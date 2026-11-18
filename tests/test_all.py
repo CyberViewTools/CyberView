@@ -618,6 +618,7 @@ async def main():
             await pg.context.close()
             ctx = await browser.new_context(viewport={"width": 390, "height": 844})
             pg = await ctx.new_page(); await pg.goto(url); await pg.wait_for_timeout(1200)
+            await pg.click("#filtersBtn"); await pg.wait_for_timeout(200)   # phones fold the filter rows away
             await pg.click("#wlOpen"); await pg.wait_for_timeout(200)
             box = await pg.locator("#wlDlg").bounding_box()
             ok("phone: environment dialog fills the screen", box["width"] >= 389 and box["height"] >= 800, box)
@@ -633,7 +634,8 @@ async def main():
             await pg.click("#navBtn"); await pg.keyboard.press("Escape")
             ok("phone: Esc closes the sheet and returns focus", await pg.locator("#navSheet").is_hidden() and await pg.evaluate("document.activeElement.id") == "navBtn")
             vs = await pg.locator("#viewseg").bounding_box()
-            ok("phone: view switcher fills its row", vs["width"] > 330, vs)
+            fb = await pg.locator("#filtersBtn").bounding_box()
+            ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
             for sub in ["archive.html", "trends.html", "tabletop.html", "workbench.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
@@ -876,6 +878,40 @@ async def main():
             ok("freshness: live dot off", "off" in (await pg.locator("#live").get_attribute("class")))
             await pg.context.close()
         await serve(make_site(old), v121)
+
+        # v1.23: phone layout: globe on the first screen, filters folded, swipe gestures, lines drawn
+        async def v123(url):
+            ctx = await browser.new_context(viewport={"width": 390, "height": 664}, has_touch=True, is_mobile=True, device_scale_factor=2)
+            pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.goto(url); await pg.wait_for_timeout(2200)
+            st = await pg.locator("#stage").bounding_box(); sp = await pg.locator("#svg .sphere").bounding_box()
+            ok("phone: the whole globe is on the first screen", st and sp and st["y"] < 260 and sp["y"] + sp["height"] <= 664 + 4, [st, sp])
+            ok("phone: filter rows folded behind a button", await pg.locator("#filtersBtn").is_visible() and await pg.locator("#chips").is_hidden() and await pg.locator("#wlOpen").is_hidden())
+            ok("phone: menu button on the first row", abs((await pg.locator("#navBtn").bounding_box())["y"] - (await pg.locator("#refresh").bounding_box())["y"]) < 12)
+            ok("phone: lines between linked events are drawn", await pg.locator("#svg .arc").count() >= 1 and await pg.evaluate("[...document.querySelectorAll('#svg .arc')].every(a => (a.getAttribute('d')||'').length > 10)"))
+            ok("phone: an up or down swipe on the globe scrolls the page", await pg.evaluate("getComputedStyle(document.getElementById('svg')).touchAction") == "pan-y")
+            cdp = await ctx.new_cdp_session(pg)
+            box = await pg.locator("#svg").bounding_box(); cx, cy = box["x"] + box["width"] / 2, box["y"] + box["height"] / 2
+            async def swipe(dx, dy):
+                await cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": cx, "y": cy}]})
+                for i in range(1, 11):
+                    await cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": cx + dx * i / 10, "y": cy + dy * i / 10}]}); await pg.wait_for_timeout(16)
+                await cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []}); await pg.wait_for_timeout(700)
+            land = "[...document.querySelectorAll('#svg path.country')].map(p => (p.getAttribute('d')||'').slice(0,24)).join('|')"
+            await swipe(-6, 0); a = await pg.evaluate(land)          # under the threshold: only stops nothing
+            await swipe(-150, 8); b2 = await pg.evaluate(land)
+            ok("phone: a sideways swipe turns the globe", a != b2 and await pg.evaluate("scrollY") == 0)
+            full = await pg.evaluate("[...document.querySelectorAll('#svg path.country')].reduce((n,p) => n + (p.getAttribute('d')||'').length, 0)")
+            ok("phone: full outlines are restored when the globe stops", full > 60000, full)
+            await swipe(0, -220)
+            ok("phone: a vertical swipe scrolls the page and leaves the globe alone", await pg.evaluate("scrollY") > 100 and await pg.evaluate(land) == b2, await pg.evaluate("scrollY"))
+            await pg.evaluate("scrollTo(0,0)"); await pg.click("#filtersBtn"); await pg.wait_for_timeout(250)
+            ok("phone: Filters opens the filter rows", await pg.locator("#chips").is_visible() and await pg.locator("#wlOpen").is_visible() and await pg.locator("#filtersBtn").get_attribute("aria-expanded") == "true")
+            ok("phone: no sideways page scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            ok("v1.23: no script errors", not errs, errs)
+            await ctx.close()
+        await serve(make_site(bundle), v123)
 
         async def v121b(url):
             ctx = await browser.new_context(viewport={"width": 1440, "height": 860})

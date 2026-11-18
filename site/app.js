@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.22",date:"2026-11-18"};
+var BUILD={version:"1.23",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -848,6 +848,9 @@ function layout(){
   if(x1-x0<160){x0=8;x1=W-8;} if(y1-y0<120){y0=8;y1=H-8;}
   FX=(x0+x1)/2;FY=(y0+y1)/2;FW=x1-x0;FH=y1-y0;
   svg.attr("viewBox","0 0 "+W+" "+H);
+  gMarks.attr("filter",coarse||!wide?null:"url(#glow)");   /* the soft glow is costly to repaint on phones */
+  /* d3.drag sets touch-action:none on the element itself; on the phone layout an up or down swipe must scroll the page */
+  svg.style("touch-action",wide||wall.on?"none":"pan-y");
   projection.fitExtent([[x0,y0],[x1,y1]],{type:"Sphere"});
   zoom.translateExtent([[-W*.6,-H*.6],[W*1.6,H*1.6]]).extent([[0,0],[W,H]]);
   gMap.selectAll("*").remove();
@@ -860,7 +863,42 @@ function layout(){
   svg.call(zoom.transform,d3.zoomIdentity);
   shade();
 }
-function repath(){gMap.selectAll("path").attr("d",path);}
+/* Redrawing the land is the expensive part of every frame. Two savings, both invisible:
+   countries wholly on the far side are skipped, and while the globe is moving outlines are drawn without the
+   curve-smoothing pass (it is put back the moment the globe comes to rest, in settle()). */
+var coarse=!!(window.matchMedia&&matchMedia("(pointer:coarse)").matches),moving=false,settleT=0,lastFrame=0;
+/* a lighter copy of each outline (every third point of long rings) for frames drawn while the globe is moving */
+function thin(ring,k){if(ring.length<16)return ring;var out=[];for(var i=0;i<ring.length-1;i+=k)out.push(ring[i]);out.push(ring[ring.length-1]);return out.length>=4?out:ring;}
+function thinGeom(g,k){
+  if(!g)return g;
+  if(g.type==="Polygon")return {type:"Polygon",coordinates:g.coordinates.map(function(r){return thin(r,k);})};
+  if(g.type==="MultiPolygon")return {type:"MultiPolygon",coordinates:g.coordinates.filter(function(p){return p[0].length>=8;}).map(function(p){return p.map(function(r){return thin(r,k);});})};
+  return g;
+}
+var gratLite=d3.geoGraticule().step([30,30]).precision(12)();
+var liteLevel=1,workMs=0;   /* 1 = every third point; 2 = every sixth, used only when frames are taking too long on this device */
+function prepWorld(){if(!world)return;var k=3;world.forEach(function(f){var c=d3.geoCentroid(f),b=d3.geoBounds(f),r=0;
+  [[b[0][0],b[0][1]],[b[1][0],b[1][1]],[b[0][0],b[1][1]],[b[1][0],b[0][1]]].forEach(function(q){var d=d3.geoDistance(c,q);if(d>r)r=d;});f.__c=c;f.__r=Math.min(Math.PI,r+.12);
+  var lg=thinGeom(f.geometry,k),lg2=thinGeom(f.geometry,6);f.__lite=lg&&lg.coordinates&&lg.coordinates.length?{type:"Feature",geometry:lg}:null;
+  f.__lite2=lg2&&lg2.coordinates&&lg2.coordinates.length?{type:"Feature",geometry:lg2}:f.__lite;});}
+function repath(fast){
+  fast=!!fast;if(fast!==moving){moving=fast;globeProj.precision(fast?0:.4);}
+  var centre=[-rot[0],-rot[1]];
+  gMap.selectAll("path").attr("d",function(f){
+    if(f&&f.__c)return d3.geoDistance(f.__c,centre)>Math.PI/2+f.__r?"":path(fast&&f.__lite?(liteLevel===2?f.__lite2:f.__lite):f);
+    return fast&&f&&f.type==="MultiLineString"?path(gratLite):path(f);});
+}
+/* one redraw per animation frame while the globe moves (30 a second on phones); settle() restores full quality */
+function frame(){
+  if(raf2)return;
+  raf2=requestAnimationFrame(function(now){raf2=0;
+    if(coarse&&now-lastFrame<30){frame();return;}lastFrame=now;
+    var w0=performance.now();repath(true);drawMarks();
+    /* if this device needs more than about 26 ms of work per frame, use the lighter outlines from now on */
+    workMs=workMs?workMs*.85+(performance.now()-w0)*.15:performance.now()-w0;if(liteLevel===1&&workMs>26)liteLevel=2;
+    clearTimeout(settleT);settleT=setTimeout(settle,160);});
+}
+function settle(){if(spin||flyT||raf2){clearTimeout(settleT);settleT=setTimeout(settle,200);return;}if(moving){repath(false);drawMarks();}}
 var RAD=Math.PI/180,cv=[0,0,0],cvKey="";
 // far side test: dot product with the view centre (cos 87 deg), cheaper than a great-circle distance per point
 function proj(lng,lat){
@@ -868,21 +906,37 @@ function proj(lng,lat){
     var l=lng*RAD,p=lat*RAD,cp=Math.cos(p);if(cp*Math.cos(l)*cv[0]+cp*Math.sin(l)*cv[1]+Math.sin(p)*cv[2]<0.0506)return null;}
   return projection([lng,lat]);
 }
-function turnTo(lng,lat){stopSpin();rot=[-lng,Math.max(-70,Math.min(70,-lat))];globeProj.rotate(rot);repath();}
+function turnTo(lng,lat){stopSpin();rot=[-lng,Math.max(-70,Math.min(70,-lat))];globeProj.rotate(rot);repath(false);}
 function stopSpin(){if(spin){spin.stop();spin=null;}}
 function startSpin(){
   if(reduced||spin||!globe)return;
-  spin=d3.timer(function(t){if(!globe||(t>45000&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();return;}
-    rot[0]+=.06;globeProj.rotate(rot);if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;repath();drawMarks();});});
+  /* by the clock, not by the frame: a slow phone drops frames but the globe still turns at the same speed (3.6 degrees a second) */
+  var last=-1;
+  spin=d3.timer(function(t){if(!globe||(t>45000&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();settle();return;}
+    var dt=last<0?16:Math.min(120,t-last);last=t;rot[0]+=dt*.0036;
+    globeProj.rotate(rot);frame();});
 }
 /* the map is always a globe: Refresh turns it back to the starting view and lets it spin again */
-function resetGlobe(){stopSpin();rot=ROT0.slice();globeProj.rotate(rot);repath();drawMarks();startSpin();}
+function resetGlobe(){stopSpin();rot=ROT0.slice();globeProj.rotate(rot);repath(false);drawMarks();startSpin();}
 document.body.classList.add("globe");
 // drag turns the globe (the flat map pans with d3.zoom instead)
-svg.call(d3.drag().filter(function(ev){return globe&&state.view==="map"&&!ev.button&&!(ev.touches&&ev.touches.length>1);})
+function turnBy(dx,dy){var d=180/(Math.PI*globeProj.scale()*T.k);rot=[rot[0]+dx*d,Math.max(-80,Math.min(80,rot[1]-dy*d))];globeProj.rotate(rot);frame();}
+/* mouse, pen, and touch on wide screens: drag turns the globe. On the phone layout the page scrolls, so one-finger
+   touches are handled below instead: a sideways swipe turns the globe, an up or down swipe scrolls the page. */
+svg.call(d3.drag().filter(function(ev){var touch=/^touch/.test(ev.type)||ev.pointerType==="touch";return globe&&state.view==="map"&&!ev.button&&!(ev.touches&&ev.touches.length>1)&&!(touch&&!wide);})
   .on("start",function(){stopSpin();hideTip();})
-  .on("drag",function(ev){var d=180/(Math.PI*globeProj.scale()*T.k);rot=[rot[0]+ev.dx*d,Math.max(-80,Math.min(80,rot[1]-ev.dy*d))];globeProj.rotate(rot);
-    if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;repath();drawMarks();});}));
+  .on("drag",function(ev){turnBy(ev.dx,ev.dy);}));
+var tg=null;
+$("svg").addEventListener("touchstart",function(ev){tg=!wide&&globe&&state.view==="map"&&ev.touches.length===1?{x:ev.touches[0].clientX,y:ev.touches[0].clientY,mode:""}:null;},{passive:true});
+$("svg").addEventListener("touchmove",function(ev){
+  if(!tg||ev.touches.length!==1){tg=null;return;}
+  var t=ev.touches[0],dx=t.clientX-tg.x,dy=t.clientY-tg.y;
+  if(!tg.mode){if(Math.abs(dx)<7&&Math.abs(dy)<7)return;tg.mode=Math.abs(dx)>=Math.abs(dy)?"turn":"scroll";if(tg.mode==="turn"){stopSpin();hideTip();}}
+  if(tg.mode!=="turn")return;
+  if(ev.cancelable)ev.preventDefault();
+  tg.x=t.clientX;tg.y=t.clientY;turnBy(dx,dy);
+},{passive:false});
+["touchend","touchcancel"].forEach(function(n){$("svg").addEventListener(n,function(){tg=null;},{passive:true});});
 $("svg").addEventListener("wheel",stopSpin,{passive:true,capture:true});
 function shade(){
   if(!world)return;
@@ -1470,10 +1524,10 @@ function flyGlobe(lng,lat,ms,done){
   stopSpin();if(flyT){flyT.stop();flyT=null;}
   var to=[-lng,Math.max(-70,Math.min(70,-lat))],from=rot.slice();to[0]=from[0]+(((to[0]-from[0])%360+540)%360-180);
   var fin=function(){if(done)done();};
-  if(reduced||!ms){rot=to;globeProj.rotate(rot);repath();drawMarks();fin();return;}
+  if(reduced||!ms){rot=to;globeProj.rotate(rot);repath(false);drawMarks();fin();return;}
   var ip=d3.interpolate(from,to);
-  flyT=d3.timer(function(t){var k=Math.min(1,t/ms);rot=ip(d3.easeCubicInOut(k));globeProj.rotate(rot);if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;repath();drawMarks();});
-    if(k>=1){flyT.stop();flyT=null;fin();}});
+  flyT=d3.timer(function(t){var k=Math.min(1,t/ms);rot=ip(d3.easeCubicInOut(k));globeProj.rotate(rot);frame();
+    if(k>=1){flyT.stop();flyT=null;settle();fin();}});
 }
 function zoomHome(){svg.call(zoom.transform,d3.zoomIdentity);}
 
@@ -1964,6 +2018,8 @@ function themeSync(){var t=document.documentElement.dataset.theme==="dark"?"dark
 document.querySelectorAll("[data-theme-set]").forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.themeSet;lsSet("cwm.theme",b.dataset.themeSet);themeSync();render();});});
 themeSync();
 $("fs").addEventListener("click",toggleFs);
+/* phones: the filter rows are folded away so the globe is on the first screen; this button opens them */
+$("filtersBtn").addEventListener("click",function(){var on=!document.body.classList.contains("filters-open");document.body.classList.toggle("filters-open",on);$("filtersBtn").setAttribute("aria-expanded",on?"true":"false");setTimeout(function(){layout();render();},30);});
 $("keysBtn").addEventListener("click",showKeys);
 document.addEventListener("fullscreenchange",fsSync);document.addEventListener("webkitfullscreenchange",fsSync);
 $("refresh").addEventListener("click",refresh);
@@ -1997,7 +2053,7 @@ setInterval(function(){renderStats(lastList);if(state.tab==="ins")renderInsights
 window.addEventListener("error",function(ev){if(!faults.page){faults.page=String(ev&&ev.message||"error").slice(0,160);fault();}});
 loadPrefs();syncControls();layout();setView(state.view);
 fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo){
-  world=topojson.feature(topo,topo.objects.countries).features.filter(function(f){return f.id!=="010";});
+  world=topojson.feature(topo,topo.objects.countries).features.filter(function(f){return f.id!=="010";});prepWorld();
   layout();drawMarks();startSpin();
 }).catch(function(){/* outline missing: markers still plot on the graticule */});
 

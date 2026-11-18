@@ -754,6 +754,21 @@ body.wall #svg{cursor:default}
 .acts a.abtn{background:var(--tint);color:var(--accent);border-radius:10px;padding:6px 12px;font-weight:600;font-size:12px;text-decoration:none}
 @media (max-width:1250px) and (min-width:901px){.sitenav a{padding:7px 6px;font-size:13.5px}.sitenav{margin-left:0}#refresh .lbl{display:none}#refresh{padding-left:11px;padding-right:11px}header .top{gap:8px 8px}}
 .val small.rev{display:block}.val small.rev.flagged{color:var(--bad)}.val small.rev.none{opacity:.7}
+#filtersBtn{display:none}
+@media (max-width:900px){
+  /* phone layout: globe on the first screen, page scrolls with an up or down swipe even when the finger starts on the globe */
+  #svg{touch-action:pan-y}
+  #stage{height:min(62vh,430px);min-height:300px}
+  header .row2{display:none}
+  body.filters-open header .row2{display:flex}
+  #filtersBtn{display:inline-flex;margin-left:auto}
+  header .meta{row-gap:8px}
+  header .meta .stats{flex-basis:100%;order:3}
+  .arc.link{stroke-width:2.4;stroke-opacity:.8}.arc.origin{stroke-width:2;stroke-opacity:.75}.arc.hot{stroke-width:3.4}
+  .arc{pointer-events:stroke}
+  .country{transition:none}
+}
+@media (max-width:600px){#fs{display:none}header .top{flex-wrap:nowrap}header h1{min-width:0}}
 </style>
 </head>
 <body>
@@ -791,6 +806,7 @@ body.wall #svg{cursor:default}
         <button type="button" data-view="time" aria-pressed="false">Timeline</button>
         <button type="button" data-view="graph" aria-pressed="false">Correlation</button>
       </div>
+      <button type="button" class="btn ghost sm" id="filtersBtn" aria-expanded="false" aria-controls="chips">Filters</button>
       <div class="stats" id="stats" aria-live="polite">Loading events</div>
       <span class="hud" id="hud">UTC</span>
       <div class="spacer"></div>

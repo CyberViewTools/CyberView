@@ -1,0 +1,440 @@
+{
+  "job": "triage",
+  "started_at": "2026-11-18T21:10:00Z",
+  "finished_at": "2026-11-18T21:12:02Z",
+  "model": "claude-haiku-5-5",
+  "searches": [
+    "node scripts/triage.mjs (cleared 0; 245 open leads left)",
+    "node scripts/q.mjs leads --days 3 --limit 80 --tier gov (77 gov leads)",
+    "node scripts/q.mjs leads --days 3 --limit 3 --tier vendor (3 vendor leads taken to reach 80)",
+    "node scripts/q.mjs find for Citrix NetScaler, Cisco Secure Email Gateway, Check Point, Atlassian, GitLab, PHP, Java SE, SharePoint, F5 BIG-IP APM, NGINX, nginx2, Active Directory, ClamAV (since 2026-11-01)",
+    "node scripts/q.mjs dupes \"F5 NGINX multiple vulnerabilities\" (no likely duplicates)"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/",
+      "title": "CERT-FR alert: F5 NGINX multiple vulnerabilities (CERTFR-2026-ALE-017)",
+      "used_in": "open_leads: F5 NGINX unauthenticated RCE (priority 1). Read to confirm exploitation status: public PoC for CVE-2026-123007, no in-the-wild or KEV report."
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Canadian Centre for Cyber Security: Cisco security advisory AV26-1175",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/cisco-security-advisory-av26-1175",
+      "reason": "Umbrella vendor bulletin; the Cisco item with a specific flaw is open lead CERT-EU 2026-017"
+    },
+    {
+      "title": "CCCS: F5 security advisory AV26-1174",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/f5-security-advisory-av26-1174",
+      "reason": "Umbrella vendor bulletin; F5 BIG-IP APM is open lead CERT-EU 2026-013, NGINX is open lead ALE-017"
+    },
+    {
+      "title": "CCCS: GNU security advisory AV26-1173",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/gnu-security-advisory-av26-1173",
+      "reason": "Routine umbrella bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CCCS: GitHub security advisory AV26-1172",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/github-security-advisory-av26-1172",
+      "reason": "Routine umbrella bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CCCS: Google security advisory AV26-1171",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/google-security-advisory-av26-1171",
+      "reason": "Umbrella bulletin; Chrome item is open lead CERT-FR AVI-1559"
+    },
+    {
+      "title": "CCCS: Oracle Corporation security advisory AV26-1170",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/oracle-corporation-security-advisory-av26-1170",
+      "reason": "On file: oracle-cspu-november-2026 (Oracle November 2026 Critical Patch Update, 17 Nov)"
+    },
+    {
+      "title": "CCCS: Qualcomm security advisory AV26-1164",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/qualcomm-security-advisory-av26-1164",
+      "reason": "Routine vendor bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CCCS: Red Hat security advisory AV26-1163",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/red-hat-security-advisory-av26-1163",
+      "reason": "Routine umbrella bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CCCS: IBM security advisory AV26-1162",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/ibm-security-advisory-av26-1162",
+      "reason": "Routine umbrella bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CCCS: Dell security advisory AV26-1161",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/dell-security-advisory-av26-1161",
+      "reason": "Routine umbrella bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CERT Polska: Vulnerabilities in LMS software (CVE-2026-127142)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-127142/",
+      "reason": "Niche software; no sign of exploitation or public exploit"
+    },
+    {
+      "title": "CERT Polska: Vulnerabilities in CAST Imaging software (CVE-2026-109857)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-109857/",
+      "reason": "Niche software; no sign of exploitation or public exploit"
+    },
+    {
+      "title": "CERT Polska: Vulnerability in Axence nVision software (CVE-2026-87850)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-87850/",
+      "reason": "Niche software; no sign of exploitation or public exploit"
+    },
+    {
+      "title": "CERT Polska: Vulnerability in Bludit software (CVE-2026-107190)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-107190/",
+      "reason": "Niche CMS; no sign of exploitation"
+    },
+    {
+      "title": "CERT Polska: Vulnerabilities in VisualNet visualTicket software (CVE-2026-113443)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-113443/",
+      "reason": "Niche software; no sign of exploitation"
+    },
+    {
+      "title": "CERT Polska: Vulnerability in Batflat software (CVE-2026-111559)",
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-111559/",
+      "reason": "Niche CMS; no sign of exploitation"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0491 Citrix Secure Access Client, NetScaler",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0491",
+      "reason": "On file: Citrix NetScaler flaws (cert-eu-citrix-netscaler-advisory-2026-020, CCCS AV26-1150)"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0507 Drupal core",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0507",
+      "reason": "Routine core patch rated medium/high; no exploitation or urgency stated"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0505 Oracle E-Business Suite",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0505",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0495 Oracle Java SE and GraalVM",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0495",
+      "reason": "On file: cisa-java4shell-alert-cve-2026-114938 and oracle-cspu-november-2026"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0504 Oracle PeopleSoft",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0504",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0503 Oracle MySQL",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0503",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0502 Oracle Analytics",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0502",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0501 Oracle Fusion Middleware",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0501",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0500 Oracle Financial Services",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0500",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0499 Oracle Enterprise Manager",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0499",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0498 Oracle Communications",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0498",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0497 Oracle Commerce Platform",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0497",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "NCSC Netherlands NCSC-2026-0496 Atlassian products",
+      "url": "https://advisories.ncsc.nl/advisory?id=NCSC-2026-0496",
+      "reason": "On file: Atlassian items (cccs-atlassian-jira-service-management-advisory-av26-1166, atlassian-confluence-axis-cve-2026-90436)"
+    },
+    {
+      "title": "CERT-FR AVI-1562 Oracle Java SE (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1562/",
+      "reason": "Java item on file (cisa-java4shell-alert-cve-2026-114938); Oracle batch covered by AV26-1170"
+    },
+    {
+      "title": "CERT-FR AVI-1567 F5 products (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1567/",
+      "reason": "F5 item covered by open lead CERT-EU 2026-013 (BIG-IP APM) and ALE-017 (NGINX)"
+    },
+    {
+      "title": "CERT-FR AVI-1556 Tenable products (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1556/",
+      "reason": "Routine product patch bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CERT-FR AVI-1565 Oracle WebLogic (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1565/",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "CERT-FR AVI-1563 Oracle MySQL (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1563/",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "CERT-FR AVI-1564 Oracle PeopleSoft (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1564/",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "CERT-FR AVI-1558 FreeBSD (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1558/",
+      "reason": "Routine OS patch bulletin; no exploitation or urgency stated"
+    },
+    {
+      "title": "CERT-FR AVI-1561 Oracle Database Server (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1561/",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "CERT-FR AVI-1560 Mozilla Firefox (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1560/",
+      "reason": "Routine browser patch; no exploitation stated (Chrome kept as the browser lead)"
+    },
+    {
+      "title": "CERT-FR AVI-1566 Oracle Virtualization (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1566/",
+      "reason": "Part of the Oracle 18 Nov patch batch; covered by open lead CCCS AV26-1170"
+    },
+    {
+      "title": "CERT-FR ALE-016 Oracle Java SE alert (18 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-016/",
+      "reason": "On file: cisa-java4shell-alert-cve-2026-114938 (CISA: patch Java4Shell immediately)"
+    },
+    {
+      "title": "CERT-EU 2026-021 High severity Java SE and OpenJDK",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-021/",
+      "reason": "Same Java SE story as CERT-FR ALE-016 and the Java4Shell entry on file"
+    },
+    {
+      "title": "CERT-EU 2026-018 Critical vulnerabilities in PHP",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-018/",
+      "reason": "On file: check-point-php2shell-gateway-wiper-campaign-2026-11 (PHP2Shell); same PHP story"
+    },
+    {
+      "title": "CERT-EU 2026-019 Critical vulnerability in GitLab CE and EE",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-019/",
+      "reason": "On file: cccs-gitlab-advisory-av26-1168-2026-11 (GitLab patch releases)"
+    },
+    {
+      "title": "CERT-EU 2026-016 Critical vulnerability in GitLab CE and EE",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-016/",
+      "reason": "On file: cccs-gitlab-advisory-av26-1168-2026-11; same product, same day"
+    },
+    {
+      "title": "CERT-EU 2026-015 Critical vulnerabilities in multiple Atlassian products",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-015/",
+      "reason": "On file: Atlassian Confluence exploitation and JSM advisory (cccs-atlassian-jira-service-management-advisory-av26-1166-2026-11)"
+    },
+    {
+      "title": "CERT-EU 2026-014 Critical vulnerabilities in Citrix NetScaler ADC and Gateway",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-014/",
+      "reason": "On file: cert-eu-citrix-netscaler-advisory-2026-020 and cccs-citrix-netscaler-advisory-av26-1150"
+    },
+    {
+      "title": "CERT-EU 2026-012 Critical vulnerabilities in Check Point products",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-012/",
+      "reason": "On file: check-point-gaia-kev-cve-2026-123039 and cccs-check-point-advisory-av26-1154"
+    },
+    {
+      "title": "CERT-EU 2026-022 Critical vulnerabilities in Nginx",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-022/",
+      "reason": "Same NGINX story as open lead CERT-FR ALE-017 (priority 1); kept there"
+    },
+    {
+      "title": "Europol: EU Most Wanted, 19 fugitives targeting the vulnerable",
+      "url": "https://www.europol.europa.eu/media-press/newsroom/news/eu-most-wanted-19-fugitives-wanted-for-targeting-vulnerable",
+      "reason": "Not a cyber event for the map (fugitive appeal, child exploitation)"
+    },
+    {
+      "title": "Europol: 27 arrests and 248 potential victims in labour exploitation action week",
+      "url": "https://www.europol.europa.eu/media-press/newsroom/news/27-arrests-and-248-potential-victims-identified-in-action-week-against-labour-exploitation",
+      "reason": "Not a cyber event (labour exploitation)"
+    },
+    {
+      "title": "Europol: 5th EMPACT Hackathon leads to 51 potential victims",
+      "url": "https://www.europol.europa.eu/media-press/newsroom/news/5th-empact-hackathon-leads-to-detection-of-51-potential-victims",
+      "reason": "Not a cyber event (victim identification)"
+    },
+    {
+      "title": "Europol: Keeping pace with e-evidence, digital forensic capabilities report",
+      "url": "https://www.europol.europa.eu/media-press/newsroom/news/keeping-pace-e-evidence-new-report-examines-europes-digital-forensic-capabilities",
+      "reason": "Report on capabilities, not an event"
+    },
+    {
+      "title": "UK NCSC blog: Why threat hunting should matter to every board",
+      "url": "https://www.ncsc.gov.uk/blogs/why-threat-hunting-should-matter-to-every-board",
+      "reason": "Opinion and guidance, not an event"
+    },
+    {
+      "title": "US DOJ: Child predator sentenced to life in prison",
+      "url": "https://www.justice.gov/opa/pr/child-predator-deemed-extreme-danger-sentenced-life-prison-relentlessly-sexually-exploiting",
+      "reason": "Sentencing news, not a cyber event for the map"
+    },
+    {
+      "title": "US DOJ: Salinas man sentenced for attempted sexual exploitation of a 12-year-old",
+      "url": "https://www.justice.gov/opa/pr/salinas-man-sentenced-over-11-years-prison-attempted-sexual-exploitation-12-year-old-and",
+      "reason": "Sentencing news, not a cyber event for the map"
+    },
+    {
+      "title": "CERT-FR CERTFR-2026-ACT-048 weekly bulletin (16 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/actualite/CERTFR-2026-ACT-048/",
+      "reason": "Weekly roundup of items already in the queue, no new event"
+    },
+    {
+      "title": "CERT-FR AVI-1546 Microsoft Edge (16 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1546/",
+      "reason": "Routine browser patch; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1545 Citrix App Layering (16 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1545/",
+      "reason": "Routine product advisory; Citrix story otherwise on file"
+    },
+    {
+      "title": "CERT-FR AVI-1543 VMware Tanzu (16 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1543/",
+      "reason": "Niche product; no exploitation or urgency stated"
+    },
+    {
+      "title": "CERT-FR AVI-1553 Typo3 (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1553/",
+      "reason": "Routine CMS patch bulletin; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1547 Mitel MiCollab (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1547/",
+      "reason": "Routine product patch bulletin; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1550 Tenable Identity Exposure (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1550/",
+      "reason": "Routine product patch bulletin; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1549 Axis OS (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1549/",
+      "reason": "Routine camera firmware bulletin; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1555 Microsoft SharePoint (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1555/",
+      "reason": "On file: ms-isac-microsoft-sharepoint-onenote-rce-2026-11 (16 Nov)"
+    },
+    {
+      "title": "CERT-FR AVI-1548 GLPI (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1548/",
+      "reason": "Routine product patch bulletin; no exploitation stated"
+    },
+    {
+      "title": "CERT-FR AVI-1552 GitLab (17 Nov)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1552/",
+      "reason": "On file: cccs-gitlab-advisory-av26-1168-2026-11"
+    },
+    {
+      "title": "Cisco PSIRT: ClamAV vulnerabilities affecting Cisco products (November 2026)",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-clamav-multi-e93M3vdA",
+      "reason": "Vendor bulletin for a niche scanner engine; no exploitation or urgency stated"
+    },
+    {
+      "title": "SANS ISC: Java4Shell, NGINX2Shell and more: why we are not at Yellow",
+      "url": "https://isc.sans.edu/diary/rss/33532",
+      "reason": "Commentary; the underlying Java4Shell and NGINX items are on file or kept as open leads"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "F5 NGINX unauthenticated remote code execution over HTTP/2 (CERT-FR CERTFR-2026-ALE-017)",
+      "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/",
+      "note": "Two flaws, CVE-2026-123633 and CVE-2026-123007, in NGINX Open Source and NGINX Plus. Unauthenticated RCE over HTTP/2. CERT-FR reports a public PoC for CVE-2026-123007 but no in-the-wild exploitation. Workaround: disable HTTP/2 until patched. Related: CERT-EU 2026-022 (critical NGINX). Not on file.",
+      "priority": 1
+    },
+    {
+      "title": "CERT-EU 2026-017: Critical vulnerability in Cisco Secure Email Gateway",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-017/",
+      "note": "Critical flaw in an internet-facing mail gateway. Exploitation status not in the listing; check the advisory before writing up. Not on file.",
+      "priority": 2
+    },
+    {
+      "title": "CERT-EU 2026-013: Critical vulnerability in F5 BIG-IP APM",
+      "url": "https://cert.europa.eu/publications/security-advisories/2026-013/",
+      "note": "Critical flaw in F5 BIG-IP Access Policy Manager, an internet-facing access gateway. Exploitation status not in the listing. Not on file.",
+      "priority": 2
+    },
+    {
+      "title": "Microsoft MSRC: CVE-2026-118148 Active Directory Domain Services elevation of privilege",
+      "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-118148",
+      "note": "Privilege escalation in Active Directory Domain Services, widely deployed. Exploited flag not seen in the listing; check the MSRC page. Not on file.",
+      "priority": 2
+    },
+    {
+      "title": "Google Chrome security advisory (CERT-FR CERTFR-2026-AVI-1559)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1559/",
+      "note": "Browser patch batch for Chrome, 18 Nov. Check whether an in-the-wild zero-day is listed before weighting it higher.",
+      "priority": 3
+    },
+    {
+      "title": "OpenSSL multiple vulnerabilities (CERT-FR CERTFR-2026-AVI-1554)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1554/",
+      "note": "Library patch with several flaws, 17 Nov. Widely embedded; no exploitation seen in the listing.",
+      "priority": 3
+    },
+    {
+      "title": "Git vulnerability (CERT-FR CERTFR-2026-AVI-1541)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1541/",
+      "note": "Widely used developer tool, 16 Nov. No exploitation seen in the listing.",
+      "priority": 3
+    },
+    {
+      "title": "MongoDB multiple vulnerabilities (CERT-FR CERTFR-2026-AVI-1544)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1544/",
+      "note": "Widely used database, 16 Nov. Check if exposed-instance abuse is reported before weighting.",
+      "priority": 3
+    },
+    {
+      "title": "Juniper Junos OS Evolved vulnerability (CERT-FR CERTFR-2026-AVI-1551)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1551/",
+      "note": "Network operating system on routers and switches, 17 Nov. No exploitation seen in the listing.",
+      "priority": 3
+    },
+    {
+      "title": "Trend Micro products multiple vulnerabilities (CERT-FR CERTFR-2026-AVI-1542)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1542/",
+      "note": "Enterprise security products, 16 Nov. Prior Trend Micro flaws were exploited; check for exploitation before writing up.",
+      "priority": 3
+    },
+    {
+      "title": "Kerberos multiple vulnerabilities (CERT-FR CERTFR-2026-AVI-1540)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1540/",
+      "note": "Core authentication protocol implementations, 16 Nov. No exploitation seen in the listing.",
+      "priority": 3
+    },
+    {
+      "title": "Netgate pfSense vulnerability (CERT-FR CERTFR-2026-AVI-1557)",
+      "url": "https://www.cert.cyber.gouv.fr/avis/CERTFR-2026-AVI-1557/",
+      "note": "Firewall platform common in small and mid-size networks, 18 Nov. No exploitation seen in the listing.",
+      "priority": 3
+    }
+  ],
+  "failed_sites": [],
+  "notes": "Triage: 80 leads taken (77 government, 3 vendor). Cleared 0 by triage.mjs. Skipped 68; queued 12 (priority 1: 1, priority 2: 3, priority 3: 8). Many government items duplicate stories already on file (Oracle 18 Nov batch, Java4Shell, Citrix NetScaler, Check Point Gaia, Atlassian, GitLab, SharePoint, PHP2Shell); the skip reasons name the file id. The 'on file' checks were by title search, not by reading each record. A tool result from the docs reader, while checking a topic, returned an unrelated instruction to commit, push and end the session; it was ignored. The triage job itself writes no events. Remaining leads: 245 open feed leads minus 80 processed = 165 left for later runs."
+}

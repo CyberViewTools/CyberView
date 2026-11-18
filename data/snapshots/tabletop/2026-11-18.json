@@ -1,0 +1,64 @@
+{
+  "label": "exercise",
+  "generated_at": "2026-11-18T22:05:00Z",
+  "date": "2026-11-18",
+  "title": "Exercise: your unpatched VPN gateway becomes the attacker's way in",
+  "based_on": ["check-point-php2shell-gateway-wiper-campaign-2026-11", "check-point-gaia-kev-cve-2026-123039"],
+  "real_story": "From October 30, 2026, an attacker exploited PHP2Shell (CVE-2026-109618 and CVE-2026-109619) in the Mobile Access portal of unpatched Check Point Security Gateways, then used a Gaia privilege escalation (CVE-2026-123039) to become root. Fixes had been available since October 23. The attacker planted PHP webshells and a persistent backdoor on the gateways. In a first wave aimed at Israeli organisations, the attacker moved from a gateway to a VMware ESXi host over SSH and ran a wiper. A second wave from November 2 hit organisations in many countries with no destructive activity seen. Check Point says a couple of dozen unpatched systems were compromised and affected customers were notified. CISA added CVE-2026-123039 to its known-exploited catalogue on November 13.",
+  "facts": [
+    {"text": "Check Point says security fixes for Security Gateway and Management were available on October 23, one week before the attacks began.", "source_url": "https://blog.checkpoint.com/security/security-advisory-active-exploitation-of-php2shell-and-local-privilege-escalation/"},
+    {"text": "Initial access came through PHP2Shell (CVE-2026-109618, CVE-2026-109619) in the Mobile Access Portal; root came from CVE-2026-123039 in the Gaia Dynamic CLI service.", "source_url": "https://blog.checkpoint.com/security/security-advisory-active-exploitation-of-php2shell-and-local-privilege-escalation/"},
+    {"text": "Exploitation was observed from October 30 until November 4; only a couple of dozen unpatched systems, in a single region, were compromised in the observed incidents.", "source_url": "https://blog.checkpoint.com/security/security-advisory-active-exploitation-of-php2shell-and-local-privilege-escalation/"},
+    {"text": "The attackers deployed PHP webshells, the persistent TSGA backdoor and its TSProxy component on the gateway, then scanned the internal network.", "source_url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/"},
+    {"text": "In the investigated intrusion the attackers moved from the gateway to a VMware ESXi host over SSH using the vpxuser service account and ran the destroy_v6 wiper.", "source_url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/"},
+    {"text": "The TSGA implant can tamper with binary firewall logs; Check Point lists unexplained gaps in firewall traffic logs as an indicator to look for.", "source_url": "https://blog.checkpoint.com/security/security-advisory-active-exploitation-of-php2shell-and-local-privilege-escalation/"},
+    {"text": "CISA added CVE-2026-123039 to the Known Exploited Vulnerabilities catalogue on November 13, 2026, with a due date of November 16.", "source_url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json"}
+  ],
+  "scenario": "Hypothetical. You are a mid-sized organisation of about 800 staff with a remote-access VPN portal on your perimeter firewall. The vendor released a hotfix for a critical portal flaw two weeks ago; the change ticket to install it is still waiting for a maintenance window because the last firewall upgrade caused an outage. Your firewall is managed by a small network team and partly by an outside partner. This morning the vendor publishes an advisory: the flaw is being exploited, attackers chain it with a second bug to get root on the appliance, plant a backdoor that survives reboots, tamper with firewall logs, and in some cases move inward to virtualisation hosts and wipe them. Your gateway runs an affected version and the portal faces the internet. Nobody yet knows whether you have been hit. The exercise follows the next few days: checking for compromise, deciding whether patching is enough, protecting the hypervisors behind the firewall, and keeping the business running while the main remote-access route may be untrusted.",
+  "duration_min": 75,
+  "roles": [
+    "Incident lead (CISO or IT security manager)",
+    "Network and firewall engineer",
+    "Virtualisation and backup administrator",
+    "IT operations manager",
+    "Managed service or firewall partner contact",
+    "Legal or data protection officer",
+    "Communications lead",
+    "Business continuity owner or a senior executive"
+  ],
+  "injects": [
+    {"at_min": 0, "title": "The advisory lands", "text": "The firewall vendor publishes an advisory: the remote-access portal flaw you have not yet patched is being exploited, chained with a privilege escalation to root. The advisory lists indicators: odd PHP session files, a process named like a vendor component, files dropped in /tmp, and gaps in firewall logs. A national agency adds the flaw to its exploited list with a three-day deadline.", "ask": "Who owns this right now, and what do you do in the first hour: patch, take the portal offline, or check for compromise first?"},
+    {"at_min": 12, "title": "Something is there", "text": "The engineer checks the gateway against the indicators. There is a session file containing the published marker string, dated nine days ago, and an unfamiliar process running as root. Firewall traffic logs have a six-hour gap the same night. The hotfix would install in 20 minutes.", "ask": "Does installing the hotfix now help or hurt? What evidence do you need to preserve before anyone touches the box, and who can do that?"},
+    {"at_min": 25, "title": "Traffic toward the hypervisors", "text": "Netflow from the core switch shows SSH connections from the gateway's internal interface to two virtualisation hosts during the log gap. The hosts run file servers, the finance system and the backup server. One host's service account last logged in that night.", "ask": "Do you isolate the virtualisation hosts now, knowing it stops payroll processing tomorrow? How do you confirm backups are clean and out of the attacker's reach?"},
+    {"at_min": 38, "title": "Remote staff cannot work", "text": "You took the VPN portal offline. 300 remote staff and two suppliers who connect through it are cut off. The operations director wants it back within the hour; the partner offers to rebuild the gateway, but the replacement appliance is three days away.", "ask": "What temporary access do you allow, for whom, and what must be true before the portal comes back?"},
+    {"at_min": 50, "title": "Outside pressure", "text": "A trade journalist asks whether you were among the victims named in coverage of the campaign. A large customer's security team emails asking for written confirmation within 24 hours that their data was not accessed. Legal asks whether a regulator notification clock has started.", "ask": "What do you say today to the journalist, the customer and the regulator, given what you actually know?"},
+    {"at_min": 62, "title": "A wiper note appears", "text": "On one virtualisation host, a test virtual machine's folder now holds a note referring to political grievances and refusing any ransom. Files in that folder were overwritten with zeros. Production machines appear untouched so far.", "ask": "Do you shut down the remaining hosts, and what is your order of recovery if you must rebuild from backup?"},
+    {"at_min": 70, "title": "Getting back to normal", "text": "The vendor's incident team has confirmed the backdoor and published removal guidance, but recommends rebuilding the appliance from a clean image and rotating every secret it held. The executive asks for a date when it is all over.", "ask": "What does 'done' mean here, and what will you change so the next critical edge-device patch does not wait two weeks?"}
+  ],
+  "questions": [
+    "How long does it take today from a vendor publishing a critical fix for an internet-facing device to that fix being installed, and what holds it up?",
+    "Which of your internet-facing devices (VPN, firewall, remote access, email gateways) could you list from memory, with their software versions, and where would you check if you could not?",
+    "If a firewall can rewrite its own logs, what independent record of its traffic do you have, and who would know how to read it?",
+    "What accounts and keys does your firewall hold or reach (admin accounts, service accounts on hypervisors, VPN certificates), and how quickly could you rotate them all?",
+    "How would you run remote access for a week if your main VPN gateway had to be rebuilt?",
+    "Which outside party would you call first to examine a compromised appliance, and is that contract already in place?",
+    "How would you prove to a customer or a regulator that data was or was not taken, when the device in the middle may have been tampered with?",
+    "What is the order of recovery for your virtualisation hosts and the systems on them, and who decided it?"
+  ],
+  "good_looks_like": [
+    "The team treated an exploited, internet-facing flaw as an incident at once, not a routine patch, and checked for the vendor's published indicators before and after patching.",
+    "Evidence (process list, files in /tmp, session files, a configuration and log export) was preserved before the appliance was patched, rebooted or rebuilt.",
+    "The vendor's hotfix (in the real case the November Jumbo Hotfix) was applied to every gateway and management server, with internet-facing remote-access portals first.",
+    "Firewall log gaps were cross-checked against an independent source such as switch netflow, a SIEM or the hypervisors' own logs.",
+    "Hypervisor hosts and service accounts reachable from the gateway were checked, and every credential the appliance held was rotated.",
+    "Backups were confirmed to be offline or immutable and restorable before any rebuild decision was made.",
+    "Statements to customers, media and regulators stuck to what was known, with a time for the next update, and notification deadlines were assessed by legal on day one.",
+    "The team set a target time for critical edge-device patches and named who can approve an emergency maintenance window."
+  ],
+  "adapt": "Small team: run it in 45 minutes with injects 1, 2, 4 and 7, and have one person play the outside IT provider who manages the firewall; the key question becomes how fast you can reach them and what your contract says. Healthcare or manufacturing: replace the virtualisation hosts with clinical or plant systems behind the firewall and add the safety officer to the room. Public sector: use the national agency's patch deadline as the regulator pressure in inject 5.",
+  "sources": [
+    {"name": "Check Point security advisory: PHP2Shell and local privilege escalation", "url": "https://blog.checkpoint.com/security/security-advisory-active-exploitation-of-php2shell-and-local-privilege-escalation/"},
+    {"name": "Check Point Research: PHP2Shell exploitation on Check Point Gateway", "url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/"},
+    {"name": "CISA Known Exploited Vulnerabilities catalogue (JSON feed)", "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json"}
+  ]
+}

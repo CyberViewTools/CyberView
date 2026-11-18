@@ -5,9 +5,8 @@ name: AI jobs
 # Each run: check out main, build the prompt from docs/jobs.md (shared preamble + the job's section),
 # let Claude do the job and commit to main, then the Pages workflow redeploys the site.
 # Signs in to Claude with the first of these that is set up (without any, every run skips in seconds):
-#   1. Workload identity federation (recommended, no stored secret): repository VARIABLES
-#      ANTHROPIC_FEDERATION_RULE_ID, ANTHROPIC_ORGANIZATION_ID, ANTHROPIC_SERVICE_ACCOUNT_ID and, if the rule
-#      covers several workspaces, ANTHROPIC_WORKSPACE_ID. Scope the rule to repo:xanderhutch/CyberView:ref:refs/heads/main.
+#   1. Workload identity federation (recommended, no stored secret): the IDs in .github/claude-federation.json
+#      (or repository variables of the same names, which win). Scope the rule to repo:xanderhutch/CyberView:ref:refs/heads/main.
 #   2. Repository secret ANTHROPIC_API_KEY (Claude Console, pay as you go).
 #   3. Repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`; uses a Claude subscription).
 # Schedule and models are listed in docs/jobs.md and routines.json; change them together.
@@ -43,8 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      AUTH: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID != '' && 'wif' || secrets.ANTHROPIC_API_KEY != '' && 'apikey' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' && 'oauth' || 'none' }}
-      HAS_TOKEN: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID != '' || secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+      HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+      HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
     steps:
       - name: Pick the job and model
         id: pick
@@ -66,17 +65,37 @@ jobs:
             *)                                   model=claude-sonnet-5-5; turns=100 ;;
           esac
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "model=$model" >> "$GITHUB_OUTPUT"; echo "turns=$turns" >> "$GITHUB_OUTPUT"
-          echo "Job: $job, model: $model, sign-in: ${{ env.AUTH }}" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Skip when the Claude token is not set
-        if: env.HAS_TOKEN != 'true'
-        run: echo "No Claude sign-in is set up (federation variables, ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
+          echo "Job: $job, model: $model, " >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
-        if: env.HAS_TOKEN == 'true'
         with:
           ref: main
           fetch-depth: 50
+
+      - name: Choose the Claude sign-in
+        id: auth
+        env:
+          V_RULE: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          V_ORG: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          V_SVAC: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          V_WS: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+        run: |
+          # federation IDs: repository variables win, else .github/claude-federation.json (IDs, not secrets)
+          f=.github/claude-federation.json
+          get() { node -e 'try{const v=JSON.parse(require("fs").readFileSync(process.argv[1]))[process.argv[2]]||"";if(/^[A-Za-z0-9_-]{0,80}$/.test(v))console.log(v)}catch{}' "$f" "$1"; }
+          rule="${V_RULE:-$(get ANTHROPIC_FEDERATION_RULE_ID)}"; org="${V_ORG:-$(get ANTHROPIC_ORGANIZATION_ID)}"
+          svac="${V_SVAC:-$(get ANTHROPIC_SERVICE_ACCOUNT_ID)}"; ws="${V_WS:-$(get ANTHROPIC_WORKSPACE_ID)}"
+          if [ -n "$rule" ] && [ -n "$org" ]; then mode=wif
+          elif [ "$HAS_KEY" = "true" ]; then mode=apikey
+          elif [ "$HAS_OAUTH" = "true" ]; then mode=oauth
+          else mode=none; fi
+          { echo "mode=$mode"; echo "rule=$rule"; echo "org=$org"; echo "svac=$svac"; echo "ws=$ws"; } >> "$GITHUB_OUTPUT"
+          echo "AUTH=$mode" >> "$GITHUB_ENV"; echo "HAS_TOKEN=$([ $mode = none ] && echo false || echo true)" >> "$GITHUB_ENV"
+          echo "Sign-in: $mode" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Skip when no Claude sign-in is set up
+        if: env.HAS_TOKEN != 'true'
+        run: echo "No Claude sign-in is set up (federation IDs in .github/claude-federation.json or repository variables, ANTHROPIC_API_KEY, or CLAUDE_CODE_OAUTH_TOKEN); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@v4
         if: env.HAS_TOKEN == 'true'
@@ -105,10 +124,10 @@ jobs:
             --model ${{ steps.pick.outputs.model }}
             --max-turns ${{ steps.pick.outputs.turns }}
             --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Task"
-          anthropic_federation_rule_id: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
-          anthropic_organization_id: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
-          anthropic_service_account_id: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
-          anthropic_workspace_id: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          anthropic_federation_rule_id: ${{ steps.auth.outputs.rule }}
+          anthropic_organization_id: ${{ steps.auth.outputs.org }}
+          anthropic_service_account_id: ${{ steps.auth.outputs.svac }}
+          anthropic_workspace_id: ${{ steps.auth.outputs.ws }}
 
       - name: Run the job with Claude (API key)
         if: env.AUTH == 'apikey'

@@ -1,0 +1,76 @@
+{
+  "action": "Enforce FIDO2 security keys for admins, alert on new passkey or MFA device enrolments and tenant-wide exports, and when remediating revoke all sessions, tokens, OAuth grants and rogue passkeys, not just passwords.",
+  "actor": "COLD RELIC (COLDRIVER, UNC4057, Star Blizzard, Callisto)",
+  "attack": [
+    "T1621 Multi-Factor Authentication Request Generation",
+    "T1098.005 Account Manipulation: Device Registration",
+    "T1530 Data from Cloud Storage",
+    "T1114.002 Email Collection: Remote Email Collection",
+    "T1562.008 Impair Defenses: Disable or Modify Cloud Logs"
+  ],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-17",
+  "exec": "One cloud breach became a launchpad for the next: stolen contacts made phishing believable. Phishing-resistant MFA and full session revocation are key.",
+  "first_seen": "2026-11-18T06:15:38Z",
+  "geo_basis": "researcher HQ",
+  "lat": 37.422,
+  "lng": -122.084,
+  "org": "Google Threat Intelligence Group / Mandiant",
+  "pin_type": "researcher",
+  "place": "Mountain View, CA (researcher)",
+  "plain": "Google says a Russian spy group stole one US organisation's staff lists and files, then pretended to be its employees to trick and break into a second organisation.",
+  "products": [
+    "Google Workspace",
+    "Microsoft Entra ID"
+  ],
+  "report": {
+    "publisher": "Google Threat Intelligence Group / Mandiant",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-17",
+    "key_findings": [
+      "In late 2025 COLD RELIC used stolen Super Admin credentials, an MFA push-fatigue attack and a residential proxy near the victim to enter a US organisation's cloud tenant.",
+      "It downloaded the whole cloud drive, exported staff lists, ran a tenant-wide Customer Takeout and deleted Alert Center notifications to hide the intrusion.",
+      "Unrevoked attacker-enrolled passkeys let it get back in after password and session resets.",
+      "In 2026 it impersonated an employee of the first victim over an encrypted messaging app to phish Entra ID credentials at a second US organisation, then bulk-downloaded files.",
+      "GTIG observed new COLD RELIC phishing operations as recently as November 2026."
+    ],
+    "recommendations": [
+      "Use phishing-resistant FIDO2/WebAuthn MFA and restrict and audit passkey and MFA device registrations.",
+      "Revoke all sessions, refresh tokens, OAuth grants, passkeys and backup codes when remediating, not just passwords.",
+      "Block or alert on admin logons from residential proxies and consumer ISPs.",
+      "Apply DLP rules to cloud storage for credentials, rosters and .pst files, and alert on tenant-wide exports and directory downloads."
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/cold-relic-a-case-study-in-impersonation-and-compromise"
+  },
+  "sector": "Multiple (US organisations)",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Google Threat Intelligence Group / Mandiant",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/cold-relic-a-case-study-in-impersonation-and-compromise"
+    }
+  ],
+  "status": "official",
+  "summary": "Mandiant and GTIG describe two linked intrusions by Russian espionage group COLD RELIC. In late 2025 it used a stolen Super Admin password and MFA fatigue to take a US organisation's entire cloud drive and staff directory. In 2026 it impersonated that organisation's staff over a messaging app to phish a second US organisation through Entra ID. GTIG saw new COLD RELIC phishing as recently as November 2026.",
+  "tags": [
+    "espionage",
+    "phishing",
+    "identity",
+    "cloud",
+    "third-party"
+  ],
+  "time_basis": "published",
+  "title": "Google: Russia's COLD RELIC used data stolen from one US organisation to breach a second",
+  "updated_at": "2026-11-18T06:15:38Z",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-18T06:15:38Z",
+    "note": "Reviewed against the full original Google Cloud threat intelligence post."
+  }
+}

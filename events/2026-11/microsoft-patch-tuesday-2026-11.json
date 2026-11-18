@@ -1,0 +1,132 @@
+{
+  "action": "Install the November 2026 Microsoft updates, starting with Outlook (CVE-2026-124194, exploited) and the 9.8-rated Windows LDAP, Windows Search and Xbox Live Networking flaws. Tell users not to open unexpected message-file attachments.",
+  "actor": "",
+  "attack": [
+    "T1187 Forced Authentication"
+  ],
+  "category": "vuln",
+  "country": "United States",
+  "cve_meta": [
+    {
+      "id": "CVE-2026-124194",
+      "cvss": 6.5,
+      "epss": 0.0162,
+      "kev": true,
+      "kev_due": "2026-11-24"
+    },
+    {
+      "id": "CVE-2026-116928",
+      "cvss": 9.8,
+      "epss": 0.01161,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-119958",
+      "cvss": 9.8,
+      "epss": 0.01279,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-112967",
+      "cvss": 9.8,
+      "epss": 0.01154,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-119990",
+      "cvss": 9.8,
+      "epss": 0.00921,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-114160",
+      "cvss": 9.8,
+      "epss": 0.00921,
+      "kev": false,
+      "kev_due": ""
+    }
+  ],
+  "cves": [
+    "CVE-2026-124194",
+    "CVE-2026-116928",
+    "CVE-2026-119958",
+    "CVE-2026-112967",
+    "CVE-2026-119990",
+    "CVE-2026-114160"
+  ],
+  "date": "2026-11-10",
+  "exec": "A very large update with one actively exploited email flaw; prompt patching of Outlook and Windows reduces credential-theft risk.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "vendor HQ",
+  "lat": 47.64,
+  "lng": -122.13,
+  "occurred_at": "2026-11-10T19:20:00Z",
+  "org": "Microsoft",
+  "pin_type": "hq",
+  "place": "Redmond, WA",
+  "plain": "Microsoft's monthly security update fixes 1,093 flaws. One in Outlook is already being used by attackers: opening a specially made email can leak a scrambled form of the user's password. A serious Windows Search flaw is also fixed.",
+  "products": [
+    "Microsoft Outlook",
+    "Microsoft Windows",
+    "Windows Search"
+  ],
+  "report": {
+    "doc_id": "2026-Nov (November 2026 Security Updates)",
+    "iocs_available": false,
+    "key_findings": [
+      "MSRC's November 2026 Security Updates release was first published November 10 and last revised November 17.",
+      "As of November 17 the Security Update Guide lists 1,098 Microsoft-issued CVEs under the release, including items added after release day, and 64 rated Critical.",
+      "Only one is marked exploited: CVE-2026-124194, an Outlook spoofing flaw (6.5) that leaks the user's NTLMv2 hash when a crafted message file is opened; it was not publicly disclosed.",
+      "Critical flaws scored 9.8 include Windows LDAP (CVE-2026-119958), Windows Search (CVE-2026-116928), Xbox Live Networking Service (CVE-2026-112967), Azure OpenAI and Azure Managed Grafana.",
+      "For the Outlook flaw the Preview Pane is not an attack vector and MSRC lists no mitigation or workaround."
+    ],
+    "published": "2026-11-10 08:00:00 UTC",
+    "publisher": "Microsoft Security Response Center (MSRC)",
+    "publisher_type": "vendor",
+    "read_depth": "summary",
+    "recommendations": [
+      "Install the November 10 security update for every affected Outlook version; Microsoft lists no workaround.",
+      "Tell users not to open unexpected message files sent as attachments, since opening is the trigger.",
+      "Apply the updates for the Critical 9.8 remote code execution flaws in Windows LDAP, Windows Search and Xbox Live Networking Service."
+    ],
+    "url": "https://api.msrc.microsoft.com/cvrf/v3.0/updates/2026-Nov"
+  },
+  "sector": "Technology",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "MSRC: November 2026 Security Updates (release record)",
+      "url": "https://api.msrc.microsoft.com/cvrf/v3.0/updates/2026-Nov"
+    },
+    {
+      "name": "Microsoft Security Response Center (CVE-2026-124194)",
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-124194"
+    },
+    {
+      "name": "Dark Reading",
+      "url": "https://darkreading.com/vulnerabilities-threats/november-patch-tuesday-cornucopia-cves"
+    },
+    {
+      "name": "Qualys",
+      "url": "https://blog.qualys.com/vulnerabilities-threat-research/2026/11/10/microsoft-patch-tuesday-november-2026-security-update-review"
+    }
+  ],
+  "status": "official",
+  "summary": "The second four-digit release in a row includes 63 critical flaws. CVE-2026-124194, an Outlook spoofing bug that leaks NTLMv2 hashes when a crafted message is opened, is under active attack. Analysts also flag a Windows Search remote code execution bug rated 9.8.",
+  "tags": [
+    "zero-day"
+  ],
+  "time_basis": "published",
+  "title": "Microsoft Patch Tuesday: 1,093 fixes and an exploited Outlook zero-day",
+  "updated_at": "2026-11-18T06:14:21Z",
+  "validation": {
+    "checked_at": "2026-11-18T00:20:00Z",
+    "note": "Reviewed against the original Microsoft Security Response Center (MSRC) document: the Security Update Guide data for release 2026-Nov. The release-notes page and full CVRF file did not load. MSRC's current totals (1,098 CVEs, 64 Critical) include post-release additions; the release-day figures of 1,093 and 63 come from news coverage.",
+    "state": "corroborated"
+  }
+}

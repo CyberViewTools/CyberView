@@ -1,0 +1,118 @@
+{
+  "action": "SAP administrators: apply SAP Notes 3778530, 3778556, 3798345 and 3849308 as a priority. All four flaws are rated 10.0 and need no login. Cover every Web Dispatcher and Gateway instance and any AS ABAP system using SAML2 logon.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "Germany",
+  "cve_meta": [
+    {
+      "id": "CVE-2026-76964",
+      "cvss": 10,
+      "epss": 0.00431,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-89126",
+      "cvss": 10,
+      "epss": 0.00431,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-89103",
+      "cvss": 10,
+      "epss": 0.00324,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-120017",
+      "cvss": 10,
+      "epss": 0.00259,
+      "kev": false,
+      "kev_due": ""
+    }
+  ],
+  "cves": [
+    "CVE-2026-76964",
+    "CVE-2026-89126",
+    "CVE-2026-89103",
+    "CVE-2026-120017"
+  ],
+  "date": "2026-11-10",
+  "exec": "Four maximum-severity flaws in core SAP components are confirmed by SAP's own records; prompt patching is warranted.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "vendor HQ",
+  "lat": 49.293,
+  "lng": 8.642,
+  "org": "SAP",
+  "pin_type": "hq",
+  "place": "Walldorf",
+  "plain": "SAP's monthly security release includes four flaws given the highest possible severity score. SAP's own records confirm an attacker needs no login to use them. Fixes are available.",
+  "products": [
+    "SAP NetWeaver",
+    "SAP Web Dispatcher",
+    "SAP Gateway"
+  ],
+  "report": {
+    "doc_id": "SAP Notes 3778530, 3778556, 3798345, 3849308",
+    "iocs_available": false,
+    "key_findings": [
+      "SAP's own CVE records rate four flaws CVSS 10.0, each exploitable over the network without authentication or user interaction.",
+      "CVE-2026-76964 (NetWeaver AS ABAP Internet Communication Manager) and CVE-2026-89126 (Web Dispatcher, heap overflow) are memory corruption from crafted network traffic that could give code execution.",
+      "CVE-2026-89103: SAP Gateway turns on a high-privilege default access control list that can treat an outside attacker as an internal application server.",
+      "CVE-2026-120017: under certain configurations the SAML2 service provider does not properly verify assertions, letting an attacker impersonate any user including privileged ones.",
+      "Affected kernels span 7.53 to 9.20 for ICM and Web Dispatcher, 7.22 to 9.21 for Gateway, and SAP_BASIS 702 to 922 for SAML2."
+    ],
+    "published": "2026-11-10T00:17:07.116Z",
+    "publisher": "SAP (CVE records published by SAP as CVE numbering authority)",
+    "publisher_type": "vendor",
+    "read_depth": "summary",
+    "recommendations": [
+      "Apply SAP Note 3778530 (NetWeaver AS ABAP ICM) and SAP Note 3778556 (Web Dispatcher).",
+      "Apply SAP Note 3798345 (SAP Gateway).",
+      "Apply SAP Note 3849308 (SAML2 service provider in AS ABAP and ABAP Platform)."
+    ],
+    "url": "https://cveawg.mitre.org/api/cve/CVE-2026-76964"
+  },
+  "sector": "Technology / ERP",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "SAP CVE record CVE-2026-76964 (Note 3778530)",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2026-76964"
+    },
+    {
+      "name": "SAP CVE record CVE-2026-89126 (Note 3778556)",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2026-89126"
+    },
+    {
+      "name": "SAP CVE record CVE-2026-89103 (Note 3798345)",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2026-89103"
+    },
+    {
+      "name": "SAP CVE record CVE-2026-120017 (Note 3849308)",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2026-120017"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/sap-patches-four-cvss-100-flaws.html"
+    },
+    {
+      "name": "Carthage Electronics security blog",
+      "url": "https://carthageelectronics.com/patch-tuesday-2026-11-10/"
+    }
+  ],
+  "status": "official",
+  "summary": "SAP's November 10 CVE records confirm four flaws rated CVSS 10.0: memory corruption in the NetWeaver AS ABAP Internet Communication Manager and in Web Dispatcher, a SAP Gateway default access list that can treat outsiders as internal servers, and a SAML2 assertion check failure allowing impersonation of any user. Each is fixed by its own SAP Note. The 35-note total comes from secondary coverage.",
+  "tags": [],
+  "title": "SAP Patch Day: 35 notes, four rated CVSS 10.0",
+  "updated_at": "2026-11-18T06:14:21Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:58:00Z",
+    "note": "Reviewed against the original SAP document (SAP's four CVE records). SAP's Patch Day page refuses automated readers, so the 35-note total remains from secondary coverage.",
+    "state": "corroborated"
+  }
+}

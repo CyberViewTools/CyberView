@@ -348,6 +348,60 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(b18), v18)
+
+        # v1.9: environment drop (file read in the browser), quick picks, whole-word matching
+        fx = tempfile.mkdtemp(prefix="cv-env-")
+        files = {
+            "assets.csv": 'Hostname,Vendor,Product,Version\nsrv1,Fortinet,FortiOS,7.4.2\nsrv2,"Ivanti","Connect Secure",22.7\nsrv3,Microsoft,Exchange Server 2019,15.2\n',
+            "bom.json": json.dumps({"bomFormat": "CycloneDX", "components": [{"name": "openssl", "version": "3.0.1", "publisher": "OpenSSL Project"}, {"name": "core", "version": "1"}, {"name": "log4j-core", "components": [{"name": "jackson-databind"}]}]}),
+            "spdx.json": json.dumps({"spdxVersion": "SPDX-2.3", "packages": [{"name": "Veeam Backup", "supplier": "Organization: Veeam"}]}),
+            "requirements.txt": "# deps\nDjango==4.2.1\nrequests>=2.0\n-r other.txt\n",
+            "profile.json": json.dumps({"cyberview_environment": 1, "terms": ["Atlassian Confluence", "energy"]}),
+            "empty.txt": "1.0\n2.0\n",
+        }
+        for n, c in files.items():
+            open(os.path.join(fx, n), "w").write(c)
+
+        async def v19(url):
+            pg, errs = await open_page(browser, url, wait=1200)
+            reqs = []
+            pg.on("request", lambda r: reqs.append(r.url))
+            await pg.click("#wlOpen")
+            ok("env: dialog opens with drop zone", await pg.locator("#envDrop").is_visible())
+            ok("env: quick picks shown", await pg.locator("#envQuick .chip").count() >= 20)
+            await pg.fill("#wlText", "")
+            n0 = len(reqs)
+            for n in ["assets.csv", "bom.json", "spdx.json", "requirements.txt", "profile.json"]:
+                await pg.set_input_files("#envFile", os.path.join(fx, n))
+                await pg.wait_for_timeout(150)
+            terms = [t.strip() for t in (await pg.input_value("#wlText")).splitlines() if t.strip()]
+            low = [t.lower() for t in terms]
+            ok("env: CSV vendor and product columns read", all(x in low for x in ["fortinet", "fortios", "ivanti", "connect secure", "microsoft"]) and "srv1" not in low, terms)
+            ok("env: versions stripped", "exchange server 2019" in low or "exchange server" in low, terms)
+            ok("env: CycloneDX components and publishers, generic names dropped", all(x in low for x in ["openssl", "openssl project", "log4j-core", "jackson-databind"]) and "core" not in low, terms)
+            ok("env: SPDX supplier read", "veeam" in low and "veeam backup" in low, terms)
+            ok("env: requirements.txt read", "django" in low and "requests" in low, terms)
+            ok("env: saved profile restored", "atlassian confluence" in low and "energy" in low, terms)
+            ok("env: message names the format", "requirements" in (await pg.inner_text("#envMsg")) or "profile" in (await pg.inner_text("#envMsg")))
+            ok("env: nothing sent over the network while reading files", len(reqs) == n0, reqs[n0:])
+            await pg.set_input_files("#envFile", os.path.join(fx, "empty.txt"))
+            await pg.wait_for_timeout(150)
+            ok("env: useless file explained", "Nothing usable" in await pg.inner_text("#toast"))
+            await pg.fill("#wlText", "")
+            await pg.click("#envQuick .chip >> text=Cisco")
+            ok("env: quick pick adds", "Cisco" in await pg.input_value("#wlText"))
+            await pg.click("#envQuick .chip >> text=Cisco")
+            ok("env: quick pick removes", "Cisco" not in await pg.input_value("#wlText"))
+            await pg.fill("#wlText", "sap")
+            await pg.click("#wlSave")
+            await pg.wait_for_timeout(200)
+            hit = await pg.evaluate("""() => { const re = new RegExp('(^|[^a-z0-9])sap($|[^a-z0-9])'); return [re.test('sapphire rapids'), re.test('sap netweaver flaw')]; }""")
+            ok("env: whole-word matching", hit == [False, True], hit)
+            ok("env: header button renamed", (await pg.inner_text("#wlOpen")).startswith("My environment"))
+            ok("v1.9: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(bundle), v19)
         await browser.close()
 
 

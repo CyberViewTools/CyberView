@@ -8,7 +8,8 @@ A rolling seven-day world map of publicly reported cyber events: incidents, outa
 
 - **Map, Timeline and Correlation views**, a known-exploited feed with patch deadlines, a daily brief, and a copy-ready shift handover.
 - **Sources first.** Events are reviewed against original government and vendor documents where possible; corrections are logged; unverified attacker claims are hidden unless you ask for them.
-- **Exposure check.** List your vendors and products in the watchlist and get a report: known-exploited flaws with patch deadlines (overdue ones flagged), this week's matching events, and matches across the whole archive. It runs in your browser; the list never leaves your device.
+- **My environment.** Drop in a software or asset inventory (CSV), an SBOM (CycloneDX or SPDX), `package.json`, `requirements.txt` or a plain list, or tick common platforms. The file is read in your browser and never uploaded. Matching is whole-word, and the profile can be copied to another device or a colleague.
+- **Exposure check.** Your environment drives a report: known-exploited flaws with patch deadlines (overdue ones flagged), this week's matching events, and matches across the whole archive. It runs in your browser; the list never leaves your device.
 - **Share and subscribe.** Every event has a link (`#e=<id>`) and a Copy link button. High-severity and known-exploited events are published as an [RSS feed](https://xanderhutch.github.io/CyberView/data/feed.xml) and a [JSON Feed](https://xanderhutch.github.io/CyberView/data/feed.json).
 - **Trends.** [What is moving](https://xanderhutch.github.io/CyberView/trends.html): this week against last by event type, sector, country, actor, product and theme, with daily counts and an honest caveat while history is short.
 - **Time-lapse and deep search.** Play the window day by day on the map; searches also point to older matches in the archive.

@@ -47,13 +47,13 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.8",date:"2026-11-18"};
+var BUILD={version:"1.9",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
 function lsGet(k){try{return window.localStorage.getItem(k);}catch(x){return null;}}
 function lsSet(k,v){try{window.localStorage.setItem(k,v);return true;}catch(x){return false;}}
-var wl={terms:[],lower:[],doc:null,mode:"local",stored:true};
+var wl={terms:[],lower:[],res:[],doc:null,mode:"local",stored:true};
 var rep={id:null,text:"",fail:false,busy:false};
 var savedT=null,feedTop=0,feedKey="",keyShut=true;
 var daily=null,hist=null,corrections=[],rubricOpen=false;
@@ -101,17 +101,21 @@ function numIn(v,lo,hi){return typeof v==="number"&&isFinite(v)&&v>=lo&&v<=hi?v:
 function strs(a,n,len){return (Array.isArray(a)?a:[]).map(function(c){return str(c,len).trim();}).filter(Boolean).slice(0,n);}
 function isDay(s){return /^\d{4}-\d{2}-\d{2}$/.test(s)&&isFinite(parseDay(s).getTime());}
 /* ---------- watchlist ---------- */
+var WL_MAX=150;
 function wlParse(s){
   var seen={},out=[];
-  String(s||"").slice(0,4000).split(/[,\n]/).forEach(function(t){
-    t=t.replace(/\s+/g," ").trim().slice(0,60);var k=t.toLowerCase();
+  String(s||"").slice(0,12000).split(/[,\n]/).forEach(function(t){
+    t=t.replace(/[\u0000-\u001f<>]/g,"").replace(/\s+/g," ").trim().slice(0,60);var k=t.toLowerCase();
     if(k.length>=2&&!seen["k"+k]){seen["k"+k]=1;out.push(t);}
   });
-  return out.slice(0,40);
+  return out.slice(0,WL_MAX);
 }
+/* whole-word matching, so "SAP" does not match "sapphire" */
+function wlRe(t){return new RegExp("(^|[^a-z0-9])"+t.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"($|[^a-z0-9])");}
+function wlHit(hay){for(var i=0;i<wl.res.length;i++){if(wl.res[i].test(hay))return true;}return false;}
 function wlClean(a){return wlParse((Array.isArray(a)?a:[]).filter(function(x){return typeof x==="string";}).join("\n"));}
-function wlTest(e){for(var i=0;i<wl.lower.length;i++){if(e.wlHay.indexOf(wl.lower[i])>=0)return true;}return false;}
-function wlApply(terms){wl.terms=terms;wl.lower=terms.map(function(t){return t.toLowerCase();});events.forEach(function(e){e.wl=wlTest(e);});}
+function wlTest(e){return wlHit(e.wlHay);}
+function wlApply(terms){wl.terms=terms;wl.lower=terms.map(function(t){return t.toLowerCase();});wl.res=terms.map(wlRe);events.forEach(function(e){e.wl=wlTest(e);});}
 function cleanRipples(d){
   if(!d||typeof d!=="object"||!Array.isArray(d.items))return null;
   return {generated:str(d.generated_at,30),items:d.items.slice(0,12).map(function(r){if(!r||typeof r!=="object")return null;var id=str(r.event_id,120);if(!id)return null;
@@ -339,7 +343,7 @@ function renderStats(list){
   var a=sweep&&ago(sweep.last_sweep_at);
   if(a){s.appendChild(document.createTextNode(" · swept "));s.appendChild(el("b",null,a));s.appendChild(document.createTextNode(" · next "+nextSweep()));}
   var ws=$("wlStat");ws.textContent="";
-  if(wl.terms.length){ws.appendChild(el("b","wlstat",String(list.filter(function(e){return e.wl;}).length)));ws.appendChild(document.createTextNode(" on your watchlist"));}
+  if(wl.terms.length){ws.appendChild(el("b","wlstat",String(list.filter(function(e){return e.wl;}).length)));ws.appendChild(document.createTextNode(" match your environment"));}
 }
 function renderToggles(){
   var n=base(true).filter(function(e){return e.status==="claimed";}).length;
@@ -347,7 +351,7 @@ function renderToggles(){
   $("claimsN").textContent=n+(state.claims?" shown":" hidden");
   var has=wl.terms.length>0;
   $("wlOnly").disabled=!has;$("wlOnly").setAttribute("aria-pressed",state.wlOnly&&has?"true":"false");
-  $("wlOpen").textContent=has?"Watchlist ("+wl.terms.length+")":"Watchlist";
+  $("wlOpen").textContent=has?"My environment ("+wl.terms.length+")":"My environment";
 
 }
 function renderChips(){
@@ -435,7 +439,7 @@ function card(e,open){
   var sub=el("span","sub");
   var where=[e.place,e.country].filter(function(x,i,arr){return x&&arr.indexOf(x)===i;}).join(", ");
   if(where)sub.appendChild(el("span",null,where));
-  if(e.wl)sub.appendChild(el("span","pill wl","On your watchlist"));
+  if(e.wl)sub.appendChild(el("span","pill wl","Matches your environment"));
   if(e.records)sub.appendChild(el("span","pill mute",fmtNum(e.records)+" records"));
   if(e.isNew)sub.appendChild(el("span","pill new","New"));
   if(e.status==="claimed"||e.status==="developing")sub.appendChild(el("span","pill warn",STATUS[e.status]));
@@ -591,7 +595,7 @@ function renderScope(){
   if(state.lens!=="all")parts.push($("lens").selectedOptions[0].textContent);
   if(state.sev>1)parts.push(state.sev===3?"High only":"Medium and high");
   if(state.cats.size<CATS.length)parts.push((CATS.length-state.cats.size)+" type"+(CATS.length-state.cats.size>1?"s":"")+" off");
-  if(state.wlOnly&&wl.terms.length)parts.push("Watchlist only");
+  if(state.wlOnly&&wl.terms.length)parts.push("My environment only");
   $("scope").hidden=!parts.length||!!state.sel;$("scopeText").textContent=parts.join(" · ");
   var note=$("notice");
   if(unavailable){note.hidden=false;note.textContent="The latest data could not be loaded. Check your connection and press Refresh.";}
@@ -929,7 +933,7 @@ function vizTime(v,list){
   var lanes=viz.lane==="type"?CATS.map(function(c){return [c.k,c.label];}):viz.lane==="sector"?SECG:LAYERS.map(function(l){return [l[0],l[1]];});
   var keyOf=viz.lane==="type"?function(e){return e.category;}:viz.lane==="sector"?function(e){return e.secg;}:function(e){return e.layer;};
   var s2=el("div","vsec");s2.appendChild(el("h3",null,viz.lane==="layer"?"Which part of the environment is under pressure, and when?":viz.lane==="sector"?"Which sectors were hit, and when?":"What kind of events arrived, and when?"));
-  s2.appendChild(el("p","q","Each mark is one event, in the column for its day. Bigger means more severe; hollow means an unverified claim; a blue ring means it matches your watchlist. The most important come first, and a +N chip opens the rest of a busy day. Select a mark to open the event."));
+  s2.appendChild(el("p","q","Each mark is one event, in the column for its day. Bigger means more severe; hollow means an unverified claim; a blue ring means it matches your environment. The most important come first, and a +N chip opens the rest of a busy day. Select a mark to open the event."));
   var PITCH=19,MAXR=3,cols=Math.max(2,Math.floor((CW-12)/PITCH)),yy=22,geo=[];
   lanes.forEach(function(l){var evs=list.filter(function(e){return keyOf(e)===l[0];});if(!evs.length)return;
     var mxr=1;days.forEach(function(d){var n=evs.filter(function(e){return e.date===d;}).length;mxr=Math.max(mxr,Math.min(MAXR,Math.ceil(n/cols)));});
@@ -984,7 +988,7 @@ function vizTime(v,list){
         var g=sp.append("g").attr("class","col").attr("tabindex",0).attr("role","button").attr("aria-label",r.name+" "+r.cve+": "+kevDueText(r.left));
         g.append("rect").attr("class","hit").attr("x",0).attr("y",y0+1).attr("width",W0).attr("height",RH-2).attr("rx",8);
         g.append("text").attr("class","lbl").attr("x",8).attr("y",cy-2).attr("font-size",12.5).text(fit(r.name,6.9,NW2-16));
-        g.append("text").attr("class","sublbl").attr("x",8).attr("y",cy+12).text(r.cve+(r.ransom?" · used by ransomware":"")+(r.wl?" · on your watchlist":""));
+        g.append("text").attr("class","sublbl").attr("x",8).attr("y",cy+12).text(r.cve+(r.ransom?" · used by ransomware":"")+(r.wl?" · match your environment":""));
         if(r.left===0)g.append("circle").attr("cx",x0).attr("cy",cy).attr("r",5).style("fill","var(--bad)");
         else g.append("path").attr("d",ov?"M"+x0+","+(cy-BH/2)+"H"+(x1+rr)+"q"+(-rr)+",0 "+(-rr)+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+rr+","+rr+"H"+x0+"Z":"M"+x0+","+(cy-BH/2)+"H"+(x1-rr)+"q"+rr+",0 "+rr+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+(-rr)+","+rr+"H"+x0+"Z").style("fill",ov?"var(--bad)":"var(--accent)");
         var txt=r.left===0?"due today":ov?(-r.left)+((-r.left)===1?" day":" days")+" overdue":r.left+(r.left===1?" day":" days")+" left";
@@ -1123,7 +1127,7 @@ function cleanKev(id,d){
   var k={cve:cve,vendor:str(d.vendor,80),product:str(d.product,120),name:str(d.name,200),added:added,due:isDay(due)?due:"",ransom:d.ransomware===true,desc:str(d.desc,420),cvss:numIn(d.cvss,0,10),epss:numIn(d.epss,0,1)};
   k.hay=(k.cve+" | "+k.vendor+" | "+k.product+" | "+k.name).toLowerCase();return k;
 }
-function kevWl(k){for(var i=0;i<wl.lower.length;i++){if(k.hay.indexOf(wl.lower[i])>=0)return true;}return false;}
+function kevWl(k){return wlHit(k.hay);}
 function kevLeft(k){return k.due?Math.round((parseDay(k.due).getTime()-parseDay(ymd(new Date())).getTime())/864e5):null;}
 function kevDueText(n){return n===null?"":n<0?"federal deadline passed "+(-n)+(n===-1?" day":" days")+" ago":n===0?"federal deadline today":"federal deadline in "+n+(n===1?" day":" days");}
 function renderKev(){
@@ -1138,7 +1142,7 @@ function renderKev(){
     if(kevSort==="due"){var la=kevLeft(a),lb=kevLeft(b);return (la===null?999:la)-(lb===null?999:lb);}return a.added<b.added?1:a.added>b.added?-1:0;});
   var hd=el("div","khead");hd.appendChild(el("b",null,String(kev.length)));hd.appendChild(document.createTextNode(" flaws added to CISA's known-exploited list in the last 45 days · "));
   hd.appendChild(el("b",null,String(kev.filter(function(k){return k.added>=wk;}).length)));hd.appendChild(document.createTextNode(" this week"));
-  var nw=kev.filter(kevWl).length;if(wl.terms.length){hd.appendChild(document.createTextNode(" · "));hd.appendChild(el("b",null,String(nw)));hd.appendChild(document.createTextNode(" match your watchlist"));}
+  var nw=kev.filter(kevWl).length;if(wl.terms.length){hd.appendChild(document.createTextNode(" · "));hd.appendChild(el("b",null,String(nw)));hd.appendChild(document.createTextNode(" match your environment"));}
   if(sweep&&sweep.last_kev_at)hd.appendChild(document.createTextNode(" · synced "+(ago(sweep.last_kev_at)||"")));
   p.appendChild(hd);
   var tools=el("div","vhead");tools.appendChild(seg([["new","Newest first"],["due","Deadline first"]],kevSort,"Sort the exploited list",function(k){kevSort=k;renderKev();}));p.appendChild(tools);
@@ -1146,7 +1150,7 @@ function renderKev(){
   list.forEach(function(k){
     var left=kevLeft(k),c=el("article","kcard");
     var id=el("div","kid");id.appendChild(el("span",null,k.cve));id.appendChild(el("span",null,"added "+fmtDay(k.added)));
-    if(kevWl(k))id.appendChild(el("span","pill wl","On your watchlist"));
+    if(kevWl(k))id.appendChild(el("span","pill wl","Matches your environment"));
     if(k.ransom)id.appendChild(el("span","pill kev","Used by ransomware"));
     if(left!==null)id.appendChild(el("span","pill "+(left<0?"over":"due"),left<0?"Deadline passed":left===0?"Due today":"Due in "+left+"d"));
     c.appendChild(id);
@@ -1177,7 +1181,7 @@ function hoBuild(){
   if(since){var nw=list.filter(function(e){return e.firstSeen&&e.firstSeen>since;}).sort(function(a,b){return b.pri-a.pri;});
     L.push("");L.push("NEW SINCE LAST HANDOVER ("+nw.length+", since "+fmtTime(since)+")");nw.slice(0,10).forEach(function(e){L.push(line(e));});if(nw.length>10)L.push("  …and "+(nw.length-10)+" more");if(!nw.length)L.push("- none");}
   var wlh=list.filter(function(e){return e.wl;});
-  if(wl.terms.length){L.push("");L.push("WATCHLIST MATCHES ("+wlh.length+")");wlh.slice(0,8).forEach(function(e){L.push(line(e));});if(!wlh.length)L.push("- none");}
+  if(wl.terms.length){L.push("");L.push("MATCHES YOUR ENVIRONMENT ("+wlh.length+")");wlh.slice(0,8).forEach(function(e){L.push(line(e));});if(!wlh.length)L.push("- none");}
   L.push("");L.push("Unverified attacker claims are left out. Details and sources: "+location.href.split("#")[0]);
   return L.join("\n");
 }
@@ -1212,7 +1216,7 @@ function drawMarks(){
       g.append("path").attr("d",symPath(e.category,[0,70,125,200][e.severity]))
         .attr("fill","var(--c-"+e.category+")").style("stroke",e.status==="claimed"?"var(--c-"+e.category+")":null);
       g.on("click",function(){select(e.id,false);}).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(e.id,false);}});
-      g.on("pointerenter",function(){tip(c.x,c.y,e.title,fmtDay(e.date)+" · "+(e.place||e.country)+" · "+CONF[e.conf]+" confidence"+pinNote(e)+(e.wl?" · on your watchlist":""));}).on("pointerleave",hideTip);
+      g.on("pointerenter",function(){tip(c.x,c.y,e.title,fmtDay(e.date)+" · "+(e.place||e.country)+" · "+CONF[e.conf]+" confidence"+pinNote(e)+(e.wl?" · match your environment":""));}).on("pointerleave",hideTip);
     }else{
       var ids=c.items.map(function(p){return p.e.id;});
       var has=state.sel&&ids.indexOf(state.sel)>=0;
@@ -1223,7 +1227,7 @@ function drawMarks(){
       g.append("text").text(ids.length);
       var act=function(){openCluster(c);};
       g.on("click",act).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();act();}});
-      g.on("pointerenter",function(){tip(c.x,c.y,ids.length+" events",c.items.slice(0,3).map(function(p){return p.e.org||p.e.title;}).join(", ")+(ids.length>3?" …":"")+(nw?" · "+nw+" on your watchlist":""));}).on("pointerleave",hideTip);
+      g.on("pointerenter",function(){tip(c.x,c.y,ids.length+" events",c.items.slice(0,3).map(function(p){return p.e.org||p.e.title;}).join(", ")+(ids.length>3?" …":"")+(nw?" · "+nw+" match your environment":""));}).on("pointerleave",hideTip);
     }
   });
 }
@@ -1286,10 +1290,10 @@ function renderKey(){
     var s=el("span"),v=document.createElementNS(NS,"svg");v.setAttribute("viewBox","0 0 26 8");v.style.width="26px";v.style.height="8px";
     var l=document.createElementNS(NS,"line");l.setAttribute("class","edge "+a[0]);l.setAttribute("x1",1);l.setAttribute("x2",25);l.setAttribute("y1",4);l.setAttribute("y2",4);v.appendChild(l);s.appendChild(v);s.appendChild(document.createTextNode(a[1]));k.appendChild(s);});
     k.appendChild(el("span",null,"Circle = one pattern"));return;}
-  var legendWl=function(){if(wl.terms.length)ringKey("wlr","On your watchlist");};
+  var legendWl=function(){if(wl.terms.length)ringKey("wlr","Matches your environment");};
   function ringKey(cls,label){var s=el("span"),v=document.createElementNS(NS,"svg");v.setAttribute("viewBox","-8 -8 16 16");v.setAttribute("class","rg");v.setAttribute("aria-hidden","true");
     var c=document.createElementNS(NS,"circle");c.setAttribute("class",cls);c.setAttribute("r",6);v.appendChild(c);s.appendChild(v);s.appendChild(document.createTextNode(label));k.appendChild(s);}
-  if(state.view==="time"){k.appendChild(el("span",null,"Exact position = reported time; others are placed on their day"));if(wl.terms.length)ringKey("wlr","On your watchlist");return;}
+  if(state.view==="time"){k.appendChild(el("span",null,"Exact position = reported time; others are placed on their day"));if(wl.terms.length)ringKey("wlr","Matches your environment");return;}
   var a=el("span");a.appendChild(glyph("incident"));a.appendChild(document.createTextNode("Confirmed"));k.appendChild(a);
   var b=el("span");b.appendChild(glyph("incident",true));b.appendChild(document.createTextNode("Unverified claim"));k.appendChild(b);
   if(!state.claims)b.lastChild.textContent="Unverified claim (hidden)";
@@ -1373,8 +1377,100 @@ function wlNote(){
 }
 function wlToggle(open){
   var d=$("wlDlg");d.hidden=!open;$("wlOpen").setAttribute("aria-expanded",open?"true":"false");
-  if(open){$("wlText").value=wl.terms.join("\n");wlNote();wlReport();$("wlText").focus();}
+  if(open){$("wlText").value=wl.terms.join("\n");$("envMsg").textContent="";envQuick();wlNote();wlReport();$("wlText").focus();}
 }
+/* ---------- environment import: the file is read here, in the browser, and never leaves the device ---------- */
+var ENV_QUICK=["Microsoft","Windows","Exchange","Azure","Microsoft 365","Google Chrome","Apple","Linux","Cisco","Fortinet","Palo Alto Networks","Ivanti","Citrix","VMware","Atlassian","Oracle","SAP","AWS","Okta","CrowdStrike","SonicWall","Juniper","F5","WordPress","Apache","OpenSSL","Veeam","Zoom","Salesforce","GitHub"];
+var ENV_STOP={"core":1,"common":1,"utils":1,"util":1,"test":1,"tests":1,"types":1,"lib":1,"api":1,"client":1,"server":1,"main":1,"app":1,"data":1,"config":1,"tools":1,"cli":1,"plugin":1,"plugins":1,"helpers":1,"base":1,"node":1,"none":1,"unknown":1,"n/a":1,"null":1,"true":1,"false":1,"name":1,"vendor":1,"product":1,"version":1,"software":1,"organization":1,"noassertion":1};
+function envTerm(t){
+  t=String(t==null?"":t).replace(/^(organization|person|tool):\s*/i,"").replace(/\s*\(.*?\)\s*$/,"")
+    .replace(/[\s@]*v?\d+(\.\d+)+[\w.+-]*$/,"").replace(/^["'\s]+|["'\s]+$/g,"").replace(/\s+/g," ").trim();
+  if(t.charAt(0)==="@")t=t.slice(1);
+  var k=t.toLowerCase();
+  if(t.length<3||t.length>60||/^[\d\W_]+$/.test(t)||ENV_STOP[k]||/^(https?:|[a-f0-9]{16,})/i.test(t))return "";
+  return t;
+}
+function envCsvRows(text){
+  var rows=[],row=[],f="",q=false;
+  for(var i=0;i<text.length&&rows.length<5000;i++){var c=text.charAt(i);
+    if(q){if(c==='"'){if(text.charAt(i+1)==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"')q=true;else if(c===","||c===";"||c==="\t"){row.push(f);f="";}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&text.charAt(i+1)==="\n")i++;row.push(f);rows.push(row);row=[];f="";}else f+=c;}
+  if(f||row.length){row.push(f);rows.push(row);}
+  return rows.filter(function(r){return r.some(function(x){return x.trim();});});
+}
+// returns {kind, terms}; kind names the format so the visitor can see what was understood
+function envParse(name,text){
+  var out=[],kind="text",push=function(v){var t=envTerm(v);if(t)out.push(t);};
+  name=String(name||"").toLowerCase();text=String(text||"").replace(/^\uFEFF/,"").slice(0,2e6);
+  var j=null;if(/^\s*[\[{]/.test(text)){try{j=JSON.parse(text);}catch(x){j=null;}}
+  if(j&&typeof j==="object"){
+    if(j.cyberview_environment&&Array.isArray(j.terms)){j.terms.forEach(function(t){if(typeof t==="string")out.push(t);});kind="CyberView profile";}
+    else if(j.bomFormat==="CycloneDX"||Array.isArray(j.components)){kind="CycloneDX SBOM";
+      (function walk(a,d){(Array.isArray(a)?a:[]).forEach(function(c){if(!c||typeof c!=="object"||d>6)return;
+        push(c.publisher);push(c.supplier&&c.supplier.name);push(c.name);walk(c.components,d+1);});})(j.components,0);}
+    else if(j.spdxVersion||Array.isArray(j.packages)){kind="SPDX SBOM";
+      (j.packages||[]).forEach(function(p){if(p&&typeof p==="object"){push(p.supplier);push(p.originator);push(p.name);}});}
+    else if(j.dependencies||j.devDependencies){kind="package.json";
+      push(j.name);["dependencies","devDependencies","peerDependencies"].forEach(function(k){if(j[k]&&typeof j[k]==="object")Object.keys(j[k]).forEach(push);});}
+    else if(Array.isArray(j)){kind="JSON list";j.forEach(function(x){if(typeof x==="string")push(x);else if(x&&typeof x==="object"){push(x.vendor||x.manufacturer||x.publisher);push(x.product||x.name||x.software);}});}
+  }else if(/<bom[\s>]/i.test(text)){kind="CycloneDX SBOM (XML)";
+    var re=/<(publisher|name)>([^<]{1,120})<\/\1>/gi,m,n=0;while((m=re.exec(text))&&n++<5000)push(m[2]);}
+  else if(/\.(csv|tsv)$/.test(name)||/^[^\n]*[,;\t][^\n]*\n/.test(text)&&!/requirements|\.txt$/.test(name)){
+    var rows=envCsvRows(text);kind="CSV";
+    if(rows.length){var h=rows[0].map(function(x){return x.trim().toLowerCase();}),cols=[];
+      h.forEach(function(x,i){if(/vendor|manufacturer|publisher|supplier|make\b/.test(x)||/product|software|application|^name$|display ?name|^title$|model|^os$|operating system|platform/.test(x))cols.push(i);});
+      if(!cols.length)cols=[0];else rows=rows.slice(1);
+      rows.forEach(function(r){cols.forEach(function(i){push(r[i]);});});}}
+  else{kind=/requirements/.test(name)?"requirements.txt":"text list";
+    text.split(/\n/).forEach(function(l){l=l.replace(/#.*/,"").trim();if(!l||/^-/.test(l))return;
+      push(l.split(/\s*(?:==|>=|<=|~=|!=|>|<|;|\[)/)[0]);});}
+  var seen={},terms=[];out.forEach(function(t){var k=t.toLowerCase();if(!seen[k]){seen[k]=1;terms.push(t);}});
+  return {kind:kind,terms:terms};
+}
+function envMerge(add){
+  var cur=wlParse($("wlText").value),have={};cur.forEach(function(t){have[t.toLowerCase()]=1;});
+  var fresh=add.filter(function(t){return !have[t.toLowerCase()];}),room=Math.max(0,WL_MAX-cur.length);
+  $("wlText").value=cur.concat(fresh.slice(0,room)).join("\n");envQuick();
+  return {added:Math.min(fresh.length,room),skipped:Math.max(0,fresh.length-room)};
+}
+function envFile(f){
+  if(!f)return;
+  if(f.size>2e6){toast("That file is over 2 MB. Export just the software list, or paste the names.");return;}
+  var r=new FileReader();
+  r.onload=function(){
+    var p=envParse(f.name,r.result);
+    if(!p.terms.length){toast("Nothing usable found in "+String(f.name).slice(0,60)+". Try a CSV with vendor and product columns, an SBOM, or one name per line.");return;}
+    var m=envMerge(p.terms);
+    $("envMsg").textContent="Read "+String(f.name).slice(0,60)+" as "+p.kind+": "+p.terms.length+" names found, "+m.added+" added"+(m.skipped?", "+m.skipped+" left out (the list holds "+WL_MAX+")":"")+". Review the list, then Save. The file was read on this device and not uploaded.";
+  };
+  r.onerror=function(){toast("That file could not be read.");};
+  r.readAsText(f);
+}
+function envQuick(){
+  var box=$("envQuick");if(!box)return;box.textContent="";
+  var have={};wlParse($("wlText").value).forEach(function(t){have[t.toLowerCase()]=1;});
+  ENV_QUICK.forEach(function(t){var b=el("button","chip qk",t);b.type="button";b.setAttribute("aria-pressed",have[t.toLowerCase()]?"true":"false");
+    b.addEventListener("click",function(){
+      var cur=wlParse($("wlText").value);
+      if(have[t.toLowerCase()])cur=cur.filter(function(x){return x.toLowerCase()!==t.toLowerCase();});else cur.push(t);
+      $("wlText").value=cur.join("\n");envQuick();});
+    box.appendChild(b);});
+}
+(function(){
+  var dz=$("envDrop"),fi=$("envFile");
+  $("envPick").addEventListener("click",function(){fi.click();});
+  fi.addEventListener("change",function(){envFile(fi.files&&fi.files[0]);fi.value="";});
+  ["dragenter","dragover"].forEach(function(t){dz.addEventListener(t,function(ev){ev.preventDefault();dz.classList.add("over");});});
+  ["dragleave","drop"].forEach(function(t){dz.addEventListener(t,function(ev){ev.preventDefault();dz.classList.remove("over");});});
+  dz.addEventListener("drop",function(ev){var f=ev.dataTransfer&&ev.dataTransfer.files&&ev.dataTransfer.files[0];envFile(f);});
+  $("wlText").addEventListener("input",function(){clearTimeout(envQuick.t);envQuick.t=setTimeout(envQuick,250);});
+  $("envExport").addEventListener("click",function(){
+    var t=JSON.stringify({cyberview_environment:1,saved:new Date().toISOString().slice(0,10),terms:wlParse($("wlText").value)},null,1);
+    try{navigator.clipboard.writeText(t).then(function(){toast("Profile copied. Save it as a .json file and drop it here on another device or for a colleague.");},function(){toast("Copy was blocked by the browser.");});}catch(x){toast("Copy was blocked by the browser.");}
+  });
+})();
+
 /* ---------- exposure report: what in the watchlist is hit, worked out in the browser; nothing is sent ---------- */
 var archRows=null,archLoad=null,xrText="";
 function loadArchive(){
@@ -1388,7 +1484,7 @@ function wlReport(){
   var box=$("wlReport"),cp=$("wlCopy");box.textContent="";
   if(!wl.terms.length){box.hidden=true;cp.hidden=true;xrText="";return;}
   box.hidden=false;cp.hidden=false;
-  var today=ymd(new Date()),lines=["CyberView exposure report, "+today,"Watchlist: "+wl.terms.join(", "),""];
+  var today=ymd(new Date()),lines=["CyberView exposure report, "+today,"Environment: "+wl.terms.join(", "),""];
   var kh=kev.filter(kevWl).sort(function(a,b){return (a.due||"9")<(b.due||"9")?-1:1;});
   var sec=el("section");sec.appendChild(el("h3",null,"Known-exploited flaws in your list ("+kh.length+")"));
   lines.push("Known-exploited flaws ("+kh.length+"):");
@@ -1409,7 +1505,7 @@ function wlReport(){
     var li=el("li"),b=el("button",null,fmtDay(e.date)+" · "+["","Low","Medium","High"][e.severity]+" · "+e.title);b.type="button";
     b.addEventListener("click",function(){wlToggle(false);showEvent(e.id);});li.appendChild(b);ul2.appendChild(li);
     lines.push("- "+e.date+" ["+["","low","medium","high"][e.severity]+"] "+e.title+" "+eventLink(e.id));
-  });if(eh.length>10)ul2.appendChild(el("li","xr-none","and "+(eh.length-10)+" more: turn on Only my watchlist."));sec.appendChild(ul2);}
+  });if(eh.length>10)ul2.appendChild(el("li","xr-none","and "+(eh.length-10)+" more: turn on Only my environment."));sec.appendChild(ul2);}
   box.appendChild(sec);
   var as=el("section");as.appendChild(el("h3",null,"Across the whole archive"));var ap=el("p","xr-none","Counting");as.appendChild(ap);box.appendChild(as);
   xrText=lines.join("\n");
@@ -1417,7 +1513,7 @@ function wlReport(){
   loadArchive().then(function(rows){
     if(terms.join("|")!==wl.terms.join("|"))return;
     ap.remove();var ul3=el("ul"),tot=0,arch=["","Across the whole archive:"];
-    terms.forEach(function(t){var lt=t.toLowerCase(),n=rows.filter(function(r){return r.status!=="claimed"&&r.hay.indexOf(lt)>=0;}).length;if(!n)return;tot+=n;
+    terms.forEach(function(t){var re=wlRe(t),n=rows.filter(function(r){return r.status!=="claimed"&&re.test(r.hay);}).length;if(!n)return;tot+=n;
       var li=el("li"),a=el("a",null,t+": "+n+" event"+(n===1?"":"s"));a.href="archive.html#q="+encodeURIComponent(t);li.appendChild(a);ul3.appendChild(li);arch.push("- "+t+": "+n);});
     if(!tot)as.appendChild(el("p","xr-none",rows.length?"No earlier events mention these terms.":"The archive could not be loaded."));else as.appendChild(ul3);
     xrText+= "\n"+arch.join("\n");
@@ -1426,9 +1522,9 @@ function wlReport(){
 function wlSave(){
   var terms=wlParse($("wlText").value),same=terms.join("\n")===wl.terms.join("\n");
   $("wlText").value=terms.join("\n");
-  if(same){wlNote();toast("Watchlist unchanged.");return;}
+  if(same){wlNote();toast("Environment unchanged.");return;}
   wlApply(terms);if(!terms.length)state.wlOnly=false;render();wlReport();
-  var local=function(){wl.mode="local";wl.stored=lsSet("cwm.wl",JSON.stringify(terms));wlNote();toast(wl.stored?"Watchlist saved on this device only.":"Watchlist could not be stored. It will last until you close the page.");};
+  var local=function(){wl.mode="local";wl.stored=lsSet("cwm.wl",JSON.stringify(terms));wlNote();toast(wl.stored?"Environment saved on this device only.":"Environment could not be stored. It will last until you close the page.");};
   local();
 }
 $("wlOpen").addEventListener("click",function(){wlToggle($("wlDlg").hidden);});

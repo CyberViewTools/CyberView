@@ -38,19 +38,6 @@
       "does": "Checks the live site, its security policy and data freshness; browser check twice a day."
     },
     {
-      "key": "market-prices",
-      "name": "Market prices",
-      "tier": "automation",
-      "workflow": "markets.yml",
-      "cron": "23 1,6,11,16,21 * * *",
-      "model": null,
-      "status_key": "last_markets_at",
-      "max_age_hours": 30,
-      "active": true,
-      "active_since": "2026-11-18T20:30:00Z",
-      "does": "Fetches end-of-day prices for tracked cyber stocks and listed victims (Alpha Vantage, within the free 25 calls a day)."
-    },
-    {
       "key": "lead-triage",
       "name": "Lead triage",
       "tier": "automation",
@@ -190,19 +177,6 @@
       "max_age_hours": 200,
       "active": true,
       "does": "Reviews the week's code changes and data for security problems."
-    },
-    {
-      "key": "markets",
-      "name": "Markets research",
-      "tier": "ai",
-      "workflow": "claude-task",
-      "active_since": "2026-11-18T20:30:00Z",
-      "cron": "37 21 * * 1-5",
-      "model": "claude-sonnet-5-5",
-      "status_key": "last_markets_research_at",
-      "max_age_hours": 80,
-      "active": true,
-      "does": "Links listed victims to their tickers and records SEC cyber incident filings (8-K Item 1.05)."
     },
     {
       "key": "triage",

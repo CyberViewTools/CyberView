@@ -37,15 +37,6 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 | duplicate_of | | id of the richer record; the build leaves this one out |
 | first_seen, updated_at, qa_checked_at | | ISO times |
 
-### Market fields (set by the markets job)
-
-| Field | Type | Notes |
-|---|---|---|
-| `ticker` | string | US exchange symbol of the organisation (or its listed parent), confirmed on an investor-relations, SEC or exchange page. Uppercase, e.g. `UBER`, `BRK.B`. Only for listed companies. |
-| `filing` | object | SEC filing about the incident: `form` (8-K, 8-K/A, 6-K, 10-K, 10-Q), `item` (e.g. "1.05"), `filed` (YYYY-MM-DD), `url` (must start `https://www.sec.gov/`), `company` (registrant name). |
-
-Prices live in `data/markets/prices/<SYMBOL>.json` (`days`: `[date, close, volume]`, oldest first), written by `scripts/markets.mjs`; tracked stocks are listed in `config/markets.json`. `scripts/build.mjs` computes `site/data/markets.json` (moves around disclosures against the benchmark, the tracker, the filings).
-
 ## data/kev/&lt;CVE&gt;.json
 
 `cve, vendor, product, name, added (YYYY-MM-DD), due (YYYY-MM-DD), ransomware (bool), desc (plain, at most 260 characters), cvss (number), epss (0 to 1)`. Entries added in the last 45 days are published.

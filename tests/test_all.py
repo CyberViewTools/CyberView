@@ -587,7 +587,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Archive", "Trends", "Markets", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Archive", "Trends", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -634,50 +634,14 @@ async def main():
             ok("phone: Esc closes the sheet and returns focus", await pg.locator("#navSheet").is_hidden() and await pg.evaluate("document.activeElement.id") == "navBtn")
             vs = await pg.locator("#viewseg").bounding_box()
             ok("phone: view switcher fills its row", vs["width"] > 330, vs)
-            for sub in ["archive.html", "markets.html", "about.html"]:
+            for sub in ["archive.html", "trends.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 6 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 5 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
 
-        # v1.13: markets page (uses the built site/data/markets.json from real data/ prices)
-        async def v113(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "markets.html"), wait=1200)
-            m = json.load(open(os.path.join(ROOT, "site", "data", "markets.json")))
-            ok("markets: as-of line", "Prices to the close of" in await pg.inner_text("#asof") or "No price data yet" in await pg.inner_text("#asof"))
-            ok("markets: disclaimer shown", "not investment advice" in (await pg.inner_text("main")).lower())
-            ok("markets: four tiles", await pg.locator("#tiles .tile").count() == 4)
-            n_ok = len([x for x in m["impacts"] if x["status"] == "ok" and x.get("abn0") is not None])
-            ok("markets: one bar per measured move", await pg.locator("#impactChart rect.bar").count() == min(n_ok, 25), n_ok)
-            ok("markets: one card per listed incident", await pg.locator("#impactCards .card").count() == min(len(m["impacts"]), 12))
-            ok("markets: tracker card per stock", await pg.locator("#tracker .stock").count() == len(m["tracked"]))
-            priced = [t for t in m["tracked"] if len(t["series"]) >= 5]
-            ok("markets: priced stocks get a line", await pg.locator("#tracker path.line").count() == len(priced))
-            if n_ok:
-                await pg.hover("#impactChart rect.hit >> nth=0")
-                ok("markets: bar tooltip explains the move", "against the market" in await pg.inner_text("#mtip"))
-                href = await pg.get_attribute("#impactCards .card h3 a >> nth=0", "href")
-                ok("markets: cards link to the event", href.startswith("./#e="), href)
-                await pg.click("#winSeg button[data-win='5']")
-                ok("markets: five-day toggle", await pg.get_attribute("#winSeg button[data-win='5']", "aria-pressed") == "true")
-            ok("markets: no script errors", not errs, errs)
-            await pg.context.close()
-            pg, errs = await open_page(browser, url, wait=900)
-            ok("nav: Markets link", await pg.get_attribute("#marketsLink", "href") == "markets.html")
-            await pg.context.close()
-            # a bad ticker must fail the build
-            bad = os.path.join(ROOT, "data", "events", "2026-11", "zz-test-bad-ticker-2026-11.json")
-            json.dump({"title": "t", "date": "2026-11-10", "category": "incident", "severity": 1, "status": "confirmed", "sources": [], "tags": [], "cves": [], "products": [], "attack": [], "ticker": "bad ticker!"}, open(bad, "w"))
-            try:
-                r = subprocess.run(["node", os.path.join(ROOT, "scripts", "build.mjs")], capture_output=True, text=True)
-                ok("build: rejects a malformed ticker", r.returncode == 1 and "ticker must be" in r.stderr, r.stderr[-200:])
-            finally:
-                os.remove(bad)
-                subprocess.run(["node", os.path.join(ROOT, "scripts", "build.mjs")], capture_output=True)
-
-        await serve(make_site(bundle), v113)
         await browser.close()
 
 

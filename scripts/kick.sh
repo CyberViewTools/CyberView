@@ -7,7 +7,7 @@ set -u
 REPO=xanderhutch/CyberView
 now=$(date -u +%s)
 # workflow, start it when its newest run (any trigger) is older than this many minutes
-specs="collect.yml 40|feeds.yml 110|monitor.yml 70|markets.yml 290|linkcheck.yml 10080"
+specs="collect.yml 40|feeds.yml 110|monitor.yml 70|linkcheck.yml 10080"
 # email alerts only once accounts are configured
 if node -e 'process.exit(require("./config/accounts.json").supabase_url ? 0 : 1)' 2>/dev/null; then specs="$specs|alerts.yml 70"; fi
 IFS='|'; for spec in $specs; do unset IFS

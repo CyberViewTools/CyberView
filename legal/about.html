@@ -1,0 +1,51 @@
+<!-- title: About CyberView -->
+<!-- description: How CyberView works, where its data comes from, how to request a correction, accessibility and security disclosure. -->
+<section class="intro">
+  <h1>About CyberView</h1>
+  <p>A rolling seven-day world map of publicly reported cyber events, for defenders. Free, non-commercial and open source.</p>
+</section>
+
+<section class="panel legal" id="method">
+  <h2>How it is made</h2>
+  <ul>
+    <li><strong>Collection:</strong> scripts read 22 government, vendor and news feeds and official catalogues (CISA's known-exploited list, FIRST EPSS, NIST NVD). No AI is involved in this step.</li>
+    <li><strong>Research:</strong> scheduled AI jobs (Anthropic's Claude) turn leads into events. They work under written rules that are <a href="https://github.com/{{owner_github}}/CyberView/blob/main/docs/jobs.md">published in full</a>: facts only from pages actually read, original government and vendor documents preferred, specific source links required, outages never called attacks without an official source, attacker claims marked unverified.</li>
+    <li><strong>Checking:</strong> a verification job re-checks recent events against their sources, a watchdog reviews failures and reader reports, and every build validates every record. Corrections are logged publicly.</li>
+    <li><strong>Severity</strong> follows exploitation: known-exploited flaws, public exploit code or an official "patch immediately" in widely used or internet-facing software are rated high.</li>
+    <li>Every routine and its last run are shown on the <a href="status.html">status page</a>; the full history is in the <a href="archive.html">archive</a> and the <a href="https://github.com/{{owner_github}}/CyberView">public repository</a>.</li>
+  </ul>
+  <p>AI-assisted research can make mistakes. Read <a href="terms.html#not-advice">information, not advice</a> before relying on an entry.</p>
+</section>
+
+<section class="panel legal" id="licences">
+  <h2>Sources and licences</h2>
+  <ul>
+    <li><strong>Event summaries and structured data</strong> written for CyberView: you may reuse them with attribution ("CyberView") and a link to the event. Each event links to the articles and advisories it is based on; those remain the property of their publishers.</li>
+    <li><strong>CISA Known Exploited Vulnerabilities catalog</strong>: US government work, public domain.</li>
+    <li><strong>EPSS scores</strong>: FIRST.org; see <a href="https://www.first.org/epss/">EPSS</a> usage guidance.</li>
+    <li><strong>CVSS data</strong>: NIST National Vulnerability Database. This product uses data from the NVD API but is not endorsed or certified by the NVD.</li>
+    <li><strong>Internet disruption signals</strong>: <a href="https://ioda.inetintel.cc.gatech.edu/">IODA</a>, Internet Intelligence Lab, Georgia Institute of Technology.</li>
+    <li><strong>Disaster alerts</strong>: <a href="https://www.gdacs.org/">GDACS</a>, a cooperation framework of the United Nations and the European Commission.</li>
+    <li><strong>Leak-site claims</strong>: listings tracked by ransomware.live. Organisation names only; never stolen data.</li>
+    <li><strong>Map</strong>: Natural Earth (public domain) via world-atlas; <a href="https://d3js.org/">d3</a> (ISC licence) and topojson-client (ISC licence). Accounts use supabase-js (MIT licence).</li>
+    <li><strong>Design ideas</strong> for the globe and map layers were adapted from <a href="https://github.com/VrushankPatel/godseye">Godseye</a> (Apache License 2.0).</li>
+    <li><strong>Code</strong>: CyberView's own code is released under the <a href="https://github.com/{{owner_github}}/CyberView/blob/main/LICENSE">MIT licence</a>.</li>
+  </ul>
+</section>
+
+<section class="panel legal" id="corrections">
+  <h2>Corrections and removal requests</h2>
+  <p>If an entry is wrong, use <strong>Report an error</strong> on the event, or open an issue in the repository. The verification job checks every report against the sources; when an original contradicts an entry, the entry is fixed and the correction is logged publicly with what changed.</p>
+  <p>If you are an organisation or person named in an entry and believe it is inaccurate, unfair, infringes copyright or breaches your privacy, contact us privately (below) with the event link and what is wrong. We review requests promptly, correct or remove content that is inaccurate or unlawful, and tell you the outcome. Attacker claims the named organisation has not confirmed are labelled as such and hidden by default; an organisation's denial is recorded when it is published.</p>
+  <p data-contact>Private contact: <a data-contact-link href="mailto:">{{contact_email}}</a></p>
+</section>
+
+<section class="panel legal" id="security">
+  <h2>Security disclosure</h2>
+  <p>If you find a security problem in CyberView, please report it privately through <a href="https://github.com/{{owner_github}}/CyberView/security/advisories/new">GitHub's private vulnerability reporting</a>, not in a public issue. Good-faith research that respects these rules is welcome: do not access other people's accounts or data, degrade the service, or use social engineering; give us reasonable time to fix the issue before disclosure. We do not pay bounties. Machine-readable details: <a href="https://xanderhutch.github.io/CyberView/.well-known/security.txt">security.txt</a>.</p>
+</section>
+
+<section class="panel legal" id="accessibility">
+  <h2>Accessibility</h2>
+  <p>We aim to meet WCAG 2.2 level AA. Event types are shown by both colour and shape using a colour-blind-safe palette, the map and lists work with a keyboard (press ? on the map for shortcuts), motion respects your reduced-motion setting, and every map event is also listed as text in the feed. Known limitation: the map and charts are visual summaries; the feed, archive and exports carry the same information as text. If something is hard to use, please tell us.</p>
+</section>

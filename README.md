@@ -15,7 +15,8 @@ A rolling seven-day world map of publicly reported cyber events: incidents, outa
 - **Time-lapse and deep search.** Play the window day by day on the map; searches also point to older matches in the archive.
 - **Runs itself, in the open.** A [status page](https://xanderhutch.github.io/CyberView/status.html) lists every routine, when it last ran and what it found; a collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
 - **Globe and context layers.** Switch the map to a globe you can turn (G), and open the layers panel (L) for internet-disruption signals (IODA) and orange and red disaster alerts (GDACS). Each layer shows its source, its age and whether it is live, stale or offline. They are context, never counted as cyber events.
-- **Static site.** One HTML page reading one JSON bundle. No accounts, no tracking. Watchlists stay in your browser.
+- **Optional accounts.** Sign in with an email link to sync your environment across devices (encrypted in your browser with your own passphrase) and get email alerts when something matches it. Export or delete everything yourself at any time. See [privacy](https://xanderhutch.github.io/CyberView/privacy.html) and [docs/accounts.md](docs/accounts.md).
+- **Static site.** One HTML page reading one JSON bundle. No tracking, no cookies, no account needed; your environment stays in your browser unless you choose to sync it.
 
 ## How it stays current
 

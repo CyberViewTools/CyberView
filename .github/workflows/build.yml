@@ -4,7 +4,7 @@ name: Validate, security check and test
 # Data-only pushes from the jobs skip this; Netlify's build runs the same validator before every deploy.
 on:
   push:
-    paths: ["site/**", "scripts/**", "tests/**", "netlify.toml", ".github/**"]
+    paths: ["site/**", "scripts/**", "tests/**", "legal/**", "pages/**", "config/**", "supabase/**", "netlify.toml", ".github/**"]
   pull_request:
   workflow_dispatch:
 
@@ -27,6 +27,28 @@ jobs:
       - name: Unit tests
         run: node --test tests/unit/*.test.mjs
 
+  sql-security-tests:
+    # the accounts schema, attacked from every role on a fresh Postgres (tests/sql/rls_test.sql)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply the migration twice and run the attacks
+        env:
+          PGPASSWORD: postgres
+        run: |
+          P="psql -h localhost -U postgres -v ON_ERROR_STOP=1 -q -tA"
+          $P -c "create database t"
+          for f in tests/sql/supabase_shim.sql supabase/migrations/0001_accounts.sql supabase/migrations/0001_accounts.sql tests/sql/rls_test.sql; do $P -d t -f "$f"; done | tee out.txt
+          grep -q "SQL SECURITY TESTS: ALL PASS" out.txt
+
   browser-tests:
     needs: validate
     runs-on: ubuntu-latest
@@ -38,7 +60,7 @@ jobs:
       - name: Did the page, scripts or tests change?
         id: changed
         run: |
-          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE '^(site/|scripts/|tests/|netlify.toml)'; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE '^(site/|scripts/|tests/|legal/|pages/|config/|netlify.toml)'; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/setup-node@v4
         if: steps.changed.outputs.run == 'yes'
         with:

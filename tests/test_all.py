@@ -402,6 +402,138 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(bundle), v19)
+
+        # v1.10: legal pages, and the account page against a fake Supabase (no network)
+        async def legal(url):
+            for name in ["about", "privacy", "terms"]:
+                pg, errs = await open_page(browser, url.replace("index.html", name + ".html"), wait=300)
+                body = await pg.inner_text("body")
+                ok(f"legal: {name} renders without placeholders", "{{" not in body and len(body) > 1500, body[:80])
+                ok(f"legal: {name} has the footer", await pg.locator("footer.foot a").count() >= 5)
+                ok(f"legal: {name} no script errors", not errs, errs)
+                await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "account.html"), wait=300)
+            ok("account: unconfigured shows 'not open yet'", await pg.locator("#offline").is_visible() and await pg.locator("#signedIn").is_hidden())
+            await pg.context.close()
+            r = await (await browser.new_context()).request.get(url.replace("index.html", ".well-known/security.txt"))
+            t = await r.text()
+            ok("security.txt served with Contact and Expires", r.status == 200 and "Contact: " in t and "Expires: " in t, t[:120])
+
+        await serve(make_site(bundle), legal)
+
+        REF = "abcdefghijklmnopqrst"
+        SB = f"https://{REF}.supabase.co"
+        acct_site = make_site(bundle)
+        ap = os.path.join(acct_site, "account.html")
+        h = open(ap).read()
+        h = h.replace("connect-src 'self'", f"connect-src 'self' {SB}").replace('<meta name="cv-supabase-url" content="">',
+            f'<meta name="cv-supabase-url" content="{SB}">\n<meta name="cv-supabase-key" content="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.x">\n<meta name="cv-region" content="Canada (Central)">\n<meta name="cv-github" content="1">')
+        h = h.replace('<script src="account.js">', '<script src="vendor/supabase.min.js"></script>\n<script src="account.js">')
+        open(ap, "w").write(h)
+
+        async def account(url):
+            import base64, time as _t
+            uid = "00000000-0000-0000-0000-00000000000a"
+            store = {"accounts": None, "env": None, "calls": []}
+            def jwt(payload):
+                enc = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+                return enc({"alg": "HS256", "typ": "JWT"}) + "." + enc(payload) + ".sig"
+            exp = int(_t.time()) + 3600
+            session = {"access_token": jwt({"sub": uid, "role": "authenticated", "exp": exp, "email": "a@example.test"}), "token_type": "bearer", "expires_in": 3600, "expires_at": exp,
+                       "refresh_token": "r", "user": {"id": uid, "aud": "authenticated", "role": "authenticated", "email": "a@example.test", "app_metadata": {}, "user_metadata": {}, "created_at": "2026-11-18T00:00:00Z"}}
+            ctx = await browser.new_context(viewport={"width": 1280, "height": 900})
+            await ctx.add_init_script(f"localStorage.setItem('sb-{REF}-auth-token', JSON.stringify({json.dumps(session)})); localStorage.setItem('cwm.wl', JSON.stringify(['Fortinet','Ivanti','Microsoft']));")
+            pg = await ctx.new_page()
+            errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            outside = []
+            pg.on("request", lambda r: outside.append(r.url) if not (r.url.startswith("http://localhost") or r.url.startswith(SB)) else None)
+
+            async def handle(route):
+                req = route.request; u = req.url; m = req.method
+                store["calls"].append((m, u.split(".co", 1)[1], req.post_data or ""))
+                body, status = "[]", 200
+                if "/rest/v1/accounts" in u:
+                    if m == "GET":
+                        a = store["accounts"]
+                        if "select=user_id" in u: body = json.dumps({"user_id": uid} if a else None) if "maybe" in u else json.dumps([{"user_id": uid}] if a else [])
+                        else: body = json.dumps(a or {})
+                        if a is None and "select=user_id" in u: body = "[]"
+                    elif m == "POST": store["accounts"] = {"user_id": uid, "alerts_enabled": False, "alert_frequency": "daily", "alert_min_severity": 2, "alert_terms": [], "consent_at": None}; status = 201; body = ""
+                    elif m == "PATCH":
+                        store["accounts"].update(json.loads(req.post_data)); body = ""; status = 204
+                elif "/rest/v1/environments" in u:
+                    if m == "POST": store["env"] = json.loads(req.post_data); body = ""; status = 201
+                    elif m == "DELETE": store["env"] = None; body = ""; status = 204
+                    else:
+                        e = store["env"]
+                        body = json.dumps([e] if e else [])
+                elif "/rpc/export_my_data" in u: body = json.dumps({"account": {"email": "a@example.test"}, "settings": store["accounts"]})
+                elif "/rpc/delete_my_account" in u: body = "true"
+                elif "/auth/v1/logout" in u: body = ""; status = 204
+                elif "/auth/v1/otp" in u: body = "{}"
+                elif "/auth/v1/user" in u: body = json.dumps(session["user"])
+                hdr = {"content-type": "application/json", "access-control-allow-origin": "*", "content-range": "0-0/1"}
+                if m in ("GET", "POST") and "/rest/v1/" in u and req.headers.get("accept", "").startswith("application/vnd.pgrst.object"):
+                    try:
+                        arr = json.loads(body) if body else []
+                        body = json.dumps(arr[0] if isinstance(arr, list) and arr else (arr if isinstance(arr, dict) else None))
+                        if body == "null": status = 406; body = json.dumps({"code": "PGRST116", "message": "0 rows"})
+                    except Exception: pass
+                await route.fulfill(status=status, headers=hdr, body=body)
+            await pg.route(SB + "/**", handle)
+            await pg.goto(url.replace("index.html", "account.html"))
+            await pg.wait_for_timeout(1200)
+            ok("account: signed-in view shown", await pg.locator("#signedIn").is_visible(), await pg.inner_text("body"))
+            ok("account: shows who and region", "a@example.test" in await pg.inner_text("#who") and "Canada" in await pg.inner_text("#region"))
+            # encrypted sync
+            await pg.fill("#pass", "short")
+            await pg.click("#push")
+            ok("sync: short passphrase refused", "at least 12" in await pg.inner_text("#syncMsg"))
+            await pg.fill("#pass", "correct horse battery staple")
+            await pg.click("#push")
+            await pg.wait_for_timeout(2500)
+            env = store["env"] or {}
+            ok("sync: ciphertext saved", bool(env.get("ciphertext")) and env.get("kdf") == "PBKDF2-SHA256-600000", env)
+            wire = json.dumps(env)
+            ok("sync: plain terms never sent", "Fortinet" not in wire and "Ivanti" not in wire and "correct horse" not in wire)
+            await pg.evaluate("localStorage.setItem('cwm.wl','[]')")
+            await pg.fill("#pass", "wrong passphrase entirely")
+            await pg.click("#pull")
+            await pg.wait_for_timeout(2500)
+            ok("sync: wrong passphrase cannot decrypt", "does not open" in await pg.inner_text("#syncMsg"))
+            await pg.fill("#pass", "correct horse battery staple")
+            await pg.click("#pull")
+            await pg.wait_for_timeout(2500)
+            ok("sync: right passphrase restores the list", json.loads(await pg.evaluate("localStorage.getItem('cwm.wl')")) == ["Fortinet", "Ivanti", "Microsoft"])
+            # alerts need consent
+            await pg.click("#useEnv")
+            await pg.click("#alertsOn")
+            ok("alerts: refused without the consent box", "Tick the box" in await pg.inner_text("#alertMsg") and not (store["accounts"] or {}).get("alerts_enabled"))
+            await pg.check("#consent")
+            await pg.click("#alertsOn")
+            await pg.wait_for_timeout(600)
+            a = store["accounts"] or {}
+            ok("alerts: consent recorded with wording and version", a.get("alerts_enabled") is True and a.get("consent_at") and "unsubscribe" in (a.get("consent_text") or "") and a.get("consent_version") == "1", a)
+            ok("alerts: terms saved", a.get("alert_terms") == ["Fortinet", "Ivanti", "Microsoft"], a.get("alert_terms"))
+            await pg.click("#alertsOff")
+            await pg.wait_for_timeout(500)
+            ok("alerts: can be turned off", (store["accounts"] or {}).get("alerts_enabled") is False)
+            # data rights
+            await pg.click("#export")
+            await pg.wait_for_timeout(500)
+            ok("export: shows the data", "a@example.test" in await pg.input_value("#exportOut"))
+            await pg.click("#delete")
+            ok("delete: needs DELETE typed", "Type DELETE" in await pg.inner_text("#dataMsg") and not any("delete_my_account" in c[1] for c in store["calls"]))
+            await pg.fill("#delConfirm", "DELETE")
+            await pg.click("#delete")
+            await pg.wait_for_timeout(1200)
+            ok("delete: calls delete_my_account and signs out", any("delete_my_account" in c[1] for c in store["calls"]) and await pg.locator("#signedOut").is_visible())
+            ok("account: talks to nothing but the site and Supabase", not outside, outside)
+            ok("account: no script errors", not errs, errs)
+            await ctx.close()
+
+        await serve(acct_site, account)
         await browser.close()
 
 

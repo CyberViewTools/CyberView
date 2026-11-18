@@ -28,6 +28,7 @@ for (const p of pages) {
   }
   for (const m of html.matchAll(/<link\b[^>]*href\s*=\s*"((?:https?:)?\/\/[^"]+)"/gi)) fails.push(`${rel(p)}: stylesheet or resource from another site: ${m[1]}`);
   for (const m of html.matchAll(/\s(on[a-z]+)\s*=\s*["']/gi)) fails.push(`${rel(p)}: inline event handler ${m[1]}= (the CSP blocks it; use addEventListener)`);
+  if (/vendor\/supabase\.min\.js/.test(html) && !["account.html", "unsubscribe.html"].includes(p.split("/").pop())) fails.push(`${rel(p)}: only the account pages may load the Supabase library`);
 }
 passes.push(`${pages.length} page(s) checked`);
 
@@ -49,12 +50,18 @@ passes.push(`${ours.length} script(s) checked for HTML sinks`);
 
 // 3. Content-Security-Policy. GitHub Pages cannot send custom headers, so every page carries the policy in a
 //    <meta http-equiv> tag (frame-ancestors is not allowed there). If netlify.toml still sets one, it must stay strict too.
+// account pages may also reach the configured Supabase project, and nothing else; every other page stays 'self' only
+const ACCOUNT_PAGES = new Set(["account.html", "unsubscribe.html"]);
+const SUPABASE = (() => { try { const u = JSON.parse(readFileSync(join(ROOT, "config", "accounts.json"), "utf8")).supabase_url || "";
+  if (u && !/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(u)) fails.push(`config/accounts.json: supabase_url must look like https://<20-character ref>.supabase.co`);
+  return u; } catch { return ""; } })();
 function checkCsp(csp, where) {
   const dir = Object.fromEntries(csp.split(";").map((d) => d.trim().split(/\s+/)).filter((d) => d[0]).map((d) => [d[0], d.slice(1).join(" ")]));
   if (dir["script-src"] !== "'self'") fails.push(`${where}: CSP script-src must be exactly 'self' (is "${dir["script-src"]}")`);
   if (dir["default-src"] !== "'self'") fails.push(`${where}: CSP default-src must be 'self' (is "${dir["default-src"]}")`);
   if (dir["base-uri"] !== "'none'") fails.push(`${where}: CSP must keep base-uri 'none'`);
-  if ((dir["connect-src"] || "") !== "'self'") fails.push(`${where}: CSP connect-src must be 'self' only`);
+  const extra = ACCOUNT_PAGES.has(where.replace(/^site\//, "")) && SUPABASE ? ` ${SUPABASE}` : "";
+  if ((dir["connect-src"] || "") !== `'self'${extra}`) fails.push(`${where}: CSP connect-src must be 'self'${extra ? " plus the configured Supabase project" : " only"}`);
   if (/'unsafe-eval'/.test(csp)) fails.push(`${where}: CSP must not allow 'unsafe-eval'`);
 }
 for (const p of pages) {
@@ -73,10 +80,20 @@ if (existsSync(tomlPath)) {
 }
 passes.push("Content-Security-Policy checked on every page");
 
+// 3b. the deploy workflow must listen for workflows that exist (a rename once stopped feed updates from deploying)
+{
+  const wfDir = join(ROOT, ".github", "workflows"), names = new Set(readdirSync(wfDir).map((f) => (read(join(wfDir, f)).match(/^name:\s*(.+)$/m) || [])[1]).filter(Boolean).map((n) => n.trim()));
+  const listed = (read(join(wfDir, "pages.yml")).match(/workflows:\s*\[([^\]]*)\]/) || [])[1] || "";
+  for (const n of [...listed.matchAll(/"([^"]+)"/g)].map((m) => m[1])) if (!names.has(n)) fails.push(`pages.yml waits for workflow "${n}", which does not exist (renamed?)`);
+  passes.push("deploy workflow listens for existing workflows");
+}
+
 // 4. vendored files
 const PINNED = {
   "site/vendor/d3.min.js": "f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539",
   "site/vendor/topojson.min.js": "25cd02ae486cc5063e0215a4e4cfb15de83700c87ac48bac4d57dc6aaf3ebb89",
+  // @supabase/supabase-js 2.118.0, dist/umd/supabase.js (npm integrity sha512-FxI8UXMVC2UG7Ike…), loaded only by account pages
+  "site/vendor/supabase.min.js": "ee3be8de192b97cb1d73d1e95d6b82bb1f6b658c0f97c4ef757fc331996ed3d3",
   "site/world-110m.json": "2516c915867c7baf18ddec727aec46c315541a07cfb3d79a6559b05d5e94eee8",
 };
 for (const [f, want] of Object.entries(PINNED)) {

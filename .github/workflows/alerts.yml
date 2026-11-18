@@ -1,0 +1,36 @@
+name: Email alerts
+
+# Emails account holders whose alerts match new events (scripts/alerts.mjs). No AI model, commits nothing.
+# Runs only when accounts are configured (config/accounts.json) and these repository secrets exist:
+#   SUPABASE_SERVICE_ROLE_KEY   Supabase project -> Settings -> API -> service_role (secret; bypasses row-level security)
+#   BREVO_API_KEY               or RESEND_API_KEY
+#   ALERT_FROM_EMAIL            a sender address verified with the email provider
+# Started hourly by the schedule below or, while GitHub's scheduler is not firing, by scripts/kick.sh from the hourly sweep.
+on:
+  schedule:
+    - cron: "47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alerts
+  cancel-in-progress: false
+
+jobs:
+  alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Send due alerts
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_FROM_EMAIL: ${{ secrets.ALERT_FROM_EMAIL }}
+        run: node scripts/alerts.mjs

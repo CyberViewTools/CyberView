@@ -99,7 +99,7 @@ All have automatic approval. Their GitHub-based replacements are written in `doc
 ## 3. Target architecture
 
 ```
-GitHub: xanderhutch/cyber-watch-map (private)
+GitHub: xanderhutch/cyberview (private)
  ├─ data/                 source of truth: one JSON file per record
  ├─ scripts/build.mjs     validates data/, writes site/data/bundle.json (fails on bad data)
  ├─ site/                 static page (index.html, vendor/d3, vendor/topojson, world-110m.json)
@@ -166,17 +166,17 @@ If the artifact tools are not available in Claude Code, run the export from a cl
 
 ### 5.2 GitHub
 
-1. Create the empty private repo `xanderhutch/cyber-watch-map` on github.com. This session's GitHub token could not create repositories.
+1. Create the empty private repo `xanderhutch/cyberview` on github.com. This session's GitHub token could not create repositories.
 2. Push this folder:
    ```
    git init -b main && git add . && git commit -m "Cyber Watch Map v1.1: static site, data, build, tests"
-   git remote add origin git@github.com:xanderhutch/cyber-watch-map.git && git push -u origin main
+   git remote add origin git@github.com:xanderhutch/cyberview.git && git push -u origin main
    ```
 3. Protect `main` lightly. Scheduled jobs push directly, so do not require pull requests. Add a GitHub Action running `node scripts/build.mjs` on every push, so a bad commit is flagged even before Netlify sees it.
 
 ### 5.3 Netlify
 
-1. Connect the Netlify connector or the dashboard to GitHub, choose **Import from Git**, and pick `xanderhutch/cyber-watch-map`.
+1. Connect the Netlify connector or the dashboard to GitHub, choose **Import from Git**, and pick `xanderhutch/cyberview`.
 2. Build settings come from `netlify.toml` (build `node scripts/build.mjs`, publish `site`, Node 20).
 3. Enable **Forms** and confirm the `event-report` form appears after the first deploy.
 4. Optional: a custom domain, and form notifications by email.

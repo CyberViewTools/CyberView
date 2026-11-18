@@ -5,7 +5,7 @@ Each job is a Claude scheduled task that runs in a fresh session with this repos
 ## Shared preamble
 
 ```
-You maintain the data for Cyber Watch Map, a public seven-day world map of cyber events for defenders, in the GitHub repository xanderhutch/cyber-watch-map. Netlify rebuilds the site from the main branch on every push.
+You maintain the data for Cyber Watch Map, a public seven-day world map of cyber events for defenders, in the GitHub repository xanderhutch/cyberview. Netlify rebuilds the site from the main branch on every push.
 
 SETUP: clone or open the repository (it is attached to this session), then read CLAUDE.md and docs/schema.md. They are the rules. Get the real time with: date -u +%Y-%m-%dT%H:%M:%SZ. Work on main.
 

@@ -1,6 +1,6 @@
 // Context layers for the map, no AI model. Run: node scripts/context.mjs   (behind a proxy: NODE_USE_ENV_PROXY=1)
 // Fetched here, at build time, and served from the site itself, so the page never calls third parties
-// (the CSP allows connect-src 'self' only). Idea taken from Godseye's build-time "runtime manifests".
+// (the CSP allows connect-src 'self' only).
 //   data/context/ioda.json    internet disruption signals by country, last 24 h (IODA, Georgia Tech)
 //   data/context/gdacs.json   orange and red disaster alerts now current (GDACS, EU JRC and UN OCHA)
 // Each file: { layer, source, source_url, fetched_at, ok, error, items[] }. When a source fails, the old items are

@@ -48,4 +48,4 @@ Every event has a "Report an error" button that opens a pre-filled GitHub issue.
 
 ## Credits
 
-The globe view, layer health badges, build-time context manifests, network retry and circuit-breaker helper, intel wire and `npm run ci` layout adapt patterns from [Godseye](https://github.com/VrushankPatel/godseye) by Vrushank Patel (Apache License 2.0). CyberView's code is its own; no Godseye files are copied. Context data: [IODA](https://ioda.inetintel.cc.gatech.edu/) (Georgia Tech Internet Intelligence Lab) and [GDACS](https://www.gdacs.org/) (European Commission JRC and UN OCHA). Map: Natural Earth via world-atlas; d3 and topojson-client.
+Context data: [IODA](https://ioda.inetintel.cc.gatech.edu/) (Georgia Tech Internet Intelligence Lab) and [GDACS](https://www.gdacs.org/) (European Commission JRC and UN OCHA). Map: Natural Earth via world-atlas; d3 and topojson-client.

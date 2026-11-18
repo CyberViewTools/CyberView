@@ -200,7 +200,7 @@ function renderLayers(){
 }
 function layersToggle(open){var b=$("layers");b.hidden=!open;$("zlayers").setAttribute("aria-expanded",open?"true":"false");if(open)renderLayers();}
 
-/* ---------- HUD clock and intel wire (ideas from Godseye's mission HUD and intel wire) ---------- */
+/* ---------- HUD clock and intel wire ---------- */
 var wireI=0,wireItems=[],builtAt="";
 function hudTick(){var h=$("hud");if(!h)return;var d=new Date();h.textContent="UTC "+pad2(d.getUTCHours())+":"+pad2(d.getUTCMinutes());h.title="Coordinated Universal Time. Data built "+(builtAt?ago(builtAt):"(not loaded yet)")+".";}
 function pad2(n){return (n<10?"0":"")+n;}
@@ -787,7 +787,7 @@ function renderPatterns(){
 
 /* ---------- map ---------- */
 var svg=d3.select("#svg"),gMap=svg.append("g"),gMarks=svg.append("g").attr("filter","url(#glow)");
-/* flat map or globe (globe view adapted from Godseye, Apache-2.0); proj() hides points on the far side */
+/* the globe; proj() hides points on the far side */
 var globeProj=d3.geoOrthographic().clipAngle(90).precision(.4),globe=true,ROT0=[30,-28],rot=ROT0.slice(),spin=null,raf2=0;
 var projection=globeProj.rotate(rot),path=d3.geoPath(projection),T=d3.zoomIdentity,W=800,H=450,FX=400,FY=225,FW=600,FH=300,world=null,raf=0;
 var MAXK=60,R=17,wide=true;

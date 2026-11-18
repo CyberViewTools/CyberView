@@ -16,7 +16,7 @@ This is a working checklist for running CyberView responsibly. It is **not legal
 | AI-generated content | Transparency | About explains that AI jobs do the research under published rules, and that mistakes are possible. | ✅ |
 | Data source terms | Licence conditions | CISA KEV (public domain), FIRST EPSS, NVD (required "not endorsed" notice included), IODA and GDACS are attributed on About. | ✅ |
 | Trademarks | Implying endorsement | Names are used only to identify vendors; stated in the terms. | ✅ |
-| Third-party code | Licence notices | d3 and topojson (ISC), supabase-js (MIT) and Godseye ideas (Apache 2.0) are credited on About and in the README. | ✅ |
+| Third-party code | Licence notices | d3 and topojson (ISC), supabase-js (MIT) are credited on About and in the README. | ✅ |
 
 ## Accounts and personal information
 

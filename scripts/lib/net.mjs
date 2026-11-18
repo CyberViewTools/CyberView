@@ -1,5 +1,4 @@
 // Fetch with a time limit, retries with backoff, and a per-source circuit breaker.
-// Pattern adapted from Godseye's src/utils/network.js (Apache-2.0, github.com/VrushankPatel/godseye).
 // Errors carry a short code: timeout, http_<status>, network (DNS, refused), circuit_open, bad_json.
 const circuits = new Map();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

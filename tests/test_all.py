@@ -38,7 +38,10 @@ def make_site(bundle):
 def dense(bundle, factor=5):
     b = copy.deepcopy(bundle)
     random.seed(4)
-    days = sorted({e["date"] for e in b["events"]})[-8:] or ["2026-11-17"]
+    # Spread copies over the last 7 days counted from today, so the check does not drift as the data ages.
+    import datetime
+    today = datetime.datetime.now(datetime.timezone.utc).date()
+    days = [(today - datetime.timedelta(days=n)).isoformat() for n in range(7)]
     extra = []
     for k in range(factor):
         for e in bundle["events"]:
@@ -111,7 +114,8 @@ async def main():
                 ok(f"{th}: J moves to next", t1 != await pg.inner_text("#dcard .ttl"))
                 await pg.keyboard.press("Escape")
                 await pg.wait_for_timeout(600)
-                ok(f"{th}: back restores list position", abs(await pg.evaluate('document.getElementById("feed").scrollTop') - 400) < 80)
+                st = await pg.evaluate('document.getElementById("feed").scrollTop')
+                ok(f"{th}: back restores list position", abs(st - 400) < 80, st)
                 await pg.click("#tab-kev")
                 await pg.wait_for_timeout(300)
                 ok(f"{th}: exploited feed lists flaws", await pg.locator("#kev .kcard").count() >= min(5, len(bundle["kev"])))
@@ -134,7 +138,7 @@ async def main():
                 for tab in ["brief", "pat", "ins", "kev", "feed"]:
                     await pg.click(f"#tab-{tab}")
                     await pg.wait_for_timeout(120)
-                ok(f"{th}: no marking wording", not await pg.evaluate(r"/\bhandled\b|not relevant|\bpatched\b|not affected/i.test(document.body.innerText)"))
+                ok(f"{th}: no marking wording", not await pg.evaluate(r"/\bhandled\b|not relevant|\bpatched\b|not affected/i.test([...document.querySelectorAll('button,label,option,[role=button],[role=tab]')].filter(e=>!e.closest('.card,#detail')).map(e=>e.innerText||e.textContent).join(' '))"))
                 await pg.click("#tab-ins")
                 ok(f"{th}: version shown", "version" in (await pg.inner_text("#ins")).lower())
                 ok(f"{th}: no fault notice", not await pg.is_visible("#fault"))

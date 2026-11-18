@@ -4,7 +4,7 @@ Exit 1 on failure. Appends its result to monitor-report.md when that file exists
 import asyncio, os, sys
 from playwright.async_api import async_playwright
 
-BASE = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SITE_URL", "https://cyberview.netlify.app")).rstrip("/")
+BASE = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SITE_URL", "https://xanderhutch.github.io/CyberView")).rstrip("/")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 

@@ -5,7 +5,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./lib/store.mjs";
 
-const BASE = (process.argv[2] || process.env.SITE_URL || "https://cyberview.netlify.app").replace(/\/$/, "");
+const BASE = (process.argv[2] || process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");
 const fails = [], warns = [], notes = [];
 const hours = (iso) => (Date.now() - Date.parse(iso)) / 36e5;
 
@@ -24,13 +24,12 @@ const home = await get("/");
 if (home.status !== 200) fails.push(`Home page returned ${home.status || home.error}`);
 else {
   if (!/<title>CyberView<\/title>/.test(home.body)) fails.push("Home page title is not CyberView (wrong deploy?)");
-  const csp = home.headers.get("content-security-policy") || "";
-  if (!csp) fails.push("Content-Security-Policy header is missing");
-  else {
-    if (!/script-src 'self'(;|$)/.test(csp)) fails.push(`CSP script-src is not exactly 'self': ${csp}`);
-    if (!/frame-ancestors 'none'/.test(csp)) fails.push("CSP no longer forbids framing (frame-ancestors 'none')");
-  }
-  for (const h of ["x-content-type-options", "referrer-policy", "permissions-policy"]) if (!home.headers.get(h)) fails.push(`Security header ${h} is missing`);
+  // GitHub Pages cannot send custom headers: the policy is a meta tag in the page
+  const csp = (home.body.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i) || [])[1] || home.headers.get("content-security-policy") || "";
+  if (!csp) fails.push("Content-Security-Policy is missing from the page");
+  else if (!/script-src 'self'(;|$)/.test(csp)) fails.push(`CSP script-src is not exactly 'self': ${csp}`);
+  if (!/<meta\s+name="referrer"/i.test(home.body)) warns.push("Referrer policy meta tag is missing");
+  if (!/^https:/.test(BASE)) fails.push("Site is not served over HTTPS");
 }
 
 // 2. the data
@@ -42,10 +41,10 @@ else {
   notes.push(`${ev} events, ${(d.kev || []).length} known-exploited, built ${d.built_at}`);
   if (ev < 10) fails.push(`Only ${ev} events in the bundle; the map looks empty`);
   const builtH = hours(d.built_at);
-  // data-only deploys are rationed on the Free plan (see scripts/netlify-ignore.sh), so an old bundle is a warning, not a failure
-  const maxH = Number(process.env.MAX_BUNDLE_HOURS || 36);
+  // every data commit redeploys (pages.yml); the sweep commits at least every 4 h
+  const maxH = Number(process.env.MAX_BUNDLE_HOURS || 12);
   if (builtH > maxH) fails.push(`Bundle was built ${builtH.toFixed(1)} h ago (limit ${maxH} h); the live data is stale`);
-  else if (builtH > 6) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago (data deploys are rationed)`);
+  else if (builtH > 6) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago `);
   const sweptH = st.last_sweep_at ? hours(st.last_sweep_at) : Infinity;
   if (sweptH > 8) fails.push(`Last sweep was ${isFinite(sweptH) ? sweptH.toFixed(1) + " h" : "never"} ago; the sweep job has stopped`);
   else if (sweptH > 3.5) warns.push(`Last sweep was ${sweptH.toFixed(1)} h ago`);

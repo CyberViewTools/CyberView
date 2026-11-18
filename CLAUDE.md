@@ -2,7 +2,7 @@
 
 A rolling seven-day world map of publicly reported cyber events, for defenders. Public, read-only for visitors. Owner: Xander.
 
-Live site: https://cyberview.netlify.app (Netlify), built from this repo's `main` branch. Data and page live together in this repo.
+Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `.github/workflows/pages.yml` after every push to `main`. Data and page live together in this repo.
 
 ## Layout
 
@@ -24,19 +24,18 @@ scripts/q.mjs            search the whole history without reading files (find, d
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
-scripts/netlify-ignore.sh    Netlify skips data-only builds (Free plan: ~20 deploys a month); see the file
+scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/smoke_live.py      browser check of the live site
-.github/workflows/       build.yml (code pushes), feeds.yml, monitor.yml, security.yml
+.github/workflows/       pages.yml (deploy), build.yml (code pushes), feeds.yml, monitor.yml, security.yml, ai-jobs.yml (Claude jobs)
 docs/                    data schema (schema.md) and the scheduled jobs (jobs.md)
-netlify.toml             build, ignore rule, publish folder, security headers
 ```
 
 ## Commands
 
 - `node scripts/build.mjs` — validate `data/` and build the bundle and archive. Exit 1 means a record is broken; the message names the file. Warnings are hygiene faults to fix.
 - `node scripts/q.mjs find <text>` (and `dupes`, `get`, `seen`, `leads`, `runs`, `kev`, `stats`) — search the history; use this instead of reading data files.
-- `node scripts/security-check.mjs` — must pass before any commit that touches `site/`, `scripts/` or `netlify.toml`.
+- `node scripts/security-check.mjs` — must pass before any commit that touches `site/`, `scripts/` or `.github/`.
 - `python3 tests/test_all.py` — builds, serves `site/` with the production headers and runs the browser checks (needs `pip install playwright` and `playwright install chromium`).
 - `node scripts/feeds.mjs` — pull the mechanical feeds (behind a proxy: `NODE_USE_ENV_PROXY=1`).
 - Preview: `node scripts/build.mjs && cd site && python3 ../tests/serve.py 8000`.
@@ -74,4 +73,5 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - Coverage is thin for Africa, Turkey, most of the Middle East and Latin America.
 - Attack-surface and sector rows in the analysis views are assigned by keyword and can be wrong.
 - Germany's BSI, Australia's cyber.gov.au and SAP notes block automated readers.
-- Error reports from visitors arrive as Netlify form submissions (form name `event-report`), not in the repo.
+- Error reports from visitors arrive as GitHub issues labelled `event-report`; the verify and watchdog jobs handle them.
+- GitHub Pages cannot send custom headers, so the Content-Security-Policy is a meta tag in each page (it cannot set frame-ancestors).

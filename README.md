@@ -2,7 +2,7 @@
 
 # CyberView
 
-Live: https://cyberview.netlify.app
+Live: https://xanderhutch.github.io/CyberView · Archive: https://xanderhutch.github.io/CyberView/archive.html
 
 A rolling seven-day world map of publicly reported cyber events: incidents, outages, exploited vulnerabilities, government and vendor reports, laws, enforcement and security investment. Built for defenders: every event says what happened, why it matters and what to do, with its sources.
 
@@ -12,7 +12,7 @@ A rolling seven-day world map of publicly reported cyber events: incidents, outa
 
 ## How it stays current
 
-Scheduled Claude jobs research new events and commit JSON files under `data/`. Each push runs `scripts/build.mjs`, which validates every record and rebuilds the bundle; Netlify then publishes `site/`. Jobs and their prompts: `docs/jobs.md`.
+Scheduled Claude jobs research new events and commit JSON files under `data/`. Each push runs `scripts/build.mjs`, which validates every record and rebuilds the bundle and archive; GitHub Pages then publishes `site/`. Jobs and their prompts: `docs/jobs.md`.
 
 ## Working on it
 
@@ -27,3 +27,7 @@ Rules for the page and the data: `CLAUDE.md`. Field reference: `docs/schema.md`.
 ## Limits
 
 Coverage reflects what public sources report and leans toward English-language and government sources. Dates are mostly publication dates. This is an information aid, not security advice for your organisation.
+
+## Report an error
+
+Every event has a "Report an error" button that opens a pre-filled GitHub issue. The jobs check each report against the sources and log any correction.

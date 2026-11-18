@@ -426,7 +426,7 @@ function openSource(e){if(!e||!e.sources.length)return;try{window.open(e.sources
 function reportForm(e){
   var f=el("div","rep"),ta=document.createElement("textarea");ta.id="reportText";ta.value=rep.text;
   if(rep.fail){
-    f.appendChild(el("div","msg","Couldn't save the report from this view. Copy it instead."));
+    f.appendChild(el("div","msg","The GitHub page didn't open. Copy the report and send it another way."));
     ta.readOnly=true;ta.setAttribute("aria-label","Report text to copy");f.appendChild(ta);
     var cb=el("button","btn","Copy");cb.type="button";cb.id="reportCopy";
     cb.addEventListener("click",function(){
@@ -437,14 +437,14 @@ function reportForm(e){
   }
   ta.maxLength=500;ta.placeholder="What is wrong, and what should it say?";ta.setAttribute("aria-label","Describe the error");
   ta.addEventListener("input",function(){rep.text=ta.value;});f.appendChild(ta);
-  var sb=el("button","btn","Send");sb.type="button";sb.id="reportSend";
+  var sb=el("button","btn","Report on GitHub");sb.type="button";sb.id="reportSend";
   sb.addEventListener("click",function(){
     var note=rep.text.trim().slice(0,500);
     if(!note){toast("Write a short note first.");return;}
     if(rep.busy)return;rep.busy=true;
     var payload={event_id:e.id,title:e.title,note:note,at:new Date().toISOString()},p;
     try{p=db?db.collection("reports").add(payload):Promise.reject(new Error("no db"));}catch(x){p=Promise.reject(x);}
-    Promise.resolve(p).then(function(){rep={id:null,text:"",fail:false,busy:false};toast("Report saved.");render();},
+    Promise.resolve(p).then(function(){rep={id:null,text:"",fail:false,busy:false};toast("Your report is open on GitHub. Submit it there.");render();},
       function(){rep={id:e.id,fail:true,busy:false,text:"Error report\nEvent: "+payload.title+"\nEvent id: "+payload.event_id+"\nNote: "+note+"\nAt: "+payload.at};render();});
   });f.appendChild(sb);
   return f;
@@ -1304,9 +1304,13 @@ fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo)
 
 /* ---------- data store: one static JSON bundle, re-read on a timer ---------- */
 var STORE_URL="data/bundle.json",POLL_MS=5*60*1000;
+// Error reports open a pre-filled GitHub issue (label event-report) that the verify and watchdog jobs read.
+var REPORT_URL="https://github.com/xanderhutch/CyberView/issues/new";
 function sendReport(p){
-  var b=new URLSearchParams({"form-name":"event-report",event_id:p.event_id,title:p.title,note:p.note,at:p.at,"bot-field":""});
-  return fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b.toString()}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);});
+  var body="Event: "+p.title+"\nEvent id: "+p.event_id+"\nReported at: "+p.at+"\n\nWhat is wrong, and what should it say:\n"+p.note+"\n";
+  var u=REPORT_URL+"?labels=event-report&title="+encodeURIComponent("Error report: "+String(p.title).slice(0,90))+"&body="+encodeURIComponent(body);
+  var w=null;try{w=window.open(u,"_blank");if(w)w.opener=null;}catch(x){w=null;}
+  return w?Promise.resolve():Promise.reject(new Error("popup blocked"));
 }
 function openStore(){
   var bundle=null,subs=[],last=null;

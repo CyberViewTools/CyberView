@@ -43,21 +43,31 @@ for (const p of ours) {
 }
 passes.push(`${ours.length} script(s) checked for HTML sinks`);
 
-// 3. headers
-const toml = read(join(ROOT, "netlify.toml"));
-const csp = (toml.match(/Content-Security-Policy\s*=\s*"([^"]+)"/) || [])[1] || "";
-if (!csp) fails.push("netlify.toml: Content-Security-Policy is missing");
-else {
+// 3. Content-Security-Policy. GitHub Pages cannot send custom headers, so every page carries the policy in a
+//    <meta http-equiv> tag (frame-ancestors is not allowed there). If netlify.toml still sets one, it must stay strict too.
+function checkCsp(csp, where) {
   const dir = Object.fromEntries(csp.split(";").map((d) => d.trim().split(/\s+/)).filter((d) => d[0]).map((d) => [d[0], d.slice(1).join(" ")]));
-  if (dir["script-src"] !== "'self'") fails.push(`CSP script-src must be exactly 'self' (is "${dir["script-src"]}")`);
-  if (dir["default-src"] !== "'self'") fails.push(`CSP default-src must be 'self' (is "${dir["default-src"]}")`);
-  if (dir["frame-ancestors"] !== "'none'") fails.push("CSP must keep frame-ancestors 'none'");
-  if (dir["base-uri"] !== "'none'") fails.push("CSP must keep base-uri 'none'");
-  if (!/'self'/.test(dir["connect-src"] || "") || /\*/.test(dir["connect-src"] || "")) fails.push("CSP connect-src must stay 'self' only");
-  if (/'unsafe-eval'/.test(csp)) fails.push("CSP must not allow 'unsafe-eval'");
+  if (dir["script-src"] !== "'self'") fails.push(`${where}: CSP script-src must be exactly 'self' (is "${dir["script-src"]}")`);
+  if (dir["default-src"] !== "'self'") fails.push(`${where}: CSP default-src must be 'self' (is "${dir["default-src"]}")`);
+  if (dir["base-uri"] !== "'none'") fails.push(`${where}: CSP must keep base-uri 'none'`);
+  if ((dir["connect-src"] || "") !== "'self'") fails.push(`${where}: CSP connect-src must be 'self' only`);
+  if (/'unsafe-eval'/.test(csp)) fails.push(`${where}: CSP must not allow 'unsafe-eval'`);
 }
-for (const h of ["X-Content-Type-Options", "Referrer-Policy", "Permissions-Policy"]) if (!new RegExp(h + "\\s*=").test(toml)) fails.push(`netlify.toml: ${h} header is missing`);
-passes.push("security headers checked");
+for (const p of pages) {
+  const html = read(p);
+  const m = html.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i);
+  if (!m) { fails.push(`${rel(p)}: no Content-Security-Policy meta tag`); continue; }
+  checkCsp(m[1], rel(p));
+  const headEnd = html.search(/<\/head>/i), firstScript = html.search(/<script\b/i);
+  if (firstScript >= 0 && firstScript < headEnd && firstScript < html.indexOf(m[0])) fails.push(`${rel(p)}: the CSP meta tag must come before any script`);
+  if (!/<meta\s+name="referrer"/i.test(html)) fails.push(`${rel(p)}: missing referrer meta tag`);
+}
+const tomlPath = join(ROOT, "netlify.toml");
+if (existsSync(tomlPath)) {
+  const csp = (read(tomlPath).match(/Content-Security-Policy\s*=\s*"([^"]+)"/) || [])[1];
+  if (csp) checkCsp(csp, "netlify.toml");
+}
+passes.push("Content-Security-Policy checked on every page");
 
 // 4. vendored files
 const PINNED = {

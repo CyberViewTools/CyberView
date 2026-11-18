@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+# Builds site/ (validating every record first) and publishes it to GitHub Pages.
+# Runs on every push to main, and after the data workflows finish: their commits are pushed with the
+# workflow token, which by design does not start other "push" workflows.
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Feeds (KEV, EPSS, NVD)", "AI jobs"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # GitHub Pages needs a public repository on the Free plan; until then this job is skipped
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate and build the bundle and archive
+        run: node scripts/build.mjs
+      - name: Security check
+        run: node scripts/security-check.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

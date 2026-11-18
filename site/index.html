@@ -9,6 +9,8 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CyberView</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -674,9 +676,6 @@ a.btn{text-decoration:none}
     <div class="pane" id="ins" hidden></div>
   </aside>
 </div>
-<form name="event-report" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
-  <input name="event_id"><input name="title"><textarea name="note"></textarea><input name="at"><input name="bot-field">
-</form>
 <div id="hoDlg" class="glass dlg" role="dialog" aria-labelledby="hoTitle" hidden>
   <h2 id="hoTitle">Shift handover</h2>
   <p id="hoNote"></p>

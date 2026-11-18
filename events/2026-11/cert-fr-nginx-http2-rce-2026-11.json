@@ -1,0 +1,76 @@
+{
+  "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
+  "actor": "",
+  "attack": [
+    "rce",
+    "http2"
+  ],
+  "category": "vuln",
+  "country": "France",
+  "date": "2026-11-18",
+  "occurred_at": "2026-11-18T12:00:00Z",
+  "exec": "NGINX is among the most widely used web servers and proxies; an unauthenticated remote code execution flaw with a public proof of concept makes exposed servers urgent to patch or mitigate.",
+  "first_seen": "2026-11-18T21:13:25Z",
+  "geo_basis": "agency",
+  "impact": "",
+  "lat": 48.85,
+  "lng": 2.35,
+  "org": "CERT-FR (ANSSI)",
+  "pin_type": "agency",
+  "place": "Paris, France",
+  "plain": "French cyber agency warns of two flaws in the NGINX web server that could let an attacker run code on a server over HTTP/2, with public attack code available for one of them.",
+  "products": [
+    "F5 NGINX Open Source",
+    "F5 NGINX Plus"
+  ],
+  "cves": [
+    "CVE-2026-123633",
+    "CVE-2026-123007"
+  ],
+  "cve_meta": [
+    {
+      "id": "CVE-2026-123633"
+    },
+    {
+      "id": "CVE-2026-123007"
+    }
+  ],
+  "report": {
+    "doc_id": "CERTFR-2026-ALE-017",
+    "iocs_available": false,
+    "key_findings": [
+      "Two flaws, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2.",
+      "Affected: NGINX Open Source 1.31.x before 1.31.9 and versions before 1.30.7; NGINX Plus 3.1.x-3.2.x before 3.7.3.0.1 and 3.7.x before 37.0.8.1.",
+      "CERT-FR knows of a public proof of concept for CVE-2026-123007; in-the-wild exploitation is not stated."
+    ],
+    "published": "2026-11-18",
+    "publisher": "CERT-FR",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Apply F5 fixes (K000163926, K000163928).",
+      "Disable HTTP/2 as an interim workaround."
+    ],
+    "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/"
+  },
+  "sector": "Technology / web infrastructure",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "CERT-FR alert CERTFR-2026-ALE-017",
+      "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/"
+    }
+  ],
+  "status": "official",
+  "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2. It knows of a public proof of concept for CVE-2026-123007. Affected are Open Source 1.31.x before 1.31.9 and earlier branches before 1.30.7, and Plus before the fixed releases. Disabling HTTP/2 is an interim workaround.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
+  "updated_at": "2026-11-18T21:13:25Z",
+  "validation": {
+    "checked_at": "2026-11-18T21:13:25Z",
+    "state": "single_source",
+    "note": "Read the CERT-FR alert (French) via fetch agent. F5 bulletins and the Wiz blog it cites were not opened. CVSS not stated on the page."
+  }
+}

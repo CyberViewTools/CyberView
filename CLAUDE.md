@@ -24,7 +24,7 @@ scripts/q.mjs            search the whole history without reading files (find, d
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
-scripts/netlify-ignore.sh    Netlify skips data-only builds less than 50 minutes apart
+scripts/netlify-ignore.sh    Netlify skips data-only builds (Free plan: ~20 deploys a month); see the file
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/smoke_live.py      browser check of the live site
 .github/workflows/       build.yml (code pushes), feeds.yml, monitor.yml, security.yml

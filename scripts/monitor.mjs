@@ -42,8 +42,10 @@ else {
   notes.push(`${ev} events, ${(d.kev || []).length} known-exploited, built ${d.built_at}`);
   if (ev < 10) fails.push(`Only ${ev} events in the bundle; the map looks empty`);
   const builtH = hours(d.built_at);
-  if (builtH > 12) fails.push(`Bundle was built ${builtH.toFixed(1)} h ago; nothing has been deployed since (feeds run every 2 h)`);
-  else if (builtH > 5) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago`);
+  // data-only deploys are rationed on the Free plan (see scripts/netlify-ignore.sh), so an old bundle is a warning, not a failure
+  const maxH = Number(process.env.MAX_BUNDLE_HOURS || 36);
+  if (builtH > maxH) fails.push(`Bundle was built ${builtH.toFixed(1)} h ago (limit ${maxH} h); the live data is stale`);
+  else if (builtH > 6) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago (data deploys are rationed)`);
   const sweptH = st.last_sweep_at ? hours(st.last_sweep_at) : Infinity;
   if (sweptH > 8) fails.push(`Last sweep was ${isFinite(sweptH) ? sweptH.toFixed(1) + " h" : "never"} ago; the sweep job has stopped`);
   else if (sweptH > 3.5) warns.push(`Last sweep was ${sweptH.toFixed(1)} h ago`);

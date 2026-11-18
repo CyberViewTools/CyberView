@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.4",date:"2026-11-18"};
+var BUILD={version:"1.5",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -410,6 +410,10 @@ function card(e,open){
     var cp=el("button",null,"Copy brief");cp.type="button";cp.addEventListener("click",function(){
       try{navigator.clipboard.writeText(brief(e)).then(function(){toast("Brief copied.");},function(){toast("Copy was blocked by the browser.");});}catch(x){toast("Copy was blocked by the browser.");}
     });acts.appendChild(cp);
+    var lk=el("button",null,"Copy link");lk.type="button";lk.title="A link that opens this event";lk.addEventListener("click",function(){
+      var u=eventLink(e.id);
+      try{navigator.clipboard.writeText(u).then(function(){toast("Link copied.");},function(){toast(u);});}catch(x){toast(u);}
+    });acts.appendChild(lk);
     if(e.country){var cf=el("button",null,"More from "+e.country);cf.type="button";cf.addEventListener("click",function(){state.country=normC(e.country);select(null);});acts.appendChild(cf);}
     var rpb=el("button",null,"Report an error");rpb.type="button";rpb.id="reportBtn";rpb.setAttribute("aria-expanded",rep.id===e.id?"true":"false");
     rpb.addEventListener("click",function(){rep=rep.id===e.id?{id:null,text:"",fail:false,busy:false}:{id:e.id,text:"",fail:false,busy:false};render();var t=$("reportText");if(t)t.focus();});
@@ -611,6 +615,7 @@ function renderInsights(list){
   ab.appendChild(au);
   box.appendChild(ab);
   box.appendChild(el("div","empty","CyberView version "+BUILD.version+" · built "+fmtDay(BUILD.date)+(sweep&&sweep.data_version?" · data rules "+str(sweep.data_version,20):"")));
+  var subs=el("div","empty");subs.appendChild(document.createTextNode("Subscribe to high-priority events: "));var rl=el("a",null,"RSS");rl.href="data/feed.xml";subs.appendChild(rl);subs.appendChild(document.createTextNode(" · "));var jl=el("a",null,"JSON Feed");jl.href="data/feed.json";subs.appendChild(jl);subs.appendChild(document.createTextNode(" · "));var al=el("a",null,"Full archive");al.href="archive.html";subs.appendChild(al);box.appendChild(subs);
 }
 function histBlock(){
   var b=el("section","blk hist");b.appendChild(el("h3",null,"This week vs earlier"));
@@ -1096,7 +1101,7 @@ function select(id,fromFeed){
   state.sel=id;
   var e=id&&events.find(function(x){return x.id===id;});
   if(e&&state.tab!=="feed"){state.tab="feed";["brief","feed","kev","pat","ins"].forEach(function(k){$("tab-"+k).setAttribute("aria-selected",k==="feed"?"true":"false");$(k).hidden=k!=="feed";});}
-  try{history.replaceState(null,"",id?"#"+id:location.pathname+location.search);}catch(x){}
+  try{history.replaceState(null,"",id?"#e="+encodeURIComponent(id):location.pathname+location.search);}catch(x){}
   render();
   if(state.view==="map"){
     if(e&&fromFeed&&e.lat!==null){var p=projection([e.lng,e.lat]);
@@ -1220,19 +1225,70 @@ function wlNote(){
 }
 function wlToggle(open){
   var d=$("wlDlg");d.hidden=!open;$("wlOpen").setAttribute("aria-expanded",open?"true":"false");
-  if(open){$("wlText").value=wl.terms.join("\n");wlNote();$("wlText").focus();}
+  if(open){$("wlText").value=wl.terms.join("\n");wlNote();wlReport();$("wlText").focus();}
+}
+/* ---------- exposure report: what in the watchlist is hit, worked out in the browser; nothing is sent ---------- */
+var archRows=null,archLoad=null,xrText="";
+function loadArchive(){
+  if(!archLoad)archLoad=fetch("data/archive/search.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error();return r.json();}).then(function(d){
+    var f=Array.isArray(d.fields)?d.fields:[];archRows=(Array.isArray(d.rows)?d.rows:[]).map(function(r){var o={};f.forEach(function(k,i){o[k]=r[i];});
+      o.hay=[o.title,o.org,o.country,o.actor,(o.cves||[]).join(" "),(o.tags||[]).join(" ")].join(" | ").toLowerCase();return o;});return archRows;
+  }).catch(function(){archRows=[];return archRows;});
+  return archLoad;
+}
+function wlReport(){
+  var box=$("wlReport"),cp=$("wlCopy");box.textContent="";
+  if(!wl.terms.length){box.hidden=true;cp.hidden=true;xrText="";return;}
+  box.hidden=false;cp.hidden=false;
+  var today=ymd(new Date()),lines=["CyberView exposure report, "+today,"Watchlist: "+wl.terms.join(", "),""];
+  var kh=kev.filter(kevWl).sort(function(a,b){return (a.due||"9")<(b.due||"9")?-1:1;});
+  var sec=el("section");sec.appendChild(el("h3",null,"Known-exploited flaws in your list ("+kh.length+")"));
+  lines.push("Known-exploited flaws ("+kh.length+"):");
+  if(!kh.length)sec.appendChild(el("p","xr-none","None in the last 45 days of CISA's catalog."));
+  else{var ul=el("ul");kh.slice(0,12).forEach(function(k){
+    var li=el("li"),over=k.due&&k.due<today;
+    li.appendChild(document.createTextNode(k.cve+" · "+k.vendor+" "+k.product+" "));
+    li.appendChild(el("span",over?"due over":"due",k.due?(over?"overdue since "+fmtDay(k.due):"patch by "+fmtDay(k.due)):""));
+    if(k.ransom)li.appendChild(el("span","rw"," · used in ransomware"));
+    ul.appendChild(li);lines.push("- "+k.cve+" "+k.vendor+" "+k.product+(k.due?(over?" OVERDUE since ":" patch by ")+k.due:"")+(k.ransom?" (ransomware)":""));
+  });sec.appendChild(ul);}
+  box.appendChild(sec);
+  var eh=events.filter(function(e){return e.wl&&inWindow(e)&&claimOk(e);}).sort(function(a,b){return b.severity-a.severity||(a.date<b.date?1:-1);});
+  sec=el("section");sec.appendChild(el("h3",null,"This window's events that mention it ("+eh.length+")"));
+  lines.push("","Events in the last "+state.win+" days ("+eh.length+"):");
+  if(!eh.length)sec.appendChild(el("p","xr-none","Nothing in the current window."));
+  else{var ul2=el("ul");eh.slice(0,10).forEach(function(e){
+    var li=el("li"),b=el("button",null,fmtDay(e.date)+" · "+["","Low","Medium","High"][e.severity]+" · "+e.title);b.type="button";
+    b.addEventListener("click",function(){wlToggle(false);showEvent(e.id);});li.appendChild(b);ul2.appendChild(li);
+    lines.push("- "+e.date+" ["+["","low","medium","high"][e.severity]+"] "+e.title+" "+eventLink(e.id));
+  });if(eh.length>10)ul2.appendChild(el("li","xr-none","and "+(eh.length-10)+" more: turn on Only my watchlist."));sec.appendChild(ul2);}
+  box.appendChild(sec);
+  var as=el("section");as.appendChild(el("h3",null,"Across the whole archive"));var ap=el("p","xr-none","Counting");as.appendChild(ap);box.appendChild(as);
+  xrText=lines.join("\n");
+  var terms=wl.terms.slice();
+  loadArchive().then(function(rows){
+    if(terms.join("|")!==wl.terms.join("|"))return;
+    ap.remove();var ul3=el("ul"),tot=0,arch=["","Across the whole archive:"];
+    terms.forEach(function(t){var lt=t.toLowerCase(),n=rows.filter(function(r){return r.status!=="claimed"&&r.hay.indexOf(lt)>=0;}).length;if(!n)return;tot+=n;
+      var li=el("li"),a=el("a",null,t+": "+n+" event"+(n===1?"":"s"));a.href="archive.html#q="+encodeURIComponent(t);li.appendChild(a);ul3.appendChild(li);arch.push("- "+t+": "+n);});
+    if(!tot)as.appendChild(el("p","xr-none",rows.length?"No earlier events mention these terms.":"The archive could not be loaded."));else as.appendChild(ul3);
+    xrText+= "\n"+arch.join("\n");
+  });
 }
 function wlSave(){
   var terms=wlParse($("wlText").value),same=terms.join("\n")===wl.terms.join("\n");
   $("wlText").value=terms.join("\n");
   if(same){wlNote();toast("Watchlist unchanged.");return;}
-  wlApply(terms);if(!terms.length)state.wlOnly=false;render();
+  wlApply(terms);if(!terms.length)state.wlOnly=false;render();wlReport();
   var local=function(){wl.mode="local";wl.stored=lsSet("cwm.wl",JSON.stringify(terms));wlNote();toast(wl.stored?"Watchlist saved on this device only.":"Watchlist could not be stored. It will last until you close the page.");};
   local();
 }
 $("wlOpen").addEventListener("click",function(){wlToggle($("wlDlg").hidden);});
 $("wlClose").addEventListener("click",function(){wlToggle(false);$("wlOpen").focus();});
 $("wlSave").addEventListener("click",wlSave);
+$("wlCopy").addEventListener("click",function(){
+  try{navigator.clipboard.writeText(xrText).then(function(){toast("Exposure report copied.");},function(){toast("Copy was blocked by the browser.");});}catch(x){toast("Copy was blocked by the browser.");}
+});
 (function(){
   var lv=lsGet("cwm.level");if(lv==="plain"||lv==="standard"||lv==="exec")state.level=lv;
   state.claims=lsGet("cwm.claims")==="1";
@@ -1302,6 +1358,20 @@ fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo)
   layout();drawMarks();
 }).catch(function(){/* outline missing: markers still plot on the graticule */});
 
+/* ---------- permalinks: #e=<id> opens one event (plain #<id> from older links still works) ---------- */
+function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
+function eventLink(id){return location.origin+location.pathname+"#e="+encodeURIComponent(id);}
+function openFromHash(){
+  var h=hashId();if(!h){if(state.sel)select(null);return;}
+  if(h===state.sel)return;
+  var he=events.find(function(e){return e.id===h;});
+  if(!he){toast("That event is older than the map's window; opening it in the archive.");setTimeout(function(){location.href="archive.html#q="+encodeURIComponent(h);},900);return;}
+  if(he.status==="claimed"&&!state.claims){state.claims=true;toast("This link points to an unverified claim, so claims are shown for now.");}
+  state.day=null;state.spot=null;state.country=null;state.pattern=null;
+  select(h,true);
+}
+window.addEventListener("hashchange",openFromHash);
+
 /* ---------- data store: one static JSON bundle, re-read on a timer ---------- */
 var STORE_URL="data/bundle.json",POLL_MS=5*60*1000;
 // Error reports open a pre-filled GitHub issue (label event-report) that the verify and watchdog jobs read.
@@ -1351,9 +1421,7 @@ openStore().then(function(d){
   query.onSnapshot(function(snap){
     var n=apply(snap);
     if(!snap.metadata||!snap.metadata.fromCache){clearTimeout(timer);stale=false;}
-    if(first){first=false;var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}
-      var he=h&&events.find(function(e){return e.id===h;});
-      if(he){if(he.status==="claimed"&&!state.claims){state.claims=true;toast("This link points to an unverified claim, so claims are shown for now.");}select(h,true);return;}}
+    if(first){first=false;if(hashId()){openFromHash();return;}}
     else if(n)toast(n+" new event"+(n>1?"s":"")+" just arrived.");
     renderSoon();
   },function(){clearTimeout(timer);if(!loaded)unavailable=true;stale=false;render();});

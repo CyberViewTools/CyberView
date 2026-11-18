@@ -6,6 +6,7 @@
 //   site/data/archive/search.json    one compact row per event ever stored, for the archive page's search
 //   site/data/archive/events.jsonl   everything, one event per line, for download and analysis
 //   site/data/archive/kev.json       every known-exploited entry on file
+//   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
 import { writeFileSync, mkdirSync, existsSync, rmSync } from "node:fs";
@@ -101,5 +102,49 @@ writeFileSync(join(ARCH, "search.json"), JSON.stringify({ built_at, fields: ["id
 writeFileSync(join(ARCH, "events.jsonl"), live.map((e) => JSON.stringify(e)).join("\n") + "\n");
 writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.added < b.added ? 1 : -1))));
 
+// subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)
+const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");
+const link = (id) => `${SITE}/#e=${encodeURIComponent(id)}`;
+const isKev = (e) => Array.isArray(e.cve_meta) && e.cve_meta.some((c) => c && c.kev);
+const when = (e) => (/^\d{4}-\d{2}-\d{2}T/.test(e.first_seen || "") ? e.first_seen : `${e.date}T12:00:00Z`);
+const picks = live.filter((e) => e.status !== "claimed" && (e.severity === 3 || isKev(e)))
+  .sort((a, b) => (when(a) < when(b) ? 1 : -1)).slice(0, 60);
+const text = (e) => [e.summary, e.action ? `What to do: ${e.action}` : "", (e.cves || []).length ? `CVEs: ${e.cves.join(", ")}` : ""].filter(Boolean).join("\n\n");
+const xml = (v) => String(v == null ? "" : v).replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>CyberView: high-priority cyber events</title>
+<link>${SITE}/</link>
+<atom:link href="${SITE}/data/feed.xml" rel="self" type="application/rss+xml"/>
+<description>High-severity incidents, exploited vulnerabilities and urgent advisories from CyberView, with what to do. Unverified claims are left out.</description>
+<language>en</language>
+<lastBuildDate>${new Date(built_at).toUTCString()}</lastBuildDate>
+${picks.map((e) => `<item>
+<title>${xml(e.title)}</title>
+<link>${xml(link(e.id))}</link>
+<guid isPermaLink="false">cyberview:${xml(e.id)}</guid>
+<pubDate>${new Date(when(e)).toUTCString()}</pubDate>
+<category>${xml(e.category)}</category>
+<description>${xml(text(e))}</description>
+</item>`).join("\n")}
+</channel>
+</rss>
+`;
+writeFileSync(join(OUT, "feed.xml"), rss);
+writeFileSync(join(OUT, "feed.json"), JSON.stringify({
+  version: "https://jsonfeed.org/version/1.1",
+  title: "CyberView: high-priority cyber events",
+  home_page_url: `${SITE}/`,
+  feed_url: `${SITE}/data/feed.json`,
+  description: "High-severity incidents, exploited vulnerabilities and urgent advisories, with what to do. Unverified claims are left out.",
+  items: picks.map((e) => ({
+    id: `cyberview:${e.id}`, url: link(e.id), title: e.title, content_text: text(e), date_published: when(e),
+    date_modified: /^\d{4}-\d{2}-\d{2}T/.test(e.updated_at || "") ? e.updated_at : undefined,
+    tags: [e.category, ...(e.tags || [])], external_url: (e.sources && e.sources[0] && e.sources[0].url) || undefined,
+  })),
+}));
+
 console.log(`Built site/data/bundle.json: ${events.length} events (of ${allEvents.length} on file), ${kev.length} known-exploited, ${corrections.length} corrections, docs: ${Object.keys(docs).join(", ") || "none"}.`);
+console.log(`Feeds: ${picks.length} high-priority items in data/feed.xml and data/feed.json.`);
 console.log(`Archive: ${live.length} events in ${index.months.length} month(s), ${kevAll.length} known-exploited entries. ${warnings.length} hygiene warning(s).`);

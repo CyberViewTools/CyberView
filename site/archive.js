@@ -20,6 +20,9 @@
       });
       $("summary").textContent = rows.length + " events recorded since " + (rows.length ? fmt(rows[rows.length - 1].date) : "the start") + ". The map shows the last seven days; everything else lives here.";
       readHash(); render();
+      // a link to one event (archive.html#q=<id>) opens it straight away
+      var q = $("q").value.trim(), only = $("list").querySelectorAll(".row > button");
+      if (only.length === 1 && rows.some(function (r) { return r.id === q; })) only[0].click();
     }).catch(function () { $("summary").textContent = "The archive can't be loaded right now. Try again in a minute."; });
   }
 
@@ -75,6 +78,8 @@
       if (e.summary) box.appendChild(el("p", null, e.summary));
       if (e.action) { var p = el("p"); p.appendChild(el("strong", null, "What to do: ")); p.appendChild(document.createTextNode(e.action)); box.appendChild(p); }
       if (e.actor) box.appendChild(el("p", null, "Actor: " + e.actor));
+      var lp = el("p"), la = el("a", null, "Link to this event");
+      la.href = "archive.html#q=" + encodeURIComponent(r.id); lp.appendChild(la); box.appendChild(lp);
       var src = (e.sources || []).filter(function (s) { return s && safeUrl(s.url); });
       if (src.length) {
         box.appendChild(el("h3", null, "Sources"));

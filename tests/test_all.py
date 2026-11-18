@@ -208,6 +208,41 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(bundle), archive)
+
+        # v1.5 features: permalinks, feeds, exposure report
+        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2)
+
+        async def features(url):
+            pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
+            ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
+            ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
+            await pg.wait_for_timeout(700)
+            ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
+            ok("permalink: the address follows the open event", ("#e=" + other["id"]) in pg.url)
+            await pg.keyboard.press("Escape")
+            await pg.wait_for_timeout(500)
+            await pg.click("#wlOpen")
+            await pg.fill("#wlText", (target.get("org") or target["title"].split()[0])[:40])
+            await pg.click("#wlSave")
+            await pg.wait_for_timeout(900)
+            rep = await pg.inner_text("#wlReport")
+            ok("exposure: report shows known-exploited, window and archive sections", all(x in rep for x in ["Known-exploited", "This window", "Across the whole archive"]), rep[:160])
+            ok("exposure: matching event listed", await pg.locator("#wlReport li button").count() >= 1)
+            ok("exposure: copy button shown", await pg.is_visible("#wlCopy"))
+            ok("features: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(bundle), features)
+        import xml.etree.ElementTree as ET
+        try:
+            items = ET.parse(os.path.join(ROOT, "site", "data", "feed.xml")).findall(".//item")
+            jf = json.load(open(os.path.join(ROOT, "site", "data", "feed.json")))
+            ok("feeds: RSS and JSON Feed parse, same items, no claims", len(items) == len(jf["items"]) > 0 and not any(i["id"].endswith("-claim-2026-11") for i in jf["items"]))
+            ok("feeds: items link to permalinks", all("/#e=" in i.find("link").text for i in items))
+        except Exception as x:
+            ok("feeds: RSS and JSON Feed parse", False, str(x)[:160])
         await browser.close()
 
 

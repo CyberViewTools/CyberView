@@ -47,9 +47,7 @@
     (o.routines || []).forEach(function (r) {
       var s = state(r), tr = el("tr");
       if (r.active) { counts.active++; if (s.cls === "ok" || s.cls === "info") counts.ok++; }
-      var name = el("td"), code = typeof r.codename === "string" ? r.codename.slice(0, 30) : "";
-      if (code) { var cn = el("span", "codename", code); cn.title = (r.universe === "DC" ? "DC" : "Marvel") + (typeof r.codename_why === "string" ? ": " + r.codename_why.slice(0, 120) : ""); name.appendChild(cn); }
-      name.appendChild(el("strong", null, String(r.name))); name.appendChild(el("span", "sub", r.does)); tr.appendChild(name);
+      var name = el("td"); name.appendChild(el("strong", null, String(r.name))); name.appendChild(el("span", "sub", r.does)); tr.appendChild(name);
       tr.appendChild(el("td", "nowrap", when(r.cron)));
       tr.appendChild(el("td", "nowrap", r.model ? (MODEL[r.model] || r.model) : "none (script)"));
       tr.appendChild(el("td", "nowrap", r.last_at ? ago(r.last_at) : "—"));

@@ -850,12 +850,11 @@ async def main():
 
         await serve(site18, v118)
 
-        # v1.19: status page shows codenames and where the research comes from
+        # v1.19: status page shows where the research comes from
         async def v119(url):
             pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=900)
-            codes = await pg.locator("#routines .codename").all_text_contents()
-            ok("status: every routine has a codename", len(codes) >= 25 and "Nick Fury" in codes and "Batman" in codes and len(set(codes)) == len(codes), codes[:6])
-            ok("status: not-affiliated note", "not affiliated with or endorsed by Marvel or DC" in await pg.inner_text("body"))
+            names = await pg.locator("#routines tbody strong").all_text_contents()
+            ok("status: routines listed by plain name", len(names) >= 25 and "Sweep" in names and "Source scout" in names and await pg.locator("#routines .codename").count() == 0, names[:6])
             rows = await pg.locator("#sources tbody tr").all_text_contents()
             ok("status: sources table lists the collectors", len(rows) >= 8 and any("google-news" in r for r in rows) and any(r.startswith("rss") for r in rows), rows[:3])
             ok("status: pipeline summary", "stories waiting" in await pg.locator("#pipe").text_content())

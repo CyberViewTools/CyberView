@@ -15,7 +15,7 @@ site/status.html, .js    routines and their last runs, lead queue, recent runs (
 site/workbench.html, .js, workbench-lib.js   the workbench: patch queue ranked with reasons, the visitor's software list matched by version (browser only), check and fix steps, hunt pack (from site/data/workbench.json)
 site/community.html, .js  the public community feed (reviewed posts from site/data/chat.json; posting is a GitHub issue form)
 site/tabletop.html, .js  the weekly tabletop exercise (from site/data/tabletop.json; facilitator clock, print, copy)
-routines.json            registry of every routine: schedule, model, status key, max age, active, and its Marvel or DC codename (display only; scripts use the key)
+routines.json            registry of every routine: schedule, model, status key, max age, active
 config/feeds.json, queries.json   extra feeds and standing searches; the source scout and editor jobs maintain them
 site/vendor/             d3 7.9.0 and topojson 3.0.2, served locally, hashes pinned in scripts/security-check.mjs
 site/account.js, unsubscribe.js   optional accounts (Supabase); the ONLY pages allowed to load vendor/supabase.min.js and reach the project

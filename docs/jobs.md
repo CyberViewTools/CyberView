@@ -16,38 +16,6 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 
 Failures open a GitHub issue (labels `site-monitor`, `job-failure`, `security`) that closes itself on recovery. Visitors' error reports arrive as issues labelled `event-report`. The **watchdog** job reads all of them daily and fixes what it can.
 
-## Codenames
-
-Every routine has a codename from Marvel or DC, shown on the status page and in the scheduled task names. Scripts, schedules and section headings below keep the plain job key. The names are a nod to the characters; CyberView is not affiliated with or endorsed by Marvel or DC.
-
-| Codename | From | Routine | Why |
-|---|---|---|---|
-| Heimdall | Marvel | Lead collector (`collect`) | sees everything that happens, everywhere |
-| Cyborg | DC | Vulnerability feeds (`feeds`) | wired straight into the machines |
-| The Watcher | Marvel | Live site monitor (`monitor`) | observes, always |
-| Oracle | DC | Open-source collectors (`osint`) | the information broker who pulls from every network |
-| Daredevil | Marvel | Exploit watch (`exploit-watch`) | senses danger before anyone sees it |
-| The Flash | DC | Lead triage (`lead-triage`) | sorts it all in an instant |
-| Spider-Man | Marvel | Link check (`link-check`) | keeps the web holding together |
-| Captain America | Marvel | Weekly security check (`security-check`) | the shield |
-| Nick Fury | Marvel | Sweep (`sweep`) | assembles the team and runs the mission |
-| Wonder Woman | DC | Verify (`verify`) | the lasso of truth |
-| Beast | Marvel | Report review (`report-review`) | the scholar who reads the whole paper |
-| Batman | DC | Analysis (`analysis`) | the detective who connects the cases |
-| Aquaman | DC | Deep sweep (`deep-sweep`) | goes where others don't look: the deep |
-| J.A.R.V.I.S. | Marvel | Daily brief (`brief`) | the morning briefing |
-| Alfred | DC | Watchdog (`watchdog`) | keeps the house running and patches people up |
-| Black Widow | Marvel | Security review (`security-review`) | finds the way in before an enemy does |
-| Doctor Strange | Marvel | Triage desk (`triage`) | a surgeon's triage, with a view of every outcome |
-| Nightcrawler | Marvel | Regional desk (`regional`) | anywhere in the world in a blink |
-| Lois Lane | DC | Follow-up desk (`followup`) | the reporter who never drops a story |
-| Ant-Man | Marvel | Data steward (`steward`) | fixes the small things nobody else notices |
-| Iron Man | Marvel | Tabletop exercise (`tabletop`) | runs the simulations |
-| Lucius Fox | DC | Advisory desk (`advisory`) | the engineer with the fix |
-| Green Lantern | DC | Community moderator (`moderator`) | keeps the peace in his sector |
-| Hawkeye | Marvel | Source scout (`scout`) | sees farther than anyone and never misses |
-| Perry White | DC | Editor (`editor`) | the editor-in-chief |
-
 ## The Claude jobs
 
 All eight run in `.github/workflows/ai-jobs.yml`. They sign in to Claude with the first method that is set up: **workload identity federation** (recommended: repository variables `ANTHROPIC_FEDERATION_RULE_ID`, `ANTHROPIC_ORGANIZATION_ID`, `ANTHROPIC_SERVICE_ACCOUNT_ID`, optional `ANTHROPIC_WORKSPACE_ID`; no stored secret; scope the Console rule to `repo:xanderhutch@83180485/CyberView@1462335687:ref:refs/heads/main`), a repository secret `ANTHROPIC_API_KEY`, or a repository secret `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`, which uses a Claude subscription). Federation and API keys bill the Claude Console account per use; so the schedule starts lean, about 11 runs a day; raise it in `ai-jobs.yml` (cron and job mapping) and in this table together. Run any job by hand from the Actions tab (AI jobs, Run workflow).

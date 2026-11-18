@@ -7,13 +7,13 @@
 //                         a score of 1 or more is almost certainly the same event, 0.5 to 1 needs a look)
 //   node scripts/q.mjs get <id> [--fields title,summary,sources]  one event (all fields, or only those listed)
 //   node scripts/q.mjs seen <url>          was this URL already used as a source or read in a past run?
-//   node scripts/q.mjs leads [--days 7]    leads past runs found but did not write up (open_leads and skipped items)
+//   node scripts/q.mjs leads [--days 3] [--tier gov|vendor|news] [--source X] [text]   new feed items and open leads, not yet used or rejected
 //   node scripts/q.mjs runs [--days 2]     what each job run did
 //   node scripts/q.mjs kev [text] [--since YYYY-MM-DD]   known-exploited entries
 //   node scripts/q.mjs stats               counts by month and category
 //   add --json to find/kev/leads for machine-readable output
 import { join } from "node:path";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { DATA, readJson, listEventFiles, listDir, dayAgo } from "./lib/store.mjs";
 
 const argv = process.argv.slice(2), cmd = argv[0] || "help";
@@ -68,16 +68,29 @@ if (cmd === "find") {
   runs(60).forEach(({ day, file, r }) => JSON.stringify(r).includes(JSON.stringify(u).slice(1, -1)) && hits.push(`read in run ${day}/${file}`));
   console.log(hits.length ? hits.join("\n") : "not seen");
 } else if (cmd === "leads") {
-  const days = Number(flags.days || 7), stored = new Set(events().flatMap((e) => (e.sources || []).map((s) => s.url)));
-  const leads = [];
-  runs(days).forEach(({ day, file, r }) => {
-    (r.open_leads || []).forEach((l) => leads.push({ from: `${day}/${file}`, ...l }));
-    Object.values(r.lanes || {}).forEach((lane) => (lane && lane.skipped || []).forEach((l) => leads.push({ from: `${day}/${file}`, ...l })));
-    (r.skipped || []).forEach((l) => leads.push({ from: `${day}/${file}`, ...l }));
+  // two kinds: feed items the collector found (data/leads/*.jsonl) and leads earlier job runs could not confirm
+  const days = Number(flags.days || 3), used = new Set(events().flatMap((e) => (e.sources || []).map((s) => s.url)));
+  const rejected = new Set(), runLeads = [];
+  runs(Math.max(days, 14)).forEach(({ day, file, r }) => {
+    const sk = [...(r.skipped || []), ...Object.values(r.lanes || {}).flatMap((l) => (l && l.skipped) || [])];
+    sk.forEach((l) => l && l.url && rejected.add(l.url));
+    if (day >= dayAgo(days)) (r.open_leads || []).forEach((l) => runLeads.push({ kind: "open", from: `${day}/${file}`, ...l }));
   });
-  const open = leads.filter((l) => !l.url || !stored.has(l.url));
-  if (flags.json) console.log(JSON.stringify(open));
-  else { open.forEach((l) => console.log(`${l.from} | ${cut(l.title, 90)} | ${l.url || ""} | ${cut(l.reason || l.note || "", 80)}`)); console.log(`(${open.length} open lead(s))`); }
+  const feed = [], dir = join(DATA, "leads");
+  if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(days)).sort())
+    for (const line of readFileSync(join(dir, f), "utf8").split("\n")) { try { feed.push({ kind: "feed", ...JSON.parse(line) }); } catch {} }
+  let open = [...runLeads, ...feed].filter((l) => !l.url || (!used.has(l.url) && !rejected.has(l.url)));
+  if (flags.tier) open = open.filter((l) => l.tier === flags.tier);
+  if (flags.source) open = open.filter((l) => has(l.source, flags.source));
+  if (text) open = open.filter((l) => has(`${l.title} ${l.summary || ""} ${l.note || ""}`, text));
+  open.sort((a, b) => (a.kind !== b.kind ? (a.kind === "open" ? -1 : 1) : String(b.published || "") < String(a.published || "") ? -1 : 1));
+  if (flags.json) console.log(JSON.stringify(open.slice(0, limit)));
+  else {
+    open.slice(0, Number(flags.limit || 60)).forEach((l) => console.log(l.kind === "open"
+      ? `OPEN ${l.from} | ${cut(l.title, 90)} | ${l.url || ""} | ${cut(l.note || "", 70)}`
+      : `${String(l.published || l.seen_at).slice(0, 10)} ${String(l.tier).padEnd(6)} ${cut(l.source, 22)} | ${cut(l.title, 100)} | ${l.url}`));
+    console.log(`(${open.length} open lead(s): ${open.filter((l) => l.kind === "open").length} from earlier runs, ${open.filter((l) => l.kind === "feed").length} from feeds; --tier gov|vendor|news, --source, text, --limit)`);
+  }
 } else if (cmd === "runs") {
   runs(Number(flags.days || 2)).forEach(({ day, file, r }) => console.log(`${day}/${file} | ${r.job} | added ${(r.added || r.kev_added || []).length} updated ${(r.updated || r.events_updated || []).length}${(r.failed || r.failed_sites || []).length ? " | failed: " + cut((r.failed || r.failed_sites).join(", "), 80) : ""}`));
 } else if (cmd === "kev") {

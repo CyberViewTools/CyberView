@@ -8,9 +8,10 @@
 //   site/data/archive/kev.json       every known-exploited entry on file
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
+//   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
-import { writeFileSync, mkdirSync, existsSync, rmSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
 
@@ -138,6 +139,37 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   };
   writeFileSync(join(OUT, "trends.json"), JSON.stringify(trends));
   console.log(`Trends: ${trends.cur.total} events this week, ${trends.prev.total} the week before${trends.prev.complete ? "" : " (partly recorded)"}.`);
+}
+
+// operations: the routines registry, each routine's last run, recent run logs and the lead queue (site/data/ops.json)
+{
+  const reg = readJson(join(ROOT, "routines.json"), null);
+  if (!reg || !Array.isArray(reg.routines)) { console.error("error: routines.json is missing or not valid JSON"); process.exit(1); }
+  const keys = new Set(), aiYml = existsSync(join(ROOT, ".github", "workflows", "ai-jobs.yml")) ? readFileSync(join(ROOT, ".github", "workflows", "ai-jobs.yml"), "utf8") : "";
+  const bad = [];
+  for (const r of reg.routines) {
+    if (!r.key || keys.has(r.key)) bad.push(`routines.json: missing or repeated key "${r.key}"`); keys.add(r.key);
+    if (r.cron && r.cron.trim().split(/\s+/).length !== 5) bad.push(`routines.json: ${r.key} cron "${r.cron}" is not 5 fields`);
+    if (r.tier === "ai" && aiYml) {
+      if (!aiYml.includes(`cron: "${r.cron}"`)) bad.push(`routines.json: ${r.key} cron "${r.cron}" is not scheduled in ai-jobs.yml`);
+      if (!new RegExp(`"${r.cron.replace(/[*]/g, "\\*")}"\\)\\s+job=${r.key}\\b`).test(aiYml)) bad.push(`routines.json: ai-jobs.yml does not map "${r.cron}" to job ${r.key}`);
+    }
+  }
+  if (bad.length) { bad.forEach((b) => console.error("error: " + b)); console.error("\nBuild failed: routines.json and the workflows disagree."); process.exit(1); }
+  const st = docs["meta/status"] || {};
+  const routines = reg.routines.map((r) => ({ ...r, last_at: (r.status_key && st[r.status_key]) || null }));
+  const runsDir = join(DATA, "runs"), runs = [];
+  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(7)).sort().reverse())
+    for (const f of readdirSync(join(runsDir, d)).sort().reverse()) {
+      const r = readJson(join(runsDir, d, f), {}); if (runs.length >= 40) break;
+      runs.push({ at: `${d}T${f.slice(0, 2)}:${f.slice(2, 4)}:00Z`, job: String(r.job || f.slice(5, -5)).slice(0, 40),
+        added: (r.added || r.kev_added || []).length, updated: (r.updated || r.events_updated || []).length,
+        failed: (r.failed || r.failed_sites || []).length, note: String(r.notes || r.mode || "").slice(0, 200) });
+    }
+  const leadsDir = join(DATA, "leads"), byTier = { gov: 0, vendor: 0, news: 0 }; let leads24 = 0;
+  if (existsSync(leadsDir)) for (const f of readdirSync(leadsDir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(1)))
+    for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); if (Date.now() - Date.parse(l.seen_at) < 864e5) { leads24++; byTier[l.tier] = (byTier[l.tier] || 0) + 1; } } catch {} }
+  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] } }));
 }
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)

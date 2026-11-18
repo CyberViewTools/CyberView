@@ -12,6 +12,7 @@ A rolling seven-day world map of publicly reported cyber events: incidents, outa
 - **Share and subscribe.** Every event has a link (`#e=<id>`) and a Copy link button. High-severity and known-exploited events are published as an [RSS feed](https://xanderhutch.github.io/CyberView/data/feed.xml) and a [JSON Feed](https://xanderhutch.github.io/CyberView/data/feed.json).
 - **Trends.** [What is moving](https://xanderhutch.github.io/CyberView/trends.html): this week against last by event type, sector, country, actor, product and theme, with daily counts and an honest caveat while history is short.
 - **Time-lapse and deep search.** Play the window day by day on the map; searches also point to older matches in the archive.
+- **Runs itself, in the open.** A [status page](https://xanderhutch.github.io/CyberView/status.html) lists every routine, when it last ran and what it found; an hourly collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
 - **Static site.** One HTML page reading one JSON bundle. No accounts, no tracking. Watchlists stay in your browser.
 
 ## How it stays current

@@ -1,7 +1,7 @@
 // Checks the live site over HTTP. No browser, no AI model. Run: node scripts/monitor.mjs [base URL]
 // Exit 0 = healthy, 1 = something is broken (the workflow opens or updates a GitHub issue), 2 = only warnings.
 // Writes monitor-report.md next to the repo root for the workflow to post.
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./lib/store.mjs";
 
@@ -45,11 +45,13 @@ else {
   const maxH = Number(process.env.MAX_BUNDLE_HOURS || 12);
   if (builtH > maxH) fails.push(`Bundle was built ${builtH.toFixed(1)} h ago (limit ${maxH} h); the live data is stale`);
   else if (builtH > 6) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago `);
-  const sweptH = st.last_sweep_at ? hours(st.last_sweep_at) : Infinity;
-  if (sweptH > 8) fails.push(`Last sweep was ${isFinite(sweptH) ? sweptH.toFixed(1) + " h" : "never"} ago; the sweep job has stopped`);
-  else if (sweptH > 3.5) warns.push(`Last sweep was ${sweptH.toFixed(1)} h ago`);
-  const feedsH = st.last_feeds_at ? hours(st.last_feeds_at) : Infinity;
-  if (feedsH > 6) warns.push(`Feeds last ran ${isFinite(feedsH) ? feedsH.toFixed(1) + " h" : "never"} ago`);
+  // lateness comes from routines.json: active routines with a status timestamp, late past max_age_hours, failing past twice that
+  const reg = JSON.parse(readFileSync(join(ROOT, "routines.json"), "utf8"));
+  for (const r of reg.routines.filter((r) => r.active && r.status_key && r.max_age_hours)) {
+    const h = st[r.status_key] ? hours(st[r.status_key]) : Infinity, msg = isFinite(h) ? `${h.toFixed(1)} h ago` : "never";
+    if (h > 2 * r.max_age_hours) fails.push(`${r.name} last ran ${msg} (expected every ${r.max_age_hours} h or less); it has stopped`);
+    else if (h > r.max_age_hours) warns.push(`${r.name} is late: last ran ${msg}`);
+  }
   const future = (d.events || []).filter((e) => e.date > new Date(Date.now() + 864e5).toISOString().slice(0, 10));
   if (future.length) fails.push(`${future.length} event(s) dated in the future: ${future.slice(0, 3).map((e) => e.id).join(", ")}`);
 }

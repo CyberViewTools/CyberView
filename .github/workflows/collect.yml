@@ -1,0 +1,47 @@
+name: Collect leads
+
+# Hourly, no AI model: reads public RSS and Atom feeds from agencies, vendors and security news
+# (scripts/collect.mjs) and appends new items to data/leads/<date>.jsonl. The AI sweep starts from these.
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: data-writes
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Collect
+        run: node scripts/collect.mjs
+      - name: Validate
+        run: node scripts/build.mjs > /dev/null
+      - name: Commit and push
+        run: |
+          git config user.name "cyberview-collect"
+          git config user.email "cyberview-collect@users.noreply.github.com"
+          git add data/leads data/status.json
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
+          git commit -q -m "data: collect, $n new lead(s)"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
+          exit 1
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**Lead collector failed.** New feed items are not being collected." > report.md
+          bash .github/scripts/alert.sh job-failure "Lead collector is failing" report.md failing

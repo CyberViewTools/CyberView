@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>CyberView status</title>
+<meta name="description" content="How CyberView keeps itself current: every routine, when it last ran, and what it found.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="archive.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
+  <span class="crumb">Status</span>
+  <span class="spacer"></span>
+  <a class="btn ghost" href="trends.html">Trends</a>
+  <a class="btn ghost" href="archive.html">Archive</a>
+  <a class="btn ghost" href="./">Back to the map</a>
+</header>
+<main>
+  <section class="intro">
+    <h1>How CyberView keeps itself current</h1>
+    <p id="summary" aria-live="polite">Loading status</p>
+  </section>
+  <section class="panel">
+    <h2>Routines</h2>
+    <div class="tablewrap"><table id="routines">
+      <thead><tr><th scope="col">Routine</th><th scope="col">Runs</th><th scope="col">Model</th><th scope="col">Last run</th><th scope="col">State</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="note">Automation routines are scripts on GitHub Actions and use no AI model. AI routines are Claude jobs; each picks the cheapest model that does its job well. Times are UTC. "Late" means past its expected gap; "stopped" means more than twice that.</p>
+  </section>
+  <div class="dims">
+    <section class="panel">
+      <h2>Lead queue</h2>
+      <p id="leads" class="big"></p>
+      <ul class="plain" id="leadTiers"></ul>
+      <p class="note">New items from agency, vendor and news feeds in the last 24 hours. The sweep checks them before searching the web.</p>
+    </section>
+    <section class="panel">
+      <h2>Recent runs</h2>
+      <ul class="plain runs" id="runs"></ul>
+      <p class="note">From the run logs in data/runs, which keep every search, page read and rejected lead.</p>
+    </section>
+  </div>
+</main>
+<script src="status.js"></script>
+</body>
+</html>

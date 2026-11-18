@@ -270,6 +270,30 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(bundle), v16)
+
+        # v1.7: status page from routines.json, feed parser
+        async def v17(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=1200)
+            reg = json.load(open(os.path.join(ROOT, "routines.json")))
+            ok("status: one row per routine", await pg.locator("#routines tbody tr").count() == len(reg["routines"]))
+            ok("status: summary counts active routines", "active routines" in await pg.inner_text("#summary"))
+            ok("status: lead queue shown", "new leads" in await pg.inner_text("#leads"))
+            ok("status: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(bundle), v17)
+        probe = r"""import('./scripts/collect.mjs').then(m => {
+          const rss = '<rss><channel><item><title>A &amp; B</title><link>https://x.test/a</link><pubDate>Tue, 18 Nov 2026 10:00:00 GMT</pubDate><description><![CDATA[<p>Hi</p>]]></description></item></channel></rss>';
+          const atom = '<feed><entry><title>C</title><link rel="alternate" href="https://x.test/c"/><updated>2026-11-18T09:00:00Z</updated><summary>S</summary></entry></feed>';
+          const a = m.parseFeed(rss), b = m.parseFeed(atom);
+          console.log(JSON.stringify([a[0].title, a[0].url, a[0].published, a[0].summary, b[0].url, m.FEEDS.length]));
+        })"""
+        r = subprocess.run(["node", "--input-type=module", "-e", probe], capture_output=True, text=True, cwd=ROOT)
+        try:
+            got = json.loads(r.stdout.strip().splitlines()[-1])
+        except Exception:
+            got = None
+        ok("collector: parses RSS and Atom", got is not None and got[:5] == ["A & B", "https://x.test/a", "2026-11-18T10:00:00Z", "Hi", "https://x.test/c"], got or r.stderr[-200:])
         import xml.etree.ElementTree as ET
         try:
             items = ET.parse(os.path.join(ROOT, "site", "data", "feed.xml")).findall(".//item")

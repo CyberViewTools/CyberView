@@ -28,7 +28,10 @@
   function state(r) {
     if (!r.active) return { cls: "wait", text: "Paused" };
     if (!r.status_key) return { cls: "info", text: "See GitHub runs", link: /^[a-z0-9-]+\.yml$/.test(String(r.workflow)) ? REPO + "/actions/workflows/" + r.workflow : "" };
-    if (!r.last_at) return { cls: "bad", text: "No run recorded" };
+    if (!r.last_at) {
+      var since = r.active_since ? (Date.now() - Date.parse(r.active_since)) / 36e5 : Infinity;
+      return since <= r.max_age_hours ? { cls: "info", text: "Waiting for first run" } : { cls: "bad", text: "No run recorded" };
+    }
     var h = (Date.now() - Date.parse(r.last_at)) / 36e5;
     if (h <= r.max_age_hours) return { cls: "ok", text: "On time" };
     if (h <= 2 * r.max_age_hours) return { cls: "warn", text: "Late" };

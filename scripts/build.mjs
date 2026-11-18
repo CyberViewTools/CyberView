@@ -9,6 +9,7 @@
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
+//   site/data/chat.json              reviewed community posts (newest 300)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
@@ -17,7 +18,7 @@ import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
-import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide } from "./lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -88,6 +89,19 @@ for (const [path, file] of [["meta/status", "status.json"], ["analysis/latest", 
   const d = readJson(p); if (d) docs[path] = d; else errors.push(`${file}: not valid JSON`);
 }
 
+// community posts: only reviewed ones are on file; removed ones stay on file but are not published
+const chat = [];
+{
+  const ids = new Set(allEvents.map((e) => e.id));
+  for (const x of listDir("chat")) {
+    if (x.id === "pending") continue;
+    const bad = x.r ? checkChat({ ...x.r, id: x.r.id === x.id ? Number(x.id) : x.r.id }, ids) : ["not valid JSON"];
+    if (bad.length) { bad.forEach((m) => errors.push(`${x.path.slice(DATA.length + 1)}: ${m}`)); continue; }
+    if (!x.r.removed) chat.push({ id: Number(x.id), at: x.r.at, author: x.r.author, kind: x.r.kind, text: x.r.text, event_id: x.r.event_id || "", links: x.r.links, reviewed_at: x.r.reviewed_at, note: x.r.note || "" });
+  }
+  chat.sort((a, b) => (a.at < b.at ? 1 : -1));
+}
+
 // fix guides (the advisory desk): one per CVE, from the vendor's own advisory
 const guides = {};
 for (const x of listDir("guides")) {
@@ -154,6 +168,7 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
   for (const [cve, g] of Object.entries(guides)) for (const h of g.hunt || []) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
   writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
+writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
   past: tabletop.past.map((t) => ({ date: t.date, title: t.title })), exercises: tabletop.past.slice(0, 26) }));

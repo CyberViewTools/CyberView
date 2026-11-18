@@ -12,6 +12,7 @@ This is a working checklist for running CyberView responsibly. It is **not legal
 | Leak-site data | Spreading stolen personal data | Only organisation names from leak-site listings; never files, samples or personal data. Stated in the privacy policy. | ✅ |
 | People named in events | Privacy of individuals | Only what official or published sources state (for example court records). Removal route provided. | ✅ |
 | Outages vs attacks | Wrongly implying an attack | Outages are never called attacks without an official source (data rules in CLAUDE.md). | ✅ |
+| Community posts | Defamation, privacy breaches or harmful content posted by visitors | Pre-moderated: fixed rules (no personal data, credentials, files, risky links; rate and account-age limits), then an AI moderator that refuses unsourced claims about named parties. Posts labelled as visitors' own words; Report link on every post; removal route; rules in the terms. As a publisher of third-party content you can still be liable once told a post is unlawful: act on reports promptly. | ✅ (watch reports 🟡) |
 | Not advice | Reliance on wrong information | "Information, not advice" in the terms, a disclaimer in every alert, and a no-warranty and limitation-of-liability clause. | ✅ |
 | AI-generated content | Transparency | About explains that AI jobs do the research under published rules, and that mistakes are possible. | ✅ |
 | Data source terms | Licence conditions | CISA KEV (public domain), FIRST EPSS, NVD (required "not endorsed" notice included), IODA and GDACS are attributed on About. | ✅ |

@@ -69,6 +69,10 @@ A fix guide written by the advisory desk from the vendor's own advisory (never f
 `cve, advisory {name, url}, read_at, read_depth (full, summary), check[], fixed[], workaround[], compromise_signs[], exposure (internet, internal, local), exploit_public (bool), hunt[]`.
 The workbench (`workbench.html`, from `site/data/workbench.json`) shows it under each flaw and uses `exposure` and `exploit_public` in the priority score.
 
+## data/chat/&lt;YYYY-MM&gt;/&lt;issue&gt;.json
+
+A reviewed community post: `id` (issue number), `at`, `author` (GitHub login), `kind` (comment, tip, question), `text` (plain, at most 600), `event_id`, `links` (at most 2, https), `reviewed_at`, optional `note` (moderator's note), `removed`, `removed_at`, `removed_reason`. Written only by `scripts/chat.mjs approve`; the build publishes the newest 300 that are not removed to `site/data/chat.json`.
+
 ## data/tabletop.json
 
 The weekly tabletop exercise (the tabletop job), copied to `data/snapshots/tabletop/<YYYY-MM-DD>.json`. The build rejects it unless every field passes `scripts/lib/validate.mjs`:

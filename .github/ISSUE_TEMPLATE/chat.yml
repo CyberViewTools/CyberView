@@ -1,0 +1,32 @@
+name: Community post
+description: Post a tip, question or comment to CyberView's community feed. It appears on the site after review.
+title: "Community post"
+labels: ["chat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Your post is public and shows your GitHub username. It appears on the site only after review, usually within the hour.
+        Not allowed: accusations without a public source, personal information, credentials, indicators or exploit code, advertising, abuse. Plain text only, at most 600 characters and 2 links.
+  - type: textarea
+    id: message
+    attributes:
+      label: Message
+      description: Plain text, at most 600 characters.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Comment
+        - Tip
+        - Question
+    validations:
+      required: true
+  - type: input
+    id: event
+    attributes:
+      label: About an event (optional)
+      description: The event's id from its CyberView link (the part after #e=).

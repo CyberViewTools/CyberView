@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.17",date:"2026-11-18"};
+var BUILD={version:"1.18",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -536,6 +536,7 @@ function card(e,open){
       var u=eventLink(e.id);
       try{navigator.clipboard.writeText(u).then(function(){toast("Link copied.");},function(){toast(u);});}catch(x){toast(u);}
     });acts.appendChild(lk);
+    var dc=el("a","abtn","Discuss");dc.href="community.html#e="+encodeURIComponent(e.id);dc.title="Community posts about this event, and a place to add yours (reviewed before they appear)";acts.appendChild(dc);
     if(e.country){var cf=el("button",null,"More from "+e.country);cf.type="button";cf.addEventListener("click",function(){state.country=normC(e.country);select(null);});acts.appendChild(cf);}
     var rpb=el("button",null,"Report an error");rpb.type="button";rpb.id="reportBtn";rpb.setAttribute("aria-expanded",rep.id===e.id?"true":"false");
     rpb.addEventListener("click",function(){rep=rep.id===e.id?{id:null,text:"",fail:false,busy:false}:{id:e.id,text:"",fail:false,busy:false};render();var t=$("reportText");if(t)t.focus();});

@@ -126,7 +126,7 @@ body.nav-open{overflow:hidden}
 .sheetnav{display:flex;flex-direction:column;gap:4px}
 .sheetnav a{font-size:17px;padding:14px 14px;color:var(--ink);border-radius:12px}
 .sheetnav a[aria-current="page"]{background:rgba(255,255,255,.1);box-shadow:inset 3px 0 0 var(--accent)}
-@media (max-width:760px){.sitenav{display:none}.navbtn{display:inline-flex}.bar{padding:10px 14px}}
+@media (max-width:900px){.sitenav{display:none}.navbtn{display:inline-flex}.bar{padding:10px 14px}}
 /* narrow screens: wide tables scroll inside their panel instead of widening the page */
 .panel{max-width:100%;min-width:0;overflow-x:auto}
 .dims>*{min-width:0}
@@ -207,3 +207,21 @@ body.nav-open{overflow:hidden}
 .wbh{display:grid;grid-template-columns:130px minmax(0,1fr);gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
 .wbh .note{margin:3px 0 0}.wbh a{overflow-wrap:anywhere}
 @media (max-width:600px){.wbhead{grid-template-columns:46px minmax(0,1fr)}.wbrank{display:none}.wbdetail{padding:2px 14px 14px}.wbh{grid-template-columns:1fr}.wbscore{font-size:18px}}
+/* community feed */
+.cmform{display:flex;flex-direction:column;gap:10px}
+.cmfield{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.cmfield textarea,.cmrow input,.cmrow select{border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);padding:9px 11px;font:15px var(--font);min-width:0}
+.cmfield textarea{resize:vertical}
+.cmrow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.cmrow label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}.cmrow label.grow{flex:1 1 220px}
+.cmrow select option{background:#1c1f27;color:#e8eaf0}
+.note.bad{color:#ff8171}
+.cm .wbhow ul{margin:8px 0 0;padding-left:20px}.cm .wbhow li{margin:5px 0}
+.cmlist{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.cmpost{padding:13px 16px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.cmhead{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.cmhead .note,.cmfoot .note{margin:0}
+.cmrev{margin-left:auto!important;color:#5bd68a!important}
+.cmtext{margin:8px 0 0;font-size:15px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.cmnote{font-style:italic}
+.cmfoot{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:13px}

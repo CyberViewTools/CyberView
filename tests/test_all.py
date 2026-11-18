@@ -587,7 +587,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "Trends", "Exercise", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -634,10 +634,10 @@ async def main():
             ok("phone: Esc closes the sheet and returns focus", await pg.locator("#navSheet").is_hidden() and await pg.evaluate("document.activeElement.id") == "navBtn")
             vs = await pg.locator("#viewseg").bounding_box()
             ok("phone: view switcher fills its row", vs["width"] > 330, vs)
-            for sub in ["archive.html", "trends.html", "tabletop.html", "workbench.html", "about.html"]:
+            for sub in ["archive.html", "trends.html", "tabletop.html", "workbench.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 7 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 8 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -802,6 +802,53 @@ async def main():
             await ctx.close()
 
         await serve(site17, v117)
+
+        # v1.18: community feed (reviewed posts only)
+        site18 = make_site(bundle)
+        ev0 = bundle["events"][0]["id"]
+        json.dump({"built_at": "x", "posts": [
+            {"id": 41, "at": "2026-11-18T21:00:00Z", "author": "defender-one", "kind": "tip", "text": "Disabling http2 held for us. Guidance: https://www.cisa.gov/example-alert and more.", "event_id": ev0, "links": ["https://www.cisa.gov/example-alert"], "reviewed_at": "2026-11-18T21:40:00Z", "note": "Opinion; not verified."},
+            {"id": 42, "at": "2026-11-18T20:00:00Z", "author": "blue-team", "kind": "question", "text": "<img src=x onerror=alert(1)> is 7.2 affected?", "event_id": "", "links": ["javascript:alert(1)"], "reviewed_at": "2026-11-18T20:40:00Z"},
+            {"id": 43, "at": "2026-11-18T19:00:00Z", "author": "not-reviewed", "kind": "comment", "text": "This must never show.", "links": []},
+            {"id": 44, "at": "2026-11-18T18:00:00Z", "author": "bad name<script>", "kind": "comment", "text": "bad author", "links": [], "reviewed_at": "2026-11-18T18:40:00Z"}]},
+            open(os.path.join(site18, "data", "chat.json"), "w"))
+
+        async def v118(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "community.html"), wait=800)
+            ok("community: only reviewed, well-formed posts shown", await pg.locator("#cmList .cmpost").count() == 2 and "This must never show" not in await pg.inner_text("body"))
+            ok("community: markup shown as text", await pg.locator("#cmList img").count() == 0 and await pg.locator("#cmList script").count() == 0)
+            hrefs = await pg.eval_on_selector_all("#cmList a", "as => as.map(a => [a.href, a.rel])")
+            ok("community: links are https and nofollow", not any(h[0].startswith("javascript") for h in hrefs) and any("cisa.gov/example-alert" in h[0] and "nofollow" in h[1] for h in hrefs), hrefs)
+            first = await pg.locator("#cmList .cmpost >> nth=0").text_content()
+            ok("community: author, reviewed mark, moderator note, report link", all(x in first for x in ["defender-one", "Reviewed", "Moderator's note", "Report #41"]), first)
+            await pg.select_option("#cmShow", "question"); await pg.wait_for_timeout(100)
+            ok("community: filter by kind", await pg.locator("#cmList .cmpost").count() == 1)
+            await pg.select_option("#cmShow", "")
+            await pg.click("#cmPost")
+            ok("post: empty message stopped on the page", await pg.locator("#cmWarn").is_visible() and "Write a message" in await pg.locator("#cmWarn").text_content())
+            await pg.fill("#cmText", "my key is AKIAABCDEFGHIJKLMNOP"); await pg.click("#cmPost")
+            ok("post: a credential is stopped on the page", "credential" in await pg.locator("#cmWarn").text_content())
+            await pg.fill("#cmText", "Seeing scans for this flaw across our edge."); await pg.fill("#cmEvent", ev0)
+            await pg.context.route("https://github.com/**", lambda r: r.fulfill(status=200, content_type="text/html", body="ok"))   # never reach GitHub from a test
+            async with pg.context.expect_page() as np:
+                await pg.click("#cmPost")
+            gh = await np.value; await gh.wait_for_load_state()
+            ok("post: opens the GitHub form prefilled, nothing sent from the page", "github.com/xanderhutch/CyberView/issues/new" in gh.url and "template=chat.yml" in gh.url and "Seeing%20scans" in gh.url and "event=" + ev0 in gh.url, gh.url[:160])
+            await gh.close()
+            ok("community: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "community.html#e=" + ev0)); await pg.reload(); await pg.wait_for_timeout(600)
+            ok("community: event link shows that event's posts", await pg.locator("#cmList .cmpost").count() == 1 and await pg.locator("#cmClear").is_visible() and await pg.input_value("#cmEvent") == ev0)
+            await pg.context.close()
+            ctx = await browser.new_context(viewport={"width": 390, "height": 844})
+            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "community.html")); await pg.wait_for_timeout(600)
+            ok("phone community: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ctx.close()
+            pg, errs = await open_page(browser, url, w=1000, wait=1200)
+            nb = await pg.locator("header .sitenav").bounding_box(); rb = await pg.locator("#refresh").bounding_box()
+            ok("nav: eight links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
+            await pg.context.close()
+
+        await serve(site18, v118)
 
         await browser.close()
 

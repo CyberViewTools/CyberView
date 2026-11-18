@@ -126,3 +126,23 @@ export function checkGuide(g, id) {
   if (g.exploit_public != null && typeof g.exploit_public !== "boolean") p.push("exploit_public must be true or false");
   return p.concat(checkHunt(g.hunt));
 }
+
+/**
+ * A published community post (data/chat/<YYYY-MM>/<issue>.json), written only by scripts/chat.mjs approve after review.
+ * { id, at, author, kind: comment | tip | question, text, event_id, links[], reviewed_at, note?, removed?, removed_reason? }
+ */
+export function checkChat(c, known) {
+  if (!c || typeof c !== "object" || Array.isArray(c)) return ["not an object"];
+  const p = [];
+  if (!Number.isInteger(c.id) || c.id < 1) p.push("id must be the issue number");
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(c.at || "")) p.push("at must be an ISO time");
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(c.author || "")) p.push("author must be a GitHub login");
+  if (!["comment", "tip", "question"].includes(c.kind)) p.push("kind must be comment, tip or question");
+  if (!text(c.text, 600) || /[<>\u0000-\u001f]/.test(c.text)) p.push("text is required: plain text, at most 600 characters, no markup");
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(c.reviewed_at || "")) p.push("reviewed_at is required: a post is never published unreviewed");
+  if (!Array.isArray(c.links) || c.links.length > 2 || c.links.some((u) => typeof u !== "string" || !/^https:\/\/[^\s"'<>]+$/.test(u))) p.push("links: at most 2, https only");
+  if (c.event_id && (!ID.test(c.event_id) || (known && !known.has(c.event_id)))) p.push(`event_id "${c.event_id}" is not an event on file`);
+  if (c.note != null && !text(c.note, 200)) p.push("note must be text (at most 200 characters)");
+  if (c.removed != null && typeof c.removed !== "boolean") p.push("removed must be true or false");
+  return p;
+}

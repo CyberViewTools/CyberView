@@ -1,7 +1,7 @@
 // Prints the full prompt for one scheduled AI job: the shared preamble from docs/jobs.md, a blank line,
 // then that job's section. docs/jobs.md stays the single source of truth for every job's instructions.
 // Usage: node scripts/job-prompt.mjs <job>   (sweep, verify, report-review, analysis, deep-sweep, brief, watchdog,
-//        security-review, triage, regional, followup, steward, tabletop, advisory)
+//        security-review, triage, regional, followup, steward, tabletop, advisory, moderator)
 // For the triage desk and the sweep it first runs the no-AI housekeeping (start overdue workflows, collect feeds,
 // clear obvious leads), so that work happens every run whether or not the agent remembers it.
 // Set NO_HOUSEKEEPING=1 to skip it (the GitHub Actions fallback does).
@@ -12,19 +12,21 @@ import { ROOT } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
-  "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk",
+  "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
 
-if ((job === "sweep" || job === "triage") && !process.env.NO_HOUSEKEEPING) {
+if ((job === "sweep" || job === "triage" || job === "moderator") && !process.env.NO_HOUSEKEEPING) {
   const steps = job === "sweep"
     ? [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/triage.mjs"]]]
+    : job === "moderator" ? [["node", ["scripts/chat.mjs", "intake"]]]
     : [["node", ["scripts/triage.mjs"]]];
   const lines = ["HOUSEKEEPING (already done by this command; nothing for you to run):"];
   for (const [cmd, args] of steps) {
     const r = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: 240000, env: { ...process.env, NODE_USE_ENV_PROXY: "1" } });
     const out = `${r.stdout || ""}${r.stderr || ""}`.split("\n").filter((l) => l.trim() && !/Warning|trace-warnings/.test(l));
+    if (job === "moderator") { lines.push(`- ${args[0]}: ${r.status === 0 ? "ok" : "FAILED (" + (r.status ?? r.signal) + ")"}`, ...out.slice(0, 60).map((l) => "  " + l.slice(0, 900))); continue; }
     lines.push(`- ${args[0]}: ${r.status === 0 ? "ok" : "FAILED (" + (r.status ?? r.signal) + ")"}${out.length ? "; " + out.slice(-3).join(" | ").slice(0, 300) : ""}`);
   }
   process.stdout.write(lines.join("\n") + "\n\n");

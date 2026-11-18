@@ -1,6 +1,6 @@
 # Scheduled jobs
 
-CyberView runs itself, entirely on GitHub: the repository is public, so GitHub Actions minutes and GitHub Pages hosting are free and unmetered. Work is split by what it needs:
+CyberView runs itself. The mechanical tiers run on GitHub (the repository is public, so Actions minutes and Pages hosting are free); the Claude jobs run as Claude Code scheduled tasks on the owner's Claude plan. Work is split by what it needs:
 
 | Tier | What | Workflow | Model |
 |---|---|---|---|
@@ -10,7 +10,7 @@ CyberView runs itself, entirely on GitHub: the repository is public, so GitHub A
 | 0 | Live monitor: pages, CSP, data and sweep freshness hourly; browser check twice a day | `monitor.yml` | none |
 | 0 | Security: static check on every code push and deploy, live check weekly | `build.yml`, `security.yml` | none |
 | 0 | Structural cleanup: schema, month folders, duplicate ids, front-page sources, long summaries | `scripts/build.mjs`, every deploy | none |
-| 1 | The eight Claude jobs below | `ai-jobs.yml` (Claude Code GitHub Action) | per job |
+| 1 | The eight Claude jobs below | Claude Code scheduled tasks ("CyberView: <job>") firing into the "CyberView ops" session, which has this repo checked out and pushes to main; `ai-jobs.yml` remains as a manual fallback | per job |
 
 Failures open a GitHub issue (labels `site-monitor`, `job-failure`, `security`) that closes itself on recovery. Visitors' error reports arrive as issues labelled `event-report`. The **watchdog** job reads all of them daily and fixes what it can.
 
@@ -115,4 +115,6 @@ JOB: security review. Review the past 7 days of changes for security problems: g
 Every routine is listed in `routines.json` (name, tier, workflow, cron, model, `status_key`, `max_age_hours`, `active`). The build fails if an AI routine's cron there disagrees with `ai-jobs.yml`, the monitor and the watchdog use `max_age_hours` to spot late routines, and `status.html` shows them all.
 
 - **Automation routine (no model):** write a script in `scripts/`, a workflow in `.github/workflows/` that commits to `data/` (copy `collect.yml`), have the script set its timestamp in `data/status.json`, add it to the `workflows:` list in `pages.yml` so its commits deploy, and add a `routines.json` entry.
-- **AI routine:** add a `## Name` section with a code block here, add the job key to `HEADINGS` in `scripts/job-prompt.mjs`, add its cron to `ai-jobs.yml` (schedule list, job mapping and model choice), and add a `routines.json` entry with the same cron. Set `active` to true once it can run.
+- **AI routine:** add a `## Name` section with a code block here, add the job key to `HEADINGS` in `scripts/job-prompt.mjs`, add a `routines.json` entry (`"workflow": "claude-task"`), and create a Claude Code scheduled task with the same cron (UTC) that fires into the "CyberView ops" session. Its message follows the existing tasks: pull, print the prompt with `node scripts/job-prompt.mjs <key>`, then do the job (Sonnet, the session's model) or hand it to one subagent with model "opus" or "haiku".
+
+How the Claude jobs run: each scheduled task sends one message to the "CyberView ops" Claude Code session. Messages queue, so jobs never overlap or race on git. The session's checkout persists between runs and is re-cloned if its container is replaced. Prompts live only here (`docs/jobs.md`); the scheduled task messages just point at them, so editing a job means editing this file.

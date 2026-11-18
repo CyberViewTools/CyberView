@@ -158,7 +158,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   for (const r of reg.routines) {
     if (!r.key || keys.has(r.key)) bad.push(`routines.json: missing or repeated key "${r.key}"`); keys.add(r.key);
     if (r.cron && r.cron.trim().split(/\s+/).length !== 5) bad.push(`routines.json: ${r.key} cron "${r.cron}" is not 5 fields`);
-    if (r.tier === "ai" && aiYml) {
+    if (r.tier === "ai" && aiYml && r.workflow === "ai-jobs.yml") {
       if (!aiYml.includes(`cron: "${r.cron}"`)) bad.push(`routines.json: ${r.key} cron "${r.cron}" is not scheduled in ai-jobs.yml`);
       if (!new RegExp(`"${r.cron.replace(/[*]/g, "\\*")}"\\)\\s+job=${r.key}\\b`).test(aiYml)) bad.push(`routines.json: ai-jobs.yml does not map "${r.cron}" to job ${r.key}`);
     }

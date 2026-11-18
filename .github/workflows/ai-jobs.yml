@@ -1,5 +1,4 @@
 name: AI jobs
-# Schedule registered 2026-11-18; times are UTC.
 
 # The Claude research and maintenance jobs, run by Claude Code's GitHub Action on a schedule.
 # Each run: check out main, build the prompt from docs/jobs.md (shared preamble + the job's section),
@@ -11,15 +10,8 @@ name: AI jobs
 #   3. Repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`; uses a Claude subscription).
 # Schedule and models are listed in docs/jobs.md and routines.json; change them together.
 on:
-  schedule:
-    - cron: "10 */4 * * *"     # sweep, every 4 h
-    - cron: "19 3,15 * * *"    # verify, twice a day
-    - cron: "17 13 * * *"      # report review, daily
-    - cron: "50 12 * * *"      # analysis, daily
-    - cron: "17 9 * * 1,4"     # deep sweep, Mondays and Thursdays
-    - cron: "40 11 * * *"      # brief, 6:40 am Toronto (winter)
-    - cron: "30 14 * * *"      # watchdog, daily
-    - cron: "5 8 * * 1"        # security review, Mondays
+  # No schedule: the AI jobs run as Claude Code scheduled tasks in the "CyberView ops" session (see docs/jobs.md),
+  # on the owner's Claude plan. This workflow stays as a manual fallback (needs Console credit for identity federation).
   workflow_dispatch:
     inputs:
       job:

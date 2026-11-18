@@ -26,7 +26,7 @@
     return days + hr.split(",").map(function (h) { return pad(h) + ":" + pad(min); }).join(" and ");
   }
   function state(r) {
-    if (!r.active) return { cls: "wait", text: r.tier === "ai" ? "Not running yet: needs Claude sign-in" : "Paused" };
+    if (!r.active) return { cls: "wait", text: "Paused" };
     if (!r.status_key) return { cls: "info", text: "See GitHub runs", link: /^[a-z0-9-]+\.yml$/.test(String(r.workflow)) ? REPO + "/actions/workflows/" + r.workflow : "" };
     if (!r.last_at) return { cls: "bad", text: "No run recorded" };
     var h = (Date.now() - Date.parse(r.last_at)) / 36e5;

@@ -236,10 +236,6 @@ button.brow:hover span:first-child{color:var(--accent)}
 .m .ctry{fill:none;stroke:var(--muted);stroke-width:1.3;stroke-dasharray:.5 3;stroke-linecap:round}
 .key svg.rg{width:16px;height:16px}
 .key .wlr{fill:none;stroke:var(--accent);stroke-width:2.2}.key .act{fill:none;stroke:var(--ink);stroke-width:1.3;stroke-dasharray:3 2.5}.key .ctry{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-dasharray:.5 3;stroke-linecap:round}
-#wlDlg{position:absolute;right:454px;top:calc(var(--hdr,96px) + 24px);width:380px;max-width:calc(100% - 24px);padding:14px;z-index:5;display:flex;flex-direction:column;gap:8px}
-#wlDlg h2{margin:0;font-family:var(--font-display);font-size:16px;font-weight:600}
-#wlDlg p{margin:0;font-size:12.5px;color:var(--muted)}
-#wlDlg .dacts{display:flex;gap:8px;justify-content:flex-end}
 #wlText{min-height:110px}
 #wlNote{color:var(--ink)}
 .bhd{font-family:var(--font-display);font-size:17px;font-weight:600;line-height:1.25;margin:0 0 3px}
@@ -300,7 +296,6 @@ details.blk ul{margin:7px 0 0;padding-left:18px;font-size:12.5px}
   .key{display:none}
   .zoomer{top:12px}
   .kpis{grid-template-columns:repeat(2,1fr)}
-  #wlDlg{position:fixed;left:10px;right:10px;top:60px;width:auto;max-width:none}
   .tools{flex-wrap:wrap}
   #toast{position:fixed}
 }
@@ -382,8 +377,6 @@ h1{font-weight:700;letter-spacing:-.02em}
 .key .kt{color:var(--accent)}
 .cl circle{stroke-width:2}
 @media (min-width:901px){
-  #wlDlg{left:50%;right:auto;top:50%;transform:translate(-50%,-50%);width:400px;padding:20px;border-radius:22px;box-shadow:0 0 0 100vmax rgba(20,30,50,.18),var(--shadow)}
-  #wlDlg h2{text-align:center;font-size:17px}
 }
 
 /* ---- dark smoked-glass appearance ---- */
@@ -471,12 +464,7 @@ h1{font-weight:700;letter-spacing:-.02em}
 .vnone{color:var(--muted);font-size:12.5px;padding:8px 0}
 @media (max-width:900px){.viz{order:2;overflow:visible}body[data-view="time"] #stage,body[data-view="graph"] #stage{display:none}}
 
-#hoDlg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;max-width:calc(100% - 24px);padding:20px;border-radius:22px;z-index:5;display:flex;flex-direction:column;gap:8px;box-shadow:0 0 0 100vmax rgba(20,30,50,.18),var(--shadow)}
-#hoDlg h2{margin:0;font-family:var(--font-display);font-size:17px;font-weight:600;text-align:center}
-#hoDlg p{margin:0;font-size:12.5px;color:var(--muted)}
-#hoDlg .dacts{display:flex;gap:8px;justify-content:flex-end}
 #hoDlg textarea{background:var(--fill);border:0;border-radius:10px;padding:10px 12px;min-height:320px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;color:var(--ink);resize:vertical}
-@media (max-width:900px){#hoDlg{position:fixed;left:10px;right:10px;top:60px;width:auto;max-width:none;transform:none}}
 #kevBadge:not(:empty){display:inline-block;min-width:17px;padding:0 5px;border-radius:999px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;line-height:17px;margin-left:2px}
 .khead{font-size:12.5px;color:var(--muted)}
 .khead b{color:var(--ink)}
@@ -563,7 +551,6 @@ a.btn{text-decoration:none}
 .day.play:hover svg,.day.play:focus-visible svg{background:color-mix(in srgb,var(--accent) 30%,transparent)}
 .day.play[aria-pressed="true"] svg{background:var(--accent);color:#06203f}
 /* ---- environment drop (v1.9) ---- */
-#wlDlg{max-height:calc(100vh - var(--hdr,96px) - 40px);overflow:auto}
 .drop{border:1.5px dashed var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;font-size:12px;color:var(--muted);transition:border-color .15s,background .15s}
 .drop strong{color:var(--ink);font-size:13px}
 .drop.over{border-color:var(--accent);background:var(--tint)}
@@ -602,6 +589,62 @@ body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
 .wire .wwhen{color:var(--muted);white-space:nowrap;font-size:11px}
 @media (max-width:1100px){.wire{display:none!important}}
 @media (max-width:600px){.hud{display:none}.layers{left:54px}}
+/* ---- v1.12: dialogs, header menu, phone layout ---- */
+.backdrop{position:fixed;inset:0;background:rgba(8,10,16,.55);backdrop-filter:blur(2px);z-index:20}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(580px,calc(100vw - 24px));max-height:min(86vh,880px);z-index:21;
+  display:flex;flex-direction:column;padding:0;border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.modal>*{flex:none}
+.modal .mhead{display:flex;align-items:center;gap:10px;padding:16px 18px 8px}
+.modal h2{margin:0;flex:1;font-family:var(--font-display);font-size:18px;font-weight:600}
+.mclose{width:34px;height:34px;border-radius:50%;border:0;background:var(--fill);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.mclose:hover{background:var(--glass-hi)}
+.mtabs{display:flex;gap:4px;margin:0 18px;padding:3px;border-radius:12px;background:var(--fill)}
+.mtabs [role=tab]{flex:1;border:0;background:none;color:var(--muted);padding:7px 10px;border-radius:9px;font:600 13px var(--font);cursor:pointer}
+.mtabs [role=tab][aria-selected="true"]{background:var(--glass-hi);color:var(--ink)}
+.mtabs .n{font-weight:500;color:var(--muted);margin-left:3px}
+.modal .mbody{flex:1 1 auto;min-height:0;overflow:auto;padding:14px 18px;display:block}
+.modal .mbody>section>*+*{margin-top:10px}
+.modal .lead,.modal .msg{margin:0;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.modal .msg:empty{display:none}
+.modal .mh3{margin:14px 0 6px;font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
+.modal .mh3 .muted{color:var(--muted);font-weight:400}
+.modal textarea{display:block;width:100%;box-sizing:border-box;background:var(--fill);border:1px solid transparent;border-radius:10px;padding:10px 12px;color:var(--ink);font:13px/1.5 var(--font);resize:vertical}
+.modal textarea:focus{border-color:var(--accent);outline:none}
+#wlText{min-height:140px}
+.modal .mrow{display:flex;flex-wrap:wrap;gap:8px}
+.modal .mfoot{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:rgba(0,0,0,.12)}
+.modal .mfoot .spacer{flex:1}
+.modal .dirty{font-size:12px;color:var(--warn,#f2b544);font-weight:600}
+.modal .drop{margin-top:12px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+#wlReport{max-height:none;overflow:visible;border-top:0;padding-top:0}
+#hoText{min-height:340px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px}
+.menu{position:relative}
+.menu #menuBtn svg{width:16px;height:16px}
+.menulist{position:absolute;left:0;top:calc(100% + 6px);min-width:260px;padding:6px;border-radius:14px;z-index:15;display:flex;flex-direction:column;box-shadow:var(--shadow);background:rgba(36,38,44,.97)!important;backdrop-filter:blur(20px)}
+.menulist[hidden]{display:none}
+.menulist a,.menulist .mi{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:8px 10px;border-radius:9px;color:var(--ink);text-decoration:none;font:600 13.5px var(--font);border:0;background:none;cursor:pointer;text-align:left}
+.menulist .mi{flex-direction:row;justify-content:space-between;align-items:center;width:100%}
+.menulist small{font-weight:400;font-size:11.5px;color:var(--muted)}
+.menulist a:hover,.menulist a:focus-visible,.menulist .mi:hover,.menulist .mi:focus-visible{background:var(--glass-hi);outline:none}
+.menulist hr{border:0;border-top:1px solid var(--line);margin:5px 4px}
+.menulist kbd{font:11px var(--font-mono);color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+body.modal-open{overflow:hidden}
+@media (min-width:561px){#listTools .tools.t2{grid-template-columns:minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1fr)}}
+@media (max-width:600px){
+  header{padding:10px 12px;gap:8px}
+  header h1{font-size:22px}
+  header .btn,header .chip,header .seg button{font-size:13.5px;min-height:34px;padding-top:0;padding-bottom:0}
+  header .seg button{padding-left:10px;padding-right:10px}
+  header .row2{gap:6px}
+  .modal{left:0;top:0;transform:none;width:100vw;height:100dvh;max-height:none;border-radius:0}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent)}
+  .chips::-webkit-scrollbar{display:none}
+  .chips .chip{flex:none}
+  header .top{gap:8px}
+  header .stats{order:5;flex-basis:100%;font-size:12px}
+  #refresh{padding-left:12px;padding-right:12px}
+}
 </style>
 </head>
 <body>
@@ -632,18 +675,25 @@ body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
         <button type="button" data-view="time" aria-pressed="false">Timeline</button>
         <button type="button" data-view="graph" aria-pressed="false">Correlation</button>
       </div>
-      <a class="btn ghost" id="archiveLink" href="archive.html" title="Every event on file, searchable">Archive</a>
-      <a class="btn ghost" id="trendsLink" href="trends.html" title="What is rising and falling this week">Trends</a>
-      <a class="btn ghost" id="statusLink" href="status.html" title="How CyberView keeps itself current">Status</a>
-      <a class="btn ghost" id="aboutLink" href="about.html" title="How CyberView works, sources, privacy and terms">About</a>
       <button type="button" class="btn" id="refresh" title="Reload the latest data and return to the main map view (R)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         Refresh
       </button>
-      <button type="button" class="btn ghost" id="fs" title="Full screen (F)" aria-pressed="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
-        <span id="fsLabel">Full screen</span>
-      </button>
+      <div class="menu" id="menu">
+        <button type="button" class="btn ghost" id="menuBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="menuList">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          Menu
+        </button>
+        <div class="menulist glass" id="menuList" role="menu" hidden>
+          <a role="menuitem" href="archive.html" id="archiveLink">Archive <small>every event on file, searchable</small></a>
+          <a role="menuitem" href="trends.html" id="trendsLink">Trends <small>what is rising and falling</small></a>
+          <a role="menuitem" href="status.html" id="statusLink">Status <small>routines and their last runs</small></a>
+          <a role="menuitem" href="about.html" id="aboutLink">About <small>method, sources, privacy, terms</small></a>
+          <hr>
+          <button type="button" role="menuitem" class="mi" id="fs" aria-pressed="false"><span id="fsLabel">Full screen</span> <kbd>F</kbd></button>
+          <button type="button" role="menuitem" class="mi" id="keysBtn">Keyboard shortcuts <kbd>?</kbd></button>
+        </div>
+      </div>
     </div>
     <div class="row2">
       <div class="chips" id="chips" role="group" aria-label="Event types"></div>
@@ -684,19 +734,19 @@ body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
     </div>
     <div class="tools t2">
       <select id="status" aria-label="Filter by confidence">
-        <option value="all">All statuses</option>
-        <option value="corroborated">Corroborated</option>
+        <option value="all">Any confidence</option>
+        <option value="corroborated">Corroborated only</option>
         <option value="confirmed">Confirmed or official</option>
         <option value="open">Claimed or developing</option>
       </select>
       <select id="sort" aria-label="Sort events">
         <optgroup label="Sort by">
-        <option value="pri">Priority</option>
-        <option value="new">Newest</option>
-        <option value="sev">Severity</option>
+        <option value="pri">Priority first</option>
+        <option value="new">Newest first</option>
+        <option value="sev">Highest severity</option>
         <option value="upd">Recently updated</option>
         <option value="rec">Most records</option>
-        <option value="risk">Exploit risk</option>
+        <option value="risk">Highest exploit risk</option>
         </optgroup>
       </select>
       <select id="lens" aria-label="Sector lens" title="Lens: show one sector's view">
@@ -744,32 +794,54 @@ body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
     <div class="pane" id="ins" hidden></div>
   </aside>
 </div>
-<div id="hoDlg" class="glass dlg" role="dialog" aria-labelledby="hoTitle" hidden>
-  <h2 id="hoTitle">Shift handover</h2>
-  <p id="hoNote"></p>
+<div id="hoDlg" class="glass modal" role="dialog" aria-modal="true" aria-labelledby="hoTitle" hidden>
+  <div class="mhead"><h2 id="hoTitle">Shift handover</h2></div>
+  <div class="mbody">
+  <p id="hoNote" class="msg"></p>
   <textarea id="hoText" aria-label="Handover summary" readonly></textarea>
-  <div class="dacts">
+  </div>
+  <div class="mfoot"><span class="spacer"></span>
     <button type="button" class="btn ghost" id="hoClose">Close</button>
     <button type="button" class="btn" id="hoCopy">Copy</button>
   </div>
 </div>
-<div id="wlDlg" class="glass" role="dialog" aria-labelledby="wlTitle" hidden>
-  <h2 id="wlTitle">My environment: does this affect me?</h2>
-  <p>Describe what you run: vendors, products, your sector and countries. Events, exploited flaws and the archive are matched against it, and matches are marked and sorted first. It stays on this device.</p>
-  <div class="drop" id="envDrop">
-    <strong>Drop an inventory file here</strong>
-    <span>Software or asset list (CSV), SBOM (CycloneDX or SPDX), package.json, requirements.txt, a saved CyberView profile, or a plain list. Read in your browser; never uploaded.</span>
-    <button type="button" class="btn ghost sm" id="envPick">Choose a file</button>
-    <input type="file" id="envFile" accept=".csv,.tsv,.txt,.json,.xml,.cdx,.spdx" hidden>
+<div class="backdrop" id="backdrop" hidden></div>
+<div id="wlDlg" class="glass modal" role="dialog" aria-modal="true" aria-labelledby="wlTitle" hidden>
+  <div class="mhead">
+    <h2 id="wlTitle">My environment</h2>
+    <button type="button" class="mclose" id="wlX" aria-label="Close">&times;</button>
   </div>
-  <p id="envMsg" aria-live="polite"></p>
-  <div class="qkrow" id="envQuick" role="group" aria-label="Common platforms: add or remove"></div>
-  <textarea id="wlText" aria-label="Environment terms, one per line" maxlength="12000" placeholder="Microsoft, Cisco, energy, Canada"></textarea>
-  <p id="wlNote" aria-live="polite"></p>
-  <div id="wlReport" aria-live="polite" hidden></div>
-  <div class="dacts">
-    <button type="button" class="btn ghost" id="notifyBtn" aria-pressed="false" title="Get a notification on this device when a new event or exploited flaw matches your environment, while CyberView is open">Notify me on this device</button>
-    <button type="button" class="btn ghost" id="envExport" title="Copy this list as a profile file you can drop in on another device">Copy profile</button>
+  <div class="mtabs" role="tablist" aria-label="My environment">
+    <button type="button" role="tab" id="wlTabList" aria-selected="true" aria-controls="wlPaneList">Your list <span class="n" id="wlCount"></span></button>
+    <button type="button" role="tab" id="wlTabRep" aria-selected="false" aria-controls="wlPaneRep">Exposure report <span class="n" id="wlHits"></span></button>
+  </div>
+  <div class="mbody">
+    <section id="wlPaneList" role="tabpanel" aria-labelledby="wlTabList">
+      <p class="lead">List what you run: vendors, products, your sector and countries. Events, exploited flaws and the archive are matched against it. It stays on this device.</p>
+      <div class="drop" id="envDrop">
+        <div><strong>Drop an inventory file here</strong> or <button type="button" class="linkbtn" id="envPick">choose a file</button></div>
+        <span>CSV software or asset list, SBOM (CycloneDX or SPDX), package.json, requirements.txt, a saved profile, or a plain list. Read in your browser; never uploaded.</span>
+        <input type="file" id="envFile" accept=".csv,.tsv,.txt,.json,.xml,.cdx,.spdx" hidden>
+      </div>
+      <p id="envMsg" class="msg" aria-live="polite"></p>
+      <h3 class="mh3">Common platforms</h3>
+      <div class="qkrow" id="envQuick" role="group" aria-label="Common platforms: add or remove"></div>
+      <h3 class="mh3"><label for="wlText">Your list <span class="muted">(one per line)</span></label></h3>
+      <textarea id="wlText" maxlength="12000" placeholder="Fortinet&#10;Microsoft Exchange&#10;energy&#10;Canada"></textarea>
+      <p id="wlNote" class="msg" aria-live="polite"></p>
+      <div class="mrow">
+        <button type="button" class="btn ghost sm" id="notifyBtn" aria-pressed="false" title="Get a notification on this device when a new event or exploited flaw matches your environment, while CyberView is open">Notify me on this device</button>
+        <button type="button" class="btn ghost sm" id="envExport" title="Copy this list as a profile file you can drop in on another device">Copy profile</button>
+      </div>
+    </section>
+    <section id="wlPaneRep" role="tabpanel" aria-labelledby="wlTabRep" hidden>
+      <div id="wlReport" aria-live="polite" hidden></div>
+      <p class="msg" id="wlRepEmpty">Add terms to your list and save to see what affects you.</p>
+    </section>
+  </div>
+  <div class="mfoot">
+    <span class="dirty" id="wlDirty" hidden>Unsaved changes</span>
+    <span class="spacer"></span>
     <button type="button" class="btn ghost" id="wlCopy" hidden>Copy report</button>
     <button type="button" class="btn ghost" id="wlClose">Close</button>
     <button type="button" class="btn" id="wlSave">Save</button>

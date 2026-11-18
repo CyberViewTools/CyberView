@@ -1,4 +1,4 @@
-# Cyber Watch Map: handoff and build-out plan
+# CyberView (formerly Cyber Watch Map): original handoff and build-out plan
 
 Prepared 2026-11-17 for moving the project from a Claude artifact to **GitHub + Netlify**, maintained with **Claude Code**.
 
@@ -169,7 +169,7 @@ If the artifact tools are not available in Claude Code, run the export from a cl
 1. Create the empty private repo `xanderhutch/cyberview` on github.com. This session's GitHub token could not create repositories.
 2. Push this folder:
    ```
-   git init -b main && git add . && git commit -m "Cyber Watch Map v1.1: static site, data, build, tests"
+   git init -b main && git add . && git commit -m "CyberView v1.1: static site, data, build, tests"
    git remote add origin git@github.com:xanderhutch/cyberview.git && git push -u origin main
    ```
 3. Protect `main` lightly. Scheduled jobs push directly, so do not require pull requests. Add a GitHub Action running `node scripts/build.mjs` on every push, so a bad commit is flagged even before Netlify sees it.

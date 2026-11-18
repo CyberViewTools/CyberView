@@ -302,6 +302,52 @@ async def main():
             ok("feeds: items link to permalinks", all("/#e=" in i.find("link").text for i in items))
         except Exception as x:
             ok("feeds: RSS and JSON Feed parse", False, str(x)[:160])
+        # v1.8: globe view, context layers with health, HUD and wire (fixed fixture, no network)
+        import datetime
+        now = datetime.datetime.now(datetime.timezone.utc)
+        iso = lambda h: (now - datetime.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        b18 = copy.deepcopy(bundle)
+        b18["context"] = {
+            "ioda": {"source": "IODA", "source_url": "https://ioda.inetintel.cc.gatech.edu/", "fetched_at": iso(1), "ok": True, "error": "",
+                     "items": [{"code": "FR", "name": "France", "map_name": "France", "score": 900, "events": 2, "signals": ["bgp"], "url": "https://ioda.inetintel.cc.gatech.edu/country/FR"},
+                               {"code": "XX", "name": "Bad<b>", "map_name": "", "score": 1, "events": 1, "signals": [], "url": "javascript:alert(1)"}]},
+            "gdacs": {"source": "GDACS", "source_url": "https://www.gdacs.org/", "fetched_at": iso(30), "ok": False, "error": "timeout",
+                      "items": [{"id": "EQ-1", "type": "earthquake", "level": "red", "name": "Earthquake test", "country": "Chile", "lat": -33.4, "lng": -70.6, "url": "https://evil.test/x"}]},
+        }
+
+        async def v18(url):
+            pg, errs = await open_page(browser, url, wait=1500)
+            ok("hud: UTC clock shown", (await pg.inner_text("#hud")).startswith("UTC "))
+            ok("wire: newest item shown", len((await pg.inner_text("#wire")).strip()) > 5)
+            ok("layers: disaster alerts on by default", await pg.locator("g.haz").count() == 1)
+            ok("layers: disruptions off by default", await pg.locator("path.country.dis").count() == 0)
+            await pg.click("#zlayers")
+            ok("layers: panel opens", await pg.locator("#layers").is_visible())
+            txt = await pg.inner_text("#layers")
+            ok("layers: health shows live and stale", "Live" in txt and "Stale" in txt and "timeout" in txt, txt[:200])
+            hrefs = await pg.eval_on_selector_all("#layers a", "as => as.map(a => a.getAttribute('href'))")
+            ok("layers: off-site and script links neutralised", "javascript:alert(1)" not in hrefs and "https://evil.test/x" not in hrefs, hrefs)
+            await pg.click("#layers .chip >> nth=0")
+            ok("layers: disruptions shade the country", await pg.locator("path.country.dis").count() == 1)
+            await pg.keyboard.press("Escape")
+            ok("layers: Esc closes the panel", await pg.locator("#layers").is_hidden())
+            await pg.click("#zglobe")
+            await pg.wait_for_timeout(300)
+            ok("globe: switches on", await pg.get_attribute("#zglobe", "aria-pressed") == "true" and await pg.locator("path.ocean").count() == 1)
+            flat_marks = await pg.locator("#svg g.m, #svg g.cl").count()
+            ok("globe: far side hidden", flat_marks > 0, flat_marks)
+            box = await pg.locator("#svg").bounding_box()
+            d0 = await pg.get_attribute("path.grat", "d")
+            await pg.mouse.move(box["x"] + 500, box["y"] + 450); await pg.mouse.down(); await pg.mouse.move(box["x"] + 350, box["y"] + 430, steps=6); await pg.mouse.up()
+            await pg.wait_for_timeout(200)
+            ok("globe: drag turns it", await pg.get_attribute("path.grat", "d") != d0)
+            await pg.click("#refresh")
+            await pg.wait_for_timeout(500)
+            ok("globe: refresh returns to the flat map", await pg.get_attribute("#zglobe", "aria-pressed") == "false" and await pg.locator("path.ocean").count() == 0)
+            ok("v1.8: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(b18), v18)
         await browser.close()
 
 

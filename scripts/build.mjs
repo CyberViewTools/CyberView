@@ -73,6 +73,14 @@ for (const [path, file] of [["meta/status", "status.json"], ["analysis/latest", 
   const d = readJson(p); if (d) docs[path] = d; else errors.push(`${file}: not valid JSON`);
 }
 
+// context layers (scripts/context.mjs): validated loosely, a broken file only drops that layer
+const context = {};
+for (const x of listDir("context")) {
+  const c = x.r;
+  if (!c || !Array.isArray(c.items) || typeof c.source !== "string") { warnings.push(`context/${x.id}.json: unreadable, layer left out`); continue; }
+  context[x.id] = { source: c.source, source_url: c.source_url, fetched_at: c.fetched_at || "", ok: !!c.ok, error: c.error || "", items: c.items };
+}
+
 const shown = warnings.slice(0, 40);
 shown.forEach((w) => console.warn("warning: " + w));
 if (warnings.length > shown.length) console.warn(`warning: ...and ${warnings.length - shown.length} more`);
@@ -82,7 +90,7 @@ if (errors.length) { errors.forEach((e) => console.error("error: " + e)); consol
 // the map's bundle
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();
-writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs }));
+writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs, context }));
 
 // the archive
 if (existsSync(ARCH)) rmSync(ARCH, { recursive: true });

@@ -1,0 +1,21 @@
+{
+  "name": "cyberview",
+  "private": true,
+  "description": "A rolling seven-day world map of publicly reported cyber events, for defenders.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "security": "node scripts/security-check.mjs",
+    "unit": "node --test tests/unit/*.test.mjs",
+    "test": "python3 tests/test_all.py",
+    "feeds": "node scripts/feeds.mjs",
+    "context": "node scripts/context.mjs",
+    "collect": "node scripts/collect.mjs",
+    "monitor": "node scripts/monitor.mjs",
+    "q": "node scripts/q.mjs",
+    "preview": "node scripts/build.mjs && cd site && python3 ../tests/serve.py 8000",
+    "ci": "npm run build && npm run security && npm run unit && npm run test"
+  }
+}

@@ -562,6 +562,36 @@ a.btn{text-decoration:none}
 .day.play svg{width:26px;height:26px;margin-bottom:2px;border-radius:50%;padding:5px;background:var(--tint)}
 .day.play:hover svg,.day.play:focus-visible svg{background:color-mix(in srgb,var(--accent) 30%,transparent)}
 .day.play[aria-pressed="true"] svg{background:var(--accent);color:#06203f}
+/* ---- globe, layers, HUD, wire (v1.8; patterns adapted from Godseye, Apache-2.0) ---- */
+.zoomer button svg{width:17px;height:17px;vertical-align:middle}
+.zoomer button[aria-pressed="true"],.zoomer button[aria-expanded="true"]{background:color-mix(in srgb,var(--accent) 28%,transparent);color:var(--ink)}
+.ocean{fill:color-mix(in srgb,var(--accent) 7%,var(--bg1));stroke:none}
+body.globe .sphere{stroke:var(--accent);stroke-opacity:.45;stroke-width:1.2}
+body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
+.country.dis{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:2.5 2}
+.haz circle{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}
+.haz path{stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.haz.red circle{stroke-width:2.6;stroke-dasharray:none}
+.haz{cursor:pointer;opacity:.85}.haz:hover,.haz:focus-visible{opacity:1}
+.layers{position:absolute;left:58px;top:calc(var(--hdr,96px) + 26px);z-index:3;width:min(330px,calc(100vw - 80px));max-height:calc(100vh - var(--hdr,96px) - 120px);overflow:auto;padding:10px 12px;border-radius:12px;font-size:12.5px}
+.layers h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.lrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.lname{font-weight:600}
+.lrow .chip{white-space:nowrap}
+.lh{font-family:var(--font-mono);font-size:10.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.lh.h-live{color:var(--ink)}.lh.h-live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px}
+.lh.h-stale{color:var(--muted);border-style:dashed}.lh.h-off{color:var(--muted);text-decoration:line-through}
+.lnote{margin:4px 0 0;color:var(--muted);font-size:11.5px;line-height:1.4}
+.llist{margin:5px 0 0;padding-left:16px;font-size:12px}.llist li{margin:2px 0}.llist .muted{color:var(--muted)}
+.lsrc{margin:4px 0 2px;font-size:11px;color:var(--muted)}
+.hud{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wire{display:flex;align-items:center;gap:7px;min-width:0;max-width:34vw;font-size:12px}
+.wire .wtag{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+.wire .wtxt{border:0;background:none;color:var(--ink);padding:0;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;cursor:pointer;text-align:left}
+.wire .wtxt:hover{text-decoration:underline}
+.wire .wwhen{color:var(--muted);white-space:nowrap;font-size:11px}
+@media (max-width:1100px){.wire{display:none!important}}
+@media (max-width:600px){.hud{display:none}.layers{left:54px}}
 </style>
 </head>
 <body>
@@ -573,7 +603,10 @@ a.btn{text-decoration:none}
     <button type="button" id="zin" aria-label="Zoom in">+</button>
     <button type="button" id="zout" aria-label="Zoom out">&minus;</button>
     <button type="button" id="zreset" aria-label="Reset map view" title="Reset view">&#8962;</button>
+    <button type="button" id="zglobe" aria-label="Globe view" aria-pressed="false" title="Globe view (G)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button>
+    <button type="button" id="zlayers" aria-label="Map layers" aria-expanded="false" aria-controls="layers" title="Map layers (L)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 8 12 13l9.5-5z"/><path d="m2.5 12.5 9.5 5 9.5-5"/><path d="m2.5 16.5 9.5 5 9.5-5" opacity=".55"/></svg></button>
   </div>
+  <section class="layers glass" id="layers" hidden aria-label="Map layers"></section>
   <div id="tip"></div>
 </div>
 <div class="ui">
@@ -581,6 +614,8 @@ a.btn{text-decoration:none}
     <div class="top">
       <h1><span class="live" id="live" title="Live data connection"></span><img class="logo" src="logo.svg" alt="" width="26" height="26">CyberView</h1>
       <div class="stats" id="stats" aria-live="polite">Loading events</div>
+      <span class="hud" id="hud">UTC</span>
+      <div class="wire" id="wire" hidden aria-live="off"></div>
       <div class="spacer"></div>
       <div class="seg" role="group" aria-label="View" id="viewseg">
         <button type="button" data-view="map" aria-pressed="true">Map</button>

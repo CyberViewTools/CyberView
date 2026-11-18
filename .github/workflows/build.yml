@@ -24,6 +24,8 @@ jobs:
         run: node scripts/build.mjs
       - name: Security check
         run: node scripts/security-check.mjs
+      - name: Unit tests
+        run: node --test tests/unit/*.test.mjs
 
   browser-tests:
     needs: validate

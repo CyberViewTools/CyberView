@@ -1,4 +1,4 @@
-name: Feeds (KEV, EPSS, NVD)
+name: Feeds (KEV, EPSS, NVD, context layers)
 # Schedule registered 2026-11-18; times are UTC.
 
 # Mechanical data, no AI model: CISA known-exploited catalog, EPSS and CVSS scores, cve_meta on events.
@@ -29,6 +29,9 @@ jobs:
         run: node scripts/feeds.mjs
         env:
           NVD_MAX: "25"
+      - name: Context layers (internet disruption signals, disaster alerts)
+        # a failing source keeps its old items, marked stale; only a total failure stops the run
+        run: node scripts/context.mjs
       - name: Validate and security check
         run: node scripts/build.mjs && node scripts/security-check.mjs
       - name: Commit and push

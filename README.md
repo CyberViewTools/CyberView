@@ -13,6 +13,7 @@ A rolling seven-day world map of publicly reported cyber events: incidents, outa
 - **Trends.** [What is moving](https://xanderhutch.github.io/CyberView/trends.html): this week against last by event type, sector, country, actor, product and theme, with daily counts and an honest caveat while history is short.
 - **Time-lapse and deep search.** Play the window day by day on the map; searches also point to older matches in the archive.
 - **Runs itself, in the open.** A [status page](https://xanderhutch.github.io/CyberView/status.html) lists every routine, when it last ran and what it found; an hourly collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
+- **Globe and context layers.** Switch the map to a globe you can turn (G), and open the layers panel (L) for internet-disruption signals (IODA) and orange and red disaster alerts (GDACS). Each layer shows its source, its age and whether it is live, stale or offline. They are context, never counted as cyber events.
 - **Static site.** One HTML page reading one JSON bundle. No accounts, no tracking. Watchlists stay in your browser.
 
 ## How it stays current
@@ -24,10 +25,12 @@ Scheduled Claude jobs research new events and commit JSON files under `data/`. E
 You only need this to work on the code; visitors use the live site above.
 
 ```bash
-node scripts/build.mjs                        # validate the data, build the bundle, archive and feeds
-cd site && python3 ../tests/serve.py 8000     # serve the built site on your machine, port 8000
-python3 tests/test_all.py                     # browser regression suite
+npm run build      # validate the data, build the bundle, archive and feeds
+npm run preview    # build, then serve the site on your machine, port 8000
+npm run ci         # build, security check, unit tests, browser regression suite
 ```
+
+No packages to install: the scripts use only Node 22's standard library. The browser suite needs `pip install playwright`.
 
 Rules for the page and the data: `CLAUDE.md`. Field reference: `docs/schema.md`.
 
@@ -38,3 +41,7 @@ Coverage reflects what public sources report and leans toward English-language a
 ## Report an error
 
 Every event has a "Report an error" button that opens a pre-filled GitHub issue. The jobs check each report against the sources and log any correction.
+
+## Credits
+
+The globe view, layer health badges, build-time context manifests, network retry and circuit-breaker helper, intel wire and `npm run ci` layout adapt patterns from [Godseye](https://github.com/VrushankPatel/godseye) by Vrushank Patel (Apache License 2.0). CyberView's code is its own; no Godseye files are copied. Context data: [IODA](https://ioda.inetintel.cc.gatech.edu/) (Georgia Tech Internet Intelligence Lab) and [GDACS](https://www.gdacs.org/) (European Commission JRC and UN OCHA). Map: Natural Earth via world-atlas; d3 and topojson-client.

@@ -97,6 +97,12 @@ jobs:
           echo "AUTH=$mode" >> "$GITHUB_ENV"; echo "HAS_TOKEN=$([ $mode = none ] && echo false || echo true)" >> "$GITHUB_ENV"
           echo "Sign-in: $mode" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Show the GitHub identity token's claims (debug runs only; never the token itself)
+        if: inputs.debug == true && env.AUTH == 'wif'
+        run: |
+          t=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://api.anthropic.com" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>console.log(JSON.parse(d).value))')
+          echo "$t" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{const p=JSON.parse(Buffer.from(d.trim().split(".")[1],"base64url"));const k=["iss","aud","sub","repository","repository_owner","ref","event_name","job_workflow_ref","environment"];const o={};k.forEach(x=>{if(p[x]!==undefined)o[x]=p[x]});console.log(JSON.stringify(o,null,1))})' | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Skip when no Claude sign-in is set up
         if: env.HAS_TOKEN != 'true'
         run: echo "No Claude sign-in is set up (federation IDs in .github/claude-federation.json or repository variables, ANTHROPIC_API_KEY, or CLAUDE_CODE_OAUTH_TOKEN); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"

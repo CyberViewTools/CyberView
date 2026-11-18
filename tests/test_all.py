@@ -1,4 +1,4 @@
-"""Browser regression suite for Cyber Watch Map.
+"""Browser regression suite for CyberView.
 
 Run from the repo root:  python3 tests/test_all.py
 Needs: node, and `pip install playwright && playwright install chromium`.

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Cyber Watch Map. Static page: reads one file, data/bundle.json, built from the repository's data/ folder by scripts/build.mjs.
+  CyberView. Static page: reads one file, data/bundle.json, built from the repository's data/ folder by scripts/build.mjs.
   Sections, in order: design tokens and styles; markup; script (configuration tables CATS / LAYERS / SECG / LENS at the top,
   then data cleaning, feed, detail, insights, analysis views, map, controls, data store).
   Every record is passed through a clean*() function before use; add new fields there.
@@ -10,7 +10,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cyber Watch Map</title>
+<title>CyberView</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>(function(){var t=null;try{t=localStorage.getItem("cwm.theme");}catch(e){}if(t!=="light"&&t!=="dark")t=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;})();</script>
 <style>
 /* Layout idea: the map is the whole stage; frosted glass panels (bar, feed, day strip) float over it. */
@@ -68,6 +71,7 @@ button{cursor:pointer}
 header{grid-column:1/3;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
 .top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
 h1{font-family:var(--font-display);font-weight:700;font-size:21px;letter-spacing:-.01em;margin:0;display:flex;align-items:center;gap:9px}
+.logo{width:26px;height:26px;image-rendering:pixelated;flex:none}
 .live{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 25%,transparent)}
 .live.off{background:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 25%,transparent)}
 .stats{color:var(--muted);font-family:var(--font-mono);font-size:12px;font-variant-numeric:tabular-nums}
@@ -539,7 +543,7 @@ body[data-view="time"] .viz{grid-row:2/4}
 <div class="ui">
   <header class="glass">
     <div class="top">
-      <h1><span class="live" id="live" title="Live data connection"></span>Cyber Watch Map</h1>
+      <h1><span class="live" id="live" title="Live data connection"></span><img class="logo" src="logo.svg" alt="" width="26" height="26">CyberView</h1>
       <div class="stats" id="stats" aria-live="polite">Loading events</div>
       <div class="spacer"></div>
       <div class="seg" role="group" aria-label="View" id="viewseg">
@@ -728,7 +732,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.1",date:"2026-11-17"};
+var BUILD={version:"1.2",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -1291,7 +1295,7 @@ function renderInsights(list){
    "This is an information aid, not professional security advice for your organisation."].forEach(function(t){au.appendChild(el("li",null,t));});
   ab.appendChild(au);
   box.appendChild(ab);
-  box.appendChild(el("div","empty","Cyber Watch Map version "+BUILD.version+" · built "+fmtDay(BUILD.date)+(sweep&&sweep.data_version?" · data rules "+str(sweep.data_version,20):"")));
+  box.appendChild(el("div","empty","CyberView version "+BUILD.version+" · built "+fmtDay(BUILD.date)+(sweep&&sweep.data_version?" · data rules "+str(sweep.data_version,20):"")));
 }
 function histBlock(){
   var b=el("section","blk hist");b.appendChild(el("h3",null,"This week vs earlier"));
@@ -1793,7 +1797,7 @@ function select(id,fromFeed){
 var faults={};
 function safe(name,fn){
   try{fn();if(faults[name]){delete faults[name];fault();}}
-  catch(x){if(!faults[name]){faults[name]=String(x&&x.message||x).slice(0,160);fault();try{console.error("Cyber Watch Map: "+name+" failed",x);}catch(y){}}}
+  catch(x){if(!faults[name]){faults[name]=String(x&&x.message||x).slice(0,160);fault();try{console.error("CyberView: "+name+" failed",x);}catch(y){}}}
 }
 function fault(){var n=$("fault"),k=Object.keys(faults);if(!n)return;n.hidden=!k.length;n.textContent=k.length?"Part of this page could not be drawn ("+k.join(", ")+"). The rest is unaffected. Press Refresh; if it persists, use Report an error on any event.":"";}
 function render(){

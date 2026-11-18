@@ -1,4 +1,8 @@
-# Cyber Watch Map
+<p align="center"><img src="site/icon-512.png" alt="CyberView logo: a pixel-art masked head" width="128"></p>
+
+# CyberView
+
+Live: https://cyberview.netlify.app
 
 A rolling seven-day world map of publicly reported cyber events: incidents, outages, exploited vulnerabilities, government and vendor reports, laws, enforcement and security investment. Built for defenders: every event says what happened, why it matters and what to do, with its sources.
 

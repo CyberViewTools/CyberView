@@ -619,17 +619,47 @@ body.globe #svg{cursor:grab}body.globe #svg:active{cursor:grabbing}
 .linkbtn{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 #wlReport{max-height:none;overflow:visible;border-top:0;padding-top:0}
 #hoText{min-height:340px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px}
-.menu{position:relative}
-.menu #menuBtn svg{width:16px;height:16px}
-.menulist{position:absolute;left:0;top:calc(100% + 6px);min-width:260px;padding:6px;border-radius:14px;z-index:15;display:flex;flex-direction:column;box-shadow:var(--shadow);background:rgba(36,38,44,.97)!important;backdrop-filter:blur(20px)}
-.menulist[hidden]{display:none}
-.menulist a,.menulist .mi{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:8px 10px;border-radius:9px;color:var(--ink);text-decoration:none;font:600 13.5px var(--font);border:0;background:none;cursor:pointer;text-align:left}
-.menulist .mi{flex-direction:row;justify-content:space-between;align-items:center;width:100%}
-.menulist small{font-weight:400;font-size:11.5px;color:var(--muted)}
-.menulist a:hover,.menulist a:focus-visible,.menulist .mi:hover,.menulist .mi:focus-visible{background:var(--glass-hi);outline:none}
-.menulist hr{border:0;border-top:1px solid var(--line);margin:5px 4px}
-.menulist kbd{font:11px var(--font-mono);color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
 body.modal-open{overflow:hidden}
+/* ---- v1.14: site navigation, header rows, globe-only map ---- */
+.sitenav{display:flex;gap:2px;margin-left:6px}
+.sitenav a,.sheetnav a{color:var(--muted);text-decoration:none;font:600 13.5px var(--font);padding:7px 10px;border-radius:9px;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:var(--glass-hi)}
+.sitenav a[aria-current="page"]{color:var(--ink);background:var(--fill);box-shadow:inset 0 -2px 0 var(--accent)}
+.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--fill);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font:700 15px var(--font)}
+.iconbtn svg{width:17px;height:17px}.iconbtn:hover{background:var(--glass-hi)}
+.iconbtn[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.navbtn{display:none;width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:var(--fill);color:var(--ink);cursor:pointer;align-items:center;justify-content:center}
+.navbtn svg{width:20px;height:20px}
+.navsheet{position:fixed;inset:0;z-index:100;overflow:auto;padding:14px 14px 24px;background:rgba(20,22,27,.985);backdrop-filter:blur(16px)}
+.sheethead{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;padding:0 2px;font:700 20px var(--font-display);color:var(--ink)}
+.sheetclose{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+body.nav-open{overflow:hidden}
+.navsheet[hidden]{display:none}
+.sheetnav{display:flex;flex-direction:column;gap:4px}
+.sheetnav a{font-size:17px;padding:14px;color:var(--ink);border-radius:12px}
+.sheetnav a[aria-current="page"]{background:var(--fill);box-shadow:inset 3px 0 0 var(--accent)}
+header .meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;min-width:0}
+header .meta .wire{max-width:42vw}
+#svg{touch-action:none}
+body.globe #svg{cursor:grab}
+@media (max-width:1100px){.sitenav a{padding:7px 8px}}
+@media (max-width:900px){
+  .sitenav{display:none}.navbtn{display:inline-flex}
+  #stage{height:min(62vh,520px)!important}
+  .zoomer{flex-direction:row;top:auto!important;bottom:10px;left:10px;border-radius:12px}
+  .zoomer button{border-top:0;border-left:1px solid var(--line);width:38px;height:36px}.zoomer button:first-child{border-left:0}
+  .layers{top:auto!important;bottom:56px;left:10px!important;max-height:60%}
+  header .meta .spacer{display:none}
+  header .meta .seg{order:1;flex:1}header .meta .seg button{flex:1}header .meta .stats{order:2;flex-basis:100%}
+}
+@media (max-width:600px){
+  #refresh .lbl{display:none}#refresh{padding:0 10px;min-width:40px;justify-content:center}
+  #keysBtn{display:none}
+  header .row2 .spacer{display:none}
+  #wlOpen{order:1}#wlOnly{order:2}header .row2 .seg{order:3}#claims{order:5}#hoOpen{order:6}#wlStat{order:7;flex-basis:100%}
+  header .row2 .seg{flex:1 1 auto}header .row2 .seg button{flex:1;padding-left:6px;padding-right:6px}
+}
 @media (min-width:561px){#listTools .tools.t2{grid-template-columns:minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1fr)}}
 @media (max-width:600px){
   header{padding:10px 12px;gap:8px}
@@ -656,7 +686,6 @@ body.modal-open{overflow:hidden}
     <button type="button" id="zin" aria-label="Zoom in">+</button>
     <button type="button" id="zout" aria-label="Zoom out">&minus;</button>
     <button type="button" id="zreset" aria-label="Reset map view" title="Reset view">&#8962;</button>
-    <button type="button" id="zglobe" aria-label="Globe view" aria-pressed="false" title="Globe view (G)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button>
     <button type="button" id="zlayers" aria-label="Map layers" aria-expanded="false" aria-controls="layers" title="Map layers (L)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 8 12 13l9.5-5z"/><path d="m2.5 12.5 9.5 5 9.5-5"/><path d="m2.5 16.5 9.5 5 9.5-5" opacity=".55"/></svg></button>
   </div>
   <section class="layers glass" id="layers" hidden aria-label="Map layers"></section>
@@ -666,35 +695,26 @@ body.modal-open{overflow:hidden}
   <header class="glass">
     <div class="top">
       <h1><span class="live" id="live" title="Live data connection"></span><img class="logo" src="logo.svg" alt="" width="26" height="26">CyberView</h1>
-      <div class="stats" id="stats" aria-live="polite">Loading events</div>
-      <span class="hud" id="hud">UTC</span>
-      <div class="wire" id="wire" hidden aria-live="off"></div>
+      <nav class="sitenav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html" id="archiveLink">Archive</a><a href="trends.html" id="trendsLink">Trends</a><a href="markets.html" id="marketsLink">Markets</a><a href="status.html" id="statusLink">Status</a><a href="about.html" id="aboutLink">About</a></nav>
       <div class="spacer"></div>
+      <button type="button" class="btn" id="refresh" title="Reload the latest data and return to the main view (R)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        <span class="lbl">Refresh</span>
+      </button>
+      <button type="button" class="iconbtn" id="fs" aria-pressed="false" title="Full screen (F)" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fsLabel" class="sr">Full screen</span></button>
+      <button type="button" class="iconbtn" id="keysBtn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">?</button>
+      <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+    <div class="meta">
       <div class="seg" role="group" aria-label="View" id="viewseg">
-        <button type="button" data-view="map" aria-pressed="true">Map</button>
+        <button type="button" data-view="map" aria-pressed="true">Globe</button>
         <button type="button" data-view="time" aria-pressed="false">Timeline</button>
         <button type="button" data-view="graph" aria-pressed="false">Correlation</button>
       </div>
-      <button type="button" class="btn" id="refresh" title="Reload the latest data and return to the main map view (R)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-        Refresh
-      </button>
-      <div class="menu" id="menu">
-        <button type="button" class="btn ghost" id="menuBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="menuList">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-          Menu
-        </button>
-        <div class="menulist glass" id="menuList" role="menu" hidden>
-          <a role="menuitem" href="archive.html" id="archiveLink">Archive <small>every event on file, searchable</small></a>
-          <a role="menuitem" href="trends.html" id="trendsLink">Trends <small>what is rising and falling</small></a>
-          <a role="menuitem" href="markets.html" id="marketsLink">Markets <small>breach impact on shares, SEC filings, cyber stocks</small></a>
-          <a role="menuitem" href="status.html" id="statusLink">Status <small>routines and their last runs</small></a>
-          <a role="menuitem" href="about.html" id="aboutLink">About <small>method, sources, privacy, terms</small></a>
-          <hr>
-          <button type="button" role="menuitem" class="mi" id="fs" aria-pressed="false"><span id="fsLabel">Full screen</span> <kbd>F</kbd></button>
-          <button type="button" role="menuitem" class="mi" id="keysBtn">Keyboard shortcuts <kbd>?</kbd></button>
-        </div>
-      </div>
+      <div class="stats" id="stats" aria-live="polite">Loading events</div>
+      <span class="hud" id="hud">UTC</span>
+      <div class="spacer"></div>
+      <div class="wire" id="wire" hidden aria-live="off"></div>
     </div>
     <div class="row2">
       <div class="chips" id="chips" role="group" aria-label="Event types"></div>
@@ -718,6 +738,7 @@ body.modal-open{overflow:hidden}
       </div>
     </div>
   </header>
+  <div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="markets.html">Markets</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
   <div class="days glass" id="days" role="group" aria-label="Events per day"></div>
   <div class="key glass" id="key"></div>
   <section class="viz glass" id="viz" hidden aria-label="Analysis"></section>
@@ -853,5 +874,6 @@ body.modal-open{overflow:hidden}
 <script src="vendor/d3.min.js"></script>
 <script src="vendor/topojson.min.js"></script>
 <script src="app.js"></script>
+<script src="nav.js"></script>
 </body>
 </html>

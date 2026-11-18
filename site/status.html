@@ -16,13 +16,11 @@
 <body>
 <header class="bar">
   <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
-  <span class="crumb">Status</span>
+  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="markets.html">Markets</a><a href="status.html" aria-current="page">Status</a><a href="about.html">About</a></nav>
   <span class="spacer"></span>
-  <a class="btn ghost" href="trends.html">Trends</a>
-  <a class="btn ghost" href="archive.html">Archive</a>
-  <a class="btn ghost" href="markets.html">Markets</a>
-  <a class="btn ghost" href="./">Back to the map</a>
+  <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </header>
+<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="markets.html">Markets</a><a href="status.html" aria-current="page">Status</a><a href="about.html">About</a></nav></div>
 <main>
   <section class="intro">
     <h1>How CyberView keeps itself current</h1>
@@ -52,5 +50,6 @@
 </main>
 <footer class="foot"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="about.html#corrections">Corrections</a><a href="about.html#security">Report a security issue</a><a href="account.html">Account</a></footer>
 <script src="status.js"></script>
+<script src="nav.js"></script>
 </body>
 </html>

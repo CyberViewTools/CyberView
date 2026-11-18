@@ -18,6 +18,10 @@ export function siteConfig() {
   return { ...c, contact_email: email };
 }
 
+const NAV = [["./", "Map", "index"], ["archive.html", "Archive", "archive"], ["trends.html", "Trends", "trends"], ["markets.html", "Markets", "markets"], ["status.html", "Status", "status"], ["about.html", "About", "about"]];
+export const navMarkup = (cur, cls) => `<nav class="${cls}" aria-label="Site">` + NAV.map(([h, t, k]) => `<a href="${h}"${k === cur ? ' aria-current="page"' : ""}>${t}</a>`).join("") + "</nav>";
+const BURGER = '<button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
+
 export function footer() {
   return `<footer class="foot"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="about.html#corrections">Corrections</a><a href="about.html#security">Report a security issue</a><a href="account.html">Account</a></footer>`;
 }
@@ -59,14 +63,15 @@ export function render(name, body, cfg, page = {}) {
 <body>
 <header class="bar">
   <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
-  <span class="crumb">${esc(title)}</span>
+  ${navMarkup(name, "sitenav")}
   <span class="spacer"></span>
-  <a class="btn ghost" href="./">Back to the map</a>
+  ${BURGER}
 </header>
+<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div>${navMarkup(name, "sheetnav")}</div>
 <main>
 ${html.trim()}
 </main>
-${footer()}${(page.scripts || []).map((s) => `\n<script src="${s}"></script>`).join("")}
+${footer()}${["nav.js", ...(page.scripts || [])].map((s) => `\n<script src="${s}"></script>`).join("")}
 </body>
 </html>
 `;

@@ -7,7 +7,8 @@ Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `
 ## Layout
 
 ```
-site/index.html, app.js  the map page (markup and styles; script in app.js so the CSP can forbid inline scripts)
+site/index.html, app.js  the globe page (markup and styles; script in app.js so the CSP can forbid inline scripts)
+site/nav.js              site navigation on every page: inline links on wide screens, a menu sheet on phones
 site/archive.html, .js   the searchable archive of every event on file
 site/trends.html, .js    week-over-week trends from site/data/trends.json (styles shared in archive.css)
 site/status.html, .js    routines and their last runs, lead queue, recent runs (from site/data/ops.json)
@@ -67,7 +68,7 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 4. Category colours are a validated colour-blind-safe set (light and dark). Category is always shown by shape too. Do not add a hue without re-validating.
 5. Charts lead with the question they answer and print their caveats underneath. Bar charts are single-colour; breakdowns go in tooltips.
 6. No viewer workflow state. The owner decided visitors do not mark items handled, patched or not relevant.
-7. Refresh reloads data and resets to the main map view (flat map, not the globe).
+7. The map is a 3D globe only (the owner removed the flat map). Refresh reloads data and resets to the main view with the globe turned back to its starting position.
 8. Bump `BUILD.version` and `BUILD.date` in `site/app.js`, run the tests and the security check, then commit.
 9. Context layers (`data/context/`) are drawn in neutral ink, dashed, never in a category colour, and every one says it is context, not a cyber event. A new layer needs a parser in `scripts/context.mjs` with unit tests, a `CTX_DEFS` entry and a `cleanCtx` branch with a link host allowlist in `site/app.js`.
 10. Accounts are optional and must never be required for any map feature. Personal data rules: collect the minimum, keep the environment list encrypted in the browser, store readable alert terms only with recorded consent, keep export and delete self-service. Any change to what is collected or why needs `legal/privacy.html` updated and `legal_updated` bumped in `config/site.json`.

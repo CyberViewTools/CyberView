@@ -72,7 +72,7 @@
       tracked: (Array.isArray(raw.tracked) ? raw.tracked : []).map(cleanTracked).filter(Boolean),
       filings: (Array.isArray(raw.filings) ? raw.filings : []).map(cleanFiling).filter(Boolean),
     };
-    $("asof").textContent = data.asOf ? "Prices to the close of " + fmtDay(data.asOf) + ". " + data.impacts.length + " incidents at listed companies, " + data.filings.length + " SEC filings, " + data.tracked.length + " stocks tracked." : "No price data yet: the first prices arrive with the next markets run.";
+    $("asof").textContent = data.asOf ? "Prices to the close of " + fmtDay(data.asOf) + ". " + data.impacts.length + (data.impacts.length === 1 ? " incident" : " incidents") + " at listed companies, " + data.filings.length + (data.filings.length === 1 ? " SEC filing, " : " SEC filings, ") + data.tracked.length + " stocks tracked." : "No price data yet: the first prices arrive with the next markets run.";
     tiles(); impactChart(); impactCards(); filings(); tracker();
   }
 

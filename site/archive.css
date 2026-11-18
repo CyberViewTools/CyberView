@@ -109,3 +109,21 @@ ul.plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;g
 .btn.warn{border-color:rgba(255,120,100,.6);color:#ffb4a8}
 .btn:disabled{opacity:.5;cursor:default}
 .row.danger{margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+
+/* site navigation (all pages) */
+.bar{flex-wrap:nowrap}
+.sitenav{display:flex;gap:2px;margin-left:10px}
+.sitenav a,.sheetnav a{color:var(--muted);text-decoration:none;font:600 14px var(--font);padding:8px 11px;border-radius:9px;white-space:nowrap}
+.sitenav a:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+.sitenav a[aria-current="page"]{color:var(--ink);background:rgba(255,255,255,.1);box-shadow:inset 0 -2px 0 var(--accent)}
+.navbtn{display:none;width:42px;height:42px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);cursor:pointer;align-items:center;justify-content:center}
+.navbtn svg{width:20px;height:20px}
+.navsheet{position:fixed;inset:0;z-index:100;overflow:auto;padding:14px 14px 24px;background:rgba(20,22,27,.985);backdrop-filter:blur(16px)}
+.sheethead{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;padding:0 2px;font:700 20px var(--font-display);color:var(--ink)}
+.sheetclose{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+body.nav-open{overflow:hidden}
+.navsheet[hidden]{display:none}
+.sheetnav{display:flex;flex-direction:column;gap:4px}
+.sheetnav a{font-size:17px;padding:14px 14px;color:var(--ink);border-radius:12px}
+.sheetnav a[aria-current="page"]{background:rgba(255,255,255,.1);box-shadow:inset 3px 0 0 var(--accent)}
+@media (max-width:760px){.sitenav{display:none}.navbtn{display:inline-flex}.bar{padding:10px 14px}}

@@ -1,0 +1,43 @@
+name: Market prices
+
+# End-of-day share prices for the Markets page (scripts/markets.mjs). No AI model.
+# Needs the repository secret ALPHAVANTAGE_API_KEY (free key: https://www.alphavantage.co/support/#api-key; 25 calls a day).
+# Five runs a day at 5 calls each stay inside the free limit. Without the secret every run exits in seconds.
+# Started by the schedule below or, while GitHub's scheduler is not firing, by scripts/kick.sh from the hourly sweep.
+on:
+  schedule:
+    - cron: "23 1,6,11,16,21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-writes
+  cancel-in-progress: false
+
+jobs:
+  prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Fetch prices
+        env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+          MARKETS_MAX_CALLS: "5"
+        run: node scripts/markets.mjs
+      - name: Validate
+        run: node scripts/build.mjs
+      - name: Commit and push
+        run: |
+          git config user.name "cyberview-markets"
+          git config user.email "cyberview-markets@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -q -m "data: market prices"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
+          exit 1

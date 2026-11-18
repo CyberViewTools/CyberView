@@ -12,6 +12,7 @@
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
 import { buildPages } from "./pages.mjs";
+import { impact, change, chartSeries, SYMBOL_RE } from "./lib/markets.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
@@ -49,6 +50,13 @@ function checkEvent(e, path) {
   const words = String(e.summary || "").trim().split(/\s+/).filter(Boolean).length;
   if (words > 75) warnings.push(`${where}: summary is ${words} words; the limit is 75`);
   if (e.duplicate_of && typeof e.duplicate_of !== "string") errors.push(`${where}: duplicate_of must be an event id`);
+  // market fields (set by the markets job): a listed company's ticker, and an SEC filing about the incident
+  if (e.ticker != null && !(typeof e.ticker === "string" && SYMBOL_RE.test(e.ticker))) errors.push(`${where}: ticker must be an exchange symbol like "UBER" or "BRK.B"`);
+  if (e.filing != null) {
+    const f = e.filing;
+    if (typeof f !== "object" || !/^https:\/\/www\.sec\.gov\//.test(f.url || "") || !/^\d{4}-\d{2}-\d{2}$/.test(f.filed || "") || !/^(8-K|8-K\/A|6-K|10-K|10-Q)$/.test(f.form || ""))
+      errors.push(`${where}: filing needs form (8-K, 8-K/A, 6-K, 10-K or 10-Q), filed (YYYY-MM-DD) and an https://www.sec.gov/ url`);
+  }
 }
 
 const files = listEventFiles();
@@ -230,3 +238,35 @@ console.log(`Archive: ${live.length} events in ${index.months.length} month(s), 
 
 // legal pages and security.txt from legal/ and config/site.json
 console.log("Pages: " + buildPages().join(", "));
+
+// ---------- markets (site/data/markets.json): share moves around disclosures, SEC filings, cyber stocks tracker ----------
+{
+  const mcfg = readJson(join(ROOT, "config", "markets.json"), { benchmark: "SPY", tracked: [] });
+  const px = (sym) => (readJson(join(DATA, "markets", "prices", `${sym}.json`), null) || { days: [] }).days;
+  const bench = px(mcfg.benchmark);
+  const live = allEvents.filter((e) => !e.duplicate_of && e.status !== "claimed");
+  const wre = (t) => new RegExp("(^|[^a-z0-9])" + t.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "($|[^a-z0-9])");
+  const brief = (e) => ({ id: e.id, title: e.title, date: e.date, category: e.category, severity: e.severity, org: e.org || "" });
+  const impacts = live.filter((e) => e.ticker).map((e) => {
+    const d = px(e.ticker);
+    const im = d.length ? impact(d, bench, e.date) : null;
+    return { ...brief(e), ticker: e.ticker, status: im ? (im.split ? "split" : "ok") : (d.length ? "no_window" : "no_prices"), ...(im && !im.split ? im : {}) };
+  }).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 120);
+  const tracked = mcfg.tracked.map((t) => {
+    const d = px(t.symbol), series = chartSeries(d, 90), from = series.length ? series[0][0] : "9999";
+    const res = (t.terms || []).map(wre), hit = (h) => res.some((re) => re.test(h.toLowerCase()));
+    return {
+      symbol: t.symbol, name: t.name, kind: t.kind, last: d.length ? d[d.length - 1] : null,
+      chg1: change(d, 1), chg5: change(d, 5), chg30: change(d, 21), series,
+      events: res.length ? live.filter((e) => e.date >= from && hit([e.org, e.title, (e.products || []).join(" | ")].join(" | "))).map(brief).slice(0, 40) : [],
+      kev: res.length ? kevAll.filter((k) => (k.added || "") >= from && hit([k.vendor, k.product].join(" | "))).map((k) => ({ cve: k.cve, added: k.added, product: k.product })).slice(0, 40) : [],
+    };
+  });
+  const filings = allEvents.filter((e) => !e.duplicate_of && e.filing).map((e) => ({ ...brief(e), ticker: e.ticker || "", filing: e.filing }))
+    .sort((a, b) => (a.filing.filed < b.filing.filed ? 1 : -1)).slice(0, 100);
+  const asOf = [bench, ...mcfg.tracked.map((t) => px(t.symbol))].map((d) => (d.length ? d[d.length - 1][0] : "")).sort().pop() || "";
+  const benchSeries = chartSeries(bench, 90);
+  writeFileSync(join(OUT, "markets.json"), JSON.stringify({ built_at: new Date().toISOString(), as_of: asOf, benchmark: { symbol: mcfg.benchmark, series: benchSeries }, source: "Alpha Vantage (end of day)", impacts, tracked, filings }));
+  console.log(`Markets: ${impacts.filter((x) => x.status === "ok").length} of ${impacts.length} listed-company events with a computed move, ${tracked.filter((t) => t.series.length).length}/${tracked.length} tracked stocks priced, ${filings.length} SEC filings.`);
+}
+

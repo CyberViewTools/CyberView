@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.12",date:"2026-11-18"};
+var BUILD={version:"1.13",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -249,7 +249,7 @@ function clean(id,d){
   e.isNew=isFinite(Date.parse(e.firstSeen))&&Date.now()-Date.parse(e.firstSeen)<3*3600e3;
   e.action=str(d.action,300);e.plain=str(d.plain,260);e.exec=str(d.exec,180);
   e.tier=own(TIER,d.source_tier)?d.source_tier:"";e.pin=own(PIN,d.pin_type)?d.pin_type:"";
-  e.products=strs(d.products,8,60);e.attack=strs(d.attack,4,80);
+  e.products=strs(d.products,8,60);var tk=str(d.ticker,10);e.ticker=/^[A-Z][A-Z0-9.\-]{0,9}$/.test(tk)?tk:"";e.attack=strs(d.attack,4,80);
   var rp=d.report;e.report=null;
   if(rp&&typeof rp==="object"&&str(rp.publisher,80)){var ru=str(rp.url,600);
     e.report={publisher:str(rp.publisher,80),ptype:rp.publisher_type==="government"?"government":"vendor",docId:str(rp.doc_id,60),published:str(rp.published,30),
@@ -499,7 +499,7 @@ function card(e,open){
     function row(k,v,cls){if(!v)return;dl.appendChild(el("dt",null,k));dl.appendChild(el("dd",cls||null,v));}
     row("When",fmtWhen(e,true)+(e.hasTime?"":" (time of day not reported)"),"mono");row("Organization",e.org);row("Sector",e.sector);row("Products",e.products.join(", "));row("Actor",e.actor);row("Techniques",e.attack.join("; "));row("Status",STATUS[e.status]);row("Source quality",e.tier?TIER[e.tier]:"");
     row("Severity",["","Low","Medium","High"][e.severity]);row("Records",e.records?e.records.toLocaleString():"");
-    row("CVEs",e.cves.join(", "),"mono");row("Pin shows",[e.geo||(e.pin?PIN[e.pin]:""),e.actorPin?"attributed origin, not a victim location":e.countryPin?"country-level location":""].filter(Boolean).join(" · "));row("Date note",e.dateNote);
+    row("CVEs",e.cves.join(", "),"mono");if(e.ticker)row("Listed company",e.ticker+" (share move on the Markets page)","mono");row("Pin shows",[e.geo||(e.pin?PIN[e.pin]:""),e.actorPin?"attributed origin, not a victim location":e.countryPin?"country-level location":""].filter(Boolean).join(" · "));row("Date note",e.dateNote);
     row("First seen",fmtTime(e.firstSeen),"mono");row("Updated",e.updated&&e.updated!==e.firstSeen?fmtTime(e.updated):"","mono");
     if(dl.childNodes.length)b.appendChild(dl);
     if(e.sources.length){

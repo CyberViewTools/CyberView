@@ -63,7 +63,7 @@ async def open_page(browser, url, w=1440, h=860, theme=None, wait=1500):
     await pg.goto(url)
     await pg.wait_for_timeout(wait)
     if theme:
-        await pg.click(f"[data-theme-set={theme}]")
+        pass  # the page is dark only; no theme switch to click
         await pg.wait_for_timeout(150)
     return pg, errs
 
@@ -99,7 +99,7 @@ async def main():
             browser = await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
 
         async def core(url):
-            for th in ["light", "dark"]:
+            for th in ["dark"]:
                 pg, errs = await open_page(browser, url, theme=th)
                 ok(f"{th}: feed has cards", await pg.locator("#feed .card").count() >= min(10, n_events))
                 ok(f"{th}: map markers drawn", await pg.locator("#svg g.m, #svg g.cl").count() > 3)

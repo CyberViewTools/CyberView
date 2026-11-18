@@ -1,0 +1,1365 @@
+// CyberView page script. Loaded as a file so the Content Security Policy can forbid inline scripts.
+(function(){
+"use strict";
+var CATS=[
+  {k:"incident",label:"Incidents",one:"Incident",sym:d3.symbolCircle},
+  {k:"report",label:"Threat reports",one:"Threat report",sym:d3.symbolDiamond},
+  {k:"vuln",label:"Patches & advisories",one:"Patch / advisory",sym:d3.symbolTriangle},
+  {k:"policy",label:"Law & policy",one:"Law / policy",sym:d3.symbolSquare},
+  {k:"enforcement",label:"Law enforcement",one:"Law enforcement",sym:d3.symbolStar},
+  {k:"investment",label:"Investment & vendors",one:"Investment / vendor",sym:d3.symbolCross},
+  {k:"outage",label:"Outages",one:"Outage",sym:d3.symbolWye}
+];
+var CAT={};CATS.forEach(function(c){CAT[c.k]=c;});
+var STATUS={confirmed:"Confirmed",official:"Official",claimed:"Claimed",developing:"Developing"};
+var VAL={corroborated:["Corroborated","v-ok","Two or more independent sources, or a primary source, support the core facts."],
+  single_source:["Single source","v-warn","Only one publisher found so far."],
+  unconfirmed_claim:["Unconfirmed claim","v-bad","An attacker's claim that the named organization has not confirmed."],
+  disputed:["Disputed","v-bad","Sources conflict, or the organization denies it."],
+  source_unreachable:["Source unreachable","v-bad","The cited source could not be loaded at the last check."]};
+var CONF=["Unchecked","Low","Medium","High"];
+var CI=/energy|utilit|power|electric|water|health|hospital|government|election|aviation|transport|telecom|critical|ot-ics|\bics\b|oil|gas|rail|shipping|port\b/i;
+var ALIAS={"united states":"united states of america","usa":"united states of america","us":"united states of america","uk":"united kingdom","czech republic":"czechia","dr congo":"dem. rep. congo","democratic republic of the congo":"dem. rep. congo","ivory coast":"côte d'ivoire","bosnia and herzegovina":"bosnia and herz.","dominican republic":"dominican rep.","uae":"united arab emirates"};
+var TIER={primary:"Primary source",established:"Established outlet",aggregator:"Aggregator only"};
+var PIN={victim:"victim location",hq:"headquarters",agency:"agency",actor:"actor origin",researcher:"researcher",country:"country centre",none:""};
+var LENS={
+  rall:function(e){return !!e.report;},
+  rgov:function(e){return !!e.report&&e.report.ptype==="government";},
+  rvendor:function(e){return !!e.report&&e.report.ptype==="vendor";},
+  ci:function(e){return CI.test(e.lensHay);},
+  energy:function(e){return /energy|utilit|power|electric|water|\boil\b|\bgas\b|nuclear|\bgrid\b|pipeline/.test(e.lensHay);},
+  health:function(e){return /health|hospital|medical|pharma|clinic|dental|\bnhs\b/.test(e.lensHay);},
+  gov:function(e){return /government|public sector|election|municip|ministry|defen[cs]e|military|federal|\bcouncil\b|\bcity of\b/.test(e.lensHay);},
+  finance:function(e){return /financ|bank|insur|payment|fintech|credit|accounting|crypto|invest/.test(e.lensHay);},
+  telecom:function(e){return /telecom|telco|\bisp\b|broadband|\bsms\b|wireless|mobile operator/.test(e.lensHay);},
+  transport:function(e){return /transport|aviation|airline|airport|\brail|shipping|logistic|maritime|\bports?\b|automotive/.test(e.lensHay);},
+  tech:function(e){return /technolog|software|saas|cloud|semiconduct|\bai\b|\bweb\b|\berp\b|network security|it services/.test(e.lensHay);},
+  edu:function(e){return /educat|universit|school|college|academ/.test(e.lensHay);},
+  smb:function(e){return e.tags.some(function(t){return /ransomware|phishing|fraud/.test(t);})||/retail|professional services/i.test(e.sector);}
+};
+var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|scada|\bplc\b|controller|industrial|refrigerat|siemens|codesys|johnson controls|danfoss|copeland/],
+  ["edge","Network edge: VPN, firewall, gateway",/vpn|firewall|gateway|netscaler|forti|sonicwall|check point|ivanti|citrix|palo alto|pan-os|cisco|router|big-ip|\bf5\b|barracuda|juniper|gaia/],
+  ["identity","Identity: logins, credentials, single sign-on",/identity|\bsso\b|saml|\bmfa\b|okta|entra|active directory|credential|ldap|oauth|password|stealer/],
+  ["email","Email and collaboration",/outlook|exchange|e-?mail|microsoft 365|\bteams\b|sharepoint|zoom|gmail|phishing/],
+  ["cloud","Cloud, SaaS and AI",/cloud|\baws\b|azure|saas|kubernetes|container|ai-enabled|\bllm\b|\bai\b|api key/],
+  ["app","Apps and supply chain: applications, code libraries, build tools",/supply-chain|\bnpm\b|pypi|github|gitlab|java|\bjdk\b|node\.js|react|rails|wordpress|\bsap\b|confluence|atlassian|package|script|puppet|n8n|\bweb/],
+  ["endpoint","Endpoints and OS: computers, phones, browsers",/windows|linux|macos|\bios\b|android|chrome|browser|endpoint|kernel|driver|patch tuesday/],
+  ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
+  ["org","Policy and other: laws, enforcement, business news",/^$/]];
+var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
+var BUILD={version:"1.3",date:"2026-11-18"};
+var viz={lane:"layer",mat:"layer"};
+var kev=[],ripples=null,kevSort="new";
+function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
+function lsGet(k){try{return window.localStorage.getItem(k);}catch(x){return null;}}
+function lsSet(k,v){try{window.localStorage.setItem(k,v);return true;}catch(x){return false;}}
+var wl={terms:[],lower:[],doc:null,mode:"local",stored:true};
+var rep={id:null,text:"",fail:false,busy:false};
+var savedT=null,feedTop=0,feedKey="",keyShut=true;
+var daily=null,hist=null,corrections=[],rubricOpen=false;
+var state={win:7,cats:new Set(CATS.map(function(c){return c.k;})),sev:1,lens:"all",level:"standard",claims:false,wlOnly:false,status:"all",sort:"pri",q:"",day:null,sel:null,spot:null,country:null,tab:"feed",view:"map",pattern:null};
+var analysis=null;var events=[],sweep=null,loaded=false,unavailable=false,stale=false,db=null,query=null,fresh=new Set();
+var $=function(id){return document.getElementById(id);};
+var reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+var NS="http://www.w3.org/2000/svg";
+
+function ymd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function daysAgo(n){var d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-n);return d;}
+function parseDay(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2],12);}
+function fmtDay(s){return parseDay(s).toLocaleDateString(undefined,{month:"short",day:"numeric"});}
+function fmtTime(iso){var t=Date.parse(iso);return isFinite(t)?new Date(t).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";}
+function fmtNum(n){return n>=1e9?(n/1e9).toFixed(1).replace(/\.0$/,"")+"B":n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,"")+"M":n>=1e4?Math.round(n/1e3)+"K":n.toLocaleString();}
+function ago(iso){
+  var t=Date.parse(iso);if(!isFinite(t))return "";
+  var m=Math.max(0,Math.round((Date.now()-t)/60000));
+  if(m<1)return "just now";if(m<60)return m+" min ago";
+  var h=Math.round(m/60);if(h<48)return h+" h ago";return Math.round(h/24)+" days ago";
+}
+function nextSweep(){
+  var min=sweep&&typeof sweep.sweep_minute==="number"?sweep.sweep_minute:10,now=new Date().getUTCMinutes();
+  var d=(min-now+60)%60;return d===0?"now":"in "+d+" min";
+}
+function fmtWhen(e,long){
+  if(!e.hasTime)return fmtDay(e.date);
+  var s=new Date(e.t).toLocaleString(undefined,long?{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}:{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  return s+(e.tb&&e.tb!=="occurred"?" ("+e.tb+")":"");
+}
+function cleanAnalysis(d){
+  if(!d||typeof d!=="object"||!Array.isArray(d.patterns))return null;
+  var ids=function(a){return (Array.isArray(a)?a:[]).map(function(x){return str(x,120);}).filter(Boolean).slice(0,60);};
+  return {generated:str(d.generated_at,30),summary:str(d.summary,900),patterns:d.patterns.slice(0,24).map(function(p,i){
+    if(!p||typeof p!=="object")return null;
+    var kind={stated:1,inferred:1,timing:1}[p.kind]?p.kind:"inferred";
+    return {id:str(p.id,60)||("p"+i),title:str(p.title,110)||"Pattern",kind:kind,conf:Math.min(3,Math.max(1,Math.round(+p.confidence)||1)),
+      narrative:str(p.narrative,900),caveat:str(p.caveat,400),ids:ids(p.event_ids),chain:ids(p.chain),
+      edges:(Array.isArray(p.edges)?p.edges:[]).slice(0,80).map(function(x){return x&&typeof x==="object"?{from:str(x.from,120),to:str(x.to,120),rel:str(x.rel,60),basis:{stated:1,inferred:1,timing:1}[x.basis]?x.basis:kind}:null;}).filter(Boolean)};
+  }).filter(Boolean)};
+}
+function curPattern(){return analysis&&state.pattern?analysis.patterns.find(function(p){return p.id===state.pattern;}):null;}
+function str(v,max){return typeof v==="string"?v.slice(0,max||400):"";}
+function numIn(v,lo,hi){return typeof v==="number"&&isFinite(v)&&v>=lo&&v<=hi?v:null;}
+function strs(a,n,len){return (Array.isArray(a)?a:[]).map(function(c){return str(c,len).trim();}).filter(Boolean).slice(0,n);}
+function isDay(s){return /^\d{4}-\d{2}-\d{2}$/.test(s)&&isFinite(parseDay(s).getTime());}
+/* ---------- watchlist ---------- */
+function wlParse(s){
+  var seen={},out=[];
+  String(s||"").slice(0,4000).split(/[,\n]/).forEach(function(t){
+    t=t.replace(/\s+/g," ").trim().slice(0,60);var k=t.toLowerCase();
+    if(k.length>=2&&!seen["k"+k]){seen["k"+k]=1;out.push(t);}
+  });
+  return out.slice(0,40);
+}
+function wlClean(a){return wlParse((Array.isArray(a)?a:[]).filter(function(x){return typeof x==="string";}).join("\n"));}
+function wlTest(e){for(var i=0;i<wl.lower.length;i++){if(e.wlHay.indexOf(wl.lower[i])>=0)return true;}return false;}
+function wlApply(terms){wl.terms=terms;wl.lower=terms.map(function(t){return t.toLowerCase();});events.forEach(function(e){e.wl=wlTest(e);});}
+function cleanRipples(d){
+  if(!d||typeof d!=="object"||!Array.isArray(d.items))return null;
+  return {generated:str(d.generated_at,30),items:d.items.slice(0,12).map(function(r){if(!r||typeof r!=="object")return null;var id=str(r.event_id,120);if(!id)return null;
+    return {id:id,direct:strs(r.direct,4,200),downstream:strs(r.downstream,4,200),watch:strs(r.watch_for,4,200),who:strs(r.who_should_care,4,40),basis:r.basis==="stated"?"stated":"inferred"};}).filter(function(r){return r&&(r.direct.length||r.downstream.length);})};
+}
+function cleanBrief(d){
+  if(!d||typeof d!=="object")return null;
+  var b={generated:str(d.generated_at,30),date:str(d.date,10),headline:str(d.headline,200),summary:str(d.plain_summary,1200),
+    items:(Array.isArray(d.items)?d.items:[]).slice(0,8).map(function(x){
+      if(!x||typeof x!=="object")return null;
+      var it={title:str(x.title,200),why:str(x.why,400),action:str(x.action,300),id:str(x.event_id,120)};
+      return it.title||it.why?it:null;
+    }).filter(Boolean)};
+  return b.headline||b.summary||b.items.length?b:null;
+}
+function cleanHist(d){
+  if(!d||typeof d!=="object"||!d.days||typeof d.days!=="object")return null;
+  var out=[];
+  Object.keys(d.days).forEach(function(k){
+    if(!isDay(k))return;var v=d.days[k];if(!v||typeof v!=="object")return;
+    var t=numIn(v.total,0,1e6);
+    if(t===null){t=0;CATS.forEach(function(c){t+=numIn(v[c.k],0,1e6)||0;});}
+    out.push({d:k,n:Math.round(t)});
+  });
+  out.sort(function(a,b){return a.d<b.d?-1:1;});
+  return out.slice(-28);
+}
+function cleanCorr(d){
+  if(!d||typeof d!=="object")return null;
+  var c={at:str(d.at,30),id:str(d.event_id,120),title:str(d.title,200),what:str(d.what_changed,400)};
+  return c.title||c.what?c:null;
+}
+function normC(s){s=(s||"").toLowerCase().trim();return ALIAS[s]||s;}
+function clean(id,d){
+  if(!d||typeof d!=="object")return null;
+  if(typeof d.duplicate_of==="string"&&d.duplicate_of&&d.duplicate_of!==id)return null; /* flagged by the data-quality pass; the richer record is shown */
+  var date=str(d.date,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return null;
+  var lat=typeof d.lat==="number"&&isFinite(d.lat)&&Math.abs(d.lat)<=90?d.lat:null;
+  var lng=typeof d.lng==="number"&&isFinite(d.lng)&&Math.abs(d.lng)<=180?d.lng:null;
+  if(lat===null||lng===null){lat=null;lng=null;}
+  var sources=(Array.isArray(d.sources)?d.sources:[]).map(function(s){
+    var u=str(s&&s.url,600);return /^https?:\/\//i.test(u)?{name:str(s.name,80)||u.replace(/^https?:\/\//,"").split("/")[0],url:u}:null;
+  }).filter(Boolean).slice(0,6);
+  var v=d.validation&&typeof d.validation==="object"&&VAL[d.validation.state]?{state:d.validation.state,checked:str(d.validation.checked_at,30),note:str(d.validation.note,240)}:null;
+  var e={id:id,title:str(d.title,200)||"Untitled event",date:date,dateNote:str(d.date_note,160),
+    category:CAT[d.category]?d.category:"report",severity:Math.min(3,Math.max(1,Math.round(+d.severity)||1)),
+    status:STATUS[d.status]?d.status:"developing",org:str(d.org,120),sector:str(d.sector,80),country:str(d.country,60),
+    place:str(d.place,80),lat:lat,lng:lng,geo:str(d.geo_basis,40),actor:str(d.actor,120),summary:str(d.summary,900),impact:str(d.impact,240),
+    cves:(Array.isArray(d.cves)?d.cves:[]).map(function(c){return str(c,24);}).filter(Boolean).slice(0,8),
+    tags:(Array.isArray(d.tags)?d.tags:[]).map(function(c){return str(c,28).toLowerCase();}).filter(Boolean).slice(0,6),
+    records:typeof d.records_affected==="number"&&isFinite(d.records_affected)&&d.records_affected>0?Math.round(d.records_affected):0,
+    sources:sources,val:v,firstSeen:str(d.first_seen,30),updated:str(d.updated_at,30),tb:str(d.time_basis,20)};
+  var ot=Date.parse(str(d.occurred_at,40));e.hasTime=isFinite(ot);e.t=e.hasTime?ot:parseDay(date).getTime();
+  var ok=e.status==="confirmed"||e.status==="official";
+  e.conf=!v?(e.status==="claimed"?1:0):v.state==="corroborated"?(ok?3:e.status==="developing"?2:1):v.state==="single_source"?(e.status==="claimed"?1:2):1;
+  e.ci=CI.test(e.sector+" "+e.tags.join(" "));
+  e.isNew=isFinite(Date.parse(e.firstSeen))&&Date.now()-Date.parse(e.firstSeen)<3*3600e3;
+  e.action=str(d.action,300);e.plain=str(d.plain,260);e.exec=str(d.exec,180);
+  e.tier=own(TIER,d.source_tier)?d.source_tier:"";e.pin=own(PIN,d.pin_type)?d.pin_type:"";
+  e.products=strs(d.products,8,60);e.attack=strs(d.attack,4,80);
+  var rp=d.report;e.report=null;
+  if(rp&&typeof rp==="object"&&str(rp.publisher,80)){var ru=str(rp.url,600);
+    e.report={publisher:str(rp.publisher,80),ptype:rp.publisher_type==="government"?"government":"vendor",docId:str(rp.doc_id,60),published:str(rp.published,30),
+      findings:strs(rp.key_findings,6,260),recs:strs(rp.recommendations,6,260),iocs:rp.iocs_available===true,read:str(rp.read_depth,20),url:/^https?:\/\//i.test(ru)?ru:""};}
+  e.cveMeta=(Array.isArray(d.cve_meta)?d.cve_meta:[]).map(function(c){
+    if(!c||typeof c!=="object")return null;var cid=str(c.id,24);if(!cid)return null;
+    var due=str(c.kev_due,10);
+    return {id:cid,cvss:numIn(c.cvss,0,10),epss:numIn(c.epss,0,1),kev:c.kev===true,due:isDay(due)?due:""};
+  }).filter(Boolean).slice(0,8);
+  e.kev=e.cveMeta.some(function(c){return c.kev;})?1:0;
+  e.epss=e.cveMeta.reduce(function(m,c){return c.epss!==null&&c.epss>m?c.epss:m;},-1);
+  e.cvss=e.cveMeta.reduce(function(m,c){return c.cvss!==null&&c.cvss>m?c.cvss:m;},-1);
+  e.actorPin=e.pin==="actor"||/actor origin/i.test(e.geo);e.countryPin=!e.actorPin&&e.pin==="country";
+  e.wlHay=[e.title,e.org,e.sector,e.country,e.products.join(" | "),e.tags.join(" | "),e.actor,e.cves.join(" ")].join(" | ").toLowerCase();
+  e.lensHay=(e.sector+" "+e.tags.join(" ")+" "+e.org).toLowerCase();
+  var lh=(e.title+" "+e.products.join(" ")+" "+e.tags.join(" ")+" "+e.sector).toLowerCase();
+  e.layer="org";
+  if(e.category==="incident"||e.category==="vuln"||e.category==="report"||e.category==="outage"){for(var li=0;li<LAYERS.length;li++){if(LAYERS[li][2].test(lh)){e.layer=LAYERS[li][0];break;}}}
+  e.secg="other";for(var si=0;si<SECG.length;si++){if(own(LENS,SECG[si][0])&&LENS[SECG[si][0]](e)){e.secg=SECG[si][0];break;}}
+  e.wl=wlTest(e);
+  return e;
+}
+function symPath(cat,size){return d3.symbol().type(CAT[cat].sym).size(size)();}
+function glyph(cat,hollow){
+  var s=document.createElementNS(NS,"svg");s.setAttribute("viewBox","-8 -8 16 16");s.setAttribute("aria-hidden","true");
+  var p=document.createElementNS(NS,"path");p.setAttribute("d",symPath(cat,110));
+  if(hollow){p.setAttribute("fill","none");p.setAttribute("stroke","var(--c-"+cat+")");p.setAttribute("stroke-width","2");}
+  else p.setAttribute("fill","var(--c-"+cat+")");
+  s.appendChild(p);return s;
+}
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+function confEl(e){var c=el("span","conf c"+e.conf);c.title="Confidence: "+CONF[e.conf];for(var i=0;i<3;i++)c.appendChild(el("i"));c.appendChild(document.createTextNode(CONF[e.conf]));return c;}
+var toastT=0;
+function toast(msg){var t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},4200);}
+
+/* ---------- filtering ---------- */
+function priOf(e){
+  var s=e.severity*20;
+  if(e.wl)s+=60;if(e.kev)s+=35;if(e.tags.indexOf("zero-day")>=0)s+=15;if(e.epss>=.5)s+=10;
+  if(e.status==="claimed")s-=30;else if(e.conf>=3)s+=6;
+  if(e.action)s+=5;if(e.category==="incident"||e.category==="vuln")s+=8;if(e.category==="outage")s+=4;
+  var age=isFinite(e.t)?(Date.now()-e.t)/864e5:7;
+  return s-Math.min(7,Math.max(0,age))*4;
+}
+function urgent(e){return e.status!=="claimed"&&(e.kev||e.wl||e.severity>=3||(e.severity>=2&&(e.category==="vuln"||e.category==="incident")));}
+function nav(d){
+  var list=lastList;if(!list.length)return;
+  var i=list.findIndex(function(e){return e.id===state.sel;});
+  var n=i<0?(d>0?0:list.length-1):i+d;
+  if(n<0||n>=list.length)return;
+  select(list[n].id,true);
+}
+function inWindow(e){return e.date>=ymd(daysAgo(state.win))&&e.date<=ymd(daysAgo(-1));}
+function matchQ(e){
+  if(!state.q)return true;
+  var hay=[e.title,e.org,e.country,e.place,e.sector,e.actor,e.summary,e.cves.join(" "),e.tags.join(" ")].join(" ").toLowerCase();
+  return state.q.toLowerCase().split(/\s+/).every(function(w){return hay.indexOf(w)>=0;});
+}
+function matchStatus(e){
+  if(state.status==="all")return true;
+  if(state.status==="corroborated")return !!e.val&&e.val.state==="corroborated";
+  var open=e.status==="claimed"||e.status==="developing";
+  return state.status==="open"?open:!open;
+}
+function claimOk(e){return state.claims||e.status!=="claimed";}
+function lensOk(e){return state.lens==="all"||!own(LENS,state.lens)||LENS[state.lens](e);}
+function base(all){var only=state.wlOnly&&wl.terms.length>0;return events.filter(function(e){return inWindow(e)&&matchQ(e)&&matchStatus(e)&&e.severity>=state.sev&&lensOk(e)&&(!only||e.wl)&&(all||claimOk(e));});}
+function scoped(){return base().filter(function(e){return state.cats.has(e.category)&&(!state.country||normC(e.country)===state.country);});}
+function visible(){
+  var cmp={new:function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.t-a.t)||b.severity-a.severity;},
+    sev:function(a,b){return b.severity-a.severity||(a.date<b.date?1:-1);},
+    upd:function(a,b){return (b.updated||"").localeCompare(a.updated||"")||(a.date<b.date?1:-1);},
+    rec:function(a,b){return b.records-a.records||b.severity-a.severity;},
+    pri:function(a,b){return b.pri-a.pri||(a.date<b.date?1:-1);},
+    risk:function(a,b){return (b.kev-a.kev)||(b.epss-a.epss)||(b.cvss-a.cvss)||b.severity-a.severity||(a.date<b.date?1:-1);}}[state.sort];
+  var cp=curPattern();
+  return scoped().filter(function(e){e.pri=priOf(e);return (!state.day||e.date===state.day)&&(!state.spot||state.spot.indexOf(e.id)>=0)&&(!cp||cp.ids.indexOf(e.id)>=0);})
+    .sort(function(a,b){return (state.sort==="pri"?0:((b.wl?1:0)-(a.wl?1:0)))||cmp(a,b);});
+}
+
+/* ---------- header ---------- */
+function renderStats(list){
+  var s=$("stats");s.textContent="";
+  $("live").className="live"+(unavailable||stale?" off":"");
+  if(!loaded){s.textContent=unavailable?"Live data unavailable":"Loading events";return;}
+  var mapped=list.filter(function(e){return e.lat!==null;}).length;
+  s.appendChild(el("b",null,String(list.length)));s.appendChild(document.createTextNode(" events · "));
+  var todo=list.filter(function(e){return urgent(e);}).length;
+  s.appendChild(el("b",null,String(todo)));s.appendChild(document.createTextNode(" high priority · "));
+  s.appendChild(el("b",null,String(mapped)));s.appendChild(document.createTextNode(" on map"));s.title="As of "+new Date().toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+  var a=sweep&&ago(sweep.last_sweep_at);
+  if(a){s.appendChild(document.createTextNode(" · swept "));s.appendChild(el("b",null,a));s.appendChild(document.createTextNode(" · next "+nextSweep()));}
+  var ws=$("wlStat");ws.textContent="";
+  if(wl.terms.length){ws.appendChild(el("b","wlstat",String(list.filter(function(e){return e.wl;}).length)));ws.appendChild(document.createTextNode(" on your watchlist"));}
+}
+function renderToggles(){
+  var n=base(true).filter(function(e){return e.status==="claimed";}).length;
+  $("claims").setAttribute("aria-pressed",state.claims?"true":"false");
+  $("claimsN").textContent=n+(state.claims?" shown":" hidden");
+  var has=wl.terms.length>0;
+  $("wlOnly").disabled=!has;$("wlOnly").setAttribute("aria-pressed",state.wlOnly&&has?"true":"false");
+  $("wlOpen").textContent=has?"Watchlist ("+wl.terms.length+")":"Watchlist";
+
+}
+function renderChips(){
+  var b=base().filter(function(e){return (!state.day||e.date===state.day)&&(!state.country||normC(e.country)===state.country);});
+  var box=$("chips");box.textContent="";
+  CATS.forEach(function(c){
+    var n=b.filter(function(e){return e.category===c.k;}).length;
+    var btn=el("button","chip");btn.type="button";btn.setAttribute("aria-pressed",state.cats.has(c.k)?"true":"false");
+    btn.appendChild(glyph(c.k));btn.appendChild(el("span",null,c.label));btn.appendChild(el("span","n",String(n)));
+    btn.addEventListener("click",function(ev){
+      if(ev.shiftKey||ev.altKey){state.cats=new Set([c.k]);}
+      else if(state.cats.has(c.k))state.cats.delete(c.k);else state.cats.add(c.k);
+      if(state.cats.size===0)state.cats=new Set(CATS.map(function(x){return x.k;}));
+      render();
+    });
+    btn.title="Click to toggle. Shift-click to show only this type.";
+    box.appendChild(btn);
+  });
+}
+function renderDays(){
+  var b=scoped();
+  var days=[];for(var i=state.win;i>=0;i--)days.push(ymd(daysAgo(i)));
+  var counts=days.map(function(d){return b.filter(function(e){return e.date===d;}).length;});
+  var max=Math.max(1,d3.max(counts));
+  var box=$("days");box.textContent="";
+  days.forEach(function(d,i){
+    var btn=el("button","day"+(state.day&&state.day!==d?" dim":""));btn.type="button";
+    btn.setAttribute("aria-pressed",state.day===d?"true":"false");
+    btn.setAttribute("aria-label",counts[i]+" events on "+fmtDay(d));
+    btn.appendChild(el("span","cnt",String(counts[i])));
+    var bar=el("span","bar");bar.style.height=Math.round(counts[i]/max*34)+"px";btn.appendChild(bar);
+    btn.appendChild(el("span","lab",i===days.length-1?"Today":parseDay(d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"})));
+    btn.addEventListener("click",function(){state.day=state.day===d?null:d;render();});
+    box.appendChild(btn);
+  });
+}
+
+/* ---------- feed ---------- */
+function related(e){
+  return events.filter(function(o){
+    if(o.id===e.id)return false;
+    if(!claimOk(o))return false;
+    if(e.org&&o.org===e.org)return true;
+    if(e.actor&&o.actor&&o.actor===e.actor)return true;
+    return e.cves.some(function(c){return o.cves.indexOf(c)>=0;});
+  }).slice(0,4);
+}
+function brief(e){
+  return [e.title,fmtDay(e.date)+" | "+CAT[e.category].one+" | "+[e.place,e.country].filter(Boolean).join(", "),e.summary,
+    "Status: "+STATUS[e.status]+" | Confidence: "+CONF[e.conf]+(e.val?" ("+VAL[e.val.state][0]+")":""),
+    e.sources.map(function(s){return s.url;}).join("\n")].filter(Boolean).join("\n");
+}
+function card(e,open){
+  var li=el(open?"div":"li");var a=el("article","card s"+e.severity+(state.sel===e.id?" sel":"")+(fresh.has(e.id)?" fresh":""));a.style.setProperty("--cc","var(--c-"+e.category+")");
+  a.id=open?"dcard":"card-"+e.id;open=!!open;
+  var h=el("button","head");h.type="button";h.setAttribute("aria-expanded",open?"true":"false");
+  h.appendChild(glyph(e.category,e.status==="claimed"));
+  var meta=el("span","meta");meta.appendChild(el("span","cat",CAT[e.category].one));meta.appendChild(el("span",null,fmtWhen(e)));
+  meta.appendChild(confEl(e));
+  if(e.tier)meta.appendChild(el("span","tier "+e.tier,TIER[e.tier]));
+  h.appendChild(meta);h.appendChild(el("span","ttl",e.title));
+  var sub=el("span","sub");
+  var where=[e.place,e.country].filter(function(x,i,arr){return x&&arr.indexOf(x)===i;}).join(", ");
+  if(where)sub.appendChild(el("span",null,where));
+  if(e.wl)sub.appendChild(el("span","pill wl","On your watchlist"));
+  if(e.records)sub.appendChild(el("span","pill mute",fmtNum(e.records)+" records"));
+  if(e.isNew)sub.appendChild(el("span","pill new","New"));
+  if(e.status==="claimed"||e.status==="developing")sub.appendChild(el("span","pill warn",STATUS[e.status]));
+  if(e.kev)sub.appendChild(el("span","pill kev","Known exploited"));
+  if(e.report&&e.report.read!=="secondary"&&e.report.read)sub.appendChild(el("span","pill rep",e.report.ptype==="government"?"Gov report":"Vendor report"));
+  if(e.lat===null)sub.appendChild(el("span","pill mute","Not on map"));
+  h.appendChild(sub);
+  if(!open&&e.action&&urgent(e)){var dn=el("span","do");dn.appendChild(el("b",null,"Do: "));dn.appendChild(document.createTextNode(e.action));h.appendChild(dn);}
+  if(open)h.tabIndex=-1;
+  h.addEventListener("click",function(){if(!open)select(e.id,true);});
+  a.appendChild(h);
+  if(open){
+    var b=el("div","body");
+    var tr=el("div","tri");
+    function tb(label,key,cls,fn){var x=el("button",cls||null,label);x.type="button";var k=el("kbd",null,key);x.appendChild(k);x.addEventListener("click",fn);tr.appendChild(x);}
+    if(e.sources.length){var os=el("button",null,"Open source");os.type="button";os.appendChild(el("kbd",null,"O"));os.addEventListener("click",function(){openSource(e);});tr.appendChild(os);}
+    if(tr.childNodes.length)b.appendChild(tr);
+    b.appendChild(el("p",null,(state.level==="plain"?e.plain:state.level==="exec"?e.exec:"")||e.summary||"No summary yet."));
+    if(e.impact)b.appendChild(el("p",null,"Impact: "+e.impact));
+    if(e.action||e.cveMeta.length){
+      var td=el("div","todo");td.appendChild(el("h4",null,e.action?"What to do":"Exploit risk"));
+      if(e.action)td.appendChild(el("p",null,e.action));
+      if(e.cveMeta.length){
+        var ct=el("div","cvet");["CVE","CVSS","EPSS","Exploited"].forEach(function(x){ct.appendChild(el("span","h",x));});
+        e.cveMeta.forEach(function(c){
+          ct.appendChild(el("span",null,c.id));
+          ct.appendChild(el("span",null,c.cvss===null?"n/a":c.cvss.toFixed(1)));
+          var ep=el("span",null,c.epss===null?"n/a":(c.epss*100>=10?Math.round(c.epss*100):(c.epss*100).toFixed(1))+"%");
+          ep.title="EPSS: estimated chance of exploitation in the next 30 days";ct.appendChild(ep);
+          var kc=el("span","k");
+          if(c.kev){kc.appendChild(el("span","pill kev","Known exploited"));if(c.due)kc.appendChild(el("span",null,"due "+fmtDay(c.due)));}
+          else kc.appendChild(el("span",null,"not listed"));
+          ct.appendChild(kc);
+        });
+        td.appendChild(ct);
+      }
+      b.appendChild(td);
+    }
+    if(e.report){
+      var rv=el("div","todo rep"),r=e.report;
+      rv.appendChild(el("h4",null,(r.ptype==="government"?"Government report review":"Vendor report review")));
+      rv.appendChild(el("p","mono",[r.publisher,r.docId,r.published?(isDay(r.published.slice(0,10))?fmtDay(r.published.slice(0,10)):""):""].filter(Boolean).join(" · ")));
+      if(r.findings.length){rv.appendChild(el("p",null,"Key findings"));var fl=el("ul");r.findings.forEach(function(x){fl.appendChild(el("li",null,x));});rv.appendChild(fl);}
+      if(r.recs.length){rv.appendChild(el("p",null,"What the report recommends"));var rl=el("ul");r.recs.forEach(function(x){rl.appendChild(el("li",null,x));});rv.appendChild(rl);}
+      var foot=el("p","mono",(r.iocs?"Indicators of compromise are published in the report. ":"")+(r.read==="full"?"Reviewed from the full document.":r.read==="summary"?"Reviewed from the publisher's summary page.":r.read?"Reviewed from secondary coverage; the original was not read.":""));
+      if(foot.textContent)rv.appendChild(foot);
+      if(r.url){var ra=el("a",null,"Open the report");ra.href=r.url;ra.target="_blank";ra.rel="noopener noreferrer";rv.appendChild(ra);}
+      b.appendChild(rv);
+    }
+    var vv=e.val?VAL[e.val.state]:["Not yet checked","v-warn","The validation pass has not reached this event yet."];
+    var vb=el("div","val "+vv[1]);vb.appendChild(el("b",null,vv[0]));vb.appendChild(document.createTextNode(" · confidence "+CONF[e.conf].toLowerCase()));
+    vb.appendChild(el("small",null,(e.val&&e.val.note)||vv[2]));
+    if(e.val&&e.val.checked)vb.appendChild(el("small",null,"Checked "+fmtTime(e.val.checked)));
+    b.appendChild(vb);
+    if(e.tags.length){var tg=el("div","tags");e.tags.forEach(function(t){tg.appendChild(el("span","tag",t));});b.appendChild(tg);}
+    var dl=el("dl");
+    function row(k,v,cls){if(!v)return;dl.appendChild(el("dt",null,k));dl.appendChild(el("dd",cls||null,v));}
+    row("When",fmtWhen(e,true)+(e.hasTime?"":" (time of day not reported)"),"mono");row("Organization",e.org);row("Sector",e.sector);row("Products",e.products.join(", "));row("Actor",e.actor);row("Techniques",e.attack.join("; "));row("Status",STATUS[e.status]);row("Source quality",e.tier?TIER[e.tier]:"");
+    row("Severity",["","Low","Medium","High"][e.severity]);row("Records",e.records?e.records.toLocaleString():"");
+    row("CVEs",e.cves.join(", "),"mono");row("Pin shows",[e.geo||(e.pin?PIN[e.pin]:""),e.actorPin?"attributed origin, not a victim location":e.countryPin?"country-level location":""].filter(Boolean).join(" · "));row("Date note",e.dateNote);
+    row("First seen",fmtTime(e.firstSeen),"mono");row("Updated",e.updated&&e.updated!==e.firstSeen?fmtTime(e.updated):"","mono");
+    if(dl.childNodes.length)b.appendChild(dl);
+    if(e.sources.length){
+      var s=el("div","srcs");s.appendChild(el("span",null,"Sources ("+e.sources.length+"):"));
+      e.sources.forEach(function(x){var l=el("a",null,x.name);l.href=x.url;l.target="_blank";l.rel="noopener noreferrer";s.appendChild(l);});
+      b.appendChild(s);
+    }
+    var acts=el("div","acts");
+    var cp=el("button",null,"Copy brief");cp.type="button";cp.addEventListener("click",function(){
+      try{navigator.clipboard.writeText(brief(e)).then(function(){toast("Brief copied.");},function(){toast("Copy was blocked by the browser.");});}catch(x){toast("Copy was blocked by the browser.");}
+    });acts.appendChild(cp);
+    if(e.country){var cf=el("button",null,"More from "+e.country);cf.type="button";cf.addEventListener("click",function(){state.country=normC(e.country);select(null);});acts.appendChild(cf);}
+    var rpb=el("button",null,"Report an error");rpb.type="button";rpb.id="reportBtn";rpb.setAttribute("aria-expanded",rep.id===e.id?"true":"false");
+    rpb.addEventListener("click",function(){rep=rep.id===e.id?{id:null,text:"",fail:false,busy:false}:{id:e.id,text:"",fail:false,busy:false};render();var t=$("reportText");if(t)t.focus();});
+    acts.appendChild(rpb);
+    b.appendChild(acts);
+    if(rep.id===e.id)b.appendChild(reportForm(e));
+    var rel=related(e);
+    if(rel.length){var ul=el("ul","rel");ul.appendChild(el("li",null,"Related:"));rel.forEach(function(o){var l=el("li");var rb=el("button",null,fmtDay(o.date)+" · "+o.title);rb.type="button";rb.addEventListener("click",function(){state.day=null;state.spot=null;state.country=null;select(o.id,true);});l.appendChild(rb);ul.appendChild(l);});b.appendChild(ul);}
+    a.appendChild(b);
+  }
+  li.appendChild(a);return li;
+}
+function openSource(e){if(!e||!e.sources.length)return;try{window.open(e.sources[0].url,"_blank","noopener,noreferrer");}catch(x){}}
+function reportForm(e){
+  var f=el("div","rep"),ta=document.createElement("textarea");ta.id="reportText";ta.value=rep.text;
+  if(rep.fail){
+    f.appendChild(el("div","msg","Couldn't save the report from this view. Copy it instead."));
+    ta.readOnly=true;ta.setAttribute("aria-label","Report text to copy");f.appendChild(ta);
+    var cb=el("button","btn","Copy");cb.type="button";cb.id="reportCopy";
+    cb.addEventListener("click",function(){
+      try{navigator.clipboard.writeText(rep.text).then(function(){toast("Report copied.");},function(){toast("Copy was blocked by the browser. Select the text and copy it by hand.");});}
+      catch(x){toast("Copy was blocked by the browser. Select the text and copy it by hand.");}
+    });f.appendChild(cb);
+    return f;
+  }
+  ta.maxLength=500;ta.placeholder="What is wrong, and what should it say?";ta.setAttribute("aria-label","Describe the error");
+  ta.addEventListener("input",function(){rep.text=ta.value;});f.appendChild(ta);
+  var sb=el("button","btn","Send");sb.type="button";sb.id="reportSend";
+  sb.addEventListener("click",function(){
+    var note=rep.text.trim().slice(0,500);
+    if(!note){toast("Write a short note first.");return;}
+    if(rep.busy)return;rep.busy=true;
+    var payload={event_id:e.id,title:e.title,note:note,at:new Date().toISOString()},p;
+    try{p=db?db.collection("reports").add(payload):Promise.reject(new Error("no db"));}catch(x){p=Promise.reject(x);}
+    Promise.resolve(p).then(function(){rep={id:null,text:"",fail:false,busy:false};toast("Report saved.");render();},
+      function(){rep={id:e.id,fail:true,busy:false,text:"Error report\nEvent: "+payload.title+"\nEvent id: "+payload.event_id+"\nNote: "+note+"\nAt: "+payload.at};render();});
+  });f.appendChild(sb);
+  return f;
+}
+function showEvent(id){
+  var e=id&&events.find(function(x){return x.id===id;});
+  if(!e){toast("That event is not loaded in this view.");return;}
+  state.day=null;state.spot=null;state.country=null;state.pattern=null;
+  if(!visible().some(function(x){return x.id===id;})){render();toast(e.status==="claimed"&&!state.claims?"That event is an unverified claim. Turn on Show unverified claims to see it.":"That event is hidden by the current filters.");return;}
+  select(id,true);
+}
+function renderBrief(){
+  var box=$("brief");box.textContent="";
+  if(!daily){box.appendChild(el("div","empty",!loaded&&!unavailable?"Loading":"No brief yet. One is written each morning."));return;}
+  var hd=el("section","blk");
+  hd.appendChild(el("div","meta","Daily brief"+(daily.date&&isDay(daily.date)?" · "+fmtDay(daily.date):"")+(fmtTime(daily.generated)?" · written "+fmtTime(daily.generated):"")));
+  if(daily.headline)hd.appendChild(el("h2","bhd",daily.headline));
+  if(daily.summary)hd.appendChild(el("p",null,daily.summary));
+  box.appendChild(hd);
+  if(!daily.items.length)return;
+  var ol=el("ol","bitems");
+  daily.items.forEach(function(it,i){
+    var li=el("li","pcard");
+    li.appendChild(el("h3",null,it.title||"Item "+(i+1)));
+    if(it.why)li.appendChild(el("p",null,it.why));
+    if(it.action)li.appendChild(el("p","do","What to do: "+it.action));
+    if(it.id){
+      var a=el("div","acts"),b=el("button",null,"Show event");b.type="button";b.id="brief-show-"+i;
+      b.addEventListener("click",function(){showEvent(it.id);});a.appendChild(b);li.appendChild(a);
+    }
+    ol.appendChild(li);
+  });
+  box.appendChild(ol);
+}
+function renderScope(){
+  var parts=[];
+  if(state.spot)parts.push(state.spot.label||(state.spot.length+" events at one spot"));
+  if(state.country){var m=events.find(function(e){return normC(e.country)===state.country;});parts.push("Country: "+(m?m.country:state.country));}
+  if(state.day)parts.push(fmtDay(state.day));
+  var cp=curPattern();if(cp)parts.push("Pattern: "+cp.title);
+  if(state.q)parts.push("Search: "+state.q.slice(0,24));
+  if(state.status!=="all")parts.push($("status").selectedOptions[0].textContent);
+  if(state.lens!=="all")parts.push($("lens").selectedOptions[0].textContent);
+  if(state.sev>1)parts.push(state.sev===3?"High only":"Medium and high");
+  if(state.cats.size<CATS.length)parts.push((CATS.length-state.cats.size)+" type"+(CATS.length-state.cats.size>1?"s":"")+" off");
+  if(state.wlOnly&&wl.terms.length)parts.push("Watchlist only");
+  $("scope").hidden=!parts.length||!!state.sel;$("scopeText").textContent=parts.join(" · ");
+  var note=$("notice");
+  if(unavailable){note.hidden=false;note.textContent="The latest data could not be loaded. Check your connection and press Refresh.";}
+  else if(stale){note.hidden=false;note.textContent="Still waiting for the data store. What's shown may be out of date.";}
+  else note.hidden=true;
+}
+function renderFeed(list){
+  var f=$("feed"),ae=document.activeElement,typing=ae&&ae.id==="reportText"&&!ae.readOnly,ss=typing?ae.selectionStart:0;
+  var key=[state.win,state.sev,Array.from(state.cats).join(","),state.lens,state.status,state.sort,state.q,state.day,state.spot&&state.spot.length,state.country,state.pattern,state.claims,state.wlOnly].join("|");
+  var anchor=null,ft=0;
+  if(!f.hidden&&f.scrollTop>0&&key===feedKey){ft=f.getBoundingClientRect().top;for(var ci=0;ci<f.children.length;ci++){var cr=f.children[ci].getBoundingClientRect();if(cr.bottom>ft+4){var fc=f.children[ci].firstChild;if(fc&&fc.id)anchor={id:fc.id,off:cr.top-ft};break;}}}
+  f.textContent="";
+  if(typing)setTimeout(function(){var t=$("reportText");if(t&&document.activeElement!==t){t.focus();try{t.setSelectionRange(ss,ss);}catch(x){}}},0);
+  if(!loaded&&!unavailable){f.appendChild(el("li","empty","Loading events"));return;}
+  if(!list.length){f.appendChild(el("li","empty",events.length?"No events match these filters.":"No events stored yet. The next scheduled sweep will add them."));return;}
+  list.forEach(function(e){f.appendChild(card(e,false));});
+  if(key!==feedKey){feedKey=key;if(!f.hidden)f.scrollTop=0;feedTop=0;}
+  else if(anchor){var an=$(anchor.id);if(an)f.scrollTop+=an.parentNode.getBoundingClientRect().top-ft-anchor.off;}
+}
+function renderDetail(list){
+  var e=state.sel&&list.find(function(x){return x.id===state.sel;}),on=!!e&&state.tab==="feed";
+  var d=$("detail"),f=$("feed"),was=!d.hidden;
+  if(on&&!was)feedTop=f.scrollTop;
+  $("dbar").hidden=!on;d.hidden=!on;$("listTools").hidden=on;f.hidden=state.tab!=="feed"||on;
+  if(!on){d.textContent="";d.dataset.id="";if(was&&!f.hidden){f.scrollTop=feedTop;var c=state.last&&$("card-"+state.last);if(c)c.scrollIntoView({block:"nearest"});}return;}
+  var ae=document.activeElement,typing=ae&&ae.id==="reportText"&&!ae.readOnly,ss=typing?ae.selectionStart:0,same=d.dataset.id===e.id,st=d.scrollTop;
+  d.textContent="";d.appendChild(card(e,true));d.dataset.id=e.id;state.last=e.id;
+  if(same)d.scrollTop=st;else{d.scrollTop=0;d.style.animation="none";void d.offsetWidth;d.style.animation="";}
+  if(typing){var t=$("reportText");if(t){t.focus();try{t.setSelectionRange(ss,ss);}catch(x){}}}
+  var i=list.indexOf(e);$("dPos").textContent=(i+1)+" of "+list.length;$("dPrev").disabled=i<=0;$("dNext").disabled=i>=list.length-1;
+}
+
+/* ---------- insights ---------- */
+function tally(list,fn){var m=new Map();list.forEach(function(e){var k=fn(e);if(k)m.set(k,(m.get(k)||0)+1);});return Array.from(m).sort(function(a,b){return b[1]-a[1];});}
+function bars(title,rows,onPick,fmt){
+  var b=el("section","blk");b.appendChild(el("h3",null,title));
+  if(!rows.length){b.appendChild(el("div","empty","Nothing in this window."));return b;}
+  var max=rows[0][1];
+  rows.forEach(function(r){
+    var row=el(onPick?"button":"div","brow");if(onPick){row.type="button";row.addEventListener("click",function(){onPick(r[0]);});}
+    row.appendChild(el("span",null,r[2]||r[0]));var tr=el("span","tr");var i=el("i");i.style.width=Math.max(4,r[1]/max*100)+"%";tr.appendChild(i);row.appendChild(tr);
+    row.appendChild(el("span","v",fmt?fmt(r[1]):String(r[1])));b.appendChild(row);
+  });
+  return b;
+}
+function sysRow(dl,k,iso,lateH){
+  dl.appendChild(el("dt",null,k));var t=Date.parse(iso),late=isFinite(t)&&lateH&&Date.now()-t>lateH*3600e3;
+  dl.appendChild(el("dd",late?"late":null,isFinite(t)?ago(iso)+(late?" (overdue)":""):"not yet run"));
+}
+function renderInsights(list){
+  var box=$("ins");box.textContent="";
+  if(!loaded){box.appendChild(el("div","empty",unavailable?"Live data unavailable":"Loading"));return;}
+  var k=el("div","kpis");
+  function kpi(v,l){var d=el("div","kpi");d.appendChild(el("b",null,v));d.appendChild(el("span",null,l));k.appendChild(d);}
+  var corr=list.filter(function(e){return e.val&&e.val.state==="corroborated";}).length;
+  kpi(String(list.length),"events");kpi(String(list.filter(function(e){return e.severity===3;}).length),"high severity");
+  kpi(String(new Set(list.map(function(e){return normC(e.country);}).filter(Boolean)).size),"countries");
+  kpi(list.length?Math.round(corr/list.length*100)+"%":"0%","corroborated");
+  box.appendChild(k);
+  box.appendChild(histBlock());
+  box.appendChild(bars("Source quality",tally(list,function(e){return e.tier?TIER[e.tier]:"Not rated yet";}),null));
+  box.appendChild(bars("Validation",tally(list,function(e){return e.val?VAL[e.val.state][0]:"Not yet checked";}),null));
+  box.appendChild(bars("Countries",tally(list,function(e){return e.country;}).slice(0,6),function(c){state.country=normC(c);setTab("feed");render();}));
+  box.appendChild(bars("Sectors",tally(list,function(e){return e.sector.split(" / ")[0];}).slice(0,6),function(s){state.q=s;$("q").value=s;setTab("feed");render();}));
+  box.appendChild(bars("Named actors",tally(list,function(e){return e.actor;}).slice(0,5),function(s){state.q=s.split(" (")[0];$("q").value=state.q;setTab("feed");render();}));
+  var big=list.filter(function(e){return e.records;}).sort(function(a,b){return b.records-a.records;}).slice(0,5).map(function(e){return [e.id,e.records,e.org||e.title];});
+  box.appendChild(bars("Largest by records affected",big,function(id){setTab("feed");select(id,true);},fmtNum));
+  var tg=tally(list.reduce(function(a,e){return a.concat(e.tags.map(function(t){return {t:t};}));},[]),function(x){return x.t;}).slice(0,6);
+  if(tg.length)box.appendChild(bars("Tags",tg,function(t){state.q=t;$("q").value=t;setTab("feed");render();}));
+  var q=el("section","blk");q.appendChild(el("h3",null,"Data quality"));
+  var dq=el("dl","sys");
+  function qr(a,b){dq.appendChild(el("dt",null,a));dq.appendChild(el("dd",null,String(b)));}
+  qr("Single source",list.filter(function(e){return e.val&&e.val.state==="single_source";}).length);
+  qr(state.claims?"Unverified claims shown":"Unverified claims hidden",base(true).filter(function(e){return e.status==="claimed";}).length);
+  qr("Not yet checked",list.filter(function(e){return !e.val;}).length);
+  qr("No map location",list.filter(function(e){return e.lat===null;}).length);
+  qr("Uncertain date",list.filter(function(e){return e.dateNote;}).length);
+  q.appendChild(dq);box.appendChild(q);
+  var cs=el("section","blk");cs.appendChild(el("h3",null,"Corrections"));
+  if(!corrections.length)cs.appendChild(el("div","empty","No corrections recorded yet"));
+  else{var cu=el("ul","corr");corrections.forEach(function(c){
+    var li=el("li");
+    if(c.id&&events.some(function(e){return e.id===c.id;})){var cb=el("button",null,c.title||"Event");cb.type="button";cb.addEventListener("click",function(){showEvent(c.id);});li.appendChild(cb);}
+    else li.appendChild(el("b",null,c.title||"Event"));
+    if(c.what)li.appendChild(el("div",null,c.what));
+    if(fmtTime(c.at))li.appendChild(el("small",null,fmtTime(c.at)));
+    cu.appendChild(li);});cs.appendChild(cu);}
+  box.appendChild(cs);
+  var rb=document.createElement("details");rb.className="blk";rb.id="rubric";rb.open=rubricOpen;
+  var sm=el("summary",null,"How severity and confidence are scored");sm.id="rubricToggle";rb.appendChild(sm);
+  var ru=el("ul");
+  ["Severity 1, low: claims, small breaches, brief glitches.",
+   "Severity 2, medium: a confirmed breach, attack or outage with real impact.",
+   "Severity 3, high: critical infrastructure, national-scale disruption, exploited zero-days, or millions of records.",
+   "Confidence high: corroborated and confirmed.",
+   "Confidence medium: a single source, or still developing.",
+   "Confidence low: an unverified claim, a disputed report, or a source that could not be reached."].forEach(function(t){ru.appendChild(el("li",null,t));});
+  rb.appendChild(ru);rb.addEventListener("toggle",function(){rubricOpen=rb.open;});
+  box.appendChild(rb);
+  var s=el("section","blk");s.appendChild(el("h3",null,"Update pipeline"));var sd=el("dl","sys");
+  [["Hourly sweep","last_sweep_at",3],["Validation pass","last_validation_at",6],["Feeds and scores","last_feeds_at",6],["Known-exploited feed","last_kev_at",6],["Pattern analysis","last_analysis_at",8],["Report review","last_reports_at",26],["Daily deep sweep","last_deep_sweep_at",30],["Daily brief","last_brief_at",30],["Daily cleanup","last_maintenance_at",30]].forEach(function(r){sysRow(sd,r[0],sweep&&sweep[r[1]],r[2]);});
+  sd.appendChild(el("dt",null,"Next hourly sweep"));sd.appendChild(el("dd",null,nextSweep()));
+  s.appendChild(sd);
+  if(sweep&&sweep.health&&typeof sweep.health==="object"&&str(sweep.health.note,200))s.appendChild(el("div","empty",str(sweep.health.note,200)));
+  if(sweep&&sweep.coverage_note){s.appendChild(el("div","empty",str(sweep.coverage_note,200)));}
+  box.appendChild(s);
+  var ab=document.createElement("details");ab.className="blk";ab.id="about";
+  ab.appendChild(el("summary",null,"About this map: sources, method and limits"));
+  var au=el("ul");
+  ["What it is: a rolling seven-day picture of publicly reported cyber events, kept current by scheduled research tasks. It is not a complete record of everything that happened.",
+   "Sources: government agencies (CISA, FBI, NSA and counterparts abroad), security vendors' own reports, CISA's known-exploited catalog, NVD and EPSS scores, and established news outlets. Each event lists the sources it rests on.",
+   "Verification: a validation pass re-checks events against their sources. Events reviewed against an original government or vendor report carry a report badge. Attacker claims that the named organisation has not confirmed are hidden unless you turn them on.",
+   "Outages are recorded as outages and are never described as attacks unless an official source says so.",
+   "Corrections: when an original source contradicts an entry, the entry is fixed and the change is listed under Corrections.",
+   "Analysis views: patterns, chains and ripple effects are assembled by an analysis pass. Anything marked inferred or reasoned is a judgement, not a reported fact.",
+   "Limits: coverage leans toward English-language and government sources; dates are mostly publication dates; counts reflect what was collected. Check the linked source before acting on any single entry.",
+   "This is an information aid, not professional security advice for your organisation."].forEach(function(t){au.appendChild(el("li",null,t));});
+  ab.appendChild(au);
+  box.appendChild(ab);
+  box.appendChild(el("div","empty","CyberView version "+BUILD.version+" · built "+fmtDay(BUILD.date)+(sweep&&sweep.data_version?" · data rules "+str(sweep.data_version,20):"")));
+}
+function histBlock(){
+  var b=el("section","blk hist");b.appendChild(el("h3",null,"This week vs earlier"));
+  var n=hist?hist.length:0;
+  if(n<8){b.appendChild(el("div","empty","Baseline is still being built ("+n+" day"+(n===1?"":"s")+" recorded)"));return b;}
+  var Wd=380,Ht=64,max=Math.max(1,d3.max(hist,function(x){return x.n;})),step=Wd/n,bw=Math.max(2,step-2);
+  var s=document.createElementNS(NS,"svg");s.setAttribute("viewBox","0 0 "+Wd+" "+(Ht+2));s.setAttribute("role","img");
+  var wk=hist.slice(-7),prior=hist.slice(0,-7),wsum=d3.sum(wk,function(x){return x.n;}),pavg=Math.round(d3.sum(prior,function(x){return x.n;})/prior.length*7);
+  s.setAttribute("aria-label","Events per day for the last "+n+" recorded days. Last 7 days total "+wsum+".");
+  hist.forEach(function(x,i){
+    var hgt=Math.max(1.5,x.n/max*Ht),r=document.createElementNS(NS,"rect");
+    r.setAttribute("x",(i*step+1).toFixed(1));r.setAttribute("y",(Ht-hgt).toFixed(1));r.setAttribute("width",bw.toFixed(1));r.setAttribute("height",hgt.toFixed(1));r.setAttribute("rx",Math.min(3,bw/2));
+    r.setAttribute("class","hb"+(i>=n-7?" wk":""));
+    var t=document.createElementNS(NS,"title");t.textContent=fmtDay(x.d)+": "+x.n+" events";r.appendChild(t);s.appendChild(r);
+  });
+  var l=document.createElementNS(NS,"line");l.setAttribute("class","hbl");l.setAttribute("x1",0);l.setAttribute("x2",Wd);l.setAttribute("y1",Ht+.5);l.setAttribute("y2",Ht+.5);s.appendChild(l);
+  var top=el("div","hax");top.appendChild(el("span",null,"events per day, peak "+max));top.appendChild(el("span",null,"dark = last 7 days"));b.appendChild(top);
+  b.appendChild(s);
+  var ax=el("div","hax");ax.appendChild(el("span",null,fmtDay(hist[0].d)));ax.appendChild(el("span",null,fmtDay(hist[n-1].d)));b.appendChild(ax);
+  b.appendChild(el("p",null,"This week: "+wsum+" events. Prior "+(prior.length>=15?"3-week":prior.length+"-day")+" average: "+pavg+" per week."));
+  return b;
+}
+function setTab(t){
+  state.tab=t;["brief","feed","kev","pat","ins"].forEach(function(k){$("tab-"+k).setAttribute("aria-selected",t===k?"true":"false");$(k).hidden=t!==k;});
+  renderDetail(lastList||[]);
+}
+var KIND={stated:"Stated by sources",inferred:"Inferred pattern",timing:"Timing only"};
+function pickPattern(id,view){state.pattern=state.pattern===id&&!view?null:id;state.spot=null;state.day=null;state.sel=null;if(view)setView(view);else render();}
+function renderPatterns(){
+  var box=$("pat");box.textContent="";
+  if(!analysis||!analysis.patterns.length){box.appendChild(el("div","empty",loaded?"No pattern analysis stored yet. The analysis task writes one every few hours.":"Loading"));return;}
+  box.appendChild(el("div","warnbox","Correlation is not causation. Each pattern says whether sources state the link, whether it is an inference from shared attributes, or whether it rests on timing alone. Generated "+(fmtTime(analysis.generated)||"recently")+"."));
+  if(analysis.summary){var s=el("div","pcard");s.appendChild(el("h3",null,"Overall read"));s.appendChild(el("p",null,analysis.summary));box.appendChild(s);}
+  var byId={};events.forEach(function(e){if(claimOk(e))byId[e.id]=e;});
+  analysis.patterns.forEach(function(p){
+    var have=p.ids.filter(function(i){return byId[i];});
+    var c=el("div","pcard"+(state.pattern===p.id?" on":""));
+    var hd=el("div","meta");hd.appendChild(el("span","pk "+p.kind,KIND[p.kind]));hd.appendChild(el("span",null,"confidence "+CONF[p.conf].toLowerCase()));hd.appendChild(el("span",null,have.length+" events"));
+    c.appendChild(hd);c.appendChild(el("h3",null,p.title));c.appendChild(el("p",null,p.narrative));
+    if(p.caveat)c.appendChild(el("p","cav",p.caveat));
+    var seq=(p.chain.length?p.chain:have.slice().sort(function(a,b){return byId[a].t-byId[b].t;})).filter(function(i){return byId[i];});
+    if(seq.length){var ol=el("ol");seq.slice(0,14).forEach(function(i){var e=byId[i],li=el("li"),b=el("button",null,e.org||e.title);b.type="button";
+      b.addEventListener("click",function(){state.pattern=p.id;setTab("feed");select(i,true);});li.appendChild(b);li.appendChild(el("small",null,"  "+fmtWhen(e)));ol.appendChild(li);});c.appendChild(ol);}
+    var acts=el("div","acts");
+    [["Show on map","map"],["Timeline","time"],["Correlation view","graph"]].forEach(function(a){var b=el("button",null,a[0]);b.type="button";b.addEventListener("click",function(){pickPattern(p.id,a[1]);});acts.appendChild(b);});
+    if(state.pattern===p.id){var x=el("button",null,"Clear");x.type="button";x.addEventListener("click",function(){state.pattern=null;render();});acts.appendChild(x);}
+    c.appendChild(acts);box.appendChild(c);
+  });
+}
+
+/* ---------- map ---------- */
+var svg=d3.select("#svg"),gMap=svg.append("g"),gMarks=svg.append("g").attr("filter","url(#glow)");
+var projection=d3.geoNaturalEarth1(),path=d3.geoPath(projection),T=d3.zoomIdentity,W=800,H=450,FX=400,FY=225,FW=600,FH=300,world=null,raf=0;
+var MAXK=60,R=17,wide=true;
+var zoom=d3.zoom().scaleExtent([.8,MAXK]).filter(function(ev){return state.view!=="time"&&(!ev.ctrlKey||ev.type==="wheel")&&!ev.button;}).on("zoom",function(ev){T=ev.transform;gMap.attr("transform",T);if(!raf)raf=requestAnimationFrame(function(){raf=0;drawMarks();});});
+svg.call(zoom).on("dblclick.zoom",null);
+function layout(){
+  var r=$("stage").getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(160,r.height);
+  wide=window.innerWidth>900;
+  var hh=document.querySelector("header").getBoundingClientRect().height,dh=$("days").getBoundingClientRect().height;
+  document.documentElement.style.setProperty("--hdr",hh+"px");
+  var x0=wide?60:8,y0=wide?hh+34:8,x1=wide?W-430-34:W-8,y1=wide?H-dh-34:H-8;
+  if(x1-x0<160){x0=8;x1=W-8;} if(y1-y0<120){y0=8;y1=H-8;}
+  FX=(x0+x1)/2;FY=(y0+y1)/2;FW=x1-x0;FH=y1-y0;
+  svg.attr("viewBox","0 0 "+W+" "+H);
+  projection.fitExtent([[x0,y0],[x1,y1]],{type:"Sphere"});
+  zoom.translateExtent([[-W*.6,-H*.6],[W*1.6,H*1.6]]).extent([[0,0],[W,H]]);
+  gMap.selectAll("*").remove();
+  gMap.append("path").attr("class","grat").attr("d",path(d3.geoGraticule10()));
+  gMap.append("path").attr("class","sphere").attr("d",path({type:"Sphere"}));
+  if(world)gMap.selectAll("path.country").data(world).join("path").attr("class","country").attr("d",path)
+    .on("click",function(ev,f){var n=normC(f.properties.name);if(!f.__n)return;state.country=state.country===n?null:n;state.spot=null;render();})
+    .append("title").text(function(f){return f.properties.name;});
+  svg.call(zoom.transform,d3.zoomIdentity);
+  shade();
+}
+function shade(){
+  if(!world)return;
+  var counts=new Map();scoped().forEach(function(e){var n=normC(e.country);if(n)counts.set(n,(counts.get(n)||0)+1);});
+  gMap.selectAll("path.country").each(function(f){
+    var n=normC(f.properties.name),c=counts.get(n)||0;f.__n=c;
+    d3.select(this).classed("has",c>0).classed("on",state.country===n)
+      .style("fill",c?"color-mix(in srgb,var(--accent) "+Math.min(46,10+c*6)+"%,var(--land))":null);
+    d3.select(this).select("title").text(f.properties.name+(c?": "+c+" events":""));
+  });
+}
+function clusters(list){
+  var pts=[];
+  list.forEach(function(e){
+    if(e.lat===null)return;var p=projection([e.lng,e.lat]);if(!p)return;
+    pts.push({e:e,bx:p[0],by:p[1],x:T.applyX(p[0]),y:T.applyY(p[1])});
+  });
+  pts.sort(function(a,b){return b.e.severity-a.e.severity||(a.e.date<b.e.date?1:-1);});
+  var cs=[];
+  pts.forEach(function(p){
+    for(var i=0;i<cs.length;i++){if(Math.hypot(cs[i].x-p.x,cs[i].y-p.y)<R){cs[i].items.push(p);return;}}
+    cs.push({x:p.x,y:p.y,items:[p]});
+  });
+  return cs;
+}
+var lastList=[];
+function setView(v){
+  state.view=v;document.querySelectorAll("[data-view]").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.view===v?"true":"false");});
+  gMap.style("display",v==="map"?null:"none");
+  document.querySelector(".zoomer").style.display=v==="map"?"":"none";$("key").style.display=v==="map"?"":"none";
+  $("viz").hidden=v==="map";$("viz").scrollTop=0;document.body.dataset.view=v;
+  svg.call(zoom.transform,d3.zoomIdentity);render();
+}
+function rings(g,e,k){
+  if(e.actorPin)g.append("circle").attr("class","act").attr("r",11*k);
+  else if(e.countryPin)g.append("circle").attr("class","ctry").attr("r",11*k);
+  if(e.wl)g.append("circle").attr("class","wlr").attr("r",(e.actorPin||e.countryPin?14.5:12.5)*k);
+}
+function pinNote(e){return e.actorPin?" · attributed origin, not a victim location":e.countryPin?" · country-level location":"";}
+function winDays(){var a=[];for(var i=state.win;i>=0;i--)a.push(ymd(daysAgo(i)));return a;}
+function isFiltered(){return !!(state.q||state.status!=="all"||state.lens!=="all"||state.sev>1||state.cats.size<CATS.length||state.wlOnly||state.day||state.spot||state.country||state.pattern);}
+function tipAt(ev,a,b){var t=$("tip"),s=$("stage").getBoundingClientRect();t.textContent="";t.appendChild(document.createTextNode(a));if(b)t.appendChild(el("small",null,b));
+  t.style.left=Math.min(s.width-140,Math.max(140,ev.clientX-s.left))+"px";t.style.top=Math.max(50,ev.clientY-s.top)+"px";t.style.display="block";}
+function seg(opts,cur,label,fn){var s=el("div","seg");s.setAttribute("role","group");s.setAttribute("aria-label",label);
+  opts.forEach(function(o){var b=el("button",null,o[1]);b.type="button";b.setAttribute("aria-pressed",o[0]===cur?"true":"false");b.addEventListener("click",function(){fn(o[0]);});s.appendChild(b);});return s;}
+function evGlyph(g,e,x,y,small){
+  var n=g.append("g").attr("class","ev"+"").attr("transform","translate("+x+","+y+")").attr("tabindex",0).attr("role","button").attr("aria-label",e.title);
+  if(state.sel===e.id)n.append("circle").attr("class","selr").attr("r",small?8.5:10);
+  else if(e.wl)n.append("circle").attr("class","wlr").attr("r",small?8:9.5);
+  n.append("path").attr("d",symPath(e.category,(small?[0,30,46,66]:[0,40,66,100])[e.severity]))
+    .attr("fill",e.status==="claimed"?"var(--solid)":"var(--c-"+e.category+")").style("stroke","var(--c-"+e.category+")").style("stroke-width",e.status==="claimed"?1.8:.6);
+  n.on("click",function(){select(e.id,false);}).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(e.id,false);}})
+   .on("pointerenter",function(ev){tipAt(ev,e.title,fmtDay(e.date)+" · "+CAT[e.category].one+" · "+["","low","medium","high"][e.severity]+" severity"+(e.status==="claimed"?" · unverified claim":"")+"");}).on("pointerleave",hideTip);
+}
+function pickSet(ids,label){var a=ids.slice();a.label=label;state.spot=a;state.sel=null;state.day=null;setTab("feed");render();}
+function renderViz(list){
+  var v=$("viz"),st=v.dataset.view===state.view?v.scrollTop:0;v.dataset.view=state.view;v.textContent="";
+  if(!loaded){v.appendChild(el("p","vnone","Loading events"));return;}
+  try{if(state.view==="time")vizTime(v,list);else vizCorr(v,list);}
+  catch(x){v.appendChild(el("p","vnone","This chart could not be drawn. The charts above it and the rest of the page are unaffected."));throw x;}
+  v.scrollTop=st;
+}
+function vizTime(v,list){
+  var days=winDays(),W0=Math.max(560,v.clientWidth-36),LW=Math.min(210,Math.max(170,W0*.22)),CW=(W0-LW)/days.length,today=ymd(new Date());
+  var X=function(d){return LW+days.indexOf(d)*CW;};
+  var fit=function(t,px,w){var n=Math.max(4,Math.floor(w/px));return t.length>n?t.slice(0,n-1)+"…":t;};
+  var hd=el("div","vhead");hd.appendChild(el("h2",null,"Timeline"));
+  hd.appendChild(seg([["layer","By attack surface"],["type","By event type"],["sector","By sector"]],viz.lane,"Group rows by",function(k){viz.lane=k;render();}));v.appendChild(hd);
+  if(!list.length){v.appendChild(el("p","vnone","No events match these filters."));return;}
+  /* 1. tempo */
+  var s1=el("div","vsec");s1.appendChild(el("h3",null,"Is this week busier than usual?"));
+  var per=days.map(function(d){var o={d:d,t:0};CATS.forEach(function(c){o[c.k]=0;});list.forEach(function(e){if(e.date===d){o[e.category]++;o.t++;}});return o;});
+  var base=null;
+  if(hist&&!isFiltered()){var vals=hist.filter(function(x){return x.d<days[0];}).map(function(x){return x.n;});
+    if(vals.length>=7){var m=d3.mean(vals),sd=d3.deviation(vals)||0;base={m:m,sd:sd,n:vals.length};}}
+  var mx=Math.max(d3.max(per,function(p){return p.t;})||1,base?base.m+base.sd:0),TH=104,y=d3.scaleLinear().domain([0,mx]).range([TH,22]),BW=Math.min(24,CW*.5);
+  var sv=d3.select(s1).append("svg").attr("viewBox","0 0 "+W0+" "+(TH+22)).attr("role","img").attr("aria-label","Events per day");
+  sv.append("text").attr("class","lbl").attr("x",0).attr("y",30).text("Events per day");
+  sv.append("text").attr("class","sublbl").attr("x",0).attr("y",46).text(isFiltered()?"filters applied":"all events in the window");
+  sv.append("line").attr("class","gl").attr("x1",LW).attr("x2",W0).attr("y1",TH).attr("y2",TH);
+  if(base){sv.append("line").attr("class","gl ref").attr("x1",LW).attr("x2",W0).attr("y1",y(base.m)).attr("y2",y(base.m));
+    sv.append("text").attr("class","ax").attr("x",LW-8).attr("y",y(base.m)+3.5).attr("text-anchor","end").text("typical day "+base.m.toFixed(1));}
+  per.forEach(function(p){var cx=X(p.d)+CW/2,x=cx-BW/2,top=y(p.t),hgt=TH-top,r=Math.min(4,hgt),hot=base&&p.t>base.m+2*base.sd;
+    var g=sv.append("g").attr("class","col"+(state.day&&state.day!==p.d?" off":"")).attr("tabindex",0).attr("role","button").attr("aria-label",p.t+" events on "+fmtDay(p.d)+(hot?", unusually high":""));
+    g.append("rect").attr("class","hit").attr("x",X(p.d)+2).attr("y",8).attr("width",CW-4).attr("height",TH+12).attr("rx",6);
+    if(p.t)g.append("path").attr("class","bar").attr("d","M"+x+","+TH+"V"+(top+r)+"q0,"+(-r)+" "+r+","+(-r)+"h"+(BW-2*r)+"q"+r+",0 "+r+","+r+"V"+TH+"Z");
+    g.append("text").attr("x",cx).attr("y",top-6).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",600).text(p.t+(hot?" ▲":""));
+    g.append("text").attr("class","ax").attr("x",cx).attr("y",TH+15).attr("text-anchor","middle").attr("font-weight",p.d===today?700:400).text(p.d===today?"Today":parseDay(p.d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"}));
+    var parts=CATS.filter(function(c){return p[c.k];}).map(function(c){return p[c.k]+" "+c.label.toLowerCase();}).join(" · ");
+    var go=function(){state.day=state.day===p.d?null:p.d;render();};
+    g.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
+     .on("pointermove",function(ev){tipAt(ev,p.t+(p.t===1?" event":" events")+" · "+fmtDay(p.d),(parts||"nothing collected")+(hot?" · more than two standard deviations above the usual":""));}).on("pointerleave",hideTip)
+     .on("focus",function(){var r2=this.getBoundingClientRect();tipAt({clientX:r2.left+r2.width/2,clientY:r2.top+20},p.t+(p.t===1?" event":" events")+" · "+fmtDay(p.d),parts||"nothing collected");}).on("blur",hideTip);});
+  s1.appendChild(el("p","cav","Counts are events this map collected, not every event in the world. Most are dated by publication, so weekends look quiet and a busy day can reflect a batch of advisories rather than more attacks. Select a bar to look at one day."+(base?" The line is the average of the prior "+base.n+" days; ▲ marks a day more than two standard deviations above it.":" A typical-day line appears once the map has seven days of history.")));
+  v.appendChild(s1);
+  /* 2. swimlanes */
+  var lanes=viz.lane==="type"?CATS.map(function(c){return [c.k,c.label];}):viz.lane==="sector"?SECG:LAYERS.map(function(l){return [l[0],l[1]];});
+  var keyOf=viz.lane==="type"?function(e){return e.category;}:viz.lane==="sector"?function(e){return e.secg;}:function(e){return e.layer;};
+  var s2=el("div","vsec");s2.appendChild(el("h3",null,viz.lane==="layer"?"Which part of the environment is under pressure, and when?":viz.lane==="sector"?"Which sectors were hit, and when?":"What kind of events arrived, and when?"));
+  s2.appendChild(el("p","q","Each mark is one event, in the column for its day. Bigger means more severe; hollow means an unverified claim; a blue ring means it matches your watchlist. The most important come first, and a +N chip opens the rest of a busy day. Select a mark to open the event."));
+  var PITCH=19,MAXR=3,cols=Math.max(2,Math.floor((CW-12)/PITCH)),yy=22,geo=[];
+  lanes.forEach(function(l){var evs=list.filter(function(e){return keyOf(e)===l[0];});if(!evs.length)return;
+    var mxr=1;days.forEach(function(d){var n=evs.filter(function(e){return e.date===d;}).length;mxr=Math.max(mxr,Math.min(MAXR,Math.ceil(n/cols)));});
+    var hgt=Math.max(40,mxr*PITCH+16);geo.push({l:l,evs:evs,y:yy,h:hgt});yy+=hgt+6;});
+  var sw=d3.select(s2).append("svg").attr("viewBox","0 0 "+W0+" "+(yy+4));
+  geo.forEach(function(g){sw.append("rect").attr("class","lane").attr("x",0).attr("y",g.y).attr("width",W0).attr("height",g.h).attr("rx",9);});
+  days.forEach(function(d,i){
+    sw.append("line").attr("class","gl").attr("x1",X(d)).attr("x2",X(d)).attr("y1",16).attr("y2",yy-2);
+    if(d===today)sw.append("rect").attr("x",X(d)+1).attr("y",16).attr("width",CW-2).attr("height",yy-18).attr("rx",6).attr("fill","none").style("stroke","var(--accent)").style("stroke-width",1.5);
+    sw.append("text").attr("class","ax").attr("x",X(d)+CW/2).attr("y",10).attr("text-anchor","middle").attr("font-weight",d===today?700:400).style("fill",d===today?"var(--accent)":null).text(d===today?"Today":parseDay(d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"}));});
+  geo.forEach(function(g){
+    var hi=g.evs.filter(function(e){return e.severity>=3&&e.status!=="claimed";}).length,words=g.l[1].split(": ");
+    var lt=sw.append("text").attr("class","lbl").attr("x",10).attr("y",g.y+g.h/2-2).text(fit(words[0],7,LW-18));lt.append("title").text(g.l[1]);
+    sw.append("text").attr("class","sublbl").attr("x",10).attr("y",g.y+g.h/2+12).text(g.evs.length+(g.evs.length===1?" event":" events")+(hi?" · "+hi+" high":""));
+    days.forEach(function(d){var c=g.evs.filter(function(e){return e.date===d;}).sort(function(a,b){return b.pri-a.pri;});if(!c.length)return;
+      var cap=cols*MAXR,over=c.length>cap?c.length-(cap-1):0,show=over?c.slice(0,cap-1):c,slots=show.length+(over?1:0);
+      var rowsN=Math.ceil(slots/cols),used=Math.min(cols,slots),x0=X(d)+(CW-used*PITCH)/2+PITCH/2,y0=g.y+(g.h-rowsN*PITCH)/2+PITCH/2;
+      show.forEach(function(e,i){evGlyph(sw,e,x0+(i%cols)*PITCH,y0+Math.floor(i/cols)*PITCH,true);});
+      if(over){var i2=show.length,mx=x0+(i2%cols)*PITCH,my=y0+Math.floor(i2/cols)*PITCH,lab=g.l[1].split(":")[0]+" · "+fmtDay(d);
+        var mg=sw.append("g").attr("class","ev").attr("tabindex",0).attr("role","button").attr("aria-label",over+" more events, "+lab).attr("transform","translate("+mx+","+my+")");
+        mg.append("rect").attr("x",-9).attr("y",-8).attr("width",PITCH+1).attr("height",16).attr("rx",8).attr("fill","var(--solid)").style("stroke","var(--muted)").style("stroke-width",1);
+        mg.append("text").attr("x",.5).attr("y",3.5).attr("text-anchor","middle").attr("font-size",9.5).attr("font-weight",700).text("+"+over);
+        var go=function(){pickSet(c.map(function(e){return e.id;}),lab);};
+        mg.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
+          .on("pointerenter",function(ev){tipAt(ev,c.length+" events",lab+" · select to list them all");}).on("pointerleave",hideTip);}
+    });
+  });
+  v.appendChild(s2);
+  /* 3. patch clock */
+  var s3=el("div","vsec");s3.appendChild(el("h3",null,"How long do we have to patch?"));
+  s3.appendChild(el("p","q","Flaws that CISA confirms attackers are using, measured from today. A bar to the right is time left before the US federal deadline; a bar to the left is how long ago that deadline passed. Use the deadline as an upper limit for your own patching."));
+  var src=kev.length?kev.map(function(k){return {cve:k.cve,name:(k.vendor&&k.product&&k.product.toLowerCase().indexOf(k.vendor.toLowerCase())<0?k.vendor+" "+k.product:k.product||k.vendor)||k.name,due:k.due,ransom:k.ransom,wl:kevWl(k)};}):[];
+  if(!src.length){var seenC={};list.forEach(function(e){e.cveMeta.forEach(function(c){if(c.kev&&c.due&&!seenC[c.id]){seenC[c.id]=1;src.push({cve:c.id,name:e.products[0]||e.org,due:c.due,ransom:false,wl:e.wl});}});});}
+  var t0d=parseDay(ymd(new Date())).getTime();
+  src=src.filter(function(r){return r.due;}).map(function(r){r.left=Math.round((parseDay(r.due).getTime()-t0d)/864e5);return r;});
+  var up=src.filter(function(r){return r.left>=0;}).sort(function(a,b){return a.left-b.left;}),over=src.filter(function(r){return r.left<0&&r.left>=-14;}).sort(function(a,b){return b.left-a.left;});
+  if(!up.length&&!over.length)s3.appendChild(el("p","vnone","No known-exploited flaws with a deadline in the last two weeks or ahead."));
+  else{
+    var UPN=8,OVN=6,rowsU=up.slice(0,UPN),rowsO=over.slice(0,OVN),lo=Math.min(-3,d3.min(rowsO,function(r){return r.left;})||0),hi=Math.max(7,d3.max(rowsU,function(r){return r.left;})||0);
+    lo=Math.max(lo,-14);hi=Math.min(hi,28);
+    var NW2=Math.min(300,Math.max(210,W0*.3)),TW=120,px=d3.scaleLinear().domain([lo,hi]).range([NW2+10,W0-TW]),RH=34,BH=12,yy3=26,blocks=[];
+    if(rowsU.length){blocks.push({t:"Deadline ahead ("+up.length+")",y:yy3,rows:rowsU,more:up.length-rowsU.length});yy3+=20+rowsU.length*RH+(up.length>rowsU.length?18:0)+10;}
+    if(rowsO.length){blocks.push({t:"Deadline passed in the last two weeks ("+over.length+")",y:yy3,rows:rowsO,more:over.length-rowsO.length});yy3+=20+rowsO.length*RH+(over.length>rowsO.length?18:0)+10;}
+    var sp=d3.select(s3).append("svg").attr("viewBox","0 0 "+W0+" "+yy3).attr("role","img").attr("aria-label","Days to or since the federal patch deadline for known-exploited flaws");
+    var ticks=d3.ticks(lo,hi,6).filter(function(t){return Number.isInteger(t);});
+    ticks.forEach(function(t){sp.append("line").attr("class","gl").attr("x1",px(t)).attr("x2",px(t)).attr("y1",16).attr("y2",yy3-6);
+      sp.append("text").attr("class","ax").attr("x",px(t)).attr("y",10).attr("text-anchor","middle").attr("font-weight",t===0?700:400).style("fill",t===0?"var(--ink)":null).text(t===0?"Today":t>0?"+"+t+" d":t+" d");});
+    sp.append("line").attr("x1",px(0)).attr("x2",px(0)).attr("y1",16).attr("y2",yy3-6).style("stroke","var(--ink)").style("stroke-width",1.5);
+    blocks.forEach(function(bk){
+      sp.append("text").attr("class","colh").attr("x",0).attr("y",bk.y+8).text(bk.t);
+      bk.rows.forEach(function(r,i){var y0=bk.y+20+i*RH,cy=y0+RH/2,lft=Math.max(lo,Math.min(hi,r.left)),x0=px(0),x1=px(lft),ov=r.left<0,rr=Math.min(4,Math.abs(x1-x0));
+        var g=sp.append("g").attr("class","col").attr("tabindex",0).attr("role","button").attr("aria-label",r.name+" "+r.cve+": "+kevDueText(r.left));
+        g.append("rect").attr("class","hit").attr("x",0).attr("y",y0+1).attr("width",W0).attr("height",RH-2).attr("rx",8);
+        g.append("text").attr("class","lbl").attr("x",8).attr("y",cy-2).attr("font-size",12.5).text(fit(r.name,6.9,NW2-16));
+        g.append("text").attr("class","sublbl").attr("x",8).attr("y",cy+12).text(r.cve+(r.ransom?" · used by ransomware":"")+(r.wl?" · on your watchlist":""));
+        if(r.left===0)g.append("circle").attr("cx",x0).attr("cy",cy).attr("r",5).style("fill","var(--bad)");
+        else g.append("path").attr("d",ov?"M"+x0+","+(cy-BH/2)+"H"+(x1+rr)+"q"+(-rr)+",0 "+(-rr)+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+rr+","+rr+"H"+x0+"Z":"M"+x0+","+(cy-BH/2)+"H"+(x1-rr)+"q"+rr+",0 "+rr+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+(-rr)+","+rr+"H"+x0+"Z").style("fill",ov?"var(--bad)":"var(--accent)");
+        var txt=r.left===0?"due today":ov?(-r.left)+((-r.left)===1?" day":" days")+" overdue":r.left+(r.left===1?" day":" days")+" left";
+        g.append("text").attr("x",ov?x0+10:x1+8).attr("y",cy+4).attr("text-anchor","start").attr("font-size",12).attr("font-weight",600).text(txt+(r.left>hi?" ›":""));
+        var go=function(){state.q=r.cve;$("q").value=r.cve;setTab("kev");render();};
+        g.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
+         .on("pointermove",function(ev){tipAt(ev,r.name,r.cve+" · deadline "+fmtDay(r.due)+" · "+txt+(r.ransom?" · used by ransomware":""));}).on("pointerleave",hideTip);});
+      if(bk.more>0)sp.append("text").attr("class","ax").attr("x",8).attr("y",bk.y+20+bk.rows.length*RH+12).text("+"+bk.more+" more in the Exploited tab");
+    });
+    s3.appendChild(el("p","cav","Source: CISA Known Exploited Vulnerabilities catalog. The deadline binds US federal agencies only. Select a row to open that flaw in the Exploited tab."));
+  }
+  v.appendChild(s3);
+}
+function vizCorr(v,list){
+  var days=winDays(),W0=Math.max(560,v.clientWidth-36),LW=Math.min(260,Math.max(170,W0*.28)),CW=(W0-LW)/days.length,today=ymd(new Date());
+  var X=function(d){return LW+days.indexOf(d)*CW;};
+  var hd=el("div","vhead");hd.appendChild(el("h2",null,"Correlation"));v.appendChild(hd);
+  if(!list.length){v.appendChild(el("p","vnone","No events match these filters."));return;}
+  var byId={};list.forEach(function(e){byId[e.id]=e;});
+  /* 0a. ripple effects */
+  var sr=el("div","vsec");sr.appendChild(el("h3",null,"Ripple effects: if this is real, what follows?"));
+  sr.appendChild(el("p","q","For the events with the widest reach, the analysis pass sets out the direct effect, what it can lead to downstream, and what to watch for. These are reasoned consequences, not reports that they have happened."));
+  var rp=ripples?ripples.items.filter(function(r){return byId[r.id];}).slice(0,6):[];
+  if(!rp.length)sr.appendChild(el("p","vnone",ripples?"None of the analysed events are in this view.":"The analysis pass has not written ripple effects yet."));
+  else{var rw=el("div","rips");rp.forEach(function(r){var e=byId[r.id],c=el("div","rip"),rh=el("div","rh");
+    var tb=el("button",null,e.title);tb.type="button";tb.addEventListener("click",function(){select(e.id,false);});rh.appendChild(tb);
+    rh.appendChild(el("span","badge "+(r.basis==="stated"?"stated":"timing"),r.basis==="stated"?"Stated by sources":"Reasoned, not observed"));
+    r.who.forEach(function(w){rh.appendChild(el("span","badge",w));});c.appendChild(rh);
+    var cols=el("div","cols");[["Direct effect",r.direct],["Can lead to",r.downstream],["Watch for",r.watch]].forEach(function(x){var col=el("div","col");col.appendChild(el("h4",null,x[0]));var ul=el("ul");x[1].forEach(function(t){ul.appendChild(el("li",null,t));});col.appendChild(ul);cols.appendChild(col);});
+    c.appendChild(cols);rw.appendChild(c);});sr.appendChild(rw);
+    if(ripples.generated)sr.appendChild(el("p","cav","Written "+fmtTime(ripples.generated)+". Consequences marked as reasoned are inferences from how the affected technology is normally used."));}
+  v.appendChild(sr);
+  /* 0b. flow */
+  var sf=el("div","vsec");sf.appendChild(el("h3",null,"From threat to target: where does each kind of threat land?"));
+  sf.appendChild(el("p","q","Read left to right: the kind of threat, the part of the environment it touches, and the sector affected. A thicker band means more events. Select a band to list them."));
+  var tagRank=tally(list.reduce(function(a,e){e.tags.forEach(function(t){a.push(t);});return a;},[]),function(t){return t;}).slice(0,6).map(function(x){return x[0];});
+  var fe=list.filter(function(e){return e.layer!=="org"&&e.tags.some(function(t){return tagRank.indexOf(t)>=0;});}).map(function(e){return {e:e,a:tagRank.filter(function(t){return e.tags.indexOf(t)>=0;})[0],b:e.layer,c:e.secg};});
+  if(fe.length<4)sf.appendChild(el("p","vnone","Too few tagged technical events in this view to draw a flow."));
+  else{
+    var FH=Math.max(190,Math.min(300,fe.length*7)),NW=10,PAD=7,cx=[LW*.62,W0*.52,W0-170],lname={};LAYERS.forEach(function(l){lname[l[0]]=l[1].split(":")[0];});var sname={};SECG.forEach(function(s){sname[s[0]]=s[1];});
+    var colsN=[["a",function(k){return k;}],["b",function(k){return lname[k];}],["c",function(k){return sname[k];}]].map(function(cdef,ci){
+      var m=tally(fe,function(x){return x[cdef[0]];}),tot=fe.length,avail=FH-PAD*(m.length-1),yy=24;
+      return m.map(function(kv){var hgt=Math.max(3,avail*kv[1]/tot),n={k:kv[0],n:kv[1],y:yy,h:hgt,label:cdef[1](kv[0]),so:0,to:0,ci:ci};yy+=hgt+PAD;return n;});});
+    var sf2=d3.select(sf).append("svg").attr("viewBox","0 0 "+W0+" "+(FH+34));
+    ["Kind of threat","Part of the environment","Sector affected"].forEach(function(t,i){sf2.append("text").attr("class","colh").attr("x",cx[i]+(i===2?NW:0)).attr("y",12).attr("text-anchor",i===0?"end":i===2?"start":"middle").text(t);});
+    [[0,1,"a","b"],[1,2,"b","c"]].forEach(function(pr){
+      var src=colsN[pr[0]],dst=colsN[pr[1]],links=[];
+      src.forEach(function(s){dst.forEach(function(d){var evs=fe.filter(function(x){return x[pr[2]]===s.k&&x[pr[3]]===d.k;});if(evs.length)links.push({s:s,d:d,evs:evs});});});
+      links.forEach(function(l){var th=l.s.h*l.evs.length/l.s.n,th2=l.d.h*l.evs.length/l.d.n,y0=l.s.y+l.s.so,y1=l.d.y+l.d.to;l.s.so+=th;l.d.to+=th2;
+        var x0=cx[pr[0]]+NW,x1=cx[pr[1]],mx2=(x0+x1)/2;
+        var dd="M"+x0+","+y0+"C"+mx2+","+y0+" "+mx2+","+y1+" "+x1+","+y1+"L"+x1+","+(y1+th2)+"C"+mx2+","+(y1+th2)+" "+mx2+","+(y0+th)+" "+x0+","+(y0+th)+"Z";
+        var lab=l.s.label+" → "+l.d.label,go=function(){pickSet(l.evs.map(function(x){return x.e.id;}),lab);};
+        sf2.append("path").attr("class","rib").attr("d",dd).attr("tabindex",0).attr("role","button").attr("aria-label",lab+": "+l.evs.length+" events")
+          .on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
+          .on("pointerenter",function(ev){tipAt(ev,lab,l.evs.length+(l.evs.length===1?" event":" events"));}).on("pointerleave",hideTip);});
+      src.forEach(function(s){s.so=0;});dst.forEach(function(d){d.to=0;});});
+    colsN.forEach(function(col,ci){col.forEach(function(n){sf2.append("rect").attr("class","nd").attr("x",cx[ci]).attr("y",n.y).attr("width",NW).attr("height",n.h).attr("rx",3);
+      if(n.h>=9||col.length<7)sf2.append("text").attr("class","ndl").attr("x",ci===0?cx[ci]-7:cx[ci]+NW+7).attr("y",n.y+n.h/2+4).attr("text-anchor",ci===0?"end":"start").text((ci===1?"":"")+n.label+" · "+n.n);});});
+    sf.appendChild(el("p","cav","Based on "+fe.length+" technical events that carry one of the six most common threat tags; each event is counted once, under its most common tag. Policy, enforcement and business news is left out. Sector and environment are assigned from wording, so treat thin bands as anecdotes."));}
+  v.appendChild(sf);
+  /* 1. chains */
+  var s0=el("div","vsec");s0.appendChild(el("h3",null,"Chains: what led to what?"));
+  s0.appendChild(el("p","q","Sequences the analysis pass assembled from the stored events. A solid arrow is a link the sources state; dashed is inferred; dotted is timing only."));
+  var pats=analysis?analysis.patterns.map(function(p){var steps=(p.chain.length>1?p.chain:p.ids).map(function(i){return byId[i];}).filter(Boolean);return {p:p,steps:p.chain.length>1?steps:steps.slice().sort(function(a,b){return a.t-b.t;})};}).filter(function(x){return x.steps.length>1;}).sort(function(a,b){return (b.p.kind==="stated")-(a.p.kind==="stated")||b.p.conf-a.p.conf||b.steps.length-a.steps.length;}).slice(0,6):[];
+  if(!pats.length)s0.appendChild(el("p","vnone",analysis?"No chain in the current analysis has two or more of the events in this view.":"The analysis pass has not written any chains yet."));
+  else{var cw=el("div","chains");pats.forEach(function(x){var p=x.p,c=el("div","chain");
+    var ch=el("div","ch");ch.appendChild(el("b",null,p.title));ch.appendChild(el("span","badge "+p.kind,KIND[p.kind]));ch.appendChild(el("span","badge timing","confidence "+CONF[p.conf].toLowerCase()));
+    var sb=el("button",null,"Show these "+x.steps.length+" in the feed");sb.type="button";sb.className="badge";sb.style.border="0";sb.addEventListener("click",function(){pickSet(x.steps.map(function(e){return e.id;}),"Chain: "+p.title);});ch.appendChild(sb);c.appendChild(ch);
+    var fl=el("div","flow");x.steps.slice(0,7).forEach(function(e,i){
+      if(i){var prev=x.steps[i-1],ed=p.edges.find(function(g){return (g.from===prev.id&&g.to===e.id)||(g.from===e.id&&g.to===prev.id);});
+        var ar=el("div","arr "+(ed?ed.basis:p.chain.length>1?p.kind:"timing"));ar.appendChild(el("span",null,ed&&ed.rel?ed.rel:p.chain.length>1?"then":"later"));ar.appendChild(el("i"));fl.appendChild(ar);}
+      var b=el("button","step");b.type="button";b.style.setProperty("--cc","var(--c-"+e.category+")");b.appendChild(el("small",null,fmtDay(e.date)+" · "+CAT[e.category].one));b.appendChild(document.createTextNode(e.title.length>74?e.title.slice(0,72)+"…":e.title));
+      b.addEventListener("click",function(){select(e.id,false);});fl.appendChild(b);});
+    if(x.steps.length>7)fl.appendChild(el("div","arr","+"+(x.steps.length-7)+" more"));
+    c.appendChild(fl);if(p.caveat)c.appendChild(el("p","cav","Caveat: "+p.caveat));cw.appendChild(c);});s0.appendChild(cw);}
+  v.appendChild(s0);
+  /* 2. shared factors */
+  var s1=el("div","vsec");s1.appendChild(el("h3",null,"Shared factors: what do separate events have in common?"));
+  s1.appendChild(el("p","q","Each row is one concrete thing named in two or more events: the same actor, the same CVE, or the same product. Marks show when those events landed. Select a row label to list them."));
+  var groups=new Map();
+  function add(type,name,e){if(!name)return;var k=type+"|"+name.toLowerCase();var g=groups.get(k);if(!g){g={type:type,name:name,evs:[]};groups.set(k,g);}if(g.evs.indexOf(e)<0)g.evs.push(e);}
+  list.forEach(function(e){if(e.actor&&!/^(unknown|unattributed|none|n\/a)/i.test(e.actor))add("Actor",e.actor.split(/[;(]/)[0].trim().slice(0,40),e);
+    e.cves.forEach(function(c){add("CVE",c,e);});e.products.forEach(function(p){add("Product",p.slice(0,40),e);});});
+  var rank={Actor:3,CVE:2,Product:1},seenSets={};
+  var gs=Array.from(groups.values()).filter(function(g){return g.evs.length>1;}).map(function(g){g.orgs=new Set(g.evs.map(function(e){return e.org;})).size;g.sev=d3.sum(g.evs,function(e){return e.severity;});return g;})
+    .sort(function(a,b){return b.evs.length-a.evs.length||rank[b.type]-rank[a.type]||b.sev-a.sev;})
+    .filter(function(g){var k=g.evs.map(function(e){return e.id;}).sort().join(",");if(seenSets[k])return false;seenSets[k]=1;return true;}).slice(0,12);
+  if(!gs.length)s1.appendChild(el("p","vnone","No actor, CVE or product is named in more than one event in this view."));
+  else{var RH=30,sh=gs.length*RH+18,sg=d3.select(s1).append("svg").attr("viewBox","0 0 "+W0+" "+sh);
+    days.forEach(function(d){if(d===today)sg.append("rect").attr("class","today").attr("x",X(d)).attr("y",14).attr("width",CW).attr("height",sh-14).attr("rx",6);
+      sg.append("text").attr("class","ax").attr("x",X(d)+CW/2).attr("y",10).attr("text-anchor","middle").text(d===today?"Today":parseDay(d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"}));});
+    gs.forEach(function(g,i){var yy=16+i*RH,lab=g.type+": "+g.name;
+      var hit=sg.append("g").attr("class","ev").attr("tabindex",0).attr("role","button").attr("aria-label",lab+", "+g.evs.length+" events");
+      hit.append("rect").attr("class","lane").attr("x",0).attr("y",yy).attr("width",W0).attr("height",RH-4).attr("rx",8);
+      hit.append("text").attr("class","lbl").attr("x",10).attr("y",yy+12).attr("font-size",11.5).text(lab.length>36?lab.slice(0,35)+"…":lab);
+      hit.append("text").attr("class","sublbl").attr("x",10).attr("y",yy+23).text(g.evs.length+" events · "+g.orgs+(g.orgs===1?" organisation":" organisations"));
+      var go=function(){pickSet(g.evs.map(function(e){return e.id;}),lab);};
+      hit.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}});
+      days.forEach(function(d){var c=g.evs.filter(function(e){return e.date===d;});var x0=X(d)+CW/2-(c.length-1)*7.5;
+        c.forEach(function(e,j){evGlyph(sg,e,x0+j*15,yy+(RH-4)/2,true);});});});
+    s1.appendChild(el("p","cav","A shared factor is not proof of one campaign. Many unrelated attackers use the same flaw or product, and actor names come from the sources and can be wrong."));}
+  v.appendChild(s1);
+  /* 3. matrix */
+  var s2=el("div","vsec"),mh=el("div","vhead");mh.appendChild(el("h3",null,"What is hitting where?"));
+  mh.appendChild(seg([["layer","Attack surface"],["sector","Sector"]],viz.mat,"Matrix rows",function(k){viz.mat=k;render();}));s2.appendChild(mh);
+  s2.appendChild(el("p","q","Rows are "+(viz.mat==="layer"?"parts of the environment":"sectors")+", columns are threat tags. Each cell counts events carrying both. Select a cell to list them."));
+  var rowsDef=(viz.mat==="layer"?LAYERS.map(function(l){return [l[0],l[1].split(":")[0]];}):SECG),rk=viz.mat==="layer"?function(e){return e.layer;}:function(e){return e.secg;};
+  var tagN=tally(list.reduce(function(a,e){e.tags.forEach(function(t){a.push({t:t});});return a;},[]),function(x){return x.t;}).slice(0,8).map(function(x){return x[0];});
+  var rws=rowsDef.map(function(r){var evs=list.filter(function(e){return rk(e)===r[0]&&e.tags.length;});return {k:r[0],n:r[1],evs:evs};}).filter(function(r){return r.evs.length;});
+  if(!tagN.length||!rws.length)s2.appendChild(el("p","vnone","Not enough tagged events in this view."));
+  else{var N=list.filter(function(e){return e.tags.length;}).length,colT={};tagN.forEach(function(t){colT[t]=list.filter(function(e){return e.tags.indexOf(t)>=0;}).length;});
+    var MW=Math.min(W0,LW+tagN.length*92),cw2=(MW-LW-44)/tagN.length,chh=30,mhh=rws.length*chh+64,hot=0,mxc=1;
+    var cells=[];rws.forEach(function(r){tagN.forEach(function(t){var ids=r.evs.filter(function(e){return e.tags.indexOf(t)>=0;});var n=ids.length,lift=n?(n*N)/(r.evs.length*colT[t]):0;mxc=Math.max(mxc,n);cells.push({r:r,t:t,n:n,ids:ids,hot:n>=3&&lift>=1.5,lift:lift});});});
+    var sm=d3.select(s2).append("svg").attr("viewBox","0 0 "+W0+" "+mhh);
+    tagN.forEach(function(t,j){sm.append("text").attr("class","ax").attr("transform","translate("+(LW+j*cw2+cw2/2)+",52) rotate(-28)").attr("text-anchor","start").attr("font-size",11).style("fill","var(--ink)").text(t);});
+    rws.forEach(function(r,i){var yy=60+i*chh;sm.append("text").attr("class","lbl").attr("x",10).attr("y",yy+chh/2+3).attr("font-size",11.5).text(r.n);
+      sm.append("text").attr("class","ax").attr("x",LW+tagN.length*cw2+8).attr("y",yy+chh/2+3).text(r.evs.length);});
+    cells.forEach(function(c){var i=rws.indexOf(c.r),j=tagN.indexOf(c.t),x=LW+j*cw2+2,yy=60+i*chh+2;if(c.hot)hot++;
+      var g=sm.append("g");
+      var rc=g.append("rect").attr("class","cell"+(c.hot?" hot":"")).attr("x",x).attr("y",yy).attr("width",cw2-4).attr("height",chh-4).attr("rx",6)
+        .attr("fill",c.n?"color-mix(in srgb,var(--accent) "+Math.round(12+58*c.n/mxc)+"%,transparent)":"transparent");
+      if(c.n){g.append("text").attr("class","cellt").attr("x",x+(cw2-4)/2).attr("y",yy+(chh-4)/2).text(c.n+(c.hot?" ▲":""));
+        rc.attr("tabindex",0).attr("role","button").attr("aria-label",c.r.n+" and "+c.t+": "+c.n+" events");
+        var go=function(){pickSet(c.ids.map(function(e){return e.id;}),c.r.n+" × "+c.t);};
+        rc.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
+          .on("pointerenter",function(ev){tipAt(ev,c.r.n+" × "+c.t,c.n+" of "+c.r.evs.length+" events in this row"+(c.n>=3?" · "+c.lift.toFixed(1)+"× the rate expected by chance":" · too few to compare"));}).on("pointerleave",hideTip);}
+      else rc.style("cursor","default");});
+    s2.appendChild(el("p","cav","▲ and a dark outline mark a combination seen at least 1.5 times more often than its row and column totals alone would predict, counted only where there are 3 or more events. With "+N+" tagged events this is a pointer for where to look, not a statistical finding. Rows are assigned from product and tag wording, so some events sit in the wrong row."+(hot?"":" No combination clears that bar in this view.")));}
+  v.appendChild(s2);
+}
+
+/* ---------- known-exploited feed ---------- */
+function cleanKev(id,d){
+  if(!d||typeof d!=="object")return null;var cve=str(d.cve,24)||str(id,24);if(!/^CVE-\d{4}-\d+$/.test(cve))return null;
+  var added=str(d.added,10),due=str(d.due,10);if(!isDay(added))return null;
+  var k={cve:cve,vendor:str(d.vendor,80),product:str(d.product,120),name:str(d.name,200),added:added,due:isDay(due)?due:"",ransom:d.ransomware===true,desc:str(d.desc,420),cvss:numIn(d.cvss,0,10),epss:numIn(d.epss,0,1)};
+  k.hay=(k.cve+" | "+k.vendor+" | "+k.product+" | "+k.name).toLowerCase();return k;
+}
+function kevWl(k){for(var i=0;i<wl.lower.length;i++){if(k.hay.indexOf(wl.lower[i])>=0)return true;}return false;}
+function kevLeft(k){return k.due?Math.round((parseDay(k.due).getTime()-parseDay(ymd(new Date())).getTime())/864e5):null;}
+function kevDueText(n){return n===null?"":n<0?"federal deadline passed "+(-n)+(n===-1?" day":" days")+" ago":n===0?"federal deadline today":"federal deadline in "+n+(n===1?" day":" days");}
+function renderKev(){
+  var p=$("kev");if(!p)return;
+  var wk=ymd(daysAgo(7)),open=kev.filter(function(k){return k.added>=wk;}).length;
+  $("kevBadge").textContent=open?String(open):"";
+  if(state.tab!=="kev")return;
+  var st=p.scrollTop;p.textContent="";
+  if(!kev.length){p.appendChild(el("div","empty",loaded?"The known-exploited feed has not been written yet. The feeds task fills it on its next run.":"Loading"));return;}
+  var q=state.q.toLowerCase(),list=kev.filter(function(k){return (!q||k.hay.indexOf(q)>=0)&&(!state.wlOnly||!wl.terms.length||kevWl(k));});
+  list.sort(function(a,b){var wa=kevWl(a)?1:0,wb=kevWl(b)?1:0;if(wa!==wb)return wb-wa;
+    if(kevSort==="due"){var la=kevLeft(a),lb=kevLeft(b);return (la===null?999:la)-(lb===null?999:lb);}return a.added<b.added?1:a.added>b.added?-1:0;});
+  var hd=el("div","khead");hd.appendChild(el("b",null,String(kev.length)));hd.appendChild(document.createTextNode(" flaws added to CISA's known-exploited list in the last 45 days · "));
+  hd.appendChild(el("b",null,String(kev.filter(function(k){return k.added>=wk;}).length)));hd.appendChild(document.createTextNode(" this week"));
+  var nw=kev.filter(kevWl).length;if(wl.terms.length){hd.appendChild(document.createTextNode(" · "));hd.appendChild(el("b",null,String(nw)));hd.appendChild(document.createTextNode(" match your watchlist"));}
+  if(sweep&&sweep.last_kev_at)hd.appendChild(document.createTextNode(" · synced "+(ago(sweep.last_kev_at)||"")));
+  p.appendChild(hd);
+  var tools=el("div","vhead");tools.appendChild(seg([["new","Newest first"],["due","Deadline first"]],kevSort,"Sort the exploited list",function(k){kevSort=k;renderKev();}));p.appendChild(tools);
+  if(!list.length){p.appendChild(el("div","empty","Nothing in the feed matches the search or toggles."));return;}
+  list.forEach(function(k){
+    var left=kevLeft(k),c=el("article","kcard");
+    var id=el("div","kid");id.appendChild(el("span",null,k.cve));id.appendChild(el("span",null,"added "+fmtDay(k.added)));
+    if(kevWl(k))id.appendChild(el("span","pill wl","On your watchlist"));
+    if(k.ransom)id.appendChild(el("span","pill kev","Used by ransomware"));
+    if(left!==null)id.appendChild(el("span","pill "+(left<0?"over":"due"),left<0?"Deadline passed":left===0?"Due today":"Due in "+left+"d"));
+    c.appendChild(id);
+    c.appendChild(el("div","kt",(k.vendor&&k.product&&k.product.toLowerCase().indexOf(k.vendor.toLowerCase())<0?k.vendor+" "+k.product:k.product||k.vendor)||k.name));
+    if(k.desc)c.appendChild(el("p",null,k.desc));
+    var meta=[k.cvss!==null?"CVSS "+k.cvss.toFixed(1):"",k.epss!==null?"EPSS "+(k.epss*100>=10?Math.round(k.epss*100):(k.epss*100).toFixed(1))+"%":"",kevDueText(left)].filter(Boolean).join(" · ");
+    if(meta)c.appendChild(el("p","khead",meta));
+    var acts=el("div","acts");
+    function ab(label,fn){var b=el("button",null,label);b.type="button";b.addEventListener("click",fn);acts.appendChild(b);}
+    var ev=events.find(function(e){return e.cves.indexOf(k.cve)>=0;});
+    if(ev)ab("Open on the map",function(){showEvent(ev.id);});
+    var a=el("a",null,"NVD record");a.href="https://nvd.nist.gov/vuln/detail/"+encodeURIComponent(k.cve);a.target="_blank";a.rel="noopener noreferrer";acts.appendChild(a);
+    c.appendChild(acts);p.appendChild(c);
+  });
+  p.appendChild(el("p","khead","Source: CISA Known Exploited Vulnerabilities catalog. Deadlines bind US federal agencies only; treat them as a sensible upper limit. A flaw that is not listed here can still be exploited."));
+  p.scrollTop=st;
+}
+/* ---------- shift handover ---------- */
+function hoBuild(){
+  var since=lsGet("cwm.ho")||"",list=base(),now=new Date(),L=[];
+  var sev=["","Low","Med","High"],line=function(e){return "- ["+sev[e.severity]+"] "+e.title+" ("+fmtDay(e.date)+")"+(e.action&&!/^no action/i.test(e.action)?"\n    Do: "+e.action:"");};
+  L.push("CYBER WATCH HANDOVER  "+now.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}));
+  L.push("Window: last "+(state.win===1?"24 hours":state.win+" days")+(isFiltered()?" (filters on: "+$("scopeText").textContent+")":"")+" · "+list.length+" events");
+  var todo=list.filter(function(e){return urgent(e);}).sort(function(a,b){return b.pri-a.pri;});
+  L.push("");L.push("TOP PRIORITY ("+todo.length+")");todo.slice(0,10).forEach(function(e){L.push(line(e));});if(todo.length>10)L.push("  …and "+(todo.length-10)+" more");if(!todo.length)L.push("- none");
+  var dl=kev.filter(function(k){var n=kevLeft(k);return n!==null&&n<=7&&n>=-3;}).sort(function(a,b){return kevLeft(a)-kevLeft(b);});
+  L.push("");L.push("PATCH DEADLINES, KNOWN-EXPLOITED ("+dl.length+")");dl.slice(0,12).forEach(function(k){L.push("- "+k.cve+"  "+[k.vendor,k.product].filter(Boolean).join(" ")+" — "+kevDueText(kevLeft(k))+(k.ransom?" · used by ransomware":""));});if(!dl.length)L.push("- none within 7 days");
+  if(since){var nw=list.filter(function(e){return e.firstSeen&&e.firstSeen>since;}).sort(function(a,b){return b.pri-a.pri;});
+    L.push("");L.push("NEW SINCE LAST HANDOVER ("+nw.length+", since "+fmtTime(since)+")");nw.slice(0,10).forEach(function(e){L.push(line(e));});if(nw.length>10)L.push("  …and "+(nw.length-10)+" more");if(!nw.length)L.push("- none");}
+  var wlh=list.filter(function(e){return e.wl;});
+  if(wl.terms.length){L.push("");L.push("WATCHLIST MATCHES ("+wlh.length+")");wlh.slice(0,8).forEach(function(e){L.push(line(e));});if(!wlh.length)L.push("- none");}
+  L.push("");L.push("Unverified attacker claims are left out. Details and sources: "+location.href.split("#")[0]);
+  return L.join("\n");
+}
+function hoToggle(open){var d=$("hoDlg");d.hidden=!open;$("hoOpen").setAttribute("aria-expanded",open?"true":"false");
+  if(open){var s=lsGet("cwm.ho");$("hoNote").textContent=s?"Includes what is new since your last handover on "+fmtTime(s)+".":"First handover on this device. Later ones also list what is new since the previous one.";$("hoText").value=hoBuild();$("hoText").focus();$("hoText").scrollTop=0;}}
+function drawMarks(){
+  gMarks.selectAll("*").remove();
+  if(state.view!=="map")return;
+  var cs=clusters(lastList),recent=ymd(daysAgo(1));
+  var cp=curPattern();
+  if(cp&&cp.chain.length>1){
+    var pts=cp.chain.map(function(id){var e=lastList.find(function(x){return x.id===id;});if(!e||e.lat===null)return null;var p=projection([e.lng,e.lat]);return p?[T.applyX(p[0]),T.applyY(p[1])]:null;}).filter(Boolean);
+    if(pts.length>1){gMarks.append("path").attr("class","chainline").attr("d",d3.line().curve(d3.curveCatmullRom.alpha(.6))(pts));
+      pts.forEach(function(p,i){var g=gMarks.append("g").attr("class","stepn").attr("transform","translate("+(p[0]+13)+","+(p[1]-13)+")");g.append("circle").attr("r",8);g.append("text").text(i+1);});}
+  }
+  cs.forEach(function(c){
+    var g=gMarks.append("g").attr("transform","translate("+c.x+","+c.y+")").attr("tabindex",0).attr("role","button");
+    if(c.items.length===1){
+      var e=c.items[0].e;
+      g.attr("class","m"+(e.status==="claimed"?" hollow":"")).attr("aria-label",e.title);
+      if(e.date>=recent&&e.severity>1)g.append("circle").attr("class","pulse").attr("r",9).attr("stroke","var(--c-"+e.category+")");
+      if(state.sel===e.id)g.append("circle").attr("class","ring").attr("r",e.wl||e.actorPin||e.countryPin?18:15);
+      rings(g,e,1);
+      g.append("path").attr("d",symPath(e.category,[0,70,125,200][e.severity]))
+        .attr("fill","var(--c-"+e.category+")").style("stroke",e.status==="claimed"?"var(--c-"+e.category+")":null);
+      g.on("click",function(){select(e.id,false);}).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(e.id,false);}});
+      g.on("pointerenter",function(){tip(c.x,c.y,e.title,fmtDay(e.date)+" · "+(e.place||e.country)+" · "+CONF[e.conf]+" confidence"+pinNote(e)+(e.wl?" · on your watchlist":""));}).on("pointerleave",hideTip);
+    }else{
+      var ids=c.items.map(function(p){return p.e.id;});
+      var has=state.sel&&ids.indexOf(state.sel)>=0;
+      g.attr("class","cl"+(has?" sel":"")).attr("aria-label",ids.length+" events here");
+      var cr=9+Math.min(9,Math.sqrt(ids.length)*2.4),nw=c.items.filter(function(p){return p.e.wl;}).length;
+      if(nw)g.append("circle").attr("class","wlr").attr("r",cr+3.5);
+      g.append("circle").attr("r",cr);
+      g.append("text").text(ids.length);
+      var act=function(){openCluster(c);};
+      g.on("click",act).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();act();}});
+      g.on("pointerenter",function(){tip(c.x,c.y,ids.length+" events",c.items.slice(0,3).map(function(p){return p.e.org||p.e.title;}).join(", ")+(ids.length>3?" …":"")+(nw?" · "+nw+" on your watchlist":""));}).on("pointerleave",hideTip);
+    }
+  });
+}
+function tip(x,y,a,b){var t=$("tip");t.textContent="";t.appendChild(document.createTextNode(a));if(b)t.appendChild(el("small",null,b));
+  var s=$("svg").getBoundingClientRect();
+  t.style.left=Math.min(s.width-130,Math.max(130,x*(s.width/W)))+"px";t.style.top=Math.max(44,y*(s.height/H))+"px";t.style.display="block";}
+function hideTip(){$("tip").style.display="none";}
+function flyTo(bx,by,k){
+  var t=d3.zoomIdentity.translate(FX,FY).scale(k).translate(-bx,-by);
+  (reduced?svg:svg.transition().duration(600)).call(zoom.transform,t);
+}
+function openCluster(c){
+  hideTip();
+  var spread=0,cx=0,cy=0;
+  c.items.forEach(function(p){cx+=p.bx;cy+=p.by;});cx/=c.items.length;cy/=c.items.length;
+  c.items.forEach(function(p){spread=Math.max(spread,Math.hypot(p.bx-cx,p.by-cy));});
+  if(spread*MAXK<R||T.k>=MAXK*0.95){state.spot=c.items.map(function(p){return p.e.id;});state.sel=null;setTab("feed");render();return;}
+  flyTo(cx,cy,Math.min(MAXK,Math.max(T.k*2.5,R*1.4/spread)));
+}
+function select(id,fromFeed){
+  var prev=state.sel;
+  state.sel=id;
+  var e=id&&events.find(function(x){return x.id===id;});
+  if(e&&state.tab!=="feed"){state.tab="feed";["brief","feed","kev","pat","ins"].forEach(function(k){$("tab-"+k).setAttribute("aria-selected",k==="feed"?"true":"false");$(k).hidden=k!=="feed";});}
+  try{history.replaceState(null,"",id?"#"+id:location.pathname+location.search);}catch(x){}
+  render();
+  if(state.view==="map"){
+    if(e&&fromFeed&&e.lat!==null){var p=projection([e.lng,e.lat]);
+      if(p){if(!prev||!savedT)savedT=savedT||T;var sx=T.applyX(p[0]),sy=T.applyY(p[1]);
+        var inside=Math.abs(sx-FX)<FW*.44&&Math.abs(sy-FY)<FH*.42;
+        if(!inside||T.k<2.4)flyTo(p[0],p[1],Math.max(T.k,2.6));}}
+    else if(!id&&prev&&savedT){var bt=savedT;savedT=null;(reduced?svg:svg.transition().duration(450)).call(zoom.transform,bt);}
+  }
+  if(!id)savedT=null;
+}
+
+/* ---------- render ---------- */
+var faults={};
+function safe(name,fn){
+  try{fn();if(faults[name]){delete faults[name];fault();}}
+  catch(x){if(!faults[name]){faults[name]=String(x&&x.message||x).slice(0,160);fault();try{console.error("CyberView: "+name+" failed",x);}catch(y){}}}
+}
+function fault(){var n=$("fault"),k=Object.keys(faults);if(!n)return;n.hidden=!k.length;n.textContent=k.length?"Part of this page could not be drawn ("+k.join(", ")+"). The rest is unaffected. Press Refresh; if it persists, use Report an error on any event.":"";}
+function render(){
+  var list=visible();lastList=list;
+  if(state.sel&&!list.some(function(e){return e.id===state.sel;}))state.sel=null;
+  safe("header",function(){renderStats(list);renderToggles();renderChips();renderDays();renderScope();});
+  safe("brief",renderBrief);safe("feed",function(){renderFeed(list);renderDetail(list);});safe("exploited",renderKev);safe("patterns",renderPatterns);safe("insights",function(){renderInsights(list);});
+  safe("map",function(){if(state.view==="map"){shade();drawMarks();}else drawMarks();});
+  if(state.view!=="map")safe("analysis",function(){renderViz(list);});
+  safe("legend",renderKey);
+  lsSet("cwm.ui",JSON.stringify({win:state.win,sev:state.sev,sort:state.sort,lens:state.lens,view:state.view,cats:Array.from(state.cats)}));
+}
+function renderKey(){
+  var k=$("key");k.textContent="";k.classList.toggle("shut",keyShut);
+  var kt=el("button","kt",keyShut?"Legend":"Hide legend");kt.type="button";kt.setAttribute("aria-expanded",keyShut?"false":"true");
+  kt.addEventListener("click",function(){keyShut=!keyShut;lsSet("cwm.key",keyShut?"1":"0");renderKey();});k.appendChild(kt);
+  if(state.view==="graph"){[["stated","Link stated by sources"],["inferred","Inferred link"],["timing","Timing only"],["auto","Same actor or CVE"]].forEach(function(a){
+    var s=el("span"),v=document.createElementNS(NS,"svg");v.setAttribute("viewBox","0 0 26 8");v.style.width="26px";v.style.height="8px";
+    var l=document.createElementNS(NS,"line");l.setAttribute("class","edge "+a[0]);l.setAttribute("x1",1);l.setAttribute("x2",25);l.setAttribute("y1",4);l.setAttribute("y2",4);v.appendChild(l);s.appendChild(v);s.appendChild(document.createTextNode(a[1]));k.appendChild(s);});
+    k.appendChild(el("span",null,"Circle = one pattern"));return;}
+  var legendWl=function(){if(wl.terms.length)ringKey("wlr","On your watchlist");};
+  function ringKey(cls,label){var s=el("span"),v=document.createElementNS(NS,"svg");v.setAttribute("viewBox","-8 -8 16 16");v.setAttribute("class","rg");v.setAttribute("aria-hidden","true");
+    var c=document.createElementNS(NS,"circle");c.setAttribute("class",cls);c.setAttribute("r",6);v.appendChild(c);s.appendChild(v);s.appendChild(document.createTextNode(label));k.appendChild(s);}
+  if(state.view==="time"){k.appendChild(el("span",null,"Exact position = reported time; others are placed on their day"));if(wl.terms.length)ringKey("wlr","On your watchlist");return;}
+  var a=el("span");a.appendChild(glyph("incident"));a.appendChild(document.createTextNode("Confirmed"));k.appendChild(a);
+  var b=el("span");b.appendChild(glyph("incident",true));b.appendChild(document.createTextNode("Unverified claim"));k.appendChild(b);
+  if(!state.claims)b.lastChild.textContent="Unverified claim (hidden)";
+  ringKey("act","Attributed origin, not a victim location");ringKey("ctry","Country-level location");legendWl();
+  k.appendChild(el("span",null,"Bigger = more severe"));k.appendChild(el("span",null,"Shaded country = events there"));
+}
+
+/* ---------- data ---------- */
+var rq=0;function renderSoon(){if(rq)return;rq=requestAnimationFrame(function(){rq=0;render();});}
+function syncControls(){
+  document.querySelectorAll("[data-win]").forEach(function(x){x.setAttribute("aria-pressed",+x.dataset.win===state.win?"true":"false");});
+  document.querySelectorAll("[data-sev]").forEach(function(x){x.setAttribute("aria-pressed",+x.dataset.sev===state.sev?"true":"false");});
+  $("q").value=state.q;$("status").value=state.status;$("sort").value=state.sort;$("lens").value=state.lens;
+}
+function loadPrefs(){
+  keyShut=lsGet("cwm.key")!=="0";
+  try{var o=JSON.parse(lsGet("cwm.ui")||"null");if(!o||typeof o!=="object")return;
+    if([1,3,7].indexOf(o.win)>=0)state.win=o.win;if([1,2,3].indexOf(o.sev)>=0)state.sev=o.sev;
+    if(["pri","new","sev","upd","rec","risk"].indexOf(o.sort)>=0)state.sort=o.sort;
+    if(o.lens==="all"||own(LENS,o.lens))state.lens=o.lens;
+    if(Array.isArray(o.cats)){var cs=o.cats.filter(function(c){return own(CAT,c);});if(cs.length)state.cats=new Set(cs);}
+  }catch(x){}
+}
+function apply(snap){
+  var before=new Set(events.map(function(e){return e.id;}));
+  events=snap.docs.map(function(d){return clean(d.id,d.data());}).filter(Boolean);
+  var added=loaded?events.filter(function(e){return !before.has(e.id);}):[];
+  added.forEach(function(e){fresh.add(e.id);});
+  if(added.length)setTimeout(function(){added.forEach(function(e){fresh.delete(e.id);});render();},90000);
+  loaded=true;return added.length;
+}
+function resetMain(){
+  state.q="";state.status="all";state.lens="all";state.sev=1;state.win=7;state.sort="pri";state.wlOnly=false;state.claims=false;lsSet("cwm.claims","0");
+  state.cats=new Set(CATS.map(function(c){return c.k;}));state.day=null;state.spot=null;state.country=null;state.pattern=null;state.sel=null;savedT=null;feedKey="";
+  if(!$("wlDlg").hidden)wlToggle(false);if(!$("hoDlg").hidden)hoToggle(false);
+  try{history.replaceState(null,"",location.pathname+location.search);}catch(x){}
+  syncControls();setTab("feed");setView("map");
+  var f=$("feed");if(f)f.scrollTop=0;
+}
+function refresh(){
+  var btn=$("refresh");
+  resetMain();
+  if(!db||!query){toast("Reset to the main view. The latest data can't be reached: check your connection and try again.");return;}
+  if(btn.classList.contains("spin"))return;
+  btn.classList.add("spin");
+  var t0=Date.now();
+  Promise.all([query.get(),db.doc("meta/status").get()]).then(function(r){
+    var n=apply(r[0]);sweep=r[1].exists?r[1].data():sweep;stale=false;unavailable=false;
+    render();
+    toast("Refreshed and reset to the main view. "+(n?n+" new event"+(n>1?"s":"")+" loaded. ":"")+events.length+" events stored. Last sweep "+(sweep&&ago(sweep.last_sweep_at)||"unknown")+", next "+nextSweep()+".");
+  }).catch(function(){toast("Reset to the main view, but the latest data could not be loaded. Check your connection and try again.");})
+  .then(function(){setTimeout(function(){btn.classList.remove("spin");},Math.max(0,500-(Date.now()-t0)));});
+}
+
+/* ---------- controls ---------- */
+document.querySelectorAll("[data-win]").forEach(function(b){
+  b.addEventListener("click",function(){
+    state.win=+b.dataset.win;state.day=null;state.spot=null;
+    document.querySelectorAll("[data-win]").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+    render();
+  });
+});
+document.querySelectorAll("[data-sev]").forEach(function(b){
+  b.addEventListener("click",function(){
+    state.sev=+b.dataset.sev;
+    document.querySelectorAll("[data-sev]").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+    render();
+  });
+});
+$("claims").addEventListener("click",function(){state.claims=!state.claims;lsSet("cwm.claims",state.claims?"1":"0");render();});
+$("wlOnly").addEventListener("click",function(){state.wlOnly=!state.wlOnly;render();});
+$("lens").addEventListener("change",function(ev){state.lens=own(LENS,ev.target.value)?ev.target.value:"all";render();});
+function syncLevel(){document.querySelectorAll("[data-level]").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.level===state.level?"true":"false");});}
+document.querySelectorAll("[data-level]").forEach(function(b){
+  b.addEventListener("click",function(){state.level=b.dataset.level;lsSet("cwm.level",state.level);syncLevel();render();});
+});
+function wlNote(){
+  var n=events.filter(function(e){return e.wl&&inWindow(e)&&claimOk(e);}).length;
+  var where=!wl.stored?"This list could not be stored and will be lost when you close the page.":"This list is saved on this device only.";
+  $("wlNote").textContent=(wl.terms.length?wl.terms.length+" term"+(wl.terms.length>1?"s":"")+", "+n+" matching event"+(n===1?"":"s")+" in this window. ":"No terms yet. ")+where;
+}
+function wlToggle(open){
+  var d=$("wlDlg");d.hidden=!open;$("wlOpen").setAttribute("aria-expanded",open?"true":"false");
+  if(open){$("wlText").value=wl.terms.join("\n");wlNote();$("wlText").focus();}
+}
+function wlSave(){
+  var terms=wlParse($("wlText").value),same=terms.join("\n")===wl.terms.join("\n");
+  $("wlText").value=terms.join("\n");
+  if(same){wlNote();toast("Watchlist unchanged.");return;}
+  wlApply(terms);if(!terms.length)state.wlOnly=false;render();
+  var local=function(){wl.mode="local";wl.stored=lsSet("cwm.wl",JSON.stringify(terms));wlNote();toast(wl.stored?"Watchlist saved on this device only.":"Watchlist could not be stored. It will last until you close the page.");};
+  local();
+}
+$("wlOpen").addEventListener("click",function(){wlToggle($("wlDlg").hidden);});
+$("wlClose").addEventListener("click",function(){wlToggle(false);$("wlOpen").focus();});
+$("wlSave").addEventListener("click",wlSave);
+(function(){
+  var lv=lsGet("cwm.level");if(lv==="plain"||lv==="standard"||lv==="exec")state.level=lv;
+  state.claims=lsGet("cwm.claims")==="1";
+  try{var t=JSON.parse(lsGet("cwm.wl")||"[]");wlApply(wlClean(t));}catch(x){}
+  syncLevel();
+})();
+var qt=0;$("q").addEventListener("input",function(ev){var v=ev.target.value.trim();clearTimeout(qt);qt=setTimeout(function(){state.q=v;render();},140);});
+$("status").addEventListener("change",function(ev){state.status=ev.target.value;render();});
+$("sort").addEventListener("change",function(ev){state.sort=ev.target.value;render();});
+$("scopeClear").addEventListener("click",function(){state.spot=null;state.country=null;state.day=null;state.pattern=null;
+  state.q="";state.status="all";state.lens="all";state.sev=1;state.wlOnly=false;state.cats=new Set(CATS.map(function(c){return c.k;}));
+  syncControls();render();});
+$("dBack").addEventListener("click",function(){select(null);});
+$("dPrev").addEventListener("click",function(){nav(-1);});
+$("dNext").addEventListener("click",function(){nav(1);});
+$("tab-feed").addEventListener("click",function(){setTab("feed");});
+$("tab-brief").addEventListener("click",function(){setTab("brief");});
+$("tab-ins").addEventListener("click",function(){setTab("ins");});
+$("tab-pat").addEventListener("click",function(){setTab("pat");});
+$("tab-kev").addEventListener("click",function(){setTab("kev");renderKev();});
+$("hoOpen").addEventListener("click",function(){hoToggle($("hoDlg").hidden);});
+$("hoClose").addEventListener("click",function(){hoToggle(false);$("hoOpen").focus();});
+$("hoCopy").addEventListener("click",function(){var t=$("hoText").value,ok=function(){lsSet("cwm.ho",new Date().toISOString());toast("Handover copied. The next one will also list what is new from now.");hoToggle(false);},bad=function(){$("hoText").select();toast("Copy was blocked by the browser. The text is selected: copy it with your keyboard.");};
+  try{navigator.clipboard.writeText(t).then(ok,bad);}catch(x){bad();}});
+document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){setView(b.dataset.view);});});
+function fsOn(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
+function fsSync(){$("fs").setAttribute("aria-pressed",fsOn()?"true":"false");$("fsLabel").textContent=fsOn()?"Exit full screen":"Full screen";}
+function toggleFs(){
+  try{
+    var d=document.documentElement,p;
+    if(fsOn())p=(document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    else p=(d.requestFullscreen||d.webkitRequestFullscreen).call(d);
+    if(p&&p.catch)p.catch(function(){toast("Full screen was blocked here. Open the map in its own tab and try again.");});
+  }catch(x){toast("Full screen isn't available in this view. Open the map in its own tab and try again.");}
+}
+function themeSync(){var t=document.documentElement.dataset.theme==="dark"?"dark":"light";document.querySelectorAll("[data-theme-set]").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.themeSet===t?"true":"false");});}
+document.querySelectorAll("[data-theme-set]").forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.themeSet;lsSet("cwm.theme",b.dataset.themeSet);themeSync();render();});});
+themeSync();
+$("fs").addEventListener("click",toggleFs);
+document.addEventListener("fullscreenchange",fsSync);document.addEventListener("webkitfullscreenchange",fsSync);
+$("refresh").addEventListener("click",refresh);
+$("zin").addEventListener("click",function(){svg.transition().duration(reduced?0:250).call(zoom.scaleBy,1.8);});
+$("zout").addEventListener("click",function(){svg.transition().duration(reduced?0:250).call(zoom.scaleBy,1/1.8);});
+$("zreset").addEventListener("click",function(){state.spot=null;svg.transition().duration(reduced?0:350).call(zoom.transform,d3.zoomIdentity);render();});
+document.addEventListener("keydown",function(ev){
+  var typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement&&document.activeElement.tagName);
+  if(ev.key==="Escape"&&!$("wlDlg").hidden){wlToggle(false);$("wlOpen").focus();return;}
+  if(ev.key==="Escape"&&!$("hoDlg").hidden){hoToggle(false);$("hoOpen").focus();return;}
+  if(ev.key==="Escape"){if(typing)document.activeElement.blur();else if(state.sel)select(null);else{state.spot=null;state.country=null;state.day=null;state.pattern=null;select(null);}}
+  else if(typing||ev.metaKey||ev.ctrlKey||ev.altKey){}
+  else if(ev.key==="j"||(ev.key==="ArrowDown"&&state.sel)){ev.preventDefault();nav(1);}
+  else if(ev.key==="k"||(ev.key==="ArrowUp"&&state.sel)){ev.preventDefault();nav(-1);}
+  else if(ev.key==="o"&&state.sel){openSource(events.find(function(z){return z.id===state.sel;}));}
+  else if(ev.key==="1"||ev.key==="2"||ev.key==="3"){setView(["map","time","graph"][+ev.key-1]);}
+  else if(ev.key==="?"){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · R refresh · F full screen · Esc back");}
+  else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&ev.key==="/"){ev.preventDefault();$("q").focus();}
+  else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&(ev.key==="r"||ev.key==="R")){refresh();}
+  else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&(ev.key==="f"||ev.key==="F")){toggleFs();}
+});
+if(window.ResizeObserver){var rt=0;new ResizeObserver(function(){clearTimeout(rt);rt=setTimeout(function(){layout();render();},140);}).observe(document.body);}
+setInterval(function(){renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},60000);
+
+window.addEventListener("error",function(ev){if(!faults.page){faults.page=String(ev&&ev.message||"error").slice(0,160);fault();}});
+loadPrefs();syncControls();layout();setView(state.view);
+fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo){
+  world=topojson.feature(topo,topo.objects.countries).features.filter(function(f){return f.id!=="010";});
+  layout();drawMarks();
+}).catch(function(){/* outline missing: markers still plot on the graticule */});
+
+/* ---------- data store: one static JSON bundle, re-read on a timer ---------- */
+var STORE_URL="data/bundle.json",POLL_MS=5*60*1000;
+function sendReport(p){
+  var b=new URLSearchParams({"form-name":"event-report",event_id:p.event_id,title:p.title,note:p.note,at:p.at,"bot-field":""});
+  return fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b.toString()}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);});
+}
+function openStore(){
+  var bundle=null,subs=[],last=null;
+  function snapDocs(a){return {docs:a.map(function(r){return {id:r.id,data:function(){return r;}};}),size:a.length};}
+  function docSnap(v){return {exists:!!v,data:function(){return v;}};}
+  function rows(name){var a=bundle&&Array.isArray(bundle[name])?bundle[name]:[];return a.filter(function(r){return r&&typeof r==="object"&&typeof r.id==="string";});}
+  function notify(){subs.forEach(function(f){try{f();}catch(x){}});}
+  function load(){
+    return fetch(STORE_URL+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+      .then(function(j){if(!j||typeof j!=="object"||!Array.isArray(j.events))throw new Error("bad bundle");var changed=j.built_at!==last;bundle=j;last=j.built_at;return changed;});
+  }
+  function reload(){return load().then(function(ch){if(ch)notify();});}
+  function coll(name,filters,order,lim){
+    function run(){
+      var a=rows(name);
+      filters.forEach(function(f){a=a.filter(function(r){var v=r[f[0]];return f[1]===">="?v>=f[2]:f[1]==="<="?v<=f[2]:v===f[2];});});
+      if(order)a=a.slice().sort(function(x,y){var p=x[order[0]],q=y[order[0]];return (p<q?-1:p>q?1:0)*(order[1]==="desc"?-1:1);});
+      return snapDocs(lim?a.slice(0,lim):a);
+    }
+    return {where:function(f,o,v){return coll(name,filters.concat([[f,o,v]]),order,lim);},orderBy:function(f,d){return coll(name,filters,[f,d||"asc"],lim);},limit:function(n){return coll(name,filters,order,n);},
+      get:function(){return reload().then(run);},
+      onSnapshot:function(cb){subs.push(function(){cb(run());});if(bundle)cb(run());return function(){};},
+      add:function(payload){return name==="reports"?sendReport(payload):Promise.reject(new Error("read only"));}};
+  }
+  function doc(path){
+    function val(){return bundle&&bundle.docs&&own(bundle.docs,path)?bundle.docs[path]:null;}
+    return {get:function(){return reload().then(function(){return docSnap(val());});},
+      onSnapshot:function(cb){subs.push(function(){cb(docSnap(val()));});if(bundle)cb(docSnap(val()));return function(){};}};
+  }
+  setInterval(function(){if(!document.hidden)reload().catch(function(){});},POLL_MS);
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)reload().catch(function(){});});
+  return load().then(function(){return {collection:function(n){return coll(n,[],null,0);},doc:doc};});
+}
+openStore().then(function(d){
+  if(!d){unavailable=true;render();return;}
+  db=d;query=db.collection("events").where("date",">=",ymd(daysAgo(9)));
+  var timer=setTimeout(function(){if(!loaded){stale=true;render();}},10000),first=true;
+  query.onSnapshot(function(snap){
+    var n=apply(snap);
+    if(!snap.metadata||!snap.metadata.fromCache){clearTimeout(timer);stale=false;}
+    if(first){first=false;var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}
+      var he=h&&events.find(function(e){return e.id===h;});
+      if(he){if(he.status==="claimed"&&!state.claims){state.claims=true;toast("This link points to an unverified claim, so claims are shown for now.");}select(h,true);return;}}
+    else if(n)toast(n+" new event"+(n>1?"s":"")+" just arrived.");
+    renderSoon();
+  },function(){clearTimeout(timer);if(!loaded)unavailable=true;stale=false;render();});
+  db.doc("analysis/latest").onSnapshot(function(s){analysis=s.exists?cleanAnalysis(s.data()):null;renderSoon();},function(){});
+  try{db.collection("kev").where("added",">=",ymd(daysAgo(45))).onSnapshot(function(snap){kev=snap.docs.map(function(x){return cleanKev(x.id,x.data());}).filter(Boolean);renderKev();if(state.view!=="map")renderSoon();},function(){});}catch(x){}
+  db.doc("analysis/ripples").onSnapshot(function(s){ripples=s.exists?cleanRipples(s.data()):null;if(state.view==="graph")renderSoon();},function(){});
+  db.doc("brief/latest").onSnapshot(function(s){daily=s.exists?cleanBrief(s.data()):null;renderBrief();},function(){});
+  db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
+  try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
+    corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
+  db.doc("meta/status").onSnapshot(function(s){sweep=s.exists?s.data():null;renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},function(){});
+}).catch(function(){unavailable=true;render();});
+})();

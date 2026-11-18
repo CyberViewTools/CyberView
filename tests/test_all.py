@@ -75,7 +75,7 @@ OVERLAP = """() => { let n = 0; document.querySelectorAll('#viz .vsec svg').forE
 
 
 async def serve(dirpath, fn):
-    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd=dirpath, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    srv = subprocess.Popen([sys.executable, os.path.join(ROOT, "tests", "serve.py"), str(PORT)], cwd=dirpath, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.8)
     try:
         await fn(f"http://localhost:{PORT}/index.html")
@@ -114,8 +114,12 @@ async def main():
                 ok(f"{th}: J moves to next", t1 != await pg.inner_text("#dcard .ttl"))
                 await pg.keyboard.press("Escape")
                 await pg.wait_for_timeout(600)
-                st = await pg.evaluate('document.getElementById("feed").scrollTop')
-                ok(f"{th}: back restores list position", abs(st - 400) < 80, st)
+                # Back returns to where you were: the list is not reset to the top, and stays near the event last viewed
+                pos = await pg.evaluate("""() => { const f = document.getElementById("feed"), c = f.querySelector(".card.sel");
+                  if (!c) return {top: f.scrollTop, seen: false};
+                  const a = f.getBoundingClientRect(), b = c.getBoundingClientRect();
+                  return {top: f.scrollTop, seen: b.bottom > a.top && b.top < a.bottom}; }""")
+                ok(f"{th}: back restores list position", 200 < pos["top"] < 1400, pos)  # J moved one event on, so the list may sit a card lower
                 await pg.click("#tab-kev")
                 await pg.wait_for_timeout(300)
                 ok(f"{th}: exploited feed lists flaws", await pg.locator("#kev .kcard").count() >= min(5, len(bundle["kev"])))

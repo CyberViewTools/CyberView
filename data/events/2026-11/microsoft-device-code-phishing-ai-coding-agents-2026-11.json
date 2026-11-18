@@ -1,0 +1,71 @@
+{
+  "action": "Tell developers to enter device codes only for sign-ins they started, review and revoke unexpected GitHub OAuth authorisations, and set Copilot CLI cloud session storage and memory to the least permissive setting that works.",
+  "actor": "",
+  "attack": [
+    "T1566.002 Phishing: Spearphishing Link",
+    "T1528 Steal Application Access Token"
+  ],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-17",
+  "exec": "AI coding agents widen what a phished sign-in can reach, including code, past sessions and local commands; restrict agent session and memory settings.",
+  "first_seen": "2026-11-18T06:15:38Z",
+  "geo_basis": "researcher HQ",
+  "lat": 47.674,
+  "lng": -122.121,
+  "org": "Microsoft Security Research",
+  "pin_type": "researcher",
+  "place": "Redmond, WA (researcher)",
+  "plain": "Microsoft tested how tricking a developer into typing a sign-in code could let a hacker control their AI coding assistant and read their private code. It has not seen this used in real attacks yet.",
+  "products": [
+    "GitHub Copilot CLI",
+    "GitHub"
+  ],
+  "report": {
+    "publisher": "Microsoft Security Research",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-17",
+    "key_findings": [
+      "In a controlled simulation, a test account approved a GitHub device-code request started by an attacker-controlled client using the public Copilot CLI client ID.",
+      "With that approval researchers could steer a remote-control-enabled Copilot CLI session to run a command, add misleading memory entries, read synced sessions and access private repositories.",
+      "The requested scopes included repo, read:user, read:org, gist and codespace, chosen by the client that starts the flow.",
+      "The technique applies to any public client supporting the device flow; Microsoft has not observed these four outcomes in the wild.",
+      "Microsoft cites earlier device-code phishing campaigns including Storm-2372 and EvilTokens, which it helped disrupt in September 2026."
+    ],
+    "recommendations": [
+      "Approve device codes only for sign-ins you started yourself, even on the genuine github.com page.",
+      "Review GitHub Copilot CLI session storage and remote-control policy and choose the least permissive setting.",
+      "Review and revoke unexpected GitHub OAuth authorisations and limit repository access by role.",
+      "Review Copilot Memory for suspicious entries, and connect GitHub Enterprise Cloud to Defender for Cloud Apps for visibility."
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://www.microsoft.com/en-us/security/blog/2026/11/17/the-risks-of-device-code-authentication-for-ai-coding-agents/"
+  },
+  "sector": "Software development",
+  "severity": 1,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Microsoft Security Blog",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/17/the-risks-of-device-code-authentication-for-ai-coding-agents/"
+    }
+  ],
+  "status": "official",
+  "summary": "Microsoft researchers showed in a lab that a phished GitHub device-code approval for the Copilot CLI client could let an attacker steer a remotely controllable agent session, plant misleading memory entries, read cloud-synced sessions and reach private repositories. These are proof-of-concept results, not attacks seen in the wild. Microsoft added two Defender XDR detections for the email and Teams lures.",
+  "tags": [
+    "phishing",
+    "identity",
+    "ai-enabled"
+  ],
+  "time_basis": "published",
+  "title": "Microsoft: one phished device-code approval could let attackers steer AI coding agents",
+  "updated_at": "2026-11-18T06:15:38Z",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-18T06:15:38Z",
+    "note": "Reviewed against the full original Microsoft Security Blog post; lab proof of concept only."
+  }
+}

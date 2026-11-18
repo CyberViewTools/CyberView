@@ -1,0 +1,184 @@
+{
+  "action": "Take Copeland XWEB EVO controllers off the public internet and put them behind a VPN on a separate network segment. No patch is coming for firmware 5.8.8, so plan a move to a supported platform and check logs for VulnCheck's indicators.",
+  "actor": "",
+  "attack": [
+    "T1190 Exploit Public-Facing Application"
+  ],
+  "category": "vuln",
+  "country": "United States",
+  "cves": [
+    "CVE-2026-124002",
+    "CVE-2026-124003",
+    "CVE-2026-124004",
+    "CVE-2026-124005",
+    "CVE-2026-124006",
+    "CVE-2026-124007",
+    "CVE-2026-124008",
+    "CVE-2026-124009",
+    "CVE-2026-124010",
+    "CVE-2026-124011",
+    "CVE-2026-124012",
+    "CVE-2026-124013",
+    "CVE-2026-124014",
+    "CVE-2026-124015"
+  ],
+  "date": "2026-11-13",
+  "exec": "These refrigeration controllers will never be patched; exposed units need to come off the internet and be replaced over time.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "vendor HQ",
+  "lat": 38.63,
+  "lng": -90.2,
+  "org": "Copeland",
+  "pin_type": "hq",
+  "place": "St. Louis, MO",
+  "plain": "Researchers disclosed 14 weaknesses in Copeland XWEB EVO devices that control commercial refrigeration. The maker no longer updates these devices, and attackers began probing two of the flaws within a day.",
+  "products": [
+    "Copeland XWEB 300D EVO",
+    "Copeland XWEB 500D EVO",
+    "Copeland XWEB 500 EVO"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "CVE-2026-124002 to CVE-2026-124015",
+    "iocs_available": true,
+    "key_findings": [
+      "VulnCheck disclosed 14 flaws, CVE-2026-124002 through CVE-2026-124015, in Dixell/Copeland XWEB EVO refrigeration supervisors including the 300D, 500D and 500 EVO.",
+      "They allow unauthenticated root command execution via the login page and a console script, and include a hardcoded administrator password and a daily password derivable from MAC address and date.",
+      "The EVO family is end of software support with no fixes after March 16, 2026; current firmware 5.8.8 is affected by several findings.",
+      "Internet scans show roughly 1,660 to 1,960 exposed EVO hosts.",
+      "Exploitation was seen for two flaws: config writes (CVE-2026-124014) from November 12 22:00 UTC and root execution probes (CVE-2026-124010) from November 13."
+    ],
+    "published": "2026-11-13",
+    "publisher": "VulnCheck",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Keep XWEB EVO devices off the public internet and segment them behind a VPN.",
+      "Plan migration to a supported platform, because firmware 5.8.8 will not be patched.",
+      "Hunt for the request patterns and source addresses VulnCheck published."
+    ],
+    "url": "https://www.vulncheck.com/blog/copeland-xweb-evo-unauthenticated-root"
+  },
+  "sector": "Industrial control / refrigeration",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "VulnCheck",
+      "url": "https://www.vulncheck.com/blog/copeland-xweb-evo-unauthenticated-root"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "VulnCheck disclosed 14 flaws in Dixell/Copeland XWEB EVO refrigeration supervisors that let an unauthenticated attacker run commands as root and recover administrator passwords. The product line is past end of software support, so no fixes are coming. Up to about 1,960 devices are reachable from the internet, and VulnCheck saw two of the flaws targeted from November 12 and 13.",
+  "tags": [
+    "ot-ics",
+    "critical-infrastructure"
+  ],
+  "title": "Hackers probe newly disclosed flaws in Copeland refrigeration controllers",
+  "updated_at": "2026-11-18T06:14:21Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:36:00Z",
+    "note": "Reviewed against the original VulnCheck report.",
+    "state": "corroborated"
+  },
+  "cve_meta": [
+    {
+      "id": "CVE-2026-124002",
+      "cvss": null,
+      "epss": 0.03224,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124003",
+      "cvss": null,
+      "epss": 0.00693,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124004",
+      "cvss": null,
+      "epss": 0.00764,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124005",
+      "cvss": null,
+      "epss": 0.00553,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124006",
+      "cvss": null,
+      "epss": 0.00572,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124007",
+      "cvss": null,
+      "epss": 0.02119,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124008",
+      "cvss": null,
+      "epss": 0.02414,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124009",
+      "cvss": null,
+      "epss": 0.02414,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124010",
+      "cvss": null,
+      "epss": 0.03128,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124011",
+      "cvss": null,
+      "epss": 0.00395,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124012",
+      "cvss": null,
+      "epss": 0.0059,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124013",
+      "cvss": null,
+      "epss": 0.02878,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124014",
+      "cvss": null,
+      "epss": 0.00734,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-124015",
+      "cvss": null,
+      "epss": 0.00617,
+      "kev": false,
+      "kev_due": ""
+    }
+  ]
+}

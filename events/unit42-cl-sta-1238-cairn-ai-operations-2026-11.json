@@ -1,0 +1,74 @@
+{
+  "action": "Follow Unit 42's guidance: tighten identity hygiene (strong unique passwords, no shared or default credentials), cut internet-facing attack surface, patch dated public flaws, and add the two published IP indicators to monitoring.",
+  "actor": "CL-STA-1238 (China-nexus, moderate confidence)",
+  "attack": [
+    "T1190 Exploit Public-Facing Application"
+  ],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-12",
+  "exec": "AI-run intrusions got in through weak passwords, open cloud storage and login bypasses, not new exploits; basic identity and patch upkeep is the defence.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "researcher HQ",
+  "lat": 37.38,
+  "lng": -121.98,
+  "org": "Palo Alto Networks Unit 42",
+  "pin_type": "researcher",
+  "place": "Santa Clara, CA (researcher)",
+  "plain": "Unit 42 says a likely China-linked group used an AI hacking tool to run 25 mostly automated break-in attempts on 19 chip, defence and civil-society bodies, got into 10 and took over 1 million union member records.",
+  "products": [
+    "Cairn",
+    "Zhipu GLM 5.2",
+    "DeepSeek V4"
+  ],
+  "records_affected": 1000000,
+  "report": {
+    "doc_id": "CL-STA-1238",
+    "iocs_available": true,
+    "key_findings": [
+      "Targets were 7 semiconductor and advanced-manufacturing firms, 3 defence or defence-policy bodies and 4 human-rights or civil-society groups, including a Canadian rights body and a US teachers' union.",
+      "The cluster ran 25 operations against at least 19 organisations and reached confirmed unauthorised access or data retrieval at 10 of them.",
+      "It used a customised fork of the open-source Cairn framework driven by Zhipu GLM 5.2 and DeepSeek V4 models, plus a custom skill pack not in upstream Cairn.",
+      "Entry came from password spraying, brute-forced credentials, unauthenticated cloud-storage writes, login bypasses and open registration endpoints rather than new exploits.",
+      "Data taken included over 1 million union member records, about 31,000 CRM contacts and about 150,000 internal documents; Unit 42 assesses China-nexus collection with moderate confidence."
+    ],
+    "published": "2026-11-12",
+    "publisher": "Palo Alto Networks Unit 42",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Tighten identity hygiene: remove weak, default and shared passwords on internet-facing applications.",
+      "Reduce the exposed attack surface, including open registration endpoints and unauthenticated cloud storage.",
+      "Patch software affected by older public CVEs.",
+      "Monitor for the two IP addresses Unit 42 published for the Cairn hosting and staging servers."
+    ],
+    "url": "https://unit42.paloaltonetworks.com/cairn-framework-ai-autonomous-attacks/"
+  },
+  "sector": "Semiconductors / defense / civil society",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Palo Alto Networks Unit 42",
+      "url": "https://unit42.paloaltonetworks.com/cairn-framework-ai-autonomous-attacks/"
+    },
+    {
+      "name": "AgentBeam timeline",
+      "url": "https://www.agentbeam.com/blog/november-2026-attacks-timeline"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Unit 42 tracked a cluster, CL-STA-1238, running a customised fork of the open-source Cairn AI penetration-testing framework on Chinese AI models. It ran 25 operations against at least 19 organisations in the semiconductor supply chain, defence and civil society, with confirmed access or data retrieval at 10. A US teachers' union lost more than 1 million member records. Unit 42 assesses China-nexus intelligence collection with moderate confidence.",
+  "tags": [
+    "ai-enabled",
+    "espionage"
+  ],
+  "title": "Unit 42: autonomous 'Cairn' operations hit semiconductor, defense and civil-society targets",
+  "updated_at": "2026-11-17T23:15:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:15:00Z",
+    "note": "Reviewed against the original Palo Alto Networks Unit 42 report.",
+    "state": "corroborated"
+  }
+}

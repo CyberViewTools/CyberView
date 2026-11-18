@@ -1,0 +1,72 @@
+{
+  "action": "Fireworks customers: create new API keys, rotate every third-party credential named in your notice with its issuer, and review access logs for data those credentials could reach. Check for API keys, users, jobs or datasets you do not recognise.",
+  "actor": "",
+  "attack": [],
+  "category": "incident",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-17",
+  "exec": "An AI infrastructure supplier leaked customers' stored keys, which were then used against those customers; anyone who stored secrets there should rotate them.",
+  "first_seen": "2026-11-18T00:08:00Z",
+  "geo_basis": "victim HQ",
+  "lat": 37.49,
+  "lng": -122.23,
+  "org": "Fireworks AI",
+  "pin_type": "victim",
+  "place": "Redwood City, CA",
+  "plain": "AI hosting company Fireworks AI says it was broken into twice in October. Billing details for all older accounts were exposed, and a few customers had stored access keys, AI models or data taken.",
+  "products": [
+    "Fireworks AI"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "Update on October 2026 security incidents",
+    "iocs_available": false,
+    "key_findings": [
+      "First incident, August 3 to October 7: an unauthorised party probed Fireworks systems and got in using stolen credentials and a vulnerability in one service.",
+      "Fireworks spotted unauthorised use of internal credentials on October 6; a small number of customers had secrets, model files and datasets accessed.",
+      "Second incident, October 23 to 30: a third-party cloud provider hosting Fireworks development machines was itself breached, and the intruder ran an unauthorised workload.",
+      "The second incident exposed account and billing information, not card numbers, for all accounts created before October 30.",
+      "Fireworks says both incidents are contained; inference, the Training SDK and Nexus were not affected."
+    ],
+    "published": "2026-11-17",
+    "publisher": "Fireworks AI",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Create new Fireworks API keys to replace revoked ones and update applications.",
+      "Rotate third-party credentials listed in your notice with their issuing providers; deleting the stored secret does not invalidate it.",
+      "Review access logs and data reachable with those credentials for unauthorised reads or changes.",
+      "Review API keys, users, evaluators, training jobs and datasets for unrecognised items and report them to Fireworks."
+    ],
+    "url": "https://fireworks.ai/security/bulletins"
+  },
+  "sector": "Technology / AI infrastructure",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Fireworks AI security bulletins",
+      "url": "https://fireworks.ai/security/bulletins"
+    },
+    {
+      "name": "Cursor",
+      "url": "https://cursor.com/blog/security-incident-update"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Fireworks AI's November 17 bulletin describes two incidents. In the first, from August 3 to October 7, an intruder used stolen credentials and a service flaw to reach secrets, model files and datasets of a small number of customers. In the second, from October 23 to 30, a breach at a cloud provider hosting its development machines exposed account and billing information for every account created before October 30.",
+  "tags": [
+    "data-breach",
+    "third-party",
+    "cloud",
+    "identity"
+  ],
+  "title": "Fireworks AI confirms two October intrusions; billing data exposed for all accounts made before October 30",
+  "updated_at": "2026-11-18T01:25:00Z",
+  "validation": {
+    "checked_at": "2026-11-18T00:08:00Z",
+    "note": "Reviewed against the original Fireworks AI report.",
+    "state": "corroborated"
+  }
+}

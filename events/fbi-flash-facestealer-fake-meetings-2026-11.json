@@ -1,0 +1,72 @@
+{
+  "action": "Join calls through the official Zoom or Teams app with an invite code, keep the webcam off until the host is verified another way, never run scripts or paste code to fix audio, and enable MFA and login alerts on messaging accounts.",
+  "actor": "Sapphire Sleet / UNC1069 / BlueNoroff (North Korea)",
+  "attack": [],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-12",
+  "exec": "A trusted contact on a video call can be a recording; crypto firms and open-source maintainers are the targets, with supply-chain risk for software users.",
+  "first_seen": "2026-11-17T23:38:00Z",
+  "geo_basis": "agency",
+  "lat": 38.895,
+  "lng": -77.025,
+  "org": "FBI",
+  "pin_type": "agency",
+  "place": "Washington, DC",
+  "plain": "The FBI says North Korean hackers stage fake video meetings using real recordings of earlier victims, then trick people into running a so-called fix that infects their computer and empties crypto wallets.",
+  "products": [
+    "Zoom",
+    "Microsoft Teams",
+    "Telegram",
+    "LinkedIn",
+    "Slack",
+    "Discord"
+  ],
+  "report": {
+    "doc_id": "AC-111226-MS",
+    "iocs_available": true,
+    "key_findings": [
+      "Targets are cryptocurrency and Web3 workers, open-source developers and maintainers, and through them their contacts and employers' networks.",
+      "Operators take over a victim's messaging account, send contacts a look-alike meeting link and replay the victim's recorded webcam video in a staged session.",
+      "Posing as the contact, they claim an audio fault and have the target run an update or paste terminal code, installing a backdoor, keyloggers and a cookie harvester.",
+      "More than $400 million was stolen over roughly 18 months and the FBI seized over 900 victim webcam videos; one widely used JavaScript library was nearly compromised.",
+      "New elements are AI-generated deepfakes of known crypto figures, attempts on NPM and Rust maintainers, and theft delayed for months after compromise."
+    ],
+    "published": "2026-11-12",
+    "publisher": "FBI",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Join meetings through the official Zoom or Teams app with an invite code rather than a web link.",
+      "Keep your camera off until you have verified the inviter, and confirm meetings through a different channel.",
+      "Never run scripts or paste code into a terminal to fix a meeting problem.",
+      "Enable multifactor authentication and login alerts on messaging accounts.",
+      "If compromised, move crypto to a new wallet with new seed phrases on a clean device and report to IC3 with the keyword FaceStealer."
+    ],
+    "url": "https://www.ic3.gov/CSA/2026/261112.pdf"
+  },
+  "sector": "Government advisory",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "FBI FLASH AC-111226-MS (IC3)",
+      "url": "https://www.ic3.gov/CSA/2026/261112.pdf"
+    }
+  ],
+  "status": "official",
+  "summary": "FBI FLASH AC-111226-MS (TLP:CLEAR) explains FaceStealer: North Korean operators hijack a victim's messaging account, invite that person's contacts to a counterfeit Zoom or Teams session, replay secretly recorded webcam video and talk the target into running a fake audio fix that installs malware. More than $400 million was stolen in about 18 months, and open-source maintainers are now targeted as well.",
+  "tags": [
+    "fraud",
+    "supply-chain",
+    "identity"
+  ],
+  "title": "FBI: FLASH details North Korean FaceStealer fake-meeting scheme behind $400M in crypto theft",
+  "updated_at": "2026-11-17T23:38:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:38:00Z",
+    "note": "Reviewed against the original FBI document.",
+    "state": "corroborated"
+  }
+}

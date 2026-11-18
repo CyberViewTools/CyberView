@@ -1,0 +1,79 @@
+{
+  "action": "Upgrade InfoScan to version 1.46 or later (System Maintenance, Check for Updates, or the Dorsett customer portal for offline sites). Keep control systems off the internet, behind firewalls and reachable only through an up-to-date VPN.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "United States",
+  "cves": [
+    "CVE-2026-117659",
+    "CVE-2026-120157",
+    "CVE-2026-120255",
+    "CVE-2026-120260",
+    "CVE-2026-120271",
+    "CVE-2026-120298"
+  ],
+  "date": "2026-11-17",
+  "exec": "Water utilities using InfoScan should schedule the update; the flaws leak reconnaissance data and weaken encryption rather than give direct control.",
+  "first_seen": "2026-11-17T23:38:00Z",
+  "geo_basis": "agency",
+  "lat": 38.87,
+  "lng": -77.01,
+  "occurred_at": "2026-11-17T06:00:00+00:00",
+  "org": "CISA",
+  "pin_type": "agency",
+  "place": "Washington, DC area",
+  "plain": "Software used to monitor water and wastewater plants has flaws that could let outsiders see system details, read data or intercept connections. An update is available and no attacks are known.",
+  "products": [
+    "Dorsett Controls InfoScan"
+  ],
+  "report": {
+    "doc_id": "ICSA-26-321-01",
+    "iocs_available": false,
+    "key_findings": [
+      "Dorsett Controls InfoScan 1.45.0 and earlier is affected; it is deployed worldwide in the Water and Wastewater Systems sector.",
+      "CVE-2026-117659 (CVSS 8.1): the Electron desktop client accepts TLS certificates without validation and runs with insecure settings, so traffic can be intercepted or altered.",
+      "Unauthenticated endpoints and the public installer reveal usernames, MFA status, version and firmware details, the BACnet/IP port and customer and internal hostnames.",
+      "Hard-coded cryptographic keys protect the MongoDB password kept in the Windows registry, so it may be recoverable.",
+      "CISA reports no known public exploitation; the vendor fix is dated October 22, 2026."
+    ],
+    "published": "2026-11-17",
+    "publisher": "CISA",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Upgrade to InfoScan v1.46 or later, online through System Maintenance or offline from the Dorsett Controls Customer Portal.",
+      "Keep control system devices and systems off the internet.",
+      "Place control networks and remote devices behind firewalls, separated from business networks.",
+      "Use up-to-date VPNs for remote access.",
+      "Report suspected malicious activity to CISA."
+    ],
+    "url": "https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/OT/white/2026/icsa-26-321-01.json"
+  },
+  "sector": "Government advisory",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "CISA ICSA-26-321-01 (CSAF)",
+      "url": "https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/OT/white/2026/icsa-26-321-01.json"
+    },
+    {
+      "name": "CISA ICSA-26-321-01 (web page, did not load)",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-321-01"
+    }
+  ],
+  "status": "official",
+  "summary": "CISA advisory ICSA-26-321-01 lists six flaws in Dorsett Controls InfoScan 1.45.0 and earlier, software used worldwide in water and wastewater systems. The most serious, rated 8.1, is a desktop client that accepts unvalidated TLS certificates, allowing traffic interception. Others leak hostnames, usernames and MFA status without login and protect the database password with hard-coded keys. CISA knows of no public exploitation; version 1.46 fixes them.",
+  "tags": [
+    "ot-ics",
+    "critical-infrastructure"
+  ],
+  "time_basis": "published",
+  "title": "CISA: Dorsett Controls InfoScan flaws expose water-sector monitoring data and credentials",
+  "updated_at": "2026-11-17T23:38:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:38:00Z",
+    "note": "Reviewed against the original CISA document (the advisory's CSAF file; the web page would not load).",
+    "state": "corroborated"
+  }
+}

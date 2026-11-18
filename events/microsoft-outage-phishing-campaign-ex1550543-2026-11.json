@@ -1,0 +1,74 @@
+{
+  "action": "Warn staff not to click 'restore messages' links in outage emails. Search mail logs for Microsoft's published sender domains and subject patterns, remove delivered copies, and reset passwords and revoke sessions for anyone who clicked and signed in.",
+  "actor": "",
+  "attack": [
+    "T1566.002 Phishing: Spearphishing Link",
+    "T1036 Masquerading",
+    "T1204.001 User Execution: Malicious Link"
+  ],
+  "category": "report",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-16",
+  "exec": "Criminals are using a real outage to make scam emails convincing, raising the risk of stolen staff logins.",
+  "first_seen": "2026-11-17T22:28:00Z",
+  "geo_basis": "",
+  "lat": null,
+  "lng": null,
+  "org": "Microsoft 365 customers",
+  "pin_type": "none",
+  "place": "",
+  "plain": "Scammers are sending fake Microsoft 365 notices that mention the real reference number of the recent outage and threaten to delete held emails. Microsoft says the outage itself was not caused by a cyberattack.",
+  "products": [
+    "Microsoft 365"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Microsoft observed a high-volume phishing campaign on November 13 aimed at organisations in multiple sectors worldwide.",
+      "Emails use subjects like 'Outage' plus a random token and sender names posing as service-health notices, claiming four messages were held after a November 12 Exchange Online incident.",
+      "A 'RESTORE MESSAGES' button leads to a likely credential-phishing page; Microsoft has not confirmed credential capture.",
+      "Randomised subjects, recipient-specific tracking links and rotating sender domains are used to defeat simple pattern matching.",
+      "Microsoft has not attributed the campaign to a named actor or malware family."
+    ],
+    "published": "2026-11-17T00:08:00Z",
+    "publisher": "Microsoft Threat Intelligence",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Search mail telemetry for the published sender domains, subject patterns and lure phrases, then quarantine and remove delivered copies.",
+      "Identify users who clicked using click, proxy and endpoint logs.",
+      "For anyone who may have entered credentials, reset the password, revoke sessions and tokens, verify MFA registrations and review inbox rules and OAuth grants.",
+      "Turn on Safe Links, Safe Attachments and zero-hour auto purge, and prefer phishing-resistant MFA.",
+      "Remind users that genuine service-health notices do not point to non-Microsoft sites; check the Microsoft 365 admin center."
+    ],
+    "url": "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/"
+  },
+  "sector": "Multiple",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Microsoft Threat Intelligence",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/"
+    },
+    {
+      "name": "Windows Forum",
+      "url": "https://windowsforum.com/news/microsoft-365-outage-sparks-phishing-campaign-using-real-incident-id-ex1550543.452782/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Microsoft Threat Intelligence describes a high-volume phishing campaign seen on November 13 that poses as Microsoft 365 service-health notices. Emails claim four messages were held after the November 12 Exchange Online incident and will be deleted within 24 hours unless the reader clicks to restore them. Microsoft has not named an actor or confirmed credential capture. News coverage says some lures cite the real incident number.",
+  "tags": [
+    "phishing"
+  ],
+  "title": "Phishing campaign exploits the Microsoft 365 outage using the real incident ID",
+  "updated_at": "2026-11-18T01:25:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:58:00Z",
+    "note": "Reviewed against the original Microsoft Threat Intelligence report. The use of incident number EX1550543 in the lure is reported by news coverage; it was not found in Microsoft's post as read.",
+    "state": "corroborated"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "action": "Development teams, especially in crypto: review .claude/settings.json files in repositories for commands you did not add, treat changes to them like code changes, audit GitHub access tokens with Copilot-style names, and warn staff not to run fix scripts from meeting pages.",
+  "actor": "MIDNIGHT NEPTUNE (suspected North Korea)",
+  "attack": [
+    "T1204 User Execution"
+  ],
+  "category": "report",
+  "country": "North Korea",
+  "cves": [],
+  "date": "2026-11-16",
+  "exec": "Developer tool configuration files are being abused for persistent access at crypto firms; treat them as code.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "actor origin",
+  "lat": 39.03,
+  "lng": 125.75,
+  "org": "Google Threat Intelligence Group",
+  "pin_type": "actor",
+  "place": "Pyongyang (actor origin)",
+  "plain": "Google says suspected North Korean hackers tricked staff at cryptocurrency firms into running harmful commands, then altered a settings file in code projects so that opening an AI coding tool installed a hidden backdoor.",
+  "products": [
+    "Claude Code"
+  ],
+  "report": {
+    "doc_id": "GTIG AI Threat Tracker",
+    "iocs_available": false,
+    "key_findings": [
+      "Google describes recent intrusions against cryptocurrency organisations in North America and Europe by a suspected MIDNIGHT NEPTUNE cluster it links to North Korea.",
+      "Fake recruiter profiles with AI-generated images steered targets to bogus meeting platforms, where ClickFix prompts had them run fix scripts that were likely LLM-written.",
+      "Inside victim networks the actor edited .claude/settings.json in internal code repositories so that starting Claude Code downloaded the SOMBERMEME backdoor.",
+      "The actor created GitHub personal access tokens named after Microsoft Copilot to disguise lateral movement.",
+      "Google frames this as abuse of native AI agent execution hooks and an internal supply chain vector; the post gives no indicator list."
+    ],
+    "published": "November 16, 2026",
+    "publisher": "Google Threat Intelligence Group",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "The post gives no step-by-step guidance for this activity; it points to Mandiant's hardening guide for machine-speed, LLM-enabled tooling.",
+      "Verify LLM-generated proof-of-concept exploits before relying on them, since many published ones do not work."
+    ],
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/agentic-threat-activity-crosses-a-significant-threshold"
+  },
+  "sector": "Cryptocurrency / developers",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Google Threat Intelligence Group",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/agentic-threat-activity-crosses-a-significant-threshold"
+    },
+    {
+      "name": "AgentBeam timeline",
+      "url": "https://www.agentbeam.com/blog/november-2026-attacks-timeline"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Google's November 16 AI Threat Tracker says a suspected North Korean cluster, MIDNIGHT NEPTUNE, used fake recruiter profiles and ClickFix lures against cryptocurrency organisations in North America and Europe. After getting in, it edited .claude/settings.json files in internal code repositories so that starting Claude Code downloaded the SOMBERMEME backdoor. The post does not say whether this is a product flaw and lists no indicators.",
+  "tags": [
+    "espionage",
+    "supply-chain",
+    "ai-enabled"
+  ],
+  "title": "Google: North Korean actor backdoors crypto developers through Claude Code settings files",
+  "updated_at": "2026-11-17T23:58:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:58:00Z",
+    "note": "Reviewed against the original Google Threat Intelligence Group document.",
+    "state": "corroborated"
+  }
+}

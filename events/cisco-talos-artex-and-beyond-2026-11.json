@@ -1,0 +1,76 @@
+{
+  "action": "Apply Talos's guidance: alert on unusually rapid activity, enforce MFA and rate limits against password spraying, turn on EDR tamper protection, remove exposed secrets, limit privileges, and deploy the listed Snort and ClamAV coverage.",
+  "actor": "VAPOR PANDA; Storm-0940; Storm-3358 (as cited by Talos)",
+  "attack": [],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-13",
+  "exec": "AI attack platforms automate whole intrusions in minutes; password spraying and exposed secrets remain the usual way in.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "researcher HQ",
+  "lat": 37.41,
+  "lng": -121.93,
+  "occurred_at": "2026-11-13T20:57:13Z",
+  "org": "Cisco Talos",
+  "pin_type": "researcher",
+  "place": "San Jose, CA (researcher)",
+  "plain": "Cisco Talos says AI-driven hacking tools such as ARTEX are now used by spies and criminals alike, and counted over 2,500 internet addresses tied to ARTEX and over 700 PentAGI control panels reachable online.",
+  "products": [
+    "ARTEX",
+    "PentAGI",
+    "Hephaestus",
+    "HexStrike AI",
+    "VShell",
+    "AdaptixC2"
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Talos counted more than 2,500 ARTEX-associated C2 IP addresses and more than 700 reachable PentAGI instances.",
+      "The platforms automate the full chain from reconnaissance to follow-on actions; one cited case went from a GitHub search to Azure Key Vault exfiltration within five minutes.",
+      "Entry methods seen include password spraying, exposed or stolen credentials, long-term AWS keys and web flaws such as missing API authentication and injection.",
+      "Cited activity: VAPOR PANDA against more than 200 organisations in at least 14 countries since October 17, and Storm-0940 reaching more than 2,250 downstream Microsoft 365 tenants.",
+      "Both state-aligned and financially motivated groups use the tools, including a Cambodia-based group deploying VShell and AdaptixC2 in Southeast Asia."
+    ],
+    "published": "2026-11-13T20:57:13Z",
+    "publisher": "Cisco Talos",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Monitor for rapid, machine-speed activity and prepare fast containment.",
+      "Defend against credential attacks with MFA, rate limits and password-spray alerts.",
+      "Harden EDR with tamper protection and harden public-facing systems.",
+      "Remove exposed secrets, limit privileges and secure cloud resources.",
+      "Deploy the Snort rules and ClamAV signatures Talos lists for ARTEX, AdaptixC2, VShell and FScan."
+    ],
+    "url": "https://blog.talosintelligence.com/artex-and-beyond/"
+  },
+  "sector": "Threat research",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Cisco Talos",
+      "url": "https://blog.talosintelligence.com/artex-and-beyond/"
+    },
+    {
+      "name": "AgentBeam timeline",
+      "url": "https://www.agentbeam.com/blog/november-2026-attacks-timeline"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Cisco Talos reviewed abuse of AI-enabled penetration-testing platforms: ARTEX, Hephaestus, PentAGI and HexStrike AI. It counted more than 2,500 ARTEX-associated command-and-control IP addresses and more than 700 reachable PentAGI instances. Cited cases include VAPOR PANDA targeting over 200 organisations in at least 14 countries from October 17 and Storm-0940 reaching more than 2,250 downstream Microsoft 365 tenants.",
+  "tags": [
+    "ai-enabled"
+  ],
+  "time_basis": "published",
+  "title": "Cisco Talos tracks more than 2,500 ARTEX IPs and 700 open PentAGI consoles",
+  "updated_at": "2026-11-17T23:15:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:15:00Z",
+    "note": "Reviewed against the original Cisco Talos report.",
+    "state": "corroborated"
+  }
+}

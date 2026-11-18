@@ -1,0 +1,75 @@
+{
+  "action": "Search your GitHub organisations for wfx-docs branches and pull requests titled 'docs: dependency audit notes', and look for gaps in workflow run numbers. Where the payload ran, rotate every secret and cloud role those workflows could reach.",
+  "actor": "",
+  "attack": [
+    "T1078 Valid Accounts"
+  ],
+  "category": "incident",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-12",
+  "exec": "Hijacked developer accounts are being used to plant key-stealing code in software projects, a risk for any team building on GitHub.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "",
+  "lat": null,
+  "lng": null,
+  "org": "GitHub repositories",
+  "pin_type": "none",
+  "place": "",
+  "plain": "Attackers used 4,837 taken-over GitHub accounts to probe more than 61,000 code projects and ran password-stealing code in the build systems of at least 1,835 of them.",
+  "products": [
+    "GitHub",
+    "GitHub Actions",
+    "Packagist",
+    "Go modules"
+  ],
+  "report": {
+    "doc_id": "wfx-loot",
+    "iocs_available": true,
+    "key_findings": [
+      "From about 12:45 UTC on November 10, 4,837 compromised GitHub accounts opened probe pull requests in 61,764 repositories to test for write access.",
+      "At least 1,835 repositories ran the payload and had credentials taken; the true figure may be higher because run logs were deleted.",
+      "The stealer arrives through an altered workflow, an npm postinstall hook or a throwaway workflow, and is reverted within about a minute.",
+      "It takes Actions secrets, cloud and registry credentials and AI provider keys, then pivots into AWS, GCP, Azure, Vault and Kubernetes.",
+      "New tricks include forged success status checks, rewritten AWS role trust policies and Azure federated credentials named wfx-ci for persistence."
+    ],
+    "published": "2026-11-12",
+    "publisher": "Aikido Security",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Search for wfx-docs branches and pull requests titled 'docs: dependency audit notes'.",
+      "Check for gaps in workflow run numbers, which may be the only trace of a run.",
+      "If the payload ran, rotate every secret and cloud role available to that repository's workflows.",
+      "Review AWS role trust policies and remove Azure federated credentials named wfx-ci.",
+      "Treat machines that installed the affected Packagist or Go module versions as compromised."
+    ],
+    "url": "https://www.aikido.dev/blog/compromised-github-accounts-push-ci-secret-stealer-to-tens-of-thousands-of-repositories"
+  },
+  "sector": "Technology / open source",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Aikido Security",
+      "url": "https://www.aikido.dev/blog/compromised-github-accounts-push-ci-secret-stealer-to-tens-of-thousands-of-repositories"
+    },
+    {
+      "name": "BleepingComputer",
+      "url": "https://bleepingcomputer.com/news/security/hackers-compromise-4-800-github-accounts-to-steal-cloud-credentials"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Aikido reports that from November 10 an attacker used 4,837 compromised GitHub accounts to open probe pull requests in 61,764 repositories, then ran a secrets-stealing script in the build pipelines of at least 1,835. The script takes pipeline secrets and cloud credentials, pivots into cloud accounts and erases its traces within about a minute. One Packagist package and two Go module versions also carried it.",
+  "tags": [
+    "supply-chain",
+    "identity"
+  ],
+  "title": "wfx-loot campaign uses 4,837 hijacked GitHub accounts to push secrets-stealing malware",
+  "updated_at": "2026-11-17T23:46:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:46:00Z",
+    "note": "Reviewed against the original Aikido Security report.",
+    "state": "corroborated"
+  }
+}

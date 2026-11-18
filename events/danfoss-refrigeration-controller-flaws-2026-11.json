@@ -1,0 +1,86 @@
+{
+  "action": "List every AK-SM800A reachable from the internet, including through integrators' 4G modems, and restrict management access to a VPN, private APN or strict IP whitelist. Put controllers on a separate OT network and change default passwords. Do not rely on patching alone.",
+  "actor": "",
+  "attack": [
+    "T1190 Exploit Public-Facing Application"
+  ],
+  "category": "vuln",
+  "country": "Denmark",
+  "cves": [],
+  "date": "2026-11-16",
+  "exec": "Refrigeration controllers under active attack have six more unfixed flaws; the researchers say only removing internet exposure helps.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "vendor HQ",
+  "impact": "A joint US fact sheet of November 5 (CISA, FBI, HHS, USDA, DoT) warns that actors altering refrigeration controller settings can force continuous heating and defrost cycles, causing inventory loss, fire hazard and loss of temperature visibility.",
+  "lat": 55.05,
+  "lng": 9.74,
+  "org": "Danfoss",
+  "pin_type": "hq",
+  "place": "Nordborg",
+  "plain": "Researchers found six unfixed weaknesses in Danfoss AK-SM800A refrigeration controllers that let outsiders take control without a password. Attacks on such devices since October have spoiled supermarket stock in Europe.",
+  "products": [
+    "Danfoss AK-SM800A"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "Midnight Blue found six pre-authentication remote code execution flaws, stack-based buffer overflows, in Danfoss AK-SM800A firmware up to and including 5.3.2.",
+      "A further pre-authentication memory corruption bug sits in the controller's session control component.",
+      "CVE numbers are pending and technical details are withheld while coordinated disclosure with Danfoss continues.",
+      "Internet scans on November 10 showed hundreds of Danfoss systems exposed, plus over 1,000 Copeland and Dixell and hundreds of Eliwell controllers.",
+      "The attack waves began in France on October 11; public exploit code for older AK-SM800A flaws appeared within 48 hours."
+    ],
+    "published": "2026-11",
+    "publisher": "Midnight Blue",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Inventory which controllers are internet-exposed, including through integrators' 4G modems.",
+      "Restrict management interfaces to a VPN, private APN or a highly restrictive firewall IP whitelist.",
+      "Do not treat patching or strict session control as sufficient; put effort into reducing exposure.",
+      "Treat IP whitelisting as an interim measure only."
+    ],
+    "url": "https://www.midnightblue.nl/blog/multiple-rce-danfoss-aksm800a"
+  },
+  "sector": "Industrial control / refrigeration",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Midnight Blue",
+      "url": "https://www.midnightblue.nl/blog/multiple-rce-danfoss-aksm800a"
+    },
+    {
+      "name": "CISA, FBI, HHS, USDA and DoT fact sheet (5 November 2026)",
+      "url": "https://www.cisa.gov/resources-tools/resources/us-government-partners-urge-hardening-industrial-refrigeration-and-cold-chain-monitoring-systems"
+    },
+    {
+      "name": "BSI cyber security warning 2026-306525-1032",
+      "url": "https://www.bsi.bund.de/SharedDocs/Cybersicherheitswarnungen/DE/2026/2026-306525-1032.pdf?__blob=publicationFile&v=2"
+    },
+    {
+      "name": "BSI press release (13 November 2026)",
+      "url": "https://www.bsi.bund.de/DE/Service-Navi/Presse/Pressemitteilungen/Presse2026/261113_Kuehlgeraete-Danfoss.html"
+    },
+    {
+      "name": "NCSC Ireland advisory (13 November 2026)",
+      "url": "https://www.ncsc.gov.ie/pdfs/2611130306_New_Vulnerabilities_in_Refrigeration_Controllers.pdf"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Midnight Blue found six pre-authentication remote code execution flaws in Danfoss AK-SM800A refrigeration controllers, affecting firmware up to and including 5.3.2. CVE numbers are pending and details are withheld during coordinated disclosure. The researchers say patching alone will not make these devices safe and that hundreds remain reachable from the internet. Attack waves on such controllers began in France on October 11.",
+  "tags": [
+    "ot-ics",
+    "zero-day",
+    "critical-infrastructure"
+  ],
+  "title": "Six unpatched Danfoss refrigeration controller flaws allow remote takeover",
+  "updated_at": "2026-11-18T01:25:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:50:00Z",
+    "note": "Reviewed against the original Midnight Blue report and the BSI (Germany) and NCSC Ireland advisories of November 13; BSI says it knows of no exploitation of the six new flaws and cannot rule out that firmware 5.4.0 is affected. The Belgian advisory would not load.",
+    "state": "corroborated"
+  }
+}

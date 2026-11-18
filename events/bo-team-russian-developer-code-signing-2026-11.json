@@ -1,0 +1,75 @@
+{
+  "action": "Take SSH off the internet and require two-factor sign-in for remote access. Patch VMware vCenter and anything still exposed to Log4Shell. Software makers: isolate signing servers and review their logs for unexpected use.",
+  "actor": "BO Team (Black Owl)",
+  "attack": [
+    "T1190 Exploit Public-Facing Application"
+  ],
+  "category": "incident",
+  "country": "Russia",
+  "cves": [
+    "CVE-2021-44228"
+  ],
+  "date": "2026-11-05",
+  "exec": "Attackers were positioned for a supply-chain attack on a developer's customers; the signing step was blocked, but only just.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "victim country",
+  "lat": 58,
+  "lng": 56.2,
+  "org": "Russian software developer (unnamed)",
+  "pin_type": "country",
+  "place": "Russia (city not stated)",
+  "plain": "Kaspersky found that a hacking group spent months inside a Russian software company and tried to tamper with the server that digitally signs its software. Security software blocked that attempt.",
+  "products": [
+    "VMware vCenter",
+    "Apache Log4j"
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "The victim is a Russia-based developer of industrial software used mainly in Eastern Europe; Kaspersky attributes the intrusion to BO Team (Black Owl) with high confidence.",
+      "Entry was through internet-exposed SSH on a Linux terminal server with a password-authenticated service account; Log4Shell in vCenter 7.0.3 then gave root on a hypervisor.",
+      "Attackers stayed for several months and reached domain controllers, GitLab, the Ansible server, backups, SIEM and the mail server, stealing its DKIM private key.",
+      "Attempts to inject code on the code-signing server were blocked by security software; no signed malware distribution, encryption or destruction is reported.",
+      "The stolen DKIM key let them send phishing that passed sender checks, and they mostly lived off the land rather than deploying malware."
+    ],
+    "published": "2026-11-05",
+    "publisher": "Kaspersky ICS CERT",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Remove internet exposure of SSH, disable root SSH login and require two-factor sign-in for VPN, RDP and domain controllers.",
+      "Patch vCenter, hypervisors and any software still affected by Log4j.",
+      "After an intrusion reset all account passwords, reset krbtgt twice and reissue keys and certificates.",
+      "Keep backups on a non-domain server with separate credentials and test restores.",
+      "Keep logs at least 30 days and remove plaintext credentials from scripts and directory comments."
+    ],
+    "url": "https://ics-cert.kaspersky.com/publications/reports/2026/11/05/supply-chain-attack-bo-team-in-a-software-developers-infrastructure/"
+  },
+  "sector": "Technology",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Kaspersky ICS CERT",
+      "url": "https://ics-cert.kaspersky.com/publications/reports/2026/11/05/supply-chain-attack-bo-team-in-a-software-developers-infrastructure/"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Kaspersky ICS CERT describes a months-long intrusion at a Russian industrial software developer, attributed with high confidence to BO Team. The attackers entered through internet-exposed SSH, used Log4Shell in VMware vCenter to gain root on a hypervisor, and reached domain controllers, GitLab and the mail server. Their attempts to inject code on the code-signing server were blocked, and no tampered software release is reported.",
+  "tags": [
+    "supply-chain",
+    "phishing"
+  ],
+  "title": "BO Team spends months inside a Russian software developer, targets its build-signing server",
+  "updated_at": "2026-11-17T23:46:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:46:00Z",
+    "note": "Reviewed against the original Kaspersky ICS CERT report.",
+    "state": "corroborated"
+  }
+}

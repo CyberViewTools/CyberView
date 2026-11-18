@@ -8,6 +8,7 @@
 //   site/data/archive/kev.json       every known-exploited entry on file
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
+//   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
@@ -16,7 +17,7 @@ import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
-import { checkAttribution, checkLinks, checkTabletop } from "./lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -69,6 +70,7 @@ for (const f of files) {
     const where = f.path.slice(DATA.length + 1);
     checkAttribution(f.e.attribution).forEach((m) => errors.push(`${where}: ${m}`));
     checkLinks(f.e.links, f.id, ids).forEach((m) => errors.push(`${where}: ${m}`));
+    checkHunt(f.e.hunt).forEach((m) => errors.push(`${where}: ${m}`));
   }
 }
 const allEvents = files.filter((f) => f.e).map((f) => f.e);
@@ -84,6 +86,14 @@ for (const [path, file] of [["meta/status", "status.json"], ["analysis/latest", 
   const p = join(DATA, file);
   if (!existsSync(p)) continue;
   const d = readJson(p); if (d) docs[path] = d; else errors.push(`${file}: not valid JSON`);
+}
+
+// fix guides (the advisory desk): one per CVE, from the vendor's own advisory
+const guides = {};
+for (const x of listDir("guides")) {
+  const bad = x.r ? checkGuide(x.r, x.id) : ["not valid JSON"];
+  if (bad.length) { bad.forEach((m) => errors.push(`guides/${x.id}.json: ${m}`)); continue; }
+  const { id, ...g } = x.r; guides[x.id] = g;
 }
 
 // the weekly tabletop exercise (the tabletop job): current one plus every past one from the snapshots
@@ -122,6 +132,28 @@ if (errors.length) { errors.forEach((e) => console.error("error: " + e)); consol
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();
 writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs, context }));
+// the workbench (site/data/workbench.json): every known-exploited entry on file with its affected-version ranges, recent
+// high-risk flaws that are not on CISA's list, the fix guides, and detection resources named by advisories and reports
+{
+  const s = (v, n) => String(v || "").slice(0, n);
+  const wbKev = kevAll.map((k) => ({ cve: k.cve, vendor: k.vendor, product: k.product, name: k.name, added: k.added, due: k.due, ransomware: !!k.ransomware,
+    desc: s(k.desc, 300), cvss: k.cvss ?? null, epss: k.epss ?? null, av: k.av || "", required: s(k.required, 700), refs: (k.refs || []).slice(0, 4), affected: (k.affected || []).slice(0, 60) }));
+  const inKev = new Set(kevAll.map((k) => k.cve)), seenCve = new Set(), wbVulns = [];
+  for (const e of allEvents.filter((e) => !e.duplicate_of && e.category === "vuln" && e.status !== "claimed" && e.severity >= 2 && e.date >= dayAgo(30)).sort((a, b) => (a.date < b.date ? 1 : -1))) {
+    for (const c of (e.cves || []).slice(0, 6)) {
+      if (inKev.has(c) || seenCve.has(c) || !/^CVE-\d{4}-\d{4,}$/.test(c)) continue; seenCve.add(c);
+      const m = (e.cve_meta || []).find((x) => x && x.id === c) || {};
+      wbVulns.push({ cve: c, event_id: e.id, title: s(e.title, 160), date: e.date, severity: e.severity, vendor: s(e.org, 80), products: (e.products || []).slice(0, 6).map((x) => s(x, 60)),
+        desc: s(e.plain || e.summary, 300), action: s(e.action, 300), cvss: m.cvss ?? null, epss: m.epss ?? null });
+    }
+  }
+  const eventOf = {}; for (const e of allEvents) if (!e.duplicate_of) for (const c of e.cves || []) (eventOf[c] ||= e.id);
+  const hunt = [];
+  for (const e of allEvents.filter((e) => !e.duplicate_of && Array.isArray(e.hunt) && e.hunt.length && e.date >= dayAgo(60)).sort((a, b) => (a.date < b.date ? 1 : -1)))
+    for (const h of e.hunt) hunt.push({ ...h, about: s(e.title, 140), event_id: e.id, date: e.date });
+  for (const [cve, g] of Object.entries(guides)) for (const h of g.hunt || []) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
+  writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, event_of: eventOf, hunt: hunt.slice(0, 200) }));
+}
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
   past: tabletop.past.map((t) => ({ date: t.date, title: t.title })), exercises: tabletop.past.slice(0, 26) }));

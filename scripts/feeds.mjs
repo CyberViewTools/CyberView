@@ -2,7 +2,8 @@
 // 1. data/kev/<CVE>.json matches the CISA known-exploited catalog for entries added in the last 45 days.
 //    Old files are kept (they are the history); the build only publishes the last 45 days.
 // 2. EPSS scores from FIRST for every recent KEV entry and every CVE on a recent event.
-// 3. CVSS from NVD for up to NVD_MAX entries that lack it (NVD allows ~5 requests per 30 s without a key).
+// 3. CVSS, attack vector and affected-version ranges from NVD for up to NVD_MAX entries that lack them
+//    (NVD allows ~5 requests per 30 s without a key).
 // 4. cve_meta on recent events is refreshed; an event whose CVE is known-exploited is raised to at least severity 2
 //    (the AI jobs decide whether it deserves 3). Every change is listed in the output.
 // 5. data/status.json gets last_kev_at / last_feeds_at, and data/runs/<date>/<time>-feeds.json logs the run.
@@ -10,6 +11,7 @@
 import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { DATA, readJson, writeJson, listEventFiles, saveEvent, writeRunLog } from "./lib/store.mjs";
+import { parseAffected, parseCvss } from "./lib/affected.mjs";
 
 const KEV_URL = "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json";
 const KEV_DAYS = 45, EVENT_DAYS = 9, NVD_MAX = Number(process.env.NVD_MAX || 20);
@@ -53,6 +55,9 @@ if (catalog && Array.isArray(catalog.vulnerabilities)) {
       added: v.dateAdded, due: v.dueDate, ransomware: v.knownRansomwareCampaignUse === "Known",
       // keep a plain-language description an AI job already wrote; otherwise use CISA's text, trimmed
       desc: old.desc || String(v.shortDescription || "").slice(0, 260),
+      // CISA's required action and the advisory links it cites (the workbench shows them as "what CISA requires" and "advisories")
+      required: String(v.requiredAction || "").replace(/\s+/g, " ").trim().slice(0, 700),
+      refs: [...new Set(String(v.notes || "").split(/[\s;,]+/).filter((u) => /^https:\/\/[^\s"'<>]+$/.test(u) && !/nvd\.nist\.gov/.test(u)))].slice(0, 4),
     });
     if (!same(rec, old)) { writeJson(p, rec); (Object.keys(old).length ? log.kev_updated : log.kev_added).push(v.cveID); }
   }
@@ -75,22 +80,24 @@ for (let i = 0; i < allCves.length; i += 50) {
   for (const row of (r && r.data) || []) epss[row.cve] = Math.round(Number(row.epss) * 1e5) / 1e5;
 }
 
-// 3. NVD CVSS for entries without one
-const cvss = {};
+// 3. NVD: CVSS score, attack vector and affected-version ranges for entries that lack them
+// (ranges are retried every 3 days while NVD has none yet: its analysis often lands days after CISA lists a flaw)
+const cvss = {}, extra = {};
 async function nvd(cve) {
   const r = await getJson(`https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${cve}`, `NVD ${cve}`, 2);
-  const m = r && r.vulnerabilities && r.vulnerabilities[0] && r.vulnerabilities[0].cve.metrics;
-  if (!m) return null;
-  for (const k of ["cvssMetricV40", "cvssMetricV31", "cvssMetricV30", "cvssMetricV2"]) {
-    const x = (m[k] || []).find((y) => y.type === "Primary") || (m[k] || [])[0];
-    if (x && x.cvssData && typeof x.cvssData.baseScore === "number") return x.cvssData.baseScore;
-  }
-  return null;
+  const c = r && r.vulnerabilities && r.vulnerabilities[0] && r.vulnerabilities[0].cve;
+  return c ? { ...parseCvss(c), affected: parseAffected(c) } : null;
 }
+const stale = (k) => !Array.isArray(k.affected) || (!k.affected.length && (k.affected_at || "") < day(3));
 let nvdCalls = 0;
-for (const k of recentKev) {
-  if (typeof k.cvss === "number" || nvdCalls >= NVD_MAX) continue;
-  nvdCalls++; const s = await nvd(k.cve); if (s != null) { cvss[k.cve] = s; log.cvss_added.push(k.cve); }
+for (const k of recentKev.sort((a, b) => ((a.added || "") < (b.added || "") ? 1 : -1))) {
+  if ((typeof k.cvss === "number" && !stale(k)) || nvdCalls >= NVD_MAX) continue;
+  nvdCalls++; const s = await nvd(k.cve);
+  if (s) {
+    if (s.score != null && typeof k.cvss !== "number") { cvss[k.cve] = s.score; log.cvss_added.push(k.cve); }
+    extra[k.cve] = { affected: s.affected, affected_at: nowIso.slice(0, 10), ...(s.av ? { av: s.av } : {}) };
+    if (s.affected.length) (log.affected_added ||= []).push(k.cve);
+  }
   await sleep(6500);
 }
 
@@ -99,6 +106,7 @@ for (const k of recentKev) {
   const p = join(kevDir, `${k.cve}.json`), next = { ...k };
   if (epss[k.cve] != null) next.epss = epss[k.cve];
   if (cvss[k.cve] != null) next.cvss = cvss[k.cve];
+  if (extra[k.cve]) Object.assign(next, extra[k.cve]);
   if (!same(sortKeys(next), sortKeys(k))) { writeJson(p, sortKeys(next)); log.epss_updated++; }
 }
 

@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.16",date:"2026-11-18"};
+var BUILD={version:"1.17",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -280,6 +280,9 @@ function clean(id,d){
     if(aLat!==null&&aLng!==null&&/^https:\/\//i.test(au)&&str(at.by,120)&&str(at.actor,120))e.attr={actor:str(at.actor,120),origin:str(at.origin_country,60),lat:aLat,lng:aLng,by:str(at.by,120),byType:at.by_type,url:au};}
   e.links=(Array.isArray(d.links)?d.links:[]).slice(0,40).map(function(l){if(!l||typeof l!=="object")return null;var to=str(l.to,120),u=str(l.url,600);
     return /^[a-z0-9][a-z0-9-]{2,119}$/.test(to)&&to!==id&&/^https:\/\//i.test(u)?{to:to,rel:str(l.rel,60)||"linked",url:u}:null;}).filter(Boolean);
+  var HF={stix:"STIX",sigma:"Sigma rule",yara:"YARA rule",snort:"Snort rule",suricata:"Suricata rule",kql:"KQL query",spl:"Splunk query",csv:"CSV indicators",json:"JSON indicators",misp:"MISP event",openioc:"OpenIOC",text:"Indicator list",pdf:"PDF with indicators"};
+  e.hunt=(Array.isArray(d.hunt)?d.hunt:[]).slice(0,12).map(function(h){if(!h||typeof h!=="object"||!own(HF,h.format))return null;var hu=str(h.url,600);
+    return /^https:\/\//i.test(hu)?{name:str(h.name,100)||HF[h.format],fmt:HF[h.format],url:hu}:null;}).filter(Boolean);
   e.actorPin=e.pin==="actor"||/actor origin/i.test(e.geo);e.countryPin=!e.actorPin&&e.pin==="country";
   e.wlHay=[e.title,e.org,e.sector,e.country,e.products.join(" | "),e.tags.join(" | "),e.actor,e.cves.join(" ")].join(" | ").toLowerCase();
   e.lensHay=(e.sector+" "+e.tags.join(" ")+" "+e.org).toLowerCase();
@@ -539,6 +542,9 @@ function card(e,open){
     acts.appendChild(rpb);
     b.appendChild(acts);
     if(rep.id===e.id)b.appendChild(reportForm(e));
+    if(e.hunt.length){var hs=el("div","srcs");hs.appendChild(el("span",null,"Detection resources ("+e.hunt.length+"):"));
+      e.hunt.forEach(function(x){var l=el("a",null,x.name+" ("+x.fmt+")");l.href=safeUrl(x.url);l.target="_blank";l.rel="noopener noreferrer";hs.appendChild(l);});b.appendChild(hs);}
+    if(e.cves.length&&(e.kev||e.category==="vuln")){var wk=el("p","mono");var wa=el("a",null,"Open in the workbench: am I affected, and how to fix");wa.href="workbench.html#"+encodeURIComponent(e.cves[0]);wk.appendChild(wa);b.appendChild(wk);}
     if(e.attr){var ab=el("div","todo attr");ab.appendChild(el("h4",null,"Attribution"));
       ab.appendChild(el("p",null,"Attributed to "+e.attr.actor+(e.attr.origin?", said to operate from "+e.attr.origin:"")+", by "+e.attr.by+" ("+(e.attr.byType==="government"?"a government body":"the investigating firm")+")."));
       ab.appendChild(el("p","mono","Attribution is a judgement by the named body, not a CyberView finding, and can be disputed."));

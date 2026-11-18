@@ -36,12 +36,13 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 | report | | review of an original document: `{publisher, publisher_type (government or vendor), doc_id, published, key_findings[], recommendations[], iocs_available, read_depth (full, summary, secondary), url}` |
 | attribution | | `{actor, origin_country, lat, lng, by, by_type, url}`: who a government (`by_type` `government`) or the investigating firm (`investigator`) says did it, where the actor is said to be based (lat, lng of that country's capital) and the https page where the attribution is made. Drawn as a dashed, labelled arc from the origin to the victim. Never from attacker boasts or press speculation. |
 | links | | `[{to, rel, url}]`: other events a source says this one is connected to (`to` is an event id on file, `rel` at most 60 characters such as "customer of breached supplier", `url` the page that states it). Drawn as arcs on the globe. |
+| hunt | | `[{name, format, url, publisher}]`: indicator files and detection rules the original document publishes (format: stix, sigma, yara, snort, suricata, kql, spl, csv, json, misp, openioc, text, pdf). Links only; indicators themselves are never stored. Shown in the workbench's hunt pack. |
 | duplicate_of | | id of the richer record; the build leaves this one out |
 | first_seen, updated_at, qa_checked_at | | ISO times |
 
 ## data/kev/&lt;CVE&gt;.json
 
-`cve, vendor, product, name, added (YYYY-MM-DD), due (YYYY-MM-DD), ransomware (bool), desc (plain, at most 260 characters), cvss (number), epss (0 to 1)`. Entries added in the last 45 days are published.
+`cve, vendor, product, name, added (YYYY-MM-DD), due (YYYY-MM-DD), ransomware (bool), desc (plain, at most 260 characters), cvss (number), epss (0 to 1)`, and from the feeds script: `required` (CISA's required action), `refs` (advisory links CISA cites), `av` (CVSS attack vector N, A, L or P), `affected` (version ranges from NVD: `[{vendor, product, part, from, from_incl, to, to_incl, exact}]`) and `affected_at`. Entries added in the last 45 days are published.
 
 ## data/corrections/&lt;id&gt;.json
 
@@ -61,6 +62,12 @@ One file per job run, never deleted. It keeps the research so it is not wasted:
 `job, started_at, finished_at, model, searches[], pages_read[{url, title, used_in}], added[ids], updated[ids], skipped[{title, url, reason}], open_leads[{title, url, note}], failed_sites[], notes`.
 The feeds script writes its own shape (`kev_added, kev_updated, cvss_added, events_updated, rerated, failed`).
 `node scripts/q.mjs leads` lists open leads and skipped items that never became events; `q.mjs seen <url>` checks whether a page was already read.
+
+## data/guides/&lt;CVE&gt;.json
+
+A fix guide written by the advisory desk from the vendor's own advisory (never from news coverage), checked by `checkGuide` in `scripts/lib/validate.mjs`:
+`cve, advisory {name, url}, read_at, read_depth (full, summary), check[], fixed[], workaround[], compromise_signs[], exposure (internet, internal, local), exploit_public (bool), hunt[]`.
+The workbench (`workbench.html`, from `site/data/workbench.json`) shows it under each flaw and uses `exposure` and `exploit_public` in the priority score.
 
 ## data/tabletop.json
 

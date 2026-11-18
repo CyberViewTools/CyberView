@@ -587,7 +587,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Archive", "Trends", "Exercise", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "Trends", "Exercise", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -634,10 +634,10 @@ async def main():
             ok("phone: Esc closes the sheet and returns focus", await pg.locator("#navSheet").is_hidden() and await pg.evaluate("document.activeElement.id") == "navBtn")
             vs = await pg.locator("#viewseg").bounding_box()
             ok("phone: view switcher fills its row", vs["width"] > 330, vs)
-            for sub in ["archive.html", "trends.html", "tabletop.html", "about.html"]:
+            for sub in ["archive.html", "trends.html", "tabletop.html", "workbench.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 6 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 7 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -732,6 +732,76 @@ async def main():
             await pg.context.close()
 
         await serve(site16, v116)
+
+        # v1.17: workbench (patch queue, my software, fix guides, hunt pack)
+        site17 = make_site(bundle)
+        wbd = {"built_at": "2026-11-18T22:00:00Z", "event_of": {},
+               "kev": [
+                   {"cve": "CVE-2026-1001", "vendor": "Fortinet", "product": "FortiOS", "name": "FortiOS auth bypass", "added": "2026-11-10", "due": "2026-11-12", "ransomware": True, "desc": "Lets a remote attacker log in.", "cvss": 9.8, "epss": 0.9, "av": "N",
+                    "required": "Apply the vendor fix.", "refs": ["https://vendor.example/psirt/1", "javascript:alert(1)"],
+                    "affected": [{"vendor": "fortinet", "product": "fortios", "part": "o", "from": "7.0.0", "from_incl": True, "to": "7.4.10", "to_incl": False}]},
+                   {"cve": "CVE-2026-1002", "vendor": "Acme", "product": "Widget Server", "name": "Acme Widget Server RCE", "added": "2026-11-01", "due": "2099-01-01", "ransomware": False, "desc": "x", "cvss": 7.0, "epss": 0.01, "av": "L",
+                    "affected": [{"vendor": "acme", "product": "widget server", "part": "a", "to": "2.0", "to_incl": False}]},
+                   {"cve": "CVE-2026-1003", "vendor": "<img src=x onerror=alert(1)>", "product": "Thing", "name": "Markup test", "added": "2026-11-01", "due": "", "affected": []}],
+               "vulns": [{"cve": "CVE-2026-2001", "event_id": bundle["events"][0]["id"], "title": "Not yet on CISA's list", "date": "2026-11-17", "severity": 3, "vendor": "Zeta", "products": ["Zeta Mail"], "desc": "d", "action": "Patch.", "cvss": None, "epss": 0.2}],
+               "guides": {"CVE-2026-1001": {"advisory": {"name": "Fortinet PSIRT FG-IR-26-001", "url": "https://vendor.example/psirt/1"}, "read_at": "2026-11-18T20:00:00Z", "read_depth": "full",
+                                              "check": ["Run get system status and read the version line."], "fixed": ["7.4.10 or later"], "workaround": ["Disable the admin interface on WAN."], "compromise_signs": ["Unknown admin accounts."],
+                                              "exposure": "internet", "exploit_public": True,
+                                              "hunt": [{"name": "Indicators", "format": "stix", "url": "https://agency.example/x.stix.json", "publisher": "Test Agency"}, {"name": "bad", "format": "yara", "url": "javascript:alert(2)"}]}},
+               "hunt": [{"name": "Indicators", "format": "stix", "url": "https://agency.example/x.stix.json", "publisher": "Test Agency", "about": "CVE-2026-1001", "cve": "CVE-2026-1001", "date": "2026-11-18"},
+                        {"name": "Sigma rule for webshell", "format": "sigma", "url": "https://vendor.example/rule.yml", "about": "Some report", "event_id": bundle["events"][0]["id"], "date": "2026-11-17"},
+                        {"name": "evil", "format": "exe", "url": "https://x.example/a"}]}
+        json.dump(wbd, open(os.path.join(site17, "data", "workbench.json"), "w"))
+
+        async def v117(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "workbench.html"), wait=900)
+            ok("workbench: flaws ranked, exploited first", await pg.locator("#wbList .wbrow").count() == 4 and "CVE-2026-1001" in await pg.locator("#wbList .wbrow >> nth=0").text_content())
+            ok("workbench: general ranking notice without a list", await pg.locator("#wbNoInv").is_visible())
+            ok("workbench: markup in data shown as text", await pg.locator("#wbList img").count() == 0)
+            top = int(await pg.locator("#wbList .wbscore >> nth=0").text_content())
+            ok("workbench: score without a list", top == 35 + 10 + 14 + 5 + 10 + 5, top)
+            await pg.click("#wbt-inv"); await pg.fill("#wbText", "FortiOS 7.2.4, 12\nAcme Widget Server 2.1\nZeta Mail\nSlack 4.0")
+            await pg.click("#wbAdd"); await pg.wait_for_timeout(250)
+            ok("software: list read and saved in the browser only", "4 products" in await pg.locator("#wbInvMsg").text_content() and await pg.evaluate("JSON.parse(localStorage.getItem('cwm.inv')).length") == 4)
+            rows = await pg.locator("#wbInvTable tbody tr").all_text_contents()
+            ok("software: affected first, with states", "FortiOS" in rows[0] and "Affected" in rows[0] and any("Fixed version" in r for r in rows) and any("Check version" in r for r in rows) and any("none on file" in r for r in rows), rows)
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(150)
+            ok("queue: your affected version adds 20 points", int(await pg.locator("#wbList .wbscore >> nth=0").text_content()) == min(100, top + 20))
+            ok("queue: notice gone once a list is loaded", await pg.locator("#wbNoInv").is_hidden())
+            ok("queue: a fixed version drops to the end", "CVE-2026-1002" in await pg.locator("#wbList .wbrow >> nth=3").text_content() and await pg.locator("#wbList .wbrow.clear").count() == 1)
+            await pg.locator("#wbList .wbhead >> nth=0").click(); await pg.wait_for_timeout(150)
+            det = await pg.locator(".wbdetail").text_content()
+            ok("detail: your version, reasons, steps and fix", all(x in det for x in ["You run an affected version", "FortiOS 7.2.4 ×12", "Known exploited (CISA)", "Used by ransomware groups", "Internet-facing (from the advisory)", "How to check if you are affected", "get system status", "7.4.10 or later", "Signs of compromise"]), det[:300])
+            hrefs = await pg.eval_on_selector_all(".wbdetail a", "as => as.map(a => a.href)")
+            ok("detail: only https links, advisory and NVD present", not any(h.startswith("javascript") for h in hrefs) and any("nvd.nist.gov/vuln/detail/CVE-2026-1001" in h for h in hrefs) and any("vendor.example/psirt/1" in h for h in hrefs), hrefs)
+            await pg.select_option("#wbShow", "mine"); await pg.wait_for_timeout(100)
+            ok("queue: filter to my software", await pg.locator("#wbList .wbrow").count() == 2)
+            await pg.select_option("#wbShow", "all")
+            async with pg.expect_download() as dl:
+                await pg.click("#wbCsv")
+            csvp = await (await dl.value).path(); csv = open(csvp, newline="").read()
+            ok("csv: header, ranked rows, formulas neutralised", csv.startswith("Rank,Score,CVE") and "CVE-2026-1001" in csv.split("\r\n")[1] and "\r\n=" not in csv and ",=" not in csv, csv[:200])
+            await pg.click("#wbt-hunt"); await pg.wait_for_timeout(150)
+            ok("hunt: valid resources only", await pg.locator("#wbHunt .wbh").count() == 2 and "STIX" in await pg.locator("#wbHunt").text_content())
+            await pg.select_option("#wbFmt", "sigma"); await pg.wait_for_timeout(100)
+            ok("hunt: format filter", await pg.locator("#wbHunt .wbh").count() == 1)
+            await pg.click("#wbt-inv"); await pg.click("#wbClear"); await pg.wait_for_timeout(150)
+            ok("software: clear removes it from the browser", await pg.evaluate("localStorage.getItem('cwm.inv')") is None and await pg.locator("#wbInvTable tbody tr").count() == 0)
+            reqs = []
+            pg.on("request", lambda r: reqs.append(r.url) if not r.url.startswith("http://localhost") else None)
+            await pg.fill("#wbText", "FortiOS 7.2.4"); await pg.click("#wbAdd"); await pg.wait_for_timeout(300)
+            ok("software: nothing leaves the page", not reqs, reqs)
+            ok("workbench: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "workbench.html#CVE-2026-1002")); await pg.reload(); await pg.wait_for_timeout(700)
+            ok("workbench: a CVE link opens that flaw", await pg.locator(".wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
+            await pg.context.close()
+            ctx = await browser.new_context(viewport={"width": 390, "height": 844})
+            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "workbench.html")); await pg.wait_for_timeout(700)
+            await pg.locator("#wbList .wbhead >> nth=0").click()
+            ok("phone workbench: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ctx.close()
+
+        await serve(site17, v117)
 
         await browser.close()
 

@@ -242,6 +242,19 @@
    "max_age_hours": 200,
    "active": true,
    "does": "Turns one real, verified event of the week into a ready-to-run team exercise: scenario, timed updates, questions and what good looks like."
+  },
+  {
+   "key": "advisory",
+   "name": "Advisory desk",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-18T23:00:00Z",
+   "cron": "27 4,16 * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_advisory_at",
+   "max_age_hours": 30,
+   "active": true,
+   "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps."
   }
  ]
 }

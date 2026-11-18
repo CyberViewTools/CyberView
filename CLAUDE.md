@@ -12,6 +12,7 @@ site/nav.js              site navigation on every page: inline links on wide scr
 site/archive.html, .js   the searchable archive of every event on file
 site/trends.html, .js    week-over-week trends from site/data/trends.json (styles shared in archive.css)
 site/status.html, .js    routines and their last runs, lead queue, recent runs (from site/data/ops.json)
+site/workbench.html, .js, workbench-lib.js   the workbench: patch queue ranked with reasons, the visitor's software list matched by version (browser only), check and fix steps, hunt pack (from site/data/workbench.json)
 site/tabletop.html, .js  the weekly tabletop exercise (from site/data/tabletop.json; facilitator clock, print, copy)
 routines.json            registry of every routine: schedule, model, status key, max age, active
 site/vendor/             d3 7.9.0 and topojson 3.0.2, served locally, hashes pinned in scripts/security-check.mjs
@@ -29,6 +30,7 @@ data/corrections/<id>.json
 data/leads/<date>.jsonl  feed items waiting to be checked (q.mjs leads)
 data/runs/<date>/<HHMM>-<job>.json   research log of every job run: searches, pages read, added, skipped, open leads
 data/snapshots/brief|analysis/<date>.json   daily copies of the brief and the analysis
+data/guides/<CVE>.json   fix guides from vendor advisories (advisory desk; checked by scripts/lib/validate.mjs)
 data/tabletop.json, snapshots/tabletop/<date>.json   the weekly tabletop exercise (checked by scripts/lib/validate.mjs)
 data/status.json, analysis.json, ripples.json, brief.json, history.json   current single documents
 scripts/lib/store.mjs    the one place that knows the data layout
@@ -71,7 +73,8 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 8. Bump `BUILD.version` and `BUILD.date` in `site/app.js`, run the tests and the security check, then commit.
 9. Context layers (`data/context/`) are drawn in neutral ink, dashed, never in a category colour, and every one says it is context, not a cyber event. A new layer needs a parser in `scripts/context.mjs` with unit tests, a `CTX_DEFS` entry and a `cleanCtx` branch with a link host allowlist in `site/app.js`.
 10. Arcs on the globe are drawn only for links a source states (event `links`, the analysis job's `stated` edges) and for attribution made by a government or the investigating firm (event `attribution`), each labelled with who said so. Never draw inferred or timing-only links as arcs. Wall mode and campaign replay are views; they store nothing.
-11. Accounts are optional and must never be required for any map feature. Personal data rules: collect the minimum, keep the environment list encrypted in the browser, store readable alert terms only with recorded consent, keep export and delete self-service. Any change to what is collected or why needs `legal/privacy.html` updated and `legal_updated` bumped in `config/site.json`.
+11. The workbench never sends or uploads the visitor's software list: it is parsed, matched and stored in the browser only (`cwm.inv`). Scores must list every point on the row. Version ranges come from NVD and guides only from the vendor's own advisory; indicators of compromise are linked, never copied.
+12. Accounts are optional and must never be required for any map feature. Personal data rules: collect the minimum, keep the environment list encrypted in the browser, store readable alert terms only with recorded consent, keep export and delete self-service. Any change to what is collected or why needs `legal/privacy.html` updated and `legal_updated` bumped in `config/site.json`.
 ## Rules for data (people and scheduled jobs)
 
 - Facts only from pages actually read. Never invent a document number, finding, quote or URL.

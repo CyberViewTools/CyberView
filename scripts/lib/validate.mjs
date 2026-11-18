@@ -83,3 +83,46 @@ export function checkTabletop(t, known) {
   else t.sources.forEach((s, i) => { if (!s || !text(s.name, 80) || !https(s.url)) p.push(`sources[${i}] needs a name and the https url of the page read`); });
   return p;
 }
+
+export const HUNT_FORMATS = ["stix", "sigma", "yara", "snort", "suricata", "kql", "spl", "csv", "json", "misp", "openioc", "text", "pdf"];
+/**
+ * Detection resources published by the original advisory or report: indicator files and detection rules.
+ * [{ name, format, url, publisher }]. Links only: CyberView never copies indicators themselves.
+ */
+export function checkHunt(list) {
+  if (list == null) return [];
+  if (!Array.isArray(list)) return ["hunt must be a list"];
+  const p = [];
+  if (list.length > 12) p.push("hunt: at most 12");
+  list.forEach((h, i) => {
+    if (!h || typeof h !== "object") { p.push(`hunt[${i}] must be an object`); return; }
+    if (!text(h.name, 100)) p.push(`hunt[${i}].name is required (what the file is, at most 100 characters)`);
+    if (!HUNT_FORMATS.includes(h.format)) p.push(`hunt[${i}].format must be one of ${HUNT_FORMATS.join(", ")}`);
+    if (!https(h.url)) p.push(`hunt[${i}].url must be the https address of the file or the page that publishes it`);
+    if (h.publisher != null && !text(h.publisher, 80)) p.push(`hunt[${i}].publisher must be text (at most 80 characters)`);
+  });
+  return p;
+}
+
+/**
+ * A fix guide for one CVE (data/guides/<CVE>.json), written by the advisory desk from the vendor's own advisory.
+ * { cve, advisory: {name, url}, read_at, read_depth: full | summary, check[], fixed[], workaround[], compromise_signs[],
+ *   exposure: internet | internal | local, exploit_public: bool, hunt[] }
+ */
+export function checkGuide(g, id) {
+  if (!g || typeof g !== "object" || Array.isArray(g)) return ["not an object"];
+  const p = [];
+  if (!/^CVE-\d{4}-\d{4,}$/.test(g.cve || "")) p.push("cve must be a CVE id");
+  else if (id && g.cve !== id) p.push(`cve "${g.cve}" does not match the file name`);
+  if (!g.advisory || !text(g.advisory.name, 100) || !https(g.advisory.url)) p.push("advisory needs a name and the https url of the vendor or agency advisory that was read");
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(g.read_at || "")) p.push("read_at must be an ISO time");
+  if (!["full", "summary"].includes(g.read_depth)) p.push('read_depth must be "full" or "summary" (a guide is never written from secondary coverage)');
+  for (const [k, max, len] of [["check", 6, 320], ["fixed", 8, 160], ["workaround", 5, 320], ["compromise_signs", 6, 320]]) {
+    if (g[k] == null) continue;
+    if (!Array.isArray(g[k]) || g[k].length > max || g[k].some((x) => !text(x, len))) p.push(`${k}: at most ${max} items, each at most ${len} characters`);
+  }
+  if (!(g.check || []).length && !(g.fixed || []).length && !(g.workaround || []).length) p.push("a guide needs at least one of check, fixed or workaround");
+  if (g.exposure != null && !["internet", "internal", "local"].includes(g.exposure)) p.push("exposure must be internet, internal or local");
+  if (g.exploit_public != null && typeof g.exploit_public !== "boolean") p.push("exploit_public must be true or false");
+  return p.concat(checkHunt(g.hunt));
+}

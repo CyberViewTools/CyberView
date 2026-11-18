@@ -4,8 +4,13 @@ name: AI jobs
 # The Claude research and maintenance jobs, run by Claude Code's GitHub Action on a schedule.
 # Each run: check out main, build the prompt from docs/jobs.md (shared preamble + the job's section),
 # let Claude do the job and commit to main, then the Pages workflow redeploys the site.
-# Needs one repository secret: CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`). Without it every run
-# skips in a few seconds. Schedule and models are listed in docs/jobs.md; change both together.
+# Signs in to Claude with the first of these that is set up (without any, every run skips in seconds):
+#   1. Workload identity federation (recommended, no stored secret): repository VARIABLES
+#      ANTHROPIC_FEDERATION_RULE_ID, ANTHROPIC_ORGANIZATION_ID, ANTHROPIC_SERVICE_ACCOUNT_ID and, if the rule
+#      covers several workspaces, ANTHROPIC_WORKSPACE_ID. Scope the rule to repo:xanderhutch/CyberView:ref:refs/heads/main.
+#   2. Repository secret ANTHROPIC_API_KEY (Claude Console, pay as you go).
+#   3. Repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`; uses a Claude subscription).
+# Schedule and models are listed in docs/jobs.md and routines.json; change them together.
 on:
   schedule:
     - cron: "10 */4 * * *"     # sweep, every 4 h
@@ -38,7 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+      AUTH: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID != '' && 'wif' || secrets.ANTHROPIC_API_KEY != '' && 'apikey' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' && 'oauth' || 'none' }}
+      HAS_TOKEN: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID != '' || secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
     steps:
       - name: Pick the job and model
         id: pick
@@ -60,11 +66,11 @@ jobs:
             *)                                   model=claude-sonnet-5-5; turns=100 ;;
           esac
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "model=$model" >> "$GITHUB_OUTPUT"; echo "turns=$turns" >> "$GITHUB_OUTPUT"
-          echo "Job: $job, model: $model" >> "$GITHUB_STEP_SUMMARY"
+          echo "Job: $job, model: $model, sign-in: ${{ env.AUTH }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Skip when the Claude token is not set
         if: env.HAS_TOKEN != 'true'
-        run: echo "CLAUDE_CODE_OAUTH_TOKEN is not set; skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
+        run: echo "No Claude sign-in is set up (federation variables, ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
         if: env.HAS_TOKEN == 'true'
@@ -86,19 +92,51 @@ jobs:
           d="EOF_$(openssl rand -hex 8)"
           { echo "text<<$d"; node scripts/job-prompt.mjs "${{ steps.pick.outputs.job }}"; echo; echo "Model for this run: ${{ steps.pick.outputs.model }}. This run is unattended, inside GitHub Actions: GH_TOKEN is set for gh."; echo "$d"; } >> "$GITHUB_OUTPUT"
 
-      - name: Run the job with Claude
-        if: env.HAS_TOKEN == 'true'
+      # one step per sign-in method: a static credential must not sit next to the federation inputs
+      - name: Run the job with Claude (identity federation)
+        if: env.AUTH == 'wif'
         uses: anthropics/claude-code-action@v1
         env:
           GH_TOKEN: ${{ github.token }}
         with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
           prompt: ${{ steps.prompt.outputs.text }}
           claude_args: >-
             --model ${{ steps.pick.outputs.model }}
             --max-turns ${{ steps.pick.outputs.turns }}
             --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Task"
+          anthropic_federation_rule_id: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          anthropic_organization_id: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          anthropic_service_account_id: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          anthropic_workspace_id: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+
+      - name: Run the job with Claude (API key)
+        if: env.AUTH == 'apikey'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          github_token: ${{ github.token }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          claude_args: >-
+            --model ${{ steps.pick.outputs.model }}
+            --max-turns ${{ steps.pick.outputs.turns }}
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Task"
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Run the job with Claude (subscription token)
+        if: env.AUTH == 'oauth'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          github_token: ${{ github.token }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          claude_args: >-
+            --model ${{ steps.pick.outputs.model }}
+            --max-turns ${{ steps.pick.outputs.turns }}
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Task"
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
       - name: Check what was pushed
         if: env.HAS_TOKEN == 'true' && always()

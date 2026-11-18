@@ -16,7 +16,7 @@ Failures open a GitHub issue (labels `site-monitor`, `job-failure`, `security`) 
 
 ## The Claude jobs
 
-All eight run in `.github/workflows/ai-jobs.yml`. They need one repository secret, `CLAUDE_CODE_OAUTH_TOKEN` (create it with `claude setup-token`, then add it under Settings, Secrets and variables, Actions). Runs use that Claude plan's usage, so the schedule starts lean, about 11 runs a day; raise it in `ai-jobs.yml` (cron and job mapping) and in this table together. Run any job by hand from the Actions tab (AI jobs, Run workflow).
+All eight run in `.github/workflows/ai-jobs.yml`. They sign in to Claude with the first method that is set up: **workload identity federation** (recommended: repository variables `ANTHROPIC_FEDERATION_RULE_ID`, `ANTHROPIC_ORGANIZATION_ID`, `ANTHROPIC_SERVICE_ACCOUNT_ID`, optional `ANTHROPIC_WORKSPACE_ID`; no stored secret; scope the Console rule to `repo:xanderhutch/CyberView:ref:refs/heads/main`), a repository secret `ANTHROPIC_API_KEY`, or a repository secret `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`, which uses a Claude subscription). Federation and API keys bill the Claude Console account per use; so the schedule starts lean, about 11 runs a day; raise it in `ai-jobs.yml` (cron and job mapping) and in this table together. Run any job by hand from the Actions tab (AI jobs, Run workflow).
 
 | Job | When (UTC) | Cron | Model | Why this model |
 |---|---|---|---|---|

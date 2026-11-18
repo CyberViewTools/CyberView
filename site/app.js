@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.5",date:"2026-11-18"};
+var BUILD={version:"1.6",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -293,12 +293,35 @@ function renderChips(){
     box.appendChild(btn);
   });
 }
+/* ---------- time-lapse: step the day filter through the window so the map shows how the week unfolded ---------- */
+var play={timer:null,days:[],i:0};
+function playing(){return !!play.timer;}
+function stopPlay(keepDay){if(play.timer)clearInterval(play.timer);play.timer=null;if(!keepDay)state.day=null;render();}
+function startPlay(days){
+  if(play.timer)clearInterval(play.timer);
+  play.days=days.slice();play.i=0;state.sel=null;state.day=play.days[0];render();
+  var step=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches?2600:1400;
+  play.timer=setInterval(function(){
+    if(state.day!==play.days[play.i]){if(play.timer)clearInterval(play.timer);play.timer=null;render();return;}   // the visitor took over
+    play.i++;
+    if(play.i>=play.days.length){stopPlay(false);toast("End of the window. Press play to watch it again.");return;}
+    state.day=play.days[play.i];render();
+  },step);
+}
 function renderDays(){
   var b=scoped();
   var days=[];for(var i=state.win;i>=0;i--)days.push(ymd(daysAgo(i)));
   var counts=days.map(function(d){return b.filter(function(e){return e.date===d;}).length;});
   var max=Math.max(1,d3.max(counts));
   var box=$("days");box.textContent="";
+  var pb=el("button","day play");pb.type="button";pb.id="playDays";
+  pb.setAttribute("aria-label",playing()?"Pause the time-lapse":"Play the window day by day");pb.title=pb.getAttribute("aria-label");
+  pb.setAttribute("aria-pressed",playing()?"true":"false");
+  var ns="http://www.w3.org/2000/svg",ic=document.createElementNS(ns,"svg");ic.setAttribute("viewBox","0 0 24 24");ic.setAttribute("aria-hidden","true");
+  var path=document.createElementNS(ns,"path");path.setAttribute("d",playing()?"M7 5h3.5v14H7zM13.5 5H17v14h-3.5z":"M8 5.5v13l10.5-6.5z");path.setAttribute("fill","currentColor");ic.appendChild(path);
+  pb.appendChild(ic);pb.appendChild(el("span","lab",playing()?"Pause":"Play"));
+  pb.addEventListener("click",function(){if(playing())stopPlay(true);else startPlay(days);});
+  box.appendChild(pb);
   days.forEach(function(d,i){
     var btn=el("button","day"+(state.day&&state.day!==d?" dim":""));btn.type="button";
     btn.setAttribute("aria-pressed",state.day===d?"true":"false");
@@ -306,7 +329,7 @@ function renderDays(){
     btn.appendChild(el("span","cnt",String(counts[i])));
     var bar=el("span","bar");bar.style.height=Math.round(counts[i]/max*34)+"px";btn.appendChild(bar);
     btn.appendChild(el("span","lab",i===days.length-1?"Today":parseDay(d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"})));
-    btn.addEventListener("click",function(){state.day=state.day===d?null:d;render();});
+    btn.addEventListener("click",function(){if(play.timer){clearInterval(play.timer);play.timer=null;}state.day=state.day===d?null:d;render();});
     box.appendChild(btn);
   });
 }
@@ -385,7 +408,7 @@ function card(e,open){
       if(r.recs.length){rv.appendChild(el("p",null,"What the report recommends"));var rl=el("ul");r.recs.forEach(function(x){rl.appendChild(el("li",null,x));});rv.appendChild(rl);}
       var foot=el("p","mono",(r.iocs?"Indicators of compromise are published in the report. ":"")+(r.read==="full"?"Reviewed from the full document.":r.read==="summary"?"Reviewed from the publisher's summary page.":r.read?"Reviewed from secondary coverage; the original was not read.":""));
       if(foot.textContent)rv.appendChild(foot);
-      if(r.url){var ra=el("a",null,"Open the report");ra.href=r.url;ra.target="_blank";ra.rel="noopener noreferrer";rv.appendChild(ra);}
+      if(r.url){var ra=el("a",null,"Open the report");ra.href=safeUrl(r.url);ra.target="_blank";ra.rel="noopener noreferrer";rv.appendChild(ra);}
       b.appendChild(rv);
     }
     var vv=e.val?VAL[e.val.state]:["Not yet checked","v-warn","The validation pass has not reached this event yet."];
@@ -403,7 +426,7 @@ function card(e,open){
     if(dl.childNodes.length)b.appendChild(dl);
     if(e.sources.length){
       var s=el("div","srcs");s.appendChild(el("span",null,"Sources ("+e.sources.length+"):"));
-      e.sources.forEach(function(x){var l=el("a",null,x.name);l.href=x.url;l.target="_blank";l.rel="noopener noreferrer";s.appendChild(l);});
+      e.sources.forEach(function(x){var l=el("a",null,x.name);l.href=safeUrl(x.url);l.target="_blank";l.rel="noopener noreferrer";s.appendChild(l);});
       b.appendChild(s);
     }
     var acts=el("div","acts");
@@ -501,6 +524,19 @@ function renderScope(){
   else if(stale){note.hidden=false;note.textContent="Still waiting for the data store. What's shown may be out of date.";}
   else note.hidden=true;
 }
+// While searching, say how many older matches the archive holds (the map only carries the last few days).
+function archHint(f){
+  var q=state.q.trim().toLowerCase();if(q.length<2)return;
+  var li=el("li","empty arch-hint");f.appendChild(li);
+  loadArchive().then(function(rows){
+    if(!li.isConnected||state.q.trim().toLowerCase()!==q)return;
+    var inWin={};events.forEach(function(e){if(inWindow(e))inWin[e.id]=1;});
+    var n=rows.filter(function(r){return r.status!=="claimed"&&!inWin[r.id]&&r.hay.indexOf(q)>=0;}).length;
+    if(!n){li.remove();return;}
+    li.appendChild(document.createTextNode("Older matches: "));
+    var a=el("a",null,n+" more in the archive");a.href="archive.html#q="+encodeURIComponent(state.q.trim());li.appendChild(a);
+  });
+}
 function renderFeed(list){
   var f=$("feed"),ae=document.activeElement,typing=ae&&ae.id==="reportText"&&!ae.readOnly,ss=typing?ae.selectionStart:0;
   var key=[state.win,state.sev,Array.from(state.cats).join(","),state.lens,state.status,state.sort,state.q,state.day,state.spot&&state.spot.length,state.country,state.pattern,state.claims,state.wlOnly].join("|");
@@ -509,8 +545,9 @@ function renderFeed(list){
   f.textContent="";
   if(typing)setTimeout(function(){var t=$("reportText");if(t&&document.activeElement!==t){t.focus();try{t.setSelectionRange(ss,ss);}catch(x){}}},0);
   if(!loaded&&!unavailable){f.appendChild(el("li","empty","Loading events"));return;}
-  if(!list.length){f.appendChild(el("li","empty",events.length?"No events match these filters.":"No events stored yet. The next scheduled sweep will add them."));return;}
+  if(!list.length){f.appendChild(el("li","empty",events.length?"No events match these filters.":"No events stored yet. The next scheduled sweep will add them."));archHint(f);return;}
   list.forEach(function(e){f.appendChild(card(e,false));});
+  archHint(f);
   if(key!==feedKey){feedKey=key;if(!f.hidden)f.scrollTop=0;feedTop=0;}
   else if(anchor){var an=$(anchor.id);if(an)f.scrollTop+=an.parentNode.getBoundingClientRect().top-ft-anchor.off;}
 }
@@ -1358,6 +1395,8 @@ fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo)
   layout();drawMarks();
 }).catch(function(){/* outline missing: markers still plot on the graticule */});
 
+// every URL that comes from data passes through here before it becomes a link
+function safeUrl(u){u=String(u||"");return /^https?:\/\//i.test(u)?u:"about:blank";}
 /* ---------- permalinks: #e=<id> opens one event (plain #<id> from older links still works) ---------- */
 function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
 function eventLink(id){return location.origin+location.pathname+"#e="+encodeURIComponent(id);}

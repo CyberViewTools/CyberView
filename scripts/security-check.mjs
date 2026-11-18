@@ -39,7 +39,11 @@ const SINKS = [[/\.innerHTML\s*=/, "innerHTML assignment"], [/\.outerHTML\s*=/, 
 for (const p of ours) {
   const src = read(p);
   for (const [re, name] of SINKS) if (re.test(src)) fails.push(`${rel(p)}: ${name} (build DOM nodes and set textContent instead)`);
-  if (/\.href\s*=\s*(?!["'`]https:\/\/)/.test(src) && !/https\?:\\\/\\\//.test(src)) fails.push(`${rel(p)}: assigns href without an http(s) check`);
+  // an href may come from a quoted literal (internal page or fixed https URL) or a URL-checking helper; anything else could carry javascript:
+  for (const m of src.matchAll(/\.href\s*=\s*([^;]{0,80})/g)) {
+    const rhs = m[1].trim();
+    if (!/^["'`]/.test(rhs) && !/^(safeUrl|eventLink)\(/.test(rhs)) fails.push(`${rel(p)}: href set from "${rhs.slice(0, 40)}" without a URL check (use a literal or safeUrl())`);
+  }
 }
 passes.push(`${ours.length} script(s) checked for HTML sinks`);
 

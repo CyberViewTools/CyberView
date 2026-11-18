@@ -235,6 +235,41 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(bundle), features)
+
+        # v1.6 features: search reaches the archive, trends page, time-lapse
+        async def v16(url):
+            pg, errs = await open_page(browser, url, wait=1500)
+            await pg.click("#playDays")
+            await pg.wait_for_timeout(300)
+            d1 = await pg.evaluate("document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)') ? document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)').getAttribute('aria-label') : ''")
+            await pg.wait_for_timeout(1700)
+            d2 = await pg.evaluate("document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)') ? document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)').getAttribute('aria-label') : ''")
+            ok("time-lapse: play steps through the days", bool(d1) and bool(d2) and d1 != d2, (d1, d2))
+            await pg.click("#playDays")
+            await pg.wait_for_timeout(1800)
+            d3 = await pg.evaluate("document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)') ? document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)').getAttribute('aria-label') : ''")
+            ok("time-lapse: pause holds the current day", d3 != "" and await pg.get_attribute("#playDays", "aria-pressed") == "false", d3)
+            await pg.click("#refresh")
+            await pg.wait_for_timeout(900)
+            ok("time-lapse: refresh clears the day filter", await pg.evaluate("!document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)')"))
+            await pg.fill("#q", "a")
+            await pg.fill("#q", "microsoft")
+            await pg.wait_for_timeout(1200)
+            import datetime as _dt
+            arch = json.load(open(os.path.join(ROOT, "site", "data", "archive", "search.json")))
+            f = arch["fields"]; start = (_dt.date.today() - _dt.timedelta(days=7)).isoformat()
+            hay = lambda r: " ".join(str(r[f.index(k)]) for k in ["title", "org", "country", "actor", "cves", "tags"]).lower()
+            expect = sum(1 for r in arch["rows"] if r[f.index("status")] != "claimed" and r[f.index("date")] < start and "microsoft" in hay(r))
+            hint = await pg.locator(".arch-hint a").count()
+            ok("search: older archive matches are offered exactly when they exist", (hint == 1) == (expect > 0), (hint, expect))
+            await pg.goto(url.replace("index.html", "trends.html"))
+            await pg.wait_for_timeout(1200)
+            ok("trends: summary and tables render", "events from" in await pg.inner_text("#summary") and await pg.locator("table").count() >= 2)
+            ok("trends: daily chart drawn", await pg.locator("#days .day").count() == 28)
+            ok("v1.6: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(bundle), v16)
         import xml.etree.ElementTree as ET
         try:
             items = ET.parse(os.path.join(ROOT, "site", "data", "feed.xml")).findall(".//item")

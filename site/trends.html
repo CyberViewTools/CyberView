@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="alternate" type="application/rss+xml" title="CyberView: high-priority events (RSS)" href="data/feed.xml">
+<title>CyberView trends</title>
+<meta name="description" content="What is rising and falling in publicly reported cyber events: this week against last week by category, sector, country, actor, product and tag.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="archive.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
+  <span class="crumb">Trends</span>
+  <span class="spacer"></span>
+  <a class="btn ghost" href="archive.html">Archive</a>
+  <a class="btn ghost" href="./">Back to the map</a>
+</header>
+<main>
+  <section class="intro">
+    <h1>What is moving this week</h1>
+    <p id="summary" aria-live="polite">Loading trends</p>
+  </section>
+  <p class="caveat" id="caveat" hidden></p>
+  <section class="panel">
+    <h2>How many events were recorded each day?</h2>
+    <div class="days" id="days" role="img" aria-label="Events per day, last 28 days"></div>
+    <p class="note">Last 28 days, unverified claims left out. A day's count can still grow as later sweeps find more.</p>
+  </section>
+  <div class="dims" id="dims"></div>
+  <p class="note">Counts are events on file whose date falls in each week; one event can carry several sectors, products or tags. Names come from the sources and are not merged across spellings. Select a name to see its events in the archive.</p>
+</main>
+<script src="trends.js"></script>
+</body>
+</html>

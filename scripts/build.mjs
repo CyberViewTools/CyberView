@@ -7,6 +7,7 @@
 //   site/data/archive/events.jsonl   everything, one event per line, for download and analysis
 //   site/data/archive/kev.json       every known-exploited entry on file
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
+//   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
 import { writeFileSync, mkdirSync, existsSync, rmSync } from "node:fs";
@@ -101,6 +102,43 @@ writeFileSync(join(ARCH, "search.json"), JSON.stringify({ built_at, fields: ["id
   rows: live.map((e) => [e.id, e.date, e.category, e.severity, s(e.status, 12), s(e.title, 160), s(e.org, 80), s(e.country, 60), (e.cves || []).slice(0, 12), (e.tags || []).slice(0, 5), s(e.actor, 60)]) }));
 writeFileSync(join(ARCH, "events.jsonl"), live.map((e) => JSON.stringify(e)).join("\n") + "\n");
 writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.added < b.added ? 1 : -1))));
+
+// trends: this 7 days against the 7 before, by category, sector, country, actor, product and tag (claims excluded)
+{
+  const known = live.filter((e) => e.status !== "claimed");
+  const curFrom = dayAgo(6), prevFrom = dayAgo(13), prevTo = dayAgo(7), to = dayAgo(0);
+  const inCur = (e) => e.date >= curFrom && e.date <= to, inPrev = (e) => e.date >= prevFrom && e.date <= prevTo;
+  // collection start = the earliest first_seen; before then, a week is a backfill, not a like-for-like count
+  const started = known.map((e) => String(e.first_seen || "").slice(0, 10)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort()[0] || to;
+  const norm = (v) => String(v || "").replace(/\s+/g, " ").trim();
+  const DIMS = {
+    category: (e) => [e.category],
+    sector: (e) => norm(e.sector).split(/[,;/]| and /i).map((x) => norm(x)).filter((x) => x && x.length < 40),
+    country: (e) => [norm(e.country)].filter((x) => x && !/^(global|worldwide|multiple|international)/i.test(x)),
+    actor: (e) => [norm(String(e.actor || "").split(/[;(]/)[0])].filter((x) => x && !/^(unknown|unattributed|none|n\/a)/i.test(x)),
+    product: (e) => (e.products || []).map((x) => norm(x)).filter((x) => x && x.length < 50),
+    tag: (e) => (e.tags || []).filter((t) => TAGS.includes(t)),
+  };
+  const dims = {};
+  for (const [name, get] of Object.entries(DIMS)) {
+    const m = new Map();
+    for (const e of known) {
+      const w = inCur(e) ? "cur" : inPrev(e) ? "prev" : null; if (!w) continue;
+      for (const k of new Set(get(e))) { const key = k.toLowerCase(); const r = m.get(key) || { k, cur: 0, prev: 0 }; r[w]++; m.set(key, r); }
+    }
+    dims[name] = [...m.values()].filter((r) => r.cur + r.prev >= 2).sort((a, b) => (b.cur - b.prev) - (a.cur - a.prev) || b.cur - a.cur).slice(0, 60);
+  }
+  const daily = [];
+  for (let i = 27; i >= 0; i--) { const d = dayAgo(i); daily.push({ date: d, total: known.filter((e) => e.date === d).length }); }
+  const trends = {
+    built_at, cur: { from: curFrom, to, total: known.filter(inCur).length },
+    prev: { from: prevFrom, to: prevTo, total: known.filter(inPrev).length, complete: started <= prevFrom },
+    collection_started: started,
+    dims, daily,
+  };
+  writeFileSync(join(OUT, "trends.json"), JSON.stringify(trends));
+  console.log(`Trends: ${trends.cur.total} events this week, ${trends.prev.total} the week before${trends.prev.complete ? "" : " (partly recorded)"}.`);
+}
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");

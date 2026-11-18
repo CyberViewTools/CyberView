@@ -556,6 +556,12 @@ a.btn{text-decoration:none}
 #wlReport .over{color:var(--bad);font-weight:600}
 #wlReport .rw{color:var(--warn);font-weight:600}
 #wlReport .xr-none{color:var(--muted);font-size:12.5px}
+
+/* ---- time-lapse button (v1.6) ---- */
+.day.play{flex:0 0 auto;justify-content:flex-end;color:var(--accent);cursor:pointer;padding:0 4px}
+.day.play svg{width:26px;height:26px;margin-bottom:2px;border-radius:50%;padding:5px;background:var(--tint)}
+.day.play:hover svg,.day.play:focus-visible svg{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.day.play[aria-pressed="true"] svg{background:var(--accent);color:#06203f}
 </style>
 </head>
 <body>
@@ -582,6 +588,7 @@ a.btn{text-decoration:none}
         <button type="button" data-view="graph" aria-pressed="false">Correlation</button>
       </div>
       <a class="btn ghost" id="archiveLink" href="archive.html" title="Every event on file, searchable">Archive</a>
+      <a class="btn ghost" id="trendsLink" href="trends.html" title="What is rising and falling this week">Trends</a>
       <button type="button" class="btn" id="refresh" title="Reload the latest data and return to the main map view (R)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         Refresh

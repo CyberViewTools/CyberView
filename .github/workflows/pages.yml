@@ -38,6 +38,9 @@ jobs:
           node-version: "22"
       - name: Validate and build the bundle and archive
         run: node scripts/build.mjs
+        env:
+          # the public address used in feeds and links; set the repository variable SITE_URL when a custom domain is added
+          SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
       - name: Security check
         run: node scripts/security-check.mjs
       - uses: actions/configure-pages@v5

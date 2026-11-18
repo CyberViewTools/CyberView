@@ -1,6 +1,7 @@
 name: Collect leads
 
-# Hourly, no AI model: reads public RSS and Atom feeds from agencies, vendors and security news
+# Every 30 minutes, no AI model: reads public RSS and Atom feeds from agencies, vendors and security news, then several
+# news indexes and primary databases (scripts/osint.mjs), and groups it all into stories (scripts/fuse.mjs).
 # (scripts/collect.mjs) and appends new items to data/leads/<date>.jsonl. The AI sweep starts from these.
 on:
   schedule:
@@ -26,15 +27,20 @@ jobs:
           node-version: "22"
       - name: Collect
         run: node scripts/collect.mjs
+      - name: Other open sources (news indexes, breach and vulnerability databases, status pages)
+        # a failing source is skipped and shown on the status page; it never stops the run
+        run: node scripts/osint.mjs || true
       - name: Clear obvious leads (no AI)
         run: node scripts/triage.mjs
+      - name: Group leads into stories
+        run: node scripts/fuse.mjs
       - name: Validate
         run: node scripts/build.mjs > /dev/null
       - name: Commit and push
         run: |
           git config user.name "cyberview-collect"
           git config user.email "cyberview-collect@users.noreply.github.com"
-          git add data/leads data/status.json
+          git add data/leads data/status.json data/osint.json data/runs
           if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
           git commit -q -m "data: collect, $n new lead(s)"

@@ -18,6 +18,7 @@ import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
+import { load as pipelineMetrics } from "./metrics.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -150,14 +151,16 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
 // high-risk flaws that are not on CISA's list, the fix guides, and detection resources named by advisories and reports
 {
   const s = (v, n) => String(v || "").slice(0, n);
-  const wbKev = kevAll.map((k) => ({ cve: k.cve, vendor: k.vendor, product: k.product, name: k.name, added: k.added, due: k.due, ransomware: !!k.ransomware,
+  const expl = (readJson(join(DATA, "exploits.json"), { cves: {} }).cves) || {};
+  const repoOf = (cve) => { const x = expl[cve]; return x && x.repos > 0 ? { repos: x.repos, top: (x.top || []).slice(0, 3).filter((r) => /^https:\/\/github\.com\//.test(r.url || "")).map((r) => ({ name: s(r.name, 100), url: r.url, stars: r.stars || 0 })) } : null; };
+  const wbKev = kevAll.map((k) => ({ repo: repoOf(k.cve), cve: k.cve, vendor: k.vendor, product: k.product, name: k.name, added: k.added, due: k.due, ransomware: !!k.ransomware,
     desc: s(k.desc, 300), cvss: k.cvss ?? null, epss: k.epss ?? null, av: k.av || "", required: s(k.required, 700), refs: (k.refs || []).slice(0, 4), affected: (k.affected || []).slice(0, 60) }));
   const inKev = new Set(kevAll.map((k) => k.cve)), seenCve = new Set(), wbVulns = [];
   for (const e of allEvents.filter((e) => !e.duplicate_of && e.category === "vuln" && e.status !== "claimed" && e.severity >= 2 && e.date >= dayAgo(30)).sort((a, b) => (a.date < b.date ? 1 : -1))) {
     for (const c of (e.cves || []).slice(0, 6)) {
       if (inKev.has(c) || seenCve.has(c) || !/^CVE-\d{4}-\d{4,}$/.test(c)) continue; seenCve.add(c);
       const m = (e.cve_meta || []).find((x) => x && x.id === c) || {};
-      wbVulns.push({ cve: c, event_id: e.id, title: s(e.title, 160), date: e.date, severity: e.severity, vendor: s(e.org, 80), products: (e.products || []).slice(0, 6).map((x) => s(x, 60)),
+      wbVulns.push({ repo: repoOf(c), cve: c, event_id: e.id, title: s(e.title, 160), date: e.date, severity: e.severity, vendor: s(e.org, 80), products: (e.products || []).slice(0, 6).map((x) => s(x, 60)),
         desc: s(e.plain || e.summary, 300), action: s(e.action, 300), cvss: m.cvss ?? null, epss: m.epss ?? null });
     }
   }
@@ -258,7 +261,12 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const leadsDir = join(DATA, "leads"), byTier = { gov: 0, vendor: 0, news: 0 }; let leads24 = 0;
   if (existsSync(leadsDir)) for (const f of readdirSync(leadsDir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(1)))
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); if (Date.now() - Date.parse(l.seen_at) < 864e5) { leads24++; byTier[l.tier] = (byTier[l.tier] || 0) + 1; } } catch {} }
-  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] } }));
+  // open-source collectors: each one's health, and what the pipeline did with their leads this week
+  const osint = readJson(join(DATA, "osint.json"), { sources: {} }), pm = pipelineMetrics(7);
+  const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
+  const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
+    collectors: pm.collectors.slice(0, 12), stories: { open: st.stories_open ?? null, corroborated: st.stories_corroborated ?? null, claims: st.stories_claims ?? null, leads_72h: st.leads_72h ?? null } };
+  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline }));
 }
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)

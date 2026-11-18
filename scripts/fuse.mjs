@@ -1,0 +1,154 @@
+// Story fusion, no AI model. Run: node scripts/fuse.mjs [list|show|done]
+// Hundreds of leads a day arrive from RSS feeds, several news indexes and primary databases. Many describe the same thing.
+// This groups leads from the last 72 hours into stories, so a job researches a story once with every source in hand,
+// and so corroboration (how many independent publishers, and of what kind, report it) decides what is looked at first.
+//   node scripts/fuse.mjs                         group, print a summary, write data/stories.json (working file, not committed)
+//   node scripts/fuse.mjs list [--limit 25] [--claims] [--region africa] [--min 2] [--json]   open stories, strongest first
+//   node scripts/fuse.mjs show <id>               one story with all its leads
+//   node scripts/fuse.mjs done <id> "<event id, or why it is not an event>"   close a story: every lead in it is logged as handled
+// Grouping is by shared CVE id, or by shared distinctive words in the headline (names, products, places), never by
+// generic words like "ransomware attack". Leak-site claims are grouped too but a story made only of claims stays low.
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+import { DATA, readJson, writeJson, listEventFiles, dayAgo, writeRunLog, nowIso } from "./lib/store.mjs";
+import { tokens, matchEvent, NOT_EVENT } from "./triage.mjs";
+
+// words too common in this field to tell two stories apart
+const GENERIC = new Set(("cyber cyberattack cyberattacks attack attacks attacked attacker attackers hack hacked hacker hackers hacking breach breaches breached data security ransomware malware vulnerability vulnerabilities flaw flaws bug exploit exploited exploits exploitation " +
+  "incident incidents threat threats group gang claim claims lists leak site critical high severity patch patches update updates advisory alert warns warning report reports reported says said confirms confirmed company firm customers users million thousands systems system network " +
+  "information personal stolen theft access remote code execution rce zero-day zero day actively cve cvss online services service outage disruption after over via using used could allows allow unauthenticated authentication bypass phishing campaign targets targeting new latest major " +
+  "ciberataque cyberattaque angriff hit hits impact impacted affected affecting following amid against more than its their has have been were will").split(/\s+/));
+const THIN = new Set(["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"]);
+const TIER_RANK = { gov: 3, vendor: 2, news: 1 };
+const SEARCH = new Set(["google-news", "bing-news", "gdelt"]);
+
+/** One name per publisher: "The Record", "therecord.media" and "The Record from Recorded Future News" are the same outlet. */
+export function publisherKey(name) {
+  return String(name || "").toLowerCase().replace(/&amp;/g, "and").replace(/^www\./, "").replace(/\.(com|org|net|co|io|media|news|gov|edu|info|au|uk|ca|in|de|fr|es|jp|kr|br|id|ke|za|ng)(\.[a-z]{2})?$/, "").replace(/^the\s+/, "").replace(/[^a-z0-9]+/g, "");
+}
+export function countPublishers(names) {
+  const keys = [...new Set(names.map(publisherKey).filter(Boolean))].sort((a, b) => a.length - b.length), kept = [];
+  for (const k of keys) if (!kept.some((x) => x.length >= 5 && k.includes(x))) kept.push(k);
+  return kept;
+}
+export const cvesIn = (s) => [...new Set((String(s || "").toUpperCase().match(/CVE-\d{4}-\d{4,}/g) || []))];
+export const keyTokens = (title) => new Set([...tokens(String(title).replace(/^Claim: \S+ lists /, "").replace(/ on its leak site$/, ""))].filter((w) => !GENERIC.has(w) && !/^\d+$/.test(w)));
+
+/** Group leads into stories. leads: [{title,url,source,tier,via,kind,seen_at,published,lang,region}] -> [[lead,...],...] */
+export function cluster(leads) {
+  const n = leads.length, parent = leads.map((_, i) => i);
+  const find = (i) => { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; };
+  const join2 = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[Math.max(a, b)] = Math.min(a, b); };
+  const toks = leads.map((l) => keyTokens(l.title)), byCve = new Map(), byTok = new Map();
+  leads.forEach((l, i) => {
+    cvesIn(l.title).forEach((c) => { if (byCve.has(c)) join2(byCve.get(c), i); else byCve.set(c, i); });
+    toks[i].forEach((w) => { if (!byTok.has(w)) byTok.set(w, []); byTok.get(w).push(i); });
+  });
+  // only compare leads that share a distinctive word that is not everywhere
+  const seen = new Set();
+  for (const [, ids] of byTok) {
+    if (ids.length < 2 || ids.length > 40) continue;
+    for (let x = 0; x < ids.length; x++) for (let y = x + 1; y < ids.length; y++) {
+      const a = ids[x], b = ids[y], k = a * n + b; if (seen.has(k) || find(a) === find(b)) continue; seen.add(k);
+      let inter = 0; toks[a].forEach((w) => toks[b].has(w) && inter++);
+      const small = Math.min(toks[a].size, toks[b].size), union = toks[a].size + toks[b].size - inter;
+      // a leak-site claim carries only the victim's name: it joins a report when the whole name is in the headline
+      const claim = (leads[a].kind === "claim") !== (leads[b].kind === "claim"), claimTok = leads[a].kind === "claim" ? toks[a] : toks[b];
+      const other = leads[a].kind === "claim" ? leads[b] : leads[a];
+      const nameHit = claim && inter === claimTok.size && /ransom|attack|breach|hack|leak|extort|stolen|incident/i.test(other.title) && (inter >= 2 || [...claimTok][0].length >= 6);
+      if ((inter >= 2 && inter / union >= 0.4) || (inter >= 2 && small <= 5 && inter / small >= 0.5 && inter / union >= 0.25) || (inter >= 3 && inter / small >= 0.6) || nameHit) join2(a, b);
+    }
+  }
+  const groups = new Map();
+  leads.forEach((l, i) => { const r = find(i); if (!groups.has(r)) groups.set(r, []); groups.get(r).push(l); });
+  return [...groups.values()];
+}
+
+/** One story from its leads. now is a timestamp (ms). */
+export function story(group, evs = [], now = Date.now()) {
+  const best = group.slice().sort((a, b) => (a.kind === "claim") - (b.kind === "claim") || (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0) || SEARCH.has(a.via) - SEARCH.has(b.via) || String(a.seen_at).localeCompare(String(b.seen_at)))[0];
+  const publishers = new Set(countPublishers(group.map((l) => l.source))), vias = new Set(group.map((l) => l.via || "rss")), tiers = new Set(group.map((l) => l.tier));
+  const kinds = new Set(group.map((l) => l.kind).filter(Boolean)), regions = [...new Set(group.map((l) => l.region).filter(Boolean))], langs = [...new Set(group.map((l) => l.lang).filter(Boolean))];
+  const cves = [...new Set(group.flatMap((l) => cvesIn(l.title)))].slice(0, 8);
+  const times = group.map((l) => Date.parse(l.seen_at)).filter(isFinite), first = Math.min(...times), last = Math.max(...times);
+  const claimOnly = group.every((l) => l.kind === "claim"), open = group.filter((l) => l._open).length;
+  const ev = matchEvent(best.title, evs) || cves.map((c) => evs.find((e) => (e.cves || []).includes(c))).filter(Boolean).map((e) => ({ id: e.id }))[0] || null;
+  const pts = [];
+  const add = (p, why) => { if (p) pts.push([p, why]); };
+  const indep = [...publishers].filter((p) => p !== "ransomwarelive").length;
+  // a bare database row (a new CVE, a breach-list entry, a status page) is a fact to check, not yet a report by an agency or vendor
+  const reported = (t) => group.some((l) => l.tier === t && !["cve", "breach-db", "status"].includes(l.kind));
+  add(Math.min(indep, 8) * 2, `${indep} publisher${indep === 1 ? "" : "s"}`);
+  add(reported("gov") ? 6 : 0, "a government or CERT source"); add(reported("vendor") ? 3 : 0, "a vendor or research source");
+  add(!reported("gov") && !reported("vendor") && group.some((l) => ["cve", "breach-db", "status"].includes(l.kind)) ? 2 : 0, "a primary database entry");
+  add(kinds.has("exploited") ? 6 : 0, "listed as exploited"); add(cves.length ? 2 : 0, "names a CVE");
+  add(vias.size >= 2 ? 3 : 0, `${vias.size} independent collectors`);
+  add(now - last < 6 * 36e5 ? 3 : 0, "seen in the last 6 hours");
+  add(group.every((l) => THIN.has(l.region)) ? 3 : 0, "found only through a thinly covered region");
+  add(kinds.has("claim") && !claimOnly ? 2 : 0, "matches a leak-site claim");
+  let score = pts.reduce((s, p) => s + p[0], 0); if (claimOnly) score = Math.min(score, 2);
+  return {
+    id: createHash("sha1").update(group.map((l) => l.url).sort()[0]).digest("hex").slice(0, 8), title: String(best.title).slice(0, 200), score, why: pts.map((p) => p[1]),
+    publishers: publishers.size, vias: [...vias], tiers: [...tiers], kinds: [...kinds], cves, regions, langs, first_seen: new Date(first).toISOString().replace(/\.\d+Z$/, "Z"), last_seen: new Date(last).toISOString().replace(/\.\d+Z$/, "Z"),
+    claim_only: claimOnly, event: ev ? ev.id : "", open,
+    leads: group.slice().sort((a, b) => (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0)).slice(0, 14).map((l) => ({ source: l.source, tier: l.tier, via: l.via || "rss", ...(l.kind ? { kind: l.kind } : {}), ...(l.lang ? { lang: l.lang } : {}), title: String(l.title).slice(0, 160), url: l.url, open: !!l._open })),
+    more: Math.max(0, group.length - 14), urls: group.map((l) => l.url),
+  };
+}
+
+export function build() {
+  const used = new Set(), rejected = new Set();
+  const evs = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of);
+  evs.forEach((e) => (e.sources || []).forEach((s) => used.add(s.url)));
+  const runsDir = join(DATA, "runs");
+  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(14)))
+    for (const f of readdirSync(join(runsDir, d))) (readJson(join(runsDir, d, f), {}).skipped || []).forEach((l) => l && l.url && rejected.add(l.url));
+  const cutoff = Date.now() - 72 * 36e5, map = new Map(), dir = join(DATA, "leads");
+  if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(4)))
+    for (const line of readFileSync(join(dir, f), "utf8").split("\n")) {
+      try { const l = JSON.parse(line); if (!l.url || Date.parse(l.seen_at) < cutoff || NOT_EVENT.test(l.title || "")) continue; l._open = !used.has(l.url) && !rejected.has(l.url); map.set(l.url, l); } catch {}
+    }
+  const recent = evs.filter((e) => e.date >= dayAgo(30));
+  const stories = cluster([...map.values()]).map((g) => story(g, recent)).sort((a, b) => b.score - a.score || (a.last_seen < b.last_seen ? 1 : -1));
+  return { built_at: nowIso(), leads: map.size, stories };
+}
+export const isOpen = (s) => s.open > 0 && !s.event;
+
+function fmt(s) {
+  const tags = [s.cves.slice(0, 2).join(" "), s.regions.join(","), s.langs.filter((l) => l !== "en").join(","), s.claim_only ? "CLAIM ONLY" : s.kinds.includes("claim") ? "has claim" : "", s.kinds.includes("status") ? "status page" : ""].filter(Boolean).join(" · ");
+  return `[${String(s.score).padStart(2)}] ${s.id}  ${s.title.slice(0, 110)}\n       ${s.publishers} publisher(s): ${[...new Set(s.leads.map((l) => l.source))].slice(0, 6).join(", ")}${s.more ? " +" + s.more + " more" : ""}${tags ? "  |  " + tags : ""}`;
+}
+
+function main() {
+  const [cmd, ...rest] = process.argv.slice(2), opt = (k, d) => { const i = rest.indexOf("--" + k); return i >= 0 ? rest[i + 1] : d; };
+  const d = build(), open = d.stories.filter(isOpen);
+  if (cmd === "show") {
+    const s = d.stories.find((x) => x.id === rest[0]); if (!s) { console.error("no such story (ids change as leads arrive; run list again)"); process.exit(1); }
+    console.log(fmt(s) + `\n       why: ${s.why.join("; ")}${s.event ? "\n       ON FILE as " + s.event : ""}`);
+    s.leads.forEach((l) => console.log(`  - [${l.tier}${l.kind ? "/" + l.kind : ""}${l.lang && l.lang !== "en" ? "/" + l.lang : ""}] ${l.source}: ${l.title}\n    ${l.url}${l.open ? "" : "  (already handled)"}`));
+    return;
+  }
+  if (cmd === "done") {
+    const s = d.stories.find((x) => x.id === rest[0]), why = String(rest.slice(1).join(" ")).replace(/\s+/g, " ").trim().slice(0, 200);
+    if (!s || !why) { console.error('usage: fuse.mjs done <id> "<event id, or why it is not an event>"'); process.exit(1); }
+    writeRunLog("stories", { started_at: nowIso(), finished_at: nowIso(), model: null, story: s.id, skipped: s.urls.map((u) => ({ title: s.title.slice(0, 160), url: u, reason: `story ${s.id}: ${why}` })) });
+    console.log(`story ${s.id} closed (${s.urls.length} lead${s.urls.length === 1 ? "" : "s"}): ${why}`); return;
+  }
+  if (cmd === "list") {
+    const min = Number(opt("min", 0)), region = opt("region", ""), claims = rest.includes("--claims");
+    const list = open.filter((s) => (claims || !s.claim_only) && s.score >= min && (!region || s.regions.includes(region))).slice(0, Number(opt("limit", 25)));
+    if (rest.includes("--json")) { console.log(JSON.stringify(list.map(({ urls, ...s }) => s))); return; }
+    console.log(`${open.length} open stories from ${d.leads} leads in the last 72 hours (${open.filter((s) => s.claim_only).length} are leak-site claims only, hidden unless --claims). Strongest first:`);
+    list.forEach((s) => console.log(fmt(s)));
+    console.log(`\nnode scripts/fuse.mjs show <id> lists a story's sources; done <id> "<event id or reason>" closes it.`); return;
+  }
+  writeJson(join(DATA, "stories.json"), { built_at: d.built_at, leads: d.leads, stories: d.stories.map(({ urls, ...s }) => s).slice(0, 400) });
+  const multi = open.filter((s) => s.publishers >= 2 && !s.claim_only).length;
+  const sp = join(DATA, "status.json"), st = readJson(sp, {});
+  Object.assign(st, { last_fuse_at: d.built_at, stories_open: open.length, stories_corroborated: multi, stories_claims: open.filter((s) => s.claim_only).length, leads_72h: d.leads }); writeJson(sp, st);
+  console.log(`fuse: ${d.leads} leads in 72 h -> ${d.stories.length} stories; ${open.length} open (${multi} reported by two or more publishers, ${open.filter((s) => s.claim_only).length} claims only); ${d.stories.filter((s) => s.event).length} already on file`);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

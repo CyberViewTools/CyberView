@@ -143,6 +143,7 @@
     if (f.ransomware) add(10, "Used by ransomware groups");
     if (typeof f.epss === "number") add(15 * f.epss, "EPSS " + Math.round(f.epss * 100) + "% chance of exploitation in 30 days");
     if (f.exploit_public) add(5, "Public exploit code");
+    else if (f.repos > 0) add(3, f.repos + " public GitHub repositor" + (f.repos === 1 ? "y names" : "ies name") + " this CVE (possible exploit code)");
     if (f.exposure === "internet") add(10, "Internet-facing (from the advisory)");
     else if (!f.exposure && f.av !== "L" && f.av !== "P" && EDGE.test((f.vendor || "") + " " + (f.product || "") + " " + (f.name || ""))) add(10, "Likely internet-facing (by product keyword)");
     if (f.due) { var left = Math.round((Date.parse(f.due + "T12:00:00Z") - Date.parse(today + "T12:00:00Z")) / 864e5); if (left < 0) add(5, "Federal deadline passed"); else if (left <= 7) add(3, "Federal deadline within 7 days"); }

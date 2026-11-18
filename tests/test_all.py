@@ -850,6 +850,24 @@ async def main():
 
         await serve(site18, v118)
 
+        # v1.19: status page shows codenames and where the research comes from
+        async def v119(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=900)
+            codes = await pg.locator("#routines .codename").all_text_contents()
+            ok("status: every routine has a codename", len(codes) >= 25 and "Nick Fury" in codes and "Batman" in codes and len(set(codes)) == len(codes), codes[:6])
+            ok("status: not-affiliated note", "not affiliated with or endorsed by Marvel or DC" in await pg.inner_text("body"))
+            rows = await pg.locator("#sources tbody tr").all_text_contents()
+            ok("status: sources table lists the collectors", len(rows) >= 8 and any("google-news" in r for r in rows) and any(r.startswith("rss") for r in rows), rows[:3])
+            ok("status: pipeline summary", "stories waiting" in await pg.locator("#pipe").text_content())
+            ok("status: no script errors", not errs, errs)
+            await pg.context.close()
+            ctx = await browser.new_context(viewport={"width": 390, "height": 844})
+            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(700)
+            ok("phone status: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ctx.close()
+
+        await serve(make_site(bundle), v119)
+
         await browser.close()
 
 

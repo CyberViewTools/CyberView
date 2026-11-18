@@ -1,5 +1,5 @@
 {
- "_about": "Every routine that keeps CyberView running. The build checks the AI job schedules here against .github/workflows/ai-jobs.yml, publishes this list with each routine's last run to site/data/ops.json (shown on status.html), and the monitor and watchdog use max_age_hours to spot late routines. To add a routine: add its workflow (or job in ai-jobs.yml), add an entry here, and give it a status_key it writes to data/status.json.",
+ "_about": "Every routine that keeps CyberView running. The build checks the AI job schedules here against .github/workflows/ai-jobs.yml, publishes this list with each routine's last run to site/data/ops.json (shown on status.html), and the monitor and watchdog use max_age_hours to spot late routines. To add a routine: add its workflow (or job in ai-jobs.yml), add an entry here, and give it a status_key it writes to data/status.json. Each routine also has a codename borrowed from a Marvel or DC character (codename, universe, codename_why); the key, not the codename, is what scripts and schedules use.",
  "routines": [
   {
    "key": "collect",
@@ -11,7 +11,10 @@
    "status_key": "last_collect_at",
    "max_age_hours": 3,
    "active": true,
-   "does": "Reads 22 agency, vendor and news feeds every 30 minutes and files new items as leads."
+   "does": "Reads 64 agency, vendor and news feeds in several languages every 30 minutes, plus any the source scout has added, and files new items as leads.",
+   "codename": "Heimdall",
+   "universe": "Marvel",
+   "codename_why": "sees everything that happens, everywhere"
   },
   {
    "key": "feeds",
@@ -23,7 +26,10 @@
    "status_key": "last_feeds_at",
    "max_age_hours": 5,
    "active": true,
-   "does": "Syncs CISA's known-exploited catalog and EPSS and CVSS scores; re-rates affected events; refreshes the internet-disruption and disaster-alert map layers."
+   "does": "Syncs CISA's known-exploited catalog and EPSS and CVSS scores; re-rates affected events; refreshes the internet-disruption and disaster-alert map layers.",
+   "codename": "Cyborg",
+   "universe": "DC",
+   "codename_why": "wired straight into the machines"
   },
   {
    "key": "monitor",
@@ -35,7 +41,42 @@
    "status_key": null,
    "max_age_hours": null,
    "active": true,
-   "does": "Checks the live site, its security policy and data freshness; browser check twice a day."
+   "does": "Checks the live site, its security policy and data freshness; browser check twice a day.",
+   "codename": "The Watcher",
+   "universe": "Marvel",
+   "codename_why": "observes, always"
+  },
+  {
+   "key": "osint",
+   "name": "Open-source collectors",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_osint_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-19T00:00:00Z",
+   "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and cloud status pages, so no single search engine decides what is seen.",
+   "codename": "Oracle",
+   "universe": "DC",
+   "codename_why": "the information broker who pulls from every network"
+  },
+  {
+   "key": "exploit-watch",
+   "name": "Exploit watch",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_exploits_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-19T00:00:00Z",
+   "does": "Checks GitHub for public repositories naming each exploited flaw and flags them in the workbench as possible exploit code.",
+   "codename": "Daredevil",
+   "universe": "Marvel",
+   "codename_why": "senses danger before anyone sees it"
   },
   {
    "key": "lead-triage",
@@ -47,7 +88,10 @@
    "status_key": null,
    "max_age_hours": null,
    "active": true,
-   "does": "Clears leads already on file, plain non-events and expired items after every collection, before any AI reads them."
+   "does": "Clears leads already on file, plain non-events and expired items, then groups everything into stories ranked by how many independent publishers report them.",
+   "codename": "The Flash",
+   "universe": "DC",
+   "codename_why": "sorts it all in an instant"
   },
   {
    "key": "link-check",
@@ -60,7 +104,10 @@
    "max_age_hours": 200,
    "active": true,
    "active_since": "2026-11-18T21:00:00Z",
-   "does": "Checks every source link from the last 30 days and lists the broken ones for the data steward."
+   "does": "Checks every source link from the last 30 days and lists the broken ones for the data steward.",
+   "codename": "Spider-Man",
+   "universe": "Marvel",
+   "codename_why": "keeps the web holding together"
   },
   {
    "key": "security-check",
@@ -72,7 +119,10 @@
    "status_key": null,
    "max_age_hours": null,
    "active": true,
-   "does": "Static security check of the code and data, plus the live site's policy."
+   "does": "Static security check of the code and data, plus the live site's policy.",
+   "codename": "Captain America",
+   "universe": "Marvel",
+   "codename_why": "the shield"
   },
   {
    "key": "sweep",
@@ -85,7 +135,10 @@
    "status_key": "last_sweep_at",
    "max_age_hours": 2,
    "active": true,
-   "does": "Turns new leads and headline news into verified events."
+   "does": "Turns new leads and headline news into verified events.",
+   "codename": "Nick Fury",
+   "universe": "Marvel",
+   "codename_why": "assembles the team and runs the mission"
   },
   {
    "key": "verify",
@@ -98,7 +151,10 @@
    "status_key": "last_validation_at",
    "max_age_hours": 18,
    "active": true,
-   "does": "Re-checks recent events against their sources, handles readers' error reports, logs corrections."
+   "does": "Re-checks recent events against their sources, handles readers' error reports, logs corrections.",
+   "codename": "Wonder Woman",
+   "universe": "DC",
+   "codename_why": "the lasso of truth"
   },
   {
    "key": "report-review",
@@ -111,7 +167,10 @@
    "status_key": "last_reports_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Reads original government and vendor reports and records findings and recommendations."
+   "does": "Reads original government and vendor reports and records findings and recommendations.",
+   "codename": "Beast",
+   "universe": "Marvel",
+   "codename_why": "the scholar who reads the whole paper"
   },
   {
    "key": "analysis",
@@ -124,7 +183,10 @@
    "status_key": "last_analysis_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Finds patterns, chains and ripple effects across the week."
+   "does": "Finds patterns, chains and ripple effects across the week.",
+   "codename": "Batman",
+   "universe": "DC",
+   "codename_why": "the detective who connects the cases"
   },
   {
    "key": "deep-sweep",
@@ -137,7 +199,10 @@
    "status_key": "last_deep_sweep_at",
    "max_age_hours": 100,
    "active": true,
-   "does": "Regional, native-language research where coverage is thin."
+   "does": "Regional, native-language research where coverage is thin.",
+   "codename": "Aquaman",
+   "universe": "DC",
+   "codename_why": "goes where others don't look: the deep"
   },
   {
    "key": "brief",
@@ -150,7 +215,10 @@
    "status_key": "last_brief_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Writes the morning brief for defenders and records daily counts."
+   "does": "Writes the morning brief for defenders and records daily counts.",
+   "codename": "J.A.R.V.I.S.",
+   "universe": "Marvel",
+   "codename_why": "the morning briefing"
   },
   {
    "key": "watchdog",
@@ -163,7 +231,10 @@
    "status_key": "last_watchdog_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Triages alerts, late routines and error reports, and fixes what it can."
+   "does": "Triages alerts, late routines and error reports, and fixes what it can.",
+   "codename": "Alfred",
+   "universe": "DC",
+   "codename_why": "keeps the house running and patches people up"
   },
   {
    "key": "security-review",
@@ -176,7 +247,10 @@
    "status_key": "last_security_review_at",
    "max_age_hours": 200,
    "active": true,
-   "does": "Reviews the week's code changes and data for security problems."
+   "does": "Reviews the week's code changes and data for security problems.",
+   "codename": "Black Widow",
+   "universe": "Marvel",
+   "codename_why": "finds the way in before an enemy does"
   },
   {
    "key": "triage",
@@ -189,7 +263,10 @@
    "status_key": "last_triage_at",
    "max_age_hours": 7,
    "active": true,
-   "does": "Sorts the lead backlog: drops non-events and duplicates, queues real events for the sweep by priority."
+   "does": "Sorts the lead backlog: drops non-events and duplicates, queues real events for the sweep by priority.",
+   "codename": "Doctor Strange",
+   "universe": "Marvel",
+   "codename_why": "a surgeon's triage, with a view of every outcome"
   },
   {
    "key": "regional",
@@ -202,7 +279,10 @@
    "status_key": "last_regional_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "One under-covered region a day, researched in its own languages."
+   "does": "One under-covered region a day, researched in its own languages.",
+   "codename": "Nightcrawler",
+   "universe": "Marvel",
+   "codename_why": "anywhere in the world in a blink"
   },
   {
    "key": "followup",
@@ -215,7 +295,10 @@
    "status_key": "last_followup_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Checks whether developing stories and claims were confirmed, denied or grew, and updates them."
+   "does": "Checks whether developing stories and claims were confirmed, denied or grew, and updates them.",
+   "codename": "Lois Lane",
+   "universe": "DC",
+   "codename_why": "the reporter who never drops a story"
   },
   {
    "key": "steward",
@@ -228,7 +311,10 @@
    "status_key": "last_steward_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Repairs weak or broken sources, long summaries and duplicates, by rule."
+   "does": "Repairs weak or broken sources, long summaries and duplicates, by rule.",
+   "codename": "Ant-Man",
+   "universe": "Marvel",
+   "codename_why": "fixes the small things nobody else notices"
   },
   {
    "key": "tabletop",
@@ -241,7 +327,10 @@
    "status_key": "last_tabletop_at",
    "max_age_hours": 200,
    "active": true,
-   "does": "Turns one real, verified event of the week into a ready-to-run team exercise: scenario, timed updates, questions and what good looks like."
+   "does": "Turns one real, verified event of the week into a ready-to-run team exercise: scenario, timed updates, questions and what good looks like.",
+   "codename": "Iron Man",
+   "universe": "Marvel",
+   "codename_why": "runs the simulations"
   },
   {
    "key": "advisory",
@@ -254,7 +343,10 @@
    "status_key": "last_advisory_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps."
+   "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps.",
+   "codename": "Lucius Fox",
+   "universe": "DC",
+   "codename_why": "the engineer with the fix"
   },
   {
    "key": "moderator",
@@ -267,7 +359,42 @@
    "status_key": "last_moderator_at",
    "max_age_hours": null,
    "active": true,
-   "does": "Checks every community post against fixed rules, then reviews it for harm and unsourced claims before it can appear; handles reports of published posts."
+   "does": "Checks every community post against fixed rules, then reviews it for harm and unsourced claims before it can appear; handles reports of published posts.",
+   "codename": "Green Lantern",
+   "universe": "DC",
+   "codename_why": "keeps the peace in his sector"
+  },
+  {
+   "key": "scout",
+   "name": "Source scout",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "13 5 * * 0",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_scout_at",
+   "max_age_hours": 200,
+   "active": true,
+   "does": "Repairs broken sources and adds official feeds and local-language searches for the regions with the least coverage.",
+   "codename": "Hawkeye",
+   "universe": "Marvel",
+   "codename_why": "sees farther than anyone and never misses"
+  },
+  {
+   "key": "editor",
+   "name": "Editor",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "41 7 * * 6",
+   "model": "claude-opus-5-5",
+   "status_key": "last_editor_at",
+   "max_age_hours": 200,
+   "active": true,
+   "does": "Reviews the week's pipeline numbers and corrections, fixes the three biggest problems in configuration, and reports what needs code.",
+   "codename": "Perry White",
+   "universe": "DC",
+   "codename_why": "the editor-in-chief"
   }
  ]
 }

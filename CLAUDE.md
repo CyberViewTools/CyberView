@@ -15,7 +15,8 @@ site/status.html, .js    routines and their last runs, lead queue, recent runs (
 site/workbench.html, .js, workbench-lib.js   the workbench: patch queue ranked with reasons, the visitor's software list matched by version (browser only), check and fix steps, hunt pack (from site/data/workbench.json)
 site/community.html, .js  the public community feed (reviewed posts from site/data/chat.json; posting is a GitHub issue form)
 site/tabletop.html, .js  the weekly tabletop exercise (from site/data/tabletop.json; facilitator clock, print, copy)
-routines.json            registry of every routine: schedule, model, status key, max age, active
+routines.json            registry of every routine: schedule, model, status key, max age, active, and its Marvel or DC codename (display only; scripts use the key)
+config/feeds.json, queries.json   extra feeds and standing searches; the source scout and editor jobs maintain them
 site/vendor/             d3 7.9.0 and topojson 3.0.2, served locally, hashes pinned in scripts/security-check.mjs
 site/account.js, unsubscribe.js   optional accounts (Supabase); the ONLY pages allowed to load vendor/supabase.min.js and reach the project
 legal/*.html, pages/*.html   sources for about/privacy/terms and account/unsubscribe; scripts/pages.mjs renders them into site/ (generated, not committed)
@@ -41,7 +42,10 @@ scripts/q.mjs            search the whole history without reading files (find, d
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
-scripts/collect.mjs      collects leads from 22 agency, vendor and news RSS feeds into data/leads/<date>.jsonl (every 30 min, no AI model)
+scripts/collect.mjs      collects leads from 64 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
+scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
+scripts/fuse.mjs         groups leads into stories ranked by corroboration (list, show, done); data/stories.json is untracked working state
+scripts/metrics.mjs      pipeline metrics for the editor job and the status page
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
@@ -91,6 +95,7 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 - Use the real current time (`date -u +%Y-%m-%dT%H:%M:%SZ`), never an estimate.
 - Never delete event files. Mark a duplicate with `"duplicate_of": "<id>"`; the build leaves it out. Before adding an event, run `node scripts/q.mjs dupes "<title>"`.
 - Nothing researched is wasted: every job writes a run log in `data/runs/` with what it read, added, skipped and could not confirm (open leads). The next run starts from `node scripts/q.mjs leads`.
+- Work from stories (`node scripts/fuse.mjs list`), which combine every collector, before using web search: one search engine is not the world. Cite the publisher's own page, never a news.google.com or bing.com redirect. Leak-site leads (`kind: claim`) are attackers' claims; database rows (`cve`, `breach-db`, `status`) are facts to check, not reports.
 - Slow sites: retry after 60 then 120 seconds. Do not work around sites that block automated readers.
 - Commit data changes with a message like `data: hourly sweep, 3 new, 2 updated`. Run `node scripts/build.mjs` first; never commit if it fails.
 

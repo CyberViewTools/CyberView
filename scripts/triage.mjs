@@ -12,7 +12,7 @@ import { DATA, readJson, listEventFiles, dayAgo, writeRunLog, nowIso } from "./l
 
 const STOP = new Set("the a an of in on to for and or by with from at as is was are be its it this that new after over into says said us uk how why what".split(" "));
 export const tokens = (s) => new Set(String(s || "").toLowerCase().replace(/[^a-z0-9-]+/g, " ").split(" ").filter((w) => w.length > 2 && !STOP.has(w)));
-export const NOT_EVENT = /\b(webinar|podcast|episode|sponsored|partner content|week in review|weekly recap|this week in|newsletter|round-?up|how to|tips for|best practices|buyer'?s guide|explained|what is|deal|discount|% off|hiring|job opening|career|interview with|q&a|book review|top \d+|ebook|whitepaper download|register now|save the date)\b/i;
+export const NOT_EVENT = /\b(\d+ (steps|ways|tips|things|lessons)|webinar|podcast|episode|sponsored|partner content|week in review|weekly recap|this week in|newsletter|round-?up|how to|tips for|best practices|buyer'?s guide|explained|what is|deal|discount|% off|hiring|job opening|career|interview with|q&a|book review|top \d+|ebook|whitepaper download|register now|save the date)\b/i;
 
 /** Strong match only: most of the lead's words appear in one event, or they share a CVE. */
 export function matchEvent(title, evs) {

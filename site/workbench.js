@@ -40,20 +40,25 @@
     return { advisory: a, depth: g.read_depth === "full" ? "full" : "summary", readAt: str(g.read_at, 10), check: strs(g.check, 6, 320), fixed: strs(g.fixed, 8, 160), workaround: strs(g.workaround, 5, 320), signs: strs(g.compromise_signs, 6, 320),
       exposure: { internet: 1, internal: 1, local: 1 }[g.exposure] ? g.exposure : "", exploit: g.exploit_public === true, hunt: (Array.isArray(g.hunt) ? g.hunt : []).map(cleanHunt).filter(Boolean).slice(0, 12) };
   }
+  // exploit watch: public GitHub repositories that name the CVE (a signal that exploit code may exist, not proof)
+  function cleanRepo(r) {
+    if (!r || typeof r !== "object") return { n: 0, top: [] };
+    return { n: num(r.repos, 0, 1e5) || 0, top: (Array.isArray(r.top) ? r.top : []).slice(0, 3).map(function (x) { var u = str(x && x.url, 300); return /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/.test(u) ? { name: str(x.name, 100), url: u, stars: num(x.stars, 0, 1e7) || 0 } : null; }).filter(Boolean) };
+  }
   function cleanKev(k, guides, eventOf) {
     if (!k || typeof k !== "object" || !isCve(k.cve)) return null;
     var g = guides[k.cve] || null, ev = str(eventOf[k.cve], 120);
     return { cve: k.cve, kev: true, vendor: str(k.vendor, 80), product: str(k.product, 120), name: str(k.name, 200), added: isDay(k.added) ? k.added : "", due: isDay(k.due) ? k.due : "", ransomware: k.ransomware === true,
       desc: str(k.desc, 300), cvss: num(k.cvss, 0, 10), epss: num(k.epss, 0, 1), av: /^[NALP]$/.test(k.av || "") ? k.av : "", required: str(k.required, 700),
       refs: strs(k.refs, 4, 600).filter(function (u) { return /^https:\/\//.test(u); }), affected: (Array.isArray(k.affected) ? k.affected : []).slice(0, 60).map(cleanRange).filter(Boolean),
-      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: 3 };
+      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: 3, repos: cleanRepo(k.repo).n, repoTop: cleanRepo(k.repo).top };
   }
   function cleanVuln(v, guides) {
     if (!v || typeof v !== "object" || !isCve(v.cve)) return null;
     var g = guides[v.cve] || null, prods = strs(v.products, 6, 60), ev = str(v.event_id, 120);
     return { cve: v.cve, kev: false, vendor: str(v.vendor, 80), product: prods.join(", "), name: str(v.title, 160), added: isDay(v.date) ? v.date : "", due: "", ransomware: false, desc: str(v.desc, 300),
       cvss: num(v.cvss, 0, 10), epss: num(v.epss, 0, 1), av: "", required: str(v.action, 300), refs: [], affected: prods.map(function (p) { return { vendor: str(v.vendor, 60), product: p, from: "", to: "", exact: "", nameOnly: true }; }),
-      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: v.severity === 3 ? 3 : 2 };
+      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: v.severity === 3 ? 3 : 2, repos: cleanRepo(v.repo).n, repoTop: cleanRepo(v.repo).top };
   }
 
   var flaws = [], hunt = [], inv = [], rows = [], openCve = "", builtAt = "";
@@ -126,6 +131,11 @@
       var fx = W.fixedIn(f);
       if (fx.length) list(d, "Fixed in (from NVD's version ranges)", fx);
       d.appendChild(el("p", "note", "Check and fix steps from the vendor advisory have not been written for this one yet. The advisory desk adds them for new exploited flaws within a day."));
+    }
+    if (f.repoTop.length) {
+      d.appendChild(el("h4", null, "Public repositories naming this CVE (" + f.repos + ")"));
+      var rl = el("ul"); f.repoTop.forEach(function (x) { var li = el("li"); li.appendChild(link(x.url, x.name)); li.appendChild(el("span", "note", " " + x.stars + " stars")); rl.appendChild(li); }); d.appendChild(rl);
+      d.appendChild(el("p", "note", "Found by an automatic search of GitHub. A repository naming a CVE may hold a working exploit, a detector, notes or nothing useful, and some are traps: review before running anything."));
     }
     if (f.required) { d.appendChild(el("h4", null, f.kev ? "What CISA requires" : "What to do")); d.appendChild(el("p", null, f.required)); }
     var ln = el("p", "wblinks");

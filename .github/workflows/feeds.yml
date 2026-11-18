@@ -32,6 +32,8 @@ jobs:
       - name: Context layers (internet disruption signals, disaster alerts)
         # a failing source keeps its old items, marked stale; only a total failure stops the run
         run: node scripts/context.mjs
+      - name: Exploit watch (public repositories naming exploited CVEs)
+        run: node scripts/osint.mjs exploits || true
       - name: Validate and security check
         run: node scripts/build.mjs && node scripts/security-check.mjs
       - name: Commit and push

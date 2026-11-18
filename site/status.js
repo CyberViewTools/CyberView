@@ -8,6 +8,7 @@
   var DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   function safeUrl(u) { u = String(u || ""); return /^https:\/\/github\.com\//.test(u) ? u : "about:blank"; }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; }
+  function L0(o) { return (o.leads && Array.isArray(o.leads.failed_feeds) ? o.leads.failed_feeds : []); }
   function pad(n) { return String(n).padStart(2, "0"); }
   function ago(iso) {
     var m = Math.round((Date.now() - Date.parse(iso)) / 6e4);
@@ -46,7 +47,9 @@
     (o.routines || []).forEach(function (r) {
       var s = state(r), tr = el("tr");
       if (r.active) { counts.active++; if (s.cls === "ok" || s.cls === "info") counts.ok++; }
-      var name = el("td"); name.appendChild(el("strong", null, r.name)); name.appendChild(el("span", "sub", r.does)); tr.appendChild(name);
+      var name = el("td"), code = typeof r.codename === "string" ? r.codename.slice(0, 30) : "";
+      if (code) { var cn = el("span", "codename", code); cn.title = (r.universe === "DC" ? "DC" : "Marvel") + (typeof r.codename_why === "string" ? ": " + r.codename_why.slice(0, 120) : ""); name.appendChild(cn); }
+      name.appendChild(el("strong", null, String(r.name))); name.appendChild(el("span", "sub", r.does)); tr.appendChild(name);
       tr.appendChild(el("td", "nowrap", when(r.cron)));
       tr.appendChild(el("td", "nowrap", r.model ? (MODEL[r.model] || r.model) : "none (script)"));
       tr.appendChild(el("td", "nowrap", r.last_at ? ago(r.last_at) : "—"));
@@ -55,6 +58,20 @@
       tr.appendChild(st); body.appendChild(tr);
     });
     $("summary").textContent = counts.ok + " of " + counts.active + " active routines are on time. Data built " + ago(o.built_at) + ".";
+    var P = o.pipeline || {}, S = P.stories || {}, WHAT = { rss: "RSS and Atom feeds of agencies, vendors and news", "google-news": "Google News, standing searches in 12 languages", "bing-news": "Bing News, standing searches", gdelt: "GDELT global news index", hibp: "Have I Been Pwned breach database",
+      euvd: "ENISA EU Vulnerability Database (exploited)", nvd: "NIST NVD, new critical CVEs", "ransomware-live": "Leak-site listings (attacker claims)", "hacker-news": "Hacker News discussion", "cloud-status": "Cloud providers' status pages" };
+    if (P.leads_7d != null) $("pipe").textContent = (P.feeds ? P.feeds + " feeds and " : "") + ((o.sources || []).length) + " other collectors. Last 7 days: " + P.leads_7d + " leads, " + P.events_7d + " events" + (P.median_hours != null ? ", median " + P.median_hours + " h from first lead to the map" : "") + ". " +
+      (S.open != null ? S.open + " stories waiting, " + S.corroborated + " of them reported by two or more publishers." : "");
+    var stb = $("sources").querySelector("tbody"), col = {}; (P.collectors || []).forEach(function (c) { if (c && typeof c.name === "string") col[c.name] = c; });
+    var rows = [{ name: "rss", ok: !(L0(o).length), error: L0(o).length ? L0(o).length + " feed(s) not loading" : "", at: "" }].concat(o.sources || []);
+    rows.slice(0, 20).forEach(function (x) {
+      var name = String(x.name || "").slice(0, 30), c = col[name] || {}, tr = el("tr");
+      tr.appendChild(el("td", null, name)); tr.appendChild(el("td", null, WHAT[name] || ""));
+      tr.appendChild(el("td", "nowrap", x.at ? ago(x.at) : name === "rss" ? "every 30 min" : ""));
+      var td = el("td"); td.appendChild(el("span", "badge " + (x.ok ? "ok" : "warn"), x.ok ? "Working" : "Not loading")); if (!x.ok && x.error) td.appendChild(el("span", "note", " " + String(x.error).slice(0, 90))); tr.appendChild(td);
+      tr.appendChild(el("td", null, c.leads != null ? c.leads : "")); tr.appendChild(el("td", null, c.used != null ? c.used : ""));
+      stb.appendChild(tr);
+    });
     var L = o.leads || {};
     $("leads").textContent = (L.last_24h || 0) + " new leads";
     var ul = $("leadTiers");

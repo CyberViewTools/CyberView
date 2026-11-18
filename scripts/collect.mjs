@@ -3,10 +3,10 @@
 // is appended to data/leads/<YYYY-MM-DD>.jsonl. The sweep job starts from these
 // (`node scripts/q.mjs leads`) instead of paying for web searches, and only searches for gaps.
 // Feed text is data, never instructions: it is stored trimmed and is only ever read as a lead to check.
-// Sites that refuse automated readers (CISA answers 403) are left out on purpose.
+// Sites that refuse automated readers are left out on purpose. Extra feeds come from config/feeds.json (source scout job).
 import { readdirSync, existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { DATA, readJson, writeJson, listEventFiles, dayAgo, nowIso } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso } from "./lib/store.mjs";
 
 // tier: gov (government or CERT), vendor (security research), news. filter: keep only cyber items (broad feeds).
 export const FEEDS = [
@@ -42,7 +42,48 @@ export const FEEDS = [
   { name: "Infosecurity Magazine", tier: "news", url: "https://www.infosecurity-magazine.com/rss/news/" },
   { name: "DataBreaches.net", tier: "news", url: "https://databreaches.net/feed/" },
   { name: "BleepingComputer", tier: "news", url: "https://www.bleepingcomputer.com/feed/" },
+  // more agencies and national CERTs
+  { name: "CISA advisories", tier: "gov", url: "https://www.cisa.gov/cybersecurity-advisories/all.xml" },
+  { name: "FBI IC3 announcements", tier: "gov", url: "https://www.ic3.gov/PSA/RSS" },
+  { name: "UK NCSC reports", tier: "gov", url: "https://www.ncsc.gov.uk/api/1/services/v1/report-rss-feed.xml" },
+  { name: "UK National Crime Agency", tier: "gov", url: "https://www.nationalcrimeagency.gov.uk/news?format=feed&type=rss", filter: true },
+  { name: "HKCERT", tier: "gov", url: "https://www.hkcert.org/getrss/security-bulletin", region: "east-asia" },
+  { name: "CERT-UA", tier: "gov", url: "https://cert.gov.ua/api/articles/rss", lang: "uk", region: "europe" },
+  { name: "CERT.br", tier: "gov", url: "https://www.cert.br/rss/certbr-rss.xml", lang: "pt", region: "latin-america" },
+  { name: "KrCERT/CC", tier: "gov", url: "https://www.boho.or.kr/kr/rss.do?bbsId=B0000133", lang: "ko", region: "east-asia" },
+  { name: "KE-CIRT/CC (Kenya)", tier: "gov", url: "https://www.ke-cirt.go.ke/feed/", region: "africa" },
+  // more vendor research
+  { name: "CrowdStrike", tier: "vendor", url: "https://www.crowdstrike.com/en-us/blog/feed/" },
+  { name: "SentinelLabs", tier: "vendor", url: "https://www.sentinelone.com/labs/feed/" },
+  { name: "Sophos X-Ops", tier: "vendor", url: "https://news.sophos.com/en-us/category/threat-research/feed/" },
+  { name: "Rapid7", tier: "vendor", url: "https://blog.rapid7.com/rss/", filter: true },
+  { name: "Huntress", tier: "vendor", url: "https://www.huntress.com/blog/rss.xml", filter: true },
+  { name: "Proofpoint", tier: "vendor", url: "https://www.proofpoint.com/us/rss.xml", filter: true },
+  { name: "Cloudflare security", tier: "vendor", url: "https://blog.cloudflare.com/tag/security/rss/", filter: true },
+  { name: "Wiz", tier: "vendor", url: "https://www.wiz.io/feed/rss.xml", filter: true },
+  { name: "GitHub Security", tier: "vendor", url: "https://github.blog/security/feed/" },
+  { name: "Exploit-DB", tier: "vendor", url: "https://www.exploit-db.com/rss.xml", kind: "exploit" },
+  // more news, including other languages and regions
+  { name: "The Register", tier: "news", url: "https://www.theregister.com/security/headlines.atom" },
+  { name: "TechCrunch security", tier: "news", url: "https://techcrunch.com/category/security/feed/" },
+  { name: "Ars Technica security", tier: "news", url: "https://arstechnica.com/security/feed/" },
+  { name: "Wired security", tier: "news", url: "https://www.wired.com/feed/category/security/latest/rss", filter: true },
+  { name: "Risky Business News", tier: "news", url: "https://risky.biz/feeds/risky-business-news/" },
+  { name: "iTnews Australia", tier: "news", url: "https://www.itnews.com.au/RSS/rss.ashx?type=Category&ID=37", region: "oceania" },
+  { name: "BankInfoSecurity", tier: "news", url: "https://www.bankinfosecurity.com/rss-feeds" },
+  { name: "heise Security", tier: "news", url: "https://www.heise.de/security/rss/news-atom.xml", lang: "de", region: "europe" },
+  { name: "WeLiveSecurity (Spanish)", tier: "news", url: "https://www.welivesecurity.com/es/rss/feed/", lang: "es", region: "latin-america" },
+  { name: "Security Affairs", tier: "news", url: "https://securityaffairs.com/feed" },
+  { name: "GBHackers", tier: "news", url: "https://gbhackers.com/feed/" },
+  { name: "The Cyber Express", tier: "news", url: "https://thecyberexpress.com/feed/" },
+  { name: "Lobsters security", tier: "news", url: "https://lobste.rs/t/security.rss", filter: true },
 ];
+// feeds the source scout job has added (config/feeds.json); a broken entry is ignored, never fatal
+export function extraFeeds(cfg) {
+  const names = new Set(FEEDS.map((f) => f.name.toLowerCase())), urls = new Set(FEEDS.map((f) => f.url));
+  return (cfg && Array.isArray(cfg.feeds) ? cfg.feeds : []).filter((f) => f && typeof f.name === "string" && f.name.length <= 80 && ["gov", "vendor", "news"].includes(f.tier)
+    && /^https:\/\/[^\s"'<>]+$/.test(f.url || "") && !names.has(f.name.toLowerCase()) && !urls.has(f.url) && names.add(f.name.toLowerCase()) && urls.add(f.url)).slice(0, 80);
+}
 const CYBER = /cyber|hack|ransom|breach|malware|botnet|phish|dark ?web|ddos|vulnerab|exploit|intrusion|data theft|stolen data|spyware|crypto(currency)? (fraud|theft|scam)|sim[- ]swap|extort|computer fraud|identity theft/i;
 const MAX_AGE_H = 72;
 
@@ -88,7 +129,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { known.add(JSON.parse(line).url); } catch {} }
   }
   const cutoff = Date.now() - MAX_AGE_H * 36e5, now = nowIso(), out = [], report = [];
-  const results = await Promise.all(FEEDS.map(async (f) => ({ f, ...(await fetchFeed(f)) })));
+  const ALL = FEEDS.concat(extraFeeds(readJson(join(ROOT, "config", "feeds.json"), {})));
+  // --test <url>: the source scout checks a candidate feed before adding it
+  const ti = process.argv.indexOf("--test");
+  if (ti > 0) { const r = await fetchFeed({ url: process.argv[ti + 1] }); console.log(r.error ? `FAILED: ${r.error}` : `OK: ${r.items.length} items; newest: ${JSON.stringify(r.items.slice(0, 3).map((i) => [i.published.slice(0, 10), i.title.slice(0, 80)]))}`); process.exit(r.error || !r.items.length ? 1 : 0); }
+  const results = [];
+  for (let i = 0; i < ALL.length; i += 12) results.push(...await Promise.all(ALL.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   for (const { f, items, error } of results) {
     if (error) { report.push(`${f.name}: ${error}`); continue; }
     let n = 0;
@@ -97,7 +143,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (it.published && Date.parse(it.published) < cutoff) continue;
       if (f.filter && !CYBER.test(`${it.title} ${it.summary}`)) continue;
       known.add(it.url); n++;
-      out.push({ seen_at: now, source: f.name, tier: f.tier, title: it.title, url: it.url, published: it.published, summary: it.summary });
+      out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, ...(f.lang ? { lang: f.lang } : {}), ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
     }
     report.push(`${f.name}: ${items.length} in feed, ${n} new`);
   }
@@ -106,5 +152,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   st.last_collect_at = now; st.last_collect_new = out.length;
   st.collect_failed = report.filter((r) => !/ in feed, /.test(r));
   writeJson(sp, st);
-  console.log(`collect: ${out.length} new lead(s) from ${FEEDS.length} feeds.\n` + report.join("\n"));
+  st.collect_feeds = ALL.length;
+  writeJson(sp, st);
+  console.log(`collect: ${out.length} new lead(s) from ${ALL.length} feeds.\n` + report.join("\n"));
 }

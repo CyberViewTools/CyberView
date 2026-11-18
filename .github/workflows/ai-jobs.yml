@@ -111,7 +111,7 @@ jobs:
           git config user.name "cyberview-${{ steps.pick.outputs.job }}"
           git config user.email "cyberview-jobs@users.noreply.github.com"
           d="EOF_$(openssl rand -hex 8)"
-          { echo "text<<$d"; node scripts/job-prompt.mjs "${{ steps.pick.outputs.job }}"; echo; echo "Model for this run: ${{ steps.pick.outputs.model }}. This run is unattended, inside GitHub Actions: GH_TOKEN is set for gh."; echo "$d"; } >> "$GITHUB_OUTPUT"
+          { echo "text<<$d"; NO_HOUSEKEEPING=1 node scripts/job-prompt.mjs "${{ steps.pick.outputs.job }}"; echo; echo "Model for this run: ${{ steps.pick.outputs.model }}. This run is unattended, inside GitHub Actions: GH_TOKEN is set for gh."; echo "$d"; } >> "$GITHUB_OUTPUT"
 
       # one step per sign-in method: a static credential must not sit next to the federation inputs
       - name: Run the job with Claude (identity federation)

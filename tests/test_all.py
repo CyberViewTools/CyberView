@@ -328,7 +328,7 @@ async def main():
             ok("layers: health shows live and stale", "Live" in txt and "Stale" in txt and "timeout" in txt, txt[:200])
             hrefs = await pg.eval_on_selector_all("#layers a", "as => as.map(a => a.getAttribute('href'))")
             ok("layers: off-site and script links neutralised", "javascript:alert(1)" not in hrefs and "https://evil.test/x" not in hrefs, hrefs)
-            await pg.click("#layers .chip >> nth=0")
+            await pg.click("#layers .chip:not([data-arc]) >> nth=0")
             ok("layers: disruptions shade the country", await pg.locator("path.country.dis").count() == 1)
             await pg.keyboard.press("Escape")
             ok("layers: Esc closes the panel", await pg.locator("#layers").is_hidden())
@@ -587,7 +587,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Archive", "Trends", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Archive", "Trends", "Exercise", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -634,13 +634,104 @@ async def main():
             ok("phone: Esc closes the sheet and returns focus", await pg.locator("#navSheet").is_hidden() and await pg.evaluate("document.activeElement.id") == "navBtn")
             vs = await pg.locator("#viewseg").bounding_box()
             ok("phone: view switcher fills its row", vs["width"] > 330, vs)
-            for sub in ["archive.html", "trends.html", "about.html"]:
+            for sub in ["archive.html", "trends.html", "tabletop.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 5 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 6 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
+
+        # v1.16: arcs and blast radius, campaign replay, wall mode, tabletop exercise
+        b16 = copy.deepcopy(bundle)
+        geo = [e for e in b16["events"] if e.get("lat") is not None and e.get("status") != "claimed" and e.get("lng") is not None]
+        src, dst, vic = geo[0], geo[1], geo[2]
+        src["links"] = [{"to": dst["id"], "rel": "customer of breached supplier", "url": "https://example.com/story"}]
+        vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}
+        vic["pin_type"] = "victim"; vic["geo_basis"] = "victim location"
+        bad = geo[3]; bad["links"] = [{"to": geo[4]["id"], "rel": "x", "url": "javascript:alert(1)"}]
+        site16 = make_site(b16)
+        tt = {"label": "exercise", "generated_at": "2026-11-20T15:40:00Z", "date": "2026-11-20", "title": "Exercise: a supplier breach reaches you",
+              "based_on": [src["id"]], "real_story": "A supplier was breached.", "duration_min": 60, "roles": ["Incident lead", "Communications"],
+              "facts": [{"text": "Fact one.", "source_url": "https://example.com/a"}, {"text": "Fact two.", "source_url": "javascript:alert(1)"}],
+              "scenario": "Your organisation uses the supplier.",
+              "injects": [{"at_min": 0, "title": "First signal", "text": "A customer emails."}, {"at_min": 15, "title": "Confirmation", "text": "The supplier confirms.", "ask": "Who decides?"}, {"at_min": 30, "title": "Media", "text": "A reporter calls."}],
+              "questions": ["Q1?", "Q2?", "Q3?", "Q4?"], "good_looks_like": ["G1", "G2", "G3"], "adapt": "Shrink it.", "sources": [{"name": "Example", "url": "https://example.com/a"}]}
+        json.dump({"built_at": "x", "current": tt, "past": [], "exercises": []}, open(os.path.join(site16, "data", "tabletop.json"), "w"))
+
+        async def v116(url):
+            pg, errs = await open_page(browser, url, wait=1800)
+            await pg.evaluate(f"location.hash='e={src['id']}'"); await pg.wait_for_timeout(1500)
+            ok("arcs: a stated link is drawn", await pg.locator("#svg .arc.link").count() >= 1)
+            ok("arcs: the selected event's link is highlighted", await pg.locator("#svg .arc.link.hot").count() >= 1)
+            ok("arcs: blast radius around the selected event", await pg.locator("#svg .blast").count() == 1 and "linked" in (await pg.locator("#svg .blast text").text_content() or ""))
+            ok("card: lists the stated link with its source", await pg.locator("#dcard .rel.links").count() == 1 and "customer of breached supplier" in await pg.locator("#dcard .rel.links").text_content())
+            hrefs = await pg.eval_on_selector_all("#dcard a", "as => as.map(a => a.href)")
+            ok("card: no unsafe link targets", not any(h.startswith("javascript") for h in hrefs), hrefs)
+            await pg.evaluate(f"location.hash='e={vic['id']}'"); await pg.wait_for_timeout(1500)
+            ok("arcs: attributed origin drawn dashed", await pg.locator("#svg .arc.origin").count() >= 1)
+            ok("card: attribution names who made it", await pg.locator("#dcard .todo.attr").count() == 1 and "Test Agency" in await pg.locator("#dcard .todo.attr").text_content())
+            ok("arcs: an unsafe link url is dropped", await pg.evaluate(f"!document.body.textContent.includes('javascript:')"))
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(200)
+            await pg.click("#zlayers"); await pg.wait_for_timeout(150)
+            ok("layers: arc toggles listed", await pg.locator("#layers [data-arc]").count() == 2)
+            await pg.click("#layers [data-arc=links]"); await pg.click("#layers [data-arc=origins]"); await pg.wait_for_timeout(200)
+            ok("layers: arcs can be hidden", await pg.locator("#svg .arc").count() == 0)
+            await pg.click("#layers [data-arc=links]"); await pg.click("#layers [data-arc=origins]")
+            await pg.keyboard.press("Escape")
+            # campaign replay
+            await pg.click("#tab-pat"); await pg.wait_for_timeout(200)
+            rb = pg.locator("#pat button:has-text('Replay on globe')")
+            ok("replay: patterns offer a replay", await rb.count() >= 1)
+            await rb.first.click(); await pg.wait_for_timeout(1700)
+            ok("replay: panel opens on step 1", await pg.locator("#replay").is_visible() and (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
+            ok("replay: stage named", len((await pg.locator("#rpStage").text_content()).strip()) > 3)
+            ok("replay: step markers drawn", await pg.locator("#svg .stepn").count() >= 1 and await pg.locator("#svg .rpcur").count() == 1)
+            await pg.click("#rpPlay"); await pg.click("#rpNext"); await pg.wait_for_timeout(1600)
+            ok("replay: next moves on and draws the path", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and await pg.locator("#svg .stepn").count() >= 2)
+            await pg.keyboard.press("ArrowLeft"); await pg.wait_for_timeout(300)
+            ok("replay: arrow keys step back", (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+            ok("replay: Esc closes and clears the pattern", await pg.locator("#replay").is_hidden() and await pg.evaluate("!document.body.classList.contains('replaying')"))
+            # wall mode
+            await pg.click("#wallBtn"); await pg.wait_for_timeout(3000)
+            ok("wall: overlay shown, controls hidden", await pg.locator("#wall").is_visible() and await pg.locator("header").is_hidden() and await pg.locator("aside").is_hidden())
+            ok("wall: five counters and a clock", await pg.locator("#wStats .wstat").count() == 5 and ":" in await pg.locator("#wClock").text_content())
+            ok("wall: flies to a high-severity event", len((await pg.locator("#wCap h2").text_content() or "").strip()) > 5 and await pg.locator("#svg .ring.wallr, #svg .cl.sel").count() == 1)
+            ok("wall: headline ticker", await pg.locator("#wTrack .wit").count() >= 4)
+            gb = await pg.locator("#svg .sphere").bounding_box()
+            ok("wall: globe is large and centred", gb and gb["height"] > 560 and abs(gb["x"] + gb["width"] / 2 - 720) < 40, gb)
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(400)
+            ok("wall: Esc exits back to the map", await pg.locator("#wall").is_hidden() and await pg.locator("header").is_visible() and await pg.evaluate("!document.body.classList.contains('wall')"))
+            ok("v1.16: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "index.html?wall")); await pg.wait_for_timeout(2500)
+            ok("wall: ?wall opens straight into wall mode", await pg.locator("#wall").is_visible())
+            await pg.context.close()
+            ctx = await browser.new_context(viewport={"width": 390, "height": 844})
+            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "index.html?wall")); await pg.wait_for_timeout(2500)
+            ok("phone wall: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            cap, st = await pg.locator("#wCap").bounding_box(), await pg.locator("#wStats").bounding_box()
+            ok("phone wall: counters and caption do not overlap", cap and st and st["y"] + st["height"] <= cap["y"], [st, cap])
+            await pg.goto(url.replace("index.html", "tabletop.html")); await pg.wait_for_timeout(800)
+            ok("phone exercise: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ctx.close()
+            # tabletop page
+            pg, errs = await open_page(browser, url.replace("index.html", "tabletop.html"), wait=900)
+            ok("exercise: title and banner", "supplier breach" in await pg.locator("#ttTitle").text_content() and await pg.locator("#ttBanner").is_visible())
+            ok("exercise: injects listed in order", await pg.locator("#ttInj > li").count() == 3)
+            ok("exercise: fact with an unsafe source is dropped", await pg.locator(".ttfacts li").count() == 1)
+            ok("exercise: map link to the real event", await pg.locator(f"a[href='./#e={src['id']}']").count() == 1)
+            await pg.check("#ttReveal"); await pg.wait_for_timeout(100)
+            ok("exercise: reveal hides later updates", await pg.locator("#ttInj > li.locked").count() == 3)
+            await pg.click("#ttGo"); await pg.wait_for_timeout(1300)
+            ok("exercise: clock runs and opens the first update", (await pg.locator("#ttFace").text_content()) in ("00:01", "00:02") and await pg.locator("#ttInj > li.locked").count() == 2)
+            await pg.click("#ttReset")
+            ok("exercise: reset", await pg.locator("#ttFace").text_content() == "00:00")
+            ok("exercise: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Exercise")
+            ok("exercise: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(site16, v116)
 
         await browser.close()
 

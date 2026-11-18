@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.15",date:"2026-11-18"};
+var BUILD={version:"1.16",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -68,7 +68,7 @@ function daysAgo(n){var d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-
 function parseDay(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2],12);}
 // date formatters are built once and reused: creating one per call made long feeds slow
 var DTF={day:new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric"}),time:new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}),
-  tz:new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"})},dayMemo={};
+  tz:new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}),clock:new Intl.DateTimeFormat(undefined,{hour:"numeric",minute:"2-digit"})},dayMemo={};
 function fmtDay(s){return dayMemo[s]||(dayMemo[s]=DTF.day.format(parseDay(s)));}
 function fmtTime(iso){var t=Date.parse(iso);return isFinite(t)?DTF.time.format(new Date(t)):"";}
 function fmtNum(n){return n>=1e9?(n/1e9).toFixed(1).replace(/\.0$/,"")+"B":n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,"")+"M":n>=1e4?Math.round(n/1e3)+"K":n.toLocaleString();}
@@ -180,6 +180,15 @@ function renderLayers(){
   var box=$("layers");if(!box||box.hidden)return;box.textContent="";
   box.appendChild(el("h3",null,"Map layers"));
   var ev=el("div","lrow");ev.appendChild(el("span","lname","Cyber events"));ev.appendChild(el("span","lh h-live","Always on"));box.appendChild(ev);
+  var arcs=arcsFor(lastList);
+  Object.keys(ARC_DEFS).forEach(function(k){
+    var def=ARC_DEFS[k],r=el("div","lrow"),n=arcs.filter(function(x){return x.kind===(k==="links"?"link":"origin");}).length;
+    var b=el("button","chip tog",def.label+" ");b.type="button";b.setAttribute("aria-pressed",arcOn[k]?"true":"false");b.title=def.what;b.dataset.arc=k;
+    b.appendChild(el("span","n",arcOn[k]?String(n):"off"));
+    b.addEventListener("click",function(){arcOn[k]=!arcOn[k];lsSet("cwm.arcs",JSON.stringify(arcOn));render();renderLayers();});
+    r.appendChild(b);r.appendChild(el("span","lh h-live",arcOn[k]?(n?n+" on screen":"none on screen"):"Hidden"));box.appendChild(r);
+    box.appendChild(el("p","lnote",def.what));
+  });
   Object.keys(CTX_DEFS).forEach(function(k){
     var def=CTX_DEFS[k],c=ctx[k],h=ctxHealth(c),r=el("div","lrow");
     var b=el("button","chip tog",def.label+" ");b.type="button";b.setAttribute("aria-pressed",ctxOn[k]?"true":"false");b.title=def.what;
@@ -265,6 +274,12 @@ function clean(id,d){
   e.kev=e.cveMeta.some(function(c){return c.kev;})?1:0;
   e.epss=e.cveMeta.reduce(function(m,c){return c.epss!==null&&c.epss>m?c.epss:m;},-1);
   e.cvss=e.cveMeta.reduce(function(m,c){return c.cvss!==null&&c.cvss>m?c.cvss:m;},-1);
+  /* attribution only when a government or the investigating firm made it, with the page that says so */
+  var at=d.attribution;e.attr=null;
+  if(at&&typeof at==="object"&&(at.by_type==="government"||at.by_type==="investigator")){var aLat=numIn(at.lat,-90,90),aLng=numIn(at.lng,-180,180),au=str(at.url,600);
+    if(aLat!==null&&aLng!==null&&/^https:\/\//i.test(au)&&str(at.by,120)&&str(at.actor,120))e.attr={actor:str(at.actor,120),origin:str(at.origin_country,60),lat:aLat,lng:aLng,by:str(at.by,120),byType:at.by_type,url:au};}
+  e.links=(Array.isArray(d.links)?d.links:[]).slice(0,40).map(function(l){if(!l||typeof l!=="object")return null;var to=str(l.to,120),u=str(l.url,600);
+    return /^[a-z0-9][a-z0-9-]{2,119}$/.test(to)&&to!==id&&/^https:\/\//i.test(u)?{to:to,rel:str(l.rel,60)||"linked",url:u}:null;}).filter(Boolean);
   e.actorPin=e.pin==="actor"||/actor origin/i.test(e.geo);e.countryPin=!e.actorPin&&e.pin==="country";
   e.wlHay=[e.title,e.org,e.sector,e.country,e.products.join(" | "),e.tags.join(" | "),e.actor,e.cves.join(" ")].join(" | ").toLowerCase();
   e.lensHay=(e.sector+" "+e.tags.join(" ")+" "+e.org).toLowerCase();
@@ -524,7 +539,15 @@ function card(e,open){
     acts.appendChild(rpb);
     b.appendChild(acts);
     if(rep.id===e.id)b.appendChild(reportForm(e));
-    var rel=related(e);
+    if(e.attr){var ab=el("div","todo attr");ab.appendChild(el("h4",null,"Attribution"));
+      ab.appendChild(el("p",null,"Attributed to "+e.attr.actor+(e.attr.origin?", said to operate from "+e.attr.origin:"")+", by "+e.attr.by+" ("+(e.attr.byType==="government"?"a government body":"the investigating firm")+")."));
+      ab.appendChild(el("p","mono","Attribution is a judgement by the named body, not a CyberView finding, and can be disputed."));
+      var aa=el("a",null,"Read the attribution");aa.href=safeUrl(e.attr.url);aa.target="_blank";aa.rel="noopener noreferrer";ab.appendChild(aa);b.appendChild(ab);}
+    var lks=linksOf(e);
+    if(lks.length){var lu=el("ul","rel links");lu.appendChild(el("li",null,"Linked by sources ("+lks.length+"):"));lks.forEach(function(x){var l=el("li");var lb=el("button",null,x.rel+" · "+x.e.title);lb.type="button";
+      lb.addEventListener("click",function(){state.day=null;state.spot=null;state.country=null;select(x.e.id,true);});l.appendChild(lb);
+      if(x.url){var la=el("a","src",x.src==="source"?"source":"");la.textContent="source";la.href=safeUrl(x.url);la.target="_blank";la.rel="noopener noreferrer";l.appendChild(document.createTextNode(" "));l.appendChild(la);}lu.appendChild(l);});b.appendChild(lu);}
+    var rel=related(e).filter(function(o){return !lks.some(function(x){return x.e.id===o.id;});});
     if(rel.length){var ul=el("ul","rel");ul.appendChild(el("li",null,"Related:"));rel.forEach(function(o){var l=el("li");var rb=el("button",null,fmtDay(o.date)+" · "+o.title);rb.type="button";rb.addEventListener("click",function(){state.day=null;state.spot=null;state.country=null;select(o.id,true);});l.appendChild(rb);ul.appendChild(l);});b.appendChild(ul);}
     a.appendChild(b);
   }
@@ -779,6 +802,7 @@ function renderPatterns(){
     if(seq.length){var ol=el("ol");seq.slice(0,14).forEach(function(i){var e=byId[i],li=el("li"),b=el("button",null,e.org||e.title);b.type="button";
       b.addEventListener("click",function(){state.pattern=p.id;setTab("feed");select(i,true);});li.appendChild(b);li.appendChild(el("small",null,"  "+fmtWhen(e)));ol.appendChild(li);});c.appendChild(ol);}
     var acts=el("div","acts");
+    if(seq.length>1){var rb=el("button","primary","Replay on globe");rb.type="button";rb.title="Watch this pattern unfold step by step on the globe";rb.addEventListener("click",function(){replayStart(p.id);});acts.appendChild(rb);}
     [["Show on map","map"],["Timeline","time"],["Correlation view","graph"]].forEach(function(a){var b=el("button",null,a[0]);b.type="button";b.addEventListener("click",function(){pickPattern(p.id,a[1]);});acts.appendChild(b);});
     if(state.pattern===p.id){var x=el("button",null,"Clear");x.type="button";x.addEventListener("click",function(){state.pattern=null;render();});acts.appendChild(x);}
     c.appendChild(acts);box.appendChild(c);
@@ -786,7 +810,7 @@ function renderPatterns(){
 }
 
 /* ---------- map ---------- */
-var svg=d3.select("#svg"),gMap=svg.append("g"),gMarks=svg.append("g").attr("filter","url(#glow)");
+var svg=d3.select("#svg"),gMap=svg.append("g"),gArcs=svg.append("g").attr("class","arcs"),gMarks=svg.append("g").attr("filter","url(#glow)");
 /* the globe; proj() hides points on the far side */
 var globeProj=d3.geoOrthographic().clipAngle(90).precision(.4),globe=true,ROT0=[30,-28],rot=ROT0.slice(),spin=null,raf2=0;
 var projection=globeProj.rotate(rot),path=d3.geoPath(projection),T=d3.zoomIdentity,W=800,H=450,FX=400,FY=225,FW=600,FH=300,world=null,raf=0;
@@ -801,6 +825,7 @@ function layout(){
   var hh=document.querySelector("header").getBoundingClientRect().height,dh=$("days").getBoundingClientRect().height;
   document.documentElement.style.setProperty("--hdr",hh+"px");
   var x0=wide?60:8,y0=wide?hh+34:8,x1=wide?W-430-34:W-8,y1=wide?H-dh-34:H-8;
+  if(wall.on){x0=W>900?W*.2:16;x1=W>900?W*.8:W-16;y0=W>900?96:200;y1=H-(W>900?150:250);}
   if(x1-x0<160){x0=8;x1=W-8;} if(y1-y0<120){y0=8;y1=H-8;}
   FX=(x0+x1)/2;FY=(y0+y1)/2;FW=x1-x0;FH=y1-y0;
   svg.attr("viewBox","0 0 "+W+" "+H);
@@ -828,7 +853,7 @@ function turnTo(lng,lat){stopSpin();rot=[-lng,Math.max(-70,Math.min(70,-lat))];g
 function stopSpin(){if(spin){spin.stop();spin=null;}}
 function startSpin(){
   if(reduced||spin||!globe)return;
-  spin=d3.timer(function(t){if(!globe||t>45000||document.hidden||state.view!=="map"){stopSpin();return;}
+  spin=d3.timer(function(t){if(!globe||(t>45000&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();return;}
     rot[0]+=.06;globeProj.rotate(rot);if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;repath();drawMarks();});});
 }
 /* the map is always a globe: Refresh turns it back to the starting view and lets it spin again */
@@ -1254,7 +1279,7 @@ function hoBuild(){
   L.push("");L.push("Unverified attacker claims are left out. Details and sources: "+location.href.split("#")[0]);
   return L.join("\n");
 }
-function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · drag to turn the globe · L layers · R refresh · F full screen · Esc back");}
+function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · drag to turn the globe · L layers · W wall mode · R refresh · F full screen · Esc back");}
 /* ---------- modal dialogs: backdrop, focus moved in and restored, Tab kept inside, Esc closes ---------- */
 var modalOpen=null,modalReturn=null;
 function modalShow(id,open,opener){
@@ -1273,6 +1298,7 @@ function hoToggle(open){var d=$("hoDlg");modalShow("hoDlg",open,$("hoOpen"));$("
   if(open){var s=lsGet("cwm.ho");$("hoNote").textContent=s?"Includes what is new since your last handover on "+fmtTime(s)+".":"First handover on this device. Later ones also list what is new since the previous one.";$("hoText").value=hoBuild();$("hoText").focus();$("hoText").scrollTop=0;}}
 function drawMarks(){
   gMarks.selectAll("*").remove();
+  safe("arcs",drawArcs);
   if(state.view!=="map")return;
   if(ctxOn.gdacs&&ctx.gdacs)ctx.gdacs.items.forEach(function(x){
     var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]);
@@ -1284,7 +1310,7 @@ function drawMarks(){
   });
   var cs=clusters(lastList),recent=ymd(daysAgo(1));
   var cp=curPattern();
-  if(cp&&cp.chain.length>1){
+  if(cp&&cp.chain.length>1&&!rp.on){
     var pts=cp.chain.map(function(id){var e=lastList.find(function(x){return x.id===id;});if(!e||e.lat===null)return null;var p=proj(e.lng,e.lat);return p?[T.applyX(p[0]),T.applyY(p[1])]:null;}).filter(Boolean);
     if(pts.length>1){gMarks.append("path").attr("class","chainline").attr("d",d3.line().curve(d3.curveCatmullRom.alpha(.6))(pts));
       pts.forEach(function(p,i){var g=gMarks.append("g").attr("class","stepn").attr("transform","translate("+(p[0]+13)+","+(p[1]-13)+")");g.append("circle").attr("r",8);g.append("text").text(i+1);});}
@@ -1295,7 +1321,7 @@ function drawMarks(){
       var e=c.items[0].e;
       g.attr("class","m"+(e.status==="claimed"?" hollow":"")).attr("aria-label",e.title);
       if(e.date>=recent&&e.severity>1)g.append("circle").attr("class","pulse").attr("r",9).attr("stroke","var(--c-"+e.category+")");
-      if(state.sel===e.id)g.append("circle").attr("class","ring").attr("r",e.wl||e.actorPin||e.countryPin?18:15);
+      if(state.sel===e.id||wall.focus===e.id)g.append("circle").attr("class","ring"+(wall.focus===e.id?" wallr":"")).attr("r",e.wl||e.actorPin||e.countryPin?18:15);
       rings(g,e,1);
       g.append("path").attr("d",symPath(e.category,[0,70,125,200][e.severity]))
         .attr("fill","var(--c-"+e.category+")").style("stroke",e.status==="claimed"?"var(--c-"+e.category+")":null);
@@ -1303,7 +1329,7 @@ function drawMarks(){
       g.on("pointerenter",function(){tip(c.x,c.y,e.title,fmtDay(e.date)+" · "+(e.place||e.country)+" · "+CONF[e.conf]+" confidence"+pinNote(e)+(e.wl?" · match your environment":""));}).on("pointerleave",hideTip);
     }else{
       var ids=c.items.map(function(p){return p.e.id;});
-      var has=state.sel&&ids.indexOf(state.sel)>=0;
+      var has=(state.sel&&ids.indexOf(state.sel)>=0)||(wall.on&&wall.focus&&ids.indexOf(wall.focus)>=0);
       g.attr("class","cl"+(has?" sel":"")).attr("aria-label",ids.length+" events here");
       var cr=9+Math.min(9,Math.sqrt(ids.length)*2.4),nw=c.items.filter(function(p){return p.e.wl;}).length;
       if(nw)g.append("circle").attr("class","wlr").attr("r",cr+3.5);
@@ -1348,6 +1374,250 @@ function select(id,fromFeed){
   if(!id)savedT=null;
 }
 
+/* ---------- globe stories: arcs, blast radius, campaign replay, wall mode ---------- */
+/* how far a point faces the viewer (dot product with the view centre; below 0 it is behind the globe) */
+function facing(lng,lat){proj(0,0);var l=lng*RAD,p=lat*RAD,cp=Math.cos(p);return cp*Math.cos(l)*cv[0]+cp*Math.sin(l)*cv[1]+Math.sin(p)*cv[2];}
+/* a great-circle arc lifted off the surface; it shows over the horizon and is hidden only where the globe covers it */
+function arcD(a,b){
+  var A=[a.lng,a.lat],B=[b.lng,b.lat],dist=d3.geoDistance(A,B);if(!(dist>0.002))return "";
+  var ip=d3.geoInterpolate(A,B),c=projection.translate(),R0=projection.scale(),lift=Math.min(.16,.03+dist*.07),n=Math.max(10,Math.round(dist*36)),d="",pen=false;
+  for(var i=0;i<=n;i++){
+    var t=i/n,g=ip(t),q=projection(g),h=1+lift*Math.sin(Math.PI*t);if(!q){pen=false;continue;}
+    var dx=(q[0]-c[0])*h,dy=(q[1]-c[1])*h;
+    if(facing(g[0],g[1])<0&&Math.hypot(dx,dy)<=R0){pen=false;continue;}
+    d+=(pen?"L":"M")+T.applyX(c[0]+dx).toFixed(1)+","+T.applyY(c[1]+dy).toFixed(1);pen=true;
+  }
+  return d;
+}
+var arcOn={links:true,origins:true};
+var ARC_DEFS={
+  links:{label:"Stated links",what:"Arcs between events that a source says are connected: a breached supplier and the customers hit through it, one campaign, one flaw. Links that are only inferred or rest on timing are not drawn here (see Patterns)."},
+  origins:{label:"Attributed origins",what:"Dashed arcs from where an actor is said to be based to its victim, drawn only when a government or the investigating firm made the attribution, and labelled with who said so. Attribution can be wrong or disputed."}
+};
+function edgeKey(a,b){return a<b?a+"|"+b:b+"|"+a;}
+/* every arc among the events on screen; "stated" only: from the events' own links and the analysis job's stated edges */
+function arcsFor(list){
+  var on={},out=[],seen={};list.forEach(function(e){on[e.id]=e;});
+  function add(a,b,rel,url,src){if(!a||!b||a===b||a.lat===null||b.lat===null)return;var k=edgeKey(a.id,b.id);if(seen[k])return;seen[k]=1;out.push({kind:"link",a:a,b:b,rel:rel,url:url,src:src});}
+  if(arcOn.links){
+    list.forEach(function(e){e.links.forEach(function(l){add(e,on[l.to],l.rel,l.url,"source");});});
+    if(analysis)analysis.patterns.forEach(function(p){p.edges.forEach(function(x){if(x.basis==="stated")add(on[x.from],on[x.to],x.rel,"","analysis");});});
+  }
+  if(arcOn.origins)list.forEach(function(e){
+    if(e.attr&&e.lat!==null&&!e.actorPin&&d3.geoDistance([e.attr.lng,e.attr.lat],[e.lng,e.lat])>0.02)
+      out.push({kind:"origin",a:{id:"origin:"+e.id,lng:e.attr.lng,lat:e.attr.lat},b:e,rel:"attributed to "+e.attr.actor+" by "+e.attr.by,url:e.attr.url,attr:e.attr});
+  });
+  return out;
+}
+/* links touching one event, for its card: outgoing, incoming and analysis edges, all stated */
+function linksOf(e){
+  var by={},out=[],seen={};events.forEach(function(o){by[o.id]=o;});
+  function add(o,rel,url,src){if(!o||o.id===e.id||!claimOk(o)||seen[o.id])return;seen[o.id]=1;out.push({e:o,rel:rel,url:url,src:src});}
+  e.links.forEach(function(l){add(by[l.to],l.rel,l.url,"source");});
+  events.forEach(function(o){o.links.forEach(function(l){if(l.to===e.id)add(o,l.rel,l.url,"source");});});
+  if(analysis)analysis.patterns.forEach(function(p){p.edges.forEach(function(x){if(x.basis!=="stated")return;if(x.from===e.id)add(by[x.to],x.rel,"","analysis");else if(x.to===e.id)add(by[x.from],x.rel,"","analysis");});});
+  return out.slice(0,12);
+}
+function arcLabel(x){
+  if(x.kind==="origin")return ["Attributed: "+x.attr.actor,"by "+x.attr.by+" ("+(x.attr.byType==="government"?"government":"investigating firm")+") · said to operate from "+x.attr.origin+" · not a victim location"];
+  return [(x.a.org||x.a.title)+" ↔ "+(x.b.org||x.b.title),x.rel+" · link stated by "+(x.src==="source"?"the event's source":"sources (analysis)")];
+}
+function drawArcs(){
+  gArcs.selectAll("*").remove();
+  if(state.view!=="map")return;
+  if(rp.on){drawReplay();return;}
+  var arcs=arcsFor(lastList),sel=state.sel||wall.focus;
+  var hot=sel?arcs.filter(function(x){return x.b.id===sel||x.a.id===sel;}):[];
+  arcs.forEach(function(x){
+    var d=arcD(x.a,x.b);if(!d)return;var on=hot.indexOf(x)>=0;
+    var p=gArcs.append("path").attr("class","arc "+x.kind+(on?" hot":hot.length?" dim":"")).attr("d",d);
+    var lb=arcLabel(x);
+    p.on("pointerenter",function(ev){tipAt(ev,lb[0],lb[1]);}).on("pointerleave",hideTip)
+     .on("click",function(){if(!wall.on)select(x.b.id===sel&&x.a.id&&x.a.id.indexOf("origin:")!==0?x.a.id:x.b.id,true);});
+    p.append("title").text(lb[0]+". "+lb[1]);
+  });
+  /* blast radius: the selected event's reach, sized by how many stated links it has */
+  if(sel&&hot.length){
+    var e=events.find(function(z){return z.id===sel;}),pt=e&&e.lat!==null?proj(e.lng,e.lat):null;
+    if(pt){var n=hot.filter(function(x){return x.kind==="link";}).length,r=20+9*Math.sqrt(Math.max(1,n));
+      var g=gArcs.append("g").attr("class","blast").attr("transform","translate("+T.applyX(pt[0])+","+T.applyY(pt[1])+")");
+      g.append("circle").attr("r",r);g.append("circle").attr("class","b2").attr("r",r*.62);
+      if(n)g.append("text").attr("y",-r-5).text(n+" linked event"+(n>1?"s":""));}
+  }
+}
+/* turn the globe smoothly to a point (shortest way round) */
+var flyT=null;
+function flyGlobe(lng,lat,ms,done){
+  stopSpin();if(flyT){flyT.stop();flyT=null;}
+  var to=[-lng,Math.max(-70,Math.min(70,-lat))],from=rot.slice();to[0]=from[0]+(((to[0]-from[0])%360+540)%360-180);
+  var fin=function(){if(done)done();};
+  if(reduced||!ms){rot=to;globeProj.rotate(rot);repath();drawMarks();fin();return;}
+  var ip=d3.interpolate(from,to);
+  flyT=d3.timer(function(t){var k=Math.min(1,t/ms);rot=ip(d3.easeCubicInOut(k));globeProj.rotate(rot);if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;repath();drawMarks();});
+    if(k>=1){flyT.stop();flyT=null;fin();}});
+}
+function zoomHome(){svg.call(zoom.transform,d3.zoomIdentity);}
+
+/* ---------- campaign replay: a pattern unfolds on the globe, one step at a time ---------- */
+var rp={on:false,p:null,steps:[],i:0,timer:0};
+var CISA_PT={lng:-77.09,lat:38.88};
+function stageOf(e){
+  var hay=(e.title+" "+e.summary).toLowerCase();
+  if(e.category==="vuln"){if(/proof[- ]of[- ]concept|\bpoc\b|exploit code|public exploit|exploit released/.test(hay))return "Exploit published";
+    if(e.kev||/actively exploited|exploited in the wild|under attack|zero-day/.test(hay))return "Exploited in the wild";return "Flaw disclosed";}
+  if(e.category==="incident")return e.status==="claimed"?"Attacker claim (unverified)":"Victim hit";
+  return {outage:"Outage",report:"Research published",policy:"Government responds",enforcement:"Regulator or police act",investment:"Market responds"}[e.category]||CAT[e.category].one;
+}
+function replaySteps(p){
+  var by={};events.forEach(function(e){if(claimOk(e))by[e.id]=e;});
+  var chain=p.chain.length>1,evs=(chain?p.chain:p.ids).map(function(i){return by[i];}).filter(Boolean);
+  if(!chain)evs.sort(function(a,b){return a.t-b.t;});
+  var steps=evs.map(function(e){return {e:e,id:e.id,lng:e.lng,lat:e.lat,t:e.t,date:e.date,stage:stageOf(e),title:e.title,where:whereOf(e)};});
+  /* CISA's known-exploited listing of a CVE named in the pattern becomes its own step, at the agency */
+  var cves={};evs.forEach(function(e){e.cves.forEach(function(c){cves[c]=1;});});
+  kev.filter(function(k){return cves[k.cve];}).forEach(function(k){
+    var s={e:null,id:"kev:"+k.cve,lng:CISA_PT.lng,lat:CISA_PT.lat,t:parseDay(k.added).getTime(),date:k.added,stage:"Listed as known exploited",
+      title:"CISA adds "+k.cve+([k.vendor,k.product].filter(Boolean).length?" ("+[k.vendor,k.product].filter(Boolean).join(" ")+")":"")+" to its known-exploited catalog",where:"CISA, United States (agency location)",kev:k};
+    var at=steps.findIndex(function(x){return x.t>s.t;});if(at<0)steps.push(s);else steps.splice(at,0,s);
+  });
+  return steps.slice(0,24);
+}
+function replayStart(id){
+  var p=analysis&&analysis.patterns.find(function(x){return x.id===id;});if(!p)return;
+  var steps=replaySteps(p);
+  if(steps.filter(function(s){return s.lat!==null;}).length<2){toast("This pattern has fewer than two events with a map location, so there is nothing to replay.");return;}
+  if(wall.on)wallStop();
+  if(!$("layers").hidden)layersToggle(false);
+  state.pattern=id;state.spot=null;state.day=null;state.sel=null;
+  rp={on:true,p:p,steps:steps,i:0,timer:0};document.body.classList.add("replaying");
+  if(state.view!=="map")setView("map");zoomHome();render();
+  $("replay").hidden=false;replayGo(0);replayPlay(true);
+  var f=$("rpPlay");if(f)f.focus();
+}
+function replayGo(i){
+  if(!rp.on)return;rp.i=Math.max(0,Math.min(rp.steps.length-1,i));
+  var s=rp.steps[rp.i];replayUi();
+  if(s.lat!==null)flyGlobe(s.lng,s.lat,1400);else drawMarks();
+}
+function replayPlay(on){
+  clearInterval(rp.timer);rp.timer=0;
+  if(on){if(rp.i>=rp.steps.length-1)replayGo(0);rp.timer=setInterval(function(){if(document.hidden)return;if(rp.i>=rp.steps.length-1){replayPlay(false);return;}replayGo(rp.i+1);},reduced?6500:4800);}
+  var b=$("rpPlay");if(b){b.textContent=on?"Pause":"Play";b.setAttribute("aria-pressed",on?"true":"false");}
+}
+function replayStop(){
+  if(!rp.on)return;clearInterval(rp.timer);rp={on:false,p:null,steps:[],i:0,timer:0};
+  document.body.classList.remove("replaying");$("replay").hidden=true;state.pattern=null;render();startSpin();
+}
+function replayUi(){
+  var s=rp.steps[rp.i],n=rp.steps.length;
+  $("rpTitle").textContent=rp.p.title;
+  $("rpKind").textContent=KIND[rp.p.kind]+" · confidence "+CONF[rp.p.conf].toLowerCase();
+  $("rpCount").textContent="Step "+(rp.i+1)+" of "+n;
+  $("rpStage").textContent=s.stage;
+  $("rpWhen").textContent=fmtDay(s.date)+(s.where?" · "+s.where:"")+(s.lat===null?" · no map location":"");
+  var t=$("rpEvent");t.textContent=s.title;t.disabled=!s.e;
+  var dots=$("rpDots");dots.textContent="";
+  rp.steps.forEach(function(x,i){var b=el("button",i<rp.i?"done":i===rp.i?"cur":null);b.type="button";b.setAttribute("aria-label","Step "+(i+1)+": "+x.stage);b.title=(i+1)+". "+x.stage+" · "+fmtDay(x.date);
+    b.addEventListener("click",function(){replayPlay(false);replayGo(i);});dots.appendChild(b);});
+  $("rpPrev").disabled=rp.i===0;$("rpNext").disabled=rp.i===n-1;
+  $("rpCav").textContent=rp.p.kind==="stated"?"Sources state these links. Dates are when each step was reported.":rp.p.kind==="timing"?"Timing only: these steps are close in time, which does not show they are connected.":"Inferred: the link is a judgement from shared attributes, not a reported fact.";
+}
+function drawReplay(){
+  var pts=rp.steps.map(function(s){return s.lat===null?null:s;});
+  var prev=null;
+  for(var i=0;i<=rp.i;i++){var s=pts[i];if(!s)continue;
+    if(prev){var d=arcD(prev,s);if(d)gArcs.append("path").attr("class","arc replay"+(i===rp.i?" hot":"")+(rp.p.kind==="stated"?"":" soft")).attr("d",d);}prev=s;}
+  for(var j=0;j<=rp.i;j++){var st=pts[j];if(!st)continue;var p=proj(st.lng,st.lat);if(!p)continue;
+    var x=T.applyX(p[0]),y=T.applyY(p[1]);
+    if(j===rp.i){var g=gArcs.append("g").attr("class","rpcur").attr("transform","translate("+x+","+y+")");g.append("circle").attr("r",16);g.append("circle").attr("class","b2").attr("r",26);}
+    if(!st.e){var a=gArcs.append("g").attr("class","agency").attr("transform","translate("+x+","+y+")");a.append("rect").attr("x",-6).attr("y",-6).attr("width",12).attr("height",12).attr("rx",2);}
+    var b=gArcs.append("g").attr("class","stepn").attr("transform","translate("+(x+13)+","+(y-13)+")");b.append("circle").attr("r",8);b.append("text").text(j+1);}
+}
+$("rpPrev").addEventListener("click",function(){replayPlay(false);replayGo(rp.i-1);});
+$("rpNext").addEventListener("click",function(){replayPlay(false);replayGo(rp.i+1);});
+$("rpPlay").addEventListener("click",function(){replayPlay(!rp.timer);});
+$("rpClose").addEventListener("click",replayStop);
+$("rpEvent").addEventListener("click",function(){var s=rp.steps[rp.i];if(!s||!s.e)return;var id=s.e.id;replayStop();state.pattern=null;setTab("feed");select(id,true);});
+
+/* ---------- wall mode: a hands-off display for a team's wall screen ---------- */
+var wall={on:false,q:[],i:0,timer:0,tick:0,focus:null,lock:null,idle:0,seen:{}};
+function wallQueue(){
+  var cut=Date.now()-72*3600e3,old=ymd(daysAgo(2));
+  return events.filter(function(e){return e.status!=="claimed"&&e.lat!==null&&(e.severity>=3||e.kev)&&((Date.parse(e.firstSeen)||0)>cut||e.date>=old);})
+    .sort(function(a,b){return (Date.parse(b.firstSeen)||b.t)-(Date.parse(a.firstSeen)||a.t);}).slice(0,24);
+}
+function wallStart(){
+  if(wall.on)return;
+  if(rp.on)replayStop();if(modalOpen)modalShow(modalOpen,false);if(!$("layers").hidden)layersToggle(false);
+  wall.on=true;document.body.classList.add("wall");$("wall").hidden=false;
+  state.sel=null;state.spot=null;state.pattern=null;if(state.view!=="map")setView("map");
+  try{history.replaceState(null,"",location.pathname+"?wall");}catch(x){}
+  if(!fsOn())try{var r=document.documentElement,pr=(r.requestFullscreen||r.webkitRequestFullscreen).call(r);if(pr&&pr.catch)pr.catch(function(){});}catch(x){}
+  try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(l){wall.lock=l;},function(){});}catch(x){}
+  layout();zoomHome();render();
+  wall.q=wallQueue();wall.i=0;wallNext();
+  wall.timer=setInterval(function(){if(!document.hidden)wallNext();},15000);
+  wall.tick=setInterval(wallClock,1000);wallClock();wallWake();
+  $("wallExit").focus();
+}
+function wallStop(){
+  if(!wall.on)return;wall.on=false;clearInterval(wall.timer);clearInterval(wall.tick);clearTimeout(wall.idle);
+  document.body.classList.remove("wall","wall-idle");$("wall").hidden=true;wall.focus=null;
+  try{if(wall.lock)wall.lock.release();}catch(x){}wall.lock=null;
+  if(fsOn())try{(document.exitFullscreen||document.webkitExitFullscreen).call(document);}catch(x){}
+  try{history.replaceState(null,"",location.pathname);}catch(x){}
+  layout();render();resetGlobe();$("wallBtn").focus();
+}
+function wallNext(){
+  if(!wall.q.length)wall.q=wallQueue();
+  if(!wall.q.length){wall.focus=null;wallCaption(null);startSpin();return;}
+  var e=wall.q[wall.i%wall.q.length];wall.i++;wall.focus=e.id;
+  wallCaption(e);flyGlobe(e.lng,e.lat,2400);
+}
+/* new high-severity arrivals jump the queue and are shown at once */
+function wallNew(added){
+  if(!wall.on)return;var hot=added.filter(function(e){return e.status!=="claimed"&&e.lat!==null&&(e.severity>=3||e.kev);});
+  wall.q=wallQueue();if(!hot.length)return;
+  hot.forEach(function(e){wall.q=wall.q.filter(function(x){return x.id!==e.id;});wall.q.unshift(e);});
+  wall.i=0;clearInterval(wall.timer);wallNext();wall.timer=setInterval(function(){if(!document.hidden)wallNext();},15000);
+}
+function wallCaption(e){
+  var c=$("wCap");c.textContent="";
+  if(!e){c.appendChild(el("p","wq","No new high-severity events in the last three days. Watching."));return;}
+  var top=el("div","wtag");top.appendChild(glyph(e.category));top.appendChild(document.createTextNode(CAT[e.category].one+" · "+["","Low","Medium","High"][e.severity]+" severity"+(e.kev?" · known exploited":"")));c.appendChild(top);
+  c.appendChild(el("h2",null,e.title));
+  c.appendChild(el("p","wwhere",whereOf(e)+" · "+fmtWhen(e)+" · "+CONF[e.conf].toLowerCase()+" confidence"+pinNote(e)));
+  if(e.action&&!/^no action/i.test(e.action))c.appendChild(el("p","wdo","Do: "+e.action));
+}
+function whereOf(e){return e.place&&e.country&&e.place.toLowerCase().indexOf(e.country.toLowerCase())>=0?e.place:[e.place,e.country].filter(function(x,i,a){return x&&a.indexOf(x)===i;}).join(", ");}
+function wallClock(){
+  var d=new Date();$("wClock").textContent=pad2(d.getUTCHours())+":"+pad2(d.getUTCMinutes())+":"+pad2(d.getUTCSeconds());
+  $("wDate").textContent="UTC · "+d.toISOString().slice(0,10)+" · local "+DTF.clock.format(d);
+  if(d.getSeconds()===0)wallStats();
+}
+function wallStats(){
+  if(!wall.on)return;var box=$("wStats");box.textContent="";
+  var today=new Date().toISOString().slice(0,10),cut=Date.now()-24*3600e3,ok=events.filter(function(e){return e.status!=="claimed";});
+  var d24=ok.filter(function(e){return e.t>cut;});
+  [[kev.filter(function(k){return k.added===today;}).length,"Known exploited","added today"],
+   [kev.filter(function(k){return k.added>=ymd(daysAgo(7));}).length,"Known exploited","last 7 days"],
+   [d24.filter(function(e){return e.severity>=3;}).length,"High severity","last 24 h"],
+   [d24.length,"Events","last 24 h"],
+   [new Set(d24.map(function(e){return normC(e.country);}).filter(Boolean)).size,"Countries","last 24 h"]].forEach(function(r){
+    var s=el("div","wstat");s.appendChild(el("b",null,String(r[0])));s.appendChild(el("span",null,r[1]));s.appendChild(el("small",null,r[2]));box.appendChild(s);});
+  var u=el("p","wupd","Data built "+(builtAt?ago(builtAt):"(loading)")+" · reloads every 5 min");box.appendChild(u);
+  /* headline ticker: the newest confirmed events and known-exploited additions; doubled so the loop is seamless */
+  var items=ok.slice().sort(function(a,b){return (Date.parse(b.firstSeen)||b.t)-(Date.parse(a.firstSeen)||a.t);}).slice(0,14).map(function(e){return [CAT[e.category].one,e.title,e.category];});
+  kev.filter(function(k){return k.added>=ymd(daysAgo(2));}).slice(0,4).forEach(function(k){items.splice(1,0,["Known exploited",k.cve+" "+[k.vendor,k.product].filter(Boolean).join(" "),"vuln"]);});
+  var key=items.map(function(x){return x[1];}).join("|");var tr=$("wTrack");if(tr.dataset.key===key)return;tr.dataset.key=key;tr.textContent="";
+  [0,1].forEach(function(rep){items.forEach(function(x){var s=el("span","wit");if(rep)s.setAttribute("aria-hidden","true");s.style.setProperty("--cc","var(--c-"+x[2]+")");s.appendChild(el("b",null,x[0]));s.appendChild(document.createTextNode(x[1]));tr.appendChild(s);});});
+  tr.style.animationDuration=Math.max(40,items.length*7)+"s";
+}
+function wallWake(){if(!wall.on)return;document.body.classList.remove("wall-idle");clearTimeout(wall.idle);wall.idle=setTimeout(function(){if(wall.on)document.body.classList.add("wall-idle");},3500);}
+document.addEventListener("pointermove",wallWake,{passive:true});
+$("wallBtn").addEventListener("click",wallStart);
+$("wallExit").addEventListener("click",wallStop);
+
 /* ---------- render ---------- */
 var faults={};
 function safe(name,fn){
@@ -1364,6 +1634,7 @@ function render(){
   if(state.view!=="map")safe("analysis",function(){renderViz(list);});
   safe("legend",renderKey);
   safe("wire",function(){wireBuild();hudTick();});
+  if(wall.on)safe("wall",wallStats);
   lsSet("cwm.ui",JSON.stringify({win:state.win,sev:state.sev,sort:state.sort,lens:state.lens,view:state.view,cats:Array.from(state.cats)}));
 }
 function renderKey(){
@@ -1394,6 +1665,7 @@ function syncControls(){
 }
 function loadPrefs(){
   keyShut=lsGet("cwm.key")!=="0";
+  try{var ao=JSON.parse(lsGet("cwm.arcs")||"null");if(ao&&typeof ao==="object"){arcOn.links=ao.links!==false;arcOn.origins=ao.origins!==false;}}catch(x){}
   try{var o=JSON.parse(lsGet("cwm.ui")||"null");if(!o||typeof o!=="object")return;
     if([1,3,7].indexOf(o.win)>=0)state.win=o.win;if([1,2,3].indexOf(o.sev)>=0)state.sev=o.sev;
     if(["pri","new","sev","upd","rec","risk"].indexOf(o.sort)>=0)state.sort=o.sort;
@@ -1407,7 +1679,7 @@ function apply(snap){
   var added=loaded?events.filter(function(e){return !before.has(e.id);}):[];
   added.forEach(function(e){fresh.add(e.id);});
   if(added.length)setTimeout(function(){added.forEach(function(e){fresh.delete(e.id);});render();},90000);
-  loaded=true;if(added.length)notifyEvents(added);return added.length;
+  loaded=true;if(added.length){notifyEvents(added);wallNew(added);}return added.length;
 }
 function resetMain(){
   state.q="";state.status="all";state.lens="all";state.sev=1;state.win=7;state.sort="pri";state.wlOnly=false;state.claims=false;lsSet("cwm.claims","0");
@@ -1682,6 +1954,8 @@ $("zlayers").addEventListener("click",function(){layersToggle($("layers").hidden
 $("zreset").addEventListener("click",function(){state.spot=null;svg.transition().duration(reduced?0:350).call(zoom.transform,d3.zoomIdentity);render();});
 document.addEventListener("keydown",function(ev){
   var typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement&&document.activeElement.tagName);
+  if(wall.on){if(ev.key==="Escape"||ev.key==="w"||ev.key==="W"){ev.preventDefault();wallStop();}else if(ev.key==="f"||ev.key==="F")toggleFs();else if(ev.key===" "||ev.key==="ArrowRight"){ev.preventDefault();wallNext();}return;}
+  if(rp.on&&!typing){if(ev.key==="Escape"){replayStop();return;}if(ev.key==="ArrowRight"){ev.preventDefault();replayPlay(false);replayGo(rp.i+1);return;}if(ev.key==="ArrowLeft"){ev.preventDefault();replayPlay(false);replayGo(rp.i-1);return;}if(ev.key===" "&&document.activeElement===document.body){ev.preventDefault();replayPlay(!rp.timer);return;}}
   if(ev.key==="Escape"&&!$("wlDlg").hidden){wlToggle(false);$("wlOpen").focus();return;}
   if(ev.key==="Escape"&&!$("hoDlg").hidden){hoToggle(false);$("hoOpen").focus();return;}
   if(ev.key==="Escape"&&!$("layers").hidden){layersToggle(false);$("zlayers").focus();return;}
@@ -1696,6 +1970,7 @@ document.addEventListener("keydown",function(ev){
   else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&(ev.key==="r"||ev.key==="R")){refresh();}
   else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&(ev.key==="f"||ev.key==="F")){toggleFs();}
   else if(!typing&&(ev.key==="l"||ev.key==="L")){layersToggle($("layers").hidden);}
+  else if(!typing&&(ev.key==="w"||ev.key==="W")&&!modalOpen){wallStart();}
 });
 if(window.ResizeObserver){var rt=0;new ResizeObserver(function(){clearTimeout(rt);rt=setTimeout(function(){layout();render();},140);}).observe(document.body);}
 setInterval(function(){renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},60000);
@@ -1774,7 +2049,7 @@ openStore().then(function(d){
   query.onSnapshot(function(snap){
     var n=apply(snap);
     if(!snap.metadata||!snap.metadata.fromCache){clearTimeout(timer);stale=false;}
-    if(first){first=false;if(hashId()){openFromHash();return;}}
+    if(first){first=false;if(/[?&]wall(\b|=|&|$)/.test(location.search)){renderSoon();setTimeout(wallStart,60);return;}if(hashId()){openFromHash();return;}}
     else if(n)toast(n+" new event"+(n>1?"s":"")+" just arrived.");
     renderSoon();
   },function(){clearTimeout(timer);if(!loaded)unavailable=true;stale=false;render();});

@@ -8,6 +8,7 @@
 //   site/data/archive/kev.json       every known-exploited entry on file
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
+//   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
@@ -15,6 +16,7 @@ import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
+import { checkAttribution, checkLinks, checkTabletop } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -59,6 +61,16 @@ for (const f of files) {
   seen.set(f.id, f.path.slice(DATA.length + 1));
   checkEvent(f.e, f.path);
 }
+// attribution and stated links (drawn as arcs on the globe); links must point at events on file
+{
+  const ids = new Set(files.filter((f) => f.e).map((f) => f.id));
+  for (const f of files) {
+    if (!f.e) continue;
+    const where = f.path.slice(DATA.length + 1);
+    checkAttribution(f.e.attribution).forEach((m) => errors.push(`${where}: ${m}`));
+    checkLinks(f.e.links, f.id, ids).forEach((m) => errors.push(`${where}: ${m}`));
+  }
+}
 const allEvents = files.filter((f) => f.e).map((f) => f.e);
 const kevAll = listDir("kev").filter((x) => x.r).map((x) => x.r);
 listDir("kev").filter((x) => !x.r).forEach((x) => errors.push(`kev/${x.id}.json: not valid JSON (${x.error})`));
@@ -72,6 +84,24 @@ for (const [path, file] of [["meta/status", "status.json"], ["analysis/latest", 
   const p = join(DATA, file);
   if (!existsSync(p)) continue;
   const d = readJson(p); if (d) docs[path] = d; else errors.push(`${file}: not valid JSON`);
+}
+
+// the weekly tabletop exercise (the tabletop job): current one plus every past one from the snapshots
+const tabletop = { current: null, past: [] };
+{
+  const ids = new Set(allEvents.map((e) => e.id));
+  const cur = join(DATA, "tabletop.json");
+  if (existsSync(cur)) {
+    const t = readJson(cur);
+    const bad = t ? checkTabletop(t, ids) : ["not valid JSON"];
+    if (bad.length) bad.forEach((m) => errors.push(`tabletop.json: ${m}`)); else tabletop.current = t;
+  }
+  for (const x of listDir("snapshots/tabletop")) {
+    const bad = x.r ? checkTabletop(x.r, ids) : ["not valid JSON"];
+    if (bad.length) { bad.forEach((m) => errors.push(`snapshots/tabletop/${x.id}.json: ${m}`)); continue; }
+    tabletop.past.push(x.r);
+  }
+  tabletop.past.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
 // context layers (scripts/context.mjs): validated loosely, a broken file only drops that layer
@@ -92,6 +122,9 @@ if (errors.length) { errors.forEach((e) => console.error("error: " + e)); consol
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();
 writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs, context }));
+// tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
+writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
+  past: tabletop.past.map((t) => ({ date: t.date, title: t.title })), exercises: tabletop.past.slice(0, 26) }));
 
 // the archive
 if (existsSync(ARCH)) rmSync(ARCH, { recursive: true });

@@ -8,10 +8,12 @@
 <section class="panel legal" id="method">
   <h2>How it is made</h2>
   <ul>
-    <li><strong>Collection:</strong> scripts read 22 government, vendor and news feeds and official catalogues (CISA's known-exploited list, FIRST EPSS, NIST NVD). No AI is involved in this step.</li>
+    <li><strong>Collection:</strong> scripts read 32 government, vendor and news feeds and official catalogues (CISA's known-exploited list, FIRST EPSS, NIST NVD). No AI is involved in this step.</li>
     <li><strong>Research:</strong> scheduled AI jobs (Anthropic's Claude) turn leads into events. They work under written rules that are <a href="https://github.com/{{owner_github}}/CyberView/blob/main/docs/jobs.md">published in full</a>: facts only from pages actually read, original government and vendor documents preferred, specific source links required, outages never called attacks without an official source, attacker claims marked unverified.</li>
     <li><strong>Checking:</strong> a verification job re-checks recent events against their sources, a watchdog reviews failures and reader reports, and every build validates every record. Corrections are logged publicly.</li>
     <li><strong>Severity</strong> follows exploitation: known-exploited flaws, public exploit code or an official "patch immediately" in widely used or internet-facing software are rated high.</li>
+    <li><strong>Links and attribution on the globe:</strong> arcs connect events only where a source states the link (for example a breached supplier and a customer hit through it). Attribution arcs are drawn only when a government body or the investigating firm made the attribution, and name who made it; CyberView does not attribute attacks itself.</li>
+    <li><strong>Tabletop exercises:</strong> each week an AI job turns one verified event into a <a href="tabletop.html">practice exercise</a>. The real facts carry their sources; the scenario for your organisation is invented for practice and says so.</li>
     <li>Every routine and its last run are shown on the <a href="status.html">status page</a>; the full history is in the <a href="archive.html">archive</a> and the <a href="https://github.com/{{owner_github}}/CyberView">public repository</a>.</li>
   </ul>
   <p>AI-assisted research can make mistakes. Read <a href="terms.html#not-advice">information, not advice</a> before relying on an entry.</p>

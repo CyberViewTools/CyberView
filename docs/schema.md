@@ -34,6 +34,8 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 | source_tier | | `primary`, `established`, `aggregator` |
 | validation | | `{state, checked_at, note}`; state is `corroborated`, `single_source`, `unconfirmed_claim`, `disputed`, `source_unreachable` |
 | report | | review of an original document: `{publisher, publisher_type (government or vendor), doc_id, published, key_findings[], recommendations[], iocs_available, read_depth (full, summary, secondary), url}` |
+| attribution | | `{actor, origin_country, lat, lng, by, by_type, url}`: who a government (`by_type` `government`) or the investigating firm (`investigator`) says did it, where the actor is said to be based (lat, lng of that country's capital) and the https page where the attribution is made. Drawn as a dashed, labelled arc from the origin to the victim. Never from attacker boasts or press speculation. |
+| links | | `[{to, rel, url}]`: other events a source says this one is connected to (`to` is an event id on file, `rel` at most 60 characters such as "customer of breached supplier", `url` the page that states it). Drawn as arcs on the globe. |
 | duplicate_of | | id of the richer record; the build leaves this one out |
 | first_seen, updated_at, qa_checked_at | | ISO times |
 
@@ -60,9 +62,15 @@ One file per job run, never deleted. It keeps the research so it is not wasted:
 The feeds script writes its own shape (`kev_added, kev_updated, cvss_added, events_updated, rerated, failed`).
 `node scripts/q.mjs leads` lists open leads and skipped items that never became events; `q.mjs seen <url>` checks whether a page was already read.
 
+## data/tabletop.json
+
+The weekly tabletop exercise (the tabletop job), copied to `data/snapshots/tabletop/<YYYY-MM-DD>.json`. The build rejects it unless every field passes `scripts/lib/validate.mjs`:
+`label` ("exercise"), `generated_at`, `date`, `title` (at most 120), `based_on` [event ids on file], `real_story` (at most 900, facts only), `facts` [{text, source_url}] (at least 2), `scenario` (hypothetical, at most 1200), `duration_min` (20 to 180), `roles` [], `injects` [{at_min, title, text, ask}] (3 to 10, in time order), `questions` (4 to 12), `good_looks_like` (3 to 10), `adapt`, `sources` [{name, url}].
+The site shows it on `tabletop.html` with past exercises from the snapshots.
+
 ## data/snapshots/
 
-`brief/<YYYY-MM-DD>.json` is a copy of that day's brief. `analysis/<YYYY-MM-DD>.json` is `{analysis, ripples}` as of that day's last analysis run.
+`brief/<YYYY-MM-DD>.json` is a copy of that day's brief. `analysis/<YYYY-MM-DD>.json` is `{analysis, ripples}` as of that day's last analysis run. `tabletop/<YYYY-MM-DD>.json` is that week's exercise.
 
 ## Published archive (generated, site/data/archive/)
 

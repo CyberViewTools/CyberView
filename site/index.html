@@ -675,6 +675,82 @@ body.globe #svg{cursor:grab}
   header .stats{order:5;flex-basis:100%;font-size:12px}
   #refresh{padding-left:12px;padding-right:12px}
 }
+
+/* ---------- arcs, blast radius, replay, wall mode ---------- */
+.arc{fill:none;stroke-linecap:round;pointer-events:visibleStroke;cursor:pointer}
+.arc.link{stroke:var(--accent);stroke-width:1.6;stroke-opacity:.55}
+.arc.origin{stroke:var(--ink);stroke-width:1.4;stroke-opacity:.5;stroke-dasharray:5 4}
+.arc.hot{stroke-opacity:1;stroke-width:2.6;stroke-dasharray:9 6;animation:flow 1.6s linear infinite}
+.arc.origin.hot{stroke-width:2}
+.arc.dim{stroke-opacity:.14}
+.arc.replay{stroke:var(--accent);stroke-width:2.4;stroke-opacity:.75;pointer-events:none}
+.arc.replay.soft{stroke-dasharray:3 5}
+.arc.replay.hot{stroke-opacity:1;stroke-width:3;stroke-dasharray:10 7}
+@keyframes flow{to{stroke-dashoffset:-30}}
+.blast circle{fill:color-mix(in srgb,var(--accent) 7%,transparent);stroke:var(--accent);stroke-width:1.3;stroke-dasharray:4 4;pointer-events:none}
+.blast .b2{fill:none;stroke-opacity:.5}
+.blast text,.rpcur text{font-family:var(--font-mono);font-size:10.5px;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--solid);stroke-width:3px}
+.rpcur circle{fill:none;stroke:var(--accent);stroke-width:2.4;pointer-events:none}
+.rpcur .b2{stroke-opacity:.45;transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
+.agency rect{fill:var(--solid);stroke:var(--ink);stroke-width:1.6}
+.m .ring.wallr{stroke:var(--accent);stroke-width:3}
+.todo.attr{border-left:3px dashed var(--ink)}
+.rel.links .src{font-family:var(--font-mono);font-size:11px}
+.acts button.primary,.rpctl button.primary{background:var(--accent);color:#fff}
+.replay{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(680px,calc(100vw - 32px));padding:12px 16px 10px;z-index:6;border-radius:16px}
+.rphead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.rphead b{display:block;font-family:var(--font-display);font-size:16px;line-height:1.25}
+.rphead small{color:var(--muted);font-family:var(--font-mono);font-size:11px}
+.rplab{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.rpstep{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0;align-items:baseline}
+.rpcount{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.rpstage{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--accent)}
+.rpwhen{grid-column:1/-1;font-family:var(--font-mono);font-size:11.5px;color:var(--muted)}
+.rpev{grid-column:1/-1;text-align:left;background:none;border:0;padding:0;font-size:14px;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.rpev:disabled{text-decoration:none;cursor:default}
+.rpctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rpctl button{background:var(--tint);color:var(--accent);border:0;border-radius:10px;padding:6px 12px;font-weight:600}
+.rpctl button:disabled{opacity:.4;cursor:default}
+.rpdots{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.rpdots button{width:12px;height:12px;padding:0;border-radius:50%;background:transparent;border:1.5px solid var(--accent)}
+.rpdots button.done{background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.rpdots button.cur{background:var(--accent);transform:scale(1.25)}
+.rpcav{margin:8px 0 0;font-size:11.5px;color:var(--muted)}
+body.replaying .days{visibility:hidden}
+@media (max-width:900px){.replay{position:fixed;bottom:8px}.rpstage{font-size:17px}}
+.wallui{position:fixed;inset:0;z-index:7;pointer-events:none;color:var(--ink)}
+.wallui>*{position:absolute}
+.wtl{left:28px;top:22px}
+.wbrand{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-size:20px;font-weight:600}
+.wlive{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ok);border:1px solid currentColor;border-radius:999px;padding:1px 8px}
+.wclock{font-family:var(--font-mono);font-size:clamp(34px,4.4vw,64px);font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:6px}
+.wdate{font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.wtr{right:28px;top:22px;display:grid;grid-template-columns:repeat(5,auto);gap:10px 26px;text-align:right}
+.wstat b{display:block;font-family:var(--font-mono);font-size:clamp(26px,3vw,46px);font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.wstat span{display:block;font-size:13px;font-weight:600;margin-top:4px}
+.wstat small{display:block;font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.wupd{grid-column:1/-1;margin:0;font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.wcap{left:28px;bottom:84px;max-width:min(620px,46vw);background:var(--glass);border:1px solid var(--glass-brd);border-radius:16px;padding:14px 18px;box-shadow:var(--shadow);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);animation:slidein .5s ease}
+.wcap h2{font-family:var(--font-display);font-size:clamp(20px,2vw,30px);line-height:1.2;margin:6px 0}
+.wtag{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.wtag svg{width:16px;height:16px}
+.wwhere{margin:0;font-family:var(--font-mono);font-size:12.5px;color:var(--muted)}
+.wdo{margin:8px 0 0;font-size:14px}
+.wq{margin:0;font-size:15px;color:var(--muted)}
+.wtick{left:0;right:0;bottom:0;height:52px;overflow:hidden;background:var(--glass);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);display:flex;align-items:center}
+.wtrack{display:flex;white-space:nowrap;animation:tick 80s linear infinite;will-change:transform}
+@keyframes tick{to{transform:translateX(-50%)}}
+.wit{display:inline-flex;align-items:center;gap:9px;padding:0 30px;font-size:16px;border-right:1px solid var(--line)}
+.wit b{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cc)}
+#wallExit{right:28px;bottom:70px;pointer-events:auto;transition:opacity .3s}
+body.wall-idle #wallExit{opacity:0}
+body.wall-idle,body.wall-idle #svg{cursor:none}
+body.wall .ui,body.wall .zoomer,body.wall #layers,body.wall #tip{display:none!important}
+body.wall #stage{position:fixed;inset:0;height:auto!important;z-index:1}
+body.wall #svg{cursor:default}
+@media (max-width:900px){.wtr{grid-template-columns:repeat(3,auto);left:16px;right:16px;top:124px;text-align:left;gap:6px 18px}.wstat b{font-size:24px}.wtl{left:16px;top:14px}
+  .wcap{left:16px;right:16px;max-width:none;bottom:62px;padding:10px 14px}.wtr .wstat:nth-child(n+4),.wupd{display:none}#wallExit{right:16px;top:16px;bottom:auto}.wcap .wdo{display:none}}
+@media (prefers-reduced-motion:reduce){.wtrack{animation:none!important;flex-wrap:nowrap}}
 </style>
 </head>
 <body>
@@ -695,12 +771,13 @@ body.globe #svg{cursor:grab}
   <header class="glass">
     <div class="top">
       <h1><span class="live" id="live" title="Live data connection"></span><img class="logo" src="logo.svg" alt="" width="26" height="26">CyberView</h1>
-      <nav class="sitenav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html" id="archiveLink">Archive</a><a href="trends.html" id="trendsLink">Trends</a><a href="status.html" id="statusLink">Status</a><a href="about.html" id="aboutLink">About</a></nav>
+      <nav class="sitenav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html" id="archiveLink">Archive</a><a href="trends.html" id="trendsLink">Trends</a><a href="tabletop.html" id="exerciseLink">Exercise</a><a href="status.html" id="statusLink">Status</a><a href="about.html" id="aboutLink">About</a></nav>
       <div class="spacer"></div>
       <button type="button" class="btn" id="refresh" title="Reload the latest data and return to the main view (R)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         <span class="lbl">Refresh</span>
       </button>
+      <button type="button" class="iconbtn" id="wallBtn" title="Wall mode: a hands-off display for a team screen (W)" aria-label="Wall mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="1.8"/><path d="M8 20.5h8M12 16.5v4"/><circle cx="12" cy="10.2" r="3.1"/></svg></button>
       <button type="button" class="iconbtn" id="fs" aria-pressed="false" title="Full screen (F)" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fsLabel" class="sr">Full screen</span></button>
       <button type="button" class="iconbtn" id="keysBtn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">?</button>
       <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -738,7 +815,7 @@ body.globe #svg{cursor:grab}
       </div>
     </div>
   </header>
-  <div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
+  <div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./" aria-current="page">Map</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
   <div class="days glass" id="days" role="group" aria-label="Events per day"></div>
   <div class="key glass" id="key"></div>
   <section class="viz glass" id="viz" hidden aria-label="Analysis"></section>
@@ -868,6 +945,21 @@ body.globe #svg{cursor:grab}
     <button type="button" class="btn ghost" id="wlClose">Close</button>
     <button type="button" class="btn" id="wlSave">Save</button>
   </div>
+</div>
+<section class="replay glass" id="replay" hidden aria-label="Campaign replay">
+  <div class="rphead"><div><span class="rplab">Replay</span><b id="rpTitle"></b><small id="rpKind"></small></div><button type="button" class="sheetclose" id="rpClose" aria-label="Close replay (Esc)">&times;</button></div>
+  <div class="rpstep" aria-live="polite"><span class="rpcount" id="rpCount"></span><span class="rpstage" id="rpStage"></span><span class="rpwhen" id="rpWhen"></span>
+    <button type="button" class="rpev" id="rpEvent" title="Open this event"></button></div>
+  <div class="rpctl"><button type="button" id="rpPrev" aria-label="Previous step">&#8592; Back</button><button type="button" id="rpPlay" class="primary" aria-pressed="true">Pause</button><button type="button" id="rpNext" aria-label="Next step">Next &#8594;</button>
+    <div class="rpdots" id="rpDots" role="group" aria-label="Steps"></div></div>
+  <p class="rpcav" id="rpCav"></p>
+</section>
+<div class="wallui" id="wall" hidden aria-label="Wall mode">
+  <div class="wtl"><div class="wbrand"><img src="logo.svg" alt="" width="26" height="26">CyberView <span class="wlive">live</span></div><div class="wclock" id="wClock">--:--:--</div><div class="wdate" id="wDate"></div></div>
+  <div class="wtr" id="wStats"></div>
+  <div class="wcap" id="wCap" aria-live="polite"></div>
+  <div class="wtick" aria-label="Latest headlines"><div class="wtrack" id="wTrack"></div></div>
+  <button type="button" class="btn" id="wallExit" title="Leave wall mode (Esc or W)">Exit wall mode</button>
 </div>
 <div id="toast" class="glass" role="status" hidden></div>
 

@@ -1,0 +1,39 @@
+name: Weekly security check
+
+# Re-runs the static security check on main and checks the live security headers once a week,
+# so a weakened header or a leaked secret is caught even in a week with no code changes.
+# The deeper AI security review is a scheduled Claude job (docs/jobs.md, "Security review").
+on:
+  schedule:
+    - cron: "41 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Static security check and live headers
+        id: run
+        run: |
+          set +e
+          node scripts/security-check.mjs > security.txt 2>&1; s=$?
+          node scripts/monitor.mjs >/dev/null; m=$?
+          set -e
+          { echo "**Weekly security check: $([ $s = 0 ] && [ $m != 1 ] && echo passed || echo FAILED)**"; echo; echo '```'; cat security.txt; echo '```'; echo; cat monitor-report.md; } > report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ $s != 0 ] || [ $m = 1 ]; then echo "state=failing" >> "$GITHUB_OUTPUT"; else echo "state=healthy" >> "$GITHUB_OUTPUT"; fi
+      - name: Open, update or close the alert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash .github/scripts/alert.sh security "CyberView security check is failing" report.md "${{ steps.run.outputs.state }}"
+          [ "${{ steps.run.outputs.state }}" = "healthy" ]

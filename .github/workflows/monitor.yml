@@ -1,0 +1,59 @@
+name: Live site monitor
+
+# Every hour: HTTP check of the live site (pages, security headers, data freshness, sweep age).
+# Twice a day: also loads the site in a real browser (desktop and phone) and checks it renders without errors.
+# A failure opens one GitHub issue labelled site-monitor; it is updated while the problem lasts and closed on recovery.
+on:
+  schedule:
+    - cron: "17 * * * *"
+    - cron: "7 5,17 * * *"
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: "Also run the browser check"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://cyberview.netlify.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: HTTP check
+        id: http
+        run: |
+          set +e; node scripts/monitor.mjs; code=$?; set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: github.event.schedule == '7 5,17 * * *' || inputs.browser
+        with:
+          python-version: "3.12"
+      - name: Browser check
+        id: browser
+        if: github.event.schedule == '7 5,17 * * *' || inputs.browser
+        run: |
+          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          set +e; python tests/smoke_live.py; code=$?; set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+      - name: Open, update or close the alert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ steps.http.outputs.code }}" = "1" ] || [ "${{ steps.browser.outputs.code }}" = "1" ]; then state=failing; else state=healthy; fi
+          bash .github/scripts/alert.sh site-monitor "CyberView live site check is failing" monitor-report.md "$state"
+          cat monitor-report.md >> "$GITHUB_STEP_SUMMARY"
+          [ "$state" = "healthy" ]

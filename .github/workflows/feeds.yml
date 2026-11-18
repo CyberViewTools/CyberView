@@ -1,0 +1,49 @@
+name: Feeds (KEV, EPSS, NVD)
+
+# Mechanical data, no AI model: CISA known-exploited catalog, EPSS and CVSS scores, cve_meta on events.
+# Runs every 2 hours; commits only when something changed. Netlify redeploys on the push.
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: data-writes
+  cancel-in-progress: false
+
+jobs:
+  feeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Pull feeds
+        run: node scripts/feeds.mjs
+        env:
+          NVD_MAX: "25"
+      - name: Validate and security check
+        run: node scripts/build.mjs && node scripts/security-check.mjs
+      - name: Commit and push
+        run: |
+          git config user.name "cyberview-feeds"
+          git config user.email "cyberview-feeds@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          msg=$(ls -t data/runs/*/*-feeds.json | head -1 | xargs node -e 'const r=JSON.parse(require("fs").readFileSync(process.argv[1]));console.log(`data: feeds, KEV +${r.kev_added.length}, ${r.events_updated.length} events refreshed, ${r.cvss_added.length} CVSS added`)')
+          git commit -q -m "$msg"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
+          exit 1
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**Feeds job failed.** The known-exploited list and scores are not updating." > report.md
+          bash .github/scripts/alert.sh job-failure "Feeds job is failing" report.md failing

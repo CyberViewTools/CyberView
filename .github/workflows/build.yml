@@ -1,16 +1,53 @@
-name: Validate data and build
+name: Validate, security check and test
 
+# Code pushes (page, scripts, tests, config): validate, static security check, then the browser suite.
+# Data-only pushes from the jobs skip this; Netlify's build runs the same validator before every deploy.
 on:
   push:
+    paths: ["site/**", "scripts/**", "tests/**", "netlify.toml", ".github/**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Validate data/ and build the bundle
+          node-version: "22"
+      - name: Validate data/ and build the bundle and archive
         run: node scripts/build.mjs
+      - name: Security check
+        run: node scripts/security-check.mjs
+
+  browser-tests:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Did the page, scripts or tests change?
+        id: changed
+        run: |
+          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE '^(site/|scripts/|tests/|netlify.toml)'; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-node@v4
+        if: steps.changed.outputs.run == 'yes'
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        if: steps.changed.outputs.run == 'yes'
+        with:
+          python-version: "3.12"
+      - name: Install Playwright
+        if: steps.changed.outputs.run == 'yes'
+        run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: Browser regression suite
+        if: steps.changed.outputs.run == 'yes'
+        run: python tests/test_all.py

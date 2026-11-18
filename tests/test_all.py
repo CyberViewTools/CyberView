@@ -192,6 +192,22 @@ async def main():
             await pg.context.close()
 
         await serve(make_site(big), volume)
+
+        async def archive(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "archive.html"), wait=1200)
+            ok("archive: lists events", await pg.locator(".row").count() > 0)
+            await pg.fill("#q", "zzzz-no-such-thing")
+            await pg.wait_for_timeout(400)
+            ok("archive: search filters", "0 events" in await pg.inner_text("#count") and not await pg.is_visible("#more"))
+            await pg.fill("#q", "")
+            await pg.wait_for_timeout(400)
+            await pg.locator(".row button").first.click()
+            await pg.wait_for_timeout(600)
+            ok("archive: opening an event shows details", await pg.locator(".more-info p").count() > 0)
+            ok("archive: no script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(make_site(bundle), archive)
         await browser.close()
 
 

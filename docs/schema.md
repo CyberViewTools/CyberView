@@ -52,3 +52,18 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 - `ripples.json`: `generated_at, items[{event_id, basis (stated, inferred), who_should_care[], direct[], downstream[], watch_for[]}]`.
 - `brief.json`: `generated_at, date, headline, plain_summary, items[{title, why, action, event_id}]`.
 - `history.json`: `days {YYYY-MM-DD: {total, incident, ...}}`.
+
+## data/runs/&lt;YYYY-MM-DD&gt;/&lt;HHMM&gt;-&lt;job&gt;.json
+
+One file per job run, never deleted. It keeps the research so it is not wasted:
+`job, started_at, finished_at, model, searches[], pages_read[{url, title, used_in}], added[ids], updated[ids], skipped[{title, url, reason}], open_leads[{title, url, note}], failed_sites[], notes`.
+The feeds script writes its own shape (`kev_added, kev_updated, cvss_added, events_updated, rerated, failed`).
+`node scripts/q.mjs leads` lists open leads and skipped items that never became events; `q.mjs seen <url>` checks whether a page was already read.
+
+## data/snapshots/
+
+`brief/<YYYY-MM-DD>.json` is a copy of that day's brief. `analysis/<YYYY-MM-DD>.json` is `{analysis, ripples}` as of that day's last analysis run.
+
+## Published archive (generated, site/data/archive/)
+
+`index.json` (months with counts), `<YYYY-MM>.json` (full events of the month), `search.json` (compact rows: id, date, category, severity, status, title, org, country, cves, tags, actor), `events.jsonl` (everything), `kev.json` (every known-exploited entry).

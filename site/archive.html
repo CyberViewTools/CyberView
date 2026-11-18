@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>CyberView archive</title>
+<meta name="description" content="Every cyber event CyberView has recorded, searchable by text, month, category and severity.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="archive.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
+  <span class="crumb">Archive</span>
+  <span class="spacer"></span>
+  <a class="btn ghost" href="./">Back to the map</a>
+</header>
+<main>
+  <section class="intro">
+    <h1>Every event on file</h1>
+    <p id="summary" aria-live="polite">Loading the archive</p>
+  </section>
+  <form class="filters" id="filters" role="search">
+    <label class="grow"><span>Search</span><input id="q" type="search" placeholder="Organisation, actor, CVE, country, tag" autocomplete="off"></label>
+    <label><span>Month</span><select id="month"><option value="">All months</option></select></label>
+    <label><span>Category</span><select id="cat">
+      <option value="">All categories</option>
+      <option value="incident">Incidents</option>
+      <option value="vuln">Patches and advisories</option>
+      <option value="report">Threat reports</option>
+      <option value="policy">Law and policy</option>
+      <option value="enforcement">Law enforcement</option>
+      <option value="investment">Investment and vendors</option>
+      <option value="outage">Outages</option>
+    </select></label>
+    <label><span>Severity</span><select id="sev">
+      <option value="">Any severity</option>
+      <option value="3">High</option>
+      <option value="2">Medium and high</option>
+    </select></label>
+    <label class="check"><input id="claims" type="checkbox"> Include unverified claims</label>
+  </form>
+  <p class="count" id="count"></p>
+  <ol class="list" id="list"></ol>
+  <button type="button" class="btn ghost more" id="more" hidden>Show more</button>
+  <section class="downloads">
+    <h2>Download the data</h2>
+    <p>The full history in open formats, rebuilt on every update: <a href="data/archive/events.jsonl" download>every event (JSON Lines)</a>, <a href="data/archive/kev.json" download>every known-exploited entry (JSON)</a>, <a href="data/archive/index.json">monthly index (JSON)</a>.</p>
+  </section>
+</main>
+<script src="archive.js"></script>
+</body>
+</html>

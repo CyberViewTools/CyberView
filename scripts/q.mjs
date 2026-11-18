@@ -83,11 +83,12 @@ if (cmd === "find") {
   if (flags.tier) open = open.filter((l) => l.tier === flags.tier);
   if (flags.source) open = open.filter((l) => has(l.source, flags.source));
   if (text) open = open.filter((l) => has(`${l.title} ${l.summary || ""} ${l.note || ""}`, text));
-  open.sort((a, b) => (a.kind !== b.kind ? (a.kind === "open" ? -1 : 1) : String(b.published || "") < String(a.published || "") ? -1 : 1));
+  const pri = (l) => (l.kind === "open" ? Number(l.priority) || 2 : 9);   // the triage desk sets priority 1-3 on queued leads
+  open.sort((a, b) => (pri(a) !== pri(b) ? pri(a) - pri(b) : String(b.published || "") < String(a.published || "") ? -1 : 1));
   if (flags.json) console.log(JSON.stringify(open.slice(0, limit)));
   else {
     open.slice(0, Number(flags.limit || 60)).forEach((l) => console.log(l.kind === "open"
-      ? `OPEN ${l.from} | ${cut(l.title, 90)} | ${l.url || ""} | ${cut(l.note || "", 70)}`
+      ? `OPEN P${Number(l.priority) || 2} ${l.from} | ${cut(l.title, 90)} | ${l.url || ""} | ${cut(l.note || "", 70)}`
       : `${String(l.published || l.seen_at).slice(0, 10)} ${String(l.tier).padEnd(6)} ${cut(l.source, 22)} | ${cut(l.title, 100)} | ${l.url}`));
     console.log(`(${open.length} open lead(s): ${open.filter((l) => l.kind === "open").length} from earlier runs, ${open.filter((l) => l.kind === "feed").length} from feeds; --tier gov|vendor|news, --source, text, --limit)`);
   }

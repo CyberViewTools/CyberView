@@ -26,6 +26,8 @@ jobs:
           node-version: "22"
       - name: Collect
         run: node scripts/collect.mjs
+      - name: Clear obvious leads (no AI)
+        run: node scripts/triage.mjs
       - name: Validate
         run: node scripts/build.mjs > /dev/null
       - name: Commit and push

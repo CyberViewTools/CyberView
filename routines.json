@@ -51,6 +51,31 @@
       "does": "Fetches end-of-day prices for tracked cyber stocks and listed victims (Alpha Vantage, within the free 25 calls a day)."
     },
     {
+      "key": "lead-triage",
+      "name": "Lead triage",
+      "tier": "automation",
+      "workflow": "collect.yml",
+      "cron": "11,41 * * * *",
+      "model": null,
+      "status_key": null,
+      "max_age_hours": null,
+      "active": true,
+      "does": "Clears leads already on file, plain non-events and expired items after every collection, before any AI reads them."
+    },
+    {
+      "key": "link-check",
+      "name": "Link check",
+      "tier": "automation",
+      "workflow": "linkcheck.yml",
+      "cron": "29 4 * * 0",
+      "model": null,
+      "status_key": "last_linkcheck_at",
+      "max_age_hours": 200,
+      "active": true,
+      "active_since": "2026-11-18T21:00:00Z",
+      "does": "Checks every source link from the last 30 days and lists the broken ones for the data steward."
+    },
+    {
       "key": "security-check",
       "name": "Weekly security check",
       "tier": "automation",
@@ -178,6 +203,58 @@
       "max_age_hours": 80,
       "active": true,
       "does": "Links listed victims to their tickers and records SEC cyber incident filings (8-K Item 1.05)."
+    },
+    {
+      "key": "triage",
+      "name": "Triage desk",
+      "tier": "ai",
+      "workflow": "claude-task",
+      "active_since": "2026-11-18T21:00:00Z",
+      "cron": "50 */3 * * *",
+      "model": "claude-haiku-5-5",
+      "status_key": "last_triage_at",
+      "max_age_hours": 7,
+      "active": true,
+      "does": "Sorts the lead backlog: drops non-events and duplicates, queues real events for the sweep by priority."
+    },
+    {
+      "key": "regional",
+      "name": "Regional desk",
+      "tier": "ai",
+      "workflow": "claude-task",
+      "active_since": "2026-11-18T21:00:00Z",
+      "cron": "43 6 * * *",
+      "model": "claude-sonnet-5-5",
+      "status_key": "last_regional_at",
+      "max_age_hours": 30,
+      "active": true,
+      "does": "One under-covered region a day, researched in its own languages."
+    },
+    {
+      "key": "followup",
+      "name": "Follow-up desk",
+      "tier": "ai",
+      "workflow": "claude-task",
+      "active_since": "2026-11-18T21:00:00Z",
+      "cron": "23 17 * * *",
+      "model": "claude-sonnet-5-5",
+      "status_key": "last_followup_at",
+      "max_age_hours": 30,
+      "active": true,
+      "does": "Checks whether developing stories and claims were confirmed, denied or grew, and updates them."
+    },
+    {
+      "key": "steward",
+      "name": "Data steward",
+      "tier": "ai",
+      "workflow": "claude-task",
+      "active_since": "2026-11-18T21:00:00Z",
+      "cron": "7 2 * * *",
+      "model": "claude-haiku-5-5",
+      "status_key": "last_steward_at",
+      "max_age_hours": 30,
+      "active": true,
+      "does": "Repairs weak or broken sources, long summaries and duplicates, by rule."
     }
   ]
 }

@@ -7,7 +7,7 @@ import { ROOT } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
-  "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "markets": "Markets",
+  "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "markets": "Markets", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }

@@ -127,3 +127,7 @@ body.nav-open{overflow:hidden}
 .sheetnav a{font-size:17px;padding:14px 14px;color:var(--ink);border-radius:12px}
 .sheetnav a[aria-current="page"]{background:rgba(255,255,255,.1);box-shadow:inset 3px 0 0 var(--accent)}
 @media (max-width:760px){.sitenav{display:none}.navbtn{display:inline-flex}.bar{padding:10px 14px}}
+/* narrow screens: wide tables scroll inside their panel instead of widening the page */
+.panel{max-width:100%;min-width:0;overflow-x:auto}
+.dims>*{min-width:0}
+@media (max-width:600px){main{padding-left:12px;padding-right:12px}th,td{padding-left:4px;padding-right:4px}}

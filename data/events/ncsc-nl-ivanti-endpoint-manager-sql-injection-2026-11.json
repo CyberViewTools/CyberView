@@ -1,0 +1,85 @@
+{
+  "action": "Update Ivanti Endpoint Manager to 2024 SU8 or later now, starting with any Core server reachable from the internet, and review Core servers for signs of compromise.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "Netherlands",
+  "cve_meta": [
+    {
+      "cvss": 9.8,
+      "epss": 0.0198,
+      "id": "CVE-2026-121653",
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "cvss": 6.8,
+      "epss": 0.00444,
+      "id": "CVE-2026-18128",
+      "kev": false,
+      "kev_due": ""
+    }
+  ],
+  "cves": [
+    "CVE-2026-121653",
+    "CVE-2026-18128"
+  ],
+  "date": "2026-11-13",
+  "exec": "Endpoint Manager controls every managed computer; a no-login takeover flaw with public exploit code makes this a patch-now item.",
+  "first_seen": "2026-11-18T00:50:00Z",
+  "geo_basis": "agency",
+  "impact": "",
+  "lat": 52.08,
+  "lng": 4.31,
+  "occurred_at": "2026-11-13T15:59:00+01:00",
+  "org": "NCSC Netherlands",
+  "pin_type": "agency",
+  "place": "The Hague",
+  "plain": "A serious weakness in Ivanti's software for managing company computers can let an outsider take control without a password. Instructions for abusing it are now public, so attacks are likely soon.",
+  "products": [
+    "Ivanti Endpoint Manager"
+  ],
+  "report": {
+    "doc_id": "NCSC-2026-0493 [1.0.1]",
+    "iocs_available": false,
+    "key_findings": [
+      "CVE-2026-121653 is an SQL injection in the Core of Ivanti Endpoint Manager versions before 2024 SU8, rated CVSS 9.8.",
+      "A remote, unauthenticated attacker can inject SQL commands, which can lead to remote code execution.",
+      "Public proof-of-concept code for CVE-2026-121653 appeared by November 13, raising the chance of exploitation in the short term.",
+      "CVE-2026-18128 (CVSS 6.8): the Agent sends sensitive information in clear text, so a man-in-the-middle attacker can read and alter traffic."
+    ],
+    "published": "2026-11-13T15:59:00+01:00",
+    "publisher": "NCSC Netherlands",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Install the updates Ivanti has released for Endpoint Manager.",
+      "See Ivanti's November 2026 security advisory for affected versions and fixes."
+    ],
+    "url": "https://advisories.ncsc.nl/2026/ncsc-2026-0493.html"
+  },
+  "sector": "Technology / endpoint management",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "NCSC-NL advisory NCSC-2026-0493",
+      "url": "https://advisories.ncsc.nl/2026/ncsc-2026-0493.html"
+    },
+    {
+      "name": "Ivanti security advisory",
+      "url": "https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Endpoint-Manager-EPM-November-2026?language=en_US"
+    }
+  ],
+  "status": "official",
+  "summary": "The Dutch National Cyber Security Centre warns that proof-of-concept code is now public for CVE-2026-121653, an SQL injection flaw in the Core of Ivanti Endpoint Manager before 2024 SU8. A remote attacker without credentials can use it to run code. A second flaw, CVE-2026-18128, lets an attacker positioned on the network read and alter agent traffic sent in clear text. Ivanti has released updates.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "NCSC Netherlands: public exploit code for critical Ivanti Endpoint Manager flaw (CVE-2026-121653)",
+  "updated_at": "2026-11-18T00:50:00Z",
+  "validation": {
+    "checked_at": "2026-11-18T00:50:00Z",
+    "note": "Reviewed against the original NCSC-NL advisory, read in a browser. The Ivanti advisory it references was not read.",
+    "state": "corroborated"
+  }
+}

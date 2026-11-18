@@ -1,0 +1,66 @@
+{
+  "action": "Log and inspect QUIC traffic or block outbound UDP 443 so it falls back to inspectable TCP. Patch Exchange and web servers, review accounts holding the ApplicationImpersonation role and audit Group Policy logon scripts for changes.",
+  "actor": "TGR-STA-0049 (also REF7707, Earth Alux, Ink Dragon)",
+  "attack": [],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-16",
+  "exec": "Espionage tools now hide in HTTP/3 traffic that many network monitors skip; unpatched Exchange servers remain the way in.",
+  "first_seen": "2026-11-18T00:08:00Z",
+  "geo_basis": "researcher HQ",
+  "lat": 37.38,
+  "lng": -121.98,
+  "org": "Palo Alto Networks Unit 42",
+  "pin_type": "researcher",
+  "place": "Santa Clara, CA (researcher)",
+  "plain": "Researchers found a spying group breaking into government networks in Southeast Asia through unpatched email servers and hiding its remote-control traffic inside a newer web protocol many security tools do not inspect.",
+  "products": [
+    "Microsoft Exchange",
+    "PerfectPioneer RAT",
+    "KUKURAT"
+  ],
+  "report": {
+    "doc_id": "TGR-STA-0049",
+    "iocs_available": true,
+    "key_findings": [
+      "Targets are Southeast Asian government entities; one decoy PDF imitates a Myanmar election commission document, though victim countries are not confirmed.",
+      "Entry is through unpatched Microsoft Exchange and web servers to plant web shells, with phishing using decoy PDFs and DLL sideloading as a second route.",
+      "PerfectPioneer, a Go tool with six variants, uses HTTP/3 with HTTP/2 fallback and blocks operators from running noisy or destructive commands.",
+      "KUKURAT loads at least 12 modules for keylogging, screenshots, lateral movement and tunnelling, and creates decoy network, registry and file activity.",
+      "Activity spans about nine months and included mass mailbox permission changes on Exchange and credential theft from a domain controller."
+    ],
+    "published": "2026-11-16",
+    "publisher": "Palo Alto Networks Unit 42",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Log and inspect QUIC traffic, or block outbound UDP 443 so HTTP/3 falls back to inspectable TCP.",
+      "Audit SYSVOL and Group Policy for unauthorised logon script changes.",
+      "Create behavioural rules for rundll32.exe loading comsvcs.dll, including ordinal-based calls.",
+      "Review accounts with the ApplicationImpersonation role and watch Exchange logs for repeated Add-MailboxPermission FullAccess grants."
+    ],
+    "url": "https://unit42.paloaltonetworks.com/custom-rats-target-southeast-asia-governments/"
+  },
+  "sector": "Threat research",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Palo Alto Networks Unit 42",
+      "url": "https://unit42.paloaltonetworks.com/custom-rats-target-southeast-asia-governments/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Unit 42 describes about nine months of intrusions into Southeast Asian government networks by a group it tracks as TGR-STA-0049. The attackers entered through unpatched Microsoft Exchange and web servers, then deployed two custom remote access tools, PerfectPioneer and KUKURAT, that talk to their controllers over HTTP/3. KUKURAT also generates decoy activity to hide what it is doing.",
+  "tags": [
+    "espionage"
+  ],
+  "title": "Unit 42: TGR-STA-0049 uses HTTP/3 remote access tools against Southeast Asian governments",
+  "updated_at": "2026-11-18T00:08:00Z",
+  "validation": {
+    "checked_at": "2026-11-18T00:08:00Z",
+    "note": "Reviewed against the original Palo Alto Networks Unit 42 report.",
+    "state": "corroborated"
+  }
+}

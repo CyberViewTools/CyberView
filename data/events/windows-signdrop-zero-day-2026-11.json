@@ -1,0 +1,77 @@
+{
+  "action": "No patch exists. Limit who can run untrusted software with application control, do not disable CLFS authentication, deploy Cyderes's detections for the Defender update interface and unexpected hid.dll files, and apply Microsoft's fix when released.",
+  "actor": "",
+  "attack": [
+    "T1068 Exploitation for Privilege Escalation",
+    "T1574.001 Hijack Execution Flow: DLL",
+    "T1070.004 Indicator Removal: File Deletion",
+    "T1106 Native API"
+  ],
+  "category": "vuln",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-10",
+  "exec": "A public, unpatched Windows flaw raises the damage an attacker can do after any initial foothold; no fix is available yet.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "vendor HQ",
+  "lat": 47.66,
+  "lng": -122.15,
+  "org": "Microsoft Windows",
+  "pin_type": "hq",
+  "place": "Redmond, WA",
+  "plain": "A researcher published an unfixed Windows flaw, named SignDrop, that lets someone who already has basic access to a computer gain full control of it by misusing built-in protections. No fix exists yet.",
+  "products": [
+    "Microsoft Windows",
+    "Windows CLFS",
+    "Microsoft Defender"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "A researcher using the name MSNightmare (Nightmare-Eclipse cluster) published SignDrop on GitHub on November 10, 2026 without coordinated disclosure.",
+      "It raises a standard user to SYSTEM without memory corruption, abusing CLFS HMAC authentication and the Defender signature-update RPC interface to plant a file, then sideloading a DLL through consent.exe.",
+      "Cyderes reproduced all five stages and got a SYSTEM shell with no UAC prompt; the exploit deletes its planted DLL afterwards.",
+      "No CVE or patch exists; Microsoft had not commented as of November 11 and no in-the-wild use was identified as of November 10.",
+      "It is the cluster's sixteenth public zero-day in about thirty-one weeks; the researcher's claim that about 80% of installations are vulnerable is unsupported."
+    ],
+    "published": "November 12, 2026",
+    "publisher": "Cyderes Howler Cell",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Inventory the CLFS Authentication Mode registry value across hosts to define which systems to prioritise.",
+      "Do not disable CLFS authentication, because that reopens older memory-corruption attack classes.",
+      "Restrict untrusted local code execution with application and script control.",
+      "Deploy the detections Cyderes lists, such as Defender signature-update RPC calls from outside the Defender service tree and any hid.dll created in the ink directory.",
+      "Retain file-creation and image-load telemetry, since the exploit removes its artifact."
+    ],
+    "url": "https://www.cyderes.com/howler-cell/signdrop-zero-day"
+  },
+  "sector": "Technology",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Cyderes Howler Cell",
+      "url": "https://www.cyderes.com/howler-cell/signdrop-zero-day"
+    },
+    {
+      "name": "Security Affairs",
+      "url": "https://securityaffairs.com/202968/hacking/new-signdrop-exploit-can-abuse-windows-defender-to-bypass-security-protections.html"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "A researcher using the name MSNightmare published SignDrop on November 10, an unpatched Windows flaw that lifts a standard user to SYSTEM by abusing CLFS log authentication and Microsoft Defender's signature-update interface. Cyderes reproduced it end to end on November 12. There is no CVE or patch, Microsoft had not commented, and no use in real attacks had been identified.",
+  "tags": [
+    "zero-day"
+  ],
+  "title": "SignDrop: researcher releases Windows zero-day giving SYSTEM privileges",
+  "updated_at": "2026-11-18T01:25:00Z",
+  "validation": {
+    "checked_at": "2026-11-18T00:30:00Z",
+    "note": "Reviewed against the original Cyderes Howler Cell document. Microsoft has published nothing on this flaw that could be found.",
+    "state": "corroborated"
+  }
+}

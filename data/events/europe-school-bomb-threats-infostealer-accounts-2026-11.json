@@ -1,0 +1,74 @@
+{
+  "action": "Schools and universities: check whether your accounts appear in stolen-credential data, reset those passwords through a trusted process, revoke sessions, review mailbox rules and turn on phishing-resistant sign-in. Monitor outbound mail for bulk sending.",
+  "actor": "",
+  "attack": [
+    "T1078 Valid Accounts",
+    "T1586.002 Compromise Accounts: Email Accounts"
+  ],
+  "category": "report",
+  "country": "Italy",
+  "cves": [],
+  "date": "2026-11-11",
+  "exec": "Stolen staff or student logins can be reused to send threats under an institution's name, causing disruption and reputational harm.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "victim country",
+  "lat": 42.8,
+  "lng": 12.6,
+  "org": "Schools across Europe",
+  "pin_type": "country",
+  "place": "Italy (city not stated)",
+  "plain": "Schools across Europe received threatening emails on November 11. Researchers found that two university email addresses reported as senders, in Egypt and Taiwan, had already appeared in stolen-password data.",
+  "products": [],
+  "report": {
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "Hudson Rock found two university addresses reported as senders of the threats, one Egyptian and one Taiwanese, in previously stolen credential data.",
+      "The Egyptian address sits in a Vidar infostealer record dated October 1, 2021, with 112 saved credentials, 20 of them using that address.",
+      "The Taiwanese address appears in the AlienTXTBASE collection, more than a year old; the university later saw abnormal bulk sending and suspended the account.",
+      "About 6,000 Italian schools received the messages, more than 300 in Northern Ireland, with threats also reported in Scotland and Ireland.",
+      "Hudson Rock says this shows earlier exposure, not proof the credentials were used, and attributes the threats to no person, group or state."
+    ],
+    "published": "2026-11-12",
+    "publisher": "Hudson Rock",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Contain any affected account and reset its credentials through a trusted process.",
+      "Revoke sessions and refresh tokens and review app passwords, sign-in methods, app consents and mailbox rules.",
+      "Investigate and clean the infected device.",
+      "Move to phishing-resistant sign-in and monitor outbound mail for bulk sending.",
+      "Use leaked-credential detection and risk-based access policies."
+    ],
+    "url": "https://www.infostealers.com/article/school-bomb-threats-hudson-rock-finds-reported-sender-accounts-in-infostealer-data/"
+  },
+  "sector": "Education",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Hudson Rock (Infostealers)",
+      "url": "https://www.infostealers.com/article/school-bomb-threats-hudson-rock-finds-reported-sender-accounts-in-infostealer-data/"
+    },
+    {
+      "name": "Security Affairs",
+      "url": "https://securityaffairs.com/202941/security/the-school-bomb-threats-came-from-accounts-already-in-stolen-data.html"
+    },
+    {
+      "name": "Cybernews",
+      "url": "https://cybernews.com/security/school-bomb-threats-europe-hacked-accounts/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Threat emails reached about 6,000 Italian schools and hundreds more in Northern Ireland, Scotland and Ireland on November 11. Hudson Rock found two university addresses reported as senders, one Egyptian and one Taiwanese, in infostealer data that predates the threats by a year or more. It stresses this shows earlier credential exposure, not proof of use, and names no culprit.",
+  "tags": [
+    "identity"
+  ],
+  "title": "School bomb-threat emails across Europe traced to accounts found in infostealer data",
+  "updated_at": "2026-11-17T23:58:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:58:00Z",
+    "note": "Reviewed against the original Hudson Rock report.",
+    "state": "corroborated"
+  }
+}

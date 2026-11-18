@@ -1,0 +1,145 @@
+{
+  "generated_at": "2026-11-18T01:00:00Z",
+  "items": [
+    {
+      "basis": "inferred",
+      "direct": [
+        "Any service that decodes untrusted Base64 on an affected Java runtime can be crashed or taken over without a login."
+      ],
+      "downstream": [
+        "Java is bundled inside third-party applications, appliances and container images, so exposure extends to products you did not build.",
+        "Patching depends on each vendor shipping an updated runtime, so some systems will stay exposed after your own servers are fixed."
+      ],
+      "event_id": "cisa-java4shell-alert-cve-2026-114938-2026-11",
+      "watch_for": [
+        "Unexpected JVM crashes and restarts",
+        "Vendor advisories naming a bundled Java runtime",
+        "Unfamiliar Java processes or runtimes on servers"
+      ],
+      "who_should_care": [
+        "App owners",
+        "Vendor management",
+        "Platform teams"
+      ]
+    },
+    {
+      "basis": "inferred",
+      "direct": [
+        "An outsider can run code on the Endpoint Manager Core server without credentials; exploit code is public."
+      ],
+      "downstream": [
+        "The Core server can push software and scripts to every managed computer, so a takeover there can become a takeover of the fleet.",
+        "Management servers are a common starting point for ransomware deployment."
+      ],
+      "event_id": "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11",
+      "watch_for": [
+        "New or unexpected software distribution tasks",
+        "Core server reachable from the internet",
+        "Unusual SQL errors or new admin accounts on the Core"
+      ],
+      "who_should_care": [
+        "Endpoint team",
+        "SOC"
+      ]
+    },
+    {
+      "basis": "inferred",
+      "direct": [
+        "Attackers are exploiting a flaw that runs code on the Puppet Server."
+      ],
+      "downstream": [
+        "The Puppet Server defines configuration for every node it manages, so control of it can change settings or run commands across the estate.",
+        "Secrets held in Puppet data, such as service passwords, could be read."
+      ],
+      "event_id": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11",
+      "watch_for": [
+        "Certificate requests signed automatically",
+        "Unexpected catalog or module changes",
+        "Reports submitted from unknown agents"
+      ],
+      "who_should_care": [
+        "Infrastructure automation",
+        "Linux admins"
+      ]
+    },
+    {
+      "basis": "stated",
+      "direct": [
+        "Unfixed flaws let an outsider take control of refrigeration controllers that are reachable from the internet."
+      ],
+      "downstream": [
+        "US agencies warn that altered settings can force heating and defrost cycles, causing inventory loss and a fire hazard.",
+        "Operators can lose sight of real temperatures, so spoiled goods may not be noticed in time."
+      ],
+      "event_id": "danfoss-refrigeration-controller-flaws-2026-11",
+      "watch_for": [
+        "Controllers reachable through integrators' 4G modems",
+        "Setpoint or defrost schedule changes nobody made",
+        "Gaps in temperature logs"
+      ],
+      "who_should_care": [
+        "Facilities",
+        "Retail and food operations",
+        "OT security"
+      ]
+    },
+    {
+      "basis": "inferred",
+      "direct": [
+        "Over 6 million stolen credentials were recovered from the criminals' servers and are being shared with notification services."
+      ],
+      "downstream": [
+        "Credentials stolen before the takedown may already have been sold and can still be used.",
+        "Expect a wave of breach notifications and password resets as victims are told."
+      ],
+      "event_id": "operation-endgame-gootloader-castlerat-stealc-2026-11",
+      "watch_for": [
+        "Notifications from HaveIBeenPwned, Shadowserver or your national CSIRT",
+        "Sign-ins from new locations on accounts without multi-factor authentication"
+      ],
+      "who_should_care": [
+        "Identity team",
+        "Help desk"
+      ]
+    },
+    {
+      "basis": "stated",
+      "direct": [
+        "Automated agents hunted for exposed AI gateways and app builders and extracted the provider keys inside them."
+      ],
+      "downstream": [
+        "Stolen keys were pooled to fund further attacks, so victims see unexpected AI bills.",
+        "A key that also grants wider cloud access turns a billing problem into a breach."
+      ],
+      "event_id": "amazon-ai-agent-campaign-litellm-dify-keys-2026-11",
+      "watch_for": [
+        "Unexpected spend or usage on AI provider accounts",
+        "AI gateways with default or hardcoded credentials",
+        "Keys ever committed to code"
+      ],
+      "who_should_care": [
+        "AI platform owners",
+        "Cloud FinOps"
+      ]
+    },
+    {
+      "basis": "inferred",
+      "direct": [
+        "A widely embedded third-party script was altered, so sites loading it served malicious code to their visitors."
+      ],
+      "downstream": [
+        "Every site that loads the script inherits the compromise without being breached itself.",
+        "Card or login details entered on affected pages may have been captured, creating notification duties for site owners."
+      ],
+      "event_id": "optimizely-web-script-injection-2026-11",
+      "watch_for": [
+        "Third-party scripts loaded without integrity checks",
+        "Unexpected outbound requests from checkout or login pages"
+      ],
+      "who_should_care": [
+        "Web team",
+        "Fraud and payments"
+      ]
+    }
+  ]
+}

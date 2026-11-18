@@ -1,0 +1,69 @@
+{
+  "action": "Update SharePoint Server Subscription Edition to 16.0.20326.20278 or later and bring Microsoft 365 Apps and Office LTSC 2021/2024 (Windows and Mac) to the current security build after testing.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "United States",
+  "cves": [
+    "CVE-2026-124222",
+    "CVE-2026-124223",
+    "CVE-2026-126526"
+  ],
+  "date": "2026-11-16",
+  "exec": "A fresh SharePoint and Office patch set outside the monthly cycle; no exploitation reported, risk rated High for larger organisations.",
+  "first_seen": "2026-11-17T23:38:00Z",
+  "geo_basis": "agency",
+  "lat": 42.59,
+  "lng": -73.7,
+  "org": "MS-ISAC (Center for Internet Security)",
+  "pin_type": "agency",
+  "place": "East Greenbush, NY",
+  "plain": "Microsoft fixed three flaws in SharePoint and OneNote that could let an attacker run their own code on a computer or server. No attacks are known.",
+  "products": [
+    "Microsoft SharePoint Server",
+    "Microsoft OneNote",
+    "Microsoft 365 Apps",
+    "Microsoft Office LTSC"
+  ],
+  "report": {
+    "doc_id": "2026-134",
+    "iocs_available": false,
+    "key_findings": [
+      "SharePoint Server Subscription Edition before 16.0.20326.20278 and Office LTSC 2021 and 2024, Microsoft 365 Apps and Office for Mac before the listed builds are affected.",
+      "CVE-2026-124222 is improper authorisation and CVE-2026-124223 is deserialisation of untrusted data, both in SharePoint; CVE-2026-126526 is a heap overflow in OneNote.",
+      "The most severe could allow remote code execution with the privileges of the logged-on user.",
+      "There are no reports of exploitation in the wild.",
+      "Risk is High for large and medium government and business entities, Medium for small ones and Low for home users."
+    ],
+    "published": "2026-11-16",
+    "publisher": "MS-ISAC (Center for Internet Security)",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Apply Microsoft's updates to vulnerable systems promptly after appropriate testing.",
+      "Run software as a non-administrative user and apply least privilege.",
+      "Segment the network and place internet-facing services in a DMZ.",
+      "Enable anti-exploitation features such as DEP and Windows Defender Exploit Guard."
+    ],
+    "url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-products-could-allow-for-remote-code-execution_2026-134"
+  },
+  "sector": "Government advisory",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "MS-ISAC advisory 2026-134",
+      "url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-products-could-allow-for-remote-code-execution_2026-134"
+    }
+  ],
+  "status": "official",
+  "summary": "MS-ISAC advisory 2026-134, issued November 16, covers three Microsoft flaws: an improper authorisation bug and a deserialisation bug in SharePoint Server Subscription Edition, and a heap overflow in OneNote affecting Microsoft 365 Apps and Office LTSC 2021 and 2024 on Windows and Mac. The most severe could allow remote code execution with the logged-on user's privileges. No exploitation has been reported.",
+  "tags": [],
+  "title": "MS-ISAC: Microsoft SharePoint and OneNote flaws could allow remote code execution",
+  "updated_at": "2026-11-17T23:38:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:38:00Z",
+    "note": "Reviewed against the original MS-ISAC document.",
+    "state": "corroborated"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "architecture": [
+    "One page file, index.html, plus world-110m.json (country outlines). d3 v7 and topojson from cdnjs. No other network calls from the page.",
+    "All data lives in this artifact's database. Scheduled tasks write it; the page reads it live and re-renders on change.",
+    "Every document is passed through a clean*() function in the page before use, so malformed data is dropped, not shown. New fields must be added there.",
+    "Each panel renders inside safe(), so one failing panel shows a notice instead of blanking the page."
+  ],
+  "collections": {
+    "analysis/latest": "Patterns: generated_at, summary, patterns[{id,title,kind,confidence,narrative,caveat,event_ids,chain,edges[{from,to,rel,basis}]}].",
+    "analysis/ripples": "generated_at, items[{event_id,basis,who_should_care[],direct[],downstream[],watch_for[]}].",
+    "brief/latest": "Daily brief: generated_at, date, headline, plain_summary, items[{title,why,action,event_id}].",
+    "corrections/<id>": "at, event_id, title, what_changed.",
+    "data/users/<uid>/watchlist": "Per-viewer watchlist terms. The only path viewers can write besides reports.",
+    "events/<id>": "One per event. Fields: title, date, date_note, occurred_at, time_basis, category (incident|outage|vuln|report|policy|investment|enforcement), severity 1-3, status (confirmed|official|developing|claimed), org, sector, country, place, lat, lng, geo_basis, pin_type, actor, summary, plain, exec, action, impact, records_affected, products[], attack[], tags[], cves[], cve_meta[{id,cvss,epss,kev,kev_due}], sources[{name,url}], source_tier, validation{state,checked_at,note}, report{publisher,publisher_type,doc_id,published,key_findings[],recommendations[],iocs_available,read_depth,url}, report_recheck, first_seen, updated_at.",
+    "kev/<CVE id>": "CISA known-exploited catalog entries from the last 45 days: cve, vendor, product, name, added, due, ransomware, desc, cvss, epss.",
+    "meta/status": "Last-run timestamps per task (last_sweep_at, last_validation_at, last_feeds_at, last_kev_at, last_analysis_at, last_reports_at, last_deep_sweep_at, last_brief_at, last_maintenance_at), notes, health.",
+    "reports/<id>": "Reader error reports, reviewed by the validation pass.",
+    "stats/history": "days{YYYY-MM-DD:{total,...}} for the typical-day baseline."
+  },
+  "design_decisions": [
+    "Appearance: light and dark glass, system font, validated colour-blind-safe category palette; category is always also shown by shape.",
+    "Charts lead with the question they answer and print their caveats underneath.",
+    "Bar charts are single-colour columns; breakdowns go in tooltips.",
+    "No viewer-side workflow state (handled/patched) by owner's decision on 2026-11-17.",
+    "Refresh reloads data and resets to the main map view."
+  ],
+  "how_to_update_the_page": [
+    "Edit index.html. Configuration tables (CATS, LAYERS, SECG, LENS) are at the top of the script.",
+    "Bump BUILD.version and BUILD.date in the script.",
+    "Run the regression suite (test_all.py: both appearances, phone width, missing data, no connection, 190 events). It must print ALL PASS.",
+    "Publish index.html to artifact slug 480095d5-6613-4f00-b113-f4ee0e03aa61 with the current live version as base_version.",
+    "To change a scheduled task, append or replace a clearly labelled paragraph and resend the whole prompt; verify the stored prompt afterwards."
+  ],
+  "known_limits": [
+    "The live page has only been verified through a local test copy with stubbed data, not in a signed-in browser.",
+    "Scheduled tasks cannot use a real browser, so pages that need one (CISA's advisory list sometimes, Europol, HHS) rely on fallbacks.",
+    "Germany's BSI, Australia's cyber.gov.au and SAP notes block automated readers.",
+    "Attack-surface and sector rows are assigned by keyword and can be wrong.",
+    "Coverage is thin for Africa, Turkey, most of the Middle East and Latin America."
+  ],
+  "page_version": "1.0",
+  "purpose": "Rolling seven-day world map of publicly reported cyber events for defenders. Read-only for viewers: no marking of items as handled. Owner: Xander.",
+  "rules_for_data": [
+    "Facts only from pages actually retrieved; never invent a document number, finding or URL.",
+    "Outages are category outage and never called attacks unless an official source says so.",
+    "Attacker claims: status claimed, severity 1, hidden by default.",
+    "Prefer the original government or vendor document; record how deeply it was read in report.read_depth.",
+    "When an original contradicts an entry, fix the entry and add a corrections document.",
+    "Never delete documents. Use ifVersion on existing documents; at most 15-20 operations per write.",
+    "Slow or failing sites: retry after 60 then 120 seconds; do not work around sites that block automated readers."
+  ],
+  "scheduled_tasks": [
+    {
+      "id": "trig_01TabG7pDaRQCf3ZcNieuarY",
+      "name": "hourly sweep",
+      "schedule": "minute 10 every hour"
+    },
+    {
+      "id": "trig_0194AprfFRoQAnWv7iWFqvVJ",
+      "name": "daily deep sweep",
+      "schedule": "5:17 am Toronto"
+    },
+    {
+      "id": "trig_01VEUdDAWAFsG5sPZavdYyiV",
+      "name": "daily cleanup and health check",
+      "schedule": "3:41 am Toronto, push on"
+    },
+    {
+      "id": "trig_01NKHBGprPJLC3pMk6XXLiS8",
+      "name": "validation pass",
+      "schedule": "minute 19 every 2 hours"
+    },
+    {
+      "id": "trig_019eTHWuuXPYuo1QYkdEHwqo",
+      "name": "correlation and timeline analysis",
+      "schedule": "minute 50 every 3 hours"
+    },
+    {
+      "id": "trig_01BJ2EYCycYREe9WxeDFVH1h",
+      "name": "feeds and enrichment sync",
+      "schedule": "minute 59 every 2 hours"
+    },
+    {
+      "id": "trig_01SDa3PPJ4QaKed3FS3jWZ6H",
+      "name": "daily brief and baseline",
+      "schedule": "6:40 am Toronto, push on"
+    },
+    {
+      "id": "trig_012cMW9qvL4bHXVX1c7P6CTr",
+      "name": "primary-source report review",
+      "schedule": "1:17 am and 1:17 pm Toronto"
+    }
+  ],
+  "title": "Cyber Watch Map maintainer guide",
+  "updated_at": "2026-11-18T01:25:00Z"
+}

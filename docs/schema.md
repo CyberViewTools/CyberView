@@ -37,6 +37,7 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 | attribution | | `{actor, origin_country, lat, lng, by, by_type, url}`: who a government (`by_type` `government`) or the investigating firm (`investigator`) says did it, where the actor is said to be based (lat, lng of that country's capital) and the https page where the attribution is made. Drawn as a dashed, labelled arc from the origin to the victim. Never from attacker boasts or press speculation. |
 | links | | `[{to, rel, url}]`: other events a source says this one is connected to (`to` is an event id on file, `rel` at most 60 characters such as "customer of breached supplier", `url` the page that states it). Drawn as arcs on the globe. |
 | hunt | | `[{name, format, url, publisher}]`: indicator files and detection rules the original document publishes (format: stix, sigma, yara, snort, suricata, kql, spl, csv, json, misp, openioc, text, pdf). Links only; indicators themselves are never stored. Shown in the workbench's hunt pack. |
+| review | | `{state, at, note, flags[]}`: the second review by a different agent (the review desk), written only by `scripts/review.mjs`: `passed`, `corrected` (the reviewer fixed the record) or `flagged` (a problem remains; validation becomes `disputed` until verify settles it). |
 | duplicate_of | | id of the richer record; the build leaves this one out |
 | first_seen, updated_at, qa_checked_at | | ISO times |
 

@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.21",date:"2026-11-18"};
+var BUILD={version:"1.22",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -288,6 +288,7 @@ function clean(id,d){
     if(aLat!==null&&aLng!==null&&/^https:\/\//i.test(au)&&str(at.by,120)&&str(at.actor,120))e.attr={actor:str(at.actor,120),origin:str(at.origin_country,60),lat:aLat,lng:aLng,by:str(at.by,120),byType:at.by_type,url:au};}
   e.links=(Array.isArray(d.links)?d.links:[]).slice(0,40).map(function(l){if(!l||typeof l!=="object")return null;var to=str(l.to,120),u=str(l.url,600);
     return /^[a-z0-9][a-z0-9-]{2,119}$/.test(to)&&to!==id&&/^https:\/\//i.test(u)?{to:to,rel:str(l.rel,60)||"linked",url:u}:null;}).filter(Boolean);
+  var rv=d.review;e.review=rv&&typeof rv==="object"&&{passed:1,corrected:1,flagged:1}[rv.state]&&str(rv.at,30)?{state:rv.state,at:str(rv.at,30),note:str(rv.note,300)}:null;
   var HF={stix:"STIX",sigma:"Sigma rule",yara:"YARA rule",snort:"Snort rule",suricata:"Suricata rule",kql:"KQL query",spl:"Splunk query",csv:"CSV indicators",json:"JSON indicators",misp:"MISP event",openioc:"OpenIOC",text:"Indicator list",pdf:"PDF with indicators"};
   e.hunt=(Array.isArray(d.hunt)?d.hunt:[]).slice(0,12).map(function(h){if(!h||typeof h!=="object"||!own(HF,h.format))return null;var hu=str(h.url,600);
     return /^https:\/\//i.test(hu)?{name:str(h.name,100)||HF[h.format],fmt:HF[h.format],url:hu}:null;}).filter(Boolean);
@@ -522,6 +523,8 @@ function card(e,open){
     var vb=el("div","val "+vv[1]);vb.appendChild(el("b",null,vv[0]));vb.appendChild(document.createTextNode(" · confidence "+CONF[e.conf].toLowerCase()));
     vb.appendChild(el("small",null,(e.val&&e.val.note)||vv[2]));
     if(e.val&&e.val.checked)vb.appendChild(el("small",null,"Checked "+fmtTime(e.val.checked)));
+    if(e.review)vb.appendChild(el("small","rev "+e.review.state,({passed:"Second review: a different agent re-read the sources and found nothing wrong",corrected:"Second review: a different agent re-read the sources and corrected this record",flagged:"Second review: a problem was found and is being settled"})[e.review.state]+" · "+fmtTime(e.review.at)+(e.review.state!=="passed"&&e.review.note?" · "+e.review.note:"")));
+    else vb.appendChild(el("small","rev none","Second review: not yet done"));
     b.appendChild(vb);
     if(e.tags.length){var tg=el("div","tags");e.tags.forEach(function(t){tg.appendChild(el("span","tag",t));});b.appendChild(tg);}
     var dl=el("dl");

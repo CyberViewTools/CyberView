@@ -62,6 +62,7 @@ function checkEvent(e, path) {
   const words = String(e.summary || "").trim().split(/\s+/).filter(Boolean).length;
   if (words > 75) warnings.push(`${where}: summary is ${words} words; the limit is 75`);
   if (e.duplicate_of && typeof e.duplicate_of !== "string") errors.push(`${where}: duplicate_of must be an event id`);
+  if (e.review != null && (typeof e.review !== "object" || !["passed", "corrected", "flagged"].includes(e.review.state) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(e.review.at || ""))) errors.push(`${where}: review must be {state: passed|corrected|flagged, at, note} (written by scripts/review.mjs)`);
 }
 
 const files = listEventFiles();

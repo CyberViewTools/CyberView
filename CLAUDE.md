@@ -46,6 +46,7 @@ scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS fee
 scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
 scripts/fuse.mjs         groups leads into stories ranked by corroboration (list, show, done); data/stories.json is untracked working state
 scripts/metrics.mjs      pipeline metrics for the editor job and the status page
+scripts/review.mjs       second review of new events: queue with mechanical flags, and pass, corrected, flagged verdicts (the review desk job)
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
 scripts/verify-build.mjs build verifier: outputs parse and match site/data/manifest.json; --against-live refuses a shrunken dataset; --live proves the deploy took
 scripts/guard.mjs        end-to-end guard from the outside (live site + public GitHub API): data age, last runs, deploy lag; --heal restarts what it can
@@ -100,6 +101,7 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 - Never delete event files. Mark a duplicate with `"duplicate_of": "<id>"`; the build leaves it out. Before adding an event, run `node scripts/q.mjs dupes "<title>"`.
 - Nothing researched is wasted: every job writes a run log in `data/runs/` with what it read, added, skipped and could not confirm (open leads). The next run starts from `node scripts/q.mjs leads`.
 - Work from stories (`node scripts/fuse.mjs list`), which combine every collector, before using web search: one search engine is not the world. Cite the publisher's own page, never a news.google.com or bing.com redirect. Leak-site leads (`kind: claim`) are attackers' claims; database rows (`cve`, `breach-db`, `status`) are facts to check, not reports.
+- Every new or changed event gets a second review by a different agent (`node scripts/review.mjs queue`); only that script writes the `review` field. Job instructions in `docs/jobs.md` follow one format (GOAL, INPUTS, STEPS, RULES, LIMITS, DONE WHEN, TIMESTAMP) and the shared preamble's event checklist; keep new jobs to it.
 - Slow sites: retry after 60 then 120 seconds. Do not work around sites that block automated readers.
 - Commit data changes with a message like `data: hourly sweep, 3 new, 2 updated`. Run `node scripts/build.mjs` first; never commit if it fails.
 

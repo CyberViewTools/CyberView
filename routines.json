@@ -114,6 +114,19 @@
    "does": "Turns new leads and headline news into verified events."
   },
   {
+   "key": "review",
+   "name": "Review desk",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "25 */2 * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_review_at",
+   "max_age_hours": 5,
+   "active": true,
+   "does": "A second agent re-reads the sources of every new or changed event and passes, corrects or flags it, up to 30 events a run with three reviewers in parallel."
+  },
+  {
    "key": "verify",
    "name": "Verify",
    "tier": "ai",

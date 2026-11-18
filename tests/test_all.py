@@ -867,6 +867,37 @@ async def main():
 
         await serve(make_site(bundle), v119)
 
+        # v1.21: freshness notice, offline copy, health panel
+        old = copy.deepcopy(bundle); old["built_at"] = "2026-11-01T00:00:00Z"
+        async def v121(url):
+            pg, errs = await open_page(browser, url, wait=1500)
+            note = await pg.locator("#notice").text_content()
+            ok("freshness: old data is called out plainly", await pg.locator("#notice").is_visible() and "New data is not arriving" in note, note)
+            ok("freshness: live dot off", "off" in (await pg.locator("#live").get_attribute("class")))
+            await pg.context.close()
+        await serve(make_site(old), v121)
+
+        async def v121b(url):
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 860})
+            pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.goto(url); await pg.wait_for_timeout(1500)
+            ok("fresh data: no notice", await pg.locator("#notice").is_hidden())
+            ready = await pg.evaluate("navigator.serviceWorker.ready.then(r => !!r.active)")
+            await pg.reload(); await pg.wait_for_timeout(1500)   # second load goes through the worker and is stored
+            n = await pg.locator("#feed .card").count()
+            await ctx.set_offline(True)
+            await pg.reload(); await pg.wait_for_timeout(2500)
+            ok("offline: the stored copy still shows the map and events", ready and n > 0 and await pg.locator("#feed .card").count() == n and await pg.locator("header h1").is_visible(), [ready, n])
+            await ctx.set_offline(False)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(900)
+            rows = await pg.locator("#health li").all_text_contents()
+            ok("status: health panel lists the checks", len(rows) >= 5 and any("Site data rebuilt" in r for r in rows) and any("Every record passed validation" in r for r in rows) and any("Published:" in r for r in rows), rows)
+            ok("v1.21: no script errors", not errs, errs)
+            await ctx.close()
+        subprocess.run(["node", "scripts/build.mjs"], cwd=ROOT, check=True, capture_output=True)   # fresh health.json and manifest.json
+        await serve(make_site(json.load(open(os.path.join(ROOT, "site", "data", "bundle.json")))), v121b)
+
         await browser.close()
 
 

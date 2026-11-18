@@ -26,7 +26,7 @@ jobs:
       - name: Check links
         run: node scripts/linkcheck.mjs
       - name: Validate
-        run: node scripts/build.mjs
+        run: node scripts/build.mjs --quarantine
       - name: Commit and push
         run: |
           git config user.name "cyberview-linkcheck"

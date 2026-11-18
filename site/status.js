@@ -42,6 +42,21 @@
   fetch("data/ops.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(render)
     .catch(function () { $("summary").textContent = "Status can't be loaded right now. Try again in a minute."; });
 
+  // pipeline health: data age, last runs, and anything the build left out (site/data/health.json and manifest.json)
+  Promise.all(["health.json", "manifest.json"].map(function (f) { return fetch("data/" + f + "?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); })).then(function (a) {
+    var h = a[0], m = a[1], ul = $("health"); ul.textContent = "";
+    function row(ok, text) { var li = el("li"); li.appendChild(el("span", "badge " + (ok ? "ok" : "warn"), ok ? "OK" : "Check")); li.appendChild(document.createTextNode(" " + text)); ul.appendChild(li); }
+    if (!h) { row(false, "The health record can't be loaded right now."); return; }
+    var mins = function (iso) { return (Date.now() - Date.parse(iso)) / 6e4; }, lim = function (iso, max, label) { var v = mins(iso); row(isFinite(v) && v <= max, label + " " + (iso ? ago(iso) : "has not run yet") + (isFinite(v) && v > max ? " (expected within " + (max >= 120 ? Math.round(max / 60) + " h" : max + " min") + ")" : "")); };
+    lim(h.built_at, 90, "Site data rebuilt");
+    lim(h.last_sweep_at, 150, "Research sweep ran");
+    lim(h.last_collect_at, 120, "Feeds collected");
+    lim(h.last_feeds_at, 360, "Vulnerability feeds synced");
+    var q = typeof h.quarantined_count === "number" ? h.quarantined_count : 0;
+    row(q === 0, q === 0 ? "Every record passed validation" : q + " record" + (q === 1 ? "" : "s") + " failed validation and " + (q === 1 ? "is" : "are") + " left out until fixed");
+    if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));
+  });
+
   function render(o) {
     var body = $("routines").querySelector("tbody"), counts = { ok: 0, active: 0 };
     (o.routines || []).forEach(function (r) {

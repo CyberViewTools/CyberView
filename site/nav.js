@@ -2,6 +2,8 @@
 // Esc, a click outside or choosing a link closes it; focus moves into the sheet and back to the button.
 (function () {
   "use strict";
+  // offline copy (sw.js): if the site cannot be reached, the last good pages and data are shown instead of an error
+  try { if ("serviceWorker" in navigator && /^https:$|^http:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
   var btn = document.getElementById("navBtn"), sheet = document.getElementById("navSheet");
   if (!btn || !sheet) return;
   function set(open) {

@@ -27,6 +27,11 @@
     <p id="summary" aria-live="polite">Loading status</p>
   </section>
   <section class="panel">
+    <h2>Is fresh, checked data reaching the site?</h2>
+    <ul class="plain" id="health"><li>Checking</li></ul>
+    <p class="note">Every build validates every record. A record that breaks a rule is left out and reported, so it cannot hold back the rest. Before publishing, the build is checked for completeness and compared with the live site; after publishing, the live copy is fetched and compared byte for byte with the build. If the site cannot be reached, your browser shows its last good copy and says how old it is.</p>
+  </section>
+  <section class="panel">
     <h2>Routines</h2>
     <div class="tablewrap"><table id="routines">
       <thead><tr><th scope="col">Routine</th><th scope="col">Runs</th><th scope="col">Model</th><th scope="col">Last run</th><th scope="col">State</th></tr></thead>

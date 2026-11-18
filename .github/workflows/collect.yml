@@ -35,7 +35,7 @@ jobs:
       - name: Group leads into stories
         run: node scripts/fuse.mjs
       - name: Validate
-        run: node scripts/build.mjs > /dev/null
+        run: node scripts/build.mjs --quarantine > /dev/null
       - name: Commit and push
         run: |
           git config user.name "cyberview-collect"

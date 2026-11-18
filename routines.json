@@ -11,7 +11,7 @@
    "status_key": "last_collect_at",
    "max_age_hours": 3,
    "active": true,
-   "does": "Reads 64 agency, vendor and news feeds in several languages every 30 minutes, plus any the source scout has added, and files new items as leads."
+   "does": "Reads 131 agency, vendor and news feeds in several languages every 30 minutes, plus any the source scout has added, and files new items as leads."
   },
   {
    "key": "feeds",
@@ -320,6 +320,19 @@
    "max_age_hours": 200,
    "active": true,
    "does": "Reviews the week's pipeline numbers and corrections, fixes the three biggest problems in configuration, and reports what needs code."
+  },
+  {
+   "key": "guardian",
+   "name": "Guardian",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "47 */2 * * *",
+   "model": "claude-haiku-5-5",
+   "status_key": null,
+   "max_age_hours": null,
+   "active": true,
+   "does": "An independent check, outside the session that runs the other jobs: confirms fresh, validated data is live, restarts what is overdue, and alerts the owner if it cannot."
   }
  ]
 }

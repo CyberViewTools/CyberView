@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.20",date:"2026-11-18"};
+var BUILD={version:"1.21",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -210,7 +210,15 @@ function renderLayers(){
 function layersToggle(open){var b=$("layers");b.hidden=!open;$("zlayers").setAttribute("aria-expanded",open?"true":"false");if(open)renderLayers();}
 
 /* ---------- HUD clock and intel wire ---------- */
-var wireI=0,wireItems=[],builtAt="";
+var wireI=0,wireItems=[],builtAt="",loadFailing=0;
+/* Data freshness, said plainly: the pipeline rebuilds the data at least every 30 minutes, so data older than 3 hours means
+   something upstream has stopped; a failing reload means this browser cannot reach the site and is showing a stored copy. */
+function freshness(){
+  var h=(Date.now()-Date.parse(builtAt))/36e5;if(!builtAt||!isFinite(h))return "";
+  if(loadFailing>=2)return "CyberView can't be reached right now. You are seeing the copy from "+ago(builtAt)+"; it will update by itself when the connection returns.";
+  if(h>=3)return "This data was last updated "+ago(builtAt)+". New data is not arriving, which is a fault on CyberView's side, not yours. Check primary sources for anything urgent.";
+  return "";
+}
 function hudTick(){var h=$("hud");if(!h)return;var d=new Date();h.textContent="UTC "+pad2(d.getUTCHours())+":"+pad2(d.getUTCMinutes());h.title="Coordinated Universal Time. Data built "+(builtAt?ago(builtAt):"(not loaded yet)")+".";}
 function pad2(n){return (n<10?"0":"")+n;}
 var wireKey="";
@@ -354,7 +362,7 @@ function visible(){
 /* ---------- header ---------- */
 function renderStats(list){
   var s=$("stats");s.textContent="";
-  $("live").className="live"+(unavailable||stale?" off":"");
+  $("live").className="live"+(unavailable||stale||freshness()?" off":"");
   if(!loaded){s.textContent=unavailable?"Live data unavailable":"Loading events";return;}
   var mapped=list.filter(function(e){return e.lat!==null;}).length;
   s.appendChild(el("b",null,String(list.length)));s.appendChild(document.createTextNode(" events · "));
@@ -630,8 +638,9 @@ function renderScope(){
   if(state.cats.size<CATS.length)parts.push((CATS.length-state.cats.size)+" type"+(CATS.length-state.cats.size>1?"s":"")+" off");
   if(state.wlOnly&&wl.terms.length)parts.push("My environment only");
   $("scope").hidden=!parts.length||!!state.sel;$("scopeText").textContent=parts.join(" · ");
-  var note=$("notice");
-  if(unavailable){note.hidden=false;note.textContent="The latest data could not be loaded. Check your connection and press Refresh.";}
+  var note=$("notice"),fr=freshness();
+  if(fr&&!unavailable){note.hidden=false;note.textContent=fr;}
+  else if(unavailable){note.hidden=false;note.textContent="The latest data could not be loaded. Check your connection and press Refresh.";}
   else if(stale){note.hidden=false;note.textContent="Still waiting for the data store. What's shown may be out of date.";}
   else note.hidden=true;
 }
@@ -2025,7 +2034,7 @@ function openStore(){
     return fetch(STORE_URL+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
       .then(function(j){if(!j||typeof j!=="object"||!Array.isArray(j.events))throw new Error("bad bundle");var changed=j.built_at!==last;bundle=j;last=j.built_at;builtAt=str(j.built_at,30);return changed;});
   }
-  function reload(){return load().then(function(ch){if(ch)notify();});}
+  function reload(){return load().then(function(ch){loadFailing=0;if(ch)notify();else renderSoon();},function(x){loadFailing++;renderSoon();throw x;});}
   function coll(name,filters,order,lim){
     function run(){
       var a=rows(name);

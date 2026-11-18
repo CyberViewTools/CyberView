@@ -11,12 +11,15 @@
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
 //   site/data/chat.json              reviewed community posts (newest 300)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
+//   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
+//   site/data/manifest.json          counts and a SHA-256 of every data file, for scripts/verify-build.mjs
 //   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
 import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
 import { load as pipelineMetrics } from "./metrics.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat } from "./lib/validate.mjs";
@@ -28,6 +31,11 @@ const STATUS = ["confirmed", "official", "developing", "claimed"];
 const TAGS = ["ransomware","data-breach","supply-chain","zero-day","ddos","espionage","critical-infrastructure","ai-enabled","third-party","phishing","insider","hacktivism","ot-ics","cloud","identity","fraud","takedown","regulation","funding","acquisition"];
 const errors = [], warnings = [];
 const strict = process.argv.includes("--strict");   // CI can turn hygiene warnings into errors
+// --quarantine (the deploy and the data workflows use it): a record that breaks a rule is LEFT OUT and reported in
+// site/data/health.json instead of stopping the build, so one bad record can never keep fresh data off the site.
+// Without the flag (what the jobs run before they commit) any broken record still fails the build.
+const quarantine = process.argv.includes("--quarantine");
+const badEvents = new Set();
 
 function checkEvent(e, path) {
   const where = path.slice(DATA.length + 1);
@@ -60,9 +68,11 @@ const files = listEventFiles();
 const seen = new Map();
 for (const f of files) {
   if (!f.e) { errors.push(`${f.path.slice(DATA.length + 1)}: not valid JSON (${f.error})`); continue; }
+  const before = errors.length;
   if (seen.has(f.id)) errors.push(`events: id "${f.id}" is stored twice (${seen.get(f.id)} and ${f.path.slice(DATA.length + 1)})`);
   seen.set(f.id, f.path.slice(DATA.length + 1));
   checkEvent(f.e, f.path);
+  if (errors.length > before) badEvents.add(f.path);
 }
 // attribution and stated links (drawn as arcs on the globe); links must point at events on file
 {
@@ -70,12 +80,14 @@ for (const f of files) {
   for (const f of files) {
     if (!f.e) continue;
     const where = f.path.slice(DATA.length + 1);
+    const before = errors.length;
+    checkHunt(f.e.hunt).forEach((m) => errors.push(`${where}: ${m}`));
     checkAttribution(f.e.attribution).forEach((m) => errors.push(`${where}: ${m}`));
     checkLinks(f.e.links, f.id, ids).forEach((m) => errors.push(`${where}: ${m}`));
-    checkHunt(f.e.hunt).forEach((m) => errors.push(`${where}: ${m}`));
+    if (errors.length > before) badEvents.add(f.path);
   }
 }
-const allEvents = files.filter((f) => f.e).map((f) => f.e);
+const allEvents = files.filter((f) => f.e && !(quarantine && badEvents.has(f.path))).map((f) => f.e);
 const kevAll = listDir("kev").filter((x) => x.r).map((x) => x.r);
 listDir("kev").filter((x) => !x.r).forEach((x) => errors.push(`kev/${x.id}.json: not valid JSON (${x.error})`));
 const corrAll = listDir("corrections").filter((x) => x.r).map((x) => x.r);
@@ -141,6 +153,9 @@ const shown = warnings.slice(0, 40);
 shown.forEach((w) => console.warn("warning: " + w));
 if (warnings.length > shown.length) console.warn(`warning: ...and ${warnings.length - shown.length} more`);
 if (strict && warnings.length) errors.push(`${warnings.length} hygiene warning(s) in --strict mode`);
+const quarantined = quarantine ? errors.splice(0).map((e) => String(e).slice(0, 300)) : [];
+if (quarantined.length) { quarantined.forEach((e) => console.error("quarantined: " + e)); console.error(`\n${quarantined.length} problem(s) quarantined: those records are left out of this build and listed in site/data/health.json. Everything else is published.`); }
+if (quarantine && allEvents.length === 0) errors.push("no valid events at all: refusing to publish an empty map");
 if (errors.length) { errors.forEach((e) => console.error("error: " + e)); console.error(`\nBuild failed: ${errors.length} problem(s). Nothing was written.`); process.exit(1); }
 
 // the map's bundle
@@ -318,4 +333,15 @@ console.log(`Archive: ${live.length} events in ${index.months.length} month(s), 
 
 // legal pages and security.txt from legal/ and config/site.json
 console.log("Pages: " + buildPages().join(", "));
+
+// health and manifest, written last: what was left out, and a fingerprint of every data file so the deploy can prove
+// that what is live is exactly what was built (scripts/verify-build.mjs)
+{
+  const st = docs["meta/status"] || {};
+  writeFileSync(join(OUT, "health.json"), JSON.stringify({ built_at, ok: quarantined.length === 0, quarantined: quarantined.slice(0, 100), quarantined_count: quarantined.length, warnings: warnings.length,
+    last_sweep_at: st.last_sweep_at || "", last_collect_at: st.last_collect_at || "", last_feeds_at: st.last_feeds_at || "" }));
+  const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
+  walk(OUT, "");
+  writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));
+}
 

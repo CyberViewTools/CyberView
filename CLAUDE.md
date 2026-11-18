@@ -42,11 +42,14 @@ scripts/q.mjs            search the whole history without reading files (find, d
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
-scripts/collect.mjs      collects leads from 64 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
+scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
 scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
 scripts/fuse.mjs         groups leads into stories ranked by corroboration (list, show, done); data/stories.json is untracked working state
 scripts/metrics.mjs      pipeline metrics for the editor job and the status page
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
+scripts/verify-build.mjs build verifier: outputs parse and match site/data/manifest.json; --against-live refuses a shrunken dataset; --live proves the deploy took
+scripts/guard.mjs        end-to-end guard from the outside (live site + public GitHub API): data age, last runs, deploy lag; --heal restarts what it can
+site/sw.js               offline copy: network first, last good copy when the site cannot be reached (registered by nav.js)
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
 scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md
@@ -60,7 +63,8 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 
 ## Commands
 
-- `node scripts/build.mjs` — validate `data/` and build the bundle and archive. Exit 1 means a record is broken; the message names the file. Warnings are hygiene faults to fix.
+- `node scripts/build.mjs` — validate `data/` and build the bundle and archive. Exit 1 means a record is broken; the message names the file. Warnings are hygiene faults to fix. Jobs run it this way before every commit. The deploy and the data workflows add `--quarantine`: a broken record is left out and listed in `site/data/health.json` (and a `data-quarantine` issue) so it can never hold back the rest of the data.
+- `node scripts/verify-build.mjs` and `node scripts/guard.mjs` — prove a build is complete, and that fresh data is live.
 - `node scripts/q.mjs find <text>` (and `dupes`, `get`, `seen`, `leads`, `runs`, `kev`, `stats`) — search the history; use this instead of reading data files.
 - `node scripts/security-check.mjs` — must pass before any commit that touches `site/`, `scripts/` or `.github/`.
 - `npm run ci` — build, security check, unit tests and the browser suite in one go (`npm run unit` for unit tests alone).
@@ -100,6 +104,13 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 - Commit data changes with a message like `data: hourly sweep, 3 new, 2 updated`. Run `node scripts/build.mjs` first; never commit if it fails.
 
 Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
+
+## Reliability rules
+
+- Fresh data must always get out: never add a step to `pages.yml`, `collect.yml` or `feeds.yml` that lets one bad record, one failing source or one failing optional step stop the commit or the deploy. Quarantine and report instead.
+- Never weaken `verify-build.mjs`, the quarantine report or the live check to make a deploy pass; fix the data or the code.
+- The app must say so when data is old (`freshness()` in `site/app.js`) and keep showing the last good copy (`site/sw.js`); do not remove either.
+- The guardian scheduled task runs in its own fresh session, outside the ops session, so a stuck ops session is noticed.
 
 ## Known limits
 

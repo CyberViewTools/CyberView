@@ -1,6 +1,11 @@
 name: Deploy to GitHub Pages
 
-# Builds site/ (validating every record first) and publishes it to GitHub Pages.
+# Builds site/ (validating every record first) and publishes it to GitHub Pages. Built so that fresh data always gets out:
+#   1. a record that breaks a rule is quarantined (left out and reported), it does not stop the build;
+#   2. the build is verified before publishing (every file parses, fingerprints match, nothing essential is empty,
+#      and it has not lost a large share of what is live); if that fails, the previous deployment stays live;
+#   3. after publishing, the live site is fetched and compared byte for byte with the build;
+#   4. any of these opens (or updates) one GitHub issue labelled job-failure, and closes it again on recovery.
 # Runs on every push to main, and after the data workflows finish: their commits are pushed with the
 # workflow token, which by design does not start other "push" workflows.
 on:
@@ -15,6 +20,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
 
 concurrency:
   group: pages
@@ -36,10 +42,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Validate and build the bundle and archive
-        run: node scripts/build.mjs
+      - name: Validate and build the bundle and archive (bad records are quarantined, not fatal)
+        run: node scripts/build.mjs --quarantine
         env:
           # the public address used in feeds and links; set the repository variable SITE_URL when a custom domain is added
+          SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
+      - name: Verify the build before publishing
+        run: node scripts/verify-build.mjs --against-live
+        env:
           SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
       - name: Security check
         run: node scripts/security-check.mjs
@@ -49,3 +59,33 @@ jobs:
           path: site
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Confirm the live site serves this build
+        run: node scripts/verify-build.mjs --live
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
+      - name: Report quarantined records
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(node -e 'try{console.log(JSON.parse(require("fs").readFileSync("site/data/health.json")).quarantined_count)}catch(e){console.log(0)}')
+          if [ "$n" != "0" ]; then
+            { echo "**$n data problem(s) quarantined.** The records below were left out of the site; everything else was published. Fix each file (or mark it duplicate_of) and the next build restores it."; echo; node -e 'JSON.parse(require("fs").readFileSync("site/data/health.json")).quarantined.slice(0,40).forEach(x=>console.log("- "+x))'; } > q.md
+            bash .github/scripts/alert.sh data-quarantine "Data records quarantined from the site" q.md failing
+          else
+            echo "No records are quarantined." > q.md; bash .github/scripts/alert.sh data-quarantine "Data records quarantined from the site" q.md healthy
+          fi
+      - name: Alert when the deploy fails
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**The site deploy failed or could not be confirmed.** The previous deployment is still live, so visitors see older data until this is fixed. Check the failing step in the run below." > d.md
+          bash .github/scripts/alert.sh job-failure "Site deploy is failing" d.md failing
+      - name: Clear the deploy alert
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "The site deployed and the live copy was verified." > d.md
+          gh issue list --label job-failure --state open --search "Site deploy is failing in:title" --json number --jq '.[].number' | while read n; do gh issue comment "$n" --body "Recovered: the site deployed and the live copy was verified."; gh issue close "$n"; done

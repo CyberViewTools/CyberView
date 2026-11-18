@@ -35,7 +35,7 @@ jobs:
       - name: Exploit watch (public repositories naming exploited CVEs)
         run: node scripts/osint.mjs exploits || true
       - name: Validate and security check
-        run: node scripts/build.mjs && node scripts/security-check.mjs
+        run: node scripts/build.mjs --quarantine && node scripts/security-check.mjs
       - name: Commit and push
         run: |
           git config user.name "cyberview-feeds"

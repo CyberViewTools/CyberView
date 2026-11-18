@@ -534,6 +534,55 @@ async def main():
             await ctx.close()
 
         await serve(acct_site, account)
+
+        # v1.11: patch deadlines as calendar files; desktop notifications for new matches
+        import datetime as _dt
+        today = _dt.date.today()
+        b11 = copy.deepcopy(bundle)
+        b11["kev"] = [
+            {"id": "CVE-2026-90001", "cve": "CVE-2026-90001", "vendor": "Fortinet", "product": "FortiOS", "name": "x", "added": (today - _dt.timedelta(days=2)).isoformat(), "due": (today + _dt.timedelta(days=10)).isoformat(), "desc": "Lets attackers in; patch, now", "ransomware": True},
+            {"id": "CVE-2026-90002", "cve": "CVE-2026-90002", "vendor": "Acme", "product": "Widget", "name": "y", "added": (today - _dt.timedelta(days=3)).isoformat(), "due": (today + _dt.timedelta(days=5)).isoformat()},
+            {"id": "CVE-2026-90003", "cve": "CVE-2026-90003", "vendor": "Fortinet", "product": "Old", "name": "z", "added": (today - _dt.timedelta(days=40)).isoformat(), "due": (today - _dt.timedelta(days=19)).isoformat()},
+        ]
+        site11 = make_site(b11)
+
+        async def v111(url):
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True)
+            await ctx.grant_permissions(["notifications"])
+            await ctx.add_init_script("""localStorage.setItem('cwm.wl', JSON.stringify(['Fortinet']));
+              window.__notes = []; window.Notification = function(t, o){ window.__notes.push([t, (o||{}).body||'']); this.close = function(){}; };
+              window.Notification.permission = 'granted'; window.Notification.requestPermission = function(){ return Promise.resolve('granted'); };""")
+            pg = await ctx.new_page()
+            errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.goto(url); await pg.wait_for_timeout(1500)
+            await pg.click("#tab-kev"); await pg.wait_for_timeout(300)
+            ok("calendar: button labelled for my environment", (await pg.inner_text("#kevCal")).startswith("My deadlines"))
+            async with pg.expect_download() as dl:
+                await pg.click("#kevCal")
+            d = await dl.value
+            ics = open(await d.path(), newline="").read()
+            ok("calendar: file name", d.suggested_filename == "cyberview-patch-deadlines.ics", d.suggested_filename)
+            ok("calendar: valid calendar with reminders", ics.startswith("BEGIN:VCALENDAR\r\n") and ics.rstrip().endswith("END:VCALENDAR") and "TRIGGER:-P3D" in ics, ics[:200])
+            ok("calendar: only open deadlines that match", "CVE-2026-90001" in ics and "CVE-2026-90002" not in ics and "CVE-2026-90003" not in ics)
+            ok("calendar: text escaped", "patch\\, now" in ics and "\\;" in ics, ics[ics.find("DESCRIPTION"):][:160])
+            ok("calendar: lines folded to the limit", all(len(l.encode()) <= 75 for l in ics.split("\r\n")))
+            # notifications: turn on, then a new matching event arrives on refresh
+            await pg.click("#wlOpen"); await pg.click("#notifyBtn"); await pg.wait_for_timeout(200)
+            ok("notify: toggle on", await pg.get_attribute("#notifyBtn", "aria-pressed") == "true")
+            await pg.click("#wlClose")
+            nb = copy.deepcopy(b11)
+            ev = copy.deepcopy(nb["events"][0]); ev.update({"id": "fortinet-new-flaw-test", "title": "Fortinet FortiGate flaw under attack", "severity": 3, "status": "confirmed", "date": today.isoformat(), "org": "Fortinet"})
+            ev2 = copy.deepcopy(ev); ev2.update({"id": "unrelated-test", "title": "Acme widget outage", "org": "Acme", "products": [], "tags": []})
+            nb["events"] += [ev, ev2]; nb["built_at"] = "2099-01-01T00:00:00Z"
+            json.dump(nb, open(os.path.join(site11, "data", "bundle.json"), "w"))
+            await pg.click("#refresh"); await pg.wait_for_timeout(1500)
+            notes = await pg.evaluate("window.__notes")
+            ok("notify: one notification for the new match only", len(notes) == 1 and "Fortinet FortiGate" in notes[0][1] and "Acme" not in notes[0][1], notes)
+            ok("v1.11: no script errors", not errs, errs)
+            await ctx.close()
+
+        await serve(site11, v111)
         await browser.close()
 
 

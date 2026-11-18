@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.10",date:"2026-11-18"};
+var BUILD={version:"1.11",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -1145,7 +1145,10 @@ function renderKev(){
   var nw=kev.filter(kevWl).length;if(wl.terms.length){hd.appendChild(document.createTextNode(" · "));hd.appendChild(el("b",null,String(nw)));hd.appendChild(document.createTextNode(" match your environment"));}
   if(sweep&&sweep.last_kev_at)hd.appendChild(document.createTextNode(" · synced "+(ago(sweep.last_kev_at)||"")));
   p.appendChild(hd);
-  var tools=el("div","vhead");tools.appendChild(seg([["new","Newest first"],["due","Deadline first"]],kevSort,"Sort the exploited list",function(k){kevSort=k;renderKev();}));p.appendChild(tools);
+  var tools=el("div","vhead");tools.appendChild(seg([["new","Newest first"],["due","Deadline first"]],kevSort,"Sort the exploited list",function(k){kevSort=k;renderKev();}));
+  var cal=el("button","btn ghost sm",wl.terms.length?"My deadlines to calendar":"Deadlines to calendar");cal.type="button";cal.id="kevCal";
+  cal.title="Download open patch deadlines as a calendar file (.ics) with a reminder 3 days before"+(wl.terms.length?"; only flaws that match your environment":"");
+  cal.addEventListener("click",function(){kevCalendar(null);});tools.appendChild(cal);p.appendChild(tools);
   if(!list.length){p.appendChild(el("div","empty","Nothing in the feed matches the search or toggles."));return;}
   list.forEach(function(k){
     var left=kevLeft(k),c=el("article","kcard");
@@ -1162,12 +1165,71 @@ function renderKev(){
     function ab(label,fn){var b=el("button",null,label);b.type="button";b.addEventListener("click",fn);acts.appendChild(b);}
     var ev=events.find(function(e){return e.cves.indexOf(k.cve)>=0;});
     if(ev)ab("Open on the map",function(){showEvent(ev.id);});
+    if(k.due&&left!==null&&left>=0)ab("Add to calendar",function(){kevCalendar(k);});
     var a=el("a",null,"NVD record");a.href="https://nvd.nist.gov/vuln/detail/"+encodeURIComponent(k.cve);a.target="_blank";a.rel="noopener noreferrer";acts.appendChild(a);
     c.appendChild(acts);p.appendChild(c);
   });
   p.appendChild(el("p","khead","Source: CISA Known Exploited Vulnerabilities catalog. Deadlines bind US federal agencies only; treat them as a sensible upper limit. A flaw that is not listed here can still be exploited."));
   p.scrollTop=st;
 }
+/* ---------- patch deadlines as calendar reminders (.ics, RFC 5545); built here, nothing is sent ---------- */
+function blobUrl(b){return b instanceof Blob?URL.createObjectURL(b):"about:blank";}
+function saveFile(name,mime,text){
+  var a=document.createElement("a");a.href=blobUrl(new Blob([text],{type:mime}));a.download=name;
+  document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+function icsEsc(t){return String(t||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");}
+function icsFold(line){var out=[],s=line;while(s.length>73){out.push(s.slice(0,73));s=" "+s.slice(73);}out.push(s);return out.join("\r\n");}
+function kevIcs(list){
+  var stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z"),L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CyberView//Patch deadlines//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:CyberView patch deadlines"];
+  list.forEach(function(k){
+    var d=k.due.replace(/-/g,""),next=ymd(new Date(parseDay(k.due).getTime()+864e5)).replace(/-/g,""),what=(k.vendor+" "+k.product).trim();
+    L.push("BEGIN:VEVENT","UID:"+k.cve.toLowerCase()+"-due@cyberview","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+d,"DTEND;VALUE=DATE:"+next,
+      "SUMMARY:"+icsEsc("Patch "+k.cve+" ("+what+"): CISA deadline"),
+      "DESCRIPTION:"+icsEsc((k.desc?k.desc+"\n\n":"")+(k.ransom?"Known to be used in ransomware.\n":"")+"Added to CISA's known-exploited list "+k.added+". The deadline binds US federal agencies; treat it as an upper limit.\nNVD: https://nvd.nist.gov/vuln/detail/"+k.cve+"\nCyberView: "+location.origin+location.pathname+"#kev"),
+      "URL:https://nvd.nist.gov/vuln/detail/"+k.cve,"CATEGORIES:Security,Patch",
+      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc("Patch "+k.cve+" due in 3 days"),"TRIGGER:-P3D","END:VALARM","END:VEVENT");
+  });
+  L.push("END:VCALENDAR");
+  return L.map(icsFold).join("\r\n")+"\r\n";
+}
+function kevCalendar(only){
+  var today=ymd(new Date()),pool=only?[only]:kev.filter(function(k){return k.due&&k.due>=today;});
+  var mine=wl.terms.length&&!only?pool.filter(kevWl):pool;
+  if(!mine.length){toast(wl.terms.length?"None of the open deadlines match your environment.":"There are no open deadlines.");return;}
+  saveFile(only?only.cve+"-deadline.ics":"cyberview-patch-deadlines.ics","text/calendar;charset=utf-8",kevIcs(mine));
+  toast(mine.length+" deadline"+(mine.length>1?"s":"")+" saved as a calendar file"+(wl.terms.length&&!only?" (your environment only)":"")+". Open it to add them to your calendar; each has a reminder 3 days before.");
+}
+
+/* ---------- desktop notifications for new matches (only while a CyberView tab is open; nothing is sent anywhere) ---------- */
+var notifyOn=false,kevSeen=null;
+function canNotify(){return typeof Notification!=="undefined";}
+function notifySync(){var b=$("notifyBtn");if(!b)return;var on=notifyOn&&canNotify()&&Notification.permission==="granted";
+  b.setAttribute("aria-pressed",on?"true":"false");b.textContent=on?"Notifications on (this device)":"Notify me on this device";}
+function notifyToggle(){
+  if(!canNotify()){toast("This browser cannot show notifications.");return;}
+  if(notifyOn){notifyOn=false;lsSet("cwm.notify","0");notifySync();toast("Notifications off.");return;}
+  Notification.requestPermission().then(function(p){
+    notifyOn=p==="granted";lsSet("cwm.notify",notifyOn?"1":"0");notifySync();
+    toast(notifyOn?"You will get a notification here when a new event or exploited flaw matches your environment, while CyberView is open in a tab.":"Notifications are blocked for this site in your browser settings.");
+  });
+}
+function notifyNew(items){
+  if(!notifyOn||!wl.terms.length||!canNotify()||Notification.permission!=="granted"||!items.length)return;
+  var first=items[0],n=new Notification(items.length===1?"CyberView: new match for your environment":"CyberView: "+items.length+" new matches for your environment",
+    {body:items.slice(0,3).map(function(x){return x.t;}).join("\n").slice(0,300),tag:"cyberview-"+first.id,icon:"icon-512.png"});
+  n.onclick=function(){try{window.focus();}catch(x){}first.go();n.close();};
+}
+function notifyEvents(added){
+  notifyNew(added.filter(function(e){return e.wl&&e.severity>=2&&(state.claims||e.status!=="claimed");}).sort(function(a,b){return b.severity-a.severity;})
+    .map(function(e){return {id:e.id,t:["","","Medium","High"][e.severity]+": "+e.title,go:function(){showEvent(e.id);}};}));
+}
+function notifyKev(){
+  var ids=new Set(kev.map(function(k){return k.cve;}));
+  if(kevSeen){notifyNew(kev.filter(function(k){return !kevSeen.has(k.cve)&&kevWl(k);}).map(function(k){return {id:k.cve,t:"Exploited: "+k.cve+" "+k.vendor+" "+k.product,go:function(){setTab("kev");renderKev();}};}));}
+  kevSeen=ids;
+}
+
 /* ---------- shift handover ---------- */
 function hoBuild(){
   var since=lsGet("cwm.ho")||"",list=base(),now=new Date(),L=[];
@@ -1323,7 +1385,7 @@ function apply(snap){
   var added=loaded?events.filter(function(e){return !before.has(e.id);}):[];
   added.forEach(function(e){fresh.add(e.id);});
   if(added.length)setTimeout(function(){added.forEach(function(e){fresh.delete(e.id);});render();},90000);
-  loaded=true;return added.length;
+  loaded=true;if(added.length)notifyEvents(added);return added.length;
 }
 function resetMain(){
   state.q="";state.status="all";state.lens="all";state.sev=1;state.win=7;state.sort="pri";state.wlOnly=false;state.claims=false;lsSet("cwm.claims","0");
@@ -1377,7 +1439,7 @@ function wlNote(){
 }
 function wlToggle(open){
   var d=$("wlDlg");d.hidden=!open;$("wlOpen").setAttribute("aria-expanded",open?"true":"false");
-  if(open){$("wlText").value=wl.terms.join("\n");$("envMsg").textContent="";envQuick();wlNote();wlReport();$("wlText").focus();}
+  if(open){$("wlText").value=wl.terms.join("\n");$("envMsg").textContent="";envQuick();notifySync();wlNote();wlReport();$("wlText").focus();}
 }
 /* ---------- environment import: the file is read here, in the browser, and never leaves the device ---------- */
 var ENV_QUICK=["Microsoft","Windows","Exchange","Azure","Microsoft 365","Google Chrome","Apple","Linux","Cisco","Fortinet","Palo Alto Networks","Ivanti","Citrix","VMware","Atlassian","Oracle","SAP","AWS","Okta","CrowdStrike","SonicWall","Juniper","F5","WordPress","Apache","OpenSSL","Veeam","Zoom","Salesforce","GitHub"];
@@ -1528,6 +1590,8 @@ function wlSave(){
   local();
 }
 $("wlOpen").addEventListener("click",function(){wlToggle($("wlDlg").hidden);});
+$("notifyBtn").addEventListener("click",notifyToggle);
+notifyOn=lsGet("cwm.notify")==="1";
 $("wlClose").addEventListener("click",function(){wlToggle(false);$("wlOpen").focus();});
 $("wlSave").addEventListener("click",wlSave);
 $("wlCopy").addEventListener("click",function(){
@@ -1679,7 +1743,7 @@ openStore().then(function(d){
     renderSoon();
   },function(){clearTimeout(timer);if(!loaded)unavailable=true;stale=false;render();});
   db.doc("analysis/latest").onSnapshot(function(s){analysis=s.exists?cleanAnalysis(s.data()):null;renderSoon();},function(){});
-  try{db.collection("kev").where("added",">=",ymd(daysAgo(45))).onSnapshot(function(snap){kev=snap.docs.map(function(x){return cleanKev(x.id,x.data());}).filter(Boolean);renderKev();if(state.view!=="map")renderSoon();},function(){});}catch(x){}
+  try{db.collection("kev").where("added",">=",ymd(daysAgo(45))).onSnapshot(function(snap){kev=snap.docs.map(function(x){return cleanKev(x.id,x.data());}).filter(Boolean);notifyKev();renderKev();if(state.view!=="map")renderSoon();},function(){});}catch(x){}
   db.doc("analysis/ripples").onSnapshot(function(s){ripples=s.exists?cleanRipples(s.data()):null;if(state.view==="graph")renderSoon();},function(){});
   db.doc("brief/latest").onSnapshot(function(s){daily=s.exists?cleanBrief(s.data()):null;renderBrief();},function(){});
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});

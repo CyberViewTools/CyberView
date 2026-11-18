@@ -43,7 +43,7 @@ for (const p of ours) {
   // an href may come from a quoted literal (internal page or fixed https URL) or a URL-checking helper; anything else could carry javascript:
   for (const m of src.matchAll(/\.href\s*=\s*([^;]{0,80})/g)) {
     const rhs = m[1].trim();
-    if (!/^["'`]/.test(rhs) && !/^(safeUrl|eventLink)\(/.test(rhs)) fails.push(`${rel(p)}: href set from "${rhs.slice(0, 40)}" without a URL check (use a literal or safeUrl())`);
+    if (!/^["'`]/.test(rhs) && !/^(safeUrl|eventLink|blobUrl)\(/.test(rhs)) fails.push(`${rel(p)}: href set from "${rhs.slice(0, 40)}" without a URL check (use a literal or safeUrl())`);
   }
 }
 passes.push(`${ours.length} script(s) checked for HTML sinks`);

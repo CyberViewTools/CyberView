@@ -1,0 +1,65 @@
+{
+  "actor": "AuditTeam",
+  "attack": [
+    "ransomware",
+    "edr-killer"
+  ],
+  "impact": "",
+  "tags": [],
+  "cves": [],
+  "cve_meta": [],
+  "products": [
+    "OpsAgent"
+  ],
+  "geo_basis": "hq",
+  "time_basis": "published",
+  "first_seen": "2026-11-18T19:12:06Z",
+  "updated_at": "2026-11-18T19:12:06Z",
+  "category": "report",
+  "date": "2026-11-18",
+  "occurred_at": "2026-11-18T08:00:00Z",
+  "date_note": "Activity January to October 2026; report published Nov 18.",
+  "title": "Kaspersky: AuditTeam ransomware crew uses OpsAgent framework and a signed driver to kill security tools",
+  "org": "Kaspersky GReAT",
+  "sector": "Cross-sector",
+  "country": "Russia",
+  "place": "Moscow",
+  "lat": 55.75,
+  "lng": 37.62,
+  "pin_type": "researcher",
+  "severity": 2,
+  "status": "official",
+  "source_tier": "primary",
+  "summary": "Kaspersky describes AuditTeam, a ransomware-linked group that frames its demand as an audit and consulting fee and uses the OpsAgent framework, in C++ and Rust versions. Activity runs from January to October 2026, with victims in seven countries and seven more claimed on its leak site. It kills security tools using a signed Beijing Jiangmin driver.",
+  "plain": "Researchers describe a ransomware group that disguises extortion as a consulting bill and switches off antivirus using a legitimately signed driver.",
+  "exec": "A newly documented ransomware group with an EDR-killing driver; signed drivers can slip past some controls.",
+  "action": "Block or alert on the abused Jiangmin driver, watch for mass process-kill behaviour, and review Kaspersky's indicators.",
+  "sources": [
+    {
+      "name": "Kaspersky Securelist",
+      "url": "https://securelist.com/auditteam-opsagent-forced-audit/122031/"
+    }
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "OpsAgent exists in C++ and Rust versions; implant v5.2.8.",
+      "Victims in 7 countries, 7 more claimed on a leak site.",
+      "AV/EDR killer uses a signed Beijing Jiangmin driver."
+    ],
+    "published": "2026-11-18",
+    "publisher": "Kaspersky GReAT",
+    "publisher_type": "vendor",
+    "read_depth": "summary",
+    "recommendations": [
+      "Hunt using Kaspersky indicators; control driver loading."
+    ],
+    "url": "https://securelist.com/auditteam-opsagent-forced-audit/122031/"
+  },
+  "validation": {
+    "checked_at": "2026-11-18T19:12:06Z",
+    "state": "corroborated",
+    "note": "Original Kaspersky report read via fetch agent summary (read_depth summary)."
+  }
+}

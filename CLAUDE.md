@@ -29,7 +29,7 @@ scripts/q.mjs            search the whole history without reading files (find, d
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
-scripts/collect.mjs      collects leads from 22 agency, vendor and news RSS feeds into data/leads/<date>.jsonl (hourly, no AI model)
+scripts/collect.mjs      collects leads from 22 agency, vendor and news RSS feeds into data/leads/<date>.jsonl (every 30 min, no AI model)
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
 scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md

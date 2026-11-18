@@ -1,9 +1,9 @@
 {
   "_about": "Every routine that keeps CyberView running. The build checks the AI job schedules here against .github/workflows/ai-jobs.yml, publishes this list with each routine's last run to site/data/ops.json (shown on status.html), and the monitor and watchdog use max_age_hours to spot late routines. To add a routine: add its workflow (or job in ai-jobs.yml), add an entry here, and give it a status_key it writes to data/status.json.",
   "routines": [
-    { "key": "collect", "name": "Lead collector", "tier": "automation", "workflow": "collect.yml", "cron": "41 * * * *", "model": null,
+    { "key": "collect", "name": "Lead collector", "tier": "automation", "workflow": "collect.yml", "cron": "11,41 * * * *", "model": null,
       "status_key": "last_collect_at", "max_age_hours": 3, "active": true,
-      "does": "Reads 22 agency, vendor and news feeds and files new items as leads." },
+      "does": "Reads 22 agency, vendor and news feeds every 30 minutes and files new items as leads." },
     { "key": "feeds", "name": "Vulnerability feeds", "tier": "automation", "workflow": "feeds.yml", "cron": "23 */2 * * *", "model": null,
       "status_key": "last_feeds_at", "max_age_hours": 5, "active": true,
       "does": "Syncs CISA's known-exploited catalog and EPSS and CVSS scores; re-rates affected events; refreshes the internet-disruption and disaster-alert map layers." },
@@ -13,8 +13,8 @@
     { "key": "security-check", "name": "Weekly security check", "tier": "automation", "workflow": "security.yml", "cron": "41 6 * * 1", "model": null,
       "status_key": null, "max_age_hours": null, "active": true,
       "does": "Static security check of the code and data, plus the live site's policy." },
-    { "key": "sweep", "name": "Sweep", "tier": "ai", "workflow": "claude-task", "cron": "10 */4 * * *", "model": "claude-sonnet-5-5",
-      "status_key": "last_sweep_at", "max_age_hours": 8, "active": true,
+    { "key": "sweep", "name": "Sweep", "tier": "ai", "workflow": "claude-task", "cron": "10 * * * *", "model": "claude-sonnet-5-5",
+      "status_key": "last_sweep_at", "max_age_hours": 2, "active": true,
       "does": "Turns new leads and headline news into verified events." },
     { "key": "verify", "name": "Verify", "tier": "ai", "workflow": "claude-task", "cron": "19 3,15 * * *", "model": "claude-sonnet-5-5",
       "status_key": "last_validation_at", "max_age_hours": 18, "active": true,

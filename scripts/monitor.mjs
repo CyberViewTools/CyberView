@@ -41,7 +41,7 @@ else {
   notes.push(`${ev} events, ${(d.kev || []).length} known-exploited, built ${d.built_at}`);
   if (ev < 10) fails.push(`Only ${ev} events in the bundle; the map looks empty`);
   const builtH = hours(d.built_at);
-  // every data commit redeploys (pages.yml); the sweep commits at least every 4 h
+  // every data commit redeploys (pages.yml); the sweep commits hourly
   const maxH = Number(process.env.MAX_BUNDLE_HOURS || 12);
   if (builtH > maxH) fails.push(`Bundle was built ${builtH.toFixed(1)} h ago (limit ${maxH} h); the live data is stale`);
   else if (builtH > 6) warns.push(`Bundle was built ${builtH.toFixed(1)} h ago `);

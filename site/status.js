@@ -21,7 +21,7 @@
     var p = String(cron || "").split(/\s+/); if (p.length !== 5) return cron || "";
     var min = p[0], hr = p[1], dow = p[4];
     var days = dow === "*" ? "" : dow.split(",").map(function (d) { return DOW[+d] || d; }).join(" and ") + " ";
-    if (hr === "*") return "hourly at :" + pad(min);
+    if (hr === "*") return min.indexOf(",") > 0 ? "every 30 min" : "hourly at :" + pad(min);
     var every = hr.match(/^\*\/(\d+)$/); if (every) return "every " + every[1] + " h at :" + pad(min);
     return days + hr.split(",").map(function (h) { return pad(h) + ":" + pad(min); }).join(" and ");
   }

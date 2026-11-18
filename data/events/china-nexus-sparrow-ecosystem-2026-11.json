@@ -1,0 +1,72 @@
+{
+  "action": "Government, telecom and critical infrastructure security teams: load Check Point's published indicators, hunt for the listed registry and firewall artifacts, and warn staff that a browser certificate error offering a fix installer is a lure.",
+  "actor": "CopperDragon (tool developer for China-nexus groups, moderate confidence)",
+  "attack": [],
+  "category": "report",
+  "country": "China",
+  "cves": [],
+  "date": "2026-11-10",
+  "exec": "Shared tooling across China-linked espionage groups means a detection for one campaign may help against the others.",
+  "first_seen": "2026-11-17T22:08:00Z",
+  "geo_basis": "actor origin",
+  "lat": 39.9,
+  "lng": 116.4,
+  "org": "China-nexus clusters",
+  "pin_type": "actor",
+  "place": "Beijing (actor origin)",
+  "plain": "Check Point found that three separate spying campaigns in Europe, Asia and Latin America used related malicious software from one developer, which appears to supply several China-linked hacking groups.",
+  "products": [
+    "SparrowDoor",
+    "SquadC",
+    "AnnobinDoor",
+    "SparrowShell",
+    "CopperDoor",
+    "CopperDNS"
+  ],
+  "report": {
+    "doc_id": "CopperDragon / Sparrow framework",
+    "iocs_available": true,
+    "key_findings": [
+      "Check Point tracks the builder of the Sparrow framework as CopperDragon, a possible tool supplier to China-nexus groups including FamousSparrow, Earth Estries and Tropic Trooper; confidence is moderate.",
+      "SilentDelivery hit government, shipping and IT targets in Europe and Asia from early 2026 using watering-hole sites with a fake Chrome certificate error and a bogus fix installer.",
+      "OceanGate targeted government and critical infrastructure in Asia through an internet-facing Linux server, then RDP password attempts against Windows administrators.",
+      "DarkWire has targeted telecom providers and foreign affairs and justice ministries in Latin America since mid-2025; its link to the group is weaker.",
+      "New tools include SquadC, AnnobinDoor, SparrowShell with an embedded Linux kernel rootkit, CopperDNS, and a passive backdoor hiding on a legitimate port."
+    ],
+    "published": "2026-11-10",
+    "publisher": "Check Point Research",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Hunt for the host artifacts Check Point lists, including a WindowsUpdateAssist Run key and firewall rules named RasiUwpApp and ss1.",
+      "Check for an unexpected LocalAccountTokenFilterPolicy change and an account named admin$.",
+      "Load the published hashes, domains, addresses and certificate details into detection."
+    ],
+    "url": "https://research.checkpoint.com/2026/not-all-that-glitters-is-gold-tracking-copperdragons-sparrow-framework-around-the-globe/"
+  },
+  "sector": "Government / multiple",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Check Point Research",
+      "url": "https://research.checkpoint.com/2026/not-all-that-glitters-is-gold-tracking-copperdragons-sparrow-framework-around-the-globe/"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/three-china-nexus-espionage-campaigns.html"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Check Point Research links three espionage campaigns through the Sparrow malware framework, whose builder it tracks as CopperDragon, a possible tool supplier to several China-nexus groups. SilentDelivery used watering-hole sites in Europe and Asia, OceanGate hit government and critical infrastructure in Asia through Linux servers, and DarkWire targeted Latin American telecoms and ministries. Several backdoors and a Linux kernel rootkit are newly documented.",
+  "tags": [
+    "espionage"
+  ],
+  "title": "Three China-nexus espionage campaigns linked through Sparrow malware ecosystem",
+  "updated_at": "2026-11-17T23:46:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:46:00Z",
+    "note": "Reviewed against the original Check Point Research report.",
+    "state": "corroborated"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "action": "Remove default or hardcoded credentials (including the LiteLLM default master key), require login on AI gateways and builders, patch Langflow and RAGFlow, rotate keys ever exposed in code, and watch for unexpected AI spend or usage.",
+  "actor": "Chinese-nexus threat groups (moderate confidence)",
+  "attack": [
+    "T1595 Active Scanning",
+    "T1552 Unsecured Credentials"
+  ],
+  "category": "report",
+  "country": "United States",
+  "cves": [
+    "CVE-2025-3248",
+    "CVE-2026-28797"
+  ],
+  "date": "2026-11-13",
+  "exec": "Exposed AI gateways are being mined for provider keys by automated agents; stolen keys mean unexpected bills and wider cloud access.",
+  "first_seen": "2026-11-17T22:50:00Z",
+  "geo_basis": "researcher HQ",
+  "lat": 47.615,
+  "lng": -122.339,
+  "occurred_at": "2026-11-13T13:26:42-07:00",
+  "org": "Amazon threat intelligence",
+  "pin_type": "researcher",
+  "place": "Seattle, WA (researcher)",
+  "plain": "Amazon says AI agents, likely run by China-linked groups, scanned the internet for poorly secured AI tools to steal the access keys inside them, and separately tried to fool identity checks at crypto exchanges with deepfake video.",
+  "products": [
+    "LiteLLM",
+    "One API",
+    "Dify",
+    "Langflow",
+    "RAGFlow",
+    "Open WebUI"
+  ],
+  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Between October 3 and November 5 Amazon saw two campaigns it assesses, with moderate confidence, used ARTEX agents run by disparate Chinese-nexus groups.",
+      "Campaign 1 found exposed AI gateways and builders (One API, LiteLLM, Dify, Langflow, RAGFlow, Open WebUI and others), extracted upstream provider keys, validated and pooled them.",
+      "Stolen keys funded the model gateway driving further key hunting; agents also used CVE-2025-3248, CVE-2026-28797, a One API header bypass and the LiteLLM default master key.",
+      "Campaign 2 attacked identity verification at two crypto exchanges with real-time deepfake video and forged ID photos; the vendor rejected every recorded attempt.",
+      "Amazon did not watch the activity live and could not verify the agents' reported outcomes; it publishes 11 IP indicators."
+    ],
+    "published": "2026-11-13T13:26:42-07:00",
+    "publisher": "Amazon Threat Intelligence",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Fix basics: default or hardcoded credentials, keys left in code or public artifacts, unauthenticated interfaces and unpatched software.",
+      "Assume exposed secrets and misconfigurations will be found quickly and remediate on that basis.",
+      "Put AI apps, model gateways and inference endpoints under the same controls as other production systems.",
+      "Watch for misuse through unexpected spend or unusual usage."
+    ],
+    "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-observes-threat-actors-running-cybercrime-campaigns-with-artex-ai-agents/"
+  },
+  "sector": "Threat research",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "AWS Security Blog",
+      "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-observes-threat-actors-running-cybercrime-campaigns-with-artex-ai-agents/"
+    },
+    {
+      "name": "Security Affairs",
+      "url": "https://securityaffairs.com/203188/ai/artex-how-cybercriminals-use-ai-agents-to-scale-their-attacks.html"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Amazon Threat Intelligence observed two campaigns between October 3 and November 5 that it assesses, with moderate confidence, were run with ARTEX AI agents by Chinese-nexus groups. One hunted internet-exposed AI gateways and app builders for upstream provider keys; the other tried to beat identity checks at two crypto exchanges with real-time deepfake video and forged ID photos. Every recorded deepfake attempt was rejected.",
+  "tags": [
+    "ai-enabled",
+    "identity",
+    "cloud"
+  ],
+  "time_basis": "published",
+  "title": "Amazon uncovers AI agent campaign hunting exposed apps for AI provider keys",
+  "updated_at": "2026-11-18T01:25:00Z",
+  "validation": {
+    "checked_at": "2026-11-17T23:15:00Z",
+    "note": "Reviewed against the original Amazon Threat Intelligence report.",
+    "state": "corroborated"
+  }
+}

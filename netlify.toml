@@ -1,3 +1,6 @@
+# CyberView moved to GitHub Pages: https://xanderhutch.github.io/CyberView
+# Netlify now only redirects old links (including #e= permalinks and feed URLs) to the same path there.
+# Builds are skipped unless this file changes (scripts/netlify-ignore.sh), so Netlify uses no more credits.
 [build]
   publish = "site"
   command = "node scripts/build.mjs"
@@ -6,15 +9,8 @@
 [build.environment]
   NODE_VERSION = "20"
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
-
-[[headers]]
-  for = "/data/*"
-  [headers.values]
-    Cache-Control = "public, max-age=60, must-revalidate"
+[[redirects]]
+  from = "/*"
+  to = "https://xanderhutch.github.io/CyberView/:splat"
+  status = 301
+  force = true

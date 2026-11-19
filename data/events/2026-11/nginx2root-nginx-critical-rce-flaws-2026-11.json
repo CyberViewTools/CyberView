@@ -1,7 +1,7 @@
 {
   "title": "NGINX2Root: critical HTTP/2 flaws in NGINX allow unauthenticated code execution; F5 ships fixes",
   "date": "2026-11-18",
-  "date_note": "Wiz published its analysis on November 18; GBHackers followed on November 19. The F5 advisory date could not be read.",
+  "date_note": "Wiz published its analysis on November 18; SecurityWeek (19 Nov) says F5 announced the fixes on Wednesday 18 Nov. The F5 advisory itself was not read.",
   "category": "vuln",
   "severity": 2,
   "status": "confirmed",
@@ -14,12 +14,15 @@
   "geo_basis": "vendor headquarters",
   "pin_type": "hq",
   "actor": "",
-  "summary": "F5 released updates for several NGINX flaws, including CVE-2026-123007 and CVE-2026-123633 in HTTP/2 handling, both listed at CVSS 4.0 9.2 (GBHackers attributes the score to F5). Wiz says it built proof-of-concept exploits but is not releasing them; neither source reports exploitation in the wild. Xint demonstrated chaining one flaw with a Linux kernel bug to gain root. Affected: NGINX 1.9.5 through 1.31.8 (CVE-2026-123007); fixed in 1.30.7 and 1.31.9.",
+  "summary": "F5 released updates for five critical NGINX flaws (NGINX2Root), including CVE-2026-123007 and CVE-2026-123633 in HTTP/2 handling, rated CVSS 4.0 9.2. Wiz withheld its exploits, but SecurityWeek reports Rapid7 and Censys published proof-of-concept code; Rapid7 says RCE needs about 128 GB of HTTP/2 data. F5 does not report exploitation in the wild. Fixed in NGINX 1.30.7 and 1.31.9.",
   "plain": "Serious flaws in the widely used NGINX web server could let an outsider run commands on it. Fixed versions are out; no attacks have been reported yet.",
   "exec": "NGINX fronts a large share of internet-facing sites; a remote code-execution flaw in default-style HTTP/2 setups puts web infrastructure at risk until patched.",
   "action": "Upgrade NGINX Open Source to 1.30.7 (stable) or 1.31.9 (mainline), or NGINX Plus to the fixed release in F5's advisory; if you cannot, set http2 off in affected server blocks (NGINX 1.25.1+) or remove the http2 parameter from listen directives. Check ingress-nginx against its own advisories.",
-  "impact": "Unauthenticated code execution demonstrated by researchers; no in-the-wild exploitation reported.",
-  "tags": [],
+  "impact": "Unauthenticated code execution demonstrated by researchers; public proof-of-concept code reported; no in-the-wild exploitation reported.",
+  "tags": [
+    "poc-public",
+    "rce"
+  ],
   "cves": [
     "CVE-2026-123007",
     "CVE-2026-123633",
@@ -40,16 +43,20 @@
     {
       "name": "GBHackers",
       "url": "https://gbhackers.com/nginx2root-five-critical-vulnerabilities/"
+    },
+    {
+      "name": "SecurityWeek",
+      "url": "https://www.securityweek.com/f5-patches-critical-nginx2root-flaws-as-poc-exploits-go-public/"
     }
   ],
   "source_tier": "established",
   "validation": {
     "state": "disputed",
-    "checked_at": "2026-11-19T13:29:34Z",
-    "note": "Second review: Wiz and GBHackers match on CVEs, 9.2, versions, fixes. But summary says PoCs are not released while f5-nginx2root-critical-flaws-poc-2026-11 and cert-fr-nginx-http2-rce-2026-11 report public PoC; if so severity should be 3 (e"
+    "checked_at": "2026-11-19T16:40:48Z",
+    "note": "Second review: Summary fixed (public Rapid7/Censys PoC per SecurityWeek; sources merged from duplicate). Unresolved for editor: severity is 2 but checklist says 3 for public PoC plus unauthenticated RCE in widely used software; reviewer may"
   },
   "first_seen": "2026-11-19T05:07:01Z",
-  "updated_at": "2026-11-19T15:37:23Z",
+  "updated_at": "2026-11-19T16:40:19Z",
   "links": [
     {
       "to": "cert-fr-nginx-http2-rce-2026-11",
@@ -69,11 +76,11 @@
   ],
   "review": {
     "state": "flagged",
-    "at": "2026-11-19T13:29:34Z",
-    "note": "Wiz and GBHackers match on CVEs, 9.2, versions, fixes. But summary says PoCs are not released while f5-nginx2root-critical-flaws-poc-2026-11 and cert-fr-nginx-http2-rce-2026-11 report public PoC; if so severity should be 3 (editor decision) and this overlaps f5-nginx2root-critical-flaws-poc-2026-11 ",
+    "at": "2026-11-19T16:40:48Z",
+    "note": "Summary fixed (public Rapid7/Censys PoC per SecurityWeek; sources merged from duplicate). Unresolved for editor: severity is 2 but checklist says 3 for public PoC plus unauthenticated RCE in widely used software; reviewer may not upgrade. F5 advisory K000164058 (GBHackers cites K000163928) not read.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T13:29:34Z",
+  "qa_checked_at": "2026-11-19T16:40:48Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123007",

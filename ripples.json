@@ -1,145 +1,215 @@
 {
-  "generated_at": "2026-11-18T01:00:00Z",
-  "items": [
-    {
-      "basis": "inferred",
-      "direct": [
-        "Any service that decodes untrusted Base64 on an affected Java runtime can be crashed or taken over without a login."
-      ],
-      "downstream": [
-        "Java is bundled inside third-party applications, appliances and container images, so exposure extends to products you did not build.",
-        "Patching depends on each vendor shipping an updated runtime, so some systems will stay exposed after your own servers are fixed."
-      ],
-      "event_id": "cisa-java4shell-alert-cve-2026-114938-2026-11",
-      "watch_for": [
-        "Unexpected JVM crashes and restarts",
-        "Vendor advisories naming a bundled Java runtime",
-        "Unfamiliar Java processes or runtimes on servers"
-      ],
-      "who_should_care": [
-        "App owners",
-        "Vendor management",
-        "Platform teams"
-      ]
-    },
-    {
-      "basis": "inferred",
-      "direct": [
-        "An outsider can run code on the Endpoint Manager Core server without credentials; exploit code is public."
-      ],
-      "downstream": [
-        "The Core server can push software and scripts to every managed computer, so a takeover there can become a takeover of the fleet.",
-        "Management servers are a common starting point for ransomware deployment."
-      ],
-      "event_id": "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11",
-      "watch_for": [
-        "New or unexpected software distribution tasks",
-        "Core server reachable from the internet",
-        "Unusual SQL errors or new admin accounts on the Core"
-      ],
-      "who_should_care": [
-        "Endpoint team",
-        "SOC"
-      ]
-    },
-    {
-      "basis": "inferred",
-      "direct": [
-        "Attackers are exploiting a flaw that runs code on the Puppet Server."
-      ],
-      "downstream": [
-        "The Puppet Server defines configuration for every node it manages, so control of it can change settings or run commands across the estate.",
-        "Secrets held in Puppet data, such as service passwords, could be read."
-      ],
-      "event_id": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11",
-      "watch_for": [
-        "Certificate requests signed automatically",
-        "Unexpected catalog or module changes",
-        "Reports submitted from unknown agents"
-      ],
-      "who_should_care": [
-        "Infrastructure automation",
-        "Linux admins"
-      ]
-    },
-    {
-      "basis": "stated",
-      "direct": [
-        "Unfixed flaws let an outsider take control of refrigeration controllers that are reachable from the internet."
-      ],
-      "downstream": [
-        "US agencies warn that altered settings can force heating and defrost cycles, causing inventory loss and a fire hazard.",
-        "Operators can lose sight of real temperatures, so spoiled goods may not be noticed in time."
-      ],
-      "event_id": "danfoss-refrigeration-controller-flaws-2026-11",
-      "watch_for": [
-        "Controllers reachable through integrators' 4G modems",
-        "Setpoint or defrost schedule changes nobody made",
-        "Gaps in temperature logs"
-      ],
-      "who_should_care": [
-        "Facilities",
-        "Retail and food operations",
-        "OT security"
-      ]
-    },
-    {
-      "basis": "inferred",
-      "direct": [
-        "Over 6 million stolen credentials were recovered from the criminals' servers and are being shared with notification services."
-      ],
-      "downstream": [
-        "Credentials stolen before the takedown may already have been sold and can still be used.",
-        "Expect a wave of breach notifications and password resets as victims are told."
-      ],
-      "event_id": "operation-endgame-gootloader-castlerat-stealc-2026-11",
-      "watch_for": [
-        "Notifications from HaveIBeenPwned, Shadowserver or your national CSIRT",
-        "Sign-ins from new locations on accounts without multi-factor authentication"
-      ],
-      "who_should_care": [
-        "Identity team",
-        "Help desk"
-      ]
-    },
-    {
-      "basis": "stated",
-      "direct": [
-        "Automated agents hunted for exposed AI gateways and app builders and extracted the provider keys inside them."
-      ],
-      "downstream": [
-        "Stolen keys were pooled to fund further attacks, so victims see unexpected AI bills.",
-        "A key that also grants wider cloud access turns a billing problem into a breach."
-      ],
-      "event_id": "amazon-ai-agent-campaign-litellm-dify-keys-2026-11",
-      "watch_for": [
-        "Unexpected spend or usage on AI provider accounts",
-        "AI gateways with default or hardcoded credentials",
-        "Keys ever committed to code"
-      ],
-      "who_should_care": [
-        "AI platform owners",
-        "Cloud FinOps"
-      ]
-    },
-    {
-      "basis": "inferred",
-      "direct": [
-        "A widely embedded third-party script was altered, so sites loading it served malicious code to their visitors."
-      ],
-      "downstream": [
-        "Every site that loads the script inherits the compromise without being breached itself.",
-        "Card or login details entered on affected pages may have been captured, creating notification duties for site owners."
-      ],
-      "event_id": "optimizely-web-script-injection-2026-11",
-      "watch_for": [
-        "Third-party scripts loaded without integrity checks",
-        "Unexpected outbound requests from checkout or login pages"
-      ],
-      "who_should_care": [
-        "Web team",
-        "Fraud and payments"
-      ]
-    }
-  ]
+ "generated_at": "2026-11-19T03:11:03Z",
+ "items": [
+  {
+   "event_id": "cisa-java4shell-alert-cve-2026-114938-2026-11",
+   "basis": "inferred",
+   "direct": [
+    "Any service that decodes untrusted Base64 on an affected x86-64 HotSpot Java runtime could be crashed or taken over without a login."
+   ],
+   "downstream": [
+    "Java is bundled inside third-party applications, appliances and container images, so exposure extends to products you did not build.",
+    "Patching depends on each vendor shipping an updated runtime, so some systems will stay exposed after your own servers are fixed."
+   ],
+   "watch_for": [
+    "Unexpected JVM crashes and restarts",
+    "Vendor advisories naming a bundled Java runtime",
+    "Signs of exploitation reported by CISA or vendors"
+   ],
+   "who_should_care": [
+    "App owners",
+    "Vendor management",
+    "Platform teams"
+   ]
+  },
+  {
+   "event_id": "atlassian-confluence-axis-cve-2026-90436-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Self-hosted Confluence Data Center with the Remote API enabled can be taken over without a login; CISA lists the Axis flaw as exploited."
+   ],
+   "downstream": [
+    "In the case Rapid7 saw, the intruder took database credentials, queried a cloud data warehouse and signed in to Microsoft 365 as a service account.",
+    "Apache Axis 1.x is end-of-life and may sit inside other Java products that will not get a fix."
+   ],
+   "watch_for": [
+    "Unusual Remote API requests to Confluence",
+    "Service accounts signing in from new places",
+    "Other products bundling Apache Axis 1.x"
+   ],
+   "who_should_care": [
+    "Confluence admins",
+    "Identity teams",
+    "SOC analysts"
+   ]
+  },
+  {
+   "event_id": "n-able-n-central-zero-day-exploitation-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Internet-facing N-central servers were exploited through zero-days published without coordinated disclosure; crypto miners were deployed."
+   ],
+   "downstream": [
+    "An RMM server reaches every managed client, so a compromise can spread to many customer networks at once.",
+    "Removal of the Legacy API may break older integrations that still depend on it."
+   ],
+   "watch_for": [
+    "N-central servers not on Hotfix 3",
+    "New agents or scripts pushed from RMM",
+    "Mining processes on managed endpoints"
+   ],
+   "who_should_care": [
+    "MSPs",
+    "MSP customers",
+    "IT operations"
+   ]
+  },
+  {
+   "event_id": "fireworks-ai-october-incidents-update-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Account and billing data for every Fireworks AI account created before Oct 30 was exposed; some customers' secrets, model files and datasets were reached earlier."
+   ],
+   "downstream": [
+    "Cursor, Notion and Uber are reported as affected customers; keys held by the provider led to a trojanized extension at Cursor.",
+    "Credentials pasted into AI prompts or held by inference providers can open systems far from the provider itself."
+   ],
+   "watch_for": [
+    "Notices from AI and inference providers you use",
+    "Use of API keys issued to providers",
+    "Secrets in AI chat logs and traces"
+   ],
+   "who_should_care": [
+    "AI platform teams",
+    "Vendor management",
+    "Developers"
+   ]
+  },
+  {
+   "event_id": "microsoft-agent-framework-pypi-compromise-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Agent Framework 1.26.1 and 1.26.2 on PyPI ran a credential stealer at Python start-up, aimed at cloud, GitHub and AI tokens."
+   ],
+   "downstream": [
+    "Any CI job or developer machine that installed those versions may have leaked tokens that unlock cloud accounts and repositories.",
+    "Unpinned dependencies pull a bad release automatically, so exposure can exist without anyone choosing to upgrade."
+   ],
+   "watch_for": [
+    "Installs of versions 1.26.1 or 1.26.2",
+    "Token use from unfamiliar hosts after Nov 17",
+    "Unpinned AI packages in build files"
+   ],
+   "who_should_care": [
+    "Developers",
+    "DevOps",
+    "Cloud security"
+   ]
+  },
+  {
+   "event_id": "optimizely-web-script-injection-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Malicious JavaScript was injected into some Optimizely Web Experimentation customer projects, reaching 178 organisations by one researcher's count."
+   ],
+   "downstream": [
+    "Coverage says the code skimmed payment cards and swapped crypto addresses on customers' sites, so their visitors were the victims.",
+    "Sites that load third-party scripts without integrity checks or a strict Content-Security-Policy inherit the supplier's compromise."
+   ],
+   "watch_for": [
+    "Unexpected scripts on checkout pages",
+    "CSP violation reports",
+    "Notices from script and tag vendors"
+   ],
+   "who_should_care": [
+    "E-commerce teams",
+    "Web developers",
+    "Payment compliance"
+   ]
+  },
+  {
+   "event_id": "wellington-it-irish-credit-unions-breach-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Saved payee records at about 40 Irish credit unions were exposed through a reported attack on supplier Wellington IT."
+   ],
+   "downstream": [
+    "Payee data can be used to make fraud and impersonation messages to members more convincing.",
+    "Ireland's finance minister called the delay unacceptable, so expect regulatory scrutiny of supplier notification."
+   ],
+   "watch_for": [
+    "Payment-redirection and impersonation lures to members",
+    "Statements from the supplier or the Central Bank",
+    "Automated API abuse with valid logins"
+   ],
+   "who_should_care": [
+    "Credit unions",
+    "Fraud teams",
+    "Vendor management"
+   ]
+  },
+  {
+   "event_id": "cert-fr-nginx-http2-rce-2026-11",
+   "basis": "inferred",
+   "direct": [
+    "NGINX Open Source and Plus with HTTP/2 can be taken over without a login; a public proof of concept exists for one flaw."
+   ],
+   "downstream": [
+    "NGINX sits in front of many sites and is embedded in load balancers, ingress controllers and appliances that update on vendors' schedules.",
+    "A public proof of concept usually shortens the time before scanning and attacks begin."
+   ],
+   "watch_for": [
+    "Ingress and appliance vendors shipping fixed NGINX",
+    "Worker crashes on HTTP/2 traffic",
+    "Reports of in-the-wild exploitation"
+   ],
+   "who_should_care": [
+    "Web operations",
+    "Kubernetes teams",
+    "Appliance owners"
+   ]
+  },
+  {
+   "event_id": "danfoss-refrigeration-controller-flaws-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Six unpatched pre-authentication flaws let attackers take over Danfoss AK-SM800A refrigeration controllers; hundreds are reachable online."
+   ],
+   "downstream": [
+    "Food retail, cold storage and pharmacies risk spoiled stock and safety incidents; French attacks on such controllers were linked to fires.",
+    "France is seeking EU sanctions over the campaign, which could prompt further attacks or warnings."
+   ],
+   "watch_for": [
+    "Refrigeration controllers reachable from the internet",
+    "Unexpected setpoint or alarm changes",
+    "CVE numbers and fixes from Danfoss"
+   ],
+   "who_should_care": [
+    "Retail facilities",
+    "Cold-chain operators",
+    "OT security"
+   ]
+  },
+  {
+   "event_id": "equinor-ongoing-cyberattack-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Equinor's IT systems are under an ongoing attack; it says production is unaffected and email was reported down."
+   ],
+   "downstream": [
+    "Restoration time is unknown, so partners and suppliers may see delays or unusual messages from Equinor.",
+    "Attackers often use a known incident to send fake invoices or updates in the victim's name."
+   ],
+   "watch_for": [
+    "Messages claiming to come from Equinor",
+    "Norwegian authority advisories",
+    "Any named attacker or leak claim"
+   ],
+   "who_should_care": [
+    "Energy sector",
+    "Equinor suppliers",
+    "SOC analysts"
+   ]
+  }
+ ]
 }

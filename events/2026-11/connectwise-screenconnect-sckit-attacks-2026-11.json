@@ -34,14 +34,14 @@
     "ConnectWise ScreenConnect",
     "RMM+ extension"
   ],
-  "qa_checked_at": "2026-11-19T00:27:26Z",
+  "qa_checked_at": "2026-11-19T18:10:03Z",
   "report": {
     "doc_id": "SCKit",
     "iocs_available": true,
     "key_findings": [
       "Huntress saw rogue ScreenConnect clients pushed to at least 288 hosts at 48 organisations on November 11 and 205 hosts at 41 organisations in a second wave on November 13.",
       "Operators used the Run Command feature on cloud-hosted ScreenConnect panels to run commands as SYSTEM; one panel alone reached 190 downstream clients.",
-      "Entry appears tied to the third-party RMM+ extension, versions 1.0.31 and 1.0.32, which accepted a blank access key; ConnectWise disabled five extensions across 400+ partner environments.",
+      "Entry appears tied to the third-party RMM+ extension, versions 1.0.31 and 1.0.32, which accepted a blank access key; ConnectWise disabled five extensions across about 400 partner environments.",
       "SCKit is 16 scripts and config files that install a rogue client, hijack the real client's connection and try to steal the technician's .aspxauth session cookie (and browser cookie stores) to replay against the panel. Huntress describes CVE-2026-84869 (client flaw before 26.6.5) as background, not as the method SCKit uses.",
       "Huntress has not seen the jump from an infected endpoint to a technician workstation succeed in any recovered log."
     ],
@@ -90,8 +90,8 @@
   "date_note": "Two waves, November 11 and November 13; date is the latest wave. Huntress report published November 11.",
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T00:27:26Z",
-    "note": "Checked against Huntress (Nov 11): 288/48 and 205/41 hosts/orgs, RMM+ 1.0.31/1.0.32, 26.6.5, jump to technicians not observed all match. Title claimed SCKit 'spreads to MSP technicians' (not observed); reworded. Date 11-17 unsupported; set to latest wave 11-13 with date_note. BleepingComputer return",
+    "at": "2026-11-19T18:10:03Z",
+    "note": "Compared 288/48 and 205/41 hosts, dates, RMM+ 1.0.31/1.0.32, 26.6.5, no technician jump observed against Huntress and BleepingComputer; 400+ partner environments was about 400 in sources, now about 400",
     "flags": []
   }
 }

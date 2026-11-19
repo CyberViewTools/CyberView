@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.45",date:"2026-11-19"};
+var BUILD={version:"1.46",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -157,7 +157,7 @@ function cleanCorr(d){
 var CTX_DEFS={
   ioda:{label:"Internet disruptions",what:"Countries where IODA's automated measurements (routing, active probing, Google traffic) saw a drop in the last 24 hours. A signal, not a confirmed outage, and never by itself evidence of an attack.",host:/^https:\/\/ioda\.inetintel\.cc\.gatech\.edu\//},
   gdacs:{label:"Disaster alerts",what:"Orange and red GDACS alerts now in effect (earthquakes, cyclones, floods, volcanoes). Disasters cause outages and draw scams; they are context, not cyber events.",host:/^https:\/\/www\.gdacs\.org\//},
-  grid:{label:"Power grid outages",what:"Outages and grid emergencies that six grid operators report themselves (Hydro-Qu\u00e9bec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO): customers without power, load shedding, energy emergencies. Context, not cyber events. The cause is shown as the operator reports it; a ring is drawn at the operator's area, not the exact place.",
+  grid:{label:"Power grid outages",what:"Outages and grid emergencies that six grid operators report themselves (Hydro-Qu\u00e9bec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO): customers without power, load shedding, energy emergencies. Context, not cyber events. The cause is shown as the operator reports it; the larger rings are incidents (5,000 or more customers out in one operator's area, drawn at that area); the small rings are single outages of 100 or more customers, at the place the operator gives. Customers are accounts, not people.",
     host:/^https:\/\/(?:[a-z0-9-]+\.)*(?:hydroquebec\.com|bchydro\.com|ukpowernetworks\.co\.uk|eskom\.co\.za|ercot\.com|aemo\.com\.au|nemweb\.com\.au)(?:\/|$)|^https:\/\/ukpowernetworks\.opendatasoft\.com(?:\/|$)/}
 };
 /* grid cause decisions (scripts/grid-desk.mjs); "attack" wording only where an official source says so */
@@ -168,7 +168,7 @@ var ctx={},ctxOn={ioda:false,gdacs:true,grid:true};
 function cleanCtx(name,d){
   var def=CTX_DEFS[name];if(!def||!d||typeof d!=="object"||!Array.isArray(d.items))return null;
   var link=function(u){u=str(u,300);return def.host.test(u)?u:"";};
-  var items=d.items.slice(0,60).map(function(x){
+  var items=d.items.slice(0,name==="grid"?460:60).map(function(x){
     if(!x||typeof x!=="object")return null;
     if(name==="ioda"){var code=str(x.code,2);if(!/^[A-Z]{2}$/.test(code))return null;
       return {code:code,name:str(x.name,60),map:str(x.map_name,60).toLowerCase(),score:numIn(x.score,0,1e9)||0,events:numIn(x.events,0,1e4)||0,signals:strs(x.signals,4,20),url:link(x.url)};}
@@ -184,7 +184,7 @@ function cleanGrid(x,link){
   var lat=numIn(x.lat,-90,90),lng=numIn(x.lng,-180,180),geo=lat!==null&&lng!==null,cu=numIn(x.customers,0,1e8),lv=numIn(x.level,0,10);
   var ck=x.checked&&typeof x.checked==="object"?x.checked:null,dec=ck?str(ck.decision,30):"";
   var src=str(x.source,20).toLowerCase(),cc=str(x.country,2).toUpperCase();
-  return {id:str(x.id,120),source:/^[a-z0-9_-]+$/.test(src)?src:"",kind:own(GRID_KIND,str(x.kind,20))?x.kind:"outage",name:nm,country:/^[A-Z]{2}$/.test(cc)?cc:"",region:str(x.region,80).trim(),
+  return {id:str(x.id,120),scope:x.scope==="outage"?"outage":"incident",planned:x.planned===true,source:/^[a-z0-9_-]+$/.test(src)?src:"",kind:own(GRID_KIND,str(x.kind,20))?x.kind:"outage",name:nm,country:/^[A-Z]{2}$/.test(cc)?cc:"",region:str(x.region,80).trim(),
     customers:cu===null?null:Math.round(cu),level:lv===null?null:Math.round(lv),lat:geo?lat:null,lng:geo?lng:null,approx:x.approx===true,since:str(x.since,30),cause:str(x.cause,120).trim(),
     checked:ck&&own(GRID_DEC,dec)?{decision:dec,summary:str(ck.summary,300).trim(),by:AI_BY}:null,url:link(x.url)};
 }
@@ -193,6 +193,7 @@ function gridLine(x){
   var p=[];
   if(x.customers!==null)p.push(fmtNum(x.customers)+" customer"+(x.customers===1?"":"s")+" without power");
   if(x.level!==null&&x.kind!=="outage")p.push(GRID_KIND[x.kind]+" level "+x.level);else if(x.customers===null)p.push(GRID_KIND[x.kind]);
+  if(x.planned)p.push("planned work");
   if(x.region)p.push(x.region);
   var s=ago(x.since);if(s)p.push("started "+s);
   p.push(x.cause?"cause as reported: "+x.cause:"no cause reported");
@@ -261,15 +262,23 @@ function renderLayers(){
     r.appendChild(b);r.appendChild(el("span","lh h-"+h.k,h.t));box.appendChild(r);
     box.appendChild(el("p","lnote",def.what));
     if(c&&c.items.length&&ctxOn[k]&&k==="grid"){
-      var gl=el("ul","llist grid");
-      c.items.slice(0,5).forEach(function(x){
+      var gl=el("ul","llist grid"),incs=c.items.filter(function(x){return x.scope!=="outage";}),outs=c.items.filter(function(x){return x.scope==="outage";});
+      if(!incs.length)gl.appendChild(el("li","muted","No operator region has 5,000 or more customers out (no incident open)."));
+      var gridLi=function(x){
         var li=el("li");
         if(x.url){var ga=el("a",null,x.name);ga.href=safeUrl(x.url);ga.target="_blank";ga.rel="noopener noreferrer";li.appendChild(ga);}else li.appendChild(el("b",null,x.name));
         li.appendChild(el("span","muted"," "+gridLine(x)+(x.lat===null?" \u00b7 not drawn (no location given)":x.approx?" \u00b7 drawn at the operator's area":"")));
         var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" \u00b7 ")));
         if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
-        gl.appendChild(li);});
-      if(c.items.length>5)gl.appendChild(el("li","muted","and "+(c.items.length-5)+" more on the globe"));
+        gl.appendChild(li);};
+      incs.slice(0,5).forEach(gridLi);
+      if(incs.length>5)gl.appendChild(el("li","muted","and "+(incs.length-5)+" more incidents on the globe"));
+      if(outs.length){
+        var np=outs.filter(function(x){return x.planned;}).length;
+        gl.appendChild(el("li","ghead",fmtNum(outs.length)+" single outage"+(outs.length===1?"":"s")+" of 100 or more customers"+(np?" ("+np+" planned work)":"")+", the smaller rings:"));
+        outs.slice(0,5).forEach(gridLi);
+        if(outs.length>5)gl.appendChild(el("li","muted","and "+(outs.length-5)+" more on the globe"));
+      }
       box.appendChild(gl);
     }else if(c&&c.items.length&&ctxOn[k]){
       var ul=el("ul","llist");
@@ -1535,6 +1544,7 @@ function hoToggle(open){var d=$("hoDlg");modalShow("hoDlg",open,$("hoOpen"));$("
   if(open){var s=lsGet("cwm.ho");$("hoNote").textContent=s?"Includes what is new since your last handover on "+fmtTime(s)+".":"First handover on this device. Later ones also list what is new since the previous one.";$("hoText").value=hoBuild();$("hoText").focus();$("hoText").scrollTop=0;}}
 /* power grid incidents: neutral ink, dashed rings sized by customers (log scale, capped); context, not cyber events */
 function gridR(x){
+  if(x.scope==="outage")return Math.min(8,3+Math.max(0,Math.log10(Math.max(100,x.customers||100))-2)*2.5);
   if(x.customers)return Math.min(20,5+Math.max(0,Math.log10(x.customers)-2)*3);
   return Math.min(16,8+(x.level||0)*1.5);
 }
@@ -1543,10 +1553,10 @@ function drawGrid(){
   ctx.grid.items.slice().reverse().forEach(function(x){
     if(x.lat===null)return;var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]),r=gridR(x);
     var gn=gridNotes(x),head=x.name,body=gridLine(x)+(x.approx?" \u00b7 drawn at the operator's area":"")+(gn.length?" \u00b7 "+gn.join(" \u00b7 "):"")+(x.checked?" \u00b7 "+gridChecked(x):"")+" \u00b7 context, not a cyber event";
-    var g=gMarks.append("g").attr("class","gridm"+(x.approx?" approx":"")).attr("transform","translate("+px+","+py+")").attr("tabindex",0)
+    var g=gMarks.append("g").attr("class","gridm"+(x.scope==="outage"?" out":"")+(x.approx?" approx":"")).attr("transform","translate("+px+","+py+")").attr("tabindex",0)
       .attr("aria-label",x.name+", power grid "+GRID_KIND[x.kind]+" (context, not a cyber event)"+(x.url?" (opens the operator's page)":""));
     if(x.url)g.attr("role","link");
-    g.append("circle").attr("r",r);g.append("path").attr("d","M1.2,-4.2L-1.8,0.6H1.4L-0.8,4.4");
+    g.append("circle").attr("r",r);if(x.scope!=="outage")g.append("path").attr("d","M1.2,-4.2L-1.8,0.6H1.4L-0.8,4.4");
     var show=function(){tip(px,py,head,body);};
     if(x.url){var open=function(){var w=null;try{w=window.open(safeUrl(x.url),"_blank","noopener");}catch(z){}if(w)w.opener=null;};
       g.on("click",open).on("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();open();}});}

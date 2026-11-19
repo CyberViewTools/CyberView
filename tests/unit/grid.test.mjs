@@ -503,3 +503,22 @@ test("ENTSO-E token from ENTSOE_TOKEN: sent only as securityToken to ENTSO-E, ne
     assert.ok(!SOURCES.entsoe.url.includes(T));
   } finally { if (old === undefined) delete process.env.ENTSOE_TOKEN; else process.env.ENTSOE_TOKEN = old; }
 });
+
+test("context layer: single outages of show_customers (100) or more with a location, after the incidents, planned labelled", async () => {
+  const { contextItems, checkContext } = await import("../../scripts/grid.mjs");
+  const base = { source: "bchydro", country: "CA", region: "British Columbia", area: "Bowen Island", kind: "outage", level: null, started_at: "2026-11-19T20:00:00Z", restore_est: "", url: "https://www.bchydro.com/x", cause: "Tree" };
+  const live = [
+    { ...base, id: "bchydro:1", customers: 1399, lat: 49.38, lng: -123.36, planned: true },
+    { ...base, id: "bchydro:2", customers: 100, lat: 49.2, lng: -123.1, planned: false },
+    { ...base, id: "bchydro:3", customers: 99, lat: 49.2, lng: -123.1, planned: false },          // under 100: left out
+    { ...base, id: "bchydro:4", customers: 5000, lat: null, lng: null, planned: false },         // no location: left out
+    { ...base, id: "eskom:1", source: "eskom", kind: "load_shedding", customers: null, lat: -29, lng: 24, planned: false },
+  ];
+  const items = contextItems({ open: [] }, {}, live, { show_customers: 100 });
+  assert.deepEqual(items.map((x) => [x.scope, x.customers, x.planned]), [["outage", 1399, true], ["outage", 100, false]]);
+  assert.match(items[0].name, /^BC Hydro: 1,399 customers without power \(planned work\)$/);
+  assert.ok(items.every((x) => /^grid-o-/.test(x.id)));
+  const doc = { layer: "grid", source: "x", source_url: "", fetched_at: "2026-11-19T22:00:00Z", ok: true, error: "", items };
+  assert.deepEqual(checkContext(doc), []);
+  assert.equal(contextItems({ open: [] }, {}, live, { show_customers: 1000 }).length, 1);    // the threshold is the owner's setting
+});

@@ -25,13 +25,13 @@ import { get } from "./lib/net.mjs";
 export const AI_BY = "CyberView AI (a Claude model)";
 const KEEP_STALE_HOURS = 6;
 const CLOSED_KEEP_DAYS = 30;
-const CONTEXT_MAX = 60;
+const CONTEXT_MAX = 60, OUTAGE_MAX = 400;          // incidents, then single outages of show_customers or more
 const AEMO_NOTICES = 40;          // newest market notices read each run (about a day of notices)
 const AEMO_MAX_AGE_HOURS = 24;    // an actual LOR or load shedding with no cancellation seen in this time is dropped
 
 export const DEFAULT_CFG = {
   open_customers: 5000, close_customers: 2000, close_after: 2, research_customers: 50000,
-  research_suspicious_customers: 10000, levels: { eskom: 4, ercot: 1, aemo: 3 }, retry_hours: 6, max_tries: 3,
+  research_suspicious_customers: 10000, levels: { eskom: 4, ercot: 1, aemo: 3 }, retry_hours: 6, max_tries: 3, show_customers: 100,
 };
 export function loadConfig(p = join(ROOT, "config", "grid.json")) {
   const c = readJson(p, {}) || {};
@@ -680,17 +680,29 @@ export const DECISIONS = ["weather", "equipment", "planned", "supply_shortfall",
 const rank = (i) => (i.customers != null ? i.customers : (i.level || 0) * 100000);
 /** Open incidents -> context items, biggest first (a signal ranks as level x 100,000 customers), max 60, with the grid
  *  desk's result (data/grid/research.json, lane B) when there is one. */
-export function contextItems(incidents, research = {}) {
+export function contextItems(incidents, research = {}, live = [], cfg = DEFAULT_CFG) {
   const open = Array.isArray(incidents) ? incidents : (incidents && incidents.open) || [];
-  return open.filter((i) => i && i.id && i.closed_at === "").sort((a, b) => rank(b) - rank(a)).slice(0, CONTEXT_MAX).map((i) => {
+  const inc = open.filter((i) => i && i.id && i.closed_at === "").sort((a, b) => rank(b) - rank(a)).slice(0, CONTEXT_MAX).map((i) => {
     const r = research && typeof research === "object" ? research[i.id] : null;
     const checked = r && DECISIONS.includes(r.decision)
       ? { decision: r.decision, summary: str(r.cause_summary, 300), by: AI_BY } : null;
-    return { id: i.id, source: i.source, kind: i.kind, name: str(i.name, 120), country: i.country,
+    return { id: i.id, scope: "incident", source: i.source, kind: i.kind, name: str(i.name, 120), country: i.country,
       region: str((REGIONS[`${i.source}|${i.region}`] || {}).name || i.region, 60), customers: i.customers, level: i.level,
       lat: i.lat, lng: i.lng, approx: !!i.approx, since: i.opened_at, cause: str((i.causes && i.causes[0] && i.causes[0].cause) || "", 120),
-      checked, url: ownUrl(i.source, i.url) };
+      planned: false, checked, url: ownUrl(i.source, i.url) };
   });
+  // single outages (owner, 2026-11-19: show anything over 100): every operator outage with a location and at least
+  // show_customers customers, biggest first; planned work is kept and labelled as planned
+  const min = Math.max(1, Number(cfg && cfg.show_customers) || 100);
+  const outs = (Array.isArray(live) ? live : []).filter((x) => x && x.kind === "outage" && OPERATORS.includes(x.source)
+      && Number.isInteger(x.customers) && x.customers >= min && x.lat !== null && x.lng !== null && okLat(x.lat) && okLng(x.lng))
+    .sort((a, b) => b.customers - a.customers).slice(0, OUTAGE_MAX).map((x) => ({
+      id: str(`grid-o-${String(x.id).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, 120), scope: "outage", source: x.source, kind: "outage",
+      name: str(`${SOURCES[x.source].name}: ${x.customers.toLocaleString("en-US")} customers without power${x.planned ? " (planned work)" : ""}`, 120),
+      country: x.country, region: str((x.area || x.region), 60), customers: x.customers, level: null, lat: x.lat, lng: x.lng, approx: false,
+      since: ISO.test(x.started_at || "") ? x.started_at : "", cause: str(x.cause, 120), planned: !!x.planned, checked: null,
+      url: ownUrl(x.source, x.url) }));
+  return [...inc, ...outs];
 }
 
 // ---------- verify ----------
@@ -781,7 +793,7 @@ export function checkContext(d) {
   if (!isStr(d.source, 200) || d.source_url !== "") e.push("source/source_url: wrong");
   if (!(d.fetched_at === "" || ISO.test(d.fetched_at || ""))) e.push("fetched_at: not ISO");
   if (typeof d.ok !== "boolean" || !isStr(d.error, 400)) e.push("ok/error: wrong type");
-  if (!Array.isArray(d.items) || d.items.length > CONTEXT_MAX) { e.push(`items: not an array of at most ${CONTEXT_MAX}`); return e; }
+  if (!Array.isArray(d.items) || d.items.length > CONTEXT_MAX + OUTAGE_MAX) { e.push(`items: not an array of at most ${CONTEXT_MAX + OUTAGE_MAX}`); return e; }
   d.items.forEach((x, i) => {
     const p = `items[${i}]`;
     if (!x || typeof x !== "object") { e.push(`${p}: not an object`); return; }
@@ -792,7 +804,8 @@ export function checkContext(d) {
     if (!(x.customers === null || isInt(x.customers)) || !(x.level === null || isInt(x.level))) e.push(`${p}.customers/level: not int or null`);
     checkLatLng(x, e, p);
     if (typeof x.approx !== "boolean") e.push(`${p}.approx: not a boolean`);
-    if (!ISO.test(x.since || "")) e.push(`${p}.since: not ISO`);
+    if (!["incident", "outage", undefined].includes(x.scope)) e.push(`${p}.scope: not incident or outage`);
+    if (!(ISO.test(x.since || "") || (x.scope === "outage" && x.since === ""))) e.push(`${p}.since: not ISO`);
     if (!isStr(x.cause, 120)) e.push(`${p}.cause: not a string <= 120`);
     if (!(x.url === "" || ownUrl(x.source, x.url) === x.url)) e.push(`${p}.url: not https on the operator's host`);
     if (x.checked !== null && !(x.checked && DECISIONS.includes(x.checked.decision) && isStr(x.checked.summary, 300) && x.checked.by === AI_BY))
@@ -1007,7 +1020,7 @@ async function collect() {
   const research = readJson(P.research, {}) || {};
   const okCount = Object.values(sources).filter((s) => s.ok).length;
   writeJson(P.context, { layer: "grid", source: CONTEXT_SOURCE, source_url: "", fetched_at: nowIso(), ok: okCount > 0,
-    error: str(failed.join("; "), 400), items: contextItems(open, research) });
+    error: str(failed.join("; "), 400), items: contextItems(open, research, items, cfg) });
 
   const st = readStatus(); st.last_grid_at = nowIso(); writeJson(join(DATA, "status.json"), st);
   const prevIds = new Set((prev.open || []).map((i) => i.id)), reasons = {};

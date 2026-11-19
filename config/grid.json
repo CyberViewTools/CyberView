@@ -1,11 +1,16 @@
 {
-  "_note": "Grid outage tracker (scripts/grid.mjs). open_customers: unplanned customers out in one operator region that opens an incident; close_customers: below this (and no grid level) for close_after collections in a row closes it. research_customers: peak that asks for a cause check (big); research_suspicious_customers: lower peak that asks for one when the operator's cause reads cyber, hack, malware, ransom, unknown or under investigation. levels: the grid level per signal source that asks for a check (Eskom load-shedding stage, ERCOT EEA level, AEMO LOR level). retry_hours and max_tries are used by scripts/grid-desk.mjs. The owner may change any of these.",
+  "_note": "Grid outage tracker (scripts/grid.mjs). open_customers: unplanned customers out in one operator region that opens an incident; close_customers: below this (and no grid level) for close_after collections in a row closes it. research_customers: peak that asks for a cause check (big); research_suspicious_customers: lower peak that asks for one when the operator's cause reads cyber, hack, malware, ransom, unknown or under investigation. levels: the grid level per signal source that asks for a check (Eskom load-shedding stage, ERCOT EEA level, AEMO LOR level). retry_hours and max_tries are used by scripts/grid-desk.mjs. The owner may change any of these. show_customers: every single outage with at least this many customers (accounts, not people) is drawn on the map with its location, besides the incidents (owner, 2026-11-19: anything over 100).",
   "open_customers": 5000,
   "close_customers": 2000,
   "close_after": 2,
   "research_customers": 50000,
   "research_suspicious_customers": 10000,
-  "levels": { "eskom": 4, "ercot": 1, "aemo": 3 },
+  "levels": {
+    "eskom": 4,
+    "ercot": 1,
+    "aemo": 3
+  },
   "retry_hours": 6,
-  "max_tries": 3
+  "max_tries": 3,
+  "show_customers": 100
 }

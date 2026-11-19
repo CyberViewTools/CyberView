@@ -383,6 +383,11 @@ async def main():
              "lat": 51.5, "lng": -0.12, "approx": True, "since": iso(1), "cause": "Underground cable fault", "checked": None, "url": "https://evil.opendatasoft.com/x"},
             {"id": "grid-aemo-nsw-1", "source": "aemo", "kind": "supply_warning", "name": "AEMO: lack of reserve, New South Wales", "country": "AU", "region": "NSW", "customers": None, "level": 3,
              "lat": None, "lng": None, "approx": True, "since": iso(1), "cause": "", "checked": None, "url": "https://www.nemweb.com.au/REPORTS/CURRENT/Market_Notice/"},
+            # v1.46: single outages of 100 or more customers (owner: show anything over 100)
+            {"id": "grid-o-bchydro-2869620", "scope": "outage", "source": "bchydro", "kind": "outage", "name": "BC Hydro: 1,399 customers without power (planned work)", "country": "CA", "region": "Bowen Island", "customers": 1399, "level": None,
+             "lat": 49.38, "lng": -123.36, "approx": False, "since": iso(2), "cause": "Planned work being done on our equipment", "planned": True, "checked": None, "url": "https://www.bchydro.com/power-outages/app/outage-map.html"},
+            {"id": "grid-o-hydroquebec-1", "scope": "outage", "source": "hydroquebec", "kind": "outage", "name": "Hydro-Québec: 158 customers without power", "country": "CA", "region": "Quebec", "customers": 158, "level": None,
+             "lat": 45.88, "lng": -72.55, "approx": False, "since": "", "cause": "Material wear and tear or breakdown", "planned": False, "checked": None, "url": ""},
         ]}
         site_g = make_site(bg)
         hp = os.path.join(site_g, "data", "health.json")
@@ -442,9 +447,12 @@ async def main():
             ok("grid: an item with no location is listed, not drawn", "AEMO: lack of reserve, New South Wales" in txt and "not drawn (no location given)" in txt)
             ok("grid analysis: corroboration note in the list, own operator and unknown kinds left out", "seen also by: internet measurements (IODA) · news reports (2)" in txt and "other grid operators" not in txt and "evil" not in txt and await pg.locator("#pwn2").count() == 0, txt[-700:])
             ok("grid analysis: anomaly note in the list", "unusual for this hour of the week" in txt)
+            ok("grid outages: single outages of 100+ listed under their own heading, planned work counted", "2 single outages of 100 or more customers (1 planned work)" in txt and "BC Hydro: 1,399 customers without power (planned work)" in txt)
+            ok("grid outages: drawn as the smaller rings, no bolt glyph", await pg.locator("g.gridm.out").count() == 2 and await pg.locator("g.gridm.out path").count() == 0)
+            ok("grid outages: incidents drawn on top of single outages", await pg.evaluate("(() => { const a=[...document.querySelectorAll('g.gridm')]; const i=a.findIndex(g=>!g.classList.contains('out')); const o=a.findIndex(g=>g.classList.contains('out')); return o > -1 && i > o; })()"))
             notes = await pg.locator("#layers .gnote").all_text_contents()
             ok("grid analysis: only incidents with signals get a note", len(notes) == 1 and not any("cyber" in n.lower() or "attack" in n.lower() for n in notes), notes)
-            g0 = pg.locator("g.gridm[aria-label^='Hydro-Québec']")
+            g0 = pg.locator("g.gridm:not(.out)[aria-label^='Hydro-Québec']")
             await g0.focus(); await pg.wait_for_timeout(150)
             tiptxt = await pg.text_content("#tip")
             ok("grid analysis: tooltip carries the notes", "seen also by: internet measurements (IODA) · news reports (2)" in tiptxt and "unusual for this hour of the week" in tiptxt and "context, not a cyber event" in tiptxt, tiptxt)

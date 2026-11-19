@@ -1,0 +1,56 @@
+{
+  "action": "Government defenders: learn how SoftEther VPN normally behaves on your network and hunt for unexpected SoftEther services; use the IOC list and YARA rules Rapid7 published, and TLS inspection where available.",
+  "actor": "Webworm",
+  "attack": ["Defense evasion", "Command and control"],
+  "attribution": {"actor": "Webworm", "by": "Rapid7", "by_type": "investigator", "origin_country": "China", "lat": 35.86, "lng": 104.2, "confidence": "moderate", "url": "https://www.rapid7.com/blog/post/tr-spying-on-governments-no-malware-custom-webworms-toolkit-softether-bridge", "note": "Rapid7 attributes the tool to Webworm, a China-aligned APT, with moderate confidence"},
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-19",
+  "date_note": "Date of Rapid7's publication; activity dates are not stated in the post",
+  "exec": "A China-aligned espionage group is using a rebuilt VPN tool that avoids malware detection, aimed at government networks.",
+  "first_seen": "2026-11-19T15:54:00Z",
+  "geo_basis": "researcher HQ",
+  "lat": 42.36,
+  "lng": -71.06,
+  "org": "Rapid7",
+  "pin_type": "researcher",
+  "place": "Boston, MA (researcher)",
+  "plain": "Security firm Rapid7 says a China-aligned spying group called Webworm uses a modified copy of the legitimate SoftEther VPN program to reach government networks without classic malware.",
+  "products": ["SoftEther VPN"],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Rapid7 describes a custom build of SoftEther VPN Bridge (based on version 4.44, build 9807) rebuilt from source, with renamed branding, changed HTTP endpoints and handshake so stock clients cannot connect.",
+      "The resource archive is embedded in the binary and the configuration is stored encrypted with a custom cipher.",
+      "Rapid7 attributes the tool to Webworm with moderate confidence, citing TTPs matching ESET's earlier reporting and hosting infrastructure linked to the group before.",
+      "Webworm is described as a China-aligned APT focused on governmental organizations, especially in Europe; the post gives no victim counts or country list."
+    ],
+    "published": "2026-11-19",
+    "publisher": "Rapid7",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Learn SoftEther's normal behaviour on the network, since the actor can easily change endpoints and watermark.",
+      "Use Rapid7's published IOC list and YARA rules; detect via TLS inspection where available."
+    ],
+    "url": "https://www.rapid7.com/blog/post/tr-spying-on-governments-no-malware-custom-webworms-toolkit-softether-bridge"
+  },
+  "sector": "Government",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {"name": "Rapid7", "url": "https://www.rapid7.com/blog/post/tr-spying-on-governments-no-malware-custom-webworms-toolkit-softether-bridge"}
+  ],
+  "status": "confirmed",
+  "summary": "Rapid7 published research on a modified build of the open-source SoftEther VPN Bridge that it attributes, with moderate confidence, to Webworm, a China-aligned group known for targeting governments, especially in Europe. The build changes branding, endpoints and handshake and encrypts its configuration to evade detection. Rapid7 names no victims.",
+  "tags": ["apt", "espionage", "vpn"],
+  "title": "Rapid7: Webworm uses custom SoftEther VPN bridge to spy on governments without malware",
+  "updated_at": "2026-11-19T15:54:00Z",
+  "validation": {
+    "checked_at": "2026-11-19T15:54:00Z",
+    "note": "Single vendor research post by Rapid7, read in full; attribution is Rapid7's own at moderate confidence.",
+    "state": "single_source"
+  }
+}

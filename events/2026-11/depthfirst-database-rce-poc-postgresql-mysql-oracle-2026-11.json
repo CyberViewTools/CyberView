@@ -1,7 +1,9 @@
 {
   "action": "Check PostgreSQL, MySQL, Oracle Database and Oracle REST Data Services against the fixed versions in the vendor advisories and patch. Review which low-privilege database accounts exist.",
   "actor": "",
-  "attack": ["rce"],
+  "attack": [
+    "rce"
+  ],
   "category": "vuln",
   "country": "United States",
   "date": "2026-11-19",
@@ -17,9 +19,20 @@
   "pin_type": "country",
   "place": "United States (researcher location not stated)",
   "plain": "A researcher published working code showing that a low-privilege database account can take over the server in PostgreSQL, MySQL and other databases. Most have fixes.",
-  "products": ["PostgreSQL", "MySQL", "Oracle Database", "Oracle REST Data Services", "ClickHouse"],
+  "products": [
+    "PostgreSQL",
+    "MySQL",
+    "Oracle Database",
+    "Oracle REST Data Services",
+    "ClickHouse"
+  ],
   "tags": [],
-  "cves": ["CVE-2026-116331", "CVE-2026-101786", "CVE-2026-114819", "CVE-2026-91609"],
+  "cves": [
+    "CVE-2026-116331",
+    "CVE-2026-101786",
+    "CVE-2026-114819",
+    "CVE-2026-91609"
+  ],
   "report": {
     "doc_id": "",
     "iocs_available": false,
@@ -32,13 +45,18 @@
     "publisher": "The Hacker News",
     "publisher_type": "news",
     "read_depth": "full",
-    "recommendations": ["Apply vendor patches."],
+    "recommendations": [
+      "Apply vendor patches."
+    ],
     "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"
   },
   "severity": 2,
   "source_tier": "established",
   "sources": [
-    {"name": "The Hacker News", "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"}
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"
+    }
   ],
   "status": "developing",
   "summary": "The Hacker News reports that researcher Zheng Yu of Depthfirst published proof-of-concept exploits that let low-privilege database accounts run code on the server in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has neither. No attacks in the wild are reported, and the chains were not independently reproduced.",
@@ -46,8 +64,17 @@
   "title": "Researcher publishes database RCE exploits for PostgreSQL, MySQL and Oracle",
   "updated_at": "2026-11-19T09:08:14Z",
   "validation": {
-    "checked_at": "2026-11-19T09:08:14Z",
-    "state": "single_source",
-    "note": "Only The Hacker News was read; the vendor advisories it cites (postgresql.org, Oracle, MySQL) were not opened."
-  }
+    "state": "disputed",
+    "checked_at": "2026-11-19T09:26:17Z",
+    "note": "Second review: Article content matches (Zheng Yu/Depthfirst, 4 CVEs, ClickHouse no CVE, no in-the-wild use), but public working PoC exploits for widely used databases meet the checklist rule for severity 3 and the record says 2; reviewer ma"
+  },
+  "review": {
+    "state": "flagged",
+    "at": "2026-11-19T09:26:17Z",
+    "note": "Article content matches (Zheng Yu/Depthfirst, 4 CVEs, ClickHouse no CVE, no in-the-wild use), but public working PoC exploits for widely used databases meet the checklist rule for severity 3 and the record says 2; reviewer may not upgrade severity. Vendor advisories (postgresql.org, MySQL, Oracle) n",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-19T09:26:17Z"
 }

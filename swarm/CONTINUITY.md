@@ -33,3 +33,17 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 2. `node scripts/swarm.mjs board` shows queues, live leases, the loop and the speed.
 3. Loop not running and no lease: send "Run the sweep job now" to the ops or standby session, or wait for their next schedule.
 4. A workflow late: start it from GitHub Actions (Run workflow) or let the guard's `--heal` do it.
+
+## Sessions and rotation
+| Session | Id | Runs |
+|---|---|---|
+| CyberView ops 4 | session_013C7AZ5CZCr8dMQSMHM1eo5 | every "CyberView 4: ..." schedule (research :05 :20 :35 :50, review desk :25, backlog desk :57, triage, analyst, brief, analysis, advisory, verify, report review, deep sweep, watchdog, security review, regional, follow-up, steward, tabletop, scout, editor, improver) |
+| CyberView standby | session_013C7AZ7WzHrDL7e9QagpvvF | "CyberView standby: Research :12" and ":42"; ends in seconds while ops holds the leader lease |
+| Guardian | a fresh session each time | "CyberView: Guardian" every 2 hours; pushes an ALERT to the owner and messages both sessions when the loop has no leader |
+
+Retired: ops 3 (session_013C7AZ5wTsxwP5Xg9AFNesw), its "CyberView 3: ..." schedules are disabled, not deleted, so they can be switched back on.
+
+**Rotate the ops session** when its context passes about 400,000 tokens or its jobs slow down (the status page's job durations
+climb): create a fresh session, create the same schedules as "CyberView N+1: ..." pointing at it with the same dispatcher
+prompt, switch the old ones off (never delete), update the guardian's prompt and the table above. Nothing is lost in a
+rotation: all state is in the repository and `data/leases.json`, and the leader lease hands the research loop over by itself.

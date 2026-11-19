@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy1.outputs.page_url || steps.deploy2.outputs.page_url || steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,7 +57,23 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+      # GitHub's artifact service sometimes fails for a moment ("Fetching artifact metadata failed"):
+      # try again twice before giving up, so fresh data does not wait for the next push
+      - id: deploy1
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Wait before retrying the deploy
+        if: steps.deploy1.outcome == 'failure'
+        run: sleep 45
+      - id: deploy2
+        if: steps.deploy1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Wait before the last deploy attempt
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
+        run: sleep 90
       - id: deployment
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
         uses: actions/deploy-pages@v4
       - name: Confirm the live site serves this build
         run: node scripts/verify-build.mjs --live

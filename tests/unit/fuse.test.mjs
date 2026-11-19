@@ -44,3 +44,12 @@ test("being checked: only fresh, corroborated or official reports; never claims,
   const onlyRedirect = mk([lead({ title: "Port operator confirms cyberattack", source: "H", url: "https://news.google.com/rss/articles/x" }), lead({ title: "Cyberattack at port operator", source: "I", url: "https://www.bing.com/news/apiclick.aspx?u=1" })]);
   assert.equal(developing([onlyRedirect], NOW)[0].url, "");
 });
+
+test("already on file: a retold incident matches by organisation plus shared words; a big vendor's name alone does not", async () => {
+  const { matchEvent } = await import("../../scripts/triage.mjs");
+  const evs = [{ id: "visa-third-party-2026-11", title: "Visa says incident was at an Asia Pacific third-party provider after gang lists it", org: "Visa", category: "incident" },
+    { id: "ms-agent-pypi-2026-11", title: "Poisoned Microsoft Agent Framework releases on PyPI steal cloud credentials", org: "Microsoft", category: "incident" }];
+  assert.equal((matchEvent("Visa confirms apparent cyberattack at third-party provider, gang claims hit", evs) || {}).id, "visa-third-party-2026-11");
+  assert.equal(matchEvent("Microsoft confirms Exchange Online outage across Europe after update", evs), null);
+  assert.equal(matchEvent("Regional bank discloses ransomware attack on loan systems", evs), null);
+});

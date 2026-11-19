@@ -70,7 +70,7 @@ ONE SEARCH ENGINE IS NOT THE WORLD
 - A lead of kind "claim" (ransomware.live) is an attacker's claim: at most status "claimed", severity 1, organisation name only. A "cve", "breach-db" or "status" lead is a database row: a fact to check against the vendor or the organisation, not a report by itself.
 
 THE EVENT CHECKLIST (every event you write or change must pass all of it)
- 1. It happened, or was published, in the last 7 days (or it updates an event on file), and it is a cyber event: incident, outage, vuln, report, policy, investment, enforcement.
+ 1. It happened, or was published, in the last 6 days (or it updates an event on file): the map shows seven days, so an older event would be invisible on arrival; log it under skipped with the reason "older than the map window". And it is a cyber event: incident, outage, vuln, report, policy, investment, enforcement.
  2. You read the page yourself in this run. Every fact in the record is on a page listed in "sources". Nothing is inferred, rounded up, or carried over from memory.
  3. "sources" are the specific article, advisory or listing, never a front page or a search-engine redirect. The government or vendor original comes first when it exists.
  4. "date" is the day it happened (or was published if unknown; then say so in "date_note"). "occurred_at" is within a day of "date". Not in the future.
@@ -464,12 +464,12 @@ End with one line: "researcher <batch>: <n> new, <n> updated, <n> closed as not 
 ```
 JOB: gap researcher. The other researchers are working through stories that the feeds and news indexes already found. Your job is what they cannot see: events of the last 3 hours that no story covers, and one region in depth.
 STEPS:
-1. `node scripts/fuse.mjs list --limit 40` and `node scripts/q.mjs runs --days 1`, so you know what is already found or being handled. Do not work those.
-2. Headline pass with WebSearch (at most 4 searches, varied wording): major outages of national services, banks, airlines, telecoms and cloud providers; attacks on governments and critical infrastructure; emergency patches and exploited flaws announced in the last 3 hours.
-3. Region in depth, by the current UTC hour: 0-3 Europe, 4-7 Asia-Pacific, 8-11 Latin America, 12-15 Africa and the Middle East, 16-19 Canada and US state and local, 20-23 global wrap-up. At most 4 searches, at least half in a local language of the region. Prefer the national CERT, the regulator, then established national media.
+1. Read YOUR ASSIGNMENT at the end of this prompt first: a script has chosen your region, your sector, the searches already made and the events already on file. `node scripts/fuse.mjs list --limit 40` shows what the other researchers are handling. Do not work those.
+2. Headline pass with WebSearch (at most 4 searches, varied wording, the last 6 hours): your assigned sector first, then major outages of national services and cloud providers, attacks on governments and critical infrastructure, emergency patches and exploited flaws.
+3. Region in depth: the region under YOUR ASSIGNMENT. At most 4 searches, at least half in the languages named there. Look for what English-language feeds miss: a hospital, city, utility, bank or agency reporting an incident; a national CERT alert.
 4. For each real event found: read the page, `node scripts/q.mjs dupes "<title>"`, and write a complete record that passes THE EVENT CHECKLIST (or update the event on file).
-5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-sweep-gap.json with searches, pages_read, added, updated, open_leads.
-RULES: do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
+5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<the file name under YOUR ASSIGNMENT> with searches, pages_read, added, updated, open_leads.
+RULES: an event already listed under YOUR ASSIGNMENT is done: finding it again is not a result. An event whose date is more than 6 days ago is not added (the map shows seven days): log it under skipped. Do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
 LIMITS: 8 searches, 6 new events.
 DONE WHEN: the headline pass and the region pass are both done; a quiet hour with nothing new is a valid result.
 End with one line: "gap researcher: <n> new, <n> updated; region <name>".

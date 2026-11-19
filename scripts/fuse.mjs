@@ -93,7 +93,7 @@ export function story(group, evs = [], now = Date.now()) {
   const cves = [...new Set(group.flatMap((l) => cvesIn(l.title)))].slice(0, 8);
   const times = group.map((l) => Date.parse(l.seen_at)).filter(isFinite), first = Math.min(...times), last = Math.max(...times);
   const claimOnly = group.every((l) => l.kind === "claim"), open = group.filter((l) => l._open).length;
-  const ev = matchEvent(best.title, evs) || cves.map((c) => evs.find((e) => (e.cves || []).includes(c))).filter(Boolean).map((e) => ({ id: e.id }))[0] || null;
+  const ev = matchEvent(best.title, evs) || group.slice(0, 8).map((l) => l !== best && matchEvent(l.title, evs)).filter(Boolean).sort((a, b) => b.score - a.score)[0] || cves.map((c) => evs.find((e) => (e.cves || []).includes(c))).filter(Boolean).map((e) => ({ id: e.id }))[0] || null;
   const pts = [];
   const add = (p, why) => { if (p) pts.push([p, why]); };
   const indep = [...publishers].filter((p) => p !== "ransomwarelive").length;

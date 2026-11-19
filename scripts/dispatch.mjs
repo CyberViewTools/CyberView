@@ -26,12 +26,12 @@ if (job === "sweep") {
   const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });
   const plan = sh("node", ["scripts/sweep-plan.mjs", "plan"]), head = plan.out[0] || "no plan";
   const batches = [...new Set((readJson(join(DATA, "sweep-plan.json"), { stories: [] }).stories || []).map((s) => s.batch))].sort();
-  const gap = (readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}).gap_pass !== false;
+  const sc = readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}, gap = sc.gap_pass === false ? 0 : Math.max(1, Math.min(3, Number(sc.gap_workers) || 1));
   say(`Housekeeping done by this command: ${hk.join(", ")}. ${head}`);
   // community posts are checked in the same hourly wake-up, so an idle moderator never costs a wake-up of its own
   const chat = sh("node", ["scripts/chat.mjs", "intake"]), posts = chat.out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
   say(`Community feed: ${posts} post(s) or report(s) waiting.`);
-  const tasks = batches.map((b) => worker("researcher", b)).concat(gap ? [worker("gap")] : []).concat(posts ? [`You are the CyberView community moderator. In ${ROOT} run \`node scripts/job-prompt.mjs moderator\` and carry out the printed instructions exactly, EXCEPT: do not run any git command and do not edit data/status.json (the dispatcher commits). End with one line starting "moderator:".`] : []);
+  const tasks = batches.map((b) => worker("researcher", b)).concat(Array.from({ length: gap }, (_, i) => worker("gap", i + 1))).concat(posts ? [`You are the CyberView community moderator. In ${ROOT} run \`node scripts/job-prompt.mjs moderator\` and carry out the printed instructions exactly, EXCEPT: do not run any git command and do not edit data/status.json (the dispatcher commits). End with one line starting "moderator:".`] : []);
   say(`1. Start these ${tasks.length} subagents IN ONE MESSAGE so they run in parallel (${AGENT("sonnet")}). The task text for each, exactly:`);
   tasks.forEach((t, i) => say(`   (${i + 1}) ${t}`));
   say("2. When ALL have returned, run: node scripts/sweep-plan.mjs check");

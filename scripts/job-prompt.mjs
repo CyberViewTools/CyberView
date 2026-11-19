@@ -5,10 +5,10 @@
 // For the triage desk and the sweep it first runs the no-AI housekeeping (start overdue workflows, collect feeds,
 // clear obvious leads), so that work happens every run whether or not the agent remembers it.
 // Set NO_HOUSEKEEPING=1 to skip it (the GitHub Actions fallback does).
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { ROOT, DATA, readJson } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
@@ -51,6 +51,27 @@ if (job === "researcher") {
 } else if (job === "reviewer") {
   const plan = readJson(join(DATA, "review-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
   assignment = `YOUR ASSIGNMENT (reviewer ${batch}): ${mine.length} events:\n` + mine.map((id) => `  ${id}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"reviewer " + batch + ": nothing assigned\")");
+} else if (job === "gap") {
+  // the focus rotates by rule with every run and every worker, so two runs in a row never search the same ground
+  const FOCUS = [
+    ["Western and Northern Europe", "French, German, Dutch or a Nordic language"], ["Latin America and the Caribbean", "Spanish or Portuguese"],
+    ["East Asia (Japan, South Korea, Taiwan, China, Hong Kong)", "Japanese, Korean or Chinese"], ["Africa", "French, Arabic, Portuguese or Swahili"],
+    ["United States and Canada: state, city, county, school and hospital level", "English or French"], ["The Middle East and Turkey", "Arabic, Turkish, Hebrew or Farsi"],
+    ["South Asia (India, Pakistan, Bangladesh, Sri Lanka, Nepal)", "Hindi, Urdu or Bengali"], ["Southern and Eastern Europe", "Italian, Spanish, Polish, Czech, Romanian or Greek"],
+    ["Southeast Asia and Oceania", "Indonesian, Malay, Thai, Vietnamese or Filipino"], ["Ukraine, Russia, the Caucasus and Central Asia", "Ukrainian or Russian"],
+  ];
+  const SECTOR = ["hospitals and health services", "banks, payments and insurers", "energy, water and utilities", "airports, airlines, rail, ports and logistics", "telecoms and internet providers", "national and local government", "schools and universities", "manufacturing and retail", "cloud, software and IT service providers"];
+  const n = Math.max(1, Number(batch) || 1), slot = Math.floor(Date.now() / 18e5), f = FOCUS[(slot * 3 + (n - 1) * 5) % FOCUS.length], sec = SECTOR[(slot + (n - 1) * 4) % SECTOR.length];
+  const since = Date.now() - 12 * 36e5, searched = [], runsDir = join(DATA, "runs");
+  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).sort().slice(-2)) for (const fn of readdirSync(join(runsDir, d)).filter((x) => /sweep-gap/.test(x))) {
+    const r = readJson(join(runsDir, d, fn), {}); if (Date.parse(r.started_at || r.finished_at || 0) < since) continue;
+    (r.searches || []).forEach((q) => searched.push(String(typeof q === "string" ? q : (q && (q.query || q.q)) || "").slice(0, 90)));
+  }
+  const onFile = listEventFiles().map((x) => x.e).filter((e) => e && !e.duplicate_of && Date.parse(e.first_seen || 0) > Date.now() - 36 * 36e5).sort((x, y) => String(x.first_seen).localeCompare(String(y.first_seen))).map((e) => String(e.title).slice(0, 90));
+  assignment = `YOUR ASSIGNMENT (gap researcher ${n}):\n  Region in depth: ${f[0]}. At least half of your region searches in ${f[1]}.\n  Sector for the headline pass: ${sec} (plus anything major you come across).\n`
+    + `  Run log file name: <HHMM>-sweep-gap${n > 1 ? "-" + n : ""}.json\n`
+    + (searched.length ? `  Searches the gap researchers already ran in the last 12 hours (do not repeat them; word yours differently):\n${[...new Set(searched.filter(Boolean))].slice(-24).map((q) => "    - " + q).join("\n")}\n` : "")
+    + (onFile.length ? `  Added to the map in the last 36 hours (already on file: do not research these again, only add what is NOT here):\n${onFile.slice(-70).map((t) => "    - " + t).join("\n")}\n` : "");
 } else if (job === "regional-researcher") {
   const G = { a: "Africa (africa); the Middle East and Turkey (middle-east)", b: "Latin America and the Caribbean (latin-america)", c: "South Asia (south-asia); Southeast Asia (southeast-asia); Oceania (oceania)" };
   assignment = `YOUR ASSIGNMENT (regional researcher ${batch}): ${G[batch] || G.a}. The region names in brackets are the ones fuse.mjs --region understands.`;

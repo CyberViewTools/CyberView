@@ -15,6 +15,8 @@ export const tokens = (s) => new Set(String(s || "").toLowerCase().replace(/[^a-
 export const NOT_EVENT = /\b(\d+ (steps|ways|tips|things|lessons)|webinar|podcast|episode|sponsored|partner content|week in review|weekly recap|this week in|newsletter|round-?up|how to|tips for|best practices|buyer'?s guide|explained|what is|deal|discount|% off|hiring|job opening|career|interview with|q&a|book review|top \d+|ebook|whitepaper download|register now|save the date)\b/i;
 
 /** Strong match only: most of the lead's words appear in one event, or they share a CVE. */
+// vendors so large that their name alone says nothing about which story this is
+const COMMON_ORG = new Set(["microsoft", "google", "apple", "amazon", "meta", "cisco", "oracle", "adobe", "linux", "windows", "android", "chrome", "government", "ministry", "university", "hospital", "bank", "city", "county", "police", "group", "services", "systems", "technologies", "international", "national"]);
 export function matchEvent(title, evs) {
   const q = tokens(title);
   if (q.size < 3) return null;
@@ -24,7 +26,10 @@ export function matchEvent(title, evs) {
     let inter = 0; q.forEach((w) => t.has(w) && inter++);
     const cve = [...q].some((w) => /^cve-\d{4}-\d+$/.test(w) && t.has(w));
     const score = inter / Math.min(q.size, t.size || 1);
-    if (cve || score >= 0.75) { if (!best || score > best.score) best = { id: e.id, score: cve ? 2 : score }; }
+    // the organisation named in a recent incident or outage, plus a fair share of the same words, is the same story told again
+    const org = e._org || (e._org = [...tokens(e.org || "")].filter((w) => w.length >= 4 && !COMMON_ORG.has(w)));
+    const sameOrg = org.length > 0 && org.every((w) => q.has(w)) && (e.category === "incident" || e.category === "outage") && score >= 0.4;
+    if (cve || score >= 0.75 || sameOrg) { if (!best || score > best.score) best = { id: e.id, score: cve ? 2 : score }; }
   }
   return best;
 }

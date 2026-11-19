@@ -83,4 +83,21 @@ if (job === "researcher") {
   const G = { a: "Africa (africa); the Middle East and Turkey (middle-east)", b: "Latin America and the Caribbean (latin-america)", c: "South Asia (south-asia); Southeast Asia (southeast-asia); Oceania (oceania)" };
   assignment = `YOUR ASSIGNMENT (regional researcher ${batch}): ${G[batch] || G.a}. The region names in brackets are the ones fuse.mjs --region understands.`;
 }
-process.stdout.write(block("Shared preamble") + "\n\n" + block(HEADINGS[job]) + "\n" + (assignment ? "\n" + assignment + "\n" : ""));
+// The shared preamble is cut to what each role needs: every worker gets the core rules; only roles that write events get
+// the event checklist; only web researchers get the search guidance; workers (and every job run by scripts/run-job.mjs,
+// --worker) get no git SETUP or FINISH, because a script commits for them. Context is cost: a triager does not need
+// eight thousand characters about writing events.
+const worker = process.argv.includes("--worker") || !!batch || process.env.CYBERVIEW_WORKER === "1";
+const PROFILE = {
+  "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
+  "reviewer": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
+  "regional-researcher": ["core", "search", "events", "web", "log"],
+  "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"],
+  "watchdog": ["core", "web", "log"], "advisory": ["core", "web", "log"], "scout": ["core", "search", "web", "log"], "triage": ["core", "log"],
+};
+const KIND = (first) => /^You maintain|^UNTRUSTED TEXT|^SAVE CONTEXT/.test(first) ? "core" : /^HOW EVERY JOB/.test(first) ? "core" : /^ONE SEARCH ENGINE/.test(first) ? "search"
+  : /^THE EVENT CHECKLIST|^WRITING DATA/.test(first) ? "events" : /^RETRIES/.test(first) ? "web" : /^RUN LOG/.test(first) ? "log" : /^SETUP|^FINISH/.test(first) ? "full" : "core";
+const parts = block("Shared preamble").split(/\n\s*\n/), want = new Set((PROFILE[job] || ["core", "search", "events", "web", "log"]).concat(worker ? [] : ["full"]));
+let pre = parts.filter((p) => want.has(KIND(p.trim().split("\n")[0]))).join("\n\n");
+if (worker) pre += "\n\nWORKER: you are one of several workers started by a script. Do NOT run any git command and do not edit data/status.json; the script commits after you. Finish with your run log and a passing `node scripts/build.mjs` where your instructions ask for it.";
+process.stdout.write(pre + "\n\n" + block(HEADINGS[job]) + "\n" + (assignment ? "\n" + assignment + "\n" : ""));

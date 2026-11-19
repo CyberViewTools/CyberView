@@ -286,7 +286,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const routines = reg.routines.map((r) => ({ ...r, last_at: (r.status_key && st[r.status_key]) || null }));
   const runsDir = join(DATA, "runs"), runs = [];
   if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(7)).sort().reverse())
-    for (const f of readdirSync(join(runsDir, d)).sort().reverse()) {
+    for (const f of readdirSync(join(runsDir, d)).filter((f) => f.endsWith(".json")).sort().reverse()) {
       const r = readJson(join(runsDir, d, f), {}); if (runs.length >= 40) break;
       runs.push({ at: `${d}T${f.slice(0, 2)}:${f.slice(2, 4)}:00Z`, job: String(r.job || f.slice(5, -5)).slice(0, 40),
         added: (r.added || r.kev_added || []).length, updated: (r.updated || r.events_updated || []).length,

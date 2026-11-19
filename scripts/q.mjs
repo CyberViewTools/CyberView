@@ -33,7 +33,7 @@ const line = (e) => `${e.date} ${String(e.category).padEnd(11)} s${e.severity} $
 function runs(days) {
   const dir = join(DATA, "runs"); if (!existsSync(dir)) return [];
   return readdirSync(dir).filter((d) => d >= dayAgo(days)).sort().flatMap((d) =>
-    readdirSync(join(dir, d)).sort().map((f) => ({ day: d, file: f, r: readJson(join(dir, d, f), {}) })));
+    readdirSync(join(dir, d)).filter((f) => f.endsWith(".json")).sort().map((f) => ({ day: d, file: f, r: readJson(join(dir, d, f), {}) })));
 }
 
 if (cmd === "find") {

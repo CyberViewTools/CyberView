@@ -8,11 +8,11 @@
 //   node scripts/fuse.mjs done <id> "<event id, or why it is not an event>"   close a story: every lead in it is logged as handled
 // Grouping is by shared CVE id, or by shared distinctive words in the headline (names, products, places), never by
 // generic words like "ransomware attack". Leak-site claims are grouped too but a story made only of claims stays low.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, listEventFiles, dayAgo, writeRunLog, nowIso } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, listEventFiles, dayAgo, writeRunLog, nowIso, forEachSkipped } from "./lib/store.mjs";
 import { tokens, matchEvent, NOT_EVENT } from "./triage.mjs";
 
 // words too common in this field to tell two stories apart
@@ -134,9 +134,7 @@ export function build() {
   const used = new Set(), rejected = new Set();
   const evs = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of);
   evs.forEach((e) => (e.sources || []).forEach((s) => used.add(s.url)));
-  const runsDir = join(DATA, "runs");
-  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(14)))
-    for (const f of readdirSync(join(runsDir, d))) (readJson(join(runsDir, d, f), {}).skipped || []).forEach((l) => l && l.url && rejected.add(l.url));
+  forEachSkipped(14, (u) => rejected.add(u));
   const cutoff = Date.now() - 72 * 36e5, map = new Map(), dir = join(DATA, "leads");
   if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(4)))
     for (const line of readFileSync(join(dir, f), "utf8").split("\n")) {
@@ -165,8 +163,22 @@ function main() {
   if (cmd === "done") {
     const s = d.stories.find((x) => x.id === rest[0]), why = String(rest.slice(1).join(" ")).replace(/\s+/g, " ").trim().slice(0, 200);
     if (!s || !why) { console.error('usage: fuse.mjs done <id> "<event id, or why it is not an event>"'); process.exit(1); }
-    writeRunLog("stories", { started_at: nowIso(), finished_at: nowIso(), model: null, story: s.id, skipped: s.urls.map((u) => ({ title: s.title.slice(0, 160), url: u, reason: `story ${s.id}: ${why}` })) });
+    // one line per closure in a daily file (a file per closure was hundreds of tiny files a day, all re-read by every plan)
+    const day = nowIso().slice(0, 10), dir = join(DATA, "runs", day); mkdirSync(dir, { recursive: true });
+    appendFileSync(join(dir, "closures.jsonl"), JSON.stringify({ at: nowIso(), story: s.id, title: s.title.slice(0, 120), reason: why, urls: s.urls }) + "\n");
     console.log(`story ${s.id} closed (${s.urls.length} lead${s.urls.length === 1 ? "" : "s"}): ${why}`); return;
+  }
+  if (cmd === "compact") {
+    // fold the old one-file-per-closure logs (<HHMM>-stories*.json) into each day's closures.jsonl; nothing is lost
+    let files = 0, lines = 0;
+    for (const d of readdirSync(join(DATA, "runs"))) {
+      const dir = join(DATA, "runs", d), old = readdirSync(dir).filter((f) => /^\d{4}-stories(-\d+)?\.json$/.test(f)).sort(); if (!old.length) continue;
+      const out = [];
+      for (const f of old) { const r = readJson(join(dir, f), {}), sk = r.skipped || []; if (!sk.length) { rmSync(join(dir, f)); files++; continue; }
+        const why = String(sk[0].reason || "").replace(/^story [0-9a-f]+: /, ""); out.push(JSON.stringify({ at: r.finished_at || r.started_at || "", story: r.story || "", title: String(sk[0].title || "").slice(0, 120), reason: why, urls: sk.map((x) => x.url).filter(Boolean) })); rmSync(join(dir, f)); files++; }
+      if (out.length) { appendFileSync(join(dir, "closures.jsonl"), out.join("\n") + "\n"); lines += out.length; }
+    }
+    console.log(`compacted ${files} closure file(s) into ${lines} line(s) of closures.jsonl`); return;
   }
   if (cmd === "list") {
     const min = Number(opt("min", 0)), region = opt("region", ""), claims = rest.includes("--claims");

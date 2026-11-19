@@ -9,6 +9,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, listEventFiles, dayAgo, writeRunLog, nowIso } from "./lib/store.mjs";
+import { forEachSkipped } from "./lib/store.mjs";
 
 const STOP = new Set("the a an of in on to for and or by with from at as is was are be its it this that new after over into says said us uk how why what".split(" "));
 export const tokens = (s) => new Set(String(s || "").toLowerCase().replace(/[^a-z0-9-]+/g, " ").split(" ").filter((w) => w.length > 2 && !STOP.has(w)));
@@ -49,8 +50,7 @@ function openFeedLeads() {
   const evs = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of);
   evs.forEach((e) => (e.sources || []).forEach((s) => used.add(s.url)));
   const runsDir = join(DATA, "runs");
-  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(14)))
-    for (const f of readdirSync(join(runsDir, d))) (readJson(join(runsDir, d, f), {}).skipped || []).forEach((l) => l && l.url && rejected.add(l.url));
+  forEachSkipped(14, (u) => rejected.add(u));
   const out = [], dir = join(DATA, "leads");
   if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(10)))
     for (const line of readFileSync(join(dir, f), "utf8").split("\n")) {

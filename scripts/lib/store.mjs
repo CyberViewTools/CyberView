@@ -87,3 +87,14 @@ export function migrateFlatEvents() {
   }
   return n;
 }
+
+/** Every lead URL a run log or a story closure has ruled out in the last `days` days. Run logs are <HHMM>-<job>.json with a
+ *  "skipped" list; story closures are lines in each day's closures.jsonl ({story, reason, urls}). Calls fn(url, reason). */
+export function forEachSkipped(days, fn) {
+  const dir = join(DATA, "runs"); if (!existsSync(dir)) return;
+  for (const d of readdirSync(dir).filter((d) => d >= dayAgo(days)))
+    for (const f of readdirSync(join(dir, d))) {
+      if (f.endsWith(".jsonl")) { for (const line of readFileSync(join(dir, d, f), "utf8").split("\n")) { if (!line) continue; try { const c = JSON.parse(line); (c.urls || []).forEach((u) => fn(u, c.reason || "")); } catch {} } }
+      else if (f.endsWith(".json")) (readJson(join(dir, d, f), {}).skipped || []).forEach((l) => l && l.url && fn(l.url, l.reason || ""));
+    }
+}

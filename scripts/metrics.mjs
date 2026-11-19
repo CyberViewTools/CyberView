@@ -6,6 +6,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, listEventFiles, dayAgo } from "./lib/store.mjs";
+import { forEachSkipped } from "./lib/store.mjs";
 
 const REGION = { "united states": "north-america", canada: "north-america", mexico: "latin-america", brazil: "latin-america", argentina: "latin-america", colombia: "latin-america", chile: "latin-america", peru: "latin-america",
   "united kingdom": "europe", ireland: "europe", france: "europe", germany: "europe", netherlands: "europe", belgium: "europe", spain: "europe", portugal: "europe", italy: "europe", switzerland: "europe", austria: "europe", poland: "europe", ukraine: "europe", norway: "europe", sweden: "europe", finland: "europe", denmark: "europe", czechia: "europe", romania: "europe", greece: "europe", russia: "europe",
@@ -43,8 +44,7 @@ export function load(days = 7) {
   if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(days)))
     for (const line of readFileSync(join(dir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); if (l.url) leads.push(l); } catch {} }
   const skipped = {}, runsDir = join(DATA, "runs");
-  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(days)))
-    for (const f of readdirSync(join(runsDir, d))) (readJson(join(runsDir, d, f), {}).skipped || []).forEach((l) => { if (l && l.url) skipped[l.url] = String(l.reason || "").slice(0, 60); });
+  forEachSkipped(days, (u, why) => { skipped[u] = String(why || "").slice(0, 60); });
   const events = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of && String(e.first_seen || e.date) >= dayAgo(days));
   const m = compute(leads, events, skipped), osint = readJson(join(DATA, "osint.json"), { sources: {} }), st = readJson(join(DATA, "status.json"), {});
   m.failing = Object.entries(osint.sources || {}).filter(([, v]) => !v.ok).map(([k, v]) => `${k}: ${v.error}`).concat(st.collect_failed || []);

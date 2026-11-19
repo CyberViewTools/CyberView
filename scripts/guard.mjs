@@ -11,19 +11,27 @@ import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20 };
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300 };
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
 
 /** Pure: what was read -> { fails, warns, heal }. */
-export function assess({ manifest, health, bundle, head, deploy }, now = Date.now()) {
+export function assess({ manifest, health, bundle, head, deploy, leases }, now = Date.now()) {
   const fails = [], warns = [], heal = [];
   if (!manifest || !health || !bundle) { fails.push("the live site's data files could not be read"); heal.push("deploy"); return { fails, warns, heal }; }
   const age = mins(manifest.built_at, now);
   if (!(age <= LIMITS.build_min)) { fails.push(`live data was built ${Math.round(age)} minutes ago (limit ${LIMITS.build_min})`); heal.push("collect"); }
   const late = (label, iso, limit, wf) => { const m = mins(iso, now); if (!iso || !(m <= limit)) { (wf ? warns : fails).push(`${label} last ran ${iso ? Math.round(m) + " minutes ago" : "never"} (limit ${limit})`); if (wf) heal.push(wf); return true; } return false; };
-  if (late("the sweep", health.last_sweep_at, LIMITS.sweep_min, "")) heal.push("sweep");
+  // a live leader lease means the research loop is running, even through a quiet spell with nothing to commit
+  const leaderLive = leases && leases["flow:leader"] && Date.parse(leases["flow:leader"].until) > now;
+  if (!leaderLive && late("the sweep", health.last_sweep_at, LIMITS.sweep_min, "")) heal.push("sweep");
   late("the lead collector", health.last_collect_at, LIMITS.collect_min, "collect");
   late("the vulnerability feeds", health.last_feeds_at, LIMITS.feeds_min, "feeds");
+  if (health.last_cve_at !== undefined && late("the CVE corpus", health.last_cve_at, LIMITS.cve_min, "cve")) heal.push("cve");
+  if (health.last_brief_at !== undefined) late("the daily brief", health.last_brief_at, LIMITS.brief_min, "brief");
+  if (health.last_analysis_at !== undefined) late("the pattern analysis", health.last_analysis_at, LIMITS.analysis_min, "analysis");
+  if (health.last_analyst_at !== undefined) late("the exploit analyst", health.last_analyst_at, LIMITS.analyst_min, "analyst");
+  // the research loop's leader lease is its heartbeat: renewed every cycle, so an expired one means no loop is running
+  if (leases) { const l = leases["flow:leader"]; if (!l || !(Date.parse(l.until) > now)) warns.push("no research loop holds the leader lease" + (l ? " (it expired at " + l.until + ")" : "") + ": the standby session should take over within 30 minutes"); }
   if (!Array.isArray(bundle.events) || bundle.events.length < 5) fails.push(`the live bundle has ${Array.isArray(bundle.events) ? bundle.events.length : 0} events`);
   const bl = health.backlog;
   if (bl && bl.waiting > 60) warns.push(`the research queue holds ${bl.waiting} reports waiting for a decision (limit 60): the backlog desk is behind`);
@@ -48,10 +56,11 @@ async function main() {
   const [manifest, health, bundle, commit, runs] = await Promise.all([live("manifest.json"), live("health.json"), live("bundle.json"), api("commits/main"), api("actions/workflows/pages.yml/runs?per_page=1&status=completed")]);
   const head = commit ? { sha: commit.sha, date: commit.commit && commit.commit.committer && commit.commit.committer.date } : null;
   const deploy = runs && runs.workflow_runs && runs.workflow_runs[0] ? { conclusion: runs.workflow_runs[0].conclusion } : null;
-  const r = assess({ manifest, health, bundle, head, deploy });
+  const leases = await j(`https://raw.githubusercontent.com/${REPO}/main/data/leases.json?t=${t}`);
+  const r = assess({ manifest, health, bundle, head, deploy, leases });
   const healed = [];
   if (process.argv.includes("--heal")) for (const h of r.heal) {
-    const wf = { deploy: "pages.yml", collect: "collect.yml", feeds: "feeds.yml" }[h]; if (!wf) continue;
+    const wf = { deploy: "pages.yml", collect: "collect.yml", feeds: "feeds.yml", cve: "cve.yml" }[h]; if (!wf) continue;
     const x = gh(["-X", "POST", `repos/${REPO}/actions/workflows/${wf}/dispatches`, "-f", "ref=main"]);
     healed.push(`${wf}: ${x.status === 0 ? "started" : "could not be started from here"}`);
   }

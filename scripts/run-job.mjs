@@ -12,7 +12,7 @@ import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
-import { claim, release, RUN_ID } from "./lib/lease.mjs";
+import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN } from "./lib/lease.mjs";
 
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
@@ -128,6 +128,19 @@ async function flow() {
   const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
   if (flowAlive(readJson(FLOW_LOCK, null))) { const l = readJson(FLOW_LOCK, {}); log(`CyberView sweep: flow already running (cycle ${l.cycle}, pid ${l.pid})`); return; }
   if (!webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
+  // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
+  const host = (process.env.CLAUDE_CODE_REMOTE_SESSION_ID || process.env.HOSTNAME || "local").slice(-40);
+  const publishLeader = (msg) => { sh("git", ["add", "data/leases.json"]); sh("git", ["commit", "-q", "-m", msg]); return sh("node", ["scripts/git-sync.mjs"], 180000).ok; };
+  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]);
+  const other = leaderOf(readLeases());
+  if (other && other.run !== RUN) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
+  claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
+  publishLeader("data: research loop leader " + RUN);
+  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]);
+  { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
+  let lastPublish = Date.now();
+  const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }
+    if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
   const t0 = Date.now(); let cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
@@ -181,10 +194,10 @@ async function flow() {
       if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
-    beat("waiting");
+    beat("waiting"); renew();
     const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
   }
-  release(RUN);
+  release(RUN); publishLeader("data: research loop handed over");
   log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
 }
 

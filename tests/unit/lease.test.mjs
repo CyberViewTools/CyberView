@@ -13,3 +13,11 @@ test("claiming drops expired leases and sets the expiry", () => {
   const out = withClaims({ "story:old": { run: "x", until: "2026-11-19T09:00:00Z" } }, "cve", ["CVE-1"], "r", 45, now);
   assert.deepEqual(out, { "cve:CVE-1": { run: "r", until: "2026-11-19T10:45:00Z" } });
 });
+
+import { leaderOf } from "../../scripts/lib/lease.mjs";
+test("the research loop's leader lease: live until it expires, then free for a standby", () => {
+  const now = Date.parse("2026-11-19T21:00:00Z");
+  assert.equal(leaderOf({ "flow:leader": { run: "a", until: "2026-11-19T21:10:00Z" } }, now).run, "a");
+  assert.equal(leaderOf({ "flow:leader": { run: "a", until: "2026-11-19T20:59:00Z" } }, now), null);
+  assert.equal(leaderOf({}, now), null);
+});

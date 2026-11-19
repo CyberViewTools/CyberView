@@ -29,3 +29,10 @@ export function release(run) {
   writeJson(FILE, out);
 }
 export const RUN_ID = () => process.env.CYBERVIEW_RUN || `run-${nowIso().replace(/[-:]/g, "").slice(0, 13)}-${process.pid}`;
+
+/* ---- the research loop's leader lease: one loop at a time across every session and container ----
+   The loop that runs holds "flow:leader" in data/leases.json (committed, so every container sees it) and renews it every
+   cycle; a standby session starts a loop only when that lease has expired. It is also the loop's heartbeat. */
+export const LEADER_MIN = 20;
+/** Pure: the live leader lease, or null. */
+export function leaderOf(leases, now = Date.now()) { const l = leases && leases["flow:leader"]; return l && Date.parse(l.until) > now ? l : null; }

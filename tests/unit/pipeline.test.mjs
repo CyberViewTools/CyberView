@@ -40,3 +40,13 @@ test("guard: late mechanical jobs and quarantined records are warnings", () => {
   let r = assess(live({ health: { last_sweep_at: ago(40), last_collect_at: ago(300), last_feeds_at: ago(60), quarantined_count: 2, quarantined: ["events/x.json: missing title"] } }), NOW);
   assert.deepEqual(r.fails, []); assert.equal(r.warns.length, 2); assert.ok(r.heal.includes("collect"));
 });
+
+test("guard: a live leader lease keeps a quiet research loop healthy; an expired one and a stale CVE corpus are reported", () => {
+  const lease = (min) => ({ "flow:leader": { run: "r", until: new Date(NOW + min * 6e4).toISOString() } });
+  const quiet = live({ health: { last_sweep_at: ago(120), last_collect_at: ago(20), last_feeds_at: ago(60), quarantined_count: 0 } });
+  assert.deepEqual(assess({ ...quiet, leases: lease(10) }, NOW).fails, [], "no commits for two hours, but the loop holds its lease");
+  const dead = assess({ ...quiet, leases: lease(-5) }, NOW);
+  assert.ok(dead.fails.some((f) => /sweep/.test(f))); assert.ok(dead.warns.some((w) => /leader lease/.test(w)));
+  const cve = assess(live({ health: { last_sweep_at: ago(10), last_collect_at: ago(20), last_feeds_at: ago(60), quarantined_count: 0, last_cve_at: ago(400) }, leases: lease(10) }), NOW);
+  assert.ok(cve.warns.some((w) => /CVE corpus/.test(w))); assert.ok(cve.heal.includes("cve"));
+});

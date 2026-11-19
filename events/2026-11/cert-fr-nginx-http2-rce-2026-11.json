@@ -1,5 +1,5 @@
 {
-  "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
+  "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (this covers only the HTTP/2 flaws; the resolver, HTTP/3 and mail proxy flaws need the fixed versions, 1.30.7 or 1.31.9) (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
   "actor": "",
   "attack": [
     "rce",
@@ -74,7 +74,7 @@
       "Two flaws, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2.",
       "Affected: NGINX Open Source 1.31.x before 1.31.9 and versions before 1.30.7; NGINX Plus 3.1.x-3.2.x before 3.7.3.0.1 and 3.7.x before 37.0.8.1.",
       "CERT-FR knows of a public proof of concept for CVE-2026-123007; in-the-wild exploitation is not stated.",
-      "KrCERT/CC lists five NGINX Plus and Open Source flaws fixed by F5: CVE-2026-123007 (integer underflow) and use-after-free CVE-2026-123634, CVE-2026-123633, CVE-2026-121810 and CVE-2026-113425; it urges updating to the fixed versions (Open Source 1.30.7 or 1.31.9)."
+      "KrCERT/CC lists five NGINX Plus and Open Source flaws fixed by F5: CVE-2026-123007 (integer underflow) and use-after-free CVE-2026-123634, CVE-2026-123633, CVE-2026-121810 and CVE-2026-113425; it urges updating to the fixed versions (Open Source 1.30.7 or 1.31.9). nginx.org titles them: CVE-2026-123007 memory corruption in HTTP/2 flow control (major); CVE-2026-123633 use-after-free in HTTP/2 (medium); CVE-2026-123634 use-after-free in the resolver (medium); CVE-2026-121810 use-after-free in HTTP/3 (medium); CVE-2026-113425 use-after-free in the mail proxy module (major)."
     ],
     "published": "2026-11-18",
     "publisher": "CERT-FR",
@@ -82,7 +82,7 @@
     "read_depth": "full",
     "recommendations": [
       "Apply F5 fixes (K000163926, K000163928).",
-      "Disable HTTP/2 as an interim workaround."
+      "Disable HTTP/2 as an interim workaround for the HTTP/2 flaws only; it does not mitigate the resolver, HTTP/3 or mail proxy flaws."
     ],
     "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/"
   },
@@ -101,14 +101,18 @@
     {
       "name": "Rapid7",
       "url": "https://www.rapid7.com/blog/post/ve-cve-2026-123007-critical-nginx-http-2-integer-underflow-leads-to-rce-fixed/"
+    },
+    {
+      "name": "nginx.org security advisories",
+      "url": "https://nginx.org/en/security_advisories.html"
     }
   ],
   "status": "official",
-  "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2. It knows of a public proof of concept for CVE-2026-123007. Affected are Open Source 1.31.x before 1.31.9 and earlier branches before 1.30.7, and Plus before the fixed releases. Disabling HTTP/2 is an interim workaround. KrCERT/CC lists three further use-after-free flaws fixed in the same F5 update.",
+  "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2. It knows of a public proof of concept for CVE-2026-123007. Affected are Open Source 1.31.x before 1.31.9 and earlier branches before 1.30.7, and Plus before the fixed releases. Disabling HTTP/2 is an interim workaround. KrCERT/CC lists three further use-after-free flaws fixed in the same F5 update; per nginx.org they are in the resolver (CVE-2026-123634, medium), HTTP/3 (CVE-2026-121810, medium) and the mail proxy module (CVE-2026-113425, major), so disabling HTTP/2 does not cover them.",
   "tags": [],
   "time_basis": "published",
   "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
-  "updated_at": "2026-11-19T15:37:23Z",
+  "updated_at": "2026-11-19T18:01:13Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T03:24:00Z",

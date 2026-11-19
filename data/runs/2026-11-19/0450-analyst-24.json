@@ -1,0 +1,106 @@
+{
+  "job": "exploit-analyst",
+  "batch": 24,
+  "started_at": "2026-11-19T04:40:00Z",
+  "finished_at": "2026-11-19T04:50:16Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "November 2026 Patch Tuesday CVE-2026-116928 Windows Search Exchange CVE-2026-119958 LDAP",
+    "CVE-2026-112967 Xbox Live Networking Service",
+    "Zero Day Initiative November 2026 Security Update Review",
+    "Tenable OR Talos OR CrowdStrike Microsoft November 2026 Patch Tuesday",
+    "\"CVE-2026-119958\" LDAP domain controllers",
+    "\"Xbox Live Networking Service\" remote code execution November 2026"
+  ],
+  "pages_read": [
+    {
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-116928",
+      "title": "MSRC CVE-2026-116928",
+      "used_in": "CVE-2026-116928"
+    },
+    {
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-119958",
+      "title": "MSRC CVE-2026-119958",
+      "used_in": "CVE-2026-119958"
+    },
+    {
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-112967",
+      "title": "MSRC CVE-2026-112967",
+      "used_in": "CVE-2026-112967"
+    },
+    {
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/affectedProduct",
+      "title": "MSRC affected products and fixed builds (filtered per CVE)",
+      "used_in": "CVE-2026-116928, CVE-2026-119958, CVE-2026-112967"
+    },
+    {
+      "url": "https://blog.qualys.com/vulnerabilities-threat-research/2026/11/10/microsoft-patch-tuesday-november-2026-security-update-review",
+      "title": "Qualys November 2026 review",
+      "used_in": "CVE-2026-116928, CVE-2026-119958, CVE-2026-112967"
+    },
+    {
+      "url": "https://www.crowdstrike.com/en-us/blog/patch-tuesday-analysis-november-2026/",
+      "title": "CrowdStrike November 2026 Patch Tuesday analysis",
+      "used_in": "CVE-2026-116928, CVE-2026-119958, CVE-2026-112967"
+    },
+    {
+      "url": "https://www.opswat.com/blog/microsoft-s-november-2026-patch-tuesday-one-flaw-in-1-095-scored-6-5-and-it-s-under-attack",
+      "title": "OPSWAT November 2026 Patch Tuesday",
+      "used_in": "CVE-2026-116928, CVE-2026-119958"
+    },
+    {
+      "url": "https://itwire.com/business-it-news/security/microsoft-november-patch-tuesday-reveals-1-092-vulnerabilities-by-adam-barnett-lead-software-engineer-rapid7",
+      "title": "iTWire: Rapid7 commentary",
+      "used_in": "CVE-2026-116928"
+    },
+    {
+      "url": "https://www.it-connect.tech/patch-tuesday-november-2026-microsoft-fixes-1093-vulnerabilities-including-an-exploited-outlook-zero-day/",
+      "title": "IT-Connect Patch Tuesday November 2026",
+      "used_in": "CVE-2026-116928, CVE-2026-119958"
+    },
+    {
+      "url": "https://senserva.com/patch-tuesday-2026-11",
+      "title": "Senserva Patch Tuesday 2026-11 (scores only; not cited)",
+      "used_in": ""
+    },
+    {
+      "url": "https://smartscope.blog/en/blog/microsoft-14-critical-unauthenticated-network-vulnerabilities-disclosed-november-2026/",
+      "title": "SmartScope (lists Xbox flaw as CVE-2026-66801; not cited)",
+      "used_in": ""
+    }
+  ],
+  "added": [
+    "CVE-2026-116928",
+    "CVE-2026-119958",
+    "CVE-2026-112967"
+  ],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "CVE-2026-116928: Exchange Server listed in MSRC description but not in affected products",
+      "url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-116928",
+      "note": "IT-Connect says fix is Windows-only; OPSWAT says patch Windows and Exchange. Recheck if MSRC revises the record.",
+      "priority": "medium"
+    },
+    {
+      "title": "CVE-2026-112967 vs CVE-2026-66801 Xbox RCE id confusion",
+      "url": "https://smartscope.blog/en/blog/microsoft-14-critical-unauthenticated-network-vulnerabilities-disclosed-november-2026/",
+      "note": "Some trackers list a 9.8 Xbox heap overflow as CVE-2026-66801; MSRC confirms CVE-2026-112967. Check whether two separate flaws exist.",
+      "priority": "low"
+    },
+    {
+      "title": "Watch for exploitation or researcher write-ups of the Windows LDAP and Windows Search 9.8 flaws",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "note": "No exploitation reported as of 19 Nov 2026; raise priority to immediate if KEV adds them.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "darkreading.com (403)",
+    "www.action1.com (403)",
+    "www.fortra.com (403)",
+    "securityonline.info (503)"
+  ],
+  "notes": "No vendor workarounds exist for any of the three; LDAP signing and network restriction in CVE-2026-119958 are attributed to OPSWAT as hardening. No exploit repositories or PoC material opened."
+}

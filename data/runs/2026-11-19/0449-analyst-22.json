@@ -1,0 +1,39 @@
+{
+  "job": "exploit-analyst",
+  "started_at": "2026-11-19T04:46:39Z",
+  "finished_at": "2026-11-19T04:49:20Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-107412 NetScaler exploited",
+    "CVE-2026-107484 Check Point Gaia Portal",
+    "CVE-2026-126187 React Server Components exploitation",
+    "Check Point November 2026 Gaia DynamicCLI CVE-2026-123039 sk1000291 Jumbo Hotfix blog"
+  ],
+  "pages_read": [
+    {"url": "https://cert.europa.eu/publications/security-advisories/2026-020/", "title": "CERT-EU Security Advisory 2026-020", "used_in": "CVE-2026-107412"},
+    {"url": "https://support.citrix.com/external/article/CTX697305/citrix-netscaler-adc-and-citrix-netscaler-gateway-security-bulletin.html", "title": "Citrix bulletin CTX697305", "used_in": "CVE-2026-107412"},
+    {"url": "https://www.cyber.gc.ca/en/alerts-advisories/check-point-security-advisory-av26-1154", "title": "Cyber Centre AV26-1154", "used_in": "CVE-2026-107484"},
+    {"url": "https://www.rescana.com/post/checkpoint-gaia-cve-2026-123039-kev-patch-now", "title": "Rescana: Check Point Gaia CVE-2026-123039", "used_in": "CVE-2026-107484"},
+    {"url": "https://itdaily.com/news/security/check-point-patches-gaia-vulnerability-firewalls/", "title": "ITdaily: Check Point patches exploited flaw", "used_in": "CVE-2026-107484"},
+    {"url": "https://www.cyber.gc.ca/en/alerts-advisories/react-security-advisory-av26-1152", "title": "Cyber Centre AV26-1152", "used_in": "CVE-2026-126187"},
+    {"url": "https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3", "title": "React advisory GHSA-xqc2-xf4c-x3h3", "used_in": "CVE-2026-126187"},
+    {"url": "https://radar.cloudflare.com/zero-wire/rsc-typed-array-rce", "title": "Cloudflare Radar: RSC typed-array RCE", "used_in": "CVE-2026-126187"},
+    {"url": "https://www.stepsecurity.io/blog/cve-2026-126187-react-flight-rce", "title": "StepSecurity: CVE-2026-126187 React Flight RCE", "used_in": "CVE-2026-126187"}
+  ],
+  "added": ["CVE-2026-107412", "CVE-2026-107484", "CVE-2026-126187"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Check Point sk1000291 (CVE-2026-107484) affected and fixed takes", "url": "https://support.checkpoint.com/results/sk/sk1000291", "note": "Vendor SK loads only with scripts; fixed takes taken from Rescana's summary. Confirm and raise analysis confidence when readable.", "priority": "medium"},
+    {"title": "Public PoC claims for CVE-2026-126187", "url": "https://radar.cloudflare.com/zero-wire/rsc-typed-array-rce", "note": "Hash Security and ThreatDefence PoC claims unverified; watch for KEV listing or in-the-wild reports and raise priority to immediate if confirmed.", "priority": "medium"},
+    {"title": "CVE-2026-107412 exploitation watch", "url": "https://support.citrix.com/external/article/CTX697305/citrix-netscaler-adc-and-citrix-netscaler-gateway-security-bulletin.html", "note": "No exploitation reported as of 19 Nov 2026; assignment said exploitation or exploit code reported, which the sources do not support. Recheck KEV.", "priority": "medium"}
+  ],
+  "failed_sites": [
+    "support.citrix.com/support-home/kbsearch (script-only page; external article URL used instead)",
+    "support.checkpoint.com/results/sk/sk1000291 (script-only page, no content)",
+    "community.citrix.com (403)",
+    "bleepingcomputer.com (403)",
+    "nvd.nist.gov CVE-2026-107484 (no content returned)"
+  ],
+  "notes": "Batch 22. Three analyses written. None of the three CVEs is reported exploited in the wild: CVE-2026-107484's urgency comes from the exploited companion CVE-2026-123039 fixed in the same Jumbo Hotfix; CVE-2026-126187 has unverified public PoC claims; CVE-2026-107412 has none. Priorities set to urgent for all three. CVE-2026-107484 written without the vendor SK (government source plus secondary), confidence low. Build passed."
+}

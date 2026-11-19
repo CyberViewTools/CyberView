@@ -1,16 +1,56 @@
 {
-  "generated_at": "2026-11-19T05:55:00Z",
+  "generated_at": "2026-11-19T11:48:42Z",
   "date": "2026-11-19",
-  "headline": "Four newly exploited flaws, plus critical NGINX and Java bugs, need patching now",
-  "plain_summary": "CISA added four flaws to its exploited list on November 18, with a November 21 deadline for three of them. Critical flaws in NGINX, Java and Drupal also have fixes available. Apache says a flaw in Roller is being exploited. A Microsoft Python package was published with a credential stealer. Some people may need to act today.",
+  "headline": "Exploited flaws in four products, plus critical NGINX and Java bugs, need patching now",
+  "plain_summary": "CISA added four flaws to its exploited list, with a November 21 deadline for three. Critical flaws in NGINX, Java and Drupal have fixes, and Apache says a flaw in Roller is being exploited. A Microsoft Python package was published with a credential stealer. The European Commission is dealing with an attack whose cause is not yet known.",
   "items": [
-    {"title": "CISA adds four exploited flaws to KEV", "why": "Synology DSM, LiteLLM, Apache Axis and REDCap are confirmed as exploited; three carry a November 21 deadline.", "action": "Check for Synology DSM, LiteLLM, Apache Axis and REDCap in your environment, apply vendor fixes, and keep LiteLLM and REDCap off the open internet until patched.", "event_id": "cisa-kev-four-additions-2026-11-18"},
-    {"title": "Apache Roller RCE flaw is exploited", "why": "Apache says an unauthenticated remote code execution bug in Roller's XML-RPC interface is being used in attacks.", "action": "Upgrade Apache Roller to 6.1.6 or later. If you cannot, set enabledForExtensions to false in WEB-INF/web.xml, remove the /roller-services/xmlrpc mapping and restart; switching off XML-RPC in the admin UI is not enough.", "event_id": "apache-roller-rce-cve-2026-129448-2026-11"},
-    {"title": "NGINX HTTP/2 flaws allow remote code execution", "why": "CERT-FR reports two unauthenticated RCE flaws in NGINX and a public proof of concept for one of them.", "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched. Review exposed servers for signs of compromise.", "event_id": "cert-fr-nginx-http2-rce-2026-11"},
-    {"title": "Java4Shell: critical Java flaw, patches out", "why": "CISA urges immediate patching of CVE-2026-114938; Rapid7 does not report exploitation in the wild.", "action": "Inventory every Java runtime, including bundled ones, and install the fixed releases (for example 17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1), internet-facing systems first. See the CISA alert for interim controls.", "event_id": "rapid7-java-17-rce-cve-2026-114938-2026-11"},
-    {"title": "Drupal fixes critical installer flaw", "why": "Drupal says install.php can be used to reinstall a site under specific conditions, and a proof of concept exists.", "action": "Update Drupal core to 10.6.22, 11.3.22 or 11.4.13 (or later). If you cannot upgrade, secure the installer as Drupal describes. Sites on 11.2.x and 10.5.x or older are end of life.", "event_id": "drupal-core-installer-rce-sa-core-2026-017-2026-11"},
-    {"title": "Microsoft Agent Framework PyPI package compromised", "why": "Versions 1.26.1 and 1.26.2 were published with a credential stealer; PyPI has quarantined both.", "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.", "event_id": "microsoft-agent-framework-pypi-compromise-2026-11"},
-    {"title": "About 40 Irish credit unions hit by supplier breach", "why": "A breach at Wellington IT exposed saved payee records; passwords, PINs and card details were not exposed.", "action": "Credit union members should watch for payment fraud and phishing that uses saved payee details. Credit unions should confirm what Wellington IT holds for them and ask it for access logs.", "event_id": "wellington-it-irish-credit-unions-breach-2026-11"},
-    {"title": "Hydro-Québec asks 1.7 million users to reset passwords", "why": "Unauthorized logins used passwords already used elsewhere; the company says internal systems were not compromised.", "action": "Hydro-Québec customers: log in to the Espace client from the official site, reset your password if prompted, and never reuse it elsewhere. Ignore password-reset links in emails or texts.", "event_id": "hydro-quebec-espace-client-credential-stuffing-2026-11"}
+    {
+      "title": "CISA adds four exploited flaws: Synology DSM, LiteLLM, Axis, REDCap",
+      "why": "Federal deadline is November 21 for three of them; exploitation is reported, including ransomware on Synology NAS.",
+      "action": "Find Synology DSM, LiteLLM, Apache Axis and REDCap in your environment and apply vendor fixes where they exist. Axis 1.x is end of life with no fix (migrate or apply the July 12, 2026 commit); keep Axis, LiteLLM and REDCap off the open internet until addressed.",
+      "event_id": "cisa-kev-four-additions-2026-11-18"
+    },
+    {
+      "title": "NGINX HTTP/2 flaws allow unauthenticated code execution",
+      "why": "CERT-FR says a public proof of concept exists for one of the two flaws.",
+      "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
+      "event_id": "cert-fr-nginx-http2-rce-2026-11"
+    },
+    {
+      "title": "CISA urges immediate patching of Java flaw 'Java4Shell'",
+      "why": "Java runs inside many third-party apps and appliances, and GreyNoise saw matching requests, with no successful intrusions on its sensors.",
+      "action": "Find every Java runtime, including ones bundled in third-party apps, containers and appliances. Apply Oracle and vendor patches, internet-facing systems first. Until patched, validate and size-limit Base64 input and restrict unauthenticated access. Siemens Industrial Edge Management users: block direct internet access to IEM Pro and Virtual until Siemens releases a fix.",
+      "event_id": "cisa-java4shell-alert-cve-2026-114938-2026-11"
+    },
+    {
+      "title": "Apache says Roller code-execution flaw is exploited",
+      "why": "Apache itself reports exploitation of an unauthenticated flaw in versions 4.0.0 to 6.1.4.",
+      "action": "Upgrade Apache Roller to 6.1.6 or later. If you cannot, set enabledForExtensions to false in WEB-INF/web.xml, remove the /roller-services/xmlrpc mapping and restart; switching off XML-RPC in the admin UI is not enough.",
+      "event_id": "apache-roller-rce-cve-2026-129448-2026-11"
+    },
+    {
+      "title": "Drupal fixes critical flaw that can let attackers reinstall a site",
+      "why": "Drupal says a proof of concept exists and fixed releases are out.",
+      "action": "Update Drupal core to 10.6.22, 11.3.22 or 11.4.13 (or later). If you cannot upgrade, secure the installer as Drupal describes. Sites on 11.2.x and 10.5.x or older are end of life.",
+      "event_id": "drupal-core-installer-rce-sa-core-2026-017-2026-11"
+    },
+    {
+      "title": "Microsoft Agent Framework PyPI releases carried a credential stealer",
+      "why": "Versions 1.26.1 and 1.26.2 are confirmed malicious and run when Python starts; PyPI has quarantined them.",
+      "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.",
+      "event_id": "microsoft-agent-framework-pypi-compromise-2026-11"
+    },
+    {
+      "title": "About 40 Irish credit unions hit by supplier breach",
+      "why": "Saved payee records were exposed, and credit unions were told only on November 17.",
+      "action": "Credit union members should watch for payment fraud and phishing that uses saved payee details. Credit unions should confirm what Wellington IT holds for them and ask it for access logs.",
+      "event_id": "wellington-it-irish-credit-unions-breach-2026-11"
+    },
+    {
+      "title": "European Commission reports attack on staff HR and health systems",
+      "why": "Press reports say HR and insurance systems were down for days; the attacker and any data theft are not yet established.",
+      "action": "If you work with EU institutions, expect notices from them and treat unexpected messages claiming to be from Commission staff with care.",
+      "event_id": "european-commission-cyberattack-payroll-2026-11"
+    }
   ]
 }

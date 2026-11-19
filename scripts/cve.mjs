@@ -25,7 +25,13 @@ import vm from "node:vm";
 const RATE = (() => { const sb = { window: {} }; vm.runInNewContext(readFileSync(join(ROOT, "site", "cvedb-lib.js"), "utf8"), sb); return sb.window.CVDB; })();
 import { compact, parseEpss, bucket, deltaSince, notable, toLead, FIELDS, toArr, ID, parseKevCatalog, nvdScore } from "./lib/cve.mjs";
 
-export const CORPUS_VERSION = 2;   // raise when compact() gains fields: the workflow then rebuilds the corpus from the CVE List
+export const CORPUS_VERSION = 2;
+/** Critical the way NVD counts it: a CVSS v3 or v4 rating of Critical (CVSS v2 has no Critical). The assigner's or CISA's
+ *  score first, NVD's when they gave none. */
+export function isCritical(r) {
+  if (r.cvss != null) return r.sev === "C" && !/^2/.test(r.ver || "");
+  return r.ncvss != null && r.nsev === "C" && /^CVSS:[34]/.test(r.nvec || "");
+}   // raise when compact() gains fields: the workflow then rebuilds the corpus from the CVE List
 const DIR = process.env.CVE_CORPUS || join(ROOT, "cache", "cve");
 const STATE = join(DIR, "state.json");
 const DELTA_LOG = "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/deltaLog.json";
@@ -160,7 +166,7 @@ function saveAll(byYear) { for (const [y, m] of byYear) saveYear(y, m); }
 /** Our counts against the primary sources (NVD totals, CISA's catalog), recorded so the site can show it and a drift is seen. */
 async function audit() {
   let total = 0, rejected = 0, kevN = 0, crit = 0, critAny = 0;
-  for (const r of allRows()) { total++; if (r.state === "R") { rejected++; continue; } if (r.kev) kevN++; const c = r.cvss ?? r.ncvss; if (r.sev === "C" || (r.cvss == null && r.nsev === "C")) crit++; if (r.sev === "C" || r.nsev === "C") critAny++; }
+  for (const r of allRows()) { total++; if (r.state === "R") { rejected++; continue; } if (r.kev) kevN++; const c = r.cvss ?? r.ncvss; if (isCritical(r)) crit++; if ((r.sev === "C" && !/^2/.test(r.ver || "")) || (r.nsev === "C" && /^CVSS:[34]/.test(r.nvec || ""))) critAny++; }
   const q = async (p) => { try { const j = await get(`${NVD}?resultsPerPage=1${p}`, { timeoutMs: 60000 }); return j.totalResults ?? null; } catch { return null; } };
   const nvdAll = await q(""); await sleep(6500); const nvdLive = await q("&noRejected"); await sleep(6500); const nvdCritV3 = await q("&cvssV3Severity=CRITICAL");
   const st = state(), a = { at: nowIso(), ours: { total, rejected, kev: kevN, critical: crit, critical_any_source: critAny },
@@ -175,7 +181,7 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
   for (const r of allRows()) {
     total++; if (r.state === "R") rejected++; if (r.kev || r.expl === "active") exploited++;
-    if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if ((r.cvss ?? r.ncvss) >= 9) critical++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
+    if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
       const d = RATE.rate({ ...r, rejected: false }); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1; }
     const y = yearOf(r.id); byYear[y] = (byYear[y] || 0) + 1;
     const b = bucket(r.id); if (!buckets.has(b)) buckets.set(b, []); buckets.get(b).push(toArr(r));
@@ -188,7 +194,7 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   const files = {}; for (const b of buckets.keys()) { const [y, k] = b.split("/"); (files[y] ||= []).push(Number(k)); }
   for (const y of Object.keys(files)) files[y].sort((a, b) => a - b);
   writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size, files_by_year: files,
-    kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, critical_from_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
+    kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
     sources: { cvelist: st.delta_at || st.baseline_at || null, epss: st.epss_date || null } }));
   console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${recent.length} published or changed since ${since}.`);
 }

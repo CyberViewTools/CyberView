@@ -44,3 +44,12 @@ test("only exploited, known-exploited or critical new CVEs become leads", () => 
   const l = toLead({ ...r, pub: "2026-11-18" }, "2026-11-19T10:00:00Z");
   assert.equal(l.kind, "exploited"); assert.equal(l.tier, "gov"); assert.match(l.url, /^https:\/\/www\.cve\.org\/CVERecord\?id=CVE-2024-3400$/); assert.match(l.title, /CVSS 10/);
 });
+
+import { isCritical } from "../../scripts/cve.mjs";
+test("critical is counted the way NVD counts it: a CVSS v3 or v4 rating of Critical, never v2", () => {
+  assert.equal(isCritical({ cvss: 9.8, sev: "C", ver: "3.1" }), true);
+  assert.equal(isCritical({ cvss: 10, sev: "C", ver: "2.0" }), false);
+  assert.equal(isCritical({ cvss: null, ncvss: 9.1, nsev: "C", nvec: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N" }), true);
+  assert.equal(isCritical({ cvss: null, ncvss: 10, nsev: "H", nvec: "AV:N/AC:L/Au:N/C:C/I:C/A:C" }), false);
+  assert.equal(isCritical({ cvss: 7.5, sev: "H", ver: "3.1", ncvss: 9.8, nsev: "C", nvec: "CVSS:3.1/AV:N" }), false, "the assigner's score comes first");
+});

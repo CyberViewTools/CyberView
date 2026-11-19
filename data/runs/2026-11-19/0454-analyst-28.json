@@ -1,0 +1,28 @@
+{
+ "job": "exploit-analyst",
+ "batch": 28,
+ "started_at": "2026-11-19T04:44:00Z",
+ "finished_at": "2026-11-19T04:54:05Z",
+ "model": "claude-opus-5-5",
+ "searches": [],
+ "pages_read": [
+  {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-89126", "title": "SAP CVE record: Memory Corruption vulnerability in SAP Web Dispatcher", "used_in": "CVE-2026-89126"},
+  {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-89103", "title": "SAP CVE record: Broken Access Control in SAP Gateway", "used_in": "CVE-2026-89103"},
+  {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-120017", "title": "SAP CVE record: Missing Authentication in SAP NetWeaver AS ABAP (SAML2 Service Provider)", "used_in": "CVE-2026-120017"},
+  {"url": "https://support.sap.com/en/my-support/knowledge-base/security-notes-news/november-2026.html", "title": "SAP Security Patch Day - November 2026", "used_in": "CVE-2026-89126, CVE-2026-89103, CVE-2026-120017"},
+  {"url": "https://onapsis.com/blog/icm2shell-cve-2026-76964-cve-2026-89126-sap-netweaver-web-dispatcher-threat-advisory/", "title": "Onapsis: ICM2SHELL threat advisory", "used_in": "CVE-2026-89126"},
+  {"url": "https://onapsis.com/blog/proxygate-cve-2026-89103-sap-netweaver-gateway-threat-advisory/", "title": "Onapsis: PROXYGATE threat advisory", "used_in": "CVE-2026-89103"},
+  {"url": "https://redrays.io/blog/sap-note-3778556-web-dispatcher-websocket-memory-corruption-cve-2026-89126/", "title": "RedRays: SAP Note 3778556 Web Dispatcher WebSocket memory corruption", "used_in": "CVE-2026-89126"},
+  {"url": "https://redrays.io/blog/sap-note-3849308-saml2-authentication-bypass-cve-2026-120017/", "title": "RedRays: SAP Note 3849308 SAML2 authentication bypass", "used_in": "CVE-2026-120017"},
+  {"url": "https://thehackernews.com/2026/11/sap-patches-four-cvss-100-flaws.html", "title": "The Hacker News: SAP patches four CVSS 10.0 flaws", "used_in": "CVE-2026-89126, CVE-2026-89103, CVE-2026-120017"}
+ ],
+ "added": ["CVE-2026-89126", "CVE-2026-89103", "CVE-2026-120017"],
+ "updated": [],
+ "skipped": [],
+ "open_leads": [
+  {"title": "SAP November 2026 CVSS 10.0 flaws: watch for exploitation or KEV listing", "url": "https://onapsis.com/blog/icm2shell-cve-2026-76964-cve-2026-89126-sap-netweaver-web-dispatcher-threat-advisory/", "note": "Onapsis will update its ICM2SHELL and PROXYGATE advisories if exploitation is seen; none reported as of 19 Nov. Update analyses priority to immediate if exploited or public exploit code appears.", "priority": "medium"},
+  {"title": "CVE-2026-120017 affected SAML2 configurations not described publicly", "url": "https://redrays.io/blog/sap-note-3849308-saml2-authentication-bypass-cve-2026-120017/", "note": "SAP Note 3849308 and FAQ 3849602 need an SAP for Me login; RedRays' release list (804, 918) differs from SAP's CVE record. A public finder write-up would raise confidence.", "priority": "low"}
+ ],
+ "failed_sites": ["me.sap.com (SAP Notes need a login; not attempted, per known limits)", "securitybridge.com (403, not worked around)", "nvd.nist.gov (page body not rendered for automated reader)"],
+ "notes": "All three written from SAP's own CVE records and patch day page plus finder (Onapsis) or RedRays readings of the notes. No page carried instructions to the agent. RedRays' SAML2 page included a network probe path; it was not copied. Priority set to urgent (not known exploited, no public exploit code). Exposure for the Gateway flaw set to internal because gateways should not face the internet, though some do."
+}

@@ -156,6 +156,8 @@ async function flow() {
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
     if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).out.slice(-1)[0] || ""); } catch {} }
+    // grid analysis (no AI model): anomalies, corroboration, trends; flags `corroborated` incidents before the grid desk plans
+    if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).out.slice(-1)[0] || ""); } catch {} }
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");
     const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
     const stories = fresh ? sp.stories || [] : [], batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);

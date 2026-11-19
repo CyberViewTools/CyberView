@@ -1,44 +1,57 @@
 {
-  "date": "2026-11-17",
-  "generated_at": "2026-11-17T23:00:00Z",
-  "headline": "Equinor is fighting an ongoing cyberattack; the US outage wave is still not linked to any attack",
+  "generated_at": "2026-11-19T03:15:00Z",
+  "date": "2026-11-19",
+  "headline": "Exploited flaws in Apache, NGINX and Synology need patching as CISA sets a November 21 deadline",
+  "plain_summary": "Several widely used server products have flaws that attackers are already using or that have public attack code, including Apache HTTP Server, Apache Roller and NGINX. CISA gave US agencies until November 21 to fix four exploited flaws. Microsoft's Agent Framework package on PyPI carried a credential stealer for a short time. Equinor's cyberattack is still being handled; production is unaffected and no attacker is named. Teams running these products should check and patch."
+  ,
   "items": [
     {
-      "action": "Energy-sector partners should review connections to Equinor systems and watch for follow-up statements.",
-      "event_id": "equinor-ongoing-cyberattack-2026-11",
-      "title": "Equinor detects ongoing cyberattack on IT systems",
-      "why": "A major European energy supplier is under active attack, though production and data are reported unaffected."
+      "title": "CISA adds four exploited flaws to KEV; three due November 21",
+      "why": "Synology DSM, LiteLLM, Apache Axis and REDCap flaws are confirmed as exploited, with US federal deadlines starting November 21.",
+      "action": "Check for Synology DSM, LiteLLM, Apache Axis and REDCap in your environment, apply vendor fixes, and keep LiteLLM and REDCap off the open internet until patched.",
+      "event_id": "cisa-kev-four-additions-2026-11-18"
     },
     {
-      "action": "Apply Check Point's emergency hotfixes now and check gateways for signs of compromise since October 30.",
-      "event_id": "check-point-php2shell-gateway-wiper-campaign-2026-11",
-      "title": "Check Point gateways are being wiped in PHP2Shell attacks",
-      "why": "Attackers gain root on unpatched gateways and deploy destructive wipers."
+      "title": "Exploitation reported for Apache HTTP Server mod_http2 flaw",
+      "why": "Singapore's CSA says exploitation is reportedly under way and proof-of-concept code is public.",
+      "action": "Find Apache HTTP Server 2.4.55 to 2.4.70 with mod_http2 enabled and update to the latest release at once, internet-facing servers first. Check the Apache advisory for the full list of affected versions.",
+      "event_id": "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11"
     },
     {
-      "action": "Update the ScreenConnect technician client to 26.6.5 or later and disable third-party extensions.",
-      "event_id": "connectwise-screenconnect-sckit-attacks-2026-11",
-      "title": "ScreenConnect attacks spread from customers to MSP technicians",
-      "why": "A worm-like toolkit turns one unpatched remote-support system into a route into many networks."
+      "title": "Apache says Roller remote code execution flaw is exploited",
+      "why": "An unauthenticated flaw in the XML-RPC interface is being used in attacks against versions 4.0.0 to 6.1.4.",
+      "action": "Upgrade Apache Roller to 6.1.6 or later. If you cannot, set enabledForExtensions to false in WEB-INF/web.xml, remove the /roller-services/xmlrpc mapping and restart; switching off XML-RPC in the admin UI is not enough.",
+      "event_id": "apache-roller-rce-cve-2026-129448-2026-11"
     },
     {
-      "action": "If you run Optimizely Web Experimentation, review your snippets; if you paid by card or sent crypto on an affected site that day, check the transaction.",
-      "event_id": "optimizely-web-script-injection-2026-11",
-      "title": "Optimizely script injection reached 178 organizations' websites",
-      "why": "Visitors to well-known sites on November 16 were served card-skimming and crypto-stealing code."
+      "title": "NGINX HTTP/2 flaws allow remote code execution; public PoC",
+      "why": "CERT-FR knows of a public proof of concept for one of two unauthenticated remote code execution flaws.",
+      "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
+      "event_id": "cert-fr-nginx-http2-rce-2026-11"
     },
     {
-      "action": "Warn staff that Microsoft will not email them threatening to delete held messages; report such emails.",
-      "event_id": "microsoft-outage-phishing-campaign-ex1550543-2026-11",
-      "title": "Phishing emails exploit the Microsoft 365 outage",
-      "why": "Messages cite the real incident number to look genuine."
+      "title": "CISA urges immediate patching of Java4Shell (CVE-2026-114938)",
+      "why": "A critical Java flaw could allow unauthenticated remote code execution, and Oracle's November update fixes it.",
+      "action": "Find every Java runtime, including ones bundled in third-party apps, containers and appliances. Apply Oracle and vendor patches, internet-facing systems first. Until patched, validate and size-limit Base64 input and restrict unauthenticated access.",
+      "event_id": "cisa-java4shell-alert-cve-2026-114938-2026-11"
     },
     {
+      "title": "Microsoft Agent Framework PyPI package carried a credential stealer",
+      "why": "Versions 1.26.1 and 1.26.2 ran a stealer at Python start-up and targeted cloud, GitHub and AI credentials.",
+      "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.",
+      "event_id": "microsoft-agent-framework-pypi-compromise-2026-11"
+    },
+    {
+      "title": "Around 40 Irish credit unions affected by supplier breach",
+      "why": "Saved payee records were exposed at supplier Wellington IT; passwords, PINs and card details were not.",
+      "action": "Credit union members should watch for payment fraud and phishing that uses saved payee details. Credit unions should confirm what Wellington IT holds for them and ask it for access logs.",
+      "event_id": "wellington-it-irish-credit-unions-breach-2026-11"
+    },
+    {
+      "title": "NSA Net outage: agency cites maintenance, no cyberattack indicated",
+      "why": "The NSA attributes the classified network outage to routine maintenance, and the Director of National Intelligence said there is no sign of a coordinated cyberattack.",
       "action": "No action needed; for awareness.",
-      "event_id": "nsa-net-classified-network-outage-2026-11",
-      "title": "NSA's classified network outage attributed to maintenance",
-      "why": "It is the latest in a week of US outages; the agency reports no evidence of an attack."
+      "event_id": "nsa-net-classified-network-outage-2026-11"
     }
-  ],
-  "plain_summary": "The confirmed attacks today are on Norway's Equinor, whose production is unaffected, and on websites using Optimizely, where visitors were exposed to card-stealing code. The run of US outages (Microsoft, FAA, banks, NSA, Apple) is unsettling, but every organization gives a non-cyber cause and officials say it was not coordinated. Most people need to do nothing beyond watching for scam emails that exploit the outages. IT teams have several urgent patches."
+  ]
 }

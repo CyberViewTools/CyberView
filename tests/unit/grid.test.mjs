@@ -335,7 +335,7 @@ test("adapters: without a key each keyed host is 'not connected', and no key is 
   // a connected reply: Radar parses; EIA waits for a saved real reply; ENTSO-E is fetched as bytes (net.mjs as:"buffer"),
   // so a reply that is not a real zip is refused as a bad shape, never mistaken for "needs a binary fetch"
   await withFetch(reply(200, txt("cfradar.json")), async () => { assert.ok((await ADAPTERS.cfradar()).every((x) => x.source === "cfradar")); });
-  await withFetch(reply(200, "{}"), async () => { await assert.rejects(ADAPTERS.eia(), (e) => e.code === "parser_pending"); });
+  await withFetch(reply(200, txt("eia.json")), async () => { assert.ok(Array.isArray(await ADAPTERS.eia())); });
   await withFetch(reply(200, "PK\u0003\u0004zip", "application/zip"), async () => { await assert.rejects(ADAPTERS.entsoe(), (e) => e.code !== "needs_binary_fetch" && /shape|zip/i.test(`${e.code} ${e.message}`)); });
   assert.deepEqual(OPERATORS, ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]);
 });
@@ -446,4 +446,42 @@ test("roll-up: daily max/mean per region, only files older than the kept days (h
   assert.deepEqual(checkMonthly({ month: "2026-08", days: { "2026-08-01": { "x|y": { max: 1, mean: 5, points: 1, level_max: null } } } }, "2026-08.json"),
     ["days.2026-08-01.x|y: not { max, mean <= max, points, level_max }"]);
   assert.ok(existsSync(join(dir, "monthly", "2026-08.json")));
+});
+
+// EIA: the fixture is a REAL reply (saved 2026-11-19 with the owner's key, 5 balancing authorities, 30 hours). The
+// variants change only the values named, to show each rule found on that night's live data.
+test("EIA: demand far under both forecast and yesterday for two complete hours is a signal; habits and partial hours are not", async () => {
+  const { parseEia } = await import("../../scripts/grid.mjs");
+  const real = json("eia.json"), rows = real.response.data;
+  const newest = rows.map((r) => r.period).filter((p, i) => rows[i].type === "D").sort().pop();
+  const now = Date.parse(newest + ":30:00Z");
+  assert.deepEqual(parseEia(real, now), []);                                           // a normal night: nothing
+  const hours = [...new Set(rows.filter((r) => r.respondent === "PJM" && r.type === "D").map((r) => r.period))].sort().reverse();
+  const cut = (data, ba, periods, f) => ({ response: { data: data.map((r) => r.respondent === ba && r.type === "D" && periods.includes(r.period) ? { ...r, value: String(Math.round(Number(r.value) * f)) } : r) } });
+  // the newest reported hour alone collapsing (LDWP 27 vs 2,540 MWh) is a partly filled hour: ignored
+  assert.deepEqual(parseEia(cut(rows, "PJM", [hours[0]], 0.01), now), []);
+  // one complete hour down 40%: not enough, it must hold for two
+  assert.deepEqual(parseEia(cut(rows, "PJM", [hours[1]], 0.6), now), []);
+  // two complete hours down 40% against forecast and against the same hours yesterday: a signal
+  const sig = parseEia(cut(rows, "PJM", [hours[1], hours[2]], 0.6), now);
+  assert.equal(sig.length, 1);
+  assert.equal(sig[0].source, "eia"); assert.equal(sig[0].kind, "supply_warning"); assert.equal(sig[0].customers, null);
+  assert.match(sig[0].cause, /under forecast, \d+% under the same hour yesterday/);
+  // a forecast that is always high (SRP misses 34-38% at this hour every day): demand matches yesterday, so no signal
+  const biased = { response: { data: rows.map((r) => r.respondent === "PJM" && r.type === "DF" ? { ...r, value: String(Math.round(Number(r.value) * 1.6)) } : r) } };
+  assert.deepEqual(parseEia(biased, now), []);
+  // stale data (older than 6 hours) is not a signal
+  assert.deepEqual(parseEia(cut(rows, "PJM", [hours[1], hours[2]], 0.6), now + 12 * 3600e3), []);
+});
+
+test("Cloudflare Radar, REAL reply (saved 2026-11-19 with the owner's token): power-cause outages only, while current", async () => {
+  const { parseCfRadar } = await import("../../scripts/grid.mjs");
+  const real = json("cfradar-real.json");
+  const items = parseCfRadar(real, Date.parse("2026-11-08T12:00:00Z"));
+  assert.ok(items.length >= 1 && items.every((x) => x.source === "cfradar" && x.kind === "outage" && /^[A-Z]{2}$/.test(x.country)));
+  assert.ok(items.some((x) => x.country === "UA"));                                  // 8 Nov: strikes on Ukraine's energy grid
+  const causes = new Set(real.result.annotations.map((a) => a.outage.outageCause));
+  assert.ok(causes.has("CABLE_CUT") || causes.has("MILITARY_ACTION"));                // the fixture holds other causes, all left out
+  assert.equal(items.length, new Set(items.map((x) => x.id)).size);
+  assert.deepEqual(parseCfRadar(real, Date.parse("2026-11-19T22:00:00Z")), []);       // all ended over a day before: nothing now
 });

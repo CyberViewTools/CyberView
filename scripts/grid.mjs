@@ -82,7 +82,7 @@ export const SOURCES = {
   // keyed: the environment's network proxy adds the key for `host` (never this code). Signals only: their items are used
   // by scripts/grid-analysis.mjs to corroborate operator incidents and do not open incidents themselves.
   eia: { name: "EIA hourly electric grid monitor", country: "US", keyed: true, host: "api.eia.gov",
-    url: "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data[0]=value&facets[type][]=D&facets[type][]=DF&sort[0][column]=period&sort[0][direction]=desc&length=500",
+    url: "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data[0]=value&facets[type][]=D&facets[type][]=DF&sort[0][column]=period&sort[0][direction]=desc&length=5000",
     page: "https://www.eia.gov/electricity/gridmonitor/", hosts: ["www.eia.gov"] },
   cfradar: { name: "Cloudflare Radar outage center", country: "", keyed: true, host: "api.cloudflare.com",
     url: "https://api.cloudflare.com/client/v4/radar/annotations/outages?dateRange=7d&format=JSON&limit=200",
@@ -374,6 +374,50 @@ export function parseCfRadar(d, now = Date.now()) {
   return out;
 }
 
+// --- EIA --- api.eia.gov/v2/electricity/rto/region-data (Hourly Electric Grid Monitor). Shape read from a real reply
+// (tests/fixtures/grid/eia.json, saved 2026-11-19): response.data[] = { period "YYYY-MM-DDTHH" (UTC), respondent,
+// respondent-name, type "D" (demand) | "DF" (day-ahead demand forecast), value (string, MWh) }. Per balancing authority:
+// the newest complete hours (the newest reported hour is skipped); demand at least EIA_DROP below its forecast AND below the same
+// hour a day earlier, for two complete hours in a row, in an authority that carries at
+// least EIA_MIN_MWH, is a signal (lost load, or a data fault: EIA's data are preliminary). Signals only: they corroborate
+// incidents and never open one. The key is added by the network proxy (header X-Api-Key, tested 2026-11-19).
+export const EIA_DROP = 0.25;     // weather moves demand 15-20% day to day (AECI, 2026-11-19); lost load is bigger
+export const EIA_MIN_MWH = 500, EIA_MAX_AGE_H = 6, EIA_WINDOW_H = 30;
+export function parseEia(d, now = Date.now()) {
+  if (!d || !d.response || !Array.isArray(d.response.data)) throw badShape("eia");
+  const by = new Map();
+  for (const r of d.response.data) {
+    if (!r || !/^[A-Z0-9_-]{2,12}$/.test(r.respondent || "") || !/^\d{4}-\d{2}-\d{2}T\d{2}$/.test(r.period || "")) continue;
+    const v = Number(r.value); if (!isFinite(v) || (r.type !== "D" && r.type !== "DF")) continue;
+    const b = by.get(r.respondent) || { name: str(r["respondent-name"], 100), hours: new Map() };
+    const h = b.hours.get(r.period) || {}; h[r.type] = v; b.hours.set(r.period, h); by.set(r.respondent, b);
+  }
+  const out = [];
+  for (const [ba, b] of by) {
+    // the newest reported hour is still being filled in (seen 2026-11-19: LDWP 27 vs 2,540 MWh, normal the hour before),
+    // so it is skipped, and the drop must hold in the two complete hours before it
+    const all = [...b.hours.entries()].filter(([, h]) => h.D != null && h.DF != null).sort((x, y) => (x[0] < y[0] ? 1 : -1));
+    const both = all.slice(1, 3);
+    if (both.length < 2) continue;
+    const [period, h] = both[0], at = Date.parse(period + ":00:00Z");
+    if (!isFinite(at) || now - at > EIA_MAX_AGE_H * 3600e3) continue;
+    // lost load shows in actual demand, not in the forecast's habits (seen 2026-11-19: SRP misses its forecast by 34-38% at
+    // this hour every day; SWPW sat 18% under for 15 hours after a forecast change): a drop counts only when demand is at
+    // least EIA_DROP below the forecast AND below the same hour a day earlier, in both complete hours
+    const yesterday = (p) => b.hours.get(new Date(Date.parse(p + ":00:00Z") - 864e5).toISOString().slice(0, 13));
+    const fall = (p, x) => { const y = yesterday(p); if (!(x.DF >= EIA_MIN_MWH) || !y || !(y.D >= EIA_MIN_MWH) || x.D < 0) return null;
+      return { vsForecast: (x.DF - x.D) / x.DF, vsYesterday: (y.D - x.D) / y.D, yD: y.D }; };
+    const f0 = fall(period, h), f1 = fall(both[1][0], both[1][1]);
+    if (!f0 || !f1 || [f0, f1].some((f) => f.vsForecast < EIA_DROP || f.vsYesterday < EIA_DROP)) continue;
+    const drop = f0.vsForecast;
+    out.push(item({ source: "eia", id: `eia:${ba}-${period}`, country: "US", region: str(b.name || ba, 60), area: str(`${b.name || ba} (${ba})`, 120),
+      ...centroid("US"), customers: null, kind: "supply_warning", planned: false,
+      cause: str(`demand ${Math.round(h.D)} MWh: ${Math.round(drop * 100)}% under forecast, ${Math.round(f0.vsYesterday * 100)}% under the same hour yesterday`, 120),
+      level: null, started_at: isoS(at), restore_est: "", url: SOURCES.eia.page }));
+  }
+  return out;
+}
+
 // --- ENTSO-E --- documentType A80 (generation unavailability, article 15.1.A&B), documented in the Transparency
 // Platform's Postman collection https://documenter.getpostman.com/view/7009892/2s93JtP3F6 (read 2026-11-19): the reply
 // is a ZIP of up to 200 Unavailability_MarketDocument XML files; BusinessType A53 = planned maintenance, A54 = forced
@@ -476,14 +520,11 @@ export const ADAPTERS = {
     if (!notices.some(Boolean)) throw Object.assign(new Error("no notice could be read"), { code: "notices_unreadable" });
     return aemoItems(notices);
   },
-  // EIA: only the not-connected path is built. Its documentation (https://www.eia.gov/opendata/documentation.php, read
-  // 2026-11-19) gives the generic v2 reply but not the region-data columns, and says the key "must always appear in the
-  // URL; it will not be detected in the HTTP headers". Until a real reply is saved, a connected answer is reported as
-  // an error instead of guessed at (swarm/REQUESTS.md).
+  // EIA: hourly demand (D) against EIA's own day-ahead forecast (DF) per balancing authority; see parseEia.
   async eia() {
     return keyed("eia", async () => {
-      await get(SOURCES.eia.url, { retries: 0 });
-      throw Object.assign(new Error("connected; the EIA parser waits for a saved real reply"), { code: "parser_pending" });
+      const start = new Date(Date.now() - EIA_WINDOW_H * 3600e3).toISOString().slice(0, 13);
+      return parseEia(await get(`${SOURCES.eia.url}&start=${start}`, { retries: 1, timeoutMs: 40000 }));
     });
   },
   async cfradar() { return keyed("cfradar", async () => parseCfRadar(await get(SOURCES.cfradar.url, { retries: 1 }))); },

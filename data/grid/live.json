@@ -1,20 +1,20 @@
 {
-  "fetched_at": "2026-11-19T22:32:45Z",
+  "fetched_at": "2026-11-19T22:39:55Z",
   "sources": {
     "hydroquebec": {
       "name": "Hydro-Québec",
       "url": "https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
-      "items": 18
+      "fetched_at": "2026-11-19T22:39:55Z",
+      "items": 12
     },
     "bchydro": {
       "name": "BC Hydro",
       "url": "https://www.bchydro.com/power-outages/app/outages-map-data.json",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 22
     },
     "ukpn": {
@@ -22,7 +22,7 @@
       "url": "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-live-faults/records",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 34
     },
     "eskom": {
@@ -30,7 +30,7 @@
       "url": "https://loadshedding.eskom.co.za/LoadShedding/GetStatus",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 1
     },
     "ercot": {
@@ -38,7 +38,7 @@
       "url": "https://www.ercot.com/api/1/services/read/dashboards/daily-prc.json",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 1
     },
     "aemo": {
@@ -46,23 +46,23 @@
       "url": "https://www.nemweb.com.au/REPORTS/CURRENT/Market_Notice/",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-19T22:32:45Z",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 1
     },
     "eia": {
       "name": "EIA hourly electric grid monitor",
-      "url": "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data[0]=value&facets[type][]=D&facets[type][]=DF&sort[0][column]=period&sort[0][direction]=desc&length=500",
-      "ok": false,
-      "error": "not connected (no key saved for api.eia.gov)",
-      "fetched_at": "",
+      "url": "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data[0]=value&facets[type][]=D&facets[type][]=DF&sort[0][column]=period&sort[0][direction]=desc&length=5000",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 0
     },
     "cfradar": {
       "name": "Cloudflare Radar outage center",
       "url": "https://api.cloudflare.com/client/v4/radar/annotations/outages?dateRange=7d&format=JSON&limit=200",
-      "ok": false,
-      "error": "not connected (no key saved for api.cloudflare.com)",
-      "fetched_at": "",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-19T22:39:55Z",
       "items": 0
     },
     "entsoe": {
@@ -75,6 +75,40 @@
     }
   },
   "items": [
+    {
+      "id": "hydroquebec:20261119210333--79.134,48.242",
+      "source": "hydroquebec",
+      "country": "CA",
+      "region": "Quebec",
+      "area": "",
+      "lat": 48.242,
+      "lng": -79.134,
+      "customers": 3,
+      "kind": "outage",
+      "planned": false,
+      "cause": "Protection of public safety",
+      "level": null,
+      "started_at": "2026-11-19T21:03:33Z",
+      "restore_est": "2026-11-19T23:00:00Z",
+      "url": "https://pannes.hydroquebec.com/pannes/"
+    },
+    {
+      "id": "hydroquebec:20261119160718--73.65,45.558",
+      "source": "hydroquebec",
+      "country": "CA",
+      "region": "Quebec",
+      "area": "",
+      "lat": 45.558,
+      "lng": -73.65,
+      "customers": 158,
+      "kind": "outage",
+      "planned": false,
+      "cause": "Material wear and tear or breakdown",
+      "level": null,
+      "started_at": "2026-11-19T16:07:18Z",
+      "restore_est": "2026-11-19T23:00:00Z",
+      "url": "https://pannes.hydroquebec.com/pannes/"
+    },
     {
       "id": "hydroquebec:20261119182831--72.549,45.884",
       "source": "hydroquebec",
@@ -107,23 +141,6 @@
       "level": null,
       "started_at": "2026-11-19T21:34:50Z",
       "restore_est": "2026-11-19T23:45:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119220603--73.553,45.546",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.546,
-      "lng": -73.553,
-      "customers": 96,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T22:06:03Z",
-      "restore_est": "",
       "url": "https://pannes.hydroquebec.com/pannes/"
     },
     {
@@ -161,74 +178,6 @@
       "url": "https://pannes.hydroquebec.com/pannes/"
     },
     {
-      "id": "hydroquebec:20261119194305--72.116,45.301",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.301,
-      "lng": -72.116,
-      "customers": 3,
-      "kind": "outage",
-      "planned": false,
-      "cause": "Protection of public safety",
-      "level": null,
-      "started_at": "2026-11-19T19:43:05Z",
-      "restore_est": "2026-11-19T23:00:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119221414--73.562,45.553",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.553,
-      "lng": -73.562,
-      "customers": 36,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T22:14:14Z",
-      "restore_est": "",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119210333--79.134,48.242",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 48.242,
-      "lng": -79.134,
-      "customers": 3,
-      "kind": "outage",
-      "planned": false,
-      "cause": "Protection of public safety",
-      "level": null,
-      "started_at": "2026-11-19T21:03:33Z",
-      "restore_est": "2026-11-19T23:00:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119212203--73.537,45.56",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.56,
-      "lng": -73.537,
-      "customers": 45,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T21:22:03Z",
-      "restore_est": "2026-11-19T23:00:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
       "id": "hydroquebec:20261119180226--72.712,45.179",
       "source": "hydroquebec",
       "country": "CA",
@@ -246,19 +195,19 @@
       "url": "https://pannes.hydroquebec.com/pannes/"
     },
     {
-      "id": "hydroquebec:20261119130641--73.711,45.582",
+      "id": "hydroquebec:20261119222838--74.42,45.334",
       "source": "hydroquebec",
       "country": "CA",
       "region": "Quebec",
       "area": "",
-      "lat": 45.582,
-      "lng": -73.711,
-      "customers": 11,
+      "lat": 45.334,
+      "lng": -74.42,
+      "customers": 2,
       "kind": "outage",
       "planned": false,
       "cause": "",
       "level": null,
-      "started_at": "2026-11-19T13:06:41Z",
+      "started_at": "2026-11-19T22:28:38Z",
       "restore_est": "",
       "url": "https://pannes.hydroquebec.com/pannes/"
     },
@@ -311,57 +260,6 @@
       "level": null,
       "started_at": "2026-11-19T19:36:52Z",
       "restore_est": "",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119160718--73.65,45.558",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.558,
-      "lng": -73.65,
-      "customers": 158,
-      "kind": "outage",
-      "planned": false,
-      "cause": "Material wear and tear or breakdown",
-      "level": null,
-      "started_at": "2026-11-19T16:07:18Z",
-      "restore_est": "2026-11-19T23:00:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119215349--73.571,45.497",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.497,
-      "lng": -73.571,
-      "customers": 703,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T21:53:49Z",
-      "restore_est": "2026-11-19T23:45:00Z",
-      "url": "https://pannes.hydroquebec.com/pannes/"
-    },
-    {
-      "id": "hydroquebec:20261119203618--73.537,45.557",
-      "source": "hydroquebec",
-      "country": "CA",
-      "region": "Quebec",
-      "area": "",
-      "lat": 45.557,
-      "lng": -73.537,
-      "customers": 284,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T20:36:18Z",
-      "restore_est": "2026-11-19T22:45:00Z",
       "url": "https://pannes.hydroquebec.com/pannes/"
     },
     {
@@ -548,7 +446,7 @@
       "cause": "Motor vehicle accident",
       "level": null,
       "started_at": "2026-11-19T14:24:49Z",
-      "restore_est": "2026-11-19T22:00:00Z",
+      "restore_est": "2026-11-19T23:30:00Z",
       "url": "https://www.bchydro.com/power-outages/app/outage-map.html"
     },
     {
@@ -790,23 +688,6 @@
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
-      "id": "ukpn:INCD-648328-Z",
-      "source": "ukpn",
-      "country": "GB",
-      "region": "London, South East and East of England",
-      "area": "PINNER: WD3 3, WD3 4",
-      "lat": 51.652,
-      "lng": -0.444,
-      "customers": 6,
-      "kind": "outage",
-      "planned": false,
-      "cause": "LV UG Network Fault",
-      "level": null,
-      "started_at": "2026-11-19T11:16:07Z",
-      "restore_est": "2026-11-19T22:30:00Z",
-      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
-    },
-    {
       "id": "ukpn:INCD-648334-Z",
       "source": "ukpn",
       "country": "GB",
@@ -892,20 +773,20 @@
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
-      "id": "ukpn:INCD-470356-G",
+      "id": "ukpn:INCD-420531-J",
       "source": "ukpn",
       "country": "GB",
       "region": "London, South East and East of England",
-      "area": "West Kent Zone: ME18 5, ME18 6, TN12 6",
-      "lat": 51.185,
-      "lng": 0.383,
-      "customers": 153,
+      "area": "NORTH EAST: N16 7",
+      "lat": 51.557,
+      "lng": -0.068,
+      "customers": 0,
       "kind": "outage",
       "planned": false,
-      "cause": "11kV OH Fault",
+      "cause": "Emergency Isolation",
       "level": null,
-      "started_at": "2026-11-19T21:52:09Z",
-      "restore_est": "2026-11-20T01:00:00Z",
+      "started_at": "2026-11-19T22:28:38Z",
+      "restore_est": "",
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
@@ -1028,6 +909,23 @@
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
+      "id": "ukpn:INCD-648523-Z",
+      "source": "ukpn",
+      "country": "GB",
+      "region": "London, South East and East of England",
+      "area": "CAMBRIDGE: CB6 1, CB6 2",
+      "lat": 52.431,
+      "lng": 0.181,
+      "customers": 4,
+      "kind": "outage",
+      "planned": false,
+      "cause": "11kV OH Fault",
+      "level": null,
+      "started_at": "2026-11-19T20:46:28Z",
+      "restore_est": "2026-11-20T00:00:00Z",
+      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
+    },
+    {
       "id": "ukpn:INCD-648528-Z",
       "source": "ukpn",
       "country": "GB",
@@ -1042,23 +940,6 @@
       "level": null,
       "started_at": "2026-11-19T21:45:16Z",
       "restore_est": "2026-11-20T00:00:00Z",
-      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
-    },
-    {
-      "id": "ukpn:INCD-420531-J",
-      "source": "ukpn",
-      "country": "GB",
-      "region": "London, South East and East of England",
-      "area": "NORTH EAST: N16 7",
-      "lat": 51.557,
-      "lng": -0.068,
-      "customers": 0,
-      "kind": "outage",
-      "planned": false,
-      "cause": "",
-      "level": null,
-      "started_at": "2026-11-19T22:28:38Z",
-      "restore_est": "",
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
@@ -1127,6 +1008,23 @@
       "level": null,
       "started_at": "2026-11-18T21:26:36Z",
       "restore_est": "2026-11-19T22:30:00Z",
+      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
+    },
+    {
+      "id": "ukpn:INCD-648328-Z",
+      "source": "ukpn",
+      "country": "GB",
+      "region": "London, South East and East of England",
+      "area": "PINNER: WD3 3, WD3 4",
+      "lat": 51.652,
+      "lng": -0.444,
+      "customers": 1,
+      "kind": "outage",
+      "planned": false,
+      "cause": "LV UG Network Fault",
+      "level": null,
+      "started_at": "2026-11-19T11:16:07Z",
+      "restore_est": "",
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
@@ -1266,23 +1164,6 @@
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
-      "id": "ukpn:INCD-648523-Z",
-      "source": "ukpn",
-      "country": "GB",
-      "region": "London, South East and East of England",
-      "area": "CAMBRIDGE: CB6 1, CB6 2",
-      "lat": 52.431,
-      "lng": 0.181,
-      "customers": 28,
-      "kind": "outage",
-      "planned": false,
-      "cause": "11kV OH Fault",
-      "level": null,
-      "started_at": "2026-11-19T20:46:28Z",
-      "restore_est": "2026-11-20T00:00:00Z",
-      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
-    },
-    {
       "id": "ukpn:INCD-648524-Z",
       "source": "ukpn",
       "country": "GB",
@@ -1317,6 +1198,23 @@
       "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
     },
     {
+      "id": "ukpn:INCD-470356-G",
+      "source": "ukpn",
+      "country": "GB",
+      "region": "London, South East and East of England",
+      "area": "West Kent Zone: ME18 5, ME18 6, TN12 6",
+      "lat": 51.185,
+      "lng": 0.383,
+      "customers": 153,
+      "kind": "outage",
+      "planned": false,
+      "cause": "11kV OH Fault",
+      "level": null,
+      "started_at": "2026-11-19T21:52:09Z",
+      "restore_est": "2026-11-20T01:00:00Z",
+      "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
+    },
+    {
       "id": "ukpn:INCD-24957-I",
       "source": "ukpn",
       "country": "GB",
@@ -1346,7 +1244,7 @@
       "planned": false,
       "cause": "",
       "level": 0,
-      "started_at": "2026-11-19T22:32:41Z",
+      "started_at": "2026-11-19T22:39:50Z",
       "restore_est": "",
       "url": "https://loadshedding.eskom.co.za/"
     },
@@ -1363,7 +1261,7 @@
       "planned": false,
       "cause": "",
       "level": 0,
-      "started_at": "2026-11-19T22:32:13Z",
+      "started_at": "2026-11-19T22:39:25Z",
       "restore_est": "",
       "url": "https://www.ercot.com/gridmktinfo/dashboards/gridconditions"
     },

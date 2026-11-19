@@ -17,7 +17,7 @@ import { claim, release, RUN_ID } from "./lib/lease.mjs";
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
 const MAXPAR = Math.max(1, Math.min(10, Number(PIPE.max_parallel) || 6));
-const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1" } }); return { ok: x.status === 0, out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
+const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
 
 /** Pure: the claude command line for one role. */
@@ -135,7 +135,7 @@ async function main() {
   } else if (job === "backlog") {
     const bc = PIPE.backlog || {}, T = Math.max(1, Math.min(8, Number(bc.triagers) || 3)), R = Math.max(1, Math.min(8, Number(bc.researchers) || 4));
     sh("node", ["scripts/triage.mjs"]); sh("node", ["scripts/backlog.mjs", "auto"]);
-    const st = JSON.parse(sh("node", ["scripts/backlog.mjs", "status", "--json"]).out.join("") || "{}");
+    const st = JSON.parse(sh("node", ["scripts/backlog.mjs", "status", "--json"]).stdout.trim() || "{}");
     if (!(st.waiting > Number(bc.leave_for_sweep ?? 48))) phase("plan", `only ${st.waiting ?? 0} waiting: the research runs cover it`);
     else {
       phase("plan", sh("node", ["scripts/backlog.mjs", "plan", "--per", "40", "--max", String(T)]).out[0] || "");

@@ -309,6 +309,19 @@
    "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps."
   },
   {
+   "key": "analyst",
+   "name": "Exploit analyst",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "31 */3 * * *",
+   "model": "claude-opus-5-5",
+   "status_key": "last_analyst_at",
+   "max_age_hours": 7,
+   "active": true,
+   "does": "Opus agents read the vendor advisory, CISA and researchers' write-ups for each flaw in the workbench and explain how it is exploited (never code) and the remediation path: fix, workarounds, verification, and what to do if compromised."
+  },
+  {
    "key": "moderator",
    "name": "Community moderator",
    "tier": "ai",

@@ -60,6 +60,18 @@ if (job === "sweep") {
     say(`   If it prints BUILD FAILED: start ONE subagent (${AGENT("sonnet")}) with: ${fixer}  Then run: node scripts/finish.mjs backlog --force`);
     say('5. Run: node scripts/backlog.mjs status   and end with exactly one line: "CyberView backlog: " followed by that status line and the line finish.mjs printed.');
   }
+} else if (job === "analyst") {
+  const ac = readJson(join(ROOT, "config", "pipeline.json"), {}).analyst || {}, Wk = Math.max(1, Math.min(4, Number(ac.workers) || 2)), per = Math.max(1, Math.min(5, Number(ac.per_worker) || 3));
+  const plan = sh("node", ["scripts/analyst.mjs", "plan", "--workers", String(Wk), "--per", String(per)]), n = ((readJson(join(DATA, "analyst-plan.json"), { batches: [] }).batches) || []).length;
+  say(plan.out[0] || "");
+  if (!n) say('Nothing is waiting. End with exactly: "CyberView analyst: nothing waiting"');
+  else {
+    say(`1. Start these ${n} subagents IN ONE MESSAGE so they run in parallel (${AGENT("opus")}). The task text for each, exactly:`);
+    for (let i = 1; i <= n; i++) say(`   (${i}) ${worker("exploit-analyst", i)}`);
+    say("2. When ALL have returned, run: node scripts/finish.mjs analyst");
+    say(`   If it prints BUILD FAILED: start ONE subagent (${AGENT("sonnet")}) with: ${fixer}  Then run: node scripts/finish.mjs analyst --force`);
+    say('3. Run: node scripts/analyst.mjs status   and end with exactly one line: "CyberView analyst: " followed by each analyst\'s final line, that status line and the line finish.mjs printed.');
+  }
 } else if (job === "review") {
   const plan = sh("node", ["scripts/review.mjs", "plan"]), n = ((readJson(join(DATA, "review-plan.json"), { batches: [] }).batches) || []).filter((b) => b.length).length;
   say(plan.out[0] || "");

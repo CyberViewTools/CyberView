@@ -128,6 +128,48 @@ export function checkGuide(g, id) {
 }
 
 /**
+ * An exploitation analysis (data/analyses/<CVE>.json), written by the exploit analyst job (an Opus agent) from public sources.
+ * It explains how attackers use a flaw at the level of an advisory, so defenders can find exposure, detect use and fix it.
+ * It never contains exploit code, payloads, request strings, commands that attack a system, or reproduction steps:
+ * NOCODE rejects text that looks like any of those, so a record carrying them is refused by the build.
+ * { cve, analyzed_at, model, exploitation_status, how_exploited, preconditions[], attack_path[], exposure, who_is_exposed[],
+ *   detect[], remediation: { priority, steps[], fixed_versions[], workarounds[], verify[], if_compromised[] },
+ *   confidence, caveats, sources: [{ name, url, kind, read_depth }] }
+ */
+export const NOCODE = /`|<\/?(script|iframe|svg|img|object|embed)\b|\$\{|\$\(|\b(curl|wget|nc|ncat|netcat|powershell|bash|sh|python3?|perl|ruby|php|msfconsole|sqlmap|nmap)\s+-|\b(curl|wget)\s+https?:|\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+\/\S|\.\.\/\.\.|%2e%2e|%00|\\x[0-9a-f]{2}|\b0x[0-9a-f]{8,}|[A-Za-z0-9+\/]{60,}={0,2}|\b(payload|shellcode|proof[- ]of[- ]concept code|exploit code)\s*:|\bUNION\s+SELECT\b|\bOR\s+1\s*=\s*1\b|\/bin\/(ba)?sh\b|\bcmd\.exe\s*\/c\b|\bjndi:|\{\{.*\}\}|\bchmod\s+\+x\b/i;
+const SRC_KINDS = ["vendor", "government", "research", "news", "database"];
+export function checkAnalysis(a, id) {
+  if (!a || typeof a !== "object" || Array.isArray(a)) return ["not an object"];
+  const p = [], strs = [];
+  const one = (k, max, req = true) => { const v = a[k]; if ((v == null || v === "") && !req) return; if (!text(v, max)) p.push(`${k}: required text, at most ${max} characters`); else strs.push([k, v]); };
+  const many = (o, k, min, max, len, label = k) => { const v = o[k]; if (v == null && !min) return;
+    if (!Array.isArray(v) || v.length < min || v.length > max || v.some((x) => !text(x, len))) p.push(`${label}: ${min ? min + " to " : "at most "}${max} items, each at most ${len} characters`); else v.forEach((x) => strs.push([label, x])); };
+  if (!/^CVE-\d{4}-\d{4,}$/.test(a.cve || "")) p.push("cve must be a CVE id"); else if (id && a.cve !== id) p.push(`cve "${a.cve}" does not match the file name`);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(a.analyzed_at || "")) p.push("analyzed_at must be an ISO time");
+  if (!text(a.model, 60)) p.push("model must name the model that wrote it");
+  one("exploitation_status", 240); one("how_exploited", 900);
+  many(a, "preconditions", 1, 6, 260); many(a, "attack_path", 1, 6, 280); many(a, "who_is_exposed", 0, 5, 260); many(a, "detect", 1, 6, 300);
+  if (!["internet", "internal", "local"].includes(a.exposure)) p.push("exposure must be internet, internal or local");
+  const r = a.remediation;
+  if (!r || typeof r !== "object" || Array.isArray(r)) p.push("remediation is required");
+  else {
+    if (!["immediate", "urgent", "planned"].includes(r.priority)) p.push("remediation.priority must be immediate, urgent or planned");
+    many(r, "steps", 1, 8, 320, "remediation.steps"); many(r, "fixed_versions", 0, 8, 160, "remediation.fixed_versions"); many(r, "workarounds", 0, 5, 320, "remediation.workarounds");
+    many(r, "verify", 1, 5, 300, "remediation.verify"); many(r, "if_compromised", 0, 6, 300, "remediation.if_compromised");
+  }
+  if (!["high", "medium", "low"].includes(a.confidence)) p.push("confidence must be high, medium or low");
+  one("caveats", 500, false);
+  const src = a.sources;
+  if (!Array.isArray(src) || src.length < 2 || src.length > 10) p.push("sources: 2 to 10 pages that were read");
+  else {
+    src.forEach((x, i) => { if (!x || !text(x.name, 100) || !https(x.url) || !SRC_KINDS.includes(x.kind) || !["full", "summary"].includes(x.read_depth)) p.push(`sources[${i}] needs name, https url (a specific page), kind (${SRC_KINDS.join(", ")}) and read_depth (full or summary)`); });
+    if (!src.some((x) => x && (x.kind === "vendor" || x.kind === "government"))) p.push("sources must include the vendor's advisory or a government source");
+  }
+  for (const [k, v] of strs) if (NOCODE.test(v)) { p.push(`${k}: looks like code, a payload, a request or an attack command; describe the technique in words instead`); break; }
+  return p;
+}
+
+/**
  * A published community post (data/chat/<YYYY-MM>/<issue>.json), written only by scripts/chat.mjs approve after review.
  * { id, at, author, kind: comment | tip | question, text, event_id, links[], reviewed_at, note?, removed?, removed_reason? }
  */

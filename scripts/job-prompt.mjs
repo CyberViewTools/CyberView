@@ -12,9 +12,9 @@ import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
-  "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
+  "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "backlog-triager": "Backlog triager", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -48,6 +48,9 @@ if (job === "researcher") {
   const plan = readJson(join(DATA, "sweep-plan.json"), { stories: [] });
   const mine = batch === "retry" ? plan.stories.filter((s) => (plan.retry || []).includes(s.id)) : plan.stories.filter((s) => String(s.batch) === batch);
   assignment = `YOUR ASSIGNMENT (researcher ${batch}): ${mine.length} stories, in this order:\n` + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 110)}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"researcher " + batch + ": nothing assigned\")");
+} else if (job === "exploit-analyst") {
+  const plan = readJson(join(DATA, "analyst-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
+  assignment = `YOUR ASSIGNMENT (exploit analyst ${batch}): ${mine.length} flaw(s):\n` + mine.map((x) => `  ${x.cve}  ${x.vendor} ${x.product}: ${String(x.name || "").slice(0, 120)}\n      why now: ${x.why}${x.required ? "\n      required action on file: " + String(x.required).slice(0, 240) : ""}${(x.refs || []).length ? "\n      references on file: " + x.refs.join(" ") : ""}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"exploit analyst " + batch + ": nothing assigned\")");
 } else if (job === "backlog-triager") {
   const plan = readJson(join(DATA, "backlog-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
   assignment = `YOUR ASSIGNMENT (backlog triager ${batch}): ${mine.length} stories. Answers file: ${join(DATA, "backlog-triage-" + batch + ".json")}\n`

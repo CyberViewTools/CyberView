@@ -40,25 +40,38 @@
     return { advisory: a, depth: g.read_depth === "full" ? "full" : "summary", readAt: str(g.read_at, 10), check: strs(g.check, 6, 320), fixed: strs(g.fixed, 8, 160), workaround: strs(g.workaround, 5, 320), signs: strs(g.compromise_signs, 6, 320),
       exposure: { internet: 1, internal: 1, local: 1 }[g.exposure] ? g.exposure : "", exploit: g.exploit_public === true, hunt: (Array.isArray(g.hunt) ? g.hunt : []).map(cleanHunt).filter(Boolean).slice(0, 12) };
   }
+  // exploitation analysis (the exploit analyst job, an AI model reading public sources): how the flaw is used and the
+  // remediation path. Rendered as text only; links must be https pages. The build already refuses records that look like code.
+  var SRC_KIND = { vendor: "Vendor", government: "Government", research: "Research", news: "News", database: "Database" };
+  function cleanAnalysis(a) {
+    if (!a || typeof a !== "object") return null;
+    var r = a.remediation && typeof a.remediation === "object" ? a.remediation : {};
+    var src = (Array.isArray(a.sources) ? a.sources : []).slice(0, 10).map(function (x) { var u = str(x && x.url, 600); return x && /^https:\/\//.test(u) && SRC_KIND[x.kind] ? { name: str(x.name, 100), url: u, kind: x.kind, full: x.read_depth === "full" } : null; }).filter(Boolean);
+    var o = { at: str(a.analyzed_at, 30), status: str(a.exploitation_status, 240), how: str(a.how_exploited, 900), pre: strs(a.preconditions, 6, 260), path: strs(a.attack_path, 6, 280),
+      exposure: { internet: "Internet-facing", internal: "Internal network", local: "Local access" }[a.exposure] || "", who: strs(a.who_is_exposed, 5, 260), detect: strs(a.detect, 6, 300),
+      priority: { immediate: 1, urgent: 1, planned: 1 }[r.priority] ? r.priority : "", steps: strs(r.steps, 8, 320), fixed: strs(r.fixed_versions, 8, 160), work: strs(r.workarounds, 5, 320), verify: strs(r.verify, 5, 300), ir: strs(r.if_compromised, 6, 300),
+      conf: { high: "High", medium: "Medium", low: "Low" }[a.confidence] || "", caveats: str(a.caveats, 500), sources: src };
+    return o.how && o.steps.length && src.length >= 2 ? o : null;
+  }
   // exploit watch: public GitHub repositories that name the CVE (a signal that exploit code may exist, not proof)
   function cleanRepo(r) {
     if (!r || typeof r !== "object") return { n: 0, top: [] };
     return { n: num(r.repos, 0, 1e5) || 0, top: (Array.isArray(r.top) ? r.top : []).slice(0, 3).map(function (x) { var u = str(x && x.url, 300); return /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/.test(u) ? { name: str(x.name, 100), url: u, stars: num(x.stars, 0, 1e7) || 0 } : null; }).filter(Boolean) };
   }
-  function cleanKev(k, guides, eventOf) {
+  function cleanKev(k, guides, eventOf, an) {
     if (!k || typeof k !== "object" || !isCve(k.cve)) return null;
     var g = guides[k.cve] || null, ev = str(eventOf[k.cve], 120);
     return { cve: k.cve, kev: true, vendor: str(k.vendor, 80), product: str(k.product, 120), name: str(k.name, 200), added: isDay(k.added) ? k.added : "", due: isDay(k.due) ? k.due : "", ransomware: k.ransomware === true,
       desc: str(k.desc, 300), cvss: num(k.cvss, 0, 10), epss: num(k.epss, 0, 1), av: /^[NALP]$/.test(k.av || "") ? k.av : "", required: str(k.required, 700),
       refs: strs(k.refs, 4, 600).filter(function (u) { return /^https:\/\//.test(u); }), affected: (Array.isArray(k.affected) ? k.affected : []).slice(0, 60).map(cleanRange).filter(Boolean),
-      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: 3, repos: cleanRepo(k.repo).n, repoTop: cleanRepo(k.repo).top };
+      guide: g, analysis: (an && an[k.cve]) || null, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: 3, repos: cleanRepo(k.repo).n, repoTop: cleanRepo(k.repo).top };
   }
-  function cleanVuln(v, guides) {
+  function cleanVuln(v, guides, an) {
     if (!v || typeof v !== "object" || !isCve(v.cve)) return null;
     var g = guides[v.cve] || null, prods = strs(v.products, 6, 60), ev = str(v.event_id, 120);
     return { cve: v.cve, kev: false, vendor: str(v.vendor, 80), product: prods.join(", "), name: str(v.title, 160), added: isDay(v.date) ? v.date : "", due: "", ransomware: false, desc: str(v.desc, 300),
       cvss: num(v.cvss, 0, 10), epss: num(v.epss, 0, 1), av: "", required: str(v.action, 300), refs: [], affected: prods.map(function (p) { return { vendor: str(v.vendor, 60), product: p, from: "", to: "", exact: "", nameOnly: true }; }),
-      guide: g, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: v.severity === 3 ? 3 : 2, repos: cleanRepo(v.repo).n, repoTop: cleanRepo(v.repo).top };
+      guide: g, analysis: (an && an[v.cve]) || null, exposure: g ? g.exposure : "", exploit_public: !!(g && g.exploit), event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", severity: v.severity === 3 ? 3 : 2, repos: cleanRepo(v.repo).n, repoTop: cleanRepo(v.repo).top };
   }
 
   var flaws = [], hunt = [], inv = [], rows = [], openCve = "", builtAt = "";
@@ -106,6 +119,34 @@
     if (!items.length) return; parent.appendChild(el("h4", null, title));
     var l = el(ordered ? "ol" : "ul"); items.forEach(function (x) { l.appendChild(el("li", null, x)); }); parent.appendChild(l);
   }
+  var PRIO = { immediate: ["Fix immediately", "bad"], urgent: ["Fix urgently", "warn"], planned: ["Fix in the next planned cycle", "info"] };
+  function analysisBox(a) {
+    var box = el("section", "wbanal"); box.setAttribute("aria-label", "How it is exploited and how to fix it");
+    var h = el("div", "wbanh"); h.appendChild(el("h4", null, "How it is exploited and how to fix it"));
+    if (a.priority) h.appendChild(el("span", "badge " + PRIO[a.priority][1], PRIO[a.priority][0]));
+    if (a.exposure) h.appendChild(el("span", "badge info", a.exposure));
+    box.appendChild(h);
+    if (a.status) box.appendChild(el("p", "wbanst", a.status));
+    var cols = el("div", "wbancols"), left = el("div", "wbancol"), right = el("div", "wbancol fix");
+    left.appendChild(el("h5", null, "The attack"));
+    left.appendChild(el("p", null, a.how));
+    list(left, "What an attacker needs", a.pre);
+    list(left, "How an attack unfolds", a.path, true);
+    list(left, "Who is exposed", a.who);
+    list(left, "How to detect it", a.detect);
+    right.appendChild(el("h5", null, "The remediation path"));
+    list(right, "Do this, in order", a.steps, true);
+    list(right, "Fixed in", a.fixed);
+    list(right, "If you cannot patch yet", a.work);
+    list(right, "Confirm the fix took", a.verify);
+    list(right, "If you find signs of compromise", a.ir, true);
+    cols.appendChild(left); cols.appendChild(right); box.appendChild(cols);
+    var sl = el("p", "note"); sl.appendChild(document.createTextNode("Sources read: "));
+    a.sources.forEach(function (s, i) { if (i) sl.appendChild(document.createTextNode(" · ")); sl.appendChild(link(s.url, s.name)); sl.appendChild(document.createTextNode(" (" + SRC_KIND[s.kind].toLowerCase() + (s.full ? "" : ", summary") + ")")); });
+    box.appendChild(sl);
+    box.appendChild(el("p", "note", "Written by an AI model (Claude Opus) from the sources listed" + (a.at ? ", " + a.at.slice(0, 10) : "") + (a.conf ? "; confidence " + a.conf.toLowerCase() : "") + ". It explains how the flaw is used so you can defend against it and contains no exploit code. Confirm versions and steps against the vendor advisory before you act." + (a.caveats ? " Caveats: " + a.caveats : "")));
+    return box;
+  }
   function detail(r) {
     var f = r.f, g = f.guide, d = el("div", "wbdetail");
     if (f.desc) d.appendChild(el("p", null, f.desc));
@@ -116,6 +157,7 @@
       if (r.m.fixed.length && r.m.state !== "clear") me.appendChild(el("p", null, "NVD lists it as fixed in: " + r.m.fixed.join(", ") + ". Confirm the right fixed release for your branch in the vendor advisory."));
       d.appendChild(me);
     }
+    if (f.analysis) d.appendChild(analysisBox(f.analysis));
     var pts = el("div", "wbpts"); pts.appendChild(el("h4", null, "Why it ranks here: " + r.score + " of 100"));
     var pl = el("ul"); r.points.forEach(function (p) { var li = el("li"); li.appendChild(el("b", null, "+" + p[0])); li.appendChild(document.createTextNode(" " + p[1])); pl.appendChild(li); }); pts.appendChild(pl); d.appendChild(pts);
     if (g) {
@@ -168,6 +210,7 @@
       var dt = dueText(f); if (dt) chips.appendChild(el("span", "badge " + (dueLeft(f) < 0 ? "warn" : "info"), dt));
       if (f.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + Math.round(f.epss * 100) + "%"));
       if (f.guide) chips.appendChild(el("span", "badge ok", "Check and fix steps"));
+      if (f.analysis) chips.appendChild(el("span", "badge ok", "Exploit and fix analysis"));
       mid.appendChild(chips); b.appendChild(mid);
       b.appendChild(el("span", "wbrank", "#" + (i + 1)));
       b.addEventListener("click", function () { openCve = open ? "" : f.cve; renderQueue(); if (!open) { var n = document.getElementById("row-" + f.cve); if (n) n.querySelector("button").focus(); } });
@@ -285,8 +328,10 @@
     var guides = {}, raw = d && d.guides && typeof d.guides === "object" ? d.guides : {};
     Object.keys(raw).slice(0, 2000).forEach(function (k) { if (isCve(k)) { var g = cleanGuide(raw[k]); if (g) guides[k] = g; } });
     var eventOf = d && d.event_of && typeof d.event_of === "object" ? d.event_of : {};
-    flaws = (Array.isArray(d && d.kev) ? d.kev : []).slice(0, 3000).map(function (k) { return cleanKev(k, guides, eventOf); }).filter(Boolean)
-      .concat((Array.isArray(d && d.vulns) ? d.vulns : []).slice(0, 80).map(function (v) { return cleanVuln(v, guides); }).filter(Boolean));
+    var an = {}, ra = d && d.analyses && typeof d.analyses === "object" ? d.analyses : {};
+    Object.keys(ra).slice(0, 2000).forEach(function (k) { if (isCve(k)) { var a = cleanAnalysis(ra[k]); if (a) an[k] = a; } });
+    flaws = (Array.isArray(d && d.kev) ? d.kev : []).slice(0, 3000).map(function (k) { return cleanKev(k, guides, eventOf, an); }).filter(Boolean)
+      .concat((Array.isArray(d && d.vulns) ? d.vulns : []).slice(0, 80).map(function (v) { return cleanVuln(v, guides, an); }).filter(Boolean));
     hunt = (Array.isArray(d && d.hunt) ? d.hunt : []).slice(0, 200).map(cleanHunt).filter(Boolean);
     var fm = {}; hunt.forEach(function (h) { fm[h.format] = 1; });
     Object.keys(fm).sort().forEach(function (k) { var o = el("option", null, FORMATS[k]); o.value = k; $("wbFmt").appendChild(o); });

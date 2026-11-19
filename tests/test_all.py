@@ -759,6 +759,15 @@ async def main():
                "hunt": [{"name": "Indicators", "format": "stix", "url": "https://agency.example/x.stix.json", "publisher": "Test Agency", "about": "CVE-2026-1001", "cve": "CVE-2026-1001", "date": "2026-11-18"},
                         {"name": "Sigma rule for webshell", "format": "sigma", "url": "https://vendor.example/rule.yml", "about": "Some report", "event_id": bundle["events"][0]["id"], "date": "2026-11-17"},
                         {"name": "evil", "format": "exe", "url": "https://x.example/a"}]}
+        wbd["analyses"] = {
+            "CVE-2026-1001": {"cve": "CVE-2026-1001", "analyzed_at": "2026-11-19T04:30:00Z", "model": "claude-opus-5-5", "exploitation_status": "Exploited in the wild (test).",
+                              "how_exploited": "A remote attacker sends a crafted login request to the admin interface and is let in without a password.", "preconditions": ["Admin interface reachable"],
+                              "attack_path": ["Find an exposed admin interface", "Log in without a password", "Create an admin account"], "exposure": "internet", "who_is_exposed": ["Devices with admin on WAN"],
+                              "detect": ["New admin accounts in the event log"], "remediation": {"priority": "immediate", "steps": ["Upgrade to 7.4.10", "Review admin accounts"], "fixed_versions": ["7.4.10"],
+                              "workarounds": ["Disable admin on WAN"], "verify": ["get system status shows 7.4.10"], "if_compromised": ["Rebuild the configuration from a known-good backup"]},
+                              "confidence": "high", "caveats": "", "sources": [{"name": "Fortinet PSIRT", "url": "https://vendor.example/psirt/1", "kind": "vendor", "read_depth": "full"},
+                              {"name": "bad", "url": "javascript:alert(3)", "kind": "vendor", "read_depth": "full"}, {"name": "CISA", "url": "https://agency.example/kev/1", "kind": "government", "read_depth": "summary"}]},
+            "CVE-2026-1002": {"cve": "CVE-2026-1002", "how_exploited": "only one source", "remediation": {"steps": ["x"]}, "sources": [{"name": "a", "url": "https://a.example/1", "kind": "vendor", "read_depth": "full"}]}}
         json.dump(wbd, open(os.path.join(site17, "data", "workbench.json"), "w"))
 
         async def v117(url):
@@ -780,6 +789,9 @@ async def main():
             await pg.locator("#wbList .wbhead >> nth=0").click(); await pg.wait_for_timeout(150)
             det = await pg.locator(".wbdetail").text_content()
             ok("detail: your version, reasons, steps and fix", all(x in det for x in ["You run an affected version", "FortiOS 7.2.4 ×12", "Known exploited (CISA)", "Used by ransomware groups", "Internet-facing (from the advisory)", "How to check if you are affected", "get system status", "7.4.10 or later", "Signs of compromise"]), det[:300])
+            an = await pg.locator(".wbdetail .wbanal").text_content()
+            ok("v1.29: exploit and fix analysis shown with its remediation path and sources", all(x in an for x in ["How it is exploited and how to fix it", "Fix immediately", "Upgrade to 7.4.10", "Confirm the fix took", "contains no exploit code"]) and await pg.locator(".wbdetail .wbanal a").count() == 2, an[:200])
+            ok("v1.29: an analysis with fewer than two valid sources is not shown", await pg.locator("#wbList .wbrow", has_text="CVE-2026-1002").locator("text=Exploit and fix analysis").count() == 0)
             hrefs = await pg.eval_on_selector_all(".wbdetail a", "as => as.map(a => a.href)")
             ok("detail: only https links, advisory and NVD present", not any(h.startswith("javascript") for h in hrefs) and any("nvd.nist.gov/vuln/detail/CVE-2026-1001" in h for h in hrefs) and any("vendor.example/psirt/1" in h for h in hrefs), hrefs)
             await pg.select_option("#wbShow", "mine"); await pg.wait_for_timeout(100)

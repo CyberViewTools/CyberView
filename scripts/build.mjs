@@ -22,7 +22,7 @@ import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
 import { load as pipelineMetrics } from "./metrics.mjs";
-import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat } from "./lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -173,6 +173,14 @@ try {
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();
 writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs, context }));
+// exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code
+const analyses = {};
+for (const x of listDir("analyses")) {
+  const bad = x.r ? checkAnalysis(x.r, x.id) : ["not valid JSON"];
+  if (bad.length) { bad.forEach((m) => errors.push(`analyses/${x.id}.json: ${m}`)); continue; }
+  const { id, ...a } = x.r; analyses[x.id] = a;
+}
+
 // the workbench (site/data/workbench.json): every known-exploited entry on file with its affected-version ranges, recent
 // high-risk flaws that are not on CISA's list, the fix guides, and detection resources named by advisories and reports
 {
@@ -195,7 +203,7 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
   for (const e of allEvents.filter((e) => !e.duplicate_of && Array.isArray(e.hunt) && e.hunt.length && e.date >= dayAgo(60)).sort((a, b) => (a.date < b.date ? 1 : -1)))
     for (const h of e.hunt) hunt.push({ ...h, about: s(e.title, 140), event_id: e.id, date: e.date });
   for (const [cve, g] of Object.entries(guides)) for (const h of g.hunt || []) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
-  writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, event_of: eventOf, hunt: hunt.slice(0, 200) }));
+  writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, analyses, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)

@@ -88,9 +88,9 @@ The site shows it on `tabletop.html` with past exercises from the snapshots.
 
 `index.json` (months with counts), `<YYYY-MM>.json` (full events of the month), `search.json` (compact rows: id, date, category, severity, status, title, org, country, cves, tags, actor), `events.jsonl` (everything), `kev.json` (every known-exploited entry).
 
-## CVE corpus (scripts/cve.mjs; the cve-corpus release asset; published as site/data/cve/)
+## CVE corpus (scripts/cve.mjs; the Actions cache; published as site/data/cve/)
 
-Every CVE in the official CVE List (CVEProject/cvelistV5), with CISA's enrichment, kept current hourly by `.github/workflows/cve.yml`. The working corpus (`cache/cve/<year>.jsonl` plus `state.json`) is the asset `cve-corpus.tar.gz` of the `cve-corpus` release, never committed. The deploy runs `node scripts/cve.mjs site`.
+Every CVE in the official CVE List (CVEProject/cvelistV5), with CISA's enrichment, kept current hourly by `.github/workflows/cve.yml`. The working corpus (`cache/cve/<year>.jsonl` plus `state.json`) is kept in the GitHub Actions cache (key `cve-corpus-<run>`), never committed; the deploy restores the newest copy. The deploy runs `node scripts/cve.mjs site`.
 Row: `id`, `state` (P published, R rejected), `pub`, `upd` (YYYY-MM-DD), `cvss`, `sev` (C H M L N), `ver` (CVSS version), `cwe`, `vendor`, `product`, `title` (160), `desc` (600), `cna` (assigner), `expl` (CISA SSVC exploitation: none, poc, active), `kev` (date CISA listed it), `epss`, `pct` (EPSS percentile).
 Site files: `index.json` (counts, sources' freshness), `recent.json` (published or changed in the last 14 days, up to 3000), `<year>/<floor(n/1000)>.json` (`{fields, rows}` with rows as arrays in `fields` order).
 New CVEs that are exploited per CISA, on KEV, or CVSS 9+ and published in the last 7 days are filed as leads (`via: cvelist`, `kind: exploited` or `cve`).

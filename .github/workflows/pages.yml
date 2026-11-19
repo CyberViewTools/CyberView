@@ -48,14 +48,18 @@ jobs:
         env:
           # the public address used in feeds and links; set the repository variable SITE_URL when a custom domain is added
           SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
-      - name: CVE lookup files from the cve workflow's corpus (optional; without it the CVE page says so)
+      - name: Restore the CVE corpus saved by the cve workflow (optional)
+        continue-on-error: true
+        uses: actions/cache/restore@v4
+        with:
+          path: cache/cve
+          key: cve-corpus-none
+          restore-keys: cve-corpus-
+      - name: CVE lookup files (optional; without a corpus the Vulnerabilities page says the CVE list is not available)
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ github.token }}
           CVE_CORPUS: ${{ github.workspace }}/cache/cve
-        run: |
-          mkdir -p cache
-          gh release download cve-corpus --pattern cve-corpus.tar.gz --dir cache && tar -xzf cache/cve-corpus.tar.gz -C cache && node scripts/cve.mjs site
+        run: if [ -f "$CVE_CORPUS/state.json" ]; then node scripts/cve.mjs site; else echo "No CVE corpus in the cache yet."; fi
       - name: Verify the build before publishing
         run: node scripts/verify-build.mjs --against-live
         env:

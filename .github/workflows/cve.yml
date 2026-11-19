@@ -1,9 +1,9 @@
 name: CVE corpus (CVE List, EPSS)
 # Every CVE published since 1999, kept current. No AI model.
-# The corpus (cache/cve, about 300,000 compact rows) is kept as the asset of the "cve-corpus" release of this repository,
-# never committed. Each run: download it, or build it from the CVE List's midnight release (first run, on request, or
+# The corpus (cache/cve, about 300,000 compact rows) is kept in the GitHub Actions cache (key cve-corpus-<run>), never
+# committed; if the cache is evicted, the next run rebuilds it from the CVE List in about two minutes. Each run: download it, or build it from the CVE List's midnight release (first run, on request, or
 # when it fell behind the change log), apply the CVE List's change log, attach EPSS once a day and CISA known-exploited
-# dates, upload it again, and file new notable CVEs (exploited per CISA, on KEV, or CVSS 9+) as leads for the
+# dates, save it again, and file new notable CVEs (exploited per CISA, on KEV, or CVSS 9+) as leads for the
 # research loop. Its commit starts a deploy, which publishes the lookup files.
 on:
   schedule:
@@ -38,15 +38,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Download the corpus
+      - name: Restore the corpus (the newest copy saved by an earlier run)
+        uses: actions/cache/restore@v4
+        with:
+          path: cache/cve
+          key: cve-corpus-${{ github.run_id }}
+          restore-keys: cve-corpus-
+      - name: Is there a corpus?
         id: get
         run: |
-          mkdir -p cache
-          if [ "${{ inputs.rebuild }}" != "true" ] && gh release download cve-corpus --pattern cve-corpus.tar.gz --dir cache 2>/dev/null && tar -xzf cache/cve-corpus.tar.gz -C cache && [ -f "$CVE_CORPUS/state.json" ]; then
-            echo "have=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "have=0" >> "$GITHUB_OUTPUT"
-          fi
+          if [ "${{ inputs.rebuild }}" != "true" ] && [ -f "$CVE_CORPUS/state.json" ]; then echo "have=1" >> "$GITHUB_OUTPUT"; else echo "have=0" >> "$GITHUB_OUTPUT"; fi
       - name: Build every CVE since 1999 from the CVE List's midnight release (first run or rebuild)
         if: steps.get.outputs.have != '1'
         run: bash scripts/cve-baseline.sh
@@ -64,16 +65,11 @@ jobs:
           if [ "$(node -e 'const s=require(process.env.CVE_CORPUS+"/state.json");console.log(s.epss_date||"")')" != "$(date -u +%F)" ]; then node scripts/cve.mjs epss || echo "EPSS unavailable; keeping yesterday's scores"; fi
           node scripts/cve.mjs kev
           node scripts/cve.mjs stats
-      - name: Upload the corpus
-        run: |
-          tar -czf cve-corpus.tar.gz -C cache cve
-          ls -l cve-corpus.tar.gz
-          if ! gh release view cve-corpus >/dev/null 2>&1; then
-            gh release create cve-corpus cve-corpus.tar.gz --title "CVE corpus (working data)" --notes "Compact CVE rows used to build the site's CVE lookup. Updated hourly by the cve workflow; not a software release." --latest=false && exit 0
-          fi
-          # a release that was just created can take a moment to accept uploads: retry with backoff
-          for i in 1 2 3 4 5; do gh release upload cve-corpus cve-corpus.tar.gz --clobber && exit 0; echo "upload attempt $i failed; retrying"; sleep $((i * 15)); done
-          exit 1
+      - name: Save the corpus for the next run and the deploy
+        uses: actions/cache/save@v4
+        with:
+          path: cache/cve
+          key: cve-corpus-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Commit new leads and the run time (starts a deploy)
         run: |
           git config user.name "cyberview-feeds"

@@ -11,7 +11,7 @@
 //                       index.json (counts, freshness) and recent.json (published or changed in the last 14 days)
 //   stats | get <id>
 // The corpus lives in CVE_CORPUS (default cache/cve/, not committed): <year>.jsonl plus state.json. The cve workflow
-// keeps it as a release file of this repository between runs, so the full history is never committed to git.
+// keeps it in the GitHub Actions cache between runs, so the full history is never committed to git.
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync, appendFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";

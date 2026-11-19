@@ -68,12 +68,13 @@
   "org": "CISA",
   "pin_type": "agency",
   "place": "Washington, DC area",
-  "plain": "US cyber agency CISA added six flaws to its list of weaknesses that attackers are actively using. They affect Cisco phone-system software, Barracuda email filtering devices, Microsoft Outlook and Google Chrome.",
+  "plain": "US cyber agency CISA added six flaws to its list of weaknesses that attackers are actively using. They affect Cisco phone-system software, Barracuda email filtering devices, Microsoft Outlook and Google's Chromium browser engine.",
   "products": [
     "Cisco BroadWorks",
     "Barracuda Email Security Gateway",
     "Microsoft Outlook",
-    "Google Chrome"
+    "Google Chromium",
+    "Openwave Webtop Media Transcoder"
   ],
   "report": {
     "doc_id": "",
@@ -115,16 +116,21 @@
     }
   ],
   "status": "official",
-  "summary": "The six additions are an XML external entity flaw in Cisco BroadWorks, an authentication bypass and a command injection in Barracuda Email Security Gateway, the Outlook zero-day, the Chrome zero-day and a flaw in Openwave Webtop Media Transcoder. Federal deadlines run to November 24.",
-  "tags": [
-    "zero-day"
-  ],
+  "summary": "The six additions are an XML external entity flaw in Cisco BroadWorks, an authentication bypass and a command injection in Barracuda products including Email Security Gateway, an Outlook flaw (CVE-2026-124194), a Chromium use-after-free (CVE-2026-125350) and a flaw in Openwave Webtop Media Transcoder. Federal due dates in the catalog run from November 13 to November 24.",
+  "tags": [],
   "time_basis": "published",
-  "title": "CISA adds six exploited flaws to KEV: Cisco BroadWorks, Barracuda ESG, Outlook, Chrome, Openwave",
-  "updated_at": "2026-11-18T06:14:21Z",
+  "title": "CISA adds six exploited flaws to KEV: Cisco BroadWorks, Barracuda ESG, Outlook, Chromium, Openwave",
+  "updated_at": "2026-11-19T02:27:34Z",
   "validation": {
     "checked_at": "2026-11-17T23:15:00Z",
     "note": "Reviewed against the original CISA document.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T02:27:46Z",
+    "note": "CVEs, vendors and Nov 13/24 due dates match CISA bulletin and KEV data; removed unsupported zero-day wording/tag, Chrome corrected to Chromium, Openwave added to products",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T02:27:46Z"
 }

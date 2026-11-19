@@ -4,6 +4,13 @@
   "use strict";
   // offline copy (sw.js): if the site cannot be reached, the last good pages and data are shown instead of an error
   try { if ("serviceWorker" in navigator && /^https:$|^http:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
+  // tables with class "stack" turn into cards on phones; each cell needs its column name (CSS reads data-label)
+  function label(t) { var hs = Array.prototype.map.call(t.querySelectorAll("thead th"), function (h) { return h.textContent.trim(); }); if (!hs.length) return;
+    Array.prototype.forEach.call(t.querySelectorAll("tbody tr"), function (tr) { Array.prototype.forEach.call(tr.children, function (td, i) { if (hs[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", hs[i]); }); }); }
+  Array.prototype.forEach.call(document.querySelectorAll("table.stack"), function (t) { label(t); try { new MutationObserver(function () { label(t); }).observe(t, { childList: true, subtree: true }); } catch (e) {} });
+  var bar = document.querySelector("header.bar, .bar");
+  function barh() { if (bar && getComputedStyle(bar).position === "sticky") document.documentElement.style.setProperty("--barh", bar.offsetHeight + "px"); }
+  if (bar && !document.getElementById("stage")) { barh(); window.addEventListener("resize", barh); }
   var btn = document.getElementById("navBtn"), sheet = document.getElementById("navSheet");
   if (!btn || !sheet) return;
   function set(open) {

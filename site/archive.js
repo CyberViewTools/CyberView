@@ -20,6 +20,7 @@
       });
       $("summary").textContent = rows.length + " events recorded since " + (rows.length ? fmt(rows[rows.length - 1].date) : "the start") + ". The map shows the last seven days; everything else lives here.";
       readHash(); render();
+      window.addEventListener("hashchange", function () { readHash(); render(); });
       // a link to one event (archive.html#q=<id>) opens it straight away
       var q = $("q").value.trim(), only = $("list").querySelectorAll(".row > button");
       if (only.length === 1 && rows.some(function (r) { return r.id === q; })) only[0].click();

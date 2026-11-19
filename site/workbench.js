@@ -193,7 +193,7 @@
       var tr = el("tr"); tr.appendChild(el("td", null, (x.it.vendor ? x.it.vendor + " " : "") + x.it.name)); tr.appendChild(el("td", "nowrap", x.it.version || "none given")); tr.appendChild(el("td", null, x.it.count));
       var td = el("td");
       if (!x.h.length) td.appendChild(el("span", "note", "none on file"));
-      x.h.slice(0, 6).forEach(function (h) { var b = el("button", "badge " + STATE[h.state][1], h.cve + " · " + STATE[h.state][0]); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; $("wbShow").value = "all"; openCve = h.cve; tab("queue"); renderQueue(); }); td.appendChild(b); });
+      x.h.slice(0, 6).forEach(function (h) { var b = el("button", "badge " + STATE[h.state][1], h.cve + " · " + STATE[h.state][0]); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; $("wbShow").value = "all"; openCve = h.cve; tab("queue"); renderQueue(); showOpen(); }); td.appendChild(b); });
       tr.appendChild(td); tb.appendChild(tr);
     });
     t.appendChild(tb);
@@ -222,7 +222,7 @@
       var li = el("li", "wbh"); li.appendChild(el("span", "badge info", FORMATS[h.format]));
       var mid = el("div"); mid.appendChild(link(h.url, h.name));
       var sub = el("p", "note", [h.publisher, h.date ? fmtDay(h.date) : ""].filter(Boolean).join(" · ") + (h.about ? " · for " : ""));
-      if (h.cve) { var b = el("button", "linkbtn", h.cve); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; openCve = h.cve; tab("queue"); renderQueue(); }); sub.appendChild(b); }
+      if (h.cve) { var b = el("button", "linkbtn", h.cve); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; openCve = h.cve; tab("queue"); renderQueue(); showOpen(); }); sub.appendChild(b); }
       else if (h.event) sub.appendChild(link("./#e=" + h.event, h.about)); else if (h.about) sub.appendChild(document.createTextNode(h.about));
       mid.appendChild(sub); li.appendChild(mid); box.appendChild(li);
     });
@@ -252,6 +252,9 @@
     return L.join("\n");
   }
   function flash(btn, t) { var old = btn.textContent; btn.textContent = t; setTimeout(function () { btn.textContent = old; }, 2200); }
+
+  /* bring the opened flaw into view (on a phone it is otherwise below the fold) */
+  function showOpen() { var n = openCve && document.getElementById("row-" + openCve); if (n) { try { n.scrollIntoView({ block: "start" }); } catch (e) { n.scrollIntoView(); } var b = n.querySelector("button"); if (b) b.focus({ preventScroll: true }); } }
 
   /* ---- tabs and wiring ---- */
   function tab(t) {

@@ -117,6 +117,7 @@
     var items = document.querySelectorAll("#ttInj > li"), next = null;
     Array.prototype.forEach.call(items, function (li) {
       var on = (clock.start || clock.held) > 0, at = +li.dataset.at, due = on && m >= at;
+      if (due && !li.classList.contains("due") && clock.start && at > 0) { try { li.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {} }
       li.classList.toggle("due", due);
       li.classList.toggle("locked", clock.reveal && !due);
       if (m < at && next === null) next = at;

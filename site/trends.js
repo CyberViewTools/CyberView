@@ -25,9 +25,12 @@
 
   function days(list) {
     var box = $("days"), max = Math.max(1, Math.max.apply(null, list.map(function (d) { return d.total; })));
+    var cap = el("p", "note daycap", "Tap a bar to see that day's count."); cap.setAttribute("aria-live", "polite"); box.parentNode.insertBefore(cap, box.nextSibling);
     list.forEach(function (d, i) {
-      var col = el("div", "day"); col.title = fmt(d.date, { weekday: "short", month: "short", day: "numeric" }) + ": " + d.total + " event" + (d.total === 1 ? "" : "s");
-      var bar = el("div", "bar"); bar.style.height = Math.round((d.total / max) * 128) + "px"; if (!d.total) bar.hidden = true; col.appendChild(bar);
+      var text = fmt(d.date, { weekday: "short", month: "short", day: "numeric" }) + ": " + d.total + " event" + (d.total === 1 ? "" : "s");
+      var col = el("button", "day"); col.type = "button"; col.title = text; col.setAttribute("aria-label", text);
+      col.addEventListener("click", function () { cap.textContent = text; Array.prototype.forEach.call(box.querySelectorAll(".day.on"), function (x) { x.classList.remove("on"); }); col.classList.add("on"); });
+      var bar = el("span", "daybar"); bar.style.height = Math.round((d.total / max) * 128) + "px"; if (!d.total) bar.hidden = true; col.appendChild(bar);
       col.appendChild(el("span", "lab", i % 7 === 6 || i === list.length - 1 ? fmt(d.date) : ""));
       box.appendChild(col);
     });

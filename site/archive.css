@@ -60,10 +60,12 @@ main{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
 .panel h2{margin:0 0 10px;font:600 17px var(--font-display)}
 .note{color:var(--muted);font-size:13px;margin:10px 2px 0}
 .days{display:grid;grid-template-columns:repeat(28,minmax(0,1fr));gap:3px;align-items:end;height:150px;padding-bottom:20px;position:relative}
-.days .day{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
-.days .bar{background:var(--accent);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
-.days .day:hover .bar{opacity:1}
-.days .lab{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
+.days .day{all:unset;box-sizing:border-box;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;touch-action:manipulation}
+.days .daybar{display:block;background:var(--accent);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+.days .day:hover .daybar,.days .day.on .daybar{opacity:1}.days .day.on .daybar{outline:2px solid var(--ink);outline-offset:1px}
+.days .day:focus-visible{outline:2px solid var(--accent)}
+.daycap{min-height:1.4em;margin:8px 0 0}
+.days .lab{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);white-space:nowrap}
 .dims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:4px 6px;border-bottom:1px solid var(--line)}
@@ -225,3 +227,30 @@ body.nav-open{overflow:hidden}
 .cmtext{margin:8px 0 0;font-size:15px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
 .cmnote{font-style:italic}
 .cmfoot{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:13px}
+
+/* phones (review 2026-11-19): readable tables, no zoom on focus, fingers-sized targets */
+button,a,summary,select,label,.btn{touch-action:manipulation}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.navsheet{overscroll-behavior:contain}
+@media (max-width:900px){input,select,textarea{font-size:16px!important}}
+@media (max-width:600px){
+  table.stack thead{display:none}
+  table.stack,table.stack tbody,table.stack tr{display:block;width:100%}
+  table.stack tr{padding:10px 0;border-bottom:1px solid var(--line)}
+  table.stack td{display:block;position:relative;padding:3px 0 3px 100px;border:0;white-space:normal;text-align:left;min-height:22px;overflow-wrap:anywhere}
+  table.stack td::before{content:attr(data-label);position:absolute;left:0;top:5px;width:92px;color:var(--muted);font-size:12px;font-weight:600}
+  table.stack td:first-child{padding-left:0}
+  table.stack .badge{white-space:normal;max-width:100%;text-align:left}
+  table.stack td:first-child{display:block;font-size:15px;padding-bottom:6px}
+  table.stack td:first-child::before{display:none}
+  th.num{white-space:normal}
+  .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .filters label.grow,.filters label.check{grid-column:1/-1}
+  .filters select{width:100%;min-width:0;padding-left:8px;padding-right:24px;background-position:right 7px center}
+  .wbtabs{overflow-x:visible;gap:2px}.wbtabs button{flex:1 1 0;min-width:0;padding:10px 4px;text-align:center;white-space:normal;font-size:14px;line-height:1.2}
+  .ttclock{position:sticky;top:var(--barh,56px);z-index:1;padding:8px 0;background:var(--panel)}
+}
+.wbrow,.ttinj>li,#list>li{scroll-margin-top:calc(var(--barh,56px) + 8px)}
+.foot a{display:inline-flex;align-items:center;min-height:40px}
+.wbhow summary,details>summary{min-height:40px;display:flex;align-items:center}
+.filters label.check input,.ttrev input,.panel label.check input{width:22px;height:22px;flex:none}

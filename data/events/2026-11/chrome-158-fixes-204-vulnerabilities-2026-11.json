@@ -11,7 +11,7 @@
   "geo_basis": "hq",
   "time_basis": "reported",
   "first_seen": "2026-11-18T19:12:06Z",
-  "updated_at": "2026-11-19T05:12:00Z",
+  "updated_at": "2026-11-19T12:56:00Z",
   "category": "vuln",
   "date": "2026-11-17",
   "date_note": "SecurityWeek, published November 18, says Google announced the release on Tuesday (November 17).",
@@ -27,7 +27,7 @@
   "severity": 2,
   "status": "official",
   "source_tier": "established",
-  "summary": "Google released Chrome 158 for Windows, macOS and Linux with fixes for 204 vulnerabilities: 6 critical, 62 high, 82 medium and 54 low. Use-after-free is the most common type (51). No exploitation in the wild is mentioned. Google found 145 itself and paid $11,000 for five external reports.",
+  "summary": "Google released Chrome 158 for Windows, macOS and Linux with fixes for 204 vulnerabilities: 6 critical, 62 high, 82 medium and 54 low. Use-after-free is the most common type (51). Malwarebytes says Google credits an Anthropic researcher, assisted by Claude, with two of the critical flaws (GPU and Media). No exploitation in the wild is mentioned. Google found 145 itself and paid $11,000 for five external reports.",
   "plain": "Google released a very large Chrome security update, with six serious flaws fixed. No attacks are reported.",
   "exec": "A big routine browser patch; no known exploitation, but six critical flaws are fixed.",
   "action": "Update Chrome to 158.0.8127.36 or later and restart browsers; check managed fleets pick up the update.",
@@ -35,6 +35,10 @@
     {
       "name": "SecurityWeek",
       "url": "https://www.securityweek.com/chrome-158-patches-204-vulnerabilities/"
+    },
+    {
+      "name": "Malwarebytes",
+      "url": "https://www.malwarebytes.com/blog/bugs/2026/11/chrome-patches-six-critical-flaws-two-found-with-ais-help"
     }
   ],
   "report": {
@@ -54,9 +58,9 @@
     "url": "https://www.securityweek.com/chrome-158-patches-204-vulnerabilities/"
   },
   "validation": {
-    "checked_at": "2026-11-18T19:12:06Z",
-    "state": "single_source",
-    "note": "Read via fetch agent; Chrome Releases blog cited, not opened."
+    "checked_at": "2026-11-19T12:56:00Z",
+    "state": "corroborated",
+    "note": "SecurityWeek and Malwarebytes report the 204 fixes and six critical flaws independently; Chrome Releases post not opened."
   },
   "review": {
     "state": "corrected",

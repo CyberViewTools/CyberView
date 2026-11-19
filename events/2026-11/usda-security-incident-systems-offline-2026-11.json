@@ -1,72 +1,48 @@
 {
+  "action": "Farmers and USDA partners: expect intermittent outages of USDA payment and status tools; use official USDA channels for updates and verify any unexpected USDA email or call before sharing information.",
   "actor": "",
-  "attack": [
-    "intrusion"
-  ],
-  "impact": "Many USDA applications, including farmer payment tools, had multi-day outages after database passwords were reset; VPN problems for some staff.",
-  "tags": [
-    "government",
-    "incident-response"
-  ],
-  "cves": [],
-  "cve_meta": [],
-  "products": [],
-  "geo_basis": "agency",
-  "time_basis": "published",
-  "first_seen": "2026-11-19T22:15:00Z",
-  "updated_at": "2026-11-19T22:15:00Z",
+  "attack": [],
   "category": "incident",
-  "date": "2026-11-19",
-  "date_note": "Date of the Nextgov report; the start of the incident is not stated (an internal email was sent on Monday).",
-  "occurred_at": "2026-11-19T00:00:00Z",
-  "title": "USDA resets database passwords after a security incident, causing application outages",
-  "org": "U.S. Department of Agriculture",
-  "sector": "Government",
   "country": "United States",
-  "place": "Washington, DC",
-  "lat": 38.89,
+  "cves": [],
+  "date": "2026-11-19",
+  "date_note": "Date is the Nextgov report; the internal disclosure was earlier that week (an email sent Monday).",
+  "exec": "A US federal agency that pays farmers has taken applications offline after a security incident; the cause and any data loss are not yet known.",
+  "first_seen": "2026-11-19T22:12:00Z",
+  "geo_basis": "agency HQ",
+  "lat": 38.887,
   "lng": -77.03,
-  "pin_type": "agency",
+  "occurred_at": "2026-11-19T20:42:00Z",
+  "org": "US Department of Agriculture",
+  "pin_type": "hq",
+  "place": "Washington, DC",
+  "plain": "The US Department of Agriculture has had a security incident, and staff took several systems offline, including tools used to pay farmers. It is not yet clear who did it or whether any data was taken.",
+  "products": [],
+  "sector": "Government / agriculture",
   "severity": 2,
-  "status": "developing",
   "source_tier": "established",
-  "summary": "Nextgov reports, citing three people familiar with the matter and an internal email, that USDA's cybersecurity operations center uncovered a security incident. Responders reset all database passwords in all environments, causing outages of many applications, including tools for payments between USDA and farmers. It is not clear who is responsible or whether data was taken. USDA and CISA had not commented.",
-  "plain": "The US Department of Agriculture found a security incident and took systems offline, disrupting farmer payment and status tools. Who is behind it, and whether data was taken, is unknown.",
-  "exec": "A federal agency's payment and aid applications are disrupted; cause and data impact are unconfirmed.",
-  "action": "Farmers and USDA partners: expect intermittent outages this week, rely on official USDA notices and be wary of unsolicited messages about payments.",
   "sources": [
     {
-      "name": "Nextgov",
+      "name": "Nextgov/FCW",
       "url": "https://www.nextgov.com/cybersecurity/2026/11/usda-grapples-security-breach-it-staff-take-multiple-systems-offline/417350/"
     }
   ],
-  "report": {
-    "doc_id": "",
-    "iocs_available": false,
-    "key_findings": [
-      "USDA's Cybersecurity and Privacy Operations Center uncovered a security incident, per three people familiar and an internal email.",
-      "All database passwords in all environments were reset, causing outages of many applications.",
-      "Not clear who carried out the intrusion or if any data was exfiltrated; USDA and CISA reached for comment."
-    ],
-    "published": "2026-11-19",
-    "publisher": "Nextgov",
-    "publisher_type": "news",
-    "read_depth": "full",
-    "recommendations": [
-      "Follow official USDA notices for application status."
-    ],
-    "url": "https://www.nextgov.com/cybersecurity/2026/11/usda-grapples-security-breach-it-staff-take-multiple-systems-offline/417350/"
-  },
+  "status": "developing",
+  "summary": "Nextgov reports, citing three anonymous people and an internal email and bulletin it viewed, that USDA applications were taken offline over several days after a security incident disclosed internally this week. The email says database passwords were reset in all environments. Affected tools include financial systems for payments to farmers. Nextgov says it is unclear who was responsible or whether data was taken; USDA has not commented publicly.",
+  "tags": [],
+  "time_basis": "reported",
+  "title": "USDA takes multiple systems offline after internal security incident",
+  "updated_at": "2026-11-19T22:12:00Z",
   "validation": {
-    "checked_at": "2026-11-19T22:15:00Z",
-    "state": "single_source",
-    "note": "Read via fetch agent: one article (Nextgov), anonymous sourcing; no official USDA confirmation found."
+    "checked_at": "2026-11-19T22:12:00Z",
+    "note": "Single publisher (Nextgov/FCW, with Government Executive also viewing the documents) relying on anonymous sources and internal notices; no on-record USDA statement.",
+    "state": "single_source"
   },
   "review": {
     "state": "passed",
-    "at": "2026-11-19T22:10:51Z",
-    "note": "Compared title, summary, outages, password reset, VPN, anonymous sourcing, no USDA/CISA comment, date and status against the Nextgov article",
+    "at": "2026-11-19T22:15:38Z",
+    "note": "Compared title, summary, date and single_source status against the Nextgov/FCW article: anonymous sources, Monday internal email, database passwords reset in all environments, farmer payment tools offline, cause and data theft unknown, no USDA comment. No actor named, severity 2 fits.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T22:10:51Z"
+  "qa_checked_at": "2026-11-19T22:15:38Z"
 }

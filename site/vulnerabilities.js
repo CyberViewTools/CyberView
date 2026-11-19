@@ -455,7 +455,7 @@
     if (ix.total !== null) $("wbnAll").textContent = fmtN(ix.total);
     var age = ix.cvelist ? Math.round((Date.now() - Date.parse(ix.cvelist)) / 6e4) : null;
     $("cvSummary").textContent = (ix.total !== null ? fmtN(ix.total) + " CVEs on file, every one published since 1999" + (ix.rejected !== null ? " (" + fmtN(ix.rejected) + " of them rejected)" : "") + ". " : "") +
-      (ix.exploited !== null ? fmtN(ix.exploited) + " are known or seen exploited" + (ix.critical !== null ? ", " + fmtN(ix.critical) + " rated CVSS 9 or higher" : "") + ". " : "") +
+      (ix.exploited !== null ? fmtN(ix.exploited) + (ix.exploited === 1 ? " is" : " are") + " known or seen exploited" + (ix.critical !== null ? ", " + fmtN(ix.critical) + " rated CVSS 9 or higher" : "") + ". " : "") +
       (age !== null && isFinite(age) ? "Updated " + (age < 90 ? age + " minutes" : Math.round(age / 60) + " hours") + " ago." + (age > 360 ? " This is older than it should be; the hourly update may be failing." : "") : "");
     $("cvCaveat").textContent = CAVEAT;
     buildKev(); cvStatus("");

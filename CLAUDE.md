@@ -10,7 +10,7 @@ Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `
 site/index.html, app.js  the globe page (markup and styles; script in app.js so the CSP can forbid inline scripts)
 site/nav.js              site navigation on every page: inline links on wide screens, a menu sheet on phones
 site/archive.html, .js   the searchable archive of every event on file
-site/cve.html, workbench.html, moved.js   thin redirects to vulnerabilities.html (query and hash kept); site/cve.js is no longer used by any page
+site/cve.html, workbench.html, moved.js   thin redirects to vulnerabilities.html (query and hash kept)
 site/trends.html, .js    week-over-week trends from site/data/trends.json (styles shared in archive.css)
 site/status.html, .js    routines and their last runs, lead queue, recent runs (from site/data/ops.json)
 site/vulnerabilities.html, .js, workbench-lib.js, cvedb-lib.js   the Vulnerabilities page, one page with four views: Known exploited (patch queue ranked with reasons, CISA deadline chart and calendar file, check and fix steps), All CVEs (look up or browse the CVE List from data/cve/ lookup files, joined with the KEV data), My software (the visitor's list matched by version, browser only), Hunt pack (from site/data/workbench.json)

@@ -283,3 +283,21 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .wbhfiles{list-style:none;padding-left:0!important}.wbhfiles a{overflow-wrap:anywhere}
 .wbhact{margin:12px 0 0;font-size:13px}
 @media (max-width:600px){.wbhtop{grid-template-columns:1fr}}
+/* vulnerabilities: patch deadlines */
+.wbdl{margin-top:16px}.wbdl h2{margin:0 0 6px}.wbdlh{margin:14px 0 6px;font:600 14px var(--font);color:var(--muted)}
+.wbdlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.wbdlrow{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(140px,1fr) minmax(120px,1.6fr) 110px;gap:10px;align-items:center;width:100%;padding:6px 8px;border-radius:9px}
+.wbdlrow:hover{background:var(--card-hi)}.wbdlrow:focus-visible{outline:2px solid var(--accent)}
+.wbdllab{display:flex;flex-direction:column;min-width:0;font-size:14px;overflow-wrap:anywhere}.wbdllab .note{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.wbdltrack{position:relative;height:12px;border-radius:6px;background:rgba(255,255,255,.06)}
+.wbdlzero{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.8}
+.wbdlbar{position:absolute;top:0;bottom:0;border-radius:6px;background:var(--accent)}.wbdlbar.over{background:#ff8171}
+.wbdltxt{font-size:13px;font-weight:600;text-align:right;white-space:nowrap}
+@media (max-width:600px){.wbdlrow{grid-template-columns:minmax(0,1fr) auto}.wbdltrack{grid-column:1/-1;order:3}}
+/* vulnerabilities: All CVEs */
+.cvlab{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)}
+.cvlab select,#wbp-all .filters input[type=text]{min-height:40px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);padding:8px 11px;font:15px var(--font)}
+.cvbar{height:8px;border-radius:4px;background:rgba(255,255,255,.08);margin-top:10px;overflow:hidden}.cvbar span{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+.cvvendors{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.cvvendors .badge{cursor:pointer;background:none;font:inherit;font-size:12px;font-weight:600;color:var(--muted)}.cvvendors .badge:hover{color:var(--ink);border-color:var(--accent)}
+.cvscore{font-size:18px}
+.fault{margin-bottom:12px}

@@ -1,10 +1,11 @@
-// CyberView workbench page: one tool for "am I affected, what do I patch first, how do I check and fix, what do I hunt for".
+// CyberView vulnerabilities page: one tool for "what is exploited and due, am I affected, how do I check and fix, what do I hunt for",
+// plus "All CVEs": a lookup and browser over a static, compact copy of NVD served from data/cve/ (see cvedb-lib.js).
 // Reads data/workbench.json (written by scripts/build.mjs). The visitor's software list is parsed, matched and stored
 // only in this browser (localStorage "cwm.inv"); nothing is sent. Every record passes a clean function with length
 // limits, and all text is inserted as text.
 (function () {
   "use strict";
-  var W = window.CVWorkbench;
+  var W = window.CVWorkbench, D = window.CVDB;
   var $ = function (id) { return document.getElementById(id); };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; }
   function str(v, n) { return typeof v === "string" ? v.slice(0, n) : ""; }
@@ -20,6 +21,14 @@
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
   var TODAY = new Date().toISOString().slice(0, 10);
+  // each view draws inside safe(): one failure shows a note in that view and cannot blank the page
+  function safe(panel, fn) {
+    try { fn(); var old = document.querySelector("#wbp-" + panel + " > .fault"); if (old) old.remove(); }
+    catch (e) {
+      var p = $("wbp-" + panel); if (!p) return;
+      var n = p.querySelector(":scope > .fault"); if (!n) { n = el("p", "caveat fault", "This part of the page could not be drawn. Reload the page; if it keeps happening, report it from the About page."); p.insertBefore(n, p.firstChild); }
+    }
+  }
   var FORMATS = { stix: "STIX", sigma: "Sigma rule", yara: "YARA rule", snort: "Snort rule", suricata: "Suricata rule", kql: "KQL query", spl: "Splunk query", csv: "CSV indicators", json: "JSON indicators", misp: "MISP event", openioc: "OpenIOC", text: "Indicator list", pdf: "PDF with indicators" };
 
   function cleanRange(r) {
@@ -188,7 +197,8 @@
     d.appendChild(ln);
     return d;
   }
-  function renderQueue() {
+  function renderQueue() { safe("queue", drawQueue); }
+  function drawQueue() {
     var vis = visibleRows(), box = $("wbList"); box.textContent = "";
     $("wbNoInv").hidden = inv.length > 0;
     var mine = rows.filter(function (r) { return r.m && r.m.state === "affected"; }).length, chk = rows.filter(function (r) { return r.m && r.m.state === "check"; }).length;
@@ -222,7 +232,8 @@
   }
 
   /* ---- my software ---- */
-  function renderInv() {
+  function renderInv() { safe("inv", drawInv); }
+  function drawInv() {
     $("wbnInv").textContent = inv.length ? String(inv.length) : "";
     var t = $("wbInvTable"); t.textContent = "";
     if (!inv.length) { $("wbInvHead").textContent = "Nothing loaded yet"; return; }
@@ -284,7 +295,8 @@
     return cards;
   }
   function huntList(h, items) { var ul = el("ul"); items.forEach(function (t) { ul.appendChild(el("li", null, t)); }); return ul; }
-  function renderHunt() {
+  function renderHunt() { safe("hunt", drawHunt); }
+  function drawHunt() {
     var box = $("wbHunt"); box.textContent = "";
     $("wbHuntMine").disabled = !inv.length; $("wbHuntMineL").title = inv.length ? "" : "Load your software list first (Your software tab)";
     var cards = huntCards();
@@ -350,20 +362,272 @@
   /* bring the opened flaw into view (on a phone it is otherwise below the fold) */
   function showOpen() { var n = openCve && document.getElementById("row-" + openCve); if (n) { try { n.scrollIntoView({ block: "start" }); } catch (e) { n.scrollIntoView(); } var b = n.querySelector("button"); if (b) b.focus({ preventScroll: true }); } }
 
-  /* ---- tabs and wiring ---- */
-  function tab(t) {
-    ["queue", "inv", "hunt"].forEach(function (k) { $("wbt-" + k).setAttribute("aria-selected", k === t ? "true" : "false"); $("wbp-" + k).hidden = k !== t; });
-    try { history.replaceState(null, "", t === "queue" ? location.pathname : "#" + t); } catch (e) {}
-    if (t === "inv") renderInv(); if (t === "hunt") renderHunt();
+  /* ---- patch deadlines: chart and calendar file (built here; nothing is sent) ---- */
+  function openDeadlines() { return flaws.filter(function (f) { return f.kev && f.due && f.due >= TODAY; }); }
+  function drawDeadlines() {
+    var box = $("wbDlChart"); box.textContent = "";
+    var up = [], over = [];
+    flaws.forEach(function (f) { var n = f.kev ? dueLeft(f) : null; if (n === null) return; if (n >= 0) up.push({ f: f, n: n }); else if (n >= -14) over.push({ f: f, n: n }); });
+    up.sort(function (a, b) { return a.n - b.n; }); over.sort(function (a, b) { return b.n - a.n; });
+    $("kevCal").disabled = !openDeadlines().length;
+    if (!up.length && !over.length) { box.appendChild(el("p", "note", "No known-exploited flaws with a deadline in the last two weeks or ahead.")); return; }
+    var UP = up.slice(0, 8), OV = over.slice(0, 6), lo = Math.max(-14, Math.min(-3, OV.reduce(function (m, r) { return Math.min(m, r.n); }, 0))), hi = Math.min(28, Math.max(7, UP.reduce(function (m, r) { return Math.max(m, r.n); }, 0)));
+    var zero = (-lo) / (hi - lo) * 100;
+    function group(title, rows, total) {
+      if (!rows.length) return;
+      box.appendChild(el("h3", "wbdlh", title + " (" + total + ")"));
+      var ul = el("ul", "wbdlist");
+      rows.forEach(function (r) {
+        var f = r.f, li = el("li"), b = el("button", "wbdlrow"); b.type = "button";
+        var name = (f.vendor && f.product && f.product.toLowerCase().indexOf(f.vendor.toLowerCase()) < 0 ? f.vendor + " " + f.product : f.product || f.vendor) || f.name;
+        var lab = el("span", "wbdllab"); lab.appendChild(el("b", null, name)); lab.appendChild(el("span", "note", f.cve + (f.ransomware ? " · used by ransomware" : "")));
+        var track = el("span", "wbdltrack"), zl = el("span", "wbdlzero"); zl.style.left = zero + "%"; track.appendChild(zl);
+        var bar = el("span", "wbdlbar" + (r.n < 0 ? " over" : "")), len = Math.min(Math.abs(r.n), r.n < 0 ? -lo : hi) / (hi - lo) * 100;
+        bar.style.width = Math.max(r.n === 0 ? 0.8 : 1.2, len) + "%"; bar.style.left = (r.n < 0 ? zero - len : zero) + "%"; track.appendChild(bar);
+        var txt = r.n === 0 ? "due today" : r.n < 0 ? (-r.n) + (r.n === -1 ? " day" : " days") + " overdue" : r.n + (r.n === 1 ? " day" : " days") + " left";
+        b.setAttribute("aria-label", name + " " + f.cve + ": " + txt);
+        b.appendChild(lab); b.appendChild(track); b.appendChild(el("span", "wbdltxt", txt));
+        b.addEventListener("click", function () { goKnown(f.cve); });
+        li.appendChild(b); ul.appendChild(li);
+      });
+      box.appendChild(ul);
+      if (total > rows.length) box.appendChild(el("p", "note", "+" + (total - rows.length) + " more in the list below (use the Show filter: deadline within 7 days or passed)."));
+    }
+    group("Deadline ahead", UP, up.length); group("Deadline passed in the last two weeks", OV, over.length);
   }
-  ["queue", "inv", "hunt"].forEach(function (k) { $("wbt-" + k).addEventListener("click", function () { tab(k); }); });
+  function renderDeadlines() { safe("queue", drawDeadlines); }
+  function icsEsc(t) { return String(t || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  function icsFold(line) { var out = [], s = line; while (s.length > 73) { out.push(s.slice(0, 73)); s = " " + s.slice(73); } out.push(s); return out.join("\r\n"); }
+  function plusDay(d) { return new Date(Date.parse(d + "T12:00:00Z") + 864e5).toISOString().slice(0, 10).replace(/-/g, ""); }
+  function kevIcs(list) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z"), L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//CyberView//Patch deadlines//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:CyberView patch deadlines"];
+    list.forEach(function (f) {
+      var what = (f.vendor + " " + f.product).trim();
+      L.push("BEGIN:VEVENT", "UID:" + f.cve.toLowerCase() + "-due@cyberview", "DTSTAMP:" + stamp, "DTSTART;VALUE=DATE:" + f.due.replace(/-/g, ""), "DTEND;VALUE=DATE:" + plusDay(f.due),
+        "SUMMARY:" + icsEsc("Patch " + f.cve + " (" + what + "): CISA deadline"),
+        "DESCRIPTION:" + icsEsc((f.desc ? f.desc + "\n\n" : "") + (f.ransomware ? "Known to be used in ransomware.\n" : "") + "Added to CISA's known-exploited list " + f.added + ". The deadline binds US federal agencies; treat it as an upper limit.\nNVD: https://nvd.nist.gov/vuln/detail/" + f.cve + "\nCyberView: " + location.origin + location.pathname + "#" + f.cve),
+        "URL:https://nvd.nist.gov/vuln/detail/" + f.cve, "CATEGORIES:Security,Patch",
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsEsc("Patch " + f.cve + " due in 3 days"), "TRIGGER:-P3D", "END:VALARM", "END:VEVENT");
+    });
+    L.push("END:VCALENDAR");
+    return L.map(icsFold).join("\r\n") + "\r\n";
+  }
+  function saveFile(name, mime, text) {
+    var a = el("a"); a.href = blobUrl(new Blob([text], { type: mime })); var u = a.href; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }
+  function calendar() {
+    var pool = openDeadlines();
+    if (inv.length) { var mineIds = {}; rows.forEach(function (r) { if (r.m && (r.m.state === "affected" || r.m.state === "check")) mineIds[r.f.cve] = 1; }); pool = pool.filter(function (f) { return mineIds[f.cve]; }); }
+    var msg = $("wbDlMsg");
+    if (!pool.length) { msg.textContent = inv.length ? "None of the open deadlines affect software on your list." : "There are no open deadlines."; return; }
+    saveFile("cyberview-patch-deadlines.ics", "text/calendar;charset=utf-8", kevIcs(pool));
+    msg.textContent = pool.length + " deadline" + (pool.length > 1 ? "s" : "") + " saved as a calendar file" + (inv.length ? " (software on your list only)" : "") + ". Open it to add them to your calendar; each has a reminder 3 days before.";
+  }
+  function calLabel() { $("kevCal").textContent = inv.length ? "My deadlines to calendar" : "Deadlines to calendar"; }
+
+  /* ---- All CVEs: the CVE List as static lookup files (data/cve/, written by scripts/cve.mjs site), read on demand ---- */
+  var CV = { idx: null, state: "idle", waiting: null, files: {}, ready: {}, sets: {}, pool: [], list: [], page: 0, open: "", kev: {}, events: null };
+  var PAGE = 200, SEV = { C: ["Critical", "bad"], H: ["High", "bad"], M: ["Medium", "warn"], L: ["Low", "info"], N: ["None", "info"] };
+  var CAVEAT = "What this is: every CVE published in the official CVE List (CVE Program), including CISA's enrichment: CVSS where the assigner gave none, the weakness (CWE) and whether CISA has seen it exploited. Descriptions are trimmed, only the first affected product is kept, and the list is rebuilt about every hour, so a very new change can be missing: the CVE record and NVD stay the authority. Exploit likelihood is FIRST EPSS, refreshed daily. \"Known exploited\" means listed in CISA's catalog (or seen exploited by CISA); it is also joined here from the catalog as CyberView holds it. A CVE is a database record, not an event on the map.";
+  function fmtN(n) { try { return n.toLocaleString("en-US"); } catch (e) { return String(n); } }
+  function fmtLong(d) { if (!d) return ""; try { return new Date(d + "T12:00:00Z").toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return d; } }
+  function buildKev() { CV.kev = {}; flaws.forEach(function (f) { if (f.kev) CV.kev[f.cve] = f; }); }
+  function cvStatus(msg) { var b = $("cvStatus"); b.hidden = !msg; b.textContent = msg || ""; $("cvMain").hidden = !!msg; }
+  function getJson(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); }); }
+  function ensureIndex() {
+    if (CV.waiting) return CV.waiting;
+    CV.state = "loading";
+    CV.waiting = getJson("data/cve/index.json").then(function (j) {
+      var ix = D.cleanIndex(j); if (!ix) throw new Error("invalid");
+      CV.idx = ix; CV.state = "ready"; initCvUi(); return ix;
+    }).catch(function () {
+      CV.state = "missing"; CV.waiting = null;
+      cvStatus("The CVE list is not available right now. It is built when the site is deployed, so it can be missing just after a change. Known exploited flaws and My software work without it; try this view again in a little while.");
+      return null;
+    });
+    return CV.waiting;
+  }
+  function initCvUi() {
+    var ix = CV.idx, sel = $("cvYear"); sel.textContent = "";
+    var o0 = el("option", null, "Published or changed in the last two weeks"); o0.value = "recent"; sel.appendChild(o0);
+    ix.years.forEach(function (y) { var o = el("option", null, y.year + " · " + fmtN(y.count) + " CVEs"); o.value = String(y.year); sel.appendChild(o); });
+    if (ix.total !== null) $("wbnAll").textContent = fmtN(ix.total);
+    var age = ix.cvelist ? Math.round((Date.now() - Date.parse(ix.cvelist)) / 6e4) : null;
+    $("cvSummary").textContent = (ix.total !== null ? fmtN(ix.total) + " CVEs on file, every one published since 1999" + (ix.rejected !== null ? " (" + fmtN(ix.rejected) + " of them rejected)" : "") + ". " : "") +
+      (ix.exploited !== null ? fmtN(ix.exploited) + " are known or seen exploited" + (ix.critical !== null ? ", " + fmtN(ix.critical) + " rated CVSS 9 or higher" : "") + ". " : "") +
+      (age !== null && isFinite(age) ? "Updated " + (age < 90 ? age + " minutes" : Math.round(age / 60) + " hours") + " ago." + (age > 360 ? " This is older than it should be; the hourly update may be failing." : "") : "");
+    $("cvCaveat").textContent = CAVEAT;
+    buildKev(); cvStatus("");
+  }
+  function getFile(file) {
+    if (CV.files[file]) return CV.files[file];
+    var pr = getJson("data/cve/" + file).then(function (d) { var c = D.parseFile(d); CV.ready[file] = c; return c; });
+    CV.files[file] = pr; pr.catch(function () { delete CV.files[file]; });
+    return pr;
+  }
+  function loadEvents() {
+    if (!CV.events) CV.events = getJson("data/archive/search.json").then(function (d) {
+      var f = d.fields || [], ci = f.indexOf("cves"), ii = f.indexOf("id"), ti = f.indexOf("title");
+      return (d.rows || []).slice(0, 20000).map(function (r) { return { id: str(r[ii], 80), title: str(r[ti], 200), cves: Array.isArray(r[ci]) ? r[ci].filter(isCve) : [] }; });
+    });
+    return CV.events;
+  }
+  function sevBadge(r) { return r.sev ? el("span", "badge " + SEV[r.sev][1], SEV[r.sev][0] + (r.cvss !== null ? " " + r.cvss.toFixed(1) : "")) : el("span", "badge info", r.cvss !== null ? "CVSS " + r.cvss.toFixed(1) : "No score"); }
+  function isKev(r) { return !!(r.kev || CV.kev[r.id]); }
+  function cvCard(r, open, rank) {
+    var li = el("li", "wbrow cvrow" + (r.rejected ? " clear" : "")), b = el("button", "wbhead cvhead"); b.type = "button"; b.setAttribute("aria-expanded", open ? "true" : "false");
+    var sc = el("span", "wbscore cvscore", r.cvss !== null ? r.cvss.toFixed(1) : "-"); sc.title = "CVSS base score"; b.appendChild(sc);
+    var mid = el("span", "wbmid"), top = el("span", "wbtop"); top.appendChild(el("b", null, r.id)); var who = [r.vendor, r.product].filter(Boolean).join(" "); if (who) top.appendChild(document.createTextNode(" " + who));
+    mid.appendChild(top); mid.appendChild(el("span", "wbname", (r.title || r.desc || "No description.").slice(0, 200)));
+    var chips = el("span", "wbchips"); chips.appendChild(sevBadge(r));
+    if (r.rejected) chips.appendChild(el("span", "badge warn", "Rejected"));
+    if (isKev(r)) chips.appendChild(el("span", "badge bad", "Known exploited")); else if (r.expl === "active") chips.appendChild(el("span", "badge bad", "Exploited (CISA)"));
+    if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
+    if (r.cwe) chips.appendChild(el("span", "badge info", r.cwe));
+    if (r.pub) chips.appendChild(el("span", "badge info", r.pub));
+    mid.appendChild(chips); b.appendChild(mid); b.appendChild(el("span", "wbrank", rank ? "#" + rank : ""));
+    if (rank) b.addEventListener("click", function () { CV.open = open ? "" : r.id; renderAll(); var n = document.getElementById("cv-" + r.id); if (n) n.querySelector("button").focus({ preventScroll: true }); });
+    li.id = rank ? "cv-" + r.id : "cvr-" + r.id; li.appendChild(b); if (open) li.appendChild(cvDetail(r));
+    return li;
+  }
+  function cvDetail(r) {
+    var d = el("div", "wbdetail"); if (r.desc) d.appendChild(el("p", null, r.desc));
+    var kv = el("ul");
+    [["Affects", [r.vendor, r.product].filter(Boolean).join(" ")], ["Published", fmtLong(r.pub)], ["Last changed", r.upd && r.upd !== r.pub ? fmtLong(r.upd) : ""], ["Assigned by", r.cna],
+      ["CVSS", r.cvss !== null ? r.cvss.toFixed(1) + (r.sev ? " " + SEV[r.sev][0].toLowerCase() : "") + (r.ver ? " (v" + r.ver + ")" : "") : ""], ["Weakness", r.cwe],
+      ["CISA exploitation", r.expl ? D.EXPL[r.expl] : ""], ["Exploit likelihood (EPSS)", r.epss !== null ? (r.epss * 100).toFixed(2) + "% chance of exploitation in the next 30 days" + (r.pct !== null ? "; higher than " + (r.pct * 100).toFixed(1) + "% of CVEs" : "") : ""]]
+      .forEach(function (p) { if (!p[1]) return; var li = el("li"); li.appendChild(el("b", null, p[0] + ": ")); li.appendChild(document.createTextNode(p[1])); kv.appendChild(li); });
+    d.appendChild(kv);
+    var k = CV.kev[r.id];
+    if (k) {
+      var me = el("div", "wbme bad"); me.appendChild(el("b", null, "On CISA's known-exploited list")); me.appendChild(el("p", null, "Added " + k.added + (k.due ? "; " + dueText(k).toLowerCase() : "") + (k.ransomware ? "; used by ransomware groups" : "") + "."));
+      var gb = el("button", "linkbtn cvgo", "See it in Known exploited, with check and fix steps"); gb.type = "button"; gb.addEventListener("click", function () { goKnown(r.id); }); me.appendChild(gb); d.appendChild(me);
+    }
+    var ln = el("p", "wblinks"); ln.appendChild(link("https://www.cve.org/CVERecord?id=" + r.id, "CVE record")); ln.appendChild(link("https://nvd.nist.gov/vuln/detail/" + r.id, "NVD record"));
+    if (r.kev) ln.appendChild(link("https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=" + r.id, "CISA catalog entry"));
+    d.appendChild(ln);
+    var ev = el("p", "note", "Checking the map and archive"); d.appendChild(ev);
+    loadEvents().then(function (list) {
+      var hit = list.filter(function (e) { return e.cves.indexOf(r.id) >= 0; }); ev.textContent = "";
+      if (!hit.length) { ev.textContent = "Not on the map or in the archive: no checked report of this flaw yet."; return; }
+      ev.appendChild(document.createTextNode("In the archive: "));
+      hit.slice(0, 5).forEach(function (e, i) { if (i) ev.appendChild(document.createTextNode("; ")); var a = el("a", null, e.title.slice(0, 120)); a.href = "archive.html#q=" + encodeURIComponent(e.id); ev.appendChild(a); });
+    }, function () { ev.textContent = ""; });
+    return d;
+  }
+  function cvFilters() { return { q: $("wbQ").value, sev: $("cvSev").value, minEpss: +$("cvEpss").value || 0, cwe: $("cvCwe").value, vendor: $("cvVendor").value, status: $("cvStatusSel").value, exploited: $("cvKev").checked }; }
+  function rebuildPool() {
+    var out = [], seen = {};
+    Object.keys(CV.sets).forEach(function (k) { if (CV.sets[k].state === "done") CV.sets[k].files.forEach(function (f) { (CV.ready[f] || []).forEach(function (r) { if (!seen[r.id]) { seen[r.id] = 1; out.push(r); } }); }); });
+    CV.pool = out;
+    var dl = $("cvVendors"), vl = $("cvVendorList"); dl.textContent = ""; vl.textContent = "";
+    D.topVendors(out, 60).forEach(function (v) {
+      var o = el("option"); o.value = v[0]; dl.appendChild(o);
+      var b = el("button", "badge info", v[0] + " (" + fmtN(v[1]) + ")"); b.type = "button";
+      b.addEventListener("click", function () { $("cvVendor").value = v[0]; CV.page = 0; renderAll(); });
+      vl.appendChild(b);
+    });
+    $("cvVendorDir").hidden = !out.length;
+  }
+  function renderAll() { safe("all", drawAll); }
+  function drawAll() {
+    if (CV.state !== "ready") return;
+    var names = Object.keys(CV.sets).filter(function (k) { return CV.sets[k].state === "done"; }).sort().reverse();
+    $("cvLoaded").textContent = names.length ? "Loaded: " + names.map(function (k) { return k === "recent" ? "last two weeks" : k; }).join(", ") + " (" + fmtN(CV.pool.length) + " CVEs). Filters and search apply to these only." : "Nothing loaded yet. Choose a year (or the last two weeks) and load it to browse and filter, or look up one CVE above.";
+    var box = $("cvList"); box.textContent = "";
+    if (!CV.pool.length) { $("cvCount").textContent = ""; $("cvPager").hidden = true; return; }
+    CV.list = D.filter(CV.pool, cvFilters(), CV.kev, $("cvSort").value);
+    var pg = D.page(CV.list, CV.page, PAGE); CV.page = pg.page;
+    $("cvCount").textContent = CV.list.length === CV.pool.length ? fmtN(CV.list.length) + " CVEs in what is loaded." : fmtN(CV.list.length) + " of " + fmtN(CV.pool.length) + " CVEs match.";
+    if (!CV.list.length) box.appendChild(el("li", "empty", "Nothing matches. Clear the search or a filter, or load another year."));
+    pg.items.forEach(function (r, i) { box.appendChild(cvCard(r, CV.open === r.id, pg.page * PAGE + i + 1)); });
+    $("cvPager").hidden = pg.pages <= 1; $("cvPage").textContent = "Page " + (pg.page + 1) + " of " + pg.pages + " (" + PAGE + " per page)";
+    $("cvPrev").disabled = pg.page === 0; $("cvNext").disabled = pg.page >= pg.pages - 1;
+  }
+  /* a year is a run of lookup files <year>/0.json, 1.json ...; the index lists no files, so they are probed in groups until a whole group is missing */
+  function loadSet(key) {
+    if (CV.sets[key]) return;
+    var set = CV.sets[key] = { state: "loading", files: [] }, prog = $("cvProg"), bar = $("cvBar"), fill = $("cvBarFill"), btn = $("cvLoadYear");
+    var y = CV.idx.years.filter(function (x) { return String(x.year) === key; })[0], expect = y ? y.count : 0, got = 0;
+    bar.hidden = false; fill.style.width = "0%"; btn.disabled = true; prog.textContent = "Loading " + (key === "recent" ? "the last two weeks" : key) + "...";
+    function tick() { fill.style.width = expect ? Math.min(100, Math.round(got / expect * 100)) + "%" : "50%"; prog.textContent = "Loading " + (key === "recent" ? "the last two weeks" : key) + ": " + fmtN(got) + (expect ? " of about " + fmtN(expect) : "") + " CVEs"; }
+    var work;
+    if (key === "recent") work = getJson("data/cve/recent.json").then(function (d) { var rows = D.parseFile(d); CV.ready["recent.json"] = rows; set.files.push("recent.json"); got = rows.length; tick(); });
+    else {
+      var k = 0, GROUP = 4, MAX = 160;
+      var step = function () {
+        if (k >= MAX) return Promise.resolve();
+        var batch = []; for (var i = 0; i < GROUP; i++) batch.push(key + "/" + (k + i) + ".json"); k += GROUP;
+        return Promise.all(batch.map(function (f) { return getFile(f).then(function (rows) { return { f: f, n: rows.length }; }, function () { return null; }); })).then(function (rs) {
+          var hits = rs.filter(Boolean); hits.forEach(function (h) { set.files.push(h.f); got += h.n; }); tick();
+          if (!hits.length && k > 0) return;   // a whole group missing: past the last file
+          return step();
+        });
+      };
+      work = step().then(function () { if (!set.files.length) throw new Error("none"); });
+    }
+    work.then(function () { set.state = "done"; rebuildPool(); CV.page = 0; prog.textContent = (key === "recent" ? "The last two weeks" : key) + " loaded: " + fmtN(got) + " CVEs in memory."; }).catch(function () {
+      delete CV.sets[key]; prog.textContent = "Part of the list could not be loaded. Try again in a moment.";
+    }).then(function () { bar.hidden = true; btn.disabled = false; renderAll(); });
+  }
+  function loadYear() { loadSet($("cvYear").value); }
+  function unloadYears() { CV.sets = {}; CV.pool = []; CV.page = 0; $("cvProg").textContent = "Unloaded."; rebuildPool(); renderAll(); }
+  function lookup() {
+    var out = $("cvResult"), msg = $("cvLookMsg"); out.textContent = ""; msg.textContent = "";
+    var id = D.normId($("wbQ").value);
+    if (!id) { msg.textContent = "Type a full CVE id in the search box, for example CVE-2024-3400."; return Promise.resolve(); }
+    return ensureIndex().then(function (ix) {
+      if (!ix) return;
+      msg.textContent = "Looking up " + id + "...";
+      return getFile(D.bucketFile(id)).then(function (rows) {
+        var hit = rows.filter(function (r) { return r.id === id; })[0];
+        msg.textContent = hit ? "" : id + " is not in the CVE List. It may be reserved but not yet published.";
+        if (hit) { buildKev(); var ul = el("ol", "wblist cvlist"); ul.appendChild(cvCard(hit, true, 0)); out.appendChild(ul); }
+      }, function () { msg.textContent = id + " is not in the CVE List, or the lookup files are not available right now."; });
+    });
+  }
+
+  /* ---- tabs, links and wiring ---- */
+  var VIEWS = ["queue", "all", "inv", "hunt"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt" }, cur = "queue";
+  function tab(t, keepHash) {
+    cur = t;
+    VIEWS.forEach(function (k) { $("wbt-" + k).setAttribute("aria-selected", k === t ? "true" : "false"); $("wbp-" + k).hidden = k !== t; });
+    $("wbSearchBar").hidden = t !== "queue" && t !== "all";
+    $("wbSearchHint").textContent = t === "all" ? "Filters the years you have loaded. To look up one CVE, type its id and press Enter. Nothing you type is sent anywhere." : "Filters the list below. Nothing you type is sent anywhere.";
+    if (!keepHash) { try { history.replaceState(null, "", "#" + (t === "queue" ? "known" : t)); } catch (e) {} }
+    if (t === "inv") renderInv(); if (t === "hunt") renderHunt();
+    if (t === "all") ensureIndex().then(function () { renderAll(); });
+    if (t === "queue") renderQueue();
+  }
+  /* open one flaw in the Known exploited view */
+  function goKnown(cve) { $("wbQ").value = cve; $("wbShow").value = "all"; openCve = cve; tab("queue"); showOpen(); try { history.replaceState(null, "", "#" + cve); } catch (e) {} }
+  function route(h) {
+    h = String(h || "").replace(/^#/, "");
+    if (isCve(h)) {
+      if (flaws.some(function (f) { return f.cve === h; })) { openCve = h; $("wbQ").value = h; tab("queue", true); renderQueue(); showOpen(); return; }
+      $("wbQ").value = h; tab("all", true); lookup(); return;
+    }
+    tab(HASH[h] || "queue", true);
+  }
+  VIEWS.forEach(function (k) { $("wbt-" + k).addEventListener("click", function () { tab(k); }); });
   $("wbGoInv").addEventListener("click", function () { tab("inv"); $("wbText").focus(); });
-  var qt = 0; $("wbQ").addEventListener("input", function () { clearTimeout(qt); qt = setTimeout(renderQueue, 140); });
+  var qt = 0; $("wbQ").addEventListener("input", function () { clearTimeout(qt); qt = setTimeout(function () { if (cur === "all") { CV.page = 0; renderAll(); } else renderQueue(); }, 140); });
+  $("wbQ").addEventListener("keydown", function (ev) { if (ev.key === "Enter" && cur === "all") { ev.preventDefault(); lookup(); } });
   $("wbShow").addEventListener("change", renderQueue);
   $("wbFmt").addEventListener("change", function () { huntShown = 12; renderHunt(); });
   $("wbHuntMine").addEventListener("change", function () { huntShown = 12; renderHunt(); });
   $("wbHuntMore").addEventListener("click", function () { huntShown += 12; renderHunt(); });
   $("wbHuntCopy").addEventListener("click", function () { var b = $("wbHuntCopy"); try { navigator.clipboard.writeText(toHuntPlan()).then(function () { flash(b, "Copied"); }, function () { flash(b, "Copy blocked"); }); } catch (e) { flash(b, "Copy blocked"); } });
+  $("kevCal").addEventListener("click", function () { safe("queue", calendar); });
+  $("cvLookup").addEventListener("click", lookup);
+  $("cvLoadYear").addEventListener("click", loadYear);
+  $("cvClearYears").addEventListener("click", unloadYears);
+  ["cvSev", "cvEpss", "cvStatusSel", "cvSort", "cvKev"].forEach(function (id) { $(id).addEventListener("change", function () { CV.page = 0; renderAll(); }); });
+  var ct = 0; ["cvVendor", "cvCwe"].forEach(function (id) { $(id).addEventListener("input", function () { clearTimeout(ct); ct = setTimeout(function () { CV.page = 0; renderAll(); }, 160); }); });
+  $("cvPrev").addEventListener("click", function () { CV.page--; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });
+  $("cvNext").addEventListener("click", function () { CV.page++; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });
+  window.addEventListener("hashchange", function () { route(location.hash); });
   $("wbCsv").addEventListener("click", function () { var a = el("a"); a.href = blobUrl(new Blob([toCsv()], { type: "text/csv" })); var u = a.href; a.download = "cyberview-patch-queue-" + TODAY + ".csv"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
   $("wbCopy").addEventListener("click", function () { var b = $("wbCopy"); try { navigator.clipboard.writeText(toChange()).then(function () { flash(b, "Copied"); }, function () { flash(b, "Copy blocked"); }); } catch (e) { flash(b, "Copy blocked"); } });
   var drop = $("wbDrop"), file = $("wbFile");
@@ -374,7 +638,7 @@
   ["dragleave", "drop"].forEach(function (n) { drop.addEventListener(n, function (ev) { ev.preventDefault(); drop.classList.remove("over"); }); });
   drop.addEventListener("drop", function (ev) { readFile(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]); });
   $("wbAdd").addEventListener("click", function () { var t = $("wbText").value; if (!t.trim()) { $("wbInvMsg").textContent = "Type or paste at least one product first."; return; } addItems("pasted", t); });
-  $("wbClear").addEventListener("click", function () { inv = []; saveInv(); try { localStorage.removeItem("cwm.inv"); } catch (e) {} $("wbInvMsg").textContent = "Your list is cleared from this browser."; compute(); renderInv(); renderQueue(); });
+  $("wbClear").addEventListener("click", function () { inv = []; saveInv(); try { localStorage.removeItem("cwm.inv"); } catch (e) {} $("wbInvMsg").textContent = "Your list is cleared from this browser."; compute(); renderInv(); renderQueue(); calLabel(); });
 
   loadInv();
   fetch("data/workbench.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (d) {
@@ -389,9 +653,11 @@
     hunt = (Array.isArray(d && d.hunt) ? d.hunt : []).slice(0, 200).map(cleanHunt).filter(Boolean);
     var fm = {}; hunt.forEach(function (h) { fm[h.format] = 1; });
     Object.keys(fm).sort().forEach(function (k) { var o = el("option", null, FORMATS[k]); o.value = k; $("wbFmt").appendChild(o); });
-    compute();
-    var h = location.hash.slice(1); if (isCve(h)) { openCve = h; $("wbQ").value = h; }
-    renderQueue(); renderInv(); renderHunt();
-    if (h === "inv" || h === "hunt") tab(h);
-  }).catch(function () { $("wbSummary").textContent = "The workbench data can't be loaded right now. Try again in a minute."; });
+    compute(); buildKev();
+    renderQueue(); renderDeadlines(); renderInv(); renderHunt(); calLabel();
+    route(location.hash);
+  }).catch(function () {
+    $("wbSummary").textContent = "The known-exploited data can't be loaded right now. Try again in a minute.";
+    route(location.hash);   // All CVEs does not depend on it
+  });
 })();

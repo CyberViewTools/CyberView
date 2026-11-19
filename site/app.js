@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 var BUILD={version:"1.33",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
-var kev=[],ripples=null,kevSort="new";
+var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
 function lsGet(k){try{return window.localStorage.getItem(k);}catch(x){return null;}}
 function lsSet(k,v){try{window.localStorage.setItem(k,v);return true;}catch(x){return false;}}
@@ -229,7 +229,7 @@ function wireBuild(){
     .sort(function(x,y){return Date.parse(y.firstSeen)-Date.parse(x.firstSeen);}).slice(0,6)
     .map(function(e){return {t:e.title,when:e.firstSeen,go:function(){select(e.id,true);}};});
   (kev||[]).filter(function(k){return k&&k.added>=ymd(daysAgo(1));}).slice(0,3).forEach(function(k){
-    a.push({t:"Known exploited: "+k.cve+(k.vendor?" ("+k.vendor+" "+k.product+")":""),when:k.added,go:function(){setTab("kev");renderKev();}});});
+    a.push({t:"Known exploited: "+k.cve+(k.vendor?" ("+k.vendor+" "+k.product+")":""),when:k.added,go:function(){location.href="vulnerabilities.html#"+encodeURIComponent(k.cve);}});});
   wireItems=a;wireShow();
 }
 function wireShow(){
@@ -557,7 +557,7 @@ function card(e,open){
     if(rep.id===e.id)b.appendChild(reportForm(e));
     if(e.hunt.length){var hs=el("div","srcs");hs.appendChild(el("span",null,"Detection resources ("+e.hunt.length+"):"));
       e.hunt.forEach(function(x){var l=el("a",null,x.name+" ("+x.fmt+")");l.href=safeUrl(x.url);l.target="_blank";l.rel="noopener noreferrer";hs.appendChild(l);});b.appendChild(hs);}
-    if(e.cves.length&&(e.kev||e.category==="vuln")){var wk=el("p","mono");var wa=el("a",null,"Open in the workbench: am I affected, and how to fix");wa.href="workbench.html#"+encodeURIComponent(e.cves[0]);wk.appendChild(wa);b.appendChild(wk);}
+    if(e.cves.length&&(e.kev||e.category==="vuln")){var wk=el("p","mono");var wa=el("a",null,"Open on the Vulnerabilities page: am I affected, and how to fix");wa.href="vulnerabilities.html#"+encodeURIComponent(e.cves[0]);wk.appendChild(wa);b.appendChild(wk);}
     if(e.attr){var ab=el("div","todo attr");ab.appendChild(el("h4",null,"Attribution"));
       ab.appendChild(el("p",null,"Attributed to "+e.attr.actor+(e.attr.origin?", said to operate from "+e.attr.origin:"")+", by "+e.attr.by+" ("+(e.attr.byType==="government"?"a government body":"the investigating firm")+")."));
       ab.appendChild(el("p","mono","Attribution is a judgement by the named body, not a CyberView finding, and can be disputed."));
@@ -729,7 +729,7 @@ function renderDetail(list){
   var e=state.sel&&list.find(function(x){return x.id===state.sel;}),on=!!e&&state.tab==="feed";
   var d=$("detail"),f=$("feed"),was=!d.hidden;
   if(on&&!was)feedTop=f.scrollTop;
-  $("dbar").hidden=!on;d.hidden=!on;$("listTools").hidden=on||(state.tab!=="feed"&&state.tab!=="kev");f.hidden=state.tab!=="feed"||on;
+  $("dbar").hidden=!on;d.hidden=!on;$("listTools").hidden=on||state.tab!=="feed";f.hidden=state.tab!=="feed"||on;
   document.querySelector("#listTools .t2").hidden=state.tab!=="feed";
   if(!on){d.textContent="";d.dataset.id="";if(was&&!f.hidden){f.scrollTop=feedTop;var c=state.last&&$("card-"+state.last);if(c)c.scrollIntoView({block:"nearest"});}return;}
   var ae=document.activeElement,typing=ae&&ae.id==="reportText"&&!ae.readOnly,ss=typing?ae.selectionStart:0,same=d.dataset.id===e.id,st=d.scrollTop;
@@ -1214,42 +1214,11 @@ function vizTime(v,list){
   v.appendChild(s2);
   /* 3. patch clock */
   var s3=el("div","vsec");s3.appendChild(el("h3",null,"How long do we have to patch?"));
-  s3.appendChild(el("p","q","Flaws that CISA confirms attackers are using, measured from today. A bar to the right is time left before the US federal deadline; a bar to the left is how long ago that deadline passed. Use the deadline as an upper limit for your own patching."));
-  var src=kev.length?kev.map(function(k){return {cve:k.cve,name:(k.vendor&&k.product&&k.product.toLowerCase().indexOf(k.vendor.toLowerCase())<0?k.vendor+" "+k.product:k.product||k.vendor)||k.name,due:k.due,ransom:k.ransom,wl:kevWl(k)};}):[];
-  if(!src.length){var seenC={};list.forEach(function(e){e.cveMeta.forEach(function(c){if(c.kev&&c.due&&!seenC[c.id]){seenC[c.id]=1;src.push({cve:c.id,name:e.products[0]||e.org,due:c.due,ransom:false,wl:e.wl});}});});}
-  var t0d=parseDay(ymd(new Date())).getTime();
-  src=src.filter(function(r){return r.due;}).map(function(r){r.left=Math.round((parseDay(r.due).getTime()-t0d)/864e5);return r;});
-  var up=src.filter(function(r){return r.left>=0;}).sort(function(a,b){return a.left-b.left;}),over=src.filter(function(r){return r.left<0&&r.left>=-14;}).sort(function(a,b){return b.left-a.left;});
-  if(!up.length&&!over.length)s3.appendChild(el("p","vnone","No known-exploited flaws with a deadline in the last two weeks or ahead."));
-  else{
-    var UPN=8,OVN=6,rowsU=up.slice(0,UPN),rowsO=over.slice(0,OVN),lo=Math.min(-3,d3.min(rowsO,function(r){return r.left;})||0),hi=Math.max(7,d3.max(rowsU,function(r){return r.left;})||0);
-    lo=Math.max(lo,-14);hi=Math.min(hi,28);
-    var NW2=Math.min(300,Math.max(210,W0*.3)),TW=120,px=d3.scaleLinear().domain([lo,hi]).range([NW2+10,W0-TW]),RH=34,BH=12,yy3=26,blocks=[];
-    if(rowsU.length){blocks.push({t:"Deadline ahead ("+up.length+")",y:yy3,rows:rowsU,more:up.length-rowsU.length});yy3+=20+rowsU.length*RH+(up.length>rowsU.length?18:0)+10;}
-    if(rowsO.length){blocks.push({t:"Deadline passed in the last two weeks ("+over.length+")",y:yy3,rows:rowsO,more:over.length-rowsO.length});yy3+=20+rowsO.length*RH+(over.length>rowsO.length?18:0)+10;}
-    var sp=d3.select(s3).append("svg").attr("viewBox","0 0 "+W0+" "+yy3).attr("role","img").attr("aria-label","Days to or since the federal patch deadline for known-exploited flaws");
-    var ticks=d3.ticks(lo,hi,6).filter(function(t){return Number.isInteger(t);});
-    ticks.forEach(function(t){sp.append("line").attr("class","gl").attr("x1",px(t)).attr("x2",px(t)).attr("y1",16).attr("y2",yy3-6);
-      sp.append("text").attr("class","ax").attr("x",px(t)).attr("y",10).attr("text-anchor","middle").attr("font-weight",t===0?700:400).style("fill",t===0?"var(--ink)":null).text(t===0?"Today":t>0?"+"+t+" d":t+" d");});
-    sp.append("line").attr("x1",px(0)).attr("x2",px(0)).attr("y1",16).attr("y2",yy3-6).style("stroke","var(--ink)").style("stroke-width",1.5);
-    blocks.forEach(function(bk){
-      sp.append("text").attr("class","colh").attr("x",0).attr("y",bk.y+8).text(bk.t);
-      bk.rows.forEach(function(r,i){var y0=bk.y+20+i*RH,cy=y0+RH/2,lft=Math.max(lo,Math.min(hi,r.left)),x0=px(0),x1=px(lft),ov=r.left<0,rr=Math.min(4,Math.abs(x1-x0));
-        var g=sp.append("g").attr("class","col").attr("tabindex",0).attr("role","button").attr("aria-label",r.name+" "+r.cve+": "+kevDueText(r.left));
-        g.append("rect").attr("class","hit").attr("x",0).attr("y",y0+1).attr("width",W0).attr("height",RH-2).attr("rx",8);
-        g.append("text").attr("class","lbl").attr("x",8).attr("y",cy-2).attr("font-size",12.5).text(fit(r.name,6.9,NW2-16));
-        g.append("text").attr("class","sublbl").attr("x",8).attr("y",cy+12).text(r.cve+(r.ransom?" · used by ransomware":"")+(r.wl?" · match your environment":""));
-        if(r.left===0)g.append("circle").attr("cx",x0).attr("cy",cy).attr("r",5).style("fill","var(--bad)");
-        else g.append("path").attr("d",ov?"M"+x0+","+(cy-BH/2)+"H"+(x1+rr)+"q"+(-rr)+",0 "+(-rr)+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+rr+","+rr+"H"+x0+"Z":"M"+x0+","+(cy-BH/2)+"H"+(x1-rr)+"q"+rr+",0 "+rr+","+rr+"v"+(BH-2*rr)+"q0,"+rr+" "+(-rr)+","+rr+"H"+x0+"Z").style("fill",ov?"var(--bad)":"var(--accent)");
-        var txt=r.left===0?"due today":ov?(-r.left)+((-r.left)===1?" day":" days")+" overdue":r.left+(r.left===1?" day":" days")+" left";
-        g.append("text").attr("x",ov?x0+10:x1+8).attr("y",cy+4).attr("text-anchor","start").attr("font-size",12).attr("font-weight",600).text(txt+(r.left>hi?" ›":""));
-        var go=function(){state.q=r.cve;$("q").value=r.cve;setTab("kev");render();};
-        g.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
-         .on("pointermove",function(ev){tipAt(ev,r.name,r.cve+" · deadline "+fmtDay(r.due)+" · "+txt+(r.ransom?" · used by ransomware":""));}).on("pointerleave",hideTip);});
-      if(bk.more>0)sp.append("text").attr("class","ax").attr("x",8).attr("y",bk.y+20+bk.rows.length*RH+12).text("+"+bk.more+" more in the Exploited tab");
-    });
-    s3.appendChild(el("p","cav","Source: CISA Known Exploited Vulnerabilities catalog. The deadline binds US federal agencies only. Select a row to open that flaw in the Exploited tab."));
-  }
+  s3.appendChild(el("p","q","Flaws that CISA confirms attackers are using, measured from today against the US federal deadline. Use the deadline as an upper limit for your own patching."));
+  var openDl=kev.filter(function(k){var n=kevLeft(k);return n!==null&&n>=0;}).length,lateDl=kev.filter(function(k){var n=kevLeft(k);return n!==null&&n<0&&n>=-14;}).length;
+  s3.appendChild(el("p",openDl||lateDl?null:"vnone",openDl||lateDl?openDl+(openDl===1?" known-exploited flaw has":" known-exploited flaws have")+" a federal deadline ahead and "+lateDl+" passed in the last two weeks. The full deadline chart, a calendar file and the fix steps are on the Vulnerabilities page.":"No known-exploited flaws with a deadline in the last two weeks or ahead."));
+  var s3a=el("a","btn ghost sm","Open the deadline chart");s3a.href="vulnerabilities.html#known";s3.appendChild(s3a);
+  s3.appendChild(el("p","cav","Source: CISA Known Exploited Vulnerabilities catalog. The deadline binds US federal agencies only."));
   v.appendChild(s3);
 }
 function vizCorr(v,list){
@@ -1380,6 +1349,7 @@ function cleanKev(id,d){
 function kevWl(k){return wlHit(k.hay);}
 function kevLeft(k){return k.due?Math.round((parseDay(k.due).getTime()-parseDay(ymd(new Date())).getTime())/864e5):null;}
 function kevDueText(n){return n===null?"":n<0?"federal deadline passed "+(-n)+(n===-1?" day":" days")+" ago":n===0?"federal deadline today":"federal deadline in "+n+(n===1?" day":" days");}
+/* The Exploited tab is a short summary. The full list, deadline chart, calendar file and fix steps live on the Vulnerabilities page. */
 function renderKev(){
   var p=$("kev");if(!p)return;
   var wk=ymd(daysAgo(7)),open=kev.filter(function(k){return k.added>=wk;}).length;
@@ -1388,20 +1358,18 @@ function renderKev(){
   if(state.tab!=="kev")return;
   var st=p.scrollTop;p.textContent="";
   if(!kev.length){p.appendChild(el("div","empty",loaded?"The known-exploited feed has not been written yet. The feeds task fills it on its next run.":"Loading"));return;}
-  var q=state.q.toLowerCase(),list=kev.filter(function(k){return (!q||k.hay.indexOf(q)>=0)&&(!state.wlOnly||!wl.terms.length||kevWl(k));});
-  list.sort(function(a,b){var wa=kevWl(a)?1:0,wb=kevWl(b)?1:0;if(wa!==wb)return wb-wa;
-    if(kevSort==="due"){var la=kevLeft(a),lb=kevLeft(b);return (la===null?999:la)-(lb===null?999:lb);}return a.added<b.added?1:a.added>b.added?-1:0;});
   var hd=el("div","khead");hd.appendChild(el("b",null,String(kev.length)));hd.appendChild(document.createTextNode(" flaws added to CISA's known-exploited list in the last 45 days · "));
-  hd.appendChild(el("b",null,String(kev.filter(function(k){return k.added>=wk;}).length)));hd.appendChild(document.createTextNode(" this week"));
+  hd.appendChild(el("b",null,String(open)));hd.appendChild(document.createTextNode(" this week"));
   var nw=kev.filter(kevWl).length;if(wl.terms.length){hd.appendChild(document.createTextNode(" · "));hd.appendChild(el("b",null,String(nw)));hd.appendChild(document.createTextNode(" match your environment"));}
   if(sweep&&sweep.last_kev_at)hd.appendChild(document.createTextNode(" · synced "+(ago(sweep.last_kev_at)||"")));
   p.appendChild(hd);
-  var tools=el("div","vhead");tools.appendChild(seg([["new","Newest first"],["due","Deadline first"]],kevSort,"Sort the exploited list",function(k){kevSort=k;renderKev();}));
-  var cal=el("button","btn ghost sm",wl.terms.length?"My deadlines to calendar":"Deadlines to calendar");cal.type="button";cal.id="kevCal";
-  cal.title="Download open patch deadlines as a calendar file (.ics) with a reminder 3 days before"+(wl.terms.length?"; only flaws that match your environment":"");
-  cal.addEventListener("click",function(){kevCalendar(null);});tools.appendChild(cal);p.appendChild(tools);
-  if(!list.length){p.appendChild(el("div","empty","Nothing in the feed matches the search or toggles."));return;}
-  list.forEach(function(k){
+  var go=el("a","btn","Open the Vulnerabilities page");go.id="kevMore";go.href="vulnerabilities.html#known";
+  go.title="Every exploited flaw ranked for patching, deadlines, calendar file, check and fix steps, and a database of all CVEs";p.appendChild(go);
+  /* the next deadlines: soonest first; with none open, the most recently added */
+  var today=ymd(new Date()),next=kev.filter(function(k){return k.due&&k.due>=today;}).sort(function(a,b){return a.due<b.due?-1:a.due>b.due?1:0;});
+  var shown=next.length?next.slice(0,5):kev.slice().sort(function(a,b){return a.added<b.added?1:a.added>b.added?-1:0;}).slice(0,5);
+  p.appendChild(el("p","khead",next.length?"Next patch deadlines ("+next.length+" open):":"No open deadlines. Most recently added:"));
+  shown.forEach(function(k){
     var left=kevLeft(k),c=el("article","kcard");
     var id=el("div","kid");id.appendChild(el("span",null,k.cve));id.appendChild(el("span",null,"added "+fmtDay(k.added)));
     if(kevWl(k))id.appendChild(el("span","pill wl","Matches your environment"));
@@ -1409,47 +1377,13 @@ function renderKev(){
     if(left!==null)id.appendChild(el("span","pill "+(left<0?"over":"due"),left<0?"Deadline passed":left===0?"Due today":"Due in "+left+"d"));
     c.appendChild(id);
     c.appendChild(el("div","kt",(k.vendor&&k.product&&k.product.toLowerCase().indexOf(k.vendor.toLowerCase())<0?k.vendor+" "+k.product:k.product||k.vendor)||k.name));
-    if(k.desc)c.appendChild(el("p",null,k.desc));
     var meta=[k.cvss!==null?"CVSS "+k.cvss.toFixed(1):"",k.epss!==null?"EPSS "+(k.epss*100>=10?Math.round(k.epss*100):(k.epss*100).toFixed(1))+"%":"",kevDueText(left)].filter(Boolean).join(" · ");
     if(meta)c.appendChild(el("p","khead",meta));
-    var acts=el("div","acts");
-    function ab(label,fn){var b=el("button",null,label);b.type="button";b.addEventListener("click",fn);acts.appendChild(b);}
-    var ev=events.find(function(e){return e.cves.indexOf(k.cve)>=0;});
-    if(ev)ab("Open on the map",function(){showEvent(ev.id);});
-    if(k.due&&left!==null&&left>=0)ab("Add to calendar",function(){kevCalendar(k);});
-    var a=el("a",null,"NVD record");a.href="https://nvd.nist.gov/vuln/detail/"+encodeURIComponent(k.cve);a.target="_blank";a.rel="noopener noreferrer";acts.appendChild(a);
+    var acts=el("div","acts"),a=el("a",null,"Check and fix steps");a.href="vulnerabilities.html#"+encodeURIComponent(k.cve);acts.appendChild(a);
     c.appendChild(acts);p.appendChild(c);
   });
   p.appendChild(el("p","khead","Source: CISA Known Exploited Vulnerabilities catalog. Deadlines bind US federal agencies only; treat them as a sensible upper limit. A flaw that is not listed here can still be exploited."));
   p.scrollTop=st;
-}
-/* ---------- patch deadlines as calendar reminders (.ics, RFC 5545); built here, nothing is sent ---------- */
-function blobUrl(b){return b instanceof Blob?URL.createObjectURL(b):"about:blank";}
-function saveFile(name,mime,text){
-  var a=document.createElement("a");a.href=blobUrl(new Blob([text],{type:mime}));a.download=name;
-  document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
-}
-function icsEsc(t){return String(t||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");}
-function icsFold(line){var out=[],s=line;while(s.length>73){out.push(s.slice(0,73));s=" "+s.slice(73);}out.push(s);return out.join("\r\n");}
-function kevIcs(list){
-  var stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z"),L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CyberView//Patch deadlines//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:CyberView patch deadlines"];
-  list.forEach(function(k){
-    var d=k.due.replace(/-/g,""),next=ymd(new Date(parseDay(k.due).getTime()+864e5)).replace(/-/g,""),what=(k.vendor+" "+k.product).trim();
-    L.push("BEGIN:VEVENT","UID:"+k.cve.toLowerCase()+"-due@cyberview","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+d,"DTEND;VALUE=DATE:"+next,
-      "SUMMARY:"+icsEsc("Patch "+k.cve+" ("+what+"): CISA deadline"),
-      "DESCRIPTION:"+icsEsc((k.desc?k.desc+"\n\n":"")+(k.ransom?"Known to be used in ransomware.\n":"")+"Added to CISA's known-exploited list "+k.added+". The deadline binds US federal agencies; treat it as an upper limit.\nNVD: https://nvd.nist.gov/vuln/detail/"+k.cve+"\nCyberView: "+location.origin+location.pathname+"#kev"),
-      "URL:https://nvd.nist.gov/vuln/detail/"+k.cve,"CATEGORIES:Security,Patch",
-      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc("Patch "+k.cve+" due in 3 days"),"TRIGGER:-P3D","END:VALARM","END:VEVENT");
-  });
-  L.push("END:VCALENDAR");
-  return L.map(icsFold).join("\r\n")+"\r\n";
-}
-function kevCalendar(only){
-  var today=ymd(new Date()),pool=only?[only]:kev.filter(function(k){return k.due&&k.due>=today;});
-  var mine=wl.terms.length&&!only?pool.filter(kevWl):pool;
-  if(!mine.length){toast(wl.terms.length?"None of the open deadlines match your environment.":"There are no open deadlines.");return;}
-  saveFile(only?only.cve+"-deadline.ics":"cyberview-patch-deadlines.ics","text/calendar;charset=utf-8",kevIcs(mine));
-  toast(mine.length+" deadline"+(mine.length>1?"s":"")+" saved as a calendar file"+(wl.terms.length&&!only?" (your environment only)":"")+". Open it to add them to your calendar; each has a reminder 3 days before.");
 }
 
 /* ---------- desktop notifications for new matches (only while a CyberView tab is open; nothing is sent anywhere) ---------- */
@@ -1478,7 +1412,7 @@ function notifyEvents(added){
 }
 function notifyKev(){
   var ids=new Set(kev.map(function(k){return k.cve;}));
-  if(kevSeen){notifyNew(kev.filter(function(k){return !kevSeen.has(k.cve)&&kevWl(k);}).map(function(k){return {id:k.cve,t:"Exploited: "+k.cve+" "+k.vendor+" "+k.product,go:function(){setTab("kev");renderKev();}};}));}
+  if(kevSeen){notifyNew(kev.filter(function(k){return !kevSeen.has(k.cve)&&kevWl(k);}).map(function(k){return {id:k.cve,t:"Exploited: "+k.cve+" "+k.vendor+" "+k.product,go:function(){location.href="vulnerabilities.html#"+encodeURIComponent(k.cve);}};}));}
   kevSeen=ids;
 }
 

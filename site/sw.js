@@ -13,6 +13,8 @@ function timeout(ms) { return new Promise(function (_, no) { setTimeout(function
 self.addEventListener("fetch", function (ev) {
   var req = ev.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
+  // the CVE lookup files are many and large: always straight from the network, never stored in the offline copy
+  if (/\/data\/cve\//.test(url.pathname)) return;
   var key = keyOf(req);
   // pages, scripts and styles skip the browser's 10-minute HTTP cache (revalidated, so still cheap): after a deploy a
   // phone never runs a new page with an old script or the reverse

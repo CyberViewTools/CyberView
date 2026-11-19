@@ -26,19 +26,18 @@
     "doc_id": "Status incident ftw0fh9wx43z",
     "iocs_available": false,
     "key_findings": [
-      "Optimizely says an unauthorised party exploited a vulnerability in its Experimentation product.",
-      "The flaw was used to add malicious JavaScript to some customer projects, which then loaded on those customers' websites.",
-      "Optimizely reports it fixed the vulnerability, removed the injected code and secured affected user accounts.",
-      "It added protections intended to stop unauthorised code being delivered; the incident remained in monitoring status with one update posted.",
-      "The notice gives no count of affected customers, no technical detail of the flaw and no description of what the script did."
+      "Optimizely says an unauthorised party exploited a flaw in the Web Experimentation account signup flow to impersonate users and insert malicious JavaScript into customer projects.",
+      "It detected the activity on November 16 and says it closed the flaw within three hours of detection.",
+      "On November 17 it reported the code removed and affected accounts secured; on November 18 it said remediation was complete and every Web Experimentation customer had been contacted.",
+      "Optimizely says less than 5% of its customers were impacted and that it was not a credentials breach.",
+      "The 178-organisation count and the script behaviour come from researchers and news coverage, not Optimizely."
     ],
     "published": "2026-11-17T01:02:00Z",
     "publisher": "Optimizely",
     "publisher_type": "vendor",
     "read_depth": "full",
     "recommendations": [
-      "The notice lists no customer actions; contact Optimizely Support at support.optimizely.com with questions.",
-      "Wait for Optimizely's further updates before treating the incident as closed, since it is still marked as monitoring."
+      "Customers using Web Experimentation should review the additional guidance Optimizely sent them and contact Optimizely Support with questions."
     ],
     "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z"
   },
@@ -76,17 +75,24 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Optimizely says an unauthorised party exploited a vulnerability in its Experimentation product to add malicious JavaScript to some customer projects. It reports the flaw fixed, the code removed and affected accounts secured. Researcher Scott Helme counted 188 infected scripts across 178 organisations, and coverage says the code skimmed cards and swapped crypto addresses. Optimizely has not published technical detail or customer numbers. Krebs, citing Report URI, says the payload was rebuilt 26 times in a day, some sites also served iOS exploit kits, and about $7,500 in virtual currency was stolen.",
+  "summary": "Optimizely says an unauthorised party exploited a flaw in its Web Experimentation signup flow to inject malicious JavaScript into some customer projects. It reports the flaw fixed and code removed, and on November 18 said under 5% of customers were affected. Researcher Scott Helme counted 178 organisations; coverage says the code skimmed cards and swapped crypto addresses. Krebs, citing Report URI, says about $7,500 was stolen.",
   "tags": [
     "supply-chain",
     "data-breach"
   ],
   "time_basis": "reported",
   "title": "Optimizely script injection reaches 178 organizations' websites",
-  "updated_at": "2026-11-19T00:25:00Z",
+  "updated_at": "2026-11-19T00:27:14Z",
   "validation": {
     "checked_at": "2026-11-17T23:58:00Z",
-    "note": "Reviewed against the original Optimizely report. The 178-organisation count and the script's behaviour come from a researcher and news coverage, not Optimizely. Krebs on Security and Sophos X-Ops read in the 2026-11-19 sweep; Krebs figures (26 rebuilds, about $7,500, iOS exploit kits) are attributed to Report URI.",
+    "note": "Reviewed against the original Optimizely report. The 178-organisation count and the script's behaviour come from a researcher and news coverage, not Optimizely. Krebs on Security and Sophos X-Ops read in the 2026-11-19 sweep; Krebs figures (26 rebuilds, about $7,500, iOS exploit kits) are attributed to Report URI. Status page re-read 2026-11-19: Nov 18 update says remediation complete and under 5% of customers affected.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T00:27:26Z",
+    "note": "Checked against Optimizely status page (updates to Nov 18), BleepingComputer and Krebs: 178 orgs, 188 scripts, 26 rebuilds, $7,500, iOS kits match. Summary said Optimizely gave no technical detail or customer numbers; status now names the signup flow and says under 5% of customers affected. Summary ",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T00:27:26Z"
 }

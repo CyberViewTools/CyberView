@@ -60,7 +60,7 @@
     "iocs_available": false,
     "key_findings": [
       "SAP's own CVE records rate four flaws CVSS 10.0, each exploitable over the network without authentication or user interaction.",
-      "CVE-2026-76964 (NetWeaver AS ABAP Internet Communication Manager) and CVE-2026-89126 (Web Dispatcher, heap overflow) are memory corruption from crafted network traffic that could give code execution.",
+      "CVE-2026-76964 (NetWeaver AS ABAP Internet Communication Manager) and CVE-2026-89126 (Web Dispatcher) are memory corruption from crafted network traffic that could give code execution.",
       "CVE-2026-89103: SAP Gateway turns on a high-privilege default access control list that can treat an outside attacker as an internal application server.",
       "CVE-2026-120017: under certain configurations the SAML2 service provider does not properly verify assertions, letting an attacker impersonate any user including privileged ones.",
       "Affected kernels span 7.53 to 9.20 for ICM and Web Dispatcher, 7.22 to 9.21 for Gateway, and SAP_BASIS 702 to 922 for SAML2."
@@ -109,10 +109,19 @@
   "summary": "SAP's November 10 CVE records confirm four flaws rated CVSS 10.0: memory corruption in the NetWeaver AS ABAP Internet Communication Manager and in Web Dispatcher, a SAP Gateway default access list that can treat outsiders as internal servers, and a SAML2 assertion check failure allowing impersonation of any user. Each is fixed by its own SAP Note. The 35-note total comes from secondary coverage.",
   "tags": [],
   "title": "SAP Patch Day: 35 notes, four rated CVSS 10.0",
-  "updated_at": "2026-11-18T06:14:21Z",
+  "updated_at": "2026-11-19T00:32:00Z",
   "validation": {
     "checked_at": "2026-11-17T23:58:00Z",
     "note": "Reviewed against the original SAP document (SAP's four CVE records). SAP's Patch Day page refuses automated readers, so the 35-note total remains from secondary coverage.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T00:27:43Z",
+    "note": "CVE records, 35 notes (Carthage), notes numbers checked; removed unsupported 'heap overflow' from key findings",
+    "flags": [
+      "severity-3-reason"
+    ]
+  },
+  "qa_checked_at": "2026-11-19T00:27:43Z"
 }

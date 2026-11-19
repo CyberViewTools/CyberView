@@ -1,0 +1,68 @@
+{
+  "action": "If SCTP is not needed, block the module from loading (a modprobe.d rule such as 'install sctp /bin/false'), and watch your distribution's kernel updates; Xint says a kernel patch is expected in the coming weeks.",
+  "actor": "",
+  "attack": [
+    "lpe",
+    "use-after-free"
+  ],
+  "category": "vuln",
+  "country": "",
+  "date": "2026-11-18",
+  "occurred_at": "2026-11-18T12:00:00Z",
+  "exec": "An unpatched Linux kernel flaw lets an attacker who already runs code on a server, including inside a container, become root on the host.",
+  "first_seen": "2026-11-19T04:08:58Z",
+  "geo_basis": "",
+  "impact": "",
+  "lat": null,
+  "lng": null,
+  "org": "Linux kernel",
+  "pin_type": "none",
+  "place": "",
+  "plain": "Researchers say they found an unpatched flaw in the Linux kernel's SCTP networking code that can turn a foothold on a server into full control, and a fix has not been released yet.",
+  "products": [
+    "Linux kernel (SCTP)"
+  ],
+  "cves": [],
+  "report": {
+    "publisher": "Xint (Theori)",
+    "publisher_type": "vendor",
+    "published": "2026-11-18",
+    "read_depth": "full",
+    "url": "https://xint.io/blog/nginx2root-remote-code-execution",
+    "key_findings": [
+      "Xint describes a use-after-free or double free in the SCTP send path, introduced in Linux v4.15 in 2018, reachable when an association is moved to another socket while a send is waiting.",
+      "Chained with one of its five nginx flaws, it gave root on the host, including from a Docker container; Xint withholds most exploit details until a kernel patch exists.",
+      "No CVE number or kernel patch is stated; Xint says the patch will come in the coming weeks (nginx2root.com).",
+      "A post on oss-security (Rich Felker, 18 November) advises anyone not needing SCTP to block the module."
+    ],
+    "iocs_available": false,
+    "recommendations": [
+      "Block the sctp module where not needed.",
+      "Apply kernel updates when released."
+    ]
+  },
+  "sector": "Technology / open source",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Xint: NGINX2Root, section 6 (Linux kernel SCTP flaw)",
+      "url": "https://xint.io/blog/nginx2root-remote-code-execution"
+    },
+    {
+      "name": "oss-security: Another (?) Linux kernel SCTP vuln undisclosed",
+      "url": "https://seclists.org/oss-sec/2026/q4/781"
+    }
+  ],
+  "status": "official",
+  "summary": "Xint (Theori) says a separate, still-unpatched Linux kernel flaw in the SCTP subsystem, found alongside five nginx vulnerabilities, lets a local attacker gain root, including escaping a Docker container. The bug has existed since Linux 4.15 (2018). Xint withholds exploit details and says a patch is due in the coming weeks. No CVE or exploitation in the wild is stated.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "Xint discloses unpatched Linux kernel SCTP privilege-escalation flaw chained with nginx bugs",
+  "updated_at": "2026-11-19T04:08:58Z",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-19T04:08:58Z",
+    "note": "Xint's own write-up read in full; the oss-security thread only repeats Xint's site and points to the same blog. No kernel maintainer or CVE record found, so the flaw is reported by one party."
+  }
+}

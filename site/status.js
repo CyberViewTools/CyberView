@@ -49,11 +49,11 @@
     if (!h) { row(false, "The health record can't be loaded right now."); return; }
     var mins = function (iso) { return (Date.now() - Date.parse(iso)) / 6e4; }, lim = function (iso, max, label) { var v = mins(iso); row(isFinite(v) && v <= max, label + " " + (iso ? ago(iso) : "has not run yet") + (isFinite(v) && v > max ? " (expected within " + (max >= 120 ? Math.round(max / 60) + " h" : max + " min") + ")" : "")); };
     lim(h.built_at, 90, "Site data rebuilt");
-    lim(h.last_sweep_at, 150, "Research sweep ran");
+    lim(h.last_sweep_at, 45, "Research run (every 15 minutes)");
     lim(h.last_collect_at, 120, "Feeds collected");
     lim(h.last_feeds_at, 360, "Vulnerability feeds synced");
     var bl = h.backlog;
-    if (bl && typeof bl.waiting === "number") row(bl.waiting <= 150 && !(bl.oldest_incident_hours > 12), "Research queue: " + bl.waiting + " report" + (bl.waiting === 1 ? "" : "s") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 150 ? " (expected under 150)" : ""));
+    if (bl && typeof bl.waiting === "number") row(bl.waiting <= 60 && !(bl.oldest_incident_hours > 2), "Research queue: " + bl.waiting + " report" + (bl.waiting === 1 ? "" : "s") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 60 ? " (expected under 60)" : ""));
     var q = typeof h.quarantined_count === "number" ? h.quarantined_count : 0;
     row(q === 0, q === 0 ? "Every record passed validation" : q + " record" + (q === 1 ? "" : "s") + " failed validation and " + (q === 1 ? "is" : "are") + " left out until fixed");
     if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));

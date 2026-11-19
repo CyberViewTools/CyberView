@@ -11,7 +11,7 @@ import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 150, collect_min: 120, feeds_min: 360, deploy_lag_min: 20 };
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20 };
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
 
 /** Pure: what was read -> { fails, warns, heal }. */
@@ -26,8 +26,8 @@ export function assess({ manifest, health, bundle, head, deploy }, now = Date.no
   late("the vulnerability feeds", health.last_feeds_at, LIMITS.feeds_min, "feeds");
   if (!Array.isArray(bundle.events) || bundle.events.length < 5) fails.push(`the live bundle has ${Array.isArray(bundle.events) ? bundle.events.length : 0} events`);
   const bl = health.backlog;
-  if (bl && bl.waiting > 150) warns.push(`the research queue holds ${bl.waiting} reports waiting for a decision (limit 150): the backlog desk is behind`);
-  if (bl && bl.oldest_incident_hours > 12) warns.push(`a report that reads like an incident has waited ${bl.oldest_incident_hours} hours (limit 12)`);
+  if (bl && bl.waiting > 60) warns.push(`the research queue holds ${bl.waiting} reports waiting for a decision (limit 60): the backlog desk is behind`);
+  if (bl && bl.oldest_incident_hours > 2) warns.push(`a report that reads like an incident has waited ${bl.oldest_incident_hours} hours (limit 2)`);
   if (health.quarantined_count > 0) warns.push(`${health.quarantined_count} data record(s) are quarantined (left out of the site): ${(health.quarantined || []).slice(0, 2).join("; ")}`);
   if (head && head.sha && manifest.commit && head.sha !== manifest.commit && mins(head.date, now) > LIMITS.deploy_lag_min) { fails.push(`main is at ${head.sha.slice(0, 7)} (${Math.round(mins(head.date, now))} minutes old) but the live site is built from ${manifest.commit.slice(0, 7)}`); heal.push("deploy"); }
   if (deploy && deploy.conclusion === "failure") { warns.push("the most recent deploy run failed"); heal.push("deploy"); }

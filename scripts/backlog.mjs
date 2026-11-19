@@ -25,6 +25,10 @@ export function autoReason(s, now = Date.now()) {
   if (s.leads.length && s.leads.every((l) => ROWS.includes(l.kind))) return "a bare database row with no report of exploitation";
   if (s.routine && !s.tiers.includes("gov")) return "a routine vendor bulletin with no sign of exploitation";
   if (s.routine && s.publishers <= 1 && !s.incident) return "a routine advisory repeated by one agency, with no sign of exploitation";
+  // the owner's rule (2026-11-19): agents read incidents, exploited flaws, official sources and anything two publishers report;
+  // a single news item whose headline reports nothing that happened is closed here, at once, with this reason
+  // English headlines only: the word lists cannot judge other languages, and those are where coverage is thinnest
+  if (s.publishers <= 1 && !s.eventlike && s.langs.every((l) => !l || l === "en") && !s.tiers.some((t) => t === "gov" || t === "vendor")) return "a single-source item whose headline reports no incident, exploitation or official action";
   return "";
 }
 /** Pure: the stories that still need a decision, strongest and newest first, incidents before everything else. */

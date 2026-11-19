@@ -30,3 +30,13 @@ test("the queue puts incidents first and the summary counts only what still need
   const s = summary([adv, noise, claim, inc], NOW);
   assert.equal(s.waiting, 2); assert.equal(s.incidents, 1); assert.equal(s.closable_by_rule, 1); assert.equal(s.claims, 1);
 });
+
+test("the single-source rule closes English headlines that report nothing, and never judges other languages or official sources", () => {
+  assert.match(autoReason(mk([lead({ title: "Nvidia projects AI growth beyond 2027 despite CEO exit" })]), NOW), /single-source/);
+  assert.equal(autoReason(mk([lead({ title: "Iran targeted US infrastructure with cyberattacks, Homeland Security chief says" })]), NOW), "");
+  assert.equal(autoReason(mk([lead({ title: "New GitDoor backdoors turn GitHub into covert channels" })]), NOW), "");
+  assert.equal(autoReason(mk([lead({ title: "Güneş enerjisi santrali hacklendi, 3 aydır çalışamıyor", lang: "tr" })]), NOW), "");
+  assert.equal(autoReason(mk([lead({ title: "Quarterly notes from the national centre", lang: "ja" })]), NOW), "");
+  assert.equal(autoReason(mk([lead({ title: "Notes on a new loader family", tier: "vendor", source: "Lab" })]), NOW), "");
+  assert.equal(autoReason(mk(["A", "B"].map((s) => lead({ title: "Nvidia projects AI growth beyond 2027 despite CEO exit", source: s }))), NOW), "");
+});

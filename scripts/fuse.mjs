@@ -66,8 +66,9 @@ export function cluster(leads) {
   return [...groups.values()];
 }
 
-const INCIDENT = /\b(breach(ed|es)?|ransomware|hack(ed|ers?)?|cyber ?attack|attack(ed|s)?|stolen|leak(ed|s)?|data theft|extortion|outage|disrupt(ed|ion)|shut ?down|compromised?|intrusion|espionage|malware|phishing campaign|backdoor|botnet|wiper|ddos)\b/i;
+const INCIDENT = /\b(breach(ed|es)?|ransomware|hack(ed|ers?|ing)?|cyber[- ]?attacks?|attack(ed|s)?|stolen|leak(ed|s)?|data theft|extortion|outages?|disrupt(ed|ion|s)|interruptions?|shut ?down|compromised?|intrusion|espionage|malware|phishing campaign|backdoor|botnet|wiper|ddos)\b|ciberataque|ciberseguridad: ataque|ataque (hacker|cibern)|cyberangriff|hackerangriff|datenleck|cyberattaque|piratage|attacco (hacker|informatico)|siber sald|hacklendi|サイバー攻撃|不正アクセス|情報漏えい|流出|해킹|사이버 공격|유출|网络攻击|黑客|هجوم سيبراني|اختراق|кибератак|взлом/i;
 const ROUTINE = /weekly report|multiple vulnerabilit|mehrere schwachstellen|schwachstelle ermöglicht|security (update|advisory|bulletin|release)s?\b|patch tuesday|複数|脆弱性|vulnerabilità|vulnérabilités? dans|\[(neu|update)\]/i;
+const EVENTLIKE = /\b(expos(ed|es|ure)|unauthori[sz]ed access|deface(d|ment)?|taken (down|offline)|knocked offline|offline|down for|arrest(ed|s)?|sentenced|charged|indict(ed|ment)|extradit\w+|sanction(s|ed)?|fined|fine of|seiz(ed|ure|es)|takedown|dismantl\w+|zero-day|0-day|exploit(ed|s|ation|ing)?|emergency (patch|update|directive)|out-of-band|spyware|trojan|stealer|rootkit|campaign|threat (actor|group)|apt[- ]?\d+|state-backed|state-sponsored|confirms?|discloses?|notif(y|ies|ying)|investigat(es|ing|ion)|lawsuit|class action|settle(s|ment)|regulator|directive|orders?|bans?|mandate(s|d)?|recall(s|ed)?|warns? of|advisory warns|urges|sues?|sued|targets?|targeted|targeting|critical (bug|flaw|hole|vulnerabilit\w+)s?|flaws?|vulnerabilit(y|ies)|patch(es|ed)?|scam(s|mers)?|fraud|phishing|typosquat\w*|payloads?|poisoned|hijack\w*|steal(s|ing)?|backdoors?|shuts? ?down|rce|remote code execution|trojani[sz]ed|snooping|regulators?|reports? of)\b/i;
 const EXPLAINER = /\?\s*$|^(how|why|what|when|who|is|are|can|should|if|no,)\b|\b(op-?ed|opinion|explained|explainer|\d+ (steps|ways|tips|things)|nine steps|tips (to|for)|guide to|lessons? (from|learned)|podcast|webinar|what (we|you) (know|need)|believes|truth is|don[’']t let)\b/i;
 const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.com)\b/i;
 
@@ -123,7 +124,7 @@ export function story(group, evs = [], now = Date.now()) {
   return {
     id: createHash("sha1").update(group.map((l) => l.url).sort()[0]).digest("hex").slice(0, 8), title: String(best.title).slice(0, 200), score, why: pts.map((p) => p[1]),
     publishers: publishers.size, vias: [...vias], tiers: [...tiers], kinds: [...kinds], cves, regions, langs, first_seen: new Date(first).toISOString().replace(/\.\d+Z$/, "Z"), last_seen: new Date(last).toISOString().replace(/\.\d+Z$/, "Z"),
-    claim_only: claimOnly, event: ev ? ev.id : "", open, published: new Date(newest).toISOString().replace(/\.\d+Z$/, "Z"), dated, incident: incident && !explainer, routine, explainer,
+    claim_only: claimOnly, event: ev ? ev.id : "", open, published: new Date(newest).toISOString().replace(/\.\d+Z$/, "Z"), dated, incident: incident && !explainer, eventlike: (incident || EVENTLIKE.test(titles)) && !explainer, routine, explainer,
     leads: group.slice().sort((a, b) => (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0)).slice(0, 14).map((l) => ({ source: l.source, tier: l.tier, via: l.via || "rss", ...(l.kind ? { kind: l.kind } : {}), ...(l.lang ? { lang: l.lang } : {}), title: String(l.title).slice(0, 160), url: l.url, open: !!l._open })),
     more: Math.max(0, group.length - 14), urls: group.map((l) => l.url),
   };

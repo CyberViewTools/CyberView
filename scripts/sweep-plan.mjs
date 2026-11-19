@@ -10,9 +10,10 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
+import { backlog } from "./backlog.mjs";
 
 const cfg = (readJson(join(ROOT, "config", "pipeline.json"), {}).sweep) || {};
-export const BATCHES = Math.max(1, Math.min(4, Number(cfg.researchers) || 2)), MAX_STORIES = BATCHES * Math.max(2, Math.min(12, Number(cfg.stories_per_researcher) || 6)), THIN = ["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"];
+export const PER = Math.max(2, Math.min(12, Number(cfg.stories_per_researcher) || 6)), BATCHES = Math.max(1, Math.min(8, Number(cfg.researchers) || 2)), MAX_STORIES = BATCHES * PER, THIN = ["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"];
 
 /** Pure: open stories (already sorted strongest first) -> the stories to work this run. */
 export function pick(stories, max = MAX_STORIES) {
@@ -47,10 +48,11 @@ function main() {
   const cmd = process.argv[2] || "plan", pp = join(DATA, "sweep-plan.json");
   const d = build();
   if (cmd === "plan") {
-    const chosen = pick(d.stories), batches = split(chosen);
+    // the queue is what still needs a decision after the rules (scripts/backlog.mjs); researchers scale with it, up to the cap
+    const queue = backlog(d.stories), chosen = pick(queue), batches = chosen.length ? split(chosen, Math.max(1, Math.min(BATCHES, Math.ceil(chosen.length / PER)))) : [];
     const plan = { planned_at: nowIso(), stories: batches.flatMap((b, i) => b.map((s) => ({ id: s.id, title: s.title, score: s.score, batch: i + 1, urls: s.urls }))) };
     writeJson(pp, plan);
-    console.log(`SWEEP PLAN: ${chosen.length} stories for ${batches.length} researcher(s), out of ${d.stories.filter(isOpen).length} open.`);
+    console.log(`SWEEP PLAN: ${chosen.length} stories for ${batches.length} researcher(s); ${queue.length} waiting for a decision${queue.length > chosen.length ? ` (${queue.length - chosen.length} over this run's cap wait for the next run, 15 minutes)` : ""}.`);
     batches.forEach((b, i) => { console.log(`\nRESEARCHER ${i + 1} (${b.length} stories):`); b.forEach((s) => console.log(`  ${s.id}  [${s.score}] ${s.title.slice(0, 96)}  (${s.publishers} publisher${s.publishers === 1 ? "" : "s"}${s.langs.filter((l) => l !== "en").length ? ", " + s.langs.join("/") : ""}; ${s.picked})`)); });
     if (!chosen.length) console.log("Nothing strong is waiting: a quiet hour. Do the gap pass only.");
     return;

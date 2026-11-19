@@ -78,6 +78,7 @@
       var e = by[r.id]; box.textContent = "";
       if (!e) { box.textContent = "Details are not available."; return; }
       if (e.summary) box.appendChild(el("p", null, e.summary));
+      box.appendChild(el("p", "note", "Researched and written by CyberView AI (a Claude model) from the sources listed."));
       if (e.action) { var p = el("p"); p.appendChild(el("strong", null, "What to do: ")); p.appendChild(document.createTextNode(e.action)); box.appendChild(p); }
       if (e.actor) box.appendChild(el("p", null, "Actor: " + e.actor));
       var lp = el("p"), la = el("a", null, "Link to this event");

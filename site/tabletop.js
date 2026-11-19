@@ -100,7 +100,7 @@
     var gu = el("ul", "ttlist good"); cur.good.forEach(function (x) { gu.appendChild(el("li", null, x)); }); g.appendChild(gu); b.appendChild(g);
     if (cur.adapt) { var ad = el("section", "panel"); ad.appendChild(el("h2", null, "Make it yours")); ad.appendChild(el("p", null, cur.adapt)); b.appendChild(ad); }
     if (cur.sources.length) { var so = el("p", "note ttsrc", "Sources read: "); cur.sources.forEach(function (s, k) { if (k) so.appendChild(document.createTextNode(" · ")); so.appendChild(link(s.url, s.name)); }); b.appendChild(so); }
-    b.appendChild(el("p", "note", "Written by CyberView's tabletop job (an AI model) from the event's verified record and the sources above, under the same rules as every event. Check the facts against the sources before you rely on them. Free to use and adapt for your own team's exercises."));
+    b.appendChild(el("p", "note", "Written by CyberView AI (a Claude model) from the event's verified record and the sources above, under the same rules as every event. Check the facts against the sources before you rely on them. Free to use and adapt for your own team's exercises."));
     tick();
   }
 

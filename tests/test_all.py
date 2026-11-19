@@ -116,6 +116,7 @@ async def main():
                 await pg.locator("#feed .card .head").nth(4).click()
                 await pg.wait_for_timeout(700)
                 ok(f"{th}: detail opens", await pg.is_visible("#detail") and not await pg.is_visible("#feed"))
+                ok(f"{th}: v1.37 an event says it was written by CyberView AI (a Claude model)", "CyberView AI (a Claude model)" in (await pg.inner_text("#dcard")))
                 t1 = await pg.inner_text("#dcard .ttl")
                 await pg.keyboard.press("j")
                 await pg.wait_for_timeout(600)

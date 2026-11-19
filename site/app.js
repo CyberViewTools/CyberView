@@ -47,7 +47,9 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.36",date:"2026-11-19"};
+/* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
+var AI_BY="CyberView AI (a Claude model)";
+var BUILD={version:"1.37",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -521,10 +523,11 @@ function card(e,open){
       b.appendChild(rv);
     }
     var vv=e.val?VAL[e.val.state]:["Not yet checked","v-warn","The validation pass has not reached this event yet."];
+    b.appendChild(el("small","aiby","Researched and written by "+AI_BY+" from the sources listed, under CyberView's published rules."));
     var vb=el("div","val "+vv[1]);vb.appendChild(el("b",null,vv[0]));vb.appendChild(document.createTextNode(" · confidence "+CONF[e.conf].toLowerCase()));
     vb.appendChild(el("small",null,(e.val&&e.val.note)||vv[2]));
     if(e.val&&e.val.checked)vb.appendChild(el("small",null,"Checked "+fmtTime(e.val.checked)));
-    if(e.review)vb.appendChild(el("small","rev "+e.review.state,({passed:"Second review: a different agent re-read the sources and found nothing wrong",corrected:"Second review: a different agent re-read the sources and corrected this record",flagged:"Second review: a problem was found and is being settled"})[e.review.state]+" · "+fmtTime(e.review.at)+(e.review.state!=="passed"&&e.review.note?" · "+e.review.note:"")));
+    if(e.review)vb.appendChild(el("small","rev "+e.review.state,({passed:"Second review: a second "+AI_BY+" agent re-read the sources and found nothing wrong",corrected:"Second review: a second "+AI_BY+" agent re-read the sources and corrected this record",flagged:"Second review: a problem was found and is being settled"})[e.review.state]+" · "+fmtTime(e.review.at)+(e.review.state!=="passed"&&e.review.note?" · "+e.review.note:"")));
     else vb.appendChild(el("small","rev none","Second review: not yet done"));
     b.appendChild(vb);
     if(e.tags.length){var tg=el("div","tags");e.tags.forEach(function(t){tg.appendChild(el("span","tag",t));});b.appendChild(tg);}
@@ -611,7 +614,7 @@ function renderBrief(){
   box.textContent="";
   if(!daily){box.appendChild(el("div","empty",!loaded&&!unavailable?"Loading":"No brief yet. One is written each morning."));return;}
   var hd=el("section","blk");
-  hd.appendChild(el("div","meta","Daily brief"+(daily.date&&isDay(daily.date)?" · "+fmtDay(daily.date):"")+(fmtTime(daily.generated)?" · written "+fmtTime(daily.generated):"")));
+  hd.appendChild(el("div","meta","Daily brief"+(daily.date&&isDay(daily.date)?" · "+fmtDay(daily.date):"")+(fmtTime(daily.generated)?" · written by "+AI_BY+" "+fmtTime(daily.generated):" · written by "+AI_BY)));
   if(daily.headline)hd.appendChild(el("h2","bhd",daily.headline));
   if(daily.summary)hd.appendChild(el("p",null,daily.summary));
   box.appendChild(hd);
@@ -863,7 +866,7 @@ function renderPatterns(){
   var box=$("pat");if(box.hidden)return;
   box.textContent="";
   if(!analysis||!analysis.patterns.length){box.appendChild(el("div","empty",loaded?"No pattern analysis stored yet. The analysis task writes one every few hours.":"Loading"));return;}
-  box.appendChild(el("div","warnbox","Correlation is not causation. Each pattern says whether sources state the link, whether it is an inference from shared attributes, or whether it rests on timing alone. Generated "+(fmtTime(analysis.generated)||"recently")+"."));
+  box.appendChild(el("div","warnbox","Written by "+AI_BY+". Correlation is not causation. Each pattern says whether sources state the link, whether it is an inference from shared attributes, or whether it rests on timing alone. Generated "+(fmtTime(analysis.generated)||"recently")+"."));
   if(analysis.summary){var s=el("div","pcard");s.appendChild(el("h3",null,"Overall read"));s.appendChild(el("p",null,analysis.summary));box.appendChild(s);}
   var byId={};events.forEach(function(e){if(claimOk(e))byId[e.id]=e;});
   analysis.patterns.forEach(function(p){

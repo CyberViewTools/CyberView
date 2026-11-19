@@ -154,7 +154,7 @@
     var sl = el("p", "note"); sl.appendChild(document.createTextNode("Sources read: "));
     a.sources.forEach(function (s, i) { if (i) sl.appendChild(document.createTextNode(" · ")); sl.appendChild(link(s.url, s.name)); sl.appendChild(document.createTextNode(" (" + SRC_KIND[s.kind].toLowerCase() + (s.full ? "" : ", summary") + ")")); });
     box.appendChild(sl);
-    box.appendChild(el("p", "note", "Written by an AI model (Claude Opus) from the sources listed" + (a.at ? ", " + a.at.slice(0, 10) : "") + (a.conf ? "; confidence " + a.conf.toLowerCase() : "") + ". It explains how the flaw is used so you can defend against it and contains no exploit code. Confirm versions and steps against the vendor advisory before you act." + (a.caveats ? " Caveats: " + a.caveats : "")));
+    box.appendChild(el("p", "note", "Written by CyberView AI (a Claude model), Opus, from the sources listed" + (a.at ? ", " + a.at.slice(0, 10) : "") + (a.conf ? "; confidence " + a.conf.toLowerCase() : "") + ". It explains how the flaw is used so you can defend against it and contains no exploit code. Confirm versions and steps against the vendor advisory before you act." + (a.caveats ? " Caveats: " + a.caveats : "")));
     return box;
   }
   function detail(r) {
@@ -177,7 +177,7 @@
       list(gb, "If you cannot patch yet", g.workaround);
       list(gb, "Signs of compromise to look for", g.signs);
       if (g.hunt.length) { gb.appendChild(el("h4", null, "Detection resources")); var hl = el("ul"); g.hunt.forEach(function (h) { var li = el("li"); li.appendChild(link(h.url, h.name)); li.appendChild(el("span", "note", " " + FORMATS[h.format] + (h.publisher ? " · " + h.publisher : ""))); hl.appendChild(li); }); gb.appendChild(hl); }
-      var src = el("p", "note", "From the advisory, " + (g.depth === "full" ? "read in full" : "from its summary page") + (g.readAt ? " on " + g.readAt : "") + ": "); src.appendChild(link(g.advisory.url, g.advisory.name)); gb.appendChild(src);
+      var src = el("p", "note", "Summarised by CyberView AI (a Claude model) from the advisory, " + (g.depth === "full" ? "read in full" : "from its summary page") + (g.readAt ? " on " + g.readAt : "") + ": "); src.appendChild(link(g.advisory.url, g.advisory.name)); gb.appendChild(src);
       d.appendChild(gb);
     } else {
       var fx = W.fixedIn(f);
@@ -310,7 +310,7 @@
       var t = el("div"); t.appendChild(el("h3", null, c.title)); if (c.name) t.appendChild(el("p", "note", c.name)); if (c.why.length) t.appendChild(el("p", "wbhwhy", "Why now: " + c.why.join(" · ")));
       top.appendChild(t); li.appendChild(top);
       if (c.signs.length) { var s1 = el("div", "wbhsec"); var h1 = el("h4", null, "What the vendor says to look for "); if (c.signsFrom) h1.appendChild(link(c.signsFrom.url, "(" + (c.signsFrom.name || "advisory") + ")")); s1.appendChild(h1); s1.appendChild(huntList(null, c.signs)); li.appendChild(s1); }
-      if (c.detect.length) { var s2 = el("div", "wbhsec"); s2.appendChild(el("h4", null, "Where to look")); s2.appendChild(huntList(null, c.detect)); s2.appendChild(el("p", "note", "Written by an AI model from the advisories it read; check against the vendor's own guidance.")); li.appendChild(s2); }
+      if (c.detect.length) { var s2 = el("div", "wbhsec"); s2.appendChild(el("h4", null, "Where to look")); s2.appendChild(huntList(null, c.detect)); s2.appendChild(el("p", "note", "Written by CyberView AI (a Claude model) from the advisories it read; check against the vendor's own guidance.")); li.appendChild(s2); }
       if (c.files.length) { var s3 = el("div", "wbhsec"); s3.appendChild(el("h4", null, "Detection files from the publishers")); var ul = el("ul", "wbhfiles");
         c.files.forEach(function (h) { var x = el("li"); x.appendChild(el("span", "badge info", FORMATS[h.format])); x.appendChild(document.createTextNode(" ")); x.appendChild(link(h.url, h.name)); if (h.publisher) x.appendChild(el("span", "note", " · " + h.publisher)); ul.appendChild(x); });
         s3.appendChild(ul); li.appendChild(s3); }
@@ -327,7 +327,7 @@
       L.push((i + 1) + ". " + c.title + (c.name ? "  (" + c.name + ")" : ""));
       if (c.why.length) L.push("   Why now: " + c.why.join("; "));
       if (c.signs.length) { L.push("   Vendor says look for:" + (c.signsFrom ? " (" + c.signsFrom.url + ")" : "")); c.signs.forEach(function (x) { L.push("   - " + x); }); }
-      if (c.detect.length) { L.push("   Where to look (AI analysis of the advisories):"); c.detect.forEach(function (x) { L.push("   - " + x); }); }
+      if (c.detect.length) { L.push("   Where to look (written by CyberView AI, a Claude model, from the advisories):"); c.detect.forEach(function (x) { L.push("   - " + x); }); }
       c.files.forEach(function (h) { L.push("   File: " + FORMATS[h.format] + " " + h.name + "  " + h.url); });
       L.push("");
     });

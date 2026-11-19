@@ -323,13 +323,14 @@ const picks = live.filter((e) => e.status !== "claimed" && (e.severity === 3 || 
   .sort((a, b) => (when(a) < when(b) ? 1 : -1)).slice(0, 60);
 const text = (e) => [e.summary, e.action ? `What to do: ${e.action}` : "", (e.cves || []).length ? `CVEs: ${e.cves.join(", ")}` : ""].filter(Boolean).join("\n\n");
 const xml = (v) => String(v == null ? "" : v).replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+const AI_BY = "CyberView AI (a Claude model)";   // who writes every summary: the site's AI agents, which are Claude models
 const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>CyberView: high-priority cyber events</title>
 <link>${SITE}/</link>
 <atom:link href="${SITE}/data/feed.xml" rel="self" type="application/rss+xml"/>
-<description>High-severity incidents, exploited vulnerabilities and urgent advisories from CyberView, with what to do. Unverified claims are left out.</description>
+<description>High-severity incidents, exploited vulnerabilities and urgent advisories from CyberView, with what to do, researched and written by ${AI_BY}. Unverified claims are left out.</description>
 <language>en</language>
 <lastBuildDate>${new Date(built_at).toUTCString()}</lastBuildDate>
 ${picks.map((e) => `<item>
@@ -338,7 +339,7 @@ ${picks.map((e) => `<item>
 <guid isPermaLink="false">cyberview:${xml(e.id)}</guid>
 <pubDate>${new Date(when(e)).toUTCString()}</pubDate>
 <category>${xml(e.category)}</category>
-<description>${xml(text(e))}</description>
+<description>${xml(text(e) + " (Written by " + AI_BY + ".)")}</description>
 </item>`).join("\n")}
 </channel>
 </rss>
@@ -349,7 +350,8 @@ writeFileSync(join(OUT, "feed.json"), JSON.stringify({
   title: "CyberView: high-priority cyber events",
   home_page_url: `${SITE}/`,
   feed_url: `${SITE}/data/feed.json`,
-  description: "High-severity incidents, exploited vulnerabilities and urgent advisories, with what to do. Unverified claims are left out.",
+  description: `High-severity incidents, exploited vulnerabilities and urgent advisories, with what to do, researched and written by ${AI_BY}. Unverified claims are left out.`,
+  authors: [{ name: AI_BY, url: `${SITE}/about.html` }],
   items: picks.map((e) => ({
     id: `cyberview:${e.id}`, url: link(e.id), title: e.title, content_text: text(e), date_published: when(e),
     date_modified: /^\d{4}-\d{2}-\d{2}T/.test(e.updated_at || "") ? e.updated_at : undefined,

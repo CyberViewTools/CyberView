@@ -1,0 +1,90 @@
+{
+  "job": "triage",
+  "started_at": "2026-11-19T00:50:31Z",
+  "finished_at": "2026-11-19T00:52:37Z",
+  "model": "claude-haiku-5-5",
+  "searches": [],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "PAN-OS / JPCERT weekly report / Siemens SSA-566512 (story 74c7d2bd)",
+      "url": "https://www.jpcert.or.jp/wr/2026/wr261118.html#13",
+      "reason": "closed: earlier run 2026-11-19/0021-stories-9 judged not an event (PAN-OS CVE-2026-0331 medium information disclosure, no exploitation stated)"
+    },
+    {
+      "title": "US tech outages spark conversation on resilience in the age of AI (story 623dab6b)",
+      "url": "https://www.the-star.co.ke/news/world/2026-11-18-rubio-us-not-under-attack-over-tech-outages",
+      "reason": "closed: commentary on US outages; outages already on file; earlier run 2026-11-19/0014-stories"
+    },
+    {
+      "title": "Cyber Attack Hits 178 Major Websites (story d007e9fa)",
+      "url": "https://techstory.in/cyber-attack-hits-178-major-websites-full-list-of-affected-organizations/",
+      "reason": "closed: already on file as optimizely-web-script-injection-2026-11"
+    },
+    {
+      "title": "CSIRT Italy: Supply Chain Attack via Optimizely Web Experimentation (story 1cbdeb4f)",
+      "url": "https://www.acn.gov.it/portale/w/supply-chain-attack-distribuzione-di-codice-malevolo-tramite-optimizely-web-experimentation",
+      "reason": "closed: already on file as optimizely-web-script-injection-2026-11"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Minister criticises Belfast IT firm's notification delay over credit unions data breach (story 7f0a7e43)",
+      "url": "https://www.msn.com/en-us/news/other/minister-criticises-belfast-it-firms-notification-delay-over-credit-unions-data-breach/ar-AA2hIpe7",
+      "note": "Follow-up to wellington-it-irish-credit-unions-breach-2026-11 on file; 3 publishers. Sweep should update that event (minister's criticism, notification delay) after reading the page; do not write a new event.",
+      "priority": 1
+    },
+    {
+      "title": "Danfoss AK-SM800A: six 0-day vulnerabilities in refrigeration controllers (story 75f86126)",
+      "url": "https://www.acn.gov.it/portale/w/danfoss-ak-sm800a-rilevate-sei-vulnerabilita-0-day-nei-controller-per-la-refrigerazione",
+      "note": "Government (ACN Italy) report of six 0-days in OT controllers; not yet on file. Read the advisory and any vendor notice before deciding severity.",
+      "priority": 1
+    },
+    {
+      "title": "LibreOffice: public PoCs for new vulnerabilities (story 82e5a6b9)",
+      "url": "https://www.acn.gov.it/portale/w/libreoffice-disponibili-poc-per-nuove-vulnerabilita",
+      "note": "Public proof-of-concept code exists (severity 3 candidate under the rules); check CVE IDs and the vendor fix.",
+      "priority": 1
+    },
+    {
+      "title": "Zyxel router vulnerabilities (BSI WID-SEC-2026-4600, story 053965e0)",
+      "url": "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2026-4600",
+      "note": "Rated high, internet-facing device class; check for exploitation before closing.",
+      "priority": 1
+    },
+    {
+      "title": "Oracle E-Business Suite vulnerabilities (BSI WID-SEC-2026-4614, story b6876a3a)",
+      "url": "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2026-4614",
+      "note": "Rated high in widely used enterprise software; check for exploitation or official urgency.",
+      "priority": 1
+    },
+    {
+      "title": "SmarterTools SmarterMail vulnerabilities (BSI WID-SEC-2026-3070, story 90972191)",
+      "url": "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2026-3070",
+      "note": "Rated high, internet-facing mail server; check for exploitation.",
+      "priority": 1
+    },
+    {
+      "title": "NGINX Plus and NGINX Open Source critical vulnerabilities (CERT.at, story 14963833)",
+      "url": "https://www.cert.at/de/warnungen/2026/11/kritische-sicherheitslucken-in-nginx-plus-und-nginx-open-source-updates-verfugbar",
+      "note": "Critical rating in internet-facing software; earlier leads note an unreachable F5 page. Check F5 advisory and exploitation status.",
+      "priority": 1
+    },
+    {
+      "title": "Fortinet and Ivanti product vulnerabilities (JPCERT weekly report 2026-11-18, stories 180af52b, 10be754e)",
+      "url": "https://www.jpcert.or.jp/wr/2026/wr261118.html#19",
+      "note": "Widely used internet-facing products; check vendor advisories for exploitation or patch urgency.",
+      "priority": 1
+    },
+    {
+      "title": "Other BSI, JPCERT, INCIBE, CERT-SE, CERT.at and NCSC Finland advisory stories (about 70)",
+      "url": "",
+      "note": "Routine vendor advisories and CERT items left open this run: the rule requires opening a government source before closing it, and that was not done for each. Next sweep or advisory desk to open and close them, starting with the priority-1 items above.",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [],
+  "notes": "Queue at start: 754 open stories (fuse), 80 top stories listed. Closed 4 (2 already on file, 2 already judged not events by earlier runs). 76 left open: government-source stories were not closed without opening them (rule), and 38a4d763 (Spanish report that the US ruled out a cyberattack, 3 publishers) was left open as it overlaps the outage cluster. The --claims listing returned no claim stories in this build (it printed the same advisory list), so the 48 leak-site claim stories were not triaged this run. No pages were opened by triage itself; closures rest on earlier runs' recorded decisions and on the event on file."
+}

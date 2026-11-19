@@ -32,18 +32,20 @@
     "doc_id": "",
     "published": "2026-11-17",
     "key_findings": [
-      "BubbleLoader patches a program's entry point and adds two PNG images that hold the hidden code; the second PNG is a fake containing encrypted code.",
-      "Known hosts include WinRAR, x64dbg, Windows Media Player, the Firefox launcher and virtiofs.",
-      "Earliest samples date from February 2026; two activity clusters in mid-September and early October indicate current use.",
-      "Runtime polymorphism makes the in-memory payload hash differ on every execution.",
-      "ReversingLabs does not say how the tampered programs reach victims (Help Net Security); the final payload varies."
+      "BubbleLoader patches the entry point of a benign program and appends two PNG files; the host then decrypts and reflectively loads a final payload in memory.",
+      "Hosts seen include WinRAR, x64dbg, Windows Media Player, a Firefox launcher and virtiofs; the post names no victims or sectors and the final payload varies by sample.",
+      "Earliest samples date from February 2026, with two activity clusters in mid-September and early October.",
+      "It overwrites padding bytes in the payload with timestamp-derived randomness on each run, so the in-memory hash changes every execution, and hooks RtlPcToFileHeader in ntdll so the payload can handle exceptions.",
+      "The second PNG is a fake with a truncated header, which ReversingLabs offers as a static detection signal; the post does not say how the altered programs reach victims."
     ],
     "recommendations": [
-      "Strict application allowlisting and code-signing verification.",
-      "Alert on RWX memory and protection changes to ntdll exception routines; flag PNGs with truncated headers."
+      "Enforce strict application allowlisting and code-signing verification, especially for common utilities such as WinRAR.",
+      "Have EDR alert on read-write-execute memory allocated with VirtualAlloc and on protection changes to the ntdll routine RtlPcToFileHeader.",
+      "Add static rules for embedded PNGs with a truncated header.",
+      "Rely on behavioural memory analysis and entry-point integrity checks, not only static payload hashes."
     ],
     "iocs_available": true,
-    "read_depth": "summary",
+    "read_depth": "full",
     "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-bubbleloader"
   },
   "sector": "Cross-sector",
@@ -66,10 +68,10 @@
   ],
   "time_basis": "reported",
   "title": "ReversingLabs: BubbleLoader turns WinRAR and other programs into malware carriers",
-  "updated_at": "2026-11-19T03:44:55Z",
+  "updated_at": "2026-11-19T13:20:14Z",
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-19T03:44:55Z",
+    "checked_at": "2026-11-19T13:20:14Z",
     "note": "ReversingLabs original (highlights and intro read; full body only summarised) and Help Net Security's detailed write-up, which restates the vendor research."
   },
   "review": {

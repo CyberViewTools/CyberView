@@ -7,17 +7,17 @@
   "pin_type": "none",
   "place": "",
   "first_seen": "2026-11-19T03:47:28Z",
-  "updated_at": "2026-11-19T05:09:29Z",
+  "updated_at": "2026-11-19T13:20:14Z",
   "category": "report",
   "source_tier": "primary",
-  "status": "confirmed",
+  "status": "official",
   "title": "Elastic: SANSAR Linux cryptominer fakes GPU readings to hide mining",
-  "date": "2026-11-16",
+  "date": "2026-11-12",
   "org": "Elastic Security Labs",
   "actor": "REF3364 (Elastic's tracking name; financially motivated, unattributed)",
   "sector": "AI / GPU infrastructure",
   "severity": 2,
-  "summary": "Elastic Security Labs describes REF3364, a Linux cryptomining operation seen in late October 2026. Access came through an exposed Ray job agent. The toolkit, SANSAR, adds a kernel rootkit, a modified NVIDIA NVML wrapper that reports 0% GPU use and random temperatures, and an Ethereum-assisted backdoor. Elastic does not know who is behind it and found Turkish comments in the code.",
+  "summary": "Elastic Security Labs describes REF3364, a Linux cryptomining operation seen in late October 2026. Access came through an exposed Ray job agent. The toolkit, SANSAR, adds a kernel rootkit, a modified NVIDIA NVML wrapper that reports 0% GPU use and random temperatures, and an Ethereum-assisted backdoor. Elastic does not identify who is behind it.",
   "plain": "Attackers are secretly mining cryptocurrency on Linux servers with powerful graphics cards, and they fake the card's readings so the load looks normal.",
   "exec": "Hijacked AI compute raises costs and takes capacity from real workloads, and fake monitoring readings hide it.",
   "action": "Do not expose Ray job APIs to the internet, restrict who can submit jobs, and check hosts for a modified NVML library, unknown DKMS modules such as acpi_thermal_mgr and initramfs changes.",
@@ -49,24 +49,25 @@
     "publisher": "Elastic Security Labs",
     "publisher_type": "vendor",
     "doc_id": "REF3364",
-    "published": "2026-11-16",
+    "published": "2026-11-12",
     "key_findings": [
-      "Initial access was through an exposed Ray job agent, then a reverse shell and an added SSH key.",
-      "A modified NVML wrapper reports GPU utilisation as 0% and substitutes random temperature (36 to 46 C) and power (100 to 200 W) readings.",
-      "A kernel rootkit, acpi_thermal_mgr.ko, hides processes, files and sockets and reloads through an initramfs loader.",
-      "The netns backdoor fetches its controller address from an Ethereum smart contract.",
-      "Turkish-language comments were found in the rootkit source; the operator is unidentified."
+      "Organisations running Linux GPU hosts for AI or ML work are the target; three hosts were hit in an intrusion tracked as REF3364 between 22 and 25 October 2026.",
+      "Initial access was an internet-reachable Ray job agent that accepted job submissions without authentication, followed by a reverse shell and an added SSH key.",
+      "The Rust orchestrator SANSAR takes commands over Tor, runs XMRig and SRBMiner-MULTI for mining, and can open shells and run a TCP SYN flood task.",
+      "A kernel rootkit (acpi_thermal_mgr.ko) hides selected processes, files and sockets, and a modified NVML library reports 0% GPU use with random temperature and power readings.",
+      "A separate netns backdoor gets its controller address from an Ethereum contract through public RPC and opens a shell on port 8080."
     ],
     "recommendations": [
-      "Check who can submit jobs to GPU clusters and whether GPU monitoring libraries have been modified."
+      "Check who can submit jobs to GPU clusters and do not leave job agents such as Ray reachable without authentication.",
+      "Check whether GPU monitoring libraries such as NVML have been modified."
     ],
     "iocs_available": true,
-    "read_depth": "secondary",
-    "url": "https://thehackernews.com/2026/11/sansar-linux-cryptomining-malware-uses.html"
+    "read_depth": "full",
+    "url": "https://www.elastic.co/security-labs/threat-command/sansar-linux-cryptomining-malware"
   },
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-19T05:09:29Z",
+    "checked_at": "2026-11-19T13:20:14Z",
     "note": "Elastic's original (Nov 12) read: REF3364, activity Oct 22-25 2026, exposed Ray job agent, NVML wrapper, Turkish comments match; The Hacker News write-up matches."
   },
   "review": {
@@ -75,5 +76,14 @@
     "note": "Facts match Elastic original and THN; added Elastic Security Labs (Nov 12) as first primary source, tier primary, validation corroborated",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T05:09:53Z"
+  "qa_checked_at": "2026-11-19T05:09:53Z",
+  "hunt": [
+    {
+      "name": "Linux_Trojan_Sansar and Linux_Trojan_Netns YARA rules (inline in post)",
+      "format": "yara",
+      "url": "https://www.elastic.co/security-labs/threat-command/sansar-linux-cryptomining-malware",
+      "publisher": "Elastic Security Labs"
+    }
+  ],
+  "date_note": "Elastic published on 12 November; the event date was moved from 16 November to match."
 }

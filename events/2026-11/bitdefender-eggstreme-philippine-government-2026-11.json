@@ -24,16 +24,24 @@
   "report": {
     "iocs_available": true,
     "key_findings": [
-      "Bitdefender assesses with high confidence the operation continues to target multiple Philippine government organisations, broadening its first report on one Philippine military company.",
-      "Taiwan is targeted at low to medium confidence, which Bitdefender says is a lead, not an established fact.",
-      "New builds use raw TCP with mutual TLS plus an AES-256-CBC layer, drop the keylogger and include a passive variant that never beacons out.",
-      "Bitdefender makes no new attribution claim; the suspected Chinese APT attribution is unchanged."
+      "Bitdefender assesses with high confidence that the operation still targets several Philippine government organisations, and with low to medium confidence Taiwan; victims are not named.",
+      "The operators rebuilt the malware after the 2025 report: AES-256-CBC for the Fuel configuration, new loader ciphers, and an agent moved from gRPC to raw TCP with mutual TLS.",
+      "New agent builds add Active Directory reconnaissance, proxy and PowerShell commands and drop the keylogger.",
+      "Behaviour that stayed constant: DLL sideloading, in-memory execution and lateral movement over shares through a staging host outside endpoint management.",
+      "Attribution is unchanged: a suspected Chinese APT."
     ],
     "published": "2026-11-18",
     "publisher": "Bitdefender",
     "publisher_type": "vendor",
     "read_depth": "summary",
-    "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure"
+    "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure",
+    "doc_id": "",
+    "recommendations": [
+      "Restrict built-in tools such as WScript, cmd and reg to roles that need them and alert on scripts run from C:\\Users\\Public.",
+      "Inventory unmanaged machines reachable over SMB, monitor SMB-launched scripts and alert on new inbound firewall allow rules.",
+      "Enable script block logging and detect in-process PowerShell and CLR loading.",
+      "Build detections on the constant behaviours, not hashes, and capture process memory before remediation."
+    ]
   },
   "sector": "Government",
   "severity": 2,
@@ -54,9 +62,9 @@
     "espionage"
   ],
   "title": "Bitdefender: EggStreme backdoor rebuilt to evade detection, still aimed at Philippine government bodies",
-  "updated_at": "2026-11-19T05:54:00Z",
+  "updated_at": "2026-11-19T13:20:14Z",
   "validation": {
-    "checked_at": "2026-11-19T05:54:00Z",
+    "checked_at": "2026-11-19T13:20:14Z",
     "note": "Bitdefender's own post (read via a fetch agent) and GBHackers' coverage agree on the November 18 update, targeting confidence levels and attribution.",
     "state": "corroborated"
   },

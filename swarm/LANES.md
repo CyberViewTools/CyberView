@@ -1,10 +1,11 @@
 # Lanes
 
 One owner per path or queue. A lane edits only what it owns; anything else goes in swarm/REQUESTS.md for the owner.
-Swarm runs live in swarm/<run>/ (not committed); every data change reaches main through scripts/finish.mjs (git-sync merges status.json and leads).
+Queues are shared through leases (data/leases.json), not by pausing jobs: a run claims what it works, everyone else skips it until the lease ends.
+One status view for everything: `node scripts/swarm.mjs board`.
 
 | lane | session | owns | status | updated |
 |------|---------|------|--------|---------|
-| catch-up | CyberView catch-up (swarm) | the research backlog and the exploit analyst queue while paused; restoring the triggers in swarm/paused.json | done | 2026-11-19 04:57 |
-| ops | CyberView ops 3 (dispatcher) | every scheduled job not listed in swarm/paused.json | running | 2026-11-19 04:30 |
-| build | planning session (owner's chat) | scripts/, site/, docs/, tests/, config/, routines.json, the triggers' definitions | idle | 2026-11-19 04:30 |
+| ops | CyberView ops 3 (dispatcher) | every scheduled job; each runs as one `scripts/run-job.mjs` call (plan, claim, work, check, retry, commit, report) | running | 2026-11-19 05:08 |
+| catch-up | planning session (owner's chat) | one-off swarms over a whole queue: `swarm.mjs freeze <kind>` then `swarm.mjs run <run>` (headless workers, leases), then `close` | running: review | 2026-11-19 05:08 |
+| build | planning session (owner's chat) | scripts/, site/, docs/, tests/, config/, routines.json, the scheduled tasks' definitions | running: catch-up requests | 2026-11-19 05:08 |

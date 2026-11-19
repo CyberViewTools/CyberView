@@ -66,7 +66,7 @@ function runWorker(job, role, batch) {
   });
 }
 /** Run many workers, at most MAXPAR at a time. */
-async function pool(job, list) {
+export async function pool(job, list) {
   const res = []; let i = 0;
   await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => { while (i < list.length) { const k = i++; res[k] = await runWorker(job, list[k][0], list[k][1]); } }));
   if (list.length && unavailable >= Math.min(list.length, 2)) { log("HEADLESS UNAVAILABLE: claude could not start workers"); process.exit(3); }

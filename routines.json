@@ -372,6 +372,19 @@
    "max_age_hours": null,
    "active": true,
    "does": "An independent check, outside the session that runs the other jobs: confirms fresh, validated data is live, restarts what is overdue, and alerts the owner if it cannot."
+  },
+  {
+   "key": "improver",
+   "name": "Improver",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "37 9 * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_improver_at",
+   "max_age_hours": 30,
+   "active": true,
+   "does": "Continuous improvement: reads the week's cost, yield, speed and second-review results and makes up to three small, bounded, logged changes to the pipeline's dials and per-role models; anything bigger goes to the owner as a request."
   }
  ]
 }

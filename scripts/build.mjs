@@ -300,7 +300,12 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
   const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
     collectors: pm.collectors.slice(0, 12), stories: { open: st.stories_open ?? null, corroborated: st.stories_corroborated ?? null, claims: st.stories_claims ?? null, leads_72h: st.leads_72h ?? null } };
-  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline }));
+  // continuous improvement: the improver's latest report (cost, yield, quality, guard) and its last changes, for the status page
+  const imp = readJson(join(DATA, "improve", "latest.json"), null), chP = join(DATA, "improve", "changes.jsonl");
+  const changes = existsSync(chP) ? readFileSync(chP, "utf8").trim().split("\n").filter(Boolean).slice(-10).reverse().map((l) => { try { const x = JSON.parse(l); return { at: String(x.at).slice(0, 20), key: String(x.key).slice(0, 80), from: String(x.from).slice(0, 20), to: String(x.to).slice(0, 20), reason: String(x.reason).slice(0, 300) }; } catch { return null; } }).filter(Boolean) : [];
+  const improve = imp ? { at: imp.at, days: imp.days, events_added: imp.events_added, cost_usd: imp.cost_usd, cost_per_event: imp.cost_per_event, review: imp.review, guard: imp.guard,
+    roles: Object.fromEntries(Object.entries(imp.roles || {}).slice(0, 30)), changes } : { changes };
+  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline, improve }));
 }
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)

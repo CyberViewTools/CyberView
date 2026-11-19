@@ -59,7 +59,26 @@
     if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));
   });
 
+  function renderImprove(m) {
+    if (!m || typeof m !== "object") return;
+    var num = function (v, d) { return typeof v === "number" && isFinite(v) ? v : d; };
+    if (m.at) {
+      var rv = m.review || {}, g = m.guard || {};
+      $("impSum").textContent = "Last " + num(m.days, 7) + " days: " + num(m.events_added, 0) + " events added" + (typeof m.cost_usd === "number" ? "; worker cost $" + m.cost_usd.toFixed(2) : "") + (typeof m.cost_per_event === "number" ? " ($" + m.cost_per_event.toFixed(2) + " per event)" : "") +
+        (typeof rv.rate === "number" ? "; the second review corrected or flagged " + Math.round(rv.rate * 100) + "% of " + num(rv.reviewed, 0) + " checked" : "") + "." + (g.blocked ? " Quality guard on: " + String(g.why || "").slice(0, 200) + "." : "");
+    }
+    var tb = $("impRoles").querySelector("tbody"); tb.textContent = "";
+    Object.keys(m.roles || {}).slice(0, 30).forEach(function (k) { var r = m.roles[k] || {}, tr = el("tr");
+      [String(k).slice(0, 40), String(r.model || "").slice(0, 12), String(num(r.runs, 0)), Math.round(num(r.ok_rate, 0) * 100) + "%" + (r.timeouts ? " (" + r.timeouts + " timed out)" : ""), "$" + num(r.cost_per_run, 0).toFixed(3), String(num(r.turns_per_run, 0))].forEach(function (v) { tr.appendChild(el("td", null, v)); });
+      tb.appendChild(tr); });
+    var ul = $("impChanges"); ul.textContent = "";
+    (Array.isArray(m.changes) ? m.changes : []).slice(0, 10).forEach(function (c) { var li = el("li");
+      li.appendChild(el("strong", null, String(c.key || "").slice(0, 80) + ": " + String(c.from).slice(0, 20) + " to " + String(c.to).slice(0, 20)));
+      li.appendChild(document.createTextNode(" · " + (c.at ? ago(c.at) : "") + " · " + String(c.reason || "").slice(0, 300))); ul.appendChild(li); });
+    if (!ul.children.length) ul.appendChild(el("li", null, "None yet."));
+  }
   function render(o) {
+    try { renderImprove(o.improve); } catch (e) {}
     var body = $("routines").querySelector("tbody"), counts = { ok: 0, active: 0 };
     (o.routines || []).forEach(function (r) {
       var s = state(r), tr = el("tr");

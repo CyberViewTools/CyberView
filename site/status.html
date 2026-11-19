@@ -32,6 +32,17 @@
     <p class="note">Every build validates every record. A record that breaks a rule is left out and reported, so it cannot hold back the rest. Before publishing, the build is checked for completeness and compared with the live site; after publishing, the live copy is fetched and compared byte for byte with the build. If the site cannot be reached, your browser shows its last good copy and says how old it is.</p>
   </section>
   <section class="panel">
+    <h2>Is the pipeline getting better?</h2>
+    <p id="impSum" class="note">Waiting for the first improvement report.</p>
+    <div class="tablewrap"><table class="stack" id="impRoles">
+      <thead><tr><th scope="col">Worker role</th><th scope="col">Model</th><th scope="col">Runs</th><th scope="col">Finished</th><th scope="col">Cost per run</th><th scope="col">Turns</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <h3>Changes made by the improver</h3>
+    <ul class="plain" id="impChanges"><li>None yet.</li></ul>
+    <p class="note">Every day the improver job reads the week's cost, yield, speed and second-review results and makes at most three small changes to how many agents run and which model each role uses. A script refuses anything outside fixed limits, and nothing is made cheaper while the second review is correcting more than 15% of new events.</p>
+  </section>
+  <section class="panel">
     <h2>Routines</h2>
     <div class="tablewrap"><table class="stack" id="routines">
       <thead><tr><th scope="col">Routine</th><th scope="col">Runs</th><th scope="col">Model</th><th scope="col">Last run</th><th scope="col">State</th></tr></thead>

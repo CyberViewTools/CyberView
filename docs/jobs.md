@@ -453,6 +453,7 @@ STEPS, for each story id in your assignment, in the order given:
 3. Not on file: open the two best sources: the government or vendor original first, then the strongest independent publisher. Follow news.google.com and bing.com links through to the publisher's own page. If a page will not load, try the next source in the list before giving up.
 4. Decide: is this a real cyber event for the map, from the last 6 days? A new CVE or advisory counts only with exploitation, public exploit code, an official urgent notice, or wide use. A leak-site claim counts only for an organisation of public importance, as status "claimed", severity 1.
 5. Real and new: write data/events/<YYYY-MM>/<id>.json so that it passes every point of THE EVENT CHECKLIST. Two or more independent publishers read: validation.state "corroborated" with a note naming them.
+5b. Self-check before you move on (the second review corrected or flagged 44% of new events in the week to 19 November, mostly for these): run `node scripts/review.mjs flags <event id>` on every event you wrote or changed and fix every flag it prints. actor-unsourced: name who attributed the actor in the summary ("according to Mandiant") and fill "attribution", or remove the actor. single-source-high: find a second independent publisher or the original document, or lower severity. number-check: copy figures exactly as the source states them. long-summary: 75 words at most. Rerun until no flag is left that you can fix.
 6. Close the story: `node scripts/fuse.mjs done <id> "<event id you wrote or updated>"` or `node scripts/fuse.mjs done <id> "<why it is not an event>"`. Every assigned story must be closed one way or the other. If you could not decide because no source would load, close it with "could not confirm: <what failed>" and add it to your run log's open_leads.
 7. When all are done, run `node scripts/build.mjs`. Fix any error it names in a file you wrote, and rerun until it passes.
 8. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-sweep-r<batch>.json with pages_read, added, updated, skipped, open_leads.
@@ -460,6 +461,24 @@ RULES: do NOT run any git command (no pull, add, commit or push) and do not edit
 LIMITS: only your assigned stories. No extra research beyond them.
 DONE WHEN: every assigned story is closed with fuse.mjs done, and the build passes.
 End with one line: "researcher <batch>: <n> new, <n> updated, <n> closed as not events, <n> could not confirm".
+```
+
+## Improver (daily, Sonnet 5.5): continuous improvement
+
+```
+JOB: improver.
+GOAL: every day the pipeline gets a little cheaper, faster or more accurate, never at the cost of accuracy, and every change is small, explained and reversible.
+INPUTS: `node scripts/improve.mjs report` (the last 7 days: cost and yield per role and job, skip reasons, second-review results and notes, the research queue, the quality guard); `node scripts/improve.mjs history` (changes already made, so you do not undo yesterday's change without new evidence); config/pipeline.json and config/models.json.
+STEPS:
+1. Read the report. Name the single biggest problem in one sentence, with its numbers: quality (second review corrected or flagged more than 15%), speed (queue over 60, an incident waiting over 2 hours, timeouts), or cost (a role whose cost per run rose, a job whose yield is under 20%).
+2. Choose at most 3 changes that address it, each backed by a number from the report. What you may change (scripts/improve.mjs enforces the bounds and refuses anything else): the dials in config/pipeline.json (researchers, stories per researcher, gap workers, backlog triagers and researchers, analyst workers, reviewers, max_parallel) and, per role in config/models.json, the model (one tier) and max_turns (by at most a quarter). Rules of thumb: while the quality guard is on, do not lower any model or turn cap; raise review capacity or move a role up a tier only if the notes show it lacks judgment, not care. A role with many timeouts needs more max_turns or smaller batches, not a bigger model. A role that always finishes far under its turn cap can lose a quarter of it. A Haiku role with a low ok rate moves to Sonnet.
+3. Write the proposal to /tmp/improve-proposal.json as {"changes":[{"key":"pipeline.sweep.researchers","to":5,"reason":"one sentence with the numbers"}]} (keys: pipeline.<path> or models.roles.<role>.model|max_turns) and run `node scripts/improve.mjs apply /tmp/improve-proposal.json`. Read what it applied and refused.
+4. Problems a dial cannot fix (instructions that keep producing the same correction, a source that always fails, a rule that closes good stories) go to swarm/REQUESTS.md as one line each: date, what, the evidence, the suggested change. Never edit docs, scripts or the site yourself.
+5. Write your run log data/runs/<YYYY-MM-DD>/<HHMM>-improver.json: the problem, the changes applied and refused, the requests filed.
+RULES: no change without a number behind it; one problem at a time; never change the same key two days running unless the report shows the first change worked against its goal; a quiet day with nothing to change is a valid result.
+LIMITS: 3 changes, 3 requests.
+DONE WHEN: the proposal was applied (or nothing was needed) and the run log is written.
+End with one line: "improver: <problem>; <n> changed (<keys>); <n> requested".
 ```
 
 ## Exploit analyst (worker for the analyst desk; Opus 5.5; one per batch of flaws)
@@ -515,7 +534,7 @@ STEPS:
 1. Read YOUR ASSIGNMENT at the end of this prompt first: a script has chosen your region, your sector, the searches already made and the events already on file. `node scripts/fuse.mjs list --limit 40` shows what the other researchers are handling. Do not work those.
 2. Headline pass with WebSearch (at most 4 searches, varied wording, the last 6 hours): your assigned sector first, then major outages of national services and cloud providers, attacks on governments and critical infrastructure, emergency patches and exploited flaws.
 3. Region in depth: the region under YOUR ASSIGNMENT. At most 4 searches, at least half in the languages named there. Look for what English-language feeds miss: a hospital, city, utility, bank or agency reporting an incident; a national CERT alert.
-4. For each real event found: read the page, `node scripts/q.mjs dupes "<title>"`, and write a complete record that passes THE EVENT CHECKLIST (or update the event on file).
+4. For each real event found: read the page, `node scripts/q.mjs dupes "<title>"`, and write a complete record that passes THE EVENT CHECKLIST (or update the event on file). Then run `node scripts/review.mjs flags <event id>` and fix every flag it prints.
 5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<the file name under YOUR ASSIGNMENT> with searches, pages_read, added, updated, open_leads.
 RULES: an event already listed under YOUR ASSIGNMENT is done: finding it again is not a result. Never re-read or re-confirm an event that is already confirmed, official or corroborated; update an event on file only for a new fact (confirmation of a claim, attribution, numbers, a fix, an arrest, service restored). An event whose date is more than 6 days ago is not added (the map shows seven days): log it under skipped. Do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
 LIMITS: 8 searches, 6 new events.

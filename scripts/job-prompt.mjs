@@ -12,7 +12,7 @@ import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
-  "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
+  "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "improver": "Improver", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
   "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
 };
@@ -92,7 +92,7 @@ const PROFILE = {
   "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
   "reviewer": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
   "regional-researcher": ["core", "search", "events", "web", "log"],
-  "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"],
+  "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"], "improver": ["core", "log"],
   "watchdog": ["core", "web", "log"], "advisory": ["core", "web", "log"], "scout": ["core", "search", "web", "log"], "triage": ["core", "log"],
 };
 const KIND = (first) => /^You maintain|^UNTRUSTED TEXT|^SAVE CONTEXT/.test(first) ? "core" : /^HOW EVERY JOB/.test(first) ? "core" : /^ONE SEARCH ENGINE/.test(first) ? "search"

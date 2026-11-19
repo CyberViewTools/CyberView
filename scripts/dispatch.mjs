@@ -24,7 +24,8 @@ const fixer = `In ${ROOT} run \`node scripts/build.mjs\`. Fix every error it nam
 
 // Headless mode (the owner approved it on 2026-11-19): the whole job runs as one script that starts its own workers, so
 // this session makes one call per job and its history barely grows. Falls back to subagents if headless is unavailable.
-if (readJson(join(ROOT, "config", "pipeline.json"), {}).headless === true && process.env.CYBERVIEW_SUBAGENTS !== "1") {
+const PL = readJson(join(ROOT, "config", "pipeline.json"), {});
+if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_jobs.includes(job))) && process.env.CYBERVIEW_SUBAGENTS !== "1") {
   console.log([`DISPATCH ${job} (headless). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command with run_in_background true (it can take up to 45 minutes; do not poll, you are notified when it ends): node scripts/run-job.mjs ${job} > /tmp/cv-${job}.log 2>&1; tail -2 /tmp/cv-${job}.log`,
     `2. When it ends: if the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs ${job}\` and do what it prints instead. Otherwise end with exactly its last line (it starts "CyberView ${job}:").`].join("\n"));

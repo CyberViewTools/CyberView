@@ -439,6 +439,85 @@ RULES: do NOT research or write events yourself, change any code, or loosen any 
 DONE WHEN: you ended with exactly one of the two lines.
 ```
 
+## Researcher (worker for the sweep; one per batch of stories)
+
+```
+JOB: researcher. You are one of several researchers working in parallel on the hourly sweep. A script has assigned you the stories listed under YOUR ASSIGNMENT at the end of this prompt. Handle every one of them: the run is scored on it.
+GOAL: each assigned story ends as a complete, sourced event on the map, an update to an event already on file, or is closed with a clear reason. Nothing is skipped and nothing is written from a headline.
+STEPS, for each story id in your assignment, in the order given:
+1. `node scripts/fuse.mjs show <id>` lists every source that reports it.
+2. Open the two best sources: the government or vendor original first, then the strongest independent publisher. Follow news.google.com and bing.com links through to the publisher's own page. If a page will not load, try the next source in the list before giving up.
+3. Decide: is this a real cyber event for the map, from the last 7 days? A new CVE or advisory counts only with exploitation, public exploit code, an official urgent notice, or wide use. A leak-site claim counts only for an organisation of public importance, as status "claimed", severity 1.
+4. `node scripts/q.mjs dupes "<title>"`. Score 1 or more: it is on file. Update that event (new source, new facts, updated_at) instead of adding one.
+5. Real and new: write data/events/<YYYY-MM>/<id>.json so that it passes every point of THE EVENT CHECKLIST. Two or more independent publishers read: validation.state "corroborated" with a note naming them.
+6. Close the story: `node scripts/fuse.mjs done <id> "<event id you wrote or updated>"` or `node scripts/fuse.mjs done <id> "<why it is not an event>"`. Every assigned story must be closed one way or the other. If you could not decide because no source would load, close it with "could not confirm: <what failed>" and add it to your run log's open_leads.
+7. When all are done, run `node scripts/build.mjs`. Fix any error it names in a file you wrote, and rerun until it passes.
+8. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-sweep-r<batch>.json with pages_read, added, updated, skipped, open_leads.
+RULES: do NOT run any git command (no pull, add, commit or push) and do not edit data/status.json: the dispatcher commits everything once all researchers have finished. Other researchers are writing other files at the same time: touch only event files you create or update, your run log, and correction files. Never write an event you have not read a source for.
+LIMITS: only your assigned stories. No extra research beyond them.
+DONE WHEN: every assigned story is closed with fuse.mjs done, and the build passes.
+End with one line: "researcher <batch>: <n> new, <n> updated, <n> closed as not events, <n> could not confirm".
+```
+
+## Gap researcher (worker for the sweep; finds what no feed carried)
+
+```
+JOB: gap researcher. The other researchers are working through stories that the feeds and news indexes already found. Your job is what they cannot see: events of the last 3 hours that no story covers, and one region in depth.
+STEPS:
+1. `node scripts/fuse.mjs list --limit 40` and `node scripts/q.mjs runs --days 1`, so you know what is already found or being handled. Do not work those.
+2. Headline pass with WebSearch (at most 4 searches, varied wording): major outages of national services, banks, airlines, telecoms and cloud providers; attacks on governments and critical infrastructure; emergency patches and exploited flaws announced in the last 3 hours.
+3. Region in depth, by the current UTC hour: 0-3 Europe, 4-7 Asia-Pacific, 8-11 Latin America, 12-15 Africa and the Middle East, 16-19 Canada and US state and local, 20-23 global wrap-up. At most 4 searches, at least half in a local language of the region. Prefer the national CERT, the regulator, then established national media.
+4. For each real event found: read the page, `node scripts/q.mjs dupes "<title>"`, and write a complete record that passes THE EVENT CHECKLIST (or update the event on file).
+5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-sweep-gap.json with searches, pages_read, added, updated, open_leads.
+RULES: do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
+LIMITS: 8 searches, 6 new events.
+DONE WHEN: the headline pass and the region pass are both done; a quiet hour with nothing new is a valid result.
+End with one line: "gap researcher: <n> new, <n> updated; region <name>".
+```
+
+## Reviewer (worker for the review desk; one per batch of events)
+
+```
+JOB: reviewer. You are one of several reviewers working in parallel. You did not write these events. A script has assigned you the event ids listed under YOUR ASSIGNMENT at the end of this prompt. Review every one.
+GOAL: each assigned event is compared with its own sources and gets exactly one verdict: passed, corrected or flagged.
+STEPS, for each event id:
+1. `node scripts/q.mjs get <id>` (the whole record) and `node scripts/review.mjs flags <id>` (problems a script already spotted).
+2. Open its first two sources; open all of them when it is severity 3 or has a flag about sources, numbers, actor or claims. Read them.
+3. Check in this order:
+   a. The source says what the title and summary say: same organisation, same kind of event, same outcome, no stronger wording than the source (a "probe" is not a "breach"; "investigating" is not "confirmed").
+   b. Date and time match the source; occurred_at is not the publication time passed off as the event time (time_basis says which).
+   c. Every number matches the source exactly, with its qualifier.
+   d. Category and status: an outage is not called an attack without an official source; a claim the organisation has not confirmed is "claimed", severity 1; "confirmed" needs the organisation's or an authority's own statement.
+   e. Severity follows the checklist rule. An actor is attributed by a named source and the summary says by whom.
+   f. Sources are the publisher's own specific pages; "corroborated" really has two independent publishers or a primary source.
+   g. Each mechanical flag: is it a real problem? For possible-duplicate run `node scripts/q.mjs dupes "<title>"`; when it is the same event keep the earlier record, merge sources into it and set duplicate_of on the later.
+   h. plain, exec and action are present, accurate and useful.
+4. Verdict:
+   - Nothing wrong: `node scripts/review.mjs pass <id> "<what you compared, e.g. title, date, 4.2M figure and status against the company statement and Reuters>"`.
+   - Wrong but fixable from the sources: fix the record (add a correction file when a published fact changes), set updated_at from `date -u`, then `node scripts/review.mjs corrected <id> "<what was wrong and what it says now>"`.
+   - A problem you cannot settle (sources disagree, the page is gone, the claim cannot be found): `node scripts/review.mjs flagged <id> "<the exact problem>"`.
+5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-review-r<batch>.json with reviewed [{id, verdict, note}] and pages_read.
+RULES: do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never pass an event whose sources you did not open. Never upgrade severity, status or confidence. Never delete an event. A source that will not load after retries is "flagged: source unreachable", never a pass.
+LIMITS: only your assigned events.
+DONE WHEN: every assigned event has a verdict written by review.mjs.
+End with one line: "reviewer <batch>: <n> passed, <n> corrected, <n> flagged".
+```
+
+## Regional researcher (worker for the deep sweep; one per region group)
+
+```
+JOB: regional researcher. You are one of three researchers on the twice-weekly deep sweep. Your region group is given under YOUR ASSIGNMENT at the end of this prompt.
+GOAL: real cyber events of the last 3 days in your regions that are not yet on file, found through local agencies and local-language press.
+STEPS:
+1. `node scripts/fuse.mjs list --region <each of your regions> --limit 30`: work the open stories for your regions first (show, read two sources, dupes, write or close with fuse.mjs done, exactly as a researcher does).
+2. Then search (at most 10 searches, more than half in local languages): national CERTs, data-protection and telecom regulators, and established national outlets, for incidents, outages of national services, government advisories, arrests and new laws.
+3. Write complete records that pass THE EVENT CHECKLIST; summaries in English; pin to the real city where stated.
+4. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-deep-sweep-<group>.json, listing which national CERT sites loaded and which did not.
+RULES: do NOT run any git command and do not edit data/status.json: the dispatcher commits. A translated headline is not enough: read the page.
+LIMITS: 5 new events.
+End with one line: "regional researcher <group>: <n> new, <n> updated".
+```
+
 ## Adding a routine
 
 Every routine is listed in `routines.json` (name, tier, workflow, cron, model, `status_key`, `max_age_hours`, `active`). The build fails if an AI routine's cron there disagrees with `ai-jobs.yml`, the monitor and the watchdog use `max_age_hours` to spot late routines, and `status.html` shows them all.
@@ -446,4 +525,12 @@ Every routine is listed in `routines.json` (name, tier, workflow, cron, model, `
 - **Automation routine (no model):** write a script in `scripts/`, a workflow in `.github/workflows/` that commits to `data/` (copy `collect.yml`), have the script set its timestamp in `data/status.json`, add it to the `workflows:` list in `pages.yml` so its commits deploy, and add a `routines.json` entry.
 - **AI routine:** add a `## Name` section with a code block here, add the job key to `HEADINGS` in `scripts/job-prompt.mjs`, add a `routines.json` entry (`"workflow": "claude-task"`), and create a Claude Code scheduled task with the same cron (UTC) that fires into the "CyberView ops" session. Its message follows the existing tasks: pull, print the prompt with `node scripts/job-prompt.mjs <key>`, then do the job (Sonnet, the session's model) or hand it to one subagent with model "opus" or "haiku".
 
-How the Claude jobs run: each scheduled task sends one message to the "CyberView ops" Claude Code session. Messages queue, so jobs never overlap or race on git. The session's checkout persists between runs and is re-cloned if its container is replaced. Prompts live only here (`docs/jobs.md`); the scheduled task messages just point at them, so editing a job means editing this file.
+How the Claude jobs run: each scheduled task sends one short message to the ops session: run `node scripts/dispatch.mjs <job>` and do what it prints. The ops session is only a dispatcher. It never researches and never reads these instructions; it starts fresh subagents, each of which prints its own instructions with `node scripts/job-prompt.mjs <job>`. That keeps the ops session's history small (a long history made every job slow, expensive and careless) and gives every job an agent with a clean head.
+
+- **Sweep:** `dispatch.mjs` runs the housekeeping, then `scripts/sweep-plan.mjs plan` assigns stories by rule to researchers (the Researcher section), plus a gap researcher. They work in parallel and never run git. Afterwards `sweep-plan.mjs check` counts how many assigned stories were handled (below 80% triggers one more researcher), and `scripts/finish.mjs` commits and pushes. How many researchers and stories: `config/pipeline.json`.
+- **Review desk:** `scripts/review.mjs plan` assigns the riskiest unreviewed events to reviewers (the Reviewer section); `finish.mjs` commits.
+- **Deep sweep:** three regional researchers in parallel.
+- **Everything else:** one subagent on the job's model, which commits and pushes itself.
+- **Guardian:** not in the ops session at all; it runs in its own fresh session and only reads the live site.
+
+Messages queue, so jobs never overlap or race on git. Prompts live only here (`docs/jobs.md`), so editing a job means editing this file.

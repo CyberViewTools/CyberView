@@ -53,7 +53,10 @@ scripts/guard.mjs        end-to-end guard from the outside (live site + public G
 site/sw.js               offline copy: network first, last good copy when the site cannot be reached (registered by nav.js)
 scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
-scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md
+scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md (workers get their assignment with --batch)
+scripts/dispatch.mjs     what the ops session runs for every scheduled job: plans the work and says which subagents to start
+scripts/sweep-plan.mjs   assigns stories to the sweep's researchers by rule and scores the run afterwards (config/pipeline.json sets how many)
+scripts/finish.mjs       mechanical end of a job: timestamp, build, commit, pull, push
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/unit/*.test.mjs    unit tests (node --test, no dependencies)
 tests/smoke_live.py      browser check of the live site
@@ -113,6 +116,7 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - Never weaken `verify-build.mjs`, the quarantine report or the live check to make a deploy pass; fix the data or the code.
 - The app must say so when data is old (`freshness()` in `site/app.js`) and keep showing the last good copy (`site/sw.js`); do not remove either.
 - The guardian scheduled task runs in its own fresh session, outside the ops session, so a stuck ops session is noticed.
+- The ops session is a dispatcher only (`scripts/dispatch.mjs`): it must never do research or read job instructions itself, because a long session history makes every job slow, costly and careless. Work is done by fresh subagents; workers running in parallel never run git, and `scripts/finish.mjs` commits.
 
 ## Known limits
 

@@ -67,7 +67,9 @@ export function listDir(dir) {
 /** Write a research log for a job run. */
 export function writeRunLog(job, log) {
   const t = nowIso();
-  const p = join(DATA, "runs", t.slice(0, 10), `${t.slice(11, 16).replace(":", "")}-${job}.json`);
+  // several agents can finish in the same minute: never overwrite another run's log
+  const base = join(DATA, "runs", t.slice(0, 10), `${t.slice(11, 16).replace(":", "")}-${job}`);
+  let p = `${base}.json`; for (let i = 2; existsSync(p) && i < 60; i++) p = `${base}-${i}.json`;
   writeJson(p, { job, ...log });
   return p;
 }

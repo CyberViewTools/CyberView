@@ -8,11 +8,13 @@
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { ROOT } from "./lib/store.mjs";
+import { ROOT, DATA, readJson } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
+  // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
+  "researcher": "Researcher", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -39,4 +41,18 @@ const block = (heading) => {
   if (!m) { console.error(`docs/jobs.md has no "## ${heading}" section with a code block`); process.exit(1); }
   return m[1];
 };
-process.stdout.write(block("Shared preamble") + "\n\n" + block(HEADINGS[job]) + "\n");
+// a worker's assignment comes from the plan a script wrote, never from the worker's own choice
+let assignment = "";
+const bi = process.argv.indexOf("--batch"), batch = bi > 0 ? String(process.argv[bi + 1] || "") : "";
+if (job === "researcher") {
+  const plan = readJson(join(DATA, "sweep-plan.json"), { stories: [] });
+  const mine = batch === "retry" ? plan.stories.filter((s) => (plan.retry || []).includes(s.id)) : plan.stories.filter((s) => String(s.batch) === batch);
+  assignment = `YOUR ASSIGNMENT (researcher ${batch}): ${mine.length} stories, in this order:\n` + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 110)}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"researcher " + batch + ": nothing assigned\")");
+} else if (job === "reviewer") {
+  const plan = readJson(join(DATA, "review-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
+  assignment = `YOUR ASSIGNMENT (reviewer ${batch}): ${mine.length} events:\n` + mine.map((id) => `  ${id}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"reviewer " + batch + ": nothing assigned\")");
+} else if (job === "regional-researcher") {
+  const G = { a: "Africa (africa); the Middle East and Turkey (middle-east)", b: "Latin America and the Caribbean (latin-america)", c: "South Asia (south-asia); Southeast Asia (southeast-asia); Oceania (oceania)" };
+  assignment = `YOUR ASSIGNMENT (regional researcher ${batch}): ${G[batch] || G.a}. The region names in brackets are the ones fuse.mjs --region understands.`;
+}
+process.stdout.write(block("Shared preamble") + "\n\n" + block(HEADINGS[job]) + "\n" + (assignment ? "\n" + assignment + "\n" : ""));

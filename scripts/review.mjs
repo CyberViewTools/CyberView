@@ -11,7 +11,8 @@
 // pass/corrected/flagged write the event's "review" {state, at, note, flags} and qa_checked_at; "flagged" also lowers
 // validation to "disputed" so the site shows low confidence until the verify job settles it.
 import { pathToFileURL } from "node:url";
-import { listEventFiles, saveEvent, findEvent, nowIso, dayAgo } from "./lib/store.mjs";
+import { join } from "node:path";
+import { DATA, ROOT, readJson, writeJson, listEventFiles, saveEvent, findEvent, nowIso, dayAgo } from "./lib/store.mjs";
 import { tokens } from "./triage.mjs";
 
 const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.com\/[a-z-]+\/news\/other|t\.co|bit\.ly)\b/i;
@@ -73,6 +74,14 @@ function queue() {
 
 function main() {
   const [cmd, id, ...rest] = process.argv.slice(2);
+  if (cmd === "plan") {   // split the head of the queue between reviewers (data/review-plan.json, working file); the dispatcher uses it
+    const c = (readJson(join(ROOT, "config", "pipeline.json"), {}).review) || {}, n = Math.max(1, Math.min(4, Number(c.reviewers) || 2)), per = Math.max(3, Math.min(15, Number(c.events_per_reviewer) || 10));
+    const q = queue().slice(0, n * per), k = Math.max(1, Math.min(n, Math.ceil(q.length / 4))), batches = Array.from({ length: k }, () => []);
+    q.forEach((x, i) => batches[i % k].push(x.e.id));
+    writeJson(join(DATA, "review-plan.json"), { planned_at: nowIso(), batches });
+    console.log(`REVIEW PLAN: ${q.length} event(s) for ${q.length ? batches.length : 0} reviewer(s); ${queue().length} waiting in all.`);
+    return;
+  }
   if (cmd === "queue") {
     const q = queue(), li = process.argv.indexOf("--limit"), lim = li > 0 ? Number(process.argv[li + 1]) : 30;
     if (process.argv.includes("--json")) { console.log(JSON.stringify(q.slice(0, lim).map((x) => ({ id: x.e.id, severity: x.e.severity, status: x.e.status, category: x.e.category, title: x.e.title, flags: x.flags, sources: (x.e.sources || []).map((s) => s.url) })))); return; }

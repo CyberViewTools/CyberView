@@ -1,0 +1,35 @@
+{
+  "job": "exploit-analyst-27",
+  "started_at": "2026-11-19T04:50:41Z",
+  "finished_at": "2026-11-19T04:55:03Z",
+  "model": "claude-opus-5-5",
+  "searches": ["CVE-2026-76964 SAP ICM memory corruption November 2026 patch day Onapsis OR SecurityBridge", "Onapsis ICM2SHELL blog", "\"CVE-2026-84869\" ScreenConnect exploited technician Huntress"],
+  "pages_read": [
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-121810", "title": "CVE record CVE-2026-121810 (F5)", "used_in": "CVE-2026-121810"},
+    {"url": "https://nginx.org/en/security_advisories.html", "title": "nginx security advisories", "used_in": "CVE-2026-121810"},
+    {"url": "https://www.boho.or.kr/kr/bbs/view.do?searchCnd=&bbsId=B0000133&searchWrd=&menuNo=205020&pageIndex=1&categoryCode=&nttId=72314", "title": "KrCERT/CC F5 NGINX notice", "used_in": "CVE-2026-121810"},
+    {"url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/", "title": "CERT-FR CERTFR-2026-ALE-017", "used_in": "CVE-2026-121810"},
+    {"url": "https://www.rapid7.com/blog/post/ve-cve-2026-123007-critical-nginx-http-2-integer-underflow-leads-to-rce-fixed/", "title": "Rapid7 CVE-2026-123007", "used_in": "CVE-2026-121810"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-84869", "title": "CVE record CVE-2026-84869 (ConnectWise)", "used_in": "CVE-2026-84869"},
+    {"url": "https://github.com/ConnectWise-Advisories/Disclosures/tree/main/CVE-2026-84869", "title": "ConnectWise disclosure CVE-2026-84869", "used_in": "CVE-2026-84869"},
+    {"url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json", "title": "CISA KEV feed (catalog 2026.11.18)", "used_in": "CVE-2026-84869"},
+    {"url": "https://www.huntress.com/blog/cve-2026-84869-screenconnect-technician-exploitation", "title": "Huntress: CVE-2026-84869 exploited against MSP technicians", "used_in": "CVE-2026-84869"},
+    {"url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect", "title": "Huntress: SCKit worm", "used_in": "CVE-2026-84869"},
+    {"url": "https://www.helpnetsecurity.com/2026/09/07/connectwise-screenconnect-file-transfer-flaw/", "title": "Help Net Security: ScreenConnect file transfer flaw", "used_in": "CVE-2026-84869"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-76964", "title": "CVE record CVE-2026-76964 (SAP)", "used_in": "CVE-2026-76964"},
+    {"url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-161/", "title": "CSA Singapore AL-2026-161", "used_in": "CVE-2026-76964"},
+    {"url": "https://support.sap.com/en/my-support/knowledge-base/security-notes-news.html", "title": "SAP Security Notes and News", "used_in": "CVE-2026-76964"},
+    {"url": "https://fieldeffect.com/blog/sap-icm2shell-proxygate-saml2", "title": "Field Effect: ICM2SHELL, PROXYGATE, SAML2", "used_in": "CVE-2026-76964"},
+    {"url": "https://pathlock.com/blog/security-alerts/sap-security-patch-day-november-2026-critical-vulnerabilities/", "title": "Pathlock: SAP Patch Day November 2026", "used_in": "CVE-2026-76964"}
+  ],
+  "added": ["CVE-2026-121810", "CVE-2026-84869", "CVE-2026-76964"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "CyberView event cert-fr-nginx-http2-rce-2026-11 lists CVE-2026-121810, which is an HTTP/3 use-after-free (F5 K000163927), not one of the HTTP/2 flaws in the event's action", "url": "https://cveawg.mitre.org/api/cve/CVE-2026-121810", "note": "Event action and workbench text may imply disabling HTTP/2 mitigates it; it does not. Review desk should check wording.", "priority": "medium"},
+    {"title": "Event connectwise-screenconnect-sckit-attacks-2026-11 says SCKit tries to use CVE-2026-84869 against technicians; the Huntress SCKit post read today ties the technician step to stolen session cookies, not this CVE", "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect", "note": "Possible correction for the review desk. CVE-2026-84869 is in CISA KEV since 2026-09-11 but q.mjs kev shows no entry; check the KEV feed import.", "priority": "medium"},
+    {"title": "Onapsis ICM2SHELL research (CVE-2026-76964, CVE-2026-89126) not found to read directly; affected kernel ranges differ between SAP and Onapsis as cited by Field Effect", "url": "https://fieldeffect.com/blog/sap-icm2shell-proxygate-saml2", "note": "Read Onapsis original when found and confirm whether exploit is public.", "priority": "low"}
+  ],
+  "failed_sites": ["my.f5.com (script-only page, K000163927 not readable)", "www.connectwise.com (403)", "bleepingcomputer.com (403)", "nvd.nist.gov (page shell only)", "me.sap.com notes (login required, not attempted)"],
+  "notes": "Three analyses written; build passes. CVE-2026-121810: no workaround given since no vendor or government source states one for HTTP/3."
+}

@@ -15,12 +15,14 @@ const model = /opus/.test(r.model || "") ? "opus" : /haiku/.test(r.model || "") 
 const sh = (cmd, args, ms = 240000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1" } }); return { ok: x.status === 0, out: `${x.stdout || ""}${x.stderr || ""}`.split("\n").filter((l) => l.trim() && !/Warning|trace-warnings/.test(l)) }; };
 const out = [];
 const say = (s = "") => out.push(s);
-const AGENT = (m) => `Agent tool, subagent_type "general-purpose", model "${m}", run in the foreground`;
+// run_in_background false: all workers' results come back as ONE turn of this session. Background workers each wake the
+// session separately, and every wake-up re-reads the session's whole history, which is what used up the plan's limit.
+const AGENT = (m) => `Agent tool, subagent_type "general-purpose", model "${m}", run_in_background false`;
 const worker = (key, batch) => `You are a CyberView ${key.replace("-", " ")}. In ${ROOT} run \`node scripts/job-prompt.mjs ${key}${batch ? " --batch " + batch : ""}\` and carry out the printed instructions exactly and completely. Do not run any git command. End with the one line the instructions ask for.`;
 const single = (key) => `You are running the CyberView "${key}" job. In ${ROOT} run \`node scripts/job-prompt.mjs ${key}\` and carry out the printed instructions exactly and completely, including the FINISH steps (build, commit, push). End with one line starting "CyberView ${key}:".`;
 const fixer = `In ${ROOT} run \`node scripts/build.mjs\`. Fix every error it names by correcting that record from its own sources (open them; never delete an event; never invent a value). Rerun until it passes. Do not run any git command. End with one line saying what you fixed.`;
 
-say(`DISPATCH ${job}. Do exactly these steps, in order, and nothing else. Do not research, read data files or read job instructions yourself.`);
+say(`DISPATCH ${job}. Do exactly these steps, in order, and nothing else. Do not research, read data files or read job instructions yourself. Use as few turns as possible: combine shell commands with && in one call, start all subagents of a step in ONE message with run_in_background false, and never wait or poll.`);
 
 if (job === "sweep") {
   const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]], ["backlog rules", "node", ["scripts/backlog.mjs", "auto"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });

@@ -17,7 +17,7 @@ Each adapter: fetch + pure parser with a saved or hand-made fixture, items in th
 
 ## Time series (lane D)
 `data/grid/series/<YYYY-MM-DD>.jsonl`: one line per region per 15 minutes at most:
-`{ at, source, region, customers, unplanned, level }`. Written by grid.mjs collect. Kept 90 days in git; older days are
+`{ at, source, region, customers, unplanned, level }`. Written by grid.mjs collect. Kept 35 days in git (the baseline reads 4 weeks); older days are
 rolled into `data/grid/series/monthly/<YYYY-MM>.json` (daily max/mean per region) and the daily files removed by the script
 (the one exception to "never delete": these are derived numbers, the monthly roll-up keeps them).
 

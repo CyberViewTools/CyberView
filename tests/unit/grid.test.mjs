@@ -332,10 +332,11 @@ test("adapters: without a key each keyed host is 'not connected', and no key is 
     assert.doesNotMatch(s.url, /api_key|securityToken|token=/i);
     assert.deepEqual(Object.keys(s.headers).map((h) => h.toLowerCase()), ["user-agent"]);
   }
-  // a connected reply: Radar parses; EIA waits for a saved real reply; ENTSO-E needs a binary fetch from net.mjs
+  // a connected reply: Radar parses; EIA waits for a saved real reply; ENTSO-E is fetched as bytes (net.mjs as:"buffer"),
+  // so a reply that is not a real zip is refused as a bad shape, never mistaken for "needs a binary fetch"
   await withFetch(reply(200, txt("cfradar.json")), async () => { assert.ok((await ADAPTERS.cfradar()).every((x) => x.source === "cfradar")); });
   await withFetch(reply(200, "{}"), async () => { await assert.rejects(ADAPTERS.eia(), (e) => e.code === "parser_pending"); });
-  await withFetch(reply(200, "PK\u0003\u0004zip", "application/zip"), async () => { await assert.rejects(ADAPTERS.entsoe(), (e) => e.code === "needs_binary_fetch"); });
+  await withFetch(reply(200, "PK\u0003\u0004zip", "application/zip"), async () => { await assert.rejects(ADAPTERS.entsoe(), (e) => e.code !== "needs_binary_fetch" && /shape|zip/i.test(`${e.code} ${e.message}`)); });
   assert.deepEqual(OPERATORS, ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]);
 });
 
@@ -414,7 +415,7 @@ test("appendSeries: at most one line per region per slot (two writers), files by
   assert.deepEqual(readLines(join(dir, "2026-11-20.jsonl")).map((x) => x.unplanned), [20, 30]);
 });
 
-test("roll-up: daily max/mean per region, only files older than 90 days removed, monthly merged and verified", () => {
+test("roll-up: daily max/mean per region, only files older than the kept days (here 90) removed, monthly merged and verified", () => {
   const root = mkdtempSync(join(tmpdir(), "grid-rollup-")), dir = join(root, "data", "grid", "series");
   mkdirSync(dir, { recursive: true });
   const now = Date.parse("2026-11-19T12:00:00Z");
@@ -429,12 +430,12 @@ test("roll-up: daily max/mean per region, only files older than 90 days removed,
     "bchydro|British Columbia": { max: 300, mean: 200, points: 2, level_max: null },   // the duplicate slot counted once
     "eskom|South Africa": { max: 0, mean: 0, points: 1, level_max: 2 },
   });
-  assert.deepEqual(rollupSeries(dir, now), ["2026-08-10", "2026-08-20"]);
+  assert.deepEqual(rollupSeries(dir, now, 90), ["2026-08-10", "2026-08-20"]);
   assert.deepEqual(readdirSync(dir).filter((f) => f.endsWith(".jsonl")).sort(), ["2026-08-21.jsonl", "2026-11-19.jsonl"]);
   const m = JSON.parse(readFileSync(join(dir, "monthly", "2026-08.json"), "utf8"));
   assert.deepEqual(Object.keys(m.days), ["2026-08-10", "2026-08-20"]);
   assert.equal(m.days["2026-08-10"]["bchydro|British Columbia"].max, 300);
-  assert.deepEqual(rollupSeries(dir, now), []);                                         // idempotent
+  assert.deepEqual(rollupSeries(dir, now, 90), []);                                         // idempotent
   assert.deepEqual(verifySeries(root), []);
   writeFileSync(join(dir, "2026-11-19.jsonl"), JSON.stringify(p("2026-11-18", "01", "cfradar", "Cuba", 5)) + "\n{\n");
   const bad = verifySeries(root)[0];

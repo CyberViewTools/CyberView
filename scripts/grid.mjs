@@ -3,7 +3,7 @@
 //
 //   collect  fetch six public operator feeds and three keyed sources -> data/grid/live.json (items) -> incidents (open,
 //            update, close) -> data/grid/incidents.json, closed ones appended to data/grid/history/<YYYY-MM>.jsonl
-//            -> data/grid/series/<YYYY-MM-DD>.jsonl (one point per region per 15 minutes; days older than 90 are rolled
+//            -> data/grid/series/<YYYY-MM-DD>.jsonl (one point per region per 15 minutes; days older than 35 are rolled
 //            into data/grid/series/monthly/<YYYY-MM>.json and removed) -> data/context/grid.json (the map layer)
 //            -> status last_grid_at, run log with counts and reason codes
 //            Keyed sources (EIA, Cloudflare Radar, ENTSO-E): the network proxy adds the key; this code never reads,
@@ -755,7 +755,7 @@ export function checkConfig(c) {
 // ---------- time series ----------
 // data/grid/series/<YYYY-MM-DD>.jsonl: { at (start of the 15-minute slot), source, region, customers, unplanned, level },
 // one line per operator region per slot. Regions an ok source did not report are written as zero, so a quiet hour counts.
-export const SERIES_KEEP_DAYS = 90;
+export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; older days live on in the monthly roll-up (about 3.5 MB in git, not 9)
 const SLOT = 15 * 6e4;
 export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
 const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo"]);

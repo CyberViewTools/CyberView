@@ -89,14 +89,16 @@
     if (Array.isArray(r.causes)) r.causes.slice(0, 20).forEach(function (c) { if (!c || typeof c !== "object") return; var n = num(c.customers != null ? c.customers : c.count != null ? c.count : c.n, 0, 1e12), t = str(c.cause, 60); if (n !== null) causes.push({ cause: t || "no cause reported", n: n }); });
     else if (r.causes && typeof r.causes === "object") Object.keys(r.causes).slice(0, 20).forEach(function (k) { var n = num(r.causes[k], 0, 1e12); if (n !== null) causes.push({ cause: str(k, 60) || "no cause reported", n: n }); });
     causes.sort(function (a, b) { return b.n - a.n; });
-    var w = r.wow || r.week_over_week, wow = null;
-    if (w && typeof w === "object") { var a = num(w.cur != null ? w.cur : w.this_week, 0, 1e12), b = num(w.prev != null ? w.prev : w.last_week, 0, 1e12); if (a !== null && b !== null) wow = { cur: a, prev: b }; }
+    var w = r.wow || r.week_over_week || r.week, wow = null;
+    if (w && typeof w === "object") { var a = num(w.cur != null ? w.cur : w.this_week != null ? w.this_week : w.customer_hours, 0, 1e12), b = num(w.prev != null ? w.prev : w.last_week != null ? w.last_week : w.prev_customer_hours, 0, 1e12); if (a !== null && b !== null) wow = { cur: a, prev: b }; }
     return { source: /^[a-z0-9_-]+$/.test(src) ? src : "", country: /^[A-Z]{2}$/.test(cc) ? cc : "", region: region, hours: ch, incidents: inc === null ? null : Math.round(inc), largest: largest, causes: causes.slice(0, 5), wow: wow };
   }
   function cleanGrid(g) {
     if (!g || typeof g !== "object" || !g.trends || typeof g.trends !== "object") return null;
     var t = g.trends, rows = [];
-    if (Array.isArray(t.regions)) t.regions.slice(0, 60).forEach(function (r) { rows.push(cleanGridRow("", r)); });
+    var reg = t.regions && typeof t.regions === "object" ? t.regions : null;
+    if (Array.isArray(reg)) reg.slice(0, 60).forEach(function (r) { rows.push(cleanGridRow("", r)); });
+    else if (reg) Object.keys(reg).slice(0, 60).forEach(function (k) { if (reg[k] && typeof reg[k] === "object" && !Array.isArray(reg[k])) rows.push(cleanGridRow(k, reg[k])); });
     else Object.keys(t).slice(0, 60).forEach(function (k) { if (t[k] && typeof t[k] === "object" && !Array.isArray(t[k])) rows.push(cleanGridRow(k, t[k])); });
     rows = rows.filter(Boolean).sort(function (a, b) { return b.hours - a.hours; }).slice(0, 20);
     var days = num(t.days != null ? t.days : t.window_days, 1, 365);

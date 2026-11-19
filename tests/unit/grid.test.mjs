@@ -522,3 +522,16 @@ test("context layer: single outages of show_customers (100) or more with a locat
   assert.deepEqual(checkContext(doc), []);
   assert.equal(contextItems({ open: [] }, {}, live, { show_customers: 1000 }).length, 1);    // the threshold is the owner's setting
 });
+
+test("source files: scripts/grid-sources/*.mjs add sources, regions and adapters; lib-* files and broken files are left out", async () => {
+  const { SOURCES, ADAPTERS, OPERATORS, PLUGIN_ERRORS, REGIONS } = await import("../../scripts/grid.mjs");
+  for (const k of ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]) assert.ok(SOURCES[k] && OPERATORS.includes(k));
+  for (const k of Object.keys(SOURCES)) assert.equal(typeof ADAPTERS[k], "function", `${k} has an adapter`);
+  for (const [k, s] of Object.entries(SOURCES)) if (s.file) {
+    assert.ok(!s.file.startsWith("lib-"));
+    assert.ok(s.hosts.length && /^https:\/\//.test(s.url) && /^https:\/\//.test(s.page), k);
+  }
+  assert.ok(Array.isArray(PLUGIN_ERRORS));
+  assert.deepEqual(PLUGIN_ERRORS, [], "every source file loads");
+  assert.ok(Object.values(REGIONS).every((r) => r.name && isFinite(r.lat) && isFinite(r.lng)));
+});

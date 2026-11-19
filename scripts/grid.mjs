@@ -25,7 +25,7 @@ import { get } from "./lib/net.mjs";
 export const AI_BY = "CyberView AI (a Claude model)";
 const KEEP_STALE_HOURS = 6;
 const CLOSED_KEEP_DAYS = 30;
-const CONTEXT_MAX = 60, OUTAGE_MAX = 400;          // incidents, then single outages of show_customers or more
+const CONTEXT_MAX = 60, OUTAGE_MAX = 400, COLLECT_PARALLEL = 8, SOURCE_TIMEOUT_S = 60;          // incidents, then single outages of show_customers or more
 const AEMO_NOTICES = 40;          // newest market notices read each run (about a day of notices)
 const AEMO_MAX_AGE_HOURS = 24;    // an actual LOR or load shedding with no cancellation seen in this time is dropped
 
@@ -90,8 +90,6 @@ export const SOURCES = {
   entsoe: { name: "ENTSO-E Transparency Platform", country: "", keyed: true, host: "web-api.tp.entsoe.eu",
     url: "https://web-api.tp.entsoe.eu/api", page: "https://transparency.entsoe.eu/", hosts: ["transparency.entsoe.eu"] },
 };
-/** The six public operator feeds (incidents, series); the keyed sources are signals for the analysis only. */
-export const OPERATORS = Object.keys(SOURCES).filter((k) => !SOURCES[k].keyed);
 
 // Approximate country centroids and English names (for keyed sources' items, which come per country, and for matching
 // GDACS and news by country name in scripts/grid-analysis.mjs). approx: these are rough points, never a location claim.
@@ -147,6 +145,40 @@ export const REGIONS = {
   "aemo|SA1": { name: "South Australia", lat: -32.0, lng: 136.0 },
   "aemo|TAS1": { name: "Tasmania", lat: -42.0, lng: 146.6 },
 };
+
+// ---------- source files (scripts/grid-sources/*.mjs) ----------
+// Each file adds sources without touching this one, so builders can work in parallel:
+//   export default { sources: { <key>: { name, country, url, page, hosts: [operator hosts], keyed?, kind?: "outages"|"signal",
+//                                        terms_url, terms_ok, customers_served } },
+//                    regions: { "<key>|<region>": { name, lat, lng } },
+//                    adapters: { <key>: async (h) => [items] } }
+// h = { get, item, str, isoOf, zonedToIso (local time + IANA zone -> ISO), centroid, SOURCES }: an adapter fetches with h.get (scripts/lib/net.mjs) and
+// returns items built with h.item(...) (the Item shape in swarm/handoff/grid-contract.md). Files whose names start with
+// "lib-" hold shared parsers (e.g. a vendor map platform) and are not loaded as sources. A file that fails to load is
+// reported in PLUGIN_ERRORS and left out: one broken source file never stops the others.
+export const PLUGIN_ERRORS = [];
+export const PLUGIN_ADAPTERS = {};
+{
+  const dir = join(ROOT, "scripts", "grid-sources");
+  const files = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".mjs") && !f.startsWith("lib-")).sort() : [];
+  for (const f of files) {
+    try {
+      const m = (await import(pathToFileURL(join(dir, f)).href)).default || {};
+      for (const [k, def] of Object.entries(m.sources || {})) {
+        if (!/^[a-z0-9-]{2,40}$/.test(k) || SOURCES[k]) { PLUGIN_ERRORS.push(`${f}: source key ${k} invalid or taken`); continue; }
+        if (!def || !def.name || !Array.isArray(def.hosts) || !def.hosts.length || !/^https:\/\//.test(def.url || "") || !/^https:\/\//.test(def.page || "")) { PLUGIN_ERRORS.push(`${f}: source ${k} needs name, url, page, hosts`); continue; }
+        if (typeof (m.adapters || {})[k] !== "function") { PLUGIN_ERRORS.push(`${f}: source ${k} has no adapter`); continue; }
+        SOURCES[k] = { ...def, file: f };
+        PLUGIN_ADAPTERS[k] = m.adapters[k];
+      }
+      for (const [rk, r] of Object.entries(m.regions || {})) if (!REGIONS[rk] && r && r.name && okLat(r.lat) && okLng(r.lng)) REGIONS[rk] = r;
+    } catch (e) { PLUGIN_ERRORS.push(`${f}: ${String(e && e.message || e).slice(0, 120)}`); }
+  }
+}
+
+/** Public operator feeds (incidents, series): built-in and source files; keyed sources and "signal" sources from files
+ *  are signals for the analysis only. */
+export const OPERATORS = Object.keys(SOURCES).filter((k) => !SOURCES[k].keyed);
 
 function item(o) {
   const src = o.source;
@@ -559,6 +591,8 @@ export const ADAPTERS = {
     }
   },
 };
+const HELPERS = { get, item, str, isoOf, zonedToIso, centroid, SOURCES };
+for (const [k, fn] of Object.entries(PLUGIN_ADAPTERS)) ADAPTERS[k] = () => fn(HELPERS);
 
 // ---------- incidents ----------
 /** Items -> one summary per operator region. */
@@ -971,15 +1005,17 @@ const P = {
   history: join(DATA, "grid", "history"), context: join(DATA, "context", "grid.json"), series: join(DATA, "grid", "series"),
   analysis: join(DATA, "grid", "analysis.json"),
 };
-export const CONTEXT_SOURCE = "Grid operators: Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO";
+export const CONTEXT_SOURCE = str(`Grid operators (${OPERATORS.length}): ${OPERATORS.map((k) => SOURCES[k].name).join(", ")}`, 200);
 
 async function collect() {
   const cfg = loadConfig(), started = nowIso(), now = Date.now();
   const old = readJson(P.live, {}) || {}, oldItems = Array.isArray(old.items) ? old.items : [], oldSources = old.sources || {};
   const sources = {}, items = [], failed = [], unkeyed = [];
-  const results = await Promise.all(Object.keys(SOURCES).map(async (k) => {
-    try { return [k, await ADAPTERS[k](), null]; } catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60)]; }
-  }));
+  // at most COLLECT_PARALLEL sources at once, each capped at SOURCE_TIMEOUT_S, so one slow utility never holds up a cycle
+  const cap = (k) => new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { code: "source_timeout" })), SOURCE_TIMEOUT_S * 1000).unref());
+  const results = await pool(Object.keys(SOURCES), COLLECT_PARALLEL, async (k) => {
+    try { return [k, await Promise.race([ADAPTERS[k](), cap(k)]), null]; } catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60)]; }
+  });
   for (const [k, got, err] of results) {
     const def = SOURCES[k], prev = oldSources[k] || {};
     if (got) {

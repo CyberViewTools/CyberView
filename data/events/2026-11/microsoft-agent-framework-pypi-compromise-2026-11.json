@@ -12,12 +12,12 @@
     "Microsoft Agent Framework (PyPI)"
   ],
   "geo_basis": "hq",
-  "time_basis": "published",
+  "time_basis": "reported",
   "first_seen": "2026-11-18T18:14:23Z",
-  "updated_at": "2026-11-19T18:53:23Z",
+  "updated_at": "2026-11-19T19:10:35Z",
   "category": "incident",
   "date": "2026-11-17",
-  "occurred_at": "2026-11-17T12:00:00Z",
+  "occurred_at": "2026-11-17T20:35:00Z",
   "date_note": "Malicious versions published Nov 17; reported Nov 18.",
   "title": "Microsoft Agent Framework PyPI package compromised with credential stealer",
   "org": "Microsoft (Agent Framework on PyPI)",
@@ -75,12 +75,10 @@
     "note": "Compared BleepingComputer with Wiz and Socket (independent vendor analyses): versions 1.26.1 and 1.26.2, November 17, .pth credential stealer, 1.26.0 safe; Wiz states both removed from PyPI about 21:30 UTC. Download figure rests on BleepingComputer only."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T00:27:43Z",
-    "note": "Versions 1.26.1/1.26.2, Nov 17, 200k downloads, credential targets, quarantine, 1.26.0 safe against BleepingComputer; single_source honest",
-    "flags": [
-      "single-source-high"
-    ]
+    "state": "corrected",
+    "at": "2026-11-19T19:10:36Z",
+    "note": "Checked BleepingComputer, Wiz, Socket, ITmedia: versions, Nov 17, targets, quarantine, 1.26.0 safe, Microsoft no response, StepSecurity maintainer claim match. Fixed occurred_at from placeholder 12:00Z to 20:35Z (Wiz: 1.26.1 published 20:35 UTC).",
+    "flags": []
   },
-  "qa_checked_at": "2026-11-19T00:27:43Z"
+  "qa_checked_at": "2026-11-19T19:10:36Z"
 }

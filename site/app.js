@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.25",date:"2026-11-19"};
+var BUILD={version:"1.26",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -924,7 +924,9 @@ function turnTo(lng,lat){stopSpin();rot=[-lng,Math.max(-70,Math.min(70,-lat))];g
 function stopSpin(){if(spin){spin.stop();spin=null;}}
 var stageSeen=true;
 function startSpin(){
-  if(reduced||spin||!globe||!stageSeen)return;
+  /* phones: no automatic spin. Each spin frame is a long task on a phone, so the first seconds of a visit felt frozen;
+     the globe turns with a swipe instead (wall mode still spins) */
+  if(reduced||spin||!globe||!stageSeen||(coarse&&!wall.on))return;
   /* by the clock, not by the frame: a slow phone drops frames but the globe still turns at the same speed (3.6 degrees a second) */
   var last=-1;
   spin=d3.timer(function(t){if(!globe||(t>(coarse||!wide?12000:45000)&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();settle();return;}
@@ -2144,7 +2146,7 @@ function openStore(){
   function rows(name){var a=bundle&&Array.isArray(bundle[name])?bundle[name]:[];return a.filter(function(r){return r&&typeof r==="object"&&typeof r.id==="string";});}
   function notify(){subs.forEach(function(f){try{f();}catch(x){}});}
   function load(){
-    return fetch(STORE_URL+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+    return fetch(STORE_URL,{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
       .then(function(j){if(!j||typeof j!=="object"||!Array.isArray(j.events))throw new Error("bad bundle");var changed=j.built_at!==last;bundle=j;last=j.built_at;builtAt=str(j.built_at,30);return changed;});
   }
   function reload(){return load().then(function(ch){loadFailing=0;if(ch)notify();else renderSoon();},function(x){loadFailing++;renderSoon();throw x;});}

@@ -14,15 +14,16 @@ self.addEventListener("fetch", function (ev) {
   var req = ev.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   var key = keyOf(req);
-  ev.respondWith(
-    // pages, scripts and styles skip the browser's 10-minute HTTP cache (revalidated, so still cheap): after a deploy a
-    // phone never runs a new page with an old script or the reverse
-    Promise.race([fetch(/\.(html|js|css)$|\/$/.test(url.pathname) || req.mode === "navigate" ? new Request(req, { cache: "no-cache" }) : req), timeout(12000)]).then(function (res) {
-      // keep only complete, successful answers from this site
-      if (res && res.status === 200 && res.type === "basic") { var copy = res.clone(); caches.open(CACHE).then(function (c) { return c.put(key, copy); }).catch(function () {}); }
-      return res;
-    }).catch(function () {
-      return caches.open(CACHE).then(function (c) { return c.match(key); }).then(function (hit) { if (hit) return hit; throw new Error("offline and no stored copy"); });
-    })
-  );
+  // pages, scripts and styles skip the browser's 10-minute HTTP cache (revalidated, so still cheap): after a deploy a
+  // phone never runs a new page with an old script or the reverse
+  var net = fetch(/\.(html|js|css)$|\/$/.test(url.pathname) || req.mode === "navigate" ? new Request(req, { cache: "no-cache" }) : req).then(function (res) {
+    // keep only complete, successful answers from this site; a slow answer is still stored when it lands
+    if (res && res.status === 200 && res.type === "basic") { var copy = res.clone(); caches.open(CACHE).then(function (c) { return c.put(key, copy); }).catch(function () {}); }
+    return res;
+  });
+  ev.waitUntil(net.then(function () {}, function () {}));
+  // after 12 s (or offline) the stored copy is shown; with nothing stored, keep waiting for the network instead of failing
+  ev.respondWith(Promise.race([net, timeout(12000)]).catch(function () {
+    return caches.open(CACHE).then(function (c) { return c.match(key); }).then(function (hit) { return hit || net; });
+  }));
 });

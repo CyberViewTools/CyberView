@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.39",date:"2026-11-19"};
+var BUILD={version:"1.40",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -390,17 +390,24 @@ function renderToggles(){
 function renderChips(){
   var b=base().filter(function(e){return (!state.day||e.date===state.day)&&(!state.country||normC(e.country)===state.country);});
   var box=$("chips");box.textContent="";
+  /* all types shown = nothing picked. The first click picks only that type and highlights it; further clicks add types
+     or take them out again; taking out the last one, or All, shows every type again */
+  var all=state.cats.size===CATS.length;box.classList.toggle("picking",!all);
+  var ab=el("button","chip allchip");ab.type="button";ab.setAttribute("aria-pressed",all?"true":"false");
+  ab.appendChild(el("span",null,"All"));ab.appendChild(el("span","n",String(b.length)));ab.title="Show every type";
+  ab.addEventListener("click",function(){state.cats=new Set(CATS.map(function(x){return x.k;}));render();});
+  box.appendChild(ab);
   CATS.forEach(function(c){
-    var n=b.filter(function(e){return e.category===c.k;}).length;
-    var btn=el("button","chip");btn.type="button";btn.setAttribute("aria-pressed",state.cats.has(c.k)?"true":"false");
+    var n=b.filter(function(e){return e.category===c.k;}).length,on=!all&&state.cats.has(c.k);
+    var btn=el("button","chip");btn.type="button";btn.setAttribute("aria-pressed",on?"true":"false");
     btn.appendChild(glyph(c.k));btn.appendChild(el("span",null,c.label));btn.appendChild(el("span","n",String(n)));
     btn.addEventListener("click",function(ev){
-      if(ev.shiftKey||ev.altKey){state.cats=new Set([c.k]);}
-      else if(state.cats.has(c.k))state.cats.delete(c.k);else state.cats.add(c.k);
+      if(all||ev.shiftKey||ev.altKey)state.cats=new Set([c.k]);        // pick only this one
+      else if(state.cats.has(c.k))state.cats.delete(c.k);else state.cats.add(c.k);   // add or take out
       if(state.cats.size===0)state.cats=new Set(CATS.map(function(x){return x.k;}));
       render();
     });
-    btn.title="Click to toggle. Shift-click to show only this type.";
+    btn.title=all?"Show only "+c.label.toLowerCase():on?"Take "+c.label.toLowerCase()+" out":"Add "+c.label.toLowerCase();
     box.appendChild(btn);
   });
 }

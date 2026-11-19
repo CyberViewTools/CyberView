@@ -1,0 +1,56 @@
+{
+  "title": "AI debt collection platform CreditNirvana exposed about 6.6 million accounts and 315,000 call recordings",
+  "date": "2026-11-18",
+  "date_note": "Published November 18; the flaws were reported May 30 and fixed June 2, 2026.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "CreditNirvana (Perfios)",
+  "sector": "Finance",
+  "country": "India",
+  "place": "India (city not stated)",
+  "lat": 20.59,
+  "lng": 78.96,
+  "geo_basis": "country",
+  "pin_type": "victim",
+  "summary": "Researcher Eaton Zveare reported two flaws in the CreditNirvana collections platform: a hardcoded API key in the AI call centre and a login bypass in the main platform. They exposed about 6.6 million accounts and about 315,000 call recordings. Both were fixed on June 2, 2026. Nothing shows attackers used them.",
+  "plain": "Two security holes in an AI debt-collection service made millions of borrowers' records and call recordings reachable without a proper login. They were fixed in June.",
+  "exec": "Shows third-party AI collections platforms can expose lenders' customer data at scale; lenders using them inherit the risk.",
+  "action": "If you run CreditNirvana, confirm the call centre is on 2.0.0 and the collections platform on 4.8.2, per CERT-In; lenders should review vendor access controls.",
+  "impact": "About 6.6 million accounts and about 315,000 call recordings accessible; no exploitation shown.",
+  "records_affected": 6600000,
+  "tags": [
+    "data-exposure",
+    "ai",
+    "india"
+  ],
+  "cves": [
+    "CVE-2026-110474",
+    "CVE-2026-110475"
+  ],
+  "products": [
+    "CreditNirvana",
+    "CollectionWorkz"
+  ],
+  "attack": [
+    "broken-authentication"
+  ],
+  "sources": [
+    {
+      "name": "Eaton Zveare (researcher write-up)",
+      "url": "https://eaton-works.com/2026/11/18/credit-nirvana-hack"
+    },
+    {
+      "name": "Receivables Info",
+      "url": "https://receivablesinfo.com/2026/11/18/creditnirvana-ai-debt-collection-security-flaws/"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "corroborated",
+    "note": "Researcher's own write-up and Receivables Info (reporting Wired's findings) agree on numbers, CVEs and the June 2 fix; the vendor did not comment to Wired. Wired itself could not be loaded.",
+    "checked_at": "2026-11-19T04:23:55Z"
+  },
+  "first_seen": "2026-11-19T04:23:55Z",
+  "updated_at": "2026-11-19T04:23:55Z"
+}

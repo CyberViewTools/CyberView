@@ -7,9 +7,9 @@
   "pin_type": "none",
   "place": "",
   "first_seen": "2026-11-19T03:47:28Z",
-  "updated_at": "2026-11-19T03:47:28Z",
+  "updated_at": "2026-11-19T04:40:00Z",
   "category": "report",
-  "source_tier": "established",
+  "source_tier": "primary",
   "status": "confirmed",
   "title": "Kaspersky: Retadup worm's revived servers now deliver CoffeeLoader",
   "date": "2026-11-16",
@@ -17,8 +17,8 @@
   "actor": "",
   "sector": "Multiple",
   "severity": 2,
-  "summary": "Kaspersky says servers once used by the Retadup USB worm, disrupted by French police in 2019, now serve a new CoffeeLoader variant. The loader hides in a patched 7-Zip library and uses a packer that runs decryption on the GPU. Kaspersky says it blocked about 15,000 infections, mostly in Peru, Angola, Russia and Bolivia, and it is unclear who runs the servers.",
-  "plain": "An old USB worm that police shut down in 2019 is back and installing a newer malware loader that can bring in further malware. Kaspersky blocked about 15,000 infections.",
+  "summary": "Kaspersky says servers once used by the Retadup USB worm, disrupted by French police in 2019, now serve a new CoffeeLoader variant. The loader hides in a patched 7-Zip library and uses a packer that runs decryption on the GPU. Kaspersky says its products blocked Retadup infection attempts on about 15,000 systems this year, mostly in Peru, Angola, Russia and Bolivia, and it is unclear who runs the servers.",
+  "plain": "An old USB worm that police shut down in 2019 is back and installing a newer malware loader that can bring in further malware. Kaspersky blocked infection attempts on about 15,000 systems.",
   "exec": "Removable drives can still carry malware that opens the door to later attacks, including from long-dead botnets.",
   "action": "Block autorun and restrict USB storage on endpoints, scan removable drives, and hunt for a patched 7z.dll running via rundll32.exe from %PROGRAMDATA% or %LOCALAPPDATA%.",
   "products": [
@@ -35,6 +35,10 @@
   ],
   "sources": [
     {
+      "name": "Kaspersky Securelist",
+      "url": "https://securelist.com/retadup-delivers-coffeeloader/121908/"
+    },
+    {
       "name": "The Hacker News",
       "url": "https://thehackernews.com/2026/11/retadup-worm-resurfaces-7-years-after.html"
     }
@@ -47,17 +51,17 @@
     "key_findings": [
       "A new CoffeeLoader variant uses a patched 7z.dll carrying a new version of the Armoury packer, which runs decryption on the GPU via OpenGL instead of OpenCL.",
       "Domains used as Retadup command servers were re-registered about two years ago and first served SmokeLoader, then CoffeeLoader from early 2025.",
-      "Kaspersky blocked about 15,000 systems from infection, mostly in Peru, Angola, Russia and Bolivia.",
+      "Kaspersky products blocked Retadup infection attempts on about 15,000 systems in the first three quarters of the year, mostly in Peru, Angola, Russia and Bolivia, far fewer than the 850,000 machines disinfected in 2019.",
       "It is unclear whether the worm's author or another actor revived the servers."
     ],
     "recommendations": [],
-    "iocs_available": false,
-    "read_depth": "secondary",
-    "url": "https://thehackernews.com/2026/11/retadup-worm-resurfaces-7-years-after.html"
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://securelist.com/retadup-delivers-coffeeloader/121908/"
   },
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T03:47:28Z",
-    "note": "Read The Hacker News write-up quoting Kaspersky's analysis; the Kaspersky original was not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-19T04:40:00Z",
+    "note": "Read the Kaspersky Securelist original (published 2026-11-16, lists domains and payload hosts as indicators) and The Hacker News write-up of it."
   }
 }

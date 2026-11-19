@@ -19,14 +19,33 @@
   "exec": "NAS devices often hold backups and shared files; an unauthenticated flaw in them is a data-loss and ransomware risk if exposed to the internet.",
   "action": "Install DSM 7.4.1-90080-2 or 7.3.2-86009-6 when released; meanwhile deactivate the OAuth Service package and disable HTTP/2 in Control Panel, and keep NAS devices off the internet.",
   "impact": "DSM 7.1 to 7.4 and BeeStation OS 1.5 are listed as affected; DSM 7.2.x, 7.1 and BeeStation OS had no fix yet when read (advisories marked Ongoing).",
-  "tags": ["nas", "patch"],
-  "cves": ["CVE-2026-120382", "CVE-2026-123007"],
-  "products": ["Synology DSM", "BeeStation OS", "NGINX"],
+  "tags": [
+    "nas",
+    "patch"
+  ],
+  "cves": [
+    "CVE-2026-120382",
+    "CVE-2026-123007"
+  ],
+  "products": [
+    "Synology DSM",
+    "BeeStation OS",
+    "NGINX"
+  ],
   "attack": [],
   "sources": [
-    {"name": "Synology advisory SA_26_21", "url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_21"},
-    {"name": "Synology advisory SA_26_20", "url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_20"},
-    {"name": "GBHackers", "url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"}
+    {
+      "name": "Synology advisory SA_26_21",
+      "url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_21"
+    },
+    {
+      "name": "Synology advisory SA_26_20",
+      "url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_20"
+    },
+    {
+      "name": "GBHackers",
+      "url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"
+    }
   ],
   "source_tier": "primary",
   "validation": {
@@ -35,5 +54,14 @@
     "note": "Vendor advisories read in full; GBHackers independently reports the same CVEs and scores. No exploitation stated by either."
   },
   "first_seen": "2026-11-19T13:35:00Z",
-  "updated_at": "2026-11-19T13:35:00Z"
+  "updated_at": "2026-11-19T13:35:00Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-19T13:29:25Z",
+    "note": "Compared with SA_26_21, SA_26_20 and GBHackers: CVEs, CVSS scores, affected versions, 7.3 and 7.4 fixes scheduled by 20 Nov, workarounds, no exploitation stated",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-19T13:29:25Z"
 }

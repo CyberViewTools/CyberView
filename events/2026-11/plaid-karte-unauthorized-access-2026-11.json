@@ -29,29 +29,37 @@
   "pin_type": "hq",
   "severity": 2,
   "status": "confirmed",
-  "source_tier": "aggregator",
+  "source_tier": "primary",
   "summary": "PLAID suspended all KARTE services after detecting unauthorized third-party access on November 13. Its notice says the attacker exploited an unnamed server vulnerability and stole credentials. 79,249 KARTE account email addresses are confirmed leaked. Integration credentials and part of the imported data are also listed as leaked, with the number affected still under investigation. As of November 18, services remained suspended with no resumption date.",
   "plain": "A Japanese customer-data platform shut down all its services after hackers got in and stole login details and thousands of account email addresses.",
   "exec": "A platform that holds customers' data for many Japanese companies is offline; stolen integration credentials could affect downstream customers.",
   "action": "KARTE customers should rotate any API keys and integration credentials, review data imported into KARTE, and watch PLAID's status page for updates.",
   "sources": [
     {
+      "name": "PLAID notice, 16 Nov 2026 (leak of information possibly including personal data)",
+      "url": "https://plaid.co.jp/news/20261116/"
+    },
+    {
+      "name": "PLAID notice, 13 Nov 2026 (report on unauthorized access)",
+      "url": "https://plaid.co.jp/news/20261113/"
+    },
+    {
       "name": "Smartscope (summarising PLAID notices of Nov 13 and 16)",
       "url": "https://smartscope.blog/en/blog/karte-all-services-suspended-due-unauthorized-access-plaid-2026/"
     }
   ],
   "validation": {
-    "checked_at": "2026-11-18T19:12:06Z",
-    "state": "single_source",
-    "note": "Read a secondary blog summarising PLAID notices; PLAID notices themselves not opened. Find the original notice."
+    "checked_at": "2026-11-19T13:30:00Z",
+    "state": "corroborated",
+    "note": "PLAID's own notices of 13 and 16 Nov read: they confirm 79,249 account emails, integration credentials and part of imported data leaked, a server vulnerability exploited, and services suspended. Smartscope summary agrees."
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T05:12:54Z",
-    "note": "Compared with Smartscope's summary of PLAID notices of Nov 13 and 16: 79,249 emails, unnamed server vulnerability, suspension and no resumption date match; integration credentials are listed as leaked (count under investigation), not merely being assessed. Summary fixed. PLAID's own notice not opene",
+    "at": "2026-11-19T13:29:35Z",
+    "note": "Opened PLAID's own notices of 13 and 16 Nov: 79,249 emails, credentials and imported data leaked, server vulnerability, suspension all match. Added them as primary sources, tier primary, validation corroborated (was single_source secondary blog)",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T05:12:54Z",
+  "qa_checked_at": "2026-11-19T13:29:35Z",
   "links": [
     {
       "to": "dhc-karte-19-million-customer-data-leak-2026-11",

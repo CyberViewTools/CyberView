@@ -1,7 +1,9 @@
 {
   "action": "VW ID. owners: install the available software update (3.9.1 over the air for cars below 4.0; workshop visit above 4.0), and never accept an unknown Bluetooth pairing request.",
   "actor": "",
-  "attack": ["T1200 Hardware Additions"],
+  "attack": [
+    "T1200 Hardware Additions"
+  ],
   "category": "vuln",
   "country": "Germany",
   "cves": [],
@@ -16,7 +18,9 @@
   "pin_type": "hq",
   "place": "Wolfsburg",
   "plain": "Researchers showed that older Volkswagen infotainment systems could be listened to and tracked over Bluetooth after a pairing was accepted. VW says a software update is now available.",
-  "products": ["Volkswagen infotainment (BlueSDK Bluetooth stack)"],
+  "products": [
+    "Volkswagen infotainment (BlueSDK Bluetooth stack)"
+  ],
   "sector": "Automotive",
   "severity": 2,
   "source_tier": "established",
@@ -28,12 +32,23 @@
   ],
   "status": "confirmed",
   "summary": "heise reports that PCA Cyber Security researchers showed older VW infotainment systems could be eavesdropped on and tracked via Bluetooth (the PerfektBlue flaws in BlueSDK) once a pairing was accepted. VW says the fix has been available for about three weeks, with no recall planned and no driving-safety effect. The Times, cited by heise, says several hundred thousand cars may be affected.",
-  "tags": ["automotive", "bluetooth", "vulnerability"],
+  "tags": [
+    "automotive",
+    "bluetooth",
+    "vulnerability"
+  ],
   "title": "Volkswagen patches Bluetooth flaws that allowed eavesdropping and tracking in older cars",
   "updated_at": "2026-11-19T12:38:00Z",
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-19T12:38:00Z",
     "note": "heise read, with VW's statement; The Times figure is relayed by heise, original not read. Exact publication date not shown in the fetched text."
-  }
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-19T13:29:35Z",
+    "note": "heise: PCA Cyber Security, PerfektBlue in BlueSDK, pairing must be accepted, fix about 3 weeks, no recall, 3.9.1 and 4.0 thresholds, Times figure relayed by heise; single_source correct; exact date not shown",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T13:29:35Z"
 }

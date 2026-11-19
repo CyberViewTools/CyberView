@@ -112,7 +112,75 @@ function publishClaim(kind, ids) {
   return a.status === 0 && c.status === 0 && g.status === 0 ? ids.length : -ids.length;
 }
 
+// ---------- continuous flow: one long-running loop instead of separate 15-minute runs ----------
+// Each cycle: collect -> plan -> researchers on new stories AND reviewers on events published earlier, in parallel ->
+// check/retry -> commit and push (the deploy takes about 30 s). A lead is collected within one cycle of appearing,
+// published at the end of the next and reviewed in the cycle after: about 15 minutes end to end. The research
+// schedules only (re)start the loop when it is not running (FLOW_LOCK heartbeat).
+export const FLOW_LOCK = "/tmp/cyberview-flow.json";
+/** Pure: is the loop described by lock alive at time now? */
+export function flowAlive(lock, now = Date.now(), pidAlive = (p) => { try { process.kill(p, 0); return true; } catch { return false; } }) {
+  return !!(lock && lock.pid && pidAlive(lock.pid) && now - Date.parse(lock.beat) < 12 * 6e4);
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function flow() {
+  const F = PIPE.flow || {}, LIFE = Math.max(1, Math.min(115, Number(process.env.FLOW_MINUTES) || Number(F.minutes) || 100)) * 6e4, MINCYCLE = Math.max(2, Math.min(15, Number(F.min_cycle_minutes) || 4)) * 6e4;
+  const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
+  if (flowAlive(readJson(FLOW_LOCK, null))) { const l = readJson(FLOW_LOCK, {}); log(`CyberView sweep: flow already running (cycle ${l.cycle}, pid ${l.pid})`); return; }
+  if (!webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
+  const t0 = Date.now(); let cycle = 0, lastGap = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
+  const stop = () => { try { if (readJson(FLOW_LOCK, {}).pid === process.pid) unlinkSync(FLOW_LOCK); } catch {} };
+  process.on("exit", stop); process.on("SIGTERM", () => process.exit(0)); process.on("SIGINT", () => process.exit(0));
+  while (Date.now() - t0 < LIFE) {
+    cycle++; const cs = Date.now(), run = `${RUN}-c${cycle}`; process.env.CYBERVIEW_RUN = run;
+    const rec = { run, job: "sweep", flow: true, cycle, started_at: nowIso(), phases: [] };
+    const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[c${cycle} ${name}] ${note || ""}`); };
+    beat("collecting");
+    for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
+    phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");
+    const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
+    const stories = fresh ? sp.stories || [] : [], batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);
+    const pf = `review-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
+    let rb = [];
+    if (RW) { phase("review", sh("node", ["scripts/review.mjs", "plan", "--max", String(RW), "--file", pf]).out[0] || ""); rb = (readJson(join(DATA, pf), { batches: [] }).batches || []).filter((b) => b.length); }
+    const work = batches.map((b) => ["researcher", b]).concat(rb.map((_, i) => ["reviewer", i + 1]));
+    const sc = PIPE.sweep || {};
+    if (sc.gap_pass !== false && Date.now() - lastGap > 30 * 6e4) { lastGap = Date.now(); for (let i = 1; i <= Math.max(1, Math.min(3, Number(sc.gap_workers) || 1)); i++) work.push(["gap", i]); }
+    if (cycle % 6 === 1 && sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+    let res = [];
+    if (work.length) {
+      if (stories.length) publishClaim("story", stories.map((s) => s.id));
+      if (rb.length) publishClaim("event", rb.flat());
+      beat(`working: ${work.length} worker(s)`);
+      process.env.CYBERVIEW_REVIEW_PLAN = pf;
+      res = await pool("sweep", work);
+      delete process.env.CYBERVIEW_REVIEW_PLAN;
+      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
+      if (batches.length) {
+        const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
+        if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
+      }
+    } else phase("idle", "nothing new to research or review");
+    try { unlinkSync(join(DATA, pf)); } catch {}
+    rec.finished_at = nowIso(); rec.minutes = +((Date.now() - cs) / 6e4).toFixed(1); rec.workers = res.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
+    total.workers += rec.workers; total.cost += rec.cost; total.cycles++;
+    if (work.length) {
+      const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
+      appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
+      release(run);
+      let f = finish("sweep");
+      if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
+      phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
+    }
+    beat("waiting");
+    const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
+  }
+  log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
+}
+
 async function main() {
+  if (process.argv[2] === "flow") return flow();
   const job = process.argv[2], reg = readJson(join(ROOT, "routines.json"), { routines: [] });
   if (!reg.routines.find((x) => x.key === job && x.tier === "ai")) { console.error(`unknown AI job "${job}"`); process.exit(1); }
   const t0 = Date.now(), rec = { run: RUN, job, started_at: nowIso(), phases: [] };

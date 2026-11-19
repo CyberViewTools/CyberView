@@ -18,6 +18,7 @@ import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, listDir, nowIso } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 import { backlog } from "./backlog.mjs";
+import { measure } from "./lib/latency.mjs";
 import { splitAnalyses } from "./analyst.mjs";
 
 const SW = join(ROOT, "swarm");
@@ -148,6 +149,9 @@ function board() {
   console.log(`  research   ${line("node", ["scripts/backlog.mjs", "status"]).replace(/^BACKLOG: /, "")}`);
   console.log(`  review     ${line("node", ["scripts/review.mjs", "queue", "--limit", "1"])}`);
   console.log(`  analyst    ${line("node", ["scripts/analyst.mjs", "status"]).replace(/^ANALYST: /, "")}`);
+  const L = measure(24), fl = readJson("/tmp/cyberview-flow.json", null);
+  console.log(`  speed 24h  lead -> published p50 ${L.publish.p50 ?? "-"} / p90 ${L.publish.p90 ?? "-"} min; lead -> reviewed p50 ${L.review.p50 ?? "-"} / p90 ${L.review.p90 ?? "-"} min (${L.n} events; target under 15)`);
+  console.log(`  flow       ${fl ? `cycle ${fl.cycle}, ${fl.note}, beat ${fl.beat} (pid ${fl.pid} in this container)` : "not running in this container"}`);
   const leases = readJson(join(DATA, "leases.json"), {}), now = Date.now(), byRun = {};
   for (const [k, l] of Object.entries(leases)) if (Date.parse(l.until) > now) (byRun[l.run] ||= []).push(k.split(":")[0]);
   console.log(`  leases     ${Object.entries(byRun).map(([r, ks]) => `${r}: ${ks.length} ${ks[0]}(s)`).join("; ") || "none live"}`);

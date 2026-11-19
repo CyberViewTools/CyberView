@@ -245,6 +245,12 @@ async def main():
         # v1.6 features: search reaches the archive, trends page, time-lapse
         async def v16(url):
             pg, errs = await open_page(browser, url, wait=1500)
+            nbar = await pg.locator("#days .day:not(.play)").count()
+            ok("v1.31: '7 days' draws exactly 7 day bars (today and the six before)", nbar == 7, nbar)
+            await pg.click("[data-win='3']"); await pg.wait_for_timeout(300)
+            nbar3 = await pg.locator("#days .day:not(.play)").count()
+            ok("v1.31: '3 days' draws exactly 3 day bars", nbar3 == 3, nbar3)
+            await pg.click("[data-win='7']"); await pg.wait_for_timeout(300)
             await pg.click("#playDays")
             await pg.wait_for_timeout(300)
             d1 = await pg.evaluate("document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)') ? document.querySelector('#days .day[aria-pressed=\"true\"]:not(.play)').getAttribute('aria-label') : ''")

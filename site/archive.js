@@ -18,7 +18,8 @@
       Object.keys(ms).sort().reverse().forEach(function (m) {
         var o = el("option", null, new Date(m + "-15T12:00:00Z").toLocaleDateString(undefined, { year: "numeric", month: "long" })); o.value = m; $("month").appendChild(o);
       });
-      $("summary").textContent = rows.length + " events recorded since " + (rows.length ? fmt(rows[rows.length - 1].date) : "the start") + ". The map shows the last seven days; everything else lives here.";
+      var nClaims = rows.filter(function (r) { return r.status === "claimed"; }).length;
+      $("summary").textContent = (rows.length - nClaims) + " checked events since " + (rows.length ? fmt(rows[rows.length - 1].date) : "the start") + (nClaims ? ", plus " + nClaims + " unverified claim" + (nClaims === 1 ? "" : "s") + " (hidden unless you include them)" : "") + ". The map shows today and the six days before; everything else lives here.";
       readHash(); render();
       window.addEventListener("hashchange", function () { readHash(); render(); });
       // a link to one event (archive.html#q=<id>) opens it straight away

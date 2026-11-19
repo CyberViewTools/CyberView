@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.30",date:"2026-11-19"};
+var BUILD={version:"1.31",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -332,7 +332,8 @@ function nav(d){
   if(n<0||n>=list.length)return;
   select(list[n].id,true);
 }
-function inWindow(e){return e.date>=ymd(daysAgo(state.win))&&e.date<=ymd(daysAgo(-1));}
+/* "N days" is today and the N-1 calendar days before it, on the map, the day bars, the counts and the handover alike */
+function inWindow(e){return e.date>=ymd(daysAgo(state.win-1))&&e.date<=ymd(daysAgo(-1));}
 function matchQ(e){
   if(!state.q)return true;
   var hay=[e.title,e.org,e.country,e.place,e.sector,e.actor,e.summary,e.cves.join(" "),e.tags.join(" ")].join(" ").toLowerCase();
@@ -418,7 +419,7 @@ function startPlay(days){
 }
 function renderDays(){
   var b=scoped();
-  var days=[];for(var i=state.win;i>=0;i--)days.push(ymd(daysAgo(i)));
+  var days=winDays();
   var counts=days.map(function(d){return b.filter(function(e){return e.date===d;}).length;});
   var max=Math.max(1,d3.max(counts));
   var box=$("days");box.textContent="";
@@ -1047,7 +1048,7 @@ function rings(g,e,k){
   if(e.wl)g.append("circle").attr("class","wlr").attr("r",(e.actorPin||e.countryPin?14.5:12.5)*k);
 }
 function pinNote(e){return e.actorPin?" · attributed origin, not a victim location":e.countryPin?" · country-level location":"";}
-function winDays(){var a=[];for(var i=state.win;i>=0;i--)a.push(ymd(daysAgo(i)));return a;}
+function winDays(){var a=[];for(var i=state.win-1;i>=0;i--)a.push(ymd(daysAgo(i)));return a;}
 function isFiltered(){return !!(state.q||state.status!=="all"||state.lens!=="all"||state.sev>1||state.cats.size<CATS.length||state.wlOnly||state.day||state.spot||state.country||state.pattern);}
 function tipAt(ev,a,b){var t=$("tip"),s=$("stage").getBoundingClientRect();t.textContent="";t.appendChild(document.createTextNode(a));if(b)t.appendChild(el("small",null,b));
   t.style.left=Math.min(s.width-140,Math.max(140,ev.clientX-s.left))+"px";t.style.top=Math.max(50,ev.clientY-s.top)+"px";t.style.display="block";}
@@ -1486,7 +1487,7 @@ function hoBuild(){
   var since=lsGet("cwm.ho")||"",list=base(),now=new Date(),L=[];
   var sev=["","Low","Med","High"],line=function(e){return "- ["+sev[e.severity]+"] "+e.title+" ("+fmtDay(e.date)+")"+(e.action&&!/^no action/i.test(e.action)?"\n    Do: "+e.action:"");};
   L.push("CYBERVIEW HANDOVER  "+now.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}));
-  L.push("Window: last "+(state.win===1?"24 hours":state.win+" days")+(isFiltered()?" (filters on: "+$("scopeText").textContent+")":"")+" · "+list.length+" events");
+  L.push("Window: last "+state.win+" days (today and the "+(state.win-1)+" before)"+(isFiltered()?" (filters on: "+$("scopeText").textContent+")":"")+" · "+list.length+" events");
   var todo=list.filter(function(e){return urgent(e);}).sort(function(a,b){return b.pri-a.pri;});
   L.push("");L.push("TOP PRIORITY ("+todo.length+")");todo.slice(0,10).forEach(function(e){L.push(line(e));});if(todo.length>10)L.push("  …and "+(todo.length-10)+" more");if(!todo.length)L.push("- none");
   var dl=kev.filter(function(k){var n=kevLeft(k);return n!==null&&n<=7&&n>=-3;}).sort(function(a,b){return kevLeft(a)-kevLeft(b);});
@@ -1903,7 +1904,7 @@ function loadPrefs(){
   keyShut=lsGet("cwm.key")!=="0";
   try{var ao=JSON.parse(lsGet("cwm.arcs")||"null");if(ao&&typeof ao==="object"){arcOn.links=ao.links!==false;arcOn.origins=ao.origins!==false;}}catch(x){}
   try{var o=JSON.parse(lsGet("cwm.ui")||"null");if(!o||typeof o!=="object")return;
-    if([1,3,7].indexOf(o.win)>=0)state.win=o.win;if([1,2,3].indexOf(o.sev)>=0)state.sev=o.sev;
+    if(o.win===1)o.win=2;if([2,3,7].indexOf(o.win)>=0)state.win=o.win;if([1,2,3].indexOf(o.sev)>=0)state.sev=o.sev;
     if(["pri","new","sev","upd","rec","risk"].indexOf(o.sort)>=0)state.sort=o.sort;
     if(o.lens==="all"||own(LENS,o.lens))state.lens=o.lens;
     if(Array.isArray(o.cats)){var cs=o.cats.filter(function(c){return own(CAT,c);});if(cs.length)state.cats=new Set(cs);}

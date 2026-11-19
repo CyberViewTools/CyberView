@@ -1,0 +1,35 @@
+{
+  "job": "analyst-14",
+  "started_at": "2026-11-19T04:41:00Z",
+  "finished_at": "2026-11-19T04:45:06Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-76519 Cisco Secure Email Gateway exploited",
+    "JVN#88474777 SiteGuard Server Edition CVE-2026-106931",
+    "CVE-2023-22894 Strapi exploited CISA KEV analysis",
+    "GHSA CVE-2023-22894 strapi Leaking sensitive user information by filtering on private fields"
+  ],
+  "pages_read": [
+    {"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-esa-afw-zqYJkjxp", "title": "Cisco cisco-sa-esa-afw-zqYJkjxp", "used_in": "CVE-2026-76519"},
+    {"url": "https://www.bleepingcomputer.com/news/security/cisco-patches-actively-exploited-secure-email-gateway-zero-day/", "title": "BleepingComputer: Cisco patches actively exploited SEG zero-day", "used_in": "CVE-2026-76519"},
+    {"url": "https://www.cyberscoop.com/cisco-secure-email-gateway-zero-day-exploited/", "title": "CyberScoop: Cisco SEG zero-day exploited (about CVE-2026-76461, not used)", "used_in": "none"},
+    {"url": "https://nvd.nist.gov/vuln/detail/CVE-2026-76519", "title": "NVD API record with CISA KEV fields", "used_in": "CVE-2026-76519"},
+    {"url": "https://strapi.io/blog/security-disclosure-of-vulnerabilities-cve", "title": "Strapi security disclosure", "used_in": "CVE-2023-22894"},
+    {"url": "https://github.com/strapi/strapi/security/advisories/GHSA-jjqf-j4w7-92w8", "title": "Strapi GHSA-jjqf-j4w7-92w8", "used_in": "CVE-2023-22894"},
+    {"url": "https://github.com/strapi/strapi/security/advisories/GHSA-2h87-4q2w-v4hf", "title": "Strapi GHSA-2h87-4q2w-v4hf (CVE-2023-22621)", "used_in": "CVE-2023-22894"},
+    {"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-22894", "title": "NVD API record with CISA KEV fields", "used_in": "CVE-2023-22894"},
+    {"url": "https://www.eg-secure.co.jp/siteguard/news/alert-202610-1", "title": "EG Secure Solutions SiteGuard alert", "used_in": "CVE-2026-106931"},
+    {"url": "https://jvn.jp/en/jp/JVN88474777/", "title": "JVN#88474777", "used_in": "CVE-2026-106931"},
+    {"url": "https://www.bleepingcomputer.com/news/security/hackers-exploit-siteguard-waf-flaw-to-run-commands-as-system-root/", "title": "BleepingComputer: SiteGuard WAF flaw exploited", "used_in": "CVE-2026-106931"},
+    {"url": "https://nvd.nist.gov/vuln/detail/CVE-2026-106931", "title": "NVD API record with CISA KEV fields", "used_in": "CVE-2026-106931"}
+  ],
+  "added": ["CVE-2026-76519", "CVE-2023-22894", "CVE-2026-106931"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Cisco SEG CVE-2026-76519 possibly first fixed in September under another CVE id", "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-esa-afw-zqYJkjxp", "note": "A search snippet claimed the fix was first released 14 Sep as CVE-2026-76440; not stated in pages read. Check a later Cisco advisory revision.", "priority": "low"},
+    {"title": "Independent technical write-up for CVE-2026-76519 or CVE-2026-106931", "url": "https://jvn.jp/en/jp/JVN88474777/", "note": "No researcher or incident-responder analysis found for either; upgrade confidence if one appears.", "priority": "low"}
+  ],
+  "failed_sites": ["www.cisa.gov KEV catalog search page (did not show the entry; KEV dates taken from NVD API)", "nvd.nist.gov HTML page (empty render; used the NVD API)"],
+  "notes": "Exploit analyst batch 14. Three analyses written; build passes. No instructions found in page text. Strapi sources disagree on whether authentication is needed (CVE text vs Strapi's own GHSA); recorded in caveats."
+}

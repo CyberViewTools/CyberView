@@ -1,0 +1,37 @@
+{
+  "job": "exploit-analyst",
+  "started_at": "2026-11-19T04:38:00Z",
+  "finished_at": "2026-11-19T04:45:30Z",
+  "model": "claude-opus-5-5",
+  "batch": 17,
+  "searches": [
+    "CVE-2026-114625 VeloCloud Orchestrator exploited",
+    "CVE-2026-118527 Ivanti Connect Secure",
+    "CVE-2026-41709 ESX insufficient logging exploited",
+    "CISA adds known exploited vulnerabilities catalog October 2026 Ivanti VMware Arista",
+    "Volexity UTA0576 Ivanti Connect Secure",
+    "CrowdStrike Warp Panda ESXi logging CVE-2026-41709 blog"
+  ],
+  "pages_read": [
+    {"url": "https://www.arista.com/en/support/advisories-notices/security-advisory/24838-security-advisory-0199", "title": "Arista Security Advisory 0199", "used_in": "CVE-2026-114625"},
+    {"url": "https://www.bleepingcomputer.com/news/security/arista-patches-new-velocloud-orchestrator-zero-day-exploited-in-attacks/", "title": "Arista patches new VeloCloud Orchestrator zero-day", "used_in": "CVE-2026-114625"},
+    {"url": "https://socradar.io/blog/velocloud-orchestrator-cve-2026-114625-active-exploitation/", "title": "SOCRadar: VCO CVE-2026-114625 active exploitation", "used_in": "CVE-2026-114625"},
+    {"url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json", "title": "CISA KEV catalog feed", "used_in": "CVE-2026-114625, CVE-2026-118527, CVE-2026-41709"},
+    {"url": "https://www.volexity.com/blog/2026/10/13/a-series-of-unauthenticated-events-chained-exploitation-of-ivanti-connect-secure-zero-days/", "title": "Volexity: chained exploitation of Ivanti Connect Secure zero-days", "used_in": "CVE-2026-118527"},
+    {"url": "https://www.securityweek.com/ivanti-patches-two-more-zero-days-exploited-in-connect-secure-attack-chain/", "title": "SecurityWeek: Ivanti patches two more zero-days", "used_in": "CVE-2026-118527"},
+    {"url": "https://www.bleepingcomputer.com/news/security/ivanti-patches-two-more-connect-secure-zero-days-chained-in-attacks/", "title": "BleepingComputer: Ivanti patches two more Connect Secure zero-days", "used_in": "CVE-2026-118527"},
+    {"url": "https://www.cybersecuritydive.com/news/hacker-ivanti-connect-secure-chained-exploitation/832983/", "title": "Cybersecurity Dive: Ivanti chained exploitation", "used_in": "CVE-2026-118527"},
+    {"url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/38017", "title": "Broadcom VMSA-2026-0006", "used_in": "CVE-2026-41709"},
+    {"url": "https://www.securityweek.com/chinese-hackers-quietly-used-low-severity-esxi-logging-flaw-as-zero-day/", "title": "SecurityWeek: ESXi logging flaw used as zero-day", "used_in": "CVE-2026-41709"},
+    {"url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-esx-logging-zero-day-warp-panda-20261030-c/", "title": "CSA research note: Warp Panda ESX logging zero-day", "used_in": "CVE-2026-41709"}
+  ],
+  "added": ["CVE-2026-114625", "CVE-2026-118527", "CVE-2026-41709"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Ivanti advisory for CVE-2026-104935 / 111357 / 118527", "url": "https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Connect-Secure-CVE-2026-104935?language=en_US", "note": "Page needs a browser and did not render for an automated reader (tried twice, plus the forums redirect). CVE-2026-118527 analysis is at medium confidence until the vendor text (versions, any ICT guidance) is confirmed.", "priority": "medium"},
+    {"title": "CrowdStrike 2026 Legal Threat Landscape Report (Warp Panda, CVE-2026-41709)", "url": "https://www.crowdstrike.com/explore/crowdstrike-content/legal-threat-landscape-report", "note": "Primary attribution source not read; findings taken from SecurityWeek and CSA. Which ESX operations go unlogged is still unpublished.", "priority": "low"}
+  ],
+  "failed_sites": ["hub.ivanti.com (renders only with JavaScript)"],
+  "notes": "Three analyses written; all pass checkAnalysis and the build passes. Attacker IP addresses from Arista's advisory were not copied, only referenced by advisory name. No exploit repositories or proof-of-concept material opened."
+}

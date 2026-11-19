@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.46",date:"2026-11-19"};
+var BUILD={version:"1.47",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -202,13 +202,13 @@ function gridLine(x){
 /* grid analysis (scripts/grid-analysis.mjs, no AI model; docs["grid/analysis"]): other independent signals seen near an
    incident, and whether its size is unusual for that hour of the week. Notes only: never evidence of a cause or an attack. */
 var GRID_SIG={operator:"other grid operators",internet:"internet measurements",disaster:"disaster alerts",news:"news reports",demand:"electricity demand data"};
-var GRID_SRC={ioda:"IODA",gdacs:"GDACS",cfradar:"Cloudflare Radar",eia:"EIA",entsoe:"ENTSO-E"};
+var GRID_SRC={ioda:"IODA",gdacs:"GDACS",cfradar:"Cloudflare Radar",eia:"EIA",entsoe:"ENTSO-E",ioda:"IODA",gdacs:"GDACS"};
 var gridA=null;
 function cleanGridAnalysis(d){
   if(!d||typeof d!=="object")return null;
-  var by={},an=[],srcName=function(v){var t=str(v,40).trim(),k=t.toLowerCase();return own(GRID_SRC,k)?GRID_SRC[k]:/^[\w .()&'-]{1,40}$/.test(t)?t:"";};
+  var by={},sc={},an=[],srcName=function(v){var t=str(v,40).trim(),k=t.toLowerCase();return own(GRID_SRC,k)?GRID_SRC[k]:/^[\w .()&'-]{1,40}$/.test(t)?t:"";};
   (Array.isArray(d.corroboration)?d.corroboration:[]).slice(0,200).forEach(function(c){
-    if(!c||typeof c!=="object")return;var id=str(c.id,120);if(!id)return;
+    if(!c||typeof c!=="object")return;var id=str(c.id,120);if(!id)return;var s0=numIn(c.score,0,20);if(s0!==null)sc[id]=Math.round(s0);
     var sig=(Array.isArray(c.signals)?c.signals:[]).slice(0,20).map(function(g){
       if(!g||typeof g!=="object")return null;var k=str(g.kind,20);if(!own(GRID_SIG,k))return null;
       return {kind:k,source:srcName(g.source),raw:str(g.source,40).toLowerCase()};}).filter(Boolean);
@@ -216,9 +216,10 @@ function cleanGridAnalysis(d){
   });
   (Array.isArray(d.anomalies)?d.anomalies:[]).slice(0,200).forEach(function(a){
     if(!a||typeof a!=="object")return;
-    an.push({id:str(a.id||a.incident_id||a.incident,120),source:str(a.source,20).toLowerCase(),region:str(a.region,80).trim()});
+    var v=numIn(a.value,0,1e9),m=numIn(a.median,0,1e9),z=numIn(a.z,-1e4,1e4);
+    an.push({id:str(a.id||a.incident_id||a.incident,120),source:str(a.source,20).toLowerCase(),region:str(a.region,80).trim(),value:v===null?null:Math.round(v),median:m===null?null:Math.round(m),z:z,at:str(a.at,30)});
   });
-  return {by:by,anomalies:an};
+  return {by:by,scores:sc,anomalies:an,at:str(d.updated_at,30)};
 }
 /* plain-text notes for one incident: "seen also by: internet measurements (IODA) · news reports (2)", "unusual for this hour of the week" */
 function gridNotes(x){
@@ -235,6 +236,225 @@ function gridNotes(x){
   return out;
 }
 function gridChecked(x){return x.checked?"Cause checked by "+x.checked.by+": "+GRID_DEC[x.checked.decision]+(x.checked.summary?" \u2014 "+x.checked.summary:""):"";}
+/* ---------- Grid view (owner, 2026-11-19): power grid outages only, as context. Nothing about cyber events is drawn or
+   listed here: no event markers, arcs, other layers, filters or feed. Leaving it restores the other views as they were. ---------- */
+var GRID_OPS={hydroquebec:"Hydro-Québec",bchydro:"BC Hydro",ukpn:"UK Power Networks",eskom:"Eskom",ercot:"ERCOT",aemo:"AEMO",eia:"EIA",cfradar:"Cloudflare Radar",entsoe:"ENTSO-E",ioda:"IODA",gdacs:"GDACS"};
+var GRID_FEEDS=[["hydroquebec","outages in Quebec"],["bchydro","outages in British Columbia"],["ukpn","faults in London, the South East and East of England"],["eskom","load shedding in South Africa"],
+  ["ercot","grid conditions in Texas"],["aemo","market notices in Australia"],["eia","US electricity demand (needs a key)"],["cfradar","internet outages with a power cause (needs a key)"],["entsoe","generation and transmission outages in Europe (needs a key)"],
+  ["ioda","internet measurements, used only to corroborate"],["gdacs","disaster alerts, used only to corroborate"]];
+var gridUi={f:"all",cc:"",sel:null,all:false,ccKey:""},gridHealth={data:null,at:0,busy:false,failed:false},gridTr=null,gridPrevUrl=null;
+var GRID_CC=null;try{GRID_CC=new Intl.DisplayNames(undefined,{type:"region"});}catch(x){GRID_CC=null;}
+function gridCountry(cc){if(!cc)return "";try{return GRID_CC?GRID_CC.of(cc)||cc:cc;}catch(x){return cc;}}
+function gridShown(x){
+  if(gridUi.f==="unplanned"&&x.planned)return false;
+  if(gridUi.f==="incidents"&&x.scope==="outage")return false;
+  return !gridUi.cc||x.country===gridUi.cc;
+}
+/* open incidents first, then single outages; biggest first in each (signals with no customer count after, by level) */
+function gridOrder(a,b){
+  var s=(a.scope==="outage")-(b.scope==="outage");if(s)return s;
+  var ca=a.customers===null?-1:a.customers,cb=b.customers===null?-1:b.customers;if(ca!==cb)return cb-ca;
+  return (b.level||0)-(a.level||0);
+}
+function gridHash(on){
+  try{
+    if(on){if(location.hash!=="#grid"){gridPrevUrl=location.pathname+location.search+location.hash;history.replaceState(history.state,"",location.pathname+location.search+"#grid");}}
+    else{if(location.hash==="#grid")history.replaceState(history.state,"",gridPrevUrl||location.pathname+location.search);gridPrevUrl=null;}
+  }catch(x){}
+}
+/* each grid source's last fetch, from health.json (written by the build) */
+function cleanGridHealth(h){
+  if(!h||typeof h!=="object")return null;
+  var out={at:str(h.last_grid_at,30),sources:{}},gs=h.grid_sources&&typeof h.grid_sources==="object"?h.grid_sources:{};
+  Object.keys(gs).slice(0,30).forEach(function(k){
+    var v=gs[k];if(!/^[a-z0-9_-]{1,30}$/.test(k)||!v||typeof v!=="object")return;
+    var n=numIn(v.items,0,1e6);
+    out.sources[k]={ok:v.ok===true,error:str(v.error,120),at:str(v.at,30),items:n===null?null:Math.round(n)};
+  });
+  return out;
+}
+function loadGridHealth(force){
+  if(gridHealth.busy||(!force&&gridHealth.data&&Date.now()-gridHealth.at<5*60*1000))return;
+  gridHealth.busy=true;
+  fetch("data/health.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+    .then(function(j){gridHealth.data=cleanGridHealth(j);gridHealth.failed=!gridHealth.data;},function(){gridHealth.failed=true;})
+    .then(function(){gridHealth.busy=false;gridHealth.at=Date.now();if(state.view==="grid"){safe("grid sources",gridSources);safe("grid header",gridHead);}});
+}
+/* 30-day customer-hours per operator region (docs["grid/analysis"].trends); the same cleaning as the trends page */
+function cleanGridTrendRow(key,r){
+  if(!r||typeof r!=="object")return null;
+  var src=str(r.source,20).toLowerCase(),cc=str(r.country,2).toUpperCase();
+  var region=str(r.region,80)||str(key,80);
+  var ch=numIn(r.customer_hours!=null?r.customer_hours:r.customer_hours_30d,0,1e12);
+  var inc=numIn(r.incidents!=null?r.incidents:r.incidents_opened!=null?r.incidents_opened:r.opened,0,1e6);
+  if(!region||ch===null)return null;
+  var lg=r.largest&&typeof r.largest==="object"?r.largest:null,largest=null;
+  if(lg){
+    var lc=numIn(lg.peak_customers!=null?lg.peak_customers:lg.customers,0,1e9),ck=lg.checked&&typeof lg.checked==="object"?str(lg.checked.decision,30):"";
+    largest={name:str(lg.name,120),customers:lc===null?null:Math.round(lc),checked:own(GRID_DEC,ck)?ck:""};
+    if(!largest.name&&largest.customers===null)largest=null;
+  }
+  var causes=[];
+  if(Array.isArray(r.causes))r.causes.slice(0,20).forEach(function(c){if(!c||typeof c!=="object")return;var n=numIn(c.customers!=null?c.customers:c.count!=null?c.count:c.n,0,1e12),t=str(c.cause,60);if(n!==null)causes.push({cause:t||"no cause reported",n:n});});
+  else if(r.causes&&typeof r.causes==="object")Object.keys(r.causes).slice(0,20).forEach(function(k){var n=numIn(r.causes[k],0,1e12);if(n!==null)causes.push({cause:str(k,60)||"no cause reported",n:n});});
+  causes.sort(function(a,b){return b.n-a.n;});
+  var w=r.wow||r.week_over_week||r.week,wow=null;
+  if(w&&typeof w==="object"){var a=numIn(w.cur!=null?w.cur:w.this_week!=null?w.this_week:w.customer_hours,0,1e12),b=numIn(w.prev!=null?w.prev:w.last_week!=null?w.last_week:w.prev_customer_hours,0,1e12);if(a!==null&&b!==null)wow={cur:a,prev:b};}
+  return {source:/^[a-z0-9_-]+$/.test(src)?src:"",country:/^[A-Z]{2}$/.test(cc)?cc:"",region:region,hours:ch,incidents:inc===null?null:Math.round(inc),largest:largest,causes:causes.slice(0,5),wow:wow};
+}
+function cleanGridTrends(g){
+  if(!g||typeof g!=="object"||!g.trends||typeof g.trends!=="object")return null;
+  var t=g.trends,rows=[];
+  var reg=t.regions&&typeof t.regions==="object"?t.regions:null;
+  if(Array.isArray(reg))reg.slice(0,60).forEach(function(r){rows.push(cleanGridTrendRow("",r));});
+  else if(reg)Object.keys(reg).slice(0,60).forEach(function(k){if(reg[k]&&typeof reg[k]==="object"&&!Array.isArray(reg[k]))rows.push(cleanGridTrendRow(k,reg[k]));});
+  else Object.keys(t).slice(0,60).forEach(function(k){if(t[k]&&typeof t[k]==="object"&&!Array.isArray(t[k]))rows.push(cleanGridTrendRow(k,t[k]));});
+  rows=rows.filter(Boolean).sort(function(a,b){return b.hours-a.hours;}).slice(0,20);
+  var days=numIn(t.days!=null?t.days:t.window_days,1,365);
+  return {at:str(g.updated_at,30),days:days===null?30:Math.round(days),rows:rows};
+}
+function gridReset(){
+  gridUi.f="all";gridUi.cc="";gridUi.sel=null;gridUi.all=false;hideTip();gridControls();
+  svg.call(zoom.transform,d3.zoomIdentity);resetGlobe();
+  var p=$("gridp");if(p)p.scrollTop=0;
+}
+function gridControls(){
+  document.querySelectorAll("[data-gf]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.gf===gridUi.f?"true":"false");});
+  var cs=$("gCountry");if(cs&&cs.value!==gridUi.cc)cs.value=gridUi.cc;
+}
+function gridMark(){Array.prototype.forEach.call(document.querySelectorAll("#gRows li[data-id]"),function(li){li.classList.toggle("on",li.dataset.id===gridUi.sel);});}
+/* a row turns the globe to its outage and shows its tooltip, the way the feed focuses an event */
+function gridFocus(x){
+  if(!x)return;
+  if(x.lat===null){toast("The operator gave no location for this one, so it is not on the globe.");return;}
+  gridUi.sel=x.id;gridMark();
+  if(!wide&&!wall.on)window.scrollTo(0,0);
+  var k=Math.max(T.k,2.2),tk=d3.zoomIdentity.translate(FX*(1-k),FY*(1-k)).scale(k);
+  flyGlobe(x.lng,x.lat,reduced?0:650,function(){drawMarks();});
+  (reduced?svg:svg.transition().duration(650)).call(zoom.transform,tk);
+}
+function gridHead(){
+  var p=$("gAt");if(!p)return;
+  var at=gridHealth.data&&gridHealth.data.at||(ctx.grid&&ctx.grid.at)||"";
+  p.textContent=at&&isFinite(Date.parse(at))?"Last grid collection "+ago(at)+" ("+fmtTime(at)+").":ctx.grid?"Time of the last grid collection not known.":"Grid data is not loaded yet.";
+}
+function gridRow(x){
+  var li=el("li",x.lat===null?"nogeo":null);li.dataset.id=x.id;li.tabIndex=0;if(gridUi.sel===x.id)li.classList.add("on");
+  var r1=el("div","gr1"),op=GRID_OPS[x.source]||x.name.split(":")[0];
+  r1.appendChild(el("span","gtag"+(x.scope==="outage"?" out":""),x.scope==="outage"?"Outage":"Incident"));
+  if(x.url){var a=el("a","gop",op);a.href=safeUrl(x.url);a.target="_blank";a.rel="noopener noreferrer";a.title="Opens the operator's own page";r1.appendChild(a);}else r1.appendChild(el("span","gop",op));
+  var place=[x.region,gridCountry(x.country)].filter(function(v,i,arr){return v&&arr.indexOf(v)===i;}).join(", ");
+  if(place)r1.appendChild(el("span",null,place));
+  li.appendChild(r1);
+  li.appendChild(el("b","gname",x.name));
+  var p2=[];
+  if(x.customers!==null)p2.push(x.customers.toLocaleString()+" customer"+(x.customers===1?"":"s")+" without power");
+  if(x.level!==null&&x.kind!=="outage")p2.push(GRID_KIND[x.kind]+" level "+x.level);else if(x.customers===null)p2.push(GRID_KIND[x.kind]);
+  var s=ago(x.since);p2.push(s?"started "+s:"start time not given");
+  var r2=el("div","gr2",p2.join(" · "));
+  if(x.planned){r2.appendChild(document.createTextNode(" · "));r2.appendChild(el("span","gplan","Planned work"));}
+  li.appendChild(r2);
+  li.appendChild(el("div","gr3",x.cause?"Cause as reported: "+x.cause:"No cause reported"));
+  if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
+  var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" · ")));
+  if(x.lat===null)li.appendChild(el("small","gnote","Not on the globe: the operator gave no location."));
+  else if(x.approx)li.appendChild(el("small","gnote","Drawn at the operator's area, not an exact place."));
+  li.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest("a"))return;gridFocus(x);});
+  li.addEventListener("keydown",function(ev){if(ev.target!==li)return;if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();gridFocus(x);}});
+  return li;
+}
+function gridList(){
+  var ul=$("gRows"),cnt=$("gCount"),cs=$("gCountry");if(!ul)return;
+  var all=ctx.grid?ctx.grid.items:[];
+  /* the country list comes from the data; it is rebuilt only when the set of countries changes */
+  var ccs=all.map(function(x){return x.country;}).filter(function(c,i,a){return c&&a.indexOf(c)===i;}).sort(function(a,b){return gridCountry(a).localeCompare(gridCountry(b));});
+  if(gridUi.cc&&ccs.indexOf(gridUi.cc)<0)ccs.push(gridUi.cc);
+  var key=ccs.join(",");
+  if(cs&&key!==gridUi.ccKey){gridUi.ccKey=key;while(cs.options.length>1)cs.remove(1);ccs.forEach(function(c){var o=el("option",null,gridCountry(c));o.value=c;cs.appendChild(o);});cs.value=gridUi.cc;}
+  ul.textContent="";
+  if(!ctx.grid){cnt.textContent=loaded?"Grid data is not available right now.":"Loading grid data";return;}
+  var list=all.filter(gridShown).sort(gridOrder);
+  if(gridUi.sel&&!list.some(function(x){return x.id===gridUi.sel;})){gridUi.sel=null;hideTip();}
+  var ni=list.filter(function(x){return x.scope!=="outage";}).length,no=list.length-ni,np=list.filter(function(x){return x.scope==="outage"&&x.planned;}).length;
+  cnt.textContent=list.length?(ni+" incident"+(ni===1?"":"s")+" open (5,000 or more customers in one operator's area, or a grid emergency) · "+no+" single outage"+(no===1?"":"s")+" of 100 or more customers"+(np?" ("+np+" planned work)":"")+". Tap one to find it on the globe."):
+    all.length?"Nothing matches this filter.":"No operator reports an outage of 100 or more customers right now.";
+  var cap=gridUi.all?list.length:60;
+  list.slice(0,cap).forEach(function(x){ul.appendChild(gridRow(x));});
+  if(list.length>cap){var li=el("li","more"),b=el("button","btn ghost sm","Show all "+list.length);b.type="button";b.addEventListener("click",function(){gridUi.all=true;safe("grid list",gridList);});li.appendChild(b);ul.appendChild(li);}
+}
+function gridSources(){
+  var ul=$("gSrc");if(!ul)return;ul.textContent="";
+  var d=gridHealth.data;
+  if(!d){ul.appendChild(el("li","muted",gridHealth.failed?"Source health could not be loaded. The outage list above is unaffected.":"Loading source health"));return;}
+  /* the nine grid feeds always; the corroboration feeds (IODA, GDACS) and any new one only when the data names them */
+  var keys=GRID_FEEDS.slice(0,9).map(function(f){return f[0];});Object.keys(d.sources).forEach(function(k){if(keys.indexOf(k)<0)keys.push(k);});
+  keys.forEach(function(k){
+    var f=GRID_FEEDS.find(function(z){return z[0]===k;}),x=own(d.sources,k)?d.sources[k]:null,li=el("li");
+    var h=x&&x.at?(Date.now()-Date.parse(x.at))/36e5:NaN,nc=!!x&&!x.ok&&/^not connected/i.test(x.error);
+    var cls=!x?"neutral":x.ok?(isFinite(h)&&h>2?"stale":"live"):nc?"neutral":"bad";
+    var lab=!x?"Not reported yet":x.ok?(cls==="stale"?"Stale · "+ago(x.at):"Live"):nc?"Not connected":"Failing";
+    li.appendChild(el("span","gbadge "+cls,lab));
+    var t=(GRID_OPS[k]||k)+(f?": "+f[1]:"");
+    if(nc)t+=" · no key saved";else if(x&&!x.ok)t+=" · "+(x.error||"error not given");
+    if(x&&x.items!==null&&!nc)t+=" · "+x.items+" item"+(x.items===1?"":"s");
+    if(x&&x.ok&&cls==="live"&&x.at&&isFinite(Date.parse(x.at)))t+=" · checked "+ago(x.at);
+    li.appendChild(el("span",null,t));
+    ul.appendChild(li);
+  });
+}
+function gridAnalysisPanel(){
+  var box=$("gAnaBody");if(!box)return;box.textContent="";
+  if(!gridA){box.appendChild(el("p","none","No grid analysis stored yet. A script (no AI model) writes one after each grid collection."));return;}
+  var items=ctx.grid?ctx.grid.items:[],byId={};items.forEach(function(x){byId[x.id]=x;});
+  var nameOf=function(id,src,region){var x=id&&byId[id];return x?x.name:[GRID_OPS[src]||src,region].filter(Boolean).join(", ")||"An operator region";};
+  box.appendChild(el("h4",null,"Unusual for this hour of the week"));
+  if(!gridA.anomalies.length)box.appendChild(el("p","none","No outage is unusual for this hour of the week."));
+  else{var ul=el("ul","gana");gridA.anomalies.slice(0,12).forEach(function(a){
+    var li=el("li",null,nameOf(a.id,a.source,a.region));
+    var d=[];if(a.value!==null)d.push(a.value.toLocaleString()+" customers out");if(a.median!==null)d.push("usually about "+a.median.toLocaleString()+" at this hour of the week (median of the last four weeks)");
+    if(d.length)li.appendChild(el("small",null,d.join("; ")));ul.appendChild(li);});box.appendChild(ul);}
+  box.appendChild(el("h4",null,"Seen by other independent sources"));
+  var ids=Object.keys(gridA.scores).filter(function(id){return gridA.scores[id]>=1;}).sort(function(a,b){return gridA.scores[b]-gridA.scores[a];});
+  if(!ids.length)box.appendChild(el("p","none","No open incident has a corroboration score yet."));
+  else{var ul2=el("ul","gana");ids.slice(0,12).forEach(function(id){
+    var x=byId[id],sc=gridA.scores[id],li=el("li",null,nameOf(id,"",""));
+    var n=x?gridNotes(x).filter(function(t){return t.indexOf("seen also by")===0;}):[];
+    li.appendChild(el("small",null,"Score "+sc+": "+sc+" independent kind"+(sc===1?"":"s")+" of source (the operator, internet measurements, disaster alerts, news, demand data)"+(n.length?" · "+n[0]:"")));
+    ul2.appendChild(li);});box.appendChild(ul2);}
+  box.appendChild(el("p","cav","Signals computed by a script (no AI model) from the operators' figures, internet measurements, disaster alerts and news headlines"+(gridA.at?", updated "+ago(gridA.at):"")+". They are signals, not causes, and never evidence of an attack."));
+}
+function gridTrends(){
+  var box=$("gBars"),sum=$("gTrendSum"),det=$("gTrendDet");if(!box)return;box.textContent="";det.textContent="";
+  var g=gridTr;
+  if(!g||!g.rows.length){sum.textContent=g?"No operator reported unplanned outages in the last "+g.days+" days, or the first analysis has not run yet.":"No grid trends stored yet.";return;}
+  $("gTrendH").textContent="Where were the most customer-hours without power in the last "+g.days+" days?";
+  var tot=g.rows.reduce(function(s,r){return s+r.hours;},0),max=Math.max(1,g.rows[0].hours);
+  sum.textContent=fmtNum(tot)+" customer-hours without power across "+g.rows.length+" operator region"+(g.rows.length===1?"":"s")+". Tap a bar for the causes as the operators reported them.";
+  g.rows.forEach(function(r){
+    var op=GRID_OPS[r.source]||r.source||"",who=op&&r.region&&r.region!==op?op+", "+r.region:op||r.region,detail=[];
+    if(r.incidents!==null)detail.push(r.incidents+" incident"+(r.incidents===1?"":"s")+" opened");
+    if(r.wow)detail.push("this week "+fmtNum(r.wow.cur)+", week before "+fmtNum(r.wow.prev));
+    if(r.largest)detail.push("largest: "+(r.largest.name||"")+(r.largest.customers!==null&&!/customers/i.test(r.largest.name)?(r.largest.name?", ":"")+fmtNum(r.largest.customers)+" customers":"")+(r.largest.checked?" (cause checked by "+AI_BY+": "+GRID_DEC[r.largest.checked]+")":""));
+    var mix=r.causes.length?"Causes as reported: "+r.causes.map(function(c){return c.cause+" ("+fmtNum(c.n)+")";}).join(", "):"No causes reported";
+    var text=who+": "+fmtNum(r.hours)+" customer-hours"+(detail.length?", "+detail.join(", "):"")+". "+mix+".";
+    var b=el("button","gbar");b.type="button";b.title=text;b.setAttribute("aria-label",text);
+    b.appendChild(el("span","glab",who));
+    var tr=el("span","gtrack"),fl=el("span","gfill");fl.style.width=Math.max(1,Math.round(r.hours/max*100))+"%";tr.appendChild(fl);b.appendChild(tr);
+    b.appendChild(el("span","gval",fmtNum(r.hours)));
+    b.addEventListener("click",function(){det.textContent=text;Array.prototype.forEach.call(box.querySelectorAll(".gbar.on"),function(z){z.classList.remove("on");});b.classList.add("on");});
+    box.appendChild(b);
+  });
+}
+function renderGridPanel(){
+  safe("grid header",gridHead);
+  safe("grid list",gridList);
+  safe("grid sources",gridSources);
+  safe("grid analysis",gridAnalysisPanel);
+  safe("grid trends",gridTrends);
+  if(Date.now()-gridHealth.at>5*60*1000)loadGridHealth(false);
+}
+document.querySelectorAll("[data-gf]").forEach(function(b){b.addEventListener("click",function(){gridUi.f=b.dataset.gf;gridUi.all=false;gridControls();safe("grid list",gridList);drawMarks();});});
+$("gCountry").addEventListener("change",function(ev){gridUi.cc=/^[A-Z]{2}$/.test(ev.target.value)?ev.target.value:"";gridUi.all=false;safe("grid list",gridList);drawMarks();});
 function ctxHealth(c){
   if(!c)return {k:"off",t:"Offline"};
   var h=(Date.now()-Date.parse(c.at))/36e5,age=isFinite(h)?ago(c.at):"";
@@ -1063,7 +1283,7 @@ function startSpin(){
   if(reduced||spin||!globe||!stageSeen||(coarse&&!wall.on))return;
   /* by the clock, not by the frame: a slow phone drops frames but the globe still turns at the same speed (3.6 degrees a second) */
   var last=-1;
-  spin=d3.timer(function(t){if(!globe||(t>(coarse||!wide?12000:45000)&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();settle();return;}
+  spin=d3.timer(function(t){if(!globe||(t>(coarse||!wide?12000:45000)&&!wall.on)||document.hidden||!onGlobe()||rp.on){stopSpin();settle();return;}
     var dt=last<0?16:Math.min(120,t-last);last=t;rot[0]+=dt*.0036;
     globeProj.rotate(rot);frame();});
 }
@@ -1074,11 +1294,11 @@ document.body.classList.add("globe");
 function turnBy(dx,dy){var d=180/(Math.PI*globeProj.scale()*T.k);rot=[rot[0]+dx*d,Math.max(-80,Math.min(80,rot[1]-dy*d))];globeProj.rotate(rot);frame();}
 /* mouse, pen, and touch on wide screens: drag turns the globe. On the phone layout the page scrolls, so one-finger
    touches are handled below instead: a sideways swipe turns the globe, an up or down swipe scrolls the page. */
-svg.call(d3.drag().filter(function(ev){var touch=/^touch/.test(ev.type)||ev.pointerType==="touch";return globe&&state.view==="map"&&!ev.button&&!(ev.touches&&ev.touches.length>1)&&!(touch&&!wide);})
+svg.call(d3.drag().filter(function(ev){var touch=/^touch/.test(ev.type)||ev.pointerType==="touch";return globe&&onGlobe()&&!ev.button&&!(ev.touches&&ev.touches.length>1)&&!(touch&&!wide);})
   .on("start",function(){stopSpin();hideTip();})
   .on("drag",function(ev){turnBy(ev.dx,ev.dy);}));
 var tg=null;
-$("svg").addEventListener("touchstart",function(ev){tg=!wide&&globe&&state.view==="map"&&ev.touches.length===1?{x:ev.touches[0].clientX,y:ev.touches[0].clientY,mode:""}:null;},{passive:true});
+$("svg").addEventListener("touchstart",function(ev){tg=!wide&&globe&&onGlobe()&&ev.touches.length===1?{x:ev.touches[0].clientX,y:ev.touches[0].clientY,mode:""}:null;},{passive:true});
 $("svg").addEventListener("touchmove",function(ev){
   if(!tg||ev.touches.length!==1){tg=null;return;}
   var t=ev.touches[0],dx=t.clientX-tg.x,dy=t.clientY-tg.y;
@@ -1102,8 +1322,8 @@ window.addEventListener("scroll",function(){if(wide)return;if(spin&&window.scrol
 $("toMap").addEventListener("click",function(){window.scrollTo(0,0);});
 function shade(){
   if(!world)return;
-  var counts=new Map();scoped().forEach(function(e){var n=normC(e.country);if(n)counts.set(n,(counts.get(n)||0)+1);});
-  var dis=new Map();if(ctxOn.ioda&&ctx.ioda)ctx.ioda.items.forEach(function(x){if(x.map)dis.set(x.map,x);});
+  var gv=state.view==="grid",counts=new Map();if(!gv)scoped().forEach(function(e){var n=normC(e.country);if(n)counts.set(n,(counts.get(n)||0)+1);});
+  var dis=new Map();if(!gv&&ctxOn.ioda&&ctx.ioda)ctx.ioda.items.forEach(function(x){if(x.map)dis.set(x.map,x);});
   gMap.selectAll("path.country").each(function(f){
     var n=normC(f.properties.name),c=counts.get(n)||0;f.__n=c;
     d3.select(this).classed("has",c>0).classed("on",state.country===n)
@@ -1127,12 +1347,24 @@ function clusters(list){
   return cs;
 }
 var lastList=[];
+/* the views that draw the globe: the main map, and Grid (power grid outages only) */
+function onGlobe(){return state.view==="map"||state.view==="grid";}
 function setView(v){
+  if(["map","time","graph","grid"].indexOf(v)<0)v="map";
+  var was=state.view,gl=v==="map"||v==="grid";
+  if(v==="grid"&&rp.on)replayStop();
   state.view=v;document.querySelectorAll("[data-view]").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.view===v?"true":"false");});
-  gMap.style("display",v==="map"?null:"none");
-  document.querySelector(".zoomer").style.display=v==="map"?"":"none";if(v!=="map"){stopSpin();if(!$("layers").hidden)layersToggle(false);}$("key").style.display=v==="map"?"":"none";
-  $("viz").hidden=v==="map";$("viz").scrollTop=0;document.body.dataset.view=v;
-  svg.call(zoom.transform,d3.zoomIdentity);render();
+  gMap.style("display",gl?null:"none");
+  document.querySelector(".zoomer").style.display=gl?"":"none";if(v!=="map"){if(!gl)stopSpin();if(!$("layers").hidden)layersToggle(false);}$("key").style.display=v==="map"?"":"none";
+  $("viz").hidden=gl;$("viz").scrollTop=0;document.body.dataset.view=v;
+  $("gridp").hidden=v!=="grid";
+  var aside=document.querySelector("aside");if(aside)aside.setAttribute("aria-label",v==="grid"?"Power grid outages":"Events and insights");
+  $("svg").setAttribute("aria-label",v==="grid"?"Globe with power grid outages (context, not cyber events)":"World map with event markers");
+  if(v==="grid"&&was!=="grid"){gridHash(true);loadGridHealth(false);}
+  if(was==="grid"&&v!=="grid"){gridUi.sel=null;hideTip();gridHash(false);}
+  svg.call(zoom.transform,d3.zoomIdentity);
+  if((v==="grid")!==(was==="grid"))layout();
+  render();
 }
 function rings(g,e,k){
   if(e.actorPin)g.append("circle").attr("class","act").attr("r",11*k);
@@ -1525,7 +1757,7 @@ function hoBuild(){
   L.push("");L.push("Unverified attacker claims are left out. Details and sources: "+location.href.split("#")[0]);
   return L.join("\n");
 }
-function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · drag to turn the globe · L layers · W wall mode · R refresh · F full screen · Esc back");}
+function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 4 views · drag to turn the globe · L layers · W wall mode · R refresh · F full screen · Esc back");}
 /* ---------- modal dialogs: backdrop, focus moved in and restored, Tab kept inside, Esc closes ---------- */
 var modalOpen=null,modalReturn=null;
 function modalShow(id,open,opener){
@@ -1549,9 +1781,10 @@ function gridR(x){
   return Math.min(16,8+(x.level||0)*1.5);
 }
 function drawGrid(){
-  if(!ctxOn.grid||!ctx.grid)return;
+  var gv=state.view==="grid",selShow=null;
+  if((!ctxOn.grid&&!gv)||!ctx.grid)return;
   ctx.grid.items.slice().reverse().forEach(function(x){
-    if(x.lat===null)return;var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]),r=gridR(x);
+    if(x.lat===null||(gv&&!gridShown(x)))return;var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]),r=gridR(x);
     var gn=gridNotes(x),head=x.name,body=gridLine(x)+(x.approx?" \u00b7 drawn at the operator's area":"")+(gn.length?" \u00b7 "+gn.join(" \u00b7 "):"")+(x.checked?" \u00b7 "+gridChecked(x):"")+" \u00b7 context, not a cyber event";
     var g=gMarks.append("g").attr("class","gridm"+(x.scope==="outage"?" out":"")+(x.approx?" approx":"")).attr("transform","translate("+px+","+py+")").attr("tabindex",0)
       .attr("aria-label",x.name+", power grid "+GRID_KIND[x.kind]+" (context, not a cyber event)"+(x.url?" (opens the operator's page)":""));
@@ -1561,11 +1794,14 @@ function drawGrid(){
     if(x.url){var open=function(){var w=null;try{w=window.open(safeUrl(x.url),"_blank","noopener");}catch(z){}if(w)w.opener=null;};
       g.on("click",open).on("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();open();}});}
     g.on("pointerenter",show).on("focus",show).on("pointerleave",hideTip).on("blur",hideTip);
+    if(gv&&gridUi.sel===x.id){g.classed("gsel",true);g.insert("circle",":first-child").attr("class","gselr").attr("r",r+5);selShow=show;}
   });
+  if(selShow)selShow();
 }
 function drawMarks(){
   gMarks.selectAll("*").remove();
   safe("arcs",drawArcs);
+  if(state.view==="grid"){safe("grid layer",drawGrid);return;}
   if(state.view!=="map")return;
   if(ctxOn.gdacs&&ctx.gdacs)ctx.gdacs.items.forEach(function(x){
     var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]);
@@ -1616,7 +1852,7 @@ function tip(x,y,a,b){var t=$("tip");t.textContent="";t.appendChild(document.cre
   t.style.left=Math.min(s.width-130,Math.max(130,x*(s.width/W)))+"px";t.style.top=Math.max(44,y*(s.height/H))+"px";t.style.display="block";}
 function hideTip(){$("tip").style.display="none";}
 function flyTo(bx,by,k){
-  if(globe&&state.view==="map"){var ll=globeProj.invert&&globeProj.invert([bx,by]);
+  if(globe&&onGlobe()){var ll=globeProj.invert&&globeProj.invert([bx,by]);
     if(ll&&isFinite(ll[0])&&isFinite(ll[1])){flyGlobe(ll[0],ll[1],reduced?0:600);var tk=d3.zoomIdentity.translate(FX*(1-k),FY*(1-k)).scale(k);(reduced?svg:svg.transition().duration(600)).call(zoom.transform,tk);return;}}
   var t=d3.zoomIdentity.translate(FX,FY).scale(k).translate(-bx,-by);
   (reduced?svg:svg.transition().duration(600)).call(zoom.transform,t);
@@ -1915,8 +2151,9 @@ function render(){
   if(state.sel&&!list.some(function(e){return e.id===state.sel;}))state.sel=null;
   safe("header",function(){renderStats(list);renderToggles();renderChips();renderDays();renderScope();});
   safe("brief",renderBrief);safe("feed",function(){if(state.tab==="feed")renderFeed(list);renderDetail(list);});safe("exploited",renderKev);safe("patterns",renderPatterns);safe("insights",function(){renderInsights(list);});
-  safe("map",function(){if(state.view==="map"){shade();drawMarks();}else drawMarks();});
-  if(state.view!=="map")safe("analysis",function(){renderViz(list);});
+  safe("map",function(){if(onGlobe()){shade();drawMarks();}else drawMarks();});
+  if(!onGlobe())safe("analysis",function(){renderViz(list);});
+  if(state.view==="grid")renderGridPanel();
   safe("legend",renderKey);
   safe("wire",function(){wireBuild();hudTick();});
   if(wall.on)safe("wall",wallStats);
@@ -1976,15 +2213,16 @@ function resetMain(){
   var f=$("feed");if(f)f.scrollTop=0;
 }
 function refresh(){
-  var btn=$("refresh");
-  resetMain();
-  if(!db||!query){toast("Reset to the main view. The latest data can't be reached: check your connection and try again.");return;}
+  var btn=$("refresh"),gv=state.view==="grid";
+  if(gv)gridReset();else resetMain();
+  if(!db||!query){toast(gv?"Grid view reset. The latest data can't be reached: check your connection and try again.":"Reset to the main view. The latest data can't be reached: check your connection and try again.");return;}
   if(btn.classList.contains("spin"))return;
   btn.classList.add("spin");
   var t0=Date.now();
   Promise.all([query.get(),db.doc("meta/status").get()]).then(function(r){
     var n=apply(r[0]);sweep=r[1].exists?r[1].data():sweep;stale=false;unavailable=false;
     render();
+    if(gv){loadGridHealth(true);toast("Refreshed the Grid view. "+(ctx.grid?ctx.grid.items.length+" grid outages and incidents loaded. ":"")+"Data built "+(builtAt?ago(builtAt):"recently")+".");return;}
     toast("Refreshed and reset to the main view. "+(n?n+" new event"+(n>1?"s":"")+" loaded. ":"")+events.length+" events stored. Last sweep "+(sweep&&ago(sweep.last_sweep_at)||"unknown")+", next "+nextSweep()+".");
   }).catch(function(){toast("Reset to the main view, but the latest data could not be loaded. Check your connection and try again.");})
   .then(function(){setTimeout(function(){btn.classList.remove("spin");},Math.max(0,500-(Date.now()-t0)));});
@@ -2249,12 +2487,17 @@ document.addEventListener("keydown",function(ev){
   if(ev.key==="Escape"&&!$("wlDlg").hidden){wlToggle(false);$("wlOpen").focus();return;}
   if(ev.key==="Escape"&&!$("hoDlg").hidden){hoToggle(false);$("hoOpen").focus();return;}
   if(ev.key==="Escape"&&!$("layers").hidden){layersToggle(false);$("zlayers").focus();return;}
+  if(state.view==="grid"&&!typing&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
+    if(ev.key==="Escape"){if(gridUi.sel){gridUi.sel=null;hideTip();gridMark();drawMarks();}return;}
+    /* the event list, layers and wall mode are not part of the Grid view */
+    if(/^[jkoJKOlLwW\/]$/.test(ev.key)||ev.key==="ArrowDown"||ev.key==="ArrowUp")return;
+  }
   if(ev.key==="Escape"){if(typing)document.activeElement.blur();else if(state.sel)select(null);else{state.spot=null;state.country=null;state.day=null;state.pattern=null;select(null);}}
   else if(typing||ev.metaKey||ev.ctrlKey||ev.altKey){}
   else if(ev.key==="j"||(ev.key==="ArrowDown"&&state.sel)){ev.preventDefault();nav(1);}
   else if(ev.key==="k"||(ev.key==="ArrowUp"&&state.sel)){ev.preventDefault();nav(-1);}
   else if(ev.key==="o"&&state.sel){openSource(events.find(function(z){return z.id===state.sel;}));}
-  else if(ev.key==="1"||ev.key==="2"||ev.key==="3"){setView(["map","time","graph"][+ev.key-1]);}
+  else if(ev.key==="1"||ev.key==="2"||ev.key==="3"||ev.key==="4"){setView(["map","time","graph","grid"][+ev.key-1]);}
   else if(ev.key==="?"){showKeys();}
   else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&ev.key==="/"){ev.preventDefault();$("q").focus();}
   else if(!typing&&!ev.metaKey&&!ev.ctrlKey&&(ev.key==="r"||ev.key==="R")){refresh();}
@@ -2268,7 +2511,7 @@ var lastW=window.innerWidth;
 setInterval(function(){renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},60000);
 
 window.addEventListener("error",function(ev){if(!faults.page){faults.page=String(ev&&ev.message||"error").slice(0,160);fault();}});
-loadPrefs();syncControls();layout();setView(state.view);
+loadPrefs();syncControls();layout();setView(location.hash==="#grid"?"grid":state.view);
 fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo){
   world=topojson.feature(topo,topo.objects.countries).features.filter(function(f){return f.id!=="010";});prepWorld();
   layout();drawMarks();startSpin();
@@ -2277,10 +2520,12 @@ fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo)
 // every URL that comes from data passes through here before it becomes a link
 function safeUrl(u){u=String(u||"");return /^https?:\/\//i.test(u)?u:"about:blank";}
 /* ---------- permalinks: #e=<id> opens one event (plain #<id> from older links still works) ---------- */
-function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
+function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h==="grid")return "";if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
 function eventLink(id){return location.origin+location.pathname+"#e="+encodeURIComponent(id);}
 function openFromHash(){
-  var h=hashId();if(!h){if(state.sel)select(null);return;}
+  if(location.hash==="#grid"){if(state.view!=="grid")setView("grid");return;}
+  var h=hashId();if(!h){if(state.sel&&state.view!=="grid")select(null);return;}
+  if(state.view==="grid")setView("map");
   if(h===state.sel)return;
   var he=events.find(function(e){return e.id===h;});
   if(!he){toast("That event is older than the map's window; opening it in the archive.");setTimeout(function(){location.href="archive.html#q="+encodeURIComponent(h);},900);return;}
@@ -2358,8 +2603,8 @@ openStore().then(function(d){
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
-  db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;renderLayers();if(state.view==="map")renderSoon();},function(){});
-  Object.keys(CTX_DEFS).forEach(function(k){db.doc("context/"+k).onSnapshot(function(s){ctx[k]=s.exists?cleanCtx(k,s.data()):null;renderLayers();if(state.view==="map")renderSoon();},function(){});});
+  db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;gridTr=s.exists?cleanGridTrends(s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});
+  Object.keys(CTX_DEFS).forEach(function(k){db.doc("context/"+k).onSnapshot(function(s){ctx[k]=s.exists?cleanCtx(k,s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});});
   db.doc("meta/status").onSnapshot(function(s){sweep=s.exists?s.data():null;renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},function(){});
 }).catch(function(){unavailable=true;render();});
 })();

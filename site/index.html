@@ -865,6 +865,60 @@ button,a,select,label,.zoomer,.days,.chips,.seg{touch-action:manipulation}
 .rip .tease{margin:0 0 6px;font-size:12.5px;color:var(--muted)}
 .rip>.linkbtn{font-size:12.5px;font-weight:600;min-height:30px}
 .aiby{display:block;margin:6px 0 2px;font-size:12px;color:var(--muted)}
+
+/* ---- Grid view (v1.47): power grid outages only; everything about cyber events is out of the way ---- */
+#viewseg .gico{width:13px;height:13px;margin-right:4px;vertical-align:-2px}
+body[data-view="grid"] header .row2,body[data-view="grid"] #filtersBtn,body[data-view="grid"] #stats,body[data-view="grid"] #wire,body[data-view="grid"] #wallBtn,
+body[data-view="grid"] #phoneIntro,body[data-view="grid"] #days,body[data-view="grid"] #key,body[data-view="grid"] #zlayers,body[data-view="grid"] #layers,
+body[data-view="grid"] #replay,body[data-view="grid"] #viz{display:none!important}
+body[data-view="grid"] aside>*:not(#gridp):not(#fault){display:none!important}
+.gridp{gap:14px}
+.gridp .ghd{margin:0;font-size:13px;font-weight:600;line-height:1.4}
+.gridp .gat{margin:-8px 0 0;font-size:12px;color:var(--muted)}
+.gsec{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px;min-width:0}
+.gsec h3{margin:0;font-family:var(--font-display);font-size:14px;font-weight:600}
+.gfil{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gfil .seg button{font-size:12px;padding:5px 9px}
+.gtools{padding:0!important;border:0!important;flex:1 1 140px;min-width:0}
+.gtools select{width:100%}
+.gcount{margin:0;font-size:12px;color:var(--muted)}
+.glist,.gsrc,.gana{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.glist li{border-radius:12px;background:var(--fill);padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere;border:1px solid transparent}
+.glist li:hover{background:color-mix(in srgb,var(--fill) 60%,var(--tint))}
+.glist li:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.glist li.on{border-color:var(--ink)}
+.glist li.nogeo{cursor:default}
+.glist .gr1{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;font-size:12px;color:var(--muted)}
+.glist .gtag{font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.04em;border:1px dashed var(--muted);border-radius:6px;padding:0 5px;color:var(--ink)}
+.glist .gtag.out{border-style:dotted;color:var(--muted)}
+.glist .gop{color:var(--accent);font-weight:600}
+.glist .gname{font-size:13.5px;font-weight:600}
+.glist .gr2,.glist .gr3{font-size:12.5px;color:var(--muted)}
+.glist .gplan{font-weight:600;color:var(--ink)}
+.glist .aiby,.glist .gnote{margin:2px 0 0;font-size:11.5px;color:var(--muted);display:block}
+.glist .gnote{font-style:italic}
+.glist li.more{background:transparent;padding:0;cursor:default}
+.gsrc li{font-size:12.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.gbadge{font:600 10.5px var(--font-mono);border-radius:999px;padding:1px 8px;white-space:nowrap;background:var(--fill);color:var(--muted)}
+.gbadge.live{color:var(--ok)}.gbadge.stale{color:var(--warn)}.gbadge.bad{color:var(--bad)}.gbadge.neutral{color:var(--muted)}
+.gana li{font-size:12.5px}.gana li small{display:block;color:var(--muted);font-size:11.5px}
+#gAnaBody h4{margin:6px 0 4px;font-size:12.5px;font-weight:600}
+#gAnaBody .none,.gsum,.gdet{margin:0;font-size:12.5px;color:var(--muted)}
+.gridp .cav{margin:2px 0 0;font-size:11.5px;color:var(--muted)}
+.gridp .gbars{display:flex;flex-direction:column;gap:6px}
+.gridp .gbar{all:unset;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) 4em;gap:2px 8px;align-items:center;width:100%;cursor:pointer;font-size:12.5px;touch-action:manipulation}
+.gridp .gbar .glab{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gridp .gbar .gtrack{display:block;height:10px;border-radius:3px;background:var(--fill);overflow:hidden}
+.gridp .gbar .gfill{display:block;height:100%;background:var(--accent);opacity:.85;min-width:2px}
+.gridp .gbar .gval{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.gridp .gbar.on .gtrack{outline:2px solid var(--ink);outline-offset:1px}
+.gridp .gbar:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.gridm.gsel{opacity:1}.gridm .gselr{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:none}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
+  .glist li{padding:10px 12px}
+  .gfil .seg{flex:1 1 100%}.gfil .seg button{flex:1;min-height:40px}
+}
+@media (max-width:420px){#viewseg button{padding-left:4px!important;padding-right:4px!important;font-size:12px!important}#viewseg .gico{margin-right:2px}}
 </style>
 </head>
 <body>
@@ -902,6 +956,7 @@ button,a,select,label,.zoomer,.days,.chips,.seg{touch-action:manipulation}
         <button type="button" data-view="map" aria-pressed="true">Globe</button>
         <button type="button" data-view="time" aria-pressed="false">Timeline</button>
         <button type="button" data-view="graph" aria-pressed="false">Correlation</button>
+        <button type="button" data-view="grid" aria-pressed="false" title="Power grid outages only (context, not cyber events)"><svg class="gico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></svg>Grid</button>
       </div>
       <button type="button" class="btn ghost sm" id="filtersBtn" aria-expanded="false" aria-controls="chips">Filters</button>
       <div class="stats" id="stats" aria-live="polite">Loading events</div>
@@ -1008,6 +1063,38 @@ button,a,select,label,.zoomer,.days,.chips,.seg{touch-action:manipulation}
     <div class="pane" id="kev" hidden></div>
     <div class="pane" id="pat" hidden></div>
     <div class="pane" id="ins" hidden></div>
+    <div class="pane gridp" id="gridp" hidden>
+      <p class="ghd">Power grid outages &mdash; context, not cyber events. Operators' own reports; customers are accounts, not people.</p>
+      <p class="gat" id="gAt"></p>
+      <section class="gsec" id="gList" aria-labelledby="gListH">
+        <h3 id="gListH">Outages now</h3>
+        <div class="gfil">
+          <div class="seg" role="group" aria-label="Which outages" id="gseg">
+            <button type="button" data-gf="all" aria-pressed="true">All</button>
+            <button type="button" data-gf="unplanned" aria-pressed="false">Unplanned only</button>
+            <button type="button" data-gf="incidents" aria-pressed="false">Incidents only</button>
+          </div>
+          <div class="tools gtools"><select id="gCountry" aria-label="Country"><option value="">All countries</option></select></div>
+        </div>
+        <p class="gcount" id="gCount" aria-live="polite"></p>
+        <ul class="glist" id="gRows"></ul>
+      </section>
+      <section class="gsec" id="gSrcSec" aria-labelledby="gSrcH">
+        <h3 id="gSrcH">Sources</h3>
+        <ul class="gsrc" id="gSrc"></ul>
+      </section>
+      <section class="gsec" id="gAna" aria-labelledby="gAnaH">
+        <h3 id="gAnaH">Is anything unusual, and do other sources see it too?</h3>
+        <div id="gAnaBody"></div>
+      </section>
+      <section class="gsec" id="gTrend" aria-labelledby="gTrendH">
+        <h3 id="gTrendH">Where were the most customer-hours without power in the last 30 days?</h3>
+        <p class="gsum" id="gTrendSum"></p>
+        <div class="gbars" id="gBars" role="group" aria-label="Customer-hours without power by operator region, last 30 days"></div>
+        <p class="gdet" id="gTrendDet" aria-live="polite"></p>
+        <p class="cav gcav">Context, not cyber events. Operator-reported, from six operators only, so most of the world is missing. Customer-hours add up unplanned customers without power, sampled every 15 minutes; a customer is an account, not a person, and operators count them differently, so compare a region with itself over time. Computed by a script, not written.</p>
+      </section>
+    </div>
   </aside>
 </div>
 <div id="hoDlg" class="glass modal" role="dialog" aria-modal="true" aria-labelledby="hoTitle" hidden>

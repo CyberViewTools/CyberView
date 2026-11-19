@@ -1,0 +1,42 @@
+{
+  "job": "exploit-analyst-9",
+  "started_at": "2026-11-19T04:30:00Z",
+  "finished_at": "2026-11-19T04:41:33Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-104935 Ivanti Connect Secure",
+    "Volexity Ivanti Connect Secure CVE-2026-104935 zero-day exploitation blog",
+    "cisa.gov alert Ivanti CVE-2026-104935 known exploited",
+    "CVE-2021-3199 ONLYOFFICE Document Server path traversal exploited",
+    "Flax Typhoon joint advisory 2026 ONLYOFFICE known exploited vulnerabilities",
+    "cisa.gov AA26-281A Integrity Technology Group advisory",
+    "CVE-2026-105133 AhsayCBS authentication bypass",
+    "Huntress AhsayCBS exploitation CVE-2026-105133 CVE-2026-105134 webshell"
+  ],
+  "pages_read": [
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/10/13/cisa-urges-patching-newly-exploited-vulnerabilities-ivanti-connect-secure", "title": "CISA Urges Patching Newly Exploited Vulnerabilities in Ivanti Connect Secure", "used_in": "CVE-2026-104935"},
+    {"url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-147/", "title": "CSA Singapore AL-2026-147", "used_in": "CVE-2026-104935"},
+    {"url": "https://www.volexity.com/blog/2026/10/13/a-series-of-unauthenticated-events-chained-exploitation-of-ivanti-connect-secure-zero-days/", "title": "Volexity: chained exploitation of Ivanti Connect Secure zero-days", "used_in": "CVE-2026-104935"},
+    {"url": "https://www.rapid7.com/blog/post/etr-ivanti-connect-secure-zero-day-exploited-in-the-wild-cve-2026-104935/", "title": "Rapid7: Ivanti Connect Secure zero-day exploited in the wild", "used_in": "CVE-2026-104935"},
+    {"url": "https://raw.githubusercontent.com/ONLYOFFICE/DocumentServer/903fe5ab7a275bd69c3c3346af2d21cf87ebeabf/CHANGELOG.md", "title": "ONLYOFFICE DocumentServer changelog (5.6.3 entry)", "used_in": "CVE-2021-3199"},
+    {"url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-281a", "title": "AA26-281A Chinese Government-linked Cyber Threat Actors Combine Automated and Hands-on Hacking Tools", "used_in": "CVE-2021-3199"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2021-3199", "title": "CISA KEV entry CVE-2021-3199", "used_in": "CVE-2021-3199"},
+    {"url": "https://www.hkcert.org/security-bulletin/onlyoffice-docs-remote-code-execution-vulnerability_20261009", "title": "HKCERT: ONLYOFFICE Docs Remote Code Execution Vulnerability", "used_in": "CVE-2021-3199"},
+    {"url": "https://ayinedjimi-consultants.fr/cve/cve-2021-3199-onlyoffice-rce-flax-typhoon-kev-cisa", "title": "CVE-2021-3199 ONLYOFFICE analysis (French, secondary)", "used_in": "CVE-2021-3199"},
+    {"url": "https://www.ahsay.com/en/company/announcements/patch-cve-105133-105134-update", "title": "Ahsay patch announcement CVE-2026-105133/105134 (update)", "used_in": "CVE-2026-105133"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-105133", "title": "CISA KEV entry CVE-2026-105133", "used_in": "CVE-2026-105133"},
+    {"url": "https://www.huntress.com/blog/ahsaycbs-flaws-exploit", "title": "Huntress: Threat Actors Exploit Critical AhsayCBS Flaws", "used_in": "CVE-2026-105133"},
+    {"url": "https://www.huntress.com/blog/ahsaycbs-webshells", "title": "Huntress: Inside an AhsayCBS Intrusion", "used_in": "CVE-2026-105133"},
+    {"url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-104935", "title": "NVD API records for the three CVEs (descriptions)", "used_in": "CVE-2026-104935, CVE-2021-3199, CVE-2026-105133"}
+  ],
+  "added": ["CVE-2026-104935", "CVE-2021-3199", "CVE-2026-105133"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Ivanti advisory for CVE-2026-104935: confirm exact fixed builds", "url": "https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Connect-Secure-CVE-2026-104935", "note": "Vendor page is a script-rendered portal that returned only a loading shell; fixed builds taken from Rapid7 and NVD, and CISA's 30 Oct revision lists 25.1.1.2 and 22.8R2.5 as affected by the chain. Analysis confidence held at medium.", "priority": "medium"},
+    {"title": "Analyses for CVE-2026-111357 and CVE-2026-118527 (Ivanti Connect Secure, chained with CVE-2026-104935, KEV 30 Oct 2026)", "url": "https://www.cisa.gov/news-events/alerts/2026/10/13/cisa-urges-patching-newly-exploited-vulnerabilities-ivanti-connect-secure", "note": "Follow-on flaws in the same chain; not in this batch.", "priority": "medium"},
+    {"title": "Analysis for CVE-2026-105134 (AhsayCBS command injection chained with CVE-2026-105133)", "url": "https://www.huntress.com/blog/ahsaycbs-flaws-exploit", "note": "Not in this batch.", "priority": "medium"}
+  ],
+  "failed_sites": ["hub.ivanti.com (script-rendered, no content for automated reader)", "bleepingcomputer.com (403)", "nvd.nist.gov web page (no content; API used instead)"],
+  "notes": "Three analyses written. CVE-2021-3199: no technical write-up of the 2026 exploitation exists; AA26-281A lists it only as successfully exploited, so follow-on activity attributed by a French secondary source is marked unconfirmed and confidence is medium. No exploit repositories were opened."
+}

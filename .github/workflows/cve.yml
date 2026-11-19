@@ -67,8 +67,13 @@ jobs:
       - name: Upload the corpus
         run: |
           tar -czf cve-corpus.tar.gz -C cache cve
-          gh release view cve-corpus >/dev/null 2>&1 || gh release create cve-corpus --title "CVE corpus (working data)" --notes "Compact CVE rows used to build the site's CVE lookup. Updated hourly by the cve workflow; not a software release." --latest=false
-          gh release upload cve-corpus cve-corpus.tar.gz --clobber
+          ls -l cve-corpus.tar.gz
+          if ! gh release view cve-corpus >/dev/null 2>&1; then
+            gh release create cve-corpus cve-corpus.tar.gz --title "CVE corpus (working data)" --notes "Compact CVE rows used to build the site's CVE lookup. Updated hourly by the cve workflow; not a software release." --latest=false && exit 0
+          fi
+          # a release that was just created can take a moment to accept uploads: retry with backoff
+          for i in 1 2 3 4 5; do gh release upload cve-corpus cve-corpus.tar.gz --clobber && exit 0; echo "upload attempt $i failed; retrying"; sleep $((i * 15)); done
+          exit 1
       - name: Commit new leads and the run time (starts a deploy)
         run: |
           git config user.name "cyberview-feeds"

@@ -1,0 +1,63 @@
+{
+  "title": "Study of 428 LLM API routers finds some inject malicious code and steal credentials",
+  "date": "2026-11-19",
+  "date_note": "Date of the ITmedia report; the paper is on arXiv.",
+  "category": "report",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "UC Santa Barbara (researchers)",
+  "sector": "Technology",
+  "country": "United States",
+  "place": "Santa Barbara, California, United States",
+  "lat": 34.41,
+  "lng": -119.85,
+  "geo_basis": "institution",
+  "pin_type": "agency",
+  "summary": "Researchers led from UC Santa Barbara tested 428 third-party API routers that sit between AI agents and model providers. One paid and eight free routers injected malicious code, 17 free routers misused decoy AWS credentials and one drained a decoy Ethereum wallet. A single malicious router in a chain was enough to hijack an agent.",
+  "plain": "Some of the middleman services that connect AI coding agents to AI models were caught altering commands and stealing keys, including crypto keys.",
+  "exec": "Routing AI agent traffic through unvetted third parties exposes API keys, cloud credentials and code to theft or tampering.",
+  "action": "Send agent traffic only to the model provider or a router you operate and trust, and rotate any keys that passed through an unvetted router.",
+  "impact": "9 of 428 routers injected code; 17 free routers used decoy AWS keys; one drained a decoy Ethereum key.",
+  "tags": [
+    "ai",
+    "supply-chain",
+    "research"
+  ],
+  "cves": [],
+  "products": [
+    "LLM API routers",
+    "AI coding agents"
+  ],
+  "attack": [
+    "supply-chain"
+  ],
+  "sources": [
+    {
+      "name": "ITmedia (Japan)",
+      "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003310/"
+    }
+  ],
+  "report": {
+    "publisher": "ITmedia NEWS summarising an academic paper",
+    "publisher_type": "vendor",
+    "published": "2026-11-19",
+    "key_findings": [
+      "428 routers tested (28 paid, 400 free)",
+      "9 injected malicious code",
+      "17 free routers misused decoy AWS credentials",
+      "1 router drained a decoy Ethereum key"
+    ],
+    "recommendations": [],
+    "iocs_available": false,
+    "read_depth": "secondary",
+    "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003310/"
+  },
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "note": "ITmedia's summary of the paper \"Your Agent Is Mine\"; the paper itself (arXiv) was not read.",
+    "checked_at": "2026-11-19T04:23:55Z"
+  },
+  "first_seen": "2026-11-19T04:23:55Z",
+  "updated_at": "2026-11-19T04:23:55Z"
+}

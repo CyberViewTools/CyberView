@@ -1,0 +1,75 @@
+{
+  "action": "Verify WinRAR and other tools on your network are the publisher's signed copies; apply application allowlisting and code-signing checks, and alert on memory that is read, write and execute at once and on PNGs with truncated headers.",
+  "actor": "",
+  "attack": [
+    "T1027 Obfuscated Files or Information",
+    "T1055 Process Injection",
+    "T1036 Masquerading"
+  ],
+  "category": "report",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-17",
+  "exec": "Trusted programs can be rewritten into malware carriers whose fingerprint changes every run, so hash-based blocking is weak.",
+  "first_seen": "2026-11-19T03:44:55Z",
+  "geo_basis": "researcher HQ",
+  "lat": 42.3601,
+  "lng": -71.0589,
+  "org": "ReversingLabs",
+  "pin_type": "researcher",
+  "place": "Cambridge, MA (researcher)",
+  "plain": "Security firm ReversingLabs describes BubbleLoader, malware that edits ordinary programs like WinRAR so they secretly load other malware, and changes its fingerprint every time it runs.",
+  "products": [
+    "WinRAR",
+    "Windows Media Player",
+    "x64dbg",
+    "Firefox launcher",
+    "virtiofs"
+  ],
+  "report": {
+    "publisher": "ReversingLabs",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-17",
+    "key_findings": [
+      "BubbleLoader patches a program's entry point and adds two PNG images that hold the hidden code; the second PNG is a fake containing encrypted code.",
+      "Known hosts include WinRAR, x64dbg, Windows Media Player, the Firefox launcher and virtiofs.",
+      "Earliest samples date from February 2026; two activity clusters in mid-September and early October indicate current use.",
+      "Runtime polymorphism makes the in-memory payload hash differ on every execution.",
+      "ReversingLabs does not say how the tampered programs reach victims (Help Net Security); the final payload varies."
+    ],
+    "recommendations": [
+      "Strict application allowlisting and code-signing verification.",
+      "Alert on RWX memory and protection changes to ntdll exception routines; flag PNGs with truncated headers."
+    ],
+    "iocs_available": true,
+    "read_depth": "summary",
+    "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-bubbleloader"
+  },
+  "sector": "Cross-sector",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "ReversingLabs: Threat Researcher's Notebook: BubbleLoader",
+      "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-bubbleloader"
+    },
+    {
+      "name": "Help Net Security",
+      "url": "https://www.helpnetsecurity.com/2026/11/18/winrar-bubbleloader-malware/"
+    }
+  ],
+  "status": "official",
+  "summary": "ReversingLabs analysed BubbleLoader, a loader that rewrites a few instructions at a program's entry point and adds two PNG images to turn legitimate software, including WinRAR and Windows Media Player, into a carrier for other malware. It changes its payload's in-memory hash on every run. Samples date from February 2026, with activity clusters in September and October. Delivery method is not stated.",
+  "tags": [
+    "supply-chain"
+  ],
+  "time_basis": "reported",
+  "title": "ReversingLabs: BubbleLoader turns WinRAR and other programs into malware carriers",
+  "updated_at": "2026-11-19T03:44:55Z",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-19T03:44:55Z",
+    "note": "ReversingLabs original (highlights and intro read; full body only summarised) and Help Net Security's detailed write-up, which restates the vendor research."
+  }
+}

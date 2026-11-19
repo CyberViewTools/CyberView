@@ -6,7 +6,7 @@
 // Sites that refuse automated readers are left out on purpose. Extra feeds come from config/feeds.json (source scout job).
 import { readdirSync, existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
 
 // tier: gov (government or CERT), vendor (security research), news. filter: keep only cyber items (broad feeds).
 export const FEEDS = [
@@ -221,7 +221,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     report.push(`${f.name}: ${items.length} in feed, ${n} new`);
   }
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");
-  const sp = join(DATA, "status.json"), st = readJson(sp, {});
+  const sp = join(DATA, "status.json"), st = readStatus();
   st.last_collect_at = now; st.last_collect_new = out.length;
   writeJson(sp, st);
   for (const k of Object.keys(fh)) if (!seenNames.has(k)) delete fh[k];

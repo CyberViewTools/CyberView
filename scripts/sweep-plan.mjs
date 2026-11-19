@@ -9,7 +9,7 @@
 import { leased } from "./lib/lease.mjs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, ROOT, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, nowIso, listEventFiles, readStatus } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 import { backlog } from "./backlog.mjs";
 
@@ -63,7 +63,7 @@ function main() {
     const r = score(plan, d.stories, listEventFiles().map((f) => f.e).filter(Boolean));
     console.log(`SWEEP SCORECARD: ${r.handled} of ${r.planned} planned stories handled (${Math.round(r.share * 100)}%); ${r.added.length} event(s) added since the plan: ${r.added.slice(0, 20).join(", ") || "none"}`);
     r.untouched.forEach((u) => console.log(`  NOT HANDLED (researcher ${u.batch}): ${u.id}  [${u.score}] ${u.title.slice(0, 90)}`));
-    const sp = join(DATA, "status.json"), st = readJson(sp, {}); Object.assign(st, { sweep_planned: r.planned, sweep_handled: r.handled }); writeJson(sp, st);
+    const sp = join(DATA, "status.json"), st = readStatus(); Object.assign(st, { sweep_planned: r.planned, sweep_handled: r.handled }); writeJson(sp, st);
     if (r.planned && r.share < 0.8) { console.log("Below 80%: assign the stories marked NOT HANDLED to researchers again, then run check once more."); process.exit(1); }
     return;
   }

@@ -7,7 +7,7 @@
 //   3. git add data config docs, commit ("data: <job>, N new, M updated"), pull --rebase, push (three tries)
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { ROOT, DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
 
 const job = process.argv[2], force = process.argv.includes("--force");
 if (!job || !/^[a-z-]+$/.test(job)) { console.error("usage: finish.mjs <job> [--force]"); process.exit(1); }
@@ -15,7 +15,7 @@ const run = (cmd, args) => spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", t
 const git = (...a) => run("git", a);
 
 const reg = readJson(join(ROOT, "routines.json"), { routines: [] }), r = reg.routines.find((x) => x.key === job);
-const st = readJson(join(DATA, "status.json"), {}), key = (r && r.status_key) || `last_${job.replace(/-/g, "_")}_at`;
+const st = readStatus(), key = (r && r.status_key) || `last_${job.replace(/-/g, "_")}_at`;
 const porcelain = git("status", "--porcelain", "data/events").stdout.split("\n").filter(Boolean);
 const added = porcelain.filter((l) => l.startsWith("??") || l.startsWith("A ")).length, updated = porcelain.filter((l) => /^ ?M/.test(l)).length;
 st[key] = nowIso();

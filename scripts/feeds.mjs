@@ -11,7 +11,7 @@
 // A source that fails is skipped and reported; the script never deletes anything.
 import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { DATA, readJson, writeJson, listEventFiles, saveEvent, writeRunLog } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, listEventFiles, saveEvent, writeRunLog, readStatus } from "./lib/store.mjs";
 import { parseAffected, parseCvss } from "./lib/affected.mjs";
 import { kevToImport } from "./lib/kev.mjs";
 
@@ -134,7 +134,7 @@ for (const { f, e } of events) {
 }
 
 // 5. status and run log
-const sp = join(DATA, "status.json"), st = readJson(sp, {});
+const sp = join(DATA, "status.json"), st = readStatus();
 if (catalog) st.last_kev_at = nowIso;
 st.last_feeds_at = nowIso;
 writeJson(sp, st);

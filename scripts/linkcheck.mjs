@@ -6,7 +6,7 @@
 // The run never edits events; it only reports.
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, writeJson, nowIso, listEventFiles, dayAgo, readJson } from "./lib/store.mjs";
+import { DATA, writeJson, nowIso, listEventFiles, dayAgo, readJson, readStatus } from "./lib/store.mjs";
 
 export function classify(status, code) {
   if (status === 404 || status === 410) return "broken";
@@ -44,7 +44,7 @@ for (let i = 0; i < uniq.length; i += 4) {
   });
 }
 writeJson(join(DATA, "linkcheck.json"), out);
-const sp = join(DATA, "status.json"), st = readJson(sp, {});
+const sp = join(DATA, "status.json"), st = readStatus();
 st.last_linkcheck_at = out.checked_at; writeJson(sp, st);
 console.log(`linkcheck: ${out.checked} links, ${out.broken.length} broken, ${out.blocked} blocked or busy (not counted)`);
 }

@@ -16,7 +16,7 @@
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { parseFeed } from "./collect.mjs";
 
 const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
@@ -186,7 +186,7 @@ async function leads() {
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");
   const old = readJson(join(DATA, "osint.json"), {});
   writeJson(join(DATA, "osint.json"), { ...old, checked_at: now, sources: health });
-  const sp = join(DATA, "status.json"), st = readJson(sp, {}); st.last_osint_at = now; st.last_osint_new = out.length; writeJson(sp, st);
+  const sp = join(DATA, "status.json"), st = readStatus(); st.last_osint_at = now; st.last_osint_new = out.length; writeJson(sp, st);
   console.log(`osint: ${out.length} new lead(s). ` + Object.entries(health).map(([k, v]) => `${k} ${v.ok ? v.new + "/" + v.items : "FAILED (" + v.error + ")"}`).join("; "));
 }
 
@@ -209,7 +209,7 @@ async function exploits() {
     await sleep(7000);
   }
   db.checked_at = nowIso(); writeJson(p, db);
-  const sp = join(DATA, "status.json"), st = readJson(sp, {}); st.last_exploits_at = nowIso(); writeJson(sp, st);
+  const sp = join(DATA, "status.json"), st = readStatus(); st.last_exploits_at = nowIso(); writeJson(sp, st);
   console.log(`exploit watch: checked ${done} of ${cves.size} CVEs; ${Object.values(db.cves).filter((v) => v.repos > 0).length} have public repositories naming them` + (failed ? `; stopped: ${failed}` : ""));
 }
 

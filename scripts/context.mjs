@@ -8,7 +8,7 @@
 // Neither layer is an attack report: outages are shown as outages (see CLAUDE.md).
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, ROOT, readJson, writeJson, nowIso, writeRunLog } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { get } from "./lib/net.mjs";
 
 // IODA's country names -> the short names in site/world-110m.json (only where they differ)
@@ -105,7 +105,7 @@ async function main() {
       log.failed.push(`${layer}: ${code}`);
     }
   }
-  const sp = join(DATA, "status.json"), st = readJson(sp, {});
+  const sp = join(DATA, "status.json"), st = readStatus();
   st.last_context_at = nowIso();
   writeJson(sp, st);
   log.finished_at = nowIso();

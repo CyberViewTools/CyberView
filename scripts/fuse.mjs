@@ -12,7 +12,7 @@ import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, rmSyn
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, listEventFiles, dayAgo, writeRunLog, nowIso, forEachSkipped } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, listEventFiles, dayAgo, writeRunLog, nowIso, forEachSkipped, readStatus } from "./lib/store.mjs";
 import { tokens, matchEvent, NOT_EVENT } from "./triage.mjs";
 
 // words too common in this field to tell two stories apart
@@ -192,7 +192,7 @@ function main() {
   }
   writeJson(join(DATA, "stories.json"), { built_at: d.built_at, leads: d.leads, stories: d.stories.map(({ urls, ...s }) => s).slice(0, 400) });
   const multi = open.filter((s) => s.publishers >= 2 && !s.claim_only).length;
-  const sp = join(DATA, "status.json"), st = readJson(sp, {});
+  const sp = join(DATA, "status.json"), st = readStatus();
   Object.assign(st, { last_fuse_at: d.built_at, stories_open: open.length, stories_corroborated: multi, stories_claims: open.filter((s) => s.claim_only).length, leads_72h: d.leads }); writeJson(sp, st);
   console.log(`fuse: ${d.leads} leads in 72 h -> ${d.stories.length} stories; ${open.length} open (${multi} reported by two or more publishers, ${open.filter((s) => s.claim_only).length} claims only); ${d.stories.filter((s) => s.event).length} already on file`);
 }

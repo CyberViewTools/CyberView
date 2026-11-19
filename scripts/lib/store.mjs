@@ -8,6 +8,7 @@
 //   data/snapshots/brief/<YYYY-MM-DD>.json      daily brief, kept for history
 //   data/snapshots/analysis/<YYYY-MM-DD>.json   patterns and ripples, one per day
 //   data/status.json, analysis.json, ripples.json, brief.json, history.json   the current single documents
+import { spawnSync } from "node:child_process";
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync, renameSync, unlinkSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -97,4 +98,14 @@ export function forEachSkipped(days, fn) {
       if (f.endsWith(".jsonl")) { for (const line of readFileSync(join(dir, d, f), "utf8").split("\n")) { if (!line) continue; try { const c = JSON.parse(line); (c.urls || []).forEach((u) => fn(u, c.reason || "")); } catch {} } }
       else if (f.endsWith(".json")) (readJson(join(dir, d, f), {}).skipped || []).forEach((l) => l && l.url && fn(l.url, l.reason || ""));
     }
+}
+
+/** data/status.json for a read-modify-write. Never an empty object by accident: if the file does not parse (a write
+ *  in progress, or conflict markers left by another job's pull), fall back to the last committed copy, so a writer can
+ *  only add or change its own keys and never wipe everyone else's. */
+export function readStatus() {
+  const p = join(DATA, "status.json");
+  try { return JSON.parse(readFileSync(p, "utf8")); } catch {}
+  try { const r = spawnSync("git", ["show", "HEAD:data/status.json"], { cwd: ROOT, encoding: "utf8" }); if (r.status === 0) return JSON.parse(r.stdout); } catch {}
+  return {};
 }

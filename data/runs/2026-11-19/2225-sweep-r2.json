@@ -1,1 +1,24 @@
-{"job":"sweep-r2","started_at":"2026-11-19T22:22:00Z","finished_at":"2026-11-19T22:30:00Z","model":"claude-sonnet-5-5","searches":["banco reporta ciberataque piratas informáticos podrían haber obtenido información de clientes"],"pages_read":[],"added":[],"updated":[],"skipped":[{"title":"Chaotic Eclipse Releases FastUnlock","url":"https://securityaffairs.com/203537/hacking/chaotic-eclipse-releases-fastunlock-a-new-windows-zero-day-vulnerability.html","reason":"already on file: fastunlock-windows-narrator-lockscreen-bypass-2026-11"}],"open_leads":[{"title":"CVE-2026-55007 Exchange Server RCE (MSRC)","url":"https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-55007","note":"MSRC page is JavaScript-only; check exploitation status via the CVRF API or another publisher","priority":"medium"},{"title":"CVE-2026-95874, CVE-2026-96082, CVE-2026-78455 (MSRC)","url":"https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-96082","note":"MSRC pages unreadable; no exploitation evidence","priority":"low"},{"title":"Unnamed bank cyberattack (Facebook headline)","url":"","note":"bank not identifiable; no publisher page found","priority":"low"}],"failed_sites":["msrc.microsoft.com (JavaScript-only pages)"],"notes":"No new events. The Facebook lead only came through a Google News redirect and the search did not find the same report."}
+{
+  "job": "sweep-researcher",
+  "started_at": "2026-11-19T22:23:42Z",
+  "finished_at": "2026-11-19T22:35:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://talkbusiness.net/2026/11/report-provides-info-about-attack-on-city-of-fort-smith-computer-system/", "title": "Report provides info about attack on city of Fort Smith computer system", "used_in": "fort-smith-arkansas-ransomware-forensic-report-2026-11"},
+    {"url": "https://securityaffairs.com/203537/hacking/chaotic-eclipse-releases-fastunlock-a-new-windows-zero-day-vulnerability.html", "title": "Chaotic Eclipse Releases FastUnlock", "used_in": "already on file"}
+  ],
+  "added": ["fort-smith-arkansas-ransomware-forensic-report-2026-11"],
+  "updated": [],
+  "skipped": [
+    {"title": "Tech outages are piling up, and AI is raising the stakes", "url": "https://apnews.com/article/tech-outage-ai-security-patch-0c0f0cf4983a0f81ba88c4c4d2b8383f", "reason": "commentary; AP page not fetchable"},
+    {"title": "Semi-Supervised Deep Learning Framework Detects Smart Grid Cyber Attacks", "url": "", "reason": "academic research, no incident"},
+    {"title": "FastUnlock", "url": "", "reason": "already on file"}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-55007 Exchange Server RCE", "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-55007", "note": "MSRC page JS-rendered, details unreadable; check exploitation flag", "priority": "medium"},
+    {"title": "CVE-2026-78455 Xbox information disclosure", "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-78455", "note": "MSRC page JS-rendered; low priority", "priority": "low"}
+  ],
+  "failed_sites": ["msrc.microsoft.com (JS-rendered)", "apnews.com (fetch refused)"],
+  "notes": "Fort Smith: single publisher; PNG Cyber report PDF not opened."
+}

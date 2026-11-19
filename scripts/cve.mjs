@@ -1,7 +1,8 @@
 // The CVE corpus: every CVE ever published, from the official CVE List (github.com/CVEProject/cvelistV5, with CISA's
 // enrichment), FIRST EPSS scores and our CISA known-exploited files. No AI model. Run: node scripts/cve.mjs <command>
 //   baseline <dir>      build the corpus from an unpacked cvelistV5 release (every cves/<year>/<n>xxx/CVE-*.json)
-//   delta [--max N]     apply the CVE List's change log (cves/deltaLog.json) since the last run; new notable CVEs
+//   delta [--max N]     apply the CVE List's change log (cves/deltaLog.json) since the last run (exit 4 when the corpus is
+//                       older than the log reaches: rebuild it); new notable CVEs
 //                       (exploited per CISA, on KEV, or CVSS 9+) are filed as leads for the research loop
 //   epss                attach today's EPSS score and percentile to every CVE
 //   kev                 mark CVEs in data/kev/ as known exploited
@@ -61,6 +62,8 @@ async function delta() {
   if (!st.delta_since) { console.error("no corpus yet: run baseline first (the cve workflow downloads it)"); process.exit(1); }
   const log = await get(DELTA_LOG, { timeoutMs: 60000 });
   const runs = (Array.isArray(log) ? log : []).map((r) => r.fetchTime).filter(Boolean).sort();
+  // the change log only reaches back so far; a corpus older than its first entry would silently miss changes
+  if (runs.length && String(st.delta_since) < runs[0]) { console.log(`STALE: the corpus ends ${st.delta_since}, before the change log begins (${runs[0]}); rebuild it from the CVE List release.`); process.exit(4); }
   const todo = deltaSince(log, st.delta_since);
   for (const id of st.pending || []) if (!todo.find((t) => t.id === id)) { const [, y, n] = id.split("-"); todo.push({ id, url: `https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/${y}/${Math.floor(Number(n) / 1000)}xxx/${id}.json`, at: "", isNew: false }); }
   const work = todo.slice(0, max), failed = todo.slice(max).map((t) => t.id), got = [];

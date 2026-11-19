@@ -59,6 +59,12 @@
     if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));
   });
 
+  function renderSpeed(s) {
+    if (!s || typeof s !== "object" || !s.publish) return;
+    var v = function (x) { return typeof x === "number" && isFinite(x) ? Math.round(x) + " min" : "not measured"; }, p = s.publish || {}, r = s.review || {};
+    $("speedSum").textContent = "Speed, last " + (typeof s.hours === "number" ? s.hours : 24) + " hours (" + (typeof s.n === "number" ? s.n : 0) + " events): from the first report collected to the event on the map, half took under " + v(p.p50) + " and nine in ten under " + v(p.p90) +
+      "; to the second review, half under " + v(r.p50) + " and nine in ten under " + v(r.p90) + ". The target is under 15 minutes for both.";
+  }
   function renderImprove(m) {
     if (!m || typeof m !== "object") return;
     var num = function (v, d) { return typeof v === "number" && isFinite(v) ? v : d; };
@@ -79,6 +85,7 @@
   }
   function render(o) {
     try { renderImprove(o.improve); } catch (e) {}
+    try { renderSpeed(o.speed); } catch (e) {}
     var body = $("routines").querySelector("tbody"), counts = { ok: 0, active: 0 };
     (o.routines || []).forEach(function (r) {
       var s = state(r), tr = el("tr");

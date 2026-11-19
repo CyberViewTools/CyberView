@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.29",date:"2026-11-19"};
+var BUILD={version:"1.30",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -875,7 +875,7 @@ function renderPatterns(){
     if(seq.length){var ol=el("ol");seq.slice(0,14).forEach(function(i){var e=byId[i],li=el("li"),b=el("button",null,e.org||e.title);b.type="button";
       b.addEventListener("click",function(){state.pattern=p.id;setTab("feed");select(i,true);});li.appendChild(b);li.appendChild(el("small",null,"  "+fmtWhen(e)));ol.appendChild(li);});c.appendChild(ol);}
     var acts=el("div","acts");
-    if(seq.length>1){var rb=el("button","primary","Replay on globe");rb.type="button";rb.title="Watch this pattern unfold step by step on the globe";rb.addEventListener("click",function(){replayStart(p.id);});acts.appendChild(rb);}
+    if(seq.length>1&&replaySteps(p).filter(function(x){return x.lat!==null;}).length>1){var rb=el("button","primary","Replay on globe");rb.type="button";rb.title="Watch this pattern unfold step by step on the globe";rb.addEventListener("click",function(){replayStart(p.id);});acts.appendChild(rb);}
     [["Show on map","map"],["Timeline","time"],["Correlation view","graph"]].forEach(function(a){var b=el("button",null,a[0]);b.type="button";b.addEventListener("click",function(){pickPattern(p.id,a[1]);});acts.appendChild(b);});
     if(state.pattern===p.id){var x=el("button",null,"Clear");x.type="button";x.addEventListener("click",function(){state.pattern=null;render();});acts.appendChild(x);}
     c.appendChild(acts);box.appendChild(c);

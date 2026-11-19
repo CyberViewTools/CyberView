@@ -57,7 +57,7 @@ function resolve() {
 
 function main() {
   for (let i = 1, max = Number(process.env.GIT_SYNC_TRIES) || 5; i <= max; i++) {
-    const p = git("pull", "--rebase", "-q", "origin", "main");
+    const p = git("pull", "--rebase", "--autostash", "-q", "origin", "main");
     if (p.status !== 0) {
       let ok = true;
       for (let n = 0; n < 50 && ok; n++) {                                         // one round per commit being replayed

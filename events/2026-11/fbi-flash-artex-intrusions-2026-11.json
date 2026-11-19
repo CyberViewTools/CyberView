@@ -33,7 +33,7 @@
       "ARTEX turns plain-language goals into commands run by AI agents and relies on external LLM providers; attacker instances mostly use Chinese-origin models.",
       "Some intrusions reached privileged access in under three hours; researchers counted over 1,600 exposed ARTEX consoles in early November 2026.",
       "Entry came through ordinary web flaws (unsigned SAML assertions, injection, missing API authentication), weak or hardcoded admin credentials, stolen VPN configs and partner-tenant trust abuse.",
-      "A ConnectWise Cloud Backup supply-chain compromise reached more than 2,250 downstream tenants; a South Korean financial campaign took data on about 67,000 people."
+      "A ConnectWise Cloud Backup supply-chain compromise led to attempted sign-ins to more than 2,250 downstream tenants; a South Korean financial campaign took data on about 67,000 people."
     ],
     "published": "2026-11-13",
     "publisher": "FBI",
@@ -62,7 +62,7 @@
     }
   ],
   "status": "official",
-  "summary": "FBI FLASH-20261113-001 (TLP:CLEAR) says threat actors have used the open-source, LLM-driven ARTEX agent platform since at least August 2026 to automate intrusions from reconnaissance to data theft. Some reached privileged access in under three hours. It cites a South Korean financial campaign exposing about 67,000 people and a ConnectWise Cloud Backup compromise reaching more than 2,250 downstream tenants.",
+  "summary": "FBI FLASH-20261113-001 (TLP:CLEAR) says threat actors have used the open-source, LLM-driven ARTEX agent platform since at least August 2026 to automate intrusions from reconnaissance to data theft. Some reached privileged access in under three hours. It cites a South Korean financial campaign exposing about 67,000 people and a ConnectWise Cloud Backup supply-chain compromise with attempted sign-ins to more than 2,250 downstream tenants.",
   "tags": [
     "ai-enabled",
     "supply-chain",
@@ -70,10 +70,17 @@
     "cloud"
   ],
   "title": "FBI FLASH: ARTEX autonomous penetration-testing framework used to automate intrusions",
-  "updated_at": "2026-11-17T23:15:00Z",
+  "updated_at": "2026-11-19T02:27:42Z",
   "validation": {
     "checked_at": "2026-11-17T23:15:00Z",
     "note": "Reviewed against the original FBI document.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T02:31:14Z",
+    "note": "FLASH says attempted sign-ins to more than 2,250 ConnectWise tenants, not a compromise reaching them; summary and key finding reworded; other figures match",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T02:31:14Z"
 }

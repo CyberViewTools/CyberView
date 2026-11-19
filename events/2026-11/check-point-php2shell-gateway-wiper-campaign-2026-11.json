@@ -53,14 +53,14 @@
     "Check Point Spark",
     "VMware ESXi"
   ],
-  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "qa_checked_at": "2026-11-19T02:27:46Z",
   "report": {
     "doc_id": "sk1000302; sk1000362",
     "iocs_available": true,
     "key_findings": [
       "Attackers used PHP2Shell (CVE-2026-109618, CVE-2026-109619, CVSS 9.2) in the Mobile Access Portal for unauthenticated code execution, then CVE-2026-123039 to become root.",
       "Exploitation began October 30, about a week after the PHP2Shell hotfix of October 23; the advisory counts a couple of dozen compromised unpatched systems.",
-      "The first wave targeted Israeli organisations and was destructive in a limited number of cases; a second wave from November 2 hit many countries with no destruction reported.",
+      "The first wave targeted Israeli organisations and was destructive in a limited number of cases; a second wave from November 2 reached organisations in several countries with no destruction reported.",
       "Tools included the TSGA backdoor, a TSProxy library, PHP webshells, a network scanner and a wiper that was also run on a VMware ESXi host reached over SSH.",
       "Check Point Research links the tooling to the PhiliKit framework but does not attribute the campaign with confidence and raises a possible false flag."
     ],
@@ -94,16 +94,22 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Check Point says attackers chained the PHP2Shell flaws in the Mobile Access Portal with a Gaia privilege escalation to gain root on unpatched gateways from October 30. A first wave hit Israeli organisations and wiped some systems, including a VMware ESXi host; a second wave from November 2 exploited gateways in many countries without destruction. About two dozen unpatched systems were compromised.",
+  "summary": "Check Point says attackers chained the PHP2Shell flaws in the Mobile Access Portal with a Gaia privilege escalation to gain root on unpatched gateways from October 30. A first wave hit Israeli organisations and wiped some systems, including a VMware ESXi host; a second wave from November 2 exploited gateways in several countries without destruction. About two dozen unpatched systems were compromised.",
   "tags": [
     "zero-day"
   ],
   "time_basis": "published",
   "title": "Unpatched Check Point gateways wiped in PHP2Shell attacks",
-  "updated_at": "2026-11-18T06:14:21Z",
+  "updated_at": "2026-11-19T02:27:34Z",
   "validation": {
     "checked_at": "2026-11-17T23:15:00Z",
     "note": "Reviewed against the original Check Point report.",
     "state": "corroborated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T02:27:46Z",
+    "note": "Facts match Check Point advisory, Research report and Security Affairs; 'many countries' for second wave changed to 'several countries' as sources state",
+    "flags": []
   }
 }

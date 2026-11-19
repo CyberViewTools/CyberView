@@ -50,3 +50,13 @@ test("guard: a live leader lease keeps a quiet research loop healthy; an expired
   const cve = assess(live({ health: { last_sweep_at: ago(10), last_collect_at: ago(20), last_feeds_at: ago(60), quarantined_count: 0, last_cve_at: ago(400) }, leases: lease(10) }), NOW);
   assert.ok(cve.warns.some((w) => /CVE corpus/.test(w))); assert.ok(cve.heal.includes("cve"));
 });
+
+test("guard: a late power grid collector is a warning, never a failure; a recent one is quiet", () => {
+  const h = (grid) => live({ health: { last_sweep_at: ago(10), last_collect_at: ago(20), last_feeds_at: ago(60), quarantined_count: 0, last_grid_at: grid } });
+  const late = assess(h(ago(LIMITS.grid_min + 30)), NOW);
+  assert.deepEqual(late.fails, []); assert.ok(late.warns.some((w) => /power grid collector/.test(w) && /limit 120/.test(w)));
+  const never = assess(h(""), NOW);
+  assert.deepEqual(never.fails, []); assert.ok(never.warns.some((w) => /power grid collector last ran never/.test(w)));
+  assert.deepEqual(assess(h(ago(30)), NOW).warns.filter((w) => /grid/.test(w)), []);
+  assert.equal(LIMITS.grid_min, 120);
+});

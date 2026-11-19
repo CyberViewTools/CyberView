@@ -372,7 +372,8 @@ console.log("Pages: " + buildPages().join(", "));
   const st = docs["meta/status"] || {};
   writeFileSync(join(OUT, "health.json"), JSON.stringify({ built_at, ok: quarantined.length === 0, quarantined: quarantined.slice(0, 100), quarantined_count: quarantined.length, warnings: warnings.length,
     last_sweep_at: st.last_sweep_at || "", last_collect_at: st.last_collect_at || "", last_feeds_at: st.last_feeds_at || "", last_backlog_at: st.last_backlog_at || "", backlog: backlogNow,
-    last_cve_at: st.last_cve_at || "", last_review_at: st.last_review_at || "", last_analyst_at: st.last_analyst_at || "", last_brief_at: st.last_brief_at || "", last_analysis_at: st.last_analysis_at || "" }));
+    last_cve_at: st.last_cve_at || "", last_review_at: st.last_review_at || "", last_analyst_at: st.last_analyst_at || "", last_brief_at: st.last_brief_at || "", last_analysis_at: st.last_analysis_at || "",
+    last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "", grid_open: context.grid ? context.grid.items.length : null }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

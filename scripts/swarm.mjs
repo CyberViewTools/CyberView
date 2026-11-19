@@ -28,7 +28,8 @@ const runDir = (id) => join(SW, id);
 
 /** Pure: items -> frozen batches and a plan_id that changes if any item moves. */
 export function planBatches(items, per) {
-  const batches = [];
+  const batches = [], seen = new Set();
+  items = items.filter((x) => !seen.has(x.id) && seen.add(x.id)); // an id is in exactly one batch
   for (let i = 0; i < items.length; i += per) batches.push({ batch: batches.length + 1, ids: items.slice(i, i + per).map((x) => x.id) });
   const plan_id = sha(JSON.stringify(batches.map((b) => b.ids))).slice(0, 12);
   return { plan_id, batches };
@@ -77,8 +78,11 @@ function writeWorkerPlan(kind, run, plan, items, onlyMissing) {
  * Done = an analysis that passes checkAnalysis (the same split as analyst.mjs queue), or a CVE a worker logged as skipped.
  * An analysis on file that breaks a rule is NOT done: the build leaves it out of the workbench. It is returned in `bad`
  * so validate can say "on file, needs fixing" rather than "missing". */
-export function analystDone(rows, logs = []) {
-  const { done, bad } = splitAnalyses(rows), skipped = new Set();
+export function analystDone(rows, logs = [], since = "") {
+  const { done: all, bad } = splitAnalyses(rows), skipped = new Set(), done = {};
+  // `since` (the freeze time): an analysis written before it was already on file when the item was queued, so it was stale
+  // (30 days old, or older than the catalog entry); counting it done would drop the refresh from validate and retry
+  for (const [c, a] of Object.entries(all)) if (!since || String(a.analyzed_at || "") >= since) done[c] = a;
   for (const l of logs) (l && Array.isArray(l.skipped) ? l.skipped : []).forEach((s) => { const c = String((s && (s.cve || s.title || s)) || "").match(/CVE-\d{4}-\d{4,}/); if (c) skipped.add(c[0]); });
   return { isDone: (id) => id in done || skipped.has(id), bad };
 }
@@ -89,7 +93,7 @@ function analystLogs() {
   return out;
 }
 
-function isDoneFn(kind) {
+function isDoneFn(kind, since = "") {
   if (kind === "backlog") {
     const d = build(), openUrls = new Set(d.stories.filter(isOpen).flatMap((s) => s.urls));
     return (items) => { const m = new Map(items.map((x) => [x.id, x])); return (id) => !(m.get(id).urls || []).some((u) => openUrls.has(u)); };
@@ -98,7 +102,7 @@ function isDoneFn(kind) {
     const reviewed = new Set(listDir("events").filter((x) => x.r && x.r.review).map((x) => x.id));
     return () => (id) => reviewed.has(id);
   }
-  const { isDone } = analystDone(listDir("analyses"), analystLogs());
+  const { isDone } = analystDone(listDir("analyses"), analystLogs(), since);
   return () => isDone;
 }
 
@@ -125,7 +129,7 @@ async function runSwarm(id) {
   const cp = (phase, extra = {}) => writeJson(join(dir, "checkpoint.json"), { phase, at: nowIso(), plan_id: plan.plan_id, ...extra });
   let spent = 0;
   for (let attempt = 0; attempt < 2; attempt++) {
-    const r = reconcile(plan, isDoneFn(plan.kind)(items(plan.kind, man)));
+    const r = reconcile(plan, isDoneFn(plan.kind, man.frozen_at)(items(plan.kind, man)));
     const todo = r.rows.filter((x) => x.missing.length).map((x) => x.batch);
     console.log(`${attempt ? "RETRY" : "WORK"} ${id}: ${r.done} of ${man.count} done; ${todo.length} batch(es) to run`);
     if (!todo.length) break;
@@ -134,7 +138,7 @@ async function runSwarm(id) {
     const res = await pool(K.job, todo.map((b) => [K.role, b]));
     spent += res.reduce((n, x) => n + ((x && x.cost) || 0), 0);
   }
-  const r = reconcile(plan, isDoneFn(plan.kind)(items(plan.kind, man)));
+  const r = reconcile(plan, isDoneFn(plan.kind, man.frozen_at)(items(plan.kind, man)));
   cp("collected", { done: r.done, missing: r.missing, cost: +spent.toFixed(2) });
   release(id);
   const f = spawnSync("node", ["scripts/finish.mjs", K.job], { cwd: ROOT, encoding: "utf8", timeout: 600000 });
@@ -195,7 +199,7 @@ async function main() {
     const dir = runDir(a || ""); if (!a || !existsSync(join(dir, "plan.json"))) { console.error(`no run "${a}"`); process.exit(1); }
     const plan = readJson(join(dir, "plan.json")), man = readJson(join(dir, "manifest.json")), kind = plan.kind;
     const its = items(kind, man);
-    const r = reconcile(plan, isDoneFn(kind)(its));
+    const r = reconcile(plan, isDoneFn(kind, man.frozen_at)(its));
     writeJson(join(dir, "checkpoint.json"), { phase: cmd === "close" ? "closed" : "collected", at: nowIso(), plan_id: plan.plan_id, done: r.done, missing: r.missing, failed_batches: r.rows.filter((x) => x.missing.length).map((x) => x.batch) });
     if (cmd === "retry") {
       const miss = new Set(r.rows.flatMap((x) => x.missing));
@@ -213,7 +217,7 @@ async function main() {
       return;
     }
     console.log(`VALIDATE ${a}: ${r.done} of ${man.count} done, ${r.missing} missing${r.missing ? " in batch(es) " + r.rows.filter((x) => x.missing.length).map((x) => x.batch).join(" ") : ""}.`);
-    if (kind === "analyst") { const { bad } = analystDone(listDir("analyses")), onFile = r.rows.flatMap((x) => x.missing).filter((id) => bad[id]);
+    if (kind === "analyst") { const { bad } = analystDone(listDir("analyses"), [], man.frozen_at), onFile = r.rows.flatMap((x) => x.missing).filter((id) => bad[id]);
       if (onFile.length) console.log(`  of the missing, ${onFile.length} have a file that breaks a rule (retry hands them out as FIX ONLY; see node scripts/analyst.mjs check): ${onFile.join(" ")}`); }
     process.exit(r.missing ? 1 : 0);
   }

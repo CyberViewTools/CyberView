@@ -46,6 +46,18 @@ test("analyst queue: an old catalog entry named by a severe event is still queue
   assert.deepEqual(queue([{ cve: "CVE-2026-84869", added: d(-3), due: d(5) }], [{ cve: "CVE-2026-84869", rank: 50 }], {}, today).length, 1, "a recent entry is queued once, not twice");
 });
 
+test("swarm: an item queued because its analysis was stale is not done until rewritten after the freeze", () => {
+  const old = (x) => ({ ...x, analyzed_at: "2020-01-01T00:00:00Z" }), r = [row("CVE-2026-0001", old), row("CVE-2026-0002")];
+  assert.equal(analystDone(r, [], "2020-06-01T00:00:00Z").isDone("CVE-2026-0001"), false, "stale file from before the freeze is not done");
+  assert.equal(analystDone(r, [], "2020-06-01T00:00:00Z").isDone("CVE-2026-0002"), true, "written after the freeze: done");
+  assert.equal(analystDone(r).isDone("CVE-2026-0001"), true, "without a freeze time any valid file counts");
+});
+
+test("planBatches puts an id in one batch only, so a retry cannot hand it out twice", () => {
+  const p = planBatches(["a", "b", "a", "c", "b"].map((id) => ({ id })), 2);
+  assert.deepEqual(p.batches.flatMap((b) => b.ids), ["a", "b", "c"]);
+});
+
 test("swarm validate/retry: a valid analysis is done, so retry never hands it out again", () => {
   const { isDone, bad } = analystDone(rows, [{ skipped: [{ cve: "CVE-2026-0007", why: "no advisory" }, "CVE-2026-0008: no page readable"] }]);
   const plan = planBatches(["CVE-2026-0001", "CVE-2026-0002", "CVE-2026-105432", "CVE-2026-0007", "CVE-2026-0008", "CVE-2026-0009"].map((id) => ({ id })), 3);

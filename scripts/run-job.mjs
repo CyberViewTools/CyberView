@@ -82,7 +82,7 @@ function finish(job) {
 
 // ---------- swarm phases: plan (frozen, with a plan_id) -> claim (leases) -> work -> check -> retry -> commit -> report ----------
 const RUN = (process.env.CYBERVIEW_RUN = RUN_ID());
-const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer"]);
+const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer", "grid"]);
 /** Can a headless worker in this container open web pages? One tiny Haiku fetch, remembered for 6 hours. */
 function webOk() {
   const f = "/tmp/cyberview-webprobe.json", c = readJson(f, null);
@@ -143,6 +143,7 @@ async function flow() {
   const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }
     if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
   const t0 = Date.now(); let cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
   const stop = () => { try { if (readJson(FLOW_LOCK, {}).pid === process.pid) unlinkSync(FLOW_LOCK); } catch {} };
@@ -153,6 +154,8 @@ async function flow() {
     const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[c${cycle} ${name}] ${note || ""}`); };
     beat("collecting");
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
+    // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
+    if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).out.slice(-1)[0] || ""); } catch {} }
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");
     const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
     const stories = fresh ? sp.stories || [] : [], batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);
@@ -163,7 +166,11 @@ async function flow() {
     const uf = `update-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let ub = [];
     if (UW) { phase("updates", sh("node", ["scripts/updates.mjs", "plan", "--max", String(UW), "--per", String(UPER), "--file", uf]).out[0] || ""); ub = (readJson(join(DATA, uf), { batches: [] }).batches || []).filter((b) => b.length); }
-    const work = batches.map((b) => ["researcher", b]).concat(rb.map((_, i) => ["reviewer", i + 1]), ub.map((_, i) => ["updater", i + 1]));
+    // grid outages that need a cause: grid workers read the operator's and officials' statements (scripts/grid-desk.mjs)
+    const gf = `grid-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
+    let gb = [];
+    if (GW && existsSync(join(ROOT, "scripts", "grid-desk.mjs"))) { try { phase("grid-plan", sh("node", ["scripts/grid-desk.mjs", "plan", "--max", String(GW), "--per", String(GPER), "--file", gf], 60000).out[0] || ""); gb = (readJson(join(DATA, gf), { batches: [] }).batches || []).filter((b) => b && (b.incidents || []).length); } catch { gb = []; } }
+    const work = batches.map((b) => ["researcher", b]).concat(rb.map((_, i) => ["reviewer", i + 1]), ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]));
     if (Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
     const sc = PIPE.sweep || {};
     if (sc.gap_pass !== false && Date.now() - lastGap > 30 * 6e4) { lastGap = Date.now(); for (let i = 1; i <= Math.max(1, Math.min(3, Number(sc.gap_workers) || 1)); i++) work.push(["gap", i]); }
@@ -173,11 +180,14 @@ async function flow() {
       if (stories.length) publishClaim("story", stories.map((s) => s.id));
       const evIds = [...new Set(rb.flat().concat(ub.flat().map((c) => c.id)))];
       if (evIds.length) publishClaim("event", evIds);
+      if (gb.length) publishClaim("grid", gb.flatMap((b) => b.incidents.map((i) => i.id)));
       beat(`working: ${work.length} worker(s)`);
-      process.env.CYBERVIEW_REVIEW_PLAN = pf; process.env.CYBERVIEW_UPDATE_PLAN = uf;
+      process.env.CYBERVIEW_REVIEW_PLAN = pf; process.env.CYBERVIEW_UPDATE_PLAN = uf; process.env.CYBERVIEW_GRID_PLAN = gf;
       res = await pool("sweep", work);
-      delete process.env.CYBERVIEW_REVIEW_PLAN; delete process.env.CYBERVIEW_UPDATE_PLAN;
-      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
+      delete process.env.CYBERVIEW_REVIEW_PLAN; delete process.env.CYBERVIEW_UPDATE_PLAN; delete process.env.CYBERVIEW_GRID_PLAN;
+      // record what the grid workers found (validated; a cyber cause becomes a lead for the next cycle's researchers)
+      for (const b of gb) { try { if (existsSync(join(DATA, b.out))) phase("grid-apply", sh("node", ["scripts/grid-desk.mjs", "apply", b.out], 60000).out[0] || ""); else phase("grid-apply", `batch ${b.batch}: no out file`); } catch {} }
+      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
       if (batches.length) {
         const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
@@ -185,6 +195,8 @@ async function flow() {
     } else phase("idle", "nothing new to research or review");
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}
+    try { unlinkSync(join(DATA, gf)); } catch {}
+    for (const b of gb) { try { unlinkSync(join(DATA, b.out)); } catch {} }
     rec.finished_at = nowIso(); rec.minutes = +((Date.now() - cs) / 6e4).toFixed(1); rec.workers = res.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
     total.workers += rec.workers; total.cost += rec.cost; total.cycles++;
     if (work.length) {

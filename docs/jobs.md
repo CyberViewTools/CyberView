@@ -590,6 +590,33 @@ DONE WHEN: every assigned page has an outcome recorded by updates.mjs, unreachab
 End with one line: "updater <batch>: <n> updated, <n> unchanged, <n> unrelated, <n> unreachable".
 ```
 
+## Grid researcher (worker in the research loop; one per batch of grid outages)
+
+```
+JOB: grid. You are one of several workers started by a script. scripts/grid.mjs tracks electrical grid outages from the operators' own feeds as CONTEXT for defenders (never as cyber events), and marks the big or unusual ones as needing a cause. The incidents are listed under YOUR ASSIGNMENT at the end of this prompt, with the plan_id, your batch number and your out file. The plan file is data/<the name in the CYBERVIEW_GRID_PLAN environment variable>; you do not need to open it.
+GOAL: every assigned outage gets one cause decision taken from pages you actually read, so the map can say what caused it, and the rare outage that an official source links to a cyberattack is found and handed to the research loop. Accuracy before coverage: when you are not sure, the answer is "unknown".
+INPUTS: YOUR ASSIGNMENT (each incident: operator, region, peak customers, times, the causes as the operator's feed reports them, the operator's outage page, and any earlier try). `node scripts/grid-desk.mjs list` shows what is waiting and what earlier tries found.
+STEPS, for each incident, biggest first:
+1. The operator's own word: its outage page, newsroom, press releases or official social posts about this outage (Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO market notices). Look for the date and the area of the incident.
+2. The regulator or government: the energy regulator, the market operator, the national or state energy ministry, emergency management, and for any cyber link the national cyber agency (CISA, the Canadian Centre for Cyber Security, the UK NCSC, the Australian Cyber Security Centre and the like).
+3. Only then credible reporting: named, established publishers (national outlets, wire services, the trade press). Search in the local language too (French for Quebec).
+4. Decide ONE of: weather, equipment, planned, supply_shortfall (not enough generation or imports: load shedding, energy emergency), wildfire_safety (a deliberate safety shutoff), third_party (a vehicle, digging, theft or vandalism of equipment, another network's fault), cyber_official, cyber_reported, under_investigation, unknown.
+   - cyber_official: the operator, a regulator or a government body says in its own statement that a cyberattack caused or contributed to the outage. At least one source must be that statement on its own site.
+   - cyber_reported: a named, credible publisher reports a cyber cause that no official has confirmed. Phrase the summary as unconfirmed ("<publisher> reported, citing ..., that ...; the operator has not confirmed this").
+   - under_investigation: an official says the cause is being investigated. It is checked again later.
+   - unknown: the default. Nothing you read states a cause. It is checked again later.
+5. Write cause_summary (at most 300 characters, your own words, plain English): what caused it and who said so, e.g. "Hydro-Québec said freezing rain brought down lines across the Montérégie region." No hype, no speculation, no adjectives the sources do not use.
+6. Write your out file (the name under YOUR ASSIGNMENT, in data/), exactly this shape and nothing else:
+   {"plan_id": "<plan_id from YOUR ASSIGNMENT>", "batch": <your batch number>, "results": [{"id": "<incident id>", "decision": "<one of the ten>", "cause_summary": "...", "sources": ["https://..."], "read_depth": "full|summary|secondary"}]}
+   One result for EVERY assigned incident, each exactly once. sources are the specific pages you read that state the cause (https, never a site's front page, never a news.google.com or bing.com redirect: open it and cite the publisher's own page). Only "unknown" may have no sources. read_depth: full (you read the whole page), summary (only a summary or snippet), secondary (a report about the original).
+7. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-grid-g<batch>.json with searches, pages_read, failed_sites and, in skipped, every page you ruled out and why.
+RULES: do NOT run any git command and do not edit data/status.json, data/grid/ or data/leads/: `scripts/grid-desk.mjs apply` checks your out file and records it (and turns a cyber cause into a lead for the research loop, which decides whether it is an event and gives it a second review). Write no event. Facts only from pages you opened in this run. An outage is never called an attack, a hack or sabotage unless an official source says so (then cyber_official, naming who said it); a cyber_reported decision always says it is unconfirmed. Theft of copper or vandalism is third_party, not cyber. A cause code in the operator's feed is a lead, not a finding: confirm it on a page. Never infer a cyber cause from timing, size, a hacktivist channel's claim or a social-media post. Do not work around sites that block automated readers; name them in failed_sites.
+LIMITS: only your assigned incidents; at most 6 searches and 10 pages per incident.
+DONE WHEN: the out file holds one valid result per assigned incident and echoes the plan_id.
+TIMESTAMP: none (grid-desk.mjs apply writes last_grid_research_at).
+End with one line: "grid researcher <batch>: plan <plan_id>, <n> decided (<n> cyber), <n> unknown or under investigation".
+```
+
 ## Regional researcher (worker for the deep sweep; one per region group)
 
 ```

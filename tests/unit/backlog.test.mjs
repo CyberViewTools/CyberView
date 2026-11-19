@@ -31,6 +31,17 @@ test("the queue puts incidents first and the summary counts only what still need
   assert.equal(s.waiting, 2); assert.equal(s.incidents, 1); assert.equal(s.closable_by_rule, 1); assert.equal(s.claims, 1);
 });
 
+test("the age of the queue counts from the oldest lead still open, not from an old lead that was handled hours ago", () => {
+  const handled = lead({ title: "Hospital hit by ransomware attack", seen_at: "2026-11-18T10:00:00Z", _open: false });
+  const fresh = lead({ title: "Hospital hit by ransomware attack", url: "https://example.org/fresh", seen_at: "2026-11-19T01:40:00Z", _open: true });
+  const s = mk([handled, fresh]);
+  assert.equal(s.waiting_since, "2026-11-19T01:40:00Z");
+  const sum = summary([s], NOW);
+  assert.equal(sum.oldest_hours, 0); assert.equal(sum.oldest_incident_hours, 0);
+  const old = mk([lead({ title: "Hospital hit by ransomware attack", seen_at: "2026-11-18T22:00:00Z" })]);
+  assert.equal(summary([old], NOW).oldest_incident_hours, 4);
+});
+
 test("the single-source rule closes English headlines that report nothing, and never judges other languages or official sources", () => {
   assert.match(autoReason(mk([lead({ title: "Nvidia projects AI growth beyond 2027 despite CEO exit" })]), NOW), /single-source/);
   assert.equal(autoReason(mk([lead({ title: "Iran targeted US infrastructure with cyberattacks, Homeland Security chief says" })]), NOW), "");

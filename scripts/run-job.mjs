@@ -159,15 +159,29 @@ async function main() {
   // 2. claim
   const claimed = claimPlanned(job, rec.started_at); if (claimed) phase("claim", `${Math.abs(claimed)} item(s) leased to ${RUN}${claimed < 0 ? " (lease not published: push failed)" : ""}`);
   // 3. work
-  const res = work.length ? await pool(job, work) : [];
+  let res = work.length ? await pool(job, work) : [];
   if (work.length) phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished; $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
   // 4. check and retry (only what is missing, once)
   if ((job === "sweep" || job === "backlog") && work.length) {
     const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
     if (!chk.ok && work.some((w) => w[0] === "researcher")) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
   }
+  // 4b. drain: reports that arrived while the researchers worked (the collect action pushes about every 30 minutes) are collected,
+  //     planned and worked now, in this run, so nothing waits for the next one. At most two more rounds and about 12 minutes in all.
+  let extra = 0;
+  if (job === "sweep") for (let round = 2; round <= 3 && Date.now() - t0 < 12 * 6e4; round++) {
+    for (const [c, a] of [["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
+    const note = sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "";
+    const more = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);
+    if (!more.length) { phase("drain", `round ${round}: nothing new is waiting`); break; }
+    phase("drain", `round ${round}: ${note}`);
+    claimPlanned(job, rec.started_at);
+    res = res.concat(await pool(job, more.map((b) => ["researcher", b]))); extra += more.length;
+    const c2 = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", c2.out[0] || "");
+    if (!c2.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool(job, [["researcher", "retry"]])); extra++; phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
+  }
   // 5. report: one record per run, read by the improver; written before the commit so it rides with it
-  rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
+  rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length + extra; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
   const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
   appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
   // 6. commit (the leases are released in the same commit)
@@ -177,7 +191,7 @@ async function main() {
   const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
   phase("commit", last);
   const b = job === "sweep" || job === "backlog" ? sh("node", ["scripts/backlog.mjs", "status"]).out[0] || "" : "";
-  log(`CyberView ${job}: ${last.replace(/^CyberView [a-z-]+: /, "")}${b ? " | " + b.replace(/^BACKLOG: /, "queue: ").slice(0, 120) : ""} | ${work.length} worker(s), $${rec.cost} | ${rec.minutes} min`);
+  log(`CyberView ${job}: ${last.replace(/^CyberView [a-z-]+: /, "")}${b ? " | " + b.replace(/^BACKLOG: /, "queue: ").slice(0, 120) : ""} | ${work.length + extra} worker(s), $${rec.cost} | ${rec.minutes} min`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

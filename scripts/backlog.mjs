@@ -38,10 +38,10 @@ export function backlog(stories, now = Date.now()) {
 }
 /** Pure: the numbers the status page and the guard show. */
 export function summary(stories, now = Date.now()) {
-  const open = stories.filter(isOpen), work = backlog(stories, now), ages = work.map((s) => (now - Date.parse(s.first_seen)) / 36e5).filter(isFinite);
+  const open = stories.filter(isOpen), work = backlog(stories, now), ages = work.map((s) => (now - Date.parse(s.waiting_since || s.first_seen)) / 36e5).filter(isFinite);
   return { at: new Date(now).toISOString().replace(/\.\d+Z$/, "Z"), waiting: work.length, incidents: work.filter((s) => s.incident).length, strong: work.filter((s) => s.score >= 12).length,
     closable_by_rule: open.filter((s) => autoReason(s, now)).length, claims: open.filter((s) => s.claim_only).length, oldest_hours: ages.length ? Math.round(Math.max(...ages)) : 0,
-    oldest_incident_hours: Math.round(Math.max(0, ...work.filter((s) => s.incident).map((s) => (now - Date.parse(s.first_seen)) / 36e5).filter(isFinite))) };
+    oldest_incident_hours: Math.round(Math.max(0, ...work.filter((s) => s.incident).map((s) => (now - Date.parse(s.waiting_since || s.first_seen)) / 36e5).filter(isFinite))) };
 }
 const closeAll = (job, items) => items.length ? writeRunLog(job, { started_at: nowIso(), finished_at: nowIso(), model: null,
   skipped: items.flatMap(({ s, why }) => s.urls.slice(0, 40).map((u) => ({ title: String(s.title).slice(0, 120), url: u, reason: `story ${s.id}: ${why}`.slice(0, 220) }))) }) : null;

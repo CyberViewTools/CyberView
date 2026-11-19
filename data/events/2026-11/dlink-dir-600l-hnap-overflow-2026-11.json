@@ -1,0 +1,32 @@
+{
+  "title": "D-Link DIR-600L end-of-life router has critical unauthenticated stack overflow with public proof of concept",
+  "date": "2026-11-16",
+  "date_note": "INCIBE-CERT advisory INCIBE-2026-896 published November 16.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "D-Link",
+  "sector": "Technology",
+  "country": "Spain",
+  "place": "Madrid, Spain (INCIBE-CERT, publisher of the advisory)",
+  "lat": 40.4168,
+  "lng": -3.7038,
+  "geo_basis": "advisory publisher; the flaw affects devices worldwide",
+  "pin_type": "agency",
+  "summary": "INCIBE-CERT rates CVE-2026-129354 critical (importance 5). In the D-Link DIR-600L router, hardware revision B, firmware 2.17b02, the hnap_main function does not check the length of the HTTP SOAPAction header, so a remote unauthenticated attacker can overflow a stack buffer. A published proof of concept crashes the CGI process in an emulated setup. INCIBE lists exploitation as not observed. D-Link says revision B is end of life.",
+  "plain": "An old D-Link router that no longer gets updates has a serious flaw that lets anyone on the internet crash it, and a public demonstration exists.",
+  "exec": "Unsupported edge routers cannot be patched and are easy targets once a public proof of concept exists.",
+  "action": "Replace DIR-600L rev B routers with a supported model; until then disable remote administration and limit the management interface to a trusted network.",
+  "impact": "Remote buffer overflow without authentication on an unsupported router; no fix will be issued.",
+  "tags": [],
+  "cves": ["CVE-2026-129354"],
+  "products": ["D-Link DIR-600L rev B 2.17b02"],
+  "attack": ["buffer-overflow"],
+  "sources": [
+    {"name": "INCIBE-CERT", "url": "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/desbordamiento-de-bufer-basado-en-pila-en-dir-600l-de-d-link"}
+  ],
+  "source_tier": "primary",
+  "validation": {"state": "single_source", "checked_at": "2026-11-19T01:14:34Z", "note": "National CERT advisory read in full; the vendor advisory it lists was not opened."},
+  "first_seen": "2026-11-19T01:14:34Z",
+  "updated_at": "2026-11-19T01:14:34Z"
+}

@@ -57,7 +57,8 @@ if (job === "researcher") {
   assignment = `YOUR ASSIGNMENT (backlog triager ${batch}): ${mine.length} stories. Answers file: ${join(DATA, "backlog-triage-" + batch + ".json")}\n`
     + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 150)}  [${s.publishers} publisher${s.publishers === 1 ? "" : "s"}: ${(s.sources || []).join(", ").slice(0, 70)}${(s.kinds || []).includes("exploited") ? "; exploited" : ""}${(s.langs || []).some((l) => l && l !== "en") ? "; " + s.langs.join("/") : ""}; published ${String(s.published).slice(5, 16)}${s.dated ? "" : " (date not given)"}]`).join("\n");
 } else if (job === "reviewer") {
-  const plan = readJson(join(DATA, "review-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
+  const pf = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_REVIEW_PLAN || "") ? process.env.CYBERVIEW_REVIEW_PLAN : "review-plan.json";
+  const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
   assignment = `YOUR ASSIGNMENT (reviewer ${batch}): ${mine.length} events:\n` + mine.map((id) => `  ${id}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"reviewer " + batch + ": nothing assigned\")");
 } else if (job === "gap") {
   // the focus rotates by rule with every run and every worker, so two runs in a row never search the same ground

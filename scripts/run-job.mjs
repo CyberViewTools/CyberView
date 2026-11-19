@@ -8,7 +8,7 @@
 // tokens, cost and outcome go to data/usage/<YYYY-MM>.jsonl, which scripts/improve.mjs reads for continuous improvement.
 // If `claude` cannot start a worker at all, it prints HEADLESS UNAVAILABLE and exits 3 so the dispatcher can fall back.
 import { spawn, spawnSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
@@ -102,6 +102,10 @@ function planIds(job, since) {
 /** Claim what was planned and publish the claim at once, so runs in other containers skip it. */
 function claimPlanned(job, since) {
   const ids = planIds(job, since), kind = kindOf[job]; if (!kind || !ids.length) return 0;
+  return publishClaim(kind, ids);
+}
+/** Lease ids to this run and push the lease file at once, so runs in other containers skip them. */
+function publishClaim(kind, ids) {
   claim(kind, ids, RUN, 45);
   const a = spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }), c = spawnSync("git", ["commit", "-q", "-m", "data: leases"], { cwd: ROOT });
   const g = spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
@@ -180,6 +184,23 @@ async function main() {
     res = res.concat(await pool(job, more.map((b) => ["researcher", b]))); extra += more.length;
     const c2 = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", c2.out[0] || "");
     if (!c2.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool(job, [["researcher", "retry"]])); extra++; phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
+  }
+  // 4c. continuous review: every research run also gives the oldest unreviewed events (its own new ones included) a second
+  // review by different workers, so the review queue never builds up between hourly review desks
+  const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
+  if (job === "sweep" && RW && Date.now() - t0 < 9 * 6e4) {   // late runs leave it to the hourly desk, so a run never overlaps the next one
+    const pf = `review-plan-${RUN}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
+    phase("review", sh("node", ["scripts/review.mjs", "plan", "--max", String(RW), "--file", pf]).out[0] || "");
+    const rb = (readJson(join(DATA, pf), { batches: [] }).batches || []).filter((b) => b.length);
+    if (rb.length) {
+      publishClaim("event", rb.flat());
+      process.env.CYBERVIEW_REVIEW_PLAN = pf;
+      const rr = await pool(job, rb.map((_, i) => ["reviewer", i + 1]));
+      delete process.env.CYBERVIEW_REVIEW_PLAN;
+      res = res.concat(rr); extra += rb.length;
+      phase("review", `${rr.filter((r) => r && r.ok).length} of ${rb.length} reviewer(s) finished; ${rb.flat().length} event(s)`);
+    }
+    try { unlinkSync(join(DATA, pf)); } catch {}
   }
   // 5. report: one record per run, read by the improver; written before the commit so it rides with it
   rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length + extra; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);

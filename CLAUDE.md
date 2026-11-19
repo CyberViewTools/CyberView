@@ -10,6 +10,7 @@ Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `
 site/index.html, app.js  the globe page (markup and styles; script in app.js so the CSP can forbid inline scripts)
 site/nav.js              site navigation on every page: inline links on wide screens, a menu sheet on phones
 site/archive.html, .js   the searchable archive of every event on file
+site/cve.html, cve.js     CVE lookup: every published CVE by ID (data/cve/<year>/<thousand>.json) and the last two weeks' new or changed CVEs, with CVSS, EPSS, CISA exploitation and KEV
 site/trends.html, .js    week-over-week trends from site/data/trends.json (styles shared in archive.css)
 site/status.html, .js    routines and their last runs, lead queue, recent runs (from site/data/ops.json)
 site/workbench.html, .js, workbench-lib.js   the workbench: patch queue ranked with reasons, the visitor's software list matched by version (browser only), check and fix steps, hunt pack (from site/data/workbench.json)
@@ -40,7 +41,8 @@ scripts/lib/store.mjs    the one place that knows the data layout
 scripts/build.mjs        validates every record, writes the bundle and the archive; fails on bad data
 scripts/q.mjs            search the whole history without reading files (find, dupes, get, seen, leads, runs, kev, stats)
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
-scripts/cve-db.mjs      the historical CVE database: every CVE NVD has published, compact, sharded by year on the cve-data branch (one force-pushed commit, built by cve-db.yml, copied into site/data/cve/ at deploy); never commit it to main
+scripts/cve.mjs          the CVE corpus (no AI model): baseline from the CVE List's midnight release, hourly changes from its deltaLog, EPSS, KEV; `site` writes the lookup files; new notable CVEs become leads. The corpus (cache/cve, ~300,000 rows) lives as the asset of this repository's "cve-corpus" release, never in git
+scripts/cve-db.mjs      SUPERSEDED by scripts/cve.mjs (kept for reference; cve-db.yml runs only by hand and the deploy no longer copies it): every CVE NVD has published, compact, sharded by year on the cve-data branch (one force-pushed commit, built by cve-db.yml, copied into site/data/cve/ at deploy); never commit it to main
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
 scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
@@ -67,7 +69,7 @@ scripts/finish.mjs       mechanical end of a job: timestamp, build, commit, pull
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/unit/*.test.mjs    unit tests (node --test, no dependencies)
 tests/smoke_live.py      browser check of the live site
-.github/workflows/       pages.yml (deploy), build.yml (code pushes), collect.yml, feeds.yml, monitor.yml, security.yml, ai-jobs.yml (manual fallback only)
+.github/workflows/       pages.yml (deploy), build.yml (code pushes), collect.yml, feeds.yml, cve.yml (CVE corpus, hourly), monitor.yml, security.yml, ai-jobs.yml (manual fallback only)
 Claude jobs             run as Claude Code scheduled tasks "CyberView: <job>" in the "CyberView ops" session (see docs/jobs.md)
 docs/                    data schema (schema.md) and the scheduled jobs (jobs.md)
 ```

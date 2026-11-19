@@ -1,0 +1,81 @@
+name: CVE corpus (CVE List, EPSS)
+# Every CVE ever published, kept current. No AI model.
+# The corpus (cache/cve, about 300,000 compact rows) is kept as the asset of the "cve-corpus" release of this repository,
+# never committed. Each run: download it (or build it once from the CVE List's midnight release), apply the CVE List's
+# change log, attach EPSS once a day and CISA known-exploited dates, upload it again, and file new notable CVEs
+# (exploited per CISA, on KEV, or CVSS 9+) as leads for the research loop. The deploy publishes the lookup files.
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+    inputs:
+      rebuild:
+        description: "Rebuild the corpus from the CVE List's latest midnight release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: cve-corpus
+  cancel-in-progress: false
+
+jobs:
+  cve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CVE_CORPUS: ${{ github.workspace }}/cache/cve
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Download the corpus
+        id: get
+        run: |
+          mkdir -p cache
+          if [ "${{ inputs.rebuild }}" != "true" ] && gh release download cve-corpus --pattern cve-corpus.tar.gz --dir cache 2>/dev/null; then
+            tar -xzf cache/cve-corpus.tar.gz -C cache && echo "have=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "have=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build the corpus from the CVE List's midnight release (first run or rebuild)
+        if: steps.get.outputs.have != '1'
+        run: |
+          mkdir -p cache/src
+          tag=$(gh release view --repo CVEProject/cvelistV5 --json tagName --jq .tagName)
+          gh release download "$tag" --repo CVEProject/cvelistV5 --pattern '*all_CVEs_at_midnight*' --dir cache/src
+          cd cache/src && for z in *.zip; do unzip -q -o "$z"; done && for z in *.zip; do [ -f "$z" ] && unzip -q -o "$z" || true; done && cd ../..
+          day=$(echo "$tag" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+          CVE_BASELINE_AT="${day}T00:00:00Z" node scripts/cve.mjs baseline cache/src
+          rm -rf cache/src
+      - name: Apply the CVE List's changes
+        run: node scripts/cve.mjs delta
+      - name: EPSS scores (once a day) and CISA known-exploited dates
+        run: |
+          if [ "$(node -e 'const s=require(process.env.CVE_CORPUS+"/state.json");console.log(s.epss_date||"")')" != "$(date -u +%F)" ]; then node scripts/cve.mjs epss || echo "EPSS unavailable; keeping yesterday's scores"; fi
+          node scripts/cve.mjs kev
+          node scripts/cve.mjs stats
+      - name: Upload the corpus
+        run: |
+          tar -czf cve-corpus.tar.gz -C cache cve
+          gh release view cve-corpus >/dev/null 2>&1 || gh release create cve-corpus --title "CVE corpus (working data)" --notes "Compact CVE rows used to build the site's CVE lookup. Updated hourly by the cve workflow; not a software release." --latest=false
+          gh release upload cve-corpus cve-corpus.tar.gz --clobber
+      - name: Commit new leads and the run time
+        run: |
+          git config user.name "cyberview-feeds"
+          git config user.email "cyberview-feeds@users.noreply.github.com"
+          node -e 'const f="data/status.json",fs=require("fs"),s=JSON.parse(fs.readFileSync(f));s.last_cve_at=new Date().toISOString().replace(/\.\d+Z$/,"Z");s.cve_total=require(process.env.CVE_CORPUS+"/state.json").total||s.cve_total;fs.writeFileSync(f,JSON.stringify(s,null,2)+"\n")'
+          git add data/leads data/status.json
+          if git diff --cached --quiet; then echo "No new leads."; exit 0; fi
+          git commit -q -m "data: CVE corpus updated"
+          node scripts/git-sync.mjs
+      - name: Alert on failure
+        if: failure()
+        run: |
+          echo "**CVE corpus job failed.** The CVE lookup is not updating; the site keeps the last published copy." > report.md
+          bash .github/scripts/alert.sh job-failure "CVE corpus job is failing" report.md failing

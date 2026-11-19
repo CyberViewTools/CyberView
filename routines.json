@@ -32,8 +32,20 @@
    "workflow": "cve-db.yml",
    "cron": "41 3 * * *",
    "model": null,
+   "active": false,
+   "does": "Superseded by the CVE corpus (cve.yml). Kept every CVE NVD has published in a compact searchable database on the cve-data branch, reading only what NVD changed each day; the site copies it in when it deploys."
+  },
+  {
+   "key": "cve",
+   "name": "CVE corpus",
+   "tier": "automation",
+   "workflow": "cve.yml",
+   "cron": "41 * * * *",
+   "model": null,
+   "status_key": "last_cve_at",
+   "max_age_hours": 3,
    "active": true,
-   "does": "Keeps every CVE NVD has published in a compact searchable database on the cve-data branch, reading only what NVD changed each day; the site copies it in when it deploys."
+   "does": "Keeps every published CVE current from the official CVE List (with CISA's enrichment), EPSS daily and CISA's known-exploited dates, for the CVE lookup page; files new notable CVEs (exploited, known exploited or CVSS 9+) as leads for the research loop."
   },
   {
    "key": "monitor",

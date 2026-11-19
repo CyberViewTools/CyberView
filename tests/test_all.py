@@ -598,7 +598,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "CVEs", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -647,10 +647,10 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "trends.html", "tabletop.html", "workbench.html", "community.html", "about.html"]:
+            for sub in ["archive.html", "cve.html", "trends.html", "tabletop.html", "workbench.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 8 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1003,6 +1003,40 @@ async def main():
             await ctx.close()
         subprocess.run(["node", "scripts/build.mjs"], cwd=ROOT, check=True, capture_output=True)   # fresh health.json and manifest.json
         await serve(make_site(json.load(open(os.path.join(ROOT, "site", "data", "bundle.json")))), v121b)
+
+        # v1.32: CVE lookup (every CVE from the CVE List; lookup files built by scripts/cve.mjs site)
+        F = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct"]
+        log4 = ["CVE-2021-44228", "P", "2021-12-10", "2025-10-21", 10, "C", "3.1", "CWE-502", "Apache Software Foundation", "Apache Log4j2", "Log4j2 JNDI lookup", "Remote code execution through JNDI.", "apache", "active", "2021-12-10", 0.99999, 1]
+        evil = ["CVE-2026-1001", "P", recent_day, recent_day, 6.5, "M", "3.1", "", "<img src=x onerror=alert(1)>", "Widget", "<script>alert(1)</script>", "x", "acme", "", "", 0.002, 0.3]
+        def cve_site(with_data):
+            d = make_site(bundle)
+            c = os.path.join(d, "data", "cve")
+            shutil.rmtree(c, ignore_errors=True)
+            if with_data:
+                os.makedirs(os.path.join(c, "2021"), exist_ok=True)
+                json.dump({"fields": F, "rows": [log4]}, open(os.path.join(c, "2021", "44.json"), "w"))
+                json.dump({"fields": F, "since": recent_day, "rows": [evil, log4]}, open(os.path.join(c, "recent.json"), "w"))
+                json.dump({"built_at": "2026-11-19T00:00:00Z", "total": 2, "rejected": 0, "exploited": 1, "critical": 1, "by_year": {"2021": 1, "2026": 1}, "sources": {"cvelist": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}}, open(os.path.join(c, "index.json"), "w"))
+            return d
+        async def v132(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "cve.html#CVE-2021-44228"), wait=1500)
+            ok("cve: summary counts from the index", "2 CVEs on file" in (await pg.text_content("#summary")))
+            one = await pg.text_content("#one")
+            ok("cve: a link to an ID opens that CVE with CVSS, known exploited and EPSS", "CVE-2021-44228" in one and "CVSS 10.0" in one and "Known exploited" in one and "EPSS" in one, one[:200])
+            ok("cve: links go to the CVE record and NVD", await pg.locator("#one a[href='https://www.cve.org/CVERecord?id=CVE-2021-44228']").count() == 1 and await pg.locator("#one a[href='https://nvd.nist.gov/vuln/detail/CVE-2021-44228']").count() == 1)
+            ok("cve: recent list rendered, markup in fields shown as text", await pg.locator("#list li.row").count() == 2 and await pg.locator("#list img, #list script").count() == 0 and "<script>" in (await pg.text_content("#list")))
+            await pg.select_option("#show", "expl"); await pg.wait_for_timeout(200)
+            ok("cve: exploited filter", await pg.locator("#list li.row").count() == 1)
+            await pg.fill("#id", "CVE-2099-12345"); await pg.click("#look button[type=submit]"); await pg.wait_for_timeout(800)
+            ok("cve: an unknown ID says so", "not in the CVE List" in (await pg.text_content("#one")))
+            ok("cve: no script errors", not errs, errs)
+            await pg.context.close()
+        async def v132b(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "cve.html"), wait=1200)
+            ok("cve: without lookup files the page says so and nothing breaks", "not available" in (await pg.text_content("#summary")) and not errs, errs)
+            await pg.context.close()
+        await serve(cve_site(True), v132)
+        await serve(cve_site(False), v132b)
 
         await browser.close()
 

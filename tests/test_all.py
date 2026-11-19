@@ -1170,6 +1170,25 @@ async def main():
 
         await serve(site132b, v132b)
 
+        # v1.38: dropdowns drawn in the site's style on desktop; native picker kept on touch screens
+        async def v138(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "archive.html"), wait=1200)
+            ok("dropdown: each select gets a site-styled button on desktop", await pg.locator(".cvsel:has(#cat) .cvsel-btn").count() == 1)
+            n0 = await pg.text_content("#count")
+            await pg.locator(".cvsel:has(#cat) .cvsel-btn").click(); await pg.wait_for_timeout(150)
+            ok("dropdown: the list opens as a listbox with every option", await pg.locator(".cvsel-list[role=listbox] li[role=option]").count() == await pg.locator("#cat option").count())
+            await pg.locator(".cvsel-list li", has_text="Incidents").click(); await pg.wait_for_timeout(300)
+            ok("dropdown: picking sets the real select and filters", await pg.eval_on_selector("#cat", "s => s.value") == "incident" and await pg.text_content("#count") != n0 and await pg.locator(".cvsel-list").count() == 0)
+            await pg.locator(".cvsel:has(#sev) .cvsel-btn").focus(); await pg.keyboard.press("Enter"); await pg.keyboard.press("Escape"); await pg.wait_for_timeout(100)
+            ok("dropdown: Esc closes and returns focus", await pg.locator(".cvsel-list").count() == 0 and "cvsel-btn" in (await pg.evaluate("document.activeElement.className")))
+            ok("dropdown: no script errors", not errs, errs)
+            await pg.context.close()
+            ctx = await browser.new_context(viewport={"width": 390, "height": 844}, has_touch=True, is_mobile=True)
+            ph = await ctx.new_page(); await ph.goto(url.replace("index.html", "archive.html")); await ph.wait_for_timeout(900)
+            ok("dropdown: phones keep the native picker", await ph.locator(".cvsel-btn").count() == 0)
+            await ctx.close()
+        await serve(make_site(bundle), v138)
+
         await browser.close()
 
 

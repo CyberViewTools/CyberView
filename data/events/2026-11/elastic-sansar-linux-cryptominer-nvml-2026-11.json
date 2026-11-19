@@ -1,0 +1,68 @@
+{
+  "country": "",
+  "cves": [],
+  "geo_basis": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "place": "",
+  "first_seen": "2026-11-19T03:47:28Z",
+  "updated_at": "2026-11-19T03:47:28Z",
+  "category": "report",
+  "source_tier": "established",
+  "status": "confirmed",
+  "title": "Elastic: SANSAR Linux cryptominer fakes GPU readings to hide mining",
+  "date": "2026-11-16",
+  "org": "Elastic Security Labs",
+  "actor": "REF3364 (Elastic's tracking name; financially motivated, unattributed)",
+  "sector": "AI / GPU infrastructure",
+  "severity": 2,
+  "summary": "Elastic Security Labs describes REF3364, a Linux cryptomining operation seen in late October 2026. Access came through an exposed Ray job agent. The toolkit, SANSAR, adds a kernel rootkit, a modified NVIDIA NVML wrapper that reports 0% GPU use and random temperatures, and an Ethereum-assisted backdoor. Elastic does not know who is behind it and found Turkish comments in the code.",
+  "plain": "Attackers are secretly mining cryptocurrency on Linux servers with powerful graphics cards, and they fake the card's readings so the load looks normal.",
+  "exec": "Hijacked AI compute raises costs and takes capacity from real workloads, and fake monitoring readings hide it.",
+  "action": "Do not expose Ray job APIs to the internet, restrict who can submit jobs, and check hosts for a modified NVML library, unknown DKMS modules such as acpi_thermal_mgr and initramfs changes.",
+  "products": [
+    "Ray",
+    "NVIDIA NVML",
+    "Linux"
+  ],
+  "tags": [
+    "cloud",
+    "ai-enabled"
+  ],
+  "attack": [
+    "T1190 Exploit Public-Facing Application",
+    "T1496 Resource Hijacking",
+    "T1014 Rootkit"
+  ],
+  "sources": [
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/sansar-linux-cryptomining-malware-uses.html"
+    }
+  ],
+  "report": {
+    "publisher": "Elastic Security Labs",
+    "publisher_type": "vendor",
+    "doc_id": "REF3364",
+    "published": "2026-11-16",
+    "key_findings": [
+      "Initial access was through an exposed Ray job agent, then a reverse shell and an added SSH key.",
+      "A modified NVML wrapper reports GPU utilisation as 0% and substitutes random temperature (36 to 46 C) and power (100 to 200 W) readings.",
+      "A kernel rootkit, acpi_thermal_mgr.ko, hides processes, files and sockets and reloads through an initramfs loader.",
+      "The netns backdoor fetches its controller address from an Ethereum smart contract.",
+      "Turkish-language comments were found in the rootkit source; the operator is unidentified."
+    ],
+    "recommendations": [
+      "Check who can submit jobs to GPU clusters and whether GPU monitoring libraries have been modified."
+    ],
+    "iocs_available": true,
+    "read_depth": "secondary",
+    "url": "https://thehackernews.com/2026/11/sansar-linux-cryptomining-malware-uses.html"
+  },
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-19T03:47:28Z",
+    "note": "Read The Hacker News write-up quoting Elastic's report; the Elastic original was not read."
+  }
+}

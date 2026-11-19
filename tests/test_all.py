@@ -10,7 +10,7 @@ import asyncio, copy, json, os, random, shutil, subprocess, sys, tempfile, time
 from playwright.async_api import async_playwright
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PORT = 8765
+PORT = int(os.environ.get("CV_TEST_PORT", "8765"))   # another checkout running the suite at the same time can pick its own port
 fails, count = [], 0
 
 
@@ -371,6 +371,8 @@ async def main():
             await pg.keyboard.down("Shift"); await pg.mouse.dblclick(gx, gy); await pg.keyboard.up("Shift"); await pg.wait_for_timeout(900)
             k2 = await pg.evaluate("document.getElementById('svg').__zoom.k")
             ok("globe: shift + double-click zooms back out", abs(k2 - k1 / 2) < 0.01, (k1, k2))
+            await pg.mouse.click(gx, gy); await pg.wait_for_timeout(700); await pg.mouse.click(gx, gy); await pg.wait_for_timeout(500)
+            ok("globe: two slow clicks are not a double-click", abs(await pg.evaluate("document.getElementById('svg').__zoom.k") - k2) < 0.01)
             await pg.mouse.dblclick(box["x"] + 4, box["y"] + 4); await pg.wait_for_timeout(500)
             ok("globe: double-click off the globe does nothing", abs(await pg.evaluate("document.getElementById('svg').__zoom.k") - k2) < 0.01)
             await pg.click("#refresh")
@@ -407,7 +409,7 @@ async def main():
         hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5})
         # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
         hj["grid_sources"] = {
-            "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3)},
+            "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12},
             "bchydro": {"name": "BC Hydro", "ok": True, "error": "", "at": iso(0.3)},
             "ukpn": {"name": "UK Power Networks", "ok": False, "error": "HTTP 503", "at": iso(0.3)},
             "eskom": {"name": "Eskom", "ok": True, "error": "", "at": iso(0.3)},
@@ -440,6 +442,8 @@ async def main():
             {"source": "bchydro", "region": "British Columbia", "country": "CA", "incidents": 1, "customer_hours": 9000, "causes": []},
             {"source": "eskom", "region": "South Africa", "customer_hours": "lots"}]}}
         json.dump(tj, open(tp, "w"))
+        # v1.47: the Grid view reads the same 30-day trends from the bundle (docs["grid/analysis"].trends)
+        bg["docs"]["grid/analysis"]["trends"] = copy.deepcopy(tj["grid"]["trends"])
         json.dump(bg, open(os.path.join(site_g, "data", "bundle.json"), "w"))
 
         async def vgrid(url):
@@ -465,6 +469,7 @@ async def main():
             notes = await pg.locator("#layers .gnote").all_text_contents()
             ok("grid analysis: only incidents with signals get a note", len(notes) == 1 and not any("cyber" in n.lower() or "attack" in n.lower() for n in notes), notes)
             g0 = pg.locator("g.gridm:not(.out)[aria-label^='Hydro-Québec']")
+            await pg.dispatch_event("#svg", "pointerdown"); await pg.wait_for_timeout(900)   # stop the spin first: a spinning globe redraws its rings every frame
             await g0.focus(); await pg.wait_for_timeout(150)
             tiptxt = await pg.text_content("#tip")
             ok("grid analysis: tooltip carries the notes", "seen also by: internet measurements (IODA) · news reports (2)" in tiptxt and "unusual for this hour of the week" in tiptxt and "context, not a cyber event" in tiptxt, tiptxt)
@@ -477,6 +482,93 @@ async def main():
             await pg.keyboard.press("Escape")
             ok("grid: no failed panel", await pg.locator("#fault").is_hidden())
             ok("grid: globe renders without script errors", not errs and await pg.locator("path.ocean").count() == 1, errs)
+            await pg.context.close()
+
+            # v1.47: the Grid view (owner, 2026-11-19): power grid outages only; everything about cyber events is out of the way
+            pg, errs = await open_page(browser, url, wait=1500)
+            gb = pg.locator("#viewseg [data-view=grid]")
+            ok("grid view: a Grid button in the view switch", await gb.count() == 1 and "Grid" in await gb.inner_text())
+            ok("grid view: cyber markers on the globe before", await pg.locator("#svg g.m, #svg g.cl").count() > 0)
+            await gb.click(); await pg.wait_for_timeout(500)
+            ok("grid view: the button is pressed after the click", await gb.get_attribute("aria-pressed") == "true" and await pg.evaluate("document.body.dataset.view") == "grid")
+            ok("grid view: the address is #grid, so the view can be shared", await pg.evaluate("location.hash") == "#grid")
+            ok("grid view: no cyber markers, clusters, arcs, IODA or GDACS marks on the globe",
+               await pg.locator("#svg g.m, #svg g.cl, #svg path.arc, #svg .blast, #svg g.haz, #svg path.country.dis, #svg path.country.has, #svg .chainline").count() == 0)
+            ok("grid view: only grid rings are drawn, always on", await pg.evaluate("(() => { const g = document.querySelector('#svg g.gridm'); if (!g) return false; return [...g.parentNode.children].every(c => c.classList.contains('gridm')); })()") and await pg.locator("#svg g.gridm").count() == 6)
+            hidden = ["#feed", "header .row2 >> nth=0", "#days", "aside .tabs", "#listTools", "#wallBtn", "#zlayers", "#key", "#stats", "#viz"]
+            vis = [h for h in hidden if await pg.locator(h).first.is_visible()]
+            ok("grid view: feed, tabs, filters, time bar, legend, layers and wall mode are hidden", not vis, vis)
+            ok("grid view: the grid panel and its four sections render", await pg.locator("#gridp").is_visible() and all([await pg.locator(x).is_visible() for x in ["#gList", "#gSrcSec", "#gAna", "#gTrend"]]))
+            gtxt = await pg.inner_text("#gridp")
+            ok("grid view: header says context, operators' reports, customers are accounts", "Power grid outages — context, not cyber events. Operators' own reports; customers are accounts, not people." in gtxt and "Last grid collection" in gtxt, gtxt[:300])
+            names = await pg.locator("#gRows li .gname").all_text_contents()
+            tags = await pg.locator("#gRows li .gtag").all_text_contents()
+            ok("grid view: every item listed (one with no location too)", len(names) == 7, names)
+            ok("grid view: incidents before single outages", tags == ["Incident"] * 5 + ["Outage"] * 2, tags)
+            ok("grid view: biggest first", names[:2] == ["Hydro-Québec: 152,300 customers without power", "UK Power Networks: 9,000 customers without power"] and names[5:] == ["BC Hydro: 1,399 customers without power (planned work)", "Hydro-Québec: 158 customers without power"], names)
+            first = await pg.inner_text("#gRows li >> nth=0")
+            ok("grid view: a row has operator, place, customers, started, cause as reported", all(t in first for t in ["Hydro-Québec", "Quebec, Canada", "152,300 customers without power", "started 3 h ago", "Cause as reported: Vegetation"]), first)
+            ok("grid view: the cause check is labelled as AI-written", "Cause checked by CyberView AI (a Claude model): weather" in first and "someone else" not in gtxt)
+            ok("grid view: analysis notes on the row", "seen also by: internet measurements (IODA) · news reports (2)" in first and "unusual for this hour of the week" in first, first)
+            ok("grid view: planned work labelled", await pg.locator("#gRows li .gplan").all_text_contents() == ["Planned work"])
+            ok("grid view: injected markup stays text", "<img src=x id=pwn>Eskom load shedding" in gtxt and await pg.locator("#pwn, #pwn2, #pwn3").count() == 0 and await pg.locator("#gridp img").count() == 0)
+            hrefs = await pg.eval_on_selector_all("#gridp a", "as => as.map(a => a.getAttribute('href'))")
+            ok("grid view: operator links kept, links off the allowlist dropped", "https://www.hydroquebec.com/outages/" in hrefs and not any(h and ("evil" in h or h.startswith("javascript")) for h in hrefs), hrefs)
+            src = await pg.locator("#gSrc li").all_text_contents()
+            ok("grid view: one source row each, live, failing with its error, not connected with no key", len(src) == 9 and sum(1 for r in src if r.startswith("Live")) == 5
+               and any(r.startswith("Failing") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Not connected") and "no key saved" in r) == 3, src)
+            ok("grid view: item counts when the source gives them", any(r.startswith("Live") and "Hydro-Québec" in r and "12 items" in r for r in src), src)
+            ncb = await pg.eval_on_selector_all("#gSrc .gbadge", "bs => bs.filter(b => b.textContent === 'Not connected').map(b => b.className)")
+            ok("grid view: not connected is neutral, not a fault", len(ncb) == 3 and all("neutral" in c.split() for c in ncb), ncb)
+            atxt = await pg.inner_text("#gAna")
+            ok("grid view: anomalies and corroboration scores shown with the caveat", "Unusual for this hour of the week" in atxt and "152,300 customers out" in atxt and "usually about 4,000" in atxt and "Score 3" in atxt
+               and "signals, not causes" in atxt and "never evidence of an attack" in atxt, atxt)
+            ok("grid view: trends lead with the question", (await pg.text_content("#gTrendH")).strip().endswith("?") and await pg.locator("#gBars .gbar").count() == 3)
+            fills = await pg.eval_on_selector_all("#gBars .gfill", "fs => [...new Set(fs.map(f => getComputedStyle(f).backgroundColor))]")
+            widths = await pg.eval_on_selector_all("#gBars .gfill", "fs => fs.map(f => f.getBoundingClientRect().width)")
+            ok("grid view: trend bars single colour, largest first", len(fills) == 1 and len(widths) == 3 and widths[0] > widths[1] > widths[2] > 0, [fills, widths])
+            ok("grid view: trend caveats underneath", await pg.evaluate("(() => { const b = document.getElementById('gBars'), c = document.querySelector('#gTrend .gcav'); return !!(b.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING) && /not cyber events/.test(c.textContent); })()"))
+            ok("grid view: trend region names stay text", "<img src=x id=pwn4>London" in await pg.inner_text("#gTrend") and await pg.locator("#pwn4").count() == 0)
+            await pg.click("#gseg [data-gf=unplanned]"); await pg.wait_for_timeout(150)
+            un = await pg.locator("#gRows li .gname").all_text_contents()
+            ok("grid view: Unplanned only drops planned work, on the globe too", len(un) == 6 and not any("planned work" in n for n in un) and await pg.locator("#svg g.gridm.out").count() == 1, un)
+            await pg.click("#gseg [data-gf=incidents]"); await pg.wait_for_timeout(150)
+            ok("grid view: Incidents only", await pg.locator("#gRows li .gtag").all_text_contents() == ["Incident"] * 5 and await pg.locator("#svg g.gridm.out").count() == 0)
+            await pg.click("#gseg [data-gf=all]"); await pg.wait_for_timeout(150)
+            opts = await pg.eval_on_selector_all("#gCountry option", "os => os.map(o => o.value)")
+            ok("grid view: country list built from the data", sorted(opts) == sorted(["", "AU", "CA", "GB", "US", "ZA"]), opts)
+            await pg.evaluate("(() => { const s = document.getElementById('gCountry'); s.value = 'CA'; s.dispatchEvent(new Event('change', { bubbles: true })); })()"); await pg.wait_for_timeout(150)
+            ca = await pg.locator("#gRows li .gname").all_text_contents()
+            ok("grid view: the country filter works", len(ca) == 3 and all("Hydro-Québec" in n or "BC Hydro" in n for n in ca) and await pg.locator("#svg g.gridm").count() == 3, ca)
+            await pg.evaluate("(() => { const s = document.getElementById('gCountry'); s.value = ''; s.dispatchEvent(new Event('change', { bubbles: true })); })()"); await pg.wait_for_timeout(150)
+            ok("grid view: back to all countries", await pg.locator("#gRows li").count() == 7)
+            await pg.locator("#gRows li .gname", has_text="Hydro-Québec: 152,300").click(); await pg.wait_for_timeout(1100)
+            tipv = await pg.locator("#tip").is_visible()
+            tiptxt = await pg.text_content("#tip")
+            ok("grid view: a row turns the globe to the outage and shows its tooltip", tipv and "Hydro-Québec: 152,300 customers without power" in tiptxt and "context, not a cyber event" in tiptxt, tiptxt)
+            near = await pg.evaluate("(() => { const g = document.querySelector('#svg g.gridm.gsel'), s = document.getElementById('svg').getBoundingClientRect(); if (!g) return null; const r = g.getBoundingClientRect(); return [r.left + r.width / 2 - s.left, r.top + r.height / 2 - s.top, s.width, s.height]; })()")
+            ok("grid view: the chosen outage is ringed near the middle of the globe", near is not None and abs(near[0] - (near[2] - 430) / 2) < near[2] * 0.25 and await pg.locator("#gRows li.on").count() == 1, near)
+            await pg.locator("#gRows li", has_text="UK Power Networks: 9,000").focus(); await pg.keyboard.press("Enter"); await pg.wait_for_timeout(1100)
+            ok("grid view: Enter on a row works too", "UK Power Networks: 9,000" in (await pg.text_content("#tip") or ""))
+            await pg.click("#refresh"); await pg.wait_for_timeout(900)
+            ok("grid view: Refresh reloads and stays in Grid view", await pg.evaluate("document.body.dataset.view") == "grid" and await pg.evaluate("location.hash") == "#grid" and await pg.locator("#gRows li").count() == 7 and await pg.locator("#gRows li.on").count() == 0)
+            await pg.click("#viewseg [data-view=map]"); await pg.wait_for_timeout(500)
+            ok("grid view: leaving it brings back markers, the feed and filters", await pg.locator("#svg g.m, #svg g.cl").count() > 0 and await pg.locator("#feed").is_visible() and await pg.locator("aside .tabs").is_visible()
+               and await pg.locator("#days").is_visible() and await pg.locator("#gridp").is_hidden() and await pg.evaluate("location.hash") != "#grid")
+            ok("grid view: no failed panel and no script errors", await pg.locator("#fault").is_hidden() and not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url + "#grid", wait=1500)
+            ok("grid view: #grid opens straight into Grid view", await pg.evaluate("document.body.dataset.view") == "grid" and await pg.locator("#viewseg [data-view=grid]").get_attribute("aria-pressed") == "true"
+               and await pg.locator("#gridp").is_visible() and await pg.locator("#svg g.m, #svg g.cl").count() == 0 and await pg.locator("#svg g.gridm").count() == 6 and await pg.locator("#feed").is_hidden())
+            ok("grid view: opened from the link without script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url + "#grid", w=390, h=844, wait=1500)
+            ok("grid view (phone): no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"))
+            ok("grid view (phone): the view switch fits", await pg.evaluate("[...document.querySelectorAll('#viewseg button')].every(b => b.scrollWidth <= b.clientWidth + 1 && b.getBoundingClientRect().right <= window.innerWidth)"))
+            ok("grid view (phone): the grid panel stacks under the globe", await pg.evaluate("document.getElementById('gridp').getBoundingClientRect().top >= document.getElementById('stage').getBoundingClientRect().bottom") and await pg.locator("#gRows li").count() == 7)
+            await pg.locator("#gRows li .gname", has_text="UK Power Networks").click(); await pg.wait_for_timeout(1100)
+            ok("grid view (phone): a row brings the globe into view with the tooltip", await pg.evaluate("window.scrollY") < 50 and "UK Power Networks" in (await pg.text_content("#tip") or ""))
+            ok("grid view (phone): no script errors", not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=1000)
             rows = await pg.locator("#health li").all_text_contents()

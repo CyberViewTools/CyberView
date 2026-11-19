@@ -29,7 +29,7 @@
   "org": "ConnectWise",
   "pin_type": "hq",
   "place": "Tampa, FL",
-  "plain": "Attackers pushed fake copies of ConnectWise ScreenConnect remote-support software to hundreds of computers. Their toolkit tries to jump to IT technicians' machines, but researchers have not seen that step work.",
+  "plain": "Attackers pushed fake copies of ConnectWise ScreenConnect remote-support software to hundreds of computers. Their toolkit tries to steal the login session cookie of any IT technician who connects to an infected machine, but researchers have not seen that step work.",
   "products": [
     "ConnectWise ScreenConnect",
     "RMM+ extension"
@@ -42,7 +42,7 @@
       "Huntress saw rogue ScreenConnect clients pushed to at least 288 hosts at 48 organisations on November 11 and 205 hosts at 41 organisations in a second wave on November 13.",
       "Operators used the Run Command feature on cloud-hosted ScreenConnect panels to run commands as SYSTEM; one panel alone reached 190 downstream clients.",
       "Entry appears tied to the third-party RMM+ extension, versions 1.0.31 and 1.0.32, which accepted a blank access key; ConnectWise disabled five extensions across 400+ partner environments.",
-      "SCKit is 16 scripts and config files that install a rogue client, hijack the real client's connection and try to steal technician session cookies using CVE-2026-84869.",
+      "SCKit is 16 scripts and config files that install a rogue client, hijack the real client's connection and try to steal the technician's .aspxauth session cookie (and browser cookie stores) to replay against the panel. Huntress describes CVE-2026-84869 (client flaw before 26.6.5) as background, not as the method SCKit uses.",
       "Huntress has not seen the jump from an infected endpoint to a technician workstation succeed in any recovered log."
     ],
     "published": "2026-11-11",
@@ -75,13 +75,13 @@
     }
   ],
   "status": "official",
-  "summary": "Huntress reports two waves of attacks, on November 11 and 13, in which operators used ScreenConnect's Run Command feature to install rogue clients on 288 and then 205 hosts. Entry appears linked to a flawed third-party RMM+ extension. The SCKit toolkit tries to reach technician workstations through CVE-2026-84869, but Huntress has not seen that step succeed. Technician client 26.6.5 or later fixes the flaw.",
+  "summary": "Huntress reports two waves of attacks, on November 11 and 13, in which operators used ScreenConnect's Run Command feature to install rogue clients on 288 and then 205 hosts. Entry appears linked to a flawed third-party RMM+ extension. The SCKit toolkit tries to steal the session cookie of a technician who connects to an infected host and replay it against the panel, but Huntress has not seen that step succeed. Huntress mentions CVE-2026-84869 (client flaw fixed in 26.6.5) as background and does not say SCKit uses it.",
   "tags": [
     "supply-chain"
   ],
   "time_basis": "occurred",
   "title": "Huntress: rogue ScreenConnect clients pushed to hundreds of hosts in SCKit attacks; ConnectWise disables extensions",
-  "updated_at": "2026-11-19T00:27:14Z",
+  "updated_at": "2026-11-19T18:01:02Z",
   "validation": {
     "checked_at": "2026-11-18T00:40:00Z",
     "note": "Reviewed against the original Huntress report. ConnectWise's advisories page was then read in full: its newest entry is the Cloud Backup notice updated November 4, with no November notice on the ScreenConnect attacks; the separate security bulletins list did not render.",

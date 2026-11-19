@@ -1,0 +1,27 @@
+{
+  "job": "exploit-analyst-7",
+  "started_at": "2026-11-19T04:31:43Z",
+  "finished_at": "2026-11-19T04:34:07Z",
+  "model": "claude-opus-5-5",
+  "searches": ["CVE-2015-5477 TKEY BIND attacks in the wild analysis"],
+  "pages_read": [
+    {"url": "https://kb.isc.org/docs/aa-01272", "title": "ISC AA-01272: CVE-2015-5477", "used_in": "CVE-2015-5477"},
+    {"url": "https://access.redhat.com/errata/RHSA-2015:1513.html", "title": "RHSA-2015:1513 bind security update", "used_in": "CVE-2015-5477"},
+    {"url": "https://www.securityweek.com/critical-dos-flaw-bind-exploited-target-dns-servers/", "title": "SecurityWeek: Critical DoS flaw in BIND exploited", "used_in": "CVE-2015-5477"},
+    {"url": "https://www.php.net/archive/2026.php", "title": "PHP Security Advisory of 21 October 2026", "used_in": "CVE-2026-109618, CVE-2026-109619"},
+    {"url": "https://thephp.foundation/blog/2026/10/21/todays-php-security-release-and-how-were-strengthening-php-security/", "title": "PHP Foundation: today's PHP security release", "used_in": "CVE-2026-109618, CVE-2026-109619"},
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching", "title": "CISA: Critical vulnerabilities in PHP require immediate patching", "used_in": "CVE-2026-109618, CVE-2026-109619"},
+    {"url": "https://cyber.gc.ca/en/alerts-advisories/al26-026-critical-vulnerabilities-impacting-php-cve-2026-109618-cve-2026-109619", "title": "Canadian Centre for Cyber Security AL26-026", "used_in": "CVE-2026-109618, CVE-2026-109619"},
+    {"url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/", "title": "Check Point Research: PHP2Shell exploitation on Check Point gateway", "used_in": "CVE-2026-109618, CVE-2026-109619"}
+  ],
+  "added": ["CVE-2015-5477", "CVE-2026-109618", "CVE-2026-109619"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Juniper Junos bulletin for CVE-2015-5477 (fixed Junos releases)", "url": "https://supportportal.juniper.net/s/article/2016-01-Security-Bulletin-Junos-Vulnerability-in-ISC-BIND-named-CVE-2015-5477", "note": "Page did not render for the automated reader; Junos fixed releases not in the analysis.", "priority": "low"},
+    {"title": "Check Point fixed versions for PHP2Shell on Mobile Access gateways", "url": "https://blog.checkpoint.com/?p=249830", "note": "Not read this run; the PHP analyses refer readers to the product vendor's fix without listing Check Point versions.", "priority": "medium"},
+    {"title": "NCSC-NL php2shell repository (affected product list)", "url": "https://github.com/NCSC-NL/php2shell", "note": "Linked by CISA; not read. May list third-party products bundling vulnerable PHP.", "priority": "medium"}
+  ],
+  "failed_sites": ["web.archive.org (fetch tool refused)", "supportportal.juniper.net (page did not render)", "www.cisa.gov KEV catalog search (no result rendered)"],
+  "notes": "CVE-2015-5477 confidence set to medium: CISA catalog page did not load, KEV details taken from CyberView's catalog feed copy. No exploit repositories opened. Build passed."
+}

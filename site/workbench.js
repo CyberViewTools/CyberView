@@ -30,6 +30,7 @@
   function cleanHunt(h) {
     if (!h || typeof h !== "object" || !FORMATS[h.format]) return null;
     var u = str(h.url, 600); if (!/^https:\/\//.test(u)) return null;
+    if (/csaf|cvrf|\bvex\b/i.test(u + " " + h.name)) return null;   // machine-readable advisories, not detection content
     var ev = str(h.event_id, 120);
     return { name: str(h.name, 100) || FORMATS[h.format], format: h.format, url: u, publisher: str(h.publisher, 80), about: str(h.about, 140), cve: isCve(h.cve) ? h.cve : "", event: /^[a-z0-9][a-z0-9-]{2,119}$/.test(ev) ? ev : "", date: isDay(h.date) ? h.date : "" };
   }
@@ -256,19 +257,69 @@
     var fr = new FileReader(); fr.onload = function () { addItems(f.name, String(fr.result || "")); }; fr.onerror = function () { $("wbInvMsg").textContent = "The file could not be read."; }; fr.readAsText(f);
   }
 
-  /* ---- hunt pack ---- */
-  function renderHunt() {
-    var fmt = $("wbFmt").value, box = $("wbHunt"); box.textContent = ""; $("wbnHunt").textContent = hunt.length ? String(hunt.length) : "";
-    var list = hunt.filter(function (h) { return !fmt || h.format === fmt; });
-    if (!list.length) { box.appendChild(el("li", "empty", hunt.length ? "No files in that format." : "No detection resources on file yet. The report-review and advisory jobs add them as advisories publish indicator files and rules.")); return; }
-    list.forEach(function (h) {
-      var li = el("li", "wbh"); li.appendChild(el("span", "badge info", FORMATS[h.format]));
-      var mid = el("div"); mid.appendChild(link(h.url, h.name));
-      var sub = el("p", "note", [h.publisher, h.date ? fmtDay(h.date) : ""].filter(Boolean).join(" · ") + (h.about ? " · for " : ""));
-      if (h.cve) { var b = el("button", "linkbtn", h.cve); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; openCve = h.cve; tab("queue"); renderQueue(); showOpen(); }); sub.appendChild(b); }
-      else if (h.event) sub.appendChild(link("./#e=" + h.event, h.about)); else if (h.about) sub.appendChild(document.createTextNode(h.about));
-      mid.appendChild(sub); li.appendChild(mid); box.appendChild(li);
+  /* ---- hunt pack: what to look for in your logs, per exploited flaw and per reported campaign, most urgent first ---- */
+  var huntShown = 12;
+  function huntCards() {
+    var fmt = $("wbFmt").value, mine = $("wbHuntMine").checked && inv.length, cards = [], used = {};
+    var keep = function (list) { return list.filter(function (h) { return !fmt || h.format === fmt; }); };
+    rows.slice().sort(function (a, b) { return b.score - a.score; }).forEach(function (r) {
+      var f = r.f, g = f.guide, an = f.analysis;
+      if (mine && !(r.m && (r.m.state === "affected" || r.m.state === "check"))) return;
+      var seen = {}, files = keep(((g && g.hunt) || []).concat(hunt.filter(function (h) { return h.cve === f.cve || (f.event && h.event === f.event); }))).filter(function (h) { if (seen[h.url]) return false; seen[h.url] = 1; return true; });
+      files.forEach(function (h) { used[h.url] = 1; });
+      var signs = g ? g.signs : [], detect = an ? an.detect : [];
+      if (fmt ? !files.length : !(signs.length || detect.length || files.length)) return;
+      var why = [];
+      if (f.kev) why.push("known exploited" + (f.added ? " since " + fmtDay(f.added) : ""));
+      if (f.ransomware) why.push("used by ransomware");
+      if (f.due) why.push("US federal patch deadline " + fmtDay(f.due));
+      if (r.m && STATE[r.m.state]) why.push("your list: " + STATE[r.m.state][0].toLowerCase());
+      cards.push({ kind: "flaw", f: f, r: r, title: f.cve + " · " + [f.vendor, f.product].filter(Boolean).join(" "), name: f.name, why: why, signs: signs, signsFrom: g ? g.advisory : null, detect: detect, files: files, date: f.added });
     });
+    if (!mine) {
+      var byEv = {};
+      hunt.forEach(function (h) { if (!h.event || h.cve || used[h.url]) return; (byEv[h.event] = byEv[h.event] || { title: h.about, date: h.date, files: [] }).files.push(h); });
+      Object.keys(byEv).forEach(function (k) { var e = byEv[k], files = keep(e.files); if (files.length) cards.push({ kind: "campaign", event: k, title: e.title || "Reported campaign", why: ["reported " + (e.date ? fmtDay(e.date) : "recently")], signs: [], detect: [], files: files, date: e.date }); });
+    }
+    return cards;
+  }
+  function huntList(h, items) { var ul = el("ul"); items.forEach(function (t) { ul.appendChild(el("li", null, t)); }); return ul; }
+  function renderHunt() {
+    var box = $("wbHunt"); box.textContent = "";
+    $("wbHuntMine").disabled = !inv.length; $("wbHuntMineL").title = inv.length ? "" : "Load your software list first (Your software tab)";
+    var cards = huntCards();
+    $("wbnHunt").textContent = cards.length ? String(cards.length) : "";
+    $("wbHuntCount").textContent = cards.length ? cards.length + " thing" + (cards.length === 1 ? "" : "s") + " to hunt for" + (cards.length > huntShown ? ", showing " + huntShown : "") : "";
+    if (!cards.length) { box.appendChild(el("li", "empty", $("wbHuntMine").checked ? "Nothing to hunt for on your list: no exploited flaw matches your software." : $("wbFmt").value ? "No files in that format." : "Nothing to hunt for yet. Cards appear as vendors publish signs of compromise and the exploit analyst reads the advisories.")); $("wbHuntMore").hidden = true; return; }
+    cards.slice(0, huntShown).forEach(function (c) {
+      var li = el("li", "wbhcard" + (c.kind === "campaign" ? " camp" : ""));
+      var top = el("div", "wbhtop");
+      top.appendChild(el("span", "badge " + (c.kind === "campaign" ? "info" : c.f.ransomware ? "bad" : "warn"), c.kind === "campaign" ? "Campaign" : c.f.ransomware ? "Ransomware" : c.f.kev ? "Exploited" : "Flaw"));
+      var t = el("div"); t.appendChild(el("h3", null, c.title)); if (c.name) t.appendChild(el("p", "note", c.name)); if (c.why.length) t.appendChild(el("p", "wbhwhy", "Why now: " + c.why.join(" · ")));
+      top.appendChild(t); li.appendChild(top);
+      if (c.signs.length) { var s1 = el("div", "wbhsec"); var h1 = el("h4", null, "What the vendor says to look for "); if (c.signsFrom) h1.appendChild(link(c.signsFrom.url, "(" + (c.signsFrom.name || "advisory") + ")")); s1.appendChild(h1); s1.appendChild(huntList(null, c.signs)); li.appendChild(s1); }
+      if (c.detect.length) { var s2 = el("div", "wbhsec"); s2.appendChild(el("h4", null, "Where to look")); s2.appendChild(huntList(null, c.detect)); s2.appendChild(el("p", "note", "Written by an AI model from the advisories it read; check against the vendor's own guidance.")); li.appendChild(s2); }
+      if (c.files.length) { var s3 = el("div", "wbhsec"); s3.appendChild(el("h4", null, "Detection files from the publishers")); var ul = el("ul", "wbhfiles");
+        c.files.forEach(function (h) { var x = el("li"); x.appendChild(el("span", "badge info", FORMATS[h.format])); x.appendChild(document.createTextNode(" ")); x.appendChild(link(h.url, h.name)); if (h.publisher) x.appendChild(el("span", "note", " · " + h.publisher)); ul.appendChild(x); });
+        s3.appendChild(ul); li.appendChild(s3); }
+      var act = el("p", "wbhact");
+      if (c.kind === "flaw") { var b = el("button", "linkbtn", "Fix steps in the patch queue"); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = c.f.cve; openCve = c.f.cve; tab("queue"); renderQueue(); showOpen(); }); act.appendChild(b); if (c.f.event) { act.appendChild(document.createTextNode(" · ")); act.appendChild(link("./#e=" + c.f.event, "On the map")); } }
+      else act.appendChild(link("./#e=" + c.event, "Read the report on the map"));
+      li.appendChild(act); box.appendChild(li);
+    });
+    $("wbHuntMore").hidden = cards.length <= huntShown;
+  }
+  function toHuntPlan() {
+    var cards = huntCards(), L = ["HUNT PLAN  " + TODAY, "From CyberView's workbench" + ($("wbHuntMine").checked && inv.length ? ", only flaws on our software list" : "") + ". Look for signs that someone got in before the fix was applied.", ""];
+    cards.slice(0, 40).forEach(function (c, i) {
+      L.push((i + 1) + ". " + c.title + (c.name ? "  (" + c.name + ")" : ""));
+      if (c.why.length) L.push("   Why now: " + c.why.join("; "));
+      if (c.signs.length) { L.push("   Vendor says look for:" + (c.signsFrom ? " (" + c.signsFrom.url + ")" : "")); c.signs.forEach(function (x) { L.push("   - " + x); }); }
+      if (c.detect.length) { L.push("   Where to look (AI analysis of the advisories):"); c.detect.forEach(function (x) { L.push("   - " + x); }); }
+      c.files.forEach(function (h) { L.push("   File: " + FORMATS[h.format] + " " + h.name + "  " + h.url); });
+      L.push("");
+    });
+    return L.join("\n");
   }
 
   /* ---- exports ---- */
@@ -309,7 +360,10 @@
   $("wbGoInv").addEventListener("click", function () { tab("inv"); $("wbText").focus(); });
   var qt = 0; $("wbQ").addEventListener("input", function () { clearTimeout(qt); qt = setTimeout(renderQueue, 140); });
   $("wbShow").addEventListener("change", renderQueue);
-  $("wbFmt").addEventListener("change", renderHunt);
+  $("wbFmt").addEventListener("change", function () { huntShown = 12; renderHunt(); });
+  $("wbHuntMine").addEventListener("change", function () { huntShown = 12; renderHunt(); });
+  $("wbHuntMore").addEventListener("click", function () { huntShown += 12; renderHunt(); });
+  $("wbHuntCopy").addEventListener("click", function () { var b = $("wbHuntCopy"); try { navigator.clipboard.writeText(toHuntPlan()).then(function () { flash(b, "Copied"); }, function () { flash(b, "Copy blocked"); }); } catch (e) { flash(b, "Copy blocked"); } });
   $("wbCsv").addEventListener("click", function () { var a = el("a"); a.href = blobUrl(new Blob([toCsv()], { type: "text/csv" })); var u = a.href; a.download = "cyberview-patch-queue-" + TODAY + ".csv"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
   $("wbCopy").addEventListener("click", function () { var b = $("wbCopy"); try { navigator.clipboard.writeText(toChange()).then(function () { flash(b, "Copied"); }, function () { flash(b, "Copy blocked"); }); } catch (e) { flash(b, "Copy blocked"); } });
   var drop = $("wbDrop"), file = $("wbFile");

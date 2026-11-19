@@ -206,10 +206,10 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
     }
   }
   const eventOf = {}; for (const e of allEvents) if (!e.duplicate_of) for (const c of e.cves || []) (eventOf[c] ||= e.id);
-  const hunt = [];
+  const hunt = [], detection = (h) => h && !/csaf|cvrf|\bvex\b/i.test(`${h.url} ${h.name}`);   // machine-readable advisories are not detection content
   for (const e of allEvents.filter((e) => !e.duplicate_of && Array.isArray(e.hunt) && e.hunt.length && e.date >= dayAgo(60)).sort((a, b) => (a.date < b.date ? 1 : -1)))
-    for (const h of e.hunt) hunt.push({ ...h, about: s(e.title, 140), event_id: e.id, date: e.date });
-  for (const [cve, g] of Object.entries(guides)) for (const h of g.hunt || []) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
+    for (const h of e.hunt.filter(detection)) hunt.push({ ...h, about: s(e.title, 140), event_id: e.id, date: e.date });
+  for (const [cve, g] of Object.entries(guides)) for (const h of (g.hunt || []).filter(detection)) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
   writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, analyses, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));

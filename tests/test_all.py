@@ -764,7 +764,8 @@ async def main():
                                               "hunt": [{"name": "Indicators", "format": "stix", "url": "https://agency.example/x.stix.json", "publisher": "Test Agency"}, {"name": "bad", "format": "yara", "url": "javascript:alert(2)"}]}},
                "hunt": [{"name": "Indicators", "format": "stix", "url": "https://agency.example/x.stix.json", "publisher": "Test Agency", "about": "CVE-2026-1001", "cve": "CVE-2026-1001", "date": "2026-11-18"},
                         {"name": "Sigma rule for webshell", "format": "sigma", "url": "https://vendor.example/rule.yml", "about": "Some report", "event_id": bundle["events"][0]["id"], "date": "2026-11-17"},
-                        {"name": "evil", "format": "exe", "url": "https://x.example/a"}]}
+                        {"name": "evil", "format": "exe", "url": "https://x.example/a"},
+                        {"name": "Cisco CSAF advisory document", "format": "json", "url": "https://vendor.example/csaf/x.json", "about": "CVE-2026-1001", "cve": "CVE-2026-1001", "date": "2026-11-18"}]}
         wbd["analyses"] = {
             "CVE-2026-1001": {"cve": "CVE-2026-1001", "analyzed_at": "2026-11-19T04:30:00Z", "model": "claude-opus-5-5", "exploitation_status": "Exploited in the wild (test).",
                               "how_exploited": "A remote attacker sends a crafted login request to the admin interface and is let in without a password.", "preconditions": ["Admin interface reachable"],
@@ -808,9 +809,13 @@ async def main():
             csvp = await (await dl.value).path(); csv = open(csvp, newline="").read()
             ok("csv: header, ranked rows, formulas neutralised", csv.startswith("Rank,Score,CVE") and "CVE-2026-1001" in csv.split("\r\n")[1] and "\r\n=" not in csv and ",=" not in csv, csv[:200])
             await pg.click("#wbt-hunt"); await pg.wait_for_timeout(150)
-            ok("hunt: valid resources only", await pg.locator("#wbHunt .wbh").count() == 2 and "STIX" in await pg.locator("#wbHunt").text_content())
+            ht = await pg.locator("#wbHunt").text_content()
+            ok("hunt: one card per threat, vendor's signs of compromise shown", await pg.locator("#wbHunt .wbhcard").count() >= 1 and "CVE-2026-1001" in ht and "Unknown admin accounts." in ht and "What the vendor says to look for" in ht, ht[:300])
+            ok("hunt: detection files deduplicated, unsafe and non-detection items left out", ht.count("Indicators") == 1 and "evil" not in ht and "CSAF" not in ht and await pg.locator("#wbHunt a[href^='javascript']").count() == 0, ht[:300])
+            ok("hunt: each card says why now", "Why now:" in ht)
             await pg.select_option("#wbFmt", "sigma"); await pg.wait_for_timeout(100)
-            ok("hunt: format filter", await pg.locator("#wbHunt .wbh").count() == 1)
+            ok("hunt: format filter keeps only cards with that kind of file", await pg.locator("#wbHunt .wbhcard").count() == 1 and "Sigma" in await pg.locator("#wbHunt").text_content())
+            await pg.select_option("#wbFmt", ""); await pg.wait_for_timeout(100)
             await pg.click("#wbt-inv"); await pg.click("#wbClear"); await pg.wait_for_timeout(150)
             ok("software: clear removes it from the browser", await pg.evaluate("localStorage.getItem('cwm.inv')") is None and await pg.locator("#wbInvTable tbody tr").count() == 0)
             reqs = []

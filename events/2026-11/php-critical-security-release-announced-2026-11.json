@@ -37,9 +37,9 @@
     "doc_id": "",
     "iocs_available": false,
     "key_findings": [
-      "A critical PHP security release is planned for Thursday 14:00-14:30 UTC; the highest-severity bugs are rated critical.",
-      "The Register says CVE-2026-115560 is an RCE bug needing a non-default or uncommon setup, with a configuration setting that mitigates it.",
-      "heise reports all supported PHP versions are affected and that some issues are critical only in unusual setups."
+      "heise reports PHP 8.2.36, 8.3.37, 8.4.28 and 8.5.13 fix 17 vulnerabilities, seven rated critical at CVSS 9.2.",
+      "heise describes code execution for four of them, each needing preconditions such as non-default settings.",
+      "The Register says CVE-2026-115560 is an RCE bug needing an unlikely mix of configuration and application code; no exploitation of this release is reported."
     ],
     "published": "2026-11-18",
     "publisher": "The Register; heise online",
@@ -77,5 +77,11 @@
     "state": "corroborated",
     "note": "The Register and heise reported the planned release; heise reports the released versions and fixes. php.net notice not opened."
   },
-  "qa_checked_at": "2026-11-19T05:12:54Z"
+  "qa_checked_at": "2026-11-19T15:27:04Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T15:27:04Z",
+    "note": "Versions, 17 flaws, seven critical CVSS 9.2 and CVE-2026-115560 match heise and The Register; report key_findings described the preview, now the release; php.net notice not opened",
+    "flags": []
+  }
 }

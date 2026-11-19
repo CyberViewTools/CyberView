@@ -163,6 +163,11 @@ async def main():
             await pg.click("[data-view=graph]")
             await pg.wait_for_timeout(400)
             ok("events only: correlation still draws", await pg.locator("#viz .vsec").count() == 5)
+            ok("v1.28: correlation has a summary and a jump bar for all five sections", await pg.locator("#viz .vtake li").count() >= 1 and await pg.locator("#viz .vnav button").count() == 6)
+            await pg.locator("#viz .vsec .vtog").first.click(); await pg.wait_for_timeout(150)
+            ok("v1.28: a section folds and its jump button opens it again", await pg.locator("#viz .vsec .vbody").first.is_hidden())
+            await pg.locator("#viz .vnav button").first.click(); await pg.wait_for_timeout(300)
+            ok("v1.28: jump bar reopens a folded section", await pg.locator("#viz .vsec .vbody").first.is_visible())
             ok("events only: no script errors", not errs, errs)
             await pg.context.close()
 

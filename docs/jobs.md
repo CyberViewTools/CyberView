@@ -443,12 +443,15 @@ DONE WHEN: you ended with exactly one of the two lines.
 
 ```
 JOB: researcher. You are one of several researchers working in parallel on the hourly sweep. A script has assigned you the stories listed under YOUR ASSIGNMENT at the end of this prompt. Handle every one of them: the run is scored on it.
-GOAL: each assigned story ends as a complete, sourced event on the map, an update to an event already on file, or is closed with a clear reason. Nothing is skipped and nothing is written from a headline.
+GOAL: each assigned story ends as a complete, sourced event on the map, a real update to an event already on file, or is closed with a clear reason. Your time goes to stories that are NOT on the map yet. Nothing is skipped and nothing is written from a headline.
 STEPS, for each story id in your assignment, in the order given:
-1. `node scripts/fuse.mjs show <id>` lists every source that reports it.
-2. Open the two best sources: the government or vendor original first, then the strongest independent publisher. Follow news.google.com and bing.com links through to the publisher's own page. If a page will not load, try the next source in the list before giving up.
-3. Decide: is this a real cyber event for the map, from the last 7 days? A new CVE or advisory counts only with exploitation, public exploit code, an official urgent notice, or wide use. A leak-site claim counts only for an organisation of public importance, as status "claimed", severity 1.
-4. `node scripts/q.mjs dupes "<title>"`. Score 1 or more: it is on file. Update that event (new source, new facts, updated_at) instead of adding one.
+1. `node scripts/fuse.mjs show <id>` lists every source that reports it. Then, BEFORE opening any page: `node scripts/q.mjs dupes "<the story's headline>"`.
+2. Already on file (dupes score 1 or more)? Look at that event's status and validation (`node scripts/q.mjs get <event id> --fields status,validation,updated_at`).
+   - It is confirmed or official, or its validation is corroborated: do NOT confirm it again. Open nothing. Close the story at once: `node scripts/fuse.mjs done <id> "already on file: <event id>"`. A second article saying the same thing is not news.
+   - Only update the event when the headline itself states something the record lacks: the organisation confirming a claim, an attribution by a government or the investigating firm, a number of people or records, a fix, an arrest, a restored service. Then read that one source and update the event (new source, the new fact, updated_at).
+   - The event on file is claimed, developing or single-source: this story may be its confirmation. Read the best source and update status and validation if it supports that.
+3. Not on file: open the two best sources: the government or vendor original first, then the strongest independent publisher. Follow news.google.com and bing.com links through to the publisher's own page. If a page will not load, try the next source in the list before giving up.
+4. Decide: is this a real cyber event for the map, from the last 6 days? A new CVE or advisory counts only with exploitation, public exploit code, an official urgent notice, or wide use. A leak-site claim counts only for an organisation of public importance, as status "claimed", severity 1.
 5. Real and new: write data/events/<YYYY-MM>/<id>.json so that it passes every point of THE EVENT CHECKLIST. Two or more independent publishers read: validation.state "corroborated" with a note naming them.
 6. Close the story: `node scripts/fuse.mjs done <id> "<event id you wrote or updated>"` or `node scripts/fuse.mjs done <id> "<why it is not an event>"`. Every assigned story must be closed one way or the other. If you could not decide because no source would load, close it with "could not confirm: <what failed>" and add it to your run log's open_leads.
 7. When all are done, run `node scripts/build.mjs`. Fix any error it names in a file you wrote, and rerun until it passes.
@@ -469,7 +472,7 @@ STEPS:
 3. Region in depth: the region under YOUR ASSIGNMENT. At most 4 searches, at least half in the languages named there. Look for what English-language feeds miss: a hospital, city, utility, bank or agency reporting an incident; a national CERT alert.
 4. For each real event found: read the page, `node scripts/q.mjs dupes "<title>"`, and write a complete record that passes THE EVENT CHECKLIST (or update the event on file).
 5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<the file name under YOUR ASSIGNMENT> with searches, pages_read, added, updated, open_leads.
-RULES: an event already listed under YOUR ASSIGNMENT is done: finding it again is not a result. An event whose date is more than 6 days ago is not added (the map shows seven days): log it under skipped. Do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
+RULES: an event already listed under YOUR ASSIGNMENT is done: finding it again is not a result. Never re-read or re-confirm an event that is already confirmed, official or corroborated; update an event on file only for a new fact (confirmation of a claim, attribution, numbers, a fix, an arrest, service restored). An event whose date is more than 6 days ago is not added (the map shows seven days): log it under skipped. Do NOT run any git command and do not edit data/status.json: the dispatcher commits. Never write an event from a search snippet: open the page.
 LIMITS: 8 searches, 6 new events.
 DONE WHEN: the headline pass and the region pass are both done; a quiet hour with nothing new is a valid result.
 End with one line: "gap researcher: <n> new, <n> updated; region <name>".

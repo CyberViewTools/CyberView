@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.27",date:"2026-11-19"};
+var BUILD={version:"1.28",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -1063,10 +1063,85 @@ function evGlyph(g,e,x,y,small){
    .on("pointerenter",function(ev){tipAt(ev,e.title,fmtDay(e.date)+" · "+CAT[e.category].one+" · "+["","low","medium","high"][e.severity]+" severity"+(e.status==="claimed"?" · unverified claim":"")+"");}).on("pointerleave",hideTip);
 }
 function pickSet(ids,label){var a=ids.slice();a.label=label;state.spot=a;state.sel=null;state.day=null;setTab("feed");render();}
+/* ---------- making the long analysis views quick to read ----------
+   Both views are several screens of charts. vizShape adds, on top of what vizTime and vizCorr drew: a short summary in
+   plain sentences computed from the same events, a bar to jump between sections, sections that fold, and long card lists
+   cut to the first three with the rest one tap away. It changes how the content is laid out, never the content. */
+var vizUi={closed:{},all:{},open:{}};
+var VNAMES={time:["Tempo","Pressure","Patch deadlines"],graph:["Ripple effects","Threat to target","Chains","Shared factors","Hot spots"]};
+function vizTakes(list){
+  var out=[],hi=function(a){return a.filter(function(e){return e.severity===3;}).length;},plural=function(n,w){return n+" "+w+(n===1?"":"s");};
+  if(state.view==="time"){
+    var byDay=tally(list,function(e){return e.date;});
+    if(byDay.length){var d=byDay[0][0],on=list.filter(function(e){return e.date===d;});out.push([0,"Busiest day: "+fmtDay(d)+", with "+plural(on.length,"event")+" ("+hi(on)+" high severity)."]);}
+    var keyOf=viz.lane==="type"?function(e){return e.category;}:viz.lane==="sector"?function(e){return e.secg;}:function(e){return e.layer;},names={};
+    (viz.lane==="type"?CATS.map(function(c){return [c.k,c.label];}):viz.lane==="sector"?SECG:LAYERS).forEach(function(l){names[l[0]]=String(l[1]).split(":")[0];});
+    var lanes=tally(list.filter(function(e){return e.severity===3&&(viz.lane!=="layer"||e.layer!=="org");}),keyOf);
+    if(lanes.length&&names[lanes[0][0]]){var all=list.filter(function(e){return keyOf(e)===lanes[0][0];}).length;out.push([1,names[lanes[0][0]]+" carries the most high-severity events: "+lanes[0][1]+" of its "+all+"."]);}
+    var due=kev.map(function(k){return {k:k,left:kevLeft(k)};}).filter(function(x){return x.left!==null;}),late=due.filter(function(x){return x.left<0;}).length,soon=due.filter(function(x){return x.left>=0&&x.left<=7;}).sort(function(a,b){return a.left-b.left;});
+    if(soon.length||late)out.push([2,(soon.length?plural(soon.length,"known-exploited flaw")+(soon.length===1?" has":" have")+" a US federal patch deadline within 7 days; the nearest is "+soon[0].k.cve+(soon[0].left===0?" today":" in "+plural(soon[0].left,"day"))+".":"No federal patch deadline falls in the next 7 days.")+(late?" "+late+" on file "+(late===1?"is":"are")+" already past the deadline.":"")]);
+    var fresh=list.filter(function(e){return Date.now()-Date.parse(e.firstSeen)<864e5;}).length;
+    if(fresh)out.push([-1,plural(fresh,"event")+" added to the map in the last 24 hours."]);
+  }else{
+    var byId={};list.forEach(function(e){byId[e.id]=e;});
+    var rp=ripples?ripples.items.filter(function(r){return byId[r.id];}):[];
+    if(rp.length)out.push([0,plural(Math.min(6,rp.length),"event")+" with the widest reach "+(rp.length===1?"has":"have")+" a written what-follows analysis, starting with: "+byId[rp[0].id].title+"."]);
+    var tags=tally(list.reduce(function(a,e){if(e.layer!=="org")e.tags.forEach(function(t){a.push(t);});return a;},[]),function(t){return t;});
+    if(tags.length)out.push([1,"Most common kind of threat: "+tags[0][0]+" ("+plural(tags[0][1],"event")+")"+(tags[1]?", then "+tags[1][0]+" ("+tags[1][1]+")":"")+"."]);
+    var pats=analysis?analysis.patterns.filter(function(p){return (p.chain.length>1?p.chain:p.ids).filter(function(i){return byId[i];}).length>=2;}):[];
+    if(pats.length){var st=pats.filter(function(p){return p.kind==="stated";});out.push([2,plural(pats.length,"chain")+" link separate events"+(st.length?"; "+st.length+" rest"+(st.length===1?"s":"")+" on links the sources state":"; none is stated outright by a source")+". First: "+pats[0].title+"."]);}
+    var g={};list.forEach(function(e){var seen={};e.cves.concat(e.products.map(function(x){return x.slice(0,40);})).concat(e.actor&&!/^(unknown|unattributed|none|n\/a)/i.test(e.actor)?[e.actor.split(/[;(]/)[0].trim().slice(0,40)]:[]).forEach(function(k){if(k&&!seen[k]){seen[k]=1;g[k]=(g[k]||0)+1;}});});
+    var top=Object.keys(g).filter(function(k){return g[k]>1;}).sort(function(a,b){return g[b]-g[a];})[0];
+    if(top)out.push([3,"Most widely shared factor: "+top+", named in "+g[top]+" separate events."]);
+    var ln={},sn={};LAYERS.forEach(function(l){ln[l[0]]=String(l[1]).split(":")[0];});SECG.forEach(function(x){sn[x[0]]=x[1];});
+    var cell=tally(list.filter(function(e){return e.layer!=="org"&&ln[e.layer]&&sn[e.secg];}),function(e){return e.layer+"|"+e.secg;})[0];
+    if(cell){var cp=cell[0].split("|");out.push([4,"Where most events land: "+ln[cp[0]]+" in "+sn[cp[1]].toLowerCase()+" ("+plural(cell[1],"event")+")."]);}
+  }
+  return out;
+}
+function vizShape(v,list){
+  var view=state.view,names=VNAMES[view]||[],secs=Array.prototype.slice.call(v.querySelectorAll(":scope > .vsec")),bodies=[];
+  function setOpen(i,on){var b=bodies[i];if(!b)return;b.body.hidden=!on;b.btn.setAttribute("aria-expanded",on?"true":"false");vizUi.closed[view+i]=!on;}
+  function go(i){setOpen(i,true);var n=secs[i];if(n){try{n.scrollIntoView({block:"start",behavior:reduced?"auto":"smooth"});}catch(x){n.scrollIntoView();}}}
+  secs.forEach(function(sec,i){
+    var h=sec.querySelector(":scope > h3, :scope > .vhead > h3");if(!h)return;
+    var top=h.parentNode===sec?h:h.parentNode,body=el("div","vbody");while(top.nextSibling)body.appendChild(top.nextSibling);sec.appendChild(body);
+    var btn=el("button","vtog");btn.type="button";btn.appendChild(el("span","vn",names[i]||""));btn.appendChild(el("span","vq",h.textContent));h.textContent="";h.appendChild(btn);
+    var k=view+i,closed=own(vizUi.closed,k)?vizUi.closed[k]:(!wide&&i>0);
+    bodies[i]={body:body,btn:btn};body.hidden=closed;btn.setAttribute("aria-expanded",closed?"false":"true");
+    btn.addEventListener("click",function(){setOpen(i,body.hidden);});
+    sec.id="vsec-"+view+"-"+i;
+  });
+  /* long card lists: the first three, the rest on request */
+  [[".rips",".rip","analyses"],[".chains",".chain","chains"]].forEach(function(d){
+    var box=v.querySelector(d[0]);if(!box)return;var items=Array.prototype.slice.call(box.querySelectorAll(":scope > "+d[1])),k=view+d[0];
+    if(items.length>3&&!vizUi.all[k]){items.slice(3).forEach(function(n){n.hidden=true;});
+      var mb=el("button","btn ghost sm vmore","Show all "+items.length+" "+d[2]);mb.type="button";mb.addEventListener("click",function(){vizUi.all[k]=true;items.forEach(function(n){n.hidden=false;});mb.remove();});box.appendChild(mb);}
+  });
+  /* what-follows cards open one at a time: the title and the direct effect first, the rest on request */
+  Array.prototype.forEach.call(v.querySelectorAll(".rip"),function(c){
+    var cols=c.querySelector(".cols"),t=c.querySelector(".rh button"),first=c.querySelector(".col li");if(!cols||!t)return;
+    var k=t.textContent.slice(0,80),open=!!vizUi.open[k],tease=el("p","tease",first?first.textContent:""),tb=el("button","linkbtn",open?"Show less":"What it can lead to and what to watch for");tb.type="button";
+    tb.setAttribute("aria-expanded",open?"true":"false");cols.hidden=!open;tease.hidden=open;
+    tb.addEventListener("click",function(){var on=cols.hidden;cols.hidden=!on;tease.hidden=on;vizUi.open[k]=on;tb.textContent=on?"Show less":"What it can lead to and what to watch for";tb.setAttribute("aria-expanded",on?"true":"false");});
+    c.insertBefore(tease,cols);c.appendChild(tb);
+  });
+  /* the summary and the jump bar */
+  var head=v.querySelector(":scope > .vhead"),takes=[];try{takes=vizTakes(list);}catch(x){takes=[];}
+  var nav=el("nav","vnav");nav.setAttribute("aria-label","Sections of this view");
+  secs.forEach(function(sec,i){if(!bodies[i])return;var b=el("button",null,names[i]||("Section "+(i+1)));b.type="button";b.addEventListener("click",function(){go(i);});nav.appendChild(b);});
+  var all=el("button","ghost",(secs.some(function(x,i){return bodies[i]&&bodies[i].body.hidden;})?"Open all":"Fold all"));all.type="button";
+  all.addEventListener("click",function(){var open=all.textContent==="Open all";secs.forEach(function(x,i){setOpen(i,open);});all.textContent=open?"Fold all":"Open all";});nav.appendChild(all);
+  var anchor=head?head.nextSibling:v.firstChild;
+  if(takes.length){var box=el("section","vtake");box.appendChild(el("h3",null,"In short"));var ul=el("ul");
+    takes.forEach(function(t){var li=el("li");li.appendChild(el("span",null,t[1]));if(t[0]>=0&&bodies[t[0]]){var jb=el("button","linkbtn","See "+(names[t[0]]||"section").toLowerCase());jb.type="button";jb.addEventListener("click",function(){go(t[0]);});li.appendChild(jb);}ul.appendChild(li);});
+    box.appendChild(ul);box.appendChild(el("p","cav","Computed from the "+list.length+" events in this view; change the filters and it changes with them."));v.insertBefore(box,anchor);}
+  v.insertBefore(nav,anchor);
+}
 function renderViz(list){
   var v=$("viz"),st=v.dataset.view===state.view?v.scrollTop:0;v.dataset.view=state.view;v.textContent="";
   if(!loaded){v.appendChild(el("p","vnone","Loading events"));return;}
-  try{if(state.view==="time")vizTime(v,list);else vizCorr(v,list);}
+  try{if(state.view==="time")vizTime(v,list);else vizCorr(v,list);if(list.length)vizShape(v,list);}
   catch(x){v.appendChild(el("p","vnone","This chart could not be drawn. The charts above it and the rest of the page are unaffected."));throw x;}
   v.scrollTop=st;
 }

@@ -40,6 +40,7 @@ scripts/lib/store.mjs    the one place that knows the data layout
 scripts/build.mjs        validates every record, writes the bundle and the archive; fails on bad data
 scripts/q.mjs            search the whole history without reading files (find, dupes, get, seen, leads, runs, kev, stats)
 scripts/feeds.mjs        KEV, EPSS and CVSS feeds (GitHub Action, no AI model)
+scripts/cve-db.mjs      the historical CVE database: every CVE NVD has published, compact, sharded by year on the cve-data branch (one force-pushed commit, built by cve-db.yml, copied into site/data/cve/ at deploy); never commit it to main
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
 scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)

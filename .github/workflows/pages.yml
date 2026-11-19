@@ -13,7 +13,7 @@ on:
     branches: [main]
     paths-ignore: ["data/leases.json", "data/usage/**"]
   workflow_run:
-    workflows: ["Feeds (KEV, EPSS, NVD, context layers)", "AI jobs", "Collect leads", "Link check"]
+    workflows: ["Feeds (KEV, EPSS, NVD, context layers)", "AI jobs", "Collect leads", "Link check", "CVE database (NVD history)"]
     types: [completed]
   workflow_dispatch:
 
@@ -54,6 +54,14 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
       - name: Security check
         run: node scripts/security-check.mjs
+      - name: Add the CVE history (optional, a missing or broken copy is skipped and the deploy never waits on it)
+        continue-on-error: true
+        run: |
+          if git ls-remote --exit-code --heads origin cve-data >/dev/null 2>&1; then
+            git clone -q --depth 1 --branch cve-data "https://github.com/${{ github.repository }}.git" cve-data && node scripts/cve-db.mjs site --from cve-data --to site/data/cve
+          else
+            echo "No cve-data branch yet: the site publishes without the CVE history."
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

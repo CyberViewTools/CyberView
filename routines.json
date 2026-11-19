@@ -26,6 +26,16 @@
    "does": "Syncs CISA's known-exploited catalog and EPSS and CVSS scores; re-rates affected events; refreshes the internet-disruption and disaster-alert map layers."
   },
   {
+   "key": "cve-db",
+   "name": "CVE history",
+   "tier": "automation",
+   "workflow": "cve-db.yml",
+   "cron": "41 3 * * *",
+   "model": null,
+   "active": true,
+   "does": "Keeps every CVE NVD has published in a compact searchable database on the cve-data branch, reading only what NVD changed each day; the site copies it in when it deploys."
+  },
+  {
    "key": "monitor",
    "name": "Live site monitor",
    "tier": "automation",

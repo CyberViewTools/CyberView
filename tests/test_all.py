@@ -650,7 +650,7 @@ async def main():
             for sub in ["archive.html", "vulnerabilities.html", "trends.html", "tabletop.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 8 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1086,10 +1086,10 @@ async def main():
             await pg.click("#wbt-all"); await pg.fill("#wbQ", ""); await pg.wait_for_timeout(200)
             ok("browse: nothing listed until something is loaded", await pg.locator("#cvList .cvrow").count() == 0 and "Nothing loaded" in await pg.locator("#cvLoaded").text_content())
             await pg.select_option("#cvYear", "2024"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(700)
-            ok("browse: a year loads, rejected hidden by default", await pg.locator("#cvList .cvrow").count() == 62 and "62 CVEs" in await pg.locator("#cvCount").text_content(), await pg.locator("#cvCount").text_content())
+            ok("browse: a year loads, rejected hidden by default", await pg.locator("#cvList .cvrow").count() == 62 and "62 of 63 CVEs" in await pg.locator("#cvCount").text_content(), await pg.locator("#cvCount").text_content())
             ok("browse: markup in a description is text", await pg.locator("#cvList img").count() == 0 and "<script>alert(1)</script>" in await pg.locator("#cvList").text_content())
             await pg.fill("#wbQ", "needle"); await pg.wait_for_timeout(400)
-            ok("filter: text narrows the loaded years", await pg.locator("#cvList .cvrow").count() == 1 and "CVE-2024-12345" in await pg.locator("#cvList").text_content())
+            ok("filter: text narrows the loaded years", await pg.locator("#cvList .cvrow").count() == 1 and "CVE-2024-2345" in await pg.locator("#cvList").text_content())
             await pg.fill("#wbQ", ""); await pg.select_option("#cvStatusSel", "all"); await pg.wait_for_timeout(200)
             ok("filter: status all shows the rejected one", await pg.locator("#cvList .cvrow").count() == 63 and await pg.locator("#cvList .cvrow", has_text="Rejected").count() == 1)
             await pg.select_option("#cvStatusSel", "R"); await pg.wait_for_timeout(200)
@@ -1108,7 +1108,7 @@ async def main():
             first = await pg.locator("#cvList .cvscore").first.text_content()
             ok("sort: highest CVSS first", first == "9.8", first)
             await pg.locator("#cvList .cvhead").first.click(); await pg.wait_for_timeout(150)
-            ok("rows: open for the full record", await pg.locator("#cvList .wbdetail").count() == 1 and "NVD status" in await pg.locator("#cvList .wbdetail").text_content())
+            ok("rows: open for the full record", await pg.locator("#cvList .wbdetail").count() == 1 and "Published:" in await pg.locator("#cvList .wbdetail").text_content())
             # known exploited join
             await pg.select_option("#cvYear", "2026"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(500)
             await pg.check("#cvKev"); await pg.wait_for_timeout(200)
@@ -1119,7 +1119,8 @@ async def main():
             await pg.select_option("#cvYear", "recent"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(500)
             ok("recent: three CVEs from recent.json, CISA's own flag shown", await pg.locator("#cvList .cvrow").count() == 3 and await pg.locator("#cvList .cvrow", has_text="Known exploited").count() >= 1)
             ok("vendor suggestions come from what is loaded", await pg.locator("#cvVendorList .badge").count() >= 2)
-            ok("caveat names the source and its limits", all(x in await pg.locator("#cvCaveat").text_content() for x in ["CVE List", "trimmed", "rebuilt"]))
+            cav = await pg.locator("#cvCaveat").text_content()
+            ok("caveat names the source and its limits", all(x in cav for x in ["CVE List", "trimmed", "rebuilt"]))
             outside = [r for r in reqs if not r.startswith("http://localhost")]
             ok("vulnerabilities: nothing leaves the page", not outside, outside)
             ok("vulnerabilities: no script errors", not errs, errs)

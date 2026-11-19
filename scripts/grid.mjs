@@ -1,9 +1,14 @@
 // Electrical grid outages as map context, no AI model. Run: node scripts/grid.mjs collect | verify | status [--json]
 // (behind a proxy: NODE_USE_ENV_PROXY=1). Contract: swarm/handoff/grid-contract.md.
 //
-//   collect  fetch six public operator feeds -> data/grid/live.json (items) -> incidents (open, update, close)
-//            -> data/grid/incidents.json, closed ones appended to data/grid/history/<YYYY-MM>.jsonl
-//            -> data/context/grid.json (the map layer) -> status last_grid_at, run log with counts and reason codes
+//   collect  fetch six public operator feeds and three keyed sources -> data/grid/live.json (items) -> incidents (open,
+//            update, close) -> data/grid/incidents.json, closed ones appended to data/grid/history/<YYYY-MM>.jsonl
+//            -> data/grid/series/<YYYY-MM-DD>.jsonl (one point per region per 15 minutes; days older than 90 are rolled
+//            into data/grid/series/monthly/<YYYY-MM>.json and removed) -> data/context/grid.json (the map layer)
+//            -> status last_grid_at, run log with counts and reason codes
+//            Keyed sources (EIA, Cloudflare Radar, ENTSO-E): the network proxy adds the key; this code never reads,
+//            stores or sends one. Without a key the host answers 400/401/403 and the source is "not connected", which is
+//            reported but is not a failure. Contract: swarm/handoff/grid-analysis-contract.md.
 //   verify   shape-check every grid file; exit 1 naming the file and the field
 //   status   one-line summary (JSON with --json)
 //
@@ -12,7 +17,8 @@
 // A failing source keeps its previous items (ok:false) for up to KEEP_STALE_HOURS, so the map shows it as stale.
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, unlinkSync } from "node:fs";
+import { inflateRawSync } from "node:zlib";
 import { DATA, ROOT, readJson, writeJson, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { get } from "./lib/net.mjs";
 
@@ -73,6 +79,51 @@ export const SOURCES = {
     page: "https://www.ercot.com/gridmktinfo/dashboards/gridconditions", hosts: ["www.ercot.com"] },
   aemo: { name: "AEMO", country: "AU", url: "https://www.nemweb.com.au/REPORTS/CURRENT/Market_Notice/",
     page: "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/data-nem/market-notices", hosts: ["www.nemweb.com.au", "www.aemo.com.au"] },
+  // keyed: the environment's network proxy adds the key for `host` (never this code). Signals only: their items are used
+  // by scripts/grid-analysis.mjs to corroborate operator incidents and do not open incidents themselves.
+  eia: { name: "EIA hourly electric grid monitor", country: "US", keyed: true, host: "api.eia.gov",
+    url: "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data[0]=value&facets[type][]=D&facets[type][]=DF&sort[0][column]=period&sort[0][direction]=desc&length=500",
+    page: "https://www.eia.gov/electricity/gridmonitor/", hosts: ["www.eia.gov"] },
+  cfradar: { name: "Cloudflare Radar outage center", country: "", keyed: true, host: "api.cloudflare.com",
+    url: "https://api.cloudflare.com/client/v4/radar/annotations/outages?dateRange=7d&format=JSON&limit=200",
+    page: "https://radar.cloudflare.com/outage-center", hosts: ["radar.cloudflare.com"] },
+  entsoe: { name: "ENTSO-E Transparency Platform", country: "", keyed: true, host: "web-api.tp.entsoe.eu",
+    url: "https://web-api.tp.entsoe.eu/api", page: "https://transparency.entsoe.eu/", hosts: ["transparency.entsoe.eu"] },
+};
+/** The six public operator feeds (incidents, series); the keyed sources are signals for the analysis only. */
+export const OPERATORS = Object.keys(SOURCES).filter((k) => !SOURCES[k].keyed);
+
+// Approximate country centroids and English names (for keyed sources' items, which come per country, and for matching
+// GDACS and news by country name in scripts/grid-analysis.mjs). approx: these are rough points, never a location claim.
+export const COUNTRIES = {
+  AE: ["United Arab Emirates", 24, 54], AF: ["Afghanistan", 34, 66], AL: ["Albania", 41, 20], AM: ["Armenia", 40.2, 45],
+  AO: ["Angola", -12.3, 17.5], AR: ["Argentina", -35, -65], AT: ["Austria", 47.5, 14.5], AU: ["Australia", -25, 134],
+  AZ: ["Azerbaijan", 40.3, 47.7], BA: ["Bosnia and Herzegovina", 44, 17.8], BD: ["Bangladesh", 23.7, 90.3], BE: ["Belgium", 50.6, 4.6],
+  BG: ["Bulgaria", 42.7, 25.3], BO: ["Bolivia", -16.7, -64.7], BR: ["Brazil", -10, -52], BY: ["Belarus", 53.7, 28],
+  CA: ["Canada", 56, -106], CH: ["Switzerland", 46.8, 8.2], CL: ["Chile", -33, -71], CN: ["China", 35, 103],
+  CO: ["Colombia", 4, -73], CU: ["Cuba", 21.5, -79], CY: ["Cyprus", 35, 33], CZ: ["Czechia", 49.8, 15.5],
+  DE: ["Germany", 51, 10.4], DK: ["Denmark", 56, 9.5], DO: ["Dominican Republic", 18.8, -70.2], DZ: ["Algeria", 28, 2.6],
+  EC: ["Ecuador", -1.5, -78.4], EE: ["Estonia", 58.7, 25.5], EG: ["Egypt", 26.7, 30], ES: ["Spain", 40.2, -3.6],
+  ET: ["Ethiopia", 8.6, 39.6], FI: ["Finland", 64.5, 26], FR: ["France", 46.6, 2.4], GB: ["United Kingdom", 54, -2.5],
+  GE: ["Georgia", 42.2, 43.5], GH: ["Ghana", 7.9, -1], GR: ["Greece", 39, 22], HR: ["Croatia", 45.1, 15.5],
+  HT: ["Haiti", 19, -72.7], HU: ["Hungary", 47.2, 19.4], ID: ["Indonesia", -2.5, 118], IE: ["Ireland", 53.2, -8],
+  IL: ["Israel", 31.4, 35], IN: ["India", 22, 79], IQ: ["Iraq", 33, 43.7], IR: ["Iran", 32.5, 54], IT: ["Italy", 42.8, 12.5],
+  JM: ["Jamaica", 18.1, -77.3], JO: ["Jordan", 31.2, 36.5], JP: ["Japan", 36.5, 138], KE: ["Kenya", 0.2, 37.9],
+  KG: ["Kyrgyzstan", 41.5, 74.5], KR: ["South Korea", 36.4, 127.9], KZ: ["Kazakhstan", 48, 67], LB: ["Lebanon", 33.9, 35.9],
+  LK: ["Sri Lanka", 7.8, 80.7], LT: ["Lithuania", 55.3, 23.9], LU: ["Luxembourg", 49.8, 6.1], LV: ["Latvia", 56.9, 24.9],
+  LY: ["Libya", 27, 17], MA: ["Morocco", 31.8, -6.8], MD: ["Moldova", 47.2, 28.5], MK: ["North Macedonia", 41.6, 21.7],
+  MM: ["Myanmar", 21, 96], MX: ["Mexico", 23.6, -102.5], MY: ["Malaysia", 4.2, 102], MZ: ["Mozambique", -18.7, 35.5],
+  NG: ["Nigeria", 9.1, 8.7], NL: ["Netherlands", 52.2, 5.5], NO: ["Norway", 61, 9], NP: ["Nepal", 28.4, 84.1],
+  NZ: ["New Zealand", -41.5, 172.5], OM: ["Oman", 21, 57], PA: ["Panama", 8.5, -80], PE: ["Peru", -9.2, -75],
+  PH: ["Philippines", 12.9, 122], PK: ["Pakistan", 30, 70], PL: ["Poland", 52, 19.4], PR: ["Puerto Rico", 18.2, -66.5],
+  PT: ["Portugal", 39.6, -8], PY: ["Paraguay", -23.4, -58.4], QA: ["Qatar", 25.3, 51.2], RO: ["Romania", 45.9, 24.9],
+  RS: ["Serbia", 44, 20.9], RU: ["Russia", 61.5, 99], SA: ["Saudi Arabia", 24, 45], SD: ["Sudan", 15.5, 30.2],
+  SE: ["Sweden", 62, 15], SG: ["Singapore", 1.35, 103.8], SI: ["Slovenia", 46.1, 14.8], SK: ["Slovakia", 48.7, 19.7],
+  SN: ["Senegal", 14.5, -14.4], SY: ["Syria", 35, 38.5], TH: ["Thailand", 15.8, 101], TN: ["Tunisia", 34, 9.5],
+  TR: ["Turkey", 39, 35], TW: ["Taiwan", 23.7, 121], TZ: ["Tanzania", -6.4, 34.9], UA: ["Ukraine", 49, 31.5],
+  US: ["United States", 39.8, -98.6], UY: ["Uruguay", -32.8, -56], UZ: ["Uzbekistan", 41.4, 64.6], VE: ["Venezuela", 7, -66],
+  VN: ["Vietnam", 16, 107.8], YE: ["Yemen", 15.6, 48], ZA: ["South Africa", -29, 25], ZM: ["Zambia", -13.1, 27.8],
+  ZW: ["Zimbabwe", -19, 29.8],
 };
 
 /** The url if it is https on one of the source's own hosts, else "". */
@@ -100,7 +151,7 @@ export const REGIONS = {
 function item(o) {
   const src = o.source;
   return {
-    id: str(o.id, 120), source: src, country: SOURCES[src].country, region: str(o.region, 60), area: str(o.area, 120),
+    id: str(o.id, 120), source: src, country: /^[A-Z]{2}$/.test(o.country || "") ? o.country : SOURCES[src].country, region: str(o.region, 60), area: str(o.area, 120),
     lat: okLat(o.lat) && okLng(o.lng) ? round3(o.lat) : null, lng: okLat(o.lat) && okLng(o.lng) ? round3(o.lng) : null,
     customers: intOrNull(o.customers), kind: o.kind || "outage", planned: !!o.planned, cause: str(o.cause, 120),
     level: o.level === null || o.level === undefined ? null : intOrNull(o.level), started_at: o.started_at || "",
@@ -277,6 +328,123 @@ export function aemoItems(notices, now = Date.now()) {
   return out;
 }
 
+// ---------- keyed sources ----------
+/** Did a keyed host refuse for want of a key? status: HTTP status; body: the reply text when known (null when the fetch
+ *  layer does not pass it on, then any 400/401/403 counts). Real no-key replies: tests/fixtures/grid/*-nokey.* */
+export function keyMissing(status, body = null) {
+  if (![400, 401, 403].includes(Number(status))) return false;
+  if (body == null) return true;
+  return /API_KEY_MISSING|api[_ ]?key|missing [^.]{0,40}(key|authori[sz]ation|header)|authenticat|unauthori[sz]ed|token/i.test(String(body).slice(0, 2000));
+}
+export const notConnected = (host) => Object.assign(new Error(`not connected (no key saved for ${host})`), { code: "not_connected" });
+/** Run a keyed adapter: a 400/401/403 that reads as "no key" becomes not_connected; anything else stays an error. */
+async function keyed(k, fn) {
+  try { return await fn(); } catch (e) {
+    const m = /^http_(\d{3})$/.exec((e && e.code) || "");
+    if (m && keyMissing(+m[1], e.body == null ? null : e.body)) throw notConnected(SOURCES[k].host);
+    throw e;
+  }
+}
+const isoOf = (s) => { const t = Date.parse(s || ""); return isFinite(t) ? isoS(t) : ""; };
+const centroid = (cc) => (COUNTRIES[cc] ? { lat: COUNTRIES[cc][1], lng: COUNTRIES[cc][2] } : { lat: null, lng: null });
+
+// --- Cloudflare Radar --- GET /radar/annotations/outages, documented at
+// https://developers.cloudflare.com/api/resources/radar/subresources/annotations/subresources/outages/methods/get/ (read
+// 2026-11-19): { success, result: { annotations: [{ id, dataSource, description, startDate, endDate, eventType,
+// linkedUrl, locations: [alpha-2], locationsDetails: [{ code, name }], outage: { outageCause, outageType }, scope, ... }] } }.
+// outageCause is one of 17 values; only "POWER_OUTAGE" is a grid signal. One item per location, at the country centroid.
+const RADAR_KEEP_ENDED_HOURS = 24;
+export function parseCfRadar(d, now = Date.now()) {
+  if (!d || d.success === false || !d.result || !Array.isArray(d.result.annotations)) throw badShape("radar");
+  const out = [];
+  for (const a of d.result.annotations) {
+    if (!a || !a.outage || a.outage.outageCause !== "POWER_OUTAGE") continue;
+    if (a.eventType && a.eventType !== "OUTAGE") continue;
+    const end = isoOf(a.endDate);
+    if (end && now - Date.parse(end) > RADAR_KEEP_ENDED_HOURS * 3600e3) continue;
+    const names = Object.fromEntries((a.locationsDetails || []).filter((x) => x && x.code).map((x) => [x.code, x.name]));
+    const codes = [...new Set([...(a.locations || []), ...Object.keys(names)])].filter((c) => /^[A-Z]{2}$/.test(c));
+    for (const cc of codes) {
+      out.push(item({ source: "cfradar", id: `cfradar:${str(a.id, 60)}-${cc}`, country: cc,
+        region: str(names[cc] || (COUNTRIES[cc] || [])[0] || cc, 60), area: str(a.scope || names[cc] || cc, 120), ...centroid(cc),
+        customers: null, kind: "outage", planned: false, cause: str(a.description, 120) || "Power outage", level: null,
+        started_at: isoOf(a.startDate), restore_est: end, url: SOURCES.cfradar.page }));
+    }
+  }
+  return out;
+}
+
+// --- ENTSO-E --- documentType A80 (generation unavailability, article 15.1.A&B), documented in the Transparency
+// Platform's Postman collection https://documenter.getpostman.com/view/7009892/2s93JtP3F6 (read 2026-11-19): the reply
+// is a ZIP of up to 200 Unavailability_MarketDocument XML files; BusinessType A53 = planned maintenance, A54 = forced
+// unavailability (unplanned outage); DocStatus A05 active, A09 cancelled, A13 withdrawn; SECURITY_TOKEN may go in a header.
+// Errors and empty answers come as an Acknowledgement_MarketDocument (Reason code + text; real reply saved in
+// tests/fixtures/grid/entsoe-nokey.xml). Bidding zones read: the EIC codes used in that collection's examples.
+export const ENTSOE_ZONES = {
+  "10YBE----------2": "BE", "10YAT-APG------L": "AT", "10YFR-RTE------C": "FR", "10YNL----------L": "NL",
+  "10Y1001A1001A82H": "DE", "10YCZ-CEPS-----N": "CZ", "10YES-REE------0": "ES", "10YHU-MAVIR----U": "HU",
+  "10YSK-SEPS-----K": "SK", "10YCH-SWISSGRIDZ": "CH", "10YFI-1--------U": "FI", "10YHR-HEP------M": "HR", "10YCA-BULGARIA-R": "BG",
+};
+/** Entries of a ZIP archive (stored or deflated) -> [{ name, text }]. Pure; no dependencies (node:zlib). */
+export function unzipEntries(buf, max = 200) {
+  const b = Buffer.isBuffer(buf) ? buf : Buffer.from(buf || []);
+  let eocd = -1;
+  for (let i = b.length - 22; i >= Math.max(0, b.length - 65557); i--) if (b.readUInt32LE(i) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw badShape("zip");
+  const n = b.readUInt16LE(eocd + 10), out = [];
+  let p = b.readUInt32LE(eocd + 16);
+  for (let k = 0; k < n && out.length < max; k++) {
+    if (p + 46 > b.length || b.readUInt32LE(p) !== 0x02014b50) throw badShape("zip directory");
+    const method = b.readUInt16LE(p + 10), csize = b.readUInt32LE(p + 20), nl = b.readUInt16LE(p + 28), xl = b.readUInt16LE(p + 30),
+      cl = b.readUInt16LE(p + 32), off = b.readUInt32LE(p + 42), name = b.toString("utf8", p + 46, p + 46 + nl);
+    p += 46 + nl + xl + cl;
+    if (off + 30 > b.length || b.readUInt32LE(off) !== 0x04034b50) throw badShape("zip entry");
+    const start = off + 30 + b.readUInt16LE(off + 26) + b.readUInt16LE(off + 28), raw = b.subarray(start, start + csize);
+    if (name.endsWith("/")) continue;
+    const data = method === 0 ? raw : method === 8 ? inflateRawSync(raw, { maxOutputLength: 8 << 20 }) : null;
+    if (data) out.push({ name, text: data.toString("utf8") });
+  }
+  return out;
+}
+const tag = (x, t) => { const m = String(x).match(new RegExp(`<${t.replace(/\./g, "\\.")}(?:\\s[^>]*)?>([^<]*)</${t.replace(/\./g, "\\.")}>`)); return m ? m[1].trim() : ""; };
+const xmlText = (s) => String(s || "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+/** One ENTSO-E XML document -> unavailability items (active, not cancelled or withdrawn, not ended more than 6 h ago).
+ *  An Acknowledgement that says there is no matching data -> []; any other Acknowledgement throws its reason. */
+export function parseEntsoeXml(xml, now = Date.now()) {
+  const s = String(xml || "");
+  if (/<Acknowledgement_MarketDocument/.test(s)) {
+    const why = xmlText(tag(s.split("<Reason>")[1] || "", "text"));
+    if (/no matching data/i.test(why)) return [];
+    throw Object.assign(new Error(`entsoe: ${str(why, 80)}`), { code: "entsoe_ack" });
+  }
+  if (!/<Unavailability_MarketDocument/.test(s)) throw badShape("entsoe document");
+  const status = (s.match(/<docStatus>\s*<value>(\w+)<\/value>/) || [])[1] || "A05";
+  if (status === "A09" || status === "A13") return [];
+  const mrid = tag(s, "mRID"), reason = xmlText(tag((s.split("<Reason>").pop() || ""), "text"));
+  const out = [];
+  for (const ts of s.split("<TimeSeries>").slice(1)) {
+    const zone = tag(ts, "biddingZone_Domain.mRID"), cc = ENTSOE_ZONES[zone] || "";
+    const start = isoOf(`${tag(ts, "start_DateAndOrTime.date")}T${tag(ts, "start_DateAndOrTime.time").replace(/Z?$/, "Z")}`);
+    const end = isoOf(`${tag(ts, "end_DateAndOrTime.date")}T${tag(ts, "end_DateAndOrTime.time").replace(/Z?$/, "Z")}`);
+    if (!cc || !start || (end && now - Date.parse(end) > 6 * 3600e3)) continue;
+    const bt = tag(ts, "businessType"), unit = xmlText(tag(ts, "production_RegisteredResource.name"));
+    const mw = intOrNull(tag(ts, "production_RegisteredResource.pSRType.powerSystemResources.nominalP"));
+    out.push(item({ source: "entsoe", id: `entsoe:${str(mrid, 60)}-${tag(ts, "mRID") || "1"}`, country: cc,
+      region: COUNTRIES[cc] ? COUNTRIES[cc][0] : cc, area: str(`${unit || "Generation unit"}${mw != null ? ` (${fmt(mw)} MW)` : ""}`, 120),
+      ...centroid(cc), customers: null, kind: "supply_warning", planned: bt === "A53",
+      cause: str(reason || (bt === "A54" ? "Forced unavailability" : bt === "A53" ? "Planned maintenance" : ""), 120), level: null,
+      started_at: start, restore_est: end, url: SOURCES.entsoe.page }));
+  }
+  return out;
+}
+/** A reply body (Buffer: ZIP or XML) -> items from every document in it. */
+export function parseEntsoe(body, now = Date.now()) {
+  const b = Buffer.isBuffer(body) ? body : Buffer.from(String(body || ""), "utf8");
+  const docs = b.length > 4 && b.readUInt32LE(0) === 0x04034b50 ? unzipEntries(b).filter((e) => /\.xml$/i.test(e.name)).map((e) => e.text) : [b.toString("utf8")];
+  return docs.flatMap((x) => parseEntsoeXml(x, now));
+}
+const ymdhm = (ms) => new Date(ms).toISOString().replace(/\D/g, "").slice(0, 12);
+
 async function pool(list, n, fn) {
   const out = []; let i = 0;
   await Promise.all(Array.from({ length: Math.min(n, list.length) }, async () => { while (i < list.length) { const k = i++; out[k] = await fn(list[k]); } }));
@@ -307,6 +475,30 @@ export const ADAPTERS = {
     });
     if (!notices.some(Boolean)) throw Object.assign(new Error("no notice could be read"), { code: "notices_unreadable" });
     return aemoItems(notices);
+  },
+  // EIA: only the not-connected path is built. Its documentation (https://www.eia.gov/opendata/documentation.php, read
+  // 2026-11-19) gives the generic v2 reply but not the region-data columns, and says the key "must always appear in the
+  // URL; it will not be detected in the HTTP headers". Until a real reply is saved, a connected answer is reported as
+  // an error instead of guessed at (swarm/REQUESTS.md).
+  async eia() {
+    return keyed("eia", async () => {
+      await get(SOURCES.eia.url, { retries: 0 });
+      throw Object.assign(new Error("connected; the EIA parser waits for a saved real reply"), { code: "parser_pending" });
+    });
+  },
+  async cfradar() { return keyed("cfradar", async () => parseCfRadar(await get(SOURCES.cfradar.url, { retries: 1 }))); },
+  async entsoe() {
+    return keyed("entsoe", async () => {
+      const now = Date.now(), from = ymdhm(now - 24 * 3600e3).slice(0, 10) + "00", to = ymdhm(now + 24 * 3600e3).slice(0, 10) + "00", out = [];
+      for (const zone of Object.keys(ENTSOE_ZONES)) {
+        // scripts/lib/net.mjs reads bodies as text or JSON; a ZIP needs the bytes (requested in swarm/REQUESTS.md)
+        const body = await get(`${SOURCES.entsoe.url}?documentType=A80&BusinessType=A54&BiddingZone_Domain=${encodeURIComponent(zone)}&periodStart=${from}&periodEnd=${to}`,
+          { as: "buffer", retries: 1, key: "entsoe" }).catch((e) => { if (e && e.code === "bad_json") e.code = "needs_binary_fetch"; throw e; });
+        if (!Buffer.isBuffer(body) && !(body instanceof ArrayBuffer)) throw Object.assign(new Error("needs a binary fetch"), { code: "needs_binary_fetch" });
+        out.push(...parseEntsoe(Buffer.from(body), now));
+      }
+      return out;
+    });
   },
 };
 
@@ -401,11 +593,12 @@ export function track(prev, items, cfg = DEFAULT_CFG, now = Date.now()) {
 
 // ---------- rule pass ----------
 const SUSPICIOUS = /cyber|hack|malware|ransom|unknown|investigat/i;
-const WEATHER = /\b(storm|wind|weather|snow|ice|tree|lightning|wildfire|heat|flood)/i;
+export const WEATHER = /\b(storm|wind|weather|snow|ice|tree|lightning|wildfire|heat|flood)/i;
 /** Which incidents a grid researcher should check, with a reason code. Research reasons first (suspicious_cause,
  *  grid_level, big), except that an incident that is mostly planned work closes as planned before `big`;
- *  then closures: planned, weather (the operator's top cause is weather), small. */
-export function triage(inc, cfg = DEFAULT_CFG) {
+ *  then `corroborated` (scripts/grid-analysis.mjs found an anomaly with three kinds of signal, or an internet outage
+ *  without a weather cause: extra.corroborated), then closures: planned, weather (the operator's top cause is weather), small. */
+export function triage(inc, cfg = DEFAULT_CFG, extra = {}) {
   const peak = inc.peak_customers || 0, causes = (inc.causes || []).map((c) => c.cause || "");
   const need = (r) => ({ research_needed: true, research_reason: r }), close = (r) => ({ research_needed: false, research_reason: r });
   if (peak >= cfg.research_suspicious_customers && causes.some((c) => SUSPICIOUS.test(c))) return need("suspicious_cause");
@@ -413,12 +606,13 @@ export function triage(inc, cfg = DEFAULT_CFG) {
   if (lv != null && Math.max(inc.level || 0, inc.peak_level || 0) >= lv) return need("grid_level");
   if ((inc.planned_share || 0) > 0.5) return close("planned");
   if (peak >= cfg.research_customers) return need("big");
+  if (extra && extra.corroborated) return need("corroborated");
   if (causes[0] && WEATHER.test(causes[0])) return close("weather");
   return close("small");
 }
 /** triage, but once an incident has asked for research it keeps asking (the desk leases it by that flag). */
-export function applyTriage(inc, cfg) {
-  const t = triage(inc, cfg);
+export function applyTriage(inc, cfg, extra = {}) {
+  const t = triage(inc, cfg, extra);
   return inc.research_needed && !t.research_needed ? inc : Object.assign(inc, t);
 }
 
@@ -442,6 +636,7 @@ export function contextItems(incidents, research = {}) {
 }
 
 // ---------- verify ----------
+export const REASONS = ["", "big", "suspicious_cause", "grid_level", "corroborated", "planned", "weather", "small"];
 const KINDS = ["outage", "load_shedding", "grid_emergency", "supply_warning"];
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
 const isStr = (x, n) => typeof x === "string" && x.length <= n;
@@ -506,7 +701,7 @@ export function checkIncident(o, p = "incident") {
   if (typeof o.approx !== "boolean") e.push(`${p}.approx: not a boolean`);
   if (!(o.url === "" || ownUrl(o.source, o.url) === o.url)) e.push(`${p}.url: not https on the operator's host`);
   if (typeof o.research_needed !== "boolean") e.push(`${p}.research_needed: not a boolean`);
-  if (!["", "big", "suspicious_cause", "grid_level", "planned", "weather", "small"].includes(o.research_reason)) e.push(`${p}.research_reason: unknown code`);
+  if (!REASONS.includes(o.research_reason)) e.push(`${p}.research_reason: unknown code`);
   return e;
 }
 export function checkIncidents(d) {
@@ -557,6 +752,98 @@ export function checkConfig(c) {
   return e;
 }
 
+// ---------- time series ----------
+// data/grid/series/<YYYY-MM-DD>.jsonl: { at (start of the 15-minute slot), source, region, customers, unplanned, level },
+// one line per operator region per slot. Regions an ok source did not report are written as zero, so a quiet hour counts.
+export const SERIES_KEEP_DAYS = 90;
+const SLOT = 15 * 6e4;
+export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
+const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo"]);
+/** Live items of the sources that answered (okSources: their keys) -> one point per operator region for the slot of `now`. */
+export function seriesPoints(items, okSources, now = Date.now()) {
+  const at = slotIso(now), ok = new Set(okSources || []), groups = summarize((items || []).filter((x) => x && ok.has(x.source) && OPERATORS.includes(x.source)));
+  const out = new Map();
+  for (const s of groups.values()) out.set(s.key, { at, source: s.source, region: s.region, customers: s.signal && !s.total ? null : s.total, unplanned: s.unplanned, level: s.level });
+  for (const key of Object.keys(REGIONS)) {
+    const [source, region] = key.split("|");
+    if (!ok.has(source) || out.has(key)) continue;
+    const sig = SIGNAL_SOURCES.has(source);
+    out.set(key, { at, source, region, customers: sig ? null : 0, unplanned: 0, level: sig ? 0 : null });
+  }
+  return [...out.values()];
+}
+const seriesKey = (p) => `${p.source}|${p.region}|${p.at}`;
+/** Append points to their day files, skipping a region+slot that is already there (two writers: the flow and collect.yml). */
+export function appendSeries(dir, points) {
+  let n = 0;
+  const byDay = new Map();
+  for (const p of points || []) { const d = p.at.slice(0, 10); (byDay.get(d) || byDay.set(d, []).get(d)).push(p); }
+  for (const [day, ps] of byDay) {
+    mkdirSync(dir, { recursive: true });
+    const f = join(dir, `${day}.jsonl`), have = new Set(readLines(f).map(seriesKey));
+    const add = ps.filter((p) => !have.has(seriesKey(p)) && have.add(seriesKey(p)));
+    if (add.length) { appendFileSync(f, add.map((p) => JSON.stringify(p)).join("\n") + "\n"); n += add.length; }
+  }
+  return n;
+}
+/** A jsonl file -> parsed objects (bad lines skipped; missing file -> []). */
+export function readLines(f) {
+  if (!existsSync(f)) return [];
+  return readFileSync(f, "utf8").split("\n").filter((l) => l.trim()).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter((x) => x && typeof x === "object");
+}
+/** One day's points -> { "<source>|<region>": { max, mean, points, level_max } } (max/mean of unplanned customers). */
+export function rollupDay(points) {
+  const g = {}, seen = new Set();
+  for (const p of points || []) {
+    if (!p || !p.source || seen.has(seriesKey(p))) continue;
+    seen.add(seriesKey(p));
+    const k = `${p.source}|${p.region}`, r = g[k] || (g[k] = { max: 0, sum: 0, points: 0, level_max: null });
+    const u = Number(p.unplanned) || 0;
+    r.max = Math.max(r.max, u); r.sum += u; r.points++;
+    if (p.level != null) r.level_max = Math.max(r.level_max == null ? 0 : r.level_max, p.level);
+  }
+  return Object.fromEntries(Object.entries(g).map(([k, r]) => [k, { max: r.max, mean: Math.round(r.sum / r.points), points: r.points, level_max: r.level_max }]));
+}
+/** Days older than keepDays (by file name, UTC) -> folded into monthly/<YYYY-MM>.json { month, days: { <date>: rollupDay } }
+ *  and the day file removed (derived numbers: the roll-up keeps them). Returns the dates rolled up. */
+export function rollupSeries(dir, now = Date.now(), keepDays = SERIES_KEEP_DAYS) {
+  if (!existsSync(dir)) return [];
+  const cutoff = new Date(now - keepDays * 864e5).toISOString().slice(0, 10), rolled = [];
+  for (const f of readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f)).sort()) {
+    const day = f.slice(0, 10);
+    if (day >= cutoff) continue;
+    const mf = join(dir, "monthly", `${day.slice(0, 7)}.json`), m = readJson(mf, null) || { month: day.slice(0, 7), days: {} };
+    m.days = { ...(m.days || {}), [day]: rollupDay(readLines(join(dir, f))) };
+    writeJson(mf, m);
+    unlinkSync(join(dir, f));
+    rolled.push(day);
+  }
+  return rolled;
+}
+export function checkSeriesLine(o, p = "point") {
+  const e = [];
+  if (!o || typeof o !== "object") return [`${p}: not an object`];
+  if (!ISO.test(o.at || "") || Date.parse(o.at) % SLOT) e.push(`${p}.at: not the ISO start of a 15-minute slot`);
+  if (!OPERATORS.includes(o.source)) e.push(`${p}.source: not an operator source`);
+  if (!isStr(o.region, 60) || !o.region) e.push(`${p}.region: missing`);
+  for (const k of ["customers", "level"]) if (!(o[k] === null || isInt(o[k]))) e.push(`${p}.${k}: not an int or null`);
+  if (!isInt(o.unplanned)) e.push(`${p}.unplanned: not a count`);
+  return e;
+}
+export function checkMonthly(d, name = "") {
+  const e = [];
+  if (!d || typeof d !== "object" || !d.days || typeof d.days !== "object") return ["root: not { month, days }"];
+  if (!/^\d{4}-\d{2}$/.test(d.month || "") || (name && name !== `${d.month}.json`)) e.push("month: not <YYYY-MM> matching the file name");
+  for (const [day, regions] of Object.entries(d.days)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day.slice(0, 7) !== d.month) e.push(`days.${day}: not a date in this month`);
+    for (const [k, r] of Object.entries(regions || {})) {
+      if (!r || !isInt(r.max) || !isInt(r.mean) || !isInt(r.points) || r.mean > r.max || !(r.level_max === null || isInt(r.level_max)))
+        e.push(`days.${day}.${k}: not { max, mean <= max, points, level_max }`);
+    }
+  }
+  return e;
+}
+
 /** Every grid file -> [{ file, errors }] (only files with errors). A missing data file is an error only when `strict`. */
 export function verifyAll(root = ROOT, strict = true) {
   const out = [], rel = (p) => p.slice(root.length + 1);
@@ -581,22 +868,46 @@ export function verifyAll(root = ROOT, strict = true) {
     });
     if (errors.length) out.push({ file: `data/grid/history/${f}`, errors });
   }
+  out.push(...verifySeries(root));
+  return out;
+}
+/** Series day files and monthly roll-ups -> [{ file, errors }]. */
+export function verifySeries(root = ROOT) {
+  const out = [], sd = join(root, "data", "grid", "series");
+  if (!existsSync(sd)) return out;
+  for (const f of readdirSync(sd).filter((f) => f.endsWith(".jsonl"))) {
+    const errors = [], day = f.slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f)) errors.push("file: name is not <YYYY-MM-DD>.jsonl");
+    readFileSync(join(sd, f), "utf8").split("\n").forEach((line, i) => {
+      if (!line.trim()) return;
+      let o; try { o = JSON.parse(line); } catch { errors.push(`line ${i + 1}: not JSON`); return; }
+      errors.push(...checkSeriesLine(o, `line ${i + 1}`));
+      if (o && typeof o.at === "string" && o.at.slice(0, 10) !== day) errors.push(`line ${i + 1}.at: not on ${day}`);
+    });
+    if (errors.length) out.push({ file: `data/grid/series/${f}`, errors });
+  }
+  const md = join(sd, "monthly");
+  if (existsSync(md)) for (const f of readdirSync(md).filter((f) => f.endsWith(".json"))) {
+    let d; try { d = JSON.parse(readFileSync(join(md, f), "utf8")); } catch { out.push({ file: `data/grid/series/monthly/${f}`, errors: ["file: not JSON"] }); continue; }
+    const e = checkMonthly(d, f); if (e.length) out.push({ file: `data/grid/series/monthly/${f}`, errors: e });
+  }
   return out;
 }
 
 // ---------- CLI ----------
 const P = {
   live: join(DATA, "grid", "live.json"), incidents: join(DATA, "grid", "incidents.json"), research: join(DATA, "grid", "research.json"),
-  history: join(DATA, "grid", "history"), context: join(DATA, "context", "grid.json"),
+  history: join(DATA, "grid", "history"), context: join(DATA, "context", "grid.json"), series: join(DATA, "grid", "series"),
+  analysis: join(DATA, "grid", "analysis.json"),
 };
 export const CONTEXT_SOURCE = "Grid operators: Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO";
 
 async function collect() {
   const cfg = loadConfig(), started = nowIso(), now = Date.now();
   const old = readJson(P.live, {}) || {}, oldItems = Array.isArray(old.items) ? old.items : [], oldSources = old.sources || {};
-  const sources = {}, items = [], failed = [];
+  const sources = {}, items = [], failed = [], unkeyed = [];
   const results = await Promise.all(Object.keys(SOURCES).map(async (k) => {
-    try { return [k, await ADAPTERS[k](), null]; } catch (e) { return [k, null, str(e.code || e.message, 60)]; }
+    try { return [k, await ADAPTERS[k](), null]; } catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60)]; }
   }));
   for (const [k, got, err] of results) {
     const def = SOURCES[k], prev = oldSources[k] || {};
@@ -609,14 +920,17 @@ async function collect() {
       const kept = fresh ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
       sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length };
       items.push(...kept);
-      failed.push(`${k}: ${err}`);
+      // a keyed source without a key is reported, not counted as a failure
+      if (/^not connected/.test(err)) unkeyed.push(k); else failed.push(`${k}: ${err}`);
     }
   }
   writeJson(P.live, { fetched_at: nowIso(), sources, items });
 
   const prev = readJson(P.incidents, { open: [], closed: [] }) || { open: [], closed: [] };
   const { open, closed, newlyClosed } = track(prev, items, cfg, now);
-  for (const inc of [...open, ...newlyClosed]) applyTriage(inc, cfg);
+  // the analysis (scripts/grid-analysis.mjs, previous run) names incidents its signals corroborate
+  const corroborated = new Set(((readJson(P.analysis, {}) || {}).research || []).map((r) => r && r.id));
+  for (const inc of [...open, ...newlyClosed]) applyTriage(inc, cfg, { corroborated: corroborated.has(inc.id) });
   writeJson(P.incidents, { updated_at: nowIso(), open, closed });
   if (newlyClosed.length) {
     mkdirSync(P.history, { recursive: true });
@@ -627,6 +941,11 @@ async function collect() {
       if (!ids.has(inc.id)) appendFileSync(hf, JSON.stringify(inc) + "\n");
     }
   }
+  let seriesAdded = 0, rolled = [];
+  try {
+    seriesAdded = appendSeries(P.series, seriesPoints(items, Object.keys(sources).filter((k) => sources[k].ok), now));
+    rolled = rollupSeries(P.series, now);
+  } catch (e) { failed.push(`series: ${str(e.message, 60)}`); }
   const research = readJson(P.research, {}) || {};
   const okCount = Object.values(sources).filter((s) => s.ok).length;
   writeJson(P.context, { layer: "grid", source: CONTEXT_SOURCE, source_url: "", fetched_at: nowIso(), ok: okCount > 0,
@@ -638,9 +957,9 @@ async function collect() {
   const log = { started_at: started, sources: Object.fromEntries(Object.entries(sources).map(([k, s]) => [k, { ok: s.ok, items: s.items, error: s.error }])),
     items: items.length, opened: open.filter((i) => !prevIds.has(i.id)).map((i) => i.id), closed: newlyClosed.map((i) => i.id),
     open: open.length, research: open.filter((i) => i.research_needed).map((i) => ({ id: i.id, reason: i.research_reason })),
-    reasons, failed, finished_at: nowIso() };
+    reasons, failed, not_connected: unkeyed, series_points: seriesAdded, rolled_up: rolled, finished_at: nowIso() };
   writeRunLog("grid", log);
-  console.log(`grid: ${Object.entries(sources).map(([k, s]) => `${k} ${s.ok ? s.items : "failed"}`).join(", ")}; ${open.length} open, `
+  console.log(`grid: ${Object.entries(sources).map(([k, s]) => `${k} ${s.ok ? s.items : unkeyed.includes(k) ? "not connected" : "failed"}`).join(", ")}; ${open.length} open, `
     + `${log.opened.length} opened, ${newlyClosed.length} closed, ${log.research.length} for research` + (failed.length ? `; failed: ${failed.join("; ")}` : ""));
   return okCount ? 0 : 1;
 }
@@ -654,8 +973,9 @@ function status(asJson) {
     research_needed: inc && Array.isArray(inc.open) ? inc.open.filter((i) => i.research_needed).map((i) => ({ id: i.id, reason: i.research_reason })) : [],
   };
   if (asJson) { console.log(JSON.stringify(s, null, 2)); return 0; }
-  const bad = Object.entries(s.sources).filter(([, v]) => !v.ok).map(([k, v]) => `${k} (${v.error})`);
-  console.log(`grid: ${Object.keys(s.sources).length - bad.length}/${Object.keys(s.sources).length} sources ok${bad.length ? `, failing: ${bad.join(", ")}` : ""}; `
+  const bad = Object.entries(s.sources).filter(([, v]) => !v.ok && !/^not connected/.test(v.error)).map(([k, v]) => `${k} (${v.error})`);
+  const unkeyed = Object.entries(s.sources).filter(([, v]) => !v.ok && /^not connected/.test(v.error)).map(([k]) => k);
+  console.log(`grid: ${Object.keys(s.sources).length - bad.length - unkeyed.length}/${Object.keys(s.sources).length} sources ok${bad.length ? `, failing: ${bad.join(", ")}` : ""}${unkeyed.length ? `, not connected: ${unkeyed.join(", ")}` : ""}; `
     + `${s.items} items, ${s.open} open incidents (${s.research_needed.length} for research), ${s.closed_30d} closed in 30 days; fetched ${s.fetched_at || "never"}`);
   return 0;
 }

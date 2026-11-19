@@ -292,3 +292,157 @@ test("verify: catches a broken file and names the field", () => {
   writeFileSync(join(dir, "data", "context", "grid.json"), "{");
   assert.match(verifyAll(dir).find((b) => b.file === "data/context/grid.json").errors[0], /not JSON/);
 });
+
+// ---------- keyed sources (phase 2) ----------
+// *-nokey.* fixtures are the hosts' real replies to a request without a key, saved on 2026-11-19. cfradar.json and the
+// ENTSO-E entsoe-a80.* fixtures are HAND-MADE from the providers' public documentation (no key here), following the
+// documented shape exactly: Cloudflare's API reference for /radar/annotations/outages, and the A80 example response in
+// ENTSO-E's Postman collection (entsoe-a80.xml is that example verbatim; the zip adds a cancelled and a forced copy).
+import { keyMissing, notConnected, parseCfRadar, parseEntsoe, parseEntsoeXml, unzipEntries, ADAPTERS, SOURCES, OPERATORS,
+  COUNTRIES, seriesPoints, appendSeries, readLines, rollupDay, rollupSeries, checkSeriesLine, checkMonthly, verifySeries,
+  slotIso, REASONS, checkIncident } from "../../scripts/grid.mjs";
+import { existsSync, readdirSync } from "node:fs";
+
+test("keyMissing: the real no-key replies of all three hosts read as not connected; other errors do not", () => {
+  assert.equal(keyMissing(403, txt("eia-nokey.json")), true);        // {"error":{"code":"API_KEY_MISSING",...}}
+  assert.equal(keyMissing(400, txt("cfradar-nokey.json")), true);    // code 9106 "Missing X-Auth-Key, X-Auth-Email or Authorization headers"
+  assert.equal(keyMissing(401, txt("entsoe-nokey.xml")), true);      // Acknowledgement, reason 999 "Authentication failed."
+  assert.equal(keyMissing(400), true);                               // body not passed on by the fetch layer
+  assert.equal(keyMissing(400, '{"success":false,"errors":[{"code":10001,"message":"bad dateRange"}]}'), false);
+  assert.equal(keyMissing(500, txt("eia-nokey.json")), false);
+  assert.equal(keyMissing(429), false);
+  assert.match(notConnected("api.eia.gov").message, /^not connected \(no key saved for api\.eia\.gov\)$/);
+});
+
+async function withFetch(fake, fn) {
+  const real = globalThis.fetch; globalThis.fetch = fake;
+  try { return await fn(); } finally { globalThis.fetch = real; }
+}
+const reply = (status, body, type = "application/json") => async () => new Response(body, { status, headers: { "content-type": type } });
+
+test("adapters: without a key each keyed host is 'not connected', and no key is ever sent by the code", async () => {
+  const seen = [];
+  for (const [k, status, f] of [["eia", 403, "eia-nokey.json"], ["cfradar", 400, "cfradar-nokey.json"], ["entsoe", 401, "entsoe-nokey.xml"]]) {
+    await withFetch(async (url, init) => { seen.push({ url: String(url), headers: (init && init.headers) || {} }); return reply(status, txt(f))(); }, async () => {
+      await assert.rejects(ADAPTERS[k](), (e) => e.code === "not_connected" && e.message === `not connected (no key saved for ${SOURCES[k].host})`);
+    });
+  }
+  assert.equal(seen.length, 3);                                     // ENTSO-E stops at the first zone
+  for (const s of seen) {
+    assert.doesNotMatch(s.url, /api_key|securityToken|token=/i);
+    assert.deepEqual(Object.keys(s.headers).map((h) => h.toLowerCase()), ["user-agent"]);
+  }
+  // a connected reply: Radar parses; EIA waits for a saved real reply; ENTSO-E needs a binary fetch from net.mjs
+  await withFetch(reply(200, txt("cfradar.json")), async () => { assert.ok((await ADAPTERS.cfradar()).every((x) => x.source === "cfradar")); });
+  await withFetch(reply(200, "{}"), async () => { await assert.rejects(ADAPTERS.eia(), (e) => e.code === "parser_pending"); });
+  await withFetch(reply(200, "PK\u0003\u0004zip", "application/zip"), async () => { await assert.rejects(ADAPTERS.entsoe(), (e) => e.code === "needs_binary_fetch"); });
+  assert.deepEqual(OPERATORS, ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]);
+});
+
+test("Cloudflare Radar (hand-made from the docs): power-cause outages only, one item per country, centroid, ended > 24 h dropped", () => {
+  const items = parseCfRadar(json("cfradar.json"), Date.parse("2026-11-19T22:00:00Z"));
+  noErrors(items);
+  assert.deepEqual(items.map((x) => x.id), ["cfradar:1001-ZA", "cfradar:1002-CU"]);   // cable cut and the old one left out, XX1 ignored
+  const za = items[0];
+  assert.equal(za.country, "ZA");
+  assert.deepEqual([za.lat, za.lng], [COUNTRIES.ZA[1], COUNTRIES.ZA[2]]);
+  assert.equal(za.kind, "outage");
+  assert.equal(za.started_at, "2026-11-19T14:11:19Z");
+  assert.equal(za.restore_est, "2026-11-19T20:00:00Z");
+  assert.equal(za.area, "Gauteng, Free State");
+  assert.equal(za.url, "https://radar.cloudflare.com/outage-center");                 // never the linked third-party page
+  assert.equal(items[1].restore_est, "");
+  assert.throws(() => parseCfRadar(json("cfradar-nokey.json")), (e) => e.code === "bad_shape");
+});
+
+test("ENTSO-E (hand-made from the docs): zip of documents, cancelled skipped, A53 planned, A54 forced, zone to country", () => {
+  const entries = unzipEntries(readFileSync(join(FX, "entsoe-a80.zip")));
+  assert.equal(entries.length, 3);                                    // two deflated, one stored
+  assert.ok(entries.every((e) => e.text.includes("<Unavailability_MarketDocument")));
+  const now = Date.parse("2023-01-03T13:00:00Z");
+  const items = parseEntsoe(readFileSync(join(FX, "entsoe-a80.zip")), now);
+  noErrors(items);
+  assert.deepEqual(items.map((x) => [x.country, x.planned, x.kind]), [["BE", true, "supply_warning"], ["FR", false, "supply_warning"]]);
+  assert.equal(items[0].area, "COO II T (230 MW)");
+  assert.equal(items[0].cause, "Awaiting information");
+  assert.equal(items[0].started_at, "2023-01-03T11:54:00Z");
+  assert.equal(items[0].restore_est, "2023-01-03T14:00:00Z");
+  assert.equal(items[1].cause, "Unit trip & repair");
+  assert.deepEqual(parseEntsoeXml(txt("entsoe-a80.xml"), now).map((x) => x.id), ["entsoe:nCYGn4HPvOBiVrWtRFL35g-1"]);
+  assert.deepEqual(parseEntsoeXml(txt("entsoe-a80.xml"), now + 24 * 3600e3), []);    // ended more than 6 h ago
+  assert.throws(() => parseEntsoe(txt("entsoe-nokey.xml")), (e) => e.code === "entsoe_ack" && /Authentication failed/.test(e.message));
+  assert.deepEqual(parseEntsoeXml(txt("entsoe-nokey.xml").replace("Authentication failed.", "No matching data found for Data item ...")), []);
+  assert.throws(() => unzipEntries(Buffer.from("not a zip")), (e) => e.code === "bad_shape");
+  assert.throws(() => parseEntsoeXml("<html/>"), (e) => e.code === "bad_shape");
+});
+
+test("triage: corroborated asks for research below 50,000, after the stronger reasons and never over planned work", () => {
+  assert.deepEqual(triage(inc({ peak_customers: 8000 }), cfg, { corroborated: true }), { research_needed: true, research_reason: "corroborated" });
+  assert.equal(triage(inc({ peak_customers: 60000 }), cfg, { corroborated: true }).research_reason, "big");
+  assert.equal(triage(inc({ peak_customers: 8000, planned_share: 0.9 }), cfg, { corroborated: true }).research_reason, "planned");
+  assert.equal(triage(inc({ peak_customers: 8000 }), cfg).research_reason, "small");
+  assert.ok(REASONS.includes("corroborated"));
+  const st = track({ open: [], closed: [] }, [out("bchydro", "British Columbia", 9000)], cfg, T0);
+  applyTriage(st.open[0], cfg, { corroborated: true });
+  assert.equal(st.open[0].research_reason, "corroborated");
+  assert.deepEqual(checkIncident(st.open[0]), []);
+});
+
+// ---------- series ----------
+test("seriesPoints: one point per operator region per 15-minute slot, zeros for quiet regions of sources that answered", () => {
+  const now = Date.parse("2026-11-19T10:07:00Z");
+  const items = [out("hydroquebec", "Quebec", 3000), out("hydroquebec", "Quebec", 1000, { planned: true }), ...parseEskom("3", now),
+    ...parseCfRadar(json("cfradar.json"), Date.parse("2026-11-19T22:00:00Z"))];
+  const pts = seriesPoints(items, ["hydroquebec", "eskom", "aemo", "cfradar"], now);
+  pts.forEach((p) => assert.deepEqual(checkSeriesLine(p), [], JSON.stringify(p)));
+  assert.ok(pts.every((p) => p.at === "2026-11-19T10:00:00Z"));
+  const by = Object.fromEntries(pts.map((p) => [`${p.source}|${p.region}`, p]));
+  assert.deepEqual(by["hydroquebec|Quebec"], { at: "2026-11-19T10:00:00Z", source: "hydroquebec", region: "Quebec", customers: 4000, unplanned: 3000, level: null });
+  assert.deepEqual([by["eskom|South Africa"].customers, by["eskom|South Africa"].level], [null, 2]);
+  assert.deepEqual([by["aemo|SA1"].unplanned, by["aemo|SA1"].level], [0, 0]);                // AEMO answered, SA quiet
+  assert.equal(by["bchydro|British Columbia"], undefined);                                   // did not answer: no point
+  assert.ok(!pts.some((p) => p.source === "cfradar"));                                       // keyed sources are signals only
+  assert.equal(slotIso(Date.parse("2026-11-19T10:14:59Z")), "2026-11-19T10:00:00Z");
+});
+
+test("appendSeries: at most one line per region per slot (two writers), files by UTC day", () => {
+  const dir = mkdtempSync(join(tmpdir(), "grid-series-"));
+  const p = (at, unplanned) => ({ at, source: "bchydro", region: "British Columbia", customers: unplanned, unplanned, level: null });
+  assert.equal(appendSeries(dir, [p("2026-11-19T23:45:00Z", 10), p("2026-11-20T00:00:00Z", 20)]), 2);
+  assert.equal(appendSeries(dir, [p("2026-11-19T23:45:00Z", 99), p("2026-11-20T00:15:00Z", 30)]), 1);
+  assert.deepEqual(readLines(join(dir, "2026-11-19.jsonl")).map((x) => x.unplanned), [10]);
+  assert.deepEqual(readLines(join(dir, "2026-11-20.jsonl")).map((x) => x.unplanned), [20, 30]);
+});
+
+test("roll-up: daily max/mean per region, only files older than 90 days removed, monthly merged and verified", () => {
+  const root = mkdtempSync(join(tmpdir(), "grid-rollup-")), dir = join(root, "data", "grid", "series");
+  mkdirSync(dir, { recursive: true });
+  const now = Date.parse("2026-11-19T12:00:00Z");
+  const p = (day, hh, source, region, unplanned, level = null) => ({ at: `${day}T${hh}:00:00Z`, source, region, customers: level == null ? unplanned : null, unplanned, level });
+  const write = (day, pts) => writeFileSync(join(dir, `${day}.jsonl`), pts.map((x) => JSON.stringify(x)).join("\n") + "\n");
+  write("2026-08-10", [p("2026-08-10", "01", "bchydro", "British Columbia", 100), p("2026-08-10", "02", "bchydro", "British Columbia", 300),
+    p("2026-08-10", "02", "bchydro", "British Columbia", 300), p("2026-08-10", "03", "eskom", "South Africa", 0, 2)]);
+  write("2026-08-20", [p("2026-08-20", "01", "ukpn", "London, South East and East of England", 50)]);
+  write("2026-08-21", [p("2026-08-21", "01", "ukpn", "London, South East and East of England", 70)]);   // exactly 90 days old: kept
+  write("2026-11-19", [p("2026-11-19", "01", "ukpn", "London, South East and East of England", 70)]);
+  assert.deepEqual(rollupDay(readLines(join(dir, "2026-08-10.jsonl"))), {
+    "bchydro|British Columbia": { max: 300, mean: 200, points: 2, level_max: null },   // the duplicate slot counted once
+    "eskom|South Africa": { max: 0, mean: 0, points: 1, level_max: 2 },
+  });
+  assert.deepEqual(rollupSeries(dir, now), ["2026-08-10", "2026-08-20"]);
+  assert.deepEqual(readdirSync(dir).filter((f) => f.endsWith(".jsonl")).sort(), ["2026-08-21.jsonl", "2026-11-19.jsonl"]);
+  const m = JSON.parse(readFileSync(join(dir, "monthly", "2026-08.json"), "utf8"));
+  assert.deepEqual(Object.keys(m.days), ["2026-08-10", "2026-08-20"]);
+  assert.equal(m.days["2026-08-10"]["bchydro|British Columbia"].max, 300);
+  assert.deepEqual(rollupSeries(dir, now), []);                                         // idempotent
+  assert.deepEqual(verifySeries(root), []);
+  writeFileSync(join(dir, "2026-11-19.jsonl"), JSON.stringify(p("2026-11-18", "01", "cfradar", "Cuba", 5)) + "\n{\n");
+  const bad = verifySeries(root)[0];
+  assert.equal(bad.file, "data/grid/series/2026-11-19.jsonl");
+  assert.ok(bad.errors.includes("line 1.source: not an operator source"));
+  assert.ok(bad.errors.includes("line 1.at: not on 2026-11-19"));
+  assert.ok(bad.errors.includes("line 2: not JSON"));
+  assert.deepEqual(checkMonthly({ month: "2026-08", days: { "2026-08-01": { "x|y": { max: 1, mean: 5, points: 1, level_max: null } } } }, "2026-08.json"),
+    ["days.2026-08-01.x|y: not { max, mean <= max, points, level_max }"]);
+  assert.ok(existsSync(join(dir, "monthly", "2026-08.json")));
+});

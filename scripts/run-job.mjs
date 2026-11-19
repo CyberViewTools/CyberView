@@ -164,16 +164,16 @@ async function main() {
     const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
     if (!chk.ok && work.some((w) => w[0] === "researcher")) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
   }
-  // 5. commit (the leases are released in the same commit)
+  // 5. report: one record per run, read by the improver; written before the commit so it rides with it
+  rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
+  const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
+  appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
+  // 6. commit (the leases are released in the same commit)
   release(RUN);
   let f = finish(job);
   if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool(job, [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", job, "--force"], 600000).out }; }
   const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
   phase("commit", last);
-  // 6. report: one record per run, read by the improver (it rides with the next commit)
-  rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
-  const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
-  appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
   const b = job === "sweep" || job === "backlog" ? sh("node", ["scripts/backlog.mjs", "status"]).out[0] || "" : "";
   log(`CyberView ${job}: ${last.replace(/^CyberView [a-z-]+: /, "")}${b ? " | " + b.replace(/^BACKLOG: /, "queue: ").slice(0, 120) : ""} | ${work.length} worker(s), $${rec.cost} | ${rec.minutes} min`);
 }

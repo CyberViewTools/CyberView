@@ -35,6 +35,14 @@ def make_site(bundle):
     return d
 
 
+def with_cve(site_dir):
+    """Copy the small CVE lookup-file fixture to <site>/data/cve/ for this test run only (the real files are generated at deploy time)."""
+    dst = os.path.join(site_dir, "data", "cve")
+    shutil.rmtree(dst, ignore_errors=True)
+    shutil.copytree(os.path.join(ROOT, "tests", "fixtures", "cve"), dst, ignore=shutil.ignore_patterns("*.mjs"))
+    return site_dir
+
+
 def dense(bundle, factor=5):
     b = copy.deepcopy(bundle)
     random.seed(4)
@@ -122,7 +130,7 @@ async def main():
                 ok(f"{th}: back restores list position", 200 < pos["top"] < 1400, pos)  # J moved one event on, so the list may sit a card lower
                 await pg.click("#tab-kev")
                 await pg.wait_for_timeout(300)
-                ok(f"{th}: exploited feed lists flaws", await pg.locator("#kev .kcard").count() >= min(5, len(bundle["kev"])))
+                ok(f"{th}: exploited tab is a short summary with a link to the Vulnerabilities page", 1 <= await pg.locator("#kev .kcard").count() <= 5 and await pg.get_attribute("#kevMore", "href") == "vulnerabilities.html#known" and await pg.locator("#kevCal").count() == 0)
                 await pg.click("#hoOpen")
                 await pg.wait_for_timeout(200)
                 ok(f"{th}: handover text built", "TOP PRIORITY" in await pg.input_value("#hoText"))
@@ -133,6 +141,7 @@ async def main():
                 await pg.click("[data-view=graph]")
                 await pg.wait_for_timeout(600)
                 ok(f"{th}: correlation has five sections", await pg.locator("#viz .vsec").count() == 5)
+                await pg.click("#tab-feed")
                 await pg.fill("#q", "micro")
                 await pg.click('[data-sev="3"]')
                 await pg.wait_for_timeout(300)
@@ -567,16 +576,7 @@ async def main():
             pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
             await pg.goto(url); await pg.wait_for_timeout(1500)
             await pg.click("#tab-kev"); await pg.wait_for_timeout(300)
-            ok("calendar: button labelled for my environment", (await pg.inner_text("#kevCal")).startswith("My deadlines"))
-            async with pg.expect_download() as dl:
-                await pg.click("#kevCal")
-            d = await dl.value
-            ics = open(await d.path(), newline="").read()
-            ok("calendar: file name", d.suggested_filename == "cyberview-patch-deadlines.ics", d.suggested_filename)
-            ok("calendar: valid calendar with reminders", ics.startswith("BEGIN:VCALENDAR\r\n") and ics.rstrip().endswith("END:VCALENDAR") and "TRIGGER:-P3D" in ics, ics[:200])
-            ok("calendar: only open deadlines that match", "CVE-2026-90001" in ics and "CVE-2026-90002" not in ics and "CVE-2026-90003" not in ics)
-            ok("calendar: text escaped", "patch\\, now" in ics and "\\;" in ics, ics[ics.find("DESCRIPTION"):][:160])
-            ok("calendar: lines folded to the limit", all(len(l.encode()) <= 75 for l in ics.split("\r\n")))
+            ok("exploited summary: next deadlines first, flaw links to its fix steps", "CVE-2026-90002" in await pg.inner_text("#kev .kcard >> nth=0") and (await pg.locator("#kev .kcard").first.locator("a").first.get_attribute("href")).endswith("vulnerabilities.html#CVE-2026-90002"))
             # notifications: turn on, then a new matching event arrives on refresh
             await pg.click("#wlOpen"); await pg.click("#notifyBtn"); await pg.wait_for_timeout(200)
             ok("notify: toggle on", await pg.get_attribute("#notifyBtn", "aria-pressed") == "true")
@@ -598,11 +598,11 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Workbench", "Archive", "CVEs", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
-            for t, search, filters in [("kev", True, False), ("brief", False, False), ("ins", False, False), ("feed", True, True)]:
+            for t, search, filters in [("kev", False, False), ("brief", False, False), ("ins", False, False), ("feed", True, True)]:
                 await pg.click("#tab-" + t); await pg.wait_for_timeout(150)
                 ok(f"tools on {t}: search {search}, filters {filters}", await pg.locator("#q").is_visible() == search and await pg.locator("#sort").is_visible() == filters)
             await pg.click("#wlOpen"); await pg.wait_for_timeout(200)
@@ -647,7 +647,7 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "cve.html", "trends.html", "tabletop.html", "workbench.html", "community.html", "about.html"]:
+            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "tabletop.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
                 ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
@@ -778,12 +778,12 @@ async def main():
         json.dump(wbd, open(os.path.join(site17, "data", "workbench.json"), "w"))
 
         async def v117(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "workbench.html"), wait=900)
-            ok("workbench: flaws ranked, exploited first", await pg.locator("#wbList .wbrow").count() == 4 and "CVE-2026-1001" in await pg.locator("#wbList .wbrow >> nth=0").text_content())
-            ok("workbench: general ranking notice without a list", await pg.locator("#wbNoInv").is_visible())
-            ok("workbench: markup in data shown as text", await pg.locator("#wbList img").count() == 0)
+            pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html"), wait=900)
+            ok("vulnerabilities: flaws ranked, exploited first", await pg.locator("#wbList .wbrow").count() == 4 and "CVE-2026-1001" in await pg.locator("#wbList .wbrow >> nth=0").text_content())
+            ok("vulnerabilities: general ranking notice without a list", await pg.locator("#wbNoInv").is_visible())
+            ok("vulnerabilities: markup in data shown as text", await pg.locator("#wbList img").count() == 0)
             top = int(await pg.locator("#wbList .wbscore >> nth=0").text_content())
-            ok("workbench: score without a list", top == 35 + 10 + 14 + 5 + 10 + 5, top)
+            ok("vulnerabilities: score without a list", top == 35 + 10 + 14 + 5 + 10 + 5, top)
             await pg.click("#wbt-inv"); await pg.fill("#wbText", "FortiOS 7.2.4, 12\nAcme Widget Server 2.1\nZeta Mail\nSlack 4.0")
             await pg.click("#wbAdd"); await pg.wait_for_timeout(250)
             ok("software: list read and saved in the browser only", "4 products" in await pg.locator("#wbInvMsg").text_content() and await pg.evaluate("JSON.parse(localStorage.getItem('cwm.inv')).length") == 4)
@@ -822,12 +822,12 @@ async def main():
             pg.on("request", lambda r: reqs.append(r.url) if not r.url.startswith("http://localhost") else None)
             await pg.fill("#wbText", "FortiOS 7.2.4"); await pg.click("#wbAdd"); await pg.wait_for_timeout(300)
             ok("software: nothing leaves the page", not reqs, reqs)
-            ok("workbench: no script errors", not errs, errs)
-            await pg.goto(url.replace("index.html", "workbench.html#CVE-2026-1002")); await pg.reload(); await pg.wait_for_timeout(700)
-            ok("workbench: a CVE link opens that flaw", await pg.locator(".wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
+            ok("vulnerabilities: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "vulnerabilities.html#CVE-2026-1002")); await pg.reload(); await pg.wait_for_timeout(700)
+            ok("vulnerabilities: a CVE link opens that flaw", await pg.locator(".wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
             await pg.context.close()
             ctx = await browser.new_context(viewport={"width": 390, "height": 844})
-            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "workbench.html")); await pg.wait_for_timeout(700)
+            pg = await ctx.new_page(); await pg.goto(url.replace("index.html", "vulnerabilities.html")); await pg.wait_for_timeout(700)
             await pg.locator("#wbList .wbhead >> nth=0").click()
             ok("phone workbench: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
@@ -1009,39 +1009,164 @@ async def main():
         subprocess.run(["node", "scripts/build.mjs"], cwd=ROOT, check=True, capture_output=True)   # fresh health.json and manifest.json
         await serve(make_site(json.load(open(os.path.join(ROOT, "site", "data", "bundle.json")))), v121b)
 
-        # v1.32: CVE lookup (every CVE from the CVE List; lookup files built by scripts/cve.mjs site)
-        F = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct"]
-        log4 = ["CVE-2021-44228", "P", "2021-12-10", "2025-10-21", 10, "C", "3.1", "CWE-502", "Apache Software Foundation", "Apache Log4j2", "Log4j2 JNDI lookup", "Remote code execution through JNDI.", "apache", "active", "2021-12-10", 0.99999, 1]
-        evil = ["CVE-2026-1001", "P", recent_day, recent_day, 6.5, "M", "3.1", "", "<img src=x onerror=alert(1)>", "Widget", "<script>alert(1)</script>", "x", "acme", "", "", 0.002, 0.3]
-        def cve_site(with_data):
-            d = make_site(bundle)
-            c = os.path.join(d, "data", "cve")
-            shutil.rmtree(c, ignore_errors=True)
-            if with_data:
-                os.makedirs(os.path.join(c, "2021"), exist_ok=True)
-                json.dump({"fields": F, "rows": [log4]}, open(os.path.join(c, "2021", "44.json"), "w"))
-                json.dump({"fields": F, "since": recent_day, "rows": [evil, log4]}, open(os.path.join(c, "recent.json"), "w"))
-                json.dump({"built_at": "2026-11-19T00:00:00Z", "total": 2, "rejected": 0, "exploited": 1, "critical": 1, "by_year": {"2021": 1, "2026": 1}, "sources": {"cvelist": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}}, open(os.path.join(c, "index.json"), "w"))
-            return d
+
+        # v1.33: Vulnerabilities page: views, deadlines and calendar, All CVEs over the CVE List lookup files (small fixture), redirects from the old workbench and CVE pages
+        site132 = with_cve(make_site(bundle))
+        wb132 = copy.deepcopy(wbd)
+        t132 = datetime.date.today()
+        wb132["kev"][0]["due"] = (t132 + datetime.timedelta(days=3)).isoformat()
+        wb132["kev"][1]["due"] = (t132 + datetime.timedelta(days=20)).isoformat()
+        wb132["kev"][2]["due"] = (t132 - datetime.timedelta(days=4)).isoformat()
+        json.dump(wb132, open(os.path.join(site132, "data", "workbench.json"), "w"))
+
+        CVE_TOTAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "cve", "index.json")))["total"]
+
         async def v132(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "cve.html#CVE-2021-44228"), wait=1500)
-            ok("cve: summary counts from the index", "2 CVEs on file" in (await pg.text_content("#summary")))
-            one = await pg.text_content("#one")
-            ok("cve: a link to an ID opens that CVE with CVSS, known exploited and EPSS", "CVE-2021-44228" in one and "CVSS 10.0" in one and "Known exploited" in one and "EPSS" in one, one[:200])
-            ok("cve: links go to the CVE record and NVD", await pg.locator("#one a[href='https://www.cve.org/CVERecord?id=CVE-2021-44228']").count() == 1 and await pg.locator("#one a[href='https://nvd.nist.gov/vuln/detail/CVE-2021-44228']").count() == 1)
-            ok("cve: recent list rendered, markup in fields shown as text", await pg.locator("#list li.row").count() == 2 and await pg.locator("#list img, #list script").count() == 0 and "<script>" in (await pg.text_content("#list")))
-            await pg.select_option("#show", "expl"); await pg.wait_for_timeout(200)
-            ok("cve: exploited filter", await pg.locator("#list li.row").count() == 1)
-            await pg.fill("#id", "CVE-2099-12345"); await pg.click("#look button[type=submit]"); await pg.wait_for_timeout(800)
-            ok("cve: an unknown ID says so", "not in the CVE List" in (await pg.text_content("#one")))
-            ok("cve: no script errors", not errs, errs)
-            await pg.context.close()
+            base = url.replace("index.html", "")
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True)
+            pg = await ctx.new_page()
+            errs, reqs = [], []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            pg.on("console", lambda m: errs.append(m.text[:160]) if m.type == "error" and "favicon" not in m.text and "404" not in m.text else None)
+            pg.on("request", lambda r: reqs.append(r.url))
+            await pg.goto(base + "vulnerabilities.html"); await pg.wait_for_timeout(900)
+            ok("vulnerabilities: loads with the queue view first", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbp-all").is_hidden() and await pg.locator("#wbList .wbrow").count() == 4)
+            ok("vulnerabilities: four views in the tab bar", await pg.locator(".wbtabs [role=tab]").count() == 4 and "Known exploited" in await pg.locator("#wbt-queue").text_content())
+            # deadlines
+            ok("deadlines: chart rows for open and recently passed deadlines", await pg.locator("#wbDlChart .wbdlrow").count() == 3 and "left" in await pg.locator("#wbDlChart").text_content() and "overdue" in await pg.locator("#wbDlChart").text_content())
+            async with pg.expect_download() as dl:
+                await pg.click("#kevCal")
+            d = await dl.value
+            ics = open(await d.path(), newline="").read()
+            ok("calendar: file name and valid calendar with reminders", d.suggested_filename == "cyberview-patch-deadlines.ics" and ics.startswith("BEGIN:VCALENDAR\r\n") and ics.rstrip().endswith("END:VCALENDAR") and "TRIGGER:-P3D" in ics, d.suggested_filename)
+            ok("calendar: open deadlines only (passed ones left out)", "CVE-2026-1001" in ics and "CVE-2026-1002" in ics and "CVE-2026-1003" not in ics)
+            ok("calendar: lines folded to the limit", all(len(l.encode()) <= 75 for l in ics.split("\r\n")))
+            await pg.click("#wbt-inv"); await pg.fill("#wbText", "FortiOS 7.2.4"); await pg.click("#wbAdd"); await pg.wait_for_timeout(200)
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(100)
+            ok("calendar: button labelled for my software", (await pg.inner_text("#kevCal")).startswith("My deadlines"))
+            async with pg.expect_download() as dl:
+                await pg.click("#kevCal")
+            ics = open(await (await dl.value).path(), newline="").read()
+            ok("calendar: only deadlines that affect my software", "CVE-2026-1001" in ics and "CVE-2026-1002" not in ics)
+            await pg.click("#wbt-inv"); await pg.click("#wbClear")
+            # views and hashes
+            await pg.click("#wbt-all"); await pg.wait_for_timeout(700)
+            ok("views: All CVEs opens, the others hide, hash is deep-linkable", await pg.locator("#wbp-all").is_visible() and await pg.locator("#wbp-queue").is_hidden() and await pg.evaluate("location.hash") == "#all")
+            ok("views: the index loaded, counts shown, the lookup is offered", await pg.locator("#cvMain").is_visible() and await pg.locator("#cvStatus").is_hidden() and str(CVE_TOTAL) in await pg.locator("#wbnAll").text_content() and f"{CVE_TOTAL} CVEs on file" in await pg.locator("#cvSummary").text_content())
+            await pg.click("#wbt-inv"); await pg.wait_for_timeout(100)
+            ok("views: My software opens", await pg.locator("#wbp-inv").is_visible() and await pg.locator("#wbSearchBar").is_hidden() and await pg.evaluate("location.hash") == "#inv")
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(100)
+            ok("views: back to Known exploited", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbSearchBar").is_visible())
+            # lookup loads exactly one data file
+            await pg.click("#wbt-all"); await pg.wait_for_timeout(300)
+            before = len([r for r in reqs if "/data/cve/" in r])
+            await pg.fill("#wbQ", "cve-2024-2345"); await pg.press("#wbQ", "Enter"); await pg.wait_for_timeout(600)
+            shard_reqs = [r for r in reqs if "/data/cve/" in r][before:]
+            ok("lookup: finds the record and shows it as text", "Needle" in await pg.locator("#cvResult").text_content() and "CVE-2024-2345" in await pg.locator("#cvResult").text_content())
+            ok("lookup: loads exactly one data file", len(shard_reqs) == 1 and shard_reqs[0].endswith("/data/cve/2024/2.json"), shard_reqs)
+            hrefs = await pg.eval_on_selector_all("#cvResult a", "as => as.map(a => a.href)")
+            ok("lookup: only https links to the CVE record and NVD", hrefs == ["https://www.cve.org/CVERecord?id=CVE-2024-2345", "https://nvd.nist.gov/vuln/detail/CVE-2024-2345"], hrefs)
+            await pg.fill("#wbQ", "CVE-2005-1234"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            ok("lookup: an old (2005) record", "old, unscored" in await pg.locator("#cvResult").text_content())
+            await pg.fill("#wbQ", "CVE-2024-12345"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            ok("lookup: a record far up the range, in its own file", "Far bucket" in await pg.locator("#cvResult").text_content())
+            await pg.fill("#wbQ", "CVE-2021-44228"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            res = await pg.locator("#cvResult").text_content()
+            ok("lookup: CISA's own flags and EPSS show", "Known exploited" in res and "EPSS" in res and "CVSS" in res and await pg.locator("#cvResult a[href='https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2021-44228']").count() == 1, res[:200])
+            await pg.fill("#wbQ", "CVE-2024-8000"); await pg.click("#cvLookup"); await pg.wait_for_timeout(300)
+            ok("lookup: an id outside every file says so", "not in the CVE List" in await pg.locator("#cvLookMsg").text_content() and await pg.locator("#cvResult .cvrow").count() == 0)
+            await pg.fill("#wbQ", "log4shell"); await pg.click("#cvLookup"); await pg.wait_for_timeout(200)
+            ok("lookup: not an id asks for one", "full CVE id" in await pg.locator("#cvLookMsg").text_content())
+            await pg.fill("#wbQ", "CVE-2026-1001"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            res = await pg.locator("#cvResult").text_content()
+            ok("lookup: a known-exploited CVE is flagged with a link to that view", "Known exploited" in res and "CISA's known-exploited list" in res)
+            await pg.locator("#cvResult .cvgo").click(); await pg.wait_for_timeout(400)
+            ok("lookup: the link opens it in Known exploited", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
+            # browse a year
+            await pg.click("#wbt-all"); await pg.fill("#wbQ", ""); await pg.wait_for_timeout(200)
+            ok("browse: nothing listed until something is loaded", await pg.locator("#cvList .cvrow").count() == 0 and "Nothing loaded" in await pg.locator("#cvLoaded").text_content())
+            await pg.select_option("#cvYear", "2024"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(700)
+            ok("browse: a year loads, rejected hidden by default", await pg.locator("#cvList .cvrow").count() == 62 and "62 CVEs" in await pg.locator("#cvCount").text_content(), await pg.locator("#cvCount").text_content())
+            ok("browse: markup in a description is text", await pg.locator("#cvList img").count() == 0 and "<script>alert(1)</script>" in await pg.locator("#cvList").text_content())
+            await pg.fill("#wbQ", "needle"); await pg.wait_for_timeout(400)
+            ok("filter: text narrows the loaded years", await pg.locator("#cvList .cvrow").count() == 1 and "CVE-2024-12345" in await pg.locator("#cvList").text_content())
+            await pg.fill("#wbQ", ""); await pg.select_option("#cvStatusSel", "all"); await pg.wait_for_timeout(200)
+            ok("filter: status all shows the rejected one", await pg.locator("#cvList .cvrow").count() == 63 and await pg.locator("#cvList .cvrow", has_text="Rejected").count() == 1)
+            await pg.select_option("#cvStatusSel", "R"); await pg.wait_for_timeout(200)
+            ok("filter: rejected only", await pg.locator("#cvList .cvrow").count() == 1)
+            await pg.select_option("#cvStatusSel", "live"); await pg.select_option("#cvSev", "C"); await pg.wait_for_timeout(200)
+            crit = await pg.locator("#cvList .cvrow").count()
+            ok("filter: severity", 0 < crit < 62 and await pg.locator("#cvList .cvrow", has_text="Critical").count() == crit)
+            await pg.select_option("#cvSev", ""); await pg.fill("#cvVendor", "zeta"); await pg.wait_for_timeout(400)
+            zeta = await pg.locator("#cvList .cvrow").count()
+            ok("filter: vendor", 0 < zeta < 62 and await pg.locator("#cvList .cvrow", has_text="Zeta Mail").count() == zeta)
+            await pg.fill("#cvVendor", ""); await pg.fill("#cvCwe", "cwe-787"); await pg.wait_for_timeout(400)
+            ok("filter: CWE", 0 < await pg.locator("#cvList .cvrow").count() < 62)
+            await pg.fill("#cvCwe", ""); await pg.select_option("#cvEpss", "0.5"); await pg.wait_for_timeout(200)
+            ok("filter: EPSS at least 50%", await pg.locator("#cvList .cvrow").count() == 1)
+            await pg.select_option("#cvEpss", "0"); await pg.select_option("#cvSort", "cvss"); await pg.wait_for_timeout(200)
+            first = await pg.locator("#cvList .cvscore").first.text_content()
+            ok("sort: highest CVSS first", first == "9.8", first)
+            await pg.locator("#cvList .cvhead").first.click(); await pg.wait_for_timeout(150)
+            ok("rows: open for the full record", await pg.locator("#cvList .wbdetail").count() == 1 and "NVD status" in await pg.locator("#cvList .wbdetail").text_content())
+            # known exploited join
+            await pg.select_option("#cvYear", "2026"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(500)
+            await pg.check("#cvKev"); await pg.wait_for_timeout(200)
+            ok("filter: known exploited only (joined from CISA's list, never stored in the database)", await pg.locator("#cvList .cvrow").count() == 2 and await pg.locator("#cvList .cvrow", has_text="Known exploited").count() == 2)
+            await pg.uncheck("#cvKev")
+            await pg.click("#cvClearYears"); await pg.wait_for_timeout(200)
+            ok("browse: unloading empties the list", await pg.locator("#cvList .cvrow").count() == 0)
+            await pg.select_option("#cvYear", "recent"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(500)
+            ok("recent: three CVEs from recent.json, CISA's own flag shown", await pg.locator("#cvList .cvrow").count() == 3 and await pg.locator("#cvList .cvrow", has_text="Known exploited").count() >= 1)
+            ok("vendor suggestions come from what is loaded", await pg.locator("#cvVendorList .badge").count() >= 2)
+            ok("caveat names the source and its limits", all(x in await pg.locator("#cvCaveat").text_content() for x in ["CVE List", "trimmed", "rebuilt"]))
+            outside = [r for r in reqs if not r.startswith("http://localhost")]
+            ok("vulnerabilities: nothing leaves the page", not outside, outside)
+            ok("vulnerabilities: no script errors", not errs, errs)
+            await pg.goto(base + "vulnerabilities.html#all"); await pg.reload(); await pg.wait_for_timeout(600)
+            ok("deep link: #all opens All CVEs", await pg.locator("#wbp-all").is_visible())
+            await pg.goto(base + "vulnerabilities.html#CVE-2024-2345"); await pg.reload(); await pg.wait_for_timeout(800)
+            ok("deep link: a CVE that is not known exploited is looked up in All CVEs", await pg.locator("#wbp-all").is_visible() and "Needle" in await pg.locator("#cvResult").text_content())
+            await pg.goto(base + "vulnerabilities.html#CVE-2026-1001"); await pg.reload(); await pg.wait_for_timeout(600)
+            ok("deep link: a known-exploited CVE opens in Known exploited", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .wbdetail").count() == 1)
+            await pg.close()
+            # the old URL
+            pg = await ctx.new_page()
+            await pg.goto(base + "workbench.html?x=1#inv"); await pg.wait_for_timeout(900)
+            ok("redirect: workbench.html goes to the Vulnerabilities page, keeping query and hash", pg.url.endswith("vulnerabilities.html?x=1#inv") and await pg.locator("#wbp-inv").is_visible(), pg.url)
+            await pg.goto(base + "cve.html#CVE-2021-44228"); await pg.wait_for_timeout(1100)
+            ok("redirect: cve.html goes to the Vulnerabilities page and the CVE opens", pg.url.endswith("vulnerabilities.html#CVE-2021-44228") and "Log4j2" in await pg.locator("#cvResult").text_content(), pg.url)
+            await pg.goto(base + "workbench.html#CVE-2026-1001"); await pg.wait_for_timeout(900)
+            ok("redirect: a CVE link keeps working", pg.url.endswith("vulnerabilities.html#CVE-2026-1001") and await pg.locator("#wbList .wbdetail").count() == 1, pg.url)
+            await pg.close()
+            # phone
+            ph = await browser.new_context(viewport={"width": 390, "height": 844})
+            pg = await ph.new_page(); await pg.goto(base + "vulnerabilities.html#all"); await pg.wait_for_timeout(600)
+            await pg.select_option("#cvYear", "2024"); await pg.click("#cvLoadYear"); await pg.wait_for_timeout(600)
+            await pg.locator("#cvList .cvhead").first.click()
+            ok("phone vulnerabilities: All CVEs has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await pg.goto(base + "vulnerabilities.html"); await pg.wait_for_timeout(600)
+            ok("phone vulnerabilities: deadlines and queue have no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ph.close()
+            await ctx.close()
+
+        await serve(site132, v132)
+
+        # the CVE files are missing (they are generated at deploy time): the view says so and nothing breaks
+        site132b = make_site(bundle)
+        json.dump(wb132, open(os.path.join(site132b, "data", "workbench.json"), "w"))
+
         async def v132b(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "cve.html"), wait=1200)
-            ok("cve: without lookup files the page says so and nothing breaks", "not available" in (await pg.text_content("#summary")) and not errs, errs)
+            pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html#all"), wait=900)
+            ok("no CVE files: All CVEs says it is not available yet", await pg.locator("#cvStatus").is_visible() and "not available" in await pg.locator("#cvStatus").text_content() and await pg.locator("#cvMain").is_hidden())
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(200)
+            ok("no CVE files: Known exploited still works", await pg.locator("#wbList .wbrow").count() == 4)
+            await pg.click("#wbt-all"); await pg.wait_for_timeout(300)
+            ok("no CVE files: asking again stays calm", await pg.locator("#cvStatus").is_visible())
+            ok("no CVE files: no script errors", not errs, errs)
             await pg.context.close()
-        await serve(cve_site(True), v132)
-        await serve(cve_site(False), v132b)
+
+        await serve(site132b, v132b)
 
         await browser.close()
 

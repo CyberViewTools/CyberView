@@ -14,7 +14,7 @@ const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -48,6 +48,10 @@ if (job === "researcher") {
   const plan = readJson(join(DATA, "sweep-plan.json"), { stories: [] });
   const mine = batch === "retry" ? plan.stories.filter((s) => (plan.retry || []).includes(s.id)) : plan.stories.filter((s) => String(s.batch) === batch);
   assignment = `YOUR ASSIGNMENT (researcher ${batch}): ${mine.length} stories, in this order:\n` + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 110)}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"researcher " + batch + ": nothing assigned\")");
+} else if (job === "backlog-triager") {
+  const plan = readJson(join(DATA, "backlog-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
+  assignment = `YOUR ASSIGNMENT (backlog triager ${batch}): ${mine.length} stories. Answers file: ${join(DATA, "backlog-triage-" + batch + ".json")}\n`
+    + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 150)}  [${s.publishers} publisher${s.publishers === 1 ? "" : "s"}: ${(s.sources || []).join(", ").slice(0, 70)}${(s.kinds || []).includes("exploited") ? "; exploited" : ""}${(s.langs || []).some((l) => l && l !== "en") ? "; " + s.langs.join("/") : ""}; published ${String(s.published).slice(5, 16)}${s.dated ? "" : " (date not given)"}]`).join("\n");
 } else if (job === "reviewer") {
   const plan = readJson(join(DATA, "review-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
   assignment = `YOUR ASSIGNMENT (reviewer ${batch}): ${mine.length} events:\n` + mine.map((id) => `  ${id}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"reviewer " + batch + ": nothing assigned\")");

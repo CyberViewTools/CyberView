@@ -23,7 +23,7 @@ const fixer = `In ${ROOT} run \`node scripts/build.mjs\`. Fix every error it nam
 say(`DISPATCH ${job}. Do exactly these steps, in order, and nothing else. Do not research, read data files or read job instructions yourself.`);
 
 if (job === "sweep") {
-  const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });
+  const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]], ["backlog rules", "node", ["scripts/backlog.mjs", "auto"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });
   const plan = sh("node", ["scripts/sweep-plan.mjs", "plan"]), head = plan.out[0] || "no plan";
   const batches = [...new Set((readJson(join(DATA, "sweep-plan.json"), { stories: [] }).stories || []).map((s) => s.batch))].sort();
   const sc = readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}, gap = sc.gap_pass === false ? 0 : Math.max(1, Math.min(3, Number(sc.gap_workers) || 1));
@@ -39,6 +39,24 @@ if (job === "sweep") {
   say("3. Run: node scripts/finish.mjs sweep");
   say(`   If it prints BUILD FAILED: start ONE subagent (${AGENT("sonnet")}) with: ${fixer}  Then run: node scripts/finish.mjs sweep --force`);
   say('4. End with exactly one line: "CyberView sweep: " followed by the scorecard line and the line finish.mjs printed.');
+} else if (job === "backlog") {
+  // drains whatever the sweeps cannot reach: rules close the noise, triagers sort headlines, researchers take what is left
+  const bc = readJson(join(ROOT, "config", "pipeline.json"), {}).backlog || {}, T = Math.max(1, Math.min(8, Number(bc.triagers) || 3)), R = Math.max(1, Math.min(8, Number(bc.researchers) || 4)), floor = Number(bc.leave_for_sweep ?? 16);
+  sh("node", ["scripts/triage.mjs"]);
+  const auto = sh("node", ["scripts/backlog.mjs", "auto"]), plan = sh("node", ["scripts/backlog.mjs", "plan", "--per", "40", "--max", String(T)]), st = JSON.parse(sh("node", ["scripts/backlog.mjs", "status", "--json"]).out.join("") || "{}");
+  const nb = ((readJson(join(DATA, "backlog-plan.json"), { batches: [] }).batches) || []).length;
+  say(`${auto.out[0] || ""} ${plan.out[0] || ""}`);
+  if (!(st.waiting > floor)) say(`Only ${st.waiting ?? 0} stories are waiting, which the next sweep covers. Run: node scripts/finish.mjs backlog   then end with exactly: "CyberView backlog: clear (${st.waiting ?? 0} waiting)"`);
+  else {
+    say(nb ? `1. Start these ${nb} subagents IN ONE MESSAGE so they run in parallel (${AGENT("sonnet")}). The task text for each, exactly:` : "1. (no triage needed this run)");
+    for (let i = 1; i <= nb; i++) say(`   (${i}) ${worker("backlog-triager", i)}`);
+    say(`2. When ALL have returned, run: node scripts/backlog.mjs apply --per 8 --max ${R}`);
+    say(`   Its last line reads "RESEARCHER BATCHES: 1 2 3 ..." (or "none"). For EACH number N on that line start one subagent, all IN ONE MESSAGE (${AGENT("sonnet")}), with exactly this task text, N replaced by the number: ${worker("researcher", "N")}`);
+    say("3. When ALL have returned, run: node scripts/sweep-plan.mjs check   (a score under 80% is reported, not retried: the next run takes what is left)");
+    say("4. Run: node scripts/finish.mjs backlog");
+    say(`   If it prints BUILD FAILED: start ONE subagent (${AGENT("sonnet")}) with: ${fixer}  Then run: node scripts/finish.mjs backlog --force`);
+    say('5. Run: node scripts/backlog.mjs status   and end with exactly one line: "CyberView backlog: " followed by that status line and the line finish.mjs printed.');
+  }
 } else if (job === "review") {
   const plan = sh("node", ["scripts/review.mjs", "plan"]), n = ((readJson(join(DATA, "review-plan.json"), { batches: [] }).batches) || []).filter((b) => b.length).length;
   say(plan.out[0] || "");

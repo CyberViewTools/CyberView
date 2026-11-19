@@ -34,6 +34,9 @@ jobs:
         run: node scripts/triage.mjs
       - name: Group leads into stories
         run: node scripts/fuse.mjs
+      - name: Close what a rule can decide (routine bulletins, commentary, database rows)
+        # optional: a fault here must never stop the leads being committed
+        run: node scripts/backlog.mjs auto || true
       - name: Validate
         run: node scripts/build.mjs --quarantine > /dev/null
       - name: Commit and push

@@ -45,6 +45,7 @@ scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-h
 scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
 scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
 scripts/fuse.mjs         groups leads into stories ranked by corroboration, publication age and type (list, show, done); `developing()` feeds the app's "being checked" list; data/stories.json is untracked working state
+scripts/backlog.mjs      the research queue kept at zero: `auto` closes what a rule can decide, `plan` and `apply` drive the backlog desk (triagers sort headlines, researchers take the rest), `status` feeds the status page and the guard
 scripts/metrics.mjs      pipeline metrics for the editor job and the status page
 scripts/review.mjs       second review of new events: queue with mechanical flags, and pass, corrected, flagged verdicts (the review desk job)
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
@@ -117,6 +118,7 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - Never weaken `verify-build.mjs`, the quarantine report or the live check to make a deploy pass; fix the data or the code.
 - The app must say so when data is old (`freshness()` in `site/app.js`) and keep showing the last good copy (`site/sw.js`); do not remove either.
 - The guardian scheduled task runs in its own fresh session, outside the ops session, so a stuck ops session is noticed.
+- No backlog: every story the collectors find ends as an event, an update, or a logged reason, never by expiring unread. Rules close noise at every collection (`backlog.mjs auto`), the hourly backlog desk drains what the sweeps do not reach, and the status page and guard report the queue (limit 150 waiting, 12 hours for anything that reads like an incident). Triage answers are applied by story id; never run `backlog.mjs plan` or `apply`, or `dispatch.mjs backlog`, in a checkout where a backlog run is in progress.
 - The ops session is a dispatcher only (`scripts/dispatch.mjs`): it must never do research or read job instructions itself, because a long session history makes every job slow, costly and careless. Work is done by fresh subagents; workers running in parallel never run git, and `scripts/finish.mjs` commits.
 
 ## Known limits

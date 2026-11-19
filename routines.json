@@ -127,6 +127,19 @@
    "does": "A second agent re-reads the sources of every new or changed event and passes, corrects or flags it, up to 30 events a run with three reviewers in parallel."
   },
   {
+   "key": "backlog",
+   "name": "Backlog desk",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "active_since": "2026-11-19T00:00:00Z",
+   "cron": "55 * * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_backlog_at",
+   "max_age_hours": 3,
+   "active": true,
+   "does": "Keeps the research queue empty: rules close routine bulletins and commentary, triagers sort the remaining headlines, and up to four researchers take what the sweeps did not reach."
+  },
+  {
    "key": "verify",
    "name": "Verify",
    "tier": "ai",

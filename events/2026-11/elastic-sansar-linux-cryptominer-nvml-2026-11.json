@@ -7,9 +7,9 @@
   "pin_type": "none",
   "place": "",
   "first_seen": "2026-11-19T03:47:28Z",
-  "updated_at": "2026-11-19T03:47:28Z",
+  "updated_at": "2026-11-19T05:09:29Z",
   "category": "report",
-  "source_tier": "established",
+  "source_tier": "primary",
   "status": "confirmed",
   "title": "Elastic: SANSAR Linux cryptominer fakes GPU readings to hide mining",
   "date": "2026-11-16",
@@ -37,6 +37,10 @@
   ],
   "sources": [
     {
+      "name": "Elastic Security Labs",
+      "url": "https://www.elastic.co/security-labs/threat-command/sansar-linux-cryptomining-malware"
+    },
+    {
       "name": "The Hacker News",
       "url": "https://thehackernews.com/2026/11/sansar-linux-cryptomining-malware-uses.html"
     }
@@ -61,8 +65,15 @@
     "url": "https://thehackernews.com/2026/11/sansar-linux-cryptomining-malware-uses.html"
   },
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T03:47:28Z",
-    "note": "Read The Hacker News write-up quoting Elastic's report; the Elastic original was not read."
-  }
+    "state": "corroborated",
+    "checked_at": "2026-11-19T05:09:29Z",
+    "note": "Elastic's original (Nov 12) read: REF3364, activity Oct 22-25 2026, exposed Ray job agent, NVML wrapper, Turkish comments match; The Hacker News write-up matches."
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:09:53Z",
+    "note": "Facts match Elastic original and THN; added Elastic Security Labs (Nov 12) as first primary source, tier primary, validation corroborated",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T05:09:53Z"
 }

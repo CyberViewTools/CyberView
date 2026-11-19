@@ -14,7 +14,7 @@
   "org": "ANSSI / CERT-FR",
   "pin_type": "agency",
   "place": "Paris",
-  "plain": "France's cyber agency reported 64 new data leaks at public bodies in a month. Most began with stolen passwords, accounts without a second sign-in step, or web pages that exposed other people's files.",
+  "plain": "France's cyber agency says 64 new data breaches reached it since September 30, five at ministries or their agencies. Known causes: stolen passwords, accounts without a second sign-in step, or web pages that exposed other people's files.",
   "products": [],
   "records_affected": 1200000,
   "report": {
@@ -25,7 +25,7 @@
       "New cases: about 1.2 million CAF/VACAF case files, over 60,000 France Travail agents and professionals, 30,500 ASP DEFI users, over 1,000 OFB permit users, about 100 foreign ministry library users.",
       "25 of 30 education academies had incidents between July and September 2026; intruders reused valid credentials and moved across the interministerial state network.",
       "Every breach used weaknesses already seen: missing or weak MFA, infostealer-compromised accounts, subcontractor exposure, IDOR flaws and configuration defects.",
-      "At France Travail the second factor was bypassed through a compromised agent account using SMS validation; elsewhere MFA stopped logins with stolen VPN certificates."
+      "At France Travail a compromised agent account, with second-factor (SMS) validation, allowed exfiltration; elsewhere MFA stopped logins with stolen VPN certificates."
     ],
     "published": "2026-11-12",
     "publisher": "ANSSI / CERT-FR",
@@ -65,10 +65,17 @@
     "third-party"
   ],
   "title": "ANSSI's second REACTIV report details October data leaks across French state bodies",
-  "updated_at": "2026-11-17T23:38:00Z",
+  "updated_at": "2026-11-19T05:20:00Z",
   "validation": {
     "checked_at": "2026-11-17T23:38:00Z",
     "note": "Reviewed against the original ANSSI / CERT-FR document.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:10:30Z",
+    "note": "Checked PDF directly: 64 breaches, 25/30 academies, CAF 1.2M, FT 60,000, ASP 30,500, OFB 1,000 confirmed. Fixed plain (64 reached ANSSI, five at ministries, not 'at public bodies') and France Travail 'bypassed' to report wording.",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T05:10:30Z"
 }

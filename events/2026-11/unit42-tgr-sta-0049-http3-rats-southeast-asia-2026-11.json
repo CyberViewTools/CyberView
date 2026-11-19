@@ -26,7 +26,7 @@
     "key_findings": [
       "Targets are Southeast Asian government entities; one decoy PDF imitates a Myanmar election commission document, though victim countries are not confirmed.",
       "Entry is through unpatched Microsoft Exchange and web servers to plant web shells, with phishing using decoy PDFs and DLL sideloading as a second route.",
-      "PerfectPioneer, a Go tool with six variants, uses HTTP/3 with HTTP/2 fallback and blocks operators from running noisy or destructive commands.",
+      "PerfectPioneer, a Go tool with six variants, uses HTTP/2 or HTTP/3 depending on the variant (one variant uses HTTP/3 with HTTP/2 fallback); two variants add a blocklist of dangerous commands.",
       "KUKURAT loads at least 12 modules for keylogging, screenshots, lateral movement and tunnelling, and creates decoy network, registry and file activity.",
       "Activity spans about nine months and included mass mailbox permission changes on Exchange and credential theft from a domain controller."
     ],
@@ -57,10 +57,19 @@
     "espionage"
   ],
   "title": "Unit 42: TGR-STA-0049 uses HTTP/3 remote access tools against Southeast Asian governments",
-  "updated_at": "2026-11-18T00:08:00Z",
+  "updated_at": "2026-11-19T05:10:26Z",
   "validation": {
     "checked_at": "2026-11-18T00:08:00Z",
     "note": "Reviewed against the original Palo Alto Networks Unit 42 report.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:10:52Z",
+    "note": "Checked against the Unit 42 report (16 Nov): summary correct; key finding overstated HTTP/3 with HTTP/2 fallback and the command blocklist as applying to PerfectPioneer generally, but it is per variant; reworded. Actor attribution is Unit 42's own",
+    "flags": [
+      "actor-unsourced"
+    ]
+  },
+  "qa_checked_at": "2026-11-19T05:10:52Z"
 }

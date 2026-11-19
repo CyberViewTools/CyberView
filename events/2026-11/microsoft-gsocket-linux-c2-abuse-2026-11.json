@@ -41,11 +41,11 @@
     "doc_id": "",
     "iocs_available": true,
     "key_findings": [
-      "Internet-facing Linux web servers are the target; PHP applications and cPanel hosting account for 63.9% of incidents and Apache for 24.3%.",
+      "Internet-facing Linux web servers are the target; Among web-application and hosting incidents, PHP applications and cPanel hosting account for 63.9% and Apache for 24.3%.",
       "Education and research is the most affected sector at 30.7% of organisations, which Microsoft attributes to exposure rather than deliberate targeting.",
       "After web application code execution, a curl download-and-run script installs GSocket, which connects outbound to a shared public relay.",
       "Access persists after the original flaw is patched, and there is no attacker-owned address or domain to block.",
-      "GSocket detections rose 356.2% from March to August 2026; a few intrusions also tried the Dirty Frag flaw CVE-2026-43284 to gain root."
+      "Devices with GSocket detections rose 356.2% from March to August 2026; in few observed incidents attackers also tried the Dirty Frag flaw CVE-2026-43284 to gain root."
     ],
     "published": "2026-11-11",
     "publisher": "Microsoft Threat Intelligence",
@@ -70,15 +70,22 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Microsoft says multiple unrelated attackers are installing the open-source GSocket tool on Linux web servers after exploiting web applications. Both the server and the attacker connect outbound to a shared public relay, so there is no attacker address to block and access survives patching of the original flaw. Detections rose 356.2% between March and August 2026, with PHP and cPanel hosting most affected.",
+  "summary": "Microsoft says multiple unrelated attackers are installing the open-source GSocket tool on Linux web servers after exploiting web applications. Both the server and the attacker connect outbound to a shared public relay, so there is no attacker address to block and access survives patching of the original flaw. Devices with GSocket detections rose 356.2% between March and August 2026, with PHP and cPanel hosting most affected.",
   "tags": [
     "cloud"
   ],
   "title": "Microsoft: attackers use open-source GSocket to keep hidden access to hacked Linux servers",
-  "updated_at": "2026-11-18T06:14:21Z",
+  "updated_at": "2026-11-19T05:12:00Z",
   "validation": {
     "checked_at": "2026-11-18T00:08:00Z",
     "note": "Reviewed against the original Microsoft Threat Intelligence report.",
     "state": "corroborated"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:12:39Z",
+    "note": "Checked against Microsoft post: 63.9%/24.3% are shares within web-app/hosting incidents and 356.2% is devices with detections, Dirty Frag only in few incidents; wording fixed",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T05:12:39Z"
 }

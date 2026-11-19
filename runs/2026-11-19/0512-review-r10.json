@@ -1,0 +1,43 @@
+{
+  "job": "reviewer",
+  "started_at": "2026-11-19T05:00:00Z",
+  "finished_at": "2026-11-19T05:15:00Z",
+  "model": "claude-sonnet-5-5",
+  "reviewed": [
+    {"id": "oracle-cspu-november-2026", "verdict": "corrected", "note": "CSPU not CPU; Hyperion count added; SecurityWeek page 403"},
+    {"id": "osaka-city-email-data-breach-2026-11", "verdict": "flagged", "note": "City of Osaka pages return 408; figures unchecked"},
+    {"id": "osaki-electric-ransomware-smart-meter-halt-2026-11", "verdict": "passed", "note": "matches company notice"},
+    {"id": "perry-local-schools-cyber-incident-2026-11", "verdict": "passed", "note": "matches News 5 and Cleveland 19"},
+    {"id": "php-critical-security-release-announced-2026-11", "verdict": "passed", "note": "matches Register and heise"},
+    {"id": "plaid-karte-unauthorized-access-2026-11", "verdict": "corrected", "note": "integration credentials listed as leaked; PLAID original not opened"},
+    {"id": "rails-active-storage-cve-2026-122006", "verdict": "passed", "note": "matches timeline; GHSA unreachable"},
+    {"id": "reversinglabs-bubbleloader-patched-software-loader-2026-11", "verdict": "passed", "note": "matches ReversingLabs and Help Net Security"},
+    {"id": "richmond-public-schools-cyberattack-audit-2026-11", "verdict": "passed", "note": "matches WWBT"},
+    {"id": "romania-stops-turla-government-email-attack-2026-11", "verdict": "passed", "note": "matches SRI release"},
+    {"id": "ruby-regexp-string-case-conversion-vulns-2026-11", "verdict": "passed", "note": "matches Ruby advisory"},
+    {"id": "sans-isc-litellm-starlette-scanning-2026-11", "verdict": "passed", "note": "matches SANS diary"}
+  ],
+  "pages_read": [
+    {"url": "https://www.oracle.com/security-alerts/cspunov2026.html", "title": "Oracle CSPU Nov 2026", "used_in": "oracle-cspu-november-2026"},
+    {"url": "https://www.osaki.co.jp/ja/notice/20261118.html", "title": "Osaki notice", "used_in": "osaki-electric-ransomware-smart-meter-halt-2026-11"},
+    {"url": "https://therecord.media/city-of-osaka-japan-email-data-breach", "title": "The Record Osaka", "used_in": "osaka-city-email-data-breach-2026-11"},
+    {"url": "https://www.news5cleveland.com/news/local-news/perry-local-closes-schools-on-monday-after-cyber-incident", "title": "News 5", "used_in": "perry-local-schools-cyber-incident-2026-11"},
+    {"url": "https://www.cleveland19.com/2026/11/16/cyber-incident-closes-stark-county-school-district/", "title": "Cleveland 19", "used_in": "perry-local-schools-cyber-incident-2026-11"},
+    {"url": "https://www.theregister.com/patches/2026/11/18/get-ready-for-another-critical-php-security-release-to-drop/5310911", "title": "The Register", "used_in": "php-critical-security-release-announced-2026-11"},
+    {"url": "https://www.heise.de/news/Sicherheitsfix-PHP-Admins-bekommen-Donnerstagnachmittag-zu-tun-11530253.html", "title": "heise", "used_in": "php-critical-security-release-announced-2026-11"},
+    {"url": "https://smartscope.blog/en/blog/karte-all-services-suspended-due-unauthorized-access-plaid-2026/", "title": "Smartscope", "used_in": "plaid-karte-unauthorized-access-2026-11"},
+    {"url": "https://www.agentbeam.com/blog/november-2026-attacks-timeline", "title": "AgentBeam timeline", "used_in": "rails-active-storage-cve-2026-122006"},
+    {"url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-bubbleloader", "title": "ReversingLabs", "used_in": "reversinglabs-bubbleloader-patched-software-loader-2026-11"},
+    {"url": "https://www.helpnetsecurity.com/2026/11/18/winrar-bubbleloader-malware/", "title": "Help Net Security", "used_in": "reversinglabs-bubbleloader-patched-software-loader-2026-11"},
+    {"url": "https://www.12onyourside.com/2026/11/11/richmond-public-schools-says-forensic-audit-is-underway-after-october-cyberattack/?outputType=amp", "title": "WWBT", "used_in": "richmond-public-schools-cyberattack-audit-2026-11"},
+    {"url": "https://www.sri.ro/articole/comunicat-de-presa-11-11-2026.html", "title": "SRI release", "used_in": "romania-stops-turla-government-email-attack-2026-11"},
+    {"url": "https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/", "title": "Ruby advisory", "used_in": "ruby-regexp-string-case-conversion-vulns-2026-11"},
+    {"url": "https://isc.sans.edu/diary/rss/33522", "title": "SANS ISC diary", "used_in": "sans-isc-litellm-starlette-scanning-2026-11"}
+  ],
+  "failed_sites": [
+    "city.osaka.lg.jp (HTTP 408, both pages)",
+    "securityweek.com (403)",
+    "github.com advisories (blocked in session)"
+  ],
+  "notes": "Fetched with node fetch via the proxy. The Record page for Romania was fetched but not needed; SRI primary read."
+}

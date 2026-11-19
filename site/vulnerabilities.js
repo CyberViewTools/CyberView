@@ -545,7 +545,7 @@
     $("cvPager").hidden = pg.pages <= 1; $("cvPage").textContent = "Page " + (pg.page + 1) + " of " + pg.pages + " (" + PAGE + " per page)";
     $("cvPrev").disabled = pg.page === 0; $("cvNext").disabled = pg.page >= pg.pages - 1;
   }
-  /* a year is a run of lookup files <year>/0.json, 1.json ...; the index lists no files, so they are probed in groups until a whole group is missing */
+  /* a year's lookup files are listed in the index (files_by_year); an older index without the list falls back to probing <year>/0.json, 1.json ... in groups until a whole group is missing */
   function loadSet(key) {
     if (CV.sets[key]) return;
     var set = CV.sets[key] = { state: "loading", files: [] }, prog = $("cvProg"), bar = $("cvBar"), fill = $("cvBarFill"), btn = $("cvLoadYear");
@@ -554,6 +554,12 @@
     function tick() { fill.style.width = expect ? Math.min(100, Math.round(got / expect * 100)) + "%" : "50%"; prog.textContent = "Loading " + (key === "recent" ? "the last two weeks" : key) + ": " + fmtN(got) + (expect ? " of about " + fmtN(expect) : "") + " CVEs"; }
     var work;
     if (key === "recent") work = getJson("data/cve/recent.json").then(function (d) { var rows = D.parseFile(d); CV.ready["recent.json"] = rows; set.files.push("recent.json"); got = rows.length; tick(); });
+    else if (y && y.files) {
+      var list = y.files.slice(), n = 0;
+      var next = function () { if (n >= list.length) return Promise.resolve(); var batch = list.slice(n, n + 6); n += 6;
+        return Promise.all(batch.map(function (k) { var f = key + "/" + k + ".json"; return getFile(f).then(function (rows) { set.files.push(f); got += rows.length; }, function () { return null; }); })).then(function () { tick(); return next(); }); };
+      work = next().then(function () { if (!set.files.length) throw new Error("none"); });
+    }
     else {
       var k = 0, GROUP = 4, MAX = 160;
       var step = function () {

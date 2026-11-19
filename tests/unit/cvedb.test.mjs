@@ -29,7 +29,7 @@ test("bucketFile matches the files scripts/cve.mjs site writes (thousands)", () 
 
 test("cleanIndex reads counts and freshness, orders years newest first, drops junk", () => {
   const ix = D.cleanIndex({ built_at: "2026-11-19T03:00:00Z", total: 9, rejected: 1, exploited: 2, critical: 3, by_year: { 1999: 1, 2024: 8, x: 5, 1500: 1, 2023: "n" }, sources: { cvelist: "2026-11-19T02:00:00Z", epss: "2026-11-19" } });
-  assert.deepEqual(plain(ix.years), [{ year: 2024, count: 8 }, { year: 1999, count: 1 }]);
+  assert.deepEqual(plain(ix.years), [{ year: 2024, count: 8, files: null }, { year: 1999, count: 1, files: null }]);
   assert.equal(ix.total, 9); assert.equal(ix.cvelist, "2026-11-19T02:00:00Z");
   assert.equal(D.cleanIndex(null), null);
   assert.equal(D.cleanIndex({ total: "many" }), null);
@@ -106,4 +106,12 @@ test("page slices and clamps; topVendors counts", () => {
   assert.equal(D.page(l, -3, 200).page, 0);
   assert.equal(D.page([], 0, 200).pages, 1);
   assert.deepEqual(plain(D.topVendors(S, 2)), [["Acme", 2], ["Acmecorp", 1]]);
+});
+
+test("cleanIndex keeps the per-year file list and drops bad entries; an older index has none", () => {
+  const ix = D.cleanIndex({ total: 3, by_year: { 2024: 2, 2021: 1 }, files_by_year: { 2024: [0, 3, -1, 2.5, "7", 120], 2021: [] } });
+  const y24 = ix.years.find((y) => y.year === 2024), y21 = ix.years.find((y) => y.year === 2021);
+  assert.deepEqual(y24.files, [0, 3, 120]);
+  assert.equal(y21.files, null);
+  assert.equal(D.cleanIndex({ total: 1, by_year: { 2024: 1 } }).years[0].files, null);
 });

@@ -18,11 +18,15 @@
   /* the lookup file that holds an id: CVE-2024-3400 -> "2024/3.json" (thousands, as scripts/lib/cve.mjs bucket()) */
   L.bucketFile = function (id) { var p = L.parseId(id); return p ? p.year + "/" + Math.floor(p.seq / 1000) + ".json" : ""; };
 
-  /* index.json: { built_at, total, rejected, exploited, critical, by_year: {"2024": n}, buckets, sources: { cvelist, epss } } */
+  /* index.json: { built_at, total, rejected, exploited, critical, by_year: {"2024": n}, buckets, files_by_year: {"2024": [0, 1, 3 ...]}, sources: { cvelist, epss } }
+     files is null for an older index without the list; the page then probes for the files */
   L.cleanIndex = function (x) {
     if (!x || typeof x !== "object") return null;
     var by = x.by_year && typeof x.by_year === "object" ? x.by_year : {}, years = [];
-    Object.keys(by).slice(0, 120).forEach(function (k) { var n = num(by[k], 0, 1e7); if (/^\d{4}$/.test(k) && +k >= 1988 && +k <= 2100 && n !== null) years.push({ year: +k, count: n }); });
+    var fy = x.files_by_year && typeof x.files_by_year === "object" ? x.files_by_year : {};
+    Object.keys(by).slice(0, 120).forEach(function (k) { var n = num(by[k], 0, 1e7); if (/^\d{4}$/.test(k) && +k >= 1988 && +k <= 2100 && n !== null) {
+      var f = Array.isArray(fy[k]) ? fy[k].slice(0, 2000).filter(function (v) { return typeof v === "number" && v >= 0 && v <= 99999 && Math.floor(v) === v; }) : null;
+      years.push({ year: +k, count: n, files: f && f.length ? f : null }); } });
     years.sort(function (a, b) { return b.year - a.year; });
     var s = x.sources && typeof x.sources === "object" ? x.sources : {};
     var o = { builtAt: str(x.built_at, 30), total: num(x.total, 0, 1e8), rejected: num(x.rejected, 0, 1e8), exploited: num(x.exploited, 0, 1e8), critical: num(x.critical, 0, 1e8), years: years, cvelist: str(s.cvelist, 30), epss: str(s.epss, 30) };

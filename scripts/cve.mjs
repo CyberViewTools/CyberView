@@ -5,7 +5,8 @@
 //                       (exploited per CISA, on KEV, or CVSS 9+) are filed as leads for the research loop
 //   epss                attach today's EPSS score and percentile to every CVE
 //   kev                 mark CVEs in data/kev/ as known exploited
-//   site [dir]          write the lookup files the site reads (default site/data/cve/): <year>/<thousand>.json buckets,
+//   site [dir]          write the lookup files the site reads (default site/data/cve/): <year>/<thousand>.json buckets
+//                       (index.json lists them per year in files_by_year),
 //                       index.json (counts, freshness) and recent.json (published or changed in the last 14 days)
 //   stats | get <id>
 // The corpus lives in CVE_CORPUS (default cache/cve/, not committed): <year>.jsonl plus state.json. The cve workflow
@@ -115,7 +116,9 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   recent.sort((a, b) => (b.pub || "").localeCompare(a.pub || "") || num(b.id) - num(a.id));
   const st = state();
   writeFileSync(join(out, "recent.json"), JSON.stringify({ fields: FIELDS, since, rows: recent.slice(0, 3000).map(toArr) }));
-  writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size,
+  const files = {}; for (const b of buckets.keys()) { const [y, k] = b.split("/"); (files[y] ||= []).push(Number(k)); }
+  for (const y of Object.keys(files)) files[y].sort((a, b) => a - b);
+  writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size, files_by_year: files,
     sources: { cvelist: st.delta_at || st.baseline_at || null, epss: st.epss_date || null } }));
   console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${recent.length} published or changed since ${since}.`);
 }

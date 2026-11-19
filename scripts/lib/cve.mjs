@@ -11,7 +11,7 @@ export function bestCvss(metrics) {
   for (const k of ["cvssV4_0", "cvssV3_1", "cvssV3_0", "cvssV2_0"])
     for (const m of metrics || []) {
       const c = m && m[k];
-      if (c && typeof c.baseScore === "number") return { score: c.baseScore, sev: SEV[String(c.baseSeverity || "").toUpperCase()] || sevOf(c.baseScore), ver: k.replace("cvssV", "").replace("_", ".") };
+      if (c && typeof c.baseScore === "number") return { score: c.baseScore, sev: SEV[String(c.baseSeverity || "").toUpperCase()] || sevOf(c.baseScore), ver: k.replace("cvssV", "").replace("_", "."), vec: /^[A-Za-z0-9.:\/]{8,200}$/.test(c.vectorString || "") ? c.vectorString : "" };
     }
   return null;
 }
@@ -25,12 +25,16 @@ export function compact(r) {
   const rejected = md.state === "REJECTED";
   const desc = ((cna.descriptions || []).find((d) => /^en/i.test(d.lang || "")) || (cna.descriptions || [])[0] || (cna.rejectedReasons || [])[0] || {}).value || "";
   let cvss = bestCvss(cna.metrics);
-  let exploitation = "", kev = "", cwe = "";
+  let exploitation = "", kev = "", cwe = "", automatable = "", impact = "";
   for (const a of adp) {
     if (!cvss) cvss = bestCvss(a.metrics);
     for (const m of a.metrics || []) {
       const o = m && m.other;
-      if (o && o.type === "ssvc") for (const opt of (o.content && o.content.options) || []) if (opt && opt.Exploitation) exploitation = String(opt.Exploitation).toLowerCase();
+      if (o && o.type === "ssvc") for (const opt of (o.content && o.content.options) || []) {
+        if (opt && opt.Exploitation) exploitation = String(opt.Exploitation).toLowerCase();
+        if (opt && opt.Automatable) automatable = String(opt.Automatable).toLowerCase();
+        if (opt && opt["Technical Impact"]) impact = String(opt["Technical Impact"]).toLowerCase();
+      }
       if (o && o.type === "kev") kev = day(o.content && o.content.dateAdded) || "yes";
     }
   }
@@ -43,6 +47,7 @@ export function compact(r) {
     cwe, vendor: txt(aff.vendor && aff.vendor !== "n/a" ? aff.vendor : "", 60), product: txt(aff.product && aff.product !== "n/a" ? aff.product : "", 80),
     title: txt(cna.title || "", 160), desc: txt(desc, 600), cna: txt(md.assignerShortName, 40),
     expl: ["none", "poc", "active"].includes(exploitation) ? exploitation : "", kev,
+    auto: ["yes", "no"].includes(automatable) ? automatable : "", ti: ["total", "partial"].includes(impact) ? impact : "", vec: cvss ? cvss.vec : "",
   };
 }
 
@@ -90,5 +95,23 @@ export function toLead(row, seenAt) {
 }
 
 // fields of the site's lookup files, in order (rows are arrays to keep the files small)
-export const FIELDS = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct"];
+export const FIELDS = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct",
+  "auto", "ti", "vec", "due", "ransom", "ncvss", "nsev", "nvec"];
+
+/** CISA KEV catalog JSON -> Map(id -> {added, due, ransom}) */
+export function parseKevCatalog(j) {
+  const m = new Map();
+  for (const v of (j && j.vulnerabilities) || []) if (ID.test(v.cveID || "")) m.set(v.cveID, { added: day(v.dateAdded), due: day(v.dueDate), ransom: /^known$/i.test(v.knownRansomwareCampaignUse || "") });
+  return m;
+}
+/** NVD API 2.0 vulnerability item -> {ncvss, nsev, nvec} from NVD's own (Primary) score, v4.0 then v3.1, v3.0, v2. */
+export function nvdScore(item) {
+  const m = (item && item.cve && item.cve.metrics) || {};
+  for (const k of ["cvssMetricV40", "cvssMetricV31", "cvssMetricV30", "cvssMetricV2"]) {
+    const list = m[k] || [], x = list.find((y) => y && y.type === "Primary") || list[0];
+    const d = x && x.cvssData;
+    if (d && typeof d.baseScore === "number") return { ncvss: d.baseScore, nsev: SEV[String(d.baseSeverity || x.baseSeverity || "").toUpperCase()] || sevOf(d.baseScore), nvec: /^[A-Za-z0-9.:\/()]{8,200}$/.test(d.vectorString || "") ? d.vectorString : "" };
+  }
+  return null;
+}
 export const toArr = (r) => FIELDS.map((k) => (r[k] === undefined ? null : r[k]));

@@ -475,12 +475,31 @@
   }
   function sevBadge(r) { return r.sev ? el("span", "badge " + SEV[r.sev][1], SEV[r.sev][0] + (r.cvss !== null ? " " + r.cvss.toFixed(1) : "")) : el("span", "badge info", r.cvss !== null ? "CVSS " + r.cvss.toFixed(1) : "No score"); }
   function isKev(r) { return !!(r.kev || CV.kev[r.id]); }
+  var DEC_CLASS = { act: "bad", attend: "warn", "track*": "info", track: "info" };
+  function decBadge(rt) { var b = el("span", "badge " + (DEC_CLASS[rt.decision] || "info"), (rt.decision ? "Priority: " : "") + rt.label); b.title = rt.does; return b; }
+  function rateOpts() { return { mission: $("cvMission").value, exposed: $("cvExposed").value === "yes" ? true : $("cvExposed").value === "no" ? false : undefined }; }
+  function rateBox(r) {
+    var rt = D.rated(r), box = el("div", "wbme cvrate " + (DEC_CLASS[rt.decision] || "info"));
+    box.appendChild(el("b", null, rt.decision ? "Priority: " + rt.label + " (CISA SSVC)" : rt.label));
+    box.appendChild(el("p", null, rt.does));
+    if (!rt.decision) return box;
+    var fx = rt.fixBy || {}, ul = el("ul");
+    var line = function (k, label) { var t = fx[k]; if (!t || (rt.fixFor && rt.fixFor !== k)) return; var li = el("li"); li.appendChild(el("b", null, label + ": ")); li.appendChild(document.createTextNode(t.text)); ul.appendChild(li); };
+    line("exposed", "Fix by, internet-facing systems (CISA BOD 26-04)"); line("internal", "Fix by, internal systems (CISA BOD 26-04)");
+    if (rt.deadline) { var li = el("li"); li.appendChild(el("b", null, "CISA catalog due date: ")); li.appendChild(document.createTextNode(fmtLong(rt.deadline) + (rt.overdue ? " (passed)" : ""))); ul.appendChild(li); }
+    box.appendChild(ul);
+    box.appendChild(el("h4", null, "How it was decided"));
+    var il = el("ul"); rt.inputs.forEach(function (x) { var li = el("li"); li.appendChild(el("b", null, x.name + ": " + x.value)); li.appendChild(document.createTextNode(" · " + x.basis)); il.appendChild(li); }); box.appendChild(il);
+    if (rt.signals.length) { box.appendChild(el("h4", null, "Supporting signals")); var sl = el("ul"); rt.signals.forEach(function (x) { sl.appendChild(el("li", null, x.text)); }); box.appendChild(sl); }
+    var how = el("button", "linkbtn", "How CyberView rates vulnerabilities"); how.type = "button"; how.addEventListener("click", function () { var h = $("cvHow"); h.open = true; h.scrollIntoView({ block: "start" }); }); box.appendChild(how);
+    return box;
+  }
   function cvCard(r, open, rank) {
     var li = el("li", "wbrow cvrow" + (r.rejected ? " clear" : "")), b = el("button", "wbhead cvhead"); b.type = "button"; b.setAttribute("aria-expanded", open ? "true" : "false");
     var sc = el("span", "wbscore cvscore", r.cvss !== null ? r.cvss.toFixed(1) : "-"); sc.title = "CVSS base score"; b.appendChild(sc);
     var mid = el("span", "wbmid"), top = el("span", "wbtop"); top.appendChild(el("b", null, r.id)); var who = [r.vendor, r.product].filter(Boolean).join(" "); if (who) top.appendChild(document.createTextNode(" " + who));
     mid.appendChild(top); mid.appendChild(el("span", "wbname", (r.title || r.desc || "No description.").slice(0, 200)));
-    var chips = el("span", "wbchips"); chips.appendChild(sevBadge(r));
+    var chips = el("span", "wbchips"); if (!r.rejected) chips.appendChild(decBadge(D.rated(r))); chips.appendChild(sevBadge(r));
     if (r.rejected) chips.appendChild(el("span", "badge warn", "Rejected"));
     if (isKev(r)) chips.appendChild(el("span", "badge bad", "Known exploited")); else if (r.expl === "active") chips.appendChild(el("span", "badge bad", "Exploited (CISA)"));
     if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
@@ -493,6 +512,7 @@
   }
   function cvDetail(r) {
     var d = el("div", "wbdetail"); if (r.desc) d.appendChild(el("p", null, r.desc));
+    d.appendChild(rateBox(r));
     var kv = el("ul");
     [["Affects", [r.vendor, r.product].filter(Boolean).join(" ")], ["Published", fmtLong(r.pub)], ["Last changed", r.upd && r.upd !== r.pub ? fmtLong(r.upd) : ""], ["Assigned by", r.cna],
       ["CVSS", r.cvss !== null ? r.cvss.toFixed(1) + (r.sev ? " " + SEV[r.sev][0].toLowerCase() : "") + (r.ver ? " (v" + r.ver + ")" : "") : ""], ["Weakness", r.cwe],
@@ -516,7 +536,7 @@
     }, function () { ev.textContent = ""; });
     return d;
   }
-  function cvFilters() { return { q: $("wbQ").value, sev: $("cvSev").value, minEpss: +$("cvEpss").value || 0, cwe: $("cvCwe").value, vendor: $("cvVendor").value, status: $("cvStatusSel").value, exploited: $("cvKev").checked }; }
+  function cvFilters() { D.rateOpts = rateOpts(); return { decision: $("cvDec").value, rateOpts: D.rateOpts, q: $("wbQ").value, sev: $("cvSev").value, minEpss: +$("cvEpss").value || 0, cwe: $("cvCwe").value, vendor: $("cvVendor").value, status: $("cvStatusSel").value, exploited: $("cvKev").checked }; }
   function rebuildPool() {
     var out = [], seen = {};
     Object.keys(CV.sets).forEach(function (k) { if (CV.sets[k].state === "done") CV.sets[k].files.forEach(function (f) { (CV.ready[f] || []).forEach(function (r) { if (!seen[r.id]) { seen[r.id] = 1; out.push(r); } }); }); });
@@ -629,7 +649,11 @@
   $("cvLookup").addEventListener("click", lookup);
   $("cvLoadYear").addEventListener("click", loadYear);
   $("cvClearYears").addEventListener("click", unloadYears);
-  ["cvSev", "cvEpss", "cvStatusSel", "cvSort", "cvKev"].forEach(function (id) { $(id).addEventListener("change", function () { CV.page = 0; renderAll(); }); });
+  ["cvSev", "cvEpss", "cvStatusSel", "cvSort", "cvKev", "cvDec"].forEach(function (id) { $(id).addEventListener("change", function () { CV.page = 0; renderAll(); }); });
+  /* the visitor's rating settings stay in this browser, like the software list */
+  try { var rs = JSON.parse(localStorage.getItem("cwm.rate") || "{}"); if (/^(low|medium|high)$/.test(rs.mission || "")) $("cvMission").value = rs.mission; if (/^(yes|no)$/.test(rs.exposed || "")) $("cvExposed").value = rs.exposed; } catch (e) {}
+  ["cvMission", "cvExposed"].forEach(function (id) { $(id).addEventListener("change", function () { try { localStorage.setItem("cwm.rate", JSON.stringify({ mission: $("cvMission").value, exposed: $("cvExposed").value })); } catch (e) {} D.rateOpts = rateOpts(); CV.page = 0; renderAll(); }); });
+  D.rateOpts = rateOpts();
   var ct = 0; ["cvVendor", "cvCwe"].forEach(function (id) { $(id).addEventListener("input", function () { clearTimeout(ct); ct = setTimeout(function () { CV.page = 0; renderAll(); }, 160); }); });
   $("cvPrev").addEventListener("click", function () { CV.page--; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });
   $("cvNext").addEventListener("click", function () { CV.page++; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });

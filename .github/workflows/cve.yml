@@ -29,7 +29,7 @@ concurrency:
 jobs:
   cve:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       GH_TOKEN: ${{ github.token }}
       CVE_CORPUS: ${{ github.workspace }}/cache/cve
@@ -47,7 +47,8 @@ jobs:
       - name: Is there a corpus?
         id: get
         run: |
-          if [ "${{ inputs.rebuild }}" != "true" ] && [ -f "$CVE_CORPUS/state.json" ]; then echo "have=1" >> "$GITHUB_OUTPUT"; else echo "have=0" >> "$GITHUB_OUTPUT"; fi
+          v=$(node -e 'try{console.log(require(process.env.CVE_CORPUS+"/state.json").version||0)}catch{console.log(0)}'); want=$(node -e 'import("./scripts/cve.mjs").then(m=>console.log(m.CORPUS_VERSION))')
+          if [ "${{ inputs.rebuild }}" != "true" ] && [ "$v" = "$want" ]; then echo "have=1" >> "$GITHUB_OUTPUT"; else echo "have=0 (corpus version $v, code wants $want)"; echo "have=0" >> "$GITHUB_OUTPUT"; fi
       - name: Build every CVE since 1999 from the CVE List's midnight release (first run or rebuild)
         if: steps.get.outputs.have != '1'
         run: bash scripts/cve-baseline.sh
@@ -64,7 +65,14 @@ jobs:
         run: |
           if [ "$(node -e 'const s=require(process.env.CVE_CORPUS+"/state.json");console.log(s.epss_date||"")')" != "$(date -u +%F)" ]; then node scripts/cve.mjs epss || echo "EPSS unavailable; keeping yesterday's scores"; fi
           node scripts/cve.mjs kev
-          node scripts/cve.mjs stats
+      - name: NVD's own scores (a full read the first time, about 25 minutes; then only NVD's changes)
+        continue-on-error: true
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: node scripts/cve.mjs nvd
+      - name: Audit our counts against NVD and CISA
+        continue-on-error: true
+        run: node scripts/cve.mjs audit && node scripts/cve.mjs stats
       - name: Save the corpus for the next run and the deploy
         uses: actions/cache/save@v4
         with:

@@ -115,3 +115,43 @@ test("cleanIndex keeps the per-year file list and drops bad entries; an older in
   assert.equal(y21.files, null);
   assert.equal(D.cleanIndex({ total: 1, by_year: { 2024: 1 } }).years[0].files, null);
 });
+
+test("rating: CISA's SSVC table, inputs with their source, and BOD 26-04 timelines", () => {
+  const log4 = { id: "CVE-2021-44228", cvss: 10, sev: "C", kev: "2021-12-10", expl: "active", auto: "yes", ti: "total", epss: 0.99999, pct: 1, ransom: true, due: "2021-12-24" };
+  const r = D.rate(log4, { today: "2026-11-19" });
+  assert.equal(r.decision, "act"); assert.equal(r.overdue, true);
+  assert.deepEqual(plain(r.inputs.map((i) => [i.name, i.value, i.source])), [["Exploitation", "active", "cisa-kev"], ["Automatable", "yes", "cisa"], ["Technical impact", "total", "cisa"], ["Mission and well-being", "medium", "default"]]);
+  assert.equal(r.fixBy.exposed.days, 3); assert.equal(r.fixBy.exposed.triage, true); assert.equal(r.fixBy.internal.days, 3);
+  assert.ok(r.signals.some((s) => /ransomware/.test(s.text)));
+  // every row of CISA's coordinator table (CERT/CC cisa_coordinator_2_0_3.csv), mission low/medium/high
+  const want = { "none|no|partial": "T T T", "none|no|total": "T T T*", "none|yes|partial": "T T At", "none|yes|total": "T T At", "poc|no|partial": "T T T*", "poc|no|total": "T T* At",
+    "poc|yes|partial": "T T At", "poc|yes|total": "T T* At", "active|no|partial": "T T At", "active|no|total": "T At Ac", "active|yes|partial": "At At Ac", "active|yes|total": "At Ac Ac" };
+  const code = { track: "T", "track*": "T*", attend: "At", act: "Ac" };
+  for (const [k, v] of Object.entries(want)) { const [e, a, t] = k.split("|"); assert.equal(["low", "medium", "high"].map((m) => code[D.ssvcDecision(e, a, t, m)]).join(" "), v, k); }
+  // BOD 26-04 Table 1, all 16 rows
+  const bod = [[1, 1, "yes", "total", "3t"], [1, 1, "yes", "partial", "3"], [1, 1, "no", "total", "3t"], [1, 1, "no", "partial", "14"], [1, 0, "yes", "total", "3"], [1, 0, "yes", "partial", "14"], [1, 0, "no", "total", "14"], [1, 0, "no", "partial", "60"],
+    [0, 1, "yes", "total", "3t"], [0, 1, "yes", "partial", "14"], [0, 1, "no", "total", "14"], [0, 1, "no", "partial", "14"], [0, 0, "yes", "total", "60"], [0, 0, "yes", "partial", "60"], [0, 0, "no", "total", "up"], [0, 0, "no", "partial", "up"]];
+  for (const [x, k, a, t, w] of bod) { const b = D.bodTimeline(!!x, !!k, a, t); assert.equal(b.days === null ? "up" : b.days + (b.triage ? "t" : ""), w, [x, k, a, t].join("|")); }
+});
+test("rating: estimates from the CVSS vector are labelled, EPSS only raises Track to Track*, rejected CVEs are not rated", () => {
+  const rce = { id: "CVE-2026-1", cvss: 9.8, sev: "C", vec: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", epss: 0.3, pct: 0.97 };
+  const r = D.rate(rce);
+  assert.equal(r.decision, "track*"); assert.equal(r.estimated, true);
+  assert.deepEqual(plain(r.inputs.slice(1, 3).map((i) => [i.value, i.source])), [["yes", "estimate"], ["total", "estimate"]]);
+  assert.equal(D.rate({ ...rce, pct: 0.5 }).decision, "track");
+  assert.equal(D.rate({ ...rce, expl: "active" }, { mission: "high" }).decision, "act");
+  assert.equal(D.automatableFromVector("CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"), "no");
+  assert.equal(D.impactFromVector("CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"), "total");
+  assert.equal(D.rate({ id: "CVE-2020-1", rejected: true }).decision, null);
+});
+
+test("rating: the record's own exploitation evidence and the BOD 26-04 floor for known-exploited flaws", () => {
+  const seen = { id: "CVE-2026-126755", cvss: 9.8, sev: "C", expl: "poc", auto: "yes", ti: "total", desc: "Auth bypass. Exploitation evidence was first observed by the Shadowserver Foundation on 2026-09-16." };
+  const a = D.rate(seen); assert.equal(a.inputs[0].value, "active"); assert.equal(a.inputs[0].source, "description"); assert.equal(a.decision, "act");
+  const pub = D.rate({ id: "CVE-2026-132142", cvss: 7.2, vec: "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H", desc: "Stack overflow. The exploit has been published and may be used." });
+  assert.equal(pub.inputs[0].value, "public PoC");
+  const plex = { id: "CVE-2026-96652", cvss: 5.3, kev: "2026-10-01", expl: "active", auto: "no", ti: "partial" };
+  const p = D.rate(plex); assert.equal(p.decision, "attend"); assert.ok(/BOD 26-04/.test(p.signals[0].text));   // table says Track; KEV is 14 days
+  assert.equal(D.rate(plex, { exposed: true }).decision, "attend");
+  assert.equal(D.rate({ ...plex, ti: "total" }, { exposed: true }).decision, "act");   // 3 days and forensic triage
+});

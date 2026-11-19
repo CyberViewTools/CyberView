@@ -18,7 +18,7 @@ test("a CVE JSON 5 record becomes one compact row with CISA's enrichment", () =>
   assert.equal(r.vendor, "Palo Alto Networks"); assert.equal(r.desc, "A command injection vulnerability."); assert.equal(r.expl, "active"); assert.equal(r.kev, "2024-04-12");
 });
 test("CVSS falls back to CISA's score, v4 is preferred, and rejected records are marked", () => {
-  assert.deepEqual(bestCvss([{ cvssV3_1: { baseScore: 7.5 } }, { cvssV4_0: { baseScore: 8.7, baseSeverity: "HIGH" } }]), { score: 8.7, sev: "H", ver: "4.0" });
+  assert.deepEqual(bestCvss([{ cvssV3_1: { baseScore: 7.5 } }, { cvssV4_0: { baseScore: 8.7, baseSeverity: "HIGH" } }]), { score: 8.7, sev: "H", ver: "4.0", vec: "" });
   const r = compact({ cveMetadata: { cveId: "CVE-2020-0001", state: "REJECTED", datePublished: "2020-01-01" }, containers: { cna: { rejectedReasons: [{ value: "Duplicate." }] }, adp: [{ metrics: [{ cvssV3_1: { baseScore: 5 } }] }] } });
   assert.equal(r.state, "R"); assert.equal(r.cvss, 5); assert.equal(r.sev, "M"); assert.equal(r.desc, "Duplicate.");
   assert.equal(compact({ cveMetadata: { cveId: "not-a-cve" } }), null);

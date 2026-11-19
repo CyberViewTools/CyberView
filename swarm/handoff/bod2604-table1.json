@@ -1,0 +1,32 @@
+{"plan_id":"dbe4dbee4f27","table1":[
+{"kev":"Yes","exposure":"Yes","automatable":"Yes","impact":"Total control","other":"row 1","timeline":"3 days & forensic triage"},
+{"kev":"Yes","exposure":"Yes","automatable":"Yes","impact":"Partial control","other":"row 2","timeline":"3 days"},
+{"kev":"Yes","exposure":"Yes","automatable":"No","impact":"Total control","other":"row 3","timeline":"3 days & forensic triage"},
+{"kev":"Yes","exposure":"Yes","automatable":"No","impact":"Partial control","other":"row 4","timeline":"14 days"},
+{"kev":"No","exposure":"Yes","automatable":"Yes","impact":"Total control","other":"row 5","timeline":"3 days"},
+{"kev":"No","exposure":"Yes","automatable":"Yes","impact":"Partial control","other":"row 6","timeline":"14 days"},
+{"kev":"No","exposure":"Yes","automatable":"No","impact":"Total control","other":"row 7","timeline":"14 days"},
+{"kev":"No","exposure":"Yes","automatable":"No","impact":"Partial control","other":"row 8","timeline":"60 days"},
+{"kev":"Yes","exposure":"No","automatable":"Yes","impact":"Total control","other":"row 9","timeline":"3 days & forensic triage"},
+{"kev":"Yes","exposure":"No","automatable":"Yes","impact":"Partial control","other":"row 10","timeline":"14 days"},
+{"kev":"Yes","exposure":"No","automatable":"No","impact":"Total control","other":"row 11","timeline":"14 days"},
+{"kev":"Yes","exposure":"No","automatable":"No","impact":"Partial control","other":"row 12","timeline":"14 days"},
+{"kev":"No","exposure":"No","automatable":"Yes","impact":"Total control","other":"row 13","timeline":"60 days"},
+{"kev":"No","exposure":"No","automatable":"Yes","impact":"Partial control","other":"row 14","timeline":"60 days"},
+{"kev":"No","exposure":"No","automatable":"No","impact":"Total control","other":"row 15","timeline":"Fix on system upgrade"},
+{"kev":"No","exposure":"No","automatable":"No","impact":"Partial control","other":"row 16","timeline":"Fix on system upgrade"}
+],
+"definitions":[
+{"variable":"Publicly Exposed","value":"Yes","meaning":"Appendix A: asset is accessible to unauthenticated or untrusted entities via public networks. If any one method (e.g. CDM or Cyber Hygiene) finds it publicly exposed, the value is Yes. Directive Definitions section: any agency-owned or agency-managed IT resource accessible to unauthenticated or untrusted entities via public networks such as the internet, regardless of physical or logical location. (close paraphrase)"},
+{"variable":"Publicly Exposed","value":"No","meaning":"Appendix A: otherwise (not accessible as above)."},
+{"variable":"In the KEV","value":"Yes/No","meaning":"Appendix A: the CVE ID has an entry in CISA's KEV Catalog; inclusion criteria unchanged. (paraphrase)"},
+{"variable":"Automatable by Adversary","value":"Yes/No","meaning":"Appendix A: defined as documented by the Vulnrichment Program (links to CERTCC/SSVC on GitHub); Background: whether an adversary can automate all steps needed to exploit. Value definitions not on the page itself. (paraphrase)"},
+{"variable":"Technical Impact","value":"Total control","meaning":"Definitions section: the exploit gives the adversary total control over the software's behavior, including if it reliably reveals log-in credentials. (close paraphrase)"},
+{"variable":"Technical Impact","value":"Partial control","meaning":"Definitions section: limited control over, or information exposure about, the software's behavior, or a low stochastic opportunity for total control; denial of service is a form of limited control. (close paraphrase)"},
+{"variable":"Timeline","value":"Fix on system upgrade","meaning":"Appendix A: fix the next time the asset gets a scheduled major upgrade or rebuild, unless conditions change. (paraphrase)"},
+{"variable":"Timeline","value":"& forensic triage","meaning":"Appendix A: complete remediation or mitigation within the timeline (3 days) and also perform forensic triage of the asset. (paraphrase)"},
+{"variable":"Timeline","value":"days","meaning":"Appendix A: calendar days; clock starts when CISA adds the CVE to KEV or the agency identifies the vulnerability on an asset and updates the CDM dashboard, whichever is first. (paraphrase)"}
+],
+"complete":true,
+"url":"https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk",
+"notes":"Table 1 is published on the page as an image (BOD_26_04_Table_1_Remediation_Timelines_0.png); read visually, all 16 rows and 5 columns legible. Column headers: 'Publicly Exposed?†', 'In the KEV?*', 'Automatable by Adversary?*', 'Technical Impact*', 'Agency Timeline (Calendar Days) for Remediation'; row numbers 1-16 are the unlabelled first column (put in 'other'). The † and * footnote texts are not visible in the image and were not read. Definitions are mostly paraphrased, not word for word (the fetcher limited quotes); table cells are exact. Variable order on page Background: Asset Exposure, KEV Status, Exploit Automation, Technical Impact."}

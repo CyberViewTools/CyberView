@@ -7,6 +7,7 @@
 // Planning, counting and committing stay in scripts (sweep-plan, review, backlog, analyst, finish). Every worker's turns,
 // tokens, cost and outcome go to data/usage/<YYYY-MM>.jsonl, which scripts/improve.mjs reads for continuous improvement.
 // If `claude` cannot start a worker at all, it prints HEADLESS UNAVAILABLE and exits 3 so the dispatcher can fall back.
+import { heal } from "./lib/conflicts.mjs";
 import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -131,12 +132,12 @@ async function flow() {
   // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
   const host = (process.env.CLAUDE_CODE_REMOTE_SESSION_ID || process.env.HOSTNAME || "local").slice(-40);
   const publishLeader = (msg) => { sh("git", ["add", "data/leases.json"]); sh("git", ["commit", "-q", "-m", msg]); return sh("node", ["scripts/git-sync.mjs"], 180000).ok; };
-  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]);
+  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]); heal(ROOT);
   const other = leaderOf(readLeases());
   if (other && other.run !== RUN) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
   claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
   publishLeader("data: research loop leader " + RUN);
-  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]);
+  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]); heal(ROOT);
   { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
   let lastPublish = Date.now();
   const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }

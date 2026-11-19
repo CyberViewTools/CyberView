@@ -17,24 +17,9 @@ const git = (...a) => spawnSync("git", a, { cwd: ROOT, encoding: "utf8", maxBuff
 const show = (stage, f) => { const r = git("show", `:${stage}:${f}`); return r.status === 0 ? r.stdout : null; };
 const sleep = (s) => spawnSync("sleep", [String(s)]);
 
-/** Pure: three-way merge of two JSON objects by key. base = common ancestor, up = what is on main, mine = this commit. */
-export function mergeJson(base, up, mine) {
-  const out = { ...up };
-  for (const k of new Set([...Object.keys(base || {}), ...Object.keys(mine || {})])) {
-    const b = JSON.stringify((base || {})[k]), m = JSON.stringify((mine || {})[k]);
-    if (b === m) continue;                                                         // this commit did not touch the key: main's value stands
-    if (!(k in (mine || {}))) { delete out[k]; continue; }
-    const u = (up || {})[k];
-    out[k] = u && mine[k] && typeof u === "object" && typeof mine[k] === "object" && !Array.isArray(u) && !Array.isArray(mine[k]) ? mergeJson((base || {})[k], u, mine[k]) : mine[k];
-  }
-  return out;
-}
-/** Pure: union of two line files, main's order first, then lines only this commit has. */
-export function mergeLines(up, mine) {
-  const seen = new Set(), out = [];
-  for (const l of `${up || ""}\n${mine || ""}`.split("\n")) if (l.trim() && !seen.has(l)) { seen.add(l); out.push(l); }
-  return out.join("\n") + "\n";
-}
+export { mergeJson, mergeLines } from "./lib/merge.mjs";
+import { mergeJson, mergeLines } from "./lib/merge.mjs";
+import { heal, markedInOutgoing } from "./lib/conflicts.mjs";
 
 function resolve() {
   const files = git("diff", "--name-only", "--diff-filter=U").stdout.split("\n").filter(Boolean);
@@ -55,7 +40,7 @@ function resolve() {
   return true;
 }
 
-function main() {
+async function main() {
   for (let i = 1, max = Number(process.env.GIT_SYNC_TRIES) || 5; i <= max; i++) {
     const p = git("pull", "--rebase", "--autostash", "-q", "origin", "main");
     if (p.status !== 0) {
@@ -67,6 +52,9 @@ function main() {
       }
       if (!ok || git("status").stdout.includes("rebase in progress")) { git("rebase", "--abort"); console.error(`git-sync: attempt ${i}: ${(p.stderr || "").trim().split("\n")[0]}`); sleep(Number(process.env.GIT_SYNC_TRIES) ? 0 : i * 10); continue; }
     }
+    heal(ROOT);
+    const bad = markedInOutgoing(ROOT);
+    if (bad.length) { console.error(`git-sync: refusing to push, conflict markers in ${bad.join(", ")}`); process.exit(1); }
     const r = git("push", "-q", "origin", "HEAD:main");
     if (r.status === 0) { console.log(`git-sync: pushed (attempt ${i})`); process.exit(0); }
     console.error(`git-sync: push attempt ${i} failed: ${(r.stderr || "").trim().split("\n").pop()}`); sleep(i * 10);
@@ -74,4 +62,4 @@ function main() {
   console.error("git-sync: could not push after 5 attempts"); process.exit(1);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

@@ -8,6 +8,7 @@
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
+import { heal, marked } from "./lib/conflicts.mjs";
 
 const job = process.argv[2], force = process.argv.includes("--force");
 if (!job || !/^[a-z-]+$/.test(job)) { console.error("usage: finish.mjs <job> [--force]"); process.exit(1); }
@@ -29,7 +30,9 @@ if (b.status !== 0) {
   if (!force) { console.log("Nothing was committed. Have these fixed, then run finish again (add --force if they cannot be fixed)."); process.exit(1); }
   console.log("Committing anyway (--force): the deploy leaves broken records out and reports them.");
 }
+heal(ROOT);                                                                   // a pull --autostash may have left conflict markers
 git("add", "-A", "data", "config", "docs");
+{ const bad = marked(ROOT); if (bad.length) { git("reset", "-q", "--", ...bad); console.log(`NOT COMMITTED (conflict markers): ${bad.join(", ")}`); } }
 if (git("diff", "--cached", "--quiet").status === 0) { console.log(`CyberView ${job}: nothing to commit`); process.exit(0); }
 const msg = `data: ${job}, ${added} new, ${updated} updated`;
 const c = git("commit", "-q", "-m", msg);

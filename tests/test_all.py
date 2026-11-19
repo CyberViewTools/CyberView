@@ -361,6 +361,18 @@ async def main():
             await pg.mouse.move(box["x"] + 500, box["y"] + 450); await pg.mouse.down(); await pg.mouse.move(box["x"] + 350, box["y"] + 430, steps=6); await pg.mouse.up()
             await pg.wait_for_timeout(200)
             ok("globe: drag turns it", await pg.get_attribute("path.grat", "d") != d0)
+            # v1.48: double-click zooms in on the spot (the globe turns to it), shift + double-click zooms out
+            k0 = await pg.evaluate("document.getElementById('svg').__zoom.k")
+            d1 = await pg.get_attribute("path.grat", "d")
+            gx, gy = box["x"] + box["width"] * 0.42, box["y"] + box["height"] * 0.45
+            await pg.mouse.dblclick(gx, gy); await pg.wait_for_timeout(900)
+            k1 = await pg.evaluate("document.getElementById('svg').__zoom.k")
+            ok("globe: double-click zooms in 2x and turns to the spot", abs(k1 - 2 * k0) < 0.01 and await pg.get_attribute("path.grat", "d") != d1, (k0, k1))
+            await pg.keyboard.down("Shift"); await pg.mouse.dblclick(gx, gy); await pg.keyboard.up("Shift"); await pg.wait_for_timeout(900)
+            k2 = await pg.evaluate("document.getElementById('svg').__zoom.k")
+            ok("globe: shift + double-click zooms back out", abs(k2 - k1 / 2) < 0.01, (k1, k2))
+            await pg.mouse.dblclick(box["x"] + 4, box["y"] + 4); await pg.wait_for_timeout(500)
+            ok("globe: double-click off the globe does nothing", abs(await pg.evaluate("document.getElementById('svg').__zoom.k") - k2) < 0.01)
             await pg.click("#refresh")
             await pg.wait_for_timeout(500)
             ok("globe: refresh keeps the globe and turns it back", await pg.locator("path.ocean").count() == 1 and await pg.evaluate("document.body.classList.contains('globe')"))

@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.47",date:"2026-11-19"};
+var BUILD={version:"1.48",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -985,6 +985,17 @@ var zoom=d3.zoom().scaleExtent([.8,MAXK]).filter(function(ev){return state.view!
   if(globe&&ev.sourceEvent){T=d3.zoomIdentity.translate(FX*(1-T.k),FY*(1-T.k)).scale(T.k);svg.node().__zoom=T;}
   gMap.attr("transform",T);if(!raf)raf=requestAnimationFrame(function(){raf=0;drawMarks();});});
 svg.call(zoom).on("dblclick.zoom",null);
+/* double-click zooms in 2x on the spot clicked (the globe turns to it first); shift + double-click zooms out. d3's own
+   double-click zoom stays off because it scales without turning the globe. */
+svg.on("dblclick.spot",function(ev){safe("double-click zoom",function(){
+  if(state.view!=="map")return;ev.preventDefault();
+  var p=d3.pointer(ev,svg.node()),bx=T.invertX(p[0]),by=T.invertY(p[1]);
+  var k=Math.max(.8,Math.min(MAXK,ev.shiftKey?T.k/2:T.k*2));
+  if(!isFinite(bx)||!isFinite(by)||(k===T.k&&!globe))return;
+  if(globe){var ll=globeProj.invert&&globeProj.invert([bx,by]),back=ll&&isFinite(ll[0])&&isFinite(ll[1])?globeProj(ll):null;  /* off the globe the inverse clamps to the rim: */
+    if(!back||Math.abs(back[0]-bx)>1.5||Math.abs(back[1]-by)>1.5)return;}                                                          /* a point that does not map back is off the globe: nothing */
+  flyTo(bx,by,k);
+});});
 function layout(){
   var r=$("stage").getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(160,r.height);
   wide=!(window.matchMedia&&matchMedia("(max-width:900px),(max-height:520px) and (pointer:coarse)").matches);
@@ -1525,7 +1536,7 @@ function hoBuild(){
   L.push("");L.push("Unverified attacker claims are left out. Details and sources: "+location.href.split("#")[0]);
   return L.join("\n");
 }
-function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · drag to turn the globe · L layers · W wall mode · R refresh · F full screen · Esc back");}
+function showKeys(){toast("Keys: J/K next and previous · O open source · / search · 1 2 3 views · drag to turn the globe · double-click to zoom in (shift: out) · L layers · W wall mode · R refresh · F full screen · Esc back");}
 /* ---------- modal dialogs: backdrop, focus moved in and restored, Tab kept inside, Esc closes ---------- */
 var modalOpen=null,modalReturn=null;
 function modalShow(id,open,opener){

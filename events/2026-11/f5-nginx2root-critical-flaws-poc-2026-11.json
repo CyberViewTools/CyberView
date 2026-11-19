@@ -1,9 +1,17 @@
 {
   "action": "Upgrade NGINX Open Source to 1.30.7 or 1.31.9 (NGINX Plus 37.0.8.1 or 37.3.0.1) per F5's advisory K000164058, and review which affected features (HTTP/2, HTTP/3, mail proxy) you expose.",
-  "attack": ["T1190 Exploit Public-Facing Application"],
+  "attack": [
+    "T1190 Exploit Public-Facing Application"
+  ],
   "category": "vuln",
   "country": "United States",
-  "cves": ["CVE-2026-113425", "CVE-2026-121810", "CVE-2026-123007", "CVE-2026-123633", "CVE-2026-123634"],
+  "cves": [
+    "CVE-2026-113425",
+    "CVE-2026-121810",
+    "CVE-2026-123007",
+    "CVE-2026-123633",
+    "CVE-2026-123634"
+  ],
   "date": "2026-11-19",
   "exec": "NGINX runs a large share of internet-facing web servers; public proof-of-concept code raises the odds of attacks on unpatched ones.",
   "first_seen": "2026-11-19T10:50:00Z",
@@ -15,7 +23,10 @@
   "pin_type": "vendor",
   "place": "Seattle, WA (vendor HQ)",
   "plain": "F5 fixed five critical NGINX bugs that can allow remote code execution without logging in. Public test code now exists, so patch soon.",
-  "products": ["NGINX Open Source", "NGINX Plus"],
+  "products": [
+    "NGINX Open Source",
+    "NGINX Plus"
+  ],
   "sector": "Technology",
   "severity": 2,
   "source_tier": "established",
@@ -27,12 +38,24 @@
   ],
   "status": "confirmed",
   "summary": "F5 released out-of-band fixes for five critical NGINX flaws dubbed NGINX2Root, which SecurityWeek says allow unauthenticated remote code execution with the privileges of the nginx worker. Rapid7 and Censys published proof-of-concept code for CVE-2026-123007, which Wiz says affects all NGINX versions since 1.9.5. F5 does not report exploitation in the wild.",
-  "tags": ["poc-public", "rce"],
+  "tags": [
+    "poc-public",
+    "rce"
+  ],
   "title": "F5 patches critical NGINX2Root flaws as PoC exploits go public",
   "updated_at": "2026-11-19T10:50:00Z",
   "validation": {
-    "checked_at": "2026-11-19T10:50:00Z",
-    "note": "Read via SecurityWeek only; F5's advisory page would not render, so the vendor original was not read.",
-    "state": "single_source"
-  }
+    "state": "disputed",
+    "checked_at": "2026-11-19T11:26:32Z",
+    "note": "Second review: Severity 2 but checklist says 3 (public PoC, unauthenticated RCE, widely used internet-facing NGINX); reviewer may not upgrade severity, needs editor decision. SecurityWeek otherwise matches (5 CVEs, fixes 1.30.7/1.31.9, Plus"
+  },
+  "review": {
+    "state": "flagged",
+    "at": "2026-11-19T11:26:32Z",
+    "note": "Severity 2 but checklist says 3 (public PoC, unauthenticated RCE, widely used internet-facing NGINX); reviewer may not upgrade severity, needs editor decision. SecurityWeek otherwise matches (5 CVEs, fixes 1.30.7/1.31.9, Plus 37.0.8.1/37.3.0.1, Rapid7/Censys PoC, no ITW). F5 advisory K000164058 not ",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-19T11:26:32Z"
 }

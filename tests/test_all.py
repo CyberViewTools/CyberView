@@ -939,6 +939,23 @@ async def main():
             ok("phone: Map button goes back to the globe", await pg.evaluate("scrollY") == 0)
             ok("phone: no blur effects to repaint while scrolling", await pg.evaluate("[...document.querySelectorAll('*')].filter(e => { const s = getComputedStyle(e); return s.backdropFilter && s.backdropFilter !== 'none'; }).length") == 0)
             ok("v1.24: no script errors", not errs, errs)
+            # v1.25 (phone review): Back closes an event, fields do not trigger iOS zoom, the tabs stay in reach
+            await pg.evaluate("scrollTo(0,0)"); await pg.locator("#feed .card .head").nth(2).scroll_into_view_if_needed()
+            await pg.locator("#feed .card .head").nth(2).tap(); await pg.wait_for_timeout(500)
+            opened = await pg.evaluate("location.hash")
+            await pg.go_back(); await pg.wait_for_timeout(600)
+            ok("v1.25 phone: the browser's Back closes the event and stays on the site", opened.startswith("#e=") and await pg.evaluate("location.hash") == "" and await pg.locator("#dbar").is_hidden() and "index.html" in pg.url, pg.url)
+            ok("v1.25 phone: text fields are 16px (iOS does not zoom on focus)", await pg.evaluate("getComputedStyle(document.getElementById('q')).fontSize") == "16px")
+            await pg.evaluate("scrollTo(0, 2400)"); await pg.wait_for_timeout(200)
+            ok("v1.25 phone: the tabs stay at the top while scrolling the list", abs(await pg.evaluate("document.querySelector('aside .tabs').getBoundingClientRect().top")) < 2)
+            await pg.evaluate("scrollTo(0,0)"); await pg.locator("#filtersBtn").tap(); await pg.wait_for_timeout(200)
+            await pg.locator("#filtersDone").tap(); await pg.wait_for_timeout(500)
+            ok("v1.25 phone: Show events closes the filters and shows the list", not await pg.evaluate("document.body.classList.contains('filters-open')") and await pg.evaluate("scrollY") > 300)
+            await ctx.close()
+            # a big phone turned sideways gets the phone layout, not the desktop one
+            ctx = await browser.new_context(viewport={"width": 932, "height": 430}, has_touch=True, is_mobile=True)
+            pg = await ctx.new_page(); await pg.goto(url); await pg.wait_for_timeout(1500)
+            ok("v1.25: a phone in landscape gets the phone layout (page scrolls, menu button)", await pg.evaluate("getComputedStyle(document.body).overflowY") == "auto" and await pg.locator("#navBtn").is_visible())
             await ctx.close()
         await serve(make_site(bundle), v123)
 

@@ -15,7 +15,9 @@ self.addEventListener("fetch", function (ev) {
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   var key = keyOf(req);
   ev.respondWith(
-    Promise.race([fetch(req), timeout(12000)]).then(function (res) {
+    // pages, scripts and styles skip the browser's 10-minute HTTP cache (revalidated, so still cheap): after a deploy a
+    // phone never runs a new page with an old script or the reverse
+    Promise.race([fetch(/\.(html|js|css)$|\/$/.test(url.pathname) || req.mode === "navigate" ? new Request(req, { cache: "no-cache" }) : req), timeout(12000)]).then(function (res) {
       // keep only complete, successful answers from this site
       if (res && res.status === 200 && res.type === "basic") { var copy = res.clone(); caches.open(CACHE).then(function (c) { return c.put(key, copy); }).catch(function () {}); }
       return res;

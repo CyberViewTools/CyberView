@@ -283,8 +283,8 @@ details.blk ul{margin:7px 0 0;padding-left:18px;font-size:12.5px}
 .key .kt{background:transparent;border:0;font-size:11.5px;color:var(--muted);padding:0 2px;font-weight:600}
 .key.shut .kt{padding:6px 11px}
 .keys{font-size:11.5px;color:var(--muted);padding:0 12px 9px}
-@media (max-width:900px){.dbar{flex-wrap:wrap}}
-@media (max-width:900px){
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){.dbar{flex-wrap:wrap}}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
   html,body{height:auto}
   body{overflow:auto;display:flex;flex-direction:column;gap:10px;padding:10px}
   .ui{display:contents}
@@ -376,7 +376,7 @@ h1{font-weight:700;letter-spacing:-.02em}
 #toast{border-radius:999px;padding:10px 18px}
 .key .kt{color:var(--accent)}
 .cl circle{stroke-width:2}
-@media (min-width:901px){
+@media (min-width:901px) and (min-height:521px),(min-width:901px) and (pointer:fine){
 }
 
 /* ---- dark smoked-glass appearance ---- */
@@ -462,7 +462,7 @@ h1{font-weight:700;letter-spacing:-.02em}
 .badge{font-size:10.5px;border-radius:999px;padding:1px 8px;background:var(--tint);color:var(--accent);font-weight:600;white-space:nowrap}
 .badge.timing{background:var(--fill);color:var(--muted)}
 .vnone{color:var(--muted);font-size:12.5px;padding:8px 0}
-@media (max-width:900px){.viz{order:2;overflow:visible}body[data-view="time"] #stage,body[data-view="graph"] #stage{display:none}}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){.viz{order:2;overflow:visible}body[data-view="time"] #stage,body[data-view="graph"] #stage{display:none}}
 
 #hoDlg textarea{background:var(--fill);border:0;border-radius:10px;padding:10px 12px;min-height:320px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;color:var(--ink);resize:vertical}
 #kevBadge:not(:empty){display:inline-block;min-width:17px;padding:0 5px;border-radius:999px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;line-height:17px;margin-left:2px}
@@ -631,7 +631,7 @@ body.modal-open{overflow:hidden}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .navbtn{display:none;width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:var(--fill);color:var(--ink);cursor:pointer;align-items:center;justify-content:center}
 .navbtn svg{width:20px;height:20px}
-.navsheet{position:fixed;inset:0;z-index:100;overflow:auto;padding:14px 14px 24px;background:rgba(20,22,27,.985);backdrop-filter:blur(16px)}
+.navsheet{position:fixed;inset:0;z-index:100;overflow:auto;overscroll-behavior:contain;padding:14px 14px 24px;background:#14161b}
 .sheethead{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;padding:0 2px;font:700 20px var(--font-display);color:var(--ink)}
 .sheetclose{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
 body.nav-open{overflow:hidden}
@@ -644,7 +644,7 @@ header .meta .wire{max-width:42vw}
 #svg{touch-action:none}
 body.globe #svg{cursor:grab}
 @media (max-width:1100px){.sitenav a{padding:7px 8px}}
-@media (max-width:900px){
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
   .sitenav{display:none}.navbtn{display:inline-flex}
   #stage{height:min(62vh,520px)!important}
   .zoomer{flex-direction:row;top:auto!important;bottom:10px;left:10px;border-radius:12px}
@@ -717,7 +717,7 @@ body.globe #svg{cursor:grab}
 .rpdots button.cur{background:var(--accent);transform:scale(1.25)}
 .rpcav{margin:8px 0 0;font-size:11.5px;color:var(--muted)}
 body.replaying .days{visibility:hidden}
-@media (max-width:900px){.replay{position:fixed;bottom:8px}.rpstage{font-size:17px}}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){.replay{position:fixed;bottom:8px}.rpstage{font-size:17px}}
 .wallui{position:fixed;inset:0;z-index:7;pointer-events:none;color:var(--ink)}
 .wallui>*{position:absolute}
 .wtl{left:28px;top:22px}
@@ -748,14 +748,14 @@ body.wall-idle,body.wall-idle #svg{cursor:none}
 body.wall .ui,body.wall .zoomer,body.wall #layers,body.wall #tip{display:none!important}
 body.wall #stage{position:fixed;inset:0;height:auto!important;z-index:1}
 body.wall #svg{cursor:default}
-@media (max-width:900px){.wtr{grid-template-columns:repeat(3,auto);left:16px;right:16px;top:124px;text-align:left;gap:6px 18px}.wstat b{font-size:24px}.wtl{left:16px;top:14px}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){.wtr{grid-template-columns:repeat(3,auto);left:16px;right:16px;top:124px;text-align:left;gap:6px 18px}.wstat b{font-size:24px}.wtl{left:16px;top:14px}
   .wcap{left:16px;right:16px;max-width:none;bottom:62px;padding:10px 14px}.wtr .wstat:nth-child(n+4),.wupd{display:none}#wallExit{right:16px;top:16px;bottom:auto}.wcap .wdo{display:none}}
 @media (prefers-reduced-motion:reduce){.wtrack{animation:none!important;flex-wrap:nowrap}}
 .acts a.abtn{background:var(--tint);color:var(--accent);border-radius:10px;padding:6px 12px;font-weight:600;font-size:12px;text-decoration:none}
 @media (max-width:1250px) and (min-width:901px){.sitenav a{padding:7px 6px;font-size:13.5px}.sitenav{margin-left:0}#refresh .lbl{display:none}#refresh{padding-left:11px;padding-right:11px}header .top{gap:8px 8px}}
 .val small.rev{display:block}.val small.rev.flagged{color:var(--bad)}.val small.rev.none{opacity:.7}
 #filtersBtn{display:none}
-@media (max-width:900px){
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
   /* phone layout: globe on the first screen, page scrolls with an up or down swipe even when the finger starts on the globe */
   #svg{touch-action:pan-y}
   #stage{height:min(62vh,430px);min-height:300px}
@@ -771,14 +771,54 @@ body.wall #svg{cursor:default}
 @media (max-width:600px){#fs{display:none}header .top{flex-wrap:nowrap}header h1{min-width:0}}
 #toMap{position:fixed;right:14px;bottom:14px;z-index:8;box-shadow:var(--shadow)}
 #feed li.more{list-style:none;text-align:center;padding:6px 0 2px}#feed li.more .btn{width:100%;justify-content:center;min-height:44px}
-@media (min-width:901px){#toMap{display:none!important}}
-@media (max-width:900px){
+@media (min-width:901px) and (min-height:521px),(min-width:901px) and (pointer:fine){#toMap{display:none!important}}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
   /* blur behind every panel is the most expensive thing a phone paints while scrolling: use solid panels instead */
   .glass,.card,header,aside,.days,#tip,.wcap,.wtick,.replay,.navsheet,.backdrop{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
   .glass{background:var(--solid)}
   [data-theme="dark"] .glass{background:#23262e}
   .m .pulse{animation:none;display:none}
   #feed .card{content-visibility:auto;contain-intrinsic-size:auto 150px}
+}
+
+/* phones (review 2026-11-19) */
+:root{--font:var(--font-body)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,select,label,.zoomer,.days,.chips,.seg{touch-action:manipulation}
+#stage{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.m .hit,.cl .hit{fill:transparent;stroke:none}
+.modal,.layers{overscroll-behavior:contain}
+#phoneIntro{display:none}
+@media (hover:none){kbd{display:none!important}}
+@media (max-width:900px),(max-height:520px) and (pointer:coarse){
+  input,select,textarea{font-size:16px!important}
+  #wallBtn{display:none}
+  #phoneIntro{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;color:var(--muted);font-size:13.5px;line-height:1.4}
+  #phoneIntro span{flex:1 1 200px;min-width:0}
+  #toFeed{min-height:36px}
+  /* the tabs (or, with an event open, its back/next bar) stay at the top of the screen while reading the list */
+  aside .tabs{position:sticky;top:0;z-index:5;background:var(--solid);border-radius:14px 14px 0 0;padding-bottom:2px}
+  [data-theme="dark"] aside .tabs,[data-theme="dark"] body.reading .dbar{background:#23262e}
+  body.reading aside .tabs{position:static}
+  body.reading .dbar{position:sticky;top:0;z-index:5;background:var(--solid)}
+  .tabs button{min-height:44px;font-size:13.5px}
+  .dbar>button{min-height:40px;min-width:40px}
+  #feed .card,#dbar,#scope{scroll-margin-top:60px}
+  #filtersDone{display:none}
+  body.filters-open #filtersDone{display:inline-flex;flex-basis:100%;justify-content:center;min-height:44px}
+  body.replaying #toMap{display:none!important}
+  .replay{max-height:42vh;overflow:auto}
+  .rpdots button{min-width:22px;min-height:22px}
+}
+@media (max-width:380px){
+  header h1{font-size:19px;gap:6px}header h1 .logo{width:22px;height:22px}
+  header .meta .seg button{padding-left:6px;padding-right:6px;font-size:12px}
+  .tabs button{font-size:12.5px;padding-left:2px;padding-right:2px}
+}
+@media (max-height:520px) and (pointer:coarse){
+  #phoneIntro,#fs,#keysBtn,.hud{display:none!important}
+  header{padding:8px 12px}header .meta{row-gap:6px}
+  #stage{height:calc(100vh - 20px)!important;min-height:240px}
 }
 </style>
 </head>
@@ -811,6 +851,7 @@ body.wall #svg{cursor:default}
       <button type="button" class="iconbtn" id="keysBtn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">?</button>
       <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
+    <p id="phoneIntro"><span>Cyber events from the last seven days, each checked against its sources.</span><button type="button" class="btn ghost sm" id="toFeed">Latest events &darr;</button></p>
     <div class="meta">
       <div class="seg" role="group" aria-label="View" id="viewseg">
         <button type="button" data-view="map" aria-pressed="true">Globe</button>
@@ -827,6 +868,7 @@ body.wall #svg{cursor:default}
       <div class="chips" id="chips" role="group" aria-label="Event types"></div>
     </div>
     <div class="row2">
+      <button type="button" class="btn" id="filtersDone">Show events</button>
       <button type="button" class="chip tog" id="claims" aria-pressed="false" title="Attacker claims that the named organization has not confirmed. Hidden unless this is on.">Show unverified claims <span class="n" id="claimsN"></span></button>
       <button type="button" class="btn ghost sm" id="wlOpen" aria-haspopup="dialog" aria-expanded="false" title="Does this affect me? Describe or drop in what you run: vendors, products, sector, countries.">My environment</button>
       <button type="button" class="chip tog" id="wlOnly" aria-pressed="false" title="Show only events that match your environment">Only my environment</button>

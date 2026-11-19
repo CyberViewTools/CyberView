@@ -153,6 +153,7 @@ function board() {
   console.log(`  research   ${line("node", ["scripts/backlog.mjs", "status"]).replace(/^BACKLOG: /, "")}`);
   console.log(`  review     ${line("node", ["scripts/review.mjs", "queue", "--limit", "1"])}`);
   console.log(`  analyst    ${line("node", ["scripts/analyst.mjs", "status"]).replace(/^ANALYST: /, "")}`);
+  console.log(`  updates    ${line("node", ["scripts/updates.mjs", "list"])}`);
   const L = measure(24), S = measure(2), fl = readJson("/tmp/cyberview-flow.json", null);
   console.log(`  speed 24h  lead -> published p50 ${L.publish.p50 ?? "-"} / p90 ${L.publish.p90 ?? "-"} min; lead -> reviewed p50 ${L.review.p50 ?? "-"} / p90 ${L.review.p90 ?? "-"} min (${L.n} events; target under 15)`);
   console.log(`  speed 2h   lead -> published p50 ${S.publish.p50 ?? "-"} / p90 ${S.publish.p90 ?? "-"} min; lead -> reviewed p50 ${S.review.p50 ?? "-"} / p90 ${S.review.p90 ?? "-"} min (${S.n} events)`);

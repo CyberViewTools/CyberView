@@ -582,12 +582,12 @@ STEPS, for each event id:
    a. The page is about a different incident or organisation: it is unrelated. If it reports a new event, leave it: the research loop takes it.
    b. The page repeats what the event already says: unchanged.
    c. The page adds something that matters to a defender: a confirmation or a denial by the organisation or an authority, a number of people or records, a cause or entry point, an attribution by a government or the investigating firm, a CVE, a patch or mitigation, restored service, an arrest, charge, fine or lawsuit, a ransom demand reported by the organisation. Update the event in place: the changed fields, the summary (within 75 words), the new page added to sources, updated_at from `date -u +%Y-%m-%dT%H:%M:%SZ`. When a published fact changes, add data/corrections/<date>-<short id>.json. Status moves from claimed to confirmed only on the organisation's or an authority's own statement. A follow-up that is its own event (an arrest, a fine, a lawsuit) is added as a new event that names the original, after `node scripts/q.mjs dupes "<title>"`.
-4. Record the outcome for every page you looked at, one command per event: `node scripts/updates.mjs done <id> <updated|unchanged|unrelated> <url> [url...]` (list the URLs exactly as assigned).
+4. Record an outcome for EVERY assigned page, one command per event and outcome: `node scripts/updates.mjs done <id> <updated|unchanged|unrelated|unreachable> <url> [url...]` (the URLs exactly as assigned). A page that will not load after the usual retries, a redirect that leads nowhere, or a site that blocks automated readers is "unreachable": it is tried once more an hour later, then dropped.
 5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-update-u<batch>.json with updated [{id, what}], unchanged, unrelated and pages_read.
 RULES: do NOT run any git command and do not edit data/status.json. Facts only from pages you opened. Never upgrade a claim on more attacker posts; never attribute from speculation; never raise severity on commentary. Never write the review field: the second review checks your update.
 LIMITS: only your assigned events and pages.
-DONE WHEN: every assigned page has an outcome recorded by updates.mjs.
-End with one line: "updater <batch>: <n> updated, <n> unchanged, <n> unrelated".
+DONE WHEN: every assigned page has an outcome recorded by updates.mjs, unreachable ones included.
+End with one line: "updater <batch>: <n> updated, <n> unchanged, <n> unrelated, <n> unreachable".
 ```
 
 ## Regional researcher (worker for the deep sweep; one per region group)

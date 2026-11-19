@@ -1,120 +1,120 @@
 {
- "action": "Apply the Broadcom fix (VMSA-2026-0009; e.g. vCenter 8.0 U3m) now; Broadcom lists no workaround. Restrict inbound access and egress from vCenter, and hunt with the GTIG indicators.",
- "actor": "ARMORY CASTLE",
- "attack": [
-  "zero-day",
-  "auth-bypass",
-  "webshell",
-  "backdoor"
- ],
- "attribution": {
-  "by": "Google Threat Intelligence Group",
-  "by_type": "investigator",
+  "action": "Apply the Broadcom fix (VMSA-2026-0009; e.g. vCenter 8.0 U3m) now; Broadcom lists no workaround. Restrict inbound access and egress from vCenter, and hunt with the GTIG indicators.",
   "actor": "ARMORY CASTLE",
-  "origin_country": "China",
-  "lat": 35.86,
-  "lng": 104.2,
-  "claim": "Suspected PRC-nexus espionage actor ARMORY CASTLE (formerly UNC5221)",
-  "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
- },
- "category": "vuln",
- "country": "United States",
- "cves": [
-  "CVE-2026-123890",
-  "CVE-2026-102764"
- ],
- "date": "2026-11-19",
- "exec": "A suspected state-backed group used an unpatched vCenter flaw to control virtualisation hosts, which hold most servers in a company; the fix is available now.",
- "first_seen": "2026-11-19T14:50:00Z",
- "geo_basis": "hq",
- "lat": 37.42,
- "lng": -122.08,
- "occurred_at": "2026-11-19T00:00:00Z",
- "org": "Google Threat Intelligence Group",
- "pin_type": "researcher",
- "place": "Mountain View, CA",
- "plain": "Google says a suspected China-linked spy group exploited a previously unknown flaw in VMware vCenter to take control of virtual server infrastructure. A patch is out.",
- "products": [
-  "VMware vCenter Server",
-  "VMware ESXi",
-  "BeyondTrust Remote Support"
- ],
- "report": {
-  "publisher": "Google Threat Intelligence Group (Mandiant)",
-  "publisher_type": "vendor",
-  "published": "2026-11-19T00:00:00Z",
-  "read_depth": "full",
-  "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere",
-  "iocs_available": true,
-  "key_findings": [
-   "CVE-2026-123890 in vCenter Server is an unauthenticated SRP-6a session key disclosure over DCE/RPC leading to authentication bypass as administrator@vsphere.local; Broadcom patch page linked from the post.",
-   "The campaign used two zero-days in total; the other is the BeyondTrust Remote Support flaw CVE-2026-102764 from GTIG's 15 October post.",
-   "The actor moved from a BeyondTrust appliance to internal Linux appliances without EDR, then to vCenter and ESXi.",
-   "Five newly identified malware families and utilities are described, including the SLIMSAVAGE and CAGEMATCH webshells, the BEARBONES backdoor, BONESAW and SAWSNAKE; LAZYBONES was also deployed.",
-   "The post names no victim organisations or countries."
+  "attack": [
+    "zero-day",
+    "auth-bypass",
+    "webshell",
+    "backdoor"
   ],
-  "recommendations": [
-   "Apply the Broadcom patch immediately.",
-   "Use the Mandiant VCSA Hardening and Logging Tool after testing and change control.",
-   "Hunt with the YARA rules and indicators in the GTI collection."
+  "attribution": {
+    "by": "Google Threat Intelligence Group",
+    "by_type": "investigator",
+    "actor": "ARMORY CASTLE",
+    "origin_country": "China",
+    "lat": 35.86,
+    "lng": 104.2,
+    "claim": "Suspected PRC-nexus espionage actor ARMORY CASTLE (formerly UNC5221)",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
+  },
+  "category": "vuln",
+  "country": "United States",
+  "cves": [
+    "CVE-2026-123890",
+    "CVE-2026-102764"
+  ],
+  "date": "2026-11-19",
+  "exec": "A suspected state-backed group used an unpatched vCenter flaw to control virtualisation hosts, which hold most servers in a company; the fix is available now.",
+  "first_seen": "2026-11-19T14:50:00Z",
+  "geo_basis": "hq",
+  "lat": 37.42,
+  "lng": -122.08,
+  "occurred_at": "2026-11-19T00:00:00Z",
+  "org": "Google Threat Intelligence Group",
+  "pin_type": "researcher",
+  "place": "Mountain View, CA",
+  "plain": "Google says a suspected China-linked spy group exploited a previously unknown flaw in VMware vCenter to take control of virtual server infrastructure. A patch is out.",
+  "products": [
+    "VMware vCenter Server",
+    "VMware ESXi",
+    "BeyondTrust Remote Support"
+  ],
+  "report": {
+    "publisher": "Google Threat Intelligence Group (Mandiant)",
+    "publisher_type": "vendor",
+    "published": "2026-11-19T00:00:00Z",
+    "read_depth": "full",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere",
+    "iocs_available": true,
+    "key_findings": [
+      "CVE-2026-123890 in vCenter Server is an unauthenticated SRP-6a session key disclosure over DCE/RPC leading to authentication bypass as administrator@vsphere.local; Broadcom patch page linked from the post.",
+      "The campaign used two zero-days in total; the other is the BeyondTrust Remote Support flaw CVE-2026-102764 from GTIG's 15 October post.",
+      "The actor moved from a BeyondTrust appliance to internal Linux appliances without EDR, then to vCenter and ESXi.",
+      "Five newly identified malware families and utilities are described, including the SLIMSAVAGE and CAGEMATCH webshells, the BEARBONES backdoor, BONESAW and SAWSNAKE; LAZYBONES was also deployed.",
+      "The post names no victim organisations or countries."
+    ],
+    "recommendations": [
+      "Apply the Broadcom patch immediately.",
+      "Use the Mandiant VCSA Hardening and Logging Tool after testing and change control.",
+      "Hunt with the YARA rules and indicators in the GTI collection."
+    ]
+  },
+  "sector": "Technology",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Google Cloud Threat Intelligence: ARMORY CASTLE Exploits vSphere",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
+    },
+    {
+      "name": "SecurityWeek: Newly Patched VMware vCenter Flaw Exploited as Zero-Day by Chinese APT",
+      "url": "https://www.securityweek.com/newly-patched-vmware-vcenter-flaw-exploited-as-zero-day-by-chinese-apt/"
+    },
+    {
+      "name": "The Hacker News: Critical VMware vCenter Flaw (CVSS 9.8) Lets Network Attackers Bypass Authentication",
+      "url": "https://thehackernews.com/2026/11/critical-vmware-vcenter-flaw-cvss-98.html"
+    },
+    {
+      "name": "Rapid7: CVE-2026-123890: Critical Authentication Bypass in VMware vCenter",
+      "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123890-critical-authentication-bypass-vmware-vcenter"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Google Threat Intelligence Group says ARMORY CASTLE, a suspected PRC-nexus espionage actor it formerly tracked as UNC5221, exploited CVE-2026-123890, an unauthenticated authentication bypass in VMware vCenter Server disclosed on 19 November. Rapid7 reports a CVSS of 9.8, exploitation from as early as September, fixes in vCenter 8.0 U3m and other builds, and no workaround. No victims are named.",
+  "tags": [
+    "espionage",
+    "zero-day"
+  ],
+  "time_basis": "published",
+  "title": "Google: ARMORY CASTLE exploits vCenter zero-day CVE-2026-123890 in espionage campaign",
+  "updated_at": "2026-11-19T21:19:32Z",
+  "validation": {
+    "state": "disputed",
+    "checked_at": "2026-11-19T19:29:32Z",
+    "note": "Second review: Reviewer could not open the sources in this run (fetch command was denied by the permission layer); record was updated at 19:27Z after the last pass at 16:40Z and was not re-compared with its sources. Needs a re-review."
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-19T21:24:15Z",
+    "note": "Compared title, actor wording (suspected PRC-nexus, formerly UNC5221, by GTIG), CVE ids, no victims, 9.8 CVSS, VMSA-2026-0009, 8.0 U3m, no workaround, Sept exploitation against GTIG post, SecurityWeek and Rapid7",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T21:24:15Z",
+  "cve_meta": [
+    {
+      "id": "CVE-2026-123890",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-102764",
+      "cvss": 9.3,
+      "epss": 0.50694,
+      "kev": true,
+      "kev_due": "2026-10-19"
+    }
   ]
- },
- "sector": "Technology",
- "severity": 3,
- "source_tier": "primary",
- "sources": [
-  {
-   "name": "Google Cloud Threat Intelligence: ARMORY CASTLE Exploits vSphere",
-   "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
-  },
-  {
-   "name": "SecurityWeek: Newly Patched VMware vCenter Flaw Exploited as Zero-Day by Chinese APT",
-   "url": "https://www.securityweek.com/newly-patched-vmware-vcenter-flaw-exploited-as-zero-day-by-chinese-apt/"
-  },
-  {
-   "name": "The Hacker News: Critical VMware vCenter Flaw (CVSS 9.8) Lets Network Attackers Bypass Authentication",
-   "url": "https://thehackernews.com/2026/11/critical-vmware-vcenter-flaw-cvss-98.html"
-  },
-  {
-   "name": "Rapid7: CVE-2026-123890: Critical Authentication Bypass in VMware vCenter",
-   "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123890-critical-authentication-bypass-vmware-vcenter"
-  }
- ],
- "status": "confirmed",
- "summary": "Google Threat Intelligence Group says ARMORY CASTLE, a suspected PRC-nexus espionage actor it formerly tracked as UNC5221, exploited CVE-2026-123890, an unauthenticated authentication bypass in VMware vCenter Server disclosed on 19 November. Rapid7 reports a CVSS of 9.8, exploitation from as early as September, fixes in vCenter 8.0 U3m and other builds, and no workaround. No victims are named.",
- "tags": [
-  "espionage",
-  "zero-day"
- ],
- "time_basis": "published",
- "title": "Google: ARMORY CASTLE exploits vCenter zero-day CVE-2026-123890 in espionage campaign",
- "updated_at": "2026-11-19T21:19:32Z",
- "validation": {
-  "state": "disputed",
-  "checked_at": "2026-11-19T19:29:32Z",
-  "note": "Second review: Reviewer could not open the sources in this run (fetch command was denied by the permission layer); record was updated at 19:27Z after the last pass at 16:40Z and was not re-compared with its sources. Needs a re-review."
- },
- "review": {
-  "state": "flagged",
-  "at": "2026-11-19T19:29:32Z",
-  "note": "Reviewer could not open the sources in this run (fetch command was denied by the permission layer); record was updated at 19:27Z after the last pass at 16:40Z and was not re-compared with its sources. Needs a re-review.",
-  "flags": []
- },
- "qa_checked_at": "2026-11-19T19:29:32Z",
- "cve_meta": [
-  {
-   "id": "CVE-2026-123890",
-   "cvss": null,
-   "epss": null,
-   "kev": false,
-   "kev_due": ""
-  },
-  {
-   "id": "CVE-2026-102764",
-   "cvss": 9.3,
-   "epss": 0.50694,
-   "kev": true,
-   "kev_due": "2026-10-19"
-  }
- ]
 }

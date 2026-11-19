@@ -485,3 +485,21 @@ test("Cloudflare Radar, REAL reply (saved 2026-11-19 with the owner's token): po
   assert.equal(items.length, new Set(items.map((x) => x.id)).size);
   assert.deepEqual(parseCfRadar(real, Date.parse("2026-11-19T22:00:00Z")), []);       // all ended over a day before: nothing now
 });
+
+test("ENTSO-E token from ENTSOE_TOKEN: sent only as securityToken to ENTSO-E, never in errors or written files", async () => {
+  const { entsoeToken, ADAPTERS, SOURCES } = await import("../../scripts/grid.mjs");
+  assert.equal(entsoeToken({}), "");
+  assert.equal(entsoeToken({ ENTSOE_TOKEN: "short" }), "");
+  assert.equal(entsoeToken({ ENTSOE_TOKEN: "x y <script>" }), "");
+  const T = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+  assert.equal(entsoeToken({ ENTSOE_TOKEN: ` ${T} ` }), T);
+  const old = process.env.ENTSOE_TOKEN; process.env.ENTSOE_TOKEN = T;
+  try {
+    const seen = [];
+    await withFetch(async (url) => { seen.push(String(url)); return reply(401, txt("entsoe-nokey.xml"))(); }, async () => {
+      await assert.rejects(ADAPTERS.entsoe(), (e) => { assert.equal(e.code, "token_refused"); assert.ok(!String(e.message).includes(T) && !JSON.stringify(e).includes(T)); return true; });
+    });
+    assert.ok(seen.length >= 1 && seen.every((u) => u.startsWith("https://web-api.tp.entsoe.eu/") && u.includes(`securityToken=${T}`)));
+    assert.ok(!SOURCES.entsoe.url.includes(T));
+  } finally { if (old === undefined) delete process.env.ENTSOE_TOKEN; else process.env.ENTSOE_TOKEN = old; }
+});

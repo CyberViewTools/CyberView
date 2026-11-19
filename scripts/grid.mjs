@@ -374,6 +374,15 @@ export function parseCfRadar(d, now = Date.now()) {
   return out;
 }
 
+// ENTSO-E's token can also come from the environment variable ENTSOE_TOKEN (the owner's environment settings offer no
+// network secret with the header name SECURITY_TOKEN that ENTSO-E needs). It is read only here, sent only to
+// web-api.tp.entsoe.eu as the documented securityToken parameter, and never logged or written: the source's url in
+// live.json, run logs and every error message are built without it (net.mjs errors carry a code and the reply, not the url).
+export function entsoeToken(env = process.env) {
+  const t = String(env.ENTSOE_TOKEN || "").trim();
+  return /^[A-Za-z0-9-]{20,100}$/.test(t) && !/^proxy-injected$/i.test(t) ? t : "";
+}
+
 // --- EIA --- api.eia.gov/v2/electricity/rto/region-data (Hourly Electric Grid Monitor). Shape read from a real reply
 // (tests/fixtures/grid/eia.json, saved 2026-11-19): response.data[] = { period "YYYY-MM-DDTHH" (UTC), respondent,
 // respondent-name, type "D" (demand) | "DF" (day-ahead demand forecast), value (string, MWh) }. Per balancing authority:
@@ -530,16 +539,24 @@ export const ADAPTERS = {
   async cfradar() { return keyed("cfradar", async () => parseCfRadar(await get(SOURCES.cfradar.url, { retries: 1 }))); },
   async entsoe() {
     return keyed("entsoe", async () => {
+      try { return await entsoeFetch(); } catch (e) {
+        // a token is set but refused: say so (access not enabled yet, or a wrong token), not "no key saved"
+        if (entsoeToken() && /^http_(401|403)$/.test((e && e.code) || "")) throw Object.assign(new Error("token refused by ENTSO-E (API access not enabled yet, or a wrong token)"), { code: "token_refused" });
+        throw e;
+      }
+    });
+    async function entsoeFetch() {
       const now = Date.now(), from = ymdhm(now - 24 * 3600e3).slice(0, 10) + "00", to = ymdhm(now + 24 * 3600e3).slice(0, 10) + "00", out = [];
+      const tok = entsoeToken();
       for (const zone of Object.keys(ENTSOE_ZONES)) {
-        // scripts/lib/net.mjs reads bodies as text or JSON; a ZIP needs the bytes (requested in swarm/REQUESTS.md)
-        const body = await get(`${SOURCES.entsoe.url}?documentType=A80&BusinessType=A54&BiddingZone_Domain=${encodeURIComponent(zone)}&periodStart=${from}&periodEnd=${to}`,
+        // the reply is a ZIP, fetched as bytes (net.mjs as:"buffer")
+        const body = await get(`${SOURCES.entsoe.url}?documentType=A80&BusinessType=A54&BiddingZone_Domain=${encodeURIComponent(zone)}&periodStart=${from}&periodEnd=${to}${tok ? `&securityToken=${tok}` : ""}`,
           { as: "buffer", retries: 1, key: "entsoe" }).catch((e) => { if (e && e.code === "bad_json") e.code = "needs_binary_fetch"; throw e; });
         if (!Buffer.isBuffer(body) && !(body instanceof ArrayBuffer)) throw Object.assign(new Error("needs a binary fetch"), { code: "needs_binary_fetch" });
         out.push(...parseEntsoe(Buffer.from(body), now));
       }
       return out;
-    });
+    }
   },
 };
 

@@ -1,0 +1,70 @@
+{
+  "action": "Apply the Broadcom fix for CVE-2026-123890 (advisory 39495) to vCenter Server now, restrict inbound access and egress from vCenter, and hunt with the GTIG indicators and the Mandiant VCSA hardening tool.",
+  "actor": "ARMORY CASTLE",
+  "attack": ["zero-day", "auth-bypass", "webshell", "backdoor"],
+  "attribution": {
+    "by": "Google Threat Intelligence Group",
+    "by_type": "investigator",
+    "actor": "ARMORY CASTLE",
+    "origin_country": "China",
+    "lat": 35.86,
+    "lng": 104.2,
+    "claim": "Suspected PRC-nexus espionage actor ARMORY CASTLE (formerly UNC5221)",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
+  },
+  "category": "vuln",
+  "country": "United States",
+  "cves": ["CVE-2026-123890", "CVE-2026-102764"],
+  "date": "2026-11-19",
+  "exec": "A suspected state-backed group used an unpatched vCenter flaw to control virtualisation hosts, which hold most servers in a company; the fix is available now.",
+  "first_seen": "2026-11-19T14:50:00Z",
+  "geo_basis": "hq",
+  "lat": 37.42,
+  "lng": -122.08,
+  "occurred_at": "2026-11-19T00:00:00Z",
+  "org": "Google Threat Intelligence Group",
+  "pin_type": "researcher",
+  "place": "Mountain View, CA",
+  "plain": "Google says a suspected China-linked spy group exploited a previously unknown flaw in VMware vCenter to take control of virtual server infrastructure. A patch is out.",
+  "products": ["VMware vCenter Server", "VMware ESXi", "BeyondTrust Remote Support"],
+  "report": {
+    "publisher": "Google Threat Intelligence Group (Mandiant)",
+    "publisher_type": "vendor",
+    "published": "2026-11-19T00:00:00Z",
+    "read_depth": "full",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere",
+    "iocs_available": true,
+    "key_findings": [
+      "CVE-2026-123890 in vCenter Server is an unauthenticated SRP-6a session key disclosure over DCE/RPC leading to authentication bypass as administrator@vsphere.local; Broadcom advisory 39495.",
+      "The campaign used two zero-days in total; the other is the BeyondTrust Remote Support flaw CVE-2026-102764 from GTIG's 15 October post.",
+      "The actor moved from a BeyondTrust appliance to internal Linux appliances without EDR, then to vCenter and ESXi.",
+      "Five newly identified malware families and utilities are described, including the SLIMSAVAGE and CAGEMATCH webshells, the BEARBONES backdoor, BONESAW and SAWSNAKE; LAZYBONES was also deployed.",
+      "The post names no victim organisations or countries."
+    ],
+    "recommendations": [
+      "Apply the Broadcom patch (advisory 39495) immediately.",
+      "Use the Mandiant VCSA Hardening and Logging Tool after testing and change control.",
+      "Hunt with the YARA rules and indicators in the GTI collection."
+    ]
+  },
+  "sector": "Technology",
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Google Cloud Threat Intelligence: ARMORY CASTLE Exploits vSphere",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Google Threat Intelligence Group says ARMORY CASTLE, a suspected PRC-nexus espionage actor it formerly tracked as UNC5221, exploited CVE-2026-123890 in VMware vCenter Server, an unauthenticated authentication bypass disclosed on 19 November. GTIG reports the campaign used two zero-days and new malware, moving from a BeyondTrust appliance to vCenter and ESXi. No victims are named.",
+  "tags": ["espionage", "virtualization", "zero-day"],
+  "time_basis": "published",
+  "title": "Google: ARMORY CASTLE exploits vCenter zero-day CVE-2026-123890 in espionage campaign",
+  "updated_at": "2026-11-19T14:50:00Z",
+  "validation": {
+    "checked_at": "2026-11-19T14:50:00Z",
+    "note": "Original GTIG post read in full; investigating firm is the primary source.",
+    "state": "single_source"
+  }
+}

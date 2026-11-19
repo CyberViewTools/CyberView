@@ -1,0 +1,43 @@
+{
+  "job": "exploit-analyst",
+  "batch": 3,
+  "started_at": "2026-11-19T04:31:44Z",
+  "finished_at": "2026-11-19T04:35:51Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Check Point CVE-2026-123039 DynamicCLI hotfix Jumbo Take R81.20 R82",
+    "CVE-2026-124194 Outlook NTLM exploited Tenable OR Rapid7 OR ZDI OR Talos",
+    "Openwave Webtop Media Transcoder CVE-2026-111793 exploited"
+  ],
+  "pages_read": [
+    {"url": "https://blog.checkpoint.com/?p=249830", "title": "Check Point security advisory (PHP2Shell and Gaia flaws)", "used_in": "CVE-2026-123039"},
+    {"url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/", "title": "Check Point Research: PHP2Shell exploitation on Check Point gateway", "used_in": "CVE-2026-123039"},
+    {"url": "https://www.cyber.gc.ca/en/alerts-advisories/check-point-security-advisory-av26-1154", "title": "Cyber Centre AV26-1154", "used_in": "CVE-2026-123039"},
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/11/13/cisa-adds-two-known-exploited-vulnerabilities-catalog", "title": "CISA adds two KEVs, 13 Nov 2026", "used_in": "CVE-2026-123039"},
+    {"url": "https://itdaily.com/news/security/check-point-patches-gaia-vulnerability-firewalls/", "title": "ITdaily: Check Point patches exploited flaw", "used_in": "CVE-2026-123039"},
+    {"url": "https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2026-124194", "title": "MSRC CVE-2026-124194", "used_in": "CVE-2026-124194"},
+    {"url": "https://learn.microsoft.com/en-us/officeupdates/microsoft365-apps-security-updates", "title": "Microsoft 365 Apps security updates release notes", "used_in": "CVE-2026-124194"},
+    {"url": "https://www.cyber.gc.ca/en/alerts-advisories/microsoft-security-advisory-november-2026-monthly-rollup-av26-1142", "title": "Cyber Centre AV26-1142", "used_in": "CVE-2026-124194"},
+    {"url": "https://blog.qualys.com/vulnerabilities-threat-research/2026/11/10/microsoft-patch-tuesday-november-2026-security-update-review", "title": "Qualys November 2026 Patch Tuesday", "used_in": "CVE-2026-124194"},
+    {"url": "https://socprime.com/?p=57962", "title": "SOC Prime: Outlook zero-day steals NTLM hashes", "used_in": "CVE-2026-124194"},
+    {"url": "https://braindetox.kr/en/posts/microsoft_office_cve_2026_124194_kev.html", "title": "Outlook CVE-2026-124194 fixed Office builds", "used_in": "CVE-2026-124194"},
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/11/10/cisa-adds-six-known-exploited-vulnerabilities-catalog", "title": "CISA adds six KEVs, 10 Nov 2026", "used_in": "CVE-2026-124194, CVE-2026-111793"},
+    {"url": "https://github.com/GISOpenwave/security-advisories-public/blob/main/CAN-2026-2032674.md", "title": "Openwave advisory CAN-2026-2032674", "used_in": "CVE-2026-111793"},
+    {"url": "https://jvn.jp/en/vu/JVNVU93403064/", "title": "JVNVU#93403064", "used_in": "CVE-2026-111793"}
+  ],
+  "added": ["CVE-2026-123039", "CVE-2026-124194", "CVE-2026-111793"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Check Point sk1000362 (fixed takes and Dynamic CLI mitigation)", "url": "https://support.checkpoint.com/results/sk/sk1000362", "note": "Page returned empty content; fixed takes taken from Check Point blog and press relaying sk1000362. Confirm and update the analysis if they differ.", "priority": "medium"},
+    {"title": "MSRC November 2026 CVRF remediation entries for CVE-2026-124194", "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov", "note": "Document too large to read; per-product fixed builds for Microsoft 365 Apps not confirmed from MSRC directly.", "priority": "low"},
+    {"title": "Openwave CVE-2026-111793 exploitation details", "url": "https://jvn.jp/en/vu/JVNVU93403064/", "note": "No public detail on attackers, victims or what information is exposed; revisit if JPCERT or Openwave publish more.", "priority": "low"}
+  ],
+  "failed_sites": [
+    "support.checkpoint.com (empty page)",
+    "bleepingcomputer.com (403)",
+    "securityonline.info (503)",
+    "securityweek.com (403)"
+  ],
+  "notes": "Three analyses written; build passed. No git run (parallel worker). No exploit code or repositories opened."
+}

@@ -1,0 +1,28 @@
+{
+  "job": "exploit-analyst-6",
+  "started_at": "2026-11-19T04:31:00Z",
+  "finished_at": "2026-11-19T04:34:17Z",
+  "model": "claude-opus-5-5",
+  "searches": ["CVE-2026-111560 Barracuda exploited", "CVE-2026-102895 GPUStack exploitation", "CVE-2026-123218 Aspera Faspex exploited", "CISA adds known exploited vulnerabilities November 2026 GPUStack Aspera Faspex (cisa.gov)"],
+  "pages_read": [
+    {"url": "https://trust.barracuda.com/security/pre-authentication-authorization-bypass-command-injection", "title": "Barracuda advisory: pre-auth authorization bypass and command injection", "used_in": "CVE-2026-111560"},
+    {"url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0041.md", "title": "Mandiant MNDT-2026-0041", "used_in": "CVE-2026-111560"},
+    {"url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-162/", "title": "CSA Singapore AL-2026-162", "used_in": "CVE-2026-111560"},
+    {"url": "https://www.securityweek.com/recently-patched-barracuda-vulnerabilities-exploited-in-attacks/", "title": "SecurityWeek: Barracuda flaws exploited", "used_in": "CVE-2026-111560"},
+    {"url": "https://github.com/gpustack/gpustack/security/advisories/GHSA-gj9m-f8ph-pmhr", "title": "GPUStack GHSA-gj9m-f8ph-pmhr", "used_in": "CVE-2026-102895"},
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/11/09/cisa-adds-four-known-exploited-vulnerabilities-catalog", "title": "CISA adds four KEVs (9 Nov 2026)", "used_in": "CVE-2026-102895, CVE-2026-123218"},
+    {"url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-gpustack-cve-2026-102895-kev-20261110-csa/", "title": "CSA research note GPUStack", "used_in": "CVE-2026-102895"},
+    {"url": "https://www.ibm.com/support/pages/node/7295921", "title": "IBM bulletin Aspera Faspex 5", "used_in": "CVE-2026-123218"},
+    {"url": "https://www.rescana.com/post/ibm-aspera-faspex-cve-2026-123218-authorization-bypass-prepare-now", "title": "Rescana: Faspex CVE-2026-123218", "used_in": "CVE-2026-123218"},
+    {"url": "https://smartscope.blog/en/blog/ibm-aspera-faspex-authorization-bypass-vulnerability-cve-2026-2026/", "title": "SmartScope: Faspex authorization bypass", "used_in": "CVE-2026-123218"}
+  ],
+  "added": ["CVE-2026-111560", "CVE-2026-102895", "CVE-2026-123218"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Faspex CVE-2026-123218 exploitation details", "url": "https://www.ibm.com/support/pages/node/7295921", "note": "CISA lists it as exploited but neither IBM nor CISA describe attacks; IBM text (authenticated user) conflicts with CVSS vector (no privileges). Recheck for an IBM update or responder write-up.", "priority": "medium"},
+    {"title": "Barracuda chain post-exploitation activity", "url": "https://trust.barracuda.com/security/pre-authentication-authorization-bypass-command-injection", "note": "No indicators or attacker actions published yet; CSA Singapore says public exploit code exists, others do not mention it.", "priority": "medium"}
+  ],
+  "failed_sites": ["bleepingcomputer.com (403)", "securityweek.com Faspex article (403)"],
+  "notes": "Exploitation analyses for batch 6 written; build passes. No git run (parallel worker)."
+}

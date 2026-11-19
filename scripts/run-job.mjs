@@ -106,7 +106,7 @@ function claimPlanned(job, since) {
 }
 /** Lease ids to this run and push the lease file at once, so runs in other containers skip them. */
 function publishClaim(kind, ids) {
-  claim(kind, ids, RUN, 45);
+  claim(kind, ids, process.env.CYBERVIEW_RUN || RUN, 45);
   const a = spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }), c = spawnSync("git", ["commit", "-q", "-m", "data: leases"], { cwd: ROOT });
   const g = spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
   return a.status === 0 && c.status === 0 && g.status === 0 ? ids.length : -ids.length;
@@ -176,6 +176,7 @@ async function flow() {
     beat("waiting");
     const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
   }
+  release(RUN);
   log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
 }
 

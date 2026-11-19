@@ -1,0 +1,19 @@
+{
+  "actor": "", "impact": "", "tags": ["end-of-support","firewall"], "cves": [], "cve_meta": [],
+  "products": ["SonicWall Gen 6 firewalls", "SonicOS 6.x"],
+  "time_basis": "published", "first_seen": "2026-11-19T10:53:30Z", "updated_at": "2026-11-19T10:53:30Z",
+  "category": "vuln", "status": "confirmed", "attack": ["vulnerability-exploit"],
+  "geo_basis": "hq", "date": "2026-11-18", "occurred_at": "2026-11-18T09:00:00Z",
+  "title": "SonicWall: retire Gen 6 firewalls now, no more patches even for critical flaws",
+  "org": "SonicWall", "sector": "Network security vendor", "country": "United States", "place": "Milpitas", "lat": 37.4323, "lng": -121.8996,
+  "pin_type": "hq", "severity": 3, "source_tier": "primary",
+  "summary": "SonicWall's advisory of 18 November says every Gen 6 and Gen 6.5 firewall running SonicOS 6.x, including NSv, has reached end of support and will get no firmware or security patches regardless of severity. SonicWall says it expects internet-facing Gen 6 units to be actively targeted and tells customers to replace them with Gen 8. No new CVE is named.",
+  "plain": "SonicWall says its older Gen 6 firewalls will never get security fixes again and should be replaced, especially if they face the internet.",
+  "exec": "Unpatchable internet-edge firewalls become a permanent entry point; replacement needs budget and lead time.",
+  "action": "Inventory every Gen 6 unit; replace internet-facing ones first; meanwhile disable WAN management and SSL VPN (or restrict sources), enforce MFA, and monitor logs.",
+  "sources": [
+    {"name": "SonicWall product advisory", "url": "https://www.sonicwall.com/support/notices/product-advisory-retire-unsupported-gen-6-firewalls/kA1VN000002iouP0AQ"},
+    {"name": "Help Net Security", "url": "https://www.helpnetsecurity.com/2026/11/19/sonicwall-gen-6-firewalls-reach-end-of-support/"}
+  ],
+  "validation": {"checked_at": "2026-11-19T10:53:30Z", "state": "corroborated", "note": "Vendor advisory (primary) read in full, plus Help Net Security. Exploitation of Gen 6 is expected by SonicWall, not reported; severity 3 reflects the vendor's urgent replace-now notice for internet-facing devices."}
+}

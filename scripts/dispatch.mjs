@@ -28,7 +28,10 @@ if (job === "sweep") {
   const batches = [...new Set((readJson(join(DATA, "sweep-plan.json"), { stories: [] }).stories || []).map((s) => s.batch))].sort();
   const gap = (readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}).gap_pass !== false;
   say(`Housekeeping done by this command: ${hk.join(", ")}. ${head}`);
-  const tasks = batches.map((b) => worker("researcher", b)).concat(gap ? [worker("gap")] : []);
+  // community posts are checked in the same hourly wake-up, so an idle moderator never costs a wake-up of its own
+  const chat = sh("node", ["scripts/chat.mjs", "intake"]), posts = chat.out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
+  say(`Community feed: ${posts} post(s) or report(s) waiting.`);
+  const tasks = batches.map((b) => worker("researcher", b)).concat(gap ? [worker("gap")] : []).concat(posts ? [`You are the CyberView community moderator. In ${ROOT} run \`node scripts/job-prompt.mjs moderator\` and carry out the printed instructions exactly, EXCEPT: do not run any git command and do not edit data/status.json (the dispatcher commits). End with one line starting "moderator:".`] : []);
   say(`1. Start these ${tasks.length} subagents IN ONE MESSAGE so they run in parallel (${AGENT("sonnet")}). The task text for each, exactly:`);
   tasks.forEach((t, i) => say(`   (${i + 1}) ${t}`));
   say("2. When ALL have returned, run: node scripts/sweep-plan.mjs check");

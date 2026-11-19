@@ -371,7 +371,7 @@ DONE WHEN: `node scripts/build.mjs` passes (it validates every guide).
 TIMESTAMP: last_advisory_at, advisory_note (one line: guides written, skipped and why).
 ```
 
-## Moderator (hourly at :35, Sonnet 5.5)
+## Moderator (hourly with the sweep, Sonnet 5.5)
 
 ```
 JOB: moderator.

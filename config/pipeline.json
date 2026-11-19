@@ -1,5 +1,5 @@
 {
- "_note": "How much research each run does. Research runs every 15 minutes and starts as many researchers as the queue needs, up to sweep.researchers (the cap on usage); an empty queue starts none. gap_workers searchers run on every other run. The backlog desk only acts when more than backlog.leave_for_sweep stories are waiting. The editor job may move these by at most a quarter a week; the owner can set them to anything.",
+ "_note": "How much research each run does. Research runs every 15 minutes and starts as many researchers as the queue needs, up to sweep.researchers (the cap on usage); an empty queue starts none. gap_workers searchers run on every other run. The backlog desk only acts when more than backlog.leave_for_sweep stories are waiting. The editor job may move these by at most a quarter a week; the owner can set them to anything. headless true (owner, 2026-11-19): every AI job runs as one scripts/run-job.mjs call in swarm phases (plan, claim leases, work, check, retry, commit, report); a job whose workers cannot read the web here falls back to subagents.",
  "sweep": {
   "researchers": 6,
   "stories_per_researcher": 8,
@@ -19,7 +19,7 @@
   "workers": 2,
   "per_worker": 3
  },
- "headless": false,
+ "headless": true,
  "max_parallel": 6,
  "headless_ready": [
   "triage",
@@ -33,5 +33,21 @@
   "improver",
   "watchdog"
  ],
- "headless_jobs": []
+ "headless_jobs": [
+  "analysis",
+  "analyst",
+  "backlog",
+  "brief",
+  "deep-sweep",
+  "editor",
+  "improver",
+  "moderator",
+  "review",
+  "security-review",
+  "steward",
+  "sweep",
+  "tabletop",
+  "triage",
+  "watchdog"
+ ]
 }

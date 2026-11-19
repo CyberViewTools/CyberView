@@ -97,6 +97,10 @@
     {
       "name": "KrCERT/CC security notice (Korean)",
       "url": "https://www.boho.or.kr/kr/bbs/view.do?searchCnd=&bbsId=B0000133&searchWrd=&menuNo=205020&pageIndex=1&categoryCode=&nttId=72314"
+    },
+    {
+      "name": "Rapid7",
+      "url": "https://www.rapid7.com/blog/post/ve-cve-2026-123007-critical-nginx-http-2-integer-underflow-leads-to-rce-fixed/"
     }
   ],
   "status": "official",
@@ -104,11 +108,11 @@
   "tags": [],
   "time_basis": "published",
   "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
-  "updated_at": "2026-11-19T01:15:31Z",
+  "updated_at": "2026-11-19T03:24:00Z",
   "validation": {
-    "checked_at": "2026-11-18T21:13:25Z",
-    "state": "single_source",
-    "note": "Read the CERT-FR alert (French) via fetch agent. F5 bulletins and the Wiz blog it cites were not opened. CVSS not stated on the page. KrCERT/CC notice (Korean) read in a later run: it lists five CVEs fixed by F5 but does not mention HTTP/2 or exploitation. Two government CERTs, one issuing from F5's bulletins."
+    "state": "corroborated",
+    "checked_at": "2026-11-19T03:24:00Z",
+    "note": "Compared CERT-FR (primary) with Rapid7 (PoC author): CVE-2026-123007 HTTP/2 flaw, fixes 1.31.9 and 1.30.7, public PoC, no in-the-wild exploitation stated. Rapid7 notes its PoC needs about 128 GB of HTTP/2 data and a specific x86-64 glibc, and gives no HTTP/2-off workaround; that workaround is CERT-FR advice. Not compared: CVE-2026-123633 (only CERT-FR)."
   },
   "review": {
     "state": "passed",

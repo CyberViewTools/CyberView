@@ -388,7 +388,42 @@ async def main():
         hp = os.path.join(site_g, "data", "health.json")
         hj = json.load(open(hp)) if os.path.exists(hp) else {"built_at": iso(0.1)}
         hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5})
+        # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
+        hj["grid_sources"] = {
+            "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3)},
+            "bchydro": {"name": "BC Hydro", "ok": True, "error": "", "at": iso(0.3)},
+            "ukpn": {"name": "UK Power Networks", "ok": False, "error": "HTTP 503", "at": iso(0.3)},
+            "eskom": {"name": "Eskom", "ok": True, "error": "", "at": iso(0.3)},
+            "ercot": {"name": "ERCOT", "ok": True, "error": "", "at": iso(0.3)},
+            "aemo": {"name": "AEMO", "ok": True, "error": "", "at": iso(0.3)},
+            "eia": {"name": "", "ok": False, "error": "not connected (no key saved for api.eia.gov)", "at": iso(0.3)},
+            "cfradar": {"name": "", "ok": False, "error": "not connected (no key saved for api.cloudflare.com)", "at": iso(0.3)},
+            "entsoe": {"name": "<b id=pwn3>x</b>", "ok": False, "error": "not connected (no key saved for web-api.tp.entsoe.eu)", "at": ""},
+        }
         json.dump(hj, open(hp, "w"))
+        bg["docs"] = dict(bundle.get("docs") or {})
+        bg["docs"]["grid/analysis"] = {"updated_at": iso(0.2),
+            "anomalies": [{"id": "grid-hydroquebec-qc-202611190900", "source": "hydroquebec", "region": "Quebec", "at": iso(0.3), "value": 152300, "median": 4000, "z": 9.1}],
+            "corroboration": [
+                {"id": "grid-hydroquebec-qc-202611190900", "score": 3, "signals": [
+                    {"kind": "operator", "source": "hydroquebec", "detail": "152,300 customers", "url": ""},
+                    {"kind": "internet", "source": "ioda", "detail": "CA: routing drop", "url": "https://ioda.inetintel.cc.gatech.edu/country/CA"},
+                    {"kind": "news", "source": "news", "detail": "Panne majeure au Québec", "url": "https://example.com/a"},
+                    {"kind": "news", "source": "news", "detail": "Quebec power outage", "url": "https://example.com/b"},
+                    {"kind": "evil", "source": "<img src=x id=pwn2>", "detail": "x", "url": "javascript:alert(1)"}]},
+                {"id": "grid-ukpn-lpn-202611191000", "score": 1, "signals": [{"kind": "operator", "source": "ukpn", "detail": "", "url": ""}]}],
+            "trends": {}, "sources": {}}
+        tp = os.path.join(site_g, "data", "trends.json")
+        tj = json.load(open(tp))
+        tj["grid"] = {"updated_at": iso(0.2), "anomalies": 1, "corroborated": 1, "trends": {"days": 30, "regions": [
+            {"source": "hydroquebec", "region": "Quebec", "country": "CA", "incidents": 4, "customer_hours": 812000,
+             "largest": {"id": "grid-hydroquebec-qc-202611190900", "name": "Hydro-Québec: 152,300 customers without power", "peak_customers": 152300, "checked": {"decision": "weather"}},
+             "causes": [{"cause": "Vegetation", "customers": 120000}, {"cause": "Equipment failure", "customers": 30000}], "wow": {"cur": 700000, "prev": 112000}},
+            {"source": "ukpn", "region": "<img src=x id=pwn4>London", "country": "GB", "incidents": 2, "customer_hours": 41000, "largest": None, "causes": {"Underground cable fault": 9000}},
+            {"source": "bchydro", "region": "British Columbia", "country": "CA", "incidents": 1, "customer_hours": 9000, "causes": []},
+            {"source": "eskom", "region": "South Africa", "customer_hours": "lots"}]}}
+        json.dump(tj, open(tp, "w"))
+        json.dump(bg, open(os.path.join(site_g, "data", "bundle.json"), "w"))
 
         async def vgrid(url):
             pg, errs = await open_page(browser, url, wait=1500)
@@ -405,6 +440,14 @@ async def main():
             ok("grid: says it is context", "Context, not cyber events" in txt)
             ok("grid: names are text, injected markup stays text", "<img src=x id=pwn>Eskom" in txt and await pg.locator("#pwn").count() == 0 and await pg.locator("#layers img").count() == 0)
             ok("grid: an item with no location is listed, not drawn", "AEMO: lack of reserve, New South Wales" in txt and "not drawn (no location given)" in txt)
+            ok("grid analysis: corroboration note in the list, own operator and unknown kinds left out", "seen also by: internet measurements (IODA) · news reports (2)" in txt and "other grid operators" not in txt and "evil" not in txt and await pg.locator("#pwn2").count() == 0, txt[-700:])
+            ok("grid analysis: anomaly note in the list", "unusual for this hour of the week" in txt)
+            notes = await pg.locator("#layers .gnote").all_text_contents()
+            ok("grid analysis: only incidents with signals get a note", len(notes) == 1 and not any("cyber" in n.lower() or "attack" in n.lower() for n in notes), notes)
+            g0 = pg.locator("g.gridm[aria-label^='Hydro-Québec']")
+            await g0.focus(); await pg.wait_for_timeout(150)
+            tiptxt = await pg.text_content("#tip")
+            ok("grid analysis: tooltip carries the notes", "seen also by: internet measurements (IODA) · news reports (2)" in tiptxt and "unusual for this hour of the week" in tiptxt and "context, not a cyber event" in tiptxt, tiptxt)
             hrefs = await pg.eval_on_selector_all("#layers a", "as => as.map(a => a.getAttribute('href'))")
             ok("grid: operator links kept, links off the allowlist dropped", "https://www.hydroquebec.com/outages/" in hrefs and not any(h and ("evil" in h or h.startswith("javascript")) for h in hrefs), hrefs)
             await chip.click(); await pg.wait_for_timeout(200)
@@ -418,7 +461,38 @@ async def main():
             pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=1000)
             rows = await pg.locator("#health li").all_text_contents()
             ok("grid: status page has a power grid row", any("Power grid outages collected" in r and "5 open incidents" in r and "causes last checked" in r for r in rows), rows)
+            src = await pg.locator("#gridSources li").all_text_contents()
+            ok("grid sources: one row per source, six public and three keyed", len(src) == 9 and await pg.locator("#gridSrcBox").is_visible(), src)
+            nc = [r for r in src if "Not connected" in r]
+            ok("grid sources: keyed ones without a key read not connected, no key saved", len(nc) == 3 and all("no key saved" in r for r in nc) and any(r.startswith("Not connected") and "EIA" in r for r in nc), nc)
+            ncb = await pg.eval_on_selector_all("#gridSources li .badge", "bs => bs.filter(b => b.textContent === 'Not connected').map(b => b.className)")
+            ok("grid sources: not connected is neutral, not a fault", ncb and all("neutral" in c.split() and "warn" not in c.split() and "bad" not in c.split() for c in ncb), ncb)
+            ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 5, src)
+            ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
             ok("grid: status page without script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), wait=1000)
+            ok("grid trends: section renders", await pg.locator("#grid").is_visible() and await pg.locator("#gridBars .gbar").count() == 3, await pg.locator("#gridBars .gbar").count())
+            h2 = await pg.text_content("#grid h2")
+            ok("grid trends: leads with the question", h2.strip().startswith("Power grid:") and h2.strip().endswith("?"), h2)
+            fills = await pg.eval_on_selector_all("#gridBars .gfill", "fs => [...new Set(fs.map(f => getComputedStyle(f).backgroundColor))]")
+            ok("grid trends: bars are a single colour", len(fills) == 1, fills)
+            widths = await pg.eval_on_selector_all("#gridBars .gfill", "fs => fs.map(f => f.getBoundingClientRect().width)")
+            ok("grid trends: bars sorted largest first and scaled", len(widths) == 3 and widths[0] > widths[1] > widths[2] > 0, widths)
+            cav = await pg.text_content("#grid .gcav")
+            ok("grid trends: caveats underneath", "operator-reported" in cav and "six operators only" in cav and "not cyber events" in cav and await pg.evaluate("(() => { const b = document.getElementById('gridBars'), c = document.querySelector('#grid .gcav'); return !!(b.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING); })()"), cav)
+            gtxt = await pg.inner_text("#grid")
+            ok("grid trends: incidents opened and the largest shown", "4 incidents opened" in gtxt and "largest: Hydro-Québec: 152,300 customers without power" in gtxt and "this week 700K, week before 112K" in gtxt, gtxt[:600])
+            ok("grid trends: AI-checked cause labelled", "checked by CyberView AI (a Claude model): weather" in gtxt)
+            ok("grid trends: injected markup stays text", "<img src=x id=pwn4>London" in gtxt and await pg.locator("#pwn4").count() == 0 and await pg.locator("#grid img").count() == 0)
+            tt = await pg.locator("#gridBars .gbar").first.get_attribute("title")
+            ok("grid trends: causes mix in the tooltip", "Causes as reported: Vegetation (120K), Equipment failure (30K)" in tt, tt)
+            await pg.locator("#gridBars .gbar").nth(1).click(); await pg.wait_for_timeout(100)
+            ok("grid trends: tap shows the detail", "Underground cable fault" in await pg.text_content("#grid .daycap"))
+            ok("grid trends: no failed section and no script errors", not errs and "could not be shown" not in await pg.inner_text("main"), errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), w=390, h=800, wait=1000)
+            ok("grid trends: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"))
             await pg.context.close()
 
         await serve(site_g, vgrid)

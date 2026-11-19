@@ -59,6 +59,7 @@
         (gn !== null ? "; " + gn + " open incident" + (gn === 1 ? "" : "s") + " on the map" : "") +
         "; causes last checked " + (h.last_grid_research_at && isFinite(mins(h.last_grid_research_at)) ? ago(h.last_grid_research_at) : "not yet") + " (context, not cyber events)");
     }
+    try { gridSources(h.grid_sources); } catch (e) {}
     var bl = h.backlog;
     if (bl && typeof bl.waiting === "number") row(bl.waiting <= 60 && !(bl.oldest_incident_hours > 2), "Research queue: " + bl.waiting + " report" + (bl.waiting === 1 ? "" : "s") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 60 ? " (expected under 60)" : ""));
     var q = typeof h.quarantined_count === "number" ? h.quarantined_count : 0;
@@ -66,6 +67,24 @@
     if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));
   });
 
+  // one row per grid source (health.json grid_sources, from data/grid/live.json and analysis.json); a keyed source with no
+  // key saved reads "not connected" and is shown neutral, not as a fault
+  var GRID_SRC = [["hydroquebec", "Hydro-Québec", "outages in Quebec"], ["bchydro", "BC Hydro", "outages in British Columbia"], ["ukpn", "UK Power Networks", "faults in London, the South East and East of England"],
+    ["eskom", "Eskom", "load shedding in South Africa"], ["ercot", "ERCOT", "grid conditions in Texas"], ["aemo", "AEMO", "market notices in Australia"],
+    ["eia", "EIA", "US electricity demand (needs a key)"], ["cfradar", "Cloudflare Radar", "internet outages with a power cause (needs a key)"], ["entsoe", "ENTSO-E", "generation and transmission outages in Europe (needs a key)"]];
+  function gridSources(gs) {
+    if (!gs || typeof gs !== "object") return;
+    var ul = $("gridSources"); ul.textContent = "";
+    GRID_SRC.forEach(function (d) {
+      var x = Object.prototype.hasOwnProperty.call(gs, d[0]) && gs[d[0]] && typeof gs[d[0]] === "object" ? gs[d[0]] : null;
+      var err = x ? String(x.error || "").slice(0, 120) : "", nc = !!x && !x.ok && /^not connected/i.test(err), at = x && typeof x.at === "string" ? x.at.slice(0, 30) : "";
+      var li = el("li"), cls = !x ? "info" : x.ok === true ? "ok" : nc ? "neutral" : "warn", label = !x ? "Not reported yet" : x.ok === true ? "Working" : nc ? "Not connected" : "Not loading";
+      li.appendChild(el("span", "badge " + cls, label));
+      li.appendChild(document.createTextNode(" " + d[1] + ": " + d[2] + (nc ? " · no key saved" : x && !x.ok && err ? " · " + err : "") + (at && isFinite(Date.parse(at)) ? " · checked " + ago(at) : "")));
+      li.dataset.src = d[0]; ul.appendChild(li);
+    });
+    $("gridSrcBox").hidden = false;
+  }
   function renderSpeed(s) {
     if (!s || typeof s !== "object" || !s.publish) return;
     var v = function (x) { return typeof x === "number" && isFinite(x) ? Math.round(x) + " min" : "not measured"; }, p = s.publish || {}, r = s.review || {};

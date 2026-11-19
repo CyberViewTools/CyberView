@@ -150,6 +150,32 @@ for (const x of listDir("context")) {
   context[x.id] = { source: c.source, source_url: c.source_url, fetched_at: c.fetched_at || "", ok: !!c.ok, error: c.error || "", items: c.items };
 }
 
+// power grid analysis (scripts/grid-analysis.mjs, no AI model): corroboration, anomalies and 30-day trends per region.
+// Validated loosely like the context layers: a broken file only drops the grid analysis (with a warning), never the build.
+// Bundled as docs["grid/analysis"] for the map and copied into trends.json for the trends page.
+const gridAnalysis = (() => {
+  const p = join(DATA, "grid", "analysis.json");
+  if (!existsSync(p)) return null;
+  const a = readJson(p);
+  const obj = (v) => v && typeof v === "object" && !Array.isArray(v);
+  if (!obj(a)) { warnings.push("grid/analysis.json: not valid JSON, grid analysis left out"); return null; }
+  for (const k of ["anomalies", "corroboration"]) if (a[k] != null && !Array.isArray(a[k])) { warnings.push(`grid/analysis.json: ${k} must be a list, grid analysis left out`); return null; }
+  for (const k of ["trends", "sources"]) if (a[k] != null && !obj(a[k])) { warnings.push(`grid/analysis.json: ${k} must be an object, grid analysis left out`); return null; }
+  return { updated_at: String(a.updated_at || "").slice(0, 30), anomalies: (a.anomalies || []).filter(obj).slice(0, 200),
+    corroboration: (a.corroboration || []).filter(obj).slice(0, 200).map((c) => ({ ...c, signals: Array.isArray(c.signals) ? c.signals.filter(obj).slice(0, 20) : [] })),
+    trends: a.trends || {}, sources: a.sources || {} };
+})();
+if (gridAnalysis) docs["grid/analysis"] = gridAnalysis;
+// each grid source's last fetch (data/grid/live.json, then analysis.json for the keyed ones), for the status page
+const gridSources = (() => {
+  const live = existsSync(join(DATA, "grid", "live.json")) ? readJson(join(DATA, "grid", "live.json")) : null;
+  const out = {}, add = (k, v) => { if (!/^[a-z0-9_-]{1,30}$/.test(k) || out[k] || !v || typeof v !== "object") return;
+    out[k] = { name: String(v.name || "").slice(0, 60), ok: v.ok === true, error: String(v.error || "").slice(0, 120), at: String(v.fetched_at || v.at || "").slice(0, 30) }; };
+  for (const [k, v] of Object.entries((live && live.sources) || {})) add(k, v);
+  for (const [k, v] of Object.entries((gridAnalysis && gridAnalysis.sources) || {})) add(k, v);
+  return Object.keys(out).length ? out : null;
+})();
+
 // exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
 // One that breaks a rule is left out of the workbench and reported here (first, so the 40-line cap never hides it). This
 // check used to run after the error report, so a broken analysis vanished silently and the swarm kept handing it out.
@@ -268,6 +294,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
     prev: { from: prevFrom, to: prevTo, total: known.filter(inPrev).length, complete: started <= prevFrom },
     collection_started: started,
     dims, daily,
+    grid: gridAnalysis ? { updated_at: gridAnalysis.updated_at, trends: gridAnalysis.trends, anomalies: gridAnalysis.anomalies.length, corroborated: gridAnalysis.corroboration.filter((c) => (c.score || 0) >= 2).length } : null,
   };
   writeFileSync(join(OUT, "trends.json"), JSON.stringify(trends));
   console.log(`Trends: ${trends.cur.total} events this week, ${trends.prev.total} the week before${trends.prev.complete ? "" : " (partly recorded)"}.`);
@@ -373,7 +400,8 @@ console.log("Pages: " + buildPages().join(", "));
   writeFileSync(join(OUT, "health.json"), JSON.stringify({ built_at, ok: quarantined.length === 0, quarantined: quarantined.slice(0, 100), quarantined_count: quarantined.length, warnings: warnings.length,
     last_sweep_at: st.last_sweep_at || "", last_collect_at: st.last_collect_at || "", last_feeds_at: st.last_feeds_at || "", last_backlog_at: st.last_backlog_at || "", backlog: backlogNow,
     last_cve_at: st.last_cve_at || "", last_review_at: st.last_review_at || "", last_analyst_at: st.last_analyst_at || "", last_brief_at: st.last_brief_at || "", last_analysis_at: st.last_analysis_at || "",
-    last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "", grid_open: context.grid ? context.grid.items.length : null }));
+    last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "", grid_open: context.grid ? context.grid.items.length : null,
+    grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "" }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

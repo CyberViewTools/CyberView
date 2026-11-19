@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.44",date:"2026-11-19"};
+var BUILD={version:"1.45",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -198,6 +198,41 @@ function gridLine(x){
   p.push(x.cause?"cause as reported: "+x.cause:"no cause reported");
   return p.join(" \u00b7 ");
 }
+/* grid analysis (scripts/grid-analysis.mjs, no AI model; docs["grid/analysis"]): other independent signals seen near an
+   incident, and whether its size is unusual for that hour of the week. Notes only: never evidence of a cause or an attack. */
+var GRID_SIG={operator:"other grid operators",internet:"internet measurements",disaster:"disaster alerts",news:"news reports",demand:"electricity demand data"};
+var GRID_SRC={ioda:"IODA",gdacs:"GDACS",cfradar:"Cloudflare Radar",eia:"EIA",entsoe:"ENTSO-E"};
+var gridA=null;
+function cleanGridAnalysis(d){
+  if(!d||typeof d!=="object")return null;
+  var by={},an=[],srcName=function(v){var t=str(v,40).trim(),k=t.toLowerCase();return own(GRID_SRC,k)?GRID_SRC[k]:/^[\w .()&'-]{1,40}$/.test(t)?t:"";};
+  (Array.isArray(d.corroboration)?d.corroboration:[]).slice(0,200).forEach(function(c){
+    if(!c||typeof c!=="object")return;var id=str(c.id,120);if(!id)return;
+    var sig=(Array.isArray(c.signals)?c.signals:[]).slice(0,20).map(function(g){
+      if(!g||typeof g!=="object")return null;var k=str(g.kind,20);if(!own(GRID_SIG,k))return null;
+      return {kind:k,source:srcName(g.source),raw:str(g.source,40).toLowerCase()};}).filter(Boolean);
+    if(sig.length)by[id]=sig;
+  });
+  (Array.isArray(d.anomalies)?d.anomalies:[]).slice(0,200).forEach(function(a){
+    if(!a||typeof a!=="object")return;
+    an.push({id:str(a.id||a.incident_id||a.incident,120),source:str(a.source,20).toLowerCase(),region:str(a.region,80).trim()});
+  });
+  return {by:by,anomalies:an};
+}
+/* plain-text notes for one incident: "seen also by: internet measurements (IODA) · news reports (2)", "unusual for this hour of the week" */
+function gridNotes(x){
+  var out=[];if(!gridA||!x)return out;
+  var sig=x.id&&own(gridA.by,x.id)?gridA.by[x.id]:[],groups={},order=[];
+  sig.forEach(function(g){
+    if(g.kind==="operator"&&g.raw&&g.raw===x.source)return;
+    if(!groups[g.kind]){groups[g.kind]={n:0,src:[]};order.push(g.kind);}
+    groups[g.kind].n++;if(g.source&&groups[g.kind].src.indexOf(g.source)<0)groups[g.kind].src.push(g.source);
+  });
+  var parts=order.map(function(k){var G=groups[k];return GRID_SIG[k]+(k==="news"?" ("+G.n+")":G.src.length?" ("+G.src.slice(0,3).join(", ")+")":"");});
+  if(parts.length)out.push("seen also by: "+parts.join(" \u00b7 "));
+  if(gridA.anomalies.some(function(a){return (a.id&&a.id===x.id)||(!a.id&&a.source&&a.source===x.source&&a.region&&a.region===x.region);}))out.push("unusual for this hour of the week");
+  return out;
+}
 function gridChecked(x){return x.checked?"Cause checked by "+x.checked.by+": "+GRID_DEC[x.checked.decision]+(x.checked.summary?" \u2014 "+x.checked.summary:""):"";}
 function ctxHealth(c){
   if(!c)return {k:"off",t:"Offline"};
@@ -231,6 +266,7 @@ function renderLayers(){
         var li=el("li");
         if(x.url){var ga=el("a",null,x.name);ga.href=safeUrl(x.url);ga.target="_blank";ga.rel="noopener noreferrer";li.appendChild(ga);}else li.appendChild(el("b",null,x.name));
         li.appendChild(el("span","muted"," "+gridLine(x)+(x.lat===null?" \u00b7 not drawn (no location given)":x.approx?" \u00b7 drawn at the operator's area":"")));
+        var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" \u00b7 ")));
         if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
         gl.appendChild(li);});
       if(c.items.length>5)gl.appendChild(el("li","muted","and "+(c.items.length-5)+" more on the globe"));
@@ -1506,7 +1542,7 @@ function drawGrid(){
   if(!ctxOn.grid||!ctx.grid)return;
   ctx.grid.items.slice().reverse().forEach(function(x){
     if(x.lat===null)return;var p=proj(x.lng,x.lat);if(!p)return;var px=T.applyX(p[0]),py=T.applyY(p[1]),r=gridR(x);
-    var head=x.name,body=gridLine(x)+(x.approx?" \u00b7 drawn at the operator's area":"")+(x.checked?" \u00b7 "+gridChecked(x):"")+" \u00b7 context, not a cyber event";
+    var gn=gridNotes(x),head=x.name,body=gridLine(x)+(x.approx?" \u00b7 drawn at the operator's area":"")+(gn.length?" \u00b7 "+gn.join(" \u00b7 "):"")+(x.checked?" \u00b7 "+gridChecked(x):"")+" \u00b7 context, not a cyber event";
     var g=gMarks.append("g").attr("class","gridm"+(x.approx?" approx":"")).attr("transform","translate("+px+","+py+")").attr("tabindex",0)
       .attr("aria-label",x.name+", power grid "+GRID_KIND[x.kind]+" (context, not a cyber event)"+(x.url?" (opens the operator's page)":""));
     if(x.url)g.attr("role","link");
@@ -2312,6 +2348,7 @@ openStore().then(function(d){
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
+  db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;renderLayers();if(state.view==="map")renderSoon();},function(){});
   Object.keys(CTX_DEFS).forEach(function(k){db.doc("context/"+k).onSnapshot(function(s){ctx[k]=s.exists?cleanCtx(k,s.data()):null;renderLayers();if(state.view==="map")renderSoon();},function(){});});
   db.doc("meta/status").onSnapshot(function(s){sweep=s.exists?s.data():null;renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},function(){});
 }).catch(function(){unavailable=true;render();});

@@ -76,6 +76,18 @@ td a{color:var(--ink);text-decoration-color:var(--line)}td a:hover{color:var(--a
 .mini .fill{display:block;height:100%;background:var(--accent)}
 td.up{color:#ff9d8a}td.down{color:#86c9ff}td.muted{color:var(--muted)}
 @media (max-width:760px){.dims{grid-template-columns:1fr}.mini{display:none}}
+/* power grid section: one horizontal bar per operator region, one colour (rule 5) */
+.gbars{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.gbar{all:unset;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,14em) minmax(0,1fr) 4.5em;gap:10px;align-items:center;width:100%;cursor:pointer;font-size:14px;touch-action:manipulation}
+.gbar .glab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gbar .gtrack{display:block;height:12px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
+.gbar .gfill{display:block;height:100%;background:var(--accent);opacity:.85;min-width:2px}
+.gbar .gval{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.gbar:hover .gfill,.gbar.on .gfill{opacity:1}.gbar.on .gtrack{outline:2px solid var(--ink);outline-offset:1px}
+.gbar:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grow .gsub{margin:2px 0 0;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.badge.neutral{color:var(--muted)}
+@media (max-width:760px){.gbar{grid-template-columns:minmax(0,1fr) 4.5em}.gbar .glab{grid-column:1/-1;white-space:normal}}
 /* ---- status page ---- */
 .tablewrap{overflow-x:auto}
 #routines td{vertical-align:top}

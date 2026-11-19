@@ -769,6 +769,17 @@ body.wall #svg{cursor:default}
   .country{transition:none}
 }
 @media (max-width:600px){#fs{display:none}header .top{flex-wrap:nowrap}header h1{min-width:0}}
+#toMap{position:fixed;right:14px;bottom:14px;z-index:8;box-shadow:var(--shadow)}
+#feed li.more{list-style:none;text-align:center;padding:6px 0 2px}#feed li.more .btn{width:100%;justify-content:center;min-height:44px}
+@media (min-width:901px){#toMap{display:none!important}}
+@media (max-width:900px){
+  /* blur behind every panel is the most expensive thing a phone paints while scrolling: use solid panels instead */
+  .glass,.card,header,aside,.days,#tip,.wcap,.wtick,.replay,.navsheet,.backdrop{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .glass{background:var(--solid)}
+  [data-theme="dark"] .glass{background:#23262e}
+  .m .pulse{animation:none;display:none}
+  #feed .card{content-visibility:auto;contain-intrinsic-size:auto 150px}
+}
 </style>
 </head>
 <body>
@@ -980,6 +991,7 @@ body.wall #svg{cursor:default}
   <div class="wtick" aria-label="Latest headlines"><div class="wtrack" id="wTrack"></div></div>
   <button type="button" class="btn" id="wallExit" title="Leave wall mode (Esc or W)">Exit wall mode</button>
 </div>
+<button type="button" class="btn" id="toMap" hidden aria-label="Back to the map">&#8593; Map</button>
 <div id="toast" class="glass" role="status" hidden></div>
 
 <script src="vendor/d3.min.js"></script>

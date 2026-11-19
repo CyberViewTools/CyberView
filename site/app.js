@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.23",date:"2026-11-18"};
+var BUILD={version:"1.24",date:"2026-11-18"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -55,7 +55,7 @@ function lsGet(k){try{return window.localStorage.getItem(k);}catch(x){return nul
 function lsSet(k,v){try{window.localStorage.setItem(k,v);return true;}catch(x){return false;}}
 var wl={terms:[],lower:[],res:[],doc:null,mode:"local",stored:true};
 var rep={id:null,text:"",fail:false,busy:false};
-var savedT=null,feedTop=0,feedKey="",keyShut=true;
+var savedT=null,feedTop=0,feedKey="",keyShut=true,feedLimit=30,winTop=0;
 var daily=null,hist=null,corrections=[],rubricOpen=false;
 var state={win:7,cats:new Set(CATS.map(function(c){return c.k;})),sev:1,lens:"all",level:"standard",claims:false,wlOnly:false,status:"all",sort:"pri",q:"",day:null,sel:null,spot:null,country:null,tab:"feed",view:"map",pattern:null};
 var analysis=null;var events=[],sweep=null,loaded=false,unavailable=false,stale=false,db=null,query=null,fresh=new Set();
@@ -606,7 +606,8 @@ function showEvent(id){
   select(id,true);
 }
 function renderBrief(){
-  var box=$("brief");box.textContent="";
+  var box=$("brief");if(box.hidden)return;   /* a hidden tab is drawn when it is opened (setTab), not on every update */
+  box.textContent="";
   if(!daily){box.appendChild(el("div","empty",!loaded&&!unavailable?"Loading":"No brief yet. One is written each morning."));return;}
   var hd=el("section","blk");
   hd.appendChild(el("div","meta","Daily brief"+(daily.date&&isDay(daily.date)?" · "+fmtDay(daily.date):"")+(fmtTime(daily.generated)?" · written "+fmtTime(daily.generated):"")));
@@ -669,7 +670,13 @@ function renderFeed(list){
   if(typing)setTimeout(function(){var t=$("reportText");if(t&&document.activeElement!==t){t.focus();try{t.setSelectionRange(ss,ss);}catch(x){}}},0);
   if(!loaded&&!unavailable){f.appendChild(el("li","empty","Loading events"));return;}
   if(!list.length){f.appendChild(el("li","empty",events.length?"No events match these filters.":"No events stored yet. The next scheduled sweep will add them."));archHint(f);return;}
-  var frag=document.createDocumentFragment();list.forEach(function(e){frag.appendChild(card(e,false));});f.appendChild(frag);
+  /* phones scroll the whole page, so a long list makes every scroll and redraw slow: show 30 and add more on request */
+  if(key!==feedKey)feedLimit=30;
+  var li=state.last?list.findIndex(function(x){return x.id===state.last;}):-1;if(li>=feedLimit)feedLimit=li+10;
+  var shown=wide?list:list.slice(0,feedLimit);
+  var frag=document.createDocumentFragment();shown.forEach(function(e){frag.appendChild(card(e,false));});f.appendChild(frag);
+  if(shown.length<list.length){var mo=el("li","more"),mb=el("button","btn ghost","Show "+Math.min(30,list.length-shown.length)+" more ("+(list.length-shown.length)+" left)");mb.type="button";mb.id="feedMore";
+    mb.addEventListener("click",function(){feedLimit+=30;renderFeed(lastList);});mo.appendChild(mb);f.appendChild(mo);}
   archHint(f);
   if(key!==feedKey){feedKey=key;if(!f.hidden)f.scrollTop=0;feedTop=0;}
   else if(anchor){var an=$(anchor.id);if(an)f.scrollTop+=an.parentNode.getBoundingClientRect().top-ft-anchor.off;}
@@ -706,7 +713,8 @@ function sysRow(dl,k,iso,lateH){
   dl.appendChild(el("dd",late?"late":null,isFinite(t)?ago(iso)+(late?" (overdue)":""):"not yet run"));
 }
 function renderInsights(list){
-  var box=$("ins");box.textContent="";
+  var box=$("ins");if(box.hidden)return;
+  box.textContent="";
   if(!loaded){box.appendChild(el("div","empty",unavailable?"Live data unavailable":"Loading"));return;}
   var k=el("div","kpis");
   function kpi(v,l){var d=el("div","kpi");d.appendChild(el("b",null,v));d.appendChild(el("span",null,l));k.appendChild(d);}
@@ -801,12 +809,15 @@ function histBlock(){
 }
 function setTab(t){
   state.tab=t;["brief","feed","kev","pat","ins"].forEach(function(k){$("tab-"+k).setAttribute("aria-selected",t===k?"true":"false");$(k).hidden=t!==k;});
-  renderDetail(lastList||[]);
+  var l=lastList||[];
+  safe("brief",renderBrief);safe("exploited",renderKev);safe("patterns",renderPatterns);safe("insights",function(){renderInsights(l);});
+  safe("feed",function(){if(t==="feed")renderFeed(l);renderDetail(l);});
 }
 var KIND={stated:"Stated by sources",inferred:"Inferred pattern",timing:"Timing only"};
 function pickPattern(id,view){state.pattern=state.pattern===id&&!view?null:id;state.spot=null;state.day=null;state.sel=null;if(view)setView(view);else render();}
 function renderPatterns(){
-  var box=$("pat");box.textContent="";
+  var box=$("pat");if(box.hidden)return;
+  box.textContent="";
   if(!analysis||!analysis.patterns.length){box.appendChild(el("div","empty",loaded?"No pattern analysis stored yet. The analysis task writes one every few hours.":"Loading"));return;}
   box.appendChild(el("div","warnbox","Correlation is not causation. Each pattern says whether sources state the link, whether it is an inference from shared attributes, or whether it rests on timing alone. Generated "+(fmtTime(analysis.generated)||"recently")+"."));
   if(analysis.summary){var s=el("div","pcard");s.appendChild(el("h3",null,"Overall read"));s.appendChild(el("p",null,analysis.summary));box.appendChild(s);}
@@ -908,11 +919,12 @@ function proj(lng,lat){
 }
 function turnTo(lng,lat){stopSpin();rot=[-lng,Math.max(-70,Math.min(70,-lat))];globeProj.rotate(rot);repath(false);}
 function stopSpin(){if(spin){spin.stop();spin=null;}}
+var stageSeen=true;
 function startSpin(){
-  if(reduced||spin||!globe)return;
+  if(reduced||spin||!globe||!stageSeen)return;
   /* by the clock, not by the frame: a slow phone drops frames but the globe still turns at the same speed (3.6 degrees a second) */
   var last=-1;
-  spin=d3.timer(function(t){if(!globe||(t>45000&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();settle();return;}
+  spin=d3.timer(function(t){if(!globe||(t>(coarse||!wide?12000:45000)&&!wall.on)||document.hidden||state.view!=="map"||rp.on){stopSpin();settle();return;}
     var dt=last<0?16:Math.min(120,t-last);last=t;rot[0]+=dt*.0036;
     globeProj.rotate(rot);frame();});
 }
@@ -938,6 +950,17 @@ $("svg").addEventListener("touchmove",function(ev){
 },{passive:false});
 ["touchend","touchcancel"].forEach(function(n){$("svg").addEventListener(n,function(){tg=null;},{passive:true});});
 $("svg").addEventListener("wheel",stopSpin,{passive:true,capture:true});
+/* While the globe moves, its markers are redrawn every frame, so a tap would land on a marker that is gone a moment later.
+   The first touch or press freezes the globe exactly as it is; quality is restored after the tap has had time to finish. */
+function freeze(){var was=!!(spin||raf2||flyT&&!rp.on&&!wall.on);stopSpin();if(raf2){cancelAnimationFrame(raf2);raf2=0;}clearTimeout(settleT);if(was||moving)settleT=setTimeout(settle,700);}
+$("svg").addEventListener("pointerdown",freeze,{passive:true,capture:true});
+$("svg").addEventListener("touchstart",freeze,{passive:true,capture:true});
+/* the spin is decoration: it stops for good as soon as the reader scrolls or the globe leaves the screen */
+if(window.IntersectionObserver)new IntersectionObserver(function(en){stageSeen=en[0].isIntersecting;if(!stageSeen&&!wall.on){stopSpin();settle();}},{threshold:.15}).observe($("stage"));
+var toMapT=0;
+window.addEventListener("scroll",function(){if(wide)return;if(spin&&window.scrollY>40){stopSpin();settle();}
+  if(!toMapT)toMapT=requestAnimationFrame(function(){toMapT=0;$("toMap").hidden=window.scrollY<520||wall.on;});},{passive:true});
+$("toMap").addEventListener("click",function(){window.scrollTo(0,0);});
 function shade(){
   if(!world)return;
   var counts=new Map();scoped().forEach(function(e){var n=normC(e.country);if(n)counts.set(n,(counts.get(n)||0)+1);});
@@ -1239,6 +1262,7 @@ function renderKev(){
   var p=$("kev");if(!p)return;
   var wk=ymd(daysAgo(7)),open=kev.filter(function(k){return k.added>=wk;}).length;
   $("kevBadge").textContent=open?String(open):"";
+  if(p.hidden)return;
   if(state.tab!=="kev")return;
   var st=p.scrollTop;p.textContent="";
   if(!kev.length){p.appendChild(el("div","empty",loaded?"The known-exploited feed has not been written yet. The feeds task fills it on its next run.":"Loading"));return;}
@@ -1445,6 +1469,14 @@ function select(id,fromFeed){
     else if(!id&&prev&&savedT){var bt=savedT;savedT=null;(reduced?svg:svg.transition().duration(450)).call(zoom.transform,bt);}
   }
   if(!id)savedT=null;
+  /* phones: the details sit below the globe. Bring them into view when an event opens, and go back to where the
+     reader was in the list (or to the globe) when it closes. */
+  if(!wide&&!wall.on){
+    if(id&&e){if(!prev)winTop=window.scrollY;
+      var toBar=function(){var bar=$("dbar");if(bar&&!bar.hidden&&state.sel===id)window.scrollTo(0,Math.max(0,bar.getBoundingClientRect().top+window.scrollY-8));};
+      toBar();requestAnimationFrame(function(){toBar();requestAnimationFrame(toBar);});}
+    else if(!id&&prev){var pc=$("card-"+prev);if(pc&&winTop>0)pc.scrollIntoView({block:"center"});else window.scrollTo(0,winTop);}
+  }
 }
 
 /* ---------- globe stories: arcs, blast radius, campaign replay, wall mode ---------- */
@@ -1702,7 +1734,7 @@ function render(){
   var list=visible();lastList=list;
   if(state.sel&&!list.some(function(e){return e.id===state.sel;}))state.sel=null;
   safe("header",function(){renderStats(list);renderToggles();renderChips();renderDays();renderScope();});
-  safe("brief",renderBrief);safe("feed",function(){renderFeed(list);renderDetail(list);});safe("exploited",renderKev);safe("patterns",renderPatterns);safe("insights",function(){renderInsights(list);});
+  safe("brief",renderBrief);safe("feed",function(){if(state.tab==="feed")renderFeed(list);renderDetail(list);});safe("exploited",renderKev);safe("patterns",renderPatterns);safe("insights",function(){renderInsights(list);});
   safe("map",function(){if(state.view==="map"){shade();drawMarks();}else drawMarks();});
   if(state.view!=="map")safe("analysis",function(){renderViz(list);});
   safe("legend",renderKey);
@@ -2047,7 +2079,9 @@ document.addEventListener("keydown",function(ev){
   else if(!typing&&(ev.key==="l"||ev.key==="L")){layersToggle($("layers").hidden);}
   else if(!typing&&(ev.key==="w"||ev.key==="W")&&!modalOpen){wallStart();}
 });
-if(window.ResizeObserver){var rt=0;new ResizeObserver(function(){clearTimeout(rt);rt=setTimeout(function(){layout();render();},140);}).observe(document.body);}
+if(window.ResizeObserver){var rt=0;var rsz="";new ResizeObserver(function(){var r=$("stage").getBoundingClientRect(),k=Math.round(r.width)+"x"+Math.round(r.height)+"|"+(window.innerWidth>900);if(k===rsz)return;rsz=k;clearTimeout(rt);rt=setTimeout(function(){layout();render();},140);}).observe($("stage"));
+  window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(function(){var k2=window.innerWidth+"x"+window.innerHeight;if(wide||k2.split("x")[0]!==String(lastW)){lastW=window.innerWidth;layout();render();}},160);});}
+var lastW=window.innerWidth;
 setInterval(function(){renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},60000);
 
 window.addEventListener("error",function(ev){if(!faults.page){faults.page=String(ev&&ev.message||"error").slice(0,160);fault();}});

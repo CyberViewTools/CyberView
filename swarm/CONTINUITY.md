@@ -10,6 +10,7 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 | Deploy | `manifest.json` `built_at`; main's newest commit live | 90 minutes; 20 minutes lag | every push; the guard starts `pages.yml` |
 | CVE corpus | `last_cve_at` | 3 hours | every finished deploy (gated to hourly), its schedule, any push to the CVE code; the guard starts `cve.yml` |
 | Feeds (KEV, EPSS, context layers) | `last_feeds_at` | 6 hours | every finished deploy (gated to 110 minutes), its schedule; the guard starts `feeds.yml` |
+| Power grid outages | `last_grid_at` | 2 hours (warn) | every research cycle runs `grid.mjs collect` and the grid researchers; collect.yml every 30 min as backup (stands down while the loop collects) |
 | Lead collection | `last_collect_at` | 2 hours | every research cycle collects; `collect.yml` as backup; the guard starts it |
 | Brief, analysis, exploit analyst, triage, advisory, verify, report review, steward, editor | `last_<job>_at` | brief 7 h, analysis 15 h, analyst 5 h | their schedules in the ops session; the guard warns |
 | The guard itself | the guardian's scheduled runs (push notification to the owner on ALERT) | 2 hours | its own schedule, in a fresh session each time |

@@ -620,7 +620,12 @@ async function collect() {
   writeJson(P.incidents, { updated_at: nowIso(), open, closed });
   if (newlyClosed.length) {
     mkdirSync(P.history, { recursive: true });
-    for (const inc of newlyClosed) appendFileSync(join(P.history, `${inc.closed_at.slice(0, 7)}.jsonl`), JSON.stringify(inc) + "\n");
+    // one line per incident id: the flow and the collect.yml backup can both close the same incident (two writers)
+    for (const inc of newlyClosed) {
+      const hf = join(P.history, `${inc.closed_at.slice(0, 7)}.jsonl`);
+      const ids = new Set((existsSync(hf) ? readFileSync(hf, "utf8") : "").split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l).id; } catch { return ""; } }));
+      if (!ids.has(inc.id)) appendFileSync(hf, JSON.stringify(inc) + "\n");
+    }
   }
   const research = readJson(P.research, {}) || {};
   const okCount = Object.values(sources).filter((s) => s.ok).length;

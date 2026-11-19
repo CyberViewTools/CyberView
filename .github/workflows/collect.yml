@@ -41,7 +41,9 @@ jobs:
         # optional: a failing operator feed is kept as stale and reported; this step can never stop the commit
         continue-on-error: true
         timeout-minutes: 4
-        run: node scripts/grid.mjs collect
+        # the research loop collects every few minutes; this backup stands down while it does (one writer at a time)
+        run: |
+          if node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid: the research loop collected under 20 minutes ago; skipping"; else node scripts/grid.mjs collect; fi
       - name: Validate
         run: node scripts/build.mjs --quarantine > /dev/null
       - name: Commit and push

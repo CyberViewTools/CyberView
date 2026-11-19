@@ -91,15 +91,17 @@ function webOk() {
   writeJson(f, { at: nowIso(), ok }); return ok;
 }
 const kindOf = { sweep: "story", backlog: "story", review: "event", analyst: "cve" };
-function planIds(job) {
-  if (job === "sweep" || job === "backlog") return (plan("sweep-plan.json").stories || []).map((s) => s.id);
-  if (job === "review") return ((plan("review-plan.json").batches) || []).flat();
-  if (job === "analyst") return ((plan("analyst-plan.json").batches) || []).flat().map((x) => x.cve);
+function planIds(job, since) {
+  const fresh = (f) => { const x = plan(f); return x.planned_at && x.planned_at >= since ? x : {}; }; // never claim a plan left by an earlier run
+  const plan_ = fresh;
+  if (job === "sweep" || job === "backlog") return (plan_("sweep-plan.json").stories || []).map((s) => s.id);
+  if (job === "review") return ((plan_("review-plan.json").batches) || []).flat();
+  if (job === "analyst") return ((plan_("analyst-plan.json").batches) || []).flat().map((x) => x.cve);
   return [];
 }
 /** Claim what was planned and publish the claim at once, so runs in other containers skip it. */
-function claimPlanned(job) {
-  const ids = planIds(job), kind = kindOf[job]; if (!kind || !ids.length) return 0;
+function claimPlanned(job, since) {
+  const ids = planIds(job, since), kind = kindOf[job]; if (!kind || !ids.length) return 0;
   claim(kind, ids, RUN, 45);
   const a = spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }), c = spawnSync("git", ["commit", "-q", "-m", "data: leases"], { cwd: ROOT });
   const g = spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
@@ -155,12 +157,12 @@ async function main() {
     work.push([job, null]); phase("plan", "one worker");
   }
   // 2. claim
-  const claimed = claimPlanned(job); if (claimed) phase("claim", `${Math.abs(claimed)} item(s) leased to ${RUN}${claimed < 0 ? " (lease not published: push failed)" : ""}`);
+  const claimed = claimPlanned(job, rec.started_at); if (claimed) phase("claim", `${Math.abs(claimed)} item(s) leased to ${RUN}${claimed < 0 ? " (lease not published: push failed)" : ""}`);
   // 3. work
   const res = work.length ? await pool(job, work) : [];
   if (work.length) phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished; $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
   // 4. check and retry (only what is missing, once)
-  if (job === "sweep" || job === "backlog") {
+  if ((job === "sweep" || job === "backlog") && work.length) {
     const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
     if (!chk.ok && work.some((w) => w[0] === "researcher")) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
   }

@@ -1,0 +1,14 @@
+{
+  "job": "watchdog",
+  "started_at": "2026-11-19T14:39:00Z",
+  "finished_at": "2026-11-19T14:50:00Z",
+  "model": "claude-haiku-5-5",
+  "searches": [],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [],
+  "failed_sites": [],
+  "notes": "Guard: healthy (live data built 12 min before check, 296 events, sweep 15 min ago). Monitor: live check healthy at 14:39:14Z. Open issues: 1 (#1, job-failure 'AI job failing: sweep', from manual fallback workflow ai-jobs.yml run 44358132427 on 2026-11-18, failing at the step 'Run the job with Claude (identity federation)'). The scheduled sweep has run successfully since (last_sweep_at within the last minute). No data-quarantine, site-monitor, security or event-report issues open. Late check (status against routines.json max_age_hours, active routines with a status_key): last_watchdog_at, last_security_review_at, last_followup_at, last_moderator_at, last_scout_at and last_editor_at have never been written. Judgement: watchdog is this run (first run). security-review (weekly, Monday 08:05, next 2026-11-23), scout (weekly, Sunday, next 2026-11-22) and editor (weekly, Saturday, next 2026-11-21) have not reached a scheduled slot since active_since. The follow-up desk's first slot is 2026-11-19 17:23. None of these is late yet. The community moderator has max_age_hours null, so no age rule applies. It is scheduled hourly at :10 and active since 2026-11-18T23:00Z, but it has never written last_moderator_at and has no run log under data/runs. Flagged for the owner; not fixed. Code and data changed: none. Issue #1 commented and left open for the owner (decide on the Console credential for the manual fallback, or close it). Health for status.json (not written here, because the worker rule forbids editing data/status.json; the finish step needs to merge it): health = {checked_at: 2026-11-19T14:39:00Z, late: [moderator (never written, no max age)], open_issues: 1, note: 'guard and live check healthy; issue 1 needs owner decision on manual fallback credentials'}; last_watchdog_at = 2026-11-19T14:39:00Z."
+}

@@ -850,10 +850,21 @@ button,a,select,label,.zoomer,.days,.chips,.seg{touch-action:manipulation}
 .vtake h3{margin:0 0 6px;font:600 13px var(--font-display);letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
 .vtake ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.45}
 .vtake li .linkbtn{margin-left:8px;font-size:12.5px;font-weight:600;white-space:nowrap}
-.vnav{position:sticky;top:-16px;z-index:3;display:flex;flex-wrap:wrap;gap:6px;padding:8px 0;margin:-6px 0;background:var(--solid)}
-[data-theme="dark"] .vnav{background:#23262e}
-.vnav button{border:1px solid var(--line);background:var(--fill);color:var(--ink);border-radius:999px;padding:6px 12px;font:600 12.5px var(--font-body);min-height:34px;cursor:pointer}
-.vnav button:hover{border-color:var(--accent)}.vnav button.ghost{background:transparent;color:var(--muted);margin-left:auto}
+/* the jump bar is the same frosted glass as the panels (it was a solid near-black strip in dark mode); it stays readable
+   while content scrolls under it because of the blur, not because it is opaque */
+.vnav{position:sticky;top:-16px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:7px 8px;margin:-6px 0;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.45)),var(--glass);border:1px solid var(--glass-brd);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);box-shadow:0 6px 18px rgba(0,0,0,.08),inset 0 1px 0 var(--glass-hi)}
+[data-theme="dark"] .vnav{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),rgba(78,80,90,.78);
+  box-shadow:0 6px 18px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.18)}
+.vnav button{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.55));color:var(--ink);border-radius:999px;padding:6px 13px;
+  font:600 12.5px var(--font-body);min-height:34px;cursor:pointer;box-shadow:inset 0 1px 0 var(--glass-hi);transition:background .15s,border-color .15s}
+[data-theme="dark"] .vnav button{border-color:var(--glass-brd);background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.05))}
+.vnav button:hover{border-color:var(--accent);background:var(--glass-hi)}
+.vnav button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vnav button.ghost{background:transparent;box-shadow:none;border-color:transparent;color:var(--muted);margin-left:auto}
+.vnav button.ghost:hover{border-color:var(--glass-brd);color:var(--ink)}
+@media (prefers-reduced-transparency:reduce){.vnav{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--solid)}}
 .viz h3 .vtog{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;width:100%;min-height:36px;padding-right:26px;position:relative}
 .viz h3 .vtog::after{content:"";position:absolute;right:6px;top:12px;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
 .viz h3 .vtog[aria-expanded="false"]::after{transform:rotate(-45deg)}

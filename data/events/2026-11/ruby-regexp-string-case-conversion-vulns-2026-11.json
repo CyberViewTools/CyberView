@@ -1,0 +1,66 @@
+{
+  "action": "Upgrade Ruby to 4.0.10, 3.4.13 or 3.3.14. Do not compile or match regular expressions from untrusted input, and plan to move off Ruby 3.2 and earlier, which get no fix.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "Japan",
+  "cves": [],
+  "date": "2026-11-18",
+  "exec": "Ruby is widely used for web back ends; apps that handle untrusted text or patterns could be open to memory-corruption flaws, and Ruby 3.2 and older get no fix.",
+  "first_seen": "2026-11-19T02:12:54Z",
+  "geo_basis": "organisation",
+  "lat": 35.68,
+  "lng": 139.69,
+  "occurred_at": "2026-11-18T12:00:00Z",
+  "org": "Ruby core team (ruby-lang.org)",
+  "pin_type": "hq",
+  "place": "Tokyo, Japan",
+  "plain": "The Ruby language team released fixes for seven memory-safety bugs. Some could let an attacker run code in apps that handle untrusted text or patterns.",
+  "products": [
+    "Ruby"
+  ],
+  "report": {
+    "doc_id": "ruby-lang.org news 2026-11-18",
+    "iocs_available": false,
+    "key_findings": [
+      "Seven flaws in Regexp and String case conversion, tracked as GHSA IDs because CVE IDs were still requested.",
+      "Affected: Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12, 4.0.0 to 4.0.9; fixed in 4.0.10, 3.4.13, 3.3.14.",
+      "Several could allow remote code execution in some scenarios, notably where attacker-controlled patterns are compiled.",
+      "Maintainers say they are aware of proof-of-concept code; no exploitation in the wild is reported.",
+      "Ruby 3.2 and earlier are end of life and will not be fixed."
+    ],
+    "published": "2026-11-18T12:00:00Z",
+    "publisher": "Ruby maintainers",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Upgrade to a fixed release.",
+      "Avoid compiling attacker-controlled regular expressions."
+    ],
+    "url": "https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/"
+  },
+  "sector": "Software",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Ruby project advisory",
+      "url": "https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/"
+    },
+    {
+      "name": "oss-security",
+      "url": "https://seclists.org/oss-sec/2026/q4/782"
+    }
+  ],
+  "status": "official",
+  "summary": "The Ruby project announced fixes for seven memory-safety flaws in Regexp and String case conversion, affecting Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12 and 4.0.0 to 4.0.9. Several could allow remote code execution in some scenarios. Maintainers say they know of proofs of concept; no exploitation is reported. Fixes are in 4.0.10, 3.4.13 and 3.3.14.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "Ruby fixes seven memory-safety flaws in Regexp and String case conversion",
+  "updated_at": "2026-11-19T02:12:54Z",
+  "validation": {
+    "checked_at": "2026-11-19T02:12:54Z",
+    "note": "Ruby advisory read in full. The oss-security post is the same announcement relayed, so this rests on one primary source.",
+    "state": "single_source"
+  }
+}

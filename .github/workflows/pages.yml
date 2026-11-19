@@ -6,14 +6,15 @@ name: Deploy to GitHub Pages
 #      and it has not lost a large share of what is live); if that fails, the previous deployment stays live;
 #   3. after publishing, the live site is fetched and compared byte for byte with the build;
 #   4. any of these opens (or updates) one GitHub issue labelled job-failure, and closes it again on recovery.
-# Runs on every push to main, and after the data workflows finish: their commits are pushed with the
+# Runs on every push to main, when the feeds and CVE workflows ask for it after committing (workflow_dispatch; they are
+# themselves started by finished deploys, so they must not start this one by finishing), and after the other data workflows finish: their commits are pushed with the
 # workflow token, which by design does not start other "push" workflows.
 on:
   push:
     branches: [main]
     paths-ignore: ["data/leases.json", "data/usage/**"]
   workflow_run:
-    workflows: ["Feeds (KEV, EPSS, NVD, context layers)", "AI jobs", "Collect leads", "Link check", "CVE corpus (CVE List, EPSS)"]
+    workflows: ["AI jobs", "Collect leads", "Link check"]
     types: [completed]
   workflow_dispatch:
 

@@ -6,10 +6,16 @@ name: Feeds (KEV, EPSS, NVD, context layers)
 on:
   schedule:
     - cron: "23 */2 * * *"
+  # GitHub runs scheduled workflows late or not at all under load (19 Nov 2026: collect ran 3 times in a day), so every
+  # finished deploy also starts this workflow; the gate below lets it through only when it is due
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: write
   issues: write
 
 concurrency:
@@ -25,18 +31,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Due? (a run started by a deploy goes ahead only when the last one is 110 minutes old)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_run" ]; then echo "go=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git pull -q --ff-only origin main || true
+          node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),t=Date.parse(s["last_feeds_at"]||0),age=(Date.now()-t)/6e4;console.log("last feeds run "+Math.round(age)+" min ago");process.exit(age>=110?0:1)' && echo "go=1" >> "$GITHUB_OUTPUT" || echo "go=0" >> "$GITHUB_OUTPUT"
       - name: Pull feeds
+        if: steps.gate.outputs.go == '1'
         run: node scripts/feeds.mjs
         env:
           NVD_MAX: "25"
       - name: Context layers (internet disruption signals, disaster alerts)
+        if: steps.gate.outputs.go == '1'
         # a failing source keeps its old items, marked stale; only a total failure stops the run
         run: node scripts/context.mjs
       - name: Exploit watch (public repositories naming exploited CVEs)
+        if: steps.gate.outputs.go == '1'
         run: node scripts/osint.mjs exploits || true
       - name: Validate and security check
+        if: steps.gate.outputs.go == '1'
         run: node scripts/build.mjs --quarantine && node scripts/security-check.mjs
       - name: Commit and push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        if: steps.gate.outputs.go == '1'
         run: |
           git config user.name "cyberview-feeds"
           git config user.email "cyberview-feeds@users.noreply.github.com"
@@ -45,6 +64,7 @@ jobs:
           msg=$(ls -t data/runs/*/*-feeds.json | head -1 | xargs node -e 'const r=JSON.parse(require("fs").readFileSync(process.argv[1]));console.log(`data: feeds, KEV +${r.kev_added.length}, ${r.events_updated.length} events refreshed, ${r.cvss_added.length} CVSS added`)')
           git commit -q -m "$msg"
           node scripts/git-sync.mjs
+          gh workflow run pages.yml --ref main || echo "could not request a deploy; the next push deploys"
       - name: Alert on failure
         if: failure()
         env:

@@ -1,14 +1,14 @@
 {
-  "action": "Plan to patch PHP on Thursday 19 November as soon as the release lands (14:00-14:30 UTC per the PHP Foundation notice cited by The Register). Inventory PHP versions on internet-facing servers, and check for the non-default configurations the advisory describes.",
+  "action": "Update PHP to 8.2.36, 8.3.37, 8.4.28 or 8.5.13 and check for the non-default configurations the advisories describe.",
   "actor": "",
   "attack": [
     "rce"
   ],
   "category": "vuln",
   "country": "Netherlands",
-  "date": "2026-11-18",
-  "occurred_at": "2026-11-18T22:38:00Z",
-  "exec": "PHP runs on most web servers with a known server-side language; a critical release is pre-announced for Thursday, so teams can schedule patching now. Earlier PHP2Shell flaws are already exploited.",
+  "date": "2026-11-19",
+  "occurred_at": "2026-11-19T14:00:00Z",
+  "exec": "PHP runs much of the web; the critical flaws need unusual setups, but patching is advised. No exploitation reported.",
   "first_seen": "2026-11-18T23:11:53Z",
   "geo_basis": "agency",
   "impact": "",
@@ -17,7 +17,7 @@
   "org": "PHP Foundation",
   "pin_type": "agency",
   "place": "Amsterdam, Netherlands (approximate)",
-  "plain": "The PHP project says it will release a critical security update on Thursday, so server owners can get ready to patch quickly.",
+  "plain": "PHP released updates fixing 17 security flaws, several rated critical. Server owners should update.",
   "products": [
     "PHP"
   ],
@@ -54,6 +54,10 @@
   "source_tier": "established",
   "sources": [
     {
+      "name": "heise Security",
+      "url": "https://www.heise.de/news/PHP-behebt-17-Sicherheitsluecken-vier-erlauben-Ausfuehrung-von-Schadcode-11531249.html"
+    },
+    {
       "name": "The Register",
       "url": "https://www.theregister.com/patches/2026/11/18/get-ready-for-another-critical-php-security-release-to-drop/5310911"
     },
@@ -63,21 +67,15 @@
     }
   ],
   "status": "official",
-  "summary": "The PHP project has announced a critical security release for Thursday, November 19, after several issues rated critical in non-default or unusual setups. The Register names CVE-2026-115560, a remote code execution bug with a configuration mitigation. heise says all supported PHP versions are affected. Patches are not yet released. Earlier PHP2Shell flaws are already exploited.",
+  "summary": "PHP shipped security releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13, fixing 17 vulnerabilities, according to heise. heise reports seven rated critical (CVSS 9.2) and says some allow code execution, but only under preconditions and not on default installations. heise reports no exploitation in the wild.",
   "tags": [],
   "time_basis": "published",
-  "title": "PHP Foundation pre-announces a critical security release for Thursday",
-  "updated_at": "2026-11-19T01:10:58Z",
+  "title": "PHP releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13 fixing 17 vulnerabilities, several rated critical",
+  "updated_at": "2026-11-19T15:20:00Z",
   "validation": {
-    "checked_at": "2026-11-18T23:11:53Z",
+    "checked_at": "2026-11-19T15:20:00Z",
     "state": "corroborated",
-    "note": "The Register and heise both report the planned release; the php.net notices they cite were not opened. No fixed versions are published yet."
-  },
-  "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:12:54Z",
-    "note": "Compared with The Register and heise: release on Thursday Nov 19, critical issues in non-default setups, all supported versions, CVE-2026-115560 RCE with config mitigation, PHP2Shell exploited.",
-    "flags": []
+    "note": "The Register and heise reported the planned release; heise reports the released versions and fixes. php.net notice not opened."
   },
   "qa_checked_at": "2026-11-19T05:12:54Z"
 }

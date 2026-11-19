@@ -1,0 +1,63 @@
+{
+  "action": "Hunt for the published EggStreme indicators retrospectively, watch for unexpected listening ports and new inbound firewall rules on servers, and review DLL sideloading and lateral movement over file shares.",
+  "actor": "Suspected Chinese APT group (unnamed)",
+  "attack": [
+    "T1574.002 DLL Side-Loading",
+    "T1021.002 SMB/Windows Admin Shares"
+  ],
+  "category": "report",
+  "country": "Philippines",
+  "cves": [],
+  "date": "2026-11-18",
+  "exec": "A suspected China-linked espionage toolkit is being rebuilt to avoid beacon-based detection, so networks that rely on outbound traffic alerts may miss it.",
+  "first_seen": "2026-11-19T05:54:00Z",
+  "geo_basis": "country",
+  "lat": 14.5995,
+  "lng": 120.9842,
+  "org": "Philippine government organisations",
+  "pin_type": "country",
+  "place": "Manila, Philippines",
+  "plain": "Security firm Bitdefender says a spy toolkit it first found in 2025 has been reworked and is still used against several Philippine government bodies, and it now hides better.",
+  "products": [
+    "EggStremeAgent"
+  ],
+  "report": {
+    "iocs_available": true,
+    "key_findings": [
+      "Bitdefender assesses with high confidence the operation continues to target multiple Philippine government organisations, broadening its first report on one Philippine military company.",
+      "Taiwan is targeted at low to medium confidence, which Bitdefender says is a lead, not an established fact.",
+      "New builds use raw TCP with mutual TLS plus an AES-256-CBC layer, drop the keylogger and include a passive variant that never beacons out.",
+      "Bitdefender makes no new attribution claim; the suspected Chinese APT attribution is unchanged."
+    ],
+    "published": "2026-11-18",
+    "publisher": "Bitdefender",
+    "publisher_type": "vendor",
+    "read_depth": "summary",
+    "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure"
+  },
+  "sector": "Government",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Bitdefender Business Insights: EggStreme Malware: Rebuilt Under Scrutiny",
+      "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure"
+    },
+    {
+      "name": "GBHackers",
+      "url": "https://gbhackers.com/silent-eggstreme-backdoor/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Bitdefender updated its EggStreme research on November 18, saying with high confidence that the operation continues to target multiple Philippine government organisations, with Taiwan possible at low to medium confidence. It says newer builds use mutual TLS and include a passive variant that never beacons out. Bitdefender keeps its earlier attribution to a suspected Chinese APT group.",
+  "tags": [
+    "espionage"
+  ],
+  "title": "Bitdefender: EggStreme backdoor rebuilt to evade detection, still aimed at Philippine government bodies",
+  "updated_at": "2026-11-19T05:54:00Z",
+  "validation": {
+    "checked_at": "2026-11-19T05:54:00Z",
+    "note": "Bitdefender's own post (read via a fetch agent) and GBHackers' coverage agree on the November 18 update, targeting confidence levels and attribution.",
+    "state": "corroborated"
+  }
+}

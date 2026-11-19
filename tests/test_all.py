@@ -369,6 +369,60 @@ async def main():
 
         await serve(make_site(b18), v18)
 
+        # v1.44: power grid context layer (fixture in the shape of data/context/grid.json; the real file is written by scripts/grid.mjs)
+        bg = copy.deepcopy(bundle)
+        bg["context"] = dict(b18["context"])
+        bg["context"]["grid"] = {"source": "Grid operators: Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO", "source_url": "", "fetched_at": iso(0.3), "ok": True, "error": "", "items": [
+            {"id": "grid-hydroquebec-qc-202611190900", "source": "hydroquebec", "kind": "outage", "name": "Hydro-Québec: 152,300 customers without power", "country": "CA", "region": "Quebec", "customers": 152300, "level": None,
+             "lat": 46.81, "lng": -71.21, "approx": False, "since": iso(3), "cause": "Vegetation", "checked": {"decision": "weather", "summary": "The operator says high winds brought down lines.", "by": "someone else"}, "url": "https://www.hydroquebec.com/outages/"},
+            {"id": "grid-eskom-za-202611190600", "source": "eskom", "kind": "load_shedding", "name": "<img src=x id=pwn>Eskom load shedding", "country": "ZA", "region": "South Africa", "customers": None, "level": 4,
+             "lat": -29.0, "lng": 24.0, "approx": True, "since": iso(6), "cause": "", "checked": None, "url": "https://evil.test/eskom"},
+            {"id": "grid-ercot-tx-202611190700", "source": "ercot", "kind": "grid_emergency", "name": "ERCOT: energy emergency", "country": "US", "region": "Texas", "customers": None, "level": 1,
+             "lat": 31.0, "lng": -99.0, "approx": True, "since": iso(2), "cause": "", "checked": {"decision": "hacked", "summary": "x"}, "url": "javascript:alert(1)"},
+            {"id": "grid-ukpn-lpn-202611191000", "source": "ukpn", "kind": "outage", "name": "UK Power Networks: 9,000 customers without power", "country": "GB", "region": "London", "customers": 9000, "level": None,
+             "lat": 51.5, "lng": -0.12, "approx": True, "since": iso(1), "cause": "Underground cable fault", "checked": None, "url": "https://evil.opendatasoft.com/x"},
+            {"id": "grid-aemo-nsw-1", "source": "aemo", "kind": "supply_warning", "name": "AEMO: lack of reserve, New South Wales", "country": "AU", "region": "NSW", "customers": None, "level": 3,
+             "lat": None, "lng": None, "approx": True, "since": iso(1), "cause": "", "checked": None, "url": "https://www.nemweb.com.au/REPORTS/CURRENT/Market_Notice/"},
+        ]}
+        site_g = make_site(bg)
+        hp = os.path.join(site_g, "data", "health.json")
+        hj = json.load(open(hp)) if os.path.exists(hp) else {"built_at": iso(0.1)}
+        hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5})
+        json.dump(hj, open(hp, "w"))
+
+        async def vgrid(url):
+            pg, errs = await open_page(browser, url, wait=1500)
+            ok("grid: rings drawn on by default", await pg.locator("g.gridm").count() >= 1, await pg.locator("g.gridm").count())
+            ok("grid: rings use neutral ink, never a category colour", await pg.evaluate("[...document.querySelectorAll('g.gridm circle')].every(c => !/--c-/.test(c.getAttribute('stroke') || '') && getComputedStyle(c).strokeDasharray !== 'none')"))
+            ok("grid: legend says context", "Power grid outage (context, not a cyber event)" in await pg.text_content("#key"))
+            await pg.click("#zlayers")
+            chip = pg.locator("#layers .chip", has_text="Power grid outages")
+            ok("grid: layer toggle shows and is on", await chip.count() == 1 and await chip.get_attribute("aria-pressed") == "true")
+            txt = await pg.inner_text("#layers")
+            ok("grid: list renders the biggest incident with customers and cause as reported", "Hydro-Québec: 152,300 customers without power" in txt and "152K customers without power" in txt and "cause as reported: Vegetation" in txt, txt[-600:])
+            ok("grid: the cause check is labelled as AI-written", "Cause checked by CyberView AI (a Claude model): weather" in txt and "someone else" not in txt)
+            ok("grid: an unknown decision is dropped", "hacked" not in txt)
+            ok("grid: says it is context", "Context, not cyber events" in txt)
+            ok("grid: names are text, injected markup stays text", "<img src=x id=pwn>Eskom" in txt and await pg.locator("#pwn").count() == 0 and await pg.locator("#layers img").count() == 0)
+            ok("grid: an item with no location is listed, not drawn", "AEMO: lack of reserve, New South Wales" in txt and "not drawn (no location given)" in txt)
+            hrefs = await pg.eval_on_selector_all("#layers a", "as => as.map(a => a.getAttribute('href'))")
+            ok("grid: operator links kept, links off the allowlist dropped", "https://www.hydroquebec.com/outages/" in hrefs and not any(h and ("evil" in h or h.startswith("javascript")) for h in hrefs), hrefs)
+            await chip.click(); await pg.wait_for_timeout(200)
+            ok("grid: toggle hides the rings", await pg.locator("g.gridm").count() == 0 and await pg.locator("#layers .chip", has_text="Power grid outages").get_attribute("aria-pressed") == "false")
+            await pg.locator("#layers .chip", has_text="Power grid outages").click(); await pg.wait_for_timeout(200)
+            ok("grid: toggle brings them back", await pg.locator("g.gridm").count() >= 1)
+            await pg.keyboard.press("Escape")
+            ok("grid: no failed panel", await pg.locator("#fault").is_hidden())
+            ok("grid: globe renders without script errors", not errs and await pg.locator("path.ocean").count() == 1, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "status.html"), wait=1000)
+            rows = await pg.locator("#health li").all_text_contents()
+            ok("grid: status page has a power grid row", any("Power grid outages collected" in r and "5 open incidents" in r and "causes last checked" in r for r in rows), rows)
+            ok("grid: status page without script errors", not errs, errs)
+            await pg.context.close()
+
+        await serve(site_g, vgrid)
+
         # v1.9: environment drop (file read in the browser), quick picks, whole-word matching
         fx = tempfile.mkdtemp(prefix="cv-env-")
         files = {

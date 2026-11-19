@@ -52,6 +52,13 @@
     lim(h.last_sweep_at, 45, "Research run (every 15 minutes)");
     lim(h.last_collect_at, 120, "Feeds collected");
     lim(h.last_feeds_at, 360, "Vulnerability feeds synced");
+    // power grid context layer: collection age, open incidents on the map, last cause research (context, not cyber events)
+    if (h.last_grid_at !== undefined) {
+      var gv = mins(h.last_grid_at), gOk = isFinite(gv) && gv <= 120, gn = typeof h.grid_open === "number" && isFinite(h.grid_open) ? Math.max(0, Math.round(h.grid_open)) : null;
+      row(gOk, "Power grid outages collected " + (h.last_grid_at ? ago(h.last_grid_at) : "not yet") + (h.last_grid_at && !gOk ? " (expected within 2 h)" : "") +
+        (gn !== null ? "; " + gn + " open incident" + (gn === 1 ? "" : "s") + " on the map" : "") +
+        "; causes last checked " + (h.last_grid_research_at && isFinite(mins(h.last_grid_research_at)) ? ago(h.last_grid_research_at) : "not yet") + " (context, not cyber events)");
+    }
     var bl = h.backlog;
     if (bl && typeof bl.waiting === "number") row(bl.waiting <= 60 && !(bl.oldest_incident_hours > 2), "Research queue: " + bl.waiting + " report" + (bl.waiting === 1 ? "" : "s") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 60 ? " (expected under 60)" : ""));
     var q = typeof h.quarantined_count === "number" ? h.quarantined_count : 0;

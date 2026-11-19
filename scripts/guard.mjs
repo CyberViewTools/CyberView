@@ -3,6 +3,7 @@
 // secrets or to the session that runs the jobs. It answers one question: is fresh, validated data reaching visitors?
 //   live data age            the site was rebuilt in the last 90 minutes
 //   sweep, collect, feeds    each ran within its limit (150 min, 120 min, 6 h)
+//   power grid               the grid collector ran within 120 minutes (warning only)
 //   deploy                   the newest commit on main is live (or was pushed less than 20 minutes ago), and the last deploy succeeded
 //   data                     the bundle has events, every post in the feed is reviewed, nothing is quarantined
 // --heal: where a check fails and `gh` is available, start the overdue workflow or a fresh deploy.
@@ -11,7 +12,7 @@ import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300 };
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120 };
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
 
 /** Pure: what was read -> { fails, warns, heal }. */
@@ -30,6 +31,8 @@ export function assess({ manifest, health, bundle, head, deploy, leases }, now =
   if (health.last_brief_at !== undefined) late("the daily brief", health.last_brief_at, LIMITS.brief_min, "brief");
   if (health.last_analysis_at !== undefined) late("the pattern analysis", health.last_analysis_at, LIMITS.analysis_min, "analysis");
   if (health.last_analyst_at !== undefined) late("the exploit analyst", health.last_analyst_at, LIMITS.analyst_min, "analyst");
+  // power grid context layer (grid.mjs collect): a warning only, never FAILING; it is context, not the cyber data
+  if (health.last_grid_at !== undefined) late("the power grid collector", health.last_grid_at, LIMITS.grid_min, "grid");
   // the research loop's leader lease is its heartbeat: renewed every cycle, so an expired one means no loop is running
   if (leases) { const l = leases["flow:leader"]; if (!l || !(Date.parse(l.until) > now)) warns.push("no research loop holds the leader lease" + (l ? " (it expired at " + l.until + ")" : "") + ": the standby session should take over within 30 minutes"); }
   if (!Array.isArray(bundle.events) || bundle.events.length < 5) fails.push(`the live bundle has ${Array.isArray(bundle.events) ? bundle.events.length : 0} events`);

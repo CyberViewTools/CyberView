@@ -76,7 +76,7 @@ function queue() {
 function main() {
   const [cmd, id, ...rest] = process.argv.slice(2);
   if (cmd === "plan") {   // split the head of the queue between reviewers (data/review-plan.json, working file); the dispatcher uses it
-    const c = (readJson(join(ROOT, "config", "pipeline.json"), {}).review) || {}, n = Math.max(1, Math.min(4, Number(c.reviewers) || 2)), per = Math.max(3, Math.min(15, Number(c.events_per_reviewer) || 10));
+    const c = (readJson(join(ROOT, "config", "pipeline.json"), {}).review) || {}, n = Math.max(1, Math.min(6, Number(c.reviewers) || 2)), per = Math.max(3, Math.min(15, Number(c.events_per_reviewer) || 10));
     const all = queue(), held = leased("event", all.map((x) => x.e.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((x) => !held.has(x.e.id)).slice(0, n * per), k = Math.max(1, Math.min(n, Math.ceil(q.length / 4))), batches = Array.from({ length: k }, () => []);
     q.forEach((x, i) => batches[i % k].push(x.e.id));
     writeJson(join(DATA, "review-plan.json"), { planned_at: nowIso(), batches });

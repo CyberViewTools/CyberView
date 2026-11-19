@@ -455,9 +455,10 @@
     if (ix.total !== null) $("wbnAll").textContent = fmtN(ix.total);
     var age = ix.cvelist ? Math.round((Date.now() - Date.parse(ix.cvelist)) / 6e4) : null;
     $("cvSummary").textContent = (ix.total !== null ? fmtN(ix.total) + " CVEs on file, every one published since 1999" + (ix.rejected !== null ? " (" + fmtN(ix.rejected) + " of them rejected)" : "") + ". " : "") +
-      (ix.kev !== null ? fmtN(ix.kev) + " are in CISA's known-exploited catalog" + (ix.ransomware ? " (" + fmtN(ix.ransomware) + " used by ransomware)" : "") + (ix.critical !== null ? "; " + fmtN(ix.critical) + " are rated Critical (CVSS v3 or v4)" : "") + ". " :
+      (ix.kev !== null ? fmtN(ix.kev) + " are in CISA's known-exploited catalog" + (ix.ransomware ? " (" + fmtN(ix.ransomware) + " used by ransomware)" : "") + (ix.criticalNvd !== null ? "; " + fmtN(ix.criticalNvd) + " are rated Critical by NVD's CVSS v3 scores" + (ix.critical !== null ? " (" + fmtN(ix.critical) + " when the vendor's own score is used first)" : "") : ix.critical !== null ? "; " + fmtN(ix.critical) + " are rated Critical (CVSS v3 or v4)" : "") + ". " :
         ix.exploited !== null ? fmtN(ix.exploited) + " are known or seen exploited. " : "") +
-      (ix.decisions && ix.decisions.act !== null ? "CISA SSVC priority today: " + fmtN(ix.decisions.act) + " Act, " + fmtN(ix.decisions.attend) + " Attend, " + fmtN(ix.decisions["track*"]) + " Track*, the rest Track. " : "") +
+      (ix.bands ? "CyberView rating: " + ["Critical", "High", "Elevated", "Moderate"].map(function (b) { return fmtN(ix.bands[b] || 0) + " " + b; }).join(", ") + ", the rest Low. " : "") +
+      (ix.decisions ? "CISA SSVC priority today: " + fmtN(ix.decisions.act || 0) + " Act, " + fmtN(ix.decisions.attend || 0) + " Attend, " + fmtN(ix.decisions["track*"] || 0) + " Track*, the rest Track. " : "") +
       (ix.audit && ix.audit.nvdTotal !== null ? "Checked against NVD and CISA every hour: NVD lists " + fmtN(ix.audit.nvdTotal) + " CVEs (" + fmtN(ix.audit.nvdRejected) + " rejected), CISA " + fmtN(ix.audit.cisaKev) + " known exploited; NVD's own scores rate " + fmtN(ix.audit.nvdCritical) + " Critical, ours use the assigner's score first. " : "") +
       (age !== null && isFinite(age) ? "Updated " + (age < 90 ? age + " minutes" : Math.round(age / 60) + " hours") + " ago." + (age > 360 ? " This is older than it should be; the hourly update may be failing." : "") : "");
     $("cvCaveat").textContent = CAVEAT;
@@ -480,7 +481,30 @@
   function isKev(r) { return !!(r.kev || CV.kev[r.id]); }
   var DEC_CLASS = { act: "bad", attend: "warn", "track*": "info", track: "info" };
   function decBadge(rt) { var b = el("span", "badge " + (DEC_CLASS[rt.decision] || "info"), (rt.decision ? "Priority: " : "") + rt.label); b.title = rt.does; return b; }
-  function rateOpts() { return { mission: $("cvMission").value, exposed: $("cvExposed").value === "yes" ? true : $("cvExposed").value === "no" ? false : undefined }; }
+  var onMapIds = null;   // CVEs a checked event covers, once the archive index has loaded
+  function nrm(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  function mineFn(r) { if (!inv.length) return false; var p = nrm(r.product), v = nrm(r.vendor); if (!p) return false;
+    return inv.some(function (x) { var n = nrm(x.name); return n && (n === p || n.indexOf(p) >= 0 || p.indexOf(n) >= 0) && (!x.vendor || !v || nrm(x.vendor) === v || v.indexOf(nrm(x.vendor)) >= 0); }); }
+  function rateOpts() { return { mission: $("cvMission").value, exposed: $("cvExposed").value === "yes" ? true : $("cvExposed").value === "no" ? false : undefined,
+    mineFn: mineFn, mapFn: function (r) { return !!(onMapIds && onMapIds[r.id]); }, mineKey: inv.length + "|" + (onMapIds ? 1 : 0) }; }
+  function scoreBox(r) {
+    var sc = D.scored(r); if (!sc) return null;
+    var box = el("div", "wbme cvscorebox " + sc.tone), head = el("div", "cvsh");
+    var big = el("span", "cvbig", String(sc.score)); big.title = "CyberView rating, 0 to 100"; head.appendChild(big);
+    var hl = el("div"); hl.appendChild(el("b", null, "CyberView rating: " + sc.band)); hl.appendChild(el("p", "note", "Confidence " + sc.confidence.toLowerCase() + ": " + sc.confidenceWhy + ". Calculated by CyberView's published rating rules; every point is listed below."));
+    head.appendChild(hl); box.appendChild(head);
+    var tb = el("div", "cvfactors");
+    sc.factors.forEach(function (f) {
+      var row = el("div", "cvf"); var lab = el("span", "cvfl", f.factor); row.appendChild(lab);
+      var bar = el("span", "cvfb"), fill = el("span", "cvff" + (f.points < 0 ? " neg" : "")); fill.style.width = Math.round(Math.abs(f.points) / Math.max(1, f.max) * 100) + "%"; bar.appendChild(fill); row.appendChild(bar);
+      row.appendChild(el("span", "cvfp", (f.points > 0 ? "+" : "") + f.points + " / " + f.max + (f.capped ? " (capped)" : "")));
+      var ul = el("ul"); f.items.forEach(function (it) { ul.appendChild(el("li", null, (it.points > 0 ? "+" : "") + it.points + " " + it.why)); });
+      if (!f.items.length) ul.appendChild(el("li", "note", "Nothing found for this factor"));
+      row.appendChild(ul); tb.appendChild(row);
+    });
+    box.appendChild(tb);
+    return box;
+  }
   function rateBox(r) {
     var rt = D.rated(r), box = el("div", "wbme cvrate " + (DEC_CLASS[rt.decision] || "info"));
     box.appendChild(el("b", null, rt.decision ? "Priority: " + rt.label + " (CISA SSVC)" : rt.label));
@@ -502,7 +526,7 @@
     var sc = el("span", "wbscore cvscore", r.cvss !== null ? r.cvss.toFixed(1) : "-"); sc.title = "CVSS base score"; b.appendChild(sc);
     var mid = el("span", "wbmid"), top = el("span", "wbtop"); top.appendChild(el("b", null, r.id)); var who = [r.vendor, r.product].filter(Boolean).join(" "); if (who) top.appendChild(document.createTextNode(" " + who));
     mid.appendChild(top); mid.appendChild(el("span", "wbname", (r.title || r.desc || "No description.").slice(0, 200)));
-    var chips = el("span", "wbchips"); if (!r.rejected) chips.appendChild(decBadge(D.rated(r))); chips.appendChild(sevBadge(r));
+    var chips = el("span", "wbchips"); if (!r.rejected) { var scx = D.scored(r); if (scx) { var sbg = el("span", "badge " + scx.tone, "CyberView " + scx.score + " " + scx.band); sbg.title = "CyberView rating, 0 to 100: open the CVE for every point"; chips.appendChild(sbg); } chips.appendChild(decBadge(D.rated(r))); } chips.appendChild(sevBadge(r));
     if (r.rejected) chips.appendChild(el("span", "badge warn", "Rejected"));
     if (isKev(r)) chips.appendChild(el("span", "badge bad", "Known exploited")); else if (r.expl === "active") chips.appendChild(el("span", "badge bad", "Exploited (CISA)"));
     if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
@@ -515,6 +539,7 @@
   }
   function cvDetail(r) {
     var d = el("div", "wbdetail"); if (r.desc) d.appendChild(el("p", null, r.desc));
+    var sb = scoreBox(r); if (sb) d.appendChild(sb);
     d.appendChild(rateBox(r));
     var kv = el("ul");
     [["Affects", [r.vendor, r.product].filter(Boolean).join(" ")], ["Published", fmtLong(r.pub)], ["Last changed", r.upd && r.upd !== r.pub ? fmtLong(r.upd) : ""], ["Assigned by", r.cna],
@@ -539,7 +564,7 @@
     }, function () { ev.textContent = ""; });
     return d;
   }
-  function cvFilters() { D.rateOpts = rateOpts(); return { decision: $("cvDec").value, rateOpts: D.rateOpts, q: $("wbQ").value, sev: $("cvSev").value, minEpss: +$("cvEpss").value || 0, cwe: $("cvCwe").value, vendor: $("cvVendor").value, status: $("cvStatusSel").value, exploited: $("cvKev").checked }; }
+  function cvFilters() { D.rateOpts = rateOpts(); return { minScore: +$("cvMin").value || 0, decision: $("cvDec").value, rateOpts: D.rateOpts, q: $("wbQ").value, sev: $("cvSev").value, minEpss: +$("cvEpss").value || 0, cwe: $("cvCwe").value, vendor: $("cvVendor").value, status: $("cvStatusSel").value, exploited: $("cvKev").checked }; }
   function rebuildPool() {
     var out = [], seen = {};
     Object.keys(CV.sets).forEach(function (k) { if (CV.sets[k].state === "done") CV.sets[k].files.forEach(function (f) { (CV.ready[f] || []).forEach(function (r) { if (!seen[r.id]) { seen[r.id] = 1; out.push(r); } }); }); });
@@ -652,11 +677,12 @@
   $("cvLookup").addEventListener("click", lookup);
   $("cvLoadYear").addEventListener("click", loadYear);
   $("cvClearYears").addEventListener("click", unloadYears);
-  ["cvSev", "cvEpss", "cvStatusSel", "cvSort", "cvKev", "cvDec"].forEach(function (id) { $(id).addEventListener("change", function () { CV.page = 0; renderAll(); }); });
+  ["cvSev", "cvEpss", "cvStatusSel", "cvSort", "cvKev", "cvDec", "cvMin"].forEach(function (id) { $(id).addEventListener("change", function () { CV.page = 0; renderAll(); }); });
   /* the visitor's rating settings stay in this browser, like the software list */
   try { var rs = JSON.parse(localStorage.getItem("cwm.rate") || "{}"); if (/^(low|medium|high)$/.test(rs.mission || "")) $("cvMission").value = rs.mission; if (/^(yes|no)$/.test(rs.exposed || "")) $("cvExposed").value = rs.exposed; } catch (e) {}
   ["cvMission", "cvExposed"].forEach(function (id) { $(id).addEventListener("change", function () { try { localStorage.setItem("cwm.rate", JSON.stringify({ mission: $("cvMission").value, exposed: $("cvExposed").value })); } catch (e) {} D.rateOpts = rateOpts(); CV.page = 0; renderAll(); }); });
   D.rateOpts = rateOpts();
+  loadEvents().then(function (list) { onMapIds = {}; list.forEach(function (e) { e.cves.forEach(function (c) { onMapIds[c] = 1; }); }); D.rateOpts = rateOpts(); renderAll(); }, function () {});
   var ct = 0; ["cvVendor", "cvCwe"].forEach(function (id) { $(id).addEventListener("input", function () { clearTimeout(ct); ct = setTimeout(function () { CV.page = 0; renderAll(); }, 160); }); });
   $("cvPrev").addEventListener("click", function () { CV.page--; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });
   $("cvNext").addEventListener("click", function () { CV.page++; renderAll(); try { $("cvCount").scrollIntoView({ block: "start" }); } catch (e) {} });

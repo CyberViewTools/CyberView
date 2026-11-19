@@ -96,7 +96,7 @@ export function toLead(row, seenAt) {
 
 // fields of the site's lookup files, in order (rows are arrays to keep the files small)
 export const FIELDS = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct",
-  "auto", "ti", "vec", "due", "ransom", "ncvss", "nsev", "nvec"];
+  "auto", "ti", "vec", "due", "ransom", "ncvss", "nsev", "nvec", "n3", "n3c"];
 
 /** CISA KEV catalog JSON -> Map(id -> {added, due, ransom}) */
 export function parseKevCatalog(j) {
@@ -107,11 +107,16 @@ export function parseKevCatalog(j) {
 /** NVD API 2.0 vulnerability item -> {ncvss, nsev, nvec} from NVD's own (Primary) score, v4.0 then v3.1, v3.0, v2. */
 export function nvdScore(item) {
   const m = (item && item.cve && item.cve.metrics) || {};
+  // NVD's CVSS v3 ratings kept apart: NVD counts "critical" from v3 (n3: NVD's own Primary v3 rating; n3c: any v3 rating
+  // NVD lists, its own or the assigner's, is Critical)
+  const v3 = [...(m.cvssMetricV31 || []), ...(m.cvssMetricV30 || [])], p3 = v3.find((y) => y && y.type === "Primary");
+  const sev3 = (x) => SEV[String((x && ((x.cvssData && x.cvssData.baseSeverity) || x.baseSeverity)) || "").toUpperCase()] || "";
+  const extra = { n3: p3 ? sev3(p3) : "", n3c: v3.some((y) => sev3(y) === "C") };
   for (const k of ["cvssMetricV40", "cvssMetricV31", "cvssMetricV30", "cvssMetricV2"]) {
     const list = m[k] || [], x = list.find((y) => y && y.type === "Primary") || list[0];
     const d = x && x.cvssData;
-    if (d && typeof d.baseScore === "number") return { ncvss: d.baseScore, nsev: SEV[String(d.baseSeverity || x.baseSeverity || "").toUpperCase()] || sevOf(d.baseScore), nvec: /^[A-Za-z0-9.:\/()]{8,200}$/.test(d.vectorString || "") ? d.vectorString : "" };
+    if (d && typeof d.baseScore === "number") return { ...extra, ncvss: d.baseScore, nsev: SEV[String(d.baseSeverity || x.baseSeverity || "").toUpperCase()] || sevOf(d.baseScore), nvec: /^[A-Za-z0-9.:\/()]{8,200}$/.test(d.vectorString || "") ? d.vectorString : "" };
   }
-  return null;
+  return v3.length ? { ...extra, ncvss: null, nsev: "", nvec: "" } : null;
 }
 export const toArr = (r) => FIELDS.map((k) => (r[k] === undefined ? null : r[k]));

@@ -1074,6 +1074,7 @@ async def main():
             await pg.fill("#wbQ", "CVE-2021-44228"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
             res = await pg.locator("#cvResult").text_content()
             ok("lookup: CISA's own flags and EPSS show", "Known exploited" in res and "EPSS" in res and "CVSS" in res and await pg.locator("#cvResult a[href='https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2021-44228']").count() == 1, res[:200])
+            ok("v1.42: the CyberView rating shows a score, a band and every factor", await pg.locator("#cvResult .cvscorebox .cvbig").count() == 1 and await pg.locator("#cvResult .cvscorebox .cvf").count() == 7 and "CyberView rating" in (await pg.locator("#cvResult").inner_text()))
             await pg.fill("#wbQ", "CVE-2024-8000"); await pg.click("#cvLookup"); await pg.wait_for_timeout(300)
             ok("lookup: an id outside every file says so", "not in the CVE List" in await pg.locator("#cvLookMsg").text_content() and await pg.locator("#cvResult .cvrow").count() == 0)
             await pg.fill("#wbQ", "log4shell"); await pg.click("#cvLookup"); await pg.wait_for_timeout(200)

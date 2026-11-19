@@ -155,3 +155,18 @@ test("rating: the record's own exploitation evidence and the BOD 26-04 floor for
   assert.equal(D.rate(plex, { exposed: true }).decision, "attend");
   assert.equal(D.rate({ ...plex, ti: "total" }, { exposed: true }).decision, "act");   // 3 days and forensic triage
 });
+
+test("CyberView rating: every point listed, ceilings hold, bands and the visitor's context", () => {
+  const log4 = { id: "CVE-2021-44228", cvss: 10, sev: "C", vec: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H", kev: "2021-12-10", expl: "active", auto: "yes", ti: "total", epss: 0.99999, pct: 1, ransom: true, due: "2021-12-24" };
+  const s = D.score(log4, { today: "2026-11-19" });
+  assert.equal(s.band, "Critical"); assert.ok(s.score >= 80, String(s.score)); assert.equal(s.confidence, "High");
+  const sum = s.factors.reduce((n, f) => n + f.points, 0); assert.equal(s.score, Math.min(100, sum));
+  for (const f of s.factors) { assert.ok(f.points <= f.max); assert.equal(f.points, Math.min(f.max, f.items.reduce((n, i) => n + i.points, 0))); }
+  assert.equal(s.factors.find((f) => f.factor === "Exploitation").points, 35);
+  const low = { id: "CVE-2026-2", cvss: 3.1, sev: "L", vec: "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:L/I:N/A:N", epss: 0.0004, pct: 0.05 };
+  const l = D.score(low, { today: "2026-11-19" }); assert.equal(l.band, "Low");
+  assert.ok(D.score(low, { today: "2026-11-19", exposed: true, mission: "high", mine: true }).score - l.score === 15);
+  assert.ok(D.score(low, { today: "2026-11-19", exposed: false, mission: "low" }).score <= l.score);
+  assert.equal(D.score({ id: "CVE-2020-1", rejected: true }), null);
+  assert.equal(D.score({ id: "CVE-2026-3" }).confidence, "Low");
+});

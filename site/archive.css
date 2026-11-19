@@ -312,3 +312,13 @@ select{color-scheme:dark}
 .wbacts select option,.cvlab select option{background:#1c1f27;color:#e8eaf0}
 /* the same gloss on the native fields phones see */
 .filters select,.panel select,.wbacts select,.cvlab select{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.14);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23b9bdc6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.05) 55%,rgba(255,255,255,.03));background-repeat:no-repeat;background-position:right 12px center,0 0}
+/* CyberView rating box */
+.cvscorebox .cvsh{display:flex;gap:14px;align-items:center}
+.cvbig{flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;font:700 24px var(--font);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 8px rgba(0,0,0,.18)}
+.cvscorebox.bad .cvbig{color:#ffb3b3}.cvscorebox.warn .cvbig{color:#ffd58a}
+.cvfactors{display:grid;gap:8px;margin-top:12px}
+.cvf{display:grid;grid-template-columns:140px minmax(0,1fr) 110px;gap:4px 12px;align-items:center}
+.cvfl{font-size:13px;font-weight:600}.cvfp{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.cvfb{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.cvff{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#6cb6ff,#9fd0ff)}.cvff.neg{background:#a0a4ad}
+.cvf ul{grid-column:1/-1;margin:0 0 2px;padding-left:18px}.cvf li{font-size:13px;margin:2px 0}
+@media (max-width:640px){.cvf{grid-template-columns:1fr 64px}.cvfb{grid-column:1/-1;grid-row:2}}

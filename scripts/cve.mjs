@@ -70,7 +70,7 @@ function baseline(src) {
 }
 
 // enrichments that do not come from the CVE List itself survive a record's update
-const keep = (p) => (p ? { due: p.due || "", ransom: !!p.ransom, ncvss: p.ncvss ?? null, nsev: p.nsev || "", nvec: p.nvec || "" } : {});
+const keep = (p) => (p ? { due: p.due || "", ransom: !!p.ransom, ncvss: p.ncvss ?? null, nsev: p.nsev || "", nvec: p.nvec || "", n3: p.n3 || "", n3c: !!p.n3c } : {});
 
 async function delta() {
   const st = state(), max = opt("max", 4000);
@@ -137,7 +137,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /** NVD's own CVSS score for every CVE: a full read the first time (about 215 pages, ~25 minutes without an API key),
  *  then only what NVD changed since the last run (windows of at most 120 days, as the API requires). */
 async function nvd() {
-  const st = state(), full = !st.nvd_since, startedAt = nowIso(), key = process.env.NVD_API_KEY || "";
+  const NVD_VERSION = 2;   // raise when nvdScore keeps more: the next run reads all of NVD again
+  const st = state(), full = !st.nvd_since || (st.nvd_version || 1) < NVD_VERSION, startedAt = nowIso(), key = process.env.NVD_API_KEY || "";
   const pause = key ? 700 : 6500, byYear = new Map(); let pages = 0, scored = 0, seen = 0;
   const windows = [];
   if (full) windows.push("");
@@ -152,24 +153,24 @@ async function nvd() {
         const id = it.cve && it.cve.id; if (!ID.test(id || "")) continue; seen++;
         const y = yearOf(id); if (!byYear.has(y)) byYear.set(y, loadYear(y));
         const row = byYear.get(y).get(id), s = nvdScore(it); if (!row) continue;
-        row.ncvss = s ? s.ncvss : null; row.nsev = s ? s.nsev : ""; row.nvec = s ? s.nvec : ""; if (s) scored++;
+        row.ncvss = s ? s.ncvss : null; row.nsev = s ? s.nsev : ""; row.nvec = s ? s.nvec : ""; row.n3 = s ? s.n3 : ""; row.n3c = !!(s && s.n3c); if (s && s.ncvss != null) scored++;
       }
       if (start + 2000 < total) await sleep(pause);
     }
   }
   saveAll(byYear);
-  setState({ nvd_since: startedAt });
+  setState({ nvd_since: startedAt, nvd_version: NVD_VERSION });
   console.log(`NVD: ${seen} record(s) read in ${pages} page(s)${full ? " (full read)" : ""}; ${scored} with an NVD score.`);
 }
 function saveAll(byYear) { for (const [y, m] of byYear) saveYear(y, m); }
 
 /** Our counts against the primary sources (NVD totals, CISA's catalog), recorded so the site can show it and a drift is seen. */
 async function audit() {
-  let total = 0, rejected = 0, kevN = 0, crit = 0, critAny = 0;
-  for (const r of allRows()) { total++; if (r.state === "R") { rejected++; continue; } if (r.kev) kevN++; const c = r.cvss ?? r.ncvss; if (isCritical(r)) crit++; if ((r.sev === "C" && !/^2/.test(r.ver || "")) || (r.nsev === "C" && /^CVSS:[34]/.test(r.nvec || ""))) critAny++; }
+  let total = 0, rejected = 0, kevN = 0, crit = 0, critAny = 0, critNvd = 0, critNvdOwn = 0;
+  for (const r of allRows()) { total++; if (r.state === "R") { rejected++; continue; } if (r.kev) kevN++; const c = r.cvss ?? r.ncvss; if (isCritical(r)) crit++; if (r.n3c) critNvd++; if (r.n3 === "C") critNvdOwn++; if ((r.sev === "C" && !/^2/.test(r.ver || "")) || (r.nsev === "C" && /^CVSS:[34]/.test(r.nvec || ""))) critAny++; }
   const q = async (p) => { try { const j = await get(`${NVD}?resultsPerPage=1${p}`, { timeoutMs: 60000 }); return j.totalResults ?? null; } catch { return null; } };
   const nvdAll = await q(""); await sleep(6500); const nvdLive = await q("&noRejected"); await sleep(6500); const nvdCritV3 = await q("&cvssV3Severity=CRITICAL");
-  const st = state(), a = { at: nowIso(), ours: { total, rejected, kev: kevN, critical: crit, critical_any_source: critAny },
+  const st = state(), a = { at: nowIso(), ours: { total, rejected, kev: kevN, critical: crit, critical_any_source: critAny, critical_nvd_v3: critNvd, critical_nvd_own_v3: critNvdOwn },
     nvd: { total: nvdAll, rejected: nvdAll != null && nvdLive != null ? nvdAll - nvdLive : null, critical_v3: nvdCritV3 }, cisa_kev: st.kev_catalog ?? null };
   setState({ audit: a });
   console.log(`AUDIT: ours ${total} total / ${rejected} rejected / ${kevN} KEV / ${crit} critical; NVD ${nvdAll} / ${a.nvd.rejected} / critical v3 ${nvdCritV3}; CISA KEV ${a.cisa_kev}`);
@@ -178,11 +179,12 @@ async function audit() {
 function site(out = join(ROOT, "site", "data", "cve")) {
   if (!years().length) { console.log("SITE: no corpus here; nothing written."); return; }
   rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
-  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
+  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, bands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
   for (const r of allRows()) {
     total++; if (r.state === "R") rejected++; if (r.kev || r.expl === "active") exploited++;
-    if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
-      const d = RATE.rate({ ...r, rejected: false }); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1; }
+    if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.n3c) criticalNvd++; if (r.n3 === "C") criticalNvdOwn++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
+      const d = RATE.rate({ ...r, rejected: false }); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1;
+      const sc = RATE.score({ ...r, rejected: false }); if (sc) bands[sc.band] = (bands[sc.band] || 0) + 1; }
     const y = yearOf(r.id); byYear[y] = (byYear[y] || 0) + 1;
     const b = bucket(r.id); if (!buckets.has(b)) buckets.set(b, []); buckets.get(b).push(toArr(r));
     if (r.state === "P" && (r.pub >= since || r.upd >= since)) recent.push(r);
@@ -194,7 +196,7 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   const files = {}; for (const b of buckets.keys()) { const [y, k] = b.split("/"); (files[y] ||= []).push(Number(k)); }
   for (const y of Object.keys(files)) files[y].sort((a, b) => a - b);
   writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size, files_by_year: files,
-    kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
+    critical_nvd: criticalNvd, bands, critical_nvd_own: criticalNvdOwn, kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
     sources: { cvelist: st.delta_at || st.baseline_at || null, epss: st.epss_date || null } }));
   console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${recent.length} published or changed since ${since}.`);
 }

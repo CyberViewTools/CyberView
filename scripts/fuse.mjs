@@ -66,6 +66,25 @@ export function cluster(leads) {
   return [...groups.values()];
 }
 
+const INCIDENT = /\b(breach(ed|es)?|ransomware|hack(ed|ers?)?|cyber ?attack|attack(ed|s)?|stolen|leak(ed|s)?|data theft|extortion|outage|disrupt(ed|ion)|shut ?down|compromised?|intrusion|espionage|malware|phishing campaign|backdoor|botnet|wiper|ddos)\b/i;
+const ROUTINE = /weekly report|multiple vulnerabilit|mehrere schwachstellen|schwachstelle ermöglicht|security (update|advisory|bulletin|release)s?\b|patch tuesday|複数|脆弱性|vulnerabilità|vulnérabilités? dans|\[(neu|update)\]/i;
+const EXPLAINER = /\?\s*$|^(how|why|what|when|who|is|are|can|should|if|no,)\b|\b(op-?ed|opinion|explained|explainer|\d+ (steps|ways|tips|things)|nine steps|tips (to|for)|guide to|lessons? (from|learned)|podcast|webinar|what (we|you) (know|need)|believes|truth is|don[’']t let)\b/i;
+const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.com)\b/i;
+
+/** Pure: the stories worth showing on the site as "reported, being checked" before any research has happened.
+ *  No AI model: publishers' own headlines, named, linked to the publisher's own page when a collector has it.
+ *  Never a leak-site claim, never a bare database row, never something already on the map. */
+export function developing(stories, now = Date.now(), max = 30) {
+  return stories.filter((s) => isOpen(s) && !s.claim_only && !s.kinds.includes("claim") && (now - Date.parse(s.published)) < 36 * 36e5
+      && s.leads.some((l) => !["cve", "breach-db", "status", "claim"].includes(l.kind) && (!l.lang || l.lang === "en"))
+      && !s.explainer && (s.dated || s.publishers >= 2) && (s.publishers >= 2 || s.kinds.includes("exploited") || (s.incident && s.tiers.some((t) => t === "gov" || t === "vendor"))) && !(s.routine && s.publishers < 3))
+    .sort((a, b) => b.score - a.score || (a.published < b.published ? 1 : -1)).slice(0, max)
+    .map((s) => {
+      const en = s.leads.filter((l) => (!l.lang || l.lang === "en") && !["cve", "breach-db", "status", "claim"].includes(l.kind)), head = en[0] || s.leads[0], direct = en.find((l) => /^https:\/\//.test(l.url) && !REDIRECT.test(l.url));
+      return { id: s.id, title: String(head.title).slice(0, 180), sources: [...new Set(s.leads.filter((l) => l.kind !== "claim").map((l) => String(l.source)))].slice(0, 4), publishers: s.publishers, url: direct ? direct.url : "", at: s.published, exploited: s.kinds.includes("exploited") };
+    });
+}
+
 /** One story from its leads. now is a timestamp (ms). */
 export function story(group, evs = [], now = Date.now()) {
   const best = group.slice().sort((a, b) => (a.kind === "claim") - (b.kind === "claim") || (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0) || SEARCH.has(a.via) - SEARCH.has(b.via) || String(a.seen_at).localeCompare(String(b.seen_at)))[0];
@@ -85,14 +104,26 @@ export function story(group, evs = [], now = Date.now()) {
   add(!reported("gov") && !reported("vendor") && group.some((l) => ["cve", "breach-db", "status"].includes(l.kind)) ? 2 : 0, "a primary database entry");
   add(kinds.has("exploited") ? 6 : 0, "listed as exploited"); add(cves.length ? 2 : 0, "names a CVE");
   add(vias.size >= 2 ? 3 : 0, `${vias.size} independent collectors`);
-  add(now - last < 6 * 36e5 ? 3 : 0, "seen in the last 6 hours");
+  // how new the report itself is (its publication time), not when a collector first happened to see it: an old bulletin
+  // met for the first time is not news, and researchers were spending most of their slots rejecting those
+  const pubs = group.map((l) => Date.parse(l.published)).filter((t) => isFinite(t) && t <= now + 36e5), dated = pubs.length > 0, newest = dated ? Math.max(...pubs) : last;
+  const ageH = (now - newest) / 36e5;
+  // a feed that gives no publication time earns nothing here: old posts met for the first time looked brand new
+  add(!dated ? 0 : ageH < 6 ? 4 : ageH < 24 ? 2 : 0, ageH < 6 ? "published in the last 6 hours" : "published in the last day");
+  add(ageH > 6 * 24 ? -10 : ageH > 3 * 24 ? -4 : 0, ageH > 6 * 24 ? "published more than six days ago" : "published more than three days ago");
+  const titles = group.map((l) => l.title || "").join(" \n ");
+  const incident = INCIDENT.test(titles), routine = ROUTINE.test(best.title || "") && !kinds.has("exploited") && !/exploit|zero-day|0-day|actively|critical|kritisch|critique/i.test(titles);
+  const explainer = EXPLAINER.test(best.title || "");
+  add(incident && !explainer ? 4 : 0, "reads like an incident");
+  add(explainer ? -6 : 0, "reads like commentary or advice, not an event");
+  add(routine && indep <= 2 ? -5 : 0, "a routine bulletin with no sign of exploitation");
   add(group.every((l) => THIN.has(l.region)) ? 3 : 0, "found only through a thinly covered region");
   add(kinds.has("claim") && !claimOnly ? 2 : 0, "matches a leak-site claim");
   let score = pts.reduce((s, p) => s + p[0], 0); if (claimOnly) score = Math.min(score, 2);
   return {
     id: createHash("sha1").update(group.map((l) => l.url).sort()[0]).digest("hex").slice(0, 8), title: String(best.title).slice(0, 200), score, why: pts.map((p) => p[1]),
     publishers: publishers.size, vias: [...vias], tiers: [...tiers], kinds: [...kinds], cves, regions, langs, first_seen: new Date(first).toISOString().replace(/\.\d+Z$/, "Z"), last_seen: new Date(last).toISOString().replace(/\.\d+Z$/, "Z"),
-    claim_only: claimOnly, event: ev ? ev.id : "", open,
+    claim_only: claimOnly, event: ev ? ev.id : "", open, published: new Date(newest).toISOString().replace(/\.\d+Z$/, "Z"), dated, incident: incident && !explainer, routine, explainer,
     leads: group.slice().sort((a, b) => (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0)).slice(0, 14).map((l) => ({ source: l.source, tier: l.tier, via: l.via || "rss", ...(l.kind ? { kind: l.kind } : {}), ...(l.lang ? { lang: l.lang } : {}), title: String(l.title).slice(0, 160), url: l.url, open: !!l._open })),
     more: Math.max(0, group.length - 14), urls: group.map((l) => l.url),
   };

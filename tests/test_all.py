@@ -142,7 +142,7 @@ async def main():
                 for tab in ["brief", "pat", "ins", "kev", "feed"]:
                     await pg.click(f"#tab-{tab}")
                     await pg.wait_for_timeout(120)
-                ok(f"{th}: no marking wording", not await pg.evaluate(r"/\bhandled\b|not relevant|\bpatched\b|not affected/i.test([...document.querySelectorAll('button,label,option,[role=button],[role=tab]')].filter(e=>!e.closest('.card,#detail')).map(e=>e.innerText||e.textContent).join(' '))"))
+                ok(f"{th}: no marking wording", not await pg.evaluate(r"/\bhandled\b|not relevant|\bpatched\b|not affected/i.test([...document.querySelectorAll('button,label,option,[role=button],[role=tab]')].filter(e=>!e.closest('.card,#detail,.justin')).map(e=>e.innerText||e.textContent).join(' '))"))
                 await pg.click("#tab-ins")
                 ok(f"{th}: version shown", "version" in (await pg.inner_text("#ins")).lower())
                 ok(f"{th}: no fault notice", not await pg.is_visible("#fault"))
@@ -646,7 +646,8 @@ async def main():
 
         # v1.16: arcs and blast radius, campaign replay, wall mode, tabletop exercise
         b16 = copy.deepcopy(bundle)
-        geo = [e for e in b16["events"] if e.get("lat") is not None and e.get("status") != "claimed" and e.get("lng") is not None]
+        recent_day = (datetime.datetime.utcnow() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")   # inside the seven-day list whatever the data holds today
+        geo = [e for e in b16["events"] if e.get("lat") is not None and e.get("status") != "claimed" and e.get("lng") is not None and e.get("date", "") >= recent_day]
         src, dst, vic = geo[0], geo[1], geo[2]
         src["links"] = [{"to": dst["id"], "rel": "customer of breached supplier", "url": "https://example.com/story"}]
         vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}

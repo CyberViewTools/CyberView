@@ -159,6 +159,13 @@ if (quarantined.length) { quarantined.forEach((e) => console.error("quarantined:
 if (quarantine && allEvents.length === 0) errors.push("no valid events at all: refusing to publish an empty map");
 if (errors.length) { errors.forEach((e) => console.error("error: " + e)); console.error(`\nBuild failed: ${errors.length} problem(s). Nothing was written.`); process.exit(1); }
 
+// reports the collectors have seen but research has not reached yet (no AI model; the app labels them "being checked").
+// Optional: a fault here must never hold back the events.
+try {
+  const { build: fuseBuild, developing } = await import("./fuse.mjs");
+  docs["wire/latest"] = { built_at: new Date().toISOString(), items: developing(fuseBuild().stories) };
+} catch (e) { console.warn("warning: developing-reports list skipped: " + String(e && e.message || e).slice(0, 160)); }
+
 // the map's bundle
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();

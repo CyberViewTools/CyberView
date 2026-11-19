@@ -47,7 +47,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
-var BUILD={version:"1.26",date:"2026-11-19"};
+var BUILD={version:"1.27",date:"2026-11-19"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null,kevSort="new";
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -676,12 +676,53 @@ function renderFeed(list){
   if(key!==feedKey)feedLimit=30;
   var li=state.last?list.findIndex(function(x){return x.id===state.last;}):-1;if(li>=feedLimit)feedLimit=li+10;
   var shown=wide?list:list.slice(0,feedLimit);
-  var frag=document.createDocumentFragment();shown.forEach(function(e){frag.appendChild(card(e,false));});f.appendChild(frag);
+  var frag=document.createDocumentFragment();
+  var ji=justIn(list);if(ji)frag.appendChild(ji);
+  shown.forEach(function(e){frag.appendChild(card(e,false));});f.appendChild(frag);
   if(shown.length<list.length){var mo=el("li","more"),mb=el("button","btn ghost","Show "+Math.min(30,list.length-shown.length)+" more ("+(list.length-shown.length)+" left)");mb.type="button";mb.id="feedMore";
     mb.addEventListener("click",function(){feedLimit+=30;renderFeed(lastList);});mo.appendChild(mb);f.appendChild(mo);}
   archHint(f);
   if(key!==feedKey){feedKey=key;if(!f.hidden)f.scrollTop=0;feedTop=0;}
   else if(anchor){var an=$(anchor.id);if(an)f.scrollTop+=an.parentNode.getBoundingClientRect().top-ft-anchor.off;}
+}
+/* ---------- just in: what was added in the last hours, and what is reported but not yet checked ----------
+   New events used to be buried (the list is sorted by priority), and a report only appeared after research reached it.
+   The second list is mechanical: publishers' own headlines from the collectors, named and labelled as unchecked. */
+var devWire=[],wireOpen=false;
+function cleanWire(d){
+  var a=d&&Array.isArray(d.items)?d.items:[];
+  return a.slice(0,40).map(function(x){
+    if(!x||typeof x!=="object")return null;
+    var u=str(x.url,600),src=(Array.isArray(x.sources)?x.sources:[]).slice(0,4).map(function(v){return str(v,60);}).filter(Boolean);
+    var o={id:str(x.id,12),title:str(x.title,180),sources:src,n:Math.max(1,Math.min(99,Math.round(+x.publishers)||1)),url:/^https:\/\//i.test(u)?u:"",at:str(x.at,30),exploited:x.exploited===true};
+    return o.title&&src.length?o:null;}).filter(Boolean);
+}
+function justIn(list){
+  if(state.q||state.day||state.spot||state.country||state.pattern||state.wlOnly||state.lens!=="all"||state.status!=="all"||state.sort!=="pri")return null;
+  var cut=Date.now()-12*3600e3;
+  var added=list.filter(function(e){return Date.parse(e.firstSeen)>cut;}).sort(function(a,b){return Date.parse(b.firstSeen)-Date.parse(a.firstSeen);}).slice(0,4);
+  var dev=devWire.filter(function(x){return Date.now()-Date.parse(x.at)<36*3600e3;});
+  if(!added.length&&!dev.length)return null;
+  var li=el("li","justin");
+  if(added.length){
+    li.appendChild(el("h3",null,"Just added"));var ul=el("ul");
+    added.forEach(function(e){var r=el("li"),b=el("button",null,e.title);b.type="button";b.addEventListener("click",function(){select(e.id,true);});
+      r.appendChild(el("span","when",ago(e.firstSeen)));r.appendChild(b);ul.appendChild(r);});
+    li.appendChild(ul);
+  }
+  if(dev.length){
+    li.appendChild(el("h3",null,"Reported, being checked ("+dev.length+")"));
+    li.appendChild(el("p","cap","Headlines from the publishers named, as collected. CyberView has not checked these yet; each becomes an event once its source has been read."));
+    var ul2=el("ul");
+    dev.slice(0,wireOpen?30:3).forEach(function(x){var r=el("li"),t;
+      if(x.url){t=el("a",null,x.title);t.href=safeUrl(x.url);t.target="_blank";t.rel="noopener noreferrer";}else t=el("span","t",x.title);
+      r.appendChild(t);
+      r.appendChild(el("small",null,x.sources.join(", ")+(x.n>x.sources.length?" and "+(x.n-x.sources.length)+" more":"")+(ago(x.at)?" · "+ago(x.at):"")+(x.exploited?" · listed as exploited":"")));
+      ul2.appendChild(r);});
+    li.appendChild(ul2);
+    if(dev.length>3){var mb=el("button","linkbtn",wireOpen?"Show fewer":"Show all "+dev.length);mb.type="button";mb.addEventListener("click",function(){wireOpen=!wireOpen;renderFeed(lastList);});li.appendChild(mb);}
+  }
+  return li;
 }
 function renderDetail(list){
   var e=state.sel&&list.find(function(x){return x.id===state.sel;}),on=!!e&&state.tab==="feed";
@@ -2187,6 +2228,7 @@ openStore().then(function(d){
   db.doc("analysis/latest").onSnapshot(function(s){analysis=s.exists?cleanAnalysis(s.data()):null;renderSoon();},function(){});
   try{db.collection("kev").where("added",">=",ymd(daysAgo(45))).onSnapshot(function(snap){kev=snap.docs.map(function(x){return cleanKev(x.id,x.data());}).filter(Boolean);notifyKev();renderKev();if(state.view!=="map")renderSoon();},function(){});}catch(x){}
   db.doc("analysis/ripples").onSnapshot(function(s){ripples=s.exists?cleanRipples(s.data()):null;if(state.view==="graph")renderSoon();},function(){});
+  db.doc("wire/latest").onSnapshot(function(s){devWire=s.exists?cleanWire(s.data()):[];renderSoon();},function(){});
   db.doc("brief/latest").onSnapshot(function(s){daily=s.exists?cleanBrief(s.data()):null;renderBrief();},function(){});
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){

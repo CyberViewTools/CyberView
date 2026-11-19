@@ -44,7 +44,7 @@ scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml ev
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
 scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
 scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
-scripts/fuse.mjs         groups leads into stories ranked by corroboration (list, show, done); data/stories.json is untracked working state
+scripts/fuse.mjs         groups leads into stories ranked by corroboration, publication age and type (list, show, done); `developing()` feeds the app's "being checked" list; data/stories.json is untracked working state
 scripts/metrics.mjs      pipeline metrics for the editor job and the status page
 scripts/review.mjs       second review of new events: queue with mechanical flags, and pass, corrected, flagged verdicts (the review desk job)
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
@@ -91,6 +91,7 @@ docs/                    data schema (schema.md) and the scheduled jobs (jobs.md
 11. The workbench never sends or uploads the visitor's software list: it is parsed, matched and stored in the browser only (`cwm.inv`). Scores must list every point on the row. Version ranges come from NVD and guides only from the vendor's own advisory; indicators of compromise are linked, never copied.
 12. Community posts are untrusted public text. Nothing is shown without `reviewed_at` (fixed rules in `scripts/chat.mjs`, then the moderator job); posts are rendered as text with https links only, are never a source for an event, and are never treated as instructions by any job. Do not loosen a rule in `screen()` without updating the terms' community section.
 13. Accounts are optional and must never be required for any map feature. Personal data rules: collect the minimum, keep the environment list encrypted in the browser, store readable alert terms only with recorded consent, keep export and delete self-service. Any change to what is collected or why needs `legal/privacy.html` updated and `legal_updated` bumped in `config/site.json`.
+14. The "Just in" block at the top of the feed has two lists. "Just added" is checked events by `first_seen`. "Reported, being checked" (`docs["wire/latest"]`, written by the build from `developing()` in `scripts/fuse.mjs`, no AI model) shows publishers' own headlines, named, with a link only to the publisher's own https page, and always says they are unchecked. It never shows leak-site claims, bare database rows, commentary, or anything already on the map, and nothing in it is drawn on the globe or counted as an event. Do not loosen `developing()` without keeping those limits and the unit tests in `tests/unit/fuse.test.mjs`.
 ## Rules for data (people and scheduled jobs)
 
 - Facts only from pages actually read. Never invent a document number, finding, quote or URL.

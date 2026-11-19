@@ -29,6 +29,11 @@
   <section class="panel">
     <h2>Is fresh, checked data reaching the site?</h2>
     <ul class="plain" id="health"><li>Checking</li></ul>
+    <div id="gridSrcBox" hidden>
+      <h3>Power grid sources (context, not cyber data)</h3>
+      <ul class="plain" id="gridSources"></ul>
+      <p class="note">Six operators publish their outages openly. EIA, Cloudflare Radar and ENTSO-E need a free key; until the owner saves one they show "not connected", which is expected, not a fault.</p>
+    </div>
     <p class="note">Every build validates every record. A record that breaks a rule is left out and reported, so it cannot hold back the rest. Before publishing, the build is checked for completeness and compared with the live site; after publishing, the live copy is fetched and compared byte for byte with the build. If the site cannot be reached, your browser shows its last good copy and says how old it is. The power grid row is a context layer (outages that grid operators report), not cyber data: a late grid collection never holds back the rest.</p>
   </section>
   <section class="panel">

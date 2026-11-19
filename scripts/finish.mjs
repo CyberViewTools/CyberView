@@ -34,11 +34,7 @@ if (git("diff", "--cached", "--quiet").status === 0) { console.log(`CyberView ${
 const msg = `data: ${job}, ${added} new, ${updated} updated`;
 const c = git("commit", "-q", "-m", msg);
 if (c.status !== 0) { console.log(`COMMIT FAILED: ${(c.stderr || c.stdout).trim().split("\n")[0]}`); process.exit(1); }
-let pushed = false, why = "";
-for (let i = 0; i < 3 && !pushed; i++) {
-  const p1 = git("pull", "--rebase", "-q", "origin", "main");
-  if (p1.status !== 0) { why = (p1.stderr || "").trim().split("\n")[0]; git("rebase", "--abort"); continue; }
-  const p2 = git("push", "-q", "origin", "HEAD:main"); pushed = p2.status === 0; if (!pushed) why = (p2.stderr || "").trim().split("\n")[0];
-}
+// git-sync merges the files every job writes (status.json, leads) instead of failing on them
+const sy = run("node", ["scripts/git-sync.mjs"]), pushed = sy.status === 0, why = `${sy.stderr || ""}`.trim().split("\n").pop();
 console.log(pushed ? `CyberView ${job}: ${added} new, ${updated} updated; committed and pushed` : `PUSH FAILED after 3 tries (${why}). The commit is local; the next job will push it.`);
 process.exit(pushed ? 0 : 1);

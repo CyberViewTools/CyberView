@@ -34,5 +34,4 @@ jobs:
           git add data
           if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           git commit -q -m "data: link check"
-          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
-          exit 1
+          node scripts/git-sync.mjs

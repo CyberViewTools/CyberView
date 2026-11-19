@@ -44,8 +44,7 @@ jobs:
           if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           msg=$(ls -t data/runs/*/*-feeds.json | head -1 | xargs node -e 'const r=JSON.parse(require("fs").readFileSync(process.argv[1]));console.log(`data: feeds, KEV +${r.kev_added.length}, ${r.events_updated.length} events refreshed, ${r.cvss_added.length} CVSS added`)')
           git commit -q -m "$msg"
-          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
-          exit 1
+          node scripts/git-sync.mjs
       - name: Alert on failure
         if: failure()
         env:

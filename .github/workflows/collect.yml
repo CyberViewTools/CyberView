@@ -47,8 +47,7 @@ jobs:
           if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
           git commit -q -m "data: collect, $n new lead(s)"
-          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep $((i*15)); done
-          exit 1
+          node scripts/git-sync.mjs
       - name: Alert on failure
         if: failure()
         env:

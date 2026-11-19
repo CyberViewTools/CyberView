@@ -23,13 +23,12 @@ import { createHash } from "node:crypto";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
 import { load as pipelineMetrics } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
-import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis } from "./lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
 const CATS = ["incident", "outage", "vuln", "report", "policy", "investment", "enforcement"];
 const STATUS = ["confirmed", "official", "developing", "claimed"];
-const TAGS = ["ransomware","data-breach","supply-chain","zero-day","ddos","espionage","critical-infrastructure","ai-enabled","third-party","phishing","insider","hacktivism","ot-ics","cloud","identity","fraud","takedown","regulation","funding","acquisition"];
 const errors = [], warnings = [];
 const strict = process.argv.includes("--strict");   // CI can turn hygiene warnings into errors
 // --quarantine (the deploy and the data workflows use it): a record that breaks a rule is LEFT OUT and reported in

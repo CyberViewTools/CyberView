@@ -28,7 +28,7 @@ All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that bre
 | impact | | free text |
 | records_affected | | number |
 | products, attack, cves | | lists of strings; cves match `CVE-YYYY-NNNN` |
-| tags | | list from: ransomware, data-breach, supply-chain, zero-day, ddos, espionage, critical-infrastructure, ai-enabled, third-party, phishing, insider, hacktivism, ot-ics, cloud, identity, fraud, takedown, regulation, funding, acquisition |
+| tags | | list from: ransomware, data-breach, supply-chain, zero-day, ddos, espionage, critical-infrastructure, ai-enabled, third-party, phishing, insider, hacktivism, ot-ics, cloud, identity, fraud, takedown, regulation, funding, acquisition, malware, rce, poc-public. Sector, country and product go in their own fields, not in tags; the list is defined as `TAGS` in `scripts/lib/validate.mjs` |
 | cve_meta | | list of `{id, cvss, epss, kev, kev_due}` |
 | sources | | list of `{name, url}`; url is the specific page read |
 | source_tier | | `primary`, `established`, `aggregator` |

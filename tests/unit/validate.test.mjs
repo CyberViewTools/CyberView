@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkAttribution, checkLinks, checkTabletop } from "../../scripts/lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, TAGS } from "../../scripts/lib/validate.mjs";
 
 const attr = { actor: "APT29", origin_country: "Russia", lat: 55.75, lng: 37.62, by: "UK NCSC", by_type: "government", url: "https://www.ncsc.gov.uk/news/advisory-apt29" };
 
@@ -74,4 +74,10 @@ test("analyst queue: newest additions and near deadlines first; analysed flaws l
   const kev = [{ cve: "CVE-2026-0001", added: d(-30), due: d(-9) }, { cve: "CVE-2026-0002", added: d(-1), due: d(20) }, { cve: "CVE-2026-0003", added: d(-10), due: d(2) }, { cve: "CVE-2026-0004", added: d(-2), due: d(19), ransomware: true }];
   assert.deepEqual(queue(kev, [], {}, today).map((x) => x.cve), ["CVE-2026-0004", "CVE-2026-0002", "CVE-2026-0003", "CVE-2026-0001"]);
   assert.deepEqual(queue(kev, [], { "CVE-2026-0004": { analyzed_at: new Date().toISOString() } }, today).map((x) => x.cve).includes("CVE-2026-0004"), false);
+});
+
+test("tags: the allowed list has no duplicates, is lower-case kebab and includes malware, rce and poc-public", () => {
+  assert.equal(new Set(TAGS).size, TAGS.length);
+  assert.ok(TAGS.every((t) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(t)));
+  for (const t of ["malware", "rce", "poc-public", "ransomware"]) assert.ok(TAGS.includes(t), t);
 });

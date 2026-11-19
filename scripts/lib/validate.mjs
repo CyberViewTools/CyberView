@@ -10,6 +10,9 @@ const ID = /^[a-z0-9][a-z0-9-]{2,119}$/;
  * Drawn on the globe as a dashed arc from the attributed origin to the victim, labelled with who attributed it.
  * { actor, origin_country, lat, lng, by, by_type: government | investigator, url, stated_at? }
  */
+// The controlled vocabulary for event `tags` (kinds of threat); sector, country and product belong in their own fields. Keep docs/schema.md in step.
+export const TAGS = ["ransomware","data-breach","supply-chain","zero-day","ddos","espionage","critical-infrastructure","ai-enabled","third-party","phishing","insider","hacktivism","ot-ics","cloud","identity","fraud","takedown","regulation","funding","acquisition","malware","rce","poc-public"];
+
 export function checkAttribution(a) {
   if (a == null) return [];
   if (typeof a !== "object" || Array.isArray(a)) return ["attribution must be an object"];

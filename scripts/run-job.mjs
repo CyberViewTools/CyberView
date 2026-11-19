@@ -167,9 +167,10 @@ async function main() {
     if (!chk.ok && work.some((w) => w[0] === "researcher")) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
   }
   // 4b. drain: reports that arrived while the researchers worked (the collect action pushes about every 30 minutes) are collected,
-  //     planned and worked now, in this run, so nothing waits for the next one. At most two more rounds and about 12 minutes in all.
+  //     planned and worked now, in this run, so nothing waits for the next one. At most two more rounds, and a round starts only
+  //     within the first 6 minutes, so a run ends in about 13 minutes and never overlaps the next one (every 15 minutes).
   let extra = 0;
-  if (job === "sweep") for (let round = 2; round <= 3 && Date.now() - t0 < 12 * 6e4; round++) {
+  if (job === "sweep") for (let round = 2; round <= 3 && Date.now() - t0 < 6 * 6e4; round++) {
     for (const [c, a] of [["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     const note = sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "";
     const more = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);

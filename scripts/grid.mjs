@@ -71,7 +71,9 @@ export const SOURCES = {
     page: "https://pannes.hydroquebec.com/pannes/", hosts: ["pannes.hydroquebec.com", "www.hydroquebec.com", "infopannes.solutions.hydroquebec.com"] },
   bchydro: { name: "BC Hydro", country: "CA", url: "https://www.bchydro.com/power-outages/app/outages-map-data.json",
     page: "https://www.bchydro.com/power-outages/app/outage-map.html", hosts: ["www.bchydro.com"] },
-  ukpn: { name: "UK Power Networks", country: "GB", url: "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-live-faults/records",
+  // paused 2026-11-19: the portal's robots.txt (ukpowernetworks.opendatasoft.com) says "Disallow: /api/" for all agents and
+  // this feed is under /api/; CyberView skips sources whose robots.txt disallows the feed path until the owner decides
+  ukpn: { paused: "robots.txt disallows /api/ on the portal; waiting for the owner's decision", name: "UK Power Networks", country: "GB", url: "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-live-faults/records",
     page: "https://www.ukpowernetworks.co.uk/power-cut/map", hosts: ["www.ukpowernetworks.co.uk", "ukpowernetworks.opendatasoft.com"] },
   eskom: { name: "Eskom", country: "ZA", url: "https://loadshedding.eskom.co.za/LoadShedding/GetStatus",
     page: "https://loadshedding.eskom.co.za/", hosts: ["loadshedding.eskom.co.za", "www.eskom.co.za"] },
@@ -1014,6 +1016,7 @@ async function collect() {
   // at most COLLECT_PARALLEL sources at once, each capped at SOURCE_TIMEOUT_S, so one slow utility never holds up a cycle
   const cap = (k) => new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { code: "source_timeout" })), SOURCE_TIMEOUT_S * 1000).unref());
   const results = await pool(Object.keys(SOURCES), COLLECT_PARALLEL, async (k) => {
+    if (SOURCES[k].paused) return [k, null, str(`paused: ${SOURCES[k].paused}`, 120)];
     try { return [k, await Promise.race([ADAPTERS[k](), cap(k)]), null]; } catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60)]; }
   });
   for (const [k, got, err] of results) {
@@ -1024,7 +1027,7 @@ async function collect() {
       items.push(...clean);
     } else {
       const fresh = prev.fetched_at && now - Date.parse(prev.fetched_at) < KEEP_STALE_HOURS * 3600e3;
-      const kept = fresh ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
+      const kept = fresh && !def.paused ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
       sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length };
       items.push(...kept);
       // a keyed source without a key is reported, not counted as a failure

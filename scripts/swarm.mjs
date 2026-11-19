@@ -18,7 +18,7 @@ import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, listDir, nowIso } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 import { backlog } from "./backlog.mjs";
-import { checkAnalysis } from "./lib/validate.mjs";
+import { splitAnalyses } from "./analyst.mjs";
 
 const SW = join(ROOT, "swarm");
 const sha = (s) => createHash("sha1").update(s).digest("hex");
@@ -63,9 +63,29 @@ function writeWorkerPlan(kind, run, plan, items, onlyMissing) {
       stories: plan.batches.flatMap((b) => keep(b).map((id) => ({ id, title: byId.get(id).title, score: byId.get(id).score, batch: b.batch, urls: byId.get(id).urls }))) });
   else if (kind === "review")
     writeJson(join(DATA, "review-plan.json"), { planned_at: nowIso(), swarm: run, plan_id: plan.plan_id, batches: plan.batches.map((b) => keep(b)) });
-  else
+  else {
+    // the manifest was frozen earlier: attach each file's problems as they are now, so a worker corrects an analysis on
+    // file that breaks a rule instead of researching the flaw again
+    const { bad } = splitAnalyses(listDir("analyses"));
     writeJson(join(DATA, "analyst-plan.json"), { planned_at: nowIso(), swarm: run, plan_id: plan.plan_id,
-      batches: plan.batches.map((b) => keep(b).map((id) => byId.get(id))) });
+      batches: plan.batches.map((b) => keep(b).map((id) => { const { fix, ...x } = byId.get(id); return bad[id] ? { ...x, fix: bad[id].slice(0, 6) } : x; })) });
+  }
+}
+
+/** Pure: which analyst items are done. rows: listDir("analyses"); logs: the last two days' -analyst- run logs.
+ * Done = an analysis that passes checkAnalysis (the same split as analyst.mjs queue), or a CVE a worker logged as skipped.
+ * An analysis on file that breaks a rule is NOT done: the build leaves it out of the workbench. It is returned in `bad`
+ * so validate can say "on file, needs fixing" rather than "missing". */
+export function analystDone(rows, logs = []) {
+  const { done, bad } = splitAnalyses(rows), skipped = new Set();
+  for (const l of logs) (l && Array.isArray(l.skipped) ? l.skipped : []).forEach((s) => { const c = String((s && (s.cve || s.title || s)) || "").match(/CVE-\d{4}-\d{4,}/); if (c) skipped.add(c[0]); });
+  return { isDone: (id) => id in done || skipped.has(id), bad };
+}
+function analystLogs() {
+  const runs = join(DATA, "runs"), out = [];
+  if (existsSync(runs)) for (const day of readdirSync(runs).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().slice(-2))
+    for (const f of readdirSync(join(runs, day)).filter((f) => /-analyst-/.test(f) && f.endsWith(".json"))) out.push(readJson(join(runs, day, f), {}));
+  return out;
 }
 
 function isDoneFn(kind) {
@@ -77,12 +97,8 @@ function isDoneFn(kind) {
     const reviewed = new Set(listDir("events").filter((x) => x.r && x.r.review).map((x) => x.id));
     return () => (id) => reviewed.has(id);
   }
-  const ok = new Set(listDir("analyses").filter((x) => x.r && !checkAnalysis(x.r, x.id).length).map((x) => x.id));
-  const skipped = new Set();
-  const runs = join(DATA, "runs");
-  if (existsSync(runs)) for (const day of readdirSync(runs).sort().slice(-2)) for (const f of readdirSync(join(runs, day)).filter((f) => /-analyst-/.test(f)))
-    (readJson(join(runs, day, f), {}).skipped || []).forEach((s) => { const c = String((s && (s.cve || s.title || s)) || "").match(/CVE-\d{4}-\d{4,}/); if (c) skipped.add(c[0]); });
-  return () => (id) => ok.has(id) || skipped.has(id);
+  const { isDone } = analystDone(listDir("analyses"), analystLogs());
+  return () => isDone;
 }
 
 // kind -> lease kind, worker role, job name for the ledger, default batch size
@@ -192,6 +208,8 @@ async function main() {
       return;
     }
     console.log(`VALIDATE ${a}: ${r.done} of ${man.count} done, ${r.missing} missing${r.missing ? " in batch(es) " + r.rows.filter((x) => x.missing.length).map((x) => x.batch).join(" ") : ""}.`);
+    if (kind === "analyst") { const { bad } = analystDone(listDir("analyses")), onFile = r.rows.flatMap((x) => x.missing).filter((id) => bad[id]);
+      if (onFile.length) console.log(`  of the missing, ${onFile.length} have a file that breaks a rule (retry hands them out as FIX ONLY; see node scripts/analyst.mjs check): ${onFile.join(" ")}`); }
     process.exit(r.missing ? 1 : 0);
   }
   if (cmd === "run") return runSwarm(a);

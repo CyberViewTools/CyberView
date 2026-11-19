@@ -150,6 +150,19 @@ for (const x of listDir("context")) {
   context[x.id] = { source: c.source, source_url: c.source_url, fetched_at: c.fetched_at || "", ok: !!c.ok, error: c.error || "", items: c.items };
 }
 
+// exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
+// One that breaks a rule is left out of the workbench and reported here (first, so the 40-line cap never hides it). This
+// check used to run after the error report, so a broken analysis vanished silently and the swarm kept handing it out.
+// It is a warning, not an error, so one long field cannot hold back every job's commit; `node scripts/analyst.mjs check`
+// fails on it, and the analyst queue hands it back as FIX ONLY.
+const analyses = {}, analysisWarnings = [];
+for (const x of listDir("analyses")) {
+  const bad = x.r ? checkAnalysis(x.r, x.id) : ["not valid JSON"];
+  if (bad.length) { bad.forEach((m) => analysisWarnings.push(`analyses/${x.id}.json: ${m} (left out of the workbench until fixed)`)); continue; }
+  const { id, ...a } = x.r; analyses[x.id] = a;
+}
+warnings.unshift(...analysisWarnings);
+
 const shown = warnings.slice(0, 40);
 shown.forEach((w) => console.warn("warning: " + w));
 if (warnings.length > shown.length) console.warn(`warning: ...and ${warnings.length - shown.length} more`);
@@ -173,13 +186,6 @@ try {
 mkdirSync(OUT, { recursive: true });
 const built_at = new Date().toISOString();
 writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, corrections, docs, context }));
-// exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code
-const analyses = {};
-for (const x of listDir("analyses")) {
-  const bad = x.r ? checkAnalysis(x.r, x.id) : ["not valid JSON"];
-  if (bad.length) { bad.forEach((m) => errors.push(`analyses/${x.id}.json: ${m}`)); continue; }
-  const { id, ...a } = x.r; analyses[x.id] = a;
-}
 
 // the workbench (site/data/workbench.json): every known-exploited entry on file with its affected-version ranges, recent
 // high-risk flaws that are not on CISA's list, the fix guides, and detection resources named by advisories and reports

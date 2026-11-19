@@ -1,5 +1,6 @@
 // Mechanical feeds, no AI model needed. Run: node scripts/feeds.mjs
-// 1. data/kev/<CVE>.json matches the CISA known-exploited catalog for entries added in the last 45 days.
+// 1. data/kev/<CVE>.json matches the CISA known-exploited catalog for entries added in the last 45 days, and for older
+//    entries whose CVE an event on file names (scripts/lib/kev.mjs).
 //    Old files are kept (they are the history); the build only publishes the last 45 days.
 // 2. EPSS scores from FIRST for every recent KEV entry and every CVE on a recent event.
 // 3. CVSS, attack vector and affected-version ranges from NVD for up to NVD_MAX entries that lack them
@@ -12,6 +13,7 @@ import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { DATA, readJson, writeJson, listEventFiles, saveEvent, writeRunLog } from "./lib/store.mjs";
 import { parseAffected, parseCvss } from "./lib/affected.mjs";
+import { kevToImport } from "./lib/kev.mjs";
 
 const KEV_URL = "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json";
 const KEV_DAYS = 45, EVENT_DAYS = 9, NVD_MAX = Number(process.env.NVD_MAX || 20);
@@ -45,9 +47,11 @@ async function getJson(url, label, tries = 3) {
 // 1. KEV
 const kevDir = join(DATA, "kev");
 const catalog = await getJson(KEV_URL, "CISA KEV catalog");
+// every CVE an event on file names: an older catalog entry for one of them is imported too (it used to be skipped as
+// older than KEV_DAYS, so an event could cite a known-exploited flaw that q.mjs kev and the workbench did not know)
+const cvesOnFile = new Set(listEventFiles().filter((x) => x.e && !x.e.duplicate_of).flatMap((x) => (Array.isArray(x.e.cves) ? x.e.cves : [])));
 if (catalog && Array.isArray(catalog.vulnerabilities)) {
-  for (const v of catalog.vulnerabilities) {
-    if ((v.dateAdded || "") < day(KEV_DAYS)) continue;
+  for (const v of kevToImport(catalog.vulnerabilities, day(KEV_DAYS), cvesOnFile)) {
     const p = join(kevDir, `${v.cveID}.json`), old = readJson(p, {});
     const rec = sortKeys({
       ...old,

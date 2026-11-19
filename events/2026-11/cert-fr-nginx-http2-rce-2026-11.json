@@ -25,7 +25,10 @@
   ],
   "cves": [
     "CVE-2026-123633",
-    "CVE-2026-123007"
+    "CVE-2026-123007",
+    "CVE-2026-123634",
+    "CVE-2026-121810",
+    "CVE-2026-113425"
   ],
   "cve_meta": [
     {
@@ -41,6 +44,27 @@
       "epss": null,
       "kev": false,
       "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-123634",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-121810",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-113425",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
     }
   ],
   "report": {
@@ -49,7 +73,8 @@
     "key_findings": [
       "Two flaws, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2.",
       "Affected: NGINX Open Source 1.31.x before 1.31.9 and versions before 1.30.7; NGINX Plus 3.1.x-3.2.x before 3.7.3.0.1 and 3.7.x before 37.0.8.1.",
-      "CERT-FR knows of a public proof of concept for CVE-2026-123007; in-the-wild exploitation is not stated."
+      "CERT-FR knows of a public proof of concept for CVE-2026-123007; in-the-wild exploitation is not stated.",
+      "KrCERT/CC lists five NGINX Plus and Open Source flaws fixed by F5: CVE-2026-123007 (integer underflow) and use-after-free CVE-2026-123634, CVE-2026-123633, CVE-2026-121810 and CVE-2026-113425; it urges updating to the fixed versions (Open Source 1.30.7 or 1.31.9)."
     ],
     "published": "2026-11-18",
     "publisher": "CERT-FR",
@@ -68,17 +93,21 @@
     {
       "name": "CERT-FR alert CERTFR-2026-ALE-017",
       "url": "https://www.cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-017/"
+    },
+    {
+      "name": "KrCERT/CC security notice (Korean)",
+      "url": "https://www.boho.or.kr/kr/bbs/view.do?searchCnd=&bbsId=B0000133&searchWrd=&menuNo=205020&pageIndex=1&categoryCode=&nttId=72314"
     }
   ],
   "status": "official",
-  "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2. It knows of a public proof of concept for CVE-2026-123007. Affected are Open Source 1.31.x before 1.31.9 and earlier branches before 1.30.7, and Plus before the fixed releases. Disabling HTTP/2 is an interim workaround.",
+  "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2. It knows of a public proof of concept for CVE-2026-123007. Affected are Open Source 1.31.x before 1.31.9 and earlier branches before 1.30.7, and Plus before the fixed releases. Disabling HTTP/2 is an interim workaround. KrCERT/CC lists three further use-after-free flaws fixed in the same F5 update.",
   "tags": [],
   "time_basis": "published",
   "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
-  "updated_at": "2026-11-18T22:14:57Z",
+  "updated_at": "2026-11-19T01:15:31Z",
   "validation": {
     "checked_at": "2026-11-18T21:13:25Z",
     "state": "single_source",
-    "note": "Read the CERT-FR alert (French) via fetch agent. F5 bulletins and the Wiz blog it cites were not opened. CVSS not stated on the page."
+    "note": "Read the CERT-FR alert (French) via fetch agent. F5 bulletins and the Wiz blog it cites were not opened. CVSS not stated on the page. KrCERT/CC notice (Korean) read in a later run: it lists five CVEs fixed by F5 but does not mention HTTP/2 or exploitation. Two government CERTs, one issuing from F5's bulletins."
   }
 }

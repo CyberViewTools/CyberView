@@ -1,0 +1,78 @@
+{
+  "action": "Check who can write to the SPI flash on any server, workstation or appliance using first-generation Ryzen, EPYC or Threadripper (Zen 1 or Zen+) parts, and restrict firmware update paths. AMD says no fix is planned, so see AMD bulletin AMD-SB-7075 for scope and consider retiring exposed platforms.",
+  "actor": "",
+  "attack": [
+    "firmware",
+    "secure-boot"
+  ],
+  "category": "vuln",
+  "country": "United States",
+  "date": "2026-11-18",
+  "date_note": "Date is INCIBE's publication date; AMD's own release date was not read.",
+  "occurred_at": "2026-11-18T12:00:00Z",
+  "exec": "A critical, permanent flaw in the boot ROM of older AMD processors cannot be patched, so the risk has to be managed by controlling who can modify firmware storage.",
+  "first_seen": "2026-11-19T01:15:31Z",
+  "geo_basis": "headquarters",
+  "impact": "",
+  "lat": 37.39,
+  "lng": -121.96,
+  "org": "AMD",
+  "pin_type": "headquarters",
+  "place": "Santa Clara, United States",
+  "plain": "A flaw in the boot code of first-generation AMD Zen and Zen+ chips lets someone who can rewrite the firmware chip run unsigned code. AMD will not fix it.",
+  "products": [
+    "AMD Zen (first generation) Zeppelin processors",
+    "AMD Zen+ processors"
+  ],
+  "cves": [
+    "CVE-2026-74127"
+  ],
+  "cve_meta": [
+    {
+      "id": "CVE-2026-74127",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    }
+  ],
+  "report": {
+    "doc_id": "INCIBE-2026-911",
+    "iocs_available": false,
+    "key_findings": [
+      "CVE-2026-74127: the PSP boot ROM in AMD Zen 1 and Zen+ (Zeppelin) processors verifies firmware signatures incorrectly.",
+      "An attacker able to modify the SPI flash could run unsigned firmware with the security processor's highest privileges.",
+      "INCIBE rates it critical and lists exploitation as No; reported by Matteo Rizzo of Google.",
+      "AMD does not plan a fix or mitigation because the boot ROM is immutable."
+    ],
+    "published": "2026-11-18",
+    "publisher": "INCIBE-CERT",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Assess who can install firmware on the SPI flash and by what routes; on some systems it can be updated without physical access.",
+      "Consult AMD bulletin AMD-SB-7075 for platform scope."
+    ],
+    "url": "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/verificacion-incorrecta-de-la-firma-criptografica-en-procesadores-zen-y-zen-de"
+  },
+  "sector": "Technology / hardware",
+  "severity": 2,
+  "source_tier": "primary",
+  "status": "official",
+  "sources": [
+    {
+      "name": "INCIBE-CERT advisory INCIBE-2026-911",
+      "url": "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/verificacion-incorrecta-de-la-firma-criptografica-en-procesadores-zen-y-zen-de"
+    }
+  ],
+  "summary": "INCIBE-CERT reports a critical flaw, CVE-2026-74127, in the boot ROM of the platform security processor in first-generation AMD Zen and Zen+ chips. An attacker with local write access to the SPI flash could run unsigned firmware with the processor's top privileges. INCIBE lists no known exploitation. AMD does not plan a fix because the ROM is immutable.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "AMD Zen and Zen+ boot ROM signature flaw cannot be patched, INCIBE warns",
+  "updated_at": "2026-11-19T01:15:31Z",
+  "validation": {
+    "checked_at": "2026-11-19T01:15:31Z",
+    "state": "single_source",
+    "note": "Read the INCIBE-CERT advisory (Spanish). AMD bulletin AMD-SB-7075 could not be loaded in this run."
+  }
+}

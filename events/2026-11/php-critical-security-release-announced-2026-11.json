@@ -31,25 +31,67 @@
     "CVE-2026-129496"
   ],
   "cve_meta": [
-    {"id": "CVE-2026-115560", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-129481", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-129182", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-129474", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-126714", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-129289", "cvss": null, "epss": null, "kev": false, "kev_due": ""},
-    {"id": "CVE-2026-129496", "cvss": null, "epss": null, "kev": false, "kev_due": ""}
+    {
+      "id": "CVE-2026-115560",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-129481",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-129182",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-129474",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-126714",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-129289",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    },
+    {
+      "id": "CVE-2026-129496",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    }
   ],
   "report": {
     "doc_id": "",
     "iocs_available": false,
     "key_findings": [
       "heise reports PHP 8.2.36, 8.3.37, 8.4.28 and 8.5.13 fix 17 vulnerabilities, seven rated critical at CVSS 9.2.",
-      "heise describes code execution for four of them, each needing preconditions such as non-default settings.",
+      "heise describes code execution for some of them, each needing preconditions such as non-default settings (heise noted a miscount in its own tally).",
       "The Register says CVE-2026-115560 is an RCE bug needing an unlikely mix of configuration and application code; no exploitation of this release is reported."
     ],
     "published": "2026-11-18",
     "publisher": "The Register; heise online",
-    "publisher_type": "vendor",
+    "publisher_type": "news",
     "read_depth": "secondary",
     "recommendations": [
       "Prepare to patch on release day."
@@ -81,17 +123,17 @@
   "tags": [],
   "time_basis": "published",
   "title": "PHP releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13 fixing 17 vulnerabilities, several rated critical",
-  "updated_at": "2026-11-19T16:05:00Z",
+  "updated_at": "2026-11-19T16:20:00Z",
   "validation": {
     "checked_at": "2026-11-19T16:05:00Z",
     "state": "corroborated",
     "note": "heise, The Register and SecurityWeek report independently; SecurityWeek lists seven critical RCE CVEs and links the php.net notice (php.net not opened); no exploitation of these seven is stated."
   },
-  "qa_checked_at": "2026-11-19T15:27:04Z",
+  "qa_checked_at": "2026-11-19T16:40:32Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T15:27:04Z",
-    "note": "Versions, 17 flaws, seven critical CVSS 9.2 and CVE-2026-115560 match heise and The Register; report key_findings described the preview, now the release; php.net notice not opened",
+    "at": "2026-11-19T16:40:32Z",
+    "note": "Versions, 17 flaws, seven critical CVSS 9.2 match heise, Register, SecurityWeek; publisher_type fixed from vendor to news; code execution count softened because heise noted a miscount",
     "flags": []
   }
 }

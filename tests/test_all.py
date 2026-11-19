@@ -1010,7 +1010,7 @@ async def main():
         await serve(make_site(json.load(open(os.path.join(ROOT, "site", "data", "bundle.json")))), v121b)
 
 
-        # v1.33: Vulnerabilities page: views, deadlines and calendar, All CVEs over the CVE List lookup files (small fixture), redirects from the old workbench and CVE pages
+        # v1.34: Vulnerabilities page: views, deadlines and calendar, All CVEs over the CVE List lookup files (small fixture), redirects from the old workbench and CVE pages
         site132 = with_cve(make_site(bundle))
         wb132 = copy.deepcopy(wbd)
         t132 = datetime.date.today()

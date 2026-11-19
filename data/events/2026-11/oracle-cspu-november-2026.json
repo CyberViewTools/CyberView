@@ -24,12 +24,12 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T18:14:23Z",
-  "updated_at": "2026-11-19T03:11:03Z",
+  "updated_at": "2026-11-19T05:12:33Z",
   "category": "vuln",
   "date": "2026-11-17",
   "occurred_at": "2026-11-17T18:00:00Z",
   "date_note": "Oracle quarterly update; coverage Nov 18.",
-  "title": "Oracle November 2026 Critical Patch Update fixes hundreds of flaws including Java4Shell",
+  "title": "Oracle November 2026 Critical Security Patch Update fixes hundreds of flaws including Java4Shell",
   "org": "Oracle",
   "sector": "Technology / enterprise software",
   "country": "United States",
@@ -40,10 +40,10 @@
   "severity": 2,
   "status": "official",
   "source_tier": "established",
-  "summary": "Oracle's November Critical Patch Update has 655 new patches. SecurityWeek counts 948 unique CVEs, 640 of them in risk matrices, with about 300 unauthenticated and remotely exploitable and 62 critical. Hyperion has the most fixes. Java SE includes the fix for Java4Shell (CVE-2026-114938). No exploitation is reported for the other flaws.",
+  "summary": "Oracle's November Critical Security Patch Update has 655 new patches, per Oracle's advisory. SecurityWeek counts 948 unique CVEs, 640 of them in risk matrices, with about 300 unauthenticated and remotely exploitable and 62 critical. Hyperion has the most fixes (267). Java SE includes the fix for Java4Shell (CVE-2026-114938). No exploitation is reported for the other flaws.",
   "plain": "Oracle released its big quarterly security update, fixing hundreds of flaws across its products, including the serious Java flaw known as Java4Shell.",
   "exec": "A large quarterly patch load across Oracle products; Java4Shell is already on file as urgent.",
-  "action": "Schedule the November 2026 CPU: patch Java SE first for Java4Shell, then internet-facing Oracle products with unauthenticated flaws.",
+  "action": "Schedule the November 2026 CSPU: patch Java SE first for Java4Shell, then internet-facing Oracle products with unauthenticated flaws.",
   "sources": [
     {
       "name": "SecurityWeek",
@@ -67,14 +67,14 @@
     "publisher_type": "vendor",
     "read_depth": "secondary",
     "recommendations": [
-      "Apply the November 2026 CPU."
+      "Apply the November 2026 CSPU."
     ],
     "url": "https://www.securityweek.com/oracle-patches-640-vulnerabilities-with-november-2026-cspu/"
   },
   "validation": {
     "checked_at": "2026-11-18T18:14:23Z",
     "state": "single_source",
-    "note": "Read SecurityWeek summary; Oracle advisory cited there, not opened."
+    "note": "Read SecurityWeek summary and the Oracle advisory (655 patches, Java SE CVE-2026-114938, Hyperion 267 patches confirmed there); SecurityWeek page not reloadable at review."
   },
   "links": [
     {
@@ -82,5 +82,12 @@
       "rel": "contains fix named in CISA alert",
       "url": "https://www.cisa.gov/news-events/alerts/2026/11/17/critical-java-vulnerability-requires-immediate-patching"
     }
-  ]
+  ],
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:12:54Z",
+    "note": "Oracle advisory: it is a Critical Security Patch Update, not a CPU; 655 patches, Java SE CVE-2026-114938 and Hyperion 267 confirmed. Title, summary and action fixed. SecurityWeek figures (948, 640, 300, 62) not rechecked: page returned 403.",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-19T05:12:54Z"
 }

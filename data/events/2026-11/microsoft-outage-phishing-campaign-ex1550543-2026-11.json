@@ -18,11 +18,11 @@
   "org": "Microsoft 365 customers",
   "pin_type": "none",
   "place": "",
-  "plain": "Scammers are sending fake Microsoft 365 notices that mention the real reference number of the recent outage and threaten to delete held emails. Microsoft says the outage itself was not caused by a cyberattack.",
+  "plain": "Scammers are sending fake Microsoft 365 notices that mention the recent outage and threaten to delete held emails.",
   "products": [
     "Microsoft 365"
   ],
-  "qa_checked_at": "2026-11-18T01:25:00Z",
+  "qa_checked_at": "2026-11-19T05:12:40Z",
   "report": {
     "doc_id": "",
     "iocs_available": true,
@@ -33,7 +33,7 @@
       "Randomised subjects, recipient-specific tracking links and rotating sender domains are used to defeat simple pattern matching.",
       "Microsoft has not attributed the campaign to a named actor or malware family."
     ],
-    "published": "2026-11-17T00:08:00Z",
+    "published": "2026-11-16",
     "publisher": "Microsoft Threat Intelligence",
     "publisher_type": "vendor",
     "read_depth": "full",
@@ -53,22 +53,25 @@
     {
       "name": "Microsoft Threat Intelligence",
       "url": "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/"
-    },
-    {
-      "name": "Windows Forum",
-      "url": "https://windowsforum.com/news/microsoft-365-outage-sparks-phishing-campaign-using-real-incident-id-ex1550543.452782/"
     }
   ],
   "status": "confirmed",
-  "summary": "Microsoft Threat Intelligence describes a high-volume phishing campaign seen on November 13 that poses as Microsoft 365 service-health notices. Emails claim four messages were held after the November 12 Exchange Online incident and will be deleted within 24 hours unless the reader clicks to restore them. Microsoft has not named an actor or confirmed credential capture. News coverage says some lures cite the real incident number.",
+  "summary": "Microsoft Threat Intelligence describes a high-volume phishing campaign seen on November 13 that poses as Microsoft 365 service-health notices. The emails claim four messages were held after an Exchange Online incident on November 12 and will be deleted within 24 hours unless the reader clicks to restore them. Microsoft has not named an actor or confirmed credential capture.",
   "tags": [
     "phishing"
   ],
-  "title": "Phishing campaign exploits the Microsoft 365 outage using the real incident ID",
-  "updated_at": "2026-11-18T01:25:00Z",
+  "title": "Phishing campaign uses the Microsoft 365 outage as a lure",
+  "updated_at": "2026-11-19T05:12:00Z",
   "validation": {
     "checked_at": "2026-11-17T23:58:00Z",
-    "note": "Reviewed against the original Microsoft Threat Intelligence report. The use of incident number EX1550543 in the lure is reported by news coverage; it was not found in Microsoft's post as read.",
+    "note": "Reviewed against the original Microsoft Threat Intelligence report. The incident number EX1550543 appears only in an AI-assisted forum post, not in Microsoft's post, so it is not asserted here.",
     "state": "corroborated"
+  },
+  "date_note": "Date of Microsoft's post; the campaign was observed on November 13.",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-19T05:12:40Z",
+    "note": "EX1550543 and 'Microsoft says not a cyberattack' are not in Microsoft's post (only an AI-assisted forum page); removed them, dropped that source, retitled, fixed publish date to Nov 16",
+    "flags": []
   }
 }

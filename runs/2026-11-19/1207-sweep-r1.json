@@ -1,0 +1,25 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-19T12:07:15Z",
+  "finished_at": "2026-11-19T12:35:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://cert.pl/en/posts/2026/11/CVE-2026-109857/", "title": "CERT Polska: CAST Imaging vulnerabilities", "used_in": "closed, not an event"},
+    {"url": "https://www.cert.se/2026/11/allvarliga-sarbarheter-i-nginx.html", "title": "CERT-SE: NGINX", "used_in": "duplicate of nginx2root-nginx-critical-rce-flaws-2026-11"},
+    {"url": "https://www.admin.ch/en/newnsb/A40p0VPerHSv", "title": "Publica audit press release", "used_in": "publica-pk-softech-data-leak-2026-11"},
+    {"url": "https://therecord.media/russian-charged-with-spying-on-palantir-for-moscow", "title": "The Record: Palantir", "used_in": "palantir-employees-russian-agent-charged-2026-11"}
+  ],
+  "added": ["publica-pk-softech-data-leak-2026-11", "palantir-employees-russian-agent-charged-2026-11"],
+  "updated": [],
+  "skipped": [
+    {"title": "CAST Imaging vulnerabilities", "url": "https://cert.pl/en/posts/2026/11/CVE-2026-109857/", "reason": "eight CVEs in version 3.6.2, no exploitation, exploit code, urgent notice or wide use reported"},
+    {"title": "CERT-SE NGINX", "url": "https://www.cert.se/2026/11/allvarliga-sarbarheter-i-nginx.html", "reason": "same CVEs as nginx2root-nginx-critical-rce-flaws-2026-11; a stray file nginx-rce-advisory-cert-se-2026-11 was marked duplicate_of it (could not be removed in this run)"}
+  ],
+  "open_leads": [
+    {"title": "大手損保の4〜9月期、純利益15%減 サイバー攻撃で保険金支払い増加も", "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE80aC1hTnVUOGxhal9WREJPZEI3NHpHSDNTc3ItYVFTd3p6N2xBSXdSazlLVDJLUE5BTlpscXdqbUxxRHV1NHdQMUEyVTZOejlfLU5mUVZhcFZXLVdtcUhXVU9zZHM1c016OVd1MQ?oc=5", "note": "Nikkei page did not load via Google News redirect; an earnings report, likely not an event", "priority": "low"},
+    {"title": "Palantir case: DOJ original", "url": "https://therecord.media/russian-charged-with-spying-on-palantir-for-moscow", "note": "DOJ release not read; event is single_source", "priority": "low"}
+  ],
+  "failed_sites": ["my.f5.com K000164058 (client-rendered)", "news.google.com Nikkei redirect"],
+  "notes": "Stray duplicate file nginx-rce-advisory-cert-se-2026-11.json carries duplicate_of; delete not permitted in this run."
+}

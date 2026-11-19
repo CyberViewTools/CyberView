@@ -1,35 +1,190 @@
 {
  "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs.",
  "toolsets": {
-  "research": ["Bash(node:*)", "Bash(date:*)", "Bash(gh api:*)", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch", "WebSearch"],
-  "local": ["Bash(node:*)", "Bash(date:*)", "Bash(gh api:*)", "Read", "Write", "Edit", "Glob", "Grep"],
-  "sort": ["Bash(node:*)", "Read", "Write"]
+  "research": [
+   "Bash(node:*)",
+   "Bash(date:*)",
+   "Bash(gh api:*)",
+   "Read",
+   "Write",
+   "Edit",
+   "Glob",
+   "Grep",
+   "WebFetch",
+   "WebSearch"
+  ],
+  "local": [
+   "Bash(node:*)",
+   "Bash(date:*)",
+   "Bash(gh api:*)",
+   "Read",
+   "Write",
+   "Edit",
+   "Glob",
+   "Grep"
+  ],
+  "sort": [
+   "Bash(node:*)",
+   "Read",
+   "Write"
+  ]
  },
- "deny": ["Bash(git:*)", "Bash(rm:*)", "Bash(curl:*)", "Bash(wget:*)"],
- "min_tier": { "exploit-analyst": "sonnet", "analysis": "sonnet", "security-review": "sonnet", "reviewer": "sonnet" },
+ "deny": [
+  "Bash(git:*)",
+  "Bash(rm:*)",
+  "Bash(curl:*)",
+  "Bash(wget:*)"
+ ],
+ "min_tier": {
+  "exploit-analyst": "sonnet",
+  "analysis": "sonnet",
+  "security-review": "sonnet",
+  "reviewer": "sonnet"
+ },
  "roles": {
-  "researcher":          { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 20 },
-  "gap":                 { "model": "sonnet", "max_turns": 45, "tools": "research", "timeout_min": 20 },
-  "regional-researcher": { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "reviewer":            { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 20 },
-  "backlog-triager":     { "model": "haiku",  "max_turns": 15, "tools": "sort",     "timeout_min": 8 },
-  "exploit-analyst":     { "model": "opus",   "max_turns": 50, "tools": "research", "timeout_min": 25 },
-  "fixer":               { "model": "sonnet", "max_turns": 30, "tools": "research", "timeout_min": 15 },
-  "moderator":           { "model": "haiku",  "max_turns": 25, "tools": "local",    "timeout_min": 10 },
-  "triage":              { "model": "haiku",  "max_turns": 30, "tools": "local",    "timeout_min": 10 },
-  "steward":             { "model": "haiku",  "max_turns": 40, "tools": "local",    "timeout_min": 15 },
-  "watchdog":            { "model": "haiku",  "max_turns": 40, "tools": "research", "timeout_min": 15 },
-  "verify":              { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "report-review":       { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "followup":            { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "regional":            { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "advisory":            { "model": "sonnet", "max_turns": 60, "tools": "research", "timeout_min": 25 },
-  "scout":               { "model": "sonnet", "max_turns": 50, "tools": "research", "timeout_min": 25 },
-  "brief":               { "model": "sonnet", "max_turns": 30, "tools": "local",    "timeout_min": 15 },
-  "improver":            { "model": "sonnet", "max_turns": 30, "tools": "local",    "timeout_min": 15 },
-  "analysis":            { "model": "opus",   "max_turns": 40, "tools": "local",    "timeout_min": 25 },
-  "tabletop":            { "model": "opus",   "max_turns": 40, "tools": "local",    "timeout_min": 25 },
-  "editor":              { "model": "opus",   "max_turns": 40, "tools": "local",    "timeout_min": 25 },
-  "security-review":     { "model": "opus",   "max_turns": 50, "tools": "local",    "timeout_min": 25 }
+  "researcher": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 20
+  },
+  "gap": {
+   "model": "sonnet",
+   "max_turns": 45,
+   "tools": "research",
+   "timeout_min": 20
+  },
+  "regional-researcher": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "reviewer": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 20
+  },
+  "backlog-triager": {
+   "model": "haiku",
+   "max_turns": 15,
+   "tools": "sort",
+   "timeout_min": 8
+  },
+  "exploit-analyst": {
+   "model": "opus",
+   "max_turns": 50,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "fixer": {
+   "model": "sonnet",
+   "max_turns": 30,
+   "tools": "research",
+   "timeout_min": 15
+  },
+  "moderator": {
+   "model": "haiku",
+   "max_turns": 25,
+   "tools": "local",
+   "timeout_min": 10
+  },
+  "triage": {
+   "model": "haiku",
+   "max_turns": 30,
+   "tools": "local",
+   "timeout_min": 10
+  },
+  "steward": {
+   "model": "haiku",
+   "max_turns": 40,
+   "tools": "local",
+   "timeout_min": 15
+  },
+  "watchdog": {
+   "model": "haiku",
+   "max_turns": 40,
+   "tools": "research",
+   "timeout_min": 15
+  },
+  "verify": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "report-review": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "followup": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "regional": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "advisory": {
+   "model": "sonnet",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "scout": {
+   "model": "sonnet",
+   "max_turns": 50,
+   "tools": "research",
+   "timeout_min": 25
+  },
+  "brief": {
+   "model": "sonnet",
+   "max_turns": 30,
+   "tools": "local",
+   "timeout_min": 15
+  },
+  "improver": {
+   "model": "sonnet",
+   "max_turns": 30,
+   "tools": "local",
+   "timeout_min": 15
+  },
+  "analysis": {
+   "model": "opus",
+   "max_turns": 40,
+   "tools": "local",
+   "timeout_min": 25
+  },
+  "tabletop": {
+   "model": "opus",
+   "max_turns": 40,
+   "tools": "local",
+   "timeout_min": 25
+  },
+  "editor": {
+   "model": "opus",
+   "max_turns": 40,
+   "tools": "local",
+   "timeout_min": 25
+  },
+  "security-review": {
+   "model": "opus",
+   "max_turns": 50,
+   "tools": "local",
+   "timeout_min": 25
+  },
+  "updater": {
+   "model": "sonnet",
+   "max_turns": 45,
+   "tools": "research",
+   "timeout_min": 15
+  }
  }
 }

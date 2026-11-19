@@ -14,7 +14,7 @@ const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "improver": "Improver", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -56,6 +56,10 @@ if (job === "researcher") {
   const plan = readJson(join(DATA, "backlog-plan.json"), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
   assignment = `YOUR ASSIGNMENT (backlog triager ${batch}): ${mine.length} stories. Answers file: ${join(DATA, "backlog-triage-" + batch + ".json")}\n`
     + mine.map((s) => `  ${s.id}  ${String(s.title).slice(0, 150)}  [${s.publishers} publisher${s.publishers === 1 ? "" : "s"}: ${(s.sources || []).join(", ").slice(0, 70)}${(s.kinds || []).includes("exploited") ? "; exploited" : ""}${(s.langs || []).some((l) => l && l !== "en") ? "; " + s.langs.join("/") : ""}; published ${String(s.published).slice(5, 16)}${s.dated ? "" : " (date not given)"}]`).join("\n");
+} else if (job === "updater") {
+  const pf = /^update-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_UPDATE_PLAN || "") ? process.env.CYBERVIEW_UPDATE_PLAN : "update-plan.json";
+  const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
+  assignment = `YOUR ASSIGNMENT (updater ${batch}): ${mine.length} event(s) with new reporting:\n` + mine.map((c) => `  ${c.id}  [severity ${c.severity}${c.status ? ", " + c.status : ""}] ${c.title}\n` + (c.leads || []).map((l) => `     - ${l.source}${l.tier ? " (" + l.tier + ")" : ""}, ${String(l.published).slice(0, 16)}: ${l.title}\n       ${l.url}`).join("\n")).join("\n") + (mine.length ? "" : "\n  (none: end with \"updater " + batch + ": nothing assigned\")");
 } else if (job === "reviewer") {
   const pf = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_REVIEW_PLAN || "") ? process.env.CYBERVIEW_REVIEW_PLAN : "review-plan.json";
   const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
@@ -92,7 +96,7 @@ if (job === "researcher") {
 const worker = process.argv.includes("--worker") || !!batch || process.env.CYBERVIEW_WORKER === "1";
 const PROFILE = {
   "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
-  "reviewer": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
+  "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
   "regional-researcher": ["core", "search", "events", "web", "log"],
   "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"], "improver": ["core", "log"],
   "watchdog": ["core", "web", "log"], "advisory": ["core", "web", "log"], "scout": ["core", "search", "web", "log"], "triage": ["core", "log"],

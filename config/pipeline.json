@@ -1,5 +1,5 @@
 {
- "_note": "How much research each run does. Research runs every 15 minutes and starts as many researchers as the queue needs, up to sweep.researchers (the cap on usage); an empty queue starts none. gap_workers searchers run on every other run. The backlog desk only acts when more than backlog.leave_for_sweep stories are waiting. The editor job may move these by at most a quarter a week; the owner can set them to anything. headless true (owner, 2026-11-19): every AI job runs as one scripts/run-job.mjs call in swarm phases (plan, claim leases, work, check, retry, commit, report); a job whose workers cannot read the web here falls back to subagents. sweep.review_workers: every research run also starts up to this many reviewers on the oldest unreviewed events (continuous second review); the hourly review desk catches the rest. flow: research is one continuous loop (run-job.mjs flow): collect, research new stories and review earlier events in parallel, commit, repeat every min_cycle_minutes or as soon as a cycle ends; it lives `minutes` and the research schedules restart it.",
+ "_note": "How much research each run does. Research runs every 15 minutes and starts as many researchers as the queue needs, up to sweep.researchers (the cap on usage); an empty queue starts none. gap_workers searchers run on every other run. The backlog desk only acts when more than backlog.leave_for_sweep stories are waiting. The editor job may move these by at most a quarter a week; the owner can set them to anything. headless true (owner, 2026-11-19): every AI job runs as one scripts/run-job.mjs call in swarm phases (plan, claim leases, work, check, retry, commit, report); a job whose workers cannot read the web here falls back to subagents. sweep.review_workers: every research run also starts up to this many reviewers on the oldest unreviewed events (continuous second review); the hourly review desk catches the rest. flow: research is one continuous loop (run-job.mjs flow): collect, research new stories and review earlier events in parallel, commit, repeat every min_cycle_minutes or as soon as a cycle ends; it lives `minutes` and the research schedules restart it. flow.update_workers: each cycle also starts up to this many updaters on published events with new reporting (scripts/updates.mjs); flow.followup_every_minutes: how often the loop also runs the follow-up desk on developing and claimed events.",
  "sweep": {
   "researchers": 6,
   "stories_per_researcher": 8,
@@ -54,6 +54,9 @@
  "flow": {
   "enabled": true,
   "minutes": 100,
-  "min_cycle_minutes": 4
+  "min_cycle_minutes": 4,
+  "update_workers": 2,
+  "updates_per_worker": 3,
+  "followup_every_minutes": 120
  }
 }

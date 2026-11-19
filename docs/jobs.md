@@ -570,6 +570,26 @@ DONE WHEN: every assigned event has a verdict written by review.mjs.
 End with one line: "reviewer <batch>: <n> passed, <n> corrected, <n> flagged".
 ```
 
+## Updater (worker in the research loop; one per batch of events with new reporting)
+
+```
+JOB: updater. You are one of several workers started by a script. A script found pages published after these events were last written that the events do not cite: new reporting on a story already on the map. They are listed under YOUR ASSIGNMENT at the end of this prompt, each event id with its new pages.
+GOAL: every published event says what is now known. Each new page ends as an update to its event, "unchanged" or "unrelated", and nothing is left unread.
+STEPS, for each event id:
+1. `node scripts/q.mjs get <id>` (the whole record).
+2. Open each new page listed for it (for a news.google.com or bing.com link, open it and cite the publisher's own page it leads to; never cite the redirect). Read it.
+3. Decide, for the event as a whole:
+   a. The page is about a different incident or organisation: it is unrelated. If it reports a new event, leave it: the research loop takes it.
+   b. The page repeats what the event already says: unchanged.
+   c. The page adds something that matters to a defender: a confirmation or a denial by the organisation or an authority, a number of people or records, a cause or entry point, an attribution by a government or the investigating firm, a CVE, a patch or mitigation, restored service, an arrest, charge, fine or lawsuit, a ransom demand reported by the organisation. Update the event in place: the changed fields, the summary (within 75 words), the new page added to sources, updated_at from `date -u +%Y-%m-%dT%H:%M:%SZ`. When a published fact changes, add data/corrections/<date>-<short id>.json. Status moves from claimed to confirmed only on the organisation's or an authority's own statement. A follow-up that is its own event (an arrest, a fine, a lawsuit) is added as a new event that names the original, after `node scripts/q.mjs dupes "<title>"`.
+4. Record the outcome for every page you looked at, one command per event: `node scripts/updates.mjs done <id> <updated|unchanged|unrelated> <url> [url...]` (list the URLs exactly as assigned).
+5. `node scripts/build.mjs` must pass. Write your run log: data/runs/<YYYY-MM-DD>/<HHMM>-update-u<batch>.json with updated [{id, what}], unchanged, unrelated and pages_read.
+RULES: do NOT run any git command and do not edit data/status.json. Facts only from pages you opened. Never upgrade a claim on more attacker posts; never attribute from speculation; never raise severity on commentary. Never write the review field: the second review checks your update.
+LIMITS: only your assigned events and pages.
+DONE WHEN: every assigned page has an outcome recorded by updates.mjs.
+End with one line: "updater <batch>: <n> updated, <n> unchanged, <n> unrelated".
+```
+
 ## Regional researcher (worker for the deep sweep; one per region group)
 
 ```

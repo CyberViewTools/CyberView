@@ -11,7 +11,8 @@ import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, nowIso } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
+import { claim, release, RUN_ID } from "./lib/lease.mjs";
 
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
@@ -78,60 +79,103 @@ function finish(job) {
   return { fixer: false, out: f.out };
 }
 
+// ---------- swarm phases: plan (frozen, with a plan_id) -> claim (leases) -> work -> check -> retry -> commit -> report ----------
+const RUN = (process.env.CYBERVIEW_RUN = RUN_ID());
+const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer"]);
+/** Can a headless worker in this container open web pages? One tiny Haiku fetch, remembered for 6 hours. */
+function webOk() {
+  const f = "/tmp/cyberview-webprobe.json", c = readJson(f, null);
+  if (c && Date.now() - Date.parse(c.at) < 6 * 36e5) return c.ok;
+  const r = spawnSync("claude", ["-p", "Use the WebFetch tool to open https://www.cisa.gov/news-events/cybersecurity-advisories and reply with only the word OK if the page loaded, or FAIL if it did not.", "--model", "haiku", "--max-turns", "3", "--output-format", "json", "--allowedTools", "WebFetch"], { cwd: ROOT, encoding: "utf8", timeout: 120000 });
+  let ok = false; try { const j = JSON.parse(r.stdout); ok = !j.is_error && /\bOK\b/.test(String(j.result)); } catch {}
+  writeJson(f, { at: nowIso(), ok }); return ok;
+}
+const kindOf = { sweep: "story", backlog: "story", review: "event", analyst: "cve" };
+function planIds(job) {
+  if (job === "sweep" || job === "backlog") return (plan("sweep-plan.json").stories || []).map((s) => s.id);
+  if (job === "review") return ((plan("review-plan.json").batches) || []).flat();
+  if (job === "analyst") return ((plan("analyst-plan.json").batches) || []).flat().map((x) => x.cve);
+  return [];
+}
+/** Claim what was planned and publish the claim at once, so runs in other containers skip it. */
+function claimPlanned(job) {
+  const ids = planIds(job), kind = kindOf[job]; if (!kind || !ids.length) return 0;
+  claim(kind, ids, RUN, 45);
+  const a = spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }), c = spawnSync("git", ["commit", "-q", "-m", "data: leases"], { cwd: ROOT });
+  const g = spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
+  return a.status === 0 && c.status === 0 && g.status === 0 ? ids.length : -ids.length;
+}
+
 async function main() {
   const job = process.argv[2], reg = readJson(join(ROOT, "routines.json"), { routines: [] });
   if (!reg.routines.find((x) => x.key === job && x.tier === "ai")) { console.error(`unknown AI job "${job}"`); process.exit(1); }
-  const t0 = Date.now(), work = [];
-  log(`RUN ${job} ${nowIso()}`);
+  const t0 = Date.now(), rec = { run: RUN, job, started_at: nowIso(), phases: [] };
+  const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[${name}] ${note || ""}`); };
+  log(`RUN ${job} ${RUN}`);
+  // a research job needs workers that can read the web; if they cannot here, the job goes back to the subagent route
+  const needsWeb = { sweep: 1, backlog: 1, review: 1, analyst: 1, "deep-sweep": 1 }[job] || WEB_ROLES.has(job);
+  if (needsWeb && !webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
+
+  // 1. plan (scripts only; the planners leave out anything another run has leased)
+  const work = [];
   if (job === "sweep") {
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
-    log(sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "no plan");
+    phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "no plan");
     const batches = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);
     const sc = PIPE.sweep || {}, gap = sc.gap_pass === false || !(sc.gap_every_run === true || new Date().getUTCMinutes() % 30 < 15) ? 0 : Math.max(1, Math.min(3, Number(sc.gap_workers) || 1));
     const posts = sh("node", ["scripts/chat.mjs", "intake"]).out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
     batches.forEach((b) => work.push(["researcher", b])); for (let i = 1; i <= gap; i++) work.push(["gap", i]); if (posts) work.push(["moderator", null]);
-    await pool(job, work);
-    const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); log(chk.out[0] || "");
-    if (!chk.ok && batches.length) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); }
   } else if (job === "review") {
-    log(sh("node", ["scripts/review.mjs", "plan"]).out[0] || "");
-    const n = ((plan("review-plan.json").batches) || []).filter((b) => b.length).length;
-    for (let i = 1; i <= n; i++) work.push(["reviewer", i]);
-    await pool(job, work);
+    phase("plan", sh("node", ["scripts/review.mjs", "plan"]).out[0] || "");
+    const n = ((plan("review-plan.json").batches) || []).filter((b) => b.length).length; for (let i = 1; i <= n; i++) work.push(["reviewer", i]);
+  } else if (job === "analyst") {
+    const ac = PIPE.analyst || {};
+    phase("plan", sh("node", ["scripts/analyst.mjs", "plan", "--workers", String(ac.workers || 2), "--per", String(ac.per_worker || 3)]).out[0] || "");
+    const n = ((plan("analyst-plan.json").batches) || []).length; for (let i = 1; i <= n; i++) work.push(["exploit-analyst", i]);
   } else if (job === "backlog") {
     const bc = PIPE.backlog || {}, T = Math.max(1, Math.min(8, Number(bc.triagers) || 3)), R = Math.max(1, Math.min(8, Number(bc.researchers) || 4));
     sh("node", ["scripts/triage.mjs"]); sh("node", ["scripts/backlog.mjs", "auto"]);
     const st = JSON.parse(sh("node", ["scripts/backlog.mjs", "status", "--json"]).out.join("") || "{}");
-    if (!(st.waiting > Number(bc.leave_for_sweep ?? 48))) log(`only ${st.waiting ?? 0} waiting: the research runs cover it`);
+    if (!(st.waiting > Number(bc.leave_for_sweep ?? 48))) phase("plan", `only ${st.waiting ?? 0} waiting: the research runs cover it`);
     else {
-      log(sh("node", ["scripts/backlog.mjs", "plan", "--per", "40", "--max", String(T)]).out[0] || "");
+      phase("plan", sh("node", ["scripts/backlog.mjs", "plan", "--per", "40", "--max", String(T)]).out[0] || "");
       const nb = ((plan("backlog-plan.json").batches) || []).length;
-      await pool(job, Array.from({ length: nb }, (_, i) => ["backlog-triager", i + 1]));
-      const ap = sh("node", ["scripts/backlog.mjs", "apply", "--per", "8", "--max", String(R)]); log(ap.out[0] || "");
-      const rb = ((ap.out.find((l) => /^RESEARCHER BATCHES:/.test(l)) || "").match(/\d+/g) || []).map(Number);
-      await pool(job, rb.map((b) => ["researcher", b]));
-      log(sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || "");
+      phase("work", `${nb} triager(s)`); await pool(job, Array.from({ length: nb }, (_, i) => ["backlog-triager", i + 1]));
+      const ap = sh("node", ["scripts/backlog.mjs", "apply", "--per", "8", "--max", String(R)]); phase("plan", ap.out[0] || "");
+      ((ap.out.find((l) => /^RESEARCHER BATCHES:/.test(l)) || "").match(/\d+/g) || []).map(Number).forEach((b) => work.push(["researcher", b]));
     }
-  } else if (job === "analyst") {
-    const ac = PIPE.analyst || {};
-    log(sh("node", ["scripts/analyst.mjs", "plan", "--workers", String(ac.workers || 2), "--per", String(ac.per_worker || 3)]).out[0] || "");
-    const n = ((plan("analyst-plan.json").batches) || []).length;
-    await pool(job, Array.from({ length: n }, (_, i) => ["exploit-analyst", i + 1]));
   } else if (job === "deep-sweep") {
     sh("node", ["scripts/collect.mjs"]); sh("node", ["scripts/osint.mjs"]); sh("node", ["scripts/triage.mjs"]);
-    await pool(job, ["a", "b", "c"].map((g) => ["regional-researcher", g]));
+    ["a", "b", "c"].forEach((g) => work.push(["regional-researcher", g])); phase("plan", "three regional researchers");
   } else if (job === "moderator") {
     const waiting = sh("node", ["scripts/chat.mjs", "intake"]).out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
-    if (waiting) await pool(job, [["moderator", null]]); else log("nothing waiting");
+    if (waiting) work.push(["moderator", null]); phase("plan", `${waiting} post(s) waiting`);
   } else {
     if (job === "triage") { sh("node", ["scripts/triage.mjs"]); sh("node", ["scripts/fuse.mjs"]); }
-    await pool(job, [[job, null]]);
+    work.push([job, null]); phase("plan", "one worker");
   }
+  // 2. claim
+  const claimed = claimPlanned(job); if (claimed) phase("claim", `${Math.abs(claimed)} item(s) leased to ${RUN}${claimed < 0 ? " (lease not published: push failed)" : ""}`);
+  // 3. work
+  const res = work.length ? await pool(job, work) : [];
+  if (work.length) phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished; $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
+  // 4. check and retry (only what is missing, once)
+  if (job === "sweep" || job === "backlog") {
+    const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
+    if (!chk.ok && work.some((w) => w[0] === "researcher")) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [["researcher", "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
+  }
+  // 5. commit (the leases are released in the same commit)
+  release(RUN);
   let f = finish(job);
-  if (f.fixer) { log("build failed: starting a fixer"); await pool(job, [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", job, "--force"], 600000).out }; }
+  if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool(job, [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", job, "--force"], 600000).out }; }
   const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
+  phase("commit", last);
+  // 6. report: one record per run, read by the improver (it rides with the next commit)
+  rec.finished_at = nowIso(); rec.minutes = Math.round((Date.now() - t0) / 6e4); rec.workers = work.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
+  const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
+  appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
   const b = job === "sweep" || job === "backlog" ? sh("node", ["scripts/backlog.mjs", "status"]).out[0] || "" : "";
-  log(`CyberView ${job}: ${last.replace(/^CyberView [a-z-]+: /, "")}${b ? " | " + b.replace(/^BACKLOG: /, "queue: ").slice(0, 120) : ""} | ${Math.round((Date.now() - t0) / 60000)} min`);
+  log(`CyberView ${job}: ${last.replace(/^CyberView [a-z-]+: /, "")}${b ? " | " + b.replace(/^BACKLOG: /, "queue: ").slice(0, 120) : ""} | ${work.length} worker(s), $${rec.cost} | ${rec.minutes} min`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

@@ -10,6 +10,7 @@
 //   node scripts/review.mjs flagged <id> "<the problem>"             reviewed; a problem remains that the reviewer could not settle
 // pass/corrected/flagged write the event's "review" {state, at, note, flags} and qa_checked_at; "flagged" also lowers
 // validation to "disputed" so the site shows low confidence until the verify job settles it.
+import { leased } from "./lib/lease.mjs";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, saveEvent, findEvent, nowIso, dayAgo } from "./lib/store.mjs";
@@ -76,7 +77,7 @@ function main() {
   const [cmd, id, ...rest] = process.argv.slice(2);
   if (cmd === "plan") {   // split the head of the queue between reviewers (data/review-plan.json, working file); the dispatcher uses it
     const c = (readJson(join(ROOT, "config", "pipeline.json"), {}).review) || {}, n = Math.max(1, Math.min(4, Number(c.reviewers) || 2)), per = Math.max(3, Math.min(15, Number(c.events_per_reviewer) || 10));
-    const q = queue().slice(0, n * per), k = Math.max(1, Math.min(n, Math.ceil(q.length / 4))), batches = Array.from({ length: k }, () => []);
+    const all = queue(), held = leased("event", all.map((x) => x.e.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((x) => !held.has(x.e.id)).slice(0, n * per), k = Math.max(1, Math.min(n, Math.ceil(q.length / 4))), batches = Array.from({ length: k }, () => []);
     q.forEach((x, i) => batches[i % k].push(x.e.id));
     writeJson(join(DATA, "review-plan.json"), { planned_at: nowIso(), batches });
     console.log(`REVIEW PLAN: ${q.length} event(s) for ${q.length ? batches.length : 0} reviewer(s); ${queue().length} waiting in all.`);

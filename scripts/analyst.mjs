@@ -5,6 +5,7 @@
 //   plan [--workers 2 --per 3]  writes data/analyst-plan.json (working file) for job-prompt.mjs exploit-analyst --batch N
 //   status                      one line for the status page and the dispatcher
 // An analysis is current for 30 days, or until the flaw is added to CISA's catalog after it was written.
+import { leased } from "./lib/lease.mjs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, listDir, listEventFiles, nowIso, dayAgo } from "./lib/store.mjs";
@@ -38,7 +39,7 @@ function main() {
   if (cmd === "status") { console.log(`ANALYST: ${Object.keys(d.done).length} flaws analysed; ${q.length} waiting (${q.filter((x) => x.kev).length} known exploited).`); return; }
   if (cmd === "queue") { if (process.argv.includes("--json")) console.log(JSON.stringify(q)); else q.slice(0, 40).forEach((x) => console.log(`${x.cve}  ${x.vendor} ${x.product}  (${x.why})`)); return; }
   if (cmd === "plan") {
-    const W = Math.max(1, Math.min(6, opt("workers", 2))), per = Math.max(1, Math.min(6, opt("per", 3))), take = q.slice(0, W * per), batches = [];
+    const W = Math.max(1, Math.min(6, opt("workers", 2))), per = Math.max(1, Math.min(6, opt("per", 3))), held = leased("cve", q.map((x) => x.cve), process.env.CYBERVIEW_RUN || ""), take = q.filter((x) => !held.has(x.cve)).slice(0, W * per), batches = [];
     for (let i = 0; i < take.length; i += per) batches.push(take.slice(i, i + per));
     writeJson(join(DATA, "analyst-plan.json"), { planned_at: nowIso(), batches });
     console.log(`ANALYST PLAN: ${take.length} flaw(s) for ${batches.length} analyst(s); ${q.length - take.length} more wait for the next run.`);

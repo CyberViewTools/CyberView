@@ -6,6 +6,7 @@
 //           always including the 4 strongest from thinly covered regions or non-English sources
 //   check   after the researchers finish: how many of the planned stories became events or were closed with a reason,
 //           which were left untouched, and what was added; exit 1 if fewer than 80% were handled
+import { leased } from "./lib/lease.mjs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
@@ -49,7 +50,7 @@ function main() {
   const d = build();
   if (cmd === "plan") {
     // the queue is what still needs a decision after the rules (scripts/backlog.mjs); researchers scale with it, up to the cap
-    const queue = backlog(d.stories), chosen = pick(queue), batches = chosen.length ? split(chosen, Math.max(1, Math.min(BATCHES, Math.ceil(chosen.length / PER)))) : [];
+    const all = backlog(d.stories), held = leased("story", all.map((s) => s.id), process.env.CYBERVIEW_RUN || ""), queue = all.filter((s) => !held.has(s.id)), chosen = pick(queue), batches = chosen.length ? split(chosen, Math.max(1, Math.min(BATCHES, Math.ceil(chosen.length / PER)))) : [];
     const plan = { planned_at: nowIso(), stories: batches.flatMap((b, i) => b.map((s) => ({ id: s.id, title: s.title, score: s.score, batch: i + 1, urls: s.urls }))) };
     writeJson(pp, plan);
     console.log(`SWEEP PLAN: ${chosen.length} stories for ${batches.length} researcher(s); ${queue.length} waiting for a decision${queue.length > chosen.length ? ` (${queue.length - chosen.length} over this run's cap wait for the next run, 15 minutes)` : ""}.`);

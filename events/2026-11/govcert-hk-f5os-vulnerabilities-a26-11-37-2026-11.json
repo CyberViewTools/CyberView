@@ -18,8 +18,18 @@
   "lat": 47.61,
   "lng": -122.33,
   "pin_type": "hq",
-  "products": ["F5OS", "F5OS-A", "F5OS-C"],
-  "cves": ["CVE-2025-24014", "CVE-2025-29768", "CVE-2026-34982", "CVE-2026-44656", "CVE-2026-55892"],
+  "products": [
+    "F5OS",
+    "F5OS-A",
+    "F5OS-C"
+  ],
+  "cves": [
+    "CVE-2025-24014",
+    "CVE-2025-29768",
+    "CVE-2026-34982",
+    "CVE-2026-44656",
+    "CVE-2026-55892"
+  ],
   "severity": 2,
   "status": "official",
   "source_tier": "primary",
@@ -28,22 +38,41 @@
   "exec": "F5 equipment often sits at the network edge; affected F5OS versions need updating.",
   "action": "Apply the F5 software updates for the affected F5OS, F5OS-A and F5OS-C versions and follow the vendor's mitigations (advisories K000164272, K000164274, K000164277, K000164280, K000164281).",
   "sources": [
-    {"name": "GovCERT.HK", "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2192"}
+    {
+      "name": "GovCERT.HK",
+      "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2192"
+    }
   ],
   "report": {
     "doc_id": "A26-11-37",
     "iocs_available": false,
-    "key_findings": ["Affected: F5OS 2.0.0; F5OS-A 1.5.1-1.5.4 and 1.8.0-1.8.4; F5OS-C 1.8.0-1.8.3", "Impacts: remote code execution, security restriction bypass or tampering"],
+    "key_findings": [
+      "Affected: F5OS 2.0.0; F5OS-A 1.5.1-1.5.4 and 1.8.0-1.8.4; F5OS-C 1.8.0-1.8.3",
+      "Impacts: remote code execution, security restriction bypass or tampering"
+    ],
     "published": "2026-11-18",
     "publisher": "GovCERT.HK",
     "publisher_type": "government",
     "read_depth": "full",
-    "recommendations": ["Apply the available software updates", "Follow vendor mitigations"],
+    "recommendations": [
+      "Apply the available software updates",
+      "Follow vendor mitigations"
+    ],
     "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2192"
   },
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-20T19:56:00Z",
     "note": "GovCERT.HK alert read; F5's own advisories (K000164272 etc.) were not read."
-  }
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-20T20:05:19Z",
+    "first_at": "2026-11-20T20:05:19Z",
+    "note": "title, date 18 Nov, versions, impacts, five CVEs, F5 advisory ids match GovCERT.HK A26-11-37",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-20T20:05:19Z"
 }

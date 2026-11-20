@@ -531,7 +531,10 @@
   }
   function cvCard(r, open, rank) {
     var li = el("li", "wbrow cvrow" + (r.rejected ? " clear" : "")), b = el("button", "wbhead cvhead"); b.type = "button"; b.setAttribute("aria-expanded", open ? "true" : "false");
-    var sc = el("span", "wbscore cvscore", r.cvss !== null ? r.cvss.toFixed(1) : "-"); sc.title = "CVSS base score"; b.appendChild(sc);
+    // the square is the plain CVSS base score (the same one the rating starts from), captioned so it is never read as the rating
+    var base = r.cvss !== null ? r.cvss : (r.ncvss != null ? r.ncvss : null), fromNvd = r.cvss === null && base !== null;
+    var sc = el("span", "wbscore cvscore"); sc.appendChild(el("span", "cvnum", base !== null ? base.toFixed(1) : "-")); sc.appendChild(el("span", "cvcap", fromNvd ? "CVSS (NVD)" : "CVSS"));
+    sc.title = base !== null ? "CVSS base score from " + (fromNvd ? "NVD" : "the assigner or CISA") + ", before the CyberView adjustment" : "No CVSS base score"; b.appendChild(sc);
     var mid = el("span", "wbmid"), top = el("span", "wbtop"); top.appendChild(el("b", null, r.id)); var who = [r.vendor, r.product].filter(Boolean).join(" "); if (who) top.appendChild(document.createTextNode(" " + who));
     mid.appendChild(top); mid.appendChild(el("span", "wbname", (r.title || r.desc || "No description.").slice(0, 200)));
     var chips = el("span", "wbchips"); if (!r.rejected) { chips.appendChild(decBadge(D.rated(r))); var scx = D.scored(r); if (scx) { var sbg = el("span", "badge " + scx.tone, scx.score !== null ? "CyberView " + scx.score.toFixed(1) + " " + scx.band : "CyberView: not scored"); sbg.title = scx.text; chips.appendChild(sbg); } } chips.appendChild(sevBadge(r));

@@ -1656,8 +1656,10 @@ async def main():
             await pg.fill("#cvCwe", ""); await pg.select_option("#cvEpss", "0.5"); await pg.wait_for_timeout(200)
             ok("filter: EPSS at least 50%", await pg.locator("#cvList .cvrow").count() == 1)
             await pg.select_option("#cvEpss", "0"); await pg.select_option("#cvSort", "cvss"); await pg.wait_for_timeout(200)
-            first = await pg.locator("#cvList .cvscore").first.text_content()
+            first = await pg.locator("#cvList .cvscore .cvnum").first.text_content()
             ok("sort: highest CVSS first", first == "9.8", first)
+            cap = await pg.locator("#cvList .cvscore .cvcap").first.text_content()
+            ok("rows: the square is captioned as the CVSS base score, never read as the rating", cap.startswith("CVSS"), cap)
             await pg.locator("#cvList .cvhead").first.click(); await pg.wait_for_timeout(150)
             ok("rows: open for the full record", await pg.locator("#cvList .wbdetail").count() == 1 and "Published:" in await pg.locator("#cvList .wbdetail").text_content())
             # known exploited join

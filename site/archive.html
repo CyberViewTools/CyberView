@@ -28,6 +28,12 @@
     <h1>Every event on file</h1>
     <p id="summary" aria-live="polite">Loading the archive</p>
   </section>
+  <section class="recent" id="recent" hidden aria-labelledby="recentHead">
+    <h2 id="recentHead">Recently filed</h2>
+    <p class="cap">Events that research added in the last 48 hours but that happened earlier. The map's "Just added" list shows only new events, so these are filed here, each with the day it happened and when CyberView filed it.</p>
+    <ol class="list" id="recentList"></ol>
+    <button type="button" class="btn ghost more" id="recentAll" hidden>Show all</button>
+  </section>
   <form class="filters" id="filters" role="search">
     <label class="grow"><span>Search</span><input id="q" type="search" placeholder="Organisation, actor, CVE, country, tag" autocomplete="off"></label>
     <label><span>Month</span><select id="month"><option value="">All months</option></select></label>

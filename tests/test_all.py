@@ -222,6 +222,24 @@ async def main():
             ok("archive: opening an event shows details", await pg.locator(".more-info p").count() > 0)
             ok("archive: no script errors", not errs, errs)
             await pg.context.close()
+            # v1.50: "Recently filed" lists events research added in the last 48 h that happened earlier; claims stay out
+            import datetime as _dt
+            now = _dt.datetime.now(_dt.timezone.utc)
+            iso = lambda h: (now - _dt.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            day = lambda d: (now - _dt.timedelta(days=d)).strftime("%Y-%m-%d")
+            fx = {"built_at": iso(0), "fields": ["id", "date", "category", "severity", "status", "title", "org", "country", "cves", "tags", "actor", "first_seen"],
+                  "rows": [["late-1", day(5), "incident", 2, "confirmed", "Late filed <img src=x id=pwnf> breach", "Org A", "US", [], [], "", iso(2)],
+                           ["new-1", day(0), "incident", 2, "confirmed", "Brand new event", "Org B", "US", [], [], "", iso(1)],
+                           ["late-claim", day(6), "incident", 1, "claimed", "Late claim", "Org C", "US", [], [], "", iso(3)],
+                           ["old-1", day(20), "vuln", 2, "official", "Filed long ago", "Org D", "US", [], [], "", iso(24 * 19)]]}
+            ctx2 = await browser.new_context(); pg2 = await ctx2.new_page()
+            await pg2.route("**/data/archive/search.json", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(fx)))
+            await pg2.goto(url.replace("index.html", "archive.html")); await pg2.wait_for_timeout(900)
+            rec = await pg2.locator("#recentList .row").all_text_contents()
+            ok("archive: Recently filed lists only late-filed events, not new ones, claims or old filings", len(rec) == 1 and "Late filed" in rec[0] and "Filed 2 h ago" in rec[0], rec)
+            ok("archive: Recently filed titles stay text", await pg2.locator("#pwnf").count() == 0)
+            ok("archive: Recently filed shows no Show-all button for one item", await pg2.locator("#recentAll").is_hidden())
+            await ctx2.close()
 
         await serve(make_site(bundle), archive)
 
@@ -328,6 +346,27 @@ async def main():
         import datetime
         now = datetime.datetime.now(datetime.timezone.utc)
         iso = lambda h: (now - datetime.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        # v1.50: "Just added" shows only NEW events (first seen in 12 h AND happened today or yesterday); late filings link to the archive
+        bja = copy.deepcopy(bundle)
+        _today = now.date()
+        _d = lambda n: (_today - datetime.timedelta(days=n)).isoformat()
+        base = copy.deepcopy(bundle["events"][0])
+        def _ev(i, title, days, hours, status="confirmed"):
+            e = copy.deepcopy(base); e.update({"id": f"ja-{i}", "title": title, "date": _d(days), "first_seen": iso(hours), "status": status, "severity": 2}); return e
+        for e in bja["events"]: e["first_seen"] = iso(30)                     # nothing else is fresh
+        bja["events"] += [_ev(1, "JA new today", 0, 1), _ev(2, "JA new yesterday", 1, 2), _ev(3, "JA happened last week", 6, 1), _ev(4, "JA happened three days ago", 3, 3)]
+        bja.setdefault("docs", {})["wire/latest"] = {"items": []}
+        async def justadded(url):
+            pg, errs = await open_page(browser, url, wait=1500)
+            ttl = await pg.locator(".justin ul button").all_text_contents()
+            filed = await pg.locator(".justin .filed").all_text_contents()
+            href = await pg.locator(".justin .filed a").get_attribute("href") if filed else ""
+            ok("just added: only new events (today and yesterday)", ttl == ["JA new today", "JA new yesterday"], ttl)
+            ok("just added: late filings counted and linked to the archive's Recently filed", filed and filed[0].startswith("2 earlier events were filed") and href == "archive.html#recent", (filed, href))
+            ok("just added: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(make_site(bja), justadded)
+
         b18 = copy.deepcopy(bundle)
         b18["context"] = {
             "ioda": {"source": "IODA", "source_url": "https://ioda.inetintel.cc.gatech.edu/", "fetched_at": iso(1), "ok": True, "error": "",

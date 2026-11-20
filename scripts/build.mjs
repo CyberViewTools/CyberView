@@ -256,10 +256,10 @@ for (const [m, list] of Object.entries(months).sort((a, b) => (a[0] < b[0] ? 1 :
   index.months.push({ month: m, count: list.length, by_category: by, high: list.filter((e) => e.severity === 3).length });
 }
 writeFileSync(join(ARCH, "index.json"), JSON.stringify(index));
-// compact search rows: [id, date, category, severity, status, title, org, country, cves, tags, actor]
+// compact search rows: [id, date, category, severity, status, title, org, country, cves, tags, actor, first_seen]
 const s = (v, n) => String(v || "").slice(0, n);
-writeFileSync(join(ARCH, "search.json"), JSON.stringify({ built_at, fields: ["id", "date", "category", "severity", "status", "title", "org", "country", "cves", "tags", "actor"],
-  rows: live.map((e) => [e.id, e.date, e.category, e.severity, s(e.status, 12), s(e.title, 160), s(e.org, 80), s(e.country, 60), (e.cves || []).slice(0, 12), (e.tags || []).slice(0, 5), s(e.actor, 60)]) }));
+writeFileSync(join(ARCH, "search.json"), JSON.stringify({ built_at, fields: ["id", "date", "category", "severity", "status", "title", "org", "country", "cves", "tags", "actor", "first_seen"],
+  rows: live.map((e) => [e.id, e.date, e.category, e.severity, s(e.status, 12), s(e.title, 160), s(e.org, 80), s(e.country, 60), (e.cves || []).slice(0, 12), (e.tags || []).slice(0, 5), s(e.actor, 60), s(e.first_seen, 20)]) }));
 writeFileSync(join(ARCH, "events.jsonl"), live.map((e) => JSON.stringify(e)).join("\n") + "\n");
 writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.added < b.added ? 1 : -1))));
 

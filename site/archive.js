@@ -20,7 +20,8 @@
       });
       var nClaims = rows.filter(function (r) { return r.status === "claimed"; }).length;
       $("summary").textContent = (rows.length - nClaims) + " checked events since " + (rows.length ? fmt(rows[rows.length - 1].date) : "the start") + (nClaims ? ", plus " + nClaims + " unverified claim" + (nClaims === 1 ? "" : "s") + " (hidden unless you include them)" : "") + ". The map shows today and the six days before; everything else lives here.";
-      readHash(); render();
+      readHash(); render(); recent();
+      $("recentAll").addEventListener("click", function () { recentAll = !recentAll; if (!recentAll && location.hash === "#recent") history.replaceState(null, "", location.pathname + location.search); recent(); });
       window.addEventListener("hashchange", function () { readHash(); render(); });
       // a link to one event (archive.html#q=<id>) opens it straight away
       var q = $("q").value.trim(), only = $("list").querySelectorAll(".row > button");
@@ -43,7 +44,31 @@
     box.textContent = "";
     $("count").textContent = list.length + " event" + (list.length === 1 ? "" : "s") + (list.length > shown ? ", showing " + shown : "");
     if (!list.length) { box.appendChild(el("li", "empty", "Nothing matches. Clear a filter or try another word.")); }
-    list.slice(0, shown).forEach(function (r) {
+    list.slice(0, shown).forEach(function (r) { box.appendChild(rowEl(r)); });
+    $("more").hidden = list.length <= shown;
+  }
+  /* "Recently filed": events research added in the last 48 hours that happened earlier (more than 36 hours before they
+     were filed). The map's "Just added" shows only new events; these are routed here instead, with both dates. */
+  var FILED_H = 48, LATE_H = 36, RECENT_FEW = 5, recentAll = false;
+  function filedLate(r) {
+    var f = Date.parse(r.first_seen || ""), d = Date.parse(String(r.date || "") + "T23:59:59Z");
+    return isFinite(f) && isFinite(d) && Date.now() - f < FILED_H * 3600e3 && f - d > LATE_H * 3600e3 && r.status !== "claimed";
+  }
+  function recent() {
+    var sec = $("recent"); if (!sec) return;
+    var list = rows.filter(filedLate).sort(function (a, b) { return Date.parse(b.first_seen) - Date.parse(a.first_seen); }).slice(0, 40);
+    sec.hidden = !list.length; if (!list.length) return;
+    $("recentHead").textContent = "Recently filed (" + list.length + ")";
+    var ol = $("recentList"); ol.textContent = "";
+    var all = recentAll || location.hash === "#recent", tb = $("recentAll");
+    tb.hidden = list.length <= RECENT_FEW; tb.textContent = all ? "Show fewer" : "Show all " + list.length;
+    list.slice(0, all ? list.length : RECENT_FEW).forEach(function (r) { var li = rowEl(r), meta = li.querySelector(".meta"), when = el("span", "pill filed", "Filed " + ago(r.first_seen) + ", happened " + fmt(r.date)); meta.insertBefore(when, meta.firstChild); ol.appendChild(li); });
+  }
+  function ago(iso) {
+    var m = Math.round((Date.now() - Date.parse(iso)) / 6e4); if (!isFinite(m)) return "";
+    return m < 60 ? m + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago";
+  }
+  function rowEl(r) {
       var li = el("li", "row"); li.style.setProperty("--cc", "var(--c-" + r.category + ")");
       var b = el("button"); b.type = "button"; b.setAttribute("aria-expanded", "false");
       b.appendChild(el("span", "date", fmt(r.date)));
@@ -57,9 +82,7 @@
       (r.cves || []).slice(0, 3).forEach(function (c) { meta.appendChild(el("span", "pill", c)); });
       b.appendChild(meta);
       b.addEventListener("click", function () { toggle(li, b, r); });
-      li.appendChild(b); box.appendChild(li);
-    });
-    $("more").hidden = list.length <= shown;
+      li.appendChild(b); return li;
     writeHash();
   }
 

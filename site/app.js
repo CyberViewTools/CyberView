@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.49",date:"2026-11-19"};
+var BUILD={version:"1.50",date:"2026-11-20"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -1012,10 +1012,14 @@ function cleanWire(d){
 }
 function justIn(list){
   if(state.q||state.day||state.spot||state.country||state.pattern||state.wlOnly||state.lens!=="all"||state.status!=="all"||state.sort!=="pri")return null;
-  var cut=Date.now()-12*3600e3;
-  var added=list.filter(function(e){return Date.parse(e.firstSeen)>cut;}).sort(function(a,b){return Date.parse(b.firstSeen)-Date.parse(a.firstSeen);}).slice(0,4);
+  /* "Just added" is for NEW events only: first recorded in the last 12 hours AND happened today or yesterday (UTC).
+     Events research filed late (they happened earlier) are routed to the archive's "Recently filed" list instead. */
+  var cut=Date.now()-12*3600e3,newDay=ymd(daysAgo(1));
+  var fresh=list.filter(function(e){return Date.parse(e.firstSeen)>cut;});
+  var added=fresh.filter(function(e){return e.date>=newDay;}).sort(function(a,b){return Date.parse(b.firstSeen)-Date.parse(a.firstSeen);}).slice(0,4);
+  var late=fresh.filter(function(e){return e.date<newDay&&e.status!=="claimed";}).length;
   var dev=devWire.filter(function(x){return Date.now()-Date.parse(x.at)<36*3600e3;});
-  if(!added.length&&!dev.length)return null;
+  if(!added.length&&!dev.length&&!late)return null;
   var li=el("li","justin");
   if(added.length){
     li.appendChild(el("h3",null,"Just added"));var ul=el("ul");
@@ -1023,6 +1027,8 @@ function justIn(list){
       r.appendChild(el("span","when",ago(e.firstSeen)));r.appendChild(b);ul.appendChild(r);});
     li.appendChild(ul);
   }
+  if(late){var fl=el("p","cap filed");fl.appendChild(document.createTextNode(late+" earlier event"+(late===1?" was":"s were")+" filed by research in the last 12 hours: "));
+    var fa=el("a",null,"see Recently filed in the archive");fa.href="archive.html#recent";fl.appendChild(fa);li.appendChild(fl);}
   if(dev.length){
     li.appendChild(el("h3",null,"Reported, being checked ("+dev.length+")"));
     li.appendChild(el("p","cap","Headlines from the publishers named, as collected. CyberView has not checked these yet; each becomes an event once its source has been read."));

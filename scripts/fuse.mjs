@@ -67,7 +67,9 @@ export function cluster(leads) {
 }
 
 const INCIDENT = /\b(breach(ed|es)?|ransomware|hack(ed|ers?|ing)?|cyber[- ]?attacks?|attack(ed|s)?|stolen|leak(ed|s)?|data theft|extortion|outages?|disrupt(ed|ion|s)|interruptions?|shut ?down|compromised?|intrusion|espionage|malware|phishing campaign|backdoor|botnet|wiper|ddos)\b|ciberataque|ciberseguridad: ataque|ataque (hacker|cibern)|cyberangriff|hackerangriff|datenleck|cyberattaque|piratage|attacco (hacker|informatico)|siber sald|hacklendi|サイバー攻撃|不正アクセス|情報漏えい|流出|해킹|사이버 공격|유출|网络攻击|黑客|هجوم سيبراني|اختراق|кибератак|взлом/i;
-const ROUTINE = /weekly report|multiple vulnerabilit|mehrere schwachstellen|schwachstelle ermöglicht|security (update|advisory|bulletin|release)s?\b|patch tuesday|複数|脆弱性|vulnerabilità|vulnérabilités? dans|\[(neu|update)\]/i;
+export const ROUTINE = /weekly report|multiple vulnerabilit|mehrere schwachstellen|schwachstelle ermöglicht|security (update|advisory|bulletin|release)s?\b|patch tuesday|複数|脆弱性|vulnerabilità|vulnérabilités? dans|\[(neu|update)\]|vulnerabilidad(es)? en\b|vulnerabilidades? (no|na|em)\b|zaifliklar|zaiflik|уязвимост|ranjivost|ranljivost|sérülékenység|podatnoś|zranitelnost|güvenlik açığ|kwetsbaarhe|sårbarhe[dt]|haavoittuvuu|kerentanan|lỗ hổng|ثغرات|ثغرة|취약점|漏洞/i;
+// a routine bulletin about a critical flaw still goes to an agent, in any of these languages
+export const CRITICAL = /exploit|zero-day|0-day|actively|critical|kritisch|critique|kritik|kriti[čc]n|kritikus|cr[ií]tic|критич|krytycz|kritisk|kriittinen|nghiêm trọng|حرج|긴급|심각|緊急|严重/i;
 const EVENTLIKE = /\b(expos(ed|es|ure)|unauthori[sz]ed access|deface(d|ment)?|taken (down|offline)|knocked offline|offline|down for|arrest(ed|s)?|sentenced|charged|indict(ed|ment)|extradit\w+|sanction(s|ed)?|fined|fine of|seiz(ed|ure|es)|takedown|dismantl\w+|zero-day|0-day|exploit(ed|s|ation|ing)?|emergency (patch|update|directive)|out-of-band|spyware|trojan|stealer|rootkit|campaign|threat (actor|group)|apt[- ]?\d+|state-backed|state-sponsored|confirms?|discloses?|notif(y|ies|ying)|investigat(es|ing|ion)|lawsuit|class action|settle(s|ment)|regulator|directive|orders?|bans?|mandate(s|d)?|recall(s|ed)?|warns? of|advisory warns|urges|sues?|sued|targets?|targeted|targeting|critical (bug|flaw|hole|vulnerabilit\w+)s?|flaws?|vulnerabilit(y|ies)|patch(es|ed)?|scam(s|mers)?|fraud|phishing|typosquat\w*|payloads?|poisoned|hijack\w*|steal(s|ing)?|backdoors?|shuts? ?down|rce|remote code execution|trojani[sz]ed|snooping|regulators?|reports? of)\b/i;
 const EXPLAINER = /\?\s*$|^(how|why|what|when|who|is|are|can|should|if|no,)\b|\b(op-?ed|opinion|explained|explainer|\d+ (steps|ways|tips|things)|nine steps|tips (to|for)|guide to|lessons? (from|learned)|podcast|webinar|what (we|you) (know|need)|believes|truth is|don[’']t let)\b/i;
 const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.com)\b/i;
@@ -117,7 +119,7 @@ export function story(group, evs = [], now = Date.now()) {
   add(!dated ? 0 : ageH < 6 ? 4 : ageH < 24 ? 2 : 0, ageH < 6 ? "published in the last 6 hours" : "published in the last day");
   add(ageH > 6 * 24 ? -10 : ageH > 3 * 24 ? -4 : 0, ageH > 6 * 24 ? "published more than six days ago" : "published more than three days ago");
   const titles = group.map((l) => l.title || "").join(" \n ");
-  const incident = INCIDENT.test(titles), routine = ROUTINE.test(best.title || "") && !kinds.has("exploited") && !/exploit|zero-day|0-day|actively|critical|kritisch|critique/i.test(titles);
+  const incident = INCIDENT.test(titles), routine = ROUTINE.test(best.title || "") && !kinds.has("exploited") && !CRITICAL.test(titles);
   const explainer = EXPLAINER.test(best.title || "");
   add(incident && !explainer ? 4 : 0, "reads like an incident");
   add(explainer ? -6 : 0, "reads like commentary or advice, not an event");

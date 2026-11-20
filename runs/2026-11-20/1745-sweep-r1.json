@@ -1,0 +1,22 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-20T17:40:00Z",
+  "finished_at": "2026-11-20T17:50:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["supermarket fridges freezers cyber attack thwarted UK NCSC", "Amazon Threat Intelligence Cairn MONAI Label zero-day"],
+  "pages_read": [
+    {"url": "https://www.aol.co.uk/articles/cybersecurity-operation-thwarts-attack-uk-170814000.html", "title": "UK operation wards off risk of cyber-attack on supermarket fridges and freezers (Guardian copy)", "used_in": "uk-fridges-critical-flaw-securing-race-2026-11"},
+    {"url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/", "title": "Hackers use autonomous AI tool Cairn to find zero-day, take over server", "used_in": "cairn-ai-monai-label-zero-day-2026-11"}
+  ],
+  "added": ["cairn-ai-monai-label-zero-day-2026-11"],
+  "updated": ["uk-fridges-critical-flaw-securing-race-2026-11"],
+  "skipped": [
+    {"title": "What's going on with all the tech outages?", "url": "https://technical.ly/civics/why-major-tech-outages-are-linked-to-ai/", "reason": "commentary explainer; outage events already on file"}
+  ],
+  "open_leads": [
+    {"title": "Amazon's own report on Cairn and MONAI Label", "url": "", "note": "not found by search; would corroborate the Cairn event and give a CVE if any", "priority": "medium"},
+    {"title": "Guardian original of the UK fridge story", "url": "https://www.theguardian.com/technology/2026/nov/20/cybersecurity-operation-thwarts-attack-on-uk-supermarket-fridges-and-freezers", "note": "could not be fetched; read via the AOL copy", "priority": "low"}
+  ],
+  "failed_sites": ["theguardian.com (fetch refused)"],
+  "notes": "Cairn/MONAI event is a separate Amazon finding from the Unit 42 CL-STA-1238 event; no link between the two is stated by the source."
+}

@@ -1,0 +1,56 @@
+{
+  "title": "Amazon: attackers used the Cairn AI tool to exploit a MONAI Label zero-day and take over a server, BleepingComputer reports",
+  "date": "2026-11-20",
+  "date_note": "Date of BleepingComputer's report; it says the attacks ran 8 to 10 September 2026 and the maintainers released a security update on 18 November.",
+  "category": "incident",
+  "severity": 2,
+  "status": "developing",
+  "org": "East Asian educational institutions (MONAI Label users)",
+  "sector": "Education",
+  "country": "",
+  "place": "East Asia",
+  "lat": 35,
+  "lng": 105,
+  "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
+  "pin_type": "region",
+  "summary": "BleepingComputer reports that Amazon Threat Intelligence found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, an open-source medical imaging application. The agents wrote a reverse shell and gained root on a server, then reached a second university network running the same software. Amazon attributes it to a China-nexus actor with moderate confidence. The article says maintainers released a security update on 18 November.",
+  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. A fix was released on 18 November.",
+  "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should apply the update.",
+  "action": "If you run MONAI Label, apply the maintainers' security update (advisory GHSA-qc22-rmgc-vg94) and do not expose it to the internet without authentication.",
+  "tags": [
+    "zero-day",
+    "ai"
+  ],
+  "cves": [],
+  "products": [
+    "MONAI Label"
+  ],
+  "attack": [
+    "path traversal"
+  ],
+  "actor": "China-nexus actor (unnamed)",
+  "attribution": {
+    "by": "Amazon Threat Intelligence",
+    "by_type": "investigator",
+    "actor": "China-nexus threat actor (unnamed)",
+    "origin_country": "China",
+    "lat": 35,
+    "lng": 105,
+    "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+    "note": "moderate confidence, from prompt language, activity timestamps and target choice, as relayed by BleepingComputer"
+  },
+  "sources": [
+    {
+      "name": "BleepingComputer",
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "note": "Only BleepingComputer read; Amazon's own report was not found by search, so Amazon's findings are as relayed. The article lists no CVE.",
+    "checked_at": "2026-11-20T17:45:00Z"
+  },
+  "first_seen": "2026-11-20T17:43:41Z",
+  "updated_at": "2026-11-20T17:43:41Z"
+}

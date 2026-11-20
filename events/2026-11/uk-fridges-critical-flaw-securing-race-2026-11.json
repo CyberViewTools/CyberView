@@ -1,5 +1,5 @@
 {
-  "title": "Experts race to secure tens of thousands of UK fridges after a critical flaw, LBC reports",
+  "title": "UK refrigeration flaw: Guardian says a secret NCSC-led operation warded off the risk; LBC reports a race to secure fridges",
   "date": "2026-11-20",
   "date_note": "Published November 20; the flaw was discovered in October per LBC.",
   "category": "vuln",
@@ -13,36 +13,34 @@
   "lng": -2,
   "geo_basis": "country",
   "pin_type": "country",
-  "summary": "LBC reports that cyber experts are racing to secure tens of thousands of fridges and freezers across Britain's retail and foodservice sectors after researchers found a significant flaw in October. LBC says Omega Systems first uncovered it and Pen Test Partners verified it. The article names no product, vendor, CVE or fix. It also reports disruption to refrigeration at stores in Europe, with no group claiming responsibility.",
-  "plain": "LBC reports a race to secure tens of thousands of UK fridges and freezers after researchers found a significant flaw; no product or fix is named.",
-  "exec": "Refrigeration used by UK retailers and food suppliers is reported to carry a significant flaw; LBC reports disruption at European stores.",
-  "action": "Retail and foodservice operators: ask your refrigeration vendor whether your units are affected; the report names no product or fix.",
+  "summary": "LBC reports experts racing to secure tens of thousands of UK fridges and freezers after a significant flaw was found. The Guardian (via AOL) says a Whitehall and NCSC-led operation warded off the risk of an attack; the flaw was in RDM data managers, found by Omega Solutions. RDM said patches were deployed. Pen Test Partners says many thousands at small stores remain exposed.",
+  "plain": "The Guardian says a UK government-led operation warded off a possible attack on fridge controllers; Pen Test Partners says many thousands at small stores are still exposed.",
+  "exec": "Pen Test Partners says many thousands of controllers at small stores are still exposed; RDM says patches were already deployed.",
+  "action": "Small operators: per Pen Test Partners as reported by the Guardian, take refrigeration controllers off the public internet or apply the updated firmware.",
   "tags": [
     "iot"
   ],
   "cves": [],
-  "products": [],
+  "products": [
+    "RDM data managers"
+  ],
   "attack": [],
   "sources": [
     {
       "name": "LBC",
       "url": "https://www.lbc.co.uk/article/cyber-uk-fridges-hackers-security-flaw-5HjdnKt_2/"
+    },
+    {
+      "name": "The Guardian (via AOL UK)",
+      "url": "https://www.aol.co.uk/articles/cybersecurity-operation-thwarts-attack-uk-170814000.html"
     }
   ],
   "source_tier": "established",
   "validation": {
-    "state": "single_source",
-    "note": "Only LBC read; no vendor, CVE or official advisory in the article; Omega Systems and Pen Test Partners findings are as relayed by LBC.",
-    "checked_at": "2026-11-20T12:09:00Z"
+    "state": "corroborated",
+    "note": "LBC and the Guardian (read via its AOL copy; the Guardian page itself could not be fetched) both report the flaw, Omega and Pen Test Partners. RDM did not respond to the Guardian per its article. The Guardian says the UK story was first reported by the BBC.",
+    "checked_at": "2026-11-20T17:43:00Z"
   },
   "first_seen": "2026-11-20T12:09:00Z",
-  "updated_at": "2026-11-20T12:27:03Z",
-  "review": {
-    "state": "corrected",
-    "at": "2026-11-20T12:27:06Z",
-    "first_at": "2026-11-20T12:27:06Z",
-    "note": "LBC 20 Nov checked: title, date, tens of thousands, Omega Systems and Pen Test Partners, no product or CVE, no claimant all match. Action cited NCSC guidance not in the article; removed.",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-20T12:27:06Z"
+  "updated_at": "2026-11-20T17:43:00Z"
 }

@@ -1,11 +1,9 @@
 {
-  "title": "SBC Medical Group discloses theft of data on 1.6 million customers in Japan",
+  "title": "SBC Medical Group discloses theft of data on 1,624,000 customers in Japan",
   "date": "2026-11-16",
   "category": "incident",
   "severity": 2,
   "status": "confirmed",
-  "occurred_at": "2026-11-16T00:00:00+09:00",
-  "time_basis": "occurred",
   "org": "SBC Medical Group Holdings",
   "sector": "Healthcare",
   "country": "Japan",
@@ -15,7 +13,7 @@
   "geo_basis": "Customers are of clinics in Japan; no city stated",
   "pin_type": "country",
   "actor": "",
-  "summary": "SBC Medical Group Holdings told the SEC that on 16 November 2026 an unauthorized third party accessed and extracted customer information from databases of its Japanese subsidiary. The company reports basic personal data on 1,624,000 customers, and separate access to clinic administrator accounts on the Tribeau booking service. Dailysecu reports the company notified Japan's Personal Information Protection Commission and is consulting police, with no secondary misuse confirmed so far. The intrusion method and full scope remain under investigation.",
+  "summary": "SBC Medical Group Holdings told the SEC that on 16 November 2026 an unauthorized third party accessed and extracted data from its Japanese subsidiary's databases: basic personal data on 1,624,000 customers, including passwords. Clinic administrator accounts on the Tribeau booking service were also accessed. Dailysecu reports the company notified Japan's Personal Information Protection Commission and is consulting police. No secondary misuse is confirmed; the investigation continues.",
   "plain": "A Japanese clinic group says someone broke into its customer databases and took details of about 1.6 million people, including names, contact details and passwords.",
   "exec": "Large patient-facing data theft with passwords exposed; the company has not yet estimated financial impact.",
   "action": "If you are an SBC clinic customer in Japan, change any reused password and watch for phishing that uses your name or contact details.",
@@ -29,8 +27,7 @@
     "unauthorized database access"
   ],
   "tags": [
-    "data-breach",
-    "third-party"
+    "data-breach"
   ],
   "sources": [
     {
@@ -53,12 +50,13 @@
     "note": "Company filing with the SEC (primary) and BleepingComputer. No actor named; company has not confirmed theft of electronic medical records."
   },
   "first_seen": "2026-11-19T22:40:00Z",
-  "updated_at": "2026-11-20T08:40:00Z",
-  "qa_checked_at": "2026-11-19T22:35:21Z",
+  "updated_at": "2026-11-20T08:44:26Z",
+  "qa_checked_at": "2026-11-20T08:44:34Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T22:35:21Z",
-    "note": "Compared 16 Nov access, 1,624,000 customers, 20,000 employee records, 12,641 Tribeau reservation people, admin accounts, no actor, no EMR confirmed against SEC 8-K Ex 99.1 and BleepingComputer",
+    "state": "corrected",
+    "at": "2026-11-20T08:44:34Z",
+    "first_at": "2026-11-19T22:35:21Z",
+    "note": "Compared with SEC 8-K Ex 99.1, BleepingComputer, Dailysecu: title said 1.6 million, now 1,624,000 as in the filing; summary shortened to under 75 words with the figure; removed made-up midnight occurred_at and unsupported third-party tag; date 16 Nov, passwords, Tribeau admin accounts, PPC, no misus",
     "flags": []
   }
 }

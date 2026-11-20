@@ -60,3 +60,14 @@ test("guard: a late power grid collector is a warning, never a failure; a recent
   assert.deepEqual(assess(h(ago(30)), NOW).warns.filter((w) => /grid/.test(w)), []);
   assert.equal(LIMITS.grid_min, 120);
 });
+
+test("guard (ops-6): late grid analysis or news, and an outage waiting over 2 h for a cause, are warnings that heal through collect.yml", () => {
+  const h = (o) => live({ health: { last_sweep_at: ago(10), last_collect_at: ago(20), last_feeds_at: ago(60), quarantined_count: 0, last_grid_at: ago(5), ...o } });
+  const r = assess(h({ grid_analysis_at: ago(90), last_grid_news_at: ago(200), grid_waiting: { count: 2, oldest_min: 180 } }), NOW);
+  assert.deepEqual(r.fails, []);
+  assert.ok(r.warns.some((w) => /power grid analysis/.test(w) && /limit 60/.test(w)));
+  assert.ok(r.warns.some((w) => /power outages in the news/.test(w)));
+  assert.ok(r.warns.some((w) => /2 grid outage\(s\) wait for a cause check, the oldest for 180 minutes/.test(w)));
+  assert.ok(r.heal.includes("grid"));
+  assert.deepEqual(assess(h({ grid_analysis_at: ago(5), last_grid_news_at: ago(20), grid_waiting: { count: 1, oldest_min: 30 } }), NOW).warns, []);
+});

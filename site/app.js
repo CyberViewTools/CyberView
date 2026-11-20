@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.53",date:"2026-11-20"};
+var BUILD={version:"1.54",date:"2026-11-20"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -199,12 +199,19 @@ function cleanGrid(x,link){
   var src=str(x.source,40).toLowerCase(),cc=str(x.country,2).toUpperCase();
   return {id:str(x.id,120),scope:x.scope==="outage"?"outage":"incident",planned:x.planned===true,source:/^[a-z0-9_-]+$/.test(src)?src:"",kind:own(GRID_KIND,str(x.kind,20))?x.kind:"outage",name:nm,country:/^[A-Z]{2}$/.test(cc)?cc:"",region:str(x.region,80).trim(),
     customers:cu===null?null:Math.round(cu),level:lv===null?null:Math.round(lv),lat:geo?lat:null,lng:geo?lng:null,approx:x.approx===true,since:str(x.since,30),cause:str(x.cause,120).trim(),
-    checked:ck&&own(GRID_DEC,dec)?{decision:dec,summary:str(ck.summary,300).trim(),by:AI_BY}:null,url:own(gridSrcDoc,src)?gridOwnLink(src,x.url):link(x.url)};  /* a known source: its own hosts only; otherwise the built-in allowlist */
+    checked:ck&&own(GRID_DEC,dec)?{decision:dec,summary:str(ck.summary,300).trim(),by:AI_BY}:null,url:own(gridSrcDoc,src)?gridOwnLink(src,x.url):link(x.url),  /* a known source: its own hosts only; otherwise the built-in allowlist */
+    /* the operator's feed is not answering (or sends old data): the last figures, labelled with their time */
+    stale:x.stale===true,staleSince:x.stale===true?str(x.stale_since,30):"",
+    /* the operator reports a band ("under 200") or masks small counts: never shown as an exact number */
+    band:/^[a-z0-9 ,]{1,30}$/i.test(str(x.customers_band,30))?str(x.customers_band,30):""};
 }
 /* plain-text description of one grid incident, shared by the tooltip and the layers list */
+function gridCustomers(x){return x.band?x.band+" customers":fmtNum(x.customers)+" customer"+(x.customers===1?"":"s");}
+function gridStale(x){if(!x.stale)return "";var s=x.staleSince&&isFinite(Date.parse(x.staleSince))?fmtTime(x.staleSince)+" ("+ago(x.staleSince)+")":"";return "Figures from "+(s||"the last good collection")+": the operator's feed is not answering or sends old data.";}
 function gridLine(x){
   var p=[];
-  if(x.customers!==null)p.push(fmtNum(x.customers)+" customer"+(x.customers===1?"":"s")+" without power");
+  if(x.stale)p.push(gridStale(x));
+  if(x.customers!==null)p.push(gridCustomers(x)+" without power");
   if(x.level!==null&&x.kind!=="outage")p.push(GRID_KIND[x.kind]+" level "+x.level);else if(x.customers===null)p.push(GRID_KIND[x.kind]);
   if(x.planned)p.push("planned work");
   if(x.region)p.push(x.region);
@@ -257,7 +264,7 @@ var GN_CAUSES=["cyberattack","sabotage","missile","drone","shelling","attack","s
 var GN_AGG=/(^|\.)(google\.[a-z.]+|bing\.com|msn\.com|yahoo\.com|news\.yahoo\.co\.jp|flipboard\.com|newsbreak\.com|ground\.news|smartnews\.com|feedly\.com|gdeltproject\.org)$/;
 var gridNews=null;
 function gnLink(u){
-  u=str(u,400);if(!/^https:\/\/[^\s"'<>\\]+$/.test(u))return "";
+  u=str(u,1000);if(!/^https:\/\/[^\s"'<>\\]+$/.test(u))return "";
   var x;try{x=new URL(u);}catch(e){return "";}
   if(x.protocol!=="https:"||x.username||x.password||GN_AGG.test(x.hostname.toLowerCase())||!x.pathname||x.pathname==="/")return "";
   return x.href;
@@ -277,7 +284,8 @@ function cleanGridNews(d){
     return {id:"news:"+str(x.id,120),country:cc,region:str(x.region,80).trim(),place:place,lat:lat,lng:lng,
       figure:fn!==null&&own(GN_UNIT,fu)?{n:Math.round(fn),unit:fu,by:str(f.by,80).trim()}:null,
       causes:strs(x.cause_words,8,20).filter(function(c){return GN_CAUSES.indexOf(c)>=0;}),
-      first:str(x.first_seen,30),last:str(x.last_seen,30)||str(x.first_seen,30),pubs:pubs,count:pubs.length,cyber:str(x.cyber_headline,220).trim()};
+      first:str(x.first_seen,30),last:str(x.last_seen,30)||str(x.first_seen,30),pubs:pubs,count:pubs.length,cyber:str(x.cyber_headline,220).trim(),
+      checked:x.checked&&typeof x.checked==="object"&&own(GRID_DEC,str(x.checked.decision,30))?{decision:str(x.checked.decision,30),summary:str(x.checked.summary,300).trim(),by:AI_BY}:null};
   }).filter(Boolean).sort(function(a,b){return b.count-a.count||(a.last<b.last?1:a.last>b.last?-1:0);});
   return {at:str(d.updated_at,30),items:items};
 }
@@ -325,7 +333,8 @@ function cleanGridHealth(h){
   Object.keys(gs).slice(0,80).forEach(function(k){
     var v=gs[k];if(!/^[a-z0-9_-]{1,40}$/.test(k)||!v||typeof v!=="object")return;
     var n=numIn(v.items,0,1e6),cc=str(v.country,2).toUpperCase();
-    out.sources[k]={name:str(v.name,60).trim(),country:/^[A-Z]{2}$/.test(cc)?cc:"",paused:v.paused===true,ok:v.ok===true,error:str(v.error,120),at:str(v.at,30),items:n===null?null:Math.round(n)};
+    out.sources[k]={name:str(v.name,60).trim(),country:/^[A-Z]{2}$/.test(cc)?cc:"",paused:v.paused===true,ok:v.ok===true,error:str(v.error,120),at:str(v.at,30),items:n===null?null:Math.round(n),
+      stale:v.stale===true,dormant:v.dormant===true,dataAt:str(v.data_at,30)};
   });
   return out;
 }
@@ -356,7 +365,8 @@ function cleanGridTrendRow(key,r){
   causes.sort(function(a,b){return b.n-a.n;});
   var w=r.wow||r.week_over_week||r.week,wow=null;
   if(w&&typeof w==="object"){var a=numIn(w.cur!=null?w.cur:w.this_week!=null?w.this_week:w.customer_hours,0,1e12),b=numIn(w.prev!=null?w.prev:w.last_week!=null?w.last_week:w.prev_customer_hours,0,1e12);if(a!==null&&b!==null)wow={cur:a,prev:b};}
-  return {source:/^[a-z0-9_-]+$/.test(src)?src:"",country:/^[A-Z]{2}$/.test(cc)?cc:"",region:region,hours:ch,incidents:inc===null?null:Math.round(inc),largest:largest,causes:causes.slice(0,5),wow:wow};
+  var cov=numIn(r.coverage,0,1);
+  return {source:/^[a-z0-9_-]+$/.test(src)?src:"",country:/^[A-Z]{2}$/.test(cc)?cc:"",region:region,hours:ch,incidents:inc===null?null:Math.round(inc),largest:largest,causes:causes.slice(0,5),wow:wow,coverage:cov};
 }
 function cleanGridTrends(g){
   if(!g||typeof g!=="object"||!g.trends||typeof g.trends!=="object")return null;
@@ -407,14 +417,15 @@ function gridRow(x){
   var place=[gridPlace(x.region),gridCountry(x.country)].filter(function(v,i,arr){return v&&arr.indexOf(v)===i;}).join(", ");
   if(place){var pl=el("div","gplace",place);pl.title=place;li.appendChild(pl);}
   /* the second line adds only what the title does not already say */
-  var p2=[],named=x.customers!==null&&x.name.indexOf(x.customers.toLocaleString("en-US"))>=0;
-  if(x.customers!==null&&!named)p2.push(x.customers.toLocaleString()+" customer"+(x.customers===1?"":"s")+" without power");
+  var p2=[],named=x.customers!==null&&(x.band?x.name.indexOf(x.band)>=0:x.name.indexOf(x.customers.toLocaleString("en-US"))>=0);
+  if(x.customers!==null&&!named)p2.push(gridCustomers(x)+" without power");
   if(x.level!==null&&x.kind!=="outage")p2.push(GRID_KIND[x.kind]+" level "+x.level);else if(x.customers===null)p2.push(GRID_KIND[x.kind]);
   var s=ago(x.since);p2.push(s?"started "+s:"start time not given");
   if(x.planned&&!/planned/i.test(x.name))p2.push("planned work");
   li.appendChild(el("div","gr2",p2.join(" \u00b7 ")));
   if(x.cause&&!(x.planned&&/^planned/i.test(x.cause)))li.appendChild(el("div","gr3","Cause as reported: "+x.cause));
   else if(!x.cause&&!x.planned)li.appendChild(el("div","gr3","No cause reported"));
+  if(x.stale)li.appendChild(el("small","gnote gstale",gridStale(x)));
   if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
   var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" \u00b7 ")));
   var att=own(gridSrcDoc,x.source)?gridSrcDoc[x.source].attribution:"";if(att)li.appendChild(el("small","gattr",att));
@@ -451,6 +462,8 @@ function gridSrcState(x){
   if(x.paused)return {k:"paused",t:"Paused"};
   if(!x.ok&&/^not connected/i.test(x.error))return {k:"neutral",t:"Not connected"};
   if(!x.ok)return {k:"bad",t:"Failing"};
+  if(x.dormant)return {k:"stale",t:"Dormant"};
+  if(x.stale)return {k:"stale",t:"Stale"};
   return isFinite(h)&&h>2?{k:"stale",t:"Stale"}:{k:"live",t:"Live"};
 }
 function gridSrcRow(k,x){
@@ -464,7 +477,8 @@ function gridSrcRow(k,x){
   else if(st.t==="Not connected")m.push("no key saved");
   else if(x&&!x.ok)m.push(x.error||"error not given");
   if(x&&x.items!==null&&x.ok)m.push(x.items+" item"+(x.items===1?"":"s"));
-  if(x&&x.ok&&x.at&&isFinite(Date.parse(x.at)))m.push((st.k==="stale"?"last data ":"checked ")+ago(x.at));
+  if(x&&x.ok&&(x.stale||x.dormant)&&x.error)m.push(x.error);
+  else if(x&&x.ok&&x.at&&isFinite(Date.parse(x.at)))m.push((st.k==="stale"?"last data ":"checked ")+ago(x.at));
   if(m.length)body.appendChild(el("small",null,m.join(" \u00b7 ")));
   var att=own(gridSrcDoc,k)?gridSrcDoc[k].attribution:"";if(att)body.appendChild(el("small","gattr",att));
   li.appendChild(body);return li;
@@ -489,7 +503,8 @@ function gridNewsRow(x){
   });
   if(x.pubs.length>8)by.appendChild(document.createTextNode(" and "+(x.pubs.length-8)+" more"));
   li.appendChild(by);
-  li.appendChild(el("small","gnote","Not checked by CyberView. A news report, not an incident; drawn at the centre of the place named."));
+  if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
+  li.appendChild(el("small","gnote",(x.checked?"The reports themselves are not checked by CyberView. ":"Not checked by CyberView. ")+"A news report, not an incident; drawn at the centre of the place named."));
   li.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest("a"))return;gridFocus(x);});
   li.addEventListener("keydown",function(ev){if(ev.target!==li)return;if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();gridFocus(x);}});
   return li;
@@ -514,7 +529,7 @@ function gridSources(){
   var tally={},attn=[],byCc={};
   keys.forEach(function(k){var x=own(d.sources,k)?d.sources[k]:null,st=gridSrcState(x);tally[st.t]=(tally[st.t]||0)+1;
     if(st.k==="live")(byCc[(x&&x.country)||""]=byCc[(x&&x.country)||""]||[]).push(k);else attn.push(k);});
-  var order=["Live","Stale","Failing","Paused","Not connected","Not reported yet"];
+  var order=["Live","Stale","Dormant","Failing","Paused","Not connected","Not reported yet"];
   ul.appendChild(el("li","gsum",order.filter(function(t){return tally[t];}).map(function(t){return tally[t]+" "+t.toLowerCase();}).join(" \u00b7 ")));
   if(attn.length){var ah=el("li","gshead","Needs attention");ul.appendChild(ah);attn.forEach(function(k){ul.appendChild(gridSrcRow(k,own(d.sources,k)?d.sources[k]:null));});}
   Object.keys(byCc).sort(function(a,b){return byCc[b].length-byCc[a].length||(a<b?-1:1);}).forEach(function(cc){
@@ -556,6 +571,7 @@ function gridTrends(){
     var op=GRID_OPS[r.source]||r.source||"",who=op&&r.region&&r.region!==op?op+", "+r.region:op||r.region,detail=[];
     if(r.incidents!==null)detail.push(r.incidents+" incident"+(r.incidents===1?"":"s")+" opened");
     if(r.wow)detail.push("this week "+fmtNum(r.wow.cur)+", week before "+fmtNum(r.wow.prev));
+    if(r.coverage!==null&&r.coverage<0.9)detail.push("data for "+Math.round(r.coverage*100)+"% of the "+g.days+" days");
     if(r.largest)detail.push("largest: "+(r.largest.name||"")+(r.largest.customers!==null&&!/customers/i.test(r.largest.name)?(r.largest.name?", ":"")+fmtNum(r.largest.customers)+" customers":"")+(r.largest.checked?" (cause checked by "+AI_BY+": "+GRID_DEC[r.largest.checked]+")":""));
     var mix=r.causes.length?"Causes as reported: "+r.causes.map(function(c){return c.cause+" ("+fmtNum(c.n)+")";}).join(", "):"No causes reported";
     var text=who+": "+fmtNum(r.hours)+" customer-hours"+(detail.length?", "+detail.join(", "):"")+". "+mix+".";

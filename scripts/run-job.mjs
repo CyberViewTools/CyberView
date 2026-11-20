@@ -156,6 +156,9 @@ async function flow() {
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
     if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).out.slice(-1)[0] || ""); } catch {} }
+    // power outages reported in the news (no AI model; publishers' own pages): before the analysis, which counts them as news
+    // signals. The script runs at most every 15 minutes (status last_grid_news_at); a failure here never stops the cycle
+    if (existsSync(join(ROOT, "scripts", "grid-news.mjs"))) { try { phase("grid-news", sh("node", ["scripts/grid-news.mjs"], 240000).stdout.trim().split("\n").slice(-1)[0] || ""); } catch {} }
     // grid analysis (no AI model): anomalies, corroboration, trends; flags `corroborated` incidents before the grid desk plans
     if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).out.slice(-1)[0] || ""); } catch {} }
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");

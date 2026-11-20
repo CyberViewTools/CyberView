@@ -37,6 +37,13 @@ jobs:
       - name: Close what a rule can decide (routine bulletins, commentary, database rows)
         # optional: a fault here must never stop the leads being committed
         run: node scripts/backlog.mjs auto || true
+      - name: Power outages reported in the news (publishers' own headlines, no AI)
+        # optional: a failing news index is skipped and reported in data/grid/news.json; this step can never stop the commit
+        continue-on-error: true
+        timeout-minutes: 5
+        # the research loop runs it every 15 minutes; this backup stands down while it does (one writer at a time)
+        run: |
+          if node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_news_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid-news: the research loop ran it under 20 minutes ago; skipping"; else node scripts/grid-news.mjs; fi
       - name: Grid outages (map context from six operators' public feeds, no AI)
         # optional: a failing operator feed is kept as stale and reported; this step can never stop the commit
         continue-on-error: true
@@ -51,7 +58,7 @@ jobs:
           git config user.name "cyberview-collect"
           git config user.email "cyberview-collect@users.noreply.github.com"
           git add data/leads data/status.json data/osint.json data/runs
-          git add data/grid data/context/grid.json 2>/dev/null || true
+          git add data/grid data/grid/news.json data/context/grid.json 2>/dev/null || true
           if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
           git commit -q -m "data: collect, $n new lead(s)"

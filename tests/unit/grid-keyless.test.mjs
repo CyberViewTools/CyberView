@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { PLUGIN_ERRORS, SOURCES, REGIONS, OPERATORS, checkItem } from "../../scripts/grid.mjs";
 import keyless, {
   parseNesoWarnings, nesoPeriod, parseFingrid, parseEcowatt, ecowattVersion, ecowattDay, parseKpx, zonedMs,
+  parseEcowattOdre, ecowattFromOdre,
 } from "../../scripts/grid-sources/keyless.mjs";
 
 const FX = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures", "grid", "keyless");
@@ -118,4 +119,26 @@ test("sources-5: the Ecowatt file date is the data time, and an old file makes t
   const st = sourceState(SOURCES["rte-ecowatt"], got, null, {}, at("2026-11-20T01:46:00Z"), "2026-10-30T00:00:00Z");
   assert.deepEqual([st.ok, st.dormant, st.stale], [true, true, false]);
   assert.match(st.error, /^dormant: the feed's newest entry is from 2026-10-30/);
+});
+
+// ---------- grid-sources lane 2026-11-20: Ecowatt dormant while RTE still publishes ----------
+test("Ecowatt: an old file + RTE's ODRÉ daily record from yesterday -> dated by ODRÉ, not dormant; too old -> dormant", async () => {
+  const { sourceState } = await import("../../scripts/grid.mjs");
+  const now = at("2026-11-20T04:40:00Z");
+  const rec = parseEcowattOdre(json("ecowatt-odre.json"));   // real reply: newest row 2026-11-19, all green
+  assert.deepEqual(rec, { day: "2026-11-19", value: 1 });
+  const got = ecowattFromOdre(rec, now);
+  assert.equal(got.data_at, "2026-11-19T00:00:00Z");
+  assert.equal(got[0].level, 0);
+  assert.match(got[0].area, /RTE's signal for 2026-11-19: pas d'alerte \(green\)/);
+  noErrors(got);
+  const st = sourceState(SOURCES["rte-ecowatt"], got, null, {}, now, got.data_at);
+  assert.deepEqual([st.ok, st.dormant, st.stale], [true, false, false]);
+  // an orange day is reported at its level, worded as that day's signal
+  const orange = json("ecowatt-odre.json"); orange.results[0].h18 = 2; orange.results[0].couleur_du_jour = 2;
+  assert.equal(ecowattFromOdre(parseEcowattOdre(orange), now)[0].level, 1);
+  // ODRÉ's newest day over 2 days old: no answer from it (the file's fallback stays, and the source shows dormant)
+  assert.equal(ecowattFromOdre(rec, at("2026-11-23T04:40:00Z")), null);
+  assert.throws(() => parseEcowattOdre({ results: [] }), (e) => e.code === "bad_shape");
+  assert.throws(() => parseEcowattOdre({ results: [{ date: "2026-11-19", couleur_du_jour: 7 }] }), (e) => e.code === "bad_shape");
 });

@@ -310,6 +310,17 @@ export function gazetteer(cfg = {}) {
     const names = ambiguous.has(name) || aliases.some((a) => prep(String(a).replace(/\*$/, "")) === prep(own)) ? aliases : [own, ...aliases];
     for (const a of names) add(a, e);
   }
+  // context aliases: a short form that is a place only in its context (news-4: "SA" is South Australia in "28,000 SA
+  // homes" only when the text also says Australia, Adelaide, SA Power ...; "sa" is a common word in Tagalog and Italian).
+  // [place name, the alias exactly as written (case kept), context words...]; the place must be in places.
+  for (const c of cfg.context_aliases || []) {
+    if (!Array.isArray(c) || c.length < 3) continue;
+    const [name, exact, ...ctx] = c, p = (cfg.places || []).find((x) => Array.isArray(x) && x[0] === name);
+    if (!p || !/^[\p{L}\p{N} .-]{2,20}$/u.test(String(exact)) || !ctx.length) continue;
+    const [, cc, lat, lng, kind] = p;
+    add(exact, { kind: kind === "city" ? "city" : "region", country: cc, region: kind === "city" ? "" : name, place: name, lat, lng,
+      exact: new RegExp(`(?<![\\p{L}\\p{N}])${String(exact).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "u"), ctx: ctx.map((w) => prep(w)).filter(Boolean) });
+  }
   for (const u of cfg.utilities || []) {
     if (!Array.isArray(u) || u.length < 6 || !/^[A-Z]{2}$/.test(u[1])) continue;
     const [name, cc, area, lat, lng, ...aliases] = u;
@@ -325,9 +336,10 @@ export function gazetteer(cfg = {}) {
   return ents;
 }
 const LETTER = /[\p{L}\p{N}]/u;
-function matches(text, ents) {
+function matches(text, ents, raw = "", context = "") {
   const out = [];
   for (const e of ents) {
+    if (e.exact && !(e.exact.test(raw) && e.ctx.some((w) => context.includes(w)))) continue;
     if (e.mode === "arabic") { const m = e.re.exec(text); if (m) out.push({ e, at: m.index, end: m.index + m[0].length }); continue; }
     for (let i = text.indexOf(e.alias); i >= 0; i = text.indexOf(e.alias, i + 1)) {
       const end = i + e.alias.length;
@@ -346,9 +358,10 @@ const RANK = { city: 0, region: 1 };
  *  the utility's service area, else a country it names. The headline first, the summary only when the headline names
  *  nothing. -> { country, region, place, lat, lng, how, utility } | null. Always approximate (the centre of the place). */
 export function locate(title, summary, ents) {
-  for (const text of [prep(title), prep(summary)]) {
+  const context = prep(`${title} ${summary}`);
+  for (const [raw, text] of [[String(title || ""), prep(title)], [String(summary || ""), prep(summary)]]) {
     if (!text) continue;
-    const ms_ = matches(text, ents); if (!ms_.length) continue;
+    const ms_ = matches(text, ents, raw, context); if (!ms_.length) continue;
     const util = ms_.filter((m) => m.e.kind === "utility").sort((a, b) => a.at - b.at)[0];
     // with two countries named, the one after "in", "of", "across" is where the outage is ("Russia leaves five regions of Ukraine without power")
     // a country right before an attack verb is the actor ("Russia attacked Ukraine's energy"): ranked last; one with a

@@ -73,6 +73,7 @@ test("Eversource: metadata directory, four territory reports, towns with custome
   serve([[/metadata\.json$/, txt("eversource-metadata.json")],
     ...EVERSOURCE_REPORTS.map((f) => [new RegExp(`/${dir}/${f.replace(".", "\\.")}$`), txt(`eversource-${f}`)])]);
   const items = await run("eversource");
+  assert.match(items.data_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);   // the directory's time (UTC)
   assert.equal(asked.length, 5);
   assert.ok(asked.every((a) => a.url.startsWith("https://outagemap.eversource.com/resources/data/external/interval_generation_data/")));
   assert.ok(asked.every((a) => !a.headers.cookie && !a.headers.authorization));
@@ -89,13 +90,25 @@ test("Eversource: metadata directory, four territory reports, towns with custome
   assert.equal(asked.length, 1);
 });
 
-test("Nashville Electric Service: counties with customers out", async () => {
-  serve([[/utilisocial\.io\/datacapable\/v2\/p\/NES\/map\/events\/count\?types=COUNTY$/, txt("nashville-electric.json")]]);
+test("Nashville Electric Service: one item per event at its point, cross-checked with the county counts", async () => {
+  // real replies read together on 2026-11-20 04:42Z: 4 events (96 + 2 + 1 + 1) and counties Davidson 97, Sumner 2, Rutherford 1
+  const ev = txt("nashville-electric-events.json"), cnt = txt("nashville-electric-count-20261120.json");
+  serve([[/\/p\/NES\/map\/events$/, ev], [/\/p\/NES\/map\/events\/count\?types=COUNTY$/, cnt]]);
   const items = await run("nashville-electric");
   noErrors(items);
-  assert.deepEqual(items.map((x) => [x.area, x.customers]), [["Rutherford County, TN", 23], ["Davidson County, TN", 6]]);
-  assert.ok(items.every((x) => x.region === "Nashville" && x.lat === null && x.url === "https://www.nespower.com/outages/"));
-  serve([[/utilisocial/, { nope: 1 }]]);
+  assert.equal(items.length, 4);
+  const big = items.find((x) => x.id === "nashville-electric:2252717");
+  assert.deepEqual([big.area, big.customers, big.lat, big.lng, big.planned], ["West Nashville, Davidson County, TN", 96, 36.116, -86.848, false]);
+  assert.equal(big.started_at, new Date(1795147913000).toISOString().replace(/\.\d+Z$/, "Z"));
+  assert.equal(big.restore_est, new Date(1795166100000).toISOString().replace(/\.\d+Z$/, "Z"));
+  assert.equal(items.data_at, "2026-11-20T04:40:25Z");                   // the newest lastUpdatedTime
+  assert.ok(items.every((x) => x.region === "Nashville" && x.url === "https://www.nespower.com/outages/"));
+  // the counts disagree with the events (synthetic: Davidson 900): bad_shape, not a silent undercount
+  serve([[/\/p\/NES\/map\/events$/, ev], [/count/, cnt.replace('"customersAffected":97', '"customersAffected":900')]]);
+  await assert.rejects(run("nashville-electric"), (e) => e.code === "bad_shape" && /add up/.test(e.message));
+  serve([[/\/p\/NES\/map\/events$/, { nope: 1 }], [/count/, cnt]]);
+  await assert.rejects(run("nashville-electric"), (e) => e.code === "bad_shape");
+  serve([[/\/p\/NES\/map\/events$/, ev.split('"numPeople"').join('"people"')], [/count/, cnt]]);
   await assert.rejects(run("nashville-electric"), (e) => e.code === "bad_shape");
 });
 
@@ -254,7 +267,7 @@ test("NYISO: the newest system state of the day, Eastern time; real normal, aler
 });
 
 test("adapters send no key, cookie or browser-imitating header", async () => {
-  serve([[/caiso/, txt("caiso-emergency.json")], [/odin/, txt("doe-odin.json")], [/utilisocial/, txt("nashville-electric.json")]]);
+  serve([[/caiso/, txt("caiso-emergency.json")], [/odin/, txt("doe-odin.json")], [/map\/events$/, txt("nashville-electric-events.json")], [/utilisocial/, txt("nashville-electric-count-20261120.json")]]);
   for (const k of ["caiso-emergency", "doe-odin", "nashville-electric"]) await run(k);
   for (const a of asked) {
     const keys = Object.keys(a.headers).map((x) => x.toLowerCase());
@@ -296,4 +309,14 @@ test("sources-2: PacifiCorp's last_upd is the data time (the state's own clock; 
   assert.equal(pacifiCorpTime("Thursday, November 19 03:30 PM, 2026", "UT", hh), "2026-11-19T22:30:00Z");
   assert.equal(pacifiCorpTime("Thursday, November 19 12:05 AM, 2026", "UT", hh), "2026-11-19T07:05:00Z");
   assert.equal(pacifiCorpTime("soon", "UT", hh), "");
+});
+
+// ---------- grid-sources lane 2026-11-20 ----------
+test("Eversource: the directory name is the data time in UTC (checked against data.json's date_generated with offset)", async () => {
+  const { eversourceDirTime } = await import("../../scripts/grid-sources/us.mjs");
+  const dir = "2026_11_20_04_39_30", gen = JSON.parse(txt(`eversource-data-${dir}.json`)).summaryFileData.date_generated;
+  assert.equal(eversourceDirTime(dir), "2026-11-20T04:39:30Z");
+  const lag = Date.parse(eversourceDirTime(dir)) - Date.parse(gen.replace(/([+-]\d{2})(\d{2})$/, "$1:$2"));
+  assert.ok(lag >= 0 && lag < 10 * 60e3, `directory ${lag / 60e3} min after date_generated`);   // Eastern would be 5 h off
+  assert.equal(eversourceDirTime("latest"), "");
 });

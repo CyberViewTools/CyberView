@@ -28,7 +28,8 @@ test("data-forward: triggers and permissions", () => {
   assert.match(YML, /workflow_dispatch:/);
   assert.match(YML, /contents: write/);
   assert.match(YML, /actions: write/);
-  assert.match(YML, /group: data-writes/);
+  assert.match(YML, /group: data-forward/);
+  assert.doesNotMatch(YML, /group: data-writes/, "a queued forwarder must never cancel a pending Collect or Feeds run");
   assert.match(YML, /fetch-depth: 0/);
 });
 

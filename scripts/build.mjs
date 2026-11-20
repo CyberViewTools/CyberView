@@ -71,6 +71,9 @@ const seen = new Map();
 for (const f of files) {
   if (!f.e) { errors.push(`${f.path.slice(DATA.length + 1)}: not valid JSON (${f.error})`); continue; }
   const before = errors.length;
+  // the id lives in the file name; an "id" inside the file must match it (a duplicate marker saved under the original's
+  // name once made two files with one id, and both were quarantined)
+  if (f.e.id !== f.id) errors.push(`${f.path.slice(DATA.length + 1)}: the id inside the file ("${String(f.e.id).slice(0, 120)}") differs from its file name; rename the file to ${String(f.e.id).slice(0, 120)}.json (in the month folder of its date) or remove the inner id`);
   if (seen.has(f.id)) errors.push(`events: id "${f.id}" is stored twice (${seen.get(f.id)} and ${f.path.slice(DATA.length + 1)})`);
   seen.set(f.id, f.path.slice(DATA.length + 1));
   checkEvent(f.e, f.path);

@@ -113,6 +113,11 @@ export function forEachSkipped(days, fn) {
 export function readStatus() {
   const p = join(DATA, "status.json");
   try { return JSON.parse(readFileSync(p, "utf8")); } catch {}
-  try { const r = spawnSync("git", ["show", "HEAD:data/status.json"], { cwd: ROOT, encoding: "utf8" }); if (r.status === 0) return JSON.parse(r.stdout); } catch {}
+  // the last committed copy: on the data branch (./data is its own checkout, the layout since 2026-11-20), else in main's
+  // old layout. Before 2026-11-20 only the second existed, so on the data branch every fallback returned {} and the next
+  // write wiped every other job's keys (18 lost at 20:54Z on 2026-11-20).
+  for (const [cwd, ref] of [[DATA, "HEAD:status.json"], [ROOT, "HEAD:data/status.json"]]) {
+    try { const r = spawnSync("git", ["show", ref], { cwd, encoding: "utf8" }); if (r.status === 0) { const o = JSON.parse(r.stdout); if (o && typeof o === "object" && !Array.isArray(o)) return o; } } catch {}
+  }
   return {};
 }

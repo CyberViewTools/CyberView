@@ -57,7 +57,7 @@ async function resolve(merging = false) {
     else if (/\.json$/.test(f)) {
       try {
         const u = JSON.parse(up || "{}"), m = JSON.parse(mine || "{}"), b = base ? JSON.parse(base) : {};
-        if ([u, m, b].every((x) => x && typeof x === "object" && !Array.isArray(x))) merged = JSON.stringify(mergeJson(b, u, m), null, 1) + "\n";
+        if ([u, m, b].every((x) => x && typeof x === "object" && !Array.isArray(x))) merged = JSON.stringify(mergeJson(b, u, m, { keepKeys: /(^|\/)status\.json$/.test(f) }), null, 1) + "\n";
       } catch { merged = null; }
     }
     if (merged === null) { console.error(`git-sync: cannot merge ${f} automatically`); return false; }

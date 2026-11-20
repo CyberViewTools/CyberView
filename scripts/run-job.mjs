@@ -13,7 +13,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock } from "./lib/lease.mjs";
 import { budgetState, budgetLine } from "./lib/usage.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -313,7 +313,11 @@ async function flow() {
     const core = work.length;                               // research, review, update and grid work; the rest is scheduled
     if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
     { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }
-    if (can.moderator && cycle % 6 === 1 && sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+    if (can.moderator && cycle % 6 === 1) {
+      // the moderator only starts when a post waits; an empty queue is a moderated queue, so it is stamped as a run
+      if (sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+      else { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_moderator_at = nowIso(); st.moderator_note = "no community posts waiting"; writeJson(sp, st); } catch {} }
+    }
     let res = [];
     if (work.length) {
       if (stories.length) publishClaim("story", stories.map((s) => s.id));
@@ -332,7 +336,7 @@ async function flow() {
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
       // the follow-up desk runs only inside the loop: record when it ran, for the status page (routines.json followup)
-      if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readJson(sp, {}) || {}; st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
+      if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}

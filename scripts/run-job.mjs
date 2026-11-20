@@ -101,7 +101,7 @@ function finish(job) {
 
 // ---------- swarm phases: plan (frozen, with a plan_id) -> claim (leases) -> work -> check -> retry -> commit -> report ----------
 const RUN = (process.env.CYBERVIEW_RUN = RUN_ID());
-const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer", "grid"]);
+const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer", "grid", "outage"]);
 /** Can a headless worker in this container open web pages? One tiny Haiku fetch, remembered for 6 hours. */
 function webOk() {
   const f = "/tmp/cyberview-webprobe.json", c = readJson(f, null);
@@ -110,13 +110,14 @@ function webOk() {
   let ok = false; try { const j = JSON.parse(r.stdout); ok = !j.is_error && /\bOK\b/.test(String(j.result)); } catch {}
   writeJson(f, { at: nowIso(), ok }); return ok;
 }
-const kindOf = { sweep: "story", backlog: "story", review: "event", analyst: "cve" };
+const kindOf = { sweep: "story", backlog: "story", review: "event", analyst: "cve", outage: "outage" };
 function planIds(job, since) {
   const fresh = (f) => { const x = plan(f); return x.planned_at && x.planned_at >= since ? x : {}; }; // never claim a plan left by an earlier run
   const plan_ = fresh;
   if (job === "sweep" || job === "backlog") return (plan_("sweep-plan.json").stories || []).map((s) => s.id);
   if (job === "review") return ((plan_("review-plan.json").batches) || []).flat();
   if (job === "analyst") return ((plan_("analyst-plan.json").batches) || []).flat().map((x) => x.cve);
+  if (job === "outage") return ((plan_("outage-plan.json").batches) || []).flatMap((b) => (b.items || []).map((i) => i.id));
   return [];
 }
 /** Claim what was planned and publish the claim at once, so runs in other containers skip it. */
@@ -163,13 +164,13 @@ export function flowDeadline(t0, lifeMs, ticks, marginMs = 60000) {
  *  ok:    everything.
  *  tight: only what the 15-minute target needs: researchers on stories that read like incidents or exploited flaws
  *         (sweep-plan --urgent) and reviewers on events waiting longer than OVERDUE_MIN (20) minutes; no updaters, grid
- *         researchers, gap searchers, follow-up desk or moderator (they wait for the next ok cycle).
+ *         researchers, outage checkers, gap searchers, follow-up desk or moderator (they wait for the next ok cycle).
  *  stop:  no workers at all: the loop keeps collecting and closing noise by rule, so nothing is lost and research resumes
  *         where it stopped as soon as the limit resets. */
 export function workAt(level) {
-  if (level === "stop") return { researchers: false, urgent_only: true, reviewers: false, overdue_only: true, updaters: false, grid: false, followup: false, gap: false, moderator: false, fixer: false };
-  if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, followup: false, gap: false, moderator: false, fixer: true };
-  return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, followup: true, gap: true, moderator: true, fixer: true };
+  if (level === "stop") return { researchers: false, urgent_only: true, reviewers: false, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: false };
+  if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: true };
+  return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, outage: true, followup: true, gap: true, moderator: true, fixer: true };
 }
 /** Pure: review batches keeping only events that have waited longer than `min` minutes (waitingSince from review.mjs). */
 export function overdueOnly(batches, byId, now = Date.now(), min = OVERDUE_MIN) {
@@ -211,6 +212,23 @@ function startNews(onDone) {
   c.on("error", () => {});
   return c;
 }
+// ---------- the outage desk (scripts/outage-desk.mjs): unchecked outage reports, checked by outage checkers ----------
+/** Plan up to max checkers, per reports each, into data/<file>; -> { note, batches } (batches with items only). */
+function outagePlan(file, max, per) {
+  if (!existsSync(join(ROOT, "scripts", "outage-desk.mjs"))) return { note: "", batches: [] };
+  try {
+    const note = sh("node", ["scripts/outage-desk.mjs", "plan", "--max", String(max), "--per", String(per), "--file", file], 60000).out[0] || "";
+    return { note, batches: (readJson(join(DATA, file), { batches: [] }).batches || []).filter((b) => b && (b.items || []).length) };
+  } catch { return { note: "", batches: [] }; }
+}
+/** Record what the checkers found (validated; a cyber cause becomes a lead for the research loop) and stamp the desk's
+ *  run in status.json (routines.json "outage", last_outage_at), also when the queue was empty. -> phase notes */
+function outageApply(batches, planNote) {
+  const notes = [];
+  for (const b of batches) { try { notes.push(existsSync(join(DATA, b.out)) ? sh("node", ["scripts/outage-desk.mjs", "apply", b.out], 60000).out[0] || "" : `batch ${b.batch}: no out file`); } catch {} }
+  try { const sp = join(DATA, "status.json"), st = readJson(sp, {}) || {}; st.last_outage_at = nowIso(); st.outage_note = String(batches.length ? notes.join(" | ") : planNote || "queue empty").slice(0, 200); writeJson(sp, st); } catch {}
+  return notes;
+}
 async function flow() {
   const F = PIPE.flow || {}, LIFE = Math.max(1, Math.min(115, Number(process.env.FLOW_MINUTES) || Number(F.minutes) || 100)) * 6e4, MINCYCLE = Math.max(2, Math.min(15, Number(F.min_cycle_minutes) || 4)) * 6e4;
   const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
@@ -250,6 +268,7 @@ async function flow() {
   const expect = () => Math.max(2 * 6e4, took.length ? took.slice(-3).reduce((s, x) => s + x, 0) / Math.min(3, took.length) : 3 * 6e4);
   log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"}); ${budgetLine(B)}`);
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
+  const OW = Math.max(0, Math.min(4, Number(F.outage_workers ?? 0) || 0)), OPER = Math.max(1, Math.min(8, Number(F.outage_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
   const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
@@ -309,8 +328,12 @@ async function flow() {
     const gf = `grid-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let gb = [];
     if (GW && can.grid && existsSync(join(ROOT, "scripts", "grid-desk.mjs"))) { try { phase("grid-plan", sh("node", ["scripts/grid-desk.mjs", "plan", "--max", String(GW), "--per", String(GPER), "--file", gf], 60000).out[0] || ""); gb = (readJson(join(DATA, gf), { batches: [] }).batches || []).filter((b) => b && (b.incidents || []).length); } catch { gb = []; } }
-    const work = mixWork(batches.map((b) => ["researcher", b]), rb.map((_, i) => ["reviewer", i + 1])).concat(ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]));
-    const core = work.length;                               // research, review, update and grid work; the rest is scheduled
+    // unchecked outage reports (news-reported power outages, IODA disruptions, status pages): outage checkers verify them
+    const of = `outage-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
+    let ob = [], oNote = "";
+    if (OW && can.outage) { const o = outagePlan(of, OW, OPER); ob = o.batches; oNote = o.note; if (oNote) phase("outage-plan", oNote); }
+    const work = mixWork(batches.map((b) => ["researcher", b]), rb.map((_, i) => ["reviewer", i + 1])).concat(ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]), ob.map((b) => ["outage", b.batch]));
+    const core = work.length;                               // research, review, update, grid and outage work; the rest is scheduled
     if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
     { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }
     if (can.moderator && cycle % 6 === 1) {
@@ -324,13 +347,15 @@ async function flow() {
       const evIds = [...new Set(rb.flat().concat(ub.flat().map((c) => c.id)))];
       if (evIds.length) publishClaim("event", evIds);
       if (gb.length) publishClaim("grid", gb.flatMap((b) => b.incidents.map((i) => i.id)));
+      if (ob.length) publishClaim("outage", ob.flatMap((b) => b.items.map((i) => i.id)));
       beat(`working: ${work.length} worker(s)`);
-      process.env.CYBERVIEW_REVIEW_PLAN = pf; process.env.CYBERVIEW_UPDATE_PLAN = uf; process.env.CYBERVIEW_GRID_PLAN = gf;
+      process.env.CYBERVIEW_REVIEW_PLAN = pf; process.env.CYBERVIEW_UPDATE_PLAN = uf; process.env.CYBERVIEW_GRID_PLAN = gf; process.env.CYBERVIEW_OUTAGE_PLAN = of;
       res = await pool("sweep", work);
-      delete process.env.CYBERVIEW_REVIEW_PLAN; delete process.env.CYBERVIEW_UPDATE_PLAN; delete process.env.CYBERVIEW_GRID_PLAN;
+      delete process.env.CYBERVIEW_REVIEW_PLAN; delete process.env.CYBERVIEW_UPDATE_PLAN; delete process.env.CYBERVIEW_GRID_PLAN; delete process.env.CYBERVIEW_OUTAGE_PLAN;
       // record what the grid workers found (validated; a cyber cause becomes a lead for the next cycle's researchers)
       for (const b of gb) { try { if (existsSync(join(DATA, b.out))) phase("grid-apply", sh("node", ["scripts/grid-desk.mjs", "apply", b.out], 60000).out[0] || ""); else phase("grid-apply", `batch ${b.batch}: no out file`); } catch {} }
-      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid${work.some((w) => w[0] === "gap") ? `, ${work.filter((w) => w[0] === "gap").length} gap` : ""}${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
+      if (ob.length) for (const n of outageApply(ob, oNote)) phase("outage-apply", n);
+      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid, ${ob.length} outage${work.some((w) => w[0] === "gap") ? `, ${work.filter((w) => w[0] === "gap").length} gap` : ""}${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
       if (batches.length) {
         const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
@@ -338,10 +363,13 @@ async function flow() {
       // the follow-up desk runs only inside the loop: record when it ran, for the status page (routines.json followup)
       if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
+    if (OW && can.outage && !ob.length && oNote) outageApply([], oNote);   // the desk ran and found nothing waiting
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}
     try { unlinkSync(join(DATA, gf)); } catch {}
     for (const b of gb) { try { unlinkSync(join(DATA, b.out)); } catch {} }
+    try { unlinkSync(join(DATA, of)); } catch {}
+    for (const b of ob) { try { unlinkSync(join(DATA, b.out)); } catch {} }
     rec.finished_at = nowIso(); rec.minutes = +((Date.now() - cs) / 6e4).toFixed(1); rec.workers = res.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
     total.workers += rec.workers; total.cost += rec.cost; total.cycles++;
     // a stop cycle is recorded too (it rides with the next commit), so the status page and improver see the loop held back
@@ -398,7 +426,7 @@ async function main() {
   if (needsWeb && !webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
 
   // 1. plan (scripts only; the planners leave out anything another run has leased)
-  const work = [];
+  const work = []; let outageRun = null;
   if (job === "sweep") {
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "no plan");
@@ -430,6 +458,10 @@ async function main() {
   } else if (job === "deep-sweep") {
     sh("node", ["scripts/collect.mjs"]); sh("node", ["scripts/osint.mjs"]); sh("node", ["scripts/triage.mjs"]);
     ["a", "b", "c"].forEach((g) => work.push(["regional-researcher", g])); phase("plan", "three regional researchers");
+  } else if (job === "outage") {
+    const F = PIPE.flow || {}, o = outagePlan("outage-plan.json", Math.max(1, Math.min(4, Number(F.outage_workers) || 1)), Math.max(1, Math.min(8, Number(F.outage_per_worker) || 4)));
+    phase("plan", o.note || "no plan"); outageRun = o;
+    o.batches.forEach((b) => work.push(["outage", b.batch]));
   } else if (job === "moderator") {
     const waiting = sh("node", ["scripts/chat.mjs", "intake"]).out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
     if (waiting) work.push(["moderator", null]); phase("plan", `${waiting} post(s) waiting`);
@@ -441,6 +473,7 @@ async function main() {
   const claimed = claimPlanned(job, rec.started_at); if (claimed) phase("claim", `${Math.abs(claimed)} item(s) leased to ${RUN}${claimed < 0 ? " (lease not published: push failed)" : ""}`);
   // 3. work
   let res = work.length ? await pool(job, work) : [];
+  if (outageRun) { for (const n of outageApply(outageRun.batches, outageRun.note)) phase("apply", n); try { unlinkSync(join(DATA, "outage-plan.json")); } catch {} for (const b of outageRun.batches) { try { unlinkSync(join(DATA, b.out)); } catch {} } }
   if (work.length) phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished; $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
   // 4. check and retry (only what is missing, once)
   if ((job === "sweep" || job === "backlog") && work.length) {

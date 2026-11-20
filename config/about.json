@@ -89,7 +89,7 @@
       "key": "grid",
       "title": "Power grid outages",
       "link": "./#grid",
-      "text": "A Grid view that sets everything else aside and shows only electrical grid outages from {grid} grid operators and data sources: every outage of 100 or more customers, larger incidents tracked from start to end, load shedding and grid emergencies, which outages are unusual for the hour, which are confirmed by internet measurements, disaster alerts, demand data or news, and 30-day trends. A third tier lists power outages reported in the news in many languages, grouped by place and time with each publisher named and linked, found by a script and labelled as not checked by CyberView; they are never counted as incidents. CyberView AI checks the cause of big or corroborated incidents; an outage is never called an attack unless an official source says so. A rule-based audit checks every grid source each cycle (failing or frozen feeds, sudden falls in customers, misplaced points), and the status page lists its flags.",
+      "text": "A Grid view that sets everything else aside and shows only electrical grid outages from {grid} grid operators and data sources: every outage of 100 or more customers, larger incidents tracked from start to end, load shedding and grid emergencies, which outages are unusual for the hour, which are confirmed by internet measurements, disaster alerts, demand data or news, and 30-day trends. A third tier lists power outages reported in the news in many languages, grouped by place and time with each publisher named and linked, found by a script and labelled as not checked by CyberView until CyberView AI's outage desk has checked them; they are never counted as incidents. CyberView AI checks the cause of big or corroborated incidents; an outage is never called an attack unless an official source says so. A rule-based audit checks every grid source each cycle (failing or frozen feeds, sudden falls in customers, misplaced points), and the status page lists its flags.",
       "covers": {
         "views": [
           "grid"
@@ -106,11 +106,22 @@
       "key": "context",
       "title": "Context layers",
       "link": "./",
-      "text": "Internet disruptions (IODA) and disaster alerts (GDACS) on the globe, drawn in neutral ink and always labelled as context, not cyber events.",
+      "text": "Internet disruptions (IODA) and disaster alerts (GDACS) on the globe, drawn in neutral ink and always labelled as context, not cyber events; a strong internet disruption shows the outage desk's check when there is one.",
       "covers": {
         "layers": [
           "ioda",
           "gdacs"
+        ]
+      }
+    },
+    {
+      "key": "outages",
+      "title": "Outage checks",
+      "link": "./#grid",
+      "text": "An outage desk inside the research loop, where CyberView AI (a Claude model) checks outage reports that no one had checked: power outages reported in the news that no operator feed covers, country-level internet disruptions measured by IODA, and major outages on providers' own status pages. Each is read against the operator's, provider's or government's own page and credible reporting and marked confirmed (naming who confirmed it, with figures, times and cause only as a source states them), not confirmed (with the reason), or, when a source links it to a cyberattack, handed to the research loop as a lead, never published as an attack by itself. The Grid view and the internet disruption layer show the result next to the report, and reports not checked yet stay labelled as unchecked. A confirmed internet or service outage can become an outage event, with a second review like every other.",
+      "covers": {
+        "routines": [
+          "outage"
         ]
       }
     },

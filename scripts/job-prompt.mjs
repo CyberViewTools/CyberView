@@ -16,7 +16,7 @@ const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "improver": "Improver", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "outage": "Outage checker", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -86,6 +86,17 @@ if (job === "researcher") {
       + `\n      causes as the operator reports them: ${(i.causes || []).map((c) => `${c.cause || "(none given)"} (${n(c.customers)})`).join("; ") || "none given"}\n      operator page: ${i.url || "none"}`
       + (i.earlier ? `\n      earlier try ${i.earlier.tries}: ${i.earlier.decision}: ${i.earlier.cause_summary}${(i.earlier.sources || []).length ? " [" + i.earlier.sources.join(" ") + "]" : ""}` : "")).join("\n")
     + (mine.length ? "" : "\n  (none: end with \"grid researcher " + batch + ": nothing assigned\")");
+} else if (job === "outage") {
+  const pf = /^outage-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_OUTAGE_PLAN || "") ? process.env.CYBERVIEW_OUTAGE_PLAN : "outage-plan.json";
+  const plan = readJson(join(DATA, pf), { batches: [] }), b = (plan.batches || [])[Number(batch) - 1] || { items: [] }, mine = b.items || [];
+  const n = (x) => (x == null ? "?" : Number(x).toLocaleString("en-US"));
+  assignment = `YOUR ASSIGNMENT (outage checker ${batch}): plan_id ${plan.plan_id || "?"}, batch ${b.batch ?? batch}. Out file: data/${b.out || "outage-out-" + batch + ".json"}\n${mine.length} unchecked outage report(s):\n`
+    + mine.map((i) => `  ${i.id}  [${i.kind}] ${i.title}\n      ${i.country || "country not given"}${i.place ? ", " + i.place : ""}; first seen ${i.first_seen || "?"}${i.last_seen && i.last_seen !== i.first_seen ? ", last seen " + i.last_seen : ""}`
+      + (i.kind === "power" ? `${i.figure ? `\n      figure as one report states it: ${n(i.figure.n)} ${i.figure.unit || "(unit not stated)"} (${i.figure.by})` : ""}${i.cyber_headline ? `\n      a headline speaks of a cyberattack: ${i.cyber_headline}` : ""}\n      reported by:\n` + (i.publishers || []).map((p) => `        - ${p.name}, ${String(p.published).slice(0, 16)}: ${p.title}\n          ${p.url}`).join("\n") : "")
+      + (i.kind === "internet" ? `\n      IODA measurements: ${(i.signals || []).join(", ") || "?"}; score ${n(i.score)}; ${i.events} event(s) in 24 h; IODA page: ${i.url || "none"}` : "")
+      + (i.kind === "service" ? `\n      provider: ${i.provider}; status page: ${i.url}${i.summary ? "\n      status page says: " + i.summary : ""}` : "")
+      + (i.earlier ? `\n      earlier try ${i.earlier.tries}: ${i.earlier.decision}: ${i.earlier.summary}${(i.earlier.sources || []).length ? " [" + i.earlier.sources.join(" ") + "]" : ""}` : "")).join("\n")
+    + (mine.length ? "" : "\n  (none: end with \"outage checker " + batch + ": nothing assigned\")");
 } else if (job === "reviewer") {
   const pf = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_REVIEW_PLAN || "") ? process.env.CYBERVIEW_REVIEW_PLAN : "review-plan.json";
   const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
@@ -153,7 +164,7 @@ if (job === "researcher") {
 const worker = process.argv.includes("--worker") || !!batch || process.env.CYBERVIEW_WORKER === "1";
 const PROFILE = {
   "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
-  "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "grid": ["core", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
+  "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "grid": ["core", "web", "log"], "outage": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
   "regional-researcher": ["core", "search", "events", "web", "log"],
   "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"], "improver": ["core", "log"],
   "watchdog": ["core", "web", "log"], "advisory": ["core", "web", "log"], "scout": ["core", "search", "web", "log"], "triage": ["core", "log"],

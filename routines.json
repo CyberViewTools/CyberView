@@ -319,6 +319,20 @@
    "reviewed": "2026-11-20"
   },
   {
+   "key": "outage",
+   "name": "Outage desk",
+   "tier": "ai",
+   "workflow": "flow",
+   "active_since": "2026-11-20T22:00:00Z",
+   "cron": null,
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_outage_at",
+   "max_age_hours": 6,
+   "active": true,
+   "does": "Runs inside the research loop every cycle (config/pipeline.json flow.outage_workers): outage checkers verify outage reports nobody had checked (power outages reported in the news that no operator feed covers, country-level internet disruptions measured by IODA, major outages on providers' status pages) from the operator's, provider's or government's own page and credible reporting, and record confirmed, not confirmed or a cyber lead for the research loop (scripts/outage-desk.mjs). A confirmed internet or service outage can become an outage event with a second review; a power outage stays context. Off when usage is tight.",
+   "reviewed": "2026-11-20"
+  },
+  {
    "key": "steward",
    "name": "Data steward",
    "tier": "ai",

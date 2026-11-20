@@ -502,8 +502,12 @@ async def main():
         b18 = copy.deepcopy(bundle)
         b18["context"] = {
             "ioda": {"source": "IODA", "source_url": "https://ioda.inetintel.cc.gatech.edu/", "fetched_at": iso(1), "ok": True, "error": "",
-                     "items": [{"code": "FR", "name": "France", "map_name": "France", "score": 900, "events": 2, "signals": ["bgp"], "url": "https://ioda.inetintel.cc.gatech.edu/country/FR"},
-                               {"code": "XX", "name": "Bad<b>", "map_name": "", "score": 1, "events": 1, "signals": [], "url": "javascript:alert(1)"}]},
+                     "items": [{"code": "FR", "name": "France", "map_name": "France", "score": 900, "events": 2, "signals": ["bgp"], "url": "https://ioda.inetintel.cc.gatech.edu/country/FR",
+                                # v1.61: the outage desk's check of this country (scripts/outage-desk.mjs, attached by the build)
+                                "verified": {"decision": "confirmed", "summary": "Orange said a fibre cut disrupted fixed internet in the south of France.", "publisher": "Orange<img src=x id=pwn9>",
+                                             "url": "https://newsroom.orange.com/fibre-incident-2026/", "at": iso(2), "by": "someone else"}},
+                               {"code": "XX", "name": "Bad<b>", "map_name": "", "score": 1, "events": 1, "signals": [], "url": "javascript:alert(1)",
+                                "verified": {"decision": "hacked", "summary": "x", "publisher": "y"}}]},
             "gdacs": {"source": "GDACS", "source_url": "https://www.gdacs.org/", "fetched_at": iso(30), "ok": False, "error": "timeout",
                       "items": [{"id": "EQ-1", "type": "earthquake", "level": "red", "name": "Earthquake test", "country": "Chile", "lat": -33.4, "lng": -70.6, "url": "https://evil.test/x"}]},
         }
@@ -522,6 +526,12 @@ async def main():
             ok("layers: off-site and script links neutralised", "javascript:alert(1)" not in hrefs and "https://evil.test/x" not in hrefs, hrefs)
             await pg.click("#layers .chip:not([data-arc]) >> nth=0")
             ok("layers: disruptions shade the country", await pg.locator("path.country.dis").count() == 1)
+            # v1.61: the outage desk's check shown on the disruption it checked; an unknown decision dropped; the rest unchecked
+            ltxt = await pg.inner_text("#layers")
+            ok("outage desk: an IODA country shows the AI check, confirmed by whom", "Checked by CyberView AI (a Claude model): confirmed by Orange<img src=x id=pwn9>" in ltxt and "fibre cut" in ltxt and "someone else" not in ltxt and await pg.locator("#pwn9").count() == 0, ltxt[-500:])
+            ok("outage desk: an unknown decision is dropped and the signal stays unchecked", "hacked" not in ltxt and "A measurement, not checked by CyberView." in ltxt)
+            lh = await pg.eval_on_selector_all("#layers .ocheck a", "as => as.map(a => a.getAttribute('href'))")
+            ok("outage desk: the check links the confirming page", lh == ["https://newsroom.orange.com/fibre-incident-2026/"], lh)
             await pg.keyboard.press("Escape")
             ok("layers: Esc closes the panel", await pg.locator("#layers").is_hidden())
             ok("globe: always on, no flat-map toggle", await pg.locator("path.ocean").count() == 1 and await pg.locator("#zglobe").count() == 0)
@@ -607,7 +617,9 @@ async def main():
         hj = json.load(open(hp)) if os.path.exists(hp) else {"built_at": iso(0.1)}
         hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5,
                    # v1.54: the later grid stages and the audit (ops-6)
-                   "grid_analysis_at": iso(0.2), "last_grid_news_at": iso(3), "grid_waiting": {"count": 2, "oldest_min": 185}, "grid_audit_flags": ["news_late", "<b id=pwn4>"]})
+                   "grid_analysis_at": iso(0.2), "last_grid_news_at": iso(3), "grid_waiting": {"count": 2, "oldest_min": 185}, "grid_audit_flags": ["news_late", "<b id=pwn4>"],
+                   # v1.61: the outage desk's queue
+                   "last_outage_at": iso(0.2), "outage_queue": {"waiting": 3, "checked_24h": 5, "confirmed_24h": 2, "cyber_leads_24h": 1, "oldest_min": 95, "by_kind": {"power": 2, "internet": 1, "service": 0}}})
         # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
         hj["grid_sources"] = {
             "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12, "flags": ["customers_missing", "<img id=pwn5>"]},
@@ -656,10 +668,13 @@ async def main():
             {"id": "gn-ca-toronto-2026111912", "country": "CA", "region": "", "place": "Toronto", "lat": 43.65, "lng": -79.38, "approx": True,
              "figure": {"n": 120000, "unit": "customers", "by": "CBC News"}, "cause_words": ["storm", "wind"], "first_seen": iso(4), "last_seen": iso(2), "count": 2, "cyber_headline": "",
              "publishers": [{"name": "CBC News", "url": "https://www.cbc.ca/news/canada/toronto/storm-outage-1.123", "title": "120,000 Toronto Hydro customers without power after storm", "lang": "en", "published": iso(4)},
-                            {"name": "CityNews", "url": "https://toronto.citynews.ca/2026/11/19/outage/", "title": "Storm knocks out power across Toronto", "lang": "en", "published": iso(2)}]},
+                            {"name": "CityNews", "url": "https://toronto.citynews.ca/2026/11/19/outage/", "title": "Storm knocks out power across Toronto", "lang": "en", "published": iso(2)}],
+             # v1.61: checked by the outage desk
+             "verified": {"decision": "confirmed", "summary": "Toronto Hydro said a storm cut power to about 120,000 customers.", "publisher": "Toronto Hydro", "url": "https://www.torontohydro.com/news/storm-update", "at": iso(1)}},
             {"id": "gn-gb-glasgow-2026111915", "country": "GB", "region": "", "place": "Glasgow", "lat": 55.86, "lng": -4.25, "approx": True,
              "figure": {"n": 3400, "unit": "unstated"}, "cause_words": [], "first_seen": iso(2), "last_seen": iso(2), "count": 1, "cyber_headline": "",
-             "publishers": [{"name": "Glasgow Live", "url": "javascript:alert(1)", "title": "3,400 without power in Glasgow", "lang": "en", "published": iso(2)}]},
+             "publishers": [{"name": "Glasgow Live", "url": "javascript:alert(1)", "title": "3,400 without power in Glasgow", "lang": "en", "published": iso(2)}],
+             "verified": {"decision": "cyberattack", "summary": "hacked", "publisher": "x"}},
             {"id": "gn-xx-nowhere-1", "country": "FR", "place": "Nowhere", "publishers": [{"name": "x", "url": "https://x.example/a", "title": "t"}]}]}
         json.dump(bg, open(os.path.join(site_g, "data", "bundle.json"), "w"))
 
@@ -755,13 +770,16 @@ async def main():
             ntxt = await pg.inner_text("#gNewsSec")
             nrows = await pg.locator("#gNews li.gn").all_text_contents()
             ok("grid news: a 'Reported in the news, not checked' section with one row per reported outage, broken items dropped", "Reported in the news, not checked" in ntxt and len(nrows) == 3 and "Nowhere" not in ntxt, nrows)
-            ok("grid news: every row says it is not checked by CyberView", all("Not checked by CyberView" in r for r in nrows), nrows)
+            ok("grid news: every row the outage desk has not checked says it is not checked by CyberView", all("Not checked by CyberView" in r for r in nrows if "Toronto" not in r), nrows)
+            ok("outage desk: a checked report says who confirmed it, labelled as AI-written", "Checked by CyberView AI (a Claude model): confirmed by Toronto Hydro" in nrows[1] and "Not checked by CyberView" not in nrows[1] and "checked 1 h ago" in nrows[1], nrows[1])
+            ok("outage desk: an unknown decision is dropped (the report stays unchecked)", "hacked" not in nrows[2] and "Checked by" not in nrows[2], nrows[2])
+            ok("outage desk: the news count says how many were checked", "1 checked by CyberView AI (a Claude model)" in await pg.inner_text("#gNewsCount"))
             ok("grid news: strongest first (most publishers)", "Kyiv" in nrows[0] and "Toronto" in nrows[1] and "Glasgow" in nrows[2], nrows)
             ok("grid news: the figure with its unit as reported, a bare number says so", "120,000 customers without power, as reported" in nrows[1] and "3,400 without power, as reported (the report does not say customers, homes or people)" in nrows[2], nrows)
             ok("grid news: publishers named; cause words as reported, not confirmed; unknown words dropped", "Reported by: <img src=x id=pwn5>Kyiv Post, Ukrainska Pravda, Suspilne" in nrows[0] and "Words in the reports: attack, drone (as reported, not confirmed)" in nrows[0] and "<b>bad</b>" not in ntxt, nrows[0])
             ok("grid news: a cyberattack in a headline is shown as the headline's words, reported, not confirmed", "A headline mentions a cyberattack: \u201cCyberattack suspected in Kyiv blackout, officials say\u201d \u2014 reported, not confirmed." in nrows[0], nrows[0])
             nhrefs = await pg.eval_on_selector_all("#gNews a", "as => as.map(a => a.getAttribute('href'))")
-            ok("grid news: links only to the publishers' own https pages (no news index, no javascript)", sorted(nhrefs) == sorted(["https://www.kyivpost.com/post/12345", "https://suspilne.media/kyiv/9876-kyiv-blackout/", "https://www.cbc.ca/news/canada/toronto/storm-outage-1.123", "https://toronto.citynews.ca/2026/11/19/outage/"]), nhrefs)
+            ok("grid news: links only to the publishers' own https pages (no news index, no javascript)", sorted(nhrefs) == sorted(["https://www.kyivpost.com/post/12345", "https://suspilne.media/kyiv/9876-kyiv-blackout/", "https://www.cbc.ca/news/canada/toronto/storm-outage-1.123", "https://toronto.citynews.ca/2026/11/19/outage/", "https://www.torontohydro.com/news/storm-update"]), nhrefs)
             ok("grid news: injected markup stays text", await pg.locator("#pwn5").count() == 0 and await pg.locator("#gNewsSec img").count() == 0)
             ok("grid news: never counted as incidents and never called an attack by CyberView", "5 incidents open" in await pg.inner_text("#gCount") and await pg.locator("#gRows li").count() == 7
                and "never counted as incidents" in ntxt and "an outage is not an attack" in ntxt)
@@ -774,6 +792,8 @@ async def main():
             ok("grid news: ring tooltip says reported in the news, not checked, context", "Reported in the news:" in ntip and "not checked by CyberView" in ntip and "context, not a cyber event" in ntip, ntip)
             await pg.locator("#gNews li.gn", has_text="Toronto").click(); await pg.wait_for_timeout(1100)
             ok("grid news: a row turns the globe to it with its tooltip", "Reported in the news: Toronto" in (await pg.text_content("#tip") or "") and await pg.locator("#svg g.gnews.gsel").count() == 1 and await pg.locator("#gNews li.on").count() == 1)
+            ttip = await pg.text_content("#tip") or ""
+            ok("outage desk: the ring's tooltip carries the check, still context", "Checked by CyberView AI (a Claude model): confirmed by Toronto Hydro" in ttip and "not checked by CyberView" not in ttip and "context, not a cyber event" in ttip, ttip)
             await pg.click("#gseg [data-gf=unplanned]"); await pg.wait_for_timeout(150)
             un = await pg.locator("#gRows li .gname").all_text_contents()
             ok("grid view: Unplanned only drops planned work, on the globe too", len(un) == 6 and not any("planned work" in n for n in un) and await pg.locator("#svg g.gridm.out").count() == 1, un)
@@ -833,6 +853,7 @@ async def main():
             ok("grid sources: not connected is neutral, not a fault", ncb and all("neutral" in c.split() and "warn" not in c.split() and "bad" not in c.split() for c in ncb), ncb)
             ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 4, src)
             ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
+            ok("outage desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Outage desk (CyberView AI (a Claude model)): 3 outage reports waiting for a check; 5 checked in 24 h (2 confirmed, 1 cyber lead passed to research)" in r and "last run" in r for r in rows), rows)
             ok("grid: status page without script errors", not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), wait=1000)

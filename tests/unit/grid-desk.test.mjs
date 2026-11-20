@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { candidates, planId, makePlan, validate, applyResults, entryFor, badSource, officialHost, leadFor, BY } from "../../scripts/grid-desk.mjs";
+import { candidates, planId, makePlan, validate, applyResults, entryFor, badSource, officialHost, leadFor, BY, regDomain, newsCandidates, brief } from "../../scripts/grid-desk.mjs";
 
 const NOW = Date.parse("2026-11-19T18:00:00Z");
 const inc = (o) => ({ id: "grid-hydroquebec-quebec-202611191200", source: "hydroquebec", country: "CA", region: "Quebec", kind: "outage", name: "Hydro-Québec: 152,300 customers without power",
@@ -116,7 +116,7 @@ test("apply: a cyber cause becomes ONE lead, with the right label and tier", () 
 test("CLI: plan, apply and apply again changes nothing; one lead", () => {
   const here = dirname(fileURLToPath(import.meta.url)), repo = join(here, "..", ".."), t = mkdtempSync(join(tmpdir(), "grid-desk-"));
   mkdirSync(join(t, "scripts", "lib"), { recursive: true }); mkdirSync(join(t, "data", "grid"), { recursive: true }); mkdirSync(join(t, "config"), { recursive: true });
-  for (const f of ["scripts/grid-desk.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs"]) copyFileSync(join(repo, f), join(t, f));
+  for (const f of ["scripts/grid-desk.mjs", "scripts/grid.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs", "scripts/lib/net.mjs"]) copyFileSync(join(repo, f), join(t, f));
   writeFileSync(join(t, "data", "grid", "incidents.json"), JSON.stringify({ updated_at: iso(Date.now()), open: [B], closed: [A] }));
   writeFileSync(join(t, "data", "status.json"), "{}\n"); writeFileSync(join(t, "config", "grid.json"), JSON.stringify({ retry_hours: 6, max_tries: 3 }));
   const run = (...a) => spawnSync("node", ["scripts/grid-desk.mjs", ...a], { cwd: t, encoding: "utf8", env: { ...process.env, CYBERVIEW_RUN: "run-test" } });
@@ -138,4 +138,67 @@ test("CLI: plan, apply and apply again changes nothing; one lead", () => {
   // a file for another plan is refused outright
   writeFileSync(join(t, "data", "grid-out-x.json"), JSON.stringify({ plan_id: "gp-nope", batch: 1, results: [] }));
   assert.equal(run("apply", "grid-out-x.json").status, 1);
+});
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("logic-1: a retry gets a new plan id and is recorded: tries 2, then final at max_tries", () => {
+  const big = inc({ id: "grid-bchydro-british-columbia-202611200200", source: "bchydro", peak_customers: 60000, url: "https://www.bchydro.com/outages" });
+  const c = { retry_hours: 6, max_tries: 3 }, t0 = Date.parse("2026-11-20T02:00:00Z");
+  let research = {};
+  const round = (now, decision) => {
+    const cands = candidates([big], research, {}, now, c);
+    if (!cands.length) return null;
+    const p = makePlan(cands, research, 1, 4);
+    const v = validate(p, { plan_id: p.plan_id, batch: 1, results: [{ id: big.id, decision, cause_summary: "BC Hydro says the cause is being investigated.",
+      sources: ["https://www.bchydro.com/news/press_centre/news_releases/2026/x.html"], read_depth: "full" }] });
+    const r = applyResults(research, p, v.good, new Set(), now, c);
+    research = r.research;
+    return p.plan_id;
+  };
+  const p1 = round(t0, "under_investigation");
+  assert.equal(research[big.id].tries, 1); assert.equal(research[big.id].next_at, "2026-11-20T08:00:00Z");
+  assert.equal(round(Date.parse("2026-11-20T05:00:00Z"), "under_investigation"), null);     // not due yet
+  const p2 = round(Date.parse("2026-11-20T09:00:00Z"), "under_investigation");
+  assert.notEqual(p2, p1);
+  assert.equal(research[big.id].tries, 2); assert.equal(research[big.id].next_at, "2026-11-20T15:00:00Z"); assert.equal(research[big.id].final, false);
+  round(Date.parse("2026-11-20T16:00:00Z"), "unknown");
+  assert.equal(research[big.id].tries, 3); assert.equal(research[big.id].final, true);
+  assert.equal(round(Date.parse("2026-11-21T06:00:00Z"), "unknown"), null);               // done: never planned again
+});
+
+test("logic-3: officialHost accepts the operator's sibling hosts (registrable domain) and refuses energy.com", () => {
+  assert.equal(regDomain("powercuts.nationalgrid.co.uk"), "nationalgrid.co.uk");
+  assert.equal(regDomain("new.kpx.or.kr"), "kpx.or.kr");
+  assert.equal(regDomain("dados.ons.org.br"), "ons.org.br");
+  assert.equal(regDomain("outagemap.eversource.com"), "eversource.com");
+  assert.ok(officialHost("https://www.eversource.com/content/news/x", "https://outagemap.eversource.com/external/default.html"));
+  assert.ok(officialHost("https://www.ons.org.br/Paginas/Noticias/x", "https://dados.ons.org.br/dataset/x"));
+  assert.ok(officialHost("https://www.ssen.co.uk/news/x", "https://powertrack.ssen.co.uk/powertrack"));
+  assert.ok(officialHost("https://www.nationalgrid.co.uk/news/x", "", "nged-live-power-cuts"));        // by the source's own hosts
+  assert.ok(officialHost("https://www.kpx.or.kr/board/x", "https://new.kpx.or.kr/x"));
+  assert.ok(!officialHost("https://www.energy.com/blog/hack")); assert.ok(!officialHost("https://www.energy.net/x"));
+  assert.ok(officialHost("https://www.energy.gov/ceser/x"));
+  assert.ok(!officialHost("https://www.example.co.uk/x", "https://powertrack.ssen.co.uk/powertrack"));    // co.uk alone is no domain
+  // validate passes the incident's source through
+  const pl = { plan_id: "gp-x", batches: [{ batch: 1, incidents: [{ id: "grid-eversource-ct-202611200100", source: "eversource", url: "https://outagemap.eversource.com/x" }] }] };
+  const v = validate(pl, { plan_id: "gp-x", batch: 1, results: [{ id: "grid-eversource-ct-202611200100", decision: "cyber_official", cause_summary: "Eversource said a cyberattack disrupted its systems.",
+    sources: ["https://www.eversource.com/content/news/2026/statement"], read_depth: "full" }] });
+  assert.equal(v.ok, true, JSON.stringify(v.bad));
+});
+
+test("logic-7: big, nationwide or cyber-reported outages known only from the news reach the desk; small or covered ones do not", () => {
+  const pub = (n, t) => ({ name: `P${n}`, url: `https://p${n}.example.com/news/${n}`, title: t, lang: "en", published: "2026-11-19T22:00:00Z" });
+  const item = (o) => ({ id: "gn-ua-ukraine-2026111822", country: "UA", region: "", place: "Ukraine", lat: 49, lng: 31.5, approx: true, figure: null, cause_words: ["drone"],
+    first_seen: "2026-11-19T22:00:00Z", last_seen: "2026-11-19T23:00:00Z", publishers: [pub(1, "Power outages across the country after strikes"), pub(2, "Blackouts in five regions")], count: 2, cyber_headline: "", ...o });
+  const news = { items: [item(), item({ id: "gn-pk-karachi-2026111900", country: "PK", place: "Karachi", figure: { n: 2000000, unit: "people" }, publishers: [pub(3, "Karachi blackout"), pub(4, "Karachi without power")] }),
+    item({ id: "gn-ng-lagos-2026111900", country: "NG", place: "Lagos", publishers: [pub(5, "Lagos outage"), pub(6, "Lagos power cut")] }),                       // small
+    item({ id: "gn-gr-athens-2026111900", country: "GR", place: "Athens", publishers: [pub(7, "Athens blackout")] }),                                          // one publisher
+    item({ id: "gn-ca-quebec-2026111900", country: "CA", place: "Quebec", figure: { n: 90000, unit: "customers" }, publishers: [pub(8, "x"), pub(9, "y")] }),   // operator incident open
+    item({ id: "gn-mx-sonora-2026111900", country: "MX", place: "Sonora", cyber_headline: "Hackers blamed for outage", publishers: [pub(10, "Hackers blamed for outage"), pub(11, "Sonora outage")] })] };
+  const c = newsCandidates(news, { open: [inc({ country: "CA" })] }, { research_customers: 50000 });
+  assert.deepEqual(c.map((x) => x.id), ["grid-news-gn-ua-ukraine-2026111822", "grid-news-gn-pk-karachi-2026111900", "grid-news-gn-mx-sonora-2026111900"]);
+  assert.ok(c.every((x) => x.source === "news" && x.research_reason === "reported" && x.research_needed === true));
+  const b = brief(c[1], null);
+  assert.equal(b.reported.length, 2); assert.equal(b.peak_customers, 2000000);
+  assert.deepEqual(candidates(c, {}, {}, NOW).map((x) => x.id)[0], "grid-news-gn-pk-karachi-2026111900");
 });

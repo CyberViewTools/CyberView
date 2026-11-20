@@ -80,10 +80,11 @@ jobs:
     if: needs.check.outputs.forward == '1'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # one writer to the data branch at a time, like the other data workflows (only runs that have something to forward
-    # join the group)
+    # its own group, NOT data-writes: GitHub keeps one pending run per group, so a forwarder queued there would cancel a
+    # pending Collect or Feeds run. One forwarder at a time is enough (a newer pending one replaces an older one and
+    # forwards everything); a push lost to another data writer is retried below from the newest data branch.
     concurrency:
-      group: data-writes
+      group: data-forward
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4

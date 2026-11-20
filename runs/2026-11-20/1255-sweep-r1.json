@@ -1,0 +1,25 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-20T12:48:39Z",
+  "finished_at": "2026-11-20T12:58:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["iFood ataque hacker vazamento", "Openbaar Ministerie Tata Steel", "デジタル庁 ファイル共有 漏えい", "Microsoft virusscanners buiten Windows-kernel"],
+  "pages_read": [
+    {"url": "https://olhardigital.com.br/2026/11/19/seguranca/ifood-sofre-ataque-hacker-que-expoe-dados-de-clientes-e-entregadores", "title": "Olhar Digital iFood", "used_in": "ifood-data-breach-2026-11"},
+    {"url": "https://tecnoblog.net/noticias/ifood-sofre-outro-vazamento-de-dados-de-clientes/", "title": "Tecnoblog iFood", "used_in": "ifood-data-breach-2026-11"},
+    {"url": "https://www.itmedia.co.jp/news/article/2611/20/2000003381/", "title": "ITmedia Digital Agency", "used_in": "digital-agency-gss-file-sharing-leak-2026-11"},
+    {"url": "https://www.security.nl/posting/962468/Openbaar+Ministerie+hackte+voor+onderzoek+bedrijfsnetwerk+Tata+Steel", "title": "Security.nl OM Tata Steel", "used_in": "om-hacked-tata-steel-network-2026-11"},
+    {"url": "https://www.security.nl/posting/962480/Microsoft+laat+virusscanners+nu+buiten+de+Windows-kernel+draaien", "title": "Security.nl Microsoft kernel", "used_in": "closed, not an event"},
+    {"url": "https://newturkpost.com/news/137291", "title": "New Turkish Post NSA outage day three", "used_in": "nsa-net-classified-network-outage-2026-11"}
+  ],
+  "added": ["ifood-data-breach-2026-11", "digital-agency-gss-file-sharing-leak-2026-11", "om-hacked-tata-steel-network-2026-11"],
+  "updated": ["nsa-net-classified-network-outage-2026-11", "nsa-tech-outage-2026-11 (marked duplicate_of the earlier NSA Net event)"],
+  "skipped": [{"title": "Microsoft virusscanners buiten de Windows-kernel", "url": "https://www.security.nl/posting/962480/", "reason": "product architecture announcement, not an incident or vulnerability"}],
+  "open_leads": [
+    {"title": "iFood statement page", "url": "https://institucional.ifood.com.br/releases/vazamento-de-dados/", "note": "iFood's own release not read; would allow primary-source citation", "priority": "low"},
+    {"title": "Digital Agency own release on GSS file-sharing leak", "url": "", "note": "Only ITmedia read; find digital.go.jp notice to corroborate", "priority": "medium"},
+    {"title": "OM press release / NOS on Tata Steel hack", "url": "", "note": "Only Security.nl read", "priority": "low"}
+  ],
+  "failed_sites": ["Google News redirect links (shell page only)"],
+  "notes": "NSA story from newturkpost was a relay of NBC/CNN/Fox; merged into the existing NSA Net event; the earlier single-source NBC record was marked duplicate. Python/curl were not permitted, so pages were read through the fetch agent."
+}

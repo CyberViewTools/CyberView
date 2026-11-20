@@ -18,15 +18,38 @@
   "exec": "A misconfigured, internet-exposed banking platform service reportedly gave attackers admin access; other banks may share the same setup.",
   "action": "Apply Temenos's configuration updates and guidance, set privileged authentication services to private, and remove direct internet access to Fabric and Spotlight administration services.",
   "impact": "Six other banks appeared to have the same configuration and internet exposure; no breaches were confirmed at them.",
-  "tags": ["misconfiguration", "banking"],
+  "tags": [
+    "misconfiguration",
+    "banking"
+  ],
   "cves": [],
-  "products": ["Temenos Quantum Fabric", "Temenos Infinity Spotlight"],
-  "attack": ["web shell"],
+  "products": [
+    "Temenos Quantum Fabric",
+    "Temenos Infinity Spotlight"
+  ],
+  "attack": [
+    "web shell"
+  ],
   "sources": [
-    {"name": "CyberPress: BankWeaver hijacks banking servers", "url": "https://cyberpress.org/bankweaver-hijacks-banking-servers/"}
+    {
+      "name": "CyberPress: BankWeaver hijacks banking servers",
+      "url": "https://cyberpress.org/bankweaver-hijacks-banking-servers/"
+    }
   ],
   "source_tier": "established",
-  "validation": {"state": "single_source", "checked_at": "2026-11-20T14:04:40Z", "note": "Only CyberPress read; it credits Forescout but the Forescout and Temenos originals were not found in this run."},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-20T14:04:40Z",
+    "note": "Only CyberPress read; it credits Forescout but the Forescout and Temenos originals were not found in this run."
+  },
   "first_seen": "2026-11-20T14:04:40Z",
-  "updated_at": "2026-11-20T14:04:40Z"
+  "updated_at": "2026-11-20T14:04:40Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-20T14:09:03Z",
+    "first_at": "2026-11-20T14:09:03Z",
+    "note": "Title, summary, FabricShell and FabricShadow, anonymous auth cause, Temenos updates, six other banks without confirmed breaches checked against CyberPress 20 Nov; single_source correct",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-20T14:09:03Z"
 }

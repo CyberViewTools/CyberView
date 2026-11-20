@@ -14,9 +14,9 @@ const AI = REG.filter((r) => r.tier === "ai");
 const MD = readFileSync(join(ROOT, "docs", "jobs.md"), "utf8");
 const prompt = (args, env = {}) => spawnSync("node", [join(ROOT, "scripts", "job-prompt.mjs"), ...args], { cwd: ROOT, encoding: "utf8", timeout: 60000, env: { ...process.env, NO_HOUSEKEEPING: "1", ...env } });
 
-test("routines: the 22 AI routines are all still listed, active or retired", () => {
+test("routines: the 23 AI routines are all still listed, active or retired (the outage desk joined on 2026-11-20)", () => {
   const keys = AI.map((r) => r.key).sort();
-  assert.deepEqual(keys, ["advisory", "analysis", "analyst", "backlog", "brief", "deep-sweep", "editor", "followup", "guardian", "improver", "moderator", "regional", "report-review", "review", "scout", "security-review", "steward", "sweep", "tabletop", "triage", "verify", "watchdog"]);
+  assert.deepEqual(keys, ["advisory", "analysis", "analyst", "backlog", "brief", "deep-sweep", "editor", "followup", "guardian", "improver", "moderator", "outage", "regional", "report-review", "review", "scout", "security-review", "steward", "sweep", "tabletop", "triage", "verify", "watchdog"]);
 });
 
 test("routines: a retired routine says why, with evidence, and names an active routine that took its duties", () => {

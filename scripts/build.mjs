@@ -172,6 +172,19 @@ for (const x of listDir("context")) {
   if (!c || !Array.isArray(c.items) || typeof c.source !== "string") { warnings.push(`context/${x.id}.json: unreadable, layer left out`); continue; }
   context[x.id] = { source: c.source, source_url: c.source_url, fetched_at: c.fetched_at || "", ok: !!c.ok, error: c.error || "", items: c.items };
 }
+// the outage desk (scripts/outage-desk.mjs): AI checks of outage reports nobody had checked (data/outages/checks.json).
+// Each check is shown next to the report it checked: an IODA country (its newest check of the last 48 hours) here, a
+// news-reported power outage below. Optional: a fault here leaves every report labelled as unchecked, never the build.
+let outageDesk = null, outageChecks = {};
+try {
+  outageDesk = await import("./outage-desk.mjs");
+  const oc = existsSync(join(DATA, "outages", "checks.json")) ? readJson(join(DATA, "outages", "checks.json")) : {};
+  if (oc && typeof oc === "object" && !Array.isArray(oc)) outageChecks = oc; else warnings.push("outages/checks.json: not readable, outage checks left out");
+  if (context.ioda) context.ioda.items = context.ioda.items.map((x) => {
+    const v = x && /^[A-Z]{2}$/.test(x.code || "") ? outageDesk.siteCheck(outageDesk.latestFor(outageChecks, `net-${x.code.toLowerCase()}`)) : null;
+    return v ? { ...x, verified: v } : x;
+  });
+} catch (e) { warnings.push(`outage checks: ${String((e && e.message) || e).slice(0, 80)}`); }
 
 // power grid analysis (scripts/grid-analysis.mjs, no AI model): corroboration, anomalies and 30-day trends per region.
 // Validated loosely like the context layers: a broken file only drops the grid analysis (with a warning), never the build.
@@ -203,7 +216,7 @@ const gridNews = (() => {
   const checked = (id) => { const r = research && typeof research === "object" ? research[`grid-news-${id}`] : null;
     return r && DEC.includes(r.decision) ? { decision: r.decision, summary: String(r.cause_summary || "").slice(0, 300), by: "CyberView AI (a Claude model)" } : null; };
   return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300)
-    .map((x) => { const c = checked(x.id); return c ? { ...x, checked: c } : x; }) };
+    .map((x) => { const c = checked(x.id), v = outageDesk ? outageDesk.siteCheck(outageChecks[`pw-${x.id}`]) : null; return { ...x, ...(c ? { checked: c } : {}), ...(v ? { verified: v } : {}) }; }) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
@@ -246,6 +259,8 @@ const gridStages = (() => {
   const pf = audit.pipeline && Array.isArray(audit.pipeline.flags) ? audit.pipeline.flags.filter((x) => /^[a-z0-9_]{1,40}$/.test(x)).slice(0, 10) : [];
   return { waiting: { count: waiting.length, oldest_min: oldest }, audit_at: String(audit.updated_at || "").slice(0, 30), audit_flags: pf };
 })();
+// the outage desk's queue, for the status page: waiting now, checked in the last 24 hours, the oldest wait
+const outageQueue = (() => { try { if (!outageDesk) return null; const d = outageDesk.load(); return outageDesk.stats(outageDesk.queue(d.lists, d.checks, {}, Date.now(), d.cfg), d.checks); } catch (e) { warnings.push(`outage queue: ${String((e && e.message) || e).slice(0, 80)}`); return null; } })();
 
 // exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
 // One that breaks a rule is left out of the workbench and reported here (first, so the 40-line cap never hides it). This
@@ -487,7 +502,8 @@ console.log("Pages: " + (await buildPages()).join(", "));
     last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "",
     grid_open: context.grid ? context.grid.items.filter((x) => x && x.scope !== "outage").length : null,
     grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "", last_grid_news_at: st.last_grid_news_at || "",
-    grid_waiting: gridStages.waiting, grid_audit_at: gridStages.audit_at, grid_audit_flags: gridStages.audit_flags }));
+    grid_waiting: gridStages.waiting, grid_audit_at: gridStages.audit_at, grid_audit_flags: gridStages.audit_flags,
+    last_outage_at: st.last_outage_at || "", outage_queue: outageQueue }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

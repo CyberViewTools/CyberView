@@ -17,7 +17,14 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const DATA = join(ROOT, "data");
 
 export const readJson = (p, d = null) => { try { return JSON.parse(readFileSync(p, "utf8")); } catch { return d; } };
-export function writeJson(p, o) { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, JSON.stringify(o, null, 2) + "\n"); }
+/** Write JSON atomically (a temporary file, then a rename), so a reader running at the same time (the build, a commit,
+ *  a background script) never sees half a file. */
+export function writeJson(p, o) {
+  mkdirSync(dirname(p), { recursive: true });
+  const t = `${p}.tmp-${process.pid}`;
+  writeFileSync(t, JSON.stringify(o, null, 2) + "\n");
+  try { renameSync(t, p); } catch (e) { try { unlinkSync(t); } catch {} throw e; }
+}
 export const nowIso = () => new Date().toISOString().replace(/\.\d+Z$/, "Z");
 export const dayAgo = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
 

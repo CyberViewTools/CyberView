@@ -11,6 +11,15 @@ export function mergeJson(base, up, mine) {
   }
   return out;
 }
+/** Pure: merge two JSON-lines files with a de-duplicating rule (dedupe: array of objects -> array of objects), for line
+ *  files where two writers can each write a different line for the same thing (grid series slots, closed incidents).
+ *  Lines that do not parse are kept as a plain union. */
+export function mergeKeyed(up, mine, dedupe) {
+  const objs = [], raw = [];
+  for (const l of `${up || ""}\n${mine || ""}`.split("\n")) { if (!l.trim()) continue; try { objs.push(JSON.parse(l)); } catch { raw.push(l); } }
+  const out = dedupe(objs).map((x) => JSON.stringify(x));
+  return mergeLines(out.join("\n"), raw.join("\n"));
+}
 /** Pure: union of two line files, main's order first, then lines only this commit has. */
 export function mergeLines(up, mine) {
   const seen = new Set(), out = [];

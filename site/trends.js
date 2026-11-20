@@ -91,7 +91,7 @@
     causes.sort(function (a, b) { return b.n - a.n; });
     var w = r.wow || r.week_over_week || r.week, wow = null;
     if (w && typeof w === "object") { var a = num(w.cur != null ? w.cur : w.this_week != null ? w.this_week : w.customer_hours, 0, 1e12), b = num(w.prev != null ? w.prev : w.last_week != null ? w.last_week : w.prev_customer_hours, 0, 1e12); if (a !== null && b !== null) wow = { cur: a, prev: b }; }
-    return { source: /^[a-z0-9_-]+$/.test(src) ? src : "", country: /^[A-Z]{2}$/.test(cc) ? cc : "", region: region, hours: ch, incidents: inc === null ? null : Math.round(inc), largest: largest, causes: causes.slice(0, 5), wow: wow };
+    return { source: /^[a-z0-9_-]+$/.test(src) ? src : "", country: /^[A-Z]{2}$/.test(cc) ? cc : "", region: region, hours: ch, incidents: inc === null ? null : Math.round(inc), largest: largest, causes: causes.slice(0, 5), wow: wow, coverage: num(r.coverage, 0, 1) };
   }
   function cleanGrid(g) {
     if (!g || typeof g !== "object" || !g.trends || typeof g.trends !== "object") return null;
@@ -112,7 +112,8 @@
     if (!g.rows.length) { sum.textContent = "No operator reported unplanned outages in the last " + g.days + " days, or the first analysis has not run yet."; return; }
     var tot = g.rows.reduce(function (s, r) { return s + r.hours; }, 0);
     sum.textContent = fmtNum(tot) + " customer-hours without power across " + g.rows.length + " operator region" + (g.rows.length === 1 ? "" : "s") + " in the last " + g.days + " days" +
-      (g.anomalies ? "; " + g.anomalies + " outage" + (g.anomalies === 1 ? " was" : "s were") + " unusual for the hour of the week" : "") + ".";
+      (g.anomalies ? "; " + g.anomalies + " outage" + (g.anomalies === 1 ? " was" : "s were") + " unusual for the hour of the week" : "") + "." +
+      (g.rows.some(function (r) { return r.coverage !== null && r.coverage < 0.9; }) ? " Some operators' feeds were not read for part of the period, so their totals undercount; each row says how much is covered, and no week-on-week change is shown without 90% coverage in both weeks." : "");
     var max = Math.max(1, g.rows[0].hours);
     var cap = el("p", "note daycap", "Tap a bar for the causes as the operators reported them."); cap.setAttribute("aria-live", "polite");
     g.rows.forEach(function (r) {
@@ -121,6 +122,7 @@
       var detail = [];
       if (r.incidents !== null) detail.push(r.incidents + " incident" + (r.incidents === 1 ? "" : "s") + " opened");
       if (r.wow) detail.push("this week " + fmtNum(r.wow.cur) + ", week before " + fmtNum(r.wow.prev));
+      if (r.coverage !== null && r.coverage < 0.9) detail.push("data for " + Math.round(r.coverage * 100) + "% of the " + g.days + " days");
       if (r.largest) detail.push("largest: " + (r.largest.name || "") + (r.largest.customers !== null && !/customers/i.test(r.largest.name) ? (r.largest.name ? ", " : "") + fmtNum(r.largest.customers) + " customers" : ""));
       var mix = r.causes.length ? "Causes as reported: " + r.causes.map(function (c) { return c.cause + " (" + fmtNum(c.n) + ")"; }).join(", ") : "No causes reported";
       var text = who + ": " + fmtNum(r.hours) + " customer-hours" + (detail.length ? ", " + detail.join(", ") : "") + ". " + mix + ".";

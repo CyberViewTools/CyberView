@@ -19,7 +19,7 @@ import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN } from "./lib/
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
 const MAXPAR = Math.max(1, Math.min(10, Number(PIPE.max_parallel) || 6));
-const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
+const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
 
 /** Pure: the claude command line for one role. */
@@ -124,6 +124,15 @@ export function flowAlive(lock, now = Date.now(), pidAlive = (p) => { try { proc
   return !!(lock && lock.pid && pidAlive(lock.pid) && now - Date.parse(lock.beat) < 12 * 6e4);
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** Start scripts/grid-news.mjs in the background; onDone(last line) when it exits; killed after 3 minutes. */
+function startNews(onDone) {
+  const c = spawn("node", ["scripts/grid-news.mjs"], { cwd: ROOT, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" }, stdio: ["ignore", "pipe", "ignore"] });
+  let out = ""; c.stdout.on("data", (d) => { out = (out + d).slice(-4000); });
+  const t = setTimeout(() => c.kill("SIGTERM"), 180000); t.unref();
+  c.on("exit", () => { clearTimeout(t); try { onDone(out.trim().split("\n").pop() || "ended"); } catch {} });
+  c.on("error", () => {});
+  return c;
+}
 /** main's newest commit when it differs from `code` (the commit the loop started on), else "". Never throws. */
 export function codeMoved(code, root = ROOT) {
   if (!code) return "";
@@ -154,7 +163,7 @@ async function flow() {
   let lastPublish = Date.now();
   const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; l["flow:leader"].code = CODE.slice(0, 12); writeJson(join(DATA, "leases.json"), l); }
     if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
-  const t0 = Date.now(); let handover = "", cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const t0 = Date.now(); let newsChild = null, handover = "", cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
@@ -167,12 +176,16 @@ async function flow() {
     beat("collecting");
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
-    if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).out.slice(-1)[0] || ""); } catch {} }
+    if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""); } catch {} }
     // power outages reported in the news (no AI model; publishers' own pages): before the analysis, which counts them as news
     // signals. The script runs at most every 15 minutes (status last_grid_news_at); a failure here never stops the cycle
-    if (existsSync(join(ROOT, "scripts", "grid-news.mjs"))) { try { phase("grid-news", sh("node", ["scripts/grid-news.mjs"], 240000).stdout.trim().split("\n").slice(-1)[0] || ""); } catch {} }
+    // runs in the background (about 2 minutes, mostly waiting on news indexes) so it never holds up the research; the
+    // analysis counts whatever the last finished run wrote, and a run still going at the next cycle is not started twice
+    if (!newsChild && existsSync(join(ROOT, "scripts", "grid-news.mjs"))) newsChild = startNews((line) => { newsChild = null; phase("grid-news", line); });
     // grid analysis (no AI model): anomalies, corroboration, trends; flags `corroborated` incidents before the grid desk plans
-    if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).out.slice(-1)[0] || ""); } catch {} }
+    if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).stdout.trim().split("\n").pop() || ""); } catch {} }
+    // the grid audit (rules only, local files, no network): flags failing, frozen or odd sources for the status page
+    if (existsSync(join(ROOT, "scripts", "grid-audit.mjs"))) { try { phase("grid-audit", sh("node", ["scripts/grid-audit.mjs"], 60000).stdout.trim().split("\n").shift() || ""); } catch {} }
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");
     const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
     const stories = fresh ? sp.stories || [] : [], batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);
@@ -229,6 +242,7 @@ async function flow() {
     if (moved) { handover = `new code ${moved.slice(0, 7)} on main`; break; }
     const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
   }
+  if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
   release(RUN); publishLeader(`data: research loop handed over${handover ? " (" + handover + ")" : ""}`);
   log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
 }

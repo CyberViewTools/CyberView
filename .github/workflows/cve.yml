@@ -41,6 +41,13 @@ jobs:
       CVE_CORPUS: ${{ github.workspace }}/cache/cve
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -48,7 +55,7 @@ jobs:
         id: gate
         run: |
           if [ "${{ github.event_name }}" != "workflow_run" ]; then echo "go=1" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git pull -q --ff-only origin main || true
+          { [ -e data/.git ] && git -C data pull -q --ff-only origin data; } || git pull -q --ff-only origin main || true
           node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),t=Date.parse(s["last_cve_at"]||0),age=(Date.now()-t)/6e4;console.log("last CVE run "+Math.round(age)+" min ago");process.exit(age>=55?0:1)' && echo "go=1" >> "$GITHUB_OUTPUT" || echo "go=0" >> "$GITHUB_OUTPUT"
       - name: Restore the corpus (the newest copy saved by an earlier run)
         if: steps.gate.outputs.go == '1'
@@ -99,15 +106,11 @@ jobs:
           key: cve-corpus-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Commit new leads and the run time (starts a deploy)
         if: steps.gate.outputs.go == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "cyberview-feeds"
-          git config user.email "cyberview-feeds@users.noreply.github.com"
           node -e 'const f="data/status.json",fs=require("fs"),s=JSON.parse(fs.readFileSync(f)),c=require(process.env.CVE_CORPUS+"/state.json");s.last_cve_at=new Date().toISOString().replace(/\.\d+Z$/,"Z");s.cve_total=c.total||s.cve_total;s.cve_note=`${c.total||"?"} CVEs; changes to ${c.delta_since||"?"}; EPSS ${c.epss_date||"?"}; ${(c.pending||[]).length} waiting`;fs.writeFileSync(f,JSON.stringify(s,null,2)+"\n")'
-          git add data/leads data/status.json
-          if git diff --cached --quiet; then echo "Nothing to commit."; exit 0; fi
-          git commit -q -m "data: CVE corpus updated"
-          node scripts/git-sync.mjs
-          gh workflow run pages.yml --ref main || echo "could not request a deploy; the next push deploys"
+          node scripts/data-commit.mjs "data: CVE corpus updated" data/leads data/status.json
       - name: Alert on failure
         if: failure()
         run: |

@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # to start the deploy after committing data
 
 concurrency:
   group: data-writes
@@ -20,6 +21,13 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -27,11 +35,8 @@ jobs:
         run: node scripts/linkcheck.mjs
       - name: Validate
         run: node scripts/build.mjs --quarantine
-      - name: Commit and push
+      - name: Commit and push (the data branch; starts the deploy)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "cyberview-linkcheck"
-          git config user.email "cyberview-linkcheck@users.noreply.github.com"
-          git add data
-          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
-          git commit -q -m "data: link check"
-          node scripts/git-sync.mjs
+          node scripts/data-commit.mjs "data: link check"

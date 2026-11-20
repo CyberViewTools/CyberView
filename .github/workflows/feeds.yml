@@ -28,6 +28,13 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -35,7 +42,7 @@ jobs:
         id: gate
         run: |
           if [ "${{ github.event_name }}" != "workflow_run" ]; then echo "go=1" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git pull -q --ff-only origin main || true
+          { [ -e data/.git ] && git -C data pull -q --ff-only origin data; } || git pull -q --ff-only origin main || true
           node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),t=Date.parse(s["last_feeds_at"]||0),age=(Date.now()-t)/6e4;console.log("last feeds run "+Math.round(age)+" min ago");process.exit(age>=110?0:1)' && echo "go=1" >> "$GITHUB_OUTPUT" || echo "go=0" >> "$GITHUB_OUTPUT"
       - name: Pull feeds
         if: steps.gate.outputs.go == '1'
@@ -57,14 +64,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         if: steps.gate.outputs.go == '1'
         run: |
-          git config user.name "cyberview-feeds"
-          git config user.email "cyberview-feeds@users.noreply.github.com"
-          git add data
-          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           msg=$(ls -t data/runs/*/*-feeds.json | head -1 | xargs node -e 'const r=JSON.parse(require("fs").readFileSync(process.argv[1]));console.log(`data: feeds, KEV +${r.kev_added.length}, ${r.events_updated.length} events refreshed, ${r.cvss_added.length} CVSS added`)')
-          git commit -q -m "$msg"
-          node scripts/git-sync.mjs
-          gh workflow run pages.yml --ref main || echo "could not request a deploy; the next push deploys"
+          node scripts/data-commit.mjs "$msg"
       - name: Alert on failure
         if: failure()
         env:

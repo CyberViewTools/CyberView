@@ -9,15 +9,20 @@ import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { ROOT, DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
 import { heal, marked } from "./lib/conflicts.mjs";
+import { dataMode } from "./lib/repo.mjs";
+// code and data on separate branches (scripts/lib/repo.mjs): data is committed to the data branch at ./data; anything a
+// job changed outside data/ (config/, docs/) is proposed to main as a pull request (scripts/propose.mjs), never pushed
+const BRANCH = dataMode(ROOT) === "branch", DDIR = BRANCH ? join(ROOT, "data") : ROOT;
 
 const job = process.argv[2], force = process.argv.includes("--force");
 if (!job || !/^[a-z-]+$/.test(job)) { console.error("usage: finish.mjs <job> [--force]"); process.exit(1); }
 const run = (cmd, args) => spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: 300000 });
 const git = (...a) => run("git", a);
+const dgit = (...a) => spawnSync("git", a, { cwd: DDIR, encoding: "utf8", timeout: 300000 });
 
 const reg = readJson(join(ROOT, "routines.json"), { routines: [] }), r = reg.routines.find((x) => x.key === job);
 const st = readStatus(), key = (r && r.status_key) || `last_${job.replace(/-/g, "_")}_at`;
-const porcelain = git("status", "--porcelain", "data/events").stdout.split("\n").filter(Boolean);
+const porcelain = dgit("status", "--porcelain", BRANCH ? "events" : "data/events").stdout.split("\n").filter(Boolean);
 const added = porcelain.filter((l) => l.startsWith("??") || l.startsWith("A ")).length, updated = porcelain.filter((l) => /^ ?M/.test(l)).length;
 st[key] = nowIso();
 if (job === "sweep") { st.last_sweep_added = added; st.last_sweep_updated = updated; }
@@ -30,14 +35,23 @@ if (b.status !== 0) {
   if (!force) { console.log("Nothing was committed. Have these fixed, then run finish again (add --force if they cannot be fixed)."); process.exit(1); }
   console.log("Committing anyway (--force): the deploy leaves broken records out and reports them.");
 }
-heal(ROOT);                                                                   // a pull --autostash may have left conflict markers
-git("add", "-A", "data", "config", "docs");
-{ const bad = marked(ROOT); if (bad.length) { git("reset", "-q", "--", ...bad); console.log(`NOT COMMITTED (conflict markers): ${bad.join(", ")}`); } }
-if (git("diff", "--cached", "--quiet").status === 0) { console.log(`CyberView ${job}: nothing to commit`); process.exit(0); }
+heal(DDIR);                                                                   // a pull --autostash may have left conflict markers
+let proposed = "";
+if (BRANCH) {
+  // config/ and docs/ changes made by the job go to main as a pull request, then are put back here until it merges
+  if (git("status", "--porcelain", "--", "config", "docs").stdout.trim()) {
+    const pr = run("node", ["scripts/propose.mjs", job]);
+    proposed = (pr.stdout || "").trim().split("\n").pop() || "";
+    if (pr.status === 0) git("checkout", "--", "config", "docs");
+  }
+  dgit("add", "-A", ".");
+} else git("add", "-A", "data", "config", "docs");
+{ const bad = marked(DDIR); if (bad.length) { dgit("reset", "-q", "--", ...bad); console.log(`NOT COMMITTED (conflict markers): ${bad.join(", ")}`); } }
+if (dgit("diff", "--cached", "--quiet").status === 0) { console.log(`CyberView ${job}: nothing to commit${proposed ? "; " + proposed : ""}`); process.exit(0); }
 const msg = `data: ${job}, ${added} new, ${updated} updated`;
-const c = git("commit", "-q", "-m", msg);
+const c = dgit("commit", "-q", "-m", msg);
 if (c.status !== 0) { console.log(`COMMIT FAILED: ${(c.stderr || c.stdout).trim().split("\n")[0]}`); process.exit(1); }
-// git-sync merges the files every job writes (status.json, leads) instead of failing on them
+// git-sync merges the files every job writes (status.json, leads) instead of failing on them, and asks for a deploy
 const sy = run("node", ["scripts/git-sync.mjs"]), pushed = sy.status === 0, why = `${sy.stderr || ""}`.trim().split("\n").pop();
-console.log(pushed ? `CyberView ${job}: ${added} new, ${updated} updated; committed and pushed` : `PUSH FAILED after 3 tries (${why}). The commit is local; the next job will push it.`);
+console.log(pushed ? `CyberView ${job}: ${added} new, ${updated} updated; committed and pushed${proposed ? "; " + proposed : ""}` : `PUSH FAILED after 3 tries (${why}). The commit is local; the next job will push it.`);
 process.exit(pushed ? 0 : 1);

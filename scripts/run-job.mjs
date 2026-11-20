@@ -313,7 +313,11 @@ async function flow() {
     const core = work.length;                               // research, review, update and grid work; the rest is scheduled
     if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
     { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }
-    if (can.moderator && cycle % 6 === 1 && sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+    if (can.moderator && cycle % 6 === 1) {
+      // the moderator only starts when a post waits; an empty queue is a moderated queue, so it is stamped as a run
+      if (sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+      else { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_moderator_at = nowIso(); st.moderator_note = "no community posts waiting"; writeJson(sp, st); } catch {} }
+    }
     let res = [];
     if (work.length) {
       if (stories.length) publishClaim("story", stories.map((s) => s.id));

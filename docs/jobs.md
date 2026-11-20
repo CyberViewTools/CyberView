@@ -12,7 +12,7 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 | 0 | Lead triage: clears leads already on file, plain non-events and expired items before any AI reads them (after every collection) | `collect.yml` (`scripts/triage.mjs`) | none |
 | 0 | Link check: every source link from the last 30 days, weekly; broken ones go to the data steward | `linkcheck.yml` (`scripts/linkcheck.mjs`) | none |
 | 0 | Structural cleanup: schema, month folders, duplicate ids, front-page sources, long summaries | `scripts/build.mjs`, every deploy | none |
-| 1 | The Claude jobs below | Claude Code scheduled tasks ("CyberView: <job>") firing into the "CyberView ops" session, which has this repo checked out and pushes to main; `ai-jobs.yml` remains as a manual fallback | per job |
+| 1 | The Claude jobs below | Claude Code scheduled tasks ("CyberView: <job>") firing into the "CyberView ops" session, which has this repo checked out (code on main, the data branch at `./data`) and pushes data to the data branch; `ai-jobs.yml` remains as a manual fallback | per job |
 
 Failures open a GitHub issue (labels `site-monitor`, `job-failure`, `security`) that closes itself on recovery. Visitors' error reports arrive as issues labelled `event-report`. The **watchdog** job reads all of them daily and fixes what it can.
 
@@ -40,14 +40,14 @@ Every job's prompt is the **shared preamble** followed by its **job section**; `
 ## Shared preamble
 
 ```
-You maintain CyberView, a public seven-day world map of cyber events for defenders, in the public GitHub repository xanderhutch/CyberView (checked out in this session). GitHub Pages redeploys the site after every push to main. People act on what the map says, so accuracy comes before volume and before speed. You run unattended: nobody will answer questions, so decide, act within these rules, and record what you did.
+You maintain CyberView, a public seven-day world map of cyber events for defenders, in the public GitHub repository xanderhutch/CyberView (checked out in this session). Code is on main (changed only through pull requests) and data on the data branch, mounted at ./data; every data push starts a redeploy of the site. People act on what the map says, so accuracy comes before volume and before speed. You run unattended: nobody will answer questions, so decide, act within these rules, and record what you did.
 
 HOW EVERY JOB IS WRITTEN: GOAL (what a good run achieves), INPUTS (what to load first), STEPS (in order), RULES (never broken), LIMITS (how much per run), DONE WHEN (how to know you finished), TIMESTAMP (what to write in data/status.json). Follow the steps in order. If a step cannot be done, say why in the run log and continue with the next; never stop silently and never invent a result to make a step look complete.
 
 SETUP
 - If the repository is not checked out, stop and end with one line: "CyberView <job>: repository unavailable".
-- cd into it, `git pull --rebase`, and read CLAUDE.md (the rules). Read docs/schema.md only when you write a field you are unsure of.
-- Real time only: `date -u +%Y-%m-%dT%H:%M:%SZ`. Never estimate a time. Work on main.
+- cd into it and read CLAUDE.md (the rules). The dispatcher has already switched the checkout (`node scripts/data-branch.mjs ensure`) and brought code and data up to date; if you run without it, run `node scripts/data-branch.mjs ensure`, then `git pull --ff-only origin main`, and `git -C data pull --rebase --autostash origin data` only when `node scripts/data-branch.mjs status` says the data branch is at ./data. Read docs/schema.md only when you write a field you are unsure of.
+- Real time only: `date -u +%Y-%m-%dT%H:%M:%SZ`. Never estimate a time. Leave the code as pulled: never commit on main, never `git add data` in main.
 
 SAVE CONTEXT (this matters for cost and for speed)
 - Never read whole folders of data or whole large files. Ask the history, one short line per result:
@@ -97,7 +97,7 @@ Anything worth checking later goes in open_leads with the reason it could not be
 FINISH (every job, in this order)
 1. Update your timestamp in data/status.json.
 2. `node scripts/build.mjs` and `node scripts/security-check.mjs`. Fix what they name and rerun. Never commit if either fails. (The deploy would quarantine a broken record, but a job never leaves one behind.)
-3. `git pull --rebase`, commit (message like "data: <job>, 3 new, 2 updated"), push; if rejected, pull --rebase and push again, twice at most.
+3. Commit and push the data with `node scripts/data-commit.mjs "data: <job>, 3 new, 2 updated"`: it commits on the data branch at ./data (or on main while the checkout still has the old layout), merges what other jobs pushed meanwhile, pushes and starts the deploy. It exits 1 if the push failed; the commit stays and the next job pushes it. If you changed config/ or docs/, run `node scripts/propose.mjs <job>`: it opens a pull request to main that merges itself once CI passes. Never push to main.
 4. End with one line summarising what changed.
 ```
 
@@ -636,15 +636,15 @@ End with one line: "regional researcher <group>: <n> new, <n> updated".
 
 Every routine is listed in `routines.json` (name, tier, workflow, cron, model, `status_key`, `max_age_hours`, `active`). The build fails if an AI routine's cron there disagrees with `ai-jobs.yml`, the monitor and the watchdog use `max_age_hours` to spot late routines, and `status.html` shows them all.
 
-- **Automation routine (no model):** write a script in `scripts/`, a workflow in `.github/workflows/` that commits to `data/` (copy `collect.yml`), have the script set its timestamp in `data/status.json`, add it to the `workflows:` list in `pages.yml` so its commits deploy, and add a `routines.json` entry.
+- **Automation routine (no model):** write a script in `scripts/`, a workflow in `.github/workflows/` that commits to `data/` (copy `collect.yml`: main checked out without `data/`, the data branch mounted with `./.github/actions/data`, commits through `scripts/data-commit.mjs` with `actions: write` so the commit starts the deploy), have the script set its timestamp in `data/status.json`, and add a `routines.json` entry. It reaches main through a pull request.
 - **AI routine:** add a `## Name` section with a code block here, add the job key to `HEADINGS` in `scripts/job-prompt.mjs`, add a `routines.json` entry (`"workflow": "claude-task"`), and create a Claude Code scheduled task with the same cron (UTC) that fires into the "CyberView ops" session. Its message follows the existing tasks: pull, print the prompt with `node scripts/job-prompt.mjs <key>`, then do the job (Sonnet, the session's model) or hand it to one subagent with model "opus" or "haiku".
 
 How the Claude jobs run: each scheduled task sends one short message to the ops session: run `node scripts/dispatch.mjs <job>` and do what it prints. The ops session is only a dispatcher. It never researches and never reads these instructions; it starts fresh subagents, each of which prints its own instructions with `node scripts/job-prompt.mjs <job>`. That keeps the ops session's history small (a long history made every job slow, expensive and careless) and gives every job an agent with a clean head.
 
-- **Sweep:** `dispatch.mjs` runs the housekeeping, then `scripts/sweep-plan.mjs plan` assigns stories by rule to researchers (the Researcher section), plus a gap researcher. They work in parallel and never run git. Afterwards `sweep-plan.mjs check` counts how many assigned stories were handled (below 80% triggers one more researcher), and `scripts/finish.mjs` commits and pushes. How many researchers and stories: `config/pipeline.json`.
+- **Sweep:** `dispatch.mjs` runs the housekeeping, then `scripts/sweep-plan.mjs plan` assigns stories by rule to researchers (the Researcher section), plus a gap researcher. They work in parallel and never run git. Afterwards `sweep-plan.mjs check` counts how many assigned stories were handled (below 80% triggers one more researcher), and `scripts/finish.mjs` commits the data to the data branch and pushes (config/ and docs/ changes become a pull request through `scripts/propose.mjs`). How many researchers and stories: `config/pipeline.json`.
 - **Review desk:** `scripts/review.mjs plan` assigns the riskiest unreviewed events to reviewers (the Reviewer section); `finish.mjs` commits.
 - **Deep sweep:** three regional researchers in parallel.
-- **Everything else:** one subagent on the job's model, which commits and pushes itself.
+- **Everything else:** one subagent on the job's model, which commits and pushes the data itself (`scripts/data-commit.mjs`, FINISH above).
 - **Guardian:** not in the ops session at all; it runs in its own fresh session and only reads the live site.
 
-Messages queue, so jobs never overlap or race on git. Prompts live only here (`docs/jobs.md`), so editing a job means editing this file.
+Messages queue, so jobs never overlap or race on git. How the two branches work: `docs/branches.md`. Prompts live only here (`docs/jobs.md`), so editing a job means editing this file.

@@ -2,6 +2,8 @@
 
 All files are UTF-8 JSON. The build (`scripts/build.mjs`) rejects files that break the required rules and warns on the rest.
 
+Where it lives: every path below that starts with `data/` is a file on the `data` branch (the branch root is the data folder, so `data/events/...` is `events/...` there), mounted at `./data` in every checkout. Code is on `main`. Scripts read and write `data/...` as before; commit only with `scripts/finish.mjs` or `scripts/data-commit.mjs`. See `docs/branches.md`.
+
 ## data/events/&lt;id&gt;.json
 
 `id` is the file name: lowercase letters, digits and hyphens, usually `<org>-<few-words>-<yyyy>-<mm>`.

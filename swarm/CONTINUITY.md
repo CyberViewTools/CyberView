@@ -7,7 +7,8 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 | Component | Heartbeat | Limit | Restarted by |
 |---|---|---|---|
 | Research loop (research, second review, updaters, follow-up desk) | `flow:leader` lease in `data/leases.json`, renewed every cycle, published at least every 8 minutes | lease expires 20 minutes after the last renewal | the four research schedules in the ops session (`:05 :20 :35 :50`) restart it when it is not running; the **standby session** takes the lease when it expires (its schedules `:12 :42`) |
-| Deploy | `manifest.json` `built_at`; main's newest commit live | 90 minutes; 20 minutes lag | every push; the guard starts `pages.yml` |
+| Deploy | `manifest.json` `built_at`; the newest code and data live | 90 minutes; 20 minutes lag | every data push dispatches `pages.yml` (scripts/lib/repo.mjs `dispatchDeploy`), every merge to main; the guard starts `pages.yml` |
+| Data branch switch (stage A) | every checkout has `./data` on the data branch; `data-forward.yml` has nothing to forward | 24 hours quiet before stage B | `node scripts/data-branch.mjs ensure` at every job start (dispatch.mjs); runbook: `swarm/handoff/data-branch.md` |
 | CVE corpus | `last_cve_at` | 3 hours | every finished deploy (gated to hourly), its schedule, any push to the CVE code; the guard starts `cve.yml` |
 | Feeds (KEV, EPSS, context layers) | `last_feeds_at` | 6 hours | every finished deploy (gated to 110 minutes), its schedule; the guard starts `feeds.yml` |
 | Power grid outages | `last_grid_at` | 2 hours (warn) | every research cycle runs `grid.mjs collect` and the grid researchers; collect.yml every 30 min as backup (stands down while the loop collects) |
@@ -19,11 +20,11 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 - **Two sessions, one leader.** The ops session and the standby session both try to run the research loop. Only the one
   holding the live `flow:leader` lease runs it; the other ends in seconds. If the ops session's container is reclaimed or it
   hits a usage limit, its lease expires and the standby takes over within about 30 minutes. A race is settled by git: after
-  publishing its claim each loop pulls again and backs off if another run's claim is the one on main.
+  publishing its claim each loop pulls again and backs off if another run's claim is the one on the data branch.
 - **Leases, not locks.** Stories, events and CVEs being worked are leased for 45 minutes; a crashed worker's items free
   themselves. Nothing waits on a dead process.
 - **Checkpoints.** Each cycle commits its own work (events, reviews, updates, run logs) before the next starts, so a crash loses
-  at most one cycle; the next cycle starts from what is on main.
+  at most one cycle; the next cycle starts from what is on the data branch.
 - **No silent stalls.** GitHub's own scheduler runs this repository's schedules late or not at all, so the data workflows also
   start after every deploy and let themselves through only when due.
 - **One writer per file.** Shared state (`data/status.json`) is read through `readStatus()`, which falls back to the last
@@ -34,6 +35,7 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 2. `node scripts/swarm.mjs board` shows queues, live leases, the loop and the speed.
 3. Loop not running and no lease: send "Run the sweep job now" to the ops or standby session, or wait for their next schedule.
 4. A workflow late: start it from GitHub Actions (Run workflow) or let the guard's `--heal` do it.
+5. A checkout in a bad state (data commits failing, `./data` missing or not on the data branch): `node scripts/data-branch.mjs status`, then the recovery steps in `docs/branches.md`.
 
 ## Sessions and rotation
 | Session | Id | Runs |
@@ -47,4 +49,4 @@ Retired: ops 3 (session_013C7AZ5wTsxwP5Xg9AFNesw), its "CyberView 3: ..." schedu
 **Rotate the ops session** when its context passes about 400,000 tokens or its jobs slow down (the status page's job durations
 climb): create a fresh session, create the same schedules as "CyberView N+1: ..." pointing at it with the same dispatcher
 prompt, switch the old ones off (never delete), update the guardian's prompt and the table above. Nothing is lost in a
-rotation: all state is in the repository and `data/leases.json`, and the leader lease hands the research loop over by itself.
+rotation: all state is in the repository (code on main, data and `leases.json` on the data branch), and the leader lease hands the research loop over by itself.

@@ -1,5 +1,5 @@
 // CyberView data access page (access.html, rendered by scripts/pages.mjs from config/data-access.json).
-// Filters the list by reason and country, and fills the one request with a source's operator and feed and copies it.
+// Filters the list by kind, reason and country, and shows and copies a source's own request (data-request on its row).
 // Nothing is sent and nothing is stored: the maintainer sends each request himself.
 (function () {
   "use strict";
@@ -7,24 +7,27 @@
   function safe(fn) { try { fn(); } catch (e) { if (window.console) console.warn("access: " + (e && e.message)); } }
   var rows = Array.prototype.slice.call(document.querySelectorAll("#sources tr[data-why]"));
   var groups = Array.prototype.slice.call(document.querySelectorAll("#sources .acgroup"));
+  var kinds = Array.prototype.slice.call(document.querySelectorAll("#sources .ackind"));
 
   // filter by reason and country
   safe(function () {
-    var fWhy = $("fWhy"), fCountry = $("fCountry"), count = $("fCount"), box = $("acFilters");
+    var fWhy = $("fWhy"), fCountry = $("fCountry"), fKind = $("fKind"), count = $("fCount"), box = $("acFilters");
     if (!fWhy || !fCountry || !count) return;
     function apply() {
-      var w = fWhy.value, c = fCountry.value, shown = 0;
-      rows.forEach(function (tr) { var on = (!w || tr.getAttribute("data-why") === w) && (!c || tr.getAttribute("data-country") === c); tr.hidden = !on; if (on) shown++; });
+      var w = fWhy.value, c = fCountry.value, k = fKind ? fKind.value : "", shown = 0;
+      rows.forEach(function (tr) { var on = (!w || tr.getAttribute("data-why") === w) && (!c || tr.getAttribute("data-country") === c) && (!k || tr.getAttribute("data-kind") === k); tr.hidden = !on; if (on) shown++; });
       groups.forEach(function (g) { g.hidden = !g.querySelector("tr[data-why]:not([hidden])"); });
+      kinds.forEach(function (g) { g.hidden = !g.querySelector("tr[data-why]:not([hidden])"); });
       count.textContent = "Showing " + shown + " of " + rows.length + " sources.";
     }
     fWhy.addEventListener("change", apply);
     fCountry.addEventListener("change", apply);
+    if (fKind) fKind.addEventListener("change", apply);
     if (box) box.hidden = false;
     apply();
   });
 
-  // one request, filled in per source and copied
+  // each source's own request, shown and copied (the template fill is only a fallback for a row without one)
   safe(function () {
     var pre = $("reqText"), msg = $("reqMsg");
     if (!pre || !msg) return;
@@ -33,7 +36,8 @@
     function selectPre() { try { var r = document.createRange(); r.selectNodeContents(pre); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
     function copy(tr) {
       var op = String(tr.getAttribute("data-operator") || "").slice(0, 120), feed = String(tr.getAttribute("data-feed") || "").slice(0, 160);
-      var text = fill(op, feed);
+      var own = String(tr.getAttribute("data-request") || "").slice(0, 2000);
+      var text = own || fill(op, feed);
       pre.textContent = text;
       var done = function () { msg.textContent = "Copied the request for " + op + ". Paste it into an email or the operator's contact form; nothing has been sent."; };
       var manual = function () { selectPre(); msg.textContent = "The request for " + op + " is filled in above and selected: copy it with Ctrl+C (or Cmd+C)."; };

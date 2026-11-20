@@ -1,8 +1,12 @@
 <!-- title: Data CyberView would like to use -->
-<!-- description: Data sources CyberView would like to use but does not have permission or access for, why, and the request it sends each operator. -->
+<!-- description: Data sources CyberView would like to use but does not have permission or access for, why, who to ask, and the request written for each operator. -->
 <style>
 pre.req{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 0;padding:14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;max-width:100%}
-.acgroup h3{margin:22px 0 6px}
+.ackind h3{margin:26px 0 4px}
+.acgroup h4{margin:18px 0 6px;font-size:15px}
+ol.askfirst{margin:12px 0 0;padding-left:22px}
+ol.askfirst li{margin:6px 0}
+ol.askfirst .sub{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;overflow-wrap:anywhere}
 .acgroup table{width:100%;border-collapse:collapse;font-size:13.5px}
 .acgroup th,.acgroup td{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid var(--line)}
 .acgroup td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -11,18 +15,19 @@ pre.req{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 0;padding:14px
 .acfilters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:12px}
 .acfilters select{min-width:0;max-width:100%;width:100%}
 .acfilters label.field{flex:1 1 220px;min-width:0}
-#sources tr[hidden],.acgroup[hidden],.acfilters[hidden]{display:none!important}
+#sources tr[hidden],.acgroup[hidden],.ackind[hidden],.acfilters[hidden]{display:none!important}
 @media (max-width:760px){.acgroup td.num{white-space:normal}}
 </style>
 <section class="intro">
   <h1>Data CyberView would like to use</h1>
   <p data-access-tagline></p>
-  <p>These are the sources CyberView would like to show but does not have permission or access to use, and the request it sends each operator.</p>
+  <p>These are the power grid and cyber security sources CyberView would like to show but does not have permission or access to use, the contact each operator publishes, and the request written for each one, in the order to ask.</p>
 </section>
 
 <section class="panel legal" id="why">
   <h2>Why CyberView asks</h2>
   <p>CyberView only uses a source when the operator's terms of use and its robots.txt allow it, and it never works around a block: no disguised browsers, no solving challenges or captchas, no borrowed keys. Many power companies publish live outage maps whose data is public to look at but whose terms forbid reuse or automated reading. CyberView respects that and asks instead.</p>
+  <p>Some cyber security sources are listed too: national CERTs and news sites whose feeds CyberView read until their sites began turning automated readers away or their robots.txt asked readers to stay away.</p>
   <p>A source is listed here when its terms forbid or restrict reuse or automated access (or could not be found), its robots.txt disallows the data, its site blocks automated readers, it needs a key or an account, or it could not be reached.</p>
 </section>
 
@@ -42,5 +47,5 @@ pre.req{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 0;padding:14px
 
 <section class="panel legal" id="how">
   <h2>How this list is made</h2>
-  <p>CyberView AI (a Claude model) compiled this list on 19 November 2026 from each operator's published terms of use, its robots.txt and one test request per source; the quotations are the operators' own words. The list is kept in the <a href="https://github.com/{{owner_github}}/CyberView/blob/main/config/data-access.json">public repository</a>. If anything here is wrong about your organisation, or you would like to grant or decline a request, please <a href="about.html#corrections">tell us</a> and we will update it.</p>
+  <p>CyberView AI (a Claude model) compiled this list on 19 November 2026 from each operator's published terms of use, its robots.txt and one test request per source; the quotations are the operators' own words. On 20 November 2026 it added the contact each operator publishes (read on the operator's own site, respecting its robots.txt; an address is never guessed, and where none could be read the entry says why), wrote each request and set the order to ask in. The list is kept in the <a href="https://github.com/{{owner_github}}/CyberView/blob/main/config/data-access.json">public repository</a>. If anything here is wrong about your organisation, or you would like to grant or decline a request, please <a href="about.html#corrections">tell us</a> and we will update it.</p>
 </section>

@@ -2,7 +2,7 @@
 // Fails (exit 1) on anything that weakens the site's defences or leaks a secret:
 //   1. pages: no inline <script> blocks, no inline event handlers (onclick=...), scripts and styles only from this site
 //   2. scripts: no HTML string sinks (innerHTML, insertAdjacentHTML, document.write, eval, new Function, setTimeout("..."))
-//   3. headers: netlify.toml keeps a strict Content-Security-Policy and the other security headers
+//   3. pages: every page carries a strict Content-Security-Policy meta tag (GitHub Pages cannot send headers)
 //   4. vendored libraries match their recorded SHA-256 (catches tampering or an unreviewed upgrade)
 //   5. secrets: no tokens or private keys in any tracked file
 //   6. data: no markup or script URLs smuggled into event text or source links
@@ -49,7 +49,7 @@ for (const p of ours) {
 passes.push(`${ours.length} script(s) checked for HTML sinks`);
 
 // 3. Content-Security-Policy. GitHub Pages cannot send custom headers, so every page carries the policy in a
-//    <meta http-equiv> tag (frame-ancestors is not allowed there). If netlify.toml still sets one, it must stay strict too.
+//    <meta http-equiv> tag (frame-ancestors is not allowed there).
 // account pages may also reach the configured Supabase project, and nothing else; every other page stays 'self' only
 const ACCOUNT_PAGES = new Set(["account.html", "unsubscribe.html"]);
 const SUPABASE = (() => { try { const u = JSON.parse(readFileSync(join(ROOT, "config", "accounts.json"), "utf8")).supabase_url || "";
@@ -72,11 +72,6 @@ for (const p of pages) {
   const headEnd = html.search(/<\/head>/i), firstScript = html.search(/<script\b/i);
   if (firstScript >= 0 && firstScript < headEnd && firstScript < html.indexOf(m[0])) fails.push(`${rel(p)}: the CSP meta tag must come before any script`);
   if (!/<meta\s+name="referrer"/i.test(html)) fails.push(`${rel(p)}: missing referrer meta tag`);
-}
-const tomlPath = join(ROOT, "netlify.toml");
-if (existsSync(tomlPath)) {
-  const csp = (read(tomlPath).match(/Content-Security-Policy\s*=\s*"([^"]+)"/) || [])[1];
-  if (csp) checkCsp(csp, "netlify.toml");
 }
 passes.push("Content-Security-Policy checked on every page");
 

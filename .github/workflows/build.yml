@@ -82,7 +82,7 @@ jobs:
       - name: Did the page, scripts or tests change?
         id: changed
         run: |
-          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE '^(site/|scripts/|tests/|legal/|pages/|config/|netlify.toml)'; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE '^(site/|scripts/|tests/|legal/|pages/|config/)'; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
       - name: Mount the data branch at ./data
         if: steps.changed.outputs.run == 'yes'
         uses: ./.github/actions/data

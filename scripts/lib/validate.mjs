@@ -219,11 +219,24 @@ const TAG_NEEDS = {
   "poc-public": [/proof[- ]of[- ]concept|\bpoc\b|exploit code|public(ly)? (available )?exploit|exploit (is |was |has been )?(public|released|published)/i, "the text must say exploit code or a proof of concept is public"],
   "supply-chain": [/supply[- ]chain|third[- ]party|supplier|vendor|package|dependenc|npm|pypi|update (server|mechanism|channel)|library|plugin|extension/i, "the text must say the attack came through a supplier, package or update"],
 };
-export function checkEventQuality(e) {
+// a figure with the word in front of it that says how exact it is; the class is what a reader takes from it
+const QFIG = /\b(about|around|approximately|roughly|some|nearly|almost|under|less than|fewer than|up to|over|more than|at least)?\s*(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?\s?(?:million|billion|bn))\b/gi;
+const QCLASS = { about: "about", around: "about", approximately: "about", roughly: "about", some: "about", nearly: "below", almost: "below", under: "below", "less than": "below", "fewer than": "below", "up to": "below", over: "above", "more than": "above", "at least": "above" };
+const figValue = (s) => { const m = String(s).toLowerCase().replace(/,/g, "").match(/([\d.]+)\s?(million|billion|bn)?/); return m ? Number(m[1]) * (m[2] === "million" ? 1e6 : m[2] ? 1e9 : 1) : NaN; };
+/** Pure: the figures in a text, each with its qualifier class (exact, about, below, above) and its value. */
+export const figuresIn = (t) => [...String(t || "").matchAll(QFIG)].map((m) => ({ raw: m[0].trim(), value: figValue(m[2]), q: m[1] ? QCLASS[m[1].toLowerCase()] : "exact" })).filter((x) => Number.isFinite(x.value));
+// how much later than first_seen (UTC) the event's own date may be: the date is local to where it happened (UTC+14 at most)
+const LOCAL_AHEAD_MS = 14 * 36e5;
+
+export function checkEventQuality(e, { now = Date.now() } = {}) {
   const out = [], add = (level, code, text) => out.push({ level, code, text });
   if (!e || typeof e !== "object") return out;
   const src = (Array.isArray(e.sources) ? e.sources : []).filter((s) => s && typeof s.url === "string");
   const hosts = new Set(src.map((s) => hostOf(s.url)).filter(Boolean));
+  // timestamps come from `date -u` at the moment of writing; a time ahead of the clock was estimated or typed by hand
+  for (const k of ["first_seen", "updated_at"]) { const t = Date.parse(e[k] || ""); if (Number.isFinite(t) && t - now > 10 * 6e4) add("warn", "future-timestamp", `${k} ${e[k]} is in the future: write it from \`date -u +%Y-%m-%dT%H:%M:%SZ\` at the time of writing, never an estimate`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(e.date || "") && Number.isFinite(Date.parse(e.first_seen || "")) && e.date > new Date(Date.parse(e.first_seen) + LOCAL_AHEAD_MS).toISOString().slice(0, 10))
+    add("error", "date-after-seen", `date ${e.date} is after the event was first seen (${String(e.first_seen).slice(0, 16)}Z): the date is when it happened or was disclosed, which cannot be later than the moment it was recorded`);
   // dates: the day it happened, not the day an article (or a roundup) was published
   const seen = String(e.first_seen || "").slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(seen) && /^\d{4}-\d{2}-\d{2}$/.test(e.date || "") && (Date.parse(seen) - Date.parse(e.date)) / 864e5 > 7 && !String(e.date_note || "").trim())
@@ -256,6 +269,17 @@ export function checkEventQuality(e) {
     const miss = (String(e[k] || "").match(FIGURE) || []).find((n) => !base.includes(n.replace(/,/g, "").toLowerCase().match(/[\d.]+/)[0]));
     if (miss) add("warn", "figure-not-in-summary", `"${miss}" in ${k} is not in the summary or impact: every figure goes in the summary exactly as the source states it (with its "about", "over", "at least")`);
   }
+  // the same figure carries the same qualifier everywhere: "over 125 million" in the summary is never "about 125 million"
+  // in the title (the second review corrected this again and again); "plain" may round, but only with "about" and only
+  // within 5% of a figure in the summary
+  const stated = figuresIn(`${e.summary || ""} ${e.impact || ""}`);
+  for (const k of ["title", "exec", "plain", "action"]) {
+    for (const f of figuresIn(e[k])) {
+      const same = stated.filter((s) => s.value === f.value);
+      if (same.length && f.q !== "exact" && !same.some((s) => s.q === f.q)) { add("warn", "figure-qualifier", `"${f.raw}" in ${k} but the summary says "${same[0].raw}": keep the source's qualifier ("about", "over", "up to", "nearly") wherever the figure appears`); break; }
+      if (k === "plain" && !same.length && f.value >= 1000 && !stated.some((s) => Math.abs(s.value - f.value) <= 0.05 * s.value && (f.q === "about" || (f.q === s.q && f.q !== "exact")))) { add("warn", "figure-not-in-summary", `"${f.raw}" in plain is not in the summary or impact: plain may round a stated figure ("about 341,000"), never add one`); break; }
+    }
+  }
   return out;
 }
 
@@ -265,21 +289,40 @@ export function checkEventQuality(e) {
  * one bulletin can cover several flaws). events: [{id, org, cves, sources, duplicate_of}]. Returns Map(id -> [{level, code,
  * text}]) for the ids in `only` (all when omitted). Warnings only.
  */
+// an organisation name without legal suffixes and bracketed notes, so "Acme Ltd" and "Acme (for its retirees)" compare equal
+export const orgKey = (o) => String(o || "").toLowerCase().replace(/\([^)]*\)/g, " ").replace(/\b(inc|ltd|llc|corp|corporation|plc|gmbh|ag|sa|nv|bv|co|company|holdings?|group|the)\b\.?/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+// government, CERT and agency pages: one bulletin or listing covers several flaws or incidents
+const OFFICIAL_HOST = /\.gov(\.[a-z]{2})?$|\.go\.[a-z]{2}$|\.mil$|cisa|cert|ncsc|githubusercontent/i;
+const GENERIC_ORG = /^(unknown|multiple|various|several|many|n a|none|undisclosed|unnamed|not named|)$/;
+const near = (a, b, days) => Math.abs(Date.parse(a.date) - Date.parse(b.date)) <= days * 864e5;
 export function sharedSourceProblems(events, only) {
   const by = new Map(), want = only ? new Set(only) : null, out = new Map();
   const norm = (u) => String(u || "").replace(/#.*$/, "").replace(/\/+$/, "").replace(/^http:/, "https:").replace(/\/\/www\./, "//");
   const pages = (e) => [...new Set((Array.isArray(e.sources) ? e.sources : []).map((x) => x && norm(x.url)).filter(Boolean))];
   const live = events.filter((e) => e && e.id && !e.duplicate_of);
   for (const e of live) for (const s of pages(e)) (by.get(s) || by.set(s, []).get(s)).push(e);
-  const org = (e) => String(e.org || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const org = (e) => orgKey(e.org);
+  const sameOrg = (a, b) => { const x = org(a), y = org(b); return !!x && !!y && !GENERIC_ORG.test(x) && (x === y || (x.length >= 5 && y.length >= 5 && (x.startsWith(y + " ") || y.startsWith(x + " ")))); };
+  const byOrg = new Map();
+  for (const e of live) if (["incident", "outage"].includes(e.category) && org(e) && !GENERIC_ORG.test(org(e))) (byOrg.get(org(e).split(" ")[0]) || byOrg.set(org(e).split(" ")[0], []).get(org(e).split(" ")[0])).push(e);
+  const dup = (o, why) => ({ level: "warn", code: "possible-duplicate", text: `${why} ${o.id}: if it is the same event, keep the earlier record, merge sources into it and set "duplicate_of" on the later` });
   for (const e of live) {
     if (want && !want.has(e.id)) continue;
     const p = [];
+    let flagged = false;
     for (const s of pages(e)) {
       const others = (by.get(s) || []).filter((o) => o.id !== e.id);
-      const same = others.find((o) => (org(o) && org(o) === org(e)) || (e.cves || []).some((c) => (o.cves || []).includes(c)));
-      if (same) p.push({ level: "warn", code: "possible-duplicate", text: `cites the same page as ${same.id} about the same organisation or CVE: if it is the same event, keep the earlier record, merge sources into it and set "duplicate_of" on the later` });
-      else if (others.length >= 2 && !/\.gov(\.[a-z]{2})?$|\.mil$|cisa|cert|ncsc|githubusercontent/i.test(hostOf(s))) p.push({ level: "warn", code: "roundup-source", text: `${s.slice(0, 90)} is also cited by ${others.length} other events: a roundup or tracker; cite the article or notice it summarises and take the date from that` });
+      const same = others.find((o) => sameOrg(o, e) || (e.cves || []).some((c) => (o.cves || []).includes(c)));
+      // one other event on the same page, same kind, within 3 days: a second record of one story far more often than two stories
+      const twin = !same && !OFFICIAL_HOST.test(hostOf(s)) && others.length === 1 && others[0].category === e.category && near(others[0], e, 3) ? others[0] : null;
+      if (same && !flagged) { flagged = true; p.push(dup(same, "cites the same page as")); }
+      else if (twin && !flagged) { flagged = true; p.push(dup(twin, "cites the same page as (same category, within 3 days)")); }
+      else if (!same && !twin && others.length >= 2 && !OFFICIAL_HOST.test(hostOf(s))) p.push({ level: "warn", code: "roundup-source", text: `${s.slice(0, 90)} is also cited by ${others.length} other events: a roundup or tracker; cite the article or notice it summarises and take the date from that` });
+    }
+    // the same victim organisation, an incident or outage of the same kind within 3 days, from different pages
+    if (!flagged && ["incident", "outage"].includes(e.category) && org(e) && !GENERIC_ORG.test(org(e))) {
+      const o = (byOrg.get(org(e).split(" ")[0]) || []).find((x) => x.id !== e.id && x.category === e.category && org(x) === org(e) && near(x, e, 3));
+      if (o) p.push(dup(o, `is about the same organisation (${String(e.org).slice(0, 40)}) within 3 days as`));
     }
     if (p.length) out.set(e.id, p);
   }

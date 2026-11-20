@@ -63,7 +63,7 @@ export function flagsFor(e, evs = [], today = new Date().toISOString().slice(0, 
   return f;
 }
 /** Flags a reviewer must settle (fix the record) before a "pass": a pass is refused while any remains. */
-export const BLOCKS_PASS = ["redirect-source", "no-source", "claim-severity", "claim-corroborated", "future-date", "bad-cve", "confirmed-on-secondary", "corroborated-one-host", "listing-source"];
+export const BLOCKS_PASS = ["redirect-source", "no-source", "claim-severity", "claim-corroborated", "future-date", "bad-cve", "confirmed-on-secondary", "corroborated-one-host", "listing-source", "date-after-seen"];
 export const passBlockers = (codes) => codes.filter((c) => BLOCKS_PASS.includes(c));
 
 /** Risk order for the queue: high severity, more flags, serious flags first. */

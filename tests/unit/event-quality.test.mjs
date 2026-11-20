@@ -8,11 +8,12 @@ const ev = (o = {}) => ({
   exec: "Customer data exposure.", tags: ["data-breach"], cves: [], sources: [{ name: "Acme", url: "https://acme.example/news/security-notice" }, { name: "Reuters", url: "https://reuters.example/tech/acme-breach-2026-11-18/" }],
   source_tier: "primary", validation: { state: "corroborated" }, first_seen: "2026-11-21T08:00:00Z", updated_at: "2026-11-21T08:00:00Z", ...o,
 });
-const codes = (e) => checkEventQuality(e).map((x) => x.code);
-const levelOf = (e, code) => (checkEventQuality(e).find((x) => x.code === code) || {}).level;
+const NOW = { now: Date.parse("2026-11-22T00:00:00Z") };   // after the fixture's first_seen, so it is not a future timestamp
+const codes = (e) => checkEventQuality(e, NOW).map((x) => x.code);
+const levelOf = (e, code) => (checkEventQuality(e, NOW).find((x) => x.code === code) || {}).level;
 
 test("a clean event has no quality problems", () => {
-  assert.deepEqual(checkEventQuality(ev()), []);
+  assert.deepEqual(checkEventQuality(ev(), NOW), []);
   assert.deepEqual(checkEventQuality(null), []);
 });
 
@@ -105,4 +106,45 @@ test("shared source pages: same organisation means a possible duplicate; three o
 
 test("strict date is a full ISO time", () => {
   assert.match(QUALITY_STRICT_FROM, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
+});
+
+test("timestamps: first_seen or updated_at in the future is a warning; a date after first_seen is an error", () => {
+  const now = Date.parse("2026-11-21T09:00:00Z");
+  const q = (o) => checkEventQuality(ev(o), { now });
+  assert.equal((q({ first_seen: "2026-11-21T12:00:00Z", updated_at: "2026-11-21T12:00:00Z" }).find((x) => x.code === "future-timestamp") || {}).level, "warn");
+  assert.equal(q({ first_seen: "2026-11-21T09:05:00Z", updated_at: "2026-11-21T09:05:00Z" }).filter((x) => x.code === "future-timestamp").length, 0);   // a few minutes of clock skew
+  assert.ok(!q({}).some((x) => x.code === "future-timestamp"));
+  // visa-third-party-provider-incident-n0n-claim-2026-11: date 19 Nov, first seen 18 Nov 01:16 UTC
+  assert.equal(levelOf(ev({ date: "2026-11-19", first_seen: "2026-11-18T01:16:00Z" }), "date-after-seen"), "error");
+  // php-critical-security-release-announced-2026-11: first seen 18 Nov 23:11 UTC, already 19 Nov east of UTC: allowed
+  assert.equal(levelOf(ev({ date: "2026-11-19", first_seen: "2026-11-18T23:11:53Z" }), "date-after-seen"), undefined);
+});
+
+test("figures keep the source's qualifier wherever they appear; plain may round with 'about' but never add a figure", () => {
+  // hydro-quebec-espace-client-credential-stuffing-2026-11: the review corrected "about 2,500" against "nearly 2,500"
+  assert.equal(levelOf(ev({ summary: "Hydro-Quebec said nearly 2,500 accounts were accessed.", exec: "About 2,500 accounts accessed." }), "figure-qualifier"), "warn");
+  assert.equal(levelOf(ev({ summary: "Over 125 million SMS were exposed.", impact: "", title: "Acme exposes about 125 million SMS" }), "figure-qualifier"), "warn");
+  assert.ok(!codes(ev({ summary: "Over 125 million SMS were exposed.", impact: "", title: "Acme exposes over 125 million SMS" })).includes("figure-qualifier"));
+  assert.ok(!codes(ev({ plain: "Acme says about 1,200 records were copied.", summary: "Acme said attackers copied about 1,200 records." })).includes("figure-qualifier"));
+  assert.equal(levelOf(ev({ plain: "Around 30,000 people may be affected." }), "figure-not-in-summary"), "warn");
+  assert.ok(!codes(ev({ summary: "Acme said 341,234 patients were notified.", impact: "", title: "Acme breach", plain: "About 341,000 patients were told." })).includes("figure-not-in-summary"));
+  assert.equal(levelOf(ev({ summary: "Acme said 341,234 patients were notified.", impact: "", title: "Acme breach", plain: "341,000 patients were told." }), "figure-not-in-summary"), "warn");
+});
+
+test("possible duplicates: one other event on the same page, same category, within 3 days; or the same victim within 3 days", () => {
+  const a = ev({ id: "infoblox-sharepoint-2026-11", org: "Infoblox", date: "2026-11-18", sources: [{ name: "TC", url: "https://techcrunch.example/2026/11/18/infoblox/" }] });
+  const b = ev({ id: "infoblox-vendor-2026-11", org: "Infoblox Inc.", date: "2026-11-19", sources: [{ name: "Reg", url: "https://register.example/2026/11/19/infoblox/" }] });
+  assert.match((sharedSourceProblems([a, b]).get("infoblox-vendor-2026-11") || [])[0].text, /same organisation .* within 3 days as infoblox-sharepoint-2026-11/);
+  // a publisher's own advisories are not duplicates of each other (vuln and report are left out of the same-organisation rule)
+  const v = (id) => ev({ id, org: "Canadian Centre for Cyber Security", category: "vuln", date: "2026-11-18", sources: [{ name: "CCCS", url: `https://cyber.gc.ca/en/alerts-advisories/${id}` }] });
+  assert.equal(sharedSourceProblems([v("av26-1166"), v("av26-1167")]).size, 0);
+  // the same incident 5 days apart is a different event
+  assert.equal(sharedSourceProblems([a, { ...b, date: "2026-11-24" }]).size, 0);
+  // two records on one article, different organisation names, same category, a day apart
+  const p = ev({ id: "atticus-nyc-retirees-2026-11", org: "Atticus Administration (for New York City retirees)", sources: [{ name: "Infobae", url: "https://infobae.example/2026/11/17/atticus/" }] });
+  const q = ev({ id: "nyc-retirees-claims-2026-11", org: "NYC retirees claims database", date: "2026-11-17", sources: [{ name: "Infobae", url: "https://infobae.example/2026/11/17/atticus/" }] });
+  assert.equal((sharedSourceProblems([p, q]).get("nyc-retirees-claims-2026-11") || [])[0].code, "possible-duplicate");
+  // ...but not when the page is a government or CERT bulletin
+  const gp = { ...p, sources: [{ name: "JPCERT", url: "https://www.jpcert.or.jp/at/2026/at260018.html" }] }, gq = { ...q, sources: gp.sources };
+  assert.equal(sharedSourceProblems([gp, gq]).size, 0);
 });

@@ -15,9 +15,9 @@
   "org": "Visa",
   "pin_type": "hq",
   "place": "San Francisco, CA",
-  "plain": "Visa, JPMorgan and Mastercard say outside vendors were hacked. JPMorgan and Mastercard say some customer email addresses may be exposed. Visa and Mastercard say their own systems or payment network were not affected.",
+  "plain": "Visa, JPMorgan and Mastercard say outside vendors were hacked. JPMorgan says some customer names and email addresses may be exposed; Mastercard says a limited amount of cardholder emails were. Visa says its systems were not affected, and Mastercard says its payment network was not.",
   "products": [],
-  "qa_checked_at": "2026-11-20T07:50:14Z",
+  "qa_checked_at": "2026-11-20T13:28:53Z",
   "sector": "Financial services",
   "severity": 2,
   "source_tier": "established",
@@ -59,18 +59,21 @@
     "mastercard",
     "jpmorgan"
   ],
-  "title": "Visa, JPMorgan and Mastercard say third-party providers were hit; n0n gang claims it, per SOCRadar",
-  "updated_at": "2026-11-20T13:24:27Z",
+  "title": "Visa, JPMorgan and Mastercard say third-party providers were hit; n0n gang claims it, per Reuters and SOCRadar",
+  "updated_at": "2026-11-20T13:29:57Z",
   "validation": {
-    "state": "disputed",
-    "checked_at": "2026-11-19T19:46:11Z",
-    "note": "Second review: Cybernews (source 1) returns HTTP 403, so the claim that n0n listed Visa and JPMorgan by name is unverified. Yahoo (published 2026-11-19) says only that n0n claimed credit for the attacks, per SOCRadar. ABC13 does not mention"
+    "state": "corroborated",
+    "checked_at": "2026-11-20T13:30:00Z",
+    "note": "Company statements read in Yahoo Finance, ABC13 and SecurityWeek. The n0n claim is the group's, relayed by Reuters (SecurityWeek) and SOCRadar (Yahoo, which says SOCRadar has not verified it)."
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T07:50:14Z",
+    "at": "2026-11-20T13:28:53Z",
     "first_at": "2026-11-19T20:22:56Z",
-    "note": "Compared title, statements (JPMorgan, Visa APAC, Mastercard), n0n claim, 16,000 Reuters figure with Yahoo, ABC13, SecurityWeek, Analytics Insight: match. Exec said vendor breach 'exposed' data, stronger than JPMorgan's 'may include'; reworded. Validation note still cites an old Cybernews source no l",
-    "flags": []
+    "note": "Compared with Yahoo, ABC13, SecurityWeek (Analytics Insight, Newsweek not reopened). Statements, Asia Pacific provider, 16,000 Reuters figure match. Fixed: plain said Mastercard emails 'may be' exposed (it says exposure of limited emails) and merged Visa/Mastercard denials wrongly; title now credits",
+    "flags": [
+      "date-after-seen",
+      "possible-duplicate"
+    ]
   }
 }

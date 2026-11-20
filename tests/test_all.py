@@ -467,9 +467,11 @@ async def main():
             {"id": "grid-o-ladwp-1", "scope": "outage", "source": "ladwp", "kind": "outage", "name": "LADWP: 1,367 customers without power", "country": "US", "region": "Woodland Hills", "customers": 1367, "level": None,
              "lat": 34.17, "lng": -118.6, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://www.ladwp.com/outages"},
             {"id": "grid-o-ladwp-2", "scope": "outage", "source": "ladwp", "kind": "outage", "name": "LADWP: 640 customers without power", "country": "US", "region": "Van Nuys", "customers": 640, "level": None,
-             "lat": 34.19, "lng": -118.45, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://www.bchydro.com/not-ladwp"},
-            {"id": "grid-o-elexon-1", "scope": "outage", "source": "elexon-system-warnings", "kind": "outage", "name": "Elexon test: 300 customers without power", "country": "GB", "region": "GB", "customers": 300, "level": None,
-             "lat": 52.0, "lng": -1.5, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://bmrs.elexon.co.uk/system-warnings"}])
+             "lat": 34.19, "lng": -118.45, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://www.bchydro.com/not-ladwp",
+             "stale": True, "stale_since": iso(2)},
+            # v1.54: an operator band is shown as the band, never as the floor (Liander "< 400" -> customers 100)
+            {"id": "grid-o-elexon-1", "scope": "outage", "source": "elexon-system-warnings", "kind": "outage", "name": "Elexon test: under 400 customers without power", "country": "GB", "region": "GB", "customers": 100, "level": None,
+             "lat": 52.0, "lng": -1.5, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://bmrs.elexon.co.uk/system-warnings", "customers_band": "under 400"}])
         bgs.setdefault("docs", {})["grid/sources"] = {"ladwp": {"name": "LADWP", "hosts": ["www.ladwp.com"], "attribution": ""},
             "elexon-system-warnings": {"name": "Elexon", "hosts": ["bmrs.elexon.co.uk"], "attribution": "Contains BMRS data © Elexon Limited copyright and database right 2026"},
             "evil": {"name": "<img src=x id=pwnsrc>", "hosts": ["evil.test", "bad host!"], "attribution": "<b id=pwnatt>x</b>"}}
@@ -479,16 +481,23 @@ async def main():
             ok("grid sources: a link is kept only on the item's own operator's hosts", "https://www.ladwp.com/outages" in hrefs and "https://www.bchydro.com/not-ladwp" not in hrefs and "https://bmrs.elexon.co.uk/system-warnings" in hrefs, hrefs)
             txt = await pg.text_content("#gRows")
             ok("grid sources: a licence's required credit shows on the item, as text", "Contains BMRS data © Elexon" in txt and await pg.locator("#pwnatt, #pwnsrc").count() == 0)
+            rows_g = await pg.locator("#gRows li").all_text_contents()
+            vn = [r for r in rows_g if "Van Nuys" in r]
+            ok("grid: a source that stopped answering shows its last figures labelled with their time (v1.54)", vn and "Figures from" in vn[0] and "not answering" in vn[0], vn)
+            el_ = [r for r in rows_g if "Elexon test" in r]
+            ok("grid: an operator's band is shown as the band, never as an exact count (v1.54)", el_ and "under 400 customers" in el_[0] and "100 customers" not in el_[0], el_)
             ok("grid sources: no script errors", not errs, errs)
             await pg.context.close()
         await serve(make_site(bgs), vgridsrc)
         site_g = make_site(bg)
         hp = os.path.join(site_g, "data", "health.json")
         hj = json.load(open(hp)) if os.path.exists(hp) else {"built_at": iso(0.1)}
-        hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5})
+        hj.update({"last_grid_at": iso(0.3), "last_grid_research_at": iso(1), "grid_open": 5,
+                   # v1.54: the later grid stages and the audit (ops-6)
+                   "grid_analysis_at": iso(0.2), "last_grid_news_at": iso(3), "grid_waiting": {"count": 2, "oldest_min": 185}, "grid_audit_flags": ["news_late", "<b id=pwn4>"]})
         # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
         hj["grid_sources"] = {
-            "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12},
+            "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12, "flags": ["customers_missing", "<img id=pwn5>"]},
             "bchydro": {"name": "BC Hydro", "ok": True, "error": "", "at": iso(0.3)},
             "ukpn": {"name": "UK Power Networks", "ok": False, "error": "HTTP 503", "at": iso(0.3)},
             "eskom": {"name": "Eskom", "ok": True, "error": "", "at": iso(0.3)},
@@ -701,11 +710,15 @@ async def main():
             ok("grid: status page has a power grid row", any("Power grid outages collected" in r and "5 open incidents" in r and "causes last checked" in r for r in rows), rows)
             src = await pg.locator("#gridSources li").all_text_contents()
             ok("grid sources: one row per source, six public and three keyed", len(src) == 9 and await pg.locator("#gridSrcBox").is_visible(), src)
+            ok("grid sources: failing ones first (v1.54)", src[0].startswith("Not loading") and "UK Power Networks" in src[0], src)
+            ok("grid sources: an audit flag is a check, in words (v1.54)", any(r.startswith("Check") and "Hydro-Québec" in r and "items without customer counts" in r for r in src) and await pg.locator("#pwn4, #pwn5").count() == 0, src)
+            ok("grid: status page shows each later grid stage (v1.54)", any("Power grid analysis (no AI model) ran" in r for r in rows) and any(r.startswith("Check") and "Power outages in the news collected" in r and "expected within 60 min" in r for r in rows)
+               and any(r.startswith("Check") and "Grid outages waiting for a cause check: 2; oldest 3 h" in r for r in rows) and any("Grid data audit (no AI model) flags: news late" in r for r in rows), rows)
             nc = [r for r in src if "Not connected" in r]
             ok("grid sources: keyed ones without a key read not connected, no key saved", len(nc) == 3 and all("no key saved" in r for r in nc) and any(r.startswith("Not connected") and "EIA" in r for r in nc), nc)
             ncb = await pg.eval_on_selector_all("#gridSources li .badge", "bs => bs.filter(b => b.textContent === 'Not connected').map(b => b.className)")
             ok("grid sources: not connected is neutral, not a fault", ncb and all("neutral" in c.split() and "warn" not in c.split() and "bad" not in c.split() for c in ncb), ncb)
-            ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 5, src)
+            ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 4, src)
             ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
             ok("grid: status page without script errors", not errs, errs)
             await pg.context.close()

@@ -109,3 +109,13 @@ test("KPX: refuses a changed, inconsistent or stale table", () => {
   assert.throws(() => parseKpx(h, at("2026-11-20T04:00:00Z")), (e) => e.code === "stale");
   assert.throws(() => parseKpx("", now), (e) => e.code === "bad_shape");
 });
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("sources-5: the Ecowatt file date is the data time, and an old file makes the source dormant, not green", async () => {
+  const { sourceState } = await import("../../scripts/grid.mjs");
+  const got = parseEcowatt(txt("ecowatt-app_signal.txt"), at("2026-11-20T01:46:00Z"));
+  assert.match(got.data_at, /^\d{4}-\d{2}-\d{2}T00:00:00Z$/);
+  const st = sourceState(SOURCES["rte-ecowatt"], got, null, {}, at("2026-11-20T01:46:00Z"), "2026-10-30T00:00:00Z");
+  assert.deepEqual([st.ok, st.dormant, st.stale], [true, true, false]);
+  assert.match(st.error, /^dormant: the feed's newest entry is from 2026-10-30/);
+});

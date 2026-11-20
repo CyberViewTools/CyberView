@@ -1,5 +1,7 @@
 {
- "_note": "Power outages from public news reporting (scripts/grid-news.mjs, no AI model; owner 2026-11-20: many utilities' own feeds cannot be used, so CyberView reads what news publishers report and cites the publisher). queries run against Google News and Bing News (hl = language, gl = country edition); per_run of them each run, rotating, so every query runs every few runs. gdelt_queries run against GDELT. A Google News result is kept only when the same headline also comes back from Bing News or GDELT with the publisher's own address (CyberView never links a news.google.com redirect). utilities: [name, country, area as shown, lat, lng, names used in the news...]; their area places a report that names the utility but no place. places: [name, country, lat, lng, kind (city or region), other names...]; a name ending in * matches the start of a word (inflected languages). countries: extra names for a country (other languages, demonyms). Everything placed is approximate (the centre of the place named). The owner may change any of this.",
+ "_note": "Power outages from public news reporting (scripts/grid-news.mjs, no AI model; owner 2026-11-20: many utilities' own feeds cannot be used, so CyberView reads what news publishers report and cites the publisher). queries run against Google News and Bing News (hl = language, gl = country edition); per_run of them each run, rotating, so every query runs every few runs. gdelt_queries run against GDELT. A Google News result is kept only when the same headline also comes back from Bing News or GDELT with the publisher's own address (CyberView never links a news.google.com redirect). utilities: [name, country, area as shown, lat, lng, names used in the news...]; their area places a report that names the utility but no place. places: [name, country, lat, lng, kind (city or region), other names...]; a name ending in * matches the start of a word (inflected languages). countries: extra names for a country (other languages, demonyms). Everything placed is approximate (the centre of the place named). The owner may change any of this. ambiguous: places whose own name is NOT used as an alias (every other place's own name is, besides its aliases). multi_area_utilities: utilities serving several areas: a report naming only the utility is placed at the country centre; a place it names wins.",
+ "ambiguous": ["Georgia (US state)", "Victoria (Australia)", "Porto", "Hidalgo", "Panama City", "Hyderabad (India)"],
+ "multi_area_utilities": ["Duke Energy", "AEP", "Xcel Energy", "Entergy"],
  "window_hours": 72,
  "group_hours": 12,
  "max_items": 300,
@@ -550,7 +552,7 @@
   ["Lviv", "UA", 49.84, 24.03, "city", "Lviv", "Львів*", "Львов*"],
   ["Mykolaiv", "UA", 46.98, 31.99, "city", "Mykolaiv", "Миколаїв*", "Николаев*"],
   ["Kherson", "UA", 46.64, 32.61, "city", "Kherson", "Херсон*"],
-  ["Sumy", "UA", 50.91, 34.8, "city", "Sumy", "Сумщин*", "Сумах"],
+  ["Sumy", "UA", 50.91, 34.8, "city", "Sumy", "Сумщин*", "Сумах", "Суми", "Сумськ*"],
   ["Poltava", "UA", 49.59, 34.55, "city", "Poltava", "Полтав*"],
   ["Chernihiv", "UA", 51.5, 31.29, "city", "Chernihiv", "Чернігів*", "Чернігов*", "Чернигов*"],
   ["Donetsk region", "UA", 48.0, 37.8, "region", "Donetsk", "Донецьк*", "Донецк*", "Донеччин*"],
@@ -826,7 +828,19 @@
   ["Tegucigalpa", "HN", 14.07, -87.19, "city", "Tegucigalpa"],
   ["Guatemala City", "GT", 14.63, -90.51, "city", "Ciudad de Guatemala"],
   ["San Salvador", "SV", 13.69, -89.22, "city", "San Salvador"],
-  ["Managua", "NI", 12.11, -86.24, "city", "Managua"]
+  ["Managua", "NI", 12.11, -86.24, "city", "Managua"],
+  ["Palo Alto", "US", 37.44, -122.14, "city", "Palo Alto"],
+  ["Eidsvoll", "NO", 60.33, 11.26, "city", "Eidsvoll"],
+  ["Coatzacoalcos", "MX", 18.13, -94.46, "city", "Coatzacoalcos"],
+  ["Kantunilkín", "MX", 21.1, -87.49, "city", "Kantunilkín"],
+  ["Mersin", "TR", 36.8, 34.63, "city", "Mersin"],
+  ["Eyre Peninsula", "AU", -33.5, 136.0, "region", "Eyre Peninsula", "Port Lincoln", "Whyalla"],
+  ["Teramo", "IT", 42.66, 13.7, "city", "Teramo"],
+  ["Raqqa", "SY", 35.95, 39.01, "city", "Raqqa", "الرقة"],
+  ["Corfu", "GR", 39.62, 19.92, "region", "Corfu", "Κέρκυρα", "Κέρκυρας"],
+  ["Clermont (Florida)", "US", 28.55, -81.77, "city", "Clermont, Florida", "Clermont, FL"],
+  ["Sevastopol", "UA", 44.6, 33.52, "city", "Sevastopol", "Севастопол*"],
+  ["Zhytomyr", "UA", 50.25, 28.66, "city", "Zhytomyr", "Житомир*"]
  ],
  "countries": {
   "US": ["United States", "U.S.", "USA", "Estados Unidos", "États-Unis"],

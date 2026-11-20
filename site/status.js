@@ -58,6 +58,16 @@
       row(gOk, "Power grid outages collected " + (h.last_grid_at ? ago(h.last_grid_at) : "not yet") + (h.last_grid_at && !gOk ? " (expected within 2 h)" : "") +
         (gn !== null ? "; " + gn + " open incident" + (gn === 1 ? "" : "s") + " on the map" : "") +
         "; causes last checked " + (h.last_grid_research_at && isFinite(mins(h.last_grid_research_at)) ? ago(h.last_grid_research_at) : "not yet") + " (context, not cyber events)");
+      // the later grid stages, each with its own limit (ops-6): the analysis and the news run every cycle
+      if (h.grid_analysis_at !== undefined) lim(h.grid_analysis_at, 60, "Power grid analysis (no AI model) ran");
+      if (h.last_grid_news_at !== undefined) lim(h.last_grid_news_at, 60, "Power outages in the news collected");
+      var gw = h.grid_waiting && typeof h.grid_waiting === "object" ? h.grid_waiting : null;
+      if (gw && typeof gw.count === "number" && isFinite(gw.count)) {
+        var gc = Math.max(0, Math.round(gw.count)), go = typeof gw.oldest_min === "number" && isFinite(gw.oldest_min) ? Math.max(0, Math.round(gw.oldest_min)) : 0;
+        row(!(gc && go > 120), "Grid outages waiting for a cause check: " + gc + (gc ? "; oldest " + (go >= 120 ? Math.round(go / 60) + " h" : go + " min") : "") + (gc && go > 120 ? " (expected within 2 h)" : ""));
+      }
+      var gf = Array.isArray(h.grid_audit_flags) ? h.grid_audit_flags.filter(function (f) { return typeof f === "string" && /^[a-z0-9_]{1,40}$/.test(f); }).slice(0, 10) : null;
+      if (gf) row(!gf.length, gf.length ? "Grid data audit (no AI model) flags: " + gf.map(function (f) { return f.replace(/_/g, " "); }).join(", ") : "Grid data audit (no AI model): no pipeline flags");
     }
     try { gridSources(h.grid_sources); } catch (e) {}
     var bl = h.backlog;
@@ -83,21 +93,33 @@
     p.dataset.data = d.slice(0, 7); p.dataset.code = c.slice(0, 7); p.hidden = false;
   }
 
-  // one row per grid source (health.json grid_sources, from data/grid/live.json and analysis.json); a keyed source with no
-  // key saved reads "not connected" and is shown neutral, not as a fault
-  var GRID_SRC = [["hydroquebec", "Hydro-Québec", "outages in Quebec"], ["bchydro", "BC Hydro", "outages in British Columbia"], ["ukpn", "UK Power Networks", "faults in London, the South East and East of England"],
-    ["eskom", "Eskom", "load shedding in South Africa"], ["ercot", "ERCOT", "grid conditions in Texas"], ["aemo", "AEMO", "market notices in Australia"],
-    ["eia", "EIA", "US electricity demand (needs a key)"], ["cfradar", "Cloudflare Radar", "internet outages with a power cause (needs a key)"], ["entsoe", "ENTSO-E", "generation and transmission outages in Europe (needs a key)"]];
+  // one row per grid source, every source health.json lists (grid_sources, from data/grid/live.json and analysis.json;
+  // ops-7): failing ones first, then by country. Names come from the data; GRID_SRC only adds a description for the
+  // first sources. A keyed source with no key saved reads "not connected" and is shown neutral, not as a fault.
+  var GRID_SRC = { hydroquebec: ["Hydro-Québec", "outages in Quebec"], bchydro: ["BC Hydro", "outages in British Columbia"], ukpn: ["UK Power Networks", "faults in London, the South East and East of England"],
+    eskom: ["Eskom", "load shedding in South Africa"], ercot: ["ERCOT", "grid conditions in Texas"], aemo: ["AEMO", "market notices in Australia"],
+    eia: ["EIA", "US electricity demand (needs a key)"], cfradar: ["Cloudflare Radar", "internet outages with a power cause (needs a key)"], entsoe: ["ENTSO-E", "generation and transmission outages in Europe (needs a key)"] };
+  var FLAG_WORDS = { failing_over_24h: "failing for over a day", stale_data: "the operator's data is old", dormant: "the feed has published nothing for weeks",
+    suddenly_empty: "suddenly empty", surge: "ten times more items than usual", customers_missing: "items without customer counts", zero_customers: "no customers in any item",
+    customers_fell: "customer total fell sharply", locations_suspect: "locations far from the country", future_times: "start times in the future", duplicate_ids: "duplicate ids", links_off_host: "links off the operator's site" };
   function gridSources(gs) {
     if (!gs || typeof gs !== "object") return;
     var ul = $("gridSources"); ul.textContent = "";
-    GRID_SRC.forEach(function (d) {
-      var x = Object.prototype.hasOwnProperty.call(gs, d[0]) && gs[d[0]] && typeof gs[d[0]] === "object" ? gs[d[0]] : null;
-      var err = x ? String(x.error || "").slice(0, 120) : "", nc = !!x && !x.ok && /^not connected/i.test(err), at = x && typeof x.at === "string" ? x.at.slice(0, 30) : "";
-      var li = el("li"), cls = !x ? "info" : x.ok === true ? "ok" : nc ? "neutral" : "warn", label = !x ? "Not reported yet" : x.ok === true ? "Working" : nc ? "Not connected" : "Not loading";
-      li.appendChild(el("span", "badge " + cls, label));
-      li.appendChild(document.createTextNode(" " + d[1] + ": " + d[2] + (nc ? " · no key saved" : x && !x.ok && err ? " · " + err : "") + (at && isFinite(Date.parse(at)) ? " · checked " + ago(at) : "")));
-      li.dataset.src = d[0]; ul.appendChild(li);
+    var rows = Object.keys(gs).filter(function (k) { return /^[a-z0-9_-]{1,40}$/.test(k) && gs[k] && typeof gs[k] === "object"; }).slice(0, 200).map(function (k) {
+      var x = gs[k], err = String(x.error || "").slice(0, 120), nc = !x.ok && /^not connected/i.test(err);
+      var flags = Array.isArray(x.flags) ? x.flags.filter(function (f) { return typeof f === "string" && Object.prototype.hasOwnProperty.call(FLAG_WORDS, f); }).slice(0, 4) : [];
+      var st = x.paused === true ? ["neutral", "Paused", 3] : nc ? ["neutral", "Not connected", 4] : x.ok !== true ? ["warn", "Not loading", 0]
+        : x.dormant === true ? ["warn", "Dormant", 1] : x.stale === true ? ["warn", "Stale data", 1] : flags.length ? ["warn", "Check", 2] : ["ok", "Working", 5];
+      return { k: k, x: x, err: err, nc: nc, flags: flags, st: st, cc: /^[A-Z]{2}$/.test(String(x.country || "")) ? x.country : "" };
+    });
+    rows.sort(function (a, b) { return a.st[2] - b.st[2] || (a.cc < b.cc ? -1 : a.cc > b.cc ? 1 : 0) || (a.k < b.k ? -1 : 1); });
+    rows.forEach(function (r) {
+      var d = Object.prototype.hasOwnProperty.call(GRID_SRC, r.k) ? GRID_SRC[r.k] : null, name = String(r.x.name || "").slice(0, 60).trim() || (d ? d[0] : r.k);
+      var at = typeof r.x.at === "string" ? r.x.at.slice(0, 30) : "", li = el("li");
+      li.appendChild(el("span", "badge " + r.st[0], r.st[1]));
+      li.appendChild(document.createTextNode(" " + name + (d ? ": " + d[1] : r.cc ? " (" + r.cc + ")" : "") + (r.nc ? " · no key saved" : r.x.ok !== true && r.err ? " · " + r.err : (r.x.stale || r.x.dormant) && r.err ? " · " + r.err : "") +
+        (r.flags.length ? " · " + r.flags.map(function (f) { return FLAG_WORDS[f]; }).join(", ") : "") + (at && isFinite(Date.parse(at)) ? " · checked " + ago(at) : "")));
+      li.dataset.src = r.k; ul.appendChild(li);
     });
     $("gridSrcBox").hidden = false;
   }

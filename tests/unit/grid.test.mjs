@@ -222,8 +222,9 @@ test("tracker: one incident per operator region; signals open at level 1 with a 
 const inc = (o) => ({ source: "hydroquebec", peak_customers: 0, level: null, planned_share: 0, causes: [], ...o });
 test("triage: reason codes", () => {
   assert.deepEqual(triage(inc({ peak_customers: 60000 }), cfg), { research_needed: true, research_reason: "big" });
-  assert.deepEqual(triage(inc({ peak_customers: 12000, causes: [{ cause: "Under investigation", customers: 12000 }] }), cfg),
-    { research_needed: true, research_reason: "suspicious_cause" });
+  // a placeholder cause asks only once it is still the label 6 hours after the peak (logic-8)
+  assert.deepEqual(triage(inc({ peak_customers: 12000, peak_at: "2026-11-19T10:00:00Z", updated_at: "2026-11-19T16:30:00Z",
+    causes: [{ cause: "Under investigation", customers: 12000 }] }), cfg), { research_needed: true, research_reason: "suspicious_cause" });
   assert.equal(triage(inc({ peak_customers: 9000, causes: [{ cause: "Unknown", customers: 9000 }] }), cfg).research_reason, "small");
   assert.deepEqual(triage(inc({ source: "eskom", peak_customers: null, level: 4 }), cfg), { research_needed: true, research_reason: "grid_level" });
   assert.equal(triage(inc({ source: "eskom", peak_customers: null, level: 3 }), cfg).research_reason, "small");
@@ -535,4 +536,148 @@ test("source files: scripts/grid-sources/*.mjs add sources, regions and adapters
   assert.ok(Array.isArray(PLUGIN_ERRORS));
   assert.deepEqual(PLUGIN_ERRORS, [], "every source file loads");
   assert.ok(Object.values(REGIONS).every((r) => r.name && isFinite(r.lat) && isFinite(r.lng)));
+});
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("ops-1/logic-4: a failed or paused source never closes its incident; it stays open, stale, and continues under the same id", async () => {
+  const { track: tr } = await import("../../scripts/grid.mjs");
+  const c = { ...cfg, close_after_minutes: 30 };
+  let st = tr({ open: [], closed: [] }, [out("bchydro", "British Columbia", 60000)], c, T0, ["bchydro"]);
+  const id = st.open[0].id;
+  // the feed fails for 8 hours, collect every 4 minutes: nothing closes, figures and quiet count stay
+  for (let m = 4; m <= 8 * 60; m += 4) st = tr(st, [], c, T0 + m * 6e4, ["hydroquebec"]);
+  assert.equal(st.open.length, 1);
+  assert.equal(st.closed.length, 0);
+  assert.equal(st.open[0].id, id);
+  assert.equal(st.open[0].customers, 60000);
+  assert.equal(st.open[0].below_count, 0);
+  assert.equal(st.open[0].stale, true);
+  assert.equal(st.open[0].stale_since, "2026-11-19T10:04:00Z");
+  assert.equal(st.open[0].updated_at, "2026-11-19T10:00:00Z");              // the time of the last good figures
+  // items kept from a failed source never open an incident either
+  const none = tr({ open: [], closed: [] }, [out("hydroquebec", "Quebec", 90000)], c, T0, ["bchydro"]);
+  assert.equal(none.open.length, 0);
+  // the feed is back with 55,000: same id, not stale
+  st = tr(st, [out("bchydro", "British Columbia", 55000)], c, T0 + 8 * H, ["bchydro"]);
+  assert.equal(st.open[0].id, id);
+  assert.equal(st.open[0].customers, 55000);
+  assert.equal(st.open[0].stale, undefined);
+  // the context layer labels a stale incident with the time of its last figures
+  const stuck = tr({ open: [], closed: [] }, [out("bchydro", "British Columbia", 60000)], c, T0, ["bchydro"]);
+  const later = tr(stuck, [], c, T0 + H, []);
+  const ci = contextItems(later.open, {}, [], c);
+  assert.equal(ci[0].stale, true);
+  assert.equal(ci[0].stale_since, "2026-11-19T10:00:00Z");
+  assert.deepEqual(checkContext({ layer: "grid", source: CONTEXT_SOURCE, source_url: "", fetched_at: "2026-11-19T10:00:00Z", ok: true, error: "", items: ci }), []);
+});
+
+test("logic-4: closing needs close_after_minutes of quiet whatever the cadence; a region active again soon reopens the same id", async () => {
+  const { track: tr } = await import("../../scripts/grid.mjs");
+  const c = { ...cfg, close_after: 2, close_after_minutes: 30, reopen_minutes: 120 };
+  let st = tr({ open: [], closed: [] }, [out("hydroquebec", "Quebec", 9000)], c, T0);
+  const id = st.open[0].id;
+  st = tr(st, [], c, T0 + 4 * 6e4);
+  st = tr(st, [], c, T0 + 8 * 6e4);                                          // two quiet collections, 4 minutes apart
+  assert.equal(st.open.length, 1);                                            // not yet: only 4 minutes of quiet
+  for (let m = 12; m <= 32; m += 4) st = tr(st, [], c, T0 + m * 6e4);
+  assert.equal(st.open.length, 1);                                            // 28 minutes since the first quiet one
+  st = tr(st, [], c, T0 + 36 * 6e4);
+  assert.equal(st.open.length, 0);
+  assert.equal(st.newlyClosed[0].closed_at, "2026-11-19T10:36:00Z");
+  st = tr(st, [out("hydroquebec", "Quebec", 7000)], c, T0 + 90 * 6e4);       // back within 2 hours
+  assert.equal(st.open[0].id, id);
+  assert.equal(st.open[0].closed_at, "");
+  assert.equal(st.open[0].reopened_at, "2026-11-19T11:30:00Z");
+  assert.equal(st.closed.length, 0);
+  assert.deepEqual(checkIncidents({ updated_at: "2026-11-19T11:30:00Z", open: st.open, closed: st.closed }), []);
+  const far = tr({ open: [], closed: [{ ...st.open[0], closed_at: "2026-11-19T06:00:00Z" }] }, [out("hydroquebec", "Quebec", 7000)], c, T0 + 90 * 6e4);
+  assert.notEqual(far.open[0].id, id);                                        // closed too long ago: a new incident
+});
+
+test("logic-8/sources-8: placeholder causes ask for research only with a real share and 6 hours on; cyber words always; planned first", () => {
+  const t0 = "2026-11-19T10:00:00Z", t1 = "2026-11-19T11:00:00Z", t7 = "2026-11-19T17:00:00Z";
+  // BC Hydro's first label on new outages, one hour after the peak: not yet
+  assert.equal(triage(inc({ peak_customers: 20000, peak_at: t0, updated_at: t1, causes: [{ cause: "Under investigation", customers: 20000 }] }), cfg).research_reason, "small");
+  // a 55-customer "Unknown" beside a big wind outage: not a share, never suspicious
+  assert.equal(triage(inc({ peak_customers: 20000, peak_at: t0, updated_at: t7, causes: [{ cause: "High winds", customers: 19945 }, { cause: "Unknown", customers: 55 }] }), cfg).research_reason, "weather");
+  // mostly planned work with a small unknown part closes as planned
+  assert.equal(triage(inc({ peak_customers: 20000, planned_share: 0.8, peak_at: t0, updated_at: t7, causes: [{ cause: "Unknown", customers: 20000 }] }), cfg).research_reason, "planned");
+  // a cause worded as cyber asks at once, even over planned work
+  assert.equal(triage(inc({ peak_customers: 12000, planned_share: 0.8, causes: [{ cause: "Cyber incident", customers: 12000 }] }), cfg).research_reason, "suspicious_cause");
+});
+
+test("logic-9: Hydro-Québec weather labels count as weather", () => {
+  for (const c of ["Precipitation", "Extreme temperatures", "Natural disaster", "Damage caused by vegetation", "Freezing rain"])
+    assert.equal(triage(inc({ peak_customers: 20000, causes: [{ cause: c, customers: 20000 }] }), cfg).research_reason, "weather", c);
+  assert.equal(triage(inc({ peak_customers: 20000, causes: [{ cause: "Equipment failure", customers: 20000 }] }), cfg).research_reason, "small");
+});
+
+test("logic-11: a signal source's level-less notice is level 0 in the series, never customers 0", async () => {
+  const { seriesPoints: sp } = await import("../../scripts/grid.mjs");
+  const dir = { id: "aemo:146504", source: "aemo", country: "AU", region: "SA1", area: "South Australia", lat: null, lng: null, customers: null,
+    kind: "supply_warning", planned: false, cause: "Direction - SA region", level: null, started_at: "", restore_est: "", url: "" };
+  const p = sp([dir], ["aemo"], T0).find((x) => x.region === "SA1");
+  assert.deepEqual([p.customers, p.level], [null, 0]);
+});
+
+test("sources-2/5, ops-10, ops-14: source state: paused is not failed, frozen data is stale, a stopped feed dormant, failures back off", async () => {
+  const { sourceState, hqVersionTime } = await import("../../scripts/grid.mjs");
+  const now = Date.parse("2026-11-20T01:52:00Z");
+  const p = sourceState({ paused: "robots.txt" }, null, null, {}, now);
+  assert.equal(p.paused, true); assert.equal(p.failures, 0);
+  // Hydro-Québec bisversion read at 01:52Z still "20261119190009" (19:00:09 Montreal = 00:00:09Z): stale
+  assert.equal(hqVersionTime("20261119190009"), "2026-11-20T00:00:09Z");
+  const hq = sourceState({}, [], null, {}, now, hqVersionTime("20261119190009"));
+  assert.deepEqual([hq.ok, hq.stale, hq.dormant], [true, true, false]);
+  assert.match(hq.error, /^stale: the operator's data is from 2026-11-20T00:00:09Z/);
+  assert.equal(sourceState({}, [], null, {}, now, "2026-11-20T01:40:00Z").stale, false);
+  // ECG's newest notice 21 days old: dormant, not stale
+  const ecg = sourceState({ dormant_hours: 14 * 24, data_stale_min: null }, [], null, {}, now, "2026-10-30T00:00:00Z");
+  assert.deepEqual([ecg.ok, ecg.stale, ecg.dormant], [true, false, true]);
+  // failures: the third in a row waits 15 minutes; a source failing for over a day waits an hour; skipped keeps state
+  let st = {};
+  for (let i = 0; i < 2; i++) st = { ...sourceState({}, null, "http_503", st, now), fetched_at: "2026-11-20T01:00:00Z" };
+  assert.equal(st.next_try_at, "");
+  st = sourceState({}, null, "http_503", { ...st, fetched_at: "2026-11-20T01:00:00Z" }, now);
+  assert.equal(st.failures, 3); assert.equal(st.next_try_at, "2026-11-20T02:07:00Z");
+  assert.equal(sourceState({}, null, "http_503", { failures: 5, fetched_at: "2026-11-18T00:00:00Z" }, now).next_try_at, "2026-11-20T02:52:00Z");
+  const sk = sourceState({}, null, "skipped", { failures: 5, error: "http_503", next_try_at: "2026-11-20T02:07:00Z" }, now);
+  assert.deepEqual([sk.skipped, sk.failures, sk.error], [true, 5, "http_503"]);
+  assert.equal(sourceState({}, null, "not connected (no key saved for x)", {}, now).failures, 0);
+});
+
+test("ops-5: a grid run log only when something changed or once an hour", async () => {
+  const { logDue } = await import("../../scripts/grid.mjs");
+  const parts = { failed: ["x"], stale: [], opened: [], closed: [], research: [] }, now = Date.parse("2026-11-20T01:00:00Z");
+  const a = logDue(null, parts, now);
+  assert.equal(a.due, true);
+  assert.equal(logDue({ at: "2026-11-20T00:30:00Z", sig: a.sig }, parts, now).due, false);
+  assert.equal(logDue({ at: "2026-11-19T23:59:00Z", sig: a.sig }, parts, now).due, true);
+  assert.equal(logDue({ at: "2026-11-20T00:30:00Z", sig: a.sig }, { ...parts, failed: ["x", "y"] }, now).due, true);
+  assert.equal(logDue({ at: "2026-11-20T00:30:00Z", sig: a.sig }, { ...parts, opened: ["grid-x"] }, now).due, true);
+});
+
+test("logic-10/ops-3: history keeps one line per id (earliest closure; a reopened one replaces), series one point per key", async () => {
+  const { dedupeHistory, dedupeSeries, writeHistory } = await import("../../scripts/grid.mjs");
+  const a = { id: "grid-enre-edesur-buenos-aires-202611200024", closed_at: "2026-11-20T00:55:39Z" }, b = { ...a, closed_at: "2026-11-20T00:59:28Z" };
+  assert.deepEqual(dedupeHistory([b, a]), [a]);
+  const r = { ...a, closed_at: "2026-11-20T03:00:00Z", reopened_at: "2026-11-20T02:00:00Z" };
+  assert.deepEqual(dedupeHistory([a, r, b]), [r]);
+  const pt = (u) => ({ at: "2026-11-20T00:45:00Z", source: "doe-odin", region: "Hawaii", customers: u, unplanned: u, level: null });
+  const ds = dedupeSeries([pt(85), pt(84), { at: "2026-11-20T00:45:00Z", ok: ["a"] }, { at: "2026-11-20T00:45:00Z", ok: ["b", "a"] }]);
+  assert.deepEqual(ds, [{ at: "2026-11-20T00:45:00Z", ok: ["a", "b"] }, pt(84)]);
+  const dir = mkdtempSync(join(tmpdir(), "grid-hist-"));
+  assert.equal(writeHistory(dir, a), true);
+  assert.equal(writeHistory(dir, b), false);                                  // same id: not written twice
+  assert.equal(writeHistory(dir, r), true);                                   // reopened and closed again: replaced
+  assert.deepEqual(readFileSync(join(dir, "2026-11.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l)), [r]);
+});
+
+test("sources-4: a band is shown as a band, never as an exact count", () => {
+  const live = [{ id: "liander-storingen:8513790", source: "liander-storingen", country: "NL", region: "Liander area", area: "Haarlem · customers reported as under 200",
+    lat: 52.38, lng: 4.64, customers: 100, customers_band: "under 200", kind: "outage", planned: false, cause: "", level: null, started_at: "", restore_est: "", url: "" }];
+  const ci = contextItems({ open: [] }, {}, live, cfg);
+  assert.equal(ci[0].name, "Liander: under 200 customers without power");
+  assert.equal(ci[0].customers_band, "under 200");
+  assert.deepEqual(checkContext({ layer: "grid", source: CONTEXT_SOURCE, source_url: "", fetched_at: "2026-11-19T10:00:00Z", ok: true, error: "", items: ci }), []);
 });

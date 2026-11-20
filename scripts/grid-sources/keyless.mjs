@@ -25,6 +25,9 @@ const STALE_HOURS = 3;   // a "current" reading older than this is not current: 
 const str = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
 const isoS = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z");
 const badShape = (why) => Object.assign(new Error(`unexpected shape: ${why}`), { code: "bad_shape" });
+// the operator's own data time travels with the items (scripts/grid.mjs collect marks a source stale when it is old)
+export const stamp = (arr, at) => Object.defineProperty(arr, "data_at", { value: at || "", enumerable: false, configurable: true });
+
 const stale = (what) => Object.assign(new Error(`stale: ${what}`), { code: "stale" });
 
 function zoneOffset(ms, tz) {
@@ -168,13 +171,13 @@ export function parseEcowatt(text, now = Date.now()) {
   const diff = Math.round((today - fileDay) / 864e5);
   const fileIso = new Date(fileDay).toISOString().slice(0, 10);
   if (diff < 0 || diff > 3 || diff >= days.length) {
-    return [signal("rte-ecowatt", "FR", "France", { id: "national", kind: "supply_warning", level: 0,
-      area: "France: no current Ecowatt signal (green)", cause: `latest Ecowatt file is for ${fileIso}`, started_at: "", url: ECOWATT_PAGE })];
+    return stamp([signal("rte-ecowatt", "FR", "France", { id: "national", kind: "supply_warning", level: 0,
+      area: "France: no current Ecowatt signal (green)", cause: `latest Ecowatt file is for ${fileIso}`, started_at: "", url: ECOWATT_PAGE })], `${fileIso}T00:00:00Z`);
   }
   const day = ecowattDay(days[diff]), v = day.hours[p.h];
-  return [signal("rte-ecowatt", "FR", "France", { id: "national", kind: "supply_warning", level: EW_LEVEL[v],
+  return stamp([signal("rte-ecowatt", "FR", "France", { id: "national", kind: "supply_warning", level: EW_LEVEL[v],
     area: `France, this hour: ${EW_NAME[v]}`, cause: str(parts[2 + diff] || "", 120) || `day signal: ${EW_NAME[day.day]}`,
-    started_at: isoS(zonedMs(p.y, p.m, p.d, p.h, 0, "Europe/Paris")), url: ECOWATT_PAGE })];
+    started_at: isoS(zonedMs(p.y, p.m, p.d, p.h, 0, "Europe/Paris")), url: ECOWATT_PAGE })], `${fileIso}T00:00:00Z`);
 }
 
 // ---------- KPX real-time supply ----------
@@ -211,7 +214,9 @@ export default {
     // (elexon-system-warnings, with demand control), so it would count each warning twice. parseNesoWarnings stays tested.
     fingrid: { ...sig, name: "Fingrid power system state", country: "FI", url: "https://www.fingrid.fi/api/graph/power-system-state?language=en",
       page: FINGRID_PAGE, hosts: ["www.fingrid.fi"], terms_url: "https://www.fingrid.fi/en/legal-terms/", terms_ok: "allowed", attribution: "Source: Fingrid" },
-    "rte-ecowatt": { ...sig, name: "RTE Ecowatt", country: "FR", url: `${ECOWATT}/data1/ecowatt-version-2`, page: ECOWATT_PAGE,
+    // the file is updated daily in a tense winter and can rest for weeks otherwise: never "stale"; a file 3 days old
+    // means the signal is not being published (sources-5: 30 October on 20 November 2026), not that France is green
+    "rte-ecowatt": { ...sig, data_stale_min: null, dormant_hours: 72, name: "RTE Ecowatt", country: "FR", url: `${ECOWATT}/data1/ecowatt-version-2`, page: ECOWATT_PAGE,
       hosts: ["www.monecowatt.fr"], terms_url: "https://www.monecowatt.fr/mentions-legales/", terms_ok: "allowed", attribution: "Source: RTE, Ecowatt" },
     kpx: { ...sig, name: "KPX real-time supply (Korea Power Exchange)", country: "KR", url: KPX_PAGE, page: KPX_PAGE, hosts: ["new.kpx.or.kr"],
       terms_url: "https://new.kpx.or.kr/", terms_ok: "silent", attribution: "Source: Korea Power Exchange (KPX)" },
@@ -226,7 +231,8 @@ export default {
     "rte-ecowatt": async (h) => {
       const dir = `${ECOWATT}/data${1 + Math.floor(Math.random() * 100)}`;   // as the site does: 100 copies of the same files
       const v = ecowattVersion(await h.get(`${dir}/ecowatt-version-2`, { as: "text", key: "monecowatt-data" }));
-      return parseEcowatt(await h.get(`${dir}/app_signal_${v}`, { as: "text", key: "monecowatt-data" })).map(h.item);
+      const got = parseEcowatt(await h.get(`${dir}/app_signal_${v}`, { as: "text", key: "monecowatt-data" }));
+      return stamp(got.map(h.item), got.data_at);
     },
     kpx: async (h) => parseKpx(await h.get(KPX_PAGE, { as: "text" })).map(h.item),
   },

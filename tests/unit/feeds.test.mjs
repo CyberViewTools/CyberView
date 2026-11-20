@@ -54,6 +54,55 @@ test("the cyber filter for broad feeds reads the languages they are written in, 
     "GTA 6 passa de 40 bilhões de views", "Morena inhabilita a regidor de Tulum"]) assert.ok(!CYBER.test(t), t);
 });
 
+test("the cyber filter reads the fifth batch's languages (fa, he, hi, hu, uz, et, da), from those feeds' real titles", () => {
+  for (const t of ["فرمانده عملیات سایبری بریتانیا از عملیات تهاجمی علیه جمهوری اسلامی خبر داد", "باج‌افزار جدید", "מתקפת סייבר עולמית ב-178 אתרים",
+    "בזמן שישנתם: חולשת אבטחה קריטית ב-Java. לכו לעדכן", "हैकर्स की चाल नाकाम करने गूगल ने बिछाया जाल", "क्या एआई बन सकता है साइबर खतरा?",
+    "Kibertámadást észlelt az Equinor, a termelés zavartalan maradt", "Qilin-zsarolóvírus-támadás során azonosítottak egy eszközt",
+    "Adatszivárgás miatt napokra leállt a LEGO népszerű online piactere", "NGINX dasturidagi kritik zaifliklar sababli serverlar kiberhujumlar xavfi ostida",
+    "RIA küberreserv harjutas Tallinna lennujaama tabanud küberrünnaku lahendamist", "Uus ID-tarkvara versioon parandab kaks olulist turvanõrkust",
+    "August küberruumis: teenusetõrked, lunavararünne ja õngitsussõnumid", "Råd til borgere ved datalæk af personoplysninger"]) assert.ok(CYBER.test(t), t);
+  // ordinary news from the same feeds: sport, prices, power cuts, service faults and Nairobi's Kibera are not cyber items
+  for (const t of ["پرسپولیس ۳-۰ پیکان؛ تارتار هم از بحران خارج شد", "سخنگوی صنعت برق: پیامک آغاز قطعی‌های برق در تهران مربوط به تعمیرات شبکه است",
+    "הסוללה התפוצצה בסלון: רגעי האימה שתועדו במצלמה", "תקלה עולמית במיקרוסופט: ניסיונות התיקון נכשלו, השרתים שוב קרסו",
+    "शाओमी 18 प्रो की कीमत लीक: अल्ट्रा-प्रीमियम सेगमेंट में एंट्री", "छात्रों ने हैकथॉन जीता", "A NATO egy orosz taxialkalmazás használatát javasolta, majd visszavonta",
+    "Esines tõrkeid riigi autentimisteenuse kasutamisel", "Flere myndigheders hjemmesider var midlertidigt utilgængelige",
+    "Kibera residents protest evictions", "Kibera, Nairobi: floods displace families"]) assert.ok(!CYBER.test(t), t);
+});
+
+// normalised host and path: the same feed under www. or with a trailing slash is still the same feed
+const feedKey = (u) => { const x = new URL(u); return `${x.hostname.replace(/^www\./, "")}${x.pathname.replace(/\/$/, "")}${x.search}`; };
+// hosts whose robots.txt disallows the feed (for every reader, or for ClaudeBot or anthropic-ai), recorded by the regional
+// source research of 2026-11-20; a feed from one of them is never added, however good its items
+const ROBOTS_DISALLOWED = new Set(["3news.com", "4hou.com", "agenceecofin.com", "aljazeera.com", "antaranews.com", "aps.sn", "baguete.com.br",
+  "beckershospitalreview.com", "bernama.com", "brecorder.com", "ciokorea.com", "civil.ge", "connectingafrica.com", "cumhuriyet.com.tr", "dawn.com",
+  "eluniversal.com.mx", "eluniverso.com", "emol.com", "en.yna.co.kr", "english.ahram.org.eg", "estadao.com.br", "eurasianet.org", "fayerwayer.com",
+  "feeds.folha.uol.com.br", "feeds.japan.zdnet.com", "focustaiwan.tw", "fortinet.com", "gulf-times.com", "gulfbusiness.com", "haaretz.com", "health-isac.org",
+  "healthcareinfosecurity.com", "healthcareittoday.com", "htxt.co.za", "hurriyet.com.tr", "innovationaus.com", "investiraucameroun.com", "iol.co.za",
+  "iranwire.com", "jornada.com.mx", "kenyans.co.ke", "khaleejtimes.com", "kun.uz", "kuwaittimes.com", "mobiletime.com.br", "monitor.co.ug", "myjoyonline.com",
+  "nation.africa", "news24.com", "newtimes.co.rw", "nhk.or.jp", "www3.nhk.or.jp", "nsm.no", "ntv.com.tr", "olhardigital.com.br", "portafolio.co", "radiofarda.com",
+  "railjournal.com", "rappler.com", "rss.uol.com.br", "sabq.org", "seneweb.com", "smart-energy.com", "taipeitimes.com", "technews.tw", "tekno.kompas.com",
+  "teletime.com.br", "thecable.ng", "thehindu.com", "thereporterethiopia.com", "tiinside.com.br", "webrazzi.com", "xtech.nikkei.com", "ynetnews.com"]);
+
+test("no two feeds read the same host and path, and none comes from a host whose robots.txt disallows it", () => {
+  const all = activeFeeds(CFG), keys = all.map((f) => feedKey(f.url));
+  assert.deepEqual(keys.filter((k, i) => keys.indexOf(k) !== i), [], "the same feed twice");
+  assert.deepEqual(all.filter((f) => ROBOTS_DISALLOWED.has(new URL(f.url).hostname.replace(/^www\./, ""))).map((f) => f.name), []);
+});
+
+test("the fifth batch: every new feed has an ISO language, a known region and a tier, and per-CVE advisory feeds are tagged", () => {
+  const byName = new Map(FEEDS.map((f) => [f.name, f]));
+  for (const [name, lang, region] of [["UzCERT (Uzbekistan)", "uz", "middle-east"], ["Iran International (Persian)", "fa", "middle-east"],
+    ["Walla Tech (Israel)", "he", "middle-east"], ["Amar Ujala technology (India)", "hi", "south-asia"], ["NKI Hungary news", "hu", "europe"],
+    ["RIA (Estonia)", "et", "europe"], ["CERT-PY (Paraguay)", "es", "latin-america"], ["ANCS Tunisia", "fr", "africa"], ["piyolog (Japan)", "ja", "east-asia"]]) {
+    const f = byName.get(name);
+    assert.ok(f, name);
+    assert.equal(f.lang, lang, name); assert.equal(f.region, region, name);
+  }
+  for (const n of ["Synology security advisories", "Moxa security advisories", "SolarWinds security advisories", "ABB PSIRT", "CERT@VDE"]) assert.equal(byName.get(n).kind, "cve", n);
+  // broad general-news feeds only ever add cyber items
+  for (const n of ["Nile Post (Uganda)", "Asharq Al-Awsat (Arabic)", "G1 tecnologia (Brazil)", "CNN Indonesia teknologi"]) assert.equal(byName.get(n).filter, true, n);
+});
+
 test("a lead's language is an ISO 639-1 code or nothing, never a language name or a region", async () => {
   const { gdeltLang, parseGdelt } = await import("../../scripts/osint.mjs");
   assert.equal(gdeltLang("Spanish"), "es");

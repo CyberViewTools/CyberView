@@ -442,6 +442,27 @@ async def main():
             {"id": "grid-o-hydroquebec-1", "scope": "outage", "source": "hydroquebec", "kind": "outage", "name": "Hydro-Québec: 158 customers without power", "country": "CA", "region": "Quebec", "customers": 158, "level": None,
              "lat": 45.88, "lng": -72.55, "approx": False, "since": "", "cause": "Material wear and tear or breakdown", "planned": False, "checked": None, "url": ""},
         ]}
+        # v1.53: operators from source files: links only on the item's OWN operator's hosts, licence credits shown (own site)
+        bgs = copy.deepcopy(bg)
+        bgs["context"]["grid"] = dict(bgs["context"]["grid"], items=[
+            {"id": "grid-o-ladwp-1", "scope": "outage", "source": "ladwp", "kind": "outage", "name": "LADWP: 1,367 customers without power", "country": "US", "region": "Woodland Hills", "customers": 1367, "level": None,
+             "lat": 34.17, "lng": -118.6, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://www.ladwp.com/outages"},
+            {"id": "grid-o-ladwp-2", "scope": "outage", "source": "ladwp", "kind": "outage", "name": "LADWP: 640 customers without power", "country": "US", "region": "Van Nuys", "customers": 640, "level": None,
+             "lat": 34.19, "lng": -118.45, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://www.bchydro.com/not-ladwp"},
+            {"id": "grid-o-elexon-1", "scope": "outage", "source": "elexon-system-warnings", "kind": "outage", "name": "Elexon test: 300 customers without power", "country": "GB", "region": "GB", "customers": 300, "level": None,
+             "lat": 52.0, "lng": -1.5, "approx": False, "since": iso(1), "cause": "", "planned": False, "checked": None, "url": "https://bmrs.elexon.co.uk/system-warnings"}])
+        bgs.setdefault("docs", {})["grid/sources"] = {"ladwp": {"name": "LADWP", "hosts": ["www.ladwp.com"], "attribution": ""},
+            "elexon-system-warnings": {"name": "Elexon", "hosts": ["bmrs.elexon.co.uk"], "attribution": "Contains BMRS data © Elexon Limited copyright and database right 2026"},
+            "evil": {"name": "<img src=x id=pwnsrc>", "hosts": ["evil.test", "bad host!"], "attribution": "<b id=pwnatt>x</b>"}}
+        async def vgridsrc(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "index.html#grid"), wait=1800)
+            hrefs = await pg.eval_on_selector_all("#gRows a", "as => as.map(a => a.getAttribute('href'))")
+            ok("grid sources: a link is kept only on the item's own operator's hosts", "https://www.ladwp.com/outages" in hrefs and "https://www.bchydro.com/not-ladwp" not in hrefs and "https://bmrs.elexon.co.uk/system-warnings" in hrefs, hrefs)
+            txt = await pg.text_content("#gRows")
+            ok("grid sources: a licence's required credit shows on the item, as text", "Contains BMRS data © Elexon" in txt and await pg.locator("#pwnatt, #pwnsrc").count() == 0)
+            ok("grid sources: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(make_site(bgs), vgridsrc)
         site_g = make_site(bg)
         hp = os.path.join(site_g, "data", "health.json")
         hj = json.load(open(hp)) if os.path.exists(hp) else {"built_at": iso(0.1)}

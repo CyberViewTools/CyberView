@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.52",date:"2026-11-20"};
+var BUILD={version:"1.53",date:"2026-11-20"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -157,7 +157,7 @@ function cleanCorr(d){
 var CTX_DEFS={
   ioda:{label:"Internet disruptions",what:"Countries where IODA's automated measurements (routing, active probing, Google traffic) saw a drop in the last 24 hours. A signal, not a confirmed outage, and never by itself evidence of an attack.",host:/^https:\/\/ioda\.inetintel\.cc\.gatech\.edu\//},
   gdacs:{label:"Disaster alerts",what:"Orange and red GDACS alerts now in effect (earthquakes, cyclones, floods, volcanoes). Disasters cause outages and draw scams; they are context, not cyber events.",host:/^https:\/\/www\.gdacs\.org\//},
-  grid:{label:"Power grid outages",what:"Outages and grid emergencies that six grid operators report themselves (Hydro-Qu\u00e9bec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO): customers without power, load shedding, energy emergencies. Context, not cyber events. The cause is shown as the operator reports it; the larger rings are incidents (5,000 or more customers out in one operator's area, drawn at that area); the small rings are single outages of 100 or more customers, at the place the operator gives. Customers are accounts, not people.",
+  grid:{label:"Power grid outages",what:"Outages and grid emergencies that grid operators report themselves (Hydro-Qu\u00e9bec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO): customers without power, load shedding, energy emergencies. Context, not cyber events. The cause is shown as the operator reports it; the larger rings are incidents (5,000 or more customers out in one operator's area, drawn at that area); the small rings are single outages of 100 or more customers, at the place the operator gives. Customers are accounts, not people.",
     host:/^https:\/\/(?:[a-z0-9-]+\.)*(?:hydroquebec\.com|bchydro\.com|ukpowernetworks\.co\.uk|eskom\.co\.za|ercot\.com|aemo\.com\.au|nemweb\.com\.au)(?:\/|$)|^https:\/\/ukpowernetworks\.opendatasoft\.com(?:\/|$)/}
 };
 /* grid cause decisions (scripts/grid-desk.mjs); "attack" wording only where an official source says so */
@@ -179,14 +179,27 @@ function cleanCtx(name,d){
   var at=str(d.fetched_at,30);
   return {source:str(d.source,100),url:link(d.source_url),at:at,ok:d.ok===true,error:str(d.error,60),items:items};
 }
+/* each grid source's own hosts and required attribution (docs["grid/sources"], from scripts/grid.mjs at build) */
+var gridSrcDoc={},ctxRaw={};
+function cleanGridSrcDoc(d){
+  var out={};if(!d||typeof d!=="object")return out;
+  Object.keys(d).slice(0,120).forEach(function(k){var v=d[k];if(!/^[a-z0-9-]{2,40}$/.test(k)||!v||typeof v!=="object")return;
+    out[k]={name:str(v.name,60),attribution:str(v.attribution,400),hosts:(Array.isArray(v.hosts)?v.hosts:[]).slice(0,8).map(function(h){return str(h,80).toLowerCase();}).filter(function(h){return /^[a-z0-9.-]{3,80}$/.test(h);})};});
+  return out;
+}
+/* an item's link is kept only when it is https on its OWN operator's hosts */
+function gridOwnLink(src,u){
+  u=str(u,300);var m=/^https:\/\/([a-z0-9.-]+)(?:[\/?#]|$)/i.exec(u),g=own(gridSrcDoc,src)?gridSrcDoc[src]:null;
+  return m&&g&&g.hosts.indexOf(m[1].toLowerCase())>=0?u:"";
+}
 function cleanGrid(x,link){
   var nm=str(x.name,120).trim();if(!nm)return null;
   var lat=numIn(x.lat,-90,90),lng=numIn(x.lng,-180,180),geo=lat!==null&&lng!==null,cu=numIn(x.customers,0,1e8),lv=numIn(x.level,0,10);
   var ck=x.checked&&typeof x.checked==="object"?x.checked:null,dec=ck?str(ck.decision,30):"";
-  var src=str(x.source,20).toLowerCase(),cc=str(x.country,2).toUpperCase();
+  var src=str(x.source,40).toLowerCase(),cc=str(x.country,2).toUpperCase();
   return {id:str(x.id,120),scope:x.scope==="outage"?"outage":"incident",planned:x.planned===true,source:/^[a-z0-9_-]+$/.test(src)?src:"",kind:own(GRID_KIND,str(x.kind,20))?x.kind:"outage",name:nm,country:/^[A-Z]{2}$/.test(cc)?cc:"",region:str(x.region,80).trim(),
     customers:cu===null?null:Math.round(cu),level:lv===null?null:Math.round(lv),lat:geo?lat:null,lng:geo?lng:null,approx:x.approx===true,since:str(x.since,30),cause:str(x.cause,120).trim(),
-    checked:ck&&own(GRID_DEC,dec)?{decision:dec,summary:str(ck.summary,300).trim(),by:AI_BY}:null,url:link(x.url)};
+    checked:ck&&own(GRID_DEC,dec)?{decision:dec,summary:str(ck.summary,300).trim(),by:AI_BY}:null,url:own(gridSrcDoc,src)?gridOwnLink(src,x.url):link(x.url)};  /* a known source: its own hosts only; otherwise the built-in allowlist */
 }
 /* plain-text description of one grid incident, shared by the tooltip and the layers list */
 function gridLine(x){
@@ -404,6 +417,7 @@ function gridRow(x){
   else if(!x.cause&&!x.planned)li.appendChild(el("div","gr3","No cause reported"));
   if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
   var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" \u00b7 ")));
+  var att=own(gridSrcDoc,x.source)?gridSrcDoc[x.source].attribution:"";if(att)li.appendChild(el("small","gattr",att));
   if(x.lat===null)li.appendChild(el("small","gnote","Not on the globe: the operator gave no location."));
   else if(x.approx)li.appendChild(el("small","gnote","Drawn at the operator's area, not an exact place."));
   li.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest("a"))return;gridFocus(x);});
@@ -452,6 +466,7 @@ function gridSrcRow(k,x){
   if(x&&x.items!==null&&x.ok)m.push(x.items+" item"+(x.items===1?"":"s"));
   if(x&&x.ok&&x.at&&isFinite(Date.parse(x.at)))m.push((st.k==="stale"?"last data ":"checked ")+ago(x.at));
   if(m.length)body.appendChild(el("small",null,m.join(" \u00b7 ")));
+  var att=own(gridSrcDoc,k)?gridSrcDoc[k].attribution:"";if(att)body.appendChild(el("small","gattr",att));
   li.appendChild(body);return li;
 }
 /* third tier: outages reported in the news, not checked (publishers named and linked to their own page only) */
@@ -2756,7 +2771,8 @@ openStore().then(function(d){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
   db.doc("grid/news").onSnapshot(function(s){gridNews=s.exists?cleanGridNews(s.data()):null;if(state.view==="grid")renderSoon();},function(){});
   db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;gridTr=s.exists?cleanGridTrends(s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});
-  Object.keys(CTX_DEFS).forEach(function(k){db.doc("context/"+k).onSnapshot(function(s){ctx[k]=s.exists?cleanCtx(k,s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});});
+  db.doc("grid/sources").onSnapshot(function(s){gridSrcDoc=s.exists?cleanGridSrcDoc(s.data()):{};if(ctxRaw.grid){ctx.grid=cleanCtx("grid",ctxRaw.grid);renderLayers();if(onGlobe())renderSoon();}},function(){});
+  Object.keys(CTX_DEFS).forEach(function(k){db.doc("context/"+k).onSnapshot(function(s){ctxRaw[k]=s.exists?s.data():null;ctx[k]=s.exists?cleanCtx(k,s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});});
   db.doc("meta/status").onSnapshot(function(s){sweep=s.exists?s.data():null;renderStats(lastList);if(state.tab==="ins")renderInsights(lastList);},function(){});
 }).catch(function(){unavailable=true;render();});
 })();

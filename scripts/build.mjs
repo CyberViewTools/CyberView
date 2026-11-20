@@ -176,6 +176,17 @@ const gridNews = (() => {
   return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
+// each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
+// licence requires, from scripts/grid.mjs SOURCES (code, not data); a failure leaves the page on its built-in allowlist
+try {
+  const { SOURCES, attributionText } = await import("./grid.mjs");
+  const gs = {};
+  for (const [k, v] of Object.entries(SOURCES)) {
+    const hosts = (v.hosts || []).filter((h) => /^[a-z0-9.-]{3,80}$/.test(h)).slice(0, 8);
+    if (/^[a-z0-9-]{2,40}$/.test(k)) gs[k] = { name: String(v.name || "").slice(0, 60), hosts, attribution: v.attribution ? attributionText(v.attribution) : "" };
+  }
+  docs["grid/sources"] = gs;
+} catch (e) { warnings.push(`grid sources for the page: ${String(e.message).slice(0, 80)}`); }
 // each grid source's last fetch (data/grid/live.json, then analysis.json for the keyed ones), for the status page
 const gridSources = (() => {
   const live = existsSync(join(DATA, "grid", "live.json")) ? readJson(join(DATA, "grid", "live.json")) : null;

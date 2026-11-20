@@ -87,6 +87,14 @@ export async function buildPages() {
       const { about, numbers, aboutSection, fill } = await import("./about.mjs");
       const a = about(), n = await numbers();
       body = body.replace("<p data-about-tagline></p>", `<p>${esc(fill(a.tagline, n))}</p>`).replace("<section data-about-generated></section>", aboutSection(a, n));
+      // power grid data: each source's required credit, from scripts/grid.mjs (the same text the map shows next to the data)
+      let credits = "";
+      try {
+        const { SOURCES, attributionText } = await import("./grid.mjs");
+        const list = Object.values(SOURCES).filter((v) => v.attribution && !v.paused).map((v) => `<li>${esc(attributionText(v.attribution))}</li>`);
+        credits = `<li><strong>Power grid data</strong>: published by each grid operator under its own terms; CyberView uses only sources whose terms and robots.txt allow it (see <a href="access.html">data CyberView would like to use</a>). Credits the licences require:<ul>${[...new Set(list)].join("")}</ul></li>`;
+      } catch { credits = ""; }
+      body = body.replace("    <li data-grid-credits></li>\n", credits ? `    ${credits}\n` : "");
     }
     // the data access page lists config/data-access.json (scripts/access.mjs); access.js filters it and copies the request
     let page = {};

@@ -97,9 +97,7 @@
       else add(ch);
     });
     document.body.appendChild(ul);
-    var r = btn.getBoundingClientRect(), h = Math.min(ul.scrollHeight, 340), below = innerHeight - r.bottom - 8;
-    ul.style.minWidth = r.width + "px"; ul.style.left = Math.max(8, Math.min(r.left, innerWidth - ul.offsetWidth - 8)) + "px";
-    if (below >= Math.min(h, 200) || below >= r.top) ul.style.top = (r.bottom + 4) + "px"; else ul.style.top = Math.max(8, r.top - 4 - h) + "px";
+    place(btn, ul);
     btn.setAttribute("aria-expanded", "true"); btn.setAttribute("aria-controls", ul.id);
     var at = Math.max(0, items.findIndex(function (li) { return li._i === cur; }));
     open = { sel: sel, btn: btn, ul: ul, items: items, at: at, typed: "", tt: 0 };
@@ -142,7 +140,18 @@
   }
   document.addEventListener("mousedown", function (e) { if (open && !open.ul.contains(e.target) && !open.btn.contains(e.target)) close(false); });
   window.addEventListener("resize", function () { close(false); });
-  document.addEventListener("scroll", function (e) { if (open && !open.ul.contains(e.target)) close(false); }, true);
+  // the list is fixed to the viewport: when the page scrolls (by hand, or because content above it finished loading),
+  // move it with its button, and close it only once the button has left the screen
+  function place(btn, ul) {
+    var r = btn.getBoundingClientRect(), h = Math.min(ul.scrollHeight, 340), below = innerHeight - r.bottom - 8;
+    ul.style.minWidth = r.width + "px"; ul.style.left = Math.max(8, Math.min(r.left, innerWidth - ul.offsetWidth - 8)) + "px";
+    if (below >= Math.min(h, 200) || below >= r.top) ul.style.top = (r.bottom + 4) + "px"; else ul.style.top = Math.max(8, r.top - 4 - h) + "px";
+  }
+  document.addEventListener("scroll", function (e) {
+    if (!open || open.ul.contains(e.target)) return;
+    var r = open.btn.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) close(false); else place(open.btn, open.ul);
+  }, true);
   function all(root) { Array.prototype.forEach.call((root || document).querySelectorAll("select"), enhance); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { all(); }); else all();
   /* selects added or refilled later (the year list, the file formats, a tab drawn on demand) */

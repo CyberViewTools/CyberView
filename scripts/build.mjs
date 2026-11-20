@@ -21,7 +21,7 @@ import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
-import { load as pipelineMetrics } from "./metrics.mjs";
+import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
@@ -223,8 +223,10 @@ const gridSources = (() => {
   // the grid audit's flags per source (scripts/grid-audit.mjs: failing, stale_data, dormant, customers_missing ...)
   const audit = existsSync(join(DATA, "grid", "audit.json")) ? readJson(join(DATA, "grid", "audit.json")) || {} : {};
   const flagsOf = (k) => { const f = audit.sources && audit.sources[k] && audit.sources[k].flags; return Array.isArray(f) ? f.filter((x) => /^[a-z0-9_]{1,40}$/.test(x)).slice(0, 10) : []; };
+  // the context sources the grid analysis reads carry no name of their own
+  const NAMES = { ioda: "IODA internet outages", gdacs: "GDACS disaster alerts" };
   const out = {}, add = (k, v) => { if (!/^[a-z0-9_-]{1,40}$/.test(k) || out[k] || !v || typeof v !== "object") return;
-    out[k] = { name: String(v.name || "").slice(0, 60), ok: v.ok === true, error: String(v.error || "").slice(0, 120), at: String(v.fetched_at || v.at || "").slice(0, 30),
+    out[k] = { name: String(v.name || NAMES[k] || "").slice(0, 60), ok: v.ok === true, error: String(v.error || "").slice(0, 120), at: String(v.fetched_at || v.at || "").slice(0, 30),
       items: Number.isInteger(v.items) && v.items >= 0 ? v.items : null,
       country: /^[A-Z]{2}$/.test(v.country || "") ? v.country : "", paused: v.paused === true,
       ...(v.stale === true ? { stale: true } : {}), ...(v.dormant === true ? { dormant: true } : {}),
@@ -402,7 +404,8 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
   // leads "used" are credited by story (scripts/metrics.mjs storyCredit); days_covered is how much of the 7 days the lead files hold
   const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, leads_used_7d: pm.leads_used, days_covered: pm.window ? pm.window.days_covered : null, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
-    collectors: pm.collectors.slice(0, 12), stories: { open: st.stories_open ?? null, corroborated: st.stories_corroborated ?? null, claims: st.stories_claims ?? null, leads_72h: st.leads_72h ?? null } };
+    collectors: pm.collectors.filter((c) => !RETIRED_COLLECTORS[c.name]).slice(0, 12),
+    retired_collectors: pm.collectors.filter((c) => RETIRED_COLLECTORS[c.name]).map((c) => ({ name: c.name, leads: c.leads, used: c.used, retired: RETIRED_COLLECTORS[c.name].retired, why: RETIRED_COLLECTORS[c.name].why })), stories: { open: st.stories_open ?? null, corroborated: st.stories_corroborated ?? null, claims: st.stories_claims ?? null, leads_72h: st.leads_72h ?? null } };
   // continuous improvement: the improver's latest report (cost, yield, quality, guard) and its last changes, for the status page
   const imp = readJson(join(DATA, "improve", "latest.json"), null), chP = join(DATA, "improve", "changes.jsonl");
   const changes = existsSync(chP) ? readFileSync(chP, "utf8").trim().split("\n").filter(Boolean).slice(-10).reverse().map((l) => { try { const x = JSON.parse(l); return { at: String(x.at).slice(0, 20), key: String(x.key).slice(0, 80), from: String(x.from).slice(0, 20), to: String(x.to).slice(0, 20), reason: String(x.reason).slice(0, 300) }; } catch { return null; } }).filter(Boolean) : [];

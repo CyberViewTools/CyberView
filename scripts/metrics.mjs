@@ -16,6 +16,9 @@ const REGION = { "united states": "north-america", canada: "north-america", mexi
   india: "south-asia", pakistan: "south-asia", bangladesh: "south-asia", "sri lanka": "south-asia", nepal: "south-asia",
   singapore: "southeast-asia", indonesia: "southeast-asia", malaysia: "southeast-asia", thailand: "southeast-asia", vietnam: "southeast-asia", philippines: "southeast-asia",
   japan: "east-asia", "south korea": "east-asia", china: "east-asia", taiwan: "east-asia", "hong kong": "east-asia", australia: "oceania", "new zealand": "oceania" };
+// collectors that no longer run (scripts/osint.mjs): their old leads stay in every count, but the status page lists them
+// as retired, never as a current source
+export const RETIRED_COLLECTORS = { "google-news": { retired: "2026-11-20", why: "Not collected since 2026-11-20: news.google.com/robots.txt disallows /rss/ and its links are redirects that cannot be cited. Bing News and GDELT run the same standing searches." } };
 export const regionOf = (country) => REGION[String(country || "").toLowerCase().trim()] || (country ? "other" : "unplaced");
 const median = (a) => { if (!a.length) return null; const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 

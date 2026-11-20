@@ -14,7 +14,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T19:12:06Z",
-  "updated_at": "2026-11-20T19:41:30Z",
+  "updated_at": "2026-11-20T19:50:08Z",
   "category": "incident",
   "date": "2026-11-13",
   "date_note": "Detected Nov 13; coverage Nov 15-18.",
@@ -29,10 +29,10 @@
   "severity": 2,
   "status": "confirmed",
   "source_tier": "primary",
-  "summary": "PLAID suspended all KARTE services after unauthorized access on November 13. Its November 20 release says a vulnerability was exploited, 79,249 account emails and 45,816 contact records of its own were taken, and some data of 570 to 754 customer companies, by category, was affected. The affected set includes companies whose contracts had ended. PLAID targets a phased resumption in mid-January 2027, a target it says may change.",
+  "summary": "PLAID suspended all KARTE services after unauthorized access on November 13. Its November 20 release says a vulnerability was exploited and 79,249 account emails and 45,816 contact records of its own were taken. Some customer data was also affected, by category: 570, 487, up to 409 and 754 companies. The set includes companies whose contracts had ended. PLAID targets a phased resumption in mid-January 2027, which it says may change.",
   "plain": "PLAID says its customer-data service KARTE should return in phases around mid-January 2027, and that data of companies that had ended their contracts was also hit.",
-  "exec": "KARTE stays suspended until a target of mid-January 2027; former customers' data is also affected.",
-  "action": "KARTE customers, including former ones, should rotate integration credentials and await PLAID's detailed data, which it says goes to affected companies from November 24.",
+  "exec": "KARTE stays suspended until a target of mid-January 2027; data of former customers is also affected.",
+  "action": "KARTE customers, including former ones, should wait for PLAID's contact: it says it will hand detailed data to affected companies sequentially from November 24.",
   "sources": [
     {
       "name": "PLAID release, 20 Nov 2026 (investigation results and outlook for resuming service)",
@@ -62,11 +62,14 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T13:29:35Z",
-    "note": "Opened PLAID's own notices of 13 and 16 Nov: 79,249 emails, credentials and imported data leaked, server vulnerability, suspension all match. Added them as primary sources, tier primary, validation corroborated (was single_source secondary blog)",
-    "flags": []
+    "at": "2026-11-20T19:50:22Z",
+    "first_at": "2026-11-19T13:29:35Z",
+    "note": "Compared with PLAID 20 Nov release and INTERNET Watch: fixed 570 to 754 companies into four non-additive categories (570, 487, up to 409, 754); removed unsourced credential-rotation advice; figures 79,249, 45,816, mid-Jan 2027, Nov 24 match",
+    "flags": [
+      "roundup-source"
+    ]
   },
-  "qa_checked_at": "2026-11-19T13:29:35Z",
+  "qa_checked_at": "2026-11-20T19:50:22Z",
   "links": [
     {
       "to": "dhc-karte-19-million-customer-data-leak-2026-11",

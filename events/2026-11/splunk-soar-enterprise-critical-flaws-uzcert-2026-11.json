@@ -1,0 +1,39 @@
+{
+  "action": "Update Splunk SOAR to 8.8.0 or later and Splunk Enterprise to a fixed version (10.6.1, 10.4.5, 10.2.9, 10.0.12 or 9.4.17), as listed by UzCERT; check Splunk's own advisory.",
+  "actor": "",
+  "attack": ["vulnerability"],
+  "category": "vuln",
+  "country": "Uzbekistan",
+  "cves": ["CVE-2026-131253", "CVE-2026-131287", "CVE-2026-131297", "CVE-2026-76535"],
+  "date": "2026-11-18",
+  "date_note": "UzCERT says Splunk announced the issues on 18 November 2026; the Splunk advisory itself was not read.",
+  "exec": "Splunk SOAR and Splunk Enterprise have new critical and high-severity flaws, so security teams running them should patch.",
+  "first_seen": "2026-11-20T19:50:00Z",
+  "geo_basis": "agency (UzCERT, Uzbekistan)",
+  "lat": 41.2995,
+  "lng": 69.2401,
+  "org": "Splunk",
+  "pin_type": "agency",
+  "place": "Tashkent",
+  "plain": "Uzbekistan's CERT reports that Splunk fixed serious flaws in SOAR and Splunk Enterprise, including remote code execution and authentication bypass. UzCERT does not say they are being exploited.",
+  "products": ["Splunk SOAR", "Splunk Enterprise"],
+  "sector": "Technology",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "UzCERT",
+      "url": "https://uzcert.uz/splunk-soar-va-splunk-enterprise-dasturlarida-kritik-zaifliklar-aniqlandi-tajovuzkorlar-zararli-kodlarni-bajaris-va-autentifikatsiyani-cetlab-otis-imkoniyatiga-ega-bolisi-mumkin/"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "UzCERT says Splunk announced on 18 November fixes for flaws in Splunk SOAR and Splunk Enterprise. Two SOAR remote code execution flaws are rated 9.9 and 9.6 and a SOAR SSO authentication bypass is rated high; all are fixed in SOAR 8.8.0 or later. A Splunk Enterprise RapidDiag REST API bypass is fixed in several versions. UzCERT does not state exploitation.",
+  "tags": ["patch", "rce", "auth-bypass"],
+  "title": "Splunk fixes critical SOAR and Enterprise flaws, UzCERT reports",
+  "updated_at": "2026-11-20T19:50:00Z",
+  "validation": {
+    "checked_at": "2026-11-20T19:50:00Z",
+    "note": "Single CERT relay (UzCERT) read in full; Splunk's own advisory was not read and the article links none.",
+    "state": "single_source"
+  }
+}

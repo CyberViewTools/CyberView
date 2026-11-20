@@ -26,7 +26,7 @@ The schedule below is `routines.json`; each AI job is a Claude Code scheduled ta
 |---|---|---|---|---|
 | Sweep (research loop) | restart check every 15 min | `5,20,35,50 * * * *` | Sonnet 5.5 (`claude-sonnet-5-5`) | Restarts the continuous research loop when its heartbeat is stale; the loop researches, reviews, updates and follows up |
 | Review desk | every 2 h at :25 | `25 */2 * * *` | Sonnet 5.5 | Second review of whatever the loop's reviewers did not reach |
-| Backlog desk | every 3 h at :55 | `55 */3 * * *` | Sonnet 5.5 (Haiku triagers) | Drains the story queue when the loop falls behind |
+| Backlog desk | hourly at :55 | `55 * * * *` | Sonnet 5.5 (Haiku triagers) | Drains the story queue when the loop falls behind |
 | Triage desk | every 6 h at :13 | `13 */6 * * *` | Haiku 5.5 (`claude-haiku-5-5`) | Sorts leak-site claims and flags strong stories the loop keeps passing over |
 | Verify desk | 03:19 and 15:19 | `19 3,15 * * *` | Sonnet 5.5 | Settles disputed events, corroborates single-source ones, reader reports, record hygiene, duplicates, issue follow-up |
 | Report review | 13:17 daily | `17 13 * * *` | Sonnet 5.5 | Reading long primary documents: extraction, not invention |

@@ -278,6 +278,18 @@ export const CYBER = new RegExp(["cyber|hack(?!athon)|ransom|breach|malware|botn
   "\\bkiber(?!a\\b)|k[üu]ber|adatsziv[aá]rg|zsarol[oó]v[ií]rus|s[ée]r[üu]l[ée]kenys[ée]g|adathal[aá]sz|k[aá]rt[ée]kony k[oó]d|datal[æa]k|it-angreb|turvan[õo]rkus|andmelek|lunavara|pahavara|[õo]ngitsus",   // hu, uz, hr, sl, da, et
   "سایبر|هکر|باج\u200c?افزار|بدافزار|نشت اطلاعات|فیشینگ|סייבר|האקר|כופרה|נוזקה|דליפת מידע|חולשת אבטחה|פישינג|साइबर|हैकर|हैकिंग|रैनसमवेयर|मालवेयर|डेटा लीक|फिशिंग"].join("|"), "i");   // fa, he, hi
 const MAX_AGE_H = 72;
+// a feed seen for the first time (no last_ok in osint.json) files only its last day: adding many feeds at once would
+// otherwise file up to three days of each one's items in a single run and flood the research queue
+export const FIRST_RUN_H = 24;
+/** Pure: is this text about cyber security? "exploit" alone means a feat in French, Spanish, Portuguese and Italian
+ *  (a football "exploit"), so outside English it needs another cyber word next to it. */
+export function isCyber(text, lang = "en") {
+  const t = String(text || "");
+  if (!CYBER.test(t)) return false;
+  if (!/^(fr|es|pt|it)/.test(lang || "en")) return true;
+  const re = new RegExp(CYBER.source, CYBER.flags.includes("g") ? CYBER.flags : CYBER.flags + "g");
+  return [...t.matchAll(re)].some((m) => !/^exploit/i.test(m[0]));
+}
 
 const decode = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
   .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&amp;/g, "&");
@@ -338,11 +350,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       : { ok: true, error: "", items: items.length, at: now, last_ok: now, fails: 0, ...(items.length ? {} : { empty: (prev.empty || 0) + 1 }) };
     if (error) { report.push(`${f.name}: ${error}`); continue; }
     let n = 0, recent = 0;
+    const since = prev.last_ok ? cutoff : Math.max(cutoff, Date.now() - FIRST_RUN_H * 36e5);
     for (const it of items) {
       if (known.has(it.url)) continue;
-      if (it.published && Date.parse(it.published) < cutoff) continue;
+      if (it.published && Date.parse(it.published) < since) continue;
       recent++;
-      if (f.filter && !CYBER.test(`${it.title} ${it.summary}`)) continue;
+      if (f.filter && !isCyber(`${it.title} ${it.summary}`, f.lang)) continue;
       known.add(it.url); n++;
       out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, lang: f.lang || "en", ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
     }

@@ -954,9 +954,14 @@ export function checkConfig(c) {
 }
 
 // ---------- time series ----------
-// data/grid/series/<YYYY-MM-DD>.jsonl: { at (start of the 15-minute slot), source, region, customers, unplanned, level },
-// one line per operator region per slot. Regions an ok source did not report are written as zero, so a quiet hour counts.
-export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; older days live on in the monthly roll-up (about 3.5 MB in git, not 9)
+// data/grid/series/<YYYY-MM-DD>.jsonl, written sparse (ops-4): per 15-minute slot one line { at, ok: [sources that answered
+// with fresh data] }, then one line { at (start of the slot), source, region, customers, unplanned, level } per operator
+// region that had something (customers or a level above 0). A region of an answered source with no line was quiet: the
+// readers (expandSeries) put its zero back, so a quiet hour still counts. Days written before 2026-11-20 hold every
+// region's zeros as lines; both read the same.
+// Size: ~135 regions from ~35 sources, 96 slots a day; about a third of the lines are non-zero, so roughly 0.5 MB a day
+// and ~18 MB for the 35 days kept (it was ~1.5 MB a day, ~54 MB, with every zero written). Older days are rolled up.
+export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; older days live on in the monthly roll-up
 const SLOT = 15 * 6e4;
 export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
 // signal sources report a grid level, not customers: built-in ones plus any source file entry with signal: true
@@ -978,7 +983,32 @@ export function seriesPoints(items, okSources, now = Date.now()) {
   }
   return [...out.values()];
 }
-const seriesKey = (p) => `${p.source}|${p.region}|${p.at}`;
+const seriesKey = (p) => (Array.isArray(p.ok) ? `slot|${p.ok.join(",")}|${p.at}` : `${p.source}|${p.region}|${p.at}`);
+const zeroPoint = (at, source, region) => (SIGNAL_SOURCES.has(source) ? { at, source, region, customers: null, unplanned: 0, level: 0 }
+  : { at, source, region, customers: 0, unplanned: 0, level: null });
+const quiet = (p) => !(Number(p.customers) > 0) && !(Number(p.unplanned) > 0) && !(Number(p.level) > 0);
+/** Full points of one slot -> what is stored: the slot line naming the sources that answered, then the non-quiet points. */
+export function sparsePoints(points, okSources) {
+  const pts = (points || []).filter(Boolean), at = pts.length ? pts[0].at : "";
+  const ok = [...new Set(okSources || [])].filter((k) => OPERATORS.includes(k)).sort();
+  return at && ok.length ? [{ at, ok }, ...pts.filter((p) => !quiet(p))] : pts.filter((p) => !quiet(p));
+}
+/** Stored lines (deduplicated) -> full points: every region of an answered source that has no line in a slot gets its
+ *  zero back. The regions of a source: its REGIONS entries and every region it reported in these lines. Slot lines are
+ *  dropped from the result; old full days pass through unchanged. */
+export function expandSeries(lines) {
+  const d = dedupeSeries(lines), slots = d.filter((p) => Array.isArray(p.ok)), pts = d.filter((p) => !Array.isArray(p.ok));
+  if (!slots.length) return pts;
+  const regions = new Map(), have = new Set(pts.map(seriesKey));
+  for (const k of Object.keys(REGIONS)) { const [src, reg] = k.split("|"); (regions.get(src) || regions.set(src, new Set()).get(src)).add(reg); }
+  for (const p of pts) (regions.get(p.source) || regions.set(p.source, new Set()).get(p.source)).add(p.region);
+  const out = [...pts];
+  for (const sl of slots) for (const src of sl.ok) for (const reg of regions.get(src) || []) {
+    const z = zeroPoint(sl.at, src, reg);
+    if (!have.has(seriesKey(z))) { out.push(z); have.add(seriesKey(z)); }
+  }
+  return out.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+}
 /** Append points to their day files, skipping a region+slot that is already there (two writers: the flow and collect.yml). */
 export function appendSeries(dir, points) {
   let n = 0;
@@ -1011,6 +1041,7 @@ export function rollupDay(points) {
   return Object.fromEntries(Object.entries(g).map(([k, r]) => [k, { max: r.max, mean: Math.round(r.sum / r.points), points: r.points, level_max: r.level_max }]));
 }
 /** Days older than keepDays (by file name, UTC) -> folded into monthly/<YYYY-MM>.json { month, days: { <date>: rollupDay } }
+ *  (the day is expanded first, so the quiet slots of answered sources count in the mean)
  *  and the day file removed (derived numbers: the roll-up keeps them). Returns the dates rolled up. */
 export function rollupSeries(dir, now = Date.now(), keepDays = SERIES_KEEP_DAYS) {
   if (!existsSync(dir)) return [];
@@ -1019,7 +1050,7 @@ export function rollupSeries(dir, now = Date.now(), keepDays = SERIES_KEEP_DAYS)
     const day = f.slice(0, 10);
     if (day >= cutoff) continue;
     const mf = join(dir, "monthly", `${day.slice(0, 7)}.json`), m = readJson(mf, null) || { month: day.slice(0, 7), days: {} };
-    m.days = { ...(m.days || {}), [day]: rollupDay(readLines(join(dir, f))) };
+    m.days = { ...(m.days || {}), [day]: rollupDay(expandSeries(readLines(join(dir, f)))) };
     writeJson(mf, m);
     unlinkSync(join(dir, f));
     rolled.push(day);
@@ -1030,6 +1061,11 @@ export function checkSeriesLine(o, p = "point") {
   const e = [];
   if (!o || typeof o !== "object") return [`${p}: not an object`];
   if (!ISO.test(o.at || "") || Date.parse(o.at) % SLOT) e.push(`${p}.at: not the ISO start of a 15-minute slot`);
+  if (Array.isArray(o.ok)) {          // a slot line: the sources that answered in this slot
+    if (o.ok.length > 400 || o.ok.some((k) => !OPERATORS.includes(k))) e.push(`${p}.ok: not a list of operator sources`);
+    if (Object.keys(o).some((k) => k !== "at" && k !== "ok")) e.push(`${p}: a slot line holds only at and ok`);
+    return e;
+  }
   if (!OPERATORS.includes(o.source)) e.push(`${p}.source: not an operator source`);
   if (!isStr(o.region, 60) || !o.region) e.push(`${p}.region: missing`);
   for (const k of ["customers", "level"]) if (!(o[k] === null || isInt(o[k]))) e.push(`${p}.${k}: not an int or null`);
@@ -1050,6 +1086,21 @@ export function checkMonthly(d, name = "") {
   return e;
 }
 
+/** Duplicates two writers can leave (logic-10): series lines with the same source|region|slot, history lines with the
+ *  same incident id. Readers de-duplicate, so these are warnings, never errors. -> [{ file, warning }] */
+export function verifyWarnings(root = ROOT) {
+  const out = [], sd = join(root, "data", "grid", "series"), hd = join(root, "data", "grid", "history");
+  const dups = (lines, key) => { const seen = new Set(); let n = 0; for (const x of lines) { const k = key(x); if (seen.has(k)) n++; else seen.add(k); } return n; };
+  if (existsSync(sd)) for (const f of readdirSync(sd).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f))) {
+    const n = dups(readLines(join(sd, f)).filter((p) => !Array.isArray(p.ok)), seriesKey);
+    if (n) out.push({ file: `data/grid/series/${f}`, warning: `${n} duplicate source|region|slot line(s); readers keep the last` });
+  }
+  if (existsSync(hd)) for (const f of readdirSync(hd).filter((f) => /^\d{4}-\d{2}\.jsonl$/.test(f))) {
+    const n = dups(readLines(join(hd, f)), (x) => x.id);
+    if (n) out.push({ file: `data/grid/history/${f}`, warning: `${n} duplicate incident id line(s); readers keep the earliest closure` });
+  }
+  return out;
+}
 /** Every grid file -> [{ file, errors }] (only files with errors). A missing data file is an error only when `strict`. */
 export function verifyAll(root = ROOT, strict = true) {
   const out = [], rel = (p) => p.slice(root.length + 1);
@@ -1239,7 +1290,7 @@ async function collect() {
   for (const inc of newlyClosed) writeHistory(P.history, inc);
   let seriesAdded = 0, rolled = [];
   try {
-    seriesAdded = appendSeries(P.series, seriesPoints(items, answered, now));
+    seriesAdded = appendSeries(P.series, sparsePoints(seriesPoints(items, answered, now), answered));
     rolled = rollupSeries(P.series, now);
   } catch (e) { failed.push(`series: ${str(e.message, 60)}`); }
   const research = readJson(P.research, {}) || {};
@@ -1288,6 +1339,7 @@ async function main() {
   if (cmd === "verify") {
     const bad = verifyAll(ROOT, !rest.includes("--lenient"));
     for (const b of bad) for (const e of b.errors.slice(0, 20)) console.error(`${b.file}: ${e}`);
+    for (const w of verifyWarnings(ROOT)) console.warn(`warning: ${w.file}: ${w.warning}`);
     if (!bad.length) console.log("grid verify: all grid files have the expected shape");
     process.exit(bad.length ? 1 : 0);
   }

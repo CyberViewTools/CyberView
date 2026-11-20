@@ -14,7 +14,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { DATA, ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
 import {
   SOURCES, REGIONS, COUNTRIES, OPERATORS, WEATHER, loadConfig, DEFAULT_CFG, str, readLines, checkSeriesLine, verifySeries,
-  EIA_BA, basFor, dedupeSeries, dedupeHistory, SIGNAL_SOURCES,
+  EIA_BA, basFor, dedupeHistory, expandSeries,
 } from "./grid.mjs";
 import { newsLeads } from "./grid-news.mjs";
 
@@ -32,12 +32,13 @@ const how = (t) => { const d = new Date(t); return d.getUTCDay() * 24 + d.getUTC
 /** Median and MAD of unplanned customers for `region` ("<source>|<region>") at the hour of the week of `now`, over the
  *  4 weeks before `now`; with fewer than 8 such points, all hours of those 4 weeks. null when there are no points. */
 export function baseline(series, region, now = Date.now()) {
-  const from = now - BASE_DAYS * D, all = [];
+  const from = now - BASE_DAYS * D, bySlot = new Map();
   for (const p of series || []) {
     const t = ms(p && p.at);
     if (!p || keyOf(p) !== region || !(t >= from && t < now) || p.unplanned == null) continue;
-    all.push({ t, x: Number(p.unplanned) || 0 });
+    bySlot.set(t, Number(p.unplanned) || 0);          // a slot written twice (two writers) counts once (ops-3)
   }
+  const all = [...bySlot].map(([t, x]) => ({ t, x }));
   if (!all.length) return null;
   const same = all.filter((p) => how(p.t) === how(now)), use = same.length >= MIN_SAME_HOUR ? same : all;
   const xs = use.map((p) => p.x), m = median(xs);
@@ -176,46 +177,63 @@ export function corroborate(inc, ctx = {}) {
 }
 
 // ---------- trends ----------
-/** Per region over the 30 days before `now`: incidents opened, customer-hours (sum of unplanned x 0.25 over the 15-minute
- *  points), the largest incident, the operators' causes mix, and this week against the week before. history: incidents
- *  (closed history lines and incidents.json open + closed; duplicates by id merged), series: points. */
+export const HOLD_MIN = 60, MIN_COVERAGE = 0.9;
+/** Per region over the 30 days before `now`: incidents opened, customer-hours, the largest incident, the operators' causes
+ *  mix, and this week against the week before. history: incidents (closed history lines and incidents.json open + closed;
+ *  duplicates by id merged), series: points (expanded, see grid.mjs expandSeries).
+ *  Customer-hours do not depend on how often collect ran (logic-5): each point's unplanned customers are held until the
+ *  next point (the newest one until now), for at most HOLD_MIN minutes; a longer gap is no data. coverage is the
+ *  share of the window with data. The week-over-week comparison (week) is given only when both weeks have at least
+ *  MIN_COVERAGE of their time covered; otherwise week is null (a partial week is no comparison). */
 export function trends(history, series, now = Date.now()) {
   const from = now - TREND_DAYS * D, wk = now - 7 * D, wk2 = now - 14 * D, regions = {};
   const r = (source, region) => {
     const k = `${source}|${region}`;
-    return regions[k] || (regions[k] = { source, region, name: (REGIONS[k] || {}).name || region, incidents: 0, customer_hours: 0,
-      largest: null, causes: [], week: { customer_hours: 0, prev_customer_hours: 0, change_pct: null, incidents: 0, prev_incidents: 0 }, _c: new Map() });
+    return regions[k] || (regions[k] = { source, region, name: (REGIONS[k] || {}).name || region, incidents: 0, customer_hours: 0, coverage: 0,
+      largest: null, causes: [], week: null, _c: new Map(), _w: { ch: 0, pch: 0, inc: 0, pinc: 0, cov: 0, pcov: 0 }, _cov: 0 });
   };
   const byId = new Map();
-  for (const i of history || []) { if (i && i.id && (!byId.has(i.id) || i.closed_at)) byId.set(i.id, i); }
+  for (const i of dedupeHistory((history || []).filter((i) => i && i.closed_at))) byId.set(i.id, i);
+  for (const i of history || []) { if (i && i.id && !byId.has(i.id)) byId.set(i.id, i); }
   for (const i of byId.values()) {
     const t = ms(i.opened_at);
     if (!(t >= from && t <= now) || !OPERATORS.includes(i.source)) continue;
     const g = r(i.source, i.region);
     g.incidents++;
-    if (t >= wk) g.week.incidents++; else if (t >= wk2) g.week.prev_incidents++;
+    if (t >= wk) g._w.inc++; else if (t >= wk2) g._w.pinc++;
     const size = (x) => (x.peak_customers != null ? x.peak_customers : (x.peak_level || x.level || 0) * 100000);
     if (!g.largest || size(i) > size(g.largest._i)) g.largest = { id: i.id, name: str(i.name, 120), peak_customers: i.peak_customers ?? null, peak_level: i.peak_level ?? i.level ?? null, opened_at: i.opened_at, _i: i };
     for (const c of i.causes || []) if (c && c.cause) g._c.set(c.cause, (g._c.get(c.cause) || 0) + (Number(c.customers) || 0));
   }
-  const seen = new Set();
+  // one point per region and slot (the last line wins), as steps
+  const pts = new Map();
   for (const p of series || []) {
     const t = ms(p && p.at);
-    if (!(t >= from && t <= now) || !OPERATORS.includes(p.source)) continue;
-    const k = `${p.source}|${p.region}|${p.at}`;
-    if (seen.has(k)) continue;
-    seen.add(k);
-    const g = r(p.source, p.region), ch = (Number(p.unplanned) || 0) * 0.25;
-    g.customer_hours += ch;
-    if (t >= wk) g.week.customer_hours += ch; else if (t >= wk2) g.week.prev_customer_hours += ch;
+    if (!(t >= from - HOLD_MIN * 6e4 && t <= now) || !OPERATORS.includes(p.source) || Array.isArray(p.ok)) continue;
+    const k = `${p.source}|${p.region}`;
+    (pts.get(k) || pts.set(k, new Map()).get(k)).set(t, Number(p.unplanned) || 0);
+  }
+  const overlap = (a0, a1, b0, b1) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
+  for (const [k, m] of pts) {
+    const [source, ...rest] = k.split("|"), g = r(source, rest.join("|")), ts = [...m.keys()].sort((a, b) => a - b);
+    ts.forEach((t, i) => {
+      const end = t + Math.max(0, Math.min(i + 1 < ts.length ? ts[i + 1] - t : now - t, HOLD_MIN * 6e4)), u = m.get(t);
+      const all = overlap(t, end, from, now), cur = overlap(t, end, wk, now), prev = overlap(t, end, wk2, wk);
+      g.customer_hours += (u * all) / H; g._cov += all;
+      g._w.ch += (u * cur) / H; g._w.cov += cur; g._w.pch += (u * prev) / H; g._w.pcov += prev;
+    });
   }
   for (const g of Object.values(regions)) {
     g.customer_hours = Math.round(g.customer_hours);
-    g.week.customer_hours = Math.round(g.week.customer_hours);
-    g.week.prev_customer_hours = Math.round(g.week.prev_customer_hours);
-    g.week.change_pct = g.week.prev_customer_hours ? Math.round(((g.week.customer_hours - g.week.prev_customer_hours) / g.week.prev_customer_hours) * 100) : null;
+    g.coverage = Math.round((g._cov / (now - from)) * 100) / 100;
+    const cov = Math.round((g._w.cov / (7 * D)) * 100) / 100, pcov = Math.round((g._w.pcov / (7 * D)) * 100) / 100;
+    if (cov >= MIN_COVERAGE && pcov >= MIN_COVERAGE) {
+      const ch = Math.round(g._w.ch), pch = Math.round(g._w.pch);
+      g.week = { customer_hours: ch, prev_customer_hours: pch, change_pct: pch ? Math.round(((ch - pch) / pch) * 100) : null,
+        incidents: g._w.inc, prev_incidents: g._w.pinc, coverage: cov, prev_coverage: pcov };
+    }
     g.causes = [...g._c].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([cause, customers]) => ({ cause: str(cause, 120), customers }));
-    delete g._c;
+    delete g._c; delete g._w; delete g._cov;
     if (g.largest) delete g.largest._i;
   }
   return { window_days: TREND_DAYS, from: iso(from), to: iso(now), regions };
@@ -293,7 +311,8 @@ export function checkAnalysis(d) {
     if (!g || !OPERATORS.includes(g.source) || `${g.source}|${g.region}` !== k) { e.push(`${p}: key, source or region wrong`); continue; }
     if (![g.incidents, g.customer_hours].every((x) => Number.isInteger(x) && x >= 0)) e.push(`${p}: incidents or customer_hours not a count`);
     if (!Array.isArray(g.causes) || g.causes.length > 5 || g.causes.some((c) => !c || !isStr(c.cause, 120) || !isNum(c.customers))) e.push(`${p}.causes: not up to 5 { cause, customers }`);
-    if (!g.week || !(g.week.change_pct === null || isNum(g.week.change_pct))) e.push(`${p}.week: wrong`);
+    if (!(g.week === null || (g.week && (g.week.change_pct === null || isNum(g.week.change_pct))))) e.push(`${p}.week: not null or { customer_hours, change_pct, ... }`);
+    if (g.coverage !== undefined && !(isNum(g.coverage) && g.coverage >= 0 && g.coverage <= 1)) e.push(`${p}.coverage: not 0..1`);
     if (!(g.largest === null || (g.largest && /^grid-/.test(g.largest.id || "")))) e.push(`${p}.largest: not null or an incident`);
   }
   if (!Array.isArray(d.research) || d.research.some((r) => !r || !/^grid-/.test(r.id || "") || !isStr(r.why, 200))) e.push("research: not [{ id, why }]");
@@ -315,16 +334,17 @@ export function verifyAnalysis(root = ROOT, strict = true) {
 
 // ---------- CLI ----------
 const P = { grid: join(DATA, "grid"), ctx: join(DATA, "context"), leads: join(DATA, "leads") };
-/** Series points of the last `days` days (day files; bad lines skipped). */
+/** Series points of the last `days` days (day files; bad lines skipped; one point per source|region|slot; the zeros of
+ *  quiet regions in answered slots put back: grid.mjs expandSeries). */
 export function readSeries(dir, days, now = Date.now()) {
   if (!existsSync(dir)) return [];
   const from = new Date(now - days * D).toISOString().slice(0, 10);
-  return readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f) && f.slice(0, 10) >= from).sort()
-    .flatMap((f) => readLines(join(dir, f))).filter((p) => checkSeriesLine(p).length === 0);
+  return expandSeries(readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f) && f.slice(0, 10) >= from).sort()
+    .flatMap((f) => readLines(join(dir, f))).filter((p) => checkSeriesLine(p).length === 0));
 }
 function load(now) {
   const hd = join(P.grid, "history"), day = (n) => new Date(now - n * D).toISOString().slice(0, 10);
-  const history = existsSync(hd) ? readdirSync(hd).filter((f) => /^\d{4}-\d{2}\.jsonl$/.test(f)).sort().slice(-2).flatMap((f) => readLines(join(hd, f))) : [];
+  const history = dedupeHistory(existsSync(hd) ? readdirSync(hd).filter((f) => /^\d{4}-\d{2}\.jsonl$/.test(f)).sort().slice(-2).flatMap((f) => readLines(join(hd, f))) : []);
   return {
     incidents: readJson(join(P.grid, "incidents.json"), null) || { open: [], closed: [] }, history,
     series: readSeries(join(P.grid, "series"), TREND_DAYS + 1, now), live: readJson(join(P.grid, "live.json"), {}) || {},

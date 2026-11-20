@@ -138,7 +138,7 @@ test("placeNames and power words: region parts, operator and country; several la
 });
 
 // ---------- trends ----------
-test("trends: incidents, customer-hours (unplanned x 0.25 per 15-minute point), largest, causes mix, week over week", () => {
+test("trends: incidents, customer-hours (each point held to the next, at most 60 min), largest, causes mix, coverage", () => {
   const series = [
     pt(NOW - 2 * D, 4000), pt(NOW - 2 * D + SLOT, 4000), pt(NOW - 2 * D + SLOT, 4000),     // the duplicate slot counted once
     pt(NOW - 10 * D, 1000), pt(NOW - 40 * D, 99999),                                       // previous week; outside 30 days
@@ -156,12 +156,14 @@ test("trends: incidents, customer-hours (unplanned x 0.25 per 15-minute point), 
   assert.equal(t.window_days, 30);
   const bc = t.regions["bchydro|British Columbia"];
   assert.equal(bc.incidents, 2);
-  assert.equal(bc.customer_hours, 2250);                                                  // (4000 + 4000 + 1000) x 0.25
-  assert.deepEqual(bc.week, { customer_hours: 2000, prev_customer_hours: 250, change_pct: 700, incidents: 1, prev_incidents: 1 });
+  // 1000 held 60 min (the next point is days later) + 4000 held to the next slot + the newest 4000 held 60 min
+  assert.equal(bc.customer_hours, 6000);
+  assert.equal(bc.week, null);                                                            // a few points are no week
+  assert.equal(bc.coverage, 0);
   assert.deepEqual(bc.largest, { id: "grid-bchydro-british-columbia-b", name: "grid-bchydro-british-columbia-b", peak_customers: 30000, peak_level: null, opened_at: iso(NOW - 9 * D) });
   assert.deepEqual(bc.causes, [{ cause: "Tree contact", customers: 26000 }, { cause: "Under investigation", customers: 3000 }]);
   const uk = t.regions["ukpn|London, South East and East of England"];
-  assert.deepEqual([uk.incidents, uk.customer_hours, uk.week.change_pct, uk.largest], [0, 0, null, null]);
+  assert.deepEqual([uk.incidents, uk.customer_hours, uk.week, uk.largest], [0, 0, null, null]);
   assert.equal(Object.keys(t.regions).length, 2);                                          // keyed sources have no trends
 });
 
@@ -265,4 +267,43 @@ test("logic-6: grid-news reports count without power words (already classified),
   assert.equal(corroborate(oak, { leads: [gn("Oakland outage", { country: "GB" })], now }).score, 1);                     // another country
   for (const t of ["Winter storm knocks out power in downtown Oakland", "5,545 customers without power", "Корти: знеструмлення в Києві", "ไฟดับ กรุงเทพ", "停電 東京", "انقطاع الكهرباء في بغداد", "Apagão em São Paulo", "Corte de luz en Lima"])
     assert.ok(POWER_WORDS.test(t), t);
+});
+
+test("logic-5: customer-hours do not depend on the collection cadence; a partial week gives no week-over-week change", () => {
+  const constant = (step, days) => { const out = []; for (let t = NOW - days * D; t < NOW; t += step) out.push(pt(t, 1000)); return out; };
+  const a = trends([], constant(SLOT, 14), NOW).regions["bchydro|British Columbia"];
+  const b = trends([], constant(2 * SLOT, 14), NOW).regions["bchydro|British Columbia"];
+  assert.equal(a.customer_hours, 336000);                                                 // 1,000 customers x 14 days x 24 h
+  assert.equal(b.customer_hours, a.customer_hours);                                       // every 30 minutes: the same
+  assert.deepEqual([a.week.customer_hours, a.week.prev_customer_hours, a.week.change_pct, a.week.coverage], [168000, 168000, 0, 1]);
+  // series starting 9 days ago: the week before is partly empty -> no comparison (it read +348% before)
+  const c = trends([], constant(SLOT, 9), NOW).regions["bchydro|British Columbia"];
+  assert.equal(c.week, null);
+  assert.equal(c.customer_hours, 216000);
+  // a gap of 3 hours (collect down) counts 60 minutes of hold, then no data; the newest point holds 60 minutes
+  const gap = [pt(NOW - 4 * H, 1000), pt(NOW - H, 1000)];
+  assert.equal(trends([], gap, NOW).regions["bchydro|British Columbia"].customer_hours, 2000);
+  assert.deepEqual(checkAnalysis({ updated_at: iso(NOW), anomalies: [], corroboration: [], trends: trends([], constant(SLOT, 9), NOW), research: [], sources: {} }), []);
+});
+
+test("ops-4: series stored sparse (a slot line and the non-quiet points) read back as the full points", async () => {
+  const { seriesPoints, sparsePoints, expandSeries, appendSeries, readLines, checkSeriesLine } = await import("../../scripts/grid.mjs");
+  const now = Date.parse("2026-11-19T10:07:00Z");
+  const it = (source, region, customers, o = {}) => ({ id: `${source}:${region}-${customers}`, source, country: "CA", region, area: "", lat: 46, lng: -72, customers, kind: "outage",
+    planned: false, cause: "", level: null, started_at: "", restore_est: "", url: "", ...o });
+  const ok = ["hydroquebec", "bchydro", "eskom", "aemo"];
+  const full = seriesPoints([it("hydroquebec", "Quebec", 3000)], ok, now);
+  const sparse = sparsePoints(full, ok);
+  assert.deepEqual(sparse[0], { at: "2026-11-19T10:00:00Z", ok: ["aemo", "bchydro", "eskom", "hydroquebec"] });
+  assert.equal(sparse.length, 2);                                                         // the slot line and Quebec only
+  sparse.forEach((p) => assert.deepEqual(checkSeriesLine(p), [], JSON.stringify(p)));
+  const key = (p) => `${p.source}|${p.region}|${p.at}|${p.customers}|${p.unplanned}|${p.level}`;
+  assert.deepEqual(expandSeries(sparse).map(key).sort(), full.map(key).sort());
+  // two writers: two slot lines for one slot merge; a duplicate point counts once
+  const dir = mkdtempSync(join(tmpdir(), "grid-sparse-"));
+  appendSeries(dir, sparse); appendSeries(dir, sparsePoints(seriesPoints([it("hydroquebec", "Quebec", 2999)], ["hydroquebec", "ukpn"], now), ["hydroquebec", "ukpn"]));
+  const back = readSeries(dir, 3, Date.parse("2026-11-19T12:00:00Z"));
+  assert.equal(back.filter((p) => p.region === "Quebec").length, 1);
+  assert.ok(back.some((p) => p.source === "ukpn"));                                       // the second writer's sources count
+  assert.ok(readLines(join(dir, "2026-11-19.jsonl")).length < full.length);
 });

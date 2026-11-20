@@ -1,0 +1,72 @@
+{
+  "action": "Hunt for the uniform script scaffold and the hex-encoded DNS exfiltration loop, and for the network indicator and file hashes Symantec lists; Symantec says its endpoint products block known malicious files and points to its Protection Bulletin.",
+  "actor": "",
+  "attack": [
+    "web shell",
+    "credential theft"
+  ],
+  "category": "incident",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-19",
+  "date_note": "Date is Symantec's publication of the report. Symantec says the toolkit ran on 20 September 2026 and that the earliest evidence of malicious activity on the server dates from April 2026.",
+  "exec": "Symantec describes a probable AI-written toolkit run against a stock exchange's server; it found no evidence of data theft.",
+  "first_seen": "2026-11-20T16:50:23Z",
+  "geo_basis": "Symantec names no country or city for the exchange",
+  "lat": 0,
+  "lng": 0,
+  "org": "Unnamed African stock exchange",
+  "pin_type": "none",
+  "place": "Africa (exchange not named)",
+  "plain": "Symantec says attackers on an African stock exchange's web server ran 41 scripts in about three minutes that look machine-written. It found no evidence of data theft.",
+  "products": [
+    "IIS",
+    "PowerShell"
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "41 PowerShell modules ran under a web shell on an IIS server between 08:44 and 08:47 UTC on 20 September 2026.",
+      "Symantec attributes six persistence implants with high confidence to Witchetty (aka LookingFrog) but has not attributed the toolkit to any group.",
+      "Symantec says the toolkit has the hallmarks of AI authorship, that no signal is conclusive alone, and that it could not identify the model.",
+      "Symantec found no evidence of privilege escalation or data theft and does not know whether any tested credentials or keys worked."
+    ],
+    "published": "2026-11-19",
+    "publisher": "Symantec Threat Hunter Team",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Hunt for the shared script scaffold and the DNS exfiltration loop.",
+      "Use the listed file hashes and network indicator.",
+      "Symantec Endpoint products detect and block a malicious file if it is available to Symantec; see the Symantec Protection Bulletin."
+    ],
+    "url": "https://www.security.com/threat-intelligence/african-stock-exchange-ai-assisted-attack"
+  },
+  "sector": "Finance",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Symantec Threat Hunter Team",
+      "url": "https://www.security.com/threat-intelligence/african-stock-exchange-ai-assisted-attack"
+    },
+    {
+      "name": "GBHackers",
+      "url": "https://gbhackers.com/african-stock-exchange-credential-theft/"
+    }
+  ],
+  "status": "developing",
+  "summary": "Symantec reports that 41 PowerShell modules ran under a web shell on an IIS server of a stock exchange in an African country, in 3 minutes 12 seconds on 20 September 2026. Symantec says the toolkit has the hallmarks of AI authorship, though no signal is conclusive alone. It attributes six implants to Witchetty with high confidence but attributes the toolkit to no group, and found no evidence of data theft.",
+  "tags": [
+    "ai-enabled"
+  ],
+  "time_basis": "published",
+  "title": "Symantec: AI-written toolkit of 41 PowerShell scripts run on an African stock exchange server",
+  "updated_at": "2026-11-20T16:50:23Z",
+  "validation": {
+    "checked_at": "2026-11-20T16:52:00Z",
+    "note": "Primary source: Symantec's own report, read in full; GBHackers relays it. The exchange has not been named and its own statement was not found in either page.",
+    "state": "corroborated"
+  }
+}

@@ -322,6 +322,8 @@ async function flow() {
         const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
+      // the follow-up desk runs only inside the loop: record when it ran, for the status page (routines.json followup)
+      if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readJson(sp, {}) || {}; st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}
@@ -368,7 +370,9 @@ async function flow() {
 async function main() {
   if (process.argv[2] === "flow") return flow();
   const job = process.argv[2], reg = readJson(join(ROOT, "routines.json"), { routines: [] });
-  if (!reg.routines.find((x) => x.key === job && x.tier === "ai")) { console.error(`unknown AI job "${job}"`); process.exit(1); }
+  const rr = reg.routines.find((x) => x.key === job && x.tier === "ai");
+  if (!rr) { console.error(`unknown AI job "${job}"`); process.exit(1); }
+  if (rr.active === false) { log(`CyberView ${job}: retired, duties moved to ${rr.merged_into || "another job"}`); return; }
   const t0 = Date.now(), rec = { run: RUN, job, started_at: nowIso(), phases: [] };
   const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[${name}] ${note || ""}`); };
   log(`RUN ${job} ${RUN}`);

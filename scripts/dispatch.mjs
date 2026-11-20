@@ -19,6 +19,7 @@ const job = process.argv[2];
 }
 const reg = readJson(join(ROOT, "routines.json"), { routines: [] }), r = reg.routines.find((x) => x.key === job);
 if (!r || r.tier !== "ai") { console.error(`unknown AI job "${job}"`); process.exit(1); }
+if (r.active === false) { console.log(`CyberView ${job}: retired, duties moved to ${r.merged_into || "another job"}; start no workers (disable this scheduled task)`); process.exit(0); }
 const model = /opus/.test(r.model || "") ? "opus" : /haiku/.test(r.model || "") ? "haiku" : "sonnet";
 const sh = (cmd, args, ms = 240000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1" } }); return { ok: x.status === 0, out: `${x.stdout || ""}${x.stderr || ""}`.split("\n").filter((l) => l.trim() && !/Warning|trace-warnings/.test(l)) }; };
 const out = [];

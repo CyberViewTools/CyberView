@@ -13,24 +13,23 @@ export const FEEDS = [
   { name: "UK NCSC", tier: "gov", url: "https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml" },
   { name: "Canadian Centre for Cyber Security", tier: "gov", url: "https://www.cyber.gc.ca/api/cccs/rss/v1/get?feed=alerts_advisories&lang=en" },
   { name: "CERT-EU", tier: "gov", url: "https://cert.europa.eu/publications/security-advisories-rss" },
-  { name: "NCSC Netherlands", tier: "gov", url: "https://advisories.ncsc.nl/rss/advisories" },
+  { name: "NCSC Netherlands", tier: "gov", url: "https://advisories.ncsc.nl/rss/advisories", lang: "nl", region: "europe" },
   { name: "JPCERT/CC", tier: "gov", url: "https://www.jpcert.or.jp/english/rss/jpcert-en.rdf" },
   { name: "US Department of Justice", tier: "gov", url: "https://www.justice.gov/news/rss?type=press_release&m=1", filter: true },
   { name: "Europol", tier: "gov", url: "https://www.europol.europa.eu/rss.xml", filter: true },
-  { name: "CERT-FR (ANSSI)", tier: "gov", url: "https://cert.cyber.gouv.fr/feed/" },
+  { name: "CERT-FR (ANSSI)", tier: "gov", url: "https://cert.cyber.gouv.fr/feed/", lang: "fr", region: "europe" },
   { name: "CERT Polska", tier: "gov", url: "https://cert.pl/en/rss.xml" },
   { name: "Microsoft Security", tier: "vendor", url: "https://www.microsoft.com/en-us/security/blog/feed/" },
-  { name: "Microsoft MSRC advisories", tier: "vendor", url: "https://api.msrc.microsoft.com/update-guide/rss" },
+  { name: "Microsoft MSRC advisories", tier: "vendor", url: "https://api.msrc.microsoft.com/update-guide/rss", kind: "cve" },
   { name: "Cisco PSIRT", tier: "vendor", url: "https://sec.cloudapps.cisco.com/security/center/psirtrss20/CiscoSecurityAdvisory.xml" },
   { name: "Fortinet PSIRT", tier: "vendor", url: "https://filestore.fortinet.com/fortiguard/rss/ir.xml" },
   { name: "Palo Alto Networks PSIRT", tier: "vendor", url: "https://security.paloaltonetworks.com/rss.xml" },
-  { name: "Zero Day Initiative", tier: "vendor", url: "https://www.zerodayinitiative.com/rss/published/" },
+  { name: "Zero Day Initiative", tier: "vendor", url: "https://www.zerodayinitiative.com/rss/published/", kind: "cve" },
   { name: "AhnLab ASEC", tier: "vendor", url: "https://asec.ahnlab.com/en/feed/" },
   { name: "SANS Internet Storm Center", tier: "vendor", url: "https://isc.sans.edu/rssfeed_full.xml" },
   { name: "Unit 42", tier: "vendor", url: "https://unit42.paloaltonetworks.com/feed/" },
   { name: "Cisco Talos", tier: "vendor", url: "https://blog.talosintelligence.com/rss/" },
   { name: "ESET WeLiveSecurity", tier: "vendor", url: "https://www.welivesecurity.com/en/rss/feed/" },
-  { name: "Kaspersky Securelist", tier: "vendor", url: "https://securelist.com/feed/" },
   { name: "Check Point Research", tier: "vendor", url: "https://research.checkpoint.com/feed/" },
   { name: "The Record", tier: "news", url: "https://therecord.media/feed" },
   { name: "SecurityWeek", tier: "news", url: "https://www.securityweek.com/feed/" },
@@ -51,7 +50,6 @@ export const FEEDS = [
   { name: "CERT-UA", tier: "gov", url: "https://cert.gov.ua/api/articles/rss", lang: "uk", region: "europe" },
   { name: "CERT.br", tier: "gov", url: "https://www.cert.br/rss/certbr-rss.xml", lang: "pt", region: "latin-america" },
   { name: "KrCERT/CC", tier: "gov", url: "https://www.boho.or.kr/kr/rss.do?bbsId=B0000133", lang: "ko", region: "east-asia" },
-  { name: "KE-CIRT/CC (Kenya)", tier: "gov", url: "https://www.ke-cirt.go.ke/feed/", region: "africa" },
   // more vendor research
   { name: "CrowdStrike", tier: "vendor", url: "https://www.crowdstrike.com/en-us/blog/feed/" },
   { name: "SentinelLabs", tier: "vendor", url: "https://www.sentinelone.com/labs/feed/" },
@@ -64,7 +62,6 @@ export const FEEDS = [
   { name: "GitHub Security", tier: "vendor", url: "https://github.blog/security/feed/" },
   { name: "Exploit-DB", tier: "vendor", url: "https://www.exploit-db.com/rss.xml", kind: "exploit" },
   // more news, including other languages and regions
-  { name: "The Register", tier: "news", url: "https://www.theregister.com/security/headlines.atom" },
   { name: "TechCrunch security", tier: "news", url: "https://techcrunch.com/category/security/feed/" },
   { name: "Ars Technica security", tier: "news", url: "https://arstechnica.com/security/feed/" },
   { name: "Wired security", tier: "news", url: "https://www.wired.com/feed/category/security/latest/rss", filter: true },
@@ -76,21 +73,20 @@ export const FEEDS = [
   { name: "Security Affairs", tier: "news", url: "https://securityaffairs.com/feed" },
   { name: "GBHackers", tier: "news", url: "https://gbhackers.com/feed/" },
   { name: "The Cyber Express", tier: "news", url: "https://thecyberexpress.com/feed/" },
-  { name: "Lobsters security", tier: "news", url: "https://lobste.rs/t/security.rss", filter: true },
   // third batch: more national agencies, product security teams and regional press (each tested: loads and has recent items)
   { name: "BSI CERT-Bund", tier: "gov", url: "https://wid.cert-bund.de/content/public/securityAdvisory/rss", lang: "de", region: "europe" },
-  { name: "CERT-SE", tier: "gov", url: "https://www.cert.se/feed.rss" },
+  { name: "CERT-SE", tier: "gov", url: "https://www.cert.se/feed.rss", lang: "sv", region: "europe" },
   { name: "CERT.at warnings", tier: "gov", url: "https://www.cert.at/cert-at.de.warnings.rss_2.0.xml", lang: "de", region: "europe" },
   { name: "CERT.at blog", tier: "gov", url: "https://cert.at/cert-at.en.blog.rss_2.0.xml" },
   { name: "CISA ICS advisories", tier: "gov", url: "https://www.cisa.gov/cybersecurity-advisories/ics-advisories.xml" },
-  { name: "CSIRT Italy", tier: "gov", url: "https://www.acn.gov.it/portale/feedrss/-/journal/rss/20119/723192" },
+  { name: "CSIRT Italy", tier: "gov", url: "https://www.acn.gov.it/portale/feedrss/-/journal/rss/20119/723192", lang: "it", region: "europe" },
   { name: "Eurojust", tier: "gov", url: "https://www.eurojust.europa.eu/rss/news.xml", filter: true },
   { name: "INCIBE-CERT", tier: "gov", url: "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/feed", lang: "es", region: "europe" },
   { name: "IPA Japan", tier: "gov", url: "https://www.ipa.go.jp/security/alert-rss.rdf", lang: "ja", region: "east-asia" },
   { name: "JPCERT (Japanese)", tier: "gov", url: "https://www.jpcert.or.jp/rss/jpcert.rdf", lang: "ja", region: "east-asia" },
   { name: "NCSC Finland", tier: "gov", url: "https://www.kyberturvallisuuskeskus.fi/feed/rss/en" },
   { name: "US SEC press releases", tier: "gov", url: "https://www.sec.gov/news/pressreleases.rss", filter: true },
-  { name: "AWS security bulletins", tier: "vendor", url: "https://aws.amazon.com/security/security-bulletins/rss/feed/" },
+  { name: "AWS security bulletins", tier: "vendor", url: "https://aws.amazon.com/security/security-bulletins/rss/feed/", kind: "cve" },
   { name: "Akamai security", tier: "vendor", url: "https://feeds.feedburner.com/akamai/blog", filter: true },
   { name: "Arctic Wolf", tier: "vendor", url: "https://arcticwolf.com/resources/blog/feed/", filter: true },
   { name: "Bitdefender Labs", tier: "vendor", url: "https://www.bitdefender.com/blog/api/rss/labs/" },
@@ -101,7 +97,7 @@ export const FEEDS = [
   { name: "Elastic Security Labs", tier: "vendor", url: "https://www.elastic.co/security-labs/rss/feed.xml" },
   { name: "Fortinet threat research", tier: "vendor", url: "https://feeds.fortinet.com/fortinet/blog/threat-research" },
   { name: "GitLab security releases", tier: "vendor", url: "https://about.gitlab.com/security-releases.xml" },
-  { name: "Google Project Zero", tier: "vendor", url: "https://googleprojectzero.blogspot.com/feeds/posts/default" },
+  { name: "Google Project Zero", tier: "vendor", url: "https://projectzero.google/feed.xml" },
   { name: "Google Threat Intelligence", tier: "vendor", url: "https://feeds.feedburner.com/threatintelligence/pvexyqv7v0v" },
   { name: "GreyNoise", tier: "vendor", url: "https://www.greynoise.io/blog/rss.xml" },
   { name: "Horizon3", tier: "vendor", url: "https://horizon3.ai/feed/", filter: true },
@@ -121,30 +117,59 @@ export const FEEDS = [
   { name: "watchTowr Labs", tier: "vendor", url: "https://labs.watchtowr.com/rss/" },
   { name: "404 Media", tier: "news", url: "https://www.404media.co/rss/", filter: true },
   { name: "BBC technology", tier: "news", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", filter: true },
-  { name: "CSO Online", tier: "news", url: "https://www.csoonline.com/feed/" },
   { name: "Computer Weekly security", tier: "news", url: "https://www.computerweekly.com/rss/IT-security.xml" },
   { name: "Cybersecurity Dive", tier: "news", url: "https://www.cybersecuritydive.com/feeds/news/" },
-  { name: "Daily Sabah technology (Turkey)", tier: "news", url: "https://www.dailysabah.com/rssFeed/10", filter: true, lang: "middle-east" },
+  { name: "Daily Sabah (Turkey)", tier: "news", url: "https://www.dailysabah.com/rssFeed/10", filter: true, region: "middle-east" },
   { name: "ET CISO India", tier: "news", url: "https://ciso.economictimes.indiatimes.com/rss/topstories", region: "south-asia" },
-  { name: "El Pais tecnologia", tier: "news", url: "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", filter: true, lang: "europe" },
+  { name: "El Pais tecnologia", tier: "news", url: "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada", filter: true, lang: "es", region: "europe" },
   { name: "FedScoop", tier: "news", url: "https://fedscoop.com/feed/", filter: true },
   { name: "Golem security", tier: "news", url: "https://rss.golem.de/rss.php?tp=sec&feed=RSS2.0", lang: "de", region: "europe" },
-  { name: "Graham Cluley", tier: "news", url: "https://grahamcluley.com/feed/" },
   { name: "HIPAA Journal", tier: "news", url: "https://www.hipaajournal.com/feed/" },
   { name: "ITmedia security (Japan)", tier: "news", url: "https://rss.itmedia.co.jp/rss/2.0/news_security.xml", lang: "ja", region: "east-asia" },
-  { name: "Infobae tecnologia", tier: "news", url: "https://www.infobae.com/arc/outboundfeeds/rss/category/tecno/", filter: true, lang: "latin-america" },
+  { name: "Infobae tecnologia", tier: "news", url: "https://www.infobae.com/arc/outboundfeeds/rss/category/tecno/", filter: true, lang: "es", region: "latin-america" },
   { name: "Le Monde Informatique", tier: "news", url: "https://www.lemondeinformatique.fr/flux-rss/thematique/securite/rss.xml", lang: "fr", region: "europe" },
   { name: "Nextgov cybersecurity", tier: "news", url: "https://www.nextgov.com/rss/cybersecurity/" },
-  { name: "RNZ (New Zealand)", tier: "news", url: "https://www.rnz.co.nz/rss/national.xml", filter: true, lang: "oceania" },
+  { name: "RNZ (New Zealand)", tier: "news", url: "https://www.rnz.co.nz/rss/national.xml", filter: true, region: "oceania" },
   { name: "Schneier on Security", tier: "news", url: "https://www.schneier.com/feed/atom/" },
   { name: "Security Boulevard", tier: "news", url: "https://securityboulevard.com/feed/", filter: true },
   { name: "Security NEXT (Japan)", tier: "news", url: "https://www.security-next.com/feed", lang: "ja", region: "east-asia" },
   { name: "StateScoop", tier: "news", url: "https://statescoop.com/feed/", filter: true },
-  { name: "TechCabal", tier: "news", url: "https://techcabal.com/feed/", filter: true, lang: "africa" },
+  { name: "TechCabal", tier: "news", url: "https://techcabal.com/feed/", filter: true, region: "africa" },
   { name: "The Guardian data security", tier: "news", url: "https://www.theguardian.com/technology/data-computer-security/rss" },
   { name: "The Stack", tier: "news", url: "https://www.thestack.technology/latest/rss/", filter: true },
   { name: "ZDNet security", tier: "news", url: "https://www.zdnet.com/topic/security/rss.xml" },
-  { name: "iThome (Taiwan)", tier: "news", url: "https://www.ithome.com.tw/rss", filter: true, lang: "east-asia" },
+  { name: "iThome (Taiwan)", tier: "news", url: "https://www.ithome.com.tw/rss", filter: true, lang: "zh", region: "east-asia" },
+  // fourth batch (2026-11-20): thin regions, other languages, critical infrastructure and product security teams. Each was
+  // fetched once before it was added: robots.txt allows the feed, items are dated and link to the publisher's own pages.
+  { name: "CIRCL (Luxembourg)", tier: "gov", url: "https://www.circl.lu/pub/rss.xml", region: "europe" },
+  { name: "TWCERT/CC", tier: "gov", url: "https://www.twcert.org.tw/tw/rss-132-1.xml", lang: "zh", region: "east-asia" },
+  { name: "ThaiCERT", tier: "gov", url: "https://www.thaicert.or.th/feed/", lang: "th", region: "southeast-asia" },
+  { name: "Oracle security alerts", tier: "vendor", url: "https://www.oracle.com/ocom/groups/public/@otn/documents/webcontent/rss-otn-sec.xml" },
+  { name: "Node.js security releases", tier: "vendor", url: "https://nodejs.org/en/feed/vulnerability.xml" },
+  { name: "Kubernetes CVE feed", tier: "vendor", url: "https://kubernetes.io/docs/reference/issues-security/official-cve-feed/feed.xml", kind: "cve" },
+  { name: "Industrial Cyber", tier: "news", url: "https://industrialcyber.co/feed/" },
+  { name: "Utility Dive", tier: "news", url: "https://www.utilitydive.com/feeds/news/", filter: true },
+  { name: "Light Reading", tier: "news", url: "https://www.lightreading.com/rss.xml", filter: true },
+  { name: "TechCentral (South Africa)", tier: "news", url: "https://techcentral.co.za/feed/", filter: true, region: "africa" },
+  { name: "CIO Africa", tier: "news", url: "https://cioafrica.co/feed/", filter: true, region: "africa" },
+  { name: "Techzim (Zimbabwe)", tier: "news", url: "https://www.techzim.co.zw/feed/", filter: true, region: "africa" },
+  { name: "Hespress (Morocco)", tier: "news", url: "https://fr.hespress.com/feed", filter: true, lang: "fr", region: "africa" },
+  { name: "The National (UAE)", tier: "news", url: "https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml", filter: true, region: "middle-east" },
+  { name: "Arab News", tier: "news", url: "https://www.arabnews.com/rss.xml", filter: true, region: "middle-east" },
+  { name: "Security Middle East", tier: "news", url: "https://www.securitymiddleeastmag.com/feed/", filter: true, region: "middle-east" },
+  { name: "ShiftDelete (Turkey)", tier: "news", url: "https://shiftdelete.net/feed", filter: true, lang: "tr", region: "middle-east" },
+  { name: "Ciberseguridad LATAM", tier: "news", url: "https://ciberseguridadlatam.com/feed/", lang: "es", region: "latin-america" },
+  { name: "DPL News", tier: "news", url: "https://dplnews.com/feed/", filter: true, lang: "es", region: "latin-america" },
+  { name: "El Tiempo tecnosfera (Colombia)", tier: "news", url: "https://www.eltiempo.com/rss/tecnosfera.xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "El Financiero (Mexico)", tier: "news", url: "https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "Convergencia Digital (Brazil)", tier: "news", url: "https://www.convergenciadigital.com.br/feed/", filter: true, lang: "pt", region: "latin-america" },
+  { name: "Tecmundo (Brazil)", tier: "news", url: "https://rss.tecmundo.com.br/feed", filter: true, lang: "pt", region: "latin-america" },
+  { name: "CNA Singapore", tier: "news", url: "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=10416", filter: true, region: "southeast-asia" },
+  { name: "Bangkok Post", tier: "news", url: "https://www.bangkokpost.com/rss/data/topstories.xml", filter: true, region: "southeast-asia" },
+  { name: "Dailysecu (Korea)", tier: "news", url: "https://www.dailysecu.com/rss/allArticle.xml", filter: true, lang: "ko", region: "east-asia" },
+  { name: "Security.nl", tier: "news", url: "https://www.security.nl/rss/headlines.xml", lang: "nl", region: "europe" },
+  { name: "ZATAZ", tier: "news", url: "https://www.zataz.com/feed/", lang: "fr", region: "europe" },
+  { name: "Sekurak", tier: "news", url: "https://sekurak.pl/feed/", lang: "pl", region: "europe" },
 ];
 // feeds the source scout job has added (config/feeds.json); a broken entry is ignored, never fatal
 export function extraFeeds(cfg) {
@@ -152,7 +177,19 @@ export function extraFeeds(cfg) {
   return (cfg && Array.isArray(cfg.feeds) ? cfg.feeds : []).filter((f) => f && typeof f.name === "string" && f.name.length <= 80 && ["gov", "vendor", "news"].includes(f.tier)
     && /^https:\/\/[^\s"'<>]+$/.test(f.url || "") && !names.has(f.name.toLowerCase()) && !urls.has(f.url) && names.add(f.name.toLowerCase()) && urls.add(f.url)).slice(0, 80);
 }
-const CYBER = /cyber|hack|ransom|breach|malware|botnet|phish|dark ?web|ddos|vulnerab|exploit|intrusion|data theft|stolen data|spyware|crypto(currency)? (fraud|theft|scam)|sim[- ]swap|extort|computer fraud|identity theft/i;
+/** Every feed to collect: the built-in list and the extra feeds, minus any name the config retires (so the source scout can
+ *  retire a built-in feed that died or now refuses automated readers without a code change). */
+export function activeFeeds(cfg) {
+  const retired = new Set((cfg && Array.isArray(cfg.retired) ? cfg.retired : []).map((r) => String((r && r.name) || "").toLowerCase()).filter(Boolean));
+  return FEEDS.concat(extraFeeds(cfg)).filter((f) => !retired.has(f.name.toLowerCase()));
+}
+// cyber words in the languages the broad feeds are written in (a filter that knew only English kept nothing from El Pais)
+export const CYBER = new RegExp(["cyber|hack(?!athon)|ransom|breach|malware|botnet|phish|dark ?web|ddos|vulnerab|exploit|intrusion|data theft|stolen data|spyware|crypto(currency)? (fraud|theft|scam)|sim[- ]swap|extort|computer fraud|identity theft",
+  "ciberataque|ciberseguridad|cibern[eé]tic|ciberdelincuen|cibercrim|hackeo|filtraci[oó]n de datos|secuestro de datos|vazamento de dados|ataque hacker|invas[aã]o hacker",   // es, pt
+  "piratage|ran[cç]ongiciel|fuite de donn[ée]es|attacco informatico|violazione dei dati|datenleck|sicherheitsl[uü]cke|schadsoftware|datalek|wyciek danych",   // fr, it, de, nl, pl
+  "\\bsiber\\b|fidye yaz[ıi]l[ıi]m|veri s[ıi]z[ıi]nt[ıi]s[ıi]|g[üu]venlik a[çc][ıi][ğg][ıi]|kimlik av[ıi]|zararl[ıi] yaz[ıi]l[ıi]m|peretas|kebocoran data|diretas|tin tặc|mã độc|rò rỉ dữ liệu",   // tr, id/ms, vi
+  "سيبراني|اختراق|قرصنة|الفدية|تسريب بيانات|кибер|хакер|взлом|утечк|вымогател",   // ar, ru/uk
+  "サイバー|不正アクセス|情報漏え?い|漏洩|ランサム|脆弱性|マルウェア|해킹|랜섬웨어|유출|취약점|사이버|악성코드|피싱|漏洞|駭客|黑客|勒索|資安|網路攻擊|网络攻击|外洩|泄露|ไซเบอร์|แฮ็ก|มัลแวร์|ช่องโหว่"].join("|"), "i");   // ja, ko, zh, th
 const MAX_AGE_H = 72;
 
 const decode = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -189,6 +226,9 @@ async function fetchFeed(f) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  // --test <url>: the source scout checks a candidate feed before adding it (reads and writes nothing)
+  const ti = process.argv.indexOf("--test");
+  if (ti > 0) { const r = await fetchFeed({ url: process.argv[ti + 1] }); console.log(r.error ? `FAILED: ${r.error}` : `OK: ${r.items.length} items; newest: ${JSON.stringify(r.items.slice(0, 3).map((i) => [i.published.slice(0, 10), i.title.slice(0, 80)]))}`); process.exit(r.error || !r.items.length ? 1 : 0); }
   const leadsDir = join(DATA, "leads");
   mkdirSync(leadsDir, { recursive: true });
   const known = new Set();
@@ -198,10 +238,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { known.add(JSON.parse(line).url); } catch {} }
   }
   const cutoff = Date.now() - MAX_AGE_H * 36e5, now = nowIso(), out = [], report = [];
-  const ALL = FEEDS.concat(extraFeeds(readJson(join(ROOT, "config", "feeds.json"), {})));
-  // --test <url>: the source scout checks a candidate feed before adding it
-  const ti = process.argv.indexOf("--test");
-  if (ti > 0) { const r = await fetchFeed({ url: process.argv[ti + 1] }); console.log(r.error ? `FAILED: ${r.error}` : `OK: ${r.items.length} items; newest: ${JSON.stringify(r.items.slice(0, 3).map((i) => [i.published.slice(0, 10), i.title.slice(0, 80)]))}`); process.exit(r.error || !r.items.length ? 1 : 0); }
+  const ALL = activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}));
   const results = [];
   for (let i = 0; i < ALL.length; i += 12) results.push(...await Promise.all(ALL.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   const hp = join(DATA, "osint.json"), hdoc = readJson(hp, {}), fh = hdoc.feeds || {}, seenNames = new Set();
@@ -217,7 +254,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (it.published && Date.parse(it.published) < cutoff) continue;
       if (f.filter && !CYBER.test(`${it.title} ${it.summary}`)) continue;
       known.add(it.url); n++;
-      out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, ...(f.lang ? { lang: f.lang } : {}), ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
+      out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, lang: f.lang || "en", ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
     }
     report.push(`${f.name}: ${items.length} in feed, ${n} new`);
   }

@@ -96,7 +96,9 @@ export function story(group, evs = [], now = Date.now()) {
   const claimOnly = group.every((l) => l.kind === "claim"), open = group.filter((l) => l._open).length;
   // how long this story has waited: from its oldest lead that is still open, not from an old lead that was handled hours ago
   const openTimes = group.filter((l) => l._open).map((l) => Date.parse(l.seen_at)).filter(isFinite), waitingSince = openTimes.length ? Math.min(...openTimes) : first;
-  const ev = matchEvent(best.title, evs) || group.slice(0, 8).map((l) => l !== best && matchEvent(l.title, evs)).filter(Boolean).sort((a, b) => b.score - a.score)[0] || cves.map((c) => evs.find((e) => (e.cves || []).includes(c))).filter(Boolean).map((e) => ({ id: e.id }))[0] || null;
+  // a match by name alone (any language) needs the lead's own date near the event's: leadAt is when it was published
+  const leadAt = (l) => l.published || l.seen_at || now;
+  const ev = matchEvent(best.title, evs, leadAt(best)) || group.slice(0, 8).map((l) => l !== best && matchEvent(l.title, evs, leadAt(l))).filter(Boolean).sort((a, b) => b.score - a.score)[0] || cves.map((c) => evs.find((e) => (e.cves || []).includes(c))).filter(Boolean).map((e) => ({ id: e.id }))[0] || null;
   const pts = [];
   const add = (p, why) => { if (p) pts.push([p, why]); };
   const indep = [...publishers].filter((p) => p !== "ransomwarelive").length;

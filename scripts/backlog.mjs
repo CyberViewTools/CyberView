@@ -31,6 +31,8 @@ export function autoReason(s, now = Date.now()) {
   if (s.publishers <= 1 && !s.eventlike && s.langs.every((l) => !l || l === "en") && !s.tiers.some((t) => t === "gov" || t === "vendor")) return "a single-source item whose headline reports no incident, exploitation or official action";
   return "";
 }
+/** Pure: "already on file: <event id>" for a story fuse.mjs matched to an event while some of its leads are still unlogged, else "". */
+export const onFile = (s) => s.event && s.open > 0 && !s.claim_only ? `already on file: ${s.event}` : "";
 /** Pure: the stories that still need a decision, strongest and newest first, incidents before everything else. */
 export function backlog(stories, now = Date.now()) {
   return stories.filter((s) => isOpen(s) && !s.claim_only && !autoReason(s, now))
@@ -65,7 +67,10 @@ function main() {
     return;
   }
   if (cmd === "auto") {
-    const items = d.stories.filter(isOpen).map((s) => ({ s, why: autoReason(s) })).filter((x) => x.why);
+    // a story that matched an event on file (same words, same CVE, or a name only that event has, in any language) is
+    // closed with that event's id: its new pages still reach an updater through scripts/updates.mjs, which matches the same way
+    const items = d.stories.filter(isOpen).map((s) => ({ s, why: autoReason(s) })).filter((x) => x.why)
+      .concat(d.stories.filter((s) => onFile(s)).map((s) => ({ s, why: onFile(s) })));
     closeAll("backlog-auto", items);
     const by = {}; items.forEach((x) => { by[x.why] = (by[x.why] || 0) + 1; });
     console.log(`BACKLOG AUTO: closed ${items.length} stories by rule.` + Object.entries(by).map(([k, n]) => `\n  ${n}  ${k}`).join(""));

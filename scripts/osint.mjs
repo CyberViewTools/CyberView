@@ -22,14 +22,15 @@ import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
-import { parseFeed } from "./collect.mjs";
+import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";
 
 const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const txt = (s, n) => String(s == null ? "" : s).replace(/<[^>]*>/g, " ").replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
 const iso = (d) => { const t = Date.parse(d); return isNaN(t) ? "" : new Date(t).toISOString().replace(/\.\d+Z$/, "Z"); };
 const https = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? String(u) : "");
-const CYBER = /cyber|hack|ransom|breach|malware|botnet|phish|ddos|vulnerab|exploit|intrusion|data (theft|leak)|spyware|zero-?day|cve-\d|ciber|siber|サイバー|사이버|سيبران|outage|incident de sécurité|datenleck|angriff/i;
+// plus the feed filter's words in every language the standing searches ask in ("vazamento de dados", "tấn công mạng", "網路攻擊")
+const CYBER = new RegExp("cyber|hack|ransom|breach|malware|botnet|phish|ddos|vulnerab|exploit|intrusion|data (theft|leak)|spyware|zero-?day|cve-\\d|ciber|siber|サイバー|사이버|سيبران|outage|incident de sécurité|datenleck|angriff|tấn công mạng|" + FEED_CYBER.source, "i");
 
 async function get(url, as = "json") {
   const r = await fetch(url, { headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "application/rss+xml, application/xml, text/xml, */*" }, signal: AbortSignal.timeout(25000) });
@@ -88,8 +89,12 @@ const AGGREGATOR = /^(?:[a-z0-9-]+\.)*(google\.[a-z.]+|bing\.com|msn\.com|yahoo\
 export function isAggregator(u) { try { return AGGREGATOR.test(new URL(u).hostname); } catch { return true; } }
 // GDELT names the language in English ("Spanish"); the other collectors and the backlog rules use ISO codes ("es")
 const GDELT_LANG = { english: "en", spanish: "es", french: "fr", portuguese: "pt", german: "de", italian: "it", dutch: "nl", polish: "pl", ukrainian: "uk", russian: "ru", turkish: "tr", arabic: "ar",
-  hindi: "hi", indonesian: "id", japanese: "ja", korean: "ko", chinese: "zh", vietnamese: "vi", hebrew: "he", persian: "fa", greek: "el", romanian: "ro", czech: "cs", swedish: "sv", thai: "th", malay: "ms" };
-const gdeltLang = (s) => { const t = txt(s, 20).toLowerCase(); return GDELT_LANG[t] || t; };
+  hindi: "hi", indonesian: "id", japanese: "ja", korean: "ko", chinese: "zh", vietnamese: "vi", hebrew: "he", persian: "fa", greek: "el", romanian: "ro", czech: "cs", swedish: "sv", thai: "th", malay: "ms",
+  hungarian: "hu", finnish: "fi", danish: "da", norwegian: "no", bulgarian: "bg", croatian: "hr", serbian: "sr", slovak: "sk", slovenian: "sl", lithuanian: "lt", latvian: "lv",
+  estonian: "et", bengali: "bn", urdu: "ur", tamil: "ta", swahili: "sw", catalan: "ca", tagalog: "tl", filipino: "tl", afrikaans: "af", albanian: "sq", armenian: "hy", azerbaijani: "az",
+  georgian: "ka", kazakh: "kk", macedonian: "mk", marathi: "mr", nepali: "ne", punjabi: "pa", telugu: "te", gujarati: "gu", kannada: "kn", malayalam: "ml", bosnian: "bs", galician: "gl", basque: "eu" };
+// an ISO 639-1 code or nothing: a language name that is not mapped is never passed on as if it were a code
+export const gdeltLang = (s) => GDELT_LANG[txt(s, 20).toLowerCase()] || "";
 /** GDELT DOC 2.0 artlist. */
 export function parseGdelt(d) {
   return (d && Array.isArray(d.articles) ? d.articles : []).map((a) => {
@@ -225,7 +230,7 @@ async function leads() {
         if (SEARCH.has(name) && !CYBER.test(it.title + " " + (it.summary || ""))) continue;
         known.add(it.url); knownTitle.add(tk); n++;
         out.push({ seen_at: now, source: txt(it.source, 80), tier: it.tier, via: name, title: it.title, url: it.url, published: it.published || "", summary: it.summary || "",
-          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang ? { lang: it.lang } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });
+          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });   // every lead names its language (database rows and claims are in English)
       }
       health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) };
     } catch (e) {

@@ -1,0 +1,25 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-20T16:27:19Z",
+  "finished_at": "2026-11-20T16:45:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/", "title": "PaperCut NG/MF Security Bulletin (27 Aug 2026)", "used_in": ["CVE-2026-82078", "CVE-2026-81578"]}
+  ],
+  "added": [],
+  "updated": [],
+  "guides_written": ["CVE-2026-82078", "CVE-2026-81578"],
+  "skipped": [],
+  "open_leads": [
+    {"title": "CVE-2026-88779 Citrix NetScaler", "url": "https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697174", "note": "KB page returns only 'Loading...' (JavaScript); community blog returned 403. Retry later.", "priority": "high"},
+    {"title": "CVE-2026-84869 ConnectWise ScreenConnect", "url": "https://www.connectwise.com/company/trust/security-bulletins/2026-09-08-screenconnect-bulletin", "note": "403 Forbidden to automated reader", "priority": "medium"},
+    {"title": "CVE-2026-63077 JetBrains TeamCity", "url": "https://blog.jetbrains.com/teamcity/2026/07/cve-2026-63077/", "note": "403 Forbidden to automated reader", "priority": "medium"},
+    {"title": "CVE-2026-48710 Kludex Starlette", "url": "https://github.com/Kludex/starlette/security/advisories/GHSA-86qp-5c8j-p5mr", "note": "403 Forbidden to automated reader", "priority": "low"},
+    {"title": "CVE-2026-42271 BerriAI LiteLLM", "url": "https://github.com/BerriAI/litellm/security/advisories/GHSA-v4p8-mg3p-g94g", "note": "403 Forbidden to automated reader", "priority": "low"},
+    {"title": "CVE-2026-90436 Apache Axis", "url": "https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz", "note": "Page is JavaScript only (Pony Mail); no text. Try the Apache Axis security page.", "priority": "medium"},
+    {"title": "CVE-2026-90817 REDCap, CVE-2026-96951 Windows, CVE-2026-59310 VMware vCenter, CVE-2026-41709 VMware ESX, CVE-2026-21589 Atlassian, CVE-2026-19868 SonicWall, CVE-2026-46300 Linux kernel", "url": "", "note": "Not attempted this run (8 per run limit and time); next in the unguided KEV list", "priority": "medium"}
+  ],
+  "failed_sites": ["support.citrix.com (JS only)", "community.citrix.com (403)", "connectwise.com (403)", "blog.jetbrains.com (403)", "github.com advisories (403)", "lists.apache.org (JS only)"],
+  "notes": "PaperCut read depth is summary: the fetch tool summarised part of the page. Guides carry the version check only as 'all versions'; no console path was published. exploit_public false: the bulletin states active exploitation but not public exploit code. No indicator files or rules are published by the vendor yet. Did not work around the 403 blocks."
+}

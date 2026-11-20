@@ -1,13 +1,13 @@
 // Pure merges for files several jobs write at once (used by git-sync.mjs and lib/conflicts.mjs). No AI model.
 /** Pure: three-way merge of two JSON objects by key. base = common ancestor, up = what is on main, mine = this commit. */
-export function mergeJson(base, up, mine) {
+export function mergeJson(base, up, mine, opts = {}) {
   const out = { ...up };
   for (const k of new Set([...Object.keys(base || {}), ...Object.keys(mine || {})])) {
     const b = JSON.stringify((base || {})[k]), m = JSON.stringify((mine || {})[k]);
     if (b === m) continue;                                                         // this commit did not touch the key: main's value stands
-    if (!(k in (mine || {}))) { delete out[k]; continue; }
+    if (!(k in (mine || {}))) { if (!opts.keepKeys) delete out[k]; continue; }   // keepKeys: a key this commit lost is kept (status.json never deletes keys)
     const u = (up || {})[k];
-    out[k] = u && mine[k] && typeof u === "object" && typeof mine[k] === "object" && !Array.isArray(u) && !Array.isArray(mine[k]) ? mergeJson((base || {})[k], u, mine[k]) : mine[k];
+    out[k] = u && mine[k] && typeof u === "object" && typeof mine[k] === "object" && !Array.isArray(u) && !Array.isArray(mine[k]) ? mergeJson((base || {})[k], u, mine[k], opts) : mine[k];
   }
   return out;
 }

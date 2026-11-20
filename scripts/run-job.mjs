@@ -13,7 +13,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock } from "./lib/lease.mjs";
 import { budgetState, budgetLine } from "./lib/usage.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -332,7 +332,7 @@ async function flow() {
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
       // the follow-up desk runs only inside the loop: record when it ran, for the status page (routines.json followup)
-      if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readJson(sp, {}) || {}; st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
+      if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}

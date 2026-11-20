@@ -15,7 +15,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-19T19:20:00Z",
-  "updated_at": "2026-11-20T05:58:00Z",
+  "updated_at": "2026-11-20T05:48:02Z",
   "category": "vuln",
   "date": "2026-11-19",
   "date_note": "Cyber Kendra's page is dated Nov 20 but states the situation as of Nov 19; published date taken as Nov 19.",
@@ -30,7 +30,7 @@
   "severity": 1,
   "status": "claimed",
   "source_tier": "established",
-  "summary": "A researcher using the names Chaotic Eclipse and Nightmare-Eclipse posted 'FastUnlock' on GitHub without coordinating with Microsoft. Cyber Kendra says the researcher claims a Narrator lock-screen flaw lets someone with physical access bypass BitLocker on Windows 11 26H2 in about five minutes; it needs an account linked to a Microsoft account. The Hacker News says ThreatLocker ran a program from the lock screen but the method does not break encryption. No CVE or Microsoft fix.",
+  "summary": "A researcher using the names Chaotic Eclipse and Nightmare-Eclipse posted \"FastUnlock\" on GitHub without coordinating with Microsoft. Cyber Kendra says the researcher claims a Narrator lock-screen flaw lets someone with physical access get past BitLocker on Windows 11 26H2, needing an account linked to a Microsoft account. The Hacker News says ThreatLocker ran a program from the lock screen but encryption is not broken. No CVE or Microsoft fix.",
   "plain": "A researcher says a lost or stolen Windows 11 laptop could be unlocked using the screen reader feature. Microsoft has published no fix or advisory yet.",
   "exec": "Matters for lost or stolen laptops that rely on BitLocker; physical access is required and no attacks in the wild are reported.",
   "action": "Until Microsoft responds, consider blocking Narrator on the lock screen with AppLocker or a restrictive DACL (the researcher's suggestion; test first) and keep devices physically secured.",
@@ -73,10 +73,10 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T05:44:54Z",
+    "at": "2026-11-20T05:48:02Z",
     "first_at": "2026-11-19T19:14:24Z",
-    "note": "Removed zero-day/public-poc tags (no source says exploited before fix or code public) and placeholder occurred_at; summary now includes THN ThreatLocker test and encryption not broken; plain no longer says Microsoft not responded. Compared with Cyber Kendra, Security Affairs, THN",
+    "note": "Summary said bypass 'in about five minutes'; sources say five minutes was the researcher's time from finding the bug to breaching a machine, so removed it; tightened wording. Title, date, claimed status, THN/ThreatLocker detail checked against Cyber Kendra, Security Affairs, THN",
     "flags": []
   },
-  "qa_checked_at": "2026-11-20T05:44:54Z"
+  "qa_checked_at": "2026-11-20T05:48:02Z"
 }

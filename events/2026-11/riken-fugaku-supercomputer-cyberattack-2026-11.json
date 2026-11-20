@@ -7,7 +7,7 @@
   "cves": [],
   "date": "2026-11-16",
   "date_note": "Intrusion ran November 10-13 and Fugaku was shut down November 14; date is RIKEN's public notice of November 16.",
-  "exec": "A national research supercomputer is offline with no restart date, and thousands of users' access keys must be treated as compromised.",
+  "exec": "A national research supercomputer is offline with no restart date, and up to 4,597 users' access keys may have been exposed.",
   "first_seen": "2026-11-18T00:25:00Z",
   "geo_basis": "victim site",
   "impact": "Fugaku has been shut down since November 14 and users' login keys were disabled.",
@@ -16,7 +16,7 @@
   "org": "RIKEN Center for Computational Science",
   "pin_type": "victim",
   "place": "Kobe",
-  "plain": "Japan's flagship Fugaku supercomputer has been switched off since November 14 after an intruder got into its systems and exposed details and login keys of about 4,600 researchers.",
+  "plain": "Japan's flagship Fugaku supercomputer has been switched off since November 14 after an intruder got into its systems; data and login keys of up to 4,597 researchers may have been taken.",
   "products": [
     "Fugaku",
     "Rikyu"
@@ -34,18 +34,26 @@
     {
       "name": "The Register",
       "url": "https://www.theregister.com/security/2026/11/17/japans-fugaku-supercomputer-has-decidedly-un-super-security/5310333"
+    },
+    {
+      "name": "ITdaily",
+      "url": "https://itdaily.com/news/datacenter/supercomputer-fugaku-offline-hack/"
+    },
+    {
+      "name": "eSecurity Planet",
+      "url": "https://www.esecurityplanet.com/threats/news-japan-fugaku-supercomputer-cyberattack-apac/"
     }
   ],
   "status": "developing",
-  "summary": "RIKEN says an intruder used the public dashboard showing Fugaku's operating status to reach internal servers between November 10 and 13 and plant malware aimed at user data. Details of 4,222 Fugaku users and 375 Rikyu users were exposed, along with SSH and access keys and research files on users' machines. Fugaku has been offline since November 14 with no restart date; no attacker is named.",
+  "summary": "RIKEN says an intruder reached Fugaku's internal servers between November 10 and 13 and installed malware; ITdaily and eSecurity Planet say the route was a public status page, which RIKEN is still investigating. Data of up to 4,222 Fugaku and 375 Rikyu users (up to 4,597) may have been taken, including SSH keys. Fugaku is offline with no restart date; no attacker is named.",
   "tags": [
     "data-breach",
     "identity"
   ],
   "title": "Japan's RIKEN takes Fugaku supercomputer offline after intrusion",
-  "updated_at": "2026-11-19T00:25:00Z",
+  "updated_at": "2026-11-20T09:17:50Z",
   "validation": {
-    "checked_at": "2026-11-19T00:25:00Z",
+    "checked_at": "2026-11-20T09:17:50Z",
     "note": "BleepingComputer and The Register both report RIKEN's own statement; the RIKEN notice itself was not retrieved. The Register adds that someone attempted to log in to Fugaku on November 13 and that the attacker tried to use stolen credentials on other systems.",
     "state": "corroborated"
   },

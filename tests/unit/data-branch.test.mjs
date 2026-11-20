@@ -89,3 +89,52 @@ test("data branch: a clone that fetches main only (cloud sessions) still switche
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(git(C, "--git-dir", origin, "show", "data:leads/d.jsonl").stdout, /"n":7/);
 });
+
+test("data branch: stage B (main drops data/) leaves switched checkouts intact, and an old checkout still switches", () => {
+  const { origin, clone } = world();
+  const A = clone("A"), D = clone("D"), S = clone("S");
+  assert.equal(sh(A, "node", ["scripts/data-branch.mjs", "create"]).status, 0);
+  // the data branch ignores working files (as the real one does)
+  const W = join(A, "..", "W"); git(A, "worktree", "add", "-q", W, "origin/data");
+  git(A, "fetch", "-q", "origin", "+refs/heads/data:refs/remotes/origin/data");
+  git(A, "worktree", "remove", "--force", W); git(A, "worktree", "add", "-q", "-b", "wtmp", W, "origin/data"); id(W);
+  writeFileSync(join(W, ".gitignore"), "stories.json\n"); git(W, "add", ".gitignore"); git(W, "commit", "-q", "-m", "ignore"); git(W, "push", "-q", "origin", "HEAD:data");
+  git(A, "worktree", "remove", "--force", W);
+  assert.match(sh(A, "node", ["scripts/data-branch.mjs", "ensure"]).stdout, /switched/);
+  // stage B: main removes data/ (from a third clone)
+  git(S, "rm", "-r", "-q", "data"); git(S, "commit", "-q", "-m", "stage B"); assert.equal(git(S, "push", "-q", "origin", "main").status, 0);
+  // A (switched) pulls: its ./data is untouched and main stays clean
+  let r = sh(A, "node", ["-e", 'import("./scripts/lib/repo.mjs").then(m=>m.pullAll())']);
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(git(A, "log", "-1", "--format=%s").stdout.trim(), "stage B");
+  assert.equal(existsSync(join(A, "data", "status.json")), true, "the data branch checkout survives main dropping data/");
+  assert.equal(git(A, "status", "--porcelain").stdout.trim(), "");
+  // D never switched; it has a working file and an uncommitted lead, then switches after stage B
+  writeFileSync(join(D, "data", "stories.json"), '{"working":1}\n');
+  writeFileSync(join(D, "data", "leads", "d.jsonl"), '{"n":1}\n{"n":4}\n');
+  r = sh(D, "node", ["scripts/data-branch.mjs", "ensure"]);
+  assert.match(r.stdout, /switched/, r.stdout + r.stderr);
+  assert.equal(readFileSync(join(D, "data", "stories.json"), "utf8"), '{"working":1}\n', "working file kept on disk");
+  assert.equal(git(join(D, "data"), "status", "--porcelain", "--", "stories.json").stdout.trim(), "", "and ignored, never committed");
+  assert.match(readFileSync(join(D, "data", "leads", "d.jsonl"), "utf8"), /"n":4/, "uncommitted data still carried over");
+});
+
+test("data branch: deletions of records that are never deleted are put back before committing", async () => {
+  const { deletionsToRestore } = await import("../../scripts/lib/repo.mjs");
+  assert.deepEqual(deletionsToRestore(["runs/2026-11-01/0100-x.json", "grid/series/2026-10-01.jsonl"]), [], "routine compaction passes");
+  assert.deepEqual(deletionsToRestore(["leads/d.jsonl", "events/2026-11/a.json"]), ["leads/d.jsonl", "events/2026-11/a.json"], "a wipe is undone whole");
+  assert.deepEqual(deletionsToRestore(["status.json"]), ["status.json"]);
+  // end to end: a wiped ./data is not committed
+  const { clone } = world();
+  const A = clone("A");
+  assert.equal(sh(A, "node", ["scripts/data-branch.mjs", "create"]).status, 0);
+  assert.match(sh(A, "node", ["scripts/data-branch.mjs", "ensure"]).stdout, /switched/);
+  mkdirSync(join(A, "data", "events"), { recursive: true }); writeFileSync(join(A, "data", "events", "e.json"), "{}\n");
+  let r = sh(A, "node", ["-e", 'import("./scripts/lib/repo.mjs").then(m=>process.exit(m.commitData("data: e",["data/events"]).pushed?0:1))']);
+  assert.equal(r.status, 0, r.stderr);
+  for (const f of ["status.json", "events/e.json", "leads/d.jsonl"]) spawnSync("rm", ["-f", join(A, "data", f)]);
+  r = sh(A, "node", ["-e", 'import("./scripts/lib/repo.mjs").then(m=>{m.commitData("data: wipe");})']);
+  assert.match(r.stderr, /DATA PROTECTED/);
+  assert.equal(existsSync(join(A, "data", "status.json")) && existsSync(join(A, "data", "events", "e.json")) && existsSync(join(A, "data", "leads", "d.jsonl")), true);
+  assert.notEqual(git(join(A, "data"), "log", "-1", "--format=%s").stdout.trim(), "data: wipe");
+});

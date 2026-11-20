@@ -28,6 +28,8 @@ permissions:
   contents: write
   issues: write
   id-token: write
+  actions: write          # finish.mjs starts the deploy after pushing data
+  pull-requests: write    # finish.mjs proposes config/ and docs/ changes as a pull request (scripts/propose.mjs)
 
 concurrency:
   group: data-writes
@@ -67,6 +69,12 @@ jobs:
         with:
           ref: main
           fetch-depth: 50
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
 
       - name: Choose the Claude sign-in
         id: auth
@@ -165,9 +173,9 @@ jobs:
       - name: Check what was pushed
         if: env.HAS_TOKEN == 'true' && always()
         run: |
-          git fetch -q origin main
-          git log --oneline -5 origin/main >> "$GITHUB_STEP_SUMMARY"
-          if [ -n "$(git status --porcelain)" ]; then echo "Uncommitted changes were left behind (not pushed):" >> "$GITHUB_STEP_SUMMARY"; git status --short | head -20 >> "$GITHUB_STEP_SUMMARY"; fi
+          d=.; [ -e data/.git ] && d=data
+          git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$(git -C "$d" status --porcelain)" ]; then echo "Uncommitted data was left behind (not pushed):" >> "$GITHUB_STEP_SUMMARY"; git -C "$d" status --short | head -20 >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: Alert on failure
         if: failure() && env.HAS_TOKEN == 'true'

@@ -133,14 +133,6 @@ function startNews(onDone) {
   c.on("error", () => {});
   return c;
 }
-/** main's newest commit when it differs from `code` (the commit the loop started on), else "". Never throws. */
-export function codeMoved(code, root = ROOT) {
-  if (!code) return "";
-  const f = spawnSync("git", ["fetch", "-q", "origin", "+refs/heads/main:refs/remotes/origin/main"], { cwd: root, encoding: "utf8", timeout: 60000 });
-  if (f.status !== 0) return "";
-  const head = spawnSync("git", ["rev-parse", "origin/main"], { cwd: root, encoding: "utf8" }).stdout.trim();
-  return /^[0-9a-f]{40}$/.test(head) && head !== code ? head : "";
-}
 async function flow() {
   const F = PIPE.flow || {}, LIFE = Math.max(1, Math.min(115, Number(process.env.FLOW_MINUTES) || Number(F.minutes) || 100)) * 6e4, MINCYCLE = Math.max(2, Math.min(15, Number(F.min_cycle_minutes) || 4)) * 6e4;
   const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
@@ -152,18 +144,14 @@ async function flow() {
   pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
   if (other && other.run !== RUN) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
-  // the code this loop runs (main's commit on disk when it started): recorded in its lease and its commits, and the loop
-  // hands over when main moves on, so the next start runs the new code instead of the old one for up to 100 minutes
-  const onMain = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: ROOT, encoding: "utf8" }).stdout.trim() === "main";
-  const CODE = onMain ? spawnSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).stdout.trim() : "";   // off main (a dev checkout): no handover
-  claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; l["flow:leader"].code = CODE.slice(0, 12); writeJson(join(DATA, "leases.json"), l); }
-  publishLeader(`data: research loop leader ${RUN} (code ${CODE.slice(0, 7)})`);
+  claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
+  publishLeader("data: research loop leader " + RUN);
   pullAll(); heal(dataGitDir());
   { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
   let lastPublish = Date.now();
-  const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; l["flow:leader"].code = CODE.slice(0, 12); writeJson(join(DATA, "leases.json"), l); }
+  const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }
     if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
-  const t0 = Date.now(); let newsChild = null, handover = "", cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const t0 = Date.now(); let newsChild = null, cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
@@ -238,12 +226,10 @@ async function flow() {
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
     beat("waiting"); renew();
-    const moved = codeMoved(CODE);
-    if (moved) { handover = `new code ${moved.slice(0, 7)} on main`; break; }
     const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
   }
   if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
-  release(RUN); publishLeader(`data: research loop handed over${handover ? " (" + handover + ")" : ""}`);
+  release(RUN); publishLeader("data: research loop handed over");
   log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
 }
 

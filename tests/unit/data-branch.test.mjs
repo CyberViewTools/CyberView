@@ -137,14 +137,3 @@ test("data branch: deletions of records that are never deleted are put back befo
   assert.match(r.stderr, /DATA PROTECTED/);
   assert.equal(existsSync(join(A, "data", "status.json")) && existsSync(join(A, "data", "events", "e.json")) && existsSync(join(A, "data", "leads", "d.jsonl")), true);
   assert.notEqual(git(join(A, "data"), "log", "-1", "--format=%s").stdout.trim(), "data: wipe");});
-
-test("research loop: notices new code on main (and only then)", () => {
-  const { clone } = world();
-  const A = clone("A"), B = clone("B");
-  const moved = (code) => sh(A, "node", ["-e", `import("./scripts/run-job.mjs").then(m=>console.log(JSON.stringify(m.codeMoved(${JSON.stringify(code)}))))`]).stdout.trim().split("\n").pop();
-  const head = git(A, "rev-parse", "HEAD").stdout.trim();
-  assert.equal(moved(head), '""', "same code: keep running");
-  assert.equal(moved(""), '""', "no code recorded (off main): never hands over");
-  writeFileSync(join(B, "x.txt"), "1\n"); git(B, "add", "x.txt"); git(B, "commit", "-q", "-m", "code"); git(B, "push", "-q", "origin", "main");
-  assert.equal(moved(head), JSON.stringify(git(B, "rev-parse", "HEAD").stdout.trim()), "main moved: hand over");
-});

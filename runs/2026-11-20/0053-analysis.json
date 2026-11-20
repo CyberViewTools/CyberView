@@ -1,0 +1,28 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-20T00:53:33Z",
+  "finished_at": "2026-11-20T00:57:42Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-13 --limit 300 (266 events)",
+    "q.mjs runs --days 1"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": ["nginx2root-nginx-critical-rce-flaws-2026-11"],
+  "skipped": [
+    {"title": "Synology advisories SA_26_20 and SA_26_21", "url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_20", "reason": "Web fetch not permitted in this worker; the NGINX2Root to Synology link uses the GBHackers page already cited by the Synology event, which states CVE-2026-123007 is fixed in DSM"},
+    {"title": "phpAfterShell and PHP 8.x security releases as one stated link", "url": "https://depthfirst.com/research/phpaftershell", "reason": "Event records say PHP shipped fixes the same day but not that the heise-reported releases are the phpAfterShell fix; kept as an inferred edge, no arc"},
+    {"title": "JPMorgan, Visa and Mastercard provider incidents as one supplier", "url": "https://finance.yahoo.com/markets/article/jpmorgan-visa-and-mastercard-disclose-cyberattack-on-third-party-vendors-190314490.html", "reason": "No source says it is the same provider; timing edge only"},
+    {"title": "Extortion claims and enforcement pattern", "url": "", "reason": "Dropped this run to stay within 12 patterns; new healthcare and split exploited/patch patterns carry more defender value. Gootloader, Europol and FaceStealer items fell out of the 7-day window"}
+  ],
+  "open_leads": [
+    {"title": "Possible duplicate events: jpmorganchase-third-party-vendor-cyberattack-2026-11 and jpmorgan-third-party-vendors-cyberattack-2026-11", "url": "", "note": "Same JPMorgan statement on Nov 19; neither marked duplicate_of. Review desk should decide.", "priority": "medium"},
+    {"title": "Possible duplicate events: ukraine-fbi-ransomware-network-40m and ukraine-police-arrest-fake-it-support-ransomware-2026-11", "url": "", "note": "Same Ukrainian/FBI operation ($40.5M, four detained); neither marked duplicate_of.", "priority": "medium"},
+    {"title": "Possible duplicate events: greiz-ronneburg-hospital-cyberattack-2026-11 and kreiskrankenhaus-greiz-cyberattack-2026-11; fort-smith-arkansas-* pair", "url": "", "note": "Same incidents filed twice; neither marked duplicate_of.", "priority": "medium"},
+    {"title": "NSA outage on Nov 19 (NBC) vs NSA Net outage on Nov 17", "url": "", "note": "Likely the same outage; recorded as an inferred edge. Confirm and merge if an official source says so.", "priority": "low"},
+    {"title": "Cisco Expressway CVE-2026-76466 exploitation", "url": "https://www.securityweek.com/hackers-exploit-cisco-expressway-vulnerability-soon-after-poc-release/", "note": "F6 reports exploitation, Cisco advisory not revised; watch for Cisco update or KEV listing.", "priority": "high"}
+  ],
+  "failed_sites": ["www.synology.com (web fetch not permitted in this worker)"],
+  "notes": "Rewrote data/analysis.json (12 patterns: nginx2root, exploited-now, patch-pressure, supplier-cascades, one-vendor-many-victims, ai-attack-tooling, ai-dev-toolchain, account-takeover, outages-and-knock-on, ot-refrigeration, government-networks, healthcare-notices) and data/ripples.json (10 items; added vCenter ARMORY CASTLE, dropped Wellington IT). Events dated Nov 12 removed except the Microsoft 365 outage, kept as the root of stated knock-on edges and labelled as just before the window. Every pattern event id checked to exist and not be a duplicate. One stated link added to nginx2root-nginx-critical-rce-flaws-2026-11 -> synology-dsm-oauth-nginx-critical-flaws-2026-11 (same CVE-2026-123007). Snapshot at data/snapshots/analysis/2026-11-20.json. Build passes; 30 hygiene warnings are tag names in other events. No instructions found in data."
+}

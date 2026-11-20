@@ -51,22 +51,30 @@
     "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"
   },
   "severity": 3,
-  "source_tier": "established",
+  "source_tier": "primary",
   "sources": [
+    {
+      "name": "Depthfirst research post",
+      "url": "https://depthfirst.com/research/narrow-grants-wide-engines"
+    },
     {
       "name": "The Hacker News",
       "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"
+    },
+    {
+      "name": "Brandefense",
+      "url": "https://brandefense.io/security-news/database-engine-rce-patch-privilege-checks/"
     }
   ],
   "status": "developing",
   "summary": "The Hacker News reports that researcher Zheng Yu of Depthfirst published proof-of-concept exploits that let low-privilege database accounts run code on the server in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has no CVE but was fixed in September. No attacks in the wild are reported, and the chains were not independently reproduced.",
   "time_basis": "published",
   "title": "Researcher publishes database RCE exploits for PostgreSQL, MySQL and Oracle",
-  "updated_at": "2026-11-20T03:25:04Z",
+  "updated_at": "2026-11-20T15:25:35Z",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-20T03:20:48Z",
-    "note": "Reviewer re-read The Hacker News (19 Nov): researcher, CVEs, fixes, ClickHouse fixed in September, no attacks seen, not independently reproduced. Single source; depthfirst.com page not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-20T15:25:35Z",
+    "note": "Compared Depthfirst's own post (18 Nov), Brandefense (19 Nov) and The Hacker News (19 Nov): researcher chains for PostgreSQL, MySQL and Oracle, same CVEs, vendor fixes for the CVE-listed flaws. ClickHouse having no CVE and being fixed in September is stated only by The Hacker News (summary attributes it); neither Depthfirst nor Brandefense says exploit code is public or that no attacks were seen."
   },
   "review": {
     "state": "corrected",

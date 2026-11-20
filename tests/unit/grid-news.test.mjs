@@ -403,3 +403,9 @@ test("news-9 (4): a headline that names nothing is placed by a utility its summa
   for (const e of ENTS.filter((x) => x.kind === "utility")) (by.get(e.alias) || by.set(e.alias, new Set()).get(e.alias)).add(e.country);
   assert.deepEqual([...by].filter(([, s]) => s.size > 1), []);
 });
+
+test("grid-news never reads Google News (its robots.txt disallows /rss/)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../../scripts/grid-news.mjs", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /news\.google\.com\/rss\/search/);
+});

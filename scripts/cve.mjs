@@ -179,12 +179,12 @@ async function audit() {
 function site(out = join(ROOT, "site", "data", "cve")) {
   if (!years().length) { console.log("SITE: no corpus here; nothing written."); return; }
   rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
-  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, bands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
+  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, ratingBands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
   for (const r of allRows()) {
     total++; if (r.state === "R") rejected++; if (r.kev || r.expl === "active") exploited++;
     if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.n3c) criticalNvd++; if (r.n3 === "C") criticalNvdOwn++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
       const d = RATE.rate({ ...r, rejected: false }); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1;
-      const sc = RATE.score({ ...r, rejected: false }); if (sc) bands[sc.band] = (bands[sc.band] || 0) + 1; }
+      const sc = RATE.score({ ...r, rejected: false }); if (sc) ratingBands[sc.band] = (ratingBands[sc.band] || 0) + 1; }   // CyberView rating bands (CVSS bands, plus "Not scored")
     const y = yearOf(r.id); byYear[y] = (byYear[y] || 0) + 1;
     const b = bucket(r.id); if (!buckets.has(b)) buckets.set(b, []); buckets.get(b).push(toArr(r));
     if (r.state === "P" && (r.pub >= since || r.upd >= since)) recent.push(r);
@@ -196,7 +196,7 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   const files = {}; for (const b of buckets.keys()) { const [y, k] = b.split("/"); (files[y] ||= []).push(Number(k)); }
   for (const y of Object.keys(files)) files[y].sort((a, b) => a - b);
   writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size, files_by_year: files,
-    critical_nvd: criticalNvd, bands, critical_nvd_own: criticalNvdOwn, kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
+    critical_nvd: criticalNvd, rating_bands: ratingBands, critical_nvd_own: criticalNvdOwn, kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
     sources: { cvelist: st.delta_at || st.baseline_at || null, epss: st.epss_date || null } }));
   console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${recent.length} published or changed since ${since}.`);
 }

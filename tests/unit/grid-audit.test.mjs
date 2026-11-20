@@ -30,3 +30,27 @@ test("audit: flags from state and history", () => {
   assert.deepEqual(flagsFor("x", ok, chk(18), hist, now), []);
   assert.deepEqual(flagsFor("x", ok, chk(0), hist.slice(0, 5), now), [], "too little history to judge");
 });
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("sources-3: parser drift is flagged: items with no customers, a customer total gone to zero or fallen 95%", () => {
+  const now = Date.parse("2026-11-20T00:00:00Z"), ok = { ok: true };
+  const chk = (o) => ({ items: 11, outages: 11, customers: 5451, no_customers: 0, far_from_country: 0, future_start: 0, dup_ids: 0, off_host_links: 0, ...o });
+  const hist = Array.from({ length: 24 }, () => ({ n: 11, c: 5000 }));
+  // LADWP with COUNT_IN_RANK renamed: 11 items, 0 customers (item.customers 0 via int(undefined)=null -> no_customers)
+  assert.deepEqual(flagsFor("ladwp", ok, chk({ customers: 0, no_customers: 11 }), hist, now), ["customers_missing", "customers_fell"]);
+  assert.deepEqual(flagsFor("bchydro", ok, chk({ customers: 0 }), hist, now), ["zero_customers", "customers_fell"]);
+  assert.deepEqual(flagsFor("x", ok, chk({ customers: 120 }), hist, now), ["customers_fell"]);
+  assert.deepEqual(flagsFor("x", ok, chk({}), hist, now), []);
+  // a source that never had customers (Tauron lists addresses) is not flagged for it
+  assert.deepEqual(flagsFor("tauron", ok, chk({ customers: 0, no_customers: 11 }), hist.map((h) => ({ ...h, c: 0 })), now), []);
+  const r = checkItems([{ ...base, id: "x:1", lat: 34, lng: -118, customers: 7 }, { ...base, id: "x:2", lat: 34, lng: -118, customers: null }], def, C, now);
+  assert.deepEqual([r.outages, r.customers, r.no_customers], [2, 7, 1]);
+});
+
+test("sources-2/5, ops-13: stale and dormant sources are flagged; a source that never succeeded is over 24 h after a day of failures", () => {
+  const now = Date.parse("2026-11-20T00:00:00Z"), chk = { items: 0, outages: 0, customers: 0, no_customers: 0, far_from_country: 0, future_start: 0, dup_ids: 0, off_host_links: 0 };
+  assert.deepEqual(flagsFor("hydroquebec", { ok: true, stale: true }, chk, [], now), ["stale_data"]);
+  assert.deepEqual(flagsFor("ecg-ghana", { ok: true, dormant: true }, chk, [], now), ["dormant"]);
+  assert.deepEqual(flagsFor("x", { ok: false, error: "http_403", fetched_at: "", failures: 400 }, chk, [], now), ["failing_over_24h"]);
+  assert.deepEqual(flagsFor("x", { ok: false, error: "http_403", fetched_at: "", failures: 3 }, chk, [], now), ["failing"]);
+});

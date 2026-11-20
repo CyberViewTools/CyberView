@@ -263,3 +263,37 @@ test("adapters send no key, cookie or browser-imitating header", async () => {
     assert.ok(!/[?&](api_?key|token|key)=/i.test(a.url));
   }
 });
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+const hh = { item: (o) => o, str: (s, n) => String(s ?? "").slice(0, n), isoOf: (s) => s, zonedToIso: (await import("../../scripts/grid.mjs")).zonedToIso };
+test("sources-3: a renamed customers field fails the source (bad_shape) instead of reading as no outage", async () => {
+  const { parseOdin, parseNes, parsePacifiCorp, parseLadwp, parseEversourceReport } = await import("../../scripts/grid-sources/us.mjs");
+  const ren = (f, a, b) => JSON.parse(txt(f).split(`"${a}"`).join(`"${b}"`));
+  assert.ok(parseOdin(JSON.parse(txt("doe-odin.json")), hh).length > 0);
+  assert.throws(() => parseOdin(ren("doe-odin.json", "metersAffected", "meters_affected"), hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parseNes(ren("nashville-electric.json", "customersAffected", "custAffected"), hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parsePacifiCorp(ren("pacific-power-OR.json", "custOutUnplan", "cust_out_unplan"), "pacific-power", "OR", hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parsePacifiCorp(ren("pacific-power-OR.json", "counties", "county"), "pacific-power", "OR", hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parseLadwp(ren("ladwp.json", "COUNT_IN_RANK", "COUNT"), hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parseEversourceReport(ren("eversource-report_conn.json", "val", "value"), hh), (e) => e.code === "bad_shape");
+  assert.throws(() => parseEversourceReport(ren("eversource-report_conn.json", "CT", "XX"), hh), (e) => e.code === "bad_shape");    // state code changed
+  // the real replies still read
+  assert.ok(parsePacifiCorp(JSON.parse(txt("pacific-power-OR.json")), "pacific-power", "OR", hh).length > 0);
+  assert.ok(parseEversourceReport(JSON.parse(txt("eversource-report_conn.json")), hh).length > 0);
+});
+
+test("sources-4: Eversource's masked small counts are a band ('a few'), never an exact count", async () => {
+  const { parseEversourceReport } = await import("../../scripts/grid-sources/us.mjs");
+  const items = parseEversourceReport(JSON.parse(txt("eversource-report_conn.json")), hh);
+  const masked = items.filter((x) => x.customers_band === "a few");
+  assert.ok(masked.length >= 5);
+  assert.ok(items.some((x) => !x.customers_band));
+});
+
+test("sources-2: PacifiCorp's last_upd is the data time (the state's own clock; the oldest state file decides)", async () => {
+  const { pacifiCorpTime } = await import("../../scripts/grid-sources/us.mjs");
+  assert.equal(pacifiCorpTime("Thursday, November 19 03:30 PM, 2026", "OR", hh), "2026-11-19T23:30:00Z");
+  assert.equal(pacifiCorpTime("Thursday, November 19 03:30 PM, 2026", "UT", hh), "2026-11-19T22:30:00Z");
+  assert.equal(pacifiCorpTime("Thursday, November 19 12:05 AM, 2026", "UT", hh), "2026-11-19T07:05:00Z");
+  assert.equal(pacifiCorpTime("soon", "UT", hh), "");
+});

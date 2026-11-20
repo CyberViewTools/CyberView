@@ -10,6 +10,12 @@
 import { US_STATES, BY_ABBR, stateOfFips, titleCase } from "./lib-us-states.mjs";
 
 const badShape = (why = "") => Object.assign(new Error(`unexpected shape${why ? `: ${why}` : ""}`), { code: "bad_shape" });
+// the operator's own data time travels with the items (scripts/grid.mjs collect marks a source stale when it is old)
+export const stamp = (arr, at) => Object.defineProperty(arr, "data_at", { value: at || "", enumerable: false, configurable: true });
+/** Rows exist but none carries the customers field as a number: the feed changed its fields (sources-3). */
+const needNumbers = (rows, get, what) => { if (rows.length && !rows.some((r) => int(get(r)) !== null)) throw badShape(`${what}: no row has a customer count`); };
+/** A feed that gives a total must add up to it (10% slack for masked or rounded rows): a renamed field shows here. */
+const needTotal = (sum, total, what) => { const t = Number(total); if (t > 0 && Math.abs(sum - t) > Math.max(2, 0.1 * t)) throw badShape(`${what}: rows add up to ${sum}, the feed's total is ${t}`); };
 const int = (x) => (x === null || x === undefined || x === "" || !isFinite(Number(x)) ? null : Math.max(0, Math.round(Number(x))));
 const slug = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "x";
 /** "MM/DD/YYYY HH:MM[:SS]" -> "YYYY-MM-DD HH:MM:SS" (for h.zonedToIso), or "". */
@@ -90,19 +96,29 @@ export function parseEversourceReport(d, h) {
   const top = d && d.file_data && Array.isArray(d.file_data.areas) ? d.file_data.areas : null;
   if (!top) throw badShape("eversource report");
   const out = [];
+  let states = 0, leaves = 0, counted = 0;
   for (const co of top) for (const st of (co && co.areas) || []) {
     const s = BY_ABBR[String(st.area_name || "").toUpperCase()];
     if (!s) continue;
+    states++;
     const walk = (nodes) => { for (const n of nodes || []) {
       if (Array.isArray(n.areas)) { walk(n.areas); continue; }
+      leaves++; if (n.cust_a && int(n.cust_a.val) !== null) counted++;
       const c = int(n.cust_a && n.cust_a.val);
       if (!c) continue;
+      sum += c;
+      // a masked count is Eversource's floor for a small number, not the number (sources-4)
       out.push(h.item({ source: "eversource", id: `eversource:${s.abbr}-${slug(n.area_name)}`, region: s.name,
         area: h.str(`${titleCase(n.area_name)}, ${s.abbr}`, 120), lat: null, lng: null, customers: c, kind: "outage",
-        planned: false, cause: "", level: null, started_at: "", restore_est: "" }));
+        planned: false, cause: "", level: null, started_at: "", restore_est: "", ...(n.cust_a.masked ? { customers_band: "a few" } : {}) }));
     } };
+    let sum = 0;
     walk(st.areas);
+    needTotal(sum, st.cust_a && !st.cust_a.masked ? st.cust_a.val : 0, `eversource ${s.abbr}`);
   }
+  // a renamed state code or count field must fail the source, not read as nobody out (sources-3)
+  if (top.some((co) => co && Array.isArray(co.areas) && co.areas.length) && !states) throw badShape("eversource: no state code recognised");
+  if (leaves && !counted) throw badShape("eversource: no town has a customer count");
   return out;
 }
 
@@ -111,6 +127,7 @@ export function parseEversourceReport(d, h) {
 // are left out. No times or causes.
 export function parseNes(d, h) {
   if (!Array.isArray(d)) throw badShape("nes");
+  needNumbers(d.filter((r) => r && r.name), (r) => r.customersAffected, "nes");
   return d.filter((r) => r && r.name && int(r.customersAffected) > 0).map((r) => h.item({
     source: "nashville-electric", id: `nashville-electric:${slug(r.name)}`, region: "Nashville",
     area: h.str(`${titleCase(r.name)} County, TN`, 120), lat: null, lng: null, customers: int(r.customersAffected), kind: "outage",
@@ -125,6 +142,7 @@ export function parsePacifiCorp(d, src, abbr, h) {
   const s = BY_ABBR[abbr];
   if (!s || !d || typeof d !== "object" || !isFinite(Number(d.totalState))) throw badShape("pacificorp list");
   const out = [];
+  needTotal((Array.isArray(d.counties) ? d.counties : []).reduce((n, c) => n + (int(c && c.custOutUnplan) || 0) + (int(c && c.custOutPlan) || 0), 0), d.totalState, `pacificorp ${abbr}`);
   for (const c of Array.isArray(d.counties) ? d.counties : []) {
     if (!c || !c.countyName) continue;
     for (const [planned, n] of [[false, c.custOutUnplan], [true, c.custOutPlan]]) {
@@ -146,6 +164,7 @@ export function parsePacifiCorp(d, src, abbr, h) {
 // The crew status is not a cause and is not reported as one. No start times. An ArcGIS error comes as { error }.
 export function parseLadwp(d, h) {
   if (!d || d.error || !Array.isArray(d.features)) throw badShape(d && d.error ? `arcgis ${int(d.error.code) ?? ""}` : "ladwp");
+  needNumbers(d.features.filter((f) => f && f.attributes && f.attributes.OBJECTID != null), (f) => f.attributes.COUNT_IN_RANK, "ladwp");
   return d.features.filter((f) => f && f.attributes && f.attributes.OBJECTID != null).map((f) => {
     const a = f.attributes, g = f.geometry || {};
     const lat = Number(a.CENTROID_LAT ?? g.y), lng = Number(a.CENTROID_LNG ?? g.x);
@@ -167,6 +186,7 @@ export const ODIN_DIRECT = /\b(PACIFICORP|ROCKY MOUNTAIN POWER|PACIFIC POWER|NAS
 const ODIN_DIRECT_IDS = new Set(["14354", "13216"]);
 export function parseOdin(d, h) {
   if (!d || !Array.isArray(d.outage)) throw badShape("odin");
+  needNumbers(d.outage.filter(Boolean), (r) => r.metersAffected, "odin");
   const out = [];
   for (const r of d.outage) {
     if (!r) continue;
@@ -306,12 +326,23 @@ export const adapters = {
     return [];
   },
 };
+const PACIFICORP_TZ = { UT: "America/Denver", WY: "America/Denver", ID: "America/Denver", OR: "America/Los_Angeles", WA: "America/Los_Angeles", CA: "America/Los_Angeles" };
+const MON = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
+/** PacifiCorp's last_upd "Thursday, November 19 03:30 PM, 2026" (the state's local time) -> ISO UTC, or "". */
+export function pacifiCorpTime(s, abbr, h) {
+  const m = String(s || "").match(/([A-Za-z]+)\s+(\d{1,2})\s+(\d{1,2}):(\d{2})\s*([AP]M),?\s*(\d{4})/i);
+  if (!m || !MON[m[1].toLowerCase()] || !PACIFICORP_TZ[abbr]) return "";
+  const hh = (+m[3] % 12) + (/pm/i.test(m[5]) ? 12 : 0);
+  return h.zonedToIso(`${m[6]}-${String(MON[m[1].toLowerCase()]).padStart(2, "0")}-${m[2].padStart(2, "0")} ${String(hh).padStart(2, "0")}:${m[4]}:00`, PACIFICORP_TZ[abbr]);
+}
 async function pacifiCorp(src, h) {
-  const out = [];
+  const out = [], times = [];
   for (const abbr of SOURCES[src].states) {
-    out.push(...parsePacifiCorp(await h.get(`https://${SOURCES[src].hosts[0]}/etc/pcorp/datafiles/outagemap/list${abbr}.json`), src, abbr, h));
+    const d = await h.get(`https://${SOURCES[src].hosts[0]}/etc/pcorp/datafiles/outagemap/list${abbr}.json`);
+    out.push(...parsePacifiCorp(d, src, abbr, h));
+    const t = pacifiCorpTime(d && d.last_upd, abbr, h); if (t) times.push(t);
   }
-  return out;
+  return stamp(out, times.sort()[0] || "");    // the oldest state file decides
 }
 
 export default { sources: SOURCES, regions: REGIONS, adapters };

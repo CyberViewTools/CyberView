@@ -238,11 +238,14 @@ export function parseHqVersion(v) {
   if (!/^\d{14}$/.test(s)) throw badShape("version");
   return s;
 }
+/** Items + the operator's own data time (not enumerable: the items stay a plain list); collect reads it as `data_at`. */
+export const withDataAt = (arr, at) => Object.defineProperty(arr, "data_at", { value: at || "", enumerable: false, configurable: true });
 /** The version stamp is Hydro-Québec's own data time, Montreal wall-clock "YYYYMMDDHHMMSS" -> ISO UTC. */
 export const hqVersionTime = (v) => { const m = String(v || "").match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/);
   return m ? zonedToIso(`${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}:${m[6]}`, "America/Montreal") : ""; };
 export function parseHydroQuebec(d) {
   if (!d || !Array.isArray(d.pannes)) throw badShape();
+  if (d.pannes.length && !d.pannes.some((r) => Array.isArray(r))) throw badShape("hydro-quebec rows are not arrays");
   const out = [];
   for (const r of d.pannes) {
     if (!Array.isArray(r) || r.length < 8) continue;
@@ -262,6 +265,8 @@ export function parseHydroQuebec(d) {
 // crewEtr (epoch ms, shown when showEtr), latitude, longitude. Planned work says so in the cause text.
 export function parseBcHydro(d) {
   if (!Array.isArray(d)) throw badShape();
+  if (d.some((r) => r && r.id != null) && !d.some((r) => r && r.id != null && Number.isFinite(Number(r.numCustomersOut)) && r.numCustomersOut !== null && r.numCustomersOut !== ""))
+    throw badShape("bc hydro: no row has numCustomersOut");
   return d.filter((r) => r && r.id != null).map((r) => item({
     source: "bchydro", id: `bchydro:${str(r.id, 40)}`, region: "British Columbia",
     area: [r.municipality, r.area].filter(Boolean).map((x) => str(x, 60)).join(": "),
@@ -581,8 +586,7 @@ export const ADAPTERS = {
   async hydroquebec() {
     const v = parseHqVersion(await get(SOURCES.hydroquebec.url));
     const items = parseHydroQuebec(await get(`https://pannes.hydroquebec.com/pannes/donnees/v3_0/bismarkers${v}.json`));
-    items.data_at = hqVersionTime(v);   // the version is the operator's own data time: a frozen feed is caught by it
-    return items;
+    return withDataAt(items, hqVersionTime(v));   // the version is the operator's own data time: a frozen feed is caught by it
   },
   async bchydro() { return parseBcHydro(await get(SOURCES.bchydro.url)); },
   async ukpn() {
@@ -595,7 +599,7 @@ export const ADAPTERS = {
     return items;
   },
   async eskom() { return parseEskom(await get(SOURCES.eskom.url, { as: "text" })); },
-  async ercot() { return parseErcot(await get(SOURCES.ercot.url)); },
+  async ercot() { const items = parseErcot(await get(SOURCES.ercot.url)); return withDataAt(items, items[0] ? items[0].started_at : ""); },
   async aemo() {
     const files = parseAemoListing(await get(SOURCES.aemo.url, { as: "text" })).slice(0, AEMO_NOTICES);
     const notices = await pool(files, 6, async (f) => {

@@ -18,6 +18,25 @@
 
 const msIso = (h, ms) => (Number.isFinite(ms) && ms > 0 ? h.isoOf(new Date(ms).toISOString()) : "");
 const badShape = (what) => Object.assign(new Error(`unexpected reply shape (${what})`), { code: "bad_shape" });
+// the operator's own data time travels with the items (scripts/grid.mjs collect marks a source stale when it is old)
+export const stamp = (arr, at) => Object.defineProperty(arr, "data_at", { value: at || "", enumerable: false, configurable: true });
+/** Rows exist but none carries the customers field as a number: the feed changed its fields (sources-3). */
+export function needNumbers(rows, get, what) {
+  if (rows.length && !rows.some((r) => { const v = get(r); return v !== null && v !== undefined && v !== "" && Number.isFinite(Number(v)); })) throw badShape(`${what}: no row has a customer count`);
+}
+/** ArcGIS layers cap a reply (maxRecordCount 2,000): follow resultOffset; a cut that is still there after `max` pages is
+ *  reported (bad_shape), never silent (sources-6). */
+export async function arcgisPages(h, url, parse, max = 5) {
+  const out = [];
+  for (let page = 0, offset = 0; page < max; page++) {
+    const d = await h.get(offset ? `${url}&resultOffset=${offset}` : url, { retries: 1 });
+    out.push(...parse(d, h));
+    if (!d || !d.exceededTransferLimit) return out;
+    if (!Array.isArray(d.features) || !d.features.length) break;
+    offset += d.features.length;
+  }
+  throw badShape(`arcgis: more than ${max} pages`);
+}
 
 // ---------- SSEN Distribution (Power Track) ----------
 // getallfaults: { timestampUtc, faults: [{ reference, type (LV | HV | PSI = planned supply interruption), loggedAtUtc,
@@ -29,7 +48,9 @@ const SSEN_TYPE = { LV: "Low-voltage fault", HV: "High-voltage fault", PSI: "Pla
 export const SSEN_NORTH = "North of Scotland", SSEN_SOUTH = "Central southern England";
 export function parseSsen(d, h) {
   if (!d || !Array.isArray(d.faults)) throw badShape("ssen");
-  return d.faults.filter((f) => f && f.reference != null && !f.mergedTo).map((f) => {
+  const rows = d.faults.filter((f) => f && f.reference != null && !f.mergedTo);
+  needNumbers(rows, (f) => f.customerCount, "ssen");
+  return stamp(rows.map((f) => {
     const loc = f.location || {}, lat = loc.latitude == null ? null : Number(loc.latitude), lng = loc.longitude == null ? null : Number(loc.longitude);
     const areas = Array.isArray(f.affectedAreas) ? f.affectedAreas.slice(0, 3).join(", ") : "";
     return h.item({
@@ -40,7 +61,7 @@ export function parseSsen(d, h) {
       cause: SSEN_TYPE[f.type] || h.str(f.type, 40), level: null,
       started_at: h.isoOf(f.loggedAtUtc), restore_est: h.isoOf(f.estimatedRestorationTimeUtc),
     });
-  });
+  }), h.isoOf(d.timestampUtc));
 }
 
 // ---------- National Grid Electricity Distribution (Live Power Cuts CSV) ----------
@@ -75,7 +96,11 @@ const intOf = (x) => { const n = Number(String(x ?? "").replace(/,/g, "")); retu
 export function parseNged(text, h) {
   const rows = parseCsv(text);
   if (!rows.length || !("Incident ID" in rows[0]) || !("Confirmed Off" in rows[0])) throw badShape("nged csv");
-  return rows.filter((r) => r["Incident ID"] && !/restored|closed|complete|cancel/i.test(r.Status || "")).map((r) => {
+  // every row carries the time NGED uploaded the file (UK wall-clock time): the newest is the data time
+  const up = rows.map((r) => String(r["Upload Date"] || "")).filter((x) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(x)).sort().pop() || "";
+  const live = rows.filter((r) => r["Incident ID"] && !/restored|closed|complete|cancel/i.test(r.Status || ""));
+  needNumbers(live, (r) => (intOf(r["Confirmed Off"]) ?? intOf(r["Predicted Off"])), "nged");
+  return stamp(live.map((r) => {
     const conf = intOf(r["Confirmed Off"]), pred = intOf(r["Predicted Off"]);
     const customers = conf == null && pred == null ? null : Math.max(conf || 0, pred || 0);
     const lat = r["Location Latitude"] === "" ? null : Number(r["Location Latitude"]);
@@ -87,7 +112,7 @@ export function parseNged(text, h) {
       planned: /^true$/i.test(r.Planned || ""), cause: ngedCategory(r.Category),
       level: null, started_at: h.zonedToIso(r["Start Time"], "Europe/London"), restore_est: h.zonedToIso(r.ETR, "Europe/London"),
     });
-  });
+  }), up ? h.zonedToIso(up, "Europe/London") : "");
 }
 
 // ---------- Elexon BMRS: NESO system warnings (SYSWARN) ----------
@@ -221,6 +246,8 @@ export function lianderBand(s) {
   return LIANDER_STEPS.filter((x) => x < n).pop() ?? 1;
 }
 export const bandWords = (b) => String(b || "").trim().replace(/^<\s*/, "under ").replace(/^>\s*/, "over ");
+/** The band as words for the map ("under 200", "over 10,000"): the count is a floor, never shown as exact (sources-4). */
+export const bandLabel = (b) => (/^[<>]\s*\d/.test(String(b || "").trim()) ? bandWords(b).replace(/(\d)\.(\d{3})/g, "$1,$2") : "");
 const LIANDER_CAUSE = {
   "spontane storing": "Spontaneous fault", "geplande werkzaamheden": "Planned work", "graafwerkzaamheden": "Excavation damage",
   "weersinvloed": "Weather", "bodemverzakking": "Ground subsidence", "nog niet bekend": "Cause not yet known",
@@ -237,7 +264,7 @@ export function parseLiander(d, h) {
       return h.item({
         source: "liander-storingen", id: `liander-storingen:${h.str(a.STORING_NUMMER, 40)}`, region: "Liander area",
         area: h.str([places, band ? `customers reported as ${bandWords(band)}` : ""].filter(Boolean).join(" · "), 120),
-        lat: c.y == null ? null : Number(c.y), lng: c.x == null ? null : Number(c.x), customers: lianderBand(band),
+        lat: c.y == null ? null : Number(c.y), lng: c.x == null ? null : Number(c.x), customers: lianderBand(band), customers_band: bandLabel(band),
         kind: "outage", planned, cause: h.str(lianderCause(a.STORING_OORZAAK) || (planned ? "Planned work" : ""), 120), level: null,
         started_at: msIso(h, a.STORING_DATUM_GEMELD), restore_est: msIso(h, a.STORING_DATUM_SCHATTING),
       });
@@ -252,6 +279,7 @@ export function parseLiander(d, h) {
 // counted toward thresholds); the area says how many address points. Only outages under way (start <= now < end).
 export function parseTauron(d, h, now = Date.now()) {
   if (!Array.isArray(d)) throw badShape("tauron");
+  if (d.some((x) => x && x.OutageId) && !d.some((x) => x && (x.TypeId === 1 || x.TypeId === 2))) throw badShape("tauron: no row has TypeId 1 or 2");
   return d.filter((x) => x && x.OutageId && (x.TypeId === 1 || x.TypeId === 2) && x.IsActive !== false).filter((x) => {
     const s = Date.parse(x.StartDate || ""), e = Date.parse(x.EndDate || "");
     return Number.isFinite(s) && s <= now && (!Number.isFinite(e) || e > now);
@@ -371,14 +399,14 @@ const adapters = {
     const u = `${h.SOURCES["elexon-demand-control"].url}?from=${isoMin(now - DCI_WINDOW_HOURS * 3600e3)}&to=${isoMin(now + 3600e3)}`;
     return parseDci(await h.get(u, { retries: 1, key: "data.elexon.co.uk" }), h, now);
   },
-  "liander-storingen": async (h) => parseLiander(await h.get(h.SOURCES["liander-storingen"].url, { retries: 1 }), h),
+  "liander-storingen": async (h) => arcgisPages(h, h.SOURCES["liander-storingen"].url, parseLiander),
   // the public map asks for [now, now + 5 days]; outages under way overlap any window that starts now, so one hour is enough
   "tauron-wylaczenia": async (h) => {
     const now = Date.now();
     const u = `${h.SOURCES["tauron-wylaczenia"].url}?fromDate=${new Date(now).toISOString()}&toDate=${new Date(now + 3600e3).toISOString()}`;
     return parseTauron(await h.get(u, { retries: 1 }), h, now);
   },
-  "elvia-strombrudd": async (h) => parseElvia(await h.get(h.SOURCES["elvia-strombrudd"].url, { retries: 1 }), h),
+  "elvia-strombrudd": async (h) => arcgisPages(h, h.SOURCES["elvia-strombrudd"].url, parseElvia),
 };
 
 export default { sources: SOURCES, regions: REGIONS, adapters };

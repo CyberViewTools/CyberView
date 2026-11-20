@@ -25,6 +25,9 @@ const isoOf = (s) => { const t = Date.parse(s || ""); return isFinite(t) ? isoS(
 const slug = (s, n = 50) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, n).replace(/-$/, "") || "x";
 const fmt = (n) => Number(n || 0).toLocaleString("en-US");
 const badShape = (why = "") => Object.assign(new Error(`unexpected shape${why ? `: ${why}` : ""}`), { code: "bad_shape" });
+// the operator's own data time travels with the items (scripts/grid.mjs collect marks a source stale when it is old)
+export const stamp = (arr, at) => Object.defineProperty(arr, "data_at", { value: at || "", enumerable: false, configurable: true });
+
 const ownHost = (key, u) => {
   const s = String(u || "");
   if (!/^https:\/\/[^\s"'<>\\]+$/.test(s) || s.length > 300) return "";
@@ -79,7 +82,10 @@ export const SOURCES = {
   "ecg-ghana": { name: "Electricity Company of Ghana", country: "GH", kind: "signal",
     url: "https://www.ecg.com.gh/index.php/en/services/ecg-status/current-system-status/current-status-accra-west?format=feed&type=rss",
     page: "https://www.ecg.com.gh/index.php/en/services/ecg-status/current-system-status", hosts: ["www.ecg.com.gh"],
-    terms_url: "https://www.ecg.com.gh/", terms_ok: "silent", customers_served: null },
+    terms_url: "https://www.ecg.com.gh/", terms_ok: "silent", customers_served: null,
+    // the feeds are notices, quiet for days at a time: never "stale"; a newest notice 14 days old means the operator
+    // stopped using them (sources-5: the newest were 29-30 October on 20 November 2026)
+    data_stale_min: null, dormant_hours: 14 * 24 },
   "enre-edenor": { name: "ENRE (Edenor area)", country: "AR", kind: "outages", url: "https://www.enre.gov.ar/paginacorte/js/data_EDN.js",
     page: "https://www.enre.gov.ar/paginacorte/tabla_cortes_edenor.html", hosts: ["www.enre.gov.ar"],
     terms_url: "https://www.argentina.gob.ar/terminos-y-condiciones", terms_ok: "silent", customers_served: 3506094 },
@@ -244,9 +250,11 @@ export function parseEcgRss(xml, regionSlug, zonedToIso, now = Date.now()) {
   if (!reg) throw badShape(`ecg region ${regionSlug}`);
   const today = zonedToIso(new Date(now).toISOString().slice(0, 10) + " 00:00:00", "Africa/Accra").slice(0, 10);
   const out = [];
+  let newest = "";
   for (const block of s.split(/<item>/).slice(1)) {
     const field = (t) => xmlText((block.match(new RegExp(`<${t}>([\\s\\S]*?)</${t}>`)) || [])[1] || "").trim();
     const title = str(field("title"), 200), link = field("link"), pub = isoOf(field("pubDate"));
+    if (pub > newest) newest = pub;
     const outage = /\b(outage|fault|power cut|interruption|damaged|broken)\b/i.test(title), maint = /\b(maintenance|planned)\b/i.test(title);
     if (!outage && !maint) continue;
     const day = noticeDay(title) || pub.slice(0, 10);
@@ -256,7 +264,7 @@ export function parseEcgRss(xml, regionSlug, zonedToIso, now = Date.now()) {
       area: `${reg[0]} region`, lat: null, lng: null, customers: null, kind: "outage", planned, cause: title, level: null,
       started_at: zonedToIso(`${day} 00:00:00`, "Africa/Accra"), restore_est: "", url: link }));
   }
-  return out;
+  return stamp(out, newest);     // the newest notice in the feed, kept or not (a dormant feed shows here)
 }
 
 // ---------- ENRE (Argentina's electricity regulator), Edenor and Edesur ----------
@@ -327,7 +335,16 @@ export function parseJsLiteral(text, maxLen = 2e6) {
 }
 const arInt = (x) => { const t = String(x == null ? "" : x).trim().replace(/\./g, ""); return /^\d+$/.test(t) ? +t : null; };
 const ENRE_LISTS = [["cortesServicioMedia", false], ["cortesServicioBaja", false], ["cortesProgramados", true], ["cortesPreventivos", true], ["cortesComunicados", true]];
-export function parseEnre(text, key, zonedToIso) {
+/** ENRE's ultimaActualizacion "HH:MM" (Buenos Aires time, today; a time later than now is yesterday's) -> ISO UTC. */
+export function enreTime(hhmm, zonedToIso, now = Date.now()) {
+  const m = String(hhmm || "").trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return "";
+  const day = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
+  let t = zonedToIso(`${day(now)} ${m[1].padStart(2, "0")}:${m[2]}:00`, "America/Argentina/Buenos_Aires");
+  if (t && Date.parse(t) > now + 10 * 6e4) t = zonedToIso(`${day(now - 864e5)} ${m[1].padStart(2, "0")}:${m[2]}:00`, "America/Argentina/Buenos_Aires");
+  return t;
+}
+export function parseEnre(text, key, zonedToIso, now = Date.now()) {
   if (!SOURCES[key] || !/^enre-/.test(key)) throw badShape("enre key");
   const d = parseJsLiteral(text);
   if (!d || typeof d !== "object" || Array.isArray(d) || !("totalUsuariosSinSuministro" in d)) throw badShape("enre data");
@@ -350,10 +367,13 @@ export function parseEnre(text, key, zonedToIso) {
   const what = { cortesServicioMedia: "medium-voltage fault", cortesServicioBaja: "low-voltage fault", cortesProgramados: "scheduled work",
     cortesPreventivos: "preventive work", cortesComunicados: "announced work" };
   const title = (s) => s.toLowerCase().replace(/(^|[\s(.-])([a-z\u00e0-\u00ff])/g, (m, a, b) => a + b.toUpperCase());
-  return [...groups.values()].map((g) => mk({ source: key, id: `${key}:${slug(g.partido)}-${g.planned ? "planned" : "unplanned"}`,
+  // the per-district sums add up to the feed's own total: a renamed list or field shows as a gap (sources-3)
+  const sum = [...groups.values()].reduce((n, g) => n + g.customers, 0), total = arInt(d.totalUsuariosSinSuministro);
+  if (total != null && Math.abs(sum - total) > Math.max(5, 0.05 * total)) throw badShape(`enre: districts add up to ${sum}, the total is ${total}`);
+  return stamp([...groups.values()].map((g) => mk({ source: key, id: `${key}:${slug(g.partido)}-${g.planned ? "planned" : "unplanned"}`,
     region: "Buenos Aires", area: str(`${title(g.partido)}: ${[...g.places].slice(0, 4).map(title).join(", ")}${g.places.size > 4 ? ` and ${g.places.size - 4} more` : ""}`, 120),
     lat: null, lng: null, customers: g.customers, kind: "outage", planned: g.planned, cause: [...g.lists].map((l) => what[l]).join(", "),
-    level: null, started_at: "", restore_est: g.restore }));
+    level: null, started_at: "", restore_est: g.restore })), enreTime(d.ultimaActualizacion, zonedToIso, now));
 }
 /** The feed's own total of customers without supply (for checks). */
 export const enreTotal = (text) => arInt(parseJsLiteral(text).totalUsuariosSinSuministro);
@@ -392,8 +412,10 @@ export function parseOns(text, zonedToIso, now = Date.now()) {
     const id = `ons-interrupcao-carga:${slug(f[iC])}-${uf.toLowerCase()}-${slug(agent)}`;
     if (seen.has(id)) continue;
     seen.add(id);
+    // a past disturbance (ONS publishes them days later): it ended after its mean duration, never "still out" (sources-7)
+    const end = isFinite(min) && min >= 0 ? new Date(t + Math.round(min) * 6e4).toISOString().replace(/\.\d+Z$/, "Z") : started;
     out.push(mk({ source: "ons-interrupcao-carga", id, country: "BR", region: st[0], area: `${agent} (${uf})`, lat: null, lng: null,
-      customers: null, kind: "outage", planned: false, level: null, started_at: started, restore_est: "",
+      customers: null, kind: "outage", planned: false, level: null, started_at: started, restore_est: end,
       cause: `${isFinite(mw) ? `${Math.round(mw * 10) / 10} MW` : "Load"} of load interrupted${isFinite(min) ? `, mean ${Math.round(min)} min` : ""} (ONS disturbance ${str(f[iC], 20)})` }));
   }
   if (!rows) throw badShape("ons rows");
@@ -408,23 +430,23 @@ export const ADAPTERS = {
   // one feed per ECG region; the source fails only when no region's feed can be read
   "ecg-ghana": async (h) => {
     const out = [], errs = [];
+    let newest = "";
     for (const r of Object.keys(ECG_REGIONS)) {
       const u = `https://www.ecg.com.gh/index.php/en/services/ecg-status/current-system-status/current-status-${r}?format=feed&type=rss`;
-      try { out.push(...parseEcgRss(await h.get(u, { as: "text", retries: 1 }), r, h.zonedToIso)); } catch (e) { errs.push(e); }
+      try { const got = parseEcgRss(await h.get(u, { as: "text", retries: 1 }), r, h.zonedToIso); out.push(...got); if (got.data_at > newest) newest = got.data_at; } catch (e) { errs.push(e); }
     }
     if (errs.length === Object.keys(ECG_REGIONS).length) throw errs[0];
-    return out;
+    return stamp(out, newest);
   },
   "enre-edenor": async (h) => parseEnre(await h.get(h.SOURCES["enre-edenor"].url, { as: "text" }), "enre-edenor", h.zonedToIso),
   "enre-edesur": async (h) => parseEnre(await h.get(h.SOURCES["enre-edesur"].url, { as: "text" }), "enre-edesur", h.zonedToIso),
-  // the whole file (about 770 KB): scripts/lib/net.mjs get() sends no Range header yet (asked in swarm/REQUESTS.md); the
-  // server answers byte ranges (206), and parseOns already reads a header-less tail, so a `range` option is passed for when
-  // get() learns it (an unknown option is ignored today)
+  // the last 64 KB of the whole-history file (about 770 KB): net.mjs get() sends the Range header and the S3 host answers
+  // 206 (seen 2026-11-20); parseOns reads the header-less tail
   "ons-interrupcao-carga": async (h) => parseOns(await h.get(h.SOURCES["ons-interrupcao-carga"].url, { as: "text", timeoutMs: 60000, range: "bytes=-65536" }), h.zonedToIso),
 };
 
 export default {
   sources: SOURCES,
   regions: REGIONS,
-  adapters: Object.fromEntries(Object.entries(ADAPTERS).map(([k, fn]) => [k, async (h) => (await fn(h)).map((x) => h.item(x))])),
+  adapters: Object.fromEntries(Object.entries(ADAPTERS).map(([k, fn]) => [k, async (h) => { const got = await fn(h); return stamp(got.map((x) => h.item(x)), got.data_at); }])),
 };

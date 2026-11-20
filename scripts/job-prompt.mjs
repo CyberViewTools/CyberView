@@ -1,7 +1,9 @@
 // Prints the full prompt for one scheduled AI job: the shared preamble from docs/jobs.md, a blank line,
 // then that job's section. docs/jobs.md stays the single source of truth for every job's instructions.
-// Usage: node scripts/job-prompt.mjs <job>   (sweep, verify, report-review, analysis, deep-sweep, brief, watchdog,
-//        security-review, triage, regional, followup, steward, tabletop, advisory, moderator, scout, editor, guardian, review)
+// Usage: node scripts/job-prompt.mjs <job>   (sweep, review, verify, report-review, analysis, brief, security-review, triage,
+//        regional, followup, tabletop, advisory, moderator, scout, guardian, improver; workers: see HEADINGS)
+// A routine retired in routines.json ("active": false; deep-sweep, steward, watchdog and editor since 2026-11-20), and a
+// worker only it starts, prints a short RETIRED notice instead (exit 0), so a schedule not yet switched off changes nothing.
 // For the triage desk and the sweep it first runs the no-AI housekeeping (start overdue workflows, collect feeds,
 // clear obvious leads), so that work happens every run whether or not the agent remembers it.
 // Set NO_HOUSEKEEPING=1 to skip it (the GitHub Actions fallback does).
@@ -18,6 +20,21 @@ const HEADINGS = {
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
+
+// retired routines: their duties moved elsewhere (routines.json merged_into, docs/jobs.md "Retired routines"); a scheduled task the
+// owner has not switched off yet gets a notice that ends the run at once, before any housekeeping, file or git work
+const WORKER_OF = { "regional-researcher": "deep-sweep" };
+const REG = readJson(join(ROOT, "routines.json"), { routines: [] }).routines || [];
+const retiredOf = (key) => REG.find((r) => key && r.key === key && r.tier === "ai" && r.active === false) || null;
+const gone = retiredOf(job) || retiredOf(WORKER_OF[job]);
+if (gone) {
+  const to = gone.merged_into || "nothing (switched off)";
+  process.stdout.write(`RETIRED: the CyberView "${gone.key}" routine was switched off${gone.retired ? " (" + String(gone.retired).slice(0, 600).replace(/\.$/, "") + ")" : ""}.\n`
+    + `Its duties now belong to: ${to} (docs/jobs.md, "Retired routines").\n`
+    + `Do nothing else: run no other command, write no file, change no data, commit nothing.\n`
+    + `End with exactly: "CyberView ${job}: retired, duties moved to ${to}"\n`);
+  process.exit(0);
+}
 
 if ((job === "sweep" || job === "triage" || job === "moderator") && !process.env.NO_HOUSEKEEPING) {
   const steps = job === "sweep"
@@ -75,22 +92,53 @@ if (job === "researcher") {
   assignment = `YOUR ASSIGNMENT (reviewer ${batch}): ${mine.length} events:\n` + mine.map((id) => `  ${id}`).join("\n") + (mine.length ? "" : "\n  (none: end with \"reviewer " + batch + ": nothing assigned\")");
 } else if (job === "gap") {
   // the focus rotates by rule with every run and every worker, so two runs in a row never search the same ground
+  // weighted to the owner's coverage priorities (2026-11-20): Africa, the Middle East and Turkey, and Latin America come up
+  // twice in every 13 slots, critical infrastructure in 6 of 11 sectors; 13 and 11 are prime, so every focus still comes round
   const FOCUS = [
-    ["Western and Northern Europe", "French, German, Dutch or a Nordic language"], ["Latin America and the Caribbean", "Spanish or Portuguese"],
-    ["East Asia (Japan, South Korea, Taiwan, China, Hong Kong)", "Japanese, Korean or Chinese"], ["Africa", "French, Arabic, Portuguese or Swahili"],
-    ["United States and Canada: state, city, county, school and hospital level", "English or French"], ["The Middle East and Turkey", "Arabic, Turkish, Hebrew or Farsi"],
-    ["South Asia (India, Pakistan, Bangladesh, Sri Lanka, Nepal)", "Hindi, Urdu or Bengali"], ["Southern and Eastern Europe", "Italian, Spanish, Polish, Czech, Romanian or Greek"],
-    ["Southeast Asia and Oceania", "Indonesian, Malay, Thai, Vietnamese or Filipino"], ["Ukraine, Russia, the Caucasus and Central Asia", "Ukrainian or Russian"],
+    ["Africa (West, Central and North: Nigeria, Ghana, Senegal, Cote d'Ivoire, Cameroon, Morocco, Algeria, Tunisia, Egypt)", "French, Arabic or English", "africa", "Nigeria|Ghana|Senegal|Ivoire|Cameroon|Morocco|Algeria|Tunisia|Egypt|Libya|Mali|Burkina|Niger|Benin|Togo|Congo|Gabon"],
+    ["Latin America (Mexico, Central America, Colombia, Peru, Chile, Argentina)", "Spanish", "latin-america", "Mexico|Guatemala|Honduras|Salvador|Nicaragua|Costa Rica|Panama|Colombia|Venezuela|Ecuador|Peru|Bolivia|Chile|Argentina|Uruguay|Paraguay"],
+    ["The Middle East (Gulf states, Iran, Iraq, Jordan, Lebanon, Israel)", "Arabic, Farsi or Hebrew", "middle-east", "Saudi|Emirates|UAE|Qatar|Kuwait|Bahrain|Oman|Yemen|Iran|Iraq|Jordan|Lebanon|Syria|Israel|Palestin"],
+    ["East Asia (Japan, South Korea, Taiwan, China, Hong Kong)", "Japanese, Korean or Chinese", "east-asia", "Japan|Korea|Taiwan|China|Hong Kong|Macau|Mongolia"],
+    ["Turkey, the Caucasus and Central Asia", "Turkish or Russian", "middle-east", "Turkey|Türkiye|Georgia|Armenia|Azerbaijan|Kazakhstan|Uzbekistan|Kyrgyz|Tajikistan|Turkmenistan"],
+    ["Western and Northern Europe", "French, German, Dutch or a Nordic language", "europe", "Germany|France|Netherlands|Belgium|Luxembourg|United Kingdom|Ireland|Switzerland|Austria|Denmark|Sweden|Norway|Finland|Iceland"],
+    ["Africa (East and Southern: Kenya, Ethiopia, Tanzania, Uganda, South Africa, Mozambique, Angola, Zambia)", "Swahili, Portuguese, Amharic or English", "africa", "Kenya|Ethiopia|Tanzania|Uganda|Rwanda|South Africa|Mozambique|Angola|Zambia|Zimbabwe|Botswana|Namibia|Malawi|Madagascar|Mauritius|Somalia|Sudan"],
+    ["United States and Canada: state, city, county, school and hospital level", "English or French", "north-america", "United States|^US$|USA|Canada"],
+    ["Brazil and the Caribbean", "Portuguese or Spanish", "latin-america", "Brazil|Cuba|Dominican|Haiti|Jamaica|Puerto Rico|Trinidad|Bahamas|Barbados"],
+    ["South Asia (India, Pakistan, Bangladesh, Sri Lanka, Nepal)", "Hindi, Urdu or Bengali", "south-asia", "India|Pakistan|Bangladesh|Sri Lanka|Nepal|Bhutan|Maldives|Afghanistan"],
+    ["Southern and Eastern Europe, Ukraine and Russia", "Italian, Spanish, Polish, Romanian, Greek, Ukrainian or Russian", "europe", "Italy|Spain|Portugal|Greece|Cyprus|Malta|Poland|Czech|Slovakia|Hungary|Romania|Bulgaria|Croatia|Serbia|Slovenia|Bosnia|Albania|Macedonia|Montenegro|Moldova|Ukraine|Russia|Belarus|Estonia|Latvia|Lithuania"],
+    ["Southeast Asia and Oceania", "Indonesian, Malay, Thai, Vietnamese or Filipino", "southeast-asia", "Indonesia|Malaysia|Singapore|Thailand|Vietnam|Philippines|Cambodia|Laos|Myanmar|Brunei|Australia|New Zealand|Fiji|Papua"],
+    ["The Middle East and Turkey: government, banks and utilities", "Arabic or Turkish", "middle-east", "Turkey|Türkiye|Saudi|Emirates|UAE|Qatar|Kuwait|Bahrain|Oman|Iran|Iraq|Jordan|Lebanon|Israel"],
   ];
-  const SECTOR = ["hospitals and health services", "banks, payments and insurers", "energy, water and utilities", "airports, airlines, rail, ports and logistics", "telecoms and internet providers", "national and local government", "schools and universities", "manufacturing and retail", "cloud, software and IT service providers"];
-  const n = Math.max(1, Number(batch) || 1), slot = Math.floor(Date.now() / 18e5), f = FOCUS[(slot * 3 + (n - 1) * 5) % FOCUS.length], sec = SECTOR[(slot + (n - 1) * 4) % SECTOR.length];
+  const SECTOR = ["energy, water and utilities", "hospitals and health services", "telecoms and internet providers", "banks, payments and insurers",
+    "airports, airlines, rail, ports and logistics", "national and local government", "energy, water and utilities (grid, oil and gas, water treatment)",
+    "schools and universities", "hospitals, clinics and emergency services", "manufacturing and retail", "cloud, software and IT service providers"];
+  const n = Math.max(1, Number(batch) || 1), slot = /^\d+$/.test(process.env.CYBERVIEW_GAP_SLOT || "") ? Number(process.env.CYBERVIEW_GAP_SLOT) : Math.floor(Date.now() / 18e5), sec = SECTOR[(slot + (n - 1) * 4) % SECTOR.length];
+  // The region in depth comes from the data: where leads keep arriving (last 3 days, leak-site claims left out) but few events
+  // from its countries reach the map; the owner's priority regions count 1.5 times. Runs and batches take turns among the best
+  // three, so two runs in a row differ. Without lead data (or with CYBERVIEW_GAP_DATA=0) the weighted rotation decides.
+  let f = FOCUS[(slot * 3 + (n - 1) * 5) % FOCUS.length], why = "";
+  if (process.env.CYBERVIEW_GAP_DATA !== "0") {
+    const leadsBy = {}, since3 = Date.now() - 3 * 864e5, leadDir = join(DATA, "leads");
+    if (existsSync(leadDir)) for (const fn of readdirSync(leadDir).filter((x) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(x)).sort().slice(-4)) {
+      for (const line of readFileSync(join(leadDir, fn), "utf8").split("\n")) {
+        if (!line) continue; let l; try { l = JSON.parse(line); } catch { continue; }
+        if (l && l.region && l.kind !== "claim" && Date.parse(l.seen_at || 0) > since3) leadsBy[l.region] = (leadsBy[l.region] || 0) + 1;
+      }
+    }
+    const recent = listEventFiles().map((x) => x.e).filter((e) => e && !e.duplicate_of && Date.parse(e.first_seen || 0) > since3);
+    const ranked = FOCUS.map((x) => {
+      const re = new RegExp(x[3], "i"), events = recent.filter((e) => re.test(String(e.country || ""))).length, leads = leadsBy[x[2]] || 0;
+      return { x, leads, events, score: (leads / (1 + events)) * (/^(africa|latin-america|middle-east)$/.test(x[2]) ? 1.5 : 1) };
+    }).filter((r) => r.leads > 0).sort((a, b) => b.score - a.score || a.events - b.events);
+    if (ranked.length) { const r = ranked[(slot + n - 1) % Math.min(3, ranked.length)]; f = r.x; why = ` (chosen from the data: ${r.leads} lead(s) from its region in 3 days, ${r.events} event(s) on the map from its countries)`; }
+  }
   const since = Date.now() - 12 * 36e5, searched = [], runsDir = join(DATA, "runs");
   if (existsSync(runsDir)) for (const d of readdirSync(runsDir).sort().slice(-2)) for (const fn of readdirSync(join(runsDir, d)).filter((x) => /sweep-gap/.test(x))) {
     const r = readJson(join(runsDir, d, fn), {}); if (Date.parse(r.started_at || r.finished_at || 0) < since) continue;
     (r.searches || []).forEach((q) => searched.push(String(typeof q === "string" ? q : (q && (q.query || q.q)) || "").slice(0, 90)));
   }
   const onFile = listEventFiles().map((x) => x.e).filter((e) => e && !e.duplicate_of && Date.parse(e.first_seen || 0) > Date.now() - 36 * 36e5).sort((x, y) => String(x.first_seen).localeCompare(String(y.first_seen))).map((e) => String(e.title).slice(0, 90));
-  assignment = `YOUR ASSIGNMENT (gap researcher ${n}):\n  Region in depth: ${f[0]}. At least half of your region searches in ${f[1]}.\n  Sector for the headline pass: ${sec} (plus anything major you come across).\n`
+  assignment = `YOUR ASSIGNMENT (gap researcher ${n}):\n  Region in depth: ${f[0]}${why}. At least half of your region searches in ${f[1]}.\n  Sector for the headline pass: ${sec} (plus anything major you come across).\n`
     + `  Run log file name: <HHMM>-sweep-gap${n > 1 ? "-" + n : ""}.json\n`
     + (searched.length ? `  Searches the gap researchers already ran in the last 12 hours (do not repeat them; word yours differently):\n${[...new Set(searched.filter(Boolean))].slice(-24).map((q) => "    - " + q).join("\n")}\n` : "")
     + (onFile.length ? `  Added to the map in the last 36 hours (already on file: do not research these again, only add what is NOT here):\n${onFile.slice(-70).map((t) => "    - " + t).join("\n")}\n` : "");

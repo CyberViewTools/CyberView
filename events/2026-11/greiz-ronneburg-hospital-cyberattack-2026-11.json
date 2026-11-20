@@ -9,7 +9,7 @@
   "exec": "An attack on hospital IT interrupted emergency care, showing the patient-safety stakes of IT resilience.",
   "first_seen": "2026-11-17T22:36:00Z",
   "geo_basis": "victim site",
-  "impact": "Emergency room closed for roughly two days.",
+  "impact": "Emergency room unavailable from 15 November; Freie Presse reported on 17 November that it is taking patients again.",
   "lat": 50.657,
   "lng": 12.2,
   "occurred_at": "2026-11-15T09:00:00+01:00",
@@ -18,15 +18,11 @@
   "place": "Greiz, Thuringia",
   "plain": "A cyberattack on a district hospital in Greiz, Germany, discovered on November 15, closed its emergency room. By November 17 it was reported to be taking patients again. Whether data was taken is not settled.",
   "products": [],
-  "qa_checked_at": "2026-11-19T00:27:26Z",
+  "qa_checked_at": "2026-11-20T15:27:03Z",
   "sector": "Healthcare / hospital",
   "severity": 3,
   "source_tier": "established",
   "sources": [
-    {
-      "name": "Pasquale Pillitteri",
-      "url": "https://pasqualepillitteri.it/en/news/34131/hacker-attack-greiz-hospital-emergency-room-closed"
-    },
     {
       "name": "Landratsamt Greiz (district statement)",
       "url": "https://www.landkreis-greiz.de/aktuelles/news-detailseite/hacker-angriff-auf-kreiskrankenhaus-greiz-ronneburg"
@@ -42,29 +38,30 @@
     {
       "name": "kma Online",
       "url": "https://www.kma-online.de/aktuelles/it-digital-health/detail/cyberangriff-auf-kreiskrankenhaus-in-greiz-56516"
+    },
+    {
+      "name": "Pasquale Pillitteri",
+      "url": "https://pasqualepillitteri.it/en/news/34131/hacker-attack-greiz-hospital-emergency-room-closed"
     }
   ],
   "status": "confirmed",
   "summary": "The Greiz district says a cyberattack on its hospital was discovered on Sunday, November 15, and the emergency room was unavailable. Kommunal.de reports the district describes it as an extortion attempt; whether data was taken is not publicly settled and the clinic gives no information on patient data. Freie Presse reported on November 17 that the emergency room is taking patients again.",
   "tags": [
-    "ransomware",
     "critical-infrastructure"
   ],
   "time_basis": "occurred",
   "title": "Cyberattack closes emergency room at Greiz-Ronneburg hospital in Germany",
-  "updated_at": "2026-11-20T15:22:50Z",
+  "updated_at": "2026-11-20T15:26:59Z",
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-20T15:22:50Z",
-    "note": "Compared Landkreis Greiz notice (15 Nov; attack, ER unavailable), Freie Presse (17 Nov; ER taking patients again), kommunal.de (17 Nov; extortion attempt per the district, data theft unsettled), KMA Online (16 Nov; no ransom comment, minister declined to comment on background). Removed 'no state link' (not stated) and 'about two days'; the original pasqualepillitteri.it source still returned errors earlier."
+    "checked_at": "2026-11-20T15:26:59Z",
+    "note": "Read Landkreis Greiz (15 Nov, attack found ~9:00, ER unavailable), kommunal.de (17 Nov, extortion attempt per district, data unsettled), Freie Presse (17 Nov, ER taking patients), kma-online (16 Nov), pasqualepillitteri.it (loads now; police say unauthorized access, no data theft confirmed). Removed unsupported ransomware tag and \"roughly two days\"."
   },
   "review": {
-    "state": "flagged",
-    "at": "2026-11-19T00:27:26Z",
-    "note": "Source unreachable: the only listed source (pasqualepillitteri.it) returned 503 on three tries and in two language versions. it-daily.net (dpa, Nov 16) confirms the attack and the emergency room being unavailable but not the reopening by Nov 17, the extortion description, the no-data-theft statement",
-    "flags": [
-      "single-source-high",
-      "corroborated-one-host"
-    ]
+    "state": "corrected",
+    "at": "2026-11-20T15:27:03Z",
+    "first_at": "2026-11-19T00:27:26Z",
+    "note": "Sources now load. Checked against district notice, kommunal.de, Freie Presse, kma-online: removed unsupported ransomware tag and 'roughly two days'; impact states 15 Nov closure and 17 Nov reopening; district source first.",
+    "flags": []
   }
 }

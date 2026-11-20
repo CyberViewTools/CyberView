@@ -1,12 +1,12 @@
 {
-  "action": "No security action is indicated. Workday customers: confirm that payroll runs, time entries and scheduled integrations from the evening of November 13 completed correctly, and watch Workday's status updates for the cause.",
+  "action": "No security action is indicated. Workday customers: confirm that payroll runs, time entries and scheduled integrations from the evening of November 13 completed correctly.",
   "actor": "",
   "attack": [],
   "category": "outage",
   "country": "United States",
   "cves": [],
   "date": "2026-11-13",
-  "exec": "A payroll and HR supplier outage of unknown cause; a reminder to have a fallback for time-critical pay runs.",
+  "exec": "A payroll and HR supplier outage reportedly tied to backup-system testing; a reminder to have a fallback for time-critical pay runs.",
   "first_seen": "2026-11-17T22:28:00Z",
   "geo_basis": "company HQ",
   "lat": 37.693,
@@ -15,7 +15,7 @@
   "org": "Workday",
   "pin_type": "hq",
   "place": "Pleasanton, CA",
-  "plain": "An outage on the evening of November 13 stopped many employees from signing in to Workday's payroll and staff-management service. Workday gave no cause and nothing points to an attack.",
+  "plain": "An outage on the evening of November 13 stopped many employees from signing in to Workday's payroll and staff-management service. HollywoodLife, citing the San Francisco Chronicle, reports a backup-testing problem; no attack is reported.",
   "products": [
     "Workday"
   ],
@@ -24,36 +24,29 @@
   "source_tier": "established",
   "sources": [
     {
-      "name": "CNN",
-      "url": "https://edition.cnn.com/2026/11/17/us/outages-cyberattack-glitch-security"
-    },
-    {
-      "name": "Fox News timeline",
-      "url": "https://www.foxnews.com/us/america-hits-tech-wall-outages-cripple-email-ground-flights-disrupt-major-banks"
-    },
-    {
       "name": "Hollywood Life",
       "url": "https://hollywoodlife.com/2026/11/14/workday-outage-updates/"
     }
   ],
   "status": "confirmed",
-  "summary": "A widespread outage on the evening of November 13 locked users out of Workday's payroll and HR platform, with nearly 3,000 Downdetector reports shortly after 5 p.m. ET. Workday called it a service disruption under investigation and gave no cause. Hollywood Life says the company serves more than 11,500 organizations; not all were affected. Cyber cause: not indicated.",
+  "summary": "A service disruption on the evening of November 13 locked users out of Workday's payroll and HR platform, with nearly 3,000 Downdetector reports shortly after 5 p.m. ET. Workday said it was working urgently to investigate and resolve it. HollywoodLife, citing the San Francisco Chronicle, reports a problem found during backup-system testing, and, citing People, restoration by about 11 a.m. ET Saturday.",
   "tags": [
     "cloud"
   ],
   "time_basis": "approx",
   "title": "Workday outage locks employees out of payroll and HR systems",
-  "updated_at": "2026-11-20T15:23:51Z",
+  "updated_at": "2026-11-20T15:26:59Z",
   "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-20T15:23:51Z",
-    "note": "Compared Fox News timeline and Hollywood Life (14 Nov; nearly 3,000 Downdetector reports after 5 p.m. ET Friday 13 Nov, more than 11,500 organizations; it cites the San Francisco Chronicle). CNN still returns HTTP 451. Corrected 'about 11,500' to the source's 'more than 11,500'."
+    "state": "single_source",
+    "checked_at": "2026-11-20T15:26:59Z",
+    "note": "Read HollywoodLife (14 Nov): nearly 3,000 Downdetector reports after 5 p.m. ET Fri 13 Nov, Workday statement (investigating), cause per SF Chronicle, restoration ~11 a.m. ET Sat per People. CNN returns 451; Fox page only partly readable, so both removed from sources. Removed \"gave no cause\" (a cause was reported)."
   },
   "review": {
-    "state": "flagged",
-    "at": "2026-11-19T05:13:17Z",
-    "note": "source unreachable: CNN returned HTTP 451; Fox timeline supports Nov 13 ~5pm ET, nearly 3,000 Downdetector reports, about 11,500 companies, but corroboration by a second outlet unverified",
+    "state": "corrected",
+    "at": "2026-11-20T15:27:03Z",
+    "first_at": "2026-11-19T05:13:17Z",
+    "note": "Read HollywoodLife: 'gave no cause' was wrong (backup-testing problem via SF Chronicle, restoration ~11am ET Sat via People); rewrote summary, plain, exec; dropped unreadable CNN and partly read Fox; now single_source.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T05:13:17Z"
+  "qa_checked_at": "2026-11-20T15:27:03Z"
 }

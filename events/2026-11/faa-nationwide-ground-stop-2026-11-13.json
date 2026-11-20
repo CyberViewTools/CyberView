@@ -1,117 +1,119 @@
 {
-  "action": "No action needed; for awareness.",
-  "actor": "",
-  "attack": [],
-  "category": "outage",
-  "country": "United States",
-  "cves": [],
-  "date": "2026-11-13",
-  "exec": "FAA has halted its router replacement after the ground stop; no cyberattack indicated.",
-  "first_seen": "2026-11-17T22:08:00Z",
-  "geo_basis": "agency",
-  "impact": "More than 9,100 flights were canceled, according to FlightAware as cited by Fox Weather; about 3,500 flights were in the air at the time.",
-  "lat": 38.855,
-  "lng": -77.04,
-  "occurred_at": "2026-11-13T15:30:00-05:00",
-  "org": "Federal Aviation Administration",
-  "pin_type": "agency",
-  "place": "Washington, DC",
-  "plain": "A flood of data from newly installed routers knocked out US air traffic communications on November 13. The FAA has now stopped installing those routers and gone back to its old ones while the fault is studied.",
-  "products": [
-    "Juniper routers",
-    "FAA FTI network (L3Harris)"
+ "action": "No action needed; for awareness.",
+ "actor": "",
+ "attack": [],
+ "category": "outage",
+ "country": "United States",
+ "cves": [],
+ "date": "2026-11-13",
+ "exec": "FAA has paused its router replacement after the ground stop; the DNI said it was not seen as a cyber attack.",
+ "first_seen": "2026-11-17T22:08:00Z",
+ "geo_basis": "agency",
+ "impact": "More than 9,100 flights were canceled, according to FlightAware as cited by Fox Weather; about 3,500 flights were in the air at the time.",
+ "lat": 38.855,
+ "lng": -77.04,
+ "occurred_at": "2026-11-13T15:30:00-05:00",
+ "org": "Federal Aviation Administration",
+ "pin_type": "agency",
+ "place": "Washington, DC",
+ "plain": "A faulty router installed during maintenance began flooding other routers and air traffic systems on November 13, grounding US flights. The FAA has paused installing those routers and gone back to its old ones.",
+ "products": [
+  "Juniper routers",
+  "FAA FTI network (L3Harris)"
+ ],
+ "report": {
+  "doc_id": "",
+  "iocs_available": false,
+  "key_findings": [
+   "AP: the FAA paused installing the routers linked to the stop and turned off Juniper routers already installed, relying on older Cisco routers.",
+   "AP: the problem hit 17 of the nation's 22 regional air traffic control centers; it was linked to a router just installed in El Dorado, Arkansas.",
+   "Fox Weather: more than 9,100 flights canceled and more than 24,500 delayed Friday per FlightAware; stop lifted at 8:15 p.m. Friday.",
+   "Reuters: DNI Jay Clayton said officials were not seeing this as a cyber attack incident."
   ],
-  "report": {
-    "doc_id": "",
-    "iocs_available": false,
-    "key_findings": [
-      "A data flood on the FAA FTI network, about 1,000 connection attempts every 4 to 5 seconds, destabilised legacy equipment and disrupted aircraft communications and radar feeds.",
-      "Instability began at 17 of 22 Air Route Traffic Control Centers and spread to several TRACON facilities; radio frequencies and some radar feeds stayed up.",
-      "Preliminary sources are a radar site in Amarillo, Texas and a radio site in El Dorado, Arkansas, where L3Harris was deploying a new router.",
-      "The FAA says all available evidence shows no indication of a cyberattack or outside malicious actor.",
-      "Operators cancelled about 12,462 flights, 9,082 by major airlines; around 3,500 airborne aircraft landed safely."
-    ],
-    "published": "2026-11-15",
-    "publisher": "Federal Aviation Administration",
-    "publisher_type": "government",
-    "read_depth": "full",
-    "recommendations": [
-      "The FAA disabled the affected function on the originating Juniper routers and on more than 60 others, and paused further installations.",
-      "The broadcasting function was disabled on all new routers as a precaution.",
-      "The FAA will reevaluate when maintenance is performed, since this router replacement was done midday at a remote facility."
-    ],
-    "url": "https://www.faa.gov/newsroom/nationwide-ground-stop-questions-and-answers"
-  },
-  "sector": "Aviation / critical infrastructure",
-  "severity": 3,
-  "source_tier": "primary",
-  "sources": [
-    {
-      "name": "FAA",
-      "url": "https://www.faa.gov/newsroom/nationwide-ground-stop-questions-and-answers"
-    },
-    {
-      "name": "US Department of Transportation",
-      "url": "https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-provides-update-restoration-airspace"
-    },
-    {
-      "name": "US Department of Transportation",
-      "url": "https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-announces-lifting-nationwide-ground"
-    },
-    {
-      "name": "BNN Bloomberg / CTV News live updates (AP)",
-      "url": "https://www.bnnbloomberg.ca/business/technology/2026/11/17/apple-nsa-us-banks-services-hit-by-outages-live-updates-here/"
-    },
-    {
-      "name": "Fox News live updates",
-      "url": "https://www.foxnews.com/live-news/tech-outages-microsoft-banks-faa-fbi-11-17-26"
-    },
-    {
-      "name": "Forbes",
-      "url": "https://www.forbes.com/sites/conormurray/2026/11/17/outages-plague-america-these-are-the-explanations/"
-    },
-    {
-      "name": "Fox Weather",
-      "url": "https://www.foxweather.com/weather-news/flights-canceled-delayed-us-ground-stop-november-2026"
-    },
-    {
-      "name": "GovInfoSecurity",
-      "url": "https://www.govinfosecurity.com/anatomy-faa-ground-stop-one-backbone-one-bad-change-a-33396"
-    },
-    {
-      "name": "NBC News",
-      "url": "https://www.nbcnews.com/tech/security/microsoft-faa-chase-nsa-week-major-outages-tech-plan-conspiracy-down-rcna609876"
-    },
-    {
-      "name": "ABC7 Chicago",
-      "url": "https://abc7chicago.com/post/us-sen-tammy-duckworth-democrat-illinois-seeks-answers-faa-outage-officials-rule-coordinated-cyberattack/20052674/"
-    }
+  "published": "2026-11-17",
+  "publisher": "Associated Press via BNN Bloomberg (CTV live blog)",
+  "publisher_type": "news",
+  "read_depth": "secondary",
+  "recommendations": [
+   "The FAA paused further installation of the routers and switched off installed Juniper units (AP)."
   ],
-  "status": "confirmed",
-  "summary": "Legacy FAA equipment became unstable on November 13 when data flooded its FTI network, disrupting 17 of 22 en route centers. AP reports the FAA has paused installing the new routers linked to the failure and switched off Juniper units already installed, relying on old Cisco routers while L3Harris tests the faulty units. Fox Weather says the ground stop was lifted at 8:15 p.m. Friday. The FAA sees no indication of a cyberattack.",
-  "tags": [
-    "critical-infrastructure"
-  ],
-  "time_basis": "occurred",
-  "title": "FAA grounds all US departures after air traffic communications failure",
-  "updated_at": "2026-11-20T15:24:21Z",
-  "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-20T15:23:51Z",
-    "note": "Compared BNN Bloomberg (AP) and Fox News live blog (router fault, 17 of 22 centers, Juniper/Cisco) with Fox Weather (3,500 flights in the air, ground stop lifted 8:15 p.m. Friday, more than 9,100 cancellations per FlightAware). FAA, DOT and Forbes pages return 403. Removed the 12,462 / 9,082 figures and the 'FBI cyber teams' wording, which no readable source states."
+  "url": "https://www.bnnbloomberg.ca/business/technology/2026/11/17/apple-nsa-us-banks-services-hit-by-outages-live-updates-here/"
+ },
+ "sector": "Aviation / critical infrastructure",
+ "severity": 3,
+ "source_tier": "primary",
+ "sources": [
+  {
+   "name": "FAA",
+   "url": "https://www.faa.gov/newsroom/nationwide-ground-stop-questions-and-answers"
   },
-  "review": {
-    "state": "flagged",
-    "at": "2026-11-19T03:26:50Z",
-    "note": "FAA, DOT and Forbes pages return 403 to automated readers; cause, 17 of 22 centers, router pause, Juniper off and Cisco fallback confirmed via BNN/AP and Fox, but the 12,462 / 9,082 / 3,500 figures, the 8:15 pm ET end and 'FBI cyber teams' appear in no readable source (Fox says an FBI team, not cybe",
-    "flags": []
+  {
+   "name": "US Department of Transportation",
+   "url": "https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-provides-update-restoration-airspace"
   },
-  "qa_checked_at": "2026-11-19T03:26:50Z",
-  "links": [
-    {
-      "to": "faa-nationwide-ground-stop-router-2026-11",
-      "rel": "same ground stop, cause reported",
-      "url": "https://www.govinfosecurity.com/anatomy-faa-ground-stop-one-backbone-one-bad-change-a-33396"
-    }
+  {
+   "name": "US Department of Transportation",
+   "url": "https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-announces-lifting-nationwide-ground"
+  },
+  {
+   "name": "BNN Bloomberg / CTV News live updates (AP)",
+   "url": "https://www.bnnbloomberg.ca/business/technology/2026/11/17/apple-nsa-us-banks-services-hit-by-outages-live-updates-here/"
+  },
+  {
+   "name": "Fox News live updates",
+   "url": "https://www.foxnews.com/live-news/tech-outages-microsoft-banks-faa-fbi-11-17-26"
+  },
+  {
+   "name": "Forbes",
+   "url": "https://www.forbes.com/sites/conormurray/2026/11/17/outages-plague-america-these-are-the-explanations/"
+  },
+  {
+   "name": "Fox Weather",
+   "url": "https://www.foxweather.com/weather-news/flights-canceled-delayed-us-ground-stop-november-2026"
+  },
+  {
+   "name": "GovInfoSecurity",
+   "url": "https://www.govinfosecurity.com/anatomy-faa-ground-stop-one-backbone-one-bad-change-a-33396"
+  },
+  {
+   "name": "NBC News",
+   "url": "https://www.nbcnews.com/tech/security/microsoft-faa-chase-nsa-week-major-outages-tech-plan-conspiracy-down-rcna609876"
+  },
+  {
+   "name": "ABC7 Chicago",
+   "url": "https://abc7chicago.com/post/us-sen-tammy-duckworth-democrat-illinois-seeks-answers-faa-outage-officials-rule-coordinated-cyberattack/20052674/"
+  }
+ ],
+ "status": "confirmed",
+ "summary": "A router installed during maintenance at a remote FAA site began flooding other routers and air traffic systems on November 13, per Secretary Duffy (Fox Weather). AP reports 17 of 22 regional centers were hit; the FAA paused new router installs and switched off installed Juniper units. Fox Weather says the stop lifted at 8:15 p.m. Friday. DNI Clayton said it was not seen as a cyber attack (Reuters).",
+ "tags": [
+  "critical-infrastructure"
+ ],
+ "time_basis": "occurred",
+ "title": "FAA grounds all US departures after air traffic communications failure",
+ "updated_at": "2026-11-20T15:27:30Z",
+ "validation": {
+  "state": "corroborated",
+  "checked_at": "2026-11-20T15:27:30Z",
+  "note": "Review: compared summary with Fox Weather (9,100 cancellations, 3,500 in the air, lifted 8:15 p.m., Duffy: router flooding), BNN/AP (17 of 22, Juniper off, Cisco) and Reuters (DNI Clayton). FAA Q&A page 403, so its figures (12,462, 9,082, 1,000 attempts, FTI network, 60 other routers) were removed from the record."
+ },
+ "review": {
+  "state": "corrected",
+  "at": "2026-11-20T15:27:13Z",
+  "first_at": "2026-11-19T03:26:50Z",
+  "note": "Cause, 17 of 22, Juniper/Cisco, 9,100 cancellations, 8:15 pm lift, DNI statement checked against AP/BNN, Fox Weather; FAA page 403 so unverified figures (12,462, 9,082, 1,000 attempts, FTI, 60 routers) removed from summary and report; summary now attributes cause and no-cyber statement",
+  "flags": [
+   "outage-as-attack",
+   "long-summary",
+   "roundup-source"
   ]
+ },
+ "qa_checked_at": "2026-11-20T15:27:13Z",
+ "links": [
+  {
+   "to": "faa-nationwide-ground-stop-router-2026-11",
+   "rel": "same ground stop, cause reported",
+   "url": "https://www.govinfosecurity.com/anatomy-faa-ground-stop-one-backbone-one-bad-change-a-33396"
+  }
+ ]
 }

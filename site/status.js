@@ -1,5 +1,6 @@
 // CyberView status page. Answers, in this order: is the site healthy right now, are we hitting the four targets, what
-// needs attention; everything else sits in collapsed details. Reads site/data/ops.json (routines, run logs, lead queue,
+// needs attention, how the data flows from the feeds to the globe and where it comes from; everything else sits in
+// collapsed details. Reads site/data/ops.json (routines, run logs, lead queue,
 // collectors, improver; scripts/build.mjs), health.json and manifest.json (pipeline timestamps, grid sources, what the
 // build left out, live commits) and efficiency.json (the four targets, usage and output per routine, feeds, coverage,
 // accuracy; scripts/efficiency.mjs). Every record goes through a clean*() function; every panel renders inside safe().
@@ -129,8 +130,32 @@
       accuracy: { days: nn(A.days) || 7, reviewed: int0(A.reviewed), corrected: int0(A.corrected), flagged: int0(A.flagged), corrected_pct: nn(A.corrected_pct),
         weeks: arr(A.weeks, 60).slice(-8).filter(function (x) { return obj(x) && /^\d{4}-\d{2}-\d{2}$/.test(x.week); }).map(function (x) { return { week: x.week, reviewed: int0(x.reviewed), corrected: int0(x.corrected), corrected_pct: nn(x.corrected_pct) }; }),
         categories: arr(A.categories, 12).filter(function (c) { return obj(c) && typeof c.name === "string"; }).map(function (c) { return { name: txt(c.name, 40), n: int0(c.n) }; }) },
-      gaps: arr(o.gaps, 6).map(function (g) { return txt(g, 300); }).filter(Boolean)
+      gaps: arr(o.gaps, 6).map(function (g) { return txt(g, 300); }).filter(Boolean),
+      flow: cleanFlow(o.flow), sources: cleanSources(o.sources)
     };
+  }
+  /** The pipeline's stage counts (efficiency.json flow): last 24 hours and the report's 7 days, and what feeds it. */
+  function cleanFlow(f) {
+    if (!obj(f)) return null;
+    if (typeof f.error === "string") return { error: txt(f.error, 240) };
+    var S = obj(f.sources) || {}, T = obj(S.by_tier) || {};
+    var win = function (w) {
+      w = obj(w); if (!w) return null;
+      return { hours: int0(w.hours), leads: int0(w.leads), stories: int0(w.stories), rule: int0(w.rule), researched: int0(w.researched), to_event: int0(w.to_event),
+        reasons: arr(w.reasons, 3).filter(function (r) { return obj(r) && typeof r.reason === "string"; }).map(function (r) { return { reason: txt(r.reason, 120), n: int0(r.n) }; }),
+        added: int0(w.added), updated: int0(w.updated), reviewed: int0(w.reviewed), passed: int0(w.passed), corrected: int0(w.corrected), flagged: int0(w.flagged) };
+    };
+    return { lead_days: nn(f.lead_days), d1: win(f.d1), d7: win(f.d7),
+      sources: { feeds: int0(S.feeds), feeds_ok: nn(S.feeds_ok) === null ? null : int0(S.feeds_ok), gov: int0(T.gov), vendor: int0(T.vendor), news: int0(T.news), queries: int0(S.queries),
+        collectors: int0(S.collectors), collectors_ok: int0(S.collectors_ok), languages: int0(S.languages), regions: int0(S.regions) } };
+  }
+  /** Where the week's events came from (efficiency.json sources): by tier and collector family, and the top publishers. */
+  function cleanSources(s) {
+    if (!obj(s)) return null;
+    if (typeof s.error === "string") return { error: txt(s.error, 240) };
+    return { events: int0(s.events), tier: countMap(s.tier), family: countMap(s.family),
+      publishers: arr(s.publishers, 10).filter(function (p) { return obj(p) && typeof p.host === "string" && /^[a-z0-9.-]{1,100}$/i.test(p.host); })
+        .map(function (p) { return { host: p.host.toLowerCase(), name: txt(p.name, 60) || p.host, events: int0(p.events) }; }) };
   }
 
   /* ---------------- shared pieces ---------------- */
@@ -245,6 +270,122 @@
     });
     if (!e.targets.length) box.appendChild(el("p", "muted", "No targets in the report."));
     note.textContent = (e.at ? "Worked out " + ago(e.at) + " by a script with no AI model. " : "") + e.note;
+  }
+
+  /* ---------------- B2. how the data flows: one box per stage, left to right (stacked on phones) ---------------- */
+
+  function fmt(n) { return n === null || n === undefined ? "—" : Number(n).toLocaleString("en"); }
+  function pctOf(a, b) { return b ? Math.round(a / b * 100) : null; }
+  function sentence(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ""; }
+  // the stages, with every number from efficiency.json (flow, the speed target) and manifest.json (the map); "—" when missing
+  function flowStages(F, ops, m) {
+    var a = F && F.d1, b = F && F.d7, S = F && F.sources, has1 = !!a, C = m && obj(m.counts) ? m.counts : null;
+    var open = ops && ops.pipeline && ops.pipeline.open !== null ? ops.pipeline.open : null, decided = has1 ? a.rule + a.researched : 0;
+    return [
+      { key: "sources", name: "Sources", fig: S ? fmt(S.feeds) + " feeds" : "—", per: "", f7: "",
+        sub: S ? "+ " + S.collectors_ok + " of " + S.collectors + " collectors, " + S.queries + " news searches" : "",
+        what: S ? S.gov + " government or CERT, " + S.vendor + " vendor, " + S.news + " news feeds; " + S.languages + " languages, " + S.regions + " regions." : "Government, vendor and news feeds, news searches in many languages, and public databases.",
+        share: S && S.feeds_ok !== null ? fmt(S.feeds_ok) + " of " + fmt(S.feeds) + " loading, every 30 min" : "Checked every 30 minutes" },
+      { key: "leads", name: "Leads collected", fig: has1 ? fmt(a.leads) : "—", f7: b ? fmt(b.leads) : "",
+        what: "New items the feeds, searches and databases filed. Scripts, no AI model.",
+        share: has1 && a.leads ? "Grouped into " + fmt(a.stories) + " stories, " + (a.leads / Math.max(1, a.stories)).toFixed(1) + " leads each" : "" },
+      { key: "stories", name: "Stories", fig: has1 ? fmt(a.stories) : "—", f7: b ? fmt(b.stories) : "",
+        what: "Leads about the same thing grouped into one story by a script, so each is read once.",
+        share: has1 ? "Decided in the same 24 h: " + fmt(a.rule) + " by rule, " + fmt(a.researched) + " by AI agents" + (open !== null ? "; " + fmt(open) + " waiting now" : "") : "" },
+      { key: "rule", name: "Closed by rule", fig: has1 ? fmt(a.rule) : "—", f7: b ? fmt(b.rule) : "",
+        what: "No AI model." + (has1 && a.reasons.length ? " Top reasons, 24 h:" : ""), reasons: has1 ? a.reasons : [],
+        share: has1 && decided ? pctOf(a.rule, decided) + "% of the stories decided stop here" : "" },
+      { key: "ai", name: "Researched by AI agents", fig: has1 ? fmt(a.researched) : "—", f7: b ? fmt(b.researched) : "",
+        what: "Stories read from the original pages by CyberView AI (a Claude model).",
+        share: has1 && a.researched ? fmt(a.to_event) + " (" + pctOf(a.to_event, a.researched) + "%) became or updated an event" : "" },
+      { key: "published", name: "Published events", fig: has1 ? fmt(a.added + a.updated) : "—", f7: b ? fmt(b.added + b.updated) : "",
+        sub: has1 ? fmt(a.added) + " new, " + fmt(a.updated) + " updated" : "",
+        what: "Checked events written up from the pages read, then validated and published by scripts.",
+        share: has1 ? fmt(a.reviewed) + " second-reviewed in the same 24 h" : "" },
+      { key: "review", name: "Second review", fig: has1 ? fmt(a.reviewed) : "—", f7: b ? fmt(b.reviewed) : "",
+        sub: has1 ? fmt(a.passed) + " passed, " + fmt(a.corrected) + " corrected, " + fmt(a.flagged) + " flagged" : "",
+        what: "A different AI agent checks every new or changed event against its sources.",
+        share: has1 && a.reviewed ? pctOf(a.passed, a.reviewed) + "% passed unchanged" : "" },
+      { key: "map", name: "On the map", fig: C ? fmt(int0(C.events_bundle)) : "—", f7: "",
+        sub: C ? "of " + fmt(int0(C.events_total)) + " events on file" : "",
+        what: "Checked events of the last seven days, drawn on the globe.", share: "" }
+    ];
+  }
+  function renderFlow(e, ops, m) {
+    var ol = $("flow"), F = e && !e.error ? e.flow : null, err = F && F.error ? F.error : "";
+    ol.textContent = "";
+    if (err) F = null;
+    $("secFlow").dataset.state = F && F.d1 ? "ok" : "missing";
+    flowStages(F, ops, m).forEach(function (s, i, all) {
+      var li = el("li", "fstage"); li.dataset.stage = s.key;
+      var L = el("div", "fl"), R = el("div", "fr"); li.appendChild(L); li.appendChild(R);
+      L.appendChild(el("h3", "fname", s.name));
+      var fig = el("p", "ffig"); fig.appendChild(el("span", "fnum", s.fig));
+      if (s.key !== "sources" && s.key !== "map") fig.appendChild(el("span", "fper", s.fig === "—" ? " not available" : " in 24 h"));
+      if (s.f7) { fig.appendChild(el("span", "fsep", " · ")); fig.appendChild(el("span", "f7", s.f7 + " in 7 days")); }
+      L.appendChild(fig);
+      if (s.sub) R.appendChild(el("p", "fsub", s.sub));
+      R.appendChild(el("p", "fwhat", s.what));
+      if (s.reasons && s.reasons.length) {
+        var ul = el("ul", "freasons");
+        s.reasons.forEach(function (r) { var x = el("li"); x.title = sentence(r.reason); x.appendChild(el("span", "frn", fmt(r.n))); x.appendChild(document.createTextNode(" " + sentence(r.reason.split(",")[0].replace(/^(a|an) /, "")))); ul.appendChild(x); });
+        li.appendChild(ul);
+      }
+      if (s.share) li.appendChild(el("p", "fshare", s.share));
+      if (i < all.length - 1) { var ar = el("span", "farrow", "→"); ar.setAttribute("aria-hidden", "true"); li.appendChild(ar); }
+      ol.appendChild(li);
+    });
+    // speed: the same figure as the Speed target card (efficiency.json), never worked out a second time
+    var sp = e && !e.error ? e.targets.filter(function (t) { return t.key === "speed"; })[0] : null;
+    $("flowSpeed").textContent = sp ? "Speed from the first lead to a published and second-reviewed event: " + (sp.figure || "not measured") + " for nine events in ten, the Speed card's figure (target " + (sp.goal || sp.target).replace(/, nine times in ten$/, "") + ")." : "Speed: not measured yet.";
+    var ld = F ? F.lead_days : null;
+    $("flowNote").textContent = err ? err : !F ? "The flow figures are not available yet; they are worked out at every build by a script with no AI model." :
+      "Each stage counts what it did in the window (leads when seen, decisions when made, events when published, reviews when first done), so the stages need not add up." +
+      (ld !== null && ld < 7 ? " The 7-day figures rest on " + ld + " days of lead data, all there is so far." : "");
+  }
+
+  /* ---------------- B3. where the data comes from: the week's events by tier, collector, region and language ---------------- */
+
+  var TIER_LABEL = { gov: "Government or CERT", vendor: "Security vendor", news: "News", database: "Database row (CVE, breach)", untraced: "No lead (own search)", "before-leads": "Before lead files" };
+  var FAMILY_LABEL = { rss: "Agency, vendor, news RSS", "bing-news": "Bing News", gdelt: "GDELT", "google-news": "Google News (retired)", "cve-kev": "CVE corpus, NVD and KEV", claims: "Leak-site claims",
+    grid: "Grid operators", other: "Other open sources", untraced: "No lead (own search)", "before-leads": "Before lead files" };
+  function barList(counts, label, keep, max) {
+    var c = {}; Object.keys(counts).forEach(function (k) { c[k] = counts[k]; }); (keep || []).forEach(function (k) { if (!has(c, k)) c[k] = 0; });
+    var keys = Object.keys(c).sort(function (x, y) { return c[y] - c[x] || (x < y ? -1 : 1); }), top = Math.max.apply(null, keys.map(function (k) { return c[k]; }).concat([1])), ul = el("ul", "hbars");
+    keys.slice(0, max || 8).forEach(function (k) {
+      var row = el("li", "hrow"); row.dataset.key = k; row.title = label(k); row.appendChild(el("span", "hlab", label(k)));
+      var t = el("span", "htrack"), f = el("span", "hfill"); f.style.width = (c[k] / top * 100) + "%"; t.appendChild(f); row.appendChild(t);
+      row.appendChild(el("span", "hval", fmt(c[k]))); ul.appendChild(row);
+    });
+    if (!keys.length) ul.appendChild(el("li", "muted", "No events yet."));
+    var none = keys.filter(function (k) { return !c[k]; }), shown = keys.filter(function (k) { return c[k]; }).slice(0, max || 8);
+    Array.prototype.slice.call(ul.children).forEach(function (r) { if (r.dataset.key && shown.indexOf(r.dataset.key) < 0) ul.removeChild(r); });
+    var more = keys.length - none.length - shown.length;
+    if (more > 0) ul.appendChild(el("li", "muted", more + " more with fewer events"));
+    if (none.length) { var z = el("li", "muted hnone", "None this week: " + none.map(label).join(", ")); z.dataset.none = none.join(" "); ul.appendChild(z); }
+    return ul;
+  }
+  function renderFrom(e) {
+    var box = $("from"), S = e && !e.error ? e.sources : null; box.textContent = "";
+    if (!S || S.error) { $("fromNote").textContent = S && S.error ? S.error : "The source breakdown is in the efficiency report, which is not available yet."; $("secFrom").dataset.state = "missing"; return; }
+    $("secFrom").dataset.state = "ok";
+    function block(key, title, jumpTo, list) {
+      var d = el("div", "fblock"); d.dataset.from = key;
+      var h = el("h3"); h.appendChild(document.createTextNode(title + " ")); h.appendChild(jump(jumpTo, "details")); d.appendChild(h);
+      d.appendChild(list); box.appendChild(d);
+    }
+    block("tier", "By source tier", "dFeeds", barList(S.tier, function (k) { return has(TIER_LABEL, k) ? TIER_LABEL[k] : dimLabel("", k); }, ["gov", "vendor", "news", "database"], 7));
+    block("family", "By collector", "dFeeds", barList(S.family, function (k) { return has(FAMILY_LABEL, k) ? FAMILY_LABEL[k] : dimLabel("", k); }, ["rss", "bing-news", "gdelt", "cve-kev", "claims", "grid"], 7));
+    // phones show five rows per block (the rest is counted on the "more" line and listed in the details)
+    var rows = window.matchMedia && window.matchMedia("(max-width: 600px)").matches ? 5 : 6;
+    block("region", "By region", "dCoverage", barList(e.d7.region, function (k) { return dimLabel("region", k); }, [], rows));
+    block("language", "By language", "dCoverage", barList(e.d7.language, function (k) { return dimLabel("language", k); }, [], rows));
+    var pub = {}, names = {}; S.publishers.forEach(function (p) { pub[p.host] = p.events; names[p.host] = p.name; });
+    var pl = barList(pub, function (k) { return names[k]; }, [], 10);
+    Array.prototype.forEach.call(pl.querySelectorAll(".hrow"), function (r) { r.title = names[r.dataset.key] + " (" + r.dataset.key + ")"; });
+    block("publishers", "Top publishers cited", "dCoverage", pl);
+    var dd = e.days_of_data;
+    $("fromNote").textContent = fmt(S.events) + " events first seen in the last 7 days" + (dd !== null && dd < 7 ? " (the event files hold " + dd + " days so far)" : "") + ".";
   }
 
   /* ---------------- D. routines: schedule and state merged with usage and output ---------------- */
@@ -510,6 +651,8 @@
     safe(function () { renderHealth(h, m); });
     safe(function () { liveCommits(m); });
     safe(function () { renderTargets(e); });
+    safe(function () { renderFlow(e, ops, m); });
+    safe(function () { renderFrom(e); });
     safe(function () { counts = renderRoutines(ops, e, attn); });
     safe(function () { renderUsage(e); });
     safe(function () { renderFeeds(ops, e, attn); });

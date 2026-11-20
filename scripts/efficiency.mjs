@@ -16,7 +16,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
-import { regionOf, storyCredit, RETIRED_COLLECTORS } from "./metrics.mjs";
+import { regionOf, storyCredit, closureOutcome, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 
 // routines whose work is a document or a check, not a list in a run log: their idle share is not measured
@@ -276,6 +276,102 @@ export function loopCycles(jobruns, since, leases = {}) {
   return out;
 }
 
+/* ---------------- how the data flows, and where it comes from (the status page's flow and sources blocks) ---------------- */
+
+/** Pure: a rule closure's reason cut to its rule ("story ab12cd34: already on file: <id>" -> "already on file"). */
+export function ruleReason(r) {
+  return String(r || "").replace(/^story [0-9a-f]{6,12}: /, "").split(/[:;(]/)[0].replace(/\s+/g, " ").trim().toLowerCase().slice(0, 120) || "no reason recorded";
+}
+const DB_KINDS = new Set(["cve", "breach-db", "status", "exploited"]);
+/** Pure: the tier of one lead as the status page names it: a database row (CVE, breach or status record) whatever its
+ *  feed, else the feed's own tier (gov, vendor, news). */
+export function leadTier(l) {
+  if (l && DB_KINDS.has(l.kind)) return "database";
+  return l && ["gov", "vendor", "news"].includes(l.tier) ? l.tier : "news";
+}
+const FAMILY = { rss: "rss", "bing-news": "bing-news", gdelt: "gdelt", "google-news": "google-news", cvelist: "cve-kev", nvd: "cve-kev", euvd: "cve-kev", kev: "cve-kev", "ransomware-live": "claims", "grid-desk": "grid" };
+/** Pure: the collector family a lead came through (agency, vendor and news RSS; Bing News; GDELT; CVE corpus, NVD and
+ *  KEV; leak-site claims; grid operators; other open sources). */
+export function familyOf(l) { return FAMILY[String((l && l.via) || "rss")] || "other"; }
+
+/** Pure: the numbers for each stage of the pipeline over the last `hours` (24, or the report's 7 days). Every figure is a
+ *  count already defined elsewhere: leads (data/leads, by seen_at), stories (fuse's grouping: storyOf from storyCredit),
+ *  stories closed by a rule (the rule closures) and read by AI agents (closures.jsonl), how many of those ended as an
+ *  event or an update (closureOutcome), events published (first_seen) and updated (updated_at), and the second review
+ *  (accuracy(), by the first review's time). */
+export function flowWindow(inp, storyOf, hours, now = Date.now()) {
+  const since = now - hours * 36e5, sinceIso = iso(since), inW = (t) => { const x = Date.parse(t); return isFinite(x) && x >= since && x <= now + 6e4; };
+  const leads = (inp.leads || []).filter((l) => l && inW(l.seen_at)), stories = new Set();
+  for (const l of leads) stories.add((storyOf && storyOf.get(l.url)) || "u:" + l.url);
+  const events = (inp.events || []).filter(Boolean), ids = new Set(events.map((e) => e.id).filter(Boolean));
+  const ruleIds = new Set(), aiIds = new Set(), toEvent = new Set(), reasons = {};
+  for (const c of inp.closures || []) {
+    if (!c || !inW(c.at)) continue;
+    const k = String(c.story || c.title || c.at);
+    if (c.rule) { if (!ruleIds.has(k)) { ruleIds.add(k); const r = ruleReason(c.reason); reasons[r] = (reasons[r] || 0) + 1; } }
+    else { aiIds.add(k); if (closureOutcome(c.reason, ids)) toEvent.add(k); }
+  }
+  const live = events.filter((e) => !e.duplicate_of);
+  const added = live.filter((e) => inW(e.first_seen)).length;
+  const updated = live.filter((e) => inW(e.updated_at) && !(String(e.first_seen || "") >= sinceIso) && e.updated_at !== e.first_seen).length;
+  const a = accuracy(live, now, hours / 24);
+  return { hours, leads: leads.length, stories: stories.size, rule: ruleIds.size, researched: aiIds.size, to_event: toEvent.size,
+    reasons: Object.entries(reasons).sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)).slice(0, 3).map(([reason, n]) => ({ reason, n })),
+    added, updated, reviewed: a.reviewed, passed: Math.max(0, a.reviewed - a.corrected - a.flagged), corrected: a.corrected, flagged: a.flagged };
+}
+
+/** Pure: what feeds the pipeline: RSS feeds by tier, the other collectors and how many of them load, and the languages
+ *  and regions the feeds and standing searches cover. feeds [{tier, lang, region}], queries [{hl, region}],
+ *  osint data/osint.json, status data/status.json (collect_feeds_ok). */
+export function sourceSummary(feeds = [], queries = [], osint = {}, status = {}) {
+  const tier = { gov: 0, vendor: 0, news: 0 }, langs = new Set(), regions = new Set();
+  for (const f of feeds) { if (!f) continue; if (tier[f.tier] !== undefined) tier[f.tier]++; langs.add(String(f.lang || "en").slice(0, 8)); if (f.region) regions.add(String(f.region).slice(0, 30)); }
+  for (const q of queries) { if (!q) continue; if (q.hl) langs.add(String(q.hl).slice(0, 8)); if (q.region && q.region !== "global") regions.add(String(q.region).slice(0, 30)); }
+  const coll = Object.entries((osint && osint.sources) || {}).filter(([k]) => !RETIRED_COLLECTORS[k]);
+  return { feeds: feeds.length, feeds_ok: status && typeof status.collect_feeds_ok === "number" ? status.collect_feeds_ok : null, by_tier: tier, queries: queries.length,
+    collectors: coll.length, collectors_ok: coll.filter(([, v]) => v && v.ok).length, languages: langs.size, regions: regions.size };
+}
+
+/** Pure: where the events first seen since `since` (ms) came from. Each event is traced to the leads that carried it: the
+ *  leads whose page it cites, and the leads of a story whose closure names it. Tier: the highest of those leads
+ *  (government or CERT, vendor, news, database row); collector family: the lead seen first. An event no lead carried
+ *  (found by an agent's own search, or written from a feed sync) is "untraced"; one first seen before the lead files
+ *  start is "before-leads". URLs are compared without scheme, www, query, fragment and trailing slash. Publishers: the sites the events cite,
+ *  each counted once per event. */
+export const urlKey = (u) => String(u || "").trim().replace(/^https?:\/\/(www\.)?/i, "").replace(/[?#].*$/, "").replace(/\/+$/, "").toLowerCase();
+export function sourcesReport(events, leads, closures, since) {
+  const byUrl = new Map(); let first = Infinity;
+  for (const l of leads || []) { if (!l || !l.url) continue; const k = urlKey(l.url); if (!byUrl.has(k)) byUrl.set(k, l); const t = Date.parse(l.seen_at); if (t < first) first = t; }
+  const ev = (events || []).filter((e) => e && !e.duplicate_of && Date.parse(e.first_seen) >= since), ids = new Set(ev.map((e) => e.id));
+  const viaStory = new Map();
+  for (const c of closures || []) {
+    if (!c || c.rule || !Array.isArray(c.urls)) continue;
+    const id = String(c.reason || "").trim().split(/[\s:;,()]/)[0];
+    if (ids.has(id)) (viaStory.get(id) || viaStory.set(id, []).get(id)).push(...c.urls);
+  }
+  const RANK = { gov: 0, vendor: 1, news: 2, database: 3 }, tier = {}, family = {}, pubs = new Map(), add = (o, k) => { o[k] = (o[k] || 0) + 1; };
+  for (const e of ev) {
+    const urls = (e.sources || []).map((s) => (s && s.url) || "").concat(viaStory.get(e.id) || []);
+    const mine = [...new Set(urls.map(urlKey))].map((u) => byUrl.get(u)).filter(Boolean);
+    // an event first seen before the lead files start cannot be traced to a lead: it is counted apart, not as "untraced"
+    if (!mine.length) { const k = Date.parse(e.first_seen) < first ? "before-leads" : "untraced"; add(tier, k); add(family, k); }
+    else {
+      add(tier, mine.map(leadTier).sort((a, b) => RANK[a] - RANK[b])[0]);
+      add(family, familyOf(mine.slice().sort((a, b) => String(a.seen_at).localeCompare(String(b.seen_at)))[0]));
+    }
+    const hosts = new Set();
+    for (const s of e.sources || []) {
+      let h = ""; try { h = new URL(s.url).hostname.replace(/^www\./, "").toLowerCase(); } catch { continue; }
+      if (!h || hosts.has(h)) continue; hosts.add(h);
+      const p = pubs.get(h) || pubs.set(h, { host: h, n: 0, names: {} }).get(h); p.n++;
+      const nm = String((s && s.name) || "").trim().slice(0, 60); if (nm) p.names[nm] = (p.names[nm] || 0) + 1;
+    }
+  }
+  const publishers = [...pubs.values()].sort((a, b) => b.n - a.n || a.host.localeCompare(b.host)).slice(0, 10)
+    .map((p) => ({ host: p.host, name: (Object.entries(p.names).sort((a, b) => b[1] - a[1])[0] || [p.host])[0], events: p.n }));
+  return { events: ev.length, tier, family, publishers };
+}
+
 /* ---------------- targets ---------------- */
 
 /** Pure: the four targets with their current value and pass, fail or unknown. */
@@ -310,7 +406,7 @@ export function targets({ speed, acc, windows, routines, feeds, days, loop = nul
 
 const jsonl = (p) => { const out = []; if (!existsSync(p)) return out; for (const line of readFileSync(p, "utf8").split("\n")) { if (!line) continue; try { out.push(JSON.parse(line)); } catch {} } return out; };
 
-export function loadInputs(days = 30, now = Date.now()) {
+export async function loadInputs(days = 30, now = Date.now()) {
   const sinceDay = iso(now - days * DAY).slice(0, 10), ud = join(DATA, "usage"), ld = join(DATA, "leads"), rd = join(DATA, "runs");
   const usage = existsSync(ud) ? readdirSync(ud).filter((f) => /^\d{4}-\d{2}\.jsonl$/.test(f) && f.slice(0, 7) >= sinceDay.slice(0, 7)).sort().flatMap((f) => jsonl(join(ud, f))) : [];
   const leads = existsSync(ld) ? readdirSync(ld).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f) && f.slice(0, 10) >= sinceDay).sort().flatMap((f) => jsonl(join(ld, f))).filter((l) => l && l.url && l.seen_at) : [];
@@ -329,7 +425,7 @@ export function loadInputs(days = 30, now = Date.now()) {
         if (!s || !s.url) continue;
         if (rule) byRule.add(s.url);
         const sm = String(s.reason || "").match(/^story ([0-9a-f]{6,12}): (.*)$/);
-        if (sm) { const g = groups.get(sm[1]) || groups.set(sm[1], { at, story: sm[1], reason: sm[2], urls: [] }).get(sm[1]); g.urls.push(s.url); }
+        if (sm) { const g = groups.get(sm[1]) || groups.set(sm[1], { at, story: sm[1], reason: sm[2], urls: [], rule }).get(sm[1]); g.urls.push(s.url); }
       }
       closures.push(...groups.values());
     }
@@ -337,7 +433,12 @@ export function loadInputs(days = 30, now = Date.now()) {
   const events = listEventFiles().map((f) => f.e).filter(Boolean);
   const registry = (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r && r.key);
   return { usage, leads, logs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {},
-    retiredFeeds: (readJson(join(ROOT, "config", "feeds.json"), {}) || {}).retired || [] };
+    retiredFeeds: (readJson(join(ROOT, "config", "feeds.json"), {}) || {}).retired || [], feedList: await feedList(),
+    queries: ((readJson(join(ROOT, "config", "queries.json"), {}) || {}).queries || []).filter((q) => q && typeof q === "object").map((q) => ({ hl: q.hl, region: q.region })) };
+}
+// every RSS feed collected (scripts/collect.mjs activeFeeds), as {tier, lang, region}; none when it cannot be read
+async function feedList() {
+  try { const m = await import("./collect.mjs"); return m.activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}) || {}).map((f) => ({ tier: f.tier, lang: f.lang || "en", region: f.region || "" })); } catch { return []; }
 }
 
 /** Pure: how many days a list of timestamps really covers before now (never more than `max`). */
@@ -350,7 +451,7 @@ export function spanDays(times, max, now = Date.now()) {
 export function report(inp, { now = Date.now(), days = 7, speed = null, windows = null, clusterFn } = {}) {
   const since = now - days * DAY;
   const leadsWin = inp.leads.filter((l) => Date.parse(l.seen_at) >= since);
-  const used = storyCredit(inp.leads, inp.events, inp.closures, clusterFn);
+  const grouped = {}, used = storyCredit(inp.leads, inp.events, inp.closures, clusterFn, grouped);
   const covered = { leads: spanDays(inp.leads.map((l) => l.seen_at), days, now), usage: spanDays(inp.usage.map((u) => u.at), days, now), runs: spanDays(inp.logs.map((l) => l.at).concat(inp.jobruns.map((j) => j.started_at)), days, now) };
   const routines = routineReport(inp.registry, inp.usage, inp.logs, inp.jobruns, inp.status, since, now, inp.leads);
   // the research loop's idle cycles that left no record of their own count as runs of the sweep, and idle ones
@@ -373,6 +474,9 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
       tokens: routines.reduce((s, r) => s + num(r.tokens), 0), cost: Math.round(routines.reduce((s, r) => s + num(r.cost), 0) * 100) / 100 },
     targets: targets({ speed, acc, windows: win, routines, feeds, days: allLeadDays, loop }),
     windows: win, loop, speed, accuracy: acc, routines, feeds: feeds.filter((f) => !f.retired).slice(0, 300), grid,
+    // the status page's "How the data flows" and "Where the data comes from"; a failure here leaves a note, never a broken report
+    flow: (() => { try { return { lead_days: allLeadDays, sources: sourceSummary(inp.feedList || [], inp.queries || [], inp.osint, inp.status), d1: flowWindow(inp, grouped.storyOf, 24, now), d7: flowWindow(inp, grouped.storyOf, days * 24, now) }; } catch (err) { return { error: "The flow figures could not be worked out: " + String((err && err.message) || err).slice(0, 160) }; } })(),
+    sources: (() => { try { return sourcesReport(inp.events, inp.leads, inp.closures, since); } catch (err) { return { error: "The source breakdown could not be worked out: " + String((err && err.message) || err).slice(0, 160) }; } })(),
     retired_feeds: feeds.filter((f) => f.retired).slice(0, 40).map((f) => ({ name: f.name, leads: f.leads, used: f.used, last_lead: f.last_lead, retired_at: f.retired_at, why: f.retired_why })),
     coverage: { d7: coverage(inp.events, leadByUrl, 7, now), d30: coverage(inp.events, leadByUrl, 30, now), events_from: inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))).sort()[0] || null,
       // how many of the 30 days the event files really hold (first_seen), so the page never shows a 2-day count as a 30-day one
@@ -385,7 +489,7 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
 }
 
 export async function build(days = 7, now = Date.now()) {
-  const inp = loadInputs(30, now);
+  const inp = await loadInputs(30, now);
   let speed = null; try { speed = speedOf(Math.max(1, Math.round(Math.min(days * 24, spanDays(inp.leads.map((l) => l.seen_at), days, now) * 24 || 24))), now); } catch {}
   const windows = await usageWindows(inp.usage, now);
   return report(inp, { now, days, speed, windows });

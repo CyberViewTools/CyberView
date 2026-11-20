@@ -14,12 +14,11 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T19:12:06Z",
-  "updated_at": "2026-11-19T12:56:24Z",
+  "updated_at": "2026-11-20T19:41:30Z",
   "category": "incident",
   "date": "2026-11-13",
-  "occurred_at": "2026-11-13T12:00:00Z",
   "date_note": "Detected Nov 13; coverage Nov 15-18.",
-  "title": "PLAID suspends all KARTE services after unauthorized access; 79,249 account emails leaked",
+  "title": "PLAID targets mid-January 2027 to resume KARTE after breach; data of ended-contract companies also affected",
   "org": "PLAID, Inc.",
   "sector": "Technology / customer experience software",
   "country": "Japan",
@@ -30,11 +29,19 @@
   "severity": 2,
   "status": "confirmed",
   "source_tier": "primary",
-  "summary": "PLAID suspended all KARTE services after detecting unauthorized third-party access on November 13. Its notice says the attacker exploited an unnamed server vulnerability and stole credentials. 79,249 KARTE account email addresses are confirmed leaked. Integration credentials and part of the imported data are also listed as leaked, with the number affected still under investigation. As of November 18, services remained suspended with no resumption date.",
-  "plain": "A Japanese customer-data platform shut down all its services after hackers got in and stole login details and thousands of account email addresses.",
-  "exec": "A platform that holds customers' data for many Japanese companies is offline; stolen integration credentials could affect downstream customers.",
-  "action": "KARTE customers should rotate any API keys and integration credentials, review data imported into KARTE, and watch PLAID's status page for updates.",
+  "summary": "PLAID suspended all KARTE services after unauthorized access on November 13. Its November 20 release says a vulnerability was exploited, 79,249 account emails and 45,816 contact records of its own were taken, and some data of 570 to 754 customer companies, by category, was affected. The affected set includes companies whose contracts had ended. PLAID targets a phased resumption in mid-January 2027, a target it says may change.",
+  "plain": "PLAID says its customer-data service KARTE should return in phases around mid-January 2027, and that data of companies that had ended their contracts was also hit.",
+  "exec": "KARTE stays suspended until a target of mid-January 2027; former customers' data is also affected.",
+  "action": "KARTE customers, including former ones, should rotate integration credentials and await PLAID's detailed data, which it says goes to affected companies from November 24.",
   "sources": [
+    {
+      "name": "PLAID release, 20 Nov 2026 (investigation results and outlook for resuming service)",
+      "url": "https://plaid.co.jp/news/20261120/"
+    },
+    {
+      "name": "INTERNET Watch, 20 Nov 2026",
+      "url": "https://internet.watch.impress.co.jp/docs/news/2158284.html"
+    },
     {
       "name": "PLAID notice, 16 Nov 2026 (leak of information possibly including personal data)",
       "url": "https://plaid.co.jp/news/20261116/"
@@ -49,9 +56,9 @@
     }
   ],
   "validation": {
-    "checked_at": "2026-11-19T13:30:00Z",
+    "checked_at": "2026-11-20T19:41:30Z",
     "state": "corroborated",
-    "note": "PLAID's own notices of 13 and 16 Nov read: they confirm 79,249 account emails, integration credentials and part of imported data leaked, a server vulnerability exploited, and services suspended. Smartscope summary agrees."
+    "note": "PLAID's own notices of 13, 16 and 20 Nov read, plus INTERNET Watch (20 Nov), which agrees with the 20 Nov release."
   },
   "review": {
     "state": "corrected",

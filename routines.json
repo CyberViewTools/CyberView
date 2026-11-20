@@ -1,5 +1,5 @@
 {
- "_about": "Every routine that keeps CyberView running. The build checks the AI job schedules here against .github/workflows/ai-jobs.yml, publishes this list with each routine's last run to site/data/ops.json (shown on status.html), and the monitor and watchdog use max_age_hours to spot late routines. To add a routine: add its workflow (or job in ai-jobs.yml), add an entry here, and give it a status_key it writes to data/status.json.",
+ "_about": "Every routine that keeps CyberView running. The build checks the AI job schedules here against .github/workflows/ai-jobs.yml, publishes this list with each routine's last run to site/data/ops.json (shown on status.html), and the monitor uses max_age_hours to spot late routines. To add a routine: add its workflow (or job in ai-jobs.yml), add an entry here, and give it a status_key it writes to data/status.json. To retire one (docs/jobs.md, Retiring a routine): set active false, say why in retired (the evidence) and where its duties went in merged_into, and switch off its Claude Code scheduled task; scripts/job-prompt.mjs then prints a retired notice instead of its instructions. Review of every AI routine: swarm/handoff/jobs-review.md.",
  "routines": [
   {
    "key": "collect",
@@ -120,7 +120,7 @@
    "max_age_hours": 200,
    "active": true,
    "active_since": "2026-11-18T21:00:00Z",
-   "does": "Checks every source link from the last 30 days and lists the broken ones for the data steward."
+   "does": "Checks every source link from the last 30 days and lists the broken ones for the verify desk."
   },
   {
    "key": "security-check",
@@ -145,7 +145,8 @@
    "status_key": "last_sweep_at",
    "max_age_hours": 2,
    "active": true,
-   "does": "Continuous research loop: every few minutes it collects leads, researches new stories and second-reviews earlier events in parallel, then commits (target: lead to published and reviewed in under 15 minutes). The four schedules restart it when it is not running."
+   "does": "Continuous research loop: every few minutes it collects leads, researches new stories and second-reviews earlier events in parallel, then commits (target: lead to published and reviewed in under 15 minutes). The four schedules restart it when it is not running.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "review",
@@ -153,12 +154,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-19T00:00:00Z",
-   "cron": "25 * * * *",
+   "cron": "25 */2 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_review_at",
    "max_age_hours": 5,
    "active": true,
-   "does": "Catch-all for second review: a second agent re-reads the sources of every new or changed event and passes, corrects or flags it. Most reviews now happen inside each research run (continuous review); this hourly desk takes whatever is left, up to 6 reviewers."
+   "does": "Catch-all for second review: a second agent re-reads the sources of every new or changed event and passes, corrects or flags it. Most reviews happen inside the research loop (continuous review); this desk takes whatever is left every 2 hours, up to 6 reviewers.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "backlog",
@@ -166,12 +168,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-19T00:00:00Z",
-   "cron": "55 * * * *",
+   "cron": "55 */3 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_backlog_at",
-   "max_age_hours": 3,
+   "max_age_hours": 7,
    "active": true,
-   "does": "Keeps the research queue empty: rules close routine bulletins and commentary, triagers sort the remaining headlines, and up to four researchers take what the sweeps did not reach."
+   "does": "Keeps the research queue empty when the research loop falls behind: rules close routine bulletins and commentary, triagers sort the remaining headlines, and up to four researchers take what the loop did not reach. Every 3 hours; the loop's own rules run at every collection.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "verify",
@@ -184,7 +187,8 @@
    "status_key": "last_validation_at",
    "max_age_hours": 18,
    "active": true,
-   "does": "Re-checks recent events against their sources, handles readers' error reports, logs corrections."
+   "does": "The verify desk, twice a day: settles disputed events, finds a second independent source for single-source ones, answers readers' error reports, repairs quarantined records, broken or front-page sources and duplicates by rule, and notes open problems for the owner (it took over the data steward and the watchdog).",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "report-review",
@@ -197,7 +201,8 @@
    "status_key": "last_reports_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Reads original government and vendor reports and records findings and recommendations."
+   "does": "Reads original government and vendor reports and records findings and recommendations.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "analysis",
@@ -205,12 +210,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-18T18:11:00Z",
-   "cron": "53 0,12 * * *",
+   "cron": "53 10 * * *",
    "model": "claude-opus-5-5",
    "status_key": "last_analysis_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Finds patterns, chains and ripple effects across the week."
+   "does": "Finds patterns, chains and ripple effects across the week, once a day before the morning brief.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "deep-sweep",
@@ -222,8 +228,10 @@
    "model": "claude-opus-5-5",
    "status_key": "last_deep_sweep_at",
    "max_age_hours": 100,
-   "active": true,
-   "does": "Regional, native-language research where coverage is thin."
+   "active": false,
+   "does": "Regional, native-language research where coverage is thin.",
+   "merged_into": "regional",
+   "retired": "2026-11-20: 1 run (Opus routine, 3 workers, $1.07) added 1 event; two of three workers read no page. The daily regional desk and the loop's gap researchers (a region in depth every 30 minutes) hunt the same thin regions; the deep sweep's region groups and local-language duty moved into the regional desk's weekly rotation."
   },
   {
    "key": "brief",
@@ -231,12 +239,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-18T18:11:00Z",
-   "cron": "47 5,11,17,23 * * *",
+   "cron": "47 11,23 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_brief_at",
-   "max_age_hours": 30,
+   "max_age_hours": 14,
    "active": true,
-   "does": "Writes the morning brief for defenders and records daily counts."
+   "does": "Writes the brief for defenders (morning in the Americas, morning in Asia) and records daily counts.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "watchdog",
@@ -248,8 +257,10 @@
    "model": "claude-haiku-5-5",
    "status_key": "last_watchdog_at",
    "max_age_hours": 30,
-   "active": true,
-   "does": "Triages alerts, late routines and error reports, and fixes what it can."
+   "active": false,
+   "does": "Triages alerts, late routines and error reports, and fixes what it can.",
+   "merged_into": "verify, guardian",
+   "retired": "2026-11-20: 1 run, found nothing (guard healthy, one stale fallback issue). Its checks duplicate the guardian (guard.mjs --heal every 2 hours, outside the ops session) and the verify desk (event reports); its small code fixes broke the rule that jobs never push code. Event reports and quarantined records: verify desk; stale data, late routines and failed deploys: guardian; status.health: verify desk."
   },
   {
    "key": "security-review",
@@ -262,7 +273,8 @@
    "status_key": "last_security_review_at",
    "max_age_hours": 200,
    "active": true,
-   "does": "Reviews the week's code changes and data for security problems."
+   "does": "Reviews the week's code changes and data for security problems.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "triage",
@@ -270,12 +282,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-18T21:00:00Z",
-   "cron": "13 */3 * * *",
+   "cron": "13 */6 * * *",
    "model": "claude-haiku-5-5",
    "status_key": "last_triage_at",
-   "max_age_hours": 7,
+   "max_age_hours": 13,
    "active": true,
-   "does": "Sorts the lead backlog: drops non-events and duplicates, queues real events for the sweep by priority."
+   "does": "Sorts what the rules cannot: leak-site claims (kept only for organisations of public importance) and stories that keep being passed over, which it queues first for the research loop. Every 6 hours; to be merged into the backlog desk once that run sorts claims itself.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "regional",
@@ -288,20 +301,22 @@
    "status_key": "last_regional_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "One under-covered region a day, researched in its own languages."
+   "does": "One thin region a day (Africa, the Middle East, Turkey and Latin America most often), researched in its own languages from national CERTs, regulators and critical-infrastructure operators; it took over the twice-weekly deep sweep.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "followup",
    "name": "Follow-up desk",
    "tier": "ai",
-   "workflow": "claude-task",
+   "workflow": "flow",
    "active_since": "2026-11-18T21:00:00Z",
-   "cron": "23 17 * * *",
+   "cron": null,
    "model": "claude-sonnet-5-5",
-   "status_key": "last_followup_at",
-   "max_age_hours": 30,
+   "status_key": null,
+   "max_age_hours": null,
    "active": true,
-   "does": "Checks whether developing stories and claims were confirmed, denied or grew, and updates them."
+   "does": "Runs inside the research loop every 2 hours (config/pipeline.json flow.followup_every_minutes): checks whether developing stories and claims were confirmed, denied or grew, and updates them. Its separate daily schedule was switched off on 2026-11-20.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "steward",
@@ -313,8 +328,10 @@
    "model": "claude-haiku-5-5",
    "status_key": "last_steward_at",
    "max_age_hours": 30,
-   "active": true,
-   "does": "Repairs weak or broken sources, long summaries and duplicates, by rule."
+   "active": false,
+   "does": "Repairs weak or broken sources, long summaries and duplicates, by rule.",
+   "merged_into": "verify",
+   "retired": "2026-11-20: 2 runs: fixed 23 leak-site sources (front page to listing page) and merged 5 duplicate groups. Its build-warning step was already verify's step 6, and its link, redirect and duplicate repairs do not need a daily wake-up of their own: all of it moved to the verify desk under the same rules (docs/jobs.md, Verify, steps 5 and 6)."
   },
   {
    "key": "tabletop",
@@ -327,7 +344,8 @@
    "status_key": "last_tabletop_at",
    "max_age_hours": 200,
    "active": true,
-   "does": "Turns one real, verified event of the week into a ready-to-run team exercise: scenario, timed updates, questions and what good looks like."
+   "does": "Turns one real, verified event of the week into a ready-to-run team exercise: scenario, timed updates, questions and what good looks like.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "advisory",
@@ -340,7 +358,8 @@
    "status_key": "last_advisory_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps."
+   "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "analyst",
@@ -353,7 +372,8 @@
    "status_key": "last_analyst_at",
    "max_age_hours": 7,
    "active": true,
-   "does": "Opus agents read the vendor advisory, CISA and researchers' write-ups for each flaw in the workbench and explain how it is exploited (never code) and the remediation path: fix, workarounds, verification, and what to do if compromised."
+   "does": "Opus agents read the vendor advisory, CISA and researchers' write-ups for each flaw in the workbench and explain how it is exploited (never code) and the remediation path: fix, workarounds, verification, and what to do if compromised.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "moderator",
@@ -361,12 +381,13 @@
    "tier": "ai",
    "workflow": "claude-task",
    "active_since": "2026-11-18T23:00:00Z",
-   "cron": "10 * * * *",
+   "cron": "10 */3 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_moderator_at",
    "max_age_hours": null,
    "active": true,
-   "does": "Checks every community post against fixed rules, then reviews it for harm and unsourced claims before it can appear; handles reports of published posts. Runs in the same hourly wake-up as the sweep."
+   "does": "Checks every community post against fixed rules, then reviews it for harm and unsourced claims before it can appear; handles reports of published posts. The research loop checks for posts about every 25 minutes; this schedule is the backup every 3 hours.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "scout",
@@ -379,7 +400,8 @@
    "status_key": "last_scout_at",
    "max_age_hours": 200,
    "active": true,
-   "does": "Repairs broken sources and adds official feeds and local-language searches for the regions with the least coverage."
+   "does": "Repairs broken sources, retires noisy ones, and adds official feeds and local-language searches for the thinnest regions (Africa, the Middle East, Turkey, Latin America first) and for critical infrastructure.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "editor",
@@ -391,8 +413,10 @@
    "model": "claude-opus-5-5",
    "status_key": "last_editor_at",
    "max_age_hours": 200,
-   "active": true,
-   "does": "Reviews the week's pipeline numbers and corrections, fixes the three biggest problems in configuration, and reports what needs code."
+   "active": false,
+   "does": "Reviews the week's pipeline numbers and corrections, fixes the three biggest problems in configuration, and reports what needs code.",
+   "merged_into": "improver, scout",
+   "retired": "2026-11-20: had not run yet (weekly, Opus); its duties overlap the daily improver (same metrics, same goal: tune the pipeline from evidence) and the scout (feeds and queries). Weekly review, instruction fixes and data/pipeline.json: improver on Saturdays; noisy feeds and queries: scout."
   },
   {
    "key": "guardian",
@@ -405,7 +429,8 @@
    "status_key": null,
    "max_age_hours": null,
    "active": true,
-   "does": "An independent check, outside the session that runs the other jobs: confirms fresh, validated data is live, restarts what is overdue, and alerts the owner if it cannot."
+   "does": "An independent check, outside the session that runs the other jobs: confirms fresh, validated data is live, restarts what is overdue, and alerts the owner if it cannot.",
+   "reviewed": "2026-11-20"
   },
   {
    "key": "improver",
@@ -418,7 +443,8 @@
    "status_key": "last_improver_at",
    "max_age_hours": 30,
    "active": true,
-   "does": "Continuous improvement: reads the week's cost, yield, speed and second-review results and makes up to three small, bounded, logged changes to the pipeline's dials and per-role models; anything bigger goes to the owner as a request."
+   "does": "Continuous improvement: reads the week's cost, yield, speed and second-review results and makes up to three small, bounded, logged changes to the pipeline's dials and per-role models; on Saturdays it also does the weekly editor's review (the three biggest problems, precise instruction fixes for recurring corrections, data/pipeline.json). Anything bigger goes to the owner as a request.",
+   "reviewed": "2026-11-20"
   }
  ]
 }

@@ -38,9 +38,9 @@ const IESO_ATTRIBUTION = "Copyright © 2004-2026 Independent Electricity System 
 const AESO_ATTRIBUTION = "Grid Alert text from the AESO (www.aeso.ca), unmodified, non-commercial use. Copyright © 2016 – 2026 Alberta Electric System Operator. All rights reserved.";
 
 const IESO_FEEDS = {
-  "ieso-critical": { name: "IESO emergency advisories", feed: "Critical", page: "Emergency-Advisory-Notices" },
-  "ieso-day0": { name: "IESO same-day advisories", feed: "Day0", page: "Day-0-Advisory-Notices-Summary" },
-  "ieso-day1-34": { name: "IESO advisories, days 1-34", feed: "Day1To34", page: "Day-1-to-34-Advisory-Notices-Summary" },
+  "ieso-critical": { signal: true, name: "IESO emergency advisories", feed: "Critical", page: "Emergency-Advisory-Notices" },
+  "ieso-day0": { signal: true, name: "IESO same-day advisories", feed: "Day0", page: "Day-0-Advisory-Notices-Summary" },
+  "ieso-day1-34": { signal: true, name: "IESO advisories, days 1-34", feed: "Day1To34", page: "Day-1-to-34-Advisory-Notices-Summary" },
 };
 const HOSTS = { "london-hydro": ["www.londonhydro.com"], aeso: ["www.aeso.ca"], ieso: ["www.ieso.ca"] };
 const PAGES = {
@@ -243,14 +243,14 @@ const sources = {
     page: PAGES["london-hydro"], hosts: HOSTS["london-hydro"],
     terms_url: "https://www.londonhydro.com/privacy", terms_ok: "silent", customers_served: 169000,
   },
-  "aeso-grid-alert": {
+  "aeso-grid-alert": { signal: true,
     name: "AESO Grid Alert", country: "CA", url: "https://www.aeso.ca/rss/grid-alert/", page: PAGES["aeso-grid-alert"],
     hosts: HOSTS.aeso, terms_url: "https://www.aeso.ca/legal/", terms_ok: "allowed", customers_served: null,
     attribution: AESO_ATTRIBUTION,
   },
 };
 for (const [k, f] of Object.entries(IESO_FEEDS)) {
-  sources[k] = { name: f.name, country: "CA", url: `https://www.ieso.ca/-/media/Files/IESO/Rss/${f.feed}`, page: PAGES[k],
+  sources[k] = { signal: true, name: f.name, country: "CA", url: `https://www.ieso.ca/-/media/Files/IESO/Rss/${f.feed}`, page: PAGES[k],
     hosts: HOSTS.ieso, terms_url: IESO_TERMS, terms_ok: "allowed", customers_served: null, attribution: IESO_ATTRIBUTION };
 }
 

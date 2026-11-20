@@ -150,7 +150,8 @@ export const REGIONS = {
 
 // ---------- source files (scripts/grid-sources/*.mjs) ----------
 // Each file adds sources without touching this one, so builders can work in parallel:
-//   export default { sources: { <key>: { name, country, url, page, hosts: [operator hosts], keyed?, kind?: "outages"|"signal",
+//   export default { sources: { <key>: { name, country, url, page, hosts: [operator hosts], keyed?, signal?: true (reports a grid
+//                                        level, not customers: its series points carry level, customers null), attribution?,
 //                                        terms_url, terms_ok, customers_served } },
 //                    regions: { "<key>|<region>": { name, lat, lng } },
 //                    adapters: { <key>: async (h) => [items] } }
@@ -865,7 +866,8 @@ export function checkConfig(c) {
 export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; older days live on in the monthly roll-up (about 3.5 MB in git, not 9)
 const SLOT = 15 * 6e4;
 export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
-const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo"]);
+// signal sources report a grid level, not customers: built-in ones plus any source file entry with signal: true
+const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES).filter((k) => SOURCES[k].signal === true)]);
 /** Live items of the sources that answered (okSources: their keys) -> one point per operator region for the slot of `now`. */
 export function seriesPoints(items, okSources, now = Date.now()) {
   const at = slotIso(now), ok = new Set(okSources || []), groups = summarize((items || []).filter((x) => x && ok.has(x.source) && OPERATORS.includes(x.source)));

@@ -337,7 +337,8 @@ test("adapters: without a key each keyed host is 'not connected', and no key is 
   await withFetch(reply(200, txt("cfradar.json")), async () => { assert.ok((await ADAPTERS.cfradar()).every((x) => x.source === "cfradar")); });
   await withFetch(reply(200, txt("eia.json")), async () => { assert.ok(Array.isArray(await ADAPTERS.eia())); });
   await withFetch(reply(200, "PK\u0003\u0004zip", "application/zip"), async () => { await assert.rejects(ADAPTERS.entsoe(), (e) => e.code !== "needs_binary_fetch" && /shape|zip/i.test(`${e.code} ${e.message}`)); });
-  assert.deepEqual(OPERATORS, ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]);
+  for (const k of ["hydroquebec", "bchydro", "ukpn", "eskom", "ercot", "aemo"]) assert.ok(OPERATORS.includes(k), k);   // plus any source files
+  assert.ok(!OPERATORS.some((k) => SOURCES[k].keyed));
 });
 
 test("Cloudflare Radar (hand-made from the docs): power-cause outages only, one item per country, centroid, ended > 24 h dropped", () => {

@@ -14,7 +14,7 @@
   "geo_basis": "hq",
   "time_basis": "reported",
   "first_seen": "2026-11-18T18:14:23Z",
-  "updated_at": "2026-11-20T16:26:51Z",
+  "updated_at": "2026-11-20T16:31:51Z",
   "category": "incident",
   "date": "2026-11-17",
   "occurred_at": "2026-11-17T20:35:00Z",
@@ -30,7 +30,7 @@
   "severity": 3,
   "status": "confirmed",
   "source_tier": "established",
-  "summary": "Versions 1.26.1 and 1.26.2 of the agent-framework package on PyPI were published on November 17 with a credential stealer that runs when Python starts. It targets cloud, GitHub and AI credentials and tokens. PyPI quarantined both; 1.26.0 is the last safe version. Italy's CSIRT (ACN) says the malware installed no OS-level persistence and downloaded no further payloads. ITmedia says StepSecurity found a new maintainer account added the same day. Microsoft had not responded to BleepingComputer.",
+  "summary": "Versions 1.26.1 and 1.26.2 of the agent-framework package on PyPI were published on November 17 with a credential stealer that runs when Python starts, targeting cloud, GitHub and AI credentials and tokens. PyPI quarantined both; 1.26.0 is the last safe version. Italy's CSIRT (ACN) says the malware installed no OS-level persistence and downloaded no further payloads. As of 18 November, Microsoft had not responded to BleepingComputer.",
   "plain": "Two bad releases of a popular Microsoft AI package were uploaded to PyPI. Anyone who installed them may have had cloud and developer passwords and tokens stolen.",
   "exec": "A trusted package on an official Microsoft project carried a credential stealer; any build or developer machine that installed it may have exposed cloud access.",
   "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.",
@@ -80,9 +80,12 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T19:10:36Z",
-    "note": "Checked BleepingComputer, Wiz, Socket, ITmedia: versions, Nov 17, targets, quarantine, 1.26.0 safe, Microsoft no response, StepSecurity maintainer claim match. Fixed occurred_at from placeholder 12:00Z to 20:35Z (Wiz: 1.26.1 published 20:35 UTC).",
-    "flags": []
+    "at": "2026-11-20T16:31:59Z",
+    "first_at": "2026-11-19T19:10:36Z",
+    "note": "Compared with Wiz, BleepingComputer, ACN: versions, 17 Nov, targets, quarantine, 1.26.0 safe, ACN no persistence or payloads match. Microsoft non-response now dated 18 Nov; dropped ITmedia StepSecurity sentence (not on pages read now) to fit 75 words. Duplicate credential-stealer-2026-11 (same Wiz p",
+    "flags": [
+      "possible-duplicate"
+    ]
   },
-  "qa_checked_at": "2026-11-19T19:10:36Z"
+  "qa_checked_at": "2026-11-20T16:31:59Z"
 }

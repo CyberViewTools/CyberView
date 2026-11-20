@@ -62,7 +62,7 @@ async function main() {
   for (let i = 1, max = Number(process.env.GIT_SYNC_TRIES) || 5; i <= max; i++) {
     // a branch that already holds merge commits (an orchestrator merging builders' branches) is merged, not rebased:
     // a rebase would replay every builder commit one by one and stop on their conflicts (seen 2026-11-19 and -20)
-    git("fetch", "-q", "origin", BR);
+    git("fetch", "-q", "origin", `+refs/heads/${BR}:refs/remotes/origin/${BR}`);
     if (git("rev-list", "--merges", "--count", `origin/${BR}..HEAD`).stdout.trim() !== "0") {
       git("merge", "-q", "--no-edit", `origin/${BR}`);
       if (git("diff", "--name-only", "--diff-filter=U").stdout.trim()) {

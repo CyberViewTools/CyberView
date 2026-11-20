@@ -72,3 +72,20 @@ test("data branch: create, switch a checkout (carrying uncommitted data), push d
   // 5. ensure on an already-switched checkout does nothing
   assert.match(sh(A, "node", ["scripts/data-branch.mjs", "ensure"]).stdout, /already/);
 });
+
+test("data branch: a clone that fetches main only (cloud sessions) still switches and pushes data", () => {
+  const { origin, clone } = world();
+  const A = clone("A"), C = clone("C");
+  assert.equal(sh(A, "node", ["scripts/data-branch.mjs", "create"]).status, 0);
+  // narrow C's fetch settings to main only, as a single-branch clone has them, and drop any origin/data it got
+  git(C, "config", "--replace-all", "remote.origin.fetch", "+refs/heads/main:refs/remotes/origin/main");
+  git(C, "update-ref", "-d", "refs/remotes/origin/data");
+  let r = sh(C, "node", ["scripts/data-branch.mjs", "ensure"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /switched/);
+  assert.match(git(C, "config", "--get-all", "remote.origin.fetch").stdout, /refs\/heads\/data:refs\/remotes\/origin\/data/);
+  writeFileSync(join(C, "data", "leads", "d.jsonl"), '{"n":1}\n{"n":7}\n');
+  r = sh(C, "node", ["-e", 'import("./scripts/lib/repo.mjs").then(m=>{const x=m.commitData("data: c",["data/leads"]);process.exit(x.committed&&x.pushed?0:1)})']);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(git(C, "--git-dir", origin, "show", "data:leads/d.jsonl").stdout, /"n":7/);
+});

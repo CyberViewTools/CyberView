@@ -16,7 +16,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync, readdir
 import { join, dirname, relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
-import { DATA_BRANCH, dataMode } from "./lib/repo.mjs";
+import { DATA_BRANCH, dataMode, fetchRef, trackDataBranch } from "./lib/repo.mjs";
 import { mergeJson, mergeLines } from "./lib/merge.mjs";
 
 const git = (cwd, ...a) => spawnSync("git", a, { cwd, encoding: "utf8", maxBuffer: 256 * 1024 * 1024, timeout: 600000 });
@@ -89,10 +89,12 @@ export function hideMainData(root = ROOT) {
 }
 
 function ensure() {
-  if (dataMode(ROOT) === "branch") { hideMainData(ROOT); say("already on the data branch layout"); return 0; }
+  if (dataMode(ROOT) === "branch") { trackDataBranch(ROOT); hideMainData(ROOT); say("already on the data branch layout"); return 0; }
   if (!remoteHasData(ROOT)) { say(`origin/${DATA_BRANCH} does not exist yet; keeping the old layout`); return 0; }
   if (flowRunning()) { say("a research loop is running in this checkout; switching after it ends"); return 0; }
-  git(ROOT, "fetch", "-q", "origin", DATA_BRANCH, "main");
+  trackDataBranch(ROOT);
+  const f = git(ROOT, "fetch", "-q", "origin", fetchRef(DATA_BRANCH), fetchRef("main"));
+  if (f.status !== 0) { say(`could not fetch the data branch (${f.stderr.trim()}); keeping the old layout`); return 1; }
   const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14), keep = join(ROOT, `data.pre-${stamp}`);
   // 1. keep a copy of the old data folder (it holds whatever this checkout has not committed yet), then put main's
   //    data/ back to its committed state: git will only leave out of the checkout files it considers unchanged

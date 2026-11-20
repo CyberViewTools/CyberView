@@ -15,6 +15,16 @@ import { ROOT } from "./store.mjs";
 
 export const DATA_BRANCH = "data";
 export const DATA_DIR = join(ROOT, "data");
+/** Fetch a branch AND update its origin/<branch> ref. A plain `git fetch origin <b>` only updates origin/<b> when the
+ *  clone's fetch refspec covers it, and many clones (cloud sessions, single-branch clones) fetch main only. */
+export const fetchRef = (b) => `+refs/heads/${b}:refs/remotes/origin/${b}`;
+/** Make sure this clone's fetch settings cover the data branch, so every later fetch keeps origin/data current. */
+export function trackDataBranch(root = ROOT) {
+  const cur = run(root, ["config", "--get-all", "remote.origin.fetch"]).stdout.split("\n").map((l) => l.trim()).filter(Boolean);
+  const covered = cur.some((r) => r === fetchRef(DATA_BRANCH) || /^\+?refs\/heads\/\*:refs\/remotes\/origin\/\*$/.test(r));
+  if (!covered) run(root, ["config", "--add", "remote.origin.fetch", fetchRef(DATA_BRANCH)]);
+  return !covered;
+}
 const run = (cwd, args, ms = 120000) => spawnSync("git", args, { cwd, encoding: "utf8", timeout: ms, maxBuffer: 64 * 1024 * 1024 });
 
 /** "branch" when ROOT/data is its own git checkout of the data branch, else "main". */

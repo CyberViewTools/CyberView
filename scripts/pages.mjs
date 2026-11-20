@@ -88,7 +88,17 @@ export async function buildPages() {
       const a = about(), n = await numbers();
       body = body.replace("<p data-about-tagline></p>", `<p>${esc(fill(a.tagline, n))}</p>`).replace("<section data-about-generated></section>", aboutSection(a, n));
     }
-    writeFileSync(join(ROOT, "site", `${name}.html`), render(name, body, cfg));
+    // the data access page lists config/data-access.json (scripts/access.mjs); access.js filters it and copies the request
+    let page = {};
+    if (name === "access") {
+      const { about, numbers, fill } = await import("./about.mjs"), { load, accessSection, problems } = await import("./access.mjs");
+      let doc = { sources: [] };
+      try { doc = load(); } catch (e) { console.warn("access: config/data-access.json unreadable: " + e.message); }
+      const bad = problems(doc); if (bad.length) console.warn(`access: ${bad.length} problem(s), those entries left out: ${bad.slice(0, 5).join("; ")}`);
+      body = body.replace("<p data-access-tagline></p>", `<p>${esc(fill(about().tagline, await numbers()))}</p>`).replace("<section data-access-generated></section>", accessSection(doc));
+      page = { scripts: ["access.js"] };
+    }
+    writeFileSync(join(ROOT, "site", `${name}.html`), render(name, body, cfg, page));
     out.push(`${name}.html`);
   }
   // account pages: the only pages allowed to reach Supabase, and only when it is configured

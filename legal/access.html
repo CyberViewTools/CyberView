@@ -1,0 +1,46 @@
+<!-- title: Data CyberView would like to use -->
+<!-- description: Data sources CyberView would like to use but does not have permission or access for, why, and the request it sends each operator. -->
+<style>
+pre.req{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 0;padding:14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;max-width:100%}
+.acgroup h3{margin:22px 0 6px}
+.acgroup table{width:100%;border-collapse:collapse;font-size:13.5px}
+.acgroup th,.acgroup td{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid var(--line)}
+.acgroup td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.acgroup .sub{display:block;color:var(--muted);font-size:12.5px;margin-top:3px;overflow-wrap:anywhere}
+.acgroup .btn{min-height:34px;padding:0 11px;font-size:13px;white-space:nowrap}
+.acfilters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:12px}
+.acfilters select{min-width:0;max-width:100%;width:100%}
+.acfilters label.field{flex:1 1 220px;min-width:0}
+#sources tr[hidden],.acgroup[hidden],.acfilters[hidden]{display:none!important}
+@media (max-width:760px){.acgroup td.num{white-space:normal}}
+</style>
+<section class="intro">
+  <h1>Data CyberView would like to use</h1>
+  <p data-access-tagline></p>
+  <p>These are the sources CyberView would like to show but does not have permission or access to use, and the request it sends each operator.</p>
+</section>
+
+<section class="panel legal" id="why">
+  <h2>Why CyberView asks</h2>
+  <p>CyberView only uses a source when the operator's terms of use and its robots.txt allow it, and it never works around a block: no disguised browsers, no solving challenges or captchas, no borrowed keys. Many power companies publish live outage maps whose data is public to look at but whose terms forbid reuse or automated reading. CyberView respects that and asks instead.</p>
+  <p>A source is listed here when its terms forbid or restrict reuse or automated access (or could not be found), its robots.txt disallows the data, its site blocks automated readers, it needs a key or an account, or it could not be reached.</p>
+</section>
+
+<section class="panel legal" id="use">
+  <h2>What CyberView would do with the data</h2>
+  <ul>
+    <li>Show current outages and grid alerts as context for defenders, next to cyber events, always labelled as context and never as a claim about their cause. An outage is never called an attack unless an official source says so.</li>
+    <li>Credit the operator by name and link to the operator's own outage map or page.</li>
+    <li>Check for updates every few minutes, no more often, from one identified collector.</li>
+    <li>Collect no personal data: counts, areas and times only.</li>
+    <li>Make no commercial use of it. CyberView is free, non-commercial and open source.</li>
+  </ul>
+  <p>When a source is granted, its entry here changes to <strong>Granted</strong> and CyberView's builder connects it on those terms. If an operator declines, the entry says so and CyberView leaves the source alone.</p>
+</section>
+
+<section data-access-generated></section>
+
+<section class="panel legal" id="how">
+  <h2>How this list is made</h2>
+  <p>CyberView AI (a Claude model) compiled this list on 19 November 2026 from each operator's published terms of use, its robots.txt and one test request per source; the quotations are the operators' own words. The list is kept in the <a href="https://github.com/{{owner_github}}/CyberView/blob/main/config/data-access.json">public repository</a>. If anything here is wrong about your organisation, or you would like to grant or decline a request, please <a href="about.html#corrections">tell us</a> and we will update it.</p>
+</section>

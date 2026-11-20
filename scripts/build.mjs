@@ -24,7 +24,7 @@ import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "
 import { load as pipelineMetrics } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
-import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, TAGS } from "./lib/validate.mjs";
+import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -88,6 +88,25 @@ for (const f of files) {
     checkLinks(f.e.links, f.id, ids).forEach((m) => errors.push(`${where}: ${m}`));
     if (errors.length > before) badEvents.add(f.path);
   }
+}
+// quality checks from what the second review kept correcting (scripts/lib/validate.mjs): errors only for events first seen
+// from QUALITY_STRICT_FROM, warnings otherwise. Warnings about events first seen or updated in the last 3 days are printed
+// first, so the 40-line cap never hides them; older ones are counted in one line (the data steward can list them with
+// `node scripts/lib/validate.mjs <id>`), so history does not drown what a job can still fix
+{
+  const recent = dayAgo(3), fresh = [], old = new Map();
+  const live = files.filter((f) => f.e && !f.e.duplicate_of), shared = sharedSourceProblems(live.map((f) => ({ ...f.e, id: f.id })));
+  for (const f of live) {
+    const where = f.path.slice(DATA.length + 1), strictQ = String(f.e.first_seen || "") >= QUALITY_STRICT_FROM;
+    const isFresh = String(f.e.first_seen || "") >= recent || String(f.e.updated_at || "") >= recent;
+    for (const x of checkEventQuality(f.e).concat(shared.get(f.id) || [])) {
+      if (x.level === "error" && strictQ) { errors.push(`${where}: ${x.code}: ${x.text}`); badEvents.add(f.path); }
+      else if (isFresh) fresh.push(`${where}: ${x.code}: ${x.text}`);
+      else old.set(x.code, (old.get(x.code) || 0) + 1);
+    }
+  }
+  warnings.unshift(...fresh);
+  if (old.size) warnings.push(`quality checks on older events: ${[...old].map(([k, n]) => `${k} ${n}`).join(", ")}`);
 }
 const allEvents = files.filter((f) => f.e && !(quarantine && badEvents.has(f.path))).map((f) => f.e);
 const kevAll = listDir("kev").filter((x) => x.r).map((x) => x.r);

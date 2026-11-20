@@ -3,18 +3,21 @@
 // This script finds what needs review and does the checks a machine can do, so the reviewers spend their time on the
 // checks only a reader can do (does the source really say this?).
 //   node scripts/review.mjs queue [--limit 30] [--json]   events added or changed in the last 72 hours that have no review
-//                                                         of their current version, highest risk first, each with its flags
+//                                                         of their current version: any waiting over 20 minutes first
+//                                                         (oldest first), then highest risk, each with its flags
 //   node scripts/review.mjs flags <id>                    the mechanical flags for one event
 //   node scripts/review.mjs pass <id> "<what was checked>"            reviewed against its sources; nothing wrong
 //   node scripts/review.mjs corrected <id> "<what was wrong and is now fixed>"   reviewed; the reviewer fixed the record first
 //   node scripts/review.mjs flagged <id> "<the problem>"             reviewed; a problem remains that the reviewer could not settle
-// pass/corrected/flagged write the event's "review" {state, at, note, flags} and qa_checked_at; "flagged" also lowers
+// pass/corrected/flagged write the event's "review" {state, at, first_at, note, flags} and qa_checked_at (first_at is the time
+// of the event's first review, kept through re-reviews of later updates); "flagged" also lowers
 // validation to "disputed" so the site shows low confidence until the verify job settles it.
 import { leased } from "./lib/lease.mjs";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, saveEvent, findEvent, nowIso, dayAgo } from "./lib/store.mjs";
 import { tokens } from "./triage.mjs";
+import { checkEventQuality, sharedSourceProblems } from "./lib/validate.mjs";
 
 const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.com\/[a-z-]+\/news\/other|t\.co|bit\.ly)\b/i;
 const ATTACK = /\b(cyber ?attack|hack(ed|ers?)?|ransomware|breach(ed)?|intrusion|malware)\b/i;
@@ -52,8 +55,16 @@ export function flagsFor(e, evs = [], today = new Date().toISOString().slice(0, 
     const sameCve = (e.cves || []).length && (e.cves || []).every((c) => (o.cves || []).includes(c)) && e.category === o.category && e.org === o.org;
     if ((q.size >= 4 && inter / Math.min(q.size, t.size || 1) >= 0.8) || sameCve) { add("possible-duplicate", `looks like ${o.id}`); break; }
   }
+  // the event-quality rules the build applies (scripts/lib/validate.mjs), and the checks across events (shared source
+  // pages): shown to the reviewer with the flags above; a code already raised here is not repeated
+  const have = new Set(f.map((x) => x.code));
+  const quality = checkEventQuality(e).concat(e.id ? (sharedSourceProblems(evs.filter((o) => o && o.id !== e.id).concat([e]), [e.id]).get(e.id) || []) : []);
+  for (const x of quality) if (!have.has(x.code)) { have.add(x.code); add(x.code, x.text); }
   return f;
 }
+/** Flags a reviewer must settle (fix the record) before a "pass": a pass is refused while any remains. */
+export const BLOCKS_PASS = ["redirect-source", "no-source", "claim-severity", "claim-corroborated", "future-date", "bad-cve", "confirmed-on-secondary", "corroborated-one-host", "listing-source"];
+export const passBlockers = (codes) => codes.filter((c) => BLOCKS_PASS.includes(c));
 
 /** Risk order for the queue: high severity, more flags, serious flags first. */
 export function risk(e, flags) {
@@ -67,10 +78,24 @@ export function needsReview(e) {
   return Date.parse(e.updated_at) - Date.parse(e.review.at) > 10 * 6e4;   // changed more than 10 minutes after its review
 }
 
+/** When this version of an event started waiting for its review: its last change if it was reviewed before, else its publication. */
+export const waitingSince = (e) => String((e.review && e.review.at && e.updated_at) || e.first_seen || e.updated_at || "");
+export const OVERDUE_MIN = 20;
+/** Pure: queue order. Anything waiting longer than OVERDUE_MIN minutes goes first, oldest first, so a run of high-risk
+ *  events can never hold a quiet one back for hours; the rest by risk, then oldest first. items: [{e, risk}]. */
+export function order(items, now = Date.now()) {
+  const late = (x) => now - Date.parse(waitingSince(x.e)) > OVERDUE_MIN * 6e4, older = (a, b) => waitingSince(a.e).localeCompare(waitingSince(b.e));
+  return items.slice().sort((a, b) => (late(b) - late(a)) || (late(a) ? older(a, b) : (b.risk - a.risk) || older(a, b)));
+}
+/** Pure: the review record. first_at keeps the time of the event's first second review through later re-reviews of updates
+ *  (the speed figures measure lead -> first review; review.at is always the latest review). */
+export function reviewRecord(prev, state, at, note, flags) {
+  return { state, at, first_at: (prev && (prev.first_at || prev.at)) || at, note, flags };
+}
 function queue() {
   const all = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of), recent = all.filter((e) => e.date >= dayAgo(30));
-  return all.filter((e) => String(e.first_seen || e.updated_at || "") >= dayAgo(3) && needsReview(e))
-    .map((e) => { const flags = flagsFor(e, recent); return { e, flags, risk: risk(e, flags) }; }).sort((a, b) => b.risk - a.risk);
+  return order(all.filter((e) => String(e.first_seen || e.updated_at || "") >= dayAgo(3) && needsReview(e))
+    .map((e) => { const flags = flagsFor(e, recent); return { e, flags, risk: risk(e, flags) }; }));
 }
 
 function main() {
@@ -88,7 +113,7 @@ function main() {
   if (cmd === "queue") {
     const q = queue(), li = process.argv.indexOf("--limit"), lim = li > 0 ? Number(process.argv[li + 1]) : 30;
     if (process.argv.includes("--json")) { console.log(JSON.stringify(q.slice(0, lim).map((x) => ({ id: x.e.id, severity: x.e.severity, status: x.e.status, category: x.e.category, title: x.e.title, flags: x.flags, sources: (x.e.sources || []).map((s) => s.url) })))); return; }
-    console.log(`${q.length} event(s) waiting for a second review (added or changed in the last 72 hours). Highest risk first:`);
+    console.log(`${q.length} event(s) waiting for a second review (added or changed in the last 72 hours). Waiting over ${OVERDUE_MIN} minutes first, then highest risk:`);
     q.slice(0, lim).forEach((x) => console.log(`[sev ${x.e.severity}${x.e.status === "claimed" ? " claim" : ""}] ${x.e.id}  ${String(x.e.title).slice(0, 90)}\n       ${x.flags.length ? "FLAGS: " + x.flags.map((f) => f.code).join(", ") : "no mechanical flags"}  |  ${(x.e.sources || []).length} source(s)`));
     return;
   }
@@ -100,8 +125,8 @@ function main() {
   const note = rest.join(" ").replace(/\s+/g, " ").trim().slice(0, 300);
   if (note.length < 8) { console.error("say what was checked or what is wrong (at least a few words)"); process.exit(1); }
   const left = flagsFor(f.e, recent).map((x) => x.code);
-  if (cmd === "pass" && left.some((c) => /^(redirect-source|no-source|claim-severity|claim-corroborated|future-date|bad-cve)$/.test(c))) { console.error(`cannot pass ${id}: fix these first: ${left.join(", ")}`); process.exit(1); }
-  const at = nowIso(), e = { ...f.e, review: { state: cmd === "pass" ? "passed" : cmd, at, note, flags: left.slice(0, 12) }, qa_checked_at: at };
+  if (cmd === "pass" && passBlockers(left).length) { console.error(`cannot pass ${id}: fix these first (or use corrected/flagged): ${passBlockers(left).join(", ")}`); process.exit(1); }
+  const at = nowIso(), e = { ...f.e, review: reviewRecord(f.e.review, cmd === "pass" ? "passed" : cmd, at, note, left.slice(0, 12)), qa_checked_at: at };
   if (cmd === "flagged") e.validation = { state: "disputed", checked_at: at, note: ("Second review: " + note).slice(0, 240) };
   saveEvent(e, f.path);
   console.log(`review: ${id} ${e.review.state}${left.length ? " (remaining flags: " + left.join(", ") + ")" : ""}`);

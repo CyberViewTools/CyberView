@@ -1,5 +1,7 @@
 // Validation for the newer record shapes, kept here so unit tests can reach them without running the build.
 // Each function returns a list of problems (strings); an empty list means the record is fine.
+// checkEventQuality and sharedSourceProblems return [{level, code, text}] instead (see there).
+import { pathToFileURL } from "node:url";
 
 const https = (u) => typeof u === "string" && /^https:\/\/[^\s"'<>]+$/.test(u) && (() => { try { const x = new URL(u); return x.pathname !== "/" || !!x.search; } catch { return false; } })();
 const text = (v, max) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
@@ -190,4 +192,114 @@ export function checkChat(c, known) {
   if (c.note != null && !text(c.note, 200)) p.push("note must be text (at most 200 characters)");
   if (c.removed != null && typeof c.removed !== "boolean") p.push("removed must be true or false");
   return p;
+}
+
+/**
+ * Event quality: the mistakes the second review kept correcting (reviews of 13-20 November 2026: 118 of 346 corrected or
+ * flagged), where a rule can decide. Returns [{level: "error"|"warn", code, text}]. The build fails on "error" only for
+ * events first seen from QUALITY_STRICT_FROM (older records get it as a warning, so history never blocks a commit);
+ * "warn" is always a warning. `node scripts/lib/validate.mjs <event id...>` prints them for chosen events.
+ * Checks that need the other events (shared source pages, possible duplicates) are in sharedSourceProblems().
+ */
+export const QUALITY_STRICT_FROM = "2026-11-21T00:00:00Z";
+// Pages that relay other publishers' reporting: breach trackers, weekly roundups, leak-site mirrors, law-firm lead pages,
+// forums. They can point to a story; on their own they cannot carry "confirmed", "official" or "corroborated".
+export const SECONDARY_HOSTS = ["ransomware.live", "ransomlook.io", "redpacketsecurity.com", "sharkstriker.com", "privacyguides.org", "agentbeam.com", "claimdepot.com", "classaction.org", "hookphish.com", "windowsforum.com", "mlq.ai", "letsdatascience.com", "hackmanac.com", "breachsense.com"];
+// a tag, category, label, author, topic or search listing rather than one article (e.g. thehackernews.com/search/label/X)
+const LISTING = /\/(tag|tags|category|categories|label|labels|author|authors|topic|topics|archive|archives)\/[^/]+\/?(page\/\d+\/?)?$|\/search\/?$/i;
+const hostOf = (u) => { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ""); } catch { return ""; } };
+export const isSecondary = (u) => { const h = hostOf(u); return !!h && SECONDARY_HOSTS.some((x) => h === x || h.endsWith("." + x)); };
+export function isListingPage(u) {
+  try { const x = new URL(u); return LISTING.test(x.pathname) || ((x.pathname === "/" || /\/search\b/i.test(x.pathname)) && /[?&](s|q|query|search)=/i.test(x.search)); } catch { return false; }
+}
+// figures a reader acts on: 1,234 / 4.5 million / 2 billion (not years, versions or ids)
+const FIGURE = /\b\d{1,3}(?:,\d{3})+\b|\b\d+(?:\.\d+)?\s?(?:million|billion|bn)\b/gi;
+const TAG_NEEDS = {
+  "zero-day": [/zero[- ]day|0-day|before (a |any )?(patch|fix)|no (patch|fix) (was |is )?available|unpatched|exploited/i, "a source must say it was exploited before a fix existed"],
+  "poc-public": [/proof[- ]of[- ]concept|\bpoc\b|exploit code|public(ly)? (available )?exploit|exploit (is |was |has been )?(public|released|published)/i, "the text must say exploit code or a proof of concept is public"],
+  "supply-chain": [/supply[- ]chain|third[- ]party|supplier|vendor|package|dependenc|npm|pypi|update (server|mechanism|channel)|library|plugin|extension/i, "the text must say the attack came through a supplier, package or update"],
+};
+export function checkEventQuality(e) {
+  const out = [], add = (level, code, text) => out.push({ level, code, text });
+  if (!e || typeof e !== "object") return out;
+  const src = (Array.isArray(e.sources) ? e.sources : []).filter((s) => s && typeof s.url === "string");
+  const hosts = new Set(src.map((s) => hostOf(s.url)).filter(Boolean));
+  // dates: the day it happened, not the day an article (or a roundup) was published
+  const seen = String(e.first_seen || "").slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(seen) && /^\d{4}-\d{2}-\d{2}$/.test(e.date || "") && (Date.parse(seen) - Date.parse(e.date)) / 864e5 > 7 && !String(e.date_note || "").trim())
+    add("error", "old-date-no-note", `date ${e.date} is more than 7 days before first_seen ${seen}: write "date_note" saying what the date is (attack, disclosure, filing) and why the event is added now`);
+  if (e.occurred_at != null && e.occurred_at !== "") {
+    if (!["occurred", "reported", "published", "approx"].includes(e.time_basis)) add("error", "occurred-no-basis", 'occurred_at needs "time_basis": occurred, reported, published or approx (which time the source states)');
+    if (/T(00|12):00(:00(\.0+)?)?(Z|[+-]00:?00)$/.test(String(e.occurred_at)) && e.time_basis !== "approx")
+      add("warn", "occurred-placeholder", `occurred_at ${e.occurred_at} looks like a placeholder: use the time a source states, mark it time_basis "approx", or leave occurred_at out`);
+  }
+  // validation and status must match what the sources can carry
+  const v = e.validation && e.validation.state;
+  if (v === "corroborated" && hosts.size < 2 && e.source_tier !== "primary")
+    add("error", "corroborated-one-host", '"corroborated" needs two independent publishers, each stating the core fact; with one publisher it is "single_source"');
+  const allSecondary = src.length > 0 && src.every((s) => isSecondary(s.url));
+  if (allSecondary && (e.status === "confirmed" || e.status === "official"))
+    add("error", "confirmed-on-secondary", `status "${e.status}" rests only on trackers or roundups (${[...hosts].join(", ")}): read and cite the organisation's own notice, a regulator filing or the original report, or set status "developing"`);
+  if (allSecondary && v === "corroborated") add("error", "corroborated-on-secondary", "trackers and roundups relay one report; they cannot corroborate it");
+  if (allSecondary && e.source_tier && e.source_tier !== "aggregator") add("warn", "tier-secondary", `every source is a tracker or roundup, so source_tier is "aggregator", not "${e.source_tier}"`);
+  if (e.status === "confirmed" && e.source_tier === "aggregator" && !allSecondary) add("warn", "confirmed-on-aggregator", '"confirmed" needs the organisation\'s or an authority\'s own statement among the sources; an aggregator relaying it is not enough');
+  for (const s of src) if (isListingPage(s.url)) add("error", "listing-source", `source ${s.url.slice(0, 100)} is a tag, category, search or listing page: cite the specific article`);
+  // tags only for what the text (and so the source) says
+  const words = `${e.title || ""} ${e.summary || ""} ${e.plain || ""} ${e.exec || ""}`;
+  for (const [t, [re, why]] of Object.entries(TAG_NEEDS)) if ((e.tags || []).includes(t) && !re.test(words)) add("warn", "tag-unsupported", `tag "${t}": ${why}; otherwise remove the tag`);
+  // an actor named in CyberView's own voice
+  if (e.actor && !e.attribution && e.status !== "claimed" && !/claim|unattributed|unknown|suspected/i.test(e.actor) && !/attribut|according to|\bsaid\b|\bsays\b|linked|tracks|blamed|assess/i.test(e.summary || ""))
+    add("warn", "actor-unsourced", `actor "${String(e.actor).slice(0, 40)}" is named but the summary does not say who attributed it ("according to <firm or agency>")`);
+  // every figure in the title and exec is in the summary or impact, as stated there
+  const base = `${e.summary || ""} ${e.impact || ""}`.replace(/,/g, "").toLowerCase();
+  for (const k of ["title", "exec"]) {
+    const miss = (String(e[k] || "").match(FIGURE) || []).find((n) => !base.includes(n.replace(/,/g, "").toLowerCase().match(/[\d.]+/)[0]));
+    if (miss) add("warn", "figure-not-in-summary", `"${miss}" in ${k} is not in the summary or impact: every figure goes in the summary exactly as the source states it (with its "about", "over", "at least")`);
+  }
+  return out;
+}
+
+/**
+ * Checks across events: a source page cited by another event about the same organisation or CVE is a possible duplicate;
+ * a page cited by three or more events is a roundup or tracker, not the report itself (government and CERT pages excepted:
+ * one bulletin can cover several flaws). events: [{id, org, cves, sources, duplicate_of}]. Returns Map(id -> [{level, code,
+ * text}]) for the ids in `only` (all when omitted). Warnings only.
+ */
+export function sharedSourceProblems(events, only) {
+  const by = new Map(), want = only ? new Set(only) : null, out = new Map();
+  const norm = (u) => String(u || "").replace(/#.*$/, "").replace(/\/+$/, "").replace(/^http:/, "https:").replace(/\/\/www\./, "//");
+  const pages = (e) => [...new Set((Array.isArray(e.sources) ? e.sources : []).map((x) => x && norm(x.url)).filter(Boolean))];
+  const live = events.filter((e) => e && e.id && !e.duplicate_of);
+  for (const e of live) for (const s of pages(e)) (by.get(s) || by.set(s, []).get(s)).push(e);
+  const org = (e) => String(e.org || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  for (const e of live) {
+    if (want && !want.has(e.id)) continue;
+    const p = [];
+    for (const s of pages(e)) {
+      const others = (by.get(s) || []).filter((o) => o.id !== e.id);
+      const same = others.find((o) => (org(o) && org(o) === org(e)) || (e.cves || []).some((c) => (o.cves || []).includes(c)));
+      if (same) p.push({ level: "warn", code: "possible-duplicate", text: `cites the same page as ${same.id} about the same organisation or CVE: if it is the same event, keep the earlier record, merge sources into it and set "duplicate_of" on the later` });
+      else if (others.length >= 2 && !/\.gov(\.[a-z]{2})?$|\.mil$|cisa|cert|ncsc|githubusercontent/i.test(hostOf(s))) p.push({ level: "warn", code: "roundup-source", text: `${s.slice(0, 90)} is also cited by ${others.length} other events: a roundup or tracker; cite the article or notice it summarises and take the date from that` });
+    }
+    if (p.length) out.set(e.id, p);
+  }
+  return out;
+}
+
+// CLI: node scripts/lib/validate.mjs <event id...>   the quality checks for those events, as the build will report them
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const { listEventFiles } = await import("./store.mjs");
+  const ids = process.argv.slice(2);
+  if (!ids.length) { console.error("usage: node scripts/lib/validate.mjs <event id...>"); process.exit(1); }
+  const all = listEventFiles().filter((f) => f.e).map((f) => ({ ...f.e, id: f.id })), shared = sharedSourceProblems(all, ids);
+  let errs = 0;
+  for (const id of ids) {
+    const e = all.find((x) => x.id === id);
+    if (!e) { console.log(`${id}: no such event`); errs++; continue; }
+    const strict = String(e.first_seen || "") >= QUALITY_STRICT_FROM;
+    const p = checkEventQuality(e).concat(shared.get(id) || []).map((x) => ({ ...x, level: x.level === "error" && !strict ? "warn" : x.level }));
+    errs += p.filter((x) => x.level === "error").length;
+    console.log(p.length ? p.map((x) => `${id}: ${x.level === "error" ? "ERROR" : "warning"} ${x.code}: ${x.text}`).join("\n") : `${id}: no quality problems found`);
+  }
+  process.exit(errs ? 1 : 0);
 }

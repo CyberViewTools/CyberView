@@ -59,7 +59,7 @@ scripts/grid-desk.mjs    the grid researchers' queue: `plan` (leases kind grid),
 scripts/context.mjs      context layers from IODA and GDACS, run by feeds.yml every 2 h (exports its parsers for tests)
 scripts/lib/net.mjs      fetch with time limit, retries with backoff and a per-host circuit breaker; use it in new fetchers
 scripts/collect.mjs      collects leads from 131 agency, vendor and news RSS feeds (plus config/feeds.json) into data/leads/<date>.jsonl (every 30 min, no AI model)
-scripts/osint.mjs        other open sources as leads: Google News, Bing News, GDELT (config/queries.json), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
+scripts/osint.mjs        other open sources as leads: Bing News (every standing search in its own language; aggregator copies such as msn.com dropped) and GDELT (config/queries.json; Google News is not collected: its robots.txt disallows /rss/), HIBP, ENISA EUVD, NVD, ransomware.live claims, Hacker News, cloud status; `exploits` writes data/exploits.json
 scripts/fuse.mjs         groups leads into stories ranked by corroboration, publication age and type (list, show, done); `developing()` feeds the app's "being checked" list; data/stories.json is untracked working state
 scripts/analyst.mjs      the exploit analyst's queue: which workbench flaws need an exploitation and remediation analysis, most urgent first
 scripts/git-sync.mjs     push after a commit (to the data branch once ./data is mounted, then start the deploy), merging status.json and lead files that several jobs write at once

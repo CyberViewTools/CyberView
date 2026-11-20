@@ -1,9 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseGoogleNews, parseBingNews, parseGdelt, parseHibp, parseEuvd, parseNvd, parseRansomwareLive, parseHn, parseStatuspage, parseGcp, parseRepoSearch } from "../../scripts/osint.mjs";
+import { parseGoogleNews, parseBingNews, parseGdelt, parseHibp, parseEuvd, parseNvd, parseRansomwareLive, parseHn, parseStatuspage, parseGcp, parseRepoSearch, isAggregator, searchedRecently } from "../../scripts/osint.mjs";
 import { cluster, story, keyTokens, countPublishers, cvesIn } from "../../scripts/fuse.mjs";
 import { compute, regionOf } from "../../scripts/metrics.mjs";
 import { extraFeeds, FEEDS } from "../../scripts/collect.mjs";
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const HERE = dirname(fileURLToPath(import.meta.url)), FIX = join(HERE, "..", "fixtures", "grid", "news");
 
 const NOW = Date.parse("2026-11-18T22:00:00Z");
 test("google news: publisher split from the headline, redirect link kept", () => {
@@ -17,7 +21,7 @@ test("bing news: the real address is taken out of the redirect; unsafe ones drop
 });
 test("gdelt, hibp, euvd, nvd rows become leads", () => {
   assert.deepEqual(parseGdelt({ articles: [{ url: "https://a.example/x", title: "Hospital attack", seendate: "20261118T101500Z", domain: "a.example", language: "Spanish", sourcecountry: "Mexico" }, { url: "ftp://x", title: "no" }] }),
-    [{ title: "Hospital attack", url: "https://a.example/x", published: "2026-11-18T10:15:00Z", source: "a.example", lang: "spanish", country: "Mexico" }]);
+    [{ title: "Hospital attack", url: "https://a.example/x", published: "2026-11-18T10:15:00Z", source: "a.example", lang: "es", country: "Mexico" }]);
   const h = parseHibp([{ Name: "Acme", Title: "Acme", PwnCount: 179745, BreachDate: "2026-11-12", AddedDate: "2026-11-13T05:41:32Z", IsVerified: true, DataClasses: ["Email addresses"] },
     { Name: "Old", Title: "Old", AddedDate: "2020-01-01T00:00:00Z", IsVerified: true }, { Name: "Fake", Title: "Fake", AddedDate: "2026-11-17T00:00:00Z", IsVerified: true, IsFabricated: true }], 7, NOW);
   assert.equal(h.length, 1); assert.equal(h[0].url, "https://haveibeenpwned.com/Breach/Acme"); assert.match(h[0].title, /179,745 accounts/);
@@ -86,4 +90,35 @@ test("extra feeds from config: https only, known tiers, no repeats", () => {
     { name: "Bad tier", tier: "blog", url: "https://x.example/rss" }, { name: "Dup url", tier: "news", url: FEEDS[0].url }, null] });
   assert.deepEqual(ok.map((f) => f.name), ["New CERT"]);
   assert.deepEqual(extraFeeds(null), []);
+});
+
+// collectors (2026-11-20): Google News is not collected, Bing News asks every standing search in its own language
+test("google news is not collected: robots.txt disallows /rss/ and its links are redirects that can never be cited", () => {
+  const src = readFileSync(join(HERE, "..", "..", "scripts", "osint.mjs"), "utf8");
+  assert.doesNotMatch(src, /news\.google\.com\/rss/);
+  assert.doesNotMatch(src, /"google-news":\s*async/);
+});
+test("bing news: the publisher's name is kept from a real reply; aggregator copies are recognised", () => {
+  const fr = parseBingNews(readFileSync(join(FIX, "bing-fr-fr.xml"), "utf8"), Date.parse("2026-11-20T12:00:00Z"));
+  assert.ok(fr.length >= 5);
+  assert.ok(fr.some((i) => i.publisher === "Le Monde"));
+  assert.ok(fr.every((i) => typeof i.publisher === "string" && i.publisher.length <= 80 && !/&#|&amp;/.test(i.publisher)));
+  const de = parseBingNews(readFileSync(join(FIX, "bing-de-de.xml"), "utf8"), Date.parse("2026-11-20T12:00:00Z"));
+  const copies = de.filter((i) => isAggregator(i.url));
+  assert.ok(copies.length >= 2 && copies.every((i) => /(^|\.)msn\.com$/.test(new URL(i.url).hostname)));
+  assert.ok(de.some((i) => !isAggregator(i.url)));
+  for (const u of ["https://www.msn.com/de-de/nachrichten/x", "https://finance.yahoo.com/news/x", "https://news.google.com/rss/articles/CBM", "https://news.yahoo.co.jp/articles/1", "not a url"]) assert.equal(isAggregator(u), true, u);
+  for (const u of ["https://www.lemonde.fr/pixels/article/2026/11/19/x.html", "https://therecord.media/x", "https://www.yahoo-finance-fake.example/x"]) assert.equal(isAggregator(u), false, u);
+});
+test("search indexes are asked at most every 10 minutes; other collectors every run", () => {
+  const now = Date.parse("2026-11-20T12:00:00Z");
+  assert.equal(searchedRecently({ ok: true, at: "2026-11-20T11:55:00Z" }, "bing-news", now), true);
+  assert.equal(searchedRecently({ ok: true, at: "2026-11-20T11:49:00Z" }, "bing-news", now), false);
+  assert.equal(searchedRecently({ ok: false, at: "2026-11-20T11:59:00Z" }, "bing-news", now), false);   // a failed run is retried
+  assert.equal(searchedRecently({ ok: true, at: "2026-11-20T11:59:00Z" }, "ransomware-live", now), false);
+  assert.equal(searchedRecently(undefined, "gdelt", now), false);
+});
+test("gdelt: language names become the codes the backlog rules read", () => {
+  const r = parseGdelt({ articles: [{ url: "https://a.example/1", title: "Bank hacked", seendate: "20261118T101500Z", language: "English" }, { url: "https://a.example/2", title: "Ataque", language: "Portuguese" }, { url: "https://a.example/3", title: "X", language: "Klingon" }] });
+  assert.deepEqual(r.map((x) => x.lang), ["en", "pt", "klingon"]);
 });

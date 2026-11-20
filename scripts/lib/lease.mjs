@@ -36,3 +36,13 @@ export const RUN_ID = () => process.env.CYBERVIEW_RUN || `run-${nowIso().replace
 export const LEADER_MIN = 20;
 /** Pure: the live leader lease, or null. */
 export function leaderOf(leases, now = Date.now()) { const l = leases && leases["flow:leader"]; return l && Date.parse(l.until) > now ? l : null; }
+/** Which session this is, as the leader lease records it. */
+export const hostId = (env = process.env) => String(env.CLAUDE_CODE_REMOTE_SESSION_ID || env.HOSTNAME || "local").slice(-40);
+/** Pure: does a live leader lease stop this session from starting a loop? Not when the lease was taken by THIS session
+ *  and no loop is running here (localAlive false): that loop died (its container restarted, or its process was killed)
+ *  without releasing the lease, and waiting for the lease to run out left the research idle for up to LEADER_MIN minutes
+ *  (measured: 21 minutes with no loop on 2026-11-20, 00:29 to 00:50). Another session's lease is always respected. */
+export function leaderBlocks(leader, run, host, localAlive) {
+  if (!leader || leader.run === run) return false;
+  return !(leader.host && leader.host === host && !localAlive);
+}

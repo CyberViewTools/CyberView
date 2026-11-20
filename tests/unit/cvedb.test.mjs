@@ -156,17 +156,68 @@ test("rating: the record's own exploitation evidence and the BOD 26-04 floor for
   assert.equal(D.rate({ ...plex, ti: "total" }, { exposed: true }).decision, "act");   // 3 days and forensic triage
 });
 
-test("CyberView rating: every point listed, ceilings hold, bands and the visitor's context", () => {
-  const log4 = { id: "CVE-2021-44228", cvss: 10, sev: "C", vec: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H", kev: "2021-12-10", expl: "active", auto: "yes", ti: "total", epss: 0.99999, pct: 1, ransom: true, due: "2021-12-24" };
-  const s = D.score(log4, { today: "2026-11-19" });
-  assert.equal(s.band, "Critical"); assert.ok(s.score >= 80, String(s.score)); assert.equal(s.confidence, "High");
-  const sum = s.factors.reduce((n, f) => n + f.points, 0); assert.equal(s.score, Math.min(100, sum));
-  for (const f of s.factors) { assert.ok(f.points <= f.max); assert.equal(f.points, Math.min(f.max, f.items.reduce((n, i) => n + i.points, 0))); }
-  assert.equal(s.factors.find((f) => f.factor === "Exploitation").points, 35);
-  const low = { id: "CVE-2026-2", cvss: 3.1, sev: "L", vec: "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:L/I:N/A:N", epss: 0.0004, pct: 0.05 };
-  const l = D.score(low, { today: "2026-11-19" }); assert.equal(l.band, "Low");
-  assert.ok(D.score(low, { today: "2026-11-19", exposed: true, mission: "high", mine: true }).score - l.score === 15);
-  assert.ok(D.score(low, { today: "2026-11-19", exposed: false, mission: "low" }).score <= l.score);
+test("CyberView rating: CVSS base x CVSS v3.1 Exploit Code Maturity, CVSS Roundup and CVSS's bands", () => {
+  const v31 = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H";
+  // exploited in the wild (CISA KEV): E High x 1.00, the base score stands
+  const kev = D.score({ id: "CVE-2026-1", cvss: 9.8, sev: "C", ver: "3.1", vec: v31, kev: "2026-10-01", epss: 0.9, pct: 0.99, ransom: true });
+  assert.equal(kev.score, 9.8); assert.equal(kev.band, "Critical"); assert.equal(kev.e.label, "High"); assert.equal(kev.e.value, 1); assert.equal(kev.confidence, "High");
+  assert.equal(kev.text, "CVSS 9.8 (assigner or CISA, v3.1) x 1.00 Exploit Code Maturity: High (on CISA's Known Exploited Vulnerabilities catalog since 2026-10-01) = 9.8 Critical");
+  // CISA reports active exploitation, not in the KEV catalog: still High
+  assert.equal(D.score({ id: "CVE-2026-2", cvss: 8.1, expl: "active" }).score, 8.1);
+  // the record states exploitation in the wild: High, labelled as the assigner's statement
+  const wild = D.score({ id: "CVE-2026-3", cvss: 9.1, desc: "This flaw is being exploited in the wild." });
+  assert.equal(wild.score, 9.1); assert.ok(/assigner/.test(wild.eWhy));
+  // public proof of concept: x 0.94, Roundup(9.212) = 9.3
+  const poc = D.score({ id: "CVE-2026-4", cvss: 9.8, expl: "poc" });
+  assert.equal(poc.score, 9.3); assert.equal(poc.band, "Critical"); assert.equal(poc.e.label, "Proof-of-Concept");
+  assert.equal(D.score({ id: "CVE-2026-5", cvss: 9.8, desc: "A proof-of-concept exploit is available." }).score, 9.3);
+  // unproven, NVD's score: x 0.91, Roundup(8.918) = 9.0, the source and version named on the row
+  const nvd = D.score({ id: "CVE-2026-6", cvss: null, ncvss: 9.8, nsev: "C", nvec: v31 });
+  assert.equal(nvd.score, 9); assert.equal(nvd.band, "Critical"); assert.equal(nvd.e.label, "Unproven"); assert.equal(nvd.confidence, "Medium");
+  assert.equal(nvd.text, "CVSS 9.8 (NVD, v3.1) x 0.91 Exploit Code Maturity: Unproven (no exploitation or public exploit reported) = 9.0 Critical");
+  // the boundary: 7.5 x 0.91 = 6.825 -> 6.9 Medium, one band below CVSS High, and the row says why
+  const b = D.score({ id: "CVE-2026-7", cvss: 7.5, sev: "H", ver: "3.1" });
+  assert.equal(b.score, 6.9); assert.equal(b.band, "Medium"); assert.equal(b.baseBand, "High"); assert.ok(b.notes.some((n) => /One band below its CVSS base rating \(High\)/.test(n)));
+  // CISA has seen no exploitation: Unproven, said so
+  assert.ok(/CISA has seen no exploitation/.test(D.score({ id: "CVE-2026-8", cvss: 5, expl: "none" }).text));
+  // no CVSS score at all: not scored, no number, no band
+  const ns = D.score({ id: "CVE-2026-9", epss: 0.5, pct: 0.99, kev: "2026-01-01" });
+  assert.equal(ns.score, null); assert.equal(ns.band, "Not scored"); assert.ok(/never invents/.test(ns.text));
+  // bands are exactly CVSS's
+  assert.deepEqual([0, 0.1, 3.9, 4, 6.9, 7, 8.9, 9, 10].map((s) => D.band(s).band), ["None", "Low", "Low", "Medium", "Medium", "High", "High", "Critical", "Critical"]);
+  // CVSS v3.1 Appendix A Roundup, floating point guard included
+  assert.equal(D.roundup(4.02), 4.1); assert.equal(D.roundup(4.0), 4); assert.equal(D.roundup(9.8 * 0.91), 9); assert.equal(D.roundup(9.8 * 0.94), 9.3);
+  // never above the base score, for every base from 0.0 to 10.0 and every maturity
+  for (let i = 0; i <= 100; i++) for (const ev of [{}, { expl: "poc" }, { kev: "yes" }]) {
+    const s = D.score({ id: "CVE-2026-10", cvss: i / 10, ...ev }); assert.ok(s.score <= i / 10 && s.score >= 0, `${i / 10} ${JSON.stringify(ev)} -> ${s.score}`);
+  }
+  // nothing else moves it: EPSS, ransomware, dates and the visitor's settings are not in the rating
+  const plainRow = { id: "CVE-2026-11", cvss: 7.2 };
+  assert.equal(D.score({ ...plainRow, epss: 0.97, pct: 0.999, ransom: true, due: "2020-01-01", pub: "2026-11-19", auto: "yes", ti: "total" }).score, D.score(plainRow).score);
+  // other CVSS versions: the v3.1 multiplier applied and said so
+  assert.ok(D.score({ id: "CVE-2026-12", cvss: 10, ver: "4.0" }).notes.some((n) => /CVSS v4\.0/.test(n)));
   assert.equal(D.score({ id: "CVE-2020-1", rejected: true }), null);
-  assert.equal(D.score({ id: "CVE-2026-3" }).confidence, "Low");
+});
+
+test("CyberView rating: filters by band floor and by CVSS base rating; default sort is priority, then rating, then EPSS", () => {
+  assert.deepEqual(ids(D.filter(S, { minScore: 9 }, {}, "id")), ["CVE-2024-1000"]);                       // 9.8 unproven -> 9.0
+  assert.deepEqual(ids(D.filter(S, { minScore: 7 }, {}, "id")), ["CVE-2024-1000", "CVE-2024-1003"]);      // 7.5 exploited stays 7.5
+  assert.deepEqual(ids(D.filter(S, { minScore: 4 }, {}, "id")), ["CVE-2024-1000", "CVE-2024-1001", "CVE-2024-1003"]);   // 5.0 -> 4.6
+  assert.deepEqual(ids(D.filter(S, { baseSev: "High" }, {}, "id")), ["CVE-2024-1003"]);
+  assert.deepEqual(ids(D.filter(S, { baseSev: "unscored" }, {}, "id")), []);
+  assert.deepEqual(ids(D.filter(S, { status: "all" }, {}, "score")), ["CVE-2024-1000", "CVE-2024-1003", "CVE-2024-1001", "CVE-2024-1002"]);   // not scored last
+  // all three are Track for an organisation's ordinary systems, so the CyberView rating orders them
+  assert.deepEqual(ids(D.filter(S, {}, {}, "priority")), ["CVE-2024-1000", "CVE-2024-1003", "CVE-2024-1001"]);
+  // a higher priority beats a higher rating: known exploited 5.3 with total impact is Act/Attend, ahead of an unexploited 9.8
+  const P = D.parseFile({ fields: F, rows: [row({ id: "CVE-2024-3001", cvss: 9.8, sev: "C", epss: 0.5 }), row({ id: "CVE-2024-3002", cvss: 5.3, sev: "M", kev: "2024-05-01", ti: "total", auto: "yes", epss: 0.01 })] });
+  assert.deepEqual(ids(D.filter(P, {}, {}, "priority")), ["CVE-2024-3002", "CVE-2024-3001"]);
+  // same priority: the higher CyberView rating first, then EPSS
+  const T = D.parseFile({ fields: F, rows: [row({ id: "CVE-2024-2001", cvss: 5, sev: "M", vec: "", epss: 0.9 }), row({ id: "CVE-2024-2002", cvss: 6, sev: "M", vec: "", epss: 0.01 }), row({ id: "CVE-2024-2003", cvss: 6, sev: "M", vec: "", epss: 0.05 })] });
+  assert.deepEqual(ids(D.filter(T, {}, {}, "priority")), ["CVE-2024-2003", "CVE-2024-2002", "CVE-2024-2001"]);
+});
+
+test("cleanIndex reads the CyberView rating band counts (rating_bands) and ignores the old 0 to 100 bands", () => {
+  const ix = D.cleanIndex({ total: 9, by_year: { 2024: 9 }, rating_bands: { Critical: 2, High: 3, Medium: 1, Low: 1, None: 1, "Not scored": 1, Elevated: 5 }, bands: { Elevated: 4 } });
+  assert.deepEqual(plain(ix.ratingBands), { Critical: 2, High: 3, Medium: 1, Low: 1, None: 1, "Not scored": 1 });
+  assert.equal(D.cleanIndex({ total: 1, by_year: { 2024: 1 }, bands: { Critical: 1 } }).ratingBands, null);
 });

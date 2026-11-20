@@ -2,7 +2,8 @@
 // index.json, recent.json) next to this file:   node tests/fixtures/cve/build-fixture.mjs
 // tests/test_all.py copies this folder to <served site>/data/cve/ for the test run only. Never commit it into site/data
 // (that folder is generated). Everything here is made up except that the ids follow the real format.
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
+import vm from "node:vm";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { FIELDS, toArr, bucket } from "../../../scripts/lib/cve.mjs";
@@ -42,6 +43,9 @@ for (const r of rows) { const b = bucket(r.id); if (!buckets.has(b)) buckets.set
 for (const [b, list] of buckets) { const [y, k] = b.split("/"); mkdirSync(join(OUT, y), { recursive: true }); writeFileSync(join(OUT, y, `${k}.json`), JSON.stringify({ fields: FIELDS, rows: list })); }
 const recent = [rec(2026, 1001, { cvss: 9.8, sev: "C", title: "FortiOS auth bypass" }), rec(2026, 5, {}), rec(2021, 44228, { cvss: 10, sev: "C", expl: "active", kev: "2021-12-10", title: "Log4j2 JNDI lookup" })];
 writeFileSync(join(OUT, "recent.json"), JSON.stringify({ fields: FIELDS, since: "2026-11-05", rows: recent.map(toArr) }));
+// CyberView rating band counts, as scripts/cve.mjs `site` counts them (the page's own rules, run here)
+const sb = { window: {} }; vm.runInNewContext(readFileSync(join(OUT, "..", "..", "..", "site", "cvedb-lib.js"), "utf8"), sb);
+const ratingBands = {}; for (const r of rows) { const sc = r.state === "R" ? null : sb.window.CVDB.score(r); if (sc) ratingBands[sc.band] = (ratingBands[sc.band] || 0) + 1; }
 writeFileSync(join(OUT, "index.json"), JSON.stringify({ built_at: "2026-11-19T03:00:00Z", total: rows.length, rejected: rows.filter((r) => r.state === "R").length, exploited: 1, critical: rows.filter((r) => r.cvss >= 9).length,
-  by_year: byYear, buckets: buckets.size, sources: { cvelist: "2026-11-19T02:00:00Z", epss: "2026-11-19" } }) + "\n");
+  by_year: byYear, buckets: buckets.size, rating_bands: ratingBands, sources: { cvelist: "2026-11-19T02:00:00Z", epss: "2026-11-19" } }) + "\n");
 console.log(`fixture: ${rows.length} CVEs in ${buckets.size} lookup files`);

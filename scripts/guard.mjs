@@ -4,19 +4,31 @@
 //   live data age            the site was rebuilt in the last 90 minutes
 //   sweep, collect, feeds    each ran within its limit (150 min, 120 min, 6 h)
 //   power grid               the grid collector ran within 120 minutes (warning only)
-//   deploy                   the newest commit on main is live (or was pushed less than 20 minutes ago), and the last deploy succeeded
+//   deploy                   the newest commit on main (code) and on the data branch (data) are live, each within 20 minutes
+//                            of being pushed, and the last deploy succeeded; data commits that need no deploy (leases, usage)
+//                            are not counted as lag
+//   forwarder                while data is still pushed to main during the switch, data-forward.yml brings it to the data
+//                            branch within 30 minutes (warning only)
 //   data                     the bundle has events, every post in the feed is reviewed, nothing is quarantined
 // --heal: where a check fails and `gh` is available, start the overdue workflow or a fresh deploy.
 // Exit 0 = healthy, 2 = warnings only, 1 = visitors are (or will soon be) seeing stale or missing data.
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
+import { NO_DEPLOY } from "./lib/repo.mjs";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120 };
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120, forward_min: 30 };
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
+/** Where a data file is read from raw.githubusercontent.com: the data branch's root once it exists, else main's data/. */
+export const rawDataUrl = (repo, dataBranch, path) => `https://raw.githubusercontent.com/${repo}/${dataBranch ? "data" : "main/data"}/${path}`;
+/** --heal: which workflow (dispatched on main) repairs which finding. */
+export const HEAL = { deploy: "pages.yml", collect: "collect.yml", feeds: "feeds.yml", cve: "cve.yml", forward: "data-forward.yml" };
 
-/** Pure: what was read -> { fails, warns, heal }. */
-export function assess({ manifest, health, bundle, head, deploy, leases }, now = Date.now()) {
+/** Pure: what was read -> { fails, warns, heal }.
+ *  head: main's newest commit {sha, date}. dataHead: the data branch's newest commit, or null while there is no data branch.
+ *  dataLagFiles: files changed between the live data commit and dataHead (only looked up when they differ).
+ *  forward: { mark: {sha, date} of the main commit in the data branch's .forwarded, main: [{sha, date}] main commits touching data/ }. */
+export function assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward }, now = Date.now()) {
   const fails = [], warns = [], heal = [];
   if (!manifest || !health || !bundle) { fails.push("the live site's data files could not be read"); heal.push("deploy"); return { fails, warns, heal }; }
   const age = mins(manifest.built_at, now);
@@ -40,7 +52,21 @@ export function assess({ manifest, health, bundle, head, deploy, leases }, now =
   if (bl && bl.waiting > 60) warns.push(`the research queue holds ${bl.waiting} reports waiting for a decision (limit 60): the backlog desk is behind`);
   if (bl && bl.oldest_incident_hours > 2) warns.push(`a report that reads like an incident has waited ${bl.oldest_incident_hours} hours (limit 2)`);
   if (health.quarantined_count > 0) warns.push(`${health.quarantined_count} data record(s) are quarantined (left out of the site): ${(health.quarantined || []).slice(0, 2).join("; ")}`);
-  if (head && head.sha && manifest.commit && head.sha !== manifest.commit && mins(head.date, now) > LIMITS.deploy_lag_min) { fails.push(`main is at ${head.sha.slice(0, 7)} (${Math.round(mins(head.date, now))} minutes old) but the live site is built from ${manifest.commit.slice(0, 7)}`); heal.push("deploy"); }
+  // deploy lag: code (main vs manifest.commit) and data (data branch vs manifest.data_commit), each with the same limit
+  const behind = (h, liveSha) => h && h.sha && liveSha && h.sha !== liveSha && mins(h.date, now) > LIMITS.deploy_lag_min;
+  if (behind(head, manifest.commit)) { fails.push(`main is at ${head.sha.slice(0, 7)} (${Math.round(mins(head.date, now))} minutes old) but the live site is built from ${manifest.commit.slice(0, 7)}`); heal.push("deploy"); }
+  if (dataHead && dataHead.sha) {
+    if (!manifest.data_commit) warns.push("the live site does not record which data commit it was built from (deployed before the data branch); the next deploy adds it");
+    else if (behind(dataHead, manifest.data_commit) && !(Array.isArray(dataLagFiles) && dataLagFiles.length && dataLagFiles.every(NO_DEPLOY))) {
+      fails.push(`the data branch is at ${dataHead.sha.slice(0, 7)} (${Math.round(mins(dataHead.date, now))} minutes old) but the live site has data ${String(manifest.data_commit).slice(0, 7)}`); heal.push("deploy");
+    }
+  }
+  // the switch: a job still on old code pushes data to main; the forwarder must bring it over to the data branch
+  if (dataHead && forward && forward.mark && forward.mark.sha && Array.isArray(forward.main)) {
+    const markAt = Date.parse(forward.mark.date), waiting = forward.main.filter((c) => c && c.sha && c.sha !== forward.mark.sha && Date.parse(c.date) > markAt);
+    const oldest = waiting.reduce((m, c) => Math.max(m, mins(c.date, now)), -Infinity);
+    if (oldest > LIMITS.forward_min) { warns.push(`data is still being pushed to main; the forwarder is not keeping up (${waiting.length} data commit(s) on main not on the data branch, the oldest ${Math.round(oldest)} minutes old; limit ${LIMITS.forward_min})`); heal.push("forward"); }
+  }
   if (deploy && deploy.conclusion === "failure") { warns.push("the most recent deploy run failed"); heal.push("deploy"); }
   return { fails, warns, heal: [...new Set(heal)] };
 }
@@ -59,11 +85,26 @@ async function main() {
   const [manifest, health, bundle, commit, runs] = await Promise.all([live("manifest.json"), live("health.json"), live("bundle.json"), api("commits/main"), api("actions/workflows/pages.yml/runs?per_page=1&status=completed")]);
   const head = commit ? { sha: commit.sha, date: commit.commit && commit.commit.committer && commit.commit.committer.date } : null;
   const deploy = runs && runs.workflow_runs && runs.workflow_runs[0] ? { conclusion: runs.workflow_runs[0].conclusion } : null;
-  const leases = await j(`https://raw.githubusercontent.com/${REPO}/main/data/leases.json?t=${t}`);
-  const r = assess({ manifest, health, bundle, head, deploy, leases });
+  // the data branch (code on main, data on `data`): its newest commit, or null while it does not exist yet
+  const dc = await api("commits/data"), dataHead = dc && dc.sha ? { sha: dc.sha, date: dc.commit && dc.commit.committer && dc.commit.committer.date } : null;
+  const leases = await j(`${rawDataUrl(REPO, !!dataHead, "leases.json")}?t=${t}`);
+  let dataLagFiles, forward;
+  if (dataHead && manifest && manifest.data_commit && manifest.data_commit !== dataHead.sha) {
+    const cmp = await api(`compare/${manifest.data_commit}...${dataHead.sha}`);
+    if (cmp && Array.isArray(cmp.files) && cmp.files.length < 300) dataLagFiles = cmp.files.map((f) => f.filename);   // 300 = the API's cap: a full list may be cut short
+  }
+  if (dataHead) {
+    const mark = await fetch(`${rawDataUrl(REPO, true, ".forwarded")}?t=${t}`, { signal: AbortSignal.timeout(20000) }).then((x) => (x.ok ? x.text() : "")).catch(() => "");
+    const sha = (/^[0-9a-f]{40}$/m.exec(mark) || [""])[0], mc = sha ? await api(`commits/${sha}`) : null;
+    if (mc && mc.commit) {
+      const date = mc.commit.committer && mc.commit.committer.date, list = await api(`commits?sha=main&path=data&since=${encodeURIComponent(date)}&per_page=100`);
+      if (Array.isArray(list)) forward = { mark: { sha, date }, main: list.map((c) => ({ sha: c.sha, date: c.commit && c.commit.committer && c.commit.committer.date })) };
+    }
+  }
+  const r = assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward });
   const healed = [];
   if (process.argv.includes("--heal")) for (const h of r.heal) {
-    const wf = { deploy: "pages.yml", collect: "collect.yml", feeds: "feeds.yml", cve: "cve.yml" }[h]; if (!wf) continue;
+    const wf = HEAL[h]; if (!wf) continue;
     const x = gh(["-X", "POST", `repos/${REPO}/actions/workflows/${wf}/dispatches`, "-f", "ref=main"]);
     healed.push(`${wf}: ${x.status === 0 ? "started" : "could not be started from here"}`);
   }

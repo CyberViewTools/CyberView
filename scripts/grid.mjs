@@ -1005,6 +1005,9 @@ export function verifySeries(root = ROOT) {
   return out;
 }
 
+/** A source's attribution as its licence asks for it, with {year} and {date} (UTC) filled in. */
+export const attributionText = (a, now = Date.now()) => str(String(a).replace(/\{year\}/g, new Date(now).toISOString().slice(0, 4)).replace(/\{date\}/g, new Date(now).toISOString().slice(0, 10)), 400);
+
 // ---------- CLI ----------
 const P = {
   live: join(DATA, "grid", "live.json"), incidents: join(DATA, "grid", "incidents.json"), research: join(DATA, "grid", "research.json"),
@@ -1027,12 +1030,12 @@ async function collect() {
     const def = SOURCES[k], prev = oldSources[k] || {};
     if (got) {
       const clean = got.filter((x) => checkItem(x).length === 0);
-      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, ...(def.attribution ? { attribution: str(def.attribution, 400) } : {}) };
+      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
       items.push(...clean);
     } else {
       const fresh = prev.fetched_at && now - Date.parse(prev.fetched_at) < KEEP_STALE_HOURS * 3600e3;
       const kept = fresh && !def.paused ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
-      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, ...(def.attribution ? { attribution: str(def.attribution, 400) } : {}) };
+      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
       items.push(...kept);
       // a keyed source without a key is reported, not counted as a failure
       if (/^not connected/.test(err)) unkeyed.push(k); else failed.push(`${k}: ${err}`);

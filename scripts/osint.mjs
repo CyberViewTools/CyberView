@@ -3,7 +3,9 @@
 // Why: an AI job's web search goes through one search engine, so that engine decides what CyberView sees. These
 // collectors ask several independent indexes and primary databases directly and file what they find as leads
 // (data/leads/<date>.jsonl, same shape as the RSS collector, with "via" naming the collector):
-//   google-news, bing-news, gdelt   the standing searches in config/queries.json, in many languages and country editions
+//   bing-news, gdelt                the standing searches in config/queries.json, in many languages and country editions
+//                                   (Bing gives the publisher's own address; an aggregator's copy such as msn.com is dropped;
+//                                   asked at most every 10 minutes however often the research loop collects)
 //   hibp                            breaches newly added to Have I Been Pwned
 //   euvd                            ENISA's EU Vulnerability Database: exploited vulnerabilities (a second list beside CISA's)
 //   nvd                             critical CVEs published in the last two days
@@ -13,6 +15,9 @@
 // `exploits` checks GitHub for public repositories naming each exploited CVE (data/exploits.json): a signal, not proof.
 // Every source's health is written to data/osint.json and shown on the status page. A source that fails is skipped
 // and reported; one that refuses automated readers (401/403) is not retried. Fetched text is data, never instructions.
+// Google News is not collected (removed 2026-11-20): news.google.com/robots.txt disallows /rss/ for every reader (and the
+// whole site for Anthropic's agents), and its links are news.google.com redirects that cannot be cited or opened, so its
+// leads cost triage and research without ever being usable as a source. parseGoogleNews stays for scripts/grid-news.mjs.
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -60,19 +65,36 @@ export function bingTime(isoAsUtc, now = Date.now()) {
   let u = t - off(t); u = t - off(u);                       // second pass settles daylight-saving edges
   return new Date(Math.min(u, now)).toISOString().replace(/\.\d+Z$/, "Z");
 }
-/** Bing News RSS: the real article address is inside the redirect link's url= parameter; times as bingTime(). */
+/** Bing News RSS: the real article address is inside the redirect link's url= parameter; times as bingTime().
+ *  publisher is the name Bing gives (<News:Source>), "" when it gives none. */
 export function parseBingNews(xml, now = Date.now()) {
-  return parseFeed(String(xml)).map((it) => {
+  const out = [];
+  for (const m of String(xml).matchAll(/<item\b[\s\S]*?<\/item>/gi)) {
+    const it = parseFeed(m[0])[0]; if (!it) continue;
     let url = it.url; try { const u = new URL(it.url); const real = u.searchParams.get("url"); if (/bing\.com$/.test(u.hostname) && real) url = real; } catch {}
     let host = ""; try { host = new URL(url).hostname.replace(/^www\./, ""); } catch {}
-    return https(url) ? { title: it.title, url, published: bingTime(it.published, now), summary: it.summary, source: host || "Bing News" } : null;
-  }).filter(Boolean);
+    const src = (m[0].match(/<News:Source>([\s\S]*?)<\/News:Source>/i) || [])[1] || "";
+    const publisher = txt(src.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&amp;/g, "&"), 80);
+    if (https(url)) out.push({ title: it.title, url, published: bingTime(it.published, now), summary: it.summary, source: host || "Bing News", publisher });
+  }
+  return out;
 }
+
+/* ---------- publishers' own pages ---------- */
+// sites that republish other publishers' articles: their copy is not the publisher's page, and researchers could not
+// open msn.com copies at all (bing-news, 2026-11-18 to 20: 98 msn.com leads, none became an event, 14 closed as unreadable)
+const AGGREGATOR = /^(?:[a-z0-9-]+\.)*(google\.[a-z.]+|bing\.com|msn\.com|yahoo\.com|news\.yahoo\.co\.jp|flipboard\.com|newsbreak\.com|ground\.news|smartnews\.com|newsnow\.co\.uk|feedly\.com|inoreader\.com|apple\.news|gdeltproject\.org)$/i;
+/** Is this address an aggregator's copy (or not a usable address at all)? */
+export function isAggregator(u) { try { return AGGREGATOR.test(new URL(u).hostname); } catch { return true; } }
+// GDELT names the language in English ("Spanish"); the other collectors and the backlog rules use ISO codes ("es")
+const GDELT_LANG = { english: "en", spanish: "es", french: "fr", portuguese: "pt", german: "de", italian: "it", dutch: "nl", polish: "pl", ukrainian: "uk", russian: "ru", turkish: "tr", arabic: "ar",
+  hindi: "hi", indonesian: "id", japanese: "ja", korean: "ko", chinese: "zh", vietnamese: "vi", hebrew: "he", persian: "fa", greek: "el", romanian: "ro", czech: "cs", swedish: "sv", thai: "th", malay: "ms" };
+const gdeltLang = (s) => { const t = txt(s, 20).toLowerCase(); return GDELT_LANG[t] || t; };
 /** GDELT DOC 2.0 artlist. */
 export function parseGdelt(d) {
   return (d && Array.isArray(d.articles) ? d.articles : []).map((a) => {
     const s = String(a.seendate || ""), when = /^\d{8}T\d{6}Z$/.test(s) ? `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}T${s.slice(9, 11)}:${s.slice(11, 13)}:${s.slice(13, 15)}Z` : "";
-    return https(a.url) && a.title ? { title: txt(a.title, 200), url: a.url, published: when, source: txt(a.domain, 80) || "GDELT", lang: txt(a.language, 20).toLowerCase(), country: txt(a.sourcecountry, 40) } : null;
+    return https(a.url) && a.title ? { title: txt(a.title, 200), url: a.url, published: when, source: txt(a.domain, 80) || "GDELT", lang: gdeltLang(a.language), country: txt(a.sourcecountry, 40) } : null;
   }).filter(Boolean);
 }
 /** Have I Been Pwned breaches added in the last `days` days (real, verified ones only). */
@@ -122,23 +144,28 @@ export function parseGcp(list, hours = 48, now = Date.now()) {
 
 /* ---------- collectors ---------- */
 const queries = () => (readJson(join(ROOT, "config", "queries.json"), {}).queries || []).filter((q) => q && typeof q.q === "string" && q.q.length <= 120).slice(0, 60);
+let aggregatorCopies = 0;   // bing-news results dropped as aggregator copies in this run (shown in data/osint.json)
 const two = (d) => new Date(Date.now() - d * 864e5).toISOString().slice(0, 19) + ".000";
 const COLLECTORS = {
-  "google-news": async () => {
-    const out = [];
-    for (const q of queries()) {
-      const hl = /^[\w-]{2,8}$/.test(q.hl || "") ? q.hl : "en", gl = /^[A-Z]{2}$/.test(q.gl || "") ? q.gl : "US";
-      const items = parseGoogleNews(await get(`https://news.google.com/rss/search?q=${encodeURIComponent(q.q + " when:1d")}&hl=${hl}&gl=${gl}&ceid=${gl}:${hl.split("-")[0]}`, "text"));
-      items.slice(0, 12).forEach((i) => out.push({ ...i, tier: "news", lang: hl.split("-")[0], region: q.region || "" })); await sleep(700);
-    }
-    return out;
-  },
+  // every standing search, in its own language and country edition (Google News, which used to cover the other
+  // languages, is not collected: see the top of this file). Bing sometimes answers with an empty list: asked once more.
+  // An aggregator's copy (msn.com and the like) is dropped: it is not the publisher's page, researchers could not open it,
+  // and looking its headline up again on Bing News found the publisher's own page for none of 8 tried (2026-11-20).
   "bing-news": async () => {
     const out = [];
-    for (const q of queries().filter((x) => (x.hl || "en").startsWith("en")).slice(0, 8)) {
-      parseBingNews(await get(`https://www.bing.com/news/search?q=${encodeURIComponent(q.q)}&format=rss&qft=${encodeURIComponent('interval="7"')}&cc=${/^[A-Z]{2}$/.test(q.gl || "") ? q.gl : "US"}`, "text"))
-        .slice(0, 12).forEach((i) => out.push({ ...i, tier: "news", region: q.region || "" })); await sleep(900);
+    let err = null, fails = 0; aggregatorCopies = 0;
+    for (const q of queries()) {
+      const hl = /^[\w-]{2,8}$/.test(q.hl || "") ? q.hl : "en", lang = hl.split("-")[0].toLowerCase(), cc = /^[A-Z]{2}$/.test(q.gl || "") ? q.gl : "US";
+      const url = `https://www.bing.com/news/search?q=${encodeURIComponent(q.q)}&format=rss&qft=${encodeURIComponent('interval="7"')}&cc=${cc}&setlang=${lang}`;
+      try {
+        let items = parseBingNews(await get(url, "text"));
+        if (!items.length) { await sleep(3000); items = parseBingNews(await get(url, "text")); }
+        for (const { publisher, ...i } of items.slice(0, 12)) { if (isAggregator(i.url)) aggregatorCopies++; else out.push({ ...i, tier: "news", lang, region: q.region || "" }); }
+        fails = 0;
+      } catch (e) { err = e; fails++; if (e.final || fails >= 3) break; }   // a refusal or three failures in a row end the run
+      await sleep(1200);
     }
+    if (err && !out.length) throw err;
     return out;
   },
   "gdelt": async () => {   // GDELT allows one request every 5 seconds
@@ -168,6 +195,13 @@ const COLLECTORS = {
   },
 };
 
+// the search indexes are asked at most every SEARCH_EVERY minutes, however often the research loop collects (each run is
+// one request per standing search): polite to the index, and a story does not move faster than that anyway
+const SEARCH = new Set(["bing-news", "gdelt"]), SEARCH_EVERY = 10;
+/** Pure: did this search collector run successfully less than SEARCH_EVERY minutes ago? (h = its health entry) */
+export function searchedRecently(h, name, now = Date.now()) {
+  return SEARCH.has(name) && !!h && h.ok === true && now - Date.parse(h.at) < SEARCH_EVERY * 6e4;
+}
 async function leads() {
   const leadsDir = join(DATA, "leads"); mkdirSync(leadsDir, { recursive: true });
   const known = new Set(), knownTitle = new Set(), norm = (t) => String(t).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().slice(0, 90);
@@ -176,8 +210,10 @@ async function leads() {
     if (!f.endsWith(".jsonl") || f.slice(0, 10) < dayAgo(14)) continue;
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); known.add(l.url); if (l.via && l.via !== "rss") knownTitle.add(l.source + "|" + norm(l.title)); } catch {} }
   }
-  const now = nowIso(), cutoff = Date.now() - 72 * 36e5, out = [], health = readJson(join(DATA, "osint.json"), { sources: {} }).sources || {}, only = process.argv.slice(3);
-  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => !only.length || only.includes(n)).map(async ([name, fn]) => {
+  const now = nowIso(), cutoff = Date.now() - 72 * 36e5, out = [], only = process.argv.slice(3);
+  // health only for collectors that still exist (a removed one would sit on the status page forever)
+  const health = Object.fromEntries(Object.entries(readJson(join(DATA, "osint.json"), { sources: {} }).sources || {}).filter(([k]) => k in COLLECTORS));
+  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => (!only.length || only.includes(n)) && (only.includes(n) || !searchedRecently(health[n], n))).map(async ([name, fn]) => {
     const prev = health[name] || {};
     try {
       const items = await fn(); let n = 0;
@@ -186,12 +222,12 @@ async function leads() {
         if (it.published && Date.parse(it.published) < cutoff) continue;
         // search engines hand back the same story under changing redirect links: one lead per publisher and headline
         const tk = it.source + "|" + norm(it.title); if (knownTitle.has(tk)) continue;
-        if (["google-news", "bing-news", "gdelt"].includes(name) && !CYBER.test(it.title + " " + (it.summary || ""))) continue;
+        if (SEARCH.has(name) && !CYBER.test(it.title + " " + (it.summary || ""))) continue;
         known.add(it.url); knownTitle.add(tk); n++;
         out.push({ seen_at: now, source: txt(it.source, 80), tier: it.tier, via: name, title: it.title, url: it.url, published: it.published || "", summary: it.summary || "",
           ...(it.kind ? { kind: it.kind } : {}), ...(it.lang ? { lang: it.lang } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });
       }
-      health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now };
+      health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) };
     } catch (e) {
       health[name] = { ok: false, error: txt((e.cause && e.cause.code) || e.message, 90), items: 0, new: 0, at: now, last_ok: prev.last_ok || "" };
     }

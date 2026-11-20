@@ -13,13 +13,16 @@ import { join, isAbsolute, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso, dayAgo, readStatus } from "./lib/store.mjs";
 import { claim, readLeases, RUN_ID } from "./lib/lease.mjs";
+import { SOURCES } from "./grid.mjs";
 
 export const BY = "CyberView AI (a Claude model)";
 export const DECISIONS = ["weather", "equipment", "planned", "supply_shortfall", "wildfire_safety", "third_party", "cyber_official", "cyber_reported", "under_investigation", "unknown"];
 export const NOT_FINAL = new Set(["under_investigation", "unknown"]);
 export const DEPTHS = ["full", "summary", "secondary"];
-// hosts whose word counts as official for a cyber cause: operators, market operators, regulators, governments
-export const OFFICIAL_HOST = /\.gov(\.[a-z]{2})?$|\.gc\.ca$|\.gov\.uk$|\.gouv\.[a-z]{2}$|\.gob\.[a-z]{2}$|\.gov\.[a-z]{2}$|(^|\.)(ofgem|ercot|aemo|eskom|hydroquebec|bchydro|ukpowernetworks|nerc|energy|cisa|ncsc|nersa|entsoe)\.(com|org|net|gov|ca|co\.uk|org\.uk|com\.au|co\.za|org\.za|eu)$/;
+// hosts whose word counts as official for a cyber cause: operators, market operators, regulators, governments. The
+// incident's own operator counts too, on any host of its registrable domain (officialHost). No bare "energy" label:
+// energy.com and energy.net are commercial sites (energy.gov passes by the .gov rule).
+export const OFFICIAL_HOST = /\.gov(\.[a-z]{2})?$|\.gc\.ca$|\.gov\.uk$|\.gouv\.[a-z]{2}$|\.gob\.[a-z]{2}$|\.gov\.[a-z]{2}$|(^|\.)(ofgem|ercot|aemo|eskom|hydroquebec|bchydro|ukpowernetworks|nerc|cisa|ncsc|nersa|entsoe)\.(com|org|net|gov|ca|co\.uk|org\.uk|com\.au|co\.za|org\.za|eu)$/;
 const REDIRECT = /(^|\.)news\.google\.com$|(^|\.)bing\.com$|(^|\.)msn\.com$/;
 const DEFAULTS = { retry_hours: 6, max_tries: 3 };
 const PLAN_FILE = /^grid-plan(-[A-Za-z0-9-]+)?\.json$/;
@@ -46,6 +49,36 @@ export function candidates(incidents, research = {}, leases = {}, now = Date.now
   return out.sort((a, b) => size(b) - size(a) || (Number(b.level) || 0) - (Number(a.level) || 0) || String(a.opened_at).localeCompare(String(b.opened_at)) || a.id.localeCompare(b.id));
 }
 
+// Outages known only from the news (data/grid/news.json, scripts/grid-news.mjs) can be the ones an official source later
+// links to a cyberattack, and most of the world has no operator feed (logic-7). A news-reported outage is checked when at
+// least NEWS_MIN_PUBLISHERS publishers report it AND it is big (a figure of research_customers or more), nationwide, or
+// a headline speaks of a cyberattack; and no operator incident is open in that country (that one is checked instead).
+// It is planned as id grid-news-<news id>, source "news", reason "reported"; never drawn as an incident; its result is
+// shown on the "reported in the news" row, and a cyber cause still becomes a lead only.
+export const NEWS_MIN_PUBLISHERS = 2;
+export const NATIONWIDE = /nationwide|nation-wide|across the country|countrywide|country-wide|entire country|whole country|national (grid|blackout|power)|en todo el pa[ií]s|a nivel nacional|em todo o pa[ií]s|dans tout le pays|im ganzen land|bundesweit|in tutto il paese|по всій країні|по всей стране|全国|전국|ทั่วประเทศ|toàn quốc|في جميع أنحاء|سراسر کشور|ülke genelinde/i;
+/** Pure: news.json -> research candidates in the incident shape. */
+export function newsCandidates(news, incidents, cfg = {}) {
+  const big = Number(cfg.research_customers) || 50000;
+  const open = Array.isArray(incidents) ? incidents.filter((i) => i && !i.closed_at) : ((incidents && incidents.open) || []);
+  const busy = new Set(open.filter((i) => i && i.source !== "news").map((i) => i.country));
+  const out = [];
+  for (const it of (news && Array.isArray(news.items)) ? news.items : []) {
+    if (!it || !/^gn-[a-z]{2}-[a-z0-9-]+$/.test(it.id || "") || !Array.isArray(it.publishers) || it.publishers.length < NEWS_MIN_PUBLISHERS || busy.has(it.country)) continue;
+    const titles = it.publishers.map((p) => String((p && p.title) || "")).join(" | ");
+    const n = it.figure && Number(it.figure.n) || 0;
+    if (!(n >= big || NATIONWIDE.test(titles) || it.cyber_headline)) continue;
+    const s = (v, k) => String(v ?? "").slice(0, k);
+    out.push({ id: `grid-news-${it.id}`.slice(0, 145), source: "news", country: s(it.country, 2), region: s(it.place, 80), kind: "outage",
+      name: s(`Reported in the news: power outage in ${it.place} (${it.publishers.length} publishers)`, 120), opened_at: s(it.first_seen, 20), updated_at: s(it.last_seen || it.first_seen, 20),
+      closed_at: "", customers: null, peak_customers: n || null, peak_at: "", level: null, planned_share: 0,
+      causes: (it.cause_words || []).slice(0, 3).map((c) => ({ cause: s(c, 40), customers: 0 })), url: s(it.publishers[0].url, 300),
+      research_needed: true, research_reason: "reported",
+      reported: it.publishers.slice(0, 6).map((p) => ({ name: s(p.name, 80), title: s(p.title, 220), url: s(p.url, 400), published: s(p.published, 20) })) });
+  }
+  return out;
+}
+
 /** Pure: the facts a worker needs about one incident (and what an earlier try found). */
 export function brief(i, r) {
   const s = (v, n) => String(v ?? "").slice(0, n);
@@ -53,12 +86,15 @@ export function brief(i, r) {
     opened_at: s(i.opened_at, 20), closed_at: s(i.closed_at, 20), customers: i.customers ?? null, peak_customers: i.peak_customers ?? null, peak_at: s(i.peak_at, 20),
     level: i.level ?? null, planned_share: i.planned_share ?? null, causes: (i.causes || []).slice(0, 3).map((x) => ({ cause: s(x && x.cause, 120), customers: (x && x.customers) ?? null })),
     url: /^https:\/\//.test(i.url || "") ? s(i.url, 300) : "", research_reason: s(i.research_reason, 40),
-    earlier: r ? { decision: r.decision, cause_summary: s(r.cause_summary, 300), sources: (r.sources || []).slice(0, 6), tries: r.tries || 0 } : null };
+    earlier: r ? { decision: r.decision, cause_summary: s(r.cause_summary, 300), sources: (r.sources || []).slice(0, 6), tries: r.tries || 0 } : null,
+    ...(Array.isArray(i.reported) ? { reported: i.reported.slice(0, 6) } : {}) };
 }
 
-/** Pure: a stable id for a plan, from its id -> batch map (same assignment, same id). */
+/** Pure: a stable id for a plan, from its id -> batch -> round map (same assignment of the same round, same id). The round
+ *  is how many tries are on file for the incident, so a retry after under_investigation or unknown gets a new plan id
+ *  and is recorded (logic-1), while applying the same plan twice still changes nothing. */
 export function planId(batches) {
-  const map = []; batches.forEach((b, k) => (b.incidents || b).forEach((x) => map.push([x.id || x, k + 1])));
+  const map = []; batches.forEach((b, k) => (b.incidents || b).forEach((x) => map.push([x.id || x, k + 1, (x && x.earlier && Number(x.earlier.tries)) || 0])));
   map.sort((a, b) => a[0].localeCompare(b[0]));
   return "gp-" + createHash("sha256").update(JSON.stringify(map)).digest("hex").slice(0, 16);
 }
@@ -80,10 +116,24 @@ export function badSource(u) {
   return "";
 }
 const hostOf = (u) => { try { return new URL(u).hostname.toLowerCase(); } catch { return ""; } };
-/** Pure: does this url sit on an operator, regulator or government host (or the incident's own operator host)? */
-export function officialHost(u, incidentUrl = "") {
-  const h = hostOf(u), own = hostOf(incidentUrl).replace(/^www\./, "");
-  return !!h && (OFFICIAL_HOST.test(h) || (!!own && (h === own || h.endsWith("." + own))));
+// second-level labels under a country code that are public suffixes (co.uk, com.au, co.za, org.br, or.kr, gob.mx ...)
+const SLD = new Set(["co", "com", "org", "net", "gov", "gob", "go", "or", "ac", "edu", "govt", "nic", "ne", "gv", "mil"]);
+/** Pure: the registrable domain of a host (eTLD+1 for the usual country suffixes): powercuts.nationalgrid.co.uk -> nationalgrid.co.uk. */
+export function regDomain(host) {
+  const p = String(host || "").toLowerCase().replace(/\.$/, "").split(".").filter(Boolean);
+  if (p.length < 2) return p.join(".");
+  const n = p.length >= 3 && p[p.length - 1].length === 2 && SLD.has(p[p.length - 2]) ? 3 : 2;
+  return p.slice(-n).join(".");
+}
+/** Pure: does this url sit on an operator, regulator or government host, or on the incident's own operator (any host of
+ *  the registrable domain of its incident url or of the source's own hosts and page: www.eversource.com for
+ *  outagemap.eversource.com)? source: the incident's source key. */
+export function officialHost(u, incidentUrl = "", source = "") {
+  const h = hostOf(u); if (!h) return false;
+  if (OFFICIAL_HOST.test(h)) return true;
+  const def = SOURCES[source] || null;
+  const own = new Set([hostOf(incidentUrl), ...((def && def.hosts) || []), def ? hostOf(def.page) : "", def ? hostOf(def.url) : ""].filter(Boolean).map(regDomain));
+  return own.has(regDomain(h));
 }
 
 /** Pure: check a worker's out file against its plan.
@@ -115,7 +165,7 @@ export function validate(plan, out) {
       if (!sources.length && r.decision !== "unknown") why.push("no sources (only an unknown cause may have none)");
       if (sources.length > 8) why.push("more than 8 sources");
       sources.forEach((u) => { const b = badSource(u); if (b) why.push(`source ${String(u).slice(0, 120)}: ${b}`); });
-      if (r.decision === "cyber_official" && !sources.some((u) => officialHost(u, inc && inc.url))) why.push("cyber_official needs at least one source on an operator, regulator or government site");
+      if (r.decision === "cyber_official" && !sources.some((u) => officialHost(u, inc && inc.url, inc && inc.source))) why.push("cyber_official needs at least one source on an operator, regulator or government site");
     }
     if (!DEPTHS.includes(r.read_depth)) why.push(`read_depth ${JSON.stringify(r.read_depth ?? null)} is not one of ${DEPTHS.join(", ")}`);
     if (why.length) bad[r.id] = why; else good.push(r);
@@ -177,7 +227,10 @@ const findPlan = (plan_id) => {
 
 function main() {
   const [cmd, ...rest] = process.argv.slice(2), arg = (k, d) => { const i = rest.indexOf("--" + k); return i >= 0 ? rest[i + 1] : d; };
-  const cfg = readCfg(), incidents = readJson(join(GRID, "incidents.json"), { open: [], closed: [] }), research = readJson(RESEARCH, {});
+  const cfg = readCfg(), research = readJson(RESEARCH, {});
+  const inc0 = readJson(join(GRID, "incidents.json"), { open: [], closed: [] }) || { open: [], closed: [] };
+  // operator incidents, then outages known only from the news (logic-7)
+  const incidents = [...(inc0.open || []), ...(inc0.closed || []), ...newsCandidates(readJson(join(GRID, "news.json"), {}), inc0, { ...readJson(join(ROOT, "config", "grid.json"), {}) })];
   if (cmd === "plan") {
     const N = Math.max(1, Math.min(4, Number(arg("max", 1)) || 1)), K = Math.max(1, Math.min(8, Number(arg("per", 4)) || 4));
     const file = PLAN_FILE.test(arg("file", "")) ? arg("file") : "grid-plan.json", run = RUN_ID();

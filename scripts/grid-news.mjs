@@ -34,7 +34,7 @@ const iso = (t) => new Date(t).toISOString().replace(/\.\d+Z$/, "Z");
 /* ---------- text ---------- */
 const MARKS = /[̀-ͯ]/g;
 /** Lower case, accents off (NFD), so "Apagón" and "apagon" match. Non-Latin scripts keep their letters. */
-export const fold = (s) => String(s == null ? "" : s).normalize("NFD").replace(MARKS, "").replace(/[đĐ]/g, "d").replace(/[łŁ]/g, "l").toLowerCase();
+export const fold = (s) => String(s == null ? "" : s).normalize("NFD").replace(MARKS, "").replace(/[đĐ]/g, "d").replace(/[łŁ]/g, "l").replace(/ı/g, "i").toLowerCase();
 const DIGIT_SETS = ["٠١٢٣٤٥٦٧٨٩", "۰۱۲۳۴۵۶۷۸۹", "०१२३४५६७८९", "০১২৩৪৫৬৭৮৯", "０１２３４５６７８９"];
 /** Arabic-Indic, Persian, Devanagari, Bengali and full-width digits as ASCII. */
 export function asciiDigits(s) {
@@ -45,7 +45,7 @@ export function asciiDigits(s) {
 const prep = (s) => fold(asciiDigits(s)).replace(/[’`´]/g, "'").replace(/\s+/g, " ").trim();
 // a regex written with accents is compared with folded text: fold its source the same way (never lower-case a source)
 // \w is ASCII only, even with the u flag: in these patterns it means a letter of any script
-const rx = (src, flags = "iu") => new RegExp(String(src).replace(/\\w/g, "[\\p{L}\\p{N}_]").normalize("NFD").replace(MARKS, "").replace(/đ/g, "d").replace(/ł/g, "l"), flags);
+const rx = (src, flags = "iu") => new RegExp(String(src).replace(/\\w/g, "[\\p{L}\\p{N}_]").normalize("NFD").replace(MARKS, "").replace(/đ/g, "d").replace(/ł/g, "l").replace(/ı/g, "i"), flags);
 const B = "(?<![\\p{L}\\p{N}])", E = "(?![\\p{L}\\p{N}])";
 // Chinese, Japanese, Korean and Thai write words without spaces: those alternatives match anywhere, the others as words
 const NOSPACE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]/u;
@@ -104,20 +104,49 @@ export const GUARDS = [
   ["entertainment", w("video ?games?|gaming|esports?|fortnite|minecraft|roblox|nintendo|movie|film|trailer|netflix|album|song|novel|anime|manga|box office|tv series|tv episode|reality show|horror|thriller|pelicula|serie de tv|cancion|filme|film d'|spielfilm")],
   ["market", w("compensation|compensacion|indemniz\\w*|pagara|lawsuit|class action|fined|multad[oa]|multa de|stocks?|shares?|share price|investors?|earnings|dividends?|stake|acquisitions?|acquires?|merger|ipo|price target|analysts?|buyback|revenue|profits?|quarterly results|q[1-4] results|bonds?|nasdaq|nyse|tsx|asx|valuation|market cap|rate case|rate (hike|increase)s?|electric bills?|tariffs?|bolsa|acciones|cotizacion|aktien?|borse|bourse|acoes|dividendos?|investidores|inversores|beneficios|lucros?|utili trimestrali")],
   ["product", w("jackery|ecoflow|anker|bluetti|power ?banks?|notstrom\\w*|akku\\w*|蓄電池|deals?|discount|on sale|for sale|sale price|black friday|cyber monday|best (\\w+ )?(generators?|power stations?|power banks?|batteries|flashlights|lanterns|ups)|buy(ing)? (a |the )?(generator|power station|power bank|battery)|\\$\\d+ off|amazon|walmart|costco|home depot|lowe's|product review")],
-  ["planned", w("saatler|sokaklar|hangi (ilce|mahalle)\\w*|δειτε που|σε ποιες περιοχες|προγραμματισμεν\\w*|confirma\\w* (el |la )?(corte|interrupcion|suspension)\\w*|hoy,? (lunes|martes|miercoles|jueves|viernes|sabado|domingo) \\d|programi|listesi|aciklandi|olmayacak|jadwal|planowan\\w*|(corte|cortes) de (luz|energia) (el|este|para el|del) (\\d|lunes|martes|miercoles|jueves|viernes|sabado|domingo)|zonas afectadas|revisa (las|los)|confirma corte|anuncia\\w* corte\\w*|drills?|exercises?|simulat\\w*|probt|ubung|testlauf|simulacro|exercice|horarios (de|confirmados)|calendario de cortes|cronograma de cortes|(outage|cut|interruption|shutdown)s? (is |are )?(planned|scheduled)|planned (power |electricity )?(outage|interruption|maintenance|shutdown|cut|work)s?|scheduled (power |electricity )?(outage|interruption|maintenance|shutdown|cut|work)s?|maintenance (outage|work)s?|(power|electricity) (shutdown|cut|outage) (for|due to) (maintenance|upgrades?|works?|repairs)|(cortes?|apagon(es)?|interrupcion(es)?|suspension(es)?) (de luz |de energia |del servicio )?programad[oa]s?|mantenimiento programado|cortes? (de luz )?por mantenimiento|coupures? (de courant |d'electricite )?programmees?|travaux programmes|geplante (stromabschaltung|abschaltung|unterbrechung|stromunterbrechung|wartung)|planmassige|interruzion[ei] programmat[ae]|lavori programmati|geplande (onderbreking|stroomonderbreking|werkzaamheden)|planowane (wylaczenie|wylaczenia|przerwy)|planow\\w+ wylacz\\w*|планов\\w* (отключ\\w*|відключ\\w*)|planli (elektrik )?kesinti\\w*|programli kesinti\\w*|계획정전|pemeliharaan|lich (cat|cup) [đd]ien")],
-  ["explainer", w("сонячн\\w* панел\\w*|скільки (коштує|доведеться)|solar panels?|rumou?r\\w*|hipotesis|supervivencia|survival kit|kit de|miedo|temor|(apagon|apagao|blackout|panne|stromausfall) (mundial|global|mondial\\w*|weltweit\\w*)|(world|global|worldwide|nationwide 90-day) blackout|teorias?|bulos?|boatos?|conspira\\w*|falso|страшилк\\w*|фейк\\w*|чутк\\w*|слух\\w*|scientists|researchers|new study|study (finds|shows)|вчені|учені|ученые|cientificos|investigadores|forscher|chercheurs|pesquisadores|beachten|ratgeber|vorsorge|notfallvorrat|備え|対策|防災|備蓄|とは|方法|べきか|どう|how to|what to do|tips|guide|explained|explainer|debunk\\w*|fact[- ]?check\\w*|rumou?rs?|hoax|conspiracy|myths?|viral (claim|post|video)|fake|90-day blackout|what (you|we) (need to )?know|things to know|q&a|faq|podcast|webinar|op-?ed|opinion|editorial|column|survival|checklist|stay (safe|warm|cool)|food safety|keep (your )?food|refrigerator|carbon monoxide (safety|tips|warning)|prepar(e|ing|edness) (for|kit)|stock(ing)? up|como (actuar|prepararse)|que hacer|consejos|que faire|conseils|was tun|tipps|cosa fare|consigli|wat te doen|co robic|что делать|як (діяти|підготуватися)|ne yapmali|ماذا تفعل|क्या करें|cara (menghadapi|mengatasi)")],
+  ["planned", w("saatler|sokaklar|hangi (ilce|mahalle)\\w*|δειτε που|σε ποιες περιοχες|προγραμματισμεν\\w*|confirma\\w* (el |la )?(corte|interrupcion|suspension)\\w*|hoy,? (lunes|martes|miercoles|jueves|viernes|sabado|domingo) \\d|programi|listesi|aciklandi|olmayacak|jadwal|planowan\\w*|(corte|cortes) de (luz|energia) (el|este|para el|del) (\\d|lunes|martes|miercoles|jueves|viernes|sabado|domingo)|zonas afectadas|revisa (las|los)|confirma corte|anuncia\\w* corte\\w*|drills?|exercises?|simulat\\w*|probt|ubung|testlauf|simulacro|exercice|horarios (de|confirmados)|calendario de cortes|cronograma de cortes|(outage|cut|interruption|shutdown)s? (is |are )?(planned|scheduled)|planned (power |electricity )?(outage|interruption|maintenance|shutdown|cut|work)s?|scheduled (power |electricity )?(outage|interruption|maintenance|shutdown|cut|work)s?|maintenance (outage|work)s?|(power|electricity) (shutdown|cut|outage) (for|due to) (maintenance|upgrades?|works?|repairs)|(cortes?|apagon(es)?|interrupcion(es)?|suspension(es)?) (de luz |de energia |del servicio )?programad[oa]s?|mantenimiento programado|cortes? (de luz )?por mantenimiento|coupures? (de courant |d'electricite )?programmees?|travaux programmes|geplante (stromabschaltung|abschaltung|unterbrechung|stromunterbrechung|wartung)|planmassige|interruzion[ei] programmat[ae]|lavori programmati|geplande (onderbreking|stroomonderbreking|werkzaamheden)|planowane (wylaczenie|wylaczenia|przerwy)|planow\\w+ wylacz\\w*|планов\\w* (отключ\\w*|відключ\\w*)|planli (elektrik )?kesinti\\w*|programli kesinti\\w*|계획정전|pemeliharaan|lich (cat|cup) [đd]ien|พรุ่งนี้|ประกาศ|งดจ่ายกระแสไฟฟ้า|เช็ก(เลย)?(ที่ไหน|พิกัด)|เช็คพิกัด|αυριο|διακοπες ρευματος (σε περιοχες|αυριο)|δεδδηε|hedno|جداول|مخطط\\w*|announce[sd]?|to face|will face")],
+  ["explainer", w("сонячн\\w* панел\\w*|скільки (коштує|доведеться)|solar panels?|rumou?r\\w*|hipotesis|supervivencia|survival kit|kit de|miedo|temor|(apagon|apagao|blackout|panne|stromausfall) (mundial|global|mondial\\w*|weltweit\\w*)|(world|global|worldwide|nationwide 90-day) blackout|teorias?|bulos?|boatos?|conspira\\w*|falso|страшилк\\w*|фейк\\w*|чутк\\w*|слух\\w*|scientists|researchers|new study|study (finds|shows)|вчені|учені|ученые|cientificos|investigadores|forscher|chercheurs|pesquisadores|beachten|ratgeber|vorsorge|notfallvorrat|備え|対策|防災|備蓄|とは|方法|べきか|どう|how to|what to do|tips|guide|explained|explainer|debunk\\w*|fact[- ]?check\\w*|rumou?rs?|hoax|conspiracy|myths?|viral (claim|post|video)|fake|90-day blackout|what (you|we) (need to )?know|things to know|q&a|faq|podcast|webinar|op-?ed|opinion|editorial|column|survival|checklist|stay (safe|warm|cool)|food safety|keep (your )?food|refrigerator|carbon monoxide (safety|tips|warning)|prepar(e|ing|edness) (for|kit)|stock(ing)? up|como (actuar|prepararse)|que hacer|consejos|que faire|conseils|was tun|tipps|cosa fare|consigli|wat te doen|co robic|что делать|як (діяти|підготуватися)|ne yapmali|ماذا تفعل|क्या करें|cara (menghadapi|mengatasi)|photos? of the day|gallery|in pictures|як (у|в) \\w+ (забезпечують|працюють)|під час (блекаут|відключен)\\w*|during (blackouts|outages)")],
   ["past", w("desde o apagao|desde el apagon|since the (big |great |national )?blackout|(\\d+|dos|tres|cuatro) anos|meses despues|years later|anniversary|\\d+ years? (ago|after|since|on)|years? (ago|after|later)|a year (ago|after|on|since)|one year (ago|after|on|since)|retrospective|documentary|history of|lessons (from|of|learned)|report (into|on) (the|last)|inquiry (into|finds)|investigation (finds|report)|final report|(19|20)\\d\\d (blackout|outage|apagon|stromausfall|panne)|aniversario|hace (un|\\d+) anos?|anniversaire|il y a (un|\\d+) ans|jahrestag|vor (einem|\\d+) jahren|anniversario|anni fa|rocznic\\w*|lat temu|годовщин\\w*|лет назад|років тому|yil once|yildonumu|ذكرى|साल पहले|周年|年前|주년|nam truoc")],
-  ["none_now", w("(no|zero) (load ?shedding|outages?)|(suspend\\w*|ends?|ended|lifted|halts?|halted|scraps?) load ?shedding|(\\d+|consecutive) days? (without|of no) (load ?shedding|outages?)|load ?shedding[- ]free|sin apagones|sem apagao|без відключень|без отключений")],
+  ["none_now", w("(no|zero) (load ?shedding|outages?)|(suspend\\w*|ends?|ended|lifted|halts?|halted|scraps?) load ?shedding|(\\d+|consecutive) days? (without|of no) (load ?shedding|outages?)|load ?shedding[- ]free|sin apagones|sem apagao|без відключень|без отключений|reduc\\w* (load ?shedding|outages|power cuts)|reduit les coupures|fewer outages")],
+  ["not_current", w("\\d+ ?% (of )?outages|repair delays|for (weeks|months)|laments|slams|celebrity|actor|singer|rapper|співак|актор")],
 ];
 export const FUTURE_STRONG = w("posibles?|possible|possivel|alerta por|може|можлив\\w*|возможн\\w*|habra|habria|havera|haveria|aconteceria|podria|could (leave|lose|see|face|knock|cause|bring|hit)|may (leave|lose|see|face|knock|cause|bring)|might (leave|lose|see|face|cause)|at risk|risk of|warns? (of|about)|warning of|prepar(e|es|ed|ing) for|bracing|brace for|ahead of|forecast|expected to|likely to|set to|threat(en)?s? (to|of)|in case of|what if|podria(n)? (dejar|provocar|causar)|riesgo de|pourrai(t|ent) (provoquer|priver|entrainer)|risque de|konnte|drohen?|potrebbe|rischio (di )?|zou kunnen|moze (dojsc|spowodowac)|grozi|может (привести|оставить)|могут|можуть|загроза|угроза|olabilir|riski|恐れ|おそれ|우려|co the");
 export const FUTURE = w("dejara|quedara|quedaran|tendra|την (δευτερα|τριτη|τεταρτη|πεμπτη|παρασκευη|κυριακη)|το σαββατο|will|would|can|fears?|concerns?|worr(y|ies)|este (lunes|martes|miercoles|jueves|viernes|sabado|domingo)|esta (semana|noche)|sera|seria|va a|vai|anuncia\\w*|tomorrow|tonight|upcoming|next (week|month|year|summer|winter|weekend)|this weekend|on (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|by 20\\d\\d|drill|exercise|simulation|scenario|plans? (to|for)|planning|proposed|project|manana|demain|morgen|domani|jutro|завтра|yarin|غدا|कल|besok|明日|내일|ngay mai|kesho");
 export const PRESENT = w("the power (is |was )?out|power is out|without (power|electricity)|lost power|los(e|es|ing) power|left (\\w+ ){0,5}(without|in the dark)|knock(ed|s) out|remains? without|still without|restored|restoring|hit by|plunge[sd]? (\\w+ ){0,3}into darkness|are without|is without|were without|in the dark|outages? (hit|hits|leave|leaves|left|affect|affects|affected)|sin luz|sin energia|sans (electricite|courant)|prives? d'electricite|ohne strom|senza (luce|corrente)|zonder stroom|bez pradu|без света|без світла|без электричества|знеструмлен\\w*|обесточ\\w*|elektriksiz|بدون كهرباء|गुल|padam|mat dien|bila umeme|restablec\\w*|restabelec\\w*|retabli\\w*|wiederhergestellt|ripristinat\\w*|hersteld|przywrocon\\w*|восстановл\\w*|відновл\\w*");
+// a present phrase after a future auxiliary is still the future ("Cali tendrá un apagón ... se quedará sin energía")
+export const PRESENT_AFTER_FUTURE = w("(quedara|quedaran|estara|estaran|tendra|tendran|ficara|ficarao|will( be| leave| have| remain)?|seront|wird|werden) (\\w+ ){0,3}(sin|without|sem|sans|ohne|senza|zonder|bez)");
 // what has already happened, for headlines that also speak of what could come next
 export const PAST = w("lost power|knock(ed|s) out|left (\\w+ ){0,5}(without|in the dark)|are without|is without|were without|remains? without|still without|restored|restoring|hit by|залишил\\w*|остал\\w*|se quedaron|quedaron sin|ficaram sem|sont prives|waren ohne");
 const QUESTION = /[?¿]|(^|\s)чи\s|^(how|why|what|when|where|who|is|are|can|should|do|does|will|which)\s|^(como|por que|que|cuando|donde|quien|wie|warum|was|pourquoi|comment|perche|come|чи|как|почему|що|як)\s/i;
 export const CYBER = w("cyber[- ]?attacks?|cyber[- ]?incident|cyberattaques?|ciberataques?|ataque (hacker|cibernetico|informatico)|cyberangriffs?|hackerangriffs?|attacco informatico|attacchi informatici|cyberatak\\w*|atak hakerski\\w*|кибератак\\w*|кібератак\\w*|хакер\\w*|siber saldiri\\w*|هجوم سيبراني|هجمات سيبرانية|साइबर हमला|serangan siber|サイバー攻撃|사이버 ?공격|网络攻击|網路攻擊|tan cong mang|hack(ed|ers?|ing)?|ransomware|malware");
 export const ATTACK_WORDS = ["cyberattack", "attack", "sabotage", "strike", "missile", "drone", "shelling", "theft", "vandalism"];
 
+// month names (folded) -> month index, for dates written in headlines
+const MONTHS = {};
+[["january jan enero janeiro janvier januar gennaio ocak ιανουαριου ม.ค.", 0], ["february feb febrero fevereiro fevrier februar febbraio subat φεβρουαριου ก.พ.", 1],
+  ["march mar marzo marco mars marz mart μαρτιου มี.ค.", 2], ["april apr abril avril aprile nisan απριλιου เม.ย.", 3], ["may mayo maio mai maggio mayis μαιου พ.ค.", 4],
+  ["june jun junio junho juin juni giugno haziran ιουνιου มิ.ย.", 5], ["july jul julio julho juillet juli luglio temmuz ιουλιου ก.ค.", 6],
+  ["august aug agosto aout agustos αυγουστου ส.ค.", 7], ["september sep sept septiembre setembro septembre settembre eylul σεπτεμβριου ก.ย.", 8],
+  ["october oct octubre outubro octobre oktober ottobre ekim οκτωβριου ต.ค.", 9], ["november nov noviembre novembro novembre kasim νοεμβριου พ.ย.", 10],
+  ["december dec diciembre dezembro decembre dezember dicembre aralik δεκεμβριου ธ.ค.", 11]].forEach(([ws, m]) => ws.split(" ").forEach((x) => { MONTHS[x] = m; }));
+const MONTH_ALT = Object.keys(MONTHS).sort((a, b) => b.length - a.length).map((x) => x.replace(/\./g, "\\.")).join("|");
+const DAY_LIST = "(\\d{1,2})((?:\\s*(?:[-–&,/]|and|y|e|et|und|ve|και|και)\\s*\\d{1,2})*)";
+const DATE_DM = new RegExp(`(?<![\\d\\p{L}])${DAY_LIST}\\s*(?:de\\s+|of\\s+)?(${MONTH_ALT})(?![\\p{L}])`, "giu");
+const DATE_MD = new RegExp(`(?<![\\p{L}])(${MONTH_ALT})\\s+(\\d{1,2})(?:st|nd|rd|th)?(?![\\d\\p{L}])`, "giu");
+const DATE_NUM = /(?<!\d)(\d{1,2})[.-](\d{1,2})[.-](20\d\d)(?!\d)/g;
+/** Does a headline name a date after the day it was published (in the publisher's time zone, whatever it is)? Published
+ *  before 10:00 UTC, the next UTC day is already the future everywhere; later in the day, two days on. */
+export function headlineFuture(title, published) {
+  const p = typeof published === "number" ? published : ms(published);
+  if (!isFinite(p)) return false;
+  const t = prep(title), pd = new Date(p), y = pd.getUTCFullYear(), day0 = Date.UTC(y, pd.getUTCMonth(), pd.getUTCDate());
+  const ahead = new Date(p).getUTCHours() < 10 ? 1 : 2, dates = [];
+  const at = (d, m, yy) => { if (!(d >= 1 && d <= 31) || !(m >= 0 && m <= 11)) return; let x = Date.UTC(yy ?? y, m, d); if (yy == null && x < day0 - 180 * 864e5) x = Date.UTC(y + 1, m, d); dates.push(x); };
+  for (const m of t.matchAll(DATE_DM)) { const days = [m[1], ...(m[2].match(/\d{1,2}/g) || [])].map(Number); at(Math.max(...days), MONTHS[m[3]]); }
+  for (const m of t.matchAll(DATE_MD)) at(Number(m[2]), MONTHS[m[1]]);
+  for (const m of t.matchAll(DATE_NUM)) at(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return dates.some((x) => x >= day0 + ahead * 864e5);
+}
 /** Is this headline (and summary) a report of a power outage happening now? -> { ok, reason, cyber }.
  *  reason (when not ok): no_power_words, ad, not_grid, entertainment, market, product, planned, explainer, past,
  *  none_now, future, question. The headline decides; the summary only adds power words. */
@@ -127,11 +156,13 @@ export function classify(title, summary = "", o = {}) {
   let power = POWER.some((r) => r.test(t)) || (POWER.some((r) => r.test(s)) && OUTAGE_WORD.test(t)) || (!!o.utility && OUTAGE_ONLY.test(t));
   if (!power) return { ok: false, reason: "no_power_words", cyber };
   for (const [code, re] of GUARDS) if (re.test(t)) return { ok: false, reason: code, cyber };
+  // a date in the headline after the day it was published: a schedule of cuts to come (any language)
+  if (o.published && headlineFuture(title, o.published)) return { ok: false, reason: "planned", cyber };
   // an internet or cloud "outage" with only a summary mention of power is not a grid outage
   if (GUARDS[1][1].test(s) && !POWER.some((r) => r.test(t))) return { ok: false, reason: "not_grid", cyber };
   const hasFig = figure(title) != null;
   if (FUTURE_STRONG.test(t) && !PAST.test(t)) return { ok: false, reason: "future", cyber };
-  if (FUTURE.test(t) && !PRESENT.test(t) && !hasFig) return { ok: false, reason: "future", cyber };
+  if (FUTURE.test(t) && (!PRESENT.test(t) || PRESENT_AFTER_FUTURE.test(t)) && !hasFig) return { ok: false, reason: "future", cyber };
   if (QUESTION.test(String(title).trim()) && !hasFig && !PAST.test(t)) return { ok: false, reason: "question", cyber };
   return { ok: true, reason: "", cyber };
 }
@@ -144,8 +175,8 @@ const MULT = [
   [1e7, "crores?|करोड़|কোটি"],
 ];
 const UNIT_RE = {
-  customers: "customers?|clients?|clientes|usuarios?|abonnes?|kunden|clienti|utenze|utenti|klanten|aansluitingen|odbiorc\\w*|klientow|абонент\\w*|споживач\\w*|потребител\\w*|abone\\w*|pelanggan|khach hang|wateja|مشترك\\w*|उपभोक्ता\\w*|গ্রাহক\\w*|صارفین|accounts|meters|connections|unidades consumidoras|consumidores|consommateurs|electricity users|users",
-  homes: "homes?( and businesses)?|houses|households?|properties|residences|premises|hogares|viviendas|casas|foyers|logements|menages|maisons|haushalte\\w*|wohnungen|famiglie|abitazioni|case|huishoudens|woningen|huizen|gospodarstw\\w*|domow|mieszkan|домов|домохозяйств\\w*|будинк\\w*|домогосподарств\\w*|квартир\\w*|hane|konut|rumah|ho dan|ho|nyumba|منزل|منازل|بيوت|घरों|घर|বাড়ি\\w*|گھر\\w*|domicilios|residencias|imoveis|residencias",
+  customers: "customers?|clients?|clientes|usuarios?|abonnes?|kunden|clienti|utenze|utenti|klanten|aansluitingen|odbiorc\\w*|klientow|абонент\\w*|споживач\\w*|потребител\\w*|abone\\w*|pelanggan|khach hang|wateja|مشترك\\w*|उपभोक्ता\\w*|গ্রাহক\\w*|صارفین|accounts|meters|connections|unidades consumidoras|consumidores|consommateurs|electricity users|users|properties|premises",
+  homes: "homes?( and businesses)?|houses|households?|residences|hogares|viviendas|casas|foyers|logements|menages|maisons|haushalte\\w*|wohnungen|famiglie|abitazioni|case|huishoudens|woningen|huizen|gospodarstw\\w*|domow|mieszkan|домов|домохозяйств\\w*|будинк\\w*|домогосподарств\\w*|квартир\\w*|hane|konut|rumah|ho dan|ho|nyumba|منزل|منازل|بيوت|घरों|घर|বাড়ি\\w*|گھر\\w*|domicilios|residencias|imoveis|residencias",
   people: "people|persons|residents|inhabitants|personas|habitantes|vecinos|pessoas|moradores|habitants|personnes|menschen|einwohner\\w*|personen|bewohner\\w*|persone|abitanti|mensen|inwoners|osob|mieszkanc\\w*|людей|человек|жител\\w*|мешканц\\w*|людини|kisi|vatandas|orang|warga|penduduk|nguoi|watu|شخص|أشخاص|اشخاص|مواطن\\w*|نسمة|लोगों|लोग|মানুষ|لوگ\\w*|افراد",
 };
 const NUM = "(?<num>\\d{1,3}(?:[,. \\u00a0\\u202f']\\d{3})+|\\d+(?:[.,]\\d+)?)";
@@ -191,9 +222,11 @@ export function figures(text, needPower = false) {
   }
   return out;
 }
-/** The figure a report states: the largest in the headline, else in the summary; a stated unit beats "unstated". */
+/** The figure a report states: the largest in the headline, else in the summary; a stated unit beats "unstated". A
+ *  headline cut short by the index ("…" or "...") can have lost its largest figure: then only the summary counts. */
 export function figure(title, summary = "") {
-  for (const text of [title, summary]) {
+  const cut = /(\.\.\.|…)\s*$/.test(String(title || ""));
+  for (const text of cut ? [summary] : [title, summary]) {
     const f = figures(text, text === summary);
     if (!f.length) continue;
     const known = f.filter((x) => x.unit !== "unstated"), pool = known.length ? known : f;
@@ -267,16 +300,20 @@ export function gazetteer(cfg = {}) {
     const f = prep(a); if (f.length < 2) return;
     ents.push({ ...e, alias: f, mode, re: mode === "arabic" ? new RegExp(`(?<![\\p{L}])(?:[وبلفك]|ال|وال|بال|لل)?${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}])`, "u") : null });
   };
+  // a place's own name is an alias too (Cali, Sofia, Guatemala City ...), without a "(qualifier)", unless it is ambiguous
+  const ambiguous = new Set(cfg.ambiguous || []), multi = new Set(cfg.multi_area_utilities || []);
   for (const p of cfg.places || []) {
     if (!Array.isArray(p) || p.length < 6 || !/^[A-Z]{2}$/.test(p[1])) continue;
     const [name, cc, lat, lng, kind, ...aliases] = p;
     const e = { kind: kind === "city" ? "city" : "region", country: cc, region: kind === "city" ? "" : name, place: name, lat, lng };
-    for (const a of aliases) add(a, e);
+    const own = String(name).replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const names = ambiguous.has(name) || aliases.some((a) => prep(String(a).replace(/\*$/, "")) === prep(own)) ? aliases : [own, ...aliases];
+    for (const a of names) add(a, e);
   }
   for (const u of cfg.utilities || []) {
     if (!Array.isArray(u) || u.length < 6 || !/^[A-Z]{2}$/.test(u[1])) continue;
     const [name, cc, area, lat, lng, ...aliases] = u;
-    for (const a of aliases) add(a, { kind: "utility", utility: name, country: cc, region: area, place: area, lat, lng });
+    for (const a of aliases) add(a, { kind: "utility", utility: name, country: cc, region: area, place: area, lat, lng, multi: multi.has(name) });
   }
   const ccs = new Set([...Object.keys(COUNTRIES), ...Object.keys(cfg.countries || {}), ...Object.keys(cfg.country_centres || {})]);
   for (const cc of ccs) {
@@ -314,33 +351,50 @@ export function locate(title, summary, ents) {
     const ms_ = matches(text, ents); if (!ms_.length) continue;
     const util = ms_.filter((m) => m.e.kind === "utility").sort((a, b) => a.at - b.at)[0];
     // with two countries named, the one after "in", "of", "across" is where the outage is ("Russia leaves five regions of Ukraine without power")
-    const prep_ = (m) => (/(^|\s)(in|of|across|throughout|en|de|du|da|do|in|im|nel|w|в|у|по|na)\s+(the\s+)?$/u.test(text.slice(Math.max(0, m.at - 14), m.at)) ? 0 : 1);
+    // a country right before an attack verb is the actor ("Russia attacked Ukraine's energy"): ranked last; one with a
+    // possessive energy word after it is the place ("Ukraine's energy infrastructure")
+    const after = (m) => text.slice(m.end, m.end + 40);
+    const actor = (m) => /^\s*(has |have |had )?(attack\w*|strikes?|struck|shell\w*|bomb\w*|launch\w*|fired|hit|атакувал\w*|атакує|атакует|обстріля\w*|обстреля\w*|вдарил\w*|ударил\w*)(?![\p{L}])/u.test(after(m));
+    const owns = (m) => /^'s?\s+(energy|power|grid|electric\w*)/.test(after(m));
+    const prep_ = (m) => (owns(m) ? 0 : actor(m) ? 3 : /(^|\s)(in|of|across|throughout|en|de|du|da|do|in|im|nel|w|в|у|по|na)\s+(the\s+)?$/u.test(text.slice(Math.max(0, m.at - 14), m.at)) ? 1 : 2);
     const cos = ms_.filter((m) => m.e.kind === "country").sort((a, b) => prep_(a) - prep_(b) || a.at - b.at);
     let places = ms_.filter((m) => m.e.kind === "city" || m.e.kind === "region");
     // a utility's own country decides; a named country only breaks ties ("Valencia, Venezuela"), since a country word is
     // often the actor ("Russian shelling in Zaporizhzhia")
     if (util) places = places.filter((m) => m.e.country === util.e.country);
-    const named = new Set(cos.map((m) => m.e.country)), inNamed = (m) => (named.has(m.e.country) ? 0 : 1);
+    // three or more regions of one country named in the same text: the report is about the country, not its first region
+    const perCc = new Map(); for (const m of places) (perCc.get(m.e.country) || perCc.set(m.e.country, new Set()).get(m.e.country)).add(m.e.place);
+    const wide = [...perCc].find(([, set]) => set.size >= 3);
+    if (wide) { const ce = ents.find((e) => e.kind === "country" && e.country === wide[0]); if (ce) return out(ce, util); }
+    const named = new Set(cos.filter((m) => prep_(m) < 3).map((m) => m.e.country)), inNamed = (m) => (named.has(m.e.country) ? 0 : 1);
     places.sort((a, b) => inNamed(a) - inNamed(b) || RANK[a.e.kind] - RANK[b.e.kind] || a.at - b.at);
     let pick = places[0] || util || cos[0];
     // "Valencia, Venezuela": a place outside the country named right after it is that country, not the place
     if (pick && pick !== util && (pick.e.kind === "city" || pick.e.kind === "region") && !named.has(pick.e.country)) { const c = cos.find((m) => m.at >= pick.end && m.at - pick.end <= 3); if (c) pick = c; }
     if (!pick) continue;
-    const e = pick.e;
+    // a utility that serves several areas (Duke Energy, AEP ...) and no named place: the country, not one of its areas
+    if (pick === util && util.e.multi) { const ce = ents.find((e) => e.kind === "country" && e.country === util.e.country); if (ce) return out(ce, util); }
+    return out(pick.e, util);
+  }
+  return null;
+  function out(e, util) {
     return { country: e.country, region: str(e.region, 80), place: str(e.place, 80), lat: Math.round(e.lat * 1000) / 1000, lng: Math.round(e.lng * 1000) / 1000,
       how: e.kind === "utility" ? "utility" : e.kind === "country" ? "country" : "place", utility: util ? util.e.utility : "" };
   }
-  return null;
 }
 
 /* ---------- publishers' own pages ---------- */
 const AGGREGATOR = /^(?:[a-z0-9-]+\.)*(google\.[a-z.]+|bing\.com|msn\.com|yahoo\.com|news\.yahoo\.co\.jp|flipboard\.com|newsbreak\.com|ground\.news|smartnews\.com|newsnow\.co\.uk|feedly\.com|inoreader\.com|apple\.news|gdeltproject\.org)$/i;
-/** The url if it is an https article page on a publisher's own host (no aggregator, redirect or front page), else "". */
+// user-generated pages are not publishers' reporting
+const UGC = /^(?:[a-z0-9-]+\.)*(note\.com|medium\.com|blogspot\.com|substack\.com|wordpress\.com|tumblr\.com|reddit\.com)$/i;
+/** The url if it is an https article page on a publisher's own host (no aggregator, redirect, blog platform or front
+ *  page, not cut inside a percent-escape), else "". */
 export function publisherUrl(u) {
   const s = String(u || "").trim();
-  if (!/^https:\/\/[^\s"'<>]+$/.test(s) || s.length > 400) return "";
+  if (!/^https:\/\/[^\s"'<>]+$/.test(s) || s.length > 1000 || /%[0-9A-Fa-f]?$/.test(s)) return "";
+  try { decodeURI(s); } catch { return ""; }
   let x; try { x = new URL(s); } catch { return ""; }
-  if (x.username || x.password || x.port || AGGREGATOR.test(x.hostname)) return "";
+  if (x.username || x.password || x.port || AGGREGATOR.test(x.hostname) || UGC.test(x.hostname)) return "";
   if (!x.pathname || x.pathname === "/" || /^\/(index\.(html?|php))?$/.test(x.pathname)) return "";
   return x.href;
 }
@@ -364,6 +418,7 @@ export function resolveGoogle(g, bingItems) {
 /* ---------- reports and grouping ---------- */
 /** Everything but the address: is it a current power outage, where, figure, causes. -> { ok, reason, report }. */
 export function assess(raw, ents, now = Date.now(), windowH = 72) {
+  const pubT = ms(raw.published);
   const title = str(raw.title, 220), t = ms(raw.published);
   if (!title) return { ok: false, reason: "no_title" };
   if (!isFinite(t)) return { ok: false, reason: "no_date" };
@@ -371,36 +426,72 @@ export function assess(raw, ents, now = Date.now(), windowH = 72) {
   const at = locate(title, raw.summary || "", ents);
   // "Oncor outage": a utility's name with "outage" in the headline is a power outage
   const tAt = at && at.utility ? locate(title, "", ents) : null;
-  const c = classify(title, raw.summary || "", { utility: !!(tAt && tAt.utility) });
+  const c = classify(title, raw.summary || "", { utility: !!(tAt && tAt.utility), published: pubT });
   if (!c.ok) return { ok: false, reason: c.reason };
   if (!at) return { ok: false, reason: "no_place" };
   return { ok: true, reason: "", report: { title, name: str(raw.name, 80), lang: langCode(raw.lang), published: iso(t),
     ...at, figure: figure(title, raw.summary || ""), causes: causeWords(title, raw.summary || ""), cyber: c.cyber } };
 }
+const MON3 = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+/** The date an article's address carries (/2024/01/28/, /2024-01-28, /2024/jan/28/, 20240128 in the slug), or NaN. Indexes
+ *  re-date old pages when they crawl them again; the address does not change. */
+export function urlDate(u) {
+  let path = ""; try { path = new URL(String(u)).pathname.toLowerCase(); } catch { return NaN; }
+  const ok = (y, m, d) => (y >= 1995 && y <= 2100 && m >= 0 && m <= 11 && d >= 1 && d <= 31 ? Date.UTC(y, m, d) : NaN);
+  let m = path.match(/(?:^|\/)((?:19|20)\d\d)[/-](\d{1,2})[/-](\d{1,2})(?:[/._-]|$)/);
+  if (m) return ok(+m[1], +m[2] - 1, +m[3]);
+  m = path.match(/(?:^|\/)((?:19|20)\d\d)\/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\/(\d{1,2})(?:\/|$)/);
+  if (m) return ok(+m[1], MON3[m[2]], +m[3]);
+  m = path.match(/(?:^|[/_-])((?:19|20)\d\d)(\d\d)(\d\d)(?:[/._-]|$)/);
+  if (m) return ok(+m[1], +m[2] - 1, +m[3]);
+  m = path.match(/(?:^|\/)((?:19|20)\d\d)\/(\d{1,2})(?:\/|$)/);              // /2024/09/ (a month): its last day
+  if (m && +m[2] >= 1 && +m[2] <= 12) return Date.UTC(+m[1], +m[2], 0);
+  return NaN;
+}
 /** One search result -> { ok, reason, report }. raw = { title, summary, url, name, published, lang }. Only a publisher's
- *  own https article page is kept. */
+ *  own https article page is kept; an address dated before the window is an old article whatever the index says. */
 export function toReport(raw, ents, now = Date.now(), windowH = 72) {
   const url = publisherUrl(raw.url);
   if (!url) return { ok: false, reason: "no_publisher_page" };
+  const ud = urlDate(url);
+  if (isFinite(ud) && ud + 864e5 < now - windowH * H) return { ok: false, reason: "too_old" };
   const a = assess(raw, ents, now, windowH);
   if (!a.ok) return a;
   return { ok: true, reason: "", report: { ...a.report, url, name: a.report.name || host(url) } };
 }
 const pkey = (n) => publisherKey(n) || fold(n).replace(/\s+/g, "");
+// hosts that republish other publishers' articles word for word (a copy is not another publisher)
+const SYNDICATOR = /^(?:[a-z0-9-]+\.)*(infoseek\.co\.jp|inshorts\.com|newsbreak\.com|headtopics\.com|dailyhunt\.in)$/i;
+/** The same article on one host under another language path (/ua/ and /en/ with the same number) is one report. */
+const articleKey = (u) => { try { const x = new URL(u), id = (x.pathname.match(/\d{5,}/g) || []).sort((a, b) => b.length - a.length)[0]; return id ? `${x.hostname.replace(/^www\./, "")}#${id}` : ""; } catch { return ""; } };
+const kmBetween = (a, b) => { const r = Math.PI / 180, dl = (b.lat - a.lat) * r, dg = (b.lng - a.lng) * r;
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dg / 2) ** 2; return 12742 * Math.asin(Math.sqrt(h)); };
+// how near two reported places must be to be one outage: two cities (Reno, Sparks) 50 km; a region and anything in it
+// (Washoe County / Reno and Nevada, Port Lincoln and the Eyre Peninsula) 300 km
+export const NEAR_CITY_KM = 50, NEAR_REGION_KM = 300;
+const nearEnough = (a, b) => kmBetween(a, b) <= (a.region || b.region ? NEAR_REGION_KM : NEAR_CITY_KM);
 const better = (a, b) => (!a ? b : !b ? a : (b.n > a.n || (b.n === a.n && a.unit === "unstated" && b.unit !== "unstated")) ? b : a);
-/** Reports of the same place (country + place) within group_hours of the outage's other reports are one reported outage.
- *  Earlier outages (prev items) keep their id; a publisher is listed once per outage (its earliest report). */
+/** Reports of the same outage within group_hours of its other reports are one reported outage: same country AND the same
+ *  place, or both below country level with centres near enough (nearEnough; the nearest such outage wins). Earlier outages (prev
+ *  items) keep their id; a publisher is listed once per outage (its earliest report); the same article under another
+ *  language path, and a syndicator's word-for-word copy, are not another publisher. */
 export function group(prevItems, reports, now = Date.now(), cfg = {}) {
   const win = (cfg.window_hours || 72) * H, gap = (cfg.group_hours || 12) * H, max = cfg.max_items || 300;
   const items = (prevItems || []).filter((it) => it && Array.isArray(it.publishers) && it.publishers.length && ms(it.last_seen || it.first_seen) >= now - win)
-    .map((it) => ({ ...it, publishers: it.publishers.slice(), cause_words: (it.cause_words || []).slice() }));
+    // an earlier run's publisher whose address the current rules refuse (a cut link, a blog platform) is dropped, so the file stays valid
+    .map((it) => ({ ...it, publishers: it.publishers.filter((p) => p && publisherUrl(p.url) === p.url), cause_words: (it.cause_words || []).slice() })).filter((it) => it.publishers.length);
   const urls = new Set(items.flatMap((it) => it.publishers.map((p) => p.url))), ids = new Set(items.map((it) => it.id));
+  const arts = new Set(items.flatMap((it) => it.publishers.map((p) => articleKey(p.url)).filter(Boolean)));
+  const countryLevel = (x) => !!COUNTRIES[x.country] && fold(x.place) === fold(COUNTRIES[x.country][0]);
   const span = (it) => { const ts = it.publishers.map((p) => ms(p.published)); return [Math.min(...ts), Math.max(...ts)]; };
   for (const r of [...reports].sort((a, b) => ms(a.published) - ms(b.published))) {
-    if (urls.has(r.url)) continue;
-    urls.add(r.url);
-    const t = ms(r.published), key = `${r.country}|${fold(r.place)}`;
-    let it = items.find((x) => `${x.country}|${fold(x.place)}` === key && (() => { const [a, b] = span(x); return t >= a - gap && t <= b + gap; })());
+    const ak = articleKey(r.url);
+    if (urls.has(r.url) || (ak && arts.has(ak))) continue;
+    urls.add(r.url); if (ak) arts.add(ak);
+    const t = ms(r.published), key = `${r.country}|${fold(r.place)}`, inTime = (x) => { const [a, b] = span(x); return t >= a - gap && t <= b + gap; };
+    let it = items.find((x) => `${x.country}|${fold(x.place)}` === key && inTime(x));
+    if (!it && !countryLevel(r)) it = items.filter((x) => x.country === r.country && !countryLevel(x) && inTime(x) && nearEnough(x, r))
+      .sort((a, b) => kmBetween(a, r) - kmBetween(b, r))[0];
     const pub = { name: r.name, url: r.url, title: r.title, lang: r.lang, published: r.published };
     if (!it) {
       it = { id: "", country: r.country, region: r.region, place: r.place, lat: r.lat, lng: r.lng, approx: true, figure: null, cause_words: [],
@@ -408,6 +499,8 @@ export function group(prevItems, reports, now = Date.now(), cfg = {}) {
       items.push(it);
     }
     if (it.publishers.some((p) => pkey(p.name) === pkey(r.name))) continue;
+    const nt = normTitle(r.title);
+    if (it.publishers.some((p) => normTitle(p.title) === nt && (SYNDICATOR.test(host(p.url)) || SYNDICATOR.test(host(r.url))))) continue;
     it.publishers.push(pub);
     it.figure = better(it.figure, r.figure ? { ...r.figure, by: r.name } : null);
     for (const c of r.causes) if (!it.cause_words.includes(c)) it.cause_words.push(c);
@@ -428,10 +521,19 @@ export function group(prevItems, reports, now = Date.now(), cfg = {}) {
     .sort((a, b) => b.count - a.count || (a.last_seen < b.last_seen ? 1 : -1)).slice(0, max);
 }
 
+// the guards that say a headline is not a current outage (not those that only lack a word the summary had given)
+const RECHECK = new Set(["planned", "future", "past", "explainer", "not_current", "none_now", "not_grid", "ad", "entertainment", "market", "product"]);
+/** Earlier runs' items with the publishers the current rules reject taken out (a schedule kept before the rules knew its
+ *  language stays off the map at once, not for the rest of its 72 hours). */
+export function recheck(prevItems) {
+  return (prevItems || []).map((it) => (it && Array.isArray(it.publishers)
+    ? { ...it, publishers: it.publishers.filter((p) => p && !RECHECK.has(classify(p.title, "", { published: ms(p.published) }).reason)) } : it));
+}
 /** The news reports as leads for scripts/grid-analysis.mjs corroborate() (kind "news"; titles only). */
 export function newsLeads(d) {
   return ((d && Array.isArray(d.items)) ? d.items : []).flatMap((it) => (it && Array.isArray(it.publishers) ? it.publishers : [])
-    .map((p) => ({ seen_at: it.first_seen, published: p.published, source: p.name, title: p.title, url: p.url, via: "grid-news", country: it.country })));
+    .map((p) => ({ seen_at: it.first_seen, published: p.published, source: p.name, title: p.title, url: p.url, via: "grid-news", country: it.country,
+      lat: it.lat, lng: it.lng, how: COUNTRIES[it.country] && it.place === COUNTRIES[it.country][0] ? "country" : "place" })));
 }
 
 /** Shape check of data/grid/news.json -> list of problems (empty = fine). */
@@ -477,11 +579,11 @@ async function fetchText(url, as = "text") {
 }
 const entities = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
   .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16))).replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-/** Bing News RSS with the publisher's name (<News:Source>) kept beside osint's parser. */
-export function parseBing(xml) {
+/** Bing News RSS with the publisher's name (<News:Source>) kept beside osint's parser (times: osint bingTime, US Pacific). */
+export function parseBing(xml, now = Date.now()) {
   const out = [];
   for (const m of String(xml).matchAll(/<item>[\s\S]*?<\/item>/g)) {
-    const it = parseBingNews(m[0])[0]; if (!it) continue;
+    const it = parseBingNews(m[0], now)[0]; if (!it) continue;
     const src = (m[0].match(/<News:Source>([\s\S]*?)<\/News:Source>/i) || [])[1];
     out.push({ ...it, name: str(entities(src), 80) || it.source });
   }
@@ -541,14 +643,17 @@ async function run(force) {
     gStat.unresolved++; return 0;
   }, health);
   gStat.unresolved += Math.max(0, cands.length - LOOKUPS);
-  const reasons = {}, reports = [];
+  const reasons = {}, reports = [], noPlace = [];
   for (const r of raws) {
     const x = toReport({ title: r.title, summary: r.summary, url: r.url, name: r.name || r.source, published: r.published, lang: r.lang }, ents, now, cfg.window_hours || 72);
     if (x.ok) reports.push(x.report); else reasons[x.reason] = (reasons[x.reason] || 0) + 1;
+    // what the gazetteer missed, so a person or improve.mjs can add the place (titles only; data, never instructions)
+    if (!x.ok && x.reason === "no_place") noPlace.push({ title: str(r.title, 160), host: host(r.url), lang: str(r.lang, 8), at: iso(now) });
   }
-  const items = group(prev.items || [], reports, now, cfg);
+  const noPlaceSample = [...noPlace, ...(((prev.stats || {}).no_place_sample) || [])].filter((x, i, a) => x && x.title && a.findIndex((y) => y.title === x.title) === i).slice(0, 30);
+  const items = group(recheck(prev.items || []), reports, now, cfg);
   const out = { updated_at: iso(now), cursor: (cursor + per) % Math.max(1, Q.length), queries: Q.length, sources: health,
-    stats: { results: raws.length, reports: reports.length, rejected: reasons, google: gStat }, items };
+    stats: { results: raws.length, reports: reports.length, rejected: reasons, google: gStat, no_place_sample: noPlaceSample }, items };
   const errs = checkNews(out);
   if (errs.length) { console.error(`grid-news: refusing to write a bad file: ${errs.slice(0, 5).join("; ")}`); return 1; }
   writeJson(OUT_PATH, out);

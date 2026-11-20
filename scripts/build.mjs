@@ -174,7 +174,14 @@ const gridNews = (() => {
   if (!existsSync(p)) return null;
   const d = readJson(p);
   if (!d || typeof d !== "object" || !Array.isArray(d.items)) { warnings.push("grid/news.json: not readable, news-reported outages left out"); return null; }
-  return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300) };
+  // a big or nationwide news-reported outage can get a cause check from the grid desk (scripts/grid-desk.mjs, research
+  // id grid-news-<id>); its result is shown on the news row, labelled as written by CyberView AI
+  const research = existsSync(join(DATA, "grid", "research.json")) ? readJson(join(DATA, "grid", "research.json")) || {} : {};
+  const DEC = ["weather", "equipment", "planned", "supply_shortfall", "wildfire_safety", "third_party", "cyber_official", "cyber_reported", "under_investigation", "unknown"];
+  const checked = (id) => { const r = research && typeof research === "object" ? research[`grid-news-${id}`] : null;
+    return r && DEC.includes(r.decision) ? { decision: r.decision, summary: String(r.cause_summary || "").slice(0, 300), by: "CyberView AI (a Claude model)" } : null; };
+  return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300)
+    .map((x) => { const c = checked(x.id); return c ? { ...x, checked: c } : x; }) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
@@ -191,13 +198,29 @@ try {
 // each grid source's last fetch (data/grid/live.json, then analysis.json for the keyed ones), for the status page
 const gridSources = (() => {
   const live = existsSync(join(DATA, "grid", "live.json")) ? readJson(join(DATA, "grid", "live.json")) : null;
+  // the grid audit's flags per source (scripts/grid-audit.mjs: failing, stale_data, dormant, customers_missing ...)
+  const audit = existsSync(join(DATA, "grid", "audit.json")) ? readJson(join(DATA, "grid", "audit.json")) || {} : {};
+  const flagsOf = (k) => { const f = audit.sources && audit.sources[k] && audit.sources[k].flags; return Array.isArray(f) ? f.filter((x) => /^[a-z0-9_]{1,40}$/.test(x)).slice(0, 10) : []; };
   const out = {}, add = (k, v) => { if (!/^[a-z0-9_-]{1,40}$/.test(k) || out[k] || !v || typeof v !== "object") return;
     out[k] = { name: String(v.name || "").slice(0, 60), ok: v.ok === true, error: String(v.error || "").slice(0, 120), at: String(v.fetched_at || v.at || "").slice(0, 30),
       items: Number.isInteger(v.items) && v.items >= 0 ? v.items : null,
-      country: /^[A-Z]{2}$/.test(v.country || "") ? v.country : "", paused: v.paused === true }; };
+      country: /^[A-Z]{2}$/.test(v.country || "") ? v.country : "", paused: v.paused === true,
+      ...(v.stale === true ? { stale: true } : {}), ...(v.dormant === true ? { dormant: true } : {}),
+      ...(/^\d{4}-\d{2}-\d{2}T/.test(v.data_at || "") ? { data_at: String(v.data_at).slice(0, 30) } : {}), flags: flagsOf(k) }; };
   for (const [k, v] of Object.entries((live && live.sources) || {})) add(k, v);
   for (const [k, v] of Object.entries((gridAnalysis && gridAnalysis.sources) || {})) add(k, v);
   return Object.keys(out).length ? out : null;
+})();
+// the grid pipeline's later stages, for the status page and the guard (ops-6): incidents waiting for a cause check, and
+// the audit's pipeline flags (collect_late, news_late, analysis_late, research_waiting_over_2h, series_large)
+const gridStages = (() => {
+  const inc = existsSync(join(DATA, "grid", "incidents.json")) ? readJson(join(DATA, "grid", "incidents.json")) || {} : {};
+  const research = existsSync(join(DATA, "grid", "research.json")) ? readJson(join(DATA, "grid", "research.json")) || {} : {};
+  const audit = existsSync(join(DATA, "grid", "audit.json")) ? readJson(join(DATA, "grid", "audit.json")) || {} : {};
+  const waiting = (Array.isArray(inc.open) ? inc.open : []).filter((i) => i && i.research_needed === true && !(research[i.id] && research[i.id].final));
+  const oldest = waiting.reduce((m, i) => { const t = Date.parse(i.opened_at || ""); return isFinite(t) ? Math.max(m, Math.round((Date.now() - t) / 6e4)) : m; }, 0);
+  const pf = audit.pipeline && Array.isArray(audit.pipeline.flags) ? audit.pipeline.flags.filter((x) => /^[a-z0-9_]{1,40}$/.test(x)).slice(0, 10) : [];
+  return { waiting: { count: waiting.length, oldest_min: oldest }, audit_at: String(audit.updated_at || "").slice(0, 30), audit_flags: pf };
 })();
 
 // exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
@@ -424,8 +447,10 @@ console.log("Pages: " + (await buildPages()).join(", "));
   writeFileSync(join(OUT, "health.json"), JSON.stringify({ built_at, ok: quarantined.length === 0, quarantined: quarantined.slice(0, 100), quarantined_count: quarantined.length, warnings: warnings.length,
     last_sweep_at: st.last_sweep_at || "", last_collect_at: st.last_collect_at || "", last_feeds_at: st.last_feeds_at || "", last_backlog_at: st.last_backlog_at || "", backlog: backlogNow,
     last_cve_at: st.last_cve_at || "", last_review_at: st.last_review_at || "", last_analyst_at: st.last_analyst_at || "", last_brief_at: st.last_brief_at || "", last_analysis_at: st.last_analysis_at || "",
-    last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "", grid_open: context.grid ? context.grid.items.length : null,
-    grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "" }));
+    last_grid_at: st.last_grid_at || "", last_grid_research_at: st.last_grid_research_at || "",
+    grid_open: context.grid ? context.grid.items.filter((x) => x && x.scope !== "outage").length : null,
+    grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "", last_grid_news_at: st.last_grid_news_at || "",
+    grid_waiting: gridStages.waiting, grid_audit_at: gridStages.audit_at, grid_audit_flags: gridStages.audit_flags }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

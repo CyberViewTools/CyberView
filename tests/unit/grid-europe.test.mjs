@@ -256,3 +256,34 @@ test("adapter: a refused feed fails the source (no workaround)", async () => {
   globalThis.fetch = async () => new Response("Forbidden", { status: 403 });
   await assert.rejects(() => ADAPTERS["elvia-strombrudd"](), (e) => e.code === "http_403");
 });
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("sources-2/3: SSEN and NGED report their own data time; a renamed customers field fails the source", async () => {
+  const { needNumbers } = await import("../../scripts/grid-sources/europe.mjs");
+  assert.equal(parseSsen(json("ssen-powertrack.json"), h).data_at, "2026-11-19T23:33:59Z");
+  assert.equal(parseNged(txt("nged-live-power-cuts.csv"), h).data_at, "2026-11-19T23:30:00Z");     // UK wall-clock = UTC in November
+  const d = JSON.parse(txt("ssen-powertrack.json").split('"customerCount"').join('"customers"'));
+  assert.throws(() => parseSsen(d, h), (e) => e.code === "bad_shape");
+  assert.throws(() => parseNged(txt("nged-live-power-cuts.csv").replace('"Confirmed Off","Predicted Off"', '"Confirmed","Predicted"'), h), (e) => e.code === "bad_shape");
+  // TAURON: rows but no TypeId 1 or 2
+  assert.throws(() => parseTauron(json("tauron-wylaczenia.json").map((x) => ({ ...x, TypeId: undefined, Type: x.TypeId })), h, T("2026-11-19T12:00:00Z")), (e) => e.code === "bad_shape");
+  assert.doesNotThrow(() => needNumbers([], (r) => r.x, "empty"));
+});
+
+test("sources-4: Liander's band is kept as words for the map ('under 300'), the count is its floor", () => {
+  const x = parseLiander(json("liander-storingen.json"), h).find((i) => i.id === "liander-storingen:627969");
+  assert.equal(x.customers, 100);
+  assert.equal(x.customers_band, "under 300");
+});
+
+test("sources-6: Liander and Elvia follow ArcGIS paging; a cut still there after the last page is reported", async () => {
+  const { arcgisPages } = await import("../../scripts/grid-sources/europe.mjs");
+  const base = json("liander-storingen.json"), urls = [];
+  const page = (feats, more) => ({ ...base, features: feats, exceededTransferLimit: more });
+  const hp = { ...h, get: async (u) => { urls.push(u); const n = urls.length; return n === 1 ? page(base.features.slice(0, 5), true) : n === 2 ? page(base.features.slice(5, 9), true) : page(base.features.slice(9), false); } };
+  const items = await arcgisPages(hp, "https://x.example/q?f=json", parseLiander);
+  assert.equal(items.length, 13);
+  assert.deepEqual(urls.map((u) => (u.match(/resultOffset=(\d+)/) || [0, "0"])[1]), ["0", "5", "9"]);
+  const always = { ...h, get: async () => page(base.features.slice(0, 2), true) };
+  await assert.rejects(arcgisPages(always, "https://x.example/q?f=json", parseLiander, 3), (e) => e.code === "bad_shape");
+});

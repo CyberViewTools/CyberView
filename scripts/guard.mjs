@@ -3,7 +3,8 @@
 // secrets or to the session that runs the jobs. It answers one question: is fresh, validated data reaching visitors?
 //   live data age            the site was rebuilt in the last 90 minutes
 //   sweep, collect, feeds    each ran within its limit (150 min, 120 min, 6 h)
-//   power grid               the grid collector ran within 120 minutes (warning only)
+//   power grid               the grid collector ran within 120 minutes, its analysis and the news within 60, and no
+//                            outage waited over 120 minutes for a cause check (warnings only: context, not cyber data)
 //   deploy                   the newest commit on main (code) and on the data branch (data) are live, each within 20 minutes
 //                            of being pushed, and the last deploy succeeded; data commits that need no deploy (leases, usage)
 //                            are not counted as lag
@@ -17,12 +18,13 @@ import { pathToFileURL } from "node:url";
 import { NO_DEPLOY } from "./lib/repo.mjs";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120, forward_min: 30 };
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120,
+  grid_analysis_min: 60, grid_news_min: 60, grid_wait_min: 120, forward_min: 30 };
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
 /** Where a data file is read from raw.githubusercontent.com: the data branch's root once it exists, else main's data/. */
 export const rawDataUrl = (repo, dataBranch, path) => `https://raw.githubusercontent.com/${repo}/${dataBranch ? "data" : "main/data"}/${path}`;
 /** --heal: which workflow (dispatched on main) repairs which finding. */
-export const HEAL = { deploy: "pages.yml", collect: "collect.yml", feeds: "feeds.yml", cve: "cve.yml", forward: "data-forward.yml" };
+export const HEAL = { deploy: "pages.yml", collect: "collect.yml", grid: "collect.yml", feeds: "feeds.yml", cve: "cve.yml", forward: "data-forward.yml" };
 
 /** Pure: what was read -> { fails, warns, heal }.
  *  head: main's newest commit {sha, date}. dataHead: the data branch's newest commit, or null while there is no data branch.
@@ -45,6 +47,10 @@ export function assess({ manifest, health, bundle, head, deploy, leases, dataHea
   if (health.last_analyst_at !== undefined) late("the exploit analyst", health.last_analyst_at, LIMITS.analyst_min, "analyst");
   // power grid context layer (grid.mjs collect): a warning only, never FAILING; it is context, not the cyber data
   if (health.last_grid_at !== undefined) late("the power grid collector", health.last_grid_at, LIMITS.grid_min, "grid");
+  if (health.grid_analysis_at !== undefined) late("the power grid analysis", health.grid_analysis_at, LIMITS.grid_analysis_min, "grid");
+  if (health.last_grid_news_at !== undefined) late("the power outages in the news", health.last_grid_news_at, LIMITS.grid_news_min, "grid");
+  const gw = health.grid_waiting;
+  if (gw && gw.count > 0 && gw.oldest_min > LIMITS.grid_wait_min) warns.push(`${gw.count} grid outage(s) wait for a cause check, the oldest for ${gw.oldest_min} minutes (limit ${LIMITS.grid_wait_min}): the grid researchers are not running`);
   // the research loop's leader lease is its heartbeat: renewed every cycle, so an expired one means no loop is running
   if (leases) { const l = leases["flow:leader"]; if (!l || !(Date.parse(l.until) > now)) warns.push("no research loop holds the leader lease" + (l ? " (it expired at " + l.until + ")" : "") + ": the standby session should take over within 30 minutes"); }
   if (!Array.isArray(bundle.events) || bundle.events.length < 5) fails.push(`the live bundle has ${Array.isArray(bundle.events) ? bundle.events.length : 0} events`);
@@ -104,7 +110,9 @@ async function main() {
   const r = assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward });
   const healed = [];
   if (process.argv.includes("--heal")) for (const h of r.heal) {
+    // grid: collect.yml runs grid collect, the analysis and the news when the research loop has not
     const wf = HEAL[h]; if (!wf) continue;
+    if (healed.some((x) => x.startsWith(wf + ":"))) continue;
     const x = gh(["-X", "POST", `repos/${REPO}/actions/workflows/${wf}/dispatches`, "-f", "ref=main"]);
     healed.push(`${wf}: ${x.status === 0 ? "started" : "could not be started from here"}`);
   }

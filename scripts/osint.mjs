@@ -47,12 +47,25 @@ export function parseGoogleNews(xml) {
   }
   return out;
 }
-/** Bing News RSS: the real article address is inside the redirect link's url= parameter. */
-export function parseBingNews(xml) {
+/** Bing News RSS pubDate is US Pacific wall-clock time labelled "GMT" (checked 2026-11-20: WLUC's UPPCO wind story is
+ *  "10:53:00 GMT" on Bing and 18:53 GMT on Google News and on the publisher's page; KOLO 07:16 on Bing, 15:16Z on its page).
+ *  parseFeed read it as UTC: read the same wall-clock time in America/Los_Angeles (8 h in PST, 7 h in PDT), never later
+ *  than now. "" stays "". */
+export function bingTime(isoAsUtc, now = Date.now()) {
+  const t = Date.parse(isoAsUtc || "");
+  if (!isFinite(t)) return "";
+  const off = (ms) => { const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", hourCycle: "h23", year: "numeric",
+    month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(new Date(ms)).map((x) => [x.type, x.value]));
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - Math.floor(ms / 1000) * 1000; };
+  let u = t - off(t); u = t - off(u);                       // second pass settles daylight-saving edges
+  return new Date(Math.min(u, now)).toISOString().replace(/\.\d+Z$/, "Z");
+}
+/** Bing News RSS: the real article address is inside the redirect link's url= parameter; times as bingTime(). */
+export function parseBingNews(xml, now = Date.now()) {
   return parseFeed(String(xml)).map((it) => {
     let url = it.url; try { const u = new URL(it.url); const real = u.searchParams.get("url"); if (/bing\.com$/.test(u.hostname) && real) url = real; } catch {}
     let host = ""; try { host = new URL(url).hostname.replace(/^www\./, ""); } catch {}
-    return https(url) ? { title: it.title, url, published: it.published, summary: it.summary, source: host || "Bing News" } : null;
+    return https(url) ? { title: it.title, url, published: bingTime(it.published, now), summary: it.summary, source: host || "Bing News" } : null;
   }).filter(Boolean);
 }
 /** GDELT DOC 2.0 artlist. */

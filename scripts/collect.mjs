@@ -166,7 +166,8 @@ export function parseFeed(xml) {
   for (const m of xml.matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)) {
     const b = m[0];
     const title = text(tag(b, ["title"]), 200);
-    let url = text(tag(b, ["link"]), 600);
+    // long enough for a Bing redirect around a percent-encoded non-Latin article address (a cut one is a broken link)
+    let url = text(tag(b, ["link"]), 4000);
     if (!/^https?:\/\//.test(url)) url = atomLink(b);
     const dateRaw = text(tag(b, ["pubDate", "published", "updated", "dc:date"]), 60);
     const t = Date.parse(dateRaw);

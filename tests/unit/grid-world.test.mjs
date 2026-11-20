@@ -201,3 +201,22 @@ test("adapters: fetch with h.get only, pass items through h.item, fail on a refu
   const ons = await plugin.adapters["ons-interrupcao-carga"](h(txt("ons-interrupcao-carga.csv")));
   assert.ok(Array.isArray(ons));
 });
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+test("sources-3/2: ENRE districts must add up to the feed's total; its update time is the data time", async () => {
+  const { enreTime } = await import("../../scripts/grid-sources/world.mjs");
+  const now = Date.parse("2026-11-19T23:40:00Z");                                   // 20:40 in Buenos Aires
+  assert.equal(parseEnre(txt("enre-edenor.js"), "enre-edenor", zonedToIso, now).data_at, "2026-11-19T23:20:00Z");   // "20:20"
+  assert.equal(enreTime("23:50", zonedToIso, now), "2026-11-19T02:50:00Z");         // later than now: yesterday's
+  // synthetic: the medium-voltage list renamed -> its customers vanish from the sum
+  const renamed = txt("enre-edenor.js").replace("cortesServicioMedia", "cortesMediaTension");
+  assert.throws(() => parseEnre(renamed, "enre-edenor", zonedToIso, now), (e) => e.code === "bad_shape" && /add up/.test(e.message));
+});
+
+test("sources-5: ECG's newest notice is the data time, kept or not (a dormant feed shows); ONS rows end after their mean duration (sources-7)", () => {
+  const got = parseEcgRss(txt("ecg-ghana-central.xml"), "central", zonedToIso, NOW);
+  assert.equal(got.data_at, "2026-10-29T08:14:19Z");
+  assert.equal(SOURCES["ecg-ghana"].dormant_hours, 336);
+  const go = parseOns(txt("ons-interrupcao-carga.csv"), zonedToIso, NOW)[2];
+  assert.equal(go.restore_est, "2026-11-17T19:06:00Z");                             // 18:57Z + 9 min, never "still out"
+});

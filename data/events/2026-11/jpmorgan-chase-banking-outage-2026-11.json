@@ -1,12 +1,12 @@
 {
-  "action": "Chase customers: check that transfers, bill payments and Zelle payments from November 16 went through once and only once, and contact the bank about anything missing or duplicated. No security action is needed.",
+  "action": "Chase customers: check that November 16 transfers and Zelle payments went through once, and watch for phishing using the incident. Defenders: see the linked JPMorgan vendor event.",
   "actor": "",
   "attack": [],
   "category": "outage",
   "country": "United States",
   "cves": [],
   "date": "2026-11-16",
-  "exec": "A software fault at a major US bank disrupted payments for hours; Chase and the FBI found no sign of a cyber cause.",
+  "exec": "A major US bank's payment outage may be linked to a cyberattack on its vendors, contradicting Chase's first explanation.",
   "first_seen": "2026-11-17T22:28:00Z",
   "geo_basis": "company HQ",
   "impact": "Thousands of customers reported trouble accessing online accounts on November 16 (6abc); no exact count is given by the sources read.",
@@ -16,7 +16,7 @@
   "org": "JPMorgan Chase",
   "pin_type": "hq",
   "place": "New York, NY",
-  "plain": "Chase customers had trouble with online banking and payments for several hours on November 16, which also affected some transactions at other banks. JPMorgan says a software release caused it and that it was not a cyberattack.",
+  "plain": "Chase customers had trouble with online banking and payments for several hours on November 16. Chase first said it was a software issue, but later said third-party providers were attacked; the cause is unclear.",
   "products": [
     "JPMorgan Chase",
     "Zelle",
@@ -33,20 +33,24 @@
     {
       "name": "Yahoo News",
       "url": "https://www.yahoo.com/news/us/articles/fbi-says-chase-outage-tracks-203816053.html"
+    },
+    {
+      "name": "KTEN",
+      "url": "https://www.kten.com/news/chase-now-blames-cyberattack-for-monday-banking-outage/article_1b81d583-fc22-42fb-ba78-f7e165277be9.html"
     }
   ],
   "status": "confirmed",
-  "summary": "Chase customers had trouble with online banking, transactions and Zelle payments for hours on November 16. Chase said a software bug in on-premise hardware systems caused it, with no evidence it was cyber-related; the FBI told NewsNation it saw no signs of malicious or external activity and linked it to a software release. Chase said partner banks in shared transactions may also have been affected.",
+  "summary": "Chase customers had trouble with online banking, transactions and Zelle payments for hours on November 16. On the day, Chase said a software issue caused it, with no evidence it was cyber-related; the FBI told NewsNation it saw no malicious activity. On November 19 KTEN reported a Chase social media post saying third-party providers were targeted, retracting that statement; the cause is now disputed.",
   "tags": [
     "critical-infrastructure"
   ],
   "time_basis": "approx",
   "title": "JPMorgan Chase outage ripples to other major US banks",
-  "updated_at": "2026-11-19T02:27:42Z",
+  "updated_at": "2026-11-20T00:15:43Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T03:19:16Z",
-    "note": "Compared 6abc live blog and Yahoo News (FBI via NewsNation): both give Chase software bug, not cyber-related; FBI no malicious activity. Dropped GuruFocus (403) and removed unsupported Wells Fargo/Bank of America system statements and the 4,700 count, which no page read supports. Beinsure returned 521."
+    "note": "Compared 6abc live blog and Yahoo News (FBI via NewsNation): both give Chase software bug, not cyber-related; FBI no malicious activity. Dropped GuruFocus (403) and removed unsupported Wells Fargo/Bank of America system statements and the 4,700 count, which no page read supports. Beinsure returned 521. 2026-11-20: KTEN (single publisher) reports Chase now says third-party providers were targeted, retracting the 'no evidence' statement; it does not say how the vendor attack relates to the outage, which stays unproven."
   },
   "review": {
     "state": "flagged",

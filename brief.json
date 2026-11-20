@@ -1,15 +1,50 @@
 {
- "generated_at": "2026-11-20T11:55:00Z",
+ "generated_at": "2026-11-20T23:50:00Z",
  "date": "2026-11-20",
- "headline": "Four more exploited flaws are due for federal fixes, and a vCenter zero-day is in use",
- "plain_summary": "CISA added four flaws to its exploited list, three due for federal fixes on November 21. Google says a suspected China-linked group has used a VMware vCenter flaw since September, and Cisco Expressway and Apache Roller flaws are reported exploited. NGINX servers using HTTP/2 also need updating because exploit code is public. Anyone running these products should patch now.",
+ "headline": "Exploited vCenter and Cisco Expressway flaws are due for patching by 23 November",
+ "plain_summary": "Two flaws in widely used server software are being attacked and are on CISA's must-patch list with a 23 November deadline: VMware vCenter and Cisco Expressway. Google attributes the vCenter attacks to a suspected state-linked group. Separately, a supplier breach at PLAID has exposed customer data at many Japanese firms. Organisations running the affected products should patch now; others need no action beyond watching for phishing.",
  "items": [
-  {"title": "Four flaws added to CISA's exploited list; three due Nov 21", "why": "Synology DSM, Apache Axis and REDCap are due for federal fixes on November 21 and LiteLLM on December 2, with exploitation reported including ransomware on Synology NAS.", "action": "Find Synology DSM, LiteLLM, Apache Axis and REDCap in your environment and apply vendor fixes where they exist. Axis 1.x is end of life with no fix (migrate or apply the July 12, 2026 commit); keep Axis, LiteLLM and REDCap off the open internet until addressed.", "event_id": "cisa-kev-four-additions-2026-11-18"},
-  {"title": "Google: vCenter zero-day CVE-2026-123890 used in espionage", "why": "Google Threat Intelligence Group says a suspected PRC-nexus actor exploited this unauthenticated bypass in VMware vCenter from early September.", "action": "Apply the Broadcom fix (VMSA-2026-0009; e.g. vCenter 8.0 U3m) now; Broadcom lists no workaround. Restrict inbound access and egress from vCenter, and hunt with the GTIG indicators.", "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11"},
-  {"title": "Cisco Expressway flaw exploited after public exploit code", "why": "F6 reports an attack that spread to two cluster nodes, while Cisco's advisory still says it knows of no malicious use.", "action": "If you run clustered Expressway, upgrade to X15.5.20 now (X14 and earlier must move to a fixed release; no workaround) and restrict TCP 4371-4372 to cluster peers.", "event_id": "cisco-expressway-cve-2026-76466-exploited-2026-11"},
-  {"title": "NGINX HTTP/2 flaws allow code execution; exploit code public", "why": "CERT-FR says two NGINX flaws let an unauthenticated attacker run code over HTTP/2, and a public proof of concept exists for one.", "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928 (1.30.7 or 1.31.9), or disable HTTP/2 until patched; that covers only the HTTP/2 flaws. Review exposed servers for signs of compromise.", "event_id": "cert-fr-nginx-http2-rce-2026-11"},
-  {"title": "Apache says Roller remote code flaw is being exploited", "why": "The XML-RPC deserialization bug in Roller 4.0.0 to 6.1.4 needs no login, and Apache says it is exploited.", "action": "Upgrade Apache Roller to 6.1.6 or later. If you cannot, set enabledForExtensions to false in WEB-INF/web.xml, remove the /roller-services/xmlrpc mapping and restart; switching off XML-RPC in the admin UI is not enough.", "event_id": "apache-roller-rce-cve-2026-129448-2026-11"},
-  {"title": "European Commission confirms AI-generated attack on its systems", "why": "A spokesperson confirmed a campaign detected 22 October that took several applications offline; most are restored and no staff-wide data breach has been detected.", "action": "If you work with EU institutions, expect notices from them and treat unexpected messages claiming to be from Commission staff with care.", "event_id": "european-commission-cyberattack-payroll-2026-11"},
-  {"title": "NSA reported to have a tech outage; cyber cause ruled out by sources", "why": "NBC News, citing unnamed sources, reports the outage was not cyber-caused; the cause is not stated and the agency has not been quoted.", "action": "No action needed; for awareness.", "event_id": "nsa-tech-outage-2026-11"}
+  {
+   "title": "Google: vCenter zero-day CVE-2026-123890 used in espionage",
+   "why": "Google says a suspected PRC-nexus group exploited this unauthenticated bypass from early September, and CISA lists it with a 23 November deadline.",
+   "action": "Apply Broadcom's fixed vCenter builds (8.0 U3m, 9.0.2.0200 or 9.1.1.0200) now; vCenter 7.0 has no public patch. Restrict inbound access to and egress from vCenter, following the hardening advice in Google's post.",
+   "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11"
+  },
+  {
+   "title": "Cisco Expressway CVE-2026-76466 exploited after public PoC",
+   "why": "F6 reports an attack on clustered devices after a PoC was posted; Cisco's advisory still says it knows of no malicious use, and CISA's deadline is 23 November.",
+   "action": "If you run clustered Expressway, upgrade to X15.5.20 now (X14 and earlier must move to a fixed release; Cisco says no workaround). If you cannot patch at once, F6 advises blocking TCP 4371-4372 except from trusted cluster node IPs.",
+   "event_id": "cisco-expressway-cve-2026-76466-exploited-2026-11"
+  },
+  {
+   "title": "NGINX HTTP/2 flaws allow remote code execution; PoC public",
+   "why": "CERT-FR says two flaws allow unauthenticated code execution over HTTP/2 and a public proof of concept exists for one.",
+   "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928 (1.30.7 or 1.31.9), or disable HTTP/2 until patched. Review exposed servers for signs of compromise.",
+   "event_id": "cert-fr-nginx-http2-rce-2026-11"
+  },
+  {
+   "title": "WordPress 7.1.5 fixes unauthenticated privilege escalation",
+   "why": "The security release lists 20 items, including a flaw the project says could lead to remote code execution; no exploitation is reported.",
+   "action": "Update WordPress to 7.1.5 now (Dashboard, Updates), or confirm the background auto-update ran; older branches are being backported, so watch for those releases.",
+   "event_id": "wordpress-7-1-5-security-release-2026-11"
+  },
+  {
+   "title": "ZOZO: about 15.18 million customers affected by PLAID KARTE leak",
+   "why": "A breach at supplier PLAID's KARTE service has exposed customer data at ZOZO and other Japanese firms; card data is not confirmed leaked.",
+   "action": "ZOZO customers: be wary of phishing emails, texts or calls impersonating ZOZO, and do not open their links or attachments, as ZOZO advises.",
+   "event_id": "zozo-karte-customer-data-leak-2026-11"
+  },
+  {
+   "title": "European Commission confirms AI-generated cyber campaign",
+   "why": "The Commission says several applications were taken down, most are restored, and it has found no evidence of a staff-wide data breach.",
+   "action": "If you work with EU institutions, expect notices from them and treat unexpected messages claiming to be from Commission staff with care.",
+   "event_id": "european-commission-cyberattack-payroll-2026-11"
+  },
+  {
+   "title": "Proximus mobile disruption: software bug, cyberattack ruled out",
+   "why": "Proximus says a software update caused the disruption and rules out a cyberattack, per Belgian press reports.",
+   "action": "No action needed; for awareness.",
+   "event_id": "proximus-mobile-network-disruption-2026-11-20"
+  }
  ]
 }

@@ -324,7 +324,18 @@ async def main():
             ok("status: lead queue shown", "new leads" in await pg.text_content("#leads"))
             ok("status: no script errors", not errs, errs)
             # the redesign (2026-11-20): answers first, details collapsed and keyboard-accessible
-            ok("status: the three questions come first, in order", await pg.evaluate("[...document.querySelectorAll('main > section.panel h2')].map(h => h.textContent)") == ["Is the site healthy right now?", "Are we hitting the four targets?", "What needs attention?"])
+            ok("status: the answers come first, in order, the flow right after the targets", await pg.evaluate("[...document.querySelectorAll('main > section.panel h2')].map(h => h.textContent)") == ["Is the site healthy right now?", "Are we hitting the four targets?", "How the data flows", "Where the data comes from", "What needs attention?"])
+            # v1.59: how the data flows and where it comes from (efficiency.json flow and sources)
+            stages = await pg.eval_on_selector_all("#flow > li.fstage", "ls => ls.map(l => [l.dataset.stage, l.querySelector('.fnum').textContent])")
+            ok("status flow: 7+ stages in order, each with a number", len(stages) >= 7 and [k for k, _ in stages] == ["sources", "leads", "stories", "rule", "ai", "published", "review", "map"] and all(any(ch.isdigit() for ch in n) for _, n in stages), stages)
+            ok("status flow: arrows are decorative, every stage is a list item with readable text", await pg.locator("#flow .farrow").count() == len(stages) - 1 and await pg.locator("#flow .farrow:not([aria-hidden=true])").count() == 0 and await pg.evaluate("document.getElementById('flow').tagName") == "OL")
+            ok("status flow: the AI stage names the model and the rule stage its reasons", "CyberView AI (a Claude model)" in await pg.text_content("#flow li[data-stage=ai]") and await pg.locator("#flow li[data-stage=rule] .freasons li").count() >= 1)
+            ok("status flow: speed note reuses the Speed card's figure", (await pg.text_content(".tcard[data-target=speed] .tfig")) in await pg.text_content("#flowSpeed"), await pg.text_content("#flowSpeed"))
+            ok("status flow: says unchecked reports stay off the globe", "being checked" in await pg.text_content("#secFlow"))
+            ok("status sources: tier, collector, region, language and publishers, one-colour bars with counts", await pg.locator("#from [data-from]").count() == 5 and len(set(await pg.eval_on_selector_all("#from .hfill", "fs => fs.map(f => getComputedStyle(f).backgroundColor)"))) == 1
+               and await pg.locator("#from [data-from=publishers] .hrow").count() >= 1 and all(any(ch.isdigit() for ch in v) for v in await pg.eval_on_selector_all("#from .hval", "vs => vs.map(v => v.textContent)")))
+            ok("status sources: each block links to its details section", await pg.eval_on_selector_all("#from h3 a[data-open]", "as => as.map(a => a.dataset.open)") == ["dFeeds", "dFeeds", "dCoverage", "dCoverage", "dCoverage"])
+            ok("status: How it works is the first details item", await pg.evaluate("document.querySelector('main details.dpanel').id") == "dHow" and "second review" in await pg.text_content("#dHow"))
             ok("status: every details section is collapsed by default", await pg.locator("main details.dpanel").count() >= 8 and await pg.locator("main details[open]").count() == 0)
             ok("status: the attention list is filled", await pg.locator("#attention li").count() >= 1 and "Checking" not in await pg.inner_text("#attention"))
             await pg.locator("#dRoutines > summary").focus(); await pg.keyboard.press("Enter"); await pg.wait_for_timeout(200)
@@ -339,7 +350,11 @@ async def main():
             ok("status: grid summary counts working sources", not gnames or "working" in await pg.text_content("#gridSum"))
             ok("status: coverage bars are one colour", len(set(await pg.eval_on_selector_all("#effCoverage .hfill", "fs => fs.map(f => getComputedStyle(f).backgroundColor)"))) <= 1)
             ok("status: accuracy is a table, not a paragraph", await pg.locator("#accTotals tbody tr").count() == 4 and await pg.locator("#effAccuracy").count() == 0)
-            ok("status: desktop page under 4,000 px with details collapsed", await pg.evaluate("(() => { document.querySelectorAll('details').forEach(d => d.open = false); return document.documentElement.scrollHeight; })()") < 4000)
+            dh = await pg.evaluate("(() => { document.querySelectorAll('details').forEach(d => d.open = false); return document.documentElement.scrollHeight; })()")
+            ok("status: desktop page under 3,000 px with details collapsed", dh < 3000, dh)
+            ov = await pg.evaluate("""(() => { const b = [...document.querySelectorAll('#flow > li')].map(l => l.getBoundingClientRect()); let n = 0;
+              for (let i = 0; i < b.length; i++) for (let j = i + 1; j < b.length; j++) if (b[i].left < b[j].right - 0.5 && b[j].left < b[i].right - 0.5 && b[i].top < b[j].bottom - 0.5 && b[j].top < b[i].bottom - 0.5) n++; return n; })()""")
+            ok("status flow: stage boxes never overlap on desktop", ov == 0, ov)
             # efficiency section (site/data/efficiency.json from scripts/efficiency.mjs, written by the build)
             eff_path = os.path.join(ROOT, "site", "data", "efficiency.json")
             eff = json.load(open(eff_path)) if os.path.exists(eff_path) else None
@@ -355,7 +370,9 @@ async def main():
             ctx = await browser.new_context(viewport={"width": 390, "height": 844}); pg = await ctx.new_page(); errs = []
             pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
             await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1200)
-            ok("phone status: under 8,000 px with details collapsed", await pg.evaluate("document.documentElement.scrollHeight") < 8000, await pg.evaluate("document.documentElement.scrollHeight"))
+            ok("phone status: under 6,000 px with details collapsed", await pg.evaluate("document.documentElement.scrollHeight") < 6000, await pg.evaluate("document.documentElement.scrollHeight"))
+            fl = await pg.evaluate("""(() => { const b = [...document.querySelectorAll('#flow > li')].map(l => l.getBoundingClientRect()); let bad = 0; for (let i = 1; i < b.length; i++) if (b[i].top < b[i - 1].bottom + 4 || Math.abs(b[i].left - b[0].left) > 1) bad++; return [b.length, bad]; })()""")
+            ok("phone status: the flow is stacked, one stage under the other", fl[0] >= 7 and fl[1] == 0, fl)
             await pg.evaluate("document.querySelectorAll('details').forEach(d => d.open = true)"); await pg.wait_for_timeout(300)
             wide = await pg.evaluate("[...document.querySelectorAll('main *')].filter(e => { const r = e.getBoundingClientRect(); return r.width && r.right > innerWidth + 1; }).map(e => e.tagName + '.' + e.className).slice(0, 5)")
             ok("phone status: no element wider than the screen, every section open", not wide and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), wide)
@@ -377,6 +394,24 @@ async def main():
                 await ctx.close(); return st, note, rows, imgs, text, errs
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=404, body="not found"))
             ok("efficiency: a missing efficiency.json says so and the rest of the page still renders", st == "missing" and "not available" in note and rows >= len(reg["routines"]) and not errs, (st, note, rows, errs))
+            ctx = await browser.new_context(viewport={"width": 390, "height": 860}); pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.route("**/data/efficiency.json*", lambda r: r.fulfill(status=404, body="not found"))
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+            fs = [await pg.locator("#flow > li.fstage").count(), await pg.get_attribute("#secFlow", "data-state"), await pg.text_content("#flowNote"), await pg.get_attribute("#secFrom", "data-state"), await pg.text_content("#fromNote")]
+            ok("status flow: missing data still shows the stages, says so, and the map count stays", fs[0] >= 7 and fs[1] == "missing" and "not available" in fs[2] and fs[3] == "missing" and "not available" in fs[4]
+               and any(ch.isdigit() for ch in await pg.text_content("#flow li[data-stage=map] .fnum")) and not errs, (fs, errs))
+            await ctx.close()
+            def flow_err(r):
+                e2 = json.load(open(os.path.join(ROOT, "site", "data", "efficiency.json"))); e2["flow"] = {"error": "The flow figures could not be worked out: boom"}; e2["sources"] = {"error": "<img src=x> broke"}
+                return r.fulfill(status=200, content_type="application/json", body=json.dumps(e2))
+            ctx = await browser.new_context(viewport={"width": 1366, "height": 860}); pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.route("**/data/efficiency.json*", flow_err)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+            ok("status flow: an error note from the build is shown as text, the targets still render", "could not be worked out" in await pg.text_content("#flowNote") and "<img src=x>" in await pg.text_content("#fromNote")
+               and await pg.locator("main img").count() == 0 and await pg.locator("#effTargets .tcard").count() == 4 and not errs, errs)
+            await ctx.close()
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps({"error": "The efficiency report could not be built: boom"})))
             ok("efficiency: a build error is shown as a note", st == "error" and "could not be built" in note and not errs, (st, note, errs))
             bad = {"at": "<b>", "note": "x", "targets": [{"key": "speed", "target": "<img src=x>", "value": "<script>1</script>", "state": "javascript:"}, None, 5],

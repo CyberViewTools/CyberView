@@ -36,9 +36,10 @@ export function closureOutcome(reason, ids = new Set()) {
  *  an event or an update. Stories are fuse's own, as their closures recorded them (closures.jsonl: {at, story, reason,
  *  urls}); leads no closure names are grouped the way fuse groups them (clusterFn, fuse.mjs cluster). A story also counts
  *  when one of its pages is cited by an event (an "already on file" story whose page was added to that event).
- *  leads [{url,title}], events [{id,sources,duplicate_of}], closures [...] -> Map(url -> "event"|"update"|"cited"). */
+ *  leads [{url,title}], events [{id,sources,duplicate_of}], closures [...] -> Map(url -> "event"|"update"|"cited").
+ *  out (optional object): receives `storyOf`, Map(url -> story key), so a caller can count stories without grouping twice. */
 export const MAX_STORY = 30;
-export function storyCredit(leads, events, closures = [], clusterFn = cluster) {
+export function storyCredit(leads, events, closures = [], clusterFn = cluster, out = null) {
   const ids = new Set(events.map((e) => e && e.id).filter(Boolean)), storyOf = new Map(), good = new Map();
   const sorted = closures.filter((c) => c && Array.isArray(c.urls)).slice().sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")));
   sorted.forEach((c, i) => c.urls.forEach((u) => storyOf.set(u, "s:" + (c.story || "i" + i))));
@@ -58,6 +59,7 @@ export function storyCredit(leads, events, closures = [], clusterFn = cluster) {
   for (const e of events) if (e && !e.duplicate_of) for (const s of e.sources || []) { const k = storyOf.get((s && s.url) || s); if (k && !good.has(k)) good.set(k, "cited"); }
   const used = new Map();
   for (const l of leads) if (l && l.url && good.has(storyOf.get(l.url))) used.set(l.url, good.get(storyOf.get(l.url)));
+  if (out && typeof out === "object") out.storyOf = storyOf;
   return used;
 }
 

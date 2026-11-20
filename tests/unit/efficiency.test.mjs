@@ -177,3 +177,63 @@ test("targets: short title, figure and detail for the status page cards", () => 
   assert.equal(t.accuracy.figure, "34.2%"); assert.equal(t.usage.figure, "49%"); assert.equal(t.earns.figure, "1 candidates");
   assert.ok(Object.values(t).every((x) => x.title && x.goal && x.figure && x.detail));
 });
+
+test("flow: each stage counts what happened in its window; rule and AI closures are told apart; reasons cut to the rule", async () => {
+  const { flowWindow, ruleReason } = await import("../../scripts/efficiency.mjs");
+  assert.equal(ruleReason("story ab12cd34: already on file: acme-2026-11 (headline adds nothing)"), "already on file");
+  assert.equal(ruleReason("a bare database row with no report of exploitation"), "a bare database row with no report of exploitation");
+  assert.equal(ruleReason(""), "no reason recorded");
+  const leads = [{ url: "a", seen_at: h(2) }, { url: "b", seen_at: h(3) }, { url: "c", seen_at: h(30) }, { url: "d", seen_at: h(200) }];
+  const storyOf = new Map([["a", "s:1"], ["b", "s:1"], ["c", "s:2"]]);
+  const closures = [{ at: h(1), story: "1", reason: "acme-2026-11", urls: ["a", "b"] }, { at: h(1), story: "9", reason: "not an event", urls: [] },
+    { at: h(5), story: "7", reason: "commentary, advice or an explainer, not an event", urls: [], rule: true }, { at: h(5), story: "7", reason: "commentary, advice or an explainer, not an event", urls: [], rule: true },
+    { at: h(40), story: "8", reason: "a bare database row with no report of exploitation", urls: [], rule: true }];
+  const events = [{ id: "acme-2026-11", first_seen: h(1), updated_at: h(1), review: { state: "corrected", at: h(0.5), first_at: h(0.5) } },
+    { id: "old-2026-11", first_seen: h(50), updated_at: h(4), review: { state: "passed", at: h(4), first_at: h(49) } }, { id: "dup", duplicate_of: "acme-2026-11", first_seen: h(1) }];
+  const d1 = flowWindow({ leads, closures, events }, storyOf, 24, NOW);
+  assert.deepEqual([d1.leads, d1.stories, d1.rule, d1.researched, d1.to_event, d1.added, d1.updated], [2, 1, 1, 2, 1, 1, 1]);
+  assert.deepEqual([d1.reviewed, d1.passed, d1.corrected, d1.flagged], [1, 0, 1, 0]);
+  assert.deepEqual(d1.reasons, [{ reason: "commentary, advice or an explainer, not an event", n: 1 }]);
+  const d7 = flowWindow({ leads, closures, events }, storyOf, 168, NOW);
+  assert.deepEqual([d7.leads, d7.stories, d7.rule, d7.added, d7.updated, d7.reviewed], [3, 2, 2, 2, 0, 2]);
+  // nothing on file: every count is zero, nothing throws
+  const empty = flowWindow({}, null, 24, NOW);
+  assert.deepEqual([empty.leads, empty.stories, empty.rule, empty.researched, empty.added, empty.reviewed, empty.reasons.length], [0, 0, 0, 0, 0, 0, 0]);
+});
+
+test("sources: feeds by tier, languages and regions; events traced to their leads by tier and collector family; top publishers", async () => {
+  const { sourceSummary, sourcesReport, leadTier, familyOf, urlKey } = await import("../../scripts/efficiency.mjs");
+  const s = sourceSummary([{ tier: "gov", lang: "fr", region: "europe" }, { tier: "news" }, { tier: "vendor", lang: "en" }], [{ hl: "ja", region: "east-asia" }, { hl: "en", region: "global" }],
+    { sources: { "bing-news": { ok: true }, gdelt: { ok: false }, "google-news": { ok: true } } }, { collect_feeds_ok: 2 });
+  assert.deepEqual(s, { feeds: 3, feeds_ok: 2, by_tier: { gov: 1, vendor: 1, news: 1 }, queries: 2, collectors: 2, collectors_ok: 1, languages: 3, regions: 2 });
+  assert.equal(leadTier({ tier: "gov", kind: "cve" }), "database"); assert.equal(leadTier({ tier: "vendor" }), "vendor"); assert.equal(leadTier({}), "news");
+  assert.equal(familyOf({ via: "nvd" }), "cve-kev"); assert.equal(familyOf({}), "rss"); assert.equal(familyOf({ via: "ransomware-live" }), "claims"); assert.equal(familyOf({ via: "hibp" }), "other");
+  assert.equal(urlKey("https://www.Example.com/a/?utm=1#x"), "example.com/a");
+  const leads = [{ url: "https://gov.example/advisory?at_medium=RSS", tier: "gov", via: "rss", seen_at: h(20) }, { url: "https://news.example/a", tier: "news", via: "bing-news", seen_at: h(10) },
+    { url: "https://redirect.example/x", tier: "news", via: "google-news", seen_at: h(9) }];
+  const events = [
+    { id: "e1", first_seen: h(5), sources: [{ name: "News", url: "https://news.example/a" }, { name: "Gov", url: "https://gov.example/advisory" }] },
+    { id: "e2", first_seen: h(5), sources: [{ name: "Vendor", url: "https://vendor.example/b" }] },
+    { id: "e3", first_seen: h(5), sources: [{ name: "News", url: "https://www.news.example/c" }, { name: "News again", url: "https://news.example/d" }] },
+    { id: "e4", first_seen: h(30), sources: [{ name: "Old", url: "https://old.example/" }] },
+    { id: "e5", first_seen: h(500), sources: [] }, { id: "e6", duplicate_of: "e1", first_seen: h(5), sources: [] }];
+  const closures = [{ at: h(5), story: "1", reason: "e3", urls: ["https://redirect.example/x"] }, { at: h(5), story: "2", reason: "e2", urls: ["https://news.example/a"], rule: true }];
+  const r = sourcesReport(events, leads, closures, NOW - 168 * 36e5);
+  assert.equal(r.events, 4);
+  // e1: gov beats news, first lead seen is the gov RSS one; e2: a rule closure never traces; e3: via its story's closure; e4: before the leads
+  assert.deepEqual(r.tier, { gov: 1, untraced: 1, news: 1, "before-leads": 1 });
+  assert.deepEqual(r.family, { rss: 1, untraced: 1, "google-news": 1, "before-leads": 1 });
+  assert.deepEqual(r.publishers[0], { host: "news.example", name: "News", events: 2 });
+  assert.equal(r.publishers.length, 4);
+  assert.deepEqual(sourcesReport([], [], [], 0), { events: 0, tier: {}, family: {}, publishers: [] });
+});
+
+test("report: carries the flow and source blocks, and a broken input leaves a note instead of failing the report", () => {
+  const inp = { usage: [], leads: [{ url: "u", title: "t", seen_at: h(3), via: "rss", tier: "gov" }], logs: [], jobruns: [], closures: [], byRule: new Set(), events: [{ id: "x", first_seen: h(2), sources: [{ name: "G", url: "u" }] }],
+    registry: [], status: {}, osint: {}, gridAudit: null, feedList: [{ tier: "gov" }], queries: [] };
+  const r = report(inp, { now: NOW, days: 7, clusterFn: noCluster });
+  assert.equal(r.flow.d1.leads, 1); assert.equal(r.flow.d7.added, 1); assert.equal(r.flow.sources.feeds, 1); assert.equal(r.flow.lead_days, 0.1);
+  assert.deepEqual(r.sources.tier, { gov: 1 });
+  const bad = report({ ...inp, feedList: 42 }, { now: NOW, days: 7, clusterFn: noCluster });
+  assert.match(bad.flow.error, /could not be worked out/);
+});

@@ -1,0 +1,25 @@
+{
+  "job": "tabletop",
+  "started_at": "2026-11-20T15:37:45Z",
+  "finished_at": "2026-11-20T15:52:00Z",
+  "model": "claude-opus-5-5",
+  "searches": ["q.mjs find --since 2026-11-13 --sev 3 --limit 60"],
+  "pages_read": [
+    {"url": "https://status.optimizely.com/incidents/ftw0fh9wx43z", "title": "Optimizely status: Web Experimentation Security Incident", "used_in": "tabletop 2026-11-20"},
+    {"url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/", "title": "Unit 42: Borrowed Code, Real Consequences: What OPTIMJACK Teaches Us", "used_in": "tabletop 2026-11-20"},
+    {"url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/", "title": "Krebs on Security: Attackers used Optimizely to A/B test malware on top websites", "used_in": "tabletop 2026-11-20"},
+    {"url": "https://www.sophos.com/en-us/blog/hijacked-optimizely-snippets-served-malicious-code", "title": "Sophos X-Ops: Hijacked Optimizely snippets served malicious code on major websites", "used_in": "tabletop 2026-11-20"},
+    {"url": "https://www.bleepingcomputer.com/news/security/optimizely-supply-chain-attack-delivers-malware-to-cnn-fox-news-bbc-salesforce-sites/", "title": "BleepingComputer: Optimizely supply chain attack delivers malware to major sites", "used_in": "tabletop 2026-11-20"}
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "Microsoft Agent Framework PyPI package compromised", "url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi", "reason": "Considered for the exercise; narrower audience (teams building with that package) than third-party website scripts"},
+    {"title": "Equinor, Greiz-Ronneburg hospital, Santos port authority incidents", "url": "", "reason": "Considered; fewer confirmed details on how the attack unfolded to base an exercise on"}
+  ],
+  "open_leads": [
+    {"title": "Optimizely initial findings PDF", "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/", "note": "Krebs links an Optimizely initial-findings PDF that was not read; it may give flaw details or customer guidance for the event record", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Wrote data/tabletop.json and data/snapshots/tabletop/2026-11-20.json from event optimizely-web-script-injection-2026-11 (confirmed; vendor status page plus Unit 42, Sophos, Krebs and BleepingComputer). This is a supplier compromise through third-party website scripts, a different kind of event from the previous exercise (the 2026-11-18 exercise was an exploited Check Point VPN gateway); only one earlier exercise exists. No government guidance was available, so good_looks_like uses Unit 42's recommendations and Report URI's CSP findings. No indicators were copied. The build passes; its 216 hygiene warnings are in existing event records, not in this exercise. status.json was not edited (worker rule). Suggested timestamp: last_tabletop_at 2026-11-20T15:52:00Z; tabletop_note: Optimizely Web Experimentation script injection (16 Nov) — a supplier's trusted JavaScript skimmed cards on 178 organisations' sites; a third-party script risk most organisations with a website face."
+}

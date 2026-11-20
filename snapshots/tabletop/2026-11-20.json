@@ -1,0 +1,65 @@
+{
+  "label": "exercise",
+  "generated_at": "2026-11-20T15:45:00Z",
+  "date": "2026-11-20",
+  "title": "Exercise: a trusted third-party script on your website starts skimming your customers",
+  "based_on": ["optimizely-web-script-injection-2026-11"],
+  "real_story": "On 16 November 2026 an unauthorised party exploited a flaw in the account signup flow of Optimizely Web Experimentation, impersonated users on targeted customer accounts and inserted malicious JavaScript into those customers' projects. The code was served from Optimizely's own CDN, so it looked legitimate, and it ran on page load. Researchers report it swapped copied cryptocurrency wallet addresses, skimmed payment card data from checkout forms, collected cookies and screenshots, and tried to deliver exploit kits to older iPhones and iPads. Report URI counted 178 affected organisations. Optimizely says it closed the flaw within three hours of detection, removed the code from all affected projects, that it was not a credentials breach, and that under 5% of its customers were affected.",
+  "facts": [
+    {"text": "On 16 November 2026 an unauthorised third party exploited a flaw in the Web Experimentation account signup flow, impersonated users on targeted customer accounts and inserted malicious JavaScript into their projects.", "source_url": "https://status.optimizely.com/incidents/ftw0fh9wx43z"},
+    {"text": "Optimizely says the vulnerability was closed within three hours of detection, the injected code was removed from all affected projects, this was not a credentials breach, and less than 5% of its customers were impacted.", "source_url": "https://status.optimizely.com/incidents/ftw0fh9wx43z"},
+    {"text": "The malicious code was placed in the custom Project JavaScript field and served from Optimizely's legitimate CDN under its own certificate; it reached visitors of at least 178 organisations' websites.", "source_url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/"},
+    {"text": "The code swapped cryptocurrency wallet addresses, skimmed payment card data from checkout forms and attempted to deliver the Coruna and DarkSword exploit kits to iPhones and iPads.", "source_url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/"},
+    {"text": "Report URI found the payload was rebuilt 26 times during the day; of the affected sites it examined, 68 had no Content Security Policy, 50 had one that still allowed the theft, and only 24 had one that fully blocked it.", "source_url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/"},
+    {"text": "Optimizely's response included blocking the vulnerable path, ending sessions, revoking tokens and resetting affected accounts.", "source_url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/"},
+    {"text": "Salesforce said Optimizely scripts were disabled across its preview and production instances while it investigated.", "source_url": "https://www.bleepingcomputer.com/news/security/optimizely-supply-chain-attack-delivers-malware-to-cnn-fox-news-bbc-salesforce-sites/"}
+  ],
+  "scenario": "Hypothetical. You are a mid-sized online retailer and service provider with about 600 staff, a web shop with a checkout page, and a customer login portal. Marketing runs A/B tests and analytics through several third-party tools whose JavaScript loads on every page, including login and checkout. The tags are managed by the marketing team and an outside agency; IT security has never reviewed the list, and your Content Security Policy, if any, allows broad script sources. On a Sunday, an attacker abuses a flaw at one of those script suppliers and adds code to your project in the supplier's console. For the rest of the day every visitor to your site runs it: card details typed at checkout and session cookies are copied out, and crypto addresses your customers copy are swapped. Nothing on your own servers changed. The exercise follows the next 48 hours: finding out, stopping it, working out who was exposed, and talking to customers, card schemes and regulators.",
+  "duration_min": 75,
+  "roles": [
+    "Incident lead (CISO or IT security manager)",
+    "Web or e-commerce engineering lead",
+    "Marketing or digital lead who owns the third-party tags",
+    "Payments or finance lead (card acquirer and PCI contact)",
+    "Legal or data protection officer",
+    "Communications and customer service lead",
+    "Supplier or procurement manager",
+    "A senior executive who can approve taking features offline"
+  ],
+  "injects": [
+    {"at_min": 0, "title": "A researcher's message", "text": "Monday 08:30. A security researcher emails your generic contact address: a script loaded from your A/B testing supplier's CDN on your checkout page fetched code from an unknown domain yesterday. They attach a screenshot. Customer service also has two complaints about unexpected card charges.", "ask": "Who picks this up, and what do you check in the first 30 minutes to decide whether it is real?"},
+    {"at_min": 10, "title": "The supplier confirms", "text": "The supplier publishes a status notice: an unauthorised party injected JavaScript into some customer projects on Sunday; the flaw is fixed and the code removed; affected customers are being contacted. Your account manager has not called. Your project's change history shows an edit by a user nobody recognises.", "ask": "Do you turn the supplier's scripts off everywhere now, only on login and checkout, or not at all, and who has the authority and the access to do it?"},
+    {"at_min": 25, "title": "Sizing the exposure", "text": "Engineering finds the injected code ran from about 06:00 to 19:00 on Sunday. Analytics show roughly 14,000 checkout sessions and 40,000 logins in that window. Your logs only show which pages were served, not what the script did in the browser.", "ask": "Whose card data and sessions do you treat as exposed, what evidence do you preserve, and what do you do about logged-in sessions now?"},
+    {"at_min": 40, "title": "Pressure from outside", "text": "Your card acquirer calls: fraud on cards used at your shop is rising and they ask for a forensic report. A technology journalist lists your site among those affected and asks for comment by 15:00. Your data protection officer reminds you of the 72-hour clock for reporting a personal data breach.", "ask": "What do you tell the acquirer, the journalist, the regulator and customers today, and what do you not yet know that you must not state as fact?"},
+    {"at_min": 55, "title": "The hard decision", "text": "Marketing says the A/B tests drive a large share of conversions in the run-up to the holiday season and wants the supplier's scripts back on tomorrow. The supplier says the fix is in place. A strict Content Security Policy would break two other marketing tools.", "ask": "What conditions must be met before any third-party script runs again on login and checkout, and who signs that off?"},
+    {"at_min": 65, "title": "Recovery and lessons", "text": "A week later. Banks are reissuing cards, customers have been notified, and the regulator has acknowledged your report. The board asks what changes so this cannot happen through any supplier's script again.", "ask": "Which three changes do you commit to, with owners and dates?"}
+  ],
+  "questions": [
+    "Which third-party scripts run on our login, checkout and account pages today, who added each one, and who can change them in the supplier's console?",
+    "How would we find out that a supplier's script started behaving differently, and how long would it take?",
+    "What does our Content Security Policy allow on checkout pages, and would it have blocked a script sending data to a new domain?",
+    "Who has the authority and the technical access to switch off a supplier's script out of hours, and how fast can they do it?",
+    "What evidence would we need to tell which customers were exposed, and do we collect it today?",
+    "What do our contracts with tag and analytics suppliers say about notifying us of incidents and about our access to their audit logs?",
+    "How do we decide who to notify (customers, card acquirer, data protection regulator) and in what order?",
+    "What would we say publicly in the first hours when the cause is at a supplier but the harm happened on our site?",
+    "How do we separate marketing and analytics code from pages that collect payment details or passwords?"
+  ],
+  "good_looks_like": [
+    "The team treated changed supplier code on its own pages as its own incident, not only the supplier's, and switched the scripts off on sensitive pages within the first hour.",
+    "Someone could produce, within minutes, a list of every third-party script on login and checkout pages and who controls each.",
+    "The team audited every change to its project in the supplier's console during the exposure window and re-checked code that may have been altered, as Unit 42 advises.",
+    "Card data entered on affected checkout pages during the window was treated as compromised and the card acquirer was told early.",
+    "The team planned to remove non-essential marketing, experimentation and analytics tags from authentication and checkout pages and to collect payment details in an isolated payment frame.",
+    "The team committed to a Content Security Policy that limits which domains may load scripts and receive data on sensitive pages, with violation reports monitored.",
+    "Public statements said what was known, what was not yet known and what customers should do, without blaming the supplier or guessing at numbers."
+  ],
+  "adapt": "Small team: run it in 45 minutes with injects 1, 2, 4 and 6; one person plays the agency or freelancer who manages your website and tags, and the key question becomes whether anyone in-house can switch a script off. No online payments: replace card skimming with stolen login sessions and form data from a donation, booking or patient portal, and keep the regulator inject. Public sector: replace the card acquirer with your national CERT and the citizens using an online service.",
+  "sources": [
+    {"name": "Optimizely status: Web Experimentation security incident", "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z"},
+    {"name": "Unit 42: OPTIMJACK supply chain attack", "url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/"},
+    {"name": "Krebs on Security: attackers used Optimizely to A/B test malware on top websites", "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/"},
+    {"name": "BleepingComputer: Optimizely supply chain attack", "url": "https://www.bleepingcomputer.com/news/security/optimizely-supply-chain-attack-delivers-malware-to-cnn-fox-news-bbc-salesforce-sites/"},
+    {"name": "Sophos X-Ops: hijacked Optimizely snippets served malicious code", "url": "https://www.sophos.com/en-us/blog/hijacked-optimizely-snippets-served-malicious-code"}
+  ]
+}

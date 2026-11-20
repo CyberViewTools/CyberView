@@ -14,10 +14,11 @@
 //
 // An outage is context, never an attack: nothing here says why the power went out beyond what the operator reports.
 // The rule pass (triage) only decides which incidents a grid researcher should check (scripts/grid-desk.mjs, lane B).
-// A failing source keeps its previous items (ok:false) for up to KEEP_STALE_HOURS, so the map shows it as stale.
+// A failing source keeps its previous items (ok:false) for up to KEEP_STALE_HOURS, and the map labels them stale. A
+// source that did not answer (failed, paused, frozen data) never closes its open incidents: they stay open, stale.
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, unlinkSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { inflateRawSync } from "node:zlib";
 import { DATA, ROOT, readJson, writeJson, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { get } from "./lib/net.mjs";
@@ -30,7 +31,7 @@ const AEMO_NOTICES = 40;          // newest market notices read each run (about 
 const AEMO_MAX_AGE_HOURS = 24;    // an actual LOR or load shedding with no cancellation seen in this time is dropped
 
 export const DEFAULT_CFG = {
-  open_customers: 5000, close_customers: 2000, close_after: 2, research_customers: 50000,
+  open_customers: 5000, close_customers: 2000, close_after: 2, close_after_minutes: 30, reopen_minutes: 120, research_customers: 50000,
   research_suspicious_customers: 10000, levels: { eskom: 4, ercot: 1, aemo: 3 }, retry_hours: 6, max_tries: 3, show_customers: 100,
 };
 export function loadConfig(p = join(ROOT, "config", "grid.json")) {
@@ -191,6 +192,8 @@ function item(o) {
     customers: intOrNull(o.customers), kind: o.kind || "outage", planned: !!o.planned, cause: str(o.cause, 120),
     level: o.level === null || o.level === undefined ? null : intOrNull(o.level), started_at: o.started_at || "",
     restore_est: o.restore_est || "", url: ownUrl(src, o.url || SOURCES[src].page),
+    // the operator reports a band or masks small counts: customers is the floor, the band says so in words
+    ...(o.customers_band ? { customers_band: str(o.customers_band, 30) } : {}),
   };
 }
 
@@ -235,6 +238,9 @@ export function parseHqVersion(v) {
   if (!/^\d{14}$/.test(s)) throw badShape("version");
   return s;
 }
+/** The version stamp is Hydro-Québec's own data time, Montreal wall-clock "YYYYMMDDHHMMSS" -> ISO UTC. */
+export const hqVersionTime = (v) => { const m = String(v || "").match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/);
+  return m ? zonedToIso(`${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}:${m[6]}`, "America/Montreal") : ""; };
 export function parseHydroQuebec(d) {
   if (!d || !Array.isArray(d.pannes)) throw badShape();
   const out = [];
@@ -542,7 +548,9 @@ async function pool(list, n, fn) {
 export const ADAPTERS = {
   async hydroquebec() {
     const v = parseHqVersion(await get(SOURCES.hydroquebec.url));
-    return parseHydroQuebec(await get(`https://pannes.hydroquebec.com/pannes/donnees/v3_0/bismarkers${v}.json`));
+    const items = parseHydroQuebec(await get(`https://pannes.hydroquebec.com/pannes/donnees/v3_0/bismarkers${v}.json`));
+    items.data_at = hqVersionTime(v);   // the version is the operator's own data time: a frozen feed is caught by it
+    return items;
   },
   async bchydro() { return parseBcHydro(await get(SOURCES.bchydro.url)); },
   async ukpn() {
@@ -658,23 +666,46 @@ function applySummary(inc, s, at) {
   if (s.level != null && (inc.peak_level == null || s.level > inc.peak_level)) inc.peak_level = s.level;
 }
 
-/** Pure tracker. prev = { open, closed } (incidents.json), items = live items, now = ms or ISO.
- *  Returns { open, closed (last 30 days, newest first), newlyClosed }. */
-export function track(prev, items, cfg = DEFAULT_CFG, now = Date.now()) {
+/** Pure tracker. prev = { open, closed } (incidents.json), items = live items, now = ms or ISO, okSources = the keys of
+ *  the sources that answered with fresh data this collection (null: all did).
+ *  - An open incident whose source did not answer (failed, paused, frozen) is NOT closed: silence is not a restoration.
+ *    It stays open with its last figures, marked stale (stale_since), and its quiet count does not move.
+ *  - An incident closes only from its source's own data: below close_customers for close_after collections in a row AND
+ *    for at least close_after_minutes (so the result does not depend on how often collect runs).
+ *  - A region that is active again within reopen_minutes of its incident closing reopens that incident (same id).
+ *  Items of sources that did not answer never open an incident. Returns { open, closed (last 30 days, newest first), newlyClosed }. */
+export function track(prev, items, cfg = DEFAULT_CFG, now = Date.now(), okSources = null) {
   const t = typeof now === "number" ? now : Date.parse(now), at = isoS(t);
-  const groups = summarize(items), open = [], newlyClosed = [], seen = new Set();
+  const ok = okSources == null ? null : new Set(okSources), answered = (src) => !ok || ok.has(src);
+  const groups = summarize((items || []).filter((x) => x && answered(x.source))), open = [], newlyClosed = [], seen = new Set();
+  const closeMs = Math.max(0, Number(cfg.close_after_minutes) || 0) * 6e4, reopenMs = Math.max(0, Number(cfg.reopen_minutes ?? DEFAULT_CFG.reopen_minutes) || 0) * 6e4;
   for (const old of (prev && prev.open) || []) {
     const key = `${old.source}|${old.region}`; seen.add(key);
     const inc = { ...old, causes: [...(old.causes || [])] };
+    if (!answered(old.source)) {
+      inc.stale = true; if (!inc.stale_since) inc.stale_since = at;
+      open.push(inc); continue;
+    }
+    delete inc.stale; delete inc.stale_since;
     const s = groups.get(key);
     if (s) applySummary(inc, s, at);
     else Object.assign(inc, { updated_at: at, customers: inc.customers == null ? null : 0, level: inc.level == null ? null : 0 });
-    inc.below_count = above(s, cfg) ? 0 : (inc.below_count || 0) + 1;
-    if (inc.below_count >= cfg.close_after) { inc.closed_at = at; newlyClosed.push(inc); } else open.push(inc);
+    if (above(s, cfg)) { inc.below_count = 0; delete inc.below_since; }
+    else { inc.below_count = (inc.below_count || 0) + 1; if (!inc.below_since) inc.below_since = at; }
+    if (inc.below_count >= cfg.close_after && t - Date.parse(inc.below_since) >= closeMs) {
+      inc.closed_at = at; delete inc.below_since; newlyClosed.push(inc);
+    } else open.push(inc);
   }
+  const reopened = new Set();
   for (const [key, s] of groups) {
     if (seen.has(key) || !active(s, cfg)) continue;
-    const inc = { id: `grid-${s.source}-${slug(s.region)}-${stamp(at)}`, source: s.source, country: s.country, region: s.region,
+    const back = ((prev && prev.closed) || []).filter((c) => c && `${c.source}|${c.region}` === key && t - Date.parse(c.closed_at) <= reopenMs)
+      .sort((a, b) => (b.closed_at > a.closed_at ? 1 : -1))[0];
+    let inc;
+    if (back) {
+      inc = { ...back, causes: [...(back.causes || [])], closed_at: "", reopened_at: at, below_count: 0 };
+      delete inc.below_since; reopened.add(back.id);
+    } else inc = { id: `grid-${s.source}-${slug(s.region)}-${stamp(at)}`, source: s.source, country: s.country, region: s.region,
       kind: "outage", name: "", opened_at: at, updated_at: at, closed_at: "", customers: null, peak_customers: null, peak_at: "",
       level: null, peak_level: null, planned_share: 0, causes: [], lat: null, lng: null, approx: true, url: "",
       research_needed: false, research_reason: "", below_count: 0 };
@@ -683,25 +714,39 @@ export function track(prev, items, cfg = DEFAULT_CFG, now = Date.now()) {
   }
   const cutoff = t - CLOSED_KEEP_DAYS * 864e5, ids = new Set();
   const closed = [...newlyClosed, ...((prev && prev.closed) || [])]
-    .filter((c) => c && Date.parse(c.closed_at) >= cutoff && !ids.has(c.id) && ids.add(c.id))
+    .filter((c) => c && !reopened.has(c.id) && Date.parse(c.closed_at) >= cutoff && !ids.has(c.id) && ids.add(c.id))
     .sort((a, b) => (b.closed_at > a.closed_at ? 1 : -1));
   return { open, closed, newlyClosed };
 }
 
 // ---------- rule pass ----------
-const SUSPICIOUS = /cyber|hack|malware|ransom|unknown|investigat/i;
-export const WEATHER = /\b(storm|wind|weather|snow|ice|tree|lightning|wildfire|heat|flood)/i;
-/** Which incidents a grid researcher should check, with a reason code. Research reasons first (suspicious_cause,
- *  grid_level, big), except that an incident that is mostly planned work closes as planned before `big`;
- *  then `corroborated` (scripts/grid-analysis.mjs found an anomaly with three kinds of signal, or an internet outage
- *  without a weather cause: extra.corroborated), then closures: planned, weather (the operator's top cause is weather), small. */
+// a cause the operator states as cyber always counts; "unknown" / "under investigation" are what most operators show
+// before a crew reports (BC Hydro, TasNetworks, Hydro-Québec code 58), so they count only when they cover a real share of
+// the incident AND are still the label PLACEHOLDER_HOURS after the peak
+export const CYBER_CAUSE = /cyber|hack|malware|ransom/i;
+export const PLACEHOLDER_CAUSE = /unknown|investigat|inconnu|indetermin/i;
+const PLACEHOLDER_SHARE = 0.25, PLACEHOLDER_HOURS = 6;
+// weather causes as operators word them (Hydro-Québec: Precipitation, Extreme temperatures, Natural disaster, Damage caused
+// by vegetation; others: storms, wind, ice, trees ...)
+export const WEATHER = /\b(storm|wind|weather|snow|ice|tree|lightning|wildfire|bushfire|heat|flood|precipitation|temperature|vegetation|natural disaster|freezing|rain|hurricane|typhoon|cyclone|tornado|hail)/i;
+/** Which incidents a grid researcher should check, with a reason code. In order: a cause the operator words as cyber
+ *  (suspicious_cause), a grid level, mostly planned work (closes as planned), a placeholder cause ("unknown", "under
+ *  investigation") that holds at least a quarter of the customers (or is the top cause) and is still there 6 hours after
+ *  the peak (suspicious_cause), big, then `corroborated` (scripts/grid-analysis.mjs: extra.corroborated), then closures:
+ *  weather (the operator's top cause is weather), small. */
 export function triage(inc, cfg = DEFAULT_CFG, extra = {}) {
-  const peak = inc.peak_customers || 0, causes = (inc.causes || []).map((c) => c.cause || "");
+  const peak = inc.peak_customers || 0, cs = (inc.causes || []).filter(Boolean), causes = cs.map((c) => c.cause || "");
   const need = (r) => ({ research_needed: true, research_reason: r }), close = (r) => ({ research_needed: false, research_reason: r });
-  if (peak >= cfg.research_suspicious_customers && causes.some((c) => SUSPICIOUS.test(c))) return need("suspicious_cause");
+  if (peak >= cfg.research_suspicious_customers && causes.some((c) => CYBER_CAUSE.test(c))) return need("suspicious_cause");
   const lv = (cfg.levels || {})[inc.source];
   if (lv != null && Math.max(inc.level || 0, inc.peak_level || 0) >= lv) return need("grid_level");
   if ((inc.planned_share || 0) > 0.5) return close("planned");
+  if (peak >= cfg.research_suspicious_customers) {
+    const total = cs.reduce((n, c) => n + (Number(c.customers) || 0), 0);
+    const ph = cs.filter((c) => PLACEHOLDER_CAUSE.test(c.cause || "")), share = total ? ph.reduce((n, c) => n + (Number(c.customers) || 0), 0) / total : 0;
+    const lasted = Date.parse(inc.updated_at || "") - Date.parse(inc.peak_at || inc.opened_at || "");
+    if (ph.length && (share >= PLACEHOLDER_SHARE || PLACEHOLDER_CAUSE.test(causes[0] || "")) && lasted >= PLACEHOLDER_HOURS * 3600e3) return need("suspicious_cause");
+  }
   if (peak >= cfg.research_customers) return need("big");
   if (extra && extra.corroborated) return need("corroborated");
   if (causes[0] && WEATHER.test(causes[0])) return close("weather");
@@ -717,9 +762,19 @@ export function applyTriage(inc, cfg, extra = {}) {
 export const DECISIONS = ["weather", "equipment", "planned", "supply_shortfall", "wildfire_safety", "third_party",
   "cyber_official", "cyber_reported", "under_investigation", "unknown"];
 const rank = (i) => (i.customers != null ? i.customers : (i.level || 0) * 100000);
+/** "1,200 customers", or the operator's band when it reports one ("under 200 customers": Liander) or masks small counts. */
+export function customersWords(x) {
+  if (x.customers_band) return str(`${x.customers_band} customers`, 60);
+  return `${Number(x.customers).toLocaleString("en-US")} customer${x.customers === 1 ? "" : "s"}`;
+}
 /** Open incidents -> context items, biggest first (a signal ranks as level x 100,000 customers), max 60, with the grid
- *  desk's result (data/grid/research.json, lane B) when there is one. */
-export function contextItems(incidents, research = {}, live = [], cfg = DEFAULT_CFG) {
+ *  desk's result (data/grid/research.json, lane B) when there is one. staleSources: keys of sources whose feed did not
+ *  answer (or answered with old data) this collection: their incidents and outages carry stale:true and stale_since (the
+ *  time of their last good figures), and the page says so. */
+export function contextItems(incidents, research = {}, live = [], cfg = DEFAULT_CFG, staleSources = {}) {
+  // staleSources: [key] or { key: time of the source's last good figures (ISO or "") }
+  const staleAt = Array.isArray(staleSources) ? Object.fromEntries(staleSources.map((k) => [k, ""])) : staleSources || {};
+  const staleSet = new Set(Object.keys(staleAt)), since = (k) => (ISO.test(staleAt[k] || "") ? staleAt[k] : "");
   const open = Array.isArray(incidents) ? incidents : (incidents && incidents.open) || [];
   const inc = open.filter((i) => i && i.id && i.closed_at === "").sort((a, b) => rank(b) - rank(a)).slice(0, CONTEXT_MAX).map((i) => {
     const r = research && typeof research === "object" ? research[i.id] : null;
@@ -728,7 +783,8 @@ export function contextItems(incidents, research = {}, live = [], cfg = DEFAULT_
     return { id: i.id, scope: "incident", source: i.source, kind: i.kind, name: str(i.name, 120), country: i.country,
       region: str((REGIONS[`${i.source}|${i.region}`] || {}).name || i.region, 60), customers: i.customers, level: i.level,
       lat: i.lat, lng: i.lng, approx: !!i.approx, since: i.opened_at, cause: str((i.causes && i.causes[0] && i.causes[0].cause) || "", 120),
-      planned: false, checked, url: ownUrl(i.source, i.url) };
+      planned: false, checked, url: ownUrl(i.source, i.url),
+      ...(i.stale || staleSet.has(i.source) ? { stale: true, stale_since: ISO.test(i.updated_at || "") ? i.updated_at : since(i.source) } : {}) };
   });
   // single outages (owner, 2026-11-19: show anything over 100): every operator outage with a location and at least
   // show_customers customers, biggest first; planned work is kept and labelled as planned
@@ -737,10 +793,11 @@ export function contextItems(incidents, research = {}, live = [], cfg = DEFAULT_
       && Number.isInteger(x.customers) && x.customers >= min && x.lat !== null && x.lng !== null && okLat(x.lat) && okLng(x.lng))
     .sort((a, b) => b.customers - a.customers).slice(0, OUTAGE_MAX).map((x) => ({
       id: str(`grid-o-${String(x.id).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, 120), scope: "outage", source: x.source, kind: "outage",
-      name: str(`${SOURCES[x.source].name}: ${x.customers.toLocaleString("en-US")} customers without power${x.planned ? " (planned work)" : ""}`, 120),
+      name: str(`${SOURCES[x.source].name}: ${customersWords(x)} without power${x.planned ? " (planned work)" : ""}`, 120),
       country: x.country, region: str((x.area || x.region), 60), customers: x.customers, level: null, lat: x.lat, lng: x.lng, approx: false,
       since: ISO.test(x.started_at || "") ? x.started_at : "", cause: str(x.cause, 120), planned: !!x.planned, checked: null,
-      url: ownUrl(x.source, x.url) }));
+      url: ownUrl(x.source, x.url), ...(x.customers_band ? { customers_band: x.customers_band } : {}),
+      ...(staleSet.has(x.source) ? { stale: true, stale_since: since(x.source) } : {}) }));
   return [...inc, ...outs];
 }
 
@@ -849,6 +906,8 @@ export function checkContext(d) {
     if (!(x.url === "" || ownUrl(x.source, x.url) === x.url)) e.push(`${p}.url: not https on the operator's host`);
     if (x.checked !== null && !(x.checked && DECISIONS.includes(x.checked.decision) && isStr(x.checked.summary, 300) && x.checked.by === AI_BY))
       e.push(`${p}.checked: not null or { decision, summary, by }`);
+    if (x.stale !== undefined && (x.stale !== true || !(x.stale_since === "" || ISO.test(x.stale_since || "")))) e.push(`${p}.stale: not true with stale_since ISO or ""`);
+    if (x.customers_band !== undefined && !isStr(x.customers_band, 30)) e.push(`${p}.customers_band: not a string <= 30`);
   });
   return e;
 }
@@ -874,7 +933,11 @@ const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES
 export function seriesPoints(items, okSources, now = Date.now()) {
   const at = slotIso(now), ok = new Set(okSources || []), groups = summarize((items || []).filter((x) => x && ok.has(x.source) && OPERATORS.includes(x.source)));
   const out = new Map();
-  for (const s of groups.values()) out.set(s.key, { at, source: s.source, region: s.region, customers: s.signal && !s.total ? null : s.total, unplanned: s.unplanned, level: s.level });
+  for (const s of groups.values()) {
+    // a signal source reports a level: a level-less notice (an AEMO direction) is level 0, never "0 customers"
+    if (SIGNAL_SOURCES.has(s.source)) out.set(s.key, { at, source: s.source, region: s.region, customers: null, unplanned: 0, level: s.level ?? 0 });
+    else out.set(s.key, { at, source: s.source, region: s.region, customers: s.signal && !s.total ? null : s.total, unplanned: s.unplanned, level: s.level });
+  }
   for (const key of Object.keys(REGIONS)) {
     const [source, region] = key.split("|");
     if (!ok.has(source) || out.has(key)) continue;
@@ -1008,6 +1071,87 @@ export function verifySeries(root = ROOT) {
 /** A source's attribution as its licence asks for it, with {year} and {date} (UTC) filled in. */
 export const attributionText = (a, now = Date.now()) => str(String(a).replace(/\{year\}/g, new Date(now).toISOString().slice(0, 4)).replace(/\{date\}/g, new Date(now).toISOString().slice(0, 10)), 400);
 
+// ---------- source state (pure) ----------
+// A source that keeps failing is not asked every cycle (the circuit breaker in net.mjs lives in one process only):
+// after BACKOFF_AFTER failures in a row it is tried every BACKOFF_MIN minutes, after a day of failing every hour.
+export const BACKOFF_AFTER = 3, BACKOFF_MIN = 15, BACKOFF_DAY_MIN = 60;
+export const DATA_STALE_MIN = 90;   // default for sources whose adapter reports the operator's own data time (data_at)
+/** When to ask a failing source next. prev = live.json sources[k] before this run. -> ISO or "". */
+export function nextTry(prev, failures, now = Date.now()) {
+  if (failures < BACKOFF_AFTER) return "";
+  const since = Date.parse((prev && prev.fetched_at) || ""), day = isFinite(since) ? now - since > 864e5 : failures >= 96;
+  return isoS(now + (day ? BACKOFF_DAY_MIN : BACKOFF_MIN) * 6e4);
+}
+/** The state of one source after this run. def = SOURCES[k]; got = items or null; err = error text or null;
+ *  prev = live.json sources[k] before; dataAt = the operator's own data time when the adapter reports one.
+ *  -> { ok, stale, dormant, paused, skipped, error, data_at, failures, next_try_at }.
+ *  stale: answered, but the operator's data time is older than def.data_stale_min (default 90 min) -> its figures are
+ *  kept and labelled, never used to open or close incidents or written to the series.
+ *  dormant: the newest thing the feed has ever published is older than def.dormant_hours (a feed the operator stopped). */
+export function sourceState(def, got, err, prev = {}, now = Date.now(), dataAt = "") {
+  prev = prev || {};
+  if (def.paused) return { ok: false, paused: true, stale: false, dormant: false, skipped: false, error: str(`paused: ${def.paused}`, 120), data_at: "", failures: 0, next_try_at: "" };
+  if (got) {
+    const at = Date.parse(dataAt || ""), age = isFinite(at) ? (now - at) / 6e4 : null;
+    const staleMin = def.data_stale_min === null ? Infinity : Number(def.data_stale_min) || DATA_STALE_MIN;
+    const stale = age != null && age > staleMin, dormant = age != null && def.dormant_hours != null && age > def.dormant_hours * 60;
+    return { ok: true, paused: false, stale: stale && !dormant, dormant, skipped: false,
+      error: dormant ? str(`dormant: the feed's newest entry is from ${isoS(at)}`, 120) : stale ? str(`stale: the operator's data is from ${isoS(at)}`, 120) : "",
+      data_at: isFinite(at) ? isoS(at) : "", failures: 0, next_try_at: "" };
+  }
+  if (err === "skipped") return { ok: false, paused: false, stale: false, dormant: false, skipped: true, error: str(prev.error || "failing", 120),
+    data_at: prev.data_at || "", failures: Number(prev.failures) || 0, next_try_at: prev.next_try_at || "" };
+  const unkeyed = /^not connected/.test(err || "");
+  const failures = unkeyed ? 0 : (Number(prev.failures) || 0) + 1;
+  return { ok: false, paused: false, stale: false, dormant: false, skipped: false, error: str(err || "error", 120), data_at: prev.data_at || "",
+    failures, next_try_at: unkeyed ? "" : nextTry(prev, failures, now) };
+}
+/** Should this run write a full grid run log? Only when something changed since the last one (the failing sources, an
+ *  incident opened or closed, the research list) or the last one is an hour old: an idle cycle every 4 minutes would
+ *  otherwise commit ~1.4 MB of identical logs a day. -> { due, sig } (sig is kept in live.json `log`). */
+export function logDue(prevLog, parts, now = Date.now()) {
+  const sig = JSON.stringify([[...(parts.failed || [])].sort(), [...(parts.stale || [])].sort(), parts.opened || [], parts.closed || [], parts.research || []]);
+  const last = Date.parse((prevLog && prevLog.at) || "");
+  return { due: !(prevLog && prevLog.sig === sig) || !isFinite(last) || now - last >= 3600e3 || (parts.opened || []).length > 0 || (parts.closed || []).length > 0, sig };
+}
+
+// ---------- history (pure readers, tolerant of two writers) ----------
+/** History lines -> one per incident id. Two writers (the flow and collect.yml) can close the same incident minutes apart:
+ *  the earliest closure wins; an incident reopened later (reopened_at) and closed again wins over its earlier closure. */
+export function dedupeHistory(lines) {
+  const by = new Map();
+  for (const x of lines || []) {
+    if (!x || !x.id) continue;
+    const was = by.get(x.id);
+    if (!was) { by.set(x.id, x); continue; }
+    const ra = was.reopened_at || "", rb = x.reopened_at || "";
+    if (rb > ra || (rb === ra && String(x.closed_at || "") < String(was.closed_at || ""))) by.set(x.id, x);
+  }
+  return [...by.values()];
+}
+/** Series lines -> one per source|region|slot (the last line wins), slot lines merged per slot. */
+export function dedupeSeries(lines) {
+  const pts = new Map(), slots = new Map();
+  for (const p of lines || []) {
+    if (!p || typeof p !== "object") continue;
+    if (Array.isArray(p.ok)) { const s = slots.get(p.at) || new Set(); p.ok.forEach((k) => s.add(k)); slots.set(p.at, s); continue; }
+    pts.set(seriesKey(p), p);
+  }
+  return [...[...slots].map(([at, s]) => ({ at, ok: [...s].sort() })), ...pts.values()];
+}
+/** Write a closed incident to its month's history file: one line per id (a reopened incident's line is replaced). */
+export function writeHistory(dir, inc) {
+  mkdirSync(dir, { recursive: true });
+  const hf = join(dir, `${inc.closed_at.slice(0, 7)}.jsonl`), lines = existsSync(hf) ? readFileSync(hf, "utf8").split("\n").filter(Boolean) : [];
+  const idOf = (l) => { try { return JSON.parse(l).id; } catch { return ""; } };
+  const i = lines.findIndex((l) => idOf(l) === inc.id);
+  if (i < 0) { appendFileSync(hf, JSON.stringify(inc) + "\n"); return true; }
+  if (!inc.reopened_at) return false;
+  lines[i] = JSON.stringify(inc);
+  writeFileSync(hf, lines.join("\n") + "\n");
+  return true;
+}
+
 // ---------- CLI ----------
 const P = {
   live: join(DATA, "grid", "live.json"), incidents: join(DATA, "grid", "incidents.json"), research: join(DATA, "grid", "research.json"),
@@ -1019,65 +1163,74 @@ export const CONTEXT_SOURCE = str(`Grid operators (${OPERATORS.length}): ${OPERA
 async function collect() {
   const cfg = loadConfig(), started = nowIso(), now = Date.now();
   const old = readJson(P.live, {}) || {}, oldItems = Array.isArray(old.items) ? old.items : [], oldSources = old.sources || {};
-  const sources = {}, items = [], failed = [], unkeyed = [];
+  const sources = {}, items = [], failed = [], unkeyed = [], paused = [], stale = {}, dormant = [];
   // at most COLLECT_PARALLEL sources at once, each capped at SOURCE_TIMEOUT_S, so one slow utility never holds up a cycle
   const cap = (k) => new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { code: "source_timeout" })), SOURCE_TIMEOUT_S * 1000).unref());
   const results = await pool(Object.keys(SOURCES), COLLECT_PARALLEL, async (k) => {
-    if (SOURCES[k].paused) return [k, null, str(`paused: ${SOURCES[k].paused}`, 120)];
-    try { return [k, await Promise.race([ADAPTERS[k](), cap(k)]), null]; } catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60)]; }
+    if (SOURCES[k].paused) return [k, null, null, ""];
+    const nt = Date.parse((oldSources[k] || {}).next_try_at || "");
+    if (isFinite(nt) && nt > now) return [k, null, "skipped", ""];
+    try { const got = await Promise.race([ADAPTERS[k](), cap(k)]); return [k, got, null, (got && got.data_at) || ""]; }
+    catch (e) { return [k, null, e && e.code === "not_connected" ? str(e.message, 120) : str((e && (e.code || e.message)) || "error", 60), ""]; }
   });
-  for (const [k, got, err] of results) {
-    const def = SOURCES[k], prev = oldSources[k] || {};
+  for (const [k, got, err, dataAt] of results) {
+    const def = SOURCES[k], prev = oldSources[k] || {}, st = sourceState(def, got, err, prev, now, dataAt);
+    const base = { name: def.name, url: def.url, ok: st.ok, error: st.error, country: def.country || "", ...(def.paused ? { paused: true } : {}),
+      ...(st.stale ? { stale: true } : {}), ...(st.dormant ? { dormant: true } : {}), ...(st.data_at ? { data_at: st.data_at } : {}),
+      ...(st.failures ? { failures: st.failures } : {}), ...(st.next_try_at ? { next_try_at: st.next_try_at } : {}),
+      ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
     if (got) {
       const clean = got.filter((x) => checkItem(x).length === 0);
-      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, country: def.country || "", ...(def.paused ? { paused: true } : {}), ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
+      sources[k] = { ...base, fetched_at: nowIso(), items: clean.length };
       items.push(...clean);
+      if (st.stale) stale[k] = st.data_at;
+      if (st.dormant) dormant.push(k);
     } else {
       const fresh = prev.fetched_at && now - Date.parse(prev.fetched_at) < KEEP_STALE_HOURS * 3600e3;
       const kept = fresh && !def.paused ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
-      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, country: def.country || "", ...(def.paused ? { paused: true } : {}), ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
+      sources[k] = { ...base, fetched_at: prev.fetched_at || "", items: kept.length };
       items.push(...kept);
-      // a keyed source without a key is reported, not counted as a failure
-      if (/^not connected/.test(err)) unkeyed.push(k); else failed.push(`${k}: ${err}`);
+      if (kept.length) stale[k] = prev.fetched_at || "";
+      // a keyed source without a key is reported, not counted as a failure; a paused source is the owner's decision
+      if (st.paused) paused.push(k); else if (/^not connected/.test(err || "")) unkeyed.push(k); else failed.push(`${k}: ${st.error}`);
     }
   }
-  writeJson(P.live, { fetched_at: nowIso(), sources, items });
+  // the sources whose fresh data may open, update and close incidents and fill the series
+  const answered = Object.keys(sources).filter((k) => sources[k].ok && !sources[k].stale);
 
   const prev = readJson(P.incidents, { open: [], closed: [] }) || { open: [], closed: [] };
-  const { open, closed, newlyClosed } = track(prev, items, cfg, now);
+  const { open, closed, newlyClosed } = track(prev, items, cfg, now, answered);
   // the analysis (scripts/grid-analysis.mjs, previous run) names incidents its signals corroborate
   const corroborated = new Set(((readJson(P.analysis, {}) || {}).research || []).map((r) => r && r.id));
   for (const inc of [...open, ...newlyClosed]) applyTriage(inc, cfg, { corroborated: corroborated.has(inc.id) });
   writeJson(P.incidents, { updated_at: nowIso(), open, closed });
-  if (newlyClosed.length) {
-    mkdirSync(P.history, { recursive: true });
-    // one line per incident id: the flow and the collect.yml backup can both close the same incident (two writers)
-    for (const inc of newlyClosed) {
-      const hf = join(P.history, `${inc.closed_at.slice(0, 7)}.jsonl`);
-      const ids = new Set((existsSync(hf) ? readFileSync(hf, "utf8") : "").split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l).id; } catch { return ""; } }));
-      if (!ids.has(inc.id)) appendFileSync(hf, JSON.stringify(inc) + "\n");
-    }
-  }
+  for (const inc of newlyClosed) writeHistory(P.history, inc);
   let seriesAdded = 0, rolled = [];
   try {
-    seriesAdded = appendSeries(P.series, seriesPoints(items, Object.keys(sources).filter((k) => sources[k].ok), now));
+    seriesAdded = appendSeries(P.series, seriesPoints(items, answered, now));
     rolled = rollupSeries(P.series, now);
   } catch (e) { failed.push(`series: ${str(e.message, 60)}`); }
   const research = readJson(P.research, {}) || {};
   const okCount = Object.values(sources).filter((s) => s.ok).length;
   writeJson(P.context, { layer: "grid", source: CONTEXT_SOURCE, source_url: "", fetched_at: nowIso(), ok: okCount > 0,
-    error: str(failed.join("; "), 400), items: contextItems(open, research, items, cfg) });
+    error: str(failed.join("; "), 400), items: contextItems(open, research, items, cfg, stale) });
 
   const st = readStatus(); st.last_grid_at = nowIso(); writeJson(join(DATA, "status.json"), st);
   const prevIds = new Set((prev.open || []).map((i) => i.id)), reasons = {};
   for (const i of [...open, ...newlyClosed]) reasons[i.research_reason] = (reasons[i.research_reason] || 0) + 1;
-  const log = { started_at: started, sources: Object.fromEntries(Object.entries(sources).map(([k, s]) => [k, { ok: s.ok, items: s.items, error: s.error }])),
-    items: items.length, opened: open.filter((i) => !prevIds.has(i.id)).map((i) => i.id), closed: newlyClosed.map((i) => i.id),
-    open: open.length, research: open.filter((i) => i.research_needed).map((i) => ({ id: i.id, reason: i.research_reason })),
-    reasons, failed, not_connected: unkeyed, series_points: seriesAdded, rolled_up: rolled, finished_at: nowIso() };
-  writeRunLog("grid", log);
-  console.log(`grid: ${Object.entries(sources).map(([k, s]) => `${k} ${s.ok ? s.items : unkeyed.includes(k) ? "not connected" : "failed"}`).join(", ")}; ${open.length} open, `
-    + `${log.opened.length} opened, ${newlyClosed.length} closed, ${log.research.length} for research` + (failed.length ? `; failed: ${failed.join("; ")}` : ""));
+  const opened = open.filter((i) => !prevIds.has(i.id)).map((i) => i.id), researchList = open.filter((i) => i.research_needed).map((i) => ({ id: i.id, reason: i.research_reason }));
+  const lg = logDue(old.log, { failed: failed.map((f) => f.split(":")[0]), stale: Object.keys(stale), opened, closed: newlyClosed.map((i) => i.id), research: researchList.map((r) => r.id) }, now);
+  const liveDoc = { fetched_at: nowIso(), sources, items, log: lg.due ? { at: nowIso(), sig: lg.sig } : (old.log || { at: "", sig: "" }) };
+  writeJson(P.live, liveDoc);
+  if (lg.due) {
+    const log = { started_at: started, sources: Object.fromEntries(Object.entries(sources).map(([k, s]) => [k, { ok: s.ok, items: s.items, error: s.error, ...(s.stale ? { stale: true } : {}) }])),
+      items: items.length, opened, closed: newlyClosed.map((i) => i.id), open: open.length, research: researchList,
+      reasons, failed, stale: Object.keys(stale), dormant, paused, not_connected: unkeyed, series_points: seriesAdded, rolled_up: rolled, finished_at: nowIso() };
+    writeRunLog("grid", log);
+  }
+  console.log(`grid: ${Object.entries(sources).map(([k, s]) => `${k} ${s.ok ? s.items + (s.stale ? " (stale)" : "") : paused.includes(k) ? "paused" : unkeyed.includes(k) ? "not connected" : "failed"}`).join(", ")}; ${open.length} open, `
+    + `${opened.length} opened, ${newlyClosed.length} closed, ${researchList.length} for research` + (failed.length ? `; failed: ${failed.join("; ")}` : "")
+    + (lg.due ? "" : "; no change, run log skipped"));
   return okCount ? 0 : 1;
 }
 

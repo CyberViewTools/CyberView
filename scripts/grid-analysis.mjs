@@ -15,6 +15,7 @@ import { DATA, ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
 import {
   SOURCES, REGIONS, COUNTRIES, OPERATORS, WEATHER, loadConfig, DEFAULT_CFG, str, readLines, checkSeriesLine, verifySeries,
 } from "./grid.mjs";
+import { newsLeads } from "./grid-news.mjs";
 
 const H = 3600e3, D = 864e5;
 export const WINDOW_H = 6;
@@ -294,7 +295,8 @@ function load(now) {
     incidents: readJson(join(P.grid, "incidents.json"), null) || { open: [], closed: [] }, history,
     series: readSeries(join(P.grid, "series"), TREND_DAYS + 1, now), live: readJson(join(P.grid, "live.json"), {}) || {},
     ioda: readJson(join(P.ctx, "ioda.json"), {}) || {}, gdacs: readJson(join(P.ctx, "gdacs.json"), {}) || {},
-    leads: [day(0), day(1)].flatMap((d) => readLines(join(P.leads, `${d}.jsonl`))), cfg: loadConfig(), now,
+    // news leads, plus the publishers' reports grid-news.mjs collected (data/grid/news.json): both count as "news" signals
+    leads: [day(0), day(1)].flatMap((d) => readLines(join(P.leads, `${d}.jsonl`))).concat(newsLeads(readJson(join(P.grid, "news.json"), {}))), cfg: loadConfig(), now,
   };
 }
 function run() {

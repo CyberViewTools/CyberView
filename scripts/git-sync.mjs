@@ -21,11 +21,11 @@ export { mergeJson, mergeLines } from "./lib/merge.mjs";
 import { mergeJson, mergeLines } from "./lib/merge.mjs";
 import { heal, markedInOutgoing } from "./lib/conflicts.mjs";
 
-function resolve() {
+function resolve(merging = false) {
   const files = git("diff", "--name-only", "--diff-filter=U").stdout.split("\n").filter(Boolean);
   for (const f of files) {
-    // during a rebase, stage 2 is main (the side being rebased onto) and stage 3 is this commit
-    const base = show(1, f), up = show(2, f), mine = show(3, f);
+    // during a rebase, stage 2 is main (the side being rebased onto) and stage 3 is this commit; during a merge it is the other way round
+    const base = show(1, f), up = show(merging ? 3 : 2, f), mine = show(merging ? 2 : 3, f);
     let merged = null;
     if (/\.jsonl$/.test(f)) merged = mergeLines(up, mine);
     else if (/\.json$/.test(f)) {
@@ -42,6 +42,21 @@ function resolve() {
 
 async function main() {
   for (let i = 1, max = Number(process.env.GIT_SYNC_TRIES) || 5; i <= max; i++) {
+    // a branch that already holds merge commits (an orchestrator merging builders' branches) is merged, not rebased:
+    // a rebase would replay every builder commit one by one and stop on their conflicts (seen 2026-11-19 and -20)
+    git("fetch", "-q", "origin", "main");
+    if (git("rev-list", "--merges", "--count", "origin/main..HEAD").stdout.trim() !== "0") {
+      git("merge", "-q", "--no-edit", "origin/main");
+      if (git("diff", "--name-only", "--diff-filter=U").stdout.trim()) {
+        if (!resolve(true) || git("-c", "core.editor=true", "commit", "-q", "--no-edit").status !== 0) { git("merge", "--abort"); console.error(`git-sync: attempt ${i}: merge could not be resolved`); sleep(i * 10); continue; }
+      }
+      heal(ROOT);
+      const bad0 = markedInOutgoing(ROOT);
+      if (bad0.length) { console.error(`git-sync: refusing to push, conflict markers in ${bad0.join(", ")}`); process.exit(1); }
+      const r0 = git("push", "-q", "origin", "HEAD:main");
+      if (r0.status === 0) { console.log(`git-sync: pushed (attempt ${i}, merged)`); process.exit(0); }
+      console.error(`git-sync: push attempt ${i} failed: ${(r0.stderr || "").trim().split("\n").pop()}`); sleep(i * 10); continue;
+    }
     const p = git("pull", "--rebase", "--autostash", "-q", "origin", "main");
     if (p.status !== 0) {
       let ok = true;

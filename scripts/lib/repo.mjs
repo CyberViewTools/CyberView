@@ -9,7 +9,7 @@
 //   commitData()   commit the given data/ paths in whichever layout, then push (git-sync) and ask for a deploy
 //   dispatchDeploy() start the deploy workflow at once (pushes made with the workflow token start nothing by design)
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { ROOT } from "./store.mjs";
 
@@ -69,6 +69,7 @@ export function commitData(msg, paths = [], root = ROOT) {
     for (const k of ["user.name", "user.email"]) { const v = run(root, ["config", k]).stdout.trim(); if (v) run(cwd, ["config", k, v]); }
   }
   run(cwd, ["add", "-A", "--", ...rel]);
+  if (protectDeletes(cwd, branch ? "" : "data/")) run(cwd, ["add", "-A", "--", ...rel]);
   if (run(cwd, ["diff", "--cached", "--quiet"]).status === 0) return { committed: false, pushed: true };
   const c = run(cwd, ["commit", "-q", "-m", msg]);
   if (c.status !== 0) { console.error(`commit failed: ${(c.stderr || c.stdout).trim().split("\n")[0]}`); return { committed: false, pushed: false }; }
@@ -77,10 +78,36 @@ export function commitData(msg, paths = [], root = ROOT) {
   return { committed: true, pushed: s.status === 0 };
 }
 
+/** Files that are never deleted by design (CLAUDE.md: never delete event files). A staged deletion of any of them means
+ *  something went wrong (a wiped ./data, a bad merge): every staged deletion is put back from HEAD before committing. */
+export const NEVER_DELETED = /^(events|kev|corrections|guides|analyses)\/|^status\.json$/;
+/** Pure: which staged deletions to put back. `deleted` are paths relative to the data root. */
+export function deletionsToRestore(deleted) {
+  return deleted.some((f) => NEVER_DELETED.test(f)) ? deleted : [];
+}
+/** Run after `git add` and before `git commit` in the data checkout (cwd); prefix "data/" in the old layout. Returns
+ *  how many deletions were undone. */
+export function protectDeletes(cwd, prefix = "") {
+  const del = run(cwd, ["diff", "--cached", "--name-only", "--diff-filter=D", "--", prefix || "."]).stdout.split("\n").filter(Boolean);
+  const back = deletionsToRestore(del.map((f) => f.slice(prefix.length)));
+  if (!back.length) return 0;
+  const paths = back.map((f) => prefix + f);
+  for (let i = 0; i < paths.length; i += 500) run(cwd, ["checkout", "HEAD", "--", ...paths.slice(i, i + 500)]);
+  console.error(`DATA PROTECTED: this commit would have deleted ${back.length} file(s) including records that are never deleted; put them back from the last commit (${back.slice(0, 3).join(", ")}${back.length > 3 ? ", ..." : ""})`);
+  return back.length;
+}
+
 /** Bring code (main, fast-forward only) and data (data branch) up to date. Never throws. */
 export function pullAll(root = ROOT) {
   if (dataMode(root) === "branch") {
-    run(root, ["pull", "-q", "--ff-only", "origin", "main"]);
+    // main dropping its old copy of data/ (stage B) makes git delete those paths on disk, which here are the data
+    // branch's files: move ./data aside for that one pull (a rename; nothing is copied)
+    run(root, ["fetch", "-q", "origin", fetchRef("main")]);
+    const drops = run(root, ["cat-file", "-e", "HEAD:data"]).status === 0 && run(root, ["cat-file", "-e", "origin/main:data"]).status !== 0;
+    const d = join(root, "data"), aside = join(root, ".data-pull");
+    if (drops) { try { renameSync(d, aside); } catch { return; } }
+    try { run(root, ["pull", "-q", "--ff-only", "origin", "main"]); }
+    finally { if (drops) { try { rmSync(d, { recursive: true, force: true }); renameSync(aside, d); } catch (e) { console.error(`pullAll: could not put ./data back from .data-pull: ${e.message}`); } } }
     // main may still carry its old copy of data/ (until it is removed there): keep git from comparing it with ./data
     run(root, ["config", "sparse.expectFilesOutsideOfPatterns", "true"]);
     run(root, ["sparse-checkout", "reapply"]);

@@ -122,7 +122,12 @@ function ensure() {
   // 4. carry over anything this checkout changed and had not pushed: files that differ from main's committed copy
   let carried = 0;
   if (existsSync(keep)) {
-    for (const f of walk(keep)) {
+    const dd = join(ROOT, "data"), files = walk(keep);
+    // working files (plans, stories, the moderation queue) are ignored by the data branch's own .gitignore: keep this
+    // checkout's copy on disk where there is none yet, never merge it into anything committed
+    const ignored = new Set(spawnSync("git", ["check-ignore", "--no-index", "--stdin"], { cwd: dd, input: files.join("\n") + "\n", encoding: "utf8" }).stdout.split("\n").filter(Boolean));
+    for (const f of files) {
+      if (ignored.has(f)) { const dst = join(dd, f); if (!existsSync(dst)) { mkdirSync(dirname(dst), { recursive: true }); cpSync(join(keep, f), dst); } continue; }
       const ours = readFileSync(join(keep, f), "utf8");
       const b = git(ROOT, "show", `HEAD:data/${f}`), base = b.status === 0 ? b.stdout : null;
       if (ours === base) continue;                                           // unchanged here: the data branch has it

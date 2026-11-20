@@ -3,18 +3,18 @@
   "cves": [],
   "cve_meta": [],
   "products": [],
-  "time_basis": "published",
+  "time_basis": "occurred",
   "first_seen": "2026-11-20T04:17:09Z",
-  "updated_at": "2026-11-20T04:17:09Z",
+  "updated_at": "2026-11-20T04:19:31Z",
   "category": "incident",
   "status": "confirmed",
   "country": "South Korea",
   "geo_basis": "country",
   "pin_type": "country",
   "source_tier": "established",
-  "date": "2026-11-16",
-  "occurred_at": "2026-11-15T00:00:00Z",
-  "date_note": "Abnormal access first detected about 9:30 a.m. Friday 13 Nov (KST); cause stated in a second statement on Monday 16 Nov, the date used here.",
+  "date": "2026-11-13",
+  "occurred_at": "2026-11-13T00:30:00Z",
+  "date_note": "Abnormal access first detected about 9:30 a.m. Friday 13 Nov (KST), the date used; the article, published 16 Nov, gives the weekday, not the calendar date. Cause stated in a second statement on Monday 16 Nov.",
   "title": "Korea Minting Corp. says outsider exploited API flaw in 'Chak' local-currency platform, data of 3,083 customers leaked",
   "org": "Korea Minting and Security Printing Corp.",
   "sector": "Government",
@@ -22,13 +22,35 @@
   "lat": 36.3504,
   "lng": 127.3845,
   "severity": 2,
-  "attack": ["data-theft", "vulnerability-exploit"],
-  "tags": ["government", "api"],
+  "attack": [
+    "data-theft",
+    "vulnerability-exploit"
+  ],
+  "tags": [
+    "government",
+    "api"
+  ],
   "impact": "Personal data of 3,083 customers leaked.",
   "summary": "The Herald Business reports that Korea Minting and Security Printing Corp. detected abnormal access to its Chak platform around 9:30 a.m. on 13 November, blocked suspect IPs including overseas ones and shut the system. A second statement said an outsider exploited an authentication flaw in an API used to exchange data between systems. Texts went to all 3,083 affected customers; the corporation says its other voucher and ID systems are physically separate.",
   "plain": "A South Korean state mint's local-currency app was accessed by an outsider and data on 3,083 customers leaked.",
   "exec": "A flaw in an API let an outsider reach customer data at a state body; API authentication is a common weak point.",
   "action": "Review authentication on APIs that exchange data between systems; Chak users should ignore unexpected texts or calls asking for money or codes.",
-  "sources": [{"name": "The Herald Business", "url": "https://biz.heraldcorp.com/article/10938658"}],
-  "validation": {"checked_at": "2026-11-20T04:17:09Z", "state": "single_source", "note": "One article read in full in this run; figures as stated there."}
+  "sources": [
+    {
+      "name": "The Herald Business",
+      "url": "https://biz.heraldcorp.com/article/10938658"
+    }
+  ],
+  "validation": {
+    "checked_at": "2026-11-20T04:17:09Z",
+    "state": "single_source",
+    "note": "One article read in full in this run; figures as stated there."
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-20T04:20:08Z",
+    "note": "3,083 count, API authentication cause, 9:30 Friday detection, separate systems match Herald; occurred_at 15 Nov matched nothing in source, now date and occurred_at 13 Nov, time_basis occurred",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-20T04:20:08Z"
 }

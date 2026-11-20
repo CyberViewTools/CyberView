@@ -73,6 +73,18 @@
    "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and cloud status pages, so no single search engine decides what is seen."
   },
   {
+   "key": "grid",
+   "name": "Power grid outages",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_grid_at",
+   "max_age_hours": 2,
+   "active": true,
+   "does": "Runs in the research loop every few minutes (collect.yml every 30 minutes as backup): reads grid operators' public outage feeds and open grid data, tracks incidents from start to end, finds outages unusual for the hour and what corroborates them, gathers outages reported in the news, and audits every source each cycle (failing or frozen feeds, sudden falls, misplaced points). Map context, never cyber events."
+  },
+  {
    "key": "exploit-watch",
    "name": "Exploit watch",
    "tier": "automation",

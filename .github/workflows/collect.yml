@@ -20,7 +20,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15   # the optional grid steps (5 + 4 min caps) can never run the job out of time before the commit
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,14 +51,17 @@ jobs:
         timeout-minutes: 5
         # the research loop runs it every 15 minutes; this backup stands down while it does (one writer at a time)
         run: |
-          if node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_news_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid-news: the research loop ran it under 20 minutes ago; skipping"; else node scripts/grid-news.mjs; fi
+          if node -e 'const l=(JSON.parse(require("fs").readFileSync("data/leases.json","utf8"))||{})["flow:leader"];process.exit(l&&Date.parse(l.until)>Date.now()?0:1)' 2>/dev/null; then echo "grid-news: the research loop is running (live leader lease); skipping"
+          elif node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_news_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid-news: the research loop ran it under 20 minutes ago; skipping"; else node scripts/grid-news.mjs; fi
       - name: Grid outages (map context from six operators' public feeds, no AI)
         # optional: a failing operator feed is kept as stale and reported; this step can never stop the commit
         continue-on-error: true
         timeout-minutes: 4
         # the research loop collects every few minutes; this backup stands down while it does (one writer at a time)
         run: |
-          if node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid: the research loop collected under 20 minutes ago; skipping"; else node scripts/grid.mjs collect; node scripts/grid-analysis.mjs || echo "grid-analysis failed (optional)"; fi
+          if node -e 'const l=(JSON.parse(require("fs").readFileSync("data/leases.json","utf8"))||{})["flow:leader"];process.exit(l&&Date.parse(l.until)>Date.now()?0:1)' 2>/dev/null; then echo "grid: the research loop is running (live leader lease); skipping"
+          elif node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid: the research loop collected under 20 minutes ago; skipping"
+          else node scripts/grid.mjs collect; node scripts/grid-analysis.mjs || echo "grid-analysis failed (optional)"; node scripts/grid-audit.mjs || echo "grid-audit failed (optional)"; fi
       - name: Validate
         run: node scripts/build.mjs --quarantine > /dev/null
       - name: Commit and push (the data branch; starts the deploy)

@@ -36,16 +36,24 @@ const show = (stage, f) => { const r = git("show", `:${stage}:${f}`); return r.s
 const sleep = (s) => spawnSync("sleep", [String(s)]);
 
 export { mergeJson, mergeLines } from "./lib/merge.mjs";
-import { mergeJson, mergeLines } from "./lib/merge.mjs";
+import { mergeJson, mergeLines, mergeKeyed } from "./lib/merge.mjs";
+// grid line files merge by key, not by whole line (two writers can each write a line for the same slot or incident)
+const GRID_KEYED = /(^|\/)grid\/(series|history)\/[^/]+\.jsonl$/;
 import { heal, markedInOutgoing } from "./lib/conflicts.mjs";
 
-function resolve(merging = false) {
+async function gridDedupe(f) {
+  const g = await import("./grid.mjs");
+  return /\/series\//.test(f) ? g.dedupeSeries : g.dedupeHistory;
+}
+
+async function resolve(merging = false) {
   const files = git("diff", "--name-only", "--diff-filter=U").stdout.split("\n").filter(Boolean);
   for (const f of files) {
     // during a rebase, stage 2 is main (the side being rebased onto) and stage 3 is this commit; during a merge it is the other way round
     const base = show(1, f), up = show(merging ? 3 : 2, f), mine = show(merging ? 2 : 3, f);
     let merged = null;
-    if (/\.jsonl$/.test(f)) merged = mergeLines(up, mine);
+    if (GRID_KEYED.test(f)) { try { merged = mergeKeyed(up, mine, await gridDedupe(f)); } catch { merged = mergeLines(up, mine); } }
+    else if (/\.jsonl$/.test(f)) merged = mergeLines(up, mine);
     else if (/\.json$/.test(f)) {
       try {
         const u = JSON.parse(up || "{}"), m = JSON.parse(mine || "{}"), b = base ? JSON.parse(base) : {};
@@ -66,7 +74,7 @@ async function main() {
     if (git("rev-list", "--merges", "--count", `origin/${BR}..HEAD`).stdout.trim() !== "0") {
       git("merge", "-q", "--no-edit", `origin/${BR}`);
       if (git("diff", "--name-only", "--diff-filter=U").stdout.trim()) {
-        if (!resolve(true) || git("-c", "core.editor=true", "commit", "-q", "--no-edit").status !== 0) { git("merge", "--abort"); console.error(`git-sync: attempt ${i}: merge could not be resolved`); sleep(i * 10); continue; }
+        if (!(await resolve(true)) || git("-c", "core.editor=true", "commit", "-q", "--no-edit").status !== 0) { git("merge", "--abort"); console.error(`git-sync: attempt ${i}: merge could not be resolved`); sleep(i * 10); continue; }
       }
       heal(ROOT);
       const bad0 = markedInOutgoing(ROOT, `origin/${BR}`);
@@ -80,7 +88,7 @@ async function main() {
       let ok = true;
       for (let n = 0; n < 50 && ok; n++) {                                         // one round per commit being replayed
         if (!git("diff", "--name-only", "--diff-filter=U").stdout.trim()) break;
-        ok = resolve();
+        ok = await resolve();
         if (ok) { const c = spawnSync("git", ["-c", "core.editor=true", "rebase", "--continue"], { cwd: ROOT, encoding: "utf8", env: { ...process.env, GIT_EDITOR: "true" } }); if (c.status === 0) break; }
       }
       if (!ok || git("status").stdout.includes("rebase in progress")) { git("rebase", "--abort"); console.error(`git-sync: attempt ${i}: ${(p.stderr || "").trim().split("\n")[0]}`); sleep(Number(process.env.GIT_SYNC_TRIES) ? 0 : i * 10); continue; }

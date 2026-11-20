@@ -13,8 +13,8 @@ import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
-import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN } from "./lib/lease.mjs";
+import { ROOT, DATA, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
+import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks } from "./lib/lease.mjs";
 
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
@@ -75,7 +75,23 @@ export async function pool(job, list) {
   return res;
 }
 const plan = (f) => readJson(join(DATA, f), {});
+/** Pure: an event with first_seen or updated_at in the future set to now, or null when both are in the past.
+ *  Workers sometimes write a rounded estimate ahead of the clock (34 of 95 events in 48 h, 7 minutes ahead on average,
+ *  up to 21): that breaks the rule "use the real current time", inflates the speed figures and can make the review queue
+ *  think an event changed after its review. The worker finished before the commit, so now is the latest true time. */
+export function clampFuture(e, now = nowIso()) {
+  if (!e) return null;
+  const fix = {}; for (const k of ["first_seen", "updated_at"]) if (typeof e[k] === "string" && /^\d{4}-\d{2}-\d{2}T/.test(e[k]) && e[k] > now) fix[k] = now;
+  return Object.keys(fix).length ? { ...e, ...fix } : null;
+}
+function clampEvents() {
+  const now = nowIso(); let n = 0;
+  for (const f of listEventFiles()) { const c = clampFuture(f.e, now); if (c) { const { id, ...rest } = c; writeJson(f.path, rest); n++; } }
+  if (n) log(`time check: ${n} event(s) had first_seen or updated_at in the future; set to ${now}`);
+  return n;
+}
 function finish(job) {
+  try { clampEvents(); } catch {}
   let f = sh("node", ["scripts/finish.mjs", job], 600000);
   if (f.out.some((l) => /^BUILD FAILED/.test(l))) return { fixer: true, out: f.out };
   return { fixer: false, out: f.out };
@@ -124,6 +140,22 @@ export function flowAlive(lock, now = Date.now(), pidAlive = (p) => { try { proc
   return !!(lock && lock.pid && pidAlive(lock.pid) && now - Date.parse(lock.beat) < 12 * 6e4);
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** Pure: the minutes of the hour a 5-field cron fires at ("5,20,35,50 * * * *", "*\/15 * * * *"), or null when it is not hourly-regular. */
+export function cronMinutes(expr) {
+  const [m, h] = String(expr || "").trim().split(/\s+/); if (!m || h !== "*") return null;
+  const step = /^\*\/(\d+)$/.exec(m); if (step) { const s = +step[1]; return s > 0 && s <= 60 ? Array.from({ length: Math.ceil(60 / s) }, (_, i) => i * s) : null; }
+  const list = m.split(",").map(Number); return list.length && list.every((x) => Number.isInteger(x) && x >= 0 && x < 60) ? list.sort((a, b) => a - b) : null;
+}
+/** Pure: when the loop must be gone. It lives at most lifeMs; it ends just before the last restart schedule (ticks: minutes of
+ *  the hour) inside that life, so the schedule that comes next finds it stopped and starts the next loop at once. Ending at a
+ *  random point instead left the research idle until the next schedule, up to 15 minutes (measured 6 to 7 minutes on most
+ *  hand-overs). marginMs: how long before the tick the loop has handed over. */
+export function flowDeadline(t0, lifeMs, ticks, marginMs = 60000) {
+  const hard = t0 + lifeMs; if (!ticks || !ticks.length) return hard;
+  let best = null;
+  for (let h = Math.floor(t0 / 36e5) * 36e5; h <= hard; h += 36e5) for (const m of ticks) { const t = h + m * 6e4; if (t - marginMs > t0 && t <= hard) best = t; }
+  return best === null ? hard : best - marginMs;
+}
 /** Start scripts/grid-news.mjs in the background; onDone(last line) when it exits; killed after 3 minutes. */
 function startNews(onDone) {
   const c = spawn("node", ["scripts/grid-news.mjs"], { cwd: ROOT, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" }, stdio: ["ignore", "pipe", "ignore"] });
@@ -139,11 +171,13 @@ async function flow() {
   if (flowAlive(readJson(FLOW_LOCK, null))) { const l = readJson(FLOW_LOCK, {}); log(`CyberView sweep: flow already running (cycle ${l.cycle}, pid ${l.pid})`); return; }
   if (!webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
   // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
-  const host = (process.env.CLAUDE_CODE_REMOTE_SESSION_ID || process.env.HOSTNAME || "local").slice(-40);
+  const host = hostId();
   const publishLeader = (msg) => commitData(msg, ["data/leases.json"]).pushed;
   pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
-  if (other && other.run !== RUN) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
+  // no loop runs in this container (checked above), so a lease taken by this session belongs to a loop that died: take over
+  if (leaderBlocks(other, RUN, host, false)) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
+  if (other && other.run !== RUN) log(`taking over from ${other.run}: it was started by this session and is no longer running here`);
   claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
   publishLeader("data: research loop leader " + RUN);
   pullAll(); heal(dataGitDir());
@@ -151,13 +185,18 @@ async function flow() {
   let lastPublish = Date.now();
   const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }
     if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
-  const t0 = Date.now(); let newsChild = null, cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const t0 = Date.now(); let newsChild = null, handedOver = false, cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  const sweepCron = ((readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).find((r) => r.key === "sweep") || {}).cron;
+  const END = flowDeadline(t0, LIFE, cronMinutes(sweepCron)), took = [];
+  // a cycle starts only when it can end before END (judged by the last few cycles), so the loop is gone when the schedule comes
+  const expect = () => Math.max(2 * 6e4, took.length ? took.slice(-3).reduce((s, x) => s + x, 0) / Math.min(3, took.length) : 3 * 6e4);
+  log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"})`);
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
   const stop = () => { try { if (readJson(FLOW_LOCK, {}).pid === process.pid) unlinkSync(FLOW_LOCK); } catch {} };
   process.on("exit", stop); process.on("SIGTERM", () => process.exit(0)); process.on("SIGINT", () => process.exit(0));
-  while (Date.now() - t0 < LIFE) {
+  while (cycle === 0 || Date.now() + expect() < END) {
     cycle++; const cs = Date.now(), run = `${RUN}-c${cycle}`; process.env.CYBERVIEW_RUN = run;
     const rec = { run, job: "sweep", flow: true, cycle, started_at: nowIso(), phases: [] };
     const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[c${cycle} ${name}] ${note || ""}`); };
@@ -169,7 +208,7 @@ async function flow() {
     // signals. The script runs at most every 15 minutes (status last_grid_news_at); a failure here never stops the cycle
     // runs in the background (about 2 minutes, mostly waiting on news indexes) so it never holds up the research; the
     // analysis counts whatever the last finished run wrote, and a run still going at the next cycle is not started twice
-    if (!newsChild && existsSync(join(ROOT, "scripts", "grid-news.mjs"))) newsChild = startNews((line) => { newsChild = null; phase("grid-news", line); });
+    if (!newsChild && existsSync(join(ROOT, "scripts", "grid-news.mjs"))) newsChild = startNews((line) => { newsChild = null; if (!handedOver) phase("grid-news", line); });
     // grid analysis (no AI model): anomalies, corroboration, trends; flags `corroborated` incidents before the grid desk plans
     if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).stdout.trim().split("\n").pop() || ""); } catch {} }
     // the grid audit (rules only, local files, no network): flags failing, frozen or odd sources for the status page
@@ -225,12 +264,16 @@ async function flow() {
       if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
+    took.push(Date.now() - cs);
     beat("waiting"); renew();
-    const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() - t0 + wait < LIFE) await sleep(wait);
+    const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() + wait + expect() < END) await sleep(wait);
   }
-  if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
+  // hand over first (lease released and pushed, summary printed, lock removed), so the schedule that comes next can start the
+  // next loop at once; only then wait, silently, for a news run still going in the background
   release(RUN); publishLeader("data: research loop handed over");
   log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
+  handedOver = true; stop();
+  if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
 }
 
 async function main() {

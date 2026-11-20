@@ -37,8 +37,9 @@ const PL = readJson(join(ROOT, "config", "pipeline.json"), {});
 if (job === "sweep" && (PL.flow || {}).enabled !== false && (PL.headless === true || (PL.headless_jobs || []).includes("sweep")) && process.env.CYBERVIEW_SUBAGENTS !== "1") {
   const { flowAlive, FLOW_LOCK } = await import("./run-job.mjs");
   const lock = readJson(FLOW_LOCK, null);
-  const { leaderOf } = await import("./lib/lease.mjs"), leader = leaderOf(readJson(join(DATA, "leases.json"), {}));
-  if (!flowAlive(lock) && leader) { console.log(`DISPATCH sweep: the research loop is running in another session (${leader.run}, cycle ${leader.cycle ?? "?"}, lease until ${leader.until}). This session is the standby: start nothing. End with exactly: "CyberView sweep: standby, loop running elsewhere"`); process.exit(0); }
+  const { leaderOf, leaderBlocks, hostId } = await import("./lib/lease.mjs"), leader = leaderOf(readJson(join(DATA, "leases.json"), {}));
+  // a lease this session took for a loop that no longer runs here (container restarted, process killed) does not block a restart
+  if (!flowAlive(lock) && leaderBlocks(leader, "", hostId(), false)) { console.log(`DISPATCH sweep: the research loop is running in another session (${leader.run}, cycle ${leader.cycle ?? "?"}, lease until ${leader.until}). This session is the standby: start nothing. End with exactly: "CyberView sweep: standby, loop running elsewhere"`); process.exit(0); }
   if (flowAlive(lock)) { console.log(`DISPATCH sweep: the continuous flow is running (cycle ${lock.cycle}, ${lock.note || ""}, last beat ${lock.beat}). Start nothing. End with exactly: "CyberView sweep: flow running, cycle ${lock.cycle}"`); process.exit(0); }
   console.log([`DISPATCH sweep (continuous flow). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command with run_in_background true AND timeout 7200000 (it loops for about 100 minutes, committing every few minutes; do not poll, you are notified when it ends): node scripts/run-job.mjs flow > /tmp/cv-flow.log 2>&1; tail -2 /tmp/cv-flow.log`,

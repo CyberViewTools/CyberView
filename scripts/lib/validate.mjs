@@ -259,6 +259,9 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
   for (const s of src) if (isListingPage(s.url)) add("error", "listing-source", `source ${s.url.slice(0, 100)} is a tag, category, search or listing page: cite the specific article`);
   // tags only for what the text (and so the source) says
   const words = `${e.title || ""} ${e.summary || ""} ${e.plain || ""} ${e.exec || ""}`;
+  // optional names in other scripts or languages (docs/schema.md; scripts/triage.mjs matches retellings with them)
+  if (e.aliases !== undefined && !(Array.isArray(e.aliases) && e.aliases.length <= 8 && e.aliases.every((a) => typeof a === "string" && a.trim() && a.length <= 60)))
+    add("warn", "aliases-shape", "aliases must be a list of at most 8 names of up to 60 characters");
   for (const [t, [re, why]] of Object.entries(TAG_NEEDS)) if ((e.tags || []).includes(t) && !re.test(words)) add("warn", "tag-unsupported", `tag "${t}": ${why}; otherwise remove the tag`);
   // an actor named in CyberView's own voice
   if (e.actor && !e.attribution && e.status !== "claimed" && !/claim|unattributed|unknown|suspected/i.test(e.actor) && !/attribut|according to|\bsaid\b|\bsays\b|linked|tracks|blamed|assess/i.test(e.summary || ""))

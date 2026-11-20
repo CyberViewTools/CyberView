@@ -25,7 +25,7 @@ export function candidates(leads, events, handled, now = Date.now(), hours = 48)
   for (const l of leads) {
     if (!l || !/^https:\/\//.test(l.url || "") || NOT_NEWS.has(l.kind) || handled.has(l.url)) continue;
     const at = String(l.published || l.seen_at || ""); if (at < since) continue;
-    const m = matchEvent(String(l.title || ""), evs);
+    const m = matchEvent(String(l.title || ""), evs, l.published || l.seen_at);
     const e = m ? evs.find((x) => x.id === m.id) : (String(l.title || "").match(CVE) || []).map((c) => byCve.get(c)).find(Boolean);
     if (!e) continue;
     if ((e.sources || []).some((s) => (s && s.url) === l.url)) continue;

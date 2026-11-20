@@ -31,6 +31,7 @@ Where it lives: every path below that starts with `data/` is a file on the `data
 | records_affected | | number |
 | products, attack, cves | | lists of strings; cves match `CVE-YYYY-NNNN` |
 | tags | | list from: ransomware, data-breach, supply-chain, zero-day, ddos, espionage, critical-infrastructure, ai-enabled, third-party, phishing, insider, hacktivism, ot-ics, cloud, identity, fraud, takedown, regulation, funding, acquisition, malware, rce, poc-public. Sector, country and product go in their own fields, not in tags; the list is defined as `TAGS` in `scripts/lib/validate.mjs` |
+| aliases | | optional list of the event's names in other scripts or languages (e.g. 富岳 for Fugaku), max 8 of up to 60 characters; lets scripts/triage.mjs match retellings in other languages to this event |
 | cve_meta | | list of `{id, cvss, epss, kev, kev_due}` |
 | sources | | list of `{name, url}`; url is the specific page read |
 | source_tier | | `primary`, `established`, `aggregator` |

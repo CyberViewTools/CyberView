@@ -4,13 +4,18 @@
   "tags": [],
   "cves": [],
   "cve_meta": [],
-  "products": ["PLAID KARTE"],
+  "products": [
+    "PLAID KARTE"
+  ],
   "time_basis": "published",
   "first_seen": "2026-11-20T19:48:30Z",
-  "updated_at": "2026-11-20T19:48:30Z",
+  "updated_at": "2026-11-20T19:57:35Z",
   "category": "incident",
   "status": "confirmed",
-  "attack": ["intrusion", "supply-chain"],
+  "attack": [
+    "intrusion",
+    "supply-chain"
+  ],
   "geo_basis": "hq",
   "date": "2026-11-18",
   "date_note": "Mitsumo announced on 18 November, citing notices from contractor PLAID of 13 and 17 November; the report says the intrusion into PLAID's KARTE was detected on 13 November.",
@@ -26,14 +31,25 @@
   "source_tier": "established",
   "summary": "Cybersecurity.com reports that Mitsumo announced on 18 November that customer data it had linked to PLAID's KARTE for email and LINE delivery leaked. Mitsumo says 60,000 people had a name, email, phone number or date of birth exposed, and 3,398,469 people only an identifier number and prefecture. Mitsumo says passwords and card data were not included and that its own systems showed no unauthorized access.",
   "plain": "A Japanese services company says customer data held in a marketing platform run by its contractor was leaked. Mitsumo says passwords and card data were not included.",
-  "exec": "A breach at one marketing-platform supplier can expose the customer data of every company that links to it, even when the company's own systems were not accessed.",
-  "action": "Organisations linked to KARTE: revoke and reissue integration credentials as PLAID asked, and warn customers of phishing. Affected people: be cautious of unexpected emails or calls.",
+  "exec": "A breach at one marketing-platform supplier can expose the customer data of companies that link to it, even when their own systems were not accessed.",
+  "action": "Organisations linked to KARTE: invalidate the linked credentials as PLAID asked, and warn customers of phishing. Affected people: be cautious of unexpected emails or calls.",
   "sources": [
-    {"name": "Cybersecurity.com (Japan)", "url": "https://cybersecurity-jp.com/news/118638"}
+    {
+      "name": "Cybersecurity.com (Japan)",
+      "url": "https://cybersecurity-jp.com/news/118638"
+    }
   ],
   "validation": {
     "checked_at": "2026-11-20T19:48:30Z",
     "state": "single_source",
     "note": "Only the Cybersecurity.com report was read; Mitsumo's own notice and PLAID's notice are cited there but were not read. The wider PLAID KARTE breach is on file as a separate event."
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-20T19:58:10Z",
+    "first_at": "2026-11-20T19:58:10Z",
+    "note": "Action said revoke and reissue credentials (PLAID asked to invalidate only) and exec said every company; fixed. 60,000 / 3,398,469 figures and fields, dates checked OK",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-20T19:58:10Z"
 }

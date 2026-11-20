@@ -14,7 +14,9 @@ import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
-import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks } from "./lib/lease.mjs";
+import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock } from "./lib/lease.mjs";
+import { budgetState, budgetLine } from "./lib/usage.mjs";
+import { waitingSince, OVERDUE_MIN } from "./review.mjs";
 
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {}, toolsets: {}, deny: [] });
 const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
@@ -156,6 +158,41 @@ export function flowDeadline(t0, lifeMs, ticks, marginMs = 60000) {
   for (let h = Math.floor(t0 / 36e5) * 36e5; h <= hard; h += 36e5) for (const m of ticks) { const t = h + m * 6e4; if (t - marginMs > t0 && t <= hard) best = t; }
   return best === null ? hard : best - marginMs;
 }
+// ---------- plan usage: the loop does less as the Max plan's windows fill (scripts/lib/usage.mjs) ----------
+/** Pure: what a cycle may start at a budget level.
+ *  ok:    everything.
+ *  tight: only what the 15-minute target needs: researchers on stories that read like incidents or exploited flaws
+ *         (sweep-plan --urgent) and reviewers on events waiting longer than OVERDUE_MIN (20) minutes; no updaters, grid
+ *         researchers, gap searchers, follow-up desk or moderator (they wait for the next ok cycle).
+ *  stop:  no workers at all: the loop keeps collecting and closing noise by rule, so nothing is lost and research resumes
+ *         where it stopped as soon as the limit resets. */
+export function workAt(level) {
+  if (level === "stop") return { researchers: false, urgent_only: true, reviewers: false, overdue_only: true, updaters: false, grid: false, followup: false, gap: false, moderator: false, fixer: false };
+  if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, followup: false, gap: false, moderator: false, fixer: true };
+  return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, followup: true, gap: true, moderator: true, fixer: true };
+}
+/** Pure: review batches keeping only events that have waited longer than `min` minutes (waitingSince from review.mjs). */
+export function overdueOnly(batches, byId, now = Date.now(), min = OVERDUE_MIN) {
+  return (batches || []).map((b) => b.filter((id) => { const e = byId.get(id); return e && now - Date.parse(waitingSince(e)) > min * 6e4; })).filter((b) => b.length);
+}
+/** Pure: how many gap searchers this cycle starts. Measured (2026-11-19 04:35 to 11-20 07:13): 122 gap runs, 11 events
+ *  (91% added nothing), $39.37 = $3.58 per event against $0.95 for a researcher, 24% of all worker spend. So they run every
+ *  sweep.gap_every_minutes (60) with sweep.gap_workers (1), plus sweep.gap_spare_workers while the 5-hour window is under
+ *  sweep.gap_spare_below_pct of its estimate (capacity that would otherwise go unused when the window resets), and none
+ *  when usage is tight. */
+export function gapCount(now, lastGap, sc = {}, budget = { level: "ok", window_pct: 0 }) {
+  if (sc.gap_pass === false || !workAt(budget.level).gap) return 0;
+  const every = Math.max(15, Number(sc.gap_every_minutes) || 30) * 6e4; if (now - lastGap < every) return 0;
+  const spare = Number(budget.window_pct) < (Number(sc.gap_spare_below_pct) || 0) ? Math.max(0, Number(sc.gap_spare_workers) || 0) : 0;
+  return Math.max(0, Math.min(3, Math.max(1, Number(sc.gap_workers) || 1) + spare));
+}
+/** Pure: how long a cycle waits after `streak` idle cycles in a row (0 = the last cycle had work): flow.idle_backoff_minutes
+ *  ([4, 8, 12]), never under the base cycle. Collection keeps the base cadence during a longer wait (light polls), and a
+ *  poll that finds work starts the next cycle at once. */
+export function idleWaitMs(streak, baseMs, steps = [4, 8, 12]) {
+  const s = Array.isArray(steps) && steps.length ? steps : [4, 8, 12];
+  return Math.max(baseMs, (Number(s[Math.min(Math.max(0, streak), s.length - 1)]) || 0) * 6e4);
+}
 /** Start scripts/grid-news.mjs in the background; onDone(last line) when it exits; killed after 3 minutes. */
 function startNews(onDone) {
   const c = spawn("node", ["scripts/grid-news.mjs"], { cwd: ROOT, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" }, stdio: ["ignore", "pipe", "ignore"] });
@@ -168,42 +205,67 @@ function startNews(onDone) {
 async function flow() {
   const F = PIPE.flow || {}, LIFE = Math.max(1, Math.min(115, Number(process.env.FLOW_MINUTES) || Number(F.minutes) || 100)) * 6e4, MINCYCLE = Math.max(2, Math.min(15, Number(F.min_cycle_minutes) || 4)) * 6e4;
   const RW = Math.max(0, Math.min(4, Number((PIPE.sweep || {}).review_workers ?? 2)));
-  if (flowAlive(readJson(FLOW_LOCK, null))) { const l = readJson(FLOW_LOCK, {}); log(`CyberView sweep: flow already running (cycle ${l.cycle}, pid ${l.pid})`); return; }
+  // this container's lock, taken atomically BEFORE the slow web probe, so a second start seconds later cannot pass too
+  const stop = () => { try { if (readJson(FLOW_LOCK, {}).pid === process.pid) unlinkSync(FLOW_LOCK); } catch {} };
+  if (!takeLock(FLOW_LOCK, (l) => flowAlive(l), { started: nowIso(), cycle: 0, note: "starting" })) { const l = readJson(FLOW_LOCK, {}); log(`CyberView sweep: flow already running (cycle ${l.cycle}, pid ${l.pid})`); return; }
+  process.on("exit", stop); process.on("SIGTERM", () => process.exit(0)); process.on("SIGINT", () => process.exit(0));
   if (!webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
   // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
-  const host = hostId();
+  const host = hostId(), SINCE = nowIso();
   const publishLeader = (msg) => commitData(msg, ["data/leases.json"]).pushed;
   pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
   // no loop runs in this container (checked above), so a lease taken by this session belongs to a loop that died: take over
   if (leaderBlocks(other, RUN, host, false)) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
   if (other && other.run !== RUN) log(`taking over from ${other.run}: it was started by this session and is no longer running here`);
-  claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
+  let cycle = 0, B = budgetState();
+  const stamp = () => { const l = readLeases(); if (l["flow:leader"]) { Object.assign(l["flow:leader"], { host, since: SINCE, cycle, budget: B.level }); writeJson(join(DATA, "leases.json"), l); } };
+  claim("flow", ["leader"], RUN, LEADER_MIN); stamp();
   publishLeader("data: research loop leader " + RUN);
   pullAll(); heal(dataGitDir());
   { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
   let lastPublish = Date.now();
-  const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }
-    if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); } };
-  const t0 = Date.now(); let newsChild = null, handedOver = false, cycle = 0, lastGap = 0, lastFollow = 0, total = { workers: 0, cost: 0, cycles: 0 };
+  // every cycle: give way if an older loop holds the lease (the local leases.json follows origin at every commit and
+  // heartbeat), else renew ours. Returns the lease we give way to, or null.
+  const renew = () => {
+    const older = yieldsTo(readLeases(), RUN, SINCE); if (older) return older;
+    claim("flow", ["leader"], RUN, LEADER_MIN); stamp();
+    if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); }
+    return null;
+  };
+  const t0 = Date.now(); let newsChild = null, handedOver = false, lastGap = 0, lastFollow = 0, idle = 0, idleRun = 0, yielded = null, polled = 0;
+  const total = { workers: 0, cost: 0, cycles: 0, idle: 0, tight: 0, stop: 0 };
   const sweepCron = ((readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).find((r) => r.key === "sweep") || {}).cron;
   const END = flowDeadline(t0, LIFE, cronMinutes(sweepCron)), took = [];
   // a cycle starts only when it can end before END (judged by the last few cycles), so the loop is gone when the schedule comes
   const expect = () => Math.max(2 * 6e4, took.length ? took.slice(-3).reduce((s, x) => s + x, 0) / Math.min(3, took.length) : 3 * 6e4);
-  log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"})`);
+  log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"}); ${budgetLine(B)}`);
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
-  const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, note });
-  const stop = () => { try { if (readJson(FLOW_LOCK, {}).pid === process.pid) unlinkSync(FLOW_LOCK); } catch {} };
-  process.on("exit", stop); process.on("SIGTERM", () => process.exit(0)); process.on("SIGINT", () => process.exit(0));
+  const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
+  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
+  const gridCollect = () => { if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
+  /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */
+  const probe = () => {
+    collectors(); gridCollect(); B = budgetState();
+    if (!workAt(B.level).researchers) return false;
+    sh("node", ["scripts/sweep-plan.mjs", "plan", ...(workAt(B.level).urgent_only ? ["--urgent"] : [])]);
+    if ((plan("sweep-plan.json").stories || []).length) return true;
+    const q = sh("node", ["scripts/review.mjs", "queue", "--json", "--limit", "40"]); let items = []; try { items = JSON.parse(q.stdout.trim() || "[]"); } catch {}
+    return RW > 0 && items.length > 0;
+  };
   while (cycle === 0 || Date.now() + expect() < END) {
     cycle++; const cs = Date.now(), run = `${RUN}-c${cycle}`; process.env.CYBERVIEW_RUN = run;
     const rec = { run, job: "sweep", flow: true, cycle, started_at: nowIso(), phases: [] };
+    if (idleRun) rec.idle_before = idleRun;                 // idle cycles leave no record of their own: counted on the next one
     const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[c${cycle} ${name}] ${note || ""}`); };
     beat("collecting");
-    for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
+    if (Date.now() - polled > 60000) collectors();        // a light poll that just ran them leaves them out
+    // the plan's usage decides what this cycle may start (scripts/lib/usage.mjs; config/pipeline.json usage_budget)
+    B = budgetState(); const can = workAt(B.level); rec.budget = { level: B.level, window_pct: B.window_pct, week_pct: B.week_pct, ...(B.limited_until ? { limited_until: B.limited_until } : {}) };
+    if (B.level !== "ok") { total[B.level]++; phase("budget", budgetLine(B)); }
     // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
-    if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { phase("grid", sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""); } catch {} }
+    { const g = gridCollect(); if (g) phase("grid", g); }
     // power outages reported in the news (no AI model; publishers' own pages): before the analysis, which counts them as news
     // signals. The script runs at most every 15 minutes (status last_grid_news_at); a failure here never stops the cycle
     // runs in the background (about 2 minutes, mostly waiting on news indexes) so it never holds up the research; the
@@ -213,25 +275,36 @@ async function flow() {
     if (existsSync(join(ROOT, "scripts", "grid-analysis.mjs"))) { try { phase("grid-analysis", sh("node", ["scripts/grid-analysis.mjs"], 60000).stdout.trim().split("\n").pop() || ""); } catch {} }
     // the grid audit (rules only, local files, no network): flags failing, frozen or odd sources for the status page
     if (existsSync(join(ROOT, "scripts", "grid-audit.mjs"))) { try { phase("grid-audit", sh("node", ["scripts/grid-audit.mjs"], 60000).stdout.trim().split("\n").shift() || ""); } catch {} }
-    phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "");
-    const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
-    const stories = fresh ? sp.stories || [] : [], batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);
+    let stories = [], batches = [];
+    if (can.researchers) {
+      phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan", ...(can.urgent_only ? ["--urgent"] : [])]).out[0] || "");
+      const sp = plan("sweep-plan.json"), fresh = sp.planned_at && sp.planned_at >= rec.started_at;
+      stories = fresh ? sp.stories || [] : []; batches = [...new Set(stories.map((s) => s.batch))].sort((a, b) => a - b);
+    }
     const pf = `review-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let rb = [];
-    if (RW) { phase("review", sh("node", ["scripts/review.mjs", "plan", "--max", String(RW), "--file", pf]).out[0] || ""); rb = (readJson(join(DATA, pf), { batches: [] }).batches || []).filter((b) => b.length); }
+    if (RW && can.reviewers) {
+      phase("review", sh("node", ["scripts/review.mjs", "plan", "--max", String(RW), "--file", pf]).out[0] || ""); rb = (readJson(join(DATA, pf), { batches: [] }).batches || []).filter((b) => b.length);
+      // tight: only events past the 20-minute mark (the 15-minute target's tail); the rest wait for a normal cycle
+      if (can.overdue_only && rb.length) {
+        const ids = new Set(rb.flat()), byId = new Map(listEventFiles().map((f) => f.e).filter((e) => e && ids.has(e.id)).map((e) => [e.id, e]));
+        const kept = overdueOnly(rb, byId); if (kept.flat().length !== rb.flat().length) phase("review", `usage tight: ${kept.flat().length} of ${rb.flat().length} event(s) are past ${OVERDUE_MIN} minutes and get a reviewer now`);
+        rb = kept; writeJson(join(DATA, pf), { ...readJson(join(DATA, pf), {}), batches: rb });
+      }
+    }
     // new reporting on events already published: updaters read it and update the event (the review then checks the update)
     const uf = `update-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let ub = [];
-    if (UW) { phase("updates", sh("node", ["scripts/updates.mjs", "plan", "--max", String(UW), "--per", String(UPER), "--file", uf]).out[0] || ""); ub = (readJson(join(DATA, uf), { batches: [] }).batches || []).filter((b) => b.length); }
+    if (UW && can.updaters) { phase("updates", sh("node", ["scripts/updates.mjs", "plan", "--max", String(UW), "--per", String(UPER), "--file", uf]).out[0] || ""); ub = (readJson(join(DATA, uf), { batches: [] }).batches || []).filter((b) => b.length); }
     // grid outages that need a cause: grid workers read the operator's and officials' statements (scripts/grid-desk.mjs)
     const gf = `grid-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let gb = [];
-    if (GW && existsSync(join(ROOT, "scripts", "grid-desk.mjs"))) { try { phase("grid-plan", sh("node", ["scripts/grid-desk.mjs", "plan", "--max", String(GW), "--per", String(GPER), "--file", gf], 60000).out[0] || ""); gb = (readJson(join(DATA, gf), { batches: [] }).batches || []).filter((b) => b && (b.incidents || []).length); } catch { gb = []; } }
+    if (GW && can.grid && existsSync(join(ROOT, "scripts", "grid-desk.mjs"))) { try { phase("grid-plan", sh("node", ["scripts/grid-desk.mjs", "plan", "--max", String(GW), "--per", String(GPER), "--file", gf], 60000).out[0] || ""); gb = (readJson(join(DATA, gf), { batches: [] }).batches || []).filter((b) => b && (b.incidents || []).length); } catch { gb = []; } }
     const work = batches.map((b) => ["researcher", b]).concat(rb.map((_, i) => ["reviewer", i + 1]), ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]));
-    if (Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
-    const sc = PIPE.sweep || {};
-    if (sc.gap_pass !== false && Date.now() - lastGap > 30 * 6e4) { lastGap = Date.now(); for (let i = 1; i <= Math.max(1, Math.min(3, Number(sc.gap_workers) || 1)); i++) work.push(["gap", i]); }
-    if (cycle % 6 === 1 && sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
+    const core = work.length;                               // research, review, update and grid work; the rest is scheduled
+    if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
+    { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }
+    if (can.moderator && cycle % 6 === 1 && sh("node", ["scripts/chat.mjs", "intake"]).out.some((l) => /^(PENDING|REPORT) /.test(l))) work.push(["moderator", null]);
     let res = [];
     if (work.length) {
       if (stories.length) publishClaim("story", stories.map((s) => s.id));
@@ -244,34 +317,50 @@ async function flow() {
       delete process.env.CYBERVIEW_REVIEW_PLAN; delete process.env.CYBERVIEW_UPDATE_PLAN; delete process.env.CYBERVIEW_GRID_PLAN;
       // record what the grid workers found (validated; a cyber cause becomes a lead for the next cycle's researchers)
       for (const b of gb) { try { if (existsSync(join(DATA, b.out))) phase("grid-apply", sh("node", ["scripts/grid-desk.mjs", "apply", b.out], 60000).out[0] || ""); else phase("grid-apply", `batch ${b.batch}: no out file`); } catch {} }
-      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
+      phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid${work.some((w) => w[0] === "gap") ? `, ${work.filter((w) => w[0] === "gap").length} gap` : ""}${work.some((w) => w[0] === "followup") ? ", follow-up desk" : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
       if (batches.length) {
         const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
         if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [["researcher", "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
-    } else phase("idle", "nothing new to research or review");
+    } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}
     try { unlinkSync(join(DATA, gf)); } catch {}
     for (const b of gb) { try { unlinkSync(join(DATA, b.out)); } catch {} }
     rec.finished_at = nowIso(); rec.minutes = +((Date.now() - cs) / 6e4).toFixed(1); rec.workers = res.length; rec.cost = +res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(4);
     total.workers += rec.workers; total.cost += rec.cost; total.cycles++;
-    if (work.length) {
+    // a stop cycle is recorded too (it rides with the next commit), so the status page and improver see the loop held back
+    if (work.length || B.level === "stop") {
       const dir = join(DATA, "runs", rec.finished_at.slice(0, 10)); mkdirSync(dir, { recursive: true });
       appendFileSync(join(dir, "jobruns.jsonl"), JSON.stringify(rec) + "\n");
+    }
+    if (work.length) {
       release(run);
       let f = finish("sweep");
-      if (f.fixer) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
+      if (f.fixer && can.fixer) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
     took.push(Date.now() - cs);
-    beat("waiting"); renew();
-    const wait = cs + MINCYCLE - Date.now(); if (wait > 0 && Date.now() + wait + expect() < END) await sleep(wait);
+    if (core) { idle = 0; idleRun = 0; } else { idle++; idleRun++; total.idle++; }
+    beat(idle ? `waiting (idle ${idle})` : "waiting");
+    yielded = renew();
+    if (yielded) { log(`flow: giving way to ${yielded.run} on ${yielded.host || "?"} (started ${yielded.since || "before this check existed"}): two loops were running`); break; }
+    // idle backoff: a cycle that found nothing waits longer, but collection keeps its cadence (a light poll every MINCYCLE)
+    // and a poll that finds work starts the next cycle at once
+    const until = cs + idleWaitMs(idle, MINCYCLE, F.idle_backoff_minutes);
+    for (let next = cs + MINCYCLE; ; next += MINCYCLE) {
+      const at = Math.min(next, until), wait = at - Date.now();
+      if (at < until && at < Date.now()) continue;           // a poll time already past (a long cycle): skip it
+      if (wait > 0) { if (Date.now() + wait + expect() >= END) break; await sleep(wait); }
+      if (at >= until || Date.now() + expect() >= END) break;
+      beat(`polling (idle ${idle})`);
+      if (probe()) { log(`[c${cycle} poll] work is waiting: next cycle now`); break; }
+    }
   }
   // hand over first (lease released and pushed, summary printed, lock removed), so the schedule that comes next can start the
   // next loop at once; only then wait, silently, for a news run still going in the background
-  release(RUN); publishLeader("data: research loop handed over");
-  log(`CyberView sweep: flow ended after ${total.cycles} cycle(s), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
+  release(RUN); publishLeader(yielded ? `data: research loop gave way to ${yielded.run}` : "data: research loop handed over");
+  log(`CyberView sweep: flow ${yielded ? "gave way to an older loop" : "ended"} after ${total.cycles} cycle(s) (${total.idle} idle${total.tight ? `, ${total.tight} tight` : ""}${total.stop ? `, ${total.stop} stopped by usage` : ""}), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
   handedOver = true; stop();
   if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
 }
@@ -285,6 +374,10 @@ async function main() {
   log(`RUN ${job} ${RUN}`);
   // a research job needs workers that can read the web; if they cannot here, the job goes back to the subagent route
   const needsWeb = { sweep: 1, backlog: 1, review: 1, analyst: 1, "deep-sweep": 1 }[job] || WEB_ROLES.has(job);
+  // the plan's usage: at "stop" no job starts workers; at "tight" the jobs in usage_budget.tight_skip_jobs wait for their
+  // next schedule, so what is left of the window goes to the research loop (scripts/lib/usage.mjs)
+  { const B = budgetState(), skip = (PIPE.usage_budget || {}).tight_skip_jobs || [];
+    if (B.level === "stop" || (B.level === "tight" && skip.includes(job))) { log(budgetLine(B)); log(`CyberView ${job}: skipped, plan usage ${B.level}${B.limited_until ? " until " + B.limited_until : ""}; it runs at its next schedule`); return; } }
   if (needsWeb && !webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
 
   // 1. plan (scripts only; the planners leave out anything another run has leased)
@@ -293,7 +386,9 @@ async function main() {
     for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "no plan");
     const batches = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);
-    const sc = PIPE.sweep || {}, gap = sc.gap_pass === false || !(sc.gap_every_run === true || new Date().getUTCMinutes() % 30 < 15) ? 0 : Math.max(1, Math.min(3, Number(sc.gap_workers) || 1));
+    // a one-off sweep (the loop is off) runs its gap searchers at most once per sweep.gap_every_minutes, by the clock
+    const sc = PIPE.sweep || {}, every = Math.max(15, Number(sc.gap_every_minutes) || 30), dayMin = Math.floor((Date.now() % 864e5) / 6e4);
+    const gap = sc.gap_every_run === true || dayMin % every < 15 ? gapCount(Date.now(), 0, sc, budgetState()) : 0;
     const posts = sh("node", ["scripts/chat.mjs", "intake"]).out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
     batches.forEach((b) => work.push(["researcher", b])); for (let i = 1; i <= gap; i++) work.push(["gap", i]); if (posts) work.push(["moderator", null]);
   } else if (job === "review") {

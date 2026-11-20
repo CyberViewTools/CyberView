@@ -25,6 +25,9 @@ export function pick(stories, max = MAX_STORIES) {
   open.forEach((s) => take(s, "next strongest"));
   return [...chosen.values()].sort((a, b) => b.score - a.score);
 }
+/** Pure: does a story read like an incident or an exploited flaw? When the plan's usage is tight (scripts/lib/usage.mjs)
+ *  the research loop plans only these (`plan --urgent`); the rest wait in the queue for the next normal cycle. */
+export const urgent = (s) => !!(s && (s.incident || (s.kinds || []).includes("exploited")));
 /** Pure: deal stories round-robin so every researcher gets a mix of strong and weak. */
 export function split(stories, n = BATCHES) {
   const k = Math.max(1, Math.min(n, Math.ceil(stories.length / 3))), out = Array.from({ length: k }, () => []);
@@ -50,10 +53,11 @@ function main() {
   const d = build();
   if (cmd === "plan") {
     // the queue is what still needs a decision after the rules (scripts/backlog.mjs); researchers scale with it, up to the cap
-    const all = backlog(d.stories), held = leased("story", all.map((s) => s.id), process.env.CYBERVIEW_RUN || ""), queue = all.filter((s) => !held.has(s.id)), chosen = pick(queue), batches = chosen.length ? split(chosen, Math.max(1, Math.min(BATCHES, Math.ceil(chosen.length / PER)))) : [];
+    const only = process.argv.includes("--urgent");
+    const all = backlog(d.stories), held = leased("story", all.map((s) => s.id), process.env.CYBERVIEW_RUN || ""), queue = all.filter((s) => !held.has(s.id)), chosen = pick(only ? queue.filter(urgent) : queue), batches = chosen.length ? split(chosen, Math.max(1, Math.min(BATCHES, Math.ceil(chosen.length / PER)))) : [];
     const plan = { planned_at: nowIso(), stories: batches.flatMap((b, i) => b.map((s) => ({ id: s.id, title: s.title, score: s.score, batch: i + 1, urls: s.urls }))) };
     writeJson(pp, plan);
-    console.log(`SWEEP PLAN: ${chosen.length} stories for ${batches.length} researcher(s); ${queue.length} waiting for a decision${queue.length > chosen.length ? ` (${queue.length - chosen.length} over this run's cap wait for the next run, 15 minutes)` : ""}.`);
+    console.log(`SWEEP PLAN: ${chosen.length} stories for ${batches.length} researcher(s)${only ? " (usage tight: incidents and exploited flaws only)" : ""}; ${queue.length} waiting for a decision${queue.length > chosen.length ? ` (${queue.length - chosen.length} over this run's cap wait for the next run, 15 minutes)` : ""}.`);
     batches.forEach((b, i) => { console.log(`\nRESEARCHER ${i + 1} (${b.length} stories):`); b.forEach((s) => console.log(`  ${s.id}  [${s.score}] ${s.title.slice(0, 96)}  (${s.publishers} publisher${s.publishers === 1 ? "" : "s"}${s.langs.filter((l) => l !== "en").length ? ", " + s.langs.join("/") : ""}; ${s.picked})`)); });
     if (!chosen.length) console.log("Nothing strong is waiting: a quiet hour. Do the gap pass only.");
     return;

@@ -52,13 +52,23 @@ if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_job
     `2. When it ends: if the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs ${job}\` and do what it prints instead. Otherwise end with exactly its last line (it starts "CyberView ${job}:").`].join("\n"));
   process.exit(0);
 }
+// subagents use the same Max plan as headless workers: at "stop" none start, at "tight" the jobs in
+// usage_budget.tight_skip_jobs wait for their next schedule (scripts/lib/usage.mjs)
+{
+  const { budgetState, budgetLine } = await import("./lib/usage.mjs"), B = budgetState();
+  if (B.level === "stop" || (B.level === "tight" && ((PL.usage_budget || {}).tight_skip_jobs || []).includes(job))) {
+    console.log(`DISPATCH ${job}: ${budgetLine(B)}. Start nothing. End with exactly: "CyberView ${job}: skipped, plan usage ${B.level}"`); process.exit(0);
+  }
+}
 say(`DISPATCH ${job}. Do exactly these steps, in order, and nothing else. Do not research, read data files or read job instructions yourself. Use as few turns as possible: combine shell commands with && in one call, start all subagents of a step in ONE message with run_in_background false, and never wait or poll.`);
 
 if (job === "sweep") {
   const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]], ["backlog rules", "node", ["scripts/backlog.mjs", "auto"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });
   const plan = sh("node", ["scripts/sweep-plan.mjs", "plan"]), head = plan.out[0] || "no plan";
   const batches = [...new Set((readJson(join(DATA, "sweep-plan.json"), { stories: [] }).stories || []).map((s) => s.batch))].sort();
-  const sc = readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}, gapDue = sc.gap_every_run === true || new Date().getUTCMinutes() % 30 < 15, gap = sc.gap_pass === false || !gapDue ? 0 : Math.max(1, Math.min(3, Number(sc.gap_workers) || 1));   // searchers every other run: twice an hour
+  // gap searchers once per sweep.gap_every_minutes (by the clock), as many as gapCount allows at this usage level
+  const sc = readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}, every = Math.max(15, Number(sc.gap_every_minutes) || 30), gapDue = sc.gap_every_run === true || Math.floor((Date.now() % 864e5) / 6e4) % every < 15;
+  const { gapCount } = await import("./run-job.mjs"), { budgetState } = await import("./lib/usage.mjs"), gap = gapDue ? gapCount(Date.now(), 0, sc, budgetState()) : 0;
   say(`Housekeeping done by this command: ${hk.join(", ")}. ${head}`);
   // community posts are checked in the same hourly wake-up, so an idle moderator never costs a wake-up of its own
   const chat = sh("node", ["scripts/chat.mjs", "intake"]), posts = chat.out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;

@@ -13,11 +13,11 @@
   "lng": -119.85,
   "geo_basis": "institution",
   "pin_type": "agency",
-  "summary": "A paper by researchers at UC Santa Barbara and other institutions measured 428 third-party LLM API routers, 28 paid and 400 free. One paid and eight free routers actively injected malicious code, 17 free routers touched researcher-owned AWS canary credentials, and one drained ETH from a researcher-owned private key.",
+  "summary": "A paper by researchers at UC Santa Barbara and other institutions measured 428 third-party LLM API routers, 28 paid and 400 free. One paid and eight free routers actively injected malicious code, 17 routers touched researcher-owned AWS canary credentials, and one drained ETH from a researcher-owned private key.",
   "plain": "Researchers found that some middleman services connecting AI coding agents to AI models altered commands, and some touched or drained decoy keys.",
   "exec": "Routing AI agent traffic through unvetted third parties exposes API keys, cloud credentials and code to theft or tampering.",
   "action": "Send agent traffic only to the model provider or a router you operate and trust, and rotate any keys that passed through an unvetted router.",
-  "impact": "9 of 428 routers injected code; 17 free routers touched AWS canary credentials; one drained ETH from a researcher-owned key.",
+  "impact": "9 of 428 routers injected code; 17 routers touched AWS canary credentials; one drained ETH from a researcher-owned key.",
   "tags": [
     "supply-chain"
   ],
@@ -45,7 +45,7 @@
     "key_findings": [
       "The study scanned 428 routers, 28 paid and 400 free, and found one paid and eight free routers actively injecting malicious code.",
       "Two routers used adaptive triggers such as waiting for 50 prior calls, limiting payloads to YOLO-mode sessions, or targeting only Rust and Go projects.",
-      "17 free routers touched researcher-owned AWS canary credentials and one drained ETH from a researcher-owned private key.",
+      "17 routers touched researcher-owned AWS canary credentials and one drained ETH from a researcher-owned private key.",
       "Poisoning studies with a deliberately leaked OpenAI key and weakly configured decoys showed the routers' traffic exposed 99 credentials across 440 Codex sessions."
     ],
     "published": "2026-04-09",
@@ -65,5 +65,13 @@
     "note": "The paper's arXiv abstract and the start of its HTML text were read; ITmedia reports the same figures but words the AWS result more strongly (\"misused\"), so the paper's wording is used."
   },
   "first_seen": "2026-11-19T04:23:55Z",
-  "updated_at": "2026-11-20T13:20:30Z"
+  "updated_at": "2026-11-20T13:23:10Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-20T13:23:14Z",
+    "first_at": "2026-11-20T13:23:14Z",
+    "note": "Paper abstract says 17 routers touched AWS canary credentials without saying free; only ITmedia says free. Removed 'free' from summary, impact, key finding. Counts 428/28/400, 1 paid + 8 free injecting, ETH checked against abstract and ITmedia.",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-20T13:23:14Z"
 }

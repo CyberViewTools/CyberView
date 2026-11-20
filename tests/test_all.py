@@ -1300,7 +1300,7 @@ async def main():
             names = await pg.locator("#routines tbody strong").all_text_contents()
             ok("status: routines listed by plain name", len(names) >= 25 and "Sweep" in names and "Source scout" in names and await pg.locator("#routines .codename").count() == 0, names[:6])
             rows = await pg.locator("#sources tbody tr").all_text_contents()
-            ok("status: sources table lists the collectors", len(rows) >= 8 and any("google-news" in r for r in rows) and any(r.startswith("rss") for r in rows), rows[:3])
+            ok("status: sources table lists the collectors", len(rows) >= 8 and any("bing-news" in r for r in rows) and any(r.startswith("rss") for r in rows), rows[:3])
             ok("status: pipeline summary", "stories waiting" in await pg.locator("#pipe").text_content())
             ok("status: no script errors", not errs, errs)
             await pg.context.close()

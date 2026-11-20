@@ -1,0 +1,34 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-20T03:31:58Z",
+  "finished_at": "2026-11-20T03:36:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html", "title": "Researcher demonstrates database RCE (The Hacker News, corrected 20 Nov)", "used_in": "CVE-2026-116331, CVE-2026-101786, CVE-2026-114819"},
+    {"url": "https://www.postgresql.org/support/security/CVE-2026-116331/", "title": "PostgreSQL min/max aggregate type confusion executes arbitrary code", "used_in": "CVE-2026-116331"},
+    {"url": "https://www.postgresql.org/about/news/postgresql-187-1712-1616-1520-1425-and-19-rc-2-released-3442/", "title": "PostgreSQL 18.7, 17.12, 16.16, 15.20, 14.25 and 19 RC 2 released", "used_in": "CVE-2026-116331"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-116331", "title": "CVE record CVE-2026-116331", "used_in": "CVE-2026-116331 (cross-check: CWE-843, credit to Zheng Yu, CISA ADP exploitation none)"},
+    {"url": "https://depthfirst.com/research/narrow-grants-wide-engines", "title": "Depthfirst: Narrow grants, wide engines", "used_in": "CVE-2026-116331, CVE-2026-101786, CVE-2026-114819"},
+    {"url": "https://dev.mysql.com/community/security/advisories/2026-10-20/", "title": "MySQL Community Edition Security Advisory: October 2026", "used_in": "CVE-2026-101786"},
+    {"url": "https://dev.mysql.com/doc/relnotes/mysql/26.7/en/", "title": "MySQL 26.7 release notes index", "used_in": "CVE-2026-101786 (no fixed release listed)"},
+    {"url": "https://dev.mysql.com/doc/relnotes/mysql/26.7/en/news-26-7-1.html", "title": "MySQL 26.7.1 release notes", "used_in": "CVE-2026-101786 (no CVE mention)"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-101786", "title": "CVE record CVE-2026-101786", "used_in": "CVE-2026-101786"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-114819", "title": "CVE record CVE-2026-114819 (Oracle CNA)", "used_in": "CVE-2026-114819"}
+  ],
+  "added": ["CVE-2026-116331", "CVE-2026-101786", "CVE-2026-114819"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Fixed MySQL release for CVE-2026-101786", "url": "https://dev.mysql.com/community/security/advisories/2026-10-20/", "note": "Advisory names affected 26.7.0-26.7.1 but no fixed release; 26.7 release notes (generated 5 Nov) list no 26.7.2 (404). Fill remediation.fixed_versions once Oracle names the release.", "priority": "medium"},
+    {"title": "Oracle November 2026 bulletin for CVE-2026-114819 patch levels", "url": "https://www.oracle.com/security-alerts/cspunov2026.html", "note": "403 to automated reader; exact patch levels per release not confirmed. Analysis built from Oracle's CNA record plus research.", "priority": "medium"},
+    {"title": "CVE-2026-91609 (Oracle REST Data Services / GraphQL) not analysed", "url": "https://www.oracle.com/security-alerts/cpuoct2026.html", "note": "Fourth CVE on the Depthfirst event, pre-auth half of the Oracle chain; not in this assignment. Depthfirst calls it Oracle's GraphQL interface, The Hacker News says ORDS.", "priority": "medium"}
+  ],
+  "failed_sites": [
+    "https://www.oracle.com/security-alerts/cspunov2026.html (403)",
+    "https://nvd.nist.gov/vuln/detail/CVE-2026-114819 (empty client-rendered shell)",
+    "https://nvd.nist.gov/vuln/detail/CVE-2026-101786 (empty client-rendered shell)",
+    "https://dev.mysql.com/doc/relnotes/mysql/26.7/en/news-26-7-2.html (404)"
+  ],
+  "notes": "No exploit code or repositories opened; prose descriptions only. No CVE is in KEV and the CISA ADP entries say exploitation none. CVE-2026-114819 has medium confidence because the Oracle bulletin could not be read; its vendor source is Oracle's own CNA record. Priority: PostgreSQL and MySQL urgent (authenticated, public exploit), Oracle immediate (9.9, reported no-login chain over an internet-facing endpoint)."
+}

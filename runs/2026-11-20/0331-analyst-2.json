@@ -1,0 +1,22 @@
+{
+  "job": "analyst-2",
+  "started_at": "2026-11-20T03:31:54Z",
+  "finished_at": "2026-11-20T03:35:00Z",
+  "model": "claude-opus-5-5",
+  "searches": ["CVE-2026-91609", "Oracle Critical Patch Update October 2026 Oracle REST Data Services advisory CERT"],
+  "pages_read": [
+    {"url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html", "title": "Researcher demonstrates database RCE (The Hacker News)", "used_in": "CVE-2026-91609"},
+    {"url": "https://depthfirst.com/research/narrow-grants-wide-engines", "title": "Narrow grants, wide engines (Depthfirst)", "used_in": "CVE-2026-91609"},
+    {"url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-91609", "title": "NVD CVE-2026-91609", "used_in": "CVE-2026-91609"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-91609", "title": "CVE record CVE-2026-91609", "used_in": "CVE-2026-91609"}
+  ],
+  "added": ["CVE-2026-91609"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Oracle October 2026 CPU risk matrix row for CVE-2026-91609 (ORDS GraphQL)", "url": "https://www.oracle.com/security-alerts/cpuoct2026.html", "note": "Oracle returned 403; exact fixed ORDS release number and any workaround not confirmed. Pre-release summary in search results listed 24.2.0-26.2.2 while the CVE record says 24.2.0-26.2.1.", "priority": "medium"},
+    {"title": "Whether ORDS GraphQL is enabled by default and how the pre-auth chain with CVE-2026-114819 works", "url": "https://depthfirst.com/research/narrow-grants-wide-engines", "note": "Researcher gives no component-level detail; Oracle rates CVE-2026-91609 as needing low privileges.", "priority": "low"}
+  ],
+  "failed_sites": ["https://www.oracle.com/security-alerts/cpuoct2026.html (403)", "https://blogs.oracle.com/security/october-2026-critical-patch-update-released (403)"],
+  "notes": "CVE-2026-91609 is the Oracle REST Data Services GraphQL flaw (CVSS 6.5, low privileges, confidentiality) that Depthfirst says chains with CVE-2026-114819 for pre-login code execution. Vendor advisory blocked automated readers; written from Oracle's CNA text in NVD/CVE.org, confidence medium, priority urgent (no in-the-wild exploitation; Oracle chain exploit not shown to be public)."
+}

@@ -1,0 +1,49 @@
+{
+  "_note": "The one description of CyberView. scripts/pages.mjs renders the About page's 'What CyberView is' section and the page descriptions from it at every build, filling {numbers} from live data; scripts/about.mjs check fails CI when a page, view, map layer or routine is not covered by an entry here, so nothing ships undescribed. Add an entry (or extend 'covers') whenever you add something; keep text plain, present tense, no hype. AI-written content must say 'CyberView AI (a Claude model)'.",
+  "tagline": "A live, verified picture of cyber threats worldwide for defenders: what happened, what is being exploited, and the outages around it, updated around the clock.",
+  "intro": [
+    "CyberView watches the world's public reporting on cyber security and turns it into one place a defender can use. Scripts collect from {feeds} government, vendor and news feeds and several open databases every few minutes; CyberView AI (Claude models by Anthropic) researches what they find, writes it up with its sources, and a second AI agent checks it before it counts as reviewed. Nothing is drawn as a fact until it has been read from a real source.",
+    "It keeps growing. New sources, views and analyses are added continuously, and this page is generated from the same list the site is built from, so it always describes what CyberView does today: {events} events on file, {cves} CVEs indexed, {grid} power grid sources connected."
+  ],
+  "capabilities": [
+    { "key": "globe", "title": "Seven-day globe of cyber events", "link": "./",
+      "text": "Every checked cyber event of the last seven days on a 3D globe, by type (shape and colour-blind-safe colour) and severity, with what happened, why it matters, what to do and the sources. Arcs connect events only where a source states the link, or where a government or the investigating firm made an attribution, and say who said so.",
+      "covers": { "pages": ["index"], "views": ["map"], "layers": ["links", "origins"] } },
+    { "key": "views", "title": "Timeline and Correlation", "link": "./",
+      "text": "The same events by day and attack surface, and as a correlation graph of shared actors, products and techniques, each with the question it answers and its caveats.",
+      "covers": { "views": ["time", "graph"] } },
+    { "key": "research", "title": "Continuous research loop", "link": "status.html",
+      "text": "A loop runs every few minutes: it collects leads, groups them into stories ranked by how many independent publishers report them, sends researchers to new stories and reviewers to new events in parallel, and publishes. The target is under 15 minutes from a lead to a published, reviewed event. Routine bulletins and single unconfirmed headlines are closed by written rules, and unconfirmed reports appear only in a labelled 'being checked' list.",
+      "covers": { "routines": ["collect", "osint", "lead-triage", "sweep", "review", "backlog", "triage", "deep-sweep", "regional", "report-review"] } },
+    { "key": "updates", "title": "Events that keep up with the story", "link": "archive.html",
+      "text": "Published events are updated when new reporting adds a confirmation, a figure, an attribution or a patch, and go back to the second review after each change; developing stories and attackers' claims are followed up on a schedule. Corrections are logged publicly.",
+      "covers": { "routines": ["followup", "verify", "watchdog"] } },
+    { "key": "vulns", "title": "Vulnerabilities", "link": "vulnerabilities.html",
+      "text": "Known-exploited flaws ranked for patching with US federal deadlines and fix steps from the vendor's own advisory; {cves} CVEs since 1999 to look up and browse with the CyberView rating, which follows CISA's SSVC and BOD 26-04; your own software list matched by version inside your browser (never uploaded); and hunt guidance. Exploitation analyses by CyberView AI explain how a flaw is used and how to fix it, without exploit code.",
+      "covers": { "pages": ["vulnerabilities"], "routines": ["feeds", "cve", "exploit-watch", "advisory", "analyst"] } },
+    { "key": "grid", "title": "Power grid outages", "link": "./#grid",
+      "text": "A Grid view that sets everything else aside and shows only electrical grid outages from {grid} grid operators and data sources: every outage of 100 or more customers, larger incidents tracked from start to end, load shedding and grid emergencies, which outages are unusual for the hour, which are confirmed by internet measurements, disaster alerts, demand data or news, and 30-day trends. CyberView AI checks the cause of big or corroborated incidents; an outage is never called an attack unless an official source says so.",
+      "covers": { "views": ["grid"], "layers": ["grid"] } },
+    { "key": "context", "title": "Context layers", "link": "./",
+      "text": "Internet disruptions (IODA) and disaster alerts (GDACS) on the globe, drawn in neutral ink and always labelled as context, not cyber events.",
+      "covers": { "layers": ["ioda", "gdacs"] } },
+    { "key": "analysis", "title": "Brief, patterns and trends", "link": "trends.html",
+      "text": "A daily brief and a pattern analysis written by CyberView AI from the week's events, and week-over-week trends by category, sector, country, actor and product.",
+      "covers": { "pages": ["trends"], "routines": ["brief", "analysis"] } },
+    { "key": "archive", "title": "Archive", "link": "archive.html",
+      "text": "Every event CyberView has ever recorded ({events} so far), searchable, with RSS and JSON feeds.",
+      "covers": { "pages": ["archive"] } },
+    { "key": "tabletop", "title": "Weekly tabletop exercise", "link": "tabletop.html",
+      "text": "Each week one verified event becomes a ready-to-run exercise with timed updates, discussion questions and what good looks like; the scenario is invented for practice and says so.",
+      "covers": { "pages": ["tabletop"], "routines": ["tabletop"] } },
+    { "key": "community", "title": "Community", "link": "community.html",
+      "text": "Defenders' tips and questions, reviewed by fixed rules and then the CyberView AI moderator before they appear; never used as a source for an event.",
+      "covers": { "pages": ["community"], "routines": ["moderator"] } },
+    { "key": "ops", "title": "Open about how it runs", "link": "status.html",
+      "text": "Every routine, when it last ran and what it found; an outside guardian that checks the live site every two hours and restarts what has stopped; link and security checks; and an improver that tunes cost and quality within written limits. The code and the job instructions are public.",
+      "covers": { "pages": ["status", "about"], "routines": ["monitor", "link-check", "security-check", "security-review", "steward", "scout", "editor", "guardian", "improver"] } }
+  ],
+  "pages": {
+    "index": "A live, verified picture of cyber threats worldwide for defenders: a seven-day globe of checked cyber events, exploited flaws ranked for patching, and power grid and internet outages for context."
+  }
+}

@@ -392,7 +392,7 @@ console.log(`Feeds: ${picks.length} high-priority items in data/feed.xml and dat
 console.log(`Archive: ${live.length} events in ${index.months.length} month(s), ${kevAll.length} known-exploited entries. ${warnings.length} hygiene warning(s).`);
 
 // legal pages and security.txt from legal/ and config/site.json
-console.log("Pages: " + buildPages().join(", "));
+console.log("Pages: " + (await buildPages()).join(", "));
 
 // health and manifest, written last: what was left out, and a fingerprint of every data file so the deploy can prove
 // that what is live is exactly what was built (scripts/verify-build.mjs)

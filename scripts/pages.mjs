@@ -18,7 +18,7 @@ export function siteConfig() {
   return { ...c, contact_email: email };
 }
 
-const NAV = [["./", "Map", "index"], ["vulnerabilities.html", "Vulnerabilities", "vulnerabilities"], ["archive.html", "Archive", "archive"], ["trends.html", "Trends", "trends"], ["tabletop.html", "Exercise", "tabletop"], ["community.html", "Community", "community"], ["status.html", "Status", "status"], ["about.html", "About", "about"]];
+export const NAV = [["./", "Map", "index"], ["vulnerabilities.html", "Vulnerabilities", "vulnerabilities"], ["archive.html", "Archive", "archive"], ["trends.html", "Trends", "trends"], ["tabletop.html", "Exercise", "tabletop"], ["community.html", "Community", "community"], ["status.html", "Status", "status"], ["about.html", "About", "about"]];
 export const navMarkup = (cur, cls) => `<nav class="${cls}" aria-label="Site">` + NAV.map(([h, t, k]) => `<a href="${h}"${k === cur ? ' aria-current="page"' : ""}>${t}</a>`).join("") + "</nav>";
 const BURGER = '<button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
 
@@ -77,11 +77,18 @@ ${footer()}${["nav.js", ...(page.scripts || [])].map((s) => `\n<script src="${s}
 `;
 }
 
-export function buildPages() {
+export async function buildPages() {
   const cfg = siteConfig(), out = [];
   for (const f of readdirSync(join(ROOT, "legal")).filter((f) => f.endsWith(".html"))) {
     const name = basename(f, ".html");
-    writeFileSync(join(ROOT, "site", `${name}.html`), render(name, readFileSync(join(ROOT, "legal", f), "utf8"), cfg));
+    let body = readFileSync(join(ROOT, "legal", f), "utf8");
+    // the About page's description is generated from config/about.json with live numbers (scripts/about.mjs)
+    if (name === "about") {
+      const { about, numbers, aboutSection, fill } = await import("./about.mjs");
+      const a = about(), n = await numbers();
+      body = body.replace("<p data-about-tagline></p>", `<p>${esc(fill(a.tagline, n))}</p>`).replace("<section data-about-generated></section>", aboutSection(a, n));
+    }
+    writeFileSync(join(ROOT, "site", `${name}.html`), render(name, body, cfg));
     out.push(`${name}.html`);
   }
   // account pages: the only pages allowed to reach Supabase, and only when it is configured
@@ -111,4 +118,4 @@ export function buildPages() {
   return out;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) console.log("Pages: " + buildPages().join(", "));
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) console.log("Pages: " + (await buildPages()).join(", "));

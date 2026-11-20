@@ -24,6 +24,8 @@ jobs:
         run: node scripts/build.mjs
       - name: Security check
         run: node scripts/security-check.mjs
+      - name: Every page, view, map layer and routine is described (config/about.json)
+        run: node scripts/about.mjs check
       - name: Unit tests
         run: node --test tests/unit/*.test.mjs
 

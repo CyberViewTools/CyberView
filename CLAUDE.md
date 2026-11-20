@@ -1,6 +1,8 @@
 # CyberView
 
-A rolling seven-day world map of publicly reported cyber events, for defenders. Public, read-only for visitors. Owner: Xander.
+A live, verified picture of cyber threats worldwide for defenders: what happened, what is being exploited, and the outages around it, updated around the clock. Public, read-only for visitors. Owner: Xander.
+
+What CyberView is and does is described in ONE place, `config/about.json` (rendered into the About page with live numbers at every build). Whenever you add a page, a view, a map layer or a routine, add or extend an entry there in the same change: `node scripts/about.mjs check` (in `npm run ci` and build.yml) fails otherwise.
 
 Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `.github/workflows/pages.yml` after every push to `main`. Data and page live together in this repo.
 

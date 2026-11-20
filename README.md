@@ -4,7 +4,9 @@
 
 **Live site: https://xanderhutch.github.io/CyberView** · [Archive](https://xanderhutch.github.io/CyberView/archive.html) · [Trends](https://xanderhutch.github.io/CyberView/trends.html)
 
-A rolling seven-day world map of publicly reported cyber events: incidents, outages, exploited vulnerabilities, government and vendor reports, laws, enforcement and security investment. Built for defenders: every event says what happened, why it matters and what to do, with its sources.
+A live, verified picture of cyber threats worldwide for defenders: what happened, what is being exploited, and the outages around it, updated around the clock.
+
+CyberView is always growing; its full, current description is generated from [`config/about.json`](config/about.json) and published on the [About page](https://xanderhutch.github.io/CyberView/about.html#what), and CI fails if a new page, view, map layer or routine is added without an entry there.
 
 - **Map, Timeline and Correlation views**, a known-exploited feed with patch deadlines, a daily brief, and a copy-ready shift handover.
 - **Sources first.** Events are reviewed against original government and vendor documents where possible; corrections are logged; unverified attacker claims are hidden unless you ask for them.

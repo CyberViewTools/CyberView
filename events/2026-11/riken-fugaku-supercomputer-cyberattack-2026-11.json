@@ -21,16 +21,12 @@
     "Fugaku",
     "Rikyu"
   ],
-  "qa_checked_at": "2026-11-19T00:27:26Z",
+  "qa_checked_at": "2026-11-20T09:22:46Z",
   "records_affected": 4597,
   "sector": "Research and high-performance computing",
   "severity": 3,
   "source_tier": "established",
   "sources": [
-    {
-      "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/japan-takes-fugaku-supercomputer-offlline-after-cyberattack/"
-    },
     {
       "name": "The Register",
       "url": "https://www.theregister.com/security/2026/11/17/japans-fugaku-supercomputer-has-decidedly-un-super-security/5310333"
@@ -51,18 +47,17 @@
     "identity"
   ],
   "title": "Japan's RIKEN takes Fugaku supercomputer offline after intrusion",
-  "updated_at": "2026-11-20T09:17:50Z",
+  "updated_at": "2026-11-20T09:23:00Z",
   "validation": {
     "checked_at": "2026-11-20T09:17:50Z",
-    "note": "BleepingComputer and The Register both report RIKEN's own statement; the RIKEN notice itself was not retrieved. The Register adds that someone attempted to log in to Fugaku on November 13 and that the attacker tried to use stolen credentials on other systems.",
+    "note": "The Register, ITdaily and eSecurity Planet each report RIKEN's own statement; the RIKEN notice itself was not retrieved. The BleepingComputer page returned 404 on review and was removed. The Register adds that someone attempted to log in to Fugaku on November 13; eSecurity Planet says RIKEN confirmed attempts to use stolen credentials on other systems. The Register's text suggests the machine went offline on November 13; ITdaily and eSecurity Planet give November 14.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T00:27:26Z",
-    "note": "Compared against BleepingComputer (Nov 17) and The Register (Nov 17): intrusion Nov 10-13, shutdown Nov 14, 4,222 Fugaku + 375 Rikyu users (=4,597), SSH/access keys, dashboard entry, no attribution, no restart date all match.",
-    "flags": [
-      "number-check"
-    ]
+    "state": "corrected",
+    "at": "2026-11-20T09:22:46Z",
+    "first_at": "2026-11-19T00:27:26Z",
+    "note": "Facts match The Register, ITdaily, eSecurity Planet (Nov 10-13 intrusion, Nov 14 shutdown, 4222+375=4597, SSH keys, no attacker, no restart date). Removed BleepingComputer source (404); still corroborated by three publishers relaying RIKEN.",
+    "flags": []
   }
 }

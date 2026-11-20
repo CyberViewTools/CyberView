@@ -319,7 +319,44 @@ async def main():
             ok("status: summary counts active routines", "active routines" in await pg.inner_text("#summary"))
             ok("status: lead queue shown", "new leads" in await pg.inner_text("#leads"))
             ok("status: no script errors", not errs, errs)
+            # efficiency section (site/data/efficiency.json from scripts/efficiency.mjs, written by the build)
+            eff_path = os.path.join(ROOT, "site", "data", "efficiency.json")
+            eff = json.load(open(eff_path)) if os.path.exists(eff_path) else None
+            ok("efficiency: the build wrote efficiency.json with four targets", bool(eff) and len(eff.get("targets", [])) == 4 and "covered" in eff, (eff or {}).get("error"))
+            ok("efficiency: section renders the four targets", await pg.get_attribute("#eff", "data-state") == "ok" and await pg.locator("#effTargets li").count() == 4)
+            ok("efficiency: routines and feeds tables filled", await pg.locator("#effRoutines tbody tr").count() > 0 and await pg.locator("#effFeeds tbody tr").count() > 0)
+            ok("efficiency: coverage by region, language and sector", await pg.locator("#effCoverage [data-cov]").count() == 3)
+            ok("efficiency: says how many days of data it rests on", "days" in await pg.inner_text("#effNote"), await pg.inner_text("#effNote"))
+            ok("efficiency: usage line with the research loop's cycles and budget levels", "Research loop:" in await pg.inner_text("#effUsage") and "budget level per cycle" in await pg.inner_text("#effUsage"), await pg.inner_text("#effUsage"))
             await pg.context.close()
+            async def eff_page(handler):
+                ctx = await browser.new_context(viewport={"width": 390, "height": 860}); pg = await ctx.new_page(); errs = []
+                pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+                await pg.route("**/data/efficiency.json*", handler)
+                await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+                st = await pg.get_attribute("#eff", "data-state"); note = await pg.inner_text("#effNote")
+                rows = await pg.locator("#routines tbody tr").count(); imgs = await pg.locator("#eff img").count(); text = await pg.inner_text("#eff")
+                await ctx.close(); return st, note, rows, imgs, text, errs
+            st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=404, body="not found"))
+            ok("efficiency: a missing efficiency.json says so and the rest of the page still renders", st == "missing" and "not available" in note and rows == len(reg["routines"]) and not errs, (st, note, errs))
+            st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps({"error": "The efficiency report could not be built: boom"})))
+            ok("efficiency: a build error is shown as a note", st == "error" and "could not be built" in note and not errs, (st, note, errs))
+            bad = {"at": "<b>", "note": "x", "targets": [{"key": "speed", "target": "<img src=x>", "value": "<script>1</script>", "state": "javascript:"}, None, 5],
+                   "windows": {"five_hour": {"tokens": "lots"}, "week": None, "budget": {"level": "<x>"}}, "routines": [{"key": "sweep", "name": "<img src=x>", "runs": "9", "tokens": 1e6, "usage": "<b>"}, "x"],
+                   "feeds": [{"name": "rss:<img src=x>", "leads": 3, "used": 1, "yield": 33.3, "days_since_useful": 1}], "coverage": {"d7": {"region": {"<img>": 3, "europe": "x"}}}, "accuracy": {"weeks": [{"week": "<b>"}]}, "gaps": [1, "plain"]}
+            st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(bad)))
+            ok("efficiency: hostile fields are shown as text or dropped, never as markup", st == "ok" and imgs == 0 and "<img src=x>" in text and "Not measurable yet" in text and not errs, (st, imgs, errs))
+            # retired routines and routines that run inside the research loop (routines.json "retired", "merged_into", workflow "flow")
+            ops = json.load(open(os.path.join(ROOT, "site", "data", "ops.json")))
+            ops["routines"] = [{"key": "steward", "name": "Steward", "tier": "ai", "active": False, "retired": "no output", "merged_into": "sweep<img src=x>", "cron": "7 2 * * *", "does": "x"},
+                               {"key": "followup", "name": "Follow-up", "tier": "ai", "active": True, "workflow": "flow", "does": "y", "max_age_hours": 2}]
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 860}); pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.route("**/data/ops.json*", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(ops)))
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+            rt = await pg.locator("#routines tbody tr").all_inner_texts(); await ctx.close()
+            ok("status: a retired routine says where its duties went", len(rt) == 2 and "Retired — duties moved to sweepimg srcx" in rt[0] and "Paused" not in rt[0], rt)
+            ok("status: a routine in the research loop says so", "in the research loop" in rt[1] and "Runs in the research loop" in rt[1] and not errs, (rt, errs))
             # data branch migration: which data and code commit is live (manifest.json data_commit and commit)
             async def live_line(man):
                 ctx = await browser.new_context(viewport={"width": 1440, "height": 860}); pg = await ctx.new_page(); errs = []

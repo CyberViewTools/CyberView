@@ -26,8 +26,13 @@
     var every = hr.match(/^\*\/(\d+)$/); if (every) return "every " + every[1] + " h at :" + pad(min);
     return days + hr.split(",").map(function (h) { return pad(h) + ":" + pad(min); }).join(" and ");
   }
+  // routines.json fields beyond the basics, checked and cut to size: a retired routine names the job its duties moved to
+  function retiredTo(r) { if (!r || r.active || !r.retired) return null; var m = typeof r.merged_into === "string" ? r.merged_into.replace(/[^a-z0-9 ,-]/gi, "").slice(0, 40).trim() : ""; return m || "another job"; }
   function state(r) {
+    var rt = retiredTo(r);
+    if (rt) return { cls: "neutral", text: "Retired — duties moved to " + rt };
     if (!r.active) return { cls: "wait", text: "Paused" };
+    if (r.workflow === "flow" && !r.status_key) return { cls: "info", text: "Runs in the research loop" };
     if (!r.status_key) return { cls: "info", text: "See GitHub runs", link: /^[a-z0-9-]+\.yml$/.test(String(r.workflow)) ? REPO + "/actions/workflows/" + r.workflow : "" };
     if (!r.last_at) {
       var since = r.active_since ? (Date.now() - Date.parse(r.active_since)) / 36e5 : Infinity;
@@ -123,6 +128,126 @@
     });
     $("gridSrcBox").hidden = false;
   }
+  // ---------- efficiency (data/efficiency.json, scripts/efficiency.mjs, no AI model) ----------
+  // each part renders inside safe(), so one bad field cannot blank the rest of the section or the page
+  function safe(fn) { try { fn(); } catch (e) { if (window.console) console.warn("status panel failed", e); } }
+  function txt(v, n) { return typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, n || 200) : ""; }
+  function nn(v) { return typeof v === "number" && isFinite(v) ? v : null; }
+  function isoOk(v) { return typeof v === "string" && /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(v) && isFinite(Date.parse(v)) ? v : ""; }
+  function countMap(o) { var out = {}; if (o && typeof o === "object") Object.keys(o).slice(0, 60).forEach(function (k) { var v = nn(o[k]); if (v !== null && /^[a-z0-9 -]{1,30}$/i.test(k)) out[k] = Math.max(0, Math.round(v)); }); return out; }
+  var EFF_STATE = { pass: ["ok", "Met"], fail: ["bad", "Not met"], unknown: ["info", "Not measurable yet"] };
+  var USAGE_STATE = ["logged", "partly logged", "not logged", "none (script)", "no runs"];
+  /** Every field the page shows from efficiency.json, checked and cut to size; anything else is dropped. */
+  function cleanEff(o) {
+    if (!o || typeof o !== "object") return null;
+    if (typeof o.error === "string") return { error: txt(o.error, 240) };
+    var cov = function (c) { c = c && typeof c === "object" ? c : {}; return { days: nn(c.days), events: nn(c.events) || 0, region: countMap(c.region), language: countMap(c.language), sector: countMap(c.sector) }; };
+    var w = function (x) { x = x && typeof x === "object" ? x : {}; return { runs: nn(x.runs) || 0, tokens: nn(x.tokens) || 0, cost: nn(x.cost) }; };
+    var LP = o.loop && typeof o.loop === "object" ? o.loop : null, LB = LP && LP.budget && typeof LP.budget === "object" ? LP.budget : {}, lvl = function (x) { return x && ["ok", "tight", "stop"].indexOf(x.level) >= 0 ? x.level : ""; };
+    var W = o.windows && typeof o.windows === "object" ? o.windows : {}, B = W.budget && typeof W.budget === "object" ? W.budget : null, A = o.accuracy && typeof o.accuracy === "object" ? o.accuracy : {};
+    return {
+      at: isoOk(o.at || o.built_at), note: txt(o.note, 300),
+      targets: (Array.isArray(o.targets) ? o.targets : []).slice(0, 6).filter(function (t) { return t && typeof t === "object"; }).map(function (t) {
+        return { key: txt(t.key, 20), target: txt(t.target, 160), value: txt(t.value, 260), note: txt(t.note, 300), state: Object.prototype.hasOwnProperty.call(EFF_STATE, t.state) ? t.state : "unknown" }; }),
+      windows: { estimate: W.estimate !== false, five: w(W.five_hour), week: w(W.week),
+        budget: B ? { window_pct: nn(B.window_pct), week_pct: nn(B.week_pct), level: lvl(B), limited_until: isoOk(B.limited_until) } : null },
+      loop: LP ? { cycles: nn(LP.cycles) || 0, idle: nn(LP.idle) || 0, idle_pct: nn(LP.idle_pct), ok: nn(LB.ok) || 0, tight: nn(LB.tight) || 0, stop: nn(LB.stop) || 0, unknown: nn(LB.unknown) || 0,
+        leader: lvl(LP.leader_budget), last: lvl(LP.last_budget) } : null,
+      routines: (Array.isArray(o.routines) ? o.routines : []).slice(0, 80).filter(function (r) { return r && typeof r === "object" && typeof r.key === "string"; }).map(function (r) {
+        return { key: txt(r.key, 40), name: txt(r.name, 60) || txt(r.key, 40), runs: nn(r.runs), idle: nn(r.idle), idle_pct: nn(r.idle_pct), tokens: nn(r.tokens), idle_tokens: nn(r.idle_tokens), cost: nn(r.cost),
+          added: nn(r.added) || 0, updated: nn(r.updated) || 0, reviewed: nn(r.reviewed) || 0, closed: nn(r.closed) || 0, filed: nn(r.filed), failures: nn(r.failures) || 0,
+          usage: USAGE_STATE.indexOf(r.usage) >= 0 ? r.usage : "not logged", active: r.active !== false, retired: r.retired === true, merged_into: typeof r.merged_into === "string" ? r.merged_into.replace(/[^a-z0-9 ,-]/gi, "").slice(0, 40) : "", last_run: isoOk(r.last_run) }; }),
+      feeds: (Array.isArray(o.feeds) ? o.feeds : []).slice(0, 400).filter(function (f) { return f && typeof f === "object" && typeof f.name === "string"; }).map(function (f) {
+        return { name: txt(f.name, 80), sources: (Array.isArray(f.sources) ? f.sources : []).slice(0, 3).map(function (s) { return txt(s, 60); }).filter(Boolean), leads: nn(f.leads) || 0, used: nn(f.used) || 0, by_rule: nn(f.by_rule) || 0,
+          yield: nn(f.yield), days_since_useful: nn(f.days_since_useful), ok: f.ok !== false, error: txt(f.error, 120), verdict: ["useful", "noise", "nothing used yet", "silent"].indexOf(f.verdict) >= 0 ? f.verdict : "" }; }),
+      d7: cov(o.coverage && o.coverage.d7), d30: cov(o.coverage && o.coverage.d30),
+      accuracy: { days: nn(A.days), reviewed: nn(A.reviewed) || 0, corrected: nn(A.corrected) || 0, flagged: nn(A.flagged) || 0, corrected_pct: nn(A.corrected_pct),
+        weeks: (Array.isArray(A.weeks) ? A.weeks : []).slice(-8).filter(function (x) { return x && /^\d{4}-\d{2}-\d{2}$/.test(x.week); }).map(function (x) { return { week: x.week, reviewed: nn(x.reviewed) || 0, corrected_pct: nn(x.corrected_pct) }; }),
+        categories: (Array.isArray(A.categories) ? A.categories : []).slice(0, 10).filter(function (c) { return c && typeof c.name === "string"; }).map(function (c) { return { name: txt(c.name, 40), n: nn(c.n) || 0 }; }) },
+      gaps: (Array.isArray(o.gaps) ? o.gaps : []).slice(0, 6).map(function (g) { return txt(g, 300); }).filter(Boolean)
+    };
+  }
+  function big(n) { return n === null ? "not logged" : n >= 1e9 ? (n / 1e9).toFixed(1) + " bn" : n >= 1e6 ? (n / 1e6).toFixed(1) + " M" : n >= 1e3 ? Math.round(n / 1e3) + " k" : String(Math.round(n)); }
+  function renderEff(raw) {
+    var e = cleanEff(raw), note = $("effNote");
+    if (!e) { note.textContent = "The efficiency report is not available yet. It is written at every build."; $("eff").dataset.state = "missing"; return; }
+    if (e.error) { note.textContent = e.error; $("eff").dataset.state = "error"; return; }
+    $("eff").dataset.state = "ok";
+    note.textContent = (e.at ? "Report from " + ago(e.at) + ". " : "") + e.note;
+    safe(function () {
+      var ul = $("effTargets"); ul.textContent = "";
+      e.targets.forEach(function (t) {
+        var s = EFF_STATE[t.state], li = el("li"); li.dataset.target = t.key;
+        li.appendChild(el("span", "badge " + s[0], s[1]));
+        li.appendChild(document.createTextNode(" " + t.target + ": " + t.value + (t.note ? " (" + t.note + ")" : "")));
+        ul.appendChild(li);
+      });
+      if (!e.targets.length) ul.appendChild(el("li", "muted", "No targets in the report."));
+    });
+    safe(function () {
+      var w = e.windows, b = w.budget;
+      $("effUsage").textContent = "Usage: " + big(w.five.tokens) + " tokens in the last 5 hours (" + w.five.runs + " worker runs) and " + big(w.week.tokens) + " in the last 7 days (" + w.week.runs + " worker runs), cache reads included" +
+        (b && b.level ? "; budget level " + b.level + (b.window_pct !== null ? ", " + b.window_pct + "% of the estimated 5-hour window" : "") + (b.week_pct !== null ? ", " + b.week_pct + "% of the estimated week" : "") + (b.limited_until ? ", limited until " + b.limited_until.slice(11, 16) + " UTC" : "") : "") +
+        (w.estimate ? ". This is an estimate from the worker log: the plan's limits are not known here, and jobs run inside the ops session are not logged." : ". Only headless workers are logged; jobs run inside the ops session are not.");
+      var L = e.loop;
+      if (L) $("effUsage").appendChild(document.createTextNode(" Research loop: " + L.cycles + " cycles, " + L.idle + " idle" + (L.idle_pct !== null ? " (" + L.idle_pct + "%)" : "") +
+        "; budget level per cycle: " + L.ok + " ok, " + L.tight + " tight, " + L.stop + " stopped" + (L.unknown ? ", " + L.unknown + " not recorded" : "") +
+        (L.leader ? "; the running loop last saw " + L.leader : L.last ? "; last cycle saw " + L.last : "") + "."));
+    });
+    safe(function () {
+      var tb = $("effRoutines").querySelector("tbody"); tb.textContent = "";
+      e.routines.filter(function (r) { return r.active || r.runs || r.tokens; }).forEach(function (r) {
+        var tr = el("tr"), name = el("td"); tr.dataset.routine = r.key;
+        name.appendChild(el("strong", null, r.name)); name.appendChild(el("span", "sub", r.key + (r.retired ? " · retired, duties moved to " + (r.merged_into || "another job") : ""))); tr.appendChild(name);
+        tr.appendChild(el("td", "nowrap", r.runs === null ? "not logged" : String(r.runs)));
+        tr.appendChild(el("td", "nowrap", r.idle_pct === null ? (r.runs ? "not measured" : "—") : r.idle + " (" + r.idle_pct + "%)" + (r.idle_tokens ? ", " + big(r.idle_tokens) + " tokens" : "")));
+        tr.appendChild(el("td", "nowrap", r.usage === "none (script)" ? "none (script)" : r.tokens === null ? "usage not logged" : big(r.tokens) + (r.cost !== null ? " ($" + r.cost.toFixed(2) + ")" : "")));
+        tr.appendChild(el("td", null, r.filed !== null ? r.filed + " leads filed" : r.added + ", " + r.updated + ", " + r.reviewed + ", " + r.closed + (r.failures ? "; " + r.failures + " failed" : "")));
+        var u = el("td"); u.appendChild(el("span", "badge " + (r.usage === "logged" ? "ok" : r.usage === "not logged" || r.usage === "partly logged" ? "warn" : "neutral"), r.usage)); tr.appendChild(u);
+        tr.appendChild(el("td", "nowrap", r.last_run ? ago(r.last_run) : "—"));
+        tb.appendChild(tr);
+      });
+    });
+    safe(function () {
+      var tb = $("effFeeds").querySelector("tbody"); tb.textContent = "";
+      var withLeads = e.feeds.filter(function (f) { return f.leads > 0; }), silent = e.feeds.filter(function (f) { return !f.leads; }), shown = withLeads.slice(0, 40);
+      shown.forEach(function (f) {
+        var tr = el("tr"), name = el("td"); tr.dataset.feed = f.name;
+        name.appendChild(el("strong", null, f.name.replace(/^rss:/, ""))); name.appendChild(el("span", "sub", (f.name.indexOf("rss:") === 0 ? "RSS: " : "collector") + (f.sources.length ? (f.name.indexOf("rss:") === 0 ? "" : ": ") + f.sources.join(", ") : "") + (f.ok ? "" : " · not loading" + (f.error ? ": " + f.error : ""))));
+        tr.appendChild(name);
+        tr.appendChild(el("td", "nowrap", String(f.leads))); tr.appendChild(el("td", "nowrap", String(f.used))); tr.appendChild(el("td", "nowrap", String(f.by_rule)));
+        tr.appendChild(el("td", "nowrap", f.yield === null ? "—" : f.yield + "%"));
+        var last = el("td", "nowrap"); last.appendChild(el("span", "badge " + (f.verdict === "useful" ? "ok" : f.verdict === "noise" ? "warn" : "neutral"), f.days_since_useful !== null ? f.days_since_useful + " days ago" : f.verdict === "noise" ? "none (noise)" : "none yet")); tr.appendChild(last);
+        tb.appendChild(tr);
+      });
+      $("effFeedsMore").textContent = (withLeads.length > shown.length ? (withLeads.length - shown.length) + " more feeds with fewer leads are in data/efficiency.json. " : "") +
+        (silent.length ? silent.length + " configured feed" + (silent.length === 1 ? "" : "s") + " filed no lead at all: " + silent.slice(0, 12).map(function (f) { return f.name.replace(/^feed:/, "") + (f.ok ? "" : " (not loading)"); }).join(", ") + (silent.length > 12 ? " and " + (silent.length - 12) + " more" : "") + "." : "");
+    });
+    safe(function () {
+      var box = $("effCoverage"); box.textContent = "";
+      [["region", "By region"], ["language", "By language"], ["sector", "By sector (critical infrastructure)"]].forEach(function (d) {
+        var div = el("div"); div.dataset.cov = d[0]; div.appendChild(el("h4", null, d[1]));
+        var ul = el("ul", "plain"), a = e.d7[d[0]], b = e.d30[d[0]];
+        Object.keys(b).concat(Object.keys(a).filter(function (k) { return !(k in b); })).sort(function (x, y) { return (b[y] || 0) - (b[x] || 0) || (a[y] || 0) - (a[x] || 0); }).slice(0, 14).forEach(function (k) {
+          ul.appendChild(el("li", null, k.replace(/-/g, " ") + ": " + (a[k] || 0) + " in 7 days, " + (b[k] || 0) + " in 30"));
+        });
+        if (!ul.children.length) ul.appendChild(el("li", "muted", "No events yet."));
+        div.appendChild(ul); box.appendChild(div);
+      });
+      box.appendChild(el("p", "note", e.d7.events + " events in the last 7 days and " + e.d30.events + " in the last 30 (the event files say how far back they reach). Language is the language of the page that carried the report."));
+    });
+    safe(function () {
+      var A = e.accuracy;
+      $("effAccuracy").textContent = (A.corrected_pct === null ? "No event has had its second review yet." : "Last " + (A.days || 7) + " days: the second review corrected " + A.corrected + " of " + A.reviewed + " events (" + A.corrected_pct + "%) and flagged " + A.flagged + " more. The target is under 10%.") +
+        (A.weeks.length ? " By week: " + A.weeks.map(function (w) { return "week of " + w.week + " " + (w.corrected_pct === null ? "—" : w.corrected_pct + "%") + " of " + w.reviewed; }).join("; ") + "." : "") +
+        (A.categories.length ? " What it found most: " + A.categories.map(function (c) { return c.name.replace(/-/g, " ") + " " + c.n; }).join(", ") + "." : "");
+      var ul = $("effGaps"); ul.textContent = "";
+      e.gaps.forEach(function (g) { var li = el("li"); li.appendChild(el("span", "badge info", "Note")); li.appendChild(document.createTextNode(" " + g)); ul.appendChild(li); });
+    });
+  }
+  fetch("data/efficiency.json", { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    .then(function (o) { safe(function () { renderEff(o); }); });
+
   function renderSpeed(s) {
     if (!s || typeof s !== "object" || !s.publish) return;
     var v = function (x) { return typeof x === "number" && isFinite(x) ? Math.round(x) + " min" : "not measured"; }, p = s.publish || {}, r = s.review || {};
@@ -155,7 +280,7 @@
       var s = state(r), tr = el("tr");
       if (r.active) { counts.active++; if (s.cls === "ok" || s.cls === "info") counts.ok++; }
       var name = el("td"); name.appendChild(el("strong", null, String(r.name))); name.appendChild(el("span", "sub", r.does)); tr.appendChild(name);
-      tr.appendChild(el("td", "nowrap", when(r.cron)));
+      tr.appendChild(el("td", "nowrap", r.workflow === "flow" && !r.cron ? "in the research loop" : when(r.cron)));
       tr.appendChild(el("td", "nowrap", r.model ? (MODEL[r.model] || r.model) : "none (script)"));
       tr.appendChild(el("td", "nowrap", r.last_at ? ago(r.last_at) : "—"));
       var st = el("td"), b = el("span", "badge " + s.cls, s.text);
@@ -165,7 +290,8 @@
     $("summary").textContent = counts.ok + " of " + counts.active + " active routines are on time. Data built " + ago(o.built_at) + ".";
     var P = o.pipeline || {}, S = P.stories || {}, WHAT = { rss: "RSS and Atom feeds of agencies, vendors and news", "google-news": "Google News, standing searches in 12 languages", "bing-news": "Bing News, standing searches", gdelt: "GDELT global news index", hibp: "Have I Been Pwned breach database",
       euvd: "ENISA EU Vulnerability Database (exploited)", nvd: "NIST NVD, new critical CVEs", "ransomware-live": "Leak-site listings (attacker claims)", "hacker-news": "Hacker News discussion", "cloud-status": "Cloud providers' status pages" };
-    if (P.leads_7d != null) $("pipe").textContent = (P.feeds ? P.feeds + " feeds and " : "") + ((o.sources || []).length) + " other collectors. Last 7 days: " + P.leads_7d + " leads, " + P.events_7d + " events" + (P.median_hours != null ? ", median " + P.median_hours + " h from first lead to the map" : "") + ". " +
+    if (P.leads_7d != null) $("pipe").textContent = (P.feeds ? P.feeds + " feeds and " : "") + ((o.sources || []).length) + " other collectors. " + (typeof P.days_covered === "number" && isFinite(P.days_covered) && P.days_covered < 7 ? "Last 7 days (the lead files hold only " + P.days_covered + " days so far): " : "Last 7 days: ") + P.leads_7d + " leads" +
+      (typeof P.leads_used_7d === "number" && isFinite(P.leads_used_7d) ? " (" + P.leads_used_7d + " in stories that became or updated an event)" : "") + ", " + P.events_7d + " events" + (P.median_hours != null ? ", median " + P.median_hours + " h from first lead to the map" : "") + ". " +
       (S.open != null ? S.open + " stories waiting, " + S.corroborated + " of them reported by two or more publishers." : "");
     var stb = $("sources").querySelector("tbody"), col = {}; (P.collectors || []).forEach(function (c) { if (c && typeof c.name === "string") col[c.name] = c; });
     var rows = [{ name: "rss", ok: !(L0(o).length), error: L0(o).length ? L0(o).length + " feed(s) not loading" : "", at: "" }].concat(o.sources || []);

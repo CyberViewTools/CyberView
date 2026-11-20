@@ -320,6 +320,25 @@ async def main():
             ok("status: lead queue shown", "new leads" in await pg.inner_text("#leads"))
             ok("status: no script errors", not errs, errs)
             await pg.context.close()
+            # data branch migration: which data and code commit is live (manifest.json data_commit and commit)
+            async def live_line(man):
+                ctx = await browser.new_context(viewport={"width": 1440, "height": 860}); pg = await ctx.new_page(); errs = []
+                pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+                await pg.route("**/data/manifest.json*", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(man)))
+                await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+                vis = await pg.locator("#liveCommits").is_visible(); t = await pg.inner_text("#liveCommits") if vis else ""
+                hrefs = await pg.eval_on_selector_all("#liveCommits a", "as => as.map(a => a.getAttribute('href'))")
+                await ctx.close(); return vis, t, hrefs, errs
+            import datetime as _dt
+            built = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40, "data_commit": "d" * 40, "counts": {"events_total": 1, "events_bundle": 1, "kev_total": 1}})
+            ok("status: live line names the data and code commit", vis and t == "Live: data ddddddd (just now), code aaaaaaa", t)
+            ok("status: live commits link to GitHub", hrefs == ["https://github.com/xanderhutch/CyberView/commit/" + "d" * 40, "https://github.com/xanderhutch/CyberView/commit/" + "a" * 40], hrefs)
+            ok("status: live line without script errors", not errs, errs)
+            vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40})
+            ok("status: an old deploy without data_commit shows code only", vis and "data not recorded" in t and "code aaaaaaa" in t and len(hrefs) == 1, t)
+            vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "<img src=x>", "data_commit": "javascript:1"})
+            ok("status: a malformed commit is not shown", not vis and not errs, (t, errs))
 
         await serve(make_site(bundle), v17)
         probe = r"""import('./scripts/collect.mjs').then(m => {

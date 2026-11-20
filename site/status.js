@@ -64,8 +64,24 @@
     if (bl && typeof bl.waiting === "number") row(bl.waiting <= 60 && !(bl.oldest_incident_hours > 2), "Research queue: " + bl.waiting + " report" + (bl.waiting === 1 ? "" : "s") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 60 ? " (expected under 60)" : ""));
     var q = typeof h.quarantined_count === "number" ? h.quarantined_count : 0;
     row(q === 0, q === 0 ? "Every record passed validation" : q + " record" + (q === 1 ? "" : "s") + " failed validation and " + (q === 1 ? "is" : "are") + " left out until fixed");
+    try { liveCommits(m); } catch (e) {}
     if (m && m.counts) row(true, "Published: " + m.counts.events_total + " events on file, " + m.counts.events_bundle + " in the seven-day map, " + m.counts.kev_total + " known-exploited flaws" + (typeof m.commit === "string" && m.commit ? " (build " + m.commit.slice(0, 7) + ")" : ""));
   });
+
+  // which data commit (data branch) and code commit (main) the live site was built from (manifest.json, written by the
+  // deploy); a deploy from before the data branch has no data_commit and shows code only
+  function liveCommits(m) {
+    if (!m || typeof m !== "object") return;
+    var sha = function (v) { return typeof v === "string" && /^[0-9a-f]{7,40}$/.test(v) ? v : ""; }, d = sha(m.data_commit), c = sha(m.commit);
+    if (!d && !c) return;
+    var at = [m.data_commit_at, m.built_at].filter(function (v) { return typeof v === "string" && isFinite(Date.parse(v)); })[0] || "";
+    var p = $("liveCommits"); p.textContent = "Live: ";
+    function link(s, label) { var a = el("a", null, s.slice(0, 7)); a.href = safeUrl(REPO + "/commit/" + s); a.target = "_blank"; a.rel = "noopener noreferrer"; a.title = label + " " + s; return a; }
+    if (d) { p.appendChild(document.createTextNode("data ")); p.appendChild(link(d, "data branch commit")); if (at) p.appendChild(document.createTextNode(" (" + ago(at) + ")")); }
+    else p.appendChild(document.createTextNode("data not recorded (built " + (at ? ago(at) : "at an unknown time") + ")"));
+    if (c) { p.appendChild(document.createTextNode(", code ")); p.appendChild(link(c, "main commit")); }
+    p.dataset.data = d.slice(0, 7); p.dataset.code = c.slice(0, 7); p.hidden = false;
+  }
 
   // one row per grid source (health.json grid_sources, from data/grid/live.json and analysis.json); a keyed source with no
   // key saved reads "not connected" and is shown neutral, not as a fault

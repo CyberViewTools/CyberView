@@ -16,7 +16,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
-import { regionOf, storyCredit } from "./metrics.mjs";
+import { regionOf, storyCredit, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 
 // routines whose work is a document or a check, not a list in a run log: their idle share is not measured
@@ -152,6 +152,19 @@ export function feedReport(leads, used, byRule, osint = {}, now = Date.now()) {
     .sort((a, b) => b.leads - a.leads || a.name.localeCompare(b.name));
 }
 
+/** Pure: marks the feeds that are no longer collected: a collector in RETIRED_COLLECTORS, or an RSS feed whose every
+ *  source name is in config/feeds.json `retired` ([{name, retired, why}]). Their leads stay in every count and target;
+ *  the status page lists them apart, never as a current feed. Returns the same rows. */
+export function markRetired(feeds, retiredCfg = [], collectors = RETIRED_COLLECTORS) {
+  const byName = new Map((Array.isArray(retiredCfg) ? retiredCfg : []).filter((r) => r && r.name).map((r) => [String(r.name).toLowerCase(), r]));
+  for (const f of feeds) {
+    const c = collectors[f.name], names = (f.sources || []).map((x) => String(x).toLowerCase()), cfg = f.via === "rss" && names.length && names.every((n) => byName.has(n)) ? byName.get(names[0]) : null;
+    if (c) Object.assign(f, { retired: true, retired_at: String(c.retired || "").slice(0, 10), retired_why: String(c.why || "").slice(0, 300) });
+    else if (cfg) Object.assign(f, { retired: true, retired_at: String(cfg.retired || "").slice(0, 10), retired_why: String(cfg.why || "").slice(0, 300) });
+  }
+  return feeds;
+}
+
 /* ---------------- coverage and accuracy ---------------- */
 
 const SECTORS = [["water", /\b(water|wastewater)\b/i], ["energy", /\b(energy|power|electric\w*|utilit(y|ies)|oil|gas|nuclear|grid|pipeline|refiner\w*)\b/i], ["health", /\b(health\w*|hospital\w*|medical|clinic\w*|pharma\w*|patient\w*)\b/i],
@@ -269,17 +282,25 @@ export function loopCycles(jobruns, since, leases = {}) {
 export function targets({ speed, acc, windows, routines, feeds, days, loop = null }) {
   const out = [];
   const p90 = speed && speed.review ? speed.review.p90 : null, n = speed && speed.review ? speed.review.n : 0;
-  out.push({ key: "speed", target: "Lead to a published and second-reviewed event in under 15 minutes, nine times in ten",
+  out.push({ key: "speed", title: "Speed", goal: "under 15 min, nine times in ten", figure: p90 == null ? "not measured" : `${p90} min`,
+    detail: p90 == null ? "no event has gone from lead to second review in the window yet" : `nine in ten events, from the first lead to published and second-reviewed (${n} events, last ${speed.hours} h)`,
+    target: "Lead to a published and second-reviewed event in under 15 minutes, nine times in ten",
     value: p90 == null ? "not measured" : `${p90} min for nine in ten (${n} events, last ${speed.hours} h)`, state: p90 == null ? "unknown" : p90 < TARGETS.speed_p90_min ? "pass" : "fail" });
-  out.push({ key: "accuracy", target: "Second review corrects under 10% of events",
+  out.push({ key: "accuracy", title: "Accuracy", goal: "second review corrects under 10%", figure: acc.corrected_pct == null ? "nothing reviewed" : `${acc.corrected_pct}%`,
+    detail: acc.corrected_pct == null ? "no event has had its second review yet" : `corrected ${acc.corrected} of ${acc.reviewed} events reviewed in the last ${acc.days} days; ${acc.flagged} more flagged`,
+    target: "Second review corrects under 10% of events",
     value: acc.corrected_pct == null ? "nothing reviewed" : `${acc.corrected_pct}% corrected (${acc.corrected} of ${acc.reviewed}, last ${acc.days} days); ${acc.flagged} more flagged`, state: acc.corrected_pct == null ? "unknown" : acc.corrected_pct < TARGETS.corrected_pct ? "pass" : "fail" });
   // the level now: scripts/lib/usage.mjs when it exists, else what the running loop last saw (its lease, then its last cycle)
   const b = (windows && windows.budget && windows.budget.level ? windows.budget : null) || (loop && loop.leader_budget ? { level: loop.leader_budget.level, window_pct: null, week_pct: null } : null) || (loop && loop.last_budget) || null, unlogged = routines.filter((r) => r.usage === "not logged" || r.usage === "partly logged").map((r) => r.key);
-  out.push({ key: "usage", target: "Never run out of the 5-hour or weekly usage window",
+  out.push({ key: "usage", title: "Usage", goal: "never run out of the 5-hour or weekly window", figure: b && b.level ? `${b.window_pct ?? "?"}%` : "not known",
+    detail: b && b.level ? `of the estimated 5-hour window; ${b.week_pct ?? "?"}% of the week, level ${b.level}${loop && loop.budget.stop ? `; ${loop.budget.stop} loop cycle(s) stopped for usage` : ""}` : "the plan's limits are not known here; only headless workers are logged",
+    target: "Never run out of the 5-hour or weekly usage window",
     value: b && b.level ? `${b.window_pct ?? "?"}% of the estimated 5-hour window, ${b.week_pct ?? "?"}% of the estimated week (level ${b.level})${loop && loop.budget.stop ? `; ${loop.budget.stop} loop cycle(s) stopped for usage` : ""}` : `${windows.five_hour.tokens.toLocaleString("en")} tokens in the last 5 hours, ${windows.week.tokens.toLocaleString("en")} in 7 days (headless workers only; the plan's limits are not known here)`,
     state: b && b.level ? (b.level === "stop" || (loop && loop.budget.stop) ? "fail" : "pass") : "unknown", note: unlogged.length ? `usage not logged for ${unlogged.join(", ")}` : "" });
   const idleR = routines.filter((r) => r.active && !r.retired && r.key !== "other" && r.runs && !r.output).map((r) => r.key), idleF = feeds.filter((f) => f.verdict !== "useful").map((f) => f.name);
-  out.push({ key: "earns", target: "Every feed and routine useful at least once in 14 days",
+  out.push({ key: "earns", title: "Earns its place", goal: "every feed and routine useful within 14 days", figure: `${idleR.length + idleF.length} ${days < TARGETS.idle_days ? "candidates" : "idle"}`,
+    detail: `${idleR.length} routine(s) and ${idleF.length} feed(s) with nothing useful yet in ${days} day(s) of data`,
+    target: "Every feed and routine useful at least once in 14 days",
     value: `${idleR.length} routine(s) and ${idleF.length} feed(s) with nothing useful in ${days} day(s) of data`, state: days < TARGETS.idle_days ? "unknown" : idleR.length || idleF.length ? "fail" : "pass",
     note: days < TARGETS.idle_days ? `needs ${TARGETS.idle_days} days of data; ${days} so far, so these are candidates, not verdicts` : "" });
   return out;
@@ -315,7 +336,8 @@ export function loadInputs(days = 30, now = Date.now()) {
   }
   const events = listEventFiles().map((f) => f.e).filter(Boolean);
   const registry = (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r && r.key);
-  return { usage, leads, logs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {} };
+  return { usage, leads, logs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {},
+    retiredFeeds: (readJson(join(ROOT, "config", "feeds.json"), {}) || {}).retired || [] };
 }
 
 /** Pure: how many days a list of timestamps really covers before now (never more than `max`). */
@@ -335,7 +357,7 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
   const loop = loopCycles(inp.jobruns, since, inp.leases || {}), sw = routines.find((r) => r.key === "sweep");
   if (sw && loop.idle_unrecorded) { sw.runs = num(sw.runs) + loop.idle_unrecorded; sw.idle = num(sw.idle) + loop.idle_unrecorded; sw.idle_pct = sw.runs ? Math.round((sw.idle / sw.runs) * 100) : null; }
   // feeds are judged over everything on file (up to 30 days), so "days since last useful" can reach the 14-day test
-  const feeds = feedReport(inp.leads, used, inp.byRule, inp.osint, now);
+  const feeds = markRetired(feedReport(inp.leads, used, inp.byRule, inp.osint, now), inp.retiredFeeds);
   const feeds7 = feedReport(leadsWin, used, inp.byRule, {}, now), f7 = new Map(feeds7.map((f) => [f.name, f]));
   feeds.forEach((f) => { const x = f7.get(f.name); f.leads_7d = x ? x.leads : 0; f.used_7d = x ? x.used : 0; });
   const leadByUrl = new Map(); for (const l of inp.leads) if (!leadByUrl.has(l.url)) leadByUrl.set(l.url, l);
@@ -350,8 +372,11 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
     totals: { leads: leadsWin.length, leads_used: leadsWin.filter((l) => used.has(l.url)).length, leads_by_rule: leadsWin.filter((l) => !used.has(l.url) && inp.byRule.has(l.url)).length, events: ev7.length,
       tokens: routines.reduce((s, r) => s + num(r.tokens), 0), cost: Math.round(routines.reduce((s, r) => s + num(r.cost), 0) * 100) / 100 },
     targets: targets({ speed, acc, windows: win, routines, feeds, days: allLeadDays, loop }),
-    windows: win, loop, speed, accuracy: acc, routines, feeds: feeds.slice(0, 300), grid,
-    coverage: { d7: coverage(inp.events, leadByUrl, 7, now), d30: coverage(inp.events, leadByUrl, 30, now), events_from: inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))).sort()[0] || null },
+    windows: win, loop, speed, accuracy: acc, routines, feeds: feeds.filter((f) => !f.retired).slice(0, 300), grid,
+    retired_feeds: feeds.filter((f) => f.retired).slice(0, 40).map((f) => ({ name: f.name, leads: f.leads, used: f.used, last_lead: f.last_lead, retired_at: f.retired_at, why: f.retired_why })),
+    coverage: { d7: coverage(inp.events, leadByUrl, 7, now), d30: coverage(inp.events, leadByUrl, 30, now), events_from: inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))).sort()[0] || null,
+      // how many of the 30 days the event files really hold (first_seen), so the page never shows a 2-day count as a 30-day one
+      days_of_data: spanDays(inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))), 30, now) },
     gaps: ["Jobs run as subagents in the ops session write no data/usage line: their usage is unknown and shown as \"usage not logged\", never as zero.",
       "Cost is the API-equivalent price data/usage records; on the Max plan the limit is the usage window, not money.",
       "Second reviews run both inside the research loop and in the hourly review desk; their run logs are counted under review, their usage under the job that started them.",

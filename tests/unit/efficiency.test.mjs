@@ -156,3 +156,24 @@ test("report: never presents fewer days of data as a full window", () => {
   assert.ok(r.gaps.some((g) => /usage not logged/.test(g)));
   assert.equal(spanDays([], 7, NOW), 0);
 });
+
+test("retired feeds: a retired collector and an RSS feed retired in config/feeds.json are listed apart, still counted", async () => {
+  const { markRetired } = await import("../../scripts/efficiency.mjs");
+  const rows = markRetired([{ name: "google-news", via: "google-news", sources: [] }, { name: "rss:theregister.com", via: "rss", sources: ["The Register"] }, { name: "rss:x.com", via: "rss", sources: ["The Register", "X"] }, { name: "bing-news", via: "bing-news", sources: [] }],
+    [{ name: "the register", retired: "2026-11-20", why: "robots.txt" }]);
+  assert.deepEqual(rows.map((r) => !!r.retired), [true, true, false, false]);
+  assert.equal(rows[1].retired_at, "2026-11-20"); assert.equal(rows[1].retired_why, "robots.txt"); assert.match(rows[0].retired_why, /robots\.txt/);
+  const inp = { usage: [], leads: [{ url: "u1", title: "t", seen_at: h(5), via: "google-news" }, { url: "https://www.theregister.com/a", title: "t", seen_at: h(5), via: "rss", source: "The Register" }], logs: [], jobruns: [], closures: [], byRule: new Set(), events: [],
+    registry: [], status: {}, osint: {}, gridAudit: null, retiredFeeds: [{ name: "The Register", retired: "2026-11-20", why: "w" }] };
+  const r = report(inp, { now: NOW, days: 7, clusterFn: noCluster });
+  assert.equal(r.feeds.length, 0); assert.deepEqual(r.retired_feeds.map((f) => f.name).sort(), ["google-news", "rss:theregister.com"]);
+  assert.equal(r.totals.leads, 2);
+});
+
+test("targets: short title, figure and detail for the status page cards", () => {
+  const t = Object.fromEntries(targets({ speed: { hours: 50, review: { p90: 1220, n: 152 } }, acc: { days: 7, reviewed: 412, corrected: 141, flagged: 17, corrected_pct: 34.2 },
+    windows: { five_hour: { tokens: 0 }, week: { tokens: 0 }, budget: { window_pct: 49, week_pct: 17, level: "ok" } }, routines: [], feeds: [{ name: "rss:x", verdict: "noise" }], days: 2.1 }).map((x) => [x.key, x]));
+  assert.equal(t.speed.figure, "1220 min"); assert.match(t.speed.detail, /152 events, last 50 h/); assert.equal(t.speed.title, "Speed");
+  assert.equal(t.accuracy.figure, "34.2%"); assert.equal(t.usage.figure, "49%"); assert.equal(t.earns.figure, "1 candidates");
+  assert.ok(Object.values(t).every((x) => x.title && x.goal && x.figure && x.detail));
+});

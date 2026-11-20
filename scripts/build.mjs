@@ -166,6 +166,16 @@ const gridAnalysis = (() => {
     trends: a.trends || {}, sources: a.sources || {} };
 })();
 if (gridAnalysis) docs["grid/analysis"] = gridAnalysis;
+// power outages reported in the news (scripts/grid-news.mjs, no AI model): publishers' headlines, unchecked, for the Grid
+// view's third tier. Validated loosely: a broken file only drops the list (with a warning), never the build.
+const gridNews = (() => {
+  const p = join(DATA, "grid", "news.json");
+  if (!existsSync(p)) return null;
+  const d = readJson(p);
+  if (!d || typeof d !== "object" || !Array.isArray(d.items)) { warnings.push("grid/news.json: not readable, news-reported outages left out"); return null; }
+  return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300) };
+})();
+if (gridNews) docs["grid/news"] = gridNews;
 // each grid source's last fetch (data/grid/live.json, then analysis.json for the keyed ones), for the status page
 const gridSources = (() => {
   const live = existsSync(join(DATA, "grid", "live.json")) ? readJson(join(DATA, "grid", "live.json")) : null;

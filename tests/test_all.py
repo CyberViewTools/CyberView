@@ -483,6 +483,22 @@ async def main():
         json.dump(tj, open(tp, "w"))
         # v1.47: the Grid view reads the same 30-day trends from the bundle (docs["grid/analysis"].trends)
         bg["docs"]["grid/analysis"]["trends"] = copy.deepcopy(tj["grid"]["trends"])
+        # v1.50: outages reported in the news, not checked (shape of data/grid/news.json from scripts/grid-news.mjs)
+        bg["docs"]["grid/news"] = {"updated_at": iso(0.1), "items": [
+            {"id": "gn-ua-kyiv-2026111906", "country": "UA", "region": "", "place": "Kyiv", "lat": 50.45, "lng": 30.52, "approx": True, "figure": None,
+             "cause_words": ["attack", "drone", "<b>bad</b>"], "first_seen": iso(5), "last_seen": iso(1), "count": 3,
+             "cyber_headline": "Cyberattack suspected in Kyiv blackout, officials say",
+             "publishers": [{"name": "<img src=x id=pwn5>Kyiv Post", "url": "https://www.kyivpost.com/post/12345", "title": "Cyberattack suspected in Kyiv blackout, officials say", "lang": "en", "published": iso(5)},
+                            {"name": "Ukrainska Pravda", "url": "https://news.google.com/rss/articles/CBMi123", "title": "Знеструмлення у Києві після атаки дронів", "lang": "uk", "published": iso(3)},
+                            {"name": "Suspilne", "url": "https://suspilne.media/kyiv/9876-kyiv-blackout/", "title": "Знеструмлення в Києві", "lang": "uk", "published": iso(1)}]},
+            {"id": "gn-ca-toronto-2026111912", "country": "CA", "region": "", "place": "Toronto", "lat": 43.65, "lng": -79.38, "approx": True,
+             "figure": {"n": 120000, "unit": "customers", "by": "CBC News"}, "cause_words": ["storm", "wind"], "first_seen": iso(4), "last_seen": iso(2), "count": 2, "cyber_headline": "",
+             "publishers": [{"name": "CBC News", "url": "https://www.cbc.ca/news/canada/toronto/storm-outage-1.123", "title": "120,000 Toronto Hydro customers without power after storm", "lang": "en", "published": iso(4)},
+                            {"name": "CityNews", "url": "https://toronto.citynews.ca/2026/11/19/outage/", "title": "Storm knocks out power across Toronto", "lang": "en", "published": iso(2)}]},
+            {"id": "gn-gb-glasgow-2026111915", "country": "GB", "region": "", "place": "Glasgow", "lat": 55.86, "lng": -4.25, "approx": True,
+             "figure": {"n": 3400, "unit": "unstated"}, "cause_words": [], "first_seen": iso(2), "last_seen": iso(2), "count": 1, "cyber_headline": "",
+             "publishers": [{"name": "Glasgow Live", "url": "javascript:alert(1)", "title": "3,400 without power in Glasgow", "lang": "en", "published": iso(2)}]},
+            {"id": "gn-xx-nowhere-1", "country": "FR", "place": "Nowhere", "publishers": [{"name": "x", "url": "https://x.example/a", "title": "t"}]}]}
         json.dump(bg, open(os.path.join(site_g, "data", "bundle.json"), "w"))
 
         async def vgrid(url):
@@ -533,11 +549,11 @@ async def main():
             ok("grid view: the address is #grid, so the view can be shared", await pg.evaluate("location.hash") == "#grid")
             ok("grid view: no cyber markers, clusters, arcs, IODA or GDACS marks on the globe",
                await pg.locator("#svg g.m, #svg g.cl, #svg path.arc, #svg .blast, #svg g.haz, #svg path.country.dis, #svg path.country.has, #svg .chainline").count() == 0)
-            ok("grid view: only grid rings are drawn, always on", await pg.evaluate("(() => { const g = document.querySelector('#svg g.gridm'); if (!g) return false; return [...g.parentNode.children].every(c => c.classList.contains('gridm')); })()") and await pg.locator("#svg g.gridm").count() == 6)
+            ok("grid view: only grid rings are drawn (operators' and news reports), always on", await pg.evaluate("(() => { const g = document.querySelector('#svg g.gridm'); if (!g) return false; return [...g.parentNode.children].every(c => c.classList.contains('gridm') || c.classList.contains('gnews')); })()") and await pg.locator("#svg g.gridm").count() == 6)
             hidden = ["#feed", "header .row2 >> nth=0", "#days", "aside .tabs", "#listTools", "#wallBtn", "#zlayers", "#key", "#stats", "#viz"]
             vis = [h for h in hidden if await pg.locator(h).first.is_visible()]
             ok("grid view: feed, tabs, filters, time bar, legend, layers and wall mode are hidden", not vis, vis)
-            ok("grid view: the grid panel and its four sections render", await pg.locator("#gridp").is_visible() and all([await pg.locator(x).is_visible() for x in ["#gList", "#gSrcSec", "#gAna", "#gTrend"]]))
+            ok("grid view: the grid panel and its five sections render", await pg.locator("#gridp").is_visible() and all([await pg.locator(x).is_visible() for x in ["#gList", "#gNewsSec", "#gSrcSec", "#gAna", "#gTrend"]]))
             gtxt = await pg.inner_text("#gridp")
             ok("grid view: header says context, operators' reports, customers are accounts", "Power grid outages — context, not cyber events. Operators' own reports; customers are accounts, not people." in gtxt and "Last grid collection" in gtxt, gtxt[:300])
             names = await pg.locator("#gRows li .gname").all_text_contents()
@@ -573,17 +589,42 @@ async def main():
             ok("grid view: trend bars single colour, largest first", len(fills) == 1 and len(widths) == 3 and widths[0] > widths[1] > widths[2] > 0, [fills, widths])
             ok("grid view: trend caveats underneath", await pg.evaluate("(() => { const b = document.getElementById('gBars'), c = document.querySelector('#gTrend .gcav'); return !!(b.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING) && /not cyber events/.test(c.textContent); })()"))
             ok("grid view: trend region names stay text", "<img src=x id=pwn4>London" in await pg.inner_text("#gTrend") and await pg.locator("#pwn4").count() == 0)
+            # v1.50: third tier, outages reported in the news, not checked
+            ntxt = await pg.inner_text("#gNewsSec")
+            nrows = await pg.locator("#gNews li.gn").all_text_contents()
+            ok("grid news: a 'Reported in the news, not checked' section with one row per reported outage, broken items dropped", "Reported in the news, not checked" in ntxt and len(nrows) == 3 and "Nowhere" not in ntxt, nrows)
+            ok("grid news: every row says it is not checked by CyberView", all("Not checked by CyberView" in r for r in nrows), nrows)
+            ok("grid news: strongest first (most publishers)", "Kyiv" in nrows[0] and "Toronto" in nrows[1] and "Glasgow" in nrows[2], nrows)
+            ok("grid news: the figure with its unit as reported, a bare number says so", "120,000 customers without power, as reported" in nrows[1] and "3,400 without power, as reported (the report does not say customers, homes or people)" in nrows[2], nrows)
+            ok("grid news: publishers named; cause words as reported, not confirmed; unknown words dropped", "Reported by: <img src=x id=pwn5>Kyiv Post, Ukrainska Pravda, Suspilne" in nrows[0] and "Words in the reports: attack, drone (as reported, not confirmed)" in nrows[0] and "<b>bad</b>" not in ntxt, nrows[0])
+            ok("grid news: a cyberattack in a headline is shown as the headline's words, reported, not confirmed", "A headline mentions a cyberattack: \u201cCyberattack suspected in Kyiv blackout, officials say\u201d \u2014 reported, not confirmed." in nrows[0], nrows[0])
+            nhrefs = await pg.eval_on_selector_all("#gNews a", "as => as.map(a => a.getAttribute('href'))")
+            ok("grid news: links only to the publishers' own https pages (no news index, no javascript)", sorted(nhrefs) == sorted(["https://www.kyivpost.com/post/12345", "https://suspilne.media/kyiv/9876-kyiv-blackout/", "https://www.cbc.ca/news/canada/toronto/storm-outage-1.123", "https://toronto.citynews.ca/2026/11/19/outage/"]), nhrefs)
+            ok("grid news: injected markup stays text", await pg.locator("#pwn5").count() == 0 and await pg.locator("#gNewsSec img").count() == 0)
+            ok("grid news: never counted as incidents and never called an attack by CyberView", "5 incidents open" in await pg.inner_text("#gCount") and await pg.locator("#gRows li").count() == 7
+               and "never counted as incidents" in ntxt and "an outage is not an attack" in ntxt)
+            ok("grid news: drawn as hollow dotted rings in neutral ink, under the operators' rings", await pg.locator("#svg g.gnews").count() == 3 and await pg.evaluate("""(() => { const cs = [...document.querySelectorAll('#svg g.gnews circle')]; return cs.length === 3 && cs.every(c => { const s = getComputedStyle(c); return s.fill === 'none' && s.strokeDasharray !== 'none' && !/--c-/.test(c.getAttribute('stroke') || ''); }); })()""")
+               and await pg.evaluate("(() => { const a = [...document.querySelectorAll('#svg g.gnews, #svg g.gridm')]; return a.findIndex(g => g.classList.contains('gridm')) > a.findIndex(g => g.classList.contains('gnews')) && a.filter(g => g.classList.contains('gnews')).every(g => a.indexOf(g) < a.findIndex(x => x.classList.contains('gridm'))); })()"))
+            nr = await pg.evaluate("(() => [Math.max(...[...document.querySelectorAll('#svg g.gnews > circle')].map(c => +c.getAttribute('r'))), Math.min(...[...document.querySelectorAll('#svg g.gridm:not(.out) > circle')].map(c => +c.getAttribute('r')))])()")
+            ok("grid news: rings smaller than the incidents'", nr[0] < nr[1], nr)
+            await pg.locator("#svg g.gnews").first.focus(); await pg.wait_for_timeout(150)
+            ntip = await pg.text_content("#tip") or ""
+            ok("grid news: ring tooltip says reported in the news, not checked, context", "Reported in the news:" in ntip and "not checked by CyberView" in ntip and "context, not a cyber event" in ntip, ntip)
+            await pg.locator("#gNews li.gn", has_text="Toronto").click(); await pg.wait_for_timeout(1100)
+            ok("grid news: a row turns the globe to it with its tooltip", "Reported in the news: Toronto" in (await pg.text_content("#tip") or "") and await pg.locator("#svg g.gnews.gsel").count() == 1 and await pg.locator("#gNews li.on").count() == 1)
             await pg.click("#gseg [data-gf=unplanned]"); await pg.wait_for_timeout(150)
             un = await pg.locator("#gRows li .gname").all_text_contents()
             ok("grid view: Unplanned only drops planned work, on the globe too", len(un) == 6 and not any("planned work" in n for n in un) and await pg.locator("#svg g.gridm.out").count() == 1, un)
             await pg.click("#gseg [data-gf=incidents]"); await pg.wait_for_timeout(150)
             ok("grid view: Incidents only", await pg.locator("#gRows li .gtag").all_text_contents() == ["Incident"] * 5 and await pg.locator("#svg g.gridm.out").count() == 0)
+            ok("grid news: hidden with Incidents only (news reports are never incidents)", await pg.locator("#svg g.gnews").count() == 0 and await pg.locator("#gNews li.gn").count() == 0 and "never incidents" in await pg.inner_text("#gNewsCount"))
             await pg.click("#gseg [data-gf=all]"); await pg.wait_for_timeout(150)
             opts = await pg.eval_on_selector_all("#gCountry option", "os => os.map(o => o.value)")
-            ok("grid view: country list built from the data", sorted(opts) == sorted(["", "AU", "CA", "GB", "US", "ZA"]), opts)
+            ok("grid view: country list built from the data (operators' and news reports)", sorted(opts) == sorted(["", "AU", "CA", "GB", "UA", "US", "ZA"]), opts)
             await pg.evaluate("(() => { const s = document.getElementById('gCountry'); s.value = 'CA'; s.dispatchEvent(new Event('change', { bubbles: true })); })()"); await pg.wait_for_timeout(150)
             ca = await pg.locator("#gRows li .gname").all_text_contents()
             ok("grid view: the country filter works", len(ca) == 3 and all("Hydro-Québec" in n or "BC Hydro" in n for n in ca) and await pg.locator("#svg g.gridm").count() == 3, ca)
+            ok("grid news: the country filter applies to news reports too", await pg.locator("#gNews li.gn").count() == 1 and await pg.locator("#svg g.gnews").count() == 1)
             await pg.evaluate("(() => { const s = document.getElementById('gCountry'); s.value = ''; s.dispatchEvent(new Event('change', { bubbles: true })); })()"); await pg.wait_for_timeout(150)
             ok("grid view: back to all countries", await pg.locator("#gRows li").count() == 7)
             await pg.locator("#gRows li .gname", has_text="Hydro-Québec: 152,300").click(); await pg.wait_for_timeout(1100)
@@ -599,6 +640,7 @@ async def main():
             await pg.click("#viewseg [data-view=map]"); await pg.wait_for_timeout(500)
             ok("grid view: leaving it brings back markers, the feed and filters", await pg.locator("#svg g.m, #svg g.cl").count() > 0 and await pg.locator("#feed").is_visible() and await pg.locator("aside .tabs").is_visible()
                and await pg.locator("#days").is_visible() and await pg.locator("#gridp").is_hidden() and await pg.evaluate("location.hash") != "#grid")
+            ok("grid news: not drawn outside the Grid view", await pg.locator("#svg g.gnews").count() == 0)
             ok("grid view: no failed panel and no script errors", await pg.locator("#fault").is_hidden() and not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url + "#grid", wait=1500)
@@ -1018,7 +1060,9 @@ async def main():
             ok("replay: stage named", len((await pg.locator("#rpStage").text_content()).strip()) > 3)
             ok("replay: step markers drawn", await pg.locator("#svg .stepn").count() >= 1 and await pg.locator("#svg .rpcur").count() == 1)
             await pg.click("#rpPlay"); await pg.click("#rpNext"); await pg.wait_for_timeout(1600)
-            ok("replay: next moves on and draws the path", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and await pg.locator("#svg .stepn").count() >= 2)
+            # the path needs two steps with a location on the near side of the globe, which depends on the day's data;
+            # moving on and drawing the current step does not
+            ok("replay: next moves on and draws the current step", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and await pg.locator("#svg .rpcur").count() == 1 and await pg.locator("#svg .stepn").count() >= 1)
             await pg.keyboard.press("ArrowLeft"); await pg.wait_for_timeout(300)
             ok("replay: arrow keys step back", (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)

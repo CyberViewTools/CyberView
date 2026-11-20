@@ -1,0 +1,57 @@
+{
+  "title": "Recorded Future: ARTEX AI servers roughly doubled in 30 days",
+  "date": "2026-11-19",
+  "date_note": "The page shows no publication date; it reports figures as of November 19, 2026, which is used as the date.",
+  "category": "report",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "Recorded Future",
+  "sector": "Threat research",
+  "country": "United States",
+  "place": "United States (researcher)",
+  "lat": 38.9,
+  "lng": -77.04,
+  "geo_basis": "researcher country; no city stated on the page",
+  "pin_type": "researcher",
+  "actor": "",
+  "summary": "Recorded Future says it observed 1,506 ARTEX AI servers on October 21 and 2,978 on November 19, across 58 countries, a footprint that roughly doubled in 30 days; these are observed servers, not confirmed compromises. It says it has not independently tied GreenJuliett infrastructure to the October refrigeration-controller attacks in France, and has not confirmed specific instances of AI misuse in this research.",
+  "plain": "Recorded Future reports that servers running the ARTEX AI attack framework grew to 2,978 by November 19. It says these are observed servers, not confirmed attacks.",
+  "exec": "Recorded Future reports fast growth in servers running an AI attack framework, so exposed controllers and edge devices deserve attention.",
+  "action": "Per Recorded Future: take controllers that should not be public off the internet, restrict FortiGate management interfaces to known addresses and keep firmware current, and block connections from AI framework servers when no authorized testing is underway.",
+  "impact": "Report of growth in AI attack-framework servers; no confirmed compromise stated.",
+  "tags": ["ai-enabled"],
+  "cves": [],
+  "products": ["ARTEX AI", "Fortinet FortiGate", "LiteLLM"],
+  "attack": [],
+  "sources": [
+    {"name": "Recorded Future", "url": "https://www.recordedfuture.com/blog/ai-industrial-attack-workflow"}
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "1,506 ARTEX servers on October 21 and 2,978 on November 19, across 58 countries; observed servers, not attacks or confirmed compromises.",
+      "Only about one in six observed ARTEX servers was present continuously for 30 days; roughly 90 new ones appear on a typical day.",
+      "Between August and October, GreenJuliett-linked infrastructure was observed scanning or trying to exploit FortiGate firewalls in Bahrain, Israel, Jordan, Kuwait, Saudi Arabia and Qatar.",
+      "Recorded Future has not independently tied GreenJuliett infrastructure to the French refrigeration attacks and has not confirmed specific instances of AI misuse in this research."
+    ],
+    "publisher": "Recorded Future",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Take controllers off the internet.",
+      "Restrict FortiGate management interfaces to known addresses and keep firmware current.",
+      "Block connections from AI framework servers when no authorized testing is underway."
+    ],
+    "url": "https://www.recordedfuture.com/blog/ai-industrial-attack-workflow"
+  },
+  "source_tier": "primary",
+  "time_basis": "published",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-20T21:22:30Z",
+    "note": "Single vendor report (Recorded Future); figures are its own observations."
+  },
+  "first_seen": "2026-11-20T21:22:30Z",
+  "updated_at": "2026-11-20T21:22:30Z"
+}

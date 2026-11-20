@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T12:56:55Z",
+  "generated_at": "2026-11-20T00:57:16Z",
   "items": [
     {
       "event_id": "nginx2root-nginx-critical-rce-flaws-2026-11",
@@ -9,18 +9,41 @@
       ],
       "downstream": [
         "Xint chained one flaw with an unpatched Linux kernel SCTP bug to reach root and escape a Docker container, so a web front end can become a host compromise.",
-        "NGINX is embedded in load balancers, Kubernetes ingress controllers and appliances that update on their vendors' schedules, so exposure outlasts your own patching."
+        "NGINX is embedded in load balancers, Kubernetes ingress controllers and appliances that update on their vendors' schedules; Synology has already listed the same CVE in DSM, so expect more appliance advisories."
       ],
       "watch_for": [
         "Ingress and appliance vendors shipping fixed NGINX builds",
         "Worker crashes on HTTP/2 traffic",
         "A Linux kernel fix and CVE for the SCTP flaw",
-        "Reports of in-the-wild exploitation"
+        "Reports of in-the-wild exploitation",
+        "Appliance advisories naming CVE-2026-123007"
       ],
       "who_should_care": [
         "Web operations",
         "Kubernetes teams",
         "Appliance owners"
+      ]
+    },
+    {
+      "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11",
+      "basis": "stated",
+      "direct": [
+        "An unauthenticated attacker can bypass authentication on VMware vCenter Server (CVE-2026-123890, CVSS 9.8); Google says ARMORY CASTLE exploited it as a zero-day, and Rapid7 reports activity from as early as September. Fixes include vCenter 8.0 U3m; there is no workaround."
+      ],
+      "downstream": [
+        "vCenter controls every virtual machine it manages, so one compromised server can expose a whole virtual estate.",
+        "Exploitation predates the fix, so patching does not show whether a server was already entered; logs back to September matter."
+      ],
+      "watch_for": [
+        "vCenter servers reachable from untrusted networks",
+        "Unexpected vCenter sign-ins or new local accounts",
+        "Hunting guidance and indicators from Google and Broadcom",
+        "Victims named in follow-up reporting"
+      ],
+      "who_should_care": [
+        "Virtualisation admins",
+        "SOC analysts",
+        "Incident responders"
       ]
     },
     {
@@ -42,6 +65,27 @@
         "Japanese retailers",
         "Marketing technology owners",
         "Vendor management"
+      ]
+    },
+    {
+      "event_id": "fireworks-ai-october-incidents-update-2026-11",
+      "basis": "stated",
+      "direct": [
+        "Account and billing data for every Fireworks AI account created before Oct 30 was exposed; some customers' secrets, model files and datasets were reached earlier."
+      ],
+      "downstream": [
+        "Cursor, Notion and Uber are reported as affected customers; keys held by the provider led to a trojanized extension at Cursor.",
+        "Credentials pasted into AI prompts or held by inference providers can open systems far from the provider itself."
+      ],
+      "watch_for": [
+        "Notices from AI and inference providers you use",
+        "Use of API keys issued to providers",
+        "Secrets in AI chat logs and traces"
+      ],
+      "who_should_care": [
+        "AI platform teams",
+        "Vendor management",
+        "Developers"
       ]
     },
     {
@@ -108,27 +152,6 @@
       ]
     },
     {
-      "event_id": "fireworks-ai-october-incidents-update-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Account and billing data for every Fireworks AI account created before Oct 30 was exposed; some customers' secrets, model files and datasets were reached earlier."
-      ],
-      "downstream": [
-        "Cursor, Notion and Uber are reported as affected customers; keys held by the provider led to a trojanized extension at Cursor.",
-        "Credentials pasted into AI prompts or held by inference providers can open systems far from the provider itself."
-      ],
-      "watch_for": [
-        "Notices from AI and inference providers you use",
-        "Use of API keys issued to providers",
-        "Secrets in AI chat logs and traces"
-      ],
-      "who_should_care": [
-        "AI platform teams",
-        "Vendor management",
-        "Developers"
-      ]
-    },
-    {
       "event_id": "optimizely-web-script-injection-2026-11",
       "basis": "stated",
       "direct": [
@@ -147,27 +170,6 @@
         "E-commerce teams",
         "Web developers",
         "Payment compliance"
-      ]
-    },
-    {
-      "event_id": "wellington-it-irish-credit-unions-breach-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Saved payee records at about 40 Irish credit unions were exposed through a reported attack on supplier Wellington IT using valid credentials and an authorization flaw."
-      ],
-      "downstream": [
-        "Payee data can be used to make fraud and impersonation messages to members more convincing.",
-        "A minister called the six-week delay in telling credit unions unacceptable, so expect regulatory scrutiny of supplier notification."
-      ],
-      "watch_for": [
-        "Payment-redirection and impersonation lures to members",
-        "Statements from the supplier or the Central Bank",
-        "Automated API abuse with valid logins"
-      ],
-      "who_should_care": [
-        "Credit unions",
-        "Fraud teams",
-        "Vendor management"
       ]
     },
     {

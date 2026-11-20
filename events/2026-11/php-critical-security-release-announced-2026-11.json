@@ -7,8 +7,7 @@
   "category": "vuln",
   "country": "Netherlands",
   "date": "2026-11-19",
-  "occurred_at": "2026-11-19T14:00:00Z",
-  "exec": "PHP runs much of the web; the critical flaws need unusual setups, but patching is advised. No exploitation reported.",
+  "exec": "PHP's critical flaws need non-default or uncommon setups, but patching is advised.",
   "first_seen": "2026-11-18T23:11:53Z",
   "geo_basis": "agency",
   "impact": "",
@@ -119,21 +118,21 @@
     }
   ],
   "status": "official",
-  "summary": "PHP shipped security releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13, fixing 17 vulnerabilities, according to heise. heise reports seven rated critical (CVSS 9.2) and says some allow code execution, but only under preconditions and not on default installations. heise reports no exploitation in the wild.",
+  "summary": "PHP shipped security releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13, fixing 17 vulnerabilities, according to heise. heise reports seven rated critical (CVSS 9.2) and says some allow code execution, but only under preconditions and not on default installations. The Register says the critical issues need non-default configuration or uncommon setups.",
   "tags": [],
-  "time_basis": "published",
   "title": "PHP releases 8.2.36, 8.3.37, 8.4.28 and 8.5.13 fixing 17 vulnerabilities, several rated critical",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-20T15:34:33Z",
   "validation": {
     "checked_at": "2026-11-19T16:05:00Z",
     "state": "corroborated",
     "note": "heise, The Register and SecurityWeek report independently; SecurityWeek lists seven critical RCE CVEs and links the php.net notice (php.net not opened); no exploitation of these seven is stated."
   },
-  "qa_checked_at": "2026-11-19T16:40:32Z",
+  "qa_checked_at": "2026-11-20T15:35:04Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T16:40:32Z",
-    "note": "Versions, 17 flaws, seven critical CVSS 9.2 match heise, Register, SecurityWeek; publisher_type fixed from vendor to news; code execution count softened because heise noted a miscount",
+    "at": "2026-11-20T15:35:04Z",
+    "first_at": "2026-11-19T16:40:32Z",
+    "note": "Compared with heise (19 Nov), SecurityWeek, The Register: versions, 17 flaws, seven critical CVSS 9.2, preconditions match. Removed 'heise reports no exploitation' (not found in heise), unverified occurred_at 14:00Z and 'runs much of the web'; added Register's non-default-config statement.",
     "flags": []
   }
 }

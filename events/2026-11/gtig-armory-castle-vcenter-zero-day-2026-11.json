@@ -1,5 +1,5 @@
 {
-  "action": "Apply the Broadcom fix (VMSA-2026-0009; e.g. vCenter 8.0 U3m) now; Broadcom lists no workaround. Restrict inbound access and egress from vCenter, and hunt with the GTIG indicators.",
+  "action": "Apply Broadcom's fixed vCenter builds (8.0 U3m, 9.0.2.0200 or 9.1.1.0200) now; vCenter 7.0 has no public patch. Restrict inbound access to and egress from vCenter, following the hardening advice in Google's post.",
   "actor": "ARMORY CASTLE",
   "attack": [
     "zero-day",
@@ -24,16 +24,15 @@
     "CVE-2026-102764"
   ],
   "date": "2026-11-19",
-  "exec": "A suspected state-backed group used an unpatched vCenter flaw to control virtualisation hosts, which hold most servers in a company; the fix is available now.",
+  "exec": "A suspected state-backed group used an unpatched vCenter flaw to gain administrator access to virtualisation management; fixes exist for supported versions.",
   "first_seen": "2026-11-19T14:50:00Z",
   "geo_basis": "hq",
   "lat": 37.42,
   "lng": -122.08,
-  "occurred_at": "2026-11-19T00:00:00Z",
   "org": "Google Threat Intelligence Group",
   "pin_type": "researcher",
   "place": "Mountain View, CA",
-  "plain": "Google says a suspected China-linked spy group exploited a previously unknown flaw in VMware vCenter to take control of virtual server infrastructure. A patch is out.",
+  "plain": "Google says a suspected China-linked spy group exploited a previously unknown flaw in VMware vCenter to gain administrator access to virtual server management. Patches are out for supported versions.",
   "products": [
     "VMware vCenter Server",
     "VMware ESXi",
@@ -81,26 +80,26 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Google Threat Intelligence Group says ARMORY CASTLE, a suspected PRC-nexus espionage actor it formerly tracked as UNC5221, exploited CVE-2026-123890, an unauthenticated authentication bypass in VMware vCenter Server, from early September 2026. SecurityWeek reports a CVSS of 9.8 and fixes in vCenter 8.0 U3m, 9.0.2.0200 and 9.1.1.0200, with no public patch for 7.0. No workaround or victims are named.",
+  "summary": "Google Threat Intelligence Group says ARMORY CASTLE, a suspected PRC-nexus espionage actor it formerly tracked as UNC5221, exploited CVE-2026-123890, an unauthenticated authentication bypass in VMware vCenter Server, from early September 2026. SecurityWeek reports a CVSS of 9.8 and fixes in vCenter 8.0 U3m, 9.0.2.0200 and 9.1.1.0200, with no public patch for 7.0. Google names no victims.",
   "tags": [
     "espionage",
     "zero-day"
   ],
-  "time_basis": "published",
   "title": "Google: ARMORY CASTLE exploits vCenter zero-day CVE-2026-123890 in espionage campaign",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-20T15:34:33Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-20T03:20:48Z",
     "note": "Re-read Google Cloud Threat Intelligence (primary) and SecurityWeek: both agree on actor wording, CVE, 19 Nov publication and no named victims; GTIG gives early-September exploitation, SecurityWeek gives CVSS 9.8 and fixed builds. Rapid7 and THN not re-read in this run."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T03:25:04Z",
-    "note": "Opened GTIG, SecurityWeek, Rapid7, THN: actor wording (suspected PRC-nexus, formerly UNC5221, by GTIG), CVE ids, early-Sept exploitation, 9.8 CVSS, VMSA-2026-0009 and no workaround (Rapid7), fixed builds, no victims named",
+    "state": "corrected",
+    "at": "2026-11-20T15:35:04Z",
+    "first_at": "2026-11-20T03:25:04Z",
+    "note": "Compared with Google GTIG post and SecurityWeek: actor wording, formerly UNC5221, early-Sept exploitation, CVSS 9.8, fixed builds, no public 7.0 patch, no victims all match. Removed placeholder occurred_at, unverified VMSA id and 'Broadcom lists no workaround' (neither source says it), and the unsou",
     "flags": []
   },
-  "qa_checked_at": "2026-11-20T03:25:04Z",
+  "qa_checked_at": "2026-11-20T15:35:04Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123890",

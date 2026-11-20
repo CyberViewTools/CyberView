@@ -8,7 +8,6 @@
   "category": "vuln",
   "country": "France",
   "date": "2026-11-18",
-  "occurred_at": "2026-11-18T12:00:00Z",
   "exec": "NGINX is among the most widely used web servers and proxies; an unauthenticated remote code execution flaw with a public proof of concept makes exposed servers urgent to patch or mitigate.",
   "first_seen": "2026-11-18T21:13:25Z",
   "geo_basis": "agency",
@@ -121,22 +120,25 @@
   ],
   "status": "official",
   "summary": "CERT-FR warns that two flaws in F5 NGINX Open Source and NGINX Plus, CVE-2026-123633 and CVE-2026-123007, allow unauthenticated remote code execution over HTTP/2; a public proof of concept exists for CVE-2026-123007. Open Source before 1.31.9 (1.30.7 on the older branch) and Plus before the fixed releases are affected. Disabling HTTP/2 is an interim workaround for those two only. Per nginx.org, three more flaws fixed in the same update (resolver, HTTP/3, mail proxy) are not covered.",
-  "tags": [],
+  "tags": [
+    "poc-public"
+  ],
   "time_basis": "published",
   "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-20T15:34:46Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T03:24:00Z",
     "note": "Compared CERT-FR (primary) with Rapid7 (PoC author): CVE-2026-123007 HTTP/2 flaw, fixes 1.31.9 and 1.30.7, public PoC, no in-the-wild exploitation stated. Rapid7 notes its PoC needs about 128 GB of HTTP/2 data and a specific x86-64 glibc, and gives no HTTP/2-off workaround; that workaround is CERT-FR advice. Not compared: CVE-2026-123633 (only CERT-FR)."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T18:10:01Z",
-    "note": "Compared title, CVEs, affected versions, public PoC for CVE-2026-123007 only, no in-the-wild statement, HTTP/2 workaround and F5 bulletins against CERT-FR, nginx.org, KrCERT/CC and Rapid7",
+    "state": "corrected",
+    "at": "2026-11-20T15:35:12Z",
+    "first_at": "2026-11-19T18:10:01Z",
+    "note": "CVEs, versions, public PoC for CVE-2026-123007, HTTP2 workaround, F5 bulletins match CERT-FR, nginx.org and Rapid7; removed placeholder occurred_at 12:00 and added poc-public tag the sources support",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T18:10:01Z",
+  "qa_checked_at": "2026-11-20T15:35:12Z",
   "links": [
     {
       "to": "xint-linux-sctp-kernel-lpe-unpatched-2026-11",

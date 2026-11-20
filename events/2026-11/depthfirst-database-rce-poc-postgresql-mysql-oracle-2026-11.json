@@ -6,10 +6,9 @@
   ],
   "category": "vuln",
   "country": "United States",
-  "date": "2026-11-19",
-  "date_note": "Date the article was published; the researcher's exploits were released shortly before.",
-  "occurred_at": "2026-11-19T00:00:00Z",
-  "exec": "Widely used databases have public proof-of-concept exploits that let low-privilege accounts run code on the server. Vendors have fixes for all five flaws, so unpatched servers are the exposure.",
+  "date": "2026-11-18",
+  "date_note": "Date of the Depthfirst research post (18 Nov); The Hacker News covered it on 19 Nov.",
+  "exec": "Widely used databases have researcher-demonstrated chains that let limited-privilege accounts run code on the server. Vendors have fixes for all five flaws, so unpatched servers are the exposure.",
   "first_seen": "2026-11-19T09:08:14Z",
   "geo_basis": "country",
   "impact": "",
@@ -18,7 +17,7 @@
   "org": "Depthfirst",
   "pin_type": "country",
   "place": "United States (researcher location not stated)",
-  "plain": "A researcher published working code showing that a low-privilege database account can take over the server in PostgreSQL, MySQL and other databases. All five flaws have fixes.",
+  "plain": "A researcher demonstrated that a database account with limited privileges can run code on the server in PostgreSQL, MySQL and other databases. Vendors have fixes for all five flaws.",
   "products": [
     "PostgreSQL",
     "MySQL",
@@ -50,7 +49,7 @@
     ],
     "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html"
   },
-  "severity": 3,
+  "severity": 2,
   "source_tier": "primary",
   "sources": [
     {
@@ -67,10 +66,9 @@
     }
   ],
   "status": "developing",
-  "summary": "The Hacker News reports that researcher Zheng Yu of Depthfirst published proof-of-concept exploits that let low-privilege database accounts run code on the server in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has no CVE but was fixed in September. No attacks in the wild are reported, and the chains were not independently reproduced.",
-  "time_basis": "published",
-  "title": "Researcher publishes database RCE exploits for PostgreSQL, MySQL and Oracle",
-  "updated_at": "2026-11-20T15:25:35Z",
+  "summary": "The Hacker News reports that Depthfirst researcher Zheng Yu demonstrated proof-of-concept chains letting database accounts with limited privileges run code on PostgreSQL, MySQL and ClickHouse servers, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has no CVE and was fixed in early September. No attacks are reported and the chains were not independently reproduced.",
+  "title": "Researcher demonstrates database RCE exploit chains for PostgreSQL, MySQL and Oracle",
+  "updated_at": "2026-11-20T15:34:33Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-20T15:25:35Z",
@@ -78,13 +76,12 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T03:25:04Z",
-    "note": "Content matches THN; ClickHouse was said to have no fix but THN (corrected 20 Nov) says fixed in September; summary, exec, plain, key findings fixed. Severity 3 stands (public PoC, widely used software).",
-    "flags": [
-      "single-source-high"
-    ]
+    "at": "2026-11-20T15:35:04Z",
+    "first_at": "2026-11-20T03:25:04Z",
+    "note": "Compared with Depthfirst post (18 Nov), THN (19 Nov, corrected 20 Nov), Brandefense. Depthfirst's post gives code excerpts with payload constants omitted and no PoC repo, so title/summary/plain/exec no longer say exploits were published; date moved to 18 Nov (research post); removed placeholder occu",
+    "flags": []
   },
-  "qa_checked_at": "2026-11-20T03:25:04Z",
+  "qa_checked_at": "2026-11-20T15:35:04Z",
   "cve_meta": [
     {
       "id": "CVE-2026-116331",

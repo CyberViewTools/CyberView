@@ -31,13 +31,13 @@
   "org": "Copeland",
   "pin_type": "hq",
   "place": "St. Louis, MO",
-  "plain": "Researchers disclosed 14 weaknesses in Copeland XWEB EVO devices that control commercial refrigeration. The maker no longer updates these devices, and attackers began probing two of the flaws within a day.",
+  "plain": "Researchers disclosed 14 weaknesses in Copeland XWEB EVO devices that control commercial refrigeration. The maker no longer updates these devices, and VulnCheck saw attackers exploit two of the flaws on 12 and 13 November.",
   "products": [
     "Copeland XWEB 300D EVO",
     "Copeland XWEB 500D EVO",
     "Copeland XWEB 500 EVO"
   ],
-  "qa_checked_at": "2026-11-19T05:09:48Z",
+  "qa_checked_at": "2026-11-20T15:35:21Z",
   "report": {
     "doc_id": "CVE-2026-124002 to CVE-2026-124015",
     "iocs_available": true,
@@ -69,13 +69,13 @@
     }
   ],
   "status": "confirmed",
-  "summary": "VulnCheck disclosed 14 flaws in Dixell/Copeland XWEB EVO refrigeration supervisors that let an unauthenticated attacker run commands as root and recover administrator passwords. The product line is past end of software support, so no fixes are coming. Up to about 1,960 devices are reachable from the internet, and VulnCheck saw two of the flaws targeted from November 12 and 13.",
+  "summary": "VulnCheck disclosed 14 flaws in Dixell/Copeland XWEB EVO refrigeration supervisors, including unauthenticated root command execution on legacy builds and a computable administrator login code on firmware 5.8.8. Copeland declared end of software support, with no fixes after 16 March 2026. VulnCheck cites Onyphe's count of about 1,960 public EVO hosts. It saw in-the-wild exploitation of two flaws on 12 and 13 November.",
   "tags": [
     "ot-ics",
     "critical-infrastructure"
   ],
   "title": "Hackers probe newly disclosed flaws in Copeland refrigeration controllers",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-20T15:34:46Z",
   "validation": {
     "checked_at": "2026-11-17T23:36:00Z",
     "note": "Reviewed against the original VulnCheck report.",
@@ -182,9 +182,10 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:09:48Z",
-    "note": "14 CVEs, root command execution, end of support, about 1,960 hosts (Onyphe), exploitation Nov 12-13 of two flaws match VulnCheck",
+    "state": "corrected",
+    "at": "2026-11-20T15:35:21Z",
+    "first_at": "2026-11-19T05:09:48Z",
+    "note": "14 CVEs, EOSS no fixes after 16 Mar 2026, exploitation Nov 12-13 match VulnCheck; fixed 1,960 (Onyphe's count, not VulnCheck's), removed 'recover administrator passwords' (page says daily admin code is computable on 5.8.8) and 'within a day' wording; correction filed",
     "flags": []
   }
 }

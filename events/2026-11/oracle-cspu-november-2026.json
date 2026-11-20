@@ -24,10 +24,9 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T18:14:23Z",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-20T15:34:46Z",
   "category": "vuln",
   "date": "2026-11-17",
-  "occurred_at": "2026-11-17T18:00:00Z",
   "date_note": "Oracle quarterly update; coverage Nov 18.",
   "title": "Oracle November 2026 Critical Security Patch Update fixes hundreds of flaws including Java4Shell",
   "org": "Oracle",
@@ -40,7 +39,7 @@
   "severity": 2,
   "status": "official",
   "source_tier": "established",
-  "summary": "Oracle's November Critical Security Patch Update has 655 new patches, per Oracle's advisory. SecurityWeek counts 948 unique CVEs, 640 of them in risk matrices, with about 300 unauthenticated and remotely exploitable and 62 critical. Hyperion has the most fixes (267). Java SE includes the fix for Java4Shell (CVE-2026-114938). No exploitation is reported for the other flaws.",
+  "summary": "Oracle's November Critical Security Patch Update has 655 new patches, per SecurityWeek. SecurityWeek counts 948 unique CVEs, 640 of them in risk matrices; just over 300 patches fix flaws exploitable remotely without authentication and 62 fix critical flaws. Hyperion has the most fixes (267). Java SE includes the fix for Java4Shell (CVE-2026-114938). Oracle makes no mention of exploitation of these flaws.",
   "plain": "Oracle released its big quarterly security update, fixing hundreds of flaws across its products, including the serious Java flaw known as Java4Shell.",
   "exec": "A large quarterly patch load across Oracle products; Java4Shell is already on file as urgent.",
   "action": "Schedule the November 2026 CSPU: patch Java SE first for Java4Shell, then internet-facing Oracle products with unauthenticated flaws.",
@@ -89,10 +88,11 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T16:40:11Z",
-    "note": "SecurityWeek Nov 18: 655 patches, 948 CVEs, 640, about 300, 62, Hyperion 267, Java SE CVE-2026-114938, no exploitation stated all match. Oracle page returned 403 to automated reader; earlier review confirmed 655, Hyperion and Java there.",
+    "state": "corrected",
+    "at": "2026-11-20T15:35:21Z",
+    "first_at": "2026-11-19T16:40:11Z",
+    "note": "SecurityWeek: 655 patches, 948 CVEs, 640, just over 300 patches unauthenticated, 62, Hyperion 267, Java4Shell, Oracle makes no mention of exploitation; summary fixed to patches not CVEs and Oracle mentions no exploitation; removed unverifiable occurred_at; Oracle page 403 to reviewer",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T16:40:11Z"
+  "qa_checked_at": "2026-11-20T15:35:21Z"
 }

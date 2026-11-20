@@ -3,6 +3,7 @@
 // A lease expires on its own (default 45 minutes), so a crashed run never blocks an item for long.
 // { "<kind>:<id>": { "run": "<run id>", "until": "<ISO time>" } }
 import { join } from "node:path";
+import { openSync, writeSync, closeSync, unlinkSync } from "node:fs";
 import { DATA, readJson, writeJson, nowIso } from "./store.mjs";
 
 const FILE = join(DATA, "leases.json");
@@ -45,4 +46,29 @@ export const hostId = (env = process.env) => String(env.CLAUDE_CODE_REMOTE_SESSI
 export function leaderBlocks(leader, run, host, localAlive) {
   if (!leader || leader.run === run) return false;
   return !(leader.host && leader.host === host && !localAlive);
+}
+/** Pure: the live leader lease this loop (run, started at `since`) must give way to, or null. Two loops can each believe they
+ *  lead: a loop that read a stale leases.json starts while another holds the lease, and git-sync's merge of leases.json lets
+ *  the key a commit changed win, so each loop's renewal overwrote the other's and neither ever looked again (2026-11-19 and
+ *  -20: four overlaps, up to 100 minutes, double the plan usage). Every loop now checks each cycle and the OLDER loop keeps
+ *  the lead (earlier `since`, then the smaller run id), so both sides agree on who stops. A lease without `since` was taken
+ *  by code older than this check, which never gives way, so it counts as the oldest. */
+export function yieldsTo(leases, run, since, now = Date.now()) {
+  const l = leaderOf(leases, now); if (!l || l.run === run) return null;
+  const a = String(l.since || ""), b = String(since || "");
+  return a < b || (a === b && String(l.run) < String(run)) ? l : null;
+}
+/** Take this container's loop lock atomically (create-exclusive), so two starts a few seconds apart in one container cannot
+ *  both pass the "is a loop running here?" check while the first is still probing the web (2026-11-19 16:49 and 16:50: two
+ *  loops, pids 3034 and 5023). A lock whose loop is gone (alive(lock) false) is replaced. Returns true when taken. */
+export function takeLock(file, alive, body = {}) {
+  for (let i = 0; i < 2; i++) {
+    try { const fd = openSync(file, "wx"); writeSync(fd, JSON.stringify({ pid: process.pid, beat: nowIso(), ...body })); closeSync(fd); return true; }
+    catch (e) {
+      if (e.code !== "EEXIST") return true;            // cannot lock at all (read-only /tmp): behave as before rather than never run
+      if (alive(readJson(file, null))) return false;
+      try { unlinkSync(file); } catch {}
+    }
+  }
+  return false;
 }

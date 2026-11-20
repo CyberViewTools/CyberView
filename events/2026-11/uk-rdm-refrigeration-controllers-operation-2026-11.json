@@ -15,12 +15,16 @@
   "pin_type": "agency",
   "place": "London, UK",
   "plain": "UK agencies and researchers worked to secure internet-exposed supermarket fridge controllers from RDM, after attacks on other makers' systems in Europe.",
-  "products": ["RDM refrigeration controller", "Danfoss", "Copeland"],
+  "products": [
+    "RDM refrigeration controller",
+    "Danfoss",
+    "Copeland"
+  ],
   "report": {
     "doc_id": "RDM-SA-2026-001",
     "iocs_available": false,
     "key_findings": [
-      "Pen Test Partners says UK supermarkets mostly use RDM controllers and were largely not hit by the Danfoss incident.",
+      "Pen Test Partners says Danfoss controllers are not particularly popular in the UK and the more popular controllers there are from RDM.",
       "Pen Test Partners says it is not publishing exploits or the discovery method.",
       "RDM has released new firmware, per Pen Test Partners."
     ],
@@ -28,24 +32,40 @@
     "publisher": "Pen Test Partners",
     "publisher_type": "vendor",
     "read_depth": "full",
-    "recommendations": ["Take controllers off the public internet."],
+    "recommendations": [
+      "Take controllers off the public internet."
+    ],
     "url": "https://www.pentestpartners.com/security-blog/the-fridge-hack-uk-supermarkets-narrowly-avoided/"
   },
   "sector": "Retail and food",
   "severity": 2,
   "source_tier": "established",
   "sources": [
-    {"name": "Pen Test Partners", "url": "https://www.pentestpartners.com/security-blog/the-fridge-hack-uk-supermarkets-narrowly-avoided/"},
-    {"name": "Security.NL (relaying BBC)", "url": "https://www.security.nl/posting/962433/VK+voerde+grote+operatie+uit+om+koelsystemen+supermarkten+te+beveiligen"}
+    {
+      "name": "Pen Test Partners",
+      "url": "https://www.pentestpartners.com/security-blog/the-fridge-hack-uk-supermarkets-narrowly-avoided/"
+    },
+    {
+      "name": "Security.NL (relaying BBC)",
+      "url": "https://www.security.nl/posting/962433/VK+voerde+grote+operatie+uit+om+koelsystemen+supermarkten+te+beveiligen"
+    }
   ],
   "status": "developing",
-  "summary": "Pen Test Partners says a significant vulnerability in RDM refrigeration controllers, found by Neil McCourt of Omega Solutions and validated by its own researcher, led NCSC to issue an urgent alert to UK supermarkets. Security.NL, citing the BBC, reports a quiet operation by NCSC, FSA, Defra and others that took exposed RDM systems offline and patched them. No CVE or exploit details are published.",
+  "summary": "Pen Test Partners says a significant vulnerability in RDM refrigeration controllers, found by Neil McCourt of Omega Solutions and validated by its own researcher, led NCSC to issue an urgent alert to UK supermarkets. It calls the issue largely mitigated, though smaller cold chain operators may still be exposed. Security.NL, citing the BBC, reports a quiet operation that took exposed RDM systems offline and patched them. No CVE or exploit details are published.",
   "tags": [],
-  "title": "UK agencies and Pen Test Partners secure exposed RDM supermarket refrigeration controllers",
-  "updated_at": "2026-11-20T10:25:03Z",
+  "title": "UK agencies and Pen Test Partners work to secure exposed RDM supermarket refrigeration controllers",
+  "updated_at": "2026-11-20T10:27:08Z",
   "validation": {
     "checked_at": "2026-11-20T10:25:03Z",
     "note": "Pen Test Partners read in full; Security.NL read, relaying the BBC, which could not be loaded. Operation details rest on that relay.",
     "state": "single_source"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-20T10:27:21Z",
+    "first_at": "2026-11-20T10:27:21Z",
+    "note": "Title said agencies secured systems; PTP says largely mitigated, smaller operators may still be exposed. Key finding claimed supermarkets mostly use RDM; page says RDM is the more popular UK controller. Summary now carries the qualifier. Date, NCSC alert, finder, validator, firmware, advisory id che",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-20T10:27:21Z"
 }

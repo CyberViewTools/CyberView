@@ -14,6 +14,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { DATA, ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
 import {
   SOURCES, REGIONS, COUNTRIES, OPERATORS, WEATHER, loadConfig, DEFAULT_CFG, str, readLines, checkSeriesLine, verifySeries,
+  EIA_BA, basFor, dedupeSeries, dedupeHistory, SIGNAL_SOURCES,
 } from "./grid.mjs";
 import { newsLeads } from "./grid-news.mjs";
 
@@ -76,17 +77,30 @@ export function anomalies(series, now = Date.now(), cfg = DEFAULT_CFG, incidents
 // ---------- corroboration ----------
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-export const POWER_WORDS = /\b(blackouts?|power outages?|power cuts?|apag[oó]n(es)?|pannes?|coupures? de courant|stromausfall|load[- ]shedding|grid)\b/i;
-/** Place names a headline may use for an incident: the region's parts, the operator, the country. */
+// power words for leads that are not already classified as power outages (grid-news reports skip this check)
+export const POWER_WORDS = /(^|[^\p{L}])(blackouts?|power outages?|power cuts?|without power|knocks? out power|knocked out power|power (is |was )?restored|apag[oó]n(es)?|apag[aã]o|corte de luz|falta de luz|pannes?|coupures? de courant|stromausfall|stroomstoring|awaria pr[aą]du|load[- ]shedding|grid|знеструмлен\p{L}*|отключени[ея] (электричества|света)|відключенн\p{L}* світла)(?![\p{L}])|停電|정전|ไฟดับ|mất điện|انقطاع الكهرباء/iu;
+// countries too large for a country-wide signal (IODA, Cloudflare Radar) to say anything about one region's outage
+export const LARGE_COUNTRIES = new Set(["US", "CA", "AU", "BR", "RU", "CN", "IN", "AR", "KZ", "MX", "ID", "DZ", "SA", "IR", "MN", "PE", "CL", "CO", "LY", "SD"]);
+export const NATIONAL_CUSTOMERS = 250000;
+export const NEAR_KM = 300;
+/** Is an incident nationally significant, so a country-wide signal can speak to it? Small countries always; large ones
+ *  when the incident covers the country (its region is the country) or reaches NATIONAL_CUSTOMERS. */
+export function national(inc) {
+  if (!LARGE_COUNTRIES.has(inc.country)) return true;
+  const cname = COUNTRIES[inc.country] ? COUNTRIES[inc.country][0] : "", rname = (REGIONS[keyOf(inc)] || {}).name || inc.region;
+  return rname === cname || inc.region === cname || (Number(inc.peak_customers) || 0) >= NATIONAL_CUSTOMERS;
+}
+/** Place names a headline may use for an incident: the region's parts, the operator, the country (the country only when a
+ *  country-wide match can speak to the incident: see national()). */
 export function placeNames(inc) {
   const r = (REGIONS[keyOf(inc)] || {}).name || inc.region || "", out = new Set();
   for (const part of r.replace(/[()]/g, ",").split(/,| and /)) { const p = part.trim(); if (p.length >= 4) out.add(p); }
   if (!/^[A-Z]{2,4}\d$/.test(inc.region || "") && String(inc.region || "").length >= 4) out.add(inc.region);
   if (SOURCES[inc.source]) out.add(SOURCES[inc.source].name);
-  if (COUNTRIES[inc.country]) out.add(COUNTRIES[inc.country][0]);
+  if (COUNTRIES[inc.country] && national(inc)) out.add(COUNTRIES[inc.country][0]);
   return [...out];
 }
-const nameRe = (names) => new RegExp(`(^|[^a-z0-9])(${names.map((n) => esc(fold(n))).join("|")})([^a-z0-9]|$)`);
+const nameRe = (names) => (names.length ? new RegExp(`(^|[^a-z0-9])(${names.map((n) => esc(fold(n))).join("|")})([^a-z0-9]|$)`) : /(?!)/);
 const httpsPublisher = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) && !/^https:\/\/(news\.google\.com|www\.bing\.com|bing\.com)\//.test(u) ? String(u).slice(0, 300) : "");
 const dist = (a, b) => {           // km, haversine
   const r = Math.PI / 180, dl = (b.lat - a.lat) * r, dg = (b.lng - a.lng) * r;
@@ -95,45 +109,65 @@ const dist = (a, b) => {           // km, haversine
 };
 const overlaps = (a0, a1, b0, b1) => a0 <= b1 && b0 <= a1;
 
-/** Independent signals for one incident within +-6 h of its span, in its country (or region / within 500 km for GDACS).
+/** Independent signals for one incident within +-6 h of its span, near it (logic-2, sources-1):
+ *   internet (IODA, Cloudflare Radar): country-wide signals, so they count only for a nationally significant incident
+ *     (national()) and say "nationwide"; a Radar annotation that names the incident's region counts anywhere
+ *   demand (EIA): only the incident's own balancing authority (basFor) or one within NEAR_KM of it
+ *   disaster (GDACS): same country by name, or within 500 km
+ *   operator (ENTSO-E): same country (European bidding zones are national)
+ *   news: grid-news reports (already classified as current outages) in the same country within NEAR_KM or naming the
+ *     region; other leads need a power word and the region, operator or (when national) country in the headline
  *  ctx = { ioda: context file, gdacs: context file, leads: [lead], items: live items (keyed sources), now }.
  *  -> { id, signals: [{ kind, source, detail, url }], score: number of distinct kinds }. The incident is the operator kind. */
 export function corroborate(inc, ctx = {}) {
   const now = ctx.now || Date.now(), w0 = ms(inc.opened_at) - WINDOW_H * H, w1 = (inc.closed_at ? ms(inc.closed_at) : now) + WINDOW_H * H;
-  const country = inc.country, cname = COUNTRIES[country] ? fold(COUNTRIES[country][0]) : "", signals = [];
+  const country = inc.country, cname = COUNTRIES[country] ? fold(COUNTRIES[country][0]) : "", signals = [], nat = national(inc);
+  const here = inc.lat != null && inc.lng != null ? inc : (REGIONS[keyOf(inc)] || null);
+  const near = (o, km = NEAR_KM) => !!here && o && o.lat != null && o.lng != null && dist(here, o) <= km;
+  const re = nameRe(placeNames(inc)), regionRe = nameRe(placeNames({ ...inc, country: "" }).filter((n) => n.length >= 4));
   signals.push({ kind: "operator", source: inc.source, detail: str(inc.name, 160), url: inc.url || "" });
-  // IODA's summary covers the 24 hours before it was fetched
+  // IODA's summary covers the 24 hours before it was fetched; one item per country: a nationwide signal
   const io = ctx.ioda || {}, ioT = ms(io.fetched_at);
-  if (isFinite(ioT) && overlaps(ioT - 24 * H, ioT, w0, w1)) {
+  if (nat && isFinite(ioT) && overlaps(ioT - 24 * H, ioT, w0, w1)) {
     for (const x of (io.items || []).filter((x) => x && x.code === country).slice(0, 1))
-      signals.push({ kind: "internet", source: "ioda", detail: str(`IODA: internet disruption signal in ${x.name} (${(x.signals || []).join(", ")})`, 160), url: x.url || "" });
+      signals.push({ kind: "internet", source: "ioda", detail: str(`IODA: nationwide internet disruption signal in ${x.name} (${(x.signals || []).join(", ")})`, 160), url: x.url || "" });
   }
   // GDACS orange and red alerts: same country by name, or within 500 km of the incident
   for (const g of ((ctx.gdacs || {}).items || [])) {
     if (!g) continue;
     const g0 = ms(g.from && !/Z$/.test(g.from) ? g.from + "Z" : g.from), g1 = g.to ? ms(!/Z$/.test(g.to) ? g.to + "Z" : g.to) : g0;
     if (!isFinite(g0) || !overlaps(g0, isFinite(g1) ? g1 : g0, w0, w1)) continue;
-    const near = cname && fold(g.country).split(/,\s*/).includes(cname)
-      || (inc.lat != null && g.lat != null && dist(inc, g) <= 500);
-    if (near) signals.push({ kind: "disaster", source: "gdacs", detail: str(`GDACS ${g.level} alert: ${g.type}, ${g.name}`, 160), url: g.url || "" });
+    const close = (nat && cname && fold(g.country).split(/,\s*/).includes(cname)) || near(g, 500);
+    if (close) signals.push({ kind: "disaster", source: "gdacs", detail: str(`GDACS ${g.level} alert: ${g.type}, ${g.name}`, 160), url: g.url || "" });
   }
-  // keyed sources (when connected): Radar power outages (internet), EIA demand drop (demand), ENTSO-E unavailability (operator)
+  // keyed sources (when connected)
+  const bas = new Set(basFor(inc.source, inc.region));
   for (const it of ctx.items || []) {
     if (!it || it.country !== country) continue;
     const t0 = ms(it.started_at), t1 = it.restore_est ? ms(it.restore_est) : now;
     if (!isFinite(t0) || !overlaps(t0, isFinite(t1) ? t1 : now, w0, w1)) continue;
-    if (it.source === "cfradar") signals.push({ kind: "internet", source: "cfradar", detail: str(`Cloudflare Radar: ${it.cause} (${it.area})`, 160), url: it.url || "" });
-    else if (it.source === "eia") signals.push({ kind: "demand", source: "eia", detail: str(`EIA: ${it.area} ${it.cause}`, 160), url: it.url || "" });
-    else if (it.source === "entsoe" && signals.filter((s) => s.source === "entsoe").length < 3)
+    if (it.source === "cfradar") {
+      const regional = regionRe.test(fold(it.area || ""));
+      if (regional || nat) signals.push({ kind: "internet", source: "cfradar", detail: str(`Cloudflare Radar${regional ? "" : ", nationwide signal"}: ${it.cause} (${it.area})`, 160), url: it.url || "" });
+    } else if (it.source === "eia") {
+      const ba = String(it.id || "").replace(/^eia:/, "").replace(/-\d{4}-\d{2}-\d{2}T\d{2}$/, "");
+      const loc = EIA_BA[ba] ? { lat: EIA_BA[ba][0], lng: EIA_BA[ba][1] } : null;
+      if (bas.has(ba) || near(loc)) signals.push({ kind: "demand", source: "eia", detail: str(`EIA: ${it.area} ${it.cause}`, 160), url: it.url || "" });
+    } else if (it.source === "entsoe" && signals.filter((s) => s.source === "entsoe").length < 3)
       signals.push({ kind: "operator", source: "entsoe", detail: str(`ENTSO-E: ${it.area}, ${it.cause}`, 160), url: it.url || "" });
   }
-  // news leads: a power word and the region, operator or country in the headline (counted, titles only, at most 5)
-  const re = nameRe(placeNames(inc)), seen = new Set();
+  // news (counted, titles only, at most 5)
+  const seen = new Set();
   for (const l of ctx.leads || []) {
     if (!l || !l.title || signals.filter((s) => s.kind === "news").length >= 5) continue;
     const t = ms(l.published) || ms(l.seen_at);
-    if (!(t >= w0 && t <= w1) || !POWER_WORDS.test(l.title) || !re.test(fold(l.title))) continue;
-    const k = fold(l.title).replace(/\W+/g, " ").trim();
+    if (!(t >= w0 && t <= w1)) continue;
+    const title = fold(l.title);
+    if (l.via === "grid-news") {
+      // already classified as a current power outage by scripts/grid-news.mjs: same country, and near or naming the place
+      if (l.country !== country || !(near(l) || re.test(title) || (nat && l.how === "country"))) continue;
+    } else if (!POWER_WORDS.test(l.title) || !re.test(title)) continue;
+    const k = title.replace(/\W+/g, " ").trim();
     if (seen.has(k)) continue;
     seen.add(k);
     signals.push({ kind: "news", source: str(l.source, 60) || "news", detail: str(l.title, 160), url: httpsPublisher(l.url) });

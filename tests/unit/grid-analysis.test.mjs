@@ -91,11 +91,16 @@ const LEADS = [
 ];
 
 test("corroborate: one signal per independent kind, matched by country / region and the +-6 h window", () => {
-  const c = corroborate(INC, { ioda: IODA, gdacs: GDACS, leads: LEADS, items: [], now: NOW });
+  // an 82,000-customer outage in Quebec is not national: Canada-wide IODA says nothing about it (logic-2)
+  const c0 = corroborate(INC, { ioda: IODA, gdacs: GDACS, leads: LEADS, items: [], now: NOW });
+  assert.deepEqual(c0.signals.map((s) => [s.kind, s.source]), [["operator", "hydroquebec"], ["disaster", "gdacs"], ["news", "Radio-Canada"], ["news", "CBC News"]]);
+  // a nationally significant one (250,000 or more) takes it, labelled nationwide
+  const big = { ...INC, peak_customers: 300000 };
+  const c = corroborate(big, { ioda: IODA, gdacs: GDACS, leads: LEADS, items: [], now: NOW });
   assert.equal(c.id, INC.id);
   assert.deepEqual(c.signals.map((s) => [s.kind, s.source]), [["operator", "hydroquebec"], ["internet", "ioda"], ["disaster", "gdacs"], ["news", "Radio-Canada"], ["news", "CBC News"]]);
   assert.equal(c.score, 4);
-  assert.match(c.signals[1].detail, /Canada \(bgp, ping-slash24\)/);
+  assert.match(c.signals[1].detail, /nationwide internet disruption signal in Canada \(bgp, ping-slash24\)/);
   assert.match(c.signals[2].detail, /orange alert: wildfire, Wildfire near Quebec City/);
   assert.equal(c.signals[4].url, "");                                                    // a news.google.com redirect is never cited
   assert.equal(c.signals[3].url, "https://ici.radio-canada.ca/x");
@@ -111,8 +116,10 @@ test("corroborate: keyed signals (Radar internet, EIA demand, ENTSO-E operator) 
     item("cfradar", "CU", "2026-11-19T11:00:00Z"), item("eia", "ZA", "2026-11-19T13:00:00Z"),
     item("entsoe", "ZA", "2026-11-19T13:00:00Z"), item("entsoe", "ZA", "2026-11-19T13:00:00Z"), item("entsoe", "ZA", "2026-11-19T13:00:00Z"), item("entsoe", "ZA", "2026-11-19T13:00:00Z")];
   const c = corroborate(za, { ioda: { fetched_at: "2026-11-18T00:00:00Z", items: IODA.items }, gdacs: GDACS, leads: [], items, now: NOW });
-  assert.deepEqual(c.signals.map((s) => s.source), ["eskom", "cfradar", "eia", "entsoe", "entsoe", "entsoe"]);   // IODA fetched too long ago; ENTSO-E capped at 3
-  assert.equal(c.score, 3);                                                              // operator, internet, demand
+  // IODA fetched too long ago; ENTSO-E capped at 3; an EIA item of no known balancing authority never counts (logic-2)
+  assert.deepEqual(c.signals.map((s) => s.source), ["eskom", "cfradar", "entsoe", "entsoe", "entsoe"]);
+  assert.equal(c.score, 2);                                                              // operator, internet (Eskom covers the country)
+  assert.match(c.signals[1].detail, /nationwide signal/);
   // the window: an incident closed at 13:00 accepts signals up to 19:00, not after
   const closed = { ...INC, closed_at: "2026-11-19T13:00:00Z" };
   assert.equal(corroborate(closed, { leads: [lead("Hydro-Québec power outage update", "2026-11-19T18:59:00Z")], now: NOW }).score, 2);
@@ -181,7 +188,7 @@ test("feedback: anomaly with score >= 3, or internet without a weather cause; lo
 test("analyze -> analysis.json shape; verify names the broken field; readSeries skips bad lines", () => {
   const series = [...fourWeeks(() => 100, { source: "hydroquebec", region: "Quebec" }), pt(NOW, 82000, { source: "hydroquebec", region: "Quebec" })];
   const live = { sources: { hydroquebec: { ok: true, error: "" }, eia: { ok: false, error: "not connected (no key saved for api.eia.gov)" } }, items: [] };
-  const a = analyze({ incidents: { open: [INC], closed: [] }, series, live, ioda: IODA, gdacs: GDACS, leads: LEADS, now: NOW });
+  const a = analyze({ incidents: { open: [{ ...INC, peak_customers: 300000 }], closed: [] }, series, live, ioda: IODA, gdacs: GDACS, leads: LEADS, now: NOW });
   assert.deepEqual(checkAnalysis(a), []);
   assert.equal(a.anomalies[0].id, INC.id);
   assert.equal(a.corroboration[0].score, 4);
@@ -206,4 +213,56 @@ test("analyze -> analysis.json shape; verify names the broken field; readSeries 
   assert.deepEqual(v[0].errors, ["line 2: not JSON", "line 3.at: not the ISO start of a 15-minute slot"]);
   assert.deepEqual(readSeries(join(root, "data", "grid", "series"), 3, NOW).map((p) => p.at), [iso(NOW)]);
   assert.deepEqual(checkAnalysis(null), ["root: not an object"]);
+});
+
+// ---------- review findings 2026-11-20 (grid-fixes lane) ----------
+const LADWP = { id: "grid-ladwp-los-angeles-202611200028", source: "ladwp", country: "US", region: "Los Angeles", kind: "outage",
+  name: "LADWP: 5,451 customers without power", opened_at: "2026-11-20T00:28:00Z", closed_at: "", lat: 34.05, lng: -118.35,
+  peak_customers: 5451, planned_share: 0, causes: [], url: "https://www.ladwp.com/outages/power-outage-map" };
+const eia = (ba, name, o = {}) => ({ id: `eia:${ba}-2026-11-19T23`, source: "eia", country: "US", region: name, area: `${name} (${ba})`, lat: null, lng: null,
+  customers: null, kind: "supply_warning", planned: false, cause: "demand 2292 MWh: 36% under forecast, 28% under the same hour yesterday", level: null,
+  started_at: "2026-11-19T23:00:00Z", restore_est: "", url: "https://www.eia.gov/electricity/gridmonitor/", ...o });
+test("logic-2/sources-1: an Arizona EIA drop does not corroborate Los Angeles; LADWP's own authority and a near one do", () => {
+  const now = Date.parse("2026-11-20T01:40:00Z");
+  const srp = corroborate(LADWP, { items: [eia("SRP", "Salt River Project Agricultural Improvement and Power District")], now });
+  assert.deepEqual(srp.signals.map((s) => s.kind), ["operator"]);                 // SRP is Phoenix, ~590 km away
+  assert.equal(corroborate(LADWP, { items: [eia("LDWP", "Los Angeles Department of Water and Power")], now }).score, 2);
+  assert.equal(corroborate(LADWP, { items: [eia("CISO", "California Independent System Operator")], now }).score, 1);   // CAISO's centre is 400 km off
+  // a state region of DOE ODIN takes every authority serving that state
+  const tx = { ...LADWP, id: "grid-doe-odin-texas-202611200028", source: "doe-odin", region: "Texas", lat: 31.5, lng: -99.3 };
+  assert.equal(corroborate(tx, { items: [eia("ERCO", "ERCOT")], now }).score, 2);
+  // country-wide internet signals and the country name in a headline do not reach a regional US incident
+  const radar = { id: "cfradar:a-US", source: "cfradar", country: "US", region: "United States", area: "United States", lat: 39.8, lng: -98.6, customers: null,
+    kind: "outage", planned: false, cause: "Power outage", level: null, started_at: "2026-11-20T00:00:00Z", restore_est: "", url: "" };
+  const ioda = { fetched_at: "2026-11-20T01:00:00Z", items: [{ code: "US", name: "United States", signals: ["bgp"], url: "" }] };
+  const c = corroborate(LADWP, { items: [radar], ioda, leads: [lead("United States blackout", "2026-11-20T00:40:00Z")], now });
+  assert.equal(c.score, 1);
+  // a Radar annotation that names the region does count
+  assert.equal(corroborate(LADWP, { items: [{ ...radar, area: "Los Angeles" }], now }).score, 2);
+});
+
+test("logic-2: EIA demand signals sit at their balancing authority, not the US centroid", async () => {
+  const { parseEia, EIA_BA } = await import("../../scripts/grid.mjs");
+  const { readFileSync } = await import("node:fs");
+  const d = JSON.parse(readFileSync(new URL("../fixtures/grid/eia.json", import.meta.url), "utf8"));
+  // synthetic from the real reply (as in grid.test.mjs): PJM's two complete hours cut by 40%
+  const rows = d.response.data, newest = rows.filter((r) => r.type === "D").map((r) => r.period).sort().pop();
+  const hours = [...new Set(rows.filter((r) => r.respondent === "PJM" && r.type === "D").map((r) => r.period))].sort().reverse();
+  const cut = { response: { data: rows.map((r) => r.respondent === "PJM" && r.type === "D" && [hours[1], hours[2]].includes(r.period) ? { ...r, value: String(Math.round(Number(r.value) * 0.6)) } : r) } };
+  const x = parseEia(cut, Date.parse(newest + ":30:00Z")).find((i) => /^eia:PJM-/.test(i.id));
+  assert.ok(x, "a PJM signal");
+  assert.deepEqual([x.lat, x.lng], [EIA_BA.PJM[0], EIA_BA.PJM[1]]);
+});
+
+test("logic-6: grid-news reports count without power words (already classified), by country and nearness; others widened", () => {
+  const now = Date.parse("2026-11-20T01:40:00Z");
+  const oak = { ...LADWP, id: "grid-pge-oakland-1", source: "doe-odin", region: "California", lat: 37.8, lng: -122.27, opened_at: "2026-11-19T22:00:00Z" };
+  const gn = (title, o = {}) => ({ seen_at: "2026-11-19T23:00:00Z", published: "2026-11-19T23:00:00Z", source: "SFGATE", title, url: "https://www.sfgate.com/x", via: "grid-news",
+    country: "US", lat: 37.8, lng: -122.27, how: "place", ...o });
+  assert.equal(corroborate(oak, { leads: [gn("Winter storm knocks out power in downtown Oakland")], now }).score, 2);
+  assert.equal(corroborate(oak, { leads: [gn("Over 5,545 Bay Area Customers Without Power", { lat: 37.77, lng: -122.42 })], now }).score, 2);
+  assert.equal(corroborate(oak, { leads: [gn("Outage in Phoenix", { lat: 33.4, lng: -112 })], now }).score, 1);              // same country, far
+  assert.equal(corroborate(oak, { leads: [gn("Oakland outage", { country: "GB" })], now }).score, 1);                     // another country
+  for (const t of ["Winter storm knocks out power in downtown Oakland", "5,545 customers without power", "Корти: знеструмлення в Києві", "ไฟดับ กรุงเทพ", "停電 東京", "انقطاع الكهرباء في بغداد", "Apagão em São Paulo", "Corte de luz en Lima"])
+    assert.ok(POWER_WORDS.test(t), t);
 });

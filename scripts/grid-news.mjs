@@ -431,7 +431,8 @@ export function group(prevItems, reports, now = Date.now(), cfg = {}) {
 /** The news reports as leads for scripts/grid-analysis.mjs corroborate() (kind "news"; titles only). */
 export function newsLeads(d) {
   return ((d && Array.isArray(d.items)) ? d.items : []).flatMap((it) => (it && Array.isArray(it.publishers) ? it.publishers : [])
-    .map((p) => ({ seen_at: it.first_seen, published: p.published, source: p.name, title: p.title, url: p.url, via: "grid-news", country: it.country })));
+    .map((p) => ({ seen_at: it.first_seen, published: p.published, source: p.name, title: p.title, url: p.url, via: "grid-news", country: it.country,
+      lat: it.lat, lng: it.lng, how: COUNTRIES[it.country] && it.place === COUNTRIES[it.country][0] ? "country" : "place" })));
 }
 
 /** Shape check of data/grid/news.json -> list of problems (empty = fine). */

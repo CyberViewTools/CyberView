@@ -431,6 +431,37 @@ export function entsoeToken(env = process.env) {
 // hour a day earlier, for two complete hours in a row, in an authority that carries at
 // least EIA_MIN_MWH, is a signal (lost load, or a data fault: EIA's data are preliminary). Signals only: they corroborate
 // incidents and never open one. The key is added by the network proxy (header X-Api-Key, tested 2026-11-19).
+// US balancing authorities (EIA-930 respondent codes): an approximate centre of the area each one runs and the states it
+// serves (approximate: several areas cross state lines). A demand signal is placed at its authority, never at the US
+// centroid, and corroborates only an incident of that authority or within EIA_NEAR_KM of it (scripts/grid-analysis.mjs).
+// An authority not listed here gets no location and corroborates nothing.
+export const EIA_BA = {
+  CISO: [37.2, -119.5, "CA"], LDWP: [34.05, -118.25, "CA"], BANC: [38.6, -121.4, "CA"], IID: [32.9, -115.5, "CA"], TIDC: [37.5, -120.8, "CA"],
+  ERCO: [31.0, -97.5, "TX"], EPE: [31.8, -106.4, "TX NM"], SRP: [33.4, -112.0, "AZ"], AZPS: [33.9, -112.3, "AZ"], TEPC: [32.2, -110.9, "AZ"],
+  WALC: [34.5, -114.3, "AZ NV"], NEVP: [36.2, -115.1, "NV"], PACE: [41.5, -111.5, "UT WY ID"], PACW: [44.5, -122.5, "OR WA CA"],
+  BPAT: [46.0, -120.5, "WA OR ID MT"], PGE: [45.5, -122.7, "OR"], PSEI: [47.6, -122.3, "WA"], SCL: [47.6, -122.3, "WA"], TPWR: [47.25, -122.45, "WA"],
+  AVA: [47.6, -117.4, "WA ID"], IPCO: [43.6, -116.2, "ID OR"], NWMT: [46.6, -112.0, "MT"], WACM: [40.5, -105.0, "CO WY NE"], PSCO: [39.7, -105.0, "CO"],
+  PNM: [35.1, -106.6, "NM"], SWPP: [38.0, -98.0, "KS OK NE SD ND"], MISO: [41.0, -90.0, "MN WI IA IL IN MI MO AR LA MS ND"],
+  PJM: [40.0, -78.0, "PA NJ MD DE DC VA WV OH KY IL IN MI NC"], NYIS: [42.9, -75.5, "NY"], ISNE: [42.5, -71.8, "MA CT NH ME VT RI"],
+  TVA: [35.9, -86.4, "TN AL MS KY"], SOCO: [32.8, -85.0, "GA AL MS"], DUK: [35.5, -80.5, "NC SC"], CPLE: [35.3, -78.6, "NC"], CPLW: [35.6, -82.6, "NC"],
+  SC: [33.6, -80.0, "SC"], SCEG: [34.0, -81.0, "SC"], FPL: [27.0, -80.5, "FL"], FPC: [28.6, -82.0, "FL"], TEC: [27.9, -82.4, "FL"], JEA: [30.3, -81.7, "FL"],
+  FMPP: [28.5, -81.4, "FL"], TAL: [30.45, -84.3, "FL"], SEC: [29.0, -82.0, "FL"], AECI: [37.5, -93.0, "MO"], LGEE: [38.0, -85.5, "KY"],
+};
+// the authority each US operator source sits in (doe-odin and other state regions: every authority serving that state)
+export const SOURCE_BA = { ladwp: ["LDWP"], ercot: ["ERCO"], "caiso-emergency": ["CISO"], "pacific-power": ["PACW"], "rocky-mountain-power": ["PACE"],
+  "nashville-electric": ["TVA"], eversource: ["ISNE"], "nyiso-realtime-events": ["NYIS"] };
+/** Balancing authorities of an incident's source and region (US only; [] elsewhere). */
+export function basFor(source, region = "") {
+  if (SOURCE_BA[source]) return SOURCE_BA[source];
+  const st = Object.entries(US_STATE_ABBR).find(([, n]) => n === region);
+  return st ? Object.keys(EIA_BA).filter((b) => EIA_BA[b][2].split(" ").includes(st[0])) : [];
+}
+const US_STATE_ABBR = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware",
+  DC: "District of Columbia", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky",
+  LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana",
+  NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah",
+  VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming" };
 export const EIA_DROP = 0.25;     // weather moves demand 15-20% day to day (AECI, 2026-11-19); lost load is bigger
 export const EIA_MIN_MWH = 500, EIA_MAX_AGE_H = 6, EIA_WINDOW_H = 30;
 export function parseEia(d, now = Date.now()) {
@@ -460,8 +491,9 @@ export function parseEia(d, now = Date.now()) {
     const f0 = fall(period, h), f1 = fall(both[1][0], both[1][1]);
     if (!f0 || !f1 || [f0, f1].some((f) => f.vsForecast < EIA_DROP || f.vsYesterday < EIA_DROP)) continue;
     const drop = f0.vsForecast;
+    const loc = EIA_BA[ba] ? { lat: EIA_BA[ba][0], lng: EIA_BA[ba][1] } : { lat: null, lng: null };
     out.push(item({ source: "eia", id: `eia:${ba}-${period}`, country: "US", region: str(b.name || ba, 60), area: str(`${b.name || ba} (${ba})`, 120),
-      ...centroid("US"), customers: null, kind: "supply_warning", planned: false,
+      ...loc, customers: null, kind: "supply_warning", planned: false,
       cause: str(`demand ${Math.round(h.D)} MWh: ${Math.round(drop * 100)}% under forecast, ${Math.round(f0.vsYesterday * 100)}% under the same hour yesterday`, 120),
       level: null, started_at: isoS(at), restore_est: "", url: SOURCES.eia.page }));
   }
@@ -928,7 +960,7 @@ export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; olde
 const SLOT = 15 * 6e4;
 export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
 // signal sources report a grid level, not customers: built-in ones plus any source file entry with signal: true
-const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES).filter((k) => SOURCES[k].signal === true || SOURCES[k].kind === "signal")]);
+export const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES).filter((k) => SOURCES[k].signal === true || SOURCES[k].kind === "signal")]);
 /** Live items of the sources that answered (okSources: their keys) -> one point per operator region for the slot of `now`. */
 export function seriesPoints(items, okSources, now = Date.now()) {
   const at = slotIso(now), ok = new Set(okSources || []), groups = summarize((items || []).filter((x) => x && ok.has(x.source) && OPERATORS.includes(x.source)));

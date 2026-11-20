@@ -80,8 +80,8 @@ and `build.yml` must be among the ones that mount it.
 **Done 2026-11-20 (B2) by pull request**, after a rehearsal showed the B2 pull below deletes `./data`'s files in a
 switched checkout (git removes the paths on disk even under the sparse checkout). Fixed first: `pullAll` moves
 `./data` aside for that one pull, commits that would delete never-deleted records are undone (`protectDeletes`), and
-the research loop records its code commit and hands over when main moves on, so B2 was merged only once the loop's
-leader commit showed code with the safe pull. B4 changed: `data-forward.yml` stays as a safety net. B1 and B3 are the
+B2 was merged at the owner's request before the research loop had restarted on the safe pull; that checkout lost
+`status.json`'s routine times (no records), which were restored from the last good commit. B4 changed: `data-forward.yml` stays as a safety net. B1 and B3 are the
 owner's (repository settings).
 
 ### B1. Allow auto-merge

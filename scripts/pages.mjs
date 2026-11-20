@@ -96,7 +96,7 @@ export async function buildPages() {
       } catch { credits = ""; }
       body = body.replace("    <li data-grid-credits></li>\n", credits ? `    ${credits}\n` : "");
     }
-    // the data access page lists config/data-access.json (scripts/access.mjs); access.js filters it and copies the request
+    // the data access page lists config/data-access.json (scripts/access.mjs); access.js filters it and copies each source's own request
     let page = {};
     if (name === "access") {
       const { about, numbers, fill } = await import("./about.mjs"), { load, accessSection, problems } = await import("./access.mjs");

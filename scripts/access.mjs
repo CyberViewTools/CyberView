@@ -4,8 +4,9 @@
 //     same check on the real file, so a broken entry fails CI
 //   - renders the generated part of the page (scripts/pages.mjs calls accessSection() for legal/access.html; entries that
 //     fail the check are left out and reported, so one bad entry can never hold back a build)
-//   - holds the one request text the owner sends himself (the page only copies it; it never sends anything)
-// Run: node scripts/access.mjs check | show
+//   - checks each entry's own request text (`request`: at most 900 characters, signed by CyberView, never by a person),
+//     which the owner sends himself (the page only copies it; it never sends anything), and its ask order (`priority`)
+// Run: node scripts/access.mjs check | show [key]
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -29,37 +30,36 @@ export const COUNTRIES = {
   UA: "Ukraine", TR: "Turkey", AU: "Australia", NZ: "New Zealand", JP: "Japan", TW: "Taiwan", KR: "South Korea", PH: "Philippines",
   MY: "Malaysia", SG: "Singapore", IN: "India", PK: "Pakistan", BD: "Bangladesh", ID: "Indonesia", VN: "Vietnam", TH: "Thailand",
   ZA: "South Africa", KE: "Kenya", NG: "Nigeria", ZM: "Zambia", ZW: "Zimbabwe", CL: "Chile", MX: "Mexico", PR: "Puerto Rico",
-  CO: "Colombia", PE: "Peru", IL: "Israel", LB: "Lebanon", IQ: "Iraq", AE: "United Arab Emirates", SA: "Saudi Arabia", KW: "Kuwait",
+  CO: "Colombia", PE: "Peru", BR: "Brazil", LK: "Sri Lanka", RU: "Russia", IL: "Israel", LB: "Lebanon", IQ: "Iraq", AE: "United Arab Emirates", SA: "Saudi Arabia", KW: "Kuwait",
 };
 export const SITE = "https://xanderhutch.github.io/CyberView/";
+export const KINDS = { grid: "Power grid and outage data", cyber: "Cyber security sources" };
+// Every request ends with this line and names no person and no personal address.
+export const SIGN = "\u2014 CyberView (https://xanderhutch.github.io/CyberView)";
 
-// The one request. [operator] and [feed] are filled in by the page's "Copy request" button.
-export const REQUEST = `Subject: Request to show [operator] outage information on CyberView
+// The shape every request follows. Each entry carries its own text (`request`), written for that operator and that feed.
+export const REQUEST = `Subject: Permission to show [feed] on CyberView
 
-Hello,
+Hello [operator] team,
 
-I run CyberView (${SITE}), a free, non-commercial website that gives cyber security defenders a live picture of threats worldwide, with power outages shown as context.
+CyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and infrastructure outages for security defenders.
 
-I would like to use your [feed]. CyberView only uses sources whose terms and robots.txt allow it, and it never works around a block, so I am asking first.
+We would like to read [feed] automatically every few minutes and show it on the map as context, credited to [operator] with a link back to your page. We would never resell it, collect personal data or call an outage an attack.
 
-What CyberView would do with it:
-- show your current outages or grid alerts as context, never as a claim about their cause
-- credit [operator] and link to your own outage map or page
-- check for updates every few minutes, no more often
-- collect no personal data and make no commercial use of the data
-
-Would you allow this? If you would rather I use a particular feed, API or licence, please point me to it. I will follow any conditions you set, and stop if you ask.
+May we have permission for this automated reading and display with attribution? We will follow any conditions you set, and stop if you ask.
 
 Thank you,
-The CyberView maintainer
-${SITE}access.html`;
+${SIGN}`;
 
-/** The request for one source (the same substitution the page does). */
-export const requestText = (s) => REQUEST.split("[operator]").join(String(s.operator)).split("[feed]").join(String(s.feed));
+/** The request for one source: its own text, or the shape above filled in when it has none. */
+export const requestText = (s) => (typeof s.request === "string" && s.request.trim()) ? s.request
+  : REQUEST.split("[operator]").join(String(s.operator)).split("[feed]").join(String(s.feed));
 
 const KEY = /^[a-z0-9][a-z0-9-]{1,60}$/, DAY = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL = /^[^\s@<>"()]+@[a-z0-9.-]+\.[a-z]{2,}$/i, HTTPS = /^https:\/\/[a-z0-9.-]+\.[a-z]{2,}(\/[^\s<>"]*)?$/i;
 const TEXT = { operator: 120, feed: 160, region: 120, what: 60, detail: 200 };
+const ADDRESS = /[^\s@<>"()]+@[a-z0-9.-]+\.[a-z]{2,}/i;
+export const REQUEST_MAX = 900;
 
 /** Pure: problems with one entry ([] when it is fine). */
 export function entryProblems(s) {
@@ -77,6 +77,23 @@ export function entryProblems(s) {
   if (!STATUS[s.status]) out.push(`${k}: status must be one of ${Object.keys(STATUS).join(", ")}`);
   if (typeof s.contact !== "string") out.push(`${k}: contact must be a string (empty when the operator publishes none)`);
   else if (s.contact && !EMAIL.test(s.contact) && !HTTPS.test(s.contact)) out.push(`${k}: contact must be an email address or an https page the operator publishes`);
+  else if (!s.contact && !(typeof s.contact_note === "string" && s.contact_note.trim())) out.push(`${k}: contact_note is required when no contact is published (say what was looked for)`);
+  if (s.contact_note !== undefined) {
+    if (typeof s.contact_note !== "string" || s.contact_note.length > 200) out.push(`${k}: contact_note must be text of at most 200 characters`);
+    else if (/[<>]/.test(s.contact_note)) out.push(`${k}: contact_note must be plain text (no < or >)`);
+  }
+  if (!KINDS[s.kind]) out.push(`${k}: kind must be one of ${Object.keys(KINDS).join(", ")}`);
+  if (!(Number.isInteger(s.priority) && s.priority >= 1 && s.priority <= 9999)) out.push(`${k}: priority must be a whole number from 1 (ask first)`);
+  const r = s.request;
+  if (typeof r !== "string" || !r.trim()) out.push(`${k}: request is required (the text the owner sends)`);
+  else {
+    if (r.length > REQUEST_MAX) out.push(`${k}: request is longer than ${REQUEST_MAX} characters (${r.length})`);
+    if (/[<>]/.test(r)) out.push(`${k}: request must be plain text (no < or >)`);
+    if (!r.trimEnd().endsWith(SIGN)) out.push(`${k}: request must end with "${SIGN}"`);
+    if (!r.includes("non-commercial")) out.push(`${k}: request must say CyberView is non-commercial`);
+    if (ADDRESS.test(r)) out.push(`${k}: request must not contain an email address (it is signed by CyberView, not a person)`);
+    if (/\[(operator|feed)\]/.test(r)) out.push(`${k}: request still has a [placeholder]`);
+  }
   if (!DAY.test(String(s.updated || "")) || !isFinite(Date.parse(s.updated))) out.push(`${k}: updated must be a date (YYYY-MM-DD)`);
   return out;
 }
@@ -84,23 +101,34 @@ export function entryProblems(s) {
 /** Pure: problems with the whole document. */
 export function problems(doc) {
   if (!doc || !Array.isArray(doc.sources)) return ["config/data-access.json: needs a sources list"];
-  const out = [], seen = new Set();
+  const out = [], seen = new Set(), ranks = new Map();
   for (const s of doc.sources) {
     out.push(...entryProblems(s));
     if (s && seen.has(s.key)) out.push(`${s.key}: duplicate key`);
     if (s) seen.add(s.key);
+    if (s && Number.isInteger(s.priority)) {
+      if (ranks.has(s.priority)) out.push(`${s.key}: priority ${s.priority} is also ${ranks.get(s.priority)}'s (each rank once)`);
+      else ranks.set(s.priority, s.key);
+    }
   }
   return out;
 }
 
-/** Pure: countries with the most sources first; inside each, biggest customer count first (unknown last), then by name. */
+/** Pure: countries with the most sources first; inside each, the source to ask first first (priority), then biggest customer count. */
 export function groups(sources) {
   const by = new Map();
   for (const s of sources) { if (!by.has(s.country)) by.set(s.country, []); by.get(s.country).push(s); }
-  const cmp = (a, b) => (b.customers_served || 0) - (a.customers_served || 0) || a.operator.localeCompare(b.operator) || a.feed.localeCompare(b.feed);
+  const rank = (s) => (Number.isInteger(s.priority) ? s.priority : 1e9);
+  const cmp = (a, b) => rank(a) - rank(b) || (b.customers_served || 0) - (a.customers_served || 0) || a.operator.localeCompare(b.operator) || a.feed.localeCompare(b.feed);
   return [...by.entries()].map(([country, list]) => ({ country, name: COUNTRIES[country] || country, sources: list.sort(cmp) }))
     .sort((a, b) => b.sources.length - a.sources.length || a.name.localeCompare(b.name));
 }
+
+/** Pure: one block per kind (grid first), each grouped by country. */
+export const kindGroups = (sources) => Object.keys(KINDS).map((kind) => ({ kind, name: KINDS[kind], groups: groups(sources.filter((s) => s.kind === kind)) })).filter((k) => k.groups.length);
+
+/** Pure: the sources to ask first. */
+export const askFirst = (sources, n = 15) => [...sources].sort((a, b) => a.priority - b.priority).slice(0, n);
 
 const n = (x) => Number(x).toLocaleString("en-US");
 const contactLink = (c) => (EMAIL.test(c) ? `mailto:${c}` : c);
@@ -109,41 +137,51 @@ const contactLink = (c) => (EMAIL.test(c) ? `mailto:${c}` : c);
 export function accessSection(doc) {
   const all = Array.isArray(doc && doc.sources) ? doc.sources : [];
   const ok = all.filter((s) => !entryProblems(s).length);
-  const gs = groups(ok);
+  const ks = kindGroups(ok), countries = groups(ok);
   const count = (f) => ok.filter(f).length;
   const reasons = Object.keys(WHY).map((w) => [w, count((s) => s.why_not === w)]).filter((x) => x[1]);
   const granted = count((s) => s.status === "granted"), asked = count((s) => s.status === "asked");
+  const withEmail = count((s) => EMAIL.test(s.contact)), withPage = count((s) => s.contact && !EMAIL.test(s.contact));
+  const contactOf = (s) => s.contact
+    ? `<a href="${esc(contactLink(s.contact))}" rel="noopener">${esc(s.contact)}</a>`
+    : `<span class="muted">no contact published${s.contact_note ? " (" + esc(s.contact_note) + ")" : ""}</span>`;
   const rows = (g) => g.sources.map((s) => {
     const [st, cls] = STATUS[s.status];
-    const contact = s.contact ? `<span class="sub">Operator's contact: <a href="${esc(contactLink(s.contact))}" rel="noopener">${esc(s.contact)}</a></span>` : "";
-    return `      <tr data-why="${esc(s.why_not)}" data-country="${esc(s.country)}" data-operator="${esc(s.operator)}" data-feed="${esc(s.feed)}" id="src-${esc(s.key)}">
+    return `      <tr data-why="${esc(s.why_not)}" data-country="${esc(s.country)}" data-kind="${esc(s.kind)}" data-operator="${esc(s.operator)}" data-feed="${esc(s.feed)}" data-request="${esc(requestText(s))}" id="src-${esc(s.key)}">
         <td><strong>${esc(s.operator)}</strong><span class="sub">${esc(s.feed)}${s.region ? " · " + esc(s.region) : ""}</span></td>
         <td>${esc(s.what)}</td>
         <td class="num">${s.customers_served ? n(s.customers_served) : '<span class="muted">not stated</span>'}</td>
         <td>${esc(WHY[s.why_not])}<span class="sub">${esc(s.detail)}</span></td>
-        <td><span class="badge ${cls}">${esc(st)}</span><span class="sub">${esc(s.updated)}</span></td>
-        <td><button type="button" class="btn copyreq" hidden>Copy request</button>${contact}</td>
+        <td><span class="badge ${cls}">${esc(st)}</span><span class="sub">Ask order ${esc(s.priority)} · ${esc(s.updated)}</span></td>
+        <td><button type="button" class="btn copyreq" hidden>Copy request</button><span class="sub">Send to: ${contactOf(s)}</span>${s.contact && s.contact_note ? `<span class="sub">${esc(s.contact_note)}</span>` : ""}</td>
       </tr>`;
   }).join("\n");
+  const first = askFirst(ok);
   return `<section class="panel" id="request">
-  <h2>The request</h2>
-  <p class="note">One short text for every source. <strong>Copy request</strong> on a source's row puts that operator's name and the specific feed into it and copies it. The CyberView maintainer sends each request himself; this page never sends anything and keeps nothing you do here.</p>
+  <h2>Ask these first</h2>
+  <p class="note">Every source has its own short request, written for that operator and naming the exact feed. <strong>Copy request</strong> on a source's row shows it here and copies it, ready to paste into an email or the operator's contact form. The CyberView maintainer sends each request himself; this page never sends anything and keeps nothing you do here. The order puts public bodies and open-data teams, the largest gaps in coverage and the sources that were most productive first.</p>
+  <ol class="askfirst" id="askFirst">
+${first.map((s) => `    <li><a href="#src-${esc(s.key)}"><strong>${esc(s.operator)}</strong></a> <span class="muted">${esc(s.feed)}</span><span class="sub">Send to: ${contactOf(s)}</span></li>`).join("\n")}
+  </ol>
   <pre class="req" id="reqText" tabindex="0">${esc(REQUEST)}</pre>
-  <p class="note" id="reqMsg" aria-live="polite"></p>
+  <p class="note" id="reqMsg" aria-live="polite">Above: the shape every request follows. Choose Copy request on a source to see and copy its own text.</p>
 </section>
 <section class="panel" id="sources">
   <h2>${ok.length} sources CyberView does not use yet</h2>
   <ul class="plain" id="reasons">
 ${reasons.map(([w, c]) => `    <li><strong>${c}</strong> ${esc(WHY[w].toLowerCase())}</li>`).join("\n")}
   </ul>
-  <p class="note">${granted ? `${granted} granted and being connected. ` : ""}${asked ? `${asked} asked and waiting for an answer. ` : ""}Countries with the most sources come first; inside each country, the operators serving the most customers come first (customer counts as the operator's own feed or page states them).</p>
+  <p class="note">${granted ? `${granted} granted and being connected. ` : ""}${asked ? `${asked} asked and waiting for an answer. ` : ""}${withEmail} publish an email address for the request and ${withPage} a contact page or form; for the rest none could be found. Contacts are the ones each operator publishes on its own site. Inside each country, the source to ask first comes first.</p>
   <div class="acfilters" id="acFilters" hidden>
+    <label class="field">Kind<select id="fKind"><option value="">Every kind</option>${ks.map((k) => `<option value="${esc(k.kind)}">${esc(k.name)} (${k.groups.reduce((a, g) => a + g.sources.length, 0)})</option>`).join("")}</select></label>
     <label class="field">Reason<select id="fWhy"><option value="">Every reason</option>${reasons.map(([w, c]) => `<option value="${esc(w)}">${esc(WHY[w])} (${c})</option>`).join("")}</select></label>
-    <label class="field">Country<select id="fCountry"><option value="">Every country</option>${gs.map((g) => `<option value="${esc(g.country)}">${esc(g.name)} (${g.sources.length})</option>`).join("")}</select></label>
+    <label class="field">Country<select id="fCountry"><option value="">Every country</option>${countries.map((g) => `<option value="${esc(g.country)}">${esc(g.name)} (${g.sources.length})</option>`).join("")}</select></label>
   </div>
   <p class="note" id="fCount" aria-live="polite"></p>
-${gs.map((g) => `  <div class="acgroup" data-country="${esc(g.country)}">
-    <h3>${esc(g.name)} <span class="muted">(${g.sources.length})</span></h3>
+${ks.map((k) => `  <div class="ackind" data-kind="${esc(k.kind)}">
+  <h3>${esc(k.name)}</h3>
+${k.groups.map((g) => `  <div class="acgroup" data-country="${esc(g.country)}">
+    <h4>${esc(g.name)} <span class="muted">(${g.sources.length})</span></h4>
     <div class="tablewrap"><table class="stack">
       <thead><tr><th scope="col">Operator and feed</th><th scope="col">What</th><th scope="col">Customers</th><th scope="col">Why not yet</th><th scope="col">Status</th><th scope="col">Request</th></tr></thead>
       <tbody>
@@ -151,15 +189,17 @@ ${rows(g)}
       </tbody>
     </table></div>
   </div>`).join("\n")}
+  </div>`).join("\n")}
 </section>`;
 }
 
 async function main() {
   const cmd = process.argv[2] || "check", doc = load();
   const p = problems(doc);
-  if (cmd === "show") { console.log(requestText({ operator: "Example Power", feed: "Example Power outage map" })); return; }
+  if (cmd === "show") { const k = process.argv[3], s = k && (doc.sources || []).find((x) => x.key === k); console.log(s ? requestText(s) : REQUEST); return; }
   if (p.length) { console.log(`access: ${p.length} problem(s)`); p.forEach((x) => console.log("  " + x)); process.exit(1); }
   const by = (f) => Object.entries(doc.sources.reduce((a, s) => ((a[s[f]] = (a[s[f]] || 0) + 1), a), {})).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", ");
-  console.log(`access: ${doc.sources.length} sources check out\n  by reason: ${by("why_not")}\n  by country: ${by("country")}\n  by status: ${by("status")}`);
+  const email = doc.sources.filter((s) => EMAIL.test(s.contact)).length, page = doc.sources.filter((s) => s.contact && !EMAIL.test(s.contact)).length;
+  console.log(`access: ${doc.sources.length} sources check out\n  by kind: ${by("kind")}\n  by reason: ${by("why_not")}\n  by country: ${by("country")}\n  by status: ${by("status")}\n  contact: ${email} email, ${page} page or form, ${doc.sources.length - email - page} none published`);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

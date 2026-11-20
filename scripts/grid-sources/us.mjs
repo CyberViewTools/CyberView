@@ -30,7 +30,8 @@ export const SOURCES = {
     url: "https://outagemap.eversource.com/resources/data/external/interval_generation_data/metadata.json",
     page: "https://outagemap.eversource.com/", hosts: ["outagemap.eversource.com", "www.eversource.com"],
     terms_url: "https://www.eversource.com/residential/about/terms-and-conditions", terms_ok: "silent", customers_served: 3344480 },
-  // the county counts behind NES's own outage map (hosted for NES by its map vendor, utilisocial.io)
+  // the events and county counts behind NES's own outage map (hosted for NES by its map vendor, utilisocial.io); url is
+  // the county count, read as a cross-check of the events (NES_EVENTS)
   "nashville-electric": { name: "Nashville Electric Service", country: "US", kind: "outages",
     url: "https://utilisocial.io/datacapable/v2/p/NES/map/events/count?types=COUNTY",
     page: "https://www.nespower.com/outages/", hosts: ["www.nespower.com"],
@@ -92,6 +93,11 @@ export function eversourceDir(meta) {
   if (!/^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}$/.test(String(d || ""))) throw badShape("eversource directory");
   return d;
 }
+/** The directory name is the time the files were made, in UTC: on 2026-11-20 directory 2026_11_20_04_39_30 sat beside
+ *  data.json's date_generated "2026-11-19T23:37:10-0500" (04:37:10Z, given with its offset) and files Last-Modified
+ *  04:41:34 GMT, read at 04:42Z (US Eastern would have named it 2026_11_19_23_..). It is the source's data time. */
+export const eversourceDirTime = (dir) => { const m = String(dir || "").match(/^(\d{4})_(\d{2})_(\d{2})_(\d{2})_(\d{2})_(\d{2})$/);
+  return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z` : ""; };
 export function parseEversourceReport(d, h) {
   const top = d && d.file_data && Array.isArray(d.file_data.areas) ? d.file_data.areas : null;
   if (!top) throw badShape("eversource report");
@@ -132,6 +138,37 @@ export function parseNes(d, h) {
     source: "nashville-electric", id: `nashville-electric:${slug(r.name)}`, region: "Nashville",
     area: h.str(`${titleCase(r.name)} County, TN`, 120), lat: null, lng: null, customers: int(r.customersAffected), kind: "outage",
     planned: false, cause: "", level: null, started_at: "", restore_est: "" }));
+}
+// /map/events (sources-10; the path NES's own embedded map at map.datacapable.com/i/nes/ reads, "<base>/p/NES/map" +
+// "/events"; utilisocial.io serves no robots.txt (its app page answers that path) and NES's terms say nothing on
+// automated reading, the same as for the count path): [{ id, startTime, lastUpdatedTime, etrTime (epoch ms), title
+// ("Outage"), numPeople, status ("Assigned" ...), cause ("" in every row seen), latitude, longitude, additionalProperties
+// [{ property: AREA_COUNTY | AREA_SERVICE | AREA_MUNICIPALITY | premise_hash, value }] }]. One item per event, at its
+// point. The county counts are fetched as well and must agree with the events' sum (25% and 50 customers of slack for
+// the seconds between the two replies): a renamed or emptied field shows as bad_shape. The newest lastUpdatedTime is
+// the data time.
+export const NES_EVENTS = "https://utilisocial.io/datacapable/v2/p/NES/map/events";
+const msIso = (ms) => (Number.isFinite(Number(ms)) && Number(ms) > 0 ? new Date(Number(ms)).toISOString().replace(/\.\d+Z$/, "Z") : "");
+export function parseNesEvents(events, counts, h) {
+  if (!Array.isArray(events)) throw badShape("nes events");
+  const rows = events.filter((r) => r && r.id != null);
+  needNumbers(rows, (r) => r.numPeople, "nes events");
+  const total = parseNes(counts, h).reduce((n, x) => n + (x.customers || 0), 0);
+  const sum = rows.reduce((n, r) => n + (int(r.numPeople) || 0), 0);
+  if (Math.abs(sum - total) > Math.max(50, 0.25 * Math.max(sum, total))) throw badShape(`nes: events add up to ${sum}, the county counts to ${total}`);
+  const prop = (r, k) => { const p = (Array.isArray(r.additionalProperties) ? r.additionalProperties : []).find((x) => x && x.property === k);
+    const v = p ? (Array.isArray(p.value) ? p.value[0] : p.value) : ""; return typeof v === "string" ? v : ""; };
+  let newest = "";
+  const out = rows.filter((r) => int(r.numPeople) > 0).map((r) => {
+    const county = prop(r, "AREA_COUNTY"), service = prop(r, "AREA_SERVICE");
+    const lat = r.latitude == null || r.latitude === "" ? null : Number(r.latitude), lng = r.longitude == null || r.longitude === "" ? null : Number(r.longitude);
+    return h.item({ source: "nashville-electric", id: `nashville-electric:${slug(String(r.id))}`, region: "Nashville",
+      area: h.str([service, county ? `${titleCase(county)} County, TN` : "TN"].filter(Boolean).join(", "), 120), lat, lng,
+      customers: int(r.numPeople), kind: "outage", planned: /planned|scheduled|maintenance/i.test(`${r.title || ""} ${r.status || ""}`),
+      cause: h.str(r.cause || "", 120), level: null, started_at: msIso(r.startTime), restore_est: msIso(r.etrTime) });
+  });
+  for (const r of rows) { const upd = msIso(r.lastUpdatedTime); if (upd > newest) newest = upd; }
+  return stamp(out, newest);
 }
 
 // ---------- PacifiCorp (Rocky Mountain Power, Pacific Power) ----------
@@ -296,9 +333,9 @@ export const adapters = {
     const dir = eversourceDir(await h.get(SOURCES.eversource.url));
     const out = [];
     for (const f of EVERSOURCE_REPORTS) out.push(...parseEversourceReport(await h.get(`${EVERSOURCE_BASE}${dir}/${f}`), h));
-    return out;
+    return stamp(out, eversourceDirTime(dir));
   },
-  "nashville-electric": async (h) => parseNes(await h.get(SOURCES["nashville-electric"].url), h),
+  "nashville-electric": async (h) => parseNesEvents(await h.get(NES_EVENTS), await h.get(SOURCES["nashville-electric"].url), h),
   "rocky-mountain-power": async (h) => pacifiCorp("rocky-mountain-power", h),
   "pacific-power": async (h) => pacifiCorp("pacific-power", h),
   ladwp: async (h) => {

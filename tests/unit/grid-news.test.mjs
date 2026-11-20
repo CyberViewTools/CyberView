@@ -380,3 +380,26 @@ test("news-1/2/8: earlier runs' reports that today's rules reject leave the file
   assert.equal(items[0].count, 1);
   assert.deepEqual(checkNews({ updated_at: iso(NOW), items }), []);
 });
+
+// ---------- grid-sources lane 2026-11-20: news-4 "SA" alias ----------
+test("news-4: 'SA' is South Australia only with Australian context in the headline or summary, and only as written", () => {
+  const at = (t, s = "") => { const l = locate(t, s, ENTS); return l ? `${l.place}|${l.country}` : null; };
+  // the headline shape from the finding (The Australian, 19 Nov: "28k SA homes"), with and without context
+  assert.equal(at("28,000 SA homes without power after storms", "Crews from SA Power Networks are out across the state"), "South Australia|AU");
+  assert.equal(at("Storms leave 28,000 SA homes without power", "Adelaide and the regions"), "South Australia|AU");
+  assert.equal(at("28,000 SA homes without power after storms", "Crews are on the Eyre Peninsula"), "South Australia|AU");   // the summary gives context; the headline's place wins
+  assert.equal(at("28,000 SA homes without power after storms", ""), null);                       // no context: not placed
+  assert.equal(at("Walang kuryente sa Quezon City", ""), "Metro Manila|PH");                      // Tagalog "sa": never SA
+  assert.notEqual(at("Walang kuryente sa Australia", ""), "South Australia|AU");                 // lower case is not the alias
+  assert.equal(at("SA blackout", "Adelaide residents lost power"), "South Australia|AU");
+});
+
+test("news-9 (4): a headline that names nothing is placed by a utility its summary names (its service area)", () => {
+  // already the summary pass of locate(); no utility alias belongs to two countries, so the query's country could not
+  // change the answer (checked over the whole gazetteer below)
+  const l = locate("Power outage hits neighborhood", "Oncor reports 2,000 customers without power", ENTS);
+  assert.deepEqual([l.place, l.country, l.how, l.utility], ["North and Central Texas", "US", "utility", "Oncor"]);
+  const by = new Map();
+  for (const e of ENTS.filter((x) => x.kind === "utility")) (by.get(e.alias) || by.set(e.alias, new Set()).get(e.alias)).add(e.country);
+  assert.deepEqual([...by].filter(([, s]) => s.size > 1), []);
+});

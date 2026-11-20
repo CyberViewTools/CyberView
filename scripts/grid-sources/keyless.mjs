@@ -10,7 +10,8 @@
 //                  endangered 1, disturbed (load shedding or serious blackout risk) 2, serious disturbance or
 //                  blackout 3, restoration after one 2. Electricity shortage indicator as a second item:
 //                  possible 1, high 2 (supply_warning), active 3 (load_shedding).
-//   rte-ecowatt    France's Ecowatt signal for the current hour (the file monecowatt.fr itself loads).
+//   rte-ecowatt    France's Ecowatt signal for the current hour (the file monecowatt.fr itself loads); when that file
+//                  is over 3 days old, RTE's daily record on ODRÉ (Licence Ouverte v2.0) dates and words the signal.
 //                  supply_warning: green / decarbonised 0, orange "système électrique tendu" 1, red "très tendu,
 //                  coupures inévitables si nous ne baissons pas notre consommation" 2.
 //   kpx            South Korea's real-time supply reserve (KPX table) against KPX's own emergency thresholds:
@@ -180,6 +181,30 @@ export function parseEcowatt(text, now = Date.now()) {
     started_at: isoS(zonedMs(p.y, p.m, p.d, p.h, 0, "Europe/Paris")), url: ECOWATT_PAGE })], `${fileIso}T00:00:00Z`);
 }
 
+// RTE's daily record of the published signal on ODRÉ (odre.opendatasoft.com, dataset nouveau_signal_ecowatt, Licence
+// Ouverte v2.0; robots.txt disallows only the download, rss and atom paths): one row per day, h0..h23 with the same values
+// (0 decarbonised, 1 green, 2 orange, 3 red) and couleur_du_jour, refreshed once a day with the days up to yesterday.
+// Seen 2026-11-20: monecowatt's own file has not changed since 30 October (the site then shows green by design) while
+// ODRÉ kept a row for every day to 19 November, all green. So when the file is over 3 days old, ODRÉ's newest row (if it
+// is at most 2 days old) shows RTE is still publishing the signal: its day is the data time (no false "dormant"), and its
+// highest value is reported, worded as that day's signal, so an orange or red day is never hidden behind "green".
+export const ECOWATT_ODRE = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/nouveau_signal_ecowatt/records?order_by=date%20desc&limit=1";
+export function parseEcowattOdre(d) {
+  const r = d && Array.isArray(d.results) ? d.results[0] : null;
+  if (!r || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.date || ""))) throw badShape("ecowatt odre");
+  const vals = [r.couleur_du_jour, ...Array.from({ length: 24 }, (_, i) => r[`h${i}`])].map(Number);
+  if (vals.some((v) => !Number.isInteger(v) || v < 0 || v > 3)) throw badShape("ecowatt odre values");
+  return { day: r.date, value: Math.max(...vals) };
+}
+/** The fallback item from parseEcowatt (file over 3 days old) + ODRÉ's newest day -> items, or null when that day is too old. */
+export function ecowattFromOdre(rec, now = Date.now()) {
+  const p = localParts(now, "Europe/Paris"), age = Math.round((Date.UTC(p.y, p.m - 1, p.d) - Date.parse(`${rec.day}T00:00:00Z`)) / 864e5);
+  if (!(age >= 0 && age <= 2)) return null;
+  return stamp([signal("rte-ecowatt", "FR", "France", { id: "national", kind: "supply_warning", level: EW_LEVEL[rec.value],
+    area: `France: no current Ecowatt forecast; RTE's signal for ${rec.day}: ${EW_NAME[rec.value]}`,
+    cause: `latest published day ${rec.day} (RTE, ODRÉ daily record)`, started_at: "", url: ECOWATT_PAGE })], `${rec.day}T00:00:00Z`);
+}
+
 // ---------- KPX real-time supply ----------
 // new.kpx.or.kr "실시간 전력수급현황" (refreshed every 5 minutes) is one table with fixed cell ids: avil (공급능력, supply
 // capacity), load (현재수요, demand), supPow (공급예비력, supply reserve), supPer (공급예비율, reserve rate), and the time
@@ -214,8 +239,9 @@ export default {
     // (elexon-system-warnings, with demand control), so it would count each warning twice. parseNesoWarnings stays tested.
     fingrid: { ...sig, name: "Fingrid power system state", country: "FI", url: "https://www.fingrid.fi/api/graph/power-system-state?language=en",
       page: FINGRID_PAGE, hosts: ["www.fingrid.fi"], terms_url: "https://www.fingrid.fi/en/legal-terms/", terms_ok: "allowed", attribution: "Source: Fingrid" },
-    // the file is updated daily in a tense winter and can rest for weeks otherwise: never "stale"; a file 3 days old
-    // means the signal is not being published (sources-5: 30 October on 20 November 2026), not that France is green
+    // the file is updated daily in a tense winter and can rest for weeks otherwise: never "stale". When it is over 3 days
+    // old, RTE's daily record on ODRÉ dates the signal instead; dormant only when neither has a day in the last 3 days
+    // (the signal is not being published at all), never read as France being green
     "rte-ecowatt": { ...sig, data_stale_min: null, dormant_hours: 72, name: "RTE Ecowatt", country: "FR", url: `${ECOWATT}/data1/ecowatt-version-2`, page: ECOWATT_PAGE,
       hosts: ["www.monecowatt.fr"], terms_url: "https://www.monecowatt.fr/mentions-legales/", terms_ok: "allowed", attribution: "Source: RTE, Ecowatt" },
     kpx: { ...sig, name: "KPX real-time supply (Korea Power Exchange)", country: "KR", url: KPX_PAGE, page: KPX_PAGE, hosts: ["new.kpx.or.kr"],
@@ -231,7 +257,10 @@ export default {
     "rte-ecowatt": async (h) => {
       const dir = `${ECOWATT}/data${1 + Math.floor(Math.random() * 100)}`;   // as the site does: 100 copies of the same files
       const v = ecowattVersion(await h.get(`${dir}/ecowatt-version-2`, { as: "text", key: "monecowatt-data" }));
-      const got = parseEcowatt(await h.get(`${dir}/app_signal_${v}`, { as: "text", key: "monecowatt-data" }));
+      let got = parseEcowatt(await h.get(`${dir}/app_signal_${v}`, { as: "text", key: "monecowatt-data" }));
+      if (!got[0].started_at) {   // the file is over 3 days old: is RTE still publishing the signal? (see ECOWATT_ODRE)
+        try { got = ecowattFromOdre(parseEcowattOdre(await h.get(ECOWATT_ODRE, { retries: 1 }))) || got; } catch { /* keep the file's answer */ }
+      }
       return stamp(got.map(h.item), got.data_at);
     },
     kpx: async (h) => parseKpx(await h.get(KPX_PAGE, { as: "text" })).map(h.item),

@@ -69,7 +69,7 @@ export function zonedToIso(local, tz) {
 // hosts: the operator's own hosts; an item url must be https on one of them. page: the operator's public outage page.
 export const SOURCES = {
   hydroquebec: { name: "Hydro-Québec", country: "CA", url: "https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json",
-    page: "https://pannes.hydroquebec.com/pannes/", hosts: ["pannes.hydroquebec.com", "www.hydroquebec.com", "infopannes.solutions.hydroquebec.com"] },
+    page: "https://infopannes.solutions.hydroquebec.com/", hosts: ["pannes.hydroquebec.com", "www.hydroquebec.com", "infopannes.solutions.hydroquebec.com"] },
   bchydro: { name: "BC Hydro", country: "CA", url: "https://www.bchydro.com/power-outages/app/outages-map-data.json",
     page: "https://www.bchydro.com/power-outages/app/outage-map.html", hosts: ["www.bchydro.com"] },
   // paused 2026-11-19: the portal's robots.txt (ukpowernetworks.opendatasoft.com) says "Disallow: /api/" for all agents and

@@ -65,6 +65,31 @@ test("Endeavour Energy: unplanned outages and planned work under way, polygon ce
   assert.throws(() => parseEndeavour({}), (e) => e.code === "bad_shape");
 });
 
+test("Endeavour Energy: one incident in several rows is one item, customers added; a repeated row counts once", () => {
+  // synthetic from the case seen live on 2026-11-20 (audit duplicate_ids): INC 48026757 came as two rows of 15 and 6
+  // customers with the same start and towns, and a few minutes later as one row of 21
+  const d = json("endeavour-energy.json"), base = d.areas.find((r) => r.incident_id === "INC 48026617");
+  const second = { ...base, customers_affected: 6, polygon_geojson: null, center_lat: -34.70, center_lng: 150.80,
+    cityname_list: ["GERRINGONG", "WERRI BEACH"], etr: "2026-11-19 11:00:00+00", start_date_time: "2026-11-19T03:20:00+00:00" };
+  d.areas.push(second, { ...second });   // the second row, then the same row again
+  const items = parseEndeavour(d, NOW), ids = items.map((x) => x.id);
+  assert.equal(new Set(ids).size, ids.length);
+  const one = items.find((x) => x.id === "endeavour-energy:inc-48026617");
+  assert.equal(one.customers, 138);                                   // 132 + 6, the repeat not counted
+  assert.equal(one.started_at, "2026-11-19T03:16:00Z");               // the earliest start
+  assert.equal(one.restore_est, "2026-11-19T11:00:00Z");              // the latest estimate
+  assert.match(one.area, /^BROUGHTON, .* and 3 more$/);               // 6 towns + WERRI BEACH (GERRINGONG once)
+  assert.ok(one.lat < -34.6 && one.lat > -34.8);
+  noErrors(items);
+});
+
+test("ECG Ghana: 22 days without a notice is ECG's normal pace (gaps up to 25 days), dormant only after 35", async () => {
+  const { sourceState } = await import("../../scripts/grid.mjs");
+  const at = "2026-10-29T08:14:19Z";
+  assert.equal(sourceState(SOURCES["ecg-ghana"], [], null, {}, Date.parse("2026-11-20T04:30:00Z"), at).dormant, false);
+  assert.equal(sourceState(SOURCES["ecg-ghana"], [], null, {}, Date.parse("2026-12-04T09:00:00Z"), at).dormant, true);
+});
+
 test("TasNetworks: WKT centres, planned wording, customers 'To be confirmed', weekday restoration times", () => {
   const items = parseTasNetworks(json("tasnetworks.json"), zonedToIso);
   noErrors(items);
@@ -216,7 +241,7 @@ test("sources-3/2: ENRE districts must add up to the feed's total; its update ti
 test("sources-5: ECG's newest notice is the data time, kept or not (a dormant feed shows); ONS rows end after their mean duration (sources-7)", () => {
   const got = parseEcgRss(txt("ecg-ghana-central.xml"), "central", zonedToIso, NOW);
   assert.equal(got.data_at, "2026-10-29T08:14:19Z");
-  assert.equal(SOURCES["ecg-ghana"].dormant_hours, 336);
+  assert.equal(SOURCES["ecg-ghana"].dormant_hours, 840);   // 35 days: ECG's notices have gaps of up to 25 days
   const go = parseOns(txt("ons-interrupcao-carga.csv"), zonedToIso, NOW)[2];
   assert.equal(go.restore_est, "2026-11-17T19:06:00Z");                             // 18:57Z + 9 min, never "still out"
 });

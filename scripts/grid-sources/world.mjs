@@ -83,9 +83,11 @@ export const SOURCES = {
     url: "https://www.ecg.com.gh/index.php/en/services/ecg-status/current-system-status/current-status-accra-west?format=feed&type=rss",
     page: "https://www.ecg.com.gh/index.php/en/services/ecg-status/current-system-status", hosts: ["www.ecg.com.gh"],
     terms_url: "https://www.ecg.com.gh/", terms_ok: "silent", customers_served: null,
-    // the feeds are notices, quiet for days at a time: never "stale"; a newest notice 14 days old means the operator
-    // stopped using them (sources-5: the newest were 29-30 October on 20 November 2026)
-    data_stale_min: null, dormant_hours: 14 * 24 },
+    // the feeds are notices, quiet for weeks at a time: never "stale". Dormant after 35 days: the 64 notices of all
+    // eight regional feeds (12 April - 29 October 2026, read 2026-11-20) have gaps of up to 25 days between one notice
+    // and the next (30 June - 25 July; also 24 and 20 days), so the 22 days since 29 October are ECG's normal pace, not
+    // a feed it stopped (the 14 days set by sources-5 flagged that pace as dormant)
+    data_stale_min: null, dormant_hours: 35 * 24 },
   "enre-edenor": { name: "ENRE (Edenor area)", country: "AR", kind: "outages", url: "https://www.enre.gov.ar/paginacorte/js/data_EDN.js",
     page: "https://www.enre.gov.ar/paginacorte/tabla_cortes_edenor.html", hosts: ["www.enre.gov.ar"],
     terms_url: "https://www.argentina.gob.ar/terminos-y-condiciones", terms_ok: "silent", customers_served: 3506094 },
@@ -135,21 +137,44 @@ export const REGIONS = {
 const eeTime = (s) => { const t = String(s || "").trim().replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00"); const iso = isoOf(t); return /^1970/.test(iso) ? "" : iso; };
 export function parseEndeavour(d, now = Date.now()) {
   if (!d || !Array.isArray(d.areas)) throw badShape("endeavour areas");
-  const out = [];
+  // One incident can come as several rows, one per area it cuts (seen 2026-11-20: INC 48026757 as two rows of 15 and 6
+  // customers with the same start, a few minutes later as one row of 21). The rows are merged into one item per
+  // incident: customers added up over distinct rows (a row repeated with the same polygon and count is counted once),
+  // towns joined, earliest start, latest restoration estimate, the mean of the rows' centres.
+  const groups = new Map();
   for (const r of d.areas) {
     if (!r || !r.incident_id) continue;
     const planned = /^PLANNED$/i.test(r.outage_type || ""), start = eeTime(r.start_date_time), end = eeTime(r.end_date_time);
     if (planned && (!start || Date.parse(start) > now || (end && Date.parse(end) <= now))) continue;
-    const g = r.polygon_geojson && typeof r.polygon_geojson === "object" ? r.polygon_geojson : null;
-    const ring = g && Array.isArray(g.coordinates) ? (g.type === "MultiPolygon" ? g.coordinates.map((p) => (p && p[0]) || []).flat() : g.coordinates[0]) : null;
-    let c = ringCentre(ring);
-    if (c.lat == null) c = { lat: Number(r.center_lat), lng: Number(r.center_lng) };
-    const cause = [r.cause, r.sub_cause].filter((x) => x && !/^none$/i.test(String(x).trim())).map((x) => str(x, 60));
-    const towns = (Array.isArray(r.cityname_list) && r.cityname_list.length ? r.cityname_list : [r.cityname]).filter(Boolean);
-    out.push(mk({ source: "endeavour-energy", id: `endeavour-energy:${slug(r.incident_id)}`, region: EE_REGION,
-      area: towns.slice(0, 4).map((x) => str(x, 40)).join(", ") + (towns.length > 4 ? ` and ${towns.length - 4} more` : ""),
-      lat: c.lat, lng: c.lng, customers: r.customers_affected, kind: "outage", planned,
-      cause: [...new Set(cause)].join(": "), level: null, started_at: start, restore_est: eeTime(r.etr) || end }));
+    const id = slug(r.incident_id), grp = groups.get(id) || { planned, rows: [], seen: new Set() };
+    const key = JSON.stringify([r.polygon_geojson || null, r.center_lat, r.center_lng, r.customers_affected]);
+    if (grp.seen.has(key)) continue;
+    grp.seen.add(key); grp.rows.push({ r, start, end }); groups.set(id, grp);
+  }
+  const out = [];
+  for (const [id, { planned, rows }] of groups) {
+    const centres = [], towns = [], causes = [];
+    let customers = null, start = "", restore = "";
+    for (const { r, start: st, end } of rows) {
+      const g = r.polygon_geojson && typeof r.polygon_geojson === "object" ? r.polygon_geojson : null;
+      const ring = g && Array.isArray(g.coordinates) ? (g.type === "MultiPolygon" ? g.coordinates.map((p) => (p && p[0]) || []).flat() : g.coordinates[0]) : null;
+      let c = ringCentre(ring);
+      if (c.lat == null && r.center_lat != null && r.center_lat !== "" && r.center_lng != null && r.center_lng !== "") c = { lat: Number(r.center_lat), lng: Number(r.center_lng) };
+      if (okLat(c.lat) && okLng(c.lng)) centres.push([c.lng, c.lat]);
+      const n = intOrNull(r.customers_affected);
+      if (n != null) customers = (customers || 0) + n;
+      towns.push(...(Array.isArray(r.cityname_list) && r.cityname_list.length ? r.cityname_list : [r.cityname]).filter(Boolean));
+      causes.push(...[r.cause, r.sub_cause].filter((x) => x && !/^none$/i.test(String(x).trim())).map((x) => str(x, 60)));
+      if (st && (!start || st < start)) start = st;
+      const est = eeTime(r.etr) || end;
+      if (est && est > restore) restore = est;
+    }
+    const c = centres.length ? { lng: centres.reduce((a, p) => a + p[0], 0) / centres.length, lat: centres.reduce((a, p) => a + p[1], 0) / centres.length } : { lat: null, lng: null };
+    const uniq = [...new Set(towns)];
+    out.push(mk({ source: "endeavour-energy", id: `endeavour-energy:${id}`, region: EE_REGION,
+      area: uniq.slice(0, 4).map((x) => str(x, 40)).join(", ") + (uniq.length > 4 ? ` and ${uniq.length - 4} more` : ""),
+      lat: c.lat, lng: c.lng, customers, kind: "outage", planned,
+      cause: [...new Set(causes)].join(": "), level: null, started_at: start, restore_est: restore }));
   }
   return out;
 }

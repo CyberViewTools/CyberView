@@ -4,7 +4,9 @@
   "attack": [],
   "category": "vuln",
   "country": "Japan",
-  "cves": [],
+  "cves": [
+    "CVE-2026-132825"
+  ],
   "date": "2026-11-18",
   "exec": "Ruby is widely used for web back ends; apps that handle untrusted text or patterns could be open to memory-corruption flaws, and Ruby 3.2 and older get no fix.",
   "first_seen": "2026-11-19T02:12:54Z",
@@ -52,20 +54,24 @@
       "url": "https://seclists.org/oss-sec/2026/q4/782"
     },
     {
+      "name": "SecurityWeek",
+      "url": "https://www.securityweek.com/ruby-patches-ruby2shell-vulnerability-that-could-lead-to-rce/"
+    },
+    {
       "name": "GBHackers (Ruby2Shell write-up of the Veria Labs disclosure)",
       "url": "https://gbhackers.com/ruby2shell-critical-ruby-vulnerability/"
     }
   ],
   "status": "official",
-  "summary": "The Ruby project announced fixes for seven memory-safety flaws in Regexp and String case conversion, affecting Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12 and 4.0.0 to 4.0.9. Several could allow remote code execution in some scenarios. Maintainers say they know of proofs of concept; no exploitation is reported. Fixes are in 4.0.10, 3.4.13 and 3.3.14.",
+  "summary": "The Ruby project announced fixes for seven memory-safety flaws in Regexp and String case conversion, affecting Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12 and 4.0.0 to 4.0.9. Several could allow remote code execution in some scenarios. Maintainers say they know of proofs of concept; no exploitation is reported. SecurityWeek says one, Ruby2Shell (CVE-2026-132825, CVSS 7.4), was found by Veria Labs. Fixes are in 4.0.10, 3.4.13 and 3.3.14.",
   "tags": [],
   "time_basis": "published",
   "title": "Ruby fixes seven memory-safety flaws in Regexp and String case conversion",
-  "updated_at": "2026-11-19T10:21:00Z",
+  "updated_at": "2026-11-20T10:59:19Z",
   "validation": {
-    "checked_at": "2026-11-19T02:12:54Z",
-    "note": "Ruby advisory read in full. The oss-security post is the same announcement relayed, so this rests on one primary source.",
-    "state": "single_source"
+    "checked_at": "2026-11-20T11:05:00Z",
+    "note": "Ruby advisory read in full; SecurityWeek (20 Nov) and GBHackers independently report Ruby2Shell and the same fixed versions.",
+    "state": "corroborated"
   },
   "review": {
     "state": "passed",

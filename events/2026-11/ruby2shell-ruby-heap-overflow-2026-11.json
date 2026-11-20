@@ -1,0 +1,72 @@
+{
+ "actor": "",
+ "duplicate_of": "ruby-regexp-string-case-conversion-vulns-2026-11",
+ "attack": [
+  "Heap buffer overflow"
+ ],
+ "impact": "",
+ "tags": [],
+ "first_seen": "2026-11-20T10:58:30Z",
+ "updated_at": "2026-11-20T10:58:30Z",
+ "category": "vuln",
+ "pin_type": "agency",
+ "status": "official",
+ "time_basis": "published",
+ "id": "ruby2shell-ruby-heap-overflow-2026-11",
+ "date": "2026-11-19",
+ "date_note": "Ruby patch release date not read; GBHackers byline 19 November, SecurityWeek 20 November.",
+ "title": "Ruby patches Ruby2Shell heap overflow in case conversion that Veria Labs says can be triggered from Rails and Sinatra",
+ "org": "Ruby",
+ "sector": "Technology / software",
+ "country": "Global",
+ "place": "Global",
+ "lat": 20,
+ "lng": 0,
+ "geo_basis": "global",
+ "severity": 2,
+ "source_tier": "established",
+ "cves": [
+  "CVE-2026-132825"
+ ],
+ "products": [
+  "Ruby",
+  "Ruby on Rails",
+  "Sinatra"
+ ],
+ "summary": "Veria Labs disclosed Ruby2Shell, a heap-based buffer overflow in case conversion for single-byte encodings such as ISO-8859-1 and Windows-1252. Veria Labs says unauthenticated attackers could trigger it in default Rails and classic Sinatra setups. Fixed in Ruby 4.0.10, 3.4.13 and 3.3.14. SecurityWeek gives CVSS 7.4 and CVE-2026-132825; GBHackers says the CVE is pending. Neither reports exploitation.",
+ "plain": "A flaw in how Ruby changes letter case in some text encodings can be reached from web apps. Ruby has released fixed versions.",
+ "exec": "Widely used web frameworks may be exposed; fixes exist and no exploitation is reported.",
+ "action": "Upgrade to Ruby 4.0.10, 3.4.13 or 3.3.14; move end-of-life branches to a supported, patched one. Bundled products (GitLab, Mastodon) have patched.",
+ "sources": [
+  {
+   "name": "SecurityWeek",
+   "url": "https://www.securityweek.com/ruby-patches-ruby2shell-vulnerability-that-could-lead-to-rce/"
+  },
+  {
+   "name": "GBHackers",
+   "url": "https://gbhackers.com/ruby2shell-critical-ruby-vulnerability/"
+  }
+ ],
+ "report": {
+  "doc_id": "",
+  "iocs_available": false,
+  "key_findings": [
+   "Heap-based buffer overflow in case conversion.",
+   "Fixed in Ruby 4.0.10, 3.4.13, 3.3.14.",
+   "No in-the-wild exploitation reported."
+  ],
+  "published": "2026-11-20",
+  "publisher": "SecurityWeek",
+  "publisher_type": "news",
+  "read_depth": "full",
+  "recommendations": [
+   "Upgrade Ruby."
+  ],
+  "url": "https://www.securityweek.com/ruby-patches-ruby2shell-vulnerability-that-could-lead-to-rce/"
+ },
+ "validation": {
+  "checked_at": "2026-11-20T10:58:30Z",
+  "state": "corroborated",
+  "note": "SecurityWeek and GBHackers each state the flaw and the fixed versions; they differ on whether the CVE is assigned."
+ }
+}

@@ -1,0 +1,70 @@
+{
+ "actor": "",
+ "attack": [
+  "Remote code execution"
+ ],
+ "impact": "",
+ "tags": [],
+ "first_seen": "2026-11-20T10:58:30Z",
+ "updated_at": "2026-11-20T10:58:30Z",
+ "category": "vuln",
+ "pin_type": "agency",
+ "status": "official",
+ "time_basis": "published",
+ "id": "mitel-micollab-awv-critical-flaws-2026-11",
+ "date": "2026-11-17",
+ "date_note": "Date of the ACN alert; updated 20 November to add two CVEs.",
+ "title": "Italy's CSIRT: Mitel MiCollab updates fix 5 flaws, two rated critical",
+ "org": "Mitel",
+ "sector": "Technology / telecommunications",
+ "country": "Italy",
+ "place": "Rome",
+ "lat": 41.9,
+ "lng": 12.5,
+ "geo_basis": "agency",
+ "severity": 2,
+ "source_tier": "primary",
+ "cves": [
+  "CVE-2026-133275",
+  "CVE-2026-133303",
+  "CVE-2026-133311",
+  "CVE-2026-133323",
+  "CVE-2026-133324"
+ ],
+ "products": [
+  "Mitel MiCollab",
+  "MiCollab Audio, Web and Video Conferencing (AWV)"
+ ],
+ "summary": "Italy's national CSIRT (ACN) says Mitel security updates fix 5 vulnerabilities in MiCollab, two of them critical. It lists an XML injection (CVE-2026-133303, CVSS v3.1 9) and a command injection (CVE-2026-133323, CVSS v3.1 10), both by an unauthenticated remote attacker. Affected: MiCollab 10.3.0.18 without the patch in KB000129195, and earlier. The alert marks exploitation and public exploit code as '-' for both critical flaws.",
+ "plain": "Mitel fixed five flaws in its MiCollab conferencing software, two of them critical. Italy's CSIRT lists a maximum-score one that an unauthenticated remote attacker could use.",
+ "exec": "Two critical MiCollab flaws could be used by unauthenticated remote attackers; Italy's CSIRT lists no exploitation.",
+ "action": "Apply the patch in Mitel KB000129195 (advisory MISA-2026-0012) to MiCollab 10.3.0.18 and earlier, starting with internet-facing systems.",
+ "sources": [
+  {
+   "name": "CSIRT Italy (ACN)",
+   "url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel"
+  }
+ ],
+ "report": {
+  "doc_id": "AL03/261117/CSIRT-ITA",
+  "iocs_available": false,
+  "key_findings": [
+   "5 vulnerabilities fixed, two critical.",
+   "CVE-2026-133323 command injection, CVSS v3.1 10.",
+   "CVE-2026-133303 XML injection, CVSS v3.1 9."
+  ],
+  "published": "2026-11-17",
+  "publisher": "CSIRT Italy (ACN)",
+  "publisher_type": "government",
+  "read_depth": "full",
+  "recommendations": [
+   "Apply the patch in KB000129195 per advisory MISA-2026-0012."
+  ],
+  "url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel"
+ },
+ "validation": {
+  "checked_at": "2026-11-20T10:58:30Z",
+  "state": "single_source",
+  "note": "Read the ACN alert only; Mitel's own advisory MISA-2026-0012 was not read."
+ }
+}

@@ -15,14 +15,16 @@ export function circuitOpen(key, threshold = 3, coolMs = 10 * 60e3) {
   return !!(c && c.fails >= threshold && Date.now() - c.at < coolMs);
 }
 
-// get(url, { as: "json" | "text" | "buffer", timeoutMs, retries, delayMs, factor, key })
+// get(url, { as: "json" | "text" | "buffer", range: "bytes=-65536", timeoutMs, retries, delayMs, factor, key })
 export async function get(url, o = {}) {
-  const { as = "json", timeoutMs = 20000, retries = 2, delayMs = 2000, factor = 3, key = new URL(url).host } = o;
+  const { as = "json", timeoutMs = 20000, retries = 2, delayMs = 2000, factor = 3, key = new URL(url).host, range = "" } = o;
   if (circuitOpen(key)) throw new FetchError("circuit_open", `${key}: skipped after repeated failures`);
   let wait = delayMs, last;
   for (let i = 0; i <= retries; i++) {
     try {
-      const r = await fetch(url, { headers: { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)" }, signal: AbortSignal.timeout(timeoutMs) });
+      const headers = { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)" };
+      if (/^bytes=-?\d+(-\d*)?$/.test(range)) headers.range = range;                   // part of a large file (e.g. the tail of a CSV)
+      const r = await fetch(url, { headers, signal: AbortSignal.timeout(timeoutMs) });
       if (!r.ok) { const e = new FetchError(`http_${r.status}`); try { e.body = (await r.text()).slice(0, 4000); } catch { e.body = null; } throw e; }
       if (as === "buffer") { const b = Buffer.from(await r.arrayBuffer()); circuits.delete(key); return b; }
       const body = await r.text();

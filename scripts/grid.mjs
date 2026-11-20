@@ -636,6 +636,8 @@ function incidentName(source, s) {
   if (source === "ercot") return str(`${op}: energy emergency (EEA) level ${s.level ?? 0}`, 120);
   if (source === "aemo") return str(s.kind === "load_shedding" ? `${op}: load shedding in ${where}`
     : s.level ? `${op}: actual lack of reserve (LOR${s.level}) in ${where}` : `${op}: ${LEVEL_WORD[s.kind] || "notice"} in ${where}`, 120);
+  // any other signal source (source files): name the condition and its level, never "0 customers"
+  if (SIGNAL_SOURCES.has(source) || (s.signal && !s.total)) return str(`${op}: ${LEVEL_WORD[s.kind] || "grid notice"} level ${s.level ?? 0}${where ? ` in ${where}` : ""}`, 120);
   return str(`${op}: ${fmt(s.total)} customers without power`, 120);
 }
 const stamp = (iso) => iso.replace(/\D/g, "").slice(0, 12);
@@ -867,7 +869,7 @@ export const SERIES_KEEP_DAYS = 35;          // the baseline reads 4 weeks; olde
 const SLOT = 15 * 6e4;
 export const slotIso = (ms) => isoS(Math.floor(ms / SLOT) * SLOT);
 // signal sources report a grid level, not customers: built-in ones plus any source file entry with signal: true
-const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES).filter((k) => SOURCES[k].signal === true)]);
+const SIGNAL_SOURCES = new Set(["eskom", "ercot", "aemo", ...Object.keys(SOURCES).filter((k) => SOURCES[k].signal === true || SOURCES[k].kind === "signal")]);
 /** Live items of the sources that answered (okSources: their keys) -> one point per operator region for the slot of `now`. */
 export function seriesPoints(items, okSources, now = Date.now()) {
   const at = slotIso(now), ok = new Set(okSources || []), groups = summarize((items || []).filter((x) => x && ok.has(x.source) && OPERATORS.includes(x.source)));
@@ -1025,12 +1027,12 @@ async function collect() {
     const def = SOURCES[k], prev = oldSources[k] || {};
     if (got) {
       const clean = got.filter((x) => checkItem(x).length === 0);
-      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length };
+      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, ...(def.attribution ? { attribution: str(def.attribution, 400) } : {}) };
       items.push(...clean);
     } else {
       const fresh = prev.fetched_at && now - Date.parse(prev.fetched_at) < KEEP_STALE_HOURS * 3600e3;
       const kept = fresh && !def.paused ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
-      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length };
+      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, ...(def.attribution ? { attribution: str(def.attribution, 400) } : {}) };
       items.push(...kept);
       // a keyed source without a key is reported, not counted as a failure
       if (/^not connected/.test(err)) unkeyed.push(k); else failed.push(`${k}: ${err}`);

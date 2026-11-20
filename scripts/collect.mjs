@@ -170,6 +170,89 @@ export const FEEDS = [
   { name: "Security.nl", tier: "news", url: "https://www.security.nl/rss/headlines.xml", lang: "nl", region: "europe" },
   { name: "ZATAZ", tier: "news", url: "https://www.zataz.com/feed/", lang: "fr", region: "europe" },
   { name: "Sekurak", tier: "news", url: "https://sekurak.pl/feed/", lang: "pl", region: "europe" },
+  // fifth batch (2026-11-20): regional research for Africa, the Middle East and Central Asia, Latin America, Asia, and
+  // infrastructure and product security. Each was fetched again before it was added: robots.txt allows the feed path for
+  // every reader and for ClaudeBot, items are dated with some in the last 30 days, and links stay on the publisher's own sites.
+  // Africa
+  { name: "ANCS Tunisia", tier: "gov", url: "https://www.ancs.tn/fr/rss.xml", lang: "fr", region: "africa" },
+  { name: "NITDA (Nigeria)", tier: "gov", url: "https://nitda.gov.ng/feed/", filter: true, region: "africa" },
+  { name: "Eskom media statements", tier: "gov", url: "https://www.eskom.co.za/feed/", filter: true, region: "africa" },
+  { name: "TechAfrica News", tier: "news", url: "https://techafricanews.com/feed/", filter: true, region: "africa" },
+  { name: "Digital Business Africa", tier: "news", url: "https://www.digitalbusiness.africa/feed/", filter: true, lang: "fr", region: "africa" },
+  { name: "Socialnetlink (Senegal)", tier: "news", url: "https://www.socialnetlink.org/feed/", filter: true, lang: "fr", region: "africa" },
+  { name: "Daily Maverick (South Africa)", tier: "news", url: "https://www.dailymaverick.co.za/dmrss/", filter: true, region: "africa" },
+  { name: "Capital FM (Kenya)", tier: "news", url: "https://capitalfm.africa/news/feed/", filter: true, region: "africa" },
+  { name: "Nile Post (Uganda)", tier: "news", url: "https://nilepost.co.ug/feed", filter: true, region: "africa" },
+  { name: "Defimedia (Mauritius)", tier: "news", url: "https://defimedia.info/rss.xml", filter: true, lang: "fr", region: "africa" },
+  { name: "Menos Fios (Angola)", tier: "news", url: "https://www.menosfios.com/feed/", filter: true, lang: "pt", region: "africa" },
+  { name: "TSA Algerie", tier: "news", url: "https://www.tsa-algerie.com/feed/", filter: true, lang: "fr", region: "africa" },
+  { name: "TelQuel (Morocco)", tier: "news", url: "https://telquel.ma/feed", filter: true, lang: "fr", region: "africa" },
+  { name: "Egypt Independent", tier: "news", url: "https://www.egyptindependent.com/feed/", filter: true, region: "africa" },
+  { name: "Al-Masry Al-Youm (Egypt)", tier: "news", url: "https://www.almasryalyoum.com/rss/rssfeeds", filter: true, lang: "ar", region: "africa" },
+  // the Middle East, Turkey, Iran, the Caucasus, Central Asia and Pakistan
+  { name: "UzCERT (Uzbekistan)", tier: "gov", url: "https://uzcert.uz/feed/", lang: "uz", region: "middle-east" },
+  { name: "Teknoblog siber guvenlik (Turkey)", tier: "news", url: "https://www.teknoblog.com/konu/siber-guvenlik/feed/", lang: "tr", region: "middle-east" },
+  { name: "Iran International (Persian)", tier: "news", url: "https://www.iranintl.com/fa/feed", filter: true, lang: "fa", region: "middle-east" },
+  { name: "Asharq Al-Awsat (Arabic)", tier: "news", url: "https://aawsat.com/feed", filter: true, lang: "ar", region: "middle-east" },
+  { name: "Walla Tech (Israel)", tier: "news", url: "https://rss.walla.co.il/feed/4", filter: true, lang: "he", region: "middle-east" },
+  { name: "Geektime (Israel)", tier: "news", url: "https://www.geektime.co.il/feed/", filter: true, lang: "he", region: "middle-east" },
+  { name: "Globes (Israel)", tier: "news", url: "https://en.globes.co.il/WebService/Rss/RssFeeder.asmx/FeederNode?iID=1725", filter: true, region: "middle-east" },
+  { name: "Haberturk teknoloji (Turkey)", tier: "news", url: "https://www.haberturk.com/rss/teknoloji.xml", filter: true, lang: "tr", region: "middle-east" },
+  { name: "DonanimHaber (Turkey)", tier: "news", url: "https://www.donanimhaber.com/rss/tum/", filter: true, lang: "tr", region: "middle-east" },
+  { name: "ProPakistani", tier: "news", url: "https://propakistani.pk/feed/", filter: true, region: "south-asia" },
+  { name: "Express Tribune technology (Pakistan)", tier: "news", url: "https://tribune.com.pk/feed/technology", filter: true, region: "south-asia" },
+  // Latin America and the Caribbean
+  { name: "CERT-PY (Paraguay)", tier: "gov", url: "https://www.cert.gov.py/feed/", lang: "es", region: "latin-america" },
+  { name: "CNCS (Dominican Republic)", tier: "gov", url: "https://cncs.gob.do/feed/", filter: true, lang: "es", region: "latin-america" },
+  { name: "G1 tecnologia (Brazil)", tier: "news", url: "https://g1.globo.com/rss/g1/tecnologia/", filter: true, lang: "pt", region: "latin-america" },
+  { name: "Tele.Sintese (Brazil)", tier: "news", url: "https://telesintese.com.br/feed/", filter: true, lang: "pt", region: "latin-america" },
+  { name: "Expansion tecnologia (Mexico)", tier: "news", url: "https://expansion.mx/rss/tecnologia", filter: true, lang: "es", region: "latin-america" },
+  { name: "La Nacion tecnologia (Argentina)", tier: "news", url: "https://www.lanacion.com.ar/arc/outboundfeeds/rss/category/tecnologia/?outputType=xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "Ambito tecnologia (Argentina)", tier: "news", url: "https://www.ambito.com/rss/pages/tecnologia.xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "iProfesional tecnologia (Argentina)", tier: "news", url: "https://www.iprofesional.com/rss/tecnologia", filter: true, lang: "es", region: "latin-america" },
+  { name: "Semana tecnologia (Colombia)", tier: "news", url: "https://www.semana.com/arc/outboundfeeds/rss/category/tecnologia/?outputType=xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "El Comercio tecnologia (Peru)", tier: "news", url: "https://elcomercio.pe/arc/outboundfeeds/rss/category/tecnologia/?outputType=xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "ABC Color tecnologia (Paraguay)", tier: "news", url: "https://www.abc.com.py/arc/outboundfeeds/rss/category/tecnologia/?outputType=xml", filter: true, lang: "es", region: "latin-america" },
+  { name: "Diario Financiero (Chile)", tier: "news", url: "https://www.df.cl/noticias/site/list/port/rss.xml", filter: true, lang: "es", region: "latin-america" },
+  // Asia and Oceania
+  { name: "GovCERT.HK security alerts", tier: "gov", url: "https://www.govcert.gov.hk/en/rss_security_alerts.xml", region: "east-asia" },
+  { name: "Digital Agency Japan", tier: "gov", url: "https://www.digital.go.jp/rss/news.xml", filter: true, lang: "ja", region: "east-asia" },
+  { name: "LAC Watch (Japan)", tier: "vendor", url: "https://www.lac.co.jp/lacwatch/feed.xml", filter: true, lang: "ja", region: "east-asia" },
+  { name: "piyolog (Japan)", tier: "news", url: "https://piyolog.hatenadiary.jp/rss", lang: "ja", region: "east-asia" },
+  { name: "ScanNetSecurity (Japan)", tier: "news", url: "https://scan.netsecurity.ne.jp/rss/index.rdf", lang: "ja", region: "east-asia" },
+  { name: "Mynavi TECH+ security (Japan)", tier: "news", url: "https://news.mynavi.jp/rss/techplus/enterprise/security", lang: "ja", region: "east-asia" },
+  { name: "Cybersecurity.com (Japan)", tier: "news", url: "https://cybersecurity-jp.com/feed", lang: "ja", region: "east-asia" },
+  { name: "INTERNET Watch (Japan)", tier: "news", url: "https://internet.watch.impress.co.jp/data/rss/1.0/iw/feed.rdf", filter: true, lang: "ja", region: "east-asia" },
+  { name: "Etnews security (Korea)", tier: "news", url: "https://rss.etnews.com/04045.xml", lang: "ko", region: "east-asia" },
+  { name: "SCMP technology (Hong Kong)", tier: "news", url: "https://www.scmp.com/rss/36/feed/", filter: true, region: "east-asia" },
+  { name: "VnExpress khoa hoc cong nghe (Vietnam)", tier: "news", url: "https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss", filter: true, lang: "vi", region: "southeast-asia" },
+  { name: "Tuoi Tre nhip song so (Vietnam)", tier: "news", url: "https://tuoitre.vn/rss/nhip-song-so.rss", filter: true, lang: "vi", region: "southeast-asia" },
+  { name: "CNN Indonesia teknologi", tier: "news", url: "https://www.cnnindonesia.com/teknologi/rss", filter: true, lang: "id", region: "southeast-asia" },
+  { name: "Inquirer technology (Philippines)", tier: "news", url: "https://technology.inquirer.net/feed", filter: true, region: "southeast-asia" },
+  { name: "Blognone (Thailand)", tier: "news", url: "https://www.blognone.com/atom.xml", filter: true, lang: "th", region: "southeast-asia" },
+  { name: "Amar Ujala technology (India)", tier: "news", url: "https://www.amarujala.com/rss/technology.xml", filter: true, lang: "hi", region: "south-asia" },
+  { name: "Information Age (Australia)", tier: "news", url: "https://ia.acs.org.au/articles.rss", filter: true, region: "oceania" },
+  // Europe: national agencies not yet covered
+  { name: "NKI Hungary alerts", tier: "gov", url: "https://nki.gov.hu/feed/riasztasok/", lang: "hu", region: "europe" },
+  { name: "NKI Hungary news", tier: "gov", url: "https://nki.gov.hu/feed/hirek/", filter: true, lang: "hu", region: "europe" },
+  { name: "Styrelsen for Samfundssikkerhed (Denmark)", tier: "gov", url: "https://samsik.dk/feed/", filter: true, lang: "da", region: "europe" },
+  { name: "GovCERT Bulgaria", tier: "gov", url: "https://www.govcert.bg/feed/", lang: "bg", region: "europe" },
+  { name: "CERT.hr (Croatia)", tier: "gov", url: "https://cert.hr/feed/", lang: "hr", region: "europe" },
+  { name: "SI-CERT (Slovenia)", tier: "gov", url: "https://www.cert.si/feed/", lang: "sl", region: "europe" },
+  { name: "RIA (Estonia)", tier: "gov", url: "https://www.ria.ee/rss-feeds/rss.xml", filter: true, lang: "et", region: "europe" },
+  { name: "CERT@VDE", tier: "gov", url: "https://certvde.com/en/advisories/feeds/rss/", kind: "cve", region: "europe" },
+  // infrastructure and product security teams
+  { name: "Ivanti security advisories", tier: "vendor", url: "https://www.ivanti.com/blog/topics/security-advisory/rss" },
+  { name: "Synology security advisories", tier: "vendor", url: "https://www.synology.com/api/rssfeed/security/en-global", kind: "cve" },
+  { name: "Moxa security advisories", tier: "vendor", url: "https://www.moxa.com/en/rss/moxa-security-advisory", kind: "cve" },
+  { name: "SolarWinds security advisories", tier: "vendor", url: "https://www.solarwinds.com/shared-content/rss-feed/solarwinds-cve-rss-feed.xml", kind: "cve" },
+  { name: "ABB PSIRT", tier: "vendor", url: "https://psirt.abb.com/rss/abbrssfeed.xml", kind: "cve" },
+  { name: "F5 Labs", tier: "vendor", url: "https://www.f5.com/labs/rss-feeds/all.xml" },
+  { name: "VulnCheck", tier: "vendor", url: "https://www.vulncheck.com/feed/blog/atom.xml" },
+  { name: "Censys", tier: "vendor", url: "https://censys.com/feed/", filter: true },
+  { name: "Bishop Fox", tier: "vendor", url: "https://bishopfox.com/feeds/blog.rss", filter: true },
+  { name: "Healthcare Dive health IT", tier: "news", url: "https://www.healthcaredive.com/feeds/topic/health-it/", filter: true },
+  { name: "RCR Wireless News", tier: "news", url: "https://rcrwireless.com/feed", filter: true },
 ];
 // feeds the source scout job has added (config/feeds.json); a broken entry is ignored, never fatal
 export function extraFeeds(cfg) {
@@ -189,7 +272,11 @@ export const CYBER = new RegExp(["cyber|hack(?!athon)|ransom|breach|malware|botn
   "piratage|ran[cç]ongiciel|fuite de donn[ée]es|attacco informatico|violazione dei dati|datenleck|sicherheitsl[uü]cke|schadsoftware|datalek|wyciek danych",   // fr, it, de, nl, pl
   "\\bsiber\\b|fidye yaz[ıi]l[ıi]m|veri s[ıi]z[ıi]nt[ıi]s[ıi]|g[üu]venlik a[çc][ıi][ğg][ıi]|kimlik av[ıi]|zararl[ıi] yaz[ıi]l[ıi]m|peretas|kebocoran data|diretas|tin tặc|mã độc|rò rỉ dữ liệu",   // tr, id/ms, vi
   "سيبراني|اختراق|قرصنة|الفدية|تسريب بيانات|кибер|хакер|взлом|утечк|вымогател",   // ar, ru/uk
-  "サイバー|不正アクセス|情報漏え?い|漏洩|ランサム|脆弱性|マルウェア|해킹|랜섬웨어|유출|취약점|사이버|악성코드|피싱|漏洞|駭客|黑客|勒索|資安|網路攻擊|网络攻击|外洩|泄露|ไซเบอร์|แฮ็ก|มัลแวร์|ช่องโหว่"].join("|"), "i");   // ja, ko, zh, th
+  "サイバー|不正アクセス|情報漏え?い|漏洩|ランサム|脆弱性|マルウェア|해킹|랜섬웨어|유출|취약점|사이버|악성코드|피싱|漏洞|駭客|黑客|勒索|資安|網路攻擊|网络攻击|外洩|泄露|ไซเบอร์|แฮ็ก|มัลแวร์|ช่องโหว่",   // ja, ko, zh, th
+  // only words that mean nothing but an IT attack or leak: generic "vulnerability" words (sårbarhed, ranjivost, sebezhetőség) also
+  // describe people, so they are left out; "kiber" is not Kibera (Nairobi)
+  "\\bkiber(?!a\\b)|k[üu]ber|adatsziv[aá]rg|zsarol[oó]v[ií]rus|s[ée]r[üu]l[ée]kenys[ée]g|adathal[aá]sz|k[aá]rt[ée]kony k[oó]d|datal[æa]k|it-angreb|turvan[õo]rkus|andmelek|lunavara|pahavara|[õo]ngitsus",   // hu, uz, hr, sl, da, et
+  "سایبر|هکر|باج\u200c?افزار|بدافزار|نشت اطلاعات|فیشینگ|סייבר|האקר|כופרה|נוזקה|דליפת מידע|חולשת אבטחה|פישינג|साइबर|हैकर|हैकिंग|रैनसमवेयर|मालवेयर|डेटा लीक|फिशिंग"].join("|"), "i");   // fa, he, hi
 const MAX_AGE_H = 72;
 
 const decode = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
@@ -227,10 +314,12 @@ async function fetchFeed(f) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   // --test <url>: the source scout checks a candidate feed before adding it (reads and writes nothing)
-  const ti = process.argv.indexOf("--test");
-  if (ti > 0) { const r = await fetchFeed({ url: process.argv[ti + 1] }); console.log(r.error ? `FAILED: ${r.error}` : `OK: ${r.items.length} items; newest: ${JSON.stringify(r.items.slice(0, 3).map((i) => [i.published.slice(0, 10), i.title.slice(0, 80)]))}`); process.exit(r.error || !r.items.length ? 1 : 0); }
+  // --test (no url): a dry run of the whole collection: every feed is fetched and filtered as usual, nothing is written
+  const ti = process.argv.indexOf("--test"), turl = ti > 0 ? process.argv[ti + 1] || "" : "";
+  if (/^https?:\/\//.test(turl)) { const r = await fetchFeed({ url: turl }); console.log(r.error ? `FAILED: ${r.error}` : `OK: ${r.items.length} items; newest: ${JSON.stringify(r.items.slice(0, 3).map((i) => [i.published.slice(0, 10), i.title.slice(0, 80)]))}`); process.exit(r.error || !r.items.length ? 1 : 0); }
+  const DRY = ti > 0;
   const leadsDir = join(DATA, "leads");
-  mkdirSync(leadsDir, { recursive: true });
+  if (!DRY) mkdirSync(leadsDir, { recursive: true });
   const known = new Set();
   for (const x of listEventFiles()) for (const s of (x.e && x.e.sources) || []) if (s && s.url) known.add(s.url);
   for (const f of existsSync(leadsDir) ? readdirSync(leadsDir) : []) {
@@ -248,16 +337,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     fh[f.name] = error ? { ok: false, error: String(error).slice(0, 90), items: 0, at: now, last_ok: prev.last_ok || "", fails: (prev.fails || 0) + 1 }
       : { ok: true, error: "", items: items.length, at: now, last_ok: now, fails: 0, ...(items.length ? {} : { empty: (prev.empty || 0) + 1 }) };
     if (error) { report.push(`${f.name}: ${error}`); continue; }
-    let n = 0;
+    let n = 0, recent = 0;
     for (const it of items) {
       if (known.has(it.url)) continue;
       if (it.published && Date.parse(it.published) < cutoff) continue;
+      recent++;
       if (f.filter && !CYBER.test(`${it.title} ${it.summary}`)) continue;
       known.add(it.url); n++;
       out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, lang: f.lang || "en", ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
     }
-    report.push(`${f.name}: ${items.length} in feed, ${n} new`);
+    report.push(`${f.name}: ${items.length} in feed, ${n} new${f.filter ? ` (${n} of ${recent} recent passed the cyber filter)` : ""}`);
   }
+  if (DRY) { console.log(`collect --test (dry run, nothing written): ${out.length} new lead(s) from ${ALL.length} feeds.\n` + report.join("\n")); process.exit(0); }
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");
   const sp = join(DATA, "status.json"), st = readStatus();
   st.last_collect_at = now; st.last_collect_new = out.length;

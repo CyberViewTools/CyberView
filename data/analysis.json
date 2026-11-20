@@ -1,20 +1,21 @@
 {
-  "generated_at": "2026-11-19T12:56:55Z",
-  "summary": "Two supplier breaches now have named customers on file: PLAID's KARTE marketing service, behind leaks of about 19 million DHC records and 710,000 BASE FOOD customers, and Fireworks AI, behind Cursor, Notion and Uber. Many other breaches this week came through a provider, from Swiss pension fund Publica to DHL and some 40 Irish credit unions, though most are separate cases. NGINX2Root is the flaw to patch first: unauthenticated code execution over HTTP/2, public proof-of-concept code, and a researcher chain to root through an unpatched Linux kernel bug, though no attacks are reported yet. The US outage wave remains a cluster in time only, and officials still see no cyberattack behind it. Password reuse and device-code phishing drove account takeovers from Hydro-Québec to Germany's BundID. Healthcare breach notices continued but are not grouped this run.",
+  "generated_at": "2026-11-20T00:57:16Z",
+  "summary": "Patch first what is already being exploited: Google says a PRC-nexus actor used the vCenter authentication bypass CVE-2026-123890 as a zero-day, an investigating firm reports Cisco Expressway clusters breached after public exploit code (Cisco has not confirmed), and Confluence, N-central, Apache Roller and four flaws CISA listed on Nov 18 are under attack. NGINX2Root remains the broadest exposure, now showing up in appliances such as Synology DSM. Supplier breaches keep reaching customers: the PLAID KARTE and Fireworks AI cascades are joined by JPMorgan, Visa and Mastercard provider incidents and Boone County's clinic operator. The European Commission confirmed an AI-assisted attack, and Bulgaria and the USDA disclosed government intrusions. Healthcare filed the most breach notices, mostly for intrusions months old. The outage wave remains a cluster in time only.",
   "patterns": [
     {
       "id": "nginx2root",
-      "title": "NGINX2Root: HTTP/2 code execution, public exploit code, and a chain to root",
+      "title": "NGINX2Root: HTTP/2 code execution, public exploit code, and appliances that bundle NGINX",
       "kind": "stated",
       "confidence": 3,
-      "narrative": "F5 shipped fixes for five NGINX flaws. Two in HTTP/2 handling, CVE-2026-123007 and CVE-2026-123633, let an unauthenticated attacker run code as the nginx worker; Wiz says CVE-2026-123007 affects every version since 1.9.5, and fixes are in 1.30.7 and 1.31.9. CERT-FR knows of a public proof of concept and SecurityWeek says Rapid7 and Censys published one. Xint, which found the flaws, chained one with a separate, still-unpatched Linux kernel SCTP bug to reach root, including out of a Docker container. NGINX fronts a large share of web services and sits inside ingress controllers and appliances, so this is the week's broadest exposure. Disabling HTTP/2 is CERT-FR's interim workaround.",
-      "caveat": "No exploitation in the wild is reported by F5, CERT-FR, Wiz or SecurityWeek. Sources differ on whose proof of concept is public (Wiz withholds its own), and F5's own advisory could not be read. The kernel flaw has no CVE and Xint withholds its details. The Apache mod_http2 flaw that Singapore says is exploited is in different software and is grouped here only because the protocol is the same.",
+      "narrative": "F5 shipped fixes for five NGINX flaws. Two in HTTP/2 handling, CVE-2026-123007 and CVE-2026-123633, let an unauthenticated attacker run code as the nginx worker; Wiz says CVE-2026-123007 affects every version since 1.9.5, and fixes are in 1.30.7 and 1.31.9. CERT-FR knows of a public proof of concept and SecurityWeek says Rapid7 and Censys published one. Xint, which found the flaws, chained one with a separate, still-unpatched Linux kernel SCTP bug to reach root, including out of a Docker container. NGINX fronts a large share of web services and sits inside ingress controllers and appliances, so this is the week's broadest exposure. On Nov 19 Synology listed the same CVE-2026-123007 among fixes for its DSM storage operating system, the first appliance vendor on file to do so, and CERT-SE issued its own warning. Disabling HTTP/2 is CERT-FR's interim workaround.",
+      "caveat": "No exploitation in the wild is reported by F5, CERT-FR, Wiz or SecurityWeek. Sources differ on whose proof of concept is public (Wiz withholds its own), and F5's own advisory could not be read. The kernel flaw has no CVE and Xint withholds its details. The Apache mod_http2 flaw that Singapore says is exploited is in different software and is grouped here only because the protocol is the same. Synology's advisory does not say whether its NGINX build is reachable over HTTP/2 by default.",
       "event_ids": [
         "nginx2root-nginx-critical-rce-flaws-2026-11",
         "cert-fr-nginx-http2-rce-2026-11",
         "f5-nginx2root-critical-flaws-poc-2026-11",
         "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
-        "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11"
+        "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11",
+        "synology-dsm-oauth-nginx-critical-flaws-2026-11"
       ],
       "chain": [
         "nginx2root-nginx-critical-rce-flaws-2026-11",
@@ -43,6 +44,112 @@
           "from": "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11",
           "to": "cert-fr-nginx-http2-rce-2026-11",
           "rel": "both HTTP/2 flaws, different software",
+          "basis": "inferred"
+        },
+        {
+          "from": "nginx2root-nginx-critical-rce-flaws-2026-11",
+          "to": "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+          "rel": "same CVE-2026-123007, fixed in Synology DSM",
+          "basis": "stated"
+        }
+      ]
+    },
+    {
+      "id": "exploited-now",
+      "title": "Exploited now: vCenter, Expressway, Confluence, N-central and other edge systems",
+      "kind": "stated",
+      "confidence": 3,
+      "narrative": "Exploitation is reported for a run of internet-facing and management systems this week. Google says the PRC-nexus actor ARMORY CASTLE exploited the VMware vCenter authentication bypass CVE-2026-123890 as a zero-day, with Rapid7 dating activity to September. The firm F6 investigated an intrusion through Cisco Expressway clusters after proof-of-concept code was posted for CVE-2026-76466. CISA listed the Apache Axis flaw behind Confluence takeovers, plus Synology DSM, LiteLLM and REDCap flaws, as exploited; N-central servers were hit through zero-days; Apache says the Roller flaw is exploited; Singapore warns of Apache mod_http2 exploitation; CISA added Puppet Enterprise and Check Point Gaia; Huntress tracks rogue ScreenConnect clients pushed to hundreds of hosts; and Dorsata was breached through a Metabase zero-day. Dragos says industrial ransomware this quarter mostly entered through edge devices, which matches this list. These are the patches to apply before the merely critical ones.",
+      "caveat": "Each exploitation claim is about one product and is stated by an agency, vendor or investigating firm, but they are different attackers; grouping them is by attribute. Cisco's advisory still says Cisco knows of no malicious use of the Expressway flaw, so that case rests on F6 as reported by SecurityWeek. Rapid7 says the Confluence and N-central exploitation was reported together, not that one actor did both. The Dorsata intrusion happened in August.",
+      "event_ids": [
+        "gtig-armory-castle-vcenter-zero-day-2026-11",
+        "cisco-expressway-cve-2026-76466-exploited-2026-11",
+        "atlassian-confluence-axis-cve-2026-90436-2026-11",
+        "cisa-kev-four-additions-2026-11-18",
+        "n-able-n-central-zero-day-exploitation-2026-11",
+        "cccs-n-able-n-central-advisory-av26-1165-2026-11",
+        "apache-roller-rce-cve-2026-129448-2026-11",
+        "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11",
+        "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11",
+        "check-point-gaia-kev-cve-2026-123039",
+        "connectwise-screenconnect-sckit-attacks-2026-11",
+        "dorsata-metabase-zero-day-breach-2026-11",
+        "dragos-industrial-ransomware-q3-2026-11"
+      ],
+      "chain": [
+        "atlassian-confluence-axis-cve-2026-90436-2026-11",
+        "cisa-kev-four-additions-2026-11-18"
+      ],
+      "edges": [
+        {
+          "from": "atlassian-confluence-axis-cve-2026-90436-2026-11",
+          "to": "cisa-kev-four-additions-2026-11-18",
+          "rel": "same CVE listed as exploited",
+          "basis": "stated"
+        },
+        {
+          "from": "atlassian-confluence-axis-cve-2026-90436-2026-11",
+          "to": "n-able-n-central-zero-day-exploitation-2026-11",
+          "rel": "exploitation reported together (Rapid7)",
+          "basis": "stated"
+        },
+        {
+          "from": "n-able-n-central-zero-day-exploitation-2026-11",
+          "to": "cccs-n-able-n-central-advisory-av26-1165-2026-11",
+          "rel": "same product, later advisory",
+          "basis": "inferred"
+        },
+        {
+          "from": "n-able-n-central-zero-day-exploitation-2026-11",
+          "to": "connectwise-screenconnect-sckit-attacks-2026-11",
+          "rel": "both remote-management tools",
+          "basis": "inferred"
+        }
+      ]
+    },
+    {
+      "id": "patch-pressure",
+      "title": "Critical fixes with public exploit code but no attacks reported yet",
+      "kind": "inferred",
+      "confidence": 2,
+      "narrative": "A second tier of flaws has fixes and, in several cases, public exploit code, but no reported attacks. CISA told organisations to patch the Java4Shell flaw CVE-2026-114938 immediately, and Oracle's November update carries the fix. Depthfirst published phpAfterShell, which reaches code execution on PHP's default session handler despite October's PHP2Shell fixes, the same day PHP shipped releases fixing 17 flaws. Depthfirst also published database exploits for PostgreSQL, MySQL, ClickHouse and Oracle. NCSC Netherlands knows of public exploit code for Ivanti Endpoint Manager; Drupal, WordPress, F5 BIG-IP and Synology DSM shipped critical fixes; SonicWall says Gen 6 firewalls will get no more patches. Australia's ACSC warns that the gap between disclosure and exploitation keeps shrinking, which is why public code matters more than a score.",
+      "caveat": "No exploitation is reported for any of these at the time of writing; that public code will soon be used is our inference, drawn from the pattern in the exploited list, not a finding. The research exploits have not been independently reproduced, and the sources do not say which PHP release fixes phpAfterShell.",
+      "event_ids": [
+        "cisa-java4shell-alert-cve-2026-114938-2026-11",
+        "rapid7-java-17-rce-cve-2026-114938-2026-11",
+        "oracle-cspu-november-2026",
+        "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+        "php-critical-security-release-announced-2026-11",
+        "depthfirst-database-rce-poc-postgresql-mysql-oracle-2026-11",
+        "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11",
+        "drupal-core-installer-rce-sa-core-2026-017-2026-11",
+        "wordpress-7-1-5-security-release-2026-11",
+        "f5-big-ip-six-critical-tmm-flaws-2026-11",
+        "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+        "sonicwall-gen6-end-of-support-retire-2026-11",
+        "acsc-critical-alert-vulnerability-pace-2026-11"
+      ],
+      "chain": [
+        "rapid7-java-17-rce-cve-2026-114938-2026-11",
+        "cisa-java4shell-alert-cve-2026-114938-2026-11"
+      ],
+      "edges": [
+        {
+          "from": "rapid7-java-17-rce-cve-2026-114938-2026-11",
+          "to": "cisa-java4shell-alert-cve-2026-114938-2026-11",
+          "rel": "same CVE, CISA alert followed",
+          "basis": "stated"
+        },
+        {
+          "from": "oracle-cspu-november-2026",
+          "to": "cisa-java4shell-alert-cve-2026-114938-2026-11",
+          "rel": "fix named in CISA alert",
+          "basis": "stated"
+        },
+        {
+          "from": "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+          "to": "php-critical-security-release-announced-2026-11",
+          "rel": "same day, likely same PHP releases",
           "basis": "inferred"
         }
       ]
@@ -106,117 +213,29 @@
       "title": "Breaches through a provider, not the front door",
       "kind": "inferred",
       "confidence": 3,
-      "narrative": "Beyond the two named cascades, many confirmed breaches this week came through a supplier. Swiss federal pension fund Publica must assume member data leaked from a test environment after an attack on its software supplier PK Softech; about 40 Irish credit unions were exposed through Wellington IT; DHL employee data was copied from a survey provider; Office Partner's customer data was reached at an external service provider; Coinone's support contractor MetaM was breached; Visa says its incident was at an Asia Pacific provider; Optimizely's injected script reached 178 organisations' sites. N-able disclosed access to a Mail Assure and SpamExperts server, while its N-central tool and ScreenConnect show how remote-management platforms reach many networks at once. TSMC, Iris Ohyama, Infoblox, Maileva, Osaka and Trezor add to the list.",
-      "caveat": "These are separate vendors and separate attackers; the shared element is the route, not the actor, and grouping them is our inference. Several victims have not named their provider. N-able's mail-filter breach and the N-central exploitation are different products and no source connects them; N-able says it has no evidence customer mail was compromised.",
+      "narrative": "Beyond the two named cascades, many confirmed breaches this week came through a supplier. Swiss federal pension fund Publica must assume member data leaked from a test environment after an attack on its software supplier PK Softech; about 40 Irish credit unions were exposed through Wellington IT; DHL employee data was copied from a survey provider; Office Partner's customer data was reached at an external service provider. JPMorganChase says vendors that serve it were attacked and marketing data with some customer names and emails was accessed, while Mastercard and Visa reported provider incidents the same day. Boone County, Indiana, says its employees' health data was exposed through Marathon Health, which runs its clinic. Optimizely's injected script reached 178 organisations' sites, and N-able disclosed access to a Mail Assure and SpamExperts server. Infoblox, La Poste's Maileva and Osaka's email delivery service add to the list.",
+      "caveat": "These are separate vendors and separate attackers; the shared element is the route, not the actor, and grouping them is our inference. JPMorgan, Visa and Mastercard have not named their providers or said whether it is the same one; the n0n gang's claim is unverified. N-able says it has no evidence customer mail was compromised.",
       "event_ids": [
         "publica-pk-softech-data-leak-2026-11",
         "wellington-it-irish-credit-unions-breach-2026-11",
         "dhl-group-survey-provider-breach-2026-11",
         "office-partner-service-provider-breach-2026-11",
-        "coinone-metam-support-contractor-breach-2026-11",
+        "jpmorganchase-third-party-vendor-cyberattack-2026-11",
         "visa-third-party-provider-incident-n0n-claim-2026-11",
+        "boone-county-in-marathon-health-breach-2026-11",
         "optimizely-web-script-injection-2026-11",
         "nable-mail-assure-spamexperts-breach-2026-11",
-        "n-able-n-central-zero-day-exploitation-2026-11",
-        "connectwise-screenconnect-sckit-attacks-2026-11",
-        "tsmc-third-party-cloud-breach-2026-11",
-        "iris-ohyama-cloud-service-breach-2026-11",
         "infoblox-vendor-data-access-2026-11",
         "la-poste-maileva-breach-2026-11",
-        "osaka-city-email-data-breach-2026-11",
-        "trezor-cryptobilis-safe5-implants-2026-11"
+        "osaka-city-email-data-breach-2026-11"
       ],
       "chain": [],
       "edges": [
         {
-          "from": "n-able-n-central-zero-day-exploitation-2026-11",
-          "to": "connectwise-screenconnect-sckit-attacks-2026-11",
-          "rel": "both MSP remote tools",
-          "basis": "inferred"
-        },
-        {
-          "from": "n-able-n-central-zero-day-exploitation-2026-11",
-          "to": "nable-mail-assure-spamexperts-breach-2026-11",
-          "rel": "same vendor, different product, no stated link",
-          "basis": "inferred"
-        }
-      ]
-    },
-    {
-      "id": "patch-to-exploit",
-      "title": "From disclosure to exploitation",
-      "kind": "stated",
-      "confidence": 3,
-      "narrative": "Fixes are turning into attacks quickly. The Apache Axis flaw Rapid7 saw used against Confluence on Nov 13 was added to CISA's exploited list on Nov 18, and Rapid7 reports N-able N-central exploited alongside it. Check Point's Gaia flaw used to wipe gateways went on the list a day after disclosure. CISA told everyone to patch Java4Shell at once, with the fix in Oracle's November update, and added an exploited Puppet Enterprise flaw. Apache warns its Roller flaw is exploited. Public exploit code now exists for Ivanti Endpoint Manager and for database flaws in PostgreSQL, MySQL and Oracle, and critical fixes landed for Drupal core, WordPress and F5 BIG-IP. SonicWall told Gen 6 firewall owners to retire them because no more fixes will come. Australia's ACSC warned that exploitation now follows disclosure faster.",
-      "caveat": "Each exploitation link is to a specific flaw and is stated by an agency or vendor. Rapid7 says the N-able and Confluence exploitation was reported together, not that one actor did both. No exploitation is reported yet for Drupal, WordPress, F5 BIG-IP or the database proof-of-concept chains, which have not been independently reproduced.",
-      "event_ids": [
-        "atlassian-confluence-axis-cve-2026-90436-2026-11",
-        "cisa-kev-four-additions-2026-11-18",
-        "n-able-n-central-zero-day-exploitation-2026-11",
-        "cccs-n-able-n-central-advisory-av26-1165-2026-11",
-        "check-point-php2shell-gateway-wiper-campaign-2026-11",
-        "cccs-check-point-advisory-av26-1154-2026-11",
-        "check-point-gaia-kev-cve-2026-123039",
-        "rapid7-java-17-rce-cve-2026-114938-2026-11",
-        "cisa-java4shell-alert-cve-2026-114938-2026-11",
-        "oracle-cspu-november-2026",
-        "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11",
-        "apache-roller-rce-cve-2026-129448-2026-11",
-        "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11",
-        "depthfirst-database-rce-poc-postgresql-mysql-oracle-2026-11",
-        "drupal-core-installer-rce-sa-core-2026-017-2026-11",
-        "wordpress-7-1-5-security-release-2026-11",
-        "f5-big-ip-six-critical-tmm-flaws-2026-11",
-        "sonicwall-gen6-end-of-support-retire-2026-11",
-        "acsc-critical-alert-vulnerability-pace-2026-11"
-      ],
-      "chain": [
-        "check-point-php2shell-gateway-wiper-campaign-2026-11",
-        "cccs-check-point-advisory-av26-1154-2026-11",
-        "check-point-gaia-kev-cve-2026-123039"
-      ],
-      "edges": [
-        {
-          "from": "atlassian-confluence-axis-cve-2026-90436-2026-11",
-          "to": "cisa-kev-four-additions-2026-11-18",
-          "rel": "same CVE listed as exploited",
-          "basis": "stated"
-        },
-        {
-          "from": "atlassian-confluence-axis-cve-2026-90436-2026-11",
-          "to": "n-able-n-central-zero-day-exploitation-2026-11",
-          "rel": "exploitation reported together (Rapid7)",
-          "basis": "stated"
-        },
-        {
-          "from": "n-able-n-central-zero-day-exploitation-2026-11",
-          "to": "cccs-n-able-n-central-advisory-av26-1165-2026-11",
-          "rel": "same product, later advisory",
-          "basis": "inferred"
-        },
-        {
-          "from": "check-point-php2shell-gateway-wiper-campaign-2026-11",
-          "to": "check-point-gaia-kev-cve-2026-123039",
-          "rel": "Gaia flaw in chain listed as exploited",
-          "basis": "stated"
-        },
-        {
-          "from": "cccs-check-point-advisory-av26-1154-2026-11",
-          "to": "check-point-gaia-kev-cve-2026-123039",
-          "rel": "same CVE added to KEV",
-          "basis": "stated"
-        },
-        {
-          "from": "rapid7-java-17-rce-cve-2026-114938-2026-11",
-          "to": "cisa-java4shell-alert-cve-2026-114938-2026-11",
-          "rel": "same CVE, CISA alert followed",
-          "basis": "stated"
-        },
-        {
-          "from": "oracle-cspu-november-2026",
-          "to": "cisa-java4shell-alert-cve-2026-114938-2026-11",
-          "rel": "fix named in CISA alert",
-          "basis": "stated"
+          "from": "jpmorganchase-third-party-vendor-cyberattack-2026-11",
+          "to": "visa-third-party-provider-incident-n0n-claim-2026-11",
+          "rel": "same day, providers not named, link unknown",
+          "basis": "timing"
         }
       ]
     },
@@ -225,18 +244,17 @@
       "title": "AI-driven attack tooling (ARTEX, Cairn)",
       "kind": "stated",
       "confidence": 3,
-      "narrative": "The FBI, Cisco Talos, Amazon and Cloudflare each describe intrusions or scanning run with the open-source ARTEX agent platform; Cloudflare says AI pentest traffic rose about 30-fold since October. Unit 42 describes a China-nexus cluster using a fork of the Cairn framework, and Google reports the first intrusion it saw run end to end by AI agents, plus a PRC-nexus group building its own tool and an exploit_agent framework that turned patches into exploits. The European Commission's spokesman said the attack it detected on Oct 22, which disrupted its HR and payroll systems, was based on a publicly available AI tool.",
-      "caveat": "Same tools, different actors. Each source states it saw ARTEX, but ARTEX is open source, so the shared tool is a shared attribute, not a link between intrusions, and says nothing about who is behind them. The FBI and Talos both cite more than 2,250 downstream tenants but describe the case differently; that they are one case is our inference. The Commission did not name the tool, so it may not be any of those listed here.",
+      "narrative": "The FBI, Cisco Talos, Amazon and Cloudflare each describe intrusions or scanning run with the open-source ARTEX agent platform; Cloudflare says AI pentest traffic rose about 30-fold since October. Google reports a PRC-nexus group building its own automated attack tool and an exploit_agent framework that turned patches into working exploits. The European Commission's spokesman confirmed on Nov 19 that the attack first detected on Oct 22, which took down its Sysper HR system and the JSIS health insurance scheme, was carried out with a publicly available AI tool; the Commission found no staff-wide data breach and named no attacker.",
+      "caveat": "Same tools, different actors. ARTEX is open source, so a shared tool is a shared attribute, not a link between intrusions, and says nothing about who is behind them. The FBI and Talos both cite more than 2,250 downstream tenants but describe the case differently; that they are one case is our inference. The Commission did not name the tool, so it may not be any of those listed here.",
       "event_ids": [
         "fbi-flash-artex-intrusions-2026-11",
         "cisco-talos-artex-and-beyond-2026-11",
         "amazon-ai-agent-campaign-litellm-dify-keys-2026-11",
         "cloudflare-ai-pentest-orchestrators-traffic-2026-11",
-        "unit42-cl-sta-1238-cairn-ai-operations-2026-11",
         "google-autonomous-attacks-warning-2026-11",
         "google-chinese-state-automated-attack-tool-2026-11",
         "gtig-exploit-agent-autonomous-patch-diff-exploitation-2026-11",
-        "european-commission-cyberattack-payroll-2026-11"
+        "eu-commission-ai-assisted-cyberattack-2026-11"
       ],
       "chain": [],
       "edges": [
@@ -265,14 +283,8 @@
           "basis": "stated"
         },
         {
-          "from": "unit42-cl-sta-1238-cairn-ai-operations-2026-11",
-          "to": "google-autonomous-attacks-warning-2026-11",
-          "rel": "same class of tool",
-          "basis": "inferred"
-        },
-        {
           "from": "google-autonomous-attacks-warning-2026-11",
-          "to": "european-commission-cyberattack-payroll-2026-11",
+          "to": "eu-commission-ai-assisted-cyberattack-2026-11",
           "rel": "AI tool used, tool not named",
           "basis": "inferred"
         }
@@ -283,13 +295,12 @@
       "title": "Developer and AI-agent toolchains as the target",
       "kind": "inferred",
       "confidence": 2,
-      "narrative": "Separate incidents aim at the tools developers and AI agents run with. Bitdefender found 22 GitHub links whose AGENTS.md and CLAUDE.md files tell coding assistants to run a loader, and Google describes a North Korean cluster planting a backdoor through Claude Code settings files: the agent's own instruction files are now an attack route. A credential stealer sat in Microsoft's Agent Framework package on PyPI, 4,837 hijacked GitHub accounts pushed a CI secrets stealer, and trojanized Claude Code extension builds reached Cursor's marketplace cache. A study of 428 LLM API routers found some injecting code and misusing credentials, and researchers took over the Kokoro model's Hugging Face account through an expired domain. Microsoft showed in a lab how a phished device-code approval could steer a coding agent. The prize in each is the keys and tokens these tools hold.",
+      "narrative": "Separate incidents aim at the tools developers and AI agents run with. Bitdefender found 22 GitHub links whose AGENTS.md and CLAUDE.md files tell coding assistants to run a loader, and Google describes a North Korean cluster planting a backdoor through Claude Code settings files: the agent's own instruction files are now an attack route. A credential stealer sat in Microsoft's Agent Framework package on PyPI, and trojanized Claude Code extension builds reached Cursor's marketplace cache. A study of 428 LLM API routers found some injecting code and misusing credentials, and researchers took over the Kokoro model's Hugging Face account through an expired domain. Microsoft showed in a lab how a phished device-code approval could steer a coding agent. The prize in each is the keys and tokens these tools hold.",
       "caveat": "These are different actors and methods; no source connects them. The Microsoft device-code work, the router study and the Kokoro takeover are research, not attacks seen in the wild; the Kokoro researchers did not upload altered weights.",
       "event_ids": [
         "bitdefender-github-ai-agent-config-malware-campaign-2026-11",
         "gtig-north-korea-claude-code-settings-backdoor-2026-11",
         "microsoft-agent-framework-pypi-compromise-2026-11",
-        "github-wfx-loot-campaign-2026-11",
         "cursor-fireworks-ai-supply-chain-2026-11",
         "llm-api-router-attacks-study-2026-11",
         "kokoro-hugging-face-account-takeover-2026-11",
@@ -303,12 +314,6 @@
           "to": "bitdefender-github-ai-agent-config-malware-campaign-2026-11",
           "rel": "both abuse coding-agent config files",
           "basis": "inferred"
-        },
-        {
-          "from": "microsoft-agent-framework-pypi-compromise-2026-11",
-          "to": "github-wfx-loot-campaign-2026-11",
-          "rel": "both steal developer credentials",
-          "basis": "inferred"
         }
       ]
     },
@@ -317,7 +322,7 @@
       "title": "Reused passwords and phished device codes open accounts",
       "kind": "inferred",
       "confidence": 2,
-      "narrative": "Several services saw accounts opened with credentials rather than exploits. Hydro-Québec says an intruder used email and password pairs from elsewhere and asked about 1.7 million customers to reset passwords; Japan's Takarakuji lottery had 4,436 accounts entered in a password list attack; Germany's BundID citizen accounts faced a mass automated login wave and were blocked as a precaution; TfL took its Oyster photocard site offline after account compromises. Separately, Hornetsecurity describes device-code phishing in which victims enter a code on Microsoft's real sign-in page and hand tokens to the attacker, the same technique Microsoft showed against coding agents. Multifactor sign-in and blocking device-code flow where it is not needed answer both.",
+      "narrative": "Several services saw accounts opened with credentials rather than exploits. Hydro-Québec says an intruder used email and password pairs from elsewhere and asked about 1.7 million customers to reset passwords; Japan's Takarakuji lottery had 4,436 accounts entered in a password list attack; Germany's BundID citizen accounts faced a mass automated login wave and were blocked as a precaution; TfL took its Oyster photocard site offline after account compromises. Separately, Hornetsecurity describes device-code phishing in which victims enter a code on Microsoft's real sign-in page and hand tokens to the attacker, the same technique Microsoft showed against coding agents. Marathon Health, which runs Boone County's employee clinic, says a voice-phishing call gave an attacker access to its systems. Multifactor sign-in and blocking device-code flow where it is not needed answer both.",
       "caveat": "Different attackers and services; no source connects them. TfL has not said how accounts were compromised, and BundID officials see no evidence that data was taken. The Microsoft coding-agent case is a lab demonstration.",
       "event_ids": [
         "hydro-quebec-espace-client-credential-stuffing-2026-11",
@@ -325,7 +330,8 @@
         "bundid-mass-login-attempts-2026-11",
         "tfl-oyster-photocard-account-compromise-2026-11",
         "hornetsecurity-device-code-phishing-sharepoint-2026-11",
-        "microsoft-device-code-phishing-ai-coding-agents-2026-11"
+        "microsoft-device-code-phishing-ai-coding-agents-2026-11",
+        "boone-county-in-marathon-health-breach-2026-11"
       ],
       "chain": [],
       "edges": [
@@ -338,14 +344,16 @@
       ]
     },
     {
-      "id": "us-outage-wave",
-      "title": "US outage wave, Nov 12 to 17",
+      "id": "outages-and-knock-on",
+      "title": "Outage wave: close in time, causes self-reported, and real knock-on harm",
       "kind": "timing",
       "confidence": 2,
-      "narrative": "Outages hit well-known US services within six days: Microsoft 365, the FAA ground stop, the National Weather Service, Workday, Chase, United, Marriott, Charles Schwab, Apple and the NSA's classified network, with Japan's Docomo failing on Nov 16. They are linked only by timing. Where organisations gave a cause it was their own technical one, most often a planned change: a network capacity upgrade at Microsoft, a router fault at the FAA, a software release at Chase, maintenance at the NSA. Senior officials say they see no cyberattack; DHS testimony on Iranian activity against US infrastructure was paired with the statement that no evidence ties the outages to attacks. Lawmakers are pressing for explanations.",
-      "caveat": "Officials say these were not attacks and not coordinated. Workday, Marriott, Schwab and United have published no cause, Google disputes a broad Gmail outage, and the FAA trigger is still undetermined. That planned changes are a common thread is our inference from self-reported causes, not a finding. A data-theft claim against JPMorgan by the n0n gang is unconfirmed and the bank says its outage was a software bug.",
+      "narrative": "Outages hit well-known US services within a week: Microsoft 365, the FAA ground stop, the National Weather Service, Workday, Chase, United, Marriott, Charles Schwab, Apple and the NSA's classified network, with Japan's Docomo failing on Nov 16. NBC reported on Nov 19 that an NSA outage was still under way and, citing sources, not cyber-caused. The outages are linked only by timing. Where a cause was given it was the organisation's own, most often a planned change: a capacity upgrade at Microsoft, a router fault at the FAA, a software release at Chase, maintenance and, per the DNI, a PHP patch at the NSA. Officials see no cyberattack. The Microsoft outage did cause stated harm: attackers used it as a phishing lure, and a hotel report says it blocked a chlorine alert email before 15 guests were poisoned. Lawmakers are pressing for explanations.",
+      "caveat": "Officials say these were not attacks and not coordinated. Workday, Marriott, Schwab and United published no cause, Google disputes a broad Gmail outage, and the FAA trigger is undetermined. That NBC's Nov 19 report describes the same NSA outage as the Nov 17 NSA Net failure is our inference. The hotel report comes from one outlet. The Microsoft outage itself began on Nov 12, just before this window.",
       "event_ids": [
         "microsoft-365-global-outage-2026-11",
+        "microsoft-outage-phishing-campaign-ex1550543-2026-11",
+        "microsoft-outage-hotel-chlorine-poisoning-2026-11",
         "faa-nationwide-ground-stop-2026-11-13",
         "faa-nationwide-ground-stop-router-2026-11",
         "nws-nationwide-communications-issues-2026-11",
@@ -358,10 +366,13 @@
         "charles-schwab-page-loading-issue-2026-11",
         "apple-icloud-services-outage-2026-11",
         "nsa-net-classified-network-outage-2026-11",
-        "us-lawmakers-demand-answers-outages-2026-11",
-        "us-accuses-iran-cyber-infrastructure-2026-11"
+        "nsa-tech-outage-2026-11",
+        "us-lawmakers-demand-answers-outages-2026-11"
       ],
-      "chain": [],
+      "chain": [
+        "microsoft-365-global-outage-2026-11",
+        "microsoft-outage-phishing-campaign-ex1550543-2026-11"
+      ],
       "edges": [
         {
           "from": "faa-nationwide-ground-stop-2026-11-13",
@@ -392,27 +403,7 @@
           "to": "jpmorgan-chase-banking-outage-2026-11",
           "rel": "both blamed on planned changes",
           "basis": "inferred"
-        }
-      ]
-    },
-    {
-      "id": "outage-knock-on",
-      "title": "Knock-on effects of the Microsoft outage",
-      "kind": "stated",
-      "confidence": 3,
-      "narrative": "Sources directly connect three later events to the Microsoft 365 outage: a high-volume phishing campaign Microsoft saw from Nov 13 posing as service-health notices about the incident, a chlorine warning email that never reached a German hotel where 15 guests were poisoned, and the pressure in Washington for explanations.",
-      "caveat": "The hotel report comes from one outlet. Microsoft has not named the phishing actor or confirmed that credentials were captured.",
-      "event_ids": [
-        "microsoft-365-global-outage-2026-11",
-        "microsoft-outage-phishing-campaign-ex1550543-2026-11",
-        "microsoft-outage-hotel-chlorine-poisoning-2026-11",
-        "us-lawmakers-demand-answers-outages-2026-11"
-      ],
-      "chain": [
-        "microsoft-365-global-outage-2026-11",
-        "microsoft-outage-phishing-campaign-ex1550543-2026-11"
-      ],
-      "edges": [
+        },
         {
           "from": "microsoft-365-global-outage-2026-11",
           "to": "microsoft-outage-phishing-campaign-ex1550543-2026-11",
@@ -430,6 +421,12 @@
           "to": "us-lawmakers-demand-answers-outages-2026-11",
           "rel": "prompted questions",
           "basis": "stated"
+        },
+        {
+          "from": "nsa-net-classified-network-outage-2026-11",
+          "to": "nsa-tech-outage-2026-11",
+          "rel": "likely the same NSA outage, not stated",
+          "basis": "inferred"
         }
       ]
     },
@@ -480,38 +477,28 @@
       ]
     },
     {
-      "id": "state-actors",
-      "title": "State-linked espionage and North Korean operations",
+      "id": "government-networks",
+      "title": "Government networks: long-hidden intrusions and state-linked espionage",
       "kind": "stated",
       "confidence": 2,
-      "narrative": "Bulgaria says unidentified hackers sat in state networks from 2021 and took over 62 million pages of documents, found only by a new national monitoring system. Bitdefender says its EggStreme backdoor, tied to a suspected Chinese group, has been rebuilt with a passive variant and still targets Philippine government bodies; Unit 42 and Kaspersky describe espionage using HTTP/3 tools and backdoors hidden in GitHub and SharePoint traffic; Google shows Russia's COLD RELIC using data stolen from one US organisation to phish a second. On North Korea, the Justice Department disrupted the FaceStealer fake-meeting scheme the FBI detailed the same day, Genians ties a NodeLinkRAT campaign against South Koreans to Kimsuky, Google describes a cluster backdooring crypto developers, and Talos tracks a crypto-stealing group it ties to North Korea with low confidence.",
-      "caveat": "Only DOJ and FBI on FaceStealer describe the same operation. The North Korean reports name different clusters; Genians' Kimsuky attribution is moderate confidence and Talos's is low. Bulgaria has named no attacker. The other reports are separate research grouped by type, some describing older activity.",
+      "narrative": "Several governments disclosed intrusions this week. Bulgaria says unidentified hackers sat in state networks from 2021 and took over 62 million pages of documents. Nextgov reports USDA took applications offline for days and reset database passwords in every environment after an internal security incident. The European Commission confirmed an AI-assisted attack that took down HR and health-insurance systems. On the research side, Google says the PRC-nexus ARMORY CASTLE exploited a vCenter zero-day for espionage; Rapid7 attributes a stealthy SoftEther VPN bridge to Webworm, which targets European governments; Bitdefender's EggStreme backdoor still targets Philippine government bodies; Unit 42 and Kaspersky describe espionage over HTTP/3 and through GitHub and SharePoint; Google shows Russia's COLD RELIC using data stolen from one US organisation to phish another. On North Korea, Genians ties a NodeLinkRAT campaign to Kimsuky, Google describes a cluster backdooring crypto developers, and Talos tracks a crypto-stealing group it ties to North Korea with low confidence.",
+      "caveat": "Bulgaria, USDA and the Commission have named no attacker, and nothing ties them to each other or to the research reports; USDA's incident rests on anonymous sources and an internal email. Attributions are the vendors' own, at moderate or low confidence for Webworm, Kimsuky and Talos's cluster. The research reports are grouped by type and some describe older activity.",
       "event_ids": [
         "bulgaria-government-networks-five-year-espionage-2026-11",
+        "usda-security-incident-systems-offline-2026-11",
+        "eu-commission-ai-assisted-cyberattack-2026-11",
+        "gtig-armory-castle-vcenter-zero-day-2026-11",
+        "webworm-softether-bridge-rapid7-2026-11",
         "bitdefender-eggstreme-philippine-government-2026-11",
         "unit42-tgr-sta-0049-http3-rats-southeast-asia-2026-11",
         "kaspersky-shadowcloud-gitdoor-graphdoor-2026-11",
         "gtig-cold-relic-cloud-impersonation-2026-11",
-        "doj-facestealer-infrastructure-seizure-2026-11",
-        "fbi-flash-facestealer-fake-meetings-2026-11",
         "nodelinkrat-kimsuky-notepad-south-korea-2026-11",
         "gtig-north-korea-claude-code-settings-backdoor-2026-11",
         "talos-uat-12643-overlord-rat-solana-2026-11"
       ],
       "chain": [],
       "edges": [
-        {
-          "from": "doj-facestealer-infrastructure-seizure-2026-11",
-          "to": "fbi-flash-facestealer-fake-meetings-2026-11",
-          "rel": "same scheme",
-          "basis": "stated"
-        },
-        {
-          "from": "fbi-flash-facestealer-fake-meetings-2026-11",
-          "to": "gtig-north-korea-claude-code-settings-backdoor-2026-11",
-          "rel": "same target group, different cluster",
-          "basis": "inferred"
-        },
         {
           "from": "gtig-north-korea-claude-code-settings-backdoor-2026-11",
           "to": "talos-uat-12643-overlord-rat-solana-2026-11",
@@ -527,61 +514,32 @@
       ]
     },
     {
-      "id": "extortion-and-enforcement",
-      "title": "Extortion claims and the law-enforcement response",
+      "id": "healthcare-notices",
+      "title": "Healthcare: two hospitals disrupted, and breach notices months after the fact",
       "kind": "inferred",
       "confidence": 2,
-      "narrative": "Leak sites posted claims in batches: on Nov 17 Vortex listed six US companies within minutes and Inception listed AMD, Cigna, Paychex and PepsiCo; n0n listed Visa, JPMorgan, Verastem and Exelixis; The Gentlemen listed Nvidia, days after CERT-In's advisory on that group. Kaspersky described AuditTeam, which dresses ransom up as an audit fee. On enforcement, Ukrainian police working with the FBI detained four key members of a ransomware group that posed as IT support, using an AI voice platform, and that police say took more than $40.5 million from at least 28 companies. Operation Endgame took down Gootloader, which the FBI then detailed, Europol announced 354 dark-web arrests, and the US won an extradition and a sentencing.",
-      "caveat": "Most listings are unverified attacker claims; Visa says its incident was at a provider and no card numbers were affected. Batch timing shows when listings appeared, not when or how intrusions happened. None of the arrests is tied to the groups listing victims this week.",
+      "narrative": "Healthcare filed the most breach notices on file this week, and two attacks disrupted care directly. The Greiz-Ronneburg district hospital in Germany closed its emergency room on Nov 15 after an extortion attack, and Monadnock Community Hospital in New Hampshire diverted ambulances after a phone and network outage it now confirms was a cyber incident. Most other notices describe intrusions found months earlier: Access Dental Management (341,049 people, May), Valley Family Health Care and LifeTouch Health (March), MPOWERHealth (June 2025), Hood River Dental (two incidents, 2025 and January 2026), Lansing Urgent Care (September), Dorsata (August, through a Metabase zero-day) and Geisinger (August). Atticus Administration's claims database for New York City retirees and Marathon Health's clinic systems were reached through providers. Social Security numbers and treatment details recur, so these feed fraud and extortion long after the intrusion.",
+      "caveat": "These are separate organisations and attackers; the sector is the only shared attribute and grouping them is our inference. Notice dates reflect US reporting rules, so the count says more about disclosure timing than about attack volume. INC Ransom's claim on Lansing Urgent Care is the group's, not the clinic's.",
       "event_ids": [
-        "owens-minor-vortex-claim-2026-11",
-        "caris-life-sciences-vortex-claim-2026-11",
-        "molex-vortex-claim-2026-11",
-        "amd-inception-claim-2026-11",
-        "pepsico-inception-claim-2026-11",
-        "cigna-healthcare-inception-claim-2026-11",
-        "visa-third-party-provider-incident-n0n-claim-2026-11",
-        "verastem-oncology-n0n-claim-2026-11",
-        "nvidia-the-gentlemen-leak-site-claim-2026-11",
-        "cert-in-gentlemen-ransomware-advisory-ciad-2026-0060-2026-11",
-        "kaspersky-auditteam-opsagent-ransomware-2026-11",
-        "ukraine-police-arrest-fake-it-support-ransomware-2026-11",
-        "operation-endgame-gootloader-castlerat-stealc-2026-11",
-        "fbi-flash-gootloader-seo-poisoning-2026-11",
-        "europol-dark-web-354-arrests-2026-11",
-        "khlynovskiy-extradition-ransomware-2026-11",
-        "doj-buchanan-sms-phishing-sim-swap-sentenced-2026-11"
+        "greiz-ronneburg-hospital-cyberattack-2026-11",
+        "monadnock-community-hospital-cyber-incident-2026-11",
+        "access-dental-management-breach-2026-11",
+        "valley-family-health-care-breach-2026-11",
+        "lifetouch-health-breach-2026-11",
+        "mpowerhealth-breach-notification-2026-11",
+        "hood-river-dental-two-breaches-2026-11",
+        "lansing-urgent-care-inc-ransom-2026-11",
+        "dorsata-metabase-zero-day-breach-2026-11",
+        "geisinger-email-account-breach-2026-11",
+        "atticus-administration-nyc-retirees-claims-breach-2026-11",
+        "boone-county-in-marathon-health-breach-2026-11"
       ],
       "chain": [],
       "edges": [
         {
-          "from": "operation-endgame-gootloader-castlerat-stealc-2026-11",
-          "to": "fbi-flash-gootloader-seo-poisoning-2026-11",
-          "rel": "same malware",
-          "basis": "stated"
-        },
-        {
-          "from": "cert-in-gentlemen-ransomware-advisory-ciad-2026-0060-2026-11",
-          "to": "nvidia-the-gentlemen-leak-site-claim-2026-11",
-          "rel": "same group name",
-          "basis": "inferred"
-        },
-        {
-          "from": "owens-minor-vortex-claim-2026-11",
-          "to": "molex-vortex-claim-2026-11",
-          "rel": "same group, same batch",
-          "basis": "timing"
-        },
-        {
-          "from": "amd-inception-claim-2026-11",
-          "to": "pepsico-inception-claim-2026-11",
-          "rel": "same group, same batch",
-          "basis": "timing"
-        },
-        {
-          "from": "verastem-oncology-n0n-claim-2026-11",
-          "to": "visa-third-party-provider-incident-n0n-claim-2026-11",
-          "rel": "same group, a day apart",
+          "from": "greiz-ronneburg-hospital-cyberattack-2026-11",
+          "to": "monadnock-community-hospital-cyber-incident-2026-11",
+          "rel": "both disrupted emergency care, no stated link",
           "basis": "timing"
         }
       ]

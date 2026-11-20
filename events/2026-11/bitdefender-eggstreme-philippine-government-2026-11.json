@@ -1,5 +1,5 @@
 {
-  "action": "Hunt for the published EggStreme indicators retrospectively, watch for unexpected listening ports and new inbound firewall rules on servers, and review DLL sideloading and lateral movement over file shares.",
+  "action": "Hunt for the published EggStreme indicators, restrict built-in tools such as WScript and cmd to roles that need them, inventory unmanaged machines reachable over SMB, and alert on new inbound listeners such as TCP 5060 on workstations.",
   "actor": "Suspected Chinese APT group (unnamed)",
   "attack": [
     "T1574.002 DLL Side-Loading",
@@ -22,26 +22,27 @@
     "EggStremeAgent"
   ],
   "report": {
+    "doc_id": "",
     "iocs_available": true,
     "key_findings": [
-      "Bitdefender assesses with high confidence that the operation still targets several Philippine government organisations, and with low to medium confidence Taiwan; victims are not named.",
-      "The operators rebuilt the malware after the 2025 report: AES-256-CBC for the Fuel configuration, new loader ciphers, and an agent moved from gRPC to raw TCP with mutual TLS.",
-      "New agent builds add Active Directory reconnaissance, proxy and PowerShell commands and drop the keylogger.",
-      "Behaviour that stayed constant: DLL sideloading, in-memory execution and lateral movement over shares through a staging host outside endpoint management.",
-      "Attribution is unchanged: a suspected Chinese APT."
+      "Bitdefender assesses with high confidence that the operation still targets multiple Philippine government organisations, and with low to medium confidence Taiwan; the page does not publish a victim count.",
+      "EggStreme is a multi-stage fileless framework; the newer agent uses raw TCP wrapped in mutual TLS plus an AES-256-CBC layer instead of gRPC and has no keylogger, and passive-mode builds do not beacon out but listen on TCP 5060.",
+      "The Fuel configuration moved from RC4 to AES-256-CBC and the loader moved to custom ciphers, with two variants dated from 28 October and mid-December 2025.",
+      "Operators moved laterally by staging a Fuel package and VBS scripts on an unmanaged host reachable over SMB; the page says valid credentials and a reachable share were enough on multiple machines, and does not state the initial access vector.",
+      "Attribution is unchanged: a suspected Chinese APT group, which the page says is not a statement about any government's involvement."
     ],
     "published": "2026-11-18",
     "publisher": "Bitdefender",
     "publisher_type": "vendor",
-    "read_depth": "summary",
-    "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure",
-    "doc_id": "",
+    "read_depth": "full",
     "recommendations": [
-      "Restrict built-in tools such as WScript, cmd and reg to roles that need them and alert on scripts run from C:\\Users\\Public.",
-      "Inventory unmanaged machines reachable over SMB, monitor SMB-launched scripts and alert on new inbound firewall allow rules.",
-      "Enable script block logging and detect in-process PowerShell and CLR loading.",
-      "Build detections on the constant behaviours, not hashes, and capture process memory before remediation."
-    ]
+      "Restrict built-in tools such as WScript.exe, cmd.exe, reg.exe and attrib.exe to roles that need them.",
+      "Detect DLL sideloading by system-library name and load location using runtime behavioural monitoring, not signatures.",
+      "Inventory unmanaged assets that reach workstations over SMB and watch SMB-launched scripts.",
+      "Baseline host firewall rules and alert on new inbound listeners such as TCP 5060 on workstations.",
+      "Detect CLR and in-process PowerShell loading in non-.NET processes and capture PowerShell script block logging."
+    ],
+    "url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure"
   },
   "sector": "Government",
   "severity": 2,
@@ -56,23 +57,24 @@
       "url": "https://gbhackers.com/silent-eggstreme-backdoor/"
     }
   ],
-  "status": "confirmed",
+  "status": "official",
   "summary": "Bitdefender updated its EggStreme research on November 18, saying with high confidence that the operation continues to target multiple Philippine government organisations, with Taiwan possible at low to medium confidence. It says newer builds use mutual TLS and include a passive variant that never beacons out. Bitdefender keeps its earlier attribution to a suspected Chinese APT group.",
   "tags": [
     "espionage"
   ],
   "title": "Bitdefender: EggStreme backdoor rebuilt to evade detection, still aimed at Philippine government bodies",
-  "updated_at": "2026-11-19T13:20:14Z",
+  "updated_at": "2026-11-20T13:20:30Z",
   "validation": {
-    "checked_at": "2026-11-19T13:20:14Z",
-    "note": "Bitdefender's own post (read via a fetch agent) and GBHackers' coverage agree on the November 18 update, targeting confidence levels and attribution.",
+    "checked_at": "2026-11-20T13:20:30Z",
+    "note": "Bitdefender's own post read in full; GBHackers' coverage agrees on the November 18 update, targeting confidence levels and attribution.",
     "state": "corroborated"
   },
-  "review": {
-    "state": "passed",
-    "at": "2026-11-19T13:29:33Z",
-    "note": "Compared 18 Nov date, high-confidence Philippine government targeting, Taiwan low-to-medium, unchanged suspected Chinese APT, mutual TLS, passive variant, keylogger absence with Bitdefender post and GBHackers",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-19T13:29:33Z"
+  "hunt": [
+    {
+      "name": "EggStreme indicators (November 2026)",
+      "format": "csv",
+      "url": "https://github.com/bitdefender/malware-ioc/blob/master/2026_11-eggstreme-iocs.csv",
+      "publisher": "Bitdefender"
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "title": "Study of 428 LLM API routers finds some inject malicious code and steal credentials",
   "date": "2026-11-19",
-  "date_note": "Date of the ITmedia report; the paper is on arXiv.",
+  "date_note": "Date of the ITmedia report; the paper itself was submitted to arXiv on 9 April 2026.",
   "category": "report",
   "severity": 2,
   "status": "confirmed",
@@ -13,11 +13,11 @@
   "lng": -119.85,
   "geo_basis": "institution",
   "pin_type": "agency",
-  "summary": "Researchers led from UC Santa Barbara tested 428 third-party API routers that sit between AI agents and model providers. One paid and eight free routers injected malicious code, 17 free routers misused decoy AWS credentials and one drained a decoy Ethereum wallet. A single malicious router in a chain was enough to hijack an agent.",
-  "plain": "Some of the middleman services that connect AI coding agents to AI models were caught altering commands and stealing keys, including crypto keys.",
+  "summary": "A paper by researchers at UC Santa Barbara and other institutions measured 428 third-party LLM API routers, 28 paid and 400 free. One paid and eight free routers actively injected malicious code, 17 free routers touched researcher-owned AWS canary credentials, and one drained ETH from a researcher-owned private key.",
+  "plain": "Researchers found that some middleman services connecting AI coding agents to AI models altered commands, and some touched or drained decoy keys.",
   "exec": "Routing AI agent traffic through unvetted third parties exposes API keys, cloud credentials and code to theft or tampering.",
   "action": "Send agent traffic only to the model provider or a router you operate and trust, and rotate any keys that passed through an unvetted router.",
-  "impact": "9 of 428 routers injected code; 17 free routers used decoy AWS keys; one drained a decoy Ethereum key.",
+  "impact": "9 of 428 routers injected code; 17 free routers touched AWS canary credentials; one drained ETH from a researcher-owned key.",
   "tags": [
     "supply-chain"
   ],
@@ -31,38 +31,39 @@
   ],
   "sources": [
     {
+      "name": "arXiv: Your Agent Is Mine: Measuring Malicious Intermediary Attacks on the LLM Supply Chain",
+      "url": "https://arxiv.org/abs/2604.08407"
+    },
+    {
       "name": "ITmedia (Japan)",
       "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003310/"
     }
   ],
   "report": {
-    "publisher": "ITmedia NEWS summarising an academic paper",
-    "publisher_type": "vendor",
-    "published": "2026-11-19",
-    "key_findings": [
-      "428 routers tested (28 paid, 400 free)",
-      "9 injected malicious code",
-      "17 free routers misused decoy AWS credentials",
-      "1 router drained a decoy Ethereum key"
-    ],
-    "recommendations": [],
+    "doc_id": "arXiv:2604.08407",
     "iocs_available": false,
-    "read_depth": "secondary",
-    "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003310/"
+    "key_findings": [
+      "The study scanned 428 routers, 28 paid and 400 free, and found one paid and eight free routers actively injecting malicious code.",
+      "Two routers used adaptive triggers such as waiting for 50 prior calls, limiting payloads to YOLO-mode sessions, or targeting only Rust and Go projects.",
+      "17 free routers touched researcher-owned AWS canary credentials and one drained ETH from a researcher-owned private key.",
+      "Poisoning studies with a deliberately leaked OpenAI key and weakly configured decoys showed the routers' traffic exposed 99 credentials across 440 Codex sessions."
+    ],
+    "published": "2026-04-09",
+    "publisher": "UC Santa Barbara and co-authors (arXiv paper)",
+    "publisher_type": "academic",
+    "read_depth": "summary",
+    "recommendations": [
+      "Use client-side mitigations such as a fail-closed policy gate, response-side anomaly screening and append-only transparency logging, which the paper says reduce exposure today.",
+      "Press for provider-backed response integrity, which the paper says is ultimately needed to secure the ecosystem."
+    ],
+    "url": "https://arxiv.org/abs/2604.08407"
   },
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "note": "ITmedia's summary of the paper \"Your Agent Is Mine\"; the paper itself (arXiv) was not read.",
-    "checked_at": "2026-11-19T04:23:55Z"
+    "state": "corroborated",
+    "checked_at": "2026-11-20T13:20:30Z",
+    "note": "The paper's arXiv abstract and the start of its HTML text were read; ITmedia reports the same figures but words the AWS result more strongly (\"misused\"), so the paper's wording is used."
   },
   "first_seen": "2026-11-19T04:23:55Z",
-  "updated_at": "2026-11-19T04:23:55Z",
-  "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:12:01Z",
-    "note": "Compared with ITmedia: 428 routers, 1 paid + 8 free injection, 17 free AWS decoy misuse, one ETH decoy drained, UCSB",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-19T05:12:01Z"
+  "updated_at": "2026-11-20T13:20:30Z"
 }

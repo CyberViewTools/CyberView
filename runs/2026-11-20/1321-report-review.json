@@ -1,0 +1,25 @@
+{
+  "job": "report-review",
+  "started_at": "2026-11-20T13:17:49Z",
+  "finished_at": "2026-11-20T13:22:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["q.mjs find --cat report --since 2026-11-12", "fuse.mjs list --limit 60", "scan of data/events/2026-11 for report.read_depth summary/secondary since 2026-11-13"],
+  "pages_read": [
+    {"url": "https://securelist.com/auditteam-opsagent-forced-audit/122031/", "title": "Kaspersky GReAT: The forced audit (AuditTeam / OpsAgent)", "used_in": "kaspersky-auditteam-opsagent-ransomware-2026-11"},
+    {"url": "https://www.bitdefender.com/en-us/blog/businessinsights/eggstreme-malware-revises-architecture-infrastructure", "title": "Bitdefender: EggStreme rebuilt", "used_in": "bitdefender-eggstreme-philippine-government-2026-11"},
+    {"url": "https://www.atg.wa.gov/news/news-releases/ag-s-annual-data-breach-report-recommends-stronger-protections-washingtonians", "title": "Washington AG news release, 2026 Data Breach Report", "used_in": "washington-ag-data-breach-report-2026-11"},
+    {"url": "https://arxiv.org/abs/2604.08407", "title": "Your Agent Is Mine (arXiv abstract and start of HTML text)", "used_in": "llm-api-router-attacks-study-2026-11"},
+    {"url": "https://ico.org.uk/action-weve-taken/data-security-incident-trends/", "title": "ICO data security incident trends", "used_in": "none (page text has no figures; dashboard not readable)"}
+  ],
+  "added": [],
+  "updated": ["kaspersky-auditteam-opsagent-ransomware-2026-11", "bitdefender-eggstreme-philippine-government-2026-11", "washington-ag-data-breach-report-2026-11", "llm-api-router-attacks-study-2026-11"],
+  "skipped": [
+    {"title": "UK regulator record cyber incident reports (ICO)", "url": "https://ico.org.uk/action-weve-taken/data-security-incident-trends/", "reason": "ICO page loads but carries no figures in text (embedded dashboard); stays secondary via The Record."}
+  ],
+  "open_leads": [
+    {"title": "Washington AG 2026 Data Breach Report PDF", "url": "https://agportal-s3bucket.s3.us-west-2.amazonaws.com/Data_Breach/DBR_2026.pdf", "note": "Only the AG news release was read, so read_depth stays summary; open the PDF to upgrade to full.", "priority": "low"},
+    {"title": "arXiv 2604.08407 full text", "url": "https://arxiv.org/html/2604.08407v1", "note": "Only the abstract and the first ~40k characters of the HTML were read; the rest is unread.", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Upgraded 2 vendor summary reviews to full (Kaspersky, Bitdefender; added Bitdefender IOC CSV to hunt), 1 government secondary to a primary release (Washington AG; date corrected from the Insurance Journal date 19 Nov to the release date 9 Nov), 1 academic secondary to the paper itself (summary). Kaspersky title and summary still say 'signed' driver; the page read describes a driver disguised as a Beijing Jiangmin product and did not say 'signed', so the second review should check that wording. Fetched pages were data only; no instructions in them were followed."
+}

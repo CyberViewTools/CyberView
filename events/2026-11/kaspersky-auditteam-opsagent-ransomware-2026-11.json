@@ -14,7 +14,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T19:12:06Z",
-  "updated_at": "2026-11-19T05:27:00Z",
+  "updated_at": "2026-11-20T13:20:30Z",
   "category": "report",
   "date": "2026-11-18",
   "occurred_at": "2026-11-18T08:00:00Z",
@@ -33,7 +33,7 @@
   "summary": "Kaspersky describes AuditTeam, a ransomware-linked group that frames its demand as an audit and consulting fee and uses the OpsAgent framework, in C++ and Rust versions. Activity runs from January to October 2026, with infections in seven countries and its leak site claiming victims in seven further countries. It kills security tools using a signed Beijing Jiangmin driver.",
   "plain": "Researchers describe a ransomware group that disguises extortion as a consulting bill and switches off antivirus using a legitimately signed driver.",
   "exec": "A newly documented ransomware group with an EDR-killing driver; signed drivers can slip past some controls.",
-  "action": "Block or alert on the abused Jiangmin driver, watch for mass process-kill behaviour, and review Kaspersky's indicators.",
+  "action": "Check systems against Kaspersky's published hashes, domains, IP address and file paths (such as syscache.dat and kvcore.sys); the report says shared CloudFront IPs are not reliable indicators on their own.",
   "sources": [
     {
       "name": "Kaspersky Securelist",
@@ -44,29 +44,25 @@
     "doc_id": "",
     "iocs_available": true,
     "key_findings": [
-      "OpsAgent exists in C++ and Rust versions; implant v5.2.8.",
-      "Victims in 7 countries, 7 more claimed on a leak site.",
-      "AV/EDR killer uses a signed Beijing Jiangmin driver."
+      "Kaspersky says AuditTeam infected dozens of organisations, with victims seen in China, the Philippines, Senegal, Italy, Finland, Hong Kong and Russia, and its leak site lists victims in seven further countries.",
+      "The OpsAgent framework gives the operators file system management, process injection, privilege escalation, keylogging, screenshot capture and network pivoting, and the ransom note demands an \"Audit & Consulting fee\" for a vulnerability report.",
+      "The campaign began in January 2026 and was active through October 2026 at a minimum; the page does not state how the group gets in.",
+      "OpsAgent was moved from C++ to Rust, and the Rust version uses CloudFront subdomains as C2 endpoints found through a GitHub repository.",
+      "An AV/EDR killer installs a driver disguised as a Beijing Jiangmin product and works from a kill list of about 220 process names."
     ],
     "published": "2026-11-18",
     "publisher": "Kaspersky GReAT",
     "publisher_type": "vendor",
-    "read_depth": "summary",
+    "read_depth": "full",
     "recommendations": [
-      "Hunt using Kaspersky indicators; control driver loading."
+      "Check systems against the published stager and driver hashes, the two CloudFront domains, the IP address and the file paths such as syscache.dat and kvcore.sys.",
+      "Do not rely on the shared CloudFront IP addresses alone as indicators; the report says they cannot serve as reliable standalone IOCs."
     ],
     "url": "https://securelist.com/auditteam-opsagent-forced-audit/122031/"
   },
   "validation": {
-    "checked_at": "2026-11-18T19:12:06Z",
+    "checked_at": "2026-11-20T13:20:30Z",
     "state": "corroborated",
-    "note": "Original Kaspersky report read via fetch agent summary (read_depth summary)."
-  },
-  "review": {
-    "state": "corrected",
-    "at": "2026-11-19T05:27:12Z",
-    "note": "Securelist matches: 18 Nov, audit and consulting fee, C++ to Rust, v5.2.8, Jan-Oct 2026, 7 infected countries plus 7 on leak site, signed Jiangmin driver. Fixed report.iocs_available to true (page has an IOC section)",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-19T05:27:12Z"
+    "note": "Original Kaspersky Securelist report read in full (read_depth full)."
+  }
 }

@@ -13,7 +13,6 @@
   "geo_basis": "organisation",
   "lat": 35.68,
   "lng": 139.69,
-  "occurred_at": "2026-11-18T12:00:00Z",
   "org": "Ruby core team (ruby-lang.org)",
   "pin_type": "hq",
   "place": "Tokyo, Japan",
@@ -28,7 +27,7 @@
       "Seven flaws in Regexp and String case conversion, tracked as GHSA IDs because CVE IDs were still requested.",
       "Affected: Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12, 4.0.0 to 4.0.9; fixed in 4.0.10, 3.4.13, 3.3.14.",
       "Several could allow remote code execution in some scenarios, notably where attacker-controlled patterns are compiled.",
-      "Maintainers say they are aware of proof-of-concept code; no exploitation in the wild is reported.",
+      "Maintainers say they are aware of proof-of-concept code that shows remote code execution for some; GBHackers says the disclosure reported no active exploitation.",
       "Ruby 3.2 and earlier are end of life and will not be fixed."
     ],
     "published": "2026-11-18T12:00:00Z",
@@ -63,21 +62,24 @@
     }
   ],
   "status": "official",
-  "summary": "The Ruby project announced fixes for seven memory-safety flaws in Regexp and String case conversion, affecting Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12 and 4.0.0 to 4.0.9. Several could allow remote code execution in some scenarios. Maintainers say they know of proofs of concept; no exploitation is reported. SecurityWeek says one, Ruby2Shell (CVE-2026-132825, CVSS 7.4), was found by Veria Labs. Fixes are in 4.0.10, 3.4.13 and 3.3.14.",
+  "summary": "The Ruby project announced fixes for seven memory-safety flaws in Regexp and String case conversion, affecting Ruby 3.3.13 and earlier, 3.4.0 to 3.4.12 and 4.0.0 to 4.0.9. Several could allow remote code execution in some scenarios, and maintainers know of proofs of concept. SecurityWeek says Ruby2Shell (CVE-2026-132825, CVSS 7.4) was disclosed by Veria Labs; Ruby says CVEs are not yet assigned. Fixed in 4.0.10, 3.4.13, 3.3.14.",
   "tags": [],
   "time_basis": "published",
   "title": "Ruby fixes seven memory-safety flaws in Regexp and String case conversion",
-  "updated_at": "2026-11-20T10:59:19Z",
+  "updated_at": "2026-11-20T11:14:30Z",
   "validation": {
     "checked_at": "2026-11-20T11:05:00Z",
     "note": "Ruby advisory read in full; SecurityWeek (20 Nov) and GBHackers independently report Ruby2Shell and the same fixed versions.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T10:28:00Z",
-    "note": "Compared with ruby-lang advisory, oss-security and GBHackers: seven flaws, affected and fixed versions, PoCs known, RCE in some scenarios, no in-the-wild exploitation, 3.2 and earlier EOL.",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-20T11:14:32Z",
+    "first_at": "2026-11-19T10:28:00Z",
+    "note": "Checked against ruby-lang advisory, oss-security, SecurityWeek, GBHackers. Ruby advisory says CVEs not yet assigned and does not name Veria Labs; summary now attributes CVE-2026-132825 and Veria Labs to SecurityWeek and notes this; no-exploitation statement now attributed to GBHackers; removed place",
+    "flags": [
+      "no-cve-meta"
+    ]
   },
-  "qa_checked_at": "2026-11-19T10:28:00Z"
+  "qa_checked_at": "2026-11-20T11:14:32Z"
 }

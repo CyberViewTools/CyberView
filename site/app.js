@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.50",date:"2026-11-20"};
+var BUILD={version:"1.51",date:"2026-11-20"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -240,7 +240,7 @@ function gridChecked(x){return x.checked?"Cause checked by "+x.checked.by+": "+G
    listed here: no event markers, arcs, other layers, filters or feed. Leaving it restores the other views as they were. ---------- */
 var GRID_OPS={hydroquebec:"Hydro-Québec",bchydro:"BC Hydro",ukpn:"UK Power Networks",eskom:"Eskom",ercot:"ERCOT",aemo:"AEMO",eia:"EIA",cfradar:"Cloudflare Radar",entsoe:"ENTSO-E",ioda:"IODA",gdacs:"GDACS"};
 var GRID_FEEDS=[["hydroquebec","outages in Quebec"],["bchydro","outages in British Columbia"],["ukpn","faults in London, the South East and East of England"],["eskom","load shedding in South Africa"],
-  ["ercot","grid conditions in Texas"],["aemo","market notices in Australia"],["eia","US electricity demand (needs a key)"],["cfradar","internet outages with a power cause (needs a key)"],["entsoe","generation and transmission outages in Europe (needs a key)"],
+  ["ercot","grid conditions in Texas"],["aemo","market notices in Australia"],["eia","US electricity demand"],["cfradar","internet outages with a power cause"],["entsoe","generation and transmission outages in Europe"],
   ["ioda","internet measurements, used only to corroborate"],["gdacs","disaster alerts, used only to corroborate"]];
 var gridUi={f:"all",cc:"",sel:null,all:false,ccKey:""},gridHealth={data:null,at:0,busy:false,failed:false},gridTr=null,gridPrevUrl=null;
 var GRID_CC=null;try{GRID_CC=new Intl.DisplayNames(undefined,{type:"region"});}catch(x){GRID_CC=null;}
@@ -266,10 +266,10 @@ function gridHash(on){
 function cleanGridHealth(h){
   if(!h||typeof h!=="object")return null;
   var out={at:str(h.last_grid_at,30),sources:{}},gs=h.grid_sources&&typeof h.grid_sources==="object"?h.grid_sources:{};
-  Object.keys(gs).slice(0,30).forEach(function(k){
-    var v=gs[k];if(!/^[a-z0-9_-]{1,30}$/.test(k)||!v||typeof v!=="object")return;
-    var n=numIn(v.items,0,1e6);
-    out.sources[k]={ok:v.ok===true,error:str(v.error,120),at:str(v.at,30),items:n===null?null:Math.round(n)};
+  Object.keys(gs).slice(0,80).forEach(function(k){
+    var v=gs[k];if(!/^[a-z0-9_-]{1,40}$/.test(k)||!v||typeof v!=="object")return;
+    var n=numIn(v.items,0,1e6),cc=str(v.country,2).toUpperCase();
+    out.sources[k]={name:str(v.name,60).trim(),country:/^[A-Z]{2}$/.test(cc)?cc:"",paused:v.paused===true,ok:v.ok===true,error:str(v.error,120),at:str(v.at,30),items:n===null?null:Math.round(n)};
   });
   return out;
 }
@@ -338,25 +338,29 @@ function gridHead(){
   var at=gridHealth.data&&gridHealth.data.at||(ctx.grid&&ctx.grid.at)||"";
   p.textContent=at&&isFinite(Date.parse(at))?"Last grid collection "+ago(at)+" ("+fmtTime(at)+").":ctx.grid?"Time of the last grid collection not known.":"Grid data is not loaded yet.";
 }
+/* place names as the operators send them: some arrive in capitals ("BROUGHTON, BROUGHTON VILLAGE, …"); shown in title
+   case, two lines at most (the full text is in the tooltip) */
+function gridPlace(t){t=String(t||"");return /[a-z]/.test(t)||t.length<4?t:t.toLowerCase().replace(/(^|[\s,(\/-])([a-z\u00e0-\u00ff])/g,function(m,p,c){return p+c.toUpperCase();});}
 function gridRow(x){
   var li=el("li",x.lat===null?"nogeo":null);li.dataset.id=x.id;li.tabIndex=0;if(gridUi.sel===x.id)li.classList.add("on");
   var r1=el("div","gr1"),op=GRID_OPS[x.source]||x.name.split(":")[0];
   r1.appendChild(el("span","gtag"+(x.scope==="outage"?" out":""),x.scope==="outage"?"Outage":"Incident"));
   if(x.url){var a=el("a","gop",op);a.href=safeUrl(x.url);a.target="_blank";a.rel="noopener noreferrer";a.title="Opens the operator's own page";r1.appendChild(a);}else r1.appendChild(el("span","gop",op));
-  var place=[x.region,gridCountry(x.country)].filter(function(v,i,arr){return v&&arr.indexOf(v)===i;}).join(", ");
-  if(place)r1.appendChild(el("span",null,place));
   li.appendChild(r1);
   li.appendChild(el("b","gname",x.name));
-  var p2=[];
-  if(x.customers!==null)p2.push(x.customers.toLocaleString()+" customer"+(x.customers===1?"":"s")+" without power");
+  var place=[gridPlace(x.region),gridCountry(x.country)].filter(function(v,i,arr){return v&&arr.indexOf(v)===i;}).join(", ");
+  if(place){var pl=el("div","gplace",place);pl.title=place;li.appendChild(pl);}
+  /* the second line adds only what the title does not already say */
+  var p2=[],named=x.customers!==null&&x.name.indexOf(x.customers.toLocaleString("en-US"))>=0;
+  if(x.customers!==null&&!named)p2.push(x.customers.toLocaleString()+" customer"+(x.customers===1?"":"s")+" without power");
   if(x.level!==null&&x.kind!=="outage")p2.push(GRID_KIND[x.kind]+" level "+x.level);else if(x.customers===null)p2.push(GRID_KIND[x.kind]);
   var s=ago(x.since);p2.push(s?"started "+s:"start time not given");
-  var r2=el("div","gr2",p2.join(" · "));
-  if(x.planned){r2.appendChild(document.createTextNode(" · "));r2.appendChild(el("span","gplan","Planned work"));}
-  li.appendChild(r2);
-  li.appendChild(el("div","gr3",x.cause?"Cause as reported: "+x.cause:"No cause reported"));
+  if(x.planned&&!/planned/i.test(x.name))p2.push("planned work");
+  li.appendChild(el("div","gr2",p2.join(" \u00b7 ")));
+  if(x.cause&&!(x.planned&&/^planned/i.test(x.cause)))li.appendChild(el("div","gr3","Cause as reported: "+x.cause));
+  else if(!x.cause&&!x.planned)li.appendChild(el("div","gr3","No cause reported"));
   if(x.checked)li.appendChild(el("small","aiby",gridChecked(x)));
-  var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" · ")));
+  var gn=gridNotes(x);if(gn.length)li.appendChild(el("small","gnote",gn.join(" \u00b7 ")));
   if(x.lat===null)li.appendChild(el("small","gnote","Not on the globe: the operator gave no location."));
   else if(x.approx)li.appendChild(el("small","gnote","Drawn at the operator's area, not an exact place."));
   li.addEventListener("click",function(ev){if(ev.target&&ev.target.closest&&ev.target.closest("a"))return;gridFocus(x);});
@@ -382,24 +386,48 @@ function gridList(){
   list.slice(0,cap).forEach(function(x){ul.appendChild(gridRow(x));});
   if(list.length>cap){var li=el("li","more"),b=el("button","btn ghost sm","Show all "+list.length);b.type="button";b.addEventListener("click",function(){gridUi.all=true;safe("grid list",gridList);});li.appendChild(b);ul.appendChild(li);}
 }
+/* Source health: a one-line summary, then anything that needs attention (paused, failing, not connected, stale), then the
+   live sources grouped by country (folded; one tap opens a country). Names come from the data, never raw keys. */
+function gridSrcState(x){
+  var h=x&&x.at?(Date.now()-Date.parse(x.at))/36e5:NaN;
+  if(!x)return {k:"neutral",t:"Not reported yet"};
+  if(x.paused)return {k:"paused",t:"Paused"};
+  if(!x.ok&&/^not connected/i.test(x.error))return {k:"neutral",t:"Not connected"};
+  if(!x.ok)return {k:"bad",t:"Failing"};
+  return isFinite(h)&&h>2?{k:"stale",t:"Stale"}:{k:"live",t:"Live"};
+}
+function gridSrcRow(k,x){
+  var f=GRID_FEEDS.find(function(z){return z[0]===k;}),st=gridSrcState(x),li=el("li");
+  li.appendChild(el("span","gbadge gb-"+st.k,st.t));
+  var body=el("span","gsname"),nm=(x&&x.name)||GRID_OPS[k]||k;
+  body.appendChild(el("b",null,nm));
+  var m=[];
+  if(f&&!x)m.push(f[1]);
+  if(x&&x.paused)m.push(x.error.replace(/^paused:\s*/i,""));
+  else if(st.t==="Not connected")m.push("no key saved");
+  else if(x&&!x.ok)m.push(x.error||"error not given");
+  if(x&&x.items!==null&&x.ok)m.push(x.items+" item"+(x.items===1?"":"s"));
+  if(x&&x.ok&&x.at&&isFinite(Date.parse(x.at)))m.push((st.k==="stale"?"last data ":"checked ")+ago(x.at));
+  if(m.length)body.appendChild(el("small",null,m.join(" \u00b7 ")));
+  li.appendChild(body);return li;
+}
 function gridSources(){
   var ul=$("gSrc");if(!ul)return;ul.textContent="";
   var d=gridHealth.data;
   if(!d){ul.appendChild(el("li","muted",gridHealth.failed?"Source health could not be loaded. The outage list above is unaffected.":"Loading source health"));return;}
-  /* the nine grid feeds always; the corroboration feeds (IODA, GDACS) and any new one only when the data names them */
-  var keys=GRID_FEEDS.slice(0,9).map(function(f){return f[0];});Object.keys(d.sources).forEach(function(k){if(keys.indexOf(k)<0)keys.push(k);});
-  keys.forEach(function(k){
-    var f=GRID_FEEDS.find(function(z){return z[0]===k;}),x=own(d.sources,k)?d.sources[k]:null,li=el("li");
-    var h=x&&x.at?(Date.now()-Date.parse(x.at))/36e5:NaN,nc=!!x&&!x.ok&&/^not connected/i.test(x.error);
-    var cls=!x?"neutral":x.ok?(isFinite(h)&&h>2?"stale":"live"):nc?"neutral":"bad";
-    var lab=!x?"Not reported yet":x.ok?(cls==="stale"?"Stale · "+ago(x.at):"Live"):nc?"Not connected":"Failing";
-    li.appendChild(el("span","gbadge "+cls,lab));
-    var t=(GRID_OPS[k]||k)+(f?": "+f[1]:"");
-    if(nc)t+=" · no key saved";else if(x&&!x.ok)t+=" · "+(x.error||"error not given");
-    if(x&&x.items!==null&&!nc)t+=" · "+x.items+" item"+(x.items===1?"":"s");
-    if(x&&x.ok&&cls==="live"&&x.at&&isFinite(Date.parse(x.at)))t+=" · checked "+ago(x.at);
-    li.appendChild(el("span",null,t));
-    ul.appendChild(li);
+  var keys=GRID_FEEDS.map(function(f){return f[0];}).filter(function(k){return own(d.sources,k)||["ioda","gdacs"].indexOf(k)<0;});
+  Object.keys(d.sources).forEach(function(k){if(keys.indexOf(k)<0)keys.push(k);});
+  var tally={},attn=[],byCc={};
+  keys.forEach(function(k){var x=own(d.sources,k)?d.sources[k]:null,st=gridSrcState(x);tally[st.t]=(tally[st.t]||0)+1;
+    if(st.k==="live")(byCc[(x&&x.country)||""]=byCc[(x&&x.country)||""]||[]).push(k);else attn.push(k);});
+  var order=["Live","Stale","Failing","Paused","Not connected","Not reported yet"];
+  ul.appendChild(el("li","gsum",order.filter(function(t){return tally[t];}).map(function(t){return tally[t]+" "+t.toLowerCase();}).join(" \u00b7 ")));
+  if(attn.length){var ah=el("li","gshead","Needs attention");ul.appendChild(ah);attn.forEach(function(k){ul.appendChild(gridSrcRow(k,own(d.sources,k)?d.sources[k]:null));});}
+  Object.keys(byCc).sort(function(a,b){return byCc[b].length-byCc[a].length||(a<b?-1:1);}).forEach(function(cc){
+    var det=el("details","gscc"),sm=el("summary");
+    sm.appendChild(el("span",null,cc?gridCountry(cc):"Worldwide"));sm.appendChild(el("span","gbadge gb-live",byCc[cc].length+" live"));
+    det.appendChild(sm);var inner=el("ul","gsrc");byCc[cc].forEach(function(k){inner.appendChild(gridSrcRow(k,d.sources[k]));});det.appendChild(inner);
+    var li=el("li");li.appendChild(det);ul.appendChild(li);
   });
 }
 function gridAnalysisPanel(){

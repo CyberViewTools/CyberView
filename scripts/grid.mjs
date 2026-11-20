@@ -1030,12 +1030,12 @@ async function collect() {
     const def = SOURCES[k], prev = oldSources[k] || {};
     if (got) {
       const clean = got.filter((x) => checkItem(x).length === 0);
-      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
+      sources[k] = { name: def.name, url: def.url, ok: true, error: "", fetched_at: nowIso(), items: clean.length, country: def.country || "", ...(def.paused ? { paused: true } : {}), ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
       items.push(...clean);
     } else {
       const fresh = prev.fetched_at && now - Date.parse(prev.fetched_at) < KEEP_STALE_HOURS * 3600e3;
       const kept = fresh && !def.paused ? oldItems.filter((x) => x && x.source === k && checkItem(x).length === 0) : [];
-      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
+      sources[k] = { name: def.name, url: def.url, ok: false, error: err, fetched_at: prev.fetched_at || "", items: kept.length, country: def.country || "", ...(def.paused ? { paused: true } : {}), ...(def.attribution ? { attribution: attributionText(def.attribution) } : {}) };
       items.push(...kept);
       // a keyed source without a key is reported, not counted as a failure
       if (/^not connected/.test(err)) unkeyed.push(k); else failed.push(`${k}: ${err}`);

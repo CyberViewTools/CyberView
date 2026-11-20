@@ -549,16 +549,21 @@ async def main():
             ok("grid view: a row has operator, place, customers, started, cause as reported", all(t in first for t in ["Hydro-Québec", "Quebec, Canada", "152,300 customers without power", "started 3 h ago", "Cause as reported: Vegetation"]), first)
             ok("grid view: the cause check is labelled as AI-written", "Cause checked by CyberView AI (a Claude model): weather" in first and "someone else" not in gtxt)
             ok("grid view: analysis notes on the row", "seen also by: internet measurements (IODA) · news reports (2)" in first and "unusual for this hour of the week" in first, first)
-            ok("grid view: planned work labelled", await pg.locator("#gRows li .gplan").all_text_contents() == ["Planned work"])
+            _pl = [t for t in await pg.locator("#gRows li").all_text_contents() if "planned work" in t.lower()]
+            ok("grid view: planned work labelled once per row", len(_pl) == 1 and _pl[0].lower().count("planned work") == 1, _pl)
             ok("grid view: injected markup stays text", "<img src=x id=pwn>Eskom load shedding" in gtxt and await pg.locator("#pwn, #pwn2, #pwn3").count() == 0 and await pg.locator("#gridp img").count() == 0)
             hrefs = await pg.eval_on_selector_all("#gridp a", "as => as.map(a => a.getAttribute('href'))")
             ok("grid view: operator links kept, links off the allowlist dropped", "https://www.hydroquebec.com/outages/" in hrefs and not any(h and ("evil" in h or h.startswith("javascript")) for h in hrefs), hrefs)
-            src = await pg.locator("#gSrc li").all_text_contents()
-            ok("grid view: one source row each, live, failing with its error, not connected with no key", len(src) == 9 and sum(1 for r in src if r.startswith("Live")) == 5
-               and any(r.startswith("Failing") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Not connected") and "no key saved" in r) == 3, src)
-            ok("grid view: item counts when the source gives them", any(r.startswith("Live") and "Hydro-Québec" in r and "12 items" in r for r in src), src)
+            summ = await pg.text_content("#gSrc > li.gsum")
+            attn = await pg.eval_on_selector_all("#gSrc > li", "ls => ls.filter(l => l.querySelector(':scope > .gbadge')).map(l => l.textContent)")
+            live = await pg.locator("#gSrc .gscc li").all_text_contents()
+            ok("grid view: sources summarised, problems listed first, live sources grouped by country",
+               summ == "5 live · 1 failing · 3 not connected" and len(attn) == 4 and any(r.startswith("Failing") and "UK Power Networks" in r and "HTTP 503" in r for r in attn)
+               and sum(1 for r in attn if r.startswith("Not connected") and "no key saved" in r) == 3 and len(live) == 5 and all(r.startswith("Live") for r in live), (summ, attn, live))
+            ok("grid view: sources show names, never raw keys", not any(k in " ".join(attn + live) for k in ["hydroquebec", "bchydro", "cfradar", "entsoe"]))
             ncb = await pg.eval_on_selector_all("#gSrc .gbadge", "bs => bs.filter(b => b.textContent === 'Not connected').map(b => b.className)")
-            ok("grid view: not connected is neutral, not a fault", len(ncb) == 3 and all("neutral" in c.split() for c in ncb), ncb)
+            ok("grid view: not connected is neutral, not a fault", len(ncb) == 3 and all("gb-neutral" in c.split() for c in ncb), ncb)
+            ok("grid view: badges never pick up the header's .live dot style", await pg.locator("#gSrc .gbadge.live").count() == 0)
             atxt = await pg.inner_text("#gAna")
             ok("grid view: anomalies and corroboration scores shown with the caveat", "Unusual for this hour of the week" in atxt and "152,300 customers out" in atxt and "usually about 4,000" in atxt and "Score 3" in atxt
                and "signals, not causes" in atxt and "never evidence of an attack" in atxt, atxt)

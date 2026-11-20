@@ -169,9 +169,10 @@ if (gridAnalysis) docs["grid/analysis"] = gridAnalysis;
 // each grid source's last fetch (data/grid/live.json, then analysis.json for the keyed ones), for the status page
 const gridSources = (() => {
   const live = existsSync(join(DATA, "grid", "live.json")) ? readJson(join(DATA, "grid", "live.json")) : null;
-  const out = {}, add = (k, v) => { if (!/^[a-z0-9_-]{1,30}$/.test(k) || out[k] || !v || typeof v !== "object") return;
+  const out = {}, add = (k, v) => { if (!/^[a-z0-9_-]{1,40}$/.test(k) || out[k] || !v || typeof v !== "object") return;
     out[k] = { name: String(v.name || "").slice(0, 60), ok: v.ok === true, error: String(v.error || "").slice(0, 120), at: String(v.fetched_at || v.at || "").slice(0, 30),
-      items: Number.isInteger(v.items) && v.items >= 0 ? v.items : null }; };
+      items: Number.isInteger(v.items) && v.items >= 0 ? v.items : null,
+      country: /^[A-Z]{2}$/.test(v.country || "") ? v.country : "", paused: v.paused === true }; };
   for (const [k, v] of Object.entries((live && live.sources) || {})) add(k, v);
   for (const [k, v] of Object.entries((gridAnalysis && gridAnalysis.sources) || {})) add(k, v);
   return Object.keys(out).length ? out : null;

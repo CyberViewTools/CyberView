@@ -1,91 +1,95 @@
 {
-  "actor": "",
-  "attack": [
-    "supply-chain",
-    "credential-theft"
-  ],
-  "impact": "",
-  "tags": [],
-  "cves": [],
-  "cve_meta": [],
-  "products": [
-    "Microsoft Agent Framework (PyPI)"
-  ],
-  "geo_basis": "hq",
-  "time_basis": "reported",
-  "first_seen": "2026-11-18T18:14:23Z",
-  "updated_at": "2026-11-20T16:31:51Z",
-  "category": "incident",
-  "date": "2026-11-17",
-  "occurred_at": "2026-11-17T20:35:00Z",
-  "date_note": "Malicious versions published Nov 17; reported Nov 18.",
-  "title": "Microsoft Agent Framework PyPI package compromised with credential stealer",
-  "org": "Microsoft (Agent Framework on PyPI)",
-  "sector": "Technology / software supply chain",
-  "country": "United States",
-  "place": "Redmond, WA",
-  "lat": 47.67,
-  "lng": -122.12,
-  "pin_type": "hq",
-  "severity": 3,
-  "status": "confirmed",
-  "source_tier": "established",
-  "summary": "Versions 1.26.1 and 1.26.2 of the agent-framework package on PyPI were published on November 17 with a credential stealer that runs when Python starts, targeting cloud, GitHub and AI credentials and tokens. PyPI quarantined both; 1.26.0 is the last safe version. Italy's CSIRT (ACN) says the malware installed no OS-level persistence and downloaded no further payloads. As of 18 November, Microsoft had not responded to BleepingComputer.",
-  "plain": "Two bad releases of a popular Microsoft AI package were uploaded to PyPI. Anyone who installed them may have had cloud and developer passwords and tokens stolen.",
-  "exec": "A trusted package on an official Microsoft project carried a credential stealer; any build or developer machine that installed it may have exposed cloud access.",
-  "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.",
-  "sources": [
-    {
-      "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
-    },
-    {
-      "name": "Wiz",
-      "url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
-    },
-    {
-      "name": "Socket",
-      "url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
-    },
-    {
-      "name": "ITmedia",
-      "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003332/"
-    },
-    {
-      "name": "CSIRT Italia (ACN)",
-      "url": "https://www.acn.gov.it/portale/w/supply-chain-attack-versioni-malevole-del-pacchetto-microsoft-agent-framework-distribuite-tramite-pypi"
-    }
-  ],
-  "report": {
-    "doc_id": "",
-    "iocs_available": false,
-    "key_findings": [
-      "Malicious 1.26.1 and 1.26.2 ran a credential stealer at Python startup, even without importing the package.",
-      "Targets include Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and cloud identity tokens; data went to a webhook.site endpoint.",
-      "PyPI quarantined both releases; how the attacker got publish access is not known."
-    ],
-    "published": "2026-11-18",
-    "publisher": "BleepingComputer",
-    "publisher_type": "vendor",
-    "read_depth": "secondary",
-    "recommendations": [
-      "Use 1.26.0 and rotate exposed credentials."
-    ],
-    "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+ "actor": "",
+ "attack": [
+  "supply-chain",
+  "credential-theft"
+ ],
+ "impact": "",
+ "tags": [],
+ "cves": [],
+ "cve_meta": [],
+ "products": [
+  "Microsoft Agent Framework (PyPI)"
+ ],
+ "geo_basis": "hq",
+ "time_basis": "reported",
+ "first_seen": "2026-11-18T18:14:23Z",
+ "updated_at": "2026-11-20T16:37:44Z",
+ "category": "incident",
+ "date": "2026-11-17",
+ "occurred_at": "2026-11-17T20:35:00Z",
+ "date_note": "Malicious versions published Nov 17; reported Nov 18.",
+ "title": "Microsoft Agent Framework PyPI package compromised with credential stealer",
+ "org": "Microsoft (Agent Framework on PyPI)",
+ "sector": "Technology / software supply chain",
+ "country": "United States",
+ "place": "Redmond, WA",
+ "lat": 47.67,
+ "lng": -122.12,
+ "pin_type": "hq",
+ "severity": 3,
+ "status": "confirmed",
+ "source_tier": "established",
+ "summary": "Versions 1.26.1 and 1.26.2 of the agent-framework package on PyPI were published on November 17 with a credential stealer that runs when Python starts, targeting cloud, GitHub and AI credentials and tokens. PyPI quarantined both; 1.26.0 is the last safe version. Italy's CSIRT (ACN) says the malware installed no OS-level persistence and downloaded no further payloads. As of 18 November, Microsoft had not responded to BleepingComputer.",
+ "plain": "Two bad releases of a popular Microsoft AI package were uploaded to PyPI. Anyone who installed them may have had cloud and developer passwords and tokens stolen.",
+ "exec": "A trusted package on an official Microsoft project carried a credential stealer; any build or developer machine that installed it may have exposed cloud access.",
+ "action": "Check for Agent Framework 1.26.1 or 1.26.2 in environments and CI builds, pin to 1.26.0, and rotate Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and OIDC tokens on any host that installed them.",
+ "sources": [
+  {
+   "name": "BleepingComputer",
+   "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
   },
-  "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-19T03:19:16Z",
-    "note": "Compared BleepingComputer with Wiz and Socket (independent vendor analyses): versions 1.26.1 and 1.26.2, November 17, .pth credential stealer, 1.26.0 safe; Wiz states both removed from PyPI about 21:30 UTC. Download figure rests on BleepingComputer only."
+  {
+   "name": "Wiz",
+   "url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
   },
-  "review": {
-    "state": "corrected",
-    "at": "2026-11-20T16:31:59Z",
-    "first_at": "2026-11-19T19:10:36Z",
-    "note": "Compared with Wiz, BleepingComputer, ACN: versions, 17 Nov, targets, quarantine, 1.26.0 safe, ACN no persistence or payloads match. Microsoft non-response now dated 18 Nov; dropped ITmedia StepSecurity sentence (not on pages read now) to fit 75 words. Duplicate credential-stealer-2026-11 (same Wiz p",
-    "flags": [
-      "possible-duplicate"
-    ]
+  {
+   "name": "Socket",
+   "url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
   },
-  "qa_checked_at": "2026-11-20T16:31:59Z"
+  {
+   "name": "ITmedia",
+   "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003332/"
+  },
+  {
+   "name": "CSIRT Italia (ACN)",
+   "url": "https://www.acn.gov.it/portale/w/supply-chain-attack-versioni-malevole-del-pacchetto-microsoft-agent-framework-distribuite-tramite-pypi"
+  },
+  {
+   "name": "Infobae",
+   "url": "https://www.infobae.com/tecno/2026/11/19/una-herramienta-de-microsoft-escondia-malware-capaz-de-robar-claves-de-github-y-azure/"
+  }
+ ],
+ "report": {
+  "doc_id": "",
+  "iocs_available": false,
+  "key_findings": [
+   "Malicious 1.26.1 and 1.26.2 ran a credential stealer at Python startup, even without importing the package.",
+   "Targets include Azure, AWS, GitHub, Docker, Hugging Face and OpenAI credentials and cloud identity tokens; data went to a webhook.site endpoint.",
+   "PyPI quarantined both releases; how the attacker got publish access is not known."
+  ],
+  "published": "2026-11-18",
+  "publisher": "BleepingComputer",
+  "publisher_type": "vendor",
+  "read_depth": "secondary",
+  "recommendations": [
+   "Use 1.26.0 and rotate exposed credentials."
+  ],
+  "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+ },
+ "validation": {
+  "state": "corroborated",
+  "checked_at": "2026-11-19T03:19:16Z",
+  "note": "Compared BleepingComputer with Wiz and Socket (independent vendor analyses): versions 1.26.1 and 1.26.2, November 17, .pth credential stealer, 1.26.0 safe; Wiz states both removed from PyPI about 21:30 UTC. Download figure rests on BleepingComputer only."
+ },
+ "review": {
+  "state": "corrected",
+  "at": "2026-11-20T16:31:59Z",
+  "first_at": "2026-11-19T19:10:36Z",
+  "note": "Compared with Wiz, BleepingComputer, ACN: versions, 17 Nov, targets, quarantine, 1.26.0 safe, ACN no persistence or payloads match. Microsoft non-response now dated 18 Nov; dropped ITmedia StepSecurity sentence (not on pages read now) to fit 75 words. Duplicate credential-stealer-2026-11 (same Wiz p",
+  "flags": [
+   "possible-duplicate"
+  ]
+ },
+ "qa_checked_at": "2026-11-20T16:31:59Z"
 }

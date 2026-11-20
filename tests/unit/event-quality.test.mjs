@@ -148,3 +148,9 @@ test("possible duplicates: one other event on the same page, same category, with
   const gp = { ...p, sources: [{ name: "JPCERT", url: "https://www.jpcert.or.jp/at/2026/at260018.html" }] }, gq = { ...q, sources: gp.sources };
   assert.equal(sharedSourceProblems([gp, gq]).size, 0);
 });
+
+test("aliases: a short list of names is fine, anything else is flagged", () => {
+  assert.ok(!codes(ev({ aliases: ["富岳", "理研"] })).includes("aliases-shape"));
+  assert.ok(codes(ev({ aliases: "Fugaku" })).includes("aliases-shape"));
+  assert.ok(codes(ev({ aliases: ["x".repeat(61)] })).includes("aliases-shape"));
+});

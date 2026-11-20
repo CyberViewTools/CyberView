@@ -120,5 +120,5 @@ test("search indexes are asked at most every 10 minutes; other collectors every 
 });
 test("gdelt: language names become the codes the backlog rules read", () => {
   const r = parseGdelt({ articles: [{ url: "https://a.example/1", title: "Bank hacked", seendate: "20261118T101500Z", language: "English" }, { url: "https://a.example/2", title: "Ataque", language: "Portuguese" }, { url: "https://a.example/3", title: "X", language: "Klingon" }] });
-  assert.deepEqual(r.map((x) => x.lang), ["en", "pt", "klingon"]);
+  assert.deepEqual(r.map((x) => x.lang), ["en", "pt", ""], "an unmapped language name is never passed on as a code");
 });

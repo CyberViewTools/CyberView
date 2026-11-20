@@ -1,5 +1,43 @@
 {
- "_note": "Extra RSS or Atom feeds for scripts/collect.mjs, on top of the built-in list. The source scout job adds and retires entries here (never in code). Each: name, tier (gov, vendor or news), https url, optional filter (true keeps only items that mention a cyber topic; use it for broad feeds), optional lang and region, added (date) and why.",
+ "_note": "Extra RSS or Atom feeds for scripts/collect.mjs, on top of the built-in list. The source scout job adds and retires entries here (never in code). Each: name, tier (gov, vendor or news), https url, optional filter (true keeps only items that mention a cyber topic in any of the languages the collector knows; use it for broad feeds), optional lang (ISO code) and region, added (date) and why. A name listed in retired is not collected, built-in or not: retire a dead feed, one whose robots.txt now disallows it, or one on the watch list that still has nothing useful when its review date comes. watch: feeds that work but showed little yield; each has the evidence (from data/leads and data/runs closures; the lead files begin on 2026-11-18, so the first audit saw only 2.5 days) and a review date.",
  "feeds": [],
- "retired": []
+ "retired": [
+  { "name": "The Register", "url": "https://www.theregister.com/security/headlines.atom", "retired": "2026-11-20", "why": "robots.txt is default-deny for every reader not named (User-agent: * Disallow: /). 37 leads in 2.5 days, 9 credited to events; its stories also reach us through other publishers." },
+  { "name": "Kaspersky Securelist", "url": "https://securelist.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows */feed and */rss for all readers. 2 leads, both credited; Kaspersky research is retold by the news feeds." },
+  { "name": "CSO Online", "url": "https://www.csoonline.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows /feed/. 19 leads, 3 credited." },
+  { "name": "Graham Cluley", "url": "https://grahamcluley.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows /feed/. 3 leads, none credited." },
+  { "name": "Lobsters security", "url": "https://lobste.rs/t/security.rss", "retired": "2026-11-20", "why": "robots.txt disallows / for all readers. No leads in 2.5 days." },
+  { "name": "KE-CIRT/CC (Kenya)", "url": "https://www.ke-cirt.go.ke/feed/", "retired": "2026-11-20", "why": "Dead: the newest of its 8 items is from 2021-03-16 and the site offers no other feed. Kenya stays covered by the Bing News search (cyber attack, KE)." }
+ ],
+ "watch": [
+  { "name": "ZDNet security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "29 leads in 2.5 days, none credited, all 29 closed by rule (commentary, single-source items)." },
+  { "name": "Security Boulevard", "since": "2026-11-20", "review": "2026-12-04", "evidence": "42 leads, none credited; 28 closed by rule, 6 by agents. Mostly reposted vendor blogs." },
+  { "name": "Qualys", "since": "2026-11-20", "review": "2026-12-04", "evidence": "7 leads, none credited, all closed by rule." },
+  { "name": "Computer Weekly security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "15 leads, none credited, 6 agent closures; agents report its article pages answer 403, so its leads cost reading time and cannot be cited." },
+  { "name": "Okta security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
+  { "name": "GreyNoise", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
+  { "name": "Huntress", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
+  { "name": "Proofpoint", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-10 (broad feed, filtered)." },
+  { "name": "GitHub Security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-10." },
+  { "name": "Exploit-DB", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-11." },
+  { "name": "CISA ICS advisories", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days although it has 30 current items: every one also arrives first through CISA advisories (all.xml) and is dropped as already collected. Retire if that holds." },
+  { "name": "Arctic Wolf", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days (broad feed, filtered)." },
+  { "name": "Fortinet threat research", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-12." },
+  { "name": "Trail of Bits", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-06." },
+  { "name": "FedScoop", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days (broad feed, filtered)." },
+  { "name": "Daily Sabah (Turkey)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days: a general Türkiye news feed; nothing in its current 50 items passes the cyber filter. Kept for now because Turkey is thinly covered." },
+  { "name": "El Pais tecnologia", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days because the cyber filter knew only English words; the filter now knows Spanish (2 of its current items pass). Review the yield." },
+  { "name": "CERT.br", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; its feed carries courses and awareness campaigns (newest 2026-11-05), not advisories. Official, so retire only if no incident or advisory appears." },
+  { "name": "Microsoft MSRC advisories", "since": "2026-11-20", "review": "2026-12-04", "evidence": "127 leads, none credited, 74 agent closures in 2.5 days (one lead per CVE). Now tagged kind cve, so a CVE row is closed by rule unless it is exploited or widely reported; check that agent closures fall to near zero." },
+  { "name": "Zero Day Initiative", "since": "2026-11-20", "review": "2026-12-04", "evidence": "31 leads, none credited, 15 agent closures. Now tagged kind cve (one advisory per flaw)." },
+  { "name": "AWS security bulletins", "since": "2026-11-20", "review": "2026-12-04", "evidence": "28 leads, none credited, 17 agent closures. Now tagged kind cve (one bulletin per CVE)." },
+  { "name": "CSIRT Italy", "since": "2026-11-20", "review": "2026-12-04", "evidence": "33 leads, none credited, 9 closed by rule, 1 by an agent, 3 already on file: routine Italian advisories. Official, so keep unless it never carries an exploited flaw or incident; now tagged lang it." },
+  { "name": "Canadian Centre for Cyber Security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "28 leads, none credited, all 28 closed by rule as routine advisories. Official; keep unless its alerts on exploited flaws also never become events." },
+  { "name": "Utility Dive", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for energy coverage, filtered; none of its 10 current items passed the filter. Keep only if grid or utility cyber items appear." },
+  { "name": "Light Reading", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for telecom coverage, filtered; none of its current items passed the filter." },
+  { "name": "Hespress (Morocco)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for North Africa (French), filtered general news; none of its 10 current items passed." },
+  { "name": "Techzim (Zimbabwe)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for southern Africa, filtered; none of its current items passed." },
+  { "name": "Bangkok Post", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for South-East Asia, filtered top stories; none of its 10 current items passed." },
+  { "name": "CIO Africa", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for Africa, filtered; of 34 items in 7 days only a hackathon passed, and the filter now skips hackathons." }
+ ]
 }

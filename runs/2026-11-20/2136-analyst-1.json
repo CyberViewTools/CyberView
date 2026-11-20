@@ -1,0 +1,38 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-20T21:32:18Z",
+  "finished_at": "2026-11-20T21:36:34Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39495", "title": "VMSA-2026-0009: VMware vCenter, Tools, and SDDC Manager updates", "used_in": "CVE-2026-123890"},
+    {"url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere", "title": "ARMORY CASTLE Exploits vSphere", "used_in": "CVE-2026-123890"},
+    {"url": "https://www.rapid7.com/blog/post/etr-cve-2026-123890-critical-authentication-bypass-vmware-vcenter", "title": "CVE-2026-123890: Critical Authentication Bypass in VMware vCenter", "used_in": "CVE-2026-123890"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-123890", "title": "Known Exploited Vulnerabilities Catalog (partly summarised copy)", "used_in": "CVE-2026-123890"},
+    {"url": "https://lists.apache.org/api/thread.lua?id=lnz4s26tv6hdo03wngtdbpfj4hg4gtds", "title": "CVE-2026-129448: Apache Roller unauthenticated deserialization in the XML-RPC endpoint", "used_in": "CVE-2026-129448"},
+    {"url": "https://lists.apache.org/api/thread.lua?id=cc0jck13nb9vvcmzxzwotr6n16mx28z9", "title": "CVE-2026-82384: Apache Roller unauthenticated deserialization in the XML-RPC endpoint", "used_in": "CVE-2026-129448"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-129448", "title": "CVE record CVE-2026-129448", "used_in": "CVE-2026-129448"},
+    {"url": "https://www.bleepingcomputer.com/news/security/apache-warns-of-roller-rce-vulnerability-exploited-in-attacks/", "title": "Apache warns of Roller RCE vulnerability exploited in attacks", "used_in": "CVE-2026-129448"},
+    {"url": "https://thehackernews.com/2026/11/critical-apache-roller-rce-flaw-under.html", "title": "Critical Apache Roller RCE Flaw Under Active Exploitation", "used_in": "CVE-2026-129448"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2025-42884", "title": "CVE record CVE-2025-42884 (SAP CNA, CISA ADP)", "used_in": "CVE-2025-42884"},
+    {"url": "https://support.sap.com/en/my-support/knowledge-base/security-notes-news/bulletin-2025.html", "title": "SAP Patch Day Bulletin 2025 (entry read via summarised copy)", "used_in": "CVE-2025-42884"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-42884", "title": "Known Exploited Vulnerabilities Catalog (summarised copy)", "used_in": "CVE-2025-42884"},
+    {"url": "https://onapsis.com/blog/sap-security-patch-day-november-2025/", "title": "Onapsis: SAP Security Patch Day November 2025", "used_in": "CVE-2025-42884"},
+    {"url": "https://onapsis.com/blog/sap-security-patch-day-nov-2026/", "title": "Onapsis: SAP Security Notes November 2026 Patch Day (does not mention CVE-2025-42884)", "used_in": "none"}
+  ],
+  "added": ["CVE-2026-123890", "CVE-2026-129448", "CVE-2025-42884"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Broadcom VMSA-2026-0009 supplemental FAQ", "url": "https://brcm.tech/vmsa-2026-0009-qna", "note": "Not read; may hold upgrade-path and 7.0 guidance to add to the CVE-2026-123890 analysis", "priority": "medium"},
+    {"title": "Who is exploiting Apache Roller CVE-2026-129448", "url": "https://lists.apache.org/thread/lnz4s26tv6hdo03wngtdbpfj4hg4gtds", "note": "Apache says actively exploited but gives no actor, dates or post-exploitation detail; update analysis when a responder publishes", "priority": "medium"},
+    {"title": "Exploitation detail for SAP CVE-2025-42884", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-42884", "note": "Only CISA's KEV listing reports exploitation; SAP Note 3660969 is login-gated. Watch Onapsis/SAP security firms for a write-up", "priority": "medium"}
+  ],
+  "failed_sites": [
+    "nvd.nist.gov and www.cve.org (pages render empty to automated readers; CVE API used instead)",
+    "support.sap.com november-2025 patch day page (404)",
+    "securitybridge.com and bleepingcomputer.com front page (403 during SAP search; no workaround attempted)",
+    "lists.apache.org thread pages (empty shell; read through its thread API)"
+  ],
+  "notes": "Three analyses written. CVE-2026-123890 high confidence (vendor + Google/Mandiant + Rapid7). CVE-2026-129448 medium (vendor advisory clear, no responder write-up). CVE-2025-42884 medium (SAP note not readable; SAP CVE record, bulletin summary, Onapsis, CISA). analyst.mjs check: 3 valid."
+}

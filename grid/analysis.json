@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-20T00:51:42Z",
+  "updated_at": "2026-11-20T00:55:46Z",
   "anomalies": [
     {
       "id": "grid-ladwp-los-angeles-202611200028",
@@ -18,18 +18,6 @@
   ],
   "corroboration": [
     {
-      "id": "grid-enre-edesur-buenos-aires-202611200024",
-      "signals": [
-        {
-          "kind": "operator",
-          "source": "enre-edesur",
-          "detail": "ENRE (Edesur area): 3,426 customers without power",
-          "url": "https://www.enre.gov.ar/paginacorte/tabla_cortes_edesur.html"
-        }
-      ],
-      "score": 1
-    },
-    {
       "id": "grid-ladwp-los-angeles-202611200028",
       "signals": [
         {
@@ -37,15 +25,21 @@
           "source": "ladwp",
           "detail": "LADWP: 6,121 customers without power",
           "url": "https://www.ladwp.com/outages/power-outage-map"
+        },
+        {
+          "kind": "demand",
+          "source": "eia",
+          "detail": "EIA: Salt River Project Agricultural Improvement and Power District (SRP) demand 2292 MWh: 36% under forecast, 28% under the same hour yesterday",
+          "url": "https://www.eia.gov/electricity/gridmonitor/"
         }
       ],
-      "score": 1
+      "score": 2
     }
   ],
   "trends": {
     "window_days": 30,
-    "from": "2026-10-21T00:51:42Z",
-    "to": "2026-11-20T00:51:42Z",
+    "from": "2026-10-21T00:55:46Z",
+    "to": "2026-11-20T00:55:46Z",
     "regions": {
       "enre-edesur|Buenos Aires": {
         "source": "enre-edesur",
@@ -55,7 +49,7 @@
         "customer_hours": 940,
         "largest": {
           "id": "grid-enre-edesur-buenos-aires-202611200024",
-          "name": "ENRE (Edesur area): 3,426 customers without power",
+          "name": "ENRE (Edesur area): 2,460 customers without power",
           "peak_customers": 11173,
           "peak_level": null,
           "opened_at": "2026-11-20T00:24:19Z"
@@ -63,15 +57,15 @@
         "causes": [
           {
             "cause": "scheduled work",
-            "customers": 2317
+            "customers": 1897
           },
           {
             "cause": "medium-voltage fault, low-voltage fault",
-            "customers": 1060
+            "customers": 484
           },
           {
             "cause": "low-voltage fault",
-            "customers": 49
+            "customers": 79
           }
         ],
         "week": {
@@ -2277,12 +2271,12 @@
       "error": ""
     },
     "eia": {
-      "ok": false,
-      "error": "not connected (no key saved for api.eia.gov)"
+      "ok": true,
+      "error": ""
     },
     "cfradar": {
-      "ok": false,
-      "error": "not connected (no key saved for api.cloudflare.com)"
+      "ok": true,
+      "error": ""
     },
     "entsoe": {
       "ok": false,

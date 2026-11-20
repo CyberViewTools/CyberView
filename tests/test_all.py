@@ -324,13 +324,12 @@ async def main():
             ok("status: lead queue shown", "new leads" in await pg.text_content("#leads"))
             ok("status: no script errors", not errs, errs)
             # the redesign (2026-11-20): answers first, details collapsed and keyboard-accessible
-            ok("status: the answers come first, in order, the flow right after the targets", await pg.evaluate("[...document.querySelectorAll('main > section.panel h2')].map(h => h.textContent)") == ["Is the site healthy right now?", "Are we hitting the four targets?", "How the data flows", "Where the data comes from", "What needs attention?"])
+            ok("status: the answers come first, in order, the flow right after health", await pg.evaluate("[...document.querySelectorAll('main > section.panel h2')].map(h => h.textContent)") == ["Is the site healthy right now?", "How the data flows", "Where the data comes from", "What needs attention?"])
             # v1.59: how the data flows and where it comes from (efficiency.json flow and sources)
             stages = await pg.eval_on_selector_all("#flow > li.fstage", "ls => ls.map(l => [l.dataset.stage, l.querySelector('.fnum').textContent])")
             ok("status flow: 7+ stages in order, each with a number", len(stages) >= 7 and [k for k, _ in stages] == ["sources", "leads", "stories", "rule", "ai", "published", "review", "map"] and all(any(ch.isdigit() for ch in n) for _, n in stages), stages)
             ok("status flow: arrows are decorative, every stage is a list item with readable text", await pg.locator("#flow .farrow").count() == len(stages) - 1 and await pg.locator("#flow .farrow:not([aria-hidden=true])").count() == 0 and await pg.evaluate("document.getElementById('flow').tagName") == "OL")
             ok("status flow: the AI stage names the model and the rule stage its reasons", "CyberView AI (a Claude model)" in await pg.text_content("#flow li[data-stage=ai]") and await pg.locator("#flow li[data-stage=rule] .freasons li").count() >= 1)
-            ok("status flow: speed note reuses the Speed card's figure", (await pg.text_content(".tcard[data-target=speed] .tfig")) in await pg.text_content("#flowSpeed"), await pg.text_content("#flowSpeed"))
             ok("status flow: says unchecked reports stay off the globe", "being checked" in await pg.text_content("#secFlow"))
             ok("status sources: tier, collector, region, language and publishers, one-colour bars with counts", await pg.locator("#from [data-from]").count() == 5 and len(set(await pg.eval_on_selector_all("#from .hfill", "fs => fs.map(f => getComputedStyle(f).backgroundColor)"))) == 1
                and await pg.locator("#from [data-from=publishers] .hrow").count() >= 1 and all(any(ch.isdigit() for ch in v) for v in await pg.eval_on_selector_all("#from .hval", "vs => vs.map(v => v.textContent)")))
@@ -341,7 +340,11 @@ async def main():
             await pg.locator("#dRoutines > summary").focus(); await pg.keyboard.press("Enter"); await pg.wait_for_timeout(200)
             ok("status: a details section opens from the keyboard", await pg.evaluate("document.getElementById('dRoutines').open") and await pg.locator("#routines").is_visible())
             ok("status: routine names are not doubled with their key", await pg.locator("#routines .sub, #routines .codename").count() == 0 and "Sweep sweep" not in await pg.inner_text("#routines"))
-            ok("status: one speed figure on the page", await pg.locator("[data-speed]").count() == 1 and (await pg.text_content("main")).count("nine in ten") == 1, (await pg.text_content("main")).count("nine in ten"))
+            # the owner took the targets off the status page (2026-11-20): no target cards, no speed note, no "Target" rows;
+            # efficiency.json keeps them for the improver, the guard and swarm.mjs board
+            mt = await pg.text_content("main")
+            ok("status: no targets on the page", await pg.locator("#eff, #effTargets, .tcard, #flowSpeed, [data-speed], [data-target]").count() == 0
+               and "four targets" not in mt and "nine in ten" not in mt and "Target" not in mt and "Not met" not in mt, [w for w in ("four targets", "nine in ten", "Target", "Not met") if w in mt])
             ok("status: the improver's stale speed and review rate are gone", await pg.locator("#speedSum").count() == 0 and "corrected or flagged" not in await pg.text_content("#impSum"))
             ok("status: feeds show the top 15, the rest behind show all", 0 < await pg.locator("#effFeeds tbody tr").count() <= 15)
             ok("status: retired collectors are not current sources", await pg.locator("#effFeeds tr[data-feed='google-news'], #effFeedsAll tr[data-feed='google-news'], #sources tr[data-src='google-news']").count() == 0)
@@ -349,7 +352,7 @@ async def main():
             ok("status: every grid source has a human name", all(not t.split(" ", 1)[1].startswith(k + " ") and not t.split(" ", 1)[1].startswith(k + ":") for k, t in gnames if k in ("ioda", "gdacs")) and all("IODA internet outages" in t for k, t in gnames if k == "ioda"), [g for g in gnames if g[0] in ("ioda", "gdacs")])
             ok("status: grid summary counts working sources", not gnames or "working" in await pg.text_content("#gridSum"))
             ok("status: coverage bars are one colour", len(set(await pg.eval_on_selector_all("#effCoverage .hfill", "fs => fs.map(f => getComputedStyle(f).backgroundColor)"))) <= 1)
-            ok("status: accuracy is a table, not a paragraph", await pg.locator("#accTotals tbody tr").count() == 4 and await pg.locator("#effAccuracy").count() == 0)
+            ok("status: accuracy is a table, not a paragraph", await pg.locator("#accTotals tbody tr").count() == 3 and await pg.locator("#effAccuracy").count() == 0)
             dh = await pg.evaluate("(() => { document.querySelectorAll('details').forEach(d => d.open = false); return document.documentElement.scrollHeight; })()")
             ok("status: desktop page under 3,000 px with details collapsed", dh < 3000, dh)
             ov = await pg.evaluate("""(() => { const b = [...document.querySelectorAll('#flow > li')].map(l => l.getBoundingClientRect()); let n = 0;
@@ -359,11 +362,9 @@ async def main():
             eff_path = os.path.join(ROOT, "site", "data", "efficiency.json")
             eff = json.load(open(eff_path)) if os.path.exists(eff_path) else None
             ok("efficiency: the build wrote efficiency.json with four targets", bool(eff) and len(eff.get("targets", [])) == 4 and "covered" in eff, (eff or {}).get("error"))
-            ok("efficiency: section renders the four targets as cards", await pg.get_attribute("#eff", "data-state") == "ok" and await pg.locator("#effTargets .tcard").count() == 4
-               and all([await pg.locator(f"#effTargets .tcard[data-target={k}] .tfig").count() == 1 for k in ("speed", "accuracy", "usage", "earns")]))
             ok("efficiency: routines merged with usage and output, feeds filled", "added" in await pg.text_content("#routines tbody") and await pg.locator("#effFeeds tbody tr").count() > 0)
             ok("efficiency: coverage by region, language and sector", await pg.locator("#effCoverage [data-cov]").count() == 3)
-            ok("efficiency: says how many days of data it rests on", "days" in await pg.inner_text("#effNote"), await pg.inner_text("#effNote"))
+            ok("efficiency: says how many days of data it rests on", "days" in await pg.text_content("#covNote"), await pg.text_content("#covNote"))
             ok("efficiency: usage line with the research loop's cycles and budget levels", "Research loop:" in await pg.text_content("#effUsage") and "budget level per cycle" in await pg.text_content("#effUsage"), await pg.text_content("#effUsage"))
             await pg.context.close()
             # phones: no sideways scroll, stacked rows never overlap their labels, page short with details collapsed
@@ -389,8 +390,8 @@ async def main():
                 pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
                 await pg.route("**/data/efficiency.json*", handler)
                 await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
-                st = await pg.get_attribute("#eff", "data-state"); note = await pg.inner_text("#effNote")
-                rows = await pg.locator("#routines tbody tr[data-routine], #routinesOff tbody tr[data-routine]").count(); imgs = await pg.locator("main img").count(); text = await pg.inner_text("#eff")
+                st = await pg.get_attribute("#secFlow", "data-state"); note = await pg.text_content("#flowNote")
+                rows = await pg.locator("#routines tbody tr[data-routine], #routinesOff tbody tr[data-routine]").count(); imgs = await pg.locator("main img").count(); text = await pg.text_content("main")
                 await ctx.close(); return st, note, rows, imgs, text, errs
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=404, body="not found"))
             ok("efficiency: a missing efficiency.json says so and the rest of the page still renders", st == "missing" and "not available" in note and rows >= len(reg["routines"]) and not errs, (st, note, rows, errs))
@@ -409,8 +410,8 @@ async def main():
             pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
             await pg.route("**/data/efficiency.json*", flow_err)
             await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
-            ok("status flow: an error note from the build is shown as text, the targets still render", "could not be worked out" in await pg.text_content("#flowNote") and "<img src=x>" in await pg.text_content("#fromNote")
-               and await pg.locator("main img").count() == 0 and await pg.locator("#effTargets .tcard").count() == 4 and not errs, errs)
+            ok("status flow: an error note from the build is shown as text, the rest still renders", "could not be worked out" in await pg.text_content("#flowNote") and "<img src=x>" in await pg.text_content("#fromNote")
+               and await pg.locator("main img").count() == 0 and await pg.locator("#routines tbody tr[data-routine]").count() > 0 and not errs, errs)
             await ctx.close()
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps({"error": "The efficiency report could not be built: boom"})))
             ok("efficiency: a build error is shown as a note", st == "error" and "could not be built" in note and not errs, (st, note, errs))
@@ -418,7 +419,7 @@ async def main():
                    "windows": {"five_hour": {"tokens": "lots"}, "week": None, "budget": {"level": "<x>"}}, "routines": [{"key": "sweep", "name": "<img src=x>", "runs": "9", "tokens": 1e6, "usage": "<b>"}, "x"],
                    "feeds": [{"name": "rss:<img src=x>", "leads": 3, "used": 1, "yield": 33.3, "days_since_useful": 1}], "coverage": {"d7": {"region": {"<img>": 3, "europe": "x"}}}, "accuracy": {"weeks": [{"week": "<b>"}]}, "gaps": [1, "plain"]}
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(bad)))
-            ok("efficiency: hostile fields are shown as text or dropped, never as markup", st == "ok" and imgs == 0 and "<img src=x>" in text and "Not measurable yet" in text and not errs, (st, imgs, errs))
+            ok("efficiency: hostile fields are shown as text or dropped, never as markup", imgs == 0 and "<img src=x>" in text and "<script>1</script>" not in text and rows >= len(reg["routines"]) and not errs, (st, imgs, errs))
             # retired routines and routines that run inside the research loop (routines.json "retired", "merged_into", workflow "flow")
             ops = json.load(open(os.path.join(ROOT, "site", "data", "ops.json")))
             ops["routines"] = [{"key": "steward", "name": "Steward", "tier": "ai", "active": False, "retired": "no output", "merged_into": "sweep<img src=x>", "cron": "7 2 * * *", "does": "x"},

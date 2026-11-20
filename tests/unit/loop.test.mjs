@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { workAt, overdueOnly, gapCount, idleWaitMs, flowAlive } from "../../scripts/run-job.mjs";
+import { workAt, overdueOnly, gapCount, idleWaitMs, flowAlive, mixWork } from "../../scripts/run-job.mjs";
 import { yieldsTo, takeLock, leaderOf } from "../../scripts/lib/lease.mjs";
 import { urgent } from "../../scripts/sweep-plan.mjs";
 
@@ -91,4 +91,15 @@ test("one container cannot start two loops: the lock is taken atomically, a dead
   writeFileSync(f, JSON.stringify({ pid: process.pid, beat: "2026-01-01T00:00:00Z" }));
   assert.equal(takeLock(f, alive), true, "a lock with no heartbeat for 12 minutes is stale");
   assert.ok(existsSync(f));
+});
+
+test("reviewers are not held behind a full research queue: reviewer 1 starts first, then they alternate", () => {
+  const R = (n) => Array.from({ length: n }, (_, i) => ["researcher", i + 1]), V = (n) => Array.from({ length: n }, (_, i) => ["reviewer", i + 1]);
+  const w = mixWork(R(6), V(4));
+  assert.equal(w.length, 10);
+  assert.deepEqual(w[0], ["reviewer", 1], "the newest events' reviewer is in the first wave");
+  assert.equal(w.slice(0, 6).filter((x) => x[0] === "reviewer").length, 3, "with 6 slots, half go to reviewers while both queues are full");
+  assert.deepEqual(mixWork(R(2), []), R(2));
+  assert.deepEqual(mixWork([], V(3)), V(3));
+  assert.deepEqual(mixWork([], []), []);
 });

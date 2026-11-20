@@ -87,6 +87,22 @@ export function order(items, now = Date.now()) {
   const late = (x) => now - Date.parse(waitingSince(x.e)) > OVERDUE_MIN * 6e4, older = (a, b) => waitingSince(a.e).localeCompare(waitingSince(b.e));
   return items.slice().sort((a, b) => (late(b) - late(a)) || (late(a) ? older(a, b) : (b.risk - a.risk) || older(a, b)));
 }
+/** Pure: split the head of the queue between up to n reviewers, at most `per` events each, at least 4 per reviewer before
+ *  another starts. With two or more reviewers the first takes the events that started waiting most recently (published
+ *  or updated in the last cycle), so a new event is reviewed in the next cycle instead of waiting behind a long tail of
+ *  older ones (measured 2026-11-20: published -> second review p50 36 min, p90 1099 min); the others take the queue in
+ *  its usual order, overdue first, oldest first. items: [{e}] in order(). Returns [[id...]...], no empty batch. */
+export function planBatches(items, n, per) {
+  const total = Math.min(items.length, Math.max(1, n) * Math.max(1, per));
+  if (!total) return [];
+  const k = Math.max(1, Math.min(n, Math.ceil(total / 4)));
+  if (k === 1) return [items.slice(0, total).map((x) => x.e.id)];
+  const share = Math.min(per, Math.ceil(total / k)), older = (a, b) => waitingSince(a.e).localeCompare(waitingSince(b.e));
+  const newest = items.slice().sort((a, b) => older(b, a)).slice(0, share).sort(older), taken = new Set(newest.map((x) => x.e.id));
+  const rest = items.filter((x) => !taken.has(x.e.id)).slice(0, total - newest.length), batches = Array.from({ length: k - 1 }, () => []);
+  rest.forEach((x, i) => batches[i % (k - 1)].push(x.e.id));
+  return [newest.map((x) => x.e.id), ...batches].filter((b) => b.length);
+}
 /** Pure: the review record. first_at keeps the time of the event's first second review through later re-reviews of updates
  *  (the speed figures measure lead -> first review; review.at is always the latest review). */
 export function reviewRecord(prev, state, at, note, flags) {
@@ -104,10 +120,9 @@ function main() {
     const argv = [id, ...rest], arg = (k) => { const j = argv.indexOf("--" + k); return j >= 0 ? argv[j + 1] : undefined; };
     const file = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(arg("file") || "") ? arg("file") : "review-plan.json";
     const c = (readJson(join(ROOT, "config", "pipeline.json"), {}).review) || {}, n = Math.max(1, Math.min(6, Number(arg("max")) || Number(c.reviewers) || 2)), per = Math.max(3, Math.min(15, Number(c.events_per_reviewer) || 10));
-    const all = queue(), held = leased("event", all.map((x) => x.e.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((x) => !held.has(x.e.id)).slice(0, n * per), k = Math.max(1, Math.min(n, Math.ceil(q.length / 4))), batches = Array.from({ length: k }, () => []);
-    q.forEach((x, i) => batches[i % k].push(x.e.id));
+    const all = queue(), held = leased("event", all.map((x) => x.e.id), process.env.CYBERVIEW_RUN || ""), batches = planBatches(all.filter((x) => !held.has(x.e.id)), n, per), planned = batches.flat().length;
     writeJson(join(DATA, file), { planned_at: nowIso(), batches });
-    console.log(`REVIEW PLAN: ${q.length} event(s) for ${q.length ? batches.length : 0} reviewer(s); ${queue().length} waiting in all.`);
+    console.log(`REVIEW PLAN: ${planned} event(s) for ${batches.length} reviewer(s)${batches.length > 1 ? " (reviewer 1 on the newest)" : ""}; ${all.length} waiting in all.`);
     return;
   }
   if (cmd === "queue") {

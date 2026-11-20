@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { flagsFor, needsReview, risk } from "../../scripts/review.mjs";
+import { flagsFor, needsReview, risk, order, planBatches } from "../../scripts/review.mjs";
 
 const base = (o = {}) => ({ id: "acme-breach-2026-11", title: "Acme confirms breach of customer database", org: "Acme", date: "2026-11-18", first_seen: "2026-11-18T10:00:00Z", category: "incident", severity: 2, status: "confirmed",
   summary: "Acme said attackers copied a customer database. The company confirmed 4,200,000 records were taken.", plain: "p", exec: "x", action: "a", records_affected: 4200000, lat: 1, lng: 1, country: "Canada",
@@ -44,4 +44,24 @@ test("review is needed for new events and for ones changed after their review", 
   assert.equal(needsReview(base({ review: { state: "passed", at: "2026-11-18T12:00:00Z" }, updated_at: "2026-11-18T12:00:05Z" })), false, "the review's own save does not re-queue it");
   assert.equal(needsReview(base({ duplicate_of: "x-y-z" })), false);
   assert.ok(risk(base({ severity: 3 }), [{ code: "redirect-source" }]) > risk(base({ severity: 3 }), []));
+});
+
+test("review plan: with two or more reviewers the first takes the newest events, the rest the oldest first", () => {
+  const now = Date.parse("2026-11-20T18:00:00Z");
+  const waiting = (n) => order(Array.from({ length: n }, (_, i) => ({ e: { id: `e${i}`, first_seen: new Date(now - (1 + i * 10) * 6e4).toISOString() }, risk: 0 })), now);
+  // 40 events waiting from 17:59 back to 11:30 (10 minutes apart): a long tail of old ones and two published this cycle
+  const items = waiting(40), b = planBatches(items, 4, 12);
+  assert.equal(b.length, 4);
+  assert.deepEqual(b[0].slice(-2), ["e1", "e0"], "the events published in the last cycle are in the first reviewer's batch");
+  assert.ok(b.every((x) => x.length && x.length <= 12));
+  assert.ok(b.slice(1).flat().includes("e39"), "the oldest event is still taken");
+  assert.equal(new Set(b.flat()).size, 40, "every event once");
+  // more waiting than the reviewers can take: the newest and the oldest are both reviewed, the middle waits
+  const m = planBatches(waiting(100), 4, 12).flat();
+  assert.equal(m.length, 48);
+  assert.ok(m.includes("e0") && m.includes("e99"));
+  // one reviewer, or too few events for two: queue order (overdue first, oldest first)
+  assert.deepEqual(planBatches(items.slice(0, 3), 4, 12), [items.slice(0, 3).map((x) => x.e.id)]);
+  assert.deepEqual(planBatches(items, 1, 5), [items.slice(0, 5).map((x) => x.e.id)]);
+  assert.deepEqual(planBatches([], 4, 12), []);
 });

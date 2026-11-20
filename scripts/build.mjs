@@ -397,7 +397,8 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   // open-source collectors: each one's health, and what the pipeline did with their leads this week
   const osint = readJson(join(DATA, "osint.json"), { sources: {} }), pm = pipelineMetrics(7);
   const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
-  const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
+  // leads "used" are credited by story (scripts/metrics.mjs storyCredit); days_covered is how much of the 7 days the lead files hold
+  const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, leads_used_7d: pm.leads_used, days_covered: pm.window ? pm.window.days_covered : null, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
     collectors: pm.collectors.slice(0, 12), stories: { open: st.stories_open ?? null, corroborated: st.stories_corroborated ?? null, claims: st.stories_claims ?? null, leads_72h: st.leads_72h ?? null } };
   // continuous improvement: the improver's latest report (cost, yield, quality, guard) and its last changes, for the status page
   const imp = readJson(join(DATA, "improve", "latest.json"), null), chP = join(DATA, "improve", "changes.jsonl");
@@ -405,6 +406,17 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const improve = imp ? { at: imp.at, days: imp.days, events_added: imp.events_added, cost_usd: imp.cost_usd, cost_per_event: imp.cost_per_event, review: imp.review, guard: imp.guard,
     roles: Object.fromEntries(Object.entries(imp.roles || {}).slice(0, 30)), changes } : { changes };
   writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline, improve, speed: (() => { try { return speedOf(24); } catch { return null; } })() }));
+}
+
+// efficiency: every routine and feed against the owner's four targets (scripts/efficiency.mjs, no AI model), for the
+// status page. A failure here never fails the build or the deploy: the page gets a note saying the report is missing.
+try {
+  const eff = await (await import("./efficiency.mjs")).build(7);
+  writeFileSync(join(OUT, "efficiency.json"), JSON.stringify({ built_at, ...eff }));
+  console.log("Efficiency: " + eff.targets.map((t) => `${t.key} ${t.state}`).join(", ") + `; ${eff.note}`);
+} catch (err) {
+  writeFileSync(join(OUT, "efficiency.json"), JSON.stringify({ built_at, error: "The efficiency report could not be built: " + String((err && err.message) || err).slice(0, 200) }));
+  console.warn("warning: efficiency report not built: " + String((err && err.message) || err).slice(0, 200));
 }
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)

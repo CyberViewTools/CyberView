@@ -1,4 +1,7 @@
 site/data/
+# the data branch is mounted here (docs/branches.md); main never holds data/
+/data/
+/data.pre-*/
 node_modules/
 .DS_Store
 tests/__pycache__/
@@ -16,15 +19,6 @@ site/account.html
 site/unsubscribe.html
 
 # community feed: posts waiting for the moderator (working state of the ops session, never published)
-data/chat/pending.json
-data/stories.json
-data/sweep-plan.json
-data/review-plan.json
-data/review-plan-*.json
-data/backlog-plan.json
-data/backlog-triage-*.json
-data/backlog-kept.json
-data/analyst-plan.json
 swarm/*
 !swarm/LANES.md
 !swarm/CONTINUITY.md
@@ -38,10 +32,5 @@ swarm/*
 # CVE corpus working copy (kept as a release asset, never committed)
 cache/
 site/data/cve/
-data/update-plan.json
-data/update-plan-*.json
 
 # grid research desk working state (per cycle)
-data/grid-plan.json
-data/grid-plan-*.json
-data/grid-out-*.json

@@ -132,14 +132,16 @@ node scripts/data-commit.mjs "data: correct <event id>" data/events/2026-11/<id>
 
 ## The switch-over
 
-**Stage A (now).** The `data` branch exists and takes the data. Each checkout switches the first time a job starts
+**Stage A (done 2026-11-20).** The `data` branch exists and takes the data. Each checkout switches the first time a job starts
 there (`scripts/dispatch.mjs` runs `data-branch.mjs ensure`; it waits while a research loop is running in that
 checkout). Anything still pushing data to `main` (a checkout not yet switched, an old workflow) is forwarded by
 `.github/workflows/data-forward.yml`, which runs `data-branch.mjs forward` and brings those changes onto `data` with the
-same merge rules, so nothing is lost. `main` still contains its old copy of `data/`, unused.
+same merge rules, so nothing is lost. `main` still contained its old copy of `data/`, unused.
 
-**Stage B (later, when every checkout has switched).** `data/` is removed from `main` by a pull request,
-`data-forward.yml` is removed, and the owner turns on two rulesets. The exact commands and checks are in
+**Stage B (done 2026-11-20).** `data/` was removed from `main` by a pull request once every checkout ran the safe
+pull (`pullAll` moves `./data` aside for the one pull that drops it; without that, git deletes those paths on disk even
+under the sparse checkout). `data-forward.yml` stays as a safety net with nothing to do, and the owner turns on two
+rulesets. The exact commands and checks are in
 `swarm/handoff/data-branch.md`.
 
 ### The rulesets (Settings → Rules → Rulesets → New ruleset → New branch ruleset)

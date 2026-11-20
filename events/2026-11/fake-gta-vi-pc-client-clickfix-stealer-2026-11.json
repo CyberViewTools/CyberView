@@ -1,0 +1,39 @@
+{
+  "action": "Do not paste commands from websites into Run or PowerShell; check game availability through official publisher channels. If the command was run, disconnect the machine, scan it with trusted software and change passwords from a clean device, starting with email.",
+  "actor": "",
+  "attack": ["T1204 User Execution", "T1574 Hijack Execution Flow"],
+  "category": "incident",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-20",
+  "date_note": "Date of the Bitdefender Labs post; the site's first activity is not stated",
+  "exec": "A fake GTA VI download site installs a stealer that takes browser, wallet and account credentials from Windows PCs.",
+  "first_seen": "2026-11-20T16:55:00Z",
+  "geo_basis": "no victim or place stated; global lure",
+  "lat": 0,
+  "lng": 0,
+  "org": "",
+  "pin_type": "country",
+  "place": "Global",
+  "plain": "A website offers a fake GTA VI client for PC and tells visitors to paste a command into Windows. Bitdefender says this installs a likely Rust-based information stealer. GTA VI is not available on PC.",
+  "products": ["Windows", "PowerShell"],
+  "sector": "Consumer",
+  "severity": 1,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Bitdefender Labs",
+      "url": "https://www.bitdefender.com/en-us/blog/labs/fake-gta-vi-pc-client-malware-clickfix"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Bitdefender Labs describes a lure site offering a fake GTA VI PC streaming client, installed by a ZIP or by a ClickFix command pasted into Win+R that runs PowerShell. The chain side-loads a DLL and injects a payload Bitdefender calls likely a new or modified Rust-based stealer, taking browser credentials, wallet data and clipboard contents. The post names no actor.",
+  "tags": ["clickfix", "infostealer"],
+  "title": "Fake GTA VI PC client spreads stealer malware through a ClickFix attack, Bitdefender says",
+  "updated_at": "2026-11-20T16:55:00Z",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-20T16:55:00Z",
+    "note": "Bitdefender Labs post read in full (vendor analysis); no second publisher read. The post says the PowerShell-fetched script itself is not included."
+  }
+}

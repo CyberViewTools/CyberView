@@ -175,6 +175,15 @@ export function workAt(level) {
 export function overdueOnly(batches, byId, now = Date.now(), min = OVERDUE_MIN) {
   return (batches || []).map((b) => b.filter((id) => { const e = byId.get(id); return e && now - Date.parse(waitingSince(e)) > min * 6e4; })).filter((b) => b.length);
 }
+/** Pure: the order a cycle starts its research and review workers in. pool() runs at most max_parallel (6) at a time in
+ *  list order, so with researchers listed first a full research queue held every reviewer until the researchers were done
+ *  (measured 2026-11-20: published -> second review p90 1099 min). Reviewer 1 (the newest events, review.mjs planBatches)
+ *  starts first, then researchers and reviewers alternate. researchers, reviewers: [[role, batch]...]. */
+export function mixWork(researchers, reviewers) {
+  const a = (reviewers || []).slice(0, 1), r = (reviewers || []).slice(1), s = (researchers || []).slice();
+  while (s.length || r.length) { if (s.length) a.push(s.shift()); if (r.length) a.push(r.shift()); }
+  return a;
+}
 /** Pure: how many gap searchers this cycle starts. Measured (2026-11-19 04:35 to 11-20 07:13): 122 gap runs, 11 events
  *  (91% added nothing), $39.37 = $3.58 per event against $0.95 for a researcher, 24% of all worker spend. So they run every
  *  sweep.gap_every_minutes (60) with sweep.gap_workers (1), plus sweep.gap_spare_workers while the 5-hour window is under
@@ -300,7 +309,7 @@ async function flow() {
     const gf = `grid-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     let gb = [];
     if (GW && can.grid && existsSync(join(ROOT, "scripts", "grid-desk.mjs"))) { try { phase("grid-plan", sh("node", ["scripts/grid-desk.mjs", "plan", "--max", String(GW), "--per", String(GPER), "--file", gf], 60000).out[0] || ""); gb = (readJson(join(DATA, gf), { batches: [] }).batches || []).filter((b) => b && (b.incidents || []).length); } catch { gb = []; } }
-    const work = batches.map((b) => ["researcher", b]).concat(rb.map((_, i) => ["reviewer", i + 1]), ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]));
+    const work = mixWork(batches.map((b) => ["researcher", b]), rb.map((_, i) => ["reviewer", i + 1])).concat(ub.map((_, i) => ["updater", i + 1]), gb.map((b) => ["grid", b.batch]));
     const core = work.length;                               // research, review, update and grid work; the rest is scheduled
     if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); work.push(["followup", null]); }
     { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }

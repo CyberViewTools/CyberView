@@ -23,11 +23,12 @@ test("date: more than 7 days before first_seen needs a date_note (error)", () =>
   assert.ok(!codes(ev({ date: "2026-11-15" })).includes("old-date-no-note"));
 });
 
-test("occurred_at: needs time_basis (error); a 12:00 or 00:00 UTC time looks like a placeholder (warning)", () => {
+test("occurred_at: needs time_basis (error); a 12:00 or 00:00 UTC time looks like a placeholder (error, refused for new events)", () => {
   assert.equal(levelOf(ev({ occurred_at: "2026-11-17T20:35:00Z" }), "occurred-no-basis"), "error");
   assert.deepEqual(codes(ev({ occurred_at: "2026-11-17T20:35:00Z", time_basis: "occurred" })), []);
-  assert.equal(levelOf(ev({ occurred_at: "2026-11-17T12:00:00Z", time_basis: "published" }), "occurred-placeholder"), "warn");
-  assert.equal(levelOf(ev({ occurred_at: "2026-11-17T00:00:00+00:00", time_basis: "occurred" }), "occurred-placeholder"), "warn");
+  assert.equal(levelOf(ev({ occurred_at: "2026-11-17T12:00:00Z", time_basis: "published" }), "occurred-placeholder"), "error");
+  assert.equal(levelOf(ev({ occurred_at: "2026-11-17T00:00:00+00:00", time_basis: "occurred" }), "occurred-placeholder"), "error");
+  assert.equal(levelOf(ev({ occurred_at: "2026-11-17T12:00:00.000Z", time_basis: "reported" }), "occurred-placeholder"), "error");
   assert.ok(!codes(ev({ occurred_at: "2026-11-17T12:00:00Z", time_basis: "approx" })).includes("occurred-placeholder"));
 });
 
@@ -153,4 +154,20 @@ test("aliases: a short list of names is fine, anything else is flagged", () => {
   assert.ok(!codes(ev({ aliases: ["富岳", "理研"] })).includes("aliases-shape"));
   assert.ok(codes(ev({ aliases: "Fugaku" })).includes("aliases-shape"));
   assert.ok(codes(ev({ aliases: ["x".repeat(61)] })).includes("aliases-shape"));
+});
+
+test("old records are not blocked: errors apply only to events first seen from QUALITY_STRICT_FROM", () => {
+  // the build and the validate.mjs CLI lower an error to a warning for an event first seen before the strict date
+  const old = ev({ first_seen: "2026-11-19T08:00:00Z", updated_at: "2026-11-19T08:00:00Z", occurred_at: "2026-11-17T12:00:00Z", time_basis: "published" });
+  assert.ok(String(old.first_seen) < QUALITY_STRICT_FROM);
+  assert.ok(String(ev().first_seen) >= QUALITY_STRICT_FROM);
+  assert.equal(levelOf(old, "occurred-placeholder"), "error");
+});
+
+test('"400+" is flagged: figures go in the source\'s own words (warning)', () => {
+  assert.equal(levelOf(ev({ summary: "Acme said 400+ customers were affected on November 17." }), "figure-plus"), "warn");
+  assert.equal(levelOf(ev({ title: "Acme breach hits 1,200+ customer records" }), "figure-plus"), "warn");
+  assert.equal(levelOf(ev({ plain: "About 1.5 million+ people affected." }), "figure-plus"), "warn");
+  assert.ok(!codes(ev({ summary: "Acme said more than 400 customers were affected. A C++ library was involved." })).includes("figure-plus"));
+  assert.ok(!codes(ev({ action: "Update to version 10.3.27+ or later." })).includes("figure-plus"));   // a version number, not a count
 });

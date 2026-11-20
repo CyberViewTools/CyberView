@@ -415,7 +415,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
 }
 
 // efficiency: every routine and feed against the owner's four targets (scripts/efficiency.mjs, no AI model), for the
-// status page. A failure here never fails the build or the deploy: the page gets a note saying the report is missing.
+// status page (flow, sources, usage, feeds, coverage, accuracy; it no longer shows the targets) and the improver and guard. A failure here never fails the build or the deploy: the page gets a note saying the report is missing.
 try {
   const eff = await (await import("./efficiency.mjs")).build(7);
   writeFileSync(join(OUT, "efficiency.json"), JSON.stringify({ built_at, ...eff }));

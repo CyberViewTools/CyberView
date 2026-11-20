@@ -196,7 +196,7 @@ export function checkChat(c, known) {
 
 /**
  * Event quality: the mistakes the second review kept correcting (reviews of 13-20 November 2026: 118 of 346 corrected or
- * flagged), where a rule can decide. Returns [{level: "error"|"warn", code, text}]. The build fails on "error" only for
+ * flagged; by 20 November 141 of 412 corrected), where a rule can decide. Returns [{level: "error"|"warn", code, text}]. The build fails on "error" only for
  * events first seen from QUALITY_STRICT_FROM (older records get it as a warning, so history never blocks a commit);
  * "warn" is always a warning. `node scripts/lib/validate.mjs <event id...>` prints them for chosen events.
  * Checks that need the other events (shared source pages, possible duplicates) are in sharedSourceProblems().
@@ -243,8 +243,10 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
     add("error", "old-date-no-note", `date ${e.date} is more than 7 days before first_seen ${seen}: write "date_note" saying what the date is (attack, disclosure, filing) and why the event is added now`);
   if (e.occurred_at != null && e.occurred_at !== "") {
     if (!["occurred", "reported", "published", "approx"].includes(e.time_basis)) add("error", "occurred-no-basis", 'occurred_at needs "time_basis": occurred, reported, published or approx (which time the source states)');
+    // a 00:00 or 12:00 UTC time is how a made-up time looks (the second review kept correcting it): an error for events first
+    // seen from QUALITY_STRICT_FROM, a warning for older ones (the build and the CLI lower it)
     if (/T(00|12):00(:00(\.0+)?)?(Z|[+-]00:?00)$/.test(String(e.occurred_at)) && e.time_basis !== "approx")
-      add("warn", "occurred-placeholder", `occurred_at ${e.occurred_at} looks like a placeholder: use the time a source states, mark it time_basis "approx", or leave occurred_at out`);
+      add("error", "occurred-placeholder", `occurred_at ${e.occurred_at} looks like a placeholder: use the time a source states, mark it time_basis "approx", or leave occurred_at out`);
   }
   // validation and status must match what the sources can carry
   const v = e.validation && e.validation.state;
@@ -266,6 +268,11 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
   // an actor named in CyberView's own voice
   if (e.actor && !e.attribution && e.status !== "claimed" && !/claim|unattributed|unknown|suspected/i.test(e.actor) && !/attribut|according to|\bsaid\b|\bsays\b|linked|tracks|blamed|assess/i.test(e.summary || ""))
     add("warn", "actor-unsourced", `actor "${String(e.actor).slice(0, 40)}" is named but the summary does not say who attributed it ("according to <firm or agency>")`);
+  // "400+" is CyberView's shorthand, not a source's qualifier: the second review kept rewriting it to the source's own words
+  for (const k of ["title", "summary", "plain", "exec", "action"]) {
+    const m = String(e[k] || "").match(/(?<![\w.])\d{1,3}(?:,\d{3})*(?:\.\d+)?\s?(?:million|billion|bn|k)?\+(?![\w+])/i);
+    if (m) { add("warn", "figure-plus", `"${m[0]}" in ${k}: write the figure in the source's own words ("more than 400", "about 400", "at least 400"); keep "+" only if the source itself writes it`); break; }
+  }
   // every figure in the title and exec is in the summary or impact, as stated there
   const base = `${e.summary || ""} ${e.impact || ""}`.replace(/,/g, "").toLowerCase();
   for (const k of ["title", "exec"]) {

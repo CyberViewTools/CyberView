@@ -1,12 +1,60 @@
 {
-  "updated_at": "2026-11-20T00:15:57Z",
+  "updated_at": "2026-11-20T00:23:13Z",
   "anomalies": [],
-  "corroboration": [],
+  "corroboration": [
+    {
+      "id": "grid-enre-edesur-buenos-aires-202611200019",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "enre-edesur",
+          "detail": "ENRE (Edesur area): 11,173 customers without power",
+          "url": "https://www.enre.gov.ar/paginacorte/tabla_cortes_edesur.html"
+        }
+      ],
+      "score": 1
+    }
+  ],
   "trends": {
     "window_days": 30,
-    "from": "2026-10-21T00:15:57Z",
-    "to": "2026-11-20T00:15:57Z",
+    "from": "2026-10-21T00:23:13Z",
+    "to": "2026-11-20T00:23:13Z",
     "regions": {
+      "enre-edesur|Buenos Aires": {
+        "source": "enre-edesur",
+        "region": "Buenos Aires",
+        "name": "Buenos Aires (Edesur area)",
+        "incidents": 1,
+        "customer_hours": 663,
+        "largest": {
+          "id": "grid-enre-edesur-buenos-aires-202611200019",
+          "name": "ENRE (Edesur area): 11,173 customers without power",
+          "peak_customers": 11173,
+          "peak_level": null,
+          "opened_at": "2026-11-20T00:19:20Z"
+        },
+        "causes": [
+          {
+            "cause": "medium-voltage fault",
+            "customers": 7675
+          },
+          {
+            "cause": "scheduled work",
+            "customers": 2764
+          },
+          {
+            "cause": "medium-voltage fault, low-voltage fault",
+            "customers": 691
+          }
+        ],
+        "week": {
+          "customer_hours": 663,
+          "prev_customer_hours": 0,
+          "change_pct": null,
+          "incidents": 1,
+          "prev_incidents": 0
+        }
+      },
       "hydroquebec|Quebec": {
         "source": "hydroquebec",
         "region": "Quebec",
@@ -305,22 +353,6 @@
         "causes": [],
         "week": {
           "customer_hours": 462,
-          "prev_customer_hours": 0,
-          "change_pct": null,
-          "incidents": 0,
-          "prev_incidents": 0
-        }
-      },
-      "enre-edesur|Buenos Aires": {
-        "source": "enre-edesur",
-        "region": "Buenos Aires",
-        "name": "Buenos Aires (Edesur area)",
-        "incidents": 0,
-        "customer_hours": 663,
-        "largest": null,
-        "causes": [],
-        "week": {
-          "customer_hours": 663,
           "prev_customer_hours": 0,
           "change_pct": null,
           "incidents": 0,
@@ -2195,42 +2227,6 @@
       "ok": true,
       "error": ""
     },
-    "endeavour-energy": {
-      "ok": true,
-      "error": ""
-    },
-    "tasnetworks": {
-      "ok": true,
-      "error": ""
-    },
-    "taipower-supply": {
-      "ok": true,
-      "error": ""
-    },
-    "ecg-ghana": {
-      "ok": true,
-      "error": ""
-    },
-    "enre-edenor": {
-      "ok": true,
-      "error": ""
-    },
-    "enre-edesur": {
-      "ok": true,
-      "error": ""
-    },
-    "ons-interrupcao-carga": {
-      "ok": true,
-      "error": ""
-    },
-    "ioda": {
-      "ok": true,
-      "error": ""
-    },
-    "gdacs": {
-      "ok": true,
-      "error": ""
-    },
     "ssen-powertrack": {
       "ok": true,
       "error": ""
@@ -2288,6 +2284,42 @@
       "error": ""
     },
     "nyiso-realtime-events": {
+      "ok": true,
+      "error": ""
+    },
+    "endeavour-energy": {
+      "ok": true,
+      "error": ""
+    },
+    "tasnetworks": {
+      "ok": true,
+      "error": ""
+    },
+    "taipower-supply": {
+      "ok": true,
+      "error": ""
+    },
+    "ecg-ghana": {
+      "ok": true,
+      "error": ""
+    },
+    "enre-edenor": {
+      "ok": true,
+      "error": ""
+    },
+    "enre-edesur": {
+      "ok": true,
+      "error": ""
+    },
+    "ons-interrupcao-carga": {
+      "ok": true,
+      "error": ""
+    },
+    "ioda": {
+      "ok": true,
+      "error": ""
+    },
+    "gdacs": {
       "ok": true,
       "error": ""
     }

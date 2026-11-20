@@ -1,0 +1,42 @@
+name: Source probe
+
+# Manual check, from GitHub's network, of a source that cannot be reached from the Claude sessions (e.g. Chile's SEC
+# outage data). Reports the HTTP status, the robots.txt rules that apply, and the first bytes of the reply. Reads
+# only; writes nothing, commits nothing. Run: Actions > Source probe > Run workflow, with the URL.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "https:// URL to probe"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          case "$URL" in https://*) ;; *) echo "only https:// URLs"; exit 1;; esac
+          host=$(printf '%s' "$URL" | sed -E 's#^https://([^/]+).*#\1#')
+          ua="CyberView source probe (+https://xanderhutch.github.io/CyberView)"
+          {
+            echo "## Probe of $URL"
+            echo '```'
+            curl -sS -o /tmp/body -w 'status %{http_code}, type %{content_type}, %{size_download} bytes, %{time_total}s\n' -A "$ua" --max-time 40 "$URL" || echo "request failed"
+            echo '```'
+            echo "### robots.txt of $host (User-agent * and ClaudeBot sections)"
+            echo '```'
+            curl -sS -A "$ua" --max-time 20 "https://$host/robots.txt" | awk 'tolower($0) ~ /^user-agent:/ {on = (tolower($0) ~ /(\*|claudebot|anthropic)/)} on' | head -60 || echo "no robots.txt"
+            echo '```'
+            echo "### First 1500 bytes of the reply"
+            echo '```'
+            head -c 1500 /tmp/body 2>/dev/null | tr -cd '\11\12\15\40-\176' || true
+            echo
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"

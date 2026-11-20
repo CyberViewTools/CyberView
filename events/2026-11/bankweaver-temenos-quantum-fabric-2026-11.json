@@ -1,0 +1,32 @@
+{
+  "title": "BankWeaver: attackers gained admin access to a bank's Temenos Quantum Fabric without credentials",
+  "date": "2026-11-20",
+  "date_note": "Article published November 20; it says investigators uncovered the breach in early September and gives no date for the intrusion itself.",
+  "category": "incident",
+  "severity": 2,
+  "status": "developing",
+  "org": "Unnamed financial institution (Temenos Quantum Fabric customer)",
+  "sector": "Finance",
+  "country": "Unknown",
+  "place": "Victim location not stated",
+  "lat": 0,
+  "lng": 0,
+  "geo_basis": "not stated in source",
+  "pin_type": "unknown",
+  "summary": "CyberPress reports a campaign it calls BankWeaver in which attackers got administrative access to a financial institution's Temenos Quantum Fabric deployment without valid credentials, because an internet-facing authentication service was configured for anonymous rather than private access. Two malicious Java components, FabricShell and FabricShadow, were used. Temenos released configuration updates and guidance; six other banks appeared to have the same configuration, with no breaches confirmed there.",
+  "plain": "A report says attackers got into a bank's digital banking back end without a password because a login service was left open to anonymous access. The vendor has issued configuration guidance.",
+  "exec": "A misconfigured, internet-exposed banking platform service reportedly gave attackers admin access; other banks may share the same setup.",
+  "action": "Apply Temenos's configuration updates and guidance, set privileged authentication services to private, and remove direct internet access to Fabric and Spotlight administration services.",
+  "impact": "Six other banks appeared to have the same configuration and internet exposure; no breaches were confirmed at them.",
+  "tags": ["misconfiguration", "banking"],
+  "cves": [],
+  "products": ["Temenos Quantum Fabric", "Temenos Infinity Spotlight"],
+  "attack": ["web shell"],
+  "sources": [
+    {"name": "CyberPress: BankWeaver hijacks banking servers", "url": "https://cyberpress.org/bankweaver-hijacks-banking-servers/"}
+  ],
+  "source_tier": "established",
+  "validation": {"state": "single_source", "checked_at": "2026-11-20T14:04:40Z", "note": "Only CyberPress read; it credits Forescout but the Forescout and Temenos originals were not found in this run."},
+  "first_seen": "2026-11-20T14:04:40Z",
+  "updated_at": "2026-11-20T14:04:40Z"
+}

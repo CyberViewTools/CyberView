@@ -2,11 +2,9 @@
 // (behind a proxy: NODE_USE_ENV_PROXY=1)
 // Why (owner, 2026-11-20): many utilities' own outage feeds cannot be used (their terms forbid it, or they need keys), so
 // CyberView also tracks power outages from what news publishers report, cited to the publisher.
-//   1. standing searches in config/grid-news.json (many languages, countries and utilities) against Google News, Bing
-//      News and GDELT, with the same polite pacing and back-off as scripts/osint.mjs (a refusal stops that index for the run)
-//   2. only the publisher's own https page is kept. Bing and GDELT give it directly; a Google News result only names the
-//      publisher behind a news.google.com redirect, so it is looked up once on Bing by its exact headline and kept only
-//      when Bing returns that headline on that publisher's own host (never a redirect, never a front page)
+//   1. standing searches in config/grid-news.json (many languages, countries and utilities) against Bing News and GDELT
+//      (not Google News: its robots.txt disallows /rss/), with the same polite pacing and back-off as scripts/osint.mjs (a refusal stops that index for the run)
+//   2. only the publisher's own https page is kept (Bing and GDELT give it directly; never a redirect, never a front page)
 //   3. pure, unit-tested extraction: is it a current power outage (not a sale, a stock story, a planned or future outage,
 //      a game, an explainer, an anniversary, or an internet, cloud or phone "outage")? The place (gazetteer and the
 //      utility's service area), the figure as reported with its unit (customers, homes or people; never converted; a
@@ -621,13 +619,9 @@ async function run(force) {
   const Q = (cfg.queries || []).filter((q) => q && typeof q.q === "string" && q.q.length <= 120), per = Math.max(1, Math.min(Q.length, Number(cfg.per_run) || 48));
   const cursor = Number.isInteger(prev.cursor) && prev.cursor >= 0 ? prev.cursor % Math.max(1, Q.length) : 0;
   const todo = Array.from({ length: per }, (_, i) => Q[(cursor + i) % Q.length]);
-  const health = {}, google = [], bing = [], gdelt = [];
+  const health = {}, bing = [], gdelt = [];
   const hl = (q) => (/^[\w-]{2,8}$/.test(q.hl || "") ? q.hl : "en"), gl = (q) => (/^[A-Z]{2}$/.test(q.gl || "") ? q.gl : "US");
   await Promise.all([
-    index("google-news", todo, 1500, async (q) => {
-      const items = parseGoogleNews(await fetchText(`https://news.google.com/rss/search?q=${encodeURIComponent(q.q + " when:1d")}&hl=${hl(q)}&gl=${gl(q)}&ceid=${gl(q)}:${hl(q).split("-")[0]}`));
-      items.slice(0, 20).forEach((i) => google.push({ ...i, lang: hl(q), gl: gl(q) })); return items.length;
-    }, health),
     index("bing-news", todo, 900, async (q) => {
       const items = parseBing(await fetchText(`https://www.bing.com/news/search?q=${encodeURIComponent(q.q)}&format=rss&qft=${encodeURIComponent('interval="7"')}&cc=${gl(q)}&setlang=${hl(q).split("-")[0]}`));
       items.slice(0, 20).forEach((i) => bing.push({ ...i, lang: hl(q) })); return items.length;
@@ -637,25 +631,10 @@ async function run(force) {
       items.forEach((i) => gdelt.push({ ...i, name: i.source })); return items.length;
     }, health),
   ]);
-  // Google News only names the publisher: look its headline up once on Bing and keep it only on the publisher's own host
+  // Google News is not read: news.google.com/robots.txt disallows /rss/ (CyberView skips what robots.txt disallows)
   const raws = [...bing.map((b) => ({ ...b, via: "bing-news" })), ...gdelt.map((g) => ({ ...g, via: "gdelt" }))];
   const seen = new Set(raws.map((r) => publisherUrl(r.url)).filter(Boolean)), knownTitles = new Set(raws.map((r) => normTitle(r.title)));
   for (const it of prev.items || []) for (const p of it.publishers || []) { seen.add(p.url); knownTitles.add(normTitle(p.title)); }
-  const cands = [], gStat = { candidates: 0, resolved: 0, unresolved: 0, already: 0 };
-  for (const g of google) {
-    const k = normTitle(g.title);
-    if (knownTitles.has(k)) { gStat.already++; continue; }
-    const r = assess({ title: g.title, summary: "", name: g.source, published: g.published, lang: g.lang }, ents, now, cfg.window_hours || 72);
-    if (r.ok && g.publisher_url && !cands.some((c) => normTitle(c.title) === k)) cands.push(g);
-  }
-  gStat.candidates = cands.length;
-  const LOOKUPS = Math.max(0, Math.min(40, Number(cfg.google_lookups) || 24));
-  await index("google-lookup", cands.slice(0, LOOKUPS), 900, async (g) => {
-    const res = resolveGoogle(g, parseBing(await fetchText(`https://www.bing.com/news/search?q=${encodeURIComponent(g.title)}&format=rss&cc=${g.gl || "US"}&setlang=${String(g.lang || "en").split("-")[0]}`)));
-    if (res && !seen.has(res.url)) { raws.push({ ...res, title: g.title, name: g.source, published: g.published || res.published, lang: g.lang, via: "google-news" }); seen.add(res.url); gStat.resolved++; return 1; }
-    gStat.unresolved++; return 0;
-  }, health);
-  gStat.unresolved += Math.max(0, cands.length - LOOKUPS);
   const reasons = {}, reports = [], noPlace = [];
   for (const r of raws) {
     const x = toReport({ title: r.title, summary: r.summary, url: r.url, name: r.name || r.source, published: r.published, lang: r.lang }, ents, now, cfg.window_hours || 72);
@@ -666,14 +645,13 @@ async function run(force) {
   const noPlaceSample = [...noPlace, ...(((prev.stats || {}).no_place_sample) || [])].filter((x, i, a) => x && x.title && a.findIndex((y) => y.title === x.title) === i).slice(0, 30);
   const items = group(recheck(prev.items || []), reports, now, cfg);
   const out = { updated_at: iso(now), cursor: (cursor + per) % Math.max(1, Q.length), queries: Q.length, sources: health,
-    stats: { results: raws.length, reports: reports.length, rejected: reasons, google: gStat, no_place_sample: noPlaceSample }, items };
+    stats: { results: raws.length, reports: reports.length, rejected: reasons, no_place_sample: noPlaceSample }, items };
   const errs = checkNews(out);
   if (errs.length) { console.error(`grid-news: refusing to write a bad file: ${errs.slice(0, 5).join("; ")}`); return 1; }
   writeJson(OUT_PATH, out);
   const s2 = readStatus(); s2.last_grid_news_at = iso(now); writeJson(join(DATA, "status.json"), s2);
   console.log(`grid-news: ${items.length} reported outage(s) from ${reports.length} report(s) of ${raws.length} result(s); queries ${cursor}-${(cursor + per - 1) % Q.length} of ${Q.length}; `
-    + Object.entries(health).map(([k, v]) => `${k} ${v.ok ? v.items + "/" + v.requests : "FAILED (" + v.error + ")"}`).join("; ")
-    + `; google headlines resolved ${gStat.resolved}, unresolved ${gStat.unresolved}`);
+    + Object.entries(health).map(([k, v]) => `${k} ${v.ok ? v.items + "/" + v.requests : "FAILED (" + v.error + ")"}`).join("; "));
   return 0;
 }
 function show() {
@@ -684,7 +662,7 @@ function show() {
     const f = it.figure ? ` · ${it.figure.n.toLocaleString("en-US")} ${it.figure.unit === "unstated" ? "(unit not stated)" : it.figure.unit}` : "";
     console.log(`[${it.count}] ${it.place}, ${it.country}${f}${it.cause_words.length ? " · " + it.cause_words.join(", ") : ""} · first ${it.first_seen}\n     ${it.publishers.slice(0, 4).map((p) => `${p.name}: ${p.title.slice(0, 90)}`).join("\n     ")}`);
   }
-  if (d.stats) console.log(`Rejected: ${JSON.stringify(d.stats.rejected)}; Google: ${JSON.stringify(d.stats.google)}`);
+  if (d.stats) console.log(`Rejected: ${JSON.stringify(d.stats.rejected)}`);
   return 0;
 }
 

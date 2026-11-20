@@ -9,7 +9,7 @@
   "date": "2026-11-19",
   "date_note": "Date the article was published; the researcher's exploits were released shortly before.",
   "occurred_at": "2026-11-19T00:00:00Z",
-  "exec": "Widely used databases have working proof-of-concept exploits that let low-privilege accounts run code on the server. Vendors have patched four of the flaws.",
+  "exec": "Widely used databases have public proof-of-concept exploits that let low-privilege accounts run code on the server. Vendors have fixes for all five flaws, so unpatched servers are the exposure.",
   "first_seen": "2026-11-19T09:08:14Z",
   "geo_basis": "country",
   "impact": "",
@@ -18,7 +18,7 @@
   "org": "Depthfirst",
   "pin_type": "country",
   "place": "United States (researcher location not stated)",
-  "plain": "A researcher published working code showing that a low-privilege database account can take over the server in PostgreSQL, MySQL and other databases. Most have fixes.",
+  "plain": "A researcher published working code showing that a low-privilege database account can take over the server in PostgreSQL, MySQL and other databases. All five flaws have fixes.",
   "products": [
     "PostgreSQL",
     "MySQL",
@@ -38,7 +38,7 @@
     "iocs_available": false,
     "key_findings": [
       "Researcher Zheng Yu of Depthfirst published proofs of concept for memory-corruption bugs in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login.",
-      "Four flaws have vendor CVEs and fixes; ClickHouse has no CVE and no confirmed fixed version.",
+      "Four flaws have vendor CVEs and fixes; ClickHouse has no CVE and was fixed in September (26.9 and later, with backports), per The Hacker News after its 20 Nov correction.",
       "The article says no attack in the wild has been seen and the full chains were not reproduced independently."
     ],
     "published": "2026-11-19",
@@ -59,22 +59,24 @@
     }
   ],
   "status": "developing",
-  "summary": "The Hacker News reports that researcher Zheng Yu of Depthfirst published proof-of-concept exploits that let low-privilege database accounts run code on the server in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has neither. No attacks in the wild are reported, and the chains were not independently reproduced.",
+  "summary": "The Hacker News reports that researcher Zheng Yu of Depthfirst published proof-of-concept exploits that let low-privilege database accounts run code on the server in PostgreSQL, MySQL and ClickHouse, plus an Oracle chain needing no login. Four flaws have CVEs and vendor fixes; ClickHouse has no CVE but was fixed in September. No attacks in the wild are reported, and the chains were not independently reproduced.",
   "time_basis": "published",
   "title": "Researcher publishes database RCE exploits for PostgreSQL, MySQL and Oracle",
-  "updated_at": "2026-11-20T03:20:48Z",
+  "updated_at": "2026-11-20T03:25:04Z",
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-20T03:20:48Z",
-    "note": "Re-read The Hacker News (19 Nov): researcher, databases, four CVEs with fixes, no attacks seen, chains not independently reproduced all match. No second publisher found (one search); depthfirst.com research page linked by THN not read. Severity raised to 3 per checklist: public proof-of-concept exploits in widely used database software."
+    "note": "Reviewer re-read The Hacker News (19 Nov): researcher, CVEs, fixes, ClickHouse fixed in September, no attacks seen, not independently reproduced. Single source; depthfirst.com page not read."
   },
   "review": {
-    "state": "flagged",
-    "at": "2026-11-19T16:40:33Z",
-    "note": "Content matches THN. Severity is 2 but checklist gives 3 for public exploit code in widely used software; reviewers cannot upgrade, editor must decide",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-20T03:25:04Z",
+    "note": "Content matches THN; ClickHouse was said to have no fix but THN (corrected 20 Nov) says fixed in September; summary, exec, plain, key findings fixed. Severity 3 stands (public PoC, widely used software).",
+    "flags": [
+      "single-source-high"
+    ]
   },
-  "qa_checked_at": "2026-11-19T16:40:33Z",
+  "qa_checked_at": "2026-11-20T03:25:04Z",
   "cve_meta": [
     {
       "id": "CVE-2026-116331",

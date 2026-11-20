@@ -9,6 +9,14 @@ import { join } from "node:path";
 import { ROOT, DATA, readJson } from "./lib/store.mjs";
 
 const job = process.argv[2];
+// code and data on separate branches: switch this checkout to the new layout the first time a job runs after the data
+// branch exists (scripts/data-branch.mjs ensure: carries uncommitted data over, waits while a research loop runs here),
+// then bring the data branch up to date. Never stops the job: the old layout still works.
+{
+  const e = spawnSync("node", [join(ROOT, "scripts", "data-branch.mjs"), "ensure"], { cwd: ROOT, encoding: "utf8", timeout: 300000 });
+  if (/switched/.test(e.stdout || "")) console.error((e.stdout || "").trim());
+  const { pullAll } = await import("./lib/repo.mjs"); pullAll();
+}
 const reg = readJson(join(ROOT, "routines.json"), { routines: [] }), r = reg.routines.find((x) => x.key === job);
 if (!r || r.tier !== "ai") { console.error(`unknown AI job "${job}"`); process.exit(1); }
 const model = /opus/.test(r.model || "") ? "opus" : /haiku/.test(r.model || "") ? "haiku" : "sonnet";

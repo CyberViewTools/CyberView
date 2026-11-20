@@ -1,0 +1,136 @@
+name: Data forward
+
+# Code and data live on separate branches (scripts/lib/repo.mjs); the site is built from the data branch. During the
+# switch some writers still put data on main: a Claude checkout that has not switched yet (scripts/data-branch.mjs
+# ensure), or a workflow that commits to main itself (the "AI jobs" fallback). This moves every data/ change that
+# reaches main onto the data branch (scripts/data-branch.mjs forward: line files by union, JSON by key, never a
+# deletion) and starts the deploy at once, so that data is no slower to reach the site than before. No AI model.
+#   - push: a person's or a Claude session's push to main that touches data/ (pages.yml ignores those)
+#   - workflow_run: a workflow that may have pushed to main with the workflow token, which starts no push workflow
+#   - schedule: a backstop every 10 minutes for anything the other two missed
+# While no data branch exists (before `node scripts/data-branch.mjs create`), main's data/ IS what the site shows: then
+# this only starts the deploy for data that reached main without one (what pages.yml's old push and workflow_run
+# triggers did), and forwards nothing.
+on:
+  push:
+    branches: [main]
+    paths: ["data/**"]
+  workflow_run:
+    workflows: ["AI jobs", "Collect leads", "Link check", "Feeds (KEV, EPSS, NVD, context layers)", "CVE corpus (CVE List, EPSS)"]
+    types: [completed]
+  schedule:
+    - cron: "4,14,24,34,44,54 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write   # to start the deploy (pages.yml)
+  issues: write    # failure alert
+
+jobs:
+  # A few API calls, no checkout and no concurrency group: most runs end here, and they must never hold up (or, by
+  # queueing, cancel) a pending data writer in the data-writes group.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      forward: ${{ steps.c.outputs.forward }}
+    steps:
+      - id: c
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          head=$(gh api "repos/$R/commits/main" --jq .sha)
+          deploy() { gh workflow run pages.yml --repo "$R" --ref main && echo "deploy requested" || echo "::warning::could not request a deploy"; }
+          if ! gh api "repos/$R/branches/data" --silent 2>/dev/null; then
+            echo "forward=0" >> "$GITHUB_OUTPUT"
+            echo "No data branch yet: main's data/ is what the site shows."
+            case "$EVENT" in
+              push)
+                # a push that changed only data/ starts no pages.yml run (paths-ignore); one that changed code does
+                # (files outside data/, data files that need a deploy); when unsure (an API error, or a list truncated
+                # at 300 files) deploy anyway: a second deploy only restarts the first
+                counts=$(gh api "repos/$R/compare/$BEFORE...$AFTER" --jq '[.files[]?.filename] | if length >= 300 then "0 1" else "\(map(select(startswith("data/") | not)) | length) \(map(select(startswith("data/") and (test("^data/(leases\\.json|usage/)") | not))) | length)" end' 2>/dev/null || echo "0 1")
+                read -r other deployable <<< "$counts"
+                if [ "$other" = "0" ] && [ "$deployable" != "0" ]; then deploy; else echo "code changed too (pages.yml deploys it) or nothing needs a deploy"; fi ;;
+              workflow_run)
+                # the workflow pushed to main with the workflow token (main moved since it started): deploy that
+                if [ "$RUN_BRANCH" = "main" ] && [ -n "$RUN_SHA" ] && [ "$head" != "$RUN_SHA" ]; then deploy; else echo "main has not moved since that run started"; fi ;;
+              *) echo "nothing to do" ;;
+            esac
+            exit 0
+          fi
+          mark=$(gh api "repos/$R/contents/.forwarded?ref=data" --jq .content 2>/dev/null | base64 -d 2>/dev/null | tr -d '[:space:]' || true)
+          if [ -z "$mark" ]; then echo "forward=0" >> "$GITHUB_OUTPUT"; echo "The data branch has no .forwarded mark; nothing to forward."; exit 0; fi
+          if [ "$mark" = "$head" ]; then echo "forward=0" >> "$GITHUB_OUTPUT"; echo "Up to date with main ${head:0:7}."; exit 0; fi
+          # data/ files changed on main since the last forward (a code-only change needs no forward); when the comparison
+          # cannot be made or is truncated (300 files), forward anyway and let the script decide
+          n=$(gh api "repos/$R/compare/$mark...$head" --jq '[.files[]?.filename] | if length >= 300 then 1 else (map(select(startswith("data/"))) | length) end' 2>/dev/null || echo 1)
+          echo "$n data file(s) changed on main since ${mark:0:7}"
+          if [ "$n" != "0" ]; then echo "forward=1" >> "$GITHUB_OUTPUT"; else echo "forward=0" >> "$GITHUB_OUTPUT"; fi
+
+  forward:
+    needs: check
+    if: needs.check.outputs.forward == '1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # one writer to the data branch at a time, like the other data workflows (only runs that have something to forward
+    # join the group)
+    concurrency:
+      group: data-writes
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0          # forward diffs main from the last forwarded commit, so it needs main's history
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: .data-branch
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Forward main's data/ changes onto the data branch and push (retried on a race)
+        id: fwd
+        env:
+          D: .data-branch
+        run: |
+          git -C "$D" config user.name "cyberview-bot"; git -C "$D" config user.email "cyberview-bot@users.noreply.github.com"
+          head=$(git rev-parse HEAD); list="$RUNNER_TEMP/forwarded.txt"; : > "$list"
+          for i in 1 2 3 4; do
+            node scripts/data-branch.mjs forward --main . --data "$D"
+            git -C "$D" add -A
+            if git -C "$D" diff --cached --quiet; then echo "Nothing to forward."; break; fi
+            git -C "$D" diff --cached --name-only > "$list"
+            git -C "$D" commit -q -m "data: forward from main ${head:0:7}"
+            if git -C "$D" push -q origin HEAD:data; then echo "pushed=1" >> "$GITHUB_OUTPUT"; echo "Forwarded and pushed (attempt $i)."; break; fi
+            # another writer pushed first: start again from the newest data branch (forward is idempotent and merges
+            # onto whatever is there; the mark it reads tells it what is left)
+            echo "Push attempt $i lost a race; retrying on the newest data branch."
+            : > "$list"
+            [ "$i" = 4 ] && { echo "::error::could not push the data branch after 4 attempts"; exit 1; }
+            sleep $((i * 5))
+            git -C "$D" fetch -q --depth=1 origin data && git -C "$D" reset -q --hard FETCH_HEAD
+          done
+          # a deploy is needed unless only the mark and files that never need one (leases, usage) changed
+          if grep -vqE '^(\.forwarded|leases\.json|usage/)' "$list"; then echo "deploy=1" >> "$GITHUB_OUTPUT"; fi
+      - name: Start the deploy
+        if: steps.fwd.outputs.pushed == '1' && steps.fwd.outputs.deploy == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main || echo "::warning::could not request a deploy; the next data commit deploys"
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**Data forwarding failed.** Data that reached main is not being moved to the data branch, so it is not on the site." > report.md
+          bash .github/scripts/alert.sh job-failure "Data forwarding is failing" report.md failing

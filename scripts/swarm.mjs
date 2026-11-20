@@ -124,8 +124,7 @@ async function runSwarm(id) {
   const { pool } = await import("./run-job.mjs");
   const all = plan.batches.flatMap((b) => b.ids);
   claim(K.lease, all, id, 240);
-  spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }); spawnSync("git", ["commit", "-q", "-m", `data: leases for swarm ${id}`], { cwd: ROOT });
-  spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
+  (await import("./lib/repo.mjs")).commitData(`data: leases for swarm ${id}`, ["data/leases.json"]);
   const cp = (phase, extra = {}) => writeJson(join(dir, "checkpoint.json"), { phase, at: nowIso(), plan_id: plan.plan_id, ...extra });
   let spent = 0;
   for (let attempt = 0; attempt < 2; attempt++) {

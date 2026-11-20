@@ -6,16 +6,19 @@ name: Deploy to GitHub Pages
 #      and it has not lost a large share of what is live); if that fails, the previous deployment stays live;
 #   3. after publishing, the live site is fetched and compared byte for byte with the build;
 #   4. any of these opens (or updates) one GitHub issue labelled job-failure, and closes it again on recovery.
-# Runs on every push to main, when the feeds and CVE workflows ask for it after committing (workflow_dispatch; they are
-# themselves started by finished deploys, so they must not start this one by finishing), and after the other data workflows finish: their commits are pushed with the
-# workflow token, which by design does not start other "push" workflows.
+# Code and data live on separate branches (scripts/lib/repo.mjs): this builds main's code with the data branch mounted at
+# ./data (.github/actions/data; main's own data/ while no data branch exists). It runs:
+#   - on every push to main that changes code (data/** is ignored: data on main is not what the site shows once the
+#     data branch exists; .github/workflows/data-forward.yml moves it there and starts this workflow);
+#   - on workflow_dispatch, which is how every data commit asks for a deploy: scripts/data-commit.mjs, git-sync and
+#     scripts/finish.mjs request it the moment their push lands (pushes made with the workflow token start nothing by
+#     design), and data-forward.yml does for data still pushed to main by an old checkout or a workflow.
+# Nothing else starts it, so one data commit means one deploy. A newer request cancels a deploy in progress (it would
+# publish older data anyway).
 on:
   push:
     branches: [main]
-    paths-ignore: ["data/leases.json", "data/usage/**"]
-  workflow_run:
-    workflows: ["AI jobs", "Collect leads", "Link check"]
-    types: [completed]
+    paths-ignore: ["data/**"]
   workflow_dispatch:
 
 permissions:
@@ -38,9 +41,16 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy1.outputs.page_url || steps.deploy2.outputs.page_url || steps.deployment.outputs.page_url }}
     steps:
+      # main without data/, then the data branch at ./data (one commit each: the build reads files, never history)
       - uses: actions/checkout@v4
         with:
           ref: main
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

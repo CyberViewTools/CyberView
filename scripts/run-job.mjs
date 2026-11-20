@@ -8,6 +8,7 @@
 // tokens, cost and outcome go to data/usage/<YYYY-MM>.jsonl, which scripts/improve.mjs reads for continuous improvement.
 // If `claude` cannot start a worker at all, it prints HEADLESS UNAVAILABLE and exits 3 so the dispatcher can fall back.
 import { heal } from "./lib/conflicts.mjs";
+import { commitData, pullAll, dataGitDir } from "./lib/repo.mjs";
 import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -108,9 +109,8 @@ function claimPlanned(job, since) {
 /** Lease ids to this run and push the lease file at once, so runs in other containers skip them. */
 function publishClaim(kind, ids) {
   claim(kind, ids, process.env.CYBERVIEW_RUN || RUN, 45);
-  const a = spawnSync("git", ["add", "data/leases.json"], { cwd: ROOT }), c = spawnSync("git", ["commit", "-q", "-m", "data: leases"], { cwd: ROOT });
-  const g = spawnSync("node", ["scripts/git-sync.mjs"], { cwd: ROOT, encoding: "utf8", timeout: 180000 });
-  return a.status === 0 && c.status === 0 && g.status === 0 ? ids.length : -ids.length;
+  const r = commitData("data: leases", ["data/leases.json"]);       // the data branch (or main in the old layout)
+  return r.committed && r.pushed ? ids.length : -ids.length;
 }
 
 // ---------- continuous flow: one long-running loop instead of separate 15-minute runs ----------
@@ -131,13 +131,13 @@ async function flow() {
   if (!webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
   // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
   const host = (process.env.CLAUDE_CODE_REMOTE_SESSION_ID || process.env.HOSTNAME || "local").slice(-40);
-  const publishLeader = (msg) => { sh("git", ["add", "data/leases.json"]); sh("git", ["commit", "-q", "-m", msg]); return sh("node", ["scripts/git-sync.mjs"], 180000).ok; };
-  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]); heal(ROOT);
+  const publishLeader = (msg) => commitData(msg, ["data/leases.json"]).pushed;
+  pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
   if (other && other.run !== RUN) { log(`CyberView sweep: standby, the research loop is running elsewhere (${other.run} on ${other.host || "?"}, lease until ${other.until})`); return; }
   claim("flow", ["leader"], RUN, LEADER_MIN); { const l = readLeases(); l["flow:leader"].host = host; writeJson(join(DATA, "leases.json"), l); }
   publishLeader("data: research loop leader " + RUN);
-  sh("git", ["pull", "-q", "--rebase", "--autostash", "origin", "main"]); heal(ROOT);
+  pullAll(); heal(dataGitDir());
   { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
   let lastPublish = Date.now();
   const renew = () => { claim("flow", ["leader"], RUN, LEADER_MIN); const l = readLeases(); if (l["flow:leader"]) { l["flow:leader"].host = host; l["flow:leader"].cycle = cycle; writeJson(join(DATA, "leases.json"), l); }

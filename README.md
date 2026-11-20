@@ -24,7 +24,7 @@ CyberView is always growing; its full, current description is generated from [`c
 
 ## How it stays current
 
-Scheduled Claude jobs research new events and commit JSON files under `data/`. Each push runs `scripts/build.mjs`, which validates every record and rebuilds the bundle and archive; GitHub Pages then publishes `site/` (`.github/workflows/pages.yml`). Jobs and their prompts: `docs/jobs.md`.
+Scheduled Claude jobs and GitHub workflows research new events and commit JSON files to the `data` branch, which every checkout mounts at `./data`. Each data push starts the deploy (`.github/workflows/pages.yml`): `scripts/build.mjs` validates every record and rebuilds the bundle and archive, and GitHub Pages publishes `site/`. The code is on `main` and changes only through pull requests that pass CI. How the two branches work: `docs/branches.md`. Jobs and their prompts: `docs/jobs.md`.
 
 ## Run it on your own computer (for developers)
 
@@ -36,7 +36,7 @@ npm run preview    # build, then serve the site on your machine, port 8000
 npm run ci         # build, security check, unit tests, browser regression suite
 ```
 
-No packages to install: the scripts use only Node 22's standard library. The browser suite needs `pip install playwright`.
+After cloning, run `node scripts/data-branch.mjs ensure` once: it mounts the data branch at `./data`. No packages to install: the scripts use only Node 22's standard library. The browser suite needs `pip install playwright`.
 
 Rules for the page and the data: `CLAUDE.md`. Field reference: `docs/schema.md`.
 

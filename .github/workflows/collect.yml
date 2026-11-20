@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write   # to start the deploy after committing data (scripts/lib/repo.mjs dispatchDeploy)
 
 concurrency:
   group: data-writes
@@ -22,6 +23,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -53,16 +61,12 @@ jobs:
           if node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),a=(Date.now()-Date.parse(s.last_grid_at||0))/6e4;process.exit(a<20?0:1)'; then echo "grid: the research loop collected under 20 minutes ago; skipping"; else node scripts/grid.mjs collect; node scripts/grid-analysis.mjs || echo "grid-analysis failed (optional)"; fi
       - name: Validate
         run: node scripts/build.mjs --quarantine > /dev/null
-      - name: Commit and push
+      - name: Commit and push (the data branch; starts the deploy)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "cyberview-collect"
-          git config user.email "cyberview-collect@users.noreply.github.com"
-          git add data/leads data/status.json data/osint.json data/runs
-          git add data/grid data/grid/news.json data/context/grid.json 2>/dev/null || true
-          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
-          git commit -q -m "data: collect, $n new lead(s)"
-          node scripts/git-sync.mjs
+          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json data/runs data/grid data/context/grid.json
       - name: Alert on failure
         if: failure()
         env:

@@ -1,0 +1,39 @@
+name: Mount the data branch at ./data
+description: >
+  Code and data live on separate branches (scripts/lib/repo.mjs). Run this right after an actions/checkout of main that
+  leaves data/ out (sparse checkout, see below). It checks out the data branch at ./data, so every script reads and writes
+  data/... as before and scripts/data-commit.mjs commits there. Until the data branch exists it puts main's own data/
+  back instead, so workflows keep working before and during the switch.
+  The checkout of main to pair with it:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          /*
+          !/data/
+        sparse-checkout-cone-mode: false
+inputs:
+  depth:
+    description: History depth of the data checkout (1 is enough to read and commit; git-sync fetches what it needs)
+    default: "1"
+runs:
+  using: composite
+  steps:
+    - id: has
+      shell: bash
+      run: |
+        if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then echo "data=1" >> "$GITHUB_OUTPUT"; else echo "data=0" >> "$GITHUB_OUTPUT"; fi
+    - if: steps.has.outputs.data == '1'
+      uses: actions/checkout@v4
+      with:
+        ref: data
+        path: data
+        fetch-depth: ${{ inputs.depth }}
+    - if: steps.has.outputs.data != '1'
+      shell: bash
+      run: |
+        git sparse-checkout disable
+        echo "No data branch yet, so main's own data/ is used."
+    - shell: bash
+      run: |
+        for d in . data; do [ -d "$d/.git" ] || [ -f "$d/.git" ] || continue
+          git -C "$d" config user.name "cyberview-bot"; git -C "$d" config user.email "cyberview-bot@users.noreply.github.com"; done

@@ -333,6 +333,20 @@
    "reviewed": "2026-11-20"
   },
   {
+   "key": "claims",
+   "name": "Claims desk",
+   "tier": "ai",
+   "workflow": "flow",
+   "active_since": "2026-11-21T12:00:00Z",
+   "cron": null,
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_claims_at",
+   "max_age_hours": 6,
+   "active": true,
+   "does": "Runs inside the research loop every cycle (config/pipeline.json flow.claims_workers), also when usage is tight: claims checkers take ransomware and extortion leak-site claims nobody had checked, most notable victim first (critical sector, government, health, large companies, other reports naming the victim, the group's track record), and look for the organisation's own statement, a regulator filing or a government notice, then credible reporting (scripts/claims-desk.mjs). Confirmed by the victim becomes a confirmed event, reported by two publishers a claimed event (severity 1, hidden by default), both with a second review; denied, unconfirmed (checked again later) and not found are recorded. Leak sites are never cited or linked and stolen data is never described.",
+   "reviewed": "2026-11-21"
+  },
+  {
    "key": "steward",
    "name": "Data steward",
    "tier": "ai",

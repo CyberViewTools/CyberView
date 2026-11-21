@@ -232,25 +232,35 @@ async def main():
                            ["new-1", day(0), "incident", 2, "confirmed", "Brand new event", "Org B", "US", [], [], "", iso(1)],
                            ["late-claim", day(6), "incident", 1, "claimed", "Late claim", "Org C", "US", [], [], "", iso(3)],
                            ["old-1", day(20), "vuln", 2, "official", "Filed long ago", "Org D", "US", [], [], "", iso(24 * 19)]]}
-            ctx2 = await browser.new_context(); pg2 = await ctx2.new_page()
+            ctx2 = await browser.new_context(service_workers="block"); pg2 = await ctx2.new_page()
             await pg2.route("**/data/archive/search.json", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(fx)))
+            # v1.63: the claims desk's check in the archive (a leak-site link dropped, markup stays text)
+            mfx = {"month": day(5)[:7], "events": [{"id": "late-1", "date": day(5), "title": "Late filed", "summary": "Org A confirmed a breach.", "sources": [],
+                   "claim_check": {"decision": "confirmed_by_victim", "summary": "Org A confirmed it.", "group": "Play<b id=pwnc2>", "claimed_at": day(6), "confirmed_by": "Org A", "url": "https://orga.example/notice/incident", "at": iso(1)}}]}
+            await pg2.route(f"**/data/archive/{day(5)[:7]}.json", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(mfx)))
             await pg2.goto(url.replace("index.html", "archive.html")); await pg2.wait_for_timeout(900)
             rec = await pg2.locator("#recentList .row").all_text_contents()
             ok("archive: Recently filed lists only late-filed events, not new ones, claims or old filings", len(rec) == 1 and "Late filed" in rec[0] and "Filed 2 h ago" in rec[0], rec)
             ok("archive: Recently filed titles stay text", await pg2.locator("#pwnf").count() == 0)
             ok("archive: Recently filed shows no Show-all button for one item", await pg2.locator("#recentAll").is_hidden())
+            await pg2.locator("#recentList .row button").first.click(); await pg2.wait_for_timeout(600)
+            atx = await pg2.inner_text("#recentList .more-info")
+            ok("claims desk: the archive shows the check on the event it names", "Checked by CyberView AI (a Claude model): confirmed by Org A \u2014 Play<b id=pwnc2>\u2019s leak-site claim" in atx and await pg2.locator("#pwnc2").count() == 0
+               and await pg2.eval_on_selector_all("#recentList .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://orga.example/notice/incident"], atx)
             await ctx2.close()
 
         await serve(make_site(bundle), archive)
 
         # v1.5 features: permalinks, feeds, exposure report
-        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2)
+        # both inside the seven days the map shows, whatever the data holds today (an older event in the bundle is hidden by default)
+        shown_day = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 5 * 86400))
+        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2 and e.get("date", "") >= shown_day)
 
         async def features(url):
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e.get("date", "") >= shown_day)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -619,7 +629,9 @@ async def main():
                    # v1.54: the later grid stages and the audit (ops-6)
                    "grid_analysis_at": iso(0.2), "last_grid_news_at": iso(3), "grid_waiting": {"count": 2, "oldest_min": 185}, "grid_audit_flags": ["news_late", "<b id=pwn4>"],
                    # v1.61: the outage desk's queue
-                   "last_outage_at": iso(0.2), "outage_queue": {"waiting": 3, "checked_24h": 5, "confirmed_24h": 2, "cyber_leads_24h": 1, "oldest_min": 95, "by_kind": {"power": 2, "internet": 1, "service": 0}}})
+                   "last_outage_at": iso(0.2), "outage_queue": {"waiting": 3, "checked_24h": 5, "confirmed_24h": 2, "cyber_leads_24h": 1, "oldest_min": 95, "by_kind": {"power": 2, "internet": 1, "service": 0}},
+                   # v1.63: the claims desk's queue
+                   "last_claims_at": iso(0.3), "claims_queue": {"waiting": 40, "checked_24h": 9, "confirmed_24h": 2, "reported_24h": 3, "denied_24h": 1, "unconfirmed_24h": 3, "not_found_24h": 0, "oldest_min": 3000}})
         # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
         hj["grid_sources"] = {
             "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12, "flags": ["customers_missing", "<img id=pwn5>"]},
@@ -854,6 +866,7 @@ async def main():
             ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 4, src)
             ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
             ok("outage desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Outage desk (CyberView AI (a Claude model)): 3 outage reports waiting for a check; 5 checked in 24 h (2 confirmed, 1 cyber lead passed to research)" in r and "last run" in r for r in rows), rows)
+            ok("claims desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Claims desk (CyberView AI (a Claude model)): 40 leak-site claims waiting for a check; 9 checked in 24 h (2 confirmed by the organisation, 3 reported, 1 denied)" in r and "last run" in r for r in rows), rows)
             ok("grid: status page without script errors", not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), wait=1000)
@@ -1219,6 +1232,13 @@ async def main():
         vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}
         vic["pin_type"] = "victim"; vic["geo_basis"] = "victim location"
         bad = geo[3]; bad["links"] = [{"to": geo[4]["id"], "rel": "x", "url": "javascript:alert(1)"}]
+        # v1.63: the claims desk's check on the event it names (scripts/claims-desk.mjs siteCheck, attached by the build)
+        cday = (datetime.datetime.utcnow() - datetime.timedelta(days=2)).strftime("%Y-%m-%d"), (datetime.datetime.utcnow() - datetime.timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        dst["claim_check"] = {"decision": "confirmed_by_victim", "summary": "The hospital said a ransomware attack disrupted its systems.", "group": "Akira<img src=x id=pwnc1>", "claimed_at": cday[0],
+                              "confirmed_by": "Riverside General Hospital", "url": "https://www.riversidegeneral.org/notice/cyber-incident", "at": cday[1], "by": "someone else"}
+        clv = geo[5]; clv["status"] = "claimed"; clv["severity"] = 1
+        clv["claim_check"] = {"decision": "reported", "summary": "Two outlets reported it; the organisation has not confirmed it.", "group": "Qilin", "claimed_at": cday[0], "url": "https://www.ransomware.live/id/abc", "at": cday[1]}
+        unk = geo[6]; unk["claim_check"] = {"decision": "hacked", "group": "Qilin", "summary": "stolen"}
         site16 = make_site(b16)
         tt = {"label": "exercise", "generated_at": "2026-11-20T15:40:00Z", "date": "2026-11-20", "title": "Exercise: a supplier breach reaches you",
               "based_on": [src["id"]], "real_story": "A supplier was breached.", "duration_min": 60, "roles": ["Incident lead", "Communications"],
@@ -1241,6 +1261,18 @@ async def main():
             ok("arcs: attributed origin drawn dashed", await pg.locator("#svg .arc.origin").count() >= 1)
             ok("card: attribution names who made it", await pg.locator("#dcard .todo.attr").count() == 1 and "Test Agency" in await pg.locator("#dcard .todo.attr").text_content())
             ok("arcs: an unsafe link url is dropped", await pg.evaluate(f"!document.body.textContent.includes('javascript:')"))
+            # v1.63: the claims desk's check, labelled as written by CyberView AI, text only, never a leak-site link
+            await pg.evaluate(f"location.hash='e={dst['id']}'"); await pg.wait_for_timeout(1200)
+            ct = await pg.inner_text("#dcard")
+            ok("claims desk: a confirmed claim says who confirmed it and whose claim it was, labelled as AI-written", "Checked by CyberView AI (a Claude model): confirmed by Riverside General Hospital" in ct
+               and "Akira<img src=x id=pwnc1>\u2019s leak-site claim of" in ct and "someone else" not in ct and "checked 2 h ago" in ct and await pg.locator("#pwnc1").count() == 0, ct[-700:])
+            ok("claims desk: the check links the confirming page", await pg.eval_on_selector_all("#dcard .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://www.riversidegeneral.org/notice/cyber-incident"])
+            await pg.evaluate(f"location.hash='e={clv['id']}'"); await pg.wait_for_timeout(1200)
+            ct2 = await pg.inner_text("#dcard")
+            ok("claims desk: a claimed event shows the check; a leak site or claim tracker is never linked", "Checked by CyberView AI (a Claude model): reported by publishers, not confirmed by the organisation" in ct2
+               and "Qilin\u2019s leak-site claim" in ct2 and await pg.locator("#dcard .ccheck a").count() == 0 and await pg.locator("#dcard a[href*='ransomware.live']").count() == 0, ct2[-700:])
+            await pg.evaluate(f"location.hash='e={unk['id']}'"); await pg.wait_for_timeout(1200)
+            ok("claims desk: an unknown decision shows no check", await pg.locator("#dcard .ccheck").count() == 0 and "stolen" not in await pg.inner_text("#dcard"))
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(200)
             await pg.click("#zlayers"); await pg.wait_for_timeout(150)
             ok("layers: arc toggles listed", await pg.locator("#layers [data-arc]").count() == 2)
@@ -1506,10 +1538,13 @@ async def main():
             await pg.touchscreen.tap(mk[0], mk[1]); await pg.wait_for_timeout(600)
             top = await pg.evaluate("Math.round(document.getElementById('dbar').getBoundingClientRect().top)")
             ok("phone: a tap on a marker opens it even while the globe spins, with the details in view", await pg.locator("#dcard").count() == 1 and 0 <= top < 200, top)
+            tapped = await pg.inner_text("#dcard .ttl") if await pg.locator("#dcard").count() else ""
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            # 30 cards, unless the tapped event sits further down: then the list keeps the reader's place and runs 10 past it
+            ttl = await pg.locator("#feed .card .ttl").all_text_contents()
+            ok("phone: the list starts with 30 events and offers more", (n == 30 or (n > 30 and len(ttl) == n and ttl[n - 10] == tapped)) and await pg.locator("#feedMore").count() == 1, (n, tapped))
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())

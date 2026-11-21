@@ -16,7 +16,7 @@ const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "improver": "Improver", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "outage": "Outage checker", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "outage": "Outage checker", "claims": "Claims checker", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -97,6 +97,16 @@ if (job === "researcher") {
       + (i.kind === "service" ? `\n      provider: ${i.provider}; status page: ${i.url}${i.summary ? "\n      status page says: " + i.summary : ""}` : "")
       + (i.earlier ? `\n      earlier try ${i.earlier.tries}: ${i.earlier.decision}: ${i.earlier.summary}${(i.earlier.sources || []).length ? " [" + i.earlier.sources.join(" ") + "]" : ""}` : "")).join("\n")
     + (mine.length ? "" : "\n  (none: end with \"outage checker " + batch + ": nothing assigned\")");
+} else if (job === "claims") {
+  // leak-site claims (scripts/claims-desk.mjs): the group, the victim as listed, the claim's date and other reports that name
+  // the victim; never the leak site's or a claim tracker's link
+  const pf = /^claims-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_CLAIMS_PLAN || "") ? process.env.CYBERVIEW_CLAIMS_PLAN : "claims-plan.json";
+  const plan = readJson(join(DATA, pf), { batches: [] }), b = (plan.batches || [])[Number(batch) - 1] || { items: [] }, mine = b.items || [];
+  assignment = `YOUR ASSIGNMENT (claims checker ${batch}): plan_id ${plan.plan_id || "?"}, batch ${b.batch ?? batch}. Out file: data/${b.out || "claims-out-" + batch + ".json"}\n${mine.length} leak-site claim(s), most notable first:\n`
+    + mine.map((i) => `  ${i.id}  ${i.group} lists "${i.victim}" on its leak site, ${String(i.claimed_at || "?").slice(0, 16).replace("T", " ")} UTC\n      country ${i.country || "not given"}; sector ${i.sector || "not given"}${(i.why || []).length ? "; queued because: " + i.why.join("; ") : ""}`
+      + ((i.reports || []).length ? "\n      other reports that name the victim (open them, cite only the publisher's own page):\n" + i.reports.map((r) => `        - ${r.source}: ${r.title}\n          ${r.url}`).join("\n") : "\n      no other report names the victim yet")
+      + (i.earlier ? `\n      earlier try ${i.earlier.tries}: ${i.earlier.decision}: ${i.earlier.summary}${(i.earlier.sources || []).length ? " [" + i.earlier.sources.join(" ") + "]" : ""}` : "")).join("\n")
+    + (mine.length ? "" : "\n  (none: end with \"claims checker " + batch + ": nothing assigned\")");
 } else if (job === "reviewer") {
   const pf = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_REVIEW_PLAN || "") ? process.env.CYBERVIEW_REVIEW_PLAN : "review-plan.json";
   const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];
@@ -164,7 +174,7 @@ if (job === "researcher") {
 const worker = process.argv.includes("--worker") || !!batch || process.env.CYBERVIEW_WORKER === "1";
 const PROFILE = {
   "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
-  "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "grid": ["core", "web", "log"], "outage": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
+  "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "grid": ["core", "web", "log"], "outage": ["core", "events", "web", "log"], "claims": ["core", "search", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
   "regional-researcher": ["core", "search", "events", "web", "log"],
   "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"], "improver": ["core", "log"],
   "watchdog": ["core", "web", "log"], "advisory": ["core", "web", "log"], "scout": ["core", "search", "web", "log"], "triage": ["core", "log"],

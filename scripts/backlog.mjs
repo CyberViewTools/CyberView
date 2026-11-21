@@ -63,7 +63,7 @@ function main() {
   if (cmd === "status") {
     const s = summary(d.stories);
     if (process.argv.includes("--json")) { console.log(JSON.stringify(s)); return; }
-    console.log(`BACKLOG: ${s.waiting} stories need a decision (${s.incidents} read like incidents, ${s.strong} strong); oldest ${s.oldest_hours} h. ${s.closable_by_rule} more can be closed by rule (run: backlog.mjs auto). ${s.claims} leak-site claims are tracked separately.`);
+    console.log(`BACKLOG: ${s.waiting} stories need a decision (${s.incidents} read like incidents, ${s.strong} strong); oldest ${s.oldest_hours} h. ${s.closable_by_rule} more can be closed by rule (run: backlog.mjs auto). ${s.claims} leak-site claims go to the claims desk (claims-desk.mjs).`);
     return;
   }
   if (cmd === "auto") {

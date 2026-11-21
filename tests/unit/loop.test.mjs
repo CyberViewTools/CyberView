@@ -17,6 +17,7 @@ test("ok starts everything; tight only urgent research and overdue review; stop 
   assert.equal(ok.urgent_only, false); assert.equal(ok.overdue_only, false);
   assert.deepEqual([tight.researchers, tight.urgent_only, tight.reviewers, tight.overdue_only], [true, true, true, true]);
   assert.deepEqual([tight.updaters, tight.grid, tight.outage, tight.followup, tight.gap, tight.moderator], [false, false, false, false, false, false]);
+  assert.equal(tight.claims, true, "claims checkers run while usage is tight; only stop holds them");
   assert.ok(Object.entries(stop).filter(([k]) => !/_only$/.test(k)).every(([, v]) => v === false));
   assert.deepEqual(workAt("anything else"), ok);
 });

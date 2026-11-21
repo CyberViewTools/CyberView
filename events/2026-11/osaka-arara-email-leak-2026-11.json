@@ -1,44 +1,79 @@
 {
-  "action": "Organisations that use Arara for mass mailing: check Arara's news page for notices, review which lists were exposed and warn recipients about fraudulent messages.",
+  "action": "As Nishinomiya City's notice urges, do not open links or attachments in unexpected emails or SMS, do not enter IDs, passwords or card details, and do not pay money such messages demand.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "Japan",
   "cves": [],
   "date": "2026-11-18",
-  "date_note": "ZATAZ page shows last update 18 November 2026; the Osaka report date is not stated, so the publication day is used.",
-  "exec": "A supplier compromise at an email-sending provider is reported to reach a large city government and other Japanese organisations.",
+  "date_note": "Kept from the first version: ZATAZ's Osaka article was last updated 18 November 2026 and gives no earlier day for Osaka's report. Arara's notice is dated 6 November, Amagasaki's notice 13 November and Nishinomiya's final report 16 November.",
+  "exec": "A breach at an email-sending provider used by a municipal contractor exposed residents' addresses in several Japanese cities, raising the risk of convincing phishing.",
   "first_seen": "2026-11-20T08:31:00Z",
-  "geo_basis": "city named in the source",
-  "lat": 34.69,
-  "lng": 135.5,
-  "org": "City of Osaka",
+  "geo_basis": "city named in the source (Nishinomiya, the city with the largest confirmed count)",
+  "lat": 34.7376,
+  "lng": 135.3416,
+  "org": "Arara (Nishinomiya City, Amagasaki City, City of Osaka)",
   "pin_type": "victim",
-  "place": "Osaka",
-  "plain": "ZATAZ reports that Osaka's city government disclosed an incident that may concern about one million people, tied to a bulk-email provider named Arara.",
+  "place": "Nishinomiya, Hyogo",
+  "plain": "Hackers got into Arara, a Japanese bulk-email service. Nishinomiya says 25,115 residents' email addresses leaked and Amagasaki says 17,064; names and addresses were not included. Expect fake emails.",
   "products": [],
   "sector": "Government",
   "severity": 2,
-  "source_tier": "established",
+  "source_tier": "primary",
   "sources": [
     {
+      "name": "Nishinomiya City, final report (16 November 2026)",
+      "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.html",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "Amagasaki City notice",
+      "url": "https://www.city.amagasaki.hyogo.jp/shisei/1026132/1026133.html",
+      "published": "2026-11-14"
+    },
+    {
+      "name": "Arara and Paycloud Holdings notice",
+      "url": "https://www.arara.com/news/info/20261106_arara",
+      "published": "2026-11-06"
+    },
+    {
       "name": "ZATAZ",
-      "url": "https://www.zataz.com/osaka-exposee-a-une-fuite-massive/"
+      "url": "https://www.zataz.com/osaka-exposee-a-une-fuite-massive/",
+      "published": "2026-11-18"
     }
   ],
-  "status": "developing",
-  "summary": "ZATAZ reports that the City of Osaka disclosed an incident that may concern about one million people, linked to the Arara bulk-email provider. The article says an attack on Arara on 2 November 2026 exposed 77 million email addresses of nearly 400 clients. Arara's own news page, as cited by ZATAZ, says criminals used its service to send millions of fraudulent messages.",
+  "status": "confirmed",
+  "summary": "Nishinomiya City's final report says 25,115 email addresses of its smart application users leaked through unauthorized access to Arara's mail delivery service, used by its contractor TKC; Amagasaki City's notice gives 17,064 addresses. Both say names, addresses and application content were not included. Arara's own notice says 81,329,467 email addresses were taken. ZATAZ reports Osaka disclosed an incident that may concern about one million people.",
   "tags": [
     "data-breach",
     "third-party"
   ],
-  "title": "City of Osaka reports incident tied to Arara bulk-email provider, ZATAZ reports",
-  "updated_at": "2026-11-20T08:31:00Z",
+  "title": "Arara email-service breach: Nishinomiya confirms 25,115 and Amagasaki 17,064 residents' email addresses leaked",
+  "updated_at": "2026-11-21T23:43:46Z",
   "validation": {
-    "checked_at": "2026-11-20T08:31:00Z",
-    "note": "Only ZATAZ was read; Arara's own news page and Osaka's notice were not read.",
-    "state": "single_source"
+    "checked_at": "2026-11-21T23:43:46Z",
+    "note": "Primary: Nishinomiya City's final report (figures in the PDF linked from the page, R081116_suma-toshinsei2.pdf), Amagasaki City's notice and Arara's own notice were read; the Osaka figure is from ZATAZ only (Osaka's own notice not read). ZATAZ gives 77 million addresses and nearly 400 clients; Arara's notice of 6 November gives 81,329,467 and up to about 380.",
+    "state": "corroborated"
   },
+  "evidence": [
+    {
+      "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.html",
+      "quote": "（２）件数：25,115 件"
+    },
+    {
+      "url": "https://www.city.amagasaki.hyogo.jp/shisei/1026132/1026133.html",
+      "quote": "尼崎市オンライン申請ポータルサイト利用者のメールアドレス　17,064件"
+    },
+    {
+      "url": "https://www.arara.com/news/info/20261106_arara",
+      "quote": "持ち出されたメールアドレスは、重複を除いて81,329,467件（約8,100万件）です"
+    },
+    {
+      "url": "https://www.zataz.com/osaka-exposee-a-une-fuite-massive/",
+      "quote": "La ville d’Osaka a signalé un incident susceptible de concerner environ un million de personnes."
+    }
+  ],
+  "records_affected": 81329467,
   "review": {
     "state": "passed",
     "at": "2026-11-20T08:36:13Z",

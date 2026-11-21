@@ -1,0 +1,32 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-21T10:53:44Z",
+  "finished_at": "2026-11-21T10:59:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-14 --limit 400",
+    "q.mjs find KARTE --since 2026-11-13",
+    "q.mjs find vendor --since 2026-11-19"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "plaid-karte-unauthorized-access-2026-11",
+    "rapid7-java-17-rce-cve-2026-114938-2026-11",
+    "uk-rdm-refrigeration-controllers-operation-2026-11",
+    "google-autonomous-attacks-warning-2026-11"
+  ],
+  "skipped": [
+    {"title": "Events dated before 2026-11-14 (Microsoft 365 outage, FAA ground stop, NWS, Workday, ARTEX reports, Copeland, Thai Airways/Amadeus, Silent Lynx, Lithuanian customs, BASE FOOD, Cursor, Notion, Dorsata, Check Point Gaia, ScreenConnect SCKit, Ivanti EPM, MPOWERHealth, Hood River Dental, Lansing Urgent Care, Osaka City, Italy briefing)", "url": "", "reason": "fell out of the 7-day window; removed from patterns. PLAID (2026-11-13) kept as the stated origin every KARTE customer names, noted in the caveat."},
+    {"title": "GTA VI lures (KnowBe4, Bitdefender fake client, Cyberleek claim, Kurtaj plea)", "url": "", "reason": "timing and theme only; not enough to earn one of the 12 pattern slots"},
+    {"title": "n0n extortion group listings (Visa provider claim, Container Store, Expedia, Verastem, Exelixis)", "url": "", "reason": "claims only; mentioned in caveat of one-vendor-many-victims, no pattern"}
+  ],
+  "open_leads": [
+    {"title": "amazon-cairn-ai-agents-monai-label-zero-day-2026-11 and cairn-ai-monai-label-zero-day-2026-11 describe the same Amazon report", "url": "", "note": "Likely duplicates, neither marked; the analysis uses cairn-ai-monai-label-zero-day-2026-11. Review desk should mark one duplicate_of the other.", "priority": "medium"},
+    {"title": "uk-fridges-critical-flaw-securing-race-2026-11 and uk-rdm-refrigeration-controllers-operation-2026-11 cover the same RDM operation", "url": "", "note": "Possible duplicates; linked as a stated edge (same flaw and operation). Review desk to decide.", "priority": "low"},
+    {"title": "Are any named Korean university breaches (Inje, Paichai, Jeonju, POSTECH) among KimJEN's claims or rERP users?", "url": "", "note": "S2W found web shells on about 20 universities' rERP systems; a source naming them would turn an inferred edge into a stated one.", "priority": "medium"},
+    {"title": "Further PLAID KARTE customers", "url": "", "note": "PLAID says several hundred companies per data category; expect more notices.", "priority": "high"}
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns) and data/ripples.json (10 items) from yesterday's with the 20-21 Nov events; saved data/snapshots/analysis/2026-11-21.json. KARTE pattern rebuilt around the customer notices (ZOZO, SMBC, Marui, Mitsumo, Sharp, Timee, Schoo, PLUS, DHC). Refrigeration pattern widened to industrial and energy incidents (grouped by sector, labelled). New stated links added to earlier events' links: PLAID -> ZOZO, SMBC, Marui, Mitsumo; Java4Shell (Rapid7) -> Siemens SSA-272816; UK RDM operation -> Guardian/LBC report; Google AI threat tracker -> exploit_agent event. Each url is a source already cited by the linked event; no new pages read in this run. Links already present in the reverse direction (Timee, Sharp, Schoo, PLUS -> PLAID; Uber -> Fireworks) were not duplicated. No event added; updated_at left unchanged on linked events because only links were added."
+}

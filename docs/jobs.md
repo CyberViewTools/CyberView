@@ -102,6 +102,7 @@ THE EVENT CHECKLIST (every event you write or change must pass all of it)
 14. Absence is a fact too. Write "no fix", "has not confirmed", "did not respond", "gave no number" or "no CVE" only when a page you read says so, with its date ("Microsoft had not responded to BleepingComputer as of 17 November"), and only after checking the vendor's or organisation's own advisory, status page or statement. Otherwise leave it out.
 15. "evidence": for every figure (item 8) and for a stated time in "occurred_at", one {"url", "quote"}: the sentence of the page that states it, copied word for word (at most 240 characters; url one of "sources"; at most 12). It is how the second review checks you in seconds and how the build checks that no figure was reworded; it is not shown on the site. No figure, no stated time: no evidence needed. From 22 November these checks (action-unsourced, figure-no-evidence, figure-qualifier, occurred-no-evidence, date-is-publication, source-published-missing, claim-title, primary-no-primary, corroborated-one-site) are build errors for new events.
 16. Before you finish, run `node scripts/lib/validate.mjs <event id...>` on every event you wrote or changed and fix every line it prints (ERROR lines fail the build), then `node scripts/review.mjs flags <event id>`.
+17. Who was hit and through what, from the fixed lists in docs/schema.md: "sectors" {"values": [1 to 4 keys, the most affected first], "basis"} and "surface" {"value": <key>, "basis"}, the way in (an incident) or the kind of system the flaw is in (a vulnerability). "basis" is "stated" only when a page in "sources" says it (a hospital, a FortiGate VPN, a phishing email); "inferred" when you concluded it from what the sources say. A flaw in widely used software, or a law for everyone: sectors "cross-sector". Not said and not inferable: "unknown". A guess is never "stated". An update that changes who was hit or the way in changes these too.
 
 THE EVENT CHECKLIST, WORKED EXAMPLES (real second-review corrections from November 2026; do not repeat them)
 - Stronger than the source: "attempted sign-ins to 2,250 tenants" became "reached 2,250 tenants"; "investigating" became "containing"; "carried Wi-Fi equipment" became "planted"; "media evaluated 15 million documents" became "bank confirms leak of 15 million documents"; a window from 9 Oct to 16 Nov became "five weeks of access"; ">300 schools in Northern Ireland" became "hundreds of schools in Northern Ireland, Scotland and Ireland". Keep the source's verb, scope and certainty.
@@ -169,6 +170,7 @@ STEPS:
    f. Sources are the publisher's own specific pages; validation "corroborated" really has two independent publishers or a primary source.
    g. Each mechanical FLAG: is it a real problem? (possible-duplicate: run q.mjs dupes; when it is the same event, keep the earlier record, merge sources into it, set duplicate_of on the later.)
    h. plain, exec and action are present, accurate and useful; the action is something a defender can do.
+   i. "sectors" and "surface" fit the sources (checklist 17): "stated" only when a source says it; correct the value or the basis when it does not.
 4. Verdict, one per event:
    - Nothing wrong: `node scripts/review.mjs pass <id> "<what you compared, e.g. title, date, 4.2M figure and status against the SEC filing and Reuters>"`.
    - Wrong but fixable from the sources: fix the record (and add a correction file when a published fact changes), set updated_at, then `node scripts/review.mjs corrected <id> "<what was wrong and what it says now>"`.
@@ -548,6 +550,7 @@ STEPS, for each event id:
    g. Each mechanical flag: is it a real problem? For possible-duplicate run `node scripts/q.mjs dupes "<title>"`; when it is the same event keep the earlier record, merge sources into it and set duplicate_of on the later.
    h. plain, exec and action are present, accurate and useful; advice the sources do not give is removed or marked "General advice:".
    Say in the verdict note what kind of error you fixed in plain words ("figure", "date", "action advice", "stronger than the source", "source not read", "validation"): `node scripts/review.mjs errors` counts the corrections by type and by the role and model that wrote the event, and the improver acts on it.
+   i. "sectors" and "surface" fit the sources (checklist 17): "stated" only when a source says it; correct the value or the basis when it does not.
 4. Verdict:
    - Nothing wrong: `node scripts/review.mjs pass <id> "<what you compared, e.g. title, date, 4.2M figure and status against the company statement and Reuters>"`.
    - Wrong but fixable from the sources: fix the record (add a correction file when a published fact changes), set updated_at from `date -u`, then `node scripts/review.mjs corrected <id> "<what was wrong and what it says now>"`.
@@ -578,6 +581,24 @@ RULES: do NOT run any git command and do not edit data/status.json. Facts only f
 LIMITS: only your assigned events and pages.
 DONE WHEN: every assigned page has an outcome recorded by updates.mjs, unreachable ones included.
 End with one line: "updater <batch>: <n> updated, <n> unchanged, <n> unrelated, <n> unreachable".
+```
+
+## Classifier (worker for the one-off sectors and surface backfill; one per batch of 40 events; Sonnet 5.5)
+
+```
+JOB: classifier. You are one of several workers started by `node scripts/classify.mjs run`. Events written before 22 November 2026 have no "sectors" or "surface"; the map's analysis views place them by keyword, which is often wrong. A script has assigned you the events listed under YOUR ASSIGNMENT at the end of this prompt, each with its own text (title, organisation, sector field, products, tags, techniques, summary, impact), and the two fixed lists.
+GOAL: every assigned event gets sectors and surface from the fixed lists, each with an honest basis, in one out file.
+STEPS:
+1. For each event, from its text only (do not open web pages; the text was written from the event's sources):
+   a. sectors: the sector(s) of the organisation(s) hit, 1 to 4 keys, the most affected first. A government body is government-facilities; a hospital or health insurer's patients are healthcare-public-health; a software or IT vendor hit itself is information-technology; a retailer, hotel, venue or media company is commercial-facilities; a university or school is education. A vulnerability or advisory in widely used software with no one victim, a threat report spanning many sectors, or a law for everyone: "cross-sector". A report or law about one sector: that sector. Nothing in the text says or implies it: "unknown".
+   b. surface: the way the attacker got in (an incident) or the kind of system the flaw is in (a vulnerability or advisory): edge-appliance (VPN, firewall, gateway, router, load balancer exposed to the internet), web-app (a website, web application, CMS or plugin), email-phishing, endpoint (desktop and server operating systems, browsers, drivers, office software), cloud-saas, supply-chain (a supplier, MSP, software package or update channel), ot-ics, identity (stolen or stuffed credentials, MFA, SSO, help-desk social engineering), mobile, physical-insider. Not said (most ransomware and breach notices) or not a technical event (policy, enforcement, investment, an outage without a stated cause): "unknown".
+   c. basis: "stated" only when the event's text names it outright (sector field "Healthcare" or "a hospital"; "a FortiGate VPN", "a phishing email", "stolen credentials"). "inferred" when you concluded it (an organisation known to be a bank; a product that is an internet-facing appliance though the text does not say so). When unsure between the two, "inferred".
+2. Write data/<out file from YOUR ASSIGNMENT>: {"plan_id": "<plan_id>", "batch": <batch>, "items": [{"id": "<event id>", "sectors": {"values": ["<key>"], "basis": "stated|inferred"}, "surface": {"value": "<key>", "basis": "stated|inferred"}, "why": "<at most 200 characters: the words that decided it>"}]}, every assigned id exactly once, in the order given, keys only from the lists.
+3. Check it: `node scripts/classify.mjs apply --dry-run` prints your batch's problems; fix every one and rerun until your batch says "would write".
+RULES: do NOT run any git command; do not edit event files or data/status.json (apply writes the events after every batch is checked). Keys only from the lists; never invent one. Never "stated" for a conclusion of your own.
+LIMITS: only your assigned events; no web pages.
+DONE WHEN: your out file passes the dry run.
+End with one line: "classifier <batch>: <n> events, <n> stated sectors, <n> stated surfaces".
 ```
 
 ## Grid researcher (worker in the research loop; one per batch of grid outages)

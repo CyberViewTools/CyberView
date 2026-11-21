@@ -1945,6 +1945,45 @@ async def main():
             await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-desktop.png", full_page=True)
             await pg.context.close()
         await serve(site_act, vact)
+        # v1.63: sector and attack surface from the event's own fields, labelled stated, inferred or keyword-assigned
+        bcl = copy.deepcopy(bundle)
+        import datetime as _dt
+        wk = (_dt.datetime.now(_dt.timezone.utc).date() - _dt.timedelta(days=5)).isoformat()
+        tech = [e for e in bcl["events"] if e["category"] in ("incident", "vuln") and e.get("status") != "claimed" and e["date"] >= wk]
+        ev_s, ev_k = tech[0], tech[1]
+        ev_s["sectors"] = {"values": ["healthcare-public-health"], "basis": "stated"}
+        ev_s["surface"] = {"value": "edge-appliance", "basis": "inferred"}
+        for k in ("sectors", "surface"): ev_k.pop(k, None)
+        ev_k["title"] = "VPN gateway flaw exploited at a regional council"
+        ev_k["sector"] = "Government"
+        tech[2]["sectors"] = {"values": ["bogus"], "basis": "stated"}  # off the list: ignored, the keyword rule places it
+        tech[2]["surface"] = {"value": "web-app", "basis": "maybe"}
+
+        async def vclassify(url):
+            pg, errs = await open_page(browser, url + "#e=" + ev_s["id"], wait=1800)
+            card = await pg.inner_text("#dcard")
+            ok("classify: an event's own sectors show with their basis", "Healthcare and public health · stated by the source" in card, card[-400:])
+            ok("classify: an event's own surface shows as inferred by CyberView AI", "Internet-facing appliance (VPN, firewall, gateway) · inferred by CyberView AI (a Claude model)" in card)
+            await pg.evaluate("id => { location.hash = 'e=' + id; }", ev_k["id"]); await pg.wait_for_timeout(700)
+            card = await pg.inner_text("#dcard")
+            ok("classify: without the fields, the keyword placement is labelled keyword-assigned", "Network edge · keyword-assigned, can be wrong" in card and "Government · keyword-assigned, can be wrong" in card, card[-400:])
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+            await pg.click("[data-view=time]"); await pg.wait_for_timeout(900)
+            note = await pg.locator("#viz p.basis[data-basis=layer]").all_inner_texts()
+            ok("classify: the swimlanes count stated, inferred and keyword-assigned placements", len(note) == 1 and "stated by the source" in note[0] and "inferred by CyberView AI (a Claude model)" in note[0] and "keyword-assigned" in note[0], note)
+            await pg.click("[data-view=graph]"); await pg.wait_for_timeout(900)
+            cav = " ".join(await pg.locator("#viz .cav").all_inner_texts())
+            ok("classify: the correlation view's flow and matrix say where rows came from", "Rows: Attack surface:" in cav and "keyword-assigned from the wording" in cav and "assigned from wording" not in cav, cav[-300:])
+            ok("classify: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1200)
+            if await pg.locator("#effCoverage [data-cov]").count():
+                sb = await pg.locator("#effCoverage [data-basis=sector]").all_text_contents()
+                ok("classify: status coverage says how each sector was assigned", len(sb) == 1 and "keyword-assigned" in sb[0] and "stated by the source" in sb[0], sb)
+            await pg.goto(url.replace("index.html", "trends.html")); await pg.wait_for_timeout(1000)
+            tb = await pg.locator("[data-basis=sector]").all_inner_texts()
+            ok("classify: trends say where the sector rows came from", len(tb) <= 1 and (not tb or ("stated by the source" in tb[0] and "free-text sector field" in tb[0])), tb)
+            await pg.context.close()
+        await serve(make_site(bcl), vclassify)
 
         await browser.close()
 

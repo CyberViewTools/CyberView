@@ -19,6 +19,7 @@ import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 import { regionOf, storyCredit, closureOutcome, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { errorReport, writersFrom } from "./review.mjs";
+import { sectorsOf, SECTOR } from "./lib/taxonomy.mjs";
 
 // routines whose work is a document or a check, not a list in a run log: their idle share is not measured
 export const DOC_ROUTINES = new Set(["brief", "analysis", "tabletop", "improver", "watchdog", "guardian", "editor", "security-review", "monitor", "link-check", "security-check", "exploit-watch"]);
@@ -171,8 +172,16 @@ export function markRetired(feeds, retiredCfg = [], collectors = RETIRED_COLLECT
 const SECTORS = [["water", /\b(water|wastewater)\b/i], ["energy", /\b(energy|power|electric\w*|utilit(y|ies)|oil|gas|nuclear|grid|pipeline|refiner\w*)\b/i], ["health", /\b(health\w*|hospital\w*|medical|clinic\w*|pharma\w*|patient\w*)\b/i],
   ["transport", /\b(transport\w*|airline\w*|airport\w*|aviation|rail\w*|port|ports|shipping|maritime|logistics|transit)\b/i], ["telecom", /\b(telecom\w*|telco\w*|mobile operator|carrier|isp|broadband)\b/i],
   ["government", /\b(government|ministry|municipal\w*|public sector|council|parliament|federal|state agency|agency|military|defen[cs]e|city of|county)\b/i]];
-/** Pure: the critical-infrastructure sector an event is in, from its sector field and tags (by keyword, can be wrong). */
+/** Pure: where an event's coverage sector comes from: its explicit "sectors" ("stated" or "inferred"), else "keyword". */
+export function sectorBasis(e) {
+  const se = sectorsOf(e);
+  return se && se.values.some((k) => SECTOR[k].cov) ? se.basis : "keyword";
+}
+/** Pure: the critical-infrastructure sector an event is in: from its explicit "sectors" when it has them (the first with a
+ *  coverage key), else from its sector field and tags by keyword (can be wrong; sectorBasis says which). */
 export function sectorOf(e) {
+  const se = sectorsOf(e), c = se && se.values.map((k) => SECTOR[k].cov).find(Boolean);
+  if (c) return c;
   const text = [e.sector, ...(Array.isArray(e.tags) ? e.tags : [])].filter(Boolean).join(" ");
   for (const [k, re] of SECTORS) if (re.test(text)) return k;
   return "other";
@@ -196,8 +205,8 @@ export function languageOf(e, leadByUrl) {
 export function coverage(events, leadByUrl, days, now = Date.now()) {
   const since = iso(now - days * DAY), ev = events.filter((e) => e && !e.duplicate_of && String(e.first_seen || "") >= since);
   const add = (o, k) => { o[k] = (o[k] || 0) + 1; };
-  const out = { days, events: ev.length, claimed: ev.filter((e) => e.status === "claimed").length, region: {}, language: {}, sector: {} };
-  for (const e of ev) { add(out.region, regionOf(e.country)); add(out.language, languageOf(e, leadByUrl)); add(out.sector, sectorOf(e)); }
+  const out = { days, events: ev.length, claimed: ev.filter((e) => e.status === "claimed").length, region: {}, language: {}, sector: {}, sector_basis: {} };
+  for (const e of ev) { add(out.region, regionOf(e.country)); add(out.language, languageOf(e, leadByUrl)); add(out.sector, sectorOf(e)); add(out.sector_basis, sectorBasis(e)); }
   return out;
 }
 

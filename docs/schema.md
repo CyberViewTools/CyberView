@@ -18,7 +18,9 @@ Where it lives: every path below that starts with `data/` is a file on the `data
 | date_note | | why the date is uncertain or differs from publication |
 | occurred_at | | ISO time with offset; within a day of `date` |
 | time_basis | | `occurred`, `reported`, `published`, `approx` |
-| org, sector, country, place | | strings |
+| org, sector, country, place | | strings (`sector` is free text as the sources put it) |
+| sectors | from 22 Nov 2026 | `{values, basis}`: who was hit, 1 to 4 keys from the fixed list, most affected first. The US CISA 16 critical infrastructure sectors: `chemical`, `commercial-facilities` (retail, hotels, venues, media), `communications`, `critical-manufacturing`, `dams`, `defense-industrial-base`, `emergency-services`, `energy`, `financial-services`, `food-agriculture`, `government-facilities`, `healthcare-public-health`, `information-technology`, `nuclear`, `transportation-systems`, `water-wastewater`; and `education`, `professional-services`, `manufacturing` (other manufacturing), `nonprofit`, `individuals`, `cross-sector` (no one sector: a flaw in widely used software, a law for everyone), `unknown` (both stand alone). `basis` is `stated` (a page in sources says it) or `inferred` (CyberView AI concluded it from what the sources say). The list is `scripts/lib/taxonomy.mjs`; checked by `checkClassification` in scripts/lib/validate.mjs |
+| surface | from 22 Nov 2026 | `{value, basis}`: the way in (an incident) or the kind of system the flaw is in: `edge-appliance` (internet-facing VPN, firewall, gateway), `web-app`, `email-phishing`, `endpoint` (computers, servers, browsers), `cloud-saas`, `supply-chain` (supplier, MSP, package, update channel), `ot-ics`, `identity` (credentials, MFA, SSO), `mobile`, `physical-insider`, `unknown`; `basis` as for sectors. Without both fields the analysis views, trends and status coverage fall back to keywords and say so; `node scripts/classify.mjs` backfills older events |
 | lat, lng | | numbers, or null when unknown |
 | geo_basis | | what the pin location is based on |
 | pin_type | | `victim`, `hq`, `agency`, `actor`, `researcher`, `country`, `none` |

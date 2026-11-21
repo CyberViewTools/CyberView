@@ -16,6 +16,7 @@ site/nav.js              site navigation on every page: inline links on wide scr
 site/archive.html, .js   the searchable archive of every event on file
 site/cve.html, workbench.html, moved.js   thin redirects to vulnerabilities.html (query and hash kept)
 site/trends.html, .js    week-over-week trends from site/data/trends.json (styles shared in archive.css)
+site/actors.html, .js, .css   threat actor profiles from site/data/actors.json (scripts/actors.mjs at build, no AI model: attributed, named and claimed events kept apart; aliases only from MITRE ATT&CK, config/attack-groups.json, or an event's own text, each with its source); nav.js adds the link to pages written before it
 site/status.html, .js    routines and their last runs, lead queue, recent runs (from site/data/ops.json)
 site/vulnerabilities.html, .js, workbench-lib.js, cvedb-lib.js   the Vulnerabilities page, one page with four views: Known exploited (patch queue ranked with reasons, CISA deadline chart and calendar file, check and fix steps), All CVEs (look up or browse the CVE List from data/cve/ lookup files, joined with the KEV data), My software (the visitor's list matched by version, browser only), Hunt pack (from site/data/workbench.json)
 site/community.html, .js  the public community feed (reviewed posts from site/data/chat.json; posting is a GitHub issue form)

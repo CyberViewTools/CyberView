@@ -386,6 +386,18 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   console.log(`Trends: ${trends.cur.total} events this week, ${trends.prev.total} the week before${trends.prev.complete ? "" : " (partly recorded)"}.`);
 }
 
+// threat actor profiles (scripts/actors.mjs, no AI model): attributed, named and claimed events per group, aliases only on a
+// stated basis (MITRE ATT&CK, the event's own text). A failure never fails the build: the page says the profiles are missing.
+try {
+  const { buildActors, loadAttack } = await import("./actors.mjs");
+  const act = buildActors(live, loadAttack(), built_at);
+  writeFileSync(join(OUT, "actors.json"), JSON.stringify(act));
+  console.log(`Actors: ${act.counts.profiles} profiles (${act.counts.checked} named or attributed, ${act.counts.claims_only} only in claims).`);
+} catch (err) {
+  writeFileSync(join(OUT, "actors.json"), JSON.stringify({ built_at, error: "The actor profiles could not be built.", profiles: [] }));
+  console.warn("warning: actor profiles not built: " + String((err && err.message) || err).slice(0, 200));
+}
+
 // operations: the routines registry, each routine's last run, recent run logs and the lead queue (site/data/ops.json)
 {
   const reg = readJson(join(ROOT, "routines.json"), null);

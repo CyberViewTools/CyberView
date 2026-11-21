@@ -250,7 +250,8 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            import datetime as _dt; week = (_dt.datetime.utcnow() - _dt.timedelta(days=6)).strftime("%Y-%m-%d")   # the map lists seven days; the bundle holds nine
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e["date"] >= week)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -1153,7 +1154,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1202,10 +1203,10 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "tabletop.html", "community.html", "about.html"]:
+            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "actors.html", "tabletop.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 8 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1433,7 +1434,7 @@ async def main():
             await ctx.close()
             pg, errs = await open_page(browser, url, w=1000, wait=1200)
             nb = await pg.locator("header .sitenav").bounding_box(); rb = await pg.locator("#refresh").bounding_box()
-            ok("nav: eight links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
+            ok("nav: nine links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
             await pg.context.close()
 
         await serve(site18, v118)
@@ -1769,6 +1770,62 @@ async def main():
             ok("dropdown: phones keep the native picker", await ph.locator(".cvsel-btn").count() == 0)
             await ctx.close()
         await serve(make_site(bundle), v138)
+
+        # threat actor profiles (site/actors.html from data/actors.json, scripts/actors.mjs): attribution labelled, claims kept apart
+        site_act = make_site(bundle)
+        act = {"built_at": "2026-11-21T20:00:00Z", "attack_version": "20.1", "attack_notice": "MITRE ATT&CK test notice. The MITRE Corporation.", "profiles": [
+            {"id": "g0094-kimsuky", "name": "Kimsuky", "attack": {"id": "G0094", "name": "Kimsuky", "url": "javascript:alert(1)"},
+             "aliases": [{"name": "Emerald Sleet", "basis": "attack", "source": "MITRE ATT&CK G0094", "url": "https://attack.mitre.org/groups/G0094/"},
+                         {"name": "<img src=x id=pwnA>", "basis": "event", "source": "named as one group in \"Fixture event\"", "event_id": "fixture-event-2026-11"},
+                         {"name": "Hunch Name", "basis": "guess", "source": "a feeling"}],
+             "attributed": [{"event_id": "fixture-event-2026-11", "title": "Fixture event", "date": "2026-11-19", "by": "Genians Security Center", "by_type": "investigator", "url": "https://example.com/report", "origin_country": "North Korea", "note": "moderate confidence"},
+                            {"event_id": "no-source-2026-11", "title": "Attribution without a page", "date": "2026-11-18", "by": "Someone", "by_type": "investigator", "url": "javascript:alert(2)"}],
+             "named": [{"event_id": "fixture-named-2026-11", "title": "Named event", "date": "2026-11-17", "as_written": "Kimsuky (per vendor)"}],
+             "claimed": [{"event_id": "fixture-claim-2026-11", "title": "Kimsuky lists Acme", "date": "2026-11-16", "org": "Acme"}],
+             "sectors": [{"k": "Government", "n": 2}], "countries": [{"k": "South Korea", "n": 2}], "cves": [{"id": "CVE-2026-1234", "event_ids": ["fixture-event-2026-11"]}, {"id": "not-a-cve"}],
+             "advisories": [{"publisher": "CISA", "doc_id": "AA26-001A", "url": "https://www.cisa.gov/a", "event_id": "fixture-event-2026-11"}], "related": [], "ambiguous": [],
+             "first_seen": "2026-11-16", "last_seen": "2026-11-19", "claims_only": False},
+            {"id": "inception", "name": "Inception", "attack": None, "attack_namesake": {"id": "G0100", "name": "Inception", "url": "https://attack.mitre.org/groups/G0100/"},
+             "aliases": [], "attributed": [], "named": [], "claimed": [{"event_id": "inc-claim-2026-11", "title": "Inception lists PepsiCo on its leak site", "date": "2026-11-17", "org": "PepsiCo"}],
+             "sectors": [{"k": "Food", "n": 1}], "countries": [], "cves": [{"id": "CVE-2026-9999", "event_ids": ["inc-claim-2026-11"]}], "advisories": [], "related": [], "ambiguous": [],
+             "first_seen": "2026-11-17", "last_seen": "2026-11-17", "claims_only": True},
+            {"id": "BAD ID", "name": "Dropped"}]}
+        json.dump(act, open(os.path.join(site_act, "data", "actors.json"), "w"))
+        async def vact(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html"), wait=900)
+            ok("actors: summary counts named and claims-only groups", "1 group named" in await pg.text_content("#summary") and "1 more appears only in its own" in await pg.text_content("#summary"), await pg.text_content("#summary"))
+            ok("actors: a bad record is dropped, claims-only groups hidden by default", await pg.locator("details.actor").count() == 1)
+            ok("actors: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Actors")
+            await pg.click("#a-g0094-kimsuky > summary"); await pg.wait_for_timeout(100)
+            body = await pg.inner_text("#a-g0094-kimsuky")
+            ok("actors: attribution says who said so", "Attributed by Genians Security Center (investigating firm)" in body and await pg.locator("#a-g0094-kimsuky a[href='https://example.com/report']").count() >= 1, body[:400])
+            ok("actors: an attribution without an https page is left out", "Attribution without a page" not in body)
+            ok("actors: aliases say where they come from; no basis, no alias", "Emerald Sleet (per MITRE ATT&CK G0094)" in body and "Hunch Name" not in body, body[:600])
+            ok("actors: injected markup stays text", "<img src=x id=pwnA>" in body and await pg.locator("#pwnA").count() == 0)
+            ok("actors: unsafe ATT&CK url never used", await pg.locator("a[href^='javascript']").count() == 0 and await pg.locator("#a-g0094-kimsuky a[href='https://attack.mitre.org/groups/G0094/']").count() >= 1)
+            ok("actors: named is labelled as the sources' words", "not an attribution by CyberView" in body)
+            ok("actors: a claim is labelled as a claim, apart from the facts", "Claimed by the group, not confirmed" in body and "Acme: the group's claim; the organisation has not confirmed it." in body)
+            ok("actors: links to the event and the archive", await pg.locator("#a-g0094-kimsuky a[href='archive.html#q=fixture-event-2026-11']").count() >= 1 and await pg.locator("#a-g0094-kimsuky a[href='archive.html#q=Kimsuky']").count() == 1)
+            ok("actors: CVEs link to the Vulnerabilities page, bad ids dropped", await pg.locator("#a-g0094-kimsuky a[href='vulnerabilities.html#CVE-2026-1234']").count() == 1 and "not-a-cve" not in body)
+            await pg.check("#claims"); await pg.wait_for_timeout(150)
+            ok("actors: claims-only groups shown on request, under their own heading", await pg.locator("details.actor").count() == 2 and "Seen only in leak-site claims" in await pg.inner_text("#list"))
+            await pg.click("#a-inception > summary"); await pg.wait_for_timeout(100)
+            ib = await pg.inner_text("#a-inception")
+            ok("actors: a claims-only group is never matched to ATT&CK and counts nothing", "does not treat them as the same group" in ib and "Sectors" not in ib and "CVE-2026-9999" not in ib, ib[:500])
+            await pg.fill("#q", "emerald"); await pg.wait_for_timeout(150)
+            ok("actors: search finds a group by another name", await pg.locator("details.actor").count() == 1 and await pg.locator("#a-g0094-kimsuky").count() == 1)
+            ok("actors: ATT&CK notice shown", "The MITRE Corporation" in await pg.text_content("#attackNote"))
+            ok("actors: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html#a=inception"), w=390, h=844, wait=900)
+            ok("actors: a profile link opens it, even a claims-only one", await pg.evaluate("document.getElementById('a-inception') && document.getElementById('a-inception').open"))
+            ok("actors: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-phone.png", full_page=True)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html#a=g0094-kimsuky"), wait=900)
+            await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-desktop.png", full_page=True)
+            await pg.context.close()
+        await serve(site_act, vact)
 
         await browser.close()
 

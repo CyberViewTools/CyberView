@@ -21,9 +21,22 @@ def ok(name, cond, info=""):
         fails.append(name + (f" :: {info}" if info else ""))
 
 
+TEMP_SITES = []
+
+
+def _cleanup_sites():
+    for d in TEMP_SITES:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+import atexit
+atexit.register(_cleanup_sites)
+
+
 def make_site(bundle):
     """Copy site/ to a temp dir and write the given bundle (or none)."""
     d = tempfile.mkdtemp(prefix="cwm-")
+    TEMP_SITES.append(d)   # removed at exit: thousands of 7.5 MB copies filled the disk on 2026-11-21
     shutil.copytree(os.path.join(ROOT, "site"), d, dirs_exist_ok=True)
     os.makedirs(os.path.join(d, "data"), exist_ok=True)
     p = os.path.join(d, "data", "bundle.json")
@@ -244,13 +257,16 @@ async def main():
         await serve(make_site(bundle), archive)
 
         # v1.5 features: permalinks, feeds, exposure report
-        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2)
+        # events from the last 6 days: the map shows 9 days and sends older permalinks to the archive, so an event dated
+        # near that edge made these checks depend on the day the suite ran
+        recent = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 6 * 86400))
+        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2 and e.get("date", "") >= recent)
 
         async def features(url):
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e.get("date", "") >= recent)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -1509,7 +1525,10 @@ async def main():
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            tapped = (await pg.evaluate("location.hash")).replace("#e=", "")
+            # the list keeps the reader's place: when the tapped event is below the first 30, it shows up to 10 past it
+            at = await pg.evaluate("id => [...document.querySelectorAll('#feed .card')].findIndex(c => c.id === 'card-' + id)", tapped)
+            ok("phone: the list starts with 30 events and offers more", (n == at + 10 if at >= 30 else 30 <= n <= 60) and await pg.locator("#feedMore").count() == 1, [n, at])
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())

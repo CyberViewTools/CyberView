@@ -5,7 +5,7 @@
 // limits, and all text is inserted as text.
 (function () {
   "use strict";
-  var W = window.CVWorkbench, D = window.CVDB;
+  var W = window.CVWorkbench, D = window.CVDB, OL = window.CVOT;
   var $ = function (id) { return document.getElementById(id); };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; }
   function str(v, n) { return typeof v === "string" ? v.slice(0, n) : ""; }
@@ -116,6 +116,7 @@
       if (show === "mine") return r.m && (r.m.state === "affected" || r.m.state === "check");
       if (show === "due") { var n = dueLeft(r.f); return n !== null && n <= 7; }
       if (show === "guide") return !!r.f.guide;
+      if (show === "ot") return !!(OT.data && OT.data.byCve[r.f.cve]);
       return true;
     });
   }
@@ -190,6 +191,7 @@
       d.appendChild(el("p", "note", "Found by an automatic search of GitHub. A repository naming a CVE may hold a working exploit, a detector, notes or nothing useful, and some are traps: review before running anything."));
     }
     if (f.required) { d.appendChild(el("h4", null, f.kev ? "What CISA requires" : "What to do")); d.appendChild(el("p", null, f.required)); }
+    d.appendChild(otJoin(f.cve));
     var ln = el("p", "wblinks");
     f.refs.forEach(function (u) { var host = ""; try { host = new URL(u).host.replace(/^www\./, ""); } catch (e) {} ln.appendChild(link(u, "Advisory (" + (host || "link") + ")")); });
     ln.appendChild(link("https://nvd.nist.gov/vuln/detail/" + encodeURIComponent(f.cve), "NVD record"));
@@ -222,6 +224,7 @@
       if (f.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + Math.round(f.epss * 100) + "%"));
       if (f.guide) chips.appendChild(el("span", "badge ok", "Check and fix steps"));
       if (f.analysis) chips.appendChild(el("span", "badge ok", "Exploit and fix analysis"));
+      if (OT.data && OT.data.byCve[f.cve]) chips.appendChild(el("span", "badge info", "Industrial advisory"));
       mid.appendChild(chips); b.appendChild(mid);
       b.appendChild(el("span", "wbrank", "#" + (i + 1)));
       b.addEventListener("click", function () { openCve = open ? "" : f.cve; renderQueue(); if (!open) { var n = document.getElementById("row-" + f.cve); if (n) n.querySelector("button").focus(); } });
@@ -544,6 +547,7 @@
     if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
     if (!r.rejected && mineFn(r)) chips.appendChild(el("span", "badge warn", "On your software list"));
     if (onMap(r)) chips.appendChild(el("span", "badge info", "On CyberView's map"));
+    if (OT.data && OT.data.byCve[r.id]) chips.appendChild(el("span", "badge info", "Industrial advisory"));
     if (r.cwe) chips.appendChild(el("span", "badge info", r.cwe));
     if (r.pub) chips.appendChild(el("span", "badge info", r.pub));
     mid.appendChild(chips); b.appendChild(mid); b.appendChild(el("span", "wbrank", rank ? "#" + rank : ""));
@@ -569,6 +573,7 @@
     }
     var ln = el("p", "wblinks"); ln.appendChild(link("https://www.cve.org/CVERecord?id=" + r.id, "CVE record")); ln.appendChild(link("https://nvd.nist.gov/vuln/detail/" + r.id, "NVD record"));
     if (r.kev) ln.appendChild(link("https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=" + r.id, "CISA catalog entry"));
+    d.appendChild(otJoin(r.id));
     d.appendChild(ln);
     var ev = el("p", "note", "Checking the map and archive"); d.appendChild(ev);
     loadEvents().then(function (list) {
@@ -658,8 +663,129 @@
     });
   }
 
+  /* ---- Industrial (ICS/OT): CISA's and the vendors' own advisories (data/ics.json, scripts/ics.mjs, no AI model), loaded
+     only when this view or a CVE's details need them. Mitigations stay in the advisory, linked; nothing is rewritten. ---- */
+  var OT = { data: null, waiting: null, shown: 40, open: "" };
+  var OT_EXPL = { kev: ["Known exploited", "bad"], active: ["Exploited", "bad"], poc: ["Public exploit", "warn"] };
+  function otStatus(msg) { var b = $("otStatus"); b.hidden = !msg; b.textContent = msg || ""; $("otMain").hidden = !!msg; }
+  function ensureOt() {
+    if (OT.waiting) return OT.waiting;
+    OT.waiting = fetch("data/ics.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); }).then(function (d) {
+      OT.data = OL.load(d); safe("ot", initOt); return OT.data;
+    }).catch(function () {
+      OT.waiting = null;
+      otStatus("The industrial advisories are not available right now. They are built when the site is deployed, so they can be missing just after a change; the other views work without them. Try again in a little while.");
+      return null;
+    });
+    return OT.waiting;
+  }
+  function otAge(at) { var m = at ? Math.round((Date.now() - Date.parse(at)) / 6e4) : NaN; return isFinite(m) ? (m < 90 ? m + " minutes" : Math.round(m / 60) + " hours") + " ago" : ""; }
+  function initOt() {
+    var d = OT.data, srcs = Object.keys(d.sources), n = d.list.length;
+    $("wbnOt").textContent = String(n);
+    var kev = d.list.filter(function (a) { return a.exploited === "kev"; }).length, act = d.list.filter(function (a) { return a.exploited === "active"; }).length, crit = d.list.filter(function (a) { return a.cvss !== null && a.cvss >= 9; }).length;
+    var age = otAge(d.updatedAt), failed = srcs.filter(function (k) { return !d.sources[k].ok; }).map(function (k) { return d.sources[k].name; });
+    $("otSummary").textContent = n + " industrial control system (ICS) and operational technology (OT) advisories first published in the last " + d.windowDays + " days, from CISA and the vendors' own machine-readable feeds. " +
+      kev + " name a CVE on CISA's known-exploited list" + (act ? ", " + act + " more say exploitation was seen" : "") + "; " + crit + " have a CVSS base score of 9.0 or higher." + (age ? " Updated " + age + "." : "") +
+      (failed.length ? " Not reachable on the last run, so their last copy is shown: " + failed.join(", ") + "." : "");
+    var vs = $("otVendor"); while (vs.options.length > 1) vs.remove(1);
+    OL.vendors(d.list, 120).forEach(function (v) { var o = el("option", null, v[0] + " (" + v[1] + ")"); o.value = v[0]; vs.appendChild(o); });
+    var ss = $("otSrc"); while (ss.options.length > 1) ss.remove(1);
+    srcs.forEach(function (k) { var s = d.sources[k], o = el("option", null, s.name + " (" + s.count + ")"); o.value = k; ss.appendChild(o); });
+    $("otCaveat").textContent = "What this is: advisories as CISA and each vendor publish them (CISA's ICS and ICS medical advisories, Siemens ProductCERT, Schneider Electric, ABB and Phoenix Contact as CSAF documents; CERT@VDE, Moxa and Mitsubishi Electric from their RSS feeds), read every two hours. " +
+      "CVSS is the highest base score the advisory gives; exploitation is what the advisory or CISA's known-exploited catalog says. RSS feeds carry less than CSAF documents: Mitsubishi Electric's names no CVEs and CERT@VDE's gives no scores, so open the advisory. " +
+      "Rockwell Automation is not read directly (its site refuses automated readers) and Honeywell publishes no machine-readable feed; CISA republishes many of their advisories. The advisory itself stays the authority.";
+    otStatus("");
+  }
+  function otFilters() { return { q: $("otQ").value, vendor: $("otVendor").value, source: $("otSrc").value, show: $("otShow").value, sort: $("otSort").value, lifeline: OT.data.lifeline, inv: inv, today: TODAY }; }
+  function goCve(c) { try { history.replaceState(null, "", "#" + c); } catch (e) {} route("#" + c); }
+  function goOt(a) {
+    OT.open = a.source + ":" + a.id; $("otQ").value = a.id; $("otShow").value = ""; OT.shown = 40; tab("ot");
+    ensureOt().then(function () { var n = document.getElementById("ot-" + OT.open.replace(/[^\w-]/g, "_")); if (n) { try { n.scrollIntoView({ block: "start" }); } catch (e) {} } });
+  }
+  function renderOt() { safe("ot", drawOt); }
+  function drawOt() {
+    if (!OT.data) return;
+    var list = OL.filter(OT.data.list, otFilters()), box = $("otList"); box.textContent = "";
+    $("otCount").textContent = list.length === OT.data.list.length ? list.length + " advisories, highest rank first." : list.length + " of " + OT.data.list.length + " advisories match.";
+    if (!list.length) box.appendChild(el("li", "empty", "Nothing matches. Clear the search or a filter."));
+    list.slice(0, OT.shown).forEach(function (x, i) {
+      var a = x.a, key = a.source + ":" + a.id, open = OT.open === key, li = el("li", "wbrow" + (a.notAffected ? " clear" : ""));
+      var b = el("button", "wbhead"); b.type = "button"; b.setAttribute("aria-expanded", open ? "true" : "false");
+      var sc = el("span", "wbscore", String(x.score)); sc.title = "Rank points that order this list (not a CVSS score or the CyberView rating)"; b.appendChild(sc);
+      var mid = el("span", "wbmid"), top = el("span", "wbtop"); top.appendChild(el("b", null, a.id)); if (a.vendor) top.appendChild(document.createTextNode(" " + a.vendor));
+      mid.appendChild(top); mid.appendChild(el("span", "wbname", a.title));
+      var chips = el("span", "wbchips");
+      if (OT_EXPL[a.exploited]) chips.appendChild(el("span", "badge " + OT_EXPL[a.exploited][1], OT_EXPL[a.exploited][0]));
+      if (a.notAffected) chips.appendChild(el("span", "badge ok", "Vendor: not affected"));
+      if (a.cvss !== null) chips.appendChild(el("span", "badge " + (a.cvss >= 7 ? "bad" : a.cvss >= 4 ? "warn" : "info"), "CVSS " + a.cvss.toFixed(1)));
+      if (x.mine) chips.appendChild(el("span", "badge warn", "Names your software"));
+      var life = OL.lifelineHit(a, OT.data.lifeline); if (life) chips.appendChild(el("span", "badge info", life));
+      if (OL.noFix(a)) chips.appendChild(el("span", "badge warn", "No vendor fix for some products"));
+      if (a.cves.length) chips.appendChild(el("span", "badge info", a.cves.length + (a.cves.length === 1 ? " CVE" : " CVEs")));
+      chips.appendChild(el("span", "badge info", a.sourceName));
+      if (a.published || a.updated) chips.appendChild(el("span", "badge info", a.published || a.updated));
+      mid.appendChild(chips); b.appendChild(mid); b.appendChild(el("span", "wbrank", "#" + (i + 1)));
+      b.addEventListener("click", function () { OT.open = open ? "" : key; renderOt(); var n = document.getElementById("ot-" + key.replace(/[^\w-]/g, "_")); if (n) n.querySelector("button").focus({ preventScroll: true }); });
+      li.id = "ot-" + key.replace(/[^\w-]/g, "_"); li.appendChild(b); if (open) li.appendChild(otDetail(x));
+      box.appendChild(li);
+    });
+    $("otMore").hidden = list.length <= OT.shown;
+  }
+  function otDetail(x) {
+    var a = x.a, d = el("div", "wbdetail");
+    if (a.summary) d.appendChild(el("p", null, a.summary));
+    if (a.notAffected) { var na = el("div", "wbme ok"); na.appendChild(el("b", null, "The vendor states its products are not affected")); na.appendChild(el("p", null, "This advisory lists the flaws and says which of the vendor's products they do not affect; there is nothing of this vendor's to patch for them.")); d.appendChild(na); }
+    if (x.mine) { var me = el("div", "wbme warn"); me.appendChild(el("b", null, "Names a product on your software list")); me.appendChild(el("p", null, "Matched by product name only, in this browser. Check the affected versions in the advisory.")); d.appendChild(me); }
+    var pts = el("div", "wbpts"); pts.appendChild(el("h4", null, "Why it ranks here: " + x.score + " rank points"));
+    var pl = el("ul"); x.points.forEach(function (p) { var li = el("li"); li.appendChild(el("b", null, "+" + p[0])); li.appendChild(document.createTextNode(" " + p[1])); pl.appendChild(li); }); pts.appendChild(pl); d.appendChild(pts);
+    var kv = el("ul");
+    [["Vendor", a.vendor], ["Products", a.products.join("; ") + (a.productsTotal > a.products.length ? " and " + (a.productsTotal - a.products.length) + " more in the advisory" : "")],
+      ["CVSS", a.cvss !== null ? a.cvss.toFixed(1) + (a.cvssVersion ? " (CVSS v" + a.cvssVersion + ")" : "") + ", the highest base score in the advisory" + (a.cvssVector ? " · " + a.cvssVector : "") : "Not given in the feed"],
+      ["Exploitation", OL.EXPL[a.exploited] + (a.exploited === "kev" ? ": " + a.kevCves.join(", ") : a.exploitNote ? ": " + a.exploitNote : "")],
+      ["Sectors (CISA)", a.sectors.join(", ")], ["Fix", OL.fixText(a)], ["Published", a.published], ["Last updated", a.updated && a.updated !== a.published ? a.updated : ""]]
+      .forEach(function (p) { if (!p[1]) return; var li = el("li"); li.appendChild(el("b", null, p[0] + ": ")); li.appendChild(document.createTextNode(p[1])); kv.appendChild(li); });
+    d.appendChild(kv);
+    if (a.cves.length) {
+      d.appendChild(el("h4", null, "CVEs in this advisory (" + a.cves.length + ")"));
+      var cl = el("p", "wbchips");
+      a.cves.forEach(function (c) { var b = el("button", "badge " + (a.kevCves.indexOf(c) >= 0 ? "bad" : "info"), c + (a.cveCvss[c] != null ? " · CVSS " + a.cveCvss[c].toFixed(1) : "") + (a.kevCves.indexOf(c) >= 0 ? " · known exploited" : "")); b.type = "button"; b.title = "Open " + c + " with its rating, priority and fix deadline"; b.addEventListener("click", function () { goCve(c); }); cl.appendChild(b); });
+      d.appendChild(cl);
+    }
+    var ln = el("p", "wblinks"), host = ""; try { host = new URL(a.url || a.doc).host.replace(/^www\./, ""); } catch (e) {}
+    ln.appendChild(link(a.url || a.doc, "Advisory with mitigations and fixes (" + (host || "link") + ")"));
+    if (a.doc && a.doc !== a.url) ln.appendChild(link(a.doc, "CSAF document (machine-readable)"));
+    d.appendChild(ln);
+    d.appendChild(el("p", "note", "From " + a.sourceName + ", read as published. Mitigations and fixes are the publisher's own and are in the advisory; CyberView does not rewrite them."));
+    return d;
+  }
+  /* beside a CVE elsewhere on the page: the industrial advisories that name it */
+  function otJoin(cve) {
+    var box = el("div", "wbme info otjoin"); box.hidden = true;
+    ensureOt().then(function (d) {
+      var list = d && d.byCve[cve]; if (!list || !list.length) return;
+      box.hidden = false; box.appendChild(el("b", null, "Industrial (ICS/OT) advisor" + (list.length > 1 ? "ies" : "y") + " naming " + cve));
+      var ul = el("ul");
+      list.slice(0, 8).forEach(function (a) {
+        var li = el("li"); li.appendChild(el("b", null, a.id + " "));
+        li.appendChild(document.createTextNode((a.vendor ? a.vendor + ": " : "") + a.title + (a.cveCvss[cve] != null ? " · CVSS " + a.cveCvss[cve].toFixed(1) + " for this CVE" : "") + (a.notAffected ? " · the vendor states its products are not affected" : "") + " · "));
+        li.appendChild(link(a.url || a.doc, "advisory")); li.appendChild(document.createTextNode(" · "));
+        var b = el("button", "linkbtn", "open in Industrial"); b.type = "button"; b.addEventListener("click", function () { goOt(a); }); li.appendChild(b);
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+      if (list.length > 8) box.appendChild(el("p", "note", (list.length - 8) + " more in the Industrial view."));
+      box.appendChild(el("p", "note", "From CISA's and the vendors' own advisories; the mitigations and fixes are in the advisory."));
+    }, function () {});
+    return box;
+  }
+  var otT = 0;
+  $("otQ").addEventListener("input", function () { clearTimeout(otT); otT = setTimeout(function () { OT.shown = 40; renderOt(); }, 140); });
+  ["otShow", "otVendor", "otSrc", "otSort"].forEach(function (id) { $(id).addEventListener("change", function () { OT.shown = 40; renderOt(); }); });
+  $("otMore").addEventListener("click", function () { OT.shown += 40; renderOt(); });
+
   /* ---- tabs, links and wiring ---- */
-  var VIEWS = ["queue", "all", "inv", "hunt"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt" }, cur = "queue";
+  var VIEWS = ["queue", "all", "inv", "hunt", "ot"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt", ot: "ot", industrial: "ot" }, cur = "queue";
   function tab(t, keepHash) {
     cur = t;
     VIEWS.forEach(function (k) { $("wbt-" + k).setAttribute("aria-selected", k === t ? "true" : "false"); $("wbp-" + k).hidden = k !== t; });
@@ -669,6 +795,7 @@
     if (t === "inv") renderInv(); if (t === "hunt") renderHunt();
     if (t === "all") ensureIndex().then(function () { renderAll(); });
     if (t === "queue") renderQueue();
+    if (t === "ot") ensureOt().then(function () { renderOt(); });
   }
   /* open one flaw in the Known exploited view */
   function goKnown(cve) { $("wbQ").value = cve; $("wbShow").value = "all"; openCve = cve; tab("queue"); showOpen(); try { history.replaceState(null, "", "#" + cve); } catch (e) {} }
@@ -684,7 +811,7 @@
   $("wbGoInv").addEventListener("click", function () { tab("inv"); $("wbText").focus(); });
   var qt = 0; $("wbQ").addEventListener("input", function () { clearTimeout(qt); qt = setTimeout(function () { if (cur === "all") { CV.page = 0; renderAll(); } else renderQueue(); }, 140); });
   $("wbQ").addEventListener("keydown", function (ev) { if (ev.key === "Enter" && cur === "all") { ev.preventDefault(); lookup(); } });
-  $("wbShow").addEventListener("change", renderQueue);
+  $("wbShow").addEventListener("change", function () { if ($("wbShow").value === "ot") ensureOt().then(renderQueue); else renderQueue(); });
   $("wbFmt").addEventListener("change", function () { huntShown = 12; renderHunt(); });
   $("wbHuntMine").addEventListener("change", function () { huntShown = 12; renderHunt(); });
   $("wbHuntMore").addEventListener("click", function () { huntShown += 12; renderHunt(); });

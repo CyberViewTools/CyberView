@@ -1,0 +1,10 @@
+{
+  "_note": "Dials for scripts/ics.mjs (industrial control system and OT advisories, no AI model). The sources themselves are in the script (SOURCES), with the hosts each may be fetched from. window_days: advisories first published within this many days are kept in data/ics/advisories.json. max_fetch_per_source: CSAF documents read per source per run (the newest first; the rest are read on later runs). Leads: an advisory first published within lead_days becomes a lead for the research loop (kind advisory) when it is known exploited or exploited per the advisory, has a CVSS base score of at least lead_cvss, or has at least sector_cvss in one of lifeline_sectors (CISA's critical infrastructure sector names); at most max_leads_per_run per run, each advisory once.",
+  "window_days": 365,
+  "max_fetch_per_source": 300,
+  "lead_days": 7,
+  "max_leads_per_run": 30,
+  "lead_cvss": 9.0,
+  "sector_cvss": 8.0,
+  "lifeline_sectors": ["Energy", "Water and Wastewater", "Water and Wastewater Systems", "Healthcare and Public Health", "Nuclear Reactors, Materials, and Waste", "Dams", "Chemical", "Transportation Systems", "Communications", "Emergency Services", "Food and Agriculture"]
+}

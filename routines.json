@@ -111,6 +111,19 @@
    "does": "Checks GitHub for public repositories naming each exploited flaw and flags them in the workbench as possible exploit code."
   },
   {
+   "key": "ics",
+   "name": "Industrial advisories",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_ics_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T22:00:00Z",
+   "does": "Reads industrial control system (ICS/OT) advisories as structured data: CISA's ICS and ICS medical advisories and Siemens, Schneider Electric, ABB and Phoenix Contact as CSAF documents, CERT@VDE, Moxa and Mitsubishi Electric from their RSS feeds; joins them with CISA's known-exploited catalog for the Vulnerabilities page's Industrial view, and files exploited or critical ones, and high-scoring ones in lifeline sectors, as leads for the research loop (scripts/ics.mjs, no AI model)."
+  },
+  {
    "key": "lead-triage",
    "name": "Lead triage",
    "tier": "automation",

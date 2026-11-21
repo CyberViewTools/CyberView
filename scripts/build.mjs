@@ -324,6 +324,13 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
   for (const [cve, g] of Object.entries(guides)) for (const h of (g.hunt || []).filter(detection)) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
   writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, analyses, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
+// industrial (ICS/OT) advisories (scripts/ics.mjs, no AI model) for the Vulnerabilities page's Industrial view; a broken or
+// missing file only leaves that view empty, with a warning, never the build
+try {
+  const p = join(DATA, "ics", "advisories.json"), d = existsSync(p) ? readJson(p) : null;
+  const sd = d ? (await import("./ics.mjs")).siteData(d, built_at) : null;
+  if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
+} catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,

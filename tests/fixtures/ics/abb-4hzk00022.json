@@ -1,0 +1,257 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "distribution": {
+      "text": "© Copyright 2026 ABB. All rights reserved.",
+      "tlp": {
+        "label": "WHITE"
+      }
+    },
+    "lang": "en",
+    "notes": [
+      {
+        "category": "summary",
+        "text": "ABB is aware of public reports of vulnerabilities in the product versions listed as affected in the advisory. The vulnerabilities are present in the embedded Apache Tomcat component included with MATLAB Runtime R2015b. A vulnerability may allow an unauthenticated attacker to execute arbitrary code, access sensitive information, or modify files on the affected system under specific conditions. Since Apache Tomcat is not required for the operation of ABB APCA Model Builder, the recommended solution is to remove the Apache Tomcat component from the installed machine. ABB provides a patch that performs this removal and mitigates exposure to CVE-2025-24813 and CVE-2016-8735.",
+        "title": "Summary"
+      },
+      {
+        "category": "other",
+        "text": "For additional instructions and support please contact your local ABB service organization. For contact information, see www.abb.com/contactcenters.\n\nInformation about ABB’s cyber security program and capabilities can be found at www.abb.com/cybersecurity.",
+        "title": "Support"
+      },
+      {
+        "category": "legal_disclaimer",
+        "text": "The information in this document is subject to change without notice, and should not be construed as a commitment by ABB.\n\nABB provides no warranty, express or implied, including warranties of merchantability and fitness for a particular purpose, for the information contained in this document, and assumes no responsibility for any errors that may appear in this document. In no event shall ABB or any of its suppliers be liable for direct, indirect, special, incidental or consequential damages of any nature or kind arising from the use of this document, or from the use of any hardware or software described in this document, even if ABB or its suppliers have been advised of the possibility of such damages.\n\nThis document and parts hereof must not be reproduced or copied without written permission from ABB, and the contents hereof must not be imparted to a third party nor used for any unauthorized purpose.\n\nAll rights to registrations and trademarks reside with their respective owners.",
+        "title": "Notice"
+      },
+      {
+        "category": "other",
+        "text": "For any installation of software-related ABB products we strongly recommend the following (non-exhaustive) list of cyber security practices:\n\n- Isolate special purpose networks (e.g. for automation systems) and remote devices behind firewalls and separate them from any general-purpose network (e.g. office or home networks).\n- Install physical controls so no unauthorized personnel can access your devices, components, peripheral equipment, and networks.\n- Never connect programming software or computers containing programing software to any network other than the network for the devices that it is intended for.\n- Scan all data imported into your environment before use to detect potential malware infections.\n- Minimize network exposure for all applications and endpoints to ensure that they are not accessible from the Internet unless they are designed for such exposure and the intended use requires such.\n- Ensure all nodes are always up to date in terms of installed software, operating system, and firmware patches as well as anti-virus and firewall.\n- When remote access is required, use secure methods, such as Virtual Private Networks (VPNs). Recognize that VPNs may have vulnerabilities and should be updated to the most current version available. Also, understand that VPNs are only as secure as the connected devices.",
+        "title": "General security recommendations"
+      },
+      {
+        "category": "other",
+        "text": "ABB has a rigorous internal cyber security continuous improvement process which involves regular testing with industry leading tools and periodic assessments to identify potential product issues. Occasionally an issue is determined to be a design or coding flaw with implications that may impact product cyber security.\n\nWhen a potential product vulnerability is identified or reported, ABB immediately initiates our vulnerability handling process. This entails validating if the issue is in fact a product issue, identifying root causes, determining what related products may be impacted, developing a remediation, and notifying end users and governmental organizations.\n\nThe resulting Cyber Security Advisory intends to notify customers of the vulnerability and provide details on which products are impacted, how to mitigate the vulnerability or explain workarounds that minimize the potential risk as much as possible. The release of a Cyber Security Advisory should not be misconstrued as an affirmation or indication of an active threat or ongoing campaign targeting the products mentioned here. If ABB is aware of any specific threats, it will be clearly mentioned in the communication.\n\nThe publication of this Cyber Security Advisory is an example of ABB's commitment to the user community in support of this critical topic. Responsible disclosure is an important element in the chain of trust we work to maintain with our many customers. The release of an Advisory provides timely information which is essential to help ensure our customers are fully informed.",
+        "title": "Purpose"
+      },
+      {
+        "category": "faq",
+        "text": "What causes the vulnerability?\n- The vulnerabilities are caused by two separate vulnerabilities in Apache Tomcat.\n\nWhat is Apache Tomcat?\n- Apache Tomcat is an open-source Java web server and servlet container used to host and execute Java-based web applications\n\nWhat might an attacker use the vulnerability to do?\n- An attacker could potentially access sensitive files, modify data, execute arbitrary code remotely, or compromise the affected server\n\nHow could an attacker exploit the vulnerability?\n- CVE-2025-24813: By sending specially crafted HTTP partial PUT requests to a vulnerable Tomcat server under specific configurations.\n- CVE-2016-8735: By sending specially crafted requests to an exposed JMX management interface when the vulnerable listener is configured.\n\nCould the vulnerability be exploited remotely?\n- Yes, both vulnerabilities can be exploited remotely if the affected services and required configurations are accessible over the network\n\nCan functional safety be affected by an exploit of this vulnerability?\n- There is no direct impact on functional safety. However, successful exploitation could affect system availability, integrity and confidentiality, potentially disrupting dependent operational functions.\n\nWhat does the update do?\n- The patch will remove the vulnerable component which is not required for ABB Ability APCA Model Builder.\n\nWhen this security advisory was issued, had this vulnerability been publicly disclosed?\n- Yes, both vulnerabilities had been publicly disclosed before the advisory was issued.\n\nWhen this security advisory was issued, had ABB received any reports that this vulnerability was being exploited?\n- No, ABB had not received any information indicating that this vulnerability had been exploited when this security advisory was originally issued.",
+        "title": "Frequently Asked Questions"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "name": "ABB PSIRT",
+      "namespace": "https://www.abb.com/global/en/company/about/cybersecurity/alerts-and-notifications"
+    },
+    "references": [
+      {
+        "category": "self",
+        "summary": "ABB CYBERSECURITY ADVISORY - PDF Version ",
+        "url": "https://search.abb.com/library/Download.aspx?DocumentID=4HZK00022&LanguageCode=en&DocumentPartId=1&Action=Launch"
+      },
+      {
+        "category": "self",
+        "summary": "ABB CYBERSECURITY ADVISORY - CSAF Version ",
+        "url": "https://psirt.abb.com/csaf/2026/4hzk00022.json"
+      }
+    ],
+    "title": "ABB Ability APCA Model Builder Apache Tomcat Vulnerability in Matlab Installation",
+    "tracking": {
+      "current_release_date": "2026-11-20T00:30:00.000Z",
+      "generator": {
+        "date": "2026-11-20T15:09:00.618Z",
+        "engine": {
+          "name": "Secvisogram",
+          "version": "2.6.21"
+        }
+      },
+      "id": "4HZK00022",
+      "initial_release_date": "2026-11-20T00:30:00.000Z",
+      "revision_history": [
+        {
+          "date": "2026-11-20T00:30:00.000Z",
+          "legacy_version": "A",
+          "number": "1",
+          "summary": "Initial version."
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "3.4",
+                "product": {
+                  "name": "ABB ABB Ability™ APCA Model Builder 3.4",
+                  "product_id": "AV1"
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "ABB Ability™ APCA Model Builder"
+          }
+        ],
+        "category": "vendor",
+        "name": "ABB"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2025-24813",
+      "cwe": {
+        "id": "CWE-44",
+        "name": "Path Equivalence: 'file.name' (Internal Dot)"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "A vulnerability in Apache Tomcat that may allow an unauthenticated attacker to perform remote code execution, access sensitive information, or modify files through improper handling of specific requests and file operations.",
+          "title": "CVE description"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "AV1"
+        ]
+      },
+      "references": [
+        {
+          "category": "external",
+          "summary": "NVD - CVE-2025-24813",
+          "url": "https://nvd.nist.gov/vuln/detail/cve-2025-24813"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "ABB recommends applying the provided patch immediately. The patch removes the vulnerable Apache Tomcat component bundled with MATLAB Runtime R2015b, thereby mitigating exposure to CVE-2025-24813 and CVE-2016-8735. Verify successful removal of the Apache Tomcat component in installed machine.\n\nApplying the patch is the only complete and reliable mitigation. Follow the steps below to install the patch:\n1. Obtain the ABB-provided workaround patch.\n2. Apply the patch on systems running ABB Ability APCA Model Builder with MATLAB Runtime R2015b.\n3. The patch removes the embedded Apache Tomcat files and directories from the Installed MATLAB Runtime.\n4. Restart any affected services or applications, if applicable.\n5. Verify that the Apache Tomcat component has been successfully removed.",
+          "product_ids": [
+            "AV1"
+          ]
+        },
+        {
+          "category": "workaround",
+          "details": "The workaround for this vulnerability while patches are not applied is to remove the existing Apache Tomcat folder from the MATLAB Runtime installation directory and restart the system.\n\nFollow the below steps for workaround.\n- Save all ongoing work in MATLAB APC Model Builder\n- Close the MATLAB APC Model Builder application completely.\n- Navigate to the following directory: C:\\Program Files (x86)\\MATLAB\\MATLAB Runtime\\v90\\sys\\\n- Locate the Apache Tomcat folder.\n- Remove the entire Apache Tomcat folder.\n- Restart the VM/system.\n- Once the system restarts, launch MATLAB APC Model Builder.\n- Verify that MATLAB APC Model Builder opens and functions as expected.",
+          "product_ids": [
+            "AV1"
+          ]
+        },
+        {
+          "category": "mitigation",
+          "details": "ABB has assessed that the vulnerable Apache Tomcat component is embedded within MATLAB Runtime R2015b, which is used as a prerequisite for ABB APCA Model Builder. The following factors remove the potential risk associated with these vulnerabilities:\n- The vulnerable Apache Tomcat component is not required for the intended operation of ABB APCA Model Builder.\n- ABB has identified a solution and developed a batch script to remove the affected components from machines on which Model Builder is installed.\n- Removal of the Apache Tomcat component eliminates the vulnerable software.\n- Successful exploitation would require access to the affected system and the vulnerable Apache Tomcat component to be present and accessible.\n- No impact on the intended functionality of ABB APCA Model Builder is expected after the patch is applied.",
+          "product_ids": [
+            "AV1"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "HIGH",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 9.8,
+            "environmentalSeverity": "CRITICAL",
+            "integrityImpact": "HIGH",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 9.8,
+            "temporalSeverity": "CRITICAL",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "version": "3.1"
+          },
+          "products": [
+            "AV1"
+          ]
+        }
+      ],
+      "title": "CVE-2025-24813"
+    },
+    {
+      "cve": "CVE-2016-8735",
+      "notes": [
+        {
+          "category": "description",
+          "text": "A vulnerability in the Apache Tomcat JMX management functionality that may allow a remote attacker to execute arbitrary code, potentially leading to complete compromise of the affected system.",
+          "title": "CVE description"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "AV1"
+        ]
+      },
+      "references": [
+        {
+          "category": "external",
+          "summary": "NVD - CVE-2016-8735",
+          "url": "https://nvd.nist.gov/vuln/detail/cve-2016-8735"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "ABB recommends applying the provided patch immediately. The patch removes the vulnerable Apache Tomcat component bundled with MATLAB Runtime R2015b, thereby mitigating exposure to CVE-2025-24813 and CVE-2016-8735. Verify successful removal of the Apache Tomcat component in installed machine.\n\nApplying the patch is the only complete and reliable mitigation. Follow the steps below to install the patch:\n1. Obtain the ABB-provided workaround patch.\n2. Apply the patch on systems running ABB Ability APCA Model Builder with MATLAB Runtime R2015b.\n3. The patch removes the embedded Apache Tomcat files and directories from the Installed MATLAB Runtime.\n4. Restart any affected services or applications, if applicable.\n5. Verify that the Apache Tomcat component has been successfully removed.",
+          "product_ids": [
+            "AV1"
+          ]
+        },
+        {
+          "category": "workaround",
+          "details": "The workaround for this vulnerability while patches are not applied is to remove the existing Apache Tomcat folder from the MATLAB Runtime installation directory and restart the system.\n\nFollow the below steps for workaround.\n- Save all ongoing work in MATLAB APC Model Builder\n- Close the MATLAB APC Model Builder application completely.\n- Navigate to the following directory: C:\\Program Files (x86)\\MATLAB\\MATLAB Runtime\\v90\\sys\\\n- Locate the Apache Tomcat folder.\n- Remove the entire Apache Tomcat folder.\n- Restart the VM/system.\n- Once the system restarts, launch MATLAB APC Model Builder.\n- Verify that MATLAB APC Model Builder opens and functions as expected.",
+          "product_ids": [
+            "AV1"
+          ]
+        },
+        {
+          "category": "mitigation",
+          "details": "ABB has assessed that the vulnerable Apache Tomcat component is embedded within MATLAB Runtime R2015b, which is used as a prerequisite for ABB APCA Model Builder. The following factors remove the potential risk associated with these vulnerabilities:\n- The vulnerable Apache Tomcat component is not required for the intended operation of ABB APCA Model Builder.\n- ABB has identified a solution and developed a batch script to remove the affected components from machines on which Model Builder is installed.\n- Removal of the Apache Tomcat component eliminates the vulnerable software.\n- Successful exploitation would require access to the affected system and the vulnerable Apache Tomcat component to be present and accessible.\n- No impact on the intended functionality of ABB APCA Model Builder is expected after the patch is applied.",
+          "product_ids": [
+            "AV1"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "HIGH",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 9.8,
+            "environmentalSeverity": "CRITICAL",
+            "integrityImpact": "HIGH",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 9.8,
+            "temporalSeverity": "CRITICAL",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "version": "3.1"
+          },
+          "products": [
+            "AV1"
+          ]
+        }
+      ],
+      "title": "CVE-2016-8735"
+    }
+  ]
+}

@@ -56,6 +56,12 @@ jobs:
       - name: Exploit watch (public repositories naming exploited CVEs)
         if: steps.gate.outputs.go == '1'
         run: node scripts/osint.mjs exploits || true
+      - name: Industrial (ICS/OT) advisories (CISA and vendors' CSAF and RSS feeds; a failing source keeps its last copy)
+        if: steps.gate.outputs.go == '1'
+        # optional: a failure here never stops the commit or the deploy
+        timeout-minutes: 5
+        continue-on-error: true
+        run: node scripts/ics.mjs || true
       - name: Validate and security check
         if: steps.gate.outputs.go == '1'
         run: node scripts/build.mjs --quarantine && node scripts/security-check.mjs

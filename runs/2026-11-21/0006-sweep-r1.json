@@ -1,0 +1,23 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-21T00:02:00Z",
+  "finished_at": "2026-11-21T00:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["NBC News USDA cyberattack farmers payments platform Fordyce"],
+  "pages_read": [
+    {"url": "https://www.cryptopolitan.com/amazon-urges-automated-defenses-ai-agents/", "title": "Amazon urges automated defenses after AI agents hacked a university", "used_in": "amazon-cairn-ai-agents-monai-label-zero-day-2026-11"},
+    {"url": "https://thedefiant.io/frontier/ai/amazon-says-ai-agents-found-and-exploited-a-zero-day", "title": "Amazon Says AI Agents Found and Exploited a Zero-Day (standfirst only)", "used_in": "amazon-cairn-ai-agents-monai-label-zero-day-2026-11"}
+  ],
+  "added": ["amazon-cairn-ai-agents-monai-label-zero-day-2026-11"],
+  "updated": [],
+  "skipped": [
+    {"title": "El departamento de Agricultura de EE.UU. sufrió un ciberataque esta semana, según NBC", "url": "https://www.clarin.com/estados-unidos/el-departamento-de-agricultura-de-ee-uu-sufrio-un-ciberataque-esta-semana-segun-nbc_0_JclxpgFrok.html", "reason": "already on file as usda-security-incident-systems-offline-2026-11; clarin is the same EFE/NBC relay and its page would not load"}
+  ],
+  "open_leads": [
+    {"title": "Amazon AWS security blog: Chinese-nexus actor's Cairn AI agents found a zero-day on their own", "url": "https://aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/", "note": "Primary source; only navigation loaded. Read it to confirm facts, date and attribution wording, then upgrade validation.", "priority": "high"},
+    {"title": "MONAI Label GitHub advisory GHSA-qc22-rmgc-vg94", "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94", "note": "403; CVE ID, affected and fixed versions unknown.", "priority": "high"},
+    {"title": "NBC News original on USDA cyberattack", "url": "", "note": "Not found; USDA event stays single_source until NBC page is read.", "priority": "medium"}
+  ],
+  "failed_sites": ["clarin.com", "aws.amazon.com (article body truncated)", "github.com advisory (403)", "thedefiant.io (body)"],
+  "notes": "The Cryptopolitan page says both 'no fix exists' at discovery and that maintainers later fixed it; the event records only the maintainers' fix as reported."
+}

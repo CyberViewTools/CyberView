@@ -1,5 +1,5 @@
 {
-  "action": "Upgrade Ruby to 4.0.10, 3.4.13 or 3.3.14. Do not compile or match regular expressions from untrusted input, and plan to move off Ruby 3.2 and earlier, which get no fix.",
+  "action": "Upgrade Ruby to 4.0.10, 3.4.13 or 3.3.14, as the Ruby project strongly recommends; move off Ruby 3.2 and earlier, which are end of life and will not get these fixes.",
   "actor": "",
   "attack": [],
   "category": "vuln",
@@ -8,7 +8,7 @@
     "CVE-2026-132825"
   ],
   "date": "2026-11-18",
-  "exec": "Ruby is widely used for web back ends; apps that handle untrusted text or patterns could be open to memory-corruption flaws, and Ruby 3.2 and older get no fix.",
+  "exec": "Apps built on affected Ruby versions could be exposed to memory-corruption flaws that maintainers say can lead to remote code execution, and Ruby 3.2 and older get no fix.",
   "first_seen": "2026-11-19T02:12:54Z",
   "geo_basis": "organisation",
   "lat": 35.68,
@@ -66,20 +66,20 @@
   "tags": [],
   "time_basis": "published",
   "title": "Ruby fixes seven memory-safety flaws in Regexp and String case conversion",
-  "updated_at": "2026-11-21T15:33:26Z",
+  "updated_at": "2026-11-21T15:42:21Z",
   "validation": {
     "checked_at": "2026-11-20T11:05:00Z",
     "note": "Ruby advisory read in full; SecurityWeek (20 Nov) and GBHackers independently report Ruby2Shell and the same fixed versions.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T15:35:05Z",
+    "state": "corrected",
+    "at": "2026-11-21T15:42:27Z",
     "first_at": "2026-11-19T10:28:00Z",
-    "note": "Compared with Ruby advisory and oss-security copy (18 Nov), SecurityWeek (20 Nov): seven flaws, affected and fixed versions, PoC wording, no CVEs at publication, Ruby2Shell CVE-2026-132825 CVSS 7.4 attributed to SecurityWeek, 3.2 EOL.",
+    "note": "Versions, fixes, seven flaws, PoC wording and CVE status match the Ruby advisory, SecurityWeek and GBHackers. Removed unsourced 'widely used for web back ends' and untrusted-regex advice from exec and action.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-20T15:35:05Z",
+  "qa_checked_at": "2026-11-21T15:42:27Z",
   "cve_meta": [
     {
       "id": "CVE-2026-132825",

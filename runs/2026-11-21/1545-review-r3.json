@@ -1,0 +1,35 @@
+{
+  "job": "review",
+  "started_at": "2026-11-21T15:30:00Z",
+  "finished_at": "2026-11-21T15:45:00Z",
+  "reviewed": [
+    {"id": "gtig-armory-castle-vcenter-zero-day-2026-11", "verdict": "passed", "note": "Google GTIG post and SecurityWeek match actor wording, CVE, dates, CVSS, fixed builds"},
+    {"id": "apache-tomcat-cve-2026-133325-cluster-tls-psk", "verdict": "passed", "note": "Tomcat security pages and GBHackers match"},
+    {"id": "dlink-dir-600l-hnap-overflow-2026-11", "verdict": "flagged", "note": "INCIBE-CERT page failed to load (too many redirects); single source"},
+    {"id": "linux-kvm-amd-nested-init-cve-2026-99312-2026-11", "verdict": "flagged", "note": "Red Hat rating in record (Moderate, 5.6) conflicts with Red Hat page as read (preliminary CVSS 7.8, no label)"},
+    {"id": "php-critical-security-release-announced-2026-11", "verdict": "passed", "note": "heise, The Register, SecurityWeek match; SecurityWeek also lists PHP 8.6.0"},
+    {"id": "poste-io-dmarc-rce-cve-2026-127027", "verdict": "passed", "note": "CERT Polska advisory matches"},
+    {"id": "synology-dsm-oauth-nginx-critical-flaws-2026-11", "verdict": "corrected", "note": "due-by-20-Nov claim replaced by advisory fix status; unsourced exec removed; correction file added"},
+    {"id": "zyxel-dsl-fiber-extender-cve-2026-79614-2026-11", "verdict": "passed", "note": "Zyxel advisory and Security.nl match"}
+  ],
+  "pages_read": [
+    {"url": "https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere"},
+    {"url": "https://www.securityweek.com/newly-patched-vmware-vcenter-flaw-exploited-as-zero-day-by-chinese-apt/"},
+    {"url": "https://tomcat.apache.org/security-11.html"},
+    {"url": "https://gbhackers.com/critical-apache-tomcat-security-flaw/"},
+    {"url": "https://www.digitalocean.com/blog/cve-2026-99312-kvm-patch"},
+    {"url": "https://lists.openwall.net/linux-cve-announce/2026/11/18/2"},
+    {"url": "https://access.redhat.com/security/cve/cve-2026-99312"},
+    {"url": "https://www.heise.de/news/PHP-behebt-17-Sicherheitsluecken-vier-erlauben-Ausfuehrung-von-Schadcode-11531249.html"},
+    {"url": "https://www.theregister.com/patches/2026/11/18/get-ready-for-another-critical-php-security-release-to-drop/5310911"},
+    {"url": "https://www.securityweek.com/php-patches-seven-critical-rce-vulnerabilities/"},
+    {"url": "https://cert.pl/en/posts/2026/11/CVE-2026-127027/"},
+    {"url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_21"},
+    {"url": "https://www.synology.com/en-us/security/advisory/Synology_SA_26_20"},
+    {"url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"},
+    {"url": "https://www.zyxel.com/global/en/support/security-advisories/zyxel-security-advisory-for-out-of-bounds-write-and-post-authentication-command-injection-vulnerabilities-in-certain-dsl-ethernet-cpe-fiber-onts-and-wireless-extenders-11-17-2026"},
+    {"url": "https://www.security.nl/posting/962067/Zyxel+dicht+beveiligingslekken+in+glasvezelmodems+en+wifi-extenders"}
+  ],
+  "failed_sites": ["https://www.incibe.es/incibe-cert/alerta-temprana/avisos/desbordamiento-de-bufer-basado-en-pila-en-dir-600l-de-d-link (too many redirects)"],
+  "notes": "Pages were read through a fetch subagent. Build passed."
+}

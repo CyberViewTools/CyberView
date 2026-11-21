@@ -1,5 +1,5 @@
 {
-  "action": "Update Ivanti Endpoint Manager to 2024 SU8 or later now, starting with any Core server reachable from the internet, and review Core servers for signs of compromise.",
+  "action": "Install the updates Ivanti has released for Endpoint Manager, as the NCSC-NL advisory advises; see Ivanti's November 2026 security advisory for affected versions and fixes.",
   "actor": "",
   "attack": [],
   "category": "vuln",
@@ -25,7 +25,7 @@
     "CVE-2026-18128"
   ],
   "date": "2026-11-13",
-  "exec": "Endpoint Manager controls every managed computer; a no-login takeover flaw with public exploit code makes this a patch-now item.",
+  "exec": "A critical flaw in Endpoint Manager that needs no login now has public proof-of-concept code, which NCSC-NL says raises the likelihood of exploitation in the short term.",
   "first_seen": "2026-11-18T00:50:00Z",
   "geo_basis": "agency",
   "impact": "",
@@ -35,7 +35,7 @@
   "org": "NCSC Netherlands",
   "pin_type": "agency",
   "place": "The Hague",
-  "plain": "A serious weakness in Ivanti's software for managing company computers can let an outsider take control without a password. Instructions for abusing it are now public, so attacks are likely soon.",
+  "plain": "A serious weakness in Ivanti's software for managing company computers could let an outsider without a password run code. Public proof-of-concept code now exists, which the Dutch NCSC says makes exploitation more likely in the short term.",
   "products": [
     "Ivanti Endpoint Manager"
   ],
@@ -65,10 +65,6 @@
     {
       "name": "NCSC-NL advisory NCSC-2026-0493",
       "url": "https://advisories.ncsc.nl/2026/ncsc-2026-0493.html"
-    },
-    {
-      "name": "Ivanti security advisory",
-      "url": "https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Endpoint-Manager-EPM-November-2026?language=en_US"
     }
   ],
   "status": "official",
@@ -76,17 +72,18 @@
   "tags": [],
   "time_basis": "published",
   "title": "NCSC Netherlands: public exploit code for critical Ivanti Endpoint Manager flaw (CVE-2026-121653)",
-  "updated_at": "2026-11-21T15:33:26Z",
+  "updated_at": "2026-11-21T15:40:42Z",
   "validation": {
     "checked_at": "2026-11-18T00:50:00Z",
-    "note": "Reviewed against the original NCSC-NL advisory, read in a browser. The Ivanti advisory it references was not read.",
+    "note": "Reviewed against the original NCSC-NL advisory only; Ivanti advisory not read and removed from sources.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T03:27:37Z",
-    "note": "CVE-2026-121653 (9.8, before 2024 SU8), public PoC, CVE-2026-18128, dates against NCSC-NL advisory; Ivanti page did not render (script-loaded)",
+    "state": "corrected",
+    "at": "2026-11-21T15:40:42Z",
+    "first_at": "2026-11-19T03:27:37Z",
+    "note": "Facts match NCSC-NL (CVEs, CVSS, before 2024 SU8, PoC, dates). Removed unsourced action detail, 'controls every managed computer' and 'attacks likely soon' wording; dropped unread Ivanti source.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-19T03:27:37Z"
+  "qa_checked_at": "2026-11-21T15:40:42Z"
 }

@@ -302,7 +302,7 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
  * ACCURACY_STRICT_FROM, warnings for older ones; the checks that need the new fields (evidence, a source's published day)
  * are left out for older events that lack them, so history is not reported for fields it could not have had.
  */
-export const ACCURACY_STRICT_FROM = "2026-11-22T00:00:00Z";
+export const ACCURACY_STRICT_FROM = "2026-11-22T06:00:00Z";
 // a figure a reader acts on in any form: 1,234 / 4.5 million / 400 / 40% (not a year, version, id, CVSS score, date or time)
 const COUNTABLE = /(?<![\w.,:/#-])(about|around|approximately|roughly|some|nearly|almost|under|less than|fewer than|up to|over|more than|at least)?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(\s?(?:million|billion|bn|m\b|k\b)|\s?(?:%|percent|per cent))?(?![\w.,:/-]*\d)(?![\w-])/gi;
 const MONTH = /^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i, MONTH_BEFORE = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s*$/i;

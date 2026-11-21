@@ -1,97 +1,97 @@
 {
-  "at": "2026-11-19T09:40:44Z",
+  "at": "2026-11-21T09:37:35Z",
   "days": 7,
-  "events_added": 279,
-  "cost_usd": 26.86,
-  "cost_per_event": 0.096,
+  "events_added": 461,
+  "cost_usd": 321.63,
+  "cost_per_event": 0.698,
   "review": {
-    "reviewed": 279,
-    "corrected_or_flagged": 100,
-    "rate": 0.358
+    "reviewed": 461,
+    "corrected_or_flagged": 177,
+    "rate": 0.384
   },
   "backlog": {
-    "at": "2026-11-19T09:40:30Z",
+    "at": "2026-11-21T09:31:57Z",
     "waiting": 0,
     "incidents": 0,
     "strong": 0,
-    "closable_by_rule": 0,
-    "claims": 13,
+    "closable_by_rule": 1,
+    "claims": 38,
     "oldest_hours": 0,
     "oldest_incident_hours": 0
   },
   "guard": {
     "blocked": true,
-    "why": "second review corrected or flagged 36% of events"
+    "why": "second review corrected or flagged 38% of events"
   },
   "roles": {
     "triage": {
       "model": "haiku",
-      "runs": 4,
+      "runs": 16,
       "ok_rate": 1,
-      "cost": 0.06,
-      "cost_per_run": 0.015,
-      "turns_per_run": 9,
-      "min_per_run": 0.7,
+      "cost": 0.29,
+      "cost_per_run": 0.018,
+      "turns_per_run": 10,
+      "min_per_run": 0.9,
       "timeouts": 0
     },
     "researcher": {
       "model": "sonnet",
-      "runs": 21,
+      "runs": 487,
       "ok_rate": 1,
-      "cost": 6.15,
-      "cost_per_run": 0.293,
-      "turns_per_run": 19,
-      "min_per_run": 1.3,
+      "cost": 137.31,
+      "cost_per_run": 0.282,
+      "turns_per_run": 16,
+      "min_per_run": 1.2,
       "timeouts": 0
     },
     "gap": {
       "model": "sonnet",
-      "runs": 20,
+      "runs": 176,
       "ok_rate": 1,
-      "cost": 6.24,
-      "cost_per_run": 0.312,
-      "turns_per_run": 14,
-      "min_per_run": 1,
+      "cost": 51.91,
+      "cost_per_run": 0.295,
+      "turns_per_run": 13,
+      "min_per_run": 0.8,
       "timeouts": 0
     },
     "reviewer": {
       "model": "sonnet",
-      "runs": 25,
+      "runs": 221,
       "ok_rate": 1,
-      "cost": 11.74,
-      "cost_per_run": 0.47,
-      "turns_per_run": 32,
-      "min_per_run": 2.1,
+      "cost": 63.61,
+      "cost_per_run": 0.288,
+      "turns_per_run": 16,
+      "min_per_run": 1.3,
       "timeouts": 0
     },
     "brief": {
       "model": "sonnet",
-      "runs": 1,
+      "runs": 7,
       "ok_rate": 1,
-      "cost": 0.3,
-      "cost_per_run": 0.299,
-      "turns_per_run": 14,
+      "cost": 2.32,
+      "cost_per_run": 0.331,
+      "turns_per_run": 16,
       "min_per_run": 1.1,
       "timeouts": 0
     },
     "exploit-analyst": {
       "model": "opus",
-      "runs": 3,
+      "runs": 8,
       "ok_rate": 1,
-      "cost": 0.99,
-      "cost_per_run": 0.329,
-      "turns_per_run": 7,
-      "min_per_run": 0.5,
+      "cost": 6.59,
+      "cost_per_run": 0.824,
+      "turns_per_run": 20,
+      "min_per_run": 2.3,
       "timeouts": 0
     },
     "regional": {
       "model": "sonnet",
-      "runs": 1,
+      "runs": 3,
       "ok_rate": 1,
-      "cost": 0.3,
-      "cost_per_run": 0.304,
-      "turns_per_run": 15,
-      "min_per_run": 1.1,
+      "cost": 1.12,
+      "cost_per_run": 0.373,
+      "turns_per_run": 19,
+      "min_per_run": 1.9,
       "timeouts": 0
     },
     "regional-researcher": {
@@ -103,11 +103,151 @@
       "turns_per_run": 18,
       "min_per_run": 1.2,
       "timeouts": 0
+    },
+    "improver": {
+      "model": "sonnet",
+      "runs": 1,
+      "ok_rate": 1,
+      "cost": 0.17,
+      "cost_per_run": 0.169,
+      "turns_per_run": 11,
+      "min_per_run": 0.7,
+      "timeouts": 0
+    },
+    "analysis": {
+      "model": "opus",
+      "runs": 3,
+      "ok_rate": 1,
+      "cost": 5.8,
+      "cost_per_run": 1.933,
+      "turns_per_run": 33,
+      "min_per_run": 4.6,
+      "timeouts": 0
+    },
+    "report-review": {
+      "model": "sonnet",
+      "runs": 2,
+      "ok_rate": 1,
+      "cost": 0.96,
+      "cost_per_run": 0.481,
+      "turns_per_run": 22,
+      "min_per_run": 2.4,
+      "timeouts": 0
+    },
+    "watchdog": {
+      "model": "haiku",
+      "runs": 1,
+      "ok_rate": 1,
+      "cost": 0.02,
+      "cost_per_run": 0.018,
+      "turns_per_run": 16,
+      "min_per_run": 1,
+      "timeouts": 0
+    },
+    "verify": {
+      "model": "sonnet",
+      "runs": 4,
+      "ok_rate": 1,
+      "cost": 3.08,
+      "cost_per_run": 0.77,
+      "turns_per_run": 15,
+      "min_per_run": 3.2,
+      "timeouts": 0
+    },
+    "advisory": {
+      "model": "sonnet",
+      "runs": 4,
+      "ok_rate": 1,
+      "cost": 1.49,
+      "cost_per_run": 0.373,
+      "turns_per_run": 22,
+      "min_per_run": 1.8,
+      "timeouts": 0
+    },
+    "followup": {
+      "model": "sonnet",
+      "runs": 27,
+      "ok_rate": 1,
+      "cost": 10.39,
+      "cost_per_run": 0.385,
+      "turns_per_run": 19,
+      "min_per_run": 1.4,
+      "timeouts": 0
+    },
+    "updater": {
+      "model": "sonnet",
+      "runs": 128,
+      "ok_rate": 1,
+      "cost": 27.32,
+      "cost_per_run": 0.213,
+      "turns_per_run": 11,
+      "min_per_run": 0.8,
+      "timeouts": 0
+    },
+    "steward": {
+      "model": "haiku",
+      "runs": 1,
+      "ok_rate": 1,
+      "cost": 0.07,
+      "cost_per_run": 0.075,
+      "turns_per_run": 24,
+      "min_per_run": 1.7,
+      "timeouts": 0
+    },
+    "fixer": {
+      "model": "sonnet",
+      "runs": 23,
+      "ok_rate": 1,
+      "cost": 2.6,
+      "cost_per_run": 0.113,
+      "turns_per_run": 6,
+      "min_per_run": 0.4,
+      "timeouts": 0
+    },
+    "tabletop": {
+      "model": "opus",
+      "runs": 1,
+      "ok_rate": 1,
+      "cost": 0.93,
+      "cost_per_run": 0.928,
+      "turns_per_run": 22,
+      "min_per_run": 2.8,
+      "timeouts": 0
+    },
+    "backlog-triager": {
+      "model": "haiku",
+      "runs": 3,
+      "ok_rate": 1,
+      "cost": 0.03,
+      "cost_per_run": 0.009,
+      "turns_per_run": 3,
+      "min_per_run": 0.4,
+      "timeouts": 0
+    },
+    "grid": {
+      "model": "sonnet",
+      "runs": 2,
+      "ok_rate": 1,
+      "cost": 0.37,
+      "cost_per_run": 0.185,
+      "turns_per_run": 8,
+      "min_per_run": 0.5,
+      "timeouts": 0
+    },
+    "outage": {
+      "model": "sonnet",
+      "runs": 16,
+      "ok_rate": 1,
+      "cost": 4.17,
+      "cost_per_run": 0.261,
+      "turns_per_run": 8,
+      "min_per_run": 0.8,
+      "timeouts": 0
     }
   },
   "jobs": {
     "feeds": {
-      "runs": 11,
+      "runs": 47,
       "added": 0,
       "updated": 0,
       "skipped": 0,
@@ -115,15 +255,15 @@
       "add_rate": null
     },
     "sweep": {
-      "runs": 93,
-      "added": 76,
-      "updated": 20,
-      "skipped": 258,
-      "cost": 12.39,
-      "add_rate": 0.27
+      "runs": 660,
+      "added": 260,
+      "updated": 80,
+      "skipped": 1307,
+      "cost": 275.96,
+      "add_rate": 0.21
     },
     "context": {
-      "runs": 9,
+      "runs": 45,
       "added": 0,
       "updated": 0,
       "skipped": 0,
@@ -131,39 +271,39 @@
       "add_rate": null
     },
     "verify": {
-      "runs": 2,
+      "runs": 5,
       "added": 0,
-      "updated": 17,
-      "skipped": 3,
-      "cost": null,
-      "add_rate": 0.85
+      "updated": 41,
+      "skipped": 4,
+      "cost": 3.08,
+      "add_rate": 0.91
     },
     "triage": {
-      "runs": 30,
+      "runs": 214,
       "added": 0,
       "updated": 0,
-      "skipped": 341,
-      "cost": 0.06,
+      "skipped": 685,
+      "cost": 0.44,
       "add_rate": 0
     },
     "tabletop": {
-      "runs": 1,
+      "runs": 2,
       "added": 0,
       "updated": 0,
-      "skipped": 2,
-      "cost": null,
+      "skipped": 4,
+      "cost": 0.93,
       "add_rate": 0
     },
     "advisory": {
-      "runs": 2,
-      "added": 11,
+      "runs": 6,
+      "added": 14,
       "updated": 0,
-      "skipped": 1,
-      "cost": null,
-      "add_rate": 0.92
+      "skipped": 9,
+      "cost": 1.49,
+      "add_rate": 0.61
     },
     "reviewer": {
-      "runs": 32,
+      "runs": 133,
       "added": 0,
       "updated": 1,
       "skipped": 0,
@@ -171,28 +311,28 @@
       "add_rate": 1
     },
     "steward": {
-      "runs": 1,
-      "added": 0,
-      "updated": 0,
-      "skipped": 3,
-      "cost": null,
-      "add_rate": 0
-    },
-    "analysis": {
-      "runs": 1,
+      "runs": 2,
       "added": 0,
       "updated": 13,
-      "skipped": 3,
-      "cost": null,
-      "add_rate": 0.81
+      "skipped": 9,
+      "cost": 0.07,
+      "add_rate": 0.59
+    },
+    "analysis": {
+      "runs": 4,
+      "added": 0,
+      "updated": 20,
+      "skipped": 13,
+      "cost": 5.8,
+      "add_rate": 0.61
     },
     "brief": {
-      "runs": 1,
+      "runs": 5,
       "added": 0,
       "updated": 0,
-      "skipped": 0,
-      "cost": 0.3,
-      "add_rate": null
+      "skipped": 3,
+      "cost": 2.32,
+      "add_rate": 0
     },
     "gap": {
       "runs": 2,
@@ -203,28 +343,28 @@
       "add_rate": 0.14
     },
     "backlog-auto": {
-      "runs": 21,
+      "runs": 492,
       "added": 0,
       "updated": 0,
-      "skipped": 240,
+      "skipped": 48305,
       "cost": null,
       "add_rate": 0
     },
     "backlog-triage": {
-      "runs": 3,
+      "runs": 4,
       "added": 0,
       "updated": 0,
-      "skipped": 315,
+      "skipped": 369,
       "cost": null,
       "add_rate": 0
     },
     "researcher": {
-      "runs": 6,
-      "added": 14,
-      "updated": 2,
-      "skipped": 18,
+      "runs": 19,
+      "added": 16,
+      "updated": 3,
+      "skipped": 30,
       "cost": null,
-      "add_rate": 0.47
+      "add_rate": 0.39
     },
     "stories": {
       "runs": 41,
@@ -243,28 +383,28 @@
       "add_rate": 0.91
     },
     "analyst": {
-      "runs": 6,
-      "added": 9,
+      "runs": 11,
+      "added": 19,
       "updated": 9,
       "skipped": 0,
-      "cost": 0.99,
+      "cost": 6.59,
       "add_rate": 1
     },
     "review": {
-      "runs": 1,
+      "runs": 87,
       "added": 0,
       "updated": 0,
       "skipped": 0,
-      "cost": 11.74,
+      "cost": 20.14,
       "add_rate": null
     },
     "regional": {
-      "runs": 1,
-      "added": 0,
+      "runs": 3,
+      "added": 2,
       "updated": 0,
-      "skipped": 3,
-      "cost": 0.3,
-      "add_rate": 0
+      "skipped": 7,
+      "cost": 1.12,
+      "add_rate": 0.22
     },
     "deep-sweep-a": {
       "runs": 1,
@@ -289,110 +429,209 @@
       "skipped": 4,
       "cost": null,
       "add_rate": 0
+    },
+    "improver": {
+      "runs": 1,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": 0.17,
+      "add_rate": null
+    },
+    "updater": {
+      "runs": 67,
+      "added": 0,
+      "updated": 19,
+      "skipped": 1,
+      "cost": null,
+      "add_rate": 0.95
+    },
+    "report review": {
+      "runs": 1,
+      "added": 0,
+      "updated": 3,
+      "skipped": 1,
+      "cost": null,
+      "add_rate": 0.75
+    },
+    "watchdog": {
+      "runs": 1,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": 0.02,
+      "add_rate": null
+    },
+    "update-u1": {
+      "runs": 26,
+      "added": 0,
+      "updated": 4,
+      "skipped": 2,
+      "cost": null,
+      "add_rate": 0.67
+    },
+    "followup": {
+      "runs": 27,
+      "added": 0,
+      "updated": 15,
+      "skipped": 32,
+      "cost": 0.24,
+      "add_rate": 0.32
+    },
+    "update-u2": {
+      "runs": 2,
+      "added": 0,
+      "updated": 1,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": 1
+    },
+    "update": {
+      "runs": 24,
+      "added": 0,
+      "updated": 6,
+      "skipped": 1,
+      "cost": null,
+      "add_rate": 0.86
+    },
+    "grid": {
+      "runs": 152,
+      "added": 0,
+      "updated": 0,
+      "skipped": 2,
+      "cost": null,
+      "add_rate": 0
+    },
+    "report-review": {
+      "runs": 1,
+      "added": 0,
+      "updated": 4,
+      "skipped": 1,
+      "cost": 0.96,
+      "add_rate": 0.8
+    },
+    "grid-desk": {
+      "runs": 2,
+      "added": 0,
+      "updated": 2,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": 1
+    },
+    "outage": {
+      "runs": 10,
+      "added": 0,
+      "updated": 0,
+      "skipped": 10,
+      "cost": null,
+      "add_rate": 0
+    },
+    "outage-desk": {
+      "runs": 14,
+      "added": 0,
+      "updated": 34,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": 1
     }
   },
   "skip_reasons": {
-    "other": 389,
-    "already on file": 322,
-    "minor advisory": 238,
-    "not an event (commentary or marketing)": 229,
-    "too old": 66,
-    "source unreadable": 9
+    "already on file": 48352,
+    "other": 1048,
+    "minor advisory": 658,
+    "not an event (commentary or marketing)": 471,
+    "too old": 310,
+    "source unreadable": 22
   },
   "review_notes": [
     {
-      "id": "european-commission-cyberattack-payroll-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "Compared with Izvestia (relaying Politico): duration, spokesperson, suspended apps and data check match; fixed overstated payroll wording (most paid as usual; some could not file time sheets or arrang"
-    },
-    {
-      "id": "depthfirst-database-rce-poc-postgresql-mysql-oracle-2026-11",
-      "state": "flagged",
-      "flags": [
-        "no-cve-meta"
-      ],
-      "note": "Article content matches (Zheng Yu/Depthfirst, 4 CVEs, ClickHouse no CVE, no in-the-wild use), but public working PoC exploits for widely used databases meet the checklist rule for severity 3 and the r"
-    },
-    {
-      "id": "amazon-ai-agent-campaign-litellm-dify-keys-2026-11",
-      "state": "flagged",
-      "flags": [
-        "actor-unsourced"
-      ],
-      "note": "AWS Security Blog (primary) returned only site navigation after retry, so facts such as the 11 IP indicators could not be checked against it. Security Affairs agrees on dates Oct 3 to Nov 5, moderate-"
-    },
-    {
-      "id": "dragos-industrial-ransomware-q3-2026-11",
-      "state": "corrected",
-      "flags": [
-        "actor-unsourced"
-      ],
-      "note": "Figures 1,266 vs 1,140, 69%, US 473, Qilin 195, Gentlemen 167, Cl0p 35 match Dragos; actor list trimmed to groups verified on the page and summary now says Dragos names them"
-    },
-    {
-      "id": "kaspersky-auditteam-opsagent-ransomware-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "Securelist matches: 18 Nov, audit and consulting fee, C++ to Rust, v5.2.8, Jan-Oct 2026, 7 infected countries plus 7 on leak site, signed Jiangmin driver. Fixed report.iocs_available to true (page has"
-    },
-    {
-      "id": "bulgaria-government-networks-five-year-espionage-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "Sources disagree on unit (Samanyolu: gigabytes; Europa FM: gigabits); summary now states gigabytes with the gigabit caveat. 2021 start, 62M pages, no personal-data evidence, Vasilev announcement match"
-    },
-    {
-      "id": "nws-nationwide-communications-issues-2026-11",
-      "state": "flagged",
-      "flags": [],
-      "note": "Source unreachable: Christian Science Monitor returned HTTP 403 on review; NWS nationwide communications problem on 13 Nov could not be confirmed from the page."
-    },
-    {
-      "id": "us-lawmakers-demand-answers-outages-2026-11",
+      "id": "epuap-cyberattack-poland-2026-11",
       "state": "corrected",
       "flags": [
         "long-summary"
       ],
-      "note": "Summary overstated: Trump did not explicitly deny an attack; Mullin said 98 percent certain no cyberattack, Clayton said not a coordinated nation-state effort; 18 Nov hearing says no evidence of malic"
+      "note": "Checked Sekurak and money.pl/PAP: COI restricted part of system (not whole, about 9 days), most services back 15-16 Nov; December plan is Gawkowski's statement; removed unsourced action advice; 19 Nov"
     },
     {
-      "id": "united-airlines-blocks-ai-agents-2026-11",
+      "id": "f5-big-ip-six-critical-tmm-flaws-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "Summary claimed decision came four days before a United outage; The Record (12 Nov) does not mention an outage. Summary now states the block on AI agents managing reservations/purchases and United's s"
+      "note": "Compared with The Hacker News, DailySecu, GBHackers: six CVEs, CVSS 9.8, hotfix-only, no exploitation and date match. Fixed action: removed advice to restrict data-plane listener exposure that no sour"
     },
     {
-      "id": "italy-meloni-opposition-briefing-hybrid-threats-2026-11",
+      "id": "silentpush-north-korean-fake-construction-firm-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "The 1,803-schools figure is in neither listed article (only a teaser of an unlisted one); removed. Rest (summit, opposition invite, Tajani/Salvini, fund cut) matches L'Espresso."
+      "note": "Compared title, date, Lynchburg, two calls, deepfake wording, no contract or payment statement against Silent Push post and GBHackers; fixed about 1,400 emails to Silent Push's unqualified 1,400 publi"
     },
     {
-      "id": "marriott-login-reservation-trouble-2026-11",
+      "id": "west-virginia-legislature-cyber-incident-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "Fox says Marriott stated the sign-in disruption was resolved and found no cyber indication; sources give no 'hundreds' count or 9:17 time (Yahoo: 9:46 a.m.). Summary, plain and exec rewritten."
+      "note": "Checked title, date, no-other-agencies, no group claim, memo wording against The Record and Intelligencer. Exec stated website and IT systems down in CyberView voice (website is only the reporter's wo"
     },
     {
-      "id": "gmail-delivery-problem-reports-2026-11",
-      "state": "flagged",
+      "id": "algonquin-dam-attempted-cyberattack-2026-11",
+      "state": "corrected",
       "flags": [],
-      "note": "Fox live blog has no dedicated Gmail entry: only a 'what to know' line that Gmail and iCloud had reliability issues into Tuesday afternoon. Downdetector peak timing and Google's 'no evidence of broad "
+      "note": "Gizmodo read: removed unsupported 'no affected systems were reported' (summary, impact); 'attempted' now attributed to Chicago Tribune and ABC 7; added Nov. 16 detection; spokesperson wording matched;"
+    },
+    {
+      "id": "france-lecornu-tightens-state-cybersecurity-standards-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Compared with VOV and ZDNet Korea: summary cut under 75 words; dropped Strubel title (ZDNet says secretary-general, VOV director general, unresolved); dates, bill scope, ANSSI powers, unprecedented ma"
+    },
+    {
+      "id": "gao-ai-cyberattacks-defense-report-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Compared with GAO product page and CASRAI: report number, 20 Nov date, 16 options and 4 goals match; agentic AI and evaluation criteria wording aligned to GAO's own sentences"
+    },
+    {
+      "id": "autopay-poland-ai-assisted-cyberattack-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Compared title, 11 Nov detection, notices to UODO, police and CSIRT KNF, cannot-rule-out copying, no affected number and the AI statement against money.pl, Spiders Web and android.com.pl. Summary now "
+    },
+    {
+      "id": "senegal-cdp-auchan-facial-recognition-2026-11",
+      "state": "corrected",
+      "flags": [
+        "long-summary"
+      ],
+      "note": "Checked title, date, Auchan Yoff Layene rejection, Sen-CSU/Wave referral against SocialNetLink. Fixed: plain said supermarket (source says store/retailer); no-reactions line applies only to the Sen-CS"
+    },
+    {
+      "id": "austria-foreign-ministry-staff-data-intrusion-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Checked against N+ (20 Nov): dates, detection, external provider site match. Summary wrongly called the article inconsistent; N+ says professional contact details exposed and personal data ruled out. "
+    },
+    {
+      "id": "fbi-sting-ransomware-recovery-fraud-indictment-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Read Krebs (20 Nov) and the 404 Media lede (19 Nov). Date moved from 18 to 19 Nov (404 Media saying Wednesday is not in the readable text; Krebs says only this week). Summary now says the indictment a"
+    },
+    {
+      "id": "brazil-santos-port-authority-ransom-demand-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "Compared with O POVO, Baguete, Oeste, DGABC: title said APS 'did not engage' (Oeste: no reply), now 'got no reply'; summary now gives Baguete (APS confirmed a cyberattack) vs Oeste (not confirmed a cr"
     }
   ],
   "flag_counts": {
-    "actor-unsourced": 15,
-    "possible-duplicate": 12,
+    "actor-unsourced": 13,
+    "possible-duplicate": 24,
+    "long-summary": 8,
     "old-date": 2,
     "no-cve-meta": 2,
     "confirmed-on-aggregator": 5,
     "severity-3-reason": 2,
-    "single-source-high": 6,
-    "corroborated-one-host": 1,
-    "long-summary": 2,
-    "outage-as-attack": 1,
-    "number-check": 1,
+    "single-source-high": 2,
+    "outage-as-attack": 3,
+    "roundup-source": 5,
     "time-date-mismatch": 1
   }
 }

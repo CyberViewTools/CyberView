@@ -1,0 +1,8 @@
+{"generated_at":"2026-11-21T09:41:00Z","week":"2026-W47","findings":[
+{"problem":"Second review corrects or flags too many new events","evidence":"38% of 461 events in 7 days (guard threshold 15%); recent corrections e.g. epuap-cyberattack-poland-2026-11, algonquin-dam-attempted-cyberattack-2026-11 (unsupported claims removed)","action":"No model or turn cap lowered while the guard is on; reviewers already at 4 per cycle"},
+{"problem":"Aggregator msn.com is the top source by events","evidence":"39 events cite msn.com; review flags confirmed-on-aggregator 5, roundup-source 5","action":"Request filed: require the publisher's own page"},
+{"problem":"Gap searchers rarely add events","evidence":"176 gap runs, ~$52; 91% added nothing, $3.58 per event vs $0.95 for researchers","action":"gap_spare_workers 1->0 proposed but refused (key not allowed); request filed"},
+{"problem":"Single-source events are common and regions thin","evidence":"183 of 461 events rest on a single source; africa 2, south-asia 5, latin-america 11 events","action":"Proposal for owner: widen sources for these regions (scout job)"},
+{"problem":"Dead feed","evidence":"Eskom media statements HTTP 404 for 20 runs","action":"Request filed to retire or fix"}],
+"changes":[],"proposals":["Allow the improver to change sweep.gap_spare_workers","Reject aggregator-only sourcing in the researcher rules","Retire or fix the Eskom feed"],
+"numbers":{"leads":5232,"events":461,"median_hours":0.2,"single_source_share":0.4,"regions":11,"reviewed":461,"corrected":175,"flagged":175}}

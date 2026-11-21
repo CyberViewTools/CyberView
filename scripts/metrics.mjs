@@ -15,7 +15,28 @@ const REGION = { "united states": "north-america", canada: "north-america", mexi
   nigeria: "africa", kenya: "africa", "south africa": "africa", ghana: "africa", ethiopia: "africa", morocco: "africa", senegal: "africa", tanzania: "africa", uganda: "africa", algeria: "africa", tunisia: "africa",
   india: "south-asia", pakistan: "south-asia", bangladesh: "south-asia", "sri lanka": "south-asia", nepal: "south-asia",
   singapore: "southeast-asia", indonesia: "southeast-asia", malaysia: "southeast-asia", thailand: "southeast-asia", vietnam: "southeast-asia", philippines: "southeast-asia",
-  japan: "east-asia", "south korea": "east-asia", china: "east-asia", taiwan: "east-asia", "hong kong": "east-asia", australia: "oceania", "new zealand": "oceania" };
+  japan: "east-asia", "south korea": "east-asia", china: "east-asia", taiwan: "east-asia", "hong kong": "east-asia", australia: "oceania", "new zealand": "oceania",
+  // more countries and the spellings events use (2026-11-21): without them an event in Türkiye, Lebanon, Trinidad or
+  // Uzbekistan counted as "other" and the coverage report understated exactly the regions it is meant to watch. Central
+  // Asia and the Caucasus go with the Middle East, as the feeds label them (UzCERT).
+  us: "north-america", usa: "north-america", "united states of america": "north-america", uk: "europe", "great britain": "europe", uae: "middle-east",
+  türkiye: "middle-east", turkiye: "middle-east", lebanon: "middle-east", syria: "middle-east", yemen: "middle-east", oman: "middle-east", bahrain: "middle-east",
+  palestine: "middle-east", cyprus: "middle-east", kazakhstan: "middle-east", uzbekistan: "middle-east", kyrgyzstan: "middle-east", tajikistan: "middle-east",
+  turkmenistan: "middle-east", azerbaijan: "middle-east", armenia: "middle-east", georgia: "middle-east", afghanistan: "south-asia", maldives: "south-asia", bhutan: "south-asia",
+  libya: "africa", sudan: "africa", "south sudan": "africa", mauritania: "africa", mali: "africa", niger: "africa", chad: "africa", "burkina faso": "africa",
+  "côte d'ivoire": "africa", "cote d'ivoire": "africa", "ivory coast": "africa", benin: "africa", togo: "africa", guinea: "africa", "sierra leone": "africa", liberia: "africa",
+  gambia: "africa", "cabo verde": "africa", "cape verde": "africa", cameroon: "africa", gabon: "africa", congo: "africa", "democratic republic of the congo": "africa", "dr congo": "africa",
+  angola: "africa", zambia: "africa", zimbabwe: "africa", malawi: "africa", mozambique: "africa", namibia: "africa", botswana: "africa", lesotho: "africa", eswatini: "africa",
+  madagascar: "africa", mauritius: "africa", seychelles: "africa", rwanda: "africa", burundi: "africa", somalia: "africa", djibouti: "africa", eritrea: "africa",
+  venezuela: "latin-america", ecuador: "latin-america", bolivia: "latin-america", paraguay: "latin-america", uruguay: "latin-america", guatemala: "latin-america",
+  honduras: "latin-america", "el salvador": "latin-america", nicaragua: "latin-america", "costa rica": "latin-america", panama: "latin-america", cuba: "latin-america",
+  "dominican republic": "latin-america", haiti: "latin-america", jamaica: "latin-america", "trinidad and tobago": "latin-america", barbados: "latin-america", bahamas: "latin-america",
+  guyana: "latin-america", suriname: "latin-america", belize: "latin-america", "puerto rico": "latin-america",
+  belgium: "europe", luxembourg: "europe", iceland: "europe", estonia: "europe", latvia: "europe", lithuania: "europe", slovakia: "europe", slovenia: "europe", croatia: "europe",
+  serbia: "europe", bosnia: "europe", "bosnia and herzegovina": "europe", montenegro: "europe", albania: "europe", "north macedonia": "europe", kosovo: "europe", bulgaria: "europe",
+  hungary: "europe", moldova: "europe", belarus: "europe", malta: "europe", "czech republic": "europe",
+  "north korea": "east-asia", mongolia: "east-asia", macau: "east-asia", cambodia: "southeast-asia", laos: "southeast-asia", myanmar: "southeast-asia", brunei: "southeast-asia",
+  "timor-leste": "southeast-asia", fiji: "oceania", "papua new guinea": "oceania", samoa: "oceania", tonga: "oceania", vanuatu: "oceania" };
 // collectors that no longer run (scripts/osint.mjs): their old leads stay in every count, but the status page lists them
 // as retired, never as a current source
 export const RETIRED_COLLECTORS = { "google-news": { retired: "2026-11-20", why: "Not collected since 2026-11-20: news.google.com/robots.txt disallows /rss/ and its links are redirects that cannot be cited. Bing News and GDELT run the same standing searches." } };

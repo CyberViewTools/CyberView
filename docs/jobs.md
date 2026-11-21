@@ -5,7 +5,7 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 | Tier | What | Workflow | Model |
 |---|---|---|---|
 | 0 | Deploy: build with quarantine, verify the build, publish to GitHub Pages, then confirm the live copy matches, after every push and every data workflow | `pages.yml` | none |
-| 0 | Lead collector: 228 agency, vendor and news RSS feeds in 28 languages, then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
+| 0 | Lead collector: 228 agency, vendor and news RSS feeds in 28 languages plus the extra feeds in config/feeds.json (52 regional, 31 languages in all), then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
 | 0 | Feeds: CISA known-exploited catalog, EPSS, CVSS, `cve_meta`, re-rating to severity 2 (every 2 h) | `feeds.yml` | none |
 | 0 | Live monitor: pages, CSP, data and sweep freshness hourly; browser check twice a day | `monitor.yml` | none |
 | 0 | Security: static check on every code push and deploy, live check weekly | `build.yml`, `security.yml` | none |

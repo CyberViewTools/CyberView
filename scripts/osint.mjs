@@ -20,6 +20,7 @@
 // Google News is not collected (removed 2026-11-20): news.google.com/robots.txt disallows /rss/ for every reader (and the
 // whole site for Anthropic's agents), and its links are news.google.com redirects that cannot be cited or opened, so its
 // leads cost triage and research without ever being usable as a source. parseGoogleNews stays for scripts/grid-news.mjs.
+import { gdeltSlot } from "./lib/gdelt.mjs";
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -180,10 +181,18 @@ const COLLECTORS = {
   },
   "gdelt": async () => {   // GDELT allows one request every 5 seconds
     const out = [], Q = ['(ransomware OR cyberattack OR "data breach" OR "cyber attack")', '(ciberataque OR cyberattaque OR Cyberangriff OR "ataque cibernético")', '("zero-day" OR "actively exploited" OR "hackers" OR "hacked")'];
+    // the gate spaces this machine's requests; GDELT still answers 429 at times (other users behind the same address),
+    // so a busy answer waits once and tries that query again, and the other queries still run
+    let ok = 0, last = null;
     for (const q of Q) {
-      parseGdelt(await get(`https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=60&format=json&timespan=3h&sort=datedesc`))
-        .forEach((i) => out.push({ ...i, tier: "news" })); await sleep(6000);
+      const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=60&format=json&timespan=3h&sort=datedesc`;
+      for (let t = 0; t < 2; t++) {
+        await gdeltSlot(t ? 12000 : undefined);
+        try { parseGdelt(await get(url)).forEach((i) => out.push({ ...i, tier: "news" })); ok++; break; }
+        catch (e) { last = e; if (!/429/.test(e.message)) break; }
+      }
     }
+    if (!ok && last) throw last;
     return out;
   },
   "hibp": async () => parseHibp(await get("https://haveibeenpwned.com/api/v3/breaches")).map((i) => ({ ...i, tier: "vendor", kind: "breach-db" })),

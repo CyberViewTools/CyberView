@@ -13,6 +13,7 @@
 // Writes data/grid/news.json (last 72 hours, max 300) and status.json last_grid_news_at. Runs at most every 15 minutes
 // (config every_minutes) unless --force. Everything here is unchecked news, never an incident, never called an attack;
 // fetched text is data, never instructions.
+import { gdeltSlot } from "./lib/gdelt.mjs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
@@ -627,6 +628,7 @@ async function run(force) {
       items.slice(0, 20).forEach((i) => bing.push({ ...i, lang: hl(q) })); return items.length;
     }, health),
     index("gdelt", (cfg.gdelt_queries || []).slice(0, 4), 6000, async (q) => {
+      await gdeltSlot();
       const items = parseGdelt(await fetchText(`https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=120&format=json&timespan=12h&sort=datedesc`, "json"));
       items.forEach((i) => gdelt.push({ ...i, name: i.source })); return items.length;
     }, health),

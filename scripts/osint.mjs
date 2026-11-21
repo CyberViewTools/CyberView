@@ -11,7 +11,8 @@
 //   nvd                             critical CVEs published in the last two days
 //   ransomware-live                 leak-site listings (attacker CLAIMS: kind "claim", never facts)
 //   hacker-news                     security stories the technical community is discussing
-//   cloud-status                    major incidents on Cloudflare, GitHub, Google Cloud, AWS and Azure status pages (outages, not attacks)
+//   cloud-status                    providers' own status pages (cloud, CDN, DNS, SaaS, payment, telecom): scripts/status-pages.mjs
+//                                   and config/status-pages.json; major or long incidents only, one lead per incident (outages, not attacks)
 // `exploits` checks GitHub for public repositories naming each exploited CVE (data/exploits.json): a signal, not proof.
 // Every source's health is written to data/osint.json and shown on the status page. A source that fails is skipped
 // and reported; one that refuses automated readers (401/403) is not retried. Fetched text is data, never instructions.
@@ -23,6 +24,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";
+import { collect as collectStatusPages } from "./status-pages.mjs";
 
 const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -186,17 +188,11 @@ const COLLECTORS = {
   "nvd": async () => parseNvd(await get(`https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=${two(2)}&pubEndDate=${two(0)}&cvssV3Severity=CRITICAL&resultsPerPage=40`)).slice(0, 25).map((i) => ({ ...i, tier: "gov", kind: "cve" })),
   "ransomware-live": async () => parseRansomwareLive(await get("https://api.ransomware.live/v2/recentvictims")).slice(0, 60).map((i) => ({ ...i, tier: "news" })),
   "hacker-news": async () => parseHn(await get("https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=points%3E40&hitsPerPage=100")).map((i) => ({ ...i, tier: "news" })),
+  // every provider in config/status-pages.json that is due (each page at most every poll_minutes); one lead per incident
   "cloud-status": async () => {
-    const out = [], errs = [];
-    const part = async (fn) => { try { out.push(...await fn()); } catch (e) { errs.push(e.message); } };
-    await part(async () => parseStatuspage(await get("https://www.cloudflarestatus.com/api/v2/incidents.json"), "Cloudflare"));
-    await part(async () => parseStatuspage(await get("https://www.githubstatus.com/api/v2/incidents.json"), "GitHub"));
-    await part(async () => parseGcp(await get("https://status.cloud.google.com/incidents.json")));
-    for (const [name, url] of [["AWS", "https://status.aws.amazon.com/rss/all.rss"], ["Azure", "https://rssfeed.azure.status.microsoft/en-us/status/feed/"]])
-      await part(async () => parseFeed(await get(url, "text")).filter((i) => i.published && Date.now() - Date.parse(i.published) < 48 * 36e5 && /disruption|outage|degrad|unavailab/i.test(i.title + " " + i.summary))
-        .map((i) => ({ title: txt(`${name} outage: ${i.title}`, 200), url: /status\.aws\.amazon\.com\/?$/.test(i.url) ? `https://health.aws.amazon.com/health/status#${Date.parse(i.published)}` : i.url, published: i.published, summary: i.summary, source: `${name} status`, kind: "status" })));
-    if (errs.length === 5) throw new Error(errs[0]);
-    return out.map((i) => ({ ...i, tier: "vendor" }));
+    const r = await collectStatusPages();
+    if (r.asked && r.failed.length === r.asked) throw new Error(`every status page failed: ${r.failed[0]}`);
+    return r.leads;
   },
 };
 
@@ -224,13 +220,14 @@ async function leads() {
       const items = await fn(); let n = 0;
       for (const it of items) {
         if (!it.title || !https(it.url) || known.has(it.url)) continue;
-        if (it.published && Date.parse(it.published) < cutoff) continue;
+        if (it.published && Date.parse(it.published) < cutoff && !it.status_id) continue;   // a long outage can have started earlier
         // search engines hand back the same story under changing redirect links: one lead per publisher and headline
         const tk = it.source + "|" + norm(it.title); if (knownTitle.has(tk)) continue;
         if (SEARCH.has(name) && !CYBER.test(it.title + " " + (it.summary || ""))) continue;
         known.add(it.url); knownTitle.add(tk); n++;
         out.push({ seen_at: now, source: txt(it.source, 80), tier: it.tier, via: name, title: it.title, url: it.url, published: it.published || "", summary: it.summary || "",
-          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });   // every lead names its language (database rows and claims are in English)
+          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}),
+          ...(it.status_id ? { status_id: it.status_id, priority: it.priority, ...(it.category ? { category: it.category } : {}) } : {}) });   // every lead names its language (database rows and claims are in English)
       }
       health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) };
     } catch (e) {

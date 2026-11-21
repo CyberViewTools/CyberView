@@ -69,7 +69,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
-          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json data/runs data/grid data/context/grid.json
+          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json data/runs data/grid data/context/grid.json $([ -d data/services ] && echo data/services)
       - name: Alert on failure
         if: failure()
         env:

@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.62",date:"2026-11-20"};
+var BUILD={version:"1.63",date:"2026-11-21"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -186,6 +186,45 @@ function verifiedNode(v){
   if(v.url){sm.appendChild(document.createTextNode(" "));var a=el("a",null,"source");a.href=safeUrl(v.url);a.target="_blank";a.rel="noopener noreferrer";sm.appendChild(a);}
   if(v.at){var w=ago(v.at);if(w)sm.appendChild(document.createTextNode(" \u00b7 checked "+w));}
   return sm;
+}
+/* service status (scripts/status-pages.mjs, no AI model; docs["services/status"]): major or long incidents on cloud, CDN,
+   DNS, SaaS, payment and telecom providers' own status pages. Listed in the map layers panel in neutral ink, never drawn,
+   never counted, never called an attack: each says it is the provider's own status page, not a cyber event. A link is
+   kept only on the provider's own status page domain (the page's last two labels). */
+var services=null,SVC_LV={critical:1,major:1,minor:1,none:1};
+function svcBase(h){return String(h||"").toLowerCase().split(".").slice(-2).join(".");}
+function cleanServices(d){
+  if(!d||typeof d!=="object"||!Array.isArray(d.items))return null;
+  var items=d.items.slice(0,60).map(function(x){
+    if(!x||typeof x!=="object")return null;
+    var name=str(x.name,60).trim(),title=str(x.title,200).trim(),page=gnLink(x.page)||(/^https:\/\/[a-z0-9.-]+\/?$/i.test(str(x.page,200))?str(x.page,200):""),url=gnLink(x.url),ph="",uh="";
+    if(!name||!title||!page)return null;
+    try{ph=new URL(page).hostname;uh=url?new URL(url).hostname:"";}catch(e){return null;}
+    if(url&&svcBase(uh)!==svcBase(ph))url="";
+    var mn=numIn(x.minutes,0,1e6);
+    return {name:name,title:title,page:page,url:url||page,impact:str(x.impact,40).trim(),level:own(SVC_LV,str(x.level,10))?x.level:"",
+      components:strs(x.components,6,80),status:str(x.status,40).toLowerCase(),start:str(x.started_at,30),end:str(x.resolved_at,30),minutes:mn===null?null:Math.round(mn),verified:cleanVerified(x.verified)};
+  }).filter(Boolean);
+  return {at:str(d.updated_at,30),pages:numIn(d.pages,0,500)||0,ok:numIn(d.pages_ok,0,500)||0,items:items};
+}
+function svcDur(m){return m===null?"":m>=120?Math.round(m/60)+" h":m+" min";}
+function servicesBlock(box){
+  if(!services)return;
+  var r=el("div","lrow"),h=ctxHealth({at:services.at,ok:services.ok>0,items:services.items});
+  r.appendChild(el("span","lname","Service status"));r.appendChild(el("span","lh h-"+h.k,h.t));box.appendChild(r);
+  box.appendChild(el("p","lnote","Major or long incidents on cloud, CDN, DNS, SaaS, payment and telecom providers' own status pages. Each is the provider's own status page, not a cyber event; not drawn on the globe."));
+  var ul=el("ul","llist svc");
+  if(!services.items.length)ul.appendChild(el("li","muted","No major or long incident open on the "+services.pages+" status pages read."));
+  services.items.slice(0,6).forEach(function(x){
+    var li=el("li"),a=el("a",null,x.name+": "+x.title);a.href=safeUrl(x.url);a.target="_blank";a.rel="noopener noreferrer";li.appendChild(a);
+    var bits=[x.impact?"impact as stated: "+x.impact:"no impact level stated"];var s=ago(x.start);if(s)bits.push("started "+s);
+    bits.push(x.end?"resolved"+(x.minutes!==null?" after "+svcDur(x.minutes):""):x.status==="monitoring"?"fix in place, provider monitoring"+(x.minutes!==null?" (after "+svcDur(x.minutes)+")":""):"open"+(x.minutes!==null?" for "+svcDur(x.minutes):""));
+    li.appendChild(el("span","muted"," "+bits.join(" · ")));
+    li.appendChild(x.verified?verifiedNode(x.verified):el("small","snote","The provider's own status page, not a cyber event. Not checked by CyberView."));
+    ul.appendChild(li);});
+  if(services.items.length>6)ul.appendChild(el("li","muted","and "+(services.items.length-6)+" more"));
+  box.appendChild(ul);
+  box.appendChild(el("p","lsrc","Source: "+services.ok+" of "+services.pages+" providers' status pages read"));
 }
 var ctx={},ctxOn={ioda:false,gdacs:true,grid:true};
 function cleanCtx(name,d){
@@ -676,6 +715,7 @@ function renderLayers(){
     }
     if(c){var src=el("p","lsrc","Source: ");if(c.url){var sa=el("a",null,c.source);sa.href=safeUrl(c.url);sa.target="_blank";sa.rel="noopener noreferrer";src.appendChild(sa);}else src.appendChild(document.createTextNode(c.source));if(c.error)src.appendChild(document.createTextNode(" · last fetch failed ("+c.error+")"));box.appendChild(src);}
   });});
+  safe("service status",function(){servicesBlock(box);});
 }
 function layersToggle(open){var b=$("layers");b.hidden=!open;$("zlayers").setAttribute("aria-expanded",open?"true":"false");if(open)renderLayers();}
 
@@ -2812,6 +2852,7 @@ openStore().then(function(d){
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
+  db.doc("services/status").onSnapshot(function(s){services=s.exists?cleanServices(s.data()):null;renderLayers();},function(){});
   db.doc("grid/news").onSnapshot(function(s){gridNews=s.exists?cleanGridNews(s.data()):null;if(state.view==="grid")renderSoon();},function(){});
   db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;gridTr=s.exists?cleanGridTrends(s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});
   db.doc("grid/sources").onSnapshot(function(s){gridSrcDoc=s.exists?cleanGridSrcDoc(s.data()):{};if(ctxRaw.grid){ctx.grid=cleanCtx("grid",ctxRaw.grid);renderLayers();if(onGlobe())renderSoon();}},function(){});

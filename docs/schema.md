@@ -68,6 +68,10 @@ One file per job run, never deleted. It keeps the research so it is not wasted:
 The feeds script writes its own shape (`kev_added, kev_updated, cvss_added, events_updated, rerated, failed`).
 `node scripts/q.mjs leads` lists open leads and skipped items that never became events; `q.mjs seen <url>` checks whether a page was already read.
 
+## Breach notices (scripts/breaches.mjs; leads of kind `breach-notice`)
+
+A notice an organisation filed with a regulator, read from the register that publishes it, filed as one line in `data/leads/<date>.jsonl`: `seen_at, source` (the regulator, e.g. "California Attorney General"), `tier: "gov"` (an official filing), `via` (`breach-ca`, `breach-wa`, `breach-ia`, `breach-ico`, `breach-sec`), `kind: "breach-notice"`, `title` ("<organisation>: data breach notification filed with <regulator>"; ICO: "ICO <action>: <organisation>: <first sentence>"; SEC: "<company>: Form 8-K Item 1.05 ..."), `url` (the regulator's own page or file for that notice: the one to cite), `published` (the day the register posted it), `summary` (300; the law it was filed under, dates and figures the register states, and "Matches event <id> on file" when it does), `lang: "en"`, `country`, `org` (the filer's name in lower case without legal form, used to join the same breach across registers). Not a bare database row: the backlog rules never close it as one, and fuse.mjs scores it as a government source; it never heads the "being checked" list (its headline is the collector's). Each register's health is in `data/breaches.json`: `checked_at, sources {<via>: {ok, error, items, new, at, last_ok, idle}}` (`idle`: not connected, e.g. the SEC until `config/site.json` contact_email is set); `status.json` gets `last_breaches_at` and `last_breaches_new`.
+
 ## data/guides/&lt;CVE&gt;.json
 
 A fix guide written by the advisory desk from the vendor's own advisory (never from news coverage), checked by `checkGuide` in `scripts/lib/validate.mjs`:

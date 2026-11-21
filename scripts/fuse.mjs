@@ -19,7 +19,10 @@ import { tokens, matchEvent, NOT_EVENT } from "./triage.mjs";
 const GENERIC = new Set(("cyber cyberattack cyberattacks attack attacks attacked attacker attackers hack hacked hacker hackers hacking breach breaches breached data security ransomware malware vulnerability vulnerabilities flaw flaws bug exploit exploited exploits exploitation " +
   "incident incidents threat threats group gang claim claims lists leak site critical high severity patch patches update updates advisory alert warns warning report reports reported says said confirms confirmed company firm customers users million thousands systems system network " +
   "information personal stolen theft access remote code execution rce zero-day zero day actively cve cvss online services service outage disruption after over via using used could allows allow unauthenticated authentication bypass phishing campaign targets targeting new latest major " +
-  "ciberataque cyberattaque angriff hit hits impact impacted affected affecting following amid against more than its their has have been were will").split(/\s+/));
+  "ciberataque cyberattaque angriff hit hits impact impacted affected affecting following amid against more than its their has have been were will " +
+  // breach notices from regulators' registers (scripts/breaches.mjs): the register's words and legal forms say nothing about which breach
+  // (nor do the words most filers' names share: two clinics' notices are not one story because both say "Health Care")
+  "notice notices notification notifications filed filing attorney general inc llc llp ltd corp plc pllc limited companies holdings technologies health healthcare care medical management solutions investigation").split(/\s+/));
 const THIN = new Set(["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"]);
 const TIER_RANK = { gov: 3, vendor: 2, news: 1 };
 const SEARCH = new Set(["google-news", "bing-news", "gdelt"]);
@@ -34,7 +37,7 @@ export function countPublishers(names) {
   return kept;
 }
 export const cvesIn = (s) => [...new Set((String(s || "").toUpperCase().match(/CVE-\d{4}-\d{4,}/g) || []))];
-export const keyTokens = (title) => new Set([...tokens(String(title).replace(/^Claim: \S+ lists /, "").replace(/ on its leak site$/, ""))].filter((w) => !GENERIC.has(w) && !/^\d+$/.test(w)));
+export const keyTokens = (title) => new Set([...tokens(String(title).replace(/^Claim: \S+ lists /, "").replace(/ on its leak site$/, "").replace(/: data breach notification filed with .*$/, ""))].filter((w) => !GENERIC.has(w) && !/^\d+$/.test(w)));
 
 /** Group leads into stories. leads: [{title,url,source,tier,via,kind,seen_at,published,lang,region}] -> [[lead,...],...] */
 export function cluster(leads) {
@@ -44,6 +47,8 @@ export function cluster(leads) {
   const toks = leads.map((l) => keyTokens(l.title)), byCve = new Map(), byTok = new Map();
   leads.forEach((l, i) => {
     cvesIn(l.title).forEach((c) => { if (byCve.has(c)) join2(byCve.get(c), i); else byCve.set(c, i); });
+    // the same organisation's notices on several breach registers are one breach (corroboration, not new stories)
+    if (l.kind === "breach-notice" && l.org) { const k = "org:" + l.org; if (byCve.has(k)) join2(byCve.get(k), i); else byCve.set(k, i); }
     toks[i].forEach((w) => { if (!byTok.has(w)) byTok.set(w, []); byTok.get(w).push(i); });
   });
   // only compare leads that share a distinctive word that is not everywhere
@@ -76,14 +81,16 @@ const REDIRECT = /^https?:\/\/(news\.google\.com|(www\.)?bing\.com|(www\.)?msn\.
 
 /** Pure: the stories worth showing on the site as "reported, being checked" before any research has happened.
  *  No AI model: publishers' own headlines, named, linked to the publisher's own page when a collector has it.
- *  Never a leak-site claim, never a bare database row, never something already on the map. */
+ *  Never a leak-site claim, never a bare database row, never something already on the map. A regulator's breach notice
+ *  (kind "breach-notice", scripts/breaches.mjs) is an official filing that agents read, but its headline is the
+ *  collector's, not a publisher's: it never heads this list. */
 export function developing(stories, now = Date.now(), max = 30) {
   return stories.filter((s) => isOpen(s) && !s.claim_only && !s.kinds.includes("claim") && (now - Date.parse(s.published)) < 36 * 36e5
-      && s.leads.some((l) => !["cve", "breach-db", "status", "claim"].includes(l.kind) && (!l.lang || l.lang === "en"))
+      && s.leads.some((l) => !["cve", "breach-db", "status", "claim", "breach-notice"].includes(l.kind) && (!l.lang || l.lang === "en"))
       && !s.explainer && (s.dated || s.publishers >= 2) && (s.publishers >= 2 || s.kinds.includes("exploited") || (s.incident && s.tiers.some((t) => t === "gov" || t === "vendor"))) && !(s.routine && s.publishers < 3))
     .sort((a, b) => b.score - a.score || (a.published < b.published ? 1 : -1)).slice(0, max)
     .map((s) => {
-      const en = s.leads.filter((l) => (!l.lang || l.lang === "en") && !["cve", "breach-db", "status", "claim"].includes(l.kind)), head = en[0] || s.leads[0], direct = en.find((l) => /^https:\/\//.test(l.url) && !REDIRECT.test(l.url));
+      const en = s.leads.filter((l) => (!l.lang || l.lang === "en") && !["cve", "breach-db", "status", "claim", "breach-notice"].includes(l.kind)), head = en[0] || s.leads[0], direct = en.find((l) => /^https:\/\//.test(l.url) && !REDIRECT.test(l.url));
       return { id: s.id, title: String(head.title).slice(0, 180), sources: [...new Set(s.leads.filter((l) => l.kind !== "claim").map((l) => String(l.source)))].slice(0, 4), publishers: s.publishers, url: direct ? direct.url : "", at: s.published, exploited: s.kinds.includes("exploited") };
     });
 }

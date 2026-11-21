@@ -1537,6 +1537,7 @@ async def main():
             await pg.touchscreen.tap(mk[0], mk[1]); await pg.wait_for_timeout(600)
             top = await pg.evaluate("Math.round(document.getElementById('dbar').getBoundingClientRect().top)")
             ok("phone: a tap on a marker opens it even while the globe spins, with the details in view", await pg.locator("#dcard").count() == 1 and 0 <= top < 200, top)
+            tapped = (await pg.evaluate("location.hash")).replace("#e=", "")
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()

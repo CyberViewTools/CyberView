@@ -35,7 +35,7 @@ jobs:
           node-version: "22"
       - name: Collect
         run: node scripts/collect.mjs
-      - name: Other open sources (news indexes, breach and vulnerability databases, status pages)
+      - name: Other open sources (news indexes, breach and vulnerability databases, status pages, official breach registers)
         # a failing source is skipped and shown on the status page; it never stops the run
         run: node scripts/osint.mjs || true
       - name: Clear obvious leads (no AI)
@@ -69,7 +69,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
-          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json data/runs data/grid data/context/grid.json
+          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json $( [ -f data/breaches.json ] && echo data/breaches.json ) data/runs data/grid data/context/grid.json
       - name: Alert on failure
         if: failure()
         env:

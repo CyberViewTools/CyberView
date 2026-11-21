@@ -417,7 +417,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); if (Date.now() - Date.parse(l.seen_at) < 864e5) { leads24++; byTier[l.tier] = (byTier[l.tier] || 0) + 1; } } catch {} }
   // open-source collectors: each one's health, and what the pipeline did with their leads this week
   const osint = readJson(join(DATA, "osint.json"), { sources: {} }), pm = pipelineMetrics(7);
-  const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
+  const sources = Object.entries({ ...(osint.sources || {}), ...((readJson(join(DATA, "breaches.json"), {}) || {}).sources || {}) }).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
   // leads "used" are credited by story (scripts/metrics.mjs storyCredit); days_covered is how much of the 7 days the lead files hold
   const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, leads_used_7d: pm.leads_used, days_covered: pm.window ? pm.window.days_covered : null, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
     collectors: pm.collectors.filter((c) => !RETIRED_COLLECTORS[c.name]).slice(0, 12),

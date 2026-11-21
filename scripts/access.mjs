@@ -22,7 +22,8 @@ export const WHY = {
   key_or_account: "Needs a key or an account",
   unavailable: "Could not be reached",
 };
-export const STATUS = { not_asked: ["Not asked yet", "wait"], asked: ["Asked, waiting", "info"], granted: ["Granted", "ok"], declined: ["Declined", "bad"] };
+// in_use: the data is now read through another open route (detail says which); the entry stays for the operator's own feed
+export const STATUS = { not_asked: ["Not asked yet", "wait"], asked: ["Asked, waiting", "info"], granted: ["Granted", "ok"], declined: ["Declined", "bad"], in_use: ["In use", "ok"] };
 export const COUNTRIES = {
   US: "United States", CA: "Canada", GB: "United Kingdom", IE: "Ireland", NL: "Netherlands", FR: "France", DE: "Germany", ES: "Spain",
   PT: "Portugal", IT: "Italy", GR: "Greece", PL: "Poland", CZ: "Czechia", SE: "Sweden", FI: "Finland", DK: "Denmark", EE: "Estonia",
@@ -128,7 +129,7 @@ export function groups(sources) {
 export const kindGroups = (sources) => Object.keys(KINDS).map((kind) => ({ kind, name: KINDS[kind], groups: groups(sources.filter((s) => s.kind === kind)) })).filter((k) => k.groups.length);
 
 /** Pure: the sources to ask first. */
-export const askFirst = (sources, n = 15) => [...sources].sort((a, b) => a.priority - b.priority).slice(0, n);
+export const askFirst = (sources, n = 15) => [...sources].filter((s) => s.status !== "in_use").sort((a, b) => a.priority - b.priority).slice(0, n);
 
 const n = (x) => Number(x).toLocaleString("en-US");
 const contactLink = (c) => (EMAIL.test(c) ? `mailto:${c}` : c);
@@ -140,7 +141,7 @@ export function accessSection(doc) {
   const ks = kindGroups(ok), countries = groups(ok);
   const count = (f) => ok.filter(f).length;
   const reasons = Object.keys(WHY).map((w) => [w, count((s) => s.why_not === w)]).filter((x) => x[1]);
-  const granted = count((s) => s.status === "granted"), asked = count((s) => s.status === "asked");
+  const granted = count((s) => s.status === "granted"), asked = count((s) => s.status === "asked"), inUse = count((s) => s.status === "in_use");
   const withEmail = count((s) => EMAIL.test(s.contact)), withPage = count((s) => s.contact && !EMAIL.test(s.contact));
   const contactOf = (s) => s.contact
     ? `<a href="${esc(contactLink(s.contact))}" rel="noopener">${esc(s.contact)}</a>`
@@ -167,11 +168,11 @@ ${first.map((s) => `    <li><a href="#src-${esc(s.key)}"><strong>${esc(s.operato
   <p class="note" id="reqMsg" aria-live="polite">Above: the shape every request follows. Choose Copy request on a source to see and copy its own text.</p>
 </section>
 <section class="panel" id="sources">
-  <h2>${ok.length} sources CyberView does not use yet</h2>
+  <h2>${ok.length - inUse} sources CyberView does not use yet</h2>
   <ul class="plain" id="reasons">
 ${reasons.map(([w, c]) => `    <li><strong>${c}</strong> ${esc(WHY[w].toLowerCase())}</li>`).join("\n")}
   </ul>
-  <p class="note">${granted ? `${granted} granted and being connected. ` : ""}${asked ? `${asked} asked and waiting for an answer. ` : ""}${withEmail} publish an email address for the request and ${withPage} a contact page or form; for the rest none could be found. Contacts are the ones each operator publishes on its own site. Inside each country, the source to ask first comes first.</p>
+  <p class="note">${inUse ? `${inUse} now read through another open route (marked In use). ` : ""}${granted ? `${granted} granted and being connected. ` : ""}${asked ? `${asked} asked and waiting for an answer. ` : ""}${withEmail} publish an email address for the request and ${withPage} a contact page or form; for the rest none could be found. Contacts are the ones each operator publishes on its own site. Inside each country, the source to ask first comes first.</p>
   <div class="acfilters" id="acFilters" hidden>
     <label class="field">Kind<select id="fKind"><option value="">Every kind</option>${ks.map((k) => `<option value="${esc(k.kind)}">${esc(k.name)} (${k.groups.reduce((a, g) => a + g.sources.length, 0)})</option>`).join("")}</select></label>
     <label class="field">Reason<select id="fWhy"><option value="">Every reason</option>${reasons.map(([w, c]) => `<option value="${esc(w)}">${esc(WHY[w])} (${c})</option>`).join("")}</select></label>

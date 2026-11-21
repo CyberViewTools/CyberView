@@ -1,7 +1,9 @@
 // Electrical grid outages as map context, no AI model. Run: node scripts/grid.mjs collect | verify | status [--json]
 // (behind a proxy: NODE_USE_ENV_PROXY=1). Contract: swarm/handoff/grid-contract.md.
 //
-//   collect  fetch six public operator feeds and three keyed sources -> data/grid/live.json (items) -> incidents (open,
+//   collect  fetch six built-in public operator feeds, the source files in scripts/grid-sources/ (utilities, system
+//            operators, government agencies' statewide or national counts) and three keyed sources
+//            -> data/grid/live.json (items) -> incidents (open,
 //            update, close) -> data/grid/incidents.json, closed ones appended to data/grid/history/<YYYY-MM>.jsonl
 //            -> data/grid/series/<YYYY-MM-DD>.jsonl (one point per region per 15 minutes; days older than 35 are rolled
 //            into data/grid/series/monthly/<YYYY-MM>.json and removed) -> data/context/grid.json (the map layer)

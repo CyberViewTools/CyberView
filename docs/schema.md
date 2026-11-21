@@ -126,6 +126,14 @@ Written only by `scripts/ics.mjs` (feeds.yml, every 2 hours; dials in config/ics
 
 `index.json` (months with counts), `<YYYY-MM>.json` (full events of the month), `search.json` (compact rows: id, date, category, severity, status, title, org, country, cves, tags, actor), `events.jsonl` (everything), `kev.json` (every known-exploited entry).
 
+## Threat actor profiles (generated, site/data/actors.json; scripts/actors.mjs, no AI model)
+
+Built at every build from the events on file (duplicates left out); nothing is stored on the data branch. `built_at, attack_version, attack_notice, counts {profiles, checked, claims_only, attack_matched}, profiles[]`, each:
+`id` (link: actors.html#a=<id>), `name` (the name CyberView's events use most), `attack {id, name, url}` (MITRE ATT&CK group, or null), `aliases[{name, basis (attack or event), source, url | event_id}]`, `attributed[{event_id, title, date, status, by, by_type (government or investigator), url, origin_country, note}]` (from the event's `attribution`), `named[{event_id, title, date, status, as_written}]` (from the event's `actor`: the sources' words), `claimed[{event_id, title, date, org, as_written}]` (status `claimed`, or the actor text says "claimed": never counted below), `origins[]`, `sectors[{k, n}]`, `countries[{k, n}]`, `cves[{id, event_ids}]`, `advisories[{publisher, doc_id, url, event_id}]` (government `report`s and government attributions), `related[]` (names an event joined that ATT&CK keeps apart), `ambiguous[]` (names ATT&CK lists under two groups), `attack_namesake` (an ATT&CK group sharing the name of a group seen only in claims; not merged), `first_seen, last_seen, claims_only`.
+Merge rules: same name in another spelling; ATT&CK lists it as an alias; one event's actor text states it ("A / B", "A (also B, C)"). Never on similarity alone.
+
+`config/attack-groups.json`: MITRE ATT&CK group names, aliases and IDs only (no descriptions), with MITRE's notice; refresh with `node scripts/actors.mjs attack` (keyless, raw.githubusercontent.com) and commit through a pull request.
+
 ## CVE corpus (scripts/cve.mjs; the Actions cache; published as site/data/cve/)
 
 Every CVE in the official CVE List (CVEProject/cvelistV5), with CISA's enrichment, kept current hourly by `.github/workflows/cve.yml`. The working corpus (`cache/cve/<year>.jsonl` plus `state.json`) is kept in the GitHub Actions cache (key `cve-corpus-<run>`), never committed; the deploy restores the newest copy. The deploy runs `node scripts/cve.mjs site`.

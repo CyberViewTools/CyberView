@@ -1,13 +1,12 @@
 {
-  "action": "Review exposure, access controls and monitoring for activity that alters business records or approval processes, as CERT-In advises; the advisory itself was not read, so check cert-in.org.in for its full recommendations.",
+  "action": "Limit which provider systems can change payment records or approve transactions, reconcile payment instructions against independent records, and report incidents to CERT-In within six hours.",
   "actor": "",
   "attack": [],
   "category": "report",
   "country": "India",
   "cves": [],
-  "date": "2026-11-21",
-  "date_note": "The advisory is described only as 'recent' and is not dated in the article; the date is the IANS article's own date.",
-  "exec": "CERT-In says attackers alter business records or approval processes to divert funds, beyond payment APIs, and that targets now include providers supporting government payment processes.",
+  "date": "2026-11-20",
+  "exec": "CERT-In says payment fraud now works through altered business records and approvals, and affects service providers and payout platforms, not only banks.",
   "first_seen": "2026-11-21T12:38:55Z",
   "geo_basis": "agency",
   "lat": 28.61,
@@ -15,26 +14,30 @@
   "org": "CERT-In (Indian Computer Emergency Response Team)",
   "pin_type": "agency",
   "place": "New Delhi",
-  "plain": "India's cyber agency warns that criminals use AI tools to manipulate how businesses handle payments, so funds are diverted through business processes. It says banks are not the only targets.",
+  "plain": "India's cyber agency warns that attackers change payment records or approvals so fraudulent transfers look legitimate, and that AI-driven attack tools are being used against organisations.",
   "products": [],
   "sector": "Finance",
-  "severity": 1,
-  "source_tier": "established",
+  "severity": 2,
+  "source_tier": "primary",
   "sources": [
+    {
+      "name": "CERT-In advisory CIAD-2026-0062",
+      "url": "https://www.cert-in.org.in/s2cMainServlet?pageid=PUBVLNOTES02&VLCODE=CIAD-2026-0062"
+    },
     {
       "name": "Telangana Today (IANS): CERT-In warns of AI-driven cyberattacks targeting business payment systems",
       "url": "https://telanganatoday.com/cert-in-warns-of-ai-driven-cyberattacks-targeting-payment-systems-across-sectors"
     }
   ],
-  "status": "developing",
-  "summary": "According to an IANS report, a recent CERT-In advisory says cybercriminals use AI-powered tools to manipulate business payment workflows and carry out unauthorised transactions. CERT-In says attacks now extend to technology service providers supporting government entities' payment processes and platforms handling vendor or partner payouts, not only banks. It says the concern is not limited to the security of payment APIs: attackers alter business records or approval processes to divert funds.",
+  "status": "official",
+  "summary": "CERT-In advisory CIAD-2026-0062, issued 20 November 2026 and rated critical, says attackers alter business records or approval relationships and push transactions through legitimate payment workflows, not only payment APIs. It names technology service providers for government-linked payments and vendor or partner payout platforms among those affected. CERT-In says its threat hunting found AI-driven agentic offensive frameworks used against enterprises, providers, government bodies and research institutions.",
   "tags": [],
-  "title": "CERT-In warns AI-powered tools are used to manipulate business payment workflows, IANS reports",
-  "updated_at": "2026-11-21T12:42:27Z",
+  "title": "CERT-In advisory CIAD-2026-0062: attackers abuse business payment workflows and AI-driven agentic offensive frameworks",
+  "updated_at": "2026-11-21T13:19:22Z",
   "validation": {
-    "checked_at": "2026-11-21T12:38:55Z",
-    "note": "One publisher (IANS via Telangana Today) read; Moneycontrol's article on the same advisory would not load; the CERT-In advisory itself was not read.",
-    "state": "single_source"
+    "state": "corroborated",
+    "checked_at": "2026-11-21T13:19:22Z",
+    "note": "The CERT-In advisory page was read in full; Telangana Today (IANS) reports the same advisory."
   },
   "review": {
     "state": "corrected",
@@ -43,5 +46,28 @@
     "note": "Against Telangana Today/IANS: removed unsupported 'transaction may pass usual application and approval checks' (article: attackers alter business records or approval processes to divert funds); 'government-linked payment processes' now 'government entities' payment processes'; plain and exec aligned",
     "flags": []
   },
-  "qa_checked_at": "2026-11-21T12:42:20Z"
+  "qa_checked_at": "2026-11-21T12:42:20Z",
+  "report": {
+    "publisher": "CERT-In (Indian Computer Emergency Response Team)",
+    "publisher_type": "government",
+    "doc_id": "CIAD-2026-0062",
+    "published": "2026-11-20",
+    "key_findings": [
+      "Attackers alter business records or approval relationships, then push transactions through legitimate payment processes; payment APIs are not the only target.",
+      "Affected parties now include technology service providers for government-linked payment processes and platforms handling vendor or partner payouts, as well as banks and financial institutions.",
+      "Transactions can pass normal application and approval checks even though the underlying records were changed without authorisation.",
+      "CERT-In's threat hunting found AI-driven agentic offensive frameworks used against enterprises, service providers, government bodies and academic and research institutions.",
+      "These frameworks automate reconnaissance, credential attacks and parallel intrusion tasks by multiple agents, and adapt attack steps when blocked."
+    ],
+    "recommendations": [
+      "Limit which provider systems can change payment records or approve transactions, and reconcile payment instructions against independent records.",
+      "Require independent verification for high-risk payment changes and agree log access and suspension procedures with providers.",
+      "Technology and payout providers should separate client environments, restrict admin and control-plane privileges, and monitor record changes alongside privileged activity and approvals.",
+      "Review internet-facing applications, identities, privileged and service accounts and external connections, and check logs for reconnaissance, credential use, admin activity and outbound data transfers.",
+      "Report incidents to CERT-In within six hours and unauthorised financial transactions at cybercrime.gov.in or helpline 1930."
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://www.cert-in.org.in/s2cMainServlet?pageid=PUBVLNOTES02&VLCODE=CIAD-2026-0062"
+  }
 }

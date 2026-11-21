@@ -10,7 +10,7 @@
   "cve_meta": [],
   "products": [],
   "first_seen": "2026-11-21T19:06:51Z",
-  "updated_at": "2026-11-21T23:18:34Z",
+  "updated_at": "2026-11-21T23:24:43Z",
   "time_basis": "published",
   "category": "incident",
   "date": "2026-11-20",
@@ -29,7 +29,7 @@
   "source_tier": "established",
   "summary": "Guia de TI and ITSitio, each citing Avast research, report a PDF that promises the full GTA VI game and links to a site with a download button. The button leads to a fake Google Drive-style page offering a ZIP file of over 700 MB, which the articles say carries an infostealer that takes credentials and other information stored on the device.",
   "plain": "A PDF that claims to offer the full GTA VI game leads to a fake download page. The file is said to carry malware that steals saved logins and other data.",
-  "exec": "Game-lure malware targets consumers and can expose logins on work devices if run there.",
+  "exec": "A game-lure infostealer, as reported from Avast research, targets consumers' stored credentials and other information.",
   "action": "Per Avast as reported, avoid downloads from links in PDFs, forums, social media or unknown sites, buy games only from official stores and keep security software updated.",
   "sources": [
     {
@@ -55,13 +55,19 @@
     "note": "ITSitio (20 Nov) and Guia de TI (21 Nov) both relay the same Avast research; Avast's own post was not read, so the finding rests on one party. Place changed from Brazil (assumed from the publisher's language) to Avast as researcher: neither article names a victim country."
   },
   "review": {
-    "state": "flagged",
-    "at": "2026-11-21T19:10:40Z",
+    "state": "corrected",
+    "at": "2026-11-21T23:24:49Z",
     "first_at": "2026-11-21T19:10:40Z",
-    "note": "Place is Brazil (country pin) but the Guia de TI article never mentions Brazil; location was assumed from the publisher language/domain. Title, Avast attribution, 700 MB figure and advice match the source. Needs an unlocated/global place or a second source stating a location.",
-    "flags": []
+    "note": "exec added an unsourced consequence (work devices); now restates the summary only. Title, Avast attribution, 700 MB and advice match both articles; place already fixed to Avast HQ",
+    "flags": [
+      "figure-qualifier"
+    ],
+    "categories": [
+      "unsourced",
+      "place"
+    ]
   },
-  "qa_checked_at": "2026-11-21T19:10:40Z",
+  "qa_checked_at": "2026-11-21T23:24:49Z",
   "sectors": {
     "values": [
       "individuals"

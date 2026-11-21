@@ -1,0 +1,57 @@
+{
+  "job": "sweep-researcher",
+  "started_at": "2026-11-21T23:23:56Z",
+  "finished_at": "2026-11-21T23:24:41Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2191",
+      "title": "Security Alert (A26-11-36): Multiple Vulnerabilities in Google Chrome",
+      "used_in": "story fe6cfa25: same Chrome 158.0.8127.36 release as chrome-158-fixes-204-vulnerabilities-2026-11; no exploitation stated"
+    },
+    {
+      "url": "https://www.security.nl/posting/962200/Google+dicht+opnieuw+tweehonderd+kwetsbaarheden+in+Chrome",
+      "title": "Google dicht opnieuw tweehonderd kwetsbaarheden in Chrome",
+      "used_in": "story fe6cfa25: same release, no exploitation stated"
+    },
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/784",
+      "title": "Fwd: gnutls 3.8.14 released with 3 CVE fixes",
+      "used_in": "story 85033925: closed as not an event"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "[UPDATE] [hoch] Google Chrome / Microsoft Edge: Mehrere Schwachstellen",
+      "url": "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2026-4303",
+      "reason": "already on file: chrome-158-fixes-204-vulnerabilities-2026-11 (official, corroborated)"
+    },
+    {
+      "title": "Kritische Sicherheitslücken in PHP - Updates verfügbar",
+      "url": "https://www.cert.at/de/warnungen/2026/11/kritische-sicherheitslucken-in-php-updates-verfugbar2",
+      "reason": "already on file: php-critical-security-release-announced-2026-11 (official, corroborated)"
+    },
+    {
+      "title": "GnuTLS 3.8.14 released with 3 CVE fixes",
+      "url": "https://seclists.org/oss-sec/2026/q4/784",
+      "reason": "all three CVEs (CVE-2026-127039, CVE-2026-127040, CVE-2026-127231) rated severity low by GnuTLS; no exploitation or public exploit code stated"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "TechRepublic: Google Releases Emergency Fix For Chrome Zero-Day Flaw – Users Should Update Now",
+      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNa29MbGMxeC1lek5XY3FyU2syeUIwTGZ5LUpvQXJ3aElPV2ZFaEtSQ0hvejJ1RlR6WTZCeXlNTWJVS09yV2xNZTNQMDROMHRXMHZpYjNONi1UemdESWt1Y0E2MVo2d3dXcUFqdGFDNHpiZENsaUxnZHlhMl84T3UtMXU4SVVEMU9qYmVIeXBvV2RqQkxE?oc=5",
+      "note": "Google News redirect returned no target; publisher URL and date unknown, may be an older article. The Chrome 158 sources read (GovCERT.HK, Security.nl) state no exploitation. Check Chrome Releases for an exploited-in-the-wild fix after 158.0.8127.36.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "news.google.com (redirect not resolvable)"
+  ],
+  "notes": "Grouped story fe6cfa25 also contained PHP and Ghostscript leads; PHP covered by the event on file, Ghostscript lead (seclists.org/oss-sec/2026/q4/806) not in assignment scope.",
+  "worker_role": "researcher-deep",
+  "worker_model": "opus"
+}

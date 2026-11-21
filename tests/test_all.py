@@ -250,7 +250,10 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            # inside the map's window (an event 9 days old sits on its edge and opens the archive instead)
+            import datetime
+            recent = (datetime.datetime.now(datetime.timezone.utc).date() - datetime.timedelta(days=6)).isoformat()
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and str(e.get("date", "")) >= recent)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -1509,7 +1512,8 @@ async def main():
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            # 30, or more when the event just read sits beyond the 30th card (the list then grows to 10 past it, renderFeed)
+            ok("phone: the list starts with 30 events and offers more", (n == 30 or 40 <= n <= 80) and await pg.locator("#feedMore").count() == 1, n)
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())
@@ -1769,6 +1773,64 @@ async def main():
             ok("dropdown: phones keep the native picker", await ph.locator(".cvsel-btn").count() == 0)
             await ctx.close()
         await serve(make_site(bundle), v138)
+
+        # v1.63: official scam warnings by country (scripts/scams.mjs, no AI model; docs["scams/warnings"]) in the Insights tab:
+        # labelled as warnings, not cyber events; issuer named; links only to the issuer's own https hosts; type keyword-assigned
+        bs = copy.deepcopy(bundle)
+        bs["docs"] = dict(bundle.get("docs") or {})
+        bs["docs"]["scams/warnings"] = {"updated_at": "2026-11-21T10:00:00Z", "types_by": "keyword", "issuers": {
+            "ic3": {"name": "FBI Internet Crime Complaint Center (IC3)", "country": "US", "home": "https://www.ic3.gov/PSA", "hosts": ["www.ic3.gov"], "ok": True, "error": ""},
+            "watchlist-internet": {"name": "Watchlist Internet", "country": "AT", "home": "https://evil.example/", "hosts": ["www.watchlist-internet.at"], "ok": False, "error": "timeout"}},
+            "items": [
+                {"id": "ic3-1", "issuer": "ic3", "country": "US", "title": "ScamTestOne: fraudsters impersonate bank staff", "published": "2026-11-20T12:00:00Z", "url": "https://www.ic3.gov/PSA/2026/PSA261120", "types": ["impersonation", "bank_sms", "nonsense"]},
+                {"id": "wl-1", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestTwo: Fake-Paket SMS", "published": "2026-11-19T12:00:00Z", "url": "https://www.watchlist-internet.at/news/paket/", "types": ["delivery"]},
+                {"id": "wl-2", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestThree: off-host link", "published": "2026-11-18T12:00:00Z", "url": "https://evil.example/news/x/", "types": []},
+                {"id": "wl-3", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestFour: script link", "published": "2026-11-17T12:00:00Z", "url": "javascript:alert(1)", "types": []},
+                {"id": "zz-1", "issuer": "unknown", "country": "ZZ", "title": "ScamTestDropped", "url": "https://x.example/"}]}
+
+        async def v163(url):
+            pg, errs = await open_page(browser, url)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            sec = pg.locator("#scamWarnings")
+            ok("scams: the section is in the Insights tab", await sec.is_visible() and "Scam warnings by country" in await sec.locator("h3").text_content())
+            note = await sec.locator(".scamnote").text_content()
+            ok("scams: labelled as warnings, not cyber events, not drawn or counted", "not cyber events" in note and "not drawn on the globe" in note and "not counted as events" in note, note)
+            ok("scams: says a script collects them and types are keyword-assigned", "no AI model" in note and "keyword" in note)
+            ok("scams: unknown issuer dropped", await sec.locator("li", has_text="ScamTestDropped").count() == 0)
+            hrefs = await sec.locator(".scamlist a").evaluate_all("a => a.map(x => x.href)")
+            ok("scams: links only to the issuer's own https hosts", sorted(hrefs) == ["https://www.ic3.gov/PSA/2026/PSA261120", "https://www.watchlist-internet.at/news/paket/"], hrefs)
+            ok("scams: off-host and script links shown as text", await sec.locator(".scamlist li b", has_text="ScamTestThree").count() == 1 and await sec.locator(".scamlist li b", has_text="ScamTestFour").count() == 1)
+            first = await sec.locator(".scamlist li").first.text_content()
+            ok("scams: issuer named, type keyword-assigned, unknown types dropped", "FBI Internet Crime Complaint Center" in first and "keyword-assigned" in first and "impersonation, bank or SMS" in first and "nonsense" not in first, first)
+            src = await sec.locator(".lsrc").first.text_content()
+            ok("scams: a failing issuer is said so; its off-host home is not linked", "last fetch failed: timeout" in src and await sec.locator(".lsrc a", has_text="Watchlist Internet").count() == 0, src)
+            await pg.select_option("#scamCountry", "AT"); await pg.wait_for_timeout(200)
+            ok("scams: the country filter keeps that country only", await pg.locator("#scamWarnings .scamlist li").count() == 3 and await pg.locator("#scamWarnings .scamlist li", has_text="ScamTestOne").count() == 0)
+            await pg.select_option("#scamType", "delivery"); await pg.wait_for_timeout(200)
+            ok("scams: the type filter narrows the list", await pg.locator("#scamWarnings .scamlist li").count() == 1)
+            ok("scams: never on the globe or in the feed", not await pg.evaluate("(document.querySelector('#stage')||document.body).textContent.includes('ScamTest')||(document.querySelector('#feed')||{textContent:''}).textContent.includes('ScamTest')"))
+            ok("scams: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url, 390, 800)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            await pg.locator("#scamWarnings").scroll_into_view_if_needed()
+            ok("scams phone: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth<=window.innerWidth+2"))
+            ok("scams phone: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url + "#scams", wait=2200)
+            ok("scams: #scams opens the Insights tab at the warnings (not an event lookup)", await pg.get_attribute("#tab-ins", "aria-selected") == "true" and await pg.locator("#scamWarnings").is_visible() and "archive" not in pg.url, pg.url)
+            ok("scams #scams: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(make_site(bs), v163)
+
+        async def v163b(url):
+            pg, errs = await open_page(browser, url)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            ok("scams missing: the section says none are stored", "No scam warnings are stored yet" in await pg.locator("#scamWarnings").text_content())
+            ok("scams missing: no script errors", not errs, errs)
+            await pg.context.close()
+        bn = copy.deepcopy(bundle); bn["docs"] = {k: v for k, v in (bundle.get("docs") or {}).items() if k != "scams/warnings"}
+        await serve(make_site(bn), v163b)
 
         await browser.close()
 

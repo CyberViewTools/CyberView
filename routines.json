@@ -98,6 +98,19 @@
    "does": "Checks GitHub for public repositories naming each exploited flaw and flags them in the workbench as possible exploit code."
   },
   {
+   "key": "scams",
+   "name": "Scam warnings",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_scams_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Reads official scam and phishing warnings from government bodies, police, regulators and national CERTs in several countries and languages (config/scams.json), types them by a fixed keyword map, and lists them by country in the map page's Insights tab. Warnings, not cyber events; one that describes a cyber incident becomes a lead for the research loop."
+  },
+  {
    "key": "lead-triage",
    "name": "Lead triage",
    "tier": "automation",

@@ -219,6 +219,21 @@ const gridNews = (() => {
     .map((x) => { const c = checked(x.id), v = outageDesk ? outageDesk.siteCheck(outageChecks[`pw-${x.id}`]) : null; return { ...x, ...(c ? { checked: c } : {}), ...(v ? { verified: v } : {}) }; }) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
+// official scam and phishing warnings by country (scripts/scams.mjs, no AI model): their own list on the map page, never
+// events, never on the globe. The issuers and their own hosts come from config/scams.json (code); the page links an item
+// only to its issuer's hosts. Validated loosely: a broken file only drops the list (with a warning), never the build.
+const scamWarnings = (() => {
+  const p = join(DATA, "scams", "warnings.json");
+  if (!existsSync(p)) return null;
+  const d = readJson(p), cfg = readJson(join(ROOT, "config", "scams.json"), { sources: [] }) || { sources: [] };
+  if (!d || typeof d !== "object" || !Array.isArray(d.items)) { warnings.push("scams/warnings.json: not readable, scam warnings left out"); return null; }
+  const issuers = {}, health = d.sources && typeof d.sources === "object" ? d.sources : {};
+  for (const s of cfg.sources || []) issuers[s.key] = { name: s.name, kind: s.kind, country: s.country, lang: s.lang, home: s.home, hosts: s.hosts,
+    ok: !!(health[s.key] && health[s.key].ok), error: String((health[s.key] && health[s.key].error) || "").slice(0, 60), last_ok: String((health[s.key] && health[s.key].last_ok) || "").slice(0, 30) };
+  return { updated_at: String(d.updated_at || "").slice(0, 30), types_by: "keyword", issuers,
+    items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Object.hasOwn(issuers, x.issuer)).slice(0, 600) };
+})();
+if (scamWarnings) docs["scams/warnings"] = scamWarnings;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
 // licence requires, from scripts/grid.mjs SOURCES (code, not data); a failure leaves the page on its built-in allowlist
 try {

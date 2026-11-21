@@ -49,7 +49,7 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.62",date:"2026-11-20"};
+var BUILD={version:"1.63",date:"2026-11-21"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -1252,6 +1252,7 @@ function renderInsights(list){
   kpi(list.length?Math.round(corr/list.length*100)+"%":"0%","corroborated");
   box.appendChild(k);
   box.appendChild(histBlock());
+  safe("scam warnings",function(){box.appendChild(scamBlock());});
   box.appendChild(bars("Source quality",tally(list,function(e){return e.tier?TIER[e.tier]:"Not rated yet";}),null));
   box.appendChild(bars("Validation",tally(list,function(e){return e.val?VAL[e.val.state][0]:"Not yet checked";}),null));
   box.appendChild(bars("Countries",tally(list,function(e){return e.country;}).slice(0,6),function(c){state.country=normC(c);setTab("feed");render();}));
@@ -1314,6 +1315,75 @@ function renderInsights(list){
   box.appendChild(el("div","empty","CyberView version "+BUILD.version+" · built "+fmtDay(BUILD.date)+(sweep&&sweep.data_version?" · data rules "+str(sweep.data_version,20):"")));
   var subs=el("div","empty");subs.appendChild(document.createTextNode("Subscribe to high-priority events: "));var rl=el("a",null,"RSS");rl.href="data/feed.xml";subs.appendChild(rl);subs.appendChild(document.createTextNode(" · "));var jl=el("a",null,"JSON Feed");jl.href="data/feed.json";subs.appendChild(jl);subs.appendChild(document.createTextNode(" · "));var al=el("a",null,"Full archive");al.href="archive.html";subs.appendChild(al);box.appendChild(subs);
 }
+/* ---------- scam warnings (scripts/scams.mjs, no AI model; docs["scams/warnings"]) ----------
+   Official warnings about scams and phishing from government bodies, police, regulators and national CERTs, by country.
+   Warnings, not cyber events: never drawn on the globe, never counted as events. The issuer is named and an item links only
+   to its issuer's own https hosts (from config/scams.json). The scam type is keyword-assigned and labelled so. */
+var SCAM_TYPES={impersonation:"impersonation",investment:"investment",delivery:"delivery",bank_sms:"bank or SMS",tech_support:"tech support",romance:"romance",job:"job",crypto:"crypto"};
+var scams=null,scamUi={cc:"",type:"",all:false};
+function cleanScams(d){
+  if(!d||typeof d!=="object"||!d.issuers||typeof d.issuers!=="object"||!Array.isArray(d.items))return null;
+  var iss={};
+  Object.keys(d.issuers).slice(0,80).forEach(function(k){var v=d.issuers[k];if(!/^[a-z0-9-]{2,30}$/.test(k)||!v||typeof v!=="object")return;
+    var hosts=(Array.isArray(v.hosts)?v.hosts:[]).slice(0,6).map(function(h){return str(h,80).toLowerCase();}).filter(function(h){return /^[a-z0-9.-]{3,80}$/.test(h);});
+    var cc=str(v.country,2).toUpperCase();
+    iss[k]={name:str(v.name,140).trim()||k,country:/^[A-Z]{2}$/.test(cc)?cc:"",hosts:hosts,ok:v.ok===true,error:str(v.error,60),home:""};
+    iss[k].home=scamLink(iss[k],v.home);});
+  var items=d.items.slice(0,600).map(function(x){
+    if(!x||typeof x!=="object"||!own(iss,str(x.issuer,30)))return null;
+    var i=iss[x.issuer],t=str(x.title,220).trim(),cc=str(x.country,2).toUpperCase();if(!t)return null;
+    return {id:str(x.id,60),issuer:x.issuer,title:t,country:/^[A-Z]{2}$/.test(cc)?cc:i.country,published:str(x.published,30),seen:str(x.first_seen,30),url:scamLink(i,x.url),
+      types:strs(x.types,8,20).filter(function(k){return own(SCAM_TYPES,k);})};
+  }).filter(Boolean);
+  return {at:str(d.updated_at,30),issuers:iss,items:items};
+}
+/* an https link on the issuer's own hosts, or nothing */
+function scamLink(i,u){
+  u=str(u,500);var m=/^https:\/\/([a-z0-9.-]+)(?:[\/?#]|$)/i.exec(u);
+  return m&&!/[\s"'<>\\]/.test(u)&&i.hosts.indexOf(m[1].toLowerCase())>=0?u:"";
+}
+function scamWhen(x){return x.published||x.seen;}
+function scamBlock(){
+  var b=el("section","blk scams");b.id="scamWarnings";b.appendChild(el("h3",null,"Scam warnings by country"));
+  b.appendChild(el("p","scamnote","Official warnings about scams and phishing from government bodies, police, regulators and national cyber security centres, read from their own feeds by a script (no AI model). They are warnings, not cyber events: they are not drawn on the globe and not counted as events. The scam type is assigned by keyword matching and can be wrong."));
+  if(!scams){b.appendChild(el("div","empty",loaded?"No scam warnings are stored yet.":"Loading scam warnings"));return b;}
+  var all=scams.items.slice().sort(function(a,c){return (Date.parse(scamWhen(c))||0)-(Date.parse(scamWhen(a))||0);});
+  var ccs={},tys={};all.forEach(function(x){if(x.country)ccs[x.country]=(ccs[x.country]||0)+1;x.types.forEach(function(t){tys[t]=(tys[t]||0)+1;});});
+  if(scamUi.cc&&!ccs[scamUi.cc])scamUi.cc="";if(scamUi.type&&!tys[scamUi.type])scamUi.type="";
+  var row=el("div","scamtools");
+  var sc=el("select");sc.id="scamCountry";sc.setAttribute("aria-label","Scam warnings: country");
+  var o0=el("option",null,"All countries ("+all.length+")");o0.value="";sc.appendChild(o0);
+  Object.keys(ccs).sort(function(a,c){return gridCountry(a).localeCompare(gridCountry(c));}).forEach(function(c){var o=el("option",null,gridCountry(c)+" ("+ccs[c]+")");o.value=c;sc.appendChild(o);});
+  sc.value=scamUi.cc;sc.addEventListener("change",function(){scamUi.cc=/^[A-Z]{2}$/.test(sc.value)?sc.value:"";scamUi.all=false;scamRedraw();});
+  var st=el("select");st.id="scamType";st.setAttribute("aria-label","Scam warnings: scam type (keyword-assigned)");
+  var t0=el("option",null,"Any scam type");t0.value="";st.appendChild(t0);
+  Object.keys(SCAM_TYPES).forEach(function(k){if(!tys[k])return;var o=el("option",null,SCAM_TYPES[k]+" ("+tys[k]+")");o.value=k;st.appendChild(o);});
+  st.value=scamUi.type;st.addEventListener("change",function(){scamUi.type=own(SCAM_TYPES,st.value)?st.value:"";scamUi.all=false;scamRedraw();});
+  row.appendChild(sc);row.appendChild(st);b.appendChild(row);
+  var list=all.filter(function(x){return (!scamUi.cc||x.country===scamUi.cc)&&(!scamUi.type||x.types.indexOf(scamUi.type)>=0);});
+  if(!list.length)b.appendChild(el("div","empty",all.length?"No warning matches this filter.":"No scam warnings in the last 90 days from the issuers below."));
+  var ul=el("ul","scamlist"),cap=scamUi.all?list.length:8;
+  list.slice(0,cap).forEach(function(x){
+    var li=el("li"),i=scams.issuers[x.issuer];
+    if(x.url){var a=el("a",null,x.title);a.href=safeUrl(x.url);a.target="_blank";a.rel="noopener noreferrer";li.appendChild(a);}else li.appendChild(el("b",null,x.title));
+    var w=scamWhen(x),meta=[i.name];if(x.country)meta.push(gridCountry(x.country));
+    if(w&&isFinite(Date.parse(w)))meta.push((x.published?"published ":"first seen ")+fmtDay(w.slice(0,10)));
+    li.appendChild(el("span","muted"," "+meta.join(" · ")));
+    li.appendChild(el("small","scamtype",x.types.length?"Scam type (keyword-assigned): "+x.types.map(function(k){return SCAM_TYPES[k];}).join(", "):"Scam type: no keyword matched"));
+    ul.appendChild(li);});
+  if(list.length)b.appendChild(ul);
+  if(list.length>cap){var more=el("button","linkbtn","Show all "+list.length+" warnings");more.type="button";more.addEventListener("click",function(){scamUi.all=true;scamRedraw();});b.appendChild(more);}
+  var keys=Object.keys(scams.issuers),src=el("p","lsrc","Issuers ("+keys.length+"): ");
+  keys.forEach(function(k,n){var i=scams.issuers[k];if(n)src.appendChild(document.createTextNode("; "));
+    if(i.home){var ha=el("a",null,i.name);ha.href=safeUrl(i.home);ha.target="_blank";ha.rel="noopener noreferrer";src.appendChild(ha);}else src.appendChild(document.createTextNode(i.name));
+    if(!i.ok)src.appendChild(document.createTextNode(" (last fetch failed"+(i.error?": "+i.error:"")+")"));});
+  b.appendChild(src);
+  if(scams.at&&isFinite(Date.parse(scams.at)))b.appendChild(el("p","lsrc","Collected "+ago(scams.at)+". Titles are the issuers' own, in their own language."));
+  return b;
+}
+/* #scams (the About page links here): the Insights tab, scrolled to the warnings */
+function scamOpen(){if(state.view==="grid")setView("map");setTab("ins");var b=$("scamWarnings");if(b&&b.scrollIntoView)b.scrollIntoView({block:"start"});}
+function scamRedraw(){var old=$("scamWarnings");if(!old)return;safe("scam warnings",function(){var n=scamBlock();old.parentNode.replaceChild(n,old);});}
 function histBlock(){
   var b=el("section","blk hist");b.appendChild(el("h3",null,"This week vs earlier"));
   var n=hist?hist.length:0;
@@ -2729,10 +2799,11 @@ fetch("world-110m.json").then(function(r){return r.json();}).then(function(topo)
 // every URL that comes from data passes through here before it becomes a link
 function safeUrl(u){u=String(u||"");return /^https?:\/\//i.test(u)?u:"about:blank";}
 /* ---------- permalinks: #e=<id> opens one event (plain #<id> from older links still works) ---------- */
-function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h==="grid")return "";if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
+function hashId(){var h=location.hash.slice(1);try{h=decodeURIComponent(h);}catch(x){}if(h==="grid"||h==="scams")return "";if(h.indexOf("e=")===0)h=h.slice(2);return /^[a-z0-9][a-z0-9-]{2,119}$/.test(h)?h:"";}
 function eventLink(id){return location.origin+location.pathname+"#e="+encodeURIComponent(id);}
 function openFromHash(){
   if(location.hash==="#grid"){if(state.view!=="grid")setView("grid");return;}
+  if(location.hash==="#scams"){scamOpen();return;}
   var h=hashId();if(!h){if(state.sel&&state.view!=="grid")select(null);return;}
   if(state.view==="grid")setView("map");
   if(h===state.sel)return;
@@ -2800,7 +2871,7 @@ openStore().then(function(d){
   query.onSnapshot(function(snap){
     var n=apply(snap);
     if(!snap.metadata||!snap.metadata.fromCache){clearTimeout(timer);stale=false;}
-    if(first){first=false;if(/[?&]wall(\b|=|&|$)/.test(location.search)){renderSoon();setTimeout(wallStart,60);return;}if(hashId()){openFromHash();return;}}
+    if(first){first=false;if(/[?&]wall(\b|=|&|$)/.test(location.search)){renderSoon();setTimeout(wallStart,60);return;}if(hashId()){openFromHash();return;}if(location.hash==="#scams")setTimeout(scamOpen,0);}
     else if(n)toast(n+" new event"+(n>1?"s":"")+" just arrived.");
     renderSoon();
   },function(){clearTimeout(timer);if(!loaded)unavailable=true;stale=false;render();});
@@ -2812,6 +2883,7 @@ openStore().then(function(d){
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
+  db.doc("scams/warnings").onSnapshot(function(s){scams=s.exists?cleanScams(s.data()):null;if(state.tab==="ins")scamRedraw();},function(){});
   db.doc("grid/news").onSnapshot(function(s){gridNews=s.exists?cleanGridNews(s.data()):null;if(state.view==="grid")renderSoon();},function(){});
   db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;gridTr=s.exists?cleanGridTrends(s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});
   db.doc("grid/sources").onSnapshot(function(s){gridSrcDoc=s.exists?cleanGridSrcDoc(s.data()):{};if(ctxRaw.grid){ctx.grid=cleanCtx("grid",ctxRaw.grid);renderLayers();if(onGlobe())renderSoon();}},function(){});

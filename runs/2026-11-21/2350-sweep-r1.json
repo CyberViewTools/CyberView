@@ -1,0 +1,85 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-21T23:47:31Z",
+  "finished_at": "2026-11-21T23:50:40Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "毎日新聞デジタル 会員情報 漏えい KARTE お知らせ 11月19日",
+    "毎日新聞社 会員情報の一部漏えい プレイド KARTE おわび (mainichi.jp / mainichi.co.jp: refused, sites block automated readers)"
+  ],
+  "pages_read": [
+    {
+      "url": "https://cybersecurity-jp.com/news/118766",
+      "title": "毎日新聞社がデジタル会員約14万人分の姓の漏えいを発表 委託先KARTEが不正アクセス",
+      "used_in": "mainichi-digital-karte-member-data-leak-2026-11"
+    },
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2157620.html",
+      "title": "「KARTE」情報漏えい、JINS・三菱UFJなど多数の企業に影響 (no Mainichi mention)",
+      "used_in": "checked for a second Mainichi source; not used"
+    },
+    {
+      "url": "https://innovatopia.jp/cyber-security/cyber-security-news/120149/",
+      "title": "KARTE breach roundup (no Mainichi mention)",
+      "used_in": "checked for a second Mainichi source; not used"
+    },
+    {
+      "url": "https://www.sbbit.jp/article/cont1/188589",
+      "title": "mineo KARTE article (visible part has no Mainichi mention)",
+      "used_in": "checked for a second Mainichi source; not used"
+    },
+    {
+      "url": "https://cybersecurity-jp.com/news/118765",
+      "title": "六花亭がオンラインショップのカード情報流出でカード不正利用1件を確認と発表",
+      "used_in": "rokkatei-online-shop-payment-screen-tampered-2026-11"
+    },
+    {
+      "url": "https://www.rokkatei.co.jp/news/info/20261121-25796/",
+      "title": "Rokkatei notice, second report, 21 Nov 2026",
+      "used_in": "rokkatei-online-shop-payment-screen-tampered-2026-11"
+    },
+    {
+      "url": "https://www.rokkatei.co.jp/news/",
+      "title": "Rokkatei news index (21 Nov notice not yet listed)",
+      "used_in": "not used"
+    },
+    {
+      "url": "https://cybersecurity-jp.com/news/118763",
+      "title": "早稲田大学のMyWasedaログイン用ユーザー情報管理システムが不正アクセス",
+      "used_in": "skipped (older than map window)"
+    },
+    {
+      "url": "https://www.waseda.jp/top/news/topic/124183?lng=en",
+      "title": "不正アクセスによる個人情報漏えいについて (Waseda, 9 Nov 2026)",
+      "used_in": "skipped (older than map window)"
+    }
+  ],
+  "added": [
+    "mainichi-digital-karte-member-data-leak-2026-11"
+  ],
+  "updated": [
+    "rokkatei-online-shop-payment-screen-tampered-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "Waseda University MyWaseda user-information system breach, 3,342 records (cumulative)",
+      "url": "https://www.waseda.jp/top/news/topic/124183?lng=en",
+      "reason": "older than the map window: Waseda's notice is dated 9 Nov 2026 (intrusion 31 Aug 2026), 12 days before first sight"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Mainichi Shimbun KARTE member-data leak: own notice not read",
+      "url": "https://cybersecurity-jp.com/news/118766",
+      "note": "Event is single_source; mainichi.jp/mainichi.co.jp block automated readers. A second independent publisher (e.g. Kyodo, Jiji, NHK) stating the figures would make it corroborated.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "mainichi.jp",
+    "mainichi.co.jp (refused by search tool: blocks automated readers)"
+  ],
+  "notes": "validate.mjs prints figure-no-evidence / figure-qualifier warnings on both events because its figure parser does not read Japanese 約 (about) or 万 (ten thousand) in the verbatim Japanese evidence quotes (約14万人分 = about 140,000; 約2,700件; 約8,000件). The qualifiers match the pages; quotes kept word for word. Rokkatei update: second notice of 21 Nov adds possible leak of names, postal addresses, phone numbers, emails and one card misuse reported by a customer on 20 Nov; also reported to the PPC and consulted police (not added to summary for length). Build passes.",
+  "worker_role": "researcher-deep",
+  "worker_model": "opus"
+}

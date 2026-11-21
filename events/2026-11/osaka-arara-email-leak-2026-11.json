@@ -5,8 +5,8 @@
   "category": "incident",
   "country": "Japan",
   "cves": [],
-  "date": "2026-11-18",
-  "date_note": "Kept from the first version: ZATAZ's Osaka article was last updated 18 November 2026 and gives no earlier day for Osaka's report. Arara's notice is dated 6 November, Amagasaki's notice 13 November and Nishinomiya's final report 16 November.",
+  "date": "2026-11-16",
+  "date_note": "Date of Nishinomiya City's final report confirming the leak; the page gives no earlier day for that confirmation. Arara's notice is dated 6 November, Amagasaki's notice 13 November; ZATAZ's Osaka article was last updated 18 November 2026.",
   "exec": "A breach at an email-sending provider used by a municipal contractor exposed residents' addresses in several Japanese cities, raising the risk of convincing phishing.",
   "first_seen": "2026-11-20T08:31:00Z",
   "geo_basis": "city named in the source (Nishinomiya, the city with the largest confirmed count)",
@@ -24,6 +24,11 @@
     {
       "name": "Nishinomiya City, final report (16 November 2026)",
       "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.html",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "Nishinomiya City, final report (PDF, 16 November 2026)",
+      "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.files/R081116_suma-toshinsei2.pdf",
       "published": "2026-11-16"
     },
     {
@@ -49,7 +54,7 @@
     "third-party"
   ],
   "title": "Arara email-service breach: Nishinomiya confirms 25,115 and Amagasaki 17,064 residents' email addresses leaked",
-  "updated_at": "2026-11-21T23:43:46Z",
+  "updated_at": "2026-11-21T23:48:09Z",
   "validation": {
     "checked_at": "2026-11-21T23:43:46Z",
     "note": "Primary: Nishinomiya City's final report (figures in the PDF linked from the page, R081116_suma-toshinsei2.pdf), Amagasaki City's notice and Arara's own notice were read; the Osaka figure is from ZATAZ only (Osaka's own notice not read). ZATAZ gives 77 million addresses and nearly 400 clients; Arara's notice of 6 November gives 81,329,467 and up to about 380.",
@@ -57,7 +62,7 @@
   },
   "evidence": [
     {
-      "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.html",
+      "url": "https://www.nishi.or.jp/shisei/koho/kishahappyoshiryo/2026/202611/R081116_suma-toshin.files/R081116_suma-toshinsei2.pdf",
       "quote": "（２）件数：25,115 件"
     },
     {
@@ -75,13 +80,18 @@
   ],
   "records_affected": 81329467,
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T08:36:13Z",
+    "state": "corrected",
+    "at": "2026-11-21T23:48:31Z",
     "first_at": "2026-11-20T08:36:13Z",
-    "note": "Compared about one million people, 2 Nov attack, 77 million addresses, nearly 400 clients, Arara notice as paraphrased and the 18 Nov date note against ZATAZ; single-source status and severity fit",
-    "flags": []
+    "note": "date: was 18 Nov (ZATAZ article date), now 16 Nov (Nishinomiya final report); source not read: evidence quote for 25,115 is in the linked PDF, not the cited HTML stub, so PDF added as source and evidence url fixed. Figures 25,115, 17,064, 81,329,467, Osaka about one million checked against pages",
+    "flags": [],
+    "categories": [
+      "figure",
+      "date",
+      "source"
+    ]
   },
-  "qa_checked_at": "2026-11-20T08:36:13Z",
+  "qa_checked_at": "2026-11-21T23:48:31Z",
   "sectors": {
     "values": [
       "government-facilities"

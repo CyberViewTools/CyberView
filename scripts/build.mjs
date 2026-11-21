@@ -24,6 +24,7 @@ import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "
 import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
+import { sectorsOf, surfaceOf, SECTOR, SURFACE } from "./lib/taxonomy.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -110,6 +111,9 @@ for (const f of files) {
   }
   warnings.unshift(...fresh);
   if (old.size) warnings.push(`quality checks on older events: ${[...old].map(([k, n]) => `${k} ${n}`).join(", ")}`);
+  // sectors and surface: the analysis views fall back to keywords without them (one line, not one per event)
+  const bare = live.filter((f) => f.e.sectors == null || f.e.surface == null).length;
+  if (bare) warnings.push(`classification: ${bare} of ${live.length} events have no sectors or surface yet; the analysis views place them by keyword (backfill: node scripts/classify.mjs plan)`);
 }
 const allEvents = files.filter((f) => f.e && !(quarantine && badEvents.has(f.path))).map((f) => f.e);
 const kevAll = listDir("kev").filter((x) => x.r).map((x) => x.r);
@@ -358,7 +362,9 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const norm = (v) => String(v || "").replace(/\s+/g, " ").trim();
   const DIMS = {
     category: (e) => [e.category],
-    sector: (e) => norm(e.sector).split(/[,;/]| and /i).map((x) => norm(x)).filter((x) => x && x.length < 40),
+    // the explicit sectors (fixed list) when an event has them, else the free-text sector field
+    sector: (e) => { const se = sectorsOf(e), v = se ? se.values.filter((k) => k !== "unknown") : []; return v.length ? v.map((k) => SECTOR[k].label) : norm(e.sector).split(/[,;/]| and /i).map((x) => norm(x)).filter((x) => x && x.length < 40); },
+    surface: (e) => { const su = surfaceOf(e); return su && su.value !== "unknown" ? [SURFACE[su.value].label] : []; },
     country: (e) => [norm(e.country)].filter((x) => x && !/^(global|worldwide|multiple|international)/i.test(x)),
     actor: (e) => [norm(String(e.actor || "").split(/[;(]/)[0])].filter((x) => x && !/^(unknown|unattributed|none|n\/a)/i.test(x)),
     product: (e) => (e.products || []).map((x) => norm(x)).filter((x) => x && x.length < 50),
@@ -380,6 +386,16 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
     prev: { from: prevFrom, to: prevTo, total: known.filter(inPrev).length, complete: started <= prevFrom },
     collection_started: started,
     dims, daily,
+    // where the sector and surface rows came from, over both weeks: the source, CyberView AI, or the free-text sector field
+    basis: (() => {
+      const b = { sector: { stated: 0, inferred: 0, free: 0 }, surface: { stated: 0, inferred: 0, none: 0 } };
+      for (const e of known.filter((x) => inCur(x) || inPrev(x))) {
+        const se = sectorsOf(e), su = surfaceOf(e);
+        b.sector[se && se.values.some((k) => k !== "unknown") ? se.basis : "free"]++;
+        b.surface[su && su.value !== "unknown" ? su.basis : "none"]++;
+      }
+      return b;
+    })(),
     grid: gridAnalysis ? { updated_at: gridAnalysis.updated_at, trends: gridAnalysis.trends, anomalies: gridAnalysis.anomalies.length, corroborated: gridAnalysis.corroboration.filter((c) => (c.score || 0) >= 2).length } : null,
   };
   writeFileSync(join(OUT, "trends.json"), JSON.stringify(trends));

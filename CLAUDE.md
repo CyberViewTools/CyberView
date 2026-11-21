@@ -70,6 +70,7 @@ scripts/improve.mjs      continuous improvement: report (cost, yield, quality, s
 scripts/swarm.mjs        catch-up runs over a whole queue: freeze, frozen batches with a plan_id, validate, retry missing, report
 scripts/metrics.mjs      pipeline metrics for the editor job and the status page
 scripts/updates.mjs      new reporting on published events (no AI model): leads that match an event, from pages it does not cite, newer than its last update; `plan` hands them to updaters in the research loop, `done` records each page as updated, unchanged, unrelated or unreachable (retried once, then dropped)
+scripts/classify.mjs     one-off backfill of event `sectors` and `surface` (fixed lists in scripts/lib/taxonomy.mjs): plan (frozen batches with a plan_id), show, run (classifier workers), apply (checked, dry run first), compare (keyword against explicit)
 scripts/review.mjs       second review of new events: queue with mechanical flags, and pass, corrected, flagged verdicts (the review desk job)
 scripts/chat.mjs         community feed intake (fixed rules), approve, reject, remove; the moderator job decides
 scripts/verify-build.mjs build verifier: outputs parse and match site/data/manifest.json; --against-live refuses a shrunken dataset; --live proves the deploy took
@@ -158,7 +159,7 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 ## Known limits
 
 - Coverage is thin for Africa, Turkey, most of the Middle East and Latin America.
-- Attack-surface and sector rows in the analysis views are assigned by keyword and can be wrong.
+- Attack-surface and sector rows in the analysis views, trends and status coverage come from each event's `sectors` and `surface` (fixed lists, `scripts/lib/taxonomy.mjs`, each "stated by the source" or "inferred by CyberView AI"); events without them (until `scripts/classify.mjs` backfills them) are placed by keyword, can be wrong, and every view counts and labels them "keyword-assigned".
 - Germany's BSI, Australia's cyber.gov.au and SAP notes block automated readers.
 - Error reports from visitors arrive as GitHub issues labelled `event-report`; the verify desk handles them.
 - GitHub Pages cannot send custom headers, so the Content-Security-Policy is a meta tag in each page (it cannot set frame-ancestors).

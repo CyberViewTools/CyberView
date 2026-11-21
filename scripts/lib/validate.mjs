@@ -2,6 +2,7 @@
 // Each function returns a list of problems (strings); an empty list means the record is fine.
 // checkEventQuality and sharedSourceProblems return [{level, code, text}] instead (see there).
 import { pathToFileURL } from "node:url";
+import { SECTOR, SURFACE, BASES, MAX_SECTORS } from "./taxonomy.mjs";
 
 const https = (u) => typeof u === "string" && /^https:\/\/[^\s"'<>]+$/.test(u) && (() => { try { const x = new URL(u); return x.pathname !== "/" || !!x.search; } catch { return false; } })();
 const text = (v, max) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
@@ -290,6 +291,45 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
       if (k === "plain" && !same.length && f.value >= 1000 && !stated.some((s) => Math.abs(s.value - f.value) <= 0.05 * s.value && (f.q === "about" || (f.q === s.q && f.q !== "exact")))) { add("warn", "figure-not-in-summary", `"${f.raw}" in plain is not in the summary or impact: plain may round a stated figure ("about 341,000"), never add one`); break; }
     }
   }
+  out.push(...checkClassification(e));
+  return out;
+}
+
+/**
+ * Event "sectors" and "surface": who was hit and through what, from fixed lists (scripts/lib/taxonomy.mjs), each with a basis
+ * (stated by a source, or inferred). A value off the list or a missing basis is an error for events first seen from
+ * QUALITY_STRICT_FROM (a warning before); a missing field is a warning for events first seen from CLASSIFY_FROM (older
+ * events are filled by `node scripts/classify.mjs`). Returns [{level, code, text}].
+ */
+export const CLASSIFY_FROM = "2026-11-22T00:00:00Z";
+export function checkClassification(e) {
+  const out = [], add = (level, code, text) => out.push({ level, code, text });
+  if (!e || typeof e !== "object") return out;
+  const basis = (b, k) => { if (!BASES.includes(b)) add("error", "classify-basis", `${k}.basis must be "stated" (a page in sources says it) or "inferred" (concluded from what the sources say)`); };
+  const s = e.sectors;
+  if (s != null) {
+    if (typeof s !== "object" || Array.isArray(s)) add("error", "sectors-shape", 'sectors must be {"values": [<sector>...], "basis": "stated" | "inferred"}');
+    else {
+      if (!Array.isArray(s.values) || !s.values.length || s.values.length > MAX_SECTORS) add("error", "sectors-shape", `sectors.values must list 1 to ${MAX_SECTORS} sectors, the most affected first`);
+      else {
+        const bad = s.values.filter((k) => !Object.prototype.hasOwnProperty.call(SECTOR, k));
+        if (bad.length) add("error", "sectors-value", `sectors.values: ${bad.map((x) => JSON.stringify(x).slice(0, 40)).join(", ")} not on the list (${Object.keys(SECTOR).join(", ")})`);
+        if (new Set(s.values).size !== s.values.length) add("error", "sectors-value", "sectors.values lists a sector twice");
+        if (s.values.length > 1 && s.values.some((k) => k === "unknown" || k === "cross-sector")) add("error", "sectors-value", '"unknown" and "cross-sector" stand alone in sectors.values');
+      }
+      basis(s.basis, "sectors");
+    }
+  }
+  const u = e.surface;
+  if (u != null) {
+    if (typeof u !== "object" || Array.isArray(u)) add("error", "surface-shape", 'surface must be {"value": <surface>, "basis": "stated" | "inferred"}');
+    else {
+      if (!Object.prototype.hasOwnProperty.call(SURFACE, u.value)) add("error", "surface-value", `surface.value ${JSON.stringify(u.value).slice(0, 40)} is not on the list (${Object.keys(SURFACE).join(", ")})`);
+      basis(u.basis, "surface");
+    }
+  }
+  if ((s == null || u == null) && String(e.first_seen || "") >= CLASSIFY_FROM && !e.duplicate_of)
+    add("warn", "unclassified", `${s == null ? "sectors" : ""}${s == null && u == null ? " and " : ""}${u == null ? "surface" : ""} missing: say who was hit and through what, from the fixed lists in docs/schema.md, with basis "stated" or "inferred"`);
   return out;
 }
 

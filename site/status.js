@@ -105,7 +105,7 @@
   function cleanEff(o) {
     if (!obj(o)) return null;
     if (typeof o.error === "string") return { error: txt(o.error, 240) };
-    var cov = function (c) { c = obj(c) || {}; return { days: nn(c.days), events: int0(c.events), region: countMap(c.region), language: countMap(c.language), sector: countMap(c.sector) }; };
+    var cov = function (c) { c = obj(c) || {}; return { days: nn(c.days), events: int0(c.events), region: countMap(c.region), language: countMap(c.language), sector: countMap(c.sector), sector_basis: countMap(c.sector_basis) }; };
     var w = function (x) { x = obj(x) || {}; return { runs: int0(x.runs), tokens: int0(x.tokens), cost: nn(x.cost) }; };
     var LP = obj(o.loop), LB = LP && obj(LP.budget) || {}, lvl = function (x) { return x && ["ok", "tight", "stop"].indexOf(x.level) >= 0 ? x.level : ""; };
     var W = obj(o.windows) || {}, B = obj(W.budget), A = obj(o.accuracy) || {}, C = obj(o.coverage) || {}, CV = obj(o.covered) || {};
@@ -534,7 +534,9 @@
       });
       if (!keys.length) ul.appendChild(el("li", "muted", "No events yet."));
       if (keys.length > 12) ul.appendChild(el("li", "muted", (keys.length - 12) + " more with fewer events"));
-      div.appendChild(ul); box.appendChild(div);
+      div.appendChild(ul);
+      if (d[0] === "sector") { var sb = e.d7.sector_basis || {}, bn = el("p", "note", "Sector of the " + e.d7.events + " events in 7 days: " + (sb.stated || 0) + " stated by the source, " + (sb.inferred || 0) + " inferred by CyberView AI (a Claude model), " + (sb.keyword || 0) + " keyword-assigned from the wording (can be wrong)."); bn.dataset.basis = "sector"; div.appendChild(bn); }
+      box.appendChild(div);
     });
     $("covNote").textContent = same ? e.d7.events + " events first seen in the last " + (dd !== null && dd < 7 ? dd + " days (all the event files hold so far, so the 7- and 30-day counts are the same)" : "7 days") + "."
       : e.d7.events + " events first seen in the last 7 days; " + e.d30.events + " in the last 30" + (dd !== null && dd < 30 ? " (the event files hold " + dd + " days)" : "") + ". Bars show 7 days.";

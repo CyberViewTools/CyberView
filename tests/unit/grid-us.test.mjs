@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SOURCES, REGIONS, ADAPTERS, PLUGIN_ERRORS, OPERATORS, checkItem, track, DEFAULT_CFG } from "../../scripts/grid.mjs";
-import us, { caisoLevel, nyisoDay, ODIN_DIRECT, EVERSOURCE_REPORTS } from "../../scripts/grid-sources/us.mjs";
+import us, { caisoLevel, nyisoDay, ODIN_DIRECT, ODIN_STATE_AGENCIES, EVERSOURCE_REPORTS } from "../../scripts/grid-sources/us.mjs";
 import { stateOfFips, titleCase } from "../../scripts/grid-sources/lib-us-states.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -162,9 +162,14 @@ test("DOE/ORNL ODIN: county rows, state regions, utility in area, direct utiliti
   const pacificorp = raw.filter((r) => r.names.some((n) => n.name === "PACIFICORP"));
   assert.equal(pacificorp.length, 24);
   assert.equal(pacificorp.filter((r) => r.names.length > 2).length, 1);
-  assert.equal(items.length, raw.length - pacificorp.length);
+  // Pennsylvania and Maryland rows (10 here, 695 meters, all in PA) are dropped: their state agencies' counts are read
+  // directly (agencies.mjs, ODIN_STATE_AGENCIES)
+  const agencyStates = raw.filter((r) => ODIN_STATE_AGENCIES.has(String(r.communityDescriptor).slice(0, 2)));
+  assert.equal(agencyStates.length, 10);
+  assert.equal(items.length, raw.length - pacificorp.length - agencyStates.length);
   assert.ok(!items.some((x) => /PACIFICORP/.test(x.area)));
-  assert.equal(items.reduce((s, x) => s + x.customers, 0), 5993 - 359);
+  assert.ok(!items.some((x) => x.region === "Pennsylvania" || x.region === "Maryland"));
+  assert.equal(items.reduce((s, x) => s + x.customers, 0), 5993 - 359 - 695);
   const cnp = items.find((x) => x.customers === 1313);
   assert.deepEqual([cnp.region, cnp.area, cnp.country, cnp.lat], ["Texas", "County FIPS 48201: CENTERPOINT ENERGY", "US", null]);
   assert.ok(items.every((x) => REGIONS[`doe-odin|${x.region}`]));

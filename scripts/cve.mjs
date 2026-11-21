@@ -24,6 +24,7 @@ import vm from "node:vm";
 // the site's rating code, run here too so the counts on the page and the ratings in the browser cannot disagree
 const RATE = (() => { const sb = { window: {} }; vm.runInNewContext(readFileSync(join(ROOT, "site", "cvedb-lib.js"), "utf8"), sb); return sb.window.CVDB; })();
 import { compact, parseEpss, bucket, deltaSince, notable, toLead, FIELDS, toArr, ID, parseKevCatalog, nvdScore } from "./lib/cve.mjs";
+import { advisory as psirtAdvisory, byCve as psirtByCve } from "./lib/psirt.mjs";
 
 export const CORPUS_VERSION = 2;
 /** Critical the way NVD counts it: a CVSS v3 or v4 rating of Critical (CVSS v2 has no Critical). The assigner's or CISA's
@@ -179,12 +180,16 @@ async function audit() {
 function site(out = join(ROOT, "site", "data", "cve")) {
   if (!years().length) { console.log("SITE: no corpus here; nothing written."); return; }
   rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true });
+  // vendor advisories joined on CVE (scripts/psirt.mjs), as the page attaches them, so a vendor's own "exploited" statement
+  // counts the same here as in the browser
+  const adv = RATE.cleanVendorIndex({ cve: psirtByCve(((readJson(join(DATA, "psirt", "advisories.json"), {}) || {}).advisories || []).map((a) => psirtAdvisory(a || {})).filter(Boolean)) });
   const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, ratingBands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
   for (const r of allRows()) {
     total++; if (r.state === "R") rejected++; if (r.kev || r.expl === "active") exploited++;
     if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.n3c) criticalNvd++; if (r.n3 === "C") criticalNvdOwn++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
-      const d = RATE.rate({ ...r, rejected: false }); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1;
-      const sc = RATE.score({ ...r, rejected: false }); if (sc) ratingBands[sc.band] = (ratingBands[sc.band] || 0) + 1; }   // CyberView rating bands (CVSS bands, plus "Not scored")
+      const rr = adv[r.id] ? { ...r, rejected: false, adv: adv[r.id] } : { ...r, rejected: false };
+      const d = RATE.rate(rr); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1;
+      const sc = RATE.score(rr); if (sc) ratingBands[sc.band] = (ratingBands[sc.band] || 0) + 1; }   // CyberView rating bands (CVSS bands, plus "Not scored")
     const y = yearOf(r.id); byYear[y] = (byYear[y] || 0) + 1;
     const b = bucket(r.id); if (!buckets.has(b)) buckets.set(b, []); buckets.get(b).push(toArr(r));
     if (r.state === "P" && (r.pub >= since || r.upd >= since)) recent.push(r);

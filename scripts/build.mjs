@@ -9,6 +9,7 @@
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
+//   site/data/psirt.json             vendor security advisories joined on CVE (scripts/psirt.mjs), for the Vulnerabilities page
 //   site/data/chat.json              reviewed community posts (newest 300)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
@@ -26,6 +27,7 @@ import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
 import { STAGES, lastRuns, limits as stageLimits } from "./lib/stages.mjs";
 import { sectorsOf, surfaceOf, SECTOR, SURFACE } from "./lib/taxonomy.mjs";
+import { advisory as psirtAdvisory, byCve as psirtByCve } from "./lib/psirt.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -190,6 +192,15 @@ try {
     return v ? { ...x, verified: v } : x;
   });
 } catch (e) { warnings.push(`outage checks: ${String((e && e.message) || e).slice(0, 80)}`); }
+// the claims desk (scripts/claims-desk.mjs): AI checks of leak-site claims (data/claims/checks.json). The newest check that
+// names an event is shown on it as claim_check (bundle and archive). Optional: a fault here leaves the events as they are.
+let claimsDesk = null;
+try {
+  claimsDesk = await import("./claims-desk.mjs");
+  const cc = existsSync(join(DATA, "claims", "checks.json")) ? readJson(join(DATA, "claims", "checks.json")) : {};
+  if (cc && typeof cc === "object" && !Array.isArray(cc)) { const by = claimsDesk.checksByEvent(cc); for (const e of allEvents) { const v = by[e.id] ? claimsDesk.siteCheck(by[e.id]) : null; if (v) e.claim_check = v; } }
+  else warnings.push("claims/checks.json: not readable, claim checks left out");
+} catch (e) { warnings.push(`claim checks: ${String((e && e.message) || e).slice(0, 80)}`); }
 
 // power grid analysis (scripts/grid-analysis.mjs, no AI model): corroboration, anomalies and 30-day trends per region.
 // Validated loosely like the context layers: a broken file only drops the grid analysis (with a warning), never the build.
@@ -243,6 +254,21 @@ const services = (() => {
     }) };
 })();
 if (services) docs["services/status"] = services;
+// official scam and phishing warnings by country (scripts/scams.mjs, no AI model): their own list on the map page, never
+// events, never on the globe. The issuers and their own hosts come from config/scams.json (code); the page links an item
+// only to its issuer's hosts. Validated loosely: a broken file only drops the list (with a warning), never the build.
+const scamWarnings = (() => {
+  const p = join(DATA, "scams", "warnings.json");
+  if (!existsSync(p)) return null;
+  const d = readJson(p), cfg = readJson(join(ROOT, "config", "scams.json"), { sources: [] }) || { sources: [] };
+  if (!d || typeof d !== "object" || !Array.isArray(d.items)) { warnings.push("scams/warnings.json: not readable, scam warnings left out"); return null; }
+  const issuers = {}, health = d.sources && typeof d.sources === "object" ? d.sources : {};
+  for (const s of cfg.sources || []) issuers[s.key] = { name: s.name, kind: s.kind, country: s.country, lang: s.lang, home: s.home, hosts: s.hosts,
+    ok: !!(health[s.key] && health[s.key].ok), error: String((health[s.key] && health[s.key].error) || "").slice(0, 60), last_ok: String((health[s.key] && health[s.key].last_ok) || "").slice(0, 30) };
+  return { updated_at: String(d.updated_at || "").slice(0, 30), types_by: "keyword", issuers,
+    items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Object.hasOwn(issuers, x.issuer)).slice(0, 600) };
+})();
+if (scamWarnings) docs["scams/warnings"] = scamWarnings;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
 // licence requires, from scripts/grid.mjs SOURCES (code, not data); a failure leaves the page on its built-in allowlist
 try {
@@ -284,6 +310,8 @@ const gridStages = (() => {
   return { waiting: { count: waiting.length, oldest_min: oldest }, audit_at: String(audit.updated_at || "").slice(0, 30), audit_flags: pf };
 })();
 // the outage desk's queue, for the status page: waiting now, checked in the last 24 hours, the oldest wait
+// the claims desk's queue, for the status page: waiting now, checked in the last 24 hours by decision, the oldest wait
+const claimsQueue = (() => { try { if (!claimsDesk) return null; const d = claimsDesk.load(); return claimsDesk.stats(claimsDesk.queue(d.items, d.checks, {}, Date.now(), d.cfg), d.checks); } catch (e) { warnings.push(`claims queue: ${String((e && e.message) || e).slice(0, 80)}`); return null; } })();
 const outageQueue = (() => { try { if (!outageDesk) return null; const d = outageDesk.load(); return outageDesk.stats(outageDesk.queue(d.lists, d.checks, {}, Date.now(), d.cfg), d.checks); } catch (e) { warnings.push(`outage queue: ${String((e && e.message) || e).slice(0, 80)}`); return null; } })();
 
 // exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
@@ -355,6 +383,14 @@ try {
   if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
 } catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
+// vendor security advisories (data/psirt/advisories.json, scripts/psirt.mjs) joined on CVE for the Vulnerabilities page: each
+// record checked again here; a missing or unreadable file gives an empty join, never a failed build
+{
+  const clip = (v, n) => String(v || "").slice(0, n), p = readJson(join(DATA, "psirt", "advisories.json"), null), advs = (p && Array.isArray(p.advisories) ? p.advisories : []).map((a) => psirtAdvisory(a || {})).filter(Boolean);
+  if (p && !advs.length && (p.advisories || []).length) warnings.push("psirt/advisories.json: no readable advisory; the vendor advisory join is empty");
+  const vendors = {}; for (const [k, v] of Object.entries((p && p.sources) || {}).slice(0, 40)) if (v && typeof v === "object") vendors[clip(k, 20)] = { name: clip(v.name, 80), ok: !!v.ok, at: clip(v.at, 30), n: Number(v.n) || 0 };
+  writeFileSync(join(OUT, "psirt.json"), JSON.stringify({ built_at, updated_at: clip(p && p.updated_at, 30), vendors, advisories: advs.length, exploited: advs.filter((a) => a.exploited).length, cve: psirtByCve(advs) }));
+}
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
   past: tabletop.past.map((t) => ({ date: t.date, title: t.title })), exercises: tabletop.past.slice(0, 26) }));
@@ -573,7 +609,9 @@ function pipelineQuality() {
     // every pipeline stage's last run and limit (scripts/lib/stages.mjs; limits from routines.json), for the guard
     stages: lastRuns(st, { "grid/analysis.json": gridAnalysis || {} }), stage_limits: stageLimits((readJson(join(ROOT, "routines.json"), {}) || {}).routines || []),
     // the pipeline check's problems (scripts/pipecheck.mjs, data/quality.json), for the status page and the guard
-    quality: pipelineQuality() }));
+    quality: pipelineQuality(),
+    last_claims_at: st.last_claims_at || "", claims_queue: claimsQueue }));
+
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

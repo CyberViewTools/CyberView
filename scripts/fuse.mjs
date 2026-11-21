@@ -99,7 +99,8 @@ export function developing(stories, now = Date.now(), max = 30) {
 export function story(group, evs = [], now = Date.now()) {
   const best = group.slice().sort((a, b) => (a.kind === "claim") - (b.kind === "claim") || (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0) || SEARCH.has(a.via) - SEARCH.has(b.via) || String(a.seen_at).localeCompare(String(b.seen_at)))[0];
   const publishers = new Set(countPublishers(group.map((l) => l.source))), vias = new Set(group.map((l) => l.via || "rss")), tiers = new Set(group.map((l) => l.tier));
-  const kinds = new Set(group.map((l) => l.kind).filter(Boolean)), regions = [...new Set(group.map((l) => l.region).filter(Boolean))], langs = [...new Set(group.map((l) => l.lang).filter(Boolean))];
+  // a vendor's or CISA's own "exploited" statement on an advisory lead (scripts/psirt.mjs, scripts/ics.mjs) counts as listed exploited
+  const kinds = new Set(group.flatMap((l) => (l.kind === "advisory" && l.exploited === true ? [l.kind, "exploited"] : [l.kind])).filter(Boolean)), regions = [...new Set(group.map((l) => l.region).filter(Boolean))], langs = [...new Set(group.map((l) => l.lang).filter(Boolean))];
   const cves = [...new Set(group.flatMap((l) => cvesIn(l.title)))].slice(0, 8);
   const times = group.map((l) => Date.parse(l.seen_at)).filter(isFinite), first = Math.min(...times), last = Math.max(...times);
   const claimOnly = group.every((l) => l.kind === "claim"), open = group.filter((l) => l._open).length;

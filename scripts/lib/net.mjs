@@ -29,7 +29,7 @@ export function circuitOpen(key, threshold = 3, coolMs = 10 * 60e3) {
   return !!(c && c.fails >= threshold && Date.now() - c.at < coolMs);
 }
 
-// get(url, { as: "json" | "text" | "buffer", range: "bytes=-65536", timeoutMs, retries, delayMs, factor, key })
+// get(url, { as: "json" | "text" | "buffer", range: "bytes=-65536", accept: "application/json", timeoutMs, retries, delayMs, factor, key })
 export async function get(url, o = {}) {
   const { as = "json", timeoutMs = 20000, retries = 2, delayMs = 2000, factor = 3, key = new URL(url).host, range = "" } = o;
   if (circuitOpen(key)) throw new FetchError("circuit_open", `${key}: skipped after repeated failures`);
@@ -38,6 +38,7 @@ export async function get(url, o = {}) {
     try {
       const headers = { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)" };
       if (/^bytes=-?\d+(-\d*)?$/.test(range)) headers.range = range;                   // part of a large file (e.g. the tail of a CSV)
+      if (/^[\w.+\/-]+$/.test(o.accept || "")) headers.accept = o.accept;               // a format the server picks by Accept (the MSRC API answers XML otherwise)
       const r = await fetch(url, { headers, signal: AbortSignal.timeout(timeoutMs) });
       if (!r.ok) { const e = new FetchError(`http_${r.status}`); e.retryAfterMs = r.status === 429 || r.status === 503 ? retryAfterMs(r.headers.get("retry-after")) : 0; try { e.body = (await r.text()).slice(0, 4000); } catch { e.body = null; } throw e; }
       if (as === "buffer") { const b = Buffer.from(await r.arrayBuffer()); circuits.delete(key); return b; }

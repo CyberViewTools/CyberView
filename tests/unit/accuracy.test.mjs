@@ -13,6 +13,7 @@ const ev = (o = {}) => ({
   exec: "Customer data exposure.", action: "Acme advises customers to reset their passwords.", tags: ["data-breach"], cves: [],
   sources: [{ name: "Acme", url: A, published: "2026-11-22" }, { name: "Reuters", url: R, published: "2026-11-22" }],
   evidence: [{ url: A, quote: "On 21 November attackers copied 1,200 customer records from our web shop." }],
+  sectors: { values: ["commercial-facilities"], basis: "inferred" }, surface: { value: "web-app", basis: "stated" },
   source_tier: "primary", validation: { state: "corroborated", note: "Acme's notice and Reuters each state it" }, first_seen: NEW, updated_at: NEW, ...o,
 });
 const NOW = { now: Date.parse("2026-11-23T00:00:00Z") };

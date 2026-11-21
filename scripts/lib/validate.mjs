@@ -391,6 +391,8 @@ function accuracyProblems(e, src) {
     if (pub.includes(e.date) && !String(e.date_note || "").trim() && e.time_basis !== "occurred")
       add(lvl, "date-is-publication", `date ${e.date} is the day a source was published: if the page says when it happened, use that day; if it does not, say so in "date_note" (e.g. "the notice of ${e.date} gives no earlier date")`);
   }
+  return out;
+}
 
 /**
  * Event "sectors" and "surface": who was hit and through what, from fixed lists (scripts/lib/taxonomy.mjs), each with a basis

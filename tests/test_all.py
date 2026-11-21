@@ -250,7 +250,10 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            # inside the map's 7-day window (the bundle holds 9 days; an older one is not on the map)
+            import datetime as _dtw
+            wk = (_dtw.date.today() - _dtw.timedelta(days=6)).isoformat()
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e.get("date", "") >= wk)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -1509,7 +1512,8 @@ async def main():
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            # 30, unless the marker tapped above is further down: the list then grows to keep it with 10 after it (renderFeed)
+            ok("phone: the list starts with 30 events and offers more", (n == 30 or (n > 30 and (n - 30) <= 40)) and await pg.locator("#feedMore").count() == 1, n)
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())
@@ -1588,7 +1592,7 @@ async def main():
             pg.on("request", lambda r: reqs.append(r.url))
             await pg.goto(base + "vulnerabilities.html"); await pg.wait_for_timeout(900)
             ok("vulnerabilities: loads with the queue view first", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbp-all").is_hidden() and await pg.locator("#wbList .wbrow").count() == 4)
-            ok("vulnerabilities: four views in the tab bar", await pg.locator(".wbtabs [role=tab]").count() == 4 and "Known exploited" in await pg.locator("#wbt-queue").text_content())
+            ok("vulnerabilities: five views in the tab bar", await pg.locator(".wbtabs [role=tab]").count() == 5 and "Known exploited" in await pg.locator("#wbt-queue").text_content())
             # deadlines
             ok("deadlines: chart rows for open and recently passed deadlines", await pg.locator("#wbDlChart .wbdlrow").count() == 3 and "left" in await pg.locator("#wbDlChart").text_content() and "overdue" in await pg.locator("#wbDlChart").text_content())
             async with pg.expect_download() as dl:
@@ -1742,6 +1746,91 @@ async def main():
             await pg.context.close()
 
         await serve(site132b, v132b)
+
+        # v1.63: the Industrial (ICS/OT) view (site/data/ics.json from scripts/ics.mjs) and the advisory beside a CVE
+        site163 = with_cve(make_site(bundle))
+        json.dump(wb132, open(os.path.join(site163, "data", "workbench.json"), "w"))
+        d163 = datetime.date.today().isoformat()
+        ics163 = {"built_at": "2026-11-21T22:00:00Z", "updated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "window_days": 365,
+                  "lifeline": ["Energy", "Water and Wastewater"],
+                  "sources": {"cisa": {"name": "CISA ICS advisories", "tier": "gov", "ok": True, "at": "2026-11-21T22:00:00Z", "count": 2, "error": ""},
+                              "siemens": {"name": "Siemens ProductCERT", "tier": "vendor", "ok": False, "at": "2026-11-21T22:00:00Z", "count": 1, "error": "timeout"}},
+                  "advisories": [
+                      {"id": "ICSA-26-300-01", "source": "cisa", "vendor": "Fortinet", "title": "Fortinet FortiOS in OT networks", "products": ["FortiOS"], "products_total": 1, "cves": ["CVE-2026-1001"], "cve_cvss": {"CVE-2026-1001": 9.8},
+                       "cvss": 9.8, "cvss_version": "3.1", "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "exploited": "kev", "exploit_note": "", "kev_cves": ["CVE-2026-1001"], "not_affected": False,
+                       "sectors": ["Energy"], "remediation": ["vendor_fix"], "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-01", "doc": "https://raw.githubusercontent.com/cisagov/CSAF/develop/x.json",
+                       "summary": "Lets a remote attacker in.", "published": d163, "updated": d163},
+                      {"id": "ICSA-26-299-02", "source": "cisa", "vendor": "<img src=x onerror=alert(1)>", "title": "<b>Pump</b> controller", "products": ["Pump"], "products_total": 1, "cves": ["CVE-2024-2345"], "cve_cvss": {},
+                       "cvss": 6.5, "cvss_version": "3.1", "cvss_vector": "", "exploited": "none", "exploit_note": "", "kev_cves": [], "not_affected": False, "sectors": ["Water and Wastewater"],
+                       "remediation": ["mitigation"], "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-299-02", "doc": "", "summary": "x", "published": "2026-10-01", "updated": "2026-10-01"},
+                      {"id": "SSA-100001", "source": "siemens", "vendor": "Siemens", "title": "Not affected notice", "products": [], "products_total": 0, "cves": ["CVE-2026-1001"], "cve_cvss": {}, "cvss": None,
+                       "exploited": "kev", "kev_cves": ["CVE-2026-1001"], "not_affected": True, "sectors": [], "remediation": [], "url": "https://cert-portal.siemens.com/productcert/html/ssa-100001.html", "doc": "", "summary": "", "published": "2026-10-05", "updated": "2026-10-05"},
+                      {"id": "BAD-1", "source": "cisa", "vendor": "x", "title": "unsafe link", "url": "javascript:alert(1)", "doc": "", "cves": [], "published": "2026-10-01"}]}
+        json.dump(ics163, open(os.path.join(site163, "data", "ics.json"), "w"))
+
+        async def v163(url):
+            base = url.replace("index.html", "")
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 900})
+            pg = await ctx.new_page()
+            errs, reqs = [], []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            pg.on("console", lambda m: errs.append(m.text[:160]) if m.type == "error" and "favicon" not in m.text and "404" not in m.text else None)
+            pg.on("request", lambda r: reqs.append(r.url))
+            await pg.goto(base + "vulnerabilities.html#ot"); await pg.wait_for_timeout(1000)
+            ok("industrial: #ot opens the Industrial view", await pg.locator("#wbp-ot").is_visible() and await pg.locator("#wbp-queue").is_hidden())
+            ok("industrial: unsafe records left out, the rest listed", await pg.locator("#otList .wbrow").count() == 3, await pg.locator("#otList .wbrow").count())
+            ok("industrial: known exploited first", "ICSA-26-300-01" in await pg.locator("#otList .wbrow >> nth=0").text_content())
+            ok("industrial: markup in data shown as text", await pg.locator("#otList img").count() == 0 and await pg.locator("#otList b", has_text="Pump").count() == 0)
+            summ = await pg.text_content("#otSummary")
+            ok("industrial: summary counts and names the source that failed", "3 industrial control system" in summ and "Siemens ProductCERT" in summ, summ)
+            ok("industrial: the not-affected notice says so", await pg.locator("#otList .wbrow", has_text="Vendor: not affected").count() == 1)
+            await pg.locator("#otList .wbhead").first.click(); await pg.wait_for_timeout(200)
+            score = int(await pg.locator("#otList .wbrow >> nth=0 >> .wbscore").text_content())
+            pts = [int(t.strip().lstrip("+")) for t in await pg.locator("#otList .wbpts li b").all_text_contents()]
+            ok("industrial: every rank point listed and adding up", pts == [40, 25, 10, 5] and score == sum(pts), (pts, score))
+            ok("industrial: the advisory and its CSAF document linked", await pg.locator("#otList .wblinks a[href='https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-01']").count() == 1 and await pg.locator("#otList .wblinks a", has_text="CSAF").count() == 1)
+            await pg.select_option("#otShow", "exploited"); await pg.wait_for_timeout(200)
+            ok("industrial: exploited filter", await pg.locator("#otList .wbrow").count() == 1)
+            await pg.select_option("#otShow", "lifeline"); await pg.wait_for_timeout(200)
+            ok("industrial: lifeline sector filter", await pg.locator("#otList .wbrow").count() == 2)
+            await pg.select_option("#otShow", ""); await pg.fill("#otQ", "pump"); await pg.wait_for_timeout(400)
+            ok("industrial: search", await pg.locator("#otList .wbrow").count() == 1)
+            await pg.fill("#otQ", ""); await pg.wait_for_timeout(300)
+            await pg.locator("#otList .wbdetail button", has_text="CVE-2026-1001").click(); await pg.wait_for_timeout(700)
+            ok("industrial: a CVE opens in Known exploited with its industrial advisories beside it", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .otjoin").is_visible()
+               and "ICSA-26-300-01" in await pg.locator("#wbList .otjoin").text_content() and "not affected" in await pg.locator("#wbList .otjoin").text_content())
+            await pg.locator("#wbList .otjoin button").first.click(); await pg.wait_for_timeout(500)
+            ok("industrial: back from the CVE to the advisory", await pg.locator("#wbp-ot").is_visible() and await pg.locator("#otList .wbdetail").count() == 1)
+            await pg.click("#wbt-queue"); await pg.fill("#wbQ", ""); await pg.select_option("#wbShow", "ot"); await pg.wait_for_timeout(400)
+            ok("known exploited: filter to flaws named in an industrial advisory", await pg.locator("#wbList .wbrow").count() == 1 and "Industrial advisory" in await pg.locator("#wbList .wbrow").text_content())
+            await pg.goto(base + "vulnerabilities.html#CVE-2024-2345"); await pg.reload(); await pg.wait_for_timeout(1000)
+            ok("all CVEs: a looked-up CVE shows the industrial advisory naming it", await pg.locator("#cvResult .otjoin").is_visible() and "ICSA-26-299-02" in await pg.locator("#cvResult .otjoin").text_content())
+            outside = [r for r in reqs if not r.startswith("http://localhost")]
+            ok("industrial: nothing leaves the page", not outside, outside)
+            ok("industrial: no script errors", not errs, errs)
+            await ctx.close()
+            ph = await browser.new_context(viewport={"width": 390, "height": 844})
+            pp = await ph.new_page(); await pp.goto(base + "vulnerabilities.html#ot"); await pp.wait_for_timeout(900)
+            await pp.locator("#otList .wbhead").first.click(); await pp.wait_for_timeout(200)
+            ok("phone industrial: no sideways scroll", await pp.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ph.close()
+
+        await serve(site163, v163)
+
+        async def v163b(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html#ot"), wait=900)
+            ok("no industrial file: the view says it is not available", await pg.locator("#otStatus").is_visible() and "not available" in await pg.locator("#otStatus").text_content() and await pg.locator("#otMain").is_hidden())
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(200)
+            await pg.locator("#wbList .wbhead").first.click(); await pg.wait_for_timeout(300)
+            ok("no industrial file: Known exploited still works", await pg.locator("#wbList .wbdetail").count() == 1 and await pg.locator("#wbList .otjoin").is_hidden())
+            ok("no industrial file: no script errors", not errs, errs)
+            await pg.context.close()
+
+        site163b = make_site(bundle)
+        json.dump(wb132, open(os.path.join(site163b, "data", "workbench.json"), "w"))
+        if os.path.exists(os.path.join(site163b, "data", "ics.json")):
+            os.remove(os.path.join(site163b, "data", "ics.json"))
+        await serve(site163b, v163b)
 
         # v1.38: dropdowns drawn in the site's style on desktop; native picker kept on touch screens
         async def v138(url):

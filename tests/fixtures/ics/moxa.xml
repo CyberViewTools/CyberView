@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>Moxa Security Advisory</title>
+<item>
+  <title><![CDATA[CVE-2026-129971, CVE-2026-129972: Buffer Overflow Vulnerabilities in Ethernet Remote I/Os]]></title>
+  <description>
+    <![CDATA[<p>This security advisory addresses two vulnerabilities identified in Ethernet Remote I/Os.</p>
+
+<p><strong>CVE-2026-129971</strong></p>
+
+<p>A buffer overflow vulnerability exists in the SNMP service of the Ethernet Remote I/Os products. An unauthenticated remote attacker could exploit improper handling of specially crafted SNMP requests, potentially leading to a denial-of-service condition on the affected device.</p>
+
+<p><strong>CVE-2026-129972</strong></p>
+
+<p>A buffer overflow vulnerability exists in the web management service of the Ethernet Remote I/Os products. An unauthenticated remote attacker could exploit insufficient bounds checking of specially crafted HTTP requests, potentially causing the web management service to crash and resulting in a denial-of-service condition.</p>
+
+<p>Given the high severity of these issues, users should apply the solutions immediately to reduce security risks.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>The Identified Vulnerability Type and Potential Impact&nbsp;</strong></p>
+
+<table>
+	<thead>
+		<tr>
+			<th>CVE ID</th>
+			<th>Vulnerability Type</th>
+			<th>Impact</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>CVE-2026-129971</td>
+			<td>
+			<p>CWE-120: Buffer Copy without Checking Size of Input</p>
+			</td>
+			<td>CAPEC-100: Overflow Buffers</td>
+		</tr>
+		<tr>
+			<td>CVE-2026-129972</td>
+			<td>CWE-120: Buffer Copy without Checking Size of Input</td>
+			<td>CAPEC-100: Overflow Buffers</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><strong>Vulnerability Scoring Details&nbsp;</strong></p>
+
+<table>
+	<thead>
+		<tr>
+			<th scope="col">
+			<div>CVE ID</div>
+			</th>
+			<th scope="col">
+			<div>Base Score</div>
+			</th>
+			<th scope="col">
+			<div>Vector</div>
+			</th>
+			<th scope="col">Severity</th>
+			<th scope="col">
+			<p>Unauthenticated</p>
+
+			<p>Remote Exploits</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>CVE-2026-129971</td>
+			<td>
+			<p>CVSS 4.0: 8.7</p>
+			</td>
+			<td>
+			<p>AV:N/AC:L/AT:N/PR:N/UI:N/</p>
+
+			<p>VC:N/VI:N/VA:H/SC:N/SI:N/SA:N&nbsp;</p>
+			</td>
+			<td>High</td>
+			<td>Yes</td>
+		</tr>
+		<tr>
+			<td>CVE-2026-129972</td>
+			<td>CVSS 4.0: 8.7</td>
+			<td>
+			<p>AV:N/AC:L/AT:N/PR:N/UI:N/</p>
+
+			<p>VC:N/VI:N/VA:H/SC:N/SI:N/SA:N</p>
+			</td>
+			<td>High</td>
+			<td>Yes</td>
+		</tr>
+	</tbody>
+</table>
+]]>
+  </description>
+  <link>https://www.moxa.com/en/support/product-support/security-advisory/mpsa-264520-cve-2026-129971,-cve-2026-129972-buffer-overflow-vulnerabilities-in-ethernet-remote-i-os</link>    
+  <pubDate>
+    Fri, 20 Nov 2026 14:46:40 GMT
+  </pubDate>
+</item>
+<item>
+  <title><![CDATA[CVE-2026-130493, CVE-2026-130494: Multiple Vulnerabilities in Ethernet Switches]]></title>
+  <description>
+    <![CDATA[<p>This security advisory addresses two vulnerabilities identified in Ethernet Switches.</p>
+
+<p><strong>CVE-2026-130493</strong></p>
+
+<p>A hard-coded cryptographic key vulnerability exists in affected Ethernet swiches. The use of a shared cryptographic key with insufficient key strength could allow an unauthenticated remote attacker, under certain conditions, to impersonate affected devices and potentially compromise the confidentiality and integrity of communications.</p>
+
+<p><strong>CVE-2026-130494</strong></p>
+
+<p>An improper firmware authenticity verification vulnerability exists in the affected Ethernet Switches products. An authenticated remote attacker with administrative privileges could exploit the lack of cryptographic signature verification to install unauthorized firmware, potentially leading to arbitrary code execution on the affected device.</p>
+
+<p>Given the high severity of these issues, users should apply the solutions immediately to reduce security risks.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>The Identified Vulnerability Type and Potential Impact&nbsp;</strong></p>
+
+<table>
+	<thead>
+		<tr>
+			<th style="width: 150px;">CVE ID</th>
+			<th>Vulnerability Type</th>
+			<th>Impact</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>CVE-2026-130493</td>
+			<td>
+			<p>CWE-321: Use of Hard-coded Cryptographic Key</p>
+			</td>
+			<td>CAPEC-21: Exploitation of Trusted Identifiers&nbsp;</td>
+		</tr>
+		<tr>
+			<td>CVE-2026-130494</td>
+			<td>CWE-347: Improper Verification of Cryptographic Signature</td>
+			<td>CAPEC-475: Signature Spoofing by Improper Validation</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><strong>Vulnerability Scoring Details&nbsp;</strong></p>
+
+<table>
+	<thead>
+		<tr>
+			<th scope="col">
+			<div>CVE ID</div>
+			</th>
+			<th scope="col">
+			<div>Base Score</div>
+			</th>
+			<th scope="col">
+			<div>Vector</div>
+			</th>
+			<th scope="col">Severity</th>
+			<th scope="col">
+			<p>Unauthenticated</p>
+
+			<p>Remote Exploits</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>CVE-2026-130493</td>
+			<td>
+			<p>CVSS 4.0: 7.7</p>
+			</td>
+			<td>
+			<p>AV:N/AC:L/AT:P/PR:N/UI:P/</p>
+
+			<p>VC:H/VI:H/VA:H/SC:N/SI:N/SA:N&nbsp;</p>
+			</td>
+			<td>High</td>
+			<td>Yes</td>
+		</tr>
+		<tr>
+			<td>CVE-2026-130494</td>
+			<td>CVSS 4.0: 8.6</td>
+			<td>
+			<p>AV:N/AC:L/AT:N/PR:H/UI:N/</p>
+
+			<p>VC:H/VI:H/VA:H/SC:N/SI:N/SA:N</p>
+			</td>
+			<td>High</td>
+			<td>No</td>
+		</tr>
+	</tbody>
+</table>
+]]>
+  </description>
+  <link>https://www.moxa.com/en/support/product-support/security-advisory/mpsa-268140-cve-2026-130493,-cve-2026-130494-multiple-vulnerabilities-in-ethernet-switches</link>    
+  <pubDate>
+    Fri, 20 Nov 2026 13:45:22 GMT
+  </pubDate>
+</item>
+</channel></rss>

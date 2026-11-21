@@ -1,5 +1,5 @@
 {
-  "_note": "Grid outage tracker (scripts/grid.mjs). open_customers: unplanned customers out in one operator region that opens an incident; close_customers: below this (and no grid level) for close_after collections in a row AND for at least close_after_minutes closes it (only from the operator's own data: a source that fails, is paused or sends old data keeps its incidents open, marked stale); reopen_minutes: a region active again this soon after its incident closed reopens the same incident (same id). research_customers: peak that asks for a cause check (big); research_suspicious_customers: lower peak that asks for one when the operator's cause reads cyber, hack, malware or ransom, or when 'unknown' / 'under investigation' holds a quarter of the customers 6 hours after the peak. levels: the grid level per signal source that asks for a check (Eskom load-shedding stage, ERCOT EEA level, AEMO LOR level). retry_hours and max_tries are used by scripts/grid-desk.mjs. The owner may change any of these. show_customers: every single outage with at least this many customers (accounts, not people) is drawn on the map with its location, besides the incidents (owner, 2026-11-19: anything over 100).",
+  "_note": "Grid outage tracker (scripts/grid.mjs). open_customers: unplanned customers out in one operator region that opens an incident; close_customers: below this (and no grid level) for close_after collections in a row AND for at least close_after_minutes closes it (only from the operator's own data: a source that fails, is paused or sends old data keeps its incidents open, marked stale); reopen_minutes: a region active again this soon after its incident closed reopens the same incident (same id). research_customers: peak that asks for a cause check (big); research_suspicious_customers: lower peak that asks for one when the operator's cause reads cyber, hack, malware or ransom, or when 'unknown' / 'under investigation' holds a quarter of the customers 6 hours after the peak. levels: the grid level per signal source that asks for a check (Eskom load-shedding stage, ERCOT EEA level, AEMO LOR level; occto-reserve: Japan's wide-area reserve level, 1 below 5%, 2 below 3%, 3 below 1%). These thresholds apply to every source alike, the state and national agency counts of scripts/grid-sources/agencies.mjs included (their regions are a whole state or a Chilean region, like ODIN's). retry_hours and max_tries are used by scripts/grid-desk.mjs. The owner may change any of these. show_customers: every single outage with at least this many customers (accounts, not people) is drawn on the map with its location, besides the incidents (owner, 2026-11-19: anything over 100).",
   "open_customers": 5000,
   "close_customers": 2000,
   "close_after": 2,
@@ -18,7 +18,8 @@
     "elexon-system-warnings": 2,
     "elexon-demand-control": 2,
     "caiso-emergency": 2,
-    "nyiso-realtime-events": 3
+    "nyiso-realtime-events": 3,
+    "occto-reserve": 2
   },
   "retry_hours": 6,
   "max_tries": 3,

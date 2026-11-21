@@ -98,6 +98,19 @@
    "does": "Runs in the research loop every few minutes (collect.yml every 30 minutes as backup): reads grid operators' public outage feeds and open grid data, tracks incidents from start to end, finds outages unusual for the hour and what corroborates them, gathers outages reported in the news, and audits every source each cycle (failing or frozen feeds, sudden falls, misplaced points). Map context, never cyber events."
   },
   {
+   "key": "psirt",
+   "name": "Vendor security advisories",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_psirt_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Reads twelve vendors' own security advisories as structured data (Microsoft, Cisco, Fortinet, Palo Alto Networks, Red Hat, Ubuntu, Debian, Oracle, Google Chrome, Apple, Mozilla, Ivanti; CSAF where the vendor publishes it): severity and fixed versions as the vendor states them, and the vendor's own exploited statement, joined to every CVE on the Vulnerabilities page. A vendor's exploited statement or a critical advisory for widely used software becomes a lead for the research loop, never an event."
+  },
+  {
    "key": "exploit-watch",
    "name": "Exploit watch",
    "tier": "automation",
@@ -122,6 +135,19 @@
    "active": true,
    "active_since": "2026-11-21T22:00:00Z",
    "does": "Reads industrial control system (ICS/OT) advisories as structured data: CISA's ICS and ICS medical advisories and Siemens, Schneider Electric, ABB and Phoenix Contact as CSAF documents, CERT@VDE, Moxa and Mitsubishi Electric from their RSS feeds; joins them with CISA's known-exploited catalog for the Vulnerabilities page's Industrial view, and files exploited or critical ones, and high-scoring ones in lifeline sectors, as leads for the research loop (scripts/ics.mjs, no AI model)."
+  },
+  {
+   "key": "scams",
+   "name": "Scam warnings",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_scams_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Reads official scam and phishing warnings from government bodies, police, regulators and national CERTs in several countries and languages (config/scams.json), types them by a fixed keyword map, and lists them by country in the map page's Insights tab. Warnings, not cyber events; one that describes a cyber incident becomes a lead for the research loop."
   },
   {
    "key": "lead-triage",
@@ -370,6 +396,20 @@
    "active": true,
    "does": "Runs inside the research loop every cycle (config/pipeline.json flow.outage_workers): outage checkers verify outage reports nobody had checked (power outages reported in the news that no operator feed covers, country-level internet disruptions measured by IODA, major outages on providers' status pages) from the operator's, provider's or government's own page and credible reporting, and record confirmed, not confirmed or a cyber lead for the research loop (scripts/outage-desk.mjs). A confirmed internet or service outage can become an outage event with a second review; a power outage stays context. Off when usage is tight.",
    "reviewed": "2026-11-20"
+  },
+  {
+   "key": "claims",
+   "name": "Claims desk",
+   "tier": "ai",
+   "workflow": "flow",
+   "active_since": "2026-11-21T12:00:00Z",
+   "cron": null,
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_claims_at",
+   "max_age_hours": 6,
+   "active": true,
+   "does": "Runs inside the research loop every cycle (config/pipeline.json flow.claims_workers), also when usage is tight: claims checkers take ransomware and extortion leak-site claims nobody had checked, most notable victim first (critical sector, government, health, large companies, other reports naming the victim, the group's track record), and look for the organisation's own statement, a regulator filing or a government notice, then credible reporting (scripts/claims-desk.mjs). Confirmed by the victim becomes a confirmed event, reported by two publishers a claimed event (severity 1, hidden by default), both with a second review; denied, unconfirmed (checked again later) and not found are recorded. Leak sites are never cited or linked and stolen data is never described.",
+   "reviewed": "2026-11-21"
   },
   {
    "key": "steward",

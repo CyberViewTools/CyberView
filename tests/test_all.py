@@ -238,13 +238,21 @@ async def main():
                            ["new-1", day(0), "incident", 2, "confirmed", "Brand new event", "Org B", "US", [], [], "", iso(1)],
                            ["late-claim", day(6), "incident", 1, "claimed", "Late claim", "Org C", "US", [], [], "", iso(3)],
                            ["old-1", day(20), "vuln", 2, "official", "Filed long ago", "Org D", "US", [], [], "", iso(24 * 19)]]}
-            ctx2 = await browser.new_context(); pg2 = await ctx2.new_page()
+            ctx2 = await browser.new_context(service_workers="block"); pg2 = await ctx2.new_page()
             await pg2.route("**/data/archive/search.json", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(fx)))
+            # v1.63: the claims desk's check in the archive (a leak-site link dropped, markup stays text)
+            mfx = {"month": day(5)[:7], "events": [{"id": "late-1", "date": day(5), "title": "Late filed", "summary": "Org A confirmed a breach.", "sources": [],
+                   "claim_check": {"decision": "confirmed_by_victim", "summary": "Org A confirmed it.", "group": "Play<b id=pwnc2>", "claimed_at": day(6), "confirmed_by": "Org A", "url": "https://orga.example/notice/incident", "at": iso(1)}}]}
+            await pg2.route(f"**/data/archive/{day(5)[:7]}.json", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(mfx)))
             await pg2.goto(url.replace("index.html", "archive.html")); await pg2.wait_for_timeout(900)
             rec = await pg2.locator("#recentList .row").all_text_contents()
             ok("archive: Recently filed lists only late-filed events, not new ones, claims or old filings", len(rec) == 1 and "Late filed" in rec[0] and "Filed 2 h ago" in rec[0], rec)
             ok("archive: Recently filed titles stay text", await pg2.locator("#pwnf").count() == 0)
             ok("archive: Recently filed shows no Show-all button for one item", await pg2.locator("#recentAll").is_hidden())
+            await pg2.locator("#recentList .row button").first.click(); await pg2.wait_for_timeout(600)
+            atx = await pg2.inner_text("#recentList .more-info")
+            ok("claims desk: the archive shows the check on the event it names", "Checked by CyberView AI (a Claude model): confirmed by Org A \u2014 Play<b id=pwnc2>\u2019s leak-site claim" in atx and await pg2.locator("#pwnc2").count() == 0
+               and await pg2.eval_on_selector_all("#recentList .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://orga.example/notice/incident"], atx)
             await ctx2.close()
 
         await serve(make_site(bundle), archive)
@@ -667,7 +675,9 @@ async def main():
                    # v1.54: the later grid stages and the audit (ops-6)
                    "grid_analysis_at": iso(0.2), "last_grid_news_at": iso(3), "grid_waiting": {"count": 2, "oldest_min": 185}, "grid_audit_flags": ["news_late", "<b id=pwn4>"],
                    # v1.61: the outage desk's queue
-                   "last_outage_at": iso(0.2), "outage_queue": {"waiting": 3, "checked_24h": 5, "confirmed_24h": 2, "cyber_leads_24h": 1, "oldest_min": 95, "by_kind": {"power": 2, "internet": 1, "service": 0}}})
+                   "last_outage_at": iso(0.2), "outage_queue": {"waiting": 3, "checked_24h": 5, "confirmed_24h": 2, "cyber_leads_24h": 1, "oldest_min": 95, "by_kind": {"power": 2, "internet": 1, "service": 0}},
+                   # v1.63: the claims desk's queue
+                   "last_claims_at": iso(0.3), "claims_queue": {"waiting": 40, "checked_24h": 9, "confirmed_24h": 2, "reported_24h": 3, "denied_24h": 1, "unconfirmed_24h": 3, "not_found_24h": 0, "oldest_min": 3000}})
         # v1.45: grid analysis (shape of data/grid/analysis.json from scripts/grid-analysis.mjs), keyed sources on the status page
         hj["grid_sources"] = {
             "hydroquebec": {"name": "Hydro-Québec", "ok": True, "error": "", "at": iso(0.3), "items": 12, "flags": ["customers_missing", "<img id=pwn5>"]},
@@ -902,6 +912,7 @@ async def main():
             ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 4, src)
             ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
             ok("outage desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Outage desk (CyberView AI (a Claude model)): 3 outage reports waiting for a check; 5 checked in 24 h (2 confirmed, 1 cyber lead passed to research)" in r and "last run" in r for r in rows), rows)
+            ok("claims desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Claims desk (CyberView AI (a Claude model)): 40 leak-site claims waiting for a check; 9 checked in 24 h (2 confirmed by the organisation, 3 reported, 1 denied)" in r and "last run" in r for r in rows), rows)
             ok("grid: status page without script errors", not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), wait=1000)
@@ -1267,6 +1278,13 @@ async def main():
         vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}
         vic["pin_type"] = "victim"; vic["geo_basis"] = "victim location"
         bad = geo[3]; bad["links"] = [{"to": geo[4]["id"], "rel": "x", "url": "javascript:alert(1)"}]
+        # v1.63: the claims desk's check on the event it names (scripts/claims-desk.mjs siteCheck, attached by the build)
+        cday = (datetime.datetime.utcnow() - datetime.timedelta(days=2)).strftime("%Y-%m-%d"), (datetime.datetime.utcnow() - datetime.timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        dst["claim_check"] = {"decision": "confirmed_by_victim", "summary": "The hospital said a ransomware attack disrupted its systems.", "group": "Akira<img src=x id=pwnc1>", "claimed_at": cday[0],
+                              "confirmed_by": "Riverside General Hospital", "url": "https://www.riversidegeneral.org/notice/cyber-incident", "at": cday[1], "by": "someone else"}
+        clv = geo[5]; clv["status"] = "claimed"; clv["severity"] = 1
+        clv["claim_check"] = {"decision": "reported", "summary": "Two outlets reported it; the organisation has not confirmed it.", "group": "Qilin", "claimed_at": cday[0], "url": "https://www.ransomware.live/id/abc", "at": cday[1]}
+        unk = geo[6]; unk["claim_check"] = {"decision": "hacked", "group": "Qilin", "summary": "stolen"}
         site16 = make_site(b16)
         tt = {"label": "exercise", "generated_at": "2026-11-20T15:40:00Z", "date": "2026-11-20", "title": "Exercise: a supplier breach reaches you",
               "based_on": [src["id"]], "real_story": "A supplier was breached.", "duration_min": 60, "roles": ["Incident lead", "Communications"],
@@ -1289,6 +1307,18 @@ async def main():
             ok("arcs: attributed origin drawn dashed", await pg.locator("#svg .arc.origin").count() >= 1)
             ok("card: attribution names who made it", await pg.locator("#dcard .todo.attr").count() == 1 and "Test Agency" in await pg.locator("#dcard .todo.attr").text_content())
             ok("arcs: an unsafe link url is dropped", await pg.evaluate(f"!document.body.textContent.includes('javascript:')"))
+            # v1.63: the claims desk's check, labelled as written by CyberView AI, text only, never a leak-site link
+            await pg.evaluate(f"location.hash='e={dst['id']}'"); await pg.wait_for_timeout(1200)
+            ct = await pg.inner_text("#dcard")
+            ok("claims desk: a confirmed claim says who confirmed it and whose claim it was, labelled as AI-written", "Checked by CyberView AI (a Claude model): confirmed by Riverside General Hospital" in ct
+               and "Akira<img src=x id=pwnc1>\u2019s leak-site claim of" in ct and "someone else" not in ct and "checked 2 h ago" in ct and await pg.locator("#pwnc1").count() == 0, ct[-700:])
+            ok("claims desk: the check links the confirming page", await pg.eval_on_selector_all("#dcard .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://www.riversidegeneral.org/notice/cyber-incident"])
+            await pg.evaluate(f"location.hash='e={clv['id']}'"); await pg.wait_for_timeout(1200)
+            ct2 = await pg.inner_text("#dcard")
+            ok("claims desk: a claimed event shows the check; a leak site or claim tracker is never linked", "Checked by CyberView AI (a Claude model): reported by publishers, not confirmed by the organisation" in ct2
+               and "Qilin\u2019s leak-site claim" in ct2 and await pg.locator("#dcard .ccheck a").count() == 0 and await pg.locator("#dcard a[href*='ransomware.live']").count() == 0, ct2[-700:])
+            await pg.evaluate(f"location.hash='e={unk['id']}'"); await pg.wait_for_timeout(1200)
+            ok("claims desk: an unknown decision shows no check", await pg.locator("#dcard .ccheck").count() == 0 and "stolen" not in await pg.inner_text("#dcard"))
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(200)
             await pg.click("#zlayers"); await pg.wait_for_timeout(150)
             ok("layers: arc toggles listed", await pg.locator("#layers [data-arc]").count() == 2)
@@ -1627,6 +1657,12 @@ async def main():
         wb132["kev"][1]["due"] = (t132 + datetime.timedelta(days=20)).isoformat()
         wb132["kev"][2]["due"] = (t132 - datetime.timedelta(days=4)).isoformat()
         json.dump(wb132, open(os.path.join(site132, "data", "workbench.json"), "w"))
+        # v1.63: vendor advisories joined on CVE (scripts/psirt.mjs -> build.mjs -> data/psirt.json)
+        json.dump({"built_at": "2026-11-21T00:00:00Z", "vendors": {}, "advisories": 3, "exploited": 1, "cve": {
+            "CVE-2024-2002": [["Acme", "ACME-SA-2026-01", "https://vendor.example/acme/sa-01", "Critical", "Acme is aware of limited exploitation of this vulnerability in the wild.", ["Widget 2.4.1"]],
+                              ["<img src=x onerror=alert(5)>", "BAD-1", "javascript:alert(6)", "", "exploited", []]],
+            "CVE-2026-1001": [["Fortinet", "FG-IR-26-001", "https://vendor.example/psirt/1", "Critical", "", ["FortiOS 7.4.10"]]]}},
+            open(os.path.join(site132, "data", "psirt.json"), "w"))
 
         CVE_TOTAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "cve", "index.json")))["total"]
 
@@ -1679,6 +1715,11 @@ async def main():
             ok("lookup: loads exactly one data file", len(shard_reqs) == 1 and shard_reqs[0].endswith("/data/cve/2024/2.json"), shard_reqs)
             hrefs = await pg.eval_on_selector_all("#cvResult a", "as => as.map(a => a.href)")
             ok("lookup: only https links to the CVE record and NVD", hrefs == ["https://www.cve.org/CVERecord?id=CVE-2024-2345", "https://nvd.nist.gov/vuln/detail/CVE-2024-2345"], hrefs)
+            await pg.fill("#wbQ", "CVE-2024-2002"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            res = await pg.locator("#cvResult").inner_text()
+            ok("v1.63: the vendor's own exploited statement shows with its advisory link and fixed version", "Exploited (vendor)" in res and "Acme is aware of limited exploitation" in res and "Fixed in, as Acme states it: Widget 2.4.1" in res and await pg.locator("#cvResult .wbvendor a[href='https://vendor.example/acme/sa-01']").count() == 1, res[:800])
+            ok("v1.63: the vendor's statement sets Exploit Code Maturity High, labelled as the vendor's", "x 1.00 Exploit Code Maturity: High" in res and "Acme's own advisory (ACME-SA-2026-01)" in res and "CyberView rating: 9.8 Critical" in res, res[:900])
+            ok("v1.63: a vendor entry with a bad link or markup is dropped, never rendered", await pg.locator("#cvResult img").count() == 0 and "BAD-1" not in res and await pg.locator("#cvResult a[href^='javascript']").count() == 0)
             await pg.fill("#wbQ", "CVE-2005-1234"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
             ok("lookup: an old (2005) record", "old, unscored" in await pg.locator("#cvResult").text_content())
             res = await pg.locator("#cvResult").inner_text()
@@ -1699,6 +1740,7 @@ async def main():
             ok("lookup: a known-exploited CVE is flagged with a link to that view", "Known exploited" in res and "CISA's known-exploited list" in res)
             await pg.locator("#cvResult .cvgo").click(); await pg.wait_for_timeout(400)
             ok("lookup: the link opens it in Known exploited", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
+            ok("v1.63: Known exploited shows the vendor's own advisory too", await pg.locator("#wbList .wbvendor a[href='https://vendor.example/psirt/1']").count() == 1 and "FortiOS 7.4.10" in await pg.locator("#wbList .wbvendor").inner_text())
             # browse a year
             await pg.click("#wbt-all"); await pg.fill("#wbQ", ""); await pg.wait_for_timeout(200)
             ok("browse: nothing listed until something is loaded", await pg.locator("#cvList .cvrow").count() == 0 and "Nothing loaded" in await pg.locator("#cvLoaded").text_content())
@@ -2001,6 +2043,63 @@ async def main():
             ok("classify: trends say where the sector rows came from", len(tb) <= 1 and (not tb or ("stated by the source" in tb[0] and "free-text sector field" in tb[0])), tb)
             await pg.context.close()
         await serve(make_site(bcl), vclassify)
+        # v1.63: official scam warnings by country (scripts/scams.mjs, no AI model; docs["scams/warnings"]) in the Insights tab:
+        # labelled as warnings, not cyber events; issuer named; links only to the issuer's own https hosts; type keyword-assigned
+        bs = copy.deepcopy(bundle)
+        bs["docs"] = dict(bundle.get("docs") or {})
+        bs["docs"]["scams/warnings"] = {"updated_at": "2026-11-21T10:00:00Z", "types_by": "keyword", "issuers": {
+            "ic3": {"name": "FBI Internet Crime Complaint Center (IC3)", "country": "US", "home": "https://www.ic3.gov/PSA", "hosts": ["www.ic3.gov"], "ok": True, "error": ""},
+            "watchlist-internet": {"name": "Watchlist Internet", "country": "AT", "home": "https://evil.example/", "hosts": ["www.watchlist-internet.at"], "ok": False, "error": "timeout"}},
+            "items": [
+                {"id": "ic3-1", "issuer": "ic3", "country": "US", "title": "ScamTestOne: fraudsters impersonate bank staff", "published": "2026-11-20T12:00:00Z", "url": "https://www.ic3.gov/PSA/2026/PSA261120", "types": ["impersonation", "bank_sms", "nonsense"]},
+                {"id": "wl-1", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestTwo: Fake-Paket SMS", "published": "2026-11-19T12:00:00Z", "url": "https://www.watchlist-internet.at/news/paket/", "types": ["delivery"]},
+                {"id": "wl-2", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestThree: off-host link", "published": "2026-11-18T12:00:00Z", "url": "https://evil.example/news/x/", "types": []},
+                {"id": "wl-3", "issuer": "watchlist-internet", "country": "AT", "title": "ScamTestFour: script link", "published": "2026-11-17T12:00:00Z", "url": "javascript:alert(1)", "types": []},
+                {"id": "zz-1", "issuer": "unknown", "country": "ZZ", "title": "ScamTestDropped", "url": "https://x.example/"}]}
+
+        async def v163(url):
+            pg, errs = await open_page(browser, url)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            sec = pg.locator("#scamWarnings")
+            ok("scams: the section is in the Insights tab", await sec.is_visible() and "Scam warnings by country" in await sec.locator("h3").text_content())
+            note = await sec.locator(".scamnote").text_content()
+            ok("scams: labelled as warnings, not cyber events, not drawn or counted", "not cyber events" in note and "not drawn on the globe" in note and "not counted as events" in note, note)
+            ok("scams: says a script collects them and types are keyword-assigned", "no AI model" in note and "keyword" in note)
+            ok("scams: unknown issuer dropped", await sec.locator("li", has_text="ScamTestDropped").count() == 0)
+            hrefs = await sec.locator(".scamlist a").evaluate_all("a => a.map(x => x.href)")
+            ok("scams: links only to the issuer's own https hosts", sorted(hrefs) == ["https://www.ic3.gov/PSA/2026/PSA261120", "https://www.watchlist-internet.at/news/paket/"], hrefs)
+            ok("scams: off-host and script links shown as text", await sec.locator(".scamlist li b", has_text="ScamTestThree").count() == 1 and await sec.locator(".scamlist li b", has_text="ScamTestFour").count() == 1)
+            first = await sec.locator(".scamlist li").first.text_content()
+            ok("scams: issuer named, type keyword-assigned, unknown types dropped", "FBI Internet Crime Complaint Center" in first and "keyword-assigned" in first and "impersonation, bank or SMS" in first and "nonsense" not in first, first)
+            src = await sec.locator(".lsrc").first.text_content()
+            ok("scams: a failing issuer is said so; its off-host home is not linked", "last fetch failed: timeout" in src and await sec.locator(".lsrc a", has_text="Watchlist Internet").count() == 0, src)
+            await pg.select_option("#scamCountry", "AT"); await pg.wait_for_timeout(200)
+            ok("scams: the country filter keeps that country only", await pg.locator("#scamWarnings .scamlist li").count() == 3 and await pg.locator("#scamWarnings .scamlist li", has_text="ScamTestOne").count() == 0)
+            await pg.select_option("#scamType", "delivery"); await pg.wait_for_timeout(200)
+            ok("scams: the type filter narrows the list", await pg.locator("#scamWarnings .scamlist li").count() == 1)
+            ok("scams: never on the globe or in the feed", not await pg.evaluate("(document.querySelector('#stage')||document.body).textContent.includes('ScamTest')||(document.querySelector('#feed')||{textContent:''}).textContent.includes('ScamTest')"))
+            ok("scams: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url, 390, 800)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            await pg.locator("#scamWarnings").scroll_into_view_if_needed()
+            ok("scams phone: no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth<=window.innerWidth+2"))
+            ok("scams phone: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url + "#scams", wait=2200)
+            ok("scams: #scams opens the Insights tab at the warnings (not an event lookup)", await pg.get_attribute("#tab-ins", "aria-selected") == "true" and await pg.locator("#scamWarnings").is_visible() and "archive" not in pg.url, pg.url)
+            ok("scams #scams: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(make_site(bs), v163)
+
+        async def v163b(url):
+            pg, errs = await open_page(browser, url)
+            await pg.click("#tab-ins"); await pg.wait_for_timeout(300)
+            ok("scams missing: the section says none are stored", "No scam warnings are stored yet" in await pg.locator("#scamWarnings").text_content())
+            ok("scams missing: no script errors", not errs, errs)
+            await pg.context.close()
+        bn = copy.deepcopy(bundle); bn["docs"] = {k: v for k, v in (bundle.get("docs") or {}).items() if k != "scams/warnings"}
+        await serve(make_site(bn), v163b)
 
         await browser.close()
 

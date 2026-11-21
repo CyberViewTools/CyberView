@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss xmlns:csaf="https://fortiguard.fortinet.com/rss/ns/csaf" xmlns:cvrf="https://fortiguard.fortinet.com/rss/ns/cvrf" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>FortiGuard Labs | FortiGuard Center - IR Advisories</title><link>https://fortiguard.fortinet.com/rss/ir.xml</link><description>The following is a list of advisories for issues resolved in Fortinet products. The resolution of such issues is coordinated by the Fortinet Product Security Incident Response Team (PSIRT), a dedicated, global team that manages the receipt, investigation, and public reporting of information about security vulnerabilities and issues related to Fortinet products and services.</description><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><lastBuildDate>Sat, 21 Nov 2026 21:30:06 +0000</lastBuildDate><pubDate>Sat, 21 Nov 2026 21:30:06 -0800</pubDate><item><title>NGINX vulnerabilities</title><link>https://fortiguard.fortinet.com/psirt/FG-IR-26-279</link><description><![CDATA[<p>
+ <strong>
+  CVSSv3 Score:
+ </strong>
+ 8.1
+</p>
+<p>
+ CVE-2026-123007 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.9.5 - 1.30.6.CVE-2026-123633 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.19.7 - 1.30.6.CVE-2026-121810 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.25.0 - 1.30.6.CVE-2026-123634 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.0.0 - 1.30.6.CVE-2026-113425 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 0.5.33 - 1.30.6.CVE-2026-118899 (high)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.13.0 - 1.30.6.CVE-2026-120967 (medium)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.25.5 - 1.30.6.CVE-2026-120993 (medium)This vulnerability affects NGINX OSS versions 1.31.4.CVE-2026-125283 (medium)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 0.9.6 - 1.30.6.CVE-2026-123640 (medium)This vulnerability affects NGINX OSS versions 1.31.0 - 1.31.8, 1.15.2 - 1.30.6.NGINX OSS versions 1.30.7 stable; 1.31.9 mainline are fixing the issues. None of Fortinet products use NGINX Plus.
+</p>
+<p>
+ <em>
+  Revised on 2026-11-21 00:00:00
+ </em>
+</p>
+]]></description><guid isPermaLink="true">https://fortiguard.fortinet.com/psirt/FG-IR-26-279</guid><pubDate>Fri, 20 Nov 2026 00:00:00 -0800</pubDate><csaf:link>https://filestore.fortinet.com/fortiguard/psirt/csaf_nginx-vulnerabilities_fg-ir-26-279.json</csaf:link><cvrf:link>https://fortiguard.fortinet.com/psirt/cvrf/FG-IR-26-279</cvrf:link></item>
+<item><title>Java4Shell Vulnerability - CVE-2026-114938</title><link>https://fortiguard.fortinet.com/psirt/FG-IR-26-278</link><description><![CDATA[<p>
+ <strong>
+  CVSSv3 Score:
+ </strong>
+ 8.1
+</p>
+<p>
+ CVE-2026-114938Vulnerability in the Oracle Java SE, Oracle GraalVM for JDK, Oracle GraalVM Enterprise Edition product of Oracle Java SE (component: Compiler). Supported versions that are affected are Oracle Java SE: 8u511b33-perf, 17.0.21.0.3, 21.0.13.0.3, 25.0.5.0.3, 27.0.1.0.3; Oracle GraalVM for JDK: 17.0.21.0.3 and 21.0.13.0.3; Oracle GraalVM Enterprise Edition: 21.3.20.0.3. Difficult to exploit vulnerability allows unauthenticated attacker with network access via multiple protocols to compromise Oracle Java SE, Oracle GraalVM for JDK, Oracle GraalVM Enterprise Edition. Successful attacks of this vulnerability can result in takeover of Oracle Java SE, Oracle GraalVM for JDK, Oracle GraalVM Enterprise Edition. Note: This vulnerability can only be exploited by supplying data to APIs in the specified Component without using Untrusted Java Web Start applications or Untrusted Java applets, such as through a web service.
+</p>
+<p>
+ <em>
+  Revised on 2026-11-19 00:00:00
+ </em>
+</p>
+]]></description><guid isPermaLink="true">https://fortiguard.fortinet.com/psirt/FG-IR-26-278</guid><pubDate>Wed, 18 Nov 2026 00:00:00 -0800</pubDate><csaf:link>https://filestore.fortinet.com/fortiguard/psirt/csaf_java4shell-vulnerability-cve-2026-114938_fg-ir-26-278.json</csaf:link><cvrf:link>https://fortiguard.fortinet.com/psirt/cvrf/FG-IR-26-278</cvrf:link></item>
+<item><title>Linux kernel RCE CVE-2026-98432</title><link>https://fortiguard.fortinet.com/psirt/FG-IR-26-188</link><description><![CDATA[<p>
+ <strong>
+  CVSSv3 Score:
+ </strong>
+ 9.8
+</p>
+<p>
+ CVE-2026-98432:ipv4: free inet_opt and ireq_opt after an RCU grace period tcp_v4_syn_recv_sock() transfers ownership of ireq-&gt;ireq_opt to the child socket (newinet-&gt;inet_opt) without copying it. Another cpu can concurrently process a retransmitted SYN for the same request socket, and send a SYNACK from tcp_check_req(). tcp_v4_send_synack() and inet_csk_route_req() read ireq-&gt;ireq_opt under rcu_read_lock() only, and ip_build_and_send_pkt() and ip_options_build() then read opt-&gt;optlen twice. Note that the SYNACK timer itself is not an issue: it holds a reference on its request socket, and inet_csk_reqsk_queue_drop() calls timer_delete_sync() before the child can be freed. Since commit 079096f103fa ("tcp/dccp: install syn_recv requests into ehash table"), request sockets are processed without holding the listener lock, so nothing prevents the child socket from being freed while the SYNACK is still being built. TCP child sockets do not have SOCK_RCU_FREE, and inet_sock_destruct() frees inet_opt with a plain kfree(), leading to a use-after-free in ip_options_build(). A similar issue exists with request socket migration (net.ipv4.tcp_migrate_req=1, or a BPF_SK_REUSEPORT_SELECT_OR_MIGRATE program). reqsk_timer_handler() clones the request socket with inet_reqsk_clone(), so that the old request socket and its clone share the same ireq_opt, then reqsk_migrate_reset() clears the pointer in the old one. Another cpu holding a reference on the old request socket can still be using these options (sending a SYNACK, or creating a child in tcp_v4_syn_recv_sock()) when the clone is freed, and tcp_v4_reqsk_destructor() also uses a plain kfree(). Readers already use RCU, and other paths replacing inet_opt (do_ip_setsockopt(), cipso_v4_sock_setattr()...) already use kfree_rcu(). Use kfree_rcu() in inet_sock_destruct() and tcp_v4_reqsk_destructor() as well. IPv6 is not affected by the first issue, because tcp_v6_syn_recv_sock() duplicates the options. tcp_v6_reqsk_destructor() has the same migration issue with ipv6_opt, which is only set by CALIPSO. This will be addressed in a separate patch.
+</p>
+<p>
+ <em>
+  Revised on 2026-11-19 00:00:00
+ </em>
+</p>
+]]></description><guid isPermaLink="true">https://fortiguard.fortinet.com/psirt/FG-IR-26-188</guid><pubDate>Mon, 02 Nov 2026 00:00:00 -0800</pubDate><csaf:link>https://filestore.fortinet.com/fortiguard/psirt/csaf_linux-kernel-rce-cve-2026-98432_fg-ir-26-188.json</csaf:link><cvrf:link>https://fortiguard.fortinet.com/psirt/cvrf/FG-IR-26-188</cvrf:link></item></channel></rss>

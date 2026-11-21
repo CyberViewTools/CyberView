@@ -136,7 +136,7 @@ function finish(job) {
 
 // ---------- swarm phases: plan (frozen, with a plan_id) -> claim (leases) -> work -> check -> retry -> commit -> report ----------
 const RUN = (process.env.CYBERVIEW_RUN = RUN_ID());
-const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer", "grid", "outage"]);
+const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer", "exploit-analyst", "verify", "report-review", "followup", "regional", "advisory", "scout", "watchdog", "fixer", "grid", "outage", "claims"]);
 /** Can a headless worker in this container open web pages? One tiny Haiku fetch, remembered for 6 hours. */
 function webOk() {
   const f = "/tmp/cyberview-webprobe.json", c = readJson(f, null);
@@ -200,15 +200,16 @@ export function flowDeadline(t0, lifeMs, ticks, marginMs = 60000) {
  *  tight: only what the 15-minute target needs: researchers on stories that read like incidents or exploited flaws
  *         (sweep-plan --urgent) and reviewers on events waiting longer than OVERDUE_MIN (20) minutes; no updaters, grid
  *         researchers, outage checkers, gap searchers, follow-up desk or moderator (they wait for the next ok cycle).
+ *         Claims checkers (leak-site claims, scripts/claims-desk.mjs) run in ok and tight.
  *  Owner, 2026-11-21 ("use whatever it needs"): tight works like ok unless usage_budget.tight_cuts_work is true; the code
  *  path stays so the owner can restore it.
  *  stop:  no workers at all: the loop keeps collecting and closing noise by rule, so nothing is lost and research resumes
  *         where it stopped as soon as the limit resets. */
 export function workAt(level, cuts = TIGHT_CUTS) {
   if (level === "tight" && !cuts) level = "ok";
-  if (level === "stop") return { researchers: false, urgent_only: true, reviewers: false, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: false };
-  if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: true };
-  return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, outage: true, followup: true, gap: true, moderator: true, fixer: true };
+  if (level === "stop") return { researchers: false, urgent_only: true, reviewers: false, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: false, claims: false };
+  if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: true, claims: true };
+  return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, outage: true, followup: true, gap: true, moderator: true, fixer: true, claims: true };
 }
 /** Pure: review batches keeping only events that have waited longer than `min` minutes (waitingSince from review.mjs). */
 export function overdueOnly(batches, byId, now = Date.now(), min = OVERDUE_MIN) {
@@ -267,6 +268,28 @@ function outageApply(batches, planNote) {
   try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_outage_at = nowIso(); st.outage_note = String(batches.length ? notes.join(" | ") : planNote || "queue empty").slice(0, 200); writeJson(sp, st); } catch {}
   return notes;
 }
+// ---------- the claims desk (scripts/claims-desk.mjs): leak-site claims, checked by claims checkers (role claims) ----------
+/** One cycle's claims checkers, self-contained: plans up to max checkers (per claims each, most notable victim first) into
+ *  data/<file>, publishes their leases (kind claim) and names the plan for job-prompt (CYBERVIEW_CLAIMS_PLAN). finish()
+ *  records what they found (claims-desk.mjs apply validates it) and stamps last_claims_at in status.json (routines.json
+ *  "claims"), also when the queue was empty; it removes the working files. -> { note, batches, finish } */
+function claimsDesk(run, max, per, on) {
+  const file = `claims-plan-${run}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
+  let note = "", batches = [];
+  if (max && on && existsSync(join(ROOT, "scripts", "claims-desk.mjs"))) {
+    try { note = sh("node", ["scripts/claims-desk.mjs", "plan", "--max", String(max), "--per", String(per), "--file", file], 60000).out[0] || ""; batches = (readJson(join(DATA, file), { batches: [] }).batches || []).filter((b) => b && (b.items || []).length); } catch { batches = []; }
+    if (batches.length) { publishClaim("claim", batches.flatMap((b) => b.items.map((i) => i.id))); process.env.CYBERVIEW_CLAIMS_PLAN = file; }
+  }
+  const finish = () => {
+    const notes = [];
+    for (const b of batches) { try { notes.push(existsSync(join(DATA, b.out)) ? sh("node", ["scripts/claims-desk.mjs", "apply", b.out], 60000).out[0] || "" : `batch ${b.batch}: no out file`); } catch {} }
+    if (note) { try { const st = readStatus(); st.last_claims_at = nowIso(); st.claims_note = String(batches.length ? notes.join(" | ") : note).slice(0, 200); writeJson(join(DATA, "status.json"), st); } catch {} }
+    delete process.env.CYBERVIEW_CLAIMS_PLAN;
+    for (const f of [file, ...batches.map((b) => b.out)]) { try { unlinkSync(join(DATA, f)); } catch {} }
+    return notes;
+  };
+  return { note, batches, finish };
+}
 async function flow() {
   const F = PIPE.flow || {}, LIFE = Math.max(1, Math.min(115, Number(process.env.FLOW_MINUTES) || Number(F.minutes) || 100)) * 6e4, MINCYCLE = Math.max(2, Math.min(15, Number(F.min_cycle_minutes) || 4)) * 6e4;
   const RW = Math.max(0, Math.min(8, Number((PIPE.sweep || {}).review_workers ?? 2)));
@@ -307,6 +330,7 @@ async function flow() {
   log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"}); ${budgetLine(B)}`);
   const GW = Math.max(0, Math.min(4, Number(F.grid_workers ?? 0) || 0)), GPER = Math.max(1, Math.min(8, Number(F.grid_per_worker) || 4));
   const OW = Math.max(0, Math.min(4, Number(F.outage_workers ?? 0) || 0)), OPER = Math.max(1, Math.min(8, Number(F.outage_per_worker) || 4));
+  const CW = Math.max(0, Math.min(4, Number(F.claims_workers ?? 1) || 0)), CPER = Math.max(1, Math.min(8, Number(F.claims_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
   const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
@@ -373,6 +397,8 @@ async function flow() {
     // the model follows the work (scripts/lib/routing.mjs): deep batches of the sweep plan and the update plan run on the deep roles
     const work = mixWork(batches.map((b) => [researcherRole(sp, b), b]), rb.map((_, i) => ["reviewer", i + 1])).concat(ub.map((_, i) => [roleFor("updater", ud.includes(i + 1), MODELS), i + 1]), gb.map((b) => ["grid", b.batch]), ob.map((b) => ["outage", b.batch]));
     const core = work.length;                               // research, review, update, grid and outage work; the rest is scheduled
+    // ransomware and extortion leak-site claims: claims checkers look for the victim's, a regulator's or the press's word
+    const cd = claimsDesk(run, CW, CPER, can.claims); if (cd.note) phase("claims-plan", cd.note); cd.batches.forEach((b) => work.push(["claims", b.batch]));
     if (can.followup && Date.now() - lastFollow > FOLLOW) { lastFollow = Date.now(); let deepF = false; try { deepF = followupDeep(listEventFiles().map((f) => f.e).filter(Boolean)); } catch {} work.push([roleFor("followup", deepF, MODELS), null]); }
     { const n = gapCount(Date.now(), lastGap, PIPE.sweep || {}, B); if (n) { lastGap = Date.now(); for (let i = 1; i <= n; i++) work.push(["gap", i]); } }
     if (can.moderator && cycle % 6 === 1) {
@@ -405,6 +431,7 @@ async function flow() {
       try { const sp = join(DATA, "status.json"), st = readStatus(), at = nowIso(); for (const [role, k] of [["researcher", "last_researcher_at"], ["reviewer", "last_reviewer_at"], ["updater", "last_updater_at"]]) if (work.some((w) => baseRole(w[0]) === role)) st[k] = at; writeJson(sp, st); } catch {}
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     if (OW && can.outage && !ob.length && oNote) outageApply([], oNote);   // the desk ran and found nothing waiting
+    for (const n of cd.finish()) phase("claims-apply", n);
     try { unlinkSync(join(DATA, pf)); } catch {}
     try { unlinkSync(join(DATA, uf)); } catch {}
     try { unlinkSync(join(DATA, gf)); } catch {}

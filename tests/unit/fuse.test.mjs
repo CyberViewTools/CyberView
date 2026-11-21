@@ -53,3 +53,12 @@ test("already on file: a retold incident matches by organisation plus shared wor
   assert.equal(matchEvent("Microsoft confirms Exchange Online outage across Europe after update", evs), null);
   assert.equal(matchEvent("Regional bank discloses ransomware attack on loan systems", evs), null);
 });
+
+test("an advisory lead whose vendor states exploitation ranks as listed exploited", async () => {
+  const { story } = await import("../../scripts/fuse.mjs");
+  const lead = (x) => ({ id: "a" + x, title: "Acme Gateway critical vulnerability CVE-2026-1111", url: "https://psirt.acme.example/a" + x, source: "Acme PSIRT", tier: "vendor", kind: "advisory", via: "psirt", seen_at: "2026-11-21T10:00:00Z", published: "2026-11-21T09:00:00Z", _open: true });
+  const now = Date.parse("2026-11-21T12:00:00Z");
+  const yes = story([{ ...lead(1), exploited: true }], [], now), no = story([lead(2)], [], now);
+  const why = (s) => JSON.stringify(s);
+  assert.ok(why(yes).includes("listed as exploited") && !why(no).includes("listed as exploited"));
+});

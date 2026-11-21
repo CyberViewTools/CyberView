@@ -1,0 +1,331 @@
+{
+ "document": {
+  "acknowledgments": [
+   {
+    "summary": "Cisco would like to thank Christophe Schleypen from the NATO Cyber Security Centre (NCSC) for reporting these vulnerabilities."
+   }
+  ],
+  "category": "csaf_security_advisory",
+  "csaf_version": "2.0",
+  "notes": [
+   {
+    "category": "summary",
+    "title": "Summary",
+    "text": "Multiple vulnerabilities in Cisco Secure Firewall Management Center (FMC) Software could allow a remote attacker to gain root access, download sensitive files, perform a SQL injection attack, or cause a denial of service (DoS) condition.\r\n\r\nFor more information about these vulnerabilities, see the Details [\"#details\"] section of this advisory.\r\n\r\nCisco has released software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities.\r\n\r\n\r\n\r\nThis advisory is part of a group of advisories. For a complete list of the advisories and links to them, see Cisco Advance Notification for Publication of September 16, 2026, Security Advisories [\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-notice-jfxK98ZP\"]. In addition, for further documentation of improvements and fixes in Cisco Secure Firewall products, see Cisco Secure Firewall Adaptive Security Appliance Software, Secure Firewall Threat Defense Software, and Secure Firewall Management Center Software Hardening Release: September 2026 [\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-asaftdfmc-uvpPROhN\"]."
+   },
+   {
+    "category": "general",
+    "title": "Vulnerable Products",
+    "text": "CVE-2026-20341: This vulnerability affects Cisco Secure FMC Software, regardless of device configuration. The attacker must have root access on a managed Cisco Firepower Threat Defense (FTD) device.\r\n\r\nCVE-2026-20340 and CVE-2026-20342: These vulnerabilities affect Cisco Secure FMC Software, regardless of device configuration. The attacker must have the ability to log in as a low-privilege user, such as the Security Analyst role.\r\n\r\nCVE-2026-20343 and CVE-2026-20344: These vulnerabilities affect Cisco Secure FMC Software, regardless of device configuration.\r\n\r\nFor information about which Cisco software releases are vulnerable, see the Fixed Software [\"#fs\"] section of this advisory."
+   },
+   {
+    "category": "general",
+    "title": "Products Confirmed Not Vulnerable",
+    "text": "Only products listed in the Vulnerable Products [\"#vp\"] section of this advisory are known to be affected by these vulnerabilities.\r\n\r\nCisco has confirmed that these vulnerabilities do not affect the following Cisco products:\r\n\r\nSecure Firewall Adaptive Security Appliance (ASA) Software\r\nSecure Firewall Threat Defense (FTD) Software"
+   },
+   {
+    "category": "general",
+    "title": "Details",
+    "text": "The vulnerabilities are not dependent on one another. Exploitation of one of the vulnerabilities is not required to exploit another vulnerability. In addition, a software release that is affected by one of the vulnerabilities may not be affected by the other vulnerabilities.\r\n\r\nDetails about the vulnerabilities are as follows:\r\n\r\nCVE-2026-20341: Cisco Secure FMC Software sftunnel Deserialization Root Command Execution Vulnerability\r\n\r\nA vulnerability in the sftunnel inter-device communication protocol of Cisco Secure FMC Software could allow an authenticated, remote attacker to obtain root privileges.\r\n\r\nThis vulnerability is due to unsecured deserialization of untrusted data over the sftunnel management connection. An attacker could exploit this vulnerability by sending crafted sftunnel remote procedure calls (RPCs). A successful exploit could allow the attacker to gain root privileges on a device that is running Cisco Secure FMC Software and its high-availability peer.\r\n\r\nTo exploit this vulnerability, the attacker must have valid administrative credentials on a managed Cisco FTD device.\r\n\r\nCisco has released software updates that address this vulnerability. There are no workarou"
+   },
+   {
+    "category": "general",
+    "title": "Workarounds",
+    "text": "There are no workarounds that address these vulnerabilities."
+   },
+   {
+    "category": "general",
+    "title": "Fixed Software",
+    "text": "Cisco considers any workarounds and mitigations (if applicable) to be temporary solutions until an upgrade to a fixed software release is available. To remediate these vulnerabilities and avoid future exposure as described in this advisory, Cisco strongly recommends that customers upgrade to the fixed software indicated in this advisory.\r\n        Cisco Secure Firewall ASA, Secure FMC, and Secure FTD Software\r\nTo help customers determine their exposure to vulnerabilities in Cisco Secure Firewall ASA, Secure FMC, and Secure FTD Software, Cisco provides the Cisco Software Checker [\"https://sec.cloudapps.cisco.com/security/center/softwarechecker.x\"]. This tool identifies any Cisco security advisories that impact a specific software release and the earliest release that fixes the vulnerabilities that are described in each advisory (\u201cFirst Fixed\u201d). If applicable, the tool also returns the earliest release that fixes all the vulnerabilities that are described in all the advisories that the Software Checker identifies (\u201cCombined First Fixed\u201d).\r\n\r\nTo use the tool, go to the Cisco Software Checker [\"https://sec.cloudapps.cisco.com/security/center/softwarechecker.x\"] page and follow the instr"
+   },
+   {
+    "category": "general",
+    "title": "Vulnerability Policy",
+    "text": "To learn about Cisco security vulnerability disclosure policies and publications, see the Security Vulnerability Policy [\"http://www.cisco.com/web/about/security/psirt/security_vulnerability_policy.html\"]. This document also contains instructions for obtaining fixed software and receiving security vulnerability information from Cisco.\r\n\r\nFor additional information on Cisco's vulnerability management, disclosure cadence, and software patching strategy, see Cisco's Transition to a Risk-Based Vulnerability Disclosure Model [\"https://sec.cloudapps.cisco.com/security/center/resources/risk-based-disclosure\"]."
+   },
+   {
+    "category": "general",
+    "title": "Exploitation and Public Announcements",
+    "text": "The Cisco Product Security Incident Response Team (PSIRT) is not aware of any public announcements or malicious use of the vulnerabilities that are described in this advisory."
+   },
+   {
+    "category": "general",
+    "title": "Source",
+    "text": "Cisco would like to thank Christophe Schleypen from the NATO Cyber Security Centre (NCSC) for reporting these vulnerabilities."
+   },
+   {
+    "category": "legal_disclaimer",
+    "title": "Legal Disclaimer",
+    "text": "SOFTWARE DOWNLOADS AND TECHNICAL SUPPORT\r\n\r\nThe Cisco Support and Downloads [\"https://www.cisco.com/c/en/us/support/index.html\"] page on Cisco.com provides information about licensing and downloads. This page can also display customer device support coverage for customers who use the My Devices tool. Please note that customers may download only software that was procured from Cisco directly or through a Cisco authorized reseller or partner and for which the license is still valid.\r\n\r\nCustomers who purchase directly from Cisco but do not hold a Cisco service contract and customers who make purchases through third-party vendors but are unsuccessful in obtaining fixed software through their point of sale should obtain upgrades by contacting the Cisco Technical Assistance Center (TAC) [\"https://www.cisco.com/c/en/us/support/web/tsd-cisco-worldwide-contacts.html\"]. Customers should have the product serial number available and be prepared to provide the URL of this advisory as evidence of entitlement to a free upgrade.\r\n\r\nWhen considering software upgrades [\"https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html#fixes\"], customers are advised to regu"
+   }
+  ],
+  "publisher": {
+   "category": "vendor",
+   "contact_details": "psirt@cisco.com",
+   "issuing_authority": "Cisco PSIRT",
+   "name": "Cisco",
+   "namespace": "https://cisco.com"
+  },
+  "references": [
+   {
+    "category": "self",
+    "summary": "Cisco Secure Firewall Management Center Software Vulnerabilities",
+    "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-fmc-mulivulns-4PsnFwvx"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Security Vulnerability Policy",
+    "url": "https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Advance Notification for Publication of September 16, 2026, Security Advisories",
+    "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-notice-jfxK98ZP"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Secure Firewall Adaptive Security Appliance Software, Secure Firewall Threat Defense Software, and Secure Firewall Management Center Software Hardening Release: September 2026",
+    "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-asaftdfmc-uvpPROhN"
+   },
+   {
+    "category": "external",
+    "summary": "CSCwu16954",
+    "url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwu16954"
+   },
+   {
+    "category": "external",
+    "summary": "CSCwu27275",
+    "url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwu27275"
+   },
+   {
+    "category": "external",
+    "summary": "CSCwu24501",
+    "url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwu24501"
+   },
+   {
+    "category": "external",
+    "summary": "CSCwu42586",
+    "url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwu42586"
+   },
+   {
+    "category": "external",
+    "summary": "CSCwu36643",
+    "url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwu36643"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Software Checker",
+    "url": "https://sec.cloudapps.cisco.com/security/center/softwarechecker.x"
+   },
+   {
+    "category": "external",
+    "summary": "Security Impact Rating (SIR)",
+    "url": "https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html#asr"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Secure Firewall ASA Compatibility",
+    "url": "https://www.cisco.com/c/en/us/td/docs/security/asa/compatibility/asamatrx.html"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Secure Firewall ASA Upgrade Guide",
+    "url": "https://www.cisco.com/c/en/us/td/docs/security/asa/upgrade/asa-upgrade/planning.html"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Secure Firewall Threat Defense Compatibility Guide",
+    "url": "https://www.cisco.com/c/en/us/td/docs/security/secure-firewall/compatibility/threat-defense-compatibility.html"
+   },
+   {
+    "category": "external",
+    "summary": "Security Vulnerability Policy",
+    "url": "http://www.cisco.com/web/about/security/psirt/security_vulnerability_policy.html"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco's Transition to a Risk-Based Vulnerability Disclosure Model",
+    "url": "https://sec.cloudapps.cisco.com/security/center/resources/risk-based-disclosure"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Support and Downloads",
+    "url": "https://www.cisco.com/c/en/us/support/index.html"
+   },
+   {
+    "category": "external",
+    "summary": "Cisco Technical Assistance Center (TAC)",
+    "url": "https://www.cisco.com/c/en/us/support/web/tsd-cisco-worldwide-contacts.html"
+   },
+   {
+    "category": "external",
+    "summary": "considering software upgrades",
+    "url": "https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html#fixes"
+   },
+   {
+    "category": "external",
+    "summary": "the advisories",
+    "url": "https://www.cisco.com/go/psirt"
+   }
+  ],
+  "title": "Cisco Secure Firewall Management Center Software Vulnerabilities",
+  "tracking": {
+   "current_release_date": "2026-09-16T16:00:00+00:00",
+   "generator": {
+    "date": "2026-11-14T05:12:09+00:00",
+    "engine": {
+     "name": "TVCE"
+    }
+   },
+   "id": "cisco-sa-fmc-mulivulns-4PsnFwvx",
+   "initial_release_date": "2026-09-16T16:00:00+00:00",
+   "revision_history": [
+    {
+     "date": "2026-09-16T16:00:00+00:00",
+     "number": "1.0.0",
+     "summary": "Initial public release."
+    }
+   ],
+   "status": "final",
+   "version": "1.0.0"
+  }
+ },
+ "product_tree": {
+  "branches": [],
+  "relationships": [
+   {
+    "category": "installed_on",
+    "full_product_name": {
+     "name": "Cisco Secure Firewall Management Center (FMC) 7.0.0 when installed on Cisco Secure Firewall Management Center (FMC) Appliances",
+     "product_id": "CSAFPID-284312:277516"
+    },
+    "product_reference": "CSAFPID-284312",
+    "relates_to_product_reference": "CSAFPID-277516"
+   },
+   {
+    "category": "installed_on",
+    "full_product_name": {
+     "name": "Cisco Secure Firewall Management Center (FMC) 7.0.0.1 when installed on Cisco Secure Firewall Management Center (FMC) Appliances",
+     "product_id": "CSAFPID-284313:277516"
+    },
+    "product_reference": "CSAFPID-284313",
+    "relates_to_product_reference": "CSAFPID-277516"
+   },
+   {
+    "category": "installed_on",
+    "full_product_name": {
+     "name": "Cisco Secure Firewall Management Center (FMC) 7.0.1 when installed on Cisco Secure Firewall Management Center (FMC) Appliances",
+     "product_id": "CSAFPID-284793:277516"
+    },
+    "product_reference": "CSAFPID-284793",
+    "relates_to_product_reference": "CSAFPID-277516"
+   }
+  ]
+ },
+ "vulnerabilities": [
+  {
+   "cve": "CVE-2026-20340",
+   "ids": [
+    {
+     "system_name": "Cisco Bug ID",
+     "text": "CSCwu27275"
+    }
+   ],
+   "notes": [
+    {
+     "category": "other",
+     "title": "Affected Product Comprehensiveness",
+     "text": "Complete."
+    }
+   ],
+   "product_status": {
+    "known_affected": [
+     "CSAFPID-284312:277516",
+     "CSAFPID-284313:277516",
+     "CSAFPID-284793:277516"
+    ]
+   },
+   "release_date": "2026-09-16T16:00:00+00:00",
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "details": "Cisco has released software updates that address this vulnerability.",
+     "product_ids": [
+      "CSAFPID-284312:277516",
+      "CSAFPID-284313:277516",
+      "CSAFPID-284793:277516"
+     ],
+     "url": "https://software.cisco.com"
+    }
+   ],
+   "scores": [
+    {
+     "cvss_v3": {
+      "baseScore": 8.8,
+      "baseSeverity": "HIGH",
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "version": "3.1"
+     },
+     "products": [
+      "CSAFPID-284312:277516",
+      "CSAFPID-284313:277516",
+      "CSAFPID-284793:277516"
+     ]
+    }
+   ],
+   "title": "Cisco Secure Firewall Management Center Software Deserialization Arbitrary Root Command Execution Vulnerability"
+  },
+  {
+   "cve": "CVE-2026-20341",
+   "ids": [
+    {
+     "system_name": "Cisco Bug ID",
+     "text": "CSCwu16954"
+    }
+   ],
+   "notes": [
+    {
+     "category": "other",
+     "title": "Affected Product Comprehensiveness",
+     "text": "Complete."
+    }
+   ],
+   "product_status": {
+    "known_affected": [
+     "CSAFPID-284312:277516",
+     "CSAFPID-284313:277516",
+     "CSAFPID-284793:277516"
+    ]
+   },
+   "release_date": "2026-09-16T16:00:00+00:00",
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "details": "Cisco has released software updates that address this vulnerability.",
+     "product_ids": [
+      "CSAFPID-284312:277516",
+      "CSAFPID-284313:277516",
+      "CSAFPID-284793:277516"
+     ],
+     "url": "https://software.cisco.com"
+    }
+   ],
+   "scores": [
+    {
+     "cvss_v3": {
+      "baseScore": 9.1,
+      "baseSeverity": "CRITICAL",
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
+      "version": "3.1"
+     },
+     "products": [
+      "CSAFPID-284312:277516",
+      "CSAFPID-284313:277516",
+      "CSAFPID-284793:277516"
+     ]
+    }
+   ],
+   "title": "Cisco Secure Firewall Management Center Software sftunnel Deserialization Root Command Execution Vulnerability"
+  }
+ ]
+}

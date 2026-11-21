@@ -92,6 +92,9 @@
       grid_waiting: GW && nn(GW.count) !== null ? { count: int0(GW.count), oldest_min: int0(GW.oldest_min) } : null,
       outage_queue: OQ && nn(OQ.waiting) !== null ? { waiting: int0(OQ.waiting), checked_24h: int0(OQ.checked_24h), confirmed_24h: int0(OQ.confirmed_24h), cyber_leads_24h: int0(OQ.cyber_leads_24h), oldest_min: int0(OQ.oldest_min) } : null,
       last_outage_at: isoOk(h.last_outage_at),
+      claims_queue: obj(h.claims_queue) && nn(h.claims_queue.waiting) !== null ? { waiting: int0(h.claims_queue.waiting), checked_24h: int0(h.claims_queue.checked_24h), confirmed_24h: int0(h.claims_queue.confirmed_24h),
+        reported_24h: int0(h.claims_queue.reported_24h), denied_24h: int0(h.claims_queue.denied_24h) } : null,
+      last_claims_at: isoOk(h.last_claims_at),
       grid_audit_flags: Array.isArray(h.grid_audit_flags) ? h.grid_audit_flags.filter(function (f) { return typeof f === "string" && /^[a-z0-9_]{1,40}$/.test(f); }).slice(0, 10) : null,
       grid_sources: obj(h.grid_sources),
       quality: cleanQuality(h.quality),
@@ -248,6 +251,12 @@
     if (oq) row(!(oq.waiting && oq.oldest_min > 720), "Outage desk (" + AI_BY + "): " + plural(oq.waiting, "outage report") + " waiting for a check; " + oq.checked_24h + " checked in 24 h" +
       (oq.checked_24h ? " (" + oq.confirmed_24h + " confirmed" + (oq.cyber_leads_24h ? ", " + plural(oq.cyber_leads_24h, "cyber lead") + " passed to research" : "") + ")" : "") +
       "; last run " + (h.last_outage_at ? ago(h.last_outage_at) : "not yet") + (oq.waiting && oq.oldest_min > 720 ? " (the oldest report has waited over 12 h)" : ""));
+    // the claims desk (scripts/claims-desk.mjs): leak-site claims, checked by CyberView AI in the research loop, most notable
+    // first; a long queue of minor claims is normal, so the row asks only that the desk keeps running while claims wait
+    var cq = h.claims_queue, cAge = h.last_claims_at ? (Date.now() - Date.parse(h.last_claims_at)) / 36e5 : Infinity;
+    if (cq) row(!(cq.waiting && cAge > 6), "Claims desk (" + AI_BY + "): " + plural(cq.waiting, "leak-site claim") + " waiting for a check; " + cq.checked_24h + " checked in 24 h" +
+      (cq.checked_24h ? " (" + cq.confirmed_24h + " confirmed by the organisation, " + cq.reported_24h + " reported, " + cq.denied_24h + " denied)" : "") +
+      "; last run " + (h.last_claims_at ? ago(h.last_claims_at) : "not yet") + (cq.waiting && cAge > 6 ? " (expected every research cycle)" : ""));
     var bl = h.backlog;
     if (bl) row(bl.waiting <= 60 && !(bl.oldest_incident_hours > 2), "Research queue: " + plural(bl.waiting, "report") + " waiting for a decision" + (bl.incidents ? ", " + bl.incidents + " that read like incidents" : "") + (bl.waiting ? "; oldest " + bl.oldest_hours + " h" : "") + (bl.waiting > 60 ? " (expected under 60)" : ""));
     var q = h.quarantined_count;

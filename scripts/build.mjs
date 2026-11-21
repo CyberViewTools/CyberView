@@ -224,6 +224,25 @@ const gridNews = (() => {
     .map((x) => { const c = checked(x.id), v = outageDesk ? outageDesk.siteCheck(outageChecks[`pw-${x.id}`]) : null; return { ...x, ...(c ? { checked: c } : {}), ...(v ? { verified: v } : {}) }; }) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
+// service status (scripts/status-pages.mjs, no AI model): major or long incidents on the providers' own status pages, for
+// the map page's "Service status" list (each labelled the provider's own status page, not a cyber event), with the outage
+// desk's check when there is one (its item id is svc-<sha1 of the incident's url>). A broken file only drops the list.
+const services = (() => {
+  const p = join(DATA, "services", "status.json");
+  if (!existsSync(p)) return null;
+  const d = readJson(p);
+  if (!d || typeof d !== "object" || !Array.isArray(d.incidents)) { warnings.push("services/status.json: not readable, service status left out"); return null; }
+  const prov = d.providers && typeof d.providers === "object" ? Object.values(d.providers) : [];
+  return { updated_at: String(d.updated_at || "").slice(0, 30), pages: prov.length, pages_ok: prov.filter((v) => v && v.ok).length,
+    items: d.incidents.filter((x) => x && typeof x === "object" && !Array.isArray(x) && /^https:\/\//.test(x.url || "")).slice(0, 60).map((x) => {
+      const v = outageDesk ? outageDesk.siteCheck(outageChecks[`svc-${createHash("sha1").update(x.url).digest("hex").slice(0, 12)}`]) : null;
+      return { provider: String(x.provider || "").slice(0, 40), name: String(x.name || "").slice(0, 60), category: String(x.category || "").slice(0, 20), page: String(x.page || "").slice(0, 200),
+        title: String(x.title || "").slice(0, 200), impact: String(x.impact || "").slice(0, 40), level: String(x.level || "").slice(0, 10), components: Array.isArray(x.components) ? x.components.slice(0, 6).map((c) => String(c).slice(0, 80)) : [],
+        status: String(x.status || "").slice(0, 40), started_at: String(x.started_at || "").slice(0, 20), resolved_at: String(x.resolved_at || "").slice(0, 20), minutes: Number.isFinite(x.minutes) ? x.minutes : null,
+        url: String(x.url).slice(0, 400), ...(v ? { verified: v } : {}) };
+    }) };
+})();
+if (services) docs["services/status"] = services;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
 // licence requires, from scripts/grid.mjs SOURCES (code, not data); a failure leaves the page on its built-in allowlist
 try {

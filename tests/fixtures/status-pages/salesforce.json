@@ -1,0 +1,240 @@
+[
+ {
+  "id": 20004546,
+  "externalId": "97243581",
+  "message": {
+   "rootCause": null,
+   "actionPlan": null,
+   "pathToResolution": null
+  },
+  "additionalInformation": "",
+  "isCore": false,
+  "affectsAll": false,
+  "status": "Resolved",
+  "type": "Degradation",
+  "createdAt": "2026-10-30T14:16:08.863Z",
+  "updatedAt": "2026-11-02T09:13:12.812Z",
+  "instanceKeys": [
+   "DB7",
+   "DB601",
+   "DB602",
+   "DB603",
+   "DB605"
+  ],
+  "serviceKeys": [
+   "MarketingCloudCoreService"
+  ],
+  "IncidentImpacts": [
+   {
+    "id": 20004881,
+    "startTime": "2026-10-30T02:00:00.000Z",
+    "endTime": "2026-10-30T13:38:00.000Z",
+    "type": "marketingCloudDegradation",
+    "severity": "minor",
+    "createdAt": "2026-10-30T14:16:08.967Z",
+    "updatedAt": "2026-10-30T14:51:30.229Z",
+    "startTimeCreatedAt": "2026-10-30T14:16:08.967Z",
+    "startTimeModifiedAt": null,
+    "endTimeCreatedAt": "2026-10-30T14:18:58.172Z",
+    "endTimeModifiedAt": null
+   }
+  ],
+  "IncidentEvents": [
+   {
+    "id": 20006358,
+    "type": "update",
+    "message": "Between 02:00 and 13:38 UTC on October 30, 2026, a subset of Marketing Cloud Engagement customers on Stack 6 who use branded tracking domains experienced intermittent errors and slow loading when emai",
+    "createdAt": "2026-11-02T09:13:12.803Z",
+    "updatedAt": "2026-11-02T09:13:12.808Z"
+   }
+  ],
+  "timeline": [
+   {
+    "title": "Update",
+    "content": "Between 02:00 and 13:38 UTC on October 30, 2026, a subset of Marketing Cloud Engagement customers on Stack 6 who use branded tracking domains experienced intermittent errors and slow loading when email recipients clicked links. Customers may also have had issues with open tracking and subscription center pages on those domains. Email sending continued normally. \n\nA faulty network component that distributes traffic triggered the issue. We removed it from service, which restored service for all affected customers at 13:38 UTC. \n\nWe'll perform a full investigation of the incident, confirming the technical trigger, the underlying cause, and preventive action to avoid a repeat in the future.\n\nWe apologize for how you and your business may have been affected by this incident.",
+    "createdAt": "2026-11-02T09:13:12.803Z",
+    "updatedAt": "2026-11-02T09:13:12.808Z",
+    "entryType": "event",
+    "sourceId": 20006358,
+    "sourceType": "event"
+   },
+   {
+    "title": "Resolved",
+    "content": "Incident Resolved",
+    "createdAt": "2026-10-30T14:18:58.172Z",
+    "updatedAt": null,
+    "entryType": "impact_end",
+    "endTime": "2026-10-30T13:38:00.000Z",
+    "sourceId": 20004881,
+    "sourceType": "impact",
+    "impactStartTime": "2026-10-30T14:16:08.967Z"
+   },
+   {
+    "title": "Degradation Started",
+    "content": "marketingCloudDegradation",
+    "createdAt": "2026-10-30T14:16:08.967Z",
+    "updatedAt": null,
+    "entryType": "impact_start",
+    "startTime": "2026-10-30T02:00:00.000Z",
+    "sourceId": 20004881,
+    "sourceType": "impact",
+    "impactStartTime": "2026-10-30T14:16:08.967Z"
+   }
+  ]
+ },
+ {
+  "id": 20004547,
+  "externalId": "97244442",
+  "message": {
+   "rootCause": null,
+   "actionPlan": null,
+   "pathToResolution": null
+  },
+  "additionalInformation": "",
+  "isCore": false,
+  "affectsAll": false,
+  "status": "Resolved",
+  "type": "Degradation",
+  "createdAt": "2026-10-30T15:31:47.193Z",
+  "updatedAt": "2026-10-30T18:31:14.850Z",
+  "instanceKeys": [
+   "DEU54",
+   "DEU96",
+   "GBR46",
+   "GBR64",
+   "ITA10"
+  ],
+  "serviceKeys": [
+   "Agentforce"
+  ],
+  "IncidentImpacts": [
+   {
+    "id": 20004882,
+    "startTime": "2026-10-30T12:37:00.000Z",
+    "endTime": "2026-10-30T18:06:00.000Z",
+    "type": "featurePerfDegradation",
+    "severity": "minor",
+    "createdAt": "2026-10-30T15:31:47.315Z",
+    "updatedAt": "2026-10-30T18:31:14.835Z",
+    "startTimeCreatedAt": "2026-10-30T15:31:47.315Z",
+    "startTimeModifiedAt": "2026-10-30T16:31:31.732Z",
+    "endTimeCreatedAt": "2026-10-30T18:31:14.835Z",
+    "endTimeModifiedAt": null
+   }
+  ],
+  "IncidentEvents": [
+   {
+    "id": 20006350,
+    "type": "update",
+    "message": "We've resolved the issue affecting Agentforce requests that use certain third-party large language models. A third-party service provider made a change to how it routes requests. The provider rolled b",
+    "createdAt": "2026-10-30T18:31:14.842Z",
+    "updatedAt": "2026-10-30T18:31:14.846Z"
+   }
+  ],
+  "timeline": [
+   {
+    "title": "Update",
+    "content": "We've resolved the issue affecting Agentforce requests that use certain third-party large language models. A third-party service provider made a change to how it routes requests. The provider rolled back the change and applied a follow-up fix. We confirmed that service has returned to normal, and customers no longer see errors.\n\nWe apologize for how this incident may have affected our customers and their businesses. We'll investigate the incident to confirm the cause and the steps we'll take to prevent it from happening again.\n",
+    "createdAt": "2026-10-30T18:31:14.842Z",
+    "updatedAt": "2026-10-30T18:31:14.846Z",
+    "entryType": "event",
+    "sourceId": 20006350,
+    "sourceType": "event"
+   },
+   {
+    "title": "Resolved",
+    "content": "Incident Resolved",
+    "createdAt": "2026-10-30T18:31:14.835Z",
+    "updatedAt": null,
+    "entryType": "impact_end",
+    "endTime": "2026-10-30T18:06:00.000Z",
+    "sourceId": 20004882,
+    "sourceType": "impact",
+    "impactStartTime": "2026-10-30T15:31:47.315Z"
+   },
+   {
+    "title": "Update",
+    "content": "The third-party service provider is continuing to roll back the recent change to how it routes requests. After the rollback, the provider will also apply a follow-up fix. We're working with the provider to confirm recovery steps and expected recovery time. We'll provide an update in 30 minutes, or sooner if additional information becomes available.",
+    "createdAt": "2026-10-30T18:08:14.572Z",
+    "updatedAt": "2026-10-30T18:08:14.576Z",
+    "entryType": "event",
+    "sourceId": 20006349,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "The third-party provider has identified an update that may be causing the issue. The third-party provider will begin the rollback in one region to confirm it resolves the issue which is expected to take about two hours. We'll provide an update in 30 minutes, or sooner if additional information becomes available.",
+    "createdAt": "2026-10-30T17:38:52.662Z",
+    "updatedAt": "2026-10-30T17:38:52.667Z",
+    "entryType": "event",
+    "sourceId": 20006348,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "The third-party provider has shared initial findings but doesn't yet know the definitive cause of the widespread service disruption. Their engineering team is actively investigating across the impacted regions. We'll provide an update in 30 minutes, or sooner if additional information becomes available.",
+    "createdAt": "2026-10-30T17:12:33.579Z",
+    "updatedAt": "2026-10-30T17:12:33.583Z",
+    "entryType": "event",
+    "sourceId": 20006347,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "We're working with the third-party provider and looking at alternate large language model options. We don't have a time for resolution yet, as the provider continues to investigate the incident trigger. Contractual and data residency commitments limit where we can reroute requests. We'll provide an update in 30 minutes, or sooner if additional information becomes available.\n",
+    "createdAt": "2026-10-30T16:56:18.763Z",
+    "updatedAt": "2026-10-30T16:56:18.767Z",
+    "entryType": "event",
+    "sourceId": 20006346,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "Upon further investigation, we've determined that the start time of impact is different than initially understood. We've revised the start time of the Trust post to more accurately reflect the time customers may have begun to experience impact. We apologize for any confusion caused by this.",
+    "createdAt": "2026-10-30T16:31:52.822Z",
+    "updatedAt": "2026-10-30T16:31:52.827Z",
+    "entryType": "event",
+    "sourceId": 20006345,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "We're working with the provider to get a recovery timeline and looking at options to route requests to alternative large language models. Because the issue affects multiple regions, we have limited rerouting options, and putting them in place may take more time. We'll provide an update in 30 minutes, or sooner if additional information becomes available.",
+    "createdAt": "2026-10-30T16:25:15.862Z",
+    "updatedAt": "2026-10-30T16:25:15.868Z",
+    "entryType": "event",
+    "sourceId": 20006344,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "Investigations have highlighted that the impact radius is broader than initially understood. We have updated the posting to reflect the additional instances experiencing impact, and customers in these instances will receive communications related to this incident going forward.  ",
+    "createdAt": "2026-10-30T16:13:19.406Z",
+    "updatedAt": "2026-10-30T16:13:19.411Z",
+    "entryType": "event",
+    "sourceId": 20006343,
+    "sourceType": "event"
+   },
+   {
+    "title": "Update",
+    "content": "We're investigating an issue affecting some Agentforce customers who use large language models hosted by a third-party provider. Affected requests may return errors or fail to complete.\n\nCustomers in multiple regions may be affected when their requests use the impacted capacity. The issue currently appears limited to models hosted by this provider. We're working with our service provider and reviewing changes to how requests are routed to resolve the issue. We're investigating the issue and will provide an update in 30 minutes, or sooner if we have more information.\n\n",
+    "createdAt": "2026-10-30T15:48:40.652Z",
+    "updatedAt": "2026-10-30T15:48:40.656Z",
+    "entryType": "event",
+    "sourceId": 20006342,
+    "sourceType": "event"
+   },
+   {
+    "title": "Degradation Started",
+    "content": "featurePerfDegradation",
+    "createdAt": "2026-10-30T15:31:47.315Z",
+    "updatedAt": "2026-10-30T16:31:31.732Z",
+    "entryType": "impact_start",
+    "startTime": "2026-10-30T12:37:00.000Z",
+    "sourceId": 20004882,
+    "sourceType": "impact",
+    "impactStartTime": "2026-10-30T15:31:47.315Z"
+   }
+  ]
+ }
+]

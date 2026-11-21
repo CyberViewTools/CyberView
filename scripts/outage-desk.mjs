@@ -101,22 +101,25 @@ export function internetItems(ioda, events = [], cfg = {}, now = Date.now()) {
   return out.sort((a, b) => b.rank - a.rank || a.id.localeCompare(b.id));
 }
 
-/** Pure: status-page outages (leads of kind "status") from the last status_hours, newest first. Left out: a page an event
- *  already cites, or a category "outage" event of the same provider on the same day. */
+/** Pure: status-page outages (leads of kind "status") from the last status_hours (filed or started), biggest providers
+ *  first (the lead's priority: the provider's tier in config/status-pages.json, 1 the biggest; a lead without one counts
+ *  as 3), then newest. Left out: a page an event already cites, or a category "outage" event of the same provider on the
+ *  same day. */
 export function serviceItems(leads, events = [], cited = new Set(), cfg = {}, now = Date.now()) {
   const c = cfgOf(cfg), seen = new Set(), out = [];
   const outEv = (events || []).filter((e) => e && e.category === "outage" && !e.duplicate_of);
   for (const l of leads || []) {
     if (!l || l.kind !== "status" || !/^https:\/\//.test(l.url || "") || seen.has(l.url)) continue;
-    const t = Date.parse(l.published || l.seen_at || ""); if (!isFinite(t) || now - t > c.status_hours * 36e5) continue;
+    const t = Date.parse(l.published || l.seen_at || ""), f = Math.max(t, Date.parse(l.seen_at || "") || 0); if (!isFinite(t) || now - f > c.status_hours * 36e5) continue;
     seen.add(l.url);
     if (cited.has(l.url)) continue;
     const provider = s(String(l.source || "").replace(/ status$/i, ""), 60), day = isoAt(t).slice(0, 10);
     if (provider && outEv.some((e) => String(e.date) === day && new RegExp(`\\b${provider.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(`${e.org || ""} ${e.title || ""}`))) continue;
     out.push({ id: `svc-${createHash("sha1").update(l.url).digest("hex").slice(0, 12)}`, key: `svc-${createHash("sha1").update(l.url).digest("hex").slice(0, 12)}`, kind: "service",
-      country: s(l.country, 2), place: provider, provider, title: s(l.title, 160), first_seen: isoAt(t), last_seen: isoAt(t), summary: s(l.summary, 300), url: s(l.url, 400), rank: t });
+      country: s(l.country, 2), place: provider, provider, title: s(l.title, 160), first_seen: isoAt(t), last_seen: isoAt(t), summary: s(l.summary, 300), url: s(l.url, 400),
+      priority: [1, 2, 3].includes(Number(l.priority)) ? Number(l.priority) : 3, rank: t });
   }
-  return out.sort((a, b) => b.rank - a.rank || a.id.localeCompare(b.id));
+  return out.sort((a, b) => a.priority - b.priority || b.rank - a.rank || a.id.localeCompare(b.id));
 }
 
 /** Pure: is an item due for a check? Not when a final result is on file, when max_tries is reached, when it or another

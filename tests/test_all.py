@@ -543,6 +543,16 @@ async def main():
                       "items": [{"id": "EQ-1", "type": "earthquake", "level": "red", "name": "Earthquake test", "country": "Chile", "lat": -33.4, "lng": -70.6, "url": "https://evil.test/x"}]},
         }
 
+        # v1.63: service status from the providers' own status pages (shape of docs["services/status"], built from
+        # data/services/status.json written by scripts/status-pages.mjs): listed in the layers panel, never drawn
+        b18.setdefault("docs", {})["services/status"] = {"updated_at": iso(0.1), "pages": 46, "pages_ok": 45, "items": [
+            {"provider": "cloudflare", "name": "Cloudflare", "category": "cdn", "page": "https://www.cloudflarestatus.com", "title": "R2 and Durable Objects availability issues",
+             "impact": "major", "level": "major", "components": ["R2"], "status": "investigating", "started_at": iso(2), "resolved_at": "", "minutes": 120,
+             "url": "https://www.cloudflarestatus.com/incidents/pfwuex7qix27"},
+            {"provider": "evil", "name": "<img src=x id=pwn12>Evil", "page": "https://status.evil.test", "title": "Off-domain link", "impact": "", "level": "bogus",
+             "started_at": iso(3), "resolved_at": iso(1), "minutes": 95, "url": "https://phish.example/incidents/x", "verified": {"decision": "hacked", "summary": "x", "publisher": "y"}},
+            {"provider": "bad", "name": "Bad", "page": "javascript:alert(1)", "title": "no page", "url": "javascript:alert(2)"}]}
+
         async def v18(url):
             pg, errs = await open_page(browser, url, wait=1500)
             ok("hud: UTC clock shown", (await pg.inner_text("#hud")).startswith("UTC "))
@@ -563,6 +573,12 @@ async def main():
             ok("outage desk: an unknown decision is dropped and the signal stays unchecked", "hacked" not in ltxt and "A measurement, not checked by CyberView." in ltxt)
             lh = await pg.eval_on_selector_all("#layers .ocheck a", "as => as.map(a => a.getAttribute('href'))")
             ok("outage desk: the check links the confirming page", lh == ["https://newsroom.orange.com/fibre-incident-2026/"], lh)
+            ok("service status: listed with the provider named, impact as stated, labelled not a cyber event",
+               "Service status" in ltxt and "Cloudflare: R2 and Durable Objects availability issues" in ltxt and "impact as stated: major" in ltxt
+               and "The provider's own status page, not a cyber event. Not checked by CyberView." in ltxt and "attack" not in ltxt.split("Service status", 1)[1].lower(), ltxt[-700:])
+            sh = await pg.eval_on_selector_all("#layers .llist.svc a", "as => as.map(a => a.getAttribute('href'))")
+            ok("service status: links stay on the provider's own status page domain; no page, no row; markup stays text",
+               sh == ["https://www.cloudflarestatus.com/incidents/pfwuex7qix27", "https://status.evil.test"] and "no page" not in ltxt and await pg.locator("#pwn12").count() == 0 and "hacked" not in ltxt, sh)
             await pg.keyboard.press("Escape")
             ok("layers: Esc closes the panel", await pg.locator("#layers").is_hidden())
             ok("globe: always on, no flat-map toggle", await pg.locator("path.ocean").count() == 1 and await pg.locator("#zglobe").count() == 0)
@@ -597,6 +613,7 @@ async def main():
 
         # v1.44: power grid context layer (fixture in the shape of data/context/grid.json; the real file is written by scripts/grid.mjs)
         bg = copy.deepcopy(bundle)
+        bg.setdefault("docs", {}).pop("services/status", None)
         bg["context"] = dict(b18["context"])
         bg["context"]["grid"] = {"source": "Grid operators: Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO", "source_url": "", "fetched_at": iso(0.3), "ok": True, "error": "", "items": [
             {"id": "grid-hydroquebec-qc-202611190900", "source": "hydroquebec", "kind": "outage", "name": "Hydro-Québec: 152,300 customers without power", "country": "CA", "region": "Quebec", "customers": 152300, "level": None,

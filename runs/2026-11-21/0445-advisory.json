@@ -1,0 +1,28 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-21T04:27:46Z",
+  "finished_at": "2026-11-21T04:46:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-vcs-static-cred-hr7EWZ8t", "title": "Cisco Expressway RCE", "used_in": "CVE-2026-76466"},
+    {"url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39495", "title": "VMSA-2026-0009.1", "used_in": "CVE-2026-123890"},
+    {"url": "https://support.checkpoint.com/results/sk/sk1000362", "title": "Check Point sk1000362", "used_in": "CVE-2026-123039"},
+    {"url": "https://roller.apache.org/security.html", "title": "Apache Roller security", "used_in": "none"},
+    {"url": "https://support.apple.com/en-us/120896", "title": "Safari 17.5 security content", "used_in": "none"}
+  ],
+  "added": ["CVE-2026-76466", "CVE-2026-123890", "CVE-2026-123039"],
+  "updated": [],
+  "skipped": [
+    {"title": "CVE-2024-27834 Apple", "url": "https://support.apple.com/en-us/120896", "reason": "page gives no fixed version per product and does not report exploitation; not enough for a guide"},
+    {"title": "CVE-2026-129448 Apache Roller", "url": "https://roller.apache.org/security.html", "reason": "CVE not on the Roller security page; the mailing-list thread cited by CISA is JS-only and the page lists that thread under CVE-2026-82384, so no advisory for this CVE could be confirmed"}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-114713 UnrealIRCd", "url": "https://forums.unrealircd.org/viewtopic.php?t=9487", "note": "403 to the reader", "priority": "low"},
+    {"title": "CVE-2026-125350 Chromium", "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_018223192.html", "note": "page body did not render", "priority": "medium"},
+    {"title": "CVE-2026-115731 Puppet Enterprise", "url": "https://portal.perforce.com/s/cve/a91Qi000003IaHpIAK/report-deserialization-code-execution", "note": "not retried this run", "priority": "low"},
+    {"title": "CVE-2026-90817, 90436, 88779, 84869, 63077, 19868, 124194, 111793, 96951, 59310, 41709, 21589, 2025-42884", "url": "", "note": "earlier runs: JS-only or 403 vendor pages; not retried this run (SAP blocks automated readers)", "priority": "low"}
+  ],
+  "failed_sites": ["forums.unrealircd.org (403)", "chromereleases.googleblog.com (empty body)", "lists.apache.org (JS only)"],
+  "notes": "3 guides written. Check Point read_depth summary (fetch tool summarised); the dbset stop value was not shown, so the guide points to the advisory for it. Vendor pages for Cisco and Broadcom state no public exploit and no compromise signs, so exploit_public false and compromise_signs empty for those."
+}

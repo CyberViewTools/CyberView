@@ -1,0 +1,50 @@
+{
+ "generated_at": "2026-11-21T11:48:50Z",
+ "date": "2026-11-21",
+ "headline": "Exploited vCenter and Cisco Expressway flaws are due for patching by 23 November",
+ "plain_summary": "Two widely used server products, VMware vCenter and Cisco Expressway, have flaws that are being exploited, and both are on CISA's list with a 23 November deadline. Separately, serious NGINX and PHP flaws have fixes available; no exploitation of the NGINX flaws has been confirmed. A large Japanese customer-data leak at a marketing vendor affects several companies. Anyone running these products should patch.",
+ "items": [
+  {
+   "title": "VMware vCenter zero-day CVE-2026-123890 exploited by suspected state actor",
+   "why": "Google says ARMORY CASTLE has exploited this authentication bypass since early September; CISA's deadline is 23 November.",
+   "action": "Apply Broadcom's fixed vCenter builds (8.0 U3m, 9.0.2.0200 or 9.1.1.0200) now; vCenter 7.0 has no public patch. Restrict inbound access to and egress from vCenter, following the hardening advice in Google's post.",
+   "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11"
+  },
+  {
+   "title": "Cisco Expressway flaw CVE-2026-76466 exploited after public PoC",
+   "why": "A critical (CVSS 9.8) unauthenticated root command flaw was used against internet-exposed devices, and CISA lists it with a 23 November deadline.",
+   "action": "If you run clustered Expressway, upgrade to X15.5.20 now (X14 and earlier must move to a fixed release; Cisco says no workaround). If you cannot patch at once, F6 advises blocking TCP 4371-4372 except from trusted cluster node IPs.",
+   "event_id": "cisco-expressway-cve-2026-76466-exploited-2026-11"
+  },
+  {
+   "title": "NGINX flaws allow remote code execution over HTTP/2; public PoC exists",
+   "why": "CERT-FR warns of unauthenticated code execution; Palo Alto Networks says it knows of no malicious exploitation.",
+   "action": "Check every NGINX server that serves HTTP/2. Apply the fixed versions (1.30.7 or 1.31.9) from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched.",
+   "event_id": "cert-fr-nginx-http2-rce-2026-11"
+  },
+  {
+   "title": "PHP security releases fix 17 vulnerabilities, several rated critical",
+   "why": "Reports say the critical issues need non-default or uncommon configurations, so default installs are not described as affected.",
+   "action": "Update PHP to 8.2.36, 8.3.37, 8.4.28 or 8.5.13 and check for the non-default configurations the advisories describe.",
+   "event_id": "php-critical-security-release-announced-2026-11"
+  },
+  {
+   "title": "European Commission confirms AI-generated cyberattack on its applications",
+   "why": "The Commission says a campaign detected 22 October took several applications offline; most are restored and no staff-wide data breach has been detected.",
+   "action": "If you work with EU institutions, expect notices from them and treat unexpected messages claiming to be from Commission staff with care.",
+   "event_id": "european-commission-cyberattack-payroll-2026-11"
+  },
+  {
+   "title": "ZOZO: about 15.18 million customers' data leaked via PLAID KARTE breach",
+   "why": "ZOZO confirmed the leak at a marketing platform vendor; passwords are not held there and card data is not confirmed leaked.",
+   "action": "ZOZO customers: be wary of phishing emails, texts or calls impersonating ZOZO, and do not open their links or attachments, as ZOZO advises.",
+   "event_id": "zozo-karte-customer-data-leak-2026-11"
+  },
+  {
+   "title": "Proximus mobile disruption: software bug, cyberattack ruled out",
+   "why": "Proximus says an update the night before caused call and SMS problems on 20 November and rules out a cyberattack.",
+   "action": "No action needed; for awareness.",
+   "event_id": "proximus-mobile-network-disruption-2026-11-20"
+  }
+ ]
+}

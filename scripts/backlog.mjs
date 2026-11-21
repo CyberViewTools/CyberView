@@ -14,6 +14,7 @@ import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, writeRunLog, nowIso } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 
+// a regulator's breach notice (kind "breach-notice", scripts/breaches.mjs) is NOT a row: it is the official confirmation, read by an agent
 const ROWS = ["cve", "breach-db", "status"];
 /** Pure: why a rule can close this story without anyone reading it, or "" when a person or agent has to look. */
 export function autoReason(s, now = Date.now()) {

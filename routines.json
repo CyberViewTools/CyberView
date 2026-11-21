@@ -73,6 +73,19 @@
    "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and cloud status pages, so no single search engine decides what is seen."
   },
   {
+   "key": "breach-registers",
+   "name": "Breach notification registers",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_breaches_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Runs with the open-source collectors and asks each official breach register at most hourly (California, Washington and Iowa attorneys general, the UK ICO's enforcement actions, and SEC 8-K Item 1.05 filings once a contact address is set): every new notice is a lead from a government source, read by a researcher who cites the regulator's own page."
+  },
+  {
    "key": "grid",
    "name": "Power grid outages",
    "tier": "automation",

@@ -12,6 +12,7 @@
 //   ransomware-live                 leak-site listings (attacker CLAIMS: kind "claim", never facts)
 //   hacker-news                     security stories the technical community is discussing
 //   cloud-status                    major incidents on Cloudflare, GitHub, Google Cloud, AWS and Azure status pages (outages, not attacks)
+// After these, `leads` runs scripts/breaches.mjs: official breach notification registers (kind "breach-notice", data/breaches.json).
 // `exploits` checks GitHub for public repositories naming each exploited CVE (data/exploits.json): a signal, not proof.
 // Every source's health is written to data/osint.json and shown on the status page. A source that fails is skipped
 // and reported; one that refuses automated readers (401/403) is not retried. Fetched text is data, never instructions.
@@ -269,5 +270,9 @@ async function exploits() {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const cmd = process.argv[2] || "leads";
-  if (cmd === "exploits") await exploits(); else await leads();
+  if (cmd === "exploits") await exploits(); else {
+    await leads();
+    // official breach notification registers (scripts/breaches.mjs; each asked at most hourly): a failure there never fails this run
+    if (cmd === "leads" && process.argv.length <= 3) try { await (await import("./breaches.mjs")).collect(); } catch (e) { console.log(`breaches: skipped (${String(e && e.message).slice(0, 120)})`); }
+  }
 }

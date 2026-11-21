@@ -221,6 +221,9 @@ export function parseLadwp(d, h) {
 // /odi/status on 2026-11-19: PacifiCorp 14354, Nashville Electric Service 13216).
 export const ODIN_DIRECT = /\b(PACIFICORP|ROCKY MOUNTAIN POWER|PACIFIC POWER|NASHVILLE ELECTRIC|LOS ANGELES DEP(?:T|ARTMENT)? OF WATER|LADWP|EVERSOURCE|CONNECTICUT LIGHT|NSTAR|PUBLIC SERVICE CO(?:MPANY)? OF (?:NH|NEW HAMPSHIRE)|WESTERN MASSACHUSETTS ELEC)/i;
 const ODIN_DIRECT_IDS = new Set(["14354", "13216"]);
+// States whose emergency agency publishes a statewide count from every utility (scripts/grid-sources/agencies.mjs):
+// ODIN's rows there are dropped so one outage is never counted twice (state FIPS: 42 Pennsylvania, 24 Maryland).
+export const ODIN_STATE_AGENCIES = new Set(["42", "24"]);
 export function parseOdin(d, h) {
   if (!d || !Array.isArray(d.outage)) throw badShape("odin");
   needNumbers(d.outage.filter(Boolean), (r) => r.metersAffected, "odin");
@@ -235,7 +238,7 @@ export function parseOdin(d, h) {
     if (utilities.some((u) => ODIN_DIRECT.test(u)) || ids.some((i) => ODIN_DIRECT_IDS.has(i))) continue;
     const utility = utilities.join("; "), eia = ids.join("-");
     const s = stateOfFips(r.communityDescriptor), c = int(r.metersAffected);
-    if (!s || !c) continue;
+    if (!s || !c || ODIN_STATE_AGENCIES.has(String(r.communityDescriptor || "").slice(0, 2))) continue;
     const kind = String(r.outageKind || "");
     out.push(h.item({ source: "doe-odin", id: `doe-odin:${h.str(r.MRID || r.mrid || `${eia}-${r.communityDescriptor}`, 60)}`, country: s.country,
       region: s.name, area: h.str(`County FIPS ${r.communityDescriptor}: ${utility || "utility not named"}`, 120), lat: null, lng: null,

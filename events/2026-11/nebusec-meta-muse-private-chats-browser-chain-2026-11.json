@@ -15,7 +15,9 @@
   "pin_type": "headquarters",
   "place": "Menlo Park, California",
   "plain": "Researchers at NebuSec showed that a booby-trapped web page opened by Meta's Muse assistant could be used to take a user's chat history and memories. NebuSec says the flaws were fixed before it published.",
-  "products": ["Meta Muse"],
+  "products": [
+    "Meta Muse"
+  ],
   "report": {
     "publisher": "NebuSec",
     "publisher_type": "vendor",
@@ -24,20 +26,36 @@
     "url": "https://nebusec.ai/research/meta-muse-credential-exposure/"
   },
   "sector": "Technology",
-  "severity": 2,
+  "severity": 1,
   "source_tier": "primary",
   "sources": [
-    {"name": "NebuSec: Hacking Muse: Stealing Private Chats Through Browser Use", "url": "https://nebusec.ai/research/meta-muse-credential-exposure/"},
-    {"name": "The Hacker News", "url": "https://thehackernews.com/2026/11/a-single-malicious-webpage-let.html"}
+    {
+      "name": "NebuSec: Hacking Muse: Stealing Private Chats Through Browser Use",
+      "url": "https://nebusec.ai/research/meta-muse-credential-exposure/"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/a-single-malicious-webpage-let.html"
+    }
   ],
-  "status": "official",
-  "summary": "Security firm NebuSec says it chained weaknesses in Meta's Muse agent: a Chromium browser flaw gave code execution in the agent's container, weaknesses in the Sentinel outbound-request check let conversation history and stored memories leave without an approval prompt, and a Linux kernel exploit gave root in the user's VM, exposing credential storage. NebuSec says all exploits were patched by publication. The Hacker News says Meta has not publicly confirmed the fixes.",
+  "status": "claimed",
+  "summary": "NebuSec says it chained weaknesses in Meta's Muse agent: a Chromium browser flaw gave code execution in the agent's container, weaknesses in the Sentinel outbound-request check let chat history and memories leave without an approval prompt, and a Linux kernel exploit gave root in the user's VM, exposing credential storage. NebuSec says all exploits were patched by publication; The Hacker News says Meta has not publicly confirmed.",
   "tags": [],
   "title": "NebuSec: malicious web page chain let researchers take Meta Muse users' private chats; says all fixed",
-  "updated_at": "2026-11-21T12:10:47Z",
+  "updated_at": "2026-11-21T12:16:09Z",
   "validation": {
-    "checked_at": "2026-11-21T12:10:47Z",
-    "note": "Primary: NebuSec's own research write-up read; The Hacker News (read) relays it and notes Meta has not publicly confirmed the fixes or commented. Findings are the researchers' own; Meta's page not read.",
-    "state": "corroborated"
-  }
+    "checked_at": "2026-11-21T12:16:00Z",
+    "state": "unconfirmed_claim",
+    "note": "NebuSec (the researchers) is the only origin of the findings and the patch claim; The Hacker News relays it and says Meta has not publicly confirmed the fixes or commented. Both pages read; Meta statement not found."
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-21T12:15:41Z",
+    "first_at": "2026-11-21T12:15:41Z",
+    "note": "Read NebuSec and The Hacker News: title, date 20 Nov, chain and patch claim match. Status official/severity 2/corroborated overstated a researcher-only claim Meta has not confirmed; now claimed, severity 1, unconfirmed_claim.",
+    "flags": [
+      "long-summary"
+    ]
+  },
+  "qa_checked_at": "2026-11-21T12:15:41Z"
 }

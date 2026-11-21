@@ -1,5 +1,5 @@
 {
-  "action": "Operators of MONAI Label: apply the maintainers' fix and keep the server off the open internet; Cryptopolitan says a GitHub advisory dated 18 November 2026 rates the flaw critical (advisory page not read).",
+  "action": "Operators of MONAI Label: apply the maintainers' fix (Cryptopolitan gives no fixed version); it says GitHub advisory GHSA-qc22-rmgc-vg94, dated 18 November 2026 rates the flaw critical (advisory page not read).",
   "actor": "",
   "attack": [
     "AI agents",
@@ -36,16 +36,24 @@
     }
   ],
   "status": "developing",
-  "summary": "Cryptopolitan reports that Amazon Threat Intelligence says AI agents coordinated through the open-source Cairn platform found and exploited a zero-day, which Amazon judged with high confidence, in MONAI Label, via a file-upload path traversal. Targeting of IPs tied to East Asian universities began around 8 September; Amazon detected it on 10 September. Amazon links the operator to China with moderate confidence.",
+  "summary": "Cryptopolitan reports that Amazon Threat Intelligence says AI agents coordinated through the open-source Cairn platform found and exploited a zero-day (judged with high confidence) in MONAI Label via a file-upload path traversal, and gained root on a server. Activity against IPs tied to East Asian universities began around 8 September; Amazon detected it on 10 September. Amazon links the operator to China with moderate confidence.",
   "tags": [
     "zero-day"
   ],
   "time_basis": "published",
   "title": "Amazon says AI agents found and exploited a zero-day in MONAI Label",
-  "updated_at": "2026-11-21T00:05:19Z",
+  "updated_at": "2026-11-21T00:10:04Z",
   "validation": {
     "checked_at": "2026-11-21T00:06:00Z",
     "note": "Only Cryptopolitan was read in full; The Defiant's standfirst states the same core claim (CJ Moses, agents took over a university server) but its body did not load. Amazon's own post (aws.amazon.com security blog) and the GitHub advisory could not be read (page truncated, 403). Kept single_source.",
     "state": "single_source"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-21T00:10:18Z",
+    "first_at": "2026-11-21T00:10:18Z",
+    "note": "Compared with Cryptopolitan (read in full): title, 8/10 Sept dates, high confidence on zero-day, moderate China link, advisory date OK. Fixed: summary lacked the root takeover that plain states; action's keep-off-internet advice was not in the source, now cites only the maintainers fix and GHSA-qc22",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-21T00:10:18Z"
 }

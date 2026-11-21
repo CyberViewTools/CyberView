@@ -2,6 +2,7 @@
 // Each function returns a list of problems (strings); an empty list means the record is fine.
 // checkEventQuality and sharedSourceProblems return [{level, code, text}] instead (see there).
 import { pathToFileURL } from "node:url";
+import { SECTOR, SURFACE, BASES, MAX_SECTORS } from "./taxonomy.mjs";
 
 const https = (u) => typeof u === "string" && /^https:\/\/[^\s"'<>]+$/.test(u) && (() => { try { const x = new URL(u); return x.pathname !== "/" || !!x.search; } catch { return false; } })();
 const text = (v, max) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
@@ -290,6 +291,144 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
       if (k === "plain" && !same.length && f.value >= 1000 && !stated.some((s) => Math.abs(s.value - f.value) <= 0.05 * s.value && (f.q === "about" || (f.q === s.q && f.q !== "exact")))) { add("warn", "figure-not-in-summary", `"${f.raw}" in plain is not in the summary or impact: plain may round a stated figure ("about 341,000"), never add one`); break; }
     }
   }
+  out.push(...checkClassification(e));
+  return out.concat(accuracyProblems(e, src));
+}
+
+/**
+ * The accuracy checks of 21 November 2026 (owner: accuracy first; the second review corrected 34% of events against a
+ * target under 10%). Each one is a correction type the review kept making that a script can decide (the table is
+ * ERROR_TYPES in scripts/review.mjs; `node scripts/review.mjs errors` counts them). Errors for events first seen from
+ * ACCURACY_STRICT_FROM, warnings for older ones; the checks that need the new fields (evidence, a source's published day)
+ * are left out for older events that lack them, so history is not reported for fields it could not have had.
+ */
+export const ACCURACY_STRICT_FROM = "2026-11-22T06:00:00Z";
+// a figure a reader acts on in any form: 1,234 / 4.5 million / 400 / 40% (not a year, version, id, CVSS score, date or time)
+const COUNTABLE = /(?<![\w.,:/#-])(about|around|approximately|roughly|some|nearly|almost|under|less than|fewer than|up to|over|more than|at least)?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(\s?(?:million|billion|bn|m\b|k\b)|\s?(?:%|percent|per cent))?(?![\w.,:/-]*\d)(?![\w-])/gi;
+const MONTH = /^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i, MONTH_BEFORE = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s*$/i;
+const NOT_FIGURE_BEFORE = /(cve-\d{4}-|cvss(v\d(\.\d)?)?:?\s*|version\s*|\bv|\bkb|\bno\.\s*|\b(build|release|patch|update|firmware|step|phase|level|tier|grade|article|section|chapter|paragraph|rule|room|apt|apt-|unc|ta|storm-|fin|sha|md|top|series|gen|ios|android|windows|win|chrome|firefox|python|php|java|node|rust|office|server|exchange|sharepoint|forti\w*|tls|ssl|http|ipv|wpa|802\.)\s*-?)$/i;
+/** Pure: the countable figures in a text: [{raw, value, q}] with q the qualifier class (exact, about, below, above). */
+export function countables(t) {
+  const s = String(t || ""), out = [];
+  for (const m of s.matchAll(COUNTABLE)) {
+    const num = m[2], unit = (m[3] || "").trim().toLowerCase(), at = m.index + m[0].indexOf(num), before = s.slice(Math.max(0, at - 24), at), after = s.slice(at + num.length, at + num.length + 12);
+    if (NOT_FIGURE_BEFORE.test(before) || MONTH.test(after) || MONTH_BEFORE.test(before) || /^\s?(am|pm|a\.m|p\.m|h\b|utc|gmt)/i.test(after)) continue;
+    const plain = Number(num.replace(/,/g, ""));
+    if (!unit && /^(19|20)\d\d$/.test(num)) continue;              // a year
+    if (!unit && !num.includes(",") && plain < 10) continue;           // one to nine: words in most texts, and rarely a figure to check
+    const mult = /^(million|m)$/.test(unit) ? 1e6 : /^(billion|bn)$/.test(unit) ? 1e9 : unit === "k" ? 1e3 : 1;
+    const q = m[1] ? QCLASS[m[1].toLowerCase()] || "about" : "exact";
+    out.push({ raw: m[0].trim(), value: +(plain * mult).toPrecision(12), pct: /%|percent|per cent/.test(unit), q });
+  }
+  return out;
+}
+// an action that says whose advice it is, or marks itself as CyberView's own general advice
+export const ACTION_AWARE = /^\s*no action (is )?(needed|stated|required|given)\b/i;
+export const ACTION_GENERAL = /^\s*general advice\b/i;
+const ACTION_SOURCED = /\b(advis\w*|recommend\w*|urg\w*|warn\w*|says?|said|according to|as (the|its|their|it) \w+|per (the |its )?\w+|notice|advisor(y|ies)|guidance|bulletin|instruct\w*|asks?|tells?|statement|release notes|lists?|publishe[sd]|its (fix|patch|update)|(vendor|maintainers|developers|company|agency|operator)['’]?s?\b|apply (the )?\S+['’]s?\b|fixed (in|version|release)|upgrade to|update to|patch(ed)? (version|release)|KB\d+|GHSA-|\bK\d{6,})/i;
+const OFFICIAL = /\.gov(\.[a-z]{2})?$|\.go\.[a-z]{2}$|\.gob\.[a-z]{2}$|\.gouv\.[a-z]{2}$|\.gc\.ca$|\.gv\.at$|\.mil$|\.admin\.ch$|\.bund\.de$|\.europa\.eu$|\.govt\.nz$|\.gov\.[a-z]{2}$|\bcisa\b|\bcert\b|\bncsc\b|\bcsirt\b|\bsec\.gov$|europol|interpol|justice/i;
+// one publisher, however many subdomains: news.example.co.uk and www.example.co.uk are one host
+export const siteOf = (u) => { const h = hostOf(u).split("."); return h.length > 2 && /^(co|com|org|net|gov|go|ac|ne|or|gob|gouv)$/.test(h[h.length - 2]) ? h.slice(-3).join(".") : h.slice(-2).join("."); };
+const ORG_STOP = new Set(["the", "inc", "group", "city", "county", "state", "national", "university", "bank", "of", "and", "for", "ltd", "co", "company", "hospital", "health", "government", "ministry", "department", "unknown", "multiple", "various"]);
+
+function accuracyProblems(e, src) {
+  const hosts = new Set(src.map((s) => hostOf(s.url)).filter(Boolean));
+  const out = [], strict = String(e.first_seen || "") >= ACCURACY_STRICT_FROM, lvl = strict ? "error" : "warn";
+  const add = (level, code, text) => out.push({ level, code, text });
+  const urls = new Set(src.map((s) => s.url));
+  // evidence: short verbatim excerpts (each at most 240 characters) from the pages read, one for every figure and stated
+  // time. Not shown on the site; the second review checks them against the page.
+  const ev = Array.isArray(e.evidence) ? e.evidence : null;
+  if (e.evidence !== undefined) {
+    if (!ev || ev.length > 12 || ev.some((x) => !x || typeof x.quote !== "string" || !x.quote.trim() || x.quote.length > 240 || typeof x.url !== "string"))
+      add("error", "evidence-shape", 'evidence is a list of at most 12 {url, quote}: quote copied word for word from the page (at most 240 characters), url one of "sources"');
+    else for (const x of ev) if (!urls.has(x.url)) { add(lvl, "evidence-unsourced", `evidence quote "${x.quote.slice(0, 50)}" is from ${x.url.slice(0, 80)}, which is not in sources: cite every page you quote`); break; }
+  }
+  const quotes = (ev || []).filter((x) => x && typeof x.quote === "string").map((x) => x.quote), qfig = quotes.flatMap(countables);
+  if (ev || strict) {
+    const fields = ["title", "summary", "plain", "exec", "action", "impact"];
+    let missing = null, qual = null;
+    for (const k of fields) for (const f of countables(e[k])) {
+      const same = qfig.filter((q) => q.value === f.value || (f.pct && q.pct && q.value === f.value));
+      // plain may round a stated figure with "about" (scripts/lib/validate.mjs figure rules); every other field uses the page's figure
+      const rounded = k === "plain" && f.q === "about" && qfig.some((q) => Math.abs(q.value - f.value) <= 0.05 * q.value);
+      if (!same.length && !rounded) { missing ||= [k, f]; continue; }
+      if (same.length && !same.some((q) => q.q === f.q) && !(rounded && f.q === "about")) qual ||= [k, f, same[0]];
+    }
+    if (e.records_affected != null && Number.isFinite(Number(e.records_affected)) && !qfig.some((q) => q.value === Number(e.records_affected))) missing ||= ["records_affected", { raw: String(e.records_affected) }];
+    if (missing) add(lvl, "figure-no-evidence", `"${missing[1].raw}" in ${missing[0]} is in no evidence quote: add {url, quote} with the sentence of the page that states it, word for word, or remove the figure`);
+    if (qual) add(lvl, "figure-qualifier", `"${qual[1].raw}" in ${qual[0]} but the page says "${qual[2].raw}": keep the page's own qualifier ("about", "over", "at least", "up to", or none)`);
+  }
+  // occurred_at: a time of day the page states, quoted
+  if (e.occurred_at && e.time_basis !== "approx" && (ev || strict) && !quotes.some((q) => /\b\d{1,2}[:.h]\d{2}\b|\b\d{1,2}\s?(am|pm|a\.m\.|p\.m\.)|\d{1,2}時|\b(midnight|noon)\b/i.test(q)))
+    add(lvl, "occurred-no-evidence", `occurred_at ${e.occurred_at} needs an evidence quote with the time of day the page states; an article's own publication time is not the event's time (leave occurred_at out)`);
+  // the action says whose advice it is, or that it is CyberView's own general advice
+  const act = String(e.action || "").trim();
+  if (act && !ACTION_AWARE.test(act) && !ACTION_GENERAL.test(act) && !ACTION_SOURCED.test(act))
+    add(lvl, "action-unsourced", 'action does not say whose advice it is: name the source ("<vendor> advises ...", "as the notice urges ..."), start with "General advice:" when it is CyberView\'s own general advice, or write "No action needed; for awareness."');
+  // corroborated: two publishers, and the note names them
+  const sites = new Set(src.map((s) => siteOf(s.url)).filter(Boolean));
+  if (e.validation && e.validation.state === "corroborated") {
+    if (hosts.size >= 2 && sites.size < 2 && e.source_tier !== "primary") add(lvl, "corroborated-one-site", `"corroborated" needs two independent publishers; every source is on ${[...sites].join(", ") || "one site"}`);
+    const note = String(e.validation.note || "").toLowerCase(), named = src.filter((s) => { const n = String(s.name || "").toLowerCase().replace(/^the\s+/, ""), site = siteOf(s.url).split(".")[0]; return (n.length >= 3 && note.includes(n.slice(0, 12))) || (site.length >= 3 && note.includes(site)); });
+    if (sites.size >= 2 && new Set(named.map((s) => siteOf(s.url))).size < 2) add("warn", "corroborated-note", 'validation "corroborated": the note names the two (or more) publishers that each state the core fact');
+  }
+  // primary: the organisation's, a vendor's or a government's own page
+  if (e.source_tier === "primary" && src.length) {
+    const orgWords = String(e.org || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter((w) => w.length >= 3 && !ORG_STOP.has(w));
+    const own = src.some((s) => { const h = hostOf(s.url); return OFFICIAL.test(h) || orgWords.some((w) => h.replace(/[^a-z0-9]/g, "").includes(w)); });
+    if (!own && src.every((s) => isSecondary(s.url) || /news|times|post|herald|journal|tribune|daily|record|register|bleeping|securityweek|thehackernews|darkreading|therecord|reuters|apnews|bbc|cnn|guardian/i.test(hostOf(s.url))))
+      add(lvl, "primary-no-primary", 'source_tier "primary" but every source is a news site or tracker: cite the organisation\'s, vendor\'s or authority\'s own page, or set "established"');
+  }
+  // a claim stays a claim in the title
+  if (e.status === "claimed" && !/\bclaim|\balleg|\blists?\b|\bsays\b|\bposts?\b|\bunverified|\bunconfirmed|\bleak site/i.test(String(e.title || "")))
+    add(lvl, "claim-title", 'status "claimed" but the title states it as fact: say it is a claim ("<group> claims ...")');
+  // date: an incident, outage or enforcement on its article's publication day needs a date_note (the review kept moving these)
+  const pub = src.map((s) => s.published).filter((p) => typeof p === "string");
+  if (pub.some((p) => !/^\d{4}-\d{2}-\d{2}$/.test(p))) add("error", "source-published-shape", 'a source\'s "published" is the page\'s own date as YYYY-MM-DD');
+  if (["incident", "outage", "enforcement"].includes(e.category)) {
+    if (strict && src.length && typeof src[0].published !== "string") add("error", "source-published-missing", 'record the first source\'s own publication day as "published" (YYYY-MM-DD) on that source, so the event\'s date can be told apart from it');
+    if (pub.includes(e.date) && !String(e.date_note || "").trim() && e.time_basis !== "occurred")
+      add(lvl, "date-is-publication", `date ${e.date} is the day a source was published: if the page says when it happened, use that day; if it does not, say so in "date_note" (e.g. "the notice of ${e.date} gives no earlier date")`);
+  }
+  return out;
+}
+
+/**
+ * Event "sectors" and "surface": who was hit and through what, from fixed lists (scripts/lib/taxonomy.mjs), each with a basis
+ * (stated by a source, or inferred). A value off the list or a missing basis is an error for events first seen from
+ * QUALITY_STRICT_FROM (a warning before); a missing field is a warning for events first seen from CLASSIFY_FROM (older
+ * events are filled by `node scripts/classify.mjs`). Returns [{level, code, text}].
+ */
+export const CLASSIFY_FROM = "2026-11-22T00:00:00Z";
+export function checkClassification(e) {
+  const out = [], add = (level, code, text) => out.push({ level, code, text });
+  if (!e || typeof e !== "object") return out;
+  const basis = (b, k) => { if (!BASES.includes(b)) add("error", "classify-basis", `${k}.basis must be "stated" (a page in sources says it) or "inferred" (concluded from what the sources say)`); };
+  const s = e.sectors;
+  if (s != null) {
+    if (typeof s !== "object" || Array.isArray(s)) add("error", "sectors-shape", 'sectors must be {"values": [<sector>...], "basis": "stated" | "inferred"}');
+    else {
+      if (!Array.isArray(s.values) || !s.values.length || s.values.length > MAX_SECTORS) add("error", "sectors-shape", `sectors.values must list 1 to ${MAX_SECTORS} sectors, the most affected first`);
+      else {
+        const bad = s.values.filter((k) => !Object.prototype.hasOwnProperty.call(SECTOR, k));
+        if (bad.length) add("error", "sectors-value", `sectors.values: ${bad.map((x) => JSON.stringify(x).slice(0, 40)).join(", ")} not on the list (${Object.keys(SECTOR).join(", ")})`);
+        if (new Set(s.values).size !== s.values.length) add("error", "sectors-value", "sectors.values lists a sector twice");
+        if (s.values.length > 1 && s.values.some((k) => k === "unknown" || k === "cross-sector")) add("error", "sectors-value", '"unknown" and "cross-sector" stand alone in sectors.values');
+      }
+      basis(s.basis, "sectors");
+    }
+  }
+  const u = e.surface;
+  if (u != null) {
+    if (typeof u !== "object" || Array.isArray(u)) add("error", "surface-shape", 'surface must be {"value": <surface>, "basis": "stated" | "inferred"}');
+    else {
+      if (!Object.prototype.hasOwnProperty.call(SURFACE, u.value)) add("error", "surface-value", `surface.value ${JSON.stringify(u.value).slice(0, 40)} is not on the list (${Object.keys(SURFACE).join(", ")})`);
+      basis(u.basis, "surface");
+    }
+  }
+  if ((s == null || u == null) && String(e.first_seen || "") >= CLASSIFY_FROM && !e.duplicate_of)
+    add("warn", "unclassified", `${s == null ? "sectors" : ""}${s == null && u == null ? " and " : ""}${u == null ? "surface" : ""} missing: say who was hit and through what, from the fixed lists in docs/schema.md, with basis "stated" or "inferred"`);
   return out;
 }
 

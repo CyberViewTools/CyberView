@@ -113,6 +113,9 @@ export function budgetState(now = Date.now(), cfg = budgetConfig(), lines = null
   // a stop on the window estimate lasts until enough of the window's oldest usage has rolled out; the loop rechecks every cycle
   return { window_pct, week_pct, level, limited_until: live ? iso(live.until) : null, reason, window: w, week: k };
 }
+/** Pure: does the "tight" level cut work? Owner, 2026-11-21: "use whatever it needs"; only the stop level holds work back.
+ *  usage_budget.tight_cuts_work (default false) restores the old tight behaviour (fewer workers, tight_skip_jobs wait). */
+export const tightCuts = (cfg = budgetConfig()) => !!(cfg && cfg.tight_cuts_work === true);
 /** One line for logs and the loop's heartbeat. */
 export const budgetLine = (b) => `budget ${b.level}: 5 h ${b.window_pct}%, week ${b.week_pct}%${b.limited_until ? `, limited until ${b.limited_until}` : ""}${b.reason ? ` (${b.reason})` : ""}`;
 /** Pure: the highest usage in any rolling `hours` within lines: { tokens, cost, at } (at: the end of that span). */

@@ -8,17 +8,26 @@ import { join } from "node:path";
 import { workAt, overdueOnly, gapCount, idleWaitMs, flowAlive, mixWork } from "../../scripts/run-job.mjs";
 import { yieldsTo, takeLock, leaderOf } from "../../scripts/lib/lease.mjs";
 import { urgent } from "../../scripts/sweep-plan.mjs";
+import { tightCuts } from "../../scripts/lib/usage.mjs";
 
 const NOW = Date.parse("2026-11-20T12:00:00Z"), iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z");
 
-test("ok starts everything; tight only urgent research and overdue review; stop starts no worker", () => {
-  const ok = workAt("ok"), tight = workAt("tight"), stop = workAt("stop");
+test("ok starts everything; tight (when it cuts work) only urgent research and overdue review; stop starts no worker", () => {
+  const ok = workAt("ok"), tight = workAt("tight", true), stop = workAt("stop");
   assert.ok(Object.entries(ok).filter(([k]) => !/_only$/.test(k)).every(([, v]) => v === true));
   assert.equal(ok.urgent_only, false); assert.equal(ok.overdue_only, false);
   assert.deepEqual([tight.researchers, tight.urgent_only, tight.reviewers, tight.overdue_only], [true, true, true, true]);
   assert.deepEqual([tight.updaters, tight.grid, tight.outage, tight.followup, tight.gap, tight.moderator], [false, false, false, false, false, false]);
   assert.ok(Object.entries(stop).filter(([k]) => !/_only$/.test(k)).every(([, v]) => v === false));
   assert.deepEqual(workAt("anything else"), ok);
+});
+
+test("owner 2026-11-21: tight cuts nothing unless usage_budget.tight_cuts_work is true; stop still stops everything", () => {
+  assert.deepEqual(workAt("tight", false), workAt("ok"));
+  assert.deepEqual(workAt("tight"), workAt("ok"), "the default config leaves tight_cuts_work off");
+  assert.deepEqual(workAt("stop", false), workAt("stop", true));
+  assert.equal(tightCuts({}), false); assert.equal(tightCuts({ tight_cuts_work: true }), true); assert.equal(tightCuts({ tight_cuts_work: "yes" }), false);
+  assert.ok(Object.entries(workAt("stop", false)).filter(([k]) => !/_only$/.test(k)).every(([, v]) => v === false));
 });
 
 test("tight research takes only stories that read like incidents or exploited flaws", () => {
@@ -39,7 +48,8 @@ test("gap searchers: once per gap_every_minutes, spare ones only while the windo
   assert.equal(gapCount(NOW, NOW - 61 * 6e4, sc, { level: "ok", window_pct: 60 }), 1);
   assert.equal(gapCount(NOW, NOW - 61 * 6e4, sc, { level: "ok", window_pct: 30 }), 2);
   assert.equal(gapCount(NOW, NOW - 59 * 6e4, sc, { level: "ok", window_pct: 30 }), 0, "not due yet");
-  assert.equal(gapCount(NOW, 0, sc, { level: "tight", window_pct: 85 }), 0);
+  assert.equal(gapCount(NOW, 0, sc, { level: "tight", window_pct: 85 }, true), 0, "tight cuts gap searchers only when it cuts work");
+  assert.equal(gapCount(NOW, 0, sc, { level: "tight", window_pct: 85 }, false), 1);
   assert.equal(gapCount(NOW, 0, sc, { level: "stop", window_pct: 0 }), 0);
   assert.equal(gapCount(NOW, 0, { ...sc, gap_pass: false }, { level: "ok", window_pct: 0 }), 0);
   assert.equal(gapCount(NOW, 0, { gap_workers: 5, gap_spare_workers: 5, gap_spare_below_pct: 90 }, { level: "ok", window_pct: 0 }), 3, "never more than 3");

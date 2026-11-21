@@ -69,6 +69,29 @@ test("the cyber filter reads the fifth batch's languages (fa, he, hi, hu, uz, et
     "Kibera residents protest evictions", "Kibera, Nairobi: floods displace families"]) assert.ok(!CYBER.test(t), t);
 });
 
+test("the cyber filter reads Swahili, Hausa, Amharic and Afrikaans, more Arabic, Turkish and Portuguese, and no longer takes Kubernetes for kuber-", () => {
+  // real titles from the new regional feeds (BBC Amharic, Euronews Turkce, Youm7 via Bing News, 2026-11-21); the Swahili, Hausa
+  // and Afrikaans lines are standard phrasing (no real cyber headline was in those feeds or in Bing News that day)
+  for (const t of ["አሜሪካ \"ስልታዊ የሳይበር ጥቃት ተፈጽሞባታል\" መባሉን የውጭ ጉዳይ ሚኒስትሯ አስተባበሉ", "çalışanların veri ihlalini basından öğrenmek zorunda kalmasına tepki",
+    "الاتحاد الأوروبى يكشف تعرضه لهجوم إلكترونى أدى لتعطيل أنظمة رقمية لأسابيع", "هجمات إلكترونية تستهدف البنوك", "Prefeitura sofre sequestro de dados",
+    "Benki yashambuliwa na wadukuzi", "Tovuti za serikali zimedukuliwa", "Mashambulizi ya kimtandao yaongezeka Afrika Mashariki", "Uhalifu wa mtandaoni waongezeka",
+    "Masu kutse sun kai hari kan bankin", "Harin intanet ya tsayar da ayyukan hukumar", "Losprysware-aanval tref munisipaliteit", "Kuberaanval op hospitaal"]) assert.ok(CYBER.test(t), t);
+  // ordinary news from the same feeds (real titles), Swahili "dukuduku" (curiosity), and the container platform
+  for (const t of ["Yadda Putin ke yawo da akwatin makamin nukiliya a asirce", "Wananchi wana dukuduku kuhusu matokeo ya uchaguzi", "Kubernetes 1.35 released with a new scheduler",
+    "Zambia welcomes S&P sovereign credit rating upgrade", "Burkina : Faso Academy 2026 : Sylvain Pardevan remporte la première place"]) assert.ok(!CYBER.test(t), t);
+});
+
+test("every extra feed in config/feeds.json is well formed: a tier, https, an ISO language, a known region, the date added and why", () => {
+  for (const f of CFG.feeds) {
+    assert.ok(["gov", "vendor", "news"].includes(f.tier), f.name);
+    assert.match(f.url, /^https:\/\/[^\s"'<>]+$/, f.name);
+    if (f.lang) assert.match(f.lang, /^[a-z]{2}$/, `${f.name}: lang is a language code`);
+    if (f.region) assert.ok(REGIONS.has(f.region), `${f.name}: region ${f.region}`);
+    assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(f.added || "") && f.why, `${f.name}: added and why`);
+  }
+  assert.equal(extraFeeds(CFG).length, CFG.feeds.length, "every extra feed is collected (none repeats a built-in one or passes the cap)");
+});
+
 // normalised host and path: the same feed under www. or with a trailing slash is still the same feed
 const feedKey = (u) => { const x = new URL(u); return `${x.hostname.replace(/^www\./, "")}${x.pathname.replace(/\/$/, "")}${x.search}`; };
 // hosts whose robots.txt disallows the feed (for every reader, or for ClaudeBot or anthropic-ai), recorded by the regional
@@ -81,7 +104,10 @@ const ROBOTS_DISALLOWED = new Set(["3news.com", "4hou.com", "agenceecofin.com", 
   "iranwire.com", "jornada.com.mx", "kenyans.co.ke", "khaleejtimes.com", "kun.uz", "kuwaittimes.com", "mobiletime.com.br", "monitor.co.ug", "myjoyonline.com",
   "nation.africa", "news24.com", "newtimes.co.rw", "nhk.or.jp", "www3.nhk.or.jp", "nsm.no", "ntv.com.tr", "olhardigital.com.br", "portafolio.co", "radiofarda.com",
   "railjournal.com", "rappler.com", "rss.uol.com.br", "sabq.org", "seneweb.com", "smart-energy.com", "taipeitimes.com", "technews.tw", "tekno.kompas.com",
-  "teletime.com.br", "thecable.ng", "thehindu.com", "thereporterethiopia.com", "tiinside.com.br", "webrazzi.com", "xtech.nikkei.com", "ynetnews.com"]);
+  "teletime.com.br", "thecable.ng", "thehindu.com", "thereporterethiopia.com", "tiinside.com.br", "webrazzi.com", "xtech.nikkei.com", "ynetnews.com",
+  // the regional coverage research of 2026-11-21
+  "addisfortune.news", "cert.ncc.gov.ng", "france24.com", "jeuneafrique.com", "latercera.com", "lemonde.fr", "lorientlejour.com", "maroelamedia.co.za",
+  "milliyet.com.tr", "ncsc.jo", "rfi.fr", "stabroeknews.com", "techeconomy.ng", "tecnoblog.net", "trinidadexpress.com", "tynmagazine.com"]);
 
 test("no two feeds read the same host and path, and none comes from a host whose robots.txt disallows it", () => {
   const all = activeFeeds(CFG), keys = all.map((f) => feedKey(f.url));

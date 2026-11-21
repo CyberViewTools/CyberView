@@ -16,7 +16,7 @@ const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
   "deep-sweep": "Deep sweep", "analyst": "Exploit analyst", "improver": "Improver", "brief": "Brief", "watchdog": "Watchdog", "security-review": "Security review", "triage": "Triage desk", "regional": "Regional desk", "followup": "Follow-up desk", "steward": "Data steward", "tabletop": "Tabletop", "advisory": "Advisory desk", "moderator": "Moderator", "scout": "Source scout", "editor": "Editor", "guardian": "Guardian", "review": "Review desk",
   // workers: started by the dispatcher (scripts/dispatch.mjs), one per batch; they never run git
-  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "outage": "Outage checker", "regional-researcher": "Regional researcher",
+  "researcher": "Researcher", "backlog-triager": "Backlog triager", "exploit-analyst": "Exploit analyst", "gap": "Gap researcher", "reviewer": "Reviewer", "updater": "Updater", "grid": "Grid researcher", "outage": "Outage checker", "classifier": "Classifier", "regional-researcher": "Regional researcher",
 };
 const job = process.argv[2];
 if (!HEADINGS[job]) { console.error(`unknown job "${job}"; one of: ${Object.keys(HEADINGS).join(", ")}`); process.exit(1); }
@@ -153,6 +153,8 @@ if (job === "researcher") {
     + `  Run log file name: <HHMM>-sweep-gap${n > 1 ? "-" + n : ""}.json\n`
     + (searched.length ? `  Searches the gap researchers already ran in the last 12 hours (do not repeat them; word yours differently):\n${[...new Set(searched.filter(Boolean))].slice(-24).map((q) => "    - " + q).join("\n")}\n` : "")
     + (onFile.length ? `  Added to the map in the last 36 hours (already on file: do not research these again, only add what is NOT here):\n${onFile.slice(-70).map((t) => "    - " + t).join("\n")}\n` : "");
+} else if (job === "classifier") {
+  assignment = (await import("./classify.mjs")).assignmentText(batch);
 } else if (job === "regional-researcher") {
   const G = { a: "Africa (africa); the Middle East and Turkey (middle-east)", b: "Latin America and the Caribbean (latin-america)", c: "South Asia (south-asia); Southeast Asia (southeast-asia); Oceania (oceania)" };
   assignment = `YOUR ASSIGNMENT (regional researcher ${batch}): ${G[batch] || G.a}. The region names in brackets are the ones fuse.mjs --region understands.`;
@@ -163,7 +165,7 @@ if (job === "researcher") {
 // eight thousand characters about writing events.
 const worker = process.argv.includes("--worker") || !!batch || process.env.CYBERVIEW_WORKER === "1";
 const PROFILE = {
-  "backlog-triager": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
+  "backlog-triager": ["core"], "classifier": ["core"], "exploit-analyst": ["core", "web", "log"], "moderator": ["core", "log"],
   "reviewer": ["core", "events", "web", "log"], "updater": ["core", "events", "web", "log"], "grid": ["core", "web", "log"], "outage": ["core", "events", "web", "log"], "researcher": ["core", "search", "events", "web", "log"], "gap": ["core", "search", "events", "web", "log"],
   "regional-researcher": ["core", "search", "events", "web", "log"],
   "analysis": ["core", "log"], "brief": ["core", "log"], "tabletop": ["core", "log"], "editor": ["core", "log"], "security-review": ["core", "log"], "improver": ["core", "log"],

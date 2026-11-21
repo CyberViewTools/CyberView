@@ -84,6 +84,9 @@ test("metrics: yield per source and collector, latency, regions", () => {
   assert.deepEqual(m.regions, { africa: 1, other: 1 });
   assert.deepEqual(m.sources[0], { name: "A", leads: 2, used: 1, skipped: 1, yield: 50 });
   assert.equal(regionOf(""), "unplaced");
+  // the countries and spellings events in the coverage gap regions use are placed, not counted as "other"
+  for (const [c, r] of [["Türkiye", "middle-east"], ["Lebanon", "middle-east"], ["Uzbekistan", "middle-east"], ["Trinidad and Tobago", "latin-america"], ["Venezuela", "latin-america"],
+    ["Côte d'Ivoire", "africa"], ["Mozambique", "africa"], ["US", "north-america"], ["Belgium", "europe"], ["North Korea", "east-asia"]]) assert.equal(regionOf(c), r, c);
 });
 test("extra feeds from config: https only, known tiers, no repeats", () => {
   const ok = extraFeeds({ feeds: [{ name: "New CERT", tier: "gov", url: "https://cert.example/rss" }, { name: "New CERT", tier: "gov", url: "https://cert.example/rss2" }, { name: "Bad", tier: "gov", url: "http://x.example/rss" },

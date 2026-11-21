@@ -10,7 +10,8 @@ const why = "the queue stayed above 60 for six hours this week";
 
 test("bounded numbers: one step at a time, inside the bounds, with a reason", () => {
   assert.equal(checkChange({ key: "pipeline.sweep.researchers", to: 7, reason: why }, cfg, models, off), "");
-  assert.match(checkChange({ key: "pipeline.sweep.researchers", to: 9, reason: why }, cfg, models, off), /between/);
+  assert.match(checkChange({ key: "pipeline.sweep.researchers", to: 17, reason: why }, { ...cfg, sweep: { ...cfg.sweep, researchers: 16 } }, models, off), /between/);
+  assert.equal(checkChange({ key: "pipeline.sweep.review_workers", to: 7, reason: why }, { ...cfg, sweep: { ...cfg.sweep, review_workers: 6 } }, models, off), "");
   assert.match(checkChange({ key: "pipeline.sweep.stories_per_researcher", to: 12, reason: why }, cfg, models, off), /at most a quarter/);
   assert.match(checkChange({ key: "pipeline.sweep.researchers", to: 7, reason: "more" }, cfg, models, off), /reason/);
   assert.match(checkChange({ key: "pipeline.headless", to: 1, reason: why }, cfg, models, off), /not a key/);

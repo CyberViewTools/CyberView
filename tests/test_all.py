@@ -6,8 +6,13 @@ Builds the bundle from data/, then checks the real data plus four variants
 (dark, phone width, missing optional data, missing bundle, high volume).
 Prints ALL PASS or the list of failures, and exits 1 on failure.
 """
-import asyncio, copy, json, os, random, shutil, subprocess, sys, tempfile, time
+import asyncio, atexit, copy, json, os, random, shutil, subprocess, sys, tempfile, time
 from playwright.async_api import async_playwright
+
+# every copy of the site made for a run is removed when the run ends (2026-11-21: 4,345 left-over copies, about 40 GB,
+# filled the disk and every later run failed with "No space left on device")
+_SITES = []
+atexit.register(lambda: [shutil.rmtree(d, ignore_errors=True) for d in _SITES])
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORT = int(os.environ.get("CV_TEST_PORT", "8765"))   # another checkout running the suite at the same time can pick its own port
@@ -24,6 +29,7 @@ def ok(name, cond, info=""):
 def make_site(bundle):
     """Copy site/ to a temp dir and write the given bundle (or none)."""
     d = tempfile.mkdtemp(prefix="cwm-")
+    _SITES.append(d)
     shutil.copytree(os.path.join(ROOT, "site"), d, dirs_exist_ok=True)
     os.makedirs(os.path.join(d, "data"), exist_ok=True)
     p = os.path.join(d, "data", "bundle.json")
@@ -244,13 +250,16 @@ async def main():
         await serve(make_site(bundle), archive)
 
         # v1.5 features: permalinks, feeds, exposure report
-        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2)
+        # events from the last 6 days: the map shows 9 days and sends older permalinks to the archive, so an event dated
+        # near that edge made these checks depend on the day the suite ran
+        recent = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 6 * 86400))
+        target = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["severity"] >= 2 and e.get("date", "") >= recent)
 
         async def features(url):
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e.get("date", "") >= recent)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -413,6 +422,28 @@ async def main():
             ok("status flow: an error note from the build is shown as text, the rest still renders", "could not be worked out" in await pg.text_content("#flowNote") and "<img src=x>" in await pg.text_content("#fromNote")
                and await pg.locator("main img").count() == 0 and await pg.locator("#routines tbody tr[data-routine]").count() > 0 and not errs, errs)
             await ctx.close()
+            # the pipeline check (scripts/pipecheck.mjs -> health.json quality) under "What needs attention": as text, by level
+            async def with_quality(r):
+                h = json.load(open(os.path.join(ROOT, "site", "data", "health.json")))
+                h["quality"] = {"checked_at": h["built_at"], "problems": [
+                    {"id": "status-keys", "level": "bad", "text": "3 key(s) vanished from data/status.json <img src=x id=pwnq>", "since": h["built_at"], "over": True},
+                    {"id": "unreviewed", "level": "warn", "text": "21 event(s) have waited over 2 hours for their second review", "since": h["built_at"], "over": False},
+                    {"id": "broken-links", "level": "info", "text": "1 source link(s) are gone", "since": "", "over": False},
+                    {"id": "<bad id>", "level": "bad", "text": "dropped"}, {"id": "x", "level": "javascript:", "text": 5}, None]}
+                return await r.fulfill(status=200, content_type="application/json", body=json.dumps(h))
+            ctx = await browser.new_context(viewport={"width": 1366, "height": 860}); pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.route("**/data/health.json*", with_quality)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+            q = await pg.eval_on_selector_all("#attention li[data-check]", "ls => ls.map(l => [l.dataset.check, l.dataset.kind, l.querySelector('.badge').textContent, l.textContent, (l.querySelector('a') || {}).href || ''])")
+            byq = {x[0]: x for x in q}
+            ok("status attention: the pipeline check's problems are listed with their level and badge", set(byq) == {"status-keys", "unreviewed", "broken-links"}
+               and byq["status-keys"][1:3] == ["bad", "Data lost"] and byq["unreviewed"][1:3] == ["warn", "Waiting"] and byq["broken-links"][1] == "info", q)
+            ok("status attention: a problem that opened an issue links to the pipeline-alert issues, the rest to the details", "label%3Apipeline-alert" in byq.get("status-keys", ["", "", "", "", ""])[4]
+               and "#dRoutines" in byq.get("unreviewed", ["", "", "", "", ""])[4], q)
+            ok("status attention: a bad problem is listed first and its text stays text", (await pg.eval_on_selector_all("#attention li", "ls => ls.map(l => l.dataset.kind)"))[0] == "bad"
+               and await pg.locator("#pwnq").count() == 0 and "<img src=x id=pwnq>" in await pg.text_content("#attention") and not errs, errs)
+            await ctx.close()
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps({"error": "The efficiency report could not be built: boom"})))
             ok("efficiency: a build error is shown as a note", st == "error" and "could not be built" in note and not errs, (st, note, errs))
             bad = {"at": "<b>", "note": "x", "targets": [{"key": "speed", "target": "<img src=x>", "value": "<script>1</script>", "state": "javascript:"}, None, 5],
@@ -512,6 +543,16 @@ async def main():
                       "items": [{"id": "EQ-1", "type": "earthquake", "level": "red", "name": "Earthquake test", "country": "Chile", "lat": -33.4, "lng": -70.6, "url": "https://evil.test/x"}]},
         }
 
+        # v1.63: service status from the providers' own status pages (shape of docs["services/status"], built from
+        # data/services/status.json written by scripts/status-pages.mjs): listed in the layers panel, never drawn
+        b18.setdefault("docs", {})["services/status"] = {"updated_at": iso(0.1), "pages": 46, "pages_ok": 45, "items": [
+            {"provider": "cloudflare", "name": "Cloudflare", "category": "cdn", "page": "https://www.cloudflarestatus.com", "title": "R2 and Durable Objects availability issues",
+             "impact": "major", "level": "major", "components": ["R2"], "status": "investigating", "started_at": iso(2), "resolved_at": "", "minutes": 120,
+             "url": "https://www.cloudflarestatus.com/incidents/pfwuex7qix27"},
+            {"provider": "evil", "name": "<img src=x id=pwn12>Evil", "page": "https://status.evil.test", "title": "Off-domain link", "impact": "", "level": "bogus",
+             "started_at": iso(3), "resolved_at": iso(1), "minutes": 95, "url": "https://phish.example/incidents/x", "verified": {"decision": "hacked", "summary": "x", "publisher": "y"}},
+            {"provider": "bad", "name": "Bad", "page": "javascript:alert(1)", "title": "no page", "url": "javascript:alert(2)"}]}
+
         async def v18(url):
             pg, errs = await open_page(browser, url, wait=1500)
             ok("hud: UTC clock shown", (await pg.inner_text("#hud")).startswith("UTC "))
@@ -532,6 +573,12 @@ async def main():
             ok("outage desk: an unknown decision is dropped and the signal stays unchecked", "hacked" not in ltxt and "A measurement, not checked by CyberView." in ltxt)
             lh = await pg.eval_on_selector_all("#layers .ocheck a", "as => as.map(a => a.getAttribute('href'))")
             ok("outage desk: the check links the confirming page", lh == ["https://newsroom.orange.com/fibre-incident-2026/"], lh)
+            ok("service status: listed with the provider named, impact as stated, labelled not a cyber event",
+               "Service status" in ltxt and "Cloudflare: R2 and Durable Objects availability issues" in ltxt and "impact as stated: major" in ltxt
+               and "The provider's own status page, not a cyber event. Not checked by CyberView." in ltxt and "attack" not in ltxt.split("Service status", 1)[1].lower(), ltxt[-700:])
+            sh = await pg.eval_on_selector_all("#layers .llist.svc a", "as => as.map(a => a.getAttribute('href'))")
+            ok("service status: links stay on the provider's own status page domain; no page, no row; markup stays text",
+               sh == ["https://www.cloudflarestatus.com/incidents/pfwuex7qix27", "https://status.evil.test"] and "no page" not in ltxt and await pg.locator("#pwn12").count() == 0 and "hacked" not in ltxt, sh)
             await pg.keyboard.press("Escape")
             ok("layers: Esc closes the panel", await pg.locator("#layers").is_hidden())
             ok("globe: always on, no flat-map toggle", await pg.locator("path.ocean").count() == 1 and await pg.locator("#zglobe").count() == 0)
@@ -566,6 +613,7 @@ async def main():
 
         # v1.44: power grid context layer (fixture in the shape of data/context/grid.json; the real file is written by scripts/grid.mjs)
         bg = copy.deepcopy(bundle)
+        bg.setdefault("docs", {}).pop("services/status", None)
         bg["context"] = dict(b18["context"])
         bg["context"]["grid"] = {"source": "Grid operators: Hydro-Québec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO", "source_url": "", "fetched_at": iso(0.3), "ok": True, "error": "", "items": [
             {"id": "grid-hydroquebec-qc-202611190900", "source": "hydroquebec", "kind": "outage", "name": "Hydro-Québec: 152,300 customers without power", "country": "CA", "region": "Quebec", "customers": 152300, "level": None,
@@ -1153,7 +1201,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1202,10 +1250,10 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "tabletop.html", "community.html", "about.html"]:
+            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "actors.html", "tabletop.html", "community.html", "about.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 8 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1433,7 +1481,7 @@ async def main():
             await ctx.close()
             pg, errs = await open_page(browser, url, w=1000, wait=1200)
             nb = await pg.locator("header .sitenav").bounding_box(); rb = await pg.locator("#refresh").bounding_box()
-            ok("nav: eight links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
+            ok("nav: nine links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
             await pg.context.close()
 
         await serve(site18, v118)
@@ -1506,10 +1554,14 @@ async def main():
             await pg.touchscreen.tap(mk[0], mk[1]); await pg.wait_for_timeout(600)
             top = await pg.evaluate("Math.round(document.getElementById('dbar').getBoundingClientRect().top)")
             ok("phone: a tap on a marker opens it even while the globe spins, with the details in view", await pg.locator("#dcard").count() == 1 and 0 <= top < 200, top)
+            tapped = (await pg.evaluate("location.hash")).replace("#e=", "")
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            tapped = (await pg.evaluate("location.hash")).replace("#e=", "")
+            # the list keeps the reader's place: when the tapped event is below the first 30, it shows up to 10 past it
+            at = await pg.evaluate("id => [...document.querySelectorAll('#feed .card')].findIndex(c => c.id === 'card-' + id)", tapped)
+            ok("phone: the list starts with 30 events and offers more", (n == at + 10 if at >= 30 else 30 <= n <= 60) and await pg.locator("#feedMore").count() == 1, [n, at])
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())
@@ -1588,7 +1640,7 @@ async def main():
             pg.on("request", lambda r: reqs.append(r.url))
             await pg.goto(base + "vulnerabilities.html"); await pg.wait_for_timeout(900)
             ok("vulnerabilities: loads with the queue view first", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbp-all").is_hidden() and await pg.locator("#wbList .wbrow").count() == 4)
-            ok("vulnerabilities: four views in the tab bar", await pg.locator(".wbtabs [role=tab]").count() == 4 and "Known exploited" in await pg.locator("#wbt-queue").text_content())
+            ok("vulnerabilities: five views in the tab bar", await pg.locator(".wbtabs [role=tab]").count() == 5 and "Known exploited" in await pg.locator("#wbt-queue").text_content())
             # deadlines
             ok("deadlines: chart rows for open and recently passed deadlines", await pg.locator("#wbDlChart .wbdlrow").count() == 3 and "left" in await pg.locator("#wbDlChart").text_content() and "overdue" in await pg.locator("#wbDlChart").text_content())
             async with pg.expect_download() as dl:
@@ -1743,6 +1795,91 @@ async def main():
 
         await serve(site132b, v132b)
 
+        # v1.63: the Industrial (ICS/OT) view (site/data/ics.json from scripts/ics.mjs) and the advisory beside a CVE
+        site163 = with_cve(make_site(bundle))
+        json.dump(wb132, open(os.path.join(site163, "data", "workbench.json"), "w"))
+        d163 = datetime.date.today().isoformat()
+        ics163 = {"built_at": "2026-11-21T22:00:00Z", "updated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "window_days": 365,
+                  "lifeline": ["Energy", "Water and Wastewater"],
+                  "sources": {"cisa": {"name": "CISA ICS advisories", "tier": "gov", "ok": True, "at": "2026-11-21T22:00:00Z", "count": 2, "error": ""},
+                              "siemens": {"name": "Siemens ProductCERT", "tier": "vendor", "ok": False, "at": "2026-11-21T22:00:00Z", "count": 1, "error": "timeout"}},
+                  "advisories": [
+                      {"id": "ICSA-26-300-01", "source": "cisa", "vendor": "Fortinet", "title": "Fortinet FortiOS in OT networks", "products": ["FortiOS"], "products_total": 1, "cves": ["CVE-2026-1001"], "cve_cvss": {"CVE-2026-1001": 9.8},
+                       "cvss": 9.8, "cvss_version": "3.1", "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "exploited": "kev", "exploit_note": "", "kev_cves": ["CVE-2026-1001"], "not_affected": False,
+                       "sectors": ["Energy"], "remediation": ["vendor_fix"], "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-01", "doc": "https://raw.githubusercontent.com/cisagov/CSAF/develop/x.json",
+                       "summary": "Lets a remote attacker in.", "published": d163, "updated": d163},
+                      {"id": "ICSA-26-299-02", "source": "cisa", "vendor": "<img src=x onerror=alert(1)>", "title": "<b>Pump</b> controller", "products": ["Pump"], "products_total": 1, "cves": ["CVE-2024-2345"], "cve_cvss": {},
+                       "cvss": 6.5, "cvss_version": "3.1", "cvss_vector": "", "exploited": "none", "exploit_note": "", "kev_cves": [], "not_affected": False, "sectors": ["Water and Wastewater"],
+                       "remediation": ["mitigation"], "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-299-02", "doc": "", "summary": "x", "published": "2026-10-01", "updated": "2026-10-01"},
+                      {"id": "SSA-100001", "source": "siemens", "vendor": "Siemens", "title": "Not affected notice", "products": [], "products_total": 0, "cves": ["CVE-2026-1001"], "cve_cvss": {}, "cvss": None,
+                       "exploited": "kev", "kev_cves": ["CVE-2026-1001"], "not_affected": True, "sectors": [], "remediation": [], "url": "https://cert-portal.siemens.com/productcert/html/ssa-100001.html", "doc": "", "summary": "", "published": "2026-10-05", "updated": "2026-10-05"},
+                      {"id": "BAD-1", "source": "cisa", "vendor": "x", "title": "unsafe link", "url": "javascript:alert(1)", "doc": "", "cves": [], "published": "2026-10-01"}]}
+        json.dump(ics163, open(os.path.join(site163, "data", "ics.json"), "w"))
+
+        async def v163(url):
+            base = url.replace("index.html", "")
+            ctx = await browser.new_context(viewport={"width": 1440, "height": 900})
+            pg = await ctx.new_page()
+            errs, reqs = [], []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            pg.on("console", lambda m: errs.append(m.text[:160]) if m.type == "error" and "favicon" not in m.text and "404" not in m.text else None)
+            pg.on("request", lambda r: reqs.append(r.url))
+            await pg.goto(base + "vulnerabilities.html#ot"); await pg.wait_for_timeout(1000)
+            ok("industrial: #ot opens the Industrial view", await pg.locator("#wbp-ot").is_visible() and await pg.locator("#wbp-queue").is_hidden())
+            ok("industrial: unsafe records left out, the rest listed", await pg.locator("#otList .wbrow").count() == 3, await pg.locator("#otList .wbrow").count())
+            ok("industrial: known exploited first", "ICSA-26-300-01" in await pg.locator("#otList .wbrow >> nth=0").text_content())
+            ok("industrial: markup in data shown as text", await pg.locator("#otList img").count() == 0 and await pg.locator("#otList b", has_text="Pump").count() == 0)
+            summ = await pg.text_content("#otSummary")
+            ok("industrial: summary counts and names the source that failed", "3 industrial control system" in summ and "Siemens ProductCERT" in summ, summ)
+            ok("industrial: the not-affected notice says so", await pg.locator("#otList .wbrow", has_text="Vendor: not affected").count() == 1)
+            await pg.locator("#otList .wbhead").first.click(); await pg.wait_for_timeout(200)
+            score = int(await pg.locator("#otList .wbrow >> nth=0 >> .wbscore").text_content())
+            pts = [int(t.strip().lstrip("+")) for t in await pg.locator("#otList .wbpts li b").all_text_contents()]
+            ok("industrial: every rank point listed and adding up", pts == [40, 25, 10, 5] and score == sum(pts), (pts, score))
+            ok("industrial: the advisory and its CSAF document linked", await pg.locator("#otList .wblinks a[href='https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-01']").count() == 1 and await pg.locator("#otList .wblinks a", has_text="CSAF").count() == 1)
+            await pg.select_option("#otShow", "exploited"); await pg.wait_for_timeout(200)
+            ok("industrial: exploited filter", await pg.locator("#otList .wbrow").count() == 1)
+            await pg.select_option("#otShow", "lifeline"); await pg.wait_for_timeout(200)
+            ok("industrial: lifeline sector filter", await pg.locator("#otList .wbrow").count() == 2)
+            await pg.select_option("#otShow", ""); await pg.fill("#otQ", "pump"); await pg.wait_for_timeout(400)
+            ok("industrial: search", await pg.locator("#otList .wbrow").count() == 1)
+            await pg.fill("#otQ", ""); await pg.wait_for_timeout(300)
+            await pg.locator("#otList .wbdetail button", has_text="CVE-2026-1001").click(); await pg.wait_for_timeout(700)
+            ok("industrial: a CVE opens in Known exploited with its industrial advisories beside it", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .otjoin").is_visible()
+               and "ICSA-26-300-01" in await pg.locator("#wbList .otjoin").text_content() and "not affected" in await pg.locator("#wbList .otjoin").text_content())
+            await pg.locator("#wbList .otjoin button").first.click(); await pg.wait_for_timeout(500)
+            ok("industrial: back from the CVE to the advisory", await pg.locator("#wbp-ot").is_visible() and await pg.locator("#otList .wbdetail").count() == 1)
+            await pg.click("#wbt-queue"); await pg.fill("#wbQ", ""); await pg.select_option("#wbShow", "ot"); await pg.wait_for_timeout(400)
+            ok("known exploited: filter to flaws named in an industrial advisory", await pg.locator("#wbList .wbrow").count() == 1 and "Industrial advisory" in await pg.locator("#wbList .wbrow").text_content())
+            await pg.goto(base + "vulnerabilities.html#CVE-2024-2345"); await pg.reload(); await pg.wait_for_timeout(1000)
+            ok("all CVEs: a looked-up CVE shows the industrial advisory naming it", await pg.locator("#cvResult .otjoin").is_visible() and "ICSA-26-299-02" in await pg.locator("#cvResult .otjoin").text_content())
+            outside = [r for r in reqs if not r.startswith("http://localhost")]
+            ok("industrial: nothing leaves the page", not outside, outside)
+            ok("industrial: no script errors", not errs, errs)
+            await ctx.close()
+            ph = await browser.new_context(viewport={"width": 390, "height": 844})
+            pp = await ph.new_page(); await pp.goto(base + "vulnerabilities.html#ot"); await pp.wait_for_timeout(900)
+            await pp.locator("#otList .wbhead").first.click(); await pp.wait_for_timeout(200)
+            ok("phone industrial: no sideways scroll", await pp.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await ph.close()
+
+        await serve(site163, v163)
+
+        async def v163b(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html#ot"), wait=900)
+            ok("no industrial file: the view says it is not available", await pg.locator("#otStatus").is_visible() and "not available" in await pg.locator("#otStatus").text_content() and await pg.locator("#otMain").is_hidden())
+            await pg.click("#wbt-queue"); await pg.wait_for_timeout(200)
+            await pg.locator("#wbList .wbhead").first.click(); await pg.wait_for_timeout(300)
+            ok("no industrial file: Known exploited still works", await pg.locator("#wbList .wbdetail").count() == 1 and await pg.locator("#wbList .otjoin").is_hidden())
+            ok("no industrial file: no script errors", not errs, errs)
+            await pg.context.close()
+
+        site163b = make_site(bundle)
+        json.dump(wb132, open(os.path.join(site163b, "data", "workbench.json"), "w"))
+        if os.path.exists(os.path.join(site163b, "data", "ics.json")):
+            os.remove(os.path.join(site163b, "data", "ics.json"))
+        await serve(site163b, v163b)
+
         # v1.38: dropdowns drawn in the site's style on desktop; native picker kept on touch screens
         async def v138(url):
             pg, errs = await open_page(browser, url.replace("index.html", "archive.html"), wait=1200)
@@ -1769,6 +1906,101 @@ async def main():
             ok("dropdown: phones keep the native picker", await ph.locator(".cvsel-btn").count() == 0)
             await ctx.close()
         await serve(make_site(bundle), v138)
+
+        # threat actor profiles (site/actors.html from data/actors.json, scripts/actors.mjs): attribution labelled, claims kept apart
+        site_act = make_site(bundle)
+        act = {"built_at": "2026-11-21T20:00:00Z", "attack_version": "20.1", "attack_notice": "MITRE ATT&CK test notice. The MITRE Corporation.", "profiles": [
+            {"id": "g0094-kimsuky", "name": "Kimsuky", "attack": {"id": "G0094", "name": "Kimsuky", "url": "javascript:alert(1)"},
+             "aliases": [{"name": "Emerald Sleet", "basis": "attack", "source": "MITRE ATT&CK G0094", "url": "https://attack.mitre.org/groups/G0094/"},
+                         {"name": "<img src=x id=pwnA>", "basis": "event", "source": "named as one group in \"Fixture event\"", "event_id": "fixture-event-2026-11"},
+                         {"name": "Hunch Name", "basis": "guess", "source": "a feeling"}],
+             "attributed": [{"event_id": "fixture-event-2026-11", "title": "Fixture event", "date": "2026-11-19", "by": "Genians Security Center", "by_type": "investigator", "url": "https://example.com/report", "origin_country": "North Korea", "note": "moderate confidence"},
+                            {"event_id": "no-source-2026-11", "title": "Attribution without a page", "date": "2026-11-18", "by": "Someone", "by_type": "investigator", "url": "javascript:alert(2)"}],
+             "named": [{"event_id": "fixture-named-2026-11", "title": "Named event", "date": "2026-11-17", "as_written": "Kimsuky (per vendor)"}],
+             "claimed": [{"event_id": "fixture-claim-2026-11", "title": "Kimsuky lists Acme", "date": "2026-11-16", "org": "Acme"}],
+             "sectors": [{"k": "Government", "n": 2}], "countries": [{"k": "South Korea", "n": 2}], "cves": [{"id": "CVE-2026-1234", "event_ids": ["fixture-event-2026-11"]}, {"id": "not-a-cve"}],
+             "advisories": [{"publisher": "CISA", "doc_id": "AA26-001A", "url": "https://www.cisa.gov/a", "event_id": "fixture-event-2026-11"}], "related": [], "ambiguous": [],
+             "first_seen": "2026-11-16", "last_seen": "2026-11-19", "claims_only": False},
+            {"id": "inception", "name": "Inception", "attack": None, "attack_namesake": {"id": "G0100", "name": "Inception", "url": "https://attack.mitre.org/groups/G0100/"},
+             "aliases": [], "attributed": [], "named": [], "claimed": [{"event_id": "inc-claim-2026-11", "title": "Inception lists PepsiCo on its leak site", "date": "2026-11-17", "org": "PepsiCo"}],
+             "sectors": [{"k": "Food", "n": 1}], "countries": [], "cves": [{"id": "CVE-2026-9999", "event_ids": ["inc-claim-2026-11"]}], "advisories": [], "related": [], "ambiguous": [],
+             "first_seen": "2026-11-17", "last_seen": "2026-11-17", "claims_only": True},
+            {"id": "BAD ID", "name": "Dropped"}]}
+        json.dump(act, open(os.path.join(site_act, "data", "actors.json"), "w"))
+        async def vact(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html"), wait=900)
+            ok("actors: summary counts named and claims-only groups", "1 group named" in await pg.text_content("#summary") and "1 more appears only in its own" in await pg.text_content("#summary"), await pg.text_content("#summary"))
+            ok("actors: a bad record is dropped, claims-only groups hidden by default", await pg.locator("details.actor").count() == 1)
+            ok("actors: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Actors")
+            await pg.click("#a-g0094-kimsuky > summary"); await pg.wait_for_timeout(100)
+            body = await pg.inner_text("#a-g0094-kimsuky")
+            ok("actors: attribution says who said so", "Attributed by Genians Security Center (investigating firm)" in body and await pg.locator("#a-g0094-kimsuky a[href='https://example.com/report']").count() >= 1, body[:400])
+            ok("actors: an attribution without an https page is left out", "Attribution without a page" not in body)
+            ok("actors: aliases say where they come from; no basis, no alias", "Emerald Sleet (per MITRE ATT&CK G0094)" in body and "Hunch Name" not in body, body[:600])
+            ok("actors: injected markup stays text", "<img src=x id=pwnA>" in body and await pg.locator("#pwnA").count() == 0)
+            ok("actors: unsafe ATT&CK url never used", await pg.locator("a[href^='javascript']").count() == 0 and await pg.locator("#a-g0094-kimsuky a[href='https://attack.mitre.org/groups/G0094/']").count() >= 1)
+            ok("actors: named is labelled as the sources' words", "not an attribution by CyberView" in body)
+            ok("actors: a claim is labelled as a claim, apart from the facts", "Claimed by the group, not confirmed" in body and "Acme: the group's claim; the organisation has not confirmed it." in body)
+            ok("actors: links to the event and the archive", await pg.locator("#a-g0094-kimsuky a[href='archive.html#q=fixture-event-2026-11']").count() >= 1 and await pg.locator("#a-g0094-kimsuky a[href='archive.html#q=Kimsuky']").count() == 1)
+            ok("actors: CVEs link to the Vulnerabilities page, bad ids dropped", await pg.locator("#a-g0094-kimsuky a[href='vulnerabilities.html#CVE-2026-1234']").count() == 1 and "not-a-cve" not in body)
+            await pg.check("#claims"); await pg.wait_for_timeout(150)
+            ok("actors: claims-only groups shown on request, under their own heading", await pg.locator("details.actor").count() == 2 and "Seen only in leak-site claims" in await pg.inner_text("#list"))
+            await pg.click("#a-inception > summary"); await pg.wait_for_timeout(100)
+            ib = await pg.inner_text("#a-inception")
+            ok("actors: a claims-only group is never matched to ATT&CK and counts nothing", "does not treat them as the same group" in ib and "Sectors" not in ib and "CVE-2026-9999" not in ib, ib[:500])
+            await pg.fill("#q", "emerald"); await pg.wait_for_timeout(150)
+            ok("actors: search finds a group by another name", await pg.locator("details.actor").count() == 1 and await pg.locator("#a-g0094-kimsuky").count() == 1)
+            ok("actors: ATT&CK notice shown", "The MITRE Corporation" in await pg.text_content("#attackNote"))
+            ok("actors: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html#a=inception"), w=390, h=844, wait=900)
+            ok("actors: a profile link opens it, even a claims-only one", await pg.evaluate("document.getElementById('a-inception') && document.getElementById('a-inception').open"))
+            ok("actors: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-phone.png", full_page=True)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "actors.html#a=g0094-kimsuky"), wait=900)
+            await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-desktop.png", full_page=True)
+            await pg.context.close()
+        await serve(site_act, vact)
+        # v1.63: sector and attack surface from the event's own fields, labelled stated, inferred or keyword-assigned
+        bcl = copy.deepcopy(bundle)
+        import datetime as _dt
+        wk = (_dt.datetime.now(_dt.timezone.utc).date() - _dt.timedelta(days=5)).isoformat()
+        tech = [e for e in bcl["events"] if e["category"] in ("incident", "vuln") and e.get("status") != "claimed" and e["date"] >= wk]
+        ev_s, ev_k = tech[0], tech[1]
+        ev_s["sectors"] = {"values": ["healthcare-public-health"], "basis": "stated"}
+        ev_s["surface"] = {"value": "edge-appliance", "basis": "inferred"}
+        for k in ("sectors", "surface"): ev_k.pop(k, None)
+        ev_k["title"] = "VPN gateway flaw exploited at a regional council"
+        ev_k["sector"] = "Government"
+        tech[2]["sectors"] = {"values": ["bogus"], "basis": "stated"}  # off the list: ignored, the keyword rule places it
+        tech[2]["surface"] = {"value": "web-app", "basis": "maybe"}
+
+        async def vclassify(url):
+            pg, errs = await open_page(browser, url + "#e=" + ev_s["id"], wait=1800)
+            card = await pg.inner_text("#dcard")
+            ok("classify: an event's own sectors show with their basis", "Healthcare and public health · stated by the source" in card, card[-400:])
+            ok("classify: an event's own surface shows as inferred by CyberView AI", "Internet-facing appliance (VPN, firewall, gateway) · inferred by CyberView AI (a Claude model)" in card)
+            await pg.evaluate("id => { location.hash = 'e=' + id; }", ev_k["id"]); await pg.wait_for_timeout(700)
+            card = await pg.inner_text("#dcard")
+            ok("classify: without the fields, the keyword placement is labelled keyword-assigned", "Network edge · keyword-assigned, can be wrong" in card and "Government · keyword-assigned, can be wrong" in card, card[-400:])
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+            await pg.click("[data-view=time]"); await pg.wait_for_timeout(900)
+            note = await pg.locator("#viz p.basis[data-basis=layer]").all_inner_texts()
+            ok("classify: the swimlanes count stated, inferred and keyword-assigned placements", len(note) == 1 and "stated by the source" in note[0] and "inferred by CyberView AI (a Claude model)" in note[0] and "keyword-assigned" in note[0], note)
+            await pg.click("[data-view=graph]"); await pg.wait_for_timeout(900)
+            cav = " ".join(await pg.locator("#viz .cav").all_inner_texts())
+            ok("classify: the correlation view's flow and matrix say where rows came from", "Rows: Attack surface:" in cav and "keyword-assigned from the wording" in cav and "assigned from wording" not in cav, cav[-300:])
+            ok("classify: no script errors", not errs, errs)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1200)
+            if await pg.locator("#effCoverage [data-cov]").count():
+                sb = await pg.locator("#effCoverage [data-basis=sector]").all_text_contents()
+                ok("classify: status coverage says how each sector was assigned", len(sb) == 1 and "keyword-assigned" in sb[0] and "stated by the source" in sb[0], sb)
+            await pg.goto(url.replace("index.html", "trends.html")); await pg.wait_for_timeout(1000)
+            tb = await pg.locator("[data-basis=sector]").all_inner_texts()
+            ok("classify: trends say where the sector rows came from", len(tb) <= 1 and (not tb or ("stated by the source" in tb[0] and "free-text sector field" in tb[0])), tb)
+            await pg.context.close()
+        await serve(make_site(bcl), vclassify)
 
         await browser.close()
 

@@ -7,6 +7,7 @@
 import { readdirSync, existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
+import { nextHealth, due } from "./lib/backoff.mjs";
 
 // tier: gov (government or CERT), vendor (security research), news. filter: keep only cyber items (broad feeds).
 export const FEEDS = [
@@ -268,14 +269,18 @@ export function activeFeeds(cfg) {
 }
 // cyber words in the languages the broad feeds are written in (a filter that knew only English kept nothing from El Pais)
 export const CYBER = new RegExp(["cyber|hack(?!athon)|ransom|breach|malware|botnet|phish|dark ?web|ddos|vulnerab|exploit|intrusion|data theft|stolen data|spyware|crypto(currency)? (fraud|theft|scam)|sim[- ]swap|extort|computer fraud|identity theft",
-  "ciberataque|ciberseguridad|cibern[eé]tic|ciberdelincuen|cibercrim|hackeo|filtraci[oó]n de datos|secuestro de datos|vazamento de dados|ataque hacker|invas[aã]o hacker",   // es, pt
+  "ciberataque|ciberseguridad|cibern[eé]tic|ciberdelincuen|cibercrim|hackeo|filtraci[oó]n de datos|secuestro de datos|vazamento de dados|sequestro de dados|ataque hacker|invas[aã]o hacker",   // es, pt
   "piratage|ran[cç]ongiciel|fuite de donn[ée]es|attacco informatico|violazione dei dati|datenleck|sicherheitsl[uü]cke|schadsoftware|datalek|wyciek danych",   // fr, it, de, nl, pl
-  "\\bsiber\\b|fidye yaz[ıi]l[ıi]m|veri s[ıi]z[ıi]nt[ıi]s[ıi]|g[üu]venlik a[çc][ıi][ğg][ıi]|kimlik av[ıi]|zararl[ıi] yaz[ıi]l[ıi]m|peretas|kebocoran data|diretas|tin tặc|mã độc|rò rỉ dữ liệu",   // tr, id/ms, vi
-  "سيبراني|اختراق|قرصنة|الفدية|تسريب بيانات|кибер|хакер|взлом|утечк|вымогател",   // ar, ru/uk
+  "\\bsiber\\b|fidye yaz[ıi]l[ıi]m|veri s[ıi]z[ıi]nt[ıi]s[ıi]|veri ihlal|g[üu]venlik a[çc][ıi][ğg][ıi]|kimlik av[ıi]|zararl[ıi] yaz[ıi]l[ıi]m|peretas|kebocoran data|diretas|tin tặc|mã độc|rò rỉ dữ liệu",   // tr, id/ms, vi
+  "سيبراني|اختراق|قرصنة|الفدية|تسريب بيانات|هجوم [إا]لكترون[يى]|هجمات [إا]لكترونية|برمجيات خبيثة|кибер|хакер|взлом|утечк|вымогател",   // ar, ru/uk
   "サイバー|不正アクセス|情報漏え?い|漏洩|ランサム|脆弱性|マルウェア|해킹|랜섬웨어|유출|취약점|사이버|악성코드|피싱|漏洞|駭客|黑客|勒索|資安|網路攻擊|网络攻击|外洩|泄露|ไซเบอร์|แฮ็ก|มัลแวร์|ช่องโหว่",   // ja, ko, zh, th
   // only words that mean nothing but an IT attack or leak: generic "vulnerability" words (sårbarhed, ranjivost, sebezhetőség) also
   // describe people, so they are left out; "kiber" is not Kibera (Nairobi)
-  "\\bkiber(?!a\\b)|k[üu]ber|adatsziv[aá]rg|zsarol[oó]v[ií]rus|s[ée]r[üu]l[ée]kenys[ée]g|adathal[aá]sz|k[aá]rt[ée]kony k[oó]d|datal[æa]k|it-angreb|turvan[õo]rkus|andmelek|lunavara|pahavara|[õo]ngitsus",   // hu, uz, hr, sl, da, et
+  "\\bkiber(?!a\\b)|k[üu]ber(?!net)|adatsziv[aá]rg|zsarol[oó]v[ií]rus|s[ée]r[üu]l[ée]kenys[ée]g|adathal[aá]sz|k[aá]rt[ée]kony k[oó]d|datal[æa]k|it-angreb|turvan[õo]rkus|andmelek|lunavara|pahavara|[õo]ngitsus",   // hu, uz, hr, sl, da, et
+  // sw, ha, am, af (regional coverage, 2026-11-21): Swahili "-dukua" (to hack: wadukuzi, imedukuliwa; not "dukuduku", curiosity)
+  // and attacks or crime "of the network"; Hausa attack on the internet, intruders ("masu kutse") and data theft; Amharic
+  // "cyber"; Afrikaans ransomware ("losprys"), with "kuber" already read above (and Kubernetes no longer mistaken for it)
+  "dukuzi|dukua|dukuliwa|(mashambulizi|mashambulio|shambulio|uhalifu|usalama) (ya|la|wa) (ki)?mtandao|har(in|e-haren) (intanet|yanar gizo)|masu kutse|satar bayanai|tsaron yanar gizo|ሳይበር|losprys",
   "سایبر|هکر|باج\u200c?افزار|بدافزار|نشت اطلاعات|فیشینگ|סייבר|האקר|כופרה|נוזקה|דליפת מידע|חולשת אבטחה|פישינג|साइबर|हैकर|हैकिंग|रैनसमवेयर|मालवेयर|डेटा लीक|फिशिंग"].join("|"), "i");   // fa, he, hi
 const MAX_AGE_H = 72;
 // a feed seen for the first time (no last_ok in osint.json) files only its last day: adding many feeds at once would
@@ -340,14 +345,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const cutoff = Date.now() - MAX_AGE_H * 36e5, now = nowIso(), out = [], report = [];
   const ALL = activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}));
-  const results = [];
-  for (let i = 0; i < ALL.length; i += 12) results.push(...await Promise.all(ALL.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   const hp = join(DATA, "osint.json"), hdoc = readJson(hp, {}), fh = hdoc.feeds || {}, seenNames = new Set();
+  // a feed that failed FAIL_RUNS runs in a row is "failing" and is asked again only after its backoff (scripts/lib/backoff.mjs):
+  // a dead or refusing feed is no longer hit every few minutes, and one success brings it straight back
+  const asked = DRY ? ALL : ALL.filter((f) => due(fh[f.name]));
+  for (const f of ALL) if (!asked.includes(f)) { seenNames.add(f.name); report.push(`${f.name}: failing, not asked until ${fh[f.name].next_try_at} (${fh[f.name].fails} runs: ${fh[f.name].error})`); }
+  const results = [];
+  for (let i = 0; i < asked.length; i += 12) results.push(...await Promise.all(asked.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   for (const { f, items, error } of results) {
     const prev = fh[f.name] || {}; seenNames.add(f.name);
-    // per-feed health: consecutive failures are counted so the source scout can repair or retire a dead feed
-    fh[f.name] = error ? { ok: false, error: String(error).slice(0, 90), items: 0, at: now, last_ok: prev.last_ok || "", fails: (prev.fails || 0) + 1 }
-      : { ok: true, error: "", items: items.length, at: now, last_ok: now, fails: 0, ...(items.length ? {} : { empty: (prev.empty || 0) + 1 }) };
+    // per-feed health: consecutive failures are counted (and backed off) so the source scout can repair or retire a dead feed
+    fh[f.name] = nextHealth(prev, error ? { ok: false, error } : { ok: true, items: items.length, extra: items.length ? {} : { empty: (prev.empty || 0) + 1 } });
     if (error) { report.push(`${f.name}: ${error}`); continue; }
     let n = 0, recent = 0;
     const since = prev.last_ok ? cutoff : Math.max(cutoff, Date.now() - FIRST_RUN_H * 36e5);

@@ -45,11 +45,33 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["app","Apps and supply chain: applications, code libraries, build tools",/supply-chain|\bnpm\b|pypi|github|gitlab|java|\bjdk\b|node\.js|react|rails|wordpress|\bsap\b|confluence|atlassian|package|script|puppet|n8n|\bweb/],
   ["endpoint","Endpoints and OS: computers, phones, browsers",/windows|linux|macos|\bios\b|android|chrome|browser|endpoint|kernel|driver|patch tuesday/],
   ["telecom","Telecom: carriers and core network",/telecom|\bbgp\b|\bdns\b|\bsms\b|carrier|\b5g\b|ss7|\birc/],
+  ["people","People and premises: insiders, physical access",/(?!)/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
-var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["other","Other sectors"]];
+var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["cross","Many sectors"],["other","Other sectors"]];
 /* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
 var AI_BY="CyberView AI (a Claude model)";
-var BUILD={version:"1.62",date:"2026-11-20"};
+/* an event's "sectors" and "surface" come from fixed lists (scripts/lib/taxonomy.mjs; tests/unit/classify.test.mjs keeps this copy in
+   step): sector key -> [label, analysis group, CISA critical infrastructure]; surface key -> [label, analysis lane]. Each carries a basis;
+   without them the analysis views fall back to the keyword rules in LAYERS and LENS, and every view says which it used. */
+var SECTOR_TX={"chemical":["Chemical","other",1],"commercial-facilities":["Commercial facilities (retail, hotels, venues, media)","other",1],"communications":["Communications","telecom",1],
+  "critical-manufacturing":["Critical manufacturing","other",1],"dams":["Dams","energy",1],"defense-industrial-base":["Defense industrial base","gov",1],"emergency-services":["Emergency services","gov",1],
+  "energy":["Energy","energy",1],"financial-services":["Financial services","finance",1],"food-agriculture":["Food and agriculture","other",1],"government-facilities":["Government services and facilities","gov",1],
+  "healthcare-public-health":["Healthcare and public health","health",1],"information-technology":["Information technology","tech",1],"nuclear":["Nuclear reactors, materials and waste","energy",1],
+  "transportation-systems":["Transportation systems","transport",1],"water-wastewater":["Water and wastewater","energy",1],"education":["Education","edu",0],"professional-services":["Professional and legal services","other",0],
+  "manufacturing":["Other manufacturing","other",0],"nonprofit":["Non-profits, civil society and religious groups","other",0],"individuals":["Individuals and consumers","other",0],
+  "cross-sector":["Many sectors","cross",0],"unknown":["Not known","",0]};
+var SURFACE_TX={"edge-appliance":["Internet-facing appliance (VPN, firewall, gateway)","edge"],"web-app":["Web application","app"],"email-phishing":["Email and phishing","email"],
+  "endpoint":["Endpoint (computers, servers, browsers)","endpoint"],"cloud-saas":["Cloud and SaaS","cloud"],"supply-chain":["Supply chain and third parties","app"],"ot-ics":["OT and industrial control","ot"],
+  "identity":["Identity and credentials","identity"],"mobile":["Mobile devices","endpoint"],"physical-insider":["Physical access and insiders","people"],"unknown":["Not known",""]};
+var BASIS={stated:"stated by the source",inferred:"inferred by "+AI_BY,keyword:"keyword-assigned, can be wrong"};
+/* with explicit sectors, a sector lens shows the events in that group; without them, its keyword rule decides */
+["energy","health","gov","finance","telecom","transport","tech","edu"].forEach(function(k){var kw=LENS[k];LENS[k]=function(e){return e.secGroups?e.secGroups.indexOf(k)>=0:kw(e);};});
+(function(kw){LENS.ci=function(e){return e.secGroups?e.secCi||e.tags.indexOf("critical-infrastructure")>=0||e.tags.indexOf("ot-ics")>=0:kw(e);};})(LENS.ci);
+/* how many of these events a view placed from stated, inferred or keyword-assigned fields */
+function basisNote(list,k){var b=k==="layer"?"layerBasis":"secgBasis",c={stated:0,inferred:0,keyword:0};list.forEach(function(e){if(own(c,e[b]))c[e[b]]++;});
+  return (k==="layer"?"Attack surface":"Sector")+": "+c.stated+" "+BASIS.stated+", "+c.inferred+" "+BASIS.inferred+", "+c.keyword+" keyword-assigned from the wording (can be wrong).";}
+function basisEl(list,k){var p=el("p","cav basis",basisNote(list,k));p.dataset.basis=k;return p;}
+var BUILD={version:"1.64",date:"2026-11-21"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -186,6 +208,45 @@ function verifiedNode(v){
   if(v.url){sm.appendChild(document.createTextNode(" "));var a=el("a",null,"source");a.href=safeUrl(v.url);a.target="_blank";a.rel="noopener noreferrer";sm.appendChild(a);}
   if(v.at){var w=ago(v.at);if(w)sm.appendChild(document.createTextNode(" \u00b7 checked "+w));}
   return sm;
+}
+/* service status (scripts/status-pages.mjs, no AI model; docs["services/status"]): major or long incidents on cloud, CDN,
+   DNS, SaaS, payment and telecom providers' own status pages. Listed in the map layers panel in neutral ink, never drawn,
+   never counted, never called an attack: each says it is the provider's own status page, not a cyber event. A link is
+   kept only on the provider's own status page domain (the page's last two labels). */
+var services=null,SVC_LV={critical:1,major:1,minor:1,none:1};
+function svcBase(h){return String(h||"").toLowerCase().split(".").slice(-2).join(".");}
+function cleanServices(d){
+  if(!d||typeof d!=="object"||!Array.isArray(d.items))return null;
+  var items=d.items.slice(0,60).map(function(x){
+    if(!x||typeof x!=="object")return null;
+    var name=str(x.name,60).trim(),title=str(x.title,200).trim(),page=gnLink(x.page)||(/^https:\/\/[a-z0-9.-]+\/?$/i.test(str(x.page,200))?str(x.page,200):""),url=gnLink(x.url),ph="",uh="";
+    if(!name||!title||!page)return null;
+    try{ph=new URL(page).hostname;uh=url?new URL(url).hostname:"";}catch(e){return null;}
+    if(url&&svcBase(uh)!==svcBase(ph))url="";
+    var mn=numIn(x.minutes,0,1e6);
+    return {name:name,title:title,page:page,url:url||page,impact:str(x.impact,40).trim(),level:own(SVC_LV,str(x.level,10))?x.level:"",
+      components:strs(x.components,6,80),status:str(x.status,40).toLowerCase(),start:str(x.started_at,30),end:str(x.resolved_at,30),minutes:mn===null?null:Math.round(mn),verified:cleanVerified(x.verified)};
+  }).filter(Boolean);
+  return {at:str(d.updated_at,30),pages:numIn(d.pages,0,500)||0,ok:numIn(d.pages_ok,0,500)||0,items:items};
+}
+function svcDur(m){return m===null?"":m>=120?Math.round(m/60)+" h":m+" min";}
+function servicesBlock(box){
+  if(!services)return;
+  var r=el("div","lrow"),h=ctxHealth({at:services.at,ok:services.ok>0,items:services.items});
+  r.appendChild(el("span","lname","Service status"));r.appendChild(el("span","lh h-"+h.k,h.t));box.appendChild(r);
+  box.appendChild(el("p","lnote","Major or long incidents on cloud, CDN, DNS, SaaS, payment and telecom providers' own status pages. Each is the provider's own status page, not a cyber event; not drawn on the globe."));
+  var ul=el("ul","llist svc");
+  if(!services.items.length)ul.appendChild(el("li","muted","No major or long incident open on the "+services.pages+" status pages read."));
+  services.items.slice(0,6).forEach(function(x){
+    var li=el("li"),a=el("a",null,x.name+": "+x.title);a.href=safeUrl(x.url);a.target="_blank";a.rel="noopener noreferrer";li.appendChild(a);
+    var bits=[x.impact?"impact as stated: "+x.impact:"no impact level stated"];var s=ago(x.start);if(s)bits.push("started "+s);
+    bits.push(x.end?"resolved"+(x.minutes!==null?" after "+svcDur(x.minutes):""):x.status==="monitoring"?"fix in place, provider monitoring"+(x.minutes!==null?" (after "+svcDur(x.minutes)+")":""):"open"+(x.minutes!==null?" for "+svcDur(x.minutes):""));
+    li.appendChild(el("span","muted"," "+bits.join(" · ")));
+    li.appendChild(x.verified?verifiedNode(x.verified):el("small","snote","The provider's own status page, not a cyber event. Not checked by CyberView."));
+    ul.appendChild(li);});
+  if(services.items.length>6)ul.appendChild(el("li","muted","and "+(services.items.length-6)+" more"));
+  box.appendChild(ul);
+  box.appendChild(el("p","lsrc","Source: "+services.ok+" of "+services.pages+" providers' status pages read"));
 }
 var ctx={},ctxOn={ioda:false,gdacs:true,grid:true};
 function cleanCtx(name,d){
@@ -676,6 +737,7 @@ function renderLayers(){
     }
     if(c){var src=el("p","lsrc","Source: ");if(c.url){var sa=el("a",null,c.source);sa.href=safeUrl(c.url);sa.target="_blank";sa.rel="noopener noreferrer";src.appendChild(sa);}else src.appendChild(document.createTextNode(c.source));if(c.error)src.appendChild(document.createTextNode(" · last fetch failed ("+c.error+")"));box.appendChild(src);}
   });});
+  safe("service status",function(){servicesBlock(box);});
 }
 function layersToggle(open){var b=$("layers");b.hidden=!open;$("zlayers").setAttribute("aria-expanded",open?"true":"false");if(open)renderLayers();}
 
@@ -766,9 +828,18 @@ function clean(id,d){
   e.wlHay=[e.title,e.org,e.sector,e.country,e.products.join(" | "),e.tags.join(" | "),e.actor,e.cves.join(" ")].join(" | ").toLowerCase();
   e.lensHay=(e.sector+" "+e.tags.join(" ")+" "+e.org).toLowerCase();
   var lh=(e.title+" "+e.products.join(" ")+" "+e.tags.join(" ")+" "+e.sector).toLowerCase();
-  e.layer="org";
-  if(e.category==="incident"||e.category==="vuln"||e.category==="report"||e.category==="outage"){for(var li=0;li<LAYERS.length;li++){if(LAYERS[li][2].test(lh)){e.layer=LAYERS[li][0];break;}}}
-  e.secg="other";for(var si=0;si<SECG.length;si++){if(own(LENS,SECG[si][0])&&LENS[SECG[si][0]](e)){e.secg=SECG[si][0];break;}}
+  var sx=d.sectors,su=d.surface,okB=function(o){return !!o&&typeof o==="object"&&(o.basis==="stated"||o.basis==="inferred");};
+  e.sectors=okB(sx)&&Array.isArray(sx.values)?sx.values.filter(function(k,i,a){return own(SECTOR_TX,k)&&a.indexOf(k)===i;}).slice(0,4):[];
+  e.sectorsBasis=e.sectors.length?sx.basis:"";
+  e.surface=okB(su)&&own(SURFACE_TX,su.value)?su.value:"";e.surfaceBasis=e.surface?su.basis:"";
+  var sg=e.sectors.map(function(k){return SECTOR_TX[k][1];}).filter(Boolean);
+  e.secGroups=sg.length?sg:null;e.secCi=e.sectors.some(function(k){return SECTOR_TX[k][2]===1;});
+  e.layer="org";e.layerBasis="";
+  if(e.category==="incident"||e.category==="vuln"||e.category==="report"||e.category==="outage"){
+    if(e.surface&&SURFACE_TX[e.surface][1]){e.layer=SURFACE_TX[e.surface][1];e.layerBasis=e.surfaceBasis;}
+    else{e.layerBasis="keyword";for(var li=0;li<LAYERS.length;li++){if(LAYERS[li][2].test(lh)){e.layer=LAYERS[li][0];break;}}}}
+  if(sg.length){e.secg=sg[0];e.secgBasis=e.sectorsBasis;}
+  else{e.secg="other";e.secgBasis="keyword";for(var si=0;si<SECG.length;si++){if(own(LENS,SECG[si][0])&&LENS[SECG[si][0]](e)){e.secg=SECG[si][0];break;}}}
   e.wl=wlTest(e);
   return e;
 }
@@ -1008,7 +1079,11 @@ function card(e,open){
     if(e.tags.length){var tg=el("div","tags");e.tags.forEach(function(t){tg.appendChild(el("span","tag",t));});b.appendChild(tg);}
     var dl=el("dl");
     function row(k,v,cls){if(!v)return;dl.appendChild(el("dt",null,k));dl.appendChild(el("dd",cls||null,v));}
-    row("When",fmtWhen(e,true)+(e.hasTime?"":" (time of day not reported)"),"mono");row("Organization",e.org);row("Sector",e.sector);row("Products",e.products.join(", "));row("Actor",e.actor);row("Techniques",e.attack.join("; "));row("Status",STATUS[e.status]);row("Source quality",e.tier?TIER[e.tier]:"");
+    row("When",fmtWhen(e,true)+(e.hasTime?"":" (time of day not reported)"),"mono");row("Organization",e.org);row("Sector",e.sector);
+    var sgName=function(k){var x=SECG.filter(function(g){return g[0]===k;})[0];return x?x[1]:"";},lnName=function(k){var x=LAYERS.filter(function(l){return l[0]===k;})[0];return x?x[1].split(":")[0]:"";};
+    var known=e.sectors.filter(function(k){return k!=="unknown";});
+    row("Sectors (fixed list)",known.length?known.map(function(k){return SECTOR_TX[k][0];}).join(", ")+" · "+BASIS[e.sectorsBasis]:e.secg!=="other"?sgName(e.secg)+" · "+BASIS.keyword:"");
+    row("Attack surface",e.surface&&e.surface!=="unknown"?SURFACE_TX[e.surface][0]+" · "+BASIS[e.surfaceBasis]:e.layer!=="org"?lnName(e.layer)+" · "+BASIS.keyword:"");row("Products",e.products.join(", "));row("Actor",e.actor);row("Techniques",e.attack.join("; "));row("Status",STATUS[e.status]);row("Source quality",e.tier?TIER[e.tier]:"");
     row("Severity",["","Low","Medium","High"][e.severity]);row("Records",e.records?e.records.toLocaleString():"");
     row("CVEs",e.cves.join(", "),"mono");row("Pin shows",[e.geo||(e.pin?PIN[e.pin]:""),e.actorPin?"attributed origin, not a victim location":e.countryPin?"country-level location":""].filter(Boolean).join(" · "));row("Date note",e.dateNote);
     row("First seen",fmtTime(e.firstSeen),"mono");row("Updated",e.updated&&e.updated!==e.firstSeen?fmtTime(e.updated):"","mono");
@@ -1726,6 +1801,7 @@ function vizTime(v,list){
           .on("pointerenter",function(ev){tipAt(ev,c.length+" events",lab+" · select to list them all");}).on("pointerleave",hideTip);}
     });
   });
+  if(viz.lane!=="type")s2.appendChild(basisEl(geo.reduce(function(a,g){return a.concat(g.evs);},[]),viz.lane==="layer"?"layer":"secg"));
   v.appendChild(s2);
   /* 3. patch clock */
   var s3=el("div","vsec");s3.appendChild(el("h3",null,"How long do we have to patch?"));
@@ -1781,7 +1857,8 @@ function vizCorr(v,list){
       src.forEach(function(s){s.so=0;});dst.forEach(function(d){d.to=0;});});
     colsN.forEach(function(col,ci){col.forEach(function(n){sf2.append("rect").attr("class","nd").attr("x",cx[ci]).attr("y",n.y).attr("width",NW).attr("height",n.h).attr("rx",3);
       if(n.h>=9||col.length<7)sf2.append("text").attr("class","ndl").attr("x",ci===0?cx[ci]-7:cx[ci]+NW+7).attr("y",n.y+n.h/2+4).attr("text-anchor",ci===0?"end":"start").text((ci===1?"":"")+n.label+" · "+n.n);});});
-    sf.appendChild(el("p","cav","Based on "+fe.length+" technical events that carry one of the six most common threat tags; each event is counted once, under its most common tag. Policy, enforcement and business news is left out. Sector and environment are assigned from wording, so treat thin bands as anecdotes."));}
+    sf.appendChild(el("p","cav","Based on "+fe.length+" technical events that carry one of the six most common threat tags; each event is counted once, under its most common tag. Policy, enforcement and business news is left out. Thin bands are anecdotes."));
+    sf.appendChild(basisEl(fe.map(function(x){return x.e;}),"layer"));sf.appendChild(basisEl(fe.map(function(x){return x.e;}),"secg"));}
   v.appendChild(sf);
   /* 1. chains */
   var s0=el("div","vsec");s0.appendChild(el("h3",null,"Chains: what led to what?"));
@@ -1850,7 +1927,7 @@ function vizCorr(v,list){
         rc.on("click",go).on("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go();}})
           .on("pointerenter",function(ev){tipAt(ev,c.r.n+" × "+c.t,c.n+" of "+c.r.evs.length+" events in this row"+(c.n>=3?" · "+c.lift.toFixed(1)+"× the rate expected by chance":" · too few to compare"));}).on("pointerleave",hideTip);}
       else rc.style("cursor","default");});
-    s2.appendChild(el("p","cav","▲ and a dark outline mark a combination seen at least 1.5 times more often than its row and column totals alone would predict, counted only where there are 3 or more events. With "+N+" tagged events this is a pointer for where to look, not a statistical finding. Rows are assigned from product and tag wording, so some events sit in the wrong row."+(hot?"":" No combination clears that bar in this view.")));}
+    s2.appendChild(el("p","cav","▲ and a dark outline mark a combination seen at least 1.5 times more often than its row and column totals alone would predict, counted only where there are 3 or more events. With "+N+" tagged events this is a pointer for where to look, not a statistical finding. Rows: "+basisNote(rws.reduce(function(a,r){return a.concat(r.evs);},[]),viz.mat==="layer"?"layer":"secg")+(hot?"":" No combination clears that bar in this view.")));}
   v.appendChild(s2);
 }
 
@@ -2812,6 +2889,7 @@ openStore().then(function(d){
   db.doc("stats/history").onSnapshot(function(s){hist=s.exists?cleanHist(s.data()):null;renderInsights(lastList);},function(){});
   try{db.collection("corrections").orderBy("at","desc").limit(20).onSnapshot(function(snap){
     corrections=snap.docs.map(function(x){return cleanCorr(x.data());}).filter(Boolean).slice(0,20);renderInsights(lastList);},function(){});}catch(x){}
+  db.doc("services/status").onSnapshot(function(s){services=s.exists?cleanServices(s.data()):null;renderLayers();},function(){});
   db.doc("grid/news").onSnapshot(function(s){gridNews=s.exists?cleanGridNews(s.data()):null;if(state.view==="grid")renderSoon();},function(){});
   db.doc("grid/analysis").onSnapshot(function(s){gridA=s.exists?cleanGridAnalysis(s.data()):null;gridTr=s.exists?cleanGridTrends(s.data()):null;renderLayers();if(onGlobe())renderSoon();},function(){});
   db.doc("grid/sources").onSnapshot(function(s){gridSrcDoc=s.exists?cleanGridSrcDoc(s.data()):{};if(ctxRaw.grid){ctx.grid=cleanCtx("grid",ctxRaw.grid);renderLayers();if(onGlobe())renderSoon();}},function(){});

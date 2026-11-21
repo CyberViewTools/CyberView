@@ -70,7 +70,20 @@
    "max_age_hours": 3,
    "active": true,
    "active_since": "2026-11-19T00:00:00Z",
-   "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and cloud status pages, so no single search engine decides what is seen."
+   "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and the own status pages of 46 cloud, CDN, DNS, SaaS, payment and telecom providers (config/status-pages.json; major or long incidents only), so no single search engine decides what is seen."
+  },
+  {
+   "key": "breach-registers",
+   "name": "Breach notification registers",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_breaches_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Runs with the open-source collectors and asks each official breach register at most hourly (California, Washington and Iowa attorneys general, the UK ICO's enforcement actions, and SEC 8-K Item 1.05 filings once a contact address is set): every new notice is a lead from a government source, read by a researcher who cites the regulator's own page."
   },
   {
    "key": "grid",
@@ -98,14 +111,27 @@
    "does": "Checks GitHub for public repositories naming each exploited flaw and flags them in the workbench as possible exploit code."
   },
   {
+   "key": "ics",
+   "name": "Industrial advisories",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_ics_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T22:00:00Z",
+   "does": "Reads industrial control system (ICS/OT) advisories as structured data: CISA's ICS and ICS medical advisories and Siemens, Schneider Electric, ABB and Phoenix Contact as CSAF documents, CERT@VDE, Moxa and Mitsubishi Electric from their RSS feeds; joins them with CISA's known-exploited catalog for the Vulnerabilities page's Industrial view, and files exploited or critical ones, and high-scoring ones in lifeline sectors, as leads for the research loop (scripts/ics.mjs, no AI model)."
+  },
+  {
    "key": "lead-triage",
    "name": "Lead triage",
    "tier": "automation",
    "workflow": "collect.yml",
    "cron": "11,41 * * * *",
    "model": null,
-   "status_key": null,
-   "max_age_hours": null,
+   "status_key": "last_lead_triage_at",
+   "max_age_hours": 3,
    "active": true,
    "does": "Clears leads already on file, plain non-events and expired items, then groups everything into stories ranked by how many independent publishers report them."
   },
@@ -121,6 +147,19 @@
    "active": true,
    "active_since": "2026-11-18T21:00:00Z",
    "does": "Checks every source link from the last 30 days and lists the broken ones for the verify desk."
+  },
+  {
+   "key": "pipecheck",
+   "name": "Pipeline check",
+   "tier": "automation",
+   "workflow": "pipecheck.yml",
+   "cron": "53 * * * *",
+   "model": null,
+   "status_key": "last_pipecheck_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-21T22:00:00Z",
+   "does": "Measures every stage of the pipeline against its limit, restarts a late stage's workflow, and checks the data itself: keys vanishing from status.json, duplicate events, events waiting over 2 hours for their second review, lead files and the data branch growing abnormally, failing feeds and collectors. Problems show under What needs attention; one that lasts opens a GitHub issue labelled pipeline-alert, closed when healthy."
   },
   {
    "key": "security-check",
@@ -370,7 +409,7 @@
    "cron": "27 4,16 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_advisory_at",
-   "max_age_hours": 30,
+   "max_age_hours": 18,
    "active": true,
    "does": "Reads the vendor's own advisory for each exploited flaw and writes the workbench's check, fix and detection steps.",
    "reviewed": "2026-11-20"
@@ -398,7 +437,7 @@
    "cron": "10 */3 * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_moderator_at",
-   "max_age_hours": null,
+   "max_age_hours": 7,
    "active": true,
    "does": "Checks every community post against fixed rules, then reviews it for harm and unsourced claims before it can appear; handles reports of published posts. The research loop checks for posts about every 25 minutes; this schedule is the backup every 3 hours.",
    "reviewed": "2026-11-20"

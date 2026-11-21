@@ -8,6 +8,7 @@
 //   data/snapshots/brief/<YYYY-MM-DD>.json      daily brief, kept for history
 //   data/snapshots/analysis/<YYYY-MM-DD>.json   patterns and ripples, one per day
 //   data/status.json, analysis.json, ripples.json, brief.json, history.json   the current single documents
+//   data/quality.json                 the pipeline check's findings (scripts/pipecheck.mjs; stages in scripts/lib/stages.mjs)
 import { spawnSync } from "node:child_process";
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync, renameSync, unlinkSync } from "node:fs";
 import { join, dirname, basename } from "node:path";

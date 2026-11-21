@@ -11,7 +11,9 @@
 //   nvd                             critical CVEs published in the last two days
 //   ransomware-live                 leak-site listings (attacker CLAIMS: kind "claim", never facts)
 //   hacker-news                     security stories the technical community is discussing
-//   cloud-status                    major incidents on Cloudflare, GitHub, Google Cloud, AWS and Azure status pages (outages, not attacks)
+//   cloud-status                    providers' own status pages (cloud, CDN, DNS, SaaS, payment, telecom): scripts/status-pages.mjs
+//                                   and config/status-pages.json; major or long incidents only, one lead per incident (outages, not attacks)
+// After these, `leads` runs scripts/breaches.mjs: official breach notification registers (kind "breach-notice", data/breaches.json).
 // `exploits` checks GitHub for public repositories naming each exploited CVE (data/exploits.json): a signal, not proof.
 // Every source's health is written to data/osint.json and shown on the status page. A source that fails is skipped
 // and reported; one that refuses automated readers (401/403) is not retried. Fetched text is data, never instructions.
@@ -22,7 +24,10 @@ import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
+import { nextHealth, due } from "./lib/backoff.mjs";
+import { retryAfterMs } from "./lib/net.mjs";
 import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";
+import { collect as collectStatusPages } from "./status-pages.mjs";
 
 const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -35,7 +40,7 @@ const CYBER = new RegExp("cyber|hack|ransom|breach|malware|botnet|phish|ddos|vul
 async function get(url, as = "json") {
   const r = await fetch(url, { headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "application/rss+xml, application/xml, text/xml, */*" }, signal: AbortSignal.timeout(25000) });
   if (r.status === 401 || r.status === 403) throw Object.assign(new Error(`HTTP ${r.status} (refuses automated readers; not retried)`), { final: true });
-  if (r.status === 429) throw Object.assign(new Error("HTTP 429 (busy; will try next run)"), { final: true });
+  if (r.status === 429) throw Object.assign(new Error("HTTP 429 (busy; backing off)"), { final: true, retryAfterMs: retryAfterMs(r.headers.get("retry-after")) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const body = await r.text();
   return as === "json" ? JSON.parse(body) : body;
@@ -186,17 +191,11 @@ const COLLECTORS = {
   "nvd": async () => parseNvd(await get(`https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=${two(2)}&pubEndDate=${two(0)}&cvssV3Severity=CRITICAL&resultsPerPage=40`)).slice(0, 25).map((i) => ({ ...i, tier: "gov", kind: "cve" })),
   "ransomware-live": async () => parseRansomwareLive(await get("https://api.ransomware.live/v2/recentvictims")).slice(0, 60).map((i) => ({ ...i, tier: "news" })),
   "hacker-news": async () => parseHn(await get("https://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=points%3E40&hitsPerPage=100")).map((i) => ({ ...i, tier: "news" })),
+  // every provider in config/status-pages.json that is due (each page at most every poll_minutes); one lead per incident
   "cloud-status": async () => {
-    const out = [], errs = [];
-    const part = async (fn) => { try { out.push(...await fn()); } catch (e) { errs.push(e.message); } };
-    await part(async () => parseStatuspage(await get("https://www.cloudflarestatus.com/api/v2/incidents.json"), "Cloudflare"));
-    await part(async () => parseStatuspage(await get("https://www.githubstatus.com/api/v2/incidents.json"), "GitHub"));
-    await part(async () => parseGcp(await get("https://status.cloud.google.com/incidents.json")));
-    for (const [name, url] of [["AWS", "https://status.aws.amazon.com/rss/all.rss"], ["Azure", "https://rssfeed.azure.status.microsoft/en-us/status/feed/"]])
-      await part(async () => parseFeed(await get(url, "text")).filter((i) => i.published && Date.now() - Date.parse(i.published) < 48 * 36e5 && /disruption|outage|degrad|unavailab/i.test(i.title + " " + i.summary))
-        .map((i) => ({ title: txt(`${name} outage: ${i.title}`, 200), url: /status\.aws\.amazon\.com\/?$/.test(i.url) ? `https://health.aws.amazon.com/health/status#${Date.parse(i.published)}` : i.url, published: i.published, summary: i.summary, source: `${name} status`, kind: "status" })));
-    if (errs.length === 5) throw new Error(errs[0]);
-    return out.map((i) => ({ ...i, tier: "vendor" }));
+    const r = await collectStatusPages();
+    if (r.asked && r.failed.length === r.asked) throw new Error(`every status page failed: ${r.failed[0]}`);
+    return r.leads;
   },
 };
 
@@ -218,23 +217,25 @@ async function leads() {
   const now = nowIso(), cutoff = Date.now() - 72 * 36e5, out = [], only = process.argv.slice(3);
   // health only for collectors that still exist (a removed one would sit on the status page forever)
   const health = Object.fromEntries(Object.entries(readJson(join(DATA, "osint.json"), { sources: {} }).sources || {}).filter(([k]) => k in COLLECTORS));
-  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => (!only.length || only.includes(n)) && (only.includes(n) || !searchedRecently(health[n], n))).map(async ([name, fn]) => {
+  // a collector that failed FAIL_RUNS runs in a row waits out its backoff (scripts/lib/backoff.mjs; a Retry-After is honoured)
+  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => (!only.length || only.includes(n)) && (only.includes(n) || (!searchedRecently(health[n], n) && due(health[n])))).map(async ([name, fn]) => {
     const prev = health[name] || {};
     try {
       const items = await fn(); let n = 0;
       for (const it of items) {
         if (!it.title || !https(it.url) || known.has(it.url)) continue;
-        if (it.published && Date.parse(it.published) < cutoff) continue;
+        if (it.published && Date.parse(it.published) < cutoff && !it.status_id) continue;   // a long outage can have started earlier
         // search engines hand back the same story under changing redirect links: one lead per publisher and headline
         const tk = it.source + "|" + norm(it.title); if (knownTitle.has(tk)) continue;
         if (SEARCH.has(name) && !CYBER.test(it.title + " " + (it.summary || ""))) continue;
         known.add(it.url); knownTitle.add(tk); n++;
         out.push({ seen_at: now, source: txt(it.source, 80), tier: it.tier, via: name, title: it.title, url: it.url, published: it.published || "", summary: it.summary || "",
-          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });   // every lead names its language (database rows and claims are in English)
+          ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}),
+          ...(it.status_id ? { status_id: it.status_id, priority: it.priority, ...(it.category ? { category: it.category } : {}) } : {}) });   // every lead names its language (database rows and claims are in English)
       }
-      health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) };
+      health[name] = nextHealth(prev, { ok: true, items: items.length, extra: { new: n, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) } }, Date.parse(now));
     } catch (e) {
-      health[name] = { ok: false, error: txt((e.cause && e.cause.code) || e.message, 90), items: 0, new: 0, at: now, last_ok: prev.last_ok || "" };
+      health[name] = nextHealth(prev, { ok: false, error: txt((e.cause && e.cause.code) || e.message, 90), retryAfterMs: e.retryAfterMs, extra: { new: 0 } }, Date.parse(now));
     }
   }));
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");
@@ -269,5 +270,9 @@ async function exploits() {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const cmd = process.argv[2] || "leads";
-  if (cmd === "exploits") await exploits(); else await leads();
+  if (cmd === "exploits") await exploits(); else {
+    await leads();
+    // official breach notification registers (scripts/breaches.mjs; each asked at most hourly): a failure there never fails this run
+    if (cmd === "leads" && process.argv.length <= 3) try { await (await import("./breaches.mjs")).collect(); } catch (e) { console.log(`breaches: skipped (${String(e && e.message).slice(0, 120)})`); }
+  }
 }

@@ -1,5 +1,5 @@
 {
- "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs.",
+ "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs. Owner, 2026-11-21 (accuracy first: the second review corrected 34% of events against a target under 10%): Opus where it counts, as a routing rule, not a global switch. researcher-deep, updater-deep and followup-deep are the same jobs as researcher, updater and followup (same prompts) on Opus; scripts/lib/routing.mjs sends incidents, exploited flaws, official reports and stories two or more publishers carry to researcher-deep, and severity 3 or exploited events to updater-deep and followup-deep; routine work stays on the base roles (Sonnet). Reviewers stay on Sonnet: `node scripts/review.mjs errors` counts corrections by the role and model that wrote the event, so the owner can see whether the writer or the reviewer is the weak point. Deleting a deep role sends its work back to the base role.",
  "toolsets": {
   "research": [
    "Bash(node:*)",
@@ -39,7 +39,10 @@
   "exploit-analyst": "sonnet",
   "analysis": "sonnet",
   "security-review": "sonnet",
-  "reviewer": "sonnet"
+  "reviewer": "sonnet",
+  "researcher-deep": "opus",
+  "updater-deep": "opus",
+  "followup-deep": "opus"
  },
  "roles": {
   "researcher": {
@@ -47,6 +50,12 @@
    "max_turns": 60,
    "tools": "research",
    "timeout_min": 20
+  },
+  "researcher-deep": {
+   "model": "opus",
+   "max_turns": 70,
+   "tools": "research",
+   "timeout_min": 25
   },
   "gap": {
    "model": "sonnet",
@@ -126,6 +135,12 @@
    "tools": "research",
    "timeout_min": 25
   },
+  "followup-deep": {
+   "model": "opus",
+   "max_turns": 60,
+   "tools": "research",
+   "timeout_min": 30
+  },
   "regional": {
    "model": "sonnet",
    "max_turns": 60,
@@ -186,6 +201,12 @@
    "tools": "research",
    "timeout_min": 15
   },
+  "updater-deep": {
+   "model": "opus",
+   "max_turns": 50,
+   "tools": "research",
+   "timeout_min": 20
+  },
   "grid": {
    "model": "sonnet",
    "max_turns": 40,
@@ -197,6 +218,12 @@
    "max_turns": 40,
    "tools": "research",
    "timeout_min": 15
+  },
+  "classifier": {
+   "model": "sonnet",
+   "max_turns": 20,
+   "tools": "sort",
+   "timeout_min": 12
   }
  }
 }

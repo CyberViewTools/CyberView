@@ -24,6 +24,8 @@ import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "
 import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
+import { STAGES, lastRuns, limits as stageLimits } from "./lib/stages.mjs";
+import { sectorsOf, surfaceOf, SECTOR, SURFACE } from "./lib/taxonomy.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -110,6 +112,9 @@ for (const f of files) {
   }
   warnings.unshift(...fresh);
   if (old.size) warnings.push(`quality checks on older events: ${[...old].map(([k, n]) => `${k} ${n}`).join(", ")}`);
+  // sectors and surface: the analysis views fall back to keywords without them (one line, not one per event)
+  const bare = live.filter((f) => f.e.sectors == null || f.e.surface == null).length;
+  if (bare) warnings.push(`classification: ${bare} of ${live.length} events have no sectors or surface yet; the analysis views place them by keyword (backfill: node scripts/classify.mjs plan)`);
 }
 const allEvents = files.filter((f) => f.e && !(quarantine && badEvents.has(f.path))).map((f) => f.e);
 const kevAll = listDir("kev").filter((x) => x.r).map((x) => x.r);
@@ -219,6 +224,25 @@ const gridNews = (() => {
     .map((x) => { const c = checked(x.id), v = outageDesk ? outageDesk.siteCheck(outageChecks[`pw-${x.id}`]) : null; return { ...x, ...(c ? { checked: c } : {}), ...(v ? { verified: v } : {}) }; }) };
 })();
 if (gridNews) docs["grid/news"] = gridNews;
+// service status (scripts/status-pages.mjs, no AI model): major or long incidents on the providers' own status pages, for
+// the map page's "Service status" list (each labelled the provider's own status page, not a cyber event), with the outage
+// desk's check when there is one (its item id is svc-<sha1 of the incident's url>). A broken file only drops the list.
+const services = (() => {
+  const p = join(DATA, "services", "status.json");
+  if (!existsSync(p)) return null;
+  const d = readJson(p);
+  if (!d || typeof d !== "object" || !Array.isArray(d.incidents)) { warnings.push("services/status.json: not readable, service status left out"); return null; }
+  const prov = d.providers && typeof d.providers === "object" ? Object.values(d.providers) : [];
+  return { updated_at: String(d.updated_at || "").slice(0, 30), pages: prov.length, pages_ok: prov.filter((v) => v && v.ok).length,
+    items: d.incidents.filter((x) => x && typeof x === "object" && !Array.isArray(x) && /^https:\/\//.test(x.url || "")).slice(0, 60).map((x) => {
+      const v = outageDesk ? outageDesk.siteCheck(outageChecks[`svc-${createHash("sha1").update(x.url).digest("hex").slice(0, 12)}`]) : null;
+      return { provider: String(x.provider || "").slice(0, 40), name: String(x.name || "").slice(0, 60), category: String(x.category || "").slice(0, 20), page: String(x.page || "").slice(0, 200),
+        title: String(x.title || "").slice(0, 200), impact: String(x.impact || "").slice(0, 40), level: String(x.level || "").slice(0, 10), components: Array.isArray(x.components) ? x.components.slice(0, 6).map((c) => String(c).slice(0, 80)) : [],
+        status: String(x.status || "").slice(0, 40), started_at: String(x.started_at || "").slice(0, 20), resolved_at: String(x.resolved_at || "").slice(0, 20), minutes: Number.isFinite(x.minutes) ? x.minutes : null,
+        url: String(x.url).slice(0, 400), ...(v ? { verified: v } : {}) };
+    }) };
+})();
+if (services) docs["services/status"] = services;
 // each grid source's own hosts (the page accepts an item's link only on its own operator's hosts) and the attribution its
 // licence requires, from scripts/grid.mjs SOURCES (code, not data); a failure leaves the page on its built-in allowlist
 try {
@@ -323,6 +347,13 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
   for (const [cve, g] of Object.entries(guides)) for (const h of (g.hunt || []).filter(detection)) hunt.push({ ...h, about: cve, cve, date: s(g.read_at, 10) });
   writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, analyses, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
+// industrial (ICS/OT) advisories (scripts/ics.mjs, no AI model) for the Vulnerabilities page's Industrial view; a broken or
+// missing file only leaves that view empty, with a warning, never the build
+try {
+  const p = join(DATA, "ics", "advisories.json"), d = existsSync(p) ? readJson(p) : null;
+  const sd = d ? (await import("./ics.mjs")).siteData(d, built_at) : null;
+  if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
+} catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
@@ -358,7 +389,9 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
   const norm = (v) => String(v || "").replace(/\s+/g, " ").trim();
   const DIMS = {
     category: (e) => [e.category],
-    sector: (e) => norm(e.sector).split(/[,;/]| and /i).map((x) => norm(x)).filter((x) => x && x.length < 40),
+    // the explicit sectors (fixed list) when an event has them, else the free-text sector field
+    sector: (e) => { const se = sectorsOf(e), v = se ? se.values.filter((k) => k !== "unknown") : []; return v.length ? v.map((k) => SECTOR[k].label) : norm(e.sector).split(/[,;/]| and /i).map((x) => norm(x)).filter((x) => x && x.length < 40); },
+    surface: (e) => { const su = surfaceOf(e); return su && su.value !== "unknown" ? [SURFACE[su.value].label] : []; },
     country: (e) => [norm(e.country)].filter((x) => x && !/^(global|worldwide|multiple|international)/i.test(x)),
     actor: (e) => [norm(String(e.actor || "").split(/[;(]/)[0])].filter((x) => x && !/^(unknown|unattributed|none|n\/a)/i.test(x)),
     product: (e) => (e.products || []).map((x) => norm(x)).filter((x) => x && x.length < 50),
@@ -380,10 +413,32 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
     prev: { from: prevFrom, to: prevTo, total: known.filter(inPrev).length, complete: started <= prevFrom },
     collection_started: started,
     dims, daily,
+    // where the sector and surface rows came from, over both weeks: the source, CyberView AI, or the free-text sector field
+    basis: (() => {
+      const b = { sector: { stated: 0, inferred: 0, free: 0 }, surface: { stated: 0, inferred: 0, none: 0 } };
+      for (const e of known.filter((x) => inCur(x) || inPrev(x))) {
+        const se = sectorsOf(e), su = surfaceOf(e);
+        b.sector[se && se.values.some((k) => k !== "unknown") ? se.basis : "free"]++;
+        b.surface[su && su.value !== "unknown" ? su.basis : "none"]++;
+      }
+      return b;
+    })(),
     grid: gridAnalysis ? { updated_at: gridAnalysis.updated_at, trends: gridAnalysis.trends, anomalies: gridAnalysis.anomalies.length, corroborated: gridAnalysis.corroboration.filter((c) => (c.score || 0) >= 2).length } : null,
   };
   writeFileSync(join(OUT, "trends.json"), JSON.stringify(trends));
   console.log(`Trends: ${trends.cur.total} events this week, ${trends.prev.total} the week before${trends.prev.complete ? "" : " (partly recorded)"}.`);
+}
+
+// threat actor profiles (scripts/actors.mjs, no AI model): attributed, named and claimed events per group, aliases only on a
+// stated basis (MITRE ATT&CK, the event's own text). A failure never fails the build: the page says the profiles are missing.
+try {
+  const { buildActors, loadAttack } = await import("./actors.mjs");
+  const act = buildActors(live, loadAttack(), built_at);
+  writeFileSync(join(OUT, "actors.json"), JSON.stringify(act));
+  console.log(`Actors: ${act.counts.profiles} profiles (${act.counts.checked} named or attributed, ${act.counts.claims_only} only in claims).`);
+} catch (err) {
+  writeFileSync(join(OUT, "actors.json"), JSON.stringify({ built_at, error: "The actor profiles could not be built.", profiles: [] }));
+  console.warn("warning: actor profiles not built: " + String((err && err.message) || err).slice(0, 200));
 }
 
 // operations: the routines registry, each routine's last run, recent run logs and the lead queue (site/data/ops.json)
@@ -416,7 +471,7 @@ writeFileSync(join(ARCH, "kev.json"), JSON.stringify(kevAll.sort((a, b) => (a.ad
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); if (Date.now() - Date.parse(l.seen_at) < 864e5) { leads24++; byTier[l.tier] = (byTier[l.tier] || 0) + 1; } } catch {} }
   // open-source collectors: each one's health, and what the pipeline did with their leads this week
   const osint = readJson(join(DATA, "osint.json"), { sources: {} }), pm = pipelineMetrics(7);
-  const sources = Object.entries(osint.sources || {}).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
+  const sources = Object.entries({ ...(osint.sources || {}), ...((readJson(join(DATA, "breaches.json"), {}) || {}).sources || {}) }).map(([name, v]) => ({ name, ok: !!v.ok, error: String(v.error || "").slice(0, 90), items: v.items || 0, at: v.at || "", last_ok: v.last_ok || "" }));
   // leads "used" are credited by story (scripts/metrics.mjs storyCredit); days_covered is how much of the 7 days the lead files hold
   const pipeline = { feeds: st.collect_feeds || null, leads_7d: pm.leads, leads_used_7d: pm.leads_used, days_covered: pm.window ? pm.window.days_covered : null, events_7d: pm.events, single_source: pm.single_source, median_hours: pm.median_hours_lead_to_event, regions: pm.regions,
     collectors: pm.collectors.filter((c) => !RETIRED_COLLECTORS[c.name]).slice(0, 12),
@@ -492,6 +547,17 @@ console.log(`Archive: ${live.length} events in ${index.months.length} month(s), 
 // legal pages and security.txt from legal/ and config/site.json
 console.log("Pages: " + (await buildPages()).join(", "));
 
+/** data/quality.json (scripts/pipecheck.mjs), cut to what the status page and the guard show; null when missing or broken.
+ *  A late stage that is a routine is left out: the routines table already lists it (and its attention line). */
+function pipelineQuality() {
+  const q = readJson(join(DATA, "quality.json"), null);
+  if (!q || typeof q !== "object" || !Array.isArray(q.problems)) return null;
+  const shown = new Set(STAGES.filter((s) => s.routine).map((s) => `stage-${s.key}`));
+  const iso = (v) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(v) ? v : "");
+  return { checked_at: iso(q.checked_at), problems: q.problems.filter((p) => p && typeof p.id === "string" && typeof p.text === "string" && p.page !== false && !shown.has(p.id)).slice(0, 30)
+    .map((p) => ({ id: p.id.slice(0, 60), level: ["bad", "warn", "info"].includes(p.level) ? p.level : "info", text: p.text.slice(0, 300), since: iso(p.since), over: p.over === true })) };
+}
+
 // health and manifest, written last: what was left out, and a fingerprint of every data file so the deploy can prove
 // that what is live is exactly what was built (scripts/verify-build.mjs)
 {
@@ -503,7 +569,11 @@ console.log("Pages: " + (await buildPages()).join(", "));
     grid_open: context.grid ? context.grid.items.filter((x) => x && x.scope !== "outage").length : null,
     grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "", last_grid_news_at: st.last_grid_news_at || "",
     grid_waiting: gridStages.waiting, grid_audit_at: gridStages.audit_at, grid_audit_flags: gridStages.audit_flags,
-    last_outage_at: st.last_outage_at || "", outage_queue: outageQueue }));
+    last_outage_at: st.last_outage_at || "", outage_queue: outageQueue,
+    // every pipeline stage's last run and limit (scripts/lib/stages.mjs; limits from routines.json), for the guard
+    stages: lastRuns(st, { "grid/analysis.json": gridAnalysis || {} }), stage_limits: stageLimits((readJson(join(ROOT, "routines.json"), {}) || {}).routines || []),
+    // the pipeline check's problems (scripts/pipecheck.mjs, data/quality.json), for the status page and the guard
+    quality: pipelineQuality() }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

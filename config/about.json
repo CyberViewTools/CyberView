@@ -2,7 +2,7 @@
   "_note": "The one description of CyberView. scripts/pages.mjs renders the About page's 'What CyberView is' section and the page descriptions from it at every build, filling {numbers} from live data; scripts/about.mjs check fails CI when a page, view, map layer or routine is not covered by an entry here, so nothing ships undescribed. Add an entry (or extend 'covers') whenever you add something; keep text plain, present tense, no hype. AI-written content must say 'CyberView AI (a Claude model)'.",
   "tagline": "A live, verified picture of cyber threats worldwide for defenders: what happened, what is being exploited, and the outages around it, updated around the clock.",
   "intro": [
-    "CyberView watches the world's public reporting on cyber security and turns it into one place a defender can use. Scripts collect from {feeds} government, vendor and news feeds and several open databases every few minutes; CyberView AI (Claude models by Anthropic) researches what they find, writes it up with its sources, and a second AI agent checks it before it counts as reviewed. Nothing is drawn as a fact until it has been read from a real source.",
+    "CyberView watches the world's public reporting on cyber security and turns it into one place a defender can use. Scripts collect from {feeds} government, vendor and news feeds in more than 30 languages, with regional sources for Africa, the Middle East, Turkey and Latin America, standing news searches in local languages and several open databases every few minutes; CyberView AI (Claude models by Anthropic) researches what they find, writes it up with its sources, and a second AI agent checks it before it counts as reviewed. Nothing is drawn as a fact until it has been read from a real source.",
     "It keeps growing. New sources, views and analyses are added continuously, and this page is generated from the same list the site is built from, so it always describes what CyberView does today: {events} events on file, {cves} CVEs indexed, {grid} power grid sources connected."
   ],
   "capabilities": [
@@ -28,7 +28,7 @@
       "key": "views",
       "title": "Timeline and Correlation",
       "link": "./",
-      "text": "The same events by day and attack surface, and as a correlation graph of shared actors, products and techniques, each with the question it answers and its caveats.",
+      "text": "The same events by day and attack surface, and as a correlation graph of shared actors, products and techniques, each with the question it answers and its caveats. Sector and attack surface come from fixed lists (the US CISA critical infrastructure sectors and a few more), each stated by the source or inferred by CyberView AI (a Claude model); events not yet classified are placed by keyword, and each view counts and labels them as keyword-assigned.",
       "covers": {
         "views": [
           "time",
@@ -52,6 +52,17 @@
           "triage",
           "regional",
           "report-review"
+        ]
+      }
+    },
+    {
+      "key": "breaches",
+      "title": "Official breach notices",
+      "link": "status.html",
+      "text": "Breach notices that organisations file with regulators are read straight from the registers that publish them (the California, Washington and Iowa attorneys general, the UK Information Commissioner's enforcement actions, and US SEC filings for material cybersecurity incidents once a contact address is set). Each new notice is a lead from a government source: a researcher reads it, cites the regulator's own page, and adds it to the map or to the event it confirms. Notices of the same breach on several registers are counted as one story.",
+      "covers": {
+        "routines": [
+          "breach-registers"
         ]
       }
     },
@@ -82,6 +93,17 @@
           "exploit-watch",
           "advisory",
           "analyst"
+        ]
+      }
+    },
+    {
+      "key": "ics",
+      "title": "Industrial (ICS/OT) advisories",
+      "link": "vulnerabilities.html#ot",
+      "text": "An Industrial view on the Vulnerabilities page with every industrial control system and operational technology advisory of the last year from CISA (ICS and medical devices), Siemens, Schneider Electric, ABB, Phoenix Contact, CERT@VDE, Moxa and Mitsubishi Electric, read by a script from their own machine-readable feeds: affected products, CVEs, CVSS, what the advisory and CISA's known-exploited catalog say about exploitation, the critical infrastructure sectors, and a link to the advisory with its mitigations. Each CVE elsewhere on the page shows the industrial advisories that name it. Exploited and critical advisories, and high-scoring ones in energy, water, health and other lifeline sectors, are handed to CyberView AI to research.",
+      "covers": {
+        "routines": [
+          "ics"
         ]
       }
     },
@@ -118,7 +140,7 @@
       "key": "outages",
       "title": "Outage checks",
       "link": "./#grid",
-      "text": "An outage desk inside the research loop, where CyberView AI (a Claude model) checks outage reports that no one had checked: power outages reported in the news that no operator feed covers, country-level internet disruptions measured by IODA, and major outages on providers' own status pages. Each is read against the operator's, provider's or government's own page and credible reporting and marked confirmed (naming who confirmed it, with figures, times and cause only as a source states them), not confirmed (with the reason), or, when a source links it to a cyberattack, handed to the research loop as a lead, never published as an attack by itself. The Grid view and the internet disruption layer show the result next to the report, and reports not checked yet stay labelled as unchecked. A confirmed internet or service outage can become an outage event, with a second review like every other.",
+      "text": "An outage desk inside the research loop, where CyberView AI (a Claude model) checks outage reports that no one had checked: power outages reported in the news that no operator feed covers, country-level internet disruptions measured by IODA, and major outages on providers' own status pages. Each is read against the operator's, provider's or government's own page and credible reporting and marked confirmed (naming who confirmed it, with figures, times and cause only as a source states them), not confirmed (with the reason), or, when a source links it to a cyberattack, handed to the research loop as a lead, never published as an attack by itself. The Grid view and the internet disruption layer show the result next to the report, and reports not checked yet stay labelled as unchecked. A confirmed internet or service outage can become an outage event, with a second review like every other. The service outages come from the providers' own status pages (cloud, CDN, DNS, SaaS, payment and telecom), read by a script with no AI model; major or long incidents are listed under Service status in the map's layers panel, each labelled as the provider's own status page and not a cyber event, and the outage desk checks the biggest providers first.",
       "covers": {
         "routines": [
           "outage"
@@ -137,6 +159,17 @@
         "routines": [
           "brief",
           "analysis"
+        ]
+      }
+    },
+    {
+      "key": "actors",
+      "title": "Threat actor profiles",
+      "link": "actors.html",
+      "text": "One profile per group named in CyberView's checked events, put together by a script, not written: the events a government or the investigating firm attributed to it (each saying who said so), the events whose reporting names it, and, kept apart and labelled as unconfirmed, what it only claimed on its leak site. Other names are joined only where MITRE ATT&CK lists them as aliases or an event's sources name them as one group, and each says which. Each profile lists sectors and countries targeted, CVEs and government advisories in its events, and links to them in the archive.",
+      "covers": {
+        "pages": [
+          "actors"
         ]
       }
     },
@@ -189,7 +222,7 @@
       "key": "ops",
       "title": "Open about how it runs",
       "link": "status.html",
-      "text": "A status page that answers first whether the site is healthy right now, followed by how the data flows (sources, leads, stories, closed by rule, read by AI agents, published, second-reviewed and on the map, each with its count for the last 24 hours and 7 days and the share it passes on) and where the data comes from (events of the week by source tier, collector, region and language, and the publishers they cite most) and what needs attention, with every detail one click away: every routine, when it last ran and what it found; an outside guardian that checks the live site every two hours and restarts what has stopped; link and security checks; an improver that tunes cost and quality within written limits; and an efficiency report, worked out by a script with no AI model at every build: usage and idle runs per routine, leads and how many became events per feed, coverage by region, language and sector, and corrections by week, each saying how many days of data it rests on. The code and the job instructions are public.",
+      "text": "A status page that answers first whether the site is healthy right now, followed by how the data flows (sources, leads, stories, closed by rule, read by AI agents, published, second-reviewed and on the map, each with its count for the last 24 hours and 7 days and the share it passes on) and where the data comes from (events of the week by source tier, collector, region and language, and the publishers they cite most) and what needs attention, with every detail one click away: every routine, when it last ran and what it found; an hourly pipeline check, a script with no AI model, that measures every stage from the collectors to the deploy against its limit, restarts a stage that has stopped, and checks the data itself (records vanishing from the status file, events recorded twice, events waiting over two hours for their second review, lead files or the data growing abnormally, feeds and collectors that keep failing, which are asked less often and proposed for the watch list instead of being dropped silently), listing every problem under what needs attention and opening one public GitHub issue per problem that lasts, closed again when it is healthy; an outside guardian that checks the live site and every stage every two hours and restarts what has stopped; link and security checks; an improver that tunes cost and quality within written limits; and an efficiency report, worked out by a script with no AI model at every build: usage and idle runs per routine, leads and how many became events per feed, coverage by region, language and sector, and corrections by week, each saying how many days of data it rests on. The code and the job instructions are public.",
       "covers": {
         "pages": [
           "status",
@@ -198,6 +231,7 @@
         "routines": [
           "monitor",
           "link-check",
+          "pipecheck",
           "security-check",
           "security-review",
           "scout",

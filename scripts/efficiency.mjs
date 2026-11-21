@@ -18,6 +18,8 @@ import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 import { regionOf, storyCredit, closureOutcome, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
+import { errorReport, writersFrom } from "./review.mjs";
+import { sectorsOf, SECTOR } from "./lib/taxonomy.mjs";
 
 // routines whose work is a document or a check, not a list in a run log: their idle share is not measured
 export const DOC_ROUTINES = new Set(["brief", "analysis", "tabletop", "improver", "watchdog", "guardian", "editor", "security-review", "monitor", "link-check", "security-check", "exploit-watch"]);
@@ -170,8 +172,16 @@ export function markRetired(feeds, retiredCfg = [], collectors = RETIRED_COLLECT
 const SECTORS = [["water", /\b(water|wastewater)\b/i], ["energy", /\b(energy|power|electric\w*|utilit(y|ies)|oil|gas|nuclear|grid|pipeline|refiner\w*)\b/i], ["health", /\b(health\w*|hospital\w*|medical|clinic\w*|pharma\w*|patient\w*)\b/i],
   ["transport", /\b(transport\w*|airline\w*|airport\w*|aviation|rail\w*|port|ports|shipping|maritime|logistics|transit)\b/i], ["telecom", /\b(telecom\w*|telco\w*|mobile operator|carrier|isp|broadband)\b/i],
   ["government", /\b(government|ministry|municipal\w*|public sector|council|parliament|federal|state agency|agency|military|defen[cs]e|city of|county)\b/i]];
-/** Pure: the critical-infrastructure sector an event is in, from its sector field and tags (by keyword, can be wrong). */
+/** Pure: where an event's coverage sector comes from: its explicit "sectors" ("stated" or "inferred"), else "keyword". */
+export function sectorBasis(e) {
+  const se = sectorsOf(e);
+  return se && se.values.some((k) => SECTOR[k].cov) ? se.basis : "keyword";
+}
+/** Pure: the critical-infrastructure sector an event is in: from its explicit "sectors" when it has them (the first with a
+ *  coverage key), else from its sector field and tags by keyword (can be wrong; sectorBasis says which). */
 export function sectorOf(e) {
+  const se = sectorsOf(e), c = se && se.values.map((k) => SECTOR[k].cov).find(Boolean);
+  if (c) return c;
   const text = [e.sector, ...(Array.isArray(e.tags) ? e.tags : [])].filter(Boolean).join(" ");
   for (const [k, re] of SECTORS) if (re.test(text)) return k;
   return "other";
@@ -195,8 +205,8 @@ export function languageOf(e, leadByUrl) {
 export function coverage(events, leadByUrl, days, now = Date.now()) {
   const since = iso(now - days * DAY), ev = events.filter((e) => e && !e.duplicate_of && String(e.first_seen || "") >= since);
   const add = (o, k) => { o[k] = (o[k] || 0) + 1; };
-  const out = { days, events: ev.length, claimed: ev.filter((e) => e.status === "claimed").length, region: {}, language: {}, sector: {} };
-  for (const e of ev) { add(out.region, regionOf(e.country)); add(out.language, languageOf(e, leadByUrl)); add(out.sector, sectorOf(e)); }
+  const out = { days, events: ev.length, claimed: ev.filter((e) => e.status === "claimed").length, region: {}, language: {}, sector: {}, sector_basis: {} };
+  for (const e of ev) { add(out.region, regionOf(e.country)); add(out.language, languageOf(e, leadByUrl)); add(out.sector, sectorOf(e)); add(out.sector_basis, sectorBasis(e)); }
   return out;
 }
 
@@ -410,7 +420,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
   const sinceDay = iso(now - days * DAY).slice(0, 10), ud = join(DATA, "usage"), ld = join(DATA, "leads"), rd = join(DATA, "runs");
   const usage = existsSync(ud) ? readdirSync(ud).filter((f) => /^\d{4}-\d{2}\.jsonl$/.test(f) && f.slice(0, 7) >= sinceDay.slice(0, 7)).sort().flatMap((f) => jsonl(join(ud, f))) : [];
   const leads = existsSync(ld) ? readdirSync(ld).filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f) && f.slice(0, 10) >= sinceDay).sort().flatMap((f) => jsonl(join(ld, f))).filter((l) => l && l.url && l.seen_at) : [];
-  const logs = [], jobruns = [], closures = [], byRule = new Set();
+  const logs = [], jobruns = [], closures = [], byRule = new Set(), writerLogs = [];
   for (const d of existsSync(rd) ? readdirSync(rd).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && d >= sinceDay).sort() : []) {
     for (const f of readdirSync(join(rd, d))) {
       if (f === "jobruns.jsonl") { jobruns.push(...jsonl(join(rd, d, f))); continue; }
@@ -419,6 +429,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
       const r = readJson(join(rd, d, f), null); if (!r || typeof r !== "object") continue;
       const at = /^\d{4}-\d{2}-\d{2}T/.test(String(r.finished_at || "")) ? r.finished_at : `${d}T${m[1]}:${m[2]}:00Z`;
       logs.push({ at, start: String(r.started_at || ""), file: `${d}T${m[1]}:${m[2]}:00Z`, job: m[3], model: r.model === undefined ? undefined : r.model, out: logOutput(r) });
+      if (Array.isArray(r.added) || Array.isArray(r.updated)) writerLogs.push({ at, job: m[3], model: r.model, worker_role: r.worker_role, worker_model: r.worker_model, added: r.added, updated: r.updated });
       // fuse's stories closed by a rule or a triager, logged as "story <id>: <why>": their grouping is fuse's own
       const rule = m[3] === "backlog-auto" || (m[3] === "triage" && r.model === null), groups = new Map();
       for (const s of Array.isArray(r.skipped) ? r.skipped : []) {
@@ -432,7 +443,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
   }
   const events = listEventFiles().map((f) => f.e).filter(Boolean);
   const registry = (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r && r.key);
-  return { usage, leads, logs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {},
+  return { usage, leads, logs, writerLogs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {},
     retiredFeeds: (readJson(join(ROOT, "config", "feeds.json"), {}) || {}).retired || [], feedList: await feedList(),
     queries: ((readJson(join(ROOT, "config", "queries.json"), {}) || {}).queries || []).filter((q) => q && typeof q === "object").map((q) => ({ hl: q.hl, region: q.region })) };
 }
@@ -463,6 +474,9 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
   feeds.forEach((f) => { const x = f7.get(f.name); f.leads_7d = x ? x.leads : 0; f.used_7d = x ? x.used : 0; });
   const leadByUrl = new Map(); for (const l of inp.leads) if (!leadByUrl.has(l.url)) leadByUrl.set(l.url, l);
   const acc = accuracy(inp.events, now, days);
+  // what the second review corrects, by type and by who wrote the event (role and model), for the improver and the owner
+  try { const er = errorReport(inp.events, writersFrom(inp.writerLogs || []), now, days); acc.errors = { types: er.types.map((t) => ({ key: t.key, label: t.label, n: t.n, pct_of_corrected: t.pct_of_corrected })), by_writer: er.by_writer.slice(0, 12).map((b) => ({ role: b.role, model: b.model, reviewed: b.reviewed, corrected: b.corrected, corrected_pct: b.corrected_pct, types: b.types })) }; }
+  catch (err) { acc.errors = { error: "The correction types could not be worked out: " + String((err && err.message) || err).slice(0, 160) }; }
   const win = windows || { source: "data/usage", estimate: true, five_hour: sumWindow(inp.usage, now, 5), week: sumWindow(inp.usage, now, 168), budget: null };
   const allLeadDays = spanDays(inp.leads.map((l) => l.seen_at), 3650, now);
   const grid = inp.gridAudit && inp.gridAudit.sources ? Object.entries(inp.gridAudit.sources).slice(0, 80).map(([k, v]) => ({ name: String((v && v.name) || k).slice(0, 60), ok: !!(v && v.ok), flags: Array.isArray(v && v.flags) ? v.flags.filter((x) => typeof x === "string").slice(0, 6) : [] })) : [];
@@ -519,6 +533,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log("Coverage, 7 days by region: " + Object.entries(r.coverage.d7.region).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
   console.log("  by language: " + Object.entries(r.coverage.d7.language).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
   console.log("  by sector: " + Object.entries(r.coverage.d7.sector).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
+  if (r.accuracy.errors && r.accuracy.errors.types) console.log("Correction types: " + r.accuracy.errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.accuracy.errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", "));
   console.log("Corrections by week: " + r.accuracy.weeks.map((x) => `${x.week} ${x.corrected_pct}% of ${x.reviewed}`).join("; ") + (r.accuracy.categories.length ? "; categories: " + r.accuracy.categories.map((c) => `${c.name} ${c.n}`).join(", ") : ""));
   r.gaps.forEach((g) => console.log("Gap: " + g));
 }

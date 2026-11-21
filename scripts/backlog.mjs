@@ -8,12 +8,14 @@
 //   apply [--per 8]   after the triagers: closes what they rejected (with their reasons) and writes the researchers' plan
 //                     (data/sweep-plan.json, the same file the sweep uses, so job-prompt.mjs researcher --batch N works)
 // Nothing here writes or changes an event: it only closes stories with a logged reason, or assigns them.
+import { deepReason } from "./lib/routing.mjs";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, writeRunLog, nowIso } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, writeRunLog, nowIso, readStatus } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 
+// a regulator's breach notice (kind "breach-notice", scripts/breaches.mjs) is NOT a row: it is the official confirmation, read by an agent
 const ROWS = ["cve", "breach-db", "status"];
 /** Pure: why a rule can close this story without anyone reading it, or "" when a person or agent has to look. */
 export function autoReason(s, now = Date.now()) {
@@ -72,6 +74,8 @@ function main() {
     const items = d.stories.filter(isOpen).map((s) => ({ s, why: autoReason(s) })).filter((x) => x.why)
       .concat(d.stories.filter((s) => onFile(s)).map((s) => ({ s, why: onFile(s) })));
     closeAll("backlog-auto", items);
+    // heartbeat (scripts/lib/stages.mjs "backlog-auto"): the rules ran, also when they closed nothing
+    try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_backlog_auto_at = nowIso(); writeJson(sp, st); } catch {}
     const by = {}; items.forEach((x) => { by[x.why] = (by[x.why] || 0) + 1; });
     console.log(`BACKLOG AUTO: closed ${items.length} stories by rule.` + Object.entries(by).map(([k, n]) => `\n  ${n}  ${k}`).join(""));
     return;
@@ -98,7 +102,7 @@ function main() {
     const byId = new Map(d.stories.map((s) => [s.id, s]));
     const prev = (readJson(join(DATA, "backlog-kept.json"), { ids: [] }).ids || []).map((id) => byId.get(id)).filter((s) => s && isOpen(s) && !keep.includes(s) && !autoReason(s));
     const queue = prev.concat(keep).sort((a, b) => (b.incident - a.incident) || b.score - a.score), now = queue.slice(0, maxB * per), later = queue.slice(maxB * per);
-    const stories = now.map((s, i) => ({ id: s.id, title: s.title, score: s.score, batch: Math.floor(i / per) + 1, urls: s.urls })), nb = Math.ceil(now.length / per);
+    const stories = now.map((s, i) => ({ id: s.id, title: s.title, score: s.score, batch: Math.floor(i / per) + 1, urls: s.urls, ...(deepReason(s) ? { deep: deepReason(s) } : {}) })), nb = Math.ceil(now.length / per);
     if (maxB) writeJson(join(DATA, "sweep-plan.json"), { planned_at: nowIso(), backlog: true, stories });
     writeJson(join(DATA, "backlog-kept.json"), { at: nowIso(), ids: later.map((s) => s.id) });
     for (const f of answerFiles()) writeJson(join(DATA, f), { keep: [], close: [], applied_at: nowIso() });   // used: never applied twice

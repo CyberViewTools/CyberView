@@ -8,7 +8,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T22:11:48Z",
-  "updated_at": "2026-11-21T08:09:30Z",
+  "updated_at": "2026-11-21T08:14:30Z",
   "date": "2026-11-18",
   "category": "vuln",
   "title": "F5 warns of six critical BIG-IP flaws in the TMM data plane; hotfixes only",
@@ -79,10 +79,10 @@
   "severity": 2,
   "status": "official",
   "source_tier": "established",
-  "summary": "F5 disclosed six critical stack-based buffer overflows in the BIG-IP Traffic Management Microkernel, CVSS 9.8, that can crash the data plane before authentication on specific virtual-server setups, including iRules and one APM policy. The report says they may allow remote code execution. F5 lists no exploitation. Fixes are engineering hotfixes only, with no workaround.",
+  "summary": "F5 disclosed six critical stack-based buffer overflows in the BIG-IP Traffic Management Microkernel, CVSS 9.8, that can crash the data plane without logging in on specific virtual-server setups, including iRules and one APM policy. The report says they may allow remote code execution. F5 lists no exploitation. Fixes are engineering hotfixes only, with no workaround.",
   "plain": "F5 reported six serious flaws in its BIG-IP load balancers that an attacker with no login could use to crash the device, and possibly run code, on certain configurations.",
   "exec": "BIG-IP sits at the network edge of many large organisations; hotfix-only fixes mean teams must request builds rather than apply a routine update.",
-  "action": "Check whether BIG-IP virtual servers use the affected iRules or the APM policy named in F5 bulletin K000164058, request the engineering hotfixes, and restrict exposure of data-plane listeners until patched.",
+  "action": "Check whether BIG-IP virtual servers use the iRules or the APM per-request policy named in the advisories, and request the engineering hotfixes from F5 (security notification K000164058, hotfix policy K4918); F5 lists no workaround.",
   "sources": [
     {
       "name": "The Hacker News",
@@ -121,10 +121,10 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T09:26:57Z",
+    "at": "2026-11-21T08:14:29Z",
     "first_at": "2026-11-19T16:40:34Z",
-    "note": "Compared with The Hacker News and Dailysecu: title, six CVEs, CVSS 9.8, no exploitation, hotfix-only match. Fixed: validation corroborated->single_source (Dailysecu names 3 CVEs, no count/reporters/exploitation); removed occurred_at 10:00Z (no stated time).",
+    "note": "Compared with The Hacker News, DailySecu, GBHackers: six CVEs, CVSS 9.8, hotfix-only, no exploitation and date match. Fixed action: removed advice to restrict data-plane listener exposure that no source gives; summary now says without logging in, as THN does.",
     "flags": []
   },
-  "qa_checked_at": "2026-11-20T09:26:57Z"
+  "qa_checked_at": "2026-11-21T08:14:29Z"
 }

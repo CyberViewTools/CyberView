@@ -1,0 +1,53 @@
+{
+  "title": "Cycode: WinGet moderator triage tool could leak a GitHub token to a pull request's installer URL; Microsoft has fixed it",
+  "date": "2026-11-18",
+  "date_note": "Cycode's post shows 'Last updated: November 18, 2026' and gives no publication or disclosure date; Expert Insights reported it on 19 November.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "Microsoft",
+  "sector": "Technology",
+  "country": "United States",
+  "place": "Redmond, Washington, United States",
+  "lat": 47.674,
+  "lng": -122.121,
+  "geo_basis": "vendor headquarters",
+  "pin_type": "agency",
+  "summary": "Cycode reports that ManualValidationPipeline.ps1, a PowerShell triage tool used by moderators of the WinGet community repository, attached the moderator's GitHub Personal Access Token to every HTTP request it makes. Cycode says a pull request with an InstallerUrl pointing at an attacker's server could expose a Classic PAT with the workflow scope. Cycode says Microsoft has since patched it in pull request #456300; no in-the-wild exploitation is reported.",
+  "plain": "Security firm Cycode says a tool used by Microsoft's WinGet moderators could have sent a powerful access token to an attacker through a single pull request. Cycode says Microsoft has fixed it.",
+  "exec": "Cycode says the token could have been used to publish backdoored installers to 14,000 exposed packages in WinGet's community repository; Cycode says Microsoft has patched it.",
+  "action": "No action needed; for awareness. Cycode recommends moving from classic tokens to fine-grained tokens scoped to the microsoft/winget-pkgs repository.",
+  "impact": "Cycode says the exposed token could have allowed publishing backdoored installers to 14,000 exposed packages; Cycode puts WinGet on over 1.4 billion active devices running Windows 10 and Windows 11. These are Cycode's figures.",
+  "tags": [
+    "supply-chain",
+    "credential-exposure"
+  ],
+  "cves": [],
+  "products": [
+    "Windows Package Manager (WinGet)",
+    "winget-pkgs"
+  ],
+  "attack": [],
+  "sources": [
+    {
+      "name": "Cycode",
+      "url": "https://cycode.com/blog/winget-zero-click-supply-chain-vulnerability/"
+    },
+    {
+      "name": "Expert Insights",
+      "url": "https://expertinsights.com/?p=64036"
+    },
+    {
+      "name": "Ciberseguridad LATAM",
+      "url": "https://ciberseguridadlatam.com/un-pull-request-basto-para-exponer-el-token-de-identidad-completo-de-un-moderador-de-microsoft/"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-21T11:03:00Z",
+    "note": "Cycode's own research post (Moriel Harush) read, plus Expert Insights (which quotes Microsoft's fix in PR #456300) and Ciberseguridad LATAM. Figures (14,000 packages, 1.4 billion devices) are Cycode's alone. Microsoft's own advisory was not read; no CVE was found."
+  },
+  "first_seen": "2026-11-21T11:02:28Z",
+  "updated_at": "2026-11-21T11:02:28Z"
+}

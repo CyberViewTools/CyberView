@@ -8,7 +8,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T22:11:48Z",
-  "updated_at": "2026-11-21T08:14:30Z",
+  "updated_at": "2026-11-21T15:22:07Z",
   "date": "2026-11-18",
   "category": "vuln",
   "title": "F5 warns of six critical BIG-IP flaws in the TMM data plane; hotfixes only",
@@ -95,6 +95,10 @@
     {
       "name": "GBHackers",
       "url": "https://gbhackers.com/critical-f5-big-ip-stack-buffer-overflow-flaw/"
+    },
+    {
+      "name": "Canadian Centre for Cyber Security, AV26-1178 (19 Nov)",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/f5-security-advisory-av26-1178"
     }
   ],
   "report": {
@@ -115,9 +119,9 @@
     "url": "https://thehackernews.com/2026/11/f5-warns-6-critical-big-ip-flaws-can.html"
   },
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-21T08:09:30Z",
-    "note": "The Hacker News (18 Nov) states the six-flaw count, CVSS, reporters, hotfix-only and no exploitation. Dailysecu (20 Nov) covers only three CVEs and does not state the count, reporters or exploitation, so it does not independently corroborate the core. F5 own portal was not read. GBHackers (21 Nov) covers one of the six, CVE-2026-123637 (APM), and states CVSS 9.8, hotfix-only and no workaround, and makes no claim of active exploitation; it does not state the six-flaw count, so the core stays single-source."
+    "state": "corroborated",
+    "checked_at": "2026-11-21T15:22:07Z",
+    "note": "Verify desk read The Hacker News (18 Nov) and the Canadian Centre for Cyber Security AV26-1178 (19 Nov): both list the same six CVEs with engineering-hotfix fixes. CVSS 9.8, no workaround and no exploitation are stated by The Hacker News only (CCCS gives no CVSS and does not mention exploitation). F5 own portal (K000164058) did not load (JavaScript shell), not read."
   },
   "review": {
     "state": "corrected",

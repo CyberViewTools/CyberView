@@ -53,6 +53,12 @@ jobs:
         if: steps.gate.outputs.go == '1'
         # a failing source keeps its old items, marked stale; only a total failure stops the run
         run: node scripts/context.mjs
+      - name: Scam warnings (official scam and phishing warnings by country, no AI)
+        # optional: a failing issuer keeps its earlier warnings and is reported in data/scams/warnings.json; never stops the commit
+        if: steps.gate.outputs.go == '1'
+        continue-on-error: true
+        timeout-minutes: 4
+        run: node scripts/scams.mjs
       - name: Exploit watch (public repositories naming exploited CVEs)
         if: steps.gate.outputs.go == '1'
         run: node scripts/osint.mjs exploits || true

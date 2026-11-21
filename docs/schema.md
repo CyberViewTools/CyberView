@@ -137,6 +137,14 @@ Written only by `scripts/ics.mjs` (feeds.yml, every 2 hours; dials in config/ics
 - Worker files: `data/claims-plan-<run>.json` (`plan_id, planned_at, run, batches [{batch, out, items}]`) and `data/claims-out-<run>-<batch>.json` (`plan_id, batch, results [...]`) are working state, deleted after each cycle. Leases are kind `claim`. `status.json` gets `last_claims_at` and `claims_note` (the research loop, every cycle the desk runs).
 - Published: the build adds `claim_check {decision, summary, group, claimed_at, confirmed_by, url, at, by}` (scripts/claims-desk.mjs `siteCheck`, the newest check naming the event) to that event in the bundle and the archive; `site/data/health.json` gets `last_claims_at` and `claims_queue {waiting, checked_24h, confirmed_24h, reported_24h, denied_24h, unconfirmed_24h, not_found_24h, oldest_min}`.
 
+## data/scams/warnings.json (official scam and phishing warnings: never cyber events)
+
+Written only by `scripts/scams.mjs` (no AI model; feeds.yml every 2 hours) from the issuers in `config/scams.json` (each: `key, name, kind` government|police|regulator|cert|consumer, `country` ISO 3166-1 alpha-2, `lang, format` rss|hkma, `url, home, hosts` (the issuer's own hosts), `filter` (the title must name a scam), `url_match`, `title_strip`).
+- `{updated_at, types_by: "keyword", types [the 8 keys], sources {<key>: {name, country, lang, home, hosts, ok, error, items, at, last_ok, fails}}, items [warning]}`.
+- warning: `{id (<issuer>-<12 hex of the URL's SHA-1>), issuer, issuer_name, country, lang, title (220, the issuer's own words and language), published (UTC, "" when the feed gives none), first_seen, url (https, on the issuer's hosts, tracking parameters dropped), types [impersonation|investment|delivery|bank_sms|tech_support|romance|job|crypto] (scripts/scams.mjs TYPES, a fixed keyword map; can be empty), types_by: "keyword", incident (true when the text names a breach or other cyber incident), lead_at}`. Items published in the last `max_age_days` are added; kept `keep_days`, at most `per_issuer` each; a failing issuer keeps its earlier items.
+- A warning with `incident` files ONE lead in `data/leads/<date>.jsonl` (`via: "scams"`, `kind: "advisory"`, tier `gov`); only the research loop turns it into an event. `status.json` gets `last_scams_at`, `scams_sources_ok`, `scams_sources`.
+- Published as `docs["scams/warnings"]` `{updated_at, types_by, issuers {<key>: {name, kind, country, lang, home, hosts, ok, error, last_ok}}, items}`; the map page lists them in the Insights tab (`#scams`), links only to the issuer's own https hosts, labels the type as keyword-assigned, and never draws or counts them as events.
+
 ## data/snapshots/
 
 `brief/<YYYY-MM-DD>.json` is a copy of that day's brief. `analysis/<YYYY-MM-DD>.json` is `{analysis, ripples}` as of that day's last analysis run. `tabletop/<YYYY-MM-DD>.json` is that week's exercise.

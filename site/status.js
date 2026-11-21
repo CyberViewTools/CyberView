@@ -94,9 +94,21 @@
       last_outage_at: isoOk(h.last_outage_at),
       grid_audit_flags: Array.isArray(h.grid_audit_flags) ? h.grid_audit_flags.filter(function (f) { return typeof f === "string" && /^[a-z0-9_]{1,40}$/.test(f); }).slice(0, 10) : null,
       grid_sources: obj(h.grid_sources),
+      quality: cleanQuality(h.quality),
       backlog: B && nn(B.waiting) !== null ? { waiting: int0(B.waiting), incidents: int0(B.incidents), oldest_hours: nn(B.oldest_hours) || 0, oldest_incident_hours: nn(B.oldest_incident_hours) || 0 } : null,
       quarantined_count: int0(h.quarantined_count), quarantined: arr(h.quarantined, 5).map(function (q) { return txt(q, 160); }).filter(Boolean)
     };
+  }
+  /** The pipeline check's problems (health.json quality, from scripts/pipecheck.mjs): level, plain text, since when. */
+  function cleanQuality(q) {
+    if (!obj(q)) return null;
+    var LV = { bad: "bad", warn: "warn", info: "info" };
+    return { checked_at: isoOk(q.checked_at), problems: arr(q.problems, 30).filter(function (p) { return obj(p) && typeof p.id === "string" && /^[a-z0-9:_-]{1,60}$/.test(p.id) && typeof p.text === "string"; })
+      .map(function (p) { return { id: p.id, level: has(LV, p.level) ? LV[p.level] : "info", text: txt(p.text, 300), since: isoOk(p.since), over: p.over === true }; }) };
+  }
+  // the badge for each kind of pipeline-check problem
+  function qualityBadge(id) {
+    return /^stage-/.test(id) ? "Late" : id === "status-keys" ? "Data lost" : id === "duplicates" ? "Duplicates" : id === "unreviewed" ? "Waiting" : id === "feeds-propose" || /^collector-/.test(id) ? "Not loading" : id === "broken-links" ? "Broken links" : "Check";
   }
   function countMap(o) { var out = {}; if (obj(o)) Object.keys(o).slice(0, 60).forEach(function (k) { var v = nn(o[k]); if (v !== null && /^[a-z0-9 -]{1,30}$/i.test(k)) out[k] = Math.max(0, Math.round(v)); }); return out; }
   var USAGE_STATE = ["logged", "partly logged", "not logged", "none (script)", "no runs"];
@@ -611,11 +623,20 @@
     if (h && h.backlog && h.backlog.waiting) attn.push({ cls: h.backlog.waiting > 60 || h.backlog.oldest_incident_hours > 2 ? "warn" : "info", badge: "Waiting", text: plural(h.backlog.waiting, "report") + " in the research queue waiting for a decision; oldest " + h.backlog.oldest_hours + " h", jump: "dQueue" });
     if (h && h.grid_waiting && h.grid_waiting.count) attn.push({ cls: h.grid_waiting.oldest_min > 120 ? "warn" : "info", badge: "Waiting", text: plural(h.grid_waiting.count, "grid outage") + " waiting for a cause check", jump: "gridSrcBox" });
     if (h && h.quarantined_count) attn.push({ cls: "bad", badge: "Left out", text: plural(h.quarantined_count, "record") + " failed validation" + (h.quarantined.length ? ": " + h.quarantined.slice(0, 2).join("; ") : ""), href: REPO + "/issues?q=label%3Adata-quarantine" });
+    // the pipeline check (scripts/pipecheck.mjs, every hour): late stages and data quality; one that outlasted its threshold
+    // also has a GitHub issue labelled pipeline-alert
+    if (h && h.quality) h.quality.problems.forEach(function (p) {
+      attn.push({ cls: p.level, badge: qualityBadge(p.id), kind: "quality", id: p.id,
+        text: p.text.charAt(0).toUpperCase() + p.text.slice(1) + (p.since ? " (first seen " + ago(p.since) + ")" : ""),
+        href: p.over ? REPO + "/issues?q=is%3Aopen+label%3Apipeline-alert" : "", jump: p.over ? "" : "dRoutines" });
+    });
     var ul = $("attention"); ul.textContent = "";
     var rank = { bad: 0, warn: 1, info: 2, neutral: 3, wait: 3 };
-    attn.sort(function (a, b) { return (rank[a.cls] || 3) - (rank[b.cls] || 3); });
+    // "bad" ranks 0: `rank[cls] || 3` sorted every red item LAST (found 2026-11-21), so look the rank up explicitly
+    var rk = function (c) { return has(rank, c) ? rank[c] : 3; };
+    attn.sort(function (a, b) { return rk(a.cls) - rk(b.cls); });
     attn.slice(0, 20).forEach(function (x) {
-      var li = el("li"); li.dataset.kind = x.cls; li.appendChild(badge(x.cls, x.badge)); li.appendChild(document.createTextNode(" " + x.text + " "));
+      var li = el("li"); li.dataset.kind = x.cls; if (x.id) li.dataset.check = x.id; li.appendChild(badge(x.cls, x.badge)); li.appendChild(document.createTextNode(" " + x.text + " "));
       if (x.href) li.appendChild(link(x.href, "details")); else if (x.jump) li.appendChild(jump(x.jump, "details"));
       ul.appendChild(li);
     });

@@ -226,7 +226,7 @@ function outagePlan(file, max, per) {
 function outageApply(batches, planNote) {
   const notes = [];
   for (const b of batches) { try { notes.push(existsSync(join(DATA, b.out)) ? sh("node", ["scripts/outage-desk.mjs", "apply", b.out], 60000).out[0] || "" : `batch ${b.batch}: no out file`); } catch {} }
-  try { const sp = join(DATA, "status.json"), st = readJson(sp, {}) || {}; st.last_outage_at = nowIso(); st.outage_note = String(batches.length ? notes.join(" | ") : planNote || "queue empty").slice(0, 200); writeJson(sp, st); } catch {}
+  try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_outage_at = nowIso(); st.outage_note = String(batches.length ? notes.join(" | ") : planNote || "queue empty").slice(0, 200); writeJson(sp, st); } catch {}
   return notes;
 }
 async function flow() {
@@ -271,7 +271,7 @@ async function flow() {
   const OW = Math.max(0, Math.min(4, Number(F.outage_workers ?? 0) || 0)), OPER = Math.max(1, Math.min(8, Number(F.outage_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
-  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
+  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
   const gridCollect = () => { if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
   /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */
   const probe = () => {
@@ -362,6 +362,8 @@ async function flow() {
       }
       // the follow-up desk runs only inside the loop: record when it ran, for the status page (routines.json followup)
       if (work.some((w) => w[0] === "followup")) { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_followup_at = nowIso(); st.followup_note = "follow-up desk ran in the research loop"; writeJson(sp, st); } catch {} }
+      // each role's heartbeat (scripts/lib/stages.mjs): when it last ran in the loop, for the pipeline check and the guard
+      try { const sp = join(DATA, "status.json"), st = readStatus(), at = nowIso(); for (const [role, k] of [["researcher", "last_researcher_at"], ["reviewer", "last_reviewer_at"], ["updater", "last_updater_at"]]) if (work.some((w) => w[0] === role)) st[k] = at; writeJson(sp, st); } catch {}
     } else phase("idle", B.level === "stop" ? `no workers: ${budgetLine(B)}` : "nothing new to research or review");
     if (OW && can.outage && !ob.length && oNote) outageApply([], oNote);   // the desk ran and found nothing waiting
     try { unlinkSync(join(DATA, pf)); } catch {}

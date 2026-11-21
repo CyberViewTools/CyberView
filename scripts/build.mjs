@@ -24,6 +24,7 @@ import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "
 import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
+import { STAGES, lastRuns, limits as stageLimits } from "./lib/stages.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -492,6 +493,17 @@ console.log(`Archive: ${live.length} events in ${index.months.length} month(s), 
 // legal pages and security.txt from legal/ and config/site.json
 console.log("Pages: " + (await buildPages()).join(", "));
 
+/** data/quality.json (scripts/pipecheck.mjs), cut to what the status page and the guard show; null when missing or broken.
+ *  A late stage that is a routine is left out: the routines table already lists it (and its attention line). */
+function pipelineQuality() {
+  const q = readJson(join(DATA, "quality.json"), null);
+  if (!q || typeof q !== "object" || !Array.isArray(q.problems)) return null;
+  const shown = new Set(STAGES.filter((s) => s.routine).map((s) => `stage-${s.key}`));
+  const iso = (v) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(v) ? v : "");
+  return { checked_at: iso(q.checked_at), problems: q.problems.filter((p) => p && typeof p.id === "string" && typeof p.text === "string" && p.page !== false && !shown.has(p.id)).slice(0, 30)
+    .map((p) => ({ id: p.id.slice(0, 60), level: ["bad", "warn", "info"].includes(p.level) ? p.level : "info", text: p.text.slice(0, 300), since: iso(p.since), over: p.over === true })) };
+}
+
 // health and manifest, written last: what was left out, and a fingerprint of every data file so the deploy can prove
 // that what is live is exactly what was built (scripts/verify-build.mjs)
 {
@@ -503,7 +515,11 @@ console.log("Pages: " + (await buildPages()).join(", "));
     grid_open: context.grid ? context.grid.items.filter((x) => x && x.scope !== "outage").length : null,
     grid_sources: gridSources, grid_analysis_at: gridAnalysis ? gridAnalysis.updated_at : "", last_grid_news_at: st.last_grid_news_at || "",
     grid_waiting: gridStages.waiting, grid_audit_at: gridStages.audit_at, grid_audit_flags: gridStages.audit_flags,
-    last_outage_at: st.last_outage_at || "", outage_queue: outageQueue }));
+    last_outage_at: st.last_outage_at || "", outage_queue: outageQueue,
+    // every pipeline stage's last run and limit (scripts/lib/stages.mjs; limits from routines.json), for the guard
+    stages: lastRuns(st, { "grid/analysis.json": gridAnalysis || {} }), stage_limits: stageLimits((readJson(join(ROOT, "routines.json"), {}) || {}).routines || []),
+    // the pipeline check's problems (scripts/pipecheck.mjs, data/quality.json), for the status page and the guard
+    quality: pipelineQuality() }));
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

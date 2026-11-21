@@ -11,26 +11,38 @@
 //   forwarder                while data is still pushed to main during the switch, data-forward.yml brings it to the data
 //                            branch within 30 minutes (warning only)
 //   data                     the bundle has events, every post in the feed is reviewed, nothing is quarantined
+//   every other stage        health.json "stages" against "stage_limits" (scripts/lib/stages.mjs; limits from routines.json):
+//                            osint, lead triage, fuse, rules, review desk, follow-up, outage desk, KEV, context, exploit
+//                            watch, link check, pipeline check (warnings; --heal starts the stage's workflow)
+//   pipeline check           every problem in health.json "quality" (scripts/pipecheck.mjs) that outlasted its threshold
+//   live check               monitor.yml ran within 3 hours (GitHub drops scheduled runs under load)
 // --heal: where a check fails and `gh` is available, start the overdue workflow or a fresh deploy.
 // Exit 0 = healthy, 2 = warnings only, 1 = visitors are (or will soon be) seeing stale or missing data.
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { NO_DEPLOY } from "./lib/repo.mjs";
+import { stageStates } from "./lib/stages.mjs";
 
 const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, ""), REPO = "xanderhutch/CyberView";
-export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 420, analysis_min: 900, analyst_min: 300, grid_min: 120,
-  grid_analysis_min: 60, grid_news_min: 60, grid_wait_min: 120, forward_min: 30 };
+// brief, analysis and analyst: the routines' own max_age_hours in routines.json (a unit test keeps them equal; until
+// 2026-11-21 the guard warned about the twice-daily brief after 7 hours and the daily analysis after 15)
+export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 840, analysis_min: 1800, analyst_min: 420, grid_min: 120,
+  grid_analysis_min: 60, grid_news_min: 60, grid_wait_min: 120, forward_min: 30, monitor_min: 180 };
+// stages the checks above already judge (with tighter limits that FAIL); the stage table adds every other one as a warning
+const JUDGED = new Set(["collect", "feeds", "cve", "sweep", "grid", "grid-news", "grid-analysis"]);
 const mins = (iso, now) => (now - Date.parse(iso)) / 6e4;
 /** Where a data file is read from raw.githubusercontent.com: the data branch's root once it exists, else main's data/. */
 export const rawDataUrl = (repo, dataBranch, path) => `https://raw.githubusercontent.com/${repo}/${dataBranch ? "data" : "main/data"}/${path}`;
 /** --heal: which workflow (dispatched on main) repairs which finding. */
-export const HEAL = { deploy: "pages.yml", collect: "collect.yml", grid: "collect.yml", feeds: "feeds.yml", cve: "cve.yml", forward: "data-forward.yml" };
+export const HEAL = { deploy: "pages.yml", collect: "collect.yml", grid: "collect.yml", feeds: "feeds.yml", cve: "cve.yml", forward: "data-forward.yml",
+  linkcheck: "linkcheck.yml", monitor: "monitor.yml", pipecheck: "pipecheck.yml" };
+const HEAL_BY_WF = Object.fromEntries(Object.entries(HEAL).map(([k, v]) => [v, k]).reverse());
 
 /** Pure: what was read -> { fails, warns, heal }.
  *  head: main's newest commit {sha, date}. dataHead: the data branch's newest commit, or null while there is no data branch.
  *  dataLagFiles: files changed between the live data commit and dataHead (only looked up when they differ).
  *  forward: { mark: {sha, date} of the main commit in the data branch's .forwarded, main: [{sha, date}] main commits touching data/ }. */
-export function assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward }, now = Date.now()) {
+export function assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward, monitor }, now = Date.now()) {
   const fails = [], warns = [], heal = [];
   if (!manifest || !health || !bundle) { fails.push("the live site's data files could not be read"); heal.push("deploy"); return { fails, warns, heal }; }
   const age = mins(manifest.built_at, now);
@@ -74,6 +86,19 @@ export function assess({ manifest, health, bundle, head, deploy, leases, dataHea
     if (oldest > LIMITS.forward_min) { warns.push(`data is still being pushed to main; the forwarder is not keeping up (${waiting.length} data commit(s) on main not on the data branch, the oldest ${Math.round(oldest)} minutes old; limit ${LIMITS.forward_min})`); heal.push("forward"); }
   }
   if (deploy && deploy.conclusion === "failure") { warns.push("the most recent deploy run failed"); heal.push("deploy"); }
+  // every other pipeline stage (scripts/lib/stages.mjs), with the limits the build took from routines.json
+  if (health.stages && health.stage_limits && typeof health.stages === "object") {
+    for (const s of stageStates(health.stages, [], now, {}, health.stage_limits)) {
+      if (JUDGED.has(s.key) || (s.state !== "late" && s.state !== "never")) continue;
+      warns.push(s.state === "never" ? `${s.label}: no heartbeat recorded` : `${s.label} last ran ${Math.round(s.age_min)} minutes ago (limit ${s.max_min})`);
+      if (s.heal && HEAL_BY_WF[s.heal]) heal.push(HEAL_BY_WF[s.heal]);
+    }
+  }
+  // the pipeline check's own findings (scripts/pipecheck.mjs): only those that outlasted their threshold
+  const Q = health.quality;
+  if (Q && Array.isArray(Q.problems)) for (const p of Q.problems) if (p && p.over === true && p.level !== "info" && typeof p.text === "string") warns.push("pipeline check: " + p.text.slice(0, 240));
+  // the live-site monitor runs in Actions with no data heartbeat: its last run is read from the Actions API
+  if (monitor && monitor.created_at && !(mins(monitor.created_at, now) <= LIMITS.monitor_min)) { warns.push(`the live site monitor last ran ${Math.round(mins(monitor.created_at, now))} minutes ago (limit ${LIMITS.monitor_min})`); heal.push("monitor"); }
   return { fails, warns, heal: [...new Set(heal)] };
 }
 
@@ -88,7 +113,8 @@ const gh = (args) => spawnSync("gh", ["api", ...args], { encoding: "utf8", timeo
 
 async function main() {
   const t = Date.now(), live = (f) => j(`${SITE}/data/${f}?t=${t}`), api = (p) => j(`https://api.github.com/repos/${REPO}/${p}`, { accept: "application/vnd.github+json" });
-  const [manifest, health, bundle, commit, runs] = await Promise.all([live("manifest.json"), live("health.json"), live("bundle.json"), api("commits/main"), api("actions/workflows/pages.yml/runs?per_page=1&status=completed")]);
+  const [manifest, health, bundle, commit, runs, mon] = await Promise.all([live("manifest.json"), live("health.json"), live("bundle.json"), api("commits/main"), api("actions/workflows/pages.yml/runs?per_page=1&status=completed"), api("actions/workflows/monitor.yml/runs?per_page=1")]);
+  const monitor = mon && mon.workflow_runs && mon.workflow_runs[0] ? { created_at: mon.workflow_runs[0].created_at } : null;
   const head = commit ? { sha: commit.sha, date: commit.commit && commit.commit.committer && commit.commit.committer.date } : null;
   const deploy = runs && runs.workflow_runs && runs.workflow_runs[0] ? { conclusion: runs.workflow_runs[0].conclusion } : null;
   // the data branch (code on main, data on `data`): its newest commit, or null while it does not exist yet
@@ -107,7 +133,7 @@ async function main() {
       if (Array.isArray(list)) forward = { mark: { sha, date }, main: list.map((c) => ({ sha: c.sha, date: c.commit && c.commit.committer && c.commit.committer.date })) };
     }
   }
-  const r = assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward });
+  const r = assess({ manifest, health, bundle, head, deploy, leases, dataHead, dataLagFiles, forward, monitor });
   const healed = [];
   if (process.argv.includes("--heal")) for (const h of r.heal) {
     // grid: collect.yml runs grid collect, the analysis and the news when the research loop has not

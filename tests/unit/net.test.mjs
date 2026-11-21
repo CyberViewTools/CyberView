@@ -13,6 +13,8 @@ before(async () => {
     if (req.url === "/flaky") return hits[req.url] < 2 ? (res.statusCode = 503, res.end()) : res.end('{"c":3}');
     if (req.url === "/404") return (res.statusCode = 404, res.end());
     if (req.url === "/html") return res.end("<html>");
+    if (req.url === "/busy1") return hits[req.url] < 2 ? (res.statusCode = 429, res.setHeader("retry-after", "1"), res.end()) : res.end('{"d":4}');
+    if (req.url === "/busylong") return (res.statusCode = 429, res.setHeader("retry-after", "3600"), res.end());
     res.statusCode = 500; res.end();
   });
   await new Promise((r) => srv.listen(0, "127.0.0.1", r));
@@ -45,4 +47,17 @@ test("circuit opens after three failed calls and then skips the source", async (
   const before = hits["/down"];
   await assert.rejects(get(base + "/down", { key: "t5", retries: 0 }), (e) => e.code === "circuit_open");
   assert.equal(hits["/down"], before);
+});
+
+test("429 with Retry-After: waits what the source asked, then succeeds", async () => {
+  const t0 = Date.now();
+  assert.deepEqual(await get(base + "/busy1", { key: "t6", delayMs: 10 }), { d: 4 });
+  assert.ok(Date.now() - t0 >= 950, "waited the second the source asked for, not the 10 ms backoff");
+});
+
+test("429 asking for an hour: not retried in this run, and the source stays skipped until then", async () => {
+  await assert.rejects(get(base + "/busylong", { key: "t7", delayMs: 10 }), (e) => e.code === "http_429" && e.retryAfterMs === 3600000);
+  assert.equal(hits["/busylong"], 1);
+  assert.ok(circuitOpen("t7"));
+  await assert.rejects(get(base + "/busylong", { key: "t7" }), (e) => e.code === "circuit_open");
 });

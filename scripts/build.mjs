@@ -9,6 +9,7 @@
 //   site/data/feed.xml, feed.json    RSS and JSON Feed of high-severity and known-exploited events
 //   site/data/trends.json            this week against last week by category, sector, country, actor, product, tag
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
+//   site/data/psirt.json             vendor security advisories joined on CVE (scripts/psirt.mjs), for the Vulnerabilities page
 //   site/data/chat.json              reviewed community posts (newest 300)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
@@ -24,6 +25,7 @@ import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "
 import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
+import { advisory as psirtAdvisory, byCve as psirtByCve } from "./lib/psirt.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
@@ -324,6 +326,14 @@ writeFileSync(join(OUT, "bundle.json"), JSON.stringify({ built_at, events, kev, 
   writeFileSync(join(OUT, "workbench.json"), JSON.stringify({ built_at, kev: wbKev, vulns: wbVulns.slice(0, 80), guides, analyses, event_of: eventOf, hunt: hunt.slice(0, 200) }));
 }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
+// vendor security advisories (data/psirt/advisories.json, scripts/psirt.mjs) joined on CVE for the Vulnerabilities page: each
+// record checked again here; a missing or unreadable file gives an empty join, never a failed build
+{
+  const clip = (v, n) => String(v || "").slice(0, n), p = readJson(join(DATA, "psirt", "advisories.json"), null), advs = (p && Array.isArray(p.advisories) ? p.advisories : []).map((a) => psirtAdvisory(a || {})).filter(Boolean);
+  if (p && !advs.length && (p.advisories || []).length) warnings.push("psirt/advisories.json: no readable advisory; the vendor advisory join is empty");
+  const vendors = {}; for (const [k, v] of Object.entries((p && p.sources) || {}).slice(0, 40)) if (v && typeof v === "object") vendors[clip(k, 20)] = { name: clip(v.name, 80), ok: !!v.ok, at: clip(v.at, 30), n: Number(v.n) || 0 };
+  writeFileSync(join(OUT, "psirt.json"), JSON.stringify({ built_at, updated_at: clip(p && p.updated_at, 30), vendors, advisories: advs.length, exploited: advs.filter((a) => a.exploited).length, cve: psirtByCve(advs) }));
+}
 // tabletop exercises: the current one and an index of past ones (site/data/tabletop.json)
 writeFileSync(join(OUT, "tabletop.json"), JSON.stringify({ built_at, current: tabletop.current,
   past: tabletop.past.map((t) => ({ date: t.date, title: t.title })), exercises: tabletop.past.slice(0, 26) }));

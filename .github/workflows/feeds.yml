@@ -25,7 +25,7 @@ concurrency:
 jobs:
   feeds:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -56,6 +56,12 @@ jobs:
       - name: Exploit watch (public repositories naming exploited CVEs)
         if: steps.gate.outputs.go == '1'
         run: node scripts/osint.mjs exploits || true
+      - name: Vendor security advisories (PSIRT CSAF, feeds and pages; leads for exploited or critical)
+        if: steps.gate.outputs.go == '1'
+        # every source fails on its own and keeps its last advisories; a total failure is reported, never stops the commit
+        env:
+          PSIRT_BUDGET_S: "300"
+        run: node scripts/psirt.mjs || echo "vendor advisories: no source could be read this run"
       - name: Validate and security check
         if: steps.gate.outputs.go == '1'
         run: node scripts/build.mjs --quarantine && node scripts/security-check.mjs

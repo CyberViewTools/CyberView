@@ -190,6 +190,8 @@
       d.appendChild(el("p", "note", "Found by an automatic search of GitHub. A repository naming a CVE may hold a working exploit, a detector, notes or nothing useful, and some are traps: review before running anything."));
     }
     if (f.required) { d.appendChild(el("h4", null, f.kev ? "What CISA requires" : "What to do")); d.appendChild(el("p", null, f.required)); }
+    var vbx = el("div"); d.appendChild(vbx);
+    loadVendor().then(function (m) { var b = vendorBox(m[f.cve] || null); if (b) vbx.appendChild(b); });
     var ln = el("p", "wblinks");
     f.refs.forEach(function (u) { var host = ""; try { host = new URL(u).host.replace(/^www\./, ""); } catch (e) {} ln.appendChild(link(u, "Advisory (" + (host || "link") + ")")); });
     ln.appendChild(link("https://nvd.nist.gov/vuln/detail/" + encodeURIComponent(f.cve), "NVD record"));
@@ -435,10 +437,32 @@
   function buildKev() { CV.kev = {}; flaws.forEach(function (f) { if (f.kev) CV.kev[f.cve] = f; }); }
   function cvStatus(msg) { var b = $("cvStatus"); b.hidden = !msg; b.textContent = msg || ""; $("cvMain").hidden = !!msg; }
   function getJson(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); }); }
+  /* vendor security advisories joined on CVE (data/psirt.json, scripts/psirt.mjs): loaded once; without it the page works as before */
+  function loadVendor() {
+    if (!CV.vendor) CV.vendor = getJson("data/psirt.json").then(function (j) { D.vendorIndex = D.cleanVendorIndex(j); return D.vendorIndex; }, function () { return {}; });
+    return CV.vendor;
+  }
+  function vendorSays(r) { return (r && Array.isArray(r.adv) ? r.adv : []).filter(function (a) { return a.x; })[0] || null; }
+  /** the vendor's own advisories for one CVE: link, the vendor's severity, fixed versions as stated, and its own exploited statement */
+  function vendorBox(adv) {
+    if (!Array.isArray(adv) || !adv.length) return null;
+    var box = el("div", "wbvendor"); box.appendChild(el("h4", null, adv.length > 1 ? "The vendors' own advisories" : "The vendor's own advisory"));
+    var ul = el("ul");
+    adv.forEach(function (a) {
+      var li = el("li"); li.appendChild(link(a.url, a.vendor + " " + a.id));
+      if (a.sev) li.appendChild(el("span", "note", " · " + a.vendor + " rates it " + a.sev));
+      if (a.x) { li.appendChild(document.createTextNode(" ")); li.appendChild(el("span", "badge bad", "Exploited (vendor)")); var q = el("p", "note", a.vendor + "'s statement: \u201c" + a.x + "\u201d"); li.appendChild(q); }
+      if (a.fixed.length) li.appendChild(el("p", "note", "Fixed in, as " + a.vendor + " states it: " + a.fixed.join("; ")));
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    box.appendChild(el("p", "note", "Collected from the vendors' own advisories (CSAF, feeds and pages) by a script, not written by CyberView. A vendor's \u201cexploited\u201d statement raises the CyberView rating's Exploit Code Maturity to High, labelled as the vendor's statement."));
+    return box;
+  }
   function ensureIndex() {
     if (CV.waiting) return CV.waiting;
     CV.state = "loading";
-    CV.waiting = getJson("data/cve/index.json").then(function (j) {
+    CV.waiting = Promise.all([getJson("data/cve/index.json"), loadVendor()]).then(function (a) { var j = a[0];
       var ix = D.cleanIndex(j); if (!ix) throw new Error("invalid");
       CV.idx = ix; CV.state = "ready"; initCvUi(); return ix;
     }).catch(function () {
@@ -540,6 +564,7 @@
     var chips = el("span", "wbchips"); if (!r.rejected) { chips.appendChild(decBadge(D.rated(r))); var scx = D.scored(r); if (scx) { var sbg = el("span", "badge " + scx.tone, scx.score !== null ? "CyberView " + scx.score.toFixed(1) + " " + scx.band : "CyberView: not scored"); sbg.title = scx.text; chips.appendChild(sbg); } } chips.appendChild(sevBadge(r));
     if (r.rejected) chips.appendChild(el("span", "badge warn", "Rejected"));
     if (isKev(r)) chips.appendChild(el("span", "badge bad", "Known exploited")); else if (r.expl === "active") chips.appendChild(el("span", "badge bad", "Exploited (CISA)"));
+    else if (vendorSays(r)) { var vxb = el("span", "badge bad", "Exploited (vendor)"); vxb.title = vendorSays(r).vendor + "'s own advisory says it is exploited in the wild"; chips.appendChild(vxb); }
     if (r.ransom) chips.appendChild(el("span", "badge bad", "Ransomware"));
     if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
     if (!r.rejected && mineFn(r)) chips.appendChild(el("span", "badge warn", "On your software list"));
@@ -562,6 +587,7 @@
       ["CISA exploitation", r.expl ? D.EXPL[r.expl] : ""], ["Exploit likelihood (EPSS)", r.epss !== null ? (r.epss * 100).toFixed(2) + "% chance of exploitation in the next 30 days" + (r.pct !== null ? "; higher than " + (r.pct * 100).toFixed(1) + "% of CVEs" : "") : ""]]
       .forEach(function (p) { if (!p[1]) return; var li = el("li"); li.appendChild(el("b", null, p[0] + ": ")); li.appendChild(document.createTextNode(p[1])); kv.appendChild(li); });
     d.appendChild(kv);
+    var vb = vendorBox(r.adv); if (vb) d.appendChild(vb);
     var k = CV.kev[r.id];
     if (k) {
       var me = el("div", "wbme bad"); me.appendChild(el("b", null, "On CISA's known-exploited list")); me.appendChild(el("p", null, "Added " + k.added + (k.due ? "; " + dueText(k).toLowerCase() : "") + (k.ransomware ? "; used by ransomware groups" : "") + "."));

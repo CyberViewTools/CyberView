@@ -1,0 +1,586 @@
+{
+ "document": {
+  "aggregate_severity": {
+   "namespace": "https://access.redhat.com/security/updates/classification/",
+   "text": "Important"
+  },
+  "category": "csaf_security_advisory",
+  "csaf_version": "2.0",
+  "distribution": {
+   "text": "Copyright \u00a9 Red Hat, Inc. All rights reserved.",
+   "tlp": {
+    "label": "WHITE",
+    "url": "https://www.first.org/tlp/"
+   }
+  },
+  "lang": "en",
+  "notes": [
+   {
+    "category": "summary",
+    "text": "A security update is now available for Red Hat JBoss Enterprise Application Platform 7.4. Red Hat Product Security has rated this update as having a security impact of Important. A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE link(s) in the References section.",
+    "title": "Topic"
+   },
+   {
+    "category": "general",
+    "text": "Red Hat JBoss Enterprise Application Platform 7 is a platform for Java applications based on the WildFly application runtime. This release of Red Hat JBoss Enterprise Application Platform 7.4.25 serves as a replacement for Red Hat JBoss Enterprise Application Platform 7.4.24, and includes bug fixes and enhancements. See the Red Hat JBoss Enterprise Application Platform 7.4.25 Release Notes for information about the most significant bug fixes and enhancements included in this release.\n\nSecurity Fix(es):\n\n* openjdk-orb: unauthed class loading via IIOP in EAP [eap-7.4.z] (CVE-2026-15560)\n\n* undertow-core: OOM via missing limits in chunked trailer in EAP's Undertow [eap-7.4.z] (CVE-2026-15561)\n\n* undertow-websockets-jsr: Undertow: Pre-Auth DoS on websocket endpoint with @ServerEndpoint class with any @OnMessage method [eap-7.4.z] (CVE-2026-15565)\n\n* jboss-eap-7/eap74-els-openjdk8-openshift-rhel8: Jackson-databind: Denial of Service via deeply nested JSON processing [eap-7.4.z] (CVE-2026-50193) \n\n* jackson-databind: jackson-databind: Arbitrary code execution via PolymorphicTypeValidator bypass [eap-7.4.z] (CVE-2026-54512)\n\n* netty-codec-redis: Netty: Denial of Service via malicious Redi",
+    "title": "Details"
+   },
+   {
+    "category": "legal_disclaimer",
+    "text": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content, or a modified version of it, you must provide attribution to Red Hat Inc. and provide a link to the original.",
+    "title": "Terms of Use"
+   }
+  ],
+  "publisher": {
+   "category": "vendor",
+   "contact_details": "https://access.redhat.com/security/team/contact/",
+   "issuing_authority": "Red Hat Product Security is responsible for vulnerability handling across all Red Hat products and services.",
+   "name": "Red Hat Product Security",
+   "namespace": "https://www.redhat.com"
+  },
+  "references": [
+   {
+    "category": "self",
+    "summary": "https://access.redhat.com/errata/RHSA-2026:53806",
+    "url": "https://access.redhat.com/errata/RHSA-2026:53806"
+   },
+   {
+    "category": "external",
+    "summary": "2488081",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488081"
+   },
+   {
+    "category": "external",
+    "summary": "2488383",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488383"
+   },
+   {
+    "category": "external",
+    "summary": "2488388",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488388"
+   },
+   {
+    "category": "external",
+    "summary": "2488391",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488391"
+   },
+   {
+    "category": "external",
+    "summary": "2488400",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488400"
+   },
+   {
+    "category": "external",
+    "summary": "2488413",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488413"
+   },
+   {
+    "category": "external",
+    "summary": "2488429",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488429"
+   },
+   {
+    "category": "external",
+    "summary": "2488433",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488433"
+   },
+   {
+    "category": "external",
+    "summary": "2488437",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488437"
+   },
+   {
+    "category": "external",
+    "summary": "2488439",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488439"
+   },
+   {
+    "category": "external",
+    "summary": "2488442",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488442"
+   },
+   {
+    "category": "external",
+    "summary": "2490628",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2490628"
+   },
+   {
+    "category": "external",
+    "summary": "2491620",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2491620"
+   },
+   {
+    "category": "external",
+    "summary": "2491999",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2491999"
+   },
+   {
+    "category": "external",
+    "summary": "2492015",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2492015"
+   },
+   {
+    "category": "external",
+    "summary": "2511026",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2511026"
+   },
+   {
+    "category": "external",
+    "summary": "JBEAP-33515",
+    "url": "https://issues.redhat.com/browse/JBEAP-33515"
+   },
+   {
+    "category": "external",
+    "summary": "https://access.redhat.com/security/updates/classification/#important",
+    "url": "https://access.redhat.com/security/updates/classification/#important"
+   },
+   {
+    "category": "external",
+    "summary": "https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/7.4",
+    "url": "https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/7.4"
+   },
+   {
+    "category": "external",
+    "summary": "https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/7.4/html-single/installation_guide/index",
+    "url": "https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/7.4/html-single/installation_guide/index"
+   },
+   {
+    "category": "external",
+    "summary": "2444320",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2444320"
+   },
+   {
+    "category": "external",
+    "summary": "2458634",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458634"
+   },
+   {
+    "category": "external",
+    "summary": "2458635",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458635"
+   },
+   {
+    "category": "external",
+    "summary": "2458638",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458638"
+   },
+   {
+    "category": "external",
+    "summary": "2458640",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458640"
+   },
+   {
+    "category": "external",
+    "summary": "2458641",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458641"
+   },
+   {
+    "category": "external",
+    "summary": "2467540",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2467540"
+   },
+   {
+    "category": "external",
+    "summary": "2477217",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477217"
+   },
+   {
+    "category": "external",
+    "summary": "2477220",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477220"
+   },
+   {
+    "category": "external",
+    "summary": "2477224",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477224"
+   },
+   {
+    "category": "external",
+    "summary": "2477226",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477226"
+   },
+   {
+    "category": "external",
+    "summary": "2477227",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477227"
+   },
+   {
+    "category": "external",
+    "summary": "2477232",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2477232"
+   },
+   {
+    "category": "external",
+    "summary": "2480325",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2480325"
+   },
+   {
+    "category": "external",
+    "summary": "2480601",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2480601"
+   },
+   {
+    "category": "external",
+    "summary": "2480637",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2480637"
+   },
+   {
+    "category": "external",
+    "summary": "2482963",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2482963"
+   },
+   {
+    "category": "external",
+    "summary": "2482965",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2482965"
+   },
+   {
+    "category": "external",
+    "summary": "2483121",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483121"
+   },
+   {
+    "category": "external",
+    "summary": "2483131",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483131"
+   },
+   {
+    "category": "external",
+    "summary": "2483133",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483133"
+   },
+   {
+    "category": "external",
+    "summary": "2483135",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483135"
+   },
+   {
+    "category": "external",
+    "summary": "2483136",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483136"
+   },
+   {
+    "category": "external",
+    "summary": "2483138",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2483138"
+   },
+   {
+    "category": "external",
+    "summary": "2488062",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488062"
+   },
+   {
+    "category": "external",
+    "summary": "2488053",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2488053"
+   },
+   {
+    "category": "self",
+    "summary": "Canonical URL",
+    "url": "https://security.access.redhat.com/data/csaf/v2/advisories/2026/rhsa-2026_53806.json"
+   }
+  ],
+  "title": "Red Hat Security Advisory: Red Hat JBoss Enterprise Application Platform 7.4.25 security update",
+  "tracking": {
+   "current_release_date": "2026-11-21T20:55:14+00:00",
+   "generator": {
+    "date": "2026-11-21T20:55:14+00:00",
+    "engine": {
+     "name": "Red Hat SDEngine",
+     "version": "5.4.8"
+    }
+   },
+   "id": "RHSA-2026:53806",
+   "initial_release_date": "2026-08-11T17:41:19+00:00",
+   "revision_history": [
+    {
+     "date": "2026-08-11T17:41:19+00:00",
+     "number": "1",
+     "summary": "Initial version"
+    },
+    {
+     "date": "2026-10-20T14:19:46+00:00",
+     "number": "2",
+     "summary": "Last updated version"
+    },
+    {
+     "date": "2026-11-21T20:55:14+00:00",
+     "number": "3",
+     "summary": "Last generated version"
+    }
+   ],
+   "status": "final",
+   "version": "3"
+  }
+ },
+ "product_tree": {
+  "branches": [
+   {
+    "branches": [
+     {
+      "branches": [
+       {
+        "category": "product_name",
+        "name": "Red Hat JBoss Enterprise Application Platform 7.4.25",
+        "product": {
+         "name": "Red Hat JBoss Enterprise Application Platform 7.4.25",
+         "product_id": "Red Hat JBoss Enterprise Application Platform 7.4.25",
+         "product_identification_helper": {
+          "cpe": "cpe:/a:redhat:jboss_enterprise_application_platform:7.4"
+         }
+        }
+       }
+      ],
+      "category": "product_family",
+      "name": "Red Hat JBoss Enterprise Application Platform"
+     }
+    ],
+    "category": "vendor",
+    "name": "Red Hat"
+   }
+  ]
+ },
+ "vulnerabilities": [
+  {
+   "cve": "CVE-2025-14813",
+   "cwe": {
+    "id": "CWE-327",
+    "name": "Use of a Broken or Risky Cryptographic Algorithm"
+   },
+   "discovery_date": "2026-04-15T10:01:27.769752+00:00",
+   "ids": [
+    {
+     "system_name": "Red Hat Bugzilla ID",
+     "text": "2458640"
+    }
+   ],
+   "notes": [
+    {
+     "category": "description",
+     "text": "A flaw was found in Legion of the Bouncy Castle Inc. BC-JAVA bcprov. The `GOSTCTR` implementation is unable to securely process more than 255 blocks of data due to keystream reuse. This issue allows an attacker to break the fundamental confidentiality of any data protected by the `G3413CTRBlockCipher`, potentially leading to the recovery and access of encrypted data.",
+     "title": "Vulnerability description"
+    },
+    {
+     "category": "summary",
+     "text": "bouncycastle: BC-JAVA: GOSTCTR implementation unable to process more than 255 blocks correctly",
+     "title": "Vulnerability summary"
+    },
+    {
+     "category": "other",
+     "text": "To exploit this flaw, an attacker needs to capture ciphertext encrypted by the `GOSTCTR` implementation where the `G3413CTRBlockCipher` processed more than 255 blocks of data, resulting in keystream reuse. An attack typically requires capturing these overlapping ciphertexts to perform cryptanalysis and uncover the underlying data.\nThe primary impact of this vulnerability is the potential loss of confidentiality for data encrypted by the `GOSTCTR` implementation. This can compromise encrypted communications or sensitive stored data by allowing an attacker to fully recover the plaintext.",
+     "title": "Statement"
+    },
+    {
+     "category": "general",
+     "text": "The CVSS score(s) listed for this vulnerability do not reflect the associated product's status, and are included for informational purposes to better understand the severity of this vulnerability.",
+     "title": "CVSS score applicability"
+    }
+   ],
+   "product_status": {
+    "fixed": [
+     "Red Hat JBoss Enterprise Application Platform 7.4.25"
+    ]
+   },
+   "references": [
+    {
+     "category": "self",
+     "summary": "Canonical URL",
+     "url": "https://access.redhat.com/security/cve/CVE-2025-14813"
+    },
+    {
+     "category": "external",
+     "summary": "RHBZ#2458640",
+     "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458640"
+    },
+    {
+     "category": "external",
+     "summary": "https://www.cve.org/CVERecord?id=CVE-2025-14813",
+     "url": "https://www.cve.org/CVERecord?id=CVE-2025-14813"
+    },
+    {
+     "category": "external",
+     "summary": "https://nvd.nist.gov/vuln/detail/CVE-2025-14813",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-14813"
+    },
+    {
+     "category": "external",
+     "summary": "https://github.com/bcgit/bc-java/wiki/CVE%E2%80%902025%E2%80%9014813",
+     "url": "https://github.com/bcgit/bc-java/wiki/CVE%E2%80%902025%E2%80%9014813"
+    }
+   ],
+   "release_date": "2026-04-15T08:56:34.057000+00:00",
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "date": "2026-08-11T17:41:19+00:00",
+     "details": "Before applying the update, make sure all previously released errata relevant to your system have been applied. Also, back up your existing installation, including all applications, configuration files, databases and database settings. For details on how to apply this update, refer to: https://access.redhat.com/articles/11258",
+     "product_ids": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ],
+     "restart_required": {
+      "category": "none"
+     },
+     "url": "https://access.redhat.com/errata/RHSA-2026:53806"
+    },
+    {
+     "category": "workaround",
+     "details": "To mitigate this vulnerability, strictly limit the payload encrypted under a single key and Initialization Vector (IV) pair using the GOSTCTR implementation and G3413CTRBlockCipher to a maximum of 255 blocks. Alternatively, transition to a more secure, standardized and authenticated encryption mode.",
+     "product_ids": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ]
+    }
+   ],
+   "scores": [
+    {
+     "cvss_v3": {
+      "attackComplexity": "LOW",
+      "attackVector": "NETWORK",
+      "availabilityImpact": "NONE",
+      "baseScore": 7.5,
+      "baseSeverity": "HIGH",
+      "confidentialityImpact": "HIGH",
+      "integrityImpact": "NONE",
+      "privilegesRequired": "NONE",
+      "scope": "UNCHANGED",
+      "userInteraction": "NONE",
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "version": "3.1"
+     },
+     "products": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ]
+    }
+   ],
+   "threats": [
+    {
+     "category": "impact",
+     "details": "Important"
+    }
+   ],
+   "title": "bouncycastle: BC-JAVA: GOSTCTR implementation unable to process more than 255 blocks correctly"
+  },
+  {
+   "cve": "CVE-2026-0636",
+   "cwe": {
+    "id": "CWE-90",
+    "name": "Improper Neutralization of Special Elements used in an LDAP Query"
+   },
+   "discovery_date": "2026-04-15T10:01:32.911938+00:00",
+   "ids": [
+    {
+     "system_name": "Red Hat Bugzilla ID",
+     "text": "2458641"
+    }
+   ],
+   "notes": [
+    {
+     "category": "description",
+     "text": "A flaw was found in Legion of the Bouncy Castle Inc. BC-JAVA bcprov. The `LDAPStoreHelper` implementation fails to properly neutralize special elements in user-supplied input before incorporating them into LDAP queries. This allows a remote attacker to execute an LDAP injection attack by supplying crafted input, potentially leading to disclosure of sensitive information or the manipulation of directory search queries.",
+     "title": "Vulnerability description"
+    },
+    {
+     "category": "summary",
+     "text": "bouncycastle: BC-JAVA: LDAP injection vulnerability in LDAPStoreHelper.java",
+     "title": "Vulnerability summary"
+    },
+    {
+     "category": "other",
+     "text": "To exploit this issue, an attacker needs to submit crafted input to an application using the `LDAPStoreHelper` implementation for directory queries. An attack typically requires the application to pass the malicious input directly into a search filter, allowing the attacker to modify the resulting LDAP query.\nThe primary impact of this vulnerability is the loss of confidentiality and integrity for directory data. This can allow an attacker to bypass search restrictions and manipulate directory results, potentially leading to unauthorized access or privilege escalation.",
+     "title": "Statement"
+    },
+    {
+     "category": "general",
+     "text": "The CVSS score(s) listed for this vulnerability do not reflect the associated product's status, and are included for informational purposes to better understand the severity of this vulnerability.",
+     "title": "CVSS score applicability"
+    }
+   ],
+   "product_status": {
+    "fixed": [
+     "Red Hat JBoss Enterprise Application Platform 7.4.25"
+    ]
+   },
+   "references": [
+    {
+     "category": "self",
+     "summary": "Canonical URL",
+     "url": "https://access.redhat.com/security/cve/CVE-2026-0636"
+    },
+    {
+     "category": "external",
+     "summary": "RHBZ#2458641",
+     "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2458641"
+    },
+    {
+     "category": "external",
+     "summary": "https://www.cve.org/CVERecord?id=CVE-2026-0636",
+     "url": "https://www.cve.org/CVERecord?id=CVE-2026-0636"
+    },
+    {
+     "category": "external",
+     "summary": "https://nvd.nist.gov/vuln/detail/CVE-2026-0636",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-0636"
+    },
+    {
+     "category": "external",
+     "summary": "https://github.com/bcgit/bc-java/commit/d20cdb8430e09224114fec0179a71859929fcbde",
+     "url": "https://github.com/bcgit/bc-java/commit/d20cdb8430e09224114fec0179a71859929fcbde"
+    },
+    {
+     "category": "external",
+     "summary": "https://github.com/bcgit/bc-java/wiki/CVE%E2%80%902026%E2%80%900636",
+     "url": "https://github.com/bcgit/bc-java/wiki/CVE%E2%80%902026%E2%80%900636"
+    }
+   ],
+   "release_date": "2026-04-15T08:59:12.677000+00:00",
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "date": "2026-08-11T17:41:19+00:00",
+     "details": "Before applying the update, make sure all previously released errata relevant to your system have been applied. Also, back up your existing installation, including all applications, configuration files, databases and database settings. For details on how to apply this update, refer to: https://access.redhat.com/articles/11258",
+     "product_ids": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ],
+     "restart_required": {
+      "category": "none"
+     },
+     "url": "https://access.redhat.com/errata/RHSA-2026:53806"
+    },
+    {
+     "category": "workaround",
+     "details": "To mitigate this flaw, sanitize all user-supplied input to remove or escape LDAP special characters before passing it to the LDAPStoreHelper for directory queries. If the input contains unexpected metacharacters such as asterisks, parentheses or backslashes, reject the request or escape the characters.",
+     "product_ids": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ]
+    }
+   ],
+   "scores": [
+    {
+     "cvss_v3": {
+      "attackComplexity": "LOW",
+      "attackVector": "NETWORK",
+      "availabilityImpact": "NONE",
+      "baseScore": 6.5,
+      "baseSeverity": "MEDIUM",
+      "confidentialityImpact": "LOW",
+      "integrityImpact": "LOW",
+      "privilegesRequired": "NONE",
+      "scope": "UNCHANGED",
+      "userInteraction": "NONE",
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "version": "3.1"
+     },
+     "products": [
+      "Red Hat JBoss Enterprise Application Platform 7.4.25"
+     ]
+    }
+   ],
+   "threats": [
+    {
+     "category": "impact",
+     "details": "Important"
+    }
+   ],
+   "title": "bouncycastle: BC-JAVA: LDAP injection vulnerability in LDAPStoreHelper.java"
+  }
+ ]
+}

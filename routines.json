@@ -85,6 +85,19 @@
    "does": "Runs in the research loop every few minutes (collect.yml every 30 minutes as backup): reads grid operators' public outage feeds and open grid data, tracks incidents from start to end, finds outages unusual for the hour and what corroborates them, gathers outages reported in the news, and audits every source each cycle (failing or frozen feeds, sudden falls, misplaced points). Map context, never cyber events."
   },
   {
+   "key": "psirt",
+   "name": "Vendor security advisories",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_psirt_at",
+   "max_age_hours": 8,
+   "active": true,
+   "active_since": "2026-11-21T00:00:00Z",
+   "does": "Reads twelve vendors' own security advisories as structured data (Microsoft, Cisco, Fortinet, Palo Alto Networks, Red Hat, Ubuntu, Debian, Oracle, Google Chrome, Apple, Mozilla, Ivanti; CSAF where the vendor publishes it): severity and fixed versions as the vendor states them, and the vendor's own exploited statement, joined to every CVE on the Vulnerabilities page. A vendor's exploited statement or a critical advisory for widely used software becomes a lead for the research loop, never an event."
+  },
+  {
    "key": "exploit-watch",
    "name": "Exploit watch",
    "tier": "automation",

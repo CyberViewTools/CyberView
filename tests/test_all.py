@@ -250,7 +250,9 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            # an event the 7-day map shows (the bundle carries 9 days, so the next one in the list can be too old to open)
+            import datetime as _dtw; week = (_dtw.date.today() - _dtw.timedelta(days=6)).isoformat()
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and str(e.get("date", "")) >= week)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -1506,10 +1508,13 @@ async def main():
             await pg.touchscreen.tap(mk[0], mk[1]); await pg.wait_for_timeout(600)
             top = await pg.evaluate("Math.round(document.getElementById('dbar').getBoundingClientRect().top)")
             ok("phone: a tap on a marker opens it even while the globe spins, with the details in view", await pg.locator("#dcard").count() == 1 and 0 <= top < 200, top)
+            opened = await pg.evaluate("document.getElementById('detail').dataset.id || ''")
             await pg.locator("#dBack").tap(); await pg.wait_for_timeout(400)
             ok("phone: back from a marker returns to the globe", await pg.evaluate("scrollY") < 40 and await pg.locator("#feed").is_visible())
             n = await pg.locator("#feed .card").count()
-            ok("phone: the list starts with 30 events and offers more", n == 30 and await pg.locator("#feedMore").count() == 1, n)
+            # 30 to start; when the marker tapped is further down, the list reaches 10 past it so its card is there to return to
+            at = await pg.evaluate("id => [...document.querySelectorAll('#feed .card')].findIndex(c => c.id === 'card-' + id)", opened)
+            ok("phone: the list starts with 30 events and offers more", n == (30 if at < 30 else at + 10) and await pg.locator("#feedMore").count() == 1, (n, at))
             await pg.evaluate("document.querySelectorAll('#feed .card')[14].scrollIntoView({block:'center'})"); await pg.wait_for_timeout(250)
             cid = await pg.evaluate("document.querySelectorAll('#feed .card')[14].id")
             ok("phone: a Map button appears once the globe is out of view", await pg.locator("#toMap").is_visible())
@@ -1575,6 +1580,12 @@ async def main():
         wb132["kev"][1]["due"] = (t132 + datetime.timedelta(days=20)).isoformat()
         wb132["kev"][2]["due"] = (t132 - datetime.timedelta(days=4)).isoformat()
         json.dump(wb132, open(os.path.join(site132, "data", "workbench.json"), "w"))
+        # v1.63: vendor advisories joined on CVE (scripts/psirt.mjs -> build.mjs -> data/psirt.json)
+        json.dump({"built_at": "2026-11-21T00:00:00Z", "vendors": {}, "advisories": 3, "exploited": 1, "cve": {
+            "CVE-2024-2002": [["Acme", "ACME-SA-2026-01", "https://vendor.example/acme/sa-01", "Critical", "Acme is aware of limited exploitation of this vulnerability in the wild.", ["Widget 2.4.1"]],
+                              ["<img src=x onerror=alert(5)>", "BAD-1", "javascript:alert(6)", "", "exploited", []]],
+            "CVE-2026-1001": [["Fortinet", "FG-IR-26-001", "https://vendor.example/psirt/1", "Critical", "", ["FortiOS 7.4.10"]]]}},
+            open(os.path.join(site132, "data", "psirt.json"), "w"))
 
         CVE_TOTAL = json.load(open(os.path.join(ROOT, "tests", "fixtures", "cve", "index.json")))["total"]
 
@@ -1627,6 +1638,11 @@ async def main():
             ok("lookup: loads exactly one data file", len(shard_reqs) == 1 and shard_reqs[0].endswith("/data/cve/2024/2.json"), shard_reqs)
             hrefs = await pg.eval_on_selector_all("#cvResult a", "as => as.map(a => a.href)")
             ok("lookup: only https links to the CVE record and NVD", hrefs == ["https://www.cve.org/CVERecord?id=CVE-2024-2345", "https://nvd.nist.gov/vuln/detail/CVE-2024-2345"], hrefs)
+            await pg.fill("#wbQ", "CVE-2024-2002"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
+            res = await pg.locator("#cvResult").inner_text()
+            ok("v1.63: the vendor's own exploited statement shows with its advisory link and fixed version", "Exploited (vendor)" in res and "Acme is aware of limited exploitation" in res and "Fixed in, as Acme states it: Widget 2.4.1" in res and await pg.locator("#cvResult .wbvendor a[href='https://vendor.example/acme/sa-01']").count() == 1, res[:800])
+            ok("v1.63: the vendor's statement sets Exploit Code Maturity High, labelled as the vendor's", "x 1.00 Exploit Code Maturity: High" in res and "Acme's own advisory (ACME-SA-2026-01)" in res and "CyberView rating: 9.8 Critical" in res, res[:900])
+            ok("v1.63: a vendor entry with a bad link or markup is dropped, never rendered", await pg.locator("#cvResult img").count() == 0 and "BAD-1" not in res and await pg.locator("#cvResult a[href^='javascript']").count() == 0)
             await pg.fill("#wbQ", "CVE-2005-1234"); await pg.click("#cvLookup"); await pg.wait_for_timeout(400)
             ok("lookup: an old (2005) record", "old, unscored" in await pg.locator("#cvResult").text_content())
             res = await pg.locator("#cvResult").inner_text()
@@ -1647,6 +1663,7 @@ async def main():
             ok("lookup: a known-exploited CVE is flagged with a link to that view", "Known exploited" in res and "CISA's known-exploited list" in res)
             await pg.locator("#cvResult .cvgo").click(); await pg.wait_for_timeout(400)
             ok("lookup: the link opens it in Known exploited", await pg.locator("#wbp-queue").is_visible() and await pg.locator("#wbList .wbdetail").count() == 1 and await pg.locator("#wbList .wbrow").count() == 1)
+            ok("v1.63: Known exploited shows the vendor's own advisory too", await pg.locator("#wbList .wbvendor a[href='https://vendor.example/psirt/1']").count() == 1 and "FortiOS 7.4.10" in await pg.locator("#wbList .wbvendor").inner_text())
             # browse a year
             await pg.click("#wbt-all"); await pg.fill("#wbQ", ""); await pg.wait_for_timeout(200)
             ok("browse: nothing listed until something is loaded", await pg.locator("#cvList .cvrow").count() == 0 and "Nothing loaded" in await pg.locator("#cvLoaded").text_content())

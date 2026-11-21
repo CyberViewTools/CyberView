@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { flagsFor, needsReview, risk, order, planBatches } from "../../scripts/review.mjs";
 
 const base = (o = {}) => ({ id: "acme-breach-2026-11", title: "Acme confirms breach of customer database", org: "Acme", date: "2026-11-18", first_seen: "2026-11-18T10:00:00Z", category: "incident", severity: 2, status: "confirmed",
-  summary: "Acme said attackers copied a customer database. The company confirmed 4,200,000 records were taken.", plain: "p", exec: "x", action: "a", records_affected: 4200000, lat: 1, lng: 1, country: "Canada",
-  sources: [{ name: "Acme", url: "https://acme.example/news/statement" }, { name: "Reuters", url: "https://reuters.example/tech/acme-breach" }], source_tier: "primary", validation: { state: "corroborated" }, cves: [], ...o });
+  summary: "Acme said attackers copied a customer database. The company confirmed 4,200,000 records were taken.", plain: "p", exec: "x", action: "Acme advises customers to reset their passwords.", records_affected: 4200000, lat: 1, lng: 1, country: "Canada",
+  sources: [{ name: "Acme", url: "https://acme.example/news/statement" }, { name: "Reuters", url: "https://reuters.example/tech/acme-breach" }], source_tier: "primary", validation: { state: "corroborated", note: "Acme and Reuters" }, cves: [], ...o });
 const codes = (e, evs) => flagsFor(e, evs, "2026-11-18").map((f) => f.code);
 
 test("a clean, well-sourced event has no flags", () => { assert.deepEqual(codes(base()), []); });

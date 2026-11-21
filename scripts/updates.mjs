@@ -12,6 +12,7 @@ import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso, dayAgo, listEventFiles } from "./lib/store.mjs";
 import { matchEvent } from "./triage.mjs";
 import { leased } from "./lib/lease.mjs";
+import { deepEvent } from "./lib/routing.mjs";
 
 const NOT_NEWS = new Set(["claim", "breach-db", "status", "cve"]);   // attackers' posts and database rows are not reporting
 const TIER = { gov: 3, vendor: 3, research: 2, news: 1 };
@@ -30,7 +31,7 @@ export function candidates(leads, events, handled, now = Date.now(), hours = 48)
     if (!e) continue;
     if ((e.sources || []).some((s) => (s && s.url) === l.url)) continue;
     if (at <= String(e.updated_at || e.first_seen || "")) continue;   // already there when the event was last written
-    const c = out.get(e.id) || { id: e.id, title: String(e.title || "").slice(0, 160), severity: e.severity || 1, status: e.status || "", leads: [] };
+    const c = out.get(e.id) || { id: e.id, title: String(e.title || "").slice(0, 160), severity: e.severity || 1, status: e.status || "", deep: deepEvent(e), leads: [] };
     if (!c.leads.some((x) => x.url === l.url)) c.leads.push({ url: l.url, title: String(l.title || "").slice(0, 200), source: String(l.source || "").slice(0, 80), tier: l.tier || "", published: at.slice(0, 20), lang: l.lang || "" });
     out.set(e.id, c);
   }
@@ -44,6 +45,18 @@ export function candidates(leads, events, handled, now = Date.now(), hours = 48)
   return [...out.values()].sort((a, b) => b.score - a.score);
 }
 
+/** Pure: split candidates between at most W updaters, at most `per` each. Severity 3 and exploited events (c.deep,
+ *  scripts/lib/routing.mjs deepEvent) go to their own batches, whose updater runs as updater-deep (Opus); the rest to
+ *  routine ones. -> {batches: [[c...]...], deep: [batch numbers]} */
+export function planUpdates(q, W, per) {
+  const d = q.filter((c) => c.deep), p = q.filter((c) => !c.deep);
+  let kd = d.length ? Math.ceil(d.length / per) : 0, kp = p.length ? Math.ceil(p.length / per) : 0;
+  while (kd + kp > Math.max(1, W) && (kd > 1 || kp > 1)) { if (kd >= kp && kd > 1) kd--; else kp--; }
+  if (kd + kp > Math.max(1, W)) kp = 0;   // one updater and both kinds: the severity 3 and exploited events first, the rest next cycle
+  const deal = (xs, k) => { const b = Array.from({ length: k }, () => []); xs.slice(0, k * per).forEach((c, i) => b[i % k].push(c)); return b; };
+  const batches = [...deal(d, kd), ...deal(p, kp)].filter((b) => b.length);
+  return { batches, deep: batches.map((b, i) => (b.some((c) => c.deep) ? i + 1 : 0)).filter(Boolean) };
+}
 /** Pure: follow-up records -> urls not to hand out again. A page that would not load is tried once more an hour later, then dropped. */
 export function handledFrom(records, now = Date.now()) {
   const by = new Map();
@@ -77,10 +90,9 @@ function main() {
     const W = Math.max(1, Math.min(4, Number(arg("max", 2)) || 2)), per = Math.max(1, Math.min(6, Number(arg("per", 3)) || 3));
     const file = /^update-plan(-[A-Za-z0-9-]+)?\.json$/.test(arg("file", "")) ? arg("file") : "update-plan.json";
     const all = current(), held = leased("event", all.map((c) => c.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((c) => !held.has(c.id)).slice(0, W * per);
-    const k = Math.min(W, Math.ceil(q.length / per)), batches = Array.from({ length: k }, () => []);
-    q.forEach((c, i) => batches[i % k].push(c));
-    writeJson(join(DATA, file), { planned_at: nowIso(), batches });
-    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${k} updater(s); ${all.length} candidate(s) in all.`);
+    const { batches, deep } = planUpdates(q, W, per);
+    writeJson(join(DATA, file), { planned_at: nowIso(), batches, deep });
+    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${batches.length} updater(s), ${deep.length} on the deep model; ${all.length} candidate(s) in all.`);
     return;
   }
   if (cmd === "done") {

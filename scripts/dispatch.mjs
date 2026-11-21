@@ -53,11 +53,12 @@ if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_job
     `2. When it ends: if the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs ${job}\` and do what it prints instead. Otherwise end with exactly its last line (it starts "CyberView ${job}:").`].join("\n"));
   process.exit(0);
 }
-// subagents use the same Max plan as headless workers: at "stop" none start, at "tight" the jobs in
-// usage_budget.tight_skip_jobs wait for their next schedule (scripts/lib/usage.mjs)
+// subagents use the same Max plan as headless workers: at "stop" none start; at "tight" the jobs in
+// usage_budget.tight_skip_jobs wait for their next schedule only while usage_budget.tight_cuts_work is true (owner,
+// 2026-11-21: off; scripts/lib/usage.mjs)
 {
   const { budgetState, budgetLine } = await import("./lib/usage.mjs"), B = budgetState();
-  if (B.level === "stop" || (B.level === "tight" && ((PL.usage_budget || {}).tight_skip_jobs || []).includes(job))) {
+  if (B.level === "stop" || (B.level === "tight" && (PL.usage_budget || {}).tight_cuts_work === true && ((PL.usage_budget || {}).tight_skip_jobs || []).includes(job))) {
     console.log(`DISPATCH ${job}: ${budgetLine(B)}. Start nothing. End with exactly: "CyberView ${job}: skipped, plan usage ${B.level}"`); process.exit(0);
   }
 }
@@ -66,7 +67,7 @@ say(`DISPATCH ${job}. Do exactly these steps, in order, and nothing else. Do not
 if (job === "sweep") {
   const hk = [["kick", "bash", ["scripts/kick.sh"]], ["collect", "node", ["scripts/collect.mjs"]], ["osint", "node", ["scripts/osint.mjs"]], ["triage", "node", ["scripts/triage.mjs"]], ["backlog rules", "node", ["scripts/backlog.mjs", "auto"]]].map(([n, c, a]) => { const x = sh(c, a); return `${n} ${x.ok ? "ok" : "FAILED"}`; });
   const plan = sh("node", ["scripts/sweep-plan.mjs", "plan"]), head = plan.out[0] || "no plan";
-  const batches = [...new Set((readJson(join(DATA, "sweep-plan.json"), { stories: [] }).stories || []).map((s) => s.batch))].sort();
+  const sp = readJson(join(DATA, "sweep-plan.json"), { stories: [] }), batches = [...new Set((sp.stories || []).map((s) => s.batch))].sort(), deepB = new Set(sp.deep || []);
   // gap searchers once per sweep.gap_every_minutes (by the clock), as many as gapCount allows at this usage level
   const sc = readJson(join(ROOT, "config", "pipeline.json"), {}).sweep || {}, every = Math.max(15, Number(sc.gap_every_minutes) || 30), gapDue = sc.gap_every_run === true || Math.floor((Date.now() % 864e5) / 6e4) % every < 15;
   const { gapCount } = await import("./run-job.mjs"), { budgetState } = await import("./lib/usage.mjs"), gap = gapDue ? gapCount(Date.now(), 0, sc, budgetState()) : 0;
@@ -76,8 +77,8 @@ if (job === "sweep") {
   say(`Community feed: ${posts} post(s) or report(s) waiting.`);
   const tasks = batches.map((b) => worker("researcher", b)).concat(Array.from({ length: gap }, (_, i) => worker("gap", i + 1))).concat(posts ? [`You are the CyberView community moderator. In ${ROOT} run \`node scripts/job-prompt.mjs moderator\` and carry out the printed instructions exactly, EXCEPT: do not run any git command and do not edit data/status.json (the dispatcher commits). End with one line starting "moderator:".`] : []);
   if (!tasks.length) { say('The queue is empty and no search is due this run. Run: node scripts/finish.mjs sweep   then end with exactly: "CyberView sweep: queue empty, nothing to research"'); process.exit(0); }
-  say(`1. Start these ${tasks.length} subagents IN ONE MESSAGE so they run in parallel (${AGENT("sonnet")}). The task text for each, exactly:`);
-  tasks.forEach((t, i) => say(`   (${i + 1}) ${t}`));
+  say(`1. Start these ${tasks.length} subagents IN ONE MESSAGE so they run in parallel (${AGENT("sonnet")}, except the ones marked [model opus]: model "opus", the deep batches of scripts/lib/routing.mjs). The task text for each, exactly:`);
+  tasks.forEach((t, i) => say(`   (${i + 1})${i < batches.length && deepB.has(batches[i]) ? " [model opus]" : ""} ${t}`));
   say("2. When ALL have returned, run: node scripts/sweep-plan.mjs check");
   say(`   If it exits 1 (stories NOT HANDLED), run \`node scripts/sweep-plan.mjs retry\` and start ONE more subagent (${AGENT("sonnet")}) with: ${worker("researcher", "retry")}`);
   say("3. Run: node scripts/finish.mjs sweep");

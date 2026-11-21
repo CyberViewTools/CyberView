@@ -26,21 +26,22 @@ Where it lives: every path below that starts with `data/` is a file on the `data
 | summary | | 2 to 4 sentences, at most 75 words |
 | plain | | non-technical, at most 240 characters |
 | exec | | business significance, at most 170 characters |
-| action | | one instruction for a defender, at most 280 characters |
+| action | | one instruction for a defender, at most 280 characters; says whose advice it is, starts with "General advice:" when it is CyberView's own, or is "No action needed; for awareness." (`action-unsourced`) |
 | impact | | free text |
 | records_affected | | number |
 | products, attack, cves | | lists of strings; cves match `CVE-YYYY-NNNN` |
 | tags | | list from: ransomware, data-breach, supply-chain, zero-day, ddos, espionage, critical-infrastructure, ai-enabled, third-party, phishing, insider, hacktivism, ot-ics, cloud, identity, fraud, takedown, regulation, funding, acquisition, malware, rce, poc-public. Sector, country and product go in their own fields, not in tags; the list is defined as `TAGS` in `scripts/lib/validate.mjs` |
 | aliases | | optional list of the event's names in other scripts or languages (e.g. 富岳 for Fugaku), max 8 of up to 60 characters; lets scripts/triage.mjs match retellings in other languages to this event |
 | cve_meta | | list of `{id, cvss, epss, kev, kev_due}` |
-| sources | | list of `{name, url}`; url is the specific page read |
+| sources | | list of `{name, url, published}`; url is the specific page read; `published` (YYYY-MM-DD) is the page's own date, required on the first source of an incident, outage or enforcement first seen from 22 November 2026 (`date-is-publication`, `source-published-missing` in scripts/lib/validate.mjs) |
+| evidence | | list of at most 12 `{url, quote}`: the sentence of a page in `sources` that states each figure (10 or more, money, percentages) in title, summary, plain, exec, action or impact, and records_affected, and the time of day in `occurred_at`; copied word for word, at most 240 characters. Required for those from 22 November 2026 (`figure-no-evidence`, `figure-qualifier`, `occurred-no-evidence`); the second review checks each quote against its page. Not shown on the site |
 | source_tier | | `primary`, `established`, `aggregator` |
 | validation | | `{state, checked_at, note}`; state is `corroborated`, `single_source`, `unconfirmed_claim`, `disputed`, `source_unreachable` |
 | report | | review of an original document: `{publisher, publisher_type (government or vendor), doc_id, published, key_findings[], recommendations[], iocs_available, read_depth (full, summary, secondary), url}` |
 | attribution | | `{actor, origin_country, lat, lng, by, by_type, url}`: who a government (`by_type` `government`) or the investigating firm (`investigator`) says did it, where the actor is said to be based (lat, lng of that country's capital) and the https page where the attribution is made. Drawn as a dashed, labelled arc from the origin to the victim. Never from attacker boasts or press speculation. |
 | links | | `[{to, rel, url}]`: other events a source says this one is connected to (`to` is an event id on file, `rel` at most 60 characters such as "customer of breached supplier", `url` the page that states it). Drawn as arcs on the globe. |
 | hunt | | `[{name, format, url, publisher}]`: indicator files and detection rules the original document publishes (format: stix, sigma, yara, snort, suricata, kql, spl, csv, json, misp, openioc, text, pdf). Links only; indicators themselves are never stored. Shown in the workbench's hunt pack. |
-| review | | `{state, at, first_at, note, flags[]}` (`at` the latest review, `first_at` the first one, kept through re-reviews of updates): the second review by a different agent (the review desk), written only by `scripts/review.mjs`: `passed`, `corrected` (the reviewer fixed the record) or `flagged` (a problem remains; validation becomes `disputed` until verify settles it). |
+| review | | `{state, at, first_at, note, flags[]}` (`at` the latest review, `first_at` the first one, kept through re-reviews of updates): the second review by a different agent (the review desk), written only by `scripts/review.mjs`: `passed`, `corrected` (the reviewer fixed the record) or `flagged` (a problem remains; validation becomes `disputed` until verify settles it). A corrected or flagged review also carries `categories`, the correction types read from its note (`ERROR_TYPES` in scripts/review.mjs; `node scripts/review.mjs errors` counts them). |
 | duplicate_of | | id of the richer record; the build leaves this one out |
 | first_seen, updated_at, qa_checked_at | | ISO times |
 

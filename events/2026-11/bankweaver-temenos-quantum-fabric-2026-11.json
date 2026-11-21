@@ -1,7 +1,7 @@
 {
-  "title": "BankWeaver: attackers gained admin access to a bank's Temenos Quantum Fabric without credentials",
-  "date": "2026-11-20",
-  "date_note": "Article published November 20; it says investigators uncovered the breach in early September and gives no date for the intrusion itself.",
+  "title": "Forescout: BankWeaver campaign abused an exposed Temenos Quantum Fabric authentication service at a financial institution",
+  "date": "2026-11-19",
+  "date_note": "Forescout published its report on 19 November; it says the breach was found in early September and gives no date for the intrusion itself. CyberPress relayed it on 20 November.",
   "category": "incident",
   "severity": 2,
   "status": "developing",
@@ -13,11 +13,11 @@
   "lng": 0,
   "geo_basis": "not stated in source",
   "pin_type": "unknown",
-  "summary": "CyberPress reports a campaign it calls BankWeaver in which attackers got administrative access to a financial institution's Temenos Quantum Fabric deployment without valid credentials, because an internet-facing authentication service was configured for anonymous rather than private access. Two malicious Java components, FabricShell and FabricShadow, were used. Temenos released configuration updates and guidance; six other banks appeared to have the same configuration, with no breaches confirmed there.",
-  "plain": "A report says attackers got into a bank's digital banking back end without a password because a login service was left open to anonymous access. The vendor has issued configuration guidance.",
-  "exec": "A misconfigured, internet-exposed banking platform service reportedly gave attackers admin access; other banks may share the same setup.",
+  "summary": "Forescout Research says a campaign it calls BankWeaver abused an internet-facing authentication service set to anonymous access in a financial institution's Temenos Quantum Fabric deployment, giving administrative functions; it confirmed one compromise. Two payloads, FabricShell and FabricShadow, are named. Temenos released updates and guidance to make the service private. Forescout found six more banks that appeared to share the configuration and has not confirmed compromise.",
+  "plain": "Security firm Forescout says attackers got into a bank's digital banking back end through a login service left open to anonymous access. Temenos has issued guidance to make the service private.",
+  "exec": "Forescout says one financial institution was compromised through an exposed service; six other banks appeared to share the same setup.",
   "action": "Apply Temenos's configuration updates and guidance, set privileged authentication services to private, and remove direct internet access to Fabric and Spotlight administration services.",
-  "impact": "Six other banks appeared to have the same configuration and internet exposure; no breaches were confirmed at them.",
+  "impact": "Forescout found six additional banks that appeared to share the same configuration and exposure; it has not confirmed compromise at them.",
   "tags": [
     "misconfiguration",
     "banking"
@@ -32,18 +32,22 @@
   ],
   "sources": [
     {
+      "name": "Forescout Research: BankWeaver Campaign Abuses Digital Banking Middleware to Deploy Web Shells",
+      "url": "https://www.forescout.com/?p=116223"
+    },
+    {
       "name": "CyberPress: BankWeaver hijacks banking servers",
       "url": "https://cyberpress.org/bankweaver-hijacks-banking-servers/"
     }
   ],
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-20T14:04:40Z",
-    "note": "Only CyberPress read; it credits Forescout but the Forescout and Temenos originals were not found in this run."
+    "state": "corroborated",
+    "checked_at": "2026-11-21T14:09:56Z",
+    "note": "Primary: Forescout Research (the investigating firm) read on 21 Nov; CyberPress relays it. Forescout names no actor and no CVE. Temenos advisory itself not read; its guidance is as relayed by Forescout."
   },
   "first_seen": "2026-11-20T14:04:40Z",
-  "updated_at": "2026-11-20T14:04:40Z",
+  "updated_at": "2026-11-21T14:09:56Z",
   "review": {
     "state": "passed",
     "at": "2026-11-20T14:09:03Z",

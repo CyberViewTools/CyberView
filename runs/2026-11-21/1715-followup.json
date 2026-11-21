@@ -1,0 +1,30 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-21T17:10:17Z",
+  "finished_at": "2026-11-21T17:20:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["Equinor cyberattack update", "Wilmington School District 209U ransomware update", "Cobre incidente de ciberseguridad actualización"],
+  "pages_read": [
+    {"url": "https://equinor.com/news/20261711-equinor-detected-cyber-attack", "title": "Equinor notice, updates 17-20 Nov", "used_in": "equinor-ongoing-cyberattack-2026-11"},
+    {"url": "https://comparitech.com/news/two-illinois-school-districts-disclose-data-breaches-claimed-by-ransomware-gangs", "title": "Comparitech: two Illinois districts (not Wilmington)", "used_in": "none"},
+    {"url": "https://wjol.com/wilmington-school-district-209u-reports-ransomware-attack-and-possible-data-breach", "title": "WJOL, 18 Nov", "used_in": "wilmington-school-district-209u-ransomware-2026-11 (unchanged)"},
+    {"url": "https://www.portafolio.co/tecnologia/cobre-confirma-incidente-de-ciberseguridad-y-asegura-que-trabaja-en-su-contencion-este-19-de-noviembre-506702", "title": "Portafolio, 19 Nov", "used_in": "cobre-cybersecurity-incident-2026-11 (unchanged)"},
+    {"url": "https://www.cobre.com/", "title": "Cobre homepage, news and blog: no incident notice", "used_in": "cobre-cybersecurity-incident-2026-11 (unchanged)"}
+  ],
+  "added": [],
+  "updated": ["equinor-ongoing-cyberattack-2026-11"],
+  "unchanged_checked": [
+    {"id": "wilmington-school-district-209u-ransomware-2026-11", "url": "https://wjol.com/wilmington-school-district-209u-reports-ransomware-attack-and-possible-data-breach"},
+    {"id": "cobre-cybersecurity-incident-2026-11", "url": "https://www.portafolio.co/tecnologia/cobre-confirma-incidente-de-ciberseguridad-y-asegura-que-trabaja-en-su-contencion-este-19-de-noviembre-506702"}
+  ],
+  "skipped": [
+    {"title": "Other candidates (riken, nsa-net, santos: updated within 24h)", "url": "", "reason": "updated in the last 24 hours"},
+    {"title": "coles-group, hospital-clinico-uchile", "url": "", "reason": "not reached; 5-event limit not needed, run capped for time"}
+  ],
+  "open_leads": [
+    {"title": "Wilmington 209U district notice", "url": "https://www.wilmington209u.org", "note": "district site refused by proxy; only WJOL read", "priority": "low"},
+    {"title": "Cobre own statement", "url": "https://www.cobre.com/", "note": "no notice on Cobre's site; only Portafolio relays the statement", "priority": "low"}
+  ],
+  "failed_sites": ["wilmington209u.org (proxy refused)"],
+  "notes": "Equinor: its own page now read; status set to confirmed with the company notice as first source. Date and facts unchanged; summary now cites Equinor directly. No published fact changed, so no correction file. Second review should check it."
+}

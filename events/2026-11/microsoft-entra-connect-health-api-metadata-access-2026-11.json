@@ -1,5 +1,5 @@
 {
-  "action": "No customer update is needed per Microsoft's notification; check Azure Service Health for the notice, and use Microsoft's script (aka.ms/ConnectHealth/scripts) to see which tenant metadata types could have been exposed.",
+  "action": "Microsoft says no customer update is needed. Check Azure Service Health for the notice, review Connect Health configuration and Entra audit and sign-in logs, and watch for targeted phishing, as Microsoft advises.",
   "actor": "",
   "attack": [
     "unauthorized-access"
@@ -18,7 +18,7 @@
   "org": "Microsoft",
   "pin_type": "headquarters",
   "place": "Redmond",
-  "plain": "Microsoft told customers that a flaw in a Microsoft Entra Connect Health API let someone read some of their tenant details. Microsoft fixed it on its side and says no passwords were exposed.",
+  "plain": "Microsoft told customers that a flaw in a Microsoft Entra Connect Health API let someone read some of their tenant details. Microsoft says it deployed a fix and found no unauthorized configuration changes.",
   "products": [
     "Microsoft Entra Connect Health"
   ],
@@ -38,10 +38,20 @@
     "cloud"
   ],
   "title": "Microsoft says a flaw in the Entra Connect Health API gave unauthorized read-only access to tenant metadata",
-  "updated_at": "2026-11-21T18:08:28Z",
+  "updated_at": "2026-11-21T18:14:22Z",
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-21T18:10:00Z",
     "note": "Only BleepingComputer read; it quotes Microsoft's customer notification and a Microsoft spokesperson. Microsoft's own advisory and the Reddit copy of the notice were not read."
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-21T18:14:23Z",
+    "first_at": "2026-11-21T18:14:23Z",
+    "note": "Checked against BleepingComputer: title, date (notice 20 Nov, fix 19 Nov), read-only metadata, no config changes, undisclosed count match. Fixed action (script shows current configuration values, not what was accessed; now Microsoft's stated advice) and plain (removed 'no passwords exposed', not in ",
+    "flags": [
+      "possible-duplicate"
+    ]
+  },
+  "qa_checked_at": "2026-11-21T18:14:23Z"
 }

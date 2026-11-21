@@ -1,7 +1,8 @@
 name: Collect leads
 
 # Every 30 minutes, no AI model: reads public RSS and Atom feeds from agencies, vendors and security news, then several
-# news indexes and primary databases (scripts/osint.mjs), and groups it all into stories (scripts/fuse.mjs).
+# news indexes and primary databases (scripts/osint.mjs), GDELT's 15-minute knowledge graph files (scripts/gdelt-gkg.mjs),
+# and groups it all into stories (scripts/fuse.mjs).
 # (scripts/collect.mjs) and appends new items to data/leads/<date>.jsonl. The AI sweep starts from these.
 on:
   schedule:
@@ -38,6 +39,14 @@ jobs:
       - name: Other open sources (news indexes, breach and vulnerability databases, status pages, official breach registers)
         # a failing source is skipped and shown on the status page; it never stops the run
         run: node scripts/osint.mjs || true
+      - name: GDELT knowledge graph files (news in English and 65 translated languages, no AI)
+        # optional: a missing or failing file is retried on a later run and shown on the status page; this step can never
+        # stop the commit. The research loop runs it every cycle; this backup stands down while it does (one writer at a time)
+        continue-on-error: true
+        timeout-minutes: 4
+        run: |
+          if node -e 'const l=(JSON.parse(require("fs").readFileSync("data/leases.json","utf8"))||{})["flow:leader"];process.exit(l&&Date.parse(l.until)>Date.now()?0:1)' 2>/dev/null; then echo "gdelt-gkg: the research loop is running (live leader lease); skipping"
+          else node scripts/gdelt-gkg.mjs; fi
       - name: Clear obvious leads (no AI)
         run: node scripts/triage.mjs
       - name: Group leads into stories
@@ -69,7 +78,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
-          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json $( [ -f data/breaches.json ] && echo data/breaches.json ) data/runs data/grid data/context/grid.json $([ -d data/services ] && echo data/services)
+          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json $( [ -f data/breaches.json ] && echo data/breaches.json ) $( [ -f data/gdelt-gkg.json ] && echo data/gdelt-gkg.json ) data/runs data/grid data/context/grid.json $([ -d data/services ] && echo data/services)
       - name: Alert on failure
         if: failure()
         env:

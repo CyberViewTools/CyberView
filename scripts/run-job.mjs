@@ -333,7 +333,8 @@ async function flow() {
   const CW = Math.max(0, Math.min(4, Number(F.claims_workers ?? 1) || 0)), CPER = Math.max(1, Math.min(8, Number(F.claims_per_worker) || 4));
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
-  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
+  // gdelt-gkg reads each 15-minute GDELT file once (its state says which), so running it every cycle costs one small request
+  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/gdelt-gkg.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
   const gridCollect = () => { if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
   /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */
   const probe = () => {
@@ -496,7 +497,7 @@ async function main() {
   // 1. plan (scripts only; the planners leave out anything another run has leased)
   const work = []; let outageRun = null;
   if (job === "sweep") {
-    for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
+    for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/gdelt-gkg.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     phase("plan", sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "no plan");
     const batches = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);
     // a one-off sweep (the loop is off) runs its gap searchers at most once per sweep.gap_every_minutes, by the clock

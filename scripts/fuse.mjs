@@ -25,7 +25,7 @@ const GENERIC = new Set(("cyber cyberattack cyberattacks attack attacks attacked
   "notice notices notification notifications filed filing attorney general inc llc llp ltd corp plc pllc limited companies holdings technologies health healthcare care medical management solutions investigation").split(/\s+/));
 const THIN = new Set(["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"]);
 const TIER_RANK = { gov: 3, vendor: 2, news: 1 };
-const SEARCH = new Set(["google-news", "bing-news", "gdelt"]);
+const SEARCH = new Set(["google-news", "bing-news", "gdelt", "gdelt-gkg"]);
 
 /** One name per publisher: "The Record", "therecord.media" and "The Record from Recorded Future News" are the same outlet. */
 export function publisherKey(name) {

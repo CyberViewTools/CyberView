@@ -627,6 +627,8 @@ async function run(force) {
       const items = parseBing(await fetchText(`https://www.bing.com/news/search?q=${encodeURIComponent(q.q)}&format=rss&qft=${encodeURIComponent('interval="7"')}&cc=${gl(q)}&setlang=${hl(q).split("-")[0]}`));
       items.slice(0, 20).forEach((i) => bing.push({ ...i, lang: hl(q) })); return items.length;
     }, health),
+    // TO BE RETIRED with the DOC API (owner, 2026-11-21): once scripts/gdelt-gkg.mjs has run cleanly for a week (2026-11-28,
+    // config/gdelt.json). GKG's power-outage themes are not a replacement for these queries yet: see config/gdelt.json grid_note
     index("gdelt", (cfg.gdelt_queries || []).slice(0, 4), 6000, async (q) => {
       await gdeltSlot();
       const items = parseGdelt(await fetchText(`https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=120&format=json&timespan=12h&sort=datedesc`, "json"));

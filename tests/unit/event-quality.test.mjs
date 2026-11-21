@@ -6,7 +6,7 @@ const ev = (o = {}) => ({
   id: "acme-breach-2026-11", title: "Acme confirms breach of 1,200 customer records", date: "2026-11-18", category: "incident", severity: 2, status: "confirmed",
   org: "Acme", summary: "Acme said attackers copied 1,200 customer records on November 17. The company has notified regulators.", impact: "1,200 records",
   exec: "Customer data exposure.", tags: ["data-breach"], cves: [], sources: [{ name: "Acme", url: "https://acme.example/news/security-notice" }, { name: "Reuters", url: "https://reuters.example/tech/acme-breach-2026-11-18/" }],
-  source_tier: "primary", validation: { state: "corroborated" }, first_seen: "2026-11-21T08:00:00Z", updated_at: "2026-11-21T08:00:00Z", ...o,
+  source_tier: "primary", validation: { state: "corroborated", note: "Acme's notice and Reuters each state it" }, first_seen: "2026-11-21T08:00:00Z", updated_at: "2026-11-21T08:00:00Z", ...o,
 });
 const NOW = { now: Date.parse("2026-11-22T00:00:00Z") };   // after the fixture's first_seen, so it is not a future timestamp
 const codes = (e) => checkEventQuality(e, NOW).map((x) => x.code);

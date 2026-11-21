@@ -8,6 +8,7 @@
 //   apply [--per 8]   after the triagers: closes what they rejected (with their reasons) and writes the researchers' plan
 //                     (data/sweep-plan.json, the same file the sweep uses, so job-prompt.mjs researcher --batch N works)
 // Nothing here writes or changes an event: it only closes stories with a logged reason, or assigns them.
+import { deepReason } from "./lib/routing.mjs";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -98,7 +99,7 @@ function main() {
     const byId = new Map(d.stories.map((s) => [s.id, s]));
     const prev = (readJson(join(DATA, "backlog-kept.json"), { ids: [] }).ids || []).map((id) => byId.get(id)).filter((s) => s && isOpen(s) && !keep.includes(s) && !autoReason(s));
     const queue = prev.concat(keep).sort((a, b) => (b.incident - a.incident) || b.score - a.score), now = queue.slice(0, maxB * per), later = queue.slice(maxB * per);
-    const stories = now.map((s, i) => ({ id: s.id, title: s.title, score: s.score, batch: Math.floor(i / per) + 1, urls: s.urls })), nb = Math.ceil(now.length / per);
+    const stories = now.map((s, i) => ({ id: s.id, title: s.title, score: s.score, batch: Math.floor(i / per) + 1, urls: s.urls, ...(deepReason(s) ? { deep: deepReason(s) } : {}) })), nb = Math.ceil(now.length / per);
     if (maxB) writeJson(join(DATA, "sweep-plan.json"), { planned_at: nowIso(), backlog: true, stories });
     writeJson(join(DATA, "backlog-kept.json"), { at: nowIso(), ids: later.map((s) => s.id) });
     for (const f of answerFiles()) writeJson(join(DATA, f), { keep: [], close: [], applied_at: nowIso() });   // used: never applied twice

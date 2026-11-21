@@ -13,14 +13,15 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, listEventFiles, nowIso, dayAgo } from "./lib/store.mjs";
+import { errorReport, writersFrom, loadRunLogs } from "./review.mjs";
 
 const TIERS = ["haiku", "sonnet", "opus"];
 /** Bounds for every key the improver may change: [min, max] for numbers. */
 export const BOUNDS = {
-  "pipeline.sweep.researchers": [1, 8], "pipeline.sweep.stories_per_researcher": [4, 12], "pipeline.sweep.gap_workers": [0, 3],
+  "pipeline.sweep.researchers": [1, 16], "pipeline.sweep.review_workers": [0, 8], "pipeline.sweep.stories_per_researcher": [4, 12], "pipeline.sweep.gap_workers": [0, 3],
   "pipeline.backlog.triagers": [1, 6], "pipeline.backlog.researchers": [1, 6], "pipeline.backlog.leave_for_sweep": [16, 96],
-  "pipeline.analyst.workers": [1, 4], "pipeline.analyst.per_worker": [1, 5], "pipeline.review.reviewers": [1, 4], "pipeline.review.events_per_reviewer": [5, 15],
-  "pipeline.max_parallel": [2, 10],
+  "pipeline.analyst.workers": [1, 4], "pipeline.analyst.per_worker": [1, 5], "pipeline.review.reviewers": [1, 8], "pipeline.review.events_per_reviewer": [5, 15],
+  "pipeline.max_parallel": [2, 12],
 };
 const getPath = (o, p) => p.split(".").reduce((x, k) => (x == null ? x : x[k]), o);
 const setPath = (o, p, v) => { const ks = p.split("."); let x = o; ks.slice(0, -1).forEach((k) => { x[k] = x[k] && typeof x[k] === "object" ? x[k] : {}; x = x[k]; }); x[ks.at(-1)] = v; };
@@ -93,6 +94,9 @@ export function report(days = 7) {
     skip_reasons: Object.fromEntries(Object.entries(skip).sort((a, b) => b[1] - a[1])),
     // what the second review keeps fixing: the improver turns repeated causes into instruction requests
     review_notes: reviewed.filter((e) => e.review.state !== "passed").sort((a, b) => String(b.review.at).localeCompare(String(a.review.at))).slice(0, 12).map((e) => ({ id: e.id, state: e.review.state, flags: (e.review.flags || []).slice(0, 4), note: String(e.review.note || "").slice(0, 200) })),
+    // the corrections by type and by the role and model that wrote the event (scripts/review.mjs errors): which type to
+    // attack, and whether a role's model (researcher vs researcher-deep) earns its cost
+    review_errors: (() => { try { const r = errorReport(evs, writersFrom(loadRunLogs(days)), Date.now(), days); return { types: r.types.map((t) => ({ key: t.key, n: t.n, pct_of_corrected: t.pct_of_corrected, checks: t.checks })), by_writer: r.by_writer.slice(0, 12) }; } catch (err) { return { error: String((err && err.message) || err).slice(0, 160) }; } })(),
     flag_counts: reviewed.reduce((m, e) => { (e.review.flags || []).forEach((f) => { m[f] = (m[f] || 0) + 1; }); return m; }, {}) };
   return out;
 }
@@ -105,6 +109,7 @@ function main() {
     for (const [k, x] of Object.entries(r.roles).sort((a, b) => b[1].cost - a[1].cost)) console.log(`  role ${k.padEnd(18)} ${x.model.padEnd(6)} runs ${String(x.runs).padStart(3)}  ok ${Math.round(x.ok_rate * 100)}%  $${x.cost_per_run}/run  ${x.turns_per_run} turns  ${x.min_per_run} min${x.timeouts ? `  ${x.timeouts} timeouts` : ""}`);
     for (const [k, x] of Object.entries(r.jobs).sort((a, b) => b[1].runs - a[1].runs).slice(0, 10)) console.log(`  job  ${k.padEnd(18)} runs ${String(x.runs).padStart(3)}  added ${x.added}  updated ${x.updated}  skipped ${x.skipped}${x.add_rate !== null ? `  yield ${Math.round(x.add_rate * 100)}%` : ""}${x.cost !== null ? `  $${x.cost}` : ""}`);
     console.log("  skips: " + Object.entries(r.skip_reasons).map(([k, n]) => `${k} ${n}`).join(", "));
+    if (r.review_errors && r.review_errors.types) console.log("  correction types: " + r.review_errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.review_errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", "));
     console.log("  review flags: " + Object.entries(r.flag_counts).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} ${n}`).join(", "));
     r.review_notes.slice(0, 8).forEach((x) => console.log(`  ${x.state.padEnd(9)} ${x.id.slice(0, 50).padEnd(50)} ${x.note.slice(0, 110)}`));
     return;

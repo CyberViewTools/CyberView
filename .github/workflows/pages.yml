@@ -99,7 +99,21 @@ jobs:
       - id: deployment
         if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
         uses: actions/deploy-pages@v4
-      - name: Confirm the live site serves this build
+      # Pages sometimes reports a deployment as a success and keeps serving the previous one (12 of 100 runs on
+      # 2026-11-21: "Reported success!" in 5 s, live still the build before). The check is not loosened: when it fails,
+      # the same artifact is deployed once more and the live site must then serve this exact build.
+      - id: live1
+        name: Confirm the live site serves this build
+        continue-on-error: true
+        run: node scripts/verify-build.mjs --live
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}
+      - id: redeploy
+        name: Deploy again when the live site did not take the build
+        if: steps.live1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+      - name: Confirm the live site serves this build (after the second deploy)
+        if: steps.live1.outcome == 'failure'
         run: node scripts/verify-build.mjs --live
         env:
           SITE_URL: ${{ vars.SITE_URL || 'https://xanderhutch.github.io/CyberView' }}

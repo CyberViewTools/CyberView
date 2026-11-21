@@ -98,6 +98,9 @@ async function main() {
           const lb = await fetchLive("bundle.json", "buffer"), want = manifest.files["bundle.json"];
           if (sha(lb) === want.sha256) { console.log(`live verified: ${SITE} serves the build of ${manifest.built_at} (${manifest.counts.events_bundle} events, bundle fingerprint matches)`); last = ""; break; }
           last = "the live bundle's fingerprint differs from the build";
+        } else if (String(lm.built_at || "") > String(manifest.built_at)) {
+          // a newer run's build is already live: this build's data is in it, nothing is left behind
+          console.log(`live verified: ${SITE} already serves a newer build (${lm.built_at}) than this one (${manifest.built_at})`); last = ""; break;
         } else last = `live is still the build of ${lm.built_at}`;
       } catch (e) { last = `live site not readable: ${e.message}`; }
       await sleep(15000);

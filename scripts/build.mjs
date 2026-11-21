@@ -190,6 +190,15 @@ try {
     return v ? { ...x, verified: v } : x;
   });
 } catch (e) { warnings.push(`outage checks: ${String((e && e.message) || e).slice(0, 80)}`); }
+// the claims desk (scripts/claims-desk.mjs): AI checks of leak-site claims (data/claims/checks.json). The newest check that
+// names an event is shown on it as claim_check (bundle and archive). Optional: a fault here leaves the events as they are.
+let claimsDesk = null;
+try {
+  claimsDesk = await import("./claims-desk.mjs");
+  const cc = existsSync(join(DATA, "claims", "checks.json")) ? readJson(join(DATA, "claims", "checks.json")) : {};
+  if (cc && typeof cc === "object" && !Array.isArray(cc)) { const by = claimsDesk.checksByEvent(cc); for (const e of allEvents) { const v = by[e.id] ? claimsDesk.siteCheck(by[e.id]) : null; if (v) e.claim_check = v; } }
+  else warnings.push("claims/checks.json: not readable, claim checks left out");
+} catch (e) { warnings.push(`claim checks: ${String((e && e.message) || e).slice(0, 80)}`); }
 
 // power grid analysis (scripts/grid-analysis.mjs, no AI model): corroboration, anomalies and 30-day trends per region.
 // Validated loosely like the context layers: a broken file only drops the grid analysis (with a warning), never the build.
@@ -284,6 +293,8 @@ const gridStages = (() => {
   return { waiting: { count: waiting.length, oldest_min: oldest }, audit_at: String(audit.updated_at || "").slice(0, 30), audit_flags: pf };
 })();
 // the outage desk's queue, for the status page: waiting now, checked in the last 24 hours, the oldest wait
+// the claims desk's queue, for the status page: waiting now, checked in the last 24 hours by decision, the oldest wait
+const claimsQueue = (() => { try { if (!claimsDesk) return null; const d = claimsDesk.load(); return claimsDesk.stats(claimsDesk.queue(d.items, d.checks, {}, Date.now(), d.cfg), d.checks); } catch (e) { warnings.push(`claims queue: ${String((e && e.message) || e).slice(0, 80)}`); return null; } })();
 const outageQueue = (() => { try { if (!outageDesk) return null; const d = outageDesk.load(); return outageDesk.stats(outageDesk.queue(d.lists, d.checks, {}, Date.now(), d.cfg), d.checks); } catch (e) { warnings.push(`outage queue: ${String((e && e.message) || e).slice(0, 80)}`); return null; } })();
 
 // exploitation analyses (the exploit analyst job): how a flaw is used and the remediation path, from public sources, no code.
@@ -573,7 +584,9 @@ function pipelineQuality() {
     // every pipeline stage's last run and limit (scripts/lib/stages.mjs; limits from routines.json), for the guard
     stages: lastRuns(st, { "grid/analysis.json": gridAnalysis || {} }), stage_limits: stageLimits((readJson(join(ROOT, "routines.json"), {}) || {}).routines || []),
     // the pipeline check's problems (scripts/pipecheck.mjs, data/quality.json), for the status page and the guard
-    quality: pipelineQuality() }));
+    quality: pipelineQuality(),
+    last_claims_at: st.last_claims_at || "", claims_queue: claimsQueue }));
+
   const filesOut = {}, walk = (dir, rel) => { for (const n of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, n.name), r = rel ? `${rel}/${n.name}` : n.name; if (n.isDirectory()) walk(p, r); else if (r !== "manifest.json") { const b = readFileSync(p); filesOut[r] = { bytes: b.length, sha256: createHash("sha256").update(b).digest("hex") }; } } };
   walk(OUT, "");
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify({ built_at, commit: process.env.GITHUB_SHA || "", data_commit: dataCommit(ROOT), counts: { events_bundle: events.length, events_total: live.length, kev_bundle: kev.length, kev_total: kevAll.length, guides: Object.keys(guides).length, chat: chat.length, quarantined: quarantined.length }, files: filesOut }));

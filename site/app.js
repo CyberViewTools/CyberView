@@ -248,6 +248,29 @@ function servicesBlock(box){
   box.appendChild(ul);
   box.appendChild(el("p","lsrc","Source: "+services.ok+" of "+services.pages+" providers' status pages read"));
 }
+/* the claims desk's check of a leak-site claim (scripts/claims-desk.mjs; v1.63), shown on the event it names. The claim is the
+   group's word; "confirmed" names who confirmed it (the organisation, a regulator or a government); the link is the page that
+   says so, never a leak site or a claim tracker. Unknown decisions are dropped and the event shows no check. */
+var CLAIM_DEC={confirmed_by_victim:1,reported:1,denied:1,unconfirmed:1,not_found:1};
+var LEAK_HOST=/(^|\.)(onion|ransomware\.live|ransomlook\.io|ransomwatch\.telemetry\.ltd|ransomfeed\.it|ransom-db\.com|ransomdb\.io|t\.me|x\.com|twitter\.com)$/;
+function cleanClaimCheck(c){
+  if(!c||typeof c!=="object"||!own(CLAIM_DEC,str(c.decision,24)))return null;
+  var group=str(c.group,60).trim(),by=str(c.confirmed_by,120).trim(),d=str(c.claimed_at,10);if(!group||(c.decision==="confirmed_by_victim"&&!by))return null;
+  var u=gnLink(c.url);if(u){try{if(LEAK_HOST.test(new URL(u).hostname.toLowerCase()))u="";}catch(e){u="";}}
+  return {decision:c.decision,summary:str(c.summary,300).trim(),group:group,claimed:isDay(d)?d:"",by:by,url:u,at:str(c.at,30),ai:AI_BY};
+}
+function claimLabel(c){
+  var g=c.group+"\u2019s leak-site claim"+(c.claimed?" of "+fmtDay(c.claimed):"");
+  return "Checked by "+c.ai+": "+({confirmed_by_victim:"confirmed by "+c.by+" \u2014 "+g,reported:"reported by publishers, not confirmed by the organisation \u2014 "+g,
+    denied:"the organisation denies "+g,unconfirmed:"nothing beyond "+g+" was found; it will be checked again",not_found:"the organisation in "+g+" could not be identified"})[c.decision];
+}
+function claimNode(c){
+  var sm=el("small","aiby ccheck");sm.dataset.decision=c.decision;
+  sm.appendChild(document.createTextNode(claimLabel(c)+(c.summary?". "+c.summary:"")));
+  if(c.url){sm.appendChild(document.createTextNode(" "));var a=el("a",null,"source");a.href=safeUrl(c.url);a.target="_blank";a.rel="noopener noreferrer";sm.appendChild(a);}
+  if(c.at){var w=ago(c.at);if(w)sm.appendChild(document.createTextNode(" \u00b7 checked "+w));}
+  return sm;
+}
 var ctx={},ctxOn={ioda:false,gdacs:true,grid:true};
 function cleanCtx(name,d){
   var def=CTX_DEFS[name];if(!def||!d||typeof d!=="object"||!Array.isArray(d.items))return null;
@@ -820,6 +843,7 @@ function clean(id,d){
     if(aLat!==null&&aLng!==null&&/^https:\/\//i.test(au)&&str(at.by,120)&&str(at.actor,120))e.attr={actor:str(at.actor,120),origin:str(at.origin_country,60),lat:aLat,lng:aLng,by:str(at.by,120),byType:at.by_type,url:au};}
   e.links=(Array.isArray(d.links)?d.links:[]).slice(0,40).map(function(l){if(!l||typeof l!=="object")return null;var to=str(l.to,120),u=str(l.url,600);
     return /^[a-z0-9][a-z0-9-]{2,119}$/.test(to)&&to!==id&&/^https:\/\//i.test(u)?{to:to,rel:str(l.rel,60)||"linked",url:u}:null;}).filter(Boolean);
+  e.claimCheck=cleanClaimCheck(d.claim_check);
   var rv=d.review;e.review=rv&&typeof rv==="object"&&{passed:1,corrected:1,flagged:1}[rv.state]&&str(rv.at,30)?{state:rv.state,at:str(rv.at,30),note:str(rv.note,300)}:null;
   var HF={stix:"STIX",sigma:"Sigma rule",yara:"YARA rule",snort:"Snort rule",suricata:"Suricata rule",kql:"KQL query",spl:"Splunk query",csv:"CSV indicators",json:"JSON indicators",misp:"MISP event",openioc:"OpenIOC",text:"Indicator list",pdf:"PDF with indicators"};
   e.hunt=(Array.isArray(d.hunt)?d.hunt:[]).slice(0,12).map(function(h){if(!h||typeof h!=="object"||!own(HF,h.format))return null;var hu=str(h.url,600);
@@ -1070,6 +1094,7 @@ function card(e,open){
     }
     var vv=e.val?VAL[e.val.state]:["Not yet checked","v-warn","The validation pass has not reached this event yet."];
     b.appendChild(el("small","aiby","Researched and written by "+AI_BY+" from the sources listed, under CyberView's published rules."));
+    if(e.claimCheck)b.appendChild(claimNode(e.claimCheck));
     var vb=el("div","val "+vv[1]);vb.appendChild(el("b",null,vv[0]));vb.appendChild(document.createTextNode(" · confidence "+CONF[e.conf].toLowerCase()));
     vb.appendChild(el("small",null,(e.val&&e.val.note)||vv[2]));
     if(e.val&&e.val.checked)vb.appendChild(el("small",null,"Checked "+fmtTime(e.val.checked)));

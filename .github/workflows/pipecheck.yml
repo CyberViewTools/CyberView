@@ -1,0 +1,68 @@
+name: Pipeline check
+
+# Every hour, no AI model (scripts/pipecheck.mjs): every pipeline stage against its limit, a restart of the workflow of any
+# late stage, and the data itself checked (status.json keys vanishing, duplicate events, events waiting for their second
+# review, lead files and the data branch growing abnormally, failing feeds and collectors). Writes data/quality.json; the
+# deploy shows its problems on the status page. A problem that outlasts its threshold opens ONE GitHub issue labelled
+# pipeline-alert, which closes itself when the check finds it healthy. Never emails anyone.
+on:
+  schedule:
+    - cron: "53 * * * *"
+  # GitHub runs scheduled workflows late or not at all under load (collect.yml: 10 scheduled runs in 3 days), so every
+  # finished deploy also starts this workflow; the gate below lets it through only when the last check is 55 minutes old
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write   # to restart a late stage's workflow, and to start the deploy after committing data
+  issues: write    # the pipeline-alert issues
+
+concurrency:
+  group: data-writes
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        uses: ./.github/actions/data
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Due? (a run started by a deploy goes ahead only when the last check is 55 minutes old)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_run" ]; then echo "go=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+          node -e 'const s=JSON.parse(require("fs").readFileSync("data/status.json","utf8")),t=Date.parse(s["last_pipecheck_at"]||0),age=(Date.now()-t)/6e4;console.log("last pipeline check "+Math.round(age)+" min ago");process.exit(age>=55?0:1)' && echo "go=1" >> "$GITHUB_OUTPUT" || echo "go=0" >> "$GITHUB_OUTPUT"
+      - name: Check every stage and the data
+        if: steps.gate.outputs.go == '1'
+        run: node scripts/pipecheck.mjs
+      - name: Restart late stages (collect, feeds, CVE, link check)
+        if: steps.gate.outputs.go == '1'
+        continue-on-error: true
+        run: node scripts/pipecheck.mjs heal
+      - name: Open, update or close the pipeline-alert issues
+        if: steps.gate.outputs.go == '1'
+        continue-on-error: true
+        run: node scripts/pipecheck.mjs alerts
+      - name: Commit and push (the data branch; starts the deploy)
+        if: steps.gate.outputs.go == '1'
+        run: node scripts/data-commit.mjs "data: pipeline check" data/quality.json data/status.json
+      - name: Alert on failure
+        if: failure()
+        run: |
+          echo "**The pipeline check failed.** Stalled stages and data problems are not being looked for." > report.md
+          bash .github/scripts/alert.sh job-failure "Pipeline check is failing" report.md failing

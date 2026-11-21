@@ -22,6 +22,8 @@ import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
+import { nextHealth, due } from "./lib/backoff.mjs";
+import { retryAfterMs } from "./lib/net.mjs";
 import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";
 
 const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
@@ -35,7 +37,7 @@ const CYBER = new RegExp("cyber|hack|ransom|breach|malware|botnet|phish|ddos|vul
 async function get(url, as = "json") {
   const r = await fetch(url, { headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "application/rss+xml, application/xml, text/xml, */*" }, signal: AbortSignal.timeout(25000) });
   if (r.status === 401 || r.status === 403) throw Object.assign(new Error(`HTTP ${r.status} (refuses automated readers; not retried)`), { final: true });
-  if (r.status === 429) throw Object.assign(new Error("HTTP 429 (busy; will try next run)"), { final: true });
+  if (r.status === 429) throw Object.assign(new Error("HTTP 429 (busy; backing off)"), { final: true, retryAfterMs: retryAfterMs(r.headers.get("retry-after")) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const body = await r.text();
   return as === "json" ? JSON.parse(body) : body;
@@ -218,7 +220,8 @@ async function leads() {
   const now = nowIso(), cutoff = Date.now() - 72 * 36e5, out = [], only = process.argv.slice(3);
   // health only for collectors that still exist (a removed one would sit on the status page forever)
   const health = Object.fromEntries(Object.entries(readJson(join(DATA, "osint.json"), { sources: {} }).sources || {}).filter(([k]) => k in COLLECTORS));
-  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => (!only.length || only.includes(n)) && (only.includes(n) || !searchedRecently(health[n], n))).map(async ([name, fn]) => {
+  // a collector that failed FAIL_RUNS runs in a row waits out its backoff (scripts/lib/backoff.mjs; a Retry-After is honoured)
+  await Promise.all(Object.entries(COLLECTORS).filter(([n]) => (!only.length || only.includes(n)) && (only.includes(n) || (!searchedRecently(health[n], n) && due(health[n])))).map(async ([name, fn]) => {
     const prev = health[name] || {};
     try {
       const items = await fn(); let n = 0;
@@ -232,9 +235,9 @@ async function leads() {
         out.push({ seen_at: now, source: txt(it.source, 80), tier: it.tier, via: name, title: it.title, url: it.url, published: it.published || "", summary: it.summary || "",
           ...(it.kind ? { kind: it.kind } : {}), ...(it.lang || name !== "gdelt" ? { lang: it.lang || "en" } : {}), ...(it.region ? { region: it.region } : {}), ...(it.country ? { country: it.country } : {}) });   // every lead names its language (database rows and claims are in English)
       }
-      health[name] = { ok: true, error: "", items: items.length, new: n, at: now, last_ok: now, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) };
+      health[name] = nextHealth(prev, { ok: true, items: items.length, extra: { new: n, ...(name === "bing-news" ? { aggregator_copies_dropped: aggregatorCopies } : {}) } }, Date.parse(now));
     } catch (e) {
-      health[name] = { ok: false, error: txt((e.cause && e.cause.code) || e.message, 90), items: 0, new: 0, at: now, last_ok: prev.last_ok || "" };
+      health[name] = nextHealth(prev, { ok: false, error: txt((e.cause && e.cause.code) || e.message, 90), retryAfterMs: e.retryAfterMs, extra: { new: 0 } }, Date.parse(now));
     }
   }));
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");

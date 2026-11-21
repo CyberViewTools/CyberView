@@ -7,6 +7,7 @@
 import { readdirSync, existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
+import { nextHealth, due } from "./lib/backoff.mjs";
 
 // tier: gov (government or CERT), vendor (security research), news. filter: keep only cyber items (broad feeds).
 export const FEEDS = [
@@ -340,14 +341,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const cutoff = Date.now() - MAX_AGE_H * 36e5, now = nowIso(), out = [], report = [];
   const ALL = activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}));
-  const results = [];
-  for (let i = 0; i < ALL.length; i += 12) results.push(...await Promise.all(ALL.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   const hp = join(DATA, "osint.json"), hdoc = readJson(hp, {}), fh = hdoc.feeds || {}, seenNames = new Set();
+  // a feed that failed FAIL_RUNS runs in a row is "failing" and is asked again only after its backoff (scripts/lib/backoff.mjs):
+  // a dead or refusing feed is no longer hit every few minutes, and one success brings it straight back
+  const asked = DRY ? ALL : ALL.filter((f) => due(fh[f.name]));
+  for (const f of ALL) if (!asked.includes(f)) { seenNames.add(f.name); report.push(`${f.name}: failing, not asked until ${fh[f.name].next_try_at} (${fh[f.name].fails} runs: ${fh[f.name].error})`); }
+  const results = [];
+  for (let i = 0; i < asked.length; i += 12) results.push(...await Promise.all(asked.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
   for (const { f, items, error } of results) {
     const prev = fh[f.name] || {}; seenNames.add(f.name);
-    // per-feed health: consecutive failures are counted so the source scout can repair or retire a dead feed
-    fh[f.name] = error ? { ok: false, error: String(error).slice(0, 90), items: 0, at: now, last_ok: prev.last_ok || "", fails: (prev.fails || 0) + 1 }
-      : { ok: true, error: "", items: items.length, at: now, last_ok: now, fails: 0, ...(items.length ? {} : { empty: (prev.empty || 0) + 1 }) };
+    // per-feed health: consecutive failures are counted (and backed off) so the source scout can repair or retire a dead feed
+    fh[f.name] = nextHealth(prev, error ? { ok: false, error } : { ok: true, items: items.length, extra: items.length ? {} : { empty: (prev.empty || 0) + 1 } });
     if (error) { report.push(`${f.name}: ${error}`); continue; }
     let n = 0, recent = 0;
     const since = prev.last_ok ? cutoff : Math.max(cutoff, Date.now() - FIRST_RUN_H * 36e5);

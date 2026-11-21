@@ -6,8 +6,13 @@ Builds the bundle from data/, then checks the real data plus four variants
 (dark, phone width, missing optional data, missing bundle, high volume).
 Prints ALL PASS or the list of failures, and exits 1 on failure.
 """
-import asyncio, copy, json, os, random, shutil, subprocess, sys, tempfile, time
+import asyncio, atexit, copy, json, os, random, shutil, subprocess, sys, tempfile, time
 from playwright.async_api import async_playwright
+
+# every copy of the site made for a run is removed when the run ends (2026-11-21: 4,345 left-over copies, about 40 GB,
+# filled the disk and every later run failed with "No space left on device")
+_SITES = []
+atexit.register(lambda: [shutil.rmtree(d, ignore_errors=True) for d in _SITES])
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORT = int(os.environ.get("CV_TEST_PORT", "8765"))   # another checkout running the suite at the same time can pick its own port
@@ -24,6 +29,7 @@ def ok(name, cond, info=""):
 def make_site(bundle):
     """Copy site/ to a temp dir and write the given bundle (or none)."""
     d = tempfile.mkdtemp(prefix="cwm-")
+    _SITES.append(d)
     shutil.copytree(os.path.join(ROOT, "site"), d, dirs_exist_ok=True)
     os.makedirs(os.path.join(d, "data"), exist_ok=True)
     p = os.path.join(d, "data", "bundle.json")
@@ -250,7 +256,9 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + target["id"], wait=1800)
             ok("permalink: #e= opens the event", await pg.is_visible("#detail") and target["title"][:30] in await pg.inner_text("#dcard"))
             ok("permalink: detail has Copy link", await pg.locator("#dcard button", has_text="Copy link").count() == 1)
-            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"])
+            # an event inside the default 7-day window (a permalink to an older one does not open a card): data-independent
+            import datetime as _dt2; recent = (_dt2.datetime.now(_dt2.timezone.utc) - _dt2.timedelta(days=5)).strftime("%Y-%m-%d")
+            other = next(e for e in bundle["events"] if e.get("status") != "claimed" and e["id"] != target["id"] and e.get("date", "") >= recent)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", other["id"])
             await pg.wait_for_timeout(700)
             ok("permalink: a new link opens while the page is open", other["title"][:30] in await pg.inner_text("#dcard"))
@@ -412,6 +420,28 @@ async def main():
             await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
             ok("status flow: an error note from the build is shown as text, the rest still renders", "could not be worked out" in await pg.text_content("#flowNote") and "<img src=x>" in await pg.text_content("#fromNote")
                and await pg.locator("main img").count() == 0 and await pg.locator("#routines tbody tr[data-routine]").count() > 0 and not errs, errs)
+            await ctx.close()
+            # the pipeline check (scripts/pipecheck.mjs -> health.json quality) under "What needs attention": as text, by level
+            async def with_quality(r):
+                h = json.load(open(os.path.join(ROOT, "site", "data", "health.json")))
+                h["quality"] = {"checked_at": h["built_at"], "problems": [
+                    {"id": "status-keys", "level": "bad", "text": "3 key(s) vanished from data/status.json <img src=x id=pwnq>", "since": h["built_at"], "over": True},
+                    {"id": "unreviewed", "level": "warn", "text": "21 event(s) have waited over 2 hours for their second review", "since": h["built_at"], "over": False},
+                    {"id": "broken-links", "level": "info", "text": "1 source link(s) are gone", "since": "", "over": False},
+                    {"id": "<bad id>", "level": "bad", "text": "dropped"}, {"id": "x", "level": "javascript:", "text": 5}, None]}
+                return await r.fulfill(status=200, content_type="application/json", body=json.dumps(h))
+            ctx = await browser.new_context(viewport={"width": 1366, "height": 860}); pg = await ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
+            await pg.route("**/data/health.json*", with_quality)
+            await pg.goto(url.replace("index.html", "status.html")); await pg.wait_for_timeout(1000)
+            q = await pg.eval_on_selector_all("#attention li[data-check]", "ls => ls.map(l => [l.dataset.check, l.dataset.kind, l.querySelector('.badge').textContent, l.textContent, (l.querySelector('a') || {}).href || ''])")
+            byq = {x[0]: x for x in q}
+            ok("status attention: the pipeline check's problems are listed with their level and badge", set(byq) == {"status-keys", "unreviewed", "broken-links"}
+               and byq["status-keys"][1:3] == ["bad", "Data lost"] and byq["unreviewed"][1:3] == ["warn", "Waiting"] and byq["broken-links"][1] == "info", q)
+            ok("status attention: a problem that opened an issue links to the pipeline-alert issues, the rest to the details", "label%3Apipeline-alert" in byq.get("status-keys", ["", "", "", "", ""])[4]
+               and "#dRoutines" in byq.get("unreviewed", ["", "", "", "", ""])[4], q)
+            ok("status attention: a bad problem is listed first and its text stays text", (await pg.eval_on_selector_all("#attention li", "ls => ls.map(l => l.dataset.kind)"))[0] == "bad"
+               and await pg.locator("#pwnq").count() == 0 and "<img src=x id=pwnq>" in await pg.text_content("#attention") and not errs, errs)
             await ctx.close()
             st, note, rows, imgs, text, errs = await eff_page(lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps({"error": "The efficiency report could not be built: boom"})))
             ok("efficiency: a build error is shown as a note", st == "error" and "could not be built" in note and not errs, (st, note, errs))

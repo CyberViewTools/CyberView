@@ -10,7 +10,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, listEventFiles, dayAgo, writeRunLog, nowIso } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, readStatus, listEventFiles, dayAgo, writeRunLog, nowIso } from "./lib/store.mjs";
 import { forEachSkipped } from "./lib/store.mjs";
 
 const STOP = new Set("the a an of in on to for and or by with from at as is was are be its it this that new after over into says said us uk how why what".split(" "));
@@ -173,6 +173,8 @@ async function main() {
   const by = (k) => skipped.filter((s) => s.reason.startsWith(k)).length;
   console.log(`triage: ${leads.length} open feed leads; cleared ${skipped.length} (already on file ${by("already")}, not events ${by("not an event")}, expired ${by("expired")}); ${leads.length - skipped.length} left for the desks`);
   if (!dry && skipped.length) writeRunLog("triage", { started_at: nowIso(), finished_at: nowIso(), model: null, skipped, open_left: leads.length - skipped.length });
+  // heartbeat (routines.json lead-triage; scripts/lib/stages.mjs): the rules ran, also when they cleared nothing
+  if (!dry) { try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_lead_triage_at = nowIso(); writeJson(sp, st); } catch {} }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

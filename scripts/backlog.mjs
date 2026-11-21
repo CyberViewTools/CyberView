@@ -11,7 +11,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, writeRunLog, nowIso } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, writeRunLog, nowIso, readStatus } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 
 const ROWS = ["cve", "breach-db", "status"];
@@ -72,6 +72,8 @@ function main() {
     const items = d.stories.filter(isOpen).map((s) => ({ s, why: autoReason(s) })).filter((x) => x.why)
       .concat(d.stories.filter((s) => onFile(s)).map((s) => ({ s, why: onFile(s) })));
     closeAll("backlog-auto", items);
+    // heartbeat (scripts/lib/stages.mjs "backlog-auto"): the rules ran, also when they closed nothing
+    try { const sp = join(DATA, "status.json"), st = readStatus(); st.last_backlog_auto_at = nowIso(); writeJson(sp, st); } catch {}
     const by = {}; items.forEach((x) => { by[x.why] = (by[x.why] || 0) + 1; });
     console.log(`BACKLOG AUTO: closed ${items.length} stories by rule.` + Object.entries(by).map(([k, n]) => `\n  ${n}  ${k}`).join(""));
     return;

@@ -1,21 +1,21 @@
 {
-  "action": "If safety or building alarms in your organisation rely on email alone, add a second channel such as a text message, phone call or on-site alarm, and test that alerts still arrive when email is down.",
+  "action": "General advice: if safety or building alarms rely on email alone, add a second channel such as a text message, phone call or on-site alarm, and test that alerts still arrive when email is down.",
   "actor": "",
   "attack": [],
   "category": "outage",
   "country": "Germany",
   "cves": [],
-  "date": "2026-11-15",
-  "date_note": "Article date; the poisoning happened during the Nov 12-14 outage",
+  "date": "2026-11-13",
+  "date_note": "The Register (16 November) says the incident happened on Friday, during the Microsoft outage that began on Thursday 12 November.",
   "exec": "A safety-critical alert that relied on email alone failed during a cloud outage, with physical harm as the result.",
   "first_seen": "2026-11-17T22:50:00Z",
-  "geo_basis": "victim country",
-  "lat": 50.6,
-  "lng": 9,
-  "org": "Hotel in Germany (unnamed)",
-  "pin_type": "country",
-  "place": "Germany (city not stated)",
-  "plain": "A news report says the earlier Microsoft 365 outage stopped a chlorine warning email from reaching a German hotel, and 15 guests were poisoned. The outage is not described as an attack.",
+  "geo_basis": "victim city",
+  "lat": 50.8286,
+  "lng": 6.9036,
+  "org": "Hotel Ling Bao (Phantasialand)",
+  "pin_type": "victim",
+  "place": "Brühl, North Rhine-Westphalia",
+  "plain": "Reports say a chlorine warning email at a German theme-park hotel did not arrive during the Microsoft outage; 15 guests were poisoned and some went to hospital.",
   "products": [
     "Microsoft 365"
   ],
@@ -25,21 +25,27 @@
   "source_tier": "established",
   "sources": [
     {
+      "name": "The Register",
+      "url": "https://www.theregister.com/a/5310087",
+      "published": "2026-11-16"
+    },
+    {
       "name": "Security Affairs",
-      "url": "https://securityaffairs.com/203189/security/the-microsoft-outage-left-15-hotel-guests-poisoned-by-chlorine.html"
+      "url": "https://securityaffairs.com/203189/security/the-microsoft-outage-left-15-hotel-guests-poisoned-by-chlorine.html",
+      "published": "2026-11-15"
     }
   ],
   "status": "confirmed",
-  "summary": "Security Affairs reports that the Microsoft 365 outage stopped a chlorine warning email from arriving at a German hotel and 15 guests were poisoned. This is a downstream physical consequence of the outage. The article does not describe the outage as a cyberattack.",
+  "summary": "According to Brühl's fire department, a technical fault made a pool dosing system add too much chlorine at Hotel Ling Bao, Phantasialand, on Friday 13 November, WDR first reported. The Register and Security Affairs say the warning email never arrived because of the Microsoft outage. Security Affairs says 15 guests were poisoned; The Register says over 15 people were checked and five went to hospital, Security Affairs four. The Register says Microsoft ruled out cybercriminals.",
   "tags": [
     "cloud"
   ],
-  "title": "Microsoft outage blocked a chlorine alert email; 15 hotel guests poisoned in Germany",
-  "updated_at": "2026-11-19T05:12:00Z",
+  "title": "Chlorine alert email at Phantasialand hotel lost in Microsoft outage; 15 guests poisoned, reports say",
+  "updated_at": "2026-11-22T19:12:34Z",
   "validation": {
-    "checked_at": "2026-11-17T22:50:00Z",
-    "note": "One outlet, summary only.",
-    "state": "single_source"
+    "state": "single_source",
+    "checked_at": "2026-11-22T19:12:34Z",
+    "note": "The Register and Security Affairs (both read 22 Nov) both relay WDR's report, so not independent; neither quotes the hotel or Phantasialand on the email link. They differ on hospital numbers (five vs four). The hotel's own statement was not read; Notebookcheck answered 403."
   },
   "review": {
     "state": "corrected",
@@ -58,5 +64,15 @@
   "surface": {
     "value": "cloud-saas",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://securityaffairs.com/203189/security/the-microsoft-outage-left-15-hotel-guests-poisoned-by-chlorine.html",
+      "quote": "Thirteen guests complained of respiratory irritation; ultimately, the number of affected individuals rose to a total of 15."
+    },
+    {
+      "url": "https://www.theregister.com/a/5310087",
+      "quote": "Paramedics checked over 15 people at the hotel, and five were taken to hospital."
+    }
+  ]
 }

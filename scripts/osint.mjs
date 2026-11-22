@@ -36,7 +36,7 @@ const txt = (s, n) => String(s == null ? "" : s).replace(/<[^>]*>/g, " ").replac
 const iso = (d) => { const t = Date.parse(d); return isNaN(t) ? "" : new Date(t).toISOString().replace(/\.\d+Z$/, "Z"); };
 const https = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? String(u) : "");
 // plus the feed filter's words in every language the standing searches ask in ("vazamento de dados", "tấn công mạng", "網路攻擊")
-const CYBER = new RegExp("cyber|hack|ransom|breach|malware|botnet|phish|ddos|vulnerab|exploit|intrusion|data (theft|leak)|spyware|zero-?day|cve-\\d|ciber|siber|サイバー|사이버|سيبران|outage|incident de sécurité|datenleck|angriff|tấn công mạng|" + FEED_CYBER.source, "i");
+export const CYBER = new RegExp("cyber|hack|ransom|breach|malware|botnet|phish|ddos|vulnerab|exploit|intrusion|data (theft|leak)|spyware|zero-?day|cve-\\d|ciber|siber|サイバー|사이버|سيبران|outage|incident de sécurité|datenleck|angriff|tấn công mạng|" + FEED_CYBER.source, "i");
 
 async function get(url, as = "json") {
   const r = await fetch(url, { headers: { "user-agent": UA, accept: as === "json" ? "application/json" : "application/rss+xml, application/xml, text/xml, */*" }, signal: AbortSignal.timeout(25000) });
@@ -179,6 +179,8 @@ const COLLECTORS = {
     if (err && !out.length) throw err;
     return out;
   },
+  // TO BE RETIRED: scripts/gdelt-gkg.mjs reads GDELT's raw 15-minute files instead (owner, 2026-11-21); this DOC API
+  // collector stays until gdelt-gkg has run cleanly for a week, then goes (config/gdelt.json doc_api_retire_after, 2026-11-28)
   "gdelt": async () => {   // GDELT allows one request every 5 seconds
     const out = [], Q = ['(ransomware OR cyberattack OR "data breach" OR "cyber attack")', '(ciberataque OR cyberattaque OR Cyberangriff OR "ataque cibernético")', '("zero-day" OR "actively exploited" OR "hackers" OR "hacked")'];
     // the gate spaces this machine's requests; GDELT still answers 429 at times (other users behind the same address),
@@ -215,14 +217,21 @@ const SEARCH = new Set(["bing-news", "gdelt"]), SEARCH_EVERY = 10;
 export function searchedRecently(h, name, now = Date.now()) {
   return SEARCH.has(name) && !!h && h.ok === true && now - Date.parse(h.at) < SEARCH_EVERY * 6e4;
 }
-async function leads() {
-  const leadsDir = join(DATA, "leads"); mkdirSync(leadsDir, { recursive: true });
-  const known = new Set(), knownTitle = new Set(), norm = (t) => String(t).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().slice(0, 90);
+/** What is already on file: every event's source addresses, and every lead of the last `days` days by address and (for
+ *  collectors other than RSS) by publisher plus headline. Shared with scripts/gdelt-gkg.mjs. */
+export const normTitle = (t) => String(t).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().slice(0, 90);
+export function knownLeads(days = 14) {
+  const leadsDir = join(DATA, "leads"), known = new Set(), knownTitle = new Set();
   for (const x of listEventFiles()) for (const s of (x.e && x.e.sources) || []) if (s && s.url) known.add(s.url);
   for (const f of existsSync(leadsDir) ? readdirSync(leadsDir) : []) {
-    if (!f.endsWith(".jsonl") || f.slice(0, 10) < dayAgo(14)) continue;
-    for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); known.add(l.url); if (l.via && l.via !== "rss") knownTitle.add(l.source + "|" + norm(l.title)); } catch {} }
+    if (!f.endsWith(".jsonl") || f.slice(0, 10) < dayAgo(days)) continue;
+    for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { const l = JSON.parse(line); known.add(l.url); if (l.via && l.via !== "rss") knownTitle.add(l.source + "|" + normTitle(l.title)); } catch {} }
   }
+  return { known, knownTitle, norm: normTitle };
+}
+async function leads() {
+  const leadsDir = join(DATA, "leads"); mkdirSync(leadsDir, { recursive: true });
+  const { known, knownTitle, norm } = knownLeads(14);
   const now = nowIso(), cutoff = Date.now() - 72 * 36e5, out = [], only = process.argv.slice(3);
   // health only for collectors that still exist (a removed one would sit on the status page forever)
   const health = Object.fromEntries(Object.entries(readJson(join(DATA, "osint.json"), { sources: {} }).sources || {}).filter(([k]) => k in COLLECTORS));

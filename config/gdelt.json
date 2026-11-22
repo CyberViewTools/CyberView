@@ -1,0 +1,19 @@
+{
+ "_note": "GDELT 2.0 Global Knowledge Graph 15-minute files as leads (scripts/gdelt-gkg.mjs, no AI model; owner 2026-11-21: the DOC search API answered 429, 403 and timeouts from our address, the raw files are plain downloads from data.gdeltproject.org). streams: english (<ts>.gkg.csv.zip) and translation (<ts>.translation.gkg.csv.zip, the 65 other languages GDELT machine-translates; the page title stays in the original language). catch_up_files: after a gap, at most this many missed 15-minute files per stream per run (newest first; 8 = 2 hours). retry_hours: a listed file the server does not have yet (404) is tried again for this long. cyber_themes: GKG theme names checked in 14,591 real rows of 2026-11-21 (CYBER_ATTACK 214 rows, TAX_FNCACT_HACKERS 73, TAX_FNCACT_HACKER 20, WB_2457_CYBER_CRIME 2); SURVEILLANCE, WB_2369_DATA_PRIVACY and SOC_RANSOM (kidnap ransoms) are left out as mostly not cyber incidents. A row is kept when its themes match AND its headline reads as cyber (the feed filter's words in many languages) or the themes are mentioned at least min_theme_mentions times. max_leads_per_run: most theme mentions first. max_per_title: at most this many leads with the same headline per run (syndicated copies, e.g. a dozen local stations running one wire story). grid_themes are only counted (last_run.grid_rows), never filed: see grid_note. The owner may change any of this.",
+ "enabled": true,
+ "streams": ["english", "translation"],
+ "catch_up_files": 8,
+ "retry_hours": 3,
+ "time_budget_seconds": 150,
+ "max_zip_bytes": 40000000,
+ "max_unzipped_bytes": 200000000,
+ "max_leads_per_run": 60,
+ "max_per_title": 2,
+ "min_theme_mentions": 4,
+ "title_words": ["ataque informático", "ataques informáticos", "dataintrång", "datainnbrudd", "dataangreb", "hakkeri", "tietomurto", "kyberhyök", "kibertámad", "χάκερ", "χάκαραν", "κυβερνοεπίθε", "κυβερνοασφ", "įsilauž", "kibernet", "hakersk", "сајбер", "хакерск", "قراصنة", "סייבר", "האקר", "साइबर", "हैकर", "سائبر", "ہیکر", "সাইবার", "হ্যাকার", "سایبری", "هکر"],
+ "cyber_themes": ["CYBER_ATTACK", "TAX_FNCACT_HACKERS", "TAX_FNCACT_HACKER", "WB_2457_CYBER_CRIME"],
+ "grid_themes": ["POWER_OUTAGE", "MANMADE_DISASTER_POWER_OUTAGE", "MANMADE_DISASTER_POWER_OUTAGES", "MANMADE_DISASTER_POWER_FAILURE", "MANMADE_DISASTER_WITHOUT_POWER", "MANMADE_DISASTER_WITHOUT_ELECTRICITY"],
+ "grid_note": "GKG power-outage themes exist and are counted, but are not filed into data/grid/news.json: scripts/grid-news.mjs needs a place and stated figures from the headline and summary, GKG gives neither a summary nor the article text, and POWER_OUTAGE also tags passing mentions (outage in a game, a phone network, a past storm). Revisit after the week of clean running.",
+ "doc_api_retire_after": "2026-11-28",
+ "doc_api_note": "The DOC API collectors (scripts/osint.mjs 'gdelt', scripts/grid-news.mjs gdelt_queries) stay until gdelt-gkg has run cleanly for a week (from 2026-11-21); the owner then retires them."
+}

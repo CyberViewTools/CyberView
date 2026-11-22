@@ -299,7 +299,7 @@ export function leadTier(l) {
   if (l && DB_KINDS.has(l.kind)) return "database";
   return l && ["gov", "vendor", "news"].includes(l.tier) ? l.tier : "news";
 }
-const FAMILY = { rss: "rss", "bing-news": "bing-news", gdelt: "gdelt", "google-news": "google-news", cvelist: "cve-kev", nvd: "cve-kev", euvd: "cve-kev", kev: "cve-kev", "ransomware-live": "claims", "grid-desk": "grid" };
+const FAMILY = { rss: "rss", "bing-news": "bing-news", gdelt: "gdelt", "gdelt-gkg": "gdelt", "google-news": "google-news", cvelist: "cve-kev", nvd: "cve-kev", euvd: "cve-kev", kev: "cve-kev", "ransomware-live": "claims", "grid-desk": "grid" };
 /** Pure: the collector family a lead came through (agency, vendor and news RSS; Bing News; GDELT; CVE corpus, NVD and
  *  KEV; leak-site claims; grid operators; other open sources). */
 export function familyOf(l) { return FAMILY[String((l && l.via) || "rss")] || "other"; }

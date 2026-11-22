@@ -73,6 +73,19 @@
    "does": "Asks three independent news indexes in 12 languages, the EU and US vulnerability databases, Have I Been Pwned, leak-site tracking, Hacker News and the own status pages of 46 cloud, CDN, DNS, SaaS, payment and telecom providers (config/status-pages.json; major or long incidents only), so no single search engine decides what is seen."
   },
   {
+   "key": "gdelt-gkg",
+   "name": "GDELT knowledge graph files",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_gdelt_gkg_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-22T00:00:00Z",
+   "does": "Reads GDELT's 15-minute Global Knowledge Graph files (English sources and 65 machine-translated languages) once each, keeps articles GDELT tags as cyber attacks, hackers or cyber crime whose headline reads as cyber, and files each as a lead with the publisher's own page, its language and the country it names first. Runs every research cycle; collect.yml is the backup."
+  },
+  {
    "key": "breach-registers",
    "name": "Breach notification registers",
    "tier": "automation",

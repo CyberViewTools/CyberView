@@ -1,0 +1,101 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T07:52:45Z",
+  "finished_at": "2026-11-22T07:57:48Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Woolworths gift card drained statement November 2026",
+    "WordPress 7.1.5 vulnerability exploited CVE Template Part",
+    "古河電工パワーシステムズ 不正アクセス 出荷管理 続報",
+    "BYOD ransomware Vanderbilt UNM Michigan State update",
+    "Vanderbilt cyberattack update data notification November 20 2026",
+    "Symantec African stock exchange AI-assisted attack Witchetty exchange named"
+  ],
+  "pages_read": [
+    {
+      "url": "https://thenightly.com.au/australia/woolworths-to-reimburse-customers-after-digital-gift-card-balances-wiped-in-unauthorised-transactions-c-23171648",
+      "title": "Woolworths to reimburse customers after digital gift card balances wiped in unauthorised transactions (Sunrise, 17 Nov)",
+      "used_in": "woolworths-gift-card-balances-drained-2026-11"
+    },
+    {
+      "url": "https://patchstack.com/articles/wordpress-7-1-5-security-release/",
+      "title": "Patchstack: WordPress 7.1.5 security release (18 Nov)",
+      "used_in": "wordpress-7-1-5-security-release-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.feps.co.jp/news/20261026/",
+      "title": "FEPS: 個人情報漏えいの可能性に関するお知らせとお詫び (26 Oct)",
+      "used_in": "furukawa-electric-power-systems-shipment-system-2026-11"
+    },
+    {
+      "url": "https://www.furukawaelectric.com/news/2026/update_20261026.html",
+      "title": "Furukawa Electric: group company notice (26 Oct)",
+      "used_in": "furukawa-electric-power-systems-shipment-system-2026-11"
+    },
+    {
+      "url": "https://www.feps.co.jp/news/",
+      "title": "FEPS news listing (no later notice)",
+      "used_in": "furukawa-electric-power-systems-shipment-system-2026-11"
+    },
+    {
+      "url": "https://www.security-next.com/192962",
+      "title": "Security NEXT (17 Nov)",
+      "used_in": "furukawa-electric-power-systems-shipment-system-2026-11"
+    },
+    {
+      "url": "https://www.security.com/threat-intelligence/african-stock-exchange-ai-assisted-attack",
+      "title": "Symantec: Major African Stock Exchange Targeted in AI-Assisted Attack (19 Nov, no update note)",
+      "used_in": "african-stock-exchange-ai-assisted-toolkit-symantec-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://news.vanderbilt.edu/2026/11/09/nov-9-active-cybersecurity-incident-updates/",
+      "title": "Vanderbilt incident updates, latest entry 19 Nov 6 p.m.",
+      "used_in": "byod-ransomware-hospitals-universities-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.trendaisecurity.com/en-us/resources-insights/trendai-security-blog/byod-ransomware-hospitals-universities",
+      "title": "TrendAI BYOD report (18 Nov, no update note)",
+      "used_in": "byod-ransomware-hospitals-universities-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "woolworths-gift-card-balances-drained-2026-11",
+    "furukawa-electric-power-systems-shipment-system-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "wordpress-7-1-5-security-release-2026-11",
+      "url": "https://patchstack.com/articles/wordpress-7-1-5-security-release/",
+      "note": "Patchstack (18 Nov): 20 fixes, no CVE ids assigned, nothing on exploitation or public exploit code; record stands."
+    },
+    {
+      "id": "african-stock-exchange-ai-assisted-toolkit-symantec-2026-11",
+      "url": "https://www.security.com/threat-intelligence/african-stock-exchange-ai-assisted-attack",
+      "note": "No update note; exchange and country still unnamed."
+    },
+    {
+      "id": "byod-ransomware-hospitals-universities-2026-11",
+      "url": "https://news.vanderbilt.edu/2026/11/09/nov-9-active-cybersecurity-incident-updates/",
+      "note": "Vanderbilt's log (latest 19 Nov) still does not name BYOD or confirm data taken; laptops-compromised emails started 18 Nov. Matches the record's 'Vanderbilt has not confirmed'. TrendAI report unchanged."
+    }
+  ],
+  "corrections": [
+    "data/corrections/2026-11-22-furukawa-fep-date.json"
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Vanderbilt: direct notices to owners of compromised laptops; data scope still undetermined",
+      "url": "https://news.vanderbilt.edu/2026/11/09/nov-9-active-cybersecurity-incident-updates/",
+      "note": "For vanderbilt-university-ransomware-2026-11 (not checked this run): 18-19 Nov entries on compromised-laptop emails and Box restored; OneDrive/SharePoint/Teams disabled for weeks.",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [
+    "https://www.vanderbilt.edu/cybersecurity-incident/ (404)"
+  ],
+  "notes": "Picked 5 not updated or follow-up-checked in 24 h: wordpress (sev 3, >3 days), african-stock-exchange, byod (sev 2 developing), woolworths, furukawa (sev 1 developing, listed companies). Woolworths: Sunrise/The Nightly 17 Nov adds Woolworths' apology and replacement cards; second publisher, evidence for $500 added, action now attributed to Woolworths. Furukawa: the company's own notice is dated 26 Oct 2026, not 17 Nov (Security NEXT's date); date corrected, notices cited first, validation primary, correction filed. This moves the event to events/2026-10/. BLOCKER: this session's permissions refused rm and mv, so the old copy data/events/2026-11/furukawa-electric-power-systems-shipment-system-2026-11.json still exists, and the build fails with 'stored twice'. The 2026-10 copy is the corrected record; the 2026-11 copy must be removed (git mv/rm) before commit. Nothing else in the build fails.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

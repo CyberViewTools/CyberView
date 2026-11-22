@@ -128,10 +128,10 @@ test("Quest KACE (both catalog spellings, one rule): version from X-DellKACE-Ver
   none(titled("KACE Systems Deployment Appliance"));
 });
 
-test("Mirth Connect is the clinical row: off unless { clinical: true }, and the scan path does not turn it on", () => {
+test("Mirth Connect: pack3() needs { clinical: true }, and the scan path passes it (lead decision: root page only, no extra request)", () => {
   const r = titled("Mirth Connect Administrator");
   none(r); assert.equal(one(r, { clinical: true }).product, "Mirth Connect");
-  assert.ok(!servicesOf(r).some((s) => s.product === "Mirth Connect"));
+  assert.ok(servicesOf(r).some((s) => s.product === "Mirth Connect"));
 });
 
 test("families: eMerge, Unitronics, Amcrest and NUUO are named as families, never versioned, always guessed", () => {

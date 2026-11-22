@@ -14,7 +14,7 @@
 //   - evidence is the rule's own fixed wording plus the version or a short model token read: never a body, a cookie value or
 //     page text
 //   - industrial, building, camera and clinical rows are identification only from the same root-page response; never a write,
-//     control command or protocol query. The clinical row (Mirth Connect) is OFF unless the caller passes { clinical: true }
+//     control command or protocol query. The clinical row (Mirth Connect) needs { clinical: true }, which scan.mjs passes (lead decision: root page only)
 //   - the login-page inventory reads the root page and the recorded Location only; it never requests /login or any path
 import { cleanVersion } from "./fingerprint.mjs";
 import { facts } from "./fp-identify.mjs";

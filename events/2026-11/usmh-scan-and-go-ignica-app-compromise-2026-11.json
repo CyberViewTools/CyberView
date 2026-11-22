@@ -1,13 +1,13 @@
 {
-  "action": "No action needed; for awareness. Affected customers are being notified by email; treat unexpected emails that use your name with caution.",
+  "action": "USMH advises affected customers to beware of emails posing as the company and says it never asks for passwords, codes or card numbers by email or phone; do not open unexpected links or attachments.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "Japan",
   "cves": [],
   "date": "2026-11-12",
-  "date_note": "NHK (published 12 November, 20:44 JST) reports USMH announced the unauthorized access that day; Security NEXT, which first reported it here, was published on 20 November.",
-  "exec": "A third-party compromise of a retailer's shopping app system may have leaked customer names and email addresses of 64,003 accounts.",
+  "date_note": "USMH's notice is dated 12 November; it gives no date for the access itself. Security NEXT was published on 20 November.",
+  "exec": "Unauthorized access to a retailer's shopping app system may have exposed names and email addresses of 64,003 accounts.",
   "first_seen": "2026-11-20T14:36:49Z",
   "geo_basis": "country",
   "lat": 36.2,
@@ -15,32 +15,39 @@
   "org": "United Super Markets Holdings (USMH)",
   "pin_type": "country",
   "place": "Japan",
-  "plain": "A third party compromised the system of the supermarket group's Scan&Go ignica app; names and email addresses of 64,003 accounts may have leaked.",
+  "plain": "Hackers got into the system behind a Japanese supermarket group's shopping app; names and email addresses of 64,003 accounts may have leaked, though the company has not confirmed they were taken.",
   "products": [
     "Scan&Go ignica"
   ],
   "sector": "Retail",
   "severity": 2,
-  "source_tier": "established",
+  "source_tier": "primary",
   "sources": [
     {
+      "name": "USMH notice (PDF), 12 Nov 2026",
+      "url": "https://www.usmh.co.jp/wp-content/uploads/2026/11/us_20261112.pdf",
+      "published": "2026-11-12"
+    },
+    {
       "name": "Security NEXT",
-      "url": "https://www.security-next.com/192800"
+      "url": "https://www.security-next.com/192800",
+      "published": "2026-11-20"
     },
     {
       "name": "NHK (lead paragraph only; article body gated)",
-      "url": "https://news.web.nhk/newsweb/na/nd-20261112de75046"
+      "url": "https://news.web.nhk/newsweb/na/nd-20261112de75046",
+      "published": "2026-11-12"
     }
   ],
-  "status": "developing",
-  "summary": "According to Security NEXT, United Super Markets Holdings (USMH) found that the system of its smartphone shopping app Scan&Go ignica was compromised by a third party. A file with some customers' names and email addresses, entered at registration, was found on the system; 64,003 accounts of about 2.4 million registered may have leaked. The company says no misuse or secondary harm has been confirmed.",
+  "status": "confirmed",
+  "summary": "United Super Markets Holdings (USMH) said on 12 November that a third party gained unauthorized access to the system of its Scan&Go ignica shopping app. A file on that system held names and email addresses entered at registration for 64,003 of about 2.4 million app accounts. USMH says it has not confirmed that the data was actually taken, and no misuse or secondary harm has been confirmed.",
   "tags": [],
-  "title": "USMH: Scan&Go ignica shopping app system compromised, 64,003 accounts may have leaked",
-  "updated_at": "2026-11-21T12:39:30Z",
+  "title": "USMH: unauthorized access to Scan&Go ignica app system, 64,003 accounts' names and emails may have leaked",
+  "updated_at": "2026-11-22T12:58:05Z",
   "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-21T12:39:30Z",
-    "note": "Security NEXT and NHK each report USMH's announcement of unauthorized access and about 64,000 records (names, email addresses). NHK read only to its lead paragraph; USMH's own notice not read."
+    "state": "primary",
+    "checked_at": "2026-11-22T12:58:05Z",
+    "note": "USMH's own notice (PDF, 12 Nov) read in full by the follow-up desk; Security NEXT and NHK report the same figures. The notice gives no cause, access date or attacker."
   },
   "review": {
     "state": "passed",
@@ -59,5 +66,11 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.usmh.co.jp/wp-content/uploads/2026/11/us_20261112.pdf",
+      "quote": "※ Scan&Go ignica アプリご利用者約 240 万アカウントのうち、64,003 アカウントが対象。"
+    }
+  ]
 }

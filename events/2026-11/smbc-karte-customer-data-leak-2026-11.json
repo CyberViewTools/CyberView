@@ -9,7 +9,7 @@
   ],
   "time_basis": "published",
   "first_seen": "2026-11-20T23:30:00Z",
-  "updated_at": "2026-11-21T03:41:30Z",
+  "updated_at": "2026-11-22T12:58:05Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -18,7 +18,7 @@
   ],
   "geo_basis": "hq",
   "date": "2026-11-20",
-  "date_note": "Date is SMBC's announcement of 20 November; the intrusion into PLAID's KARTE was reported to SMBC on 13 November.",
+  "date_note": "Date is SMBC's announcement of 20 November; SMBC says PLAID reported the intrusion to it on 13 November and the scope on 19 November.",
   "title": "SMBC says up to about 14 million customer records leaked via PLAID KARTE breach",
   "org": "Sumitomo Mitsui Banking Corporation",
   "sector": "Banking / finance",
@@ -28,25 +28,32 @@
   "lng": 139.76,
   "pin_type": "hq",
   "severity": 3,
-  "source_tier": "established",
-  "summary": "Cybersecurity.com and Rocket Boys report that SMBC announced on 20 November a leak of customer information, up to about 14 million records, after unauthorized access to KARTE at its contractor PLAID. The reports say the data includes date of birth and category values; name, address, phone, email, account number and internet-banking login are not included. No impact on assets or transactions is confirmed so far.",
-  "plain": "Sumitomo Mitsui Bank says up to about 14 million customer records leaked through its contractor PLAID's KARTE service. Names, account numbers and logins are reported not included.",
+  "source_tier": "primary",
+  "summary": "SMBC said on 20 November that up to about 14 million records of customer information leaked after unauthorized access to KARTE, a service from its contractor PLAID. The data is dates of birth, category values for age band, gender and whether a phone number is registered, and notice flags; SMBC says it is not linked to names and cannot identify individuals. No impact on assets or transactions is confirmed so far.",
+  "plain": "Sumitomo Mitsui Bank says up to about 14 million customer records leaked through its contractor PLAID's KARTE service. The bank says names, contact details, account numbers and logins were not included.",
   "exec": "Up to about 14 million bank customer records exposed through a vendor's marketing tool.",
-  "action": "SMBC customers: watch for phishing that uses your date of birth and follow SMBC's own notices.",
+  "action": "SMBC says it will never ask for passwords or card details by email or phone about this; it urges customers not to open links or attachments in suspicious messages claiming to be from the bank.",
   "sources": [
     {
+      "name": "SMBC notice (PDF), 20 Nov 2026",
+      "url": "https://www.smbc.co.jp/news/pdf/j20261120_01.pdf",
+      "published": "2026-11-20"
+    },
+    {
       "name": "Cybersecurity.com (Japan), 21 Nov 2026",
-      "url": "https://cybersecurity-jp.com/news/118712"
+      "url": "https://cybersecurity-jp.com/news/118712",
+      "published": "2026-11-21"
     },
     {
       "name": "Rocket Boys Security Measures Lab (Japan), 21 Nov 2026",
-      "url": "https://rocket-boys.co.jp/security-measures-lab/smbc-bank-karte-customer-attribute-14million-data-leak/"
+      "url": "https://rocket-boys.co.jp/security-measures-lab/smbc-bank-karte-customer-attribute-14million-data-leak/",
+      "published": "2026-11-21"
     }
   ],
   "validation": {
-    "checked_at": "2026-11-21T03:41:30Z",
-    "state": "corroborated",
-    "note": "Cybersecurity.com and Rocket Boys Security Measures Lab each report SMBC's 20 Nov announcement of up to about 14 million records (a record count, not a count of customers), the excluded data types and no confirmed asset impact. SMBC's own PDF was not read."
+    "state": "primary",
+    "checked_at": "2026-11-22T12:58:05Z",
+    "note": "SMBC's own notice (PDF, 20 Nov) read in full by the follow-up desk; it agrees with Cybersecurity.com and Rocket Boys. SMBC says it will report to the relevant authorities. PLAID's 20 Nov notice (plaid.co.jp/news/20261120/) says a vulnerability in internal processing on a public path was exploited in the early hours of 13 November; no attacker named."
   },
   "review": {
     "state": "passed",
@@ -67,5 +74,11 @@
   "surface": {
     "value": "supply-chain",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.smbc.co.jp/news/pdf/j20261120_01.pdf",
+      "quote": "件数： 最大約 14 百万件"
+    }
+  ]
 }

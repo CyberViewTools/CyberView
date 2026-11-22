@@ -1,0 +1,81 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T12:55:13Z",
+  "finished_at": "2026-11-22T12:58:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "ユナイテッド・スーパーマーケット・ホールディングス Scan&Go ignica 不正アクセス お知らせ",
+    "三井住友銀行 KARTE 不正アクセス お客さま情報 漏えい お知らせ",
+    "Microsoft agent-framework PyPI compromise statement advisory 1.26.1",
+    "React2STEAL GitHub Actions React2Shell stolen secrets"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.usmh.co.jp/wp-content/uploads/2026/11/us_20261112.pdf",
+      "title": "USMH: 不正アクセスによる個人情報流出の可能性に関するお詫びとお知らせ (12 Nov)",
+      "used_in": "usmh-scan-and-go-ignica-app-compromise-2026-11"
+    },
+    {
+      "url": "https://www.usmh.co.jp/news/",
+      "title": "USMH news list (no later update on ignica)",
+      "used_in": "usmh-scan-and-go-ignica-app-compromise-2026-11"
+    },
+    {
+      "url": "https://www.smbc.co.jp/news/pdf/j20261120_01.pdf",
+      "title": "SMBC: 業務委託先への不正アクセスによる情報漏えいについて (20 Nov)",
+      "used_in": "smbc-karte-customer-data-leak-2026-11"
+    },
+    {
+      "url": "https://plaid.co.jp/news/20261120/",
+      "title": "PLAID: KARTE investigation results and restart outlook (20 Nov)",
+      "used_in": "smbc-karte-customer-data-leak-2026-11 (validation note only)"
+    },
+    {
+      "url": "https://pypi.org/project/agent-framework/#history",
+      "title": "PyPI agent-framework release history",
+      "used_in": "microsoft-agent-framework-pypi-compromise-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://opensourcemalware.com/blog/react2steal-github-actions",
+      "title": "OpenSourceMalware: React2STEAL",
+      "used_in": "react2steal-github-actions-campaign-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "usmh-scan-and-go-ignica-app-compromise-2026-11",
+    "smbc-karte-customer-data-leak-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "microsoft-agent-framework-pypi-compromise-2026-11",
+      "url": "https://pypi.org/project/agent-framework/#history"
+    },
+    {
+      "id": "react2steal-github-actions-campaign-2026-11",
+      "url": "https://opensourcemalware.com/blog/react2steal-github-actions"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "agent-framework PyPI compromise: Microsoft/GitHub advisory (GHSA) and maintainer statement on root cause",
+      "url": "https://github.com/microsoft/agent-framework/security/advisories",
+      "note": "Search snippets say a GitHub advisory exists and a maintainer confirmed removal while investigating; GitHub pages answered 403 to the reader, so nothing changed. PyPI history now lists 1.26.0 as latest with no 1.26.1/1.26.2.",
+      "priority": 2
+    },
+    {
+      "title": "PLAID KARTE: 20 Nov investigation results (vulnerability in public-path internal processing exploited 13 Nov; 79,249 KARTE account emails; restart target mid-January 2027)",
+      "url": "https://plaid.co.jp/news/20261120/",
+      "note": "Check whether the PLAID/KARTE events on file reflect PLAID's 20 Nov findings; not changed in this run (limit 5 events).",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [
+    "github.com (403 to the page reader for advisories, discussions, issues)",
+    "ignica.jp (proxy refused)"
+  ],
+  "notes": "Picked 4 events (all others in the candidate set were updated or checked by follow-up in the last 24 h; the stories list was empty). USMH: own notice read; status developing -> confirmed (USMH confirms unauthorized access; it says exfiltration not confirmed), validation primary, action from the notice. SMBC: own PDF read; data types restated from the notice, validation primary. Remaining validate warnings are figure-no-evidence for 'about 2.4 million' and 'about 14 million': the evidence quotes give them in Japanese notation (約240万, 最大約14百万件), which the figure check cannot read; both events predate the strict date. SMBC possible-duplicate with DHC was settled by the earlier review (different victim).",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

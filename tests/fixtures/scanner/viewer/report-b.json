@@ -1,0 +1,459 @@
+{
+  "tool": {
+    "name": "CyberView Scanner",
+    "version": "1.0.0",
+    "user_agent": "CyberView-Scanner/1.0.0 (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)",
+    "detection_only": true
+  },
+  "run": {
+    "started_at": "2026-11-22T20:56:56.755Z",
+    "finished_at": "2026-11-22T20:56:57.307Z",
+    "interrupted": false,
+    "stop_reason": "",
+    "settings": {
+      "rate": 20,
+      "concurrency": 8,
+      "hostConcurrency": 2,
+      "hostBudget": 70000,
+      "budget": 2000000,
+      "minutes": 60
+    },
+    "ports": [
+      21,
+      22,
+      80,
+      443
+    ],
+    "udp": [],
+    "paths": {
+      "enabled": false
+    },
+    "network": {
+      "connections": 12,
+      "max_open_at_once": 3,
+      "skipped_host_budget": 0,
+      "skipped_global_budget": 0,
+      "stopped": "",
+      "sends": {
+        "connect": "a TCP connect; the connection is closed after the read",
+        "greeting": "nothing: the scanner only reads what the service sends first",
+        "ssh": "its identification line \"SSH-2.0-CyberViewScanner_1.0.0 authorized-vulnerability-scan\"",
+        "http": "one HTTP request for the root page (method GET, path \"/\") with User-Agent \"CyberView-Scanner/1.0.0 (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)\"",
+        "tls": "a standard TLS handshake (the certificate is read, never trusted or used)",
+        "paths": "only with --paths (off by default): at most 8 extra HTTP GET requests per host, each for a frozen literal path in scanner/lib/paths.mjs and only when that host's own root page, headers, certificate or port already hint at the product; same User-Agent, redirects recorded, not followed, only a product/version token kept"
+      }
+    },
+    "data": {
+      "mode": "offline",
+      "source": "cyberview-data",
+      "workbench_built_at": "2026-11-21T12:00:00Z",
+      "requests": 0,
+      "snapshot": {
+        "cyberview_snapshot": 1,
+        "_note": "TEST FIXTURE: invented CVE ids (CVE-2026-90xxx) and invented ranges for the scanner's unit tests. Not real advisories.",
+        "fetched_at": "2026-11-21T12:30:00Z",
+        "source": "test fixture",
+        "full": true,
+        "workbench_built_at": "2026-11-21T12:00:00Z",
+        "lookup_files": 1
+      }
+    },
+    "profile": {
+      "name": "custom ports",
+      "all_ports": false,
+      "custom_ports": true,
+      "port_count": 4,
+      "udp": [],
+      "http_ports": [],
+      "https_ports": [],
+      "assume_up": false,
+      "discover": false,
+      "data": "offline",
+      "limits": [
+        "Only the 4 listed TCP port(s) were checked; a service on any other port was not seen.",
+        "UDP was not checked (run with --udp for the DNS, NTP and SNMP checks).",
+        "Web: one GET / per web port; no other path was requested, so an application under another path was not seen.",
+        "TLS: one handshake per TLS port; a different client may negotiate different parameters.",
+        "A host that answered on none of the listed ports is reported as unreachable, not as clean."
+      ]
+    }
+  },
+  "scope": {
+    "file": "scope.json",
+    "sha256": "98cbd5b84433f899dfebdef333b46526739e1a87960e9583e78699f66970a2bc",
+    "owner": "Example lab",
+    "contact": "lab@example.org",
+    "attestation": {
+      "statement": "I own the systems listed in targets, or I hold written permission from their owner to scan them for known vulnerabilities, and this scan stays within that permission.",
+      "agreed": true,
+      "name": "Test Operator",
+      "date": "2026-11-20",
+      "expires": "",
+      "authorization_ref": "fixture"
+    },
+    "targets": [
+      "10.0.0.5",
+      "10.0.0.6",
+      "10.0.0.7"
+    ],
+    "exclude": [],
+    "public_addresses": 0,
+    "public_confirmed": false,
+    "refused": [],
+    "coaching": []
+  },
+  "summary": {
+    "hosts_in_scope": 3,
+    "hosts_up": 2,
+    "open_ports": 4,
+    "services_identified": 3,
+    "findings": 1,
+    "low_confidence": 0,
+    "version_confirmed": 1,
+    "known_exploited": 1,
+    "critical": 0,
+    "act": 0,
+    "overdue": 0,
+    "observations": 1
+  },
+  "coverage": {
+    "complete": false,
+    "interrupted": false,
+    "stop_reason": "",
+    "hosts_unreachable": [
+      "10.0.0.7"
+    ],
+    "ports_filtered": 4,
+    "truncated_banners": [],
+    "ports_not_checked": [],
+    "throttled": [],
+    "paths": {
+      "enabled": false,
+      "per_host_cap": 0,
+      "bmc": false,
+      "requests": 0,
+      "by_outcome": {},
+      "not_ok": []
+    }
+  },
+  "hosts": [
+    {
+      "address": "10.0.0.5",
+      "names": [],
+      "kind": "private",
+      "public": false,
+      "up": true,
+      "source": "scope",
+      "ports": [
+        {
+          "port": 22,
+          "state": "open",
+          "services": 1,
+          "banner": "SSH-2.0-OpenSSH_9.9"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "services": 0,
+          "banner": ""
+        }
+      ],
+      "services": [
+        {
+          "port": 22,
+          "proto": "ssh",
+          "vendor": "OpenBSD",
+          "product": "OpenSSH",
+          "label": "OpenBSD OpenSSH",
+          "version": "9.9",
+          "shown_version": "9.9",
+          "distro": "",
+          "source": "SSH banner",
+          "evidence": "SSH banner: SSH-2.0-OpenSSH_9.9",
+          "guessed": false
+        }
+      ],
+      "http": [
+        {
+          "port": 443,
+          "status": 404,
+          "title": "",
+          "redirect": ""
+        }
+      ],
+      "tls": [
+        {
+          "port": 443,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_128_GCM_SHA256",
+          "cipher_std": "TLS_AES_128_GCM_SHA256",
+          "kex_type": "",
+          "kex_group": "",
+          "kex_bits": 0,
+          "kex_note": "key-exchange group not reported by this runtime (Node does not name hybrid post-quantum groups such as X25519MLKEM768)",
+          "pqc": false,
+          "cert": {
+            "subject": "CN=files.lab.example",
+            "issuer": "CN=Other CA",
+            "valid_from": "2026-01-01",
+            "valid_to": "2027-01-01",
+            "expired": false,
+            "not_yet_valid": false,
+            "days_left": 39,
+            "self_signed": false,
+            "san": "DNS:files.lab.example",
+            "key_type": "EC",
+            "key_bits": 256,
+            "curve": "prime256v1",
+            "sig_alg": "ecdsa-with-SHA256",
+            "sig_hash": "SHA-256",
+            "fingerprint256": "EC:DB:46:DD:04:44:D9:97:32:BE:2B:FE:96:C0:41:14:59:DD:66:63:9E:36:38:50:D9:D0:F9:FE:6D:41:77:FD",
+            "serial": "02:CD",
+            "spki_sha256": "2A:29:89:DD:8C:73:E1:10:BB:6C:EC:9E:F5:79:AC:C7:7D:5B:83:28:A7:A6:72:A7:06:C5:C2:F2:61:47:5C:96",
+            "san_dns": [
+              "files.lab.example"
+            ],
+            "san_ip": [],
+            "sct": false,
+            "must_staple": false
+          }
+        }
+      ],
+      "udp": [],
+      "observations": []
+    },
+    {
+      "address": "10.0.0.6",
+      "names": [],
+      "kind": "private",
+      "public": false,
+      "up": true,
+      "source": "scope",
+      "ports": [
+        {
+          "port": 21,
+          "state": "open",
+          "services": 1,
+          "banner": "220 (vsFTPd 3.0.3)"
+        },
+        {
+          "port": 22,
+          "state": "open",
+          "services": 1,
+          "banner": "SSH-2.0-dropbear_2022.83"
+        }
+      ],
+      "services": [
+        {
+          "port": 21,
+          "proto": "ftp",
+          "vendor": "vsftpd Project",
+          "product": "vsftpd",
+          "label": "vsftpd",
+          "version": "3.0.3",
+          "shown_version": "3.0.3",
+          "distro": "",
+          "source": "FTP greeting",
+          "evidence": "FTP greeting: 220 (vsFTPd 3.0.3)",
+          "guessed": false
+        },
+        {
+          "port": 22,
+          "proto": "ssh",
+          "vendor": "Dropbear SSH Project",
+          "product": "Dropbear SSH",
+          "label": "Dropbear SSH",
+          "version": "2022.83",
+          "shown_version": "2022.83",
+          "distro": "",
+          "source": "SSH banner",
+          "evidence": "SSH banner: SSH-2.0-dropbear_2022.83",
+          "guessed": false
+        }
+      ],
+      "http": [],
+      "tls": [],
+      "udp": [],
+      "observations": [
+        {
+          "port": 21,
+          "kind": "cleartext-login",
+          "severity": "medium",
+          "text": "FTP is open: unless it requires TLS, logins cross the network in clear text"
+        }
+      ]
+    },
+    {
+      "address": "10.0.0.7",
+      "names": [],
+      "kind": "private",
+      "public": false,
+      "up": false,
+      "source": "scope",
+      "ports": [],
+      "services": [],
+      "http": [],
+      "tls": [],
+      "udp": [],
+      "observations": []
+    }
+  ],
+  "findings": [
+    {
+      "cve": "CVE-2026-90104",
+      "title": "Fixture flaw in vsftpd",
+      "vendor": "vsftpd Project",
+      "product": "vsftpd",
+      "state": "affected",
+      "kev": true,
+      "kev_added": "2026-11-01",
+      "cisa_due": "2026-11-22",
+      "overdue": false,
+      "ransomware": false,
+      "epss": null,
+      "exploitation": {
+        "value": "active",
+        "basis": "On CISA's Known Exploited Vulnerabilities catalog since 2026-11-01",
+        "source": "cisa-kev"
+      },
+      "rating": {
+        "score": 6.5,
+        "band": "Medium",
+        "text": "CVSS 6.5 (assigner or CISA) x 1.00 Exploit Code Maturity: High (on CISA's Known Exploited Vulnerabilities catalog since 2026-11-01) = 6.5 Medium",
+        "base": {
+          "score": 6.5,
+          "from": "assigner or CISA",
+          "ver": "",
+          "vector": ""
+        },
+        "e": {
+          "label": "High",
+          "value": 1
+        },
+        "notes": [],
+        "confidence": "High",
+        "confidence_why": "the exploitation evidence is CISA's KEV catalog",
+        "from": "KEV entry (the CVE lookup file was not available, so CISA's SSVC assessment is not used)"
+      },
+      "priority": {
+        "decision": "attend",
+        "label": "Attend",
+        "rank": 3,
+        "does": "Fix sooner than your normal cycle; senior staff should know.",
+        "inputs": [
+          {
+            "name": "Exploitation",
+            "value": "active",
+            "basis": "On CISA's Known Exploited Vulnerabilities catalog since 2026-11-01",
+            "source": "cisa-kev"
+          },
+          {
+            "name": "Automatable",
+            "value": "no",
+            "basis": "Unknown: no CISA assessment or CVSS vector; assumed no",
+            "source": "default"
+          },
+          {
+            "name": "Technical impact",
+            "value": "partial",
+            "basis": "Unknown: no CISA assessment or CVSS vector; assumed partial",
+            "source": "default"
+          },
+          {
+            "name": "Mission and well-being",
+            "value": "medium",
+            "basis": "Default for an organisation's ordinary systems; set yours",
+            "source": "default"
+          }
+        ],
+        "signals": [
+          "In CISA's KEV catalog: BOD 26-04 requires a fix within 14 days, so the priority is raised from Track to Attend",
+          "CVSS 6.5 from the assigner or CISA: how severe the flaw is in general, not how urgent it is for you"
+        ],
+        "fix_by": {
+          "days": 14,
+          "triage": false,
+          "text": "within 14 days"
+        },
+        "exposure": "private address",
+        "deadline": "2026-11-22",
+        "overdue": false
+      },
+      "points": {
+        "total": 58,
+        "list": [
+          {
+            "points": 35,
+            "why": "Known exploited (CISA)"
+          },
+          {
+            "points": 3,
+            "why": "Federal deadline within 7 days"
+          },
+          {
+            "points": 20,
+            "why": "You run an affected version"
+          }
+        ]
+      },
+      "confidence": "high",
+      "confidence_why": "version 3.0.3 stated by the service (FTP greeting) is inside the affected range",
+      "seen_on": [
+        {
+          "host": "10.0.0.6",
+          "names": [],
+          "public": false,
+          "port": 21,
+          "proto": "ftp",
+          "product": "vsftpd",
+          "version": "3.0.3",
+          "shown_version": "3.0.3",
+          "distro": "",
+          "evidence": "FTP greeting: 220 (vsFTPd 3.0.3)",
+          "state": "affected",
+          "confidence": "high",
+          "confidence_why": "version 3.0.3 stated by the service (FTP greeting) is inside the affected range"
+        }
+      ],
+      "fix": {
+        "fixed_in": [],
+        "vendor_fixed": [],
+        "workaround": [],
+        "cisa_required_action": "Apply the vendor's update.",
+        "advisory": null,
+        "references": [],
+        "details": "https://xanderhutch.github.io/CyberView/vulnerabilities.html#CVE-2026-90104",
+        "details_note": "Check steps, signs of compromise and detection resources are on CyberView's page for this CVE (linked, not copied).",
+        "analysis": null
+      },
+      "rank": 1
+    }
+  ],
+  "named": [
+    {
+      "product": "OpenBSD OpenSSH",
+      "version_seen": "9.9",
+      "hosts": [
+        "10.0.0.5"
+      ],
+      "cves_naming_it": 1,
+      "exploited": 1,
+      "top": [
+        {
+          "cve": "CVE-2026-90101",
+          "title": "Fixture flaw in OpenSSH",
+          "rating": "8.1 High",
+          "exploited": true
+        }
+      ],
+      "note": "Named in the CVE List, versions not checked: CyberView's lookup files hold no version ranges for these. Compare each with the vendor's advisory."
+    }
+  ],
+  "notes": [
+    "Detection only: versions were read from what each service states about itself. A service can hide or misstate its version, and a Linux distribution's package can carry a backported fix under an old version number; confidence says which.",
+    "Matching uses CyberView's known-exploited flaws (CISA's KEV catalog with NVD's affected-version ranges) and recent high-risk flaws; a flaw outside them is not reported. A clean result is not proof that a host has no vulnerabilities.",
+    "The CyberView rating is the CVSS base score adjusted for exploitation evidence (CVSS v3.1 Exploit Code Maturity), the same calculation as the Vulnerabilities page; every point is listed with each finding.",
+    "Exploitation analyses and fix guides on the linked pages are written by CyberView AI (a Claude model) from vendor and government sources.",
+    "1 matched CVE(s) had no CVE lookup row in the data used; their rating is computed from the KEV entry alone (marked in each finding)."
+  ]
+}

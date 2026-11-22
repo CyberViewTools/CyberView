@@ -118,11 +118,63 @@
     <h2 id="runH">How to run it</h2>
     <p class="note">Needs Node.js 22 or later and a copy of the CyberView repository; nothing else to install. Run from the repository's folder.</p>
     <ol class="steps">
-      <li><span class="sl">Write a scope file</span><pre><code>node scanner/cyberview-scan.mjs init --out scope.json</code></pre></li>
+      <li><span class="sl">Write a scope file: <a href="#scope">build one on this page</a>, or start one from the command line</span><pre><code>node scanner/cyberview-scan.mjs init --out scope.json</code></pre></li>
       <li><span class="sl">Edit scope.json: owner, contact and targets; set attestation.agreed to true and attestation.name to your name. Then check it (nothing is scanned)</span><pre><code>node scanner/cyberview-scan.mjs check --scope scope.json</code></pre></li>
       <li><span class="sl">Scan, reading CyberView's public data</span><pre><code>node scanner/cyberview-scan.mjs scan --scope scope.json --online</code></pre></li>
     </ol>
     <p class="note">No internet on that network? Run <code>node scanner/cyberview-scan.mjs data --out cyberview-data</code> on a connected machine, carry the folder across, and scan with <code>--data cyberview-data</code> instead of <code>--online</code>. Exit code 0 means clean and complete, 2 means some hosts or ports could not be checked, 3 means the scan stopped early.</p>
+  </section>
+
+  <div class="toolsintro" id="tools">
+    <h2>Tools that run in this page</h2>
+    <p>Both tools below work entirely in your browser. A report you open is read by this page's own script and is never uploaded, sent or stored: close the tab and it is gone. A scope file is built here and saved by your browser as a download. Nothing goes to CyberView or anyone else.</p>
+  </div>
+
+  <section class="panel" id="viewer" aria-labelledby="viewH">
+    <h2 id="viewH">View a scan report</h2>
+    <p class="note">Open one or more <code>report.json</code> files from the scanner's output folder. You see the run and its authorization, the headline counts, every finding with its rating points, the hosts, certificates, observations and what the scan could not see. Open two or more to see what changed between scans, with the same rules as the scanner's <code>--compare</code>.</p>
+    <div class="drop" id="drop">
+      <p>Drop report.json files here, or</p>
+      <label class="btn primary" for="repFile">Choose report.json files</label>
+      <input type="file" id="repFile" class="vh" accept=".json,application/json" multiple>
+      <p class="note">Up to 8 files, 64 MB each. Read in this browser only.</p>
+    </div>
+    <div class="note repmsg" id="repMsg" role="status" aria-live="polite"></div>
+    <div id="repOut" hidden></div>
+  </section>
+
+  <section class="panel" id="scope" aria-labelledby="scopeH">
+    <h2 id="scopeH">Build a scope file</h2>
+    <p class="caveat" id="scWarn"><strong>Only list systems you own, or systems whose owner has given you written permission to test.</strong> Scanning other people's systems without permission may be unlawful. The scanner reads this file before it sends anything, refuses to start without your attestation, prints it at the start of every run and writes it into the report.</p>
+    <form id="scopeForm" class="scform" novalidate autocomplete="off">
+      <div class="fgrid">
+        <label class="field" for="scOwner">Owner of the targets<input type="text" id="scOwner" maxlength="160" placeholder="Organisation or person"></label>
+        <label class="field" for="scContact">Contact<input type="text" id="scContact" maxlength="160" placeholder="Email or phone (optional)"></label>
+        <label class="field" for="scName">Your name (who attests)<input type="text" id="scName" maxlength="120"></label>
+        <label class="field" for="scRef">Authorization reference<input type="text" id="scRef" maxlength="200" placeholder="Ticket, contract or letter (optional)"></label>
+        <label class="field" for="scExpires">Valid until<input type="date" id="scExpires"><span class="hint">Optional; without it the attestation must be renewed after a year.</span></label>
+        <label class="field" for="scPorts">Ports<select id="scPorts">
+          <option value="default">The scanner's default (22 common ports)</option>
+          <option value="web">Web only (80, 443, 8000, 8008, 8080, 8443, 8888, 9443)</option>
+          <option value="remote">Remote access (22, 23, 3389, 5900)</option>
+          <option value="custom">My own list</option>
+        </select></label>
+        <label class="field" for="scCustom" id="scCustomL" hidden>Port list<input type="text" id="scCustom" maxlength="400" placeholder="22,80,8000-8010"></label>
+      </div>
+      <div class="fgrid two-up">
+        <label class="field" for="scTargets">Targets, one per line<textarea id="scTargets" rows="6" placeholder="192.168.1.0/24&#10;10.0.0.5&#10;files.example.internal"></textarea><span class="hint">Addresses, CIDR ranges (IPv4 no wider than a /16, IPv6 no wider than a /120) or host names. Lines starting with # are skipped.</span></label>
+        <label class="field" for="scExclude">Leave out, one per line<textarea id="scExclude" rows="6" placeholder="192.168.1.1"></textarea><span class="hint">Optional: addresses, ranges or host names inside the targets that must not be touched.</span></label>
+      </div>
+      <p class="note pubrule" id="scRule">Private ranges (10/8, 172.16/12, 192.168/16, loopback, link-local, IPv6 fc00::/7) run with the scope file alone. A public address also needs <code>--i-am-authorized-for-public-ranges</code> on the command line; a public IPv4 range may be no wider than a /24, and one scan touches at most 1,024 public addresses, whatever the file says.</p>
+      <p class="caveat pubflag" id="scPublic" role="status" hidden></p>
+      <div class="attest">
+        <label class="chk" for="scAgree"><input type="checkbox" id="scAgree"> I attest, as the scanner requires, in these exact words:</label>
+        <blockquote id="scStatement">I own the systems listed in targets, or I hold written permission from their owner to scan them for known vulnerabilities, and this scan stays within that permission.</blockquote>
+      </div>
+      <p class="heroacts"><button type="submit" class="btn primary" id="scMake">Make scope.json</button></p>
+    </form>
+    <div id="scopeOut" aria-live="polite" hidden></div>
+    <p class="note">The file is checked here with the same rules as the scanner's own <code>check</code> command; run that command too, since it is the scanner that decides. Discovery options (domains, Certificate Transparency, asset lists, cloud inventory) can be added to the file by hand: see the guide.</p>
   </section>
 
   <section class="panel" aria-labelledby="recentH">
@@ -133,6 +185,7 @@
   <p class="note foot-note">A proprietary CyberView product, free to download and use on your own authorised systems under its <a href="https://github.com/xanderhutch/CyberView/blob/main/scanner/LICENSE" target="_blank" rel="noopener noreferrer">licence</a>; no redistribution without permission. A clean result is not proof that a host has no vulnerabilities: the scanner knows only the flaws CyberView's data covers, and a service can hide or misstate its version.</p>
 </main>
 <footer class="foot"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="about.html#corrections">Corrections</a><a href="about.html#security">Report a security issue</a><a href="account.html">Account</a></footer>
+<script src="scanner-lib.js"></script>
 <script src="scanner.js"></script>
 <script src="nav.js"></script>
 </body>

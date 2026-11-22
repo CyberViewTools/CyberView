@@ -1,0 +1,106 @@
+{
+  "action": "Update Ghostscript to 10.08.0, which pwn.ai says fixes the flaw; on distributions that have not shipped it, apply the distribution's Ghostscript security update when available.",
+  "actor": "",
+  "attack": [
+    "rce",
+    "use-after-free"
+  ],
+  "category": "vuln",
+  "country": "",
+  "date": "2026-11-22",
+  "date_note": "The Hacker News article of 22 November is the first page found describing the application demonstrations; the fix (10.08.0) dates from 8 September and the CVE record from 9 November.",
+  "exec": "A Ghostscript flaw can let a crafted document uploaded to or processed by common applications escape Ghostscript's sandbox; it is fixed in 10.08.0, and The Hacker News reports no attacks.",
+  "first_seen": "2026-11-22T06:26:24Z",
+  "geo_basis": "",
+  "impact": "",
+  "lat": null,
+  "lng": null,
+  "org": "Artifex (Ghostscript)",
+  "pin_type": "none",
+  "place": "",
+  "plain": "Security firm pwn.ai showed that a specially made file sent to about ten common applications that use Ghostscript could break out of its safety restrictions. A fix, version 10.08.0, exists; no attacks are reported.",
+  "products": [
+    "Ghostscript"
+  ],
+  "cves": [
+    "CVE-2026-125396"
+  ],
+  "report": {
+    "publisher": "The Hacker News",
+    "publisher_type": "news",
+    "published": "2026-11-22",
+    "read_depth": "full",
+    "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+    "key_findings": [
+      "pwn.ai demonstrated a Ghostscript sandbox escape through upload, preview and print features in about ten common applications.",
+      "The flaw, CVE-2026-125396, was fixed in Ghostscript 10.08.0 on September 8; The Hacker News reports no attacks.",
+      "VulnCheck's advisory lists it as affecting ghostpdl >= 0, < 10.08.0 with CVSS 8.5."
+    ],
+    "iocs_available": false,
+    "recommendations": [
+      "Update to Ghostscript 10.08.0."
+    ]
+  },
+  "sector": "Technology / open source",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "The Hacker News: Researchers Demonstrate Ghostscript Sandbox-Escape RCE via Crafted File Uploads in Popular Apps",
+      "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+      "published": "2026-11-22"
+    },
+    {
+      "name": "VulnCheck advisory: Ghostscript before 10.08.0, dSAFER bypass",
+      "url": "https://www.vulncheck.com/advisories/ghostscript-before-10.08.0-dsafer-bypass-via-putgstringcopy-forceput-recovery",
+      "published": "2026-11-09"
+    },
+    {
+      "name": "pwn.ai: Upload2Shell evidence index",
+      "url": "https://pwn.ai/upload2shell"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "pwn.ai demonstrated that a crafted file can escape Ghostscript's sandbox through upload, preview and print features in about ten common applications. The flaw, CVE-2026-125396, is scored 8.5 in VulnCheck's advisory, which lists ghostpdl >= 0, < 10.08.0 as affected. pwn.ai says Ghostscript 10.08.0 fixes it, and The Hacker News reports no attacks.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "pwn.ai shows Ghostscript sandbox escape (CVE-2026-125396) through file uploads in about ten applications",
+  "updated_at": "2026-11-22T06:26:24Z",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-22T06:30:00Z",
+    "note": "The Hacker News, VulnCheck's advisory and the researchers' own pwn.ai page each state the CVE and the 10.08.0 fix; the pwn.ai page is the researchers' primary write-up. The Ghostscript bug tracker page (709684) blocked automated readers and was not read."
+  },
+  "evidence": [
+    {
+      "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+      "quote": "upload, preview, and print features in about ten common applications"
+    },
+    {
+      "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+      "quote": "is scored 8.5 out of 10 in its security advisory"
+    },
+    {
+      "url": "https://thehackernews.com/2026/11/researchers-demonstrate-ghostscript.html",
+      "quote": "there have been no reports of it being used in attacks"
+    },
+    {
+      "url": "https://www.vulncheck.com/advisories/ghostscript-before-10.08.0-dsafer-bypass-via-putgstringcopy-forceput-recovery",
+      "quote": "ghostpdl >= 0, < 10.08.0"
+    },
+    {
+      "url": "https://pwn.ai/upload2shell",
+      "quote": "Ghostscript 10.08.0 fixes Upload2Shell."
+    }
+  ],
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  }
+}

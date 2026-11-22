@@ -1,0 +1,55 @@
+{
+  "job": "update-u1",
+  "started_at": "2026-11-22T06:23:44Z",
+  "finished_at": "2026-11-22T06:25:49Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://letsdatascience.com/news/attackers-ai-agents-exploit-monai-label-zero-day-for-root-ac-5c46969f",
+      "title": "Attackers' AI Agents Exploit MONAI Label Zero-Day for Root Access (LDS Team, 2026-11-21)",
+      "used_in": "none (aggregator relaying AWS, the GitHub advisory, The Register, VentureBeat, The Hacker News, strix.ai); outcome unchanged, conflict logged in open_leads"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "title": "Hackers use autonomous AI tool Cairn to find zero-day, take over server",
+      "used_in": "cairn-ai-monai-label-zero-day-2026-11 (re-read: 'they released a security update to address it on November 18', linked to GHSA-qc22-rmgc-vg94)"
+    },
+    {
+      "url": "https://aws.amazon.com/blogs/security/feed/",
+      "title": "AWS Security Blog RSS",
+      "used_in": "located Amazon's post https://aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/ (20 Nov 2026); only a truncated excerpt readable, body page returned navigation only"
+    }
+  ],
+  "added": [],
+  "updated": [
+    {
+      "id": "cairn-ai-monai-label-zero-day-2026-11",
+      "what": "The 18 November security update is now attributed to BleepingComputer in summary and plain, because another report says the advisory's fix is only promised for the next MONAI Label release. No other facts were changed."
+    }
+  ],
+  "unchanged": [
+    {
+      "id": "cairn-ai-monai-label-zero-day-2026-11",
+      "url": "https://letsdatascience.com/news/attackers-ai-agents-exploit-monai-label-zero-day-for-root-ac-5c46969f"
+    }
+  ],
+  "unrelated": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "MONAI Label GHSA-qc22-rmgc-vg94: CVE, affected versions and whether a fixed release exists",
+      "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94",
+      "note": "letsdatascience (21 Nov) says the advisory states the fix 'will be included in the next MONAI Label release', lists 0.8.5 and earlier as affected, gives no release date and says 0.8.5 is still the newest package. It also reports 'CVE-2026-133968', CVSS 9.8 (via strix.ai), and workarounds (enable auth, restrict ANNOTATOR). BleepingComputer says a security update was released on 18 November. The advisory answered 403 to this worker and the gh API is repo-bound, so none of this could be checked at the original. Read the advisory, and Amazon's post (https://aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/), then fix 'action', 'cves' and the update sentence.",
+      "priority": "high"
+    }
+  ],
+  "failed_sites": [
+    "github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94 (403)",
+    "github.com/advisories/GHSA-qc22-rmgc-vg94 (403)",
+    "aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/ (body not returned, navigation only)"
+  ],
+  "notes": "The assigned page is an aggregator, so its new details (CVE, CVSS, versions, unreleased fix) were not written into the event: under checklist item 3 they must come from the advisory it relays, which could not be read. The event's one CyberView-voice claim that conflicts with that page (security update on 18 November) is now attributed to BleepingComputer. updated_at was bumped so the second review rechecks the change.",
+  "worker_role": "updater-deep",
+  "worker_model": "opus"
+}

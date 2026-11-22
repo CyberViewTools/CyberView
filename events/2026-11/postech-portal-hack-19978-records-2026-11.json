@@ -1,12 +1,22 @@
 {
-  "action": "POSTECH account holders: change the unified account password (and anywhere it was reused) and watch for phishing that uses your ID or email, following the university's notice.",
+  "action": "General advice: POSTECH account holders should change their university account password and anywhere it was reused, and watch for phishing that uses their name or email.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "South Korea",
   "cves": [],
   "date": "2026-11-19",
-  "exec": "A South Korean university reports a leak of 19,978 records from two campus portals; no national ID numbers are reported leaked.",
+  "evidence": [
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209655",
+      "quote": "20일 2차 공지를 통해 대학통합포털(Podium)에서 개인정보 2만5,551건이 추가로 유출된 사실을 확인했다고 밝혔다."
+    },
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209655",
+      "quote": "현재까지 확인된 개인정보 유출 규모는 총 4만5,529건이다."
+    }
+  ],
+  "exec": "A South Korean university's portal hack grew to 45,529 leaked records, including names, emails and office extensions.",
   "first_seen": "2026-11-20T08:12:35Z",
   "geo_basis": "victim HQ",
   "lat": 36.0136,
@@ -14,7 +24,7 @@
   "org": "POSTECH (Pohang University of Science and Technology)",
   "pin_type": "victim",
   "place": "Pohang",
-  "plain": "POSTECH in South Korea says hackers broke into two campus portals and 19,978 records of account IDs and other details leaked. The university says no national ID, passport or driver's licence numbers were leaked so far.",
+  "plain": "POSTECH in South Korea says hackers who broke into its campus portals leaked 45,529 records in total, after it found 25,551 more records with names, emails and office extensions.",
   "products": [
     "RETINA",
     "HEMOS"
@@ -25,18 +35,23 @@
   "sources": [
     {
       "name": "Dailysecu (Korea)",
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209655",
+      "published": "2026-11-22"
+    },
+    {
+      "name": "Dailysecu (Korea)",
       "url": "https://www.dailysecu.com/news/articleView.html?idxno=209629"
     }
   ],
   "status": "confirmed",
-  "summary": "According to Dailysecu, POSTECH posted a notice on 19 November that attackers used security flaws in its research equipment portal (RETINA) and IT service portal (HEMOS) to gain administrator privileges. The notice reports 19,978 records leaked: 19,500 account IDs with encrypted passwords and 478 IDs with emails and affiliations. The attack was found after an illegal mining program turned up on a lab GPU server.",
+  "summary": "According to Dailysecu, POSTECH said in a second notice on 20 November that 25,551 more personal records (names, emails, departments, positions and office extensions) leaked from its Podium portal, bringing the total to 45,529. Its first notice, on 19 November, said attackers used flaws in its research equipment portal (RETINA) and IT service portal (HEMOS) to gain administrator privileges. The attack was found after an illegal mining program turned up on a lab GPU server.",
   "tags": [],
   "time_basis": "published",
-  "title": "POSTECH says portal hack leaked 19,978 records; illegal mining program found on lab GPU server",
-  "updated_at": "2026-11-20T08:12:35Z",
+  "title": "POSTECH says portal hack leaked 45,529 records in total after finding 25,551 more",
+  "updated_at": "2026-11-22T06:24:30Z",
   "validation": {
-    "checked_at": "2026-11-20T08:12:35Z",
-    "note": "Single publisher (Dailysecu) relaying the university's own notice; the notice itself was not read.",
+    "checked_at": "2026-11-22T06:24:30Z",
+    "note": "Single publisher (Dailysecu, two articles) relaying POSTECH's notices of 19 and 20 November; the notices themselves were not read. Dailysecu says 45,529 is the sum per system and the number of people may differ due to overlap.",
     "state": "single_source"
   },
   "review": {

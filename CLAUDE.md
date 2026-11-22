@@ -94,6 +94,7 @@ scripts/monitor.mjs      live site check (GitHub Action, hourly)
 scripts/security-check.mjs   static security check (every code push and weekly)
 scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.md (workers get their assignment with --batch)
 scripts/dispatch.mjs     what the ops session runs for every scheduled job: plans the work and says which subagents to start
+scripts/grok-watch.mjs   no AI model: surfaces the `[Grok]` issues/briefs (Grok has no GitHub account; its briefs are relayed as [Grok]-titled issues) with what is still unhandled, so Claude (the lead) can act; writes nothing, Grok's briefs are proposals a person still gates
 scripts/sweep-plan.mjs   assigns stories to the sweep's researchers by rule and scores the run afterwards (config/pipeline.json sets how many)
 scripts/finish.mjs       mechanical end of a job: timestamp, build, commit data to the data branch, push (starts the deploy); config/ and docs/ changes go to propose.mjs
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS

@@ -149,6 +149,13 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 
 `diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
+## Sprint 1 additions
+
+- **Path rail (`--paths`, off unless you ask).** Up to 8 extra requests per host, method GET, and only paths on a frozen list. A host is asked only when the root response already hinted the product (nginx, Apache, or a Spring `X-Application-Context`). `--well-known` adds `robots.txt`, `security.txt`, `sitemap.xml`, a single git HEAD file and a Subversion entries file. Status-page bodies are discarded. Login paths, `/actuator/env`, heap dumps, debug consoles and configuration backups are not on the list.
+- **CMS and JavaScript on the root page.** Plugin and theme versions disclosed in the page, and library versions in script filenames, become inventory. A generator tag with no version stays a guess. No second request.
+- **SSH algorithms.** After the identification line the scanner reads the server's algorithm advertisement on the same connection and then stops. It does not send its own key exchange and it does not log in. Weak key-exchange, CBC ciphers and SHA-1 MACs are observations. A post-quantum name is recorded when the server advertises one. The host key itself is not collected, because that needs the next message.
+- **Citations and hunt links.** `--data-incidents` reads `data/incidents.json` from an offline snapshot (the live site is not asked). A citation is kept when the event is confirmed or official and the review passed or was corrected. Claimed events are counted and left out. Every corroborated event for a CVE is listed. Hunt output is publisher URLs only.
+
 ## Deliberately left out
 
 Credentialed (authenticated) scanning; password, community-string or any credential guessing; protocol commands beyond the

@@ -12,6 +12,7 @@ import tls from "node:tls";
 import http from "node:http";
 import https from "node:https";
 import { TIMEOUTS } from "./limits.mjs";
+import { isRailPath, railEntry } from "./paths.mjs";
 
 export const VERSION = "1.0.0";
 export const INFO_URL = "https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner";
@@ -71,8 +72,12 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
       const buf = await readFor(sock, timeouts.readMs, timeouts.maxBytes);
       if (port === 3306 || (buf.length > 5 && buf[3] === 0 && buf[4] === 0x0a)) out.raw = buf;
       out.banner = buf.toString("latin1").slice(0, 2048);
-      // SSH: say who we are before closing, as the protocol expects of a client (RFC 4253 section 4.2)
-      if (/^SSH-\d/.test(out.banner) && !sock.destroyed) await new Promise((r) => sock.end(SSH_IDENT + "\r\n", r));
+      // SSH: say who we are, then read the server's KEXINIT on this same connection (RFC 4253). Nothing else is sent.
+      if (/^SSH-\d/.test(out.banner) && !sock.destroyed) {
+        await new Promise((r) => sock.write(SSH_IDENT + "\r\n", r));
+        const more = await readFor(sock, Math.min(800, timeouts.readMs), 8192);
+        if (more.length) out.kexRaw = more;
+      }
     }
   } catch (e) {
     out.state = e && e.code === "ECONNREFUSED" ? "closed" : out.state === "open" ? "open" : "filtered";
@@ -105,11 +110,11 @@ function readFor(sock, ms, maxBytes) {
   });
 }
 
-/** One request for the root page over the open socket; the body is cut at maxBytes; redirects are recorded, not followed. */
-function httpGet(sock, useTls, host, port, timeouts) {
+/** One request over the open socket; the body is cut at maxBytes; redirects are recorded, not followed. path is a frozen rail path or "/". */
+function httpGet(sock, useTls, host, port, timeouts, path = "/") {
   return new Promise((resolve) => {
     const lib = useTls ? https : http, hostH = /:/.test(host) && net.isIP(host) === 6 ? `[${host}]` : host;
-    const req = lib.request({ method: "GET", path: "/", createConnection: () => sock, timeout: timeouts.readMs,
+    const req = lib.request({ method: "GET", path, createConnection: () => sock, timeout: timeouts.readMs,
       headers: { "User-Agent": USER_AGENT, Accept: "text/html,*/*;q=0.5", Connection: "close", Host: [80, 443].includes(port) ? hostH : `${hostH}:${port}` } });
     const finish = (v) => { clearTimeout(t); resolve(v); };
     const t = setTimeout(() => { req.destroy(); finish(null); }, timeouts.readMs + 500);
@@ -123,4 +128,41 @@ function httpGet(sock, useTls, host, port, timeouts) {
     req.on("error", () => finish(null));
     req.end();
   });
+}
+
+/**
+ * One extra request for a frozen rail path. A path that is not on the rail is not connected.
+ * Status-style entries return no body. Never throws.
+ */
+export async function probeHttpPath(ip, port, path, { servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS, httpPorts = [], httpsPorts = [] } = {}) {
+  const entry = railEntry(path);
+  if (!entry || !isRailPath(path)) return { port, path, state: "skipped", error: "not on the frozen path rail", http: null };
+  const out = { port, path, state: "filtered", error: "", http: null };
+  let sock = null;
+  const kill = () => { try { sock && sock.destroy(); } catch { /* closed */ } };
+  if (signal) { if (signal.aborted) return out; signal.addEventListener("abort", kill, { once: true }); }
+  const hard = setTimeout(kill, timeouts.connectMs + timeouts.readMs + 1000);
+  try {
+    const useTls = (TLS_PORTS.has(port) || httpsPorts.includes(port)) && !httpPorts.includes(port);
+    sock = await connect(ip, port, useTls, servername, timeouts.connectMs);
+    out.state = "open";
+    const http = await httpGet(sock, useTls, hostHeader || ip, port, timeouts, path);
+    out.http = trimRailBody(entry, http);
+  } catch (e) {
+    out.state = e && e.code === "ECONNREFUSED" ? "closed" : out.state === "open" ? "open" : "filtered";
+    out.error = String((e && (e.code || e.message)) || e).slice(0, 80);
+  } finally {
+    clearTimeout(hard); if (signal) signal.removeEventListener("abort", kill); kill();
+  }
+  return out;
+}
+
+function trimRailBody(entry, http) {
+  if (!http) return null;
+  if (entry.keep === "text") return { status: http.status, headers: {}, body: String(http.body || "").slice(0, 500) };
+  if (entry.keep === "git") {
+    const line = String(http.body || "").split(/\r?\n/)[0].slice(0, 80);
+    return { status: http.status, headers: {}, body: /^ref:\s+\S+$/.test(line) ? line : "" };
+  }
+  return { status: http.status, headers: {}, body: "" };
 }

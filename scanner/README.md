@@ -34,6 +34,8 @@ node scanner/cyberview-scan.mjs init --out scope.json        # 1. write a scope 
 #   2. edit scope.json: owner, contact, targets; set attestation.agreed to true and attestation.name to your name
 node scanner/cyberview-scan.mjs check --scope scope.json     # 3. check it; nothing is scanned
 node scanner/cyberview-scan.mjs scan --scope scope.json --online
+# optional, off unless you ask: --paths (hint-gated extra requests) and --well-known
+# optional, offline snapshot only: --data-incidents (confirmed incident links; claimed events are left out)
 ```
 
 For an air-gapped network, download the data on a connected machine, carry the folder across, and scan offline:

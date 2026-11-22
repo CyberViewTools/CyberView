@@ -54,6 +54,42 @@ export function fromSsh(banner, port = 22) {
   return [svc(port, "ssh", "", "", "", { label: `SSH server (${clip(soft, 40)})`, source: "SSH banner", evidence: ev, guessed: true })];
 }
 
+/** Parse a server SSH_MSG_KEXINIT (RFC 4253 section 7.1). Returns null on a short or garbled packet. Does not continue the handshake. */
+const WEAK_KEX = new Set(["diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1", "diffie-hellman-group-exchange-sha1"]);
+const WEAK_MAC = new Set(["hmac-sha1", "hmac-sha1-96", "hmac-md5", "hmac-md5-96", "hmac-ripemd160"]);
+const PQC_KEX = /mlkem|sntrup|kyber|frodokem/i;
+export function parseKexinit(buf) {
+  const b = Buffer.isBuffer(buf) ? buf : Buffer.from(buf || []);
+  if (b.length < 22) return null;
+  let i = b[5] === 20 ? 5 : b.indexOf(20);
+  if (i < 0 || i + 17 >= b.length) return null;
+  i += 1 + 16;
+  const lists = [];
+  for (let n = 0; n < 8; n++) {
+    if (i + 4 > b.length) return null;
+    const len = b.readUInt32BE(i);
+    i += 4;
+    if (len > 8192 || i + len > b.length) return null;
+    lists.push(b.subarray(i, i + len).toString("utf8").split(",").map((s) => s.trim()).filter((s) => s && s.length < 80).slice(0, 40));
+    i += len;
+  }
+  const names = (xs) => [...new Set(xs)].slice(0, 40);
+  return { kex: lists[0], host_key: lists[1], cipher: names([...lists[2], ...lists[3]]), mac: names([...lists[4], ...lists[5]]) };
+}
+export function sshKexObservations(port, parsed) {
+  if (!parsed) return [];
+  const out = [];
+  const weakKex = (parsed.kex || []).filter((n) => WEAK_KEX.has(n) || /sha-?1/i.test(n));
+  const weakCipher = (parsed.cipher || []).filter((n) => /cbc$|arcfour|3des|^des/i.test(n));
+  const weakMac = (parsed.mac || []).filter((n) => WEAK_MAC.has(n));
+  const pqc = (parsed.kex || []).filter((n) => PQC_KEX.test(n));
+  if (weakKex.length) out.push({ port, kind: "ssh-weak-kex", severity: "high", text: `SSH advertises weak key exchange: ${weakKex.slice(0, 8).join(", ")}` });
+  if (weakCipher.length) out.push({ port, kind: "ssh-weak-cipher", severity: "high", text: `SSH advertises a CBC or legacy cipher: ${weakCipher.slice(0, 8).join(", ")}` });
+  if (weakMac.length) out.push({ port, kind: "ssh-weak-mac", severity: "medium", text: `SSH advertises a SHA-1 or MD5 MAC: ${weakMac.slice(0, 8).join(", ")}` });
+  if (pqc.length) out.push({ port, kind: "ssh-pqc-kex", severity: "info", text: `SSH advertises a post-quantum or hybrid key exchange: ${pqc.slice(0, 8).join(", ")}` });
+  return out;
+}
+
 /* ---- FTP, SMTP, POP3, IMAP greetings (the server speaks first) ---- */
 const GREET = [
   [/\(vsFTPd (\d[\w.]*)\)/i, "vsftpd Project", "vsftpd", "ftp"],
@@ -145,6 +181,33 @@ export function fromHttp(res, port = 80, tls = false) {
     if ((m = /^WordPress\s+(\d[\w.]*)/i.exec(g))) out.push(svc(port, proto, "WordPress", "WordPress", m[1], { source: "page generator tag", evidence: `generator: ${g}` }));
     else if ((m = /^Drupal\s+(\d+)/i.exec(g))) out.push(svc(port, proto, "Drupal", "Drupal", "", { source: "page generator tag", evidence: `generator: ${g} (major version only)`, guessed: true }));
     else if (/^Joomla/i.test(g)) out.push(svc(port, proto, "Joomla", "Joomla!", "", { source: "page generator tag", evidence: `generator: ${g}`, guessed: true }));
+    else if ((m = /^Kentico CMS\s+([\d.]+)/i.exec(g))) out.push(svc(port, proto, "Kentico", "Kentico CMS", m[1], { source: "page generator tag", evidence: `generator: ${g}` }));
+    else if (/^October\s*CMS/i.test(g)) out.push(svc(port, proto, "October CMS", "October CMS", "", { source: "page generator tag", evidence: `generator: ${g}`, guessed: true }));
+    else if (/^DotNetNuke/i.test(g)) out.push(svc(port, proto, "DNN", "DotNetNuke", "", { source: "page generator tag", evidence: `generator: ${g}`, guessed: true }));
+    else if (/^WordPress$/i.test(g.trim())) out.push(svc(port, proto, "WordPress", "WordPress", "", { source: "page generator tag", evidence: `generator: ${g} (no version)`, guessed: true }));
+  }
+  const xgen = header("x-generator");
+  if (xgen && !out.some((x) => x.product === "Drupal")) {
+    const m = /^Drupal(?:\s+(\d[\d.]*))?/i.exec(xgen);
+    if (m) out.push(svc(port, proto, "Drupal", "Drupal", m[1] && m[1].includes(".") ? m[1] : "", { source: "HTTP X-Generator header", evidence: `X-Generator: ${xgen}`, guessed: !(m[1] && m[1].includes(".")) }));
+  }
+  if (/\bCraft CMS\b/.test(header("x-powered-by")) && !out.some((x) => x.product === "Craft CMS")) out.push(svc(port, proto, "Pixel & Tonic", "Craft CMS", "", { source: "HTTP X-Powered-By header", evidence: "X-Powered-By names Craft CMS", guessed: true }));
+  // Plugins and themes disclosed in the root page (the ver query the CMS itself appends). Not a wordlist.
+  // https://developer.wordpress.org/reference/functions/wp_enqueue_script/
+  for (const m of body.matchAll(/wp-content\/(plugins|themes)\/([a-z0-9_-]{1,40})\/[^"'?\s]{0,80}\?ver=(\d[\w.]{0,20})/gi)) {
+    const kind = m[1].toLowerCase() === "themes" ? "theme" : "plugin";
+    const name = m[2];
+    if (out.some((x) => x.product === name)) continue;
+    out.push(svc(port, proto, "WordPress", name, m[3], { source: "page script URL", evidence: `WordPress ${kind} ${name} ${m[3]} disclosed on the root page`, label: `WordPress ${kind} ${name}` }));
+    if (out.length > 24) break;
+  }
+  // Library versions named in script filenames on the root page. jquery-3.4.1.js is the release filename jQuery publishes.
+  // https://code.jquery.com/jquery/ and https://github.com/jquery/jquery
+  for (const m of body.matchAll(/(?:^|[/"])(jquery|bootstrap|angular(?:\.min)?|lodash|moment)[-.](\d+\.\d+(?:\.\d+)*)(?:\.min)?\.js/gi)) {
+    const name = m[1].replace(/\.min$/i, "");
+    if (out.some((x) => x.product.toLowerCase() === name.toLowerCase())) continue;
+    out.push(svc(port, proto, name, name, m[2], { source: "script filename", evidence: `script filename ${name}-${m[2]}.js`, label: name }));
+    if (out.length > 24) break;
   }
   return out;
 }

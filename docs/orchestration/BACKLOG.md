@@ -11,6 +11,11 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Review | Implementation | `match` command, `--assume-exposed` off by default ([handoff](handoff/tk-matchers.md)) |
 | tk-diff | Scan diff / watch — compare to last scan (new/fixed/still-open), optional scheduled re-scan + alert | Review | Implementation | `diff` of two reports; watch list is a file, not a sender ([handoff](handoff/tk-diff.md)) |
 | tk-hygiene | TLS & exposure hygiene — cert expiry/weak protocols, missing security headers, version disclosure, default pages (from data already collected) | Implementation | Implementation | Discovery + Design done ([handoff](handoff/tk-hygiene.md)); PR 1 (TLS/cert) open, then PR 2 (HTTP/mail) |
+| scan-http-paths | Bounded HTTP path rail | Review | Implementation | `--paths` hint-gated, cap 8 ([handoff](handoff/scan-http-paths.md)) |
+| scan-cms-html | CMS and JS versions from the root page | Review | Implementation | plugins disclosed in the body, script filenames ([handoff](handoff/scan-cms-html.md)) |
+| scan-incidents-cite | CVE citations, claimed events omitted | Review | Implementation | `--data-incidents` offline index ([handoff](handoff/scan-incidents-cite.md)) |
+| scan-hunt-links | Hunt pointers, links only | Review | Implementation | publisher URLs from the workbench ([handoff](handoff/scan-hunt-links.md)) |
+| scan-ssh-kex | SSH KEXINIT on the same connection | Review | Implementation | weak set and PQC names; no client key exchange ([handoff](handoff/scan-ssh-kex.md)) |
 
 ## Parked (owner decision pending)
 

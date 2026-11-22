@@ -160,6 +160,13 @@ export function summaryText(report) {
     if (f.fix.cisa_required_action) L.push(`   CISA required action: ${f.fix.cisa_required_action.slice(0, 300)}`);
     if (f.fix.advisory) L.push(`   Vendor advisory: ${f.fix.advisory.url}`);
     L.push(`   Details: ${f.fix.details}`);
+    if (f.citations && f.citations.length) L.push(`   Cited incidents: ${f.citations.map((c) => c.url).join(" ")}`);
+    if (f.claimed_omitted) L.push(`   ${f.claimed_omitted} claimed event(s) for this CVE were left out (not corroborated).`);
+  }
+  if ((report.hunt || []).length) {
+    L.push("");
+    L.push("Hunt (publisher links only; rule and indicator bodies are not copied):");
+    report.hunt.slice(0, 20).forEach((h) => L.push(`   ${h.cve ? h.cve + " " : ""}${h.publisher ? h.publisher + " " : ""}${h.url}`));
   }
   if (report.findings.length > 25) L.push(`\n... and ${report.findings.length - 25} more in report.json and findings.csv.`);
   const SEV = { high: 0, medium: 1, low: 2, info: 3 };

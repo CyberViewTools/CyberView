@@ -4,17 +4,21 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, mkdtempSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import http from "node:http";
+import net from "node:net";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import vm from "node:vm";
 import { checkScope, gate, hostInScope, classify, parseTarget, listAddresses, template, STATEMENT, LIMITS } from "../../scanner/lib/scope.mjs";
 import { settings, Limiter, CAPS, PRIVATE_CAPS } from "../../scanner/lib/limits.mjs";
-import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, certInfo, observations, udpObservations } from "../../scanner/lib/fingerprint.mjs";
+import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, certInfo, observations, udpObservations, parseKexinit, sshKexObservations } from "../../scanner/lib/fingerprint.mjs";
 import { cleanFlaws, findings, toItem } from "../../scanner/lib/match.mjs";
 import { dirSource, webSource, ALLOWED, checkBase } from "../../scanner/lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, servicesOf, allPorts } from "../../scanner/lib/scan.mjs";
 import { toCsv, toSarif, toInventory, CSV_HEAD, coverage, isTruncatedBanner, summaryText, summarize } from "../../scanner/lib/report.mjs";
-import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
+import { USER_AGENT, SSH_IDENT, probePort, probeHttpPath } from "../../scanner/lib/probe.mjs";
+import { selectPaths, PATH_CAP } from "../../scanner/lib/paths.mjs";
+import { citationsFor, huntLinks } from "../../scanner/lib/cite.mjs";
 import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
 import { udpProbe } from "../../scanner/lib/udp.mjs";
 import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
@@ -895,4 +899,128 @@ test("diff command writes diff.json and contacts nothing", async () => {
   assert.equal(diff.counts.resolved, 1);
   assert.match(readFileSync(join(d, "out", "diff.html"), "utf8"), /Resolved is not proof of a patch/);
   assert.match(readFileSync(join(d, "out", "diff.txt"), "utf8"), /WATCH/);
+});
+
+/* ---- sprint 1: path rail, CMS/JS on the root page, citations, hunt links, SSH KEXINIT ---- */
+function listenHttp(handler) {
+  const srv = http.createServer(handler);
+  return new Promise((resolve) => srv.listen(0, "127.0.0.1", () => resolve({ port: srv.address().port, close: () => new Promise((r) => srv.close(() => r())) })));
+}
+function nameList(names) {
+  const s = Buffer.from(names.join(","));
+  const b = Buffer.alloc(4 + s.length);
+  b.writeUInt32BE(s.length, 0); s.copy(b, 4); return b;
+}
+function kexPacket(kex, hostKey, cipher, mac) {
+  const body = Buffer.concat([Buffer.from([20]), Buffer.alloc(16), nameList(kex), nameList(hostKey), nameList(cipher), nameList(cipher), nameList(mac), nameList(mac), nameList(["none"]), nameList(["none"]), nameList([]), nameList([]), Buffer.from([0, 0, 0, 0, 0])]);
+  let pad = 8 - ((1 + body.length) % 8); if (pad < 4) pad += 8;
+  const packetLen = 1 + body.length + pad;
+  const out = Buffer.alloc(4 + packetLen);
+  out.writeUInt32BE(packetLen, 0); out[4] = pad; body.copy(out, 5);
+  return out;
+}
+
+test("CMS and JS versions come from the root page only", () => {
+  const body = `<html><meta name="generator" content="WordPress 6.4.2"><script src="/wp-content/plugins/akismet/akismet.js?ver=5.3.1"></script><script src="/js/jquery-3.4.1.min.js"></script></html>`;
+  const rows = fromHttp({ headers: {}, body });
+  const wp = rows.find((s) => s.product === "WordPress");
+  const plug = rows.find((s) => s.product === "akismet");
+  const jq = rows.find((s) => s.product === "jquery");
+  assert.equal(wp.version, "6.4.2"); assert.equal(wp.guessed, false);
+  assert.equal(plug.version, "5.3.1"); assert.match(plug.evidence, /root page/);
+  assert.equal(jq.version, "3.4.1"); assert.equal(jq.guessed, false);
+  const bare = fromHttp({ headers: {}, body: `<meta name="generator" content="WordPress">` });
+  assert.equal(bare[0].guessed, true); assert.equal(bare[0].version, "");
+  const craft = fromHttp({ headers: { "x-powered-by": "Craft CMS" }, body: "" });
+  assert.equal(craft[0].product, "Craft CMS"); assert.equal(craft[0].guessed, true);
+});
+
+test("path rail is hint-gated and capped, and an off-rail path is not connected", () => {
+  const nginx = selectPaths({ headers: { server: "nginx/1.24.0" }, body: "" });
+  assert.deepEqual(nginx.map((p) => p.path), ["/nginx_status", "/stub_status"]);
+  assert.deepEqual(selectPaths({ headers: { server: "intranet" }, body: "<title>x</title>" }), []);
+  const all = selectPaths({ headers: { server: "nginx", "x-application-context": "app" }, body: "" }, { wellKnown: true });
+  // server "nginx" is not apache; spring header plus nginx plus well-known
+  assert.equal(all.length <= PATH_CAP, true);
+  const both = selectPaths({ headers: { server: "Apache/2.4.58 nginx", "x-application-context": "app" } }, { wellKnown: true });
+  assert.equal(both.length, PATH_CAP);
+  assert.equal(both.some((p) => p.path === "/.svn/entries"), false);
+});
+
+test("path rail on loopback requests only the hinted paths", async () => {
+  const seen = { nginx: [], plain: [] };
+  const nginx = await listenHttp((req, res) => { seen.nginx.push(req.url); res.writeHead(200, { Server: "nginx", "Content-Type": "text/plain" }); res.end("ok"); });
+  const plain = await listenHttp((req, res) => { seen.plain.push(req.url); res.writeHead(200, { Server: "intranet", "Content-Type": "text/plain" }); res.end("ok"); });
+  try {
+    const st = settings({}).settings;
+    const host = (port) => [{ address: "127.0.0.1", names: [], kind: "loopback", public: false }];
+    await probeAll(host(), { ports: [nginx.port], httpPorts: [nginx.port], settings: st, assumeUp: true, paths: true });
+    await probeAll(host(), { ports: [plain.port], httpPorts: [plain.port], settings: st, assumeUp: true, paths: true });
+    assert.deepEqual(seen.nginx, ["/", "/nginx_status", "/stub_status"]);
+    assert.deepEqual(seen.plain, ["/"]);
+    const before = seen.plain.length;
+    const skipped = await probeHttpPath("127.0.0.1", plain.port, "/not-on-the-rail");
+    assert.equal(skipped.state, "skipped");
+    assert.equal(seen.plain.length, before);
+  } finally { await nginx.close(); await plain.close(); }
+});
+
+test("SSH KEXINIT is read on the same connection and only the identification line is sent", async () => {
+  const weak = kexPacket(["diffie-hellman-group14-sha1", "mlkem768x25519-sha256"], ["ssh-ed25519"], ["aes128-cbc", "aes128-gcm@openssh.com"], ["hmac-sha1"]);
+  const got = [];
+  const srv = net.createServer((s) => {
+    s.on("data", (d) => got.push(d.toString("latin1")));
+    s.write("SSH-2.0-OpenSSH_9.9\r\n");
+    s.once("data", () => s.write(weak));
+  });
+  const port = await new Promise((r) => srv.listen(0, "127.0.0.1", () => r(srv.address().port)));
+  try {
+    const r = await probePort("127.0.0.1", port);
+    assert.equal(r.state, "open");
+    assert.match(r.banner, /OpenSSH_9.9/);
+    const parsed = parseKexinit(r.kexRaw);
+    assert.ok(parsed.kex.includes("mlkem768x25519-sha256"));
+    const kinds = sshKexObservations(port, parsed).map((o) => o.kind);
+    assert.ok(kinds.includes("ssh-weak-kex") && kinds.includes("ssh-weak-cipher") && kinds.includes("ssh-weak-mac") && kinds.includes("ssh-pqc-kex"));
+    assert.deepEqual(got, [SSH_IDENT + "\r\n"]);
+  } finally { srv.close(); }
+  const quiet = net.createServer((s) => { s.write("SSH-2.0-OpenSSH_9.9\r\n"); s.end(); });
+  const p2 = await new Promise((r) => quiet.listen(0, "127.0.0.1", () => r(quiet.address().port)));
+  try {
+    const r = await probePort("127.0.0.1", p2);
+    assert.equal(r.kexRaw, undefined);
+    assert.equal(parseKexinit(Buffer.alloc(0)), null);
+    assert.equal(parseKexinit(Buffer.from("not a packet")), null);
+  } finally { quiet.close(); }
+});
+
+test("incident citations keep every corroborated event and omit claimed ones", () => {
+  const index = { events: [
+    { id: "a", cves: ["CVE-2026-90101"], status: "confirmed", review: { state: "passed" }, title: "Official notice", url: "https://example.gov/a", attribution: "CISA" },
+    { id: "b", cves: ["CVE-2026-90101"], status: "official", review: "corrected", title: "Second notice", url: "https://example.gov/b", attribution: "the investigating firm" },
+    { id: "c", cves: ["CVE-2026-90101"], status: "claimed", review: "passed", title: "A claim", url: "https://example.com/claim" },
+  ] };
+  const c = citationsFor(index, "CVE-2026-90101");
+  assert.deepEqual(c.kept.map((x) => x.id), ["a", "b"]);
+  assert.equal(c.claimed_omitted, 1);
+  assert.equal(c.kept.some((x) => /claim/i.test(x.url)), false);
+  const text = summaryText({ summary: { hosts_in_scope: 1, hosts_up: 1, open_ports: 1, services_identified: 1, findings: 1, version_confirmed: 1, low_confidence: 0, known_exploited: 1, critical: 0, act: 0, overdue: 0, observations: 0 }, coverage: { complete: true }, run: {}, hosts: [], notes: [], hunt: [],
+    findings: [{ rank: 1, cve: "CVE-2026-90101", title: "t", seen_on: [{ host: "10.0.0.5", port: 22, product: "OpenSSH", shown_version: "9.2", confidence: "high" }], kev: true, kev_added: "2026-10-20", cisa_due: "", overdue: false, priority: { label: "Act", fix_by: null }, rating: { text: "8.1 High" }, points: { total: 1, list: [{ points: 1, why: "x" }] }, confidence: "high", confidence_why: "stated", fix: { fixed_in: [], vendor_fixed: [], cisa_required_action: "", advisory: null, details: "https://example.gov/cve" }, citations: c.kept, claimed_omitted: c.claimed_omitted }] });
+  assert.match(text, /https:\/\/example.gov\/a/);
+  assert.match(text, /https:\/\/example.gov\/b/);
+  assert.match(text, /claimed event/);
+  assert.equal(text.includes("example.com/claim"), false);
+});
+
+test("hunt links are publisher URLs and a rule body is not copied", () => {
+  const wb = { guides: { "CVE-2026-90101": { hunt: [
+    { name: "Vendor rule", format: "sigma", url: "https://vendor.example/rule", publisher: "Vendor" },
+    { name: "with a body", format: "sigma", url: "https://vendor.example/body", publisher: "Vendor", body: "detection: {}" },
+  ] } }, hunt: [] };
+  const links = huntLinks(wb, ["CVE-2026-90101"]);
+  assert.deepEqual(links.map((h) => h.url), ["https://vendor.example/rule"]);
+  assert.equal(JSON.stringify(links).includes("detection"), false);
+  const text = summaryText({ summary: { hosts_in_scope: 0, hosts_up: 0, findings: 0, version_confirmed: 0, low_confidence: 0, known_exploited: 0, critical: 0, act: 0, overdue: 0, observations: 0, open_ports: 0, services_identified: 0 }, coverage: { complete: true }, run: {}, hosts: [], notes: [], findings: [], hunt: links });
+  assert.match(text, /publisher links only/);
+  assert.match(text, /https:\/\/vendor.example\/rule/);
 });

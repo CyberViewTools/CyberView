@@ -138,6 +138,10 @@ if (existsSync(SCAN)) {
   const files = [];
   const walk = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js)$/.test(f)) files.push(p); } };
   walk(SCAN);
+  // the single-file release (scripts/scanner-release.mjs) is built in CI and attached to a GitHub Release, never committed:
+  // a copy in the repository would escape the per-file rules below (it holds probe.mjs and udp.mjs in one file)
+  const BUNDLE = /^cyberview-scan-\d+\.\d+\.\d+\.mjs$/;
+  for (const p of [...files, ...readdirSync(ROOT).map((f) => join(ROOT, f))]) if (BUNDLE.test(p.split(/[\\/]/).pop())) fails.push(`${rel(p)}: a scanner release bundle must not be committed (CI builds it: .github/workflows/scanner-release.yml)`);
   const UDP_FILE = join("lib", "udp.mjs");   // the ONE file allowed to open a UDP socket
   const DGRAM = /node:dgram|require\(["']dgram|from\s+["']dgram["']|["']dgram["']/;
   const NOT = [[/node:child_process|require\(["']child_process|\bexecSync\b|\bspawn\(/, "starts other programs"], [/\braw[-_ ]?socket|SOCK_RAW|\bsetTTL\b/i, "raw sockets"],

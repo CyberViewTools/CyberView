@@ -71,7 +71,7 @@ var BASIS={stated:"stated by the source",inferred:"inferred by "+AI_BY,keyword:"
 function basisNote(list,k){var b=k==="layer"?"layerBasis":"secgBasis",c={stated:0,inferred:0,keyword:0};list.forEach(function(e){if(own(c,e[b]))c[e[b]]++;});
   return (k==="layer"?"Attack surface":"Sector")+": "+c.stated+" "+BASIS.stated+", "+c.inferred+" "+BASIS.inferred+", "+c.keyword+" keyword-assigned from the wording (can be wrong).";}
 function basisEl(list,k){var p=el("p","cav basis",basisNote(list,k));p.dataset.basis=k;return p;}
-var BUILD={version:"1.65",date:"2026-11-21"};
+var BUILD={version:"1.66",date:"2026-11-22"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}
@@ -178,7 +178,7 @@ function cleanCorr(d){
 /* ---------- context layers: not cyber events; fetched at build time by scripts/context.mjs ---------- */
 var CTX_DEFS={
   ioda:{label:"Internet disruptions",what:"Countries where IODA's automated measurements (routing, active probing, Google traffic) saw a drop in the last 24 hours. A signal, not a confirmed outage, and never by itself evidence of an attack.",host:/^https:\/\/ioda\.inetintel\.cc\.gatech\.edu\//},
-  gdacs:{label:"Disaster alerts",what:"Orange and red GDACS alerts now in effect (earthquakes, cyclones, floods, volcanoes). Disasters cause outages and draw scams; they are context, not cyber events.",host:/^https:\/\/www\.gdacs\.org\//},
+  gdacs:{label:"Disaster alerts",what:"Recent significant GDACS alerts, orange and red, of every type (earthquakes, cyclones, floods, volcanoes, wildfires, droughts). Disasters cause outages and draw scams; they are context, not cyber events.",host:/^https:\/\/www\.gdacs\.org\//},
   grid:{label:"Power grid outages",what:"Outages and grid emergencies that grid operators report themselves (Hydro-Qu\u00e9bec, BC Hydro, UK Power Networks, Eskom, ERCOT, AEMO): customers without power, load shedding, energy emergencies. Context, not cyber events. The cause is shown as the operator reports it; the larger rings are incidents (5,000 or more customers out in one operator's area, drawn at that area); the small rings are single outages of 100 or more customers, at the place the operator gives. Customers are accounts, not people.",
     host:/^https:\/\/(?:[a-z0-9-]+\.)*(?:hydroquebec\.com|bchydro\.com|ukpowernetworks\.co\.uk|eskom\.co\.za|ercot\.com|aemo\.com\.au|nemweb\.com\.au)(?:\/|$)|^https:\/\/ukpowernetworks\.opendatasoft\.com(?:\/|$)/}
 };

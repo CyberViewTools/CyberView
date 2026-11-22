@@ -90,6 +90,42 @@ export function parseGdacsRss(xml) {
   return out;
 }
 
+/** GDACS ARCHIVE GeoJSON -> recent significant orange and red alerts of EVERY hazard type, with a point.
+ *  The current-alerts RSS only keeps what is active this minute, so a passed earthquake or cyclone vanishes and the
+ *  layer can read near-empty. The ARCHIVE endpoint carries GDACS's recent notable orange/red events across all types
+ *  (earthquakes, cyclones, floods, volcanoes, wildfires, droughts). Same output shape as the RSS parser; newest
+ *  first, capped. The report link is built from the ids so a mangled url field cannot inject a non-GDACS URL. */
+export function parseGdacsArchive(d) {
+  if (!d || !Array.isArray(d.features)) throw badShape();
+  const seen = new Set(), out = [];
+  for (const f of d.features) {
+    const p = f && f.properties, g = f && f.geometry;
+    if (!p || !/^(Orange|Red)$/.test(p.alertlevel) || !g || g.type !== "Point" || !Array.isArray(g.coordinates)) continue;
+    const [lng, lat] = g.coordinates.map(Number);
+    if (!(isFinite(lat) && isFinite(lng)) || Math.abs(lat) > 90 || Math.abs(lng) > 180) continue;
+    if (!/^\d+$/.test(String(p.eventid))) continue;
+    const id = str(`${p.eventtype}-${p.eventid}`, 40);
+    if (seen.has(id)) continue; seen.add(id);
+    out.push({
+      id,
+      type: GDACS_TYPE[p.eventtype] || "other",
+      level: String(p.alertlevel).toLowerCase(),
+      name: str(p.name || p.description, 120),
+      country: str(p.country, 80),
+      from: str(p.fromdate, 32), to: str(p.todate, 32),
+      lat: Math.round(lat * 1e4) / 1e4, lng: Math.round(lng * 1e4) / 1e4,
+      url: /^[A-Z]{2}$/.test(String(p.eventtype)) ? `https://www.gdacs.org/report.aspx?eventtype=${p.eventtype}&eventid=${p.eventid}` : "",
+    });
+  }
+  out.sort((a, b) => String(b.from).localeCompare(String(a.from)));   // newest first
+  return out.slice(0, 80);
+}
+
+// No query params on purpose. The endpoint returns the full recent notable set (every hazard type, all orange/red);
+// an `alertlevel` filter paradoxically narrows it to a handful, and a semicolon `eventlist` does not survive Node's
+// fetch path (only the first type is honoured). The parser keeps orange/red and every type itself.
+const GDACS_ARCHIVE = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/ARCHIVE";
+
 export const LAYERS = {
   ioda: {
     source: "IODA, Georgia Tech Internet Intelligence Lab",
@@ -102,7 +138,11 @@ export const LAYERS = {
   gdacs: {
     source: "GDACS, Global Disaster Alert and Coordination System",
     source_url: "https://www.gdacs.org/",
-    async fetch() { return parseGdacsRss(await get("https://www.gdacs.org/xml/rss.xml", { as: "text", timeoutMs: 30000 })); },
+    async fetch() {
+      // ARCHIVE carries recent significant orange/red events of every type; the "current" RSS is the fallback if it ever returns nothing
+      const a = parseGdacsArchive(await get(GDACS_ARCHIVE, { timeoutMs: 30000 }));
+      return a.length ? a : parseGdacsRss(await get("https://www.gdacs.org/xml/rss.xml", { as: "text", timeoutMs: 30000 }));
+    },
   },
 };
 

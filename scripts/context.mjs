@@ -28,7 +28,6 @@ const mapNames = new Set(readJson(join(ROOT, "site", "world-110m.json"), { objec
   .objects.countries.geometries.map((g) => g.properties.name));
 export const toMapName = (n) => { const m = MAP_NAME[String(n).toLowerCase()] || n; return mapNames.has(m) ? m : ""; };
 const str = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u001f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
-const httpsOnly = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? String(u) : "");
 const badShape = () => Object.assign(new Error("unexpected shape"), { code: "bad_shape" });
 const GDACS_TYPE = { EQ: "earthquake", TC: "tropical cyclone", FL: "flood", VO: "volcano", DR: "drought", WF: "wildfire", TS: "tsunami" };
 
@@ -51,27 +50,44 @@ export function parseIoda(d) {
     .slice(0, 40);
 }
 
-/** GDACS EVENTS4APP GeoJSON -> current orange and red alerts with a point. */
-export function parseGdacs(d) {
-  if (!d || !Array.isArray(d.features)) throw badShape();
-  return d.features
-    .filter((f) => f && f.properties && /^(Orange|Red)$/.test(f.properties.alertlevel) && f.properties.iscurrent !== "false"
-      && f.geometry && f.geometry.type === "Point" && Array.isArray(f.geometry.coordinates))
-    .map((f) => {
-      const p = f.properties, [lng, lat] = f.geometry.coordinates.map(Number);
-      return {
-        id: str(`${p.eventtype}-${p.eventid}`, 40),
-        type: GDACS_TYPE[p.eventtype] || "other",
-        level: p.alertlevel.toLowerCase(),
-        name: str(p.name || p.description, 120),
-        country: str(p.country, 80),
-        from: str(p.fromdate, 19), to: str(p.todate, 19),
-        lat: Math.round(lat * 1e4) / 1e4, lng: Math.round(lng * 1e4) / 1e4,
-        url: httpsOnly(p.url && p.url.report),
-      };
-    })
-    .filter((x) => isFinite(x.lat) && isFinite(x.lng) && Math.abs(x.lat) <= 90 && Math.abs(x.lng) <= 180)
-    .slice(0, 60);
+// the five XML entities GDACS uses in titles and country lists
+const unent = (s) => String(s || "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0*39;/g, "'").replace(/&amp;/g, "&");
+const rssTag = (block, name) => { const m = block.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`, "i")); return m ? m[1].trim() : ""; };
+
+/** GDACS GeoRSS (https://www.gdacs.org/xml/rss.xml) -> current orange and red alerts with a point.
+ *  Was the EVENTS4APP endpoint, but that returns only the ~100 most recent events and silently dropped the ongoing
+ *  orange drought alerts (2026-11-22: it answered 100 all-green while GDACS had 4 current orange events). The RSS feed
+ *  carries every current alert with its level and a representative point. `gdacs:iscurrent` is not a severity signal
+ *  here (its "true" items are green wildfires, the orange alerts are "false"), so the alert level plus a valid point
+ *  decide, and each event is kept once. */
+export function parseGdacsRss(xml) {
+  if (typeof xml !== "string" || !/<rss[\s>]/i.test(xml)) throw badShape();
+  const seen = new Set(), out = [];
+  for (const it of xml.match(/<item\b[\s\S]*?<\/item>/gi) || []) {
+    const level = rssTag(it, "gdacs:alertlevel");
+    if (!/^(Orange|Red)$/.test(level)) continue;
+    const eventtype = rssTag(it, "gdacs:eventtype"), eventid = rssTag(it, "gdacs:eventid");
+    const num = (s) => (String(s).trim() === "" ? NaN : Number(s));   // Number("") is 0, which would plot at (0,0)
+    let lat = num(rssTag(it, "geo:lat")), lng = num(rssTag(it, "geo:long"));
+    if (!(isFinite(lat) && isFinite(lng))) { const p = rssTag(it, "georss:point").split(/\s+/).map(num); if (p.length === 2) [lat, lng] = p; }
+    if (!(isFinite(lat) && isFinite(lng)) || Math.abs(lat) > 90 || Math.abs(lng) > 180) continue;
+    if (!/^\d+$/.test(eventid)) continue;
+    const id = str(`${eventtype}-${eventid}`, 40);
+    if (seen.has(id)) continue; seen.add(id);
+    out.push({
+      id,
+      type: GDACS_TYPE[eventtype] || "other",
+      level: level.toLowerCase(),
+      name: str(unent(rssTag(it, "title")), 120),
+      country: str(unent(rssTag(it, "gdacs:country")), 80),
+      from: str(rssTag(it, "gdacs:fromdate"), 32), to: str(rssTag(it, "gdacs:todate"), 32),
+      lat: Math.round(lat * 1e4) / 1e4, lng: Math.round(lng * 1e4) / 1e4,
+      // build the report link from the ids so a mangled <link> can never inject a non-GDACS or non-https URL
+      url: /^[A-Z]{2}$/.test(eventtype) ? `https://www.gdacs.org/report.aspx?eventtype=${eventtype}&eventid=${eventid}` : "",
+    });
+    if (out.length >= 60) break;
+  }
+  return out;
 }
 
 export const LAYERS = {
@@ -86,7 +102,7 @@ export const LAYERS = {
   gdacs: {
     source: "GDACS, Global Disaster Alert and Coordination System",
     source_url: "https://www.gdacs.org/",
-    async fetch() { return parseGdacs(await get("https://www.gdacs.org/gdacsapi/api/events/geteventlist/EVENTS4APP")); },
+    async fetch() { return parseGdacsRss(await get("https://www.gdacs.org/xml/rss.xml", { as: "text", timeoutMs: 30000 })); },
   },
 };
 

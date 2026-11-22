@@ -11,6 +11,15 @@
   function str(v, n) { return typeof v === "string" ? v.slice(0, n) : ""; }
   function num(v, lo, hi) { return typeof v === "number" && isFinite(v) && v >= lo && v <= hi ? v : null; }
   function day(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : ""; }
+  /* one affected-version range from NVD (row field `aff`, written by scripts/cve.mjs) -> the shape the browser matcher uses
+     (the same cleanRange as the Vulnerabilities page and the workbench: {vendor, product, from, from_incl, to, to_incl, exact}),
+     so one matcher (CVWorkbench.match) serves known-exploited flaws and every other CVE alike. Null when malformed. */
+  function cleanRange(r) {
+    if (!r || typeof r !== "object" || !str(r.product, 60)) return null;
+    var v = function (x) { x = str(x, 40); return /^[\w.+\-~:]+$/.test(x) ? x : ""; };
+    return { vendor: str(r.vendor, 60), product: str(r.product, 60), from: v(r.from), from_incl: r.from_incl === true, to: v(r.to), to_incl: r.to_incl === true, exact: v(r.exact) };
+  }
+  L.cleanRange = cleanRange;
   L.SEV = SEV; L.EXPL = EXPL;
   L.isId = function (s) { return typeof s === "string" && s.length <= 24 && ID_RE.test(s); };
   L.normId = function (s) { var t = String(s || "").trim().toUpperCase().replace(/[‐-―−]/g, "-").replace(/\s+/g, ""); return L.isId(t) ? t : ""; };
@@ -29,7 +38,7 @@
       years.push({ year: +k, count: n, files: f && f.length ? f : null }); } });
     years.sort(function (a, b) { return b.year - a.year; });
     var s = x.sources && typeof x.sources === "object" ? x.sources : {};
-    var o = { builtAt: str(x.built_at, 30), total: num(x.total, 0, 1e8), rejected: num(x.rejected, 0, 1e8), exploited: num(x.exploited, 0, 1e8), critical: num(x.critical, 0, 1e8), criticalNvd: num(x.critical_nvd, 0, 1e8), ratingBands: x.rating_bands && typeof x.rating_bands === "object" ? { Critical: num(x.rating_bands.Critical, 0, 1e7), High: num(x.rating_bands.High, 0, 1e7), Medium: num(x.rating_bands.Medium, 0, 1e7), Low: num(x.rating_bands.Low, 0, 1e7), None: num(x.rating_bands.None, 0, 1e7), "Not scored": num(x.rating_bands["Not scored"], 0, 1e7) } : null, kev: num(x.kev, 0, 1e7), ransomware: num(x.ransomware, 0, 1e7), decisions: x.decisions && typeof x.decisions === "object" ? { act: num(x.decisions.act, 0, 1e7), attend: num(x.decisions.attend, 0, 1e7), "track*": num(x.decisions["track*"], 0, 1e7), track: num(x.decisions.track, 0, 1e7) } : null,
+    var o = { builtAt: str(x.built_at, 30), total: num(x.total, 0, 1e8), rejected: num(x.rejected, 0, 1e8), exploited: num(x.exploited, 0, 1e8), critical: num(x.critical, 0, 1e8), criticalNvd: num(x.critical_nvd, 0, 1e8), ratingBands: x.rating_bands && typeof x.rating_bands === "object" ? { Critical: num(x.rating_bands.Critical, 0, 1e7), High: num(x.rating_bands.High, 0, 1e7), Medium: num(x.rating_bands.Medium, 0, 1e7), Low: num(x.rating_bands.Low, 0, 1e7), None: num(x.rating_bands.None, 0, 1e7), "Not scored": num(x.rating_bands["Not scored"], 0, 1e7) } : null, kev: num(x.kev, 0, 1e7), ransomware: num(x.ransomware, 0, 1e7), withRanges: num(x.with_ranges, 0, 1e8), decisions: x.decisions && typeof x.decisions === "object" ? { act: num(x.decisions.act, 0, 1e7), attend: num(x.decisions.attend, 0, 1e7), "track*": num(x.decisions["track*"], 0, 1e7), track: num(x.decisions.track, 0, 1e7) } : null,
       audit: x.audit && typeof x.audit === "object" && x.audit.nvd ? { at: str(x.audit.at, 30), nvdTotal: num(x.audit.nvd.total, 0, 1e8), nvdRejected: num(x.audit.nvd.rejected, 0, 1e8), nvdCritical: num(x.audit.nvd.critical_v3, 0, 1e8), cisaKev: num(x.audit.cisa_kev, 0, 1e7) } : null, years: years, cvelist: str(s.cvelist, 30), epss: str(s.epss, 30) };
     return o.total === null && !years.length ? null : o;
   };
@@ -65,7 +74,9 @@
       expl: EXPL[o.expl] ? o.expl : "", kev: /^\d{4}-\d{2}-\d{2}$|^yes$/.test(o.kev || "") ? o.kev : "", epss: num(o.epss, 0, 1), pct: num(o.pct, 0, 1),
       auto: o.auto === "yes" || o.auto === "no" ? o.auto : "", ti: o.ti === "total" || o.ti === "partial" ? o.ti : "", vec: /^[A-Za-z0-9.:\/()]{8,200}$/.test(o.vec || "") ? o.vec : "",
       due: day(o.due), ransom: o.ransom === true, ncvss: num(o.ncvss, 0, 10), nsev: SEV[o.nsev] ? o.nsev : "", nvec: /^[A-Za-z0-9.:\/()]{8,200}$/.test(o.nvec || "") ? o.nvec : "",
-      n3: SEV[o.n3] ? o.n3 : "", n3c: o.n3c === true
+      n3: SEV[o.n3] ? o.n3 : "", n3c: o.n3c === true,
+      // affected-version ranges from NVD; matched against a visitor's software list in the browser, nothing uploaded
+      affected: Array.isArray(o.aff) ? o.aff.slice(0, 20).map(cleanRange).filter(Boolean) : []
     };
     c.hay = (c.id + " " + c.vendor + " " + c.product + " " + c.title + " " + c.desc + " " + c.cwe).toLowerCase();
     if (Object.prototype.hasOwnProperty.call(L.vendorIndex, c.id)) c.adv = L.vendorIndex[c.id];

@@ -1,5 +1,6 @@
 // Pure helpers for the CVE corpus: one compact row per CVE from the official CVE List (CVE JSON 5, including CISA's
 // "vulnrichment" ADP container: CVSS, CWE, SSVC exploitation, KEV), plus FIRST EPSS scores. No network here.
+import { parseAffected } from "./affected.mjs";
 
 export const ID = /^CVE-\d{4}-\d{4,}$/;
 const txt = (s, n) => String(s == null ? "" : s).replace(/\s+/g, " ").trim().slice(0, n);
@@ -94,9 +95,30 @@ export function toLead(row, seenAt) {
   };
 }
 
-// fields of the site's lookup files, in order (rows are arrays to keep the files small)
+// Affected-version ranges from NVD's CPE match data (its "configurations"), in the SAME shape the browser matcher expects
+// (CVWorkbench.match / the site's cleanRange: {vendor, product, from, from_incl, to, to_incl, exact}); the KEV/workbench path
+// in site/data/workbench.json already carries this shape, so one matcher serves every CVE. `part` and `update` are dropped
+// (the matcher does not use them), booleans are stored only when true, and the list is capped per CVE to keep the lookup files
+// (served to browsers) small. parseAffected is pure, so this stays network-free.
+export const RANGE_CAP = 16;
+export function affectedFromNvd(nvdCve) {
+  const out = [];
+  for (const r of parseAffected(nvdCve)) {            // [{vendor, product, part, from, from_incl, to, to_incl, exact}]
+    if (!r.product) continue;
+    const o = { vendor: r.vendor || "", product: r.product };
+    if (r.from) { o.from = r.from; if (r.from_incl) o.from_incl = true; }
+    if (r.to) { o.to = r.to; if (r.to_incl) o.to_incl = true; }
+    if (r.exact) o.exact = r.exact;
+    out.push(o);
+    if (out.length >= RANGE_CAP) break;
+  }
+  return out;
+}
+
+// fields of the site's lookup files, in order (rows are arrays to keep the files small). `aff` is the affected-version
+// ranges (affectedFromNvd), null when NVD has published none for the CVE yet.
 export const FIELDS = ["id", "state", "pub", "upd", "cvss", "sev", "ver", "cwe", "vendor", "product", "title", "desc", "cna", "expl", "kev", "epss", "pct",
-  "auto", "ti", "vec", "due", "ransom", "ncvss", "nsev", "nvec", "n3", "n3c"];
+  "auto", "ti", "vec", "due", "ransom", "ncvss", "nsev", "nvec", "n3", "n3c", "aff"];
 
 /** CISA KEV catalog JSON -> Map(id -> {added, due, ransom}) */
 export function parseKevCatalog(j) {

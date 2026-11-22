@@ -108,7 +108,7 @@ function nextSweep(){
 }
 /* GDACS disaster recency: the 2 / 3 / 7-day bands inside the 30-day window the layer keeps (days = how long ago it was last active). */
 function gdacsBand(d){return d==null?"":d<=2?"past 2 days":d<=3?"past 3 days":d<=7?"past week":"past 30 days";}
-function gdacsWhen(x){var dt=x.from?fmtDay(x.from):"",b=gdacsBand(x.days);return (dt?" · "+dt:"")+(b?" · "+b:"");}
+function gdacsWhen(x){var s=String(x.from||""),dt=/^\d{4}-\d{2}-\d{2}/.test(s)?fmtDay(s.slice(0,10)):"",b=gdacsBand(x.days);return (dt?" · "+dt:"")+(b?" · "+b:"");}
 function fmtWhen(e,long){
   if(!e.hasTime)return fmtDay(e.date);
   var s=(long?DTF.tz:DTF.time).format(new Date(e.t));

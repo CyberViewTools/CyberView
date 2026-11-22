@@ -9,7 +9,7 @@
   ],
   "time_basis": "published",
   "first_seen": "2026-11-20T19:48:30Z",
-  "updated_at": "2026-11-20T19:57:35Z",
+  "updated_at": "2026-11-22T20:59:43Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -18,9 +18,9 @@
   ],
   "geo_basis": "hq",
   "date": "2026-11-18",
-  "date_note": "Mitsumo announced on 18 November, citing notices from contractor PLAID of 13 and 17 November; the report says the intrusion into PLAID's KARTE was detected on 13 November.",
-  "title": "Mitsumo says member data leaked through contractor PLAID's KARTE breach",
-  "org": "Mitsumo (meetsmore)",
+  "date_note": "Date of MeetsMore's own notice (18 November 2026). It says PLAID told it of unauthorized access to PLAID's servers on 13 November and of a leak of MeetsMore customer data on 17 November.",
+  "title": "MeetsMore (Mitsumoa) says member data leaked through contractor PLAID's KARTE breach",
+  "org": "MeetsMore Inc. (株式会社ミツモア)",
   "sector": "Online services",
   "country": "Japan",
   "place": "Tokyo",
@@ -28,21 +28,36 @@
   "lng": 139.76,
   "pin_type": "hq",
   "severity": 2,
-  "source_tier": "established",
-  "summary": "Cybersecurity.com reports that Mitsumo announced on 18 November that customer data it had linked to PLAID's KARTE for email and LINE delivery leaked. Mitsumo says 60,000 people had a name, email, phone number or date of birth exposed, and 3,398,469 people only an identifier number and prefecture. Mitsumo says passwords and card data were not included and that its own systems showed no unauthorized access.",
-  "plain": "A Japanese services company says customer data held in a marketing platform run by its contractor was leaked. Mitsumo says passwords and card data were not included.",
+  "source_tier": "primary",
+  "summary": "MeetsMore said on 18 November that customer data it used in PLAID's KARTE for email and LINE delivery leaked. It says 60,000 people had a name, email, phone number or date of birth exposed, and 3,398,469 people only a member identifier number and prefecture. MeetsMore says passwords and card data were not included and no unauthorized access to its own systems was confirmed.",
+  "plain": "A Japanese services company says customer data held in a marketing platform run by its contractor was leaked. MeetsMore says passwords and card data were not included.",
   "exec": "A breach at one marketing-platform supplier can expose the customer data of companies that link to it, even when their own systems were not accessed.",
   "action": "Organisations linked to KARTE: invalidate the linked credentials as PLAID asked, and warn customers of phishing. Affected people: be cautious of unexpected emails or calls.",
   "sources": [
+    {
+      "name": "MeetsMore notice, 18 Nov 2026",
+      "url": "https://company.meetsmore.com/page/notice-20261118-karte",
+      "published": "2026-11-18"
+    },
     {
       "name": "Cybersecurity.com (Japan)",
       "url": "https://cybersecurity-jp.com/news/118638"
     }
   ],
+  "evidence": [
+    {
+      "url": "https://company.meetsmore.com/page/notice-20261118-karte",
+      "quote": "対象となるお客さまは氏名、メールアドレス、電話番号、生年月日のいずれかを含む対象が60,000人"
+    },
+    {
+      "url": "https://company.meetsmore.com/page/notice-20261118-karte",
+      "quote": "当社が会員ごとに付与している識別番号と都道府県のみの対象が3,398,469人"
+    }
+  ],
   "validation": {
-    "checked_at": "2026-11-20T19:48:30Z",
-    "state": "single_source",
-    "note": "Only the Cybersecurity.com report was read; Mitsumo's own notice and PLAID's notice are cited there but were not read. The wider PLAID KARTE breach is on file as a separate event."
+    "checked_at": "2026-11-22T20:59:43Z",
+    "state": "corroborated",
+    "note": "Primary: MeetsMore's own notice of 18 November (株式会社ミツモア, MeetsMore Inc.; read by the follow-up run on 22 November) states both counts, that passwords, card data, addresses below prefecture and LINE IDs were not included, and that no unauthorized access to its own systems was confirmed. Cybersecurity.com relays it. A separate MeetsMore notice of 16 November concerns its own systems and is a different incident, the notice says. The wider PLAID KARTE breach is on file as a separate event."
   },
   "review": {
     "state": "corrected",

@@ -1,0 +1,35 @@
+{
+  "job": "sweep-r2",
+  "started_at": "2026-11-22T11:16:31Z",
+  "finished_at": "2026-11-22T11:35:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "CVE-2026-99312 KVM AMD nested virtualization EPT read host memory DigitalOcean"
+  ],
+  "pages_read": [
+    {
+      "url": "https://ciberseguridadlatam.com/falla-en-kvm-permite-leer-127-gb-de-memoria-ajena-en-servidores-amd/",
+      "title": "Falla en KVM permite leer 127 GB de memoria ajena en servidores AMD",
+      "used_in": "kvm-amd-nested-guest-host-escape-cve-2026-99312-2026-11"
+    },
+    {
+      "url": "https://digitalocean.com/blog/cve-2026-99312-kvm-patch",
+      "title": "Virtualization, Responsible Disclosure, and CVE-2026-99312",
+      "used_in": "kvm-amd-nested-guest-host-escape-cve-2026-99312-2026-11"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Falla en KVM permite leer 127 GB...",
+      "url": "https://ciberseguridadlatam.com/falla-en-kvm-permite-leer-127-gb-de-memoria-ajena-en-servidores-amd/",
+      "reason": "same event as linux-kvm-amd-nested-init-cve-2026-99312-2026-11 (written concurrently by another worker); my record is marked duplicate_of"
+    }
+  ],
+  "open_leads": [],
+  "failed_sites": [],
+  "notes": "The initial dupes check found nothing; the earlier event appeared only at validation. The duplicate record kvm-amd-nested-guest-host-escape-cve-2026-99312-2026-11 carries duplicate_of. Terra's write-up and the kernel commit were not read. The earlier event does not cite the DigitalOcean disclosure (primary, 2026-11-19) or the Ciberseguridad LATAM page, so a later pass could add them.",
+  "worker_role": "researcher",
+  "worker_model": "sonnet"
+}

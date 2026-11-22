@@ -25,11 +25,17 @@
   "records_affected": 4222,
   "sector": "Research and high-performance computing",
   "severity": 3,
-  "source_tier": "established",
+  "source_tier": "primary",
   "sources": [
     {
+      "name": "RIKEN first notice",
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261116_2/index.html",
+      "published": "2026-11-17"
+    },
+    {
       "name": "RIKEN second notice (20 Nov)",
-      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261120_1/"
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261120_1/",
+      "published": "2026-11-20"
     },
     {
       "name": "The Register",
@@ -42,19 +48,46 @@
     {
       "name": "eSecurity Planet",
       "url": "https://www.esecurityplanet.com/threats/news-japan-fugaku-supercomputer-cyberattack-apac/"
+    },
+    {
+      "name": "Hacked.com",
+      "url": "https://hacked.com/news/fugaku-supercomputer-cyberattack-stolen-ssh-keys/",
+      "published": "2026-11-22"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261116_2/index.html",
+      "quote": "from November 10 to 13, 2026, an external third party gained unauthorized access to Fugaku's internal operational network by using a publicly accessible web page displaying Fugaku's operational status (the dashboard)."
+    },
+    {
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261120_1/",
+      "quote": "Impact on Fugaku users (4,222 individuals)"
+    },
+    {
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261120_1/",
+      "quote": "Private keys without passphrases: 233 instances"
+    },
+    {
+      "url": "https://www.riken.jp/en/news_pubs/news/2026/20261120_1/",
+      "quote": "Private keys with passphrases: 197 instances"
+    },
+    {
+      "url": "https://hacked.com/news/fugaku-supercomputer-cyberattack-stolen-ssh-keys/",
+      "quote": "430 credentials, including private keys, were collected and exfiltrated from some users' home directories."
     }
   ],
   "status": "developing",
-  "summary": "RIKEN's second notice (20 Nov) says 4,222 Fugaku users' data was taken, now including registration details, and 430 credentials (233 SSH private keys without a passphrase, 197 with one) were exfiltrated; for some, connections to external systems were confirmed. Fugaku stays offline with no restart date, and no attacker is named.",
+  "summary": "RIKEN's first notice says an outside party reached Fugaku's internal operational network from November 10 to 13 through a public web page showing Fugaku's operational status; the exact method is under investigation. Its second notice (20 Nov) says 4,222 Fugaku users' data was taken and 430 credentials (233 SSH private keys without a passphrase, 197 with one) were exfiltrated, some used for external connections. Fugaku stays offline; no attacker is named.",
   "tags": [
     "data-breach",
     "identity"
   ],
   "title": "Japan's RIKEN takes Fugaku supercomputer offline after intrusion",
-  "updated_at": "2026-11-20T19:43:08Z",
+  "updated_at": "2026-11-22T11:17:47Z",
   "validation": {
-    "checked_at": "2026-11-20T19:43:08Z",
-    "note": "The Register, ITdaily and eSecurity Planet each report RIKEN's own statement; the RIKEN notice itself was not retrieved. The BleepingComputer page returned 404 on review and was removed. The Register adds that someone attempted to log in to Fugaku on November 13; eSecurity Planet says RIKEN confirmed attempts to use stolen credentials on other systems. The Register's text suggests the machine went offline on November 13; ITdaily and eSecurity Planet give November 14. RIKEN's own second notice of 20 Nov read; it gives 4,222 Fugaku users and does not mention the 375 Rikyu users or up to 4,597 total.",
+    "checked_at": "2026-11-22T11:17:47Z",
+    "note": "Primary: RIKEN's first notice (dated Nov. 17 on the page; the second notice calls it the notice of November 16) and second notice of 20 Nov, both read. The first notice gives the November 10-13 intrusion via the public operational-status dashboard, detection of suspicious traffic on November 12, confirmation on November 13 and suspension at 4:30 AM on November 14. The Register, ITdaily, eSecurity Planet and Hacked.com relay RIKEN's statements. The second notice gives 4,222 Fugaku users; the first notice's section 3 says up to 4,224.",
     "state": "corroborated"
   },
   "review": {
@@ -72,7 +105,7 @@
     "basis": "inferred"
   },
   "surface": {
-    "value": "unknown",
-    "basis": "inferred"
+    "value": "web-app",
+    "basis": "stated"
   }
 }

@@ -22,6 +22,9 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | scan-tls-extra-hello | Optional TLS 1.0 hello | Review | Implementation | `--tls-legacy`, one extra handshake ([handoff](handoff/scan-tls-extra-hello.md)) |
 | scan-tls-pqc-offer | Honest PQC offer note | Review | Implementation | no second hello; classical group is not proof ([handoff](handoff/scan-tls-pqc-offer.md)) |
 | scan-sbom-crypto | OpenSSL below 3.0 in an imported list | Review | Implementation | cited end-of-support date only ([handoff](handoff/scan-sbom-crypto.md)) |
+| scan-kev-coverage | KEV products with no installed fingerprint | Review | Implementation | `gaps`, no network ([handoff](handoff/scan-kev-coverage.md)) |
+| scan-patch-hour | Link sheet from a report | Review | Implementation | `patch-hour`, links only ([handoff](handoff/scan-patch-hour.md)) |
+| scan-snmp-sysdescr | sysDescr stays an observation | Review | Implementation | no cited product regex, so none was added ([handoff](handoff/scan-snmp-sysdescr.md)) |
 
 ## Parked (owner decision pending)
 

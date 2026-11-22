@@ -31,6 +31,8 @@ import { startServers } from "../fixtures/scanner/servers.mjs";
 import { certRows, isInternalName } from "../../scanner/lib/certs.mjs";
 import { toCbom } from "../../scanner/lib/cbom.mjs";
 import { cryptoNotes } from "../../scanner/lib/sbom-crypto.mjs";
+import { kevGaps, FINGERPRINT_PRODUCTS } from "../../scanner/lib/coverage-gap.mjs";
+import { patchHour } from "../../scanner/lib/patchhour.mjs";
 import { tlsLegacyAvailable } from "../../scanner/lib/probe.mjs";
 
 const FIX = new URL("../fixtures/scanner/", import.meta.url).pathname, SNAP = join(FIX, "snapshot");
@@ -1092,6 +1094,27 @@ test("SBOM crypto: OpenSSL 1.1.1 is past the published end of support; 3.2 is on
   assert.equal(notes.length, 2);
   assert.equal(notes[0].past_support, true);
   assert.equal(notes[1].past_support, false);
+});
+
+test("KEV gap report names a product we cannot fingerprint and keeps one we can", () => {
+  const gaps = kevGaps([
+    { kev: true, cve: "CVE-2026-90101", vendor: "OpenBSD", product: "OpenSSH" },
+    { kev: true, cve: "CVE-2099-0001", vendor: "Example", product: "No Such Appliance" },
+  ]);
+  assert.deepEqual(gaps.map((g) => g.cve), ["CVE-2099-0001"]);
+  assert.ok(FINGERPRINT_PRODUCTS.includes("OpenSSH"));
+});
+
+test("patch-hour sheet is links only", () => {
+  const text = patchHour({ findings: [{ cve: "CVE-2026-90101", cisa_due: "2026-11-10", fix: { details: "https://example.gov/cve", advisory: { url: "https://vendor.example/adv" } } }] });
+  assert.match(text, /https:\/\/example.gov\/cve/);
+  assert.match(text, /https:\/\/vendor.example\/adv/);
+  assert.match(text, /does not scan/);
+  assert.equal(patchHour({ findings: [{ cve: "CVE-1", fix: { details: "javascript:alert(1)" } }] }).includes("javascript:"), false);
+});
+
+test("SNMP sysDescr is not turned into a product without a cited mapping", () => {
+  assert.deepEqual(fromUdp({ state: "open", port: 161, proto: "snmp", parsed: { sysdescr: "Cisco IOS Software, Version 15.1" } }), []);
 });
 
 test("legacy TLS hello is off by default and, when asked, is one extra connection", async () => {

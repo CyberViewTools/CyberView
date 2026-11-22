@@ -149,6 +149,14 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 
 `diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
+## No new probe
+
+`gaps --data DIR` lists KEV products the installed fingerprints do not name. It reads the snapshot and contacts nothing.
+
+`patch-hour --report report.json` prints the https links already on that report. It does not scan.
+
+An SNMP sysDescr stays an observation. The catalog row does not cite a product regex, so none was added.
+
 ## Crypto inventory
 
 From the handshake already made, the report adds `certs.csv` (fingerprint, reuse across hosts, names that are single-label or end in `.local`, `.lan`, `.internal`, `.home`, or `.corp`) and `cbom.json` (CycloneDX 1.6: the negotiated TLS parameters and the SSH algorithms the server advertised). Neither file is a proof of every algorithm the server supports.

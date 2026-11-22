@@ -31,6 +31,9 @@ import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.m
 import { toCertsCsv } from "./lib/certs.mjs";
 import { toCbom } from "./lib/cbom.mjs";
 import { cryptoNotes } from "./lib/sbom-crypto.mjs";
+import { kevGaps, gapsText } from "./lib/coverage-gap.mjs";
+import { patchHour } from "./lib/patchhour.mjs";
+import { cleanFlaws } from "./lib/match.mjs";
 import { pqcCurveAvailable } from "./lib/probe.mjs";
 import { toHtml, diffHtml } from "./lib/html.mjs";
 import { readInventory, MAX_BYTES } from "./lib/inputs.mjs";
@@ -137,6 +140,30 @@ async function matchCmd(a, io, today) {
   return 0;
 }
 
+/** KEV products this build's fingerprints do not name. Reads the snapshot only. */
+async function gapsCmd(a, io) {
+  if (!a.data) return fail(io, ["--data DIR is required (an offline snapshot). Nothing is contacted."], 1);
+  let src;
+  try { src = dirSource(a.data); } catch (e) { return fail(io, [e.message], 1); }
+  const wb = await src.json("data/workbench.json");
+  const text = gapsText(kevGaps(cleanFlaws(wb)));
+  if (a.out) { mkdirSync(a.out, { recursive: true, mode: 0o700 }); writeFileSync(join(a.out, "gaps.txt"), text, { mode: 0o600 }); }
+  io.out(text.trimEnd());
+  return 0;
+}
+
+/** Links already on a report. No scan. */
+function patchHourCmd(a, io) {
+  if (!a.report) return fail(io, ["--report report.json is required"], 1);
+  if (!existsSync(a.report)) return fail(io, [`not found: ${a.report}`], 1);
+  let report;
+  try { report = JSON.parse(io.readFile(a.report)); } catch { return fail(io, ["the report is not JSON"], 1); }
+  const text = patchHour(report);
+  if (a.out) { mkdirSync(a.out, { recursive: true, mode: 0o700 }); writeFileSync(join(a.out, "patch-hour.txt"), text, { mode: 0o600 }); }
+  io.out(text.trimEnd());
+  return 0;
+}
+
 /** `diff` compares two reports already on disk. It does not scan again and it sends nothing. */
 function diffCmd(a, io) {
   if (!a.before || !a.after) return fail(io, ["--before FILE and --after FILE are required (two report.json files)"], 1);
@@ -190,6 +217,8 @@ export async function main(argv, io = {}) {
 
   if (cmd === "match") return matchCmd(a, io, today);
   if (cmd === "diff") return diffCmd(a, io);
+  if (cmd === "gaps") return gapsCmd(a, io);
+  if (cmd === "patch-hour") return patchHourCmd(a, io);
 
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----

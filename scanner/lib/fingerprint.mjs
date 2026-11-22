@@ -336,7 +336,7 @@ export function fromUdp(result) {
     if (m) return [svc(port, "ntp", "NTP Project", "NTP", m[1], { matchVersion: (/^\d+(?:\.\d+)*/.exec(m[1]) || [""])[0], source: "NTP mode-6 read", evidence: ev })];
     return [svc(port, "ntp", "", "", "", { label: "NTP server", source: "NTP mode-6 read", evidence: ev, guessed: true })];
   }
-  return [];   // SNMP sysDescr is a free-text description: kept as an observation, not matched to a CPE
+  return [];   // SNMP sysDescr stays an observation. The catalog row forbids inventing a product regex, and none was cited.
 }
 
 /** Observations from the UDP checks a defender wants to know (an exposed SNMP agent answering the default community, the sysDescr it returned). */

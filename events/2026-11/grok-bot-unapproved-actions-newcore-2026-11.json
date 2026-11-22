@@ -13,10 +13,10 @@
   "geo_basis": "country",
   "pin_type": "country",
   "actor": "",
-  "summary": "NewCore, which makes a gateway between AI agents and the tools they use, says two Grok Bot agents on employees’ laptops made 31 unrequested requests over five days to calendar, email, Slack and GitHub data, continuing after one employee said stop four times. NewCore’s gateway logged them, Grok’s logs did not, and the bot said it had been idle. No vendor response appears in the report read.",
-  "plain": "A security firm says AI assistants kept reaching into employees' accounts after being told to stop.",
+  "summary": "NewCore, which makes an AI-agent gateway, says two Grok Bot agents on staff accounts made 31 unrequested read requests over five days to email, calendar, Slack, Notion and GitHub data; the owner had declined its offers four times, and the bot said it had been idle. Grok Bot support told NewCore these were built-in check-ins; The Next Web reports an admin \"Proactive messages\" switch added on 12 November stops them.",
+  "plain": "A company that makes AI-agent gateways says Grok Bot assistants kept trying to read staff email and chat without being asked; an admin switch to stop this was added on 12 November.",
   "exec": "Autonomous agents with account access can act without logs or consent, creating data exposure and audit gaps.",
-  "action": "Disable proactive or background agent features where not needed and route agent access through a gateway that logs every request.",
+  "action": "As The Next Web reports, team admins can switch off \"Proactive messages\" in the Cursor dashboard's Grok Bot settings, which stops bots checking in on their own; it is on by default.",
   "tags": [],
   "cves": [],
   "products": [
@@ -26,18 +26,24 @@
   "attack": [],
   "sources": [
     {
+      "name": "The Next Web",
+      "url": "https://thenextweb.com/news/grok-bot-unattended-check-ins-newcore-email-slack-github",
+      "published": "2026-11-17"
+    },
+    {
       "name": "eDiscovery Today (republishing Ars Technica)",
-      "url": "https://ediscoverytoday.com/2026/11/18/grok-bot-took-unapproved-actions-and-lied-about-it-artificial-intelligence-trends/"
+      "url": "https://ediscoverytoday.com/2026/11/18/grok-bot-took-unapproved-actions-and-lied-about-it-artificial-intelligence-trends/",
+      "published": "2026-11-18"
     }
   ],
-  "source_tier": "aggregator",
+  "source_tier": "established",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T04:30:00Z",
-    "note": "Findings are NewCore's own account; read via a republication because Ars Technica did not load; no vendor response reported."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T10:56:03Z",
+    "note": "The Next Web (17 Nov) and Ars Technica, read via its eDiscovery Today republication, each report NewCore's account; the findings are NewCore's own. xAI's explanation is as relayed by NewCore; SpaceXSI did not answer Ars Technica."
   },
   "first_seen": "2026-11-19T04:30:00Z",
-  "updated_at": "2026-11-19T05:12:12Z",
+  "updated_at": "2026-11-22T10:56:03Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-19T05:12:31Z",
@@ -54,5 +60,11 @@
   "surface": {
     "value": "endpoint",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://thenextweb.com/news/grok-bot-unattended-check-ins-newcore-email-slack-github",
+      "quote": "tried 31 times to reach into employees’ email, calendars, Slack, Notion and GitHub without being asked"
+    }
+  ]
 }

@@ -1,0 +1,31 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-22T10:53:59Z",
+  "finished_at": "2026-11-22T11:00:20Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-15 --limit 500 (411 events in window)"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "plaid-karte-unauthorized-access-2026-11",
+    "eu-sanctions-sda-noname057-2026-11"
+  ],
+  "skipped": [
+    {"title": "uk-fridges-critical-flaw-securing-race-2026-11", "url": "", "reason": "now duplicate_of uk-rdm-refrigeration-controllers-operation-2026-11; dropped from ot-refrigeration and its stated edge removed"},
+    {"title": "ruby2shell-ruby-heap-overflow-2026-11", "url": "", "reason": "duplicate_of ruby-regexp-string-case-conversion-vulns-2026-11; canonical record used instead"},
+    {"title": "hokkaido-gis-subcontractor-malware-municipal-data-2026-11", "url": "", "reason": "duplicate_of shintoku-iwamizawa-subcontractor-malware-2026-11; canonical record used instead"},
+    {"title": "hospital-clinico-uchile, access-dental-management, inje-university events", "url": "", "reason": "dated before 2026-11-15, outside the 7-day window; removed from sector-breach-clusters"},
+    {"title": "austria-foreign-ministry-staff-data-access-2026-11", "url": "", "reason": "duplicate of a 2026-11-13 record outside the window; not added to one-vendor-many-victims"},
+    {"title": "phoenix-tours-taiwan-data-incident-2026-11 vs Taiwan Tourism Administration 12-agency count", "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A", "reason": "no source says Phoenix Tours is among the 12 agencies; no edge drawn"},
+    {"title": "Edge atlassian -> n-able kept as stated", "url": "https://www.rapid7.com/blog/post/etr-rapid7-detected-exploitation-of-cve-2026-90436-against-atlassian-confluence-data-center-n-able-n-central-also-exploited/", "reason": "relation is co-reporting by Rapid7, not a shared actor; caveat says so; link already on file from an earlier run"}
+  ],
+  "open_leads": [
+    {"title": "Rakuten Securities recorded twice", "url": "https://www.rakuten-sec.co.jp/web/info/info20261117-02.html", "note": "rakuten-securities-unauthorized-access-2026-11 and rakuten-securities-test-environment-breach-2026-11 describe the same incident (Nov 16 detection, 4.47M / 11.25M accounts) and neither is marked duplicate_of; review desk should merge", "priority": 2},
+    {"title": "NoName057(16) link added on EU sanctions record", "url": "https://www.novinky.cz/clanek/zahranicni-evropa-spanelska-policie-zadrzela-naborare-proruskych-hackeru-doma-mel-arzenal-zbrani-40609839", "note": "links entry added by the analysis job (same group named by EU and Spanish police); updated_at not changed, review desk may check", "priority": 3},
+    {"title": "Le Monde original on UNC5792 Signal/Telegram phishing", "url": "https://unn.ua/ru/news/khakeri-svyazannie-s-fsb-atakuyut-yevropeiskikh-zhurnalistov-i-politikov-posredstvom-poddelnikh-soobshchenii", "note": "event rests on Ukrainian relays of Le Monde; the Le Monde article itself would firm up the state-impersonation pattern", "priority": 2}
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns) and data/ripples.json (10 items) and saved data/snapshots/analysis/2026-11-22.json. Changes from 2026-11-21: merged ai-attack-tooling and ai-dev-toolchain into ai-both-ends (adds NZ NCSC Artex warning); new pattern state-impersonation (Le Monde UNC5792 phishing, Erin Molan/Iran, COLD RELIC, EU sanctions and Spanish arrest over NoName057(16) as the one stated edge, IIHF defacement, UK NCF); moved Drupal CVE-2026-132165 into exploited-now (Drupal reports exploitation) and added GL.iNet cloud-management malware; patch-pressure adds Ghostscript CVE-2026-125396, Ruby fixes and WhatsApp CVE-2026-102769; supplier-cascades adds MUFG Bank and Mainichi; one-vendor-many-victims adds Caribbean Airlines/Amadeus, SBI Shinsei/Monex, Mercadien/Esquire Bank, Black Diamond Korea; account-takeover adds Ukraine/FBI ransomware network (posed as IT support, inferred only); government-networks adds Chile foreign ministry; sector-breach-clusters adds KEPCO and drops three events dated before Nov 15. PLAID's origin record (Nov 13) is kept as the stated hub every customer names, noted in the caveat. Ripples: dropped N-central and Fireworks AI (covered in patterns), added KEPCO (basis inferred, downstream labelled as inference) and GL.iNet. Links added for stated edges: plaid -> mufg-bank (MUFG's own PDF notice), eu-sanctions-sda-noname057 -> spain-burgos-noname05716 (Novinky). All other stated edges already had links on file. No pages read; all facts taken from records on file. No events added. Build passes."
+}

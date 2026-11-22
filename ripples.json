@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-21T10:58:31Z",
+  "generated_at": "2026-11-22T10:59:35Z",
   "items": [
     {
       "event_id": "cert-fr-nginx-http2-rce-2026-11",
@@ -53,7 +53,7 @@
         "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
       ],
       "downstream": [
-        "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million ZOZOTOWN customers, SMBC up to about 14 million, Marui about 8.83 million, plus Sharp, Mitsumo, Timee, Schoo and PLUS.",
+        "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million ZOZOTOWN customers, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million, plus Sharp, Mitsumo, Timee, Mainichi Shimbun, Schoo and PLUS.",
         "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
         "Companies that ended their KARTE contract are included, so former customers should check too."
       ],
@@ -70,24 +70,25 @@
       ]
     },
     {
-      "event_id": "fireworks-ai-october-incidents-update-2026-11",
-      "basis": "stated",
+      "event_id": "kepco-hanjeon-on-srm-personal-data-leak-2026-11",
+      "basis": "inferred",
       "direct": [
-        "Account and billing data for every Fireworks AI account created before Oct 30 was exposed; some customers' secrets, model files and datasets were reached earlier."
+        "KEPCO says personal data of over 1.5 million people (a simple sum, overlap unchecked) leaked from its Hanjeon ON customer platform and SRM procurement system, including resident registration, bank account and card numbers; it believes an outside attacker broke in, blocked external IP access, suspended some services and asked police to investigate."
       ],
       "downstream": [
-        "Cursor, Notion and Uber are reported as affected customers; keys held by the provider led to a trojanized extension at Cursor.",
-        "Credentials pasted into AI prompts or held by inference providers can open systems far from the provider itself."
+        "Inferred: resident registration numbers with bank and card details are the material for fraud and for convincing phishing that poses as KEPCO bills or refunds.",
+        "Inferred: the SRM system serves KEPCO suppliers, so supplier staff may receive targeted phishing posing as KEPCO procurement."
       ],
       "watch_for": [
-        "Notices from AI and inference providers you use",
-        "Use of API keys issued to providers",
-        "Secrets in AI chat logs and traces"
+        "KEPCO notices naming exactly what each person lost",
+        "Electricity bill or refund phishing in Korean",
+        "PIPC or police findings on how the attacker got in",
+        "Suppliers reporting phishing that uses procurement details"
       ],
       "who_should_care": [
-        "AI platform teams",
-        "Vendor management",
-        "Developers"
+        "Korean banks and card issuers",
+        "KEPCO suppliers",
+        "Fraud teams"
       ]
     },
     {
@@ -131,27 +132,6 @@
         "Confluence admins",
         "Identity teams",
         "SOC analysts"
-      ]
-    },
-    {
-      "event_id": "n-able-n-central-zero-day-exploitation-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Internet-facing N-central servers were exploited through zero-days published without coordinated disclosure; crypto miners were deployed."
-      ],
-      "downstream": [
-        "An RMM server reaches every managed client, so a compromise can spread to many customer networks at once.",
-        "Removal of the Legacy API may break older integrations that still depend on it."
-      ],
-      "watch_for": [
-        "N-central servers not on Hotfix 3",
-        "New agents or scripts pushed from RMM",
-        "Mining processes on managed endpoints"
-      ],
-      "who_should_care": [
-        "MSPs",
-        "MSP customers",
-        "IT operations"
       ]
     },
     {
@@ -217,6 +197,27 @@
         "Research computing admins",
         "University IT",
         "Identity teams"
+      ]
+    },
+    {
+      "event_id": "glinet-cloud-management-router-kvm-malware-2026-11",
+      "basis": "stated",
+      "direct": [
+        "GL.iNet says an unauthorized party exploited a flaw in its cloud remote management service to install malicious software on some GL.iNet routers and KVM devices; it fixed the cloud flaw and blocked the access used, and is still determining scope."
+      ],
+      "downstream": [
+        "GL.iNet says the fix does not remove malware from devices already infected, so owners must check and clean devices themselves.",
+        "A KVM device gives keyboard, screen and power control of the machine it is attached to, so an infected KVM can reach servers behind it (our inference from what the device does)."
+      ],
+      "watch_for": [
+        "GL.iNet guidance on how to detect and remove the malware",
+        "Unexpected outbound traffic from GL.iNet routers and KVMs",
+        "Devices enrolled in GL.iNet cloud management that nobody uses"
+      ],
+      "who_should_care": [
+        "Small office and remote-site IT",
+        "Data centre and lab admins using IP KVMs",
+        "Home-office users"
       ]
     }
   ]

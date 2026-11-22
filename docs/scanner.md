@@ -571,14 +571,16 @@ blocker came up. Each keeps the scanner detection-only and inside the limits abo
 
 Wave 3, taken by the build lead on 2026-11-22 under the same instruction:
 
-14. **Netlogon: rejected.** No Netlogon exchange is added to `--identify`.
+14. **Netlogon: rejected.** No Netlogon exchange is added to `--identify`: any Netlogon/NRPC call is an enumeration and exploit surface, not an identification read.
 15. **Docker Desktop: out of scope.** Its flaw is local to the workstation, so a network scan cannot see it.
 16. **Path-rail candidates rejected:** `/.git/HEAD`, `/sitemap.xml`, `/.well-known/change-password`,
     `/.well-known/caldav`, Keycloak's OpenID configuration document and vLLM's version endpoint. None is in the rail's
-    table; the products stay identified from the root page where they can be.
+    table; the products stay identified from the root page where they can be. Reasons: `/.git/HEAD` exposes repository
+    data; `/sitemap.xml`, the two `.well-known` files and vLLM's `/version` name no product or have nothing on the root
+    page to hint them; Keycloak's path was not confirmed by a source.
 17. **Ivanti Connect Secure's version file: accepted on the rail.** The same literal path the Pulse Connect Secure row
     already requests, so no new path; its build number is shown, never compared.
-18. **`robots.txt` as a fingerprint source: rejected.** It is not requested.
+18. **`robots.txt` as a fingerprint source: rejected.** It is not requested: it names paths, not a product or version, so it gives no hint the rail could use.
 19. **Mirth Connect: identified in normal scans, root page only.** No separate clinical opt-in; the exact administrator
     page title on the root page is the only signal, and nothing more is requested.
 20. **DNP3: deferred** until an operator-supplied outstation address exists in the scope file (with its own Design). A

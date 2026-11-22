@@ -20,8 +20,12 @@ const issues = (gh("issues", "?state=all&per_page=50&sort=created&direction=desc
 
 const items = issues.map((i) => {
   const comments = i.comments ? (gh(`issues/${i.number}/comments`) || []) : [];
-  // handled = a reply from Claude, or a pull request that mentions this issue, or the issue is closed
-  const claudeReplied = comments.some((c) => /claude|co-authored-by: claude/i.test((c.user && c.user.login) + " " + (c.body || "")));
+  // handled = a reply from Claude, or a pull request that mentions this issue, or the issue is closed.
+  // A comment relayed FROM Grok (a brief follow-up) is addressed to @claude and/or signed "Grok Bot"; it is NOT a reply
+  // from Claude. The old check matched the "@claude" mention inside Grok's own message and marked every brief handled,
+  // so a fresh brief with only a Grok follow-up (e.g. #82, 22 Nov 2026) was silently hidden. Count only non-relay comments.
+  const isGrokMsg = (c) => /\bgrok bot\b|\[grok\b|^\s*@claude\b/i.test((c && c.body) || "");
+  const claudeReplied = comments.some((c) => !isGrokMsg(c));
   const linkedPr = (gh("pulls", `?state=all&per_page=100`) || []).some((p) => new RegExp(`#${i.number}\\b`).test((p.body || "") + " " + (p.title || "")));
   const handled = i.state === "closed" || claudeReplied || linkedPr;
   return { number: i.number, title: i.title, state: i.state, created: i.created_at, author: i.user && i.user.login,

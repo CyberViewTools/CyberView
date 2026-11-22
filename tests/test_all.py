@@ -1212,7 +1212,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Scanner", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1261,10 +1261,10 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "vulnerabilities.html", "trends.html", "actors.html", "tabletop.html", "community.html", "about.html"]:
+            for sub in ["archive.html", "vulnerabilities.html", "scanner.html", "trends.html", "actors.html", "tabletop.html", "community.html", "status.html", "about.html", "privacy.html", "terms.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.locator("#navSheet .sheetnav a").count() == 9 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Scanner", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1511,7 +1511,7 @@ async def main():
             await ctx.close()
             pg, errs = await open_page(browser, url, w=1000, wait=1200)
             nb = await pg.locator("header .sitenav").bounding_box(); rb = await pg.locator("#refresh").bounding_box()
-            ok("nav: nine links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
+            ok("nav: ten links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
             await pg.context.close()
 
         await serve(site18, v118)
@@ -2100,6 +2100,57 @@ async def main():
             await pg.context.close()
         bn = copy.deepcopy(bundle); bn["docs"] = {k: v for k, v in (bundle.get("docs") or {}).items() if k != "scams/warnings"}
         await serve(make_site(bn), v163b)
+
+        # the Scanner page (site/scanner.html from data/scanner.json, scripts/scanner-stats.mjs): live numbers, nav tab, text only
+        async def vscan(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
+            ok("scanner: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Scanner")
+            ok("scanner: Scanner sits after Vulnerabilities in the nav", (await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => a.textContent)"))[1:3] == ["Vulnerabilities", "Scanner"])
+            for i in ["nProducts", "nRules", "nVersion"]:
+                t = (await pg.text_content("#" + i)).strip()
+                ok(f"scanner: live number {i} shown", t and t != "—" and any(c.isdigit() for c in t), t)
+            ok("scanner: counted-at note", "Counted at the site build" in await pg.text_content("#glanceNote"))
+            ok("scanner: area counts filled from the code", "detection rows" in await pg.text_content("[data-area=edge] .acount") and "built-in entries" in await pg.text_content("[data-area=services] .acount"))
+            ok("scanner: opt-ins listed from the scanner's own flags", await pg.locator("#optins li code").count() >= 3 and "--html" in await pg.text_content("#optins"))
+            ok("scanner: recently added list", await pg.locator("#recent li.rc").count() >= 5 and await pg.locator("#recent a[href='https://github.com/xanderhutch/CyberView/pull/112']").count() == 1)
+            ok("scanner: authorization warning and download links", "Only scan systems you own" in await pg.text_content(".schero .caveat") and await pg.locator(".schero a[href='https://github.com/xanderhutch/CyberView/tree/main/scanner']").count() == 1)
+            ok("scanner: quick start commands", "cyberview-scan.mjs init --out scope.json" in await pg.text_content(".steps") and await pg.locator(".steps pre code").count() == 3)
+            ok("scanner: links to My software", await pg.locator("a[href='vulnerabilities.html#inv']").count() >= 1)
+            ok("scanner: no script errors", not errs, errs)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), w=390, h=844, wait=900)
+            ok("scanner: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            ok("scanner: phone shows the menu button", await pg.locator("#navBtn").is_visible() and await pg.locator("header .sitenav").is_hidden())
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html#scanner"), wait=900)
+            ok("scanner: the Vulnerabilities panel links to the full page", await pg.locator("#scanner a[href='scanner.html']").count() == 1)
+            await pg.context.close()
+        await serve(make_site(bundle), vscan)
+
+        site_sc = make_site(bundle)
+        json.dump({"built_at": "2026-11-22T10:00:00Z", "version": "<b>1</b>", "products": "<img src=x id=pwnS1>", "rules": -5, "kev_products": 10, "kev_covered": 50,
+                   "areas": {"edge": 3, "apps": None}, "opt_ins": [{"flag": "<img src=x id=pwnS2>", "what": "x"}, {"flag": "--html", "what": "<i id=pwnS3>html</i>"}],
+                   "recent": [{"title": "<img src=x id=pwnS4>", "line": "line", "date": "2026-11-20", "pr": "javascript:alert(1)"}, {"title": "No date", "date": "soon"}]},
+                  open(os.path.join(site_sc, "data", "scanner.json"), "w"))
+        async def vscanbad(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
+            ok("scanner bad data: bad numbers show a dash", (await pg.text_content("#nProducts")).strip() == "—" and (await pg.text_content("#nRules")).strip() == "—" and (await pg.text_content("#nVersion")).strip() == "—")
+            ok("scanner bad data: impossible KEV coverage dropped", (await pg.text_content("#nKev")).strip() == "—")
+            ok("scanner bad data: a missing module says so", "Not in this release yet" in await pg.text_content("[data-area=apps] .acount") and "3 detection rows" in await pg.text_content("[data-area=edge] .acount"))
+            ok("scanner bad data: markup stays text, bad flags and dates dropped", all([await pg.locator(f"#pwnS{i}").count() == 0 for i in range(1, 5)]) and await pg.locator("#optins li code").count() == 1 and await pg.locator("#recent li.rc").count() == 1)
+            ok("scanner bad data: no unsafe link", await pg.locator("a[href^='javascript']").count() == 0)
+            ok("scanner bad data: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(site_sc, vscanbad)
+
+        site_sc2 = make_site(bundle)
+        os.remove(os.path.join(site_sc2, "data", "scanner.json"))
+        async def vscanmissing(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
+            ok("scanner missing data: dashes and a note", (await pg.text_content("#nProducts")).strip() == "—" and "could not be loaded" in await pg.text_content("#glanceNote"))
+            ok("scanner missing data: the static guide still shows", await pg.locator(".steps pre code").count() == 3 and await pg.locator(".area").count() >= 9)
+            await pg.context.close()
+        await serve(site_sc2, vscanmissing)
 
         await browser.close()
 

@@ -1,0 +1,13 @@
+{
+  "_note": "Hand-written list of shipped CyberView Scanner features for the Scanner page's 'Recently added' section (site/scanner.html). scripts/scanner-stats.mjs validates it at build and copies it into site/data/scanner.json. Public text only: a title, one plain line, the merge date (YYYY-MM-DD) and the pull request number. Newest first; add an entry when a scanner pull request merges.",
+  "recent": [
+    { "title": "Incident citations and hunt links", "line": "With --data-incidents, each finding cites the reviewed CyberView incidents that name its CVE (claims are never cited), and every finding links the publishers' detection files.", "date": "2026-11-22", "pr": 108 },
+    { "title": "Edge appliance fingerprints", "line": "VPN gateways, firewalls, routers, cameras and NAS that CISA lists as known exploited, named from the root page, headers and greeting the scan already collected. No extra request.", "date": "2026-11-22", "pr": 112 },
+    { "title": "CMS, plugin and JavaScript library versions", "line": "Versions a site discloses in its own root page markup (generator tags, script file names, library banners), read without fetching anything more.", "date": "2026-11-22", "pr": 111 },
+    { "title": "Self-contained HTML report", "line": "--html writes report.html: one page with no script, nothing loaded from the network, evidence for each finding, the backport caveat and coverage notes.", "date": "2026-11-22", "pr": 110 },
+    { "title": "SSH key exchange audit", "line": "Reads the algorithms an SSH server offers on the same connection, flags a weak set and notes post-quantum key exchange. It never starts a key exchange or logs in.", "date": "2026-11-22", "pr": 109 },
+    { "title": "HTTP and mail hygiene", "line": "Security headers, cookie flags (names only), redirects, default, setup and debug pages, and cleartext mail and logins, from the one root-page response.", "date": "2026-11-22", "pr": 98 },
+    { "title": "TLS and certificate hygiene", "line": "Expired or expiring certificates, self-signed, weak keys and signatures, old protocols, weak ciphers and no forward secrecy, from the one handshake.", "date": "2026-11-22", "pr": 97 },
+    { "title": "The CyberView Scanner", "line": "The downloadable, detection-only scanner: scope file and attestation, discovery, every-port and UDP depth, offline data, and JSON, CSV, SARIF and software-list output.", "date": "2026-11-21", "pr": 67 }
+  ]
+}

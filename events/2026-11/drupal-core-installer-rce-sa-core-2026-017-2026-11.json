@@ -29,12 +29,12 @@
     "Drupal core"
   ],
   "first_seen": "2026-11-19T00:14:29Z",
-  "updated_at": "2026-11-19T01:10:58Z",
+  "updated_at": "2026-11-22T01:19:44Z",
   "time_basis": "published",
   "category": "vuln",
   "date": "2026-11-18",
   "occurred_at": "2026-11-18T16:00:00Z",
-  "title": "Drupal fixes critical core flaw that can let attackers reinstall a site and run code (CVE-2026-132165)",
+  "title": "Drupal says core flaw CVE-2026-132165 was exploited on live sites; fixed in 10.6.22, 11.3.22 and 11.4.13",
   "org": "Drupal Security Team",
   "sector": "Technology / web platforms",
   "country": "United States",
@@ -46,10 +46,10 @@
   "severity": 3,
   "status": "official",
   "source_tier": "primary",
-  "summary": "Drupal rated SA-CORE-2026-017, CVE-2026-132165, critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. Drupal says a proof of concept exists. Fixed in 10.6.22, 11.3.22 and 11.4.13. A second advisory, CVE-2026-132166, is a gadget chain that is not directly exploitable. Drupal credits Anthropic's OSS Scanner for finding the first.",
-  "plain": "Drupal fixed a serious flaw that could let an attacker take over a website by re-running its installer. Example attack code exists.",
-  "exec": "Drupal runs a large number of public websites; a critical flaw with a proof of concept needs a quick update.",
-  "action": "Update Drupal core to 10.6.22, 11.3.22 or 11.4.13 (or later). If you cannot upgrade, secure the installer as Drupal describes. Sites on 11.2.x and 10.5.x or older are end of life.",
+  "summary": "Drupal rates SA-CORE-2026-017, CVE-2026-132165, highly critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. In an update to the advisory, Drupal says its Security Team received a report this was exploited on live sites as early as 2026-11-19 19:00 UTC. Fixed in 10.6.22, 11.3.22 and 11.4.13. A second advisory, CVE-2026-132166, is a gadget chain that is not directly exploitable.",
+  "plain": "Drupal fixed a serious flaw that can let an attacker take over a website by re-running its installer, and says it has a report of the flaw being exploited on live sites.",
+  "exec": "Drupal has a report that this highly critical flaw was exploited on live sites; Drupal sites on older versions need its fix.",
+  "action": "Drupal advises updating core to 10.6.22, 11.3.22 or 11.4.13; if you cannot upgrade, secure the installer as Drupal describes. Older branches are end of life, per Drupal.",
   "sources": [
     {
       "name": "Drupal SA-CORE-2026-017",
@@ -64,7 +64,7 @@
     "doc_id": "",
     "iocs_available": false,
     "key_findings": [
-      "SA-CORE-2026-017 (Critical, CVE-2026-132165): installer reinstall leading to takeover or RCE; proof of concept exists.",
+      "SA-CORE-2026-017 (Highly critical, CVE-2026-132165): installer reinstall leading to takeover or RCE; advisory update reports exploitation on live sites as early as 2026-11-19 19:00 UTC.",
       "Affected: below 10.6.22, 11.0.0 to below 11.3.22, 11.4.0 to below 11.4.13; fixed in 10.6.22, 11.3.22, 11.4.13.",
       "SA-CORE-2026-018 (CVE-2026-132166) is a gadget chain needing a separate unsafe-unserialize flaw."
     ],
@@ -79,8 +79,8 @@
   },
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-19T00:14:29Z",
-    "note": "Read both Drupal security advisories (primary); NCSC-NL also lists the release."
+    "checked_at": "2026-11-22T01:19:44Z",
+    "note": "Read both Drupal security advisories (primary); NCSC-NL also lists the release. SA-CORE-2026-017 re-read on 22 November: it now carries an update reporting exploitation on live sites and the score 'Highly critical 20 / 25 ... E:Exploit'."
   },
   "review": {
     "state": "passed",
@@ -98,5 +98,11 @@
   "surface": {
     "value": "web-app",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.drupal.org/sa-core-2026-017",
+      "quote": "Update: the Security Team has received a report this was exploited on live sites as early as 2026-11-19 19:00 UTC."
+    }
+  ]
 }

@@ -192,6 +192,29 @@ Written to `cyberview-scan-<time>/` (or `--out`):
 - `report.sarif`: SARIF 2.1.0, for dashboards that read code-scanning results.
 - `inventory.csv`: the software found, in the format the Vulnerabilities page's "My software" view imports.
 
+`summary.txt` and `report.json` also list **observations**: problems that are not CVEs, worked out only from what the one
+connection already returned (no extra connection or request), each with a severity (high, medium, low), most severe
+first, at most 60 per host:
+
+| Observation | When |
+|---|---|
+| `tls-expired`, `tls-expiring`, `tls-not-yet-valid` | the certificate has expired, expires within 30 days, or is not valid yet |
+| `tls-self-signed` | the certificate's subject and issuer are the same |
+| `tls-weak-key` | an RSA or DSA key under 2048 bits, or an EC key under 224 bits |
+| `tls-weak-signature` | the certificate is signed with MD2, MD5 or SHA-1 |
+| `tls-name-mismatch` | the scan reached the host by a name from your scope and the certificate does not name it |
+| `tls-old-protocol` | the handshake negotiated SSL 3.0, TLS 1.0 or TLS 1.1 (retired by RFC 8996) |
+| `tls-weak-cipher` | the negotiated suite uses NULL, export, RC4, DES or 3DES, MD5, or no authentication |
+| `tls-weak-dh` | the ephemeral Diffie-Hellman group is under 2048 bits |
+| `tls-no-forward-secrecy` | the negotiated suite uses RSA key exchange |
+| `cleartext-login` | Telnet, or FTP that does not show it requires TLS |
+| `snmp-public` | with `--udp`: SNMP answers the default `public` community |
+
+The TLS findings describe what **this scan's one handshake** negotiated; a different client can get different
+parameters, and the scanner never enumerates protocols or ciphers. The key-exchange group is recorded as Node reports it
+(for example `X25519`, or a Diffie-Hellman size). When a TLS 1.3 server picks a hybrid post-quantum group such as
+`X25519MLKEM768`, Node does not name it, and the report says "not reported" rather than guessing either way.
+
 Each finding shows the CVE, where it was seen (address, port, product, the version as stated), and:
 
 - **Ranking**: known exploited (CISA KEV) first, then other evidence of exploitation, then past CISA's deadline; within

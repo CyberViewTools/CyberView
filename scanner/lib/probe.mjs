@@ -34,7 +34,8 @@ export const SENDS = {
 
 /**
  * One port: connect, then read or ask as above. Never throws.
- * -> { port, state: open | closed | filtered, banner, raw (Buffer, MySQL only), http: { status, headers, body }, tls: { protocol, cipher, cert }, error }
+ * -> { port, state: open | closed | filtered, banner, raw (Buffer, MySQL only), http: { status, headers, body },
+ *      tls: { protocol, cipher, cipher_std, kex: { type, name, size }, cert: { ..., bits, curve, fingerprint256, raw (DER) } }, error }
  */
 export async function probePort(ip, port, { servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS, httpPorts = [], httpsPorts = [] } = {}) {
   const out = { port, state: "filtered", banner: "", raw: null, http: null, tls: null, error: "" };
@@ -58,8 +59,12 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
     }
     out.state = "open";
     if (useTls) {
-      const c = sock.getPeerCertificate(false);
-      out.tls = { protocol: sock.getProtocol() || "", cipher: (sock.getCipher() || {}).name || "", cert: c && c.subject ? { subject: c.subject, issuer: c.issuer, valid_from: c.valid_from, valid_to: c.valid_to, subjectaltname: c.subjectaltname || "" } : null };
+      // everything below is read from the handshake that already happened: no extra bytes are sent for it
+      const c = sock.getPeerCertificate(false), ci = sock.getCipher() || {};
+      let eph = {}; try { eph = sock.getEphemeralKeyInfo() || {}; } catch { /* not available */ }
+      out.tls = { protocol: sock.getProtocol() || "", cipher: ci.name || "", cipher_std: ci.standardName || "", kex: { type: eph.type || "", name: eph.name || "", size: Number(eph.size) || 0 },
+        cert: c && c.subject ? { subject: c.subject, issuer: c.issuer, valid_from: c.valid_from, valid_to: c.valid_to, subjectaltname: c.subjectaltname || "",
+          bits: Number(c.bits) || 0, curve: c.nistCurve || c.asn1Curve || "", fingerprint256: c.fingerprint256 || "", raw: Buffer.isBuffer(c.raw) ? c.raw : null } : null };
     }
     if (web) out.http = await httpGet(sock, useTls, hostHeader || ip, port, timeouts);
     else {

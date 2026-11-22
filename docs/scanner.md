@@ -55,6 +55,20 @@ scanner, its docs and its fixtures for NOCODE's attack patterns and exercises ea
 
 **Coverage (never a silent clean).** `scan.mjs` records every probe outcome — open, closed, filtered, errored, and banners cut off before a version is read — not just open ports, and probes beyond the first few ports before calling a host unreachable (a firewall or IPS may drop the first probes). `report.mjs` `coverage()` turns that into a Coverage section in `summary.txt`/`report.json` listing hosts that answered on no port, filtered ports, truncated banners, ports left unchecked, and hosts that were **throttled**. A host that resets connections after answering (IPS/fail2ban) is backed off once (the Limiter's clock, so tests stay instant) and its reset ports are re-probed one at a time, recovering hidden services. When coverage is incomplete the command exits **2**, so a scan with blind spots is never mistaken for a clean one. Tests: `probeAll` finds an open port past dropped discovery ports, `coverage()` classifies gaps, `isTruncatedBanner` flags cut banners.
 
+**Hygiene observations (`tk-hygiene`).** `fingerprint.mjs` `observations()` turns what the one connection already returned
+into findings that are not CVEs, each `{ port, kind, severity, text }`. The TLS half reads the negotiated protocol,
+cipher suite (OpenSSL and IANA names) and ephemeral key-exchange group (`getEphemeralKeyInfo()`), and the certificate's
+key size, curve, SHA-256 fingerprint, and the signature and public-key algorithms (`certAlgorithms()`, a bounded DER
+reader, because Node 22 does not expose them). Thresholds are fixed in `TLS_RULES`: expiring within 30 days, RSA/DSA under
+2048 bits, EC under 224, a DH group under 2048, MD2/MD5/SHA-1 signatures, SSL 3.0 to TLS 1.1, NULL/export/RC4/DES/3DES/
+MD5/anonymous suites. A name mismatch is reported only when the host was reached by an attested name (RFC 6125 matching:
+SAN DNS names, CN only when there is none, one wildcard label). A blank key-exchange group on TLS 1.3 is recorded as "not
+reported" (Node does not name hybrid post-quantum groups such as `X25519MLKEM768`), never as proof of PQC or its absence.
+No extra connection, no extra hello, no cipher or group enumeration; the test suite proves a loopback TLS service sees
+exactly one connection. At most 60 observations are kept per host (`OBS_PER_HOST`); any over the cap are counted in
+`observations_dropped`. The HTTP half (headers, default pages, debug markers, redirects, cleartext mail) is the second
+`tk-hygiene` PR.
+
 ## One answer, on the site and in the scanner
 
 Matching and rating are not reimplemented. `site/workbench-lib.js` holds `cleanRange`, `matchFlaw` (version ranges first,

@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // Politeness limits: rate, concurrency, per-host and global connection budgets, and the run's time limit.
 // The defaults are also the ceilings: an operator can set any of them LOWER, never higher, and none can be switched off.
 // There is no faster mode and no switch that removes a limit.

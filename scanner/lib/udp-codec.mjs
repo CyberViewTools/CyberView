@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // UDP query builders and response parsers. PURE: no sockets, no datagram module, no network. Every function builds one benign,
 // read-only diagnostic datagram or parses a response the service sent back; the actual single send lives in udp.mjs.
 // Loops here are fine (they only format or walk bytes); udp.mjs, which opens the socket, contains none and sends exactly once.

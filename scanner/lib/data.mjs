@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // CyberView's public data, read-only: from the live site (online) or from a snapshot folder (offline, air-gapped).
 // The scanner downloads ONLY these files, with plain GET requests and no key, cookie or account:
 //   data/workbench.json      known-exploited flaws (CISA's KEV catalog as CyberView holds it) with NVD's affected-version

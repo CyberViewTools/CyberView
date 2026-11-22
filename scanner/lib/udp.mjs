@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // The ONLY file in the scanner that opens a UDP socket (node:dgram); scripts/security-check.mjs enforces that and that this
 // file sends EXACTLY ONE datagram per call and contains no loop (the flood guard: one benign query per service per host,
 // no retransmit, no amplification, no community or credential iteration). The query bytes and the parsing are built in the

@@ -217,3 +217,15 @@ and a service can hide or misstate its version.
 - The scanner never runs your cloud CLI and never reads or stores your cloud or API keys.
 
 `scripts/security-check.mjs` checks the scanner's code for these on every change. More detail: `docs/scanner.md`.
+
+## Licence
+
+Copyright (c) 2026 xanderhutch (the CyberView maintainer). All rights reserved.
+
+The CyberView Scanner is a **proprietary CyberView product**, licensed under
+`scanner/LICENSE` — **not** the MIT licence that covers the rest of the
+repository. You may download and use it to scan systems you own or are
+authorised in writing to test, including inside your own organisation; you may
+not redistribute, modify for distribution, sublicense or sell it without
+written permission. It is provided with no warranty. For permissions beyond the
+licence: cyberviewthreats@gmail.com.

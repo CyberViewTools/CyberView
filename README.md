@@ -51,3 +51,7 @@ Every event has a "Report an error" button that opens a pre-filled GitHub issue.
 ## Credits
 
 Context data: [IODA](https://ioda.inetintel.cc.gatech.edu/) (Georgia Tech Internet Intelligence Lab) and [GDACS](https://www.gdacs.org/) (European Commission JRC and UN OCHA). Map: Natural Earth via world-atlas; d3 and topojson-client.
+
+## Licence
+
+The repository is under the MIT Licence (`LICENSE`), **except** the downloadable scanner in `scanner/`, which is a proprietary CyberView product under its own licence (`scanner/LICENSE`).

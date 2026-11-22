@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // The network layer: the ONLY file in the scanner that opens connections to scan targets or writes to them
 // (scripts/security-check.mjs enforces this). What it does, per open port, in ONE connection:
 //   - an ordinary TCP connect (no raw packets, no half-open or stealth scanning, no spoofed source)

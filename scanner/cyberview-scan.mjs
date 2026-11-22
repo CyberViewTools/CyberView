@@ -2,6 +2,8 @@
 // CyberView Scanner: finds known-vulnerable software on YOUR OWN network and ranks what to patch first, using CyberView's
 // published CVE, KEV and EPSS data and the CyberView rating. Detection only: it reads the versions services state about
 // themselves and matches them; it never exploits, logs in, guesses passwords, floods or hides. No AI model.
+// Copyright (c) 2026 xanderhutch. All rights reserved. Proprietary licence (scanner/LICENSE), not the
+// repository's MIT licence. Download and use on systems you own or are authorised to test; no redistribution.
 // Read scanner/README.md first. Commands:
 //   init  [--out scope.json]                  write a scope file to fill in (targets, owner, your attestation)
 //   check --scope FILE [--i-am-authorized-for-public-ranges]   check the scope file and show what a scan would do; no network

@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // One scan: resolve the scope, gate every address, probe politely, fingerprint, match, rate, report.
 // The probe and the resolver are passed in so tests can run the whole path on loopback or with stand-ins.
 import { lookup } from "node:dns/promises";

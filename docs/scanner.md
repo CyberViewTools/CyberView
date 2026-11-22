@@ -149,6 +149,16 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 
 `diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
+## Crypto inventory
+
+From the handshake already made, the report adds `certs.csv` (fingerprint, reuse across hosts, names that are single-label or end in `.local`, `.lan`, `.internal`, `.home`, or `.corp`) and `cbom.json` (CycloneDX 1.6: the negotiated TLS parameters and the SSH algorithms the server advertised). Neither file is a proof of every algorithm the server supports.
+
+`--tls-legacy` is off unless asked. It makes one extra TLS 1.0-only handshake on a port that already answered TLS. If this runtime cannot offer TLS 1.0, it does not connect. A hello that does not complete is not proof the server refuses TLS 1.0.
+
+A classical negotiated group is not proof the server lacks post-quantum key exchange. The report says whether this runtime can name `X25519MLKEM768`. The default handshake is not changed.
+
+`match` notes OpenSSL or libssl below 3.0 as past the project's published end of support (11 September 2023). A 3.x version is listed and not marked that way.
+
 ## Edge versions from pages already collected
 
 `scan-edge-versions` names an appliance only when the root page, a header, or a greeting already collected contains a literal the detection catalog cites (Nuclei, Recog, or Nmap). A login title is a guess with no version. Needs-research products are not matched. No extra request is added here; version files on a frozen path are a later item. Cisco ASA, AnyConnect, and CGI login checks are not matched.

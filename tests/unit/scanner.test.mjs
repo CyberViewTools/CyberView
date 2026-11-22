@@ -28,6 +28,10 @@ import { toHtml } from "../../scanner/lib/html.mjs";
 import { diffReports } from "../../scanner/lib/diff.mjs";
 import { NOCODE } from "../../scripts/lib/validate.mjs";
 import { startServers } from "../fixtures/scanner/servers.mjs";
+import { certRows, isInternalName } from "../../scanner/lib/certs.mjs";
+import { toCbom } from "../../scanner/lib/cbom.mjs";
+import { cryptoNotes } from "../../scanner/lib/sbom-crypto.mjs";
+import { tlsLegacyAvailable } from "../../scanner/lib/probe.mjs";
 
 const FIX = new URL("../fixtures/scanner/", import.meta.url).pathname, SNAP = join(FIX, "snapshot");
 const BANNERS = JSON.parse(readFileSync(join(FIX, "banners.json"), "utf8"));
@@ -291,7 +295,7 @@ test("offline mode: a whole scan from a snapshot, no data request, report files 
   const x = io({ probe, fetchImpl: () => { fetched++; throw new Error("offline"); } });
   assert.equal(await main(["scan", "--scope", p, "--data", SNAP, "--ports", "22,80,443", "--out", join(d, "out")], x), 0);
   assert.equal(fetched, 0);
-  assert.deepEqual(readdirSync(join(d, "out")).sort(), ["findings.csv", "inventory.csv", "report.html", "report.json", "report.sarif", "summary.txt"]);
+  assert.deepEqual(readdirSync(join(d, "out")).sort(), ["cbom.json", "certs.csv", "findings.csv", "inventory.csv", "report.html", "report.json", "report.sarif", "summary.txt"]);
   const rep = JSON.parse(readFileSync(join(d, "out", "report.json"), "utf8"));
   assert.equal(rep.run.data.mode, "offline"); assert.equal(rep.scope.attestation.name, "Test Operator"); assert.equal(rep.scope.owner, "Example lab");
   assert.deepEqual(rep.findings.map((f) => f.cve), ["CVE-2026-90102"]);   // OpenSSH 9.9 is past the fix
@@ -1060,4 +1064,46 @@ test("edge pages and greetings: cited titles, a stated version, and a login titl
   const fab = fromGreeting("Fabric OS (tm)  Release v8.2.1\r\n", 23);
   assert.equal(fab[0].product, "Fabric OS");
   assert.equal(fab[0].version, "8.2.1");
+});
+
+/* ---- crypto lane: cert inventory, CBOM, legacy hello, SBOM crypto ---- */
+test("certificate inventory: reuse and internal names, no extra fields invented", () => {
+  assert.equal(isInternalName("printer.local"), true);
+  assert.equal(isInternalName("vpn"), true);
+  assert.equal(isInternalName("www.example.com"), false);
+  const hosts = [
+    { address: "10.0.0.1", tls: [{ port: 443, cert: { fingerprint256: "AA", subject: "CN=vpn", issuer: "CN=vpn", valid_to: "2027-01-01", san: "DNS:vpn.local, DNS:www.example.com" } }] },
+    { address: "10.0.0.2", tls: [{ port: 443, cert: { fingerprint256: "AA", subject: "CN=vpn", issuer: "CN=vpn", valid_to: "2027-01-01", san: "DNS:vpn.local" } }] },
+  ];
+  const rows = certRows(hosts);
+  assert.equal(rows[0].reused_on[0], "10.0.0.2:443");
+  assert.deepEqual(rows[0].internal.sort(), ["vpn", "vpn.local"]);
+});
+
+test("CBOM lists negotiated TLS and advertised SSH and does not claim a missing algorithm", () => {
+  const doc = toCbom({ hosts: [{ address: "10.0.0.1", tls: [{ port: 443, protocol: "TLSv1.3", cipher: "TLS_AES_128_GCM_SHA256", cert: { subject: "CN=a", issuer: "CN=b", sig_alg: "ecdsa-with-SHA256" } }], ssh: [{ port: 22, kex: ["mlkem768x25519-sha256"] }] }] });
+  assert.equal(doc.bomFormat, "CycloneDX");
+  assert.equal(doc.components.length, 3);
+  assert.match(doc.note, /not proof/);
+});
+
+test("SBOM crypto: OpenSSL 1.1.1 is past the published end of support; 3.2 is only listed", () => {
+  const notes = cryptoNotes([{ product: "OpenSSL", version: "1.1.1w" }, { product: "OpenSSL", version: "3.2.1" }, { product: "nginx", version: "1.25.0" }]);
+  assert.equal(notes.length, 2);
+  assert.equal(notes[0].past_support, true);
+  assert.equal(notes[1].past_support, false);
+});
+
+test("legacy TLS hello is off by default and, when asked, is one extra connection", async () => {
+  const srv = await startTlsServer("good");
+  try {
+    const st = settings({}).settings;
+    const host = [{ address: "127.0.0.1", names: [], kind: "loopback", public: false }];
+    await probeAll(host, { ports: [srv.port], httpsPorts: [srv.port], settings: st, assumeUp: true });
+    const afterDefault = srv.connections();
+    if (tlsLegacyAvailable()) {
+      await probeAll(host, { ports: [srv.port], httpsPorts: [srv.port], settings: st, assumeUp: true, legacy: true });
+      assert.equal(srv.connections() - afterDefault, 2);
+    }
+  } finally { await srv.close(); }
 });

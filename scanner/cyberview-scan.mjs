@@ -28,12 +28,16 @@ import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib
 import { PATH_SEND } from "./lib/paths.mjs";
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
+import { toCertsCsv } from "./lib/certs.mjs";
+import { toCbom } from "./lib/cbom.mjs";
+import { cryptoNotes } from "./lib/sbom-crypto.mjs";
+import { pqcCurveAvailable } from "./lib/probe.mjs";
 import { toHtml, diffHtml } from "./lib/html.mjs";
 import { readInventory, MAX_BYTES } from "./lib/inputs.mjs";
 import { diffReports, diffText } from "./lib/diff.mjs";
 import { D } from "./lib/shared.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "assume-exposed", "help", "all-ports", "udp", "paths", "well-known", "data-incidents", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "assume-exposed", "help", "all-ports", "udp", "paths", "well-known", "data-incidents", "tls-legacy", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -87,6 +91,9 @@ function writeReportFiles(dir, report) {
   w("inventory.csv", toInventory(report));
   w("summary.txt", summaryText(report) + "\n");
   w("report.html", toHtml(report));
+  w("certs.csv", toCertsCsv(report.hosts));
+  w("cbom.json", JSON.stringify(toCbom(report), null, 2) + "\n");
+  if (Array.isArray(report.crypto)) w("crypto.json", JSON.stringify(report.crypto, null, 2) + "\n");
 }
 
 /** `match` reads a file the operator already has. It never calls the probe. */
@@ -117,6 +124,8 @@ async function matchCmd(a, io, today) {
     ports: [], settings: { match: true }, probed, refused: [], startedAt, today,
     sends: { match: "nothing: the match command reads a local file and contacts no target" },
   });
+  report.crypto = cryptoNotes(hosts.flatMap((h) => h.services || []));
+  if (report.crypto.some((n) => n.past_support)) report.notes.unshift("An imported component names OpenSSL or libssl below 3.0, which is past the project's published end of support (11 September 2023).");
   report.notes.unshift("Match read a local file only. No address was resolved and no target was contacted.");
   if (a["assume-exposed"]) report.notes.unshift("--assume-exposed: every component is treated as internet-facing for the SSVC exposure answer. The rating itself does not change.");
   read.problems.forEach((p) => report.notes.push(p));
@@ -210,6 +219,7 @@ export async function main(argv, io = {}) {
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const sends = { ...SENDS };
   if (a.paths || a["well-known"]) sends.paths = PATH_SEND;
+  if (a["tls-legacy"]) sends.legacy = "one extra TLS 1.0-only handshake per TLS port that answered, off unless this flag is set; a failure is not proof the server refuses TLS 1.0";
   io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataLine, sends }));
   if (cmd === "check") {
     if (scope.discover) io.out(`\nDiscovery is configured (${[scope.discover.cidr ? "cidr sweep" : "", scope.discover.domains.length ? `${scope.discover.domains.length} domain(s)${scope.discover.ct ? " + Certificate Transparency" : ""}` : "", scope.discover.import.length ? `${scope.discover.import.length} import file(s)` : "", scope.discover.cloud.length ? `${scope.discover.cloud.length} cloud inventory file(s)` : ""].filter(Boolean).join(", ") || "nothing"}). Every host it finds is re-checked against this scope at scan time; anything outside it is dropped.`);
@@ -237,14 +247,17 @@ export async function main(argv, io = {}) {
     if (stop) { io.err("REFUSED: " + stop); return 2; }   // the public cap is the hard stop for public space; nothing was scanned
     refused.forEach((r) => io.err(`skipped ${r.target}: ${r.why}`));
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
-    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, probePath: io.probePath, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
-      paths: !!(a.paths || a["well-known"]), wellKnown: !!a["well-known"],
+    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, probePath: io.probePath, probeLegacy: io.probeLegacy, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
+      paths: !!(a.paths || a["well-known"]), wellKnown: !!a["well-known"], legacy: !!a["tls-legacy"],
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     let incidents = null;
     if (a["data-incidents"] && a.data) incidents = readIncidents(a.data, io);
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents, sends });
     if (a["data-incidents"] && !a.data) report.notes.push("Incident citations need an offline snapshot (--data and --data-incidents). The live site was not asked for them.");
     if (incidents && incidents.missing) report.notes.push("No data/incidents.json in the snapshot, so no incident citations were attached.");
+    report.notes.push(pqcCurveAvailable()
+      ? "This runtime can name the group X25519MLKEM768. A classical group on the one handshake is not proof the server lacks a post-quantum key exchange."
+      : "This runtime cannot offer X25519MLKEM768. A classical group on the one handshake is not proof the server lacks a post-quantum key exchange.");
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
     writeReportFiles(out, report);
     const text = summaryText(report);

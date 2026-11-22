@@ -4,7 +4,7 @@
 import { lookup } from "node:dns/promises";
 import { gate, listAddresses, classify, isPrivateKind, LIMITS, parseTarget, addresses } from "./scope.mjs";
 import { Limiter, pool } from "./limits.mjs";
-import { probePort as realProbe, probeHttpPath as realProbePath, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
+import { probePort as realProbe, probeHttpPath as realProbePath, probeLegacyHello as realLegacy, tlsLegacyAvailable, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations, parseKexinit, sshKexObservations } from "./fingerprint.mjs";
 import { selectPaths, railEvidence } from "./paths.mjs";
@@ -88,7 +88,7 @@ const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
 // observations kept per host (the rest are counted in observations_dropped, never silently lost)
 export const OBS_PER_HOST = 60;
 
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, probePath = realProbePath, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = false, wellKnown = false }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, probePath = realProbePath, probeLegacy = realLegacy, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = false, wellKnown = false, legacy = false }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
   const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
@@ -138,6 +138,23 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
         ...mailObservations(port, r.banner, { tls: !!r.tls })];
       obsPush(h, obs);
       if (paths && r.http && probePath) await railFor(h, port, r.http);
+      if (legacy && r.tls) {
+        if (!tlsLegacyAvailable()) {
+          if (!h.legacyNoted) { h.legacyNoted = true; obsPush(h, [{ port, kind: "tls-legacy-unavailable", severity: "info", text: "This runtime cannot offer a TLS 1.0 hello, so legacy acceptance was not tested." }]); }
+        } else {
+          const rel = await lim.acquire(h.address);
+          if (rel) {
+            try {
+              const extra = await probeLegacy(h.address, port, { servername: h.names[0] || "", signal: ac.signal });
+              h.outcomes.push({ port, state: extra.state === "skipped" ? "filtered" : extra.state, error: extra.error || "", truncated: false });
+              const text = extra.tls && extra.tls.protocol
+                ? `An extra TLS 1.0 hello negotiated ${extra.tls.protocol}.`
+                : "An extra TLS 1.0 hello did not complete. That is not proof the server refuses TLS 1.0.";
+              obsPush(h, [{ port, kind: extra.tls && extra.tls.protocol ? "tls-legacy-accepted" : "tls-legacy-incomplete", severity: extra.tls && extra.tls.protocol ? "high" : "info", text }]);
+            } finally { rel(); }
+          }
+        }
+      }
       return true;
     } finally { release(); }
   };

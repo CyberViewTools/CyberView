@@ -88,11 +88,21 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
   return out;
 }
 
-function connect(ip, port, useTls, servername, ms) {
+export function tlsLegacyAvailable() {
+  try { tls.createSecureContext({ minVersion: "TLSv1", maxVersion: "TLSv1", ciphers: "DEFAULT:@SECLEVEL=0" }); return true; }
+  catch { return false; }
+}
+/** True when this runtime accepts the group name. It does not prove a server negotiated it. */
+export function pqcCurveAvailable() {
+  try { tls.createSecureContext({ ecdhCurve: "X25519MLKEM768" }); return true; }
+  catch { return false; }
+}
+
+function connect(ip, port, useTls, servername, ms, tlsOpts = {}) {
   return new Promise((resolve, reject) => {
     const opts = { host: ip, port, timeout: ms };
     // a TLS port gets a normal handshake; rejectUnauthorized is off only so that a self-signed certificate can still be read
-    const s = useTls ? tls.connect({ ...opts, servername: servername && !net.isIP(servername) ? servername : undefined, rejectUnauthorized: false }) : net.connect(opts);
+    const s = useTls ? tls.connect({ ...opts, ...tlsOpts, servername: servername && !net.isIP(servername) ? servername : undefined, rejectUnauthorized: false }) : net.connect(opts);
     const t = setTimeout(() => { s.destroy(); reject(Object.assign(new Error("timeout"), { code: "ETIMEDOUT" })); }, ms);
     s.once(useTls ? "secureConnect" : "connect", () => { clearTimeout(t); s.setTimeout(0); resolve(s); });
     s.once("error", (e) => { clearTimeout(t); s.destroy(); reject(e); });
@@ -150,6 +160,30 @@ export async function probeHttpPath(ip, port, path, { servername = "", hostHeade
     out.http = trimRailBody(entry, http);
   } catch (e) {
     out.state = e && e.code === "ECONNREFUSED" ? "closed" : out.state === "open" ? "open" : "filtered";
+    out.error = String((e && (e.code || e.message)) || e).slice(0, 80);
+  } finally {
+    clearTimeout(hard); if (signal) signal.removeEventListener("abort", kill); kill();
+  }
+  return out;
+}
+
+/**
+ * One extra handshake that offers only TLS 1.0. Off unless the operator asks.
+ * A failure is not proof the server refuses TLS 1.0. No HTTP request, no renegotiation.
+ */
+export async function probeLegacyHello(ip, port, { servername = "", signal = null, timeouts = TIMEOUTS } = {}) {
+  if (!tlsLegacyAvailable()) return { port, state: "skipped", error: "this runtime cannot offer TLS 1.0", tls: null };
+  const out = { port, state: "filtered", error: "", tls: null };
+  let sock = null;
+  const kill = () => { try { sock && sock.destroy(); } catch { /* closed */ } };
+  if (signal) { if (signal.aborted) return out; signal.addEventListener("abort", kill, { once: true }); }
+  const hard = setTimeout(kill, timeouts.connectMs + 1000);
+  try {
+    sock = await connect(ip, port, true, servername, timeouts.connectMs, { minVersion: "TLSv1", maxVersion: "TLSv1", ciphers: "DEFAULT:@SECLEVEL=0" });
+    out.state = "open";
+    out.tls = { protocol: sock.getProtocol() || "" };
+  } catch (e) {
+    out.state = e && e.code === "ECONNREFUSED" ? "closed" : "filtered";
     out.error = String((e && (e.code || e.message)) || e).slice(0, 80);
   } finally {
     clearTimeout(hard); if (signal) signal.removeEventListener("abort", kill); kill();

@@ -17,6 +17,11 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | scan-hunt-links | Hunt pointers, links only | Review | Implementation | publisher URLs from the workbench ([handoff](handoff/scan-hunt-links.md)) |
 | scan-ssh-kex | SSH KEXINIT on the same connection | Review | Implementation | weak set and PQC names; no client key exchange ([handoff](handoff/scan-ssh-kex.md)) |
 | scan-edge-versions | Appliance hints from collected pages and greetings | Review | Implementation | cited literals only; login titles stay guesses ([handoff](handoff/scan-edge-versions.md)) |
+| scan-cert-inventory | Certificate reuse and internal names | Review | Implementation | certs.csv from the one handshake ([handoff](handoff/scan-cert-inventory.md)) |
+| scan-cbom | CBOM export | Review | Implementation | cbom.json, negotiated and advertised only ([handoff](handoff/scan-cbom.md)) |
+| scan-tls-extra-hello | Optional TLS 1.0 hello | Review | Implementation | `--tls-legacy`, one extra handshake ([handoff](handoff/scan-tls-extra-hello.md)) |
+| scan-tls-pqc-offer | Honest PQC offer note | Review | Implementation | no second hello; classical group is not proof ([handoff](handoff/scan-tls-pqc-offer.md)) |
+| scan-sbom-crypto | OpenSSL below 3.0 in an imported list | Review | Implementation | cited end-of-support date only ([handoff](handoff/scan-sbom-crypto.md)) |
 
 ## Parked (owner decision pending)
 

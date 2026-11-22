@@ -7,6 +7,7 @@ import { Limiter, pool } from "./limits.mjs";
 import { probePort as realProbe, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
+import { fromEdge } from "./fp-edge.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
@@ -38,6 +39,7 @@ export function servicesOf(r) {
   if (r.tls && r.tls.cert) out.push(...fromCert(r.tls.cert, r.port));
   if (r.http) out.push(...fromHttp(r.http, r.port, !!r.tls));
   if (r.raw) out.push(...fromMysql(r.raw, r.port));
+  out.push(...fromEdge(r, out));   // edge appliances, from the same response and certificate (fp-edge.mjs)
   if (!out.length && r.banner) out.push(...(/^SSH-/.test(r.banner) ? fromSsh(r.banner, r.port) : fromGreeting(r.banner, r.port)));
   // a product stated with a version wins over the same product inferred from a certificate
   return out.filter((s, i) => !(s.guessed && out.some((o, j) => j !== i && !o.guessed && o.product === s.product)));

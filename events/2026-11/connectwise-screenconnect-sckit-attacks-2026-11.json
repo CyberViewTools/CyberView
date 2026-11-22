@@ -1,5 +1,5 @@
 {
-  "action": "Confirm technician clients run ScreenConnect 26.6.5 or later, disable RMM+ extension 1.0.31 and 1.0.32, review Run Command history, and check endpoints for a second ScreenConnect client. Do not connect to suspect hosts through ScreenConnect.",
+  "action": "Huntress advises: confirm technician clients run ScreenConnect 26.6.5 or later, disable RMM+ extension 1.0.31 and 1.0.32, review Run Command history, and check endpoints for a second ScreenConnect client. Do not connect to suspect hosts through ScreenConnect.",
   "actor": "",
   "attack": [
     "T1210 Exploitation of Remote Services",
@@ -17,7 +17,8 @@
     }
   ],
   "cves": [
-    "CVE-2026-84869"
+    "CVE-2026-84869",
+    "CVE-2026-127063"
   ],
   "date": "2026-11-13",
   "exec": "Hundreds of managed endpoints were hit through a faulty third-party add-on; the feared spread to IT providers' own machines has not been observed.",
@@ -63,7 +64,13 @@
   "sources": [
     {
       "name": "Huntress",
-      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect"
+      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect",
+      "published": "2026-11-11"
+    },
+    {
+      "name": "Rapid7 Vulnerability Database: CVE-2026-127063",
+      "url": "https://www.rapid7.com/db/vulnerabilities/cve-2026-127063/",
+      "published": "2026-11-12"
     },
     {
       "name": "ConnectWise advisories",
@@ -72,19 +79,24 @@
     {
       "name": "BleepingComputer",
       "url": "https://bleepingcomputer.com/news/security/new-worm-like-sckit-malware-targets-msps-in-screenconnect-attacks"
+    },
+    {
+      "name": "Cybersecurity Dive",
+      "url": "https://www.cybersecuritydive.com/news/connectwise-disables-third-party-extensions-cyberattack-ScreenConnect/874490/",
+      "published": "2026-11-12"
     }
   ],
   "status": "official",
-  "summary": "Huntress reports two waves of attacks, on November 11 and 13, using ScreenConnect's Run Command feature to install rogue clients on 288 and then 205 hosts, apparently via a flawed third-party RMM+ extension. The SCKit toolkit tries to steal a technician's session cookie and replay it against the panel; Huntress has not seen that succeed. It names CVE-2026-84869 (fixed in 26.6.5) only as background, not as SCKit's method.",
+  "summary": "Huntress reports two waves of attacks, on November 11 and November 13, using ScreenConnect's Run Command feature to install rogue clients on at least 288 and then 205 hosts, apparently via a flawed third-party RMM+ extension. SCKit tries to steal a technician's session cookie; Huntress has not seen that succeed. Rapid7 lists CVE-2026-127063 for RMM+'s default static API secret, not affecting ScreenConnect itself; CVE-2026-84869 is named only as background.",
   "tags": [
     "supply-chain"
   ],
   "time_basis": "occurred",
   "title": "Huntress: rogue ScreenConnect clients pushed to hundreds of hosts in SCKit attacks; ConnectWise disables extensions",
-  "updated_at": "2026-11-19T18:02:46Z",
+  "updated_at": "2026-11-22T19:43:01Z",
   "validation": {
-    "checked_at": "2026-11-18T00:40:00Z",
-    "note": "Reviewed against the original Huntress report. ConnectWise's advisories page was then read in full: its newest entry is the Cloud Backup notice updated November 4, with no November notice on the ScreenConnect attacks; the separate security bulletins list did not render.",
+    "checked_at": "2026-11-22T19:43:01Z",
+    "note": "Reviewed against the original Huntress report and BleepingComputer. On 22 November the Rapid7 database entry for CVE-2026-127063 (RMM+ static default API secret, published 12 November) and Cybersecurity Dive's 12 November report quoting ConnectWise were read. ConnectWise's advisories page, read 18 November, had no notice on these attacks.",
     "state": "corroborated"
   },
   "date_note": "Two waves, November 11 and November 13; date is the latest wave. Huntress report published November 11.",
@@ -103,5 +115,27 @@
   "surface": {
     "value": "supply-chain",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect",
+      "quote": "At least 288 hosts across 48 organizations that use Huntress have been affected."
+    },
+    {
+      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect",
+      "quote": "This latest wave of activity has impacted 205 hosts across 41 organizations."
+    },
+    {
+      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect",
+      "quote": "On November 13 at 16:12 UTC, Huntress saw another spike in detections related to SCKit."
+    },
+    {
+      "url": "https://www.cybersecuritydive.com/news/connectwise-disables-third-party-extensions-cyberattack-ScreenConnect/874490/",
+      "quote": "In a precautionary measure, ConnectWise has disabled access to RMM+ extensions at about 400 environments."
+    },
+    {
+      "url": "https://www.rapid7.com/db/vulnerabilities/cve-2026-127063/",
+      "quote": "The third-party RMM+ extension for ConnectWise ScreenConnect uses a static API secret by default."
+    }
+  ]
 }

@@ -1,0 +1,98 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T19:40:11Z",
+  "finished_at": "2026-11-22T19:44:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "1984 hýsing netárás",
+    "1984.is netárás Mörður RÚV",
+    "Charleston County cyber incident update",
+    "Cobre incidente ciberseguridad",
+    "Cobre fintech Colombia ataque hackers pagos",
+    "Danfoss AK-SM800A firmware update CVE",
+    "ConnectWise SCKit ScreenConnect RMM+ extension statement"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.rapid7.com/db/vulnerabilities/cve-2026-127063/",
+      "title": "CVE-2026-127063: Use of Default Credentials | Rapid7 Vulnerability Database",
+      "used_in": "connectwise-screenconnect-sckit-attacks-2026-11"
+    },
+    {
+      "url": "https://www.cybersecuritydive.com/news/connectwise-disables-third-party-extensions-cyberattack-ScreenConnect/874490/",
+      "title": "ConnectWise disables third-party extensions as it probes cyberattack targeting ScreenConnect users",
+      "used_in": "connectwise-screenconnect-sckit-attacks-2026-11"
+    },
+    {
+      "url": "https://www.huntress.com/blog/sckit-worm-rogue-screenconnect",
+      "title": "SCKit Worm Installs Rogue ScreenConnect Clients and Session Cookie Relays Across Hundreds of Endpoints",
+      "used_in": "connectwise-screenconnect-sckit-attacks-2026-11 (evidence quotes)"
+    },
+    {
+      "url": "https://thehackernews.com/2026/11/six-unpatched-danfoss-refrigeration.html",
+      "title": "Six Unpatched Danfoss Refrigeration Controller Flaws Could Allow Remote Takeover Without Login",
+      "used_in": "danfoss-refrigeration-controller-flaws-2026-11 (unchanged; 16 Nov, nothing newer than the record)"
+    },
+    {
+      "url": "https://abcnews4.com/news/local/sled-charleston-county-investigating-after-cybersecurity-incident-on-county-network",
+      "title": "SLED, Charleston County investigating after 'cybersecurity incident' on county network",
+      "used_in": "charleston-county-sc-cyber-incident-2026-11 (unchanged; 17 Nov, no update)"
+    },
+    {
+      "url": "https://status.cobre.co/",
+      "title": "Cobre - Status",
+      "used_in": "cobre-cybersecurity-incident-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "connectwise-screenconnect-sckit-attacks-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "danfoss-refrigeration-controller-flaws-2026-11",
+      "url": "https://thehackernews.com/2026/11/six-unpatched-danfoss-refrigeration.html"
+    },
+    {
+      "id": "charleston-county-sc-cyber-incident-2026-11",
+      "url": "https://abcnews4.com/news/local/sled-charleston-county-investigating-after-cybersecurity-incident-on-county-network"
+    },
+    {
+      "id": "cobre-cybersecurity-incident-2026-11",
+      "url": "https://status.cobre.co/"
+    },
+    {
+      "id": "1984-hosting-iceland-cyberattack-2026-11",
+      "url": "https://1984.hosting/"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Cobre status page: 'Indisponibilidad temporal de API y Portal por validaciones internas' (monitoring from 19 Nov, resolved 21 Nov)",
+      "url": "https://status.cobre.co/",
+      "note": "Cobre's own status page lists API and Portal temporarily unavailable 'for internal validations' from 19 November; it does not link this to the security incident, so the event was not changed. Check for a Cobre statement tying them together.",
+      "priority": 2
+    },
+    {
+      "title": "Danfoss advisory for the six AK-SM800A flaws (Midnight Blue)",
+      "url": "https://www.danfoss.com/en/service-and-support/coordinated-vulnerability-disclosure/danfoss-security-advisories/",
+      "note": "Danfoss advisories page answered 403; no CVEs or fix found in other reporting as of 22 Nov.",
+      "priority": 2
+    },
+    {
+      "title": "1984 hosting (Iceland) cyberattack: restoration and data theft status",
+      "url": "https://1984.hosting/",
+      "note": "1984.hosting dropped the connection twice (ECONNRESET), retried about 2 minutes apart; Icelandic searches found nothing newer. Try RÚV/mbl.is or 1984's own notice next run.",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [
+    "1984.hosting (ECONNRESET, twice)",
+    "danfoss.com security advisories (403)",
+    "charlestoncounty.gov (IP block page)"
+  ],
+  "notes": "Picked 5 by the follow-up rules (no update or follow-up check in 24 h): two severity 3 records not updated in 3 days (SCKit, Danfoss) and three developing incidents (1984, Charleston County, Cobre). SCKit: added CVE-2026-127063 (Rapid7) and Cybersecurity Dive/ConnectWise, evidence quotes from Huntress, sourced the action to Huntress, and added Huntress's 'at least' qualifier to 288 (correction file 2026-11-22-sckit-at-least-288). Rapid7 does not say that CVE-2026-127063 is SCKit's way in, so the summary does not link them. Others: no newer reporting found; unchanged.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

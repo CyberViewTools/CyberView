@@ -16,9 +16,7 @@
   "place": "London, UK",
   "plain": "UK agencies, retail groups and researchers worked to secure internet-exposed RDM supermarket fridge controllers; RDM released new firmware, but smaller operators may still be exposed.",
   "products": [
-    "RDM refrigeration controller",
-    "Danfoss",
-    "Copeland"
+    "RDM refrigeration controller"
   ],
   "report": {
     "doc_id": "RDM-SA-2026-001",
@@ -43,7 +41,8 @@
   "sources": [
     {
       "name": "Pen Test Partners",
-      "url": "https://www.pentestpartners.com/security-blog/the-fridge-hack-uk-supermarkets-narrowly-avoided/"
+      "url": "https://www.pentestpartners.com/security-blog/the-fridge-hack-uk-supermarkets-narrowly-avoided/",
+      "published": "2026-11-20"
     },
     {
       "name": "Security.NL (relaying BBC)",
@@ -56,23 +55,27 @@
     }
   ],
   "status": "developing",
-  "summary": "Pen Test Partners says a significant vulnerability in RDM refrigeration controllers, found by Omega Solutions, led NCSC to issue an urgent alert to UK supermarkets; it calls the issue largely mitigated, though smaller cold chain operators may still be exposed. Cooling Post reports RDM released new firmware, and that Omega alerted NCSC and, with the British Retail Consortium, DEFRA and the Food Standards Agency, began contacting supermarkets.",
+  "summary": "Pen Test Partners says a significant vulnerability in RDM refrigeration controllers, found by Omega Solutions, led NCSC to issue an urgent alert to UK supermarkets; it calls the issue largely mitigated, though smaller cold chain operators may still be exposed. Cooling Post reports RDM released new firmware, and that Omega alerted NCSC and, with the British Retail Consortium, DEFRA and the Food Standards Agency, a mass effort was initiated.",
   "tags": [],
   "title": "UK agencies and Pen Test Partners work to secure exposed RDM supermarket refrigeration controllers",
-  "updated_at": "2026-11-22T01:19:44Z",
+  "updated_at": "2026-11-22T01:25:14Z",
   "validation": {
-    "state": "corroborated",
+    "state": "single_source",
     "checked_at": "2026-11-22T01:19:44Z",
-    "note": "Pen Test Partners (read in full) and Cooling Post (read 22 November) independently report the RDM controller vulnerability, NCSC's involvement, RDM's new firmware and that the issue is largely mitigated with smaller operators possibly still exposed. Security.NL relays the BBC, which could not be loaded. Merged with uk-fridges-critical-flaw-securing-race-2026-11 (LBC, Guardian via AOL)."
+    "note": "Pen Test Partners (read in full) states the core facts, including NCSC's urgent alert and that the issue is largely mitigated; Cooling Post (read 22 November) repeats near-identical wording, so treated as one account. Security.NL relays the BBC, which could not be loaded."
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T10:27:21Z",
+    "at": "2026-11-22T01:25:32Z",
     "first_at": "2026-11-20T10:27:21Z",
-    "note": "Title said agencies secured systems; PTP says largely mitigated, smaller operators may still be exposed. Key finding claimed supermarkets mostly use RDM; page says RDM is the more popular UK controller. Summary now carries the qualifier. Date, NCSC alert, finder, validator, firmware, advisory id che",
-    "flags": []
+    "note": "validation: Cooling Post repeats Pen Test Partners wording so single_source not corroborated; stronger than the source: 'began contacting supermarkets' now 'a mass effort was initiated'; products: removed Danfoss/Copeland (not affected products); added PTP published day",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "validation"
+    ]
   },
-  "qa_checked_at": "2026-11-20T10:27:21Z",
+  "qa_checked_at": "2026-11-22T01:25:32Z",
   "links": [
     {
       "to": "uk-fridges-critical-flaw-securing-race-2026-11",

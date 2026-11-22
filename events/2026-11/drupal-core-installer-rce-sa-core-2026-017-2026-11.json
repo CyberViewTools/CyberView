@@ -29,12 +29,11 @@
     "Drupal core"
   ],
   "first_seen": "2026-11-19T00:14:29Z",
-  "updated_at": "2026-11-22T01:19:44Z",
+  "updated_at": "2026-11-22T01:25:14Z",
   "time_basis": "published",
   "category": "vuln",
   "date": "2026-11-18",
-  "occurred_at": "2026-11-18T16:00:00Z",
-  "title": "Drupal says core flaw CVE-2026-132165 was exploited on live sites; fixed in 10.6.22, 11.3.22 and 11.4.13",
+  "title": "Drupal reports core flaw CVE-2026-132165 exploited on live sites; fixed in 10.6.22, 11.3.22 and 11.4.13",
   "org": "Drupal Security Team",
   "sector": "Technology / web platforms",
   "country": "United States",
@@ -80,15 +79,22 @@
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-22T01:19:44Z",
-    "note": "Read both Drupal security advisories (primary); NCSC-NL also lists the release. SA-CORE-2026-017 re-read on 22 November: it now carries an update reporting exploitation on live sites and the score 'Highly critical 20 / 25 ... E:Exploit'."
+    "note": "Read both Drupal security advisories (primary). SA-CORE-2026-017 re-read on 22 November: it carries an update reporting exploitation on live sites and the score \"Highly critical 20 / 25 ... E:Exploit\"."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T02:27:46Z",
-    "note": "Compared CVE, critical rating, PoC (E:Proof), fixed versions, EOL branches and Anthropic OSS Scanner credit against SA-CORE-2026-017 and -018",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-22T01:25:32Z",
+    "first_at": "2026-11-19T02:27:46Z",
+    "note": "date/time: removed occurred_at 16:00 the advisory never states; title 'says ... was exploited' softened to 'reports' (Drupal only has a report); removed NCSC-NL claim not among sources",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "figure",
+      "occurred_at",
+      "source"
+    ]
   },
-  "qa_checked_at": "2026-11-19T02:27:46Z",
+  "qa_checked_at": "2026-11-22T01:25:32Z",
   "sectors": {
     "values": [
       "cross-sector"

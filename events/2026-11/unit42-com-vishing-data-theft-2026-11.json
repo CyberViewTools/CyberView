@@ -4,7 +4,30 @@
   "date_note": "Date of Unit 42's report; the activity it describes runs since August 2026.",
   "category": "report",
   "severity": 2,
-  "status": "confirmed",
+  "status": "official",
+  "report": {
+    "publisher": "Palo Alto Networks Unit 42",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-20",
+    "key_findings": [
+      "Com-affiliated actors are running repeated vishing-led data theft and extortion waves against financial services, healthcare and legal organizations, mainly in the U.S., UK and Australia.",
+      "Callers pose as IT support and send employees to tailored adversary-in-the-middle phishing pages that capture credentials and MFA approvals, after which the attackers enroll their own MFA devices within minutes.",
+      "A newly described cluster, CL-CRI-1264, mainly targets healthcare and pharma and has used personal mobile devices as well as corporate workstations.",
+      "A malicious Chrome-impersonating browser extension, sideloaded in Developer Mode, adds keylogging, cookie theft and a DevTools-based remote control module.",
+      "Australian targeting rose from under 1% of observed subdomains in August and September to about 13% in October, making it the second most-targeted country."
+    ],
+    "recommendations": [
+      "Tighten help desk identity verification.",
+      "Move to phishing-resistant MFA such as FIDO2 or passkeys.",
+      "Use allowlists for browser extensions.",
+      "Gain visibility into identity actions.",
+      "Alert on unauthorized data exports."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://unit42.paloaltonetworks.com/com-affiliate-vishing-attacks/"
+  },
   "org": "Palo Alto Networks Unit 42",
   "sector": "Financial services, healthcare, legal",
   "country": "United States",
@@ -38,7 +61,8 @@
   "sources": [
     {
       "name": "Unit 42",
-      "url": "https://unit42.paloaltonetworks.com/com-affiliate-vishing-attacks/"
+      "url": "https://unit42.paloaltonetworks.com/com-affiliate-vishing-attacks/",
+      "published": "2026-11-20"
     }
   ],
   "source_tier": "primary",
@@ -48,7 +72,7 @@
     "note": "Vendor research report by Unit 42 (primary); no second publisher read."
   },
   "first_seen": "2026-11-20T22:14:00Z",
-  "updated_at": "2026-11-20T22:19:19Z",
+  "updated_at": "2026-11-22T13:19:11Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-20T22:19:26Z",

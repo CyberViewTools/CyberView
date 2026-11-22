@@ -375,6 +375,29 @@ blocker came up. Each keeps the scanner detection-only and inside the limits abo
 13. **A browser report viewer and scope-file builder on the Scanner page: approved** (the owner asked earlier; it waited
     for the other work). A real network scanner in the browser is not possible and is not built.
 
+## Releases
+
+The scanner is also published as one file, `cyberview-scan-<version>.mjs`, on GitHub Releases (tag `scanner-v<version>`),
+with `SHA256SUMS` and `LICENSE`. `scripts/scanner-release.mjs` builds it with no dependencies: the entry and every
+`scanner/lib` module it imports, copied verbatim into their own function scopes, and `site/workbench-lib.js` and
+`site/cvedb-lib.js` embedded and run with `node:vm` exactly as `scanner/lib/shared.mjs` runs them from disk. The build
+is deterministic (same commit, same checksum). `tests/unit/scanner-release.test.mjs` proves the bundle holds no code the
+source lacks and behaves like the source CLI (same refusals, same WHAT IS SENT, same bytes on a loopback scan). The
+bundle is never committed; the security check refuses one in the repository.
+
+Cutting a release (owner):
+
+1. Set `VERSION` in `scanner/lib/probe.mjs` to the new version in a pull request and merge it.
+2. Tag that commit on main and push the tag:
+
+       git checkout main && git pull
+       git tag scanner-v1.1.0
+       git push origin scanner-v1.1.0
+
+3. `.github/workflows/scanner-release.yml` checks the tag matches `VERSION` (it stops otherwise), runs the security check
+   and the scanner tests, builds the file, writes `SHA256SUMS` and publishes the release. To try the build without
+   releasing, run the workflow by hand (Actions → Scanner release → Run workflow): it uploads the files as an artifact only.
+
 ## Licence
 
 The scanner is a proprietary CyberView product under `scanner/LICENSE` (CyberView as a whole is proprietary; this sets the scanner's end-user terms): download and use on systems you own or are authorised to test, no redistribution without permission.

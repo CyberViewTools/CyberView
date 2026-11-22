@@ -2,6 +2,7 @@
 
 One owner per path or queue. A lane edits only what it owns; anything else goes in swarm/REQUESTS.md for the owner.
 Code lives on main (pull requests only), data on the data branch at ./data (docs/branches.md); no lane pushes code to main directly.
+Grok Bot agents are read-only (they do not take the ops, guardian or build lanes, do not edit scripts/, and do not push data): they file `[Grok] ...` issues labelled `for-claude` and/or dated entries in swarm/REQUESTS.md for the build lane, and Claude Code implements them as pull requests to main (CLAUDE.md, "Grok Bot / Claude Code").
 Queues are shared through leases (data/leases.json), not by pausing jobs: a run claims what it works, everyone else skips it until the lease ends.
 One status view for everything: `node scripts/swarm.mjs board`.
 

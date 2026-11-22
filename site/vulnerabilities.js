@@ -31,11 +31,7 @@
   }
   var FORMATS = { stix: "STIX", sigma: "Sigma rule", yara: "YARA rule", snort: "Snort rule", suricata: "Suricata rule", kql: "KQL query", spl: "Splunk query", csv: "CSV indicators", json: "JSON indicators", misp: "MISP event", openioc: "OpenIOC", text: "Indicator list", pdf: "PDF with indicators" };
 
-  function cleanRange(r) {
-    if (!r || typeof r !== "object" || !str(r.product, 60)) return null;
-    var v = function (x) { x = str(x, 40); return /^[\w.+\-~:]+$/.test(x) ? x : ""; };
-    return { vendor: str(r.vendor, 60), product: str(r.product, 60), from: v(r.from), from_incl: r.from_incl === true, to: v(r.to), to_incl: r.to_incl === true, exact: v(r.exact) };
-  }
+  var cleanRange = W.cleanRange;
   function cleanHunt(h) {
     if (!h || typeof h !== "object" || !FORMATS[h.format]) return null;
     var u = str(h.url, 600); if (!/^https:\/\//.test(u)) return null;
@@ -91,17 +87,8 @@
   }
   function saveInv() { return lsSet("cwm.inv", JSON.stringify(inv)); }
 
-  /* a name-only range (flaws not yet in NVD's range data) can only say "you run this product" */
-  function matchFlaw(f) {
-    if (!inv.length) return null;
-    var real = f.affected.filter(function (r) { return !r.nameOnly; });
-    var m = W.match({ vendor: f.vendor, product: f.product, affected: real }, inv);
-    if (m.state === "none" && real.length < f.affected.length) {
-      var hits = inv.filter(function (it) { return f.affected.some(function (r) { return W.nameHit((it.vendor ? it.vendor + " " : "") + it.name, r.vendor, r.product); }); });
-      if (hits.length) m = { state: "check", items: hits.slice(0, 20).map(function (it) { return { name: it.name, version: it.version, count: it.count, state: "check" }; }), fixed: [] };
-    }
-    return m;
-  }
+  /* shared with the downloadable scanner (workbench-lib.js matchFlaw), so both judge a software list the same way */
+  function matchFlaw(f) { return inv.length ? W.matchFlaw(f, inv) : null; }
   function compute() {
     rows = flaws.map(function (f) { var m = matchFlaw(f), s = W.score(f, m, TODAY); return { f: f, m: m, score: s.total, points: s.points }; });
     // "clear" (you run it, but a fixed version) drops to the end: it needs no action
@@ -811,7 +798,7 @@
   $("otMore").addEventListener("click", function () { OT.shown += 40; renderOt(); });
 
   /* ---- tabs, links and wiring ---- */
-  var VIEWS = ["queue", "all", "inv", "hunt", "ot"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt", ot: "ot", industrial: "ot" }, cur = "queue";
+  var VIEWS = ["queue", "all", "inv", "hunt", "ot"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt", ot: "ot", industrial: "ot", scanner: "inv" }, cur = "queue";
   function tab(t, keepHash) {
     cur = t;
     VIEWS.forEach(function (k) { $("wbt-" + k).setAttribute("aria-selected", k === t ? "true" : "false"); $("wbp-" + k).hidden = k !== t; });
@@ -832,6 +819,7 @@
       $("wbQ").value = h; tab("all", true); lookup(); return;
     }
     tab(HASH[h] || "queue", true);
+    if (h === "scanner") { var sc = $("scanner"); if (sc) try { sc.scrollIntoView({ block: "start" }); } catch (e) {} }
   }
   VIEWS.forEach(function (k) { $("wbt-" + k).addEventListener("click", function () { tab(k); }); });
   $("wbGoInv").addEventListener("click", function () { tab("inv"); $("wbText").focus(); });

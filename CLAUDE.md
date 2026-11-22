@@ -23,6 +23,7 @@ site/community.html, .js  the public community feed (reviewed posts from site/da
 site/tabletop.html, .js  the weekly tabletop exercise (from site/data/tabletop.json; facilitator clock, print, copy)
 routines.json            registry of every routine: schedule, model, status key, max age, active
 config/feeds.json, queries.json   extra feeds and standing searches; the source scout and editor jobs maintain them
+scanner/                 the downloadable vulnerability scanner (docs/scanner.md, scanner/README.md): an operator runs it on their own authorized network; detection only (reads stated versions, never exploits, logs in or floods), refuses to run without a scope file and recorded attestation, public addresses need --i-am-authorized-for-public-ranges, limits only lowerable, never uploads; matches and rates with site/workbench-lib.js and site/cvedb-lib.js unchanged; offline from a `data` snapshot; security-check section 7 guards it
 site/vendor/             d3 7.9.0 and topojson 3.0.2, served locally, hashes pinned in scripts/security-check.mjs
 site/account.js, unsubscribe.js   optional accounts (Supabase); the ONLY pages allowed to load vendor/supabase.min.js and reach the project
 legal/*.html, pages/*.html   sources for about/privacy/terms and account/unsubscribe; scripts/pages.mjs renders them into site/ (generated, not committed)

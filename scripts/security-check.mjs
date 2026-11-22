@@ -127,6 +127,28 @@ for (const { e, path } of listEventFiles()) {
 }
 passes.push(`${n} event(s) checked for injected markup`);
 
+// 7. the downloadable scanner (scanner/) stays a detection tool (docs/scanner.md): no process spawning, no raw or UDP sockets
+//    (no spoofing, flooding or amplification), no request that uploads (only GET), connections to targets only from
+//    scanner/lib/probe.mjs, and limits that can be lowered, never raised or switched off
+const SCAN = join(ROOT, "scanner");
+if (existsSync(SCAN)) {
+  const files = [];
+  const walk = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js)$/.test(f)) files.push(p); } };
+  walk(SCAN);
+  const NOT = [[/node:child_process|require\(["']child_process|\bexecSync\b|\bspawn\(/, "starts other programs"], [/node:dgram|["']dgram["']/, "opens UDP sockets"], [/\braw[-_ ]?socket|SOCK_RAW|\bsetTTL\b/i, "raw sockets"],
+    [/method:\s*["'](POST|PUT|PATCH|DELETE)["']/i, "sends an upload request (the scanner only reads with GET)"], [/\beval\s*\(|new\s+Function\s*\(/, "runs code from text"],
+    [/\b(aggressive|insane|no-?rate-?limit|unlimited)\b/i, "an aggressive or unlimited mode"]];
+  for (const p of files) {
+    const src = read(p);
+    for (const [re, what] of NOT) if (re.test(src)) fails.push(`${rel(p)}: ${what}; the scanner must stay detection only (docs/scanner.md)`);
+    if (!p.endsWith(join("lib", "probe.mjs")) && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
+  }
+  const lim = existsSync(join(SCAN, "lib", "limits.mjs")) ? read(join(SCAN, "lib", "limits.mjs")) : "";
+  const cap = (k) => Number((new RegExp(`CAPS = Object\\.freeze\\(\\{[\\s\\S]*?\\b${k}:\\s*(\\d+)`).exec(lim) || [])[1]);
+  if (!(cap("rate") > 0 && cap("rate") <= 20 && cap("concurrency") > 0 && cap("concurrency") <= 8 && cap("hostConcurrency") <= 2)) fails.push("scanner/lib/limits.mjs: the ceilings (rate 20/s, 8 open, 2 per host) must not be raised");
+  passes.push(`${files.length} scanner file(s) checked: detection only`);
+}
+
 passes.forEach((p) => console.log("ok: " + p));
 fails.forEach((f) => console.error("FAIL: " + f));
 console.log(fails.length ? `\nSecurity check failed: ${fails.length} problem(s).` : "\nSecurity check passed.");

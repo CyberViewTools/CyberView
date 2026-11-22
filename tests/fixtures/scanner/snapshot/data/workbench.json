@@ -1,0 +1,183 @@
+{
+ "_note": "TEST FIXTURE: invented CVE ids (CVE-2026-90xxx) and invented ranges for the scanner's unit tests. Not real advisories.",
+ "built_at": "2026-11-21T12:00:00Z",
+ "kev": [
+  {
+   "cve": "CVE-2026-90101",
+   "vendor": "OpenBSD",
+   "product": "OpenSSH",
+   "name": "Fixture flaw in OpenSSH",
+   "added": "2026-10-20",
+   "due": "2026-11-10",
+   "ransomware": false,
+   "desc": "Fixture: a flaw in the SSH server.",
+   "cvss": 8.1,
+   "epss": 0.42,
+   "av": "N",
+   "required": "Apply the vendor's update or remove the service from the network.",
+   "refs": [
+    "https://advisories.example.com/fixture-openssh"
+   ],
+   "affected": [
+    {
+     "vendor": "openbsd",
+     "product": "openssh",
+     "part": "a",
+     "to": "9.8",
+     "to_incl": false
+    }
+   ]
+  },
+  {
+   "cve": "CVE-2026-90102",
+   "vendor": "F5",
+   "product": "NGINX",
+   "name": "Fixture flaw in nginx",
+   "added": "2026-11-12",
+   "due": "2026-12-03",
+   "ransomware": true,
+   "desc": "Fixture: a flaw in the web server.",
+   "cvss": 9.8,
+   "epss": 0.91,
+   "av": "N",
+   "required": "Apply the vendor's update.",
+   "refs": [],
+   "affected": [
+    {
+     "vendor": "f5",
+     "product": "nginx",
+     "part": "a",
+     "from": "1.20.0",
+     "from_incl": true,
+     "to": "1.25.4",
+     "to_incl": false
+    }
+   ]
+  },
+  {
+   "cve": "CVE-2026-90103",
+   "vendor": "PHP Group",
+   "product": "PHP",
+   "name": "Fixture flaw in PHP",
+   "added": "2026-11-15",
+   "due": "2026-12-06",
+   "ransomware": false,
+   "desc": "Fixture: a flaw in the language runtime.",
+   "cvss": 7.5,
+   "epss": 0.05,
+   "av": "N",
+   "required": "Apply the vendor's update.",
+   "refs": [],
+   "affected": [
+    {
+     "vendor": "php",
+     "product": "php",
+     "part": "a",
+     "from": "8.1.0",
+     "from_incl": true,
+     "to": "8.1.30",
+     "to_incl": false
+    }
+   ]
+  },
+  {
+   "cve": "CVE-2026-90104",
+   "vendor": "vsftpd Project",
+   "product": "vsftpd",
+   "name": "Fixture flaw in vsftpd",
+   "added": "2026-11-01",
+   "due": "2026-11-22",
+   "ransomware": false,
+   "desc": "Fixture: a flaw in the FTP server.",
+   "cvss": 6.5,
+   "epss": null,
+   "av": "N",
+   "required": "Apply the vendor's update.",
+   "refs": [],
+   "affected": [
+    {
+     "vendor": "vsftpd project",
+     "product": "vsftpd",
+     "part": "a",
+     "exact": "3.0.3"
+    }
+   ]
+  },
+  {
+   "cve": "CVE-2026-90105",
+   "vendor": "Fortinet",
+   "product": "FortiOS",
+   "name": "Fixture flaw in FortiOS",
+   "added": "2026-11-18",
+   "due": "2026-12-09",
+   "ransomware": false,
+   "desc": "Fixture: a flaw in the firewall operating system.",
+   "cvss": 9.1,
+   "epss": 0.3,
+   "av": "N",
+   "required": "Apply the vendor's update.",
+   "refs": [],
+   "affected": [
+    {
+     "vendor": "fortinet",
+     "product": "fortios",
+     "part": "o",
+     "from": "7.0.0",
+     "from_incl": true,
+     "to": "7.4.9",
+     "to_incl": false
+    }
+   ]
+  }
+ ],
+ "vulns": [
+  {
+   "cve": "CVE-2026-90201",
+   "event_id": "2026-11-20-fixture",
+   "title": "Fixture flaw in Apache HTTP Server",
+   "date": "2026-11-20",
+   "severity": 3,
+   "vendor": "Apache",
+   "products": [
+    "HTTP Server"
+   ],
+   "desc": "Fixture: a flaw in the web server, not yet in NVD's range data.",
+   "action": "Apply the vendor's update.",
+   "cvss": 7.3,
+   "epss": 0.02
+  }
+ ],
+ "guides": {
+  "CVE-2026-90101": {
+   "cve": "CVE-2026-90101",
+   "advisory": {
+    "name": "Fixture advisory",
+    "url": "https://advisories.example.com/fixture-openssh"
+   },
+   "read_depth": "full",
+   "check": [
+    "Fixture: read the version from the SSH banner."
+   ],
+   "fixed": [
+    "OpenSSH 9.8 or later"
+   ],
+   "workaround": [
+    "Limit SSH to the management network."
+   ],
+   "compromise_signs": [
+    "Fixture: unexpected child processes of the SSH daemon."
+   ],
+   "exposure": "internet",
+   "exploit_public": true,
+   "read_at": "2026-11-20T10:00:00Z",
+   "hunt": []
+  }
+ },
+ "analyses": {
+  "CVE-2026-90101": {
+   "cve": "CVE-2026-90101"
+  }
+ },
+ "event_of": {},
+ "hunt": []
+}

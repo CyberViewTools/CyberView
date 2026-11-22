@@ -316,7 +316,9 @@ test("loopback: real probes against stand-in services; only the identification l
     assert.deepEqual(rep.hosts[0].ports.map((q) => q.port).sort(), [srv.ports.ssh, srv.ports.ftp, srv.ports.http].sort());
     assert.deepEqual(rep.findings.map((f) => f.cve).sort(), ["CVE-2026-90101", "CVE-2026-90102", "CVE-2026-90103", "CVE-2026-90104"]);
     assert.equal(rep.findings[0].cve, "CVE-2026-90101");
-    // what the services received from the scanner
+    // what the services received from the scanner. The scan closes the scanner's socket before the loopback server's
+    // "data" event fires, so wait for the SSH ident to arrive before asserting it is the only thing sent.
+    for (let i = 0; i < 100 && !srv.got.ssh.length; i++) await new Promise((r) => setTimeout(r, 10));
     assert.deepEqual(srv.got.ftp, []);
     assert.deepEqual(srv.got.ssh, [SSH_IDENT + "\r\n"]);
     assert.equal(srv.got.http.length, 1);

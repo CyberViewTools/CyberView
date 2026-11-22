@@ -7,11 +7,11 @@
 // Read scanner/README.md first. Commands:
 //   init  [--out scope.json]                  write a scope file to fill in (targets, owner, your attestation)
 //   check --scope FILE [--i-am-authorized-for-public-ranges]   check the scope file and show what a scan would do; no network
-//   data  --out DIR [--source URL] [--full]   download CyberView's data for offline (air-gapped) scans
+//   data  --out DIR [--source URL] [--full] [--data-incidents]   download CyberView's data for offline (air-gapped) scans
 //   scan  --scope FILE (--data DIR | --online [--source URL]) [--ports LIST] [--out DIR] [--assume-up]
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
-//         [--i-am-authorized-for-public-ranges]
+//         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
@@ -26,8 +26,9 @@ import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
 import { D } from "./lib/shared.mjs";
+import { snapshotIncidentsTo } from "./lib/cite.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -44,6 +45,7 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs data  --out cyberview-data [--full]
   node scanner/cyberview-scan.mjs scan  --scope scope.json --data cyberview-data      (offline)
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
+Incidents: --data-incidents (scan and data) cites reviewed CyberView incidents naming each finding's CVE; claims are never cited.
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
 Discovery (optional, in the scope file's "discover"): cidr sweep, owned domains (with Certificate Transparency), an imported
 asset list (host/IP list, CSV, nmap -oX XML), and your own read-only cloud inventory JSON; every host found is re-checked
@@ -82,6 +84,7 @@ export async function main(argv, io = {}) {
     const src = webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl });
     io.out(`Downloading CyberView's public data from ${src.where} into ${a.out}${a.full ? " (every CVE lookup file)" : ""}. Read-only GET requests; nothing is uploaded.`);
     const m = await snapshot(src, a.out, D, { full: !!a.full, log: (s) => io.out("  " + s) });
+    if (a["data-incidents"]) { const r = await snapshotIncidentsTo(src, a.out, { log: (s) => io.out("  " + s) }); io.out(`  incident archive: ${r.incident_events} event(s) in ${r.incident_months} month file(s)`); }
     io.out(`Snapshot ready: ${m.lookup_files} lookup file(s), workbench built ${m.workbench_built_at || "?"}. Scan offline with --data ${a.out}`);
     return 0;
   }
@@ -112,7 +115,8 @@ export async function main(argv, io = {}) {
   let src = null;
   try { src = a.data ? dirSource(a.data) : a.online ? webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl }) : null; } catch (e) { return fail(io, [e.message], 1); }
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
-  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataLine, sends: SENDS }));
+  const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
+  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS }));
   if (cmd === "check") {
     if (scope.discover) io.out(`\nDiscovery is configured (${[scope.discover.cidr ? "cidr sweep" : "", scope.discover.domains.length ? `${scope.discover.domains.length} domain(s)${scope.discover.ct ? " + Certificate Transparency" : ""}` : "", scope.discover.import.length ? `${scope.discover.import.length} import file(s)` : "", scope.discover.cloud.length ? `${scope.discover.cloud.length} cloud inventory file(s)` : ""].filter(Boolean).join(", ") || "nothing"}). Every host it finds is re-checked against this scope at scan time; anything outside it is dropped.`);
     io.out(`\nThe scope file passes its checks (${scope.addressCount} directly listed address(es); at most ${LIMITS.maxAddresses}). Nothing was scanned.`); return 0;
@@ -141,7 +145,7 @@ export async function main(argv, io = {}) {
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
     const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
-    const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today });
+    const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents: !!a["data-incidents"] });
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
     mkdirSync(out, { recursive: true, mode: 0o700 });
     const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });

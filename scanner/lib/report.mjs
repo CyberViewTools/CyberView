@@ -3,6 +3,7 @@
 // dashboards), an inventory CSV (the Vulnerabilities page's "My software" view reads it), and a plain-text summary.
 // Written to the operator's own disk only; nothing here sends anything anywhere.
 import { VERSION, INFO_URL, USER_AGENT } from "./probe.mjs";
+import { citeLines } from "./cite.mjs";
 
 export function summarize(hosts, findings) {
   const up = hosts.filter((h) => h.up), services = up.reduce((n, h) => n + (h.services || []).length, 0);
@@ -159,6 +160,7 @@ export function summaryText(report) {
     if (f.fix.fixed_in.length || f.fix.vendor_fixed.length) L.push(`   Fixed in: ${(f.fix.vendor_fixed.length ? f.fix.vendor_fixed : f.fix.fixed_in).join("; ")}`);
     if (f.fix.cisa_required_action) L.push(`   CISA required action: ${f.fix.cisa_required_action.slice(0, 300)}`);
     if (f.fix.advisory) L.push(`   Vendor advisory: ${f.fix.advisory.url}`);
+    L.push(...citeLines(f));
     L.push(`   Details: ${f.fix.details}`);
   }
   if (report.findings.length > 25) L.push(`\n... and ${report.findings.length - 25} more in report.json and findings.csv.`);

@@ -316,3 +316,105 @@ export function observations(port, { banner = "", cert = null, tls = null, names
   if (port === 21 && /^220/.test(banner)) add("cleartext-login", "medium", "FTP is open: unless it requires TLS, logins cross the network in clear text");
   return out.map((o) => ({ ...o, text: cap1(o.text) }));
 }
+
+/* ---- HTTP and mail hygiene (tk-hygiene PR 2): from the one GET / response and the greeting already read ---- */
+// fixed lists; each entry is a page title or a marker that vendors ship verbatim. Only the entry's NAME goes into the report,
+// never the matched text or any part of the body.
+const DEFAULT_TITLES = [
+  [/^Apache2 (?:Ubuntu|Debian) Default Page/i, "Apache2 Ubuntu/Debian default page"], [/^Test Page for the (?:Apache|Nginx) HTTP Server/i, "Red Hat/CentOS test page"],
+  [/^Welcome to nginx!?$/i, "nginx welcome page"], [/^IIS Windows Server$|^IIS\d*$|^Internet Information Services$/i, "IIS default page"],
+  [/^Apache Tomcat\/\d/i, "Tomcat default page"], [/^Welcome to CentOS$/i, "CentOS welcome page"], [/^Welcome to JBoss/i, "JBoss/WildFly welcome page"],
+  [/^Welcome to Jetty/i, "Jetty welcome page"], [/^Caddy works!?$/i, "Caddy default page"], [/^Default Web Site Page$/i, "Plesk default page"],
+];
+const SETUP_TITLES = [[/WordPress\s*(?:›|&rsaquo;|>)?\s*(?:Setup Configuration File|Installation)/i, "WordPress installer"], [/Joomla! Web Installer/i, "Joomla installer"],
+  [/^phpMyAdmin setup/i, "phpMyAdmin setup"], [/Drupal.*(?:Choose language|Installation)/i, "Drupal installer"], [/^Installation\s*[-–|]\s*Matomo/i, "Matomo installer"]];
+const DEBUG_MARKERS = [
+  [/you(?:'|&#39;|&#x27;)re seeing this error because you have <code>DEBUG = True<\/code>/i, "Django debug page"],
+  [/<title>[^<]*Werkzeug Debugger<\/title>/i, "Werkzeug debugger page"], [/Whoops! There was an error\./i, "Whoops (PHP) error page"],
+  [/Server Error in '\/[^']*' Application\./i, "ASP.NET error page with details"], [/Action Controller: Exception caught/i, "Rails exception page"],
+  [/<b>(?:Fatal|Parse) error<\/b>:.{0,200} on line <b>\d+<\/b>/is, "PHP error with file path"],
+  [/\bat (?:java|javax|org\.springframework|org\.apache)\.[\w$.]+\((?:\w+\.java:\d+|Native Method)\)/, "Java stack trace"],
+  [/Traceback \(most recent call last\):/, "Python traceback"],
+];
+const CDN = [["cf-ray", "Cloudflare"], ["x-amz-cf-id", "Amazon CloudFront"], ["x-akamai-request-id", "Akamai"], ["akamai-grn", "Akamai"], ["x-sucuri-id", "Sucuri"],
+  ["x-iinfo", "Imperva"], ["x-azure-ref", "Azure Front Door"], ["x-fastly-request-id", "Fastly"], ["x-vercel-id", "Vercel"]];
+export const HTTP_RULES = Object.freeze({ minHstsSeconds: 15552000, maxSkewSeconds: 300 });
+
+/**
+ * Hygiene observations from the root page response already collected. Pure.
+ * opts: { tls (the page came over TLS), inScope (host -> bool, for redirect targets), names (the host's attested names), now }
+ */
+export function httpObservations(port, res, { tls = false, inScope = () => false, now = Date.now() } = {}) {
+  const out = [], add = (kind, severity, text) => out.push({ port, kind, severity, text });
+  if (!res || typeof res !== "object") return out;
+  const H = res.headers && typeof res.headers === "object" ? res.headers : {};
+  const one = (k) => clip(Array.isArray(H[k]) ? H[k][0] : H[k], 2000).trim(), status = Number(res.status) || 0;
+  const body = clip(res.body, 65536), title = httpInfo(res).title, html = /html/i.test(one("content-type")) || /<html|<title/i.test(body);
+  // redirects: recorded, never followed
+  const loc = one("location");
+  if (status >= 300 && status < 400 && loc) {
+    let u = null; try { u = new URL(loc, `${tls ? "https" : "http"}://placeholder.invalid/`); } catch { /* not a URL */ }
+    if (u && u.hostname !== "placeholder.invalid") {
+      if (tls && u.protocol === "http:") add("http-downgrade-redirect", "medium", `HTTPS redirects to plain HTTP (${clip(u.origin, 120)})`);
+      if (!inScope(u.hostname.replace(/^\[|\]$/g, ""))) add("http-redirect-out-of-scope", "info", `The root page redirects to ${clip(u.hostname, 100)}, outside the scope (recorded, not followed)`);
+    } else if (u && tls && u.protocol === "http:") add("http-downgrade-redirect", "medium", "HTTPS redirects to plain HTTP on the same host");
+  }
+  if (!tls && status >= 200 && status < 300 && html) add("http-no-https", "low", "The site is served over plain HTTP with no redirect to HTTPS");
+  // security headers (only on a page: a 2xx HTML response)
+  if (status >= 200 && status < 300 && html) {
+    const missing = [];
+    if (tls) {
+      const hsts = one("strict-transport-security"), m = /max-age\s*=\s*"?(\d+)/i.exec(hsts);
+      if (!hsts) missing.push("Strict-Transport-Security");
+      else if (!m || +m[1] < HTTP_RULES.minHstsSeconds) add("http-weak-hsts", "low", `Strict-Transport-Security max-age is ${m ? m[1] : "missing"} (under ${HTTP_RULES.minHstsSeconds} seconds, 180 days)`);
+    }
+    const csp = one("content-security-policy");
+    if (!csp) missing.push("Content-Security-Policy");
+    else { const bad = ["'unsafe-inline'", "'unsafe-eval'"].filter((x) => new RegExp(`script-src[^;]*${x}|default-src[^;]*${x}`, "i").test(csp)); if (bad.length) add("http-weak-csp", "low", `Content-Security-Policy allows ${bad.join(" and ")} for scripts`); }
+    if (!/nosniff/i.test(one("x-content-type-options"))) missing.push("X-Content-Type-Options");
+    if (!one("x-frame-options") && !/frame-ancestors/i.test(csp)) missing.push("X-Frame-Options (or CSP frame-ancestors)");
+    const rp = one("referrer-policy");
+    if (!rp) missing.push("Referrer-Policy"); else if (/unsafe-url/i.test(rp)) add("http-weak-referrer-policy", "low", "Referrer-Policy is unsafe-url: full URLs are sent to other sites");
+    if (!one("permissions-policy")) missing.push("Permissions-Policy");
+    if (missing.length) add("http-missing-headers", missing.includes("Strict-Transport-Security") ? "medium" : "low", `Security headers missing: ${missing.join(", ")}`);
+  }
+  // cookies: names only, never values
+  const cookies = (Array.isArray(H["set-cookie"]) ? H["set-cookie"] : H["set-cookie"] ? [H["set-cookie"]] : []).slice(0, 30).map((c) => clip(c, 4096));
+  const cname = (c) => clip((/^\s*([^=;\s]{1,60})=/.exec(c) || [, "?"])[1], 60);
+  const noSecure = tls ? cookies.filter((c) => !/;\s*secure\b/i.test(c)).map(cname) : [], noHttpOnly = cookies.filter((c) => !/;\s*httponly\b/i.test(c)).map(cname);
+  if (noSecure.length) add("http-cookie-not-secure", "medium", `Cookie(s) set without Secure over HTTPS: ${noSecure.slice(0, 6).join(", ")}`);
+  if (noHttpOnly.length) add("http-cookie-not-httponly", "low", `Cookie(s) set without HttpOnly (readable by page scripts): ${noHttpOnly.slice(0, 6).join(", ")}`);
+  if (one("access-control-allow-origin") === "*") add("http-cors-wildcard", "low", "Access-Control-Allow-Origin is * on the root page");
+  // default, setup and debug pages: the entry's name only
+  if (title) {
+    const d = DEFAULT_TITLES.find(([re]) => re.test(title)); if (d) add("http-default-page", "low", `A default page is served: ${d[1]}`);
+    const s = SETUP_TITLES.find(([re]) => re.test(title)); if (s) add("http-setup-page", "high", `An unfinished setup page is served: ${s[1]} (anyone who reaches it may complete the installation)`);
+    if (/^(?:Index of \/|Directory listing for \/)/i.test(title)) add("http-directory-listing", "medium", "The root page is a directory listing");
+  } else if (/<h1>It works!<\/h1>/i.test(body)) add("http-default-page", "low", "A default page is served: Apache \"It works!\" page");
+  const dbg = DEBUG_MARKERS.filter(([re]) => re.test(body)).map(([, n]) => n);
+  if (dbg.length) add("http-debug-page", "high", `The root page shows debug output: ${dbg.slice(0, 3).join(", ")} (the page text is not copied)`);
+  const dh = ["x-debug-token", "x-debug-token-link"].filter((k) => H[k]);
+  if (dh.length) add("http-debug-header", "medium", `A debug/profiler header is sent: ${dh.join(", ")}`);
+  if (/[#@]\s*sourceMappingURL=/.test(body) || H["sourcemap"] || H["x-sourcemap"]) add("http-source-map", "info", "The root page references a JavaScript source map (original source may be readable)");
+  // methods and protocols the server advertises in headers it sent anyway (no OPTIONS request is made)
+  const allow = one("allow").toUpperCase();
+  if (/\b(TRACE|TRACK)\b/.test(allow)) add("http-trace-allowed", "medium", `The Allow header lists ${allow.match(/\b(TRACE|TRACK)\b/g).join(" and ")}`);
+  if (one("dav") || /\b(PROPFIND|MKCOL)\b/.test(allow)) add("http-webdav", "info", "WebDAV is advertised (DAV or Allow header)");
+  const alt = one("alt-svc"); if (/\bh3\b|\bh2\b/i.test(alt)) add("http-alt-svc", "info", `Alt-Svc advertises ${[...new Set(alt.match(/\bh[23]\b/gi).map((x) => x.toLowerCase()))].join(" and ")}`);
+  const cdn = CDN.find(([k]) => H[k]); if (cdn) add("http-cdn-front", "info", `The response came through ${cdn[1]}: these results describe the front, not the origin server`);
+  const date = Date.parse(one("date"));
+  if (isFinite(date) && Math.abs(date - now) / 1000 > HTTP_RULES.maxSkewSeconds) add("http-clock-skew", "low", `The server clock is off by about ${Math.round(Math.abs(date - now) / 60000)} minute(s) (HTTP Date header)`);
+  const server = one("server");
+  if (/\d+\.\d+/.test(server) && distroOf(server)) add("http-server-patch-level", "info", `The Server header states a version and package build: ${clip(server, 80)}`);
+  else if (/\/\d+\.\d+/.test(server)) add("http-server-version", "info", `The Server header states a version: ${clip(server, 80)}`);
+  return out.map((o) => ({ ...o, text: cap1(o.text) }));
+}
+
+/** Cleartext mail: a POP3/IMAP/SMTP-submission greeting read without TLS (STARTTLS may still be offered; it is not checked). */
+export function mailObservations(port, banner, { tls = false } = {}) {
+  const first = String(banner || "").split(/\r?\n/)[0];
+  if (tls || !first) return [];
+  if ((port === 110 && /^\+OK/.test(first)) || (port === 143 && /^\* OK/.test(first))) return [{ port, kind: "cleartext-mail", severity: "medium", text: `${port === 110 ? "POP3" : "IMAP"} answers without TLS on port ${port}: unless STARTTLS is required, mail logins cross the network in clear text` }];
+  if (port === 587 && /^220/.test(first)) return [{ port, kind: "cleartext-submission", severity: "low", text: "SMTP submission answers without TLS on port 587: logins are safe only if STARTTLS is required before AUTH (not checked)" }];
+  return [];
+}

@@ -6,7 +6,7 @@ import { gate, listAddresses, classify, isPrivateKind, LIMITS, parseTarget, addr
 import { Limiter, pool } from "./limits.mjs";
 import { probePort as realProbe, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
-import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, udpObservations } from "./fingerprint.mjs";
+import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
@@ -78,14 +78,15 @@ export async function resolveScope(scope, { allowPublic = false, resolve = (h) =
 
 /**
  * Probe every target. -> { hosts, stats, interrupted, stop_reason }
- * opts: { ports, settings, probe, signal (an AbortSignal the caller aborts on Ctrl-C), log, clock, assumeUp }
+ * opts: { ports, settings, probe, signal (an AbortSignal the caller aborts on Ctrl-C), log, clock, assumeUp,
+ *         inScope (host -> bool: is a redirect target inside the attested scope? used only to label it, never to follow it) }
  */
 // throttle handling: how many connection resets on an already-answering host trigger a single back-off and gentle retry
 const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
 // observations kept per host (the rest are counted in observations_dropped, never silently lost)
 export const OBS_PER_HOST = 60;
 
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
   const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
@@ -107,7 +108,9 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       if (r.http) h.http.push({ port, ...httpInfo(r.http) });
       if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certInfo(r.tls.cert) });
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
-      const obs = observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names });
+      const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),
+        ...(r.http ? httpObservations(port, r.http, { tls: !!r.tls, inScope: (host) => host === h.address || h.names.includes(host.toLowerCase()) || inScope(host) }) : []),
+        ...mailObservations(port, r.banner, { tls: !!r.tls })];
       const room = OBS_PER_HOST - h.observations.length;
       if (room > 0) h.observations.push(...obs.slice(0, room));
       if (obs.length > room) h.observations_dropped = (h.observations_dropped || 0) + obs.length - Math.max(0, room);

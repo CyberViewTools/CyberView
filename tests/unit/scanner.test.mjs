@@ -704,3 +704,81 @@ test("summary text lists observations most severe first and the negotiated TLS",
   assert.ok(txt.indexOf("[high]") < txt.indexOf("[low]"));
   assert.match(txt, /key-exchange group not reported/);
 });
+
+/* ---- tk-hygiene PR 2: HTTP and mail hygiene from the one GET / and the greeting already read ---- */
+import { httpObservations, mailObservations, HTTP_RULES } from "../../scanner/lib/fingerprint.mjs";
+const page = (headers = {}, body = "<!doctype html><title>App</title><p>hi</p>", status = 200) => ({ status, headers: { "content-type": "text/html", ...headers }, body });
+const GOOD = { "strict-transport-security": "max-age=31536000", "content-security-policy": "default-src 'self'; frame-ancestors 'none'", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer", "permissions-policy": "camera=()" };
+const hk = (res, o = {}) => httpObservations(443, res, { tls: true, now: Date.parse("2026-11-22T12:00:00Z"), ...o }).map((x) => x.kind);
+
+test("HTTP hygiene: security headers, HSTS, CSP, Referrer-Policy", () => {
+  assert.deepEqual(hk(page(GOOD)), []);
+  const miss = httpObservations(443, page({}), { tls: true });
+  assert.deepEqual(miss.map((x) => x.kind), ["http-missing-headers"]);
+  assert.equal(miss[0].severity, "medium"); assert.match(miss[0].text, /Strict-Transport-Security.*Content-Security-Policy.*X-Content-Type-Options.*X-Frame-Options.*Referrer-Policy.*Permissions-Policy/);
+  // plain HTTP: no HSTS demanded, but "no redirect to HTTPS" is noted
+  const plain = httpObservations(80, page({ ...GOOD, "strict-transport-security": undefined }), { tls: false }).map((x) => x.kind);
+  assert.deepEqual(plain, ["http-no-https"]);
+  assert.deepEqual(hk(page({ ...GOOD, "strict-transport-security": "max-age=600" })), ["http-weak-hsts"]);
+  assert.deepEqual(hk(page({ ...GOOD, "content-security-policy": "script-src 'self' 'unsafe-inline'; frame-ancestors 'self'" })), ["http-weak-csp"]);
+  assert.deepEqual(hk(page({ ...GOOD, "referrer-policy": "unsafe-url" })), ["http-weak-referrer-policy"]);
+  // a redirect or an error page is not judged on page headers
+  assert.deepEqual(hk(page({}, "", 404)), []);
+  assert.ok(HTTP_RULES.maxSkewSeconds === 300);
+});
+
+test("HTTP hygiene: cookies by name only, CORS, redirects recorded not followed", () => {
+  const c = httpObservations(443, page({ ...GOOD, "set-cookie": ["sid=SECRETVALUE; Path=/", "pref=1; Secure; HttpOnly"] }), { tls: true });
+  assert.deepEqual(c.map((x) => x.kind), ["http-cookie-not-secure", "http-cookie-not-httponly"]);
+  assert.ok(c.every((x) => !x.text.includes("SECRETVALUE")), "cookie values are never copied");
+  assert.match(c[0].text, /sid/);
+  assert.deepEqual(hk(page({ ...GOOD, "access-control-allow-origin": "*" })), ["http-cors-wildcard"]);
+  assert.deepEqual(hk({ status: 302, headers: { location: "http://intranet.example.lan/" } }, { inScope: (h) => h === "intranet.example.lan" }), ["http-downgrade-redirect"]);
+  assert.deepEqual(hk({ status: 301, headers: { location: "https://login.other.example/" } }), ["http-redirect-out-of-scope"]);
+  assert.deepEqual(hk({ status: 301, headers: { location: "/login" } }), []);
+});
+
+test("HTTP hygiene: default, setup, debug pages and directory listings name the marker, never copy the page", () => {
+  assert.deepEqual(hk(page(GOOD, "<html><title>Welcome to nginx!</title>")), ["http-default-page"]);
+  assert.deepEqual(hk(page(GOOD, "<html><title>Apache2 Ubuntu Default Page: It works</title>")), ["http-default-page"]);
+  assert.deepEqual(hk(page(GOOD, "<html><title>WordPress &rsaquo; Setup Configuration File</title>")), ["http-setup-page"]);
+  assert.deepEqual(hk(page(GOOD, "<html><title>Index of /</title>")), ["http-directory-listing"]);
+  const dj = httpObservations(443, page(GOOD, "<html><title>Error</title>You're seeing this error because you have <code>DEBUG = True</code> in your Django settings file. SECRET_KEY = 'abc'"), { tls: true });
+  assert.deepEqual(dj.map((x) => x.kind), ["http-debug-page"]);
+  assert.match(dj[0].text, /Django debug page/); assert.ok(!dj[0].text.includes("SECRET_KEY"));
+  assert.deepEqual(hk(page(GOOD, "<html><title>x</title>Traceback (most recent call last):\n  File")), ["http-debug-page"]);
+  assert.deepEqual(hk(page({ ...GOOD, "x-debug-token": "abc123" })), ["http-debug-header"]);
+  assert.deepEqual(hk(page(GOOD, "<html><title>x</title><script>//# sourceMappingURL=app.js.map</script>")), ["http-source-map"]);
+});
+
+test("HTTP hygiene: advertised methods, Alt-Svc, CDN front, clock skew, Server version disclosure", () => {
+  assert.deepEqual(hk(page({ ...GOOD, allow: "GET, HEAD, TRACE" })), ["http-trace-allowed"]);
+  assert.deepEqual(hk(page({ ...GOOD, dav: "1,2" })), ["http-webdav"]);
+  assert.deepEqual(hk(page({ ...GOOD, "alt-svc": 'h3=":443"; ma=86400, h2=":443"' })), ["http-alt-svc"]);
+  assert.deepEqual(hk(page({ ...GOOD, "cf-ray": "8a1b2c3d4e5f-AMS" })), ["http-cdn-front"]);
+  assert.deepEqual(hk(page({ ...GOOD, date: "Sun, 22 Nov 2026 11:40:00 GMT" })), ["http-clock-skew"]);
+  assert.deepEqual(hk(page({ ...GOOD, date: "Sun, 22 Nov 2026 12:02:00 GMT" })), []);
+  assert.deepEqual(hk(page({ ...GOOD, server: "Apache/2.4.52 (Ubuntu)" })), ["http-server-patch-level"]);
+  assert.deepEqual(hk(page({ ...GOOD, server: "nginx/1.22.1" })), ["http-server-version"]);
+  assert.deepEqual(hk(page({ ...GOOD, server: "nginx" })), []);
+  for (const o of httpObservations(443, page({ allow: "TRACE", "set-cookie": "a=1" }), { tls: true })) assert.ok(["high", "medium", "low", "info"].includes(o.severity));
+});
+
+test("mail hygiene: cleartext POP3, IMAP and SMTP submission greetings", () => {
+  assert.deepEqual(mailObservations(110, "+OK Dovecot ready.").map((x) => x.kind), ["cleartext-mail"]);
+  assert.deepEqual(mailObservations(143, "* OK [CAPABILITY IMAP4rev1] ready").map((x) => x.kind), ["cleartext-mail"]);
+  assert.deepEqual(mailObservations(587, "220 mail.example.lan ESMTP Postfix").map((x) => x.kind), ["cleartext-submission"]);
+  assert.deepEqual(mailObservations(993, "* OK ready", { tls: true }), []);
+  assert.deepEqual(mailObservations(25, "220 mail ESMTP"), []);
+});
+
+test("probeAll end to end: HTTP hygiene comes from the one GET / (no extra request)", async () => {
+  const s = await startServers();
+  try {
+    const t = [{ address: "127.0.0.1", names: [], kind: "loopback", public: false }];
+    const r = await probeAll(t, { ports: [s.ports.http], httpPorts: [s.ports.http], settings: settings({}).settings, assumeUp: true });
+    const kinds = r.hosts[0].observations.map((o) => o.kind);
+    assert.ok(kinds.includes("http-no-https") && kinds.includes("http-missing-headers"), kinds.join(","));
+    assert.deepEqual(s.got.http.map((x) => `${x.method} ${x.url}`), ["GET /"]);
+  } finally { await s.close(); }
+});

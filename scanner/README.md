@@ -207,6 +207,17 @@ first, at most 60 per host:
 | `tls-weak-cipher` | the negotiated suite uses NULL, export, RC4, DES or 3DES, MD5, or no authentication |
 | `tls-weak-dh` | the ephemeral Diffie-Hellman group is under 2048 bits |
 | `tls-no-forward-secrecy` | the negotiated suite uses RSA key exchange |
+| `http-missing-headers` | a page (2xx HTML) lacks Strict-Transport-Security (HTTPS only), Content-Security-Policy, X-Content-Type-Options, X-Frame-Options or CSP `frame-ancestors`, Referrer-Policy, or Permissions-Policy (one observation listing them) |
+| `http-weak-hsts`, `http-weak-csp`, `http-weak-referrer-policy` | HSTS `max-age` under 180 days; CSP allowing `'unsafe-inline'` or `'unsafe-eval'` for scripts; Referrer-Policy `unsafe-url` |
+| `http-cookie-not-secure`, `http-cookie-not-httponly` | a cookie set without `Secure` over HTTPS, or without `HttpOnly` (cookie **names** only; values are never copied) |
+| `http-cors-wildcard` | `Access-Control-Allow-Origin: *` on the root page |
+| `http-no-https`, `http-downgrade-redirect`, `http-redirect-out-of-scope` | a page served over plain HTTP with no redirect; HTTPS redirecting to `http://`; a redirect to a host outside your scope (recorded, never followed) |
+| `http-default-page`, `http-setup-page`, `http-directory-listing` | a known default welcome page, an unfinished installer (WordPress, Joomla, Drupal, phpMyAdmin, Matomo), or a directory listing, by page title |
+| `http-debug-page`, `http-debug-header`, `http-source-map` | debug output on the root page (Django debug, Werkzeug, Whoops, ASP.NET, Rails, PHP errors, Java or Python stack traces), a Symfony-style `X-Debug-Token`, or a JavaScript source map — the marker's **name** only; the page text is never copied |
+| `http-trace-allowed`, `http-webdav`, `http-alt-svc` | the `Allow` header the server sent lists TRACE or TRACK, WebDAV is advertised, or `Alt-Svc` advertises HTTP/2 or HTTP/3 (no OPTIONS request is sent) |
+| `http-cdn-front` | the response came through a CDN or WAF (Cloudflare, CloudFront, Akamai, Fastly, Imperva, Sucuri, Azure Front Door, Vercel): the results describe the front, not the origin |
+| `http-clock-skew`, `http-server-version`, `http-server-patch-level` | the server's `Date` is more than 5 minutes off; the `Server` header states a version, or a version and a distribution package build |
+| `cleartext-mail`, `cleartext-submission` | POP3 (110) or IMAP (143) answering without TLS; SMTP submission (587) without TLS (whether STARTTLS is required is not checked) |
 | `cleartext-login` | Telnet, or FTP that does not show it requires TLS |
 | `snmp-public` | with `--udp`: SNMP answers the default `public` community |
 

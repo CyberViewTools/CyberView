@@ -6,7 +6,7 @@
   "cve_meta": [],
   "products": [],
   "first_seen": "2026-11-22T10:07:58Z",
-  "updated_at": "2026-11-22T11:21:53Z",
+  "updated_at": "2026-11-22T11:27:25Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -26,9 +26,9 @@
   "geo_basis": "KEPCO headquarters in Naju; the sources give no location for the affected systems",
   "severity": 3,
   "source_tier": "established",
-  "summary": "KEPCO said on 22 November it confirmed on 20 November a personal data leak from its Hanjeon ON customer platform and SRM procurement system: 152만248 people (over one and a half million) by simple sum, Newsis reports, overlap unchecked. Exposed: resident registration, bank account and card numbers. KEPCO presumes an outside attacker; it blocked external IP access, suspended some services, called in police and is investigating with the National Intelligence Service, the Korea Herald reports.",
-  "plain": "South Korea's power company KEPCO says personal data of over one and a half million people, including ID, bank account and card numbers, leaked from two of its online systems after an outside break-in.",
-  "exec": "A national utility's customer and supplier systems were breached, exposing ID, bank and card numbers that can be used for fraud and impersonation.",
+  "summary": "KEPCO said on 22 November it confirmed on 20 November a personal data leak from its Hanjeon ON customer platform and SRM procurement system: 152만248 people (over one and a half million) by simple sum, Newsis reports, overlap unchecked. Exposed: resident registration, bank account and card numbers. Dailian reports KEPCO presumes an outside attacker and has told police; it blocked external IP access and is investigating with the National Intelligence Service.",
+  "plain": "South Korea's power company KEPCO says personal data of over one and a half million people, including ID, bank account and card numbers, leaked from two of its online systems; it presumes an outside attacker.",
+  "exec": "Personal data from a national utility's customer and supplier systems leaked, including ID, bank and card numbers that can be used for fraud and impersonation.",
   "action": "KEPCO urges caution with calls, texts and emails that impersonate KEPCO or come from unclear sources, and runs a dedicated service where customers can check whether their data leaked and report damage.",
   "sources": [
     {
@@ -102,11 +102,16 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-22T10:14:43Z",
+    "state": "corrected",
+    "at": "2026-11-22T11:27:37Z",
     "first_at": "2026-11-22T10:14:43Z",
-    "note": "Compared title, dates (confirmed 20 Nov, announced 22 Nov), 65만487/86만9761/152만248 figures, duplicate caveat, external-attacker presumption, exposed items and advice against Newsis, Dailian, Segye",
-    "flags": []
+    "note": "stronger than the source / misattribution: summary credited the attacker presumption and police referral to the Korea Herald; Dailian says KEPCO presumes an attacker and (with Segye) referred to police; Herald only mentions the NIS investigation. Reattributed; plain/exec no longer state a break-in a",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "attribution",
+      "misstated"
+    ]
   },
-  "qa_checked_at": "2026-11-22T10:14:43Z"
+  "qa_checked_at": "2026-11-22T11:27:37Z"
 }

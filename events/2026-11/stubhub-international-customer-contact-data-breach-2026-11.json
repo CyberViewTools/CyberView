@@ -6,7 +6,7 @@
   "cves": [],
   "products": [],
   "first_seen": "2026-11-19T16:05:00Z",
-  "updated_at": "2026-11-22T16:12:26Z",
+  "updated_at": "2026-11-22T16:26:10Z",
   "date": "2026-11-10",
   "category": "incident",
   "title": "StubHub International tells customers contact data may have been exposed",
@@ -19,7 +19,7 @@
   "pin_type": "hq",
   "geo_basis": "country",
   "summary": "StubHub International, run by Ticketbis S.L., began emailing customers on 10 November, per TickSights as relayed by TicketNews, after detecting unauthorised access to certain systems between late October and early November. Names, email addresses, phone numbers and country settings may have been exposed. A spokesperson confirmed the access and said authorities were notified, with no evidence of access to passwords or payment details. No customer count has been given.",
-  "plain": "A ticket resale site warned customers that their names, emails and phone numbers may have leaked. It says no payment details were taken.",
+  "plain": "A ticket resale site warned customers that their names, emails and phone numbers may have leaked. It says it found no evidence that payment details were accessed.",
   "exec": "Exposed contact details enable convincing phishing against ticket buyers.",
   "action": "General advice: StubHub International customers should treat unexpected messages claiming to be StubHub with suspicion and not click their links.",
   "severity": 2,
@@ -32,7 +32,7 @@
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-19T16:05:00Z",
-    "note": "The Register read; TicketNews read and adds a StubHub International spokesperson statement, but cites The Register for the notices, so still one original report. LavX repeats it."
+    "note": "The Register read; TicketNews read and adds a StubHub International spokesperson statement, citing TickSights for the 10 November notification date; both describe the same customer notices, so one original report. LavX repeats it."
   },
   "sources": [
     {
@@ -50,12 +50,18 @@
   ],
   "checked_at": "2026-11-19T16:05:00Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T19:10:37Z",
-    "note": "Compared data types, late Oct-early Nov window, no password/payment evidence, no count, Ticketbis S.L. against The Register; spokesperson and authorities notified against TicketNews; LavX rewrites Register so single_source is right",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-22T16:26:24Z",
+    "first_at": "2026-11-19T19:10:37Z",
+    "note": "stronger than the source: plain said no payment details were taken, sources say no evidence found; validation note corrected (TicketNews cites TickSights)",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "validation",
+      "misstated"
+    ]
   },
-  "qa_checked_at": "2026-11-19T19:10:37Z",
+  "qa_checked_at": "2026-11-22T16:26:24Z",
   "sectors": {
     "values": [
       "commercial-facilities"

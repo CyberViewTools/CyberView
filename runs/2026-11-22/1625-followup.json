@@ -1,0 +1,102 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T16:25:10Z",
+  "finished_at": "2026-11-22T16:30:28Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Proximus panne réseau mobile 20 novembre bug logiciel",
+    "Bookeasy data breach national parks update",
+    "Parks Victoria Bookeasy cyber incident bookings resume",
+    "블랙다이아몬드 코리아 ERP 개인정보 유출",
+    "블랙다이아몬드 고객 개인정보 유출 가능성 공지 외부 ERP",
+    "SBI新生銀行 マネックス証券 口座開設 不正アクセス お知らせ",
+    "マネックス証券 口座開設 システム 不正アクセス 113万 メールアドレス 本人確認書類 1,592",
+    "Mullin written testimony House Homeland Security Iran cyber critical infrastructure"
+  ],
+  "pages_read": [
+    {
+      "url": "https://news.bgov.com/bloomberg-government-news/mullin-says-iran-hit-key-infrastructure-not-behind-tech-outages",
+      "title": "Iran Hit Key Infrastructure, Isn't Behind Tech Outages, US Says (lead only, paywalled)",
+      "used_in": "us-accuses-iran-cyber-infrastructure-2026-11"
+    },
+    {
+      "url": "https://www.jpost.com/middle-east/iran-news/article-915348",
+      "title": "Iran targeted US infrastructure with cyberattacks since start of war, Homeland Security chief says (Reuters)",
+      "used_in": "us-accuses-iran-cyber-infrastructure-2026-11"
+    },
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2156455.html",
+      "title": "マネックス証券、口座開設システムに不正アクセス",
+      "used_in": "sbi-shinsei-monex-account-opening-system-2026-11"
+    },
+    {
+      "url": "https://paperjam.lu/article/pas-de-cyberattaque-mais-une-panne-chez-proximus",
+      "title": "Pas de cyberattaque mais une panne chez Proximus (Proximus Luxembourg, a Tuesday hardware fault; not the 20 Nov Belgian event)",
+      "used_in": "checked, not used"
+    },
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209647",
+      "title": "블랙다이아몬드 코리아, 외주 ERP 서버 침해사고 (re-read: last updated 21 Nov 14:07, nothing new)",
+      "used_in": "black-diamond-korea-erp-breach-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.vic.gov.au/current-cyber-security-incidents-impacting-victorians",
+      "title": "Cyber security incidents impacting Victorians (no Bookeasy entry in fetched text; updated 13 April 2026)",
+      "used_in": "bookeasy-national-parks-booking-breach-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "us-accuses-iran-cyber-infrastructure-2026-11",
+    "sbi-shinsei-monex-account-opening-system-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "black-diamond-korea-erp-breach-2026-11",
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209647"
+    },
+    {
+      "id": "bookeasy-national-parks-booking-breach-2026-11",
+      "url": "https://www.vic.gov.au/current-cyber-security-incidents-impacting-victorians"
+    },
+    {
+      "id": "proximus-mobile-network-disruption-2026-11-20",
+      "url": "https://paperjam.lu/article/pas-de-cyberattaque-mais-une-panne-chez-proximus"
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Proximus Luxembourg outage (Tuesday, 05:20-09:34, hardware fault on switching equipment; cyberattack ruled out by the operator)",
+      "url": "https://paperjam.lu/article/pas-de-cyberattaque-mais-une-panne-chez-proximus",
+      "reason": "Different event from the 20 Nov Belgian mobile disruption; page gives no publication date, so the day cannot be fixed. Left for a researcher (see open_leads)."
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Proximus Luxembourg network outage, 112/113 reachability affected, HCPN cyber risk cell met",
+      "url": "https://paperjam.lu/article/pas-de-cyberattaque-mais-une-panne-chez-proximus",
+      "note": "Possible separate outage event; page shows no publication date ('ce mardi matin'); needs HCPN communiqué or a dated report.",
+      "priority": "low"
+    },
+    {
+      "title": "Monex Securities official notice (PDF)",
+      "url": "https://info.monex.co.jp/press/pdf/press2026_11_13_monex_pr.pdf",
+      "note": "Primary source for sbi-shinsei-monex event; not read this run (page limit). Would also give an English-checkable evidence quote for the 1.13 million figure (warning figure-no-evidence remains).",
+      "priority": "medium"
+    },
+    {
+      "title": "Queensland Parks Bookeasy security update",
+      "url": "https://parks.qld.gov.au/contactus/important-security-update",
+      "note": "Official page answered 403; not worked around.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "www.sbishinseibank.co.jp (socket hang up, twice)",
+    "parks.qld.gov.au (403)",
+    "www.yourlifechoices.com.au (403)"
+  ],
+  "notes": "Candidates: every developing and severity-3 event in the window was updated or follow-up-checked in the last 24 h, so this run took single-source events of public importance. Mullin testimony event now corroborated by Bloomberg Government and Reuters (via JPost), adds sectors and the ICS-disruption line from Reuters. Monex/SBI Shinsei event gained Impress Watch as a second publisher for Monex's figures; SBI Shinsei part still single-source. No search result found any later Black Diamond Korea or Bookeasy statement; Proximus Belgium had no newer report in results. Event also: chile, moengage, cert-in, fbi-ncic developing events were updated within 24 h and left out. BUILD: node scripts/build.mjs fails only on data/status.json, which holds unresolved git conflict markers (Updated upstream / Stashed changes around last_gdelt_gkg_at and last_pipecheck_at) written at 16:30 by a stash pop outside this worker; workers may not edit status.json, so it is left for the committing script. validate.mjs passes both updated events (one warning: figure-no-evidence for 1.13 million on the SBI/Monex event, first seen before 22 Nov).",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

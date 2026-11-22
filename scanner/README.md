@@ -25,10 +25,24 @@ An overview, with live counts of the products it can identify, is on CyberView's
 
 ## What you need
 
-- Node.js 22 or later. Nothing to install: the scanner uses Node's standard library only.
-- A copy of the CyberView repository (it reuses the site's own matching and rating code from `site/`):
-  [download the ZIP](https://github.com/xanderhutch/CyberView/archive/refs/heads/main.zip) or clone it, then run the
-  commands below from the repository's folder.
+- Node.js 22 or later (`node --version`). Nothing else to install: the scanner uses Node's standard library only.
+- The scanner itself, in one of two ways:
+  - **One file (recommended).** From the repository's [Releases](https://github.com/xanderhutch/CyberView/releases),
+    take the latest `scanner-v…` release and download `cyberview-scan-<version>.mjs` and `SHA256SUMS` into one folder.
+    Check the file before you run it:
+
+    ```
+    sha256sum -c --ignore-missing SHA256SUMS            # Linux
+    shasum -a 256 -c --ignore-missing SHA256SUMS        # macOS
+    (Get-FileHash .\cyberview-scan-<version>.mjs -Algorithm SHA256).Hash   # Windows PowerShell: compare with SHA256SUMS
+    ```
+
+    It must print `cyberview-scan-<version>.mjs: OK` (on Windows, the same hash as in `SHA256SUMS`). Then run it with
+    `node cyberview-scan-<version>.mjs` wherever the commands below say `node scanner/cyberview-scan.mjs`. The file is
+    the scanner and the site's matching and rating code in one, built by CI from the tagged commit (named in its first
+    lines); it contains nothing the repository's scanner does not.
+  - **From the repository** (developers): [download the ZIP](https://github.com/xanderhutch/CyberView/archive/refs/heads/main.zip)
+    or clone it, then run the commands below from the repository's folder.
 
 ## Quick start
 
@@ -38,6 +52,17 @@ node scanner/cyberview-scan.mjs init --out scope.json        # 1. write a scope 
 node scanner/cyberview-scan.mjs check --scope scope.json     # 3. check it; nothing is scanned
 node scanner/cyberview-scan.mjs scan --scope scope.json --online
 ```
+
+With the one-file release, the same steps are:
+
+    node cyberview-scan-<version>.mjs init --out scope.json
+    node cyberview-scan-<version>.mjs check --scope scope.json
+    node cyberview-scan-<version>.mjs scan --scope scope.json --online
+    node cyberview-scan-<version>.mjs data --out cyberview-data          # air-gapped: on a connected machine
+    node cyberview-scan-<version>.mjs scan --scope scope.json --data cyberview-data
+
+The help text still shows `node scanner/cyberview-scan.mjs`; the commands and flags are the same.
+
 
 For an air-gapped network, download the data on a connected machine, carry the folder across, and scan offline:
 
@@ -138,7 +163,7 @@ spoofed source address):
 |---|---|
 | Any port | A TCP connect. A refused connection shows the host is up; a port that does not answer is skipped. |
 | SSH, FTP, SMTP, POP3, IMAP, MySQL, VNC | Nothing. It reads the greeting the service sends on its own (at most 16 KB, a few seconds). |
-| SSH | After reading the server's banner, its own identification line, `SSH-2.0-CyberViewScanner_1.0.0 authorized-vulnerability-scan`, so your logs show who connected. It then reads, on the same connection, the list of algorithms the server advertises (its KEXINIT; at most 4 seconds and 16 KB) and closes. It sends no algorithm list of its own and does no key exchange, so it never sees the host key. |
+| SSH | After reading the server's banner, its own identification line, `SSH-2.0-CyberViewScanner_<version> authorized-vulnerability-scan`, so your logs show who connected. It then reads, on the same connection, the list of algorithms the server advertises (its KEXINIT; at most 4 seconds and 16 KB) and closes. It sends no algorithm list of its own and does no key exchange, so it never sees the host key. |
 | Web (80, 8080, 8000, 8008, 8888, ... and `--http-ports`) | One HTTP request for the root page (method GET, path "/"), with the User-Agent below. Redirects are recorded, not followed. |
 | TLS (443, 8443, 993, 995, 465, ... and `--https-ports`) | A standard TLS handshake to read the certificate (read, never trusted), then on web ports the same single request. |
 
@@ -158,7 +183,7 @@ product and version token is kept. Every request's status, and every hinted path
 the report's coverage. Without `--paths`, a web port gets the one root-page request and nothing else.
 
 Every web request carries the User-Agent
-`CyberView-Scanner/1.0.0 (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
+`CyberView-Scanner/<version> (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
 
 A host is first tried on up to four discovery ports (22, 80, 443, 3389 when in the list), then on the rest of the port
 list even if none of those answered (a firewall or IPS may drop the first probes); a host that answers on no port is

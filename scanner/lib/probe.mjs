@@ -18,7 +18,7 @@ import { TIMEOUTS } from "./limits.mjs";
 import { RAIL_PATHS, PATHS_PER_HOST } from "./paths.mjs";
 import { kexinitFrom } from "./ssh-kex.mjs";
 
-export const VERSION = "1.0.0";
+export const VERSION = "1.1.0";
 export const INFO_URL = "https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner";
 export const USER_AGENT = `CyberView-Scanner/${VERSION} (authorized vulnerability scan, detection only; +${INFO_URL})`;
 export const SSH_IDENT = `SSH-2.0-CyberViewScanner_${VERSION} authorized-vulnerability-scan`;

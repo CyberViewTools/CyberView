@@ -1,0 +1,103 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T17:09:47Z",
+  "finished_at": "2026-11-22T17:16:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Check Point PHP2Shell gateway attacks wiper update",
+    "Apache Roller CVE-2026-129448 exploited",
+    "Puppet Enterprise CVE-2026-115731 exploitation",
+    "CVE-2026-119618 Apache mod_http2 exploitation",
+    "CVE-2026-123039 Check Point Gaia"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.openwall.com/lists/oss-security/2026/11/17/5",
+      "title": "CVE-2026-129448: Apache Roller: Unauthenticated deserialization in the XML-RPC endpoint",
+      "used_in": "apache-roller-rce-cve-2026-129448-2026-11"
+    },
+    {
+      "url": "https://security.apache.org/projects/roller/",
+      "title": "Apache Roller security advisories",
+      "used_in": "apache-roller-rce-cve-2026-129448-2026-11"
+    },
+    {
+      "url": "https://thehackernews.com/2026/11/hackers-exploiting-critical-puppet-rce.html",
+      "title": "Hackers exploiting critical Puppet RCE",
+      "used_in": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/",
+      "title": "CSA AL-2026-164 mod_http2",
+      "used_in": "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://orca.security/resources/research/cve-2026-119618-critical-apache-http-2-race-condition-enables-unauthenticated-remote-code-execution",
+      "title": "Orca: CVE-2026-119618",
+      "used_in": "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.csoonline.com/article/4248693/the-firewall-becomes-the-foothold-attackers-turn-check-point-gateways-against-customers.html",
+      "title": "CSO: The firewall becomes the foothold",
+      "used_in": "check-point-php2shell-gateway-wiper-campaign-2026-11"
+    },
+    {
+      "url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/",
+      "title": "Check Point Research: PHP2Shell exploitation on Check Point gateway",
+      "used_in": "check-point-php2shell-gateway-wiper-campaign-2026-11"
+    },
+    {
+      "url": "https://bleepingcomputer.com/news/security/check-point-patches-zero-day-that-lets-hackers-get-root-access",
+      "title": "BleepingComputer: Check Point warns of zero-day flaw exploited for root access",
+      "used_in": "check-point-gaia-kev-cve-2026-123039, check-point-php2shell-gateway-wiper-campaign-2026-11"
+    },
+    {
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-129448",
+      "title": "CISA KEV catalog search (page truncated, row not read verbatim)",
+      "used_in": "none"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "apache-roller-rce-cve-2026-129448-2026-11",
+    "check-point-gaia-kev-cve-2026-123039",
+    "check-point-php2shell-gateway-wiper-campaign-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11",
+      "url": "https://thehackernews.com/2026/11/hackers-exploiting-critical-puppet-rce.html"
+    },
+    {
+      "id": "csa-singapore-apache-mod-http2-exploitation-al-2026-164-2026-11",
+      "url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Apache Roller CVE-2026-129448 added to CISA KEV on 20 Nov (due 23 Nov) per data/kev",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "note": "The local KEV feed shows date added 2026-11-20, due 2026-11-23, but the CISA alert page for 20 Nov returned 404 and the catalog page was truncated, so the event text was not changed to say so. Next run: read the CISA alert or the KEV row and add it.",
+      "priority": 2
+    },
+    {
+      "title": "mod_http2 CVE-2026-119618 exploitation still only 'reportedly' (CSA); Orca on 16 Nov said no confirmed in-the-wild exploitation; CVSS 8.1 (CSA) vs 9.8 (Orca)",
+      "url": "https://httpd.apache.org/security/vulnerabilities_24.html",
+      "note": "Watch for a KEV listing or a vendor/government confirmation; not in local KEV data.",
+      "priority": 2
+    },
+    {
+      "title": "Puppet CVE-2026-115731: no details yet on in-the-wild attacks (The Hacker News, 18 Nov)",
+      "url": "https://thehackernews.com/2026/11/hackers-exploiting-critical-puppet-rce.html",
+      "note": "Other outlets (Daily Security Review, SecurityOnline) say a public exploit exists; not read this run, so no poc-public tag added.",
+      "priority": 3
+    }
+  ],
+  "failed_sites": [
+    "cisa.gov/news-events/alerts/2026/11/20/* (404 for one/two/three/known-exploited slugs)"
+  ],
+  "notes": "Picked the six unchecked severity 3 candidates not updated or follow-up-checked in 24 h; no developing severity 2 candidates remained. Roller: date corrected to 17 Nov (Apache's oss-security announcement), Apache pages added as primary sources (correction 2026-11-22-roller-date). Gaia KEV: AgentBeam tracker removed from sources, BleepingComputer added. PHP2Shell: 'about two dozen' changed to Check Point's own 'a couple of dozen' (correction 2026-11-22-php2shell-dozen); Check Point Research still makes no confident attribution (PhiliKit tools linked by ESET to UNC5221, but 'does not allow us to assess with high confidence'), so actor and attribution stay empty. CCCS advisory AV26-1154 (sixth candidate) not checked: run limit of 5.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

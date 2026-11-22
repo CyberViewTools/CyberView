@@ -15,7 +15,7 @@
   "pin_type": "country",
   "actor": "Kimsuky (assessed by Genians Security Center, medium confidence)",
   "summary": "Genians Security Center said on 16 November that a spear-phishing campaign posed as an aide to a South Korean National Assembly member, Korea JoongAng Daily and GBHackers report. A ZIP held a fake Hangul document shortcut that ran hidden PowerShell and set a scheduled task fetching commands from a public aNotepad page, ending in the NodeLinkRAT remote access tool. Genians assessed Kimsuky may be responsible, with medium confidence, and could not rule out copycats.",
-  "plain": "Phishing emails posing as a lawmaker's aide install a remote-access tool on Windows PCs, taking its orders from a public notepad web page. Researchers link it to North Korea's Kimsuky.",
+  "plain": "Phishing emails posing as a lawmaker's aide install a remote-access tool on Windows PCs, taking its orders from a public notepad web page. Researchers suspect North Korea's Kimsuky.",
   "exec": "Command channels on legitimate note sites evade domain blocking.",
   "action": "General advice: block or alert on .lnk files inside ZIP attachments, hunt for a scheduled task named CommonMaintenanceHost, and review outbound access to public notepad sites.",
   "tags": [
@@ -58,14 +58,20 @@
     "note": "Korea JoongAng Daily and GBHackers each report Genians' research and its Kimsuky assessment; Genians' original was not read. aNotepad, the ZIP/LNK chain and the 12 September email date are GBHackers' only; JoongAng says 'a publicly accessible online note-taking service'."
   },
   "first_seen": "2026-11-19T08:39:15Z",
-  "updated_at": "2026-11-22T16:56:17Z",
+  "updated_at": "2026-11-22T17:10:51Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T09:26:41Z",
-    "note": "Compared ZIP with .hwp.lnk, hidden PowerShell, aNotepad, CommonMaintenanceHost, Kimsuky moderate confidence by Genians against the GBHackers article; single_source disclosed",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-22T17:11:14Z",
+    "first_at": "2026-11-19T09:26:41Z",
+    "note": "stronger than the source: plain said researchers link it to Kimsuky, now suspect (Genians medium confidence, may be Kimsuky); rest checked against JoongAng Daily and GBHackers",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "validation",
+      "misstated"
+    ]
   },
-  "qa_checked_at": "2026-11-19T09:26:41Z",
+  "qa_checked_at": "2026-11-22T17:11:14Z",
   "sectors": {
     "values": [
       "government-facilities"

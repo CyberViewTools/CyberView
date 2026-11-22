@@ -1,0 +1,92 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T21:24:50Z",
+  "finished_at": "2026-11-22T21:27:39Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "デジタル庁 GSS ファイル共有 漏えい 続報",
+    "Revolut data theft Netherlands police arrests November 2026",
+    "Chargemap fuite de données comptes nombre CNIL",
+    "Forest & Bird cyber attack supporters update",
+    "オープンロジ 不正アクセス 第3報"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.digital.go.jp/news",
+      "title": "Digital Agency news list (no follow-up after 20 Nov)",
+      "used_in": "digital-agency-gss-file-sharing-leak-2026-11"
+    },
+    {
+      "url": "https://www.digital.go.jp/press/a966ee61-478c-4194-8f13-f97599fae986",
+      "title": "Digital Agency press release, GSS file-sharing possible leak, 20 Nov 2026",
+      "used_in": "digital-agency-gss-file-sharing-leak-2026-11"
+    },
+    {
+      "url": "https://nltimes.nl/node/93277",
+      "title": "NL Times (ANP): Dutch police foil potential violent attacks linked to Revolut data breach",
+      "used_in": "revolut-data-theft-violence-nl-police-2026-11"
+    },
+    {
+      "url": "https://www.politie.nl/nieuws/2026/november/19/06-onderzoek-naar-datadiefstal-bij-bank-revolut.html",
+      "title": "Politie: onderzoek naar datadiefstal bij bank Revolut (re-read, last update 19 Nov)",
+      "used_in": "revolut-data-theft-violence-nl-police-2026-11"
+    },
+    {
+      "url": "https://www.leto.legal/news/chargemap-fuite-donnees-ancienne-interface-comptes-supprimes-2026",
+      "title": "Leto: Chargemap old interface exploited, deleted accounts included",
+      "used_in": "chargemap-account-data-breach-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.vrt.be/vrtnws/nl/2026/11/18/charge-map-cyberaanval/",
+      "title": "VRT NWS: Chargemap waarschuwt gebruikers na datalek",
+      "used_in": "chargemap-account-data-breach-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://corp.openlogi.com/news/",
+      "title": "Openlogi news list (latest notice is 第2報 of 17 Nov)",
+      "used_in": "openlogi-unauthorized-access-shipment-data-2026-11 (checked, unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "digital-agency-gss-file-sharing-leak-2026-11",
+    "revolut-data-theft-violence-nl-police-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "chargemap-account-data-breach-2026-11",
+      "url": "https://www.vrt.be/vrtnws/nl/2026/11/18/charge-map-cyberaanval/"
+    },
+    {
+      "id": "openlogi-unauthorized-access-shipment-data-2026-11",
+      "url": "https://corp.openlogi.com/news/"
+    },
+    {
+      "id": "forest-and-bird-website-breach-2026-11",
+      "url": "https://www.forestandbird.org.nz/node/2693"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Chargemap: data of accounts deleted before the incident may be affected; CNIL notified 13 Nov",
+      "url": "https://www.leto.legal/news/chargemap-fuite-donnees-ancienne-interface-comptes-supprimes-2026",
+      "note": "Leto (a GDPR software vendor) relays Chargemap's help article, which answers 402 to us; not added because the only page stating it is a vendor blog and the summary is at its word limit. Add if Next or Chargemap's page confirms.",
+      "priority": "low"
+    },
+    {
+      "title": "Forest & Bird: RNZ says payment card details, dates of birth and physical addresses may also have been taken",
+      "url": "https://www.rnz.co.nz/news/crime-and-justice/2709843/forest-and-bird-supporters-details-stolen-by-hackers",
+      "note": "From the RNZ feed summary only; RNZ and forestandbird.org.nz answered 403, so the record was not changed from a snippet.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "forestandbird.org.nz (403)",
+    "rnz.co.nz (403)",
+    "help.chargemap.com (402)"
+  ],
+  "notes": "Candidates: almost every developing, claimed and severity 3 event from the last 10 days was updated or follow-up-checked in the last 24 hours, so this run took incidents with a date_note that had not been touched since 20 November. Digital Agency: the agency's own press release is now the first source (source_tier primary); the summary now relies on it and adds the police investigation; it gives no count or cause and has no follow-up. Revolut: NL Times (ANP) adds that police put the Dutch victims at 36 (not on the police page, so attributed to NL Times) and quotes Revolut's statement. No published fact was contradicted, so no correction file. Openlogi: no notice after the 17 Nov 第2報. Chargemap: no count of affected accounts on VRT or Leto; VRT says the 3.5 million is total users, which the record already says.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

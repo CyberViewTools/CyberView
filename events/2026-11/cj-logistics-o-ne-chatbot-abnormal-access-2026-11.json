@@ -1,0 +1,78 @@
+{
+  "title": "CJ Logistics finds abnormal automated mass access to its O-NE delivery chatbot, investigating possible data leak",
+  "date": "2026-11-18",
+  "date_note": "Day CJ Logistics announced the matter on its homepage, as MTN (18 November) and Dailysecu (22 November) report; MTN's article is from the same day. Both say the abnormal access was confirmed while analysing logs on or around 16 November; no start date of the access is given.",
+  "category": "incident",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "CJ Logistics (CJ대한통운)",
+  "sector": "Transportation / logistics",
+  "country": "South Korea",
+  "place": "South Korea",
+  "lat": 36.5,
+  "lng": 127.9,
+  "geo_basis": "country only; the articles give no location for the affected systems",
+  "pin_type": "country",
+  "summary": "CJ Logistics said it confirmed abnormal automated mass access to its O-NE delivery-tracking chatbot while analysing server logs and part of a database around 16 November, MTN and Dailysecu report. According to the company, parcel recipients' names and neighbourhood-level addresses may have been looked up; whether data actually leaked, its scale and who is affected are not yet determined. CJ said the data may not count as personal information under Korean law.",
+  "plain": "CJ Logistics says automated tools made unusual mass requests to its delivery chatbot, which may have shown parcel recipients' names and neighbourhood-level addresses. It is still checking whether any data actually leaked.",
+  "exec": "CJ Logistics says its delivery chatbot saw abnormal automated mass access; recipient names and neighbourhood-level addresses may have been viewed.",
+  "action": "CJ Logistics urges customers to be careful with calls, texts and emails impersonating delivery companies that ask for personal information or money, and not to open links or attachments from unclear sources.",
+  "impact": "Parcel recipient names and neighbourhood-level (dong) addresses may have been looked up; per CJ, resident registration numbers, CI, mobile numbers and detailed addresses were not included. No number of people given.",
+  "tags": [
+    "data-breach",
+    "chatbot"
+  ],
+  "cves": [],
+  "products": [
+    "CJ Logistics O-NE chatbot"
+  ],
+  "attack": [],
+  "sources": [
+    {
+      "name": "MTN (머니투데이방송): CJ대한통운, 개인정보 유출 의심…'오네 챗봇' 비정상 대량 접근 확인",
+      "url": "https://news.mtn.co.kr/article/2026111817594394646",
+      "published": "2026-11-18"
+    },
+    {
+      "name": "Dailysecu: CJ대한통운, 오네 챗봇 비정상 대량 접근 확인…개인정보 유출 가능성 조사",
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209656",
+      "published": "2026-11-22"
+    }
+  ],
+  "report": {
+    "publisher": "MTN",
+    "publisher_type": "media",
+    "published": "2026-11-18",
+    "key_findings": [
+      "CJ Logistics confirmed abnormal automated mass access to the O-NE chatbot while analysing server logs and part of a database",
+      "Recipient names and neighbourhood-level addresses may have been viewed; leak, scale and affected people not yet determined",
+      "CJ applied web-firewall detection and blocking of abnormal requests and tightened access control"
+    ],
+    "recommendations": [
+      "Be careful with calls, texts and emails impersonating delivery companies; do not open links or attachments from unclear sources"
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://news.mtn.co.kr/article/2026111817594394646"
+  },
+  "source_tier": "established",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-22T06:36:30Z",
+    "note": "Two independent publishers, MTN (18 Nov) and Dailysecu (22 Nov), each report CJ Logistics' own statement confirming the abnormal access. CJ's homepage notice itself was not read (neither article links it)."
+  },
+  "evidence": [],
+  "sectors": {
+    "values": [
+      "transportation-systems",
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "first_seen": "2026-11-22T06:36:30Z",
+  "updated_at": "2026-11-22T06:36:30Z"
+}

@@ -10,7 +10,7 @@
   "cves": [],
   "date": "2026-11-17",
   "date_note": "Dailysecu (21 November) says the external access happened on 17 November; Kurly reported it to the relevant agencies on 18 November and its CEO apologised on 20 November.",
-  "exec": "A leak of personal data of 10,701 people at a Korean online retailer, including some account and resident or business registration numbers of curators.",
+  "exec": "A leak of personal data of 10,699 curators and 2 customers at a Korean online retailer, including some account and resident or business registration numbers of curators.",
   "first_seen": "2026-11-20T21:41:31Z",
   "geo_basis": "country as stated (South Korea); Seoul used as the pin, city not stated in the source",
   "lat": 37.5665,
@@ -18,7 +18,7 @@
   "org": "Kurly",
   "pin_type": "country",
   "place": "South Korea",
-  "plain": "Korean online grocer Kurly says an outside attacker stole credentials and got into internal systems, leaking personal data of 10,701 people, mostly curator-program participants.",
+  "plain": "Korean online grocer Kurly says an outside attacker stole credentials and got into internal systems, leaking personal data of 10,699 curator-program participants and 2 customers.",
   "products": [],
   "sector": "Retail",
   "severity": 2,
@@ -27,20 +27,25 @@
     {
       "name": "Dailysecu (Korea)",
       "url": "https://www.dailysecu.com/news/articleView.html?idxno=209644"
+    },
+    {
+      "name": "Insight (인사이트), Hwang Su-jin",
+      "url": "https://www.insight.co.kr/news/583062",
+      "published": "2026-11-22"
     }
   ],
   "status": "confirmed",
-  "summary": "Dailysecu reports that Kurly said an external attacker accessed its system by an abnormal method on 17 November, stole credentials and used them to enter internal business systems without authorisation. Kurly told the relevant agencies on 18 November. Its investigation confirmed a leak of personal data of 10,701 people: 10,699 curator-program participants and 2 general customers. For some curators this included account numbers and resident or business registration numbers.",
+  "summary": "Kurly said an external attacker accessed its system by an abnormal method on 17 November, stole credentials and entered internal business systems; it told the relevant agencies on 18 November. Per Kurly, data of 10,699 curator-program participants and 2 general customers leaked, for some curators including account numbers and resident or business registration numbers. Insight reports Kurly has not said how many had those numbers leaked.",
   "tags": [
     "data-breach",
     "credential-theft"
   ],
-  "title": "Kurly says credentials stolen in 17 November intrusion; personal data of 10,701 people leaked",
-  "updated_at": "2026-11-20T21:45:28Z",
+  "title": "Kurly says credentials stolen in 17 November intrusion; data of 10,699 curators and 2 customers leaked",
+  "updated_at": "2026-11-22T04:43:14Z",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-20T21:41:31Z",
-    "note": "Only Dailysecu (Korean) read; it relays Kurly's own statement (CEO apology of 20 November). Kurly's notice and a second publisher were not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T04:43:14Z",
+    "note": "Dailysecu (21 Nov) and Insight (22 Nov) each relay Kurly's own statement of 20 November (17 Nov access, 18 Nov report to agencies, 10,699 curators and 2 general customers). Kurly's own notice not read."
   },
   "review": {
     "state": "corrected",
@@ -59,5 +64,15 @@
   "surface": {
     "value": "identity",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.insight.co.kr/news/583062",
+      "quote": "지난 20일 컬리에 따르면 이번 사고로 개인정보가 유출된 대상은 큐레이터 프로그램 참여자 1만699명과 일반 고객 2명이다."
+    },
+    {
+      "url": "https://www.insight.co.kr/news/583062",
+      "quote": "그러나 컬리는 주민등록번호와 계좌번호가 유출된 인원이 각각 몇 명인지는 밝히지 않았다."
+    }
+  ]
 }

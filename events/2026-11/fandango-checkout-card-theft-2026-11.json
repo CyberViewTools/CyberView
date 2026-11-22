@@ -1,11 +1,12 @@
 {
-  "action": "If you bought tickets on Fandango recently, check your card statements for charges you do not recognise, ask your bank for a replacement card if you receive a notice, and follow the steps in Fandango's notification.",
+  "action": "Fandango's notice urges recipients to review account statements, promptly report unauthorized transactions to their card issuer or bank, and activate the free IDX monitoring it offers by February 13, 2027.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "United States",
   "cves": [],
   "date": "2026-11-16",
+  "date_note": "Day of BleepingComputer's and eSecurityPlanet's reports; the notice template read on oag.ca.gov gives no date of its own. Exposure window 8-11 October 2026.",
   "exec": "Card data was captured at checkout on a major ticketing site, creating fraud exposure for customers and liability for the company.",
   "first_seen": "2026-11-17T22:36:00Z",
   "geo_basis": "victim HQ (approx.)",
@@ -14,31 +15,41 @@
   "org": "Fandango Media",
   "pin_type": "victim",
   "place": "Los Angeles area, CA",
-  "plain": "Ticket seller Fandango is telling customers that payment card details typed into its checkout pages were exposed in a breach. The number of people affected is not yet known.",
+  "plain": "Ticket seller Fandango is telling customers that someone could access card details typed into its checkout page from October 8-11, 2026. It has not said how many people are affected.",
   "products": [
     "Fandango"
   ],
   "sector": "Entertainment / ticketing",
   "severity": 2,
-  "source_tier": "established",
+  "source_tier": "primary",
   "sources": [
     {
+      "name": "Fandango notice of data breach (California Attorney General)",
+      "url": "https://oag.ca.gov/system/files/Fandango%20-%20Individual%20Notice%20Template_Redacted.pdf"
+    },
+    {
       "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/fandango-says-hackers-stole-payment-card-details-from-checkout-pages/"
+      "url": "https://www.bleepingcomputer.com/news/security/fandango-says-hackers-stole-payment-card-details-from-checkout-pages/",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "eSecurityPlanet",
+      "url": "https://www.esecurityplanet.com/data-breach/news-fandango-data-breach-card-details/",
+      "published": "2026-11-16"
     }
   ],
   "status": "confirmed",
-  "summary": "Fandango is notifying customers that card-skimming code injected into its checkout page captured payment details entered between October 8 and 11, 2026, according to BleepingComputer's report of the notice. Exposed data: card number, CVV, expiry, billing ZIP and email; names, ID and SSNs were not. Fandango says it determined on October 30 that data may be affected and knows of no fraud. The number affected was not disclosed.",
+  "summary": "Fandango's notice, filed with the California Attorney General, says an unauthorized party could access payment card information for certain checkout-page transactions from October 8-11, 2026: card number, CVV, expiry, billing ZIP and email, not names, ID or SSNs. It determined this on October 30 and knows of no fraudulent use. BleepingComputer reported card-skimming code; the notice does not name the method or a count.",
   "tags": [
     "data-breach",
     "fraud"
   ],
-  "title": "Fandango says hackers stole payment card details from checkout pages",
-  "updated_at": "2026-11-19T05:09:29Z",
+  "title": "Fandango notice: unauthorized party could access payment card details on its checkout page",
+  "updated_at": "2026-11-22T16:41:38Z",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T05:09:29Z",
-    "note": "BleepingComputer article read in full (Nov 16); Fandango's own notice (DocumentCloud copy) not opened."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T16:41:38Z",
+    "note": "Follow-up 22 Nov: Fandango's own notice template on oag.ca.gov read in full (primary); eSecurityPlanet (16 Nov) also read. The notice does not describe the method; card skimming is BleepingComputer's report. eSecurityPlanet cites SecurityWeek for Oregon and Vermont filing counts; SecurityWeek answered 403, so those counts are not used."
   },
   "review": {
     "state": "corrected",

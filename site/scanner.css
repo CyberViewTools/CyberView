@@ -1,0 +1,38 @@
+/* The Scanner page (scanner.html); colours, panels, buttons and the nav come from archive.css */
+.scn .schero{padding:6px 0 4px}
+.scn .intro .eyebrow{margin:0 0 10px;color:var(--accent);font:600 13px var(--font);letter-spacing:.02em;text-transform:uppercase}
+.scn .intro .lede{margin:10px 0 0;max-width:780px;color:var(--ink);font-size:16px;line-height:1.6}
+.heroacts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);min-width:0}
+.tn{font:700 28px/1.1 var(--font-display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tl{color:var(--muted);font-size:13px;line-height:1.35}
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;margin-top:12px}
+.area{position:relative;padding:14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);min-width:0}
+.area h3{margin:0 0 4px;font:600 15px var(--font-display)}
+.area p{margin:6px 0 0;font-size:14px;line-height:1.5}
+.area .never{color:var(--muted);font-size:13.5px;padding-left:12px;border-left:2px solid rgba(255,255,255,.18)}
+.area.absent{border-style:dashed}.area.absent h3,.area.absent p{color:var(--muted)}
+.acount{display:inline-block;margin:2px 0 2px;padding:1px 9px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.acount:empty{display:none}
+.acount.optin{border-color:rgba(108,182,255,.45);color:var(--ink)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 18px}
+.nevers{margin:0;padding-left:20px}.nevers li{margin:6px 0;line-height:1.5}
+.outs{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.outs th,.outs td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid var(--line)}
+.outs th{color:var(--muted);font-weight:600;font-size:13px}
+.outs td:first-child{white-space:nowrap}
+.scn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.subh{margin:16px 0 6px;font:600 14px var(--font);color:var(--muted)}
+.optins{margin:0;padding-left:20px;font-size:14px}.optins li{margin:5px 0;line-height:1.45}
+.steps{margin:10px 0 0;padding-left:22px}.steps li{margin:10px 0}
+.steps .sl{display:block;margin-bottom:6px}
+.steps pre{margin:0;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.35);border:1px solid var(--line);overflow-x:auto;white-space:pre}
+.recent{list-style:none;margin:0;padding:0}
+.rc{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 14px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rc:last-child{border-bottom:0}
+.rct{font-weight:600}.rcpr{margin-left:8px;font-size:13px}
+.rc p{margin:3px 0 0;color:var(--muted);font-size:14px}
+.foot-note{margin-top:22px}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.rc{grid-template-columns:1fr}.tn{font-size:24px}.outs td:first-child{white-space:normal}.scn .intro .lede{font-size:15px}}

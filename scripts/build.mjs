@@ -15,6 +15,7 @@
 //   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
 //   site/data/manifest.json          counts and a SHA-256 of every data file, for scripts/verify-build.mjs
 //   site/data/ops.json               routines (routines.json) with their last run, recent run logs, lead queue
+//   site/data/scanner.json           the Scanner page's live numbers from scanner/ (scripts/scanner-stats.mjs) and config/scanner-page.json
 // Every record is validated first. Errors fail the build (exit 1) so bad data never reaches the site;
 // warnings are hygiene faults the jobs should fix (front-page sources, long summaries, missing lists).
 import { buildPages } from "./pages.mjs";
@@ -475,6 +476,19 @@ try {
 } catch (err) {
   writeFileSync(join(OUT, "actors.json"), JSON.stringify({ built_at, error: "The actor profiles could not be built.", profiles: [] }));
   console.warn("warning: actor profiles not built: " + String((err && err.message) || err).slice(0, 200));
+}
+
+// the Scanner page's live numbers (scripts/scanner-stats.mjs, no AI model): counts read from the scanner's own modules,
+// read-only. A failure never fails the build: the page shows "—" for anything missing.
+try {
+  const { scannerStats } = await import("./scanner-stats.mjs");
+  const sc = await scannerStats({ kev: kevAll, built_at });
+  writeFileSync(join(OUT, "scanner.json"), JSON.stringify(sc));
+  console.log(`Scanner: version ${sc.version || "?"}, ${sc.products ?? "?"} products, ${sc.rules ?? "?"} fingerprint rules, ${sc.recent.length} recent features.`);
+  if (sc.errors.length) console.warn("warning: scanner stats: " + sc.errors.join("; "));
+} catch (err) {
+  try { writeFileSync(join(OUT, "scanner.json"), JSON.stringify({ built_at, error: "The scanner's numbers could not be read." })); } catch { /* the page shows dashes */ }
+  console.warn("warning: scanner stats not built: " + String((err && err.message) || err).slice(0, 200));
 }
 
 // operations: the routines registry, each routine's last run, recent run logs and the lead queue (site/data/ops.json)

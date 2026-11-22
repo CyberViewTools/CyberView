@@ -19,6 +19,9 @@ import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snm
 import { udpProbe } from "../../scanner/lib/udp.mjs";
 import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
 import { main } from "../../scanner/cyberview-scan.mjs";
+import { readInventory, parseCpe, parsePurl, MAX_BYTES } from "../../scanner/lib/inputs.mjs";
+import { toHtml } from "../../scanner/lib/html.mjs";
+import { diffReports } from "../../scanner/lib/diff.mjs";
 import { NOCODE } from "../../scripts/lib/validate.mjs";
 import { startServers } from "../fixtures/scanner/servers.mjs";
 
@@ -284,7 +287,7 @@ test("offline mode: a whole scan from a snapshot, no data request, report files 
   const x = io({ probe, fetchImpl: () => { fetched++; throw new Error("offline"); } });
   assert.equal(await main(["scan", "--scope", p, "--data", SNAP, "--ports", "22,80,443", "--out", join(d, "out")], x), 0);
   assert.equal(fetched, 0);
-  assert.deepEqual(readdirSync(join(d, "out")).sort(), ["findings.csv", "inventory.csv", "report.json", "report.sarif", "summary.txt"]);
+  assert.deepEqual(readdirSync(join(d, "out")).sort(), ["findings.csv", "inventory.csv", "report.html", "report.json", "report.sarif", "summary.txt"]);
   const rep = JSON.parse(readFileSync(join(d, "out", "report.json"), "utf8"));
   assert.equal(rep.run.data.mode, "offline"); assert.equal(rep.scope.attestation.name, "Test Operator"); assert.equal(rep.scope.owner, "Example lab");
   assert.deepEqual(rep.findings.map((f) => f.cve), ["CVE-2026-90102"]);   // OpenSSH 9.9 is past the fix
@@ -781,4 +784,115 @@ test("probeAll end to end: HTTP hygiene comes from the one GET / (no extra reque
     assert.ok(kinds.includes("http-no-https") && kinds.includes("http-missing-headers"), kinds.join(","));
     assert.deepEqual(s.got.http.map((x) => `${x.method} ${x.url}`), ["GET /"]);
   } finally { await s.close(); }
+});
+
+/* ---- tk-matchers, scan-html, tk-diff: offline match, HTML report, scan diff (no target contacted) ---- */
+const NMAP_XML = `<?xml version="1.0"?>
+<nmaprun>
+<host><status state="up"/>
+<address addr="10.1.2.3" addrtype="ipv4"/>
+<hostnames><hostname name="ssh.internal" type="user"/></hostnames>
+<ports>
+<port protocol="tcp" portid="22"><state state="open"/><service name="ssh" product="OpenSSH" version="9.2p1" extrainfo="Ubuntu Linux"/></port>
+<port protocol="tcp" portid="80"><state state="closed"/><service name="http" product="ignored"/></port>
+</ports>
+</host>
+<host><status state="up"/>
+<address addr="203.0.113.9" addrtype="ipv4"/>
+<ports><port protocol="tcp" portid="443"><state state="open"/><service name="http" product="nginx" version="1.22.1"><cpe>cpe:/a:f5:nginx:1.22.1</cpe></service></port></ports>
+</host>
+</nmaprun>`;
+
+test("inputs: CPE and purl parse, CycloneDX and SPDX prefer them, a list stays a list", () => {
+  assert.equal(parseCpe("cpe:2.3:a:openbsd:openssh:9.2:*:*:*:*:*:*:*").product, "openssh");
+  assert.equal(parseCpe("cpe:/a:f5:nginx:1.22.1").version, "1.22.1");
+  assert.equal(parseCpe("not-a-cpe"), null);
+  assert.equal(parsePurl("pkg:generic/openbsd/openssh@9.2").name, "openssh");
+  const cdx = readInventory(JSON.stringify({ bomFormat: "CycloneDX", components: [
+    { name: "OpenSSH portable", version: "0", cpe: "cpe:2.3:a:openbsd:openssh:9.2:*:*:*:*:*:*:*" },
+    { name: "nested-parent", components: [{ name: "nginx", version: "1.22.1", purl: "pkg:generic/f5/nginx@1.22.1" }] },
+  ] }), { file: "app.cdx.json", format: "sbom" });
+  assert.equal(cdx.format, "CycloneDX");
+  assert.equal(cdx.hosts.length, 1);
+  assert.equal(cdx.hosts[0].public, false);
+  assert.equal(cdx.hosts[0].services[0].product, "openssh");
+  assert.equal(cdx.hosts[0].services[0].version, "9.2");
+  assert.equal(cdx.hosts[0].services[0].guessed, false);
+  const exposed = readInventory("OpenSSH 9.2\n", { file: "sw.txt", format: "list", assumeExposed: true });
+  assert.equal(exposed.hosts[0].public, true);
+  assert.equal(exposed.hosts[0].services[0].product, "OpenSSH");
+  const spdx = readInventory(JSON.stringify({ packages: [{ name: "nginx", versionInfo: "0", supplier: "Organization: F5", externalRefs: [{ referenceType: "cpe23Type", referenceLocator: "cpe:2.3:a:f5:nginx:1.22.1:*:*:*:*:*:*:*" }] }] }), { format: "sbom" });
+  assert.equal(spdx.format, "SPDX");
+  assert.equal(spdx.hosts[0].services[0].product, "nginx");
+  assert.equal(spdx.hosts[0].services[0].version, "1.22.1");
+  const capped = readInventory(JSON.stringify({ components: Array.from({ length: 10 }, (_, i) => ({ name: "widget-" + i, version: "1.0.0" })) }), { format: "sbom", limit: 3 });
+  assert.equal(capped.hosts[0].services.length, 3);
+});
+
+test("inputs: nmap XML keeps open services, classifies public and private, and skips closed ports", () => {
+  const n = readInventory(NMAP_XML, { format: "nmap" });
+  assert.equal(n.format, "nmap");
+  assert.equal(n.hosts.length, 2);
+  const priv = n.hosts.find((h) => h.address === "10.1.2.3");
+  assert.equal(priv.public, false);
+  assert.equal(priv.kind, "private");
+  assert.equal(priv.services.length, 1);
+  assert.equal(priv.services[0].product, "OpenSSH");
+  assert.equal(priv.services[0].version, "9.2");
+  assert.equal(priv.services[0].distro, "Ubuntu");
+  const pub = n.hosts.find((h) => h.address === "203.0.113.9");
+  assert.equal(pub.public, true);
+  assert.equal(pub.services[0].vendor, "f5");
+  assert.equal(pub.services[0].product, "nginx");
+});
+
+test("match: findings from a local list, report.html included, the probe is never called", async () => {
+  const d = tmp();
+  writeFileSync(join(d, "sw.txt"), "OpenSSH 9.2\n");
+  let probed = 0;
+  const x = io({ probe: async () => { probed++; return { port: 22, state: "closed" }; }, udpProbe: async () => { probed++; } });
+  assert.equal(await main(["match", "--list", join(d, "sw.txt"), "--data", SNAP, "--out", join(d, "out")], x), 0);
+  assert.equal(probed, 0);
+  assert.match(x.lines.out.join("\n"), /No target was contacted|Nothing was contacted/);
+  const rep = JSON.parse(readFileSync(join(d, "out", "report.json"), "utf8"));
+  assert.equal(rep.run.network.sends.match.startsWith("nothing"), true);
+  assert.equal(rep.run.network.connections, 0);
+  assert.ok(rep.findings.some((f) => f.cve === "CVE-2026-90101" && f.state === "affected"));
+  const html = readFileSync(join(d, "out", "report.html"), "utf8");
+  assert.match(html, /Distribution packages can backport a fix/);
+  assert.equal(/<script\b/i.test(html), false);
+  const nasty = toHtml({ summary: {}, findings: [{ rank: 1, cve: "CVE-2026-90101", title: "<b>x</b>", rating: { text: "n" }, confidence: "high", seen_on: [], fix: { details: "javascript:alert(1)" } }], hosts: [{ services: [{ distro: "Ubuntu" }] }], notes: [], coverage: { complete: true } });
+  assert.match(nasty, /&lt;b&gt;x&lt;\/b&gt;/);
+  assert.equal(nasty.includes("javascript:"), false);
+  assert.match(nasty, /This report includes at least one distribution package build/);
+  const big = io({ readFile: () => "x".repeat(MAX_BYTES + 1) });
+  assert.equal(await main(["match", "--list", join(d, "sw.txt"), "--data", SNAP], big), 1);
+});
+
+test("diff: new, resolved, still open and a watch list, with no network", () => {
+  const place = (cve, host, extra = {}) => ({ cve, title: cve, kev: !!extra.kev, priority: extra.act ? { decision: "act" } : null, seen_on: [{ host, port: 22, product: "OpenSSH", shown_version: extra.version || "9.2", state: extra.state || "affected", confidence: "high" }] });
+  const before = { run: { started_at: "2026-11-01T00:00:00Z" }, findings: [place("CVE-2026-90101", "10.0.0.5"), place("CVE-2026-90102", "10.0.0.5", { version: "1.22.1" })] };
+  const after = { run: { started_at: "2026-11-22T00:00:00Z" }, findings: [place("CVE-2026-90101", "10.0.0.5"), place("CVE-2026-90999", "10.0.0.8", { kev: true, act: true })] };
+  const d = diffReports(before, after);
+  assert.deepEqual(d.new.map((x) => x.cve), ["CVE-2026-90999"]);
+  assert.deepEqual(d.resolved.map((x) => x.cve), ["CVE-2026-90102"]);
+  assert.deepEqual(d.still.map((x) => x.cve), ["CVE-2026-90101"]);
+  assert.equal(d.watch.length, 1);
+  assert.match(d.note, /not proof/);
+});
+
+test("diff command writes diff.json and contacts nothing", async () => {
+  const d = tmp();
+  const rep = (cve, host) => JSON.stringify({ run: { started_at: "2026-11-22T00:00:00Z" }, findings: [{ cve, title: "t", kev: true, priority: { decision: "act" }, seen_on: [{ host, port: 22, product: "OpenSSH", shown_version: "9.2", state: "affected" }] }] });
+  writeFileSync(join(d, "a.json"), rep("CVE-2026-90101", "10.0.0.5"));
+  writeFileSync(join(d, "b.json"), rep("CVE-2026-90102", "10.0.0.6"));
+  let probed = 0;
+  const x = io({ probe: async () => { probed++; } });
+  assert.equal(await main(["diff", "--before", join(d, "a.json"), "--after", join(d, "b.json"), "--out", join(d, "out")], x), 0);
+  assert.equal(probed, 0);
+  const diff = JSON.parse(readFileSync(join(d, "out", "diff.json"), "utf8"));
+  assert.equal(diff.counts.new, 1);
+  assert.equal(diff.counts.resolved, 1);
+  assert.match(readFileSync(join(d, "out", "diff.html"), "utf8"), /Resolved is not proof of a patch/);
+  assert.match(readFileSync(join(d, "out", "diff.txt"), "utf8"), /WATCH/);
 });

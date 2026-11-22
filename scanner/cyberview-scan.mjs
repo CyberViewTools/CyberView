@@ -8,6 +8,8 @@
 //   init  [--out scope.json]                  write a scope file to fill in (targets, owner, your attestation)
 //   check --scope FILE [--i-am-authorized-for-public-ranges]   check the scope file and show what a scan would do; no network
 //   data  --out DIR [--source URL] [--full]   download CyberView's data for offline (air-gapped) scans
+//   match (--sbom FILE | --nmap FILE | --list FILE) (--data DIR | --online) [--out DIR] [--assume-exposed]
+//   diff  --before report.json --after report.json [--out DIR]
 //   scan  --scope FILE (--data DIR | --online [--source URL]) [--ports LIST] [--out DIR] [--assume-up]
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
@@ -25,9 +27,12 @@ import { webSource, dirSource, snapshot, DEFAULT_SOURCE } from "./lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib/scan.mjs";
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
+import { toHtml, diffHtml } from "./lib/html.mjs";
+import { readInventory, MAX_BYTES } from "./lib/inputs.mjs";
+import { diffReports, diffText } from "./lib/diff.mjs";
 import { D } from "./lib/shared.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "assume-exposed", "help", "all-ports", "udp", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -42,6 +47,8 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs init  [--out scope.json]
   node scanner/cyberview-scan.mjs check --scope scope.json
   node scanner/cyberview-scan.mjs data  --out cyberview-data [--full]
+  node scanner/cyberview-scan.mjs match --list software.txt --data cyberview-data   (no target is contacted)
+  node scanner/cyberview-scan.mjs diff  --before old/report.json --after new/report.json
   node scanner/cyberview-scan.mjs scan  --scope scope.json --data cyberview-data      (offline)
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
@@ -59,6 +66,81 @@ function loadScope(file, today) {
   return { ...r, hash: createHash("sha256").update(text).digest("hex") };
 }
 const fail = (io, lines, code = 2) => { io.err(["REFUSED: " + lines[0], ...lines.slice(1).map((l) => "  - " + l)].join("\n")); return code; };
+
+function writeReportFiles(dir, report) {
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  const w = (f, s) => writeFileSync(join(dir, f), s, { mode: 0o600 });
+  w("report.json", JSON.stringify(report, null, 2) + "\n");
+  w("findings.csv", toCsv(report));
+  w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
+  w("inventory.csv", toInventory(report));
+  w("summary.txt", summaryText(report) + "\n");
+  w("report.html", toHtml(report));
+}
+
+/** `match` reads a file the operator already has. It never calls the probe. */
+async function matchCmd(a, io, today) {
+  const which = [["sbom", a.sbom], ["nmap", a.nmap], ["list", a.list]].filter(([, v]) => v);
+  if (which.length !== 1) return fail(io, ["name exactly one input: --sbom FILE, --nmap FILE or --list FILE"], 1);
+  if (a.data && a.online) return fail(io, ["choose one data source: --data DIR (offline) or --online"], 1);
+  if (!a.data && !a.online) return fail(io, ["choose the data source: --data DIR or --online. No target is contacted either way."], 1);
+  const [kind, file] = which[0];
+  if (!existsSync(file)) return fail(io, [`input not found: ${file}`], 1);
+  const text = io.readFile(file);
+  if (String(text || "").length > MAX_BYTES) return fail(io, [`${file} is larger than ${MAX_BYTES} bytes; split it`], 1);
+  let src = null;
+  try { src = a.data ? dirSource(a.data) : webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl }); }
+  catch (e) { return fail(io, [e.message], 1); }
+  const read = readInventory(text, { file, assumeExposed: !!a["assume-exposed"], format: kind === "list" ? "list" : kind });
+  const hosts = read.hosts;
+  const startedAt = new Date().toISOString();
+  const scope = {
+    owner: "offline match (no target contacted)", contact: "",
+    attestation: { statement: "No target was contacted. The input is a file the operator already holds.", name: "match", date: today, expires: "", authorization_ref: "" },
+    targets: [{ text: file }], exclude: [], hosts: [],
+    publicCount: hosts.filter((h) => h.public).length, addressCount: hosts.length, needsPublic: false,
+  };
+  const probed = { hosts, interrupted: false, stop_reason: "", udp: [], stats: { connections: 0, max_open_at_once: 0, skipped_host_budget: 0, skipped_global_budget: 0, stopped: "" } };
+  const report = await buildReport({
+    src, scope, scopeFile: file, scopeHash: createHash("sha256").update(String(text)).digest("hex"), allowPublic: !!a["assume-exposed"],
+    ports: [], settings: { match: true }, probed, refused: [], startedAt, today,
+    sends: { match: "nothing: the match command reads a local file and contacts no target" },
+  });
+  report.notes.unshift("Match read a local file only. No address was resolved and no target was contacted.");
+  if (a["assume-exposed"]) report.notes.unshift("--assume-exposed: every component is treated as internet-facing for the SSVC exposure answer. The rating itself does not change.");
+  read.problems.forEach((p) => report.notes.push(p));
+  if (!hosts.some((h) => (h.services || []).length)) report.notes.push("No named product was read from the input.");
+  const out = resolve(a.out || `cyberview-match-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
+  writeReportFiles(out, report);
+  const textOut = summaryText(report);
+  io.out(textOut + `\n\nReport written to ${out}/ (report.json, report.html, findings.csv, report.sarif, inventory.csv, summary.txt). Nothing was contacted and nothing was uploaded.`);
+  return 0;
+}
+
+/** `diff` compares two reports already on disk. It does not scan again and it sends nothing. */
+function diffCmd(a, io) {
+  if (!a.before || !a.after) return fail(io, ["--before FILE and --after FILE are required (two report.json files)"], 1);
+  const load = (f) => {
+    if (!existsSync(f)) return { error: `not found: ${f}` };
+    const text = io.readFile(f);
+    if (String(text || "").length > MAX_BYTES) return { error: `${f} is larger than ${MAX_BYTES} bytes` };
+    try { return { report: JSON.parse(text) }; } catch { return { error: `${f} is not JSON` }; }
+  };
+  const b = load(a.before), c = load(a.after);
+  if (b.error) return fail(io, [b.error], 1);
+  if (c.error) return fail(io, [c.error], 1);
+  if (!b.report || typeof b.report !== "object" || !c.report || typeof c.report !== "object") return fail(io, ["each file must be a scanner report object"], 1);
+  const diff = diffReports(b.report, c.report);
+  const out = resolve(a.out || ".");
+  mkdirSync(out, { recursive: true, mode: 0o700 });
+  const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });
+  w("diff.json", JSON.stringify(diff, null, 2) + "\n");
+  const text = diffText(diff);
+  w("diff.txt", text + "\n");
+  w("diff.html", diffHtml(diff));
+  io.out(text + `\n\nDiff written to ${out}/ (diff.json, diff.txt, diff.html). Nothing was contacted.`);
+  return 0;
+}
 
 /**
  * The command line. io: { out, err, sleep, probe, resolve, fetchImpl, signal } so tests can run it without a terminal.
@@ -85,6 +167,9 @@ export async function main(argv, io = {}) {
     io.out(`Snapshot ready: ${m.lookup_files} lookup file(s), workbench built ${m.workbench_built_at || "?"}. Scan offline with --data ${a.out}`);
     return 0;
   }
+
+  if (cmd === "match") return matchCmd(a, io, today);
+  if (cmd === "diff") return diffCmd(a, io);
 
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----
@@ -143,11 +228,9 @@ export async function main(argv, io = {}) {
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today });
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
-    mkdirSync(out, { recursive: true, mode: 0o700 });
-    const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });
-    w("report.json", JSON.stringify(report, null, 2) + "\n"); w("findings.csv", toCsv(report)); w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
-    w("inventory.csv", toInventory(report)); const text = summaryText(report); w("summary.txt", text + "\n");
-    io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, findings.csv, report.sarif, inventory.csv, summary.txt). Nothing was uploaded.`);
+    writeReportFiles(out, report);
+    const text = summaryText(report);
+    io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, report.html, findings.csv, report.sarif, inventory.csv, summary.txt). Nothing was uploaded.`);
     // exit codes: 0 clean and complete, 2 coverage incomplete (blind spots — see the COVERAGE section), 3 stopped early
     if (report.run.interrupted) return 3;
     if (report.coverage && !report.coverage.complete) { io.err("\nCoverage incomplete: some hosts or ports could not be checked (see COVERAGE in summary.txt). A clean result does not cover them. Exit 2."); return 2; }

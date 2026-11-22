@@ -77,4 +77,7 @@ Discovery output for the toolkit's offline `match` command. Research and proposa
      the site's "My software" import.
 
 ## Implementation → Review
-- (pending)
+- **Decision on `--assume-exposed`:** shipped, default off. A list with no address stays internal. The flag only changes the SSVC exposure answer. An nmap address is classified and still not contacted.
+- **Landed in one PR** (the adapter and the command together; the design's three PRs were small enough to review as one continue-in-place change, with `scan-html` and `tk-diff`): `scanner/lib/inputs.mjs`, the `match` command, the same five report files plus `report.html`. `buildReport` takes an optional `sends` so a match report does not claim a scan's bytes were sent.
+- **Tests:** CycloneDX/SPDX CPE preference, nmap open/closed and public/private, `match` against the fixture snapshot with the probe uncalled, oversize input refused.
+- **Open questions / follow-ups:** `scan-sbom-crypto` can read these same service records later. No registry lookup of a purl.

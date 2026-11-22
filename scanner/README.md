@@ -43,6 +43,28 @@ node scanner/cyberview-scan.mjs data --out cyberview-data            # on a conn
 node scanner/cyberview-scan.mjs scan --scope scope.json --data cyberview-data
 ```
 
+A scan also writes `report.html`, one file you can open in a browser. It loads nothing else. The yellow box at the top is the backport caveat: a distribution package (Ubuntu, Debian, Red Hat and the others the scanner names) can carry a fix under an old version number, so medium confidence is not proof the package is still vulnerable.
+
+## Match a list you already have (no scanning)
+
+If you cannot scan — a change freeze, an air-gapped asset, or you only have a bill of materials from CI — `match` runs the same rating on a file you already hold. It does not resolve a name, open a connection, or read a scope file.
+
+```
+node scanner/cyberview-scan.mjs match --sbom app.cdx.json --data cyberview-data
+node scanner/cyberview-scan.mjs match --nmap scan.xml --data cyberview-data
+node scanner/cyberview-scan.mjs match --list software.txt --data cyberview-data
+```
+
+`--sbom` reads CycloneDX (`components`) or SPDX (`packages`). A CPE or a package URL is used before the free-text name. `--list` reads the same CSV the scanner writes (`inventory.csv`) or lines such as `OpenSSH 9.2`. `--nmap` reads an nmap `-oX` file, including each open port's product and version. A component list has no address, so it counts as internal for the exposure answer. `--assume-exposed` marks that list internet-facing for the exposure answer only; it does not contact anything. An address in an nmap file is classified public or private the same way a scan would classify it, and is still not contacted.
+
+## Compare two scans
+
+```
+node scanner/cyberview-scan.mjs diff --before old/report.json --after new/report.json --out diff-out
+```
+
+This writes `diff.json`, `diff.txt` and `diff.html`. New means the later report lists a CVE on a host and port the earlier one did not. Resolved means the later report does not list it. That is not proof of a patch: a host that was down, or a service that hid its version, looks the same. The watch list is the new known-exploited or Act findings, for whatever alerting you already run. The scanner does not send mail and does not scan again. Run `scan` yourself on your own schedule, then `diff`.
+
 `data --full` also downloads every CVE lookup file (about 300,000 CVEs). With a full snapshot the report adds, per
 product, how many other CVEs in the CVE List name it; those carry no version ranges, so they are listed as leads to check,
 never as findings.

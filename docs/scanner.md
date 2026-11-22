@@ -39,7 +39,7 @@ scanner, its docs and its fixtures for NOCODE's attack patterns and exercises ea
 
 | File | What it does |
 |---|---|
-| `scanner/cyberview-scan.mjs` | the command line: `init`, `check`, `data`, `scan`; the authorization gate runs before anything else |
+| `scanner/cyberview-scan.mjs` | the command line: `init`, `check`, `data`, `scan`, `match`, `diff`; the authorization gate runs before a scan |
 | `scanner/lib/scope.mjs` | the scope file, the attestation (exact `STATEMENT`), address kinds, CIDR expansion, `gate()`; pure |
 | `scanner/lib/limits.mjs` | rate, concurrency, per-host and global budgets, the time limit; `settings()` refuses values above a ceiling |
 | `scanner/lib/probe.mjs` | the only TCP network code that touches targets: connect, read a greeting, SSH identification, one root-page request, TLS handshake |
@@ -52,6 +52,9 @@ scanner, its docs and its fixtures for NOCODE's attack patterns and exercises ea
 | `scanner/lib/match.mjs` | services to findings with the site's `matchFlaw`, rated with the site's `score` and `rate`, ranked |
 | `scanner/lib/scan.mjs` | run discovery, resolve and gate the scope (with the public-cap stop), probe politely over TCP and UDP, fingerprint, assemble the report |
 | `scanner/lib/report.mjs` | the run header, JSON, CSV (formula-safe), SARIF 2.1.0, the inventory CSV, the text summary, and the `coverage()` blind-spot report |
+| `scanner/lib/html.mjs` | self-contained `report.html` (no external resources, no executable markup) and the diff page; the backport caveat is in the header |
+| `scanner/lib/inputs.mjs` | `match` inputs: CycloneDX, SPDX, nmap `-oX` service XML, and a component list, bounded, no network |
+| `scanner/lib/diff.mjs` | compare two `report.json` files: new, resolved, still open, changed, and a watch list |
 
 **Coverage (never a silent clean).** `scan.mjs` records every probe outcome — open, closed, filtered, errored, and banners cut off before a version is read — not just open ports, and probes beyond the first few ports before calling a host unreachable (a firewall or IPS may drop the first probes). `report.mjs` `coverage()` turns that into a Coverage section in `summary.txt`/`report.json` listing hosts that answered on no port, filtered ports, truncated banners, ports left unchecked, and hosts that were **throttled**. A host that resets connections after answering (IPS/fail2ban) is backed off once (the Limiter's clock, so tests stay instant) and its reset ports are re-probed one at a time, recovering hidden services. When coverage is incomplete the command exits **2**, so a scan with blind spots is never mistaken for a clean one. Tests: `probeAll` finds an open port past dropped discovery ports, `coverage()` classifies gaps, `isTruncatedBanner` flags cut banners.
 
@@ -137,6 +140,14 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
   (1.3.6.1.2.1.1.1.0) with the standard read community `public` only (161). No other UDP, no raw sockets (node `dgram`),
   no other community, no iteration. A BIND or ntpd version becomes a matchable service; an SNMP agent answering `public`
   is reported as an observation with its `sysDescr`.
+
+## Match and diff (no target contacted)
+
+`match` (`tk-matchers`) rates a CycloneDX or SPDX file, an nmap `-oX` file, or a component list with the same `findings()` path as a scan. It does not import `probe.mjs` on that path and it does not open a connection. `--assume-exposed` is off by default: a list with no address stays internal for the SSVC exposure answer. An nmap address is classified public or private and still not contacted. CPE and package URLs are preferred over the free-text name. Input is cut at 8 MB and 5,000 components.
+
+`scan` and `match` both write `report.html` (`scan-html`). The file has no external resources and no executable markup. The backport caveat is the first box on the page, and it names a distribution when one was seen.
+
+`diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
 ## Deliberately left out
 

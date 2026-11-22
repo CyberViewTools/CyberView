@@ -7,9 +7,9 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 
 | id | Item | Stage | Lead | Next action |
 |---|---|---|---|---|
-| scan-html | Scanner HTML report (self-contained `report.html`) + surface the backport caveat in the report | Design | Design | spec the report + PR plan |
-| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Design | Design | Discovery done ([handoff](handoff/tk-matchers.md), BUILD); confirm `--assume-exposed`, then start PR1 (`inputs.mjs` adapter) |
-| tk-diff | Scan diff / watch — compare to last scan (new/fixed/still-open), optional scheduled re-scan + alert | Discovery | Discovery | brief: state model, alerts tie-in |
+| scan-html | Scanner HTML report (self-contained `report.html`) + surface the backport caveat in the report | Review | Implementation | self-contained report.html on scan and match; backport caveat in the header ([handoff](handoff/scan-html.md)) |
+| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Review | Implementation | `match` command, `--assume-exposed` off by default ([handoff](handoff/tk-matchers.md)) |
+| tk-diff | Scan diff / watch — compare to last scan (new/fixed/still-open), optional scheduled re-scan + alert | Review | Implementation | `diff` of two reports; watch list is a file, not a sender ([handoff](handoff/tk-diff.md)) |
 | tk-hygiene | TLS & exposure hygiene — cert expiry/weak protocols, missing security headers, version disclosure, default pages (from data already collected) | Implementation | Implementation | Discovery + Design done ([handoff](handoff/tk-hygiene.md)); PR 1 (TLS/cert) open, then PR 2 (HTTP/mail) |
 
 ## Parked (owner decision pending)

@@ -9,9 +9,12 @@ import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
 import { fromEdge } from "./fp-edge.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
+import { appServices } from "./fp-apps.mjs";
+import { withPack2 } from "./fp-apps2.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { certRecord } from "./cert-inventory.mjs";
+import { identify } from "./fp-identify.mjs";
 import { D } from "./shared.mjs";
 import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
@@ -42,7 +45,10 @@ export function servicesOf(r) {
   if (r.http) out.push(...fromHttp(r.http, r.port, !!r.tls));
   if (r.raw) out.push(...fromMysql(r.raw, r.port));
   out.push(...fromEdge(r, out));   // edge appliances, from the same response and certificate (fp-edge.mjs)
+  out.push(...appServices(r, out));
   if (!out.length && r.banner) out.push(...(/^SSH-/.test(r.banner) ? fromSsh(r.banner, r.port) : fromGreeting(r.banner, r.port)));
+  out.splice(0, out.length, ...withPack2(out, r));   // scan-app-versions pack 2: passive, from data already collected (fp-apps2.mjs)
+  out.push(...identify(r, out));   // passive identify: the same collected data only (scanner/lib/fp-identify.mjs)
   // a product stated with a version wins over the same product inferred from a certificate
   return out.filter((s, i) => !(s.guessed && out.some((o, j) => j !== i && !o.guessed && o.product === s.product)));
 }

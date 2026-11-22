@@ -15,12 +15,11 @@
   "pin_type": "global",
   "summary": "Dragos researchers say they submitted approximately two million prompts containing unique URLs and canary token credentials, and that their seeded prompts were used in attempts to access test systems and canary AWS accounts. They report evidence that at least three AI hosting providers were compromised. OpenRouter says it off-boarded three providers, removed 125 endpoints from Zero Data Retention eligibility and found no breach of OpenRouter itself.",
   "plain": "Researchers planted fake credentials in prompts sent to AI services and saw them used, which they say shows at least three AI hosting providers were compromised. OpenRouter removed three providers.",
-  "exec": "Sensitive data sent in prompts to third-party AI providers can be stolen or retained even when privacy settings promise otherwise.",
+  "exec": "Dragos says its canary credentials in prompts sent to AI services were later used, so data sent in prompts to third-party AI providers may be exposed.",
   "action": "OpenRouter says it notified all potentially affected customers; General advice: avoid putting real keys or passwords in prompts and rotate any that were.",
   "impact": "Dragos says the largest breach involved a couple hundred of its AWS canary keys. OpenRouter says it off-boarded three providers and removed 125 endpoints from Zero Data Retention eligibility.",
   "tags": [
     "data-breach",
-    "ai-enabled",
     "supply-chain",
     "third-party",
     "cloud"
@@ -56,7 +55,7 @@
     "note": "Dragos (the researchers' own report) and OpenRouter (provider's own announcement, which links the Dragos report) are primary pages; Sekurak relays both. The three affected providers are not named in the pages read."
   },
   "first_seen": "2026-11-22T14:42:44Z",
-  "updated_at": "2026-11-22T14:42:44Z",
+  "updated_at": "2026-11-22T14:57:00Z",
   "sectors": {
     "values": [
       "information-technology"
@@ -80,5 +79,19 @@
       "url": "https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/",
       "quote": "Removed 125 endpoints from Zero Data Retention (ZDR) eligibility."
     }
-  ]
+  ],
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-22T14:56:48Z",
+    "first_at": "2026-11-22T14:56:48Z",
+    "note": "stronger than the source: exec said prompt data can be retained despite privacy settings, which no page read says; rewrote to Dragos' stated canary use; removed unsupported ai-enabled tag. Two million prompts, largest breach, 125 endpoints, three off-boarded, no OpenRouter breach, customers notified",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "tags",
+      "misstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-22T14:56:48Z"
 }

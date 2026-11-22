@@ -1,5 +1,5 @@
 {
-  "action": "Check who can write to the SPI flash on any server, workstation or appliance using first-generation Ryzen, EPYC or Threadripper (Zen 1 or Zen+) parts, and restrict firmware update paths. AMD says no fix is planned, so see AMD bulletin AMD-SB-7075 for scope and consider retiring exposed platforms.",
+  "action": "INCIBE-CERT advises assessing who can install firmware on the SPI flash and by what routes, since on some systems it can be updated without physical access; see AMD bulletin AMD-SB-7075 for platform scope. AMD does not plan a fix.",
   "actor": "",
   "attack": [
     "firmware",
@@ -9,7 +9,6 @@
   "country": "United States",
   "date": "2026-11-18",
   "date_note": "Date is INCIBE's publication date; AMD's own release date was not read.",
-  "occurred_at": "2026-11-18T12:00:00Z",
   "exec": "A critical, permanent flaw in the boot ROM of older AMD processors cannot be patched, so the risk has to be managed by controlling who can modify firmware storage.",
   "first_seen": "2026-11-19T01:15:31Z",
   "geo_basis": "headquarters",
@@ -69,19 +68,25 @@
   "tags": [],
   "time_basis": "published",
   "title": "AMD Zen and Zen+ boot ROM signature flaw cannot be patched, INCIBE warns",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-22T14:58:00Z",
   "validation": {
     "checked_at": "2026-11-19T01:15:31Z",
     "state": "single_source",
     "note": "Read the INCIBE-CERT advisory (Spanish). AMD bulletin AMD-SB-7075 could not be loaded in this run."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:10:30Z",
-    "note": "Compared CVE-2026-74127, critical rating, exploitation No, no AMD fix, SPI flash, reporter, AMD-SB-7075, 18 Nov date against INCIBE advisory.",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-22T14:57:26Z",
+    "first_at": "2026-11-19T05:10:30Z",
+    "note": "action advice: removed unsourced retire/restrict advice, now INCIBE's advice; removed placeholder occurred_at (time not stated)",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "occurred_at"
+    ]
   },
-  "qa_checked_at": "2026-11-19T05:10:30Z",
+  "qa_checked_at": "2026-11-22T14:57:26Z",
   "sectors": {
     "values": [
       "cross-sector"

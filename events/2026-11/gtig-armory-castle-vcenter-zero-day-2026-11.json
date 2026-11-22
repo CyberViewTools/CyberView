@@ -1,5 +1,5 @@
 {
-  "action": "Apply Broadcom's fixed vCenter builds (8.0 U3m, 9.0.2.0200 or 9.1.1.0200) now; vCenter 7.0 has no public patch. Restrict inbound access to and egress from vCenter, following the hardening advice in Google's post.",
+  "action": "Google advises applying Broadcom's patches immediately; SecurityWeek lists fixed vCenter builds 8.0 U3m, 9.0.2.0200 and 9.1.1.0200 and says 7.0 has no public patch. Google also advises restricting inbound access to and egress from vCenter, as described in its post.",
   "actor": "ARMORY CASTLE",
   "attack": [
     "zero-day",
@@ -86,20 +86,24 @@
     "zero-day"
   ],
   "title": "Google: ARMORY CASTLE exploits vCenter zero-day CVE-2026-123890 in espionage campaign",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-22T14:56:50Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-20T03:20:48Z",
     "note": "Re-read Google Cloud Threat Intelligence (primary) and SecurityWeek: both agree on actor wording, CVE, 19 Nov publication and no named victims; GTIG gives early-September exploitation, SecurityWeek gives CVSS 9.8 and fixed builds. Rapid7 and THN not re-read in this run."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-21T15:40:39Z",
+    "state": "corrected",
+    "at": "2026-11-22T14:56:46Z",
     "first_at": "2026-11-20T03:25:04Z",
-    "note": "Compared title, actor wording (suspected PRC-nexus, formerly UNC5221), CVE, early Sept exploitation, 19 Nov date, CVSS 9.8, fixed builds and no public 7.0 patch against Google GTIG post and SecurityWeek",
-    "flags": []
+    "note": "action advice: attributed to Google (patch immediately, hardening) and SecurityWeek (fixed builds, no 7.0 patch). Actor wording, CVE, early-Sept exploitation, CVSS 9.8, date checked against Google and SecurityWeek",
+    "flags": [],
+    "categories": [
+      "action",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-21T15:40:39Z",
+  "qa_checked_at": "2026-11-22T14:56:46Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123890",

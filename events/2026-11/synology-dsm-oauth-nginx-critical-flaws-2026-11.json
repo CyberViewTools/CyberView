@@ -17,7 +17,7 @@
   "summary": "Synology published two advisories on 19 November. CVE-2026-120382 (CVSS 9.8) lets remote attackers read or write arbitrary files or conduct denial-of-service attacks through the DSM OAuth API. CVE-2026-123007 (CVSS 8.1) is an NGINX HTTP/2 heap buffer overflow. The revised advisories list fixes in DSM 7.4.1-90080-2 and 7.3.2-86009-6, with other versions marked OnGoing. Neither mentions exploitation.",
   "plain": "Synology has warned of two serious flaws in the software of its NAS storage devices. Fixed versions exist for DSM 7.3 and 7.4; fixes for other versions are still ongoing, and the vendor gives workarounds.",
   "exec": "Synology rates the DSM OAuth flaw Critical (CVSS 9.8) and says remote attackers can read or write arbitrary files; fixes exist for DSM 7.3 and 7.4.",
-  "action": "Upgrade to DSM 7.4.1-90080-2 or 7.3.2-86009-6 or above. For versions Synology lists as OnGoing, deactivate the OAuth Service package and disable HTTP/2 under Control Panel > Network > Connectivity meanwhile.",
+  "action": "Synology advises upgrading to DSM 7.4.1-90080-2 or 7.3.2-86009-6 or above. For versions it lists as OnGoing, Synology's workarounds are to deactivate the OAuth Service package and disable HTTP/2 under Control Panel > Network > Connectivity.",
   "impact": "DSM 7.1 to 7.4 and BeeStation OS 1.5 are listed as affected; DSM 7.2.x, 7.1 and BeeStation OS had no fix yet when read (advisories marked Ongoing).",
   "tags": [],
   "cves": [
@@ -48,18 +48,24 @@
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T13:35:00Z",
-    "note": "Vendor advisories read in full; GBHackers independently reports the same CVEs and scores. No exploitation stated by either."
+    "note": "Synology's own advisories SA_26_21 and SA_26_20 (primary, read in full) and GBHackers, which independently reports the same CVEs and scores. Neither states exploitation."
   },
   "first_seen": "2026-11-19T13:35:00Z",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-22T14:57:00Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-21T15:42:11Z",
+    "at": "2026-11-22T14:56:47Z",
     "first_at": "2026-11-19T16:40:09Z",
-    "note": "Fixes for 7.3/7.4 were stated as due by 20 Nov (only GBHackers says so); revised Synology advisories now list builds 7.4.1-90080-2 and 7.3.2-86009-6, others OnGoing. Removed unsourced ransomware/backup exec, rewrote plain and action. CVEs, CVSS 9.8/8.1, workarounds and no-exploitation checked",
-    "flags": []
+    "note": "action advice: attributed fix and workarounds to Synology; validation note names Synology advisories and GBHackers. Title, date, CVEs, CVSS 9.8/8.1, fixed builds, OnGoing rows, no exploitation checked against both advisories",
+    "flags": [],
+    "categories": [
+      "action",
+      "figure",
+      "validation",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-21T15:42:11Z",
+  "qa_checked_at": "2026-11-22T14:56:47Z",
   "cve_meta": [
     {
       "id": "CVE-2026-120382",

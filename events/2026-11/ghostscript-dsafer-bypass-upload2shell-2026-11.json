@@ -1,5 +1,5 @@
 {
-  "action": "Update Ghostscript to 10.08.0, which pwn.ai says fixes the flaw; on distributions that have not shipped it, apply the distribution's Ghostscript security update when available.",
+  "action": "Update Ghostscript to 10.08.0, which pwn.ai says fixes the flaw. General advice: where a distribution has not shipped 10.08.0, apply its Ghostscript security update when available.",
   "actor": "",
   "attack": [
     "rce",
@@ -65,7 +65,7 @@
   "tags": [],
   "time_basis": "published",
   "title": "pwn.ai shows Ghostscript sandbox escape (CVE-2026-125396) through file uploads in about ten applications",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-22T14:58:00Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-22T06:30:00Z",
@@ -104,15 +104,17 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-22T06:31:49Z",
+    "state": "corrected",
+    "at": "2026-11-22T14:57:27Z",
     "first_at": "2026-11-22T06:31:49Z",
-    "note": "Compared CVE, 8.5 score, affected range, 10.08.0 fix, about-ten-apps and no-attacks wording against The Hacker News, VulnCheck and pwn.ai; evidence quotes found word for word",
-    "flags": [
-      "no-cve-meta"
+    "note": "action advice: distribution-update advice not in sources, now marked General advice",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action"
     ]
   },
-  "qa_checked_at": "2026-11-22T06:31:49Z",
+  "qa_checked_at": "2026-11-22T14:57:27Z",
   "cve_meta": [
     {
       "id": "CVE-2026-125396",

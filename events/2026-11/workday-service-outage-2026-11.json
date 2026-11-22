@@ -1,5 +1,5 @@
 {
-  "action": "No security action is indicated. Workday customers: confirm that payroll runs, time entries and scheduled integrations from the evening of November 13 completed correctly.",
+  "action": "General advice: Workday customers should confirm that payroll runs, time entries and scheduled integrations from the evening of November 13 completed correctly.",
   "actor": "",
   "attack": [],
   "category": "outage",
@@ -15,7 +15,7 @@
   "org": "Workday",
   "pin_type": "hq",
   "place": "Pleasanton, CA",
-  "plain": "An outage on the evening of November 13 stopped many employees from signing in to Workday's payroll and staff-management service. HollywoodLife, citing the San Francisco Chronicle, reports a backup-testing problem; no attack is reported.",
+  "plain": "An outage on the evening of November 13 stopped many employees from signing in to Workday's payroll and staff-management service. Reports tie it to a backup-testing problem; Workday says it was not a cyber incident.",
   "products": [
     "Workday"
   ],
@@ -24,22 +24,43 @@
   "source_tier": "established",
   "sources": [
     {
+      "name": "FOX 11 Los Angeles",
+      "url": "https://www.foxla.com/news/workday-outage-means-employees-across-thousands-businesses-cant-access-accounts",
+      "published": "2026-11-13"
+    },
+    {
+      "name": "UC Today",
+      "url": "https://uctoday.com/workday-outage-backup-test-payroll-timekeeping",
+      "published": "2026-11-14"
+    },
+    {
       "name": "Hollywood Life",
-      "url": "https://hollywoodlife.com/2026/11/14/workday-outage-updates/"
+      "url": "https://hollywoodlife.com/2026/11/14/workday-outage-updates/",
+      "published": "2026-11-14"
     }
   ],
   "status": "confirmed",
-  "summary": "A service disruption on the evening of November 13 locked users out of Workday's payroll and HR platform, with nearly 3,000 Downdetector reports shortly after 5 p.m. ET. Workday said it was working urgently to investigate and resolve it. HollywoodLife, citing the San Francisco Chronicle, reports a problem found during backup-system testing, and, citing People, restoration by about 11 a.m. ET Saturday.",
+  "summary": "A service disruption on the evening of November 13 locked users out of Workday's payroll and HR platform; Downdetector showed nearly 3,000 outage reports shortly after 5 p.m., FOX 11 reports. The San Francisco Chronicle reported a problem found while testing backup systems. A Workday spokesperson told ABC10, as relayed by UC Today, that the disruption was not related to a cybersecurity incident and service was restored by 11 a.m. EST Saturday.",
+  "evidence": [
+    {
+      "url": "https://www.foxla.com/news/workday-outage-means-employees-across-thousands-businesses-cant-access-accounts",
+      "quote": "The website Downdetector first reported nearly 3,000 outage reports for the platform shortly after 5 p.m. Friday."
+    },
+    {
+      "url": "https://uctoday.com/workday-outage-backup-test-payroll-timekeeping",
+      "quote": "was restored by 11 a.m. EST Saturday"
+    }
+  ],
   "tags": [
     "cloud"
   ],
   "time_basis": "approx",
   "title": "Workday outage locks employees out of payroll and HR systems",
-  "updated_at": "2026-11-20T15:26:59Z",
+  "updated_at": "2026-11-22T14:57:41Z",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-20T15:26:59Z",
-    "note": "Read HollywoodLife (14 Nov): nearly 3,000 Downdetector reports after 5 p.m. ET Fri 13 Nov, Workday statement (investigating), cause per SF Chronicle, restoration ~11 a.m. ET Sat per People. CNN returns 451; Fox page only partly readable, so both removed from sources. Removed \"gave no cause\" (a cause was reported)."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T14:57:41Z",
+    "note": "Follow-up 22 Nov: FOX 11 Los Angeles (13 Nov; Workday statement to LiveNOW from FOX, nearly 3,000 Downdetector reports, cause per SF Chronicle) and UC Today (14 Nov; Workday spokesperson to ABC10: not related to a cybersecurity incident, restored by 11 a.m. EST Saturday) independently report the outage; HollywoodLife kept. ABC10 not read directly. Earlier: Read HollywoodLife (14 Nov): nearly 3,000 Downdetector reports after 5 p.m. ET Fri 13 Nov, Workday statement (investigating), cause per SF Chronicle, restoration ~11 a.m. ET Sat per People. CNN returns 451; Fox page only partly readable, so both removed from sources. Removed \"gave no cause\" (a cause was reported)."
   },
   "review": {
     "state": "corrected",
@@ -58,5 +79,6 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "date_note": "FOX 11 (published 13 Nov) reports the outage under way that Friday evening; the date is the day it happened."
 }

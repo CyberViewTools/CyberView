@@ -46,7 +46,7 @@
     "Vanderbilt University REDCap"
   ],
   "first_seen": "2026-11-19T00:14:29Z",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-22T14:56:50Z",
   "time_basis": "published",
   "category": "vuln",
   "date": "2026-11-18",
@@ -65,7 +65,7 @@
   "summary": "CISA added four vulnerabilities to its Known Exploited Vulnerabilities catalog on November 18, citing evidence of active exploitation: CVE-2024-10441 in Synology DiskStation Manager, CVE-2026-40217 in BerriAI LiteLLM (unprotected alternate channel), CVE-2026-90436 in Apache Axis (unsafe reflection) and CVE-2026-90817 in Vanderbilt University REDCap (code injection). The alert gives no fixed versions. The Hacker News reports exploitation including ransomware on Synology NAS, cryptomining and LLMjacking.",
   "plain": "The US cyber agency says attackers are actively using four flaws in a Synology NAS system, LiteLLM, Apache Axis and the REDCap research tool.",
   "exec": "CISA lists four widely deployed products as exploited, so federal patching deadlines apply and are a good signal for everyone else.",
-  "action": "Find Synology DSM, LiteLLM, Apache Axis and REDCap in your environment and apply vendor fixes where they exist. Axis 1.x is end of life with no fix (migrate or apply the July 12, 2026 commit); keep Axis, LiteLLM and REDCap off the open internet until addressed.",
+  "action": "CISA directs federal agencies to remediate under BOD 26-04: find Synology DSM, LiteLLM, Apache Axis and REDCap in your environment and apply vendor fixes where they exist. The Hacker News reports Axis 1.x is end of life and unpatched, and names migrating or applying the July 12, 2026 commit as options.",
   "sources": [
     {
       "name": "CISA alert",
@@ -95,16 +95,22 @@
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T00:14:29Z",
-    "note": "Read the CISA alert (primary source)."
+    "note": "Read the CISA alert (primary source) and The Hacker News, which both state the four additions; exploitation details come from The Hacker News only."
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-21T15:42:58Z",
+    "at": "2026-11-22T14:56:46Z",
     "first_at": "2026-11-19T16:40:11Z",
-    "note": "Four CVEs and products match CISA alert and THN; exec said 'confirmed exploitation', now CISA lists them as exploited",
-    "flags": []
+    "note": "action advice: unsourced 'keep off the internet' removed, advice now attributed to CISA BOD 26-04 and The Hacker News; validation note names both publishers. Title, CVEs, products, date checked against CISA alert and THN",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "validation",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-21T15:42:58Z",
+  "qa_checked_at": "2026-11-22T14:56:46Z",
   "sectors": {
     "values": [
       "cross-sector"

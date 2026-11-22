@@ -1,7 +1,7 @@
 {
   "title": "NodeLinkRAT campaign hides commands in public notepad pages, targets South Korean users",
-  "date": "2026-11-19",
-  "date_note": "Date of the GBHackers report on Genians research; the first phishing email in the campaign was dated 12 September 2026.",
+  "date": "2026-11-16",
+  "date_note": "Genians published the research on Monday 16 November, per Korea JoongAng Daily (published that day); GBHackers reported it on 19 November. The first phishing email in the campaign was dated 12 September 2026 (GBHackers).",
   "category": "incident",
   "severity": 2,
   "status": "confirmed",
@@ -13,11 +13,11 @@
   "lng": 126.98,
   "geo_basis": "country capital (targets in South Korea)",
   "pin_type": "country",
-  "actor": "Kimsuky (attributed by Genians Security Center, moderate confidence)",
-  "summary": "GBHackers reports Genians Security Center research on a phishing campaign posing as an aide to a South Korean National Assembly member. A ZIP held a fake Hangul document shortcut that ran hidden PowerShell and set a scheduled task fetching commands from a public aNotepad page, ending in the NodeLinkRAT remote access tool. Genians attributes it to Kimsuky with moderate confidence.",
+  "actor": "Kimsuky (assessed by Genians Security Center, medium confidence)",
+  "summary": "Genians Security Center said on 16 November that a spear-phishing campaign posed as an aide to a South Korean National Assembly member, Korea JoongAng Daily and GBHackers report. A ZIP held a fake Hangul document shortcut that ran hidden PowerShell and set a scheduled task fetching commands from a public aNotepad page, ending in the NodeLinkRAT remote access tool. Genians assessed Kimsuky may be responsible, with medium confidence, and could not rule out copycats.",
   "plain": "Phishing emails posing as a lawmaker's aide install a remote-access tool on Windows PCs, taking its orders from a public notepad web page. Researchers link it to North Korea's Kimsuky.",
   "exec": "Command channels on legitimate note sites evade domain blocking.",
-  "action": "Block or alert on .lnk files inside ZIP attachments, hunt for a scheduled task named CommonMaintenanceHost, and review outbound access to public notepad sites.",
+  "action": "General advice: block or alert on .lnk files inside ZIP attachments, hunt for a scheduled task named CommonMaintenanceHost, and review outbound access to public notepad sites.",
   "tags": [
     "phishing",
     "espionage"
@@ -32,8 +32,14 @@
   ],
   "sources": [
     {
+      "name": "Korea JoongAng Daily: North Korea-linked hackers suspected of targeting National Assembly seminar attendee",
+      "url": "https://www.koreajoongangdaily.com/korea/north-korealinked-hackers-suspected-of-targeting-national-assembly-seminar-attendee/12974662",
+      "published": "2026-11-16"
+    },
+    {
       "name": "GBHackers",
-      "url": "https://gbhackers.com/nodelinkrat-targets-windows/"
+      "url": "https://gbhackers.com/nodelinkrat-targets-windows/",
+      "published": "2026-11-19"
     }
   ],
   "source_tier": "established",
@@ -47,12 +53,12 @@
     "url": "https://gbhackers.com/nodelinkrat-targets-windows/"
   },
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T08:39:15Z",
-    "note": "GBHackers report of Genians research; Genians original not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T16:56:17Z",
+    "note": "Korea JoongAng Daily and GBHackers each report Genians' research and its Kimsuky assessment; Genians' original was not read. aNotepad, the ZIP/LNK chain and the 12 September email date are GBHackers' only; JoongAng says 'a publicly accessible online note-taking service'."
   },
   "first_seen": "2026-11-19T08:39:15Z",
-  "updated_at": "2026-11-19T08:39:15Z",
+  "updated_at": "2026-11-22T16:56:17Z",
   "review": {
     "state": "passed",
     "at": "2026-11-19T09:26:41Z",

@@ -1,0 +1,93 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T20:24:53Z",
+  "finished_at": "2026-11-22T20:31:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Bitly old links hijacked statement update",
+    "행정안전부 행정 전자메일 해킹 합동점검 결과",
+    "医薬品供給 確認システム 不正アクセス NTTデータ 厚生労働省",
+    "TfL Oyster photocard breach update customers",
+    "University of Texas at Arlington data breach notification number affected"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.malwarebytes.com/blog/news/2026/11/hijacked-bitly-links-turn-old-brand-posts-into-offensive-redirects",
+      "title": "Hijacked Bitly links turn old brand posts into offensive redirects (Malwarebytes, 16 Nov)",
+      "used_in": "bitly-short-link-hijacking-2026-11"
+    },
+    {
+      "url": "https://byline.network/2026/11/16-747/",
+      "title": "Byline Network on the administrative email hack (16 Nov)",
+      "used_in": "korea-admin-email-sso-hack-2026-11"
+    },
+    {
+      "url": "https://www.mhlw.go.jp/stf/newpage_77515.html",
+      "title": "MHLW notice of 18 Nov on the drug supply system",
+      "used_in": "mhlw-drug-supply-system-unauthorized-access-2026-11 (no update since 18 Nov)"
+    },
+    {
+      "url": "https://kumanichi.com/articles/2059292",
+      "title": "Kyodo via Kumanichi, 18 Nov 18:27",
+      "used_in": "mhlw-drug-supply-system-unauthorized-access-2026-11 (repeats the notice; no new facts)"
+    },
+    {
+      "url": "https://ianvisits.co.uk/articles/tfl-cyber-attack-may-have-exposed-data-of-265000-oyster-photocard-users-94247",
+      "title": "ianVisits, 19 Nov",
+      "used_in": "tfl-oyster-photocard-account-compromise-2026-11 (same facts as the event; no newer figure)"
+    },
+    {
+      "url": "https://www.uta.edu/cybersecurity/faq",
+      "title": "UTA cybersecurity FAQ (still dated 13 Nov)",
+      "used_in": "uta-cybersecurity-incident-2026-11 (no update)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "bitly-short-link-hijacking-2026-11",
+    "korea-admin-email-sso-hack-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "mhlw-drug-supply-system-unauthorized-access-2026-11",
+      "url": "https://www.mhlw.go.jp/stf/newpage_77515.html"
+    },
+    {
+      "id": "tfl-oyster-photocard-account-compromise-2026-11",
+      "url": "https://ianvisits.co.uk/articles/tfl-cyber-attack-may-have-exposed-data-of-265000-oyster-photocard-users-94247"
+    },
+    {
+      "id": "uta-cybersecurity-incident-2026-11",
+      "url": "https://www.uta.edu/cybersecurity/faq"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "TfL: about 5,000 customers may have had Oyster refund information (possibly bank details) accessed",
+      "url": "https://cyberinsider.com/?p=348728",
+      "note": "Only in a search summary (CyberInsider/ITV); ianVisits does not mention it, TfL's page answered 403 and ITV hung up. Needs a readable page before it goes into the event.",
+      "priority": "high"
+    },
+    {
+      "title": "Korea admin email hack: joint inspection results due by year-end",
+      "url": "https://byline.network/2026/11/16-747/",
+      "note": "Watch for the ministry's findings on cause and SSO fix.",
+      "priority": "low"
+    },
+    {
+      "title": "MHLW drug supply system: info site restart 'soon', report system offline pending investigation",
+      "url": "https://www.mhlw.go.jp/stf/newpage_77515.html",
+      "note": "No second notice as of 22 Nov; check for count of affected companies and restoration.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "tfl.gov.uk/campaign/cyber-security-incident (403)",
+    "itv.com (socket hang up, retried once)",
+    "m.korea.kr (ECONNRESET, retried once)"
+  ],
+  "notes": "Bitly: status developing -> confirmed (Bitly's own statement as reported by CNN/KSL and Malwarebytes), validation single_source -> corroborated, KonBriefing tracker replaced with Malwarebytes. Korea: added Byline Network (NIRS operator, year-end target), removed occurred_at that was the release's publication time (correction filed), action marked General advice. Remaining validator warning on Korea: figure-qualifier 'about 300' vs the Korean '300여개' (300-odd), which the checker reads as bare '300'; the translation is faithful. No severity-3 events met the candidate rules; 24 h follow-up and update exclusions applied.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

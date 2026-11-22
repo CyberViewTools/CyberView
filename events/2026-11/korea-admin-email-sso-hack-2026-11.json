@@ -2,7 +2,6 @@
   "title": "South Korea launches joint inspection after hack of government administrative email system",
   "date": "2026-11-16",
   "date_note": "Date of the ministry's release; the ministry says it was notified of the hack on 9 November.",
-  "occurred_at": "2026-11-16T04:30:00Z",
   "category": "incident",
   "severity": 2,
   "status": "confirmed",
@@ -15,10 +14,10 @@
   "geo_basis": "agency, country capital",
   "pin_type": "country",
   "actor": "",
-  "summary": "South Korea's Interior Ministry says related agencies told it on 9 November that the administrative email system had been hacked. It says about 300 accounts showed abnormal access. The attacker entered through the weak network of some local governments and used a single sign-on flaw. The ministry reported the leak to the privacy regulator, notified those affected and began a joint inspection with the NIS and KISA.",
+  "summary": "South Korea's Interior Ministry says related agencies told it on 9 November that the administrative email system run by the National Information Resources Service was hacked; about 300 accounts showed abnormal access. The attacker came through some local governments' weak networks and used a single sign-on flaw. The ministry reported the leak to the privacy regulator, notified those affected, began a joint inspection with NIS and KISA and aims to find the cause by year-end.",
   "plain": "Hackers got into South Korean government work email accounts through a login flaw. The ministry has cut connections, told the people affected and is investigating.",
   "exec": "Shows how a weak local network and shared single sign-on can expose a national government system.",
-  "action": "Review single sign-on and the links between partner or local networks and your email system; look for abnormal sign-ins.",
+  "action": "General advice: review single sign-on and the links between partner or local networks and your email system; look for abnormal sign-ins.",
   "tags": [
     "government",
     "email",
@@ -38,19 +37,30 @@
     {
       "name": "Ministry of the Interior and Safety (korea.kr)",
       "url": "https://m.korea.kr/briefing/pressReleaseView.do?newsId=156789401"
+    },
+    {
+      "name": "Byline Network",
+      "url": "https://byline.network/2026/11/16-747/",
+      "published": "2026-11-16"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://byline.network/2026/11/16-747/",
+      "quote": "300여개는 비정상 접속이 확인된 계정 수다."
     }
   ],
   "source_tier": "primary",
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-20T04:14:30Z",
-    "note": "Government press release (primary source); the attacker is not named."
+    "checked_at": "2026-11-22T20:28:01Z",
+    "note": "Government press release (primary source) plus Byline Network (16 Nov), which reports the ministry's statement including the NIRS-run email system and the year-end target for the cause; the attacker is not named. korea.kr did not load on 22 Nov (ECONNRESET)."
   },
   "report": {
     "read_depth": "full"
   },
   "first_seen": "2026-11-20T04:14:30Z",
-  "updated_at": "2026-11-20T04:14:30Z",
+  "updated_at": "2026-11-22T20:28:01Z",
   "review": {
     "state": "passed",
     "at": "2026-11-20T04:17:52Z",

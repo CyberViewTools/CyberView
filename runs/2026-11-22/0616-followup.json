@@ -1,0 +1,97 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T06:16:47Z",
+  "finished_at": "2026-11-22T06:20:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Amazon threat intelligence Cairn MONAI Label zero-day blog",
+    "\"MONAI Label\" Amazon Cairn aws.amazon.com/blogs/security",
+    "Tsume cyberattaque données clients novembre 2026",
+    "Danfoss AK-SM800A CVE advisory patch November 2026",
+    "WordPress 7.1.5 vulnerability exploited in the wild",
+    "сбой Рунета 16 ноября 2026 причина Роскомнадзор"
+  ],
+  "pages_read": [
+    {
+      "url": "https://therecord.media/amazon-research-cairn-ai-university-attacks-possible-zero-day",
+      "title": "The Record: Amazon research on Cairn AI university attacks, possible zero-day (20 Nov 2026)",
+      "used_in": "cairn-ai-monai-label-zero-day-2026-11 (checked; links Amazon's report and GHSA-qc22-rmgc-vg94, no CVE, no update appended)"
+    },
+    {
+      "url": "https://www.tsume-art.com/en/blog",
+      "title": "Tsume blog (newest post 'Shipping Update', 18 Nov 2026; no incident statement)",
+      "used_in": "tsume-figurine-maker-data-breach-2026-11 (checked)"
+    },
+    {
+      "url": "https://www.cyberattaque.org/tsume-confirme-une-cyberattaque-les-commandes-des-collectionneurs-de-figurines-exposees/",
+      "title": "Cyberattaque.org: Tsume confirme une cyberattaque (19 Nov 2026)",
+      "used_in": "tsume-figurine-maker-data-breach-2026-11 (re-read; no customer count given; matches record)"
+    },
+    {
+      "url": "https://socradar.io/blog/danfoss-ak-sm800a-flaw-takeover/",
+      "title": "SOCRadar: Unpatched Danfoss AK-SM800A Flaws Allow Takeover (16 Nov 2026)",
+      "used_in": "danfoss-refrigeration-controller-flaws-2026-11 (checked; still no CVE and no fixed firmware, BSI not aware of exploitation)"
+    },
+    {
+      "url": "https://www.e1.ru/text/world/2026/11/18/76772916/",
+      "title": "E1.ru: Массовый сбой Рунета 17 ноября 2026 (18 Nov 2026)",
+      "used_in": "russia-runet-outages-yandex-beeline-rostelecom-2026-11 (checked; covers a separate 17 Nov Timeweb outage, nothing on the cause of 16 Nov)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "amazon-cairn-ai-agents-monai-label-zero-day-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "cairn-ai-monai-label-zero-day-2026-11",
+      "url": "https://therecord.media/amazon-research-cairn-ai-university-attacks-possible-zero-day"
+    },
+    {
+      "id": "tsume-figurine-maker-data-breach-2026-11",
+      "url": "https://www.tsume-art.com/en/blog"
+    },
+    {
+      "id": "danfoss-refrigeration-controller-flaws-2026-11",
+      "url": "https://socradar.io/blog/danfoss-ak-sm800a-flaw-takeover/"
+    },
+    {
+      "id": "russia-runet-outages-yandex-beeline-rostelecom-2026-11",
+      "url": "https://www.e1.ru/text/world/2026/11/18/76772916/"
+    }
+  ],
+  "skipped": [
+    {
+      "title": "WordPress 7.1.5 security release: exploitation",
+      "url": "https://www.searchenginejournal.com/wordpress-7-1-5-security-release-fixes-18-vulnerabilities/598080/",
+      "reason": "search found no report of 7.1.5 flaws being exploited; exploitation reports concern older CVE-2026-87902 and CVE-2026-119977; no page opened, record not changed"
+    },
+    {
+      "title": "Timeweb cloud outage 17 Nov 2026 (network equipment fault per Timeweb)",
+      "url": "https://www.e1.ru/text/world/2026/11/18/76772916/",
+      "reason": "outage stated as an equipment fault by the provider; separate from the 16 Nov event; left for the researchers (older than most of the window, minor)"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Amazon Threat Intelligence: Chinese-nexus actor's Cairn AI agents found a zero-day on their own",
+      "url": "https://aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/",
+      "note": "Primary source for cairn-ai-monai-label-zero-day-2026-11 (linked by The Record). Page loaded but body not extracted by the fetcher; read it and add as first source, then consider status confirmed/official on Amazon's own report.",
+      "priority": "high"
+    },
+    {
+      "title": "MONAI Label advisory GHSA-qc22-rmgc-vg94",
+      "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94",
+      "note": "Maintainers' advisory for the MONAI Label flaw (CVE, patched version). Answered 403 to the fetcher; gh API not enabled for that repo in this session.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "aws.amazon.com blog post (body truncated to navigation by fetcher)",
+    "github.com/Project-MONAI advisory (403)",
+    "danfoss.com security advisories (403)"
+  ],
+  "notes": "Followup run, 4 events picked (events updated or follow-up-checked in the last 24 h excluded). amazon-cairn-ai-agents-monai-label-zero-day-2026-11 (Cryptopolitan/The Defiant) reports the same Amazon Threat Intelligence MONAI Label/Cairn finding as cairn-ai-monai-label-zero-day-2026-11 (BleepingComputer/The Record, first seen earlier, two established publishers): marked duplicate_of the latter. No published fact changed, so no correction file. Tsume: own site has no statement; Danfoss: no CVE or fix yet per SOCRadar; Runet 16 Nov: no stated cause found.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

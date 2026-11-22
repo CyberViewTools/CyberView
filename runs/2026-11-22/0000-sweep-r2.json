@@ -1,39 +1,49 @@
 {
-  "job": "sweep",
-  "started_at": "2026-11-22T00:00:00Z",
-  "finished_at": "2026-11-22T00:00:00Z",
-  "model": "claude-sonnet-5-5",
-  "searches": [
-    "Instinct AI assistant personal data leak risks warning"
-  ],
+  "job": "sweep-r2",
+  "model": "sonnet",
   "pages_read": [
     {
-      "url": "https://jo24.net/article/583440",
-      "title": "jo24 FBI breach",
-      "used_in": "closed as already on file"
+      "url": "https://seclists.org/oss-sec/2026/q4/809",
+      "title": "Dokploy reply",
+      "used_in": "none"
+    },
+    {
+      "url": "https://arabic.euronews.com/2026/11/22/hot-freezers-lost-gps-and-fake-bombs-europes-month-of-cyberattacks",
+      "title": "Euronews roundup",
+      "used_in": "none"
     }
   ],
   "added": [],
   "updated": [],
   "skipped": [
     {
-      "title": "FBI database (88d15334)",
-      "url": "https://jo24.net/article/583440",
-      "reason": "already on file: fbi-ncic-apparent-breach-2026-11 (corroborated)"
+      "title": "Euronews roundup",
+      "reason": "roundup; freezer attacks already on file"
+    },
+    {
+      "title": "note.com digest, CNA commentary, outage commentary",
+      "reason": "not events"
     }
   ],
   "open_leads": [
     {
-      "title": "Instinct privacy warning (686b2fbf)",
-      "url": "https://www.almasryalyoum.com/news/details/4416886",
-      "note": "page would not load; background coverage dates from Aug 2026; a warning, not an incident",
-      "priority": "low"
+      "title": "Dokploy CVE-2026-129987 authenticated RCE, fixed in 0.31.1",
+      "url": "https://seclists.org/oss-sec/2026/q4/809",
+      "note": "needs vendor advisory (GHSA-9932-qg8x-pr32 returned 403) or NVD",
+      "priority": "medium"
+    },
+    {
+      "title": "G1: critical flaw in language used by 90% of large firms",
+      "url": "https://g1.globo.com/tecnologia/ciberseguranca/noticia/2026/11/22/a-falha-critica-descoberta-na-linguagem-de-programacao-usada-por-90-das-grandes-empresas-do-mundo.ghtml",
+      "note": "page would not load",
+      "priority": "medium"
     }
   ],
   "failed_sites": [
-    "almasryalyoum.com"
+    "g1.globo.com",
+    "github.com advisory 403"
   ],
-  "notes": "",
+  "notes": "no events written",
   "worker_role": "researcher",
   "worker_model": "sonnet"
 }

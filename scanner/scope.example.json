@@ -1,0 +1,23 @@
+{
+  "cyberview_scope": 1,
+  "owner": "Example Ltd IT",
+  "contact": "secops@example.org",
+  "attestation": {
+    "statement": "I own the systems listed in targets, or I hold written permission from their owner to scan them for known vulnerabilities, and this scan stays within that permission.",
+    "agreed": false,
+    "name": "",
+    "date": "2026-11-21",
+    "expires": "",
+    "authorization_ref": ""
+  },
+  "targets": ["192.168.10.0/24", "10.20.0.5", "intranet.example.lan"],
+  "exclude": ["192.168.10.1"],
+  "discover": {
+    "cidr": true,
+    "domains": ["example.com"],
+    "ct": false,
+    "import": [{ "file": "assets.csv" }],
+    "cloud": [{ "file": "ec2.json", "provider": "aws-ec2" }]
+  },
+  "_help": "An example only: it does not run until you replace the targets with your own, set attestation.agreed to true and fill in your name. The optional 'discover' block finds hosts WITHIN this attested scope (cidr sweep, owned domains + Certificate Transparency when ct is true, an imported asset list, and your own read-only cloud inventory JSON); anything it finds outside the scope is dropped. See scanner/README.md."
+}

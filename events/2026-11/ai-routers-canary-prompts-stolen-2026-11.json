@@ -1,0 +1,84 @@
+{
+  "title": "Dragos researchers: canary credentials in about two million test prompts show at least three AI hosting providers compromised",
+  "date": "2026-11-19",
+  "date_note": "Date of the Dragos report; the page gives no earlier day for the breaches themselves.",
+  "category": "incident",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "OpenRouter",
+  "sector": "Technology",
+  "country": "Global",
+  "place": "Global (no location stated)",
+  "lat": 38.9,
+  "lng": -77,
+  "geo_basis": "global report; pin is a placeholder for the United States",
+  "pin_type": "global",
+  "summary": "Dragos researchers say they submitted approximately two million prompts containing unique URLs and canary token credentials, and that their seeded prompts were used in attempts to access test systems and canary AWS accounts. They report evidence that at least three AI hosting providers were compromised. OpenRouter says it off-boarded three providers, removed 125 endpoints from Zero Data Retention eligibility and found no breach of OpenRouter itself.",
+  "plain": "Researchers planted fake credentials in prompts sent to AI services and saw them used, which they say shows at least three AI hosting providers were compromised. OpenRouter removed three providers.",
+  "exec": "Sensitive data sent in prompts to third-party AI providers can be stolen or retained even when privacy settings promise otherwise.",
+  "action": "OpenRouter says it notified all potentially affected customers; General advice: avoid putting real keys or passwords in prompts and rotate any that were.",
+  "impact": "Dragos says the largest breach involved a couple hundred of its AWS canary keys. OpenRouter says it off-boarded three providers and removed 125 endpoints from Zero Data Retention eligibility.",
+  "tags": [
+    "data-breach",
+    "ai-enabled",
+    "supply-chain",
+    "third-party",
+    "cloud"
+  ],
+  "cves": [],
+  "products": [
+    "OpenRouter"
+  ],
+  "attack": [
+    "supply-chain"
+  ],
+  "sources": [
+    {
+      "name": "Dragos: Three breaches, endless leaks: Your AI supply chain needs canaries",
+      "url": "https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens",
+      "published": "2026-11-19"
+    },
+    {
+      "name": "OpenRouter: data processing incidents on inference providers",
+      "url": "https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/",
+      "published": "2026-11-22"
+    },
+    {
+      "name": "Sekurak",
+      "url": "https://sekurak.pl/badacze-wyslali-dwa-miliony-spreparowanych-promptow-do-routerow-ai-zawierajacych-baity-tzw-kanarki-zawierajace-poufne-dane-ktos-kradnie-niektore-prompty/",
+      "published": "2026-11-22"
+    }
+  ],
+  "source_tier": "primary",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-22T14:45:00Z",
+    "note": "Dragos (the researchers' own report) and OpenRouter (provider's own announcement, which links the Dragos report) are primary pages; Sekurak relays both. The three affected providers are not named in the pages read."
+  },
+  "first_seen": "2026-11-22T14:42:44Z",
+  "updated_at": "2026-11-22T14:42:44Z",
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "evidence": [
+    {
+      "url": "https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens",
+      "quote": "we submitted approximately two million prompts containing unique URLs and canary token credentials"
+    },
+    {
+      "url": "https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens",
+      "quote": "The largest breach involved a couple hundred of our AWS keys."
+    },
+    {
+      "url": "https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/",
+      "quote": "Removed 125 endpoints from Zero Data Retention (ZDR) eligibility."
+    }
+  ]
+}

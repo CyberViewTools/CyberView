@@ -1,65 +1,80 @@
 {
-  "actor": "",
-  "attack": [
-    "ransomware",
-    "data-theft"
-  ],
-  "cves": [],
-  "products": [],
-  "first_seen": "2026-11-19T22:30:00Z",
-  "updated_at": "2026-11-19T22:30:00Z",
-  "time_basis": "published",
-  "date": "2026-11-19",
-  "category": "incident",
-  "title": "Fort Smith, Arkansas forensic report details August ransomware attack on city network",
-  "org": "City of Fort Smith",
-  "sector": "Government",
-  "country": "United States",
-  "place": "Fort Smith, Arkansas",
-  "lat": 35.3859,
-  "lng": -94.3985,
-  "pin_type": "victim",
-  "geo_basis": "victim city",
-  "summary": "A forensic report by PNG Cyber, made public on 19 November, says attackers accessed the city's network from 24 July to 18 August 2026, exfiltrated data and launched file encryption on 16 August. Talk Business & Politics reports the findings confirm Interlock's early-September claim. Police systems remain affected, and the report does not explain how credentials were stolen.",
-  "plain": "A report on the August attack on Fort Smith's computers says hackers were inside for weeks, stole data and then locked files. Some city and police systems are still not back to normal.",
-  "exec": "Attackers were in a city network for weeks before encrypting files, and recovery of public services is still incomplete.",
-  "action": "Review privileged account monitoring and alerting; test that offline backups restore and that endpoint detection covers every system.",
-  "severity": 2,
-  "status": "confirmed",
-  "date_note": "Date is the publication of the report; the encryption attack was on 16 August 2026.",
-  "tags": [
-    "ransomware",
-    "local-government",
-    "interlock"
-  ],
-  "source_tier": "established",
-  "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T22:30:00Z",
-    "note": "Only Talk Business & Politics read, which summarises the PNG Cyber report; the report itself was not read."
+ "actor": "",
+ "attack": [
+  "ransomware",
+  "data-theft"
+ ],
+ "cves": [],
+ "products": [],
+ "first_seen": "2026-11-19T22:30:00Z",
+ "updated_at": "2026-11-22T14:41:49Z",
+ "time_basis": "published",
+ "date": "2026-11-19",
+ "category": "incident",
+ "title": "Fort Smith, Arkansas forensic report details August ransomware attack on city network",
+ "org": "City of Fort Smith",
+ "sector": "Government",
+ "country": "United States",
+ "place": "Fort Smith, Arkansas",
+ "lat": 35.3859,
+ "lng": -94.3985,
+ "pin_type": "victim",
+ "geo_basis": "victim city",
+ "summary": "A PNG Cyber forensic report, made public on 19 November, says attackers accessed the city's network from 24 July to 18 August and launched file encryption on 16 August; Talk Business & Politics says it confirms Interlock's claim. The outlet says the city's 18 November notice puts information of 1,032 employees and more than 36,000 residents and businesses with water/sewer accounts potentially at risk.",
+ "plain": "A report on the summer attack on Fort Smith's computers says hackers were inside for weeks before locking files. The city says information of about 1,000 staff and more than 36,000 water/sewer account holders may be at risk.",
+ "exec": "Attackers were in a city network for weeks before encrypting files, and data of employees and utility account holders may be at risk.",
+ "action": "General advice: review privileged account monitoring and test that offline backups restore.",
+ "severity": 2,
+ "status": "confirmed",
+ "date_note": "Date is the publication of the report; the encryption attack was on 16 August 2026.",
+ "tags": [
+  "ransomware",
+  "local-government",
+  "interlock"
+ ],
+ "source_tier": "established",
+ "validation": {
+  "state": "single_source",
+  "checked_at": "2026-11-22T14:41:49Z",
+  "note": "Two Talk Business & Politics articles read (one publisher): the 19 Nov report article summarising the PNG Cyber report, and the 18 Nov article on the city's notice. Neither the PNG report nor the city document was read."
+ },
+ "sources": [
+  {
+   "name": "Talk Business & Politics",
+   "url": "https://talkbusiness.net/2026/11/report-provides-info-about-attack-on-city-of-fort-smith-computer-system/"
   },
-  "sources": [
-    {
-      "name": "Talk Business & Politics",
-      "url": "https://talkbusiness.net/2026/11/report-provides-info-about-attack-on-city-of-fort-smith-computer-system/"
-    }
-  ],
-  "checked_at": "2026-11-19T22:30:00Z",
-  "review": {
-    "state": "passed",
-    "at": "2026-11-19T22:26:28Z",
-    "note": "Compared title, dates, exfiltration, police systems and credential-theft gap against the Talk Business article; Interlock confirmation attributed to the outlet; actor blank; single_source accurate",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-19T22:26:28Z",
-  "sectors": {
-    "values": [
-      "government-facilities"
-    ],
-    "basis": "stated"
-  },
-  "surface": {
-    "value": "identity",
-    "basis": "inferred"
+  {
+   "name": "Talk Business & Politics (city notice of 18 Nov)",
+   "url": "https://talkbusiness.net/2026/11/fort-smith-issues-guidance-on-data-protection-related-to-computer-attack/",
+   "published": "2026-11-18"
   }
+ ],
+ "checked_at": "2026-11-22T14:41:49Z",
+ "review": {
+  "state": "passed",
+  "at": "2026-11-19T22:26:28Z",
+  "note": "Compared title, dates, exfiltration, police systems and credential-theft gap against the Talk Business article; Interlock confirmation attributed to the outlet; actor blank; single_source accurate",
+  "flags": []
+ },
+ "qa_checked_at": "2026-11-19T22:26:28Z",
+ "sectors": {
+  "values": [
+   "government-facilities"
+  ],
+  "basis": "stated"
+ },
+ "surface": {
+  "value": "identity",
+  "basis": "inferred"
+ },
+ "evidence": [
+  {
+   "url": "https://talkbusiness.net/2026/11/fort-smith-issues-guidance-on-data-protection-related-to-computer-attack/",
+   "quote": "Potentially at risk is personal and financial information of 1,032 city employees"
+  },
+  {
+   "url": "https://talkbusiness.net/2026/11/fort-smith-issues-guidance-on-data-protection-related-to-computer-attack/",
+   "quote": "the more than 36,000 city residents and businesses with water/sewer accounts"
+  }
+ ]
 }

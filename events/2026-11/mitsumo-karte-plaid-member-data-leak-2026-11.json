@@ -9,7 +9,7 @@
   ],
   "time_basis": "published",
   "first_seen": "2026-11-20T19:48:30Z",
-  "updated_at": "2026-11-22T20:59:43Z",
+  "updated_at": "2026-11-22T21:14:00Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -29,10 +29,10 @@
   "pin_type": "hq",
   "severity": 2,
   "source_tier": "primary",
-  "summary": "MeetsMore said on 18 November that customer data it used in PLAID's KARTE for email and LINE delivery leaked. It says 60,000 people had a name, email, phone number or date of birth exposed, and 3,398,469 people only a member identifier number and prefecture. MeetsMore says passwords and card data were not included and no unauthorized access to its own systems was confirmed.",
+  "summary": "MeetsMore said on 18 November that customer data it used in PLAID's KARTE for email and LINE delivery leaked. It says 60,000 people had at least one of name, email, phone number or date of birth exposed, and 3,398,469 people only a member identifier number and prefecture. MeetsMore says passwords and card data were not included and no unauthorized access to its own systems was confirmed.",
   "plain": "A Japanese services company says customer data held in a marketing platform run by its contractor was leaked. MeetsMore says passwords and card data were not included.",
   "exec": "A breach at one marketing-platform supplier can expose the customer data of companies that link to it, even when their own systems were not accessed.",
-  "action": "Organisations linked to KARTE: invalidate the linked credentials as PLAID asked, and warn customers of phishing. Affected people: be cautious of unexpected emails or calls.",
+  "action": "Organisations linked to KARTE: disable the linkage credentials, as PLAID asks (per Cybersecurity.com). Affected people: MeetsMore urges caution with suspicious emails, SMS and calls claiming to be MeetsMore.",
   "sources": [
     {
       "name": "MeetsMore notice, 18 Nov 2026",
@@ -41,7 +41,8 @@
     },
     {
       "name": "Cybersecurity.com (Japan)",
-      "url": "https://cybersecurity-jp.com/news/118638"
+      "url": "https://cybersecurity-jp.com/news/118638",
+      "published": "2026-11-19"
     }
   ],
   "evidence": [
@@ -61,12 +62,17 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T19:58:10Z",
+    "at": "2026-11-22T21:12:13Z",
     "first_at": "2026-11-20T19:58:10Z",
-    "note": "Action said revoke and reissue credentials (PLAID asked to invalidate only) and exec said every company; fixed. 60,000 / 3,398,469 figures and fields, dates checked OK",
-    "flags": []
+    "note": "action advice: attributed to PLAID and MeetsMore only what the sources say (PLAID's credential-disabling request, MeetsMore's caution about suspicious emails, SMS and calls); figure qualifier: 60,000 are people with any one of the listed fields, summary now says at least one of; added Cybersecurity.",
+    "flags": [],
+    "categories": [
+      "action",
+      "figure",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-20T19:58:10Z",
+  "qa_checked_at": "2026-11-22T21:12:13Z",
   "sectors": {
     "values": [
       "commercial-facilities"

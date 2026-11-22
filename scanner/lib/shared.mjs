@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // The site's own matching and rating code, loaded here unchanged so the scanner and the Vulnerabilities page cannot disagree:
 //   site/workbench-lib.js  version comparison, affected ranges, product names, matchFlaw, the patch-queue points
 //   site/cvedb-lib.js      the CVE lookup rows, the CyberView rating (score) and CISA's SSVC priority (rate)

@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // The scope file and the authorization gate. Pure functions (no network) so the gate can be tested on its own.
 // A scan never starts without a scope file that (1) lists the hosts and ranges the operator may scan, (2) records the
 // operator's attestation that they own them or are authorized to test them, in the exact words below, and (3) stays inside

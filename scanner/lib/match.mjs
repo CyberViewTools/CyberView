@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // Detected services -> findings: matched against CyberView's flaws with the site's own matchFlaw, rated with the site's own
 // CyberView rating and SSVC priority, and ranked. No network here: rows are handed in by the caller.
 import { W, D } from "./shared.mjs";

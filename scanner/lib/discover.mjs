@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // Discovery: turn the "find the hosts for me" entries in the scope file into candidate host names and addresses, so the
 // operator never hand-lists every host. NOTHING here decides what is scanned: every candidate is handed back with its
 // provenance and then re-checked against the attested scope by the gate in scope.mjs (an address or name outside the scope,

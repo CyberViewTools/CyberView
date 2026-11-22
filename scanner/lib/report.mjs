@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // The report and its exports: JSON (everything), CSV (one row per CVE and place seen), SARIF 2.1.0 (for code-scanning
 // dashboards), an inventory CSV (the Vulnerabilities page's "My software" view reads it), and a plain-text summary.
 // Written to the operator's own disk only; nothing here sends anything anywhere.

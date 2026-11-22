@@ -125,3 +125,7 @@ matching and rating against the site's libraries, the CSV, SARIF and inventory e
 and online data (with a stand-in fetch), Ctrl-C, and an end-to-end scan of stand-in services on 127.0.0.1
 (`tests/fixtures/scanner/servers.mjs`) that records every byte the scanner sends. No test contacts a real host. The
 snapshot under `tests/fixtures/scanner/snapshot/` uses invented CVE ids (CVE-2026-90xxx) and is marked as test data.
+
+## Licence
+
+The scanner is a proprietary CyberView product under `scanner/LICENSE` (not the repository's MIT licence): download and use on systems you own or are authorised to test, no redistribution without permission.

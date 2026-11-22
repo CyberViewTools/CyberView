@@ -1,3 +1,4 @@
+// CyberView Scanner — proprietary; see scanner/LICENSE (not the repository's MIT licence).
 // Fingerprint parsers: what a service says about itself (a greeting banner, HTTP response headers, a TLS certificate) ->
 // product, vendor and version. Pure functions, no network; every input is text the service sent on its own or in answer to
 // the scanner's one benign request. Product names follow NVD's CPE names so the version ranges in CyberView's data match.

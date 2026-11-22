@@ -1,5 +1,5 @@
 {
-  "action": "Autopay card payers in Poland: check your transaction history and report any transaction you do not recognise to your card-issuing bank; treat messages or calls that cite this incident with caution.",
+  "action": "Autopay advises its customers to check their transaction history and report unrecognised transactions to their bank promptly, and warns about messages and calls citing the cyberattack.",
   "actor": "",
   "attack": [],
   "category": "incident",
@@ -7,7 +7,7 @@
   "cves": [],
   "date": "2026-11-11",
   "date_note": "Date Autopay says it detected the unauthorized access; reported 14-15 November",
-  "exec": "A Polish payment operator reports unauthorized access to part of its payment data; scope is not stated, so merchants and cardholders cannot yet judge exposure.",
+  "exec": "A Polish payment operator's breach may include card data; some banks reportedly blocked cards, and the number affected is not stated.",
   "first_seen": "2026-11-19T16:56:00Z",
   "geo_basis": "country",
   "lat": 52.2297,
@@ -15,7 +15,7 @@
   "org": "Autopay S.A.",
   "pin_type": "country",
   "place": "Poland",
-  "plain": "Polish online payment company Autopay says someone got into part of its systems and some payment data it handles. It says payments kept working and has not said how many people are affected.",
+  "plain": "Polish payment company Autopay says someone got into part of its systems and some payment data, possibly including card details. At least two banks blocked some cards, a report says; no number of people is given.",
   "products": [],
   "sector": "Financial services / payments",
   "severity": 2,
@@ -32,20 +32,25 @@
     {
       "name": "android.com.pl (14 Nov, relaying Autopay's notice)",
       "url": "https://android.com.pl/tech/1104975-cyberatak-autopay-wyciek-danych-ai/"
+    },
+    {
+      "name": "money.pl (19 Nov, citing Niebezpiecznik)",
+      "url": "https://www.money.pl/gospodarka/atak-na-autopay-banki-zastrzegaja-karty-klientow-7352672287893504a.html",
+      "published": "2026-11-19"
     }
   ],
   "status": "developing",
-  "summary": "Autopay S.A. says it detected unauthorized access on 11 November to part of its infrastructure and to part of the payment data it processes, and cannot entirely rule out that data was copied. It notified Poland's data protection authority, the police and CSIRT KNF, money.pl (citing PAP) reports. A spokesperson said transaction processing was not affected and described \"massive use of AI tools\"; no number of affected people is stated.",
+  "summary": "Autopay S.A. says it detected unauthorized access on 11 November to part of its infrastructure and payment data; it may concern email addresses, top-up phone numbers, IP addresses and card data used for transactions, not banking logins, and copying cannot be ruled out. It notified UODO, police and CSIRT KNF and says processing was unaffected. Citing Niebezpiecznik, money.pl reports at least two banks blocked some users' cards; no affected number is given.",
   "tags": [
     "data-breach",
     "ai-enabled"
   ],
   "title": "Autopay (Poland) reports unauthorized access to payment data, says attack used AI tools",
-  "updated_at": "2026-11-21T04:57:38Z",
+  "updated_at": "2026-11-22T12:25:13Z",
   "validation": {
     "state": "single_source",
-    "checked_at": "2026-11-19T16:56:00Z",
-    "note": "money.pl and Spider's Web both relay Autopay's own statement; no independent confirmation of scope. The Japanese headline's claim that banks blocked cards is not in either page read."
+    "checked_at": "2026-11-22T12:25:13Z",
+    "note": "money.pl, Spider's Web and android.com.pl relay Autopay's own statement; the bank card blocking rests on Niebezpiecznik as relayed by money.pl (19 Nov), which does not name the banks. No independent confirmation of scope."
   },
   "review": {
     "state": "corrected",

@@ -13,7 +13,7 @@ import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, certInfo
 import { cleanFlaws, findings, toItem } from "../../scanner/lib/match.mjs";
 import { dirSource, webSource, ALLOWED, checkBase } from "../../scanner/lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, servicesOf, allPorts } from "../../scanner/lib/scan.mjs";
-import { toCsv, toSarif, toInventory, CSV_HEAD, coverage, isTruncatedBanner, summaryText } from "../../scanner/lib/report.mjs";
+import { toCsv, toSarif, toInventory, CSV_HEAD, coverage, isTruncatedBanner, summaryText, summarize } from "../../scanner/lib/report.mjs";
 import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
 import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
 import { udpProbe } from "../../scanner/lib/udp.mjs";
@@ -152,6 +152,9 @@ test("SSH banners: OpenSSH (portable suffix and distribution builds), Dropbear, 
   assert.deepEqual([fromSsh(BANNERS.ssh_dropbear)[0].product, fromSsh(BANNERS.ssh_dropbear)[0].version], ["Dropbear SSH", "2022.83"]);
   assert.equal(fromSsh(BANNERS.ssh_libssh)[0].version, "0.9.6");
   const c = fromSsh(BANNERS.ssh_cisco)[0]; assert.equal(c.product, ""); assert.match(c.label, /Cisco-1\.25/);
+  // OpenSSH with the version stripped is still OpenSSH (low confidence), not an anonymous "SSH server"
+  const vl = fromSsh("SSH-2.0-OpenSSH")[0]; assert.deepEqual([vl.product, vl.vendor, vl.version, vl.guessed], ["OpenSSH", "OpenBSD", "", true]);
+  const win = fromSsh("SSH-2.0-OpenSSH_for_Windows")[0]; assert.deepEqual([win.product, win.version], ["OpenSSH", ""]);
   assert.deepEqual(fromSsh("HTTP/1.1 400 Bad Request"), []);
 });
 test("FTP, SMTP, IMAP, POP3 and VNC greetings", () => {
@@ -164,6 +167,12 @@ test("FTP, SMTP, IMAP, POP3 and VNC greetings", () => {
   assert.equal(g("smtp_postfix", 25).product, "Postfix"); assert.equal(g("smtp_exchange", 25).product, "Exchange Server");
   assert.equal(g("imap_dovecot", 143).product, "Dovecot"); assert.equal(g("pop_dovecot", 110).distro, "Debian");
   assert.equal(g("vnc", 5900).label, "VNC server");
+  // a bare 220 greeting is typed by its words, not the port: an unbranded FTP on a non-21 port is FTP, not SMTP
+  assert.equal(fromGreeting("220 Welcome to the FTP service", 2121)[0].proto, "ftp");
+  assert.equal(fromGreeting("220 mail.example.com ESMTP ready", 2525)[0].proto, "smtp");
+  assert.equal(fromGreeting("220 service ready", 21)[0].proto, "ftp");          // silent banner: fall back to the port
+  assert.equal(fromGreeting("220 service ready", 587)[0].proto, "smtp");
+  assert.deepEqual(fromGreeting("220 service ready", 9999), []);                 // bare 220 on an unrelated port: no guess
 });
 test("MySQL and MariaDB handshakes; a refusal packet gives no version", () => {
   const pkt = (body) => Buffer.concat([Buffer.from([body.length & 255, (body.length >> 8) & 255, 0, 0]), body]);
@@ -581,6 +590,20 @@ test("probeAll: a host that resets after answering is backed off and re-probed, 
   assert.equal(cov.throttled[0].recovered, 3);
   assert.equal(cov.ports_filtered, 0);              // a recovered port counts by its LAST (open) outcome, not the reset
   assert.equal(cov.complete, false);                // throttling stays a coverage note even after recovery
+});
+
+test("summarize: low-confidence findings are listed but kept out of the headline counts (#82 item 5)", () => {
+  const hosts = [{ up: true, services: [{}], ports: [{ state: "open" }], observations: [] }];
+  const f = (conf, over) => ({ confidence: conf, state: "affected", kev: true, rating: { band: "Critical" }, priority: { decision: "act" }, overdue: over });
+  const s = summarize(hosts, [f("high", true), f("medium", false), f("low", true), f("low", false)]);
+  assert.equal(s.findings, 4);
+  assert.equal(s.low_confidence, 2);                 // the two low-confidence rows are counted as such
+  assert.equal(s.known_exploited, 2);                // but excluded from the headline KEV / Critical / Act / overdue counts
+  assert.equal(s.critical, 2);
+  assert.equal(s.act, 2);
+  assert.equal(s.overdue, 1);                        // only the high-confidence overdue row, not the low one
+  assert.equal(s.version_confirmed, 4);              // version_confirmed stays a plain state count (all four are "affected")
+  assert.match(summaryText({ summary: s, coverage: null, findings: [], hosts: [], notes: [], run: {} }), /2 low-confidence, listed but not in the counts below/);
 });
 
 test("probePort: plain HTTP on a TLS-by-convention port falls back to plain, and --http-ports overrides TLS (#82 item 4)", async () => {

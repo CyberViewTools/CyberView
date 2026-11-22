@@ -60,7 +60,8 @@ jobs:
         run: node scripts/pipecheck.mjs alerts
       - name: Commit and push (the data branch; starts the deploy)
         if: steps.gate.outputs.go == '1'
-        run: node scripts/data-commit.mjs "data: pipeline check" data/quality.json data/status.json
+        run: |
+          node scripts/data-commit.mjs "data: pipeline check" data/quality.json data/status.json
       - name: Alert on failure
         if: failure()
         run: |

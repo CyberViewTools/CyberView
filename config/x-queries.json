@@ -1,0 +1,7 @@
+{
+  "_note": "Standing keyword queries for X (Twitter) as a lead source (scripts/x-leads.mjs). OFF by default: curated accounts (config/x-accounts.json) carry the signal; a raw keyword firehose is mostly retweets and rumour (see the 21 Nov 2026 probe in issue #72). The scout may propose changes (scripts/propose.mjs); a query is only ever a lead, never verification. For Route A (official API) each query gets `-is:retweet -is:reply` appended and is capped by max_results; in Route B (Grok handoff) Grok applies the same filters. Keep queries under 500 characters (pay-per-use limit).",
+  "queries": [
+    { "q": "(ransomware OR \"data breach\" OR \"cyber attack\") CVE exploited", "lang": "en", "max_results": 10, "active": false, "why": "exploited-CVE chatter; tightened with 'exploited' to cut noise" },
+    { "q": "\"industrial control\" (outage OR disruption OR ICS OR SCADA)", "lang": "en", "max_results": 10, "active": false, "why": "OT/ICS incidents; routed to the outage desk unless the post names a cyber official source" }
+  ]
+}

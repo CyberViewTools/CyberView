@@ -209,6 +209,8 @@ export const SECONDARY_HOSTS = ["ransomware.live", "ransomlook.io", "redpacketse
 // a tag, category, label, author, topic or search listing rather than one article (e.g. thehackernews.com/search/label/X)
 const LISTING = /\/(tag|tags|category|categories|label|labels|author|authors|topic|topics|archive|archives)\/[^/]+\/?(page\/\d+\/?)?$|\/search\/?$/i;
 const hostOf = (u) => { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ""); } catch { return ""; } };
+// social-media and leak-site hosts: a lead source only (via "x" etc.), NEVER an event source (mirrors LEAK_HOST in scripts/claims-desk.mjs)
+export const SOCIAL_SRC = /(^|\.)(x\.com|twitter\.com|t\.me|telegram\.(me|org)|mastodon\.social|bsky\.app|linkedin\.com|facebook\.com|reddit\.com|onion)$/;
 export const isSecondary = (u) => { const h = hostOf(u); return !!h && SECONDARY_HOSTS.some((x) => h === x || h.endsWith("." + x)); };
 export function isListingPage(u) {
   try { const x = new URL(u); return LISTING.test(x.pathname) || ((x.pathname === "/" || /\/search\b/i.test(x.pathname)) && /[?&](s|q|query|search)=/i.test(x.search)); } catch { return false; }
@@ -260,6 +262,7 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
   if (allSecondary && e.source_tier && e.source_tier !== "aggregator") add("warn", "tier-secondary", `every source is a tracker or roundup, so source_tier is "aggregator", not "${e.source_tier}"`);
   if (e.status === "confirmed" && e.source_tier === "aggregator" && !allSecondary) add("warn", "confirmed-on-aggregator", '"confirmed" needs the organisation\'s or an authority\'s own statement among the sources; an aggregator relaying it is not enough');
   for (const s of src) if (isListingPage(s.url)) add("error", "listing-source", `source ${s.url.slice(0, 100)} is a tag, category, search or listing page: cite the specific article`);
+  for (const s of src) if (SOCIAL_SRC.test(hostOf(s.url))) add("error", "social-source", `source ${s.url.slice(0, 100)} is a social-media or leak-site post: X, Telegram and the like are leads only — cite the organisation's, a regulator's, a government's or a publisher's own page`);
   // tags only for what the text (and so the source) says
   const words = `${e.title || ""} ${e.summary || ""} ${e.plain || ""} ${e.exec || ""}`;
   // optional names in other scripts or languages (docs/schema.md; scripts/triage.mjs matches retellings with them)

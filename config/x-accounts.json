@@ -1,0 +1,51 @@
+{
+  "_note": "Curated X (Twitter) accounts used ONLY as a lead source (scripts/x-leads.mjs, no AI). An X post is never enough to create or corroborate a verified event; researchers cite the publisher's or vendor's own page, and x.com is never an event source (LEAK_HOST in scripts/claims-desk.mjs, and the source guard in scripts/lib/validate.mjs). Every handle here was looked up on X on the date in `added`; never add a handle that was not looked up. `x_user_id` is the stable key (handles get renamed) and is filled from the first handoff batch that carries it. Changes go through scripts/propose.mjs (the scout may propose, never invent, handles). `watch` holds looked-up-and-rejected or retired handles that must NOT be polled.",
+  "tiers": {
+    "gov": "government agency or national CERT",
+    "vendor": "vendor PSIRT or threat-intelligence team",
+    "grid": "grid operator or ISO (feeds the outage desk, not the cyber tally)",
+    "research": "individual researcher or trade press (lowest weight; still leads only)"
+  },
+  "accounts": [
+    { "username": "CISAgov", "x_user_id": "", "display": "Cybersecurity and Infrastructure Security Agency", "tier": "gov", "topics": ["cyber", "ics"], "lang": "en", "active": true, "added": "2026-11-21", "why": "US CISA; posts unwind to official cisa.gov pages", "last_checked": "2026-11-21" },
+    { "username": "CISACyber", "x_user_id": "", "display": "CISA Cyber", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "CISA cyber division", "last_checked": "2026-11-21" },
+    { "username": "NCSC", "x_user_id": "", "display": "NCSC UK", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "UK National Cyber Security Centre", "last_checked": "2026-11-21" },
+    { "username": "ANSSI_FR", "x_user_id": "", "display": "ANSSI", "tier": "gov", "topics": ["cyber"], "lang": "fr", "active": true, "added": "2026-11-21", "why": "French cyber agency; points alerts to CERT-FR", "last_checked": "2026-11-21" },
+    { "username": "CERT_FR", "x_user_id": "", "display": "CERT-FR", "tier": "gov", "topics": ["cyber"], "lang": "fr", "active": true, "added": "2026-11-21", "why": "official French CERT", "last_checked": "2026-11-21" },
+    { "username": "BSI_Bund", "x_user_id": "", "display": "BSI", "tier": "gov", "topics": ["cyber"], "lang": "de", "active": true, "added": "2026-11-21", "why": "Germany's BSI; bsi.bund.de blocks automated readers, so the X lead is a pointer only, never the cited page", "last_checked": "2026-11-21" },
+    { "username": "cybercentre_ca", "x_user_id": "", "display": "Canadian Centre for Cyber Security", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Canadian national cyber centre", "last_checked": "2026-11-21" },
+    { "username": "enisa_eu", "x_user_id": "", "display": "ENISA", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "EU cybersecurity agency", "last_checked": "2026-11-21" },
+    { "username": "FBI", "x_user_id": "", "display": "FBI", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "high volume; filter to cyber/IC3/advisory terms", "last_checked": "2026-11-21" },
+    { "username": "NCA_UK", "x_user_id": "", "display": "National Crime Agency", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "UK NCA; cybercrime takedowns", "last_checked": "2026-11-21" },
+    { "username": "jpcert_en", "x_user_id": "", "display": "JPCERT/CC", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "official JPCERT English account (bio and history match; not badge-verified)", "last_checked": "2026-11-21" },
+    { "username": "AusCERT", "x_user_id": "", "display": "AUSCERT", "tier": "gov", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "University of Queensland CERT (not badge-verified)", "last_checked": "2026-11-21" },
+
+    { "username": "MsftSecIntel", "x_user_id": "", "display": "Microsoft Threat Intelligence", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Microsoft threat intel", "last_checked": "2026-11-21" },
+    { "username": "msftsecurity", "x_user_id": "", "display": "Microsoft Security", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Microsoft Security", "last_checked": "2026-11-21" },
+    { "username": "TalosSecurity", "x_user_id": "", "display": "Cisco Talos Intelligence Group", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Cisco Talos (NOT CiscoTalos/Cisco_Talos squatters)", "last_checked": "2026-11-21" },
+    { "username": "Unit42_Intel", "x_user_id": "", "display": "Unit 42 (Palo Alto Networks)", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Palo Alto Unit 42 (official team account; not badge-verified)", "last_checked": "2026-11-21" },
+    { "username": "CrowdStrike", "x_user_id": "", "display": "CrowdStrike", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "CrowdStrike", "last_checked": "2026-11-21" },
+    { "username": "Mandiant", "x_user_id": "", "display": "Mandiant (Google Cloud)", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Mandiant", "last_checked": "2026-11-21" },
+    { "username": "Fortinet", "x_user_id": "", "display": "Fortinet", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Fortinet", "last_checked": "2026-11-21" },
+    { "username": "SentinelOne", "x_user_id": "", "display": "SentinelOne", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "SentinelOne", "last_checked": "2026-11-21" },
+    { "username": "rapid7", "x_user_id": "", "display": "Rapid7", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Rapid7 (official-looking, no badge)", "last_checked": "2026-11-21" },
+    { "username": "RecordedFuture", "x_user_id": "", "display": "Recorded Future", "tier": "vendor", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Recorded Future (official-looking, no badge)", "last_checked": "2026-11-21" },
+
+    { "username": "ERCOT_ISO", "x_user_id": "", "display": "ERCOT", "tier": "grid", "topics": ["grid"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Texas grid operator", "last_checked": "2026-11-21" },
+    { "username": "IESO_Tweets", "x_user_id": "", "display": "Ontario's IESO", "tier": "grid", "topics": ["grid"], "lang": "en", "active": true, "added": "2026-11-21", "why": "Ontario ISO (official, no badge)", "last_checked": "2026-11-21" },
+    { "username": "hydroquebec", "x_user_id": "", "display": "Hydro-Quebec", "tier": "grid", "topics": ["grid"], "lang": "fr", "active": true, "added": "2026-11-21", "why": "Hydro-Quebec", "last_checked": "2026-11-21" },
+
+    { "username": "briankrebs", "x_user_id": "", "display": "Brian Krebs", "tier": "research", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "verified journalist (briankrebs, not the KrebsOnSecurity typo)", "last_checked": "2026-11-21" },
+    { "username": "TheRegister", "x_user_id": "", "display": "The Register", "tier": "research", "topics": ["cyber"], "lang": "en", "active": true, "added": "2026-11-21", "why": "trade press", "last_checked": "2026-11-21" },
+    { "username": "campuscodi", "x_user_id": "", "display": "Catalin Cimpanu", "tier": "research", "topics": ["cyber"], "lang": "en", "active": false, "added": "2026-11-21", "why": "verified, but bio says mostly on Bluesky/Mastodon; low volume, left inactive", "last_checked": "2026-11-21" }
+  ],
+  "watch": [
+    { "username": "CERTNZ", "reason": "integrated into the NCSC; bio says it will no longer post. Retired, do not poll." },
+    { "username": "CERT_EU", "reason": "27 followers, 0 tweets, not verified. Not CERT-EU." },
+    { "username": "CiscoTalos", "reason": "empty squatter. Use TalosSecurity." },
+    { "username": "CyberGovAu", "reason": "not verified, almost no posts; not confirmed as ACSC. Leave the Australia slot empty until a real official account is confirmed." },
+    { "username": "FBIIC3", "reason": "not the FBI IC3 (personal/empty accounts under similar names)." },
+    { "username": "CERT_In", "reason": "not India's CERT-In (a private person holds the name)." },
+    { "username": "gcluley", "reason": "empty account, not Graham Cluley." }
+  ]
+}

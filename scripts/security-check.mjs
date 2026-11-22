@@ -13,6 +13,7 @@ import { join, extname } from "node:path";
 import { ROOT, listEventFiles } from "./lib/store.mjs";
 import { pathToFileURL } from "node:url";
 import { railProblems } from "./lib/scanner-rail-check.mjs";
+import { icsProblems } from "./lib/scanner-ics-check.mjs";
 
 const fails = [], passes = [];
 const rel = (p) => p.slice(ROOT.length + 1);
@@ -138,13 +139,14 @@ if (existsSync(SCAN)) {
   const files = [];
   const walk = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js)$/.test(f)) files.push(p); } };
   walk(SCAN);
-  const UDP_FILE = join("lib", "udp.mjs");   // the ONE file allowed to open a UDP socket
+  const UDP_FILE = join("lib", "udp.mjs");   // the ONE file allowed to open a UDP socket for the --udp checks
+  const ICS_FILE = join("lib", "ics.mjs");   // the industrial reads (--ics only): its own TCP connections, guarded by icsProblems below
   const DGRAM = /node:dgram|require\(["']dgram|from\s+["']dgram["']|["']dgram["']/;
   const NOT = [[/node:child_process|require\(["']child_process|\bexecSync\b|\bspawn\(/, "starts other programs"], [/\braw[-_ ]?socket|SOCK_RAW|\bsetTTL\b/i, "raw sockets"],
     [/method:\s*["'](POST|PUT|PATCH|DELETE)["']/i, "sends an upload request (the scanner only reads with GET)"], [/\beval\s*\(|new\s+Function\s*\(/, "runs code from text"],
     [/\b(aggressive|insane|no-?rate-?limit|unlimited)\b/i, "an aggressive or unlimited mode"]];
   for (const p of files) {
-    const src = read(p), isUdp = p.endsWith(UDP_FILE), isProbe = p.endsWith(join("lib", "probe.mjs"));
+    const src = read(p), isIcs = p.endsWith(ICS_FILE), isUdp = p.endsWith(UDP_FILE), isProbe = p.endsWith(join("lib", "probe.mjs")) || isIcs;
     for (const [re, what] of NOT) if (re.test(src)) fails.push(`${rel(p)}: ${what}; the scanner must stay detection only (docs/scanner.md)`);
     if (!isProbe && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
     // UDP sockets (dgram) are permitted ONLY in scanner/lib/udp.mjs
@@ -183,6 +185,18 @@ if (existsSync(SCAN)) {
       otherSrcs: files.filter((p) => !core.has(p)).map((p) => ({ file: rel(p), src: read(p) })), mod });
     fails.push(...rp);
     if (!rp.length) passes.push(`path rail: ${mod ? mod.RAIL_PATHS.length : "?"} frozen literal path(s), GET only, at most ${mod ? mod.PATHS_PER_HOST : "?"} per host, none login/management/exploit-class`);
+  }
+  // the industrial identification reads (scanner/lib/ics.mjs, only with --ics): frozen read-only requests, one exchange per
+  // protocol per host, never broadcast, never to a public address, nothing that writes, controls, logs in or sends DIMSE
+  const icsFile = join(SCAN, ICS_FILE);
+  if (existsSync(icsFile)) {
+    let mod = null;
+    try { mod = await import(pathToFileURL(icsFile).href); } catch (e) { fails.push(`scanner/lib/ics.mjs could not be loaded (${String(e && e.message).slice(0, 80)})`); }
+    const core = new Set([ICS_FILE, join("lib", "scan.mjs"), "cyberview-scan.mjs"].map((f) => join(SCAN, f)));
+    const ip = icsProblems({ icsSrc: read(icsFile), scanSrc: read(join(SCAN, "lib", "scan.mjs")), cliSrc: read(join(SCAN, "cyberview-scan.mjs")),
+      otherSrcs: files.filter((p) => !core.has(p)).map((p) => ({ file: rel(p), src: read(p) })), mod });
+    fails.push(...ip);
+    if (!ip.length) passes.push(`industrial reads: ${mod ? Object.keys(mod.ICS_PROTOCOLS).length : "?"} protocol(s), frozen read-only requests, one exchange per protocol per host, private ranges only, never broadcast, only with --ics`);
   }
   passes.push(`${files.length} scanner file(s) checked: detection only (UDP one benign datagram per service, no credential iteration)`);
 }

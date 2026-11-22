@@ -10,6 +10,7 @@
 //                  inside an affected range is reported with medium confidence, never high
 //   guessed        the product is inferred (from a certificate's issuer, a greeting with no version), not stated with a version
 
+import { mergeCms } from "./fp-cms.mjs";
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ").slice(0, n);
 const VER = /^\d+(?:[.\-_+~]\w+)*$/;
 export const cleanVersion = (v) => { const s = clip(v, 40).trim().replace(/^v(?=\d)/i, ""); return VER.test(s) ? s : ""; };
@@ -146,6 +147,7 @@ export function fromHttp(res, port = 80, tls = false) {
     else if ((m = /^Drupal\s+(\d+)/i.exec(g))) out.push(svc(port, proto, "Drupal", "Drupal", "", { source: "page generator tag", evidence: `generator: ${g} (major version only)`, guessed: true }));
     else if (/^Joomla/i.test(g)) out.push(svc(port, proto, "Joomla", "Joomla!", "", { source: "page generator tag", evidence: `generator: ${g}`, guessed: true }));
   }
+  mergeCms(out, body, port, proto, svc, h); // CMS, plugin, theme and JS library versions the page discloses (fp-cms.mjs)
   return out;
 }
 /** The page title and status, kept as context for the report (never parsed further). */

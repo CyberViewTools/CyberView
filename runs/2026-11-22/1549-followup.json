@@ -1,0 +1,96 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T15:47:00Z",
+  "finished_at": "2026-11-22T15:49:31Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Java4Shell CVE-2026-114938 exploited",
+    "Java4Shell exploitation in the wild BI.ZONE GreyNoise November 2026",
+    "Ivanti Endpoint Manager CVE-2026-121653 exploitation",
+    "Citrix NetScaler CVE-2026-120868 exploited",
+    "N-able N-central CVE-2026-129271 CISA KEV",
+    "Confluence CVE-2026-90436 exploitation update"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.group-ib.com/blog/java4shell-vulnerability/",
+      "title": "Group-IB: Java4Shell vulnerability (18 Nov 2026)",
+      "used_in": "rapid7-java-17-rce-cve-2026-114938-2026-11 (unchanged: no exploitation in the wild found as of 18 Nov)"
+    },
+    {
+      "url": "https://advisories.ncsc.nl/2026/ncsc-2026-0493.html",
+      "title": "NCSC-2026-0493 v1.0.1",
+      "used_in": "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11 (unchanged: latest revision 13 Nov, public PoC, no exploitation stated)"
+    },
+    {
+      "url": "https://www.securityweek.com/recent-ivanti-endpoint-manager-flaw-exploited-in-attacks/",
+      "title": "SecurityWeek: Recent Ivanti Endpoint Manager flaw exploited (10 Mar 2026)",
+      "used_in": "not used: about CVE-2026-1603, not CVE-2026-121653"
+    },
+    {
+      "url": "https://support.citrix.com/external/article/CTX697305/citrix-netscaler-adc-and-netscaler-gateway-security-bullet.html",
+      "title": "Citrix bulletin CTX697305",
+      "used_in": "cert-eu-citrix-netscaler-advisory-2026-020-2026-11 (unchanged: changelog last entry 12 Nov, no exploitation statement)"
+    },
+    {
+      "url": "https://www.n-able.com/?p=92422",
+      "title": "N-able: Vulnerability Remediation Update",
+      "used_in": "n-able-n-central-zero-day-exploitation-2026-11 (unchanged: latest update 16 Nov 5 pm EST, HF3; no newer hotfix)"
+    },
+    {
+      "url": "https://www.cisa.gov/news-events/alerts/2026/11/18/cisa-adds-four-known-exploited-vulnerabilities-catalog",
+      "title": "CISA adds four KEVs (18 Nov 2026)",
+      "used_in": "atlassian-confluence-axis-cve-2026-90436-2026-11 (unchanged: KEV listing already in cve_meta and links)"
+    },
+    {
+      "url": "https://bleepingcomputer.com/news/security/hackers-exploit-critical-atlassian-flaw-after-public-poc-release",
+      "title": "BleepingComputer: Atlassian flaw exploited after PoC (7 Oct 2026)",
+      "used_in": "not used: about CVE-2026-21589, not CVE-2026-90436"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "unchanged_checked": [
+    {
+      "id": "rapid7-java-17-rce-cve-2026-114938-2026-11",
+      "url": "https://www.group-ib.com/blog/java4shell-vulnerability/"
+    },
+    {
+      "id": "ncsc-nl-ivanti-endpoint-manager-sql-injection-2026-11",
+      "url": "https://advisories.ncsc.nl/2026/ncsc-2026-0493.html"
+    },
+    {
+      "id": "cert-eu-citrix-netscaler-advisory-2026-020-2026-11",
+      "url": "https://support.citrix.com/external/article/CTX697305/citrix-netscaler-adc-and-netscaler-gateway-security-bullet.html"
+    },
+    {
+      "id": "n-able-n-central-zero-day-exploitation-2026-11",
+      "url": "https://www.n-able.com/?p=92422"
+    },
+    {
+      "id": "atlassian-confluence-axis-cve-2026-90436-2026-11",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/11/18/cisa-adds-four-known-exploited-vulnerabilities-catalog"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "BI.ZONE reportedly logged first Java4Shell (CVE-2026-114938) exploitation attempts",
+      "url": "https://techora.ru/news/kriticheskaya-uyazvimost-java-ugrozhaet-bolee-100-2026-11-19",
+      "note": "Only a Russian aggregator snippet; BI.ZONE's own post not found. Attempts only; the event already reports GreyNoise attempts. Check BI.ZONE and CISA KEV for a listing.",
+      "priority": "medium"
+    },
+    {
+      "title": "Citrix CTX697305: CVE-2026-120868 not in the bulletin's vulnerability table and has no CVSS score there",
+      "url": "https://support.citrix.com/external/article/CTX697305/citrix-netscaler-adc-and-netscaler-gateway-security-bullet.html",
+      "note": "The event's 9.3 score comes from CERT-EU; Citrix's page names CVE-2026-120868 only in the preconditions section. The reviewer may want to check that the summary attributes the score to CERT-EU.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "www.scworld.com (403)"
+  ],
+  "notes": "Candidates: every developing or claimed event from the last 10 days was already checked by a follow-up run in the last 24 hours or updated in that time, so this run took five severity-3 vulnerability events not checked in the last 24 hours. Nothing new was confirmed for any of them: no new KEV listings for Java4Shell, Ivanti EPM CVE-2026-121653 or the NetScaler flaws, no N-able update after 16 Nov, and the Confluence/Axis KEV listing is already on the record. Two search results turned out to be older articles about different CVEs and were not used. No records changed.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

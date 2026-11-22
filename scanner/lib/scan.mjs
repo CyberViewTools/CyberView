@@ -11,6 +11,7 @@ import { fromEdge } from "./fp-edge.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
+import { certRecord } from "./cert-inventory.mjs";
 import { D } from "./shared.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
 
@@ -109,7 +110,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       h.ports.push({ port, state: "open", services: svcs.length, banner: r.banner ? r.banner.split(/\r?\n/)[0].replace(/[^ -~]/g, "?").slice(0, 160) : "" });
       h.services.push(...svcs);
       if (r.http) h.http.push({ port, ...httpInfo(r.http), ...(r.http.truncated ? { body_truncated: true } : {}) });   // scan-html: body cut at the size cap
-      if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certInfo(r.tls.cert) });
+      if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certRecord(r.tls.cert) });
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
       const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),
         ...(r.http ? httpObservations(port, r.http, { tls: !!r.tls, inScope: (host) => host === h.address || h.names.includes(host.toLowerCase()) || inScope(host) }) : []),

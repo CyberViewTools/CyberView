@@ -128,4 +128,4 @@ snapshot under `tests/fixtures/scanner/snapshot/` uses invented CVE ids (CVE-202
 
 ## Licence
 
-The scanner is a proprietary CyberView product under `scanner/LICENSE` (not the repository's MIT licence): download and use on systems you own or are authorised to test, no redistribution without permission.
+The scanner is a proprietary CyberView product under `scanner/LICENSE` (CyberView as a whole is proprietary; this sets the scanner's end-user terms): download and use on systems you own or are authorised to test, no redistribution without permission.

@@ -54,4 +54,4 @@ Context data: [IODA](https://ioda.inetintel.cc.gatech.edu/) (Georgia Tech Intern
 
 ## Licence
 
-The repository is under the MIT Licence (`LICENSE`), **except** the downloadable scanner in `scanner/`, which is a proprietary CyberView product under its own licence (`scanner/LICENSE`).
+CyberView is **proprietary** — copyright (c) 2026 xanderhutch, all rights reserved (`LICENSE`). The source is public to be read and audited, but may not be copied, redistributed, modified, hosted or run as a service without written permission. Two exceptions: the third-party libraries in `site/vendor/` keep their own licences (`THIRD_PARTY_NOTICES`), and the downloadable scanner in `scanner/` has its own end-user terms (`scanner/LICENSE`). Files obtained before this change remain under the MIT licence they were released under. Permissions: cyberviewthreats@gmail.com.

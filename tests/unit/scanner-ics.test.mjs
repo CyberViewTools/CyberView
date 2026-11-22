@@ -188,8 +188,10 @@ test("without --ics nothing is sent: the stand-ins receive zero bytes and the ex
       const p = await probeAll([LOCAL], { ports: ALL, settings: st, assumeUp: true, probe: probeOpen(ALL), ics, icsProbe: s.exchange });
       assert.equal(p.hosts[0].ics, undefined); assert.deepEqual(p.ics, { enabled: false });
     }
-    assert.deepEqual(s.calls, []); assert.equal(s.received(), 0);
-    for (const k of ICS_KEYS) if (k !== "bacnet") assert.equal(s.fx[k].connections, 0, k);
+    // nothing sent: the probe here is a stub, so the only way to reach a target is the industrial exchange, and it is never
+    // called. (No per-server byte or connection count: test files run in parallel, and another file probing a port it just
+    // freed can land on a stand-in's reused ephemeral port. The exact bytes sent WITH --ics are checked in the next test.)
+    assert.deepEqual(s.calls, []);
   } finally { await s.close(); }
 });
 

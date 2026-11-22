@@ -13,6 +13,7 @@ import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { certRecord } from "./cert-inventory.mjs";
 import { D } from "./shared.mjs";
+import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
@@ -171,7 +172,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
-export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10) }) {
+export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10), incidents = false }) {
   const wb = await src.json("data/workbench.json");
   const ps = await src.json("data/psirt.json", { optional: true });
   D.vendorIndex = ps ? D.cleanVendorIndex(ps) : {};
@@ -183,6 +184,10 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     const r = files.get(p).find((x) => x.id === id); if (r) rows.set(id, r);
   }
   const found = matchFindings(hosts, flaws, rows, { today });
+  // incident citations (opt-in, --data-incidents) and hunt links: CyberView's own published data only, never the targets
+  const cites = incidents ? await loadIncidents(src, found.map((f) => f.cve)) : null;
+  if (cites) attachIncidents(found, cites);
+  attachHunt(found, wb);
   // the whole CVE List, only from a full offline snapshot: other CVEs that name a detected product (versions not checked)
   let namedList = [];
   if (src.kind === "offline" && src.manifest && src.manifest.full) {
@@ -196,12 +201,14 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     "The CyberView rating is the CVSS base score adjusted for exploitation evidence (CVSS v3.1 Exploit Code Maturity), the same calculation as the Vulnerabilities page; every point is listed with each finding.",
     "Exploitation analyses and fix guides on the linked pages are written by CyberView AI (a Claude model) from vendor and government sources.",
   ];
+  if (cites && !cites.available && found.length) notes.push("--data-incidents was given, but the data source has no event archive (make the snapshot with: data --data-incidents); no incidents were cited.");
   if (rows.size < want.length) notes.push(`${want.length - rows.size} matched CVE(s) had no CVE lookup row in the data used; their rating is computed from the KEV entry alone (marked in each finding).`);
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
       udp: probed.udp || [], network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
-      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null } },
+      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
+        ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),

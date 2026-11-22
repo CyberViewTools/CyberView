@@ -7,11 +7,11 @@
 // Read scanner/README.md first. Commands:
 //   init  [--out scope.json]                  write a scope file to fill in (targets, owner, your attestation)
 //   check --scope FILE [--i-am-authorized-for-public-ranges]   check the scope file and show what a scan would do; no network
-//   data  --out DIR [--source URL] [--full]   download CyberView's data for offline (air-gapped) scans
+//   data  --out DIR [--source URL] [--full] [--data-incidents]   download CyberView's data for offline (air-gapped) scans
 //   scan  --scope FILE (--data DIR | --online [--source URL]) [--ports LIST] [--out DIR] [--assume-up]
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
-//         [--i-am-authorized-for-public-ranges] [--html] (also write report.html)
+//         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding) [--html] (also write report.html)
 //         [--certs] [--mail] [--compare PREVIOUS/report.json]   opt-in extra outputs from data already collected
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -33,8 +33,9 @@ import { certInventory, toCertsCsv, certText } from "./lib/cert-inventory.mjs";
 import { mailInventory, toMailCsv } from "./lib/mail-starttls.mjs";
 import { kevCoverage, toCoverageCsv, coverageText } from "./lib/kev-coverage.mjs";
 import { loadPrevious, diffReports, diffText } from "./lib/diff.mjs";
+import { snapshotIncidentsTo } from "./lib/cite.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "html", "certs", "mail", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -51,6 +52,7 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs data  --out cyberview-data [--full]
   node scanner/cyberview-scan.mjs scan  --scope scope.json --data cyberview-data      (offline)
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
+Incidents: --data-incidents (scan and data) cites reviewed CyberView incidents naming each finding's CVE; claims are never cited.
 Output: --html also writes report.html, one self-contained page (no script, nothing loaded from the network).
 Extra outputs (from what the scan already read; nothing more is sent): --certs (certs.csv), --mail (mail.csv),
 --compare PREVIOUS/report.json (diff.json, diff.txt: new, fixed, still-open). KEV fingerprint coverage (no network):
@@ -93,6 +95,7 @@ export async function main(argv, io = {}) {
     const src = webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl });
     io.out(`Downloading CyberView's public data from ${src.where} into ${a.out}${a.full ? " (every CVE lookup file)" : ""}. Read-only GET requests; nothing is uploaded.`);
     const m = await snapshot(src, a.out, D, { full: !!a.full, log: (s) => io.out("  " + s) });
+    if (a["data-incidents"]) { const r = await snapshotIncidentsTo(src, a.out, { log: (s) => io.out("  " + s) }); io.out(`  incident archive: ${r.incident_events} event(s) in ${r.incident_months} month file(s)`); }
     io.out(`Snapshot ready: ${m.lookup_files} lookup file(s), workbench built ${m.workbench_built_at || "?"}. Scan offline with --data ${a.out}`);
     return 0;
   }
@@ -134,7 +137,8 @@ export async function main(argv, io = {}) {
   let previous = null;   // --compare: a previous report.json from this machine, checked before anything is scanned
   if (a.compare) { let t; try { t = io.readFile(a.compare); } catch { return fail(io, [`--compare: cannot read ${a.compare}`], 1); } const p = loadPrevious(t); if (p.error) return fail(io, [`--compare ${a.compare}: ${p.error}`], 1); previous = p.report; }
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
-  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataLine, sends: SENDS }));
+  const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
+  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS }));
   const coach = scopeCoaching(sc.text, scope, { today });   // advice only (typos, gaps); never a refusal
   if (coach.length) io.out("\nSCOPE FILE ADVICE (it passes its checks; these look like typos or gaps)\n" + coach.map((c) => "  - " + c).join("\n"));
   if (cmd === "check") {
@@ -165,7 +169,7 @@ export async function main(argv, io = {}) {
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
     const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
-    const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today });
+    const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents: !!a["data-incidents"] });
     report.run.profile = scanProfile({ ports, allPorts: !!a["all-ports"], customPorts: !!(a.ports || scope.ports), udp, httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], assumeUp: !!a["assume-up"], discover: !!scope.discover, dataMode: src.kind });
     report.scope.coaching = coach; staleData(report).forEach((x) => io.err("warning: " + x));
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);

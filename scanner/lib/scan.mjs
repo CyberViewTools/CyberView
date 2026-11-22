@@ -10,6 +10,7 @@ import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
+import { identify } from "./fp-identify.mjs";
 import { D } from "./shared.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
@@ -38,6 +39,7 @@ export function servicesOf(r) {
   if (r.http) out.push(...fromHttp(r.http, r.port, !!r.tls));
   if (r.raw) out.push(...fromMysql(r.raw, r.port));
   if (!out.length && r.banner) out.push(...(/^SSH-/.test(r.banner) ? fromSsh(r.banner, r.port) : fromGreeting(r.banner, r.port)));
+  out.push(...identify(r, out));   // passive identify: the same collected data only (scanner/lib/fp-identify.mjs)
   // a product stated with a version wins over the same product inferred from a certificate
   return out.filter((s, i) => !(s.guessed && out.some((o, j) => j !== i && !o.guessed && o.product === s.product)));
 }

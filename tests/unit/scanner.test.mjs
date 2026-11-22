@@ -621,3 +621,85 @@ test("probePort: plain HTTP on a TLS-by-convention port falls back to plain, and
     assert.ok(b.http && b.http.status);
   } finally { await s.close(); }
 });
+
+/* ---- tk-hygiene: TLS and certificate hygiene from the handshake already made (no extra connection) ---- */
+import { certAlgorithms, tlsInfo, nameMatches, certNames, TLS_RULES } from "../../scanner/lib/fingerprint.mjs";
+import { startTlsServer } from "../fixtures/scanner/servers.mjs";
+import { X509Certificate } from "node:crypto";
+const derOf = (which) => new X509Certificate(readFileSync(join(FIX, "tls", `${which}-cert.pem`))).raw;
+
+test("certAlgorithms reads the signature and public-key algorithm from the certificate's DER", () => {
+  assert.deepEqual(certAlgorithms(derOf("weak")), { sig_alg: "sha1WithRSAEncryption", sig_hash: "SHA-1", key_type: "RSA" });
+  assert.deepEqual(certAlgorithms(derOf("good")), { sig_alg: "ecdsa-with-SHA256", sig_hash: "SHA-256", key_type: "EC" });
+  // garbage, truncation and absurd lengths never throw
+  for (const bad of [null, Buffer.alloc(0), Buffer.from([0x30, 0x84, 0xff, 0xff, 0xff, 0xff]), derOf("weak").subarray(0, 40)]) assert.equal(typeof certAlgorithms(bad).sig_alg, "string");
+});
+
+test("TLS observations: expiry window, not-yet-valid, weak key and signature, name mismatch", () => {
+  const now = Date.parse("2026-11-22T00:00:00Z");
+  const base = { subject: { CN: "a.example.lan" }, issuer: { CN: "Example CA" }, valid_from: "Jan 1 00:00:00 2026 GMT", subjectaltname: "DNS:a.example.lan, DNS:*.apps.example.lan" };
+  const kinds = (c, o = {}) => observations(443, { cert: c, now, ...o }).map((x) => x.kind);
+  assert.deepEqual(kinds({ ...base, valid_to: "Dec 10 00:00:00 2026 GMT", bits: 2048, raw: derOf("good") }), ["tls-expiring"]);
+  assert.deepEqual(kinds({ ...base, valid_to: "Dec 10 00:00:00 2027 GMT", bits: 2048 }), []);
+  assert.deepEqual(kinds({ ...base, valid_from: "Dec 1 00:00:00 2026 GMT", valid_to: "Dec 1 00:00:00 2027 GMT" }), ["tls-not-yet-valid"]);
+  assert.deepEqual(kinds({ ...base, valid_to: "Dec 1 00:00:00 2030 GMT", bits: 1024, raw: derOf("weak") }), ["tls-weak-key", "tls-weak-signature"]);
+  // a P-256 key is not "weak" just because its bit count is under the RSA minimum
+  assert.deepEqual(kinds({ ...base, valid_to: "Dec 1 00:00:00 2030 GMT", bits: 256, curve: "P-256", raw: derOf("good") }), []);
+  // names: only when the scan used a name; wildcard covers one label; an IP literal is never compared
+  const c = { ...base, valid_to: "Dec 1 00:00:00 2030 GMT", bits: 2048 };
+  assert.deepEqual(kinds(c, { names: [] }), []);
+  assert.deepEqual(kinds(c, { names: ["a.example.lan"] }), []);
+  assert.deepEqual(kinds(c, { names: ["x.apps.example.lan"] }), []);
+  assert.deepEqual(kinds(c, { names: ["y.x.apps.example.lan"] }), ["tls-name-mismatch"]);
+  assert.deepEqual(kinds(c, { names: ["b.example.lan"] }), ["tls-name-mismatch"]);
+  assert.deepEqual(kinds(c, { names: ["10.0.0.5"] }), []);
+  assert.ok(nameMatches(certNames({ subject: "CN=only-cn.lan", san: "" }), "only-cn.lan"));
+  for (const o of observations(443, { cert: { ...base, valid_to: "Dec 1 00:00:00 2030 GMT", bits: 1024, raw: derOf("weak") }, now })) assert.ok(["high", "medium", "low", "info"].includes(o.severity));
+});
+
+test("TLS observations: retired protocol, weak cipher, weak DH, no forward secrecy; an unreported group is not read as anything", () => {
+  const kinds = (t) => observations(443, { tls: t }).map((x) => x.kind);
+  assert.deepEqual(kinds({ protocol: "TLSv1.3", cipher: "TLS_AES_256_GCM_SHA384", cipher_std: "TLS_AES_256_GCM_SHA384", kex: { type: "ECDH", name: "X25519", size: 253 } }), []);
+  assert.deepEqual(kinds({ protocol: "TLSv1", cipher: "ECDHE-RSA-AES128-SHA", cipher_std: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" }), ["tls-old-protocol"]);
+  assert.deepEqual(kinds({ protocol: "TLSv1.2", cipher: "DES-CBC3-SHA", cipher_std: "TLS_RSA_WITH_3DES_EDE_CBC_SHA" }), ["tls-weak-cipher", "tls-no-forward-secrecy"]);
+  assert.deepEqual(kinds({ protocol: "TLSv1.2", cipher: "RC4-MD5", cipher_std: "TLS_RSA_WITH_RC4_128_MD5" }), ["tls-weak-cipher", "tls-no-forward-secrecy"]);
+  assert.deepEqual(kinds({ protocol: "TLSv1.2", cipher: "ECDHE-RSA-AES256-GCM-SHA384", cipher_std: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" }), []);
+  assert.deepEqual(kinds({ protocol: "TLSv1.2", cipher: "DHE-RSA-AES128-SHA", cipher_std: "TLS_DHE_RSA_WITH_AES_128_CBC_SHA", kex: { type: "DH", size: 1024 } }), ["tls-weak-dh"]);
+  const u = tlsInfo({ protocol: "TLSv1.3", cipher: "TLS_AES_256_GCM_SHA384", kex: {} });
+  assert.equal(u.pqc, false); assert.equal(u.kex_group, ""); assert.match(u.kex_note, /not reported/);
+  assert.equal(tlsInfo({ protocol: "TLSv1.3", kex: { type: "ECDH", name: "X25519MLKEM768", size: 0 } }).pqc, true);
+  assert.equal(tlsInfo({ protocol: "TLSv1.2", kex: {} }).kex_note, "");
+  assert.ok(TLS_RULES.minRsaBits === 2048 && TLS_RULES.expiringDays === 30);
+});
+
+test("probePort on a loopback TLS service: hygiene comes from the one handshake (still one connection)", async () => {
+  const s = await startTlsServer("weak");
+  try {
+    const r = await probePort("127.0.0.1", s.port, { httpsPorts: [s.port] });
+    assert.equal(r.state, "open");
+    assert.ok(r.tls && r.tls.protocol && r.tls.cert && Buffer.isBuffer(r.tls.cert.raw));
+    assert.equal(r.tls.cert.bits, 1024);
+    const kinds = observations(s.port, { cert: r.tls.cert, tls: r.tls, names: ["other.fixture.test"] }).map((x) => x.kind);
+    for (const k of ["tls-weak-key", "tls-weak-signature", "tls-self-signed", "tls-name-mismatch"]) assert.ok(kinds.includes(k), `${k} in ${kinds}`);
+    const info = certInfo(r.tls.cert);
+    assert.equal(info.sig_hash, "SHA-1"); assert.equal(info.key_type, "RSA"); assert.match(info.fingerprint256, /^[0-9A-F:]{95}$/);
+    assert.equal(s.connections(), 1, "the hygiene checks must not open another connection");
+  } finally { await s.close(); }
+  // a TLS 1.2 DHE server with a 1024-bit group
+  const d = await startTlsServer("weak", { maxVersion: "TLSv1.2", ciphers: "DHE-RSA-AES128-SHA:@SECLEVEL=0", dhparam: "auto" });
+  try {
+    const r = await probePort("127.0.0.1", d.port, { httpsPorts: [d.port] });
+    assert.equal(r.tls.kex.type, "DH");
+    assert.ok(observations(d.port, { tls: r.tls }).some((o) => o.kind === "tls-weak-dh"));
+    assert.equal(d.connections(), 1);
+  } finally { await d.close(); }
+});
+
+test("summary text lists observations most severe first and the negotiated TLS", () => {
+  const rep = { tool: {}, run: { settings: {}, network: { sends: {} }, data: {} }, scope: { refused: [] }, summary: summarize([], []), coverage: coverage([], {}), findings: [], named: [], notes: [],
+    hosts: [{ address: "10.0.0.5", names: [], up: true, ports: [], services: [], tls: [{ port: 443, ...tlsInfo({ protocol: "TLSv1.3", cipher_std: "TLS_AES_128_GCM_SHA256", kex: {} }), cert: { key_type: "RSA", key_bits: 1024, sig_alg: "sha1WithRSAEncryption", valid_to: "2030-01-01" } }],
+      observations: [{ port: 443, kind: "tls-self-signed", severity: "low", text: "The TLS certificate is self-signed" }, { port: 443, kind: "tls-weak-key", severity: "high", text: "The TLS certificate's RSA key is 1024 bits" }] }] };
+  const txt = summaryText(rep);
+  assert.ok(txt.indexOf("[high]") < txt.indexOf("[low]"));
+  assert.match(txt, /key-exchange group not reported/);
+});

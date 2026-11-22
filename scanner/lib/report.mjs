@@ -162,8 +162,14 @@ export function summaryText(report) {
     L.push(`   Details: ${f.fix.details}`);
   }
   if (report.findings.length > 25) L.push(`\n... and ${report.findings.length - 25} more in report.json and findings.csv.`);
-  const obs = report.hosts.flatMap((h) => (h.observations || []).map((o) => `${h.address}:${o.port} ${o.text}`));
-  if (obs.length) { L.push(""); L.push("Observations (not CVEs):"); obs.slice(0, 30).forEach((o) => L.push(`   ${o}`)); }
+  const SEV = { high: 0, medium: 1, low: 2, info: 3 };
+  const obs = report.hosts.flatMap((h) => (h.observations || []).map((o) => ({ o, line: `${h.address}:${o.port} [${o.severity || "info"}] ${o.text}` })))
+    .sort((a, b) => (SEV[a.o.severity] ?? 3) - (SEV[b.o.severity] ?? 3)).map((x) => x.line);
+  const dropped = report.hosts.reduce((n, h) => n + (Number(h.observations_dropped) || 0), 0);
+  if (obs.length) { L.push(""); L.push("Observations (not CVEs; most severe first):"); obs.slice(0, 30).forEach((o) => L.push(`   ${o}`));
+    if (obs.length > 30 || dropped) L.push(`   ... ${obs.length > 30 ? `${obs.length - 30} more in report.json` : ""}${obs.length > 30 && dropped ? "; " : ""}${dropped ? `${dropped} over the per-host cap were counted, not listed` : ""}`); }
+  const tlsRows = report.hosts.flatMap((h) => (h.tls || []).map((t) => `${h.address}:${t.port} ${t.protocol || "?"} ${t.cipher_std || t.cipher || "?"}${t.kex_group ? `, ${t.kex_group}${t.kex_bits ? ` (${t.kex_bits} bits)` : ""}` : t.kex_note ? ", key-exchange group not reported" : ""}${t.cert ? `; cert ${t.cert.key_type || "?"} ${t.cert.key_bits || "?"} bits, ${t.cert.sig_alg || "signature ?"}, expires ${t.cert.valid_to || "?"}` : ""}`));
+  if (tlsRows.length) { L.push(""); L.push("TLS (as negotiated by this scan's one handshake; a different client may get different parameters):"); tlsRows.slice(0, 20).forEach((t) => L.push(`   ${t}`)); }
   if ((report.named || []).length) { L.push(""); L.push("Also named in the CVE List (versions not checked; compare with the vendor's advisory):"); report.named.forEach((n) => L.push(`   ${n.product} ${n.version_seen || ""}: ${n.cves_naming_it} CVE(s), ${n.exploited} exploited`)); }
   L.push(""); report.notes.forEach((n) => L.push(`Note: ${n}`));
   return L.join("\n");

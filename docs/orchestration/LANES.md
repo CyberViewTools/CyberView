@@ -4,9 +4,9 @@ One owner per lane. Update the status line when you pick up or hand off an item.
 
 | Lane | Lead | Owns right now | Status | Updated |
 |---|---|---|---|---|
-| Discovery | Grok + Claude discovery agent | toolkit offline matchers (SBOM / nmap-XML / CVE-lookup); scan-diff/watch; TLS & exposure hygiene | idle — ready to scope the offline matchers first | 2026-11-22 |
+| Discovery | Grok + Claude discovery agent | scan-diff/watch | idle (tk-matchers and tk-hygiene Discovery done) | 2026-11-22 |
 | Design | Claude design agent | scanner HTML report + backport-caveat surfacing | idle | 2026-11-22 |
-| Implementation | Claude impl agent + Grok review | scanner #82 item 5 (quieter counts + fingerprint fixes) | ready to start | 2026-11-22 |
+| Implementation | Claude impl agent + Grok review | tk-hygiene PR 1 (TLS/cert), then PR 2 (HTTP/mail) | active (#91 merged) | 2026-11-22 |
 | Orchestration | this session (Claude lead) | the backlog, assignments, merge gating | active | 2026-11-22 |
 
 ## Conventions

@@ -3,6 +3,8 @@
 // sends nothing but its identification and one request for the root page. Never reachable from outside this machine.
 import net from "node:net";
 import http from "node:http";
+import tls from "node:tls";
+import { readFileSync } from "node:fs";
 
 export async function startServers({ ssh = "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.5", ftp = "220 (vsFTPd 3.0.3)", server = "nginx/1.22.1", poweredBy = "PHP/8.1.12" } = {}) {
   const got = { ssh: [], ftp: [], http: [] }, servers = [];
@@ -17,6 +19,20 @@ export async function startServers({ ssh = "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu
   // a port that was just closed: connecting to it is refused
   const tmp = net.createServer(); const closed = await new Promise((r) => tmp.listen(0, "127.0.0.1", () => { const p = tmp.address().port; tmp.close(() => r(p)); }));
   return { ports, closed, got, close: () => Promise.all(servers.map((s) => new Promise((r) => { if (s.closeAllConnections) s.closeAllConnections(); s.close(() => r()); }))) };
+}
+
+/** A stand-in TLS service on loopback with one of the fixture certificates (tests/fixtures/scanner/tls/, test-only keys).
+ *  Counts connections so a test can prove the hygiene checks add none. opts go to tls.createServer (maxVersion, ciphers ...). */
+export async function startTlsServer(which = "weak", opts = {}) {
+  const dir = new URL("./tls/", import.meta.url);
+  let connections = 0;
+  const srv = tls.createServer({ key: readFileSync(new URL(`${which}-key.pem`, dir)), cert: readFileSync(new URL(`${which}-cert.pem`, dir)), ciphers: "DEFAULT:@SECLEVEL=0", ...opts }, (s) => { s.on("error", () => {}); s.end(); });
+  const socks = new Set();
+  srv.on("connection", (c) => { connections++; socks.add(c); c.on("close", () => socks.delete(c)); });
+  srv.on("tlsClientError", () => {});
+  const port = await new Promise((r) => srv.listen(0, "127.0.0.1", () => r(srv.address().port)));
+  // close() also destroys any connection still open, so a half-closed TLS socket cannot hold the test open
+  return { port, connections: () => connections, close: () => new Promise((r) => { for (const c of socks) c.destroy(); srv.close(() => r()); }) };
 }
 
 // run directly for a demonstration: node tests/fixtures/scanner/servers.mjs (prints the ports, stops on Ctrl-C)

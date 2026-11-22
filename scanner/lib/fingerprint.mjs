@@ -162,13 +162,87 @@ const CERT_HINTS = [
   [/synology/i, "Synology", "DiskStation Manager"], [/qnap/i, "QNAP", "QTS"], [/mikrotik/i, "MikroTik", "RouterOS"], [/zyxel/i, "Zyxel", "Zyxel firmware"],
 ];
 const name = (o) => (o && typeof o === "object" ? ["CN", "O", "OU"].map((k) => (o[k] ? `${k}=${Array.isArray(o[k]) ? o[k][0] : o[k]}` : "")).filter(Boolean).join(", ") : "");
+/* ---- the certificate's own DER: signature and public-key algorithm (Node 22 does not expose them), parsed, never trusted ---- */
+// a bounded ASN.1 DER reader: one TLV at a time, lengths checked against the buffer, no recursion beyond what is asked for
+function tlv(b, i) {
+  if (!b || i + 2 > b.length) return null;
+  const tag = b[i]; let len = b[i + 1], o = i + 2;
+  if (len & 0x80) { const n = len & 0x7f; if (n < 1 || n > 4 || o + n > b.length) return null; len = 0; for (let k = 0; k < n; k++) len = len * 256 + b[o + k]; o += n; }
+  return o + len > b.length ? null : { tag, start: o, end: o + len, next: o + len };
+}
+const kids = (b, t, max = 12) => { const out = []; for (let i = t.start; i < t.end && out.length < max;) { const c = tlv(b, i); if (!c) break; out.push(c); i = c.next; } return out; };
+function oid(b, t) {
+  if (!t || t.tag !== 0x06 || t.end - t.start > 32) return "";
+  const v = b.subarray(t.start, t.end), out = [Math.floor(v[0] / 40), v[0] % 40]; let n = 0;
+  for (let k = 1; k < v.length; k++) { n = n * 128 + (v[k] & 0x7f); if (!(v[k] & 0x80)) { out.push(n); n = 0; } }
+  return out.join(".");
+}
+// signature algorithms by OID -> [name, hash]; the hash is what a "weak signature" is judged on
+const SIG_OIDS = {
+  "1.2.840.113549.1.1.2": ["md2WithRSAEncryption", "MD2"], "1.2.840.113549.1.1.4": ["md5WithRSAEncryption", "MD5"],
+  "1.2.840.113549.1.1.5": ["sha1WithRSAEncryption", "SHA-1"], "1.2.840.113549.1.1.14": ["sha224WithRSAEncryption", "SHA-224"],
+  "1.2.840.113549.1.1.11": ["sha256WithRSAEncryption", "SHA-256"], "1.2.840.113549.1.1.12": ["sha384WithRSAEncryption", "SHA-384"],
+  "1.2.840.113549.1.1.13": ["sha512WithRSAEncryption", "SHA-512"], "1.2.840.113549.1.1.10": ["RSASSA-PSS", ""],
+  "1.2.840.10040.4.3": ["dsaWithSHA1", "SHA-1"], "1.2.840.10045.4.1": ["ecdsa-with-SHA1", "SHA-1"],
+  "1.2.840.10045.4.3.2": ["ecdsa-with-SHA256", "SHA-256"], "1.2.840.10045.4.3.3": ["ecdsa-with-SHA384", "SHA-384"], "1.2.840.10045.4.3.4": ["ecdsa-with-SHA512", "SHA-512"],
+  "1.3.101.112": ["Ed25519", ""], "1.3.101.113": ["Ed448", ""],
+  "2.16.840.1.101.3.4.3.17": ["ML-DSA-44", ""], "2.16.840.1.101.3.4.3.18": ["ML-DSA-65", ""], "2.16.840.1.101.3.4.3.19": ["ML-DSA-87", ""],
+};
+const KEY_OIDS = { "1.2.840.113549.1.1.1": "RSA", "1.2.840.113549.1.1.10": "RSA-PSS", "1.2.840.10040.4.1": "DSA", "1.2.840.10045.2.1": "EC",
+  "1.3.101.110": "X25519", "1.3.101.111": "X448", "1.3.101.112": "Ed25519", "1.3.101.113": "Ed448",
+  "2.16.840.1.101.3.4.3.17": "ML-DSA-44", "2.16.840.1.101.3.4.3.18": "ML-DSA-65", "2.16.840.1.101.3.4.3.19": "ML-DSA-87" };
+/** DER certificate -> { sig_alg, sig_hash, key_type } ("" where it cannot be read). Pure; reads only the algorithm fields. */
+export function certAlgorithms(raw) {
+  const out = { sig_alg: "", sig_hash: "", key_type: "" };
+  try {
+    const b = Buffer.isBuffer(raw) ? raw : null; if (!b || b.length > 65536) return out;
+    const top = tlv(b, 0); if (!top || top.tag !== 0x30) return out;
+    const [tbs, sigAlg] = kids(b, top, 3); if (!tbs || !sigAlg) return out;
+    const so = oid(b, kids(b, sigAlg, 1)[0]), sig = SIG_OIDS[so];
+    out.sig_alg = sig ? sig[0] : so; out.sig_hash = sig ? sig[1] : "";
+    // TBSCertificate: [0] version (optional), serial, signature, issuer, validity, subject, subjectPublicKeyInfo
+    const f = kids(b, tbs, 8), base = f[0] && f[0].tag === 0xa0 ? 1 : 0, spki = f[base + 5];
+    if (spki && spki.tag === 0x30) { const alg = kids(b, spki, 1)[0]; const ko = alg ? oid(b, kids(b, alg, 1)[0]) : ""; out.key_type = KEY_OIDS[ko] || ko; }
+  } catch { /* unreadable: leave blank */ }
+  return out;
+}
+
 export function certInfo(cert, now = Date.now()) {
   if (!cert || typeof cert !== "object" || !cert.subject) return null;
   const to = Date.parse(cert.valid_to || ""), from = Date.parse(cert.valid_from || "");
-  const subject = clip(name(cert.subject), 200), issuer = clip(name(cert.issuer), 200);
+  const subject = clip(name(cert.subject), 200), issuer = clip(name(cert.issuer), 200), alg = certAlgorithms(cert.raw);
   return { subject, issuer, valid_from: isFinite(from) ? new Date(from).toISOString().slice(0, 10) : "", valid_to: isFinite(to) ? new Date(to).toISOString().slice(0, 10) : "",
-    expired: isFinite(to) && to < now, self_signed: !!subject && subject === issuer, san: clip(cert.subjectaltname, 300) };
+    expired: isFinite(to) && to < now, not_yet_valid: isFinite(from) && from > now, days_left: isFinite(to) ? Math.floor((to - now) / 86400000) : null,
+    self_signed: !!subject && subject === issuer, san: clip(cert.subjectaltname, 300),
+    key_type: clip(alg.key_type, 40), key_bits: Number(cert.bits) || 0, curve: clip(cert.curve, 40), sig_alg: clip(alg.sig_alg, 60), sig_hash: clip(alg.sig_hash, 20),
+    fingerprint256: /^[0-9A-F:]{95}$/i.test(String(cert.fingerprint256 || "")) ? String(cert.fingerprint256).toUpperCase() : "" };
 }
+
+/* ---- the negotiated TLS parameters, as recorded from the one handshake ---- */
+/** -> { protocol, cipher, cipher_std, kex_type, kex_group, kex_bits, kex_note, pqc } */
+export function tlsInfo(t) {
+  if (!t || typeof t !== "object") return null;
+  const k = t.kex && typeof t.kex === "object" ? t.kex : {}, protocol = clip(t.protocol, 20), group = clip(k.name, 40);
+  // Node names the classical groups it negotiated (X25519, prime256v1, a DH size) but reports nothing for a hybrid
+  // post-quantum group; never read a blank as "no PQC" or as "PQC": say it was not reported.
+  const unreported = protocol === "TLSv1.3" && !k.type;
+  return { protocol, cipher: clip(t.cipher, 80), cipher_std: clip(t.cipher_std, 80), kex_type: clip(k.type, 10), kex_group: group, kex_bits: Number(k.size) || 0,
+    kex_note: unreported ? "key-exchange group not reported by this runtime (Node does not name hybrid post-quantum groups such as X25519MLKEM768)" : "",
+    pqc: /MLKEM|KYBER/i.test(group) };
+}
+
+/** Does a certificate name a host? RFC 6125: SAN DNS names first (CN only when there is no SAN), one left-most "*" label. */
+export function certNames(cert) {
+  const san = String((cert && (cert.san !== undefined ? cert.san : cert.subjectaltname)) || ""), dns = [...san.matchAll(/DNS:([^,\s]+)/g)].map((m) => m[1].toLowerCase());
+  if (dns.length) return dns.slice(0, 100);
+  const cn = /CN=([^,]+)/.exec(typeof (cert && cert.subject) === "string" ? cert.subject : name(cert && cert.subject));
+  return cn ? [cn[1].trim().toLowerCase()] : [];
+}
+export function nameMatches(names, host) {
+  const h = String(host || "").toLowerCase().replace(/\.$/, "");
+  return (names || []).some((n) => n === h || (n.startsWith("*.") && h.endsWith(n.slice(1)) && h.split(".").length === n.split(".").length));
+}
+
 export function fromCert(cert, port = 443) {
   const info = certInfo(cert); if (!info) return [];
   const text = `${info.subject} ${info.issuer}`;
@@ -199,17 +273,46 @@ export function udpObservations(result) {
   if (!result || result.state !== "open") return [];
   const out = [], p = result.parsed || {};
   if (result.proto === "snmp") {
-    out.push({ port: result.port, proto: "snmp", kind: "snmp-public", text: `SNMP answers the default "public" community over UDP${p.sysdescr ? `; sysDescr: ${clip(p.sysdescr, 200)}` : ""}` });
+    out.push({ port: result.port, proto: "snmp", kind: "snmp-public", severity: "medium", text: `SNMP answers the default "public" community over UDP${p.sysdescr ? `; sysDescr: ${clip(p.sysdescr, 200)}` : ""}` });
   }
   return out;
 }
 
-/** Observations that are not CVEs but a defender wants to know (expired or self-signed certificate, a cleartext login service). */
-export function observations(port, { banner = "", cert = null, now = Date.now() } = {}) {
-  const out = [], info = cert ? certInfo(cert, now) : null;
-  if (info && info.expired) out.push({ port, kind: "tls-expired", text: `The TLS certificate expired on ${info.valid_to}` });
-  if (info && info.self_signed) out.push({ port, kind: "tls-self-signed", text: "The TLS certificate is self-signed" });
-  if (port === 23) out.push({ port, kind: "cleartext-login", text: "Telnet is open: logins cross the network in clear text" });
-  if (port === 21 && /^220/.test(banner)) out.push({ port, kind: "cleartext-login", text: "FTP is open: unless it requires TLS, logins cross the network in clear text" });
-  return out;
+// thresholds for the TLS observations (fixed, documented in docs/scanner.md)
+export const TLS_RULES = Object.freeze({ expiringDays: 30, minRsaBits: 2048, minEcBits: 224, minDhBits: 2048,
+  oldProtocols: ["SSLv2", "SSLv3", "TLSv1", "TLSv1.1"], weakHashes: ["MD2", "MD5", "SHA-1"],
+  weakCipher: /(^|[_-])(NULL|EXPORT|EXP|RC4|RC2|DES|3DES|DES-CBC3|IDEA|ANON|ADH|AECDH|MD5)([_-]|$)/i });
+const cap1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/**
+ * Observations that are not CVEs but a defender wants to know: certificate problems, weak negotiated TLS, a cleartext
+ * login service. Pure; works only on what one connection already returned (no extra probe).
+ * opts: { banner, cert (as probe.mjs returns it), tls (probe.mjs tls object), names (the attested names used for this host), now }
+ * -> [{ port, kind, severity: high | medium | low | info, text }]
+ */
+export function observations(port, { banner = "", cert = null, tls = null, names = [], now = Date.now() } = {}) {
+  const out = [], info = cert ? certInfo(cert, now) : null, t = tls ? tlsInfo(tls) : null;
+  const add = (kind, severity, text) => out.push({ port, kind, severity, text });
+  if (info) {
+    if (info.expired) add("tls-expired", "high", `The TLS certificate expired on ${info.valid_to}`);
+    else if (info.not_yet_valid) add("tls-not-yet-valid", "medium", `The TLS certificate is not valid until ${info.valid_from}`);
+    else if (info.days_left != null && info.days_left <= TLS_RULES.expiringDays) add("tls-expiring", "medium", `The TLS certificate expires in ${info.days_left} day(s), on ${info.valid_to}`);
+    if (info.self_signed) add("tls-self-signed", "low", "The TLS certificate is self-signed");
+    const rsa = /^(RSA|RSA-PSS|DSA)$/.test(info.key_type) || (!info.key_type && !info.curve);
+    if (info.key_bits && rsa && info.key_bits < TLS_RULES.minRsaBits) add("tls-weak-key", "high", `The TLS certificate's ${info.key_type || "RSA"} key is ${info.key_bits} bits (under ${TLS_RULES.minRsaBits})`);
+    if (info.key_bits && info.key_type === "EC" && info.key_bits < TLS_RULES.minEcBits) add("tls-weak-key", "high", `The TLS certificate's EC key is ${info.key_bits} bits (under ${TLS_RULES.minEcBits})`);
+    // a weak hash on a self-signed leaf is not what browsers judge, but it is still a weak signature worth replacing
+    if (TLS_RULES.weakHashes.includes(info.sig_hash)) add("tls-weak-signature", info.self_signed ? "medium" : "high", `The TLS certificate is signed with ${info.sig_hash} (${info.sig_alg})`);
+    const want = (names || []).filter((n) => n && !/^[\d.:]+$/.test(n));
+    if (want.length) { const cn = certNames(info); if (cn.length && !want.some((n) => nameMatches(cn, n))) add("tls-name-mismatch", "medium", `The TLS certificate does not name ${want.slice(0, 3).join(", ")} (it names ${cn.slice(0, 4).join(", ")}${cn.length > 4 ? " ..." : ""})`); }
+  }
+  if (t) {
+    if (TLS_RULES.oldProtocols.includes(t.protocol)) add("tls-old-protocol", "high", `${t.protocol} was negotiated: the server accepts a protocol version that is retired (RFC 8996)`);
+    if (TLS_RULES.weakCipher.test(t.cipher) || TLS_RULES.weakCipher.test(t.cipher_std)) add("tls-weak-cipher", "high", `A weak cipher suite was negotiated: ${t.cipher_std || t.cipher}`);
+    if (t.kex_type === "DH" && t.kex_bits && t.kex_bits < TLS_RULES.minDhBits) add("tls-weak-dh", "high", `The ephemeral Diffie-Hellman group is ${t.kex_bits} bits (under ${TLS_RULES.minDhBits})`);
+    if (/^TLS_RSA_WITH_/i.test(t.cipher_std)) add("tls-no-forward-secrecy", "low", `${t.cipher_std} has no forward secrecy (RSA key exchange)`);
+  }
+  if (port === 23) add("cleartext-login", "high", "Telnet is open: logins cross the network in clear text");
+  if (port === 21 && /^220/.test(banner)) add("cleartext-login", "medium", "FTP is open: unless it requires TLS, logins cross the network in clear text");
+  return out.map((o) => ({ ...o, text: cap1(o.text) }));
 }

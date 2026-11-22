@@ -6,7 +6,7 @@ import { gate, listAddresses, classify, isPrivateKind, LIMITS, parseTarget, addr
 import { Limiter, pool } from "./limits.mjs";
 import { probePort as realProbe, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
-import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, observations, udpObservations } from "./fingerprint.mjs";
+import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, udpObservations } from "./fingerprint.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
@@ -82,6 +82,8 @@ export async function resolveScope(scope, { allowPublic = false, resolve = (h) =
  */
 // throttle handling: how many connection resets on an already-answering host trigger a single back-off and gentle retry
 const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
+// observations kept per host (the rest are counted in observations_dropped, never silently lost)
+export const OBS_PER_HOST = 60;
 
 export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
@@ -103,8 +105,12 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       h.ports.push({ port, state: "open", services: svcs.length, banner: r.banner ? r.banner.split(/\r?\n/)[0].replace(/[^ -~]/g, "?").slice(0, 160) : "" });
       h.services.push(...svcs);
       if (r.http) h.http.push({ port, ...httpInfo(r.http) });
-      if (r.tls) h.tls.push({ port, protocol: r.tls.protocol, cipher: r.tls.cipher, cert: certInfo(r.tls.cert) });
-      h.observations.push(...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert }));
+      if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certInfo(r.tls.cert) });
+      // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
+      const obs = observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names });
+      const room = OBS_PER_HOST - h.observations.length;
+      if (room > 0) h.observations.push(...obs.slice(0, room));
+      if (obs.length > room) h.observations_dropped = (h.observations_dropped || 0) + obs.length - Math.max(0, room);
       return true;
     } finally { release(); }
   };
@@ -192,7 +198,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
     coverage: coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }),
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], observations: h.observations })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

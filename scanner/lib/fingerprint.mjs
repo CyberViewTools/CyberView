@@ -420,3 +420,6 @@ export function mailObservations(port, banner, { tls = false } = {}) {
   if (port === 587 && /^220/.test(first)) return [{ port, kind: "cleartext-submission", severity: "low", text: "SMTP submission answers without TLS on port 587: logins are safe only if STARTTLS is required before AUTH (not checked)" }];
   return [];
 }
+
+/** The fixed fingerprint tables, read-only, for the KEV coverage-gap report (scanner/lib/kev-coverage.mjs). */
+export const FINGERPRINT_TABLES = Object.freeze({ GREET, SERVER, CERT_HINTS });

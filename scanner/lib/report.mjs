@@ -14,6 +14,40 @@ export function summarize(hosts, findings) {
   };
 }
 
+/** A banner cut off before it carries a product/version: a bare protocol prefix ("SSH-2.0-") or a stray byte or two.
+ *  A tarpit or a throttled read can truncate a banner; the finding must not silently read as "no version seen". */
+export function isTruncatedBanner(banner) {
+  const b = String(banner || "").replace(/\r?\n[\s\S]*$/, "").trim();   // first line only
+  if (!b) return false;                                                 // empty is "no banner", handled as filtered/closed
+  if (/^SSH-\d+\.\d+-?\s*$/.test(b)) return true;                        // "SSH-2.0-" with no software after
+  if (/^220[\s-]*$/.test(b) || /^HTTP\/?$/i.test(b)) return true;        // a greeting/status code with nothing after it
+  return b.length <= 3;                                                  // a stray "S" / "SS" left by a cut connection
+}
+
+/** Coverage: where the scan could NOT see, so a clean result is never mistaken for a safe one. Pure. */
+export function coverage(hosts, { ports = [], interrupted = false, stop_reason = "" } = {}) {
+  const total = ports.length;
+  const per = (hosts || []).map((h) => {
+    // a port probed more than once (a throttle retry) counts by its LAST outcome, so a recovered port is not a gap
+    const last = new Map(); for (const x of h.outcomes || []) last.set(x.port, x);
+    const o = [...last.values()], by = (s) => o.filter((x) => x.state === s).length;
+    return { address: h.address, up: !!h.up, checked: last.size, not_checked: Math.max(0, total - last.size),
+      filtered: by("filtered"), truncated: o.filter((x) => x.truncated).length,
+      throttled: Number(h.throttled) || 0, recovered: Number(h.throttle_recovered) || 0 };
+  });
+  const sum = (k) => per.reduce((n, h) => n + h[k], 0);
+  const down = per.filter((h) => !h.up).map((h) => h.address);
+  const unchecked = per.filter((h) => h.not_checked > 0).map((h) => ({ address: h.address, not_checked: h.not_checked }));
+  const truncated = per.filter((h) => h.truncated > 0).map((h) => ({ address: h.address, count: h.truncated }));
+  const throttled = per.filter((h) => h.throttled > 0).map((h) => ({ address: h.address, resets: h.throttled, recovered: h.recovered }));
+  return {
+    complete: !(interrupted || down.length || unchecked.length || truncated.length || throttled.length),
+    interrupted: !!interrupted, stop_reason: stop_reason || "",
+    hosts_unreachable: down, ports_filtered: sum("filtered"),
+    truncated_banners: truncated, ports_not_checked: unchecked, throttled,
+  };
+}
+
 /** Every queue point with its reason: "Known exploited (CISA) +35; ..." */
 export const pointList = (f) => f.points.list.map((p) => `${p.why} +${p.points}`).join("; ");
 
@@ -97,7 +131,19 @@ export function summaryText(report) {
   const s = report.summary, L = [];
   L.push(`Hosts in scope ${s.hosts_in_scope}, up ${s.hosts_up}; open ports ${s.open_ports}; services identified ${s.services_identified}.`);
   L.push(`Findings ${s.findings} (${s.version_confirmed} with the version inside an affected range): ${s.known_exploited} known exploited (CISA), ${s.critical} rated Critical, ${s.act} at priority Act, ${s.overdue} past CISA's deadline.`);
-  if (report.run.interrupted) L.push(`The scan stopped early (${report.run.stop_reason}): the results cover only what was checked.`);
+  const cov = report.coverage;
+  if (cov && !cov.complete) {
+    L.push("");
+    L.push("COVERAGE — the scan could not see everything below; a clean result does NOT cover these blind spots:");
+    if (cov.hosts_unreachable.length) L.push(`   ${cov.hosts_unreachable.length} host(s) answered on no port (filtered/dropped, possibly firewalled or down): ${cov.hosts_unreachable.slice(0, 20).join(", ")}${cov.hosts_unreachable.length > 20 ? ", ..." : ""}`);
+    if (cov.ports_filtered) L.push(`   ${cov.ports_filtered} port probe(s) were filtered/dropped (no answer) — not confirmed closed.`);
+    if (cov.truncated_banners.length) L.push(`   ${cov.truncated_banners.reduce((n, t) => n + t.count, 0)} banner(s) were cut off before a version was seen on: ${cov.truncated_banners.slice(0, 10).map((t) => t.address).join(", ")} — the service may be present but unread.`);
+    if (cov.ports_not_checked.length) L.push(`   ${cov.ports_not_checked.length} host(s) had ports left unchecked when a limit was hit: ${cov.ports_not_checked.slice(0, 10).map((t) => `${t.address} (${t.not_checked})`).join(", ")}.`);
+    if ((cov.throttled || []).length) L.push(`   ${cov.throttled.length} host(s) reset connections after answering (possible IPS/fail2ban throttling) — the scanner backed off and retried: ${cov.throttled.slice(0, 10).map((t) => `${t.address} (${t.recovered} found on retry)`).join(", ")}. If any still look thin, re-scan slower (--rate 0.1).`);
+    if (cov.interrupted) L.push(`   The scan stopped early (${cov.stop_reason || report.run.stop_reason || "limit reached"}).`);
+  } else if (report.run.interrupted) {
+    L.push(`The scan stopped early (${report.run.stop_reason}): the results cover only what was checked.`);
+  }
   for (const f of report.findings.slice(0, 25)) {
     L.push("");
     L.push(`#${f.rank} ${f.cve} ${f.title}`.slice(0, 160));

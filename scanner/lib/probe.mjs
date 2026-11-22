@@ -43,9 +43,19 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
   if (signal) { if (signal.aborted) return out; signal.addEventListener("abort", kill, { once: true }); }
   const hard = setTimeout(kill, timeouts.connectMs + timeouts.readMs * 2 + 1000);
   try {
-    // the operator can name extra web ports (--http-ports, --https-ports) for services on non-standard ports
-    const useTls = TLS_PORTS.has(port) || httpsPorts.includes(port), web = HTTP_PORTS.has(port) || HTTPS_PORTS.has(port) || httpPorts.includes(port) || httpsPorts.includes(port);
-    sock = await connect(ip, port, useTls, servername, timeouts.connectMs);
+    // the operator can name extra web ports (--http-ports, --https-ports) for services on non-standard ports;
+    // --http-ports forces plain text even on a port that is TLS by convention (e.g. a plain HTTP service on 9443)
+    let useTls = (TLS_PORTS.has(port) || httpsPorts.includes(port)) && !httpPorts.includes(port);
+    const web = HTTP_PORTS.has(port) || HTTPS_PORTS.has(port) || httpPorts.includes(port) || httpsPorts.includes(port);
+    try { sock = await connect(ip, port, useTls, servername, timeouts.connectMs); }
+    catch (e) {
+      // a TLS handshake that fails on a port we assumed was TLS: the service may be plain HTTP/text. The TCP connected
+      // but TLS did not, so try once without TLS. A refused or timed-out port is a real closed/filtered, not retried.
+      if (useTls && e && !["ECONNREFUSED", "ETIMEDOUT", "ENOTFOUND", "EHOSTUNREACH", "ENETUNREACH", "ERR_SOCKET_CONNECTION_TIMEOUT"].includes(e.code)) {
+        useTls = false; out.tls_failed = true;
+        sock = await connect(ip, port, false, servername, timeouts.connectMs);
+      } else throw e;
+    }
     out.state = "open";
     if (useTls) {
       const c = sock.getPeerCertificate(false);

@@ -21,8 +21,9 @@ export const UDP_SENDS = Object.fromEntries(Object.values(UDP_SERVICES).map((s) 
  * Never throws. -> { service, port, proto, state: open|filtered, parsed, bytes, error }
  * state is "open" only when the service answered; UDP gives no closed/filtered certainty, so silence is "filtered".
  */
-export async function udpProbe(ip, serviceKey, { signal = null, timeouts = TIMEOUTS, port = 0 } = {}) {
-  const svc = UDP_SERVICES[serviceKey], dest = port || svc.port;   // port override: a service on a non-standard port (and the tests)
+// services: the --udp table by default; scanner/lib/ics.mjs passes its frozen BACnet entry (only with --ics), still one datagram
+export async function udpProbe(ip, serviceKey, { signal = null, timeouts = TIMEOUTS, port = 0, services = UDP_SERVICES } = {}) {
+  const svc = services[serviceKey], dest = port || svc.port;   // port override: a service on a non-standard port (and the tests)
   const out = { service: serviceKey, port: dest, proto: svc.proto, state: "filtered", parsed: null, bytes: 0, error: "" };
   const datagram = svc.build(serviceKey === "snmp" ? SNMP_COMMUNITY : undefined);
   const family = isIP(ip) === 6 ? "udp6" : "udp4";

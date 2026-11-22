@@ -21,6 +21,7 @@ import { withResearch, withResearchUdp } from "./fp-research.mjs";
 import { D } from "./shared.mjs";
 import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
+import { runIcs, icsExchange as realIcsExchange, icsSends } from "./ics.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
 export function parsePorts(s) {
@@ -102,10 +103,11 @@ const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
 // observations kept per host (the rest are counted in observations_dropped, never silently lost)
 export const OBS_PER_HOST = 60;
 
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = null, getPath = realGetPath }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = null, getPath = realGetPath, ics = null, icsProbe = realIcsExchange }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
   // the path rail (scanner/lib/paths.mjs): off unless paths.enabled (--paths); capped per host, never above PATHS_PER_HOST
   const rail = paths && paths.enabled ? { perHost: Math.min(PATHS_PER_HOST, Number(paths.perHost) || PATHS_PER_HOST), bmc: !!paths.bmc } : null;
+  const icsOn = !!(ics && ics.enabled === true);   // industrial reads (scanner/lib/ics.mjs): off unless --ics
   const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
   if (signal) { if (signal.aborted) stopAll(String(signal.reason || "interrupted")); signal.addEventListener("abort", () => stopAll(String(signal.reason || "interrupted")), { once: true }); }
@@ -195,6 +197,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       }
       if (rail && h._railEv) await runRail(h);
       delete h._railEv;
+      if (icsOn) await runIcs(h, { ports, ics, acquire: (a) => lim.acquire(a), exchange: icsProbe, signal: ac.signal, log });
       // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
       if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
       if (!h.up) { const filtered = h.outcomes.filter((o) => o.state === "filtered").length;
@@ -204,7 +207,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
     });
   } finally { clearTimeout(timer); }
   const st = lim.stats();
-  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys, paths: rail ? { enabled: true, per_host: rail.perHost, bmc: rail.bmc } : { enabled: false } };
+  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys, paths: rail ? { enabled: true, per_host: rail.perHost, bmc: rail.bmc } : { enabled: false }, ics: { enabled: icsOn } };
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
@@ -242,14 +245,14 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
-      udp: probed.udp || [], paths: probed.paths || { enabled: false }, network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
+      udp: probed.udp || [], paths: probed.paths || { enabled: false }, ics: probed.ics || { enabled: false }, network: { ...probed.stats, sends: { ...SENDS, ...icsSends(!!(probed.ics && probed.ics.enabled)), ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
       data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
         ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
     coverage: { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), ...(h.ics ? { ics: h.ics } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

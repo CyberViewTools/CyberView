@@ -15,6 +15,8 @@
 //         [--paths [--paths-per-host N] [--paths-bmc]] (the bounded path rail, off by default)
 //         [--ics] (industrial/clinical identification reads, off by default; private ranges, standard ports in --ports)
 //         [--certs] [--mail] [--compare PREVIOUS/report.json]   opt-in extra outputs from data already collected
+//         [--identify [--identify-bmc]] (one standard hello per service: SMTP EHLO, POP3 CAPA, RTSP/SIP OPTIONS, unicast mDNS; off by default)
+//         [--dns-records DOMAIN[,DOMAIN] [--dkim-selectors a,b]] (SPF, DMARC, CAA, BIMI, MTA-STS TXT, DKIM for named selectors; attested names only)
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
 //   import / depmap / rematch                 offline: the operator's own files, a report.json, a local snapshot (scanner/lib/offline-cmds.mjs)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -38,11 +40,13 @@ import { mailInventory, toMailCsv } from "./lib/mail-starttls.mjs";
 import { kevCoverage, toCoverageCsv, coverageText } from "./lib/kev-coverage.mjs";
 import { loadPrevious, diffReports, diffText } from "./lib/diff.mjs";
 import { snapshotIncidentsTo } from "./lib/cite.mjs";
+import { HELLO_SENDS, identifyHeaderText } from "./lib/hello.mjs";
+import { DNS_SENDS, dnsPlanArgs, dnsRecords, toDnsCsv, dnsText } from "./lib/dns-records.mjs";
 import { OFFLINE_CMDS, IMPORT_USAGE, offlineCommand, loadImports } from "./lib/offline-cmds.mjs";
 import { buildDepmap, toMermaid, depmapText, depmapHtml } from "./lib/depmap.mjs";
 import { icsSends, ICS_PROTOCOLS } from "./lib/ics.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", "depmap", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", "identify", "identify-bmc", "depmap", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -67,6 +71,11 @@ Extra outputs (from what the scan already read; nothing more is sent): --certs (
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
 Path rail (off by default): --paths adds at most ${PATHS_PER_HOST} GETs per host (lower with --paths-per-host N) of frozen, reviewed version
 paths, only where the host's own root page, headers, certificate or port already hint at that product; --paths-bmc adds BMC identify.
+Identify hellos (off by default): --identify sends one standard unauthenticated message per service and reads the reply
+(SMTP EHLO and POP3 CAPA on open mail ports, RTSP OPTIONS on 554/8554, SIP OPTIONS on 5060, a unicast mDNS query to UDP 5353);
+--identify-bmc adds one RMCP/ASF presence ping to UDP 623. Never a login, AUTH, USER/PASS, VRFY/EXPN, REGISTER/INVITE or stream.
+DNS records (off by default): --dns-records example.com (names listed in the scope file's targets only) asks the system resolver
+for SPF, DMARC, CAA, BIMI and the MTA-STS TXT record; --dkim-selectors s1,s2 adds DKIM for selectors you name (never guessed).
 Industrial (off by default): --ics sends one read-only identification exchange per protocol (Modbus 502, S7 102, EtherNet/IP
 44818, BACnet UDP 47808 unicast, OPC UA 4840, DICOM 104) to private addresses only, when that port is in --ports (and open).
 Discovery (optional, in the scope file's "discover"): cidr sweep, owned domains (with Certificate Transparency), an imported
@@ -138,6 +147,12 @@ export async function main(argv, io = {}) {
   const pph = pathsPerHost(a["paths-per-host"]);
   if (!pph.ok) return fail(io, ["limits", pph.problem]);
   const paths = a.paths ? { enabled: true, perHost: pph.value, bmc: !!a["paths-bmc"] } : { enabled: false };
+  // identify hellos and DNS records: off unless asked; DNS names must be attested host names in the scope file's targets
+  if (a["identify-bmc"] && !a.identify) return fail(io, ["--identify-bmc needs --identify (identify hellos are off by default)"]);
+  const identify = a.identify ? { enabled: true, bmc: !!a["identify-bmc"], ...(io.helloTcp ? { tcp: io.helloTcp } : {}), ...(io.helloUdp ? { udp: io.helloUdp } : {}) } : { enabled: false };
+  if (a["dkim-selectors"] !== undefined && a["dns-records"] === undefined) return fail(io, ["--dkim-selectors needs --dns-records"]);
+  const dnsPlan = a["dns-records"] !== undefined ? dnsPlanArgs(scope, a["dns-records"], a["dkim-selectors"]) : null;
+  if (dnsPlan && !dnsPlan.ok) return fail(io, ["--dns-records", ...dnsPlan.problems]);
   const udp = a.udp ? Object.keys(UDP_SERVICES) : [];
   const ics = a.ics ? { enabled: true } : { enabled: false };   // industrial reads (scanner/lib/ics.mjs): only with --ics
   let ports = scope.ports || DEFAULT_PORTS;
@@ -160,7 +175,8 @@ export async function main(argv, io = {}) {
   if (im.given.length && !a.depmap) return fail(io, ["import files on scan feed --depmap: add --depmap, or use the import command"], 1);
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
-  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: { ...SENDS, ...icsSends(ics.enabled) }, paths }));
+  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: { ...SENDS, ...HELLO_SENDS, ...DNS_SENDS, ...icsSends(ics.enabled) }, paths }));
+  io.out(`  Identify:    ${identifyHeaderText(identify)}\n  DNS records: ${dnsPlan ? `on (--dns-records): ${dnsPlan.domains.join(", ")}${dnsPlan.selectors.length ? `; DKIM selectors ${dnsPlan.selectors.join(", ")}` : ""} (system resolver)` : "off (--dns-records not given): no DNS record query"}`);
   if (ics.enabled) { const want = Object.values(ICS_PROTOCOLS).map((p) => p.port), have = want.filter((p) => ports.includes(p)).sort((x, y) => x - y);
     io.out(`\nIndustrial reads (--ics): ${have.length ? `standard port(s) ${have.join(", ")} in the port list; private addresses only` : `none of the standard ports (${want.join(", ")}) is in the port list, so nothing industrial will be sent`}`); }
   const coach = scopeCoaching(sc.text, scope, { today });   // advice only (typos, gaps); never a refusal
@@ -191,9 +207,13 @@ export async function main(argv, io = {}) {
     if (stop) { io.err("REFUSED: " + stop); return 2; }   // the public cap is the hard stop for public space; nothing was scanned
     refused.forEach((r) => io.err(`skipped ${r.target}: ${r.why}`));
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
-    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp, paths, ics, icsProbe: io.icsProbe,
+    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp, paths, identify, ics, icsProbe: io.icsProbe,
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents: !!a["data-incidents"] });
+    report.run.identify = probed.identify || { enabled: false };
+    report.run.network.sends = { ...report.run.network.sends, ...HELLO_SENDS, ...DNS_SENDS };
+    const dns = dnsPlan ? await dnsRecords(scope, dnsPlan.domains, dnsPlan.selectors, { resolver: io.dnsResolver || null, signal: ac.signal }) : null;
+    if (dns) { report.dns = dns; report.run.dns_records = { enabled: true, domains: dns.domains || [], selectors: dns.selectors || [] }; } else report.run.dns_records = { enabled: false };
     report.run.profile = scanProfile({ ports, allPorts: !!a["all-ports"], customPorts: !!(a.ports || scope.ports), udp, httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], assumeUp: !!a["assume-up"], discover: !!scope.discover, dataMode: src.kind });
     report.scope.coaching = coach; staleData(report).forEach((x) => io.err("warning: " + x));
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
@@ -207,6 +227,7 @@ export async function main(argv, io = {}) {
     const more = [], tail = [];
     if (a.certs) { const ci = certInventory(report); more.push(["certs.csv", toCertsCsv(ci)]); tail.push(certText(ci)); }
     if (a.mail) more.push(["mail.csv", toMailCsv(mailInventory(report))]);
+    if (dns) { more.push(["dns.csv", toDnsCsv(dns)]); tail.push(dnsText(dns)); }
     if (previous) { const df = diffReports(previous, report); more.push(["diff.json", JSON.stringify(df, null, 2) + "\n"], ["diff.txt", diffText(df) + "\n"]); tail.push(diffText(df)); }
     if (dm) { more.push(["depmap.json", JSON.stringify(dm, null, 2) + "\n"], ["depmap.mmd", toMermaid(dm)]); tail.push(depmapText(dm)); }
     more.forEach(([f, s]) => w(f, s));

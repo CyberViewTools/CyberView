@@ -1,5 +1,5 @@
 {
-  "action": "Update Splunk SOAR to 8.8.0 or later and Splunk Enterprise to a fixed version (10.6.1, 10.4.5, 10.2.9, 10.0.12 or 9.4.17), as listed by UzCERT; check Splunk's own advisory.",
+  "action": "ThaiCERT urges updating quickly to fixed versions (Enterprise 10.6.1, 10.4.5, 10.2.9, 10.0.12 or 9.4.17; Enterprise Security 8.7.0; SOAR 8.8.0 or later) and checking that pass4SymmKey in server.conf is not empty.",
   "actor": "",
   "attack": [
     "vulnerability"
@@ -10,11 +10,13 @@
     "CVE-2026-131253",
     "CVE-2026-131287",
     "CVE-2026-131297",
-    "CVE-2026-76535"
+    "CVE-2026-76535",
+    "CVE-2026-76536",
+    "CVE-2026-131202"
   ],
   "date": "2026-11-18",
   "date_note": "UzCERT says Splunk announced the issues on 18 November 2026; the Splunk advisory itself was not read.",
-  "exec": "Splunk SOAR and Splunk Enterprise have new critical and high-severity flaws, so security teams running them should patch.",
+  "exec": "Splunk fixed 139 flaws, five rated critical, across Enterprise, Enterprise Security and SOAR; security teams running them should patch.",
   "first_seen": "2026-11-20T19:50:00Z",
   "geo_basis": "agency (UzCERT, Uzbekistan)",
   "lat": 41.2995,
@@ -22,10 +24,11 @@
   "org": "Splunk",
   "pin_type": "agency",
   "place": "Tashkent",
-  "plain": "Uzbekistan's CERT reports that Splunk fixed serious flaws in SOAR and Splunk Enterprise, including remote code execution and authentication bypass. UzCERT does not say they are being exploited.",
+  "plain": "Thailand's and Uzbekistan's cyber agencies report that Splunk fixed 139 flaws in its products, some serious enough to let attackers run code or skip logins. Neither says they are being exploited.",
   "products": [
     "Splunk SOAR",
-    "Splunk Enterprise"
+    "Splunk Enterprise",
+    "Splunk Enterprise Security"
   ],
   "sector": "Technology",
   "severity": 2,
@@ -33,22 +36,28 @@
   "sources": [
     {
       "name": "UzCERT",
-      "url": "https://uzcert.uz/splunk-soar-va-splunk-enterprise-dasturlarida-kritik-zaifliklar-aniqlandi-tajovuzkorlar-zararli-kodlarni-bajaris-va-autentifikatsiyani-cetlab-otis-imkoniyatiga-ega-bolisi-mumkin/"
+      "url": "https://uzcert.uz/splunk-soar-va-splunk-enterprise-dasturlarida-kritik-zaifliklar-aniqlandi-tajovuzkorlar-zararli-kodlarni-bajaris-va-autentifikatsiyani-cetlab-otis-imkoniyatiga-ega-bolisi-mumkin/",
+      "published": "2026-11-18"
+    },
+    {
+      "name": "ThaiCERT",
+      "url": "https://www.thaicert.or.th/2026/11/22/%e0%b9%81%e0%b8%88%e0%b9%89%e0%b8%87%e0%b9%80%e0%b8%95%e0%b8%b7%e0%b8%ad%e0%b8%99-splunk-%e0%b9%81%e0%b8%81%e0%b9%89%e0%b9%84%e0%b8%82%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7/",
+      "published": "2026-11-22"
     }
   ],
   "status": "confirmed",
-  "summary": "UzCERT says Splunk announced on 18 November fixes for flaws in Splunk SOAR and Splunk Enterprise. Two SOAR remote code execution flaws are rated 9.9 and 9.6 and a SOAR SSO authentication bypass is rated high; all are fixed in SOAR 8.8.0 or later. A Splunk Enterprise RapidDiag REST API bypass is fixed in several versions. UzCERT does not state exploitation.",
+  "summary": "UzCERT says Splunk announced on 18 November fixes for flaws in Splunk SOAR and Splunk Enterprise, including two SOAR remote code execution flaws rated 9.9 and 9.6, fixed in SOAR 8.8.0 or later. ThaiCERT reports the release fixes 139 vulnerabilities, five rated critical, including authentication bypasses in Enterprise REST APIs and a path traversal in Enterprise Security fixed in 8.7.0. Neither agency states exploitation.",
   "tags": [
     "patch",
     "rce",
     "auth-bypass"
   ],
-  "title": "Splunk fixes critical SOAR and Enterprise flaws, UzCERT reports",
-  "updated_at": "2026-11-21T15:33:26Z",
+  "title": "Splunk fixes 139 flaws, including critical SOAR and Enterprise bugs, CERTs report",
+  "updated_at": "2026-11-22T10:32:45Z",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-21T03:24:00Z",
-    "note": "Verify desk read the UzCERT page (18 Nov 2026): CVSS 9.9 and 9.6 SOAR remote code execution, SSO bypass rated high, fixed in SOAR 8.8.0 or later, RapidDiag bypass in Enterprise; no exploitation stated. Matches the record. Splunk's own advisory is not cited by UzCERT and was not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T10:32:45Z",
+    "note": "Two independent national CERTs state the core fact: UzCERT (18 Nov) and ThaiCERT (22 Nov, read in full: 139 vulnerabilities, five critical, CVSS for CVE-2026-76535, 76536, 131202, 131253 and 131287, fixed versions, no exploitation stated). Splunk's own advisory was not read."
   },
   "review": {
     "state": "passed",
@@ -97,5 +106,11 @@
   "surface": {
     "value": "web-app",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.thaicert.or.th/2026/11/22/%e0%b9%81%e0%b8%88%e0%b9%89%e0%b8%87%e0%b9%80%e0%b8%95%e0%b8%b7%e0%b8%ad%e0%b8%99-splunk-%e0%b9%81%e0%b8%81%e0%b9%89%e0%b9%84%e0%b8%82%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7/",
+      "quote": "ได้เผยแพร่การอัปเดตด้านความมั่นคงปลอดภัยเพื่อแก้ไขช่องโหว่จำนวน 139 รายการ"
+    }
+  ]
 }

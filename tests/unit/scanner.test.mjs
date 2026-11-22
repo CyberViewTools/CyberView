@@ -13,7 +13,7 @@ import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, certInfo
 import { cleanFlaws, findings, toItem } from "../../scanner/lib/match.mjs";
 import { dirSource, webSource, ALLOWED, checkBase } from "../../scanner/lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, servicesOf, allPorts } from "../../scanner/lib/scan.mjs";
-import { toCsv, toSarif, toInventory, CSV_HEAD } from "../../scanner/lib/report.mjs";
+import { toCsv, toSarif, toInventory, CSV_HEAD, coverage, isTruncatedBanner, summaryText } from "../../scanner/lib/report.mjs";
 import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
 import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
 import { udpProbe } from "../../scanner/lib/udp.mjs";
@@ -102,8 +102,10 @@ test("public addresses: refused without the flag, then a prominent warning and a
   const y = io(); assert.equal(await main(["check", "--scope", p, "--i-am-authorized-for-public-ranges"], y), 0);
   assert.match(y.lines.out.join("\n"), /confirmed with --i-am-authorized-for-public-ranges/);
   let waited = 0; const z = io({ sleep: async (ms) => { waited = ms; }, publicWaitMs: 10000, probe: async (ip, port) => ({ port, state: "filtered" }) });
-  assert.equal(await main(["scan", "--scope", p, "--data", SNAP, "--i-am-authorized-for-public-ranges", "--out", join(d, "o")], z), 0);
+  // every port filtered -> the host answered nowhere -> incomplete coverage, exit 2 (not a false clean; see COVERAGE)
+  assert.equal(await main(["scan", "--scope", p, "--data", SNAP, "--i-am-authorized-for-public-ranges", "--out", join(d, "o")], z), 2);
   assert.equal(waited, 10000); assert.match(z.lines.err.join("\n"), /WARNING: this scan includes 1 PUBLIC address/);
+  assert.match(readFileSync(join(d, "o", "summary.txt"), "utf8"), /COVERAGE —[\s\S]*answered on no port/);
 });
 test("check prints the attestation and the scope, and sends nothing", async () => {
   const d = tmp(), p = writeScope(d, {}), x = io({ probe: () => { throw new Error("must not probe"); } });
@@ -524,4 +526,35 @@ test("no attack strings in the scanner, its docs or its fixtures (the NOCODE rul
   files.push(new URL("../../docs/scanner.md", import.meta.url).pathname);
   for (const f of files) { const t = readFileSync(f, "utf8"); const m = ATTACK.exec(t); assert.equal(m, null, `${f}: ${m && m[0]}`); }
   for (const [k, v] of Object.entries(BANNERS)) if (typeof v === "string") assert.equal(NOCODE.test(v), false, k);
+});
+
+/* ---- coverage: a scan with blind spots must never read as clean (Grok brief #82, silent-failure fixes) ---- */
+test("isTruncatedBanner flags a cut banner, not a full one", () => {
+  for (const b of ["SSH-2.0-", "S", "SS", "220", "HTTP"]) assert.ok(isTruncatedBanner(b), b);
+  for (const b of ["SSH-2.0-OpenSSH_9.6p1", "220 mail.example.com ESMTP Postfix", ""]) assert.ok(!isTruncatedBanner(b), b);
+});
+test("coverage: up host with closed ports is complete; filtered/down/unchecked are gaps", () => {
+  const up = { address: "10.0.0.1", up: true, outcomes: [{ port: 22, state: "open" }, { port: 80, state: "closed" }] };
+  assert.equal(coverage([up], { ports: [22, 80] }).complete, true);
+  const down = { address: "10.0.0.2", up: false, outcomes: [{ port: 22, state: "filtered" }, { port: 80, state: "filtered" }] };
+  const c = coverage([down], { ports: [22, 80] });
+  assert.equal(c.complete, false); assert.deepEqual(c.hosts_unreachable, ["10.0.0.2"]); assert.equal(c.ports_filtered, 2);
+  const partial = { address: "10.0.0.3", up: true, outcomes: [{ port: 22, state: "open" }] };
+  assert.equal(coverage([partial], { ports: [22, 80, 443] }).ports_not_checked[0].not_checked, 2);
+  const trunc = { address: "10.0.0.4", up: true, outcomes: [{ port: 22, state: "open", truncated: true }] };
+  assert.equal(coverage([trunc], { ports: [22] }).truncated_banners[0].count, 1);
+});
+test("probeAll: a host firewalled on the first ports is still probed, and the gaps are recorded", async () => {
+  const { settings: st } = settings({});
+  const targets = [{ address: "203.0.113.9", names: [], kind: "public", public: true }];
+  // the discovery ports (22/80/443) all drop; only a later port answers, with a cut banner
+  const probe = async (ip, port) => (port === 8080 ? { port, state: "open", banner: "SSH-2.0-" } : { port, state: "filtered" });
+  const res = await probeAll(targets, { ports: [22, 80, 443, 8080], settings: st, probe });
+  const h = res.hosts[0];
+  assert.ok(h.up, "found the open port past the dropped discovery ports");
+  assert.equal(h.outcomes.length, 4, "every probe outcome recorded, not just the open one");
+  const cov = coverage(res.hosts, { ports: [22, 80, 443, 8080] });
+  assert.equal(cov.ports_filtered, 3);
+  assert.equal(cov.truncated_banners.reduce((n, t) => n + t.count, 0), 1);
+  assert.equal(cov.complete, false);
 });

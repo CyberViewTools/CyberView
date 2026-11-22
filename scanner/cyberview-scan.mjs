@@ -146,7 +146,10 @@ export async function main(argv, io = {}) {
     w("report.json", JSON.stringify(report, null, 2) + "\n"); w("findings.csv", toCsv(report)); w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
     w("inventory.csv", toInventory(report)); const text = summaryText(report); w("summary.txt", text + "\n");
     io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, findings.csv, report.sarif, inventory.csv, summary.txt). Nothing was uploaded.`);
-    return report.run.interrupted ? 3 : 0;
+    // exit codes: 0 clean and complete, 2 coverage incomplete (blind spots — see the COVERAGE section), 3 stopped early
+    if (report.run.interrupted) return 3;
+    if (report.coverage && !report.coverage.complete) { io.err("\nCoverage incomplete: some hosts or ports could not be checked (see COVERAGE in summary.txt). A clean result does not cover them. Exit 2."); return 2; }
+    return 0;
   } finally { if (!io.signal) process.removeListener("SIGINT", onSig); }
 }
 

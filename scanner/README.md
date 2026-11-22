@@ -174,14 +174,17 @@ connection budgets** are 300 and 20,000 for any scan that includes a public addr
 you own** (no public address, no `--i-am-authorized-for-public-ranges`) they scale up so a large own-network sweep and
 `--all-ports` are not artificially blocked — the rate (20/s) and the time ceiling still bound the work. Each connection has
 fixed time limits (3 s to connect, 4 s to read). Ctrl-C stops new connections, lets open ones finish and still writes the
-report for what was checked (exit code 3); a second Ctrl-C quits at once.
+report for what was checked (exit code 3); a second Ctrl-C quits at once. The exit code is **0** when the scan was
+clean and complete, **2** when coverage was incomplete (a host or port could not be checked — see the Coverage section
+below; a clean result does not cover it), **3** when the scan stopped early, and 1 on an error.
 
 ## The report
 
 Written to `cyberview-scan-<time>/` (or `--out`):
 
 - `summary.txt`: hosts, services, findings, how many are known exploited, Critical, at priority Act or past CISA's
-  deadline, then each finding.
+  deadline, a **Coverage** section when the scan could not see everything (hosts that answered on no port, filtered
+  ports, banners cut off before a version was read, ports left unchecked when a limit was hit), then each finding.
 - `report.json`: everything, including the attestation, the scope, the limits used, what was sent and every service seen.
 - `findings.csv`: one row per CVE and place it was seen.
 - `report.sarif`: SARIF 2.1.0, for dashboards that read code-scanning results.
@@ -203,7 +206,10 @@ Each finding shows the CVE, where it was seen (address, port, product, the versi
   and government sources, and say so.
 
 A clean result is not proof that a host has no vulnerabilities: the scanner knows only the flaws CyberView's data covers,
-and a service can hide or misstate its version.
+and a service can hide or misstate its version. It also does not cover whatever the **Coverage** section lists — a host
+that answered on no port (a firewall or IPS may be dropping probes), a filtered port, or a banner that was cut off before
+its version could be read. The scan probes beyond the first few ports before calling a host unreachable, and reports what
+it could not reach rather than passing a blind spot off as clean (exit code 2 when coverage is incomplete).
 
 ## What it deliberately does not do
 

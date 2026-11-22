@@ -9,7 +9,7 @@ import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, observations, udpObservations } from "./fingerprint.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
-import { summarize } from "./report.mjs";
+import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { D } from "./shared.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
@@ -86,12 +86,14 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
   if (signal) { if (signal.aborted) stopAll(String(signal.reason || "interrupted")); signal.addEventListener("abort", () => stopAll(String(signal.reason || "interrupted")), { once: true }); }
   const timer = setTimeout(() => stopAll("time limit reached"), Math.max(0, lim.remainingMs()));
-  const hosts = targets.map((t) => ({ ...t, up: false, ports: [], services: [], observations: [], http: [], tls: [], udp: [] }));
+  const hosts = targets.map((t) => ({ ...t, up: false, ports: [], services: [], observations: [], http: [], tls: [], udp: [], outcomes: [] }));
   const one = async (h, port) => {
     const release = await lim.acquire(h.address);
-    if (!release) return false;
+    if (!release) return false;   // budget or time ran out: the port is left unchecked (coverage counts it)
     try {
       const r = await probe(h.address, port, { servername: h.names[0] || "", hostHeader: h.names[0] || "", signal: ac.signal, httpPorts, httpsPorts });
+      // record EVERY outcome, not just open ports, so a filtered/errored/truncated probe can never read as "nothing here"
+      h.outcomes.push({ port, state: r.state, error: r.error || "", truncated: r.state === "open" && isTruncatedBanner(r.banner) });
       if (r.state === "open" || r.state === "closed") h.up = true;
       if (r.state !== "open") return true;
       const svcs = servicesOf(r);
@@ -117,15 +119,16 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
   try {
     await pool(hosts, settings.concurrency, async (h) => {
       const first = assumeUp ? [] : discoveryPorts(ports);
-      for (const p of first) { if (!(await one(h, p))) return; }
-      const tcpDown = !assumeUp && !h.up;
-      if (!tcpDown) {
-        const rest = ports.filter((p) => !first.includes(p));
-        await pool(rest, settings.hostConcurrency, async (p) => { await one(h, p); });
-      }
+      for (const p of first) { await one(h, p); }
+      // Probe the rest even when the discovery ports gave no answer: a firewall or IPS that drops the first few ports
+      // must not let a host be written off after only 3-4 probes. A host that answers nowhere is reported as an
+      // unreachable coverage gap, never as a clean result. (The Limiter still caps probes by host/total budget and time.)
+      const rest = ports.filter((p) => !first.includes(p));
+      await pool(rest, settings.hostConcurrency, async (p) => { await one(h, p); });
       // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
       if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
-      if (tcpDown && !h.up) { log(`${h.address}: no answer on ${first.join(", ")}${udpKeys.length ? " or UDP" : ""}; treated as down`); return; }
+      if (!h.up) { const filtered = h.outcomes.filter((o) => o.state === "filtered").length;
+        log(`${h.address}: no answer on ${h.outcomes.length} TCP port(s) (${filtered} filtered/dropped)${udpKeys.length ? " or UDP" : ""}; unreachable — a coverage gap, not a clean result`); return; }
       h.ports.sort((a, b) => a.port - b.port); h.services.sort((a, b) => a.port - b.port); h.udp.sort((a, b) => a.port - b.port);
       log(`${h.address}${h.names.length ? ` (${h.names.join(", ")})` : ""}: ${h.ports.length} open TCP port(s)${udpKeys.length ? `, ${h.udp.filter((u) => u.state === "open").length} UDP service(s)` : ""}, ${h.services.length} service(s) identified`);
     });
@@ -169,6 +172,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
+    coverage: coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }),
     hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], observations: h.observations })),
     findings: found, named: namedList, notes,
   };

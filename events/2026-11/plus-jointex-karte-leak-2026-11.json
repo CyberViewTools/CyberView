@@ -14,11 +14,11 @@
   "geo_basis": "country",
   "time_basis": "published",
   "first_seen": "2026-11-20T19:47:56Z",
-  "updated_at": "2026-11-20T19:47:56Z",
-  "checked_at": "2026-11-20T19:47:56Z",
+  "updated_at": "2026-11-22T20:59:43Z",
+  "checked_at": "2026-11-22T20:59:43Z",
   "category": "incident",
   "date": "2026-11-18",
-  "date_note": "Date of PLUS's announcement as reported by Cybersecurity.com (Japan) on 19 Nov; PLUS's own notice was not found.",
+  "date_note": "Date of PLUS's own notice (2026.11.18); it says the KARTE intrusion occurred on 13 November and PLAID told PLUS of a possible leak on 15 November.",
   "title": "PLUS says information of four services, incl. JOINTEX, may have leaked via PLAID KARTE breach",
   "org": "PLUS Corporation",
   "sector": "Office supplies / retail",
@@ -29,25 +29,50 @@
   "pin_type": "country",
   "severity": 2,
   "status": "confirmed",
-  "source_tier": "established",
-  "summary": "According to Cybersecurity.com (Japan), PLUS announced on 18 November that information of four services (JOINTEX, smartoffice, smartschool, smart care) may have leaked through unauthorized access to PLAID's KARTE. It gives a cumulative total of 32,479 items, which it says is not a count of people, mostly login IDs and email addresses. No secondary harm was confirmed at announcement. PLUS has suspended KARTE use and plans individual notices.",
-  "plain": "PLUS says data from four of its services may have leaked in the KARTE breach at PLAID: 32,479 items in total, which is not a count of people.",
-  "exec": "Another KARTE customer reports possible leaks, 32,479 items in total; PLAID's breach keeps spreading to its customers.",
+  "source_tier": "primary",
+  "summary": "PLUS said on 18 November that customer information of four services may have leaked through unauthorized access to PLAID's KARTE: 21,071 items for smartschool, 10,190 for smart care, 1,176 for smartoffice and 42 for JOINTEX, counted as items, mostly login IDs and email addresses. It says card data and passwords could not have leaked and no secondary harm was confirmed. PLUS has suspended KARTE and will notify those affected individually.",
+  "plain": "PLUS says login IDs and email addresses from four of its services leaked in the KARTE breach at PLAID; card data and passwords were not involved.",
+  "exec": "Another KARTE customer reports leaked customer data; PLAID's breach keeps spreading to the companies that use it.",
   "action": "Users of JOINTEX, smartoffice, smartschool and smart care should be alert to phishing at the email addresses involved; PLUS says it will notify those affected individually.",
   "sources": [
     {
+      "name": "PLUS Corporation notice (JOINTEX), 18 Nov 2026",
+      "url": "https://www.plus.co.jp/news/202611/infoqmg2h0mviu/",
+      "published": "2026-11-18"
+    },
+    {
       "name": "Cybersecurity.com (Japan), 19 Nov 2026",
-      "url": "https://cybersecurity-jp.com/news/118636"
+      "url": "https://cybersecurity-jp.com/news/118636",
+      "published": "2026-11-19"
     },
     {
       "name": "PLAID notice, 16 Nov 2026 (leak of information possibly including personal data)",
-      "url": "https://plaid.co.jp/news/20261116/"
+      "url": "https://plaid.co.jp/news/20261116/",
+      "published": "2026-11-16"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.plus.co.jp/news/202611/infoqmg2h0mviu/",
+      "quote": "ログインID、メールアドレス：21,071件"
+    },
+    {
+      "url": "https://www.plus.co.jp/news/202611/infoqmg2h0mviu/",
+      "quote": "ログインID、メールアドレス：10,190件"
+    },
+    {
+      "url": "https://www.plus.co.jp/news/202611/infoqmg2h0mviu/",
+      "quote": "過去実施済のキャンペーン対象者のメールアドレス：1,176件"
+    },
+    {
+      "url": "https://www.plus.co.jp/news/202611/infoqmg2h0mviu/",
+      "quote": "ログインID、販売店名、担当者名、住所、メールアドレス：42件"
     }
   ],
   "validation": {
-    "checked_at": "2026-11-20T19:47:56Z",
-    "state": "single_source",
-    "note": "PLUS's own announcement was not found. Cybersecurity.com (Japan) relays it; PLAID's 16 Nov notice confirms the KARTE breach but does not mention PLUS."
+    "checked_at": "2026-11-22T20:59:43Z",
+    "state": "corroborated",
+    "note": "Primary: PLUS's own notice of 18 November (read by the follow-up run on 22 November) gives the per-service counts in items (件), not people, the data items, that card numbers, expiry dates and login passwords could not have leaked, no secondary harm so far, KARTE suspended and individual notices planned. Cybersecurity.com (Japan) relays it; PLAID's 16 Nov notice confirms the KARTE breach but does not mention PLUS. The earlier 32,479 total came from Cybersecurity.com; PLUS's notice states no total, so it was removed."
   },
   "links": [
     {

@@ -37,10 +37,10 @@ const scan = (s, paths, st = settings({}).settings) => probeAll(LOCAL, { ports: 
 const ON = { enabled: true };
 
 /* ---- the frozen table ---- */
-test("the table is frozen data: 50 reviewed rows, 39 literal paths, none login/management/exploit-class, cap 8", () => {
-  assert.equal(RAIL.length, 50); assert.equal(RAIL_PATHS.length, 39); assert.equal(PATHS_PER_HOST, 8);
+test("the table is frozen data: 51 reviewed rows (50 + ivanti-connect-secure-version-path, lead decision 2026-11-22), 39 literal paths, none login/management/exploit-class, cap 8", () => {
+  assert.equal(RAIL.length, 51); assert.equal(RAIL_PATHS.length, 39); assert.equal(PATHS_PER_HOST, 8);
   assert.ok(Object.isFrozen(RAIL) && Object.isFrozen(RAIL_PATHS) && RAIL.every((e) => Object.isFrozen(e) && Object.isFrozen(e.paths)));
-  assert.equal(new Set(RAIL.map((e) => e.id)).size, 50);
+  assert.equal(new Set(RAIL.map((e) => e.id)).size, 51);
   for (const p of RAIL_PATHS) { assert.match(p, /^\/[A-Za-z0-9_.\-\/]*$/); assert.equal(FORBIDDEN_PATH.test(p), false, p); }
   assert.throws(() => { RAIL_PATHS.push("/x"); });
   // the BMC rows are a separate opt-in group
@@ -133,7 +133,7 @@ test("a redirect on a rail path is recorded, never followed; 401 and 404 are rec
     const r = await scan(s, ON), h = r.hosts[0];
     assert.deepEqual(s.seen(), ["GET /", "GET /health", "GET /version"]);   // /elsewhere never requested
     assert.deepEqual(h.rail.map((x) => [x.path, x.status, x.outcome, x.location || ""]), [["/health", 302, "redirect", "/elsewhere"], ["/version", 401, "unauthorized", ""]]);
-    assert.equal(h.services.some((x) => x.product === "MLflow"), false);   // nothing parsed from a non-200
+    assert.equal(h.services.some((x) => x.product === "MLflow" && /path rail/.test(x.source)), false);   // nothing parsed from a non-200 (the root title alone names MLflow passively since scan-research-pack)
     const cov = railCoverage(r.hosts, { enabled: true, perHost: 8 });
     assert.equal(cov.requests, 2); assert.deepEqual(cov.by_outcome, { redirect: 1, unauthorized: 1 });
     assert.deepEqual(cov.not_ok.map((x) => x.outcome), ["redirect", "unauthorized"]);
@@ -158,7 +158,7 @@ test("hints read only the evidence already collected: title, headers, cookie nam
   assert.deepEqual(ids([ev(80, { title: "Apache Flink Web Dashboard" })]), ["apache-flink"]);
   assert.deepEqual(ids([ev(2375)]), ["docker-engine-api"]);
   assert.deepEqual(ids([ev(80, { headers: { server: "MinIO" } })]), ["minio"]);
-  assert.deepEqual(ids([ev(80, { status: 302, headers: { location: "https://vpn.example/dana-na/auth/url_default/welcome.cgi" } })]), ["pulse-secure-pulse-connect-secure"]);
+  assert.deepEqual(ids([ev(80, { status: 302, headers: { location: "https://vpn.example/dana-na/auth/url_default/welcome.cgi" } })]), ["ivanti-connect-secure-version-path", "pulse-secure-pulse-connect-secure"]);   // lead decision 2026-11-22: both rows, one request
   assert.deepEqual(ids([ev(80, { headers: { "set-cookie": ["SC_ANALYTICS_GLOBAL_COOKIE=abc; path=/"] } })]), ["sitecore-xp"]);
   assert.deepEqual(ids([ev(80, { headers: { "x-generator": "Drupal 7 (https://www.drupal.org)" } })]), ["drupal-core"]);
   assert.deepEqual(ids([ev(443, { cert: { subject: { CN: "Puppet CA: pe.example" }, issuer: { CN: "Puppet CA: pe.example" } } })]), ["perforce-puppet-enterprise"]);

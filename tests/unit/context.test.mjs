@@ -53,24 +53,27 @@ test("GDACS RSS: wrong shape throws a coded error", () => {
   assert.throws(() => parseGdacsRss("not xml"), (e) => e.code === "bad_shape");
 });
 
-test("GDACS ARCHIVE: keeps orange/red points of every type, dedupes, sorts newest first, builds https link", () => {
-  const feat = (level, { type = "TC", id = 1, from = "2026-11-20T00:00:00", coords = [80.2, 15.8], name = "Cyclone X", country = "India" } = {}) =>
-    ({ geometry: { type: "Point", coordinates: coords }, properties: { eventtype: type, eventid: id, alertlevel: level, name, country, fromdate: from, todate: "2026-11-21T00:00:00", url: { report: "https://x/" } } });
+test("GDACS ARCHIVE: dates + recency, keeps 30 days, dedupes, freshest first, builds https link", () => {
+  const NOW = Date.parse("2026-11-22T12:00:00Z");
+  const feat = (level, { type = "TC", id = 1, from = "2026-11-20T00:00:00", to = "2026-11-21T00:00:00", coords = [80.2, 15.8], name = "Cyclone X", country = "India" } = {}) =>
+    ({ geometry: { type: "Point", coordinates: coords }, properties: { eventtype: type, eventid: id, alertlevel: level, name, country, fromdate: from, todate: to, url: { report: "https://x/" } } });
   const out = parseGdacsArchive({ features: [
-    feat("Orange", { type: "EQ", id: 15731, from: "2026-11-18T00:00:00", name: "Earthquake in China" }),
-    feat("Green", { type: "WF", id: 2 }),                                                 // dropped: green
-    feat("Red", { type: "TC", id: 1001346, from: "2026-11-21T00:00:00", name: "Cyclone MURASU" }),
-    feat("Red", { type: "TC", id: 1001346, from: "2026-11-21T00:00:00" }),                // dropped: duplicate id
+    feat("Orange", { type: "EQ", id: 15731, from: "2026-11-15T00:00:00", to: "2026-11-15T00:00:00", name: "Earthquake in China" }), // 7d ago
+    feat("Red", { type: "TC", id: 1001346, from: "2026-11-21T00:00:00", to: "2026-11-21T00:00:00", name: "Cyclone MURASU" }),        // 1d ago
+    feat("Orange", { type: "DR", id: 1018332, from: "2026-05-01T00:00:00", to: "2026-11-22T00:00:00", name: "Drought" }),            // ongoing: 0d
+    feat("Red", { type: "TC", id: 1001346, from: "2026-11-21T00:00:00" }),                 // dropped: duplicate id
+    feat("Green", { type: "WF", id: 2 }),                                                  // dropped: green
+    feat("Orange", { type: "FL", id: 500, from: "2026-09-01T00:00:00", to: "2026-09-10T00:00:00" }), // dropped: >30 days old
     { geometry: { type: "Polygon", coordinates: [] }, properties: { eventtype: "FL", eventid: 9, alertlevel: "Red" } }, // dropped: not a point
-    feat("Red", { type: "EQ", id: 7, coords: [0, 500] }),                                 // dropped: out of range
-  ] });
-  assert.equal(out.length, 2);
-  assert.equal(out[0].id, "TC-1001346");          // newest (2026-11-21) first
-  assert.equal(out[0].level, "red");
-  assert.equal(out[0].type, "tropical cyclone");
-  assert.equal(out[0].url, "https://www.gdacs.org/report.aspx?eventtype=TC&eventid=1001346");
-  assert.equal(out[1].id, "EQ-15731");
-  assert.equal(out[1].type, "earthquake");
+    feat("Red", { type: "EQ", id: 7, coords: [0, 500] }),                                  // dropped: out of range
+  ] }, NOW);
+  assert.equal(out.length, 3);                                   // EQ(7d), TC(1d), DR(0d); FL dropped as >30d
+  assert.deepEqual(out.map((x) => x.id), ["DR-1018332", "TC-1001346", "EQ-15731"]);   // freshest first
+  assert.deepEqual(out.map((x) => x.days), [0, 1, 7]);
+  assert.equal(out[1].level, "red");
+  assert.equal(out[1].type, "tropical cyclone");
+  assert.equal(out[1].url, "https://www.gdacs.org/report.aspx?eventtype=TC&eventid=1001346");
+  assert.equal(out[0].type, "drought");                          // ongoing drought kept (active today)
 });
 
 test("GDACS ARCHIVE: wrong shape throws a coded error", () => {

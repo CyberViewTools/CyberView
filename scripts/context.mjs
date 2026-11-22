@@ -90,12 +90,19 @@ export function parseGdacsRss(xml) {
   return out;
 }
 
-/** GDACS ARCHIVE GeoJSON -> recent significant orange and red alerts of EVERY hazard type, with a point.
- *  The current-alerts RSS only keeps what is active this minute, so a passed earthquake or cyclone vanishes and the
- *  layer can read near-empty. The ARCHIVE endpoint carries GDACS's recent notable orange/red events across all types
- *  (earthquakes, cyclones, floods, volcanoes, wildfires, droughts). Same output shape as the RSS parser; newest
- *  first, capped. The report link is built from the ids so a mangled url field cannot inject a non-GDACS URL. */
-export function parseGdacsArchive(d) {
+// how long an event stays on the layer after it was last active; the app highlights the 2 / 3 / 7-day bands inside it
+export const GDACS_RETAIN_DAYS = 30;
+// GDACS dates carry no timezone ("2026-11-01T00:00:00"); read them as UTC
+const gdacsMs = (v) => { const s = String(v || ""); const t = Date.parse(/[Z+]/.test(s) ? s : s + "Z"); return Number.isFinite(t) ? t : NaN; };
+
+/** GDACS ARCHIVE GeoJSON -> recent significant orange and red alerts of EVERY hazard type, with a point and a
+ *  recency in days. The current-alerts RSS only keeps what is active this minute, so a passed earthquake or cyclone
+ *  vanishes and the layer reads near-empty. The ARCHIVE carries GDACS's recent notable orange/red events across all
+ *  types (earthquakes, cyclones, floods, volcanoes, wildfires, droughts). Each event is dated and kept until it has
+ *  been inactive for GDACS_RETAIN_DAYS; `days` is how long ago it was last active (0 = ongoing), so the app can band
+ *  it by the last 2 / 3 / 7 days. Freshest first. The report link is built from the ids so a mangled url field cannot
+ *  inject a non-GDACS URL. */
+export function parseGdacsArchive(d, now = Date.now()) {
   if (!d || !Array.isArray(d.features)) throw badShape();
   const seen = new Set(), out = [];
   for (const f of d.features) {
@@ -104,6 +111,12 @@ export function parseGdacsArchive(d) {
     const [lng, lat] = g.coordinates.map(Number);
     if (!(isFinite(lat) && isFinite(lng)) || Math.abs(lat) > 90 || Math.abs(lng) > 180) continue;
     if (!/^\d+$/.test(String(p.eventid))) continue;
+    // recency = days since the event was last active (the more recent of from/to); ongoing or future counts as 0
+    const ft = gdacsMs(p.fromdate), tt = gdacsMs(p.todate);
+    const last = Math.max(Number.isFinite(ft) ? ft : -Infinity, Number.isFinite(tt) ? tt : -Infinity);
+    if (!Number.isFinite(last)) continue;
+    const days = Math.max(0, Math.floor((now - last) / 864e5));
+    if (days > GDACS_RETAIN_DAYS) continue;        // drop events last active over 30 days ago
     const id = str(`${p.eventtype}-${p.eventid}`, 40);
     if (seen.has(id)) continue; seen.add(id);
     out.push({
@@ -112,12 +125,12 @@ export function parseGdacsArchive(d) {
       level: String(p.alertlevel).toLowerCase(),
       name: str(p.name || p.description, 120),
       country: str(p.country, 80),
-      from: str(p.fromdate, 32), to: str(p.todate, 32),
+      from: str(p.fromdate, 32), to: str(p.todate, 32), days,
       lat: Math.round(lat * 1e4) / 1e4, lng: Math.round(lng * 1e4) / 1e4,
       url: /^[A-Z]{2}$/.test(String(p.eventtype)) ? `https://www.gdacs.org/report.aspx?eventtype=${p.eventtype}&eventid=${p.eventid}` : "",
     });
   }
-  out.sort((a, b) => String(b.from).localeCompare(String(a.from)));   // newest first
+  out.sort((a, b) => a.days - b.days || String(b.from).localeCompare(String(a.from)));   // freshest first
   return out.slice(0, 80);
 }
 

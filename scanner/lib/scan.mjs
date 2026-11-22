@@ -80,6 +80,9 @@ export async function resolveScope(scope, { allowPublic = false, resolve = (h) =
  * Probe every target. -> { hosts, stats, interrupted, stop_reason }
  * opts: { ports, settings, probe, signal (an AbortSignal the caller aborts on Ctrl-C), log, clock, assumeUp }
  */
+// throttle handling: how many connection resets on an already-answering host trigger a single back-off and gentle retry
+const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
+
 export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
   const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
@@ -125,6 +128,22 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       // unreachable coverage gap, never as a clean result. (The Limiter still caps probes by host/total budget and time.)
       const rest = ports.filter((p) => !first.includes(p));
       await pool(rest, settings.hostConcurrency, async (p) => { await one(h, p); });
+      // Throttle (IPS/fail2ban): a host that answered, then reset several connections, is likely blocking the scan. Back
+      // off once (the Limiter's clock, so an injected clock makes tests instant) and re-probe those ports one at a time;
+      // a throttled host must not silently hide the services behind the block.
+      if (h.up && !assumeUp) {
+        const resets = [...new Set(h.outcomes.filter((o) => /reset|ECONNRESET/i.test(o.error || "")).map((o) => o.port))];
+        if (resets.length >= THROTTLE.minResets) {
+          h.throttled = resets.length;
+          const retry = resets.slice(0, THROTTLE.maxRetry);
+          log(`${h.address}: ${resets.length} connection reset(s) after the host answered — likely throttling (IPS/fail2ban); backing off, then re-probing ${retry.length} port(s) one at a time`);
+          if (!lim.stopped) await lim.clock.sleep(Math.min(THROTTLE.backoffMs, lim.remainingMs()));
+          const before = h.ports.length;
+          await pool(retry, 1, async (p) => { await one(h, p); });
+          h.throttle_recovered = h.ports.length - before;
+          if (h.throttle_recovered > 0) log(`${h.address}: ${h.throttle_recovered} service(s) found after backing off — the first pass was being throttled`);
+        }
+      }
       // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
       if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
       if (!h.up) { const filtered = h.outcomes.filter((o) => o.state === "filtered").length;

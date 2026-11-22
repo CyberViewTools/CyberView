@@ -558,3 +558,27 @@ test("probeAll: a host firewalled on the first ports is still probed, and the ga
   assert.equal(cov.truncated_banners.reduce((n, t) => n + t.count, 0), 1);
   assert.equal(cov.complete, false);
 });
+
+test("probeAll: a host that resets after answering is backed off and re-probed, recovering hidden services (#82 item 2)", async () => {
+  const { settings: st } = settings({});
+  const targets = [{ address: "203.0.113.5", names: [], kind: "public", public: true }];
+  const resetPorts = new Set([8000, 8080, 8888]), seen = new Map();
+  const probe = async (ip, port) => {
+    const n = (seen.get(port) || 0) + 1; seen.set(port, n);
+    if (port === 22) return { port, state: "open", banner: "SSH-2.0-OpenSSH_9.6p1" };               // host answers -> up
+    if (resetPorts.has(port)) return n === 1 ? { port, state: "filtered", error: "ECONNRESET" }     // reset on first pass
+      : { port, state: "open", banner: "220 (vsFTPd 3.0.3)" };                                       // answers after back-off
+    return { port, state: "closed" };
+  };
+  const clock = { now: () => 1000, sleep: async () => {} };                                          // instant back-off
+  const res = await probeAll(targets, { ports: [22, 8000, 8080, 8888], settings: st, probe, clock });
+  const h = res.hosts[0];
+  assert.ok(h.up);
+  assert.equal(h.throttled, 3);                     // 3 resets detected after the host answered
+  assert.equal(h.throttle_recovered, 3);            // all three found on the retry
+  const cov = coverage(res.hosts, { ports: [22, 8000, 8080, 8888] });
+  assert.equal(cov.throttled.length, 1);
+  assert.equal(cov.throttled[0].recovered, 3);
+  assert.equal(cov.ports_filtered, 0);              // a recovered port counts by its LAST (open) outcome, not the reset
+  assert.equal(cov.complete, false);                // throttling stays a coverage note even after recovery
+});

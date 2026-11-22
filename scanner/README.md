@@ -209,7 +209,10 @@ A clean result is not proof that a host has no vulnerabilities: the scanner know
 and a service can hide or misstate its version. It also does not cover whatever the **Coverage** section lists — a host
 that answered on no port (a firewall or IPS may be dropping probes), a filtered port, or a banner that was cut off before
 its version could be read. The scan probes beyond the first few ports before calling a host unreachable, and reports what
-it could not reach rather than passing a blind spot off as clean (exit code 2 when coverage is incomplete).
+it could not reach rather than passing a blind spot off as clean (exit code 2 when coverage is incomplete). If a host
+resets connections after it has answered (an IPS or fail2ban throttling the scan), the scanner backs off once and
+re-probes those ports one at a time, recovering services the first pass was blocked from, and notes it in Coverage — if
+anything still looks thin, re-scan slower with `--rate 0.1`.
 
 ## What it deliberately does not do
 

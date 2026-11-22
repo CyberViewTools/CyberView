@@ -11,9 +11,14 @@ certificate), matches it against CyberView's published data on known-exploited f
 affected-version ranges), and ranks what it finds by the CyberView rating, the same calculation the
 [Vulnerabilities page](https://xanderhutch.github.io/CyberView/vulnerabilities.html) uses.
 
-It is a **detection tool**. It does not exploit anything, log in, guess or test passwords, send crafted input, flood,
-hide what it is, or scan the internet at large. There is no "aggressive" setting. Mechanical code only; no AI model runs
-in it.
+It is a **detection tool**. It does not exploit anything, log in, guess or test passwords or SNMP community strings, send
+crafted input, flood, hide what it is, or scan the internet at large. There is no "aggressive" setting. Mechanical code
+only; no AI model runs in it.
+
+It can also **find the hosts for you** within the scope you attest to — sweep your ranges, resolve and expand your own
+domains, import an asset list, or read your own read-only cloud inventory — and scan **deeper**: every TCP port, and
+read-only DNS, NTP and SNMP service checks. Every host discovery finds is re-checked against your scope before it is
+scanned; nothing outside it is ever contacted.
 
 ## What you need
 
@@ -74,7 +79,43 @@ never as findings.
   warning and waits ten seconds so you can cancel. Even then, a public range may be at most a /24 and a scan may include
   at most 1,024 public addresses. Use it only for addresses you own, such as your own internet-facing servers.
 - `ports` is optional (the default is 22 common service ports). `--ports 22,80,8000-8010` overrides it;
-  `--http-ports` and `--https-ports` name web services on non-standard ports.
+  `--http-ports` and `--https-ports` name web services on non-standard ports. `--all-ports` scans every TCP port
+  (1–65535) and is allowed **only for private ranges** you own (it refuses a scope with any public address).
+- `--udp` adds read-only DNS, NTP and SNMP service checks (see "what goes over the network").
+
+## Finding the hosts for you: `discover`
+
+Add an optional `discover` block so you do not have to hand-list every host. It **never widens your scope**: every address
+it finds is re-checked against `targets` (and the public rules) before anything is contacted, so it can only narrow your
+attested scope down to the hosts that are actually there.
+
+```json
+"discover": {
+  "cidr": true,
+  "domains": ["example.com"],
+  "ct": true,
+  "import": [{ "file": "assets.csv" }, { "file": "scan.xml", "format": "nmap-xml" }],
+  "cloud": [{ "file": "ec2.json", "provider": "aws-ec2" }]
+}
+```
+
+- **cidr** — sweep the attested ranges for live hosts (the usual liveness check), then scan each.
+- **domains** — resolve domains **you own**. With `"ct": true`, also read the domain's subdomains from Certificate
+  Transparency (one read-only `GET` to `crt.sh` per domain). A subdomain of an attested domain is in scope; a public
+  address it resolves to still needs `--i-am-authorized-for-public-ranges` and counts against the public cap.
+- **import** — read an asset list from disk: a plain host/IP list, a CSV (a `host`/`ip`/`address`/`name`/`fqdn`/`dns`
+  column), or nmap `-oX` XML.
+- **cloud** — read the JSON **your own read-only command** printed, and scan the public IPs/DNS names in it. The scanner
+  **never runs your cloud CLI and never sees your cloud keys**; you run the read-only command with your own credentials
+  and point `cloud` at the file:
+  - `aws-ec2`: `aws ec2 describe-instances > ec2.json`
+  - `aws-elb`: `aws elbv2 describe-load-balancers > elb.json`
+  - `gcp`: `gcloud compute instances list --format=json > gcp.json`
+  - `azure`: `az network public-ip list > az.json` (or `az vm list-ip-addresses`)
+
+Any IP a source yields that is not inside your attested `targets` (or a listed/attested domain) is dropped and logged,
+never scanned. If discovery would push the number of public addresses over the cap (1,024), the scan **stops** and tells
+you — it does not silently scan a subset.
 
 ## Exactly what goes over the network
 
@@ -88,6 +129,15 @@ spoofed source address):
 | SSH | After reading the server's banner, its own identification line, `SSH-2.0-CyberViewScanner_1.0.0 authorized-vulnerability-scan`, so your logs show who connected. |
 | Web (80, 8080, 8000, 8008, 8888, ... and `--http-ports`) | One HTTP request for the root page (method GET, path "/"), with the User-Agent below. Redirects are recorded, not followed. |
 | TLS (443, 8443, 993, 995, 465, ... and `--https-ports`) | A standard TLS handshake to read the certificate (read, never trusted), then on web ports the same single request. |
+
+With `--udp`, one benign read-only UDP datagram per service per host (never more; no retransmit, no raw packets — node
+`dgram` only):
+
+| UDP service | The single datagram sent |
+|---|---|
+| DNS (53) | A `version.bind` query: QNAME `version.bind`, type `TXT`, class `CHAOS`. Reads the resolver's stated version. |
+| NTP (123) | A mode-6 (control) **read-variables** request (opcode 2), no payload. Reads ntpd's version/system string. |
+| SNMP (161) | One SNMPv1 `GET` of `sysDescr` (OID `1.3.6.1.2.1.1.1.0`) with the standard read community **`public`** only. No other community is ever tried; there is no walk and no write. |
 
 Every web request carries the User-Agent
 `CyberView-Scanner/1.0.0 (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
@@ -115,13 +165,16 @@ written only to the output folder on your machine, readable only by you.
 | New connections per second | 20 | `--rate` |
 | Connections open at once | 8 | `--concurrency` |
 | Connections open at once to one host | 2 | `--host-concurrency` |
-| Connections to one host per run | 300 | `--host-budget` |
-| Connections per run | 20,000 | `--budget` |
+| Connections to one host per run | 300 (public) | `--host-budget` |
+| Connections per run | 20,000 (public) | `--budget` |
 | Longest run | 60 minutes (ceiling 480) | `--max-minutes` |
 
-Each limit can be set lower, never higher, and none can be switched off. Each connection has fixed time limits (3 s to
-connect, 4 s to read). Ctrl-C stops new connections, lets open ones finish and still writes the report for what was
-checked (exit code 3); a second Ctrl-C quits at once.
+The rate and open-at-once limits can be set lower, never higher, and none can be switched off. The **per-host and total
+connection budgets** are 300 and 20,000 for any scan that includes a public address; for a scan of **only private ranges
+you own** (no public address, no `--i-am-authorized-for-public-ranges`) they scale up so a large own-network sweep and
+`--all-ports` are not artificially blocked — the rate (20/s) and the time ceiling still bound the work. Each connection has
+fixed time limits (3 s to connect, 4 s to read). Ctrl-C stops new connections, lets open ones finish and still writes the
+report for what was checked (exit code 3); a second Ctrl-C quits at once.
 
 ## The report
 
@@ -155,9 +208,12 @@ and a service can hide or misstate its version.
 ## What it deliberately does not do
 
 - No exploitation, payloads, injection strings or crafted input; no checks that work by triggering a flaw.
-- No logins, password guessing, credential testing, hash capture or cracking.
-- No denial of service, flooding or amplification; no UDP probes; no mode that removes the limits.
+- No logins, password guessing, credential testing, SNMP community-string guessing, hash capture or cracking.
+- No denial of service, flooding or amplification; the UDP checks send exactly one benign datagram per service per host
+  (no retransmit); no raw sockets; no mode that removes the rate limit.
 - No evasion: no spoofed addresses, no stealth or fragmented packets, no disguised User-Agent.
-- No scanning of addresses outside the scope file, and no wide sweeps of public address space.
+- No scanning of addresses outside the scope file (discovery is re-checked against it), and no wide sweeps of public
+  address space (the public cap is a hard stop).
+- The scanner never runs your cloud CLI and never reads or stores your cloud or API keys.
 
 `scripts/security-check.mjs` checks the scanner's code for these on every change. More detail: `docs/scanner.md`.

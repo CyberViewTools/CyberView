@@ -167,6 +167,34 @@ export function fromCert(cert, port = 443) {
   return [];
 }
 
+/* ---- UDP service checks (udp.mjs): version.bind TXT (DNS), mode-6 read (NTP), sysDescr GET (SNMP) ---- */
+export function fromUdp(result) {
+  if (!result || result.state !== "open" || !result.parsed) return [];
+  const p = result.parsed, port = result.port, proto = result.proto;
+  if (proto === "dns" && p.version) {
+    const ev = `DNS version.bind: ${clip(p.version, 120)}`;
+    let m;
+    if ((m = /BIND\s+(\d+\.\d+(?:\.\d+)?(?:-?[A-Za-z0-9.]+)?)/i.exec(p.version)) || (m = /^(\d+\.\d+\.\d+)/.exec(p.version))) return [svc(port, "dns", "ISC", "BIND", m[1], { distro: distroOf(p.version), source: "DNS version.bind", evidence: ev })];
+    return [svc(port, "dns", "", "", "", { label: "DNS server", source: "DNS version.bind", evidence: ev, guessed: true })];
+  }
+  if (proto === "ntp" && (p.version || p.system)) {
+    const ev = `NTP read: version ${clip(p.version || "?", 80)}${p.system ? `, system ${clip(p.system, 60)}` : ""}`, m = /(\d+\.\d+\.\d+(?:p\d+)?)/.exec(p.version || "");
+    if (m) return [svc(port, "ntp", "NTP Project", "NTP", m[1], { matchVersion: (/^\d+(?:\.\d+)*/.exec(m[1]) || [""])[0], source: "NTP mode-6 read", evidence: ev })];
+    return [svc(port, "ntp", "", "", "", { label: "NTP server", source: "NTP mode-6 read", evidence: ev, guessed: true })];
+  }
+  return [];   // SNMP sysDescr is a free-text description: kept as an observation, not matched to a CPE
+}
+
+/** Observations from the UDP checks a defender wants to know (an exposed SNMP agent answering the default community, the sysDescr it returned). */
+export function udpObservations(result) {
+  if (!result || result.state !== "open") return [];
+  const out = [], p = result.parsed || {};
+  if (result.proto === "snmp") {
+    out.push({ port: result.port, proto: "snmp", kind: "snmp-public", text: `SNMP answers the default "public" community over UDP${p.sysdescr ? `; sysDescr: ${clip(p.sysdescr, 200)}` : ""}` });
+  }
+  return out;
+}
+
 /** Observations that are not CVEs but a defender wants to know (expired or self-signed certificate, a cleartext login service). */
 export function observations(port, { banner = "", cert = null, now = Date.now() } = {}) {
   const out = [], info = cert ? certInfo(cert, now) : null;

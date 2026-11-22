@@ -1,10 +1,11 @@
 // One scan: resolve the scope, gate every address, probe politely, fingerprint, match, rate, report.
 // The probe and the resolver are passed in so tests can run the whole path on loopback or with stand-ins.
 import { lookup } from "node:dns/promises";
-import { gate, listAddresses, classify, isPrivateKind } from "./scope.mjs";
+import { gate, listAddresses, classify, isPrivateKind, LIMITS, parseTarget, addresses } from "./scope.mjs";
 import { Limiter, pool } from "./limits.mjs";
 import { probePort as realProbe, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
-import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, httpInfo, certInfo, observations } from "./fingerprint.mjs";
+import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
+import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, observations, udpObservations } from "./fingerprint.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize } from "./report.mjs";
@@ -26,6 +27,9 @@ export function parsePorts(s) {
 /** Ports that tell whether a host is there before the rest are tried. */
 export function discoveryPorts(ports) { const d = [22, 80, 443, 3389].filter((p) => ports.includes(p)); return d.length ? d : ports.slice(0, 3); }
 
+/** The full 65,535-port TCP list for --all-ports (the budgets, not a port cap, bound the work). */
+export function allPorts() { return Array.from({ length: 65535 }, (_, i) => i + 1); }
+
 /** The services one probed port revealed. */
 export function servicesOf(r) {
   const out = [];
@@ -38,31 +42,50 @@ export function servicesOf(r) {
 }
 
 /**
- * Resolve and gate the scope. -> { targets: [{ address, names[], kind, public }], refused: [{ target, why }] }
+ * Resolve and gate the scope, then any hosts/addresses discovery proposed. EVERY address goes through the scope gate, so a
+ * discovered IP, subdomain, swept address or cloud asset outside the attested scope (or public without the flag) is dropped
+ * and logged, never scanned. The public cap is the hard stop for public space: if the gated set would hold more than
+ * LIMITS.maxPublicAddresses public addresses, the scan STOPS (stop is set) rather than silently scanning fewer.
+ * discovered: { hosts: [{host, source}], ips: [{ip, source}], ranges: [{cidr, source}] } from discover.runDiscovery (optional).
+ * -> { targets: [{ address, names[], kind, public, source }], refused: [{ target, why }], stop }
  */
-export async function resolveScope(scope, { allowPublic = false, resolve = (h) => lookup(h, { all: true, verbatim: true }) } = {}) {
+export async function resolveScope(scope, { allowPublic = false, resolve = (h) => lookup(h, { all: true, verbatim: true }), discovered = null } = {}) {
   const map = new Map(), refused = [];
-  const add = (ip, name) => { const g = gate(scope, ip, { allowPublic, viaHost: name }); if (!g.ok) { refused.push({ target: name ? `${name} (${ip})` : ip, why: g.why }); return; }
-    if (!map.has(ip)) map.set(ip, { address: ip, names: [], kind: g.kind, public: !isPrivateKind(g.kind) }); if (name && !map.get(ip).names.includes(name)) map.get(ip).names.push(name); };
-  for (const ip of listAddresses(scope)) add(ip, "");
-  for (const h of scope.hosts) {
+  const add = (ip, name, source) => {
+    const g = gate(scope, ip, { allowPublic, viaHost: name });
+    if (!g.ok) { refused.push({ target: name ? `${name} (${ip})` : ip, why: g.why + (source && source !== "scope" ? ` [${source}]` : "") }); return; }
+    if (!map.has(ip)) map.set(ip, { address: ip, names: [], kind: g.kind, public: !isPrivateKind(g.kind), source: source || "scope" });
+    const e = map.get(ip); if (name && !e.names.includes(name)) e.names.push(name);
+  };
+  for (const ip of listAddresses(scope)) add(ip, "", "scope");
+  const hostSeeds = [...scope.hosts.map((h) => ({ host: h, source: "scope" })), ...((discovered && discovered.hosts) || [])];
+  const seen = new Set();
+  for (const { host, source } of hostSeeds) {
+    if (seen.has(host)) continue; seen.add(host);
     let res = [];
-    try { res = await resolve(h); } catch (e) { refused.push({ target: h, why: `could not be resolved (${String(e.code || e.message).slice(0, 40)})` }); continue; }
-    for (const r of (res || []).slice(0, 16)) add(r.address, h);
+    try { res = await resolve(host); } catch (e) { refused.push({ target: host, why: `could not be resolved (${String(e.code || e.message).slice(0, 40)})${source && source !== "scope" ? ` [${source}]` : ""}` }); continue; }
+    for (const r of (res || []).slice(0, 16)) add(r.address, host, source);
   }
-  return { targets: [...map.values()], refused };
+  for (const { ip, source } of (discovered && discovered.ips) || []) add(ip, "", source);
+  for (const { cidr, source } of (discovered && discovered.ranges) || []) { const t = parseTarget(cidr); if (!t.error) for (const ip of addresses(t)) add(ip, "", source); }
+  // the public cap: the hard stop for public space, counted AFTER discovery
+  const targets = [...map.values()], publicCount = targets.filter((t) => t.public).length;
+  let stop = "";
+  if (publicCount > LIMITS.maxPublicAddresses) stop = `discovery would scan ${publicCount} public addresses, over the hard cap of ${LIMITS.maxPublicAddresses}; narrow the scope or the discovery sources. Nothing was scanned.`;
+  return { targets, refused, stop, publicCount };
 }
 
 /**
  * Probe every target. -> { hosts, stats, interrupted, stop_reason }
  * opts: { ports, settings, probe, signal (an AbortSignal the caller aborts on Ctrl-C), log, clock, assumeUp }
  */
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [] }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
+  const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
   if (signal) { if (signal.aborted) stopAll(String(signal.reason || "interrupted")); signal.addEventListener("abort", () => stopAll(String(signal.reason || "interrupted")), { once: true }); }
   const timer = setTimeout(() => stopAll("time limit reached"), Math.max(0, lim.remainingMs()));
-  const hosts = targets.map((t) => ({ ...t, up: false, ports: [], services: [], observations: [], http: [], tls: [] }));
+  const hosts = targets.map((t) => ({ ...t, up: false, ports: [], services: [], observations: [], http: [], tls: [], udp: [] }));
   const one = async (h, port) => {
     const release = await lim.acquire(h.address);
     if (!release) return false;
@@ -79,19 +102,35 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       return true;
     } finally { release(); }
   };
+  // one benign UDP query per service per host (the single datagram lives in udp.mjs); it takes a Limiter slot like a connection
+  const oneUdp = async (h, key) => {
+    const release = await lim.acquire(h.address);
+    if (!release) return false;
+    try {
+      const r = await udpProbe(h.address, key, { signal: ac.signal });
+      h.udp.push({ port: r.port, proto: r.proto, state: r.state, parsed: r.parsed, error: r.error });
+      if (r.state === "open") { h.up = true; h.services.push(...fromUdp(r)); h.observations.push(...udpObservations(r)); }
+      return true;
+    } finally { release(); }
+  };
   try {
     await pool(hosts, settings.concurrency, async (h) => {
       const first = assumeUp ? [] : discoveryPorts(ports);
       for (const p of first) { if (!(await one(h, p))) return; }
-      if (!assumeUp && !h.up) { log(`${h.address}: no answer on ${first.join(", ")}; treated as down`); return; }
-      const rest = ports.filter((p) => !first.includes(p));
-      await pool(rest, settings.hostConcurrency, async (p) => { await one(h, p); });
-      h.ports.sort((a, b) => a.port - b.port); h.services.sort((a, b) => a.port - b.port);
-      log(`${h.address}${h.names.length ? ` (${h.names.join(", ")})` : ""}: ${h.ports.length} open port(s), ${h.services.length} service(s) identified`);
+      const tcpDown = !assumeUp && !h.up;
+      if (!tcpDown) {
+        const rest = ports.filter((p) => !first.includes(p));
+        await pool(rest, settings.hostConcurrency, async (p) => { await one(h, p); });
+      }
+      // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
+      if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
+      if (tcpDown && !h.up) { log(`${h.address}: no answer on ${first.join(", ")}${udpKeys.length ? " or UDP" : ""}; treated as down`); return; }
+      h.ports.sort((a, b) => a.port - b.port); h.services.sort((a, b) => a.port - b.port); h.udp.sort((a, b) => a.port - b.port);
+      log(`${h.address}${h.names.length ? ` (${h.names.join(", ")})` : ""}: ${h.ports.length} open TCP port(s)${udpKeys.length ? `, ${h.udp.filter((u) => u.state === "open").length} UDP service(s)` : ""}, ${h.services.length} service(s) identified`);
     });
   } finally { clearTimeout(timer); }
   const st = lim.stats();
-  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped };
+  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys };
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
@@ -124,11 +163,12 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
-      network: { ...probed.stats, sends: SENDS }, data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null } },
+      udp: probed.udp || [], network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
+      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, ports: h.ports, services: h.services, http: h.http, tls: h.tls, observations: h.observations })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], observations: h.observations })),
     findings: found, named: namedList, notes,
   };
 }

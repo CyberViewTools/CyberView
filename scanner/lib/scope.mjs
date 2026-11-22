@@ -15,8 +15,10 @@ export const LIMITS = Object.freeze({
   minPrefix4: 16,            // an IPv4 range may not be wider than a /16
   minPrefix6: 120,           // an IPv6 range may not be wider than a /120 (256 addresses)
   minPublicPrefix4: 24,      // a public IPv4 range may not be wider than a /24
-  maxPublicAddresses: 1024,  // public addresses in one scan, even with the confirmation
+  maxPublicAddresses: 1024,  // public addresses in one scan, even with the confirmation (the hard stop for public space)
   attestationDays: 365,      // an attestation without "expires" must be renewed after a year
+  maxDiscoverDomains: 64,    // attested owned domains the discovery step may resolve/expand
+  maxDiscoverFiles: 64,      // import/cloud inventory files the discovery step may read
 });
 
 const HOST_RE = /^(?=.{1,253}$)(?!-)[a-z0-9-]{1,63}(?<!-)(\.(?!-)[a-z0-9-]{1,63}(?<!-))*\.?$/i;
@@ -154,15 +156,50 @@ export function checkScope(text, { today = new Date().toISOString().slice(0, 10)
     if (!Array.isArray(j.ports) || !j.ports.length || j.ports.length > 1024 || j.ports.some((p) => !Number.isInteger(p) || p < 1 || p > 65535)) problems.push(`"ports" must be a list of 1 to 1024 port numbers`);
     else ports = [...new Set(j.ports)];
   }
-  const scope = { owner, contact, attestation: att, targets, exclude, ports, addressCount: Number(addressCount), publicCount: Number(publicCount),
+  // optional discovery block: "find the hosts for me" within the attested scope (see scanner/lib/discover.mjs). Every host it
+  // yields is still re-checked by gate() below, so discovery can only ever narrow down the attested scope, never widen it.
+  let discover = null;
+  if (j.discover !== undefined) {
+    const d = j.discover && typeof j.discover === "object" && !Array.isArray(j.discover) ? j.discover : null;
+    if (!d) problems.push(`"discover" must be an object (cidr, domains, ct, import, cloud)`);
+    else {
+      const domains = [];
+      for (const raw of (Array.isArray(d.domains) ? d.domains : []).slice(0, LIMITS.maxDiscoverDomains)) {
+        const t = parseTarget(raw);
+        if (t.kind === "host" && /\./.test(t.text)) domains.push(t.text);
+        else problems.push(`discover.domains: "${raw}" is not a domain name you own`);
+      }
+      const fileList = (key) => {
+        const out = [];
+        for (const e of (Array.isArray(d[key]) ? d[key] : []).slice(0, LIMITS.maxDiscoverFiles)) {
+          const file = typeof e === "string" ? e : e && typeof e === "object" ? str(e.file, 300) : "";
+          if (!file) { problems.push(`discover.${key}: each entry needs a "file"`); continue; }
+          out.push(key === "cloud" ? { file, provider: str((e && e.provider) || "aws-ec2", 20) } : { file, format: str((e && e.format) || "auto", 20) });
+        }
+        return out;
+      };
+      if (d.ct && !(Array.isArray(d.domains) && d.domains.length)) problems.push(`discover.ct needs discover.domains (the domains you own) to expand`);
+      discover = { cidr: d.cidr === true, domains, ct: d.ct === true, import: fileList("import"), cloud: fileList("cloud") };
+    }
+  }
+  const scope = { owner, contact, attestation: att, targets, exclude, ports, discover, addressCount: Number(addressCount), publicCount: Number(publicCount),
     hosts: targets.filter((t) => t.kind === "host").map((t) => t.text), needsPublic: publicCount > 0n };
   return { ok: problems.length === 0, problems, scope };
 }
 
-/** Is a resolved address inside the scope (and not excluded)? A listed host name covers the addresses it resolves to. */
+/** Is a host name inside the attested scope? A listed host target, an attested discovery domain, or a subdomain of one. */
+export function hostInScope(scope, host) {
+  const h = String(host || "").toLowerCase();
+  if (!h) return false;
+  if (scope.hosts.includes(h)) return true;
+  const domains = (scope.discover && scope.discover.domains) || [];
+  return domains.some((d) => h === d || h.endsWith("." + d));
+}
+
+/** Is a resolved address inside the scope (and not excluded)? A listed or discovered host name covers the addresses it resolves to. */
 export function inScope(scope, ip, viaHost = "") {
   if (scope.exclude.some((t) => contains(t, ip) || (t.kind === "host" && viaHost && t.text === viaHost))) return false;
-  if (viaHost && scope.hosts.includes(viaHost)) return true;
+  if (viaHost && hostInScope(scope, viaHost)) return true;
   return scope.targets.some((t) => contains(t, ip));
 }
 
@@ -198,6 +235,7 @@ export function template(today = new Date().toISOString().slice(0, 10)) {
     attestation: { statement: STATEMENT, agreed: false, name: "", date: today, expires: "", authorization_ref: "" },
     targets: [],
     exclude: [],
-    _help: "List only hosts, addresses and CIDR ranges you own or are authorized in writing to scan. Set attestation.agreed to true and fill in your name to attest. Private ranges (10/8, 172.16/12, 192.168/16, loopback) run with this file alone; a public address also needs " + PUBLIC_FLAG + " on the command line. See scanner/README.md.",
+    discover: { cidr: true, domains: [], ct: false, import: [], cloud: [] },
+    _help: "List only hosts, addresses and CIDR ranges you own or are authorized in writing to scan. Set attestation.agreed to true and fill in your name to attest. Private ranges (10/8, 172.16/12, 192.168/16, loopback) run with this file alone; a public address also needs " + PUBLIC_FLAG + " on the command line. Optional 'discover' finds the hosts for you WITHIN this attested scope: cidr sweeps your ranges, domains (that you own) are resolved and, with ct, expanded from Certificate Transparency, import reads an asset list (host/IP list, CSV or nmap -oX XML, as {\"file\":\"assets.csv\"}), cloud reads the JSON your own read-only aws/az/gcloud command printed (as {\"file\":\"ec2.json\",\"provider\":\"aws-ec2\"}). Anything discovered outside this scope is dropped. See scanner/README.md.",
   };
 }

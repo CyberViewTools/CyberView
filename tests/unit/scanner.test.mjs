@@ -7,14 +7,17 @@ import { readFileSync, mkdtempSync, writeFileSync, readdirSync, existsSync } fro
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import vm from "node:vm";
-import { checkScope, gate, classify, parseTarget, listAddresses, template, STATEMENT, LIMITS } from "../../scanner/lib/scope.mjs";
-import { settings, Limiter, CAPS } from "../../scanner/lib/limits.mjs";
-import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, certInfo, observations } from "../../scanner/lib/fingerprint.mjs";
+import { checkScope, gate, hostInScope, classify, parseTarget, listAddresses, template, STATEMENT, LIMITS } from "../../scanner/lib/scope.mjs";
+import { settings, Limiter, CAPS, PRIVATE_CAPS } from "../../scanner/lib/limits.mjs";
+import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, certInfo, observations, udpObservations } from "../../scanner/lib/fingerprint.mjs";
 import { cleanFlaws, findings, toItem } from "../../scanner/lib/match.mjs";
 import { dirSource, webSource, ALLOWED, checkBase } from "../../scanner/lib/data.mjs";
-import { parsePorts, resolveScope, probeAll, servicesOf } from "../../scanner/lib/scan.mjs";
+import { parsePorts, resolveScope, probeAll, servicesOf, allPorts } from "../../scanner/lib/scan.mjs";
 import { toCsv, toSarif, toInventory, CSV_HEAD } from "../../scanner/lib/report.mjs";
 import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
+import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
+import { udpProbe } from "../../scanner/lib/udp.mjs";
+import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
 import { main } from "../../scanner/cyberview-scan.mjs";
 import { NOCODE } from "../../scripts/lib/validate.mjs";
 import { startServers } from "../fixtures/scanner/servers.mjs";
@@ -33,6 +36,7 @@ const tmp = () => mkdtempSync(join(tmpdir(), "cvscan-"));
 const io = (extra = {}) => { const out = [], err = []; return { out: (s) => out.push(s), err: (s) => err.push(s), sleep: async () => {}, publicWaitMs: 0, lines: { out, err },
   fetchImpl: () => { throw new Error("no network in this test"); }, resolve: async () => { throw Object.assign(new Error("no DNS in this test"), { code: "ENOTFOUND" }); }, ...extra }; };
 const writeScope = (dir, o) => { const p = join(dir, "scope.json"); writeFileSync(p, scopeText(o)); return p; };
+const walkFiles = (dir) => { const out = []; for (const f of readdirSync(dir, { withFileTypes: true })) { const q = join(dir, f.name); if (f.isDirectory()) out.push(...walkFiles(q)); else if (/\.(mjs|js)$/.test(f.name)) out.push(q); } return out; };
 
 /* ---- the authorization gate ---- */
 test("scan refuses to run without a scope file, and there is no default target", async () => {
@@ -332,6 +336,179 @@ test("Ctrl-C (an abort) stops new connections and still writes a report marked i
 test("probePort reports a refused port as closed and never throws", async () => {
   const srv = await startServers();
   try { const r = await probePort("127.0.0.1", srv.closed); assert.equal(r.state, "closed"); } finally { await srv.close(); }
+});
+
+/* ---- depth: --all-ports and the private budget scaling ---- */
+test("all-ports: the full TCP range, and the budgets scale only for owned private ranges", () => {
+  const ap = allPorts();
+  assert.equal(ap.length, 65535); assert.equal(ap[0], 1); assert.equal(ap[65534], 65535);
+  // private-only (no --i-am-authorized-for-public-ranges): per-host and total budgets scale up, the rate/concurrency ceilings do not
+  const priv = settings({ budget: 500000, hostBudget: 60000 }, { hasPublic: false });
+  assert.equal(priv.ok, true); assert.equal(priv.settings.budget, 500000); assert.equal(priv.settings.hostBudget, 60000);
+  assert.equal(settings({}, { hasPublic: false }).settings.budget, PRIVATE_CAPS.budget);   // default high for a private sweep
+  assert.equal(settings({}, { hasPublic: true }).settings.budget, 20000);                   // strict for any public scan
+  // the same high budget is refused as soon as a public address is in scope
+  assert.equal(settings({ budget: 500000 }, { hasPublic: true }).ok, false);
+  assert.equal(settings({ hostBudget: 60000 }, { hasPublic: true }).ok, false);
+  // the rate and open-at-once ceilings never scale, public or private
+  assert.equal(settings({ rate: 21 }, { hasPublic: false }).ok, false);
+  assert.equal(settings({ concurrency: 9 }, { hasPublic: false }).ok, false);
+  assert.ok(!("rate" in PRIVATE_CAPS) && !("concurrency" in PRIVATE_CAPS) && !("hostConcurrency" in PRIVATE_CAPS));
+});
+test("--all-ports is refused with a public scope or alongside --ports", async () => {
+  const d = tmp();
+  const pub = writeScope(d, { targets: ["198.51.100.7"] });
+  const x = io(); assert.equal(await main(["scan", "--scope", pub, "--data", SNAP, "--all-ports", "--i-am-authorized-for-public-ranges", "--out", join(d, "o1")], x), 2);
+  assert.match(x.lines.err.join("\n"), /all-ports.*owned private ranges/s);
+  const prv = writeScope(d, { targets: ["10.0.0.5"] });
+  const y = io({ probe: async () => ({ port: 0, state: "closed" }) });
+  assert.equal(await main(["scan", "--scope", prv, "--data", SNAP, "--all-ports", "--ports", "22,80", "--out", join(d, "o2")], y), 2);
+  assert.match(y.lines.err.join("\n"), /either --all-ports or --ports/);
+});
+
+/* ---- depth: the UDP checks (one benign read-only query per service per host) ---- */
+const dnsResponse = (txt) => { const h = Buffer.alloc(12); h.writeUInt16BE(0x8180, 2); h.writeUInt16BE(1, 4); h.writeUInt16BE(1, 6);
+  const q = Buffer.concat([Buffer.from([7]), Buffer.from("version"), Buffer.from([4]), Buffer.from("bind"), Buffer.from([0, 0, 16, 0, 3])]);
+  const t = Buffer.from(txt), rl = Buffer.alloc(2); rl.writeUInt16BE(t.length + 1);
+  return Buffer.concat([h, q, Buffer.from([0xc0, 0x0c, 0, 16, 0, 3, 0, 0, 0, 0]), rl, Buffer.from([t.length]), t]); };
+const snmpResponse = (desc) => { const oct = (s) => { const b = Buffer.from(s); return Buffer.concat([Buffer.from([4, b.length]), b]); }; const seq = (b) => Buffer.concat([Buffer.from([0x30, b.length]), b]);
+  return seq(Buffer.concat([Buffer.from([2, 1, 0]), oct("public"), seq(oct(desc))])); };
+test("UDP query builders: version.bind (CHAOS TXT), NTP mode-6 read, SNMP GET sysDescr with only the public community", () => {
+  const dq = dnsVersionQuery();
+  assert.equal(dq.readUInt16BE(2), 0x0100); assert.equal(dq.readUInt16BE(4), 1);                 // RD=1, one question
+  assert.match(dq.toString("latin1"), /version.bind/); assert.equal(dq[dq.length - 2], 0); assert.equal(dq[dq.length - 1], 3);   // QTYPE TXT(16), QCLASS CHAOS(3)
+  const nq = ntpReadVarQuery();
+  assert.equal(nq.length, 12); assert.equal(nq[0] & 7, 6); assert.equal(nq[1], 2);                // mode 6 (control), op 2 (read)
+  assert.equal(SNMP_COMMUNITY, "public");
+  const sq = snmpGetSysDescr();
+  assert.equal(sq[0], 0x30); assert.match(sq.toString("latin1"), /public/);                       // one SNMP message carrying the community "public"
+  assert.ok(sq.includes(Buffer.from([0x2b, 6, 1, 2, 1, 1, 1, 0])));                               // OID 1.3.6.1.2.1.1.1.0 (sysDescr.0)
+  assert.equal((snmpGetSysDescr().toString("latin1").match(/public/g) || []).length, 1);          // the one and only community
+});
+test("UDP response parsers: BIND version, ntpd version, sysDescr, and a fingerprint from each", () => {
+  assert.equal(parseDnsVersion(dnsResponse("9.18.1-Debian")).version, "9.18.1-Debian");
+  assert.equal(parseNtpReadVar(Buffer.concat([ntpReadVarQuery(), Buffer.from('version="ntpd 4.2.8p15@1.3728-o", system="Linux/5.15"')])).version, "ntpd 4.2.8p15@1.3728-o");
+  assert.equal(parseSnmpSysDescr(snmpResponse("Linux fw01 5.15 x86_64")).sysdescr, "Linux fw01 5.15 x86_64");
+  // fromUdp turns the parsed answers into matchable service records (DNS->BIND, NTP->NTP); SNMP stays an observation
+  const dns = fromUdp({ state: "open", port: 53, proto: "dns", parsed: parseDnsVersion(dnsResponse("9.16.1-Ubuntu")) })[0];
+  assert.deepEqual([dns.vendor, dns.product, dns.version, dns.distro], ["ISC", "BIND", "9.16.1", "Ubuntu"]);
+  const ntp = fromUdp({ state: "open", port: 123, proto: "ntp", parsed: parseNtpReadVar(Buffer.concat([ntpReadVarQuery(), Buffer.from('version="4.2.8p15"')])) })[0];
+  assert.deepEqual([ntp.product, ntp.version, ntp.shown_version], ["NTP", "4.2.8", "4.2.8p15"]);   // version is the comparable core, shown_version is as stated
+  const obs = udpObservations({ state: "open", port: 161, proto: "snmp", parsed: { sysdescr: "Linux fw01" } })[0];
+  assert.equal(obs.kind, "snmp-public"); assert.match(obs.text, /default "public" community/);
+  assert.deepEqual(parseDnsVersion(Buffer.from([1, 2])), { version: "", text: "" });   // defensive: never throws on junk
+});
+test("udpProbe sends one datagram, never throws, and reports no answer as filtered (loopback, nothing listening on 53)", async () => {
+  // the real udpProbe always targets the standard service port; on loopback with nothing bound to 53 it must send its one
+  // benign datagram, get no reply, and report "filtered" without throwing. (A positive end-to-end UDP read is demonstrated
+  // separately against a stand-in on an ephemeral port; here we prove the single-datagram, never-throw contract.)
+  const none = await udpProbe("127.0.0.1", "dns");
+  assert.equal(none.state, "filtered"); assert.equal(none.service, "dns"); assert.equal(none.port, 53); assert.equal(none.parsed, null);
+});
+test("udpProbe reads a real reply from a loopback DNS stand-in and parses the BIND version", async () => {
+  const dgram = await import("node:dgram");
+  const srv = dgram.createSocket("udp4");
+  let seen = 0;
+  srv.on("message", (m, r) => { seen++; assert.match(m.toString("latin1"), /version.bind/); srv.send(dnsResponse("9.16.1-Ubuntu"), r.port, r.address); });
+  await new Promise((r) => srv.bind(0, "127.0.0.1", r));
+  try {
+    const r = await udpProbe("127.0.0.1", "dns", { port: srv.address().port });
+    assert.equal(r.state, "open"); assert.equal(r.parsed.version, "9.16.1-Ubuntu"); assert.equal(seen, 1);   // exactly one datagram received
+  } finally { srv.close(); }
+});
+
+/* ---- discovery: parse asset lists, cloud inventory and CT; re-check every host against the scope ---- */
+const DISC = join(FIX, "discover");
+const rf = (name) => readFileSync(join(DISC, name), "utf8");
+test("import parsers: plain list, CSV and nmap -oX XML; URLs, ports and CIDRs handled", () => {
+  const list = parseAssetFile(rf("assets.txt"), "list").candidates;
+  assert.deepEqual(list.map((c) => c.ip || c.host || c.cidr), ["10.20.0.5", "intranet.example.lan", "10.20.0.0/30", "web.example.lan"]);
+  const csv = parseAssetFile(rf("assets.csv"), "csv").candidates;
+  assert.ok(csv.some((c) => c.ip === "10.20.0.9") && csv.some((c) => c.host === "web1") && csv.some((c) => c.ip === "203.0.113.77"));
+  const xml = parseAssetFile(rf("scan.nmap.xml"), "auto").candidates;   // auto-detects nmap XML
+  assert.deepEqual(xml.map((c) => c.ip || c.host), ["10.20.0.5", "10.20.0.11", "203.0.113.5", "ssh.example.lan", "public.example.net"]);
+});
+test("cloud parsers: read-only aws/gcp/azure inventory JSON for public IPs and DNS names", () => {
+  const aws = parseCloud(rf("aws-ec2.json"), "aws-ec2").candidates.map((c) => c.ip || c.host);
+  assert.deepEqual(aws, ["203.0.113.20", "ec2-203-0-113-20.compute-1.amazonaws.com", "203.0.113.21"]);   // private IPs are not pulled
+  assert.deepEqual(parseCloud(rf("gcp-instances.json"), "gcp").candidates.map((c) => c.ip), ["198.51.100.30"]);
+  assert.deepEqual(parseCloud(rf("azure-ip.json"), "azure").candidates.map((c) => c.ip), ["198.51.100.40"]);
+  assert.match(parseCloud("not json", "aws-ec2").problems[0], /not valid JSON/);
+  assert.match(parseCloud("{}", "digitalocean").problems[0], /unknown cloud provider/);
+});
+test("Certificate Transparency: parse crt.sh JSON to the domain's own subdomains; a fetch is a read-only GET", async () => {
+  const subs = parseCtJson(rf("crtsh.json"), "example.com");
+  assert.deepEqual(subs.sort(), ["mail.example.com", "vpn.example.com", "www.example.com"]);   // wildcard dropped, duplicate removed, other domain excluded
+  let asked = null;
+  const fetchImpl = async (url, opts) => { asked = { url, method: opts.method, redirect: opts.redirect }; return new Response(rf("crtsh.json"), { status: 200 }); };
+  const r = await ctSubdomains("example.com", { fetchImpl });
+  assert.deepEqual(r.subdomains.sort(), ["mail.example.com", "vpn.example.com", "www.example.com"]);
+  assert.equal(asked.method, "GET"); assert.equal(asked.redirect, "error"); assert.match(asked.url, /^https:\/\/crt\.sh\/\?q=/);
+});
+test("the scope's discover block is parsed and validated; ct needs domains", () => {
+  const ok = checkScope(scopeText({ discover: { cidr: true, domains: ["example.com"], ct: true, import: [{ file: "a.csv" }], cloud: [{ file: "ec2.json", provider: "aws-ec2" }] } }), { today: TODAY });
+  assert.equal(ok.ok, true); assert.deepEqual(ok.scope.discover.domains, ["example.com"]); assert.equal(ok.scope.discover.ct, true);
+  assert.equal(ok.scope.discover.import[0].file, "a.csv"); assert.equal(ok.scope.discover.cloud[0].provider, "aws-ec2");
+  assert.match(checkScope(scopeText({ discover: { domains: ["not a domain!"] } }), { today: TODAY }).problems.join(";"), /not a domain name/);
+  assert.match(checkScope(scopeText({ discover: { ct: true, domains: [] } }), { today: TODAY }).problems.join(";"), /ct needs discover.domains/);
+  // an attested domain puts its subdomains in scope
+  const { scope } = checkScope(scopeText({ targets: ["10.20.0.5"], discover: { domains: ["example.com"] } }), { today: TODAY });
+  assert.equal(hostInScope(scope, "vpn.example.com"), true); assert.equal(hostInScope(scope, "example.com"), true); assert.equal(hostInScope(scope, "evil.test"), false);
+});
+test("every discovered host is re-checked against the scope: out-of-scope and public ones are dropped and logged", async () => {
+  const { scope } = checkScope(scopeText({ targets: ["10.20.0.9"], discover: { domains: ["example.com"] } }), { today: TODAY });
+  const discovered = { hosts: [{ host: "vpn.example.com", source: "CT log" }], ips: [{ ip: "10.20.0.9", source: "import:csv" }, { ip: "203.0.113.77", source: "import:csv" }, { ip: "10.99.0.1", source: "import:csv" }], ranges: [] };
+  const resolve = async (h) => (h === "vpn.example.com" ? [{ address: "10.20.0.50" }, { address: "203.0.113.9" }] : []);
+  const r = await resolveScope(scope, { allowPublic: false, resolve, discovered });
+  const addrs = r.targets.map((t) => t.address).sort();
+  assert.deepEqual(addrs, ["10.20.0.50", "10.20.0.9"]);   // 10.20.0.9 listed, 10.20.0.50 in scope via the attested domain; private only
+  assert.ok(r.refused.some((x) => /203\.0\.113\.77/.test(x.target) && /not in the scope/.test(x.why) && /import:csv/.test(x.why)));
+  assert.ok(r.refused.some((x) => /10\.99\.0\.1/.test(x.target) && /not in the scope/.test(x.why)));
+  assert.ok(r.refused.some((x) => /203\.0\.113\.9/.test(x.target) && /public address/.test(x.why)));   // in scope via domain but public without the flag
+  assert.equal(r.stop, "");
+});
+test("the public cap is the hard stop for public space: a gated set over the cap stops, it does not scan fewer", async () => {
+  // discovery can push the public count past the cap (e.g. many attested-domain subdomains on distinct public IPs); resolveScope
+  // enforces the stop AFTER gating. A hand-built scope of 2046 public addresses stands in for that gated result.
+  const scope = { targets: [parseTarget("203.0.113.0/21")], exclude: [], hosts: [], discover: null };
+  const r = await resolveScope(scope, { allowPublic: true });
+  assert.ok(r.publicCount > LIMITS.maxPublicAddresses);
+  assert.match(r.stop, /over the hard cap of 1024.*Nothing was scanned/s);
+  // under the cap, no stop; the same scope with --i-am-authorized would scan
+  const under = await resolveScope({ targets: [parseTarget("203.0.113.0/23")], exclude: [], hosts: [], discover: null }, { allowPublic: true });
+  assert.equal(under.stop, ""); assert.ok(under.publicCount <= LIMITS.maxPublicAddresses);
+  // the CLI surfaces resolveScope's stop as a refusal (exit 2); the scan-body guard is: if (stop) { err; return 2; }
+  assert.match(readFileSync(new URL("../../scanner/cyberview-scan.mjs", import.meta.url), "utf8"), /if \(stop\) \{ io\.err\("REFUSED: " \+ stop\); return 2;/);
+});
+test("runDiscovery gathers candidates from every source with provenance, reading files and CT through injected hooks", async () => {
+  const scope = { targets: [parseTarget("10.20.0.0/24")], discover: { cidr: true, domains: ["example.com"], ct: true, import: [{ file: "assets.csv" }], cloud: [{ file: "aws-ec2.json", provider: "aws-ec2" }] } };
+  const readFile = (f) => rf(f);
+  const fetchImpl = async () => new Response(rf("crtsh.json"), { status: 200 });
+  const r = await runDiscovery(scope, { readFile, fetchImpl });
+  assert.ok(r.hosts.some((h) => h.host === "example.com" && h.source === "domain"));
+  assert.ok(r.hosts.some((h) => h.host === "vpn.example.com" && h.source === "CT log"));
+  assert.ok(r.ips.some((i) => i.ip === "10.20.0.9" && /import/.test(i.source)));
+  assert.ok(r.ips.some((i) => i.ip === "203.0.113.20" && /cloud:aws/.test(i.source)));
+  assert.ok(r.notes.some((n) => /import/.test(n)) && r.notes.some((n) => /cloud/.test(n)));
+});
+
+/* ---- the security-check's scanner rules (section 7): what they catch ---- */
+test("security-check section 7: UDP is confined to udp.mjs, one datagram, no community iteration, ceilings fixed", () => {
+  const sec = readFileSync(new URL("../../scripts/security-check.mjs", import.meta.url), "utf8");
+  // the rules exist in the check
+  assert.match(sec, /opens a UDP socket \(dgram\) outside scanner\/lib\/udp\.mjs/);
+  assert.match(sec, /must send exactly ONE datagram/);
+  assert.match(sec, /iterates SNMP community strings/);
+  assert.match(sec, /PRIVATE_CAPS may scale only hostBudget\/budget/);
+  // udp.mjs itself obeys the flood guard: exactly one send, no loop or timer
+  const udp = readFileSync(new URL("../../scanner/lib/udp.mjs", import.meta.url), "utf8");
+  assert.equal((udp.match(/\.send\s*\(/g) || []).length, 1);
+  assert.equal(/\b(for|while|do)\s*\(|\bsetInterval\b|\.forEach\s*\(/.test(udp), false);
+  // dgram appears only in udp.mjs across the scanner
+  for (const f of walkFiles(new URL("../../scanner/", import.meta.url).pathname)) {
+    if (f.endsWith("udp.mjs")) continue;
+    assert.equal(/node:dgram|from\s+["']dgram["']/.test(readFileSync(f, "utf8")), false, f);
+  }
 });
 
 /* ---- nothing that attacks ---- */

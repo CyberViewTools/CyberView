@@ -127,26 +127,50 @@ for (const { e, path } of listEventFiles()) {
 }
 passes.push(`${n} event(s) checked for injected markup`);
 
-// 7. the downloadable scanner (scanner/) stays a detection tool (docs/scanner.md): no process spawning, no raw or UDP sockets
-//    (no spoofing, flooding or amplification), no request that uploads (only GET), connections to targets only from
-//    scanner/lib/probe.mjs, and limits that can be lowered, never raised or switched off
+// 7. the downloadable scanner (scanner/) stays a detection tool (docs/scanner.md): no process spawning, no raw sockets, no
+//    spoofing/flooding/amplification, no request that uploads (only GET), TCP connections to targets only from
+//    scanner/lib/probe.mjs, UDP only from scanner/lib/udp.mjs and exactly ONE benign datagram per service per host (no
+//    retransmit storm, no community/credential iteration), and limits that can be lowered, never raised or switched off.
 const SCAN = join(ROOT, "scanner");
 if (existsSync(SCAN)) {
   const files = [];
   const walk = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js)$/.test(f)) files.push(p); } };
   walk(SCAN);
-  const NOT = [[/node:child_process|require\(["']child_process|\bexecSync\b|\bspawn\(/, "starts other programs"], [/node:dgram|["']dgram["']/, "opens UDP sockets"], [/\braw[-_ ]?socket|SOCK_RAW|\bsetTTL\b/i, "raw sockets"],
+  const UDP_FILE = join("lib", "udp.mjs");   // the ONE file allowed to open a UDP socket
+  const DGRAM = /node:dgram|require\(["']dgram|from\s+["']dgram["']|["']dgram["']/;
+  const NOT = [[/node:child_process|require\(["']child_process|\bexecSync\b|\bspawn\(/, "starts other programs"], [/\braw[-_ ]?socket|SOCK_RAW|\bsetTTL\b/i, "raw sockets"],
     [/method:\s*["'](POST|PUT|PATCH|DELETE)["']/i, "sends an upload request (the scanner only reads with GET)"], [/\beval\s*\(|new\s+Function\s*\(/, "runs code from text"],
     [/\b(aggressive|insane|no-?rate-?limit|unlimited)\b/i, "an aggressive or unlimited mode"]];
   for (const p of files) {
-    const src = read(p);
+    const src = read(p), isUdp = p.endsWith(UDP_FILE), isProbe = p.endsWith(join("lib", "probe.mjs"));
     for (const [re, what] of NOT) if (re.test(src)) fails.push(`${rel(p)}: ${what}; the scanner must stay detection only (docs/scanner.md)`);
-    if (!p.endsWith(join("lib", "probe.mjs")) && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
+    if (!isProbe && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
+    // UDP sockets (dgram) are permitted ONLY in scanner/lib/udp.mjs
+    if (!isUdp && DGRAM.test(src)) fails.push(`${rel(p)}: opens a UDP socket (dgram) outside scanner/lib/udp.mjs`);
+  }
+  // the UDP file's flood guard: exactly one datagram send, and no loop or timer that could retransmit or iterate
+  const udpPath = join(SCAN, UDP_FILE);
+  if (existsSync(udpPath)) {
+    const u = read(udpPath);
+    const sends = (u.match(/\.send\s*\(/g) || []).length;
+    if (sends !== 1) fails.push(`scanner/lib/udp.mjs must send exactly ONE datagram (the flood guard); found ${sends} .send( call(s)`);
+    if (/\b(for|while|do)\s*\(|\bsetInterval\b|\.forEach\s*\(|\bawait\s+Promise\.all\b/.test(u)) fails.push("scanner/lib/udp.mjs must contain no loop or timer (one benign datagram per service per host; iteration over hosts/services lives in scan.mjs)");
+  }
+  // no SNMP community-string or credential iteration: in the UDP files the only community is the single constant "public";
+  // a community array/list, a second community literal, or a loop over community/credential values is refused.
+  for (const p of files) {
+    if (!(p.endsWith(UDP_FILE) || p.endsWith(join("lib", "udp-codec.mjs")))) continue;
+    const src = read(p);
+    if (/\bcommunit(y|ies)\b\s*[:=]\s*\[|\bcommunit(y|ies)\b\s*\.(map|forEach|some|every|filter)\b|\[[^\]]*["']public["'][^\]]*["']private["']|["']private["']\s*,\s*["']public["']/i.test(src))
+      fails.push(`${rel(p)}: iterates SNMP community strings; only the single standard read community "public" is allowed (no credential iteration)`);
   }
   const lim = existsSync(join(SCAN, "lib", "limits.mjs")) ? read(join(SCAN, "lib", "limits.mjs")) : "";
   const cap = (k) => Number((new RegExp(`CAPS = Object\\.freeze\\(\\{[\\s\\S]*?\\b${k}:\\s*(\\d+)`).exec(lim) || [])[1]);
-  if (!(cap("rate") > 0 && cap("rate") <= 20 && cap("concurrency") > 0 && cap("concurrency") <= 8 && cap("hostConcurrency") <= 2)) fails.push("scanner/lib/limits.mjs: the ceilings (rate 20/s, 8 open, 2 per host) must not be raised");
-  passes.push(`${files.length} scanner file(s) checked: detection only`);
+  if (!(cap("rate") > 0 && cap("rate") <= 20 && cap("concurrency") > 0 && cap("concurrency") <= 8 && cap("hostConcurrency") <= 2)) fails.push("scanner/lib/limits.mjs: the DoS ceilings (rate 20/s, 8 open, 2 per host) must not be raised");
+  // the scaled private budgets must NOT touch the rate / open-at-once ceilings (only the per-host and total work budgets may scale)
+  const pcaps = (new RegExp("PRIVATE_CAPS = Object\\.freeze\\(\\{([^}]*)\\}").exec(lim) || [, ""])[1];
+  if (/\b(rate|concurrency|hostConcurrency|minutes)\b/.test(pcaps)) fails.push("scanner/lib/limits.mjs: PRIVATE_CAPS may scale only hostBudget/budget, never the rate, concurrency or time ceilings");
+  passes.push(`${files.length} scanner file(s) checked: detection only (UDP one benign datagram per service, no credential iteration)`);
 }
 
 passes.forEach((p) => console.log("ok: " + p));

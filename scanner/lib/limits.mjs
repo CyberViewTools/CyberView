@@ -2,26 +2,38 @@
 // The defaults are also the ceilings: an operator can set any of them LOWER, never higher, and none can be switched off.
 // There is no faster mode and no switch that removes a limit.
 
+// The DoS-relevant ceilings (rate, open-at-once) are HARD: they can never be raised or switched off, whatever the target
+// (scripts/security-check.mjs section 7 enforces this).
 export const CAPS = Object.freeze({
   rate: 20,             // new connections per second, whole scan
   concurrency: 8,       // connections open at once, whole scan
   hostConcurrency: 2,   // connections open at once to one host
-  hostBudget: 300,      // connections to one host in one run
-  budget: 20000,        // connections in one run
+  hostBudget: 300,      // connections to one host in one run (the ceiling for any scan that includes a PUBLIC address)
+  budget: 20000,        // connections in one run (the ceiling for any scan that includes a PUBLIC address)
   minutes: 480,         // the longest a run may last
 });
+// For a scan of ONLY owned private ranges (no public address, no --i-am-authorized-for-public-ranges), the total-work
+// budgets may scale so large own-network sweeps and --all-ports are not artificially blocked; the real limit stays the
+// rate (20/s) and the time ceiling. The rate and open-at-once ceilings do NOT appear here: those never change.
+export const PRIVATE_CAPS = Object.freeze({ hostBudget: 70000, budget: 2000000 });
 export const DEFAULTS = Object.freeze({ rate: 20, concurrency: 8, hostConcurrency: 2, hostBudget: 300, budget: 20000, minutes: 60 });
 // fixed per-connection limits (not configurable upward either)
 export const TIMEOUTS = Object.freeze({ connectMs: 3000, readMs: 4000, maxBytes: 16384 });
 
-/** Operator settings -> { ok, problems[], settings }. A value above its ceiling or below 1 is refused, not clamped. */
-export function settings(opts = {}) {
-  const problems = [], out = { ...DEFAULTS };
+/**
+ * Operator settings -> { ok, problems[], settings }. A value above its ceiling or below 1 is refused, not clamped.
+ * ctx.hasPublic (default true, the safe assumption): when false (a private-only scan) the per-host and total budgets scale
+ * up to PRIVATE_CAPS and default high; the rate, concurrency and per-host-concurrency ceilings are unchanged either way.
+ */
+export function settings(opts = {}, { hasPublic = true } = {}) {
+  const problems = [];
+  const ceil = { ...CAPS, hostBudget: hasPublic ? CAPS.hostBudget : PRIVATE_CAPS.hostBudget, budget: hasPublic ? CAPS.budget : PRIVATE_CAPS.budget };
+  const out = { ...DEFAULTS, hostBudget: hasPublic ? DEFAULTS.hostBudget : PRIVATE_CAPS.hostBudget, budget: hasPublic ? DEFAULTS.budget : PRIVATE_CAPS.budget };
   for (const k of Object.keys(DEFAULTS)) {
     if (opts[k] === undefined || opts[k] === null || opts[k] === "") continue;
     const v = Number(opts[k]);
     if (!Number.isFinite(v) || v <= 0) { problems.push(`--${flag(k)} must be a positive number`); continue; }
-    if (v > CAPS[k]) { problems.push(`--${flag(k)} ${v} is above the ceiling of ${CAPS[k]}; limits can only be lowered`); continue; }
+    if (v > ceil[k]) { problems.push(`--${flag(k)} ${v} is above the ceiling of ${ceil[k]}; limits can only be lowered`); continue; }
     out[k] = k === "rate" || k === "minutes" ? v : Math.max(1, Math.floor(v));
   }
   if (out.rate < 0.1) problems.push("--rate must be at least 0.1 connections per second");

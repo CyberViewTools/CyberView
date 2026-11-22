@@ -17,12 +17,14 @@ import { pathToFileURL } from "node:url";
 import { checkScope, template, PUBLIC_FLAG, LIMITS } from "./lib/scope.mjs";
 import { settings as checkSettings, CAPS } from "./lib/limits.mjs";
 import { DEFAULT_PORTS, SENDS, VERSION } from "./lib/probe.mjs";
+import { UDP_SERVICES, UDP_SENDS } from "./lib/udp.mjs";
 import { webSource, dirSource, snapshot, DEFAULT_SOURCE } from "./lib/data.mjs";
-import { parsePorts, resolveScope, probeAll, buildReport } from "./lib/scan.mjs";
+import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib/scan.mjs";
+import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
 import { D } from "./lib/shared.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -39,9 +41,13 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs data  --out cyberview-data [--full]
   node scanner/cyberview-scan.mjs scan  --scope scope.json --data cyberview-data      (offline)
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
+Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
+Discovery (optional, in the scope file's "discover"): cidr sweep, owned domains (with Certificate Transparency), an imported
+asset list (host/IP list, CSV, nmap -oX XML), and your own read-only cloud inventory JSON; every host found is re-checked
+against the scope before it is scanned.
 Limits can be lowered, never raised: --rate (max ${CAPS.rate}/s), --concurrency (max ${CAPS.concurrency}), --host-concurrency (max ${CAPS.hostConcurrency}),
---host-budget (max ${CAPS.hostBudget}), --budget (max ${CAPS.budget}), --max-minutes (default 60, max ${CAPS.minutes}).
-Public (non-private) addresses also need ${PUBLIC_FLAG}. See scanner/README.md.`;
+--host-budget, --budget (both scale for owned private ranges), --max-minutes (default 60, max ${CAPS.minutes}).
+Public (non-private) addresses also need ${PUBLIC_FLAG} and stay capped at ${LIMITS.maxPublicAddresses}. See scanner/README.md.`;
 
 function loadScope(file, today) {
   if (!file) return { error: "a scope file is required (--scope FILE). There is no default target. Start one with: node scanner/cyberview-scan.mjs init" };
@@ -56,7 +62,7 @@ const fail = (io, lines, code = 2) => { io.err(["REFUSED: " + lines[0], ...lines
  * Exit codes: 0 done, 1 error, 2 refused (scope, authorization or limits), 3 the scan stopped early (report still written).
  */
 export async function main(argv, io = {}) {
-  io = { out: (s) => process.stdout.write(s + "\n"), err: (s) => process.stderr.write(s + "\n"), sleep: (ms) => new Promise((r) => setTimeout(r, ms)), publicWaitMs: 10000, ...io };
+  io = { out: (s) => process.stdout.write(s + "\n"), err: (s) => process.stderr.write(s + "\n"), sleep: (ms) => new Promise((r) => setTimeout(r, ms)), readFile: (f) => readFileSync(f, "utf8"), publicWaitMs: 10000, ...io };
   const a = parseArgs(argv), cmd = a._[0], today = new Date().toISOString().slice(0, 10);
   if (!cmd || a.help || cmd === "help") { io.out(USAGE); return cmd ? 0 : 1; }
 
@@ -86,20 +92,28 @@ export async function main(argv, io = {}) {
   if (scope.needsPublic && !allowPublic) return fail(io, [`the scope includes ${scope.publicCount} public (non-private) address(es); nothing was scanned`,
     `scanning public addresses needs ${PUBLIC_FLAG}: use it only for addresses you own or hold written permission to test`,
     `private ranges (10/8, 172.16/12, 192.168/16, loopback, link-local, IPv6 fc00::/7) run with the scope file alone`]);
-  const lim = checkSettings({ rate: a.rate, concurrency: a.concurrency, hostConcurrency: a["host-concurrency"], hostBudget: a["host-budget"], budget: a.budget, minutes: a["max-minutes"] });
+  const lim = checkSettings({ rate: a.rate, concurrency: a.concurrency, hostConcurrency: a["host-concurrency"], hostBudget: a["host-budget"], budget: a.budget, minutes: a["max-minutes"] }, { hasPublic: allowPublic });
   if (!lim.ok) return fail(io, ["limits", ...lim.problems]);
+  const udp = a.udp ? Object.keys(UDP_SERVICES) : [];
   let ports = scope.ports || DEFAULT_PORTS;
-  if (a.ports) { const p = parsePorts(a.ports); if (p.error) return fail(io, ["--ports: " + p.error]); ports = p.ports; }
   const extra = {};
-  for (const k of ["http-ports", "https-ports"]) if (a[k]) { const p = parsePorts(a[k]); if (p.error) return fail(io, [`--${k}: ${p.error}`]); extra[k] = p.ports; ports = [...new Set([...ports, ...p.ports])].sort((x, y) => x - y); }
-  if (ports.length > 1024) return fail(io, ["at most 1024 ports in one scan"]);
+  if (a["all-ports"]) {
+    if (allowPublic) return fail(io, ["--all-ports scans every TCP port and is allowed only for owned private ranges; it refuses a scope with public addresses"]);
+    if (a.ports) return fail(io, ["choose either --all-ports or --ports, not both"]);
+    ports = allPorts();
+  } else if (a.ports) { const p = parsePorts(a.ports); if (p.error) return fail(io, ["--ports: " + p.error]); ports = p.ports; }
+  for (const k of ["http-ports", "https-ports"]) if (a[k]) { const p = parsePorts(a[k]); if (p.error) return fail(io, [`--${k}: ${p.error}`]); extra[k] = p.ports; if (!a["all-ports"]) ports = [...new Set([...ports, ...p.ports])].sort((x, y) => x - y); }
+  if (!a["all-ports"] && ports.length > 1024) return fail(io, ["at most 1024 ports in one scan (use --all-ports for a full TCP sweep of owned private ranges)"]);
   if (a.data && a.online) return fail(io, ["choose one data source: --data DIR (offline) or --online"], 1);
   if (cmd === "scan" && !a.data && !a.online) return fail(io, ["choose the data source: --data DIR (a snapshot from the data command; nothing but the targets is contacted) or --online (reads CyberView's public data files)"], 1);
   let src = null;
   try { src = a.data ? dirSource(a.data) : a.online ? webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl }) : null; } catch (e) { return fail(io, [e.message], 1); }
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
-  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, data: dataLine, sends: SENDS }));
-  if (cmd === "check") { io.out(`\nThe scope file passes its checks (${scope.addressCount} address(es); at most ${LIMITS.maxAddresses}). Nothing was scanned.`); return 0; }
+  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataLine, sends: SENDS }));
+  if (cmd === "check") {
+    if (scope.discover) io.out(`\nDiscovery is configured (${[scope.discover.cidr ? "cidr sweep" : "", scope.discover.domains.length ? `${scope.discover.domains.length} domain(s)${scope.discover.ct ? " + Certificate Transparency" : ""}` : "", scope.discover.import.length ? `${scope.discover.import.length} import file(s)` : "", scope.discover.cloud.length ? `${scope.discover.cloud.length} cloud inventory file(s)` : ""].filter(Boolean).join(", ") || "nothing"}). Every host it finds is re-checked against this scope at scan time; anything outside it is dropped.`);
+    io.out(`\nThe scope file passes its checks (${scope.addressCount} directly listed address(es); at most ${LIMITS.maxAddresses}). Nothing was scanned.`); return 0;
+  }
 
   if (scope.needsPublic) {
     io.err(`\n${"!".repeat(78)}\nWARNING: this scan includes ${scope.publicCount} PUBLIC address(es). Scanning systems you do not own or are not\nauthorized to test may be unlawful. You attested that you are authorized. Starting in ${Math.round(io.publicWaitMs / 1000)} seconds; press Ctrl-C to cancel.\n${"!".repeat(78)}`);
@@ -111,10 +125,18 @@ export async function main(argv, io = {}) {
   if (!io.signal) process.on("SIGINT", onSig); else io.signal.addEventListener("abort", () => ac.abort(String(io.signal.reason || "interrupted")), { once: true });
   const startedAt = new Date().toISOString();
   try {
-    const { targets, refused } = await resolveScope(scope, { allowPublic, resolve: io.resolve });
+    let discovered = null;
+    if (scope.discover) {
+      io.out("\nDiscovery: finding hosts within the attested scope ...");
+      discovered = await runDiscovery(scope, { fetchImpl: io.fetchImpl, readFile: io.readFile, log: (s) => io.out("  " + s) });
+      discovered.notes.forEach((n) => io.out("  " + n));
+      discovered.problems.forEach((p) => io.err("  discovery: " + p));
+    }
+    const { targets, refused, stop, publicCount } = await resolveScope(scope, { allowPublic, resolve: io.resolve, discovered });
+    if (stop) { io.err("REFUSED: " + stop); return 2; }   // the public cap is the hard stop for public space; nothing was scanned
     refused.forEach((r) => io.err(`skipped ${r.target}: ${r.why}`));
-    io.out(`\nScanning ${targets.length} address(es) on ${ports.length} port(s) ...`);
-    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [] });
+    io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
+    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today });
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
     mkdirSync(out, { recursive: true, mode: 0o700 });

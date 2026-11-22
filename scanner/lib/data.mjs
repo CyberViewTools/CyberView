@@ -6,6 +6,7 @@
 //   data/psirt.json          vendors' own security advisories joined on CVE (a vendor's "exploited" statement)
 //   data/cve/index.json      the CVE lookup files' index
 //   data/cve/<year>/<n>.json the CVE lookup files (CVSS, CISA's SSVC assessment, KEV date, EPSS score) for the CVEs matched
+//   data/archive/search.json, data/archive/<YYYY-MM>.json   the event archive, ONLY with --data-incidents (scanner/lib/cite.mjs)
 // KEV and EPSS arrive inside these files: the scanner never contacts CISA, FIRST or NVD itself, and it never uploads
 // anything: no findings, no scope, no addresses, no telemetry.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -14,7 +15,7 @@ import { USER_AGENT } from "./probe.mjs";
 
 export const DEFAULT_SOURCE = "https://xanderhutch.github.io/CyberView/";
 /** The only paths the scanner will ever ask for. */
-export const ALLOWED = /^data\/(workbench\.json|psirt\.json|cve\/index\.json|cve\/\d{4}\/\d{1,5}\.json)$/;
+export const ALLOWED = /^data\/(workbench\.json|psirt\.json|cve\/index\.json|cve\/\d{4}\/\d{1,5}\.json|archive\/search\.json|archive\/\d{4}-\d{2}\.json)$/;
 
 /** A base URL must be https, or plain http on this machine (for a local mirror or a test). */
 export function checkBase(u) {

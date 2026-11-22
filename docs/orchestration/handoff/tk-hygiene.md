@@ -33,7 +33,8 @@
 - **Test plan:** DER reader on fixture certificates (RSA-1024/SHA-1, P-256/SHA-256) and on truncated/garbage input; pure
   observation tests with an injected clock (expiring, not-yet-valid, weak key, weak signature, name mismatch with
   wildcards and IP literals, retired protocol, weak cipher, weak DH, RSA key exchange, unreported group); a loopback TLS 1.3
-  service and a TLS 1.2 DHE-1024 service through `probePort`, each asserting one connection; summary ordering.
+  service and a TLS 1.2 DHE-1024 service through `probePort`, each asserting one connection; summary ordering. Test
+  certificates are made at test time (`tests/fixtures/scanner/certgen.mjs`): no private key is committed.
 - **PR plan:**
   1. `[tk-hygiene] TLS and certificate hygiene` — persist the TLS/cert fields, `certAlgorithms()`, `tlsInfo()`,
      RFC 6125 name matching, the TLS observations, severities, the per-host cap, the TLS lines in `summary.txt`.

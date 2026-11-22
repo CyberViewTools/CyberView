@@ -625,8 +625,9 @@ test("probePort: plain HTTP on a TLS-by-convention port falls back to plain, and
 /* ---- tk-hygiene: TLS and certificate hygiene from the handshake already made (no extra connection) ---- */
 import { certAlgorithms, tlsInfo, nameMatches, certNames, TLS_RULES } from "../../scanner/lib/fingerprint.mjs";
 import { startTlsServer } from "../fixtures/scanner/servers.mjs";
+import { fixtureCerts } from "../fixtures/scanner/certgen.mjs";
 import { X509Certificate } from "node:crypto";
-const derOf = (which) => new X509Certificate(readFileSync(join(FIX, "tls", `${which}-cert.pem`))).raw;
+const derOf = (which) => new X509Certificate(fixtureCerts()[which].cert).raw;
 
 test("certAlgorithms reads the signature and public-key algorithm from the certificate's DER", () => {
   assert.deepEqual(certAlgorithms(derOf("weak")), { sig_alg: "sha1WithRSAEncryption", sig_hash: "SHA-1", key_type: "RSA" });

@@ -13,6 +13,10 @@ export const ALLOWED_VERB = /^(EHLO|CAPA|OPTIONS)[ \r]/;
 export const REVIEWED_HEX = Object.freeze({
   mdns: "000000000001000000000000095f7365727669636573075f646e732d7364045f756470056c6f63616c00000c0001",   // RFC 6763 s.9 PTR _services._dns-sd._udp.local
   ipmi: "0600ff06000011be80000000",   // DMTF ASF 2.0 presence ping (RMCP class 6, IANA 4542, type 0x80)
+  rdp: "030000130ee000000000000100080003000000",   // [MS-RDPBCGR] 2.2.1.1 X.224 CR + RDP_NEG_REQ (SSL|HYBRID)
+  smb: "0000006cfe534d424000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002400040001000000000000004379626572566965772d5363616e6e7200000000000000000202100200030203",   // [MS-SMB2] 2.2.3 NEGOTIATE
+  ldap: "3063020101635e04000a01000a010002010102010a010100870b6f626a656374436c617373303e0414737570706f727465644c44415056657273696f6e040a76656e646f724e616d65040d76656e646f7256657273696f6e040b6f626a656374436c617373",   // RFC 4511 root DSE base search
+  "ldap-close": "30050201024200",   // RFC 4511 4.3 UnbindRequest
 });
 export const DNS_TYPES = Object.freeze(["TXT", "CAA"]);
 export const DNS_PREFIXES = Object.freeze(["", "_dmarc.", "default._bimi.", "_mta-sts."]);
@@ -25,8 +29,8 @@ export function helloProblems({ helloSrc = "", mod = null, scanSrc = "", dnsSrc 
   const P = [], F = "scanner/lib/hello.mjs", G = "scanner/lib/dns-records.mjs";
   if (helloSrc) {
     // (a) every request, quit and hex value in the source is one plain double-quoted literal
-    const uses = (helloSrc.match(/\b(request|quit|hex)\s*:/g) || []).length;
-    const lits = [...helloSrc.matchAll(/\b(request|quit|hex)\s*:\s*"((?:[^"\\$`]|\\[rn])*)"\s*[,}]/g)];
+    const uses = (helloSrc.match(/\b(request|quit|hex|closeHex)\s*:/g) || []).length;
+    const lits = [...helloSrc.matchAll(/\b(request|quit|hex|closeHex)\s*:\s*"((?:[^"\\$`]|\\[rn])*)"\s*[,}]/g)];
     if (uses !== lits.length) P.push(`${F}: every request/quit/hex must be one plain string literal (${uses} found, ${lits.length} literal)`);
     if (FORBIDDEN_LITERAL.test(helloSrc)) P.push(`${F}: a string literal starts with a forbidden verb (AUTH, USER, PASS, APOP, VRFY, EXPN, MAIL, RCPT, STARTTLS, STLS, REGISTER, INVITE, DESCRIBE, SETUP, PLAY, AXFR, IXFR)`);
     // (b) no broadcast or multicast, ever
@@ -56,6 +60,7 @@ export function helloProblems({ helloSrc = "", mod = null, scanSrc = "", dnsSrc 
         if (!e || (typeof e.request === "string") === (typeof e.hex === "string")) { P.push(`${F}: ${k} must have exactly one of request or hex`); continue; }
         if (e.flag !== "--identify" && e.flag !== "--identify-bmc") P.push(`${F}: ${k} must be behind --identify or --identify-bmc`);
         if (!/^only with --identify/.test(String(e.sends || ""))) P.push(`${F}: ${k}.sends must start "only with --identify" (declared in SENDS, off by default)`);
+        if (e.closeHex !== undefined && REVIEWED_HEX[`${k}-close`] !== e.closeHex) P.push(`${F}: ${k} closeHex is not the reviewed byte sequence`);
         if (typeof e.hex === "string") { if (REVIEWED_HEX[k] !== e.hex) P.push(`${F}: ${k} binary request is not the reviewed byte sequence`); continue; }
         const req = e.request;
         if (!ALLOWED_VERB.test(req)) P.push(`${F}: ${k} request must start with EHLO, CAPA or OPTIONS`);

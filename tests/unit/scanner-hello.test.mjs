@@ -10,7 +10,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateKeyPairSync } from "node:crypto";
 import { Resolver } from "node:dns/promises";
-import { HELLO, HELLO_SENDS, wire, parseEhlo, parseCapa, parseHead, parseMdns, parseAsfPong, tcpHello, udpHello, helloPlan, helloRecord, helloFindings, identifyHost, identifyHeaderText } from "../../scanner/lib/hello.mjs";
+import { parseRdp, parseSmb, parseLdap, ldapDone } from "../../scanner/lib/hello.mjs";
+import { HELLO, HELLO_SENDS, wire,parseEhlo, parseCapa, parseHead, parseMdns, parseAsfPong, tcpHello, udpHello, helloPlan, helloRecord, helloFindings, identifyHost, identifyHeaderText } from "../../scanner/lib/hello.mjs";
 import { QUERIES, dnsPlanArgs, dnsQueries, interpret, dnsRecords, toDnsCsv, DNS_SENDS } from "../../scanner/lib/dns-records.mjs";
 import { mailInventory, toMailCsv, STARTTLS } from "../../scanner/lib/mail-starttls.mjs";
 import { probeAll } from "../../scanner/lib/scan.mjs";
@@ -62,7 +63,7 @@ function dnsAnswer(m, answers) {
 /* ---- the frozen table and the exact bytes ---- */
 test("HELLO is frozen literals; wire() gives the exact bytes, fills only {target} (an IP) and {ua}", () => {
   assert.ok(Object.isFrozen(HELLO) && Object.values(HELLO).every(Object.isFrozen));
-  assert.deepEqual(Object.keys(HELLO).sort(), ["ipmi", "mdns", "pop3", "rtsp", "sip-tcp", "sip-udp", "smtp"]);
+  assert.deepEqual(Object.keys(HELLO).sort(), ["ipmi", "ldap", "mdns", "pop3", "rdp", "rtsp", "sip-tcp", "sip-udp", "smb", "smtp"]);
   assert.equal(wire("smtp").toString(), "EHLO cyberview-scanner.invalid\r\n");
   assert.equal(wire("pop3").toString(), "CAPA\r\n");
   assert.equal(wire("rtsp").toString(), `OPTIONS * RTSP/1.0\r\nCSeq: 1\r\nUser-Agent: ${USER_AGENT}\r\n\r\n`);
@@ -342,4 +343,78 @@ test("security check: the real modules pass; AUTH/USER/PASS/VRFY/EXPN/REGISTER/I
   const Q = Object.freeze([...dnsMod.QUERIES, Object.freeze({ check: "x", prefix: "www.", type: "NS" })]);
   assert.equal(helloProblems({ ...base, dnsMod: { ...dnsMod, QUERIES: Q } }).filter((p) => /not allowed|reviewed record name/.test(p)).length, 2);
   assert.ok(helloProblems({ ...base, otherSrcs: [{ file: "scanner/lib/x.mjs", src: "new Resolver()" }] }).some((p) => /only scanner\/lib\/dns-records\.mjs/.test(p)));
+});
+
+/* ---- lead decision: RDP, SMB2 and LDAP identify reads (one frozen binary message each) ---- */
+const ber = (tag, ...parts) => { const v = Buffer.concat(parts.map((p) => (Buffer.isBuffer(p) ? p : Buffer.from(p)))); const l = v.length < 128 ? Buffer.from([v.length]) : v.length < 256 ? Buffer.from([0x81, v.length]) : Buffer.from([0x82, v.length >> 8, v.length & 255]); return Buffer.concat([Buffer.from([tag]), l, v]); };
+const os = (s) => ber(0x04, s);
+const RDP_TLS = Buffer.from("030000130ed00000123400021f080001000000", "hex");
+function smbResponse(mode, dialect) {
+  const h = Buffer.alloc(64); h.writeUInt32BE(0xfe534d42, 0); h.writeUInt16LE(64, 4); h.writeUInt16LE(1, 14); h.writeUInt32LE(1, 16);
+  const b = Buffer.alloc(64); b.writeUInt16LE(65, 0); b.writeUInt16LE(mode, 2); b.writeUInt16LE(dialect, 4);
+  const nb = Buffer.alloc(4); nb.writeUInt32BE(128); return Buffer.concat([nb, h, b]);
+}
+const LDAP_ENTRY = Buffer.concat([
+  ber(0x30, ber(0x02, Buffer.from([1])), ber(0x64, os(""), ber(0x30, ber(0x30, os("objectClass"), ber(0x31, os("top"), os("OpenLDAProotDSE"))), ber(0x30, os("supportedLDAPVersion"), ber(0x31, os("3")))))),
+  ber(0x30, ber(0x02, Buffer.from([1])), ber(0x65, ber(0x0a, Buffer.from([0])), os(""), os(""))),
+]);
+
+test("RDP, SMB and LDAP requests decode to exactly what the specs and the lead decision state", () => {
+  const rdp = wire("rdp");
+  assert.equal(rdp.length, 19); assert.equal(rdp.readUInt16BE(2), 19, "TPKT length"); assert.equal(rdp[5], 0xe0, "X.224 Connection Request");
+  assert.equal(rdp[11], 0x01, "RDP_NEG_REQ"); assert.equal(rdp.readUInt32LE(15), 3, "requestedProtocols TLS|CredSSP");
+  const smb = wire("smb");
+  assert.equal(smb.readUInt32BE(0), smb.length - 4); assert.equal(smb.readUInt32BE(4), 0xfe534d42, "SMB2, never SMB1 (0xff 'SMB')");
+  assert.equal(smb.readUInt16LE(16), 0, "Command NEGOTIATE"); assert.equal(smb.readUInt16LE(68), 36); assert.equal(smb.readUInt16LE(70), 4);
+  assert.deepEqual([0, 1, 2, 3].map((i) => smb.readUInt16LE(104 + i * 2).toString(16)), ["202", "210", "300", "302"]);
+  const ldap = wire("ldap");
+  assert.equal(ldap[0], 0x30); assert.equal(ldap[5], 0x63, "SearchRequest, not a BindRequest (0x60)");
+  assert.deepEqual([...ldap.subarray(7, 18)], [0x04, 0x00, 0x0a, 0x01, 0x00, 0x0a, 0x01, 0x00, 0x02, 0x01, 0x01], "baseObject \"\", scope base, never deref, sizeLimit 1");
+  const attrs = ldap.subarray(ldap.indexOf(Buffer.from("303e", "hex")) + 2);
+  const names = []; for (let o = 0; o < attrs.length; o += 2 + attrs[o + 1]) names.push(attrs.subarray(o + 2, o + 2 + attrs[o + 1]).toString());
+  assert.deepEqual(names, ["supportedLDAPVersion", "vendorName", "vendorVersion", "objectClass"]);
+  assert.equal(Buffer.from(HELLO.ldap.closeHex, "hex")[5], 0x42, "the close is an UnbindRequest");
+});
+
+test("RDP, SMB and LDAP on loopback: exactly one request each (plus LDAP's unbind), nothing after", async () => {
+  const rd = await tcpServer("", () => RDP_TLS), sm = await tcpServer("", () => smbResponse(1, 0x0302)), ld = await tcpServer("", (t) => (t.charCodeAt(5) === 0x63 ? LDAP_ENTRY : ""));
+  try {
+    const a = helloRecord(await tcpHello("127.0.0.1", rd.port, "rdp", { timeouts: FAST }));
+    const b = helloRecord(await tcpHello("127.0.0.1", sm.port, "smb", { timeouts: FAST }));
+    const c = helloRecord(await tcpHello("127.0.0.1", ld.port, "ldap", { timeouts: FAST }));
+    await new Promise((x) => setTimeout(x, 100));
+    assert.equal(Buffer.from(rd.bytes(), "latin1").toString("hex"), HELLO.rdp.hex, "no TLS, CredSSP or MCS after the Connection Confirm");
+    assert.equal(Buffer.from(sm.bytes(), "latin1").toString("hex"), HELLO.smb.hex, "no SESSION_SETUP after the NEGOTIATE");
+    assert.equal(Buffer.from(ld.bytes(), "latin1").toString("hex"), HELLO.ldap.hex + HELLO.ldap.closeHex, "the search, then the unbind; never a bind");
+    assert.deepEqual(a.read, { confirm: true, selected: 1, protocol: "TLS", failure: "", nla: false });
+    assert.deepEqual(b.read, { smb2: true, status: 0, dialect: "3.0.2", signing_enabled: true, signing_required: false });
+    assert.deepEqual(c.read, { ok: true, versions: ["3"], vendor_name: "", vendor_version: "", object_classes: ["top", "OpenLDAProotDSE"] });
+    const f = helloFindings([{ ...a, port: 3389 }, { ...b, port: 445 }, { ...c, port: 389 }]);
+    assert.deepEqual(f.observations.map((o) => o.kind), ["rdp-no-nla", "smb-signing-not-required", "ldap-anonymous-rootdse"]);
+    const ol = f.services.find((x) => x.product === "OpenLDAP"); assert.ok(ol && ol.guessed && ol.version === "");
+  } finally { await rd.close(); await sm.close(); await ld.close(); }
+});
+
+test("RDP/SMB/LDAP parsers: NLA required, signing required, failures and junk", () => {
+  assert.equal(parseRdp(Buffer.from("030000130ed00000123400021f080002000000", "hex")).nla, true);
+  assert.deepEqual(parseRdp(Buffer.from("030000130ed000001234000300080005000000", "hex")), { confirm: true, selected: null, protocol: "", failure: "HYBRID_REQUIRED_BY_SERVER", nla: true });
+  assert.equal(parseRdp(Buffer.from("0300000b06d00000123400", "hex")).protocol, "standard RDP security");
+  assert.equal(parseRdp(Buffer.from("HTTP/1.1 400")).confirm, false);
+  assert.equal(parseSmb(smbResponse(3, 0x0300)).signing_required, true);
+  assert.equal(parseSmb(Buffer.from("00000010ff534d42", "hex")).smb2, false, "an SMB1 answer is not parsed");
+  assert.equal(parseLdap(Buffer.from("300c02010165070a010004000400", "hex")).ok, false);
+  assert.equal(ldapDone(LDAP_ENTRY), true); assert.equal(ldapDone(LDAP_ENTRY.subarray(0, 20)), false);
+  assert.deepEqual(helloPlan(host({ ports: [{ port: 389, state: "open", banner: "" }, { port: 445, state: "open", banner: "" }, { port: 3389, state: "open", banner: "" }] }), { ports: [] }).map((x) => x.key), ["ldap", "smb", "rdp", "mdns"]);
+});
+
+test("security check: a changed RDP/SMB/LDAP byte, an LDAP bind or a non-unbind close fail", async () => {
+  const mod = await import("../../scanner/lib/hello.mjs"), dnsMod = await import("../../scanner/lib/dns-records.mjs");
+  const base = { helloSrc: SRC("scanner/lib/hello.mjs"), mod, scanSrc: SRC("scanner/lib/scan.mjs"), dnsSrc: SRC("scanner/lib/dns-records.mjs"), dnsMod, otherSrcs: [] };
+  assert.deepEqual(helloProblems(base), []);
+  const swap = (k, patch) => ({ ...base, mod: { ...mod, HELLO: Object.freeze({ ...mod.HELLO, [k]: Object.freeze({ ...mod.HELLO[k], ...patch }) }) } });
+  const bind = "300c020101600702010304000400";   // an LDAP simple BindRequest (anonymous): refused
+  assert.ok(helloProblems(swap("ldap", { hex: bind })).some((p) => /ldap binary request is not the reviewed/.test(p)));
+  assert.ok(helloProblems(swap("ldap", { closeHex: bind })).some((p) => /ldap closeHex is not the reviewed/.test(p)));
+  assert.ok(helloProblems(swap("rdp", { hex: HELLO.rdp.hex.replace(/03000000$/, "0b000000") })).some((p) => /rdp binary request/.test(p)));
+  assert.ok(helloProblems(swap("smb", { hex: "00000054ff534d4272" })).some((p) => /smb binary request/.test(p)), "SMB1 negotiate refused");
 });

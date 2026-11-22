@@ -1,5 +1,5 @@
 {
-  "title": "South Korea launches joint inspection after hack of government administrative email system",
+  "title": "South Korea's Interior Ministry says government administrative email system was hacked; joint check planned",
   "date": "2026-11-16",
   "date_note": "Date of the ministry's release; the ministry says it was notified of the hack on 9 November.",
   "category": "incident",
@@ -14,8 +14,8 @@
   "geo_basis": "agency, country capital",
   "pin_type": "country",
   "actor": "",
-  "summary": "South Korea's Interior Ministry says related agencies told it on 9 November that the administrative email system run by the National Information Resources Service was hacked; about 300 accounts showed abnormal access. The attacker came through some local governments' weak networks and used a single sign-on flaw. The ministry reported the leak to the privacy regulator, notified those affected, began a joint inspection with NIS and KISA and aims to find the cause by year-end.",
-  "plain": "Hackers got into South Korean government work email accounts through a login flaw. The ministry has cut connections, told the people affected and is investigating.",
+  "summary": "South Korea's Interior Ministry says related agencies told it on 9 November that the administrative email system run by the National Information Resources Service was hacked; about 300 accounts showed abnormal access. The attacker came through some local governments' weak networks and used a single sign-on flaw. It reported the leak to the privacy regulator, notified those affected, plans a check with NIS and KISA for leftover malware, and aims to find the cause by year-end.",
+  "plain": "Hackers got into South Korean government work email accounts through a login flaw. The ministry says it has notified those affected and is investigating.",
   "exec": "Shows how a weak local network and shared single sign-on can expose a national government system.",
   "action": "General advice: review single sign-on and the links between partner or local networks and your email system; look for abnormal sign-ins.",
   "tags": [
@@ -50,24 +50,33 @@
       "quote": "300여개는 비정상 접속이 확인된 계정 수다."
     }
   ],
-  "source_tier": "primary",
+  "source_tier": "established",
   "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-22T20:28:01Z",
-    "note": "Government press release (primary source) plus Byline Network (16 Nov), which reports the ministry's statement including the NIRS-run email system and the year-end target for the cause; the attacker is not named. korea.kr did not load on 22 Nov (ECONNRESET)."
+    "state": "single_source",
+    "checked_at": "2026-11-22T20:30:57Z",
+    "note": "Only Byline Network (16 Nov) was read; it relays the ministry's statement. The ministry's own press release on korea.kr did not load (ECONNRESET) on repeated tries, so it is not counted as read. The attacker is not named."
   },
   "report": {
     "read_depth": "full"
   },
   "first_seen": "2026-11-20T04:14:30Z",
-  "updated_at": "2026-11-22T20:28:01Z",
+  "updated_at": "2026-11-22T20:30:57Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T04:17:52Z",
-    "note": "Compared title, 16 Nov date, 9 Nov notification, about 300 accounts, local-network SSO entry, privacy regulator report, joint inspection with NIS and KISA, no attribution against the ministry press release",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-22T20:31:12Z",
+    "first_at": "2026-11-20T04:17:52Z",
+    "note": "stronger than the source / validation: 'began a joint inspection' and 'cut connections' not in the Byline article (it says a check is planned); korea.kr press release unreadable so corroborated/primary downgraded to single_source/established; title and plain fixed. 300+ figure kept as about 300 (sou",
+    "flags": [
+      "long-summary",
+      "figure-qualifier"
+    ],
+    "categories": [
+      "overstated",
+      "figure",
+      "validation"
+    ]
   },
-  "qa_checked_at": "2026-11-20T04:17:52Z",
+  "qa_checked_at": "2026-11-22T20:31:12Z",
   "sectors": {
     "values": [
       "government-facilities"

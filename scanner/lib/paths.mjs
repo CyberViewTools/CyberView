@@ -77,7 +77,7 @@ export function mmh3(buf) {
 export const faviconHash = (raw) => mmh3(Buffer.from((Buffer.from(raw).toString("base64").match(/.{1,76}/g) || []).map((l) => l + "\n").join(""), "latin1"));
 
 /**
- * THE FROZEN TABLE (reviewed in Design: 50 catalog rows, 39 distinct paths). Every path is a literal; adding one needs a new
+ * THE FROZEN TABLE (reviewed in Design: 50 catalog rows, 39 distinct paths; one more row on an existing path by the lead, 2026-11-22). Every path is a literal; adding one needs a new
  * Design review, and section 7 of scripts/security-check.mjs refuses login, management and exploit-class paths.
  * group "bmc": baseboard management controllers stay opt-in even with --paths (--paths-bmc).
  * hint null: no reviewed marker, so the entry is never requested.
@@ -165,6 +165,12 @@ export const RAIL = Object.freeze([
   { id: "netgear-multiple-routers", paths: ["/currentsetting.htm"], hint: any(T(/^NETGEAR Router /i), R(/NETGEAR/i)), parse: currentSetting(null) },
   { id: "netgear-wireless-router-dgn2200", paths: ["/currentsetting.htm"], hint: any(T(/NETGEAR Router DGN2200/i), R(/NETGEAR Router DGN2200/i)), parse: currentSetting(/DGN2200/i) },
   { id: "netgear-wnr2000v5-router", paths: ["/currentsetting.htm"], hint: any(T(/NETGEAR.*WNR2000/i), R(/NETGEAR.*WNR2000/i), S(/WNR2000v5 UPnP\/1\.0 miniupnpd\/1\.0/i)), parse: currentSetting(/WNR2000/i) },
+  // scan-research-pack, lead decision 2026-11-22: the same frozen path for the catalog row ivanti-connect-secure-version-path, hinted by
+  // a recorded root redirect into /dana-na/ (or the existing ds.css marker); a dotted ProductVersion is stated (guessed false) but
+  // is a build number, not the release naming NVD's ranges use ("9.1R11"), so it is shown and never compared
+  { id: "ivanti-connect-secure-version-path", paths: ["/dana-na/nc/nc_gina_ver.txt"], hint: any(L(/^(?:https?:\/\/[^/\s]+)?\/dana-na\//i), B(/\/dana-na\/css\/ds\.css/i)),
+    parse: (p, c) => { const m = /NAME="ProductVersion"\s+?VALUE="([^"]{1,40})"/i.exec(c.body); if (!m) return null; const v = m[1].trim(), dotted = /^\d+(?:\.\d+)+$/.test(v);
+      return tok("Ivanti", "Connect Secure", dotted ? v : "", { guessed: !dotted, matchVersion: "", evidence: dotted ? `ProductVersion ${v} (build number, not compared)` : "nc_gina_ver.txt present; ProductVersion not a dotted version" }); } },
   { id: "pulse-secure-pulse-connect-secure", paths: ["/dana-na/nc/nc_gina_ver.txt"], hint: any(L(/\/dana-na\/auth\//i), B(/\/dana-na\/css\/ds\.css/i)),
     // the build number ("9.1.11.10541") is not the release naming NVD's ranges use ("9.1R11"): shown, never compared
     parse: (p, c) => { const m = /NAME="ProductVersion"\s+VALUE="([\d.]{3,30})"/i.exec(c.body); return m ? tok("Ivanti", "Connect Secure", m[1], { guessed: true, matchVersion: "", evidence: `ProductVersion ${m[1]} (build number)` }) : null; } },
@@ -270,6 +276,7 @@ export function railResult(item, res) {
       const e = RAIL.find((x) => x.id === id); if (!e) continue;
       let t = null; try { t = isStatus200(ctx) ? e.parse(item.path, ctx) : null; } catch { t = null; }
       if (!t || !t.product) continue;
+      if (services.some((x) => x.product === clip(t.product, 80) && x.vendor === clip(t.vendor, 60))) continue;   // two rows on one shared path: the first in table order wins
       const shown = cleanVersion(t.version), proto = item.tls ? "https" : "http";
       services.push({ port: item.port, proto, vendor: clip(t.vendor, 60), product: clip(t.product, 80), label: clip(t.vendor && !t.product.toLowerCase().startsWith(t.vendor.toLowerCase().split(" ")[0]) ? `${t.vendor} ${t.product}` : t.product, 120),
         version: t.matchVersion !== undefined ? t.matchVersion : core(shown), shown_version: shown, distro: "", source: `HTTP GET ${item.path} (path rail, ${id})`, evidence: clip(t.evidence, 200), guessed: !!t.guessed });

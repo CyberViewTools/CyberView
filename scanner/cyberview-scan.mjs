@@ -13,6 +13,8 @@
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
 //         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding) [--html] (also write report.html)
 //         [--paths [--paths-per-host N] [--paths-bmc]] (the bounded path rail, off by default)
+//         [--certs] [--mail] [--compare PREVIOUS/report.json]   opt-in extra outputs from data already collected
+//   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
@@ -29,9 +31,13 @@ import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.m
 import { pathsPerHost, PATHS_PER_HOST } from "./lib/paths.mjs";
 import { toHtml, scopeCoaching, scanProfile, staleData } from "./lib/html-report.mjs";
 import { D } from "./lib/shared.mjs";
+import { certInventory, toCertsCsv, certText } from "./lib/cert-inventory.mjs";
+import { mailInventory, toMailCsv } from "./lib/mail-starttls.mjs";
+import { kevCoverage, toCoverageCsv, coverageText } from "./lib/kev-coverage.mjs";
+import { loadPrevious, diffReports, diffText } from "./lib/diff.mjs";
 import { snapshotIncidentsTo } from "./lib/cite.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "paths", "paths-bmc", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -50,6 +56,9 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
 Incidents: --data-incidents (scan and data) cites reviewed CyberView incidents naming each finding's CVE; claims are never cited.
 Output: --html also writes report.html, one self-contained page (no script, nothing loaded from the network).
+Extra outputs (from what the scan already read; nothing more is sent): --certs (certs.csv), --mail (mail.csv),
+--compare PREVIOUS/report.json (diff.json, diff.txt: new, fixed, still-open). KEV fingerprint coverage (no network):
+  node scanner/cyberview-scan.mjs coverage --data cyberview-data [--out kev-coverage.csv]
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
 Path rail (off by default): --paths adds at most ${PATHS_PER_HOST} GETs per host (lower with --paths-per-host N) of frozen, reviewed version
 paths, only where the host's own root page, headers, certificate or port already hint at that product; --paths-bmc adds BMC identify.
@@ -95,6 +104,15 @@ export async function main(argv, io = {}) {
     return 0;
   }
 
+  if (cmd === "coverage") {
+    // offline only: the local snapshot against the scanner's own fingerprint tables; no target, no network
+    if (!a.data) return fail(io, ["--data DIR is required (a snapshot from the data command); coverage reads nothing from the network"], 1);
+    let src; try { src = dirSource(a.data); } catch (e) { return fail(io, [e.message], 1); }
+    const c = kevCoverage(await src.json("data/workbench.json"));
+    if (a.out) writeFileSync(a.out, toCoverageCsv(c), { mode: 0o600 });
+    io.out(coverageText(c) + (a.out ? `\nWritten to ${a.out}.` : ""));
+    return 0;
+  }
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----
   const sc = loadScope(a.scope, today);
@@ -125,6 +143,8 @@ export async function main(argv, io = {}) {
   if (cmd === "scan" && !a.data && !a.online) return fail(io, ["choose the data source: --data DIR (a snapshot from the data command; nothing but the targets is contacted) or --online (reads CyberView's public data files)"], 1);
   let src = null;
   try { src = a.data ? dirSource(a.data) : a.online ? webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl }) : null; } catch (e) { return fail(io, [e.message], 1); }
+  let previous = null;   // --compare: a previous report.json from this machine, checked before anything is scanned
+  if (a.compare) { let t; try { t = io.readFile(a.compare); } catch { return fail(io, [`--compare: cannot read ${a.compare}`], 1); } const p = loadPrevious(t); if (p.error) return fail(io, [`--compare ${a.compare}: ${p.error}`], 1); previous = p.report; }
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
   io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS, paths }));
@@ -167,7 +187,13 @@ export async function main(argv, io = {}) {
     w("report.json", JSON.stringify(report, null, 2) + "\n"); w("findings.csv", toCsv(report)); w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
     w("inventory.csv", toInventory(report)); const text = summaryText(report); w("summary.txt", text + "\n");
     if (a.html) w("report.html", toHtml(report));   // --html: one self-contained page (scanner/lib/html-report.mjs)
-    io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, findings.csv, report.sarif, inventory.csv, summary.txt${a.html ? ", report.html" : ""}). Nothing was uploaded.`);
+    // opt-in report pack: computed from this report only (and the --compare file); no further request to any target
+    const more = [], tail = [];
+    if (a.certs) { const ci = certInventory(report); more.push(["certs.csv", toCertsCsv(ci)]); tail.push(certText(ci)); }
+    if (a.mail) more.push(["mail.csv", toMailCsv(mailInventory(report))]);
+    if (previous) { const df = diffReports(previous, report); more.push(["diff.json", JSON.stringify(df, null, 2) + "\n"], ["diff.txt", diffText(df) + "\n"]); tail.push(diffText(df)); }
+    more.forEach(([f, s]) => w(f, s));
+    io.out("\n" + text + (tail.length ? "\n\n" + tail.join("\n\n") : "") + `\n\nReport written to ${out}/ (${["report.json", "findings.csv", "report.sarif", "inventory.csv", "summary.txt", ...(a.html ? ["report.html"] : []), ...more.map(([f]) => f)].join(", ")}). Nothing was uploaded.`);
     // exit codes: 0 clean and complete, 2 coverage incomplete (blind spots — see the COVERAGE section), 3 stopped early
     if (report.run.interrupted) return 3;
     if (report.coverage && !report.coverage.complete) { io.err("\nCoverage incomplete: some hosts or ports could not be checked (see COVERAGE in summary.txt). A clean result does not cover them. Exit 2."); return 2; }

@@ -1,0 +1,12 @@
+# actionlint config. The CI step in .github/workflows/build.yml runs actionlint 1.7.12
+# with -shellcheck= so stylistic shellcheck findings do not fail the build.
+# actionlint's own syntax and workflow checks still do.
+#
+# actionlint 1.7.12's embedded metadata for anthropics/claude-code-action@v1 predates
+# the workload-identity inputs (anthropic_federation_rule_id, anthropic_organization_id,
+# anthropic_service_account_id, anthropic_workspace_id). They are defined on that tag's
+# action.yml. Drop this ignore once a newer actionlint lists them.
+paths:
+  .github/workflows/ai-jobs.yml:
+    ignore:
+      - 'input "anthropic_(federation_rule_id|organization_id|service_account_id|workspace_id)" is not defined in action "anthropics/claude-code-action@v1"'

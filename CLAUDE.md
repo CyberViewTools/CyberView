@@ -162,6 +162,17 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - Jobs never push code: a job's changes to `config/` or `docs/` become a pull request through `scripts/propose.mjs` (finish.mjs does this); anything else in code is a GitHub issue.
 - A code branch never carries data: commit data only on the data branch.
 
+## Grok Bot / Claude Code
+
+Grok Bot agents are read-only on this repository. They do not take the ops, guardian, or build lanes, do not edit `scripts/`, and do not push data.
+
+Grok files work for Claude Code in either of these ways:
+
+- a GitHub issue titled `[Grok] ...`, labelled `for-claude`
+- a dated entry in `swarm/REQUESTS.md`, addressed to the build lane
+
+Claude Code implements that work on pull requests to `main`. The build lane owns `scripts/`, `site/`, `docs/`, `tests/`, `config/`, `routines.json` and the workflows; Grok does not open those pull requests and does not commit on `data`. See `swarm/LANES.md`.
+
 ## Reliability rules
 
 - Fresh data must always get out: never add a step to `pages.yml`, `collect.yml` or `feeds.yml` that lets one bad record, one failing source or one failing optional step stop the commit or the deploy. Quarantine and report instead.

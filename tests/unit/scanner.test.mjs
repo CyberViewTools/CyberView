@@ -582,3 +582,19 @@ test("probeAll: a host that resets after answering is backed off and re-probed, 
   assert.equal(cov.ports_filtered, 0);              // a recovered port counts by its LAST (open) outcome, not the reset
   assert.equal(cov.complete, false);                // throttling stays a coverage note even after recovery
 });
+
+test("probePort: plain HTTP on a TLS-by-convention port falls back to plain, and --http-ports overrides TLS (#82 item 4)", async () => {
+  const s = await startServers();
+  try {
+    // a PLAIN HTTP server, but we force TLS on its port -> the handshake fails -> fall back to plain and read it
+    const a = await probePort("127.0.0.1", s.ports.http, { httpsPorts: [s.ports.http] });
+    assert.equal(a.state, "open");
+    assert.equal(a.tls_failed, true);
+    assert.ok(a.http && a.http.status, "read the plain HTTP response after the TLS fallback");
+    // --http-ports forces plain from the start (even though it is also in the forced-TLS list): no TLS attempt
+    const b = await probePort("127.0.0.1", s.ports.http, { httpPorts: [s.ports.http], httpsPorts: [s.ports.http] });
+    assert.equal(b.state, "open");
+    assert.ok(!b.tls_failed, "plain from the start, no fallback");
+    assert.ok(b.http && b.http.status);
+  } finally { await s.close(); }
+});

@@ -3,7 +3,8 @@
 // (scripts/security-check.mjs enforces this). What it does, per open port, in ONE connection:
 //   - an ordinary TCP connect (no raw packets, no half-open or stealth scanning, no spoofed source)
 //   - read the greeting a service sends on its own (SSH, FTP, SMTP, POP3, IMAP, MySQL, VNC), at most 16 KB
-//   - on an SSH port, answer with the scanner's own identification line so the target's logs say who connected
+//   - on an SSH port, answer with the scanner's own identification line so the target's logs say who connected, then
+//     read the server's algorithm list (SSH_MSG_KEXINIT) on the same connection without answering it (ssh-kex.mjs parses it)
 //   - on a web port, one HTTP request for the root page with the scanner's User-Agent, no redirects followed
 //   - on a TLS port, a normal TLS handshake to read the certificate (the certificate is read, not trusted)
 // It sends no other bytes: no credentials, no crafted input, no exploit, nothing that changes the target.
@@ -15,6 +16,7 @@ import http from "node:http";
 import https from "node:https";
 import { TIMEOUTS } from "./limits.mjs";
 import { RAIL_PATHS, PATHS_PER_HOST } from "./paths.mjs";
+import { kexinitFrom } from "./ssh-kex.mjs";
 
 export const VERSION = "1.0.0";
 export const INFO_URL = "https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner";
@@ -38,7 +40,7 @@ export const SENDS = {
 
 /**
  * One port: connect, then read or ask as above. Never throws.
- * -> { port, state: open | closed | filtered, banner, raw (Buffer, MySQL only), http: { status, headers, body },
+ * -> { port, state: open | closed | filtered, banner, raw (Buffer, MySQL only), ssh_kex (SSH: the server's KEXINIT lists), http: { status, headers, body },
  *      tls: { protocol, cipher, cipher_std, kex: { type, name, size }, cert: { ..., bits, curve, fingerprint256, raw (DER) } }, error }
  */
 export async function probePort(ip, port, { servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS, httpPorts = [], httpsPorts = [] } = {}) {
@@ -75,8 +77,19 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
       const buf = await readFor(sock, timeouts.readMs, timeouts.maxBytes);
       if (port === 3306 || (buf.length > 5 && buf[3] === 0 && buf[4] === 0x0a)) out.raw = buf;
       out.banner = buf.toString("latin1").slice(0, 2048);
-      // SSH: say who we are before closing, as the protocol expects of a client (RFC 4253 section 4.2)
-      if (/^SSH-\d/.test(out.banner) && !sock.destroyed) await new Promise((r) => sock.end(SSH_IDENT + "\r\n", r));
+      // SSH: say who we are, as the protocol expects of a client (RFC 4253 section 4.2), then read the server's KEXINIT
+      // (its algorithm lists) on this same connection, bounded by readMs and maxBytes, and close. Nothing else is sent:
+      // no KEXINIT of our own, no key exchange, no login.
+      if (/^SSH-\d/.test(out.banner) && !sock.destroyed) {
+        let kx = kexinitFrom(buf);
+        if (!kx.need || sock.readableEnded || buf.length >= timeouts.maxBytes) await new Promise((r) => sock.end(SSH_IDENT + "\r\n", r));
+        else {
+          sock.write(SSH_IDENT + "\r\n");
+          const more = await readFor(sock, timeouts.readMs, timeouts.maxBytes - buf.length, (b) => !kexinitFrom(Buffer.concat([buf, b])).need);
+          kx = kexinitFrom(Buffer.concat([buf, more])); sock.end();
+        }
+        if (kx.kex) out.ssh_kex = kx.kex;
+      }
     }
   } catch (e) {
     out.state = e && e.code === "ECONNREFUSED" ? "closed" : out.state === "open" ? "open" : "filtered";
@@ -99,11 +112,11 @@ function connect(ip, port, useTls, servername, ms) {
 }
 
 /** Collect what the service sends for up to ms (or maxBytes), then stop. */
-function readFor(sock, ms, maxBytes) {
+function readFor(sock, ms, maxBytes, enough = null) {
   return new Promise((resolve) => {
     const parts = []; let n = 0, quiet = null;
     const done = () => { clearTimeout(t); clearTimeout(quiet); sock.removeListener("data", on); resolve(Buffer.concat(parts).subarray(0, maxBytes)); };
-    const on = (d) => { parts.push(d); n += d.length; if (n >= maxBytes) return done(); clearTimeout(quiet); quiet = setTimeout(done, 600); };
+    const on = (d) => { parts.push(d); n += d.length; if (n >= maxBytes || (enough && enough(Buffer.concat(parts)))) return done(); clearTimeout(quiet); quiet = setTimeout(done, 600); };
     const t = setTimeout(done, ms);
     sock.on("data", on); sock.once("end", done); sock.once("close", done); sock.once("error", done);
   });
@@ -143,7 +156,7 @@ function httpGet(sock, useTls, host, port, timeouts, railPath = "") {
     req.on("response", (res) => {
       const parts = []; let n = 0;
       const end = () => { const buf = Buffer.concat(parts).subarray(0, timeouts.maxBytes);
-        finish({ status: res.statusCode || 0, headers: res.headers, body: buf.toString("utf8").slice(0, timeouts.maxBytes), ...(railPath ? { raw: buf, truncated: n >= timeouts.maxBytes } : {}) }); };
+        finish({ status: res.statusCode || 0, headers: res.headers, body: buf.toString("utf8").slice(0, timeouts.maxBytes), truncated: n >= timeouts.maxBytes, ...(railPath ? { raw: buf } : {}) }); };
       res.on("data", (d) => { if (n < timeouts.maxBytes) { parts.push(d); n += d.length; } if (n >= timeouts.maxBytes) { res.destroy(); end(); } });
       res.on("end", end); res.on("error", end); res.on("close", end);
     });

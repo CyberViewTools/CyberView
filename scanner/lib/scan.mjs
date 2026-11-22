@@ -8,10 +8,13 @@ import { probePort as realProbe, getPath as realGetPath, DEFAULT_PORTS, VERSION,
 import { railEvidence, railPlan, railResult, railCoverage, PATHS_PER_HOST } from "./paths.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
+import { fromEdge } from "./fp-edge.mjs";
 import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
 import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { D } from "./shared.mjs";
+import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
+import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
 export function parsePorts(s) {
@@ -38,6 +41,7 @@ export function servicesOf(r) {
   if (r.tls && r.tls.cert) out.push(...fromCert(r.tls.cert, r.port));
   if (r.http) out.push(...fromHttp(r.http, r.port, !!r.tls));
   if (r.raw) out.push(...fromMysql(r.raw, r.port));
+  out.push(...fromEdge(r, out));   // edge appliances, from the same response and certificate (fp-edge.mjs)
   if (!out.length && r.banner) out.push(...(/^SSH-/.test(r.banner) ? fromSsh(r.banner, r.port) : fromGreeting(r.banner, r.port)));
   // a product stated with a version wins over the same product inferred from a certificate
   return out.filter((s, i) => !(s.guessed && out.some((o, j) => j !== i && !o.guessed && o.product === s.product)));
@@ -108,13 +112,14 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       const svcs = servicesOf(r);
       h.ports.push({ port, state: "open", services: svcs.length, banner: r.banner ? r.banner.split(/\r?\n/)[0].replace(/[^ -~]/g, "?").slice(0, 160) : "" });
       h.services.push(...svcs);
-      if (r.http) h.http.push({ port, ...httpInfo(r.http) });
+      if (r.http) h.http.push({ port, ...httpInfo(r.http), ...(r.http.truncated ? { body_truncated: true } : {}) });   // scan-html: body cut at the size cap
       if (rail && r.http) (h._railEv || (h._railEv = [])).push(railEvidence(port, r));   // in memory for the rail's hints only
       if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certInfo(r.tls.cert) });
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
       const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),
         ...(r.http ? httpObservations(port, r.http, { tls: !!r.tls, inScope: (host) => host === h.address || h.names.includes(host.toLowerCase()) || inScope(host) }) : []),
-        ...mailObservations(port, r.banner, { tls: !!r.tls })];
+        ...mailObservations(port, r.banner, { tls: !!r.tls }), ...(r.ssh_kex ? sshKexObservations(port, r.ssh_kex) : [])];
+      if (r.ssh_kex) (h.ssh ||= []).push({ port, ...sshKexInfo(r.ssh_kex) });
       const room = OBS_PER_HOST - h.observations.length;
       if (room > 0) h.observations.push(...obs.slice(0, room));
       if (obs.length > room) h.observations_dropped = (h.observations_dropped || 0) + obs.length - Math.max(0, room);
@@ -192,7 +197,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
-export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10) }) {
+export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10), incidents = false }) {
   const wb = await src.json("data/workbench.json");
   const ps = await src.json("data/psirt.json", { optional: true });
   D.vendorIndex = ps ? D.cleanVendorIndex(ps) : {};
@@ -204,6 +209,10 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     const r = files.get(p).find((x) => x.id === id); if (r) rows.set(id, r);
   }
   const found = matchFindings(hosts, flaws, rows, { today });
+  // incident citations (opt-in, --data-incidents) and hunt links: CyberView's own published data only, never the targets
+  const cites = incidents ? await loadIncidents(src, found.map((f) => f.cve)) : null;
+  if (cites) attachIncidents(found, cites);
+  attachHunt(found, wb);
   // the whole CVE List, only from a full offline snapshot: other CVEs that name a detected product (versions not checked)
   let namedList = [];
   if (src.kind === "offline" && src.manifest && src.manifest.full) {
@@ -217,17 +226,19 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     "The CyberView rating is the CVSS base score adjusted for exploitation evidence (CVSS v3.1 Exploit Code Maturity), the same calculation as the Vulnerabilities page; every point is listed with each finding.",
     "Exploitation analyses and fix guides on the linked pages are written by CyberView AI (a Claude model) from vendor and government sources.",
   ];
+  if (cites && !cites.available && found.length) notes.push("--data-incidents was given, but the data source has no event archive (make the snapshot with: data --data-incidents); no incidents were cited.");
   if (rows.size < want.length) notes.push(`${want.length - rows.size} matched CVE(s) had no CVE lookup row in the data used; their rating is computed from the KEV entry alone (marked in each finding).`);
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
       udp: probed.udp || [], paths: probed.paths || { enabled: false }, network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
-      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null } },
+      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
+        ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
     coverage: { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.rail ? { paths: h.rail } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

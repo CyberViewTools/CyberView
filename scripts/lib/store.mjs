@@ -56,11 +56,22 @@ export function findEvent(id) {
   return listEventFiles().find((x) => x.id === id) || null;
 }
 
-/** Save an event in its month folder. If its date moved it to another month, the old file is moved, not copied. */
+/** Pure: of all event file paths, the ones for this id that are not the kept path — stale copies to remove.
+ *  An event whose date moves to another month is written to the new folder; its old-folder file must go, or the id is
+ *  "stored twice" and the build aborts (e.g. a date corrected across a month boundary). */
+export function straysFor(id, keepPath, paths) {
+  const name = `${id}.json`;
+  return (paths || []).filter((q) => q !== keepPath && basename(q) === name);
+}
+
+/** Save an event in its month folder. If its date moved it to another month, the old file is removed, not copied — and
+ *  so is any other same-id file left anywhere under events/, whether or not the caller tracked the old path. */
 export function saveEvent(e, oldPath) {
   const { id, ...rest } = e; const p = eventPath(e);   // the id lives in the file name, not the file
   writeJson(p, rest);
-  if (oldPath && oldPath !== p && existsSync(oldPath)) unlinkSync(oldPath);
+  const remove = new Set(straysFor(id, p, walk(join(DATA, "events"))));
+  if (oldPath && oldPath !== p) remove.add(oldPath);
+  for (const q of remove) { try { if (existsSync(q)) unlinkSync(q); } catch {} }
   return p;
 }
 

@@ -12,6 +12,7 @@ import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { D } from "./shared.mjs";
 import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
+import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
 export function parsePorts(s) {
@@ -111,7 +112,8 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
       const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),
         ...(r.http ? httpObservations(port, r.http, { tls: !!r.tls, inScope: (host) => host === h.address || h.names.includes(host.toLowerCase()) || inScope(host) }) : []),
-        ...mailObservations(port, r.banner, { tls: !!r.tls })];
+        ...mailObservations(port, r.banner, { tls: !!r.tls }), ...(r.ssh_kex ? sshKexObservations(port, r.ssh_kex) : [])];
+      if (r.ssh_kex) (h.ssh ||= []).push({ port, ...sshKexInfo(r.ssh_kex) });
       const room = OBS_PER_HOST - h.observations.length;
       if (room > 0) h.observations.push(...obs.slice(0, room));
       if (obs.length > room) h.observations_dropped = (h.observations_dropped || 0) + obs.length - Math.max(0, room);
@@ -208,7 +210,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
     coverage: coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }),
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

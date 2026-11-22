@@ -16,6 +16,7 @@
 //         [--ics] (industrial/clinical identification reads, off by default; private ranges, standard ports in --ports)
 //         [--certs] [--mail] [--compare PREVIOUS/report.json]   opt-in extra outputs from data already collected
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
+//   import / depmap / rematch                 offline: the operator's own files, a report.json, a local snapshot (scanner/lib/offline-cmds.mjs)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
@@ -37,9 +38,11 @@ import { mailInventory, toMailCsv } from "./lib/mail-starttls.mjs";
 import { kevCoverage, toCoverageCsv, coverageText } from "./lib/kev-coverage.mjs";
 import { loadPrevious, diffReports, diffText } from "./lib/diff.mjs";
 import { snapshotIncidentsTo } from "./lib/cite.mjs";
+import { OFFLINE_CMDS, IMPORT_USAGE, offlineCommand, loadImports } from "./lib/offline-cmds.mjs";
+import { buildDepmap, toMermaid, depmapText, depmapHtml } from "./lib/depmap.mjs";
 import { icsSends, ICS_PROTOCOLS } from "./lib/ics.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", "depmap", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -71,7 +74,8 @@ asset list (host/IP list, CSV, nmap -oX XML), and your own read-only cloud inven
 against the scope before it is scanned.
 Limits can be lowered, never raised: --rate (max ${CAPS.rate}/s), --concurrency (max ${CAPS.concurrency}), --host-concurrency (max ${CAPS.hostConcurrency}),
 --host-budget, --budget (both scale for owned private ranges), --max-minutes (default 60, max ${CAPS.minutes}).
-Public (non-private) addresses also need ${PUBLIC_FLAG} and stay capped at ${LIMITS.maxPublicAddresses}. See scanner/README.md.`;
+Public (non-private) addresses also need ${PUBLIC_FLAG} and stay capped at ${LIMITS.maxPublicAddresses}. See scanner/README.md.
+${IMPORT_USAGE}`;
 
 function loadScope(file, today) {
   if (!file) return { error: "a scope file is required (--scope FILE). There is no default target. Start one with: node scanner/cyberview-scan.mjs init" };
@@ -117,6 +121,7 @@ export async function main(argv, io = {}) {
     io.out(coverageText(c) + (a.out ? `\nWritten to ${a.out}.` : ""));
     return 0;
   }
+  if (OFFLINE_CMDS.has(cmd)) return offlineCommand(cmd, a, io);   // import, depmap, rematch: local files only, no scope, no network
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----
   const sc = loadScope(a.scope, today);
@@ -150,6 +155,9 @@ export async function main(argv, io = {}) {
   try { src = a.data ? dirSource(a.data) : a.online ? webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl }) : null; } catch (e) { return fail(io, [e.message], 1); }
   let previous = null;   // --compare: a previous report.json from this machine, checked before anything is scanned
   if (a.compare) { let t; try { t = io.readFile(a.compare); } catch { return fail(io, [`--compare: cannot read ${a.compare}`], 1); } const p = loadPrevious(t); if (p.error) return fail(io, [`--compare ${a.compare}: ${p.error}`], 1); previous = p.report; }
+  const im = loadImports(a, io);   // --depmap's optional import files, read and checked before anything is scanned
+  if (im.error) return fail(io, [im.error], 1);
+  if (im.given.length && !a.depmap) return fail(io, ["import files on scan feed --depmap: add --depmap, or use the import command"], 1);
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
   io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: { ...SENDS, ...icsSends(ics.enabled) }, paths }));
@@ -193,12 +201,14 @@ export async function main(argv, io = {}) {
     const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });
     w("report.json", JSON.stringify(report, null, 2) + "\n"); w("findings.csv", toCsv(report)); w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
     w("inventory.csv", toInventory(report)); const text = summaryText(report); w("summary.txt", text + "\n");
-    if (a.html) w("report.html", toHtml(report));   // --html: one self-contained page (scanner/lib/html-report.mjs)
+    const dm = a.depmap ? buildDepmap(report, { imports: im.imports, inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) }) : null;   // computed, never sent
+    if (a.html) w("report.html", dm ? toHtml(report).replace("</main>", depmapHtml(dm) + "</main>") : toHtml(report));   // --html: one self-contained page (scanner/lib/html-report.mjs)
     // opt-in report pack: computed from this report only (and the --compare file); no further request to any target
     const more = [], tail = [];
     if (a.certs) { const ci = certInventory(report); more.push(["certs.csv", toCertsCsv(ci)]); tail.push(certText(ci)); }
     if (a.mail) more.push(["mail.csv", toMailCsv(mailInventory(report))]);
     if (previous) { const df = diffReports(previous, report); more.push(["diff.json", JSON.stringify(df, null, 2) + "\n"], ["diff.txt", diffText(df) + "\n"]); tail.push(diffText(df)); }
+    if (dm) { more.push(["depmap.json", JSON.stringify(dm, null, 2) + "\n"], ["depmap.mmd", toMermaid(dm)]); tail.push(depmapText(dm)); }
     more.forEach(([f, s]) => w(f, s));
     io.out("\n" + text + (tail.length ? "\n\n" + tail.join("\n\n") : "") + `\n\nReport written to ${out}/ (${["report.json", "findings.csv", "report.sarif", "inventory.csv", "summary.txt", ...(a.html ? ["report.html"] : []), ...more.map(([f]) => f)].join(", ")}). Nothing was uploaded.`);
     // exit codes: 0 clean and complete, 2 coverage incomplete (blind spots — see the COVERAGE section), 3 stopped early

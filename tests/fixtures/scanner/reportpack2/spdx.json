@@ -1,0 +1,15 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "appliance",
+  "packages": [
+    { "SPDXID": "SPDXRef-fw", "name": "appliance-firmware", "versionInfo": "4.2" },
+    { "SPDXID": "SPDXRef-ssh", "name": "OpenSSH", "versionInfo": "9.6p1", "supplier": "Organization: OpenBSD" }
+  ],
+  "relationships": [
+    { "spdxElementId": "SPDXRef-DOCUMENT", "relationshipType": "DESCRIBES", "relatedSpdxElement": "SPDXRef-fw" },
+    { "spdxElementId": "SPDXRef-fw", "relationshipType": "CONTAINS", "relatedSpdxElement": "SPDXRef-ssh" },
+    { "spdxElementId": "SPDXRef-ssh", "relationshipType": "DEPENDENCY_OF", "relatedSpdxElement": "SPDXRef-fw" },
+    { "spdxElementId": "SPDXRef-ssh", "relationshipType": "EXPLOITS", "relatedSpdxElement": "SPDXRef-fw" }
+  ]
+}

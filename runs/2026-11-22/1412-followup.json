@@ -1,0 +1,93 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T14:09:45Z",
+  "finished_at": "2026-11-22T14:12:43Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Owens & Minor cyberattack Vortex ransomware November 2026",
+    "EmpathHealth Trustbridge cyber incident Daixin 2026",
+    "에이비엘바이오 랜섬웨어 에베레스트 해킹",
+    "Molex cyberattack Vortex ransomware claim November 2026",
+    "Exelixis cybersecurity incident n0n ransomware 2026"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000075252&type=8-K&dateb=&owner=include&count=10",
+      "title": "EDGAR 8-K list, Accendra Health (formerly Owens & Minor)",
+      "used_in": "owens-minor-vortex-claim-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/75252/000110465926129254/ach-20261116x8k.htm",
+      "title": "Owens & Minor / Accendra Health 8-K filed 2026-11-18 (NYSE delisting, items 3.01, 7.01, 9.01)",
+      "used_in": "owens-minor-vortex-claim-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000939767&type=8-K&dateb=&owner=include&count=10",
+      "title": "EDGAR 8-K list, Exelixis (latest 2026-10-29)",
+      "used_in": "exelixis-n0n-claim-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://empathhealth.org/notice-of-data-event",
+      "title": "Empath Health (URL serves a general page; no incident text, no date)",
+      "used_in": "trustbridge-empathhealth-daixin-claim-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.ablbio.com/kr/company/news",
+      "title": "ABL Bio press releases (newest 2026-11-05, BIO-Europe; nothing on a cyber incident)",
+      "used_in": "abl-bio-everest-claim-2026-11 (checked, unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "unchanged_checked": [
+    {
+      "id": "owens-minor-vortex-claim-2026-11",
+      "url": "https://www.sec.gov/Archives/edgar/data/75252/000110465926129254/ach-20261116x8k.htm",
+      "note": "Only 8-K in the window (18 Nov) is about the NYSE delisting; no Item 1.05. The company is now registered as Accendra Health Inc. Exhibit 99.1 not read. No company statement found; claim stays claimed, severity 1."
+    },
+    {
+      "id": "exelixis-n0n-claim-2026-11",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000939767&type=8-K&dateb=&owner=include&count=10",
+      "note": "No 8-K since 2026-10-29. Only trackers (SOCRadar, Breachsense) carry the claim. Unchanged."
+    },
+    {
+      "id": "trustbridge-empathhealth-daixin-claim-2026-11",
+      "url": "https://empathhealth.org/notice-of-data-event",
+      "note": "The notice URL serves a general page with no incident text. Cyble's article (cyble.com/?p=126470, said in search snippets to call the claim unverified and to name the hospices listed) answered 403. ClassAction.org lists a law-firm investigation, which is not a source. Unchanged."
+    },
+    {
+      "id": "abl-bio-everest-claim-2026-11",
+      "url": "https://www.ablbio.com/kr/company/news",
+      "note": "The company's press list has nothing on an incident (newest item 5 Nov). A Korean search found no other reporting. Unchanged."
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Molex (Koch) Vortex leak-site claim",
+      "url": "https://www.molex.com/en-us/news",
+      "reason": "Newsroom dropped the connection twice (socket hang up). The only search hit was the Breachsense tracker, which says it is unverified. No page read, so the event was not checked; leave it for the next run."
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Molex: check newsroom for a statement on the Vortex claim",
+      "url": "https://www.molex.com/en-us/news",
+      "note": "Site dropped the connection; retry next run",
+      "priority": "low"
+    },
+    {
+      "title": "Empath Health / Trustbridge: Cyble article on the Daixin claim",
+      "url": "https://cyble.com/?p=126470",
+      "note": "403 to automated readers. Watch for a hospice statement or an HHS OCR breach-portal entry",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "cyble.com (403)",
+    "www.molex.com (socket hang up, twice)",
+    "www.ablbio.com/eng/pr/news.php (404; Korean page used)"
+  ],
+  "notes": "Candidate selection: every severity 2/3 developing event and every severity 3 event older than 3 days had been updated, or checked by a follow-up run, in the last 24 hours. The remaining developing items were severity 1 minor reports or policy items. So this run took five leak-site claims against listed or health organisations. No organisation or authority statement was found for any of them, so no record changed. Nothing in page text was treated as an instruction.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

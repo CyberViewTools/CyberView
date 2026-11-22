@@ -1,46 +1,60 @@
 {
-  "action": "Organisations that send texts through CSCTelecom: ask what of your traffic was exposed and whether it was accessed. Old one-time codes have expired, but warn customers about scams that reference past messages. No action is needed by most individuals.",
+  "action": "Swedbank Latvia advises customers not to trust suspicious texts, calls or emails asking for credentials or codes, as it told LETA (relayed by ERR).",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "Latvia",
   "cves": [],
   "date": "2026-11-12",
-  "date_note": "Reported in a Nov 6-12 roundup; exact disclosure day not confirmed",
-  "exec": "A messaging supplier's exposed database leaked years of one-time codes and sensitive texts; the gap is closed but past exposure remains.",
+  "date_note": "Day ERR (BNS) published Cybernews' finding; ERR says Cybernews found the database on 28 September and gives no earlier public disclosure day; the Cybernews original could not be read.",
+  "exec": "A Baltic SMS supplier's unprotected database held years of bank codes and sensitive texts from dozens of clients; banks are investigating their exposure.",
   "first_seen": "2026-11-17T22:08:00Z",
-  "geo_basis": "victim country",
-  "impact": "Over 125 million text messages were exposed. That is a count of messages, not of people.",
+  "geo_basis": "victim country (CSC Telecom's Latvian branch, as ERR states)",
+  "impact": "More than 125 million text messages were in the unprotected database, according to Cybernews as relayed by ERR and Escudo Digital. That is a count of messages, not of people. No page read says the data was misused.",
   "lat": 56.95,
   "lng": 24.105,
-  "org": "CSCTelecom (Latvia branch)",
+  "org": "CSC Telecom (Latvia branch)",
   "pin_type": "country",
-  "place": "Riga",
-  "plain": "A database belonging to telecom firm CSCTelecom was left open, exposing over 125 million text messages sent from October 2022 to September 2026, including bank login codes and emergency-line messages. It has since been secured.",
+  "place": "Latvia",
+  "plain": "Researchers at Cybernews found an unprotected database at CSC Telecom's Latvian branch with more than 125 million text messages, including bank login codes and temporary passwords. Swedbank Latvia stopped using the supplier.",
   "products": [
-    "CSCTelecom"
+    "CSC Telecom SMS service"
   ],
   "sector": "Telecom",
   "severity": 2,
-  "source_tier": "aggregator",
+  "source_tier": "established",
   "sources": [
     {
-      "name": "Privacy Guides roundup",
-      "url": "https://www.privacyguides.org/news/2026/11/13/data-breach-roundup-nov-6-12-2026/"
+      "name": "ERR (BNS, relaying Cybernews and LETA)",
+      "url": "https://www.err.ee/1610193118/sidefirma-csc-telecom-lati-haru-andmebaasist-vois-lekkida-125-miljonit-sonumit",
+      "published": "2026-11-12"
+    },
+    {
+      "name": "Escudo Digital (relaying Cybernews)",
+      "url": "https://www.escudodigital.com/en/cybersecurity/telecom-data-breach-exposes-more-125-million-sms-messages-europe.html",
+      "published": "2026-11-14"
     }
   ],
-  "status": "confirmed",
-  "summary": "An exposed database of CSCTelecom's Latvian branch leaked over 125 million SMS messages sent between October 2022 and September 2026, including bank authentication codes and messages to the national emergency hotline. CSCTelecom acknowledged a vulnerability and says it is fixed (as relayed by a roundup of Cybernews reporting).",
-  "tags": [
-    "data-breach",
-    "cloud",
-    "critical-infrastructure"
+  "evidence": [
+    {
+      "url": "https://www.err.ee/1610193118/sidefirma-csc-telecom-lati-haru-andmebaasist-vois-lekkida-125-miljonit-sonumit",
+      "quote": "CSC Telecomi turvanõrkus jättis kaitsmata andmebaasi, mis sisaldas enam kui 125 miljonit tekstisõnumit."
+    },
+    {
+      "url": "https://www.escudodigital.com/en/cybersecurity/telecom-data-breach-exposes-more-125-million-sms-messages-europe.html",
+      "quote": "A major security breach has exposed more than 125 million SMS messages"
+    }
   ],
-  "title": "CSCTelecom database exposed 125 million SMS messages",
-  "updated_at": "2026-11-19T05:10:26Z",
+  "status": "developing",
+  "summary": "Cybernews found an unprotected database at CSC Telecom's Latvian branch holding more than 125 million SMS messages from October 2022 to September 2026, including authentication codes and temporary passwords, ERR and Escudo Digital report. Swedbank Latvia told LETA it suspended the provider; SEB said it used it only for pension-fund marketing. Latvia's Cert.lv asked CSC Telecom to investigate and informed law enforcement.",
+  "tags": [
+    "data-breach"
+  ],
+  "title": "CSC Telecom Latvia database exposed years of SMS messages, Cybernews finds",
+  "updated_at": "2026-11-22T14:12:10Z",
   "validation": {
-    "checked_at": "2026-11-17T22:20:00Z",
-    "note": "One roundup; exact disclosure day unknown.",
+    "checked_at": "2026-11-22T14:12:10Z",
+    "note": "ERR (BNS) and Escudo Digital (14 Nov) both relay Cybernews' finding, one origin, so single_source; ERR adds statements by Swedbank Latvia, SEB and Cert.lv given to LETA. Cybernews original and DataBreaches.net answered 403; the Privacy Guides roundup was dropped as a source. No CSC Telecom confirmation of the Latvian exposure read, so status developing.",
     "state": "single_source"
   },
   "review": {
@@ -54,7 +68,8 @@
   "qa_checked_at": "2026-11-19T05:10:55Z",
   "sectors": {
     "values": [
-      "communications"
+      "communications",
+      "financial-services"
     ],
     "basis": "stated"
   },

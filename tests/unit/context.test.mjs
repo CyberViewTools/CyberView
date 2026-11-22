@@ -1,7 +1,7 @@
 // Unit tests for the context-layer parsers (node --test; no dependencies).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseIoda, parseGdacs, toMapName } from "../../scripts/context.mjs";
+import { parseIoda, parseGdacsRss, toMapName } from "../../scripts/context.mjs";
 
 test("IODA: maps names, sorts by score, drops junk", () => {
   const out = parseIoda({ data: [
@@ -23,17 +23,34 @@ test("IODA: wrong shape throws a coded error", () => {
   assert.throws(() => parseIoda({ nope: 1 }), (e) => e.code === "bad_shape");
 });
 
-test("GDACS: keeps current orange and red points only, cleans links", () => {
-  const f = (alertlevel, extra = {}, geometry = { type: "Point", coordinates: [86.5, 13.6] }) =>
-    ({ geometry, properties: { eventtype: "TC", eventid: 1, alertlevel, name: "Cyclone X", country: "India", url: { report: "https://www.gdacs.org/report.aspx?eventid=1" }, ...extra } });
-  const out = parseGdacs({ features: [
-    f("Orange"), f("Green"), f("Red", { iscurrent: "false" }), f("Red", { url: { report: "javascript:alert(1)" } }),
-    f("Red", {}, { type: "Polygon", coordinates: [] }), f("Red", {}, { type: "Point", coordinates: [500, 0] }),
-  ] });
+test("GDACS RSS: keeps orange and red points, drops green and junk, dedupes, builds https link", () => {
+  const item = (level, { type = "TC", id = 1, lat = "13.6", long = "86.5", pt = null, title = "Cyclone X", country = "India" } = {}) =>
+    `<item><title>${title}</title><gdacs:alertlevel>${level}</gdacs:alertlevel><gdacs:eventtype>${type}</gdacs:eventtype>` +
+    `<gdacs:eventid>${id}</gdacs:eventid><gdacs:country>${country}</gdacs:country>` +
+    (pt == null ? `<geo:lat>${lat}</geo:lat><geo:long>${long}</geo:long>` : `<georss:point>${pt}</georss:point>`) + `</item>`;
+  const xml = `<?xml version="1.0"?><rss version="2.0"><channel>` +
+    item("Orange", { type: "DR", id: 1027450, lat: "6.5", long: "39.5", title: "Drought is on going in Burundi &amp; DRC", country: "Burundi &amp; DRC" }) +
+    item("Green", { type: "WF", id: 2 }) +                                   // dropped: green
+    item("Red", { type: "FL", id: 3, pt: "18.3 -95.1" }) +                   // kept via georss:point
+    item("Red", { type: "EQ", id: 4, lat: "500", long: "0" }) +             // dropped: out of range
+    item("Orange", { type: "TC", id: "", lat: "1", long: "1" }) +           // dropped: no numeric eventid
+    item("Red", { type: "FL", id: 3, pt: "18.3 -95.1" }) +                   // dropped: duplicate eventid
+    `</channel></rss>`;
+  const out = parseGdacsRss(xml);
   assert.equal(out.length, 2);
-  assert.equal(out[0].level, "orange");
-  assert.equal(out[0].type, "tropical cyclone");
-  assert.equal(out[1].url, "");
+  const dr = out.find((x) => x.id === "DR-1027450");
+  assert.equal(dr.level, "orange");
+  assert.equal(dr.type, "drought");
+  assert.equal(dr.name, "Drought is on going in Burundi & DRC");             // entity decoded
+  assert.equal(dr.country, "Burundi & DRC");
+  assert.equal(dr.lat, 6.5); assert.equal(dr.lng, 39.5);
+  assert.equal(dr.url, "https://www.gdacs.org/report.aspx?eventtype=DR&eventid=1027450");
+  const fl = out.find((x) => x.id === "FL-3");
+  assert.equal(fl.level, "red"); assert.equal(fl.lat, 18.3); assert.equal(fl.lng, -95.1);   // georss:point parsed
+});
+
+test("GDACS RSS: wrong shape throws a coded error", () => {
+  assert.throws(() => parseGdacsRss("not xml"), (e) => e.code === "bad_shape");
 });
 
 test("map names: aliases resolve only to names on the map", () => {

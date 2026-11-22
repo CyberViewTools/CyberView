@@ -7,10 +7,13 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 
 | id | Item | Stage | Lead | Next action |
 |---|---|---|---|---|
-| scan-wave3 | Scanner wave 3: review of waves 1–2 and research for the next slices (from the deferred rows in the handoffs) | Review | Orchestration | in progress |
-| scan-release | Single-file executables and tagged GitHub Releases built by CI, with checksums (Grok brief #89; approved, decision 12 in `docs/scanner.md`) | Implementation | Implementation | in progress |
-| scan-viewer | Browser report viewer and scope-file builder on the Scanner page (approved, decision 13; no in-browser scanning) | Implementation | Implementation | in progress |
-| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Design | Design | Discovery done ([handoff](handoff/tk-matchers.md), BUILD); confirm `--assume-exposed`, then start PR1 (`inputs.mjs` adapter) |
+| scan-release-tag | First scanner release: tag `scanner-v1.1.0` on main (`VERSION` is already 1.1.0); `scanner-release.yml` builds and publishes it | Implementation | Owner | the owner pushes the tag (steps in `docs/scanner.md`, Releases) |
+| scan-hellos-2 | Fingerprints that need a protocol hello: Kafka ApiVersions, MQTT CONNECT, Redis PING, ACME `acme-tls/1` ALPN, SQL Server pre-login, Oracle TNS version, JetDirect PJL, NetBackup vnetd, MongoDB hello | Discovery | Design | one Design per protocol under decision 10 (opt-in, one standard unauthenticated message, frozen bytes, section 7) |
+| scan-dnp3 | DNP3 identification (`dnp3-identify`) | Parked | Design | deferred (decision 20) until the scope file can carry an operator-supplied outstation address; then its own Design |
+| scan-rail-review | Path-rail review: the MTA-STS policy file (for `--dns-records`) and FHIR `/metadata` (`fhir-or-hl7-http-endpoint`, opt-in) | Discovery | Design | list both in a rail Design for the lead's review |
+| scan-dnssec | DNSSEC presence for `--dns-records` | Parked | Design | `node:dns` cannot ask for DS or DNSKEY; needs a stdlib-only approach or stays out |
+| scan-no-fp | 31 catalog rows with no public fingerprint | Parked | Discovery | kept as gaps; revisit if a public fingerprint appears |
+| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Design | Design | SBOM and package-list matching shipped in #120 (`import`, `scanner/lib/imports.mjs`); check what of the [handoff](handoff/tk-matchers.md) remains (nmap-XML, CVE-lookup, `--assume-exposed`) |
 | tk-diff (watch) | Scheduled re-scan + alert, the "watch" half of tk-diff (the compare half shipped in #114) | Discovery | Discovery | brief: state model, alerts tie-in |
 
 ## Parked (owner decision pending)
@@ -21,6 +24,21 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | gdacs-history | GDACS Part 2: browsable disaster history (SEARCH backfill) | owner: deferred after the live layer |
 | xleads-p2 | x-leads (#72) Phase 2: official X API + budget caps | needs the pay-per-use route decision |
 | subs | Subscriptions / monetization (freemium, open-core) | long-term (see the roadmap doc) |
+
+## Done: scanner, wave 3 (2026-11-22)
+
+Review of waves 1–2 and the research-driven slices. Docs consolidated in `docs/scanner.md` (lead decisions 14–22) and
+`scanner/README.md`.
+
+| id | Item | PR | Handoff |
+|---|---|---|---|
+| scan-release | Single-file scanner bundle and tagged GitHub Releases built by CI, with checksums (Grok brief #89) | #118 | [scanner-releases](handoff/scanner-releases.md) |
+| scan-passive-3 | Passive pack 3: 20 more products from data already collected, and the login-page inventory | #119 | [scan-passive-3](handoff/scan-passive-3.md) |
+| scan-report-pack-2 | Relationship map (`--depmap`), operator imports, local package matching, offline rematch | #120 | [scan-report-pack-2](handoff/scan-report-pack-2.md) |
+| scan-ics-identify | `--ics`: read-only industrial and clinical identification, private ranges only | #121 | [scan-ics-identify](handoff/scan-ics-identify.md) |
+| scan-identify-hellos | `--identify`, `--identify-bmc` (incl. RDP, SMB2, LDAP root DSE) and `--dns-records` | #122 | [scan-identify-hellos](handoff/scan-identify-hellos.md) |
+| scan-research-pack | 55 public-reference fingerprints, DNS version.bind names, the Ivanti rail row | #123 | [scan-research-pack](handoff/scan-research-pack.md) |
+| scan-viewer | Report viewer and scope-file builder on the Scanner page (browser only) | #124 | — |
 
 ## Done: scanner, waves 1–2 (2026-11-22)
 

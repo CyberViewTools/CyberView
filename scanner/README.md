@@ -18,7 +18,9 @@ only; no AI model runs in it.
 It can also **find the hosts for you** within the scope you attest to — sweep your ranges, resolve and expand your own
 domains, import an asset list, or read your own read-only cloud inventory — and scan **deeper**: every TCP port, and
 read-only DNS, NTP and SNMP service checks. Every host discovery finds is re-checked against your scope before it is
-scanned; nothing outside it is ever contacted.
+scanned; nothing outside it is ever contacted. Three more opt-in families, each off unless you pass its flag, ask one
+standard question per service: identify hellos (`--identify`), mail-domain DNS records (`--dns-records`) and read-only
+industrial identification on private ranges (`--ics`).
 
 An overview, with live counts of the products it can identify, is on CyberView's
 [Scanner page](https://xanderhutch.github.io/CyberView/scanner.html).
@@ -119,6 +121,18 @@ snapshot for offline use; without it no archive file is read.
   the host's own root page, headers, certificate or port already point at that product (see "what goes over the
   network"). `--paths-per-host N` lowers the cap; `--paths-bmc` adds BMC identification (Redfish service root). Both
   are refused without `--paths`.
+- `--identify` (off by default) sends one standard, unauthenticated message per service and reads the reply: SMTP EHLO,
+  POP3 CAPA, RTSP and SIP OPTIONS, a unicast mDNS query, and on RDP, SMB and LDAP one negotiation or root DSE read (see
+  "what goes over the network"). `--identify-bmc` adds one BMC presence ping and is refused without `--identify`.
+- `--dns-records example.org[,example.net]` (off by default; only host names listed in `targets`, at most 16) asks your
+  system resolver for each domain's SPF, DMARC, CAA, BIMI and MTA-STS records; `--dkim-selectors s1,s2` (at most 8) adds
+  DKIM for the selectors you name. The scanner never guesses DKIM selectors.
+- `--ics` (off by default) adds one read-only identification exchange per protocol per host for Modbus (502), S7 (102),
+  EtherNet/IP (44818), BACnet (UDP 47808, unicast), OPC UA (4840) and DICOM (104), to private addresses only, and only
+  when that port is in `--ports` (none is in the default list) and, for TCP, open. Inventory only.
+- `--depmap` writes a relationship map from what the scan already read, with per-host risk scores and each finding's
+  blast radius; your own exports (`--sbom`, `--manifest`, `--zeek`, `--survey`, `--connections`, `--cloud`,
+  `--packages`) can add to it (see "Working offline on your own files").
 
 ## Finding the hosts for you: `discover`
 
@@ -182,6 +196,42 @@ own root page, headers, certificate or port already hint at the product. Redirec
 product and version token is kept. Every request's status, and every hinted path the cap or a budget left unsent, is in
 the report's coverage. Without `--paths`, a web port gets the one root-page request and nothing else.
 
+With `--identify` (off by default), one standard, unauthenticated client message per service per host, then the
+connection is closed. TCP ones go only to ports the scan found open and that are not implicit TLS; the UDP ones go to each
+in-scope address, one datagram each, never multicast or broadcast:
+
+| Service (port) | The one message sent |
+|---|---|
+| SMTP (an open port with a 220 greeting) | A second connection that reads the greeting, sends `EHLO cyberview-scanner.invalid`, reads the reply (STARTTLS, SIZE and the AUTH mechanism names) and sends `QUIT`. |
+| POP3 (an open port with a +OK greeting) | A second connection that reads the greeting, sends `CAPA`, reads the capability names and sends `QUIT`. |
+| RTSP (TCP 554, 8554) | One `OPTIONS *` request; the Server and Public headers are read. No stream is started. |
+| SIP (TCP 5060; UDP 5060 when 5060 is in the port list) | One OPTIONS request with Max-Forwards 0, so it is answered by the target and never forwarded; User-Agent, Server and Allow are read. |
+| mDNS (UDP 5353) | One unicast service-type query to the host's own address (the answer comes back to the scanner only). |
+| RDP (TCP 3389) | One X.224 Connection Request with an RDP negotiation request; the reply says whether Network Level Authentication is required. |
+| SMB (TCP 445) | One SMB2 NEGOTIATE (dialects 2.0.2 to 3.0.2); the reply says the dialect and whether signing is required. |
+| LDAP (TCP 389) | One anonymous base-scope read of the root DSE for four attributes (supportedLDAPVersion, vendorName, vendorVersion, objectClass), then an unbind. |
+| BMC (UDP 623, only with `--identify-bmc`) | One RMCP/ASF presence ping; the answer says whether a BMC with IPMI is there. No IPMI session. |
+
+With `--dns-records` (off by default), nothing is sent to your hosts: your system resolver is asked once per record for
+each domain you list (TXT for SPF, `_dmarc`, `default._bimi` and `_mta-sts`, the CAA record, and TXT at
+`<selector>._domainkey` only for selectors you name with `--dkim-selectors`).
+
+With `--ics` (off by default), one read-only identification exchange per protocol per host, only to private, loopback or
+link-local addresses (never a public one, even with `--i-am-authorized-for-public-ranges`), only on the standard port
+when you list it in `--ports` and, for TCP, it is open. Each step is sent only after the expected reply:
+
+| Protocol (port) | What is sent |
+|---|---|
+| Modbus/TCP (502) | One Read Device Identification request (function 0x2B, MEI 0x0E, basic objects). |
+| EtherNet/IP (44818) | One ListIdentity (command 0x63), no session. Covers Rockwell controllers. |
+| S7comm (102) | A COTP connection request, S7 Setup Communication, and one system-status read (SZL 0x0011, module identification). |
+| BACnet/IP (UDP 47808) | One unicast Who-Is to the device's own address, never broadcast; the I-Am is read. |
+| OPC UA (4840) | Hello, OpenSecureChannel with SecurityPolicy None, GetEndpoints. No session. |
+| DICOM (104) | One association request for the Verification service only, then a release. No DICOM command, not even C-ECHO. |
+
+Every opt-in exchange counts against the same rate, per-host and total budgets and time limit as the rest of the scan,
+and the run header lists exactly what each flag sends (and says "off" when it is not given).
+
 Every web request carries the User-Agent
 `CyberView-Scanner/<version> (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
 
@@ -228,6 +278,24 @@ SSH, web, mail and database servers it names from their banners and headers:
 - **Around 30 more products** (management consoles, message brokers, search engines, cameras, VoIP and mail servers),
   for example GitLab, ActiveMQ, CouchDB, Elasticsearch, OpenSearch, phpMyAdmin, VMware ESXi, vCenter and Aria
   Operations, Hikvision, PaperCut, Openfire and Grandstream UCM6200.
+- **About 20 more** helpdesks, monitoring, file transfer, remote-management, building and industrial panels, cameras and
+  IP phones, such as Citrix StoreFront, Zimbra, GLPI, Zammad, Zabbix, Quest KACE, Mirth Connect, ScadaBR, Unitronics,
+  NUUO and Amcrest recorders, Intel AMT and Cisco IP Phones.
+- **55 products from public reference fingerprints**: Jupyter, Langflow, MLflow, Ray, GeoServer, OFBiz, n8n, SAP
+  NetWeaver, Atlassian Jira, Confluence and Bitbucket, Gogs, HashiCorp Boundary and Consul, Rocket.Chat, Docker
+  registries, Harbor, NetApp ONTAP, Synology DSM, FreeNAS, Commvault, Backup Exec (NDMP), Axis cameras, HP printers, CUPS,
+  Authelia, Duo gateways, FreeIPA, Shibboleth IdP, Barracuda and FortiMail, mailcow, Proofpoint, Cacti, Jaeger, LibreNMS,
+  PRTG, Sentry, Wazuh, Netdata, Guacamole, ScreenConnect, SimpleHelp, Jitsi Meet, GitHub Enterprise, Dell iDRAC, Fujitsu
+  iRMC, HPE iLO, Intel AMT, Supermicro BMCs, and, from the `--udp` DNS answer, dnsmasq, Knot DNS, NSD, Unbound and
+  CoreDNS. Serial numbers, device tokens and certificate names are matched, never stored.
+- **Web login pages**, as inventory: a password field on the root page, or a redirect into a login path (recorded, not
+  followed). No login page is ever requested, and the line is never a finding.
+
+With the opt-in families, also: mail STARTTLS from the EHLO/CAPA reply, RTSP and SIP servers, mDNS service types,
+whether RDP requires NLA, the SMB dialect and signing mode, the LDAP server's stated vendor (`--identify`); BMCs answering
+IPMI (`--identify-bmc`); and PLCs, controllers, OPC UA servers and DICOM nodes with vendor, product and firmware where the
+device states them (`--ics`, inventory only, never matched to known-exploited flaws). None of these carries a compared
+version.
 
 Most of these do not state a version where the scanner looks. They are listed as "version not read" and reported as
 "check by hand" at low confidence, outside the headline counts. A version is compared with the affected ranges only
@@ -278,7 +346,14 @@ Optional extra files, built only from what the scan already read (none of them s
 - `certs.csv` (with `--certs`): certificate inventory and reuse — validity, key, signature, fingerprint, serial, SANs,
   wildcards, internal names, embedded SCTs, must-staple, and the same certificate or key on more than one address.
 - `mail.csv` (with `--mail`): mail services and STARTTLS as far as the greetings already read show it (IMAP's
-  capability list; SMTP and POP3 read "not checked", because the scanner does not send EHLO or CAPA).
+  capability list; SMTP and POP3 read "not checked", because a plain scan does not send EHLO or CAPA; with `--identify`
+  they read advertised or not advertised from the reply).
+- `dns.csv` (with `--dns-records`): each record asked for, what it said, and any problem found.
+- `depmap.json` and `depmap.mmd` (with `--depmap`): the relationship map (services on one host, certificates shared or
+  naming another scanned host, redirects inside your scope), each edge with its evidence and confidence; names outside
+  your scope are listed as "mentioned, not scanned" and in-scope names the scan did not start from as shadow IT, never
+  contacted; a 0–100 risk score per host with every point and the formula; and each finding's blast radius. With
+  `--html` it is also a section of `report.html`.
 - `diff.json` and `diff.txt` (with `--compare old/report.json`): what changed since that scan — findings new, fixed,
   gone, still open or not rechecked; services, versions, certificates and observations changed. The old file is checked
   before anything is scanned.
@@ -293,7 +368,8 @@ node scanner/cyberview-scan.mjs coverage --data cyberview-data --out kev-coverag
 ```
 
 `summary.txt` and `report.json` also list **observations**: problems that are not CVEs, worked out only from what the one
-connection already returned (no extra connection or request), each with a severity (high, medium, low), most severe
+connection already returned (no extra connection or request; the rows marked `--identify` or `--dns-records` come from
+those opt-in checks), each with a severity (high, medium, low), most severe
 first, at most 60 per host:
 
 | Observation | When |
@@ -320,6 +396,10 @@ first, at most 60 per host:
 | `cleartext-mail`, `cleartext-submission` | POP3 (110) or IMAP (143) answering without TLS; SMTP submission (587) without TLS (whether STARTTLS is required is not checked) |
 | `cleartext-login` | Telnet, or FTP that does not show it requires TLS |
 | `snmp-public` | with `--udp`: SNMP answers the default `public` community |
+| `smtp-no-starttls`, `smtp-auth-cleartext`, `pop3-no-stls` | with `--identify`: the EHLO or CAPA reply does not offer STARTTLS/STLS, or SMTP offers a clear-text AUTH mechanism before any TLS |
+| `rdp-no-nla`, `smb-signing-not-required`, `ldap-anonymous-rootdse` | with `--identify`: RDP does not require NLA; SMB signing is not required; LDAP answers an anonymous root DSE read without TLS |
+| `rtsp-answers`, `sip-answers`, `mdns-unicast`, `ipmi-exposed` | with `--identify` (`--identify-bmc` for IPMI): the service answers the one question |
+| `spf-*`, `dmarc-*`, `caa-missing`, `dkim-weak-key` | with `--dns-records`: SPF missing, duplicated or ending in `+all`, `?all` or no `all`; DMARC missing, duplicated, without a policy or at `p=none`; no CAA record; a DKIM RSA key under 1,024 bits |
 | `ssh-weak-kex`, `ssh-weak-hostkey`, `ssh-weak-cipher`, `ssh-weak-mac` | the SSH server offers a weak algorithm from a fixed list (SHA-1 key exchange, DSA or SHA-1 RSA host keys, CBC, 64-bit block or RC4 ciphers, MD5 or 96-bit SHA-1 MACs); every name is listed with its reason. Offering is not using: a modern client picks a strong one first |
 | `ssh-pqc-kex` | information: the SSH server offers post-quantum hybrid key exchange (ML-KEM, sntrup761) |
 
@@ -358,6 +438,33 @@ resets connections after it has answered (an IPS or fail2ban throttling the scan
 re-probes those ports one at a time, recovering services the first pass was blocked from, and notes it in Coverage — if
 anything still looks thin, re-scan slower with `--rate 0.1`.
 
+## Working offline on your own files
+
+Three commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
+
+```
+node scanner/cyberview-scan.mjs import  --packages pkgs.txt --sbom app.cdx.json --data cyberview-data
+node scanner/cyberview-scan.mjs depmap  --report cyberview-scan-<time>/report.json --scope scope.json
+node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.json --data newer-cyberview-data
+```
+
+- `import` reads your own exports and writes `imports.json`; with `--data`, packages and SBOM components are matched
+  against known-exploited flaws exactly like the Vulnerabilities page's "My software". Linux distribution versions (dpkg,
+  rpm) may carry a backported fix, so an affected match there is medium confidence at most.
+- `depmap` builds the relationship map from an earlier report (give `--scope` so names your scope covers are not listed as
+  outside it).
+- `rematch` re-checks an old scan's recorded services against newer data: newly matched, no longer matched, still
+  matched (`rematch.json`, `rematch.txt`). Nothing is rescanned, so rescan to confirm.
+
+The files you can give (`import`, `depmap`, or `scan --depmap`): `--packages` (`dpkg -l`, `rpm -qa`, a Windows
+`Get-Package` CSV), `--sbom` (CycloneDX or SPDX JSON), `--manifest` (Docker Compose or Kubernetes saved **as JSON**:
+`docker compose config --format json`, `kubectl get ... -o json`; YAML is not read), `--zeek` (a Zeek `conn.log`),
+`--survey` (a Wi-Fi or Bluetooth survey CSV, inventory only), `--connections` (`ss`, `netstat` or `/proc/net/tcp` output
+saved on the host itself, with `--connections-host IP`) and `--cloud` (a cloud CLI's describe/list JSON, with
+`--cloud-provider`). Every file is treated as untrusted: its size is checked before it is read (16 MB; a Zeek log 64 MB),
+rows and items are capped and anything over a cap is reported, and an old report for `rematch` must be a CyberView
+Scanner report of at most 64 MB.
+
 ## What it deliberately does not do
 
 - No exploitation, payloads, injection strings or crafted input; no checks that work by triggering a flaw.
@@ -373,6 +480,15 @@ anything still looks thin, re-scan slower with `--rate 0.1`.
   rail's table, such as three WordPress plugin readmes).
 - No crawling, no wordlists and no paths you supply: the optional path rail requests only the reviewed literal paths in
   `scanner/lib/paths.mjs`, never a login or management page, and is off unless you pass `--paths`.
+- Even with `--identify`: no AUTH, USER/PASS, APOP, VRFY/EXPN, MAIL/RCPT or STARTTLS; no SIP REGISTER or INVITE; no RTSP
+  stream; no LDAP bind; no SMB session setup; no RDP security exchange; no IPMI session; and no multicast or broadcast.
+- Even with `--dns-records`: no zone transfer, no ANY query, no name guessing; names outside your scope's targets are
+  refused, and DKIM selectors are never guessed (only the ones you name are asked for).
+- No industrial writes or control: with `--ics` it sends only read-only identification requests (no Modbus write or
+  register read, no S7 job other than one system-status read, no BACnet broadcast or ReadProperty, no OPC UA session, no
+  DICOM command), and only to private, loopback or link-local addresses, never to a public one.
+- It does not run `ss`, `netstat`, a package manager, a cloud CLI or a radio survey for you, or log in to a host to collect
+  them; it does not resolve or scan a name it finds in a certificate or redirect.
 
 `scripts/security-check.mjs` checks the scanner's code for these on every change. More detail: `docs/scanner.md`.
 

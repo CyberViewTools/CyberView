@@ -72,7 +72,8 @@ Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-on
 Path rail (off by default): --paths adds at most ${PATHS_PER_HOST} GETs per host (lower with --paths-per-host N) of frozen, reviewed version
 paths, only where the host's own root page, headers, certificate or port already hint at that product; --paths-bmc adds BMC identify.
 Identify hellos (off by default): --identify sends one standard unauthenticated message per service and reads the reply
-(SMTP EHLO and POP3 CAPA on open mail ports, RTSP OPTIONS on 554/8554, SIP OPTIONS on 5060, a unicast mDNS query to UDP 5353);
+(SMTP EHLO and POP3 CAPA on open mail ports, RTSP OPTIONS on 554/8554, SIP OPTIONS on 5060, a unicast mDNS query to UDP 5353,
+RDP negotiation on 3389, SMB2 NEGOTIATE on 445, an LDAP root DSE read on 389 with no bind);
 --identify-bmc adds one RMCP/ASF presence ping to UDP 623. Never a login, AUTH, USER/PASS, VRFY/EXPN, REGISTER/INVITE or stream.
 DNS records (off by default): --dns-records example.com (names listed in the scope file's targets only) asks the system resolver
 for SPF, DMARC, CAA, BIMI and the MTA-STS TXT record; --dkim-selectors s1,s2 adds DKIM for selectors you name (never guessed).

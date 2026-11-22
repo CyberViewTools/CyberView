@@ -4,7 +4,10 @@ A command-line tool an operator downloads and runs against their **own, authoriz
 software and rank what to patch first. Approved by the owner on 2026-11-21 as a detection and prioritization tool. The
 operator's guide, with the authorization notice and the exact network behaviour, is `scanner/README.md`; the site offers
 the tool on its own Scanner page (`scanner.html`, with counts read from `scanner/lib` at every build by
-`scripts/scanner-stats.mjs`) and in the Vulnerabilities page's "My software" view (`vulnerabilities.html#scanner`).
+`scripts/scanner-stats.mjs`, its "Recently added" list from `config/scanner-page.json`, and two browser-only tools: a
+viewer for one or more `report.json` files with what changed between them, and a scope-file builder that checks targets
+with the scanner's own rules and will not produce a file until the exact attestation is ticked; nothing is uploaded) and in
+the Vulnerabilities page's "My software" view (`vulnerabilities.html#scanner`).
 Mechanical code only, no AI model, Node's standard library only, nothing scheduled (no `routines.json` entry).
 
 ## Design limits (the product, not options)
@@ -12,14 +15,22 @@ Mechanical code only, no AI model, Node's standard library only, nothing schedul
 The scanner detects; it never attacks. These hold for the code, the tests, the fixtures and the docs:
 
 - No exploitation, payloads, injection strings or crafted input beyond reading a greeting (on SSH, also the server's
-  algorithm list that follows it), one request for a web server's root page and a TLS handshake — and, only with
-  `--paths`, the bounded path rail below. No check that works by triggering a flaw.
+  algorithm list that follows it), one request for a web server's root page and a TLS handshake — and, each only with its
+  own flag and off by default, the bounded path rail (`--paths`), the identify hellos (`--identify`), the industrial
+  identification reads (`--ics`) and the DNS record checks (`--dns-records`) below. No check that works by triggering a
+  flaw.
 - No credentials of any kind: no logins, password guessing or spraying, hash capture or cracking.
 - No denial of service, flooding or amplification: politeness limits whose rate and open-at-once defaults are also their
   ceilings (`scanner/lib/limits.mjs` CAPS, frozen), no raw sockets, no "fast" mode. The UDP checks send exactly one benign
-  datagram per service per host (no retransmit storm); raw sockets are never used (node `dgram` only, in one file).
+  datagram per service per host (no retransmit storm), always unicast to the attested address, never broadcast or
+  multicast; raw sockets are never used (node `dgram` only, in two files: `udp.mjs`, which also sends the `--ics` BACnet
+  query, and `hello.mjs` for the `--identify` hellos).
 - No credentials or credential iteration: no logins, no password or community-string guessing. The SNMP check uses only the
-  single standard read community `public`; no other community is ever tried.
+  single standard read community `public`; no other community is ever tried. The hellos never authenticate: no SMTP AUTH,
+  no POP3 USER/PASS, no LDAP bind, no SMB session setup, no RDP security exchange, no OPC UA session.
+- No state changes on industrial devices: `--ics` sends only read-only identification requests (no write or control
+  function code, no Modbus register or coil read, no S7 job beyond one system-status read, no DICOM command), and only to
+  private, loopback or link-local addresses.
 - No evasion: ordinary TCP connections and single UDP datagrams only, an honest User-Agent and SSH identification line, no
   spoofing.
 - No scanning outside the operator's scope file. Discovery (below) can only narrow the attested scope, never widen it: every
@@ -30,31 +41,57 @@ The scanner detects; it never attacks. These hold for the code, the tests, the f
   and, when `discover.ct` is set, read-only GETs to the Certificate Transparency source (`crt.sh`) for the operator's own
   attested domains.
 - Everything the scan reports beyond the first read comes from data it already holds: the hygiene observations, the
-  fingerprint packs, the certificate and mail inventories, the scan diff and the HTML report add no connection, request,
-  hello or datagram. Each slice's tests prove it on loopback (the stand-in services see the same bytes with and without
-  the feature). The path rail is the one exception, and it is off by default.
+  fingerprint packs, the certificate and mail inventories, the scan diff, the relationship map and the HTML report add no
+  connection, request, hello or datagram, and the offline `import`, `depmap` and `rematch` commands contact nothing at
+  all. Each slice's tests prove it on loopback (the stand-in services see the same bytes with and without the feature).
+  The exceptions are the opt-in families — the path rail, the identify hellos, the industrial reads and the DNS record
+  checks — each off by default, each declared in the run header's "what is sent" lines (`SENDS`, `HELLO_SENDS`,
+  `DNS_SENDS`, `icsSends`) and each through the same Limiter (rate, budgets, time limit, Ctrl-C).
 - Write-ups follow the NOCODE rule in `scripts/lib/validate.mjs`: no attack commands or payloads anywhere.
 
 `scripts/security-check.mjs` (section 7) fails CI if scanner code starts processes, opens a raw socket, opens a UDP socket
-(`dgram`) anywhere but `scanner/lib/udp.mjs`, sends more than one UDP datagram per service per host (a loop or timer in
-`udp.mjs`), iterates SNMP community strings, sends a POST, PUT, PATCH or DELETE, evaluates text as code, offers an
-aggressive or unlimited mode, makes a TCP connection to a target anywhere but `scanner/lib/probe.mjs`, raises the rate /
+(`dgram`) anywhere but `scanner/lib/udp.mjs` and `scanner/lib/hello.mjs`, sends more than one UDP datagram per service per
+host (a loop or timer in `udp.mjs`), iterates SNMP community strings, sends a POST, PUT, PATCH or DELETE, evaluates text as
+code, offers an aggressive or unlimited mode, makes a TCP connection to a target anywhere but `scanner/lib/probe.mjs`,
+`scanner/lib/ics.mjs` and `scanner/lib/hello.mjs`, raises the rate /
 open-at-once ceilings, or lets the private budget scaling touch those ceilings. It also fails if the path rail
 (`scanner/lib/paths.mjs`) holds a path that is not a plain string literal, holds a login, management or exploit-class
 path, names an HTTP method, or sets `PATHS_PER_HOST` above 16; if `getPath` in `probe.mjs` does not refuse every path
 outside the frozen table before connecting; if any request method in `probe.mjs` is not GET; or if anything but a
-planned rail item's path reaches it (`scripts/lib/scanner-rail-check.mjs`). `tests/unit/scanner.test.mjs` checks the
-scanner, its docs and its fixtures for NOCODE's attack patterns and exercises each of these rules.
+planned rail item's path reaches it (`scripts/lib/scanner-rail-check.mjs`). The two opt-in protocol families have their
+own checkers in the same section:
+
+- **Hellos and DNS records (`scripts/lib/scanner-hello-check.mjs`).** `hello.mjs` is the second file allowed to own a UDP
+  socket (a lead decision, 2026-11-22), under its own rules rather than `udp.mjs`'s: every request is a plain frozen
+  literal; text requests start with EHLO, CAPA or OPTIONS, and no line may start with a login, mail-transfer, address
+  verification, call-setup, streaming, zone-transfer or bind verb (AUTH, USER, PASS, APOP, VRFY, EXPN, MAIL, RCPT,
+  STARTTLS, STLS, REGISTER, INVITE, DESCRIBE, SETUP, PLAY, AXFR, BIND and the like); SIP needs Max-Forwards 0; the binary
+  messages (mDNS, the RMCP/ASF ping, RDP, SMB2, LDAP and its unbind) must equal the checker's own reviewed bytes; the file
+  holds exactly one socket write and one datagram send, in a loop-free transport block; no broadcast or multicast;
+  `identifyHost` refuses to run unless the opt-in is on, and only `scan.mjs` calls it. DNS: TXT and CAA only, frozen
+  reviewed prefixes, no ANY, AXFR or IXFR, and only `dns-records.mjs` may use a `Resolver`.
+- **Industrial reads (`scripts/lib/scanner-ics-check.mjs`).** `ics.mjs` writes in one place, only the frozen request
+  bytes, sends no datagram and imports no `dgram`: BACnet goes through `udp.mjs` (one send, no retransmit), the only
+  caller allowed to pass it a service table. Every step must decode to the allowed read-only message (no write function
+  code, no extra message, unit id not 0, no broadcast BVLC or DNET); only the six reviewed protocols (no DNP3, no FHIR);
+  nothing is planned without `--ics`, for a public host, a possible broadcast address, an unlisted port or a closed TCP
+  port, and each protocol at most once per host.
+
+`tests/unit/scanner.test.mjs` checks the scanner, its docs and its fixtures for NOCODE's attack patterns and exercises
+each of these rules; the hello and industrial test files mutate each checker rule and prove it fires.
 
 ## Files
 
 | File | What it does |
 |---|---|
-| `scanner/cyberview-scan.mjs` | the command line: `init`, `check`, `data`, `scan`; the authorization gate runs before anything else |
+| `scanner/cyberview-scan.mjs` | the command line: `init`, `check`, `data`, `scan`, `coverage`, and the offline `import`, `depmap`, `rematch`; the authorization gate runs before anything is scanned |
 | `scanner/lib/scope.mjs` | the scope file, the attestation (exact `STATEMENT`), address kinds, CIDR expansion, `gate()`; pure |
 | `scanner/lib/limits.mjs` | rate, concurrency, per-host and global budgets, the time limit; `settings()` refuses values above a ceiling |
-| `scanner/lib/probe.mjs` | the only TCP network code that touches targets: connect, read a greeting, SSH identification and the server's KEXINIT, one root-page request, TLS handshake, and `getPath` for the path rail; `SENDS` says each in words |
-| `scanner/lib/udp.mjs` | the only file that opens a UDP socket (`dgram`): one benign read-only datagram per service per host (DNS, NTP, SNMP); exactly one `send`, no loop |
+| `scanner/lib/probe.mjs` | the base scan's TCP network code (the opt-in `ics.mjs` and `hello.mjs` are the only other files that connect to a target): connect, read a greeting, SSH identification and the server's KEXINIT, one root-page request, TLS handshake, and `getPath` for the path rail; `SENDS` says each in words |
+| `scanner/lib/udp.mjs` | the `--udp` socket (`dgram`): one benign read-only datagram per service per host (DNS, NTP, SNMP, and the `--ics` BACnet Who-Is with `ics.mjs`'s frozen bytes); exactly one `send`, no loop |
+| `scanner/lib/hello.mjs` | `--identify`: the frozen `HELLO` table (one standard unauthenticated client message per service), its own TCP connection or single UDP datagram per service per host, the reply parsers, `helloPlan`, `identifyHost`; `HELLO_SENDS` says each in words. The second file allowed `dgram` (own section 7 rules) |
+| `scanner/lib/dns-records.mjs` | `--dns-records`: the frozen `QUERIES` table (TXT and CAA), attested names only, system resolver; `interpret`, `dns.csv`; `DNS_SENDS` |
+| `scanner/lib/ics.mjs` | `--ics`: the frozen read-only identification requests per industrial protocol (each beside the specification section it follows), `icsPlan`, `icsTargetOk`, the TCP exchange and the reply parsers; `icsSends` |
 | `scanner/lib/udp-codec.mjs` | pure UDP query builders and response parsers (version.bind TXT, NTP mode-6 read, SNMPv1 GET sysDescr with community `public`); no sockets |
 | `scanner/lib/discover.mjs` | discovery sources: asset-list/CSV/nmap-XML parsing, read-only cloud inventory parsing, and Certificate Transparency lookup; candidates are re-gated by the scope |
 | `scanner/lib/fingerprint.mjs` | banners, headers, certificates and UDP answers to product, vendor and version (NVD's CPE names), the hygiene observations; exports `FINGERPRINT_TABLES` for the coverage report; pure |
@@ -63,6 +100,8 @@ scanner, its docs and its fixtures for NOCODE's attack patterns and exercises ea
 | `scanner/lib/fp-edge.mjs` | edge appliances (VPN gateways, firewalls, routers, cameras, NAS, switches) from the root page, its headers and the greeting; pure rules table |
 | `scanner/lib/fp-apps.mjs`, `fp-apps2.mjs` | application fingerprint packs 1 and 2 (file transfer, web applications, frameworks, mail gateways, IT management consoles, proxies); pure rules tables |
 | `scanner/lib/fp-identify.mjs` | the passive identify pack (consoles, brokers, search engines, cameras, VoIP and mail servers); pure rules table |
+| `scanner/lib/fp-pack3.mjs` | passive pack 3 (helpdesks, monitoring, remote management, building and industrial panels, cameras, IP phones) and the login-page inventory; pure rules table |
+| `scanner/lib/fp-research.mjs` | the research pack: fingerprints from public references, each rule citing its source (`RULES`, and `DNS_RULES` for version.bind answers); pure |
 | `scanner/lib/paths.mjs` | the bounded HTTP path rail: the frozen, reviewed table of literal version/status paths (data), the hints over already-collected evidence, the parsers, the per-host cap `PATHS_PER_HOST` (8) |
 | `scanner/lib/cite.mjs` | with `--data-incidents`: reviewed CyberView incidents per finding; hunt links on every finding |
 | `scanner/lib/data.mjs` | CyberView's data online (GET, allowlisted paths) or from a snapshot folder; `snapshot()` for air-gapped use |
@@ -72,6 +111,8 @@ scanner, its docs and its fixtures for NOCODE's attack patterns and exercises ea
 | `scanner/lib/report.mjs` | the run header, JSON, CSV (formula-safe), SARIF 2.1.0, the inventory CSV, the text summary, and the `coverage()` blind-spot report |
 | `scanner/lib/html-report.mjs` | `--html`: the self-contained `report.html`, scope-file advice, the scan profile, the stale-data warning; pure |
 | `scanner/lib/cert-inventory.mjs`, `mail-starttls.mjs`, `diff.mjs`, `kev-coverage.mjs` | the report pack: `--certs`, `--mail`, `--compare` and the `coverage` command; pure, no network |
+| `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `import`, `depmap` and `rematch` commands; no network |
+| `site/scanner-lib.js`, `site/scanner.js` | the Scanner page's report viewer and scope-file builder (browser only; mirrors of `diff.mjs` and `checkScope` that the unit tests compare with the real modules) |
 
 **Coverage (never a silent clean).** `scan.mjs` records every probe outcome — open, closed, filtered, errored, and banners cut off before a version is read — not just open ports, and probes beyond the first few ports before calling a host unreachable (a firewall or IPS may drop the first probes). `report.mjs` `coverage()` turns that into a Coverage section in `summary.txt`/`report.json` listing hosts that answered on no port, filtered ports, truncated banners, ports left unchecked, and hosts that were **throttled**. A host that resets connections after answering (IPS/fail2ban) is backed off once (the Limiter's clock, so tests stay instant) and its reset ports are re-probed one at a time, recovering hidden services. When coverage is incomplete the command exits **2**, so a scan with blind spots is never mistaken for a clean one. Tests: `probeAll` finds an open port past dropped discovery ports, `coverage()` classifies gaps, `isTruncatedBanner` flags cut banners.
 
@@ -122,9 +163,10 @@ internal.
 
 ## Fingerprints from data already collected
 
-Besides `fingerprint.mjs`'s banner, Server header, generator and certificate parsers, five rules tables name products from
+Besides `fingerprint.mjs`'s banner, Server header, generator and certificate parsers, seven rules tables name products from
 what the scan already holds for a port: the greeting read on connect, the one root-page response (status, title, headers,
-cookie **names**, body markers, a recorded redirect `Location`) and the TLS certificate subject. None adds a request,
+cookie **names**, body markers, a recorded redirect `Location`), the TLS certificate subject and issuer, and (research
+pack only) the `--udp` DNS version.bind answer. None adds a request,
 path, port, hello or datagram; each hooks into `scan.mjs` `servicesOf()` with one line, after the existing parsers, so a
 product already named on the port is not repeated. Evidence is the rule's fixed description of the marker, or a short
 header, greeting or version token; page text, bodies and cookie values are never stored. Each rule cites the detection
@@ -158,6 +200,28 @@ catalog ids it builds (`ids`/`catalog` on the record).
   OpenSMTPD, qmail, CWP, CyberPanel, HPE OneView, Alcatel OmniPCX Enterprise, Grandstream UCM6200, Openfire, Mitel
   (generic, inventory only) and UnrealIRCd. A version is used only where the service states it (ActiveMQ, Adminer,
   CouchDB, Elasticsearch, OpenSearch, Aria Operations, HPE OneView, Openfire).
+- **Passive pack 3 (`fp-pack3.mjs`).** Citrix StoreFront, Zimbra Collaboration Suite, GLPI, Zammad, SolarWinds
+  Virtualization Manager, the Zabbix frontend, Ivanti Cloud Services Appliance, Soliton FileZen, the TeamViewer web
+  placeholder, Quest KACE SMA, NextGen Mirth Connect, Nice Linear eMerge, ScadaBR, Unitronics PLC/HMI web panels, ZKTeco
+  BioTime, Amcrest cameras and NVRs, NUUO NVRs, Intel AMT / Standard Manageability and Cisco IP Phones. A version is used
+  only where it is stated: GLPI (footer or asset token), Zabbix (`jsLoader.php?ver=` or footer), KACE (its version header)
+  and Intel AMT (Server header). Families (NUUO, eMerge, Unitronics, Amcrest) are never versioned; a KACE header naming the
+  deployment appliance is never taken for the SMA. Mirth Connect is named from its exact administrator page title on the
+  root page only (lead decision). The pack also records, as inventory, a **login page**: a password field on the root
+  page, or a recorded redirect into a login path. No login path is ever requested; the line names no product, is never
+  matched and is not in `inventory.csv`.
+- **Research pack (`fp-research.mjs`).** 55 products from fingerprints published in public references (Recog, Nmap's
+  service probes, Wappalyzer, nuclei templates and the products' own source; each rule cites its source), among them
+  Jupyter, MLflow, Ray, GeoServer, OFBiz, SAP NetWeaver, Atlassian Jira, Confluence and Bitbucket, Rocket.Chat, Docker
+  registries, Harbor, NetApp ONTAP, Synology DSM, Commvault, Axis cameras, HP printers, CUPS, FreeIPA, Barracuda,
+  FortiMail, Cacti, PRTG, Wazuh, ScreenConnect, Dell iDRAC, HPE iLO, Supermicro BMCs, and the DNS servers dnsmasq, Knot
+  DNS, NSD, Unbound and CoreDNS from the version.bind answer `--udp` already reads (BIND stays with `fingerprint.mjs`).
+  Versions only where the data states them (for example Rocket.Chat's version header, PRTG, HPE iLO and Netdata Server
+  headers, Jira's application meta tag, Cacti, and the five DNS servers); CUPS's major.minor and SAP NetWeaver's kernel
+  number are shown, never compared. Serial numbers, product numbers, device tokens and certificate CNs are matched,
+  never stored. A product named from a greeting replaces the product-less greeting record, and a guessed
+  certificate-inferred record a rule supersedes gives way (the FortiMail default certificate no longer reads as FortiOS).
+  Fingerprints that need a protocol hello (Redis, MQTT, Kafka, Oracle TNS, PJL, SQL Server, MongoDB, ACME) are not used.
 
 Most of these products state no version on the pages the scanner reads, so most identifications are guessed and
 version-less: they appear in the inventory and as low-confidence "check" findings, never in the headline counts (below).
@@ -242,8 +306,9 @@ is opt-in and built only from what the scan already holds:
   scanned by name. `report.json`'s `hosts[].tls[].cert` also carries `serial`, `spki_sha256`, `san_dns`, `san_ip`, `sct`
   and `must_staple`.
 - **`--mail`** writes `mail.csv`: mail services found, implicit TLS, STARTTLS as far as the greeting shows it (an IMAP
-  greeting's capability list; SMTP and POP3 need EHLO/CAPA, which is not sent, so they read "not checked", never
-  "absent"), and an SMTP service on port 25 with no submission port.
+  greeting's capability list; SMTP and POP3 need EHLO/CAPA, which a plain scan does not send, so they read "not
+  checked", never "absent"; with `--identify` they read advertised or not advertised from the EHLO/CAPA reply), and an
+  SMTP service on port 25 with no submission port.
 - **`--compare PREVIOUS/report.json`** writes `diff.json` and `diff.txt`: findings new, fixed (the same port answered and
   the CVE no longer matches), gone with their port (not proof of a fix), still open and not rechecked (host absent or
   down, port not in the list, or a limit left it partly unchecked); services and versions changed; certificates changed
@@ -253,6 +318,55 @@ is opt-in and built only from what the scan already holds:
 - **`coverage --data DIR [--out kev-coverage.csv]`** compares the snapshot's KEV catalog with the scanner's fingerprint
   tables and lists the known-exploited products the scanner cannot identify. No scope file, no target, no network.
   (Products named only by modules outside `FINGERPRINT_TABLES` are not counted until they register there.)
+- **`--dns-records`** writes `dns.csv` and `report.json`'s `dns` (see "Opt-in protocol checks" below).
+
+### Relationship map, imports and offline rematch (no network)
+
+`scan ... --depmap` also writes `depmap.json` and `depmap.mmd` (Mermaid), and a "Relationship map" section in
+`report.html` with `--html`. It is computed from what the scan already read: services on one host (co-located, low
+confidence), certificates with the same SAN list or naming another scanned host (medium), and recorded redirects inside
+the scope (medium, never followed). Every edge carries whether it is inferred and its evidence. Names and addresses
+outside the scope that appear in a certificate or a `Location` header are listed as "mentioned, not scanned"; in-scope
+names the scan did not start from are listed as shadow IT. Both are only listed, never resolved or contacted.
+Certificate and DNS answers that do not match the scanned address are listed for review (NAT or split-horizon DNS); no
+new DNS query is made. Each host gets a 0–100 risk score with every point and the formula printed (per confirmed finding
++25 if known exploited, else +15 Critical, +8 High, +4 other; +5 ransomware; +5 past CISA's due date; +2 per
+version-to-check finding, never KEV points; +10 for a public address with any finding; observations +4/+2/+1 by severity,
+at most +15; capped at 100; from this report only, not a prediction). Each finding gets a blast radius: what shares its
+host, its certificate or an imported relationship with it, each labelled with how (at most 200).
+
+The operator's own files can add what a remote scan cannot see. All are optional, parsed only (never collected by the
+scanner) and treated as untrusted: the size is checked before reading (16 MB; a Zeek `conn.log` 64 MB), at most 200,000
+lines and 5,000 nodes or items and 20,000 edges per file (anything over a cap is counted, never silently dropped),
+strings clipped and stripped of control characters, `JSON.parse` only.
+
+| Flag | What it reads |
+|---|---|
+| `--sbom` | CycloneDX or SPDX JSON (components and their dependency relationships) |
+| `--manifest` | Docker Compose or Kubernetes, **JSON only** (`docker compose config --format json`, `kubectl get ... -o json`); YAML is not parsed, and Secrets' data is never read |
+| `--zeek` | a Zeek `conn.log` (TSV with `#fields`, or JSON lines): observed connections, counted |
+| `--survey` | a Wi-Fi or Bluetooth survey CSV (a WiGLE export or any CSV with a MAC/BSSID column): inventory only |
+| `--connections` | `/proc/net/tcp`/`tcp6`, `ss` or `netstat` output saved on the host itself; `--connections-host IP` attaches it to a scanned host |
+| `--cloud` | a cloud CLI's describe/list JSON (`--cloud-provider aws-ec2`, `aws-elb`, `gcp` or `azure`): resources and their relationships |
+| `--packages` | `dpkg -l`, `rpm -qa`, a Windows `Get-Package` export saved with `Export-Csv`, or an uninstall-key CSV, or any list the Vulnerabilities page reads |
+
+Use them with `scan --depmap` (an import flag without `--depmap` is refused, and the files are read and checked before
+anything is scanned), or offline, with no scope file because nothing is contacted:
+
+- `import [files] [--data DIR]` writes `imports.json`; with a snapshot, packages and SBOM components are matched against
+  KEV and NVD exactly like the Vulnerabilities page's "My software" (`matchFlaw`, `score`). Distribution package versions
+  (dpkg, rpm) carry the backport caveat, so an affected match is medium confidence at most.
+- `depmap --report R/report.json [--scope scope.json] [files]` builds the map from an earlier report. Without `--scope`
+  the in-scope test uses only the report's recorded targets and exclusions, so more names land in "mentioned".
+- `rematch --report OLD/report.json --data NEWER-SNAPSHOT` re-matches an old scan's recorded services with newer data and
+  writes `rematch.json` and `rematch.txt`: newly matched, no longer matched, still matched. The old report is untrusted
+  (it must be a CyberView Scanner report, at most 64 MB; only the service fields matching needs are kept, clipped). No
+  target is contacted, so rescan to confirm.
+
+Limits kept on purpose: Linux package names do not always match NVD's product names (`apache2` against `http_server`);
+the site's matcher is used unchanged, so such packages stay unmatched rather than guessed. Container image tags from
+manifests are listed, not matched. Shadow-IT names come only from certificate SANs and `Location` headers, because the
+scanner sends only attested names as Host and SNI.
 
 ## Discovery: "find the hosts for me", within the attested scope
 
@@ -287,7 +401,7 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 Some products state their version only in a documented version or status file, not on the root page. With `--paths` the
 scanner may make a few extra GET requests for those files, and nothing else:
 
-- **A frozen table, not a wordlist.** `scanner/lib/paths.mjs` holds 39 literal paths for 50 reviewed catalog rows. A path
+- **A frozen table, not a wordlist.** `scanner/lib/paths.mjs` holds 39 literal paths for 51 reviewed catalog rows. A path
   is added only after a Design review; operator-supplied URLs are not accepted. No login, management, debug or
   exploit-class path is allowed (section 7 enforces it).
 - **Hint-gated.** A host gets a path only when its own already-collected evidence on that port — the root page's title,
@@ -307,14 +421,85 @@ scanner may make a few extra GET requests for those files, and nothing else:
 - Products identified only by presence, or whose file states a build number rather than the release name NVD uses, are
   reported as inferred (low confidence) and stay out of the headline counts.
 
+- The Ivanti Connect Secure row (lead decision, 2026-11-22) reuses the Pulse Connect Secure row's existing version file,
+  so the path count is unchanged; it is also hinted by a recorded root redirect into `/dana-na/`, and when both rows hint,
+  one request is made. The file states a build number, not the release NVD's ranges use, so it is shown, never compared
+  (the file is absent on newer releases).
+
 Known gaps, kept on purpose: Tomcat usually answers `/docs` with a redirect to `/docs/`, which is recorded, not followed,
 so a Tomcat version is read only where `/docs` answers directly; `/CHANGELOG.txt` covers Drupal 7, not Drupal 8 and later.
+
+## Opt-in protocol checks (`--identify`, `--dns-records`, `--ics`; all off by default)
+
+Lead decisions 10 and 11 allow new protocol messages only as opt-in families, each with its own flag, one standard
+unauthenticated client message (or one fixed identification exchange) per service per host, frozen literals declared in
+the run header's "what is sent" lines and enforced in section 7. Every exchange takes a Limiter slot, so the rate, the
+per-host and total budgets, `--max-minutes` and Ctrl-C all apply. Nothing found this way carries a compared version: it
+stays out of the headline counts. All byte layouts were written from the public specifications and are decoded field by
+field in the tests; no live device was contacted while building them.
+
+**Identify hellos (`--identify`, `scanner/lib/hello.mjs`).** One message per service, the reply's first lines read, then
+the connection closed. TCP hellos go only to ports the probe found open and that are not implicit TLS (so SMTP and POP3
+on 465 and 995 are skipped); the UDP ones go to every in-scope address, as `--udp` does, so UDP-only hosts are not missed.
+
+| Service | Port | The one message, and what is read |
+|---|---|---|
+| SMTP | an open SMTP port (greeting 220) | `EHLO cyberview-scanner.invalid` then `QUIT`: the STARTTLS and SIZE keywords and the AUTH mechanism **names**. Never AUTH, MAIL, RCPT, VRFY, EXPN or STARTTLS |
+| POP3 | an open POP3 port (greeting +OK) | `CAPA` then `QUIT`: the capability names. Never USER, PASS, APOP or STLS |
+| RTSP | TCP 554, 8554 | one `OPTIONS *` request: the Server and Public headers. Never DESCRIBE, SETUP or PLAY (no stream) |
+| SIP | TCP 5060; UDP 5060 when 5060 is in the port list | one OPTIONS with Max-Forwards 0 (answered by the target, never forwarded): User-Agent, Server, Allow. Never REGISTER or INVITE |
+| mDNS / DNS-SD | UDP 5353 | one unicast service-type query (RFC 6763 section 9) from an ephemeral port, so the answer comes back to the scanner only; never multicast |
+| RDP | TCP 3389 | one X.224 Connection Request with an RDP negotiation request (TLS or CredSSP offered): whether NLA is required. Never TLS, CredSSP, MCS or a login |
+| SMB | TCP 445 | one SMB2 NEGOTIATE (dialects 2.0.2 to 3.0.2): the dialect chosen and whether signing is required. Never SMB1, SESSION_SETUP or TREE_CONNECT |
+| LDAP | TCP 389 | one anonymous base-scope read of the root DSE for supportedLDAPVersion, vendorName, vendorVersion and objectClass, then an unbind. Never a bind, a subtree search or another attribute |
+| BMC (`--identify-bmc`, needs `--identify`) | UDP 623 | one RMCP/ASF presence ping: whether a BMC with IPMI answers. No IPMI session, no authentication-capabilities or cipher request |
+
+Results are in `hosts[].identify[]` (service, port, state, the verbs sent, and what was read; raw replies are never
+stored), and as observations: `smtp-no-starttls`, `smtp-auth-cleartext`, `pop3-no-stls`, `rtsp-answers`, `sip-answers`,
+`mdns-unicast`, `ipmi-exposed`, `rdp-no-nla`, `smb-signing-not-required` and `ldap-anonymous-rootdse`. Services named
+from a hello are guessed and version-less. With `--mail`, `mail.csv` reads STARTTLS from the EHLO/CAPA reply. Not built:
+SMB 3.1.1 (it needs negotiate contexts; a server that offers only 3.1.1 answers with an error, which is recorded), EHLO
+over implicit TLS, mapping an IPMI OEM enterprise number to a vendor.
+
+**DNS records (`--dns-records DOMAIN[,DOMAIN]`, `scanner/lib/dns-records.mjs`).** Only host names listed in the scope
+file's targets (anything else is refused before any query; at most 16). One query each to the system resolver: SPF (TXT),
+DMARC (`_dmarc` TXT), CAA, BIMI (`default._bimi` TXT) and MTA-STS (`_mta-sts` TXT); `--dkim-selectors s1,s2` (at most 8,
+needs `--dns-records`) adds DKIM for the selectors the operator names. **DKIM selectors are never guessed.** Nothing is
+sent to the targets. Results go to `report.json` (`dns`) and `dns.csv`, with observations for SPF (missing, multiple,
+`+all`, `?all`, no `all`), DMARC (missing, multiple, no policy, `p=none`), a missing CAA and a DKIM RSA key under 1,024
+bits (only the key type and length are kept, never the key). Not done: DNSSEC presence (`node:dns` cannot ask for DS or
+DNSKEY), the MTA-STS policy file (an HTTPS request awaiting a path-rail review), zone transfers, ANY, brute force,
+look-alike names.
+
+**Industrial and clinical identification (`--ics`, `scanner/lib/ics.mjs`).** One read-only identification exchange per
+protocol per host, only to private, loopback or link-local addresses (a public address is refused per host, even with
+`--i-am-authorized-for-public-ranges`), only on the protocol's standard port, only when that port is in the port list
+(none is in the default list, so name them with `--ports`) and, for TCP, the probe found it open:
+
+| Protocol | Port | Sent (each step only after the expected reply) | Why it cannot change the device |
+|---|---|---|---|
+| Modbus/TCP | TCP 502 | one Read Device Identification (function 0x2B, MEI 0x0E, basic objects; unit 0xFF) | a read of identification objects; no coil or register read, no write or diagnostics function; "more follows" is never followed |
+| EtherNet/IP | TCP 44818 | one ListIdentity (encapsulation command 0x63, no session); covers Rockwell | no session registration, no CIP service |
+| S7comm | TCP 102 | COTP Connection Request, S7 Setup Communication, one system-status read (SZL ID 0x0011, module identification) | Setup only negotiates the PDU size; no variable read or write, no start, stop, program or block function |
+| BACnet/IP | UDP 47808 | one unicast Who-Is to the host's own address, sent by `udp.mjs` (one datagram, no retransmit) | an unconfirmed discovery request; never a broadcast BVLC, never a DNET (routers would re-broadcast it), no broadcast socket option, IPv4 `.0` and `.255` addresses refused; no ReadProperty |
+| OPC UA | TCP 4840 | Hello, OpenSecureChannel (SecurityPolicy None, no certificate), GetEndpoints | no CreateSession or ActivateSession, so no login, Read, Browse, Write or Call is possible; the server certificate is skipped, never kept |
+| DICOM | TCP 104 | A-ASSOCIATE-RQ for the Verification SOP class only, then A-RELEASE-RQ after an accept | no P-DATA, so no DIMSE command, not even C-ECHO; a rejection ends the exchange |
+
+Results are inventory only, in `report.json` (`hosts[].ics[]`: protocol, port, messages sent, outcome, and the vendor,
+product, model and firmware where the device states them; `version_stated` only where the protocol's own field states a
+version). They are not matched to KEV or NVD (device names do not map cleanly to NVD's) and are not yet shown in
+`summary.txt`, `inventory.csv` or `report.html`. Known limits: the S7 module or plant name needs a second read and is not
+read, and a PLC that refuses the one TSAP is not retried; BACnet devices that answer only with a broadcast I-Am are not
+heard (the scanner does not listen for broadcasts); an OPC UA GetEndpoints reply over 16 KB is recorded as an error;
+DICOM only on 104, not 11112; DNP3 and FHIR are not included (see Decisions).
 
 ## Deliberately left out
 
 Credentialed (authenticated) scanning; password, community-string or any credential guessing; protocol commands beyond the
-greeting, the SSH identification line and the three benign UDP queries (for example Redis or database queries, SNMP writes
-or walks, SMTP EHLO or POP3 CAPA, a client KEXINIT or any key exchange, so no SSH host key is ever collected); following
+greeting, the SSH identification line, the three benign UDP queries and the opt-in families above (for example Redis or
+database queries, SNMP writes or walks, any login, bind or session, any industrial write or control function, a client
+KEXINIT or any key exchange, so no SSH host key is ever collected); broadcast or multicast; guessing DKIM selectors or
+transferring zones; following
 redirects; crawling; requesting any path outside the reviewed frozen table; fetching a page's scripts, stylesheets or
 plugin files other than the few the rail's table names; trying plugin or theme names from a list; vulnerability checks
 that send test input; operating-system fingerprinting from packet quirks; running the cloud CLI from inside the scanner;
@@ -339,7 +524,15 @@ without `--html`), `scanner-cms.test.mjs`, `scanner-edge.test.mjs`, `scanner-app
 `scanner-reportpack.test.mjs` (certificates built at test time, the diff, a bad `--compare` file refused before any probe,
 `coverage` never probes or fetches) and `scanner-paths.test.mjs` (an unhinted host sees only the root request, a hinted
 host only its frozen paths, the per-host cap, budgets, a redirect recorded and not followed, 401/404 in coverage, the flag
-off sends nothing extra, the parsers on canned responses, and each section 7 failure case).
+off sends nothing extra, the parsers on canned responses, and each section 7 failure case). Wave 3 adds
+`scanner-pack3.test.mjs` and `scanner-research.test.mjs` (every rule and its look-alikes, the site's `nameHit` on the KEV
+spellings, identifiers never stored, a greeting service sent zero bytes, a web service exactly one root request),
+`scanner-reportpack2.test.mjs` (each import format, hostile imports, matching equal to the site's, the map's edges, risk
+points and blast radius, and `import`, `depmap` and `rematch` run with every network call replaced by a trap: zero calls),
+`scanner-hello.test.mjs` and `scanner-ics.test.mjs` (the exact bytes each loopback stand-in receives per protocol, later
+steps not sent after a refusal, one datagram and no retransmit on a silent port, nothing sent without the flag, a public
+host, an unlisted port or a spent budget, and a mutation test for every checker rule), and `scanner-view.test.mjs` (the
+Scanner page's viewer and builder against the real `diff.mjs`, `checkScope` and the CLI's `check`).
 
 ## Decisions
 
@@ -366,14 +559,37 @@ blocker came up. Each keeps the scanner detection-only and inside the limits abo
 10. **New protocol hellos: allowed only as an opt-in family with its own flag**, one standard unauthenticated client
     message per protocol, no authentication, no enumeration, declared in `SENDS` and enforced in section 7. Mail STARTTLS
     (SMTP EHLO, POP3 CAPA) is the first candidate. Each protocol is listed in a Design before it is built; anything that
-    enumerates users, shares or zones, or authenticates, is rejected.
+    enumerates users, shares or zones, or authenticates, is rejected. Built as `--identify` (#122).
 11. **Industrial (ICS/OT) identification reads: allowed only behind an explicit `--ics` opt-in**, one read-only
     identification request per protocol, private ranges by default, never a write or a function that changes state.
-    (Not built yet.)
+    Built in #121, private ranges only (a public address is refused even with the public flag).
 12. **Single-file executables and tagged GitHub Releases (Grok brief #89): approved** as part of the full build. Releases
-    are built from tags by CI, with checksums.
+    are built from tags by CI, with checksums. Built in #118.
 13. **A browser report viewer and scope-file builder on the Scanner page: approved** (the owner asked earlier; it waited
-    for the other work). A real network scanner in the browser is not possible and is not built.
+    for the other work). A real network scanner in the browser is not possible and is not built. Built in #124: both run
+    in the visitor's browser only, and nothing is uploaded or kept.
+
+Wave 3, taken by the build lead on 2026-11-22 under the same instruction:
+
+14. **Netlogon: rejected.** No Netlogon exchange is added to `--identify`: any Netlogon/NRPC call is an enumeration and exploit surface, not an identification read.
+15. **Docker Desktop: out of scope.** Its flaw is local to the workstation, so a network scan cannot see it.
+16. **Path-rail candidates rejected:** `/.git/HEAD`, `/sitemap.xml`, `/.well-known/change-password`,
+    `/.well-known/caldav`, Keycloak's OpenID configuration document and vLLM's version endpoint. None is in the rail's
+    table; the products stay identified from the root page where they can be. Reasons: `/.git/HEAD` exposes repository
+    data; `/sitemap.xml`, the two `.well-known` files and vLLM's `/version` name no product or have nothing on the root
+    page to hint them; Keycloak's path was not confirmed by a source.
+17. **Ivanti Connect Secure's version file: accepted on the rail.** The same literal path the Pulse Connect Secure row
+    already requests, so no new path; its build number is shown, never compared.
+18. **`robots.txt` as a fingerprint source: rejected.** It is not requested: it names paths, not a product or version, so it gives no hint the rail could use.
+19. **Mirth Connect: identified in normal scans, root page only.** No separate clinical opt-in; the exact administrator
+    page title on the root page is the only signal, and nothing more is requested.
+20. **DNP3: deferred** until an operator-supplied outstation address exists in the scope file (with its own Design). A
+    fixed guess would rarely match, trying several would be enumeration, and the all-stations addresses are DNP3
+    broadcast.
+21. **RDP X.224, SMB2 NEGOTIATE and the LDAP root DSE: added to `--identify`.** One message each; the LDAP read asks for
+    four attributes (supportedLDAPVersion, vendorName, vendorVersion, objectClass) with no bind.
+22. **`hello.mjs` may own a UDP socket** under the `scanner-hello-check` rules (one datagram send, frozen reviewed bytes, no
+    broadcast or multicast), as the second file beside `udp.mjs`. The `--ics` BACnet query still goes through `udp.mjs`.
 
 ## Releases
 

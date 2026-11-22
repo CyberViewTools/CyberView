@@ -517,9 +517,9 @@ test("security-check section 7: UDP is confined to udp.mjs, one datagram, no com
   const udp = readFileSync(new URL("../../scanner/lib/udp.mjs", import.meta.url), "utf8");
   assert.equal((udp.match(/\.send\s*\(/g) || []).length, 1);
   assert.equal(/\b(for|while|do)\s*\(|\bsetInterval\b|\.forEach\s*\(/.test(udp), false);
-  // dgram appears only in udp.mjs across the scanner
+  // dgram appears only in udp.mjs across the scanner (and the opt-in identify hellos, hello.mjs, under their own section-7 rules)
   for (const f of walkFiles(new URL("../../scanner/", import.meta.url).pathname)) {
-    if (f.endsWith("udp.mjs")) continue;
+    if (f.endsWith("udp.mjs") || f.endsWith("hello.mjs")) continue;
     assert.equal(/node:dgram|from\s+["']dgram["']/.test(readFileSync(f, "utf8")), false, f);
   }
 });

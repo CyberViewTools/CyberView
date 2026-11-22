@@ -7,6 +7,8 @@
 //         is reported as "not checked", never as absent
 //   implicit TLS ports (465, 993, 995): the handshake already happened
 // It also records an SMTP service on port 25 with no submission port (465/587) answering, as inventory.
+// With --identify (scanner/lib/hello.mjs), the scan's own EHLO / CAPA reply is used instead: STARTTLS (SMTP) or STLS (POP3)
+// listed or not listed, in place of "not checked".
 // No open-relay test of any kind: nothing is sent to the mail server beyond what probe.mjs already does (a connect and a read).
 
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, n);
@@ -16,6 +18,8 @@ export const STARTTLS = Object.freeze({
   notListed: "not in the greeting's capability list",
   cut: "unknown: the greeting was cut before its capability list ended",
   notChecked: "not checked: the greeting carries no capability list (that needs EHLO, CAPABILITY or CAPA, which is not sent)",
+  helloListed: "advertised in the EHLO/CAPA reply (--identify)",
+  helloNotListed: "not advertised in the EHLO/CAPA reply (--identify)",
 });
 
 /** One greeting line -> "smtp" | "imap" | "pop3" | "" (the service record's protocol breaks a bare 220 tie). */
@@ -37,6 +41,12 @@ export function starttlsFromGreeting(protocol, banner, { tls = false } = {}) {
   return m[1].split(/\s+/).some((c) => c.toUpperCase() === "STARTTLS") ? STARTTLS.advertised : STARTTLS.notListed;
 }
 
+/** The --identify EHLO/CAPA answer for this port, if one was read -> a STARTTLS text, or "" */
+function helloStarttls(h, port, protocol) {
+  const x = (h.identify || []).find((r) => r.port === port && r.service === protocol && r.read && typeof r.read.starttls === "boolean" && (r.read.code === 250 || r.read.ok === true));
+  return x ? (x.read.starttls ? STARTTLS.helloListed : STARTTLS.helloNotListed) : "";
+}
+
 /** report -> [{ host, names, port, protocol, product, tls, starttls, submission }] */
 export function mailInventory(report) {
   const out = [], scanned = new Set(((report && report.run && report.run.ports) || []).map(Number));
@@ -48,7 +58,7 @@ export function mailInventory(report) {
       const protocol = mailProtocol(p.banner, p.port, svc.proto || "");
       if (!protocol) continue;
       rows.push({ host: h.address, names: (h.names || []).slice(0, 5), port: p.port, protocol, product: clip(svc.label || svc.product || "", 80), tls: tlsPorts.has(p.port),
-        starttls: starttlsFromGreeting(protocol, p.banner, { tls: tlsPorts.has(p.port) }), submission: "" });
+        starttls: helloStarttls(h, p.port, protocol) || starttlsFromGreeting(protocol, p.banner, { tls: tlsPorts.has(p.port) }), submission: "" });
     }
     const smtp25 = rows.find((r) => r.protocol === "smtp" && r.port === 25);
     if (smtp25) {

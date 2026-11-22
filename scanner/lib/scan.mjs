@@ -19,6 +19,7 @@ import { identify } from "./fp-identify.mjs";
 import { D } from "./shared.mjs";
 import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
+import { identifyHost, helloFindings } from "./hello.mjs";
 
 /** "22,80,8000-8010" -> sorted unique ports, or { error } */
 export function parsePorts(s) {
@@ -98,7 +99,7 @@ const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
 // observations kept per host (the rest are counted in observations_dropped, never silently lost)
 export const OBS_PER_HOST = 60;
 
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = null, getPath = realGetPath }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = null, getPath = realGetPath, identify = null }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
   // the path rail (scanner/lib/paths.mjs): off unless paths.enabled (--paths); capped per host, never above PATHS_PER_HOST
   const rail = paths && paths.enabled ? { perHost: Math.min(PATHS_PER_HOST, Number(paths.perHost) || PATHS_PER_HOST), bmc: !!paths.bmc } : null;
@@ -191,6 +192,14 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       }
       if (rail && h._railEv) await runRail(h);
       delete h._railEv;
+      // identify hellos (scanner/lib/hello.mjs): only with --identify; each exchange takes a Limiter slot like a probe
+      if (identify && identify.enabled === true) {
+        h.identify = await identifyHost(h, { enabled: true, bmc: identify.bmc === true, ports, signal: ac.signal, acquire: (a) => lim.acquire(a), ...(identify.tcp ? { tcp: identify.tcp } : {}), ...(identify.udp ? { udp: identify.udp } : {}) });
+        const hf = helloFindings(h.identify);
+        if (hf.services.length) { h.up = true; h.services.push(...hf.services); }
+        const room = OBS_PER_HOST - h.observations.length; h.observations.push(...hf.observations.slice(0, Math.max(0, room)));
+        if (hf.observations.length > room) h.observations_dropped = (h.observations_dropped || 0) + hf.observations.length - Math.max(0, room);
+      }
       // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
       if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
       if (!h.up) { const filtered = h.outcomes.filter((o) => o.state === "filtered").length;
@@ -200,7 +209,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
     });
   } finally { clearTimeout(timer); }
   const st = lim.stats();
-  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys, paths: rail ? { enabled: true, per_host: rail.perHost, bmc: rail.bmc } : { enabled: false } };
+  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys, paths: rail ? { enabled: true, per_host: rail.perHost, bmc: rail.bmc } : { enabled: false }, identify: identify && identify.enabled === true ? { enabled: true, bmc: identify.bmc === true } : { enabled: false } };
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
@@ -245,7 +254,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
     coverage: { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), ...(h.identify ? { identify: h.identify } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

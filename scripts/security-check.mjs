@@ -13,6 +13,7 @@ import { join, extname } from "node:path";
 import { ROOT, listEventFiles } from "./lib/store.mjs";
 import { pathToFileURL } from "node:url";
 import { railProblems } from "./lib/scanner-rail-check.mjs";
+import { helloProblems } from "./lib/scanner-hello-check.mjs";
 
 const fails = [], passes = [];
 const rel = (p) => p.slice(ROOT.length + 1);
@@ -145,10 +146,11 @@ if (existsSync(SCAN)) {
     [/\b(aggressive|insane|no-?rate-?limit|unlimited)\b/i, "an aggressive or unlimited mode"]];
   for (const p of files) {
     const src = read(p), isUdp = p.endsWith(UDP_FILE), isProbe = p.endsWith(join("lib", "probe.mjs"));
+    const isHello = p.endsWith(join("lib", "hello.mjs"));   // the opt-in identify hellos: own rules in scanner-hello-check.mjs below
     for (const [re, what] of NOT) if (re.test(src)) fails.push(`${rel(p)}: ${what}; the scanner must stay detection only (docs/scanner.md)`);
-    if (!isProbe && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
-    // UDP sockets (dgram) are permitted ONLY in scanner/lib/udp.mjs
-    if (!isUdp && DGRAM.test(src)) fails.push(`${rel(p)}: opens a UDP socket (dgram) outside scanner/lib/udp.mjs`);
+    if (!isProbe && !isHello && /\b(net|tls)\.connect\s*\(|\bhttps?\.request\s*\(/.test(src)) fails.push(`${rel(p)}: connects to a target outside scanner/lib/probe.mjs`);
+    // UDP sockets (dgram) are permitted ONLY in scanner/lib/udp.mjs (and the identify hellos in scanner/lib/hello.mjs)
+    if (!isUdp && !isHello && DGRAM.test(src)) fails.push(`${rel(p)}: opens a UDP socket (dgram) outside scanner/lib/udp.mjs`);
   }
   // the UDP file's flood guard: exactly one datagram send, and no loop or timer that could retransmit or iterate
   const udpPath = join(SCAN, UDP_FILE);
@@ -183,6 +185,18 @@ if (existsSync(SCAN)) {
       otherSrcs: files.filter((p) => !core.has(p)).map((p) => ({ file: rel(p), src: read(p) })), mod });
     fails.push(...rp);
     if (!rp.length) passes.push(`path rail: ${mod ? mod.RAIL_PATHS.length : "?"} frozen literal path(s), GET only, at most ${mod ? mod.PATHS_PER_HOST : "?"} per host, none login/management/exploit-class`);
+  }
+  // the identify hellos (scanner/lib/hello.mjs, only with --identify) and DNS records (scanner/lib/dns-records.mjs, only with
+  // --dns-records): frozen standard requests, one exchange per service per host, no forbidden verb, no broadcast, off by default
+  const helloFile = join(SCAN, "lib", "hello.mjs"), dnsFile = join(SCAN, "lib", "dns-records.mjs");
+  if (existsSync(helloFile) || existsSync(dnsFile)) {
+    const load = async (f) => { if (!existsSync(f)) return null; try { return await import(pathToFileURL(f).href); } catch (e) { fails.push(`${rel(f)} could not be loaded (${String(e && e.message).slice(0, 80)})`); return null; } };
+    const hmod = await load(helloFile), dmod = await load(dnsFile);
+    const own = new Set([helloFile, dnsFile, join(SCAN, "lib", "scan.mjs")]);
+    const hp = helloProblems({ helloSrc: existsSync(helloFile) ? read(helloFile) : "", mod: hmod, scanSrc: read(join(SCAN, "lib", "scan.mjs")), dnsSrc: existsSync(dnsFile) ? read(dnsFile) : "", dnsMod: dmod,
+      otherSrcs: files.filter((p) => !own.has(p)).map((p) => ({ file: rel(p), src: read(p) })) });
+    fails.push(...hp);
+    if (!hp.length) passes.push(`identify hellos: ${hmod ? Object.keys(hmod.HELLO).length : "?"} frozen standard request(s), one exchange each, off unless --identify; DNS records TXT/CAA only, attested names only`);
   }
   passes.push(`${files.length} scanner file(s) checked: detection only (UDP one benign datagram per service, no credential iteration)`);
 }

@@ -16,6 +16,7 @@ import { bucketPath } from "./data.mjs";
 import { summarize, coverage, isTruncatedBanner } from "./report.mjs";
 import { certRecord } from "./cert-inventory.mjs";
 import { identify } from "./fp-identify.mjs";
+import { pack3 } from "./fp-pack3.mjs";
 import { D } from "./shared.mjs";
 import { loadIncidents, attachIncidents, attachHunt } from "./cite.mjs";
 import { sshKexInfo, sshKexObservations } from "./ssh-kex.mjs";
@@ -50,6 +51,7 @@ export function servicesOf(r) {
   if (!out.length && r.banner) out.push(...(/^SSH-/.test(r.banner) ? fromSsh(r.banner, r.port) : fromGreeting(r.banner, r.port)));
   out.splice(0, out.length, ...withPack2(out, r));   // scan-app-versions pack 2: passive, from data already collected (fp-apps2.mjs)
   out.push(...identify(r, out));   // passive identify: the same collected data only (scanner/lib/fp-identify.mjs)
+  out.push(...pack3(r, out, { clinical: true }));   // passive pack 3 (Mirth Connect on too: root page only, lead decision) and login-page inventory: the same collected data only (scanner/lib/fp-pack3.mjs)
   // a product stated with a version wins over the same product inferred from a certificate
   return out.filter((s, i) => !(s.guessed && out.some((o, j) => j !== i && !o.guessed && o.product === s.product)));
 }

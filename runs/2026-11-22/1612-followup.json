@@ -1,0 +1,84 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T16:10:16Z",
+  "finished_at": "2026-11-22T16:12:59Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "N-able Mail Assure SpamExperts breach update",
+    "大崎電気 ランサムウェア 第2報",
+    "DHL Group Mitarbeiterbefragung Dienstleister Datenleck",
+    "Deutsche Bank Datenleck Datenschutzbeauftragter Hessen",
+    "StubHub International data breach Ticketbis"
+  ],
+  "pages_read": [
+    {
+      "url": "https://dailysecurityreview.com/?p=45997",
+      "title": "N-able Confirms Breach of Mail Assure and SpamExperts Cloud Server (19 Nov)",
+      "used_in": "nable-mail-assure-spamexperts-breach-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.sbbit.jp/article/st/188556",
+      "title": "Business+IT: Osaki Electric ransomware production halt (18 Nov)",
+      "used_in": "osaki-electric-ransomware-smart-meter-halt-2026-11"
+    },
+    {
+      "url": "https://www.euronews.com/2026/11/18/data-watchdog-probes-massive-deutsche-bank-leak-of-15m-files",
+      "title": "Euronews: Data watchdog probes massive Deutsche Bank leak of 15M files",
+      "used_in": "deutsche-bank-15m-document-leak-2026-11"
+    },
+    {
+      "url": "https://www.drweb.de/dhl-dienstleister-datenleck-beschaeftigte/",
+      "title": "Dr. Web: DHL Dienstleister Datenleck (19 Nov, relays heise)",
+      "used_in": "dhl-group-survey-provider-breach-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.ticketnews.com/2026/11/stubhub-international-data-breach-2026/",
+      "title": "TicketNews: StubHub International data breach",
+      "used_in": "stubhub-international-customer-contact-data-breach-2026-11"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "deutsche-bank-15m-document-leak-2026-11",
+    "stubhub-international-customer-contact-data-breach-2026-11",
+    "osaki-electric-ransomware-smart-meter-halt-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "nable-mail-assure-spamexperts-breach-2026-11",
+      "url": "https://dailysecurityreview.com/?p=45997"
+    },
+    {
+      "id": "dhl-group-survey-provider-breach-2026-11",
+      "url": "https://www.drweb.de/dhl-dienstleister-datenleck-beschaeftigte/"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "N-able Mail Assure / SpamExperts restoration status",
+      "url": "https://uptime.n-able.com/event/202672",
+      "note": "Status page 403 to our reader; latest read report (Daily Security Review) says portal, APIs, quarantine and logging still offline at 08:00 UTC 19 Nov. Check for restoration.",
+      "priority": 2
+    },
+    {
+      "title": "Osaki Electric second report",
+      "url": "https://www.osaki.co.jp/ja/notice/",
+      "note": "osaki.co.jp answered 403 on 22 Nov; no second report found in coverage. Check for restart or leak findings.",
+      "priority": 2
+    },
+    {
+      "title": "StubHub International notification date",
+      "url": "https://www.ticketnews.com/2026/11/stubhub-international-data-breach-2026/",
+      "note": "Date set to 10 Nov from TicketNews relaying TickSights (11 Nov); the TickSights report itself was not read.",
+      "priority": 3
+    }
+  ],
+  "failed_sites": [
+    "uptime.n-able.com (403)",
+    "www.osaki.co.jp (403, notice list and IR page)"
+  ],
+  "notes": "Candidates: all developing events of the last 10 days had been updated or follow-up-checked within 24 h; picked five single-source incidents at large companies. Deutsche Bank: Euronews added as an independent second publisher, validation corroborated, made-up 00:00 occurred_at removed, title qualifier fixed to 'more than 15 million'. StubHub: date corrected to the start of customer notifications (correction file), action labelled General advice. Osaki: Business+IT added, validation corroborated (primary notice on file). N-able and DHL: no new facts in pages read.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

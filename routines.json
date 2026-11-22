@@ -86,6 +86,19 @@
    "does": "Reads GDELT's 15-minute Global Knowledge Graph files (English sources and 65 machine-translated languages) once each, keeps articles GDELT tags as cyber attacks, hackers or cyber crime whose headline reads as cyber, and files each as a lead with the publisher's own page, its language and the country it names first. Runs every research cycle; collect.yml is the backup."
   },
   {
+   "key": "x-leads",
+   "name": "X (Twitter) leads",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_x_leads_at",
+   "max_age_hours": 6,
+   "active": true,
+   "active_since": "2026-11-22T00:00:00Z",
+   "does": "Ingests curated X (Twitter) posts that Grok Bot files as a JSON batch on an `x-leads` GitHub issue (official accounts and a short keyword list in config/x-accounts.json and config/x-queries.json), and files each as a lead for the research loop. X is a lead source only: a post is never an event source and never enough on its own to create or corroborate an event; researchers open the post's cited official or vendor page. No AI model; no X API spend in this phase."
+  },
+  {
    "key": "breach-registers",
    "name": "Breach notification registers",
    "tier": "automation",

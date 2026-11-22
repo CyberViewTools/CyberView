@@ -47,6 +47,15 @@ jobs:
         run: |
           if node -e 'const l=(JSON.parse(require("fs").readFileSync("data/leases.json","utf8"))||{})["flow:leader"];process.exit(l&&Date.parse(l.until)>Date.now()?0:1)' 2>/dev/null; then echo "gdelt-gkg: the research loop is running (live leader lease); skipping"
           else node scripts/gdelt-gkg.mjs; fi
+      - name: X (Twitter) leads (Grok Bot handoff, no AI, no X API)
+        # optional: ingests candidate leads Grok filed on `x-leads` issues. A gh/API failure or an empty queue is a clean
+        # no-op that still writes the heartbeat; this step can never stop the commit. X is a lead source only.
+        continue-on-error: true
+        timeout-minutes: 3
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/x-leads.mjs || echo "x-leads: skipped this run"
       - name: Clear obvious leads (no AI)
         run: node scripts/triage.mjs
       - name: Group leads into stories
@@ -78,7 +87,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           n=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/status.json")).last_collect_new||0)')
-          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json $( [ -f data/breaches.json ] && echo data/breaches.json ) $( [ -f data/gdelt-gkg.json ] && echo data/gdelt-gkg.json ) data/runs data/grid data/context/grid.json $([ -d data/services ] && echo data/services)
+          node scripts/data-commit.mjs "data: collect, $n new lead(s)" data/leads data/status.json data/osint.json $( [ -f data/breaches.json ] && echo data/breaches.json ) $( [ -f data/gdelt-gkg.json ] && echo data/gdelt-gkg.json ) $( [ -f data/x-leads.json ] && echo data/x-leads.json ) data/runs data/grid data/context/grid.json $([ -d data/services ] && echo data/services)
       - name: Alert on failure
         if: failure()
         env:

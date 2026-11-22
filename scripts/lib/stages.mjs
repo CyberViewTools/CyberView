@@ -12,6 +12,7 @@
 export const STAGES = [
   { key: "collect", label: "the lead collector (RSS feeds)", status: "last_collect_at", routine: "collect", heal: "collect.yml" },
   { key: "osint", label: "the other open-source collectors", status: "last_osint_at", routine: "osint", heal: "collect.yml" },
+  { key: "x-leads", label: "X (Twitter) lead ingest (Grok handoff)", status: "last_x_leads_at", routine: "x-leads", heal: "collect.yml" },
   { key: "lead-triage", label: "the rules that clear leads already on file", status: "last_lead_triage_at", routine: "lead-triage", heal: "collect.yml" },
   { key: "fuse", label: "grouping leads into stories", status: "last_fuse_at", max_min: 180, heal: "collect.yml" },
   { key: "backlog-auto", label: "the rules that close routine items", status: "last_backlog_auto_at", max_min: 180, heal: "collect.yml" },

@@ -1,12 +1,12 @@
 {
-  "action": "No action needed; service is restored. Businesses that depend on Docomo 5G for critical connections may wish to confirm their backup connection works.",
+  "action": "No action needed; for awareness.",
   "actor": "",
   "attack": [],
   "category": "outage",
   "country": "Japan",
   "cves": [],
   "date": "2026-11-16",
-  "exec": "A same-day 5G network failure at a major Japanese carrier, attributed to equipment congestion rather than a security event.",
+  "exec": "A major Japanese carrier says traffic congestion on its switches disrupted 5G SA service nationwide; it found no sign of a cyberattack.",
   "first_seen": "2026-11-17T22:28:00Z",
   "geo_basis": "company HQ",
   "lat": 35.672,
@@ -14,30 +14,36 @@
   "org": "NTT Docomo",
   "pin_type": "hq",
   "place": "Tokyo",
-  "plain": "NTT Docomo's newest 5G mobile network in Japan failed on November 16 and was restored the same day. The company says overloaded network equipment caused it; no cyberattack is indicated.",
+  "plain": "Docomo customers on its newest 5G service in Japan had trouble calling, using data and texting on 16 November until service was fully restored that afternoon. Docomo says traffic overloaded its switches.",
   "products": [
     "NTT Docomo"
   ],
   "sector": "Telecom",
   "severity": 2,
-  "source_tier": "aggregator",
+  "source_tier": "primary",
   "sources": [
     {
-      "name": "MLQ.ai outage roundup",
-      "url": "https://mlq.ai/news/a-week-of-outages-the-faa-ground-stop-microsoft-365-chase-nsa-net-and-apple-and-what-is-known-about-the-causes/"
+      "name": "NTT Docomo notice: 5G SA service recovered (16 November 2026)",
+      "url": "https://www.docomo.ne.jp/info/network/kanto/pages/261116_07_m.html",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "NTT Docomo notice: sixth report, partial recovery (16 November 2026)",
+      "url": "https://www.docomo.ne.jp/info/network/kanto/pages/261116_05_m.html",
+      "published": "2026-11-16"
     }
   ],
   "status": "confirmed",
-  "summary": "Docomo's standalone 5G network failed on November 16 and was restored the same day. The stated cause is switch congestion. Details come from one outage roundup; no cyber cause is indicated.",
+  "summary": "NTT Docomo says customers subscribed to its 5G SA (Standalone) service nationwide had difficulty using voice calls, data and SMS from 10:02 to 15:58 on 16 November, when it confirmed full recovery. Docomo gives the cause as a concentration of traffic on the switches serving 5G SA customers and says its investigation found no sign of unauthorised access or a cyberattack. Other 5G and 4G users, MVNOs and emergency calls were not affected.",
   "tags": [
     "critical-infrastructure"
   ],
-  "title": "NTT Docomo 5G network outage in Japan",
-  "updated_at": "2026-11-17T22:28:00Z",
+  "title": "NTT Docomo 5G SA voice, data and SMS hard to use nationwide on 16 November",
+  "updated_at": "2026-11-22T17:57:49Z",
   "validation": {
-    "checked_at": "2026-11-17T22:28:00Z",
-    "note": "One roundup, read only as a search excerpt.",
-    "state": "single_source"
+    "state": "primary",
+    "checked_at": "2026-11-22T17:57:49Z",
+    "note": "NTT Docomo's own recovery notice and sixth report read (follow-up 22 Nov); replaces the MLQ.ai roundup, which had been read only as a search excerpt."
   },
   "review": {
     "state": "passed",
@@ -55,5 +61,27 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
+  },
+  "time_basis": "occurred",
+  "occurred_at": "2026-11-16T01:02:00Z",
+  "evidence": [
+    {
+      "url": "https://www.docomo.ne.jp/info/network/kanto/pages/261116_07_m.html",
+      "quote": "2026年11月16日（月曜）午前10時02分から2026年11月16日（月曜）午後3時58分まで"
+    }
+  ],
+  "report": {
+    "publisher": "NTT Docomo",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "published": "2026-11-16",
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "5G SA voice, data and SMS hard to use nationwide 10:02-15:58 JST on 16 November",
+      "Cause: concentration of traffic on switches serving 5G SA customers",
+      "No sign of unauthorised access or cyberattack found so far, per Docomo"
+    ],
+    "recommendations": []
   }
 }

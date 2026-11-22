@@ -1,0 +1,123 @@
+name: Scanner release
+
+# The CyberView Scanner as ONE file (scripts/scanner-release.mjs): scanner/cyberview-scan.mjs, the scanner/lib modules it
+# imports and the two site libraries it runs (site/workbench-lib.js, site/cvedb-lib.js), in a single ES module that runs
+# with node 22+. No AI model, no dependencies.
+#   - push of a tag scanner-vX.Y.Z (the owner: git tag scanner-v1.1.0 && git push origin scanner-v1.1.0): test, check,
+#     build, checksum, then publish a GitHub Release with cyberview-scan-X.Y.Z.mjs, SHA256SUMS and LICENSE.
+#     The tag must match VERSION in scanner/lib/probe.mjs, or nothing is released.
+#   - workflow_dispatch: a dry run; the same build and checks, uploaded only as a workflow artifact (no release, no tag).
+# The bundle is never committed (.gitignore; scripts/security-check.mjs refuses one in the repository).
+on:
+  push:
+    tags: ["scanner-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scanner-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Version (scanner/lib/probe.mjs) and, for a tag, that the tag matches it
+        id: version
+        run: |
+          set -euo pipefail
+          ver="$(node -e 'import("./scripts/scanner-release.mjs").then((m) => console.log(m.scannerVersion()))')"
+          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            if [ "${GITHUB_REF_NAME}" != "scanner-v${ver}" ]; then
+              echo "tag ${GITHUB_REF_NAME} does not match VERSION ${ver} in scanner/lib/probe.mjs (expected scanner-v${ver})" >&2
+              exit 1
+            fi
+          fi
+      - name: Security check
+        run: node scripts/security-check.mjs
+      - name: Scanner unit tests (including the bundle against the source CLI)
+        run: node --test tests/unit/scanner*.test.mjs
+      - name: Build the single-file scanner, checksums and notes
+        env:
+          VER: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          node scripts/scanner-release.mjs --out dist --commit "${GITHUB_SHA}"
+          cp scanner/LICENSE dist/LICENSE
+          bundle="cyberview-scan-${VER}.mjs"
+          # smoke test: the bundle runs on its own, outside the repository, and still refuses without a scope file
+          tmp="$(mktemp -d)"
+          cp "dist/${bundle}" "$tmp/"
+          (cd "$tmp" && node "$bundle" help > "$tmp/help")
+          grep -q "^CyberView Scanner ${VER} " "$tmp/help"
+          code=0
+          (cd "$tmp" && node "$bundle" scan --online > /dev/null 2> "$tmp/err") || code=$?
+          if [ "$code" -ne 2 ] || ! grep -q "^REFUSED: a scope file is required" "$tmp/err"; then
+            echo "the bundle did not refuse a scan without a scope file (exit ${code})" >&2
+            exit 1
+          fi
+          (cd dist && sha256sum "$bundle" LICENSE > SHA256SUMS && cat SHA256SUMS)
+          {
+            echo "CyberView Scanner ${VER}: one file, runs with Node.js 22 or later. Built from ${GITHUB_SHA}."
+            echo
+            echo "1. Download ${bundle} and SHA256SUMS from this release into the same folder."
+            echo "2. Verify: sha256sum -c --ignore-missing SHA256SUMS (macOS: shasum -a 256 -c --ignore-missing SHA256SUMS)."
+            echo "3. Run: node ${bundle} help, then init, check and scan as in scanner/README.md."
+            echo
+            echo "Detection only. It will not start without a scope file and your recorded attestation, and scans only what you own"
+            echo "or are authorised in writing to test. Proprietary licence (LICENSE): use on your own or authorised systems; no"
+            echo "redistribution."
+          } > dist/RELEASE_NOTES.md
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cyberview-scan-${{ steps.version.outputs.version }}
+          path: |
+            dist/cyberview-scan-${{ steps.version.outputs.version }}.mjs
+            dist/SHA256SUMS
+            dist/LICENSE
+            dist/RELEASE_NOTES.md
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    # only for a pushed scanner-v* tag; a manual run stops at the artifact above
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/scanner-v')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: cyberview-scan-${{ needs.build.outputs.version }}
+          path: dist
+      - name: Verify the checksums, then publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VER: ${{ needs.build.outputs.version }}
+        run: |
+          set -euo pipefail
+          (cd dist && sha256sum -c SHA256SUMS)
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --title "CyberView Scanner ${VER}" \
+            --notes-file dist/RELEASE_NOTES.md \
+            "dist/cyberview-scan-${VER}.mjs" dist/SHA256SUMS dist/LICENSE

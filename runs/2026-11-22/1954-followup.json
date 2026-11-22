@@ -1,0 +1,89 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T19:54:28Z",
+  "finished_at": "2026-11-22T19:58:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Linux kernel SCTP privilege escalation Xint patch CVE November 2026",
+    "Microsoft hotpatch 0xC0000099 apps fail to start known issue resolved",
+    "Kokoro Hugging Face hexgrad account takeover Hugging Face response",
+    "Notion Fireworks AI breach Notion AI transcripts customers notified"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.notion.com/security/advisories/security-incident-involving-a-third-party-ai-vendor-nov9",
+      "title": "Notion: Security incident involving a third-party AI vendor (first published 9 Nov 2026)",
+      "used_in": "notion-ai-transcripts-fireworks-breach-2026-11"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/notion-says-fireworks-breach-exposed-customer-ai-chat-transcripts/",
+      "title": "BleepingComputer: Notion says Fireworks breach exposed customer AI chat transcripts (11 Nov 2026)",
+      "used_in": "notion-ai-transcripts-fireworks-breach-2026-11"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-confirms-app-installation-launch-issues-after-hotpatch/",
+      "title": "BleepingComputer: Microsoft confirms app installation, launch issues after hotpatch (19 Nov 2026)",
+      "used_in": "windows-hotpatch-app-startup-failure-2026-11"
+    },
+    {
+      "url": "https://openwall.com/lists/oss-security/2026/11/18/19",
+      "title": "oss-security: Another (?) Linux kernel SCTP vuln undisclosed (Rich Felker, 18 Nov)",
+      "used_in": "xint-linux-sctp-kernel-lpe-unpatched-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://openwall.com/lists/oss-security/2026/11/19/2",
+      "title": "oss-security: Re: Another (?) Linux kernel SCTP vuln undisclosed (Jeffrey Walton, 18 Nov)",
+      "used_in": "xint-linux-sctp-kernel-lpe-unpatched-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/researchers-hijack-hugging-face-account-for-popular-kokoro-ai-model/",
+      "title": "BleepingComputer: Researchers hijack Hugging Face account for popular Kokoro AI model (17 Nov 2026)",
+      "used_in": "kokoro-hugging-face-account-takeover-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.cyber.gc.ca/en/alerts-advisories/check-point-security-advisory-av26-1154",
+      "title": "Canadian Centre for Cyber Security AV26-1154 (12 Nov, Update 1 13 Nov)",
+      "used_in": "cccs-check-point-advisory-av26-1154-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "notion-ai-transcripts-fireworks-breach-2026-11",
+    "windows-hotpatch-app-startup-failure-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
+      "url": "https://openwall.com/lists/oss-security/2026/11/19/2"
+    },
+    {
+      "id": "kokoro-hugging-face-account-takeover-2026-11",
+      "url": "https://www.bleepingcomputer.com/news/security/researchers-hijack-hugging-face-account-for-popular-kokoro-ai-model/"
+    },
+    {
+      "id": "cccs-check-point-advisory-av26-1154-2026-11",
+      "url": "https://www.cyber.gc.ca/en/alerts-advisories/check-point-security-advisory-av26-1154"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Linux kernel SCTP LPE (NGINX2Root host-root stage): patch and CVE pending",
+      "url": "https://xint.io/blog/nginx2root-remote-code-execution",
+      "note": "oss-security posts of 18 Nov say there is no kernel patch yet and quote 'in the coming weeks'. No CVE yet. Check linux-cve-announce or Xint for the fix, then update xint-linux-sctp-kernel-lpe-unpatched-2026-11.",
+      "priority": 2
+    },
+    {
+      "title": "Kokoro Hugging Face account: secured?",
+      "url": "https://www.bleepingcomputer.com/news/security/researchers-hijack-hugging-face-account-for-popular-kokoro-ai-model/",
+      "note": "A secondary search snippet claimed the account was secured with Hugging Face. I could not verify it: BleepingComputer has no update note, and scworld.com answered 403.",
+      "priority": 3
+    }
+  ],
+  "failed_sites": [
+    "www.scworld.com (403)"
+  ],
+  "notes": "Five events picked; none had been updated or follow-up-checked in the last 24 h, and no developing or claimed candidate was left unchecked. Notion: Notion's own advisory read. Date corrected 12 -> 9 Nov. The 2 Nov notice was about synthetic data; customer-data notice 6 Nov, confirmed 8 Nov. Breach date given as 23 Oct per BleepingComputer and 24 Oct per SecurityWeek. Now corroborated, with a correction file. Windows hotpatch: Microsoft service alert WI1559710 as reported by BleepingComputer on 19 Nov. Date 20 -> 19 Nov; installs and app runs are affected too; corroborated; correction file. SCTP, Kokoro and CCCS Check Point: pages read, no new facts. An earlier future updated_at (20:09:30Z, a typed estimate) was replaced with the real clock time before validation.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

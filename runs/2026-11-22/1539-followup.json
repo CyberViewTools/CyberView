@@ -1,0 +1,78 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T15:39:01Z",
+  "finished_at": "2026-11-22T15:42:01Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Ashland Water Group cyberattack",
+    "Molex cyberattack November 2026",
+    "Waterman Group cyber incident Rhysida",
+    "LearnWorlds phishing YouTube copyright trial accounts",
+    "Depthfirst PostgreSQL MySQL Oracle RCE chain exploited in the wild"
+  ],
+  "pages_read": [
+    {
+      "url": "https://thehackernews.com/2026/11/researcher-demonstrates-database-rce.html",
+      "title": "Researcher demonstrates database RCE (The Hacker News, 19 Nov, corrected 20 Nov)",
+      "used_in": "depthfirst-database-rce-poc-postgresql-mysql-oracle-2026-11"
+    },
+    {
+      "url": "https://www.diariobitcoin.com/estafas/learnworlds-detecta-una-campana-de-phishing-que-uso-570-cuentas-de-prueba/",
+      "title": "LearnWorlds detecta una campana de phishing que uso 570 cuentas de prueba (DiarioBitcoin, 16 Nov)",
+      "used_in": "learnworlds-trial-abuse-youtube-phishing-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.watermangroup.com/news/",
+      "title": "Waterman Group news (newest item 11 Nov; no incident statement)",
+      "used_in": "waterman-group-rhysida-claim-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://www.ashlandwatergroup.com/",
+      "title": "The Ashland Water Group homepage (pump brands; no notice)",
+      "used_in": "ashland-water-group-qilin-claim-2026-11"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "depthfirst-database-rce-poc-postgresql-mysql-oracle-2026-11",
+    "ashland-water-group-qilin-claim-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "learnworlds-trial-abuse-youtube-phishing-2026-11",
+      "url": "https://www.diariobitcoin.com/estafas/learnworlds-detecta-una-campana-de-phishing-que-uso-570-cuentas-de-prueba/"
+    },
+    {
+      "id": "waterman-group-rhysida-claim-2026-11",
+      "url": "https://www.watermangroup.com/news/"
+    },
+    {
+      "id": "molex-vortex-claim-2026-11",
+      "url": "https://www.molex.com/en-us/news",
+      "note": "page did not load (socket hang up, twice); no statement found"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Molex / Vortex leak-site claim: no statement found",
+      "url": "https://www.molex.com/en-us/news",
+      "note": "Molex newsroom did not load (socket hang up, two attempts); search found only a breach tracker (Breachsense). Re-check a Molex or Koch statement next run.",
+      "priority": "low"
+    },
+    {
+      "title": "LearnWorlds: DiarioBitcoin relays The Register with a breakdown of 9,853 emails from trial accounts (7-9 Nov) and 3,723 from a paid account (14 Nov)",
+      "url": "https://www.diariobitcoin.com/estafas/learnworlds-detecta-una-campana-de-phishing-que-uso-570-cuentas-de-prueba/",
+      "note": "A relay of The Register, so validation stays single_source; no LearnWorlds notice of its own was found. The record already matches (about 570 accounts, about 13,000 emails).",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "www.molex.com (socket hang up, twice)",
+    "www.scworld.com (403)",
+    "www.secnews.gr (403)"
+  ],
+  "notes": "Picked 5 candidates not updated or followed up in the last 24 h (every severity-3 event was updated within 3 days or already followed up). Depthfirst: The Hacker News says the no-login Oracle chain is the researcher's claim and that Oracle rates neither Oracle flaw as exploitable without a login on its own; the summary and key finding were updated, and correction 2026-11-22-depthfirst-oracle-login was added. Ashland Water Group: its own homepage shows a pump-equipment maker, not a water utility, so sectors changed from water-wastewater/energy (inferred from the name) to manufacturing (inferred). No company statement found for Ashland, Waterman or Molex; the claims stay claimed, severity 1. Breach trackers (Breachsense) were not used as sources.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

@@ -434,7 +434,7 @@
   /* ---- All CVEs: the CVE List as static lookup files (data/cve/, written by scripts/cve.mjs site), read on demand ---- */
   var CV = { idx: null, state: "idle", waiting: null, files: {}, ready: {}, sets: {}, pool: [], list: [], page: 0, open: "", kev: {}, events: null };
   var PAGE = 200, SEV = { C: ["Critical", "bad"], H: ["High", "bad"], M: ["Medium", "warn"], L: ["Low", "info"], N: ["None", "info"] };
-  var CAVEAT = "What this is: every CVE published in the official CVE List (CVE Program), including CISA's enrichment: CVSS where the assigner gave none, the weakness (CWE) and whether CISA has seen it exploited. Descriptions are trimmed, only the first affected product is kept, and the list is rebuilt about every hour, so a very new change can be missing: the CVE record and NVD stay the authority. Exploit likelihood is FIRST EPSS, refreshed daily. \"Known exploited\" means listed in CISA's catalog (or seen exploited by CISA); it is also joined here from the catalog as CyberView holds it. A CVE is a database record, not an event on the map.";
+  var CAVEAT = "What this is: every CVE published in the official CVE List (CVE Program), including CISA's enrichment: CVSS where the assigner gave none, the weakness (CWE), whether CISA has seen it exploited, and NVD's affected-version ranges where NVD has analysed the flaw (matched against your software list in this browser, never uploaded). Descriptions are trimmed, the first affected product is shown, and the list is rebuilt about every hour, so a very new change can be missing: the CVE record and NVD stay the authority. Exploit likelihood is FIRST EPSS, refreshed daily. \"Known exploited\" means listed in CISA's catalog (or seen exploited by CISA); it is also joined here from the catalog as CyberView holds it. A CVE is a database record, not an event on the map.";
   function fmtN(n) { try { return n.toLocaleString("en-US"); } catch (e) { return String(n); } }
   function fmtLong(d) { if (!d) return ""; try { return new Date(d + "T12:00:00Z").toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return d; } }
   function buildKev() { CV.kev = {}; flaws.forEach(function (f) { if (f.kev) CV.kev[f.cve] = f; }); }
@@ -484,6 +484,7 @@
     $("cvSummary").textContent = (ix.total !== null ? fmtN(ix.total) + " CVEs on file, every one published since 1999" + (ix.rejected !== null ? " (" + fmtN(ix.rejected) + " of them rejected)" : "") + ". " : "") +
       (ix.kev !== null ? fmtN(ix.kev) + " are in CISA's known-exploited catalog" + (ix.ransomware ? " (" + fmtN(ix.ransomware) + " used by ransomware)" : "") + (ix.criticalNvd ? "; " + fmtN(ix.criticalNvd) + " are rated Critical by NVD's CVSS v3 scores" + (ix.critical !== null ? " (" + fmtN(ix.critical) + " when the vendor's own score is used first)" : "") : ix.critical !== null ? "; " + fmtN(ix.critical) + " are rated Critical (CVSS v3 or v4)" : "") + ". " :
         ix.exploited !== null ? fmtN(ix.exploited) + " are known or seen exploited. " : "") +
+      (ix.withRanges ? fmtN(ix.withRanges) + " carry NVD affected-version ranges, so your software list can be matched by version. " : "") +
       (ix.ratingBands ? "CyberView rating (CVSS adjusted for exploitation): " + ["Critical", "High", "Medium"].map(function (b) { return fmtN(ix.ratingBands[b] || 0) + " " + b; }).join(", ") + ", " + fmtN((ix.ratingBands.Low || 0) + (ix.ratingBands.None || 0)) + " Low or None, " + fmtN(ix.ratingBands["Not scored"] || 0) + " not scored (no CVSS score). " : "") +
       (ix.decisions ? "CISA SSVC priority today: " + fmtN(ix.decisions.act || 0) + " Act, " + fmtN(ix.decisions.attend || 0) + " Attend, " + fmtN(ix.decisions["track*"] || 0) + " Track*, the rest Track. " : "") +
       (ix.audit && ix.audit.nvdTotal !== null ? "Checked against NVD and CISA every hour: NVD lists " + fmtN(ix.audit.nvdTotal) + " CVEs (" + fmtN(ix.audit.nvdRejected) + " rejected), CISA " + fmtN(ix.audit.cisaKev) + " known exploited; NVD's own scores rate " + fmtN(ix.audit.nvdCritical) + " Critical, ours use the assigner's score first. " : "") +
@@ -514,9 +515,18 @@
   var DEC_CLASS = { act: "bad", attend: "warn", "track*": "info", track: "info" };
   function decBadge(rt) { var b = el("span", "badge " + (DEC_CLASS[rt.decision] || "info"), (rt.decision ? "Priority: " : "") + rt.label); b.title = rt.does; return b; }
   var onMapIds = null;   // CVEs a checked event covers, once the archive index has loaded
-  function nrm(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
-  function mineFn(r) { if (!inv.length) return false; var p = nrm(r.product), v = nrm(r.vendor); if (!p) return false;
-    return inv.some(function (x) { var n = nrm(x.name); return n && (n === p || n.indexOf(p) >= 0 || p.indexOf(n) >= 0) && (!x.vendor || !v || nrm(x.vendor) === v || v.indexOf(nrm(x.vendor)) >= 0); }); }
+  /* match one All-CVEs row against the visitor's software list, in the browser, through the SAME matcher as the workbench
+     (CVWorkbench.match over NVD's affected-version ranges on the row). When NVD has no ranges for the CVE yet, fall back to a
+     name-only "check". Returns null when nothing matches or no list is loaded. nameOnly marks a product-only (not version) match. */
+  function mineMatch(r) {
+    if (!inv.length || r.rejected) return null;
+    var ranges = Array.isArray(r.affected) ? r.affected : [];
+    if (ranges.length) { var m = W.match({ vendor: r.vendor, product: r.product, affected: ranges }, inv); return m.state === "none" ? null : m; }
+    if (!r.product) return null;
+    var hits = inv.filter(function (it) { return W.nameHit((it.vendor ? it.vendor + " " : "") + it.name, r.vendor, r.product); });
+    if (!hits.length) return null;
+    return { state: "check", nameOnly: true, items: hits.slice(0, 20).map(function (it) { return { name: it.name, version: it.version, count: it.count, state: "check" }; }), fixed: [] };
+  }
   function rateOpts() { return { mission: $("cvMission").value, exposed: $("cvExposed").value === "yes" ? true : $("cvExposed").value === "no" ? false : undefined }; }
   function onMap(r) { return !!(onMapIds && onMapIds[r.id]); }
   /* the CyberView rating, every step listed: CVSS base x CVSS v3.1 Exploit Code Maturity, CVSS Roundup, CVSS's bands */
@@ -570,7 +580,12 @@
     else if (vendorSays(r)) { var vxb = el("span", "badge bad", "Exploited (vendor)"); vxb.title = vendorSays(r).vendor + "'s own advisory says it is exploited in the wild"; chips.appendChild(vxb); }
     if (r.ransom) chips.appendChild(el("span", "badge bad", "Ransomware"));
     if (r.epss !== null) chips.appendChild(el("span", "badge info", "EPSS " + (r.epss * 100).toFixed(r.epss < 0.01 ? 2 : 1) + "%"));
-    if (!r.rejected && mineFn(r)) chips.appendChild(el("span", "badge warn", "On your software list"));
+    var mm = mineMatch(r);
+    if (mm) {
+      if (mm.state === "affected") { var ab = el("span", "badge bad", "Your software: affected version"); ab.title = "A version on your software list falls inside NVD's affected-version range for this CVE"; chips.appendChild(ab); }
+      else if (mm.state === "check") { var cb = el("span", "badge warn", mm.nameOnly ? "On your software list" : "Your software: check version"); cb.title = mm.nameOnly ? "You run this product; NVD has no version ranges for this CVE yet, so the version is not checked" : "You run this product; add the version to your list to confirm whether it is affected"; chips.appendChild(cb); }
+      else if (mm.state === "clear") { var lb = el("span", "badge ok", "Your version is outside the range"); lb.title = "Every version you listed for this product is outside NVD's affected-version ranges"; chips.appendChild(lb); }
+    }
     if (onMap(r)) chips.appendChild(el("span", "badge info", "On CyberView's map"));
     if (OT.data && OT.data.byCve[r.id]) chips.appendChild(el("span", "badge info", "Industrial advisory"));
     if (r.cwe) chips.appendChild(el("span", "badge info", r.cwe));
@@ -591,6 +606,18 @@
       ["CISA exploitation", r.expl ? D.EXPL[r.expl] : ""], ["Exploit likelihood (EPSS)", r.epss !== null ? (r.epss * 100).toFixed(2) + "% chance of exploitation in the next 30 days" + (r.pct !== null ? "; higher than " + (r.pct * 100).toFixed(1) + "% of CVEs" : "") : ""]]
       .forEach(function (p) { if (!p[1]) return; var li = el("li"); li.appendChild(el("b", null, p[0] + ": ")); li.appendChild(document.createTextNode(p[1])); kv.appendChild(li); });
     d.appendChild(kv);
+    var mm2 = mineMatch(r);
+    if (mm2) {
+      var cls = mm2.state === "affected" ? "bad" : mm2.state === "clear" ? "ok" : "warn";
+      var me2 = el("div", "wbme " + cls);
+      me2.appendChild(el("b", null, mm2.state === "affected" ? "You run an affected version" : mm2.state === "clear" ? "Your listed versions are outside the affected ranges" : "You run this product: confirm the version"));
+      var ml = el("ul");
+      (mm2.items || []).slice(0, 12).forEach(function (it) { var li = el("li"); li.appendChild(document.createTextNode((it.name || "") + (it.version ? " " + it.version : " (no version)") + (it.count > 1 ? " × " + it.count : "") + (it.state === "affected" ? " — affected" : it.state === "clear" ? " — outside the range" : ""))); ml.appendChild(li); });
+      if (ml.childNodes.length) me2.appendChild(ml);
+      if (mm2.fixed && mm2.fixed.length) me2.appendChild(el("p", "note", "Fixed in, as NVD states it: " + mm2.fixed.join("; ")));
+      me2.appendChild(el("p", "note", mm2.nameOnly ? "Matched by product name only: NVD has published no version ranges for this CVE yet, so the version could not be checked. Your software list stays in this browser and is never uploaded." : "Matched in your browser against NVD's affected-version ranges for this CVE. Your software list stays in this browser and is never uploaded."));
+      d.appendChild(me2);
+    }
     var vb = vendorBox(r.adv); if (vb) d.appendChild(vb);
     var k = CV.kev[r.id];
     if (k) {

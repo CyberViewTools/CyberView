@@ -23,7 +23,7 @@ import { get } from "./lib/net.mjs";
 import vm from "node:vm";
 // the site's rating code, run here too so the counts on the page and the ratings in the browser cannot disagree
 const RATE = (() => { const sb = { window: {} }; vm.runInNewContext(readFileSync(join(ROOT, "site", "cvedb-lib.js"), "utf8"), sb); return sb.window.CVDB; })();
-import { compact, parseEpss, bucket, deltaSince, notable, toLead, FIELDS, toArr, ID, parseKevCatalog, nvdScore } from "./lib/cve.mjs";
+import { compact, parseEpss, bucket, deltaSince, notable, toLead, FIELDS, toArr, ID, parseKevCatalog, nvdScore, affectedFromNvd } from "./lib/cve.mjs";
 import { advisory as psirtAdvisory, byCve as psirtByCve } from "./lib/psirt.mjs";
 
 export const CORPUS_VERSION = 2;
@@ -70,8 +70,9 @@ function baseline(src) {
   console.log(`BASELINE: ${n} CVE(s) in ${byYear.size} year file(s); ${bad} file(s) skipped.`);
 }
 
-// enrichments that do not come from the CVE List itself survive a record's update
-const keep = (p) => (p ? { due: p.due || "", ransom: !!p.ransom, ncvss: p.ncvss ?? null, nsev: p.nsev || "", nvec: p.nvec || "", n3: p.n3 || "", n3c: !!p.n3c } : {});
+// enrichments that do not come from the CVE List itself survive a record's update (NVD's score and affected-version ranges;
+// the CVE List carries neither, so a delta update must not drop what the nvd command wrote)
+const keep = (p) => (p ? { due: p.due || "", ransom: !!p.ransom, ncvss: p.ncvss ?? null, nsev: p.nsev || "", nvec: p.nvec || "", n3: p.n3 || "", n3c: !!p.n3c, aff: Array.isArray(p.aff) && p.aff.length ? p.aff : null } : {});
 
 async function delta() {
   const st = state(), max = opt("max", 4000);
@@ -135,12 +136,15 @@ async function kev() {
 
 const NVD = "https://services.nvd.nist.gov/rest/json/cves/2.0";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-/** NVD's own CVSS score for every CVE: a full read the first time (about 215 pages, ~25 minutes without an API key),
- *  then only what NVD changed since the last run (windows of at most 120 days, as the API requires). */
+/** NVD's own CVSS score AND affected-version ranges for every CVE: a full read the first time (about 215 pages, ~25 minutes
+ *  without an API key), then only what NVD changed since the last run (windows of at most 120 days, as the API requires).
+ *  The ranges come from the same NVD record as the score (its CPE "configurations"), so they cost no extra request; the full
+ *  read is the bounded backfill (it never blocks the deploy: cve.yml runs this step continue-on-error and the lookup files are
+ *  written from whatever is in the corpus), and the incremental windows pick up ranges for CVEs as NVD analyses them. */
 async function nvd() {
-  const NVD_VERSION = 2;   // raise when nvdScore keeps more: the next run reads all of NVD again
+  const NVD_VERSION = 3;   // raise when nvdScore/affectedFromNvd keep more: the next run reads all of NVD again (3: ranges added)
   const st = state(), full = !st.nvd_since || (st.nvd_version || 1) < NVD_VERSION, startedAt = nowIso(), key = process.env.NVD_API_KEY || "";
-  const pause = key ? 700 : 6500, byYear = new Map(); let pages = 0, scored = 0, seen = 0;
+  const pause = key ? 700 : 6500, byYear = new Map(); let pages = 0, scored = 0, seen = 0, ranged = 0;
   const windows = [];
   if (full) windows.push("");
   else { let from = Date.parse(st.nvd_since) - 5 * 6e4; const to = Date.now(); while (from < to) { const end = Math.min(to, from + 119 * 864e5); windows.push(`&lastModStartDate=${new Date(from).toISOString()}&lastModEndDate=${new Date(end).toISOString()}`); from = end; } }
@@ -155,13 +159,14 @@ async function nvd() {
         const y = yearOf(id); if (!byYear.has(y)) byYear.set(y, loadYear(y));
         const row = byYear.get(y).get(id), s = nvdScore(it); if (!row) continue;
         row.ncvss = s ? s.ncvss : null; row.nsev = s ? s.nsev : ""; row.nvec = s ? s.nvec : ""; row.n3 = s ? s.n3 : ""; row.n3c = !!(s && s.n3c); if (s && s.ncvss != null) scored++;
+        const aff = affectedFromNvd(it.cve); row.aff = aff.length ? aff : null; if (aff.length) ranged++;
       }
       if (start + 2000 < total) await sleep(pause);
     }
   }
   saveAll(byYear);
   setState({ nvd_since: startedAt, nvd_version: NVD_VERSION });
-  console.log(`NVD: ${seen} record(s) read in ${pages} page(s)${full ? " (full read)" : ""}; ${scored} with an NVD score.`);
+  console.log(`NVD: ${seen} record(s) read in ${pages} page(s)${full ? " (full read)" : ""}; ${scored} with an NVD score, ${ranged} with affected-version ranges.`);
 }
 function saveAll(byYear) { for (const [y, m] of byYear) saveYear(y, m); }
 
@@ -183,9 +188,10 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   // vendor advisories joined on CVE (scripts/psirt.mjs), as the page attaches them, so a vendor's own "exploited" statement
   // counts the same here as in the browser
   const adv = RATE.cleanVendorIndex({ cve: psirtByCve(((readJson(join(DATA, "psirt", "advisories.json"), {}) || {}).advisories || []).map((a) => psirtAdvisory(a || {})).filter(Boolean)) });
-  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, ratingBands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0;
+  const buckets = new Map(), byYear = {}, recent = [], since = dayAgo(14), decisions = {}, ratingBands = {}; let total = 0, rejected = 0, exploited = 0, critical = 0, criticalNvd = 0, criticalNvdOwn = 0, kevN = 0, activeOnly = 0, ransom = 0, nvdOnly = 0, unscored = 0, withRanges = 0;
   for (const r of allRows()) {
     total++; if (r.state === "R") rejected++; if (r.kev || r.expl === "active") exploited++;
+    if (r.state !== "R" && Array.isArray(r.aff) && r.aff.length) withRanges++;
     if (r.state !== "R") { if (r.kev) kevN++; else if (r.expl === "active") activeOnly++; if (r.ransom) ransom++; if (isCritical(r)) critical++; if (r.n3c) criticalNvd++; if (r.n3 === "C") criticalNvdOwn++; if (r.cvss == null && r.ncvss != null) nvdOnly++; if (r.cvss == null && r.ncvss == null) unscored++;
       const rr = adv[r.id] ? { ...r, rejected: false, adv: adv[r.id] } : { ...r, rejected: false };
       const d = RATE.rate(rr); if (d && d.decision) decisions[d.decision] = (decisions[d.decision] || 0) + 1;
@@ -201,9 +207,9 @@ function site(out = join(ROOT, "site", "data", "cve")) {
   const files = {}; for (const b of buckets.keys()) { const [y, k] = b.split("/"); (files[y] ||= []).push(Number(k)); }
   for (const y of Object.keys(files)) files[y].sort((a, b) => a - b);
   writeFileSync(join(out, "index.json"), JSON.stringify({ built_at: nowIso(), total, rejected, exploited, critical, by_year: byYear, buckets: buckets.size, files_by_year: files,
-    critical_nvd: criticalNvd, rating_bands: ratingBands, critical_nvd_own: criticalNvdOwn, kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
+    critical_nvd: criticalNvd, rating_bands: ratingBands, critical_nvd_own: criticalNvdOwn, kev: kevN, cisa_active_not_kev: activeOnly, ransomware: ransom, scored_by_nvd_only: nvdOnly, unscored, with_ranges: withRanges, decisions, audit: st.audit || null, kev_catalog: st.kev_catalog ?? null,
     sources: { cvelist: st.delta_at || st.baseline_at || null, epss: st.epss_date || null } }));
-  console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${recent.length} published or changed since ${since}.`);
+  console.log(`SITE: ${total} CVE(s) in ${buckets.size} lookup file(s); ${withRanges} with affected-version ranges; ${recent.length} published or changed since ${since}.`);
 }
 
 function stats() {

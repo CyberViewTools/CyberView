@@ -55,9 +55,17 @@ if (job === "sweep" && (PL.flow || {}).enabled !== false && (PL.headless === tru
   process.exit(0);
 }
 if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_jobs.includes(job))) && process.env.CYBERVIEW_SUBAGENTS !== "1") {
+  // Run the job in the FOREGROUND, not the background. run-job.mjs plans, then runs its headless worker pool (triagers,
+  // researchers, reviewers...) which takes several minutes; a cloud session reaps a backgrounded process a few minutes
+  // after the turn ends, so the workers were killed before they finished — the job committed "0 new" after only its
+  // planning step ran (observed for backlog: triagers ran, researchers reaped). A foreground run finishes its workers and
+  // commits before the turn ends. config/pipeline.json headless_foreground_minutes caps it under the 10-minute tool cap;
+  // if a job ever needs longer it is cut and the next scheduled run commits the leftover with finish.mjs --force.
+  const hm = Math.max(2, Math.min(9, Number(PL.headless_foreground_minutes) || 8)), tmo = Math.min(600000, (hm + 1) * 60000);
   console.log([`DISPATCH ${job} (headless). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
-    `1. Run this ONE command with run_in_background true (it can take up to 45 minutes; do not poll, you are notified when it ends): node scripts/run-job.mjs ${job} > /tmp/cv-${job}.log 2>&1; tail -2 /tmp/cv-${job}.log`,
-    `2. When it ends: if the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs ${job}\` and do what it prints instead. Otherwise end with exactly its last line (it starts "CyberView ${job}:").`].join("\n"));
+    `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it plans, runs the headless workers and commits, then returns (usually a few minutes): node scripts/run-job.mjs ${job} 2>&1 | tail -3`,
+    `   Run it in the foreground so the workers finish and commit before this turn ends; do NOT background it (a backgrounded run is reaped by the cloud session before its workers finish, so nothing is researched).`,
+    `2. If the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs ${job}\` and do what it prints instead. Otherwise end with exactly its last line (it starts "CyberView ${job}:").`].join("\n"));
   process.exit(0);
 }
 // subagents use the same Max plan as headless workers: at "stop" none start; at "tight" the jobs in

@@ -66,8 +66,14 @@ SAN DNS names, CN only when there is none, one wildcard label). A blank key-exch
 reported" (Node does not name hybrid post-quantum groups such as `X25519MLKEM768`), never as proof of PQC or its absence.
 No extra connection, no extra hello, no cipher or group enumeration; the test suite proves a loopback TLS service sees
 exactly one connection. At most 60 observations are kept per host (`OBS_PER_HOST`); any over the cap are counted in
-`observations_dropped`. The HTTP half (headers, default pages, debug markers, redirects, cleartext mail) is the second
-`tk-hygiene` PR.
+`observations_dropped`. The HTTP half, `httpObservations()`, reads only the one root-page response: security headers
+(judged on 2xx HTML pages only), cookie attributes (names only, never values), CORS `*`, redirects (an `http://`
+downgrade, a target outside the scope via the scope's own `hostInScope`/`inScope`; never followed), default, installer and
+directory-listing pages by title from fixed lists, debug output by fixed marker (only the marker's name is reported; no
+body text is stored), `Allow`/`DAV`/`Alt-Svc` headers the server sent anyway (no OPTIONS request), CDN/WAF fronts,
+`Date` clock skew over 5 minutes (`HTTP_RULES`), and version disclosure in `Server`. `mailObservations()` flags POP3/IMAP
+on 110/143 and SMTP submission on 587 answering without TLS. The end-to-end test proves the stand-in web service still
+receives exactly one request, for the root page.
 
 ## One answer, on the site and in the scanner
 

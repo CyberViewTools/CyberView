@@ -16,7 +16,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { checkScope, template, PUBLIC_FLAG, LIMITS } from "./lib/scope.mjs";
+import { checkScope, template, PUBLIC_FLAG, LIMITS, hostInScope, inScope as ipInScope } from "./lib/scope.mjs";
+import { isIP } from "node:net";
 import { settings as checkSettings, CAPS } from "./lib/limits.mjs";
 import { DEFAULT_PORTS, SENDS, VERSION } from "./lib/probe.mjs";
 import { UDP_SERVICES, UDP_SENDS } from "./lib/udp.mjs";
@@ -138,7 +139,8 @@ export async function main(argv, io = {}) {
     if (stop) { io.err("REFUSED: " + stop); return 2; }   // the public cap is the hard stop for public space; nothing was scanned
     refused.forEach((r) => io.err(`skipped ${r.target}: ${r.why}`));
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
-    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp });
+    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
+      inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today });
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
     mkdirSync(out, { recursive: true, mode: 0o700 });

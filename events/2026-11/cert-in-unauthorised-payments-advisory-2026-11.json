@@ -1,10 +1,11 @@
 {
-  "title": "CERT-In reports unauthorised transactions at financial and government-linked payment service providers",
+  "duplicate_of": "cert-in-ai-driven-payment-workflow-attacks-warning-2026-11",
+  "title": "CERT-In advisory CIAD-2026-0062: unauthorised transactions through business payment workflows, including government-linked payment providers",
   "date": "2026-11-20",
-  "date_note": "Reuters (via ThePrint, 21 November) and The420.in say the advisory was issued on Friday; The420.in gives 20 November. The CERT-In advisory itself was not read.",
+  "date_note": "Date is the original issue date of CERT-In advisory CIAD-2026-0062 (20 November 2026); the advisory gives no dates for the transactions it reports.",
   "category": "incident",
   "severity": 2,
-  "status": "developing",
+  "status": "confirmed",
   "org": "CERT-In (Indian Computer Emergency Response Team)",
   "sector": "Finance",
   "country": "India",
@@ -13,16 +14,21 @@
   "lng": 77.209,
   "geo_basis": "agency headquarters",
   "pin_type": "agency",
-  "summary": "According to Reuters, relayed by ThePrint, CERT-In said in an advisory on Friday that it had reported unauthorised transactions at service providers for banking and financial entities and at technology providers supporting government-linked payments. It said attackers altered business records or approval relationships, then used legitimate payment processes. Reuters says CERT-In did not say how much was paid out or by whom.",
-  "plain": "India's cyber agency says fraudulent payments were made through service providers by changing business records or approvals. Amounts and victims were not given.",
-  "exec": "Payment fraud via suppliers and payout platforms is reported by India's national CERT; no amounts or victims were disclosed.",
-  "action": "Government bodies, non-financial payout platforms and technology service providers: read the CERT-In advisory recommendations; the pages read do not list them.",
+  "summary": "CERT-In's advisory CIAD-2026-0062 of 20 November, rated Critical, says it has received reports of unauthorised financial transactions involving organisations outside the financial sector, including service providers supporting government-linked payment workflows and vendor or partner payout platforms. It says attackers altered business records or approval relationships, then used legitimate payment processes. The advisory names no victims and gives no amounts; Reuters also says no amounts or payers were given.",
+  "plain": "India's cyber agency says fraudulent payments were made by changing business records or approvals at service providers, including ones handling government-linked payments. No victims or amounts were given.",
+  "exec": "India's national CERT reports payment fraud through altered records at service providers and payout platforms; no amounts or victims were disclosed.",
+  "action": "CERT-In advises identifying service-provider accounts that can change payment records or approve transactions, reconciling payment instructions against independent records, and requiring independent verification for changes to payment instructions, beneficiaries and approvals.",
   "impact": "Not stated in the source.",
   "tags": [],
   "cves": [],
   "products": [],
   "attack": [],
   "sources": [
+    {
+      "name": "CERT-In advisory CIAD-2026-0062",
+      "url": "https://www.cert-in.org.in/s2cMainServlet?pageid=PUBVLNOTES02&VLCODE=CIAD-2026-0062",
+      "published": "2026-11-20"
+    },
     {
       "name": "ThePrint (Reuters)",
       "url": "https://theprint.in/india/cert-in-flags-unauthorised-transactions-at-financial-service-providers-amid-cyberattacks/3105138/"
@@ -32,14 +38,14 @@
       "url": "https://the420.in/cert-in-payment-fraud-cyberattacks/"
     }
   ],
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-21T21:39:34Z",
-    "note": "ThePrint is Reuters copy and The420.in relays the same account; not independent. CERT-In advisory not read or linked by either. Business Standard and The Hawk answered 403."
+    "state": "corroborated",
+    "checked_at": "2026-11-22T21:43:25Z",
+    "note": "Primary source: CERT-In's own advisory CIAD-2026-0062 (issued 20 November 2026), read by the follow-up desk on 22 November; it confirms the Reuters account (relayed by ThePrint) and The420.in. The advisory says the transactions involve organisations outside the financial sector, so the title no longer says financial service providers. The same advisory is already on file as cert-in-ai-driven-payment-workflow-attacks-warning-2026-11 (first seen 21 November 12:38 UTC, earlier than this record), so this record is marked duplicate_of it."
   },
   "first_seen": "2026-11-21T21:39:34Z",
-  "updated_at": "2026-11-21T21:39:34Z",
+  "updated_at": "2026-11-22T21:43:25Z",
   "review": {
     "state": "passed",
     "at": "2026-11-21T21:42:11Z",
@@ -50,8 +56,9 @@
   "qa_checked_at": "2026-11-21T21:42:11Z",
   "sectors": {
     "values": [
-      "financial-services",
-      "government-facilities"
+      "government-facilities",
+      "information-technology",
+      "financial-services"
     ],
     "basis": "inferred"
   },

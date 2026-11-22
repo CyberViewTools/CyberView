@@ -1,6 +1,6 @@
 name: Validate, security check and test
 
-# Code changes (page, scripts, tests, config): validate, static security check, unit tests, then the browser suite.
+# Code changes (page, scripts, tests, config): lint workflows, validate, static security check, unit tests, then the browser suite.
 # Runs on every pull request to main (main takes code through pull requests) and on every code push to main. Code and
 # data live on separate branches (scripts/lib/repo.mjs), so each job checks out main's code without data/ and mounts the
 # current data branch at ./data (.github/actions/data): a pull request is checked against the real, current data.
@@ -26,6 +26,35 @@ jobs:
             /*
             !/data/
           sparse-checkout-cone-mode: false
+      # TODO: stop skipping feeds.yml and pipecheck.yml once Claude Code's fix for the unquoted
+      # ': ' has merged (feeds.yml line 76, pipecheck.yml line 63).
+      - name: Lint workflows (actionlint 1.7.12)
+        run: |
+          set -euo pipefail
+          ver=1.7.12
+          case "$(uname -m)" in
+            x86_64) arch=amd64; sum=8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8 ;;
+            aarch64|arm64) arch=arm64; sum=325e971b6ba9bfa504672e29be93c24981eeb1c07576d730e9f7c8805afff0c6 ;;
+            *) echo "no pinned actionlint build for $(uname -m)" >&2; exit 1 ;;
+          esac
+          dest="${RUNNER_TEMP:-/tmp}/actionlint-${ver}"
+          mkdir -p "$dest"
+          file="actionlint_${ver}_linux_${arch}.tar.gz"
+          url="https://github.com/rhysd/actionlint/releases/download/v${ver}/${file}"
+          curl -sSfL --retry 3 --retry-delay 2 --max-time 60 -o "${dest}/${file}" "$url"
+          echo "${sum}  ${dest}/${file}" | sha256sum -c
+          tar -xzf "${dest}/${file}" -C "$dest" actionlint
+          files=()
+          for f in .github/workflows/*.yml .github/workflows/*.yaml; do
+            [ -e "$f" ] || continue
+            case "$(basename "$f")" in
+              feeds.yml|pipecheck.yml) continue ;;
+            esac
+            files+=("$f")
+          done
+          [ "${#files[@]}" -gt 0 ]
+          # -shellcheck= : stylistic shellcheck findings must not fail CI. actionlint's own checks still do.
+          "$dest/actionlint" -shellcheck= "${files[@]}"
       - name: Mount the data branch at ./data
         uses: ./.github/actions/data
       - uses: actions/setup-node@v4

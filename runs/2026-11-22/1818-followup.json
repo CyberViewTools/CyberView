@@ -1,0 +1,94 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T18:18:15Z",
+  "finished_at": "2026-11-22T18:24:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Charleston County cyber incident update residents data",
+    "eMudhra Microsoft distrust roots revoked intermediate CAs",
+    "Quantum Systems Cyberangriff Bundeswehr Drohnen",
+    "Bulgaria Vassilev cyberespionage government networks 62 million pages"
+  ],
+  "pages_read": [
+    {
+      "url": "https://hackread.com/usda-cyber-incident-disrupts-farmer-payments/",
+      "title": "USDA Cyber Incident Disrupts Farmer Payments (Hackread, 22 Nov)",
+      "used_in": "usda-security-incident-systems-offline-2026-11"
+    },
+    {
+      "url": "https://www.engadget.com/2324179/fbi-and-usda-were-reportedly-targeted-in-back-to-back-cyberattacks/",
+      "title": "FBI and USDA were reportedly targeted in back-to-back cyberattacks (Engadget, 21 Nov)",
+      "used_in": "usda-security-incident-systems-offline-2026-11 (validation note only)"
+    },
+    {
+      "url": "https://bleepingcomputer.com/news/security/emudhra-revokes-8-more-ca-certificates-after-private-key-mishap",
+      "title": "eMudhra revokes 8 more CA certificates after private key mishap (BleepingComputer, 11 Nov)",
+      "used_in": "emudhra-ca-revocations-microsoft-distrust-2026-11"
+    },
+    {
+      "url": "https://www.csoonline.com/article/4239634/emudhra-quits-global-tls-certificate-market-after-compromise-of-ca-signing-keys-2.html",
+      "title": "eMudhra quits global TLS certificate market (CSO, 23 Oct)",
+      "used_in": "none: predates the event"
+    },
+    {
+      "url": "https://www.produktion.de/ruestung-aerospace/cyberangriff-auf-quantum-systems-bundeswehr-zieht-drohnen-laut-bericht-vorsorglich-ab/2766860",
+      "title": "Cyberangriff auf Quantum Systems (produktion.de, 13 Nov)",
+      "used_in": "quantum-systems-drone-maker-cyberattack-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.bta.bg/en/news/bulgaria/1180195-government-uncovers-apparent-years-long-breach-of-administrative-networks",
+      "title": "Government Uncovers Apparent Years-Long Breach of Administrative Networks (BTA, 5 Aug)",
+      "used_in": "bulgaria-government-networks-five-year-espionage-2026-11"
+    },
+    {
+      "url": "https://abcnews4.com/news/local/sled-charleston-county-investigating-after-cybersecurity-incident-on-county-network",
+      "title": "SLED, Charleston County investigating after 'cybersecurity incident' (WCIV, 17 Nov)",
+      "used_in": "charleston-county-sc-cyber-incident-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "usda-security-incident-systems-offline-2026-11",
+    "emudhra-ca-revocations-microsoft-distrust-2026-11",
+    "bulgaria-government-networks-five-year-espionage-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "quantum-systems-drone-maker-cyberattack-2026-11",
+      "url": "https://www.produktion.de/ruestung-aerospace/cyberangriff-auf-quantum-systems-bundeswehr-zieht-drohnen-laut-bericht-vorsorglich-ab/2766860"
+    },
+    {
+      "id": "charleston-county-sc-cyber-incident-2026-11",
+      "url": "https://abcnews4.com/news/local/sled-charleston-county-investigating-after-cybersecurity-incident-on-county-network"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Quantum Systems: prosecutors reportedly investigating",
+      "url": "https://ms-aktuell.de/welt/quantum-systems-cyberangriff-13-11-2026/",
+      "note": "Headline says the judiciary is investigating; page answered 403, produktion.de names no prosecutor. Needs another source naming the Staatsanwaltschaft.",
+      "priority": 2
+    },
+    {
+      "title": "USDA: restoration of FSA/NRCS systems not yet confirmed",
+      "url": "https://www.theguardian.com/us-news/2026/nov/21/usda-fbi-outages-cyber-attack",
+      "note": "Fordyce expected most systems back by Friday evening (Hackread); no confirmation of restoration read. Guardian page could not be fetched.",
+      "priority": 2
+    },
+    {
+      "title": "Charleston County: county's own notice not read",
+      "url": "https://www.charlestoncounty.gov/news.php",
+      "note": "County site returned an access-block page; still no word on whose data was taken.",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [
+    "www.theguardian.com (fetch refused)",
+    "ms-aktuell.de (403)",
+    "www.charlestoncounty.gov (access-block page)"
+  ],
+  "notes": "Picked 5 by rule after excluding events updated or follow-up-checked in the last 24 h. USDA: added Hackread (systems named, Fordyce: no PII). eMudhra: added BleepingComputer as second publisher (corroborated), date_note, removed unsupported supply-chain tag, action marked General advice; correction file written. Bulgaria: added BTA 5 Aug report of the ministry's first disclosure. Quantum Systems and Charleston County: nothing newer than the record.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

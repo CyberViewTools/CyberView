@@ -1,5 +1,5 @@
 {
-  "action": "Inventory certificates chaining to eMudhra roots and replace them with certificates from another CA now. Apply current Windows and macOS updates so the distrusted roots are removed, including for curl and git.",
+  "action": "General advice: inventory certificates chaining to eMudhra roots and replace them with certificates from another CA now. Apply current Windows and macOS updates so the distrusted roots are removed, including for curl and git.",
   "actor": "",
   "attack": [],
   "category": "incident",
@@ -28,21 +28,27 @@
   "sources": [
     {
       "name": "iTnews",
-      "url": "https://www.itnews.com.au/news/emudhra-fiasco-widens-eight-more-cas-revoked-microsoft-pulls-trust-630303"
+      "url": "https://www.itnews.com.au/news/emudhra-fiasco-widens-eight-more-cas-revoked-microsoft-pulls-trust-630303",
+      "published": "2026-11-13"
+    },
+    {
+      "name": "BleepingComputer, 11 Nov 2026",
+      "url": "https://bleepingcomputer.com/news/security/emudhra-revokes-8-more-ca-certificates-after-private-key-mishap",
+      "published": "2026-11-11"
     }
   ],
   "status": "confirmed",
   "summary": "The Indian certificate authority revoked eight more intermediate CAs after tracing weak keys from its October compromise to one line in a home-made script that cut ECDSA private values to a single byte. Microsoft removes all 10 remaining eMudhra roots from Windows, Edge and Azure from November 16; Apple ends trust on November 30. eMudhra is leaving public TLS and has withdrawn its assurance that RSA issuers were unaffected.",
   "tags": [
-    "supply-chain",
     "identity"
   ],
   "title": "eMudhra revokes eight more CAs as Microsoft pulls trust in all its roots",
-  "updated_at": "2026-11-17T23:02:00Z",
+  "updated_at": "2026-11-22T18:20:02Z",
+  "date_note": "Date is iTnews's report (13 Nov) of Microsoft's root removal; BleepingComputer (11 Nov) says eMudhra revoked the eight further RSA intermediates on 7 November.",
   "validation": {
-    "checked_at": "2026-11-17T23:02:00Z",
-    "note": "One established outlet reporting the company's incident findings and vendor responses.",
-    "state": "single_source"
+    "checked_at": "2026-11-22T18:20:02Z",
+    "note": "Two independent publishers (iTnews, BleepingComputer) state the core facts: eight more intermediate CAs revoked, a script bug that reduced ECDSA private keys to a single byte, and eMudhra's exit from public TLS. Microsoft removing all 10 remaining roots from 16 November and Apple ending trust on 30 November are stated by iTnews only; BleepingComputer gives 16 November as the date eMudhra stops issuing under G1 and says the RSA keys were not weakened but eMudhra could not show it handled them under its policies.",
+    "state": "corroborated"
   },
   "review": {
     "state": "passed",

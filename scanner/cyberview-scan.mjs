@@ -33,6 +33,7 @@ import { toCbom } from "./lib/cbom.mjs";
 import { cryptoNotes } from "./lib/sbom-crypto.mjs";
 import { kevGaps, gapsText } from "./lib/coverage-gap.mjs";
 import { patchHour } from "./lib/patchhour.mjs";
+import { inferGraph, connectionsFrom, toMermaid, toDot, graphHtml } from "./lib/depmap.mjs";
 import { cleanFlaws } from "./lib/match.mjs";
 import { pqcCurveAvailable } from "./lib/probe.mjs";
 import { toHtml, diffHtml } from "./lib/html.mjs";
@@ -164,6 +165,28 @@ function patchHourCmd(a, io) {
   return 0;
 }
 
+/** A map from a report, plus an optional connections file. No target is contacted. */
+function graphCmd(a, io) {
+  if (!a.report) return fail(io, ["--report report.json is required"], 1);
+  if (!existsSync(a.report)) return fail(io, [`not found: ${a.report}`], 1);
+  let report;
+  try { report = JSON.parse(io.readFile(a.report)); } catch { return fail(io, ["the report is not JSON"], 1); }
+  const graph = inferGraph(report);
+  if (a.connections) {
+    if (!existsSync(a.connections)) return fail(io, [`not found: ${a.connections}`], 1);
+    graph.imported = connectionsFrom(io.readFile(a.connections));
+  }
+  const out = a.out || ".";
+  mkdirSync(out, { recursive: true, mode: 0o700 });
+  const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });
+  w("graph.json", JSON.stringify(graph, null, 2) + "\n");
+  w("graph.mmd", toMermaid(graph));
+  w("graph.dot", toDot(graph));
+  w("graph.html", graphHtml(graph));
+  io.out(`Graph: ${graph.nodes.length} node(s), ${graph.edges.length} inferred edge(s), ${graph.mentioned.length} name(s) mentioned and not scanned. Nothing was contacted.`);
+  return 0;
+}
+
 /** `diff` compares two reports already on disk. It does not scan again and it sends nothing. */
 function diffCmd(a, io) {
   if (!a.before || !a.after) return fail(io, ["--before FILE and --after FILE are required (two report.json files)"], 1);
@@ -219,6 +242,7 @@ export async function main(argv, io = {}) {
   if (cmd === "diff") return diffCmd(a, io);
   if (cmd === "gaps") return gapsCmd(a, io);
   if (cmd === "patch-hour") return patchHourCmd(a, io);
+  if (cmd === "graph") return graphCmd(a, io);
 
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----

@@ -33,6 +33,7 @@ import { toCbom } from "../../scanner/lib/cbom.mjs";
 import { cryptoNotes } from "../../scanner/lib/sbom-crypto.mjs";
 import { kevGaps, FINGERPRINT_PRODUCTS } from "../../scanner/lib/coverage-gap.mjs";
 import { patchHour } from "../../scanner/lib/patchhour.mjs";
+import { inferGraph, connectionsFrom } from "../../scanner/lib/depmap.mjs";
 import { tlsLegacyAvailable } from "../../scanner/lib/probe.mjs";
 
 const FIX = new URL("../fixtures/scanner/", import.meta.url).pathname, SNAP = join(FIX, "snapshot");
@@ -1111,6 +1112,20 @@ test("patch-hour sheet is links only", () => {
   assert.match(text, /https:\/\/vendor.example\/adv/);
   assert.match(text, /does not scan/);
   assert.equal(patchHour({ findings: [{ cve: "CVE-1", fix: { details: "javascript:alert(1)" } }] }).includes("javascript:"), false);
+});
+
+test("dependency map: co-location is low confidence and an outside name is not scanned", () => {
+  const graph = inferGraph({ hosts: [
+    { address: "10.0.0.1", names: ["app.internal"], services: [{ port: 443, product: "nginx" }, { port: 5432, product: "PostgreSQL" }], http: [{ port: 443, redirect: "https://db.internal/" }, { port: 80, redirect: "https://outside.example/" }], tls: [{ cert: { san: "DNS:app.internal, DNS:cdn.example" } }] },
+    { address: "10.0.0.2", names: ["db.internal"], services: [{ port: 5432, product: "PostgreSQL" }], http: [], tls: [] },
+  ] });
+  const colo = graph.edges.find((e) => e.kind === "co-location");
+  assert.equal(colo.confidence, "low");
+  assert.ok(graph.edges.some((e) => e.kind === "redirect" && e.confidence === "medium"));
+  assert.ok(graph.mentioned.some((m) => m.name === "outside.example"));
+  assert.ok(graph.mentioned.some((m) => m.name === "cdn.example"));
+  assert.equal(graph.mentioned.some((m) => m.name === "db.internal"), false);
+  assert.deepEqual(connectionsFrom("10.0.0.1 10.0.0.2 5432\n"), [{ local: "10.0.0.1", dest: "10.0.0.2", port: 5432, kind: "imported" }]);
 });
 
 test("SNMP sysDescr is not turned into a product without a cited mapping", () => {

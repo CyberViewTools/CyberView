@@ -149,6 +149,10 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 
 `diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
+## Dependency map
+
+`graph --report report.json` writes `graph.json`, `graph.mmd`, `graph.dot`, and `graph.html` from that report. Two services on one host are a low-confidence co-location, not a proof one calls the other. A redirect or certificate name that is not in the report is listed as mentioned and is not scanned. `--connections FILE` reads a file the operator already captured (`local dest port`, or a JSON list). The scanner does not log in to collect it.
+
 ## No new probe
 
 `gaps --data DIR` lists KEV products the installed fingerprints do not name. It reads the snapshot and contacts nothing.

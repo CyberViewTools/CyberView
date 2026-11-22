@@ -25,6 +25,7 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | scan-kev-coverage | KEV products with no installed fingerprint | Review | Implementation | `gaps`, no network ([handoff](handoff/scan-kev-coverage.md)) |
 | scan-patch-hour | Link sheet from a report | Review | Implementation | `patch-hour`, links only ([handoff](handoff/scan-patch-hour.md)) |
 | scan-snmp-sysdescr | sysDescr stays an observation | Review | Implementation | no cited product regex, so none was added ([handoff](handoff/scan-snmp-sysdescr.md)) |
+| scan-dep-map | Inferred links and an imported connections file | Review | Implementation | co-location is not a dependency ([handoff](handoff/scan-dep-map.md)) |
 
 ## Parked (owner decision pending)
 

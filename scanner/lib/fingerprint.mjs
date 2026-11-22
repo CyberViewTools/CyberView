@@ -48,6 +48,9 @@ export function fromSsh(banner, port = 22) {
   }
   if ((x = /^dropbear_(\d{4}\.\d+)$/i.exec(soft))) return [svc(port, "ssh", "Dropbear SSH Project", "Dropbear SSH", x[1], { source: "SSH banner", evidence: ev })];
   if ((x = /^libssh[_-](\d+\.\d+(?:\.\d+)?)$/i.exec(soft))) return [svc(port, "ssh", "libssh", "libssh", x[1], { source: "SSH banner", evidence: ev })];
+  // OpenSSH whose version could not be read (e.g. "SSH-2.0-OpenSSH" or "OpenSSH_for_Windows" with the number stripped):
+  // name the product so the finding is "OpenSSH, version not read" (low confidence), not an anonymous "SSH server".
+  if (/^OpenSSH(?:[_-]|$)/i.test(soft)) return [svc(port, "ssh", "OpenBSD", "OpenSSH", "", { source: "SSH banner", evidence: ev, guessed: true })];
   return [svc(port, "ssh", "", "", "", { label: `SSH server (${clip(soft, 40)})`, source: "SSH banner", evidence: ev, guessed: true })];
 }
 
@@ -78,7 +81,12 @@ export function fromGreeting(banner, port) {
     const m = re.exec(text);
     if (m) return [svc(port, proto, vendor, product, m[1] || "", { distro: distroOf(first), source: `${proto.toUpperCase()} greeting`, evidence: `${proto.toUpperCase()} greeting: ${first}`, guessed: !m[1] })];
   }
-  const proto = /^220[ -]/.test(first) ? (port === 21 ? "ftp" : "smtp") : /^\+OK/.test(first) ? "pop3" : /^\* OK/.test(first) ? "imap" : "";
+  // a bare "220" greeting is FTP or SMTP: decide by what the banner says, falling back to the port only when it is silent
+  // (an FTP service on a non-21 port must not be mislabelled SMTP, and vice versa).
+  let proto = "";
+  if (/^220[ -]/.test(first)) proto = /\bftp\b/i.test(first) ? "ftp" : /\b(?:e?smtp|mail)\b/i.test(first) ? "smtp" : port === 21 ? "ftp" : [25, 465, 587].includes(port) ? "smtp" : "";
+  else if (/^\+OK/.test(first)) proto = "pop3";
+  else if (/^\* OK/.test(first)) proto = "imap";
   return proto ? [svc(port, proto, "", "", "", { label: `${proto.toUpperCase()} server`, source: "greeting", evidence: `greeting: ${first}`, guessed: true })] : [];
 }
 

@@ -76,6 +76,13 @@ the nearest deadline and EPSS. Confidence: high when the service stated a versio
 distribution package build (backports) or an inferred product; low when the version could not be read or no range
 exists.
 
+The summary's **headline counts** (known exploited, Critical, Act, past-deadline) are the confident findings only;
+low-confidence rows — where no version was read, the product was only inferred, or a certificate merely names a vendor —
+are still listed in full and in `report.json`/`findings.csv`, and counted as `low_confidence`, but never inflate those
+numbers, so a page of "may-be-affected" guesses cannot read as a wall of confirmed criticals. A banner the scanner can
+place but not version (an OpenSSH with no release string, a bare `220` FTP/SMTP greeting) is named by its product at low
+confidence rather than dropped to an anonymous "server", so it still shows up as something to check.
+
 ## Fix information
 
 Each finding carries the fixed versions (the ends of NVD's ranges and the guide's `fixed` list), the guide's workarounds,

@@ -183,8 +183,10 @@ below; a clean result does not cover it), **3** when the scan stopped early, and
 Written to `cyberview-scan-<time>/` (or `--out`):
 
 - `summary.txt`: hosts, services, findings, how many are known exploited, Critical, at priority Act or past CISA's
-  deadline, a **Coverage** section when the scan could not see everything (hosts that answered on no port, filtered
-  ports, banners cut off before a version was read, ports left unchecked when a limit was hit), then each finding.
+  deadline — these headline counts are the **confident** findings only; low-confidence guesses are counted separately as
+  `low_confidence` and still listed in full, so a pile of maybes never reads as confirmed criticals — a **Coverage**
+  section when the scan could not see everything (hosts that answered on no port, filtered ports, banners cut off before a
+  version was read, ports left unchecked when a limit was hit), then each finding.
 - `report.json`: everything, including the attestation, the scope, the limits used, what was sent and every service seen.
 - `findings.csv`: one row per CVE and place it was seen.
 - `report.sarif`: SARIF 2.1.0, for dashboards that read code-scanning results.
@@ -199,7 +201,9 @@ Each finding shows the CVE, where it was seen (address, port, product, the versi
   the patch-queue points with the reason for each point.
 - **Confidence**: high when the service stated a version inside the affected range; medium when it is a Linux
   distribution's package build (the distribution may have backported the fix under the old version number) or the
-  product was inferred; low when the product was seen but its version could not be read.
+  product was inferred; low when the product was seen but its version could not be read. A service the scanner can name
+  but not version (an OpenSSH banner with no release string, a bare `220` FTP or SMTP greeting) is reported at low
+  confidence under its product, so you still see it as something to check — it just stays out of the headline counts.
 - **Fix**: the fixed versions (from NVD's ranges and the vendor's advisory), workarounds, CISA's required action, the
   vendor advisory's link, and the CVE's page on CyberView. Check steps, signs of compromise and detection resources are
   linked there, not copied. Exploitation analyses and fix guides are written by CyberView AI (a Claude model) from vendor

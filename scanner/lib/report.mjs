@@ -6,11 +6,15 @@ import { VERSION, INFO_URL, USER_AGENT } from "./probe.mjs";
 
 export function summarize(hosts, findings) {
   const up = hosts.filter((h) => h.up), services = up.reduce((n, h) => n + (h.services || []).length, 0);
+  // the headline counts are the confident findings; low-confidence rows (no version read, product only inferred, a cert
+  // merely naming a vendor) stay in the full list, JSON and CSV but must not inflate "known exploited / Critical / Act"
+  const strong = findings.filter((f) => f.confidence !== "low");
   return {
     hosts_in_scope: hosts.length, hosts_up: up.length, open_ports: up.reduce((n, h) => n + (h.ports || []).filter((p) => p.state === "open").length, 0), services_identified: services,
-    findings: findings.length, version_confirmed: findings.filter((f) => f.state === "affected").length, known_exploited: findings.filter((f) => f.kev).length,
-    critical: findings.filter((f) => f.rating && f.rating.band === "Critical").length, act: findings.filter((f) => f.priority && f.priority.decision === "act").length,
-    overdue: findings.filter((f) => f.overdue).length, observations: up.reduce((n, h) => n + (h.observations || []).length, 0),
+    findings: findings.length, low_confidence: findings.length - strong.length,
+    version_confirmed: findings.filter((f) => f.state === "affected").length, known_exploited: strong.filter((f) => f.kev).length,
+    critical: strong.filter((f) => f.rating && f.rating.band === "Critical").length, act: strong.filter((f) => f.priority && f.priority.decision === "act").length,
+    overdue: strong.filter((f) => f.overdue).length, observations: up.reduce((n, h) => n + (h.observations || []).length, 0),
   };
 }
 
@@ -130,7 +134,7 @@ export function header({ scope, scopeFile, scopeHash, settings, allowPublic, por
 export function summaryText(report) {
   const s = report.summary, L = [];
   L.push(`Hosts in scope ${s.hosts_in_scope}, up ${s.hosts_up}; open ports ${s.open_ports}; services identified ${s.services_identified}.`);
-  L.push(`Findings ${s.findings} (${s.version_confirmed} with the version inside an affected range): ${s.known_exploited} known exploited (CISA), ${s.critical} rated Critical, ${s.act} at priority Act, ${s.overdue} past CISA's deadline.`);
+  L.push(`Findings ${s.findings} (${s.version_confirmed} with the version inside an affected range${s.low_confidence ? `; ${s.low_confidence} low-confidence, listed but not in the counts below` : ""}): ${s.known_exploited} known exploited (CISA), ${s.critical} rated Critical, ${s.act} at priority Act, ${s.overdue} past CISA's deadline.`);
   const cov = report.coverage;
   if (cov && !cov.complete) {
     L.push("");

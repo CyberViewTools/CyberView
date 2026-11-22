@@ -3,6 +3,7 @@
 // dashboards), an inventory CSV (the Vulnerabilities page's "My software" view reads it), and a plain-text summary.
 // Written to the operator's own disk only; nothing here sends anything anywhere.
 import { VERSION, INFO_URL, USER_AGENT } from "./probe.mjs";
+import { railHeaderText, railSummaryLine } from "./paths.mjs";
 
 export function summarize(hosts, findings) {
   const up = hosts.filter((h) => h.up), services = up.reduce((n, h) => n + (h.services || []).length, 0);
@@ -101,7 +102,7 @@ export function toSarif(report) {
 }
 
 /* ---- the run header and the text summary ---- */
-export function header({ scope, scopeFile, scopeHash, settings, allowPublic, ports, allPorts = false, udp = [], udpSends = {}, data, sends }) {
+export function header({ scope, scopeFile, scopeHash, settings, allowPublic, ports, allPorts = false, udp = [], udpSends = {}, data, sends, paths = null }) {
   const a = scope.attestation, L = [];
   L.push("CyberView Scanner " + VERSION + " - detection only: it reads versions and matches them with published data; it never exploits, logs in or changes anything.");
   L.push("");
@@ -118,6 +119,7 @@ export function header({ scope, scopeFile, scopeHash, settings, allowPublic, por
   L.push(`  Ports:       ${allPorts ? "all 65535 TCP ports (--all-ports; owned private ranges only)" : ports.length > 40 ? `${ports.length} TCP ports ${ports[0]}-${ports[ports.length - 1]}` : ports.join(", ")}`);
   if (scope.discover) L.push(`  Discovery:   ${[scope.discover.cidr ? "cidr sweep" : "", scope.discover.domains.length ? `${scope.discover.domains.length} owned domain(s)${scope.discover.ct ? " + Certificate Transparency" : ""}` : "", scope.discover.import.length ? `${scope.discover.import.length} import file(s)` : "", scope.discover.cloud.length ? `${scope.discover.cloud.length} cloud inventory file(s)` : ""].filter(Boolean).join(", ") || "configured"} (every host re-checked against this scope)`);
   if (udp.length) L.push(`  UDP:         ${udp.join(", ")} (one benign read-only query each)`);
+  L.push(`  Path rail:   ${railHeaderText(paths)}`);
   L.push("");
   L.push("LIMITS");
   L.push(`  ${settings.rate} new connections/s, ${settings.concurrency} open at once (${settings.hostConcurrency} per host), at most ${settings.hostBudget} per host and ${settings.budget} in all, stop after ${settings.minutes} min`);
@@ -148,6 +150,7 @@ export function summaryText(report) {
   } else if (report.run.interrupted) {
     L.push(`The scan stopped early (${report.run.stop_reason}): the results cover only what was checked.`);
   }
+  const railLine = railSummaryLine(cov && cov.paths); if (railLine) { L.push(""); L.push(railLine); }
   for (const f of report.findings.slice(0, 25)) {
     L.push("");
     L.push(`#${f.rank} ${f.cve} ${f.title}`.slice(0, 160));

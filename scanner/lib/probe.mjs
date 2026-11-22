@@ -7,11 +7,14 @@
 //   - on a web port, one HTTP request for the root page with the scanner's User-Agent, no redirects followed
 //   - on a TLS port, a normal TLS handshake to read the certificate (the certificate is read, not trusted)
 // It sends no other bytes: no credentials, no crafted input, no exploit, nothing that changes the target.
+// The one exception, OFF by default: with --paths, getPath() makes hint-gated GETs of frozen literal paths (scanner/lib/paths.mjs),
+// at most PATHS_PER_HOST per host, each on its own connection through the same Limiter.
 import net from "node:net";
 import tls from "node:tls";
 import http from "node:http";
 import https from "node:https";
 import { TIMEOUTS } from "./limits.mjs";
+import { RAIL_PATHS, PATHS_PER_HOST } from "./paths.mjs";
 
 export const VERSION = "1.0.0";
 export const INFO_URL = "https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner";
@@ -30,6 +33,7 @@ export const SENDS = {
   ssh: `its identification line "${SSH_IDENT}"`,
   http: `one HTTP request for the root page (method GET, path "/") with User-Agent "${USER_AGENT}"`,
   tls: "a standard TLS handshake (the certificate is read, never trusted or used)",
+  paths: `only with --paths (off by default): at most ${PATHS_PER_HOST} extra HTTP GET requests per host, each for a frozen literal path in scanner/lib/paths.mjs and only when that host's own root page, headers, certificate or port already hint at the product; same User-Agent, redirects recorded, not followed, only a product/version token kept`,
 };
 
 /**
@@ -105,17 +109,41 @@ function readFor(sock, ms, maxBytes) {
   });
 }
 
-/** One request for the root page over the open socket; the body is cut at maxBytes; redirects are recorded, not followed. */
-function httpGet(sock, useTls, host, port, timeouts) {
+/**
+ * The path rail (scanner/lib/paths.mjs; only with --paths): ONE GET of a frozen literal path on its own connection, with the
+ * same User-Agent; redirects recorded, not followed; body cut at maxBytes (the caller keeps only a parsed token). A path
+ * that is not in the frozen table is refused HERE, before any connection is made. The caller takes a Limiter slot for it.
+ * Never throws. -> { status, headers, body, raw, truncated } or { status: 0, error }
+ */
+export async function getPath(ip, port, path, { tls: useTls = false, servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS } = {}) {
+  if (typeof path !== "string" || !RAIL_PATHS.includes(path)) return { status: 0, error: "refused: not a frozen rail path" };
+  let sock = null;
+  const kill = () => { try { sock && sock.destroy(); } catch { /* closed */ } };
+  if (signal) { if (signal.aborted) return { status: 0, error: "stopped" }; signal.addEventListener("abort", kill, { once: true }); }
+  const hard = setTimeout(kill, timeouts.connectMs + timeouts.readMs * 2 + 1000);
+  try {
+    sock = await connect(ip, port, useTls, servername, timeouts.connectMs);
+    return (await httpGet(sock, useTls, hostHeader || ip, port, timeouts, path)) || { status: 0, error: "timeout" };
+  } catch (e) {
+    return { status: 0, error: String((e && (e.code || e.message)) || e).slice(0, 80) };
+  } finally {
+    clearTimeout(hard); if (signal) signal.removeEventListener("abort", kill); kill();
+  }
+}
+
+/** One GET over the open socket: the root page, or (from getPath only) a frozen rail path; the body is cut at maxBytes;
+ *  redirects are recorded, not followed. */
+function httpGet(sock, useTls, host, port, timeouts, railPath = "") {
   return new Promise((resolve) => {
     const lib = useTls ? https : http, hostH = /:/.test(host) && net.isIP(host) === 6 ? `[${host}]` : host;
-    const req = lib.request({ method: "GET", path: "/", createConnection: () => sock, timeout: timeouts.readMs,
+    const req = lib.request({ method: "GET", path: railPath && RAIL_PATHS.includes(railPath) ? railPath : "/", createConnection: () => sock, timeout: timeouts.readMs,
       headers: { "User-Agent": USER_AGENT, Accept: "text/html,*/*;q=0.5", Connection: "close", Host: [80, 443].includes(port) ? hostH : `${hostH}:${port}` } });
     const finish = (v) => { clearTimeout(t); resolve(v); };
     const t = setTimeout(() => { req.destroy(); finish(null); }, timeouts.readMs + 500);
     req.on("response", (res) => {
       const parts = []; let n = 0;
-      const end = () => finish({ status: res.statusCode || 0, headers: res.headers, body: Buffer.concat(parts).toString("utf8").slice(0, timeouts.maxBytes) });
+      const end = () => { const buf = Buffer.concat(parts).subarray(0, timeouts.maxBytes);
+        finish({ status: res.statusCode || 0, headers: res.headers, body: buf.toString("utf8").slice(0, timeouts.maxBytes), ...(railPath ? { raw: buf, truncated: n >= timeouts.maxBytes } : {}) }); };
       res.on("data", (d) => { if (n < timeouts.maxBytes) { parts.push(d); n += d.length; } if (n >= timeouts.maxBytes) { res.destroy(); end(); } });
       res.on("end", end); res.on("error", end); res.on("close", end);
     });

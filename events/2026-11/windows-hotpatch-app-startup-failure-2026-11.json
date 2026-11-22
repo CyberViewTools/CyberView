@@ -20,11 +20,11 @@
     "Windows Autopatch"
   ],
   "first_seen": "2026-11-20T10:25:30Z",
-  "updated_at": "2026-11-22T19:57:09Z",
+  "updated_at": "2026-11-22T20:10:03Z",
   "summary": "Microsoft told IT administrators in service alert WI1559710, reported by BleepingComputer, that devices with the November 2026 hotpatch, delivered through Windows Autopatch to Windows 11 24H2 and later, may show error 0xC0000099 when installing, launching or running some apps, mainly those loading the 32-bit msi.dll. Standard November Patch Tuesday updates are not affected. Microsoft gives a registry workaround until a fix is available; heise advises against uninstalling the hotpatch.",
   "plain": "Microsoft says a November hotpatch can stop some apps from installing or starting on Windows 11 machines updated through Autopatch. A registry workaround is available.",
   "exec": "Microsoft confirms hotpatched Windows 11 fleets may see some apps fail to install or start.",
-  "action": "Microsoft's workaround, as reported by BleepingComputer: back up the registry, set HotPatchTableSize under HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management to 2000, then restart. heise advises not uninstalling the hotpatch.",
+  "action": "Microsoft's workaround, as reported by BleepingComputer: back up the registry, set HotPatchTableSize under HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management to 2000 (heise gives the value as hexadecimal), then restart. heise advises not uninstalling the hotpatch.",
   "tags": [],
   "sources": [
     {
@@ -34,7 +34,8 @@
     },
     {
       "name": "heise online: Microsoft Hotpatching: Patchday-Flicken legen Apps lahm",
-      "url": "https://www.heise.de/news/Microsoft-Patchday-Hotpatches-erzeugen-Startprobleme-mit-Apps-11532241.html"
+      "url": "https://www.heise.de/news/Microsoft-Patchday-Hotpatches-erzeugen-Startprobleme-mit-Apps-11532241.html",
+      "published": "2026-11-20"
     }
   ],
   "source_tier": "established",
@@ -45,13 +46,16 @@
     "note": "BleepingComputer (quoting Microsoft's service alert WI1559710) and heise each report the issue; Microsoft's alert itself was not read."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T10:27:03Z",
+    "state": "corrected",
+    "at": "2026-11-22T20:10:03Z",
     "first_at": "2026-11-20T10:27:03Z",
-    "note": "Checked against heise: Windows 11 24H2+ via Autopatch, error 0xC0000099, 32-bit msi.dll, standard updates unaffected, uninstall advice, HotPatchTableSize 2000 hex; heise cites Microsoft WI1559710",
-    "flags": []
+    "note": "evidence quote not on page word for word (now BleepingComputer's step text); heise source missing published day (2026-11-20); action now notes heise gives the value as hexadecimal. Title, date, error 0xC0000099, 24H2+, 32-bit msi.dll, standard updates unaffected, uninstall advice checked against bot",
+    "flags": [],
+    "categories": [
+      "action"
+    ]
   },
-  "qa_checked_at": "2026-11-20T10:27:03Z",
+  "qa_checked_at": "2026-11-22T20:10:03Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -65,7 +69,7 @@
   "evidence": [
     {
       "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-confirms-app-installation-launch-issues-after-hotpatch/",
-      "quote": "Set the \"HotPatchTableSize\" value to \"2000\" and click OK."
+      "quote": "set the Value to \"2000\". Click OK."
     }
   ]
 }

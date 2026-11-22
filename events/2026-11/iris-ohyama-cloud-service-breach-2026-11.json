@@ -1,45 +1,61 @@
 {
-  "action": "Iris Ohyama account holders: change your password and change it anywhere else you used the same one, since the strength of the protection is not stated. Watch for emails or messages pretending to be from the company.",
+  "action": "General advice: Iris Plaza customers should change their password there and anywhere they reused it, and watch for messages pretending to be from the shop; Iris Plaza says it will contact those affected individually by email and other means.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "Japan",
   "cves": [],
-  "date": "2026-11-12",
-  "date_note": "Reported in a Nov 6-12 roundup; exact disclosure day not confirmed",
-  "exec": "A supplier breach affecting about 7.7 million customers, with password protection strength not disclosed.",
+  "date": "2026-11-05",
+  "date_note": "Day Iris Plaza announced the possible leak and its figures (second report), per Netshop Impress and ScanNetSecurity. A suspicious file was found on 28 October and unauthorised access was announced on 29 October. Earlier this record used 12 November, the end of a weekly roundup.",
+  "evidence": [
+    {
+      "url": "https://netshop.impress.co.jp/n/2026/11/09/17001",
+      "quote": "対象データは、会員約580万人分と非会員約190万人分の計約770万人分。"
+    },
+    {
+      "url": "https://scan.netsecurity.ne.jp/article/2026/11/16/56789.html",
+      "quote": "アイリスオーヤマ公式通販サイト「アイリスプラザ」に不正アクセス、約770万人の個人情報が漏えいした可能性"
+    }
+  ],
+  "exec": "An online retailer says data of about 7.7 million people, including encrypted passwords, may have leaked from an external cloud service.",
   "first_seen": "2026-11-17T22:08:00Z",
   "geo_basis": "victim HQ",
   "lat": 38.268,
   "lng": 140.87,
-  "org": "Iris Ohyama",
+  "org": "Iris Ohyama (Iris Plaza)",
   "pin_type": "victim",
   "place": "Sendai",
-  "plain": "Japanese household goods maker Iris Ohyama said a break-in at an outside cloud service may have exposed personal data of about 7.7 million people, including account passwords that it says were encrypted.",
+  "plain": "Iris Plaza, which runs Iris Ohyama's official online shop in Japan, says personal data of about 7.7 million people may have leaked from an outside cloud service. Card details were not stored there.",
   "products": [],
   "records_affected": 7700000,
   "sector": "Consumer goods",
   "severity": 2,
-  "source_tier": "aggregator",
+  "source_tier": "established",
   "sources": [
     {
-      "name": "Privacy Guides roundup",
-      "url": "https://www.privacyguides.org/news/2026/11/13/data-breach-roundup-nov-6-12-2026/"
+      "name": "Netshop Impress, 9 November 2026",
+      "url": "https://netshop.impress.co.jp/n/2026/11/09/17001",
+      "published": "2026-11-09"
+    },
+    {
+      "name": "ScanNetSecurity, 16 November 2026",
+      "url": "https://scan.netsecurity.ne.jp/article/2026/11/16/56789.html",
+      "published": "2026-11-16"
     }
   ],
   "status": "confirmed",
-  "summary": "Iris Ohyama says unauthorised access to a third-party cloud service it used exposed personal data of about 7.7 million people, per a roundup relaying the company's disclosure; the company is still determining the full scope. Exposed data includes names, addresses, phone numbers, emails, gender, dates of birth and account passwords. The company says the passwords were encrypted but has not named the algorithm.",
+  "summary": "Iris Plaza, which runs Iris Ohyama's official online shop, said on 5 November that data of about 5.8 million members and about 1.9 million non-members, about 7.7 million in total, may have leaked after unauthorised access to an external cloud service. Member data may include names, addresses, emails, gender, passwords (stored encrypted) and birth dates; card data was not affected, Netshop Impress reports. The actual number is still under investigation.",
   "tags": [
     "third-party",
     "cloud",
     "data-breach"
   ],
-  "title": "Iris Ohyama: cloud service breach affects about 7.7 million people",
-  "updated_at": "2026-11-19T02:27:34Z",
+  "title": "Iris Ohyama's Iris Plaza shop: data of about 7.7 million people may have leaked from cloud service",
+  "updated_at": "2026-11-22T20:12:18Z",
   "validation": {
-    "state": "disputed",
-    "checked_at": "2026-11-19T02:27:46Z",
-    "note": "Second review: Only an aggregator roundup (Privacy Guides) loaded; BleepingComputer original returns 403 and no company notice found, so 'confirmed' status, 7.7M figure and date are unverified; summary and plain reworded to match roundup"
+    "state": "corroborated",
+    "checked_at": "2026-11-22T20:12:18Z",
+    "note": "Follow-up: Netshop Impress (9 Nov) and ScanNetSecurity (16 Nov) each report Iris Plaza's 5 November second report with about 7.7 million people; Netshop Impress gives the member/non-member split, data items, encrypted passwords, unaffected card data and the 29 October reports to police and the PPC. Iris Ohyama's own release (irisohyama.co.jp/news/2026/1105.pdf) answered 403 and was not read. The Privacy Guides roundup was dropped as a source."
   },
   "review": {
     "state": "flagged",
@@ -52,7 +68,7 @@
   "qa_checked_at": "2026-11-19T02:27:46Z",
   "sectors": {
     "values": [
-      "manufacturing"
+      "commercial-facilities"
     ],
     "basis": "inferred"
   },

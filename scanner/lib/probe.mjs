@@ -128,7 +128,7 @@ function httpGet(sock, useTls, host, port, timeouts) {
     const t = setTimeout(() => { req.destroy(); finish(null); }, timeouts.readMs + 500);
     req.on("response", (res) => {
       const parts = []; let n = 0;
-      const end = () => finish({ status: res.statusCode || 0, headers: res.headers, body: Buffer.concat(parts).toString("utf8").slice(0, timeouts.maxBytes) });
+      const end = () => finish({ status: res.statusCode || 0, headers: res.headers, body: Buffer.concat(parts).toString("utf8").slice(0, timeouts.maxBytes), truncated: n >= timeouts.maxBytes });
       res.on("data", (d) => { if (n < timeouts.maxBytes) { parts.push(d); n += d.length; } if (n >= timeouts.maxBytes) { res.destroy(); end(); } });
       res.on("end", end); res.on("error", end); res.on("close", end);
     });

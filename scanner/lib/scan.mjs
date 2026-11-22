@@ -107,7 +107,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       const svcs = servicesOf(r);
       h.ports.push({ port, state: "open", services: svcs.length, banner: r.banner ? r.banner.split(/\r?\n/)[0].replace(/[^ -~]/g, "?").slice(0, 160) : "" });
       h.services.push(...svcs);
-      if (r.http) h.http.push({ port, ...httpInfo(r.http) });
+      if (r.http) h.http.push({ port, ...httpInfo(r.http), ...(r.http.truncated ? { body_truncated: true } : {}) });   // scan-html: body cut at the size cap
       if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certInfo(r.tls.cert) });
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
       const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),

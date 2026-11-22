@@ -11,7 +11,7 @@
 //   scan  --scope FILE (--data DIR | --online [--source URL]) [--ports LIST] [--out DIR] [--assume-up]
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
-//         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding)
+//         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding) [--html] (also write report.html)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
@@ -25,10 +25,11 @@ import { webSource, dirSource, snapshot, DEFAULT_SOURCE } from "./lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib/scan.mjs";
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
+import { toHtml, scopeCoaching, scanProfile, staleData } from "./lib/html-report.mjs";
 import { D } from "./lib/shared.mjs";
 import { snapshotIncidentsTo } from "./lib/cite.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -46,6 +47,7 @@ const USAGE = `CyberView Scanner ${VERSION} (detection only; scan only what you 
   node scanner/cyberview-scan.mjs scan  --scope scope.json --data cyberview-data      (offline)
   node scanner/cyberview-scan.mjs scan  --scope scope.json --online                   (reads CyberView's public data)
 Incidents: --data-incidents (scan and data) cites reviewed CyberView incidents naming each finding's CVE; claims are never cited.
+Output: --html also writes report.html, one self-contained page (no script, nothing loaded from the network).
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
 Discovery (optional, in the scope file's "discover"): cidr sweep, owned domains (with Certificate Transparency), an imported
 asset list (host/IP list, CSV, nmap -oX XML), and your own read-only cloud inventory JSON; every host found is re-checked
@@ -58,7 +60,7 @@ function loadScope(file, today) {
   if (!file) return { error: "a scope file is required (--scope FILE). There is no default target. Start one with: node scanner/cyberview-scan.mjs init" };
   if (!existsSync(file)) return { error: `scope file not found: ${file}` };
   const text = readFileSync(file, "utf8"), r = checkScope(text, { today });
-  return { ...r, hash: createHash("sha256").update(text).digest("hex") };
+  return { ...r, hash: createHash("sha256").update(text).digest("hex"), text };
 }
 const fail = (io, lines, code = 2) => { io.err(["REFUSED: " + lines[0], ...lines.slice(1).map((l) => "  - " + l)].join("\n")); return code; };
 
@@ -117,6 +119,8 @@ export async function main(argv, io = {}) {
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
   io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS }));
+  const coach = scopeCoaching(sc.text, scope, { today });   // advice only (typos, gaps); never a refusal
+  if (coach.length) io.out("\nSCOPE FILE ADVICE (it passes its checks; these look like typos or gaps)\n" + coach.map((c) => "  - " + c).join("\n"));
   if (cmd === "check") {
     if (scope.discover) io.out(`\nDiscovery is configured (${[scope.discover.cidr ? "cidr sweep" : "", scope.discover.domains.length ? `${scope.discover.domains.length} domain(s)${scope.discover.ct ? " + Certificate Transparency" : ""}` : "", scope.discover.import.length ? `${scope.discover.import.length} import file(s)` : "", scope.discover.cloud.length ? `${scope.discover.cloud.length} cloud inventory file(s)` : ""].filter(Boolean).join(", ") || "nothing"}). Every host it finds is re-checked against this scope at scan time; anything outside it is dropped.`);
     io.out(`\nThe scope file passes its checks (${scope.addressCount} directly listed address(es); at most ${LIMITS.maxAddresses}). Nothing was scanned.`); return 0;
@@ -146,12 +150,15 @@ export async function main(argv, io = {}) {
     const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents: !!a["data-incidents"] });
+    report.run.profile = scanProfile({ ports, allPorts: !!a["all-ports"], customPorts: !!(a.ports || scope.ports), udp, httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], assumeUp: !!a["assume-up"], discover: !!scope.discover, dataMode: src.kind });
+    report.scope.coaching = coach; staleData(report).forEach((x) => io.err("warning: " + x));
     const out = resolve(a.out || `cyberview-scan-${startedAt.replace(/[-:]/g, "").slice(0, 15)}Z`);
     mkdirSync(out, { recursive: true, mode: 0o700 });
     const w = (f, s) => writeFileSync(join(out, f), s, { mode: 0o600 });
     w("report.json", JSON.stringify(report, null, 2) + "\n"); w("findings.csv", toCsv(report)); w("report.sarif", JSON.stringify(toSarif(report), null, 2) + "\n");
     w("inventory.csv", toInventory(report)); const text = summaryText(report); w("summary.txt", text + "\n");
-    io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, findings.csv, report.sarif, inventory.csv, summary.txt). Nothing was uploaded.`);
+    if (a.html) w("report.html", toHtml(report));   // --html: one self-contained page (scanner/lib/html-report.mjs)
+    io.out("\n" + text + `\n\nReport written to ${out}/ (report.json, findings.csv, report.sarif, inventory.csv, summary.txt${a.html ? ", report.html" : ""}). Nothing was uploaded.`);
     // exit codes: 0 clean and complete, 2 coverage incomplete (blind spots — see the COVERAGE section), 3 stopped early
     if (report.run.interrupted) return 3;
     if (report.coverage && !report.coverage.complete) { io.err("\nCoverage incomplete: some hosts or ports could not be checked (see COVERAGE in summary.txt). A clean result does not cover them. Exit 2."); return 2; }

@@ -42,9 +42,16 @@ if (job === "sweep" && (PL.flow || {}).enabled !== false && (PL.headless === tru
   // a lease this session took for a loop that no longer runs here (container restarted, process killed) does not block a restart
   if (!flowAlive(lock) && leaderBlocks(leader, "", hostId(), false)) { console.log(`DISPATCH sweep: the research loop is running in another session (${leader.run}, cycle ${leader.cycle ?? "?"}, lease until ${leader.until}). This session is the standby: start nothing. End with exactly: "CyberView sweep: standby, loop running elsewhere"`); process.exit(0); }
   if (flowAlive(lock)) { console.log(`DISPATCH sweep: the continuous flow is running (cycle ${lock.cycle}, ${lock.note || ""}, last beat ${lock.beat}). Start nothing. End with exactly: "CyberView sweep: flow running, cycle ${lock.cycle}"`); process.exit(0); }
-  console.log([`DISPATCH sweep (continuous flow). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
-    `1. Run this ONE command with run_in_background true AND timeout 7200000 (it loops for about 100 minutes, committing every few minutes; do not poll, you are notified when it ends): node scripts/run-job.mjs flow > /tmp/cv-flow.log 2>&1; tail -2 /tmp/cv-flow.log`,
-    `2. Reply now with exactly: "CyberView sweep: flow started". When it ends: if the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs sweep\` and do what it prints instead. Otherwise end with exactly its last line.`].join("\n"));
+  // Run the flow in the FOREGROUND for a bounded span, not as a ~100-minute background loop. A cloud session reaps a
+  // backgrounded process a few minutes after the turn ends, so the long loop died before its researchers could finish or
+  // commit — it looked "running" by heartbeat while publishing nothing. A short foreground run finishes its cycles and
+  // commits before the turn ends; the frequent sweep schedules give continuous coverage, and FLOW_LOCK still makes a
+  // second session stand by. config/pipeline.json flow.foreground_minutes tunes the span (kept under the 10-min tool cap).
+  const fm = Math.max(2, Math.min(9, Number((PL.flow || {}).foreground_minutes) || 7)), tmo = Math.min(600000, (fm + 2) * 60000);
+  console.log([`DISPATCH sweep (bounded foreground flow). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
+    `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it runs about ${fm} minutes of research cycles, committing every few minutes, then returns: FLOW_MINUTES=${fm} node scripts/run-job.mjs flow 2>&1 | tail -3`,
+    `   Run it in the foreground so the cycles finish and commit before this turn ends; do NOT background it (a backgrounded loop is reaped by the cloud session and publishes nothing).`,
+    `2. If the output contains "HEADLESS UNAVAILABLE", run \`CYBERVIEW_SUBAGENTS=1 node scripts/dispatch.mjs sweep\` and do what it prints instead. Otherwise end with exactly its last line.`].join("\n"));
   process.exit(0);
 }
 if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_jobs.includes(job))) && process.env.CYBERVIEW_SUBAGENTS !== "1") {

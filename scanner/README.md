@@ -20,6 +20,9 @@ domains, import an asset list, or read your own read-only cloud inventory — an
 read-only DNS, NTP and SNMP service checks. Every host discovery finds is re-checked against your scope before it is
 scanned; nothing outside it is ever contacted.
 
+An overview, with live counts of the products it can identify, is on CyberView's
+[Scanner page](https://xanderhutch.github.io/CyberView/scanner.html).
+
 ## What you need
 
 - Node.js 22 or later. Nothing to install: the scanner uses Node's standard library only.
@@ -46,6 +49,11 @@ node scanner/cyberview-scan.mjs scan --scope scope.json --data cyberview-data
 `data --full` also downloads every CVE lookup file (about 300,000 CVEs). With a full snapshot the report adds, per
 product, how many other CVEs in the CVE List name it; those carry no version ranges, so they are listed as leads to check,
 never as findings.
+
+`--data-incidents` (on `data` and on `scan`, off by default) cites, per finding, the reviewed CyberView incidents that
+name its CVE: title, date and a link, with who attributed it only when a government or the investigating firm did.
+Attackers' claims are never cited, only counted as unconfirmed. On `data` it adds a small, trimmed event archive to the
+snapshot for offline use; without it no archive file is read.
 
 ## The scope file
 
@@ -82,6 +90,10 @@ never as findings.
   `--http-ports` and `--https-ports` name web services on non-standard ports. `--all-ports` scans every TCP port
   (1–65535) and is allowed **only for private ranges** you own (it refuses a scope with any public address).
 - `--udp` adds read-only DNS, NTP and SNMP service checks (see "what goes over the network").
+- `--paths` (off by default) adds at most 8 GET requests per host for frozen, reviewed version/status files, only where
+  the host's own root page, headers, certificate or port already point at that product (see "what goes over the
+  network"). `--paths-per-host N` lowers the cap; `--paths-bmc` adds BMC identification (Redfish service root). Both
+  are refused without `--paths`.
 
 ## Finding the hosts for you: `discover`
 
@@ -126,7 +138,7 @@ spoofed source address):
 |---|---|
 | Any port | A TCP connect. A refused connection shows the host is up; a port that does not answer is skipped. |
 | SSH, FTP, SMTP, POP3, IMAP, MySQL, VNC | Nothing. It reads the greeting the service sends on its own (at most 16 KB, a few seconds). |
-| SSH | After reading the server's banner, its own identification line, `SSH-2.0-CyberViewScanner_1.0.0 authorized-vulnerability-scan`, so your logs show who connected. |
+| SSH | After reading the server's banner, its own identification line, `SSH-2.0-CyberViewScanner_1.0.0 authorized-vulnerability-scan`, so your logs show who connected. It then reads, on the same connection, the list of algorithms the server advertises (its KEXINIT; at most 4 seconds and 16 KB) and closes. It sends no algorithm list of its own and does no key exchange, so it never sees the host key. |
 | Web (80, 8080, 8000, 8008, 8888, ... and `--http-ports`) | One HTTP request for the root page (method GET, path "/"), with the User-Agent below. Redirects are recorded, not followed. |
 | TLS (443, 8443, 993, 995, 465, ... and `--https-ports`) | A standard TLS handshake to read the certificate (read, never trusted), then on web ports the same single request. |
 
@@ -139,11 +151,18 @@ With `--udp`, one benign read-only UDP datagram per service per host (never more
 | NTP (123) | A mode-6 (control) **read-variables** request (opcode 2), no payload. Reads ntpd's version/system string. |
 | SNMP (161) | One SNMPv1 `GET` of `sysDescr` (OID `1.3.6.1.2.1.1.1.0`) with the standard read community **`public`** only. No other community is ever tried; there is no walk and no write. |
 
+With `--paths` (off by default), at most 8 extra HTTP requests per host, method GET, the same User-Agent, one
+connection each, each for a literal path from the reviewed table in `scanner/lib/paths.mjs`, and only when that host's
+own root page, headers, certificate or port already hint at the product. Redirects are recorded, not followed; only a
+product and version token is kept. Every request's status, and every hinted path the cap or a budget left unsent, is in
+the report's coverage. Without `--paths`, a web port gets the one root-page request and nothing else.
+
 Every web request carries the User-Agent
 `CyberView-Scanner/1.0.0 (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
 
-A host is first tried on up to four discovery ports (22, 80, 443, 3389 when in the list); if none answers, it is treated
-as down and nothing more is sent to it (`--assume-up` tries every port anyway).
+A host is first tried on up to four discovery ports (22, 80, 443, 3389 when in the list), then on the rest of the port
+list even if none of those answered (a firewall or IPS may drop the first probes); a host that answers on no port is
+reported in Coverage as unreachable, never as clean. `--assume-up` skips the discovery-port step.
 
 Host names in the scope are resolved with your system's resolver. With `--online` the scanner also downloads CyberView's
 public data, read-only, with GET requests and no key, cookie or account, from `https://xanderhutch.github.io/CyberView/`:
@@ -153,10 +172,44 @@ public data, read-only, with GET requests and no key, cookie or account, from `h
 - `data/psirt.json`: vendors' own advisories joined on CVE
 - `data/cve/index.json` and `data/cve/<year>/<n>.json`: the CVE lookup files (CVSS, CISA's SSVC assessment, KEV date,
   EPSS) for the CVEs that matched
+- only with `--data-incidents`: `data/archive/search.json` and the `data/archive/<YYYY-MM>.json` months that hold
+  events naming a matched CVE
 
 KEV and EPSS arrive inside those files; the scanner never contacts CISA, FIRST or NVD itself. With `--data` it makes no
 data request at all. It **never uploads anything**: no findings, no scope, no addresses, no telemetry. Results are
 written only to the output folder on your machine, readable only by you.
+
+## What it identifies
+
+From the greeting, the root-page response and the certificate it has already read (no extra request), besides the
+SSH, web, mail and database servers it names from their banners and headers:
+
+- **SSH algorithms**: the key-exchange, host-key, cipher and MAC algorithms the server advertises; weak ones from a
+  fixed list are reported, post-quantum key exchange is noted.
+- **CMS and JavaScript libraries**: WordPress (and the plugins and themes its page names), Drupal, Joomla, Craft CMS,
+  DotNetNuke, Kentico, October CMS, Sitefinity, SAP Commerce Cloud, ThinkPHP, cPanel & WHM, XWiki, and jQuery, jQuery UI,
+  Bootstrap, AngularJS, Lodash, Moment.js, Vue.js, Handlebars and Underscore. A WordPress `?ver=` number is shown in the
+  inventory but never compared.
+- **Edge and appliance products**: Array Networks, Aviatrix, Cisco vManage / DCNM / ACS, D-Link, DD-WRT, Ivanti CSA,
+  Juniper ScreenOS, Microsoft TMG, NETGEAR WAP, Palo Alto Expedition, Kemp LoadMaster, Sierra Wireless ALEOS, SonicWall
+  SMA 1000, Sophos, TP-Link, Zyxel and Brocade Fabric OS.
+- **Applications**: Jenkins, MOVEit Transfer, GoAnywhere MFT, CrushFTP, WS_FTP Server, Rejetto HFS, Accellion FTA,
+  ProjectSend, SysAid, ServiceNow, NAKIVO, VeraCore, Citrix ShareFile, SharePoint, ONLYOFFICE, Oracle Fusion Middleware
+  and Business Intelligence, Telerik UI and Report Server, Apache Axis2, HugeGraph, Kylin and Spark, Ray, Kestra, QNAP,
+  D-Link and TerraMaster NAS, Envoy, and the frameworks ASP.NET, Django, Express, Laravel, Rails and Yii; mail gateways,
+  IT management consoles, proxies and small web servers such as Cisco Secure Email Gateway, MDaemon, SmarterMail,
+  WhatsUp Gold, N-central, ManageEngine, Splunk, SolarWinds Orion and Serv-U, Superset, Jaspersoft, APISIX, GoAhead,
+  nostromo, HAProxy, Squid, Traefik and Varnish.
+- **Around 30 more products** (management consoles, message brokers, search engines, cameras, VoIP and mail servers),
+  for example GitLab, ActiveMQ, CouchDB, Elasticsearch, OpenSearch, phpMyAdmin, VMware ESXi, vCenter and Aria
+  Operations, Hikvision, PaperCut, Openfire and Grandstream UCM6200.
+
+Most of these do not state a version where the scanner looks. They are listed as "version not read" and reported as
+"check by hand" at low confidence, outside the headline counts. A version is compared with the affected ranges only
+where the product states its own release; a number that is not the release (a cache-buster, a component or runtime
+version, a build number, a login-page title) is shown but never compared. With `--paths`, a few products can also be
+versioned from a documented version file. `coverage` (below) lists the known-exploited products the scanner cannot
+identify yet.
 
 ## Politeness limits
 
@@ -192,6 +245,28 @@ Written to `cyberview-scan-<time>/` (or `--out`):
 - `report.sarif`: SARIF 2.1.0, for dashboards that read code-scanning results.
 - `inventory.csv`: the software found, in the format the Vulnerabilities page's "My software" view imports.
 
+Optional extra files, built only from what the scan already read (none of them sends anything more to your hosts):
+
+- `report.html` (with `--html`): the same report as one page to open in a browser or send on; it loads nothing and runs
+  no script, and every value from your hosts is escaped. Findings that may already be fixed by a distribution backport
+  are marked "Possibly already fixed".
+- `certs.csv` (with `--certs`): certificate inventory and reuse — validity, key, signature, fingerprint, serial, SANs,
+  wildcards, internal names, embedded SCTs, must-staple, and the same certificate or key on more than one address.
+- `mail.csv` (with `--mail`): mail services and STARTTLS as far as the greetings already read show it (IMAP's
+  capability list; SMTP and POP3 read "not checked", because the scanner does not send EHLO or CAPA).
+- `diff.json` and `diff.txt` (with `--compare old/report.json`): what changed since that scan — findings new, fixed,
+  gone, still open or not rechecked; services, versions, certificates and observations changed. The old file is checked
+  before anything is scanned.
+
+`check` and `scan` also print advice when a scope file passes its checks but looks wrong (an unknown key, a duplicate
+target, an attestation about to expire), and a scan warns when CyberView's data is more than 7 days old.
+
+To see which known-exploited products this scanner cannot fingerprint yet (offline; no scope needed, nothing contacted):
+
+```
+node scanner/cyberview-scan.mjs coverage --data cyberview-data --out kev-coverage.csv
+```
+
 `summary.txt` and `report.json` also list **observations**: problems that are not CVEs, worked out only from what the one
 connection already returned (no extra connection or request), each with a severity (high, medium, low), most severe
 first, at most 60 per host:
@@ -220,6 +295,8 @@ first, at most 60 per host:
 | `cleartext-mail`, `cleartext-submission` | POP3 (110) or IMAP (143) answering without TLS; SMTP submission (587) without TLS (whether STARTTLS is required is not checked) |
 | `cleartext-login` | Telnet, or FTP that does not show it requires TLS |
 | `snmp-public` | with `--udp`: SNMP answers the default `public` community |
+| `ssh-weak-kex`, `ssh-weak-hostkey`, `ssh-weak-cipher`, `ssh-weak-mac` | the SSH server offers a weak algorithm from a fixed list (SHA-1 key exchange, DSA or SHA-1 RSA host keys, CBC, 64-bit block or RC4 ciphers, MD5 or 96-bit SHA-1 MACs); every name is listed with its reason. Offering is not using: a modern client picks a strong one first |
+| `ssh-pqc-kex` | information: the SSH server offers post-quantum hybrid key exchange (ML-KEM, sntrup761) |
 
 The TLS findings describe what **this scan's one handshake** negotiated; a different client can get different
 parameters, and the scanner never enumerates protocols or ciphers. The key-exchange group is recorded as Node reports it
@@ -242,6 +319,10 @@ Each finding shows the CVE, where it was seen (address, port, product, the versi
   vendor advisory's link, and the CVE's page on CyberView. Check steps, signs of compromise and detection resources are
   linked there, not copied. Exploitation analyses and fix guides are written by CyberView AI (a Claude model) from vendor
   and government sources, and say so.
+- **Hunt**: links to publishers' detection files for the CVE (Sigma, YARA, STIX and so on), links only; their contents
+  are never downloaded or copied.
+- **Incidents** (with `--data-incidents`): the reviewed CyberView incidents that name the CVE, with title, date and link;
+  attackers' claims are counted as unconfirmed, never cited.
 
 A clean result is not proof that a host has no vulnerabilities: the scanner knows only the flaws CyberView's data covers,
 and a service can hide or misstate its version. It also does not cover whatever the **Coverage** section lists — a host
@@ -262,6 +343,11 @@ anything still looks thin, re-scan slower with `--rate 0.1`.
 - No scanning of addresses outside the scope file (discovery is re-checked against it), and no wide sweeps of public
   address space (the public cap is a hard stop).
 - The scanner never runs your cloud CLI and never reads or stores your cloud or API keys.
+- It does not fetch a page's scripts or stylesheets, or try plugin or theme names from a list: CMS and library versions
+  come from what the root page itself names (and, only with `--paths`, from the few reviewed version files in the path
+  rail's table, such as three WordPress plugin readmes).
+- No crawling, no wordlists and no paths you supply: the optional path rail requests only the reviewed literal paths in
+  `scanner/lib/paths.mjs`, never a login or management page, and is off unless you pass `--paths`.
 
 `scripts/security-check.mjs` checks the scanner's code for these on every change. More detail: `docs/scanner.md`.
 

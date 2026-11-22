@@ -5,14 +5,13 @@
   ],
   "cves": [],
   "first_seen": "2026-11-19T04:26:55Z",
-  "updated_at": "2026-11-19T04:26:55Z",
+  "updated_at": "2026-11-22T20:42:08Z",
   "products": [],
   "tags": [],
-  "title": "Mass automated login attempts hit Germany's BundID citizen accounts; accounts blocked as a precaution",
+  "title": "Mass automated login attempts hit Germany's BundID citizen accounts; password login suspended, later restored with two-factor authentication",
   "category": "incident",
   "date": "2026-11-16",
-  "date_note": "Date of the reports; the attack started before this day.",
-  "occurred_at": "2026-11-16T12:00:00Z",
+  "date_note": "Date of the first reports (dpa, 16 November); Tichys Einblick says the attack hit on Monday, which is 16 November.",
   "country": "Germany",
   "place": "Berlin",
   "lat": 52.52,
@@ -24,18 +23,29 @@
   "severity": 2,
   "status": "confirmed",
   "source_tier": "established",
-  "summary": "Unknown attackers ran an automated wave of login attempts against BundID, Germany's federal digital citizen account, trying to take over accounts in bulk. Per dpa and Handelsblatt, citing the BSI, protective measures triggered, affected accounts were blocked and holders were told to set a new password. Officials say they have no evidence data was taken or profiles entered; no numbers were given.",
-  "plain": "Attackers tried to break into many German citizen accounts used for government services. Protections held and affected accounts were locked; officials see no sign of data theft.",
-  "exec": "A national government login service was targeted at scale; account lockouts may disrupt public-service access.",
-  "action": "BundID users: set a new, unique password if you receive a block notice, and enable stronger login methods where offered.",
+  "summary": "Unknown attackers ran automated mass login attempts against BundID, Germany's federal citizen account. Per dpa and Handelsblatt, citing the BSI, protections triggered, affected accounts were blocked and password login was temporarily disabled; eID and Elster logins still worked. Tichys Einblick reported on 18 November that the ministry later said there was no explicit blocking, and that password login returned with two-factor authentication. Officials say they have no evidence of data theft.",
+  "plain": "Attackers tried mass logins to German citizen accounts used for government services. Password login was paused and later returned with a second login step; officials say they have no evidence of data theft.",
+  "exec": "A national government login service was targeted at scale; password login was suspended, which may have disrupted access to public services.",
+  "action": "As the BundID portal advised, per dpa, use the online ID card (eID) or an Elster certificate to sign in; Tichys Einblick reports password login now requires two-factor authentication.",
   "sources": [
+    {
+      "name": "Volksstimme (dpa)",
+      "url": "https://www.volksstimme.de/leben/technik/hacker-scheitern-mit-attacke-auf-bundid-konten-4357298",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "Volksstimme (dpa): Angriffe auf BundID: Zugriffsmöglichkeiten eingeschränkt",
+      "url": "https://www.volksstimme.de/leben/technik/angriffe-auf-bundid-zugriffsmoglichkeiten-eingeschrankt-4357364",
+      "published": "2026-11-16"
+    },
     {
       "name": "Channelpartner",
       "url": "https://www.channelpartner.de/article/4249070/bundid-zugange-nach-cyberattacke-vorsorglich-blockiert.html"
     },
     {
-      "name": "Volksstimme (dpa)",
-      "url": "https://www.volksstimme.de/leben/technik/hacker-scheitern-mit-attacke-auf-bundid-konten-4357298"
+      "name": "Tichys Einblick",
+      "url": "https://www.tichyseinblick.de/daili-es-sentials/hackerangriff-auf-bund-id-zugaenge/",
+      "published": "2026-11-18"
     },
     {
       "name": "Golem",
@@ -44,8 +54,8 @@
   ],
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-19T04:26:55Z",
-    "note": "Channelpartner and Volksstimme (dpa) read; both cite the BSI via Handelsblatt, so they are close to one report, and a Digital Ministry spokesperson confirmed details. Golem page text did not load."
+    "checked_at": "2026-11-22T20:42:08Z",
+    "note": "Channelpartner and Volksstimme (dpa, two reports of 16 November) read; dpa cites the BSI via Handelsblatt and the BundID portal homepage on the suspended password login. Tichys Einblick (18 November) relays the ministry's later statement that accounts were not explicitly blocked and that password login returned with two-factor authentication; its account figures are inconsistent (headline 'Zehntausende', text 'mindestens 10.000') and unattributed, so not used. Golem text did not load."
   },
   "review": {
     "state": "passed",

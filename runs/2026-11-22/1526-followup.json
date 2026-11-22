@@ -1,0 +1,102 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T15:25:01Z",
+  "finished_at": "2026-11-22T15:26:42Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Caris Life Sciences data breach November 2026",
+    "Castle Biosciences cybersecurity incident Vortex",
+    "Verastem Oncology cybersecurity incident",
+    "Meta Muse NebuSec vulnerability Meta statement",
+    "Godrej & Boyce data breach statement November 2026"
+  ],
+  "pages_read": [
+    {
+      "url": "https://ir.castlebiosciences.com/news-events/press-releases",
+      "title": "Press Releases :: Castle Biosciences, Inc. (CSTL)",
+      "used_in": "castle-biosciences-vortex-claim-2026-11 (no cyber release; newest 12 Nov 2026)"
+    },
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2019410&type=8-K&dateb=&owner=include&count=10",
+      "title": "EDGAR 8-K list, Caris Life Sciences",
+      "used_in": "caris-life-sciences-vortex-claim-2026-11 (newest 8-K 2026-11-04, items 2.02/9.01; no 1.05)"
+    },
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1526119&type=8-K&dateb=&owner=include&count=10",
+      "title": "EDGAR 8-K list, Verastem, Inc.",
+      "used_in": "verastem-oncology-n0n-claim-2026-11 (8-K 2026-11-19 items 5.02/9.01 only; no 1.05)"
+    },
+    {
+      "url": "https://www.godrejenterprises.com/newsroom/press-releases",
+      "title": "Godrej Enterprises Group press releases",
+      "used_in": "godrej-boyce-pixelleaks-claim-2026-11 (no statement; newest 2 Nov 2026)"
+    },
+    {
+      "url": "https://nebusec.ai/research/meta-muse-credential-exposure/",
+      "title": "Hacking Muse: Stealing Private Chats Through Browser Use | NebuSec",
+      "used_in": "nebusec-meta-muse-private-chats-browser-chain-2026-11 (no Meta response or timeline added)"
+    },
+    {
+      "url": "https://thehackernews.com/2026/11/a-single-malicious-webpage-let.html",
+      "title": "A Single Malicious Webpage Let Researchers Hijack Meta Muse and Access Private Chats",
+      "used_in": "nebusec-meta-muse-private-chats-browser-chain-2026-11 (still says Meta has not publicly confirmed; no update note)"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "unchanged_checked": [
+    {
+      "id": "caris-life-sciences-vortex-claim-2026-11",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2019410&type=8-K&dateb=&owner=include&count=10"
+    },
+    {
+      "id": "castle-biosciences-vortex-claim-2026-11",
+      "url": "https://ir.castlebiosciences.com/news-events/press-releases"
+    },
+    {
+      "id": "verastem-oncology-n0n-claim-2026-11",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1526119&type=8-K&dateb=&owner=include&count=10"
+    },
+    {
+      "id": "godrej-boyce-pixelleaks-claim-2026-11",
+      "url": "https://www.godrejenterprises.com/newsroom/press-releases"
+    },
+    {
+      "id": "nebusec-meta-muse-private-chats-browser-chain-2026-11",
+      "url": "https://thehackernews.com/2026/11/a-single-malicious-webpage-let.html"
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Breachsense / SOCRadar / DeXpose listings for Caris, Castle, Verastem, Godrej claims",
+      "url": "https://www.breachsense.com/breaches/caris-life-sciences-data-breach/",
+      "reason": "trackers relaying the same leak-site claims; not a confirmation and not citable as a source"
+    },
+    {
+      "title": "Earlier Muse security stories (Wardle macOS hotfix, 404 Media VM escape, The Information)",
+      "url": "https://gizmodo.com/meta-just-patched-a-major-zero-day-vulnerability-in-its-muse-ai-assistant-2000815429",
+      "reason": "September 2026 issues, separate from the NebuSec chain and older than the map window"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Godrej & Boyce: watch NSE/BSE disclosures for a cyber incident filing",
+      "url": "https://www.dexpose.io/pixelleaks-targets-indian-manufacturing-giant-godrej-boyce/",
+      "note": "only threat-intel relays of the PixelLeaks claim; company newsroom silent as of 22 Nov",
+      "priority": "low"
+    },
+    {
+      "title": "Caris Life Sciences: claim lists about 21 million records; watch for 8-K Item 1.05 or HHS notice",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=2019410&type=8-K",
+      "note": "investor news page answered 403; EDGAR shows no 8-K after 4 Nov",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "investor.carislifesciences.com (403)",
+    "investor.verastem.com (403)"
+  ],
+  "notes": "Candidates: events dated since 12 Nov with status developing/claimed or severity 3. Every developing and severity-3 event not updated in 24 h had already been checked by a follow-up run in the last 24 h, so this run took five claims against listed or large companies not checked recently. No organisation statement, regulator filing or Meta response found; all five unchanged. Release body texts on the Castle page were not opened (titles only, none cyber-related).",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

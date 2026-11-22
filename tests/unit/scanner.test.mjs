@@ -1024,3 +1024,40 @@ test("hunt links are publisher URLs and a rule body is not copied", () => {
   assert.match(text, /publisher links only/);
   assert.match(text, /https:\/\/vendor.example\/rule/);
 });
+
+/* ---- scan-edge-versions: collected page, header, and greeting. Login titles stay guesses. ---- */
+test("edge pages and greetings: cited titles, a stated version, and a login title that stays a guess", () => {
+  const page = (title, body = "", headers = {}) => fromHttp({ headers, body: `<html><title>${title}</title>${body}</html>` });
+  const arc = page("Arcserve UDP");
+  assert.equal(arc[0].product, "Unified Data Protection");
+  assert.equal(arc[0].guessed, true);
+  assert.equal(arc[0].version, "");
+  const av = page("Aviatrix Cloud Controller");
+  assert.equal(av[0].product, "Controller");
+  assert.equal(av[0].guessed, true);
+  const ex = page("Expedition Project");
+  assert.equal(ex[0].product, "Expedition");
+  assert.equal(ex.some((s) => s.product === "PAN-OS"), false);
+  const ale = page("::: ACEmanager :::", "ALEOS Version 4.16.0 | Copyright");
+  assert.equal(ale[0].product, "ALEOS");
+  assert.equal(ale[0].version, "4.16.0");
+  assert.equal(ale[0].guessed, false);
+  const portal = page("User Portal", "<link href='/themes/lite1/css/x.css'>");
+  assert.equal(portal[0].product, "UTM");
+  assert.equal(fromHttp({ headers: {}, body: "<title>User Portal</title>" }).length, 0);
+  const sma = fromHttp({ headers: { server: "SMA/12.4.1" }, body: "<title>SMA1000</title>" });
+  assert.equal(sma[0].product, "SMA 1000");
+  assert.equal(sma[0].version, "12.4.1");
+  const acs = fromHttp({ headers: { server: "Cisco ACS 5.8.1" }, body: "" });
+  assert.equal(acs[0].version, "5.8.1");
+  assert.equal(acs[0].guessed, false);
+  const fsa = fromHttp({ headers: { "x-fortisandbox-version": "5.0.5" }, body: "<title>FortiSandbox</title>" });
+  assert.equal(fsa[0].product, "FortiSandbox");
+  assert.equal(fsa[0].version, "5.0.5");
+  const dns = page("ShareCenter", "", { server: "DNS-320" });
+  assert.equal(dns[0].product, "DNS-320");
+  assert.equal(dns[0].guessed, true);
+  const fab = fromGreeting("Fabric OS (tm)  Release v8.2.1\r\n", 23);
+  assert.equal(fab[0].product, "Fabric OS");
+  assert.equal(fab[0].version, "8.2.1");
+});

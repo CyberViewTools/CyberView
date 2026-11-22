@@ -10,6 +10,8 @@
 //                  inside an affected range is reported with medium confidence, never high
 //   guessed        the product is inferred (from a certificate's issuer, a greeting with no version), not stated with a version
 
+import { edgeFromHttp, edgeFromBanner } from "./edge.mjs";
+
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ").slice(0, n);
 const VER = /^\d+(?:[.\-_+~]\w+)*$/;
 export const cleanVersion = (v) => { const s = clip(v, 40).trim().replace(/^v(?=\d)/i, ""); return VER.test(s) ? s : ""; };
@@ -117,6 +119,8 @@ export function fromGreeting(banner, port) {
     const m = re.exec(text);
     if (m) return [svc(port, proto, vendor, product, m[1] || "", { distro: distroOf(first), source: `${proto.toUpperCase()} greeting`, evidence: `${proto.toUpperCase()} greeting: ${first}`, guessed: !m[1] })];
   }
+  const edge = edgeFromBanner(text);
+  if (edge.length) return edge.map((e) => svc(port, "telnet", e.vendor, e.product, e.version, { source: "greeting", evidence: e.evidence, guessed: e.guessed }));
   // a bare "220" greeting is FTP or SMTP: decide by what the banner says, falling back to the port only when it is silent
   // (an FTP service on a non-21 port must not be mislabelled SMTP, and vice versa).
   let proto = "";
@@ -208,6 +212,10 @@ export function fromHttp(res, port = 80, tls = false) {
     if (out.some((x) => x.product.toLowerCase() === name.toLowerCase())) continue;
     out.push(svc(port, proto, name, name, m[2], { source: "script filename", evidence: `script filename ${name}-${m[2]}.js`, label: name }));
     if (out.length > 24) break;
+  }
+  for (const e of edgeFromHttp(res)) {
+    if (out.some((x) => x.product === e.product)) continue;
+    out.push(svc(port, proto, e.vendor, e.product, e.version, { source: "collected page", evidence: e.evidence, guessed: e.guessed, label: e.product }));
   }
   return out;
 }

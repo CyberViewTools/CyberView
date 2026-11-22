@@ -149,6 +149,10 @@ scope; a public one it resolves to still needs `--i-am-authorized-for-public-ran
 
 `diff` (`tk-diff`) compares two `report.json` files into `diff.json`, `diff.txt` and `diff.html`: new, resolved, still open, changed, and a watch list of new known-exploited or Act findings. Resolved is not proof of a patch. The scanner does not re-scan and does not send the watch list anywhere; a schedule stays with the operator.
 
+## Edge versions from pages already collected
+
+`scan-edge-versions` names an appliance only when the root page, a header, or a greeting already collected contains a literal the detection catalog cites (Nuclei, Recog, or Nmap). A login title is a guess with no version. Needs-research products are not matched. No extra request is added here; version files on a frozen path are a later item. Cisco ASA, AnyConnect, and CGI login checks are not matched.
+
 ## Sprint 1 additions
 
 - **Path rail (`--paths`, off unless you ask).** Up to 8 extra requests per host, method GET, and only paths on a frozen list. A host is asked only when the root response already hinted the product (nginx, Apache, or a Spring `X-Application-Context`). `--well-known` adds `robots.txt`, `security.txt`, `sitemap.xml`, a single git HEAD file and a Subversion entries file. Status-page bodies are discarded. Login paths, `/actuator/env`, heap dumps, debug consoles and configuration backups are not on the list.

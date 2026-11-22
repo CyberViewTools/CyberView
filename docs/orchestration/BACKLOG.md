@@ -16,6 +16,7 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | scan-incidents-cite | CVE citations, claimed events omitted | Review | Implementation | `--data-incidents` offline index ([handoff](handoff/scan-incidents-cite.md)) |
 | scan-hunt-links | Hunt pointers, links only | Review | Implementation | publisher URLs from the workbench ([handoff](handoff/scan-hunt-links.md)) |
 | scan-ssh-kex | SSH KEXINIT on the same connection | Review | Implementation | weak set and PQC names; no client key exchange ([handoff](handoff/scan-ssh-kex.md)) |
+| scan-edge-versions | Appliance hints from collected pages and greetings | Review | Implementation | cited literals only; login titles stay guesses ([handoff](handoff/scan-edge-versions.md)) |
 
 ## Parked (owner decision pending)
 

@@ -7,9 +7,8 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 
 | id | Item | Stage | Lead | Next action |
 |---|---|---|---|---|
-| scan-counts | Scanner #82 item 5: low-confidence rows out of the headline counts; fingerprint fixes (version-less `SSH-2.0-OpenSSH`, FTP-on-non-21 mislabel) | Implementation | Impl | build on a branch, tests, PR |
 | scan-html | Scanner HTML report (self-contained `report.html`) + surface the backport caveat in the report | Design | Design | spec the report + PR plan |
-| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Discovery | Discovery | brief: formats, data needs, safety fit, CLI shape |
+| tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Design | Design | Discovery done ([handoff](handoff/tk-matchers.md), BUILD); confirm `--assume-exposed`, then start PR1 (`inputs.mjs` adapter) |
 | tk-diff | Scan diff / watch — compare to last scan (new/fixed/still-open), optional scheduled re-scan + alert | Discovery | Discovery | brief: state model, alerts tie-in |
 | tk-hygiene | TLS & exposure hygiene — cert expiry/weak protocols, missing security headers, version disclosure, default pages (from data already collected) | Discovery | Discovery | brief: which checks, thresholds, detection-only |
 
@@ -26,6 +25,7 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 
 | Item | PR |
 |---|---|
+| Scanner #82 item 5 (low-confidence out of headline counts; version-less OpenSSH + FTP/SMTP-by-banner) | #91 |
 | Scanner #82 items 1–4 (coverage, host-down, throttle, plain-HTTP) | #87 (merged) |
 | store.mjs month-move cleanup | #85 (merged) |
 | grok-watch: Grok messages anywhere + handled-signal fix | #86 (merged) |

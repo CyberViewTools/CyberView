@@ -1,7 +1,7 @@
 {
   "title": "Taiwan's Tourism Administration: 12 travel agencies reported personal-data leaks in 3 years",
   "date": "2026-11-22",
-  "date_note": "Date of the Liberty Times and Knews articles reporting the Tourism Administration's figures; neither gives an earlier day for the statement.",
+  "date_note": "Date of the Knews article reporting the Tourism Administration's figures; it gives no earlier day for the statement.",
   "category": "report",
   "severity": 2,
   "status": "confirmed",
@@ -13,34 +13,77 @@
   "lng": 121.56,
   "geo_basis": "Taiwan's Tourism Administration as the source of the statistics; agencies named are in Taiwan",
   "pin_type": "country",
-  "summary": "Taiwan's Tourism Administration says 12 travel agencies reported personal-data leaks over the past 3 years, with about 1.55 million records leaked in total and fines of NT$3.65 million. Reports rose from 1 in 2024 to 3 in 2025 and 8 so far in 2026. Yi You Net reported an external attack on its member centre on 7 November, with over 690,000 people affected.",
-  "plain": "Taiwan's tourism regulator says travel-company data leaks are rising: 12 firms reported leaks in 3 years, about 1.55 million records, including Yi You Net's over 690,000 people affected.",
+  "summary": "Taiwan's Tourism Administration says 12 travel agencies reported personal-data leaks over the past 3 years, with about 1.55 million records leaked in total and fines of NT$3.65 million. Reports rose from 1 in 2024 to 3 in 2025 and 8 so far in 2026. Per Knews, Yi You Net's member centre suffered an external abnormal network attack on 7 November that leaked part of the historical order contact data of over 690,000 members.",
+  "plain": "Taiwan's tourism regulator says travel-company data leaks are rising: 12 firms reported leaks in 3 years, about 1.55 million records, including part of the order contact data of over 690,000 Yi You Net members.",
   "exec": "Travel firms hold passport and itinerary data; the regulator reports rising leak reports and fines of NT$3.65 million.",
   "action": "General advice: customers of Taiwanese travel agencies should be wary of messages that use their booking details and confirm them with the agency directly.",
   "impact": "About 1.55 million records leaked across 12 agencies in 3 years, per the Tourism Administration.",
-  "tags": ["data-breach"],
+  "tags": [
+    "data-breach"
+  ],
   "cves": [],
   "products": [],
-  "attack": ["data-breach"],
+  "attack": [
+    "data-breach"
+  ],
   "sources": [
-    {"name": "Liberty Times", "url": "https://news.ltn.com.tw/news/life/breakingnews/5649385", "published": "2026-11-22"},
-    {"name": "Knews", "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A", "published": "2026-11-22"}
+    {
+      "name": "Knews",
+      "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A",
+      "published": "2026-11-22"
+    }
   ],
   "evidence": [
-    {"url": "https://news.ltn.com.tw/news/life/breakingnews/5649385", "quote": "交通部觀光署統計，旅行業通報個資外洩案逐年增加，近3年共有12家，外洩個資累積約155萬筆"},
-    {"url": "https://news.ltn.com.tw/news/life/breakingnews/5649385", "quote": "該署已依法裁處罰鍰共365萬元"},
-    {"url": "https://news.ltn.com.tw/news/life/breakingnews/5649385", "quote": "受影響人數逾69萬人"},
-    {"url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A", "quote": "113年1件、114年3件、115年8件"}
+    {
+      "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A",
+      "quote": "經統計近3年(113年至115年)旅行業向本署通報個資外洩案共計12家，外洩個資累計共約155萬筆。"
+    },
+    {
+      "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A",
+      "quote": "本署業已依法裁處罰鍰共計新台幣365萬元。"
+    },
+    {
+      "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A",
+      "quote": "2026年11月7日，易遊網會員中心遭外部異常網路攻擊，導致逾 69萬名會員的部分歷史訂單聯絡資料外洩"
+    },
+    {
+      "url": "https://www.knews.com.tw/news/AD187B2007B252A22E33783C99314A7A",
+      "quote": "（113年1件、114年3件、115年8件）"
+    }
   ],
   "records_affected": 1550000,
   "source_tier": "established",
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-22T04:19:26Z",
-    "note": "Liberty Times and Knews both relay the Tourism Administration's statistics (shared sourcing), so treated as one source; the Administration's own statement was not read."
+    "note": "Only Knews, relaying the Tourism Administration's own statistics, was read; the Liberty Times page answered 403 and could not be checked, so it was removed. The Administration's own statement was not read."
   },
   "first_seen": "2026-11-22T04:19:26Z",
-  "updated_at": "2026-11-22T04:19:26Z",
-  "sectors": {"values": ["commercial-facilities", "individuals"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "inferred"}
+  "updated_at": "2026-11-22T04:26:30Z",
+  "sectors": {
+    "values": [
+      "commercial-facilities",
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-22T04:26:52Z",
+    "first_at": "2026-11-22T04:26:52Z",
+    "note": "source not read, figure: Liberty Times answered 403 so its source and evidence were removed; Knews evidence quotes added for 12 agencies, about 1.55 million, fines, Yi You Net; 'people affected' now Knews's 'members' with part of historical order contact data; date_note updated. The checker's figure",
+    "flags": [
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "figure",
+      "date",
+      "source"
+    ]
+  },
+  "qa_checked_at": "2026-11-22T04:26:52Z"
 }

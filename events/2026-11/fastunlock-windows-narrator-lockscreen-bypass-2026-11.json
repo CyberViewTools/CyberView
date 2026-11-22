@@ -15,7 +15,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-19T19:20:00Z",
-  "updated_at": "2026-11-20T05:48:02Z",
+  "updated_at": "2026-11-22T14:29:17Z",
   "category": "vuln",
   "date": "2026-11-19",
   "date_note": "Cyber Kendra's page is dated Nov 20 but states the situation as of Nov 19; published date taken as Nov 19.",
@@ -30,10 +30,10 @@
   "severity": 1,
   "status": "claimed",
   "source_tier": "established",
-  "summary": "A researcher using the names Chaotic Eclipse and Nightmare-Eclipse posted \"FastUnlock\" on GitHub without coordinating with Microsoft. Cyber Kendra says the researcher claims a Narrator lock-screen flaw lets someone with physical access get past BitLocker on Windows 11 26H2, needing an account linked to a Microsoft account. The Hacker News says ThreatLocker ran a program from the lock screen but encryption is not broken. No CVE or Microsoft fix.",
+  "summary": "A researcher known as Chaotic Eclipse or Nightmare-Eclipse posted \"FastUnlock\" on GitHub without coordinating with Microsoft, claiming a Narrator lock-screen flaw lets someone with physical access get past BitLocker on Windows 11 26H2, Cyber Kendra says. ThreatLocker's proof of concept ran code as a non-administrator account without sign-in; The Hacker News says encryption is not broken. ThreatLocker says a BitLocker preboot PIN helps if the device was just turned on. No CVE or Microsoft fix.",
   "plain": "A researcher says a lost or stolen Windows 11 laptop could be unlocked using the screen reader feature. Microsoft has published no fix or advisory yet.",
   "exec": "Matters for lost or stolen laptops that rely on BitLocker; physical access is required and no attacks in the wild are reported.",
-  "action": "Until Microsoft responds, consider blocking Narrator on the lock screen with AppLocker or a restrictive DACL (the researcher's suggestion; test first) and keep devices physically secured.",
+  "action": "Until Microsoft responds: ThreatLocker says a BitLocker preboot PIN helps on a device that was just turned on; the researcher suggests blocking Narrator on the lock screen with AppLocker or a restrictive DACL (test first). Keep devices physically secured.",
   "sources": [
     {
       "name": "Cyber Kendra",
@@ -46,6 +46,11 @@
     {
       "name": "The Hacker News",
       "url": "https://thehackernews.com/2026/11/new-unpatched-windows-0-day-fastunlock.html"
+    },
+    {
+      "name": "ThreatLocker: Proof of concept for FastUnlock Windows lock screen bypass from Nightmare Eclipse",
+      "url": "https://www.threatlocker.com/blog/proof-of-concept-for-fastunlock-windows-lock-screen-bypass-from-nightmare-eclipse",
+      "published": "2026-11-19"
     }
   ],
   "report": {
@@ -67,9 +72,9 @@
     "url": "https://www.cyberkendra.com/2026/11/fastunlock-windows-narrator-lock-screen-bypass.html"
   },
   "validation": {
-    "checked_at": "2026-11-20T05:50:00Z",
+    "checked_at": "2026-11-22T14:29:17Z",
     "state": "unconfirmed_claim",
-    "note": "Cyber Kendra and Security Affairs report the researcher's release and claims. The Hacker News (Nov 20) reports ThreatLocker tested it and said it works, running a program from the lock screen under a limited non-administrator account; it says it does not break BitLocker encryption. Microsoft has published no confirmation, CVE or fix; no in-the-wild use reported. Still a claim."
+    "note": "Cyber Kendra and Security Affairs report the researcher's release and claims. ThreatLocker's own post (Nov 19) reproduces it: code runs from the lock screen as the non-administrator WSIAccount user with physical access; it names a BitLocker preboot PIN as mitigation. The Hacker News says encryption is not broken. No Microsoft confirmation, CVE or fix on the pages read; no in-the-wild use reported. Still a claim."
   },
   "review": {
     "state": "corrected",

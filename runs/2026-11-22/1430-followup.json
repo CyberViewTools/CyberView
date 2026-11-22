@@ -1,0 +1,83 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T14:25:21Z",
+  "finished_at": "2026-11-22T14:31:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "JPMorgan third-party vendor cyberattack customer data marketing vendor named",
+    "Temenos Quantum Fabric BankWeaver Forescout statement",
+    "Molex cyberattack Vortex ransomware",
+    "Apellis Pharmaceuticals cybersecurity incident",
+    "FastUnlock Windows Narrator Microsoft response"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.businessinsurance.com/jpmorgan-visa-mastercard-say-third-party-vendors-targeted-in-cyberattack/",
+      "title": "JPMorgan, Visa, Mastercard say third-party vendors targeted in cyberattack (Reuters)",
+      "used_in": "jpmorgan-third-party-vendors-cyberattack-2026-11"
+    },
+    {
+      "url": "https://www.fox5ny.com/news/jp-morgan-service-providers-cyberattack-what-we-know",
+      "title": "J.P. Morgan says third party service providers were target of cyberattack",
+      "used_in": "jpmorgan-third-party-vendors-cyberattack-2026-11"
+    },
+    {
+      "url": "https://www.forescout.com/?p=116223",
+      "title": "Forescout Research: BankWeaver Campaign Abuses Digital Banking Middleware to Deploy Web Shells",
+      "used_in": "bankweaver-temenos-quantum-fabric-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.threatlocker.com/blog/proof-of-concept-for-fastunlock-windows-lock-screen-bypass-from-nightmare-eclipse",
+      "title": "ThreatLocker: Proof of concept for FastUnlock Windows lock screen bypass",
+      "used_in": "fastunlock-windows-narrator-lockscreen-bypass-2026-11"
+    },
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001492422&type=8-K&dateb=&owner=include&count=10",
+      "title": "SEC EDGAR: Apellis Pharmaceuticals 8-K filings",
+      "used_in": "apellis-pharmaceuticals-vortex-claim-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "jpmorgan-third-party-vendors-cyberattack-2026-11",
+    "fastunlock-windows-narrator-lockscreen-bypass-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "bankweaver-temenos-quantum-fabric-2026-11",
+      "url": "https://www.forescout.com/?p=116223"
+    },
+    {
+      "id": "apellis-pharmaceuticals-vortex-claim-2026-11",
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001492422&type=8-K&dateb=&owner=include&count=10"
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Molex (Koch) Vortex leak-site claim",
+      "url": "https://www.molex.com/en-us/news",
+      "reason": "Molex newsroom did not load (socket hang up, retried once); only a Breachsense tracker entry repeats the claim. Not checked this run; stays claimed."
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Molex: check for a company statement on the Vortex claim",
+      "url": "https://www.molex.com/en-us/news",
+      "note": "Newsroom did not load this run",
+      "priority": "low"
+    },
+    {
+      "title": "JPMorgan vendor breach: vendor name not yet reported",
+      "url": "https://www.businessinsurance.com/jpmorgan-visa-mastercard-say-third-party-vendors-targeted-in-cyberattack/",
+      "note": "FOX 5 relays The Wall Street Journal: a third-party provider in Asia-Pacific; watch for a named vendor or customer notices",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "molex.com (socket hang up)",
+    "investors.apellis.com (403)"
+  ],
+  "notes": "JPMorgan: added Reuters (via Business Insurance) review of leaked data (124 employee and more than 16,000 customer email addresses, unverified) and JPMorgan's pledge to contact affected customers with complimentary credit monitoring where appropriate (FOX 5 relaying JPMorgan's X post; Reuters quotes the spokesperson on contacting customers); action relabelled 'General advice:'; Newsweek's around-16,000 figure taken out of impact because it was not re-read this run (figure-qualifier), Newsweek's Visa Reserve link kept without the figure. Status stays developing. The possible-duplicate warning with visa-third-party-provider-incident-n0n-claim-2026-11 was there before this run (the review noted the overlap); left for the review desk. FastUnlock: added ThreatLocker's own post (PoC as non-administrator WSIAccount, BitLocker preboot PIN mitigation); still claimed, severity 1, no Microsoft fix on pages read. BankWeaver: Forescout page shows no update (one confirmed compromise, six more banks exposed but not confirmed compromised, Temenos guidance, no CVE). Apellis: no November 2026 8-K (newest 2026-05-14), no Item 1.05; the investor site returned 403, so the claim stays unconfirmed.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

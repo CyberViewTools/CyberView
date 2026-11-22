@@ -11,6 +11,8 @@ import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
 import { join, extname } from "node:path";
 import { ROOT, listEventFiles } from "./lib/store.mjs";
+import { pathToFileURL } from "node:url";
+import { railProblems } from "./lib/scanner-rail-check.mjs";
 
 const fails = [], passes = [];
 const rel = (p) => p.slice(ROOT.length + 1);
@@ -170,6 +172,18 @@ if (existsSync(SCAN)) {
   // the scaled private budgets must NOT touch the rate / open-at-once ceilings (only the per-host and total work budgets may scale)
   const pcaps = (new RegExp("PRIVATE_CAPS = Object\\.freeze\\(\\{([^}]*)\\}").exec(lim) || [, ""])[1];
   if (/\b(rate|concurrency|hostConcurrency|minutes)\b/.test(pcaps)) fails.push("scanner/lib/limits.mjs: PRIVATE_CAPS may scale only hostBudget/budget, never the rate, concurrency or time ceilings");
+  // the HTTP path rail (scanner/lib/paths.mjs, only with --paths): frozen literal paths, GET only, at most 16 per host, no
+  // login/management/exploit-class path, requested only from probe.mjs getPath (which refuses anything not in the table)
+  const pathsFile = join(SCAN, "lib", "paths.mjs");
+  if (existsSync(pathsFile)) {
+    let mod = null;
+    try { mod = await import(pathToFileURL(pathsFile).href); } catch (e) { fails.push(`scanner/lib/paths.mjs could not be loaded (${String(e && e.message).slice(0, 80)})`); }
+    const core = new Set(["paths.mjs", "probe.mjs", "scan.mjs"].map((f) => join(SCAN, "lib", f)));
+    const rp = railProblems({ pathsSrc: read(pathsFile), probeSrc: read(join(SCAN, "lib", "probe.mjs")), scanSrc: read(join(SCAN, "lib", "scan.mjs")),
+      otherSrcs: files.filter((p) => !core.has(p)).map((p) => ({ file: rel(p), src: read(p) })), mod });
+    fails.push(...rp);
+    if (!rp.length) passes.push(`path rail: ${mod ? mod.RAIL_PATHS.length : "?"} frozen literal path(s), GET only, at most ${mod ? mod.PATHS_PER_HOST : "?"} per host, none login/management/exploit-class`);
+  }
   passes.push(`${files.length} scanner file(s) checked: detection only (UDP one benign datagram per service, no credential iteration)`);
 }
 

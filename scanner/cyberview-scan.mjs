@@ -12,6 +12,7 @@
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
 //         [--i-am-authorized-for-public-ranges] [--data-incidents] (cite reviewed CyberView incidents per finding) [--html] (also write report.html)
+//         [--paths [--paths-per-host N] [--paths-bmc]] (the bounded path rail, off by default)
 //         [--certs] [--mail] [--compare PREVIOUS/report.json]   opt-in extra outputs from data already collected
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -27,6 +28,7 @@ import { webSource, dirSource, snapshot, DEFAULT_SOURCE } from "./lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib/scan.mjs";
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
+import { pathsPerHost, PATHS_PER_HOST } from "./lib/paths.mjs";
 import { toHtml, scopeCoaching, scanProfile, staleData } from "./lib/html-report.mjs";
 import { D } from "./lib/shared.mjs";
 import { certInventory, toCertsCsv, certText } from "./lib/cert-inventory.mjs";
@@ -35,7 +37,7 @@ import { kevCoverage, toCoverageCsv, coverageText } from "./lib/kev-coverage.mjs
 import { loadPrevious, diffReports, diffText } from "./lib/diff.mjs";
 import { snapshotIncidentsTo } from "./lib/cite.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -58,6 +60,8 @@ Extra outputs (from what the scan already read; nothing more is sent): --certs (
 --compare PREVIOUS/report.json (diff.json, diff.txt: new, fixed, still-open). KEV fingerprint coverage (no network):
   node scanner/cyberview-scan.mjs coverage --data cyberview-data [--out kev-coverage.csv]
 Depth: --all-ports (every TCP port 1-65535, private ranges only), --udp (read-only DNS, NTP and SNMP service checks).
+Path rail (off by default): --paths adds at most ${PATHS_PER_HOST} GETs per host (lower with --paths-per-host N) of frozen, reviewed version
+paths, only where the host's own root page, headers, certificate or port already hint at that product; --paths-bmc adds BMC identify.
 Discovery (optional, in the scope file's "discover"): cidr sweep, owned domains (with Certificate Transparency), an imported
 asset list (host/IP list, CSV, nmap -oX XML), and your own read-only cloud inventory JSON; every host found is re-checked
 against the scope before it is scanned.
@@ -120,6 +124,11 @@ export async function main(argv, io = {}) {
     `private ranges (10/8, 172.16/12, 192.168/16, loopback, link-local, IPv6 fc00::/7) run with the scope file alone`]);
   const lim = checkSettings({ rate: a.rate, concurrency: a.concurrency, hostConcurrency: a["host-concurrency"], hostBudget: a["host-budget"], budget: a.budget, minutes: a["max-minutes"] }, { hasPublic: allowPublic });
   if (!lim.ok) return fail(io, ["limits", ...lim.problems]);
+  // the path rail is off unless --paths is given; its per-host cap can only be lowered
+  if (!a.paths && (a["paths-bmc"] || a["paths-per-host"] !== undefined)) return fail(io, ["--paths-bmc and --paths-per-host need --paths (the path rail is off by default)"]);
+  const pph = pathsPerHost(a["paths-per-host"]);
+  if (!pph.ok) return fail(io, ["limits", pph.problem]);
+  const paths = a.paths ? { enabled: true, perHost: pph.value, bmc: !!a["paths-bmc"] } : { enabled: false };
   const udp = a.udp ? Object.keys(UDP_SERVICES) : [];
   let ports = scope.ports || DEFAULT_PORTS;
   const extra = {};
@@ -138,7 +147,7 @@ export async function main(argv, io = {}) {
   if (a.compare) { let t; try { t = io.readFile(a.compare); } catch { return fail(io, [`--compare: cannot read ${a.compare}`], 1); } const p = loadPrevious(t); if (p.error) return fail(io, [`--compare ${a.compare}: ${p.error}`], 1); previous = p.report; }
   const dataLine = src ? (src.kind === "offline" ? `offline snapshot ${src.where} (fetched ${(src.manifest && src.manifest.fetched_at) || "?"}); no data request is made` : `online: read-only GET requests to ${src.where} for CyberView's data files`) : "none (check only)";
   const dataInfo = dataLine + (src && a["data-incidents"] ? "; with --data-incidents also the event archive (data/archive/), to cite reviewed incidents" : "");
-  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS }));
+  io.out(header({ scope, scopeFile: a.scope, scopeHash: sc.hash, settings: lim.settings, allowPublic, ports, allPorts: !!a["all-ports"], udp, udpSends: UDP_SENDS, data: dataInfo, sends: SENDS, paths }));
   const coach = scopeCoaching(sc.text, scope, { today });   // advice only (typos, gaps); never a refusal
   if (coach.length) io.out("\nSCOPE FILE ADVICE (it passes its checks; these look like typos or gaps)\n" + coach.map((c) => "  - " + c).join("\n"));
   if (cmd === "check") {
@@ -167,7 +176,7 @@ export async function main(argv, io = {}) {
     if (stop) { io.err("REFUSED: " + stop); return 2; }   // the public cap is the hard stop for public space; nothing was scanned
     refused.forEach((r) => io.err(`skipped ${r.target}: ${r.why}`));
     io.out(`\nScanning ${targets.length} address(es)${publicCount ? ` (${publicCount} public)` : ""} on ${a["all-ports"] ? "all 65535 TCP ports" : ports.length + " port(s)"}${udp.length ? ` plus UDP ${udp.join(", ")}` : ""} ...`);
-    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp,
+    const probed = await probeAll(targets, { ports, settings: lim.settings, probe: io.probe, udpProbe: io.udpProbe, signal: ac.signal, log: (s) => io.out("  " + s), assumeUp: !!a["assume-up"], httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], udp, paths,
       inScope: (host) => (isIP(host) ? ipInScope(scope, host) : hostInScope(scope, host)) });
     const report = await buildReport({ src, scope, scopeFile: a.scope, scopeHash: sc.hash, allowPublic, ports, settings: lim.settings, probed, refused, startedAt, today, incidents: !!a["data-incidents"] });
     report.run.profile = scanProfile({ ports, allPorts: !!a["all-ports"], customPorts: !!(a.ports || scope.ports), udp, httpPorts: extra["http-ports"] || [], httpsPorts: extra["https-ports"] || [], assumeUp: !!a["assume-up"], discover: !!scope.discover, dataMode: src.kind });

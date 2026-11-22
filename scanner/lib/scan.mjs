@@ -4,7 +4,8 @@
 import { lookup } from "node:dns/promises";
 import { gate, listAddresses, classify, isPrivateKind, LIMITS, parseTarget, addresses } from "./scope.mjs";
 import { Limiter, pool } from "./limits.mjs";
-import { probePort as realProbe, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
+import { probePort as realProbe, getPath as realGetPath, DEFAULT_PORTS, VERSION, USER_AGENT, SENDS } from "./probe.mjs";
+import { railEvidence, railPlan, railResult, railCoverage, PATHS_PER_HOST } from "./paths.mjs";
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
 import { fromEdge } from "./fp-edge.mjs";
@@ -97,8 +98,10 @@ const THROTTLE = { minResets: 3, backoffMs: 8000, maxRetry: 50 };
 // observations kept per host (the rest are counted in observations_dropped, never silently lost)
 export const OBS_PER_HOST = 60;
 
-export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false }) {
+export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe = realProbe, signal = null, log = () => {}, clock, assumeUp = false, httpPorts = [], httpsPorts = [], udp = [], udpProbe = realUdpProbe, inScope = () => false, paths = null, getPath = realGetPath }) {
   const lim = new Limiter(settings, clock), ac = new AbortController();
+  // the path rail (scanner/lib/paths.mjs): off unless paths.enabled (--paths); capped per host, never above PATHS_PER_HOST
+  const rail = paths && paths.enabled ? { perHost: Math.min(PATHS_PER_HOST, Number(paths.perHost) || PATHS_PER_HOST), bmc: !!paths.bmc } : null;
   const udpKeys = (Array.isArray(udp) ? udp : udp ? Object.keys(UDP_SERVICES) : []).filter((k) => UDP_SERVICES[k]);
   const stopAll = (why) => { lim.stop(why); ac.abort(); };
   if (signal) { if (signal.aborted) stopAll(String(signal.reason || "interrupted")); signal.addEventListener("abort", () => stopAll(String(signal.reason || "interrupted")), { once: true }); }
@@ -117,6 +120,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       h.ports.push({ port, state: "open", services: svcs.length, banner: r.banner ? r.banner.split(/\r?\n/)[0].replace(/[^ -~]/g, "?").slice(0, 160) : "" });
       h.services.push(...svcs);
       if (r.http) h.http.push({ port, ...httpInfo(r.http), ...(r.http.truncated ? { body_truncated: true } : {}) });   // scan-html: body cut at the size cap
+      if (rail && r.http) (h._railEv || (h._railEv = [])).push(railEvidence(port, r));   // in memory for the rail's hints only
       if (r.tls) h.tls.push({ port, ...tlsInfo(r.tls), cert: certRecord(r.tls.cert) });
       // capped per host so one noisy host cannot bury the rest of the report (the cap is noted when reached)
       const obs = [...observations(port, { banner: r.banner, cert: r.tls && r.tls.cert, tls: r.tls, names: h.names }),
@@ -139,6 +143,26 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
       if (r.state === "open") { h.up = true; h.services.push(...fromUdp(r)); h.observations.push(...udpObservations(r)); }
       return true;
     } finally { release(); }
+  };
+  // rail GETs for one host, one at a time, each through the Limiter (host and total budgets); every outcome is recorded
+  const runRail = async (h) => {
+    const { plan, skipped } = railPlan(h._railEv, rail); delete h._railEv;
+    if (!plan.length && !skipped.length) return;
+    h.rail = [];
+    for (const item of plan) {
+      const release = await lim.acquire(h.address);
+      if (!release) { h.rail.push({ port: item.port, path: item.path, for: item.ids, status: 0, outcome: "not-sent: budget or time", found: [] }); continue; }
+      try {
+        const { record, services } = railResult(item, await getPath(h.address, item.port, item.path, { tls: item.tls, servername: h.names[0] || "", hostHeader: h.names[0] || "", signal: ac.signal }));
+        h.rail.push(record);
+        for (const s of services) {
+          if (h.services.some((o) => o.port === s.port && o.product === s.product && (o.shown_version || !s.shown_version))) continue;
+          h.services = h.services.filter((o) => !(o.port === s.port && o.product === s.product)); h.services.push(s);
+        }
+      } finally { release(); }
+    }
+    for (const x of skipped) h.rail.push({ port: x.port, path: x.path, for: x.ids, status: 0, outcome: "not-sent: per-host cap", found: [] });
+    log(`${h.address}: path rail ${plan.length} GET(s)${skipped.length ? `, ${skipped.length} hinted path(s) over the per-host cap of ${rail.perHost} not sent` : ""}`);
   };
   try {
     await pool(hosts, settings.concurrency, async (h) => {
@@ -165,6 +189,8 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
           if (h.throttle_recovered > 0) log(`${h.address}: ${h.throttle_recovered} service(s) found after backing off — the first pass was being throttled`);
         }
       }
+      if (rail && h._railEv) await runRail(h);
+      delete h._railEv;
       // UDP checks run even when TCP found nothing: a host can answer only on UDP (one benign datagram per service)
       if (udpKeys.length) await pool(udpKeys, settings.hostConcurrency, async (k) => { await oneUdp(h, k); });
       if (!h.up) { const filtered = h.outcomes.filter((o) => o.state === "filtered").length;
@@ -174,7 +200,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
     });
   } finally { clearTimeout(timer); }
   const st = lim.stats();
-  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys };
+  return { hosts, stats: st, interrupted: !!st.stopped, stop_reason: st.stopped, udp: udpKeys, paths: rail ? { enabled: true, per_host: rail.perHost, bmc: rail.bmc } : { enabled: false } };
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
@@ -212,14 +238,14 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
-      udp: probed.udp || [], network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
+      udp: probed.udp || [], paths: probed.paths || { enabled: false }, network: { ...probed.stats, sends: { ...SENDS, ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
       data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
         ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
-    coverage: coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }),
-    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
+    coverage: { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
+    hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };
 }

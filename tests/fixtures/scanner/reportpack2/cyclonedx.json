@@ -1,0 +1,14 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "metadata": { "component": { "bom-ref": "app", "name": "shop-frontend", "version": "2.0.0" } },
+  "components": [
+    { "bom-ref": "pkg:nginx", "name": "nginx", "version": "1.24.0", "publisher": "F5", "purl": "pkg:generic/nginx@1.24.0" },
+    { "bom-ref": "pkg:php", "name": "php", "version": "8.1.12", "publisher": "PHP Group",
+      "components": [ { "bom-ref": "pkg:php-json", "name": "php-json", "version": "8.1.12" } ] }
+  ],
+  "dependencies": [
+    { "ref": "app", "dependsOn": ["pkg:nginx", "pkg:php"] },
+    { "ref": "pkg:php", "dependsOn": ["pkg:php-json"] }
+  ]
+}

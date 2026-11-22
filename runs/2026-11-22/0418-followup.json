@@ -1,0 +1,101 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-22T04:18:34Z",
+  "finished_at": "2026-11-22T04:21:34Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Porto de Santos APS ataque cibernético sistemas restabelecidos",
+    "Xbike datalek Arriva Autoriteit Persoonsgegevens",
+    "전북교육청 통학버스 개인정보 유출",
+    "PepsiCo Inception ransomware claim statement",
+    "Nvidia Gentlemen ransomware third-party partner update"
+  ],
+  "pages_read": [
+    {
+      "url": "https://abcdoabc.com.br/porto-de-santos-segue-mais-30-sistemas-fora/",
+      "title": "Porto de Santos segue com mais de 30 sistemas fora (18 Nov)",
+      "used_in": "brazil-santos-port-authority-ransom-demand-2026-11"
+    },
+    {
+      "url": "https://www.gazetadopovo.com.br/brasil/ataque-hacker-porto-de-santos-operacao-resgate-servidores/",
+      "title": "Ataque hacker ao maior porto da América Latina teve resgate de servidores (13 Nov)",
+      "used_in": "brazil-santos-port-authority-ransom-demand-2026-11"
+    },
+    {
+      "url": "https://www.acessa.com/economia/2026/11/344002-porto-de-santos-sistemas-seguem-afetados-apos-ataque-cibernetico.html",
+      "title": "Porto de Santos: sistemas seguem afetados (Agência Brasil reprint, 10 Nov)",
+      "used_in": "read; nothing beyond sources on file"
+    },
+    {
+      "url": "https://www.segye.com/newsView/20261119506024",
+      "title": "전주대·전북교육청서 잇달아 개인정보 19만건 유출 (19 Nov)",
+      "used_in": "jeonbuk-education-office-school-bus-data-leak-2026-11"
+    },
+    {
+      "url": "https://nocutnews.co.kr/news/5608603",
+      "title": "2021 NEIS article, unrelated",
+      "used_in": "not used"
+    },
+    {
+      "url": "https://nos.nl/artikel/2640147-deelfietsplatform-lekte-fietstochten-van-gebruikers-ook-van-arriva-klanten",
+      "title": "NOS: Deelfietsplatform lekte fietstochten",
+      "used_in": "xbike-arriva-bike-share-app-exposure-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/nvidia-investigating-gentlemen-ransomware-breach-claims/",
+      "title": "NVIDIA investigating Gentlemen ransomware breach claims",
+      "used_in": "nvidia-the-gentlemen-leak-site-claim-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.breachsense.com/breaches/pepsico-data-breach/",
+      "title": "Breachsense PepsiCo claim entry (tracker)",
+      "used_in": "pepsico-inception-claim-2026-11 (unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "brazil-santos-port-authority-ransom-demand-2026-11",
+    "jeonbuk-education-office-school-bus-data-leak-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "xbike-arriva-bike-share-app-exposure-2026-11",
+      "url": "https://nos.nl/artikel/2640147-deelfietsplatform-lekte-fietstochten-van-gebruikers-ook-van-arriva-klanten"
+    },
+    {
+      "id": "nvidia-the-gentlemen-leak-site-claim-2026-11",
+      "url": "https://www.bleepingcomputer.com/news/security/nvidia-investigating-gentlemen-ransomware-breach-claims/"
+    },
+    {
+      "id": "pepsico-inception-claim-2026-11",
+      "url": "https://www.breachsense.com/breaches/pepsico-data-breach/"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Nvidia / The Gentlemen countdown ends 28 Nov",
+      "url": "https://www.bleepingcomputer.com/news/security/nvidia-investigating-gentlemen-ransomware-breach-claims/",
+      "note": "No update since 19 Nov; check after 28 Nov for data release or the partner being named.",
+      "priority": "medium"
+    },
+    {
+      "title": "PepsiCo Inception claim: no PepsiCo statement found",
+      "url": "https://www.breachsense.com/breaches/pepsico-data-breach/",
+      "note": "Only tracker entries (Breachsense: 72MB claimed); no company statement or press report found. Event older than 5 days; check once more then leave.",
+      "priority": "low"
+    },
+    {
+      "title": "Jeonbuk office notice and final count",
+      "url": "https://www.jbe.go.kr/",
+      "note": "Office's own notice not read; affected students still being counted per Segye 19 Nov; NIS tracing the intrusion route.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "cybernews.com (403, not retried)"
+  ],
+  "notes": "Santos: Gazeta do Povo (13 Nov) and ABC do ABC (18 Nov) resolve the Federal Police conflict (inquiry opened 10 Nov); added >30 systems still in alternative mode, APS cause (power failure then intrusion that erased data) and no-leak statement; title and fields rewritten, action now 'General advice:'; correction 2026-11-22-santos-port. Jeonbuk: Segye Ilbo adds police referral, NIS tracing and the office's figure of 9900여 parent contacts; records_affected 10000 (media figure) cleared; now corroborated (Dailysecu + Segye); correction 2026-11-22-jeonbuk-bus. Remaining validator warnings are figure-qualifier on translated qualifiers (mais de 30, 9900여), noted in each validation note. Xbike: NOS has nothing new beyond the record. Build passes.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

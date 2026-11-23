@@ -11,8 +11,9 @@ test("waitFor: no wait the first time, the rest of the gap after a recent reques
   assert.ok(GAP_MS >= 5000);
 });
 
-test("both GDELT callers take a slot before every request", () => {
-  for (const f of ["osint.mjs", "grid-news.mjs"]) {
+test("every GDELT DOC-API caller takes a slot before every request", () => {
+  // osint.mjs retired its DOC-API collector 2026-11-23 (scripts/gdelt-gkg.mjs replaced it); grid-news.mjs still queries it.
+  for (const f of ["grid-news.mjs"]) {
     const s = readFileSync(new URL("../../scripts/" + f, import.meta.url), "utf8");
     assert.match(s, /import \{ gdeltSlot \} from "\.\/lib\/gdelt\.mjs"/);
     assert.ok((s.match(/await gdeltSlot\(/g) || []).length >= (s.match(/api\.gdeltproject\.org/g) || []).length, f);

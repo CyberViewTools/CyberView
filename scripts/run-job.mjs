@@ -125,8 +125,14 @@ export function workerEnv(served, key, base = process.env) {
   // re-read on every worker turn (17.5 K -> 9.4 K measured). Workers get no SETUP section, so nothing tells them to read it.
   const env = { ...base, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1", CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" };
   if (served === "api-fallback" && key) env.ANTHROPIC_API_KEY = key; else delete env.ANTHROPIC_API_KEY;
+  // Secrets a worker never needs (pen test, 2026-11-23): workers read untrusted web pages and issues and can run node, so
+  // anything in their environment can be exfiltrated by a prompt injection. The fallback key reaches a worker ONLY as
+  // ANTHROPIC_API_KEY in api-fallback mode (above); cloud credentials never.
+  for (const k of Object.keys(env)) if (WORKER_ENV_DENY.test(k)) delete env[k];
   return env;
 }
+/** Environment variables removed from every worker: the fallback key under its own name and cloud credentials. */
+export const WORKER_ENV_DENY = /^(CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY|AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|CLOUDSDK_AUTH_ACCESS_TOKEN|GOOGLE_APPLICATION_CREDENTIALS)$/;
 // the fallback decision reads the plan's live limit (budgetState) and the month's fallback spend (the ledger), cached briefly
 let fbCache = { at: 0, served: null, spend: { usd: 0, workers: 0, last_at: null }, limited_until: null };
 function fallbackState(now = Date.now()) {

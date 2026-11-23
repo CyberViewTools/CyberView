@@ -156,3 +156,12 @@ test("budget.mjs: the fallback status line never contains the key value", () => 
   assert.ok(!line.includes(SECRET));
   assert.match(fallbackLine(fallbackStatus(NOW, {}, [], false)), /key not set \(CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY\)/);
 });
+
+test("workers never inherit the fallback key under its own name or cloud credentials", () => {
+  const base = { PATH: "/bin", CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: "sk-x", AWS_ACCESS_KEY_ID: "a", AWS_SECRET_ACCESS_KEY: "b", CLOUDSDK_AUTH_ACCESS_TOKEN: "c" };
+  for (const mode of ["subscription", "api-fallback", "park"]) {
+    const e = workerEnv(mode, "sk-x", base);
+    for (const k of ["CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "CLOUDSDK_AUTH_ACCESS_TOKEN"]) assert.ok(!(k in e), `${mode}: ${k}`);
+    assert.equal(e.PATH, "/bin");
+  }
+});

@@ -6,7 +6,7 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 
 | Component | Heartbeat | Limit | Restarted by |
 |---|---|---|---|
-| Research loop (research, second review, updaters, follow-up desk) | `flow:leader` lease in `data/leases.json`, renewed every cycle, published at least every 8 minutes | lease expires 20 minutes after the last renewal | the four research schedules in the ops session (`:05 :20 :35 :50`) restart it when it is not running; the **standby session** takes the lease when it expires (its schedules `:12 :42`) |
+| Research loop (research, second review, updaters, follow-up desk) | `flow:leader` lease in `data/leases.json`, published once at the start of each span; a span-bounded loop (under 20 min left, which is how it runs today at ~7 foreground minutes) renews LOCALLY and makes no heartbeat or hand-over commit (#136) | the published lease expires at the span's end, so at most ~7 minutes, not 20 | the four research schedules in the ops session (`:05 :20 :35 :50`) restart it when it is not running; the **standby session** takes the lease when it expires (its schedules `:12 :42`) |
 | Deploy | `manifest.json` `built_at`; the newest code and data live | 90 minutes; 20 minutes lag | every data push dispatches `pages.yml` (scripts/lib/repo.mjs `dispatchDeploy`), every merge to main; the guard starts `pages.yml` |
 | Data branch switch (stage A) | every checkout has `./data` on the data branch; `data-forward.yml` has nothing to forward | 24 hours quiet before stage B | `node scripts/data-branch.mjs ensure` at every job start (dispatch.mjs); runbook: `swarm/handoff/data-branch.md` |
 | CVE corpus | `last_cve_at` | 3 hours | every finished deploy (gated to hourly), its schedule, any push to the CVE code; the guard starts `cve.yml` |
@@ -14,7 +14,9 @@ outside: the live site, the public GitHub API and the public `data/leases.json`.
 | Power grid outages | `last_grid_at` | 2 hours (warn) | every research cycle runs `grid.mjs collect` and the grid researchers; collect.yml every 30 min as backup (stands down while the loop collects) |
 | Lead collection | `last_collect_at` | 2 hours | every research cycle collects; `collect.yml` as backup; the guard starts it |
 | Brief, analysis, exploit analyst, triage, advisory, verify, report review, steward, editor | `last_<job>_at` | brief 7 h, analysis 15 h, analyst 5 h | their schedules in the ops session; the guard warns |
-| The guard itself | the guardian's scheduled runs (push notification to the owner on ALERT) | 2 hours | its own schedule, in a fresh session each time |
+| Health watch (owner-created, not in routines.json: it has no heartbeat to judge) | its own scheduled runs, push to the owner only when degraded | every 2 h (`trig_01CCrJLGHhRaqCawfxoduFq5`, Toronto :33, fresh session) | its own schedule. Reads open `pipeline-alert` issues and the live bundle's age; it does NOT run `guard.mjs --heal`, so it reports and does not repair |
+| Grok review (owner-created, not in routines.json) | its own scheduled runs, push only when a Grok thread waits on Claude | hourly (`trig_01ExzauUi9CgJHPJz8LwR8Y4`, :17, fresh session) | its own schedule; runs `scripts/grok-watch.mjs` read-only |
+| The guard itself | the guardian's scheduled runs (push notification to the owner on ALERT) | 2 hours | its own schedule, in a fresh session each time. **Confirmed present 2026-11-23** by a complete listing of all 126 scheduled tasks: "CyberView: Guardian" (`trig_01AQNQvXJeLj2JLtnCuDDHUX`), enabled, `47 */2 * * *` UTC, fresh session, push on, last run SUCCEEDED 2026-11-23 20:47Z. An earlier partial listing wrongly reported it missing. Note `guardian` has `status_key: null`, so nothing inside the repo can detect it if it ever does stop: the push notification on ALERT is the only signal |
 
 ## Why it does not stop
 - **Two sessions, one leader.** The ops session and the standby session both try to run the research loop. Only the one

@@ -12,5 +12,13 @@ One status view for everything: `node scripts/swarm.mjs board`.
 | standby | CyberView standby (session_013C7AZ7WzHrDL7e9QagpvvF) | the research loop only, when the `flow:leader` lease has expired ("CyberView standby: Research :12 / :42") | waiting | 2026-11-19 21:29 |
 | guardian | a fresh session each run ("CyberView: Guardian", every 2 h) | nothing; reads and heals from the outside (`guard.mjs --heal`), nudges ops 4 and standby | running | 2026-11-19 21:29 |
 | catch-up | planning session (owner's chat) | one-off swarms over a whole queue: `swarm.mjs freeze <kind>` then `swarm.mjs run <run>` (headless workers, leases), then `close` | idle (review swarm closed: 204 of 204) | 2026-11-19 05:16 |
-| build | planning session (owner's chat) | scripts/, site/, scanner/, docs/, tests/, config/, routines.json, README.md, the scheduled tasks' definitions; changes reach main only as pull requests (CI must pass) | idle | 2026-11-20 |
+| build | planning session (owner's chat) | scripts/, site/, scanner/, docs/, tests/, config/, routines.json, README.md, the scheduled tasks' definitions; changes reach main only as pull requests (CI must pass) | idle (lanes A+B integrated; CI green) | 2026-11-23 |
+| build/review-window | worktree agent | scripts/review.mjs | done (merged, #136) | 2026-11-23 |
+| build/feed-415 | worktree agent | scripts/collect.mjs, scripts/lib/net.mjs | done (merged, #136) | 2026-11-23 |
+| audit (4 read-only lanes) | worktree agents, 2026-11-23 | nothing: usage accounting, routines/triggers, sources, hygiene/accuracy | done; findings and the three corrections in docs/orchestration/STATE.md | 2026-11-23 |
+| build/limits-links | worktree agent | scripts/lib/usage.mjs, scripts/linkcheck.mjs | done (merged, #136) | 2026-11-23 |
+| build/monitoring | worktree agent | scripts/lib/stages.mjs, scripts/pipecheck.mjs | done (merged, #136) | 2026-11-23 |
+| build/metric-truth | worktree agent | scripts/efficiency.mjs, scripts/review.mjs writersFrom | done (merged, #136) | 2026-11-23 |
+| build/onfile-gate | worktree agent | scripts/lib/gates.mjs, scripts/updates.mjs | done (merged, #136) | 2026-11-23 |
+| build/lease-local | worktree agent | scripts/run-job.mjs, scripts/lib/lease.mjs | done (merged, #136) | 2026-11-23 |
 | migration | planning session (owner's chat) | the code/data branch switch-over: the data branch, data-forward.yml, the stage B removal of data/ from main; runbook swarm/handoff/data-branch.md, explanation docs/branches.md | done (stage B merged; rulesets: owner) | 2026-11-20 |

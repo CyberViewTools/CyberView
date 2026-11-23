@@ -406,7 +406,7 @@
    "status_key": "last_followup_at",
    "max_age_hours": 6,
    "active": true,
-   "does": "Runs inside the research loop every 2 hours (config/pipeline.json flow.followup_every_minutes): checks whether developing stories and claims were confirmed, denied or grew, and updates them. Its separate daily schedule was switched off on 2026-11-20.",
+   "does": "Runs inside the research loop every 2 hours (config/pipeline.json flow.followup_every_minutes): checks whether developing stories and claims were confirmed, denied or grew, and updates them. A script picks the events (scripts/followup-desk.mjs): only those with new reporting since their last follow-up, or not looked at for a wait that doubles each time nothing changed; the rest are skipped with the time they are due next. Its separate daily schedule was switched off on 2026-11-20.",
    "reviewed": "2026-11-20"
   },
   {

@@ -438,6 +438,28 @@ resets connections after it has answered (an IPS or fail2ban throttling the scan
 re-probes those ports one at a time, recovering services the first pass was blocked from, and notes it in Coverage — if
 anything still looks thin, re-scan slower with `--rate 0.1`.
 
+## What `--identify` adds for data stores and brokers
+
+With `--identify` (off by default), four more services each get one standard message, built from that protocol's own
+published specification and frozen byte for byte:
+
+- **Redis** (6379) — one `PING`, the protocol's liveness command. If it answers `+PONG` there is **no password at all**:
+  anyone who can reach the port can read and overwrite every key, which is a well-worn route to running code on the
+  host. An error reply means a password is set. `INFO` is deliberately not sent: it would give a version, but it reads
+  the server's configuration.
+- **MQTT** (1883) — one `CONNECT` with no user name, no password and no will, then a `DISCONNECT`. The CONNACK says
+  whether the broker **accepts anonymous connections**. Clean Session is set so the broker is not left holding session
+  state for the scanner.
+- **MongoDB** (27017-27019) — one `hello`, the handshake every driver sends. It reports standalone, replica set or
+  mongos and the wire-version range. It is answered before authentication by design, so it says the port is reachable
+  and says plainly that it does *not* show whether access control is on.
+- **Apache Kafka** (9092) — one `ApiVersions` request, which a broker answers whatever the authentication state.
+  Presence and the API count only; no release number is claimed, because no published mapping from an API set to a
+  Kafka release exists.
+
+Nothing here reads a key, a topic, a record, a database or a configuration value, and no version is invented: where a
+message carries no version, the row says so.
+
 ## Working offline on your own files
 
 Five commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):

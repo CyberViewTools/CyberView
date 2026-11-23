@@ -546,6 +546,30 @@ read, and a PLC that refuses the one TSAP is not retried; BACnet devices that an
 heard (the scanner does not listen for broadcasts); an OPC UA GetEndpoints reply over 16 KB is recorded as an error;
 DICOM only on 104, not 11112; DNP3 and FHIR are not included (see Decisions).
 
+### What `--identify` asks each service (wave 4)
+
+Four more services answer one standard message each, all behind the same `--identify` flag and all off by default. The
+request for each is a frozen byte sequence built field by field from that protocol's own published specification, with
+the derivation written beside it in `scanner/lib/hello.mjs` and the bytes locked in `REVIEWED_HEX`
+(`scripts/lib/scanner-hello-check.mjs`), so section 7 fails if one byte changes.
+
+| Service | Port | The one message | What is read |
+|---|---|---|---|
+| Apache Kafka | 9092 | `ApiVersions` v0, null client id | presence and the API count. **No release number**: no published mapping from an API set to a Kafka release exists |
+| Redis | 6379 | `PING` (RESP array of one bulk string) | `+PONG` means **no password at all**; a `-` error reply means one is set |
+| MQTT broker | 1883 | `CONNECT` (clean session, no user name, password or will), then `DISCONNECT` | the CONNACK return code: whether the broker **accepts anonymous connections** |
+| MongoDB | 27017-27019 | `hello` as one OP_MSG | standalone, replica set member or mongos, and the wire-version range **as the numbers it states** |
+
+Three of the four answer a posture question rather than a version question, and that is the point: an unprotected Redis
+or an MQTT broker that takes anonymous connections is a more direct route into an organisation than most unpatched
+versions are. None of the four reads data: Redis `INFO` was rejected for reading configuration and metrics, and the
+MongoDB and Kafka messages are the handshakes their own clients send before anything else.
+
+Two details are deliberate. MQTT sets Clean Session, because leaving it clear would make the broker **create and keep
+session state** for the scanner's client id — a change to the operator's own broker. And the MongoDB finding says in so
+many words that `hello` is answered before authentication by design, so it does **not** show whether access control is
+enabled; the alternative would be a reassuring sentence that happens to be wrong.
+
 ## Deliberately left out
 
 Credentialed (authenticated) scanning; password, community-string or any credential guessing; protocol commands beyond the
@@ -643,7 +667,51 @@ Wave 3, taken by the build lead on 2026-11-22 under the same instruction:
     four attributes (supportedLDAPVersion, vendorName, vendorVersion, objectClass) with no bind.
 22. **`hello.mjs` may own a UDP socket** under the `scanner-hello-check` rules (one datagram send, frozen reviewed bytes, no
     broadcast or multicast), as the second file beside `udp.mjs`. The `--ics` BACnet query still goes through `udp.mjs`.
-23. **`match` ships with `--assume-exposed`, defaulting to internal.** An SBOM or package list carries no address, so
+23. **Four more identify hellos: Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB `hello` (wave 4).** Each is a
+    Design under decision 10, built only from the protocol's own published specification, read for this build:
+    - **Kafka** `ApiVersions` v0 with a null client id (kafka.apache.org/protocol). The page states a broker "returns
+      its full list of supported ApiKeys and versions regardless of current authentication state", so this is the
+      protocol's own pre-authentication handshake, not a way around authentication. Presence and the API count only: the
+      page publishes no mapping from an API set to a Kafka release, so **no release number is claimed**.
+    - **Redis** `PING` as a RESP array of one bulk string (redis.io protocol spec). PING is the protocol's liveness
+      command: it reads no key and changes nothing. `INFO` was **rejected** — it would give a version, but it reads the
+      server's configuration and metrics, which is more than identification. The answer still carries the finding that
+      matters: `+PONG` means no password at all, an error reply means one is set. The error is matched by its `-` prefix
+      and first word only, because the exact text of Redis's authentication error is not on any page read for this
+      build and will not be written from memory.
+    - **MQTT** 3.1.1 `CONNECT` with no user name, no password and no will, then `DISCONNECT` (OASIS mqtt-v3.1.1-os).
+      Clean Session is set deliberately: with it clear, the broker would have to **create and keep session state** for
+      the scanner's client id, which would leave something behind on the operator's own broker. The client id is 16
+      bytes of `0-9a-zA-Z`, inside the 1-to-23 range of that character set a server MUST accept ([MQTT-3.1.3-5]), so
+      the probe never depends on a MAY. The CONNACK return code says whether the broker accepts anonymous connections.
+    - **MongoDB** `hello` as one OP_MSG (the wire protocol page and the BSON 1.1 specification). It is the handshake
+      every driver sends and reads no collection. It is answered **before authentication by design**, so the finding
+      says the port is reachable and explicitly says it does *not* show whether access control is on. `maxWireVersion`
+      is reported as the number it is: no page read for this build publishes a wire-version-to-release table, so none
+      is inferred.
+24. **SQL Server TDS PRELOGIN: deferred, not rejected.** It is the most valuable of the candidates, because PRELOGIN
+    returns an exact build number before authentication, and the PRELOGIN body itself is fully specified ([MS-TDS]
+    2.2.6.5: 5-byte options, big-endian offsets, VERSION first, TERMINATOR 0xFF). Three questions were left unanswered
+    by the pages read, and a reviewed byte sequence will not be frozen around a guess:
+    - the **Window** field of the 8-byte packet header is not described on the Packet Header page or any page it links
+      to, so what a client must send there is unknown;
+    - the **base of `PL_OFFSET`** is not stated (from the start of the PRELOGIN body, or of the whole packet);
+    - the Length page says Length "MUST be greater than or equal to 512 bytes", which a ~30-byte PRELOGIN packet
+      cannot satisfy; the page's "until Length is successfully negotiated" and "has not logged in" clauses may be the
+      intended exception, but it does not say so.
+    Resolving these (the [MS-TDS] PDF, or the Type and Window subsections) is all that stands in the way.
+25. **JetDirect PJL `INFO ID`: rejected.** TCP 9100 is a raw print channel. A device that is not PJL-aware prints what
+    it receives, so the probe would push a page of text out of the operator's own printers — a physical side effect on
+    their hardware. Detection-only means no side effects, not merely no exploitation. Printers stay identified from
+    their HTTP server and certificate, without a version.
+26. **NetBackup vnetd and the ACME `acme-tls/1` ALPN: deferred.** The vnetd greeting needs a non-NULL probe with no
+    public specification to build it from. The ACME check is not a hello at all: it needs a TLS handshake offering a
+    named ALPN protocol, which `hello.mjs` may not do (section 7 allows it no `tls.connect`); it belongs with the TLS
+    code, with its own Design, if ever.
+27. **Oracle TNS `(CONNECT_DATA=(COMMAND=version))`: deferred.** Oracle publishes no specification of the TNS wire
+    format, so the bytes could only come from a reverse-engineered third-party source. The listener's version command
+    is also commonly restricted, so the probe would often be refused even when correct.
+28. **`match` ships with `--assume-exposed`, defaulting to internal.** An SBOM or package list carries no address, so
     exposure cannot be read. The Discovery recommendation was to ship the internal default and add the flag later; both
     are in, because the flag changes only CISA's deadline and the alternative is silently rating an internet-facing
     inventory as internal. `match` stays offline-only (`--data DIR`, no `--online`), so one command never both downloads

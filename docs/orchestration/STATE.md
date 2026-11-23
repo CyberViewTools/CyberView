@@ -31,6 +31,16 @@ Open (this session):
   rating, CISA's deadline for both exposure answers, the NVD ranges, the fix, whether a fingerprint can find the product
   at all, and `--version` to check a version you hold. A reader, not a matcher: no new data path, and a CVE the catalog
   does not hold is reported absent rather than guessed at. **tk-matchers is complete** with this.
+  Also in #140: **scan-hellos-2** — four more `--identify` hellos (Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB
+  `hello`), decisions 23-27 in `docs/scanner.md`. Three of the four answer a posture question, not a version question:
+  Redis `+PONG` = no password at all (high), MQTT CONNACK 0 = anonymous connections accepted (high), MongoDB says
+  plainly that `hello` is pre-auth by design and so does NOT show whether access control is on. No version is invented
+  anywhere: no Kafka release from an API set, no MongoDB release from `maxWireVersion`, because neither mapping is
+  published. SQL Server PRELOGIN is deferred with three named spec gaps, JetDirect PJL rejected (raw 9100 would make
+  non-PJL printers print the probe), Oracle TNS/NetBackup/ACME deferred.
+  **Correction to this file's earlier claim:** it said the wave-3 research had sourced the byte layouts for these
+  protocols. It had not — `handoff/scan-research-pack.md` lists them under "Needs a hello (not built here)" and records
+  only the message names. Every byte shipped here was sourced from the protocol's own specification in this session.
 
 Prior open item (merged):
 - Public + internal description refresh. Surfaces the recent operational work (#127 accuracy eval set, #129 API fallback, #132 cost tiering) in the public prose and corrects drift:
@@ -80,9 +90,12 @@ Also measured, deliberately NOT changed:
 
 Changed directly by the owner citing the #127 evals (the Opus deep roles were not more accurate).
 
-## Scanner remainder (see docs/orchestration/BACKLOG.md "Remaining")
+## Scanner remainder (after #140)
 
-Protocol fingerprints each needing one new reviewed send, off by default — Kafka, Redis, MQTT, SQL Server pre-login, Oracle TNS, JetDirect, MongoDB hello, NetBackup (byte layouts sourced in the wave-3 research). DNP3 (needs an operator-supplied address). MTA-STS policy fetch + FHIR `/metadata` (path-rail review). DNSSEC. ~31 rows unbuildable (no public fingerprint). The heavy protocol work is held until the fallback key is set so build spend can't stall publishing.
+The protocol-hello family is closed except for SQL Server PRELOGIN, which is deferred on three specific, named spec
+questions (decision 24), not on effort. DNP3 still waits on an operator-supplied outstation address (decision 20).
+DNSSEC stays out while `node:dns` cannot ask for DS or DNSKEY. ~31 catalog rows have no public fingerprint. The
+remaining Active rows are the path-rail review (MTA-STS, FHIR) and the tk-diff watch half, both Design-stage.
 
 ## Known flaky test
 

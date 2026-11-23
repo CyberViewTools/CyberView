@@ -75,6 +75,59 @@ export const HELLO = fz({
     hex: "3063020101635e04000a01000a010002010102010a010100870b6f626a656374436c617373303e0414737570706f727465644c44415056657273696f6e040a76656e646f724e616d65040d76656e646f7256657273696f6e040b6f626a656374436c617373",
     closeHex: "30050201024200",
     sends: "only with --identify (off by default): on TCP 389 when listed and open, one anonymous base-scope search of the root DSE for supportedLDAPVersion, vendorName, vendorVersion and objectClass only, then an unbind; never a bind, a subtree search or any other attribute" }),
+  // ---- wave 4 (lead decision 24, 2026-11-23). Each sequence is built field by field from the protocol's own published
+  // specification, read for this build; nothing is taken from a fingerprint database or from memory. None of the four
+  // reads data, authenticates, or changes anything on the service. Three answer the question a defender most needs about
+  // these four services: is it reachable, and does it let a stranger in?
+  //
+  // Kafka, kafka.apache.org/protocol: "RequestOrResponse => Size (RequestMessage)" with "Size => int32" (big-endian, not
+  // counting itself), then Request Header v1 { request_api_key INT16 = 18 (ApiVersions), request_api_version INT16 = 0,
+  // correlation_id INT32 = 1, client_id NULLABLE_STRING = null, encoded as length -1 (0xFFFF) with no bytes }. The
+  // "ApiVersions Request (Version: 0) => { }" body is empty, so Size is the 10-byte header. The page states a broker
+  // "returns its full list of supported ApiKeys and versions regardless of current authentication state", so this is a
+  // pre-authentication request by the protocol's own design, not a way around authentication.
+  kafka: fz({ proto: "tcp", flag: "--identify", ports: fz([9092]),
+    hex: "0000000a0012000000000001ffff",
+    sends: "only with --identify (off by default): on TCP 9092 when listed and open, one Kafka ApiVersions v0 request (the handshake a client sends before anything else, answered regardless of authentication state); the supported API numbers are counted, never a topic, group, record or configuration read" }),
+  // Redis, redis.io RESP spec: "A client sends the Redis server an array consisting of only bulk strings", formatted
+  // "*<count>\r\n" then "$<len>\r\n<data>\r\n" per element -> PING is *1 $4 PING. PING is the protocol's liveness
+  // command and returns the simple string "+PONG\r\n"; it reads no key and changes nothing. A server with requirepass
+  // "will refuse any query by unauthenticated clients" (redis.io security page), which comes back as a "-" error reply:
+  // that reply is matched by its "-" prefix only, because the exact error text is not given on any page read for this
+  // build and will not be guessed at.
+  redis: fz({ proto: "tcp", flag: "--identify", ports: fz([6379]),
+    hex: "2a310d0a24340d0a50494e470d0a",
+    sends: "only with --identify (off by default): on TCP 6379 when listed and open, one RESP PING (the protocol's own liveness command); whether the answer is +PONG or an error is read, which says whether a password is required; never a key, a configuration or an INFO read" }),
+  // MQTT 3.1.1 (OASIS mqtt-v3.1.1-os) 3.1: CONNECT, the only packet a client may send first. Fixed header byte 0x10
+  // (type 1, reserved flags 0); Remaining Length 28 = the 10-byte variable header + an 18-byte payload (2.2.3: it does
+  // not count itself). Variable header: protocol name 00 04 "MQTT" (3.1.2.1), level 0x04 for 3.1.1 (3.1.2.2), connect
+  // flags 0x02 (3.1.2.3: no user name, no password, no will; Clean Session, bit 1, set), keep-alive 0x0000 (3.1.2.10:
+  // "A Keep Alive value of zero (0) has the effect of turning off the keep alive mechanism"). Then the one
+  // payload field, the Client Identifier, which [MQTT-3.1.3-3] says MUST be present and first, length-prefixed per
+  // 1.5.3, here "CyberViewScanner"
+  // -- 16 bytes of 0-9a-zA-Z, inside the 1 to 23 bytes of that character set a server MUST accept ([MQTT-3.1.3-5]), so
+  // the probe never depends on a MAY. Clean Session is set deliberately: with it clear the broker would have to CREATE
+  // and keep session state for this client id, which would leave something behind on the operator's own broker.
+  // The reply is a CONNACK (3.2): its return code says whether the broker accepted an anonymous connection (0x00) or
+  // refused it (0x05 not authorized, and the rest of Table 3.1). Then DISCONNECT (3.14, bytes E0 00), after which
+  // [MQTT-3.14.4-1] the client MUST close the connection -- so nothing is left open and no will message is published.
+  mqtt: fz({ proto: "tcp", flag: "--identify", ports: fz([1883]),
+    hex: "101c00044d5154540402000000104379626572566965775363616e6e6572",
+    closeHex: "e000",
+    sends: "only with --identify (off by default): on TCP 1883 when listed and open, one MQTT 3.1.1 CONNECT with a clean session, no user name, no password and no will, then a DISCONNECT; the CONNACK return code is read, which says whether the broker accepts anonymous connections; never a SUBSCRIBE, a PUBLISH or a topic read" }),
+  // MongoDB, the wire protocol page and the BSON 1.1 specification: a 16-byte MsgHeader of four little-endian int32s
+  // { messageLength (which "includes the 4 bytes that holds the message length", here the whole 52), requestID 1,
+  // responseTo 0, opCode 2013 = OP_MSG }, then flagBits uint32 0 (bit 0 checksumPresent clear, so no checksum follows),
+  // then one "Kind 0: Body" section: the kind byte 0x00 and a single BSON document, whose own length is the section's
+  // length. The document is { hello: 1, $db: "admin" } -- 31 bytes: int32 length, element 0x10 "hello\0" + int32 1,
+  // element 0x02 "$db\0" + int32 6 (BSON counts the trailing NUL in a string's length) + "admin\0", terminator 0x00.
+  // `hello` is the handshake command every driver sends on connecting; it reads no collection. Note that it is answered
+  // before authentication by design, so it says nothing about whether access control is enabled -- and the reply's
+  // maxWireVersion is reported as the number it is, because no published page read for this build gives a mapping from
+  // wire version to a MongoDB release, and an undocumented mapping will not be invented here.
+  mongodb: fz({ proto: "tcp", flag: "--identify", ports: fz([27017, 27018, 27019]),
+    hex: "340000000100000000000000dd07000000000000001f0000001068656c6c6f000100000002246462000600000061646d696e0000",
+    sends: "only with --identify (off by default): on TCP 27017, 27018 or 27019 when listed and open, one MongoDB OP_MSG `hello` (the driver handshake); the wire-version range and whether it is a mongos or a replica set member are read, never a database, collection or document" }),
 });
 
 /** Lines for the run header and report.json: what each hello sends (all off by default). */
@@ -103,6 +156,14 @@ const bin = (s) => (Buffer.isBuffer(s) ? s : Buffer.from(String(s || ""), "latin
 /** A whole TPKT (RDP) or direct-TCP SMB2 message has arrived. */
 export const tpktDone = (s) => { const b = bin(s); return b.length >= 4 && b[0] === 3 && b.length >= b.readUInt16BE(2); };
 export const nbssDone = (s) => { const b = bin(s); return b.length >= 4 && b.length >= 4 + (b.readUInt32BE(0) & 0xffffff); };
+/** Kafka: an int32 big-endian Size that does not count itself (kafka.apache.org/protocol). */
+export const kafkaDone = (s) => { const b = bin(s); return b.length >= 4 && b.length >= 4 + b.readUInt32BE(0); };
+/** MongoDB: messageLength is a little-endian int32 that includes its own 4 bytes (the wire protocol page). */
+export const mongoDone = (s) => { const b = bin(s); return b.length >= 4 && b.readUInt32LE(0) >= 16 && b.length >= b.readUInt32LE(0); };
+/** RESP: one complete reply line (redis.io: every reply is CRLF-terminated). */
+export const respDone = (s) => /\r\n/.test(String(s || ""));
+/** MQTT: a CONNACK is a 2-byte fixed header plus a 2-byte variable header (3.2). */
+export const connackDone = (s) => bin(s).length >= 4;
 /** One BER TLV at o -> { tag, start (of the value), end } or null when incomplete. */
 function tlv(b, o) {
   if (o + 2 > b.length) return null;
@@ -245,6 +306,112 @@ export function parseMdns(buf) {
   return out;
 }
 
+/**
+ * Kafka ApiVersions v0 response (kafka.apache.org/protocol): Size, then Response Header v0 { correlation_id INT32 },
+ * then error_code INT16 and a non-compact array of { api_key, min_version, max_version } INT16s whose length is an
+ * INT32 count. -> { kafka, error_code, apis, api_versions_max }. No release number is claimed: the page publishes no
+ * mapping from API versions to a Kafka release, so only what it states is reported.
+ */
+export function parseKafka(s) {
+  const b = bin(s), out = { kafka: false, error_code: null, apis: 0, api_versions_max: null };
+  if (!kafkaDone(b) || b.length < 14) return out;
+  const size = b.readUInt32BE(0);
+  if (size < 10 || b.readInt32BE(4) !== 1) return out;        // the correlation id must be the one that was sent
+  const err = b.readInt16BE(8), n = b.readInt32BE(10);
+  if (n < 0 || n > 1000 || 14 + n * 6 > 4 + size) return out;
+  out.kafka = true; out.error_code = err; out.apis = n;
+  for (let i = 0; i < n; i++) {
+    const o = 14 + i * 6;
+    if (o + 6 > b.length) break;
+    if (b.readInt16BE(o) === 18) out.api_versions_max = b.readInt16BE(o + 4);   // ApiVersions' own highest version
+  }
+  return out;
+}
+
+/**
+ * RESP reply to PING (redis.io protocol spec): "+PONG" (a simple string) or a "-" error, which is what a server with
+ * requirepass sends an unauthenticated client. -> { redis, pong, auth_required, error }
+ * The error is identified by the "-" prefix and its first word only; the exact text of Redis's authentication error is
+ * not on any page read for this build, so it is not matched against a remembered string.
+ */
+export function parseRedis(s) {
+  const t = String(s || ""), out = { redis: false, pong: false, auth_required: null, error: "" };
+  if (/^\+PONG\r?\n/.test(t)) return { redis: true, pong: true, auth_required: false, error: "" };
+  const e = /^-([A-Z]+)/.exec(t);
+  if (e) { out.redis = true; out.auth_required = true; out.error = clip(e[1], 20); }
+  return out;
+}
+
+const CONNACK = fz({ 0: "connection accepted", 1: "unacceptable protocol version", 2: "identifier rejected", 3: "server unavailable", 4: "bad user name or password", 5: "not authorized" });
+/**
+ * MQTT CONNACK (OASIS mqtt-v3.1.1-os 3.2): fixed header 0x20, remaining length 2, the acknowledge-flags byte (bit 0
+ * Session Present) and the return code of Table 3.1. -> { mqtt, code, meaning, anonymous, session_present }
+ */
+export function parseConnack(s) {
+  const b = bin(s), out = { mqtt: false, code: null, meaning: "", anonymous: null, session_present: null };
+  if (b.length < 4 || b[0] !== 0x20 || b[1] !== 0x02) return out;
+  const code = b[3];
+  out.mqtt = true; out.code = code; out.meaning = CONNACK[code] || `reserved (${code})`;
+  out.session_present = (b[2] & 0x01) === 1;
+  if (code === 0) out.anonymous = true;                        // accepted with no user name and no password
+  else if (code === 4 || code === 5) out.anonymous = false;    // credentials wanted
+  return out;
+}
+
+/* ---- BSON (bsonspec.org 1.1), only enough to read the named fields of a hello reply: bounded, defensive, no eval ---- */
+const BSON_SKIP = fz({ 0x01: 8, 0x05: -1, 0x07: 12, 0x08: 1, 0x09: 8, 0x10: 4, 0x11: 8, 0x12: 8, 0x13: 16, 0x0a: 0, 0xff: 0, 0x7f: 0 });
+/** A BSON document -> a flat object of the scalar fields this file needs (int32, int64, string, bool); others skipped. */
+export function bsonFields(b, start = 0, depth = 0) {
+  const out = {};
+  if (!Buffer.isBuffer(b) || depth > 4 || start + 5 > b.length) return out;
+  const len = b.readInt32LE(start);
+  if (len < 5 || start + len > b.length) return out;
+  let o = start + 4;
+  const end = start + len - 1;
+  for (let guard = 0; o < end && guard < 200; guard++) {
+    const type = b[o++];
+    if (type === 0) break;
+    const z = b.indexOf(0, o);
+    if (z < 0 || z >= end) break;
+    const key = b.subarray(o, z).toString("latin1");
+    o = z + 1;
+    if (type === 0x10) { if (o + 4 > end) break; out[key] = b.readInt32LE(o); o += 4; }
+    else if (type === 0x12 || type === 0x09) { if (o + 8 > end) break; out[key] = Number(b.readBigInt64LE(o)); o += 8; }
+    else if (type === 0x01) { if (o + 8 > end) break; out[key] = b.readDoubleLE(o); o += 8; }
+    else if (type === 0x08) { if (o + 1 > end) break; out[key] = b[o] === 1; o += 1; }
+    else if (type === 0x02) { if (o + 4 > end) break; const n = b.readInt32LE(o); if (n < 1 || o + 4 + n > end) break; out[key] = clip(b.subarray(o + 4, o + 4 + n - 1).toString("utf8"), 60); o += 4 + n; }
+    else if (type === 0x03 || type === 0x04) { if (o + 4 > end) break; const n = b.readInt32LE(o); if (n < 5 || o + n > end) break; o += n; }   // nested document or array: not read
+    else if (Object.prototype.hasOwnProperty.call(BSON_SKIP, type)) { const n = BSON_SKIP[type]; if (n < 0) { if (o + 5 > end) break; o += 5 + b.readInt32LE(o); } else o += n; if (o > end) break; }
+    else break;                                                 // an unknown type: stop rather than guess a width
+  }
+  return out;
+}
+/**
+ * MongoDB OP_MSG reply to `hello` -> { mongodb, ok, max_wire, min_wire, kind, set_name, writable_primary, read_only }.
+ * Only the fields the hello page documents are read. No MongoDB release number is derived: the pages read for this
+ * build publish no wire-version-to-release table, so none is invented.
+ */
+export function parseMongo(s) {
+  const b = bin(s), out = { mongodb: false, ok: false, max_wire: null, min_wire: null, kind: "", set_name: "", writable_primary: null, read_only: null };
+  if (!mongoDone(b) || b.length < 21 || b.readInt32LE(12) !== 2013) return out;
+  const flags = b.readUInt32LE(16);
+  if (b[20] !== 0x00) return out;                               // only a Kind 0 body section is read
+  const f = bsonFields(b, 21);
+  if (!Object.keys(f).length) return out;
+  out.mongodb = true;
+  out.ok = f.ok === 1 || f.ok === true;
+  if (typeof f.maxWireVersion === "number") out.max_wire = f.maxWireVersion;
+  if (typeof f.minWireVersion === "number") out.min_wire = f.minWireVersion;
+  if (typeof f.isWritablePrimary === "boolean") out.writable_primary = f.isWritablePrimary;
+  else if (typeof f.ismaster === "boolean") out.writable_primary = f.ismaster;
+  if (typeof f.readOnly === "boolean") out.read_only = f.readOnly;
+  if (typeof f.setName === "string" && f.setName) { out.set_name = f.setName; out.kind = "replica set member"; }
+  if (f.msg === "isdbgrid") out.kind = "mongos router";
+  else if (!out.kind) out.kind = "standalone or unknown";
+  if (flags & 0x01) out.kind += "";                             // a checksum may follow; it is not read or verified
+  return out;
+}
+
 /** RMCP/ASF presence pong -> { pong, ipmi } (supported-entities bit 7 = IPMI supported); anything else -> { pong: false } */
 export function parseAsfPong(buf) {
   if (!Buffer.isBuffer(buf) || buf.length < 28 || buf[0] !== 0x06 || buf[3] !== 0x06 || buf.readUInt32BE(4) !== 4542 || buf[8] !== 0x40) return { pong: false, ipmi: false };
@@ -262,7 +429,7 @@ function readUntil(sock, done, ms, maxBytes) {
     sock.on("data", on); sock.once("end", fin); sock.once("close", fin); sock.once("error", fin);
   });
 }
-const DONE = { smtp: smtpDone, pop3: pop3Done, rdp: tpktDone, smb: nbssDone, ldap: ldapDone };
+const DONE = { smtp: smtpDone, pop3: pop3Done, rdp: tpktDone, smb: nbssDone, ldap: ldapDone, kafka: kafkaDone, mongodb: mongoDone, redis: respDone, mqtt: connackDone };
 /** One TCP hello: connect, [read the greeting], send the frozen request, read the reply, [send QUIT], close. Never throws. */
 export async function tcpHello(ip, port, key, { signal = null, timeouts = TIMEOUTS } = {}) {
   const e = HELLO[key], out = { service: key, port, proto: "tcp", state: "no-answer", sent: [], greeting: "", reply: "", error: "" };
@@ -330,7 +497,7 @@ export function helloPlan(h, { ports = [], bmc = false } = {}) {
     if (mp === "smtp" || mp === "pop3") add(mp, p.port);
     else if (HELLO.rtsp.ports.includes(p.port)) add("rtsp", p.port);
     else if (HELLO["sip-tcp"].ports.includes(p.port)) add("sip-tcp", p.port);
-    else for (const k of ["rdp", "smb", "ldap"]) if (HELLO[k].ports.includes(p.port)) add(k, p.port);
+    else for (const k of ["rdp", "smb", "ldap", "kafka", "redis", "mqtt", "mongodb"]) if (HELLO[k].ports.includes(p.port)) add(k, p.port);
   }
   if (ports.includes(5060)) add("sip-udp", 5060);
   add("mdns", 5353);
@@ -351,6 +518,10 @@ export function helloRecord(r) {
   else if (r.service === "rdp") rec.read = parseRdp(r.reply);
   else if (r.service === "smb") rec.read = parseSmb(r.reply);
   else if (r.service === "ldap") rec.read = parseLdap(r.reply);
+  else if (r.service === "kafka") rec.read = parseKafka(r.reply);
+  else if (r.service === "redis") rec.read = parseRedis(r.reply);
+  else if (r.service === "mqtt") rec.read = parseConnack(r.reply);
+  else if (r.service === "mongodb") rec.read = parseMongo(r.reply);
   return rec;
 }
 
@@ -401,6 +572,25 @@ export function helloFindings(records) {
         `root DSE: ${[d.vendor_name && `vendorName ${d.vendor_name}`, d.vendor_version && `vendorVersion ${d.vendor_version}`, openldap && "objectClass OpenLDAProotDSE", d.versions.length && `supportedLDAPVersion ${d.versions.join(" ")}`].filter(Boolean).join("; ") || "answered"}`));
       obs.push({ port: r.port, kind: "ldap-anonymous-rootdse", severity: "info", text: `LDAP on port ${r.port} answers an anonymous root DSE read without TLS${who ? ` and names itself ${who}` : ""}; directory binds on this port cross the network in clear text unless StartTLS is required` });
     }
+    if (r.service === "kafka" && d.kafka) {
+      services.push(svc(r.port, "kafka", "Apache", "Kafka", `Apache Kafka broker (ApiVersions answered, ${d.apis} API(s))`, `ApiVersions v0 answered: error_code ${d.error_code}, ${d.apis} API(s)${d.api_versions_max == null ? "" : `, ApiVersions up to v${d.api_versions_max}`}; no release number is published for an API set, so none is claimed`));
+      obs.push({ port: r.port, kind: "kafka-reachable", severity: "low", text: `A Kafka broker answers the ApiVersions handshake on port ${r.port}. The broker answers it before authentication by design, so this does not say whether authentication is required; it does say the broker is reachable from here, and Kafka brokers are normally kept off general-purpose networks` });
+    }
+    if (r.service === "redis" && d.redis) {
+      services.push(svc(r.port, "redis", "", "Redis", `Redis (PING answered ${d.pong ? "+PONG" : `with a ${d.error} error`}; no version read)`, d.pong ? "RESP PING answered +PONG with no authentication" : `RESP PING refused with a ${d.error} error, so a password is required`));
+      if (d.pong) obs.push({ port: r.port, kind: "redis-no-auth", severity: "high", text: `Redis on port ${r.port} answered a command with no password at all. Anyone who can reach this port can read and overwrite every key, and on a default build can often also rewrite the server's own configuration, which is a well-worn route to running code on the host. Set requirepass (or an ACL user), bind it to the addresses that need it, and keep it off any network it does not have to be on` });
+      else obs.push({ port: r.port, kind: "redis-auth-required", severity: "info", text: `Redis on port ${r.port} is reachable but refused an unauthenticated command, so a password is set. The port is still reachable from here, and Redis traffic is unencrypted unless TLS is configured` });
+    }
+    if (r.service === "mqtt" && d.mqtt) {
+      services.push(svc(r.port, "mqtt", "", "MQTT broker", `MQTT 3.1.1 broker (CONNACK ${d.code}: ${d.meaning}; no version read)`, `CONNECT with no user name or password answered CONNACK return code ${d.code} (${d.meaning})`));
+      if (d.anonymous === true) obs.push({ port: r.port, kind: "mqtt-anonymous", severity: "high", text: `The MQTT broker on port ${r.port} accepted a connection with no user name and no password. Anyone who can reach this port can subscribe to every topic the broker allows, and usually publish to them too; where MQTT carries building, vehicle or industrial telemetry that means reading it and sending commands into it. Require authentication, and put the broker behind TLS on 8883` });
+      else if (d.anonymous === false) obs.push({ port: r.port, kind: "mqtt-auth-required", severity: "info", text: `The MQTT broker on port ${r.port} refused an anonymous connection (CONNACK ${d.code}: ${d.meaning}), so credentials are required. Traffic on 1883 is still unencrypted; 8883 with TLS is the encrypted port` });
+    }
+    if (r.service === "mongodb" && d.mongodb) {
+      const wire = d.max_wire == null ? "" : `maxWireVersion ${d.max_wire}${d.min_wire == null ? "" : `, minWireVersion ${d.min_wire}`}`;
+      services.push(svc(r.port, "mongodb", "MongoDB", "MongoDB", `MongoDB ${d.kind}${wire ? ` (${wire})` : ""}`, `OP_MSG hello answered${d.ok ? " ok" : ""}: ${[d.kind, wire, d.set_name && `replica set ${d.set_name}`, d.read_only === true && "readOnly"].filter(Boolean).join("; ")}. The wire version is reported as the number it is: no published mapping to a MongoDB release was available, so none is inferred`));
+      obs.push({ port: r.port, kind: "mongodb-reachable", severity: "low", text: `MongoDB answers the driver handshake on port ${r.port}${d.set_name ? ` as a member of replica set ${d.set_name}` : ""}. The handshake is answered before authentication by design, so this does NOT mean the database is open — it means the port is reachable from here. Whether access control is on cannot be told from this one message, and is worth confirming by hand` });
+    }
     if (r.service === "ipmi" && d.pong) {
       services.push(svc(r.port, "ipmi", "", "", `BMC (RMCP/ASF presence pong${d.ipmi ? ", IPMI supported" : ""})`, `ASF presence pong on UDP 623${d.ipmi ? "; supported entities: IPMI" : ""}`));
       obs.push({ port: r.port, proto: "udp", kind: "ipmi-exposed", severity: "medium", text: `A BMC answers RMCP on UDP 623${d.ipmi ? " and states IPMI support" : ""}: out-of-band management is reachable from here; keep BMCs on an isolated management network` });
@@ -431,5 +621,5 @@ export async function identifyHost(h, opts = {}) {
 /** The run header line. */
 export function identifyHeaderText(o) {
   if (!o || !o.enabled) return "off (--identify not given): no protocol hello is sent";
-  return `on (--identify): one standard unauthenticated message per service (SMTP EHLO, POP3 CAPA, RTSP and SIP OPTIONS, unicast mDNS, RDP X.224 negotiation, SMB2 NEGOTIATE, LDAP root DSE read), then close; BMC (IPMI RMCP ping) ${o.bmc ? "on (--identify-bmc)" : "off"}`;
+  return `on (--identify): one standard unauthenticated message per service (SMTP EHLO, POP3 CAPA, RTSP and SIP OPTIONS, unicast mDNS, RDP X.224 negotiation, SMB2 NEGOTIATE, LDAP root DSE read, Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB hello), then close; BMC (IPMI RMCP ping) ${o.bmc ? "on (--identify-bmc)" : "off"}`;
 }

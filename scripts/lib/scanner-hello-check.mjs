@@ -17,6 +17,13 @@ export const REVIEWED_HEX = Object.freeze({
   smb: "0000006cfe534d424000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002400040001000000000000004379626572566965772d5363616e6e7200000000000000000202100200030203",   // [MS-SMB2] 2.2.3 NEGOTIATE
   ldap: "3063020101635e04000a01000a010002010102010a010100870b6f626a656374436c617373303e0414737570706f727465644c44415056657273696f6e040a76656e646f724e616d65040d76656e646f7256657273696f6e040b6f626a656374436c617373",   // RFC 4511 root DSE base search
   "ldap-close": "30050201024200",   // RFC 4511 4.3 UnbindRequest
+  // wave 4 (2026-11-23), each byte sequence built only from the protocol's own published specification; see
+  // scanner/lib/hello.mjs for the field-by-field derivation and the page each fact came from
+  kafka: "0000000a0012000000000001ffff",   // kafka.apache.org/protocol: size 10, Request Header v1 (api_key 18 ApiVersions, version 0, correlation_id 1, client_id null = -1), empty v0 body
+  redis: "2a310d0a24340d0a50494e470d0a",   // redis.io RESP: array of one bulk string, *1 $4 PING
+  mqtt: "101c00044d5154540402000000104379626572566965775363616e6e6572",   // MQTT 3.1.1 (OASIS) 3.1: CONNECT, remaining length 28, "MQTT" level 4, Clean Session only, keep-alive 0, ClientId "CyberViewScanner"
+  "mqtt-close": "e000",   // MQTT 3.1.1 (OASIS) 3.14: DISCONNECT
+  mongodb: "340000000100000000000000dd07000000000000001f0000001068656c6c6f000100000002246462000600000061646d696e0000",   // MongoDB wire protocol OP_MSG (2013) + BSON 1.1 { hello: 1, $db: "admin" }
 });
 export const DNS_TYPES = Object.freeze(["TXT", "CAA"]);
 export const DNS_PREFIXES = Object.freeze(["", "_dmarc.", "default._bimi.", "_mta-sts."]);

@@ -15,5 +15,5 @@
  "grid_themes": ["POWER_OUTAGE", "MANMADE_DISASTER_POWER_OUTAGE", "MANMADE_DISASTER_POWER_OUTAGES", "MANMADE_DISASTER_POWER_FAILURE", "MANMADE_DISASTER_WITHOUT_POWER", "MANMADE_DISASTER_WITHOUT_ELECTRICITY"],
  "grid_note": "GKG power-outage themes exist and are counted, but are not filed into data/grid/news.json: scripts/grid-news.mjs needs a place and stated figures from the headline and summary, GKG gives neither a summary nor the article text, and POWER_OUTAGE also tags passing mentions (outage in a game, a phone network, a past storm). Revisit after the week of clean running.",
  "doc_api_retire_after": "2026-11-28",
- "doc_api_note": "The DOC API collectors (scripts/osint.mjs 'gdelt', scripts/grid-news.mjs gdelt_queries) stay until gdelt-gkg has run cleanly for a week (from 2026-11-21); the owner then retires them."
+ "doc_api_note": "scripts/osint.mjs 'gdelt' DOC-API collector was RETIRED 2026-11-23 (gdelt-gkg had run cleanly since 2026-11-22 and the DOC API was timing out from our address). scripts/grid-news.mjs gdelt_queries still use the DOC API for power-outage news and stay until a GKG-based grid replacement lands (doc_api_retire_after is the target for that)."
 }

@@ -3,9 +3,11 @@
 // Why: an AI job's web search goes through one search engine, so that engine decides what CyberView sees. These
 // collectors ask several independent indexes and primary databases directly and file what they find as leads
 // (data/leads/<date>.jsonl, same shape as the RSS collector, with "via" naming the collector):
-//   bing-news, gdelt                the standing searches in config/queries.json, in many languages and country editions
+//   bing-news                       the standing search in config/queries.json, in many languages and country editions
 //                                   (Bing gives the publisher's own address; an aggregator's copy such as msn.com is dropped;
 //                                   asked at most every 10 minutes however often the research loop collects)
+//                                   (GDELT is collected by scripts/gdelt-gkg.mjs from its raw 15-minute files; the DOC search
+//                                    API collector here was retired 2026-11-23 — see the note where it stood)
 //   hibp                            breaches newly added to Have I Been Pwned
 //   euvd                            ENISA's EU Vulnerability Database: exploited vulnerabilities (a second list beside CISA's)
 //   nvd                             critical CVEs published in the last two days
@@ -20,7 +22,6 @@
 // Google News is not collected (removed 2026-11-20): news.google.com/robots.txt disallows /rss/ for every reader (and the
 // whole site for Anthropic's agents), and its links are news.google.com redirects that cannot be cited or opened, so its
 // leads cost triage and research without ever being usable as a source. parseGoogleNews stays for scripts/grid-news.mjs.
-import { gdeltSlot } from "./lib/gdelt.mjs";
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -179,24 +180,10 @@ const COLLECTORS = {
     if (err && !out.length) throw err;
     return out;
   },
-  // TO BE RETIRED: scripts/gdelt-gkg.mjs reads GDELT's raw 15-minute files instead (owner, 2026-11-21); this DOC API
-  // collector stays until gdelt-gkg has run cleanly for a week, then goes (config/gdelt.json doc_api_retire_after, 2026-11-28)
-  "gdelt": async () => {   // GDELT allows one request every 5 seconds
-    const out = [], Q = ['(ransomware OR cyberattack OR "data breach" OR "cyber attack")', '(ciberataque OR cyberattaque OR Cyberangriff OR "ataque cibernético")', '("zero-day" OR "actively exploited" OR "hackers" OR "hacked")'];
-    // the gate spaces this machine's requests; GDELT still answers 429 at times (other users behind the same address),
-    // so a busy answer waits once and tries that query again, and the other queries still run
-    let ok = 0, last = null;
-    for (const q of Q) {
-      const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=60&format=json&timespan=3h&sort=datedesc`;
-      for (let t = 0; t < 2; t++) {
-        await gdeltSlot(t ? 12000 : undefined);
-        try { parseGdelt(await get(url)).forEach((i) => out.push({ ...i, tier: "news" })); ok++; break; }
-        catch (e) { last = e; if (!/429/.test(e.message)) break; }
-      }
-    }
-    if (!ok && last) throw last;
-    return out;
-  },
+  // The GDELT DOC search API collector was RETIRED 2026-11-23. scripts/gdelt-gkg.mjs reads GDELT's raw 15-minute files
+  // instead (a superset of the DOC search, and plain downloads with no per-address rate limit or the connect timeouts
+  // the DOC API answered from our address). parseGdelt/gdeltLang stay here because scripts/grid-news.mjs still queries
+  // the DOC API for power-outage news.
   "hibp": async () => parseHibp(await get("https://haveibeenpwned.com/api/v3/breaches")).map((i) => ({ ...i, tier: "vendor", kind: "breach-db" })),
   "euvd": async () => parseEuvd(await get("https://euvdservices.enisa.europa.eu/api/exploitedvulnerabilities")).map((i) => ({ ...i, tier: "gov", kind: "exploited" })),
   "nvd": async () => parseNvd(await get(`https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate=${two(2)}&pubEndDate=${two(0)}&cvssV3Severity=CRITICAL&resultsPerPage=40`)).slice(0, 25).map((i) => ({ ...i, tier: "gov", kind: "cve" })),
@@ -212,7 +199,7 @@ const COLLECTORS = {
 
 // the search indexes are asked at most every SEARCH_EVERY minutes, however often the research loop collects (each run is
 // one request per standing search): polite to the index, and a story does not move faster than that anyway
-const SEARCH = new Set(["bing-news", "gdelt"]), SEARCH_EVERY = 10;
+const SEARCH = new Set(["bing-news"]), SEARCH_EVERY = 10;
 /** Pure: did this search collector run successfully less than SEARCH_EVERY minutes ago? (h = its health entry) */
 export function searchedRecently(h, name, now = Date.now()) {
   return SEARCH.has(name) && !!h && h.ok === true && now - Date.parse(h.at) < SEARCH_EVERY * 6e4;

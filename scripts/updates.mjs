@@ -15,6 +15,7 @@ import { DATA, readJson, writeJson, nowIso, dayAgo, listEventFiles } from "./lib
 import { matchEvent } from "./triage.mjs";
 import { leased } from "./lib/lease.mjs";
 import { deepEvent } from "./lib/routing.mjs";
+import { gateOnFile, onFileSlug } from "./lib/gates.mjs";
 
 const NOT_NEWS = new Set(["claim", "breach-db", "status", "cve"]);   // attackers' posts and database rows are not reporting
 const TIER = { gov: 3, vendor: 3, research: 2, news: 1 };
@@ -90,6 +91,16 @@ export function current(opts = {}) {
   const events = listEventFiles().map((f) => f.e).filter((e) => e && e.date >= dayAgo(30));
   return candidates(recentLeads(), events, handledUrls(), Date.now(), 48, opts);
 }
+/** The latest "already on file: <event>" story closure of each event over the last `days` days (closures.jsonl, written by
+ *  scripts/fuse.mjs and backlog.mjs auto), for the on-file gate: { <event id>: { at, reason } }. Read only. */
+export function onFileClosures(days = 7) {
+  const out = {}, runs = join(DATA, "runs");
+  if (existsSync(runs)) for (const d of readdirSync(runs).filter((d) => d >= dayAgo(days))) {
+    const f = join(runs, d, "closures.jsonl"); if (!existsSync(f)) continue;
+    for (const line of readFileSync(f, "utf8").split("\n")) { try { const c = JSON.parse(line), id = onFileSlug(c.reason); if (id && String(c.at || "") > String((out[id] || {}).at || "")) out[id] = { at: c.at, reason: c.reason }; } catch {} }
+  }
+  return out;
+}
 /** Pure: what the plan leaves without an updater because every new lead for the event is an aggregator redirect
  *  (before 2026-11-23 each got a worker, twice): all = candidates with redirects kept, kept = the plan's candidates.
  *  -> { events, leads }. They are not lost: the follow-up desk counts such a lead as new reporting. */
@@ -103,11 +114,16 @@ function main() {
   if (cmd === "plan") {
     const W = Math.max(1, Math.min(4, Number(arg("max", 2)) || 2)), per = Math.max(1, Math.min(6, Number(arg("per", 3)) || 3));
     const file = /^update-plan(-[A-Za-z0-9-]+)?\.json$/.test(arg("file", "")) ? arg("file") : "update-plan.json";
-    const all = current(), held = leased("event", all.map((c) => c.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((c) => !held.has(c.id)).slice(0, W * per);
+    // the on-file gate (scripts/lib/gates.mjs onFileGate): no updater for pages from publishers an "already on file" event already cites
+    // when nothing in them is new; the story stays open and comes back at next_at, or at once when a new publisher, CVE or figure appears
+    let gate = { due: null, skipped: [], next_due_at: null }, all = current();
+    const ungated = all;   // the redirect count below compares against what the gate saw, not what it left
+    try { const g = gateOnFile(all, listEventFiles().map((f) => f.e).filter(Boolean), onFileClosures()); if (g.due) { gate = g; all = g.due; } } catch {}
+    const held = leased("event", all.map((c) => c.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((c) => !held.has(c.id)).slice(0, W * per);
     const { batches, deep } = planUpdates(q, W, per);
-    if (!rest.includes("--dry-run")) writeJson(join(DATA, file), { planned_at: nowIso(), batches, deep });
-    let red = { events: 0, leads: 0 }; try { red = redirectOnly(current({ redirects: true }), all); } catch {}
-    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${batches.length} updater(s), ${deep.length} on the deep model; ${all.length} candidate(s) in all${red.events ? `; ${red.events} skipped: only an aggregator's redirect names them (${red.leads} link(s)), left to the follow-up desk` : ""}.`);
+    if (!rest.includes("--dry-run")) writeJson(join(DATA, file), { planned_at: nowIso(), batches, deep, ...(gate.skipped.length ? { onfile_skipped: gate.skipped.slice(0, 40), onfile_next_due_at: gate.next_due_at } : {}) });
+    let red = { events: 0, leads: 0 }; try { red = redirectOnly(current({ redirects: true }), ungated); } catch {}
+    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${batches.length} updater(s), ${deep.length} on the deep model; ${all.length} candidate(s) in all${gate.skipped.length ? `; ${gate.skipped.length} skipped: already on file, nothing new from a new publisher (next due ${gate.next_due_at || "-"})` : ""}${red.events ? `; ${red.events} skipped: only an aggregator's redirect names them (${red.leads} link(s)), left to the follow-up desk` : ""}.`);
     return;
   }
   if (cmd === "done") {

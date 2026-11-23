@@ -21,3 +21,14 @@ test("the research loop's leader lease: live until it expires, then free for a s
   assert.equal(leaderOf({ "flow:leader": { run: "a", until: "2026-11-19T20:59:00Z" } }, now), null);
   assert.equal(leaderOf({}, now), null);
 });
+
+import { leaderLease, LEADER_MIN } from "../../scripts/lib/lease.mjs";
+test("a span-bounded loop leases the leader slot only until its end, so it needs no hand-over commit", () => {
+  const now = Date.parse("2026-11-23T10:05:00Z");
+  const b = leaderLease(now, now + 7 * 6e4);
+  assert.deepEqual(b, { minutes: 7, bounded: true });                          // runs out when the loop does
+  assert.ok(b.minutes < LEADER_MIN);                                           // and a dead loop is replaced sooner than today
+  assert.equal(leaderLease(now, now + 100 * 6e4).bounded, false);              // a long loop keeps the 20-minute lease and its commits
+  assert.deepEqual(leaderLease(now, now - 1), { minutes: LEADER_MIN, bounded: false });   // past its end: full lease, published
+  assert.equal(leaderLease(now, now + 20e3).minutes, 1);                       // never shorter than a minute
+});

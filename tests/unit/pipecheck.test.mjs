@@ -5,8 +5,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { nextHealth, due, backoffMin, failingDays, feedProposals, FAIL_RUNS, MAX_MIN, PROPOSE_DAYS, RETIRE_DAYS } from "../../scripts/lib/backoff.mjs";
-import { STAGES, stageStates, lastRuns, limits } from "../../scripts/lib/stages.mjs";
-import { stageProblems, statusKeys, missedDuplicates, unreviewed, leadsGrowth, sizeGrowth, carry, planAlerts, planHeal, targetProblems, LABEL, THRESHOLD } from "../../scripts/pipecheck.mjs";
+import { STAGES, UNJUDGED, derivedStages, allStages, stageStates, lastRuns, limits } from "../../scripts/lib/stages.mjs";
+import { stageProblems, statusKeys, missedDuplicates, unreviewed, leadsGrowth, sizeGrowth, carry, planAlerts, planHeal, targetProblems, LABEL, THRESHOLD, MAX_OPEN_PER_RUN } from "../../scripts/pipecheck.mjs";
 import { assess, LIMITS, HEAL } from "../../scripts/guard.mjs";
 import { retryAfterMs } from "../../scripts/lib/net.mjs";
 
@@ -66,6 +66,42 @@ test("stages: late, never, ok, and idle only for work-driven stages without work
   assert.ok(pr.some((p) => p.id === "stage-reviewers" && p.threshold_min === THRESHOLD.stage_never));
   assert.ok(!pr.some((p) => p.id === "stage-researchers"));
   assert.equal(lastRuns({ last_collect_at: "X" }, { "grid/analysis.json": { updated_at: "Y" } })["grid-analysis"], "Y");
+});
+test("stages: every active routine with a status key and max age is judged, except the named ones", () => {
+  const keys = new Set(allStages(REG).map((s) => s.key)), heartbeats = new Set(allStages(REG).map((s) => s.status));
+  const want = REG.filter((r) => r.active === true && !r.retired && r.status_key && r.max_age_hours > 0);
+  for (const r of want) {
+    if (UNJUDGED[r.key]) { assert.ok(!keys.has(r.key), `${r.key} is listed as unjudged`); continue; }
+    assert.ok(heartbeats.has(r.status_key), `${r.key}: heartbeat ${r.status_key} is not judged by any stage`);
+  }
+  for (const k of ["verify", "advisory", "scout", "tabletop", "backlog", "brief", "improver"]) assert.ok(keys.has(k), `${k} not judged`);
+  for (const k of Object.keys(UNJUDGED)) assert.ok(REG.some((r) => r.key === k), `UNJUDGED names unknown routine ${k}`);
+  assert.equal(new Set([...allStages(REG)].map((s) => s.key)).size, allStages(REG).length, "stage keys are unique");
+  const lim = limits(REG);
+  assert.equal(lim.verify, REG.find((r) => r.key === "verify").max_age_hours * 60);
+  assert.ok(derivedStages(REG).every((s) => s.heal === "" && s.derived), "derived stages have no workflow to heal them");
+});
+test("stages: a silent verify or advisory desk is late and alerts; a never-run weekly routine says never ran", () => {
+  const rt = (k) => REG.find((r) => r.key === k), last = {};
+  for (const s of allStages(REG)) last[s.key] = ago(10);
+  last.verify = ago(30 * 60); last.advisory = ago(28.5 * 60); last.scout = ""; last.tabletop = ago(77 * 60);
+  const st = stageStates(last, REG, NOW), by = Object.fromEntries(st.map((s) => [s.key, s]));
+  assert.equal(by.verify.state, "late"); assert.equal(by.advisory.state, "late"); assert.equal(by.tabletop.state, "ok");
+  // scout was switched on 2026-11-19 with a 200 h limit: still waiting for its first run on the 21st, "never" once past it
+  assert.equal(by.scout.state, "idle");
+  const later = stageStates(last, REG, Date.parse(rt("scout").active_since) + 201 * 36e5), sc = later.find((s) => s.key === "scout");
+  assert.equal(sc.state, "never");
+  const pr = stageProblems(later), p = pr.find((x) => x.id === "stage-scout");
+  assert.equal(p.threshold_min, THRESHOLD.stage_never); assert.match(p.text, /never run/); assert.ok(!/last ran/.test(p.text));
+  assert.ok(pr.find((x) => x.id === "stage-verify").text.includes("last ran"));
+});
+test("stages: derived stages cannot flood alerts (same cap) and honour inactive routines", () => {
+  const all = Object.fromEntries(allStages(REG).map((s) => [s.key, ""])), st = stageStates(all, REG, NOW + 400 * 36e5);
+  const probs = stageProblems(st).map((p) => ({ ...p, over: true, text: "x", since: "s" }));
+  assert.ok(probs.length > MAX_OPEN_PER_RUN, "every stage lapsed: more problems than the cap");
+  assert.equal(planAlerts(probs, [], NOW).open.length, MAX_OPEN_PER_RUN);
+  assert.ok(!derivedStages(REG.map((r) => r.key === "verify" ? { ...r, active: false } : r)).some((s) => s.key === "verify"));
+  assert.ok(!derivedStages(REG.map((r) => r.key === "verify" ? { ...r, retired: "x" } : r)).some((s) => s.key === "verify"));
 });
 test("routines: every active routine with a heartbeat has a max age longer than its schedule's interval", () => {
   const every = (c) => { const p = String(c || "").trim().split(/\s+/); if (p.length !== 5) return null; const [m, h, , , d] = p;

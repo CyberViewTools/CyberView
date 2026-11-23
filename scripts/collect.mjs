@@ -318,13 +318,15 @@ export function parseFeed(xml) {
   return items;
 }
 
-async function fetchFeed(f) {
+export async function fetchFeed(f) {
   for (let i = 0; i < 2; i++) {
     try {
-      // A feed reader's Accept prefers the feed types but ends in */* so a server that content-negotiates (or a WAF that
-      // 415s a wildcard-less Accept, e.g. several regional WordPress/SPIP feeds) still returns the feed. The user-agent
-      // stays honest; this is a standards-compliant request, not a bot-block workaround.
-      const r = await fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", accept: "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.8" }, signal: AbortSignal.timeout(25000) });
+      // A feed reader's Accept prefers the feed types but ends in */* (#135), so a server that content-negotiates still
+      // returns the feed; if it still answers 415, ask once more at once without an accept list (#136), same identifying
+      // user-agent. Not the 5 s retry below, and a 415 that persists still fails as a 415.
+      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(25000) });
+      let r = await ask("application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.8");
+      if (r.status === 415) r = await ask("");
       if (r.status === 403 || r.status === 401) return { error: `HTTP ${r.status} (refuses automated readers; not retried)` };
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return { items: parseFeed(await r.text()) };

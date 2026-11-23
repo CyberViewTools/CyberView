@@ -8,6 +8,7 @@
 // matchFlaw, the Vulnerabilities page's "My software" path), never a fork.
 import { parseCloud } from "./discover.mjs";
 import { parseTarget } from "./scope.mjs";
+import { parseCpe, parsePurl, mergeName } from "./inputs.mjs";
 import { W } from "./shared.mjs";
 
 export const IMPORT_LIMITS = Object.freeze({
@@ -45,6 +46,43 @@ function graph(source) {
 /* ---- SBOM: CycloneDX JSON (components, dependencies) or SPDX JSON (packages, relationships) ---- */
 const SPDX_REL = Object.freeze({ DEPENDS_ON: ["a", "depends on"], DEPENDENCY_OF: ["b", "depends on"], CONTAINS: ["a", "contains"], CONTAINED_BY: ["b", "contains"],
   DYNAMIC_LINK: ["a", "links dynamically to"], STATIC_LINK: ["a", "links statically to"], RUNTIME_DEPENDENCY_OF: ["b", "depends on at runtime"], BUILD_DEPENDENCY_OF: ["b", "depends on to build"] });
+/** name (lower-case) -> { vendor, alias } from every component's purl or cpe, CycloneDX and SPDX alike. */
+export function sbomIdentity(j) {
+  const out = new Map();
+  const put = (name, ref) => {
+    const n = clip(name, 120).toLowerCase(); if (!n || !ref) return;
+    const have = out.get(n) || { vendor: "", alias: "" };
+    if (!have.vendor && ref.vendor) have.vendor = ref.vendor;
+    if (!have.alias && ref.product && ref.product.toLowerCase() !== n) have.alias = ref.product;
+    out.set(n, have);
+  };
+  const refOf = (purl, cpe) => parsePurl(purl) || parseCpe(cpe) || null;
+  const walk = (list, depth) => {
+    if (depth > 16) return;
+    for (const c of arr(list).slice(0, IMPORT_LIMITS.items)) {
+      if (!obj(c)) continue;
+      put(c.name, refOf(c.purl, c.cpe));
+      walk(c.components, depth + 1);
+    }
+  };
+  if (obj(j)) {
+    walk(j.components, 0);
+    if (obj(j.metadata) && obj(j.metadata.component)) put(j.metadata.component.name, refOf(j.metadata.component.purl, j.metadata.component.cpe));
+    for (const p of arr(j.packages).slice(0, IMPORT_LIMITS.items)) {
+      if (!obj(p)) continue;
+      let ref = null;
+      for (const e of arr(p.externalRefs).slice(0, 20)) {
+        if (!obj(e)) continue;
+        const t = clip(e.referenceType, 40).toLowerCase(), loc = clip(e.referenceLocator, 300);
+        if (!ref && /^purl$/.test(t)) ref = parsePurl(loc);
+        else if (!ref && /^cpe/.test(t)) ref = parseCpe(loc);
+      }
+      put(p.name, ref || (clip(p.supplier, 80) ? { vendor: clip(String(p.supplier).replace(/^(Organization|Person):\s*/i, ""), 80), product: "" } : null));
+    }
+  }
+  return out;
+}
+
 export function parseSbom(text) {
   const { j, error } = json(text), g = graph("sbom");
   if (error) return { ...g.done({ kind: "unreadable" }), problems: [`SBOM: ${error}`], items: [] };
@@ -85,7 +123,14 @@ export function parseSbom(text) {
   } else return { ...g.done({ kind: "unknown" }), problems: ["SBOM: neither CycloneDX (components) nor SPDX (packages) JSON"], items: [] };
   // the inventory side goes through the page's own parser, exactly as an SBOM dropped on "My software"
   const inv = W.parseInventory("sbom.json", String(text));
-  return { ...g.done({ kind }), problems, items: Array.from(inv.items.slice(0, IMPORT_LIMITS.items), (x) => ({ ...x, from: kind })) };
+  // the vendor and the CPE product name each component states (purl namespace, cpe vendor/product): parseInventory keeps
+  // name and version only, and workbench-lib matches on vendor + name, so a stated vendor makes the match sharper
+  const named = sbomIdentity(j);
+  const items = Array.from(inv.items.slice(0, IMPORT_LIMITS.items), (x) => {
+    const id = named.get(String(x.name || "").toLowerCase());
+    return { ...x, from: kind, ...(id && !x.vendor ? { vendor: id.vendor } : {}), ...(id && id.alias ? { name: mergeName(x.name, id.alias) } : {}) };
+  });
+  return { ...g.done({ kind }), problems, items };
 }
 
 /* ---- local package inventories: dpkg -l, rpm -qa, Windows Get-Package / uninstall-key CSV (or any list the page reads) ---- */

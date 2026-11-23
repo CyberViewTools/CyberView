@@ -49,6 +49,7 @@ export function weekUsage(now = Date.now(), lines = null) { return windowUsage(n
 // What the claude CLI and the API say when the plan or the rate limit says no. Matched only on workers that FAILED, so a
 // researcher whose last line mentions a website's "429" never stops the loop. "overloaded" (529) is not a limit.
 export const LIMIT_RE = /usage limit|rate[ _-]?limit|limit reached|hit your (?:usage )?limit|\b429\b|too many requests|out of (?:extra )?usage|(?:5-hour|weekly|session) limit/i;
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 /** UTC offset in ms of an IANA zone at time t (0 when the zone is unknown). */
 function zoneOffset(zone, t) {
@@ -63,7 +64,11 @@ export function resetFrom(text, at) {
   const s = String(text || "");
   const unix = /\|\s*(\d{10})\b/.exec(s); if (unix) return +unix[1] * 1000;
   const isoT = /\b(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2}))/.exec(s); if (isoT && isFinite(Date.parse(isoT[1]))) return Date.parse(isoT[1]);
-  const m = /resets?\s+(?:at\s+|on\s+)?(?:(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s+(?:at\s+)?)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*\(([^)]+)\))?/i.exec(s);
+  let m = /resets?\s+(?:at\s+|on\s+)?(?:(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s+(?:at\s+)?)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*\(([^)]+)\))?/i.exec(s);
+  // "resets Nov 28, 8pm (UTC)": the weekly-limit form, a month-name date instead of a weekday
+  const mo = /resets?\s+(?:on\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*\(([^)]+)\))?/i.exec(s);
+  const mon = mo ? MONTHS.indexOf(mo[1].toLowerCase()) : -1;
+  if (mo) m = [mo[0], undefined, mo[3], mo[4], mo[5], mo[6]];
   if (!m) return null;
   let h = +m[2]; const min = +(m[3] || 0), ap = (m[4] || "").toLowerCase();
   if (ap === "pm" && h < 12) h += 12; if (ap === "am" && h === 12) h = 0;
@@ -72,18 +77,31 @@ export function resetFrom(text, at) {
   if (off === null) return null;
   const local = at + off, d = new Date(local);
   let t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), h, min) - off;
-  if (m[1]) { const want = DAYS.indexOf(m[1].toLowerCase().slice(0, 3)); while (new Date(t + off).getUTCDay() !== want || t <= at) t += 24 * HOUR; }
+  if (mo) {   // next such date at or after `at`: a date already past is next year's
+    const day = +mo[2], y = d.getUTCFullYear(); t = Date.UTC(y, mon, day, h, min) - off;
+    if (new Date(Date.UTC(y, mon, day)).getUTCMonth() !== mon) return null;
+    if (t <= at) t = Date.UTC(y + 1, mon, day, h, min) - off;
+  } else if (m[1]) { const want = DAYS.indexOf(m[1].toLowerCase().slice(0, 3)); while (new Date(t + off).getUTCDay() !== want || t <= at) t += 24 * HOUR; }
   else while (t <= at) t += 24 * HOUR;
   return t;
 }
 /** Pure: the limit hits in the ledger: [{ at, until, text }] (until = the reset time, else at + backoff). */
+// a worker served well after a refusal proves the plan is not blocking any more, so the park ends there. Without this a
+// single transient hit parks everything until a distant reset (a weekly reset is up to 5 days out), which would stop fresh
+// data getting out; the grace ignores workers of the same batch that were already in flight when the refusal came.
+export const LIMIT_CLEAR_GRACE_MIN = 5;
 export function limitHits(lines, backoffMin = 60) {
+  const all = lines || [];
+  const served = all.filter((l) => l.ok).map((l) => Date.parse(l.at)).filter((t) => isFinite(t)).sort((a, b) => a - b);
   const out = [];
-  for (const l of lines || []) {
+  for (const l of all) {
     if (l.ok || !l.error || !LIMIT_RE.test(String(l.error))) continue;
     const at = Date.parse(l.at); if (!isFinite(at)) continue;
-    const r = resetFrom(l.error, at), until = r && r > at && r - at <= 8 * 24 * HOUR ? r : at + backoffMin * 6e4;
-    out.push({ at, until, text: String(l.error).slice(0, 160) });
+    const r = resetFrom(l.error, at);
+    const reset = r && r > at && r - at <= 8 * 24 * HOUR ? r : at + (/weekly limit/i.test(l.error) ? Math.max(backoffMin, 360) : backoffMin) * 6e4;   // a weekly window never resets in an hour
+    const cleared = served.find((s) => s >= at + LIMIT_CLEAR_GRACE_MIN * 6e4);
+    const until = cleared && cleared < reset ? cleared : reset;
+    out.push({ at, until, text: String(l.error).slice(0, 160), ...(until !== reset ? { cleared_at: iso(cleared), reset: iso(reset) } : {}) });
   }
   return out;
 }

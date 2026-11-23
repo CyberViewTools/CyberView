@@ -111,7 +111,9 @@ each of these rules; the hello and industrial test files mutate each checker rul
 | `scanner/lib/report.mjs` | the run header, JSON, CSV (formula-safe), SARIF 2.1.0, the inventory CSV, the text summary, and the `coverage()` blind-spot report |
 | `scanner/lib/html-report.mjs` | `--html`: the self-contained `report.html`, scope-file advice, the scan profile, the stale-data warning; pure |
 | `scanner/lib/cert-inventory.mjs`, `mail-starttls.mjs`, `diff.mjs`, `kev-coverage.mjs` | the report pack: `--certs`, `--mail`, `--compare` and the `coverage` command; pure, no network |
-| `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `import`, `depmap` and `rematch` commands; no network |
+| `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `match`, `import`, `depmap` and `rematch` commands; no network |
+| `scanner/lib/lookup.mjs` | the `lookup` reader: one CVE from a local snapshot — rating, both exposure deadlines, NVD ranges, the fix, whether a fingerprint can find the product, and a version the operator holds against the ranges; no network, nothing new fetched |
+| `scanner/lib/inputs.mjs` | the `match` adapters: nmap `-oX` hosts and services, CPE and purl vendors, an inventory with no address as one pseudo-host; returns the records `fingerprint.mjs` builds, so the matching, rating and outputs are unchanged |
 | `site/scanner-lib.js`, `site/scanner.js` | the Scanner page's report viewer and scope-file builder (browser only; mirrors of `diff.mjs` and `checkScope` that the unit tests compare with the real modules) |
 
 **Coverage (never a silent clean).** `scan.mjs` records every probe outcome — open, closed, filtered, errored, and banners cut off before a version is read — not just open ports, and probes beyond the first few ports before calling a host unreachable (a firewall or IPS may drop the first probes). `report.mjs` `coverage()` turns that into a Coverage section in `summary.txt`/`report.json` listing hosts that answered on no port, filtered ports, truncated banners, ports left unchecked, and hosts that were **throttled**. A host that resets connections after answering (IPS/fail2ban) is backed off once (the Limiter's clock, so tests stay instant) and its reset ports are re-probed one at a time, recovering hidden services. When coverage is incomplete the command exits **2**, so a scan with blind spots is never mistaken for a clean one. Tests: `probeAll` finds an open port past dropped discovery ports, `coverage()` classifies gaps, `isTruncatedBanner` flags cut banners.
@@ -320,6 +322,57 @@ is opt-in and built only from what the scan already holds:
   (Products named only by modules outside `FINGERPRINT_TABLES` are not counted until they register there.)
 - **`--dns-records`** writes `dns.csv` and `report.json`'s `dns` (see "Opt-in protocol checks" below).
 
+### One CVE from the snapshot (`lookup`, no network)
+
+`lookup CVE-… --data DIR` is a reader, not a matcher: an analyst with a CVE number from a bulletin, in a change freeze
+or an air-gapped SOC, gets what the Vulnerabilities page would tell them without a browser or a network. It adds no data
+path — the same `workbench.json`, `psirt.json` and CVE lookup file the scan reads, through the same `dirSource`
+(`scanner/lib/lookup.mjs`).
+
+It prints the identity, whether CISA lists it as known-exploited (with the catalog date, the deadline and whether it has
+passed), EPSS, the CyberView rating with every note, and CISA's SSVC priority for **both** exposure answers, because no
+inventory was given and assuming one would be a guess. Then the affected ranges as NVD states them, the vendor's fixed
+versions, workarounds and advisory, and `detectionFor`: whether this scanner's own fingerprints can read the product's
+version, name it only (findings stay low confidence), or not find it at all — stated as a detection gap, never as
+evidence the product is absent. `--version` runs the engine's own comparison on a version the operator holds and names
+the state it returned (`affected`, `check`, `clear`, `none`), each with the backport caveat.
+
+A CVE the catalog does not hold is reported as absent, with why (the catalog is CISA's known-exploited flaws plus recent
+high-risk ones, not every CVE), plus the CVE lookup row if the snapshot happens to have it. Nothing is invented for it.
+Rule 11 and rule 15 hold: the exploitation analysis, check steps and signs of compromise stay on CyberView's page,
+linked and never copied, and the guide and analysis are labelled as written by CyberView AI (a Claude model).
+
+### Matching a list you already hold (`match`, no network)
+
+Defenders who cannot scan — change freeze, third-party or air-gapped assets, "scanning is forbidden", or only an SBOM
+from CI — get the same report from files they already have. `match --data DIR` takes `--nmap scan.xml` (nmap `-oX`, run
+with `-sV`) and/or an inventory (`--sbom`, `--packages`, `--manifest`) and writes the five report files a scan writes.
+No scope file, no attestation and no authorization gate: no host is contacted, and the module imports neither the probe
+functions nor the web data source.
+
+The adapter is `scanner/lib/inputs.mjs`. It returns the same host and service records `fingerprint.mjs` builds from a
+real probe, so `match.mjs findings()`, the rating, CISA's priority and all five writers are the scan's own code,
+unchanged — the scanner and the Vulnerabilities page cannot disagree about a product either way it was learned.
+
+- **nmap `-oX`** gives real addresses, ports, products and versions. The `<service>` line's `product`/`version` are the
+  label and the version; a `<cpe>` child supplies the vendor and, when it names the product differently
+  (`http_server` for "Apache httpd"), that name is matched as well, because `nameHit` needs every word of a range's
+  product to appear in the name. nmap's `version` attribute often carries build text ("8.2p1 Ubuntu 4ubuntu0.5"): the
+  leading version is compared, the whole string is shown, and the rest is read for the distribution, so a distribution
+  build is medium confidence (the fix may be backported) exactly as a banner read from the service would be. A service
+  nmap named from its port table alone (`method="table"`), or with no version, is `guessed`, so it can never be high
+  confidence. Hosts reported down and ports reported closed or filtered are skipped.
+- **CPE and purl** are parsed for both nmap and SBOMs (`parseCpe`, `parsePurl`): CPE 2.2 and 2.3 (`*` and `-` are "any",
+  not a version), and purl's namespace as the vendor with qualifiers and subpaths discarded. For an SBOM this fills in a
+  vendor the site's `parseInventory` does not carry, which sharpens the match; SPDX falls back to the stated supplier.
+- **An SBOM or package list has no address**, so it becomes one pseudo-host named after the file, with no port. Exposure
+  is then unknown: it is rated as internal unless the operator states `--assume-exposed`, which moves only CISA's BOD
+  26-04 deadline (the CyberView rating does not depend on exposure). A finding with no port prints as the file, not
+  `file:null`, and its SARIF location is a `file://` artifact with a `resource` logical location.
+- **The report says what it is.** `run.network` records `sent: 0` and that nothing was contacted, `coverage.from` is
+  `files` with `complete: false`, a `match` block lists the inputs and the exposure assumption, and the first note says a
+  host, port or product the files do not mention is absent, not clean.
+
 ### Relationship map, imports and offline rematch (no network)
 
 `scan ... --depmap` also writes `depmap.json` and `depmap.mmd` (Mermaid), and a "Relationship map" section in
@@ -493,6 +546,30 @@ read, and a PLC that refuses the one TSAP is not retried; BACnet devices that an
 heard (the scanner does not listen for broadcasts); an OPC UA GetEndpoints reply over 16 KB is recorded as an error;
 DICOM only on 104, not 11112; DNP3 and FHIR are not included (see Decisions).
 
+### What `--identify` asks each service (wave 4)
+
+Four more services answer one standard message each, all behind the same `--identify` flag and all off by default. The
+request for each is a frozen byte sequence built field by field from that protocol's own published specification, with
+the derivation written beside it in `scanner/lib/hello.mjs` and the bytes locked in `REVIEWED_HEX`
+(`scripts/lib/scanner-hello-check.mjs`), so section 7 fails if one byte changes.
+
+| Service | Port | The one message | What is read |
+|---|---|---|---|
+| Apache Kafka | 9092 | `ApiVersions` v0, null client id | presence and the API count. **No release number**: no published mapping from an API set to a Kafka release exists |
+| Redis | 6379 | `PING` (RESP array of one bulk string) | `+PONG` means **no password at all**; a `-` error reply means one is set |
+| MQTT broker | 1883 | `CONNECT` (clean session, no user name, password or will), then `DISCONNECT` | the CONNACK return code: whether the broker **accepts anonymous connections** |
+| MongoDB | 27017-27019 | `hello` as one OP_MSG | standalone, replica set member or mongos, and the wire-version range **as the numbers it states** |
+
+Three of the four answer a posture question rather than a version question, and that is the point: an unprotected Redis
+or an MQTT broker that takes anonymous connections is a more direct route into an organisation than most unpatched
+versions are. None of the four reads data: Redis `INFO` was rejected for reading configuration and metrics, and the
+MongoDB and Kafka messages are the handshakes their own clients send before anything else.
+
+Two details are deliberate. MQTT sets Clean Session, because leaving it clear would make the broker **create and keep
+session state** for the scanner's client id — a change to the operator's own broker. And the MongoDB finding says in so
+many words that `hello` is answered before authentication by design, so it does **not** show whether access control is
+enabled; the alternative would be a reassuring sentence that happens to be wrong.
+
 ## Deliberately left out
 
 Credentialed (authenticated) scanning; password, community-string or any credential guessing; protocol commands beyond the
@@ -590,6 +667,55 @@ Wave 3, taken by the build lead on 2026-11-22 under the same instruction:
     four attributes (supportedLDAPVersion, vendorName, vendorVersion, objectClass) with no bind.
 22. **`hello.mjs` may own a UDP socket** under the `scanner-hello-check` rules (one datagram send, frozen reviewed bytes, no
     broadcast or multicast), as the second file beside `udp.mjs`. The `--ics` BACnet query still goes through `udp.mjs`.
+23. **Four more identify hellos: Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB `hello` (wave 4).** Each is a
+    Design under decision 10, built only from the protocol's own published specification, read for this build:
+    - **Kafka** `ApiVersions` v0 with a null client id (kafka.apache.org/protocol). The page states a broker "returns
+      its full list of supported ApiKeys and versions regardless of current authentication state", so this is the
+      protocol's own pre-authentication handshake, not a way around authentication. Presence and the API count only: the
+      page publishes no mapping from an API set to a Kafka release, so **no release number is claimed**.
+    - **Redis** `PING` as a RESP array of one bulk string (redis.io protocol spec). PING is the protocol's liveness
+      command: it reads no key and changes nothing. `INFO` was **rejected** — it would give a version, but it reads the
+      server's configuration and metrics, which is more than identification. The answer still carries the finding that
+      matters: `+PONG` means no password at all, an error reply means one is set. The error is matched by its `-` prefix
+      and first word only, because the exact text of Redis's authentication error is not on any page read for this
+      build and will not be written from memory.
+    - **MQTT** 3.1.1 `CONNECT` with no user name, no password and no will, then `DISCONNECT` (OASIS mqtt-v3.1.1-os).
+      Clean Session is set deliberately: with it clear, the broker would have to **create and keep session state** for
+      the scanner's client id, which would leave something behind on the operator's own broker. The client id is 16
+      bytes of `0-9a-zA-Z`, inside the 1-to-23 range of that character set a server MUST accept ([MQTT-3.1.3-5]), so
+      the probe never depends on a MAY. The CONNACK return code says whether the broker accepts anonymous connections.
+    - **MongoDB** `hello` as one OP_MSG (the wire protocol page and the BSON 1.1 specification). It is the handshake
+      every driver sends and reads no collection. It is answered **before authentication by design**, so the finding
+      says the port is reachable and explicitly says it does *not* show whether access control is on. `maxWireVersion`
+      is reported as the number it is: no page read for this build publishes a wire-version-to-release table, so none
+      is inferred.
+24. **SQL Server TDS PRELOGIN: deferred, not rejected.** It is the most valuable of the candidates, because PRELOGIN
+    returns an exact build number before authentication, and the PRELOGIN body itself is fully specified ([MS-TDS]
+    2.2.6.5: 5-byte options, big-endian offsets, VERSION first, TERMINATOR 0xFF). Three questions were left unanswered
+    by the pages read, and a reviewed byte sequence will not be frozen around a guess:
+    - the **Window** field of the 8-byte packet header is not described on the Packet Header page or any page it links
+      to, so what a client must send there is unknown;
+    - the **base of `PL_OFFSET`** is not stated (from the start of the PRELOGIN body, or of the whole packet);
+    - the Length page says Length "MUST be greater than or equal to 512 bytes", which a ~30-byte PRELOGIN packet
+      cannot satisfy; the page's "until Length is successfully negotiated" and "has not logged in" clauses may be the
+      intended exception, but it does not say so.
+    Resolving these (the [MS-TDS] PDF, or the Type and Window subsections) is all that stands in the way.
+25. **JetDirect PJL `INFO ID`: rejected.** TCP 9100 is a raw print channel. A device that is not PJL-aware prints what
+    it receives, so the probe would push a page of text out of the operator's own printers — a physical side effect on
+    their hardware. Detection-only means no side effects, not merely no exploitation. Printers stay identified from
+    their HTTP server and certificate, without a version.
+26. **NetBackup vnetd and the ACME `acme-tls/1` ALPN: deferred.** The vnetd greeting needs a non-NULL probe with no
+    public specification to build it from. The ACME check is not a hello at all: it needs a TLS handshake offering a
+    named ALPN protocol, which `hello.mjs` may not do (section 7 allows it no `tls.connect`); it belongs with the TLS
+    code, with its own Design, if ever.
+27. **Oracle TNS `(CONNECT_DATA=(COMMAND=version))`: deferred.** Oracle publishes no specification of the TNS wire
+    format, so the bytes could only come from a reverse-engineered third-party source. The listener's version command
+    is also commonly restricted, so the probe would often be refused even when correct.
+28. **`match` ships with `--assume-exposed`, defaulting to internal.** An SBOM or package list carries no address, so
+    exposure cannot be read. The Discovery recommendation was to ship the internal default and add the flag later; both
+    are in, because the flag changes only CISA's deadline and the alternative is silently rating an internet-facing
+    inventory as internal. `match` stays offline-only (`--data DIR`, no `--online`), so one command never both downloads
+    and matches.
 
 ## Releases
 

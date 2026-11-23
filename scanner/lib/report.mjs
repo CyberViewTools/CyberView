@@ -123,9 +123,12 @@ export function toSarif(report) {
   const results = [];
   report.findings.forEach((f, i) => f.seen_on.forEach((s) => results.push({
     ruleId: f.cve, ruleIndex: i, level: LEVEL(f), rank: Math.max(0, Math.min(100, (f.rating.score ?? 0) * 10)),
-    message: { text: `${f.cve} ${s.state === "affected" ? "affects" : "may affect"} ${s.product} ${s.shown_version || "(version not stated)"} on ${s.host}:${s.port}. CyberView rating ${f.rating.score == null ? "not scored" : f.rating.score.toFixed(1) + " " + f.rating.band}${f.priority ? `; priority ${f.priority.label}` : ""}${f.kev ? "; known exploited (CISA)" : ""}. Confidence ${s.confidence}: ${s.confidence_why}.` },
-    locations: [{ physicalLocation: { artifactLocation: { uri: `tcp://${/:/.test(s.host) ? `[${s.host}]` : s.host}:${s.port}` } }, logicalLocations: [{ name: `${s.host}:${s.port}`, kind: "module" }] }],
-    partialFingerprints: { "cyberviewFinding/v1": `${f.cve}|${s.host}|${s.port}` },
+    message: { text: `${f.cve} ${s.state === "affected" ? "affects" : "may affect"} ${s.product} ${s.shown_version || "(version not stated)"} on ${s.port == null ? s.host : `${s.host}:${s.port}`}. CyberView rating ${f.rating.score == null ? "not scored" : f.rating.score.toFixed(1) + " " + f.rating.band}${f.priority ? `; priority ${f.priority.label}` : ""}${f.kev ? "; known exploited (CISA)" : ""}. Confidence ${s.confidence}: ${s.confidence_why}.` },
+    // an imported inventory has no port: the location is the file the list came from, not a socket
+    locations: [s.port == null
+      ? { physicalLocation: { artifactLocation: { uri: `file:///${String(s.host).replace(/^\/+/, "")}` } }, logicalLocations: [{ name: String(s.host), kind: "resource" }] }
+      : { physicalLocation: { artifactLocation: { uri: `tcp://${/:/.test(s.host) ? `[${s.host}]` : s.host}:${s.port}` } }, logicalLocations: [{ name: `${s.host}:${s.port}`, kind: "module" }] }],
+    partialFingerprints: { "cyberviewFinding/v1": `${f.cve}|${s.host}|${s.port == null ? s.product : s.port}` },
     properties: { confidence: s.confidence, evidence: s.evidence, rating: f.rating.text, queue_points: pointList(f), known_exploited: f.kev, cisa_due: f.cisa_due || null },
   })));
   return {
@@ -173,7 +176,13 @@ export function summaryText(report) {
   L.push(`Hosts in scope ${s.hosts_in_scope}, up ${s.hosts_up}; open ports ${s.open_ports}; services identified ${s.services_identified}.`);
   L.push(`Findings ${s.findings} (${s.version_confirmed} with the version inside an affected range${s.low_confidence ? `; ${s.low_confidence} low-confidence, listed but not in the counts below` : ""}): ${s.known_exploited} known exploited (CISA), ${s.critical} rated Critical, ${s.act} at priority Act, ${s.overdue} past CISA's deadline.`);
   const cov = report.coverage;
-  if (cov && !cov.complete) {
+  if (cov && cov.from === "files") {
+    L.push("");
+    L.push("COVERAGE — nothing was contacted: this reads the operator's own files, so it covers exactly what they list.");
+    L.push("   A host, port or product missing from the input is simply absent here; it is not a clean result.");
+    if (report.match && report.match.inputs.length) L.push(`   Read from: ${report.match.inputs.join(", ")}.`);
+    if (report.match && report.match.has_inventory && !report.match.assume_exposed) L.push("   Exposure was not stated for an input with no address, so CISA's deadline is the internal one (--assume-exposed to rate it as internet-facing).");
+  } else if (cov && !cov.complete) {
     L.push("");
     L.push("COVERAGE — the scan could not see everything below; a clean result does NOT cover these blind spots:");
     if (cov.hosts_unreachable.length) L.push(`   ${cov.hosts_unreachable.length} host(s) answered on no port (filtered/dropped, possibly firewalled or down): ${cov.hosts_unreachable.slice(0, 20).join(", ")}${cov.hosts_unreachable.length > 20 ? ", ..." : ""}`);
@@ -189,7 +198,7 @@ export function summaryText(report) {
   for (const f of report.findings.slice(0, 25)) {
     L.push("");
     L.push(`#${f.rank} ${f.cve} ${f.title}`.slice(0, 160));
-    L.push(`   Seen on: ${f.seen_on.slice(0, 4).map((x) => `${x.host}:${x.port} ${x.product} ${x.shown_version || "(no version)"} [${x.confidence}]`).join("; ")}${f.seen_on.length > 4 ? ` and ${f.seen_on.length - 4} more` : ""}`);
+    L.push(`   Seen on: ${f.seen_on.slice(0, 4).map((x) => `${x.port == null ? x.host : `${x.host}:${x.port}`} ${x.product} ${x.shown_version || "(no version)"} [${x.confidence}]`).join("; ")}${f.seen_on.length > 4 ? ` and ${f.seen_on.length - 4} more` : ""}`);
     L.push(`   ${f.kev ? `KNOWN EXPLOITED (CISA KEV since ${f.kev_added || "?"})${f.cisa_due ? `, CISA due ${f.cisa_due}${f.overdue ? " (OVERDUE)" : ""}` : ""}; ` : ""}priority ${f.priority ? f.priority.label : "-"}${f.priority && f.priority.fix_by ? ` (BOD 26-04: fix ${f.priority.fix_by.text})` : ""}`);
     L.push(`   CyberView rating: ${f.rating.text || f.rating.band}`);
     L.push(`   Queue points ${f.points.total}: ${pointList(f)}`);

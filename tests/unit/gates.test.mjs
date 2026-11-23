@@ -128,7 +128,8 @@ test("follow-up desk: small batches, deep events in their own, the rest left for
   for (const k of ["window_days", "base_hours", "max_hours", "urgent_max_hours", "sev3_quiet_hours", "workers", "per_worker"]) assert.ok(Number(pipe.followup_desk[k]) > 0, k);
   assert.ok(pipe.followup_desk.urgent_max_hours < pipe.followup_desk.max_hours);
   assert.ok(models.roles["followup-deep"].max_turns <= 20, "the follow-up desk on the deep model has a hard turn cap");
-  assert.equal(models.roles["followup-deep"].model, "opus"); assert.equal(models.roles.followup.model, "sonnet");
+  // Owner, 2026-11-23: followup-deep moved from Opus to Sonnet; the deep role remains, with its own (fuller) prompt and hard turn cap.
+  assert.equal(models.roles["followup-deep"].model, "sonnet"); assert.equal(models.roles.followup.model, "sonnet");
 });
 
 test("claims gate: 24 h, 48 h, 96 h, capped; a new report re-opens at once; an exhausted claim only by a new report", () => {

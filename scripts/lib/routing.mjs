@@ -2,9 +2,12 @@
 // The second review corrected 34% of events (target under 10%), and the corrections cluster where judgment matters:
 // incidents (what the organisation really confirmed), exploited flaws, official reports and stories several publishers
 // carry (which publisher says what). Those go to the deep roles (config/models.json: researcher-deep, updater-deep,
-// followup-deep, model opus); routine bulletins, single-source headlines and the rest stay on the base roles (Sonnet).
+// followup-deep); routine bulletins, single-source headlines and the rest stay on the base roles.
+// Owner, 2026-11-23 (cost-conscious; the #127 evals showed the Opus deep roles were not corrected less often than
+// Sonnet): the deep roles now run on Sonnet with detailed-harness prompts, not Opus. This routing is unchanged -- the
+// deep role still gets the hardest work, just at a lower tier with a fuller prompt and more turns than the base role.
 // A rule, not a global switch: the owner can move either role's model in config/models.json, and an empty or missing
-// deep role falls back to the base role (roleFor).
+// deep role falls back to the base role (roleFor); the deep role's prompt is the base role's section (baseRole).
 
 const DB_KINDS = new Set(["cve", "breach-db", "status", "claim"]);
 

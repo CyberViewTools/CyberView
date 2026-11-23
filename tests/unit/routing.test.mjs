@@ -43,8 +43,9 @@ test("roleFor: the deep role only when it is configured; the prompt is the base 
   assert.equal(roleFor("researcher", true, { roles: { researcher: {} } }), "researcher", "no deep role configured: the base role");
   assert.equal(baseRole("followup-deep"), "followup");
   for (const r of ["researcher-deep", "updater-deep", "followup-deep"]) {
-    assert.equal(MODELS.roles[r].model, "opus"); assert.equal(MODELS.min_tier[r], "opus");
-    assert.equal(workerArgs(r, "p", MODELS).model, "opus");
+    // Owner, 2026-11-23: the deep roles moved from Opus to Sonnet (detailed-harness prompts hold quality); the routing is unchanged.
+    assert.equal(MODELS.roles[r].model, "sonnet"); assert.equal(MODELS.min_tier[r], "sonnet");
+    assert.equal(workerArgs(r, "p", MODELS).model, "sonnet");
   }
   assert.equal(MODELS.roles.reviewer.model, "sonnet", "reviewers stay on Sonnet");
 });

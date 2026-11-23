@@ -1,5 +1,5 @@
 {
- "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs. Owner, 2026-11-21 (accuracy first: the second review corrected 34% of events against a target under 10%): Opus where it counts, as a routing rule, not a global switch. researcher-deep, updater-deep and followup-deep are the same jobs as researcher, updater and followup (same prompts) on Opus; scripts/lib/routing.mjs sends incidents, exploited flaws, official reports and stories two or more publishers carry to researcher-deep, and severity 3 or exploited events to updater-deep and followup-deep; routine work stays on the base roles (Sonnet). Reviewers stay on Sonnet: `node scripts/review.mjs errors` counts corrections by the role and model that wrote the event, so the owner can see whether the writer or the reviewer is the weak point. Deleting a deep role sends its work back to the base role. Turn caps (owner, 2026-11-23, \"make this highly efficient\"): every turn re-reads the whole conversation (986 M cache-read tokens against 7.8 M written in three days), so max_turns of the twelve loop roles is set from the usage ledger of 19 to 22 November: the 90th percentile of the turns of successful runs that changed something, divided by 0.8, because every worker is told its budget and to stop researching and write its run log at 80% of it (scripts/run-job.mjs turnBudgetNote). researcher 60 -> 36 (p90 28), researcher-deep 70 -> 44 (35), reviewer 60 -> 36 (28), gap 45 -> 20 (15), updater 45 -> 24 (19), updater-deep 50 -> 30 (24, all successful runs: none changed anything yet), outage 40 -> 14 (10), claims 40 -> 14 (11), grid 40 -> 14 (9), fixer 30 -> 14 (9). followup 60 -> 20 and followup-deep 60 -> 18 are hard caps for the new batches of two events (config/pipeline.json followup_desk; measured about 8 turns an event at the median when one run took five). A worker that reaches its cap ends as `capped` in the ledger, the script logs what it had not finished as open leads (unfinishedLog) and the items stay in their queue. Roles with fewer than ten productive runs in the ledger keep their caps until there is data.",
+ "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs. Owner, 2026-11-21 (accuracy first: the second review corrected 34% of events against a target under 10%): Opus where it counts, as a routing rule, not a global switch. researcher-deep, updater-deep and followup-deep are the same jobs as researcher, updater and followup (same prompts); scripts/lib/routing.mjs sends incidents, exploited flaws, official reports and stories two or more publishers carry to researcher-deep, and severity 3 or exploited events to updater-deep and followup-deep; routine work stays on the base roles. Reviewers stay on Sonnet: `node scripts/review.mjs errors` counts corrections by the role and model that wrote the event, so the owner can see whether the writer or the reviewer is the weak point. Deleting a deep role sends its work back to the base role. Owner, 2026-11-23 (set directly, not via scripts/improve.mjs apply, which is refused while second-review corrections exceed 15%): make the pipeline cost-conscious, Opus ONLY where fully needed. The #127 accuracy evals showed the Opus deep roles were not corrected less often than Sonnet (followup-deep 64% corrected, updater 58%, researcher-deep 40% vs researcher 37%), so researcher-deep, updater-deep, followup-deep, editor and tabletop moved from Opus to Sonnet and classifier and moderator from Sonnet to Haiku; the demoted roles are compensated by detailed-harness prompts in docs/jobs.md (explicit numbered steps, the most-common-correction lessons inline, a required output shape and a turn-budget stop) so the cheaper model holds quality. Opus now runs only exploit-analyst, security-review and analysis, where judgment errors are costliest. The deep roles REMAIN (now Sonnet with more turns and a fuller prompt than the base role); routing.mjs roleFor/baseRole only check that the deep role exists. min_tier for the deep roles is now sonnet (they never drop to Haiku). Turn caps (owner, 2026-11-23, \"make this highly efficient\"): every turn re-reads the whole conversation (986 M cache-read tokens against 7.8 M written in three days), so max_turns of the twelve loop roles is set from the usage ledger of 19 to 22 November: the 90th percentile of the turns of successful runs that changed something, divided by 0.8, because every worker is told its budget and to stop researching and write its run log at 80% of it (scripts/run-job.mjs turnBudgetNote). researcher 60 -> 36 (p90 28), researcher-deep 70 -> 44 (35), reviewer 60 -> 36 (28), gap 45 -> 20 (15), updater 45 -> 24 (19), updater-deep 50 -> 30 (24, all successful runs: none changed anything yet), outage 40 -> 14 (10), claims 40 -> 14 (11), grid 40 -> 14 (9), fixer 30 -> 14 (9). followup 60 -> 20 and followup-deep 60 -> 18 are hard caps for the new batches of two events (config/pipeline.json followup_desk; measured about 8 turns an event at the median when one run took five). A worker that reaches its cap ends as `capped` in the ledger, the script logs what it had not finished as open leads (unfinishedLog) and the items stay in their queue. Roles with fewer than ten productive runs in the ledger keep their caps until there is data.",
  "toolsets": {
   "research": [
    "Bash(node:*)",
@@ -40,9 +40,9 @@
   "analysis": "sonnet",
   "security-review": "sonnet",
   "reviewer": "sonnet",
-  "researcher-deep": "opus",
-  "updater-deep": "opus",
-  "followup-deep": "opus"
+  "researcher-deep": "sonnet",
+  "updater-deep": "sonnet",
+  "followup-deep": "sonnet"
  },
  "roles": {
   "researcher": {
@@ -52,7 +52,7 @@
    "timeout_min": 20
   },
   "researcher-deep": {
-   "model": "opus",
+   "model": "sonnet",
    "max_turns": 44,
    "tools": "research",
    "timeout_min": 25
@@ -94,7 +94,7 @@
    "timeout_min": 15
   },
   "moderator": {
-   "model": "sonnet",
+   "model": "haiku",
    "max_turns": 25,
    "tools": "local",
    "timeout_min": 10
@@ -136,7 +136,7 @@
    "timeout_min": 25
   },
   "followup-deep": {
-   "model": "opus",
+   "model": "sonnet",
    "max_turns": 18,
    "tools": "research",
    "timeout_min": 30
@@ -178,13 +178,13 @@
    "timeout_min": 25
   },
   "tabletop": {
-   "model": "opus",
+   "model": "sonnet",
    "max_turns": 40,
    "tools": "research",
    "timeout_min": 25
   },
   "editor": {
-   "model": "opus",
+   "model": "sonnet",
    "max_turns": 40,
    "tools": "local",
    "timeout_min": 25
@@ -202,7 +202,7 @@
    "timeout_min": 15
   },
   "updater-deep": {
-   "model": "opus",
+   "model": "sonnet",
    "max_turns": 30,
    "tools": "research",
    "timeout_min": 20
@@ -220,7 +220,7 @@
    "timeout_min": 15
   },
   "classifier": {
-   "model": "sonnet",
+   "model": "haiku",
    "max_turns": 20,
    "tools": "sort",
    "timeout_min": 12

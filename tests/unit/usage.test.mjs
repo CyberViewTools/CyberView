@@ -65,6 +65,14 @@ test("reset times: unix seconds, ISO, a clock time (next after the hit), a weekd
   assert.equal(new Date(resetFrom("resets Mon 9am (UTC)", hit)).toISOString(), "2026-11-23T09:00:00.000Z");
   assert.equal(new Date(resetFrom("resets 3pm (America/New_York)", hit)).toISOString(), "2026-11-20T20:00:00.000Z");
   assert.equal(resetFrom("usage limit reached", hit), null);
+  const wk = Date.parse("2026-11-23T13:57:25Z");
+  assert.equal(new Date(resetFrom("You've hit your weekly limit · resets Nov 28, 8pm (UTC)", wk)).toISOString(), "2026-11-28T20:00:00.000Z", "weekly-limit month-name form");
+  assert.equal(new Date(resetFrom("resets November 28 at 8:30am", wk)).toISOString(), "2026-11-28T08:30:00.000Z");
+  assert.equal(new Date(resetFrom("resets Jan 2, 9am (UTC)", Date.parse("2026-12-30T10:00:00Z"))).toISOString(), "2027-01-02T09:00:00.000Z", "year boundary");
+  assert.equal(new Date(resetFrom("resets Nov 20, 9am (UTC)", wk)).toISOString(), "2027-11-20T09:00:00.000Z", "a date already past is next year's");
+  const lh = limitHits([{ at: "2026-11-23T13:57:25Z", ok: false, error: "You've hit your weekly limit · resets Nov 28, 8pm (UTC)" }, { at: "2026-11-23T13:57:25Z", ok: false, error: "You've hit your weekly limit" }]);
+  assert.equal(new Date(lh[0].until).toISOString(), "2026-11-28T20:00:00.000Z");
+  assert.equal(lh[1].until - lh[1].at, 360 * 6e4, "an unparsed weekly limit backs off longer than an hour");
   assert.equal(resetFrom("resets 3pm (Not/AZone)", hit), null);
 });
 

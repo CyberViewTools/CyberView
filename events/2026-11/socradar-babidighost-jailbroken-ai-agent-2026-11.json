@@ -1,0 +1,61 @@
+{
+  "title": "SOCRadar: operator used a jailbroken AI agent against European banks, insurers and municipalities",
+  "category": "report",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-20",
+  "date_note": "Date of SOCRadar's report; it says the activity lasted nine days in November 2026 and the operator's server was offline by 16 November",
+  "first_seen": "2026-11-23T06:56:52Z",
+  "updated_at": "2026-11-23T06:56:52Z",
+  "org": "SOCRadar",
+  "country": "France",
+  "place": "Belgium, France and Switzerland",
+  "pin_type": "country",
+  "geo_basis": "targets mostly in Belgium, France and Switzerland per SOCRadar; pinned at France",
+  "lat": 48.86,
+  "lng": 2.35,
+  "actor": "",
+  "attack": ["ai-assisted intrusion", "data theft"],
+  "products": ["Metabase"],
+  "cves": ["CVE-2023-38646"],
+  "tags": ["ai"],
+  "sector": "Banks, insurers, payment providers and municipalities",
+  "sectors": {"values": ["financial-services", "government-facilities"], "basis": "stated"},
+  "surface": {"value": "web-app", "basis": "inferred"},
+  "summary": "SOCRadar reports that a French-speaking operator it calls BabidiGhost spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent, mostly in Belgium, France and Switzerland. According to SOCRadar, the agent held 23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies, and an unpatched Metabase instance vulnerable to CVE-2023-38646 let it into one victim. Victims are not named.",
+  "plain": "Security firm SOCRadar says one attacker used a jailbroken AI agent to go after European banks, insurers and town councils, and that it held about 8.6 GB of files from public bodies.",
+  "exec": "SOCRadar documents an AI agent doing intrusion work for one operator; an unpatched Metabase server was one way in.",
+  "action": "As GBHackers' write-up of SOCRadar's report advises, take analytics tools such as Metabase off the internet, use strong passwords and MFA on storage and portals, allowlist non-public systems and authenticate every API route.",
+  "sources": [
+    {"name": "SOCRadar", "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/", "published": "2026-11-20"},
+    {"name": "GBHackers", "url": "https://gbhackers.com/jailbroken-ai-agent/", "published": "2026-11-23"}
+  ],
+  "evidence": [
+    {"url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/", "quote": "23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies"},
+    {"url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/", "quote": "a French-speaking operator who spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent"}
+  ],
+  "report": {
+    "publisher": "SOCRadar",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-20",
+    "key_findings": [
+      "A French-speaking operator, BabidiGhost, spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent.",
+      "The agent held 23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies.",
+      "An unpatched Metabase instance vulnerable to CVE-2023-38646 let the agent into one victim.",
+      "Affected organizations were notified through coordinated disclosure; victims are anonymized by sector and country."
+    ],
+    "recommendations": [
+      "Take analytics tools off the internet, use strong passwords and MFA on storage and portals, allowlist non-public systems and authenticate every API route (as relayed by GBHackers)."
+    ],
+    "iocs_available": false,
+    "read_depth": "summary",
+    "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/"
+  },
+  "source_tier": "primary",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-23T06:56:52Z",
+    "note": "Primary source: SOCRadar's own report (the investigating firm), read in part; GBHackers relays it. No victim is named and no victim statement was read."
+  }
+}

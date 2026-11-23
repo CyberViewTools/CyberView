@@ -20,6 +20,7 @@ import { regionOf, storyCredit, closureOutcome, RETIRED_COLLECTORS } from "./met
 import { measure as speedOf } from "./lib/latency.mjs";
 import { errorReport, writersFrom } from "./review.mjs";
 import { sectorsOf, SECTOR } from "./lib/taxonomy.mjs";
+import { fallbackSpend, fallbackConfig, budgetConfig } from "./lib/usage.mjs";
 
 // routines whose work is a document or a check, not a list in a run log: their idle share is not measured
 export const DOC_ROUTINES = new Set(["brief", "analysis", "tabletop", "improver", "watchdog", "guardian", "editor", "security-review", "monitor", "link-check", "security-check", "exploit-watch"]);
@@ -515,6 +516,16 @@ export function workerEnds(usage, since, now = Date.now()) {
   }
   return out;
 }
+/** Pure: the API-key fallback telemetry for the status page (scripts/lib/usage.mjs). The subscription is primary; the
+ *  Anthropic API bills only while the subscription window is exhausted. cycles_on_fallback is the number of worker lines
+ *  that ran on the API key, est_usd_this_month their estimated API-list cost this calendar month, last_fallback_at the most
+ *  recent one. The key value is never read or shown; only the dials and the ledger's `served` marks are used. */
+export function apiFallbackReport(usage, cfg = fallbackConfig(budgetConfig()), now = Date.now()) {
+  const fb = cfg || { enabled: true, monthly_usd_cap: 150 }, spend = fallbackSpend(usage || [], now);
+  return { enabled: fb.enabled !== false, monthly_usd_cap: num(fb.monthly_usd_cap), month: spend.month,
+    cycles_on_fallback: spend.workers, est_usd_this_month: spend.usd, last_fallback_at: spend.last_at,
+    cap_reached: num(fb.monthly_usd_cap) > 0 && spend.usd >= num(fb.monthly_usd_cap) };
+}
 /** What the no-result gates hold back right now (scripts/lib/gates.mjs): for each desk, what is due and what is skipped
  *  because nothing is new since its last look, with the time the next one is due. Skipped is never dropped: every item
  *  stays in its queue. A desk that cannot be read leaves an `error`, never a broken report. */
@@ -540,6 +551,7 @@ export async function build(days = 7, now = Date.now()) {
   const r = report(inp, { now, days, speed, windows });
   r.gates = await gateSummary(now);
   r.worker_ends = workerEnds(inp.usage, now - days * DAY, now);
+  try { r.api_fallback = apiFallbackReport(inp.usage, fallbackConfig(budgetConfig()), now); } catch {}
   return r;
 }
 
@@ -571,5 +583,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log("Corrections by week: " + r.accuracy.weeks.map((x) => `${x.week} ${x.corrected_pct}% of ${x.reviewed}`).join("; ") + (r.accuracy.categories.length ? "; categories: " + r.accuracy.categories.map((c) => `${c.name} ${c.n}`).join(", ") : ""));
   if (r.gates) console.log("Gates (due / skipped: nothing new since the last check): " + ["followup", "claims", "outage", "updater"].map((k) => { const g = r.gates[k] || {}; return g.error ? `${k} ?` : `${k} ${g.due}/${g.skipped ?? g.skipped_redirect_only ?? 0}${g.next_due_at ? ` (next due ${String(g.next_due_at).slice(5, 16).replace("T", " ")})` : ""}`; }).join("; ") + (r.gates.gap && !r.gates.gap.error ? `; gap pass every ${r.gates.gap.every_minutes} min (${r.gates.gap.runs_in_a_row_without_an_event} run(s) in a row added nothing)` : ""));
   if (r.worker_ends) console.log(`Workers (${r.days} days): ${r.worker_ends.ok} of ${r.worker_ends.runs} finished, ${r.worker_ends.capped} reached their turn cap, ${r.worker_ends.usage_limit} refused by the usage limit${r.worker_ends.last_limit_at ? ` (last ${r.worker_ends.last_limit_at}${r.worker_ends.last_limit_until ? ", reset " + r.worker_ends.last_limit_until : ""})` : ""}, ${r.worker_ends.failed} failed otherwise.`);
+  if (r.api_fallback) console.log(`API fallback: ${r.api_fallback.enabled ? "enabled" : "disabled"}, cap $${r.api_fallback.monthly_usd_cap}/month; ${r.api_fallback.cycles_on_fallback} worker line(s) on the API this month, est $${r.api_fallback.est_usd_this_month}${r.api_fallback.last_fallback_at ? ", last " + r.api_fallback.last_fallback_at : ""}${r.api_fallback.cap_reached ? " — CAP REACHED" : ""}.`);
   r.gaps.forEach((g) => console.log("Gap: " + g));
 }

@@ -1,0 +1,104 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-23T01:09:27Z",
+  "finished_at": "2026-11-23T01:12:28Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Charleston County cyberattack update residents data",
+    "\"Charleston County\" cyberattack update November 19 county says",
+    "Nissan diagnostics system unauthorized access dealers statement",
+    "Nissan cyberattack dealers diagnostics New York Times November 2026",
+    "Wilmington School District 209U ransomware update",
+    "\"Wilmington\" \"209U\" cyber incident district",
+    "Quantum Systems Cyberangriff Bundeswehr Drohnen",
+    "Quantum Systems Cyberangriff Staatsanwaltschaft ermittelt",
+    "Cobre incidente de ciberseguridad fintech Colombia",
+    "Cobre pagos ciberataque comunicado clientes noviembre"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.infranken.de/deutschland/generalstaatsanwalt-ermittelt-nach-cyberattacke-auf-quantum-art-6411085",
+      "title": "Generalstaatsanwalt ermittelt nach Cyberattacke auf Quantum (dpa, 13.11.2026)",
+      "used_in": "quantum-systems-drone-maker-cyberattack-2026-11"
+    },
+    {
+      "url": "https://status.cobre.co/incidents/hsh170bxvtx3",
+      "title": "Cobre status: Temporary API and Portal unavailability due to internal validations",
+      "used_in": "cobre-cybersecurity-incident-2026-11"
+    },
+    {
+      "url": "https://status.cobre.co/",
+      "title": "Cobre status page",
+      "used_in": "cobre-cybersecurity-incident-2026-11"
+    },
+    {
+      "url": "https://www.cobre.com/",
+      "title": "Cobre homepage (no incident notice)",
+      "used_in": "cobre-cybersecurity-incident-2026-11 (checked, nothing used)"
+    },
+    {
+      "url": "https://www.charlestoncounty.gov/news-releases.php",
+      "title": "Charleston County news releases archive (lists 18 Nov statement and 19 Nov update on the cyberattack)",
+      "used_in": "charleston-county-sc-cyber-incident-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://global.nissannews.com/en/releases",
+      "title": "Nissan global newsroom (no release on the incident, newest 20 Nov)",
+      "used_in": "nissan-global-diagnostics-system-unauthorized-access-2026-11 (checked, unchanged)"
+    },
+    {
+      "url": "https://usa.nissannews.com/en-US/releases",
+      "title": "Nissan USA newsroom (no release on the incident, newest 20 Nov)",
+      "used_in": "nissan-global-diagnostics-system-unauthorized-access-2026-11 (checked, unchanged)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "quantum-systems-drone-maker-cyberattack-2026-11",
+    "cobre-cybersecurity-incident-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "charleston-county-sc-cyber-incident-2026-11",
+      "url": "https://www.charlestoncounty.gov/news-releases.php"
+    },
+    {
+      "id": "nissan-global-diagnostics-system-unauthorized-access-2026-11",
+      "url": "https://global.nissannews.com/en/releases"
+    },
+    {
+      "id": "wilmington-school-district-209u-ransomware-2026-11",
+      "url": "https://www.wilmington209u.org/ (proxy refused the connection; no page read)"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Charleston County statement (18 Nov) and 'Charleston County shares update on cyberattack' (19 Nov)",
+      "url": "https://www.charlestoncounty.gov/news/2026/charleston-county-shares-update-on-cyberattack.pdf",
+      "note": "Listed in the county's release archive, but the PDFs (and charlestoncounty.org) answer with a block page to automated readers; not worked around. A news report of the 19 Nov update would allow updating the event.",
+      "priority": "medium"
+    },
+    {
+      "title": "Nissan diagnostics system shutdown: NYT original and any Nissan statement",
+      "url": "https://zn.ua/TECHNOLOGIES/kiberataka-na-nissan-avtoproizvoditel-otkljuchil-hlobalnuju-sistemu-diahnostiki.html",
+      "note": "Still single-source (zn.ua relaying NYT); Nissan global and USA newsrooms have no release through 20 Nov; searches found no second publisher.",
+      "priority": "medium"
+    },
+    {
+      "title": "Wilmington CUSD 209U possible ransomware: district notice",
+      "url": "https://www.wilmington209u.org/",
+      "note": "District site refused by the proxy; searches found no newer reporting than WJOL.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "ms-aktuell.de (403)",
+    "www.charlestoncounty.org (block page)",
+    "www.charlestoncounty.gov news PDFs (block page)",
+    "www.wilmington209u.org (proxy refused)"
+  ],
+  "notes": "5 picked (not updated or follow-up-checked in 24 h). Quantum Systems: added dpa report that Generalstaatsanwaltschaft Bamberg investigates against unknown persons; no attribution made, actor left empty. Cobre: added Cobre's own status-page incident (API/Portal unavailable for 'internal platform validations' 19-21 Nov), stated without linking it to the security incident since the page does not; validation stays single_source. Charleston, Nissan, Wilmington unchanged.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

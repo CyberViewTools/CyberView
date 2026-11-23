@@ -9,7 +9,7 @@
   "products": [],
   "time_basis": "published",
   "first_seen": "2026-11-19T05:20:00Z",
-  "updated_at": "2026-11-19T05:20:00Z",
+  "updated_at": "2026-11-23T00:58:30Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -18,7 +18,6 @@
   ],
   "geo_basis": "country",
   "date": "2026-11-15",
-  "occurred_at": "2026-11-15T12:00:00Z",
   "date_note": "Second attack reported 15 Nov; the first attack was on 2 Nov. Time of day not stated.",
   "title": "Russian host Beget hit by second large DDoS while rebuilding cloud destroyed on 2 November",
   "org": "Beget",
@@ -30,24 +29,37 @@
   "pin_type": "country",
   "severity": 2,
   "source_tier": "established",
-  "summary": "Hosting provider Beget said on 15 November it faced a second large DDoS attack in two weeks, which it said was aimed at disrupting its recovery. The Moscow Times gives 2.1 Tbit/s and iStories up to 850 Gbit/s. On 2 November the company said its cloud infrastructure had been destroyed; iStories lists lost VPS data, S3 storage and Kubernetes clusters. Beget blames unnamed hackers.",
+  "summary": "Hosting provider Beget said on 15 November it faced a second large DDoS attack in two weeks, aimed, it said, at disrupting recovery; The Moscow Times gives 2.1 Tbit/s, iStories up to 850 Gbit/s. On 2 November it said its cloud infrastructure had been destroyed; Beget blames unnamed hackers. Topvizor Journal, relayed by directline.pro on 17 November, said 95% of shared-hosting and 94% of dedicated servers were running again.",
+  "evidence": [
+    {
+      "url": "https://www.directline.pro/connect/p/beget-vosstanovil-95-serverov-virtualnogo-hostinga/",
+      "quote": "уже восстановлена работа 95% серверов виртуального хостинга и 94% выделенных серверов"
+    }
+  ],
   "plain": "A big Russian web host was hit by a second flood attack while still rebuilding from an earlier one that wiped its cloud service.",
   "exec": "Shows how one provider's outage and data loss can take down many customers' sites and email at once.",
-  "action": "Beget customers: check your own off-host backups and follow the provider's status channel. Others: confirm you can restore hosted sites and DNS elsewhere.",
+  "action": "General advice: Beget customers: check your own off-host backups and follow the provider's status channel. Others: confirm you can restore hosted sites and DNS elsewhere.",
   "sources": [
     {
       "name": "The Moscow Times",
-      "url": "https://ru.themoscowtimes.com/2026/11/15/poteryavshii-oblachnuyu-infrastrukturu-hosting-provaider-beget-zayavil-ovtoroi-masshtabnoi-kiberatake-zadve-nedeli-a211371"
+      "url": "https://ru.themoscowtimes.com/2026/11/15/poteryavshii-oblachnuyu-infrastrukturu-hosting-provaider-beget-zayavil-ovtoroi-masshtabnoi-kiberatake-zadve-nedeli-a211371",
+      "published": "2026-11-15"
     },
     {
       "name": "iStories",
-      "url": "https://istories.media/news/2026/11/15/khakeri-povtorno-atakovali-rossiiskogo-khosting-provaidera-beget-poka-tot-pitalsya-vosstanovit-infrastrukturu/"
+      "url": "https://istories.media/news/2026/11/15/khakeri-povtorno-atakovali-rossiiskogo-khosting-provaidera-beget-poka-tot-pitalsya-vosstanovit-infrastrukturu/",
+      "published": "2026-11-15"
+    },
+    {
+      "name": "Topvizor Journal via directline.pro (17 Nov)",
+      "url": "https://www.directline.pro/connect/p/beget-vosstanovil-95-serverov-virtualnogo-hostinga/",
+      "published": "2026-11-17"
     }
   ],
   "validation": {
-    "checked_at": "2026-11-19T05:20:00Z",
+    "checked_at": "2026-11-23T00:58:30Z",
     "state": "corroborated",
-    "note": "Two independent outlets agree on dates and Beget's statement; attack size differs between them; Beget's own Telegram was not read. Headquarters city not stated in sources, so pinned at country level."
+    "note": "The Moscow Times and iStories, two independent outlets, agree on dates and Beget's statement; attack size differs between them; Beget's own Telegram was not read. Headquarters city not stated in sources, so pinned at country level. Follow-up 23 Nov: Topvizor Journal (republished by directline.pro, 17 Nov) gives the restored server shares and over 150,000 sites back from backups; www1.ru (15 Nov, citing Beget's Telegram) gave over 215,000 sites; the site counts were not reconciled, so neither is in the summary. Removed an occurred_at of 12:00 that no source states."
   },
   "review": {
     "state": "passed",

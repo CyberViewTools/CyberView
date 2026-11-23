@@ -86,3 +86,14 @@ test("job-prompt: with lead data the gap region is chosen from it, says why, and
   assert.ok(outs.every((o) => /chosen from the data: \d+ lead\(s\) from its region in 3 days, \d+ event\(s\) on the map/.test(o)));
   assert.ok(new Set(regions).size >= 2, "three runs in a row searched the same region");
 });
+
+// 170 of the build's 361 hygiene warnings were invented tags: the preamble named 3 of the 23 allowed ones, so writers
+// guessed the rest. The list is only useful if it cannot drift from the validator again.
+test("jobs.md: the writer preamble lists every allowed tag, and no tag the validator would drop", async () => {
+  const { TAGS } = await import("../../scripts/lib/validate.mjs");
+  const line = MD.split("\n").find((l) => l.includes("Tags come ONLY from this fixed list"));
+  assert.ok(line, "the preamble must name the fixed tag list");
+  for (const tag of TAGS) assert.ok(new RegExp("\\b" + tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(line), `the preamble is missing the allowed tag "${tag}"`);
+  const named = line.split(/[:.]/).flatMap((s) => s.split(",")).map((s) => s.trim()).filter((s) => /^[a-z][a-z-]+$/.test(s) && s.includes("-") === s.includes("-"));
+  for (const s of named) if (/^(ransomware|data-breach|supply-chain|zero-day|ddos|espionage|critical-infrastructure|ai-enabled|third-party|phishing|insider|hacktivism|ot-ics|cloud|identity|fraud|takedown|regulation|funding|acquisition|malware|rce|poc-public)$/.test(s)) assert.ok(TAGS.includes(s), `the preamble names "${s}", which the validator would drop`);
+});

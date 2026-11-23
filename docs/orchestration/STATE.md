@@ -13,7 +13,7 @@ Merged today:
 - #132 — cost tiering
 
 Open (this session):
-- #136 — three fixes found by reviewing the status page Routines section (branch claudex/zen-hypatia-y3utma, draft, CI green locally):
+- #136 — started as three fixes from the status page Routines section, then grew into the audit below (branch claudex/zen-hypatia-y3utma, DRAFT by choice, full CI green: 1043 unit, 668 browser). Opening it ready triggers a one-off ~67-run review drain, so the owner picks the moment. First three fixes:
   - `scripts/review.mjs`: the queue windowed on `first_seen` while `needsReview` fires on `updated_at`, so 66 of 67 events changed after their review could never be re-queued (queue said 1, pipecheck 60). Now an exported pure `inReviewWindow()` on `waitingSince`. Live effect: queue 1 -> 67. Draining it is a one-off ~67 reviewer runs, so expect a short spike and a truer accuracy number afterwards.
   - `config/pipeline.json`: `sweep.gap_pass` false. The pass sat at the gap_max_every_minutes ceiling and then ran 143 times in a row adding nothing: 278 runs, 118.4 M tokens, $76.56 of the week's $858.58. Every other gap_* dial untouched, so flipping it back restores prior behaviour exactly.
   - `scripts/collect.mjs` + `scripts/lib/net.mjs`: on a 415 only, ask once more without our `accept` list, same identifying UA. Fixes the four 415 collectors (Daily News/HabariLeo Tanzania, Lefaso.net, Ciberseguridad LATAM). Not a block workaround: 401/403 stop is untouched and a persistent 415 still fails as 415.
@@ -37,7 +37,9 @@ Fixed in #136 (full CI green: 1043 unit, 668 browser):
 - Five metric artefacts: feed "waste" ranking counted first-run backfill; heartbeat-only routines read "0 runs"; `scams` read 100% idle while publishing 54 warnings; `closed` summed stories and leads; 130 pre-logging events read "unknown writer" (22% of the accuracy denominator).
 - 170 of 361 hygiene warnings were invented tags: the preamble named 3 of 23 allowed tags. All 23 now listed, with a drift test.
 - On-file gate (`gates.mjs`, wired into `updates.mjs`): no updater worker when the only new input is a publisher the event already cites. Reopens on a new publisher, gov/vendor/research source, new CVE, new figure, claim kind, or after 24 h.
-- Research loop: span-bounded leader lease; no heartbeat or hand-over commits, one claims commit per cycle (~120-190 of 358 daily bookkeeping commits).
+- Research loop: span-bounded leader lease; no heartbeat or hand-over commits, one claims commit per cycle (~120-190 of 358 daily bookkeeping commits). CONTINUITY.md's lease row was updated to match.
+- **A limit park now ends when a worker is served again.** Parsing the weekly reset correctly (above) turned ONE transient refusal into a 5-day park: `budget.mjs` flipped from BUILD OK to "no build work until 2026-11-28" even though 83 workers were served after the 13:57 refusal and the plan reports status `allowed`. A worker served past a 5-minute grace now ends the park, so a genuine limit still holds to its reset but a transient one cannot stop publishing. This was MY regression, caught by running the gate rather than trusting it.
+- The usage percentages now say they are headless-only, since the ledger cannot see the dispatcher or interactive sessions.
 
 Corrections to earlier conclusions in this session (all three were MY errors, recorded so they are not repeated):
 1. The "most wasteful feeds" list (msrc 129 leads/0 used, zdi 31/0) is first-run BACKFILL, not ongoing waste. Feed pruning saves almost nothing: a feed is a cheap HTTP GET and the spend is in agent workers.
@@ -47,7 +49,7 @@ Corrections to earlier conclusions in this session (all three were MY errors, re
 Also measured, deliberately NOT changed:
 - Do NOT promote the proposed accuracy checks to errors. Measured catch is ~14% of corrections (33 of 234), not 40%; `occurred-round-hour` is 50% precision and `source-published-partial` 66%, so promoting them would quarantine ~49 events reviewers PASSED. An error hides an event from defenders — wrong trade for a style rule.
 - Rework costs ~$11-15/week at the margin, not hundreds. Fix accuracy for quality, not savings.
-- `monitor.mjs:50-55` DOES check every routine, but only alerts above 2x `max_age_hours` (exit 1); between 1x and 2x it exits 2 and the workflow opens nothing. That is why a 30-hour-dead desk was silent. Tightening that threshold is still open.
+- `monitor.mjs:50-55` DOES check every routine, but only alerts above 2x `max_age_hours` (exit 1); between 1x and 2x it exits 2 and the workflow opens nothing. That is why a 30-hour-dead desk was silent. LEFT AS IS on purpose: pipecheck now catches at 1x and opens the `pipeline-alert`, verified live (`4 problem(s); 24 of 24 stages on time` became `10 problem(s); 34 of 41`, with verify 30 h and advisory 29 h both `late` and scout `idle` in its grace window). Lowering monitor's threshold too would only duplicate alerts; it stays the second-tier "it has stopped" signal.
 - The usage ledger is blind to 25-50% of consumption (dispatchers, interactive sessions, subagent-run claims/outage/moderator). `canBuild`'s 35% pipeline reserve is computed on headless-only numbers, so the real reserve is smaller than intended.
 - Leave the ~154 old hygiene warnings, and `action-unsourced` / `corroborated-note` (chance-level precision).
 

@@ -1,5 +1,5 @@
 {
- "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs. Owner, 2026-11-21 (accuracy first: the second review corrected 34% of events against a target under 10%): Opus where it counts, as a routing rule, not a global switch. researcher-deep, updater-deep and followup-deep are the same jobs as researcher, updater and followup (same prompts) on Opus; scripts/lib/routing.mjs sends incidents, exploited flaws, official reports and stories two or more publishers carry to researcher-deep, and severity 3 or exploited events to updater-deep and followup-deep; routine work stays on the base roles (Sonnet). Reviewers stay on Sonnet: `node scripts/review.mjs errors` counts corrections by the role and model that wrote the event, so the owner can see whether the writer or the reviewer is the weak point. Deleting a deep role sends its work back to the base role.",
+ "_note": "Which model, how many turns and which tools each worker role gets when scripts/run-job.mjs starts it. Haiku for sorting and mechanical checks, Sonnet for research, review and writing, Opus only where judgment errors are costly. The improver job may move a role one tier or max_turns by at most a quarter a day within the bounds in scripts/improve.mjs; roles listed in min_tier never drop below it. Every worker is denied git and file deletion; tools are the smallest set the role needs. Owner, 2026-11-21 (accuracy first: the second review corrected 34% of events against a target under 10%): Opus where it counts, as a routing rule, not a global switch. researcher-deep, updater-deep and followup-deep are the same jobs as researcher, updater and followup (same prompts) on Opus; scripts/lib/routing.mjs sends incidents, exploited flaws, official reports and stories two or more publishers carry to researcher-deep, and severity 3 or exploited events to updater-deep and followup-deep; routine work stays on the base roles (Sonnet). Reviewers stay on Sonnet: `node scripts/review.mjs errors` counts corrections by the role and model that wrote the event, so the owner can see whether the writer or the reviewer is the weak point. Deleting a deep role sends its work back to the base role. Turn caps (owner, 2026-11-23, \"make this highly efficient\"): every turn re-reads the whole conversation (986 M cache-read tokens against 7.8 M written in three days), so max_turns of the twelve loop roles is set from the usage ledger of 19 to 22 November: the 90th percentile of the turns of successful runs that changed something, divided by 0.8, because every worker is told its budget and to stop researching and write its run log at 80% of it (scripts/run-job.mjs turnBudgetNote). researcher 60 -> 36 (p90 28), researcher-deep 70 -> 44 (35), reviewer 60 -> 36 (28), gap 45 -> 20 (15), updater 45 -> 24 (19), updater-deep 50 -> 30 (24, all successful runs: none changed anything yet), outage 40 -> 14 (10), claims 40 -> 14 (11), grid 40 -> 14 (9), fixer 30 -> 14 (9). followup 60 -> 20 and followup-deep 60 -> 18 are hard caps for the new batches of two events (config/pipeline.json followup_desk; measured about 8 turns an event at the median when one run took five). A worker that reaches its cap ends as `capped` in the ledger, the script logs what it had not finished as open leads (unfinishedLog) and the items stay in their queue. Roles with fewer than ten productive runs in the ledger keep their caps until there is data.",
  "toolsets": {
   "research": [
    "Bash(node:*)",
@@ -47,19 +47,19 @@
  "roles": {
   "researcher": {
    "model": "sonnet",
-   "max_turns": 60,
+   "max_turns": 36,
    "tools": "research",
    "timeout_min": 20
   },
   "researcher-deep": {
    "model": "opus",
-   "max_turns": 70,
+   "max_turns": 44,
    "tools": "research",
    "timeout_min": 25
   },
   "gap": {
    "model": "sonnet",
-   "max_turns": 45,
+   "max_turns": 20,
    "tools": "research",
    "timeout_min": 20
   },
@@ -71,7 +71,7 @@
   },
   "reviewer": {
    "model": "sonnet",
-   "max_turns": 60,
+   "max_turns": 36,
    "tools": "research",
    "timeout_min": 20
   },
@@ -89,7 +89,7 @@
   },
   "fixer": {
    "model": "sonnet",
-   "max_turns": 30,
+   "max_turns": 14,
    "tools": "research",
    "timeout_min": 15
   },
@@ -131,13 +131,13 @@
   },
   "followup": {
    "model": "sonnet",
-   "max_turns": 60,
+   "max_turns": 20,
    "tools": "research",
    "timeout_min": 25
   },
   "followup-deep": {
    "model": "opus",
-   "max_turns": 60,
+   "max_turns": 18,
    "tools": "research",
    "timeout_min": 30
   },
@@ -197,25 +197,25 @@
   },
   "updater": {
    "model": "sonnet",
-   "max_turns": 45,
+   "max_turns": 24,
    "tools": "research",
    "timeout_min": 15
   },
   "updater-deep": {
    "model": "opus",
-   "max_turns": 50,
+   "max_turns": 30,
    "tools": "research",
    "timeout_min": 20
   },
   "grid": {
    "model": "sonnet",
-   "max_turns": 40,
+   "max_turns": 14,
    "tools": "research",
    "timeout_min": 15
   },
   "outage": {
    "model": "sonnet",
-   "max_turns": 40,
+   "max_turns": 14,
    "tools": "research",
    "timeout_min": 15
   },
@@ -227,7 +227,7 @@
   },
   "claims": {
    "model": "sonnet",
-   "max_turns": 40,
+   "max_turns": 14,
    "tools": "research",
    "timeout_min": 15
   }

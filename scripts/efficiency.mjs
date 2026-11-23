@@ -502,11 +502,45 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
   };
 }
 
+/** Pure: how the workers of the window ended, from data/usage lines: finished, reached their turn cap (`capped`), were
+ *  refused by the plan's usage limit (`limit`), or failed otherwise. */
+export function workerEnds(usage, since, now = Date.now()) {
+  const out = { runs: 0, ok: 0, capped: 0, usage_limit: 0, failed: 0, last_limit_at: null, last_limit_until: null };
+  for (const u of usage || []) {
+    const t = Date.parse(u && u.at); if (!isFinite(t) || t < since || t > now + 6e4) continue;
+    out.runs++;
+    if (u.ok) out.ok++; else if (u.capped) out.capped++;
+    else if (u.limit || /hit your (?:usage )?limit|usage limit|(?:5-hour|weekly|session) limit/i.test(String(u.error || ""))) { out.usage_limit++; if (!out.last_limit_at || u.at > out.last_limit_at) { out.last_limit_at = u.at; out.last_limit_until = u.limit_until || null; } }
+    else out.failed++;
+  }
+  return out;
+}
+/** What the no-result gates hold back right now (scripts/lib/gates.mjs): for each desk, what is due and what is skipped
+ *  because nothing is new since its last look, with the time the next one is due. Skipped is never dropped: every item
+ *  stays in its queue. A desk that cannot be read leaves an `error`, never a broken report. */
+export async function gateSummary(now = Date.now()) {
+  const out = { note: "Skipped means: nothing new since the item's last check, so no worker is started for it; it is due again at the time shown, or at once when something new arrives." };
+  const part = async (key, fn) => { try { out[key] = await fn(); } catch (err) { out[key] = { error: String((err && err.message) || err).slice(0, 160) }; } };
+  await part("followup", async () => (await import("./followup-desk.mjs")).stats(now));
+  await part("claims", async () => { const m = await import("./claims-desk.mjs"), d = m.load(now), hb = m.heldBack(d.items, d.checks, {}, now, d.cfg); return { due: m.queue(d.items, d.checks, {}, now, d.cfg).length, skipped: hb.waiting.length, final_until_new_report: hb.final, next_due_at: hb.next_due_at }; });
+  await part("outage", async () => { const m = await import("./outage-desk.mjs"), d = m.load(now), hb = m.heldBack(d.lists, d.checks, {}, now, d.cfg); return { due: m.queue(d.lists, d.checks, {}, now, d.cfg).length, skipped: hb.waiting.length, next_due_at: hb.next_due_at }; });
+  await part("updater", async () => { const m = await import("./updates.mjs"), kept = m.current(), red = m.redirectOnly(m.current({ redirects: true }), kept); return { due: kept.length, skipped_redirect_only: red.events }; });
+  await part("gap", async () => {
+    const g = await import("./lib/gates.mjs"), dir = join(DATA, "runs"), runs = [];
+    if (existsSync(dir)) for (const d of readdirSync(dir).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().slice(-4)) for (const f of readdirSync(join(dir, d)).filter((f) => /^\d{4}-sweep-gap(-\d+)?\.json$/.test(f))) { const r = readJson(join(dir, d, f), null); if (r) runs.push({ at: r.finished_at || r.started_at, added: (r.added || []).length, updated: (r.updated || []).length }); }
+    const dry = g.gapDryRun(runs), sc = (readJson(join(ROOT, "config", "pipeline.json"), {}) || {}).sweep || {};
+    return { runs_in_a_row_without_an_event: dry, every_minutes: g.gapEveryMinutes(dry, sc), base_every_minutes: g.gapEveryMinutes(0, sc) };
+  });
+  return out;
+}
 export async function build(days = 7, now = Date.now()) {
   const inp = await loadInputs(30, now);
   let speed = null; try { speed = speedOf(Math.max(1, Math.round(Math.min(days * 24, spanDays(inp.leads.map((l) => l.seen_at), days, now) * 24 || 24))), now); } catch {}
   const windows = await usageWindows(inp.usage, now);
-  return report(inp, { now, days, speed, windows });
+  const r = report(inp, { now, days, speed, windows });
+  r.gates = await gateSummary(now);
+  r.worker_ends = workerEnds(inp.usage, now - days * DAY, now);
+  return r;
 }
 
 /* ---------------- CLI ---------------- */
@@ -535,5 +569,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log("  by sector: " + Object.entries(r.coverage.d7.sector).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
   if (r.accuracy.errors && r.accuracy.errors.types) console.log("Correction types: " + r.accuracy.errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.accuracy.errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", "));
   console.log("Corrections by week: " + r.accuracy.weeks.map((x) => `${x.week} ${x.corrected_pct}% of ${x.reviewed}`).join("; ") + (r.accuracy.categories.length ? "; categories: " + r.accuracy.categories.map((c) => `${c.name} ${c.n}`).join(", ") : ""));
+  if (r.gates) console.log("Gates (due / skipped: nothing new since the last check): " + ["followup", "claims", "outage", "updater"].map((k) => { const g = r.gates[k] || {}; return g.error ? `${k} ?` : `${k} ${g.due}/${g.skipped ?? g.skipped_redirect_only ?? 0}${g.next_due_at ? ` (next due ${String(g.next_due_at).slice(5, 16).replace("T", " ")})` : ""}`; }).join("; ") + (r.gates.gap && !r.gates.gap.error ? `; gap pass every ${r.gates.gap.every_minutes} min (${r.gates.gap.runs_in_a_row_without_an_event} run(s) in a row added nothing)` : ""));
+  if (r.worker_ends) console.log(`Workers (${r.days} days): ${r.worker_ends.ok} of ${r.worker_ends.runs} finished, ${r.worker_ends.capped} reached their turn cap, ${r.worker_ends.usage_limit} refused by the usage limit${r.worker_ends.last_limit_at ? ` (last ${r.worker_ends.last_limit_at}${r.worker_ends.last_limit_until ? ", reset " + r.worker_ends.last_limit_until : ""})` : ""}, ${r.worker_ends.failed} failed otherwise.`);
   r.gaps.forEach((g) => console.log("Gap: " + g));
 }

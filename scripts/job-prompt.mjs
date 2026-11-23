@@ -107,6 +107,18 @@ if (job === "researcher") {
       + ((i.reports || []).length ? "\n      other reports that name the victim (open them, cite only the publisher's own page):\n" + i.reports.map((r) => `        - ${r.source}: ${r.title}\n          ${r.url}`).join("\n") : "\n      no other report names the victim yet")
       + (i.earlier ? `\n      earlier try ${i.earlier.tries}: ${i.earlier.decision}: ${i.earlier.summary}${(i.earlier.sources || []).length ? " [" + i.earlier.sources.join(" ") + "]" : ""}` : "")).join("\n")
     + (mine.length ? "" : "\n  (none: end with \"claims checker " + batch + ": nothing assigned\")");
+} else if (job === "followup") {
+  // the follow-up desk's events come from scripts/followup-desk.mjs (the gate: something new to read, or the wait is over)
+  const pf = /^followup-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_FOLLOWUP_PLAN || "") ? process.env.CYBERVIEW_FOLLOWUP_PLAN : "followup-plan.json";
+  // run outside scripts/run-job.mjs (a subagent, by hand) there is no plan file: plan for one worker here, writing nothing
+  let plan = readJson(join(DATA, pf), null);
+  if (!plan && !process.env.CYBERVIEW_FOLLOWUP_PLAN && !batch) { try { const m = await import("./followup-desk.mjs"), g = m.load(); plan = { batches: m.makePlan(g.due, 1, g.cfg.per_worker).batches }; } catch {} }
+  plan = plan || { batches: [] };
+  const b = (plan.batches || [])[Math.max(1, Number(batch) || 1) - 1] || { events: [] }, mine = b.events || [];
+  assignment = `YOUR ASSIGNMENT (follow-up ${batch || 1}): ${mine.length} event(s), chosen by rule. Follow up exactly these, in this order, and no others.\n  Run log file name: <HHMM>-followup-${batch || 1}.json\n`
+    + mine.map((e) => `  ${e.id}  [severity ${e.severity}${e.status ? ", " + e.status : ""}] ${e.title}\n      why now: ${e.reason}${e.last_at ? `; last follow-up ${String(e.last_at).slice(0, 16).replace("T", " ")} UTC` : ""}`
+      + ((e.leads || []).length ? "\n      new reporting to open first (the publisher's own page; a redirect is only a pointer to it):\n" + e.leads.map((l) => `        - ${l.source}, ${String(l.published).slice(0, 16)}: ${l.title}\n          ${l.url}`).join("\n") : "")).join("\n")
+    + (mine.length ? "" : "\n  (none: end with \"follow-up " + (batch || 1) + ": nothing assigned\")");
 } else if (job === "reviewer") {
   const pf = /^review-plan(-[A-Za-z0-9-]+)?\.json$/.test(process.env.CYBERVIEW_REVIEW_PLAN || "") ? process.env.CYBERVIEW_REVIEW_PLAN : "review-plan.json";
   const plan = readJson(join(DATA, pf), { batches: [] }), mine = (plan.batches || [])[Number(batch) - 1] || [];

@@ -9,8 +9,12 @@
 //   reported             two credible publishers report it, the organisation has not confirmed: an event with status claimed,
 //                        severity 1 (hidden by default), never confirmed
 //   denied               the organisation denies it (a claimed event on file says so, or no event)
-//   unconfirmed          nothing beyond the leak site: checked again after recheck_hours, up to max_tries
+//   unconfirmed          nothing beyond the leak site: checked again after recheck_hours, then twice that, then twice that
+//                        again (never more than recheck_max_hours), up to max_tries
 //   not_found            the victim cannot be identified (or is a private person, who is never researched)
+// A check that found nothing is not repeated on a timer alone (scripts/lib/gates.mjs claimRecheck; all 189 checks up to
+// 2026-11-23 were unconfirmed or not_found): the wait doubles with every same result, and a new report that names the
+// victim (not a leak site) brings the claim back at once, also after not_found or max_tries (at most reopen_tries more).
 // Leak sites, claim trackers and .onion addresses are never a source and never linked: only the group's name and the claim's
 // date are recorded. Stolen data, samples and their contents never appear in any text.
 //   plan [--max N] [--per K] [--file F] [--dry-run]   batches for N checkers, K claims each; leases kind "claim"
@@ -25,12 +29,15 @@ import { ROOT, DATA, readJson, writeJson, nowIso, dayAgo, readStatus, listEventF
 import { claim, readLeases, RUN_ID } from "./lib/lease.mjs";
 import { badSource, regDomain, OFFICIAL_HOST } from "./grid-desk.mjs";
 import { norm, hasName } from "./triage.mjs";
+import { claimRecheck } from "./lib/gates.mjs";
 
 export const BY = "CyberView AI (a Claude model)";
 export const DECISIONS = ["confirmed_by_victim", "reported", "denied", "unconfirmed", "not_found"];
 export const FINAL = new Set(["confirmed_by_victim", "reported", "denied", "not_found"]);
 export const DEPTHS = ["full", "summary", "secondary"];
-export const DEFAULTS = { window_days: 10, new_hours: 168, recheck_hours: 24, max_tries: 3, match_days: 45 };
+export const DEFAULTS = { window_days: 10, new_hours: 168, recheck_hours: 24, recheck_max_hours: 168, recheck_min_score: 0, max_tries: 3, reopen_tries: 2, match_days: 45 };
+// results that put an event on the map or settle the claim: never checked again here (the follow-up desk has the event)
+export const SETTLED = new Set(["confirmed_by_victim", "reported", "denied"]);
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?Z$/;
 const ID = /^cl-[0-9a-f]{12}$/;
 const EVENT_ID = /^[a-z0-9][a-z0-9-]{2,150}$/;
@@ -106,7 +113,7 @@ export function reportsOf(victim, leads) {
   for (const l of leads || []) {
     if (!l || l.kind === "claim" || !/^https:\/\//.test(l.url || "") || LEAK_HOST.test(hostOf(l.url)) || seen.has(l.url)) continue;
     if (!/ransom|attack|breach|hack|leak|extort|stolen|incident|cyber|outage|disrupt/i.test(l.title || "") || !hasName(norm(l.title), core)) continue;
-    seen.add(l.url); out.push({ source: s(l.source, 80), title: s(l.title, 200), url: s(l.url, 400) });
+    seen.add(l.url); out.push({ source: s(l.source, 80), title: s(l.title, 200), url: s(l.url, 400), seen_at: s(l.seen_at || l.published, 20) });
   }
   return out.slice(0, 5);
 }
@@ -154,17 +161,39 @@ export function claimItems(leads, events = [], checks = {}, cfg = {}, now = Date
   return out.sort((a, b) => b.rank - a.rank || b.claimed_at.localeCompare(a.claimed_at) || a.id.localeCompare(b.id));
 }
 
-/** Pure: is a claim due for a check? Not when a final result is on file, max_tries is reached, it was checked in the last
- *  recheck_hours, or another run holds its lease. */
-export function due(it, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
+/** Pure: is a claim due for a check, and why (not)? -> { due, why, reason, next_at }
+ *  - never checked: due
+ *  - confirmed_by_victim, reported, denied: settled, never again
+ *  - another run holds its lease: not now
+ *  - unconfirmed or not_found: scripts/lib/gates.mjs claimRecheck. A report that names the victim and is newer than the
+ *    last check brings it back at once (also after not_found or max_tries, at most reopen_tries extra checks in all);
+ *    otherwise an unconfirmed claim waits recheck_hours, doubling with every same result (24, 48, 96 h, capped at
+ *    recheck_max_hours), until max_tries. With recheck_min_score above 0 (off by default), a claim whose notability
+ *    score is under it is not re-checked on the timer at all, only when a report names the victim ("needs-report"). */
+export function dueWhy(it, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
   const c = cfgOf(cfg), r = checks[it.id];
-  if (r && (r.final || FINAL.has(r.decision) || (Number(r.tries) || 0) >= c.max_tries)) return false;
-  if (r && now - Date.parse(r.checked_at) < c.recheck_hours * 36e5) return false;
-  const l = leases[`claim:${it.id}`]; if (live(l, now) && l.run !== c.run) return false;
-  return true;
+  const l = leases[`claim:${it.id}`]; if (live(l, now) && l.run !== c.run) return { due: false, why: "leased", reason: "another run is checking it", next_at: null };
+  if (!r) return { due: true, why: "new", reason: "never checked", next_at: null };
+  if (SETTLED.has(r.decision)) return { due: false, why: "settled", reason: `${r.decision}: settled`, next_at: null };
+  const tries = Number(r.tries) || 0, exhausted = !!r.final || FINAL.has(r.decision) || tries >= c.max_tries;
+  const newest = (it.reports || []).map((x) => String((x && x.seen_at) || "")).sort().pop() || "";
+  const g = claimRecheck(r, tries < c.max_tries + Math.max(0, Number(c.reopen_tries) || 0) ? newest : "", now, c, exhausted);
+  const min = Number(c.recheck_min_score) || 0;
+  if (min > 0 && (g.why === "backoff" || g.why === "wait") && notability(it).score < min) return { due: false, why: "needs-report", reason: `skipped: ${r.decision}, and the victim is not notable (score under ${min}): re-checked when a report names the victim`, next_at: null };
+  return g;
 }
+export const due = (it, checks = {}, leases = {}, now = Date.now(), cfg = {}) => dueWhy(it, checks, leases, now, cfg).due;
 /** Pure: the queue, most notable first. */
 export const queue = (items, checks = {}, leases = {}, now = Date.now(), cfg = {}) => (items || []).filter((it) => it && ID.test(it.id) && due(it, checks, leases, now, cfg));
+/** Pure: what the gate holds back, with the reason: claims waiting out their backoff ("wait": nothing new since the
+ *  last check) and claims whose result is final until a new report names the victim ("final").
+ *  -> { waiting: [{ id, reason, next_at }], final: n, next_due_at } */
+export function heldBack(items, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
+  const waiting = []; let final = 0;
+  for (const it of items || []) { if (!it || !ID.test(it.id)) continue; const g = dueWhy(it, checks, leases, now, cfg); if (g.why === "wait") waiting.push({ id: it.id, reason: g.reason, next_at: g.next_at }); else if (g.why === "final" || g.why === "needs-report") final++; }
+  waiting.sort((a, b) => String(a.next_at).localeCompare(String(b.next_at)));
+  return { waiting, final, next_due_at: waiting.length ? waiting[0].next_at : null };
+}
 
 /** Pure: the facts a checker needs about one claim (and what an earlier try found). Never the leak site's or tracker's link. */
 export function brief(it, r) {
@@ -281,10 +310,12 @@ export function entryFor(r, it, prev, plan_id, now = Date.now(), cfg = {}) {
   const c = cfgOf(cfg);
   if (prev && prev.plan_id === plan_id) return null;
   const tries = (Number(prev && prev.tries) || 0) + 1, final = FINAL.has(r.decision) || tries >= c.max_tries;
+  // checks in a row with the same result: the recheck wait doubles with each (scripts/lib/gates.mjs claimRecheck)
+  const same = prev && prev.decision === r.decision ? (Number(prev.same) || Number(prev.tries) || 1) + 1 : 1;
   const site = s(r.victim_site, 100).trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
   const e = { key: it.key || it.id, group: s(it.group, 60), claimed_victim: s(it.victim, 160), victim: s(r.victim, 160).trim() || s(it.victim, 160), country: s(it.country, 2), sector: s(it.sector, 60),
     claimed_at: s(it.claimed_at, 20), decision: r.decision, summary: r.summary.trim().slice(0, 300), confirmed_by: r.decision === "confirmed_by_victim" ? s(r.confirmed_by, 120).trim() : "",
-    victim_site: site, sources: [...new Set(r.sources)].slice(0, 8), read_depth: r.read_depth, checked_at: isoAt(now), tries, by: BY, final, plan_id };
+    victim_site: site, sources: [...new Set(r.sources)].slice(0, 8), read_depth: r.read_depth, checked_at: isoAt(now), tries, same, by: BY, final, plan_id };
   if (r.event_id && !["unconfirmed", "not_found"].includes(r.decision)) e.event_id = String(r.event_id);
   return e;
 }
@@ -357,14 +388,17 @@ function main() {
     const file = PLAN_FILE.test(arg("file", "")) ? arg("file") : "claims-plan.json", run = RUN_ID();
     const q = queue(items, checks, readLeases(), now, { ...cfg, run }), p = makePlan(q, checks, N, K, file.replace(/^claims-plan-?|\.json$/g, ""));
     const ids = p.batches.flatMap((b) => b.items.map((i) => i.id));
+    const hb = heldBack(items, checks, readLeases(), now, { ...cfg, run });
+    const held = hb.waiting.length ? `; ${hb.waiting.length} skipped: nothing new since their last check (the next is due ${String(hb.next_due_at).slice(0, 16).replace("T", " ")} UTC)` : "";
     if (dry) {
-      console.log(`CLAIMS PLAN (dry run, nothing leased or written): ${ids.length} claim(s) for ${p.batches.length} checker(s); ${q.length} waiting.`);
+      console.log(`CLAIMS PLAN (dry run, nothing leased or written): ${ids.length} claim(s) for ${p.batches.length} checker(s); ${q.length} waiting${held}.`);
+      hb.waiting.slice(0, 10).forEach((w) => console.log(`  ${w.id}  ${w.reason}`));
       q.slice(0, 20).forEach((i) => console.log(`  ${i.id}  [${i.rank}] ${i.group} claims ${i.victim}${i.country ? " (" + i.country + ")" : ""}${i.sector ? " · " + i.sector : ""} · ${i.claimed_at.slice(0, 16)}${i.why.length ? " · " + i.why.join("; ") : ""}`));
       return;
     }
     if (ids.length) claim("claim", ids, run, 45);
-    writeJson(join(DATA, file), { plan_id: p.plan_id, planned_at: nowIso(), run, batches: p.batches });
-    console.log(`CLAIMS PLAN: ${ids.length} claim(s) for ${p.batches.length} claims checker(s); ${q.length} waiting.`);
+    writeJson(join(DATA, file), { plan_id: p.plan_id, planned_at: nowIso(), run, batches: p.batches, skipped_count: hb.waiting.length, skipped: hb.waiting.slice(0, 60) });
+    console.log(`CLAIMS PLAN: ${ids.length} claim(s) for ${p.batches.length} claims checker(s); ${q.length} waiting${held}.`);
     return;
   }
   if (cmd === "apply") {
@@ -395,9 +429,10 @@ function main() {
     return;
   }
   if (cmd === "list" || cmd === "status") {
-    const { cfg, items, checks } = load(now), q = queue(items, checks, readLeases(), now, cfg), st = stats(q, checks, now);
+    const { cfg, items, checks } = load(now), q = queue(items, checks, readLeases(), now, cfg), hb = heldBack(items, checks, readLeases(), now, cfg);
+    const st = { ...stats(q, checks, now), skipped_nothing_new: hb.waiting.length, final_until_new_report: hb.final, next_due_at: hb.next_due_at };
     if (rest.includes("--json")) { console.log(JSON.stringify(cmd === "status" ? st : { ...st, waiting_items: q.map((i) => brief(i, checks[i.id])), checks })); return; }
-    console.log(`CLAIMS DESK: ${st.waiting} waiting, ${st.checked_24h} checked in 24 h (${st.confirmed_24h} confirmed by the victim, ${st.reported_24h} reported, ${st.denied_24h} denied, ${st.unconfirmed_24h} unconfirmed, ${st.not_found_24h} not found).`);
+    console.log(`CLAIMS DESK: ${st.waiting} waiting, ${st.checked_24h} checked in 24 h (${st.confirmed_24h} confirmed by the victim, ${st.reported_24h} reported, ${st.denied_24h} denied, ${st.unconfirmed_24h} unconfirmed, ${st.not_found_24h} not found); ${hb.waiting.length} skipped: nothing new since their last check${hb.next_due_at ? ` (next due ${hb.next_due_at})` : ""}.`);
     if (cmd === "status") return;
     q.slice(0, 30).forEach((i) => console.log(`  ${i.id}  [${i.rank}] ${i.group} claims ${i.victim}${i.country ? " (" + i.country + ")" : ""}${i.sector ? " · " + i.sector : ""}`));
     const done = Object.entries(checks).sort((a, b) => String(b[1].checked_at).localeCompare(String(a[1].checked_at))).slice(0, 15);

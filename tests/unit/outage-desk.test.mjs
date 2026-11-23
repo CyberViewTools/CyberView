@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { powerItems, internetItems, serviceItems, queue, due, makePlan, planId, validate, applyResults, entryFor, leadFor, siteCheck, latestFor, stats, officialFor, BY, DECISIONS } from "../../scripts/outage-desk.mjs";
+import { powerItems, internetItems, serviceItems, queue, due, dueWhy, heldBack, makePlan, planId, validate, applyResults, entryFor, leadFor, siteCheck, latestFor, stats, officialFor, BY, DECISIONS } from "../../scripts/outage-desk.mjs";
 
 const NOW = Date.parse("2026-11-20T18:00:00Z"), iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z");
 const pub = (name, host, title = "Power cut in the city") => ({ name, url: `https://${host}/news/2026/11/20/power-cut`, title, lang: "en", published: "2026-11-20T10:00:00Z" });
@@ -77,6 +77,29 @@ test("due: never re-checked within recheck_hours (same key too), final results d
   assert.equal(due(it, {}, lease("other", 10), NOW), false);
   assert.equal(due(it, {}, lease("other", -1), NOW), true);
   assert.equal(due(it, {}, lease("me", 10), NOW, { run: "me" }), true);
+});
+test("the recheck gate: a key that keeps coming back not confirmed waits twice as long each time, unless the report is stronger", () => {
+  const it = { id: "net-vi-20261123", key: "net-vi", kind: "internet", score: 12000, signals: ["bgp"] }, ago = (hrs) => iso(NOW - hrs * 36e5);
+  const nc = (hrs, tries, seen) => ({ key: "net-vi", decision: "not_confirmed", checked_at: ago(hrs), tries, final: tries >= 2, ...(seen ? { seen } : {}) });
+  // two days of the same country, each tried twice: 4 not_confirmed in a row -> 12 h x 2^3 = 96 h
+  const four = { "net-vi-20261121": nc(60, 2), "net-vi-20261122": nc(30, 2) };
+  assert.equal(due(it, four, {}, NOW), false, "30 h after the fourth not_confirmed: not yet (was: due after 12 h)");
+  const w = dueWhy(it, four, {}, NOW);
+  assert.equal(w.why, "wait"); assert.equal(w.next_at, iso(NOW - 30 * 36e5 + 96 * 36e5)); assert.match(w.reason, /^skipped: nothing new since .*not confirmed 4 times in a row\)$/);
+  assert.equal(due(it, { "net-vi-20261121": nc(160, 2), "net-vi-20261122": nc(97, 2) }, {}, NOW), true, "the wait is over");
+  assert.equal(due(it, { a: nc(400, 2), b: nc(300, 2), c: nc(200, 2), "net-vi-20261122": nc(169, 2) }, {}, NOW), true, "never longer than recheck_max_hours (7 days)");
+  // a confirmed check on the key ends the run: back to the base wait
+  assert.equal(due(it, { "net-vi-20261121": nc(60, 2), "net-vi-20261122": { key: "net-vi", decision: "confirmed", checked_at: ago(13), tries: 1, final: true } }, {}, NOW), true);
+  // stronger than what the last check saw: at once
+  assert.equal(due(it, { "net-vi-20261122": nc(3, 2, { score: 5000, publishers: 0, figure: 0, cyber: false }) }, {}, NOW), true, "the score more than doubled");
+  assert.equal(dueWhy(it, { "net-vi-20261122": nc(3, 2, { score: 5000 }) }, {}, NOW).why, "stronger");
+  assert.equal(due(it, { "net-vi-20261122": nc(3, 2, { score: 11000, publishers: 0, figure: 0, cyber: false }) }, {}, NOW), false, "about the same signal");
+  assert.equal(due(it, { "net-vi-20261122": nc(3, 2) }, {}, NOW), false, "a check from before `seen` existed cannot be compared");
+  // held back is counted with the time it is due, and a new check remembers what it saw
+  const hb = heldBack({ internet: [it] }, four, {}, NOW);
+  assert.equal(hb.waiting.length, 1); assert.equal(hb.next_due_at, w.next_at);
+  const e = entryFor({ id: it.id, decision: "not_confirmed", summary: "IODA shows a dip; no operator or government statement was found.", sources: [], read_depth: "secondary" }, it, null, "op-1", NOW);
+  assert.deepEqual(e.seen, { score: 12000, publishers: 0, figure: 0, cyber: false, last_seen: "" });
 });
 test("plan: batches of K for N checkers, stable plan id, a new id on a retry", () => {
   const q = queue(lists(), {}, {}, NOW), p = makePlan(q, {}, 2, 2, "c1");
@@ -178,7 +201,7 @@ test("site and status: what the page shows, the newest IODA check, the queue num
 test("CLI: plan --dry-run writes nothing; plan, apply and apply again; a bad file is refused", () => {
   const here = dirname(fileURLToPath(import.meta.url)), repo = join(here, "..", ".."), t = mkdtempSync(join(tmpdir(), "outage-desk-"));
   for (const d of ["scripts/lib", "data/grid", "data/context", "data/leads", "data/events/2026-11", "config"]) mkdirSync(join(t, d), { recursive: true });
-  for (const f of ["scripts/outage-desk.mjs", "scripts/grid-desk.mjs", "scripts/grid.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs", "scripts/lib/net.mjs"]) copyFileSync(join(repo, f), join(t, f));
+  for (const f of ["scripts/outage-desk.mjs", "scripts/grid-desk.mjs", "scripts/grid.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs", "scripts/lib/net.mjs", "scripts/lib/gates.mjs"]) copyFileSync(join(repo, f), join(t, f));
   const now = Date.now(), day = iso(now).slice(0, 10);
   writeFileSync(join(t, "data", "context", "ioda.json"), JSON.stringify({ ...ioda, fetched_at: iso(now) }));
   writeFileSync(join(t, "data", "leads", `${day}.jsonl`), JSON.stringify({ ...leads[0], published: iso(now - 36e5) }) + "\n");

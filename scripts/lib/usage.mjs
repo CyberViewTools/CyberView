@@ -87,7 +87,7 @@ export function limitHits(lines, backoffMin = 60) {
   }
   return out;
 }
-export const DEFAULT_BUDGET = { window_hours: 5, window_tokens: 0, week_tokens: 0, window_cost: 0, week_cost: 0, tight_pct: 80, stop_pct: 120, limit_backoff_minutes: 60 };
+export const DEFAULT_BUDGET = { window_hours: 5, window_tokens: 0, week_tokens: 0, window_cost: 0, week_cost: 0, tight_pct: 80, stop_pct: 120, limit_backoff_minutes: 60, pipeline_reserve_pct: 35 };
 export function budgetConfig() { return { ...DEFAULT_BUDGET, ...((readJson(join(ROOT, "config", "pipeline.json"), {}) || {}).usage_budget || {}) }; }
 const pct = (used, cap) => (Number(cap) > 0 ? Math.round((used / cap) * 1000) / 10 : 0);
 /** Where the plan's usage stands: { window_pct, week_pct, level: "ok"|"tight"|"stop", limited_until, reason, window, week }.
@@ -112,6 +112,30 @@ export function budgetState(now = Date.now(), cfg = budgetConfig(), lines = null
   else if (recent) { level = "tight"; reason = "recovering from a limit hit inside the last window"; }
   // a stop on the window estimate lasts until enough of the window's oldest usage has rolled out; the loop rechecks every cycle
   return { window_pct, week_pct, level, limited_until: live ? iso(live.until) : null, reason, window: w, week: k };
+}
+/** Pure: may work that is NOT the pipeline (a code build, a swarm of build agents) start more agents now?
+ *  The 5-hour window is shared by everything on the plan. On 2026-11-22 a code-build swarm used all of it and the pipeline
+ *  published nothing for 2.5 hours, so usage_budget.pipeline_reserve_pct (35) of the window estimate is kept for the
+ *  pipeline: other work may run only while the window stands at or under (100 - reserve)% of the estimate, and not at all
+ *  for an hour after the plan refused a pipeline worker (or until the reset time it gave, when that is later).
+ *  lines: the pipeline's ledger (data/usage); buildLines: what build work recorded of its own usage with
+ *  `node scripts/budget.mjs spent` (same line shape; a local file, never in data/). Build agents that record nothing are
+ *  invisible here, which is why the real-limit rule exists.
+ *  -> { ok, reason, window_pct, pipeline_pct, build_pct, ceiling_pct, reserve_pct, limited_until, level } */
+export function canBuild(now = Date.now(), cfg = budgetConfig(), lines = null, buildLines = []) {
+  const c = { ...DEFAULT_BUDGET, ...(cfg || {}) }, wh = Math.max(1, Number(c.window_hours) || 5);
+  const r = Number(c.pipeline_reserve_pct), reserve = Math.max(0, Math.min(90, Number.isFinite(r) ? r : 35)), ceiling = 100 - reserve;
+  const L = lines || readUsage(now - 7 * 24 * HOUR, now), b = budgetState(now, c, L);
+  const bu = sumUsage(buildLines || [], now - wh * HOUR, now);
+  const window_pct = Math.max(pct(b.window.tokens + bu.tokens, c.window_tokens), pct(b.window.cost + bu.cost, c.window_cost));
+  const build_pct = Math.max(pct(bu.tokens, c.window_tokens), pct(bu.cost, c.window_cost));
+  const hits = limitHits(L.filter((l) => Date.parse(l.at) <= now), Number(c.limit_backoff_minutes) || 60);
+  const hit = hits.filter((h) => h.until > now || h.at > now - HOUR).sort((x, y) => y.at - x.at)[0];
+  const until = hit ? Math.max(hit.until, hit.at + HOUR) : 0;
+  let ok = true, reason = `the 5-hour window stands at ${window_pct}% of the estimate (pipeline ${b.window_pct}%, build work ${build_pct}%); build work may run up to ${ceiling}% (${reserve}% is kept for the pipeline)`;
+  if (hit) { ok = false; reason = `usage limit reached: the plan refused a pipeline worker at ${iso(hit.at)} (${hit.text}); no build work until ${iso(until)}`; }
+  else if (window_pct > ceiling) { ok = false; reason = `the 5-hour window stands at ${window_pct}% of the estimate (pipeline ${b.window_pct}%, build work ${build_pct}%), above the ${ceiling}% that build work may use (${reserve}% is kept for the pipeline)`; }
+  return { ok, reason, window_pct, pipeline_pct: b.window_pct, build_pct, ceiling_pct: ceiling, reserve_pct: reserve, limited_until: hit ? iso(until) : null, level: b.level };
 }
 /** Pure: does the "tight" level cut work? Owner, 2026-11-21: "use whatever it needs"; only the stop level holds work back.
  *  usage_budget.tight_cuts_work (default false) restores the old tight behaviour (fewer workers, tight_skip_jobs wait). */

@@ -12,7 +12,7 @@
 
 import { mergeCms } from "./fp-cms.mjs";
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ").slice(0, n);
-const VER = /^\d+(?:[.\-_+~]\w+)*$/;
+const VER = /^\d+(?:[.\-_+~][A-Za-z0-9]+)*$/;   // separators and parts never overlap: no catastrophic backtracking
 export const cleanVersion = (v) => { const s = clip(v, 40).trim().replace(/^v(?=\d)/i, ""); return VER.test(s) ? s : ""; };
 export function distroOf(s) {
   const t = String(s || "");

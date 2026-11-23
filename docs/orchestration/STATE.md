@@ -62,6 +62,9 @@ Measured, not estimated (session transcripts via list_events, data/usage ledger)
 - Worker spend: ~$230/day, 95% inside the research loop (researcher-deep $87/day; claims, outage, follow-up gated today).
 - The fresh-session tasks "CyberView health watch" and "CyberView Grok review" start with NO checkout and no GitHub access (health watch 23 Nov 22:33 reported a 403 and an empty home dir) and run on the default model (Opus, ~$0.29 a run). They cannot do their job as configured; the Guardian clones the public repo itself and works.
 
+- **Fresh session per wake does NOT work with tool-created scheduled tasks (probed 2026-11-23 22:55).** A task made with create_trigger(create_new_session_on_fire) starts a session with no checkout, no `add_repo` tool and no push access, even when created from the `cyberview` environment (which has the repo saved). Headless `claude -p` does work there. Options: tasks created in the claude.ai routines UI with the repository attached, or the loop in GitHub Actions with a CLAUDE_CODE_OAUTH_TOKEN secret. `node scripts/dispatch.mjs <job> --exec` (this PR) makes either one a single shell call.
+- Disabled 2026-11-23 (owner): "CyberView health watch" and "CyberView Grok review" (no checkout, ran on Opus, could not do their job). The Guardian still runs every 2 h.
+
 ## Pending owner actions
 
 1. Set env var `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` in the cyberview environment to arm the API fallback. The subscription stays primary (see CLAUDE.md "Reliability rules"). Name only — never a value here.

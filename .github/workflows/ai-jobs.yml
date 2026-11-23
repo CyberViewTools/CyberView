@@ -58,7 +58,7 @@ jobs:
             *)               job="${{ inputs.job }}" ;;
           esac
           case "$job" in
-            analysis|deep-sweep|security-review) model=claude-opus-5-5; turns=120 ;;
+            analysis|deep-sweep|security-review) model=claude-sonnet-5-5; turns=120 ;;
             watchdog)                            model=claude-haiku-5-5; turns=60 ;;
             *)                                   model=claude-sonnet-5-5; turns=100 ;;
           esac

@@ -1,5 +1,9 @@
 # CyberView routines (fresh session per wake)
 
+## LIVE NOW (2026-11-23 23:07Z, interim)
+All 18 jobs run as "CyberView L: ..." scheduled tasks into ONE new launcher session, `session_013C7AZ885AhztvsH9xiZ9PL` (Haiku, repo attached, ~100 K tokens at start instead of 440-530 K), with the one-call prompt below. Every "CyberView 4: ..." task and both standby tasks are DISABLED (not deleted), and the Guardian now points at the launcher. This session still grows slowly (a few K tokens a wake); replace it with the fresh-session routines below, or start a new launcher session and re-point the tasks when it passes ~250 K.
+
+
 Each scheduled job runs in its OWN fresh session, created in the claude.ai Routines screen with:
 - Repository: xanderhutch/cyberview, Environment: cyberview, Model: Haiku (the session only launches a script).
 - "Start a new session each run" (not one persistent session: that is what grew to 440-530 K tokens and cost ~$0.25 a wake).

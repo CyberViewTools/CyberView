@@ -134,3 +134,15 @@ test("gap searchers: the pass waits for its (possibly doubled) interval, counted
   assert.equal(gapCount(NOW, NOW - 9 * 36e5, sc, ok, false, 130), 2);
   assert.equal(gapCount(NOW, 0, sc, { level: "stop", window_pct: 130 }, false, 0), 0);
 });
+
+test("worker context: only the built-in tools its toolset names, no MCP servers, no CLAUDE.md", async () => {
+  const { builtinTools, workerEnv } = await import("../../scripts/run-job.mjs");
+  const models = { roles: { r: { model: "sonnet", max_turns: 10, tools: "research" } }, toolsets: { research: ["Bash(node:*)", "Bash(gh api:*)", "Read", "WebFetch"] }, deny: ["Bash(git:*)"] };
+  assert.deepEqual(builtinTools(models.toolsets.research), ["Bash", "Read", "WebFetch"]);
+  const a = workerArgs("r", "p", models).args;
+  assert.equal(a[a.indexOf("--tools") + 1], "Bash,Read,WebFetch");
+  assert.ok(a.includes("--strict-mcp-config"));
+  assert.deepEqual(a.slice(a.indexOf("--allowedTools") + 1, a.indexOf("--disallowedTools")), models.toolsets.research, "permissions unchanged");
+  assert.equal(a[a.indexOf("--disallowedTools") + 1], "Bash(git:*)");
+  assert.equal(workerEnv("subscription", "", {}).CLAUDE_CODE_DISABLE_CLAUDE_MDS, "1");
+});

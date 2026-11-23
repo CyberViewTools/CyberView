@@ -1,5 +1,5 @@
 {
-  "action": "Update Ghostscript to 10.08.0, which pwn.ai says fixes the flaw; GBHackers says a vendor package with the fix backported also works and that updating WordPress alone does not patch Ghostscript for other applications on the host.",
+  "action": "Update Ghostscript to 10.08.0, which pwn.ai says fixes the flaw; ThaiCERT also advises checking for separately bundled Ghostscript copies in containers or applications; GBHackers says a vendor package with the fix backported also works and that updating WordPress alone does not patch Ghostscript for other applications on the host.",
   "actor": "",
   "attack": [
     "rce",
@@ -65,16 +65,21 @@
       "published": "2026-11-23"
     },
     {
+      "name": "ThaiCERT advisory 645/69: Ghostscript flaw (Thai)",
+      "url": "https://www.thaicert.or.th/2026/11/23/%e0%b8%99%e0%b8%b1%e0%b8%81%e0%b8%a7%e0%b8%b4%e0%b8%88%e0%b8%b1%e0%b8%a2%e0%b8%9e%e0%b8%9a%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7%e0%b9%88-ghostscript-%e0%b9%80%e0%b8%aa/",
+      "published": "2026-11-23"
+    },
+    {
       "name": "UzCERT: Ghostscript vulnerability advisory (Uzbek)",
       "url": "https://uzcert.uz/diqqat-ghostscript-dasturidagi-xavfli-zaiflik-wordpress-elektron-pocta-va-cop-etis-serverlarida-zararli-buyruqlarni-bajarishga-imkon-berisi-mumkin/"
     }
   ],
   "status": "confirmed",
-  "summary": "pwn.ai demonstrated that a crafted file can escape Ghostscript's sandbox through upload, preview and print features in about ten common applications. The flaw, CVE-2026-125396, is scored 8.5 in VulnCheck's advisory, which lists ghostpdl >= 0, < 10.08.0 as affected. GBHackers says the research covered WordPress, Roundcube and CUPS. pwn.ai says 10.08.0 fixes it; no attacks are reported.",
-  "tags": [],
+  "summary": "pwn.ai demonstrated that a crafted file can escape Ghostscript's sandbox through upload, preview and print features in about ten common applications. The flaw, CVE-2026-125396, is scored 8.5 in VulnCheck's advisory, which lists ghostpdl >= 0, < 10.08.0 as affected. GBHackers says the research covered WordPress, Roundcube and CUPS. pwn.ai says 10.08.0 fixes it; ThaiCERT says a proof of concept is public and reports no confirmed real-world exploitation.",
+  "tags": ["poc-public"],
   "time_basis": "published",
   "title": "pwn.ai shows Ghostscript sandbox escape (CVE-2026-125396) through file uploads in about ten applications",
-  "updated_at": "2026-11-23T05:40:20Z",
+  "updated_at": "2026-11-23T07:12:00Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-22T06:30:00Z",

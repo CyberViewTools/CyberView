@@ -111,7 +111,8 @@ each of these rules; the hello and industrial test files mutate each checker rul
 | `scanner/lib/report.mjs` | the run header, JSON, CSV (formula-safe), SARIF 2.1.0, the inventory CSV, the text summary, and the `coverage()` blind-spot report |
 | `scanner/lib/html-report.mjs` | `--html`: the self-contained `report.html`, scope-file advice, the scan profile, the stale-data warning; pure |
 | `scanner/lib/cert-inventory.mjs`, `mail-starttls.mjs`, `diff.mjs`, `kev-coverage.mjs` | the report pack: `--certs`, `--mail`, `--compare` and the `coverage` command; pure, no network |
-| `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `import`, `depmap` and `rematch` commands; no network |
+| `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `match`, `import`, `depmap` and `rematch` commands; no network |
+| `scanner/lib/inputs.mjs` | the `match` adapters: nmap `-oX` hosts and services, CPE and purl vendors, an inventory with no address as one pseudo-host; returns the records `fingerprint.mjs` builds, so the matching, rating and outputs are unchanged |
 | `site/scanner-lib.js`, `site/scanner.js` | the Scanner page's report viewer and scope-file builder (browser only; mirrors of `diff.mjs` and `checkScope` that the unit tests compare with the real modules) |
 
 **Coverage (never a silent clean).** `scan.mjs` records every probe outcome — open, closed, filtered, errored, and banners cut off before a version is read — not just open ports, and probes beyond the first few ports before calling a host unreachable (a firewall or IPS may drop the first probes). `report.mjs` `coverage()` turns that into a Coverage section in `summary.txt`/`report.json` listing hosts that answered on no port, filtered ports, truncated banners, ports left unchecked, and hosts that were **throttled**. A host that resets connections after answering (IPS/fail2ban) is backed off once (the Limiter's clock, so tests stay instant) and its reset ports are re-probed one at a time, recovering hidden services. When coverage is incomplete the command exits **2**, so a scan with blind spots is never mistaken for a clean one. Tests: `probeAll` finds an open port past dropped discovery ports, `coverage()` classifies gaps, `isTruncatedBanner` flags cut banners.
@@ -319,6 +320,37 @@ is opt-in and built only from what the scan already holds:
   tables and lists the known-exploited products the scanner cannot identify. No scope file, no target, no network.
   (Products named only by modules outside `FINGERPRINT_TABLES` are not counted until they register there.)
 - **`--dns-records`** writes `dns.csv` and `report.json`'s `dns` (see "Opt-in protocol checks" below).
+
+### Matching a list you already hold (`match`, no network)
+
+Defenders who cannot scan — change freeze, third-party or air-gapped assets, "scanning is forbidden", or only an SBOM
+from CI — get the same report from files they already have. `match --data DIR` takes `--nmap scan.xml` (nmap `-oX`, run
+with `-sV`) and/or an inventory (`--sbom`, `--packages`, `--manifest`) and writes the five report files a scan writes.
+No scope file, no attestation and no authorization gate: no host is contacted, and the module imports neither the probe
+functions nor the web data source.
+
+The adapter is `scanner/lib/inputs.mjs`. It returns the same host and service records `fingerprint.mjs` builds from a
+real probe, so `match.mjs findings()`, the rating, CISA's priority and all five writers are the scan's own code,
+unchanged — the scanner and the Vulnerabilities page cannot disagree about a product either way it was learned.
+
+- **nmap `-oX`** gives real addresses, ports, products and versions. The `<service>` line's `product`/`version` are the
+  label and the version; a `<cpe>` child supplies the vendor and, when it names the product differently
+  (`http_server` for "Apache httpd"), that name is matched as well, because `nameHit` needs every word of a range's
+  product to appear in the name. nmap's `version` attribute often carries build text ("8.2p1 Ubuntu 4ubuntu0.5"): the
+  leading version is compared, the whole string is shown, and the rest is read for the distribution, so a distribution
+  build is medium confidence (the fix may be backported) exactly as a banner read from the service would be. A service
+  nmap named from its port table alone (`method="table"`), or with no version, is `guessed`, so it can never be high
+  confidence. Hosts reported down and ports reported closed or filtered are skipped.
+- **CPE and purl** are parsed for both nmap and SBOMs (`parseCpe`, `parsePurl`): CPE 2.2 and 2.3 (`*` and `-` are "any",
+  not a version), and purl's namespace as the vendor with qualifiers and subpaths discarded. For an SBOM this fills in a
+  vendor the site's `parseInventory` does not carry, which sharpens the match; SPDX falls back to the stated supplier.
+- **An SBOM or package list has no address**, so it becomes one pseudo-host named after the file, with no port. Exposure
+  is then unknown: it is rated as internal unless the operator states `--assume-exposed`, which moves only CISA's BOD
+  26-04 deadline (the CyberView rating does not depend on exposure). A finding with no port prints as the file, not
+  `file:null`, and its SARIF location is a `file://` artifact with a `resource` logical location.
+- **The report says what it is.** `run.network` records `sent: 0` and that nothing was contacted, `coverage.from` is
+  `files` with `complete: false`, a `match` block lists the inputs and the exposure assumption, and the first note says a
+  host, port or product the files do not mention is absent, not clean.
 
 ### Relationship map, imports and offline rematch (no network)
 
@@ -590,6 +622,11 @@ Wave 3, taken by the build lead on 2026-11-22 under the same instruction:
     four attributes (supportedLDAPVersion, vendorName, vendorVersion, objectClass) with no bind.
 22. **`hello.mjs` may own a UDP socket** under the `scanner-hello-check` rules (one datagram send, frozen reviewed bytes, no
     broadcast or multicast), as the second file beside `udp.mjs`. The `--ics` BACnet query still goes through `udp.mjs`.
+23. **`match` ships with `--assume-exposed`, defaulting to internal.** An SBOM or package list carries no address, so
+    exposure cannot be read. The Discovery recommendation was to ship the internal default and add the flag later; both
+    are in, because the flag changes only CISA's deadline and the alternative is silently rating an internet-facing
+    inventory as internal. `match` stays offline-only (`--data DIR`, no `--online`), so one command never both downloads
+    and matches.
 
 ## Releases
 

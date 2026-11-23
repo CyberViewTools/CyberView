@@ -14,7 +14,7 @@ import { mergeCms } from "./fp-cms.mjs";
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ").slice(0, n);
 const VER = /^\d+(?:[.\-_+~]\w+)*$/;
 export const cleanVersion = (v) => { const s = clip(v, 40).trim().replace(/^v(?=\d)/i, ""); return VER.test(s) ? s : ""; };
-function distroOf(s) {
+export function distroOf(s) {
   const t = String(s || "");
   if (/ubuntu/i.test(t)) return "Ubuntu";
   if (/debian|deb\d+u?\d*/i.test(t)) return "Debian";
@@ -29,8 +29,8 @@ function distroOf(s) {
   return "";
 }
 // the part of a stated version that is compared with the ranges: "8.1.2-1ubuntu2.19" -> "8.1.2" (the rest is a package build)
-const core = (v) => (/^\d+(?:\.\d+)*/.exec(v) || [""])[0];
-function svc(port, proto, vendor, product, version, extra = {}) {
+export const core = (v) => (/^\d+(?:\.\d+)*/.exec(v) || [""])[0];
+export function svc(port, proto, vendor, product, version, extra = {}) {
   const shown = cleanVersion(version);
   return { port, proto, vendor, product, label: extra.label || (vendor && !product.toLowerCase().startsWith(vendor.toLowerCase().split(" ")[0]) ? `${vendor} ${product}` : product), version: extra.matchVersion !== undefined ? extra.matchVersion : core(shown), shown_version: shown, distro: extra.distro || "",
     source: extra.source || proto, evidence: clip(extra.evidence || "", 200), guessed: !!extra.guessed };

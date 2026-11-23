@@ -440,14 +440,24 @@ anything still looks thin, re-scan slower with `--rate 0.1`.
 
 ## Working offline on your own files
 
-Three commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
+Four commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
 
 ```
+node scanner/cyberview-scan.mjs match   --nmap scan.xml --data cyberview-data
 node scanner/cyberview-scan.mjs import  --packages pkgs.txt --sbom app.cdx.json --data cyberview-data
 node scanner/cyberview-scan.mjs depmap  --report cyberview-scan-<time>/report.json --scope scope.json
 node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.json --data newer-cyberview-data
 ```
 
+- `match` produces a full report — the same `report.json`, `findings.csv`, `report.sarif`, `inventory.csv` and
+  `summary.txt` a scan writes — from a list you already hold, for assets you cannot scan: a change freeze, third-party or
+  air-gapped systems, "scanning is forbidden", or an SBOM is all you have. Give `--nmap scan.xml` (run nmap with `-sV`,
+  or it states no product or version) and/or an inventory (`--sbom`, `--packages`, `--manifest`), plus `--data DIR` from
+  the `data` command. No scope file and no attestation are required, because nothing is contacted — and the report says
+  so: the network block records that nothing was sent, and the coverage block says the result covers exactly what the
+  files list and nothing more. An nmap file gives real addresses and ports, so exposure is read from the address. An SBOM
+  or package list has no address, so it becomes one entry named after the file and is rated as **internal** unless you
+  state `--assume-exposed`; that flag moves only CISA's deadline, never the CyberView rating.
 - `import` reads your own exports and writes `imports.json`; with `--data`, packages and SBOM components are matched
   against known-exploited flaws exactly like the Vulnerabilities page's "My software". Linux distribution versions (dpkg,
   rpm) may carry a backported fix, so an affected match there is medium confidence at most.
@@ -456,14 +466,18 @@ node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.js
 - `rematch` re-checks an old scan's recorded services against newer data: newly matched, no longer matched, still
   matched (`rematch.json`, `rematch.txt`). Nothing is rescanned, so rescan to confirm.
 
-The files you can give (`import`, `depmap`, or `scan --depmap`): `--packages` (`dpkg -l`, `rpm -qa`, a Windows
+The files you can give (`match`, `import`, `depmap`, or `scan --depmap`): `--packages` (`dpkg -l`, `rpm -qa`, a Windows
 `Get-Package` CSV), `--sbom` (CycloneDX or SPDX JSON), `--manifest` (Docker Compose or Kubernetes saved **as JSON**:
 `docker compose config --format json`, `kubectl get ... -o json`; YAML is not read), `--zeek` (a Zeek `conn.log`),
 `--survey` (a Wi-Fi or Bluetooth survey CSV, inventory only), `--connections` (`ss`, `netstat` or `/proc/net/tcp` output
 saved on the host itself, with `--connections-host IP`) and `--cloud` (a cloud CLI's describe/list JSON, with
 `--cloud-provider`). Every file is treated as untrusted: its size is checked before it is read (16 MB; a Zeek log 64 MB),
 rows and items are capped and anything over a cap is reported, and an old report for `rematch` must be a CyberView
-Scanner report of at most 64 MB.
+Scanner report of at most 64 MB. An nmap `-oX` file for `match` is read the same way: at most 16 MB, 5,000 hosts, 200
+open ports per host and 20,000 services, parsed with regular expressions only (no XML library), entities unescaped, every
+field clipped and stripped of control characters. Hosts nmap reported as down and ports it reported as closed or filtered
+are skipped, and an open port nmap only named from its port table (no `-sV` service line) is recorded as an open port but
+not as a product.
 
 ## What it deliberately does not do
 

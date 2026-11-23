@@ -77,4 +77,24 @@ Discovery output for the toolkit's offline `match` command. Research and proposa
      the site's "My software" import.
 
 ## Implementation → Review
-- (pending)
+
+- **#120 (2026-11-22)** shipped the SBOM and package-list half as the `import` command (`scanner/lib/imports.mjs`):
+  CycloneDX/SPDX and package inventories parsed, matched with the page's own engine, written to `imports.json`.
+- **#135 (2026-11-23)** shipped the rest of the matching half as the **`match`** command
+  (`scanner/lib/inputs.mjs`, `offline-cmds.mjs`, `docs/scanner.md` decision 23):
+  - nmap `-oX` → real hosts, ports, products and versions in `fingerprint.mjs`'s own record shape, so
+    `match.mjs findings()`, the rating, CISA's priority and all five writers are reused unchanged (no second engine).
+    Down hosts, closed and filtered ports skipped; `method="table"` or a missing version marks the record `guessed`, so it
+    can never reach high confidence; nmap's build text ("8.2p1 Ubuntu 4ubuntu0.5") is split into the compared version, the
+    shown version and the distribution, giving the same backport caveat a banner read would.
+  - `parseCpe` (2.2 and 2.3) and `parsePurl` for both nmap and SBOMs; for SBOMs the stated vendor is applied to the items
+    `W.parseInventory` returns (it keeps name and version only), and a CPE product name that differs is matched too, because
+    `nameHit` needs every word of a range's product in the name. SPDX falls back to the stated supplier.
+  - `--assume-exposed` as recommended, with internal as the default: it moves only CISA's BOD 26-04 deadline, never the
+    CyberView rating. A finding with no port prints as the file and gets a `file://` SARIF location.
+  - The report states what it is: `run.network.sent: 0`, `coverage.from: "files"` with `complete: false`, a `match` block
+    naming the inputs and the exposure assumption, and a first note that anything the files omit is absent, not clean.
+  - 10 new unit tests (adapters, crafted-input bounds, the CLI's refusals and both exposure paths) in
+    `tests/unit/scanner.test.mjs`, fixture `tests/fixtures/scanner/nmap.xml`; `security-check.mjs` section 7 green
+    (`match` imports neither the probe functions nor the web data source).
+- **Still open:** the offline `lookup <CVE>` reader from the Discovery list. Needs its own Design.

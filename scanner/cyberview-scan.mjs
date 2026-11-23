@@ -18,7 +18,8 @@
 //         [--identify [--identify-bmc]] (one standard hello per service: SMTP EHLO, POP3 CAPA, RTSP/SIP OPTIONS, unicast mDNS; off by default)
 //         [--dns-records DOMAIN[,DOMAIN] [--dkim-selectors a,b]] (SPF, DMARC, CAA, BIMI, MTA-STS TXT, DKIM for named selectors; attested names only)
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
-//   import / depmap / rematch                 offline: the operator's own files, a report.json, a local snapshot (scanner/lib/offline-cmds.mjs)
+//   match / import / depmap / rematch         offline: the operator's own files (nmap -oX, an SBOM, a package list), a report.json,
+//                                             a local snapshot — nothing is contacted (scanner/lib/offline-cmds.mjs)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
@@ -46,7 +47,7 @@ import { OFFLINE_CMDS, IMPORT_USAGE, offlineCommand, loadImports } from "./lib/o
 import { buildDepmap, toMermaid, depmapText, depmapHtml } from "./lib/depmap.mjs";
 import { icsSends, ICS_PROTOCOLS } from "./lib/ics.mjs";
 
-const BOOL = new Set(["online", "full", "assume-up", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", "identify", "identify-bmc", "depmap", PUBLIC_FLAG.slice(2)]);
+const BOOL = new Set(["online", "full", "assume-up", "assume-exposed", "help", "all-ports", "udp", "data-incidents", "html", "certs", "mail", "paths", "paths-bmc", "ics", "identify", "identify-bmc", "depmap", PUBLIC_FLAG.slice(2)]);
 export function parseArgs(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -131,7 +132,7 @@ export async function main(argv, io = {}) {
     io.out(coverageText(c) + (a.out ? `\nWritten to ${a.out}.` : ""));
     return 0;
   }
-  if (OFFLINE_CMDS.has(cmd)) return offlineCommand(cmd, a, io);   // import, depmap, rematch: local files only, no scope, no network
+  if (OFFLINE_CMDS.has(cmd)) return offlineCommand(cmd, a, io);   // match, import, depmap, rematch: local files only, no scope, no network
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----
   const sc = loadScope(a.scope, today);

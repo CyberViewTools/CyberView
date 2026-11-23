@@ -12,12 +12,16 @@ Merged today:
 - #130 — `--ics` results in summary.txt / inventory.csv / report.html
 - #132 — cost tiering
 
+Merged since: #134 — public + internal description refresh (About/Status prose for the accuracy eval set, API fallback
+and cost tiering; feed count corrected to 280; BUILD 1.70).
+
 Open (this session):
-- Public + internal description refresh. Surfaces the recent operational work (#127 accuracy eval set, #129 API fallback, #132 cost tiering) in the public prose and corrects drift:
-  - `config/about.json` "ops": added measured-accuracy test set, model tiering (least-costly-capable, Opus only where needed) and non-stalling publishing (subscription-primary, API fallback within a monthly cap). Numbers still live-filled; `about.mjs check` green.
-  - `legal/about.html` "How it is made": feed count 220→280 (live total is 280 = 228 collect + 52 feeds.json), X noted as a lead-only source (never evidence), new "Accuracy, cost and reliability" bullet linking the status page.
-  - `site/status.html`: one-line note on the Accuracy section about the eval test set (fallback/tiering/accuracy are already surfaced live via health.json + the Accuracy/Improver sections, and `nav.js` injects the Actors/Scanner links, so no nav edit needed).
-  - `site/app.js`: BUILD 1.69→1.70 (2026-11-23), since a tracked site/ file changed.
+- #135 — scanner `match`: a full report from files the operator already holds (nmap `-oX` with `-sV`, an SBOM, a package
+  list), for assets that cannot be scanned. New `scanner/lib/inputs.mjs` adapters return `fingerprint.mjs`'s own record
+  shape, so the matching, rating, CISA priority and all five outputs are the scan's code unchanged; CPE/purl give the
+  vendor the matcher needs; `--assume-exposed` (default internal) moves only CISA's deadline. Nothing is contacted and the
+  report says so. Closes most of tk-matchers; only an offline `lookup <CVE>` reader remains. Decision 23 in
+  `docs/scanner.md`.
 
 No scanner or pipeline PRs currently open (confirm with `gh pr list` when you run).
 

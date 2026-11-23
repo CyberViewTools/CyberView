@@ -4,16 +4,16 @@
   "products": [],
   "source_tier": "established",
   "first_seen": "2026-11-23T22:11:29Z",
-  "updated_at": "2026-11-23T22:11:29Z",
+  "updated_at": "2026-11-23T23:12:57Z",
   "title": "Israel Police disable internal systems over fear of leaking sensitive information; cause unconfirmed",
   "category": "incident",
   "status": "developing",
   "severity": 2,
   "date": "2026-11-23",
-  "date_note": "Arab48 relays a Ynet report of Monday 23 November; the page gives no earlier day than the day of the report, though it says the technical incident began on Sunday.",
-  "summary": "Arab48, relaying Ynet, reports that Israel Police disabled several internal systems and applications out of fear that sensitive and classified information could leak, after a technical incident that began on Sunday. The article says it is not yet known whether this was a cyberattack or an external technical fault. According to the report, police personnel will be asked to update their passwords.",
-  "plain": "Arab48, citing Ynet, says Israeli police switched off internal systems for fear of a leak. It is not known whether it was an attack or a fault. Officers must change passwords.",
-  "exec": "A national police force took internal systems offline as a precaution, according to Arab48 relaying Ynet; the cause is not confirmed.",
+  "date_note": "Ynet's page shows no publication day; Arab48 (23 November) relays it. Both say the incident began on Sunday; the day used is the day of the report.",
+  "summary": "Ynet reports that Israel Police deliberately took several internal systems offline, including the Misseronet messaging system, as a precaution against information leaks after what authorities called a \"complex technological incident\" that began on Sunday. Investigators are examining a possible cyberattack, and an external technical malfunction has not been ruled out. About 100,000 police personnel must reset their passwords.",
+  "plain": "Ynet says Israeli police switched off internal systems on purpose to prevent leaks. It is not known whether it was an attack or a fault. About 100,000 personnel must reset passwords.",
+  "exec": "Ynet reports a national police force took internal systems offline as a precaution; the cause is not established.",
   "action": "No action needed; for awareness.",
   "org": "Israel Police",
   "sector": "Government",
@@ -29,16 +29,25 @@
       "name": "Arab48",
       "url": "https://www.arab48.com/إسرائيليات/أخبار/2026/11/23/الشرطة-الإسرائيلية-تعطل-أنظمة-حساسة-خشية-تسريب-معلومات-سرية",
       "published": "2026-11-23"
+    },
+    {
+      "name": "Ynetnews",
+      "url": "https://www.ynetnews.com/article/rjmmmngjqg"
     }
   ],
   "report": {
-    "read_depth": "secondary"
+    "read_depth": "full"
   },
-  "evidence": [],
+  "evidence": [
+    {
+      "url": "https://www.ynetnews.com/article/rjmmmngjqg",
+      "quote": "about 100,000 police personnel must reset their internal-system passwords"
+    }
+  ],
   "validation": {
     "state": "single_source",
-    "checked_at": "2026-11-23T22:11:29Z",
-    "note": "Only Arab48 was read (via a fetch sub-agent), relaying Ynet; the original Ynet report and any police statement were not read."
+    "checked_at": "2026-11-23T23:12:57Z",
+    "note": "Ynet's original was read (via a fetch sub-agent, no publication day shown) and Arab48 relays it, so one publisher; the police statement is quoted by Ynet, no direct police page read."
   },
   "sectors": {
     "values": [
@@ -49,13 +58,5 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  },
-  "review": {
-    "state": "passed",
-    "at": "2026-11-23T22:28:52Z",
-    "first_at": "2026-11-23T22:28:52Z",
-    "note": "title, summary, Sunday start, unknown cause, password update checked against Arab48 (23 Nov), which attributes to Ynet; single_source, developing correct",
-    "flags": []
-  },
-  "qa_checked_at": "2026-11-23T22:28:52Z"
+  }
 }

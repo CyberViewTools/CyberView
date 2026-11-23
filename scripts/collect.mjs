@@ -318,10 +318,14 @@ export function parseFeed(xml) {
   return items;
 }
 
-async function fetchFeed(f) {
+export async function fetchFeed(f) {
   for (let i = 0; i < 2; i++) {
     try {
-      const r = await fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" }, signal: AbortSignal.timeout(25000) });
+      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(25000) });
+      let r = await ask("application/rss+xml, application/atom+xml, application/xml, text/xml");
+      // 415 is the server's content negotiation (some feeds refuse our accept list): ask once more at once without it, same
+      // identifying user-agent. Not the 5 s retry below, and a 415 that persists still fails as a 415.
+      if (r.status === 415) r = await ask("");
       if (r.status === 403 || r.status === 401) return { error: `HTTP ${r.status} (refuses automated readers; not retried)` };
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return { items: parseFeed(await r.text()) };

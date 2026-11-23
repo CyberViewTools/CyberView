@@ -6,12 +6,11 @@
   "country": "Japan",
   "cves": [],
   "date": "2026-11-13",
-  "exec": "A supplier's supplier was the weak point: the city's own systems were not entered, yet over a million residents' addresses are now phishing targets.",
+  "exec": "An outside email service used by the city was accessed; 1,078,713 email addresses of people who got city system emails are exposed, and the city warns of suspicious emails.",
   "first_seen": "2026-11-17T22:36:00Z",
   "geo_basis": "victim HQ",
   "lat": 34.694,
   "lng": 135.502,
-  "occurred_at": "2026-11-13T13:00:00+09:00",
   "org": "City of Osaka",
   "pin_type": "victim",
   "place": "Osaka",
@@ -66,21 +65,24 @@
     "data-breach",
     "third-party"
   ],
-  "time_basis": "published",
   "title": "City of Osaka: breach of outside email delivery service exposed over 1 million email addresses",
-  "updated_at": "2026-11-21T03:23:37Z",
+  "updated_at": "2026-11-23T22:29:27Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-21T03:24:00Z",
     "note": "Verify desk read both City of Osaka final reports of 13 Nov (1,078,713 user addresses, 1 Jul-31 Oct; 33,868 user and 14,669 store addresses; email addresses only; TKC named as system provider) and The Record (13 Nov: TKC, Arara service, more than 1 million addresses). Figures match. The city pages do not name the mail service; The Record does."
   },
   "review": {
-    "state": "flagged",
-    "at": "2026-11-19T05:12:54Z",
-    "note": "Source unreachable: both City of Osaka press releases return HTTP 408 after retries, so the 1,078,713 / 33,868 / 14,669 figures could not be checked. The Record confirms TKC, the Arara email service, more than 1 million addresses and the July to Oct 31 window.",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:29:47Z",
+    "first_at": "2026-11-19T05:12:54Z",
+    "note": "Read both city final reports and The Record: removed occurred_at (announcement time, not event time); exec no longer says the city's own systems were not entered or that addresses are phishing targets; 1,078,713 / 33,868 / 14,669 figures match",
+    "flags": [],
+    "categories": [
+      "occurred_at"
+    ]
   },
-  "qa_checked_at": "2026-11-19T05:12:54Z",
+  "qa_checked_at": "2026-11-23T22:29:47Z",
   "sectors": {
     "values": [
       "government-facilities"

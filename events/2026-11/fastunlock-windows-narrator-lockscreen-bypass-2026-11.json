@@ -15,7 +15,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-19T19:20:00Z",
-  "updated_at": "2026-11-23T05:19:11Z",
+  "updated_at": "2026-11-23T22:28:20Z",
   "category": "vuln",
   "date": "2026-11-19",
   "date_note": "Cyber Kendra's page is dated Nov 20 but states the situation as of Nov 19; published date taken as Nov 19.",
@@ -30,22 +30,25 @@
   "severity": 1,
   "status": "claimed",
   "source_tier": "established",
-  "summary": "A researcher known as Chaotic Eclipse or Nightmare-Eclipse posted \"FastUnlock\" on GitHub without coordinating with Microsoft, claiming a Narrator lock-screen flaw lets someone with physical access get past BitLocker on Windows 11 26H2, Cyber Kendra says. ThreatLocker's proof of concept ran code as a non-administrator account without sign-in; The Hacker News says encryption is not broken. ThreatLocker says a BitLocker preboot PIN helps if the device was just turned on. No CVE or Microsoft fix.",
+  "summary": "A researcher known as Chaotic Eclipse or Nightmare-Eclipse posted \"FastUnlock\" on GitHub \"without prior coordination\", Cyber Kendra says, claiming a Narrator lock-screen flaw lets someone with physical access get past BitLocker on Windows 11 26H2. ThreatLocker's proof of concept ran code without signing in, as a non-administrator account; The Hacker News says it does not break the encryption. As of November 19 there was no CVE or Microsoft fix, per Cyber Kendra.",
   "plain": "A researcher says a lost or stolen Windows 11 laptop could be unlocked using the screen reader feature. Microsoft has published no fix or advisory yet.",
   "exec": "Matters for lost or stolen laptops that rely on BitLocker; physical access is required and no attacks in the wild are reported.",
   "action": "Until Microsoft responds: ThreatLocker says a BitLocker preboot PIN helps on a device that was just turned on; the researcher suggests blocking Narrator on the lock screen with AppLocker or a restrictive DACL (test first). Keep devices physically secured.",
   "sources": [
     {
       "name": "Cyber Kendra",
-      "url": "https://www.cyberkendra.com/2026/11/fastunlock-windows-narrator-lock-screen-bypass.html"
+      "url": "https://www.cyberkendra.com/2026/11/fastunlock-windows-narrator-lock-screen-bypass.html",
+      "published": "2026-11-20"
     },
     {
       "name": "Security Affairs",
-      "url": "https://securityaffairs.com/203537/hacking/chaotic-eclipse-releases-fastunlock-a-new-windows-zero-day-vulnerability.html"
+      "url": "https://securityaffairs.com/203537/hacking/chaotic-eclipse-releases-fastunlock-a-new-windows-zero-day-vulnerability.html",
+      "published": "2026-11-19"
     },
     {
       "name": "The Hacker News",
-      "url": "https://thehackernews.com/2026/11/new-unpatched-windows-0-day-fastunlock.html"
+      "url": "https://thehackernews.com/2026/11/new-unpatched-windows-0-day-fastunlock.html",
+      "published": "2026-11-20"
     },
     {
       "name": "ThreatLocker: Proof of concept for FastUnlock Windows lock screen bypass from Nightmare Eclipse",
@@ -83,15 +86,16 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-22T14:31:47Z",
+    "at": "2026-11-23T22:29:20Z",
     "first_at": "2026-11-19T19:14:24Z",
-    "note": "source wording: key finding said local account linked to a Microsoft account; Cyber Kendra says at least one account on the PC linked to an online Microsoft account. Title, date, claimed status, THN and ThreatLocker details checked against all four sources",
+    "note": "stronger than source: 'without coordinating with Microsoft' -> 'without prior coordination' (Cyber Kendra); encryption/sign-in statements attributed; added published days",
     "flags": [],
     "categories": [
-      "misstated"
+      "overstated",
+      "attribution"
     ]
   },
-  "qa_checked_at": "2026-11-22T14:31:47Z",
+  "qa_checked_at": "2026-11-23T22:29:20Z",
   "sectors": {
     "values": [
       "cross-sector"

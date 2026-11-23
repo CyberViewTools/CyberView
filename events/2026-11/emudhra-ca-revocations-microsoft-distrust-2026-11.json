@@ -1,12 +1,12 @@
 {
-  "action": "General advice: inventory certificates chaining to eMudhra roots and replace them with certificates from another CA now. Apply current Windows and macOS updates so the distrusted roots are removed, including for curl and git.",
+  "action": "General advice: inventory certificates chaining to eMudhra roots and replace them with certificates from another CA, and apply current Windows and macOS updates.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "India",
   "cves": [],
   "date": "2026-11-13",
-  "exec": "Any site or service still using eMudhra-issued TLS certificates will break on Windows and Apple platforms and must be re-issued elsewhere.",
+  "exec": "iTnews reports that Microsoft and Apple are ending trust in eMudhra roots, so sites using its certificates need certificates from another authority.",
   "first_seen": "2026-11-17T23:02:00Z",
   "geo_basis": "victim HQ",
   "impact": "Certificates under the affected hierarchies stop being trusted on major platforms; issuance from the older G1 hierarchy stopped on November 17.",
@@ -15,7 +15,7 @@
   "org": "eMudhra",
   "pin_type": "victim",
   "place": "Bengaluru",
-  "plain": "An Indian company that issues website security certificates made keys so weak anyone could guess them. Microsoft and Apple are removing trust in its certificates.",
+  "plain": "iTnews reports that an Indian company that issues website security certificates had a script bug that cut some private keys to a single byte. Microsoft and Apple are removing trust in its certificates.",
   "products": [
     "eMudhra TLS certificates",
     "Microsoft Windows",
@@ -38,12 +38,12 @@
     }
   ],
   "status": "confirmed",
-  "summary": "The Indian certificate authority revoked eight more intermediate CAs after tracing weak keys from its October compromise to one line in a home-made script that cut ECDSA private values to a single byte. Microsoft removes all 10 remaining eMudhra roots from Windows, Edge and Azure from November 16; Apple ends trust on November 30. eMudhra is leaving public TLS and has withdrawn its assurance that RSA issuers were unaffected.",
+  "summary": "iTnews reports the Indian certificate authority eMudhra revoked eight more intermediate CAs; its incident report says a single line in a homebrew Python script truncated ECDSA private values to their leading byte. iTnews says Microsoft will remove all 10 remaining eMudhra roots from 16 November, and eMudhra said Apple would end trust on 30 November. iTnews also says eMudhra is leaving public TLS and has withdrawn its RSA assurance.",
   "tags": [
     "identity"
   ],
   "title": "eMudhra revokes eight more CAs as Microsoft pulls trust in all its roots",
-  "updated_at": "2026-11-22T18:20:02Z",
+  "updated_at": "2026-11-23T22:29:03Z",
   "date_note": "Date is iTnews's report (13 Nov) of Microsoft's root removal; BleepingComputer (11 Nov) says eMudhra revoked the eight further RSA intermediates on 7 November.",
   "validation": {
     "checked_at": "2026-11-22T18:20:02Z",
@@ -51,14 +51,19 @@
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T00:27:26Z",
-    "note": "Compared title, summary and impact with iTnews (Nov 13): eight more CAs revoked, one-byte truncation in script, Microsoft removing 10 roots from Nov 16, Apple Nov 30, G1 issuance stop Nov 17, exit from public TLS, RSA assurance withdrawn. Single source stated correctly as single_source.",
-    "flags": [
-      "single-source-high"
+    "state": "corrected",
+    "at": "2026-11-23T22:29:23Z",
+    "first_at": "2026-11-19T00:27:26Z",
+    "note": "who said it / stronger than source: summary now attributes to iTnews and eMudhra's incident report; dropped unsupported October compromise, plain 'anyone could guess' and 'curl and git'; exec and action reworded.",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "attribution"
     ]
   },
-  "qa_checked_at": "2026-11-19T00:27:26Z",
+  "qa_checked_at": "2026-11-23T22:29:23Z",
   "sectors": {
     "values": [
       "information-technology"

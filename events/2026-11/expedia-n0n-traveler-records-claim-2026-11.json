@@ -6,6 +6,7 @@
   "country": "United States",
   "cves": [],
   "date": "2026-11-14",
+  "date_note": "Security Affairs, dated 14 November, is the earliest page read; no page gives the day of the claim itself.",
   "exec": "A very large but unverified data theft claim against a major travel platform, said to involve a third-party provider.",
   "first_seen": "2026-11-17T22:50:00Z",
   "geo_basis": "victim HQ",
@@ -14,18 +15,19 @@
   "org": "Expedia",
   "pin_type": "victim",
   "place": "Seattle, WA",
-  "plain": "A criminal group claims to hold nearly one billion Expedia traveller records taken through an outside supplier. Expedia confirmed a breach at that supplier but not the group's numbers.",
+  "plain": "A criminal group claims to have stolen nearly one billion Expedia traveller records. Expedia says attackers got in through an outside data provider but could not confirm the group's claims.",
   "products": [
     "Expedia"
   ],
-  "qa_checked_at": "2026-11-19T05:13:51Z",
+  "qa_checked_at": "2026-11-23T22:29:56Z",
   "sector": "Travel",
   "severity": 1,
   "source_tier": "established",
   "sources": [
     {
       "name": "Security Affairs",
-      "url": "https://securityaffairs.com/203062/cyber-crime/extortion-group-claims-theft-of-nearly-one-billion-expedia-traveler-records.html"
+      "url": "https://securityaffairs.com/203062/cyber-crime/extortion-group-claims-theft-of-nearly-one-billion-expedia-traveler-records.html",
+      "published": "2026-11-14"
     },
     {
       "name": "MyNorthwest (KIRO), relaying The Seattle Times",
@@ -45,13 +47,13 @@
     }
   ],
   "status": "claimed",
-  "summary": "A Russian-speaking extortion group calling itself n0n claims to hold nearly one billion Expedia traveler records taken through a compromised third-party data platform provider. Expedia confirmed attackers reached its systems via that provider but told The Seattle Times the hackers' claims are unverified and it could not confirm their accuracy; its investigation continues. A law firm is weighing a possible class action, The Seattle Times reported.",
+  "summary": "A Russian extortion group calling itself n0n claims, per Security Affairs, to have stolen nearly one billion Expedia traveler records. Expedia told Skift attackers breached its systems through a third-party data platform provider, and told The Seattle Times the hackers' claims are unverified and it could not confirm their accuracy; its investigation continues. A law firm is weighing a possible class action, The Seattle Times reported.",
   "tags": [
     "data-breach",
     "third-party"
   ],
   "title": "Extortion group claims theft of nearly one billion Expedia traveler records",
-  "updated_at": "2026-11-22T13:41:28Z",
+  "updated_at": "2026-11-23T22:30:19Z",
   "validation": {
     "checked_at": "2026-11-22T13:41:28Z",
     "note": "Attacker claim reported by Security Affairs, Valley News Live and MyNorthwest; Expedia's statements (to Skift and The Seattle Times, as relayed) confirm a third-party provider compromise but not n0n's figures.",
@@ -59,9 +61,15 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T05:13:51Z",
-    "note": "Security Affairs says Expedia confirmed a breach via a third-party data platform provider but not n0n's figures; summary/plain/action said no confirmation found. Fixed; status stays claimed sev 1; correction filed.",
-    "flags": []
+    "at": "2026-11-23T22:29:56Z",
+    "first_at": "2026-11-19T05:13:51Z",
+    "note": "stronger than source: 'Russian-speaking' not on any page (now Russian per Security Affairs); claim vs Expedia-confirmed path attributed to Skift/Seattle Times; date_note, published day",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "date",
+      "attribution"
+    ]
   },
   "sectors": {
     "values": [

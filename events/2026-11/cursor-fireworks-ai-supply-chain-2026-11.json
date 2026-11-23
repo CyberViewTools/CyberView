@@ -1,5 +1,5 @@
 {
-  "action": "If you installed or updated the Claude Code extension to 2.1.312 or 2.1.313 from Cursor's marketplace on October 29, follow Cursor's October 30 notice (uninstalling alone may not be enough) and rotate any keys Cursor or Fireworks flagged.",
+  "action": "Cursor asks users who installed or updated to Claude Code extension 2.1.312 or 2.1.313 on October 29 to follow its security notice (uninstalling alone may not be enough); it emailed team admins the specific keys to rotate.",
   "actor": "",
   "attack": [
     "T1195.002 Supply Chain Compromise: Compromise Software Supply Chain",
@@ -9,7 +9,7 @@
   "country": "United States",
   "cves": [],
   "date": "2026-11-13",
-  "exec": "A supplier's leaked key led to tampered developer tools reaching at most 5,000 users; Cursor has dropped the supplier for inference.",
+  "exec": "Cursor says a supplier's exposed key led to tampered add-on copies that at most 5,000 users potentially received; it says it moved inference off Fireworks.",
   "first_seen": "2026-11-17T22:50:00Z",
   "geo_basis": "victim HQ",
   "lat": 37.787,
@@ -17,13 +17,13 @@
   "org": "Cursor (via Fireworks AI)",
   "pin_type": "victim",
   "place": "San Francisco, CA",
-  "plain": "Coding-tool maker Cursor says a key it gave supplier Fireworks AI was exposed. Attackers used it to copy data, then posted harmful copies of a popular add-on for about 11 hours on October 29, reaching at most 5,000 users.",
+  "plain": "Coding-tool maker Cursor says a key it gave supplier Fireworks AI was exposed and used to copy data, then malicious copies of a popular add-on were served for about 11 hours on October 29; at most 5,000 users potentially received them.",
   "products": [
     "Cursor",
     "Fireworks AI",
     "Claude Code"
   ],
-  "qa_checked_at": "2026-11-19T03:26:50Z",
+  "qa_checked_at": "2026-11-23T22:29:48Z",
   "report": {
     "doc_id": "",
     "iocs_available": false,
@@ -73,24 +73,30 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Cursor's November 13 update says an access key it had issued to Fireworks AI was exposed by that supplier and used to copy coding agent traces from a read-only bucket. Credentials found in the traces opened further internal tools. On October 29 the attacker placed malicious Claude Code extension builds 2.1.312 and 2.1.313 in Cursor's marketplace cache for about 11 hours; at most 5,000 users could have received them.",
+  "summary": "Cursor's November 13 update says an access key it had issued to Fireworks AI was exposed by that supplier and used to copy coding agent traces from a read-only bucket. Credentials found in the traces let the attacker reach select SaaS tools used by Cursor. On October 29 the attacker placed malicious Claude Code extension builds 2.1.312 and 2.1.313 in Cursor's marketplace cache for about 11 hours; at most 5,000 users potentially received them.",
   "tags": [
     "supply-chain",
-    "third-party",
-    "ai-enabled"
+    "third-party"
   ],
-  "title": "Cursor says stolen Fireworks AI key led to trojanized Claude Code extension",
-  "updated_at": "2026-11-22T15:57:08Z",
+  "title": "Cursor says exposed Fireworks AI key led to malicious Claude Code extension copies",
+  "updated_at": "2026-11-23T22:29:27Z",
   "validation": {
     "checked_at": "2026-11-17T23:36:00Z",
     "note": "Cursor's own update (primary) states the core fact; Fireworks AI's bulletins and The Hacker News were also read. Fireworks' bulletins do not mention Cursor's key.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T03:26:50Z",
-    "note": "Compared Nov 13 update, Fireworks key, traces bucket, Oct 29 builds 2.1.312/2.1.313, 11 hours, 5,000 users, Nov 1 last activity against Cursor, Hacker News and Fireworks bulletin (Aug 3 to Oct 7); Oct 30 notice is real",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:29:48Z",
+    "first_at": "2026-11-19T03:26:50Z",
+    "note": "Stronger than the source ('reaching' 5,000 users, 'internal tools'), action advice (rotate keys Fireworks flagged not stated), unsupported ai-enabled tag; figures 11 hours/5,000 match Cursor",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "tags"
+    ]
   },
   "links": [
     {

@@ -1,5 +1,5 @@
 {
-  "action": "Install Check Point's November Jumbo Hotfix on all Management Servers and Security Gateways, starting with internet-facing Mobile Access deployments. Hunt for the published indicators and ask Check Point Support for an exposure assessment.",
+  "action": "Check Point advises installing the November Jumbo Hotfix on all Management Servers and Security Gateways, starting with internet-facing Mobile Access deployments. Hunt for the published indicators and ask Check Point Support for an exposure assessment.",
   "actor": "",
   "attack": [
     "T1190 Exploit Public-Facing Application",
@@ -36,12 +36,18 @@
     "CVE-2026-123039"
   ],
   "date": "2026-11-12",
+  "date_note": "Day Check Point published its advisory and research; the exploitation it describes began on 30 October.",
+  "evidence": [
+    {
+      "url": "https://blog.checkpoint.com/?p=249830",
+      "quote": "Only a couple of dozen unpatched systems, in a single region, were compromised in the observed incidents."
+    }
+  ],
   "exec": "A fix existed a week before the attacks; only unpatched gateways were hit, and a small number in one region were wiped.",
   "first_seen": "2026-11-17T22:50:00Z",
   "geo_basis": "",
   "lat": null,
   "lng": null,
-  "occurred_at": "2026-11-12T13:58:03Z",
   "org": "Check Point gateway operators (worldwide)",
   "pin_type": "none",
   "place": "",
@@ -53,7 +59,7 @@
     "Check Point Spark",
     "VMware ESXi"
   ],
-  "qa_checked_at": "2026-11-19T03:27:37Z",
+  "qa_checked_at": "2026-11-23T22:30:00Z",
   "report": {
     "doc_id": "sk1000302; sk1000362",
     "iocs_available": true,
@@ -82,35 +88,45 @@
   "sources": [
     {
       "name": "Check Point security advisory",
-      "url": "https://blog.checkpoint.com/?p=249830"
+      "url": "https://blog.checkpoint.com/?p=249830",
+      "published": "2026-11-12"
     },
     {
       "name": "Check Point Research",
-      "url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/"
+      "url": "https://research.checkpoint.com/2026/php2shell-exploitation-on-check-point-gateway/",
+      "published": "2026-11-12"
     },
     {
       "name": "Security Affairs",
-      "url": "https://securityaffairs.com/202982/hacking/unpatched-check-point-gateways-are-being-wiped-exploiting-php2shell.html"
+      "url": "https://securityaffairs.com/202982/hacking/unpatched-check-point-gateways-are-being-wiped-exploiting-php2shell.html",
+      "published": "2026-11-13"
     }
   ],
   "status": "confirmed",
-  "summary": "Check Point says attackers chained the PHP2Shell flaws in the Mobile Access Portal with a Gaia privilege escalation to gain root on unpatched gateways from October 30. A first wave hit Israeli organisations and wiped some systems, including a VMware ESXi host; a second wave from November 2 exploited gateways in several countries without destruction. Check Point counts a couple of dozen compromised unpatched systems.",
-  "tags": [
-    "zero-day"
-  ],
-  "time_basis": "published",
+  "summary": "Check Point says attackers chained the PHP2Shell flaws in the Mobile Access Portal with a Gaia privilege escalation to gain root on unpatched gateways from October 30, a week after a fix on October 23. A first wave hit Israeli organisations, destructive in some cases; a second wave from November 2 reached several countries without destruction. Check Point says only a couple of dozen unpatched systems were compromised.",
+  "tags": [],
   "title": "Unpatched Check Point gateways wiped in PHP2Shell attacks",
-  "updated_at": "2026-11-22T17:12:51Z",
+  "updated_at": "2026-11-23T22:30:19Z",
   "validation": {
     "checked_at": "2026-11-17T23:15:00Z",
     "note": "Check Point (advisory and Check Point Research report) and Security Affairs each state the chain, the Oct 30 and Nov 2 waves, the Israeli wiper wave and a couple of dozen compromised systems; BleepingComputer and CSO Online (13 Nov) quote the same Check Point count. No confident attribution: Check Point Research cannot assess the operation with high confidence.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T03:27:37Z",
-    "note": "Oct 23 hotfix, Oct 30 start, couple of dozen systems, Israel first wave, second wave Nov 2 multiple countries, ESXi wiper, no confident attribution against Check Point advisory and Research report",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:30:00Z",
+    "first_at": "2026-11-19T03:27:37Z",
+    "note": "zero-day tag removed (no page says exploited before fix); occurred_at 13:58 removed (no page gives a time); action attributed to Check Point; evidence quote, date_note, published days added",
+    "flags": [
+      "long-summary"
+    ],
+    "categories": [
+      "action",
+      "date",
+      "occurred_at",
+      "attribution",
+      "tags"
+    ]
   },
   "links": [
     {

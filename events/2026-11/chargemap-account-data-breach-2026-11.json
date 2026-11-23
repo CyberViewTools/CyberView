@@ -1,13 +1,15 @@
 {
   "actor": "",
   "impact": "",
-  "tags": [],
+  "tags": [
+    "data-breach"
+  ],
   "cves": [],
   "cve_meta": [],
   "products": [],
   "time_basis": "published",
   "first_seen": "2026-11-19T04:25:00Z",
-  "updated_at": "2026-11-23T12:41:00Z",
+  "updated_at": "2026-11-23T22:30:19Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -27,26 +29,30 @@
   "pin_type": "hq",
   "severity": 2,
   "source_tier": "established",
-  "summary": "Chargemap says an outsider exploited a flaw in an old technical interface on November 8 to extract user account data, found on November 10 and fixed on November 12. Exposed data includes emails and usernames, and possibly phone numbers, dates of birth and password hashes. 24matins says bank details and invoices were not affected. No count of affected accounts was given; L'Argus cites 3.5 million users.",
+  "summary": "Chargemap says an outsider exploited a flaw in an old technical interface on November 8 to extract user account data, found on November 10 and fixed on November 12. Exposed data includes emails and usernames, and possibly phone numbers, dates of birth and password hashes. Chargemap says, as Next reports, that bank details and invoices were not affected. No count of affected accounts was given.",
   "plain": "A French EV charging app says hackers took account details, possibly including scrambled passwords, from an old part of its system.",
-  "exec": "Large user base with reusable credentials; password hashes can be cracked and reused elsewhere.",
-  "action": "24matins advises changing your Chargemap password, especially if reused elsewhere, enabling two-factor authentication where available, and not clicking links in unexpected messages.",
+  "exec": "Chargemap says a password hash may have been extracted; it gave no count of affected accounts.",
+  "action": "Chargemap's notice, as Next reports it, advises changing your Chargemap password and any other service where it was reused; 24matins adds enabling two-factor authentication where available.",
   "sources": [
     {
       "name": "Next",
-      "url": "https://next.ink/brief-article/chargemap-signale-un-vol-de-donnees-suite-a-une-attaque-informatique/"
+      "url": "https://next.ink/brief-article/chargemap-signale-un-vol-de-donnees-suite-a-une-attaque-informatique/",
+      "published": "2026-11-18"
     },
     {
       "name": "Cyberattaque.org",
-      "url": "https://www.cyberattaque.org/chargemap-informe-ses-clients-dune-cyberattaque-des-donnees-personnelles-et-des-mots-de-passe-exposes/"
+      "url": "https://www.cyberattaque.org/chargemap-informe-ses-clients-dune-cyberattaque-des-donnees-personnelles-et-des-mots-de-passe-exposes/",
+      "published": "2026-11-18"
     },
     {
       "name": "Security.nl",
-      "url": "https://www.security.nl/posting/962274/Chargemap+lekt+persoonlijke+gegevens+en+wachtwoordhashes+gebruikers"
+      "url": "https://www.security.nl/posting/962274/Chargemap+lekt+persoonlijke+gegevens+en+wachtwoordhashes+gebruikers",
+      "published": "2026-11-19"
     },
     {
       "name": "L'Argus",
-      "url": "https://www.largus.fr/actualite-automobile/cyberattaque-chargemap-victime-dune-fuite-de-donnees-voici-comment-reagir-40018215.html"
+      "url": "https://www.largus.fr/actualite-automobile/cyberattaque-chargemap-victime-dune-fuite-de-donnees-voici-comment-reagir-40018215.html",
+      "published": "2026-11-20"
     },
     {
       "name": "24matins",
@@ -61,12 +67,19 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T14:09:03Z",
+    "at": "2026-11-23T22:30:00Z",
     "first_at": "2026-11-19T05:09:44Z",
-    "note": "Checked against Next, Cyberattaque.org, Security.nl, L'Argus: dates ok; softened hashes/phone/DOB to possible (sources: may have been extracted, if shared at sign-up); 3.5M and 4.1M are total user figures, now worded so",
-    "flags": []
+    "note": "attribution: bank-details statement is Chargemap's (via Next) not 24matins; action attributed; exec unsourced commentary replaced; data-breach tag; published days; 3.5M figure dropped (no evidence)",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "figure",
+      "attribution",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-20T14:09:03Z",
+  "qa_checked_at": "2026-11-23T22:30:00Z",
   "sectors": {
     "values": [
       "commercial-facilities"

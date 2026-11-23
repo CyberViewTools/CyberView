@@ -1,12 +1,12 @@
 {
-  "action": "Current and former TSMC employees: follow the company's notice, monitor bank accounts, and be alert to messages using your personal details. Other firms: ask your cloud and HR providers how employee data is protected.",
+  "action": "General advice: current and former TSMC employees should be alert to messages using their personal details; BleepingComputer reports TSMC is notifying affected staff.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "Taiwan",
   "cves": [],
   "date": "2026-11-12",
-  "exec": "A supplier breach exposed staff data at a key chipmaker; the number of people affected has not been given.",
+  "exec": "TSMC says employee data appeared on an external site and matches data held by a cloud provider; it has given no count of people affected.",
   "first_seen": "2026-11-17T22:08:00Z",
   "geo_basis": "victim HQ",
   "lat": 24.774,
@@ -14,7 +14,7 @@
   "org": "TSMC",
   "pin_type": "victim",
   "place": "Hsinchu",
-  "plain": "Chipmaker TSMC said a break-in at a cloud company it uses exposed information about current and former employees. A hacker claims to hold 6.9GB including identity, contact and banking details.",
+  "plain": "Chipmaker TSMC said employee data appeared on an outside website and matches data held by a cloud provider. A forum user claims to hold 6.9GB including identity, contact and banking details.",
   "products": [],
   "sector": "Semiconductors",
   "severity": 2,
@@ -22,7 +22,8 @@
   "sources": [
     {
       "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/tsmc-employee-data-breach-linked-to-cloud-provider/"
+      "url": "https://www.bleepingcomputer.com/news/security/tsmc-employee-data-breach-linked-to-cloud-provider/",
+      "published": "2026-11-15"
     },
     {
       "name": "The Record (Recorded Future News)",
@@ -31,14 +32,14 @@
     }
   ],
   "status": "confirmed",
-  "summary": "TSMC told the SEC that some current and former employee data was made available on an external website without authorization, matching data held by an unnamed cloud service provider, and that it found no evidence its own systems were compromised. A forum user claimed on November 8 to hold a 6.9GB dataset. TSMC gave no record count; The Record says TSMC did not respond to questions about the post.",
+  "summary": "TSMC told the SEC that some current and former employee data was made available on an external website without authorization, matching data held by an unnamed cloud service provider, and that it found no evidence its own systems were compromised. A forum user claimed on November 8 to hold a 6.9GB dataset with identity, contact and banking details. TSMC gave no record count; The Record says TSMC did not respond to questions about the post.",
   "tags": [
     "third-party",
     "cloud",
     "data-breach"
   ],
-  "title": "TSMC employee data exposed through third-party cloud provider",
-  "updated_at": "2026-11-22T14:57:41Z",
+  "title": "TSMC says employee data posted externally matches data held by a cloud provider",
+  "updated_at": "2026-11-23T22:30:19Z",
   "validation": {
     "checked_at": "2026-11-22T14:57:41Z",
     "note": "BleepingComputer and The Record (Recorded Future News, 13 Nov) each report TSMC's SEC notice: employee data on an external site, matching data at an unnamed cloud provider, no evidence TSMC systems compromised; 8 Nov forum claim of 6.9 GB. SharkStriker tracker removed (a tracker is not a source). The filing itself was not read.",
@@ -46,11 +47,18 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T05:09:40Z",
-    "note": "Added BleepingComputer (15 Nov; TSMC SEC filing: employee data on an external site, matches cloud-provider data, no evidence TSMC systems compromised; 8 Nov forum claim of 6.9GB). Summary reworded to match; source tier raised to established since the tracker alone was aggregator.",
-    "flags": []
+    "at": "2026-11-23T22:29:57Z",
+    "first_at": "2026-11-19T05:09:40Z",
+    "note": "stronger than source: title/plain said exposed through/break-in at cloud provider, TSMC says data matches provider data; action advice unsourced; exec; claimed data types added; published day",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "misstated"
+    ]
   },
-  "qa_checked_at": "2026-11-19T05:09:40Z",
+  "qa_checked_at": "2026-11-23T22:29:57Z",
   "sectors": {
     "values": [
       "critical-manufacturing"

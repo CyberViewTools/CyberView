@@ -1,0 +1,39 @@
+{
+  "job": "reviewer",
+  "batch": 5,
+  "started_at": "2026-11-23T22:20:00Z",
+  "finished_at": "2026-11-23T22:45:00Z",
+  "model": "claude-sonnet-5-5",
+  "reviewed": [
+    {"id": "jpmorgan-chase-banking-outage-2026-11", "verdict": "corrected", "note": "severity 3 to 2, unsourced action marked General advice, occurred_at removed, wording"},
+    {"id": "ms-isac-microsoft-sharepoint-onenote-rce-2026-11", "verdict": "corrected", "note": "action/exec attributed, validation primary, published day"},
+    {"id": "woolworths-gift-card-balances-drained-2026-11", "verdict": "corrected", "note": "attribution to Cyber Express relay, date_note, published day"},
+    {"id": "expedia-n0n-traveler-records-claim-2026-11", "verdict": "corrected", "note": "Russian-speaking not stated; claim vs Expedia statements attributed"},
+    {"id": "tsmc-third-party-cloud-breach-2026-11", "verdict": "corrected", "note": "title/plain stronger than source; action unsourced"},
+    {"id": "check-point-php2shell-gateway-wiper-campaign-2026-11", "verdict": "corrected", "note": "zero-day tag and occurred_at removed; evidence and published days"},
+    {"id": "minnesota-epilepsy-group-second-breach-2026-11", "verdict": "corrected", "note": "action advice unsourced; date_note"},
+    {"id": "wellington-it-irish-credit-unions-breach-2026-11", "verdict": "corrected", "note": "quote wording, attribution, action advice"},
+    {"id": "quantum-systems-drone-maker-cyberattack-2026-11", "verdict": "corrected", "note": "supply-chain tag and occurred_at removed; exec/action"},
+    {"id": "chargemap-account-data-breach-2026-11", "verdict": "corrected", "note": "attribution, action, exec, figure removed"},
+    {"id": "noisytcp-linux-vulnerability-2026-11", "verdict": "corrected", "note": "title figure, trigger condition, action attribution"}
+  ],
+  "pages_read": [
+    {"url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-products-could-allow-for-remote-code-execution_2026-134", "title": "MS-ISAC 2026-134", "used_in": "ms-isac-microsoft-sharepoint-onenote-rce-2026-11"},
+    {"url": "https://thenextweb.com/news/chase-software-bug-bank-outages-zelle", "title": "TNW Chase", "used_in": "jpmorgan-chase-banking-outage-2026-11"},
+    {"url": "https://www.kten.com/news/chase-now-blames-cyberattack-for-monday-banking-outage/article_1b81d583-fc22-42fb-ba78-f7e165277be9.html", "title": "KTEN", "used_in": "jpmorgan-chase-banking-outage-2026-11"},
+    {"url": "https://thenightly.com.au/australia/woolworths-to-reimburse-customers-after-digital-gift-card-balances-wiped-in-unauthorised-transactions-c-23171648", "title": "The Nightly", "used_in": "woolworths-gift-card-balances-drained-2026-11"},
+    {"url": "https://securityaffairs.com/203062/cyber-crime/extortion-group-claims-theft-of-nearly-one-billion-expedia-traveler-records.html", "title": "Security Affairs Expedia", "used_in": "expedia-n0n-traveler-records-claim-2026-11"},
+    {"url": "https://www.bleepingcomputer.com/news/security/tsmc-employee-data-breach-linked-to-cloud-provider/", "title": "BleepingComputer TSMC", "used_in": "tsmc-third-party-cloud-breach-2026-11"},
+    {"url": "https://blog.checkpoint.com/?p=249830", "title": "Check Point advisory", "used_in": "check-point-php2shell-gateway-wiper-campaign-2026-11"},
+    {"url": "https://www.hipaajournal.com/minnesota-epilepsy-group-data-breach/", "title": "HIPAA Journal", "used_in": "minnesota-epilepsy-group-second-breach-2026-11"},
+    {"url": "https://www.rte.ie/news/2026/1118/1599645-credit-union-data-breach-assessed/", "title": "RTE", "used_in": "wellington-it-irish-credit-unions-breach-2026-11"},
+    {"url": "https://www.timeslive.co.za/news/2026-11-13-quantum-systems-says-grounded-german-military-drones-flying-again-after-cyberattack/", "title": "Reuters via TimesLIVE", "used_in": "quantum-systems-drone-maker-cyberattack-2026-11"},
+    {"url": "https://next.ink/brief-article/chargemap-signale-un-vol-de-donnees-suite-a-une-attaque-informatique/", "title": "Next Chargemap", "used_in": "chargemap-account-data-breach-2026-11"},
+    {"url": "https://www.openwall.com/lists/oss-security/2026/11/15/2", "title": "oss-security NoisyTCP", "used_in": "noisytcp-linux-vulnerability-2026-11"}
+  ],
+  "open_leads": [
+    {"title": "Check Point PHP2Shell: KEV due dates suggest listing before the Oct 23 fix", "url": "https://blog.checkpoint.com/?p=249830", "note": "no page read says exploitation before a fix; zero-day tag left off", "priority": "low"},
+    {"title": "Woolworths: The Cyber Express page body came through a summarised fetch, not verbatim", "url": "https://thecyberexpress.com/coles-cyberattack-woolworths/", "note": "dozens/ABC date relies on it", "priority": "low"}
+  ],
+  "notes": "Pages read via web-fetch subagents. Source pages mentioning instructions: none."
+}

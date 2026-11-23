@@ -1,5 +1,5 @@
 {
-  "action": "Update SharePoint Server Subscription Edition to 16.0.20326.20278 or later and bring Microsoft 365 Apps and Office LTSC 2021/2024 (Windows and Mac) to the current security build after testing.",
+  "action": "MS-ISAC advises applying Microsoft's updates after appropriate testing: SharePoint Server Subscription Edition 16.0.20326.20278 or later, and the fixed builds of Microsoft 365 Apps and Office LTSC 2021/2024 (Windows and Mac).",
   "actor": "",
   "attack": [],
   "category": "vuln",
@@ -10,7 +10,7 @@
     "CVE-2026-126526"
   ],
   "date": "2026-11-16",
-  "exec": "A fresh SharePoint and Office patch set; no exploitation reported, risk rated High for large and medium organisations.",
+  "exec": "MS-ISAC reports no exploitation of these SharePoint and Office flaws and rates the risk High for large and medium organisations.",
   "first_seen": "2026-11-17T23:38:00Z",
   "geo_basis": "agency",
   "lat": 42.59,
@@ -18,7 +18,7 @@
   "org": "MS-ISAC (Center for Internet Security)",
   "pin_type": "agency",
   "place": "East Greenbush, NY",
-  "plain": "Microsoft fixed three flaws in SharePoint and OneNote that could let an attacker run their own code on a computer or server. No attacks are known.",
+  "plain": "An advisory lists three flaws in Microsoft SharePoint and OneNote that could let an attacker run their own code. The advisory says no attacks are reported.",
   "products": [
     "Microsoft SharePoint Server",
     "Microsoft OneNote",
@@ -53,18 +53,19 @@
   "sources": [
     {
       "name": "MS-ISAC advisory 2026-134",
-      "url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-products-could-allow-for-remote-code-execution_2026-134"
+      "url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-products-could-allow-for-remote-code-execution_2026-134",
+      "published": "2026-11-16"
     }
   ],
   "status": "official",
-  "summary": "MS-ISAC advisory 2026-134, issued November 16, covers three Microsoft flaws: an improper authorisation bug and a deserialisation bug in SharePoint Server Subscription Edition, and a heap overflow in OneNote affecting Microsoft 365 Apps and Office LTSC 2021 and 2024 on Windows and Mac. The most severe could allow remote code execution with the logged-on user's privileges. No exploitation has been reported.",
+  "summary": "MS-ISAC advisory 2026-134, issued November 16, covers three Microsoft flaws: an improper authorisation bug and a deserialisation bug in SharePoint Server Subscription Edition, and a heap overflow in OneNote affecting Microsoft 365 Apps and Office LTSC 2021 and 2024 on Windows and Mac. The most severe could allow remote code execution; the advisory says an attacker could gain the logged-on user's privileges. It says there are no reports of exploitation in the wild.",
   "tags": [],
   "title": "MS-ISAC: Microsoft SharePoint and OneNote flaws could allow remote code execution",
-  "updated_at": "2026-11-21T15:33:26Z",
+  "updated_at": "2026-11-23T22:30:00Z",
   "validation": {
     "checked_at": "2026-11-17T23:38:00Z",
     "note": "Reviewed against the original MS-ISAC document.",
-    "state": "corroborated"
+    "state": "primary"
   },
   "cve_meta": [
     {
@@ -90,12 +91,17 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T16:40:34Z",
-    "note": "Compared advisory date, three CVEs, affected products, SharePoint fixed build, no exploitation reported and RCE wording against the MS-ISAC page",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:29:56Z",
+    "first_at": "2026-11-19T16:40:34Z",
+    "note": "action and exec now say whose advice/rating; privileges wording closer to advisory; validation corroborated to primary (one source); source published day",
+    "flags": [],
+    "categories": [
+      "action",
+      "validation"
+    ]
   },
-  "qa_checked_at": "2026-11-19T16:40:34Z",
+  "qa_checked_at": "2026-11-23T22:29:56Z",
   "sectors": {
     "values": [
       "cross-sector"

@@ -1,12 +1,12 @@
 {
-  "action": "If you run Metabase, apply the latest vendor patch and review access logs from August 2026 onward. Patients notified by Dorsata's provider partners should monitor insurance statements and accounts.",
+  "action": "Dorsata's notice recommends affected patients review account statements and credit reports closely and report suspicious activity or identity theft. General advice: Metabase users should apply the vendor's patch.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "United States",
   "cves": [],
   "date": "2026-11-13",
-  "exec": "A zero-day in a widely used analytics tool exposed patient data at a healthcare vendor; other Metabase users may face the same risk.",
+  "exec": "A zero-day in analytics software used by many healthcare organisations exposed patient data at a health-technology vendor.",
   "first_seen": "2026-11-17T23:06:00Z",
   "geo_basis": "victim HQ",
   "lat": 38.88,
@@ -14,7 +14,7 @@
   "org": "Dorsata",
   "pin_type": "victim",
   "place": "Arlington, VA",
-  "plain": "Hackers used an unknown flaw in a data-reporting tool to reach health records of about 58,000 patients held by a US health-tech company.",
+  "plain": "An unauthorized party used a flaw in a data-reporting tool to reach health records of about 58,000 patients held by a US health-tech company, according to HIPAA Journal.",
   "products": [
     "Metabase"
   ],
@@ -29,18 +29,19 @@
     },
     {
       "name": "HIPAA Journal",
-      "url": "https://www.hipaajournal.com/data-breaches-dorsata-bay-area-psychological-consultants-lansing-urgent-care/"
+      "url": "https://www.hipaajournal.com/data-breaches-dorsata-bay-area-psychological-consultants-lansing-urgent-care/",
+      "published": "2026-11-13"
     }
   ],
   "status": "confirmed",
-  "summary": "The women's-health technology company reported that an unauthorized party exploited a previously unknown flaw in its Metabase business intelligence software between August 10 and 12 and reached a database holding information on 58,249 patients of provider partners. Exposed data includes names, birth dates, treatment details, medications and insurance information; Dorsata's notice says Social Security numbers were not involved. A researcher says the Dire Wolf group later used the same flaw. No CVE was given.",
+  "summary": "Dorsata's notice says a vulnerability in its Metabase business intelligence software allowed unauthorized access to its database platform from August 10 to 12, 2026; Social Security numbers were not involved. HIPAA Journal reports 58,249 individuals, patients of provider partners, with names, treatment and insurance details, and calls the flaw previously unknown (zero-day). It says VenariX saw Dire Wolf exploit it later.",
   "tags": [
     "zero-day",
     "data-breach",
     "third-party"
   ],
   "title": "Metabase zero-day exploited in Dorsata breach affecting 58,249 patients",
-  "updated_at": "2026-11-22T19:12:34Z",
+  "updated_at": "2026-11-23T22:29:27Z",
   "validation": {
     "checked_at": "2026-11-22T19:12:34Z",
     "note": "Two publishers state the breach: the Dorsata notice filed with the California Attorney General and HIPAA Journal. Primary: Dorsata's own notice letter on the California Attorney General's site (read 22 Nov) states Metabase's 12 August notice, the 10-12 August access window and that Social Security numbers were not involved; it gives no count and does not call the flaw a zero-day. The 58,249 count, data types and Dire Wolf link rest on HIPAA Journal. The notice's return address is Charlottesville, VA; HIPAA Journal gives Arlington, VA.",
@@ -48,11 +49,21 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T04:27:04Z",
-    "note": "Compared with HIPAA Journal (13 Nov): Aug 10-12 window, data types, Dire Wolf via VenariX correct; added the 58,249 figure to the summary",
-    "flags": []
+    "at": "2026-11-23T22:29:48Z",
+    "first_at": "2026-11-19T04:27:04Z",
+    "note": "Action advice unsourced (now Dorsata's notice / General advice); 'a researcher' now VenariX per HIPAA Journal; data types 'may have included'; source published day and 58,249 evidence added; PDF notice read",
+    "flags": [
+      "figure-no-evidence",
+      "source-published-partial",
+      "possible-duplicate"
+    ],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action"
+    ]
   },
-  "qa_checked_at": "2026-11-19T04:27:04Z",
+  "qa_checked_at": "2026-11-23T22:29:48Z",
   "sectors": {
     "values": [
       "healthcare-public-health"
@@ -62,5 +73,16 @@
   "surface": {
     "value": "web-app",
     "basis": "inferred"
-  }
+  },
+  "date_note": "Date of HIPAA Journal's report of the filing; the page gives no earlier disclosure day. Access was August 10-12.",
+  "evidence": [
+    {
+      "url": "https://www.hipaajournal.com/data-breaches-dorsata-bay-area-psychological-consultants-lansing-urgent-care/",
+      "quote": "has recently disclosed a data breach to the HHS' Office for Civil Rights involving the protected health information of 58,249 individuals."
+    },
+    {
+      "url": "https://oag.ca.gov/system/files/Regulatory%20Notice%20Letter_Dorsata_CA_0.pdf",
+      "quote": "Our investigation determined the Metabase security vulnerability allowed unauthorized access to our database platform from August 10, 2026, to August 12, 2026."
+    }
+  ]
 }

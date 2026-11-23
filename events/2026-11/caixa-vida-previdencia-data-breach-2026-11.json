@@ -1,5 +1,5 @@
 {
-  "action": "If you are a Caixa Vida e Previdência client, be wary of calls, emails or messages that cite your CPF or policy. Do not share codes or passwords, and use the company's official channel for questions.",
+  "action": "General advice: if you are a Caixa Vida e Previdência client, be wary of calls, emails or messages that cite your CPF or policy, do not share codes or passwords, and use the company's official channel for questions.",
   "actor": "",
   "attack": [],
   "category": "incident",
@@ -24,7 +24,8 @@
   "sources": [
     {
       "name": "Folha de Pernambuco (Estadão Conteúdo)",
-      "url": "https://www.folhape.com.br/economia/caixa-seguridade-informa-incidente-cibernetico-na-caixa-vida-e/523832/"
+      "url": "https://www.folhape.com.br/economia/caixa-seguridade-informa-incidente-cibernetico-na-caixa-vida-e/523832/",
+      "published": "2026-11-12"
     },
     {
       "name": "O Liberal",
@@ -32,7 +33,8 @@
     },
     {
       "name": "Baguete",
-      "url": "https://www.baguete.com.br/noticias/ataque-a-caixa-expoe-dados-pessoais-de-7-6-milhoes-de-clientes"
+      "url": "https://www.baguete.com.br/noticias/ataque-a-caixa-expoe-dados-pessoais-de-7-6-milhoes-de-clientes",
+      "published": "2026-11-13"
     },
     {
       "name": "Diario de Pernambuco",
@@ -46,19 +48,28 @@
     "fraud"
   ],
   "title": "Caixa Vida e Previdência breach exposes data of 7.6 million clients in Brazil",
-  "updated_at": "2026-11-21T08:10:30Z",
+  "updated_at": "2026-11-23T22:28:20Z",
   "validation": {
     "checked_at": "2026-11-21T08:10:30Z",
     "note": "Company market statement relayed by Folha PE (Estadão Conteúdo), O Liberal, Baguete and Diario de Pernambuco; the company's own filing not read.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T00:27:43Z",
-    "note": "7.6M clients, data types, Nov 6 detection, Nov 12 disclosure, no financial data/passwords, ANPD against O Liberal, Baguete and Diario de Pernambuco",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:29:19Z",
+    "first_at": "2026-11-19T00:27:43Z",
+    "note": "action advice unsourced -> General advice; added evidence for 7.6M and source dates; figures, dates, 6 Nov detection, 11 Nov ANPD checked against Folha PE and Baguete",
+    "flags": [
+      "figure-no-evidence",
+      "source-published-partial"
+    ],
+    "categories": [
+      "unsourced",
+      "action",
+      "source"
+    ]
   },
-  "qa_checked_at": "2026-11-19T00:27:43Z",
+  "qa_checked_at": "2026-11-23T22:29:19Z",
   "sectors": {
     "values": [
       "financial-services"
@@ -68,5 +79,12 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.folhape.com.br/economia/caixa-seguridade-informa-incidente-cibernetico-na-caixa-vida-e/523832/",
+      "quote": "o que contempla a integralidade dos seus 7,6 milhões de clientes ativos"
+    }
+  ],
+  "date_note": "Day the company disclosed the incident (12 November); it says it detected unauthorized access on 6 November."
 }

@@ -1,5 +1,5 @@
 {
-  "action": "Take Copeland XWEB EVO controllers off the public internet and put them behind a VPN on a separate network segment. No patch is coming for firmware 5.8.8, so plan a move to a supported platform and check logs for VulnCheck's indicators.",
+  "action": "VulnCheck advises treating the device as one that must never touch the public internet, segmenting it behind a VPN and planning the move to a supported platform; Copeland's bulletin, per VulnCheck, gives no fixes after 16 March 2026.",
   "actor": "",
   "attack": [
     "T1190 Exploit Public-Facing Application"
@@ -23,7 +23,7 @@
     "CVE-2026-124015"
   ],
   "date": "2026-11-13",
-  "exec": "These refrigeration controllers will never be patched; exposed units need to come off the internet and be replaced over time.",
+  "exec": "Copeland declared these refrigeration controllers end of support with no fixes after 16 March 2026; VulnCheck says they must not be internet-facing.",
   "first_seen": "2026-11-17T22:50:00Z",
   "geo_basis": "vendor HQ",
   "lat": 38.63,
@@ -37,7 +37,7 @@
     "Copeland XWEB 500D EVO",
     "Copeland XWEB 500 EVO"
   ],
-  "qa_checked_at": "2026-11-20T15:35:21Z",
+  "qa_checked_at": "2026-11-23T22:28:37Z",
   "report": {
     "doc_id": "CVE-2026-124002 to CVE-2026-124015",
     "iocs_available": true,
@@ -75,11 +75,11 @@
     "critical-infrastructure"
   ],
   "title": "Hackers probe newly disclosed flaws in Copeland refrigeration controllers",
-  "updated_at": "2026-11-21T15:33:26Z",
+  "updated_at": "2026-11-23T22:27:25Z",
   "validation": {
-    "checked_at": "2026-11-17T23:36:00Z",
-    "note": "Reviewed against the original VulnCheck report.",
-    "state": "corroborated"
+    "state": "single_source",
+    "checked_at": "2026-11-23T22:27:25Z",
+    "note": "Only source is VulnCheck, the researcher that disclosed the flaws and observed the exploitation; Copeland's own bulletin and any second publisher were not read. Read in full on 23 Nov."
   },
   "cve_meta": [
     {
@@ -183,10 +183,15 @@
   ],
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T15:35:21Z",
+    "at": "2026-11-23T22:28:37Z",
     "first_at": "2026-11-19T05:09:48Z",
-    "note": "14 CVEs, EOSS no fixes after 16 Mar 2026, exploitation Nov 12-13 match VulnCheck; fixed 1,960 (Onyphe's count, not VulnCheck's), removed 'recover administrator passwords' (page says daily admin code is computable on 5.8.8) and 'within a day' wording; correction filed",
-    "flags": []
+    "note": "action advice (now names VulnCheck, removed no-patch and check-logs wording), exec stronger than source, validation corroborated to single_source (one publisher); 14 CVEs, EOSS 16 Mar 2026, Onyphe 1,960, exploitation 12-13 Nov match VulnCheck",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "action",
+      "validation"
+    ]
   },
   "sectors": {
     "values": [

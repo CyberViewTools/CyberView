@@ -18,16 +18,18 @@
   "plain": "Portugal's energy agency ADENE says someone broke into its systems. Its energy certification portal is offline as a precaution and it is not yet known whether personal data was accessed.",
   "exec": "ADENE says its energy certification system is down after an intrusion, with no return date and no confirmation yet on personal data.",
   "action": "ADENE advises being careful with emails, messages or calls mentioning the incident that ask for personal data or credentials in its name, and using only its official channels.",
-  "tags": [
-    "intrusion",
-    "government"
-  ],
+  "tags": [],
   "cves": [],
   "products": [
     "Sistema de Certificação Energética (SCE)"
   ],
   "attack": [],
   "sources": [
+    {
+      "name": "ADENE (notice, 23 Nov)",
+      "url": "https://www.adene.pt/adene-alvo-de-ataque-informatico-suspende-temporariamente-o-acesso-ao-sce/",
+      "published": "2026-11-23"
+    },
     {
       "name": "Jornal Económico",
       "url": "https://jornaleconomico.sapo.pt/noticias/adene-sofre-ataque-informatico-e-portal-do-sistema-de-certificacao-energetica-esta-temporariamente-indisponivel/",
@@ -40,14 +42,14 @@
       "quote": "A ADENE – Agência para a Energia foi alvo de uma intrusão não autorizada nos seus sistemas informáticos"
     }
   ],
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-23T22:20:00Z",
-    "note": "Only Jornal Económico, quoting ADENE's statement, was read; ADENE's own page (adene.pt) was not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-23T22:27:47Z",
+    "note": "ADENE's own notice (adene.pt, 23 Nov) and Jornal Económico, quoting ADENE, both state the intrusion, the SCE portal being unavailable and that personal data access is not yet confirmed."
   },
   "first_seen": "2026-11-23T22:13:01Z",
-  "updated_at": "2026-11-23T22:13:01Z",
+  "updated_at": "2026-11-23T22:27:47Z",
   "sectors": {
     "values": [
       "government-facilities"
@@ -57,5 +59,18 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-23T22:28:21Z",
+    "first_at": "2026-11-23T22:28:21Z",
+    "note": "source not read: ADENE own notice read and added as first source (primary); invalid tags intrusion and government removed; validation now corroborated",
+    "flags": [],
+    "categories": [
+      "validation",
+      "source",
+      "tags"
+    ]
+  },
+  "qa_checked_at": "2026-11-23T22:28:21Z"
 }

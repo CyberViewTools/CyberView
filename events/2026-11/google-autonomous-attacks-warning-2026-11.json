@@ -1,5 +1,5 @@
 {
-  "action": "Shorten patch windows for internet-facing systems, check that monitoring can respond to fast automated activity, and follow the recommendations in Google's report. Patch PaperCut servers and LiteLLM gateways (CVE-2026-40217).",
+  "action": "Google's report points to Mandiant's hardening guide and architectural defense framework against LLM-enabled offensive tooling. General advice: shorten patch windows for internet-facing systems and check that monitoring can respond to fast automated activity.",
   "actor": "",
   "attack": [],
   "category": "report",
@@ -10,7 +10,7 @@
     "CVE-2026-40217"
   ],
   "date": "2026-11-16",
-  "exec": "Attackers are automating the discovery and exploitation of flaws, shrinking the time defenders have to apply fixes.",
+  "exec": "Google says attackers are starting to automate vulnerability discovery and exploitation, and expects more autonomy over time.",
   "first_seen": "2026-11-17T22:28:00Z",
   "geo_basis": "researcher HQ",
   "lat": 37.405,
@@ -78,7 +78,7 @@
     "ai-enabled"
   ],
   "title": "Google warns fully automated AI attacks are arriving",
-  "updated_at": "2026-11-23T15:00:44Z",
+  "updated_at": "2026-11-23T22:29:27Z",
   "links": [
     {
       "to": "google-chinese-state-automated-attack-tool-2026-11",
@@ -93,7 +93,7 @@
   ],
   "validation": {
     "checked_at": "2026-11-19T02:43:56Z",
-    "note": "Reviewed against the original Google Threat Intelligence Group document.",
+    "note": "Primary: Google Threat Intelligence Group report (16 Nov) read; BleepingComputer (16 Nov) relays its core findings.",
     "state": "corroborated"
   },
   "cve_meta": [
@@ -121,14 +121,19 @@
   ],
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T15:35:04Z",
+    "at": "2026-11-23T22:29:49Z",
     "first_at": "2026-11-19T16:40:11Z",
-    "note": "Compared with Google GTIG post, BleepingComputer, The Record: first-time no-human automation, Russian comments, French sites, no group named, PaperCut/LiteLLM CVEs match. Removed occurred_at 09:00 (was BleepingComputer's article time), the unverified 'Google does not link this to the week's outages'",
+    "note": "Action advice (patching PaperCut/LiteLLM not Google's advice) now Mandiant guide or General advice; exec 'shrinking time' unsupported removed; core findings match GTIG and BleepingComputer",
     "flags": [
+      "action-unsourced",
       "possible-duplicate"
+    ],
+    "categories": [
+      "unsourced",
+      "action"
     ]
   },
-  "qa_checked_at": "2026-11-20T15:35:04Z",
+  "qa_checked_at": "2026-11-23T22:29:49Z",
   "sectors": {
     "values": [
       "cross-sector"

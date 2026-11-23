@@ -1,5 +1,5 @@
 {
-  "action": "Check every NGINX Open Source and NGINX Plus server that serves HTTP/2. Apply the fixed versions from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched (this covers only the HTTP/2 flaws; the resolver, HTTP/3 and mail proxy flaws need the fixed versions, 1.30.7 or 1.31.9) (remove http2 from the listen line, or set http2 off on 1.25.0 and earlier). Review exposed servers for signs of compromise.",
+  "action": "CERT-FR recommends applying F5's fixes (bulletins K000163926 and K000163928; Open Source 1.30.7 or 1.31.9) and, until patched, disabling HTTP/2, which covers only the HTTP/2 flaws. Palo Alto Networks says PAN-OS and Panorama customers can disable the HTTP/2 option.",
   "actor": "",
   "attack": [
     "rce",
@@ -8,7 +8,7 @@
   "category": "vuln",
   "country": "France",
   "date": "2026-11-18",
-  "exec": "NGINX is among the most widely used web servers and proxies; an unauthenticated remote code execution flaw with a public proof of concept makes exposed servers urgent to patch or mitigate.",
+  "exec": "CERT-FR warns of unauthenticated remote code execution over HTTP/2 in F5 NGINX; a public proof of concept exists for CVE-2026-123007.",
   "first_seen": "2026-11-18T21:13:25Z",
   "geo_basis": "agency",
   "impact": "",
@@ -131,20 +131,25 @@
   ],
   "time_basis": "published",
   "title": "CERT-FR: NGINX flaws allow unauthenticated remote code execution over HTTP/2; public PoC exists",
-  "updated_at": "2026-11-22T14:45:01Z",
+  "updated_at": "2026-11-23T22:29:27Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T03:24:00Z",
-    "note": "Compared CERT-FR (primary) with Rapid7 (PoC author): CVE-2026-123007 HTTP/2 flaw, fixes 1.31.9 and 1.30.7, public PoC, no in-the-wild exploitation stated. Rapid7 notes its PoC needs about 128 GB of HTTP/2 data and a specific x86-64 glibc, and gives no HTTP/2-off workaround; that workaround is CERT-FR advice. Not compared: CVE-2026-123633 (only CERT-FR)."
+    "note": "Compared CERT-FR (primary) with Rapid7 (PoC author): CVE-2026-123007 HTTP/2 flaw, fixes 1.31.9 and 1.30.7, public PoC, no in-the-wild exploitation stated. Rapid7 notes its PoC needs about 128 GB of HTTP/2 data and a specific x86-64 glibc, and gives no HTTP/2-off workaround; that workaround is CERT-FR advice. Not compared: CVE-2026-123633 (only CERT-FR). Publishers read: CERT-FR, Rapid7, Palo Alto Networks, nginx.org and Wiz."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-21T15:42:58Z",
+    "state": "corrected",
+    "at": "2026-11-23T22:29:48Z",
     "first_at": "2026-11-19T18:10:01Z",
-    "note": "CERT-FR (date, CVEs, versions, PoC for 123007, HTTP/2 workaround, bulletins), Palo Alto, Rapid7 PoC, nginx.org, KrCERT, Wiz, GBHackers, SecurityWeek agree; no in-the-wild exploitation claimed",
-    "flags": []
+    "note": "Action advice: removed unsourced 'check every server' and 'review for compromise', attributed fixes/workaround to CERT-FR and Palo Alto; exec 'widely used' removed. CVEs, versions, PoC, date match CERT-FR, Rapid7, PAN, nginx.org, Wiz",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-21T15:42:58Z",
+  "qa_checked_at": "2026-11-23T22:29:48Z",
   "links": [
     {
       "to": "xint-linux-sctp-kernel-lpe-unpatched-2026-11",

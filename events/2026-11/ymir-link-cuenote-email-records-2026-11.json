@@ -25,11 +25,13 @@
   "sources": [
     {
       "name": "Ymir Link, third report (2026-11-11)",
-      "url": "https://www.ymir.co.jp/info/ymir-information20261111.html"
+      "url": "https://www.ymir.co.jp/info/ymir-information20261111.html",
+      "published": "2026-11-11"
     },
     {
       "name": "Socket",
-      "url": "https://socket.dev/blog/japan-cyberattack-surge"
+      "url": "https://socket.dev/blog/japan-cyberattack-surge",
+      "published": "2026-11-12"
     },
     {
       "name": "Cybersecurity.com (Japan), on Peach Aviation's 20 November notice",
@@ -44,21 +46,25 @@
     "third-party"
   ],
   "title": "Ymir Link: a total of 47,864,147 records leaked from 49 Cuenote FC systems, company says",
-  "updated_at": "2026-11-22T00:31:44Z",
+  "updated_at": "2026-11-23T22:27:25Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-22T00:31:44Z",
     "note": "Company's own third report (primary) and Socket's summary of it. Company says a final report follows the external forensic report. Peach Aviation's figure from Cybersecurity.com (Japan) only; Peach's own PDF notice did not load (connection dropped)."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T00:27:43Z",
-    "note": "Title, 47.9M records, 49 systems, Oct 19 first disclosure and Nov 11 update against Socket; single_source and aggregator tier are honest",
+    "state": "corrected",
+    "at": "2026-11-23T22:28:38Z",
+    "first_at": "2026-11-19T00:27:43Z",
+    "note": "evidence added for 47,864,147 and 49 systems from Ymir's third report; source published days and date_note added; figures, no-payment-card statement and Peach 8,997,106 match sources",
     "flags": [
-      "single-source-high"
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "date"
     ]
   },
-  "qa_checked_at": "2026-11-19T00:27:43Z",
+  "qa_checked_at": "2026-11-23T22:28:38Z",
   "sectors": {
     "values": [
       "information-technology"
@@ -71,8 +77,17 @@
   },
   "evidence": [
     {
+      "url": "https://www.ymir.co.jp/info/ymir-information20261111.html",
+      "quote": "49システム（専用ASPの一部）"
+    },
+    {
+      "url": "https://www.ymir.co.jp/info/ymir-information20261111.html",
+      "quote": "延べ 47,864,147件"
+    },
+    {
       "url": "https://cybersecurity-jp.com/news/118777",
       "quote": "ピーチ・アビエーションは11月20日、メール配信の委託先ユミルリンクのサービス「Cuenote FC」が不正アクセスを受け、顧客の個人情報899万7,106件が漏えいしたと発表した。"
     }
-  ]
+  ],
+  "date_note": "Ymir Link's third report is dated 11 November; the page gives no earlier day for the breach itself (Socket says the intrusion was first disclosed on 19 October)."
 }

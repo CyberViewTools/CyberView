@@ -1,5 +1,5 @@
 {
-  "action": "Join video calls through the official app with an invite code, keep the webcam off until you verify the host, and never run scripts or paste code to fix audio. Exchanges should block addresses the FBI lists for the Binance laundering.",
+  "action": "The FBI urges exchanges to block the addresses it lists for the Binance laundering. General advice: join video calls through the official app with an invite code, keep the webcam off until you verify the host, and never run scripts or paste code to fix audio.",
   "actor": "TraderTraitor (Binance theft); Sapphire Sleet / UNC1069 / BlueNoroff (FaceStealer)",
   "attack": [
     "T1204 User Execution"
@@ -13,7 +13,6 @@
   "geo_basis": "agency",
   "lat": 38.893,
   "lng": -77.025,
-  "occurred_at": "2026-11-12T16:20:00-05:00",
   "org": "US Department of Justice",
   "pin_type": "agency",
   "place": "Washington, DC",
@@ -21,7 +20,7 @@
   "products": [
     "Binance"
   ],
-  "qa_checked_at": "2026-11-19T03:27:37Z",
+  "qa_checked_at": "2026-11-23T22:28:20Z",
   "report": {
     "doc_id": "26-1356",
     "iocs_available": false,
@@ -32,7 +31,7 @@
       "The FBI seized more than 900 secretly recorded victim webcam videos; open-source maintainers are also targeted, possibly to enable supply-chain attacks.",
       "The Central District of California disrupted cloud-based infrastructure used in the scheme; no domains or servers are named."
     ],
-    "published": "2026-11-12T16:20:00-05:00",
+    "published": "2026-11-12",
     "publisher": "US Department of Justice",
     "publisher_type": "government",
     "read_depth": "full",
@@ -49,7 +48,8 @@
   "sources": [
     {
       "name": "US Department of Justice (press release 26-1356)",
-      "url": "https://www.justice.gov/opa/pr/justice-department-announces-actions-disrupt-north-koreas-massive-theft-cryptocurrency"
+      "url": "https://www.justice.gov/opa/pr/justice-department-announces-actions-disrupt-north-koreas-massive-theft-cryptocurrency",
+      "published": "2026-11-12"
     },
     {
       "name": "US Department of Justice (press release 26-1400)",
@@ -63,15 +63,19 @@
     {
       "name": "Security Affairs",
       "url": "https://securityaffairs.com/203012/cyber-crime/north-korea-crypto-theft-operations-doj-seizes-1-2-billion-and-disrupts-hacker-infrastructure.html"
-    },
-    {
-      "name": "AgentBeam timeline",
-      "url": "https://www.agentbeam.com/blog/november-2026-attacks-timeline"
     }
   ],
   "status": "official",
   "summary": "The Justice Department said courts authorised the seizure or restraint of more than $1.2 billion of over $6 billion in virtual assets taken from Binance on or about October 29, 2026, which the FBI attributes to North Korea's TraderTraitor. On 23 November the department said the US filed a civil claim to forfeit over $1.1 billion of USDC. It also disrupted cloud infrastructure behind FaceStealer.",
   "evidence": [
+    {
+      "url": "https://www.justice.gov/opa/pr/justice-department-announces-actions-disrupt-north-koreas-massive-theft-cryptocurrency",
+      "quote": "the court-authorized seizure and restraint of more than $1.2 billion worth of cryptocurrency recently stolen from Binance"
+    },
+    {
+      "url": "https://www.justice.gov/opa/pr/justice-department-announces-actions-disrupt-north-koreas-massive-theft-cryptocurrency",
+      "quote": "stole more than $6 billion worth of virtual assets from the Binance cryptocurrency exchange"
+    },
     {
       "url": "https://www.justice.gov/opa/pr/united-states-files-action-recover-more-1-billion-cryptocurrency-assets-stolen-north-korean",
       "quote": "the United States filed a civil claim to forfeit over $1.1 billion of USDC, a stablecoin issued by Circle Internet Financial, LLC, that is proceeds and laundered funds from the cryptocurrency theft from Binance."
@@ -81,18 +85,29 @@
     "takedown"
   ],
   "time_basis": "published",
-  "title": "DOJ: seizure or restraint of $1.2 billion from North Korea's Binance theft authorised; FaceStealer disrupted",
-  "updated_at": "2026-11-23T18:43:00Z",
+  "title": "DOJ: seizure or restraint of more than $1.2 billion from North Korea's Binance theft authorised; FaceStealer disrupted",
+  "updated_at": "2026-11-23T22:27:47Z",
   "validation": {
     "checked_at": "2026-11-17T23:15:00Z",
-    "note": "Reviewed against the original US Department of Justice document.",
+    "note": "The US Department of Justice (press releases 26-1356 and 26-1400) and the FBI (FLASH AC-111226-MS) each state the Binance theft and its attribution to TraderTraitor; DOJ states the seizure and restraint and the forfeiture claim. The AgentBeam roundup was removed.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T03:27:37Z",
-    "note": "1.2B, 6B, Oct 29, 2.7B, 400M/18 months, 900 videos, TraderTraitor against DOJ release; actor aliases and scheme steps against FBI FLASH PDF",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:28:20Z",
+    "first_at": "2026-11-19T03:27:37Z",
+    "note": "figure: title now says more than 1.2 billion with evidence; occurred_at removed (DOJ page gives no time of day); AgentBeam roundup removed; action marked FBI vs General advice; date_note and validation note added",
+    "flags": [
+      "corroborated-note",
+      "source-published-partial"
+    ],
+    "categories": [
+      "action",
+      "figure",
+      "date",
+      "occurred_at",
+      "validation"
+    ]
   },
   "links": [
     {
@@ -110,5 +125,6 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "date_note": "DOJ release 26-1356 of 12 November announces the court actions; the page gives no earlier date for them."
 }

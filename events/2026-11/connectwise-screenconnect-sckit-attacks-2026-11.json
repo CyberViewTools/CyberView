@@ -28,7 +28,7 @@
     "CVE-2026-127063"
   ],
   "date": "2026-11-13",
-  "exec": "Hundreds of managed endpoints were hit through a faulty third-party add-on; the feared spread to IT providers' own machines has not been observed.",
+  "exec": "Huntress reports hundreds of managed endpoints hit, apparently via a faulty third-party add-on; it has not seen the feared spread to IT providers' own machines.",
   "first_seen": "2026-11-17T22:50:00Z",
   "geo_basis": "vendor HQ",
   "lat": 27.951,
@@ -42,7 +42,7 @@
     "ConnectWise ScreenConnect",
     "RMM+ extension"
   ],
-  "qa_checked_at": "2026-11-19T18:10:03Z",
+  "qa_checked_at": "2026-11-23T22:28:42Z",
   "report": {
     "doc_id": "SCKit",
     "iocs_available": true,
@@ -80,12 +80,9 @@
       "published": "2026-11-12"
     },
     {
-      "name": "ConnectWise advisories",
-      "url": "https://www.connectwise.com/company/trust/advisories"
-    },
-    {
       "name": "BleepingComputer",
-      "url": "https://bleepingcomputer.com/news/security/new-worm-like-sckit-malware-targets-msps-in-screenconnect-attacks"
+      "url": "https://bleepingcomputer.com/news/security/new-worm-like-sckit-malware-targets-msps-in-screenconnect-attacks",
+      "published": "2026-11-12"
     },
     {
       "name": "Cybersecurity Dive",
@@ -98,9 +95,9 @@
   "tags": [
     "supply-chain"
   ],
-  "time_basis": "occurred",
+  "time_basis": "reported",
   "title": "Huntress: rogue ScreenConnect clients pushed to hundreds of hosts in SCKit attacks; ConnectWise disables extensions",
-  "updated_at": "2026-11-22T20:33:31Z",
+  "updated_at": "2026-11-23T22:27:25Z",
   "validation": {
     "checked_at": "2026-11-22T19:43:01Z",
     "note": "Reviewed against the original Huntress report and BleepingComputer. On 22 November the Rapid7 database entry for CVE-2026-127063 (RMM+ static default API secret, published 12 November) and Cybersecurity Dive's 12 November report quoting ConnectWise were read. ConnectWise's advisories page, read 18 November, had no notice on these attacks.",
@@ -109,9 +106,13 @@
   "date_note": "Two waves, November 11 and November 13; date is the latest wave. Huntress report published November 11.",
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T18:10:03Z",
-    "note": "Compared 288/48 and 205/41 hosts, dates, RMM+ 1.0.31/1.0.32, 26.6.5, no technician jump observed against Huntress and BleepingComputer; 400+ partner environments was about 400 in sources, now about 400",
-    "flags": []
+    "at": "2026-11-23T22:28:42Z",
+    "first_at": "2026-11-19T18:10:03Z",
+    "note": "source not about the event removed (ConnectWise advisories index); exec lost the source hedge (apparently); time_basis occurred to reported; BC published day added; 288/48, 205/41, 16:12 UTC match Huntress",
+    "flags": [],
+    "categories": [
+      "other"
+    ]
   },
   "sectors": {
     "values": [

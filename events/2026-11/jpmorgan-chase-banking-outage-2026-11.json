@@ -1,5 +1,5 @@
 {
-  "action": "Chase customers: check that November 16 transfers and Zelle payments went through once, and watch for phishing using the incident. Defenders: see the linked JPMorgan vendor event.",
+  "action": "General advice: Chase customers can check that November 16 transfers and Zelle payments went through once; Chase said customers still had access to their accounts and funds. See the separate JPMorgan vendor event.",
   "actor": "",
   "attack": [],
   "category": "outage",
@@ -12,44 +12,47 @@
   "impact": "Thousands of customers reported trouble accessing online accounts on November 16 (6abc); no exact count is given by the sources read.",
   "lat": 40.756,
   "lng": -73.975,
-  "occurred_at": "2026-11-16T14:00:00-05:00",
   "org": "JPMorgan Chase",
   "pin_type": "hq",
   "place": "New York, NY",
-  "plain": "Chase customers had trouble with online banking and payments for several hours on November 16. Chase said a software bug caused it. Days later it disclosed a separate attack on its vendors and said it was not connected.",
+  "plain": "Chase customers had trouble with online banking and transactions on November 16. Chase said a software bug caused it. Days later it disclosed a separate attack on its vendors and said it was not connected.",
   "products": [
     "JPMorgan Chase",
     "Zelle"
   ],
   "sector": "Finance / banking",
-  "severity": 3,
+  "severity": 2,
   "source_tier": "established",
   "sources": [
     {
+      "name": "The Next Web (16 Nov)",
+      "url": "https://thenextweb.com/news/chase-software-bug-bank-outages-zelle",
+      "published": "2026-11-16"
+    },
+    {
       "name": "6abc",
-      "url": "https://6abc.com/live-updates/bank-outages-today-live-updates-chase-wells-fargo-america-others-are-reported-down/20045306/entry/20046158/"
+      "url": "https://6abc.com/live-updates/bank-outages-today-live-updates-chase-wells-fargo-america-others-are-reported-down/20045306/entry/20046158/",
+      "published": "2026-11-17"
     },
     {
       "name": "Yahoo News",
-      "url": "https://www.yahoo.com/news/us/articles/fbi-says-chase-outage-tracks-203816053.html"
+      "url": "https://www.yahoo.com/news/us/articles/fbi-says-chase-outage-tracks-203816053.html",
+      "published": "2026-11-17"
     },
     {
       "name": "KTEN",
-      "url": "https://www.kten.com/news/chase-now-blames-cyberattack-for-monday-banking-outage/article_1b81d583-fc22-42fb-ba78-f7e165277be9.html"
-    },
-    {
-      "name": "The Next Web (16 Nov)",
-      "url": "https://thenextweb.com/news/chase-software-bug-bank-outages-zelle"
+      "url": "https://www.kten.com/news/chase-now-blames-cyberattack-for-monday-banking-outage/article_1b81d583-fc22-42fb-ba78-f7e165277be9.html",
+      "published": "2026-11-19"
     }
   ],
+  "date_note": "The Next Web, published 16 November, reports Chase's 16 November post about the disruption that day.",
   "status": "confirmed",
-  "summary": "Chase customers had trouble with online banking, transactions and Zelle payments for hours on November 16. Chase said that day it was a software bug in on-premise hardware, with no evidence it was cyber-related; the FBI told NewsNation it saw no malicious activity. On November 19 Chase said on X that vendors were hit by a cyber attack, with no connection to the disruption; KTEN's headline wrongly links the two.",
+  "summary": "Chase customers had trouble with online banking and transactions on November 16; Zelle said an issue at financial institutions may affect Zelle payments. Chase said it was a software bug in on-premise hardware, with no evidence it was cyber-related; the FBI told NewsNation it saw no signs of malicious activity. On November 19 Chase said vendors were hit by a cyber attack, unconnected to the disruption, despite KTEN's headline.",
   "tags": [
     "critical-infrastructure"
   ],
-  "time_basis": "approx",
   "title": "JPMorgan Chase outage delays payments; Chase said software bug, later vendor breach unconnected",
-  "updated_at": "2026-11-21T04:55:22Z",
+  "updated_at": "2026-11-23T22:30:00Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T03:19:16Z",
@@ -57,11 +60,17 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-20T00:20:21Z",
-    "note": "Compared 6abc, Yahoo/The Hill (FBI via NewsNation) and KTEN: date, Chase software-bug statement, FBI no malicious activity, thousands-of-customers wording and KTEN Nov 19 third-party report match the summary. Title claimed the outage rippled to other banks, which no source states; retitled and dropp",
-    "flags": []
+    "at": "2026-11-23T22:29:56Z",
+    "first_at": "2026-11-20T00:20:21Z",
+    "note": "severity (outage, not attack, thousands of reports: 3 to 2); action advice unsourced (marked General advice); occurred_at 2pm was a Downdetector peak, removed; for-hours and Zelle wording; source published days",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "occurred_at"
+    ]
   },
-  "qa_checked_at": "2026-11-20T00:20:21Z",
+  "qa_checked_at": "2026-11-23T22:29:56Z",
   "sectors": {
     "values": [
       "financial-services"

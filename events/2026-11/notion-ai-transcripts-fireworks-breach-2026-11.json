@@ -13,15 +13,14 @@
   "geo_basis": "victim HQ",
   "pin_type": "victim",
   "actor": "",
-  "summary": "Notion's advisory, first published November 9, says inference provider Fireworks AI notified it on November 6 of an incident exposing Notion AI chat transcripts used for the Insights feature, impacting fewer than 1% of Notion workspaces; Fireworks confirmed the dataset on November 8. Most transcripts were unattributable. Notion disabled Insights and urges affected customers to rotate credentials pasted into Notion AI. BleepingComputer dates Fireworks' breach October 23, SecurityWeek October 24.",
-  "plain": "Hackers who broke into Fireworks AI, a company Notion used, got some Notion AI chats. Notion says fewer than 1% of workspaces were affected and has turned off the feature involved.",
+  "summary": "Notion's advisory, first published November 9, says inference provider Fireworks AI notified it on November 6 of a security incident impacting fewer than 1% of Notion workspaces; Fireworks confirmed the exposed dataset, Notion AI Insights chat transcripts, on November 8. Notion says most were unattributable, disabled Insights and urges affected customers to rotate credentials pasted into Notion AI. SecurityWeek dates the Fireworks incident October 24.",
+  "plain": "Notion says an AI vendor, Fireworks AI, had a security incident that exposed some Notion AI chats. Notion says fewer than 1% of workspaces were affected and has turned off the feature involved.",
   "exec": "An AI vendor breach exposed some customers' Notion AI chats; prompts held by AI providers carry breach risk.",
   "action": "Notion advises affected customers to treat the data as exposed, review it using the emailed instructions, and rotate any passwords, API keys or other credentials pasted into Notion AI; customers not contacted need no action for now, Notion says.",
   "tags": [
     "third-party",
     "supply-chain",
     "data-breach",
-    "ai-enabled",
     "cloud"
   ],
   "cves": [],
@@ -43,17 +42,18 @@
     },
     {
       "name": "SecurityWeek",
-      "url": "https://www.securityweek.com/notion-customer-data-compromised-in-fireworks-ai-hack/"
+      "url": "https://www.securityweek.com/notion-customer-data-compromised-in-fireworks-ai-hack/",
+      "published": "2026-11-12"
     }
   ],
   "source_tier": "primary",
   "validation": {
     "state": "corroborated",
-    "checked_at": "2026-11-22T19:57:09Z",
-    "note": "Notion's own advisory (primary), plus BleepingComputer and SecurityWeek, each state the exposure of Notion AI Insights transcripts. The breach date differs: October 23 (BleepingComputer) and October 24 (SecurityWeek)."
+    "checked_at": "2026-11-23T22:28:20Z",
+    "note": "Notion's own advisory (primary), plus BleepingComputer and SecurityWeek, each state the exposure of Notion AI chat transcripts via Fireworks AI. Only SecurityWeek gives an incident date (October 24); BleepingComputer's October 23 date refers to a cloud-provider access that may be a separate incident."
   },
   "first_seen": "2026-11-18T16:44:25Z",
-  "updated_at": "2026-11-22T19:57:09Z",
+  "updated_at": "2026-11-23T22:28:20Z",
   "links": [
     {
       "to": "fireworks-ai-october-incidents-update-2026-11",
@@ -62,12 +62,17 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:12:45Z",
-    "note": "Compared Oct 24 breach, Nov 2 notice, under 1% of workspaces, Insights transcripts and credential-rotation advice against SecurityWeek (Nov 12)",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-23T22:29:20Z",
+    "first_at": "2026-11-19T05:12:45Z",
+    "note": "date/source: BleepingComputer's Oct 23 refers to a cloud-provider access, not Notion's incident; only SecurityWeek gives Oct 24; plain softened to Notion's wording; removed ai-enabled tag; added SecurityWeek published day",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-19T05:12:45Z",
+  "qa_checked_at": "2026-11-23T22:29:20Z",
   "sectors": {
     "values": [
       "information-technology"
@@ -78,5 +83,5 @@
     "value": "supply-chain",
     "basis": "stated"
   },
-  "date_note": "Day Notion first published its advisory (November 9, 2026). The Fireworks breach itself was in late October: October 23 per BleepingComputer, October 24 per SecurityWeek; Notion's advisory gives no date for it."
+  "date_note": "Day Notion first published its advisory (November 9, 2026), which gives no date for the Fireworks incident; SecurityWeek dates it October 24."
 }

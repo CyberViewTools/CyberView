@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
 
+import { fence } from "./lib/untrusted.mjs";
 const REPO = "xanderhutch/CyberView";
 export const MAX_TEXT = 600, MAX_LINKS = 2, MAX_PER_DAY = 5, MIN_ACCOUNT_DAYS = 3;
 export const KINDS = { comment: "comment", tip: "tip", question: "question" };
@@ -111,10 +112,10 @@ function intake() {
   }
   writeJson(pendingPath, { fetched_at: nowIso(), posts: pend });
   console.log(`chat intake: ${issues.length} open, ${refused.length} refused by the fixed rules, ${pend.length} waiting for the moderator`);
-  for (const p of pend) console.log(`PENDING #${p.issue} by ${p.author} (${p.kind}${p.event_id ? ", about " + p.event_id : ""}): ${JSON.stringify(p.text)}`);
+  for (const p of pend) console.log(`PENDING #${p.issue} by ${p.author} (${p.kind}${p.event_id ? ", about " + p.event_id : ""}): ${fence("community post #" + p.issue, p.text, MAX_TEXT)}`);
   // open reports of published posts, for the moderator
   const reports = gh([`repos/${REPO}/issues?labels=chat-report&state=open&per_page=20`]).filter((i) => !i.pull_request);
-  for (const r of reports) console.log(`REPORT #${r.number}: ${JSON.stringify(cleanText(r.body).slice(0, 400))}`);
+  for (const r of reports) console.log(`REPORT #${r.number}: ${fence("report #" + r.number, cleanText(r.body), 400)}`);
 }
 
 function takePending(n) {
@@ -127,7 +128,7 @@ function takePending(n) {
 function main() {
   const [cmd, num, ...rest] = process.argv.slice(2), n = Number(num), note = cleanText(rest.join(" ")).slice(0, 200);
   if (cmd === "intake") return intake();
-  if (!Number.isInteger(n) || n < 1) { console.error("usage: chat.mjs intake | approve <issue> [note] | reject <issue> <reason> | remove <issue> <reason>"); process.exit(1); }
+  if (!Number.isInteger(n) || n < 1) { console.error("usage: chat.mjs intake | approve <issue> [note] | reject <issue> <reason> | remove <issue> <reason> | resolve-report <issue> <decision>"); process.exit(1); }
   if (cmd === "approve") {
     const p = takePending(n);
     const again = screen(p, {}); if (!again.ok) { console.error(`#${n} fails the fixed rules (${again.reason}); it cannot be approved`); process.exit(1); }
@@ -144,6 +145,14 @@ function main() {
     const f = published().find((p) => p.id === n); if (!f) { console.error(`#${n} is not a published post`); process.exit(1); }
     writeJson(join(chatDir, f.at.slice(0, 7), `${n}.json`), { ...f, removed: true, removed_at: nowIso(), removed_reason: note });
     console.log(`chat: #${n} taken down`);
+  } else if (cmd === "resolve-report") {
+    // answer a chat-report issue without giving the moderator open-ended GitHub access (pen test, 2026-11-23)
+    if (!note) { console.error("a decision is required"); process.exit(1); }
+    const r = gh([`repos/${REPO}/issues/${n}`]);
+    const labels = ((r && r.labels) || []).map((l) => String((l && l.name) || l));
+    if (!r || r.pull_request || r.state !== "open" || !labels.includes("chat-report")) { console.error(`#${n} is not an open chat-report issue`); process.exit(1); }
+    comment(n, `Reviewed: ${note}\n\n_CyberView AI (a Claude model), moderator._`); close(n, "completed");
+    console.log(`chat: report #${n} answered and closed`);
   } else { console.error(`unknown command "${cmd}"`); process.exit(1); }
 }
 

@@ -1,0 +1,19 @@
+name: Report an error in an event
+description: Point out something wrong in an event on CyberView's map (a wrong fact, date, figure or source).
+title: "Error report"
+labels: ["event-report"]
+body:
+  - type: input
+    id: event
+    attributes:
+      label: Event
+      description: The event's title and id (the site fills these in when you use its "Report an error" button).
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong, and what should it say
+      description: Plain text. If you have a source, give the publisher's own https page.
+    validations:
+      required: true

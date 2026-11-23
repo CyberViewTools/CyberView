@@ -1,50 +1,56 @@
 {
- "generated_at": "2026-11-21T11:48:50Z",
- "date": "2026-11-21",
- "headline": "Exploited vCenter and Cisco Expressway flaws are due for patching by 23 November",
- "plain_summary": "Two widely used server products, VMware vCenter and Cisco Expressway, have flaws that are being exploited, and both are on CISA's list with a 23 November deadline. Separately, serious NGINX and PHP flaws have fixes available; no exploitation of the NGINX flaws has been confirmed. A large Japanese customer-data leak at a marketing vendor affects several companies. Anyone running these products should patch.",
+ "generated_at": "2026-11-23T11:49:22Z",
+ "date": "2026-11-23",
+ "headline": "Exploited VMware vCenter and Cisco Expressway flaws reach their CISA deadline today",
+ "plain_summary": "Google says a suspected state-backed group has exploited a flaw in VMware vCenter since September, and a Cisco Expressway flaw was exploited after public proof-of-concept code appeared. CISA's patch deadline for both is 23 November. KEPCO confirmed that personal data of over 1.5 million people leaked, and a Guadeloupe hospital is cancelling care after a cyberattack. Organisations running these products should patch now.",
  "items": [
   {
    "title": "VMware vCenter zero-day CVE-2026-123890 exploited by suspected state actor",
    "why": "Google says ARMORY CASTLE has exploited this authentication bypass since early September; CISA's deadline is 23 November.",
-   "action": "Apply Broadcom's fixed vCenter builds (8.0 U3m, 9.0.2.0200 or 9.1.1.0200) now; vCenter 7.0 has no public patch. Restrict inbound access to and egress from vCenter, following the hardening advice in Google's post.",
+   "action": "Google advises applying Broadcom's patches immediately; fixed builds are 8.0 U3m, 9.0.2.0200 and 9.1.1.0200, and 7.0 has no public patch. Restrict inbound access to and egress from vCenter.",
    "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11"
   },
   {
    "title": "Cisco Expressway flaw CVE-2026-76466 exploited after public PoC",
-   "why": "A critical (CVSS 9.8) unauthenticated root command flaw was used against internet-exposed devices, and CISA lists it with a 23 November deadline.",
-   "action": "If you run clustered Expressway, upgrade to X15.5.20 now (X14 and earlier must move to a fixed release; Cisco says no workaround). If you cannot patch at once, F6 advises blocking TCP 4371-4372 except from trusted cluster node IPs.",
+   "why": "F6 investigated an attack that spread across clustered Expressway nodes; Cisco's advisory still says it knows of no malicious use.",
+   "action": "If you run clustered Expressway, upgrade to X15.5.20 now; Cisco says there is no workaround. If you cannot patch at once, F6 advises blocking TCP 4371-4372 except from trusted cluster node IPs.",
    "event_id": "cisco-expressway-cve-2026-76466-exploited-2026-11"
   },
   {
-   "title": "NGINX flaws allow remote code execution over HTTP/2; public PoC exists",
-   "why": "CERT-FR warns of unauthenticated code execution; Palo Alto Networks says it knows of no malicious exploitation.",
-   "action": "Check every NGINX server that serves HTTP/2. Apply the fixed versions (1.30.7 or 1.31.9) from F5 bulletins K000163926 and K000163928, or disable HTTP/2 until patched.",
-   "event_id": "cert-fr-nginx-http2-rce-2026-11"
+   "title": "CISA adds SAP NetWeaver flaw CVE-2025-42884 to known-exploited list",
+   "why": "CISA lists it based on evidence of active exploitation; SAP fixed it in November 2025 and the deadline is 23 November.",
+   "action": "General advice: confirm SAP NetWeaver Enterprise Portal has the fix SAP released in its November 2025 Patchday.",
+   "event_id": "cisa-kev-sap-netweaver-cve-2025-42884-2026-11"
   },
   {
-   "title": "PHP security releases fix 17 vulnerabilities, several rated critical",
-   "why": "Reports say the critical issues need non-default or uncommon configurations, so default installs are not described as affected.",
-   "action": "Update PHP to 8.2.36, 8.3.37, 8.4.28 or 8.5.13 and check for the non-default configurations the advisories describe.",
-   "event_id": "php-critical-security-release-announced-2026-11"
+   "title": "F5 BIG-IP flaw CVE-2026-126714 has public proof-of-concept code",
+   "why": "HKCERT rates it high risk and says a remote authenticated attacker could run system commands; no exploitation is stated in the event.",
+   "action": "HKCERT advises applying the workarounds issued by F5 in advisory K000164320 for BIG-IP 17.1.0 - 17.1.3, 17.5.0 - 17.5.1 and 21.1.0.",
+   "event_id": "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11"
   },
   {
-   "title": "European Commission confirms AI-generated cyberattack on its applications",
-   "why": "The Commission says a campaign detected 22 October took several applications offline; most are restored and no staff-wide data breach has been detected.",
-   "action": "If you work with EU institutions, expect notices from them and treat unexpected messages claiming to be from Commission staff with care.",
-   "event_id": "european-commission-cyberattack-payroll-2026-11"
+   "title": "Ghostscript sandbox escape CVE-2026-125396 reachable through file uploads",
+   "why": "pwn.ai showed it in about ten common applications; ThaiCERT says a proof of concept is public and reports no confirmed real-world exploitation.",
+   "action": "Update Ghostscript to 10.08.0, and check for separately bundled Ghostscript copies in containers or applications.",
+   "event_id": "ghostscript-dsafer-bypass-upload2shell-2026-11"
   },
   {
-   "title": "ZOZO: about 15.18 million customers' data leaked via PLAID KARTE breach",
-   "why": "ZOZO confirmed the leak at a marketing platform vendor; passwords are not held there and card data is not confirmed leaked.",
-   "action": "ZOZO customers: be wary of phishing emails, texts or calls impersonating ZOZO, and do not open their links or attachments, as ZOZO advises.",
-   "event_id": "zozo-karte-customer-data-leak-2026-11"
+   "title": "KEPCO says data of over 1.5 million people leaked",
+   "why": "KEPCO confirmed the leak from Hanjeon ON and its SRM system; exposed data includes resident registration, bank account and card numbers.",
+   "action": "KEPCO urges caution with calls, texts and emails that impersonate KEPCO, and runs a service where customers can check whether their data leaked.",
+   "event_id": "kepco-hanjeon-on-srm-personal-data-leak-2026-11"
   },
   {
-   "title": "Proximus mobile disruption: software bug, cyberattack ruled out",
-   "why": "Proximus says an update the night before caused call and SMS problems on 20 November and rules out a cyberattack.",
+   "title": "CHU de Guadeloupe hospital hit by cyberattack, care postponed",
+   "why": "Telephone, imaging and software are down and part of the databases was reportedly encrypted; urgent care continues.",
+   "action": "As La 1ère relays, the SAMU head advises calling the emergency medical line before going to the hospital.",
+   "event_id": "chu-guadeloupe-cyberattack-2026-11"
+  },
+  {
+   "title": "Chainflip says attacker drained its vaults and offers a bounty",
+   "why": "Chainflip Labs says funds were taken on 21 November and it has identified the mechanism of key exposure; the protocol is reportedly in safe mode.",
    "action": "No action needed; for awareness.",
-   "event_id": "proximus-mobile-network-disruption-2026-11-20"
+   "event_id": "chainflip-vaults-drained-bounty-offer-2026-11"
   }
  ]
 }

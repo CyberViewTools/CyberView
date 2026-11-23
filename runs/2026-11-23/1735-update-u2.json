@@ -1,0 +1,73 @@
+{
+  "job": "update",
+  "started_at": "2026-11-23T17:25:00Z",
+  "finished_at": "2026-11-23T17:40:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://cyber.gc.ca/en/alerts-advisories/n-able-security-advisory-av26-1191",
+      "title": "N-able security advisory AV26-1191 (MailAssure)",
+      "used_in": "unrelated to AV26-1165 (different product)"
+    },
+    {
+      "url": "https://www.acn.gov.it/portale/w/rilevata-nuova-vulnerabilita-in-gpgme",
+      "title": "CSIRT Italia: GPGME alert",
+      "used_in": "gnupg-gpgme-double-free-cve-2026-129975-2026-11"
+    },
+    {
+      "url": "https://www.analyticsinsight.net/news/laliga-cyber-attack-fan-and-club-data-extracted-from-digital-platform",
+      "title": "Analytics Insight LaLiga",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://www.terra.com.br/esportes/futebol/internacional/laliga-confirma-ataque-cibernetico-e-admite-extracao-de-dados,97f2a6a2edfaa077941310ac197ec843uryaivaj.html",
+      "title": "Terra LaLiga",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://www.flashscore.de/news/fu-ball-la-liga-cyberangriff-auf-laliga-hacker-erbeuten-daten-von-fans-und-klubs/jcRWP6tB/",
+      "title": "Flashscore LaLiga",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://www.goal.com/fr/news/3-jours-avant-de-contenir-la-catastrophe-laliga-victime-d-une-grave-cyberattaque/blt6892b1e29c3967c9",
+      "title": "Goal FR LaLiga",
+      "used_in": "unchanged"
+    }
+  ],
+  "added": [],
+  "updated": [
+    {
+      "id": "gnupg-gpgme-double-free-cve-2026-129975-2026-11",
+      "what": "added CSIRT Italia alert as source: rates critical, lists versions before 2.3.1 as affected (GnuPG says prior to 2.3.0); summary updated"
+    }
+  ],
+  "unchanged": [
+    "laliga-fan-platform-cyberattack-2026-11 (5 pages repeat the press release; no count, no attribution)"
+  ],
+  "unrelated": [
+    "cccs-n-able-n-central-advisory-av26-1165-2026-11: AV26-1191 covers MailAssure"
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "GPGME affected-version discrepancy",
+      "url": "https://dev.gnupg.org/T8427.html",
+      "note": "ACN says before 2.3.1, GnuPG says prior to 2.3.0; vendor bulletin T8427 not read",
+      "priority": "low"
+    },
+    {
+      "title": "larioja.com LaLiga article",
+      "url": "https://www.larioja.com/deportes/futbol/liga-primera/laliga-sufre-ciberataque-afecta-datos-aficionados-20261123121741-ntrc.html",
+      "note": "fetch refused; unreachable",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "larioja.com"
+  ],
+  "notes": "Existing source-published-partial warning on the GPGME event (earlier sources lack published day) left as is.",
+  "worker_role": "updater",
+  "worker_model": "sonnet"
+}

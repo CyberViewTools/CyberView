@@ -1,0 +1,88 @@
+{
+  "id": "wp-connect-plugins-backdoored-releases-held-2026-11",
+  "title": "Wordfence: backdoored releases of six WP connect WordPress plugins were held back by WordPress.org",
+  "category": "incident",
+  "status": "developing",
+  "severity": 2,
+  "date": "2026-11-22",
+  "date_note": "Wordfence says the backdoored releases were committed on 22 November (US Eastern); its post is dated 23 November.",
+  "first_seen": "2026-11-23T17:30:10Z",
+  "updated_at": "2026-11-23T17:30:10Z",
+  "org": "WP connect",
+  "country": "",
+  "place": "",
+  "pin_type": "none",
+  "geo_basis": "no location stated: WordPress plugin developer, location not given by the source",
+  "summary": "According to Wordfence, a threat actor used WP connect's own WordPress.org account to commit backdoored releases of six of its plugins, which together are estimated to have more than 3,600 active installations, on 22 November. Wordfence says WordPress.org's release delay held the versions back, its automated reviewer halted them, and the backdoored versions were never released to sites. The plugins are closed and no patched versions are available, Wordfence says.",
+  "plain": "Someone used a WordPress plugin maker's own account and tried to push hidden backdoors into six plugins, Wordfence says. WordPress.org's release hold stopped the updates before they reached websites.",
+  "exec": "Wordfence says an attacker used a developer's account to try to ship backdoored plugin updates; WordPress.org held them back before they reached sites.",
+  "action": "Wordfence advises anyone with an affected version installed to remove the plugin immediately and run a full malware scan, and to treat any site that ran an affected version as compromised and rotate administrator passwords and secret keys.",
+  "products": [
+    "Air WP Sync 2.9.1 - 2.9.4",
+    "WP Sync for Notion 1.7.4",
+    "Add-on Brevo for Gravity Forms 2.6.3",
+    "Add-On for Contact Form 7 to Airtable 2.5.4",
+    "Add-On for Contact Form 7 to Notion 1.6.4",
+    "Orders Sync to Airtable for WooCommerce 1.0.2"
+  ],
+  "cves": [
+    "CVE-2026-135202"
+  ],
+  "attack": [
+    "T1195.002 Supply Chain Compromise: Compromise Software Supply Chain"
+  ],
+  "tags": [
+    "supply-chain",
+    "wordpress",
+    "backdoor"
+  ],
+  "actor": "",
+  "sources": [
+    {
+      "name": "Wordfence (Chloe Chamberland)",
+      "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+      "published": "2026-11-23"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+      "quote": "together are estimated to have more than 3,600 active installations"
+    }
+  ],
+  "report": {
+    "publisher": "Wordfence",
+    "publisher_type": "vendor",
+    "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+    "published": "2026-11-23T17:12:20Z",
+    "read_depth": "full",
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Backdoored releases of six WP connect plugins were committed with the developer's own WordPress.org account between roughly 4:30 PM and 5:40 PM US Eastern on 22 November; the Plugins Team reports the developer says the account was compromised.",
+      "The backdoor phones home to an attacker-controlled server and executes any PHP code it is sent.",
+      "WordPress.org's release delay held the versions back and its automated reviewer halted them; Wordfence says they were never released to sites.",
+      "The plugins are closed on WordPress.org and no patched versions are available; the release before each backdoored version does not contain the backdoor."
+    ],
+    "recommendations": [
+      "Remove an affected plugin immediately and run a full malware scan.",
+      "Treat any site that ran an affected version as compromised and rotate all administrator passwords and secret keys."
+    ]
+  },
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-23T17:30:10Z",
+    "note": "Wordfence's own post read in full through its RSS feed (the article URL returned an empty body). No WordPress.org or WP connect statement read; the developer's account-compromise statement is relayed by Wordfence from the Plugins Team."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "job": "update-u1",
+  "started_at": "2026-11-23T17:29:24Z",
+  "finished_at": "2026-11-23T17:29:56Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2026-4735",
+      "title": "BSI CERT-Bund WID-SEC-2026-4735 (empty JavaScript shell, no advisory text delivered)",
+      "used_in": "unreachable"
+    },
+    {
+      "url": "https://www.cryptopolitan.com/ar/hacker-kepco-database-for-crypto-breach/",
+      "title": "Cryptopolitan (Arabic): hacker offers 'KEPCO database' for $500 in crypto (published 2026-11-23)",
+      "used_in": "unchanged"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "unchanged": [
+    "kepco-hanjeon-on-srm-personal-data-leak-2026-11"
+  ],
+  "unrelated": [],
+  "unreachable": [
+    "idunno-anticsrf-aspnet-cve-2026-131914-exploited-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "Cryptopolitan: dark-web seller offers alleged 26.53 million KEPCO records for $500",
+      "url": "https://www.cryptopolitan.com/ar/hacker-kepco-database-for-crypto-breach/",
+      "reason": "Unverified seller claim (the article itself says the database is not verified, gives no forum, no source link, and 26.53M vs 26.52M inconsistently); never upgrade or extend a confirmed event on an attacker's post. Its KEPCO facts (650,487 + 869,761, CEO apology, PIPC on-site inspection, extortion email on the 19th) are already in the event from the Korean originals."
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Alleged sale of 26.53 million KEPCO records on the dark web",
+      "url": "https://www.cryptopolitan.com/ar/hacker-kepco-database-for-crypto-breach/",
+      "note": "Add to the KEPCO event only if an established publisher or KEPCO/PIPC addresses the listing; also unsourced in the article: lawmaker Yoon Jae-ok's allegation of leaked facial-recognition records (408 employees) and CCTV logins (14,957 cameras).",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "wid.cert-bund.de (JS-only shell; BSI blocks automated readers per CLAUDE.md known limits)"
+  ],
+  "notes": "updater 1: BSI WID advisory returned HTTP 200 with only the header 'Warn- und Informationsdienst', no advisory body, recorded unreachable (retried by updates.mjs in an hour). No event changed.",
+  "worker_role": "updater-deep",
+  "worker_model": "opus"
+}

@@ -35,6 +35,15 @@ export const RUN_ID = () => process.env.CYBERVIEW_RUN || `run-${nowIso().replace
    The loop that runs holds "flow:leader" in data/leases.json (committed, so every container sees it) and renews it every
    cycle; a standby session starts a loop only when that lease has expired. It is also the loop's heartbeat. */
 export const LEADER_MIN = 20;
+/** Pure: how long to lease the leader slot, and whether the loop is span-bounded. A loop that ends by `end` (the dispatcher
+ *  runs it foreground for a few minutes and the schedules restart it) leases only until `end`: the lease then runs out by
+ *  itself when the loop is over, so the next session finds the slot free with no "handed over" commit, and a loop that died
+ *  is replaced sooner than LEADER_MIN. Past `end`, or with an end further away than LEADER_MIN, the loop is not bounded:
+ *  it leases LEADER_MIN and publishes renewals and the hand-over as before. */
+export function leaderLease(now, end) {
+  const ms = end - now;
+  return ms > 0 && ms < LEADER_MIN * 6e4 ? { minutes: Math.max(ms, 6e4) / 6e4, bounded: true } : { minutes: LEADER_MIN, bounded: false };
+}
 /** Pure: the live leader lease, or null. */
 export function leaderOf(leases, now = Date.now()) { const l = leases && leases["flow:leader"]; return l && Date.parse(l.until) > now ? l : null; }
 /** Which session this is, as the leader lease records it. */

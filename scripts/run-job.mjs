@@ -8,13 +8,13 @@
 // tokens, cost and outcome go to data/usage/<YYYY-MM>.jsonl, which scripts/improve.mjs reads for continuous improvement.
 // If `claude` cannot start a worker at all, it prints HEADLESS UNAVAILABLE and exits 3 so the dispatcher can fall back.
 import { heal } from "./lib/conflicts.mjs";
-import { commitData, pullAll, dataGitDir } from "./lib/repo.mjs";
+import { commitData, pullAll, dataGitDir, dataRel } from "./lib/repo.mjs";
 import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
-import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock } from "./lib/lease.mjs";
+import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock, leaderLease } from "./lib/lease.mjs";
 import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend } from "./lib/usage.mjs";
 import { roleFor, baseRole } from "./lib/routing.mjs";
 import { lastRunOf, gapDryRun, gapEveryMinutes } from "./lib/gates.mjs";
@@ -275,6 +275,13 @@ function publishClaim(kind, ids) {
   const r = commitData("data: leases", ["data/leases.json"]);       // the data branch (or main in the old layout)
   return r.committed && r.pushed ? ids.length : -ids.length;
 }
+/** Several kinds claimed and published in ONE commit (the loop claimed up to four kinds a cycle, one commit each). */
+function publishClaims(list) {
+  const rows = list.filter(([, ids]) => ids && ids.length); if (!rows.length) return 0;
+  for (const [kind, ids] of rows) claim(kind, ids, process.env.CYBERVIEW_RUN || RUN, 45);
+  const r = commitData("data: leases", ["data/leases.json"]), n = rows.reduce((t, [, ids]) => t + ids.length, 0);
+  return r.committed && r.pushed ? n : -n;
+}
 
 // ---------- continuous flow: one long-running loop instead of separate 15-minute runs ----------
 // Each cycle: collect -> plan -> researchers on new stories AND reviewers on events published earlier, in parallel ->
@@ -447,6 +454,9 @@ async function flow() {
   // leader election across sessions: start only if no other loop holds a live lease; publish ours; back off if we lost a race
   const host = hostId(), SINCE = nowIso();
   const publishLeader = (msg) => commitData(msg, ["data/leases.json"]).pushed;
+  // the loop's end is known up front: a span-bounded loop leases the leader slot only until then (lib/lease.mjs leaderLease)
+  const t0 = Date.now(), sweepCron = ((readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).find((r) => r.key === "sweep") || {}).cron;
+  const END = flowDeadline(t0, LIFE, cronMinutes(sweepCron)), took = [];
   pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
   // no loop runs in this container (checked above), so a lease taken by this session belongs to a loop that died: take over
@@ -454,26 +464,31 @@ async function flow() {
   if (other && other.run !== RUN) log(`taking over from ${other.run}: it was started by this session and is no longer running here`);
   let cycle = 0, B = budgetState();
   const stamp = () => { const l = readLeases(); if (l["flow:leader"]) { Object.assign(l["flow:leader"], { host, since: SINCE, cycle, budget: B.level }); writeJson(join(DATA, "leases.json"), l); } };
-  claim("flow", ["leader"], RUN, LEADER_MIN); stamp();
+  // the first lease is always published (a standby session in another container reads it); renewals and the hand-over are
+  // published only when the lease is not span-bounded, or once a bounded loop overruns its end (longPublished)
+  const first = leaderLease(Date.now(), END); let longPublished = !first.bounded;
+  claim("flow", ["leader"], RUN, first.minutes); stamp();
   publishLeader("data: research loop leader " + RUN);
   pullAll(); heal(dataGitDir());
   { const won = leaderOf(readLeases()); if (won && won.run !== RUN) { log(`CyberView sweep: standby, another loop won the lease (${won.run})`); return; } }
   let lastPublish = Date.now();
+  // a cycle that runs past the bounded lease would let a standby start a second loop: at the end, if still running,
+  // publish a full lease (and then hand over by commit too). Normal loops finish before END and clear this.
+  const overrun = setTimeout(() => { if (longPublished) return; longPublished = true; claim("flow", ["leader"], RUN, LEADER_MIN); stamp(); if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); }, Math.max(0, END - Date.now() - 15000)); overrun.unref();
   // every cycle: give way if an older loop holds the lease (the local leases.json follows origin at every commit and
   // heartbeat), else renew ours. Returns the lease we give way to, or null.
   const renew = () => {
     const older = yieldsTo(readLeases(), RUN, SINCE); if (older) return older;
-    claim("flow", ["leader"], RUN, LEADER_MIN); stamp();
-    if (Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); }
+    claim("flow", ["leader"], RUN, longPublished ? LEADER_MIN : leaderLease(Date.now(), END).minutes); stamp();
+    // a bounded lease renews locally (the cycle's own data commit carries leases.json when there was work)
+    if (longPublished && Date.now() - lastPublish > 8 * 6e4) { if (publishLeader("data: research loop heartbeat")) lastPublish = Date.now(); }
     return null;
   };
   // the follow-up and gap clocks start from the ledger, not from zero: the loop restarts every few minutes
   // (flow.foreground_minutes), and a clock kept only in the process made both run at every restart
   const CK = clocks();
-  const t0 = Date.now(); let newsChild = null, handedOver = false, lastGap = CK.lastGap, lastFollow = CK.lastFollow, lastFollowPlan = 0, gapDry = CK.gapDry, idle = 0, idleRun = 0, yielded = null, polled = 0;
+  let newsChild = null, handedOver = false, lastGap = CK.lastGap, lastFollow = CK.lastFollow, lastFollowPlan = 0, gapDry = CK.gapDry, idle = 0, idleRun = 0, yielded = null, polled = 0;
   const total = { workers: 0, cost: 0, cycles: 0, idle: 0, tight: 0, stop: 0 };
-  const sweepCron = ((readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).find((r) => r.key === "sweep") || {}).cron;
-  const END = flowDeadline(t0, LIFE, cronMinutes(sweepCron)), took = [];
   // a cycle starts only when it can end before END (judged by the last few cycles), so the loop is gone when the schedule comes
   const expect = () => Math.max(2 * 6e4, took.length ? took.slice(-3).reduce((s, x) => s + x, 0) / Math.min(3, took.length) : 3 * 6e4);
   log(`flow: ends by ${new Date(END).toISOString().slice(11, 16)} UTC, before the restart schedule (${sweepCron || "none found"}); ${budgetLine(B)}`);
@@ -567,11 +582,9 @@ async function flow() {
     }
     let res = [];
     if (work.length) {
-      if (stories.length) publishClaim("story", stories.map((s) => s.id));
-      const evIds = [...new Set(rb.flat().concat(ub.flat().map((c) => c.id)))];
-      if (evIds.length) publishClaim("event", evIds);
-      if (gb.length) publishClaim("grid", gb.flatMap((b) => b.incidents.map((i) => i.id)));
-      if (ob.length) publishClaim("outage", ob.flatMap((b) => b.items.map((i) => i.id)));
+      // item claims stay published (other containers' desks skip these items), but in one commit, not one per kind
+      publishClaims([["story", stories.map((s) => s.id)], ["event", [...new Set(rb.flat().concat(ub.flat().map((c) => c.id)))]],
+        ["grid", gb.flatMap((b) => b.incidents.map((i) => i.id))], ["outage", ob.flatMap((b) => b.items.map((i) => i.id))]]);
       beat(`working: ${work.length} worker(s)`);
       process.env.CYBERVIEW_REVIEW_PLAN = pf; process.env.CYBERVIEW_UPDATE_PLAN = uf; process.env.CYBERVIEW_GRID_PLAN = gf; process.env.CYBERVIEW_OUTAGE_PLAN = of;
       res = await pool("sweep", work);
@@ -635,7 +648,10 @@ async function flow() {
   }
   // hand over first (lease released and pushed, summary printed, lock removed), so the schedule that comes next can start the
   // next loop at once; only then wait, silently, for a news run still going in the background
-  release(RUN); publishLeader(yielded ? `data: research loop gave way to ${yielded.run}` : "data: research loop handed over");
+  clearTimeout(overrun); release(RUN);
+  if (longPublished || yielded) publishLeader(yielded ? `data: research loop gave way to ${yielded.run}` : "data: research loop handed over");
+  // span-bounded: the published lease runs out at END by itself; drop the local release so a later pull cannot conflict with it
+  else { try { spawnSync("git", ["checkout", "--", dataRel("data/leases.json")], { cwd: dataGitDir(), timeout: 30000 }); } catch {} }
   log(`CyberView sweep: flow ${yielded ? "gave way to an older loop" : "ended"} after ${total.cycles} cycle(s) (${total.idle} idle${total.tight ? `, ${total.tight} tight` : ""}${total.stop ? `, ${total.stop} stopped by usage` : ""}), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
   handedOver = true; stop();
   if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });

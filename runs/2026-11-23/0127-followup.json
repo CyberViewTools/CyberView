@@ -1,0 +1,88 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-23T01:23:51Z",
+  "finished_at": "2026-11-23T01:28:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Mitel MiCollab MISA-2026-0012 CVE-2026-133323",
+    "NCSC New Zealand Artex AI tool advisory",
+    "\"Artex\" Bickerstaffe NCSC hackers AI New Zealand",
+    "Balanz hackeo base de datos comunicado",
+    "Balanz supuesto hackeo clientes datos venta respuesta",
+    "인사혁신처 공무원 징계령 개인정보 유출 감봉 입법예고"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012",
+      "title": "Mitel Product Security Advisory MISA-2026-0012 (MiCollab Multiple Vulnerabilities)",
+      "used_in": "mitel-micollab-awv-critical-flaws-2026-11"
+    },
+    {
+      "url": "https://www.koreancenter.or.kr/news/articleView.html?idxno=1442017",
+      "title": "Yonhap: 정부기관서 개인정보 유출시 기관장도 책임…징계기준도 강화 (19 Nov)",
+      "used_in": "korea-mopm-disciplinary-leak-penalty-2026-11"
+    },
+    {
+      "url": "https://www.lapoliticaonline.com/economia/un-supuesto-hackeo-y-un-arrepentido-sacuden-a-balanz-la-financiera-favorita-de-toto-caputo/",
+      "title": "La Política Online: Un supuesto hackeo y un arrepentido sacuden a Balanz (21 Nov)",
+      "used_in": "balanz-alleged-client-database-sale-claim-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.ncsc.govt.nz/news/",
+      "title": "NCSC NZ news listing (newest item 4 November 2026; no Artex item)",
+      "used_in": "nz-ncsc-warns-ai-tool-artex-attacks-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.1news.co.nz/2026/11/22/nz-businesses-warned-as-hackers-use-ai-for-cyber-attacks/",
+      "title": "1News: NZ businesses warned as hackers use AI for cyber attacks",
+      "used_in": "nz-ncsc-warns-ai-tool-artex-attacks-2026-11 (unchanged)"
+    },
+    {
+      "url": "https://www.iproup.com/economia-digital/70660-falso-mail-de-balanz-busca-robar-datos-la-advertencia-oficial",
+      "title": "iProUP: Falso mail de Balanz busca robar datos (body not extracted, undated)",
+      "used_in": "not used"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "mitel-micollab-awv-critical-flaws-2026-11",
+    "korea-mopm-disciplinary-leak-penalty-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "balanz-alleged-client-database-sale-claim-2026-11",
+      "url": "https://www.lapoliticaonline.com/economia/un-supuesto-hackeo-y-un-arrepentido-sacuden-a-balanz-la-financiera-favorita-de-toto-caputo/"
+    },
+    {
+      "id": "nz-ncsc-warns-ai-tool-artex-attacks-2026-11",
+      "url": "https://www.1news.co.nz/2026/11/22/nz-businesses-warned-as-hackers-use-ai-for-cyber-attacks/"
+    }
+  ],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Balanz alleged client database sale: no Balanz statement found",
+      "url": "https://www.lapoliticaonline.com/economia/un-supuesto-hackeo-y-un-arrepentido-sacuden-a-balanz-la-financiera-favorita-de-toto-caputo/",
+      "note": "Re-read 21 Nov LPO article: no update note, still 'no hubo una respuesta oficial conocida'; it also notes Balanz states over 1.5 million clients, fewer than the 2.55 million records claimed. Two searches found no Balanz or CNV statement. Stays claimed, severity 1.",
+      "priority": "low"
+    },
+    {
+      "title": "NZ NCSC Artex warning: no NCSC publication yet",
+      "url": "https://www.ncsc.govt.nz/news/",
+      "note": "NCSC news listing's newest item is 4 November; no Artex advisory. Re-check for an NCSC page to replace the 1News relay.",
+      "priority": "low"
+    },
+    {
+      "title": "Mitel MiCollab AWV flaws: CVE IDs not yet in Mitel's advisory",
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012",
+      "note": "Revision 1.0 (16 Nov) says a CVE was requested but not assigned; ACN gives CVE-2026-133303/133323. Re-check for a revision listing CVEs or reporting exploitation.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "www.iproup.com (page body not extracted by the reader)"
+  ],
+  "notes": "Candidates: almost every developing, claimed and severity 3 event of the last 10 days was updated or follow-up-checked in the last 24 h; picked the remaining best four (severity 2 single-source official Mitel and NZ NCSC records, developing Korean policy record, claimed Balanz, a large Argentine broker). Mitel: vendor advisory read and cited first; date moved from 17 to 16 November (advisory first issue date), correction 2026-11-23-mitel-micollab-misa-2026-0012.json; validation corroborated (Mitel + ACN). Korea MoPM: Yonhap copy (19 Nov) added as second independent source; corroborated. Balanz and NZ Artex unchanged. Stopped at four: no fifth candidate met the step-1 filters with a likely follow-up.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

@@ -6,14 +6,14 @@
   "impact": "",
   "tags": [],
   "first_seen": "2026-11-20T10:58:30Z",
-  "updated_at": "2026-11-20T15:26:06Z",
+  "updated_at": "2026-11-23T01:27:25Z",
   "category": "vuln",
   "pin_type": "agency",
   "status": "official",
   "time_basis": "published",
-  "date": "2026-11-17",
-  "date_note": "Date of the ACN alert; updated 20 November to add two CVEs.",
-  "title": "Italy's CSIRT: Mitel MiCollab updates fix 5 flaws, two rated critical",
+  "date": "2026-11-16",
+  "date_note": "Date of Mitel advisory MISA-2026-0012 (first issued 16 November 2026); Italy's CSIRT (ACN) relayed it on 17 November and added two CVEs on 20 November.",
+  "title": "Mitel fixes 5 MiCollab AWV flaws, two critical; Italy's CSIRT relays the advisory",
   "org": "Mitel",
   "sector": "Technology / telecommunications",
   "country": "Italy",
@@ -34,14 +34,20 @@
     "Mitel MiCollab",
     "MiCollab Audio, Web and Video Conferencing (AWV)"
   ],
-  "summary": "Italy's national CSIRT (ACN) says Mitel security updates fix 5 vulnerabilities in MiCollab, two of them critical. It lists an XML injection (CVE-2026-133303, CVSS v3.1 9) and a command injection (CVE-2026-133323, CVSS v3.1 10), both by an unauthenticated remote attacker. Affected: MiCollab 10.3.0.18 without the patch in KB000129195, and earlier. The alert marks exploitation and public exploit code as '-' for both critical flaws.",
-  "plain": "Mitel fixed five flaws in its MiCollab conferencing software, two of them critical. Italy's CSIRT lists a maximum-score one that an unauthenticated remote attacker could use.",
-  "exec": "Two critical MiCollab flaws could be used by unauthenticated remote attackers; Italy's CSIRT lists no exploitation.",
-  "action": "Apply the patch in Mitel KB000129195 (advisory MISA-2026-0012) to MiCollab 10.3.0.18 and earlier.",
+  "summary": "Mitel advisory MISA-2026-0012 (16 November) fixes 5 flaws in the AWV component of MiCollab release 10.3 (10.3.0.18) and earlier, two critical: a blind command injection (CVSS 10.0) and an XML injection (CVSS 9.0). Mitel says a CVE was requested but not yet assigned; Italy's CSIRT (ACN) lists CVE-2026-133323 and CVE-2026-133303 for them, says both are usable by an unauthenticated remote attacker, and marks exploitation as '-'.",
+  "plain": "Mitel fixed five flaws in its MiCollab conferencing software, two of them critical. Italy's CSIRT says both critical ones can be used by a remote attacker without logging in.",
+  "exec": "Two critical MiCollab flaws could be used by unauthenticated remote attackers, per Italy's CSIRT, which lists no exploitation.",
+  "action": "Mitel advises applying its patch for MiCollab release 10.3 (10.3.0.18) per KB000129195 or upgrading to a later release; if that cannot be done promptly, restrict external access to the AWV component.",
   "sources": [
     {
+      "name": "Mitel Product Security Advisory MISA-2026-0012",
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012",
+      "published": "2026-11-16"
+    },
+    {
       "name": "CSIRT Italy (ACN)",
-      "url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel"
+      "url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel",
+      "published": "2026-11-17"
     }
   ],
   "report": {
@@ -57,14 +63,15 @@
     "publisher_type": "government",
     "read_depth": "full",
     "recommendations": [
-      "Apply the patch in KB000129195 per advisory MISA-2026-0012."
+      "Apply the patch for MiCollab 10.3 (10.3.0.18) per KB000129195, or upgrade to a later release.",
+      "If not possible promptly, restrict external access to the AWV component."
     ],
     "url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel"
   },
   "validation": {
-    "checked_at": "2026-11-20T10:58:30Z",
-    "state": "single_source",
-    "note": "Read the ACN alert only; Mitel's own advisory MISA-2026-0012 was not read."
+    "checked_at": "2026-11-23T01:27:25Z",
+    "state": "corroborated",
+    "note": "Mitel advisory MISA-2026-0012 (vendor original, revision 1.0 of 16 November) read in full, and the Italy CSIRT (ACN) alert: both give five MiCollab AWV flaws, two critical (CVSS 10.0 and 9.0), in 10.3 (10.3.0.18) and earlier, patch per KB000129195. Mitel lists no CVE IDs (requested, not assigned) and says nothing on exploitation; the CVE IDs, the unauthenticated wording and the exploitation mark come from ACN only."
   },
   "review": {
     "state": "passed",
@@ -120,5 +127,15 @@
   "surface": {
     "value": "edge-appliance",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012",
+      "quote": "A CVE identifier has been requested but is not yet assigned."
+    },
+    {
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012",
+      "quote": "Mitel provided a patch available for release 10.3 (10.3.0.18) that addresses these vulnerabilities."
+    }
+  ]
 }

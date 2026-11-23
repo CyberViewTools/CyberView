@@ -1,0 +1,20 @@
+{
+  "job": "security-review",
+  "started_at": "2026-11-23T08:05:46Z",
+  "finished_at": "2026-11-23T08:07:40Z",
+  "model": "claude-opus-5-5",
+  "searches": [],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "Week's git diff (git log -p)", "url": "", "reason": "git is denied to workers; reviewed the current tree of .github/workflows, the issue-fed scripts (x-leads, chat), run-job worker environment, site/sw.js and community.js instead"},
+    {"title": "Events citing plain-http sources (huatacondo-solar-bess-cyberattack-offline-2026-11, kpmg-canada-cyber-incident-client-tax-documents-2026-11)", "url": "", "reason": "hygiene only, not a security risk (no script or data URL, page renders links as text with rel=noopener); https variant could not be fetched from this worker, so the URL was not changed"}
+  ],
+  "open_leads": [
+    {"title": "SECURITY (needs a code change, build lane): worker process environment in scripts/run-job.mjs workerEnv", "url": "", "note": "Defence in depth: review which environment variables every spawned worker inherits. Details withheld from public data until fixed. Workers may not push code or open issues (gh denied), so this needs a GitHub issue labelled security and a PR.", "priority": "high"},
+    {"title": "SECURITY (needs a code change, build lane): X-leads issue intake in scripts/x-leads.mjs (fetchIssueBodies / cleanXLead)", "url": "", "note": "Defence in depth: review who an ingested handoff issue may come from and which handoff fields are trusted. Low risk today (labels need triage rights). Details withheld until fixed. Needs a GitHub issue labelled security and a PR.", "priority": "medium"}
+  ],
+  "failed_sites": [],
+  "notes": "Step 1: security-check.mjs passed (17 pages, CSP, sinks, vendored hashes, 555 files secret-scanned, 583 events checked for markup). Workflows: no pull_request_target; build.yml on pull_request is contents: read; no issue/comment-triggered workflows; untrusted workflow_run fields reach shell only via env vars. Service worker: same-origin GET only, 200 basic responses. Step 2: community path intact — chat.mjs screen() enforces https links, approve writes reviewed_at, community.js drops posts without reviewed_at, renders text via textContent with https-only safeUrl and rel=nofollow ugc noopener noreferrer. Step 3: scanned all 583 events of the last 7 days and 2,522 leads (last 3 lead files) for prompt-injection phrases, script/data URLs, tracking parameters and shortener/redirect hosts: no injection (2 hits were benign 'do not mention' in report notes), no tracking or redirect URLs, 2 plain-http sources (skipped above). No corrections needed. Step 4: two hardening items need code changes; workers cannot push code or open issues, so they are listed in open_leads with the area only for the dispatcher/build lane to file. monitor.mjs: live site degraded only by late brief/triage desk (not security)."
+}

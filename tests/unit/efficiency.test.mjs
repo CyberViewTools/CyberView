@@ -237,3 +237,45 @@ test("report: carries the flow and source blocks, and a broken input leaves a no
   const bad = report({ ...inp, feedList: 42 }, { now: NOW, days: 7, clusterFn: noCluster });
   assert.match(bad.flow.error, /could not be worked out/);
 });
+
+test("feeds: a feed's first day is left out of the waste ranking, kept in the totals", () => {
+  const mk = (n, day, host) => Array.from({ length: n }, (_, i) => ({ url: `https://${host}/${day}/${i}`, source: host, seen_at: `${day}T10:00:00Z` }));
+  // msrc: 114 of 129 on 11-19 (its first day), 15 since; zdi: 28 of 31 on 11-18, 3 since; noisy: steady
+  const leads = [...mk(114, "2026-11-19", "msrc.microsoft.com"), ...mk(15, "2026-11-20", "msrc.microsoft.com"), ...mk(28, "2026-11-18", "zerodayinitiative.com"), ...mk(3, "2026-11-20", "zerodayinitiative.com"),
+    ...mk(20, "2026-11-19", "noisy.example"), ...mk(20, "2026-11-20", "noisy.example"), ...mk(20, "2026-11-21", "noisy.example"), ...mk(9, "2026-11-19", "quiet.example")];
+  const by = Object.fromEntries(feedReport(leads, new Map(), new Set(), {}, NOW).map((r) => [r.name, r]));
+  assert.equal(by["rss:msrc.microsoft.com"].leads, 129); assert.equal(by["rss:msrc.microsoft.com"].leads_after_first_day, 15);
+  assert.equal(by["rss:zerodayinitiative.com"].leads, 31); assert.equal(by["rss:zerodayinitiative.com"].leads_after_first_day, 3);
+  assert.equal(by["rss:noisy.example"].leads_after_first_day, 40); assert.equal(by["rss:quiet.example"].leads_after_first_day, 0);
+  assert.equal(by["rss:msrc.microsoft.com"].first_day, "2026-11-19");
+  // the ranking sorts on leads after day one: noisy first, msrc ahead of zdi, quiet (nothing since day one) not ranked at all
+  const rank = Object.values(by).filter((f) => f.verdict !== "useful" && f.leads_after_first_day > 0).sort((a, b) => b.leads_after_first_day - a.leads_after_first_day).map((f) => f.name);
+  assert.deepEqual(rank, ["rss:noisy.example", "rss:msrc.microsoft.com", "rss:zerodayinitiative.com"]);
+});
+
+test("routines: a script routine with no run log counts a heartbeat advance as a run", () => {
+  const reg = [{ key: "gdelt-gkg", name: "GDELT", tier: "automation", status_key: "last_gdelt_at" }, { key: "psirt", name: "PSIRT", tier: "automation", status_key: "last_psirt_at" }, { key: "old", name: "Old", tier: "automation", status_key: "last_old_at" }, { key: "none", name: "None", tier: "automation", status_key: "last_none_at" }];
+  const rows = Object.fromEntries(routineReport(reg, [], [], [], { last_gdelt_at: h(1), last_psirt_at: h(20), last_old_at: h(24 * 30) }, NOW - 7 * 864e5, NOW).map((r) => [r.key, r]));
+  assert.equal(rows["gdelt-gkg"].runs, 1); assert.equal(rows["gdelt-gkg"].runs_basis, "heartbeat"); assert.equal(rows.psirt.runs, 1);
+  // a heartbeat from before the window, or none at all, is still "never ran" in this window
+  assert.equal(rows.old.runs, 0); assert.equal(rows.none.runs, 0);
+});
+
+test("routines: scams is a document routine, its idle share is not measured", () => {
+  const reg = [{ key: "scams", name: "Scams", tier: "automation", status_key: "last_scams_at" }];
+  const logs = Array.from({ length: 23 }, (_, i) => ({ at: h(i + 1), job: "scams", out: logOutput({ items: Array(52).fill({}), leads: [] }) }));
+  const row = routineReport(reg, [], logs, [], {}, NOW - 7 * 864e5, NOW)[0];
+  assert.equal(row.runs, 23); assert.equal(row.idle, 23); assert.equal(row.idle_pct, null);
+});
+
+test("closed is reported per unit: stories and leads are never added", () => {
+  const reg = [{ key: "backlog", name: "B", tier: "ai" }, { key: "sweep", name: "S", tier: "ai" }, { key: "lead-triage", name: "LT", tier: "automation" }];
+  const sk = (n) => Array.from({ length: n }, (_, i) => ({ url: "u" + i }));
+  const logs = [{ at: h(1), job: "backlog-b1", model: "m", out: logOutput({ skipped: sk(1955) }) }, { at: h(2), job: "sweep-r1", model: "m", out: logOutput({ skipped: sk(2680) }) }, { at: h(3), job: "backlog-auto", model: null, out: logOutput({ skipped: sk(113073) }) }];
+  const rows = Object.fromEntries(routineReport(reg, [], logs, [], {}, NOW - 7 * 864e5, NOW).map((r) => [r.key, r]));
+  assert.deepEqual([rows.backlog.closed_stories, rows.backlog.closed_leads, rows.backlog.closed_unit], [1955, 0, "stories"]);
+  assert.deepEqual([rows.sweep.closed_stories, rows.sweep.closed_leads], [2680, 0]);
+  assert.deepEqual([rows["lead-triage"].closed_stories, rows["lead-triage"].closed_leads, rows["lead-triage"].closed_unit], [0, 113073, "leads"]);
+  const rep = report({ usage: [], leads: [], logs, jobruns: [], closures: [], byRule: new Set(), events: [], registry: reg, status: {}, osint: {} }, { now: NOW, days: 7, speed: null });
+  assert.deepEqual(rep.totals.closed, { stories: 4635, leads: 113073 });
+});

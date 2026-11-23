@@ -18,12 +18,15 @@ import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
 import { regionOf, storyCredit, closureOutcome, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
-import { errorReport, writersFrom } from "./review.mjs";
+import { errorReport, writersFrom, firstRunLogAt } from "./review.mjs";
 import { sectorsOf, SECTOR } from "./lib/taxonomy.mjs";
 import { fallbackSpend, fallbackConfig, budgetConfig } from "./lib/usage.mjs";
 
-// routines whose work is a document or a check, not a list in a run log: their idle share is not measured
-export const DOC_ROUTINES = new Set(["brief", "analysis", "tabletop", "improver", "watchdog", "guardian", "editor", "security-review", "monitor", "link-check", "security-check", "exploit-watch"]);
+// routines whose work is a document or a check, not a list in a run log: their idle share is not measured.
+// scams is here because its output is the page of warnings (data/scams/warnings.json), not run-log lists: it files a lead
+// only on an incident match, so "leads: 0" in its logs is normal and must not read as an idle routine
+
+export const DOC_ROUTINES = new Set(["brief", "analysis", "tabletop", "improver", "watchdog", "guardian", "editor", "security-review", "monitor", "link-check", "security-check", "exploit-watch", "scams"]);
 export const TARGETS = { speed_p90_min: 15, corrected_pct: 10, idle_days: 14 };
 const DAY = 864e5;
 const iso = (t) => new Date(t).toISOString().replace(/\.\d+Z$/, "Z");
@@ -52,6 +55,9 @@ export function routineOf(job, keys, model) {
 }
 
 /** Pure: what one run log produced. Lists only; a field missing is zero. */
+// what a routine's "closed" counts: lead-triage closes leads (one by one, by rule); every other routine closes fuse stories
+export const CLOSED_UNIT = { "lead-triage": "leads" };
+export const closedUnit = (key) => CLOSED_UNIT[key] || "stories";
 export function logOutput(r) {
   const n = (k) => (Array.isArray(r && r[k]) ? r[k].length : 0);
   const out = { added: n("added") + n("kev_added") + n("opened"), updated: n("updated") + n("events_updated") + n("closed") + n("rerated"), reviewed: n("reviewed"), closed: n("skipped") };
@@ -63,7 +69,7 @@ export function logOutput(r) {
  *  registry: routines.json's routines; usage: data/usage lines; logs: [{at, job, model, out}] (run logs, out = logOutput);
  *  jobruns: [{job, started_at, finished_at, workers, cost}]; status: data/status.json; since/now: ms. */
 export function routineReport(registry, usage, logs, jobruns, status, since, now = Date.now(), leads = []) {
-  const keys = new Set(registry.map((r) => r.key)), rows = new Map();
+  const keys = new Set(registry.map((r) => r.key)), rows = new Map(), hbKey = new Map(registry.filter((r) => r.status_key).map((r) => [r.key, r.status_key]));
   for (const r of registry) rows.set(r.key, { key: r.key, name: String(r.name || r.key), tier: r.tier === "ai" ? "ai" : "automation", model: r.model || null, active: r.active !== false, retired: r.active === false && !!r.retired, merged_into: r.active === false && r.retired && typeof r.merged_into === "string" ? r.merged_into.slice(0, 40) : null,
     runs: 0, idle: 0, idle_tokens: 0, worker_runs: 0, logs: 0, idle_logs: 0, tokens: 0, cost: 0, usage_lines: 0, failures: 0, added: 0, updated: 0, reviewed: 0, closed: 0, last_run: (r.status_key && status[r.status_key]) || null, last_useful: null });
   const row = (k) => rows.get(k) || rows.get("other") || rows.set("other", { key: "other", name: "Not in routines.json", tier: "ai", model: null, active: true, runs: 0, idle: 0, idle_tokens: 0, worker_runs: 0, logs: 0, idle_logs: 0, tokens: 0, cost: 0, usage_lines: 0, failures: 0, added: 0, updated: 0, reviewed: 0, closed: 0, last_run: null, last_useful: null }).get("other");
@@ -104,17 +110,21 @@ export function routineReport(registry, usage, logs, jobruns, status, since, now
   }
   // routines with no run record of their own (subagent jobs, scripts): a run is a run log
   for (const r of rows.values()) if (!counted.has(r.key)) { r.runs = r.logs; r.idle = r.idle_logs; }
+  // a script routine writes no run log and no job record: an advance of its heartbeat inside the window is one run
+  // (a lower bound, status.json keeps only the latest advance), so "0 runs" means it never ran
+  for (const r of rows.values()) if (!counted.has(r.key) && !r.logs && !r.runs && hbKey.has(r.key) && inWin(status[hbKey.get(r.key)])) { r.runs = 1; r.runs_basis = "heartbeat"; }
   // the collectors write no run log: their output is the leads they filed (runs stay unknown)
   const filed = { collect: (l) => (l.via || "rss") === "rss", osint: (l) => !["rss", "cvelist"].includes(l.via || "rss"), cve: (l) => l.via === "cvelist" };
   for (const [k, f] of Object.entries(filed)) if (rows.has(k)) { const r = rows.get(k), mine = leads.filter((l) => Date.parse(l.seen_at) >= since && f(l)); r.filed = mine.length; r.added += mine.length; if (mine.length) { r.last_useful = mine.map((l) => l.seen_at).sort().pop(); if (!r.logs) r.runs = null; } }
   const workers = new Map(); for (const j of jobruns) if (inWin(j.started_at)) { const k = keys.has(j.job) ? j.job : routineOf(j.job, keys, undefined); workers.set(k, (workers.get(k) || 0) + num(j.workers)); }
   return [...rows.values()].map((r) => {
+    r.closed_unit = closedUnit(r.key);
     // a headless job that started no worker used nothing: that is logged, not unknown
     const usage = r.tier !== "ai" ? "none (script)" : r.usage_lines ? (r.logs > r.usage_lines && !counted.has(r.key) ? "partly logged" : "logged") : counted.has(r.key) && !workers.get(r.key) ? "logged" : r.runs || r.last_run ? "not logged" : "no runs";
     if (usage === "logged" && !r.usage_lines) r.usage_lines = -1;
     const logged = r.usage_lines !== 0; if (r.usage_lines < 0) r.usage_lines = 0;
     return { ...r, tokens: logged ? r.tokens : null, cost: logged ? Math.round(r.cost * 100) / 100 : null, usage,
-      idle_pct: r.runs && !DOC_ROUTINES.has(r.key) ? Math.round((r.idle / r.runs) * 100) : null, idle_tokens: logged && !DOC_ROUTINES.has(r.key) ? r.idle_tokens : null, output: r.added + r.updated + r.reviewed + r.closed,
+      idle_pct: r.runs && !DOC_ROUTINES.has(r.key) ? Math.round((r.idle / r.runs) * 100) : null, idle_tokens: logged && !DOC_ROUTINES.has(r.key) ? r.idle_tokens : null, output: r.added + r.updated + r.reviewed + r.closed, closed_stories: r.closed_unit === "stories" ? r.closed : 0, closed_leads: r.closed_unit === "leads" ? r.closed : 0,
       tokens_per_output: logged && r.tokens && r.added + r.updated + r.reviewed ? Math.round(r.tokens / (r.added + r.updated + r.reviewed)) : null };
   }).sort((a, b) => num(b.tokens) - num(a.tokens) || b.runs - a.runs);
 }
@@ -136,6 +146,9 @@ export function feedReport(leads, used, byRule, osint = {}, now = Date.now()) {
     const k = feedOf(l);
     const r = rows.get(k) || rows.set(k, { name: k, via: String(l.via || "rss"), sources: [], leads: 0, used: 0, by_rule: 0, last_lead: null, last_useful: null, ok: true, error: "" }).get(k);
     r.leads++;
+    // a feed's first collection dumps its whole backlog into one day: that day is kept in the totals, never in the ranking
+    const day = String(l.seen_at || "").slice(0, 10); if (day && (!r.first_day || day < r.first_day)) r.first_day = day;
+    (r.days ||= new Map()).set(day, (r.days.get(day) || 0) + 1);
     if (l.source && r.sources.length < 3 && !r.sources.includes(String(l.source))) r.sources.push(String(l.source));
     if (!r.last_lead || l.seen_at > r.last_lead) r.last_lead = l.seen_at;
     if (used.has(l.url)) { r.used++; if (!r.last_useful || l.seen_at > r.last_useful) r.last_useful = l.seen_at; }
@@ -149,7 +162,7 @@ export function feedReport(leads, used, byRule, osint = {}, now = Date.now()) {
     if (r.via === "rss" && r.sources.some((s) => feedsByName[s] && feedsByName[s].ok === false)) { r.ok = false; r.error = String(feedsByName[r.sources.find((s) => feedsByName[s] && feedsByName[s].ok === false)].error || "").slice(0, 120); }
   }
   for (const [name, v] of Object.entries(coll)) if (!rows.has(name)) rows.set(name, { name, via: name, sources: [], leads: 0, used: 0, by_rule: 0, last_lead: null, last_useful: null, ok: !!(v && v.ok), error: String((v && v.error) || "").slice(0, 120) });
-  return [...rows.values()].map((r) => ({ ...r, yield: r.leads ? Math.round((r.used / r.leads) * 1000) / 10 : null,
+  return [...rows.values()].map(({ days, ...r }) => ({ ...r, first_day: r.first_day || null, leads_after_first_day: days ? r.leads - (days.get(r.first_day) || 0) : 0, yield: r.leads ? Math.round((r.used / r.leads) * 1000) / 10 : null,
     days_since_useful: r.last_useful ? days1(now - Date.parse(r.last_useful)) : null,
     verdict: r.used ? "useful" : r.leads >= 15 ? "noise" : r.leads ? "nothing used yet" : "silent" }))
     .sort((a, b) => b.leads - a.leads || a.name.localeCompare(b.name));
@@ -430,7 +443,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
       const r = readJson(join(rd, d, f), null); if (!r || typeof r !== "object") continue;
       const at = /^\d{4}-\d{2}-\d{2}T/.test(String(r.finished_at || "")) ? r.finished_at : `${d}T${m[1]}:${m[2]}:00Z`;
       logs.push({ at, start: String(r.started_at || ""), file: `${d}T${m[1]}:${m[2]}:00Z`, job: m[3], model: r.model === undefined ? undefined : r.model, out: logOutput(r) });
-      if (Array.isArray(r.added) || Array.isArray(r.updated)) writerLogs.push({ at, job: m[3], model: r.model, worker_role: r.worker_role, worker_model: r.worker_model, added: r.added, updated: r.updated });
+      if (Array.isArray(r.added) || Array.isArray(r.updated) || Array.isArray(r.events_updated)) writerLogs.push({ at, job: m[3], model: r.model, worker_role: r.worker_role, worker_model: r.worker_model, added: r.added, updated: r.updated, events_updated: r.events_updated });
       // fuse's stories closed by a rule or a triager, logged as "story <id>: <why>": their grouping is fuse's own
       const rule = m[3] === "backlog-auto" || (m[3] === "triage" && r.model === null), groups = new Map();
       for (const s of Array.isArray(r.skipped) ? r.skipped : []) {
@@ -442,6 +455,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
       closures.push(...groups.values());
     }
   }
+  writerLogs.logStart = firstRunLogAt();
   const events = listEventFiles().map((f) => f.e).filter(Boolean);
   const registry = (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r && r.key);
   return { usage, leads, logs, writerLogs, jobruns, closures, byRule, events, registry, status: readJson(join(DATA, "status.json"), {}) || {}, osint: readJson(join(DATA, "osint.json"), {}) || {}, gridAudit: readJson(join(DATA, "grid", "audit.json"), null), leases: readJson(join(DATA, "leases.json"), {}) || {},
@@ -476,7 +490,7 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
   const leadByUrl = new Map(); for (const l of inp.leads) if (!leadByUrl.has(l.url)) leadByUrl.set(l.url, l);
   const acc = accuracy(inp.events, now, days);
   // what the second review corrects, by type and by who wrote the event (role and model), for the improver and the owner
-  try { const er = errorReport(inp.events, writersFrom(inp.writerLogs || []), now, days); acc.errors = { types: er.types.map((t) => ({ key: t.key, label: t.label, n: t.n, pct_of_corrected: t.pct_of_corrected })), by_writer: er.by_writer.slice(0, 12).map((b) => ({ role: b.role, model: b.model, reviewed: b.reviewed, corrected: b.corrected, corrected_pct: b.corrected_pct, types: b.types })) }; }
+  try { const er = errorReport(inp.events, writersFrom(inp.writerLogs || []), now, days); acc.errors = { pre_logging: er.pre_logging, types: er.types.map((t) => ({ key: t.key, label: t.label, n: t.n, pct_of_corrected: t.pct_of_corrected })), by_writer: er.by_writer.slice(0, 12).map((b) => ({ role: b.role, model: b.model, reviewed: b.reviewed, corrected: b.corrected, corrected_pct: b.corrected_pct, types: b.types })) }; }
   catch (err) { acc.errors = { error: "The correction types could not be worked out: " + String((err && err.message) || err).slice(0, 160) }; }
   const win = windows || { source: "data/usage", estimate: true, five_hour: sumWindow(inp.usage, now, 5), week: sumWindow(inp.usage, now, 168), budget: null };
   const allLeadDays = spanDays(inp.leads.map((l) => l.seen_at), 3650, now);
@@ -486,6 +500,7 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
     at: iso(now), days, covered,
     note: `Windows are ${days} days but hold only the data that exists: leads ${covered.leads} days, worker usage ${covered.usage} days, run logs ${covered.runs} days.`,
     totals: { leads: leadsWin.length, leads_used: leadsWin.filter((l) => used.has(l.url)).length, leads_by_rule: leadsWin.filter((l) => !used.has(l.url) && inp.byRule.has(l.url)).length, events: ev7.length,
+      closed: { stories: routines.reduce((s, r) => s + r.closed_stories, 0), leads: routines.reduce((s, r) => s + r.closed_leads, 0) },
       tokens: routines.reduce((s, r) => s + num(r.tokens), 0), cost: Math.round(routines.reduce((s, r) => s + num(r.cost), 0) * 100) / 100 },
     targets: targets({ speed, acc, windows: win, routines, feeds, days: allLeadDays, loop }),
     windows: win, loop, speed, accuracy: acc, routines, feeds: feeds.filter((f) => !f.retired).slice(0, 300), grid,
@@ -559,7 +574,8 @@ export async function build(days = 7, now = Date.now()) {
 
 function wasteful(r) {
   const routines = r.routines.filter((x) => x.runs || x.tokens).sort((a, b) => num(b.idle_tokens) - num(a.idle_tokens) || num(b.idle) - num(a.idle)).slice(0, 5);
-  const feeds = r.feeds.filter((f) => f.verdict !== "useful").sort((a, b) => b.leads - a.leads).slice(0, 5);
+  // ranked on leads after each feed's first day (the backlog dump), so a feed that is now quiet is not blamed; a feed with none is quiet, not wasteful
+  const feeds = r.feeds.filter((f) => f.verdict !== "useful" && num(f.leads_after_first_day) > 0).sort((a, b) => num(b.leads_after_first_day) - num(a.leads_after_first_day) || b.leads - a.leads).slice(0, 5);
   return { routines, feeds };
 }
 
@@ -572,14 +588,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log(`Usage (${r.windows.estimate ? "estimate from data/usage" : "from lib/usage.mjs"}): 5 h ${r.windows.five_hour.tokens.toLocaleString("en")} tokens in ${r.windows.five_hour.runs} worker runs; 7 days ${r.windows.week.tokens.toLocaleString("en")} tokens, $${r.windows.week.cost}.`);
   console.log(`Leads (${r.covered.leads} days): ${r.totals.leads}, ${r.totals.leads_used} used by story, ${r.totals.leads_by_rule} closed by rule; ${r.totals.events} events.`);
   console.log("Routines (runs, idle %, tokens, output added/updated/reviewed/closed, usage):");
-  for (const x of r.routines.filter((x) => x.runs || x.tokens || x.active)) console.log(`  ${x.key.padEnd(15)} ${String(x.runs).padStart(4)} ${String(x.idle_pct ?? "-").padStart(4)}% ${String(x.tokens ?? "-").padStart(12)} ${x.added}/${x.updated}/${x.reviewed}/${x.closed}  ${x.usage}`);
+  for (const x of r.routines.filter((x) => x.runs || x.tokens || x.active)) console.log(`  ${x.key.padEnd(15)} ${String(x.runs).padStart(4)} ${String(x.idle_pct ?? "-").padStart(4)}% ${String(x.tokens ?? "-").padStart(12)} ${x.added}/${x.updated}/${x.reviewed}/${x.closed} ${x.closed_unit}  ${x.usage}${x.runs_basis ? " (runs from heartbeat)" : ""}`);
+  console.log(`Closed, by unit (not additive): ${r.totals.closed.stories} stories, ${r.totals.closed.leads} leads.`);
   const w = wasteful(r);
   console.log("Most wasteful routines: " + w.routines.map((x) => `${x.key} (${x.idle}/${x.runs} runs idle, ${num(x.idle_tokens).toLocaleString("en")} of ${num(x.tokens).toLocaleString("en")} tokens spent in idle runs)`).join("; "));
-  console.log("Most wasteful feeds: " + w.feeds.map((f) => `${f.name} (${f.leads} leads, 0 used, ${f.by_rule} closed by rule)`).join("; "));
+  console.log("Most wasteful feeds: " + w.feeds.map((f) => `${f.name} (${f.leads_after_first_day} leads after day one, ${f.leads} in all, 0 used, ${f.by_rule} closed by rule)`).join("; ") + " [each feed's first day, its backlog dump, is left out of the ranking]");
   console.log("Coverage, 7 days by region: " + Object.entries(r.coverage.d7.region).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
   console.log("  by language: " + Object.entries(r.coverage.d7.language).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
   console.log("  by sector: " + Object.entries(r.coverage.d7.sector).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "));
-  if (r.accuracy.errors && r.accuracy.errors.types) console.log("Correction types: " + r.accuracy.errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.accuracy.errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", "));
+  if (r.accuracy.errors && r.accuracy.errors.types) console.log("Correction types: " + r.accuracy.errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.accuracy.errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", ") + (r.accuracy.errors.pre_logging ? `; before the first run log (writer unknowable, left out of the table): ${r.accuracy.errors.pre_logging.corrected}/${r.accuracy.errors.pre_logging.reviewed}` : ""));
   console.log("Corrections by week: " + r.accuracy.weeks.map((x) => `${x.week} ${x.corrected_pct}% of ${x.reviewed}`).join("; ") + (r.accuracy.categories.length ? "; categories: " + r.accuracy.categories.map((c) => `${c.name} ${c.n}`).join(", ") : ""));
   if (r.gates) console.log("Gates (due / skipped: nothing new since the last check): " + ["followup", "claims", "outage", "updater"].map((k) => { const g = r.gates[k] || {}; return g.error ? `${k} ?` : `${k} ${g.due}/${g.skipped ?? g.skipped_redirect_only ?? 0}${g.next_due_at ? ` (next due ${String(g.next_due_at).slice(5, 16).replace("T", " ")})` : ""}`; }).join("; ") + (r.gates.gap && !r.gates.gap.error ? `; gap pass every ${r.gates.gap.every_minutes} min (${r.gates.gap.runs_in_a_row_without_an_event} run(s) in a row added nothing)` : ""));
   if (r.worker_ends) console.log(`Workers (${r.days} days): ${r.worker_ends.ok} of ${r.worker_ends.runs} finished, ${r.worker_ends.capped} reached their turn cap, ${r.worker_ends.usage_limit} refused by the usage limit${r.worker_ends.last_limit_at ? ` (last ${r.worker_ends.last_limit_at}${r.worker_ends.last_limit_until ? ", reset " + r.worker_ends.last_limit_until : ""})` : ""}, ${r.worker_ends.failed} failed otherwise.`);

@@ -164,36 +164,49 @@ export function reviewRecord(prev, state, at, note, flags) {
 /** Who wrote each event: event id -> {role, model}, from the run logs (data/runs/<day>/<HHMM>-<job>.json). A log stamped by
  *  scripts/run-job.mjs carries worker_role and worker_model (exact); an older one is read from its name (sweep-r<n>:
  *  researcher, sweep-gap: gap, update-u<n>: updater, followup, regional, backlog) and its self-reported model. The last
- *  log that added or updated an event wins. logs: [{at, job, model, worker_role, worker_model, added, updated}]. */
+ *  log that added or updated an event wins (events_updated counts as updated). The result's logStart is the first log's time. logs: [{at, job, model, worker_role, worker_model, added, updated}]. */
 export function writersFrom(logs) {
   const out = new Map(), norm = (m) => { const x = String(m || "").toLowerCase(); return /opus/.test(x) ? "opus" : /sonnet/.test(x) ? "sonnet" : /haiku/.test(x) ? "haiku" : "unknown"; };
   const roleOf = (j) => /^sweep-r(\d|etry|$)/.test(j) ? "researcher" : /^(sweep-)?gap/.test(j) ? "gap" : /^update(-u|r)/.test(j) ? "updater" : /^followup/.test(j) ? "followup" : /^regional/.test(j) ? "regional-researcher" : /^backlog/.test(j) ? "researcher" : /^review/.test(j) ? "reviewer" : /^sweep/.test(j) ? "sweep" : j.replace(/-\d+$/, "") || "unknown";
   const idOf = (x) => typeof x === "string" ? x : x && typeof x === "object" ? String(x.id || x.event || x.event_id || "") : "";
   for (const l of logs.slice().sort((a, b) => String(a.at).localeCompare(String(b.at)))) {
     const role = l.worker_role || roleOf(String(l.job || "")), model = norm(l.worker_model || l.model);
-    for (const k of ["added", "updated"]) for (const x of Array.isArray(l[k]) ? l[k] : []) { const id = idOf(x); if (/^[a-z0-9][a-z0-9-]{2,119}$/.test(id)) out.set(id, { role, model, at: l.at, how: k }); }
+    // events_updated: feed and triage paths log the ids they touched there, not in updated
+    for (const k of ["added", "updated", "events_updated"]) for (const x of Array.isArray(l[k]) ? l[k] : []) { const id = idOf(x); if (/^[a-z0-9][a-z0-9-]{2,119}$/.test(id)) out.set(id, { role, model, at: l.at, how: k }); }
   }
+  // the first log's time: events first seen before it were written before logging began, so no log can name their writer
+  out.logStart = logs.logStart || logs.map((l) => String(l.at || "")).filter((a) => /^\d{4}-\d{2}-\d{2}T/.test(a)).sort()[0] || null;
   return out;
+}
+/** The time of the oldest run log on disk (from its file name, data/runs/<day>/<HHMM>-<job>.json), or null. */
+export function firstRunLogAt() {
+  const dir = join(DATA, "runs"); if (!existsSync(dir)) return null;
+  for (const d of readdirSync(dir).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort()) {
+    const t = readdirSync(join(dir, d)).filter((f) => /^\d{4}-.+\.json$/.test(f)).map((f) => f.slice(0, 4)).sort()[0];
+    if (t) return `${d}T${t.slice(0, 2)}:${t.slice(2)}:00Z`;
+  }
+  return null;
 }
 /** Pure: corrections by type, and by the role and model that wrote the event, for events whose first review is in the last
  *  `days` days. events: event records; writers: writersFrom(). -> {days, reviewed, corrected, flagged, corrected_pct,
  *  types: [{key, label, n, pct_of_corrected, checks}], by_writer: [{role, model, reviewed, corrected, corrected_pct, types}]} */
 export function errorReport(events, writers = new Map(), now = Date.now(), days = 7) {
-  const since = new Date(now - days * 864e5).toISOString(), types = {}, by = {};
+  const since = new Date(now - days * 864e5).toISOString(), types = {}, by = {}, pre = { before: writers.logStart || null, reviewed: 0, corrected: 0, flagged: 0 };
   let reviewed = 0, corrected = 0, flagged = 0;
   for (const e of events) {
     const r = e && !e.duplicate_of && e.review; if (!r || !r.state) continue;
     const at = String(r.first_at || r.at || ""); if (at < since) continue;
-    const w = writers.get(e.id) || { role: "unknown", model: "unknown" }, k = `${w.role}|${w.model}`;
-    const b = (by[k] ||= { role: w.role, model: w.model, reviewed: 0, corrected: 0, flagged: 0, types: {} });
+    // first seen before the first run log: no writer can be named, so it is counted apart, not as an "unknown" writer
+    const w = writers.get(e.id) || { role: "unknown", model: "unknown" }, early = !writers.get(e.id) && pre.before && String(e.first_seen || "") < pre.before, k = `${w.role}|${w.model}`;
+    const b = early ? pre : (by[k] ||= { role: w.role, model: w.model, reviewed: 0, corrected: 0, flagged: 0, types: {} });
     reviewed++; b.reviewed++;
     if (r.state === "flagged") { flagged++; b.flagged++; }
     if (r.state !== "corrected") continue;
     corrected++; b.corrected++;
-    for (const t of Array.isArray(r.categories) ? r.categories : classifyCorrection(r.note)) { types[t] = (types[t] || 0) + 1; b.types[t] = (b.types[t] || 0) + 1; }
+    for (const t of Array.isArray(r.categories) ? r.categories : classifyCorrection(r.note)) { types[t] = (types[t] || 0) + 1; if (!early) b.types[t] = (b.types[t] || 0) + 1; }
   }
   const pct = (a, n) => (n ? Math.round((a / n) * 1000) / 10 : null), label = Object.fromEntries(ERROR_TYPES.map((t) => [t.key, t]));
-  return { days, reviewed, corrected, flagged, corrected_pct: pct(corrected, reviewed),
+  return { days, reviewed, corrected, flagged, corrected_pct: pct(corrected, reviewed), pre_logging: pre.reviewed ? { ...pre, corrected_pct: pct(pre.corrected, pre.reviewed) } : null,
     types: Object.entries(types).sort((a, b) => b[1] - a[1]).map(([key, n]) => ({ key, label: (label[key] || { label: "other" }).label, n, pct_of_corrected: pct(n, corrected), checks: (label[key] || { checks: [] }).checks })),
     by_writer: Object.values(by).sort((a, b) => b.reviewed - a.reviewed).map((b) => ({ ...b, corrected_pct: pct(b.corrected, b.reviewed), types: Object.fromEntries(Object.entries(b.types).sort((x, y) => y[1] - x[1])) })) };
 }
@@ -204,8 +217,9 @@ export function loadRunLogs(days = 8) {
     for (const f of readdirSync(join(dir, d))) {
       const m = f.match(/^(\d{2})(\d{2})-(.+)\.json$/); if (!m) continue;
       const r = readJson(join(dir, d, f), null); if (!r || typeof r !== "object") continue;
-      out.push({ at: /^\d{4}-\d{2}-\d{2}T/.test(String(r.finished_at || "")) ? r.finished_at : `${d}T${m[1]}:${m[2]}:00Z`, job: m[3], model: r.model, worker_role: r.worker_role, worker_model: r.worker_model, added: r.added, updated: r.updated });
+      out.push({ at: /^\d{4}-\d{2}-\d{2}T/.test(String(r.finished_at || "")) ? r.finished_at : `${d}T${m[1]}:${m[2]}:00Z`, job: m[3], model: r.model, worker_role: r.worker_role, worker_model: r.worker_model, added: r.added, updated: r.updated, events_updated: r.events_updated });
     }
+  out.logStart = firstRunLogAt();
   return out;
 }
 /** Pure: is this event in the queue's window? It still needs a review and its current version has waited under 3 days. The window is

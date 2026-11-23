@@ -81,3 +81,17 @@ test("the review window follows the clock needsReview uses, so a changed old eve
   // duplicates are never queued
   assert.equal(inReviewWindow(base({ first_seen: at(1), updated_at: at(1), duplicate_of: "other-2026-11" }), now), false);
 });
+
+test("writersFrom reads events_updated, and errorReport leaves pre-logging events out of the writer table", async () => {
+  const { writersFrom, errorReport } = await import("../../scripts/review.mjs");
+  const logs = [{ at: "2026-11-18T08:00:00Z", job: "sweep-r1", model: "claude-sonnet-5-5", added: ["a-2026-11"] }, { at: "2026-11-19T09:00:00Z", job: "feeds", model: "claude-haiku-5", events_updated: ["b-2026-11", { id: "c-2026-11" }] }];
+  const w = writersFrom(logs);
+  assert.equal(w.logStart, "2026-11-18T08:00:00Z"); assert.equal(w.get("b-2026-11").how, "events_updated"); assert.equal(w.get("c-2026-11").model, "haiku");
+  const at = "2026-11-20T12:00:00Z", rev = (id, first_seen, state) => ({ id, first_seen, review: { state, at, note: "x", categories: state === "corrected" ? ["figure"] : undefined } });
+  const events = [rev("a-2026-11", "2026-11-18T08:05:00Z", "corrected"), rev("old1-2026-11", "2026-11-17T20:00:00Z", "corrected"), rev("old2-2026-11", "2026-11-18T07:00:00Z", "passed"), rev("late-2026-11", "2026-11-19T20:00:00Z", "passed")];
+  const r = errorReport(events, w, Date.parse("2026-11-21T00:00:00Z"), 7);
+  // headline numbers keep every reviewed event; the two pre-logging ones are counted apart, the unlogged late one stays "unknown"
+  assert.deepEqual([r.reviewed, r.corrected], [4, 2]);
+  assert.deepEqual(r.pre_logging, { before: "2026-11-18T08:00:00Z", reviewed: 2, corrected: 1, flagged: 0, corrected_pct: 50 });
+  assert.deepEqual(r.by_writer.map((b) => `${b.role}/${b.model}/${b.reviewed}`).sort(), ["researcher/sonnet/1", "unknown/unknown/1"]);
+});

@@ -9,6 +9,25 @@ import { join } from "node:path";
 import { ROOT, DATA, readJson } from "./lib/store.mjs";
 
 const job = process.argv[2];
+// --exec (owner, 2026-11-23: one fresh session per scheduled wake, as few tokens as possible): run a headless job right
+// here and print only its last lines, instead of printing instructions for a session to read and then carry out. A
+// dispatcher session makes ONE shell call per wake. Anything that still needs a session's judgment (subagent fallback,
+// non-headless jobs) prints its DISPATCH instructions as before.
+const EXEC = process.argv.includes("--exec");
+/** Run one headless command in the foreground and print its last lines; on HEADLESS UNAVAILABLE fall back to printing
+ *  the subagent instructions (CYBERVIEW_SUBAGENTS=1), which the session then carries out. */
+function execHeadless(env, args, ms, endLine) {
+  const x = spawnSync("node", args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...env } });
+  const lines = `${x.stdout || ""}${x.stderr || ""}`.split("\n").filter((l) => l.trim());
+  if (lines.some((l) => /HEADLESS UNAVAILABLE/.test(l))) {
+    const f = spawnSync("node", [join(ROOT, "scripts", "dispatch.mjs"), job], { cwd: ROOT, encoding: "utf8", env: { ...process.env, CYBERVIEW_SUBAGENTS: "1" } });
+    console.log(String(f.stdout || "").trim()); process.exit(0);
+  }
+  const tail = lines.slice(-3);
+  if (x.error || x.signal) tail.push(`CyberView ${job}: run stopped (${x.signal || x.error.code || "error"}); the next wake commits the leftover (finish.mjs --force)`);
+  else if (!tail.some((l) => l.startsWith(endLine))) tail.push(`${endLine} ended (exit ${x.status})`);
+  console.log(tail.join("\n")); process.exit(0);
+}
 // code and data on separate branches: switch this checkout to the new layout the first time a job runs after the data
 // branch exists (scripts/data-branch.mjs ensure: carries uncommitted data over, waits while a research loop runs here),
 // then bring the data branch up to date. Never stops the job: the old layout still works.
@@ -48,6 +67,7 @@ if (job === "sweep" && (PL.flow || {}).enabled !== false && (PL.headless === tru
   // commits before the turn ends; the frequent sweep schedules give continuous coverage, and FLOW_LOCK still makes a
   // second session stand by. config/pipeline.json flow.foreground_minutes tunes the span (kept under the 10-min tool cap).
   const fm = Math.max(2, Math.min(9, Number((PL.flow || {}).foreground_minutes) || 7)), tmo = Math.min(600000, (fm + 2) * 60000);
+  if (EXEC) execHeadless({ FLOW_MINUTES: String(fm) }, [join(ROOT, "scripts", "run-job.mjs"), "flow"], tmo - 30000, "CyberView sweep:");
   console.log([`DISPATCH sweep (bounded foreground flow). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it runs about ${fm} minutes of research cycles, committing every few minutes, then returns: FLOW_MINUTES=${fm} node scripts/run-job.mjs flow 2>&1 | tail -3`,
     `   Run it in the foreground so the cycles finish and commit before this turn ends; do NOT background it (a backgrounded loop is reaped by the cloud session and publishes nothing).`,
@@ -62,6 +82,7 @@ if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_job
   // commits before the turn ends. config/pipeline.json headless_foreground_minutes caps it under the 10-minute tool cap;
   // if a job ever needs longer it is cut and the next scheduled run commits the leftover with finish.mjs --force.
   const hm = Math.max(2, Math.min(9, Number(PL.headless_foreground_minutes) || 8)), tmo = Math.min(600000, (hm + 1) * 60000);
+  if (EXEC) execHeadless({}, [join(ROOT, "scripts", "run-job.mjs"), job], tmo - 30000, `CyberView ${job}:`);
   console.log([`DISPATCH ${job} (headless). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it plans, runs the headless workers and commits, then returns (usually a few minutes): node scripts/run-job.mjs ${job} 2>&1 | tail -3`,
     `   Run it in the foreground so the workers finish and commit before this turn ends; do NOT background it (a backgrounded run is reaped by the cloud session before its workers finish, so nothing is researched).`,

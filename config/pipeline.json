@@ -126,6 +126,11 @@
   "tight_cuts_work": false,
   "limit_backoff_minutes": 60,
   "pipeline_reserve_pct": 35,
+  "api_fallback": {
+   "_note": "API-key fallback (owner-approved 2026-11-23; scripts/lib/usage.mjs, scripts/run-job.mjs). The Max subscription stays PRIMARY: the pipeline publishes on it and the Anthropic API bills ONLY while the subscription's 5-hour/weekly window is exhausted (a worker hit the plan's real limit; budgetState limited_until is live), so publishing never stalls. The owner stores the fallback key in the environment under the NON-standard name CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY (never ANTHROPIC_API_KEY, which the claude CLI would use ahead of the subscription); the normal worker env has no ANTHROPIC_API_KEY, and only in fallback mode does run-job.mjs inject ANTHROPIC_API_KEY=<that value> into the spawned worker. With the env var unset, behaviour is exactly as before (park on a limit). When the reset passes, a worker runs on the subscription again and the key is dropped automatically. Guards: enabled turns it off (then park as before); monthly_usd_cap is the ceiling on API-billed spend per calendar month (estimated from each api-fallback worker's tokens x the PRICES table in scripts/lib/usage.mjs, which the owner updates when Anthropic changes prices) — once reached the pipeline parks instead of falling back and the pipeline check raises 'API fallback monthly cap reached'; if the fallback key itself hits a usage limit the pool parks for the rest of the run instead of looping. The key VALUE is never in the repo, never logged, never printed (only process.env is read, masked to present/not-set). Telemetry: each worker's ledger line carries served subscription|api-fallback; efficiency.json gains an api_fallback block; the pipeline check reports 'running on API fallback' (info) and the cap (needs attention); scripts/budget.mjs status prints the state and the $ this month.",
+   "enabled": true,
+   "monthly_usd_cap": 150
+  },
   "tight_skip_jobs": [
    "analysis",
    "analyst",

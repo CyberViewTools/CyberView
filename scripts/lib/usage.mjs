@@ -87,7 +87,7 @@ export function limitHits(lines, backoffMin = 60) {
   }
   return out;
 }
-export const DEFAULT_BUDGET = { window_hours: 5, window_tokens: 0, week_tokens: 0, window_cost: 0, week_cost: 0, tight_pct: 80, stop_pct: 120, limit_backoff_minutes: 60, pipeline_reserve_pct: 35 };
+export const DEFAULT_BUDGET = { window_hours: 5, window_tokens: 0, week_tokens: 0, window_cost: 0, week_cost: 0, tight_pct: 80, stop_pct: 120, limit_backoff_minutes: 60, pipeline_reserve_pct: 35, api_fallback: { enabled: true, monthly_usd_cap: 150 } };
 export function budgetConfig() { return { ...DEFAULT_BUDGET, ...((readJson(join(ROOT, "config", "pipeline.json"), {}) || {}).usage_budget || {}) }; }
 const pct = (used, cap) => (Number(cap) > 0 ? Math.round((used / cap) * 1000) / 10 : 0);
 /** Where the plan's usage stands: { window_pct, week_pct, level: "ok"|"tight"|"stop", limited_until, reason, window, week }.
@@ -140,6 +140,62 @@ export function canBuild(now = Date.now(), cfg = budgetConfig(), lines = null, b
 /** Pure: does the "tight" level cut work? Owner, 2026-11-21: "use whatever it needs"; only the stop level holds work back.
  *  usage_budget.tight_cuts_work (default false) restores the old tight behaviour (fewer workers, tight_skip_jobs wait). */
 export const tightCuts = (cfg = budgetConfig()) => !!(cfg && cfg.tight_cuts_work === true);
+
+// ---------- API-key fallback: bill the Anthropic API only while the subscription's usage window is exhausted ----------
+// The pipeline runs on the Max subscription (budgetState above). The `claude` CLI uses ANTHROPIC_API_KEY ahead of the
+// subscription OAuth, so the normal worker env has NO ANTHROPIC_API_KEY and workers use the subscription. The owner stores
+// a fallback key under a NON-standard name, CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY (never ANTHROPIC_API_KEY, which would make
+// the API primary). Only when the subscription window is exhausted (a worker hit the plan's real limit; budgetState
+// limited_until is live) does scripts/run-job.mjs inject ANTHROPIC_API_KEY=<that key> into a worker, so publishing never
+// stalls; when the reset passes a worker runs on the subscription again and the key is dropped. Guards: a monthly USD cap,
+// an enable switch, and if the fallback key itself hits a limit the pool parks instead of looping. Owner-approved 2026-11-23.
+export const FALLBACK_ENV = "CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY";
+export const DEFAULT_FALLBACK = { enabled: true, monthly_usd_cap: 150 };
+/** Pure: the fallback dials from usage_budget.api_fallback, with defaults. The env var NAME is fixed (FALLBACK_ENV); the
+ *  key VALUE is never read here, never stored in config and never logged. */
+export function fallbackConfig(budget = budgetConfig()) {
+  const f = (budget && typeof budget.api_fallback === "object" && budget.api_fallback) || {};
+  const cap = Number(f.monthly_usd_cap);
+  return { enabled: f.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 ? cap : DEFAULT_FALLBACK.monthly_usd_cap, env_var: FALLBACK_ENV };
+}
+// API list price per MILLION tokens (input / output), one place. The owner updates these when Anthropic changes prices.
+// Cache reads are billed at 0.1x the input rate, cache writes (5-minute) at 1.25x. Keyed by the model alias the workers
+// spawn with (config/models.json): sonnet, opus (Opus 4.8), haiku. An unknown model is priced as sonnet (never zero).
+export const PRICES = { sonnet: { in: 2, out: 10 }, opus: { in: 5, out: 25 }, haiku: { in: 0.1, out: 0.5 } };
+const CACHE_READ_MULT = 0.1, CACHE_WRITE_MULT = 1.25;
+/** Pure: the estimated API-list USD of one ledger line's tokens (PRICES x tokens), for the monthly fallback accrual. */
+export function estimateCost(line, prices = PRICES) {
+  const p = (prices && prices[String((line && line.model) || "").toLowerCase()]) || (prices && prices.sonnet) || PRICES.sonnet;
+  const n = (v) => Number(v) || 0;
+  const usd = (n(line && line.in) * p.in + n(line && line.out) * p.out + n(line && line.cache_read) * p.in * CACHE_READ_MULT + n(line && line.cache_write) * p.in * CACHE_WRITE_MULT) / 1e6;
+  return Math.round(usd * 1e4) / 1e4;
+}
+/** Pure: the estimated API-fallback spend this calendar month, from the ledger lines marked served "api-fallback".
+ *  -> { month: "YYYY-MM", usd, workers, last_at }. */
+export function fallbackSpend(lines, now = Date.now(), prices = PRICES) {
+  const mk = iso(now).slice(0, 7); let usd = 0, workers = 0, last_at = null;
+  for (const l of lines || []) {
+    if (!l || l.served !== "api-fallback" || typeof l.at !== "string" || l.at.slice(0, 7) !== mk) continue;
+    workers++; usd += estimateCost(l, prices); if (!last_at || l.at > last_at) last_at = l.at;
+  }
+  return { month: mk, usd: Math.round(usd * 100) / 100, workers, last_at };
+}
+/** Pure decision: which credential the pipeline pool should use right now. The subscription stays primary; the API key
+ *  bills ONLY while the subscription window is exhausted. Covers every branch:
+ *    limited_until not live        -> "subscription" (the window is usable; no key injected)
+ *    live, no key or disabled      -> "park"         (exactly the behaviour before this feature: #126 parks)
+ *    live, the fallback key itself hit a limit -> "park" (don't loop on an exhausted key)
+ *    live, spend has reached the cap           -> "park"
+ *    live, key present, enabled, under cap     -> "api-fallback"
+ *  limited_until: the subscription's reset time (ISO string or ms), from budgetState().limited_until; null/past = usable. */
+export function fallbackDecision({ limited_until = null, now = Date.now(), fallbackKeyPresent = false, enabled = true, monthSpendUsd = 0, cap = DEFAULT_FALLBACK.monthly_usd_cap, fallbackKeyLimited = false } = {}) {
+  const until = typeof limited_until === "number" ? limited_until : limited_until ? Date.parse(limited_until) : NaN;
+  if (!(isFinite(until) && until > now)) return "subscription";
+  if (!fallbackKeyPresent || !enabled) return "park";
+  if (fallbackKeyLimited) return "park";
+  const c = Number(cap); if (isFinite(c) && Number(monthSpendUsd) >= c) return "park";
+  return "api-fallback";
+}
 /** One line for logs and the loop's heartbeat. */
 export const budgetLine = (b) => `budget ${b.level}: 5 h ${b.window_pct}%, week ${b.week_pct}%${b.limited_until ? `, limited until ${b.limited_until}` : ""}${b.reason ? ` (${b.reason})` : ""}`;
 /** Pure: the highest usage in any rolling `hours` within lines: { tokens, cost, at } (at: the end of that span). */

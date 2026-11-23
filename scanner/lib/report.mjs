@@ -70,11 +70,45 @@ export function toCsv(report) {
   return rows.map((r) => r.map(cell).join(",")).join("\r\n") + "\r\n";
 }
 
+/**
+ * Industrial (ICS/OT) devices the --ics identification reads named, as flat rows for the text, CSV and HTML outputs.
+ * Inventory only (hosts[].ics, written by scanner/lib/ics.mjs): only records that reached "identified", with the real
+ * fields each protocol states. No identity read here is matched to NVD, so these never enter the findings or the counts.
+ */
+export function icsDevices(report) {
+  const out = [];
+  for (const h of (report.hosts || [])) for (const rec of (h.ics || [])) {
+    if (!rec || rec.outcome !== "identified") continue;
+    const id = rec.identity || {};
+    let vendor = "", product = "", model = "", firmware = rec.version || "";
+    switch (rec.protocol) {
+      case "modbus": vendor = id.vendor || ""; model = id.product_code || ""; firmware = id.revision || firmware; break;
+      case "enip": vendor = id.vendor || (id.vendor_id ? `vendor id ${id.vendor_id}` : ""); product = id.product_name || ""; model = id.product_code != null ? `product code ${id.product_code}` : ""; firmware = id.revision || firmware; break;
+      case "s7": vendor = "Siemens"; product = id.order_number || ""; model = id.hardware || ""; firmware = id.firmware || firmware; break;
+      case "bacnet": vendor = id.vendor_id != null ? `vendor id ${id.vendor_id}` : ""; product = id.device_instance != null ? `device instance ${id.device_instance}` : ""; break;
+      case "opcua": product = id.application_name || ""; model = id.product_uri || ""; break;
+      case "dicom": product = id.implementation_version_name || ""; model = id.implementation_class_uid || ""; break;
+      default: break;
+    }
+    out.push({ host: h.address, names: h.names || [], protocol: rec.protocol, name: rec.name || rec.protocol, port: rec.port,
+      vendor, product, model, firmware, version: rec.version || "" });
+  }
+  return out;
+}
+
 /** The detected software as the inventory CSV the Vulnerabilities page's "My software" view imports. */
 export function toInventory(report) {
   const m = new Map();
   for (const h of report.hosts) for (const s of h.services || []) if (s.product) { const k = `${s.vendor}|${s.product}|${s.version}`; m.set(k, { vendor: s.vendor, name: s.product, version: s.shown_version || s.version, count: ((m.get(k) || {}).count || 0) + 1 }); }
-  return [["name", "version", "vendor", "count"], ...[...m.values()].map((x) => [x.name, x.version, x.vendor, x.count])].map((r) => r.map(cell).join(",")).join("\r\n") + "\r\n";
+  const rows = [...m.values()].map((x) => [x.name, x.version, x.vendor, x.count]);
+  // --ics industrial devices as inventory rows (same columns): marked industrial/guessed, low confidence, never version-matched
+  const im = new Map();
+  for (const d of icsDevices(report)) {
+    const name = `${d.product || d.model || d.name} (industrial, guessed)`, version = d.firmware || d.version || "", k = `${d.vendor}|${name}|${version}`;
+    im.set(k, { name, version, vendor: d.vendor, count: ((im.get(k) || {}).count || 0) + 1 });
+  }
+  for (const x of im.values()) rows.push([x.name, x.version, x.vendor, x.count]);
+  return [["name", "version", "vendor", "count"], ...rows].map((r) => r.map(cell).join(",")).join("\r\n") + "\r\n";
 }
 
 /* ---- SARIF 2.1.0 ---- */
@@ -176,6 +210,12 @@ export function summaryText(report) {
   const tlsRows = report.hosts.flatMap((h) => (h.tls || []).map((t) => `${h.address}:${t.port} ${t.protocol || "?"} ${t.cipher_std || t.cipher || "?"}${t.kex_group ? `, ${t.kex_group}${t.kex_bits ? ` (${t.kex_bits} bits)` : ""}` : t.kex_note ? ", key-exchange group not reported" : ""}${t.cert ? `; cert ${t.cert.key_type || "?"} ${t.cert.key_bits || "?"} bits, ${t.cert.sig_alg || "signature ?"}, expires ${t.cert.valid_to || "?"}` : ""}`));
   if (tlsRows.length) { L.push(""); L.push("TLS (as negotiated by this scan's one handshake; a different client may get different parameters):"); tlsRows.slice(0, 20).forEach((t) => L.push(`   ${t}`)); }
   if ((report.named || []).length) { L.push(""); L.push("Also named in the CVE List (versions not checked; compare with the vendor's advisory):"); report.named.forEach((n) => L.push(`   ${n.product} ${n.version_seen || ""}: ${n.cves_naming_it} CVE(s), ${n.exploited} exploited`)); }
+  const ics = icsDevices(report);
+  if (ics.length) {
+    L.push("");
+    L.push("Industrial (ICS/OT) devices (identified by --ics; inventory only, low confidence, not in the counts above and not matched to CVEs):");
+    ics.forEach((d) => L.push(`   ${d.host}:${d.port} ${d.name}${d.vendor ? ` — ${d.vendor}` : ""}${d.product ? ` ${d.product}` : ""}${d.model ? ` [${d.model}]` : ""}${d.firmware || d.version ? `, firmware ${d.firmware || d.version}` : ""}`));
+  }
   L.push(""); report.notes.forEach((n) => L.push(`Note: ${n}`));
   return L.join("\n");
 }

@@ -1,0 +1,66 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-23T05:19:17Z",
+  "finished_at": "2026-11-23T05:21:41Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Porto de Santos ataque hacker APS sistemas",
+    "Autoridade Portuária de Santos sistemas restabelecidos ataque cibernético Polícia Federal novembro 2026",
+    "MONAI Label zero-day Amazon Cairn AI agents path traversal fix release"
+  ],
+  "pages_read": [
+    {
+      "url": "https://startupfortune.com/china-linked-hackers-used-ai-agents-to-exploit-a-monai-label-zero-day-amazon-says/",
+      "title": "China-linked hackers used AI agents to exploit a MONAI Label zero-day, Amazon says (22 Nov)",
+      "used_in": "cairn-ai-monai-label-zero-day-2026-11"
+    },
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "title": "Hackers use autonomous AI tool Cairn to find zero-day, take over server (20 Nov), re-read for fix status",
+      "used_in": "cairn-ai-monai-label-zero-day-2026-11"
+    },
+    {
+      "url": "https://abcdoabc.com.br/porto-de-santos-restaura-sistema-ataque/",
+      "title": "Porto de Santos restaura sistemas após ataque cibernético (11 Nov)",
+      "used_in": "brazil-santos-port-authority-ransom-demand-2026-11 (nothing newer than record)"
+    },
+    {
+      "url": "https://www.acessa.com/economia/2026/11/344002-porto-de-santos-sistemas-seguem-afetados-apos-ataque-cibernetico.html",
+      "title": "Porto de Santos: sistemas seguem afetados após ataque cibernético (Agência Brasil, 10 Nov)",
+      "used_in": "brazil-santos-port-authority-ransom-demand-2026-11 (nothing newer than record)"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "cairn-ai-monai-label-zero-day-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "brazil-santos-port-authority-ransom-demand-2026-11",
+      "url": "https://www.acessa.com/economia/2026/11/344002-porto-de-santos-sistemas-seguem-afetados-apos-ataque-cibernetico.html"
+    }
+  ],
+  "unfinished": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "MONAI Label fix status: was a patched release published?",
+      "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94",
+      "note": "BleepingComputer says a security update on 18 Nov; Startup Fortune (relaying SecurityWeek) says fix merged in source, no release. GitHub advisory returned 403 and Amazon's blog (https://aws.amazon.com/blogs/security/chinese-nexus-actors-cairn-ai-agents-found-a-zero-day-on-their-own/) returned only navigation. Read the advisory or SecurityWeek and settle it; also give The Record source its published day.",
+      "priority": "high"
+    },
+    {
+      "title": "Santos port authority: report that APS was in the final phase of restoring administrative systems around 16 Nov",
+      "url": "",
+      "note": "Seen only in a search summary, not on a page read; the record was not changed. Also: Agência Brasil (10 Nov) quotes APS saying it could not determine whether data was accessed, which sits beside the record's 18 Nov 'no confidential data leaked' (ABC do ABC); the reviewer may want both stated.",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "github.com (403)",
+    "aws.amazon.com blog (body not delivered)"
+  ],
+  "notes": "MONAI: Startup Fortune contradicts BleepingComputer on the fix release; both accounts now given, action points to the advisory, correction file 2026-11-23-cairn-ai-monai-label-zero-day.json. Startup Fortune also says the attacks ran in September and affected 0.8.5 and earlier (relaying The Hacker News); versions were not added because the advisory could not be read. Santos: no reporting newer than 18 Nov found; unchanged.",
+  "worker_role": "followup-deep",
+  "worker_model": "opus"
+}

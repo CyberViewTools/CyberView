@@ -13,10 +13,10 @@
   "lng": 105,
   "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
   "pin_type": "region",
-  "summary": "BleepingComputer reports Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API. They gained root on a server; the operator then gave them a proxy into a second university network running the same software. Amazon attributes it to a Chinese-nexus actor with moderate confidence. BleepingComputer says a security update followed on 18 November.",
-  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. BleepingComputer says a fix was released on 18 November.",
-  "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should apply the update.",
-  "action": "If you run MONAI Label, apply the maintainers' security update (advisory GHSA-qc22-rmgc-vg94).",
+  "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server; the operator then pointed them at a second university network. Amazon attributes it to a Chinese-nexus actor with moderate confidence. BleepingComputer says an update followed on 18 November; Startup Fortune, relaying SecurityWeek, says no fixed release exists yet.",
+  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. Reports differ on whether a fixed release is out yet.",
+  "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should follow the maintainers' advisory.",
+  "action": "If you run MONAI Label, follow the maintainers' advisory GHSA-qc22-rmgc-vg94, which BleepingComputer links as the security update; Startup Fortune reports no fixed release yet.",
   "tags": [
     "zero-day",
     "ai"
@@ -42,21 +42,27 @@
   "sources": [
     {
       "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/"
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "published": "2026-11-20"
     },
     {
       "name": "The Record",
       "url": "https://therecord.media/amazon-research-cairn-ai-university-attacks-possible-zero-day"
+    },
+    {
+      "name": "Startup Fortune",
+      "url": "https://startupfortune.com/china-linked-hackers-used-ai-agents-to-exploit-a-monai-label-zero-day-amazon-says/",
+      "published": "2026-11-22"
     }
   ],
   "source_tier": "established",
   "validation": {
     "state": "corroborated",
-    "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read.",
-    "checked_at": "2026-11-20T17:46:26Z"
+    "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read. Follow-up 23 Nov: Startup Fortune (22 Nov, relaying SecurityWeek and The Hacker News) says the fix is merged in source but not in a release, against BleepingComputer's 18 November security update; the GitHub advisory returned 403 and Amazon's post did not load, so both accounts are given.",
+    "checked_at": "2026-11-23T05:21:10Z"
   },
   "first_seen": "2026-11-20T17:43:41Z",
-  "updated_at": "2026-11-22T06:25:37Z",
+  "updated_at": "2026-11-23T05:21:10Z",
   "review": {
     "state": "passed",
     "at": "2026-11-22T06:31:50Z",

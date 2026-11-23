@@ -1,0 +1,101 @@
+{
+  "job": "sweep-r3",
+  "started_at": "2026-11-23T05:17:10Z",
+  "finished_at": "2026-11-23T05:20:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "campgrounds holiday parks hacked booking scam New Zealand November 2026",
+    "\"holiday parks\" hackers scam guests New Zealand Booking.com campground",
+    "F5 BIG-IP CVE-2026-126714 K000164320 PHP"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.hkcert.org/security-bulletin/f5-big-ip-remote-code-execution-vulnerability_20261123",
+      "title": "HKCERT: F5 BIG-IP Remote Code Execution Vulnerability",
+      "used_in": "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11"
+    },
+    {
+      "url": "https://ktrh.iheart.com/featured/houston-texas-news/content/2026-11-22-texas-biggest-oil-port-defends-itself-against-cyberattacks/",
+      "title": "Texas' Biggest Oil Port Defends Itself Against Cyberattacks",
+      "used_in": "story fc6fa7be closed: relays FT report on file"
+    },
+    {
+      "url": "https://mignews.com/news/disasters/kiberataki-ugrozhayut-rabote-krupnejshih-portov-ssha.html",
+      "title": "Кибератаки угрожают работе крупнейших портов США",
+      "used_in": "story ac64cef0 closed: relays FT report on file"
+    },
+    {
+      "url": "https://www.terra.com.br/noticias/caos-digital-alimenta-teorias-de-ataque-cibernetico-nos-estados-unidos,e0b4ad0030bfb290d5e5acc15761fb289zfbbsl5.html",
+      "title": "Caos digital alimenta teorias de ataque cibernético nos Estados Unidos",
+      "used_in": "story fb6cb1e6 closed: overview, not an event"
+    },
+    {
+      "url": "https://www.freezinenews.com/news/articleView.html?idxno=31730",
+      "title": "2027년, 사이버 공격이 날씨처럼 일상화된다",
+      "used_in": "story f70f044b closed: commentary"
+    },
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209662",
+      "title": "CONCERT, 12월 3일 제30회 해킹방지워크샵 개최",
+      "used_in": "story d8837c71 closed: workshop announcement"
+    }
+  ],
+  "added": [
+    "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Cyberangriff auf EU-Kommission: Hacker missbrauchen offenbar KI",
+      "url": "https://www.golem.de/news/vor-eu-uk-gipfel-ki-gestuetzter-cyberangriff-auf-eu-kommission-2611-215474.html",
+      "reason": "already on file: european-commission-cyberattack-payroll-2026-11 (confirmed)"
+    },
+    {
+      "title": "Texas' Biggest Oil Port Defends Itself Against Cyberattacks",
+      "url": "https://ktrh.iheart.com/featured/houston-texas-news/content/2026-11-22-texas-biggest-oil-port-defends-itself-against-cyberattacks/",
+      "reason": "already on file: us-ports-cyberattack-attempts-ft-report-2026-11; iHeart relays the same Financial Times report (not independent corroboration)"
+    },
+    {
+      "title": "Кибератаки угрожают работе крупнейших портов США",
+      "url": "https://mignews.com/news/disasters/kiberataki-ugrozhayut-rabote-krupnejshih-portov-ssha.html",
+      "reason": "already on file: us-ports-cyberattack-attempts-ft-report-2026-11; MIGnews relays the FT"
+    },
+    {
+      "title": "Caos digital alimenta teorias de ataque cibernético nos EUA",
+      "url": "https://www.terra.com.br/noticias/caos-digital-alimenta-teorias-de-ataque-cibernetico-nos-estados-unidos,e0b4ad0030bfb290d5e5acc15761fb289zfbbsl5.html",
+      "reason": "overview of earlier US outages and political reaction; no new incident; outages, FBI NCIC and Cairncross already on file"
+    },
+    {
+      "title": "2027년, 사이버 공격이 날씨처럼 일상화된다",
+      "url": "https://www.freezinenews.com/news/articleView.html?idxno=31730",
+      "reason": "forecast commentary relaying an Axios column"
+    },
+    {
+      "title": "CONCERT, 12월 3일 제30회 해킹방지워크샵 개최",
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209662",
+      "reason": "workshop announcement"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Travel scam widens, campgrounds and holiday parks hit by hackers (NZ)",
+      "url": "https://www.newstalkzb.co.nz/news/national/travel-scam-widens-campgrounds-and-holiday-parks-hit-by-hackers/",
+      "note": "Newstalk ZB answered 403; two searches found no other publisher or official notice for New Zealand campgrounds/holiday parks. Possibly linked to the October RMS Cloud breach in Australia (not confirmed for NZ).",
+      "priority": 2
+    },
+    {
+      "title": "F5 K000164320 (BIG-IP, CVE-2026-126714)",
+      "url": "https://my.f5.com/manage/s/article/K000164320",
+      "note": "F5 page is a JavaScript shell; read it when possible to add F5's publication date, fixed versions and whether this is the PHP phpAfterShell flaw (same CVE id on file for PHP).",
+      "priority": 2
+    }
+  ],
+  "failed_sites": [
+    "www.newstalkzb.co.nz (403)",
+    "www.dw.com (fetch tool refused)",
+    "my.f5.com (JavaScript shell)"
+  ],
+  "notes": "Event id contains 'php' from a working draft; the record itself states only what HKCERT says and the validation note says HKCERT does not mention PHP (renaming the file was not permitted in this run). Severity 2 despite public PoC: HKCERT says the attacker must be authenticated and only one page could be read.",
+  "worker_role": "researcher-deep",
+  "worker_model": "opus"
+}

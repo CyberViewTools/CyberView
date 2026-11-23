@@ -80,7 +80,7 @@ Discovery output for the toolkit's offline `match` command. Research and proposa
 
 - **#120 (2026-11-22)** shipped the SBOM and package-list half as the `import` command (`scanner/lib/imports.mjs`):
   CycloneDX/SPDX and package inventories parsed, matched with the page's own engine, written to `imports.json`.
-- **#135 (2026-11-23)** shipped the rest of the matching half as the **`match`** command
+- **#140 (2026-11-23)** shipped the rest of the matching half as the **`match`** command
   (`scanner/lib/inputs.mjs`, `offline-cmds.mjs`, `docs/scanner.md` decision 23):
   - nmap `-oX` → real hosts, ports, products and versions in `fingerprint.mjs`'s own record shape, so
     `match.mjs findings()`, the rating, CISA's priority and all five writers are reused unchanged (no second engine).

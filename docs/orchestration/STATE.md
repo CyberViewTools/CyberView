@@ -16,7 +16,7 @@ Merged since: #134 — public + internal description refresh (About/Status prose
 and cost tiering; feed count corrected to 280; BUILD 1.70).
 
 Open (this session):
-- #135 — scanner `match`: a full report from files the operator already holds (nmap `-oX` with `-sV`, an SBOM, a package
+- #140 — scanner `match`: a full report from files the operator already holds (nmap `-oX` with `-sV`, an SBOM, a package
   list), for assets that cannot be scanned. New `scanner/lib/inputs.mjs` adapters return `fingerprint.mjs`'s own record
   shape, so the matching, rating, CISA priority and all five outputs are the scan's code unchanged; CPE/purl give the
   vendor the matcher needs; `--assume-exposed` (default internal) moves only CISA's deadline. Nothing is contacted and the

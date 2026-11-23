@@ -1,10 +1,10 @@
 {
-  "title": "GreyNoise reports GT13 intrusion campaign against Check Point Security Management Servers at at least 22 organisations",
+  "title": "GreyNoise reports GT13 intrusion campaign against Check Point Security Management Servers affecting at least 22 organisations",
   "date": "2026-11-23",
   "date_note": "Date of GreyNoise's disclosure (its post is dated 23 November 2026); GreyNoise says confirmed attack activity ran between October 17th and November 2nd, 2026.",
   "time_basis": "published",
   "first_seen": "2026-11-23T17:31:38Z",
-  "updated_at": "2026-11-23T17:31:38Z",
+  "updated_at": "2026-11-23T17:41:49Z",
   "category": "incident",
   "status": "developing",
   "severity": 3,
@@ -18,12 +18,26 @@
   "geo_basis": "global report; GreyNoise says victims are global; pin is a placeholder",
   "actor": "",
   "impact": "",
-  "attack": ["exploitation", "data theft"],
-  "products": ["Check Point Security Management Server", "Check Point SmartConsole", "Rejetto HFS"],
-  "cves": ["CVE-2026-16232", "CVE-2026-61500"],
+  "attack": [
+    "exploitation",
+    "data theft"
+  ],
+  "products": [
+    "Check Point Security Management Server",
+    "Check Point SmartConsole",
+    "Rejetto HFS"
+  ],
+  "cves": [
+    "CVE-2026-16232",
+    "CVE-2026-61500"
+  ],
   "cve_meta": [],
-  "tags": ["active-exploitation", "check-point", "edge-device"],
-  "summary": "GreyNoise says an actor it tracks as GT13 used 99 IP addresses in a campaign against Check Point Security Management Servers, with confirmed attack activity between October 17th and November 2nd, 2026, impacting at least 22 distinct organizations globally. According to GreyNoise, the actor used CVE-2026-16232 to launch over 100 management tasks and saved data stolen from 24 distinct servers. GreyNoise does not attribute GT13 to any known group.",
+  "tags": [
+    "active-exploitation",
+    "check-point",
+    "edge-device"
+  ],
+  "summary": "GreyNoise says an actor it tracks as GT13 used 99 IP addresses against Check Point Security Management Servers, with confirmed attack activity between October 17th and November 2nd, 2026, impacting at least 22 distinct organizations globally. GreyNoise says the actor launched over 100 management tasks and obtained command results and data stolen from 24 distinct servers; it lists CVE-2026-16232 among the flaws. It does not attribute GT13 to any known group.",
   "plain": "Security firm GreyNoise says an unidentified attacker broke into the central management servers of Check Point firewalls at at least 22 organisations around the world between October and early November and stole data from them.",
   "exec": "GreyNoise reports intrusions into Check Point firewall management servers at at least 22 organisations; firewall admin systems are high-value targets.",
   "action": "Check Point advises installing its jumbo hotfix for CVE-2026-16232 (July 2026), limiting Trusted Clients (GUI clients) to trusted IP addresses and restricting Management access to trusted IP addresses.",
@@ -40,11 +54,26 @@
     }
   ],
   "evidence": [
-    {"url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "quote": "The actor used 99 IP addresses, much of which were disposable network infrastructure"},
-    {"url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "quote": "impacting at least 22 distinct organizations globally."},
-    {"url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "quote": "data stolen from 24 distinct Check Point Security Management Servers."},
-    {"url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "quote": "the actor launched over 100 management tasks on multiple Check Point Management Servers"},
-    {"url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "quote": "with confirmed attack activity between October 17th and November 2nd, 2026,"}
+    {
+      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+      "quote": "The actor used 99 IP addresses, much of which were disposable network infrastructure"
+    },
+    {
+      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+      "quote": "impacting at least 22 distinct organizations globally."
+    },
+    {
+      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+      "quote": "data stolen from 24 distinct Check Point Security Management Servers."
+    },
+    {
+      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+      "quote": "the actor launched over 100 management tasks on multiple Check Point Management Servers"
+    },
+    {
+      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+      "quote": "with confirmed attack activity between October 17th and November 2nd, 2026,"
+    }
   ],
   "source_tier": "primary",
   "validation": {
@@ -52,6 +81,29 @@
     "state": "single_source",
     "note": "GreyNoise's own research post (the investigating firm) is the only report of the campaign read; no second publisher found by search. Check Point's July 2026 advisory confirms CVE-2026-16232 was exploited in the wild against a handful of customers and gives the fix, but does not mention this campaign. GreyNoise gives no defender advice; the action is Check Point's."
   },
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "edge-appliance", "basis": "stated"}
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "edge-appliance",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-23T17:42:00Z",
+    "first_at": "2026-11-23T17:42:00Z",
+    "note": "wording stronger than source: summary now matches GreyNoise (command results and data stolen from 24 servers; CVE-2026-16232 listed among flaws, not stated as the cause of the tasks); title typo fixed; figures and quotes verified verbatim",
+    "flags": [
+      "no-cve-meta"
+    ],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-23T17:42:00Z"
 }

@@ -1,0 +1,40 @@
+{
+ "id": "wordpress-13-clickfix-injections-urlscan-2026-11",
+ "action": "urlscan notes that at least one kit persists in theme and plugin files on disk, so review those files; it says cleaning up one injection does not mean the threat has been mitigated.",
+ "actor": "",
+ "attack": ["T1204 User Execution"],
+ "category": "incident",
+ "country": "",
+ "cves": [],
+ "date": "2026-11-19",
+ "date_note": "Date of the urlscan post; the page gives no earlier day for the compromise.",
+ "exec": "A compromised WordPress site carried 13 ClickFix injections, which trick visitors into running malware themselves.",
+ "first_seen": "2026-11-23T21:28:25Z",
+ "geo_basis": "no victim or place stated; global",
+ "lat": 0,
+ "lng": 0,
+ "org": "",
+ "pin_type": "country",
+ "place": "Global",
+ "plain": "urlscan's researchers say one hacked WordPress site carried 13 ClickFix traps, fake checks that get visitors to run malicious commands, planted by three different kits.",
+ "products": ["WordPress"],
+ "sector": "Other",
+ "severity": 1,
+ "source_tier": "primary",
+ "sources": [
+  {"name": "urlscan Threat Research Team", "url": "https://urlscan.io/blog/2026/11/19/CompetingClickFixInjections/", "published": "2026-11-19"},
+  {"name": "Cyber Press", "url": "https://cyberpress.org/wordpress-hosts-13-clickfix-traps/", "published": "2026-11-23"}
+ ],
+ "status": "confirmed",
+ "summary": "The urlscan Threat Research Team says in a 19 November post that a single compromised WordPress site carried 13 ClickFix injections from three distinct kits. It says some used EtherHiding, which takes next-stage server addresses from Polygon smart contracts, and that competing loaders interfered with each other. Cyber Press relays the report.",
+ "tags": ["clickfix"],
+ "title": "urlscan finds 13 ClickFix injections from three kits on one compromised WordPress site",
+ "updated_at": "2026-11-23T21:28:25Z",
+ "validation": {"state": "corroborated", "checked_at": "2026-11-23T21:28:25Z", "note": "urlscan's own report (primary, investigating firm) read in full; Cyber Press (23 Nov) relays it. No victim site is named."},
+ "evidence": [
+  {"url": "https://urlscan.io/blog/2026/11/19/CompetingClickFixInjections/", "quote": "carrying thirteen separate ClickFix injections from three distinct kits"},
+  {"url": "https://cyberpress.org/wordpress-hosts-13-clickfix-traps/", "quote": "Security researchers found 13 ClickFix injections on a single compromised WordPress site"}
+ ],
+ "sectors": {"values": ["unknown"], "basis": "inferred"},
+ "surface": {"value": "web-app", "basis": "inferred"}
+}

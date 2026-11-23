@@ -1,0 +1,89 @@
+{
+  "job": "sweep-r3",
+  "started_at": "2026-11-23T00:18:13Z",
+  "finished_at": "2026-11-23T00:19:58Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Bell MTS email outage cyberattack November 2026",
+    "\"Bell MTS\" email cyberattack Manitoba",
+    "Delta outage \"not the result of a cyberattack\" weight and balance",
+    "Delta Air Lines technical issue Sunday not cyberattack statement November 22 2026",
+    "Bell MTS email outage cyberattack (Canadian news domains)",
+    "\"Bell MTS\" cyberattack email outage cause confirmed"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.lebanon24.com/news/breaking-news/1598374/",
+      "title": "شركة دلتا للطيران: الخلل الفني لم يكن نتيجة هجوم سيبراني (headline and dateline only; body not in page)",
+      "used_in": "story 5f2f45bd closed"
+    },
+    {
+      "url": "https://news.delta.com/",
+      "title": "Delta newsroom front page: no statement dated 22-23 Nov on the outage",
+      "used_in": "story 5f2f45bd closed"
+    },
+    {
+      "url": "https://president.jp/articles/-/122619?page=2",
+      "title": "北朝鮮ハッカーは標的の弱みを熟知している (interview commentary, 23 Nov 2026)",
+      "used_in": "story 768d9ea5 closed"
+    },
+    {
+      "url": "https://guelph.ctvnews.ca/winnipeg/article/bell-mts-says-service-restored-following-days-long-email-outage/",
+      "title": "Bell MTS says service restored following days-long email outage (20 Nov; video blurb only, no cause)",
+      "used_in": "story bb414580 closed"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "US ports face cyber attack onslaught as hackers target vital trade routes",
+      "url": "https://www.ft.com/content/c269cf3e-2275-4244-9a86-f412c8521b4f",
+      "reason": "trend article, no specific incident; FT unreadable; story 59c18e95 no longer in the list (closed or regrouped before this run)"
+    },
+    {
+      "title": "We haven't seen the last of the major tech outages",
+      "url": "https://www.theverge.com/tech/1039851/major-tech-outages",
+      "reason": "commentary, no specific incident; page unreadable"
+    },
+    {
+      "title": "Upgrades for the AI Age Could Bring More Outages, DNI Jay Clayton Warns",
+      "url": "https://www.technobezz.com/news/ai-upgrades-outages-flights-banking-disruptions",
+      "reason": "warning/commentary, no incident; 403"
+    },
+    {
+      "title": "ФБР и Минсельхоз США под угрозой: масштабные кибератаки продолжаются",
+      "url": "",
+      "reason": "story 79ba3658 no longer in the list (closed or regrouped before this run); headline is a roundup with no new specific incident"
+    },
+    {
+      "title": "北朝鮮ハッカーは標的の弱みを熟知している…「9500億円流出事件」",
+      "url": "https://president.jp/articles/-/122619?page=2",
+      "reason": "interview commentary; the Binance theft it cites is dated 29 Oct 2026 on the page, older than the map window"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Bell MTS says cyberattack behind recent email outage",
+      "url": "https://www.winnipegfreepress.com/breakingnews/2026/11/22/bell-mts-says-cyberattack-behind-recent-email-outage",
+      "note": "Free Press unreadable to the fetcher, CBC 403. Readable coverage (CTV, search snippets of CBC/Yahoo) gives no cause for the 17-20 Nov Manitoba email outage. If Bell MTS did link it to a cyberattack, it may belong in bell-canada-agentic-actor-enterprise-data-2026-11 (which says 'no impact to customer services') or a new outage event. Needs a readable copy (Canadian Press syndication, Bell MTS statement).",
+      "priority": "P1"
+    },
+    {
+      "title": "Delta: technical glitch was not the result of a cyberattack",
+      "url": "https://www.lebanon24.com/news/breaking-news/1598374/",
+      "note": "Only an Arabic headline states Delta's denial; body not readable and Delta newsroom has no statement. If a readable source quotes Delta, add the statement (as Delta's) to delta-weight-balance-outage-2026-11.",
+      "priority": "P2"
+    }
+  ],
+  "failed_sites": [
+    "winnipegfreepress.com (fetcher refused)",
+    "cbc.ca (403)",
+    "ft.com (fetcher refused)",
+    "theverge.com (fetcher refused)",
+    "technobezz.com (403)"
+  ],
+  "notes": "No event written: every readable page was commentary or lacked the new fact. fuse.mjs done failed for 59c18e95 and 79ba3658 because those story ids no longer exist.",
+  "worker_role": "researcher-deep",
+  "worker_model": "opus"
+}

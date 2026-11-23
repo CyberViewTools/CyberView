@@ -30,7 +30,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso, readStatus, listEventFiles } from "./lib/store.mjs";
 import { dataGitDir, dataRel, repoSlug } from "./lib/repo.mjs";
-import { STAGES, stageStates, lastRuns } from "./lib/stages.mjs";
+import { allStages, stageStates, lastRuns } from "./lib/stages.mjs";
 import { feedProposals, failingDays, PROPOSE_DAYS } from "./lib/backoff.mjs";
 import { needsReview, waitingSince } from "./review.mjs";
 import { tokens } from "./triage.mjs";
@@ -50,7 +50,8 @@ const lim = (m) => (m < 120 ? `${m} min` : `${Math.round(m / 60)} h`);
 export function stageProblems(stages) {
   return stages.filter((s) => s.state === "late" || s.state === "never").map((s) => ({
     id: `stage-${s.key}`, level: "warn", threshold_min: s.state === "never" ? THRESHOLD.stage_never : THRESHOLD.stage, heal: s.heal || "",
-    text: s.state === "never" ? `${s.label}: no heartbeat recorded (status key missing)` : `${s.label} last ran ${ago(s.age_min)} (limit ${lim(s.max_min)})${s.heal ? "" : ": only the ops session can restart it"}`,
+    // a derived routine with no heartbeat has simply never run: say that, not "late" (alerts after THRESHOLD.stage_never)
+    text: s.state === "never" ? (s.derived ? `${s.label} has never run${s.since ? ` (switched on ${String(s.since).slice(0, 10)})` : ""}: no heartbeat recorded` : `${s.label}: no heartbeat recorded (status key missing)`) : `${s.label} last ran ${ago(s.age_min)} (limit ${lim(s.max_min)})${s.heal ? "" : ": only the ops session can restart it"}`,
   }));
 }
 
@@ -215,11 +216,11 @@ export function fallbackProblems(lines, fb, now = Date.now()) {
 export async function check(now = Date.now()) {
   const qp = join(DATA, "quality.json"), prev = readJson(qp, {}) || {}, st = readStatus();
   const routines = (readJson(join(ROOT, "routines.json"), { routines: [] }) || { routines: [] }).routines || [];
-  const files = {}; for (const s of STAGES) if (s.file) files[s.file] = readJson(join(DATA, s.file), {}) || {};
+  const all = allStages(routines), files = {}; for (const s of all) if (s.file) files[s.file] = readJson(join(DATA, s.file), {}) || {};
   const events = listEventFiles().map((f) => f.e).filter(Boolean);
   const rev = unreviewed(events, now);
   const busy = { researchers: (Number(st.stories_open) || 0) - (Number(st.stories_claims) || 0) > 0, reviewers: rev.count > 0 };
-  const last = lastRuns(st, files); last.pipecheck = new Date(now).toISOString();   // this run is the pipeline check's own heartbeat
+  const last = lastRuns(st, files, all); last.pipecheck = new Date(now).toISOString();   // this run is the pipeline check's own heartbeat
   const stages = stageStates(last, routines, now, busy);
   const problems = stageProblems(stages);
   // status.json keys (first check: remember what the last commit had, so a wipe in this very run is still caught)

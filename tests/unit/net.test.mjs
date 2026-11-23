@@ -14,6 +14,8 @@ before(async () => {
     if (req.url === "/404") return (res.statusCode = 404, res.end());
     if (req.url === "/html") return res.end("<html>");
     if (req.url === "/busy1") return hits[req.url] < 2 ? (res.statusCode = 429, res.setHeader("retry-after", "1"), res.end()) : res.end('{"d":4}');
+    if (req.url === "/neg") return req.headers.accept === "application/json" ? (res.statusCode = 415, res.end()) : res.end('{"e":5}');
+    if (req.url === "/neg415") return (res.statusCode = 415, res.end());
     if (req.url === "/busylong") return (res.statusCode = 429, res.setHeader("retry-after", "3600"), res.end());
     res.statusCode = 500; res.end();
   });
@@ -60,4 +62,16 @@ test("429 asking for an hour: not retried in this run, and the source stays skip
   assert.equal(hits["/busylong"], 1);
   assert.ok(circuitOpen("t7"));
   await assert.rejects(get(base + "/busylong", { key: "t7" }), (e) => e.code === "circuit_open");
+});
+
+test("415 on our accept header: asked once more without it, same user-agent", async () => {
+  assert.deepEqual(await get(base + "/neg", { key: "t8", accept: "application/json", retries: 0 }), { e: 5 });
+  assert.equal(hits["/neg"], 2);
+});
+
+test("415 that persists without accept: one extra try only, then fails as http_415", async () => {
+  await assert.rejects(get(base + "/neg415", { key: "t9", accept: "application/json", delayMs: 10 }), (e) => e.code === "http_415");
+  assert.equal(hits["/neg415"], 2);
+  await assert.rejects(get(base + "/neg415", { key: "t10", delayMs: 10 }), (e) => e.code === "http_415");
+  assert.equal(hits["/neg415"], 3, "no accept was sent, so nothing to drop and no retry");
 });

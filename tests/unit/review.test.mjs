@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { flagsFor, needsReview, risk, order, planBatches } from "../../scripts/review.mjs";
+import { flagsFor, needsReview, inReviewWindow, risk, order, planBatches } from "../../scripts/review.mjs";
 
 const base = (o = {}) => ({ id: "acme-breach-2026-11", title: "Acme confirms breach of customer database", org: "Acme", date: "2026-11-18", first_seen: "2026-11-18T10:00:00Z", category: "incident", severity: 2, status: "confirmed",
   summary: "Acme said attackers copied a customer database. The company confirmed 4,200,000 records were taken.", plain: "p", exec: "x", action: "Acme advises customers to reset their passwords.", records_affected: 4200000, lat: 1, lng: 1, country: "Canada",
@@ -64,4 +64,34 @@ test("review plan: with two or more reviewers the first takes the newest events,
   assert.deepEqual(planBatches(items.slice(0, 3), 4, 12), [items.slice(0, 3).map((x) => x.e.id)]);
   assert.deepEqual(planBatches(items, 1, 5), [items.slice(0, 5).map((x) => x.e.id)]);
   assert.deepEqual(planBatches([], 4, 12), []);
+});
+
+test("the review window follows the clock needsReview uses, so a changed old event is re-reviewed", () => {
+  const now = Date.parse("2026-11-23T12:00:00Z"), at = (h) => new Date(now - h * 36e5).toISOString(), d = (n) => at(n * 24);
+  // first published 5 days ago, reviewed 4 days ago, changed an hour ago: waiting again, so it is in the window (this was invisible to the planner)
+  const changed = base({ first_seen: d(5), updated_at: at(1), review: { at: d(4) } });
+  assert.equal(needsReview(changed), true); assert.equal(inReviewWindow(changed, now), true);
+  // reviewed after its last change: nothing to do
+  const done = base({ first_seen: d(5), updated_at: d(4), review: { at: d(3) } });
+  assert.equal(needsReview(done), false); assert.equal(inReviewWindow(done, now), false);
+  // never reviewed and genuinely old: the 3-day horizon still applies
+  assert.equal(inReviewWindow(base({ first_seen: d(10), updated_at: d(10) }), now), false);
+  // never reviewed, just published
+  assert.equal(inReviewWindow(base({ first_seen: at(1), updated_at: at(1) }), now), true);
+  // duplicates are never queued
+  assert.equal(inReviewWindow(base({ first_seen: at(1), updated_at: at(1), duplicate_of: "other-2026-11" }), now), false);
+});
+
+test("writersFrom reads events_updated, and errorReport leaves pre-logging events out of the writer table", async () => {
+  const { writersFrom, errorReport } = await import("../../scripts/review.mjs");
+  const logs = [{ at: "2026-11-18T08:00:00Z", job: "sweep-r1", model: "claude-sonnet-5-5", added: ["a-2026-11"] }, { at: "2026-11-19T09:00:00Z", job: "feeds", model: "claude-haiku-5", events_updated: ["b-2026-11", { id: "c-2026-11" }] }];
+  const w = writersFrom(logs);
+  assert.equal(w.logStart, "2026-11-18T08:00:00Z"); assert.equal(w.get("b-2026-11").how, "events_updated"); assert.equal(w.get("c-2026-11").model, "haiku");
+  const at = "2026-11-20T12:00:00Z", rev = (id, first_seen, state) => ({ id, first_seen, review: { state, at, note: "x", categories: state === "corrected" ? ["figure"] : undefined } });
+  const events = [rev("a-2026-11", "2026-11-18T08:05:00Z", "corrected"), rev("old1-2026-11", "2026-11-17T20:00:00Z", "corrected"), rev("old2-2026-11", "2026-11-18T07:00:00Z", "passed"), rev("late-2026-11", "2026-11-19T20:00:00Z", "passed")];
+  const r = errorReport(events, w, Date.parse("2026-11-21T00:00:00Z"), 7);
+  // headline numbers keep every reviewed event; the two pre-logging ones are counted apart, the unlogged late one stays "unknown"
+  assert.deepEqual([r.reviewed, r.corrected], [4, 2]);
+  assert.deepEqual(r.pre_logging, { before: "2026-11-18T08:00:00Z", reviewed: 2, corrected: 1, flagged: 0, corrected_pct: 50 });
+  assert.deepEqual(r.by_writer.map((b) => `${b.role}/${b.model}/${b.reviewed}`).sort(), ["researcher/sonnet/1", "unknown/unknown/1"]);
 });

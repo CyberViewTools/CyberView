@@ -18,6 +18,9 @@ import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
 import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
 import { udpProbe } from "../../scanner/lib/udp.mjs";
 import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
+import { parseCpe, parsePurl, mergeName, parseNmapXml, inventoryHost, INPUT_LIMITS } from "../../scanner/lib/inputs.mjs";
+import { sbomIdentity, parseSbom } from "../../scanner/lib/imports.mjs";
+import { cveId, versionVerdict, detectionFor } from "../../scanner/lib/lookup.mjs";
 import { main } from "../../scanner/cyberview-scan.mjs";
 import { NOCODE } from "../../scripts/lib/validate.mjs";
 import { startServers } from "../fixtures/scanner/servers.mjs";
@@ -781,4 +784,271 @@ test("probeAll end to end: HTTP hygiene comes from the one GET / (no extra reque
     assert.ok(kinds.includes("http-no-https") && kinds.includes("http-missing-headers"), kinds.join(","));
     assert.deepEqual(s.got.http.map((x) => `${x.method} ${x.url}`), ["GET /"]);
   } finally { await s.close(); }
+});
+
+/* ---- inputs.mjs: the operator's own files (nmap -oX, CPE/purl, an inventory with no address) ---- */
+
+test("CPE 2.2 and 2.3 give the vendor, product and version NVD's ranges use", () => {
+  assert.deepEqual(parseCpe("cpe:/a:openbsd:openssh:8.2p1"), { kind: "a", vendor: "openbsd", product: "openssh", version: "8.2p1" });
+  assert.deepEqual(parseCpe("cpe:2.3:a:apache:http_server:2.4.49:*:*:*:*:*:*:*"), { kind: "a", vendor: "apache", product: "http server", version: "2.4.49" });
+  assert.equal(parseCpe("cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*").version, "");   // * and - are "any", not a version
+  assert.equal(parseCpe("cpe:/o:microsoft:windows_server_2019").kind, "o");
+  for (const bad of ["", "not a cpe", "cpe:2.3:a:vendor", "cpe:/a:vendor:", null, 42]) assert.equal(parseCpe(bad), null);
+});
+
+test("purl gives the namespace as the vendor and the name as the product", () => {
+  assert.deepEqual(parsePurl("pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"), { type: "maven", vendor: "org.apache.logging.log4j", product: "log4j-core", version: "2.14.1" });
+  assert.deepEqual(parsePurl("pkg:npm/%40scope/pkg@1.2.3"), { type: "npm", vendor: "scope", product: "pkg", version: "1.2.3" });
+  assert.equal(parsePurl("pkg:npm/lodash@4.17.21?arch=x64#sub").version, "4.17.21");   // qualifiers and subpath are not the version
+  assert.equal(parsePurl("pkg:deb/debian/curl").version, "");
+  for (const bad of ["", "log4j-core@2.14.1", "pkg:npm/", null]) assert.equal(parsePurl(bad), null);
+});
+
+test("the matched name keeps nmap's product and adds CPE words it is missing", () => {
+  assert.equal(mergeName("Apache httpd", "http server"), "Apache httpd http server");   // "http server" ranges match too
+  assert.equal(mergeName("OpenSSH", "openssh"), "OpenSSH");                              // same word: nothing appended
+  assert.equal(mergeName("", "fortios"), "fortios");
+  assert.equal(mergeName("nginx", ""), "nginx");
+});
+
+test("nmap -oX: open ports with a service line become service records, down hosts and closed ports do not", () => {
+  const r = parseNmapXml(readFileSync(join(FIX, "nmap.xml"), "utf8"));
+  assert.deepEqual(r.stats, { hosts: 2, services: 4, skipped_down: 1 });
+  assert.match(r.problems.join(" "), /1 host\(s\) nmap reported as down were skipped/);
+  const [priv, pub] = r.hosts;
+  assert.equal(priv.address, "10.0.0.4");
+  assert.deepEqual(priv.names, ["web01.corp.example"]);
+  assert.equal(priv.public, false);                        // RFC 1918: rated as internal
+  assert.deepEqual(priv.ports.map((p) => p.port), [22, 80, 8080]);   // 443 closed and 3389 filtered are not open ports
+  assert.deepEqual(priv.ports.map((p) => p.state), ["open", "open", "open"]);   // the shape scan.mjs builds, so report.mjs counts them
+  assert.deepEqual(priv.services.map((s) => s.port), [22, 80]);   // 8080 is open but nmap named the port only
+  assert.equal(pub.public, true);                           // 203.0.113.10 is a public address
+  const ssh = priv.services[0];
+  assert.equal(ssh.version, "8.2");                         // compared with the ranges
+  assert.equal(ssh.shown_version, "8.2p1");                 // shown to the operator
+  assert.equal(ssh.distro, "Ubuntu");                       // "8.2p1 Ubuntu 4ubuntu0.5": a distribution build
+  assert.equal(ssh.vendor, "openbsd");
+  assert.equal(ssh.guessed, false);
+  assert.match(ssh.source, /nmap -oX/);
+  const udp = pub.services.find((s) => s.proto === "udp");
+  assert.equal(udp.port, 161);                              // open|filtered UDP with a probed service line counts
+  assert.equal(pub.services[0].guessed, true);              // FortiGate with no version: inferred, so never high confidence
+});
+
+test("nmap -oX: crafted input is bounded and refused safely", () => {
+  assert.deepEqual(parseNmapXml("").hosts, []);
+  assert.match(parseNmapXml("hello").problems[0], /not nmap -oX XML/);
+  assert.match(parseNmapXml("<nmaprun></nmaprun>").problems[0], /no host with an open port/);
+  assert.match(parseNmapXml('<host><status state="up"/><address addr="not-an-ip" addrtype="ipv4"/></host>').problems[0], /no usable IP address/);
+  // entities are unescaped and control characters stripped; nothing is executed or interpreted
+  const ent = parseNmapXml('<host><status state="up"/><address addr="10.0.0.9" addrtype="ipv4"/><ports><port protocol="tcp" portid="80"><state state="open"/><service name="http" product="Acme &amp; Co &lt;Web&gt;" version="1.0" method="probed" conf="10"/></port></ports></host>');
+  assert.equal(ent.hosts[0].services[0].label, "Acme & Co <Web>");
+  const many = `<nmaprun>${'<host><status state="up"/><address addr="10.0.0.1" addrtype="ipv4"/></host>'.repeat(INPUT_LIMITS.hosts + 5)}</nmaprun>`;
+  const capped = parseNmapXml(many);
+  assert.equal(capped.hosts.length, INPUT_LIMITS.hosts);
+  assert.match(capped.problems.join(" "), /over the caps/);
+});
+
+test("an inventory with no address becomes one pseudo-host, rated internal unless the operator says otherwise", () => {
+  const items = [{ name: "log4j-core", version: "2.14.1", from: "sbom" }, { name: "nginx", from: "packages" }, { name: "", version: "1" }];
+  const h = inventoryHost(items, { file: "app.cdx.json" });
+  assert.equal(h.address, "app.cdx.json");
+  assert.equal(h.public, false);
+  assert.match(h.source, /--assume-exposed/);               // the default is stated, not silent
+  assert.equal(h.services.length, 2);                       // the nameless row is dropped
+  assert.equal(h.services[0].port, null);                   // nothing was contacted, so there is no port
+  assert.equal(h.services[1].guessed, true);                // no version stated
+  const ex = inventoryHost(items, { file: "app.cdx.json", assumeExposed: true });
+  assert.equal(ex.public, true);
+  assert.equal(ex.kind, "public");
+  assert.match(ex.source, /operator states it is internet-facing/);
+});
+
+test("nmap hosts go through findings() unchanged, with the backport caveat and no high confidence without a version", () => {
+  const flaws = cleanFlaws(wb), rows = new Map();
+  for (const a of rowsFile.rows) { const r = SD.cleanRow(rowsFile.fields, a); rows.set(r.id, r); }
+  const { hosts } = parseNmapXml(readFileSync(join(FIX, "nmap.xml"), "utf8"));
+  const f = findings(hosts, flaws, rows, { today: TODAY });
+  const ssh = f.find((x) => x.cve === "CVE-2026-90101");
+  assert.equal(ssh.state, "affected");                      // OpenSSH 8.2 is below 9.8
+  assert.equal(ssh.confidence, "medium");                   // Ubuntu package build: the fix may be backported
+  assert.match(ssh.confidence_why, /backported/);
+  assert.equal(ssh.seen_on[0].host, "10.0.0.4");
+  assert.equal(ssh.priority.exposure, "private address");   // nmap gave a real address, so exposure is not assumed
+  const forti = f.find((x) => x.cve === "CVE-2026-90105");
+  assert.equal(forti.state, "check");                       // FortiGate stated no version
+  assert.equal(forti.confidence, "low");
+  // the same inventory with no address is rated as internet-facing only when the operator says so
+  const inv = findings([inventoryHost([{ name: "OpenSSH", vendor: "OpenBSD", version: "8.2p1", from: "sbom" }], { file: "sbom.json", assumeExposed: true })], flaws, rows, { today: TODAY });
+  assert.equal(inv.find((x) => x.cve === "CVE-2026-90101").priority.exposure, "public address");
+});
+
+/* ---- the match command: a report from files the operator already holds, with nothing contacted ---- */
+
+const CDX = JSON.stringify({ bomFormat: "CycloneDX", specVersion: "1.5", metadata: { component: { name: "payments-api", version: "3.1.0", "bom-ref": "root" } },
+  components: [{ "bom-ref": "c1", name: "OpenSSH", version: "8.2p1", purl: "pkg:generic/openbsd/openssh@8.2p1" },
+    { "bom-ref": "c2", name: "nginx", version: "1.22.1", purl: "pkg:generic/f5/nginx@1.22.1" }],
+  dependencies: [{ ref: "root", dependsOn: ["c1", "c2"] }] });
+
+test("an SBOM's purl and CPE give the vendor the matcher needs, which parseInventory alone does not carry", () => {
+  const id = sbomIdentity(JSON.parse(CDX));
+  assert.equal(id.get("openssh").vendor, "openbsd");
+  assert.equal(id.get("nginx").vendor, "f5");
+  const spdx = sbomIdentity({ packages: [{ SPDXID: "p1", name: "log4j-core", versionInfo: "2.14.1", externalRefs: [{ referenceType: "purl", referenceLocator: "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1" }] },
+    { SPDXID: "p2", name: "httpd", externalRefs: [{ referenceType: "cpe23Type", referenceLocator: "cpe:2.3:a:apache:http_server:2.4.49:*:*:*:*:*:*:*" }] },
+    { SPDXID: "p3", name: "thing", supplier: "Organization: Example Ltd" }] });
+  assert.equal(spdx.get("log4j-core").vendor, "org.apache.logging.log4j");
+  assert.equal(spdx.get("httpd").vendor, "apache");
+  assert.equal(spdx.get("httpd").alias, "http server");     // the CPE product name is matched as well as the SBOM's
+  assert.equal(spdx.get("thing").vendor, "Example Ltd");    // no purl or cpe: the stated supplier, prefix stripped
+  // the vendor reaches the inventory items, so a range naming the vendor matches
+  const parsed = parseSbom(CDX);
+  assert.equal(parsed.items.find((x) => /openssh/i.test(x.name)).vendor, "openbsd");
+});
+
+test("match refuses without a local snapshot or an input, and never goes online", async () => {
+  const d = tmp();
+  const a = io(); assert.equal(await main(["match", "--nmap", join(FIX, "nmap.xml")], a), 1);
+  assert.match(a.lines.err.join("\n"), /--data DIR is required/);
+  const b = io(); assert.equal(await main(["match", "--data", SNAP], b), 1);
+  assert.match(b.lines.err.join("\n"), /give --nmap scan\.xml .* or an inventory/);
+  const c = io(); assert.equal(await main(["match", "--data", SNAP, "--online", "--nmap", join(FIX, "nmap.xml")], c), 1);
+  assert.match(c.lines.err.join("\n"), /works offline only/);
+  const e = io(); assert.equal(await main(["match", "--data", SNAP, "--nmap", join(d, "missing.xml")], e), 1);
+  assert.match(e.lines.err.join("\n"), /cannot read/);
+  const g = join(d, "junk.xml"); writeFileSync(g, "<html>not nmap</html>");
+  const h = io(); assert.equal(await main(["match", "--data", SNAP, "--nmap", g], h), 1);
+  assert.match(h.lines.err.join("\n"), /not nmap -oX XML/);
+});
+
+test("match writes the five report files from an nmap file, and the report says nothing was contacted", async () => {
+  const d = tmp(), x = io();
+  assert.equal(await main(["match", "--data", SNAP, "--nmap", join(FIX, "nmap.xml"), "--out", d], x), 0);
+  assert.deepEqual(readdirSync(d).sort(), ["findings.csv", "inventory.csv", "report.json", "report.sarif", "summary.txt"]);
+  const r = JSON.parse(readFileSync(join(d, "report.json"), "utf8"));
+  assert.equal(r.tool.command, "match");
+  assert.equal(r.run.network.sent, 0);
+  assert.match(r.run.network.note, /^none:/);
+  assert.deepEqual(r.run.network.sends, {});                 // no send is listed, because none was made
+  assert.equal(r.coverage.from, "files");
+  assert.equal(r.coverage.complete, false);                  // a file list is never full coverage
+  assert.equal(r.match.has_inventory, false);
+  assert.match(r.notes[0], /Nothing was contacted/);
+  assert.equal(r.scope.attestation, null);                   // no host is contacted, so no attestation is required
+  const ssh = r.findings.find((f) => f.cve === "CVE-2026-90101");
+  assert.equal(ssh.confidence, "medium");
+  assert.equal(ssh.priority.exposure, "private address");
+  const out = x.lines.out.join("\n");
+  assert.match(out, /Nothing was sent to any host/);
+  assert.match(out, /COVERAGE — nothing was contacted/);
+  assert.doesNotMatch(out, /Exposure was not stated/);        // no address-less input in this run
+  assert.doesNotMatch(out, /:null/);                          // every finding here has a real port
+  // SARIF stays valid: a real socket location for a scanned port
+  const s = JSON.parse(readFileSync(join(d, "report.sarif"), "utf8"));
+  assert.equal(s.version, "2.1.0");
+  assert.match(s.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri, /^tcp:\/\/10\.0\.0\.4:22$/);
+});
+
+test("an SBOM with no address is rated internal, and --assume-exposed only moves CISA's deadline", async () => {
+  const d = tmp(), f = join(d, "app.cdx.json"); writeFileSync(f, CDX);
+  const a = io(), outA = tmp();
+  assert.equal(await main(["match", "--data", SNAP, "--sbom", f, "--out", outA], a), 0);
+  const ra = JSON.parse(readFileSync(join(outA, "report.json"), "utf8"));
+  assert.equal(ra.match.has_inventory, true);
+  assert.equal(ra.match.assume_exposed, false);
+  assert.equal(ra.hosts[0].public, false);
+  assert.match(a.lines.out.join("\n"), /Exposure was not stated/);
+  assert.doesNotMatch(a.lines.out.join("\n"), /:null/);       // an inventory finding has no port and must not print one
+  const ssh = ra.findings.find((x) => x.cve === "CVE-2026-90101");
+  assert.equal(ssh.confidence, "high");                       // the SBOM states the version outright
+  assert.equal(ssh.priority.exposure, "private address");
+  const b = io(), outB = tmp();
+  assert.equal(await main(["match", "--data", SNAP, "--sbom", f, "--assume-exposed", "--out", outB], b), 0);
+  const rb = JSON.parse(readFileSync(join(outB, "report.json"), "utf8"));
+  const sshB = rb.findings.find((x) => x.cve === "CVE-2026-90101");
+  assert.equal(sshB.priority.exposure, "public address");
+  assert.equal(sshB.rating.score, ssh.rating.score);          // the CyberView rating does not depend on exposure
+  // the SARIF location for an inventory finding is the file, not a socket
+  const s = JSON.parse(readFileSync(join(outB, "report.sarif"), "utf8"));
+  assert.match(s.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri, /^file:\/\/\//);
+  assert.equal(s.runs[0].results[0].locations[0].logicalLocations[0].kind, "resource");
+});
+
+/* ---- the lookup command: one CVE from a local snapshot, read-only ---- */
+
+test("a CVE number is required, and only a CVE number is taken", () => {
+  assert.equal(cveId("cve-2026-90101"), "CVE-2026-90101");
+  assert.equal(cveId(" CVE-2026-1234 "), "CVE-2026-1234");
+  for (const bad of ["", "2026-90101", "CVE-2026", "CVE-20260-90101", "../../etc/passwd", "CVE-2026-90101; rm -rf /", null, 7]) assert.equal(cveId(bad), "");
+});
+
+test("a version the operator holds is judged against the flaw's own ranges, with the backport caveat", () => {
+  const flaws = cleanFlaws(wb);
+  const ssh = flaws.find((f) => f.cve === "CVE-2026-90101");
+  assert.equal(versionVerdict(ssh, "8.2p1").state, "affected");
+  assert.deepEqual(versionVerdict(ssh, "8.2p1").fixed_in, ["9.8"]);
+  assert.match(versionVerdict(ssh, "8.2p1").caveat, /backported/);
+  assert.equal(versionVerdict(ssh, "9.9").state, "clear");            // compared and outside every range
+  assert.match(versionVerdict(ssh, "9.9").says, /outside all of them/);
+  assert.equal(versionVerdict(ssh, ""), null);
+  const forti = flaws.find((f) => f.cve === "CVE-2026-90105");
+  assert.equal(versionVerdict(forti, "7.2.0").state, "affected");    // 7.0.0 <= 7.2.0 < 7.4.9
+  assert.equal(versionVerdict(forti, "7.6.1").state, "clear");        // 7.6.1 is past 7.4.9
+  const named = flaws.find((f) => f.cve === "CVE-2026-90201");       // name-only, no range
+  assert.equal(versionVerdict(named, "1.0").state, "check");
+  assert.match(versionVerdict(named, "1.0").says, /no comparable range/);
+});
+
+test("lookup says whether this scanner could find the product at all, and never overstates it", () => {
+  const flaws = cleanFlaws(wb);
+  const ssh = detectionFor(flaws.find((f) => f.cve === "CVE-2026-90101"));
+  assert.equal(ssh.can_name, true);
+  assert.equal(ssh.reads_version, true);
+  assert.match(ssh.how.join(" "), /OpenSSH \(SSH banner\)/);
+  assert.match(ssh.what_it_means, /version-confirmed/);
+  const php = detectionFor(flaws.find((f) => f.cve === "CVE-2026-90103"));   // PHP: no scanner fingerprint reads it by name alone
+  assert.equal(typeof php.can_name, "boolean");
+  if (!php.can_name) assert.match(php.what_it_means, /detection gap, not evidence the product is absent/);
+});
+
+test("lookup reads one CVE from the snapshot: the rating, both exposure deadlines, the ranges and the fix", async () => {
+  const d = tmp(), x = io();
+  assert.equal(await main(["lookup", "CVE-2026-90101", "--data", SNAP, "--version", "8.2p1", "--out", d], x), 0);
+  assert.deepEqual(readdirSync(d).sort(), ["lookup.json", "lookup.txt"]);
+  const r = JSON.parse(readFileSync(join(d, "lookup.json"), "utf8"));
+  assert.equal(r.known, true);
+  assert.equal(r.tool.command, "lookup");
+  assert.match(r.network, /^none:/);
+  assert.equal(r.flaw.known_exploited, true);
+  assert.equal(r.rating.score, 8.1);
+  assert.ok(r.priority.internet_facing && r.priority.internal);       // no inventory, so both answers are given
+  assert.notEqual(r.priority.internet_facing.label, r.priority.internal.label);
+  assert.deepEqual(r.affected, ["openbsd openssh before 9.8"]);
+  assert.equal(r.your_version.state, "affected");
+  assert.equal(r.detection.reads_version, true);
+  // anything CyberView wrote is labelled, and the analysis is linked, never copied
+  assert.equal(r.fix.analysis.by, "CyberView AI (a Claude model)");
+  assert.equal(r.fix.guide_by, "CyberView AI (a Claude model)");
+  assert.match(r.fix.details_note, /linked, never copied/);
+  const text = readFileSync(join(d, "lookup.txt"), "utf8");
+  assert.match(text, /CyberView rating: CVSS 8\.1/);
+  assert.doesNotMatch(text, /= 8\.1 High = 8\.1 High/);               // the rating text already carries score and band
+  assert.match(text, /Nothing was contacted/);
+});
+
+test("lookup says plainly when a CVE is not in the catalog, and refuses a bad call", async () => {
+  const x = io();
+  assert.equal(await main(["lookup", "CVE-2019-11111", "--data", SNAP], x), 0);
+  const out = x.lines.out.join("\n");
+  assert.match(out, /not in CyberView's catalog/);
+  assert.match(out, /known-exploited flaws .* and recent high-risk flaws/);
+  assert.doesNotMatch(out, /CyberView rating: CVSS/);                  // nothing is invented for a CVE it does not hold
+  const a = io(); assert.equal(await main(["lookup", "--data", SNAP], a), 1);
+  assert.match(a.lines.err.join("\n"), /give the CVE number/);
+  const b = io(); assert.equal(await main(["lookup", "not-a-cve", "--data", SNAP], b), 1);
+  assert.match(b.lines.err.join("\n"), /is not one/);
+  const c = io(); assert.equal(await main(["lookup", "CVE-2026-90101"], c), 1);
+  assert.match(c.lines.err.join("\n"), /--data DIR is required/);
+  const e = io(); assert.equal(await main(["lookup", "CVE-2026-90101", "--data", SNAP, "--online"], e), 1);
+  assert.match(e.lines.err.join("\n"), /works offline only/);
 });

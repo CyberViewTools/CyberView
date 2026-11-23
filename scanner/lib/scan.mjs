@@ -220,7 +220,13 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
 }
 
 /** Load CyberView's data, match, rate and assemble the report. */
-export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10), incidents = false }) {
+/**
+ * matched: set by the `match` command (scanner/lib/offline-cmds.mjs) when the hosts and services were read from the
+ * operator's OWN files (nmap -oX, an SBOM, a package list) instead of probed: { inputs: [file], assume_exposed: bool }.
+ * Nothing was contacted, so the run's network block, the coverage block and the notes say so rather than describing a
+ * scan that never happened. Everything else — matching, rating, priority, the five outputs — is the same code.
+ */
+export async function buildReport({ src, scope, scopeFile, scopeHash, allowPublic, ports, settings, probed, refused, startedAt, today = new Date().toISOString().slice(0, 10), incidents = false, matched = null }) {
   const wb = await src.json("data/workbench.json");
   const ps = await src.json("data/psirt.json", { optional: true });
   D.vendorIndex = ps ? D.cleanVendorIndex(ps) : {};
@@ -254,13 +260,17 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
   return {
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
-      udp: probed.udp || [], paths: probed.paths || { enabled: false }, ics: probed.ics || { enabled: false }, network: { ...probed.stats, sends: { ...SENDS, ...icsSends(!!(probed.ics && probed.ics.enabled)), ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
+      udp: probed.udp || [], paths: probed.paths || { enabled: false }, ics: probed.ics || { enabled: false }, network: matched ? { sent: 0, note: "none: every host, port and product was read from the operator's own files; no target was contacted", sends: {} } : { ...probed.stats, sends: { ...SENDS, ...icsSends(!!(probed.ics && probed.ics.enabled)), ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
       data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
         ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
     summary: summarize(hosts, found),
-    coverage: { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
+    ...(matched ? { match: { inputs: matched.inputs || [], assume_exposed: !!matched.assume_exposed, has_inventory: !!matched.has_inventory, how: "the hosts and services were read from the operator's own files; matching, rating and priority are the scanner's own, unchanged" } } : {}),
+    coverage: matched
+      ? { complete: false, from: "files", hosts_unreachable: [], ports_filtered: 0, truncated_banners: [], ports_not_checked: [], throttled: [], interrupted: false, paths: { enabled: false },
+          note: "nothing was contacted: this covers exactly what the supplied files list, and nothing else" }
+      : { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
     hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), ...(h.identify ? { identify: h.identify } : {}), ...(h.ics ? { ics: h.ics } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
     findings: found, named: namedList, notes,
   };

@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import { generateKeyPairSync } from "node:crypto";
 import { Resolver } from "node:dns/promises";
 import { parseRdp, parseSmb, parseLdap, ldapDone } from "../../scanner/lib/hello.mjs";
+import { parseKafka, parseRedis, parseConnack, parseMongo, bsonFields } from "../../scanner/lib/hello.mjs";
 import { HELLO, HELLO_SENDS, wire,parseEhlo, parseCapa, parseHead, parseMdns, parseAsfPong, tcpHello, udpHello, helloPlan, helloRecord, helloFindings, identifyHost, identifyHeaderText } from "../../scanner/lib/hello.mjs";
 import { QUERIES, dnsPlanArgs, dnsQueries, interpret, dnsRecords, toDnsCsv, DNS_SENDS } from "../../scanner/lib/dns-records.mjs";
 import { mailInventory, toMailCsv, STARTTLS } from "../../scanner/lib/mail-starttls.mjs";
@@ -63,7 +64,7 @@ function dnsAnswer(m, answers) {
 /* ---- the frozen table and the exact bytes ---- */
 test("HELLO is frozen literals; wire() gives the exact bytes, fills only {target} (an IP) and {ua}", () => {
   assert.ok(Object.isFrozen(HELLO) && Object.values(HELLO).every(Object.isFrozen));
-  assert.deepEqual(Object.keys(HELLO).sort(), ["ipmi", "ldap", "mdns", "pop3", "rdp", "rtsp", "sip-tcp", "sip-udp", "smb", "smtp"]);
+  assert.deepEqual(Object.keys(HELLO).sort(), ["ipmi", "kafka", "ldap", "mdns", "mongodb", "mqtt", "pop3", "rdp", "redis", "rtsp", "sip-tcp", "sip-udp", "smb", "smtp"]);
   assert.equal(wire("smtp").toString(), "EHLO cyberview-scanner.invalid\r\n");
   assert.equal(wire("pop3").toString(), "CAPA\r\n");
   assert.equal(wire("rtsp").toString(), `OPTIONS * RTSP/1.0\r\nCSeq: 1\r\nUser-Agent: ${USER_AGENT}\r\n\r\n`);
@@ -417,4 +418,281 @@ test("security check: a changed RDP/SMB/LDAP byte, an LDAP bind or a non-unbind 
   assert.ok(helloProblems(swap("ldap", { closeHex: bind })).some((p) => /ldap closeHex is not the reviewed/.test(p)));
   assert.ok(helloProblems(swap("rdp", { hex: HELLO.rdp.hex.replace(/03000000$/, "0b000000") })).some((p) => /rdp binary request/.test(p)));
   assert.ok(helloProblems(swap("smb", { hex: "00000054ff534d4272" })).some((p) => /smb binary request/.test(p)), "SMB1 negotiate refused");
+});
+
+/* ---- wave 4 (decision 24): Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB hello ----
+   Each is a frozen byte sequence built from the protocol's own published specification. The fixtures below answer the
+   way the real service does, and every one records the exact bytes received, so the tests prove what goes on the wire. */
+
+/** Wait until the fixture has actually recorded `want` bytes (the close packet lands just after tcpHello returns). */
+async function until(fn, ms = 2000) {
+  for (let i = 0; i < ms / 10; i++) { if (fn()) return true; await new Promise((r) => setTimeout(r, 10)); }
+  return false;
+}
+/** A binary TCP server: answers each received Buffer with answer(buf); records every byte. */
+async function binServer(answer = () => null) {
+  const got = [], conns = [];
+  const srv = net.createServer((s) => {
+    conns.push(s); const mine = []; got.push(mine);
+    s.on("data", (d) => { mine.push(Buffer.from(d)); const a = answer(Buffer.from(d), mine.length); if (a) s.write(a); });
+    s.on("error", () => {});
+  });
+  const port = await new Promise((r) => srv.listen(0, "127.0.0.1", () => r(srv.address().port)));
+  return { port, got, first: () => Buffer.concat(got[0] || []), all: () => got.map((c) => Buffer.concat(c)), close: () => new Promise((r) => { conns.forEach((c) => c.destroy()); srv.close(() => r()); }) };
+}
+
+/* fixture encoders, built from the same specs as the requests */
+const bsonDoc = (fields) => {   // bsonspec.org 1.1: int32 length (counting itself and the terminator), elements, 0x00
+  const parts = [];
+  for (const [k, v] of Object.entries(fields)) {
+    const key = Buffer.concat([Buffer.from(k, "latin1"), Buffer.from([0])]);
+    if (typeof v === "number" && Number.isInteger(v)) { const b = Buffer.alloc(4); b.writeInt32LE(v); parts.push(Buffer.concat([Buffer.from([0x10]), key, b])); }
+    else if (typeof v === "boolean") parts.push(Buffer.concat([Buffer.from([0x08]), key, Buffer.from([v ? 1 : 0])]));
+    else if (typeof v === "string") { const sv = Buffer.concat([Buffer.from(v, "utf8"), Buffer.from([0])]); const n = Buffer.alloc(4); n.writeInt32LE(sv.length); parts.push(Buffer.concat([Buffer.from([0x02]), key, n, sv])); }
+  }
+  const body = Buffer.concat(parts), out = Buffer.alloc(4 + body.length + 1);
+  out.writeInt32LE(out.length, 0); body.copy(out, 4);
+  return out;
+};
+const opMsgReply = (fields) => {   // MsgHeader (16, little-endian) + flagBits 0 + kind 0 + one BSON document
+  const doc = bsonDoc(fields), h = Buffer.alloc(16);
+  h.writeInt32LE(16 + 4 + 1 + doc.length, 0); h.writeInt32LE(7, 4); h.writeInt32LE(1, 8); h.writeInt32LE(2013, 12);
+  return Buffer.concat([h, Buffer.alloc(4), Buffer.from([0]), doc]);
+};
+const kafkaReply = (apis, { correlation = 1, error = 0 } = {}) => {   // Response Header v0 + error_code + api_keys array
+  const body = Buffer.concat([Buffer.alloc(4), Buffer.alloc(2), Buffer.alloc(4), ...apis.map(([k, lo, hi]) => { const b = Buffer.alloc(6); b.writeInt16BE(k, 0); b.writeInt16BE(lo, 2); b.writeInt16BE(hi, 4); return b; })]);
+  body.writeInt32BE(correlation, 0); body.writeInt16BE(error, 4); body.writeInt32BE(apis.length, 6);
+  const out = Buffer.alloc(4 + body.length); out.writeInt32BE(body.length, 0); body.copy(out, 4);
+  return out;
+};
+
+test("the four wave-4 requests are the reviewed byte sequences, declared in SENDS and off by default", () => {
+  for (const k of ["kafka", "redis", "mqtt", "mongodb"]) {
+    const e = HELLO[k];
+    assert.equal(e.hex, REVIEWED_HEX[k], `${k} must be the reviewed sequence`);
+    assert.equal(e.flag, "--identify");
+    assert.match(e.sends, /^only with --identify \(off by default\)/);
+    assert.equal(HELLO_SENDS[`identify-${k}`], e.sends);
+    assert.equal(wire(k).toString("hex"), REVIEWED_HEX[k]);   // no substitution: these carry no {target} or {ua}
+    assert.ok(Object.isFrozen(e));
+  }
+  assert.equal(HELLO.mqtt.closeHex, REVIEWED_HEX["mqtt-close"]);
+  // the MQTT client id must be inside the 1-23 bytes of 0-9a-zA-Z a broker MUST accept ([MQTT-3.1.3-5]): never a MAY
+  const c = wire("mqtt"), idLen = c.readUInt16BE(12);
+  assert.equal(idLen, 16);
+  assert.match(c.subarray(14, 14 + idLen).toString("latin1"), /^[0-9a-zA-Z]{1,23}$/);
+  assert.equal(c[0], 0x10);                                    // CONNECT, reserved flags 0
+  assert.equal(c[1], c.length - 2);                            // remaining length does not count itself (2.2.3)
+  assert.equal(c.subarray(2, 8).toString("hex"), "00044d515454");   // 00 04 "MQTT" (3.1.2.1)
+  assert.equal(c[8], 0x04);                                    // protocol level 4 = MQTT 3.1.1 (3.1.2.2)
+  assert.equal(c[9], 0x02);                                    // Clean Session only: no user name, password or will
+  assert.equal(c.readUInt16BE(10), 0);                         // keep-alive off (3.1.2.10)
+  // Kafka: size does not count itself; ApiVersions is api_key 18, version 0, client_id null (-1)
+  const k = wire("kafka");
+  assert.equal(k.readInt32BE(0), k.length - 4);
+  assert.equal(k.readInt16BE(4), 18);
+  assert.equal(k.readInt16BE(6), 0);
+  assert.equal(k.readInt16BE(12), -1);
+  // MongoDB: messageLength includes itself, opCode is OP_MSG, flagBits 0 (so no checksum), one Kind 0 body
+  const m = wire("mongodb");
+  assert.equal(m.readInt32LE(0), m.length);
+  assert.equal(m.readInt32LE(12), 2013);
+  assert.equal(m.readUInt32LE(16), 0);
+  assert.equal(m[20], 0x00);
+  assert.equal(m.readInt32LE(21), m.length - 21);              // the body document's own length is the section length
+  // Redis: one RESP array of one bulk string, and nothing else
+  assert.equal(wire("redis").toString("latin1"), "*1\r\n$4\r\nPING\r\n");
+});
+
+test("Kafka: ApiVersions is answered and counted, and a mismatched correlation id is not believed", async () => {
+  const srv = await binServer(() => kafkaReply([[18, 0, 3], [0, 0, 9], [1, 0, 13]]));
+  try {
+    const r = await tcpHello("127.0.0.1", srv.port, "kafka", { timeouts: FAST });
+    assert.equal(r.state, "answered");
+    assert.equal(srv.first().toString("hex"), REVIEWED_HEX.kafka);   // exactly the reviewed bytes, nothing more
+    const d = helloRecord(r).read;
+    assert.equal(d.kafka, true);
+    assert.equal(d.error_code, 0);
+    assert.equal(d.apis, 3);
+    assert.equal(d.api_versions_max, 3);
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.services[0].product, "Kafka");
+    assert.equal(f.services[0].version, "");                         // no release is claimed from an API set
+    assert.equal(f.services[0].guessed, true);
+    assert.match(f.services[0].evidence, /no release number is published/);
+    assert.deepEqual(f.observations.map((o) => o.kind), ["kafka-reachable"]);
+    assert.match(f.observations[0].text, /before authentication by design/);
+  } finally { await srv.close(); }
+  // a reply whose correlation id is not the one sent is not a Kafka broker as far as this parser is concerned
+  assert.equal(parseKafka(kafkaReply([[18, 0, 3]], { correlation: 99 })).kafka, false);
+  assert.equal(parseKafka(Buffer.from("not kafka at all padding padding")).kafka, false);
+  assert.equal(parseKafka(Buffer.alloc(0)).kafka, false);
+});
+
+test("Redis: +PONG is reported as no password at all; an error reply is reported as a password being set", async () => {
+  const open = await binServer(() => Buffer.from("+PONG\r\n", "latin1"));
+  try {
+    const r = await tcpHello("127.0.0.1", open.port, "redis", { timeouts: FAST });
+    assert.equal(open.first().toString("latin1"), "*1\r\n$4\r\nPING\r\n");
+    const d = helloRecord(r).read;
+    assert.deepEqual(d, { redis: true, pong: true, auth_required: false, error: "" });
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.observations[0].kind, "redis-no-auth");
+    assert.equal(f.observations[0].severity, "high");
+    assert.match(f.observations[0].text, /no password at all/);
+    assert.equal(f.services[0].version, "");                         // PING carries no version, and none is guessed
+  } finally { await open.close(); }
+  // a server with requirepass refuses the command; the error is matched by its prefix, not by a remembered message
+  const shut = await binServer(() => Buffer.from("-NOAUTH Authentication required.\r\n", "latin1"));
+  try {
+    const r = await tcpHello("127.0.0.1", shut.port, "redis", { timeouts: FAST });
+    const d = helloRecord(r).read;
+    assert.equal(d.redis, true);
+    assert.equal(d.pong, false);
+    assert.equal(d.auth_required, true);
+    assert.equal(d.error, "NOAUTH");
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.observations[0].kind, "redis-auth-required");
+    assert.equal(f.observations[0].severity, "info");
+  } finally { await shut.close(); }
+  // any other error prefix works the same way, which is the point of not matching a fixed string
+  assert.equal(parseRedis("-ERR unknown command\r\n").auth_required, true);
+  assert.equal(parseRedis("-WRONGPASS invalid\r\n").error, "WRONGPASS");
+  assert.equal(parseRedis("random junk\r\n").redis, false);
+  assert.equal(parseRedis("").redis, false);
+});
+
+test("MQTT: an accepted anonymous CONNECT is a high finding, a refusal is not, and DISCONNECT always follows", async () => {
+  const accept = await binServer(() => Buffer.from([0x20, 0x02, 0x00, 0x00]));
+  try {
+    const r = await tcpHello("127.0.0.1", accept.port, "mqtt", { timeouts: FAST });
+    assert.ok(await until(() => accept.first().length >= 32), "the DISCONNECT should reach the broker");
+    assert.equal(accept.first().toString("hex"), REVIEWED_HEX.mqtt + REVIEWED_HEX["mqtt-close"]);   // CONNECT then DISCONNECT, nothing else
+    assert.deepEqual(r.sent, ["mqtt request (30 bytes)", "mqtt close"]);
+    const d = helloRecord(r).read;
+    assert.equal(d.mqtt, true);
+    assert.equal(d.code, 0);
+    assert.equal(d.anonymous, true);
+    assert.equal(d.session_present, false);
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.observations[0].kind, "mqtt-anonymous");
+    assert.equal(f.observations[0].severity, "high");
+    assert.match(f.observations[0].text, /no user name and no password/);
+  } finally { await accept.close(); }
+  const refuse = await binServer(() => Buffer.from([0x20, 0x02, 0x00, 0x05]));
+  try {
+    const r = await tcpHello("127.0.0.1", refuse.port, "mqtt", { timeouts: FAST });
+    const d = helloRecord(r).read;
+    assert.equal(d.code, 5);
+    assert.equal(d.meaning, "not authorized");
+    assert.equal(d.anonymous, false);
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.observations[0].kind, "mqtt-auth-required");
+    assert.equal(f.observations[0].severity, "info");
+  } finally { await refuse.close(); }
+  // every code of Table 3.1 is named, and a reserved code is reported as reserved rather than guessed
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x00, 0x01])).meaning, "unacceptable protocol version");
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x00, 0x02])).meaning, "identifier rejected");
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x00, 0x03])).meaning, "server unavailable");
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x00, 0x04])).anonymous, false);
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x00, 0x09])).meaning, "reserved (9)");
+  assert.equal(parseConnack(Buffer.from([0x20, 0x02, 0x01, 0x00])).session_present, true);
+  assert.equal(parseConnack(Buffer.from([0x30, 0x02, 0x00, 0x00])).mqtt, false);   // not a CONNACK
+  assert.equal(parseConnack(Buffer.from([0x20])).mqtt, false);
+});
+
+test("MongoDB: the hello reply is read for what it states, and no release number is inferred from the wire version", async () => {
+  const srv = await binServer(() => opMsgReply({ isWritablePrimary: true, maxWireVersion: 21, minWireVersion: 0, readOnly: false, ok: 1 }));
+  try {
+    const r = await tcpHello("127.0.0.1", srv.port, "mongodb", { timeouts: FAST });
+    assert.equal(srv.first().toString("hex"), REVIEWED_HEX.mongodb);
+    const d = helloRecord(r).read;
+    assert.equal(d.mongodb, true);
+    assert.equal(d.ok, true);
+    assert.equal(d.max_wire, 21);
+    assert.equal(d.min_wire, 0);
+    assert.equal(d.writable_primary, true);
+    assert.equal(d.kind, "standalone or unknown");
+    const f = helloFindings([helloRecord(r)]);
+    assert.equal(f.services[0].vendor, "MongoDB");
+    assert.equal(f.services[0].version, "");                        // the wire version is NOT turned into a release
+    assert.match(f.services[0].label, /maxWireVersion 21/);
+    assert.match(f.services[0].evidence, /no published mapping to a MongoDB release/);
+    assert.equal(f.observations[0].kind, "mongodb-reachable");
+    assert.match(f.observations[0].text, /does NOT mean the database is open/);
+  } finally { await srv.close(); }
+  // a mongos names itself; a replica set member gives its set name
+  const mongos = await binServer(() => opMsgReply({ msg: "isdbgrid", maxWireVersion: 17, ok: 1 }));
+  try {
+    const d = helloRecord(await tcpHello("127.0.0.1", mongos.port, "mongodb", { timeouts: FAST })).read;
+    assert.equal(d.kind, "mongos router");
+  } finally { await mongos.close(); }
+  const rs = await binServer(() => opMsgReply({ setName: "rs0", isWritablePrimary: false, maxWireVersion: 17, ok: 1 }));
+  try {
+    const d = helloRecord(await tcpHello("127.0.0.1", rs.port, "mongodb", { timeouts: FAST })).read;
+    assert.equal(d.kind, "replica set member");
+    assert.equal(d.set_name, "rs0");
+    assert.equal(d.writable_primary, false);
+  } finally { await rs.close(); }
+  assert.equal(parseMongo(Buffer.alloc(30)).mongodb, false);        // not an OP_MSG
+  assert.equal(parseMongo(Buffer.from("junk")).mongodb, false);
+});
+
+test("the BSON reader is bounded and refuses crafted input instead of trusting its lengths", () => {
+  const good = bsonDoc({ a: 1, b: "two", c: true });
+  assert.deepEqual(bsonFields(good), { a: 1, b: "two", c: true });
+  // a length that claims more than the buffer holds
+  const big = Buffer.from(good); big.writeInt32LE(0x7fffffff, 0);
+  assert.deepEqual(bsonFields(big), {});
+  // a negative and an absurd length
+  const neg = Buffer.from(good); neg.writeInt32LE(-1, 0);
+  assert.deepEqual(bsonFields(neg), {});
+  // a string element whose length prefix runs past the document end: read nothing rather than past the buffer
+  const s = bsonDoc({ k: "value" }); s.writeInt32LE(9999, 4 + 1 + 2);
+  assert.deepEqual(bsonFields(s), {});
+  // truncation at every offset must neither throw nor invent a field
+  for (let i = 0; i <= good.length; i++) assert.doesNotThrow(() => bsonFields(good.subarray(0, i)));
+  // an unknown element type stops the read instead of guessing a width
+  const unk = Buffer.from(good); unk[4] = 0x6e;
+  assert.deepEqual(bsonFields(unk), {});
+  for (const junk of [Buffer.alloc(0), Buffer.alloc(4), Buffer.from([5, 0, 0, 0, 0]), "not a buffer", null, undefined]) assert.doesNotThrow(() => bsonFields(junk));
+  assert.deepEqual(bsonFields(Buffer.from([5, 0, 0, 0, 0])), {});   // the empty document
+  // a field name with no terminator
+  assert.deepEqual(bsonFields(Buffer.concat([(() => { const b = Buffer.alloc(4); b.writeInt32LE(12); return b; })(), Buffer.from([0x10]), Buffer.from("abcdef", "latin1"), Buffer.from([0])])), {});
+});
+
+test("the new hellos are planned only on their own ports, only when the port is open", () => {
+  const h = (ports) => ({ address: "10.0.0.5", ports: ports.map((port) => ({ port, state: "open" })), services: [], tls: [] });
+  const keys = (host, opts = {}) => helloPlan(host, opts).map((x) => `${x.key}:${x.port}`);
+  assert.ok(keys(h([9092])).includes("kafka:9092"));
+  assert.ok(keys(h([6379])).includes("redis:6379"));
+  assert.ok(keys(h([1883])).includes("mqtt:1883"));
+  assert.ok(keys(h([27017])).includes("mongodb:27017"));
+  assert.ok(keys(h([27019])).includes("mongodb:27019"));
+  // a closed port gets nothing, and a port none of them claims gets nothing
+  assert.deepEqual(keys({ address: "10.0.0.5", ports: [{ port: 6379, state: "closed" }], services: [], tls: [] }).filter((x) => x.startsWith("redis")), []);
+  assert.deepEqual(keys(h([12345])).filter((x) => /kafka|redis|mqtt|mongodb/.test(x)), []);
+  // a TLS port is skipped: these are cleartext hellos
+  assert.deepEqual(helloPlan({ address: "10.0.0.5", ports: [{ port: 6379, state: "open" }], services: [], tls: [{ port: 6379 }] }).filter((x) => x.key === "redis"), []);
+  // one entry per service even when several of its ports are open
+  assert.equal(keys(h([27017, 27018, 27019])).filter((x) => x.startsWith("mongodb")).length, 1);
+});
+
+test("probeAll end to end: an open Redis port gets zero bytes without --identify, and exactly PING with it", async () => {
+  // the service answers +PONG the way an unprotected Redis does; the scan reaches it on its real port
+  const s = await binServer(() => Buffer.from("+PONG\r\n", "latin1"));
+  try {
+    const st = settings({}).settings;
+    const off = await probeAll(LOCAL, { ports: [s.port], settings: st, assumeUp: true });
+    await new Promise((x) => setTimeout(x, 100));
+    assert.equal(Buffer.concat(s.all()).length, 0, "no --identify: not one byte is written to the Redis port");
+    assert.equal(off.hosts[0].identify, undefined);
+    // the hello is planned by port number, so the fixture's ephemeral port is mapped onto Redis's own
+    const plan = helloPlan({ address: "127.0.0.1", ports: [{ port: 6379, state: "open" }], services: [], tls: [] });
+    assert.ok(plan.some((p) => p.key === "redis" && p.port === 6379));
+    const r = await tcpHello("127.0.0.1", s.port, "redis", { timeouts: FAST });
+    await new Promise((x) => setTimeout(x, 50));
+    assert.equal(Buffer.concat(s.all()).toString("hex"), REVIEWED_HEX.redis, "with --identify: exactly the reviewed PING, nothing else");
+    assert.equal(helloRecord(r).read.pong, true);
+  } finally { await s.close(); }
 });

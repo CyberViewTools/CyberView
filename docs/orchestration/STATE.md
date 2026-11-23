@@ -12,12 +12,35 @@ Merged today:
 - #130 — `--ics` results in summary.txt / inventory.csv / report.html
 - #132 — cost tiering
 
+Merged since: #134 — public + internal description refresh (About/Status prose for the accuracy eval set, API fallback
+and cost tiering; feed count corrected to 280; BUILD 1.70).
+
 Open (this session):
 - #136 — started as three fixes from the status page Routines section, then grew into the audit below (branch claudex/zen-hypatia-y3utma, DRAFT by choice, full CI green: 1043 unit, 668 browser). Opening it ready triggers a one-off ~67-run review drain, so the owner picks the moment. First three fixes:
   - `scripts/review.mjs`: the queue windowed on `first_seen` while `needsReview` fires on `updated_at`, so 66 of 67 events changed after their review could never be re-queued (queue said 1, pipecheck 60). Now an exported pure `inReviewWindow()` on `waitingSince`. Live effect: queue 1 -> 67. Draining it is a one-off ~67 reviewer runs, so expect a short spike and a truer accuracy number afterwards.
   - `config/pipeline.json`: `sweep.gap_pass` false. The pass sat at the gap_max_every_minutes ceiling and then ran 143 times in a row adding nothing: 278 runs, 118.4 M tokens, $76.56 of the week's $858.58. Every other gap_* dial untouched, so flipping it back restores prior behaviour exactly.
   - `scripts/collect.mjs` + `scripts/lib/net.mjs`: on a 415 only, ask once more without our `accept` list, same identifying UA. Fixes the four 415 collectors (Daily News/HabariLeo Tanzania, Lefaso.net, Ciberseguridad LATAM). Not a block workaround: 401/403 stop is untouched and a persistent 415 still fails as 415.
   - Done with two worktree subagents (lanes A and B, Sonnet, ~200 K tokens total) plus inline work; one CI run, one PR. Note for next time: the feed collector uses `fetchFeed` in `scripts/collect.mjs`, NOT `net.mjs` `get()`.
+
+- #140 — scanner `match`: a full report from files the operator already holds (nmap `-oX` with `-sV`, an SBOM, a package
+  list), for assets that cannot be scanned. New `scanner/lib/inputs.mjs` adapters return `fingerprint.mjs`'s own record
+  shape, so the matching, rating, CISA priority and all five outputs are the scan's code unchanged; CPE/purl give the
+  vendor the matcher needs; `--assume-exposed` (default internal) moves only CISA's deadline. Nothing is contacted and the
+  report says so. Decision 23 in `docs/scanner.md`.
+  Also in #140: the offline `lookup <CVE>` reader (`scanner/lib/lookup.mjs`) — one CVE from the same snapshot, with the
+  rating, CISA's deadline for both exposure answers, the NVD ranges, the fix, whether a fingerprint can find the product
+  at all, and `--version` to check a version you hold. A reader, not a matcher: no new data path, and a CVE the catalog
+  does not hold is reported absent rather than guessed at. **tk-matchers is complete** with this.
+  Also in #140: **scan-hellos-2** — four more `--identify` hellos (Kafka ApiVersions, Redis PING, MQTT CONNECT, MongoDB
+  `hello`), decisions 23-27 in `docs/scanner.md`. Three of the four answer a posture question, not a version question:
+  Redis `+PONG` = no password at all (high), MQTT CONNACK 0 = anonymous connections accepted (high), MongoDB says
+  plainly that `hello` is pre-auth by design and so does NOT show whether access control is on. No version is invented
+  anywhere: no Kafka release from an API set, no MongoDB release from `maxWireVersion`, because neither mapping is
+  published. SQL Server PRELOGIN is deferred with three named spec gaps, JetDirect PJL rejected (raw 9100 would make
+  non-PJL printers print the probe), Oracle TNS/NetBackup/ACME deferred.
+  **Correction to this file's earlier claim:** it said the wave-3 research had sourced the byte layouts for these
+  protocols. It had not — `handoff/scan-research-pack.md` lists them under "Needs a hello (not built here)" and records
+  only the message names. Every byte shipped here was sourced from the protocol's own specification in this session.
 
 Prior open item (merged):
 - Public + internal description refresh. Surfaces the recent operational work (#127 accuracy eval set, #129 API fallback, #132 cost tiering) in the public prose and corrects drift:
@@ -26,7 +49,7 @@ Prior open item (merged):
   - `site/status.html`: one-line note on the Accuracy section about the eval test set (fallback/tiering/accuracy are already surfaced live via health.json + the Accuracy/Improver sections, and `nav.js` injects the Actors/Scanner links, so no nav edit needed).
   - `site/app.js`: BUILD 1.69→1.70 (2026-11-23), since a tracked site/ file changed.
 
-No scanner PRs currently open; #136 is the open pipeline PR (confirm with the GitHub tools when you run — there is no `gh pr list` here, only `gh api search/*`).
+Open PRs: #140 (scanner `match`) and #136 (pipeline audit) (confirm with the GitHub tools when you run — there is no `gh pr list` here, only `gh api search/*`).
 
 ## Audit of 2026-11-23 (four read-only lanes; findings VERIFIED by the lead before acting)
 
@@ -67,9 +90,12 @@ Also measured, deliberately NOT changed:
 
 Changed directly by the owner citing the #127 evals (the Opus deep roles were not more accurate).
 
-## Scanner remainder (see docs/orchestration/BACKLOG.md "Remaining")
+## Scanner remainder (after #140)
 
-Protocol fingerprints each needing one new reviewed send, off by default — Kafka, Redis, MQTT, SQL Server pre-login, Oracle TNS, JetDirect, MongoDB hello, NetBackup (byte layouts sourced in the wave-3 research). DNP3 (needs an operator-supplied address). MTA-STS policy fetch + FHIR `/metadata` (path-rail review). DNSSEC. ~31 rows unbuildable (no public fingerprint). The heavy protocol work is held until the fallback key is set so build spend can't stall publishing.
+The protocol-hello family is closed except for SQL Server PRELOGIN, which is deferred on three specific, named spec
+questions (decision 24), not on effort. DNP3 still waits on an operator-supplied outstation address (decision 20).
+DNSSEC stays out while `node:dns` cannot ask for DS or DNSKEY. ~31 catalog rows have no public fingerprint. The
+remaining Active rows are the path-rail review (MTA-STS, FHIR) and the tk-diff watch half, both Design-stage.
 
 ## Known flaky test
 

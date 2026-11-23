@@ -77,4 +77,34 @@ Discovery output for the toolkit's offline `match` command. Research and proposa
      the site's "My software" import.
 
 ## Implementation → Review
-- (pending)
+
+- **#120 (2026-11-22)** shipped the SBOM and package-list half as the `import` command (`scanner/lib/imports.mjs`):
+  CycloneDX/SPDX and package inventories parsed, matched with the page's own engine, written to `imports.json`.
+- **#140 (2026-11-23)** shipped the rest of the matching half as the **`match`** command
+  (`scanner/lib/inputs.mjs`, `offline-cmds.mjs`, `docs/scanner.md` decision 23):
+  - nmap `-oX` → real hosts, ports, products and versions in `fingerprint.mjs`'s own record shape, so
+    `match.mjs findings()`, the rating, CISA's priority and all five writers are reused unchanged (no second engine).
+    Down hosts, closed and filtered ports skipped; `method="table"` or a missing version marks the record `guessed`, so it
+    can never reach high confidence; nmap's build text ("8.2p1 Ubuntu 4ubuntu0.5") is split into the compared version, the
+    shown version and the distribution, giving the same backport caveat a banner read would.
+  - `parseCpe` (2.2 and 2.3) and `parsePurl` for both nmap and SBOMs; for SBOMs the stated vendor is applied to the items
+    `W.parseInventory` returns (it keeps name and version only), and a CPE product name that differs is matched too, because
+    `nameHit` needs every word of a range's product in the name. SPDX falls back to the stated supplier.
+  - `--assume-exposed` as recommended, with internal as the default: it moves only CISA's BOD 26-04 deadline, never the
+    CyberView rating. A finding with no port prints as the file and gets a `file://` SARIF location.
+  - The report states what it is: `run.network.sent: 0`, `coverage.from: "files"` with `complete: false`, a `match` block
+    naming the inputs and the exposure assumption, and a first note that anything the files omit is absent, not clean.
+  - 10 new unit tests (adapters, crafted-input bounds, the CLI's refusals and both exposure paths) in
+    `tests/unit/scanner.test.mjs`, fixture `tests/fixtures/scanner/nmap.xml`; `security-check.mjs` section 7 green
+    (`match` imports neither the probe functions nor the web data source).
+- **#140 also shipped the offline `lookup <CVE>` reader** (`scanner/lib/lookup.mjs`), the last item on the Discovery
+  list. Designed as a READER, not a matcher, and it adds no data path: the same `workbench.json`, `psirt.json` and CVE
+  lookup file through the same `dirSource`. It prints the identity, KEV status with the deadline, EPSS, the CyberView
+  rating with every note, CISA's SSVC priority for BOTH exposure answers (no inventory was given, so assuming one would
+  be a guess), the NVD ranges, the vendor's fix and workarounds, and `detectionFor`: whether this scanner's own
+  fingerprints read the product's version, name it only, or cannot find it — stated as a detection gap, never as
+  evidence the product is absent. `--version` runs the engine's own comparison and names the state it returned
+  (`affected`, `check`, `clear`, `none`) with the backport caveat. A CVE the catalog does not hold is reported absent
+  with why, and nothing is invented for it. Rules 11 and 15 hold: the analysis and check steps stay linked, never
+  copied, and anything CyberView wrote is labelled. 5 new tests.
+- **tk-matchers is now complete.** Nothing from the Discovery list remains open.

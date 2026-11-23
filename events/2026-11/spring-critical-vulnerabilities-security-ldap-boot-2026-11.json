@@ -1,8 +1,16 @@
 {
   "actor": "",
   "attack": [],
-  "cves": ["CVE-2026-59273", "CVE-2026-59367", "CVE-2026-59411"],
-  "products": ["Spring Security", "Spring LDAP", "Spring Boot"],
+  "cves": [
+    "CVE-2026-59273",
+    "CVE-2026-59367",
+    "CVE-2026-59411"
+  ],
+  "products": [
+    "Spring Security",
+    "Spring LDAP",
+    "Spring Boot"
+  ],
   "pin_type": "country",
   "source_tier": "primary",
   "category": "vuln",
@@ -23,10 +31,25 @@
   "action": "Spring advises upgrading: open-source fixes are Spring Security 7.1.3 or 7.0.9, Spring LDAP 4.1.3 or 4.0.7, Spring Boot 4.1.3 or 4.0.10; other lines' fixes need Enterprise Support.",
   "tags": [],
   "sources": [
-    {"name": "Spring: CVE-2026-59273", "url": "https://spring.io/security/cve-2026-59273", "published": "2026-11-19"},
-    {"name": "Spring: CVE-2026-59367", "url": "https://spring.io/security/cve-2026-59367", "published": "2026-11-19"},
-    {"name": "Spring: CVE-2026-59411", "url": "https://spring.io/security/cve-2026-59411", "published": "2026-11-19"},
-    {"name": "heise Security", "url": "https://www.heise.de/news/Zahlreiche-Sicherheitsluecken-betreffen-Komponenten-des-Java-Oekosystems-Spring-11534890.html"}
+    {
+      "name": "Spring: CVE-2026-59273",
+      "url": "https://spring.io/security/cve-2026-59273",
+      "published": "2026-11-19"
+    },
+    {
+      "name": "Spring: CVE-2026-59367",
+      "url": "https://spring.io/security/cve-2026-59367",
+      "published": "2026-11-19"
+    },
+    {
+      "name": "Spring: CVE-2026-59411",
+      "url": "https://spring.io/security/cve-2026-59411",
+      "published": "2026-11-19"
+    },
+    {
+      "name": "heise Security",
+      "url": "https://www.heise.de/news/Zahlreiche-Sicherheitsluecken-betreffen-Komponenten-des-Java-Oekosystems-Spring-11534890.html"
+    }
   ],
   "validation": {
     "state": "primary",
@@ -35,6 +58,25 @@
   },
   "first_seen": "2026-11-23T17:58:16Z",
   "updated_at": "2026-11-23T17:58:16Z",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "web-app", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-23T18:11:29Z",
+    "first_at": "2026-11-23T18:11:29Z",
+    "note": "Compared title, summary, versions, critical rating and action with the three Spring advisories (19 Nov) and heise (no ongoing attacks stated). Heise date not shown on page, left unset. Heise also says first PoCs are public but show no code execution; severity left at 2.",
+    "flags": [
+      "no-cve-meta",
+      "source-published-partial"
+    ]
+  },
+  "qa_checked_at": "2026-11-23T18:11:29Z"
 }

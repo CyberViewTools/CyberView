@@ -9,7 +9,11 @@
 // Every function here is pure and has unit tests (tests/unit/gates.test.mjs). The dials live in config/pipeline.json
 // (followup_desk, claims_desk, outage_desk, sweep.gap_*); the defaults below are what an absent dial means.
 
-import { siteOf } from "./validate.mjs";
+// kept in step with validate.mjs siteOf by a unit test, and copied rather than imported on purpose: gates.mjs has no
+// imports, because the claims, outage and grid desk CLIs run from a hand-picked minimal copy of scripts/ (see
+// tests/unit/claims-desk.test.mjs), and importing validate.mjs would pull taxonomy.mjs into every one of those sandboxes.
+const hostOf = (u) => { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ""); } catch { return ""; } };
+export const siteOf = (u) => { const h = hostOf(u).split("."); return h.length > 2 && /^(co|com|org|net|gov|go|ac|ne|or|gob|gouv)$/.test(h[h.length - 2]) ? h.slice(-3).join(".") : h.slice(-2).join("."); };
 
 const HOUR = 36e5;
 const iso = (t) => new Date(t).toISOString().replace(/\.\d+Z$/, "Z");

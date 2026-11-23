@@ -246,3 +246,15 @@ test("on-file gate: gateOnFile never drops a candidate: due + skipped = every ca
   assert.deepEqual([r.due.map((x) => x.id), r.skipped.map((x) => x.id)], [["other-2026-11"], [SLUG]]);
   assert.deepEqual(gateOnFile(null, [], null, NOW), { due: [], skipped: [], next_due_at: null });
 });
+
+// gates.mjs copies siteOf instead of importing it, so that the desk CLIs can run from a minimal copy of scripts/.
+// That copy is only safe while it agrees with the original.
+test("the gate's publisher helper stays in step with validate.mjs siteOf", async () => {
+  const { siteOf: theirs } = await import("../../scripts/lib/validate.mjs");
+  const { siteOf: ours } = await import("../../scripts/lib/gates.mjs");
+  const urls = ["https://www.bbc.co.uk/news/1", "https://news.bbc.co.uk/a", "https://bbc.co.uk/a", "https://www.dailysecu.com/x",
+    "https://cisa.gov/a", "https://www.ncsc.gov.uk/a", "https://sub.deep.example.com/a", "https://example.org/a",
+    "https://lefaso.net/spip.php?page=backend", "https://habarileo.co.tz/feed/", "https://www.gob.mx/a", "https://x.gouv.fr/a",
+    "not a url", "", "https://localhost/a"];
+  for (const u of urls) assert.equal(ours(u), theirs(u), `siteOf disagrees for ${JSON.stringify(u)}`);
+});

@@ -14,11 +14,11 @@
   "geo_basis": "vendor headquarters",
   "pin_type": "hq",
   "actor": "",
-  "summary": "N-able says unknown actors accessed one server in its hosted Mail Assure and SpamExperts cloud, and it found no evidence customer data was compromised. Per The Hacker News, a separate SSRF flaw, CVE-2026-134624 (CVSS 4.0 score 9.3), was found during the investigation; N-able has not said whether it was the way in. The hosted platform is patched.",
-  "plain": "A security vendor's email filtering service was breached. Mail still flows, but customers lost the management portal, APIs, quarantine and logs while N-able restores them.",
-  "exec": "Email filtering management is offline for resellers and customers of the service; mail protection continues.",
+  "summary": "N-able says unknown actors accessed one server in its hosted Mail Assure and SpamExperts cloud, and it found no evidence customer data was compromised. N-able told SecurityWeek exploitation was confined to a single hosted server and the impacted functionality is restored. Per The Hacker News, a separate SSRF flaw, CVE-2026-134624 (CVSS 4.0 score 9.3), was found during the investigation; N-able has not said whether it was the way in.",
+  "plain": "A security vendor's email filtering service was breached on one server. N-able told SecurityWeek the affected functionality is restored.",
+  "exec": "N-able told SecurityWeek the email filtering service's impacted functionality is restored and exploitation was confined to one hosted server.",
   "action": "N-able advises SpamExperts Local Cloud operators to confirm they run build 20261121.1943; Hosted Cloud users have nothing to install. Otherwise follow N-able's status updates; it revoked customer API tokens and reset local-user passwords.",
-  "impact": "Management portal, APIs, quarantine and logging offline; core mail flow and filtering available. SecurityWeek (20 Nov) reports portal and API access still disabled, with restoration and remediation continuing.",
+  "impact": "Portal and API access were disabled during the incident (SecurityWeek, 20 Nov); N-able told SecurityWeek on 23 Nov it has restored the impacted functionality.",
   "products": [
     "Mail Assure",
     "SpamExperts Hosted Cloud"
@@ -45,6 +45,11 @@
   ],
   "sources": [
     {
+      "name": "SecurityWeek (patch and restoration)",
+      "url": "https://www.securityweek.com/n-able-patches-critical-flaw-disclosed-after-mail-assure-cyberattack/",
+      "published": "2026-11-23"
+    },
+    {
       "name": "The Hacker News (CVE disclosure)",
       "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
       "published": "2026-11-23"
@@ -69,7 +74,7 @@
     "note": "The Hacker News relays N-able's own statement; N-able's status page (uptime.n-able.com/event/202672) returned 403 to our reader, so it was not read. GBHackers (19 Nov) relays the same N-able notice: more detail, not independent confirmation. 20 Nov: SecurityWeek (N-able's own statement to the outlet, status page cited) adds possible credential access and containment steps; same N-able notice, not independent confirmation."
   },
   "first_seen": "2026-11-19T10:30:00Z",
-  "updated_at": "2026-11-23T15:00:44Z",
+  "updated_at": "2026-11-23T17:59:33Z",
   "review": {
     "state": "passed",
     "at": "2026-11-20T09:18:40Z",

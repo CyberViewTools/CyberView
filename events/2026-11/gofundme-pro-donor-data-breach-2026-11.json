@@ -16,12 +16,17 @@
   "actor": "",
   "attack": [],
   "cves": [],
-  "products": ["GoFundMe Pro"],
-  "tags": ["data-breach", "nonprofit"],
+  "products": [
+    "GoFundMe Pro"
+  ],
+  "tags": [
+    "data-breach",
+    "nonprofit"
+  ],
   "summary": "GoFundMe says an unauthorized third party gained access to personal donor and supporter information on its GoFundMe Pro nonprofit fundraising platform, The NonProfit Times and Fortune report. Per a customer email GoFundMe shared with Fortune, the data included names, postal and email addresses, phone numbers and dates of birth, and for some organisations Salesforce integration credentials. Salesforce disabled the GoFundMe Pro connected app, NPT reports; GoFundMe notified law enforcement.",
-  "plain": "GoFundMe says someone broke into GoFundMe Pro, a fundraising service for charities, and reached donors' names, addresses, emails, phone numbers and birth dates.",
-  "exec": "A breach at a nonprofit fundraising platform exposed donor contact details and, for some charities, Salesforce integration credentials.",
-  "action": "Salesforce, per The NonProfit Times, advises affected organisations to rotate credentials and review their Setup Audit Trail and Login History; the GoFundMe Pro connected app has been disabled.",
+  "plain": "GoFundMe says an unauthorized party gained access to donor and supporter information on GoFundMe Pro, a fundraising service for charities, including names, addresses, emails, phone numbers and birth dates.",
+  "exec": "Unauthorized access at a nonprofit fundraising platform reached donor contact details and, for some charities, Salesforce integration credentials.",
+  "action": "As The NonProfit Times advises, GoFundMe Pro Salesforce integration users should rotate all keys and credentials stored in Salesforce and review the Setup Audit Trail and Login History for unfamiliar activity; Salesforce has disabled the GoFundMe Pro connected app.",
   "impact": "Donor and supporter names, postal addresses, email addresses, phone numbers and dates of birth; Salesforce integration credentials for some organisations (per GoFundMe's customer email, relayed by Fortune).",
   "sources": [
     {
@@ -41,10 +46,36 @@
     "checked_at": "2026-11-23T01:25:35Z",
     "note": "The NonProfit Times and Fortune each quote a GoFundMe spokesperson confirming unauthorized access to GoFundMe Pro; data categories from GoFundMe's customer email as relayed by Fortune; Salesforce statement from NPT. GoFundMe's own notice was not read. No attacker named. DonorPerfect's separate incident is not part of this record."
   },
-  "report": {"read_depth": "secondary"},
-  "sectors": {"values": ["nonprofit", "individuals"], "basis": "stated"},
-  "surface": {"value": "unknown", "basis": "inferred"},
+  "report": {
+    "read_depth": "secondary"
+  },
+  "sectors": {
+    "values": [
+      "nonprofit",
+      "individuals"
+    ],
+    "basis": "stated"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
   "evidence": [],
   "first_seen": "2026-11-23T01:25:35Z",
-  "updated_at": "2026-11-23T01:25:35Z"
+  "updated_at": "2026-11-23T01:40:51Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-23T01:40:51Z",
+    "first_at": "2026-11-23T01:40:51Z",
+    "note": "action advice: Salesforce advice attributed to Salesforce but NPT sentence is unattributed, now attributed to NPT; plain 'broke into' and exec 'exposed' softened to the sources' wording",
+    "flags": [
+      "action-unsourced"
+    ],
+    "categories": [
+      "overstated",
+      "action",
+      "attribution"
+    ]
+  },
+  "qa_checked_at": "2026-11-23T01:40:51Z"
 }

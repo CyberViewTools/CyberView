@@ -12,6 +12,13 @@ Merged today:
 - #130 — `--ics` results in summary.txt / inventory.csv / report.html
 - #132 — cost tiering
 
+Open (this session):
+- Public + internal description refresh. Surfaces the recent operational work (#127 accuracy eval set, #129 API fallback, #132 cost tiering) in the public prose and corrects drift:
+  - `config/about.json` "ops": added measured-accuracy test set, model tiering (least-costly-capable, Opus only where needed) and non-stalling publishing (subscription-primary, API fallback within a monthly cap). Numbers still live-filled; `about.mjs check` green.
+  - `legal/about.html` "How it is made": feed count 220→280 (live total is 280 = 228 collect + 52 feeds.json), X noted as a lead-only source (never evidence), new "Accuracy, cost and reliability" bullet linking the status page.
+  - `site/status.html`: one-line note on the Accuracy section about the eval test set (fallback/tiering/accuracy are already surfaced live via health.json + the Accuracy/Improver sections, and `nav.js` injects the Actors/Scanner links, so no nav edit needed).
+  - `site/app.js`: BUILD 1.69→1.70 (2026-11-23), since a tracked site/ file changed.
+
 No scanner or pipeline PRs currently open (confirm with `gh pr list` when you run).
 
 ## Pending owner actions

@@ -24,10 +24,10 @@
   "lng": -122.42,
   "org": "Spring (VMware / Broadcom)",
   "sector": "Software",
-  "title": "Spring publishes critical advisories for Spring Security, Spring LDAP and Spring Boot",
-  "summary": "Spring's advisories of 19 November rate three flaws critical. CVE-2026-59273 can allow remote code execution in Spring Security, CVE-2026-59367 is a hardcoded administrator credential on an embedded test LDAP server in Spring LDAP, and CVE-2026-59411 disables default servlet security for Actuator apps on Cloud Foundry in Spring Boot. heise says the developers cite no ongoing attacks.",
-  "plain": "Spring has published three critical security advisories for Spring Security, Spring LDAP and Spring Boot; heise says the developers report no ongoing attacks.",
-  "exec": "Three critical flaws affect widely used Java framework components; Spring lists fixes and heise says no attacks are reported.",
+  "title": "Spring publishes advisories for Spring Security, Spring LDAP and Spring Boot, two rated critical",
+  "summary": "Spring's advisories of 19 November rate CVE-2026-59367 (a hardcoded administrator credential on an embedded test LDAP server in Spring LDAP) and CVE-2026-59411 (default servlet security disabled for Actuator apps on Cloud Foundry in Spring Boot) as critical. CVE-2026-59273, which can allow remote code execution in Spring Security, is rated medium. heise says the developers cite no ongoing attacks.",
+  "plain": "Spring has published advisories for Spring Security, Spring LDAP and Spring Boot, two rated critical; heise says the developers report no ongoing attacks.",
+  "exec": "Spring rates two of three flaws in Java framework components critical and lists fixes; heise says no attacks are reported.",
   "action": "Spring advises upgrading: open-source fixes are Spring Security 7.1.3 or 7.0.9, Spring LDAP 4.1.3 or 4.0.7, Spring Boot 4.1.3 or 4.0.10; other lines' fixes need Enterprise Support.",
   "tags": [],
   "sources": [
@@ -57,7 +57,7 @@
     "checked_at": "2026-11-23T17:58:16Z"
   },
   "first_seen": "2026-11-23T17:58:16Z",
-  "updated_at": "2026-11-23T19:30:04Z",
+  "updated_at": "2026-11-23T19:40:45Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -69,16 +69,18 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-23T18:11:29Z",
+    "state": "corrected",
+    "at": "2026-11-23T19:41:19Z",
     "first_at": "2026-11-23T18:11:29Z",
-    "note": "Compared title, summary, versions, critical rating and action with the three Spring advisories (19 Nov) and heise (no ongoing attacks stated). Heise date not shown on page, left unset. Heise also says first PoCs are public but show no code execution; severity left at 2.",
+    "note": "stronger than the source: Spring page rates CVE-2026-59273 MEDIUM, only the LDAP and Boot flaws are critical; title, summary, plain, exec fixed; correction file added",
     "flags": [
-      "no-cve-meta",
       "source-published-partial"
+    ],
+    "categories": [
+      "overstated"
     ]
   },
-  "qa_checked_at": "2026-11-23T18:11:29Z",
+  "qa_checked_at": "2026-11-23T19:41:19Z",
   "cve_meta": [
     {
       "id": "CVE-2026-59273",

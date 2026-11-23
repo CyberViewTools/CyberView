@@ -5,7 +5,11 @@
     "advisory",
     "whatsapp"
   ],
-  "cves": [],
+  "cves": [
+    "CVE-2026-23871",
+    "CVE-2026-44908",
+    "CVE-2026-102769"
+  ],
   "cve_meta": [],
   "products": [
     "WhatsApp",
@@ -13,14 +17,14 @@
   ],
   "time_basis": "published",
   "first_seen": "2026-11-23T18:55:40Z",
-  "updated_at": "2026-11-23T19:11:23Z",
+  "updated_at": "2026-11-23T19:42:54Z",
   "category": "report",
-  "status": "developing",
+  "status": "confirmed",
   "attack": [],
   "geo_basis": "country",
   "date": "2026-11-23",
-  "date_note": "Pakistan Times gives no separate date for the advisory; 23 November is the article's publication day.",
-  "title": "Pakistan's National CERT urges WhatsApp users to update over reported vulnerabilities",
+  "date_note": "HKCERT's bulletin is dated 23 Nov 2026; Pakistan Times gives no earlier day for the National CERT advisory.",
+  "title": "Pakistan's National CERT and HKCERT issue WhatsApp advisories on multiple vulnerabilities",
   "org": "National CERT (Pakistan)",
   "sector": "Government advisory",
   "country": "Pakistan",
@@ -29,12 +33,22 @@
   "lng": 69.35,
   "pin_type": "country",
   "severity": 2,
-  "source_tier": "established",
-  "summary": "Pakistan Times reports that Pakistan's National CERT issued an advisory covering WhatsApp vulnerabilities on Android, iOS, Windows and Mac. The article names no CVE or versions. It says National CERT urged users to install the latest versions of WhatsApp and WhatsApp Business without delay. The advisory itself was not read.",
-  "plain": "Pakistan Times reports a national cyber agency alert telling WhatsApp users to update the app and avoid suspicious attachments and links.",
-  "exec": "Pakistan's National CERT, per Pakistan Times, urges prompt WhatsApp updates.",
-  "action": "National CERT advises, per Pakistan Times, installing the latest WhatsApp and WhatsApp Business versions from official sources and avoiding suspicious attachments and links.",
+  "source_tier": "primary",
+  "summary": "Pakistan's National CERT issued an advisory on WhatsApp and WhatsApp Business flaws, per Tribune, which names five CVEs fixed in May and November 2026 updates. HKCERT's bulletin rates the risk Medium and lists CVE-2026-23871, CVE-2026-44908 and CVE-2026-102769. It says CVE-2026-23871 \"is being scattered exploited\".",
+  "plain": "Two national cyber agencies warn about several WhatsApp flaws and tell users to install the vendor's updates.",
+  "exec": "National CERT and HKCERT both advise updating WhatsApp.",
+  "action": "HKCERT advises applying the vendor's fixes: WhatsApp for Android v2.26.35.74 or later and for iOS v2.26.24.72 or later; National CERT, per Tribune, advises updating from the official app store.",
   "sources": [
+    {
+      "name": "HKCERT: WhatsApp Multiple Vulnerabilities",
+      "url": "https://www.hkcert.org/security-bulletin/whatsapp-multiple-vulnerabilities_20261123",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "The Express Tribune",
+      "url": "https://tribune.com.pk/story/2641915/govt-issues-advisory-to-whatsapp-users-warns-of-multiple-vulnerabilities",
+      "published": "2026-11-24"
+    },
     {
       "name": "Pakistan Times",
       "url": "https://www.pakistantimes.com/pakistan-issues-nationwide-whatsapp-security-alert-over-dangerous-vulnerabilities-16783/",
@@ -43,9 +57,9 @@
   ],
   "evidence": [],
   "validation": {
-    "checked_at": "2026-11-23T18:55:40Z",
-    "state": "single_source",
-    "note": "Only Pakistan Times was read; the National CERT advisory was not found or read."
+    "checked_at": "2026-11-23T19:46:00Z",
+    "state": "corroborated",
+    "note": "HKCERT's own bulletin, The Express Tribune and Pakistan Times each state the advisory and the WhatsApp flaws; the National CERT PDF was not read."
   },
   "sectors": {
     "values": [
@@ -56,17 +70,5 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  },
-  "review": {
-    "state": "corrected",
-    "at": "2026-11-23T19:11:28Z",
-    "first_at": "2026-11-23T19:11:28Z",
-    "note": "plain said 'unexpected messages and files', which the article does not say; now 'suspicious attachments and links' as in the source. Title, date, platforms, no CVE and action otherwise match Pakistan Times",
-    "flags": [],
-    "categories": [
-      "unsourced",
-      "misstated"
-    ]
-  },
-  "qa_checked_at": "2026-11-23T19:11:28Z"
+  }
 }

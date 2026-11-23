@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { flagsFor, needsReview, risk, order, planBatches } from "../../scripts/review.mjs";
+import { flagsFor, needsReview, inReviewWindow, risk, order, planBatches } from "../../scripts/review.mjs";
 
 const base = (o = {}) => ({ id: "acme-breach-2026-11", title: "Acme confirms breach of customer database", org: "Acme", date: "2026-11-18", first_seen: "2026-11-18T10:00:00Z", category: "incident", severity: 2, status: "confirmed",
   summary: "Acme said attackers copied a customer database. The company confirmed 4,200,000 records were taken.", plain: "p", exec: "x", action: "Acme advises customers to reset their passwords.", records_affected: 4200000, lat: 1, lng: 1, country: "Canada",
@@ -64,4 +64,20 @@ test("review plan: with two or more reviewers the first takes the newest events,
   assert.deepEqual(planBatches(items.slice(0, 3), 4, 12), [items.slice(0, 3).map((x) => x.e.id)]);
   assert.deepEqual(planBatches(items, 1, 5), [items.slice(0, 5).map((x) => x.e.id)]);
   assert.deepEqual(planBatches([], 4, 12), []);
+});
+
+test("the review window follows the clock needsReview uses, so a changed old event is re-reviewed", () => {
+  const now = Date.parse("2026-11-23T12:00:00Z"), at = (h) => new Date(now - h * 36e5).toISOString(), d = (n) => at(n * 24);
+  // first published 5 days ago, reviewed 4 days ago, changed an hour ago: waiting again, so it is in the window (this was invisible to the planner)
+  const changed = base({ first_seen: d(5), updated_at: at(1), review: { at: d(4) } });
+  assert.equal(needsReview(changed), true); assert.equal(inReviewWindow(changed, now), true);
+  // reviewed after its last change: nothing to do
+  const done = base({ first_seen: d(5), updated_at: d(4), review: { at: d(3) } });
+  assert.equal(needsReview(done), false); assert.equal(inReviewWindow(done, now), false);
+  // never reviewed and genuinely old: the 3-day horizon still applies
+  assert.equal(inReviewWindow(base({ first_seen: d(10), updated_at: d(10) }), now), false);
+  // never reviewed, just published
+  assert.equal(inReviewWindow(base({ first_seen: at(1), updated_at: at(1) }), now), true);
+  // duplicates are never queued
+  assert.equal(inReviewWindow(base({ first_seen: at(1), updated_at: at(1), duplicate_of: "other-2026-11" }), now), false);
 });

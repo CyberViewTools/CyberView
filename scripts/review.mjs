@@ -208,9 +208,14 @@ export function loadRunLogs(days = 8) {
     }
   return out;
 }
+/** Pure: is this event in the queue's window? It still needs a review and its current version has waited under 3 days. The window is
+ *  on waitingSince (the clock needsReview and order use), not first_seen: an old event changed an hour ago needs a re-review. */
+export function inReviewWindow(e, now = Date.now()) {
+  return waitingSince(e) >= new Date(now - 3 * 864e5).toISOString().slice(0, 10) && needsReview(e);
+}
 function queue() {
   const all = listEventFiles().map((f) => f.e).filter((e) => e && !e.duplicate_of), recent = all.filter((e) => e.date >= dayAgo(30));
-  return order(all.filter((e) => String(e.first_seen || e.updated_at || "") >= dayAgo(3) && needsReview(e))
+  return order(all.filter((e) => inReviewWindow(e))
     .map((e) => { const flags = flagsFor(e, recent); return { e, flags, risk: risk(e, flags) }; }));
 }
 

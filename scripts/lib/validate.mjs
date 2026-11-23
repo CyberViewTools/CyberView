@@ -295,7 +295,7 @@ export function checkEventQuality(e, { now = Date.now() } = {}) {
     }
   }
   out.push(...checkClassification(e));
-  return out.concat(accuracyProblems(e, src));
+  return out.concat(accuracyProblems(e, src), proposedProblems(e));
 }
 
 /**
@@ -394,6 +394,44 @@ function accuracyProblems(e, src) {
     if (pub.includes(e.date) && !String(e.date_note || "").trim() && e.time_basis !== "occurred")
       add(lvl, "date-is-publication", `date ${e.date} is the day a source was published: if the page says when it happened, use that day; if it does not, say so in "date_note" (e.g. "the notice of ${e.date} gives no earlier date")`);
   }
+  return out;
+}
+
+/**
+ * The checks proposed by the accuracy evals of 23 November 2026 (`node scripts/evals.mjs propose-checks`, which measures
+ * each one on the records as their writers left them: how many the second review then corrected, how many it passed).
+ * Each is a mistake the review kept correcting that a script can decide and nothing here checked yet. All are WARNINGS,
+ * for every event, old or new: they never fail the build and never quarantine a record. To promote one to an error for
+ * new events, give PROPOSED_STRICT_FROM a real time (as ACCURACY_STRICT_FROM did) once its precision has held for a week.
+ * `mistake` is the key in MISTAKES (scripts/evals.mjs) the check is aimed at; `rule` is what it decides.
+ */
+export const PROPOSED_STRICT_FROM = "9999-12-31T00:00:00Z";
+export const PROPOSED_CODES = {
+  "long-summary": { mistake: "summary-too-long", rule: "summary over 75 words (until now only a reviewer's flag in scripts/review.mjs, so the writer's own `validate.mjs <id>` never showed it)" },
+  "source-published-partial": { mistake: "source-published-missing", rule: 'some sources carry their page\'s "published" day and others do not' },
+  "summary-unattributed": { mistake: "who-said-it-missing", rule: "the summary of an incident or outage names nobody who says so (no \"said\", \"according to\", \"confirmed\", \"reported\", \"notice\" ...)" },
+  "occurred-round-hour": { mistake: "occurred-at-invented", rule: 'occurred_at exactly on the hour (09:00:00), not "approx", and no evidence quote states a time of day' },
+  "claim-severity": { mistake: "validation-overstated", rule: 'status "claimed" with a severity other than 1 (until now only a reviewer\'s flag)' },
+};
+const WHO_SAYS = /\b(according to|said|says|told|stated|states|reported|reports?|confirmed|confirms|announced|announces|disclosed|discloses|notice|notified|advisory|statement|warned|warns|published|bulletin|filing|filed|attribut\w+|credits?|claims?|claimed)\b/i;
+const TIME_OF_DAY = /\b\d{1,2}[:.h]\d{2}\b|\b\d{1,2}\s?(am|pm|a\.m\.|p\.m\.)|\d{1,2}時|\b(midnight|noon)\b/i;
+/** Pure: the proposed checks for one event: [{level, code, text}] (level "warn" until PROPOSED_STRICT_FROM). */
+export function proposedProblems(e) {
+  const out = [];
+  if (!e || typeof e !== "object") return out;
+  const lvl = String(e.first_seen || "") >= PROPOSED_STRICT_FROM ? "error" : "warn", add = (code, text) => out.push({ level: lvl, code, text });
+  const src = (Array.isArray(e.sources) ? e.sources : []).filter((s) => s && typeof s.url === "string");
+  const n = String(e.summary || "").trim().split(/\s+/).filter(Boolean).length;
+  if (n > 75) add("long-summary", `summary is ${n} words: 2 to 4 sentences, at most 75 words (cut what "impact" or "date_note" already says)`);
+  const dated = src.filter((s) => typeof s.published === "string" && s.published).length;
+  if (src.length >= 2 && dated > 0 && dated < src.length)
+    add("source-published-partial", `${src.length - dated} of ${src.length} sources have no "published" day: give every source its page's own publication day (YYYY-MM-DD, read from the page, never guessed)`);
+  if (["incident", "outage"].includes(e.category) && n >= 8 && !WHO_SAYS.test(e.summary))
+    add("summary-unattributed", 'the summary names nobody who says so: write who stated it ("<organisation> said ...", "according to <publisher>", "the notice says ..."), most of all for the cause, the scope and any figure');
+  if (e.occurred_at && e.time_basis !== "approx" && /T\d\d:00(:00(\.0+)?)?(Z|[+-]\d\d:?\d\d)?$/.test(String(e.occurred_at)) && !/T(00|12):00(:00(\.0+)?)?(Z|[+-]00:?00)$/.test(String(e.occurred_at))
+    && !(Array.isArray(e.evidence) ? e.evidence : []).some((x) => x && TIME_OF_DAY.test(String(x.quote || ""))))
+    add("occurred-round-hour", `occurred_at ${e.occurred_at} is exactly on the hour and no evidence quote states a time: an article's publication time, or a guessed hour, is not the event's time (quote the page's time, mark it "approx", or leave occurred_at out)`);
+  if (e.status === "claimed" && e.severity !== 1) add("claim-severity", `status "claimed" with severity ${e.severity}: an unconfirmed claim is severity 1`);
   return out;
 }
 

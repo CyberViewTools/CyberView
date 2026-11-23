@@ -14,6 +14,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, listEventFiles, nowIso, dayAgo } from "./lib/store.mjs";
 import { errorReport, writersFrom, loadRunLogs } from "./review.mjs";
+import { casesNow, report as evalsReport, reportForImprover } from "./evals.mjs";
 
 const TIERS = ["haiku", "sonnet", "opus"];
 /** Bounds for every key the improver may change: [min, max] for numbers. */
@@ -97,8 +98,21 @@ export function report(days = 7) {
     // the corrections by type and by the role and model that wrote the event (scripts/review.mjs errors): which type to
     // attack, and whether a role's model (researcher vs researcher-deep) earns its cost
     review_errors: (() => { try { const r = errorReport(evs, writersFrom(loadRunLogs(days)), Date.now(), days); return { types: r.types.map((t) => ({ key: t.key, n: t.n, pct_of_corrected: t.pct_of_corrected, checks: t.checks })), by_writer: r.by_writer.slice(0, 12) }; } catch (err) { return { error: String((err && err.message) || err).slice(0, 160) }; } })(),
+    // the accuracy evals (scripts/evals.mjs report): the specific mistakes from what the reviewer changed, how often a
+    // mechanical check caught each on the record as written, and who writes them; every applied change is logged with them
+    evals: (() => { try { return reportForImprover(evalsReport(casesNow({ days }).cases)); } catch (err) { return { error: String((err && err.message) || err).slice(0, 160) }; } })(),
     flag_counts: reviewed.reduce((m, e) => { (e.review.flags || []).forEach((f) => { m[f] = (m[f] || 0) + 1; }); return m; }, {}) };
   return out;
+}
+
+/** Pure: the measured error types a change is logged with (data/improve/changes.jsonl `measured`): the correction rate and
+ *  the most frequent specific mistakes of the report the improver decided from, and, for a change to a role, that role's own
+ *  rate and mistakes. latest: data/improve/latest.json. null when the report has no evals. */
+export function evidenceFor(key, latest) {
+  const ev = latest && latest.evals; if (!ev || !Array.isArray(ev.mistakes)) return null;
+  const role = (String(key).match(/^models\.roles\.([a-z-]+)\./) || [])[1], w = role ? (ev.by_writer || []).filter((b) => b.role === role) : [];
+  return { corrected_pct: ev.corrected_pct, reviews: ev.reviews, top_mistakes: ev.mistakes.slice(0, 3).map((m) => ({ key: m.key, n: m.n, pct_of_corrected: m.pct_of_corrected, caught_pct: m.caught_pct })),
+    ...(w.length ? { role: w.map((b) => ({ role: b.role, model: b.model, reviewed: b.reviewed, corrected_pct: b.corrected_pct, mistakes: b.mistakes })) } : {}) };
 }
 
 function main() {
@@ -110,6 +124,7 @@ function main() {
     for (const [k, x] of Object.entries(r.jobs).sort((a, b) => b[1].runs - a[1].runs).slice(0, 10)) console.log(`  job  ${k.padEnd(18)} runs ${String(x.runs).padStart(3)}  added ${x.added}  updated ${x.updated}  skipped ${x.skipped}${x.add_rate !== null ? `  yield ${Math.round(x.add_rate * 100)}%` : ""}${x.cost !== null ? `  $${x.cost}` : ""}`);
     console.log("  skips: " + Object.entries(r.skip_reasons).map(([k, n]) => `${k} ${n}`).join(", "));
     if (r.review_errors && r.review_errors.types) console.log("  correction types: " + r.review_errors.types.map((t) => `${t.key} ${t.n}`).join(", ") + "; by writer: " + (r.review_errors.by_writer || []).map((b) => `${b.role}/${b.model} ${b.corrected}/${b.reviewed}`).join(", "));
+    if (r.evals && r.evals.mistakes) console.log(`  accuracy evals (node scripts/evals.mjs report): ${r.evals.corrected_pct}% of ${r.evals.reviews} reviews corrected; top mistakes: ` + r.evals.mistakes.slice(0, 5).map((m) => `${m.key} ${m.n} (${m.pct_of_corrected}% of corrections, checks caught ${m.caught_pct ?? "-"}%)`).join("; "));
     console.log("  review flags: " + Object.entries(r.flag_counts).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} ${n}`).join(", "));
     r.review_notes.slice(0, 8).forEach((x) => console.log(`  ${x.state.padEnd(9)} ${x.id.slice(0, 50).padEnd(50)} ${x.note.slice(0, 110)}`));
     return;
@@ -117,7 +132,7 @@ function main() {
   if (cmd === "apply") {
     const prop = readJson(arg || "", null); if (!prop || !Array.isArray(prop.changes)) { console.error("usage: improve.mjs apply <proposal.json with {changes:[{key,to,reason}]}>"); process.exit(1); }
     const pPath = join(ROOT, "config", "pipeline.json"), mPath = join(ROOT, "config", "models.json"), cfg = readJson(pPath, {}), models = readJson(mPath, { roles: {} });
-    const guard = (readJson(join(dir, "latest.json"), {}).guard) || { blocked: false }, today = nowIso().slice(0, 10), changedToday = new Set();
+    const latest = readJson(join(dir, "latest.json"), {}), guard = latest.guard || { blocked: false }, today = nowIso().slice(0, 10), changedToday = new Set();
     if (existsSync(join(dir, "changes.jsonl"))) readFileSync(join(dir, "changes.jsonl"), "utf8").split("\n").forEach((l) => { try { const x = JSON.parse(l); if (String(x.at).startsWith(today)) changedToday.add(x.key); } catch {} });
     let n = 0;
     for (const c of prop.changes.slice(0, 3)) {
@@ -125,7 +140,7 @@ function main() {
       if (why) { console.log(`REFUSED ${c && c.key}: ${why}`); continue; }
       const isModel = c.key.startsWith("models."), path = c.key.replace(/^(pipeline|models)\./, ""), target = isModel ? models : cfg, from = getPath(target, path);
       setPath(target, path, isModel && /\.model$/.test(c.key) ? c.to : Number(c.to)); changedToday.add(c.key); n++;
-      appendFileSync(join(dir, "changes.jsonl"), JSON.stringify({ at: nowIso(), key: c.key, from, to: getPath(target, path), reason: String(c.reason).slice(0, 300) }) + "\n");
+      appendFileSync(join(dir, "changes.jsonl"), JSON.stringify({ at: nowIso(), key: c.key, from, to: getPath(target, path), reason: String(c.reason).slice(0, 300), ...(evidenceFor(c.key, latest) ? { measured: evidenceFor(c.key, latest) } : {}) }) + "\n");
       console.log(`APPLIED ${c.key}: ${from} -> ${getPath(target, path)}`);
     }
     if (n) { writeJson(pPath, cfg); writeJson(mPath, models); }

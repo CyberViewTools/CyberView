@@ -1,0 +1,20 @@
+{
+  "job": "analyst",
+  "started_at": "2026-11-23T12:31:53Z",
+  "finished_at": "2026-11-23T12:32:55Z",
+  "model": "claude-opus-5-5",
+  "searches": ["CVE-2026-131914 Idunno.AntiCsrf"],
+  "pages_read": [
+    {"url": "https://thehackernews.com/2026/11/hackers-exploit-critical-aspnet-anti.html", "title": "Hackers exploit critical ASP.NET anti-CSRF library flaw (The Hacker News, 2026-11-23)", "used_in": "none (secondary only; analysis not written)"}
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "CVE-2026-131914 Idunno.AntiCsrf exploit analysis", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "reason": "The project is defunct, so there is no vendor advisory. The disclosing advisory (Mandiant MNDT-2026-0048) returned HTTP 403 to the page reader, and GitHub API access to that repository is not enabled in this session. No government source was found: the NVD detail page returned an empty shell, and the NVD API request was denied. The only pages available were The Hacker News and secondary CVE trackers. One of those trackers wrongly lists 0.9.1.0 as 'patched' and says exploitation is unconfirmed, which contradicts the Hacker News report of Mandiant. The rules require the vendor advisory or a government source, so the CVE is skipped."}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-131914 Idunno.AntiCsrf: write analysis from Mandiant MNDT-2026-0048", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "note": "Retry when the advisory can be read (through GitHub access or a later run), or when CISA KEV or NVD publish an entry. The Hacker News, quoting Mandiant, reports the following. It is an unauthenticated insecure deserialization flaw in AntiCsrfModule (unkeyed ObjectStateFormatter, no MAC) that gives code execution as w3wp.exe, CVSS 9.3. Active exploitation was observed and no patch exists. Mandiant advises replacing the library with a supported anti-CSRF mechanism (for example System.Web.Helpers.AntiForgery, or ViewStateUserKey with MAC-verified ViewState), auditing Web.config and bin/ for references to it, and reviewing IIS logs for anomalous POSTs to .aspx endpoints that returned 302 or 500 with large cs-bytes. If compromise is found, rotate the machineKey and other secrets in Web.config and applicationHost.config. All of this needs confirming against the advisory.", "priority": "high"}
+  ],
+  "failed_sites": ["github.com (Mandiant Vulnerability-Disclosures: 403 to the page reader; API access not enabled)", "nvd.nist.gov (detail page returned an empty shell; API request denied)"],
+  "notes": "Exploit analyst batch 1. No analysis file was written. The required primary or government source could not be read, and secondary trackers disagree on patch status and exploitation."
+}

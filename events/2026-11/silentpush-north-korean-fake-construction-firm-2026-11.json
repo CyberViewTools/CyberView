@@ -1,5 +1,5 @@
 {
-  "title": "Silent Push claims suspected North Korean remote worker runs fake construction company, uses apparent deepfake on video calls",
+  "title": "Silent Push claims suspected North Korean remote worker runs fake construction company, saw apparent deepfake on a video call",
   "date": "2026-11-19",
   "category": "report",
   "severity": 1,
@@ -12,8 +12,8 @@
   "lng": -79.1422,
   "geo_basis": "stated",
   "pin_type": "other",
-  "summary": "Silent Push said it can confidently assess that thegreathouse[.]us, a site presenting a construction company based in Lynchburg, Virginia, is operated by a North Korean remote worker. It bases this on the registrant email appearing on a publicly reported list of 1,400 emails attributed to North Korean IT workers and on deepfake indicators seen on two video calls. The post does not say any contract or payment was obtained.",
-  "plain": "Security firm Silent Push says a construction company website is a front run by a North Korean worker, who appeared to use a deepfake on a video call to win U.S. business.",
+  "summary": "Silent Push said it can confidently assess that thegreathouse[.]us, a site presenting a construction company based in Lynchburg, Virginia, is operated by a North Korean remote worker. It bases this on the registrant email appearing on a publicly reported list of 1,400 emails attributed to North Korean IT workers and on deepfake indicators seen on the second of two video calls. The post does not say any contract or payment was obtained.",
+  "plain": "Security firm Silent Push says a construction company website is run by a North Korean worker, who appeared to use a deepfake on a video call.",
   "exec": "Silent Push says North Korean remote workers are now pitching as contractors, so firms hiring vendors should verify identity and licences.",
   "action": "Silent Push advises testing video calls for deepfakes, verifying licenses independently, checking that contact details line up, and reporting suspected North Korean IT worker activity to the FBI IC3.",
   "impact": "Silent Push's own assessment; the report covers one front company and two calls and names no victims.",
@@ -28,11 +28,13 @@
   "sources": [
     {
       "name": "Silent Push",
-      "url": "https://www.silentpush.com/blog/nk-construction/"
+      "url": "https://www.silentpush.com/blog/nk-construction/",
+      "published": "2026-11-19"
     },
     {
       "name": "GBHackers",
-      "url": "https://gbhackers.com/north-korean-fake-construction-company-ai-deepfakes/"
+      "url": "https://gbhackers.com/north-korean-fake-construction-company-ai-deepfakes/",
+      "published": "2026-11-21"
     }
   ],
   "source_tier": "primary",
@@ -42,15 +44,19 @@
     "checked_at": "2026-11-21T06:53:16Z"
   },
   "first_seen": "2026-11-21T06:53:16Z",
-  "updated_at": "2026-11-23T13:19:48Z",
+  "updated_at": "2026-11-23T13:26:39Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-21T06:56:34Z",
+    "at": "2026-11-23T13:26:43Z",
     "first_at": "2026-11-21T06:56:34Z",
-    "note": "Compared title, date, Lynchburg, two calls, deepfake wording, no contract or payment statement against Silent Push post and GBHackers; fixed about 1,400 emails to Silent Push's unqualified 1,400 publicly reported list",
-    "flags": []
+    "note": "stronger than the source: deepfake indicators were on the second call only; plain hedged; added 1,400 evidence and source published days",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "source"
+    ]
   },
-  "qa_checked_at": "2026-11-21T06:56:34Z",
+  "qa_checked_at": "2026-11-23T13:26:43Z",
   "sectors": {
     "values": [
       "unknown"
@@ -69,7 +75,7 @@
     "key_findings": [
       "Silent Push says a site presenting a Lynchburg, Virginia construction company is run by a North Korean remote worker who pitches for building contracts directly.",
       "On a second video call Silent Push saw signs of real-time face-swap software, and the operator declined a hand-in-front-of-face test.",
-      "The registrant email appears on a publicly reported list of about 1,400 addresses attributed to North Korean IT workers.",
+      "The registrant email appears on a publicly reported list of 1,400 emails attributed to North Korean IT workers.",
       "Phone area codes and a New York registrant address conflict with the claimed location, and the domain was created on 18 October 2025 despite a claim of 10+ years in business.",
       "The page says the tradecraft matches fake companies used in the Contagious Interview campaign and that no malware is delivered."
     ],
@@ -82,5 +88,11 @@
     "iocs_available": true,
     "read_depth": "full",
     "url": "https://www.silentpush.com/blog/nk-construction/"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.silentpush.com/blog/nk-construction/",
+      "quote": "an address on a publicly reported list of 1,400 emails attributed to North Korean IT workers"
+    }
+  ]
 }

@@ -1,0 +1,88 @@
+{
+  "job": "sweep-r1",
+  "started_at": "2026-11-23T09:26:31Z",
+  "finished_at": "2026-11-23T09:29:20Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "Brad Smith Microsoft outage \"perfect storm\" November 2026",
+    "CVE-2026-120787 Microsoft Office"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.ibtimes.sg/us-ports-under-cyberattack-oil-export-hub-faces-thousands-daily-attempts-ai-threats-escalate-96529",
+      "title": "US Ports Under Cyberattack: Oil Export Hub Faces Thousands of Daily Attempts",
+      "used_in": "338decee closed: relays FT (Corpus Christi) and Bloomberg (LA), already on file"
+    },
+    {
+      "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2204",
+      "title": "Security Alert (A26-11-49): Vulnerability in Microsoft Products",
+      "used_in": "e6ff7e4e closed as not an event"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/officeupdates/microsoft365-apps-security-updates",
+      "title": "Microsoft 365 Apps security updates",
+      "used_in": "e6ff7e4e: latest entry 10 Nov, CVE-2026-120787 not listed"
+    },
+    {
+      "url": "https://gbhackers.com/hackers-use-malicious-ads-to-exploit-iphones-and-steal-passwords/",
+      "title": "Hackers Use Malicious Ads to Exploit iPhones...",
+      "used_in": "6f9719bd closed: relays Confiant MoldyRoost, already on file"
+    },
+    {
+      "url": "https://exatrack.com/publications/vmcloudoor.html",
+      "title": "Vmcloudoor (ExaTrack)",
+      "used_in": "exatrack-vmcloudoor-linux-cloud-backdoor-2026-11"
+    },
+    {
+      "url": "https://gbhackers.com/vmcloudoor-backdoor/",
+      "title": "Hackers Could Control Linux Cloud Servers Using Vmcloudoor Backdoor",
+      "used_in": "exatrack-vmcloudoor-linux-cloud-backdoor-2026-11"
+    }
+  ],
+  "added": [
+    "exatrack-vmcloudoor-linux-cloud-backdoor-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "US Ports Under Cyber Siege As Hackers Launch Thousands Of Attacks Daily",
+      "url": "https://www.ibtimes.sg/us-ports-under-cyberattack-oil-export-hub-faces-thousands-daily-attempts-ai-threats-escalate-96529",
+      "reason": "already on file: us-ports-cyberattack-attempts-ft-report-2026-11; IBTimes relays the same FT report, so not independent corroboration"
+    },
+    {
+      "title": "UK finds fix for fridge and freezer vulnerability after European hacks",
+      "url": "https://www.claimsjournal.com/news/national/2026/11/23/341474.htm",
+      "reason": "already on file: uk-rdm-refrigeration-controllers-operation-2026-11 (confirmed, corroborated)"
+    },
+    {
+      "title": "Security Alert (A26-11-49): Vulnerability in Microsoft Products",
+      "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2204",
+      "reason": "routine CERT bulletin: one Office RCE (CVE-2026-120787 per its link), no exploitation, public exploit or vendor urgent notice stated"
+    },
+    {
+      "title": "Hackers Use Malicious Ads to Exploit iPhones and Steal Passwords",
+      "url": "https://gbhackers.com/hackers-use-malicious-ads-to-exploit-iphones-and-steal-passwords/",
+      "reason": "already on file: confiant-moldyroost-ios-malvertising-2026-11; GBHackers relays Confiant, no new fact"
+    },
+    {
+      "title": "Microsoft President Brad Smith on recent global outage: It was basically a perfect storm",
+      "url": "https://timesofindia.indiatimes.com/technology/tech-news/microsoft-president-brad-smith-on-recent-outage-i-think-we-have-to-be-prepared-for-the-coming-months-because-/articleshow/136095645.cms",
+      "reason": "executive commentary on the outage already on file (microsoft-365-global-outage-2026-11); page could not be fetched"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "CVE-2026-120787 Microsoft 365 Apps / Office RCE (GovCERT.HK A26-11-49)",
+      "url": "https://www.govcert.gov.hk/en/alerts_detail.php?id=2204",
+      "note": "MSRC page renders client-side and Microsoft's release notes do not list it; recheck MSRC for an exploited flag or out-of-band release",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "timesofindia.indiatimes.com (fetch refused)",
+    "msrc.microsoft.com (client-side shell only)"
+  ],
+  "notes": "Vmcloudoor written as a severity 1 report: ExaTrack names no victims and assesses a likely pentester/red-team author; GBHackers only relays it, so single_source with ExaTrack as the primary.",
+  "worker_role": "researcher-deep",
+  "worker_model": "opus"
+}

@@ -1,0 +1,80 @@
+{
+  "title": "ExaTrack: Vmcloudoor Linux backdoor poses as cloud agents on Alibaba, Tencent and Huawei VMs",
+  "category": "report",
+  "status": "confirmed",
+  "severity": 1,
+  "date": "2026-11-19",
+  "date_note": "Date of ExaTrack's publication; the page gives no earlier discovery date.",
+  "first_seen": "2026-11-23T09:28:20Z",
+  "updated_at": "2026-11-23T09:28:20Z",
+  "org": "Linux virtual machines on Chinese cloud platforms",
+  "sector": "",
+  "country": "",
+  "place": "",
+  "pin_type": "none",
+  "geo_basis": "",
+  "lat": null,
+  "lng": null,
+  "actor": "",
+  "attack": [],
+  "cves": [],
+  "products": [
+    "Alibaba Cloud",
+    "Tencent Cloud",
+    "Huawei Cloud",
+    "Linux"
+  ],
+  "tags": [
+    "backdoor",
+    "linux",
+    "cloud"
+  ],
+  "summary": "ExaTrack reported on 19 November a Linux backdoor it calls Vmcloudoor, found during a hunting session, that disguises itself as a host agent on cloud virtual machines. According to ExaTrack, it renames its process to match the cloud provider's agents and takes commands through Alibaba OSS storage; the targeted environments are Alibaba (mainly), Tencent and Huawei. ExaTrack assumes the author is a Chinese pentester, potentially running red team engagements.",
+  "plain": "Researchers at ExaTrack found hidden remote-control software for Linux servers on Alibaba, Tencent and Huawei clouds that pretends to be the cloud provider's own helper program, so administrators are less likely to notice it.",
+  "exec": "A backdoor that hides as the cloud provider's own agent targets Linux servers on Alibaba, Tencent and Huawei clouds, ExaTrack reports.",
+  "action": "General advice: on Alibaba, Tencent and Huawei cloud servers, check processes that carry cloud agent names, and hunt with the indicators and YARA rule ExaTrack published with its report.",
+  "report": {
+    "doc_id": "Vmcloudoor",
+    "publisher": "ExaTrack",
+    "publisher_type": "vendor",
+    "published": "2026-11-19",
+    "url": "https://exatrack.com/publications/vmcloudoor.html",
+    "read_depth": "full",
+    "iocs_available": true,
+    "key_findings": [
+      "Vmcloudoor is a Linux x64 implant found during a hunting session; ExaTrack obtained only its helper module.",
+      "It checks for cloud agent paths and processes and renames itself to match one, blending in with the processes of the targeted cloud environment.",
+      "Command and control runs through Alibaba OSS; the targeted environments are Alibaba (mainly), Tencent and Huawei.",
+      "ExaTrack assumes the author is a Chinese pentester, potentially running dedicated red team engagements."
+    ],
+    "recommendations": []
+  },
+  "sources": [
+    {
+      "name": "ExaTrack",
+      "url": "https://exatrack.com/publications/vmcloudoor.html",
+      "published": "2026-11-19"
+    },
+    {
+      "name": "GBHackers (relaying ExaTrack)",
+      "url": "https://gbhackers.com/vmcloudoor-backdoor/",
+      "published": "2026-11-23"
+    }
+  ],
+  "source_tier": "primary",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-23T09:28:20Z",
+    "note": "Single origin: ExaTrack, the firm that found the implant (exatrack.com, 19 Nov, read). GBHackers (23 Nov, read) only relays ExaTrack and is not independent. ExaTrack names no victims."
+  },
+  "sectors": {
+    "values": [
+      "unknown"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "stated"
+  }
+}

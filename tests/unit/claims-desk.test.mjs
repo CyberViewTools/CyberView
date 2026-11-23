@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { parseClaim, coreName, claimKey, claimItems, matchedEvent, reportsOf, trackRecord, due, queue, makePlan, planId, validate, applyResults, entryFor,
+import { parseClaim, coreName, claimKey, claimItems, matchedEvent, reportsOf, trackRecord, due, dueWhy, heldBack, queue, makePlan, planId, validate, applyResults, entryFor,
   siteCheck, checksByEvent, stats, claimSourceProblem, BY, DECISIONS } from "../../scripts/claims-desk.mjs";
 
 const NOW = Date.parse("2026-11-21T12:00:00Z"), iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z"), h = (n) => iso(NOW - n * 36e5);
@@ -70,8 +70,39 @@ test("matching and corroboration helpers", () => {
   assert.deepEqual(reportsOf("Fabrikam Logistics", [leads[0], ...leads.slice(-3)]).map((r) => r.source), ["The Record", "Heise"]);
   assert.deepEqual(trackRecord("Everest", events, { a: { group: "everest", decision: "reported" }, b: { group: "everest", decision: "unconfirmed" } }), { events: 1, confirmed: 1, checked: 2 });
 });
+test("the recheck gate: the wait doubles with every same result; a new report that names the victim re-opens a claim at once", () => {
+  const it = { ...items()[0], reports: [] }, un = (hrs, tries, extra = {}) => ({ [it.id]: { decision: "unconfirmed", checked_at: h(hrs), tries, ...extra } });
+  // 24 h after the first unconfirmed check, 48 h after the second (same result twice in a row)
+  assert.equal(due(it, un(30, 2, { same: 2 }), {}, NOW), false, "second unconfirmed: 48 h, not 24");
+  assert.equal(due(it, un(49, 2, { same: 2 }), {}, NOW), true);
+  assert.equal(due(it, un(30, 2), {}, NOW), false, "a check written before `same` existed: tries stands in for it");
+  const w = dueWhy(it, un(30, 2, { same: 2 }), {}, NOW);
+  assert.equal(w.why, "wait"); assert.match(w.reason, /^skipped: nothing new since .* UTC; due again .* UTC \(unconfirmed 2 times in a row\)$/); assert.equal(w.next_at, iso(NOW - 30 * 36e5 + 48 * 36e5));
+  assert.equal(due(it, un(100, 2, { same: 2 }), {}, NOW, { recheck_max_hours: 36 }), true, "the cap");
+  // something new: a report that names the victim, seen after the last check
+  const fresh = { ...it, reports: [{ source: "The Record", title: "t", url: "https://therecord.media/x", seen_at: h(2) }] }, stale = { ...it, reports: [{ source: "The Record", title: "t", url: "https://therecord.media/x", seen_at: h(40) }] };
+  assert.equal(due(fresh, un(5, 1), {}, NOW), true, "checked 5 h ago, a report 2 h ago: now");
+  assert.equal(dueWhy(fresh, un(5, 1), {}, NOW).why, "new-report");
+  assert.equal(due(stale, un(5, 1), {}, NOW), false, "the report was there at the last check");
+  assert.equal(due(fresh, { [it.id]: { decision: "not_found", checked_at: h(5), tries: 1, final: true } }, {}, NOW), true, "not_found is re-opened by a new report");
+  assert.equal(due(fresh, un(5, 3), {}, NOW), true, "so is a claim at max_tries");
+  assert.equal(due(fresh, un(5, 5), {}, NOW), false, "but never more than reopen_tries extra checks");
+  for (const d of ["confirmed_by_victim", "reported", "denied"]) assert.equal(due(fresh, { [it.id]: { decision: d, checked_at: h(5), tries: 1 } }, {}, NOW), false, d + " is settled");
+  // recheck_min_score (off by default): a claim that is not notable is re-checked only when a report names the victim
+  const plain = { ...it, id: "cl-aaaaaaaaaaaa", sector: "", victim: "Smallco", reports: [], track: {} };
+  assert.equal(due(plain, { [plain.id]: { decision: "unconfirmed", checked_at: h(30), tries: 1 } }, {}, NOW), true);
+  assert.equal(dueWhy(plain, { [plain.id]: { decision: "unconfirmed", checked_at: h(30), tries: 1 } }, {}, NOW, { recheck_min_score: 5 }).why, "needs-report");
+  // what is held back is counted, never dropped
+  const hb = heldBack([it, plain], { [it.id]: un(30, 2, { same: 2 })[it.id], [plain.id]: { decision: "not_found", checked_at: h(3), tries: 1, final: true } }, {}, NOW);
+  assert.deepEqual([hb.waiting.length, hb.final, hb.next_due_at], [1, 1, iso(NOW + 18 * 36e5)]);
+  // entryFor counts the same result in a row
+  const res = { id: it.id, decision: "unconfirmed", summary: "Nothing beyond the leak site was found for this victim.", sources: [], read_depth: "secondary", victim: "x" };
+  assert.equal(entryFor(res, it, null, "cp-1", NOW).same, 1);
+  assert.equal(entryFor(res, it, { decision: "unconfirmed", tries: 1, plan_id: "cp-0" }, "cp-1", NOW).same, 2);
+  assert.equal(entryFor({ ...res, decision: "not_found" }, it, { decision: "unconfirmed", tries: 2, same: 2, plan_id: "cp-0" }, "cp-1", NOW).same, 1);
+});
 test("due: final results done, unconfirmed re-checked after recheck_hours up to max_tries, leases respected", () => {
-  const it = items()[0];
+  const it = { ...items()[0], reports: [] };
   for (const d of ["confirmed_by_victim", "reported", "denied", "not_found"]) assert.equal(due(it, { [it.id]: { decision: d, checked_at: h(100), tries: 1 } }, {}, NOW), false, d);
   assert.equal(due(it, { [it.id]: { decision: "unconfirmed", checked_at: h(5), tries: 1 } }, {}, NOW), false, "checked 5 h ago");
   assert.equal(due(it, { [it.id]: { decision: "unconfirmed", checked_at: h(25), tries: 1 } }, {}, NOW), true, "25 h ago: due again");
@@ -217,7 +248,7 @@ test("site and status: what an event shows, the newest check per event, the queu
 test("CLI: plan --dry-run writes nothing; plan, apply and apply again; a bad file is refused", () => {
   const here = dirname(fileURLToPath(import.meta.url)), repo = join(here, "..", ".."), t = mkdtempSync(join(tmpdir(), "claims-desk-"));
   for (const d of ["scripts/lib", "data/leads", "data/events/2026-11", "config"]) mkdirSync(join(t, d), { recursive: true });
-  for (const f of ["scripts/claims-desk.mjs", "scripts/grid-desk.mjs", "scripts/grid.mjs", "scripts/triage.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs", "scripts/lib/net.mjs"]) copyFileSync(join(repo, f), join(t, f));
+  for (const f of ["scripts/claims-desk.mjs", "scripts/grid-desk.mjs", "scripts/grid.mjs", "scripts/triage.mjs", "scripts/lib/store.mjs", "scripts/lib/lease.mjs", "scripts/lib/net.mjs", "scripts/lib/gates.mjs"]) copyFileSync(join(repo, f), join(t, f));
   const now = Date.now(), day = iso(now).slice(0, 10), H = (n) => iso(now - n * 36e5);
   const L = [["akira", "Riverside General Hospital", "US", "Healthcare", 2], ["qilin", "Shop & Co Retail Ltd", "GB", "Retail & E-Commerce", 3], ["everest", "Fabrikam Logistics", "DE", "Transportation", 4]]
     .map(([g, v, cc, s, n]) => ({ ...claimLead(g, v, cc, s, 0), seen_at: H(n), published: H(n) }));

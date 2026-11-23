@@ -22,6 +22,8 @@
 //   collector-<name> an open-source collector failing for a day (backoff in scripts/lib/backoff.mjs)
 //   feeds-propose    feeds failing for 7 days or more: proposed for the watch list (never retired silently)
 //   broken-links     source links the weekly link check found gone (info only: the verify desk replaces them)
+//   usage-limit      the plan's usage limit was reached (a worker's limit error, or the 5-hour estimate passed stop_pct):
+//                    no AI worker starts until the reset time; said as that, never as a generic stage failure
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -32,10 +34,11 @@ import { STAGES, stageStates, lastRuns } from "./lib/stages.mjs";
 import { feedProposals, failingDays, PROPOSE_DAYS } from "./lib/backoff.mjs";
 import { needsReview, waitingSince } from "./review.mjs";
 import { tokens } from "./triage.mjs";
+import { budgetState } from "./lib/usage.mjs";
 
 export const LABEL = "pipeline-alert";
 // minutes a problem must last before an issue is opened (the status page lists it at once)
-export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60 };
+export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60 };
 export const UNREVIEWED_MIN = 120, KEY_MEMORY_DAYS = 3, KEY_KEEP_DAYS = 14, HEAL_EVERY_MIN = 60, REMIND_HOURS = 24, MAX_OPEN_PER_RUN = 5;
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const ago = (m) => (m === null ? "never" : m < 120 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`);
@@ -178,6 +181,16 @@ export function targetProblems(targets) {
     id: `target-${t.key}`, level: "warn", page: false, threshold_min: THRESHOLD.target, text: `the ${String(t.title || t.key).toLowerCase()} target fails: ${String(t.value || t.figure || "").slice(0, 160)} (goal: ${String(t.goal || "").slice(0, 80)})` }));
 }
 
+/** Pure: the plan's usage holds the AI workers back (scripts/lib/usage.mjs budgetState level "stop"): one problem that
+ *  says so, with the reset time when the plan gave one, so late research stages are read as "waiting for the reset" and
+ *  not as a broken loop. b: budgetState(). An issue is opened only when it lasts (a 5-hour window resets by itself). */
+export function usageProblem(b) {
+  if (!b || b.level !== "stop") return null;
+  const until = b.limited_until ? String(b.limited_until).slice(0, 16).replace("T", " ") + " UTC" : "";
+  return { id: "usage-limit", level: "warn", threshold_min: THRESHOLD["usage-limit"],
+    text: until ? `usage limit reached, resets ${until}: no AI worker starts until then (collection and the rules keep running; research resumes where it stopped)` : `usage limit: ${String(b.reason || "the 5-hour estimate is used up").slice(0, 160)}; no AI worker starts until usage falls (collection and the rules keep running)` };
+}
+
 export async function check(now = Date.now()) {
   const qp = join(DATA, "quality.json"), prev = readJson(qp, {}) || {}, st = readStatus();
   const routines = (readJson(join(ROOT, "routines.json"), { routines: [] }) || { routines: [] }).routines || [];
@@ -191,6 +204,7 @@ export async function check(now = Date.now()) {
   // status.json keys (first check: remember what the last commit had, so a wipe in this very run is still caught)
   const known = prev.status_keys || Object.fromEntries(committedKeys().map((k) => [k, new Date(now - 60e3).toISOString()]));
   const sk = statusKeys(known, st, now); if (sk.problem) problems.push(sk.problem);
+  try { const up = usageProblem(budgetState(now)); if (up) problems.push(up); } catch {}
   const dupes = missedDuplicates(events, now);
   if (dupes.length) problems.push({ id: "duplicates", level: "warn", threshold_min: THRESHOLD.duplicates, text: `${dupes.length} pair(s) of events look like one story recorded twice: ${dupes.slice(0, 3).map((d) => `${d.a} / ${d.b}`).join("; ")}` });
   if (rev.count) problems.push({ id: "unreviewed", level: "warn", threshold_min: THRESHOLD.unreviewed, text: `${rev.count} event(s) have waited over ${UNREVIEWED_MIN / 60} hours for their second review, the oldest ${ago(rev.oldest_min).replace(" ago", "")}` });

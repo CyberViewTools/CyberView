@@ -3,7 +3,9 @@
 // but drops new facts: a confirmation, a figure, an attribution, a patch. This finds leads that match a published
 // event, come from a page the event does not cite, and appeared after the event was last updated, so an updater
 // (a worker in the research loop) can read them and update the event; the second review then checks the update.
-//   plan [--max W] [--per N] [--file F]   assign the strongest candidates to W updaters (default data/update-plan.json)
+//   plan [--max W] [--per N] [--file F] [--dry-run]   assign the strongest candidates to W updaters (default data/update-plan.json)
+// An updater is only ever started for a page nobody has recorded yet (handledFrom: read once; a page that would not load
+// is tried once more an hour later, then dropped) and never for an aggregator's redirect (isRedirect).
 //   done <event-id> <updated|unchanged|unrelated|unreachable> <url> [url...]   record what an updater found (data/runs/<day>/followups.jsonl)
 //   list [--json]                          the candidates now
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
@@ -18,13 +20,19 @@ const NOT_NEWS = new Set(["claim", "breach-db", "status", "cve"]);   // attacker
 const TIER = { gov: 3, vendor: 3, research: 2, news: 1 };
 const CVE = /CVE-\d{4}-\d{4,}/g;
 
-/** Pure: leads + events + handled urls -> [{id, title, severity, status, score, leads: [...]}], strongest first. */
-export function candidates(leads, events, handled, now = Date.now(), hours = 48) {
+/** Pure: is this an aggregator's redirect, not a publisher's page? An updater cannot read or cite one (measured
+ *  2026-11-20 to 22: 82 of 145 "unreachable" outcomes were news.google.com links, each tried twice by a worker). */
+export const isRedirect = (u) => /^https:\/\/(news\.google\.com\/|(www\.)?bing\.com\/news|(www\.)?msn\.com\/)/.test(String(u || ""));
+/** Pure: leads + events + handled urls -> [{id, title, severity, status, score, leads: [...]}], strongest first.
+ *  opts.redirects (default false): keep aggregator redirects. An updater is never started for one (it is left out here,
+ *  and counted by skippedRedirects for the plan line); the follow-up desk keeps them as a sign that a story moved. */
+export function candidates(leads, events, handled, now = Date.now(), hours = 48, opts = {}) {
   const evs = events.filter((e) => e && !e.duplicate_of && e.id), since = new Date(now - hours * 36e5).toISOString();
   const byCve = new Map(); for (const e of evs) for (const c of e.cves || []) if (!byCve.has(c)) byCve.set(c, e);
   const out = new Map();
   for (const l of leads) {
     if (!l || !/^https:\/\//.test(l.url || "") || NOT_NEWS.has(l.kind) || handled.has(l.url)) continue;
+    if (!opts.redirects && isRedirect(l.url)) continue;
     const at = String(l.published || l.seen_at || ""); if (at < since) continue;
     const m = matchEvent(String(l.title || ""), evs, l.published || l.seen_at);
     const e = m ? evs.find((x) => x.id === m.id) : (String(l.title || "").match(CVE) || []).map((c) => byCve.get(c)).find(Boolean);
@@ -38,8 +46,7 @@ export function candidates(leads, events, handled, now = Date.now(), hours = 48)
   for (const c of out.values()) {
     const pubs = new Set(c.leads.map((l) => l.source)).size, best = Math.max(...c.leads.map((l) => TIER[l.tier] || 0));
     c.score = c.severity * 10 + best * 5 + Math.min(pubs, 4) * 3 + (/developing|claimed/.test(c.status) ? 8 : 0);
-    const redirect = (u) => /news\.google\.com|bing\.com\/news|msn\.com/.test(u);
-    c.leads.sort((a, b) => redirect(a.url) - redirect(b.url) || (TIER[b.tier] || 0) - (TIER[a.tier] || 0) || b.published.localeCompare(a.published));
+    c.leads.sort((a, b) => isRedirect(a.url) - isRedirect(b.url) || (TIER[b.tier] || 0) - (TIER[a.tier] || 0) || b.published.localeCompare(a.published));
     c.leads = c.leads.slice(0, 6);
   }
   return [...out.values()].sort((a, b) => b.score - a.score);
@@ -73,15 +80,22 @@ function handledUrls(days = 7) {
   }
   return handledFrom(recs);
 }
-function recentLeads(days = 3) {
+export function recentLeads(days = 3) {
   const dir = join(DATA, "leads"), out = [];
   if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".jsonl") && f.slice(0, 10) >= dayAgo(days)))
     for (const line of readFileSync(join(dir, f), "utf8").split("\n")) { try { out.push(JSON.parse(line)); } catch {} }
   return out;
 }
-export function current() {
+export function current(opts = {}) {
   const events = listEventFiles().map((f) => f.e).filter((e) => e && e.date >= dayAgo(30));
-  return candidates(recentLeads(), events, handledUrls());
+  return candidates(recentLeads(), events, handledUrls(), Date.now(), 48, opts);
+}
+/** Pure: what the plan leaves without an updater because every new lead for the event is an aggregator redirect
+ *  (before 2026-11-23 each got a worker, twice): all = candidates with redirects kept, kept = the plan's candidates.
+ *  -> { events, leads }. They are not lost: the follow-up desk counts such a lead as new reporting. */
+export function redirectOnly(all, kept) {
+  const ids = new Set((kept || []).map((c) => c.id)), out = (all || []).filter((c) => !ids.has(c.id));
+  return { events: out.length, leads: out.reduce((s, c) => s + c.leads.length, 0) };
 }
 
 function main() {
@@ -91,8 +105,9 @@ function main() {
     const file = /^update-plan(-[A-Za-z0-9-]+)?\.json$/.test(arg("file", "")) ? arg("file") : "update-plan.json";
     const all = current(), held = leased("event", all.map((c) => c.id), process.env.CYBERVIEW_RUN || ""), q = all.filter((c) => !held.has(c.id)).slice(0, W * per);
     const { batches, deep } = planUpdates(q, W, per);
-    writeJson(join(DATA, file), { planned_at: nowIso(), batches, deep });
-    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${batches.length} updater(s), ${deep.length} on the deep model; ${all.length} candidate(s) in all.`);
+    if (!rest.includes("--dry-run")) writeJson(join(DATA, file), { planned_at: nowIso(), batches, deep });
+    let red = { events: 0, leads: 0 }; try { red = redirectOnly(current({ redirects: true }), all); } catch {}
+    console.log(`UPDATE PLAN: ${q.length} event(s) with new reporting for ${batches.length} updater(s), ${deep.length} on the deep model; ${all.length} candidate(s) in all${red.events ? `; ${red.events} skipped: only an aggregator's redirect names them (${red.leads} link(s)), left to the follow-up desk` : ""}.`);
     return;
   }
   if (cmd === "done") {

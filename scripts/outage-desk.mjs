@@ -22,6 +22,7 @@ import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, nowIso, dayAgo, readStatus, listEventFiles } from "./lib/store.mjs";
 import { claim, readLeases, RUN_ID } from "./lib/lease.mjs";
 import { badSource, regDomain, OFFICIAL_HOST, newsCandidates, NATIONWIDE } from "./grid-desk.mjs";
+import { outageRecheck, outageSeen } from "./lib/gates.mjs";
 
 export const BY = "CyberView AI (a Claude model)";
 export const DECISIONS = ["confirmed", "not_confirmed", "cyber_lead"];
@@ -31,7 +32,7 @@ export const SAID_BY = ["official", "reported"];
 // kinds whose confirmed outage may be (or update) a category "outage" event: telecom, internet and service outages are
 // already events on the map (CLAUDE.md); a power outage is grid context and never an event
 export const EVENT_KINDS = new Set(["internet", "service"]);
-export const DEFAULTS = { recheck_hours: 12, max_tries: 2, news_min_figure: 5000, news_min_publishers: 3, news_skip_below: 1000, ioda_min_score: 10000, ioda_min_signals: 2, status_hours: 48, event_days: 2 };
+export const DEFAULTS = { recheck_hours: 12, recheck_max_hours: 168, stronger_factor: 2, max_tries: 2, news_min_figure: 5000, news_min_publishers: 3, news_skip_below: 1000, ioda_min_score: 10000, ioda_min_signals: 2, status_hours: 48, event_days: 2 };
 // measurement and crowd-report sites: a signal, never a confirmation of an outage on their own
 const MEASURE = /(^|\.)(ioda\.inetintel\.cc\.gatech\.edu|radar\.cloudflare\.com|downdetector\.[a-z.]+|isitdownrightnow\.com|statusgator\.com|outage\.report)$/;
 // an attack named in a checker's text; NEG: the same words inside someone's denial ("ruled out a cyberattack")
@@ -122,14 +123,26 @@ export function serviceItems(leads, events = [], cited = new Set(), cfg = {}, no
   return out.sort((a, b) => a.priority - b.priority || b.rank - a.rank || a.id.localeCompare(b.id));
 }
 
-/** Pure: is an item due for a check? Not when a final result is on file, when max_tries is reached, when it or another
- *  item with the same key was checked in the last recheck_hours, or while another run holds its lease. */
-export function due(it, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
+/** Pure: is an item due for a check, and why (not)? -> { due, why, reason, next_at }
+ *  Not when a final result is on file, when max_tries is reached, or while another run holds its lease. An item whose
+ *  key was checked before (itself, or the same country's IODA signal on another day) waits recheck_hours since that
+ *  check, doubling with every not_confirmed check in a row on the key, capped at recheck_max_hours, unless the report
+ *  is now stronger than the last check saw (scripts/lib/gates.mjs outageRecheck). Measured to 2026-11-23: all 34 IODA
+ *  items were not_confirmed, the same six countries checked twice a day, every day. */
+export function dueWhy(it, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
   const c = cfgOf(cfg), r = checks[it.id];
-  if (r && (r.final || (Number(r.tries) || 0) >= c.max_tries)) return false;
-  for (const [, v] of Object.entries(checks)) if (v && v.key === it.key && now - Date.parse(v.checked_at) < c.recheck_hours * 36e5) return false;
-  const l = leases[`outage:${it.id}`]; if (live(l, now) && l.run !== c.run) return false;
-  return true;
+  if (r && (r.final || (Number(r.tries) || 0) >= c.max_tries)) return { due: false, why: "final", reason: `${r.decision}: final`, next_at: null };
+  const l = leases[`outage:${it.id}`]; if (live(l, now) && l.run !== c.run) return { due: false, why: "leased", reason: "another run is checking it", next_at: null };
+  return outageRecheck(it, Object.values(checks).filter((v) => v && v.key === it.key), now, c);
+}
+export const due = (it, checks = {}, leases = {}, now = Date.now(), cfg = {}) => dueWhy(it, checks, leases, now, cfg).due;
+/** Pure: the reports the gate holds back because nothing is new since the key's last check, soonest due first.
+ *  -> { waiting: [{ id, reason, next_at }], next_due_at } */
+export function heldBack(lists, checks = {}, leases = {}, now = Date.now(), cfg = {}) {
+  const waiting = [];
+  for (const k of KINDS) for (const it of (lists && lists[k]) || []) { if (!it || !ID.test(it.id)) continue; const g = dueWhy(it, checks, leases, now, cfg); if (g.why === "wait") waiting.push({ id: it.id, reason: g.reason, next_at: g.next_at }); }
+  waiting.sort((a, b) => String(a.next_at).localeCompare(String(b.next_at)));
+  return { waiting, next_due_at: waiting.length ? waiting[0].next_at : null };
 }
 /** Pure: the queue, most important first: the three kinds in turn (service, internet, power), each kind in its own order,
  *  so one kind can never crowd out the others. */
@@ -235,7 +248,7 @@ export function entryFor(r, it, prev, plan_id, now = Date.now(), cfg = {}) {
   const e = { kind: it.kind, key: it.key, title: s(it.title, 160), country: s(it.country, 2), place: s(it.place, 80), decision: r.decision, summary: r.summary.trim().slice(0, 300),
     publisher: s(r.publisher, 80).trim(), cause: r.decision === "confirmed" ? (s(r.cause, 200).trim() || "cause not stated") : s(r.cause, 200).trim(), figures: s(r.figures, 200).trim(),
     started_at: s(r.started_at, 20), ended_at: s(r.ended_at, 20), sources: [...new Set(r.sources)].slice(0, 8), read_depth: r.read_depth,
-    checked_at: isoAt(now), tries, by: BY, final, plan_id };
+    checked_at: isoAt(now), tries, by: BY, final, plan_id, seen: outageSeen(it) };
   if (r.decision === "cyber_lead") e.said_by = r.said_by;
   if (r.event_id) e.event_id = r.event_id;
   return e;
@@ -335,14 +348,17 @@ function main() {
     const file = PLAN_FILE.test(arg("file", "")) ? arg("file") : "outage-plan.json", run = RUN_ID();
     const q = queue(lists, checks, readLeases(), now, { ...cfg, run }), p = makePlan(q, checks, N, K, file.replace(/^outage-plan-?|\.json$/g, ""));
     const ids = p.batches.flatMap((b) => b.items.map((i) => i.id));
+    const hb = heldBack(lists, checks, readLeases(), now, { ...cfg, run });
+    const held = hb.waiting.length ? `; ${hb.waiting.length} skipped: nothing new since their last check (the next is due ${String(hb.next_due_at).slice(0, 16).replace("T", " ")} UTC)` : "";
     if (dry) {
-      console.log(`OUTAGE PLAN (dry run, nothing leased or written): ${ids.length} report(s) for ${p.batches.length} checker(s); ${q.length} waiting (${KINDS.map((k) => `${q.filter((x) => x.kind === k).length} ${k}`).join(", ")}).`);
+      console.log(`OUTAGE PLAN (dry run, nothing leased or written): ${ids.length} report(s) for ${p.batches.length} checker(s); ${q.length} waiting (${KINDS.map((k) => `${q.filter((x) => x.kind === k).length} ${k}`).join(", ")})${held}.`);
+      hb.waiting.slice(0, 10).forEach((w) => console.log(`  ${w.id}  ${w.reason}`));
       q.slice(0, 20).forEach((i) => console.log(`  ${i.id}  [${i.kind}] ${i.title}${i.figure ? ` · ${i.figure.n.toLocaleString("en-US")} ${i.figure.unit} (as reported)` : ""}${i.kind === "internet" ? ` · score ${i.score}` : ""}`));
       return;
     }
     if (ids.length) claim("outage", ids, run, 45);
-    writeJson(join(DATA, file), { plan_id: p.plan_id, planned_at: nowIso(), run, batches: p.batches });
-    console.log(`OUTAGE PLAN: ${ids.length} report(s) for ${p.batches.length} outage checker(s); ${q.length} waiting.`);
+    writeJson(join(DATA, file), { plan_id: p.plan_id, planned_at: nowIso(), run, batches: p.batches, skipped_count: hb.waiting.length, skipped: hb.waiting.slice(0, 60) });
+    console.log(`OUTAGE PLAN: ${ids.length} report(s) for ${p.batches.length} outage checker(s); ${q.length} waiting${held}.`);
     return;
   }
   if (cmd === "apply") {
@@ -375,9 +391,10 @@ function main() {
     return;
   }
   if (cmd === "list" || cmd === "status") {
-    const { cfg, lists, checks } = load(now), q = queue(lists, checks, readLeases(), now, cfg), st = stats(q, checks, now);
+    const { cfg, lists, checks } = load(now), q = queue(lists, checks, readLeases(), now, cfg), hb = heldBack(lists, checks, readLeases(), now, cfg);
+    const st = { ...stats(q, checks, now), skipped_nothing_new: hb.waiting.length, next_due_at: hb.next_due_at };
     if (rest.includes("--json")) { console.log(JSON.stringify(cmd === "status" ? st : { ...st, waiting_items: q.map((i) => brief(i, checks[i.id])), checks })); return; }
-    console.log(`OUTAGE DESK: ${st.waiting} waiting (${KINDS.map((k) => `${st.by_kind[k]} ${k}`).join(", ")}), ${st.checked_24h} checked in 24 h (${st.confirmed_24h} confirmed, ${st.cyber_leads_24h} cyber lead(s)).`);
+    console.log(`OUTAGE DESK: ${st.waiting} waiting (${KINDS.map((k) => `${st.by_kind[k]} ${k}`).join(", ")}), ${st.checked_24h} checked in 24 h (${st.confirmed_24h} confirmed, ${st.cyber_leads_24h} cyber lead(s)); ${hb.waiting.length} skipped: nothing new since their last check${hb.next_due_at ? ` (next due ${hb.next_due_at})` : ""}.`);
     if (cmd === "status") return;
     q.slice(0, 30).forEach((i) => console.log(`  ${i.id}  [${i.kind}] ${i.title}`));
     const done = Object.entries(checks).sort((a, b) => String(b[1].checked_at).localeCompare(String(a[1].checked_at))).slice(0, 15);

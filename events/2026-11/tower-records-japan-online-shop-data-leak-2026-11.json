@@ -6,7 +6,7 @@
   "cve_meta": [],
   "products": [],
   "first_seen": "2026-11-22T11:11:27Z",
-  "updated_at": "2026-11-22T11:11:27Z",
+  "updated_at": "2026-11-23T01:58:39Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -14,8 +14,8 @@
   ],
   "geo_basis": "country",
   "date": "2026-11-19",
-  "date_note": "19 November is the detection date the IHA report gives; it does not say when the unauthorised access began or on which day Tower Records announced it.",
-  "title": "Tower Records in Japan says about eleven million personal data records leaked from its online shop, IHA reports",
+  "date_note": "19 November is the day unauthorised access was confirmed, according to Security Measures Lab, which says Tower Records announced the leak on 21 November; no page read says when the access began.",
+  "title": "Tower Records in Japan says about eleven million member records leaked from Tower Records Online, including password hashes",
   "org": "Tower Records (Japan)",
   "sector": "Retail / music e-commerce",
   "country": "Japan",
@@ -25,11 +25,16 @@
   "pin_type": "country",
   "severity": 2,
   "source_tier": "established",
-  "summary": "Japanese music retail chain Tower Records announced that about eleven million personal data records leaked after unauthorised access to its shopping site, detected on 19 November, Turkey's IHA news agency reports. Customers' email addresses, membership information and shipping addresses were affected; the company says credit card information is safe and no secondary harm had been confirmed.",
-  "plain": "Japanese music chain Tower Records says hackers got into its online shop and about eleven million records of customer emails, membership details and delivery addresses leaked. It says card details are safe.",
-  "exec": "A breach of about eleven million records at an online shop exposes customers to targeted phishing that uses their real order and address details.",
-  "action": "Tower Records urges customers not to open suspicious emails or attachments and not to enter card details on suspicious platforms, as IHA reports.",
+  "summary": "Tower Records announced on 21 November that unauthorised access to its Tower Records Online shop, confirmed on 19 November, leaked about eleven million records of Tower Records Members, Japan's Security Measures Lab and Turkey's IHA report. According to Security Measures Lab, 10,214,652 login records (email, member ID, password hash), 2,784,514 member records and 776,953 delivery records were affected, including users who left within 3 years; card data was not included.",
+  "plain": "Tower Records in Japan says hackers got into its online shop and about eleven million member records leaked, including emails, hashed passwords and delivery addresses. Card details were not included.",
+  "exec": "A leak of about eleven million online shop records, including login data and delivery addresses, at Tower Records in Japan.",
+  "action": "Security Measures Lab advises customers who used the same password elsewhere to change it, starting with email and payment services, and to turn on multi-factor authentication or passkeys where offered.",
   "sources": [
+    {
+      "name": "Security Measures Lab (Rocket Boys)",
+      "url": "https://rocket-boys.co.jp/security-measures-lab/tower_records_online_1100man_password_hash_breach_2026/",
+      "published": "2026-11-23"
+    },
     {
       "name": "memurlar.net (IHA)",
       "url": "https://www.memurlar.net/haber/1184894/japonya-da-siber-guvenlik-ihlali-11-milyon-kisinin-verisi-sizdirildi.html",
@@ -45,18 +50,30 @@
     {
       "url": "https://www.tgrthaber.com/dunya/japonyada-siber-guvenlik-ihlali-11-milyon-kisinin-bilgileri-sizdirildi-3372819",
       "quote": "yaklaşık 11 milyon kişisel verinin sızdırıldığı"
+    },
+    {
+      "url": "https://rocket-boys.co.jp/security-measures-lab/tower_records_online_1100man_password_hash_breach_2026/",
+      "quote": "ログイン情報：10,214,652件（メールアドレス、会員ID、パスワードのハッシュ値）"
+    },
+    {
+      "url": "https://rocket-boys.co.jp/security-measures-lab/tower_records_online_1100man_password_hash_breach_2026/",
+      "quote": "会員情報：2,784,514件（氏名、フリガナ、ニックネーム、生年月日、性別、郵便番号）"
+    },
+    {
+      "url": "https://rocket-boys.co.jp/security-measures-lab/tower_records_online_1100man_password_hash_breach_2026/",
+      "quote": "配送先情報：776,953件（住所、宛名、電話番号）"
     }
   ],
   "validation": {
-    "checked_at": "2026-11-22T11:11:27Z",
-    "state": "single_source",
-    "note": "One wire report: memurlar.net and TGRT Haber both carry the same IHA story relaying Tower Records' announcement. Tower Records' own notice was not read: tower.jp answered 503 and 403. ekonomim.com and turkgun.com answered 403. No Japanese-language coverage found by search. The headlines say 11 million people; the article text says about eleven million personal data records, which the record follows. The figure is written in words (about eleven million) because the figure check cannot read the Turkish 'yaklaşık 11 milyon'; records_affected is left out for the same reason."
+    "checked_at": "2026-11-23T01:58:39Z",
+    "state": "corroborated",
+    "note": "Two independent publishers each state the core fact: Security Measures Lab (Rocket Boys, Japan, 23 Nov) relaying Tower Records' 21 November notice, and IHA (via memurlar.net and TGRT Haber, 22 Nov). Tower Records' own notice was not read: tower.jp answered 503. The breakdown figures are from Security Measures Lab only; it says the categories can overlap and the about 11 million figure is not a count of people. Figure kept in words because the figure check cannot read 約1,100万件 or 'yaklaşık 11 milyon'."
   },
   "report": {
-    "publisher": "İhlas Haber Ajansı (IHA), via memurlar.net and TGRT Haber",
-    "published": "2026-11-22",
+    "publisher": "Security Measures Lab (Rocket Boys)",
+    "published": "2026-11-23",
     "read_depth": "secondary",
-    "url": "https://www.tgrthaber.com/dunya/japonyada-siber-guvenlik-ihlali-11-milyon-kisinin-bilgileri-sizdirildi-3372819"
+    "url": "https://rocket-boys.co.jp/security-measures-lab/tower_records_online_1100man_password_hash_breach_2026/"
   },
   "sectors": {
     "values": [

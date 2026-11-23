@@ -1,16 +1,20 @@
 {
   "actor": "",
   "impact": "",
-  "tags": ["data-breach"],
+  "tags": [
+    "data-breach"
+  ],
   "cves": [],
   "cve_meta": [],
   "products": [],
   "time_basis": "reported",
   "first_seen": "2026-11-23T23:43:50Z",
-  "updated_at": "2026-11-23T23:43:50Z",
+  "updated_at": "2026-11-23T23:55:16Z",
   "category": "incident",
   "status": "confirmed",
-  "attack": ["data-theft"],
+  "attack": [
+    "data-theft"
+  ],
   "geo_basis": "country",
   "date": "2026-11-19",
   "date_note": "Date of the unauthorized access as given in the company's notice, per Daily SECU; the company confirmed the leak on 20 November.",
@@ -24,8 +28,8 @@
   "pin_type": "country",
   "severity": 2,
   "source_tier": "established",
-  "summary": "According to Daily SECU, HD Hyundai Robotics' breach notice says unauthorized access on 19 November leaked personal data of its homepage members, and the company confirmed the leak on 20 November. Exposed items include name, user ID, company, department, job title, phone numbers and email. The notice gave no number of people affected and no intrusion path; the company says it found no compromise of internal networks or robot control systems.",
-  "plain": "A robotics company says outsiders got into its website's member records. Names, work details and contact details were exposed. It says it has found no compromise of its internal networks.",
+  "summary": "According to Daily SECU, HD Hyundai Robotics' breach notice says unauthorized access on 19 November leaked personal data of its homepage members, and the company confirmed the leak on 20 November. Exposed items include name, user ID, encrypted password, company, department, job title, phone numbers and email. The notice gave no number of people affected; compromise of internal networks or robot control systems has not been confirmed.",
+  "plain": "A robotics company says outsiders got into its website's member records. Names, work details and contact details were exposed. It has not confirmed any compromise of its internal networks.",
   "exec": "The company's notice says homepage member data, including company and department details, was leaked; it gave no count of people affected.",
   "action": "Daily SECU advises changing passwords on other accounts that reuse the homepage password, and verifying requests for payments or account changes through a contact you already know.",
   "sources": [
@@ -40,6 +44,27 @@
     "state": "single_source",
     "note": "One publisher (Daily SECU) quoting the company's own breach notice; the notice itself was not read. No second publisher found."
   },
-  "sectors": {"values": ["critical-manufacturing"], "basis": "inferred"},
-  "surface": {"value": "web-app", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "critical-manufacturing"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-23T23:55:16Z",
+    "first_at": "2026-11-23T23:55:16Z",
+    "note": "stronger than source: found no compromise now not confirmed; added encrypted password to exposed items; dates, no count, advice checked vs Daily SECU",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "action",
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-23T23:55:16Z"
 }

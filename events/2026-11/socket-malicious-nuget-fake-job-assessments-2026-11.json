@@ -1,0 +1,42 @@
+{
+  "action": "Socket advises treating take-home projects as untrusted and building them in a disposable virtual machine; if one was run, isolate and reimage the machine and rotate browser-saved passwords, session cookies and developer tokens from a clean device.",
+  "actor": "",
+  "attack": ["T1195.002 Supply Chain Compromise: Compromise Software Supply Chain"],
+  "category": "incident",
+  "country": "Unknown",
+  "cves": [],
+  "date": "2026-11-23",
+  "date_note": "Socket's report is dated November 23 and the page gives no earlier day for the report; it describes NuGet activity from July 23 to November 4, 2026.",
+  "exec": "Socket reports 13 malicious NuGet packages aimed at .NET developers through fake job assessments; it has not attributed the campaign.",
+  "first_seen": "2026-11-23T23:26:40Z",
+  "geo_basis": "no location stated by the source",
+  "lat": 0,
+  "lng": 0,
+  "org": ".NET developers (NuGet)",
+  "pin_type": "country",
+  "place": "Unknown",
+  "plain": "Security firm Socket found 13 malicious NuGet packages meant for .NET developers who receive fake job assessments. It says the code downloads and runs further malware. Socket has not named who is behind it.",
+  "products": ["NuGet", ".NET", "MSBuild"],
+  "sector": "Technology / software development",
+  "severity": 2,
+  "source_tier": "established",
+  "sources": [
+    {"name": "Socket", "url": "https://socket.dev/blog/malicious-nuget-packages-fake-job-assessments", "published": "2026-11-23"}
+  ],
+  "evidence": [
+    {"url": "https://socket.dev/blog/malicious-nuget-packages-fake-job-assessments", "quote": "13 malicious NuGet packages"},
+    {"url": "https://socket.dev/blog/malicious-nuget-packages-fake-job-assessments", "quote": "28 versions"}
+  ],
+  "status": "developing",
+  "summary": "Socket's Threat Research Team reports 13 malicious NuGet packages across 28 versions, active from July 23 to November 4, 2026, aimed at .NET developers through fake job assessments. Socket says the packages download and run further executables from GitHub. It says it has not attributed the campaign to a named threat actor. One package, WinUI.Button 1.0.0, remained listed at the time of writing, Socket says.",
+  "tags": ["supply-chain", "malware"],
+  "title": "Socket reports 13 malicious NuGet packages targeting .NET developers with fake job assessments",
+  "updated_at": "2026-11-23T23:26:40Z",
+  "validation": {
+    "checked_at": "2026-11-23T23:26:40Z",
+    "note": "Single publisher: Socket's own research report; no second publisher or NuGet statement was read.",
+    "state": "single_source"
+  },
+  "sectors": {"values": ["information-technology"], "basis": "inferred"},
+  "surface": {"value": "supply-chain", "basis": "stated"}
+}

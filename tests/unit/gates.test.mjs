@@ -184,3 +184,65 @@ test("clocks survive a restart: the last run of a role comes from the usage ledg
   assert.equal(lastRunOf(lines, "gap"), Date.parse("2026-11-22T22:00:00Z"));
   assert.equal(lastRunOf(lines, "claims"), 0); assert.equal(lastRunOf(null, "gap"), 0);
 });
+
+// ---------- the on-file gate (gate only: nothing is closed, dropped or marked handled) ----------
+import { onFileGate, gateOnFile, onFileSlug, figuresIn } from "../../scripts/lib/gates.mjs";
+const SLUG = "fbi-ncic-apparent-breach-2026-11", CLOSED = h(10);
+const closure = (o = {}) => ({ at: CLOSED, reason: `story 89272ffb: already on file: ${SLUG}`, ...o });
+const live = (o = {}) => ({ id: SLUG, title: "FBI NCIC apparent breach", summary: "Hackers claim 1.2 million records and 40% of the index were copied.", cves: ["CVE-2026-1111"],
+  sources: [{ url: "https://www.bleepingcomputer.com/news/a", title: "BC" }, { url: "https://therecord.media/ncic", title: "Record" }], first_seen: h(40), updated_at: h(30), ...o });
+const pg = (o = {}) => ({ url: "https://www.bleepingcomputer.com/news/b", title: "FBI NCIC breach: what we know", source: "BleepingComputer", tier: "news", published: h(2), ...o });
+const gate = (leads, o = {}) => onFileGate(o.closure === undefined ? closure() : o.closure, "event" in o ? o.event : live(), leads, NOW, o.cfg);
+
+test("on-file gate: a repeat from a publisher the event already cites is skipped, with its reason and when it is due next", () => {
+  const g = gate([pg(), pg({ url: "https://bleepingcomputer.com/x", title: "NCIC update", published: h(1) })]);
+  assert.equal(g.due, false); assert.equal(g.why, "wait"); assert.match(g.reason, /^skipped: already on file as fbi-ncic/); assert.match(g.reason, /due again/);
+  assert.equal(g.next_at, iso(Date.parse(CLOSED) + 24 * 36e5), "due again a day after the closure");
+  assert.equal(gate([]).why, "nothing-new"); assert.equal(gate([pg({ published: h(11) })]).due, false, "a page older than the closure is not new input");
+});
+test("on-file gate: a new publisher, a new CVE, a new figure, a gov/vendor source or a claim reopens it", () => {
+  const why = (l) => { const g = gate([l]); assert.equal(g.due, true, JSON.stringify(l)); assert.equal(g.why, "reopened"); return g.reason; };
+  assert.match(why(pg({ url: "https://www.wired.com/story/ncic" })), /new publisher \(wired\.com\)/);
+  assert.match(why(pg({ url: "https://news.example.co.uk/a" })), /example\.co\.uk/);
+  assert.match(why(pg({ title: "NCIC breach tied to CVE-2026-2222" })), /new CVE \(CVE-2026-2222\)/);
+  assert.equal(gate([pg({ title: "NCIC breach, CVE-2026-1111 exploited" })]).due, false, "a CVE the event already names is not new");
+  assert.match(why(pg({ title: "FBI NCIC breach exposed 3 million records" })), /figure/);
+  assert.match(why(pg({ title: "FBI NCIC breach: 15,000 agencies" })), /figure/);
+  assert.equal(gate([pg({ title: "NCIC breach: 1.2 million records, 40% of the index" })]).due, false, "a figure the event states is not new");
+  assert.match(why(pg({ tier: "gov" })), /gov source/); assert.match(why(pg({ tier: "vendor" })), /vendor source/); assert.match(why(pg({ tier: "research" })), /research source/);
+  assert.match(why(pg({ kind: "claim" })), /claim lead/); assert.match(why(pg({ kind: "breach-notice" })), /breach-notice/);
+  assert.match(why(pg({ published: "" })), /no time/, "unsure: reopen");
+  assert.equal(gate([pg(), pg({ url: "https://www.wired.com/x" })]).due, true, "one reopening page among repeats is enough");
+});
+test("on-file gate: a closure naming an event that is gone, a duplicate or another event is never skipped", () => {
+  assert.deepEqual([gate([pg()], { event: null }).due, gate([pg()], { event: null }).why], [true, "dangling"]);
+  assert.equal(gate([pg()], { event: live({ duplicate_of: "other-2026-11" }) }).why, "dangling");
+  assert.equal(gate([pg()], { event: live({ id: "someone-else-2026-11" }) }).why, "dangling");
+  assert.equal(gate([pg()], { closure: closure({ reason: "story ab12cd34: a routine vendor bulletin with no sign of exploitation" }) }).why, "no-closure");
+  assert.equal(gate([pg()], { closure: null }).why, "no-closure");
+  assert.equal(onFileSlug("story x: already on file: Abc-Def-2026-11"), "abc-def-2026-11"); assert.equal(onFileSlug("triage: junk"), "");
+});
+test("on-file gate: aggregator redirects count for nothing; the wait is bounded, so nothing is held for ever", () => {
+  assert.equal(gate([pg({ url: "https://news.google.com/rss/articles/x" })]).due, false, "a redirect is not a new publisher");
+  const late = onFileGate(closure({ at: h(25) }), live(), [pg({ published: h(2) })], NOW);
+  assert.deepEqual([late.due, late.why], [true, "backoff"]);
+  assert.equal(onFileGate(closure({ at: h(25) }), live(), [pg({ published: h(2) })], NOW, { wait_hours: 48 }).due, false, "the dial");
+});
+test("on-file gate: figuresIn reads scale words, thousands separators and percentages, not years or small numbers", () => {
+  assert.deepEqual([...figuresIn("1.2 million records, 15,000 users, 40% and 3 hosts in 2026")].sort(), ["n1200000", "n15000", "p40"]);
+  assert.deepEqual([...figuresIn("2 billion and 500k")].sort(), ["n2000000000", "n500000"]);
+});
+test("on-file gate: REGRESSION the fbi-ncic shape: 31 repeats of one story -> no worker; one new publisher -> a worker", () => {
+  const repeats = Array.from({ length: 31 }, (_, i) => pg({ url: `https://www.bleepingcomputer.com/news/ncic-${i}`, title: `FBI NCIC breach, day ${i}`, published: h(9 - (i % 8)) }));
+  const r = gateOnFile([{ id: SLUG, leads: repeats }], [live()], { [SLUG]: closure() }, NOW);
+  assert.equal(r.due.length, 0); assert.equal(r.skipped.length, 1); assert.equal(r.skipped[0].id, SLUG); assert.ok(r.skipped[0].next_at && r.skipped[0].reason);
+  assert.equal(r.next_due_at, r.skipped[0].next_at);
+  const r2 = gateOnFile([{ id: SLUG, leads: [...repeats, pg({ url: "https://www.cisa.gov/ncic", tier: "gov" })] }], [live()], { [SLUG]: closure() }, NOW);
+  assert.equal(r2.due.length, 1); assert.equal(r2.skipped.length, 0);
+});
+test("on-file gate: gateOnFile never drops a candidate: due + skipped = every candidate; no closure on file means due; events may be a Map", () => {
+  const other = { id: "other-2026-11", leads: [pg()] }, k = { id: SLUG, leads: [pg()] };
+  const r = gateOnFile([k, other], new Map([[SLUG, live()]]), { [SLUG]: closure() }, NOW);
+  assert.deepEqual([r.due.map((x) => x.id), r.skipped.map((x) => x.id)], [["other-2026-11"], [SLUG]]);
+  assert.deepEqual(gateOnFile(null, [], null, NOW), { due: [], skipped: [], next_due_at: null });
+});

@@ -9,6 +9,8 @@
 // Every function here is pure and has unit tests (tests/unit/gates.test.mjs). The dials live in config/pipeline.json
 // (followup_desk, claims_desk, outage_desk, sweep.gap_*); the defaults below are what an absent dial means.
 
+import { siteOf } from "./validate.mjs";
+
 const HOUR = 36e5;
 const iso = (t) => new Date(t).toISOString().replace(/\.\d+Z$/, "Z");
 const num = (v, d) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : d);
@@ -113,6 +115,81 @@ export function outageRecheck(it, history = [], now = Date.now(), cfg = {}) {
   const next = last + backoffHours(Math.max(0, n - 1), c.recheck_hours, c.recheck_max_hours) * HOUR;
   if (now >= next) return { due: true, why: "backoff", reason: n ? `not confirmed ${n} time${n === 1 ? "" : "s"} in a row; the wait of ${(next - last) / HOUR} h is over` : "checked before; the wait is over", next_at: iso(next), n };
   return { due: false, why: "wait", reason: `skipped: ${waitText(last, next)}${n ? ` (not confirmed ${n} time${n === 1 ? "" : "s"} in a row)` : ""}`, next_at: iso(next), n };
+}
+
+// ---------- the on-file gate (scripts/updates.mjs plan) ----------
+// Owner, 2026-11-23: "gate only, don't close". A story that a rule closed as "already on file: <event>" comes back every
+// time one more page joins it (one story 31 times in five days). When that page is only the same publishers saying the
+// same thing, no updater is started for it; nothing is closed, marked handled or dropped. The story and its leads stay
+// open, and the gate lets it through the moment anything below shows up, or when the wait is over.
+export const ONFILE_DEFAULTS = { wait_hours: 24 };
+const ONFILE = /already on file: ([a-z0-9][a-z0-9-]{2,119})/;
+const CVE_RE = /CVE-\d{4}-\d{4,}/gi;
+const SCALE = { thousand: 1e3, k: 1e3, million: 1e6, m: 1e6, billion: 1e9, bn: 1e9, b: 1e9 };
+/** Pure: the slug an "already on file: <slug>" closure names, "" for any other reason. */
+export const onFileSlug = (reason) => { const m = ONFILE.exec(String(reason || "").toLowerCase()); return m ? m[1] : ""; };
+/** Pure: the figures a text states, as comparable strings: "1.2 million" -> "n1200000", "15,000" -> "n15000", "40%" -> "p40".
+ *  Bare numbers under 1,000 and years are not figures; a figure in any other form reopens (it is not found on the event). */
+export function figuresIn(text) {
+  const t = String(text || "").replace(/(\d),(?=\d{3}\b)/g, "$1"), out = new Set();
+  for (const m of t.matchAll(/(\d+(?:\.\d+)?)\s?(thousand|million|billion|bn|k|m|b)\b/gi)) out.add("n" + Math.round(Number(m[1]) * SCALE[m[2].toLowerCase()]));
+  for (const m of t.matchAll(/(\d+(?:\.\d+)?)\s?%/g)) out.add("p" + Number(m[1]));
+  for (const m of t.matchAll(/\b(\d{4,})\b(?!\s?(?:thousand|million|billion|bn|k|m|b)\b)/gi)) { const n = Number(m[1]); if (!(n >= 1900 && n <= 2100)) out.add("n" + n); }
+  return out;
+}
+// every text the event states, not its urls, ids or times: a figure the event does not say is new to it
+function eventText(v, key = "") {
+  if (typeof v === "string") return /url|date|_at$|^id$|first_seen|published/i.test(key) ? "" : v + " ";
+  if (Array.isArray(v)) return v.map((x) => eventText(x, key)).join("");
+  if (v && typeof v === "object") return Object.entries(v).map(([k, x]) => eventText(x, k)).join("");
+  return typeof v === "number" ? String(v) + " " : "";
+}
+/** Pure: should a worker be started for the new pages of a story that was closed "already on file"?
+ *  closure: its latest closure { at, reason }; event: the event it names (null when it no longer exists); leads: the story's
+ *  pages [{ url, title, source, tier, kind, seen_at | published }]; only those newer than the closure are new input.
+ *  A publisher is a registrable domain (siteOf: news.example.co.uk and www.example.co.uk are one), compared with the
+ *  domains of the event's sources. Due (never skipped) when: the closure names no live event (missing, a duplicate, or
+ *  another event than the one passed), a page has no time, a page is from a domain the event does not cite, a page is
+ *  from a government, vendor or research source, a leak-site claim or a regulator's notice, a CVE the event does not
+ *  name, a figure the event does not state, or the wait is over (cfg.wait_hours since the closure).
+ *  Aggregator redirects count for nothing: no one can read or cite them. Rejected as reopen signals, on purpose: a new
+ *  headline word, a new date, a non-English page (all too weak, and a skipped story keeps its wait anyway).
+ *  -> { due, why, reason, next_at, signals } (why: "no-closure" | "dangling" | "new-input" | "reopened" | "backoff" | "wait" | "nothing-new") */
+export function onFileGate(closure, event, leads, now = Date.now(), cfg = {}) {
+  const c = { ...ONFILE_DEFAULTS, ...(cfg || {}) }, at = ms(closure && closure.at), slug = onFileSlug(closure && closure.reason);
+  const due = (why, reason, signals = []) => ({ due: true, why, reason, next_at: iso(now), signals });
+  if (!slug || !at) return due("no-closure", "not closed as already on file");
+  if (!event || event.id !== slug || event.duplicate_of) return due("dangling", `the closure names ${slug}, which is ${!event ? "not on file now" : event.id !== slug ? "not the event matched now" : "a duplicate of " + event.duplicate_of}`);
+  const fresh = (leads || []).filter((l) => l && !/^https:\/\/(news\.google\.com\/|(www\.)?bing\.com\/news|(www\.)?msn\.com\/)/.test(String(l.url || "")) && (!ms(l.seen_at || l.published) || ms(l.seen_at || l.published) > at));
+  const next = at + num(c.wait_hours, 24) * HOUR, signals = [];
+  const sites = new Set((event.sources || []).map((s) => siteOf(s && s.url)).filter(Boolean)), text = eventText({ ...event, sources: (event.sources || []).map((s) => ({ title: s && s.title })) });
+  const have = figuresIn(text), cves = new Set((String(text).match(CVE_RE) || []).concat(event.cves || []).map((x) => x.toUpperCase()));
+  for (const l of fresh) {
+    const title = String(l.title || "");
+    if (!ms(l.seen_at || l.published)) signals.push("a page with no time");
+    if (!siteOf(l.url) || !sites.has(siteOf(l.url))) signals.push(`a new publisher (${siteOf(l.url) || "unknown"})`);
+    if (["gov", "vendor", "research"].includes(l.tier)) signals.push(`a ${l.tier} source`);
+    if (l.kind === "claim" || l.kind === "breach-notice" || l.kind === "exploited" || l.kind === "advisory") signals.push(`a ${l.kind} lead`);
+    for (const x of title.match(CVE_RE) || []) if (!cves.has(x.toUpperCase())) signals.push(`a new CVE (${x.toUpperCase()})`);
+    for (const f of figuresIn(title)) if (!have.has(f)) signals.push(`a figure the event does not state (${f.slice(1)}${f[0] === "p" ? "%" : ""})`);
+  }
+  const uniq = [...new Set(signals)];
+  if (uniq.length) return due("reopened", `reopened: ${uniq.slice(0, 3).join("; ")}`, uniq);
+  if (now >= next) return { ...due("backoff", `already on file as ${slug}; the wait of ${num(c.wait_hours, 24)} h is over`), next_at: iso(next) };
+  const nothing = !fresh.length;
+  return { due: false, why: nothing ? "nothing-new" : "wait", reason: `skipped: already on file as ${slug}; ${nothing ? "no new page since the closure" : fresh.length + " new page" + (fresh.length === 1 ? "" : "s") + " from publishers the event already cites, no new figure or CVE"}; ${waitText(at, next)}`, next_at: iso(next), signals: [] };
+}
+/** Pure: the updater plan's candidates ({ id, leads }) -> { due, skipped }. closures: latest on-file closure per event id
+ *  ({ at, reason }); events: every event by id. A skipped candidate keeps its reason and next_at and is not removed from
+ *  anywhere: only the worker is not started; the lead stays open. A candidate with no closure on file is always due. */
+export function gateOnFile(cands, events, closures, now = Date.now(), cfg = {}) {
+  const ev = events instanceof Map ? events : new Map((events || []).map((e) => [e && e.id, e])), due = [], skipped = [];
+  for (const k of cands || []) {
+    const g = onFileGate(closures && closures[k.id], ev.get(k.id) || null, k.leads, now, cfg);
+    if (g.due) due.push(k); else skipped.push({ id: k.id, why: g.why, reason: g.reason, next_at: g.next_at });
+  }
+  const nexts = skipped.map((s) => s.next_at).filter(Boolean).sort();
+  return { due, skipped, next_due_at: nexts[0] || null };
 }
 
 // ---------- gap searchers (scripts/run-job.mjs gapCount, scripts/job-prompt.mjs) ----------

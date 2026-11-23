@@ -16,7 +16,7 @@ import { appendFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { budgetConfig, canBuild, readUsage } from "./lib/usage.mjs";
+import { budgetConfig, canBuild, readUsage, budgetState, fallbackConfig, fallbackDecision, fallbackSpend } from "./lib/usage.mjs";
 
 export const BUILD_LEDGER = () => process.env.CYBERVIEW_BUILD_LEDGER || join(tmpdir(), "cyberview-build-usage.jsonl");
 /** The build work recorded with `spent` (lines of the last 7 days; a missing or broken file is no usage). */
@@ -35,6 +35,18 @@ export function spentLine(tokens, cost = 0, note = "", now = Date.now()) {
 export function verdict(r) {
   return { code: r.ok ? 0 : 1, line: `${r.ok ? "BUILD OK" : "BUILD WAIT"}: ${r.reason}.` };
 }
+/** Pure: the API-fallback state for `status`, from the pipeline ledger and the dials. keyPresent is a boolean only (the key
+ *  VALUE is never read, printed or returned). -> { enabled, cap_usd, state, month, usd, workers, last_at, key_present }. */
+export function fallbackStatus(now = Date.now(), cfg = budgetConfig(), lines = [], keyPresent = false) {
+  const fb = fallbackConfig(cfg), spend = fallbackSpend(lines, now);
+  let limited_until = null; try { limited_until = budgetState(now, cfg, lines).limited_until; } catch {}
+  const state = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!keyPresent, enabled: fb.enabled, monthSpendUsd: spend.usd, cap: fb.monthly_usd_cap, fallbackKeyLimited: false });
+  return { enabled: fb.enabled, cap_usd: fb.monthly_usd_cap, env_var: fb.env_var, key_present: !!keyPresent, state, month: spend.month, usd: spend.usd, workers: spend.workers, last_at: spend.last_at, limited_until };
+}
+/** Pure: the one line `status` prints for the fallback. Never contains the key value. */
+export function fallbackLine(f) {
+  return `API fallback: ${f.enabled ? "enabled" : "disabled"}, cap $${f.cap_usd}/month, key ${f.key_present ? "present" : `not set (${f.env_var})`}; now ${f.state}; $${f.usd} billed to the API this month (${f.workers} worker line(s)${f.last_at ? ", last " + f.last_at : ""}).`;
+}
 
 function main() {
   const [cmd, ...rest] = process.argv.slice(2), arg = (k, d) => { const i = rest.indexOf("--" + k); return i >= 0 ? rest[i + 1] : d; };
@@ -48,11 +60,13 @@ function main() {
   }
   if (cmd === "status" || cmd === "can-build") {
     let lines = []; try { lines = readUsage(now - 7 * 864e5, now); } catch {}
-    const r = canBuild(now, budgetConfig(), lines, readBuild(BUILD_LEDGER(), now)), v = verdict(r);
-    if (rest.includes("--json")) console.log(JSON.stringify({ ...r, pipeline_lines: lines.length }));
+    const cfg = budgetConfig(), r = canBuild(now, cfg, lines, readBuild(BUILD_LEDGER(), now)), v = verdict(r);
+    // the key VALUE is never read here: only whether the env var is set is passed on
+    const fb = fallbackStatus(now, cfg, lines, !!process.env[fallbackConfig(cfg).env_var]);
+    if (rest.includes("--json")) console.log(JSON.stringify({ ...r, pipeline_lines: lines.length, fallback: fb }));
     else {
       console.log(v.line);
-      if (cmd === "status") console.log(`pipeline level ${r.level}; ${lines.length} pipeline worker line(s) in the last 7 days${lines.length ? "" : " (no data/usage here: mount the data branch, or the estimate counts nothing)"}`);
+      if (cmd === "status") { console.log(`pipeline level ${r.level}; ${lines.length} pipeline worker line(s) in the last 7 days${lines.length ? "" : " (no data/usage here: mount the data branch, or the estimate counts nothing)"}`); console.log(fallbackLine(fb)); }
     }
     if (cmd === "can-build") process.exit(v.code);
     return;

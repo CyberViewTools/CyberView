@@ -34,11 +34,11 @@ import { STAGES, stageStates, lastRuns } from "./lib/stages.mjs";
 import { feedProposals, failingDays, PROPOSE_DAYS } from "./lib/backoff.mjs";
 import { needsReview, waitingSince } from "./review.mjs";
 import { tokens } from "./triage.mjs";
-import { budgetState } from "./lib/usage.mjs";
+import { budgetState, budgetConfig, fallbackConfig, fallbackSpend, readUsage } from "./lib/usage.mjs";
 
 export const LABEL = "pipeline-alert";
 // minutes a problem must last before an issue is opened (the status page lists it at once)
-export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60 };
+export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60, "api-fallback": 0, "api-fallback-cap": 3 * 60 };
 export const UNREVIEWED_MIN = 120, KEY_MEMORY_DAYS = 3, KEY_KEEP_DAYS = 14, HEAL_EVERY_MIN = 60, REMIND_HOURS = 24, MAX_OPEN_PER_RUN = 5;
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const ago = (m) => (m === null ? "never" : m < 120 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`);
@@ -191,6 +191,27 @@ export function usageProblem(b) {
     text: until ? `usage limit reached, resets ${until}: no AI worker starts until then (collection and the rules keep running; research resumes where it stopped)` : `usage limit: ${String(b.reason || "the 5-hour estimate is used up").slice(0, 160)}; no AI worker starts until usage falls (collection and the rules keep running)` };
 }
 
+/** Pure: the API-key fallback state as pipeline-check problems (scripts/lib/usage.mjs). While the subscription window is
+ *  exhausted and workers are billed to the Anthropic API, one INFO problem that says so (expected, not a failure); when the
+ *  monthly cap is reached (the pipeline then parks instead of falling back) one NEEDS-ATTENTION problem. Both reach the
+ *  status page and the guard through health.json like every other pipeline-check problem. lines: recent ledger lines. */
+export function fallbackProblems(lines, fb, now = Date.now()) {
+  const out = [], spend = fallbackSpend(lines || [], now);
+  const recent = (lines || []).filter((l) => l && typeof l.at === "string" && Date.parse(l.at) > now - 60 * 6e4).sort((a, b) => (a.at < b.at ? 1 : -1));
+  const onFallback = !!(recent[0] && recent[0].served === "api-fallback");
+  if (onFallback) {
+    const fbLines = (lines || []).filter((l) => l && l.served === "api-fallback" && Date.parse(l.at) > now - 24 * 36e5).map((l) => l.at).sort();
+    const since = fbLines.length ? String(fbLines[0]).slice(0, 16).replace("T", " ") + " UTC" : "recently";
+    out.push({ id: "api-fallback", level: "info", threshold_min: THRESHOLD["api-fallback"],
+      text: `running on the API fallback since ${since}: the subscription 5-hour window is exhausted, so pipeline workers are billed to the Anthropic API (expected; ${spend.workers} worker line(s), est $${spend.usd} this month, cap $${fb.monthly_usd_cap})` });
+  }
+  if (fb.enabled && fb.monthly_usd_cap > 0 && spend.usd >= fb.monthly_usd_cap) {
+    out.push({ id: "api-fallback-cap", level: "warn", threshold_min: THRESHOLD["api-fallback-cap"],
+      text: `API fallback monthly cap reached: est $${spend.usd} billed to the API this month, cap $${fb.monthly_usd_cap}; the pipeline now parks on a usage limit instead of falling back (raise usage_budget.api_fallback.monthly_usd_cap to resume)` });
+  }
+  return out;
+}
+
 export async function check(now = Date.now()) {
   const qp = join(DATA, "quality.json"), prev = readJson(qp, {}) || {}, st = readStatus();
   const routines = (readJson(join(ROOT, "routines.json"), { routines: [] }) || { routines: [] }).routines || [];
@@ -205,6 +226,8 @@ export async function check(now = Date.now()) {
   const known = prev.status_keys || Object.fromEntries(committedKeys().map((k) => [k, new Date(now - 60e3).toISOString()]));
   const sk = statusKeys(known, st, now); if (sk.problem) problems.push(sk.problem);
   try { const up = usageProblem(budgetState(now)); if (up) problems.push(up); } catch {}
+  // the API-key fallback: billing the Anthropic API while the subscription window is exhausted (info), or its cap reached (warn)
+  try { const fb = fallbackConfig(budgetConfig()); for (const p of fallbackProblems(readUsage(now - 24 * 36e5, now), fb, now)) problems.push(p); } catch {}
   const dupes = missedDuplicates(events, now);
   if (dupes.length) problems.push({ id: "duplicates", level: "warn", threshold_min: THRESHOLD.duplicates, text: `${dupes.length} pair(s) of events look like one story recorded twice: ${dupes.slice(0, 3).map((d) => `${d.a} / ${d.b}`).join("; ")}` });
   if (rev.count) problems.push({ id: "unreviewed", level: "warn", threshold_min: THRESHOLD.unreviewed, text: `${rev.count} event(s) have waited over ${UNREVIEWED_MIN / 60} hours for their second review, the oldest ${ago(rev.oldest_min).replace(" ago", "")}` });

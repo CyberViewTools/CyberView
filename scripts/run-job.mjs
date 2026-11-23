@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock } from "./lib/lease.mjs";
-import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom } from "./lib/usage.mjs";
+import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend } from "./lib/usage.mjs";
 import { roleFor, baseRole } from "./lib/routing.mjs";
 import { lastRunOf, gapDryRun, gapEveryMinutes } from "./lib/gates.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -39,14 +39,14 @@ export function workerArgs(role, prompt, models = MODELS) {
  *  generic failure: `capped` (the worker reached its turn cap, config/models.json max_turns, before it finished: claude's
  *  result subtype "error_max_turns") and `limit` (the plan's usage or rate limit said no: scripts/lib/usage.mjs LIMIT_RE)
  *  with `limit_until`, the reset time the message gives, when it gives one. */
-export function ledgerLine(job, role, batch, model, ms, out, err) {
+export function ledgerLine(job, role, batch, model, ms, out, err, served = "subscription") {
   let j = null; try { j = JSON.parse(out); } catch {}
   const u = (j && j.usage) || {}, capped = !!(j && j.subtype === "error_max_turns");
   const ok = !!(j && !j.is_error) && !err && !capped;
   const error = err || (capped ? `turn cap reached (${j.num_turns ?? "?"} turns)` : j && j.is_error ? String(j.result || j.subtype || "error").slice(0, 160) : null);
   const l = { at: nowIso(), job, role, batch: batch ?? null, model, ms, ok, turns: j ? j.num_turns : null, cost: j ? +(j.total_cost_usd || 0).toFixed(4) : null,
     in: u.input_tokens ?? null, out: u.output_tokens ?? null, cache_read: u.cache_read_input_tokens ?? null, cache_write: u.cache_creation_input_tokens ?? null,
-    error, last: j ? String(j.result || "").trim().split("\n").pop().slice(0, 200) : "" };
+    error, served: served === "api-fallback" ? "api-fallback" : "subscription", last: j ? String(j.result || "").trim().split("\n").pop().slice(0, 200) : "" };
   if (capped) l.capped = true;
   if (!ok && error && !capped && LIMIT_RE.test(String(error))) { l.limit = true; const at = Date.parse(l.at), r = resetFrom(error, at); if (r && r > at && r - at <= 8 * 864e5) l.limit_until = new Date(r).toISOString().replace(/\.\d+Z$/, "Z"); }
   return l;
@@ -105,12 +105,50 @@ function logUnfinished(l, t0) {
   const name = `${baseRole(l.role)}${l.batch != null ? "-" + String(l.batch).replace(/[^A-Za-z0-9]/g, "") : ""}-unfinished`;
   writeJson(join(dir, `${l.at.slice(11, 13)}${l.at.slice(14, 16)}-${name}.json`), { job: name, ...log });
 }
-let unavailable = 0, limitHit = null;
-function runWorker(job, role, batch) {
+let unavailable = 0, limitHit = null, fallbackKeyLimited = false;
+// ---------- API-key fallback (scripts/lib/usage.mjs): subscription primary, the API key bills only while the subscription
+// window is exhausted. The owner stores the key under CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY (never ANTHROPIC_API_KEY, which
+// the CLI would use ahead of the subscription). With the env var unset, behaviour is exactly as before (park on a limit).
+const FB = fallbackConfig(PIPE.usage_budget || {});
+const FALLBACK_KEY = process.env[FB.env_var] || "";     // the VALUE: read here only, never logged, never committed
+/** Pure: the environment one worker is spawned with. ANTHROPIC_API_KEY is injected ONLY in "api-fallback" mode, so the
+ *  subscription OAuth stays primary everywhere else; any ambient ANTHROPIC_API_KEY is removed so a stray one can never make
+ *  the API primary. The key is never written to a log or a data file. */
+export function workerEnv(served, key, base = process.env) {
+  const env = { ...base, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1" };
+  if (served === "api-fallback" && key) env.ANTHROPIC_API_KEY = key; else delete env.ANTHROPIC_API_KEY;
+  return env;
+}
+// the fallback decision reads the plan's live limit (budgetState) and the month's fallback spend (the ledger), cached briefly
+let fbCache = { at: 0, served: null, spend: { usd: 0, workers: 0, last_at: null }, limited_until: null };
+function fallbackState(now = Date.now()) {
+  if (fbCache.served && now - fbCache.at < 15000) return fbCache;
+  let limited_until = null; try { limited_until = budgetState(now).limited_until; } catch {}
+  let spend = { usd: 0, workers: 0, last_at: null };
+  try { spend = fallbackSpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
+  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited });
+  fbCache = { at: now, served, spend, limited_until };
+  return fbCache;
+}
+const servedNow = (now = Date.now()) => fallbackState(now).served;
+const parked = (now = Date.now()) => fallbackState(now).served === "park";
+/** A plain reason for the "not started"/"on fallback" log lines; never contains the key. */
+function fallbackNote(now = Date.now()) {
+  const s = fallbackState(now);
+  if (s.served === "park") {
+    if (!FALLBACK_KEY) return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
+    if (!FB.enabled) return "usage limit reached; the API fallback is disabled (usage_budget.api_fallback.enabled)";
+    if (fallbackKeyLimited) return "usage limit reached; the fallback API key also hit a limit";
+    if (FB.monthly_usd_cap > 0 && s.spend.usd >= FB.monthly_usd_cap) return `usage limit reached; the API-fallback monthly cap ($${FB.monthly_usd_cap}) is reached ($${s.spend.usd} this month)`;
+    return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
+  }
+  return `subscription window exhausted${s.limited_until ? ", resets " + s.limited_until : ""}; billing the API fallback ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
+}
+function runWorker(job, role, batch, served = "subscription") {
   return new Promise((resolve) => {
-    let prompt; try { prompt = promptFor(role, batch); } catch (e) { const l = ledgerLine(job, role, batch, "-", 0, "", String(e.message)); record(l); return resolve(l); }
+    let prompt; try { prompt = promptFor(role, batch); } catch (e) { const l = ledgerLine(job, role, batch, "-", 0, "", String(e.message), served); record(l); return resolve(l); }
     const w = workerArgs(role, prompt), t0 = Date.now();
-    const ch = spawn("claude", w.args, { cwd: ROOT, env: { ...process.env, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1" }, stdio: ["ignore", "pipe", "pipe"] });
+    const ch = spawn("claude", w.args, { cwd: ROOT, env: workerEnv(served, FALLBACK_KEY), stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "", done = false;
     const kill = setTimeout(() => { if (!done) { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); } }, w.timeoutMs);
     ch.stdout.on("data", (d) => { out += d; }); ch.stderr.on("data", (d) => { err += d; });
@@ -118,11 +156,14 @@ function runWorker(job, role, batch) {
     ch.on("close", (code) => {
       done = true; clearTimeout(kill);
       const timedOut = Date.now() - t0 >= w.timeoutMs - 1000;
-      const l = ledgerLine(job, role, batch, w.model, Date.now() - t0, out, timedOut ? "timeout" : code !== 0 && !out ? (err.trim().split("\n").pop() || `exit ${code}`).slice(0, 160) : null);
+      const l = ledgerLine(job, role, batch, w.model, Date.now() - t0, out, timedOut ? "timeout" : code !== 0 && !out ? (err.trim().split("\n").pop() || `exit ${code}`).slice(0, 160) : null, served);
       record(l); try { stampRunLogs(role, batch, w.model, t0); } catch {}
       try { logUnfinished(l, t0); } catch {}
-      if (l.limit) limitHit = l;
-      log(`  ${role}${batch != null ? " " + batch : ""}: ${l.ok ? "ok" : l.limit ? `USAGE LIMIT REACHED${l.limit_until ? ", resets " + l.limit_until : ""}: ` + (l.error || "") : l.capped ? "TURN CAP " + (l.error || "") + ": unfinished work logged as open leads" : "FAILED " + (l.error || "")} · ${l.turns ?? "?"} turns · $${l.cost ?? "?"} · ${Math.round(l.ms / 1000)}s${l.last ? " · " + l.last.slice(0, 120) : ""}`);
+      // a limit on the subscription parks (or, if a fallback key is set, flips to the API key); a limit the fallback key
+      // itself returns parks for the rest of this run instead of looping on an exhausted key
+      if (l.limit) { if (served === "api-fallback") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
+      else if (l.served === "api-fallback") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
+      log(`  ${served === "api-fallback" ? "[api-fallback] " : ""}${role}${batch != null ? " " + batch : ""}: ${l.ok ? "ok" : l.limit ? `USAGE LIMIT REACHED${l.limit_until ? ", resets " + l.limit_until : ""}: ` + (l.error || "") : l.capped ? "TURN CAP " + (l.error || "") + ": unfinished work logged as open leads" : "FAILED " + (l.error || "")} · ${l.turns ?? "?"} turns · $${l.cost ?? "?"} · ${Math.round(l.ms / 1000)}s${l.last ? " · " + l.last.slice(0, 120) : ""}`);
       resolve(l);
     });
   });
@@ -165,9 +206,17 @@ export const limitHolds = (hit, now = Date.now()) => !!(hit && hit.limit && now 
  *  (not started, no ledger line: their items stay in their queues and leases are released as usual); the budget then holds
  *  the loop at "stop" until the reset time the message gave (scripts/lib/usage.mjs budgetState). */
 export async function pool(job, list) {
-  const res = []; let i = 0, held = 0;
-  await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => { while (i < list.length) { const k = i++; if (limitHolds(limitHit)) { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; } res[k] = await runWorker(job, list[k][0], list[k][1]); } }));
-  if (held) log(`  ${held} worker(s) not started: usage limit reached${limitHit.limit_until ? ", resets " + limitHit.limit_until : ""}; their work stays in the queue`);
+  const res = []; let i = 0, held = 0, fb = 0;
+  await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => {
+    while (i < list.length) {
+      const k = i++, served = servedNow();
+      if (served === "park") { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; }
+      if (served === "api-fallback") fb++;
+      res[k] = await runWorker(job, list[k][0], list[k][1], served);
+    }
+  }));
+  if (fb) log(`  ${fb} worker(s) ran on the API fallback: ${fallbackNote()}`);
+  if (held) log(`  ${held} worker(s) not started: ${fallbackNote()}; their work stays in the queue`);
   if (list.length && unavailable >= Math.min(list.length, 2)) { log("HEADLESS UNAVAILABLE: claude could not start workers"); process.exit(3); }
   return res;
 }
@@ -271,6 +320,15 @@ export function workAt(level, cuts = TIGHT_CUTS) {
   if (level === "tight") return { researchers: true, urgent_only: true, reviewers: true, overdue_only: true, updaters: false, grid: false, outage: false, followup: false, gap: false, moderator: false, fixer: true, claims: true };
   return { researchers: true, urgent_only: false, reviewers: true, overdue_only: false, updaters: true, grid: true, outage: true, followup: true, gap: true, moderator: true, fixer: true, claims: true };
 }
+/** Pure: the level a cycle (or a one-off job) plans at. A "stop" that comes from a real subscription-limit hit
+ *  (budgetState().limited_until live) becomes "ok" when the API fallback is available for this worker, so the loop plans a
+ *  normal cycle and the pool runs those workers on the fallback API key; an estimate-only stop (no limited_until) is left
+ *  to park as before. b: budgetState(); served: servedNow(). */
+export function planLevelFor(b, served) {
+  if (b && b.level === "stop" && b.limited_until && served === "api-fallback") return "ok";
+  return b ? b.level : "ok";
+}
+const planLevel = (b, now = Date.now()) => planLevelFor(b, servedNow(now));
 /** Pure: review batches keeping only events that have waited longer than `min` minutes (waitingSince from review.mjs). */
 export function overdueOnly(batches, byId, now = Date.now(), min = OVERDUE_MIN) {
   return (batches || []).map((b) => b.filter((id) => { const e = byId.get(id); return e && now - Date.parse(waitingSince(e)) > min * 6e4; })).filter((b) => b.length);
@@ -430,8 +488,9 @@ async function flow() {
   /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */
   const probe = () => {
     collectors(); gridCollect(); B = budgetState();
-    if (!workAt(B.level).researchers) return false;
-    sh("node", ["scripts/sweep-plan.mjs", "plan", ...(workAt(B.level).urgent_only ? ["--urgent"] : [])]);
+    const lvl = planLevel(B);
+    if (!workAt(lvl).researchers) return false;
+    sh("node", ["scripts/sweep-plan.mjs", "plan", ...(workAt(lvl).urgent_only ? ["--urgent"] : [])]);
     if ((plan("sweep-plan.json").stories || []).length) return true;
     const q = sh("node", ["scripts/review.mjs", "queue", "--json", "--limit", "40"]); let items = []; try { items = JSON.parse(q.stdout.trim() || "[]"); } catch {}
     return RW > 0 && items.length > 0;
@@ -444,8 +503,10 @@ async function flow() {
     beat("collecting");
     if (Date.now() - polled > 60000) collectors();        // a light poll that just ran them leaves them out
     // the plan's usage decides what this cycle may start (scripts/lib/usage.mjs; config/pipeline.json usage_budget)
-    B = budgetState(); const can = workAt(B.level); rec.budget = { level: B.level, window_pct: B.window_pct, week_pct: B.week_pct, ...(B.limited_until ? { limited_until: B.limited_until } : {}) };
+    B = budgetState(); const lvl = planLevel(B), can = workAt(lvl); rec.budget = { level: B.level, window_pct: B.window_pct, week_pct: B.week_pct, ...(B.limited_until ? { limited_until: B.limited_until } : {}), ...(lvl !== B.level ? { plan_level: lvl, served: "api-fallback" } : {}) };
     if (B.level !== "ok") { total[B.level]++; phase("budget", budgetLine(B)); }
+    // the subscription window is exhausted but the API fallback is available: plan a normal cycle, bill those workers to the API
+    if (lvl !== B.level) phase("budget", fallbackNote());
     // grid outages (context, never events): collect from the operators' feeds; a failure here never stops the cycle
     { const g = gridCollect(); if (g) phase("grid", g); }
     // power outages reported in the news (no AI model; publishers' own pages): before the analysis, which counts them as news
@@ -521,8 +582,9 @@ async function flow() {
       phase("work", `${res.filter((r) => r && r.ok).length} of ${work.length} worker(s) finished (${batches.length} researcher, ${rb.length} reviewer, ${ub.length} updater, ${gb.length} grid, ${ob.length} outage${work.some((w) => w[0] === "gap") ? `, ${work.filter((w) => w[0] === "gap").length} gap` : ""}${work.some((w) => baseRole(w[0]) === "followup") ? ", follow-up desk" : ""}${work.some((w) => /-deep$/.test(w[0])) ? `; ${work.filter((w) => /-deep$/.test(w[0])).length} on the deep model` : ""}); $${res.reduce((s, r) => s + ((r && r.cost) || 0), 0).toFixed(2)}`);
       if (batches.length) {
         const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
-        // no retry while the plan's limit holds: the stories stay in the queue for the first cycle after the reset
-        if (!chk.ok && limitHolds(limitHit)) phase("retry", "not started: usage limit reached; the missing stories stay in the queue");
+        // no retry while the pool is parked (the plan's limit holds and no API fallback is available): the stories stay in
+        // the queue for the first cycle after the reset; on the API fallback the retry runs on the fallback key like the rest
+        if (!chk.ok && parked()) phase("retry", `not started: ${fallbackNote()}; the missing stories stay in the queue`);
         else if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [[researcherRole(plan("sweep-plan.json"), "retry"), "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
       if (work.some((w) => w[0] === "gap")) gapDry = clocks().gapDry;
@@ -551,7 +613,7 @@ async function flow() {
       let f = finish("sweep");
       // a broken record never holds back the cycle's good work: a fixer when one may start, and the commit either way
       // (finish --force: the deploy quarantines what is still broken and reports it)
-      if (f.fixer) { if (can.fixer && !limitHolds(limitHit)) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); } else phase("fix", "build failed and no fixer may start (usage): committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
+      if (f.fixer) { if (can.fixer && !parked()) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); } else phase("fix", "build failed and no fixer may start (usage): committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
     took.push(Date.now() - cs);
@@ -592,8 +654,9 @@ async function main() {
   const needsWeb = { sweep: 1, backlog: 1, review: 1, analyst: 1, "deep-sweep": 1 }[job] || WEB_ROLES.has(job);
   // the plan's usage: at "stop" no job starts workers; at "tight" the jobs in usage_budget.tight_skip_jobs wait for their
   // next schedule, so what is left of the window goes to the research loop (scripts/lib/usage.mjs)
-  { const B = budgetState(), skip = (PIPE.usage_budget || {}).tight_skip_jobs || [];
-    if (B.level === "stop" || (B.level === "tight" && TIGHT_CUTS && skip.includes(job))) { log(budgetLine(B)); log(`CyberView ${job}: skipped, plan usage ${B.level}${B.limited_until ? " until " + B.limited_until : ""}; it runs at its next schedule`); return; } }
+  // a real subscription-limit stop still runs the job on the API fallback when one is available (planLevel lifts it to "ok")
+  { const B = budgetState(), skip = (PIPE.usage_budget || {}).tight_skip_jobs || [], stop = B.level === "stop" && planLevel(B) === "stop";
+    if (stop || (B.level === "tight" && TIGHT_CUTS && skip.includes(job))) { log(budgetLine(B)); log(`CyberView ${job}: skipped, plan usage ${B.level}${B.limited_until ? " until " + B.limited_until : ""}; it runs at its next schedule`); return; } }
   if (needsWeb && !webOk()) { log("HEADLESS UNAVAILABLE: headless workers cannot read web pages in this container"); process.exit(3); }
 
   // 1. plan (scripts only; the planners leave out anything another run has leased)
@@ -654,13 +717,13 @@ async function main() {
   // 4. check and retry (only what is missing, once)
   if ((job === "sweep" || job === "backlog") && work.length) {
     const chk = sh("node", ["scripts/sweep-plan.mjs", "check"]); phase("check", chk.out[0] || "");
-    if (!chk.ok && work.some((w) => baseRole(w[0]) === "researcher") && !limitHolds(limitHit)) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [[researcherRole(plan("sweep-plan.json"), "retry"), "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
+    if (!chk.ok && work.some((w) => baseRole(w[0]) === "researcher") && !parked()) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); await pool(job, [[researcherRole(plan("sweep-plan.json"), "retry"), "retry"]]); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
   }
   // 4b. drain: reports that arrived while the researchers worked (the collect action pushes about every 30 minutes) are collected,
   //     planned and worked now, in this run, so nothing waits for the next one. At most two more rounds, and a round starts only
   //     within the first 6 minutes, so a run ends in about 13 minutes and never overlaps the next one (every 15 minutes).
   let extra = 0;
-  if (job === "sweep") for (let round = 2; round <= 3 && Date.now() - t0 < 6 * 6e4 && !limitHolds(limitHit); round++) {
+  if (job === "sweep") for (let round = 2; round <= 3 && Date.now() - t0 < 6 * 6e4 && !parked(); round++) {
     for (const [c, a] of [["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a);
     const note = sh("node", ["scripts/sweep-plan.mjs", "plan"]).out[0] || "";
     const more = [...new Set((plan("sweep-plan.json").stories || []).map((s) => s.batch))].sort((a, b) => a - b);
@@ -674,7 +737,7 @@ async function main() {
   // 4c. continuous review: every research run also gives the oldest unreviewed events (its own new ones included) a second
   // review by different workers, so the review queue never builds up between hourly review desks
   const RW = Math.max(0, Math.min(8, Number((PIPE.sweep || {}).review_workers ?? 2)));
-  if (job === "sweep" && RW && Date.now() - t0 < 9 * 6e4 && !limitHolds(limitHit)) {   // late runs leave it to the hourly desk, so a run never overlaps the next one
+  if (job === "sweep" && RW && Date.now() - t0 < 9 * 6e4 && !parked()) {   // late runs leave it to the hourly desk, so a run never overlaps the next one
     const pf = `review-plan-${RUN}.json`.replace(/[^A-Za-z0-9.-]/g, "-");
     phase("review", sh("node", ["scripts/review.mjs", "plan", "--max", String(RW), "--file", pf]).out[0] || "");
     const rb = (readJson(join(DATA, pf), { batches: [] }).batches || []).filter((b) => b.length);
@@ -695,7 +758,7 @@ async function main() {
   // 6. commit (the leases are released in the same commit)
   release(RUN);
   let f = finish(job);
-  if (f.fixer) { if (!limitHolds(limitHit)) { phase("fix", "build failed: starting a fixer"); await pool(job, [["fixer", null]]); } else phase("fix", "build failed and the usage limit holds: committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", job, "--force"], 600000).out }; }
+  if (f.fixer) { if (!parked()) { phase("fix", "build failed: starting a fixer"); await pool(job, [["fixer", null]]); } else phase("fix", "build failed and the usage limit holds: committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", job, "--force"], 600000).out }; }
   const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
   phase("commit", last);
   const b = job === "sweep" || job === "backlog" ? sh("node", ["scripts/backlog.mjs", "status"]).out[0] || "" : "";

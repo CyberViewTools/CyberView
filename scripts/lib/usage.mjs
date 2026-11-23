@@ -86,13 +86,22 @@ export function resetFrom(text, at) {
   return t;
 }
 /** Pure: the limit hits in the ledger: [{ at, until, text }] (until = the reset time, else at + backoff). */
+// a worker served well after a refusal proves the plan is not blocking any more, so the park ends there. Without this a
+// single transient hit parks everything until a distant reset (a weekly reset is up to 5 days out), which would stop fresh
+// data getting out; the grace ignores workers of the same batch that were already in flight when the refusal came.
+export const LIMIT_CLEAR_GRACE_MIN = 5;
 export function limitHits(lines, backoffMin = 60) {
+  const all = lines || [];
+  const served = all.filter((l) => l.ok).map((l) => Date.parse(l.at)).filter((t) => isFinite(t)).sort((a, b) => a - b);
   const out = [];
-  for (const l of lines || []) {
+  for (const l of all) {
     if (l.ok || !l.error || !LIMIT_RE.test(String(l.error))) continue;
     const at = Date.parse(l.at); if (!isFinite(at)) continue;
-    const r = resetFrom(l.error, at), until = r && r > at && r - at <= 8 * 24 * HOUR ? r : at + (/weekly limit/i.test(l.error) ? Math.max(backoffMin, 360) : backoffMin) * 6e4;   // a weekly window never resets in an hour
-    out.push({ at, until, text: String(l.error).slice(0, 160) });
+    const r = resetFrom(l.error, at);
+    const reset = r && r > at && r - at <= 8 * 24 * HOUR ? r : at + (/weekly limit/i.test(l.error) ? Math.max(backoffMin, 360) : backoffMin) * 6e4;   // a weekly window never resets in an hour
+    const cleared = served.find((s) => s >= at + LIMIT_CLEAR_GRACE_MIN * 6e4);
+    const until = cleared && cleared < reset ? cleared : reset;
+    out.push({ at, until, text: String(l.error).slice(0, 160), ...(until !== reset ? { cleared_at: iso(cleared), reset: iso(reset) } : {}) });
   }
   return out;
 }

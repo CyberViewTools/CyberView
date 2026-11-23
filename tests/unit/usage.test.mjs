@@ -87,3 +87,24 @@ test("peakUsage finds the busiest rolling span", () => {
   assert.equal(p.tokens, 3 * 11000); assert.equal(p.cost, 0.75); assert.equal(p.at, at(8.5));
   assert.equal(sumUsage([], 0, 1).tokens, 0);
 });
+
+// Parsing the weekly reset correctly (above) made one transient refusal park every worker until that reset, up to 5 days
+// away, which would stop fresh data getting out. A worker served well after the refusal proves the plan is not blocking.
+test("limitHits: a park ends when a worker is served again, but a genuine limit still holds to its reset", async () => {
+  const { limitHits } = await import("../../scripts/lib/usage.mjs");
+  const W = "You've hit your weekly limit \u00b7 resets Nov 28, 8pm (UTC)", HIT = "2026-11-23T13:57:25Z";
+  const RESET = Date.parse("2026-11-28T20:00:00Z");
+  // transient: the 13:57 refusal really happened, then 83 workers were served from 17:00 on
+  const t = limitHits([{ at: HIT, ok: false, error: W }, { at: "2026-11-23T17:00:00Z", ok: true }]);
+  assert.equal(t[0].until, Date.parse("2026-11-23T17:00:00Z"), "the park ends at the first success past the grace");
+  assert.equal(t[0].cleared_at, "2026-11-23T17:00:00Z"); assert.equal(t[0].reset, "2026-11-28T20:00:00Z");
+  // genuine: nothing served afterwards, so the real reset stands
+  const g = limitHits([{ at: HIT, ok: false, error: W }]);
+  assert.equal(g[0].until, RESET); assert.equal(g[0].cleared_at, undefined);
+  // a worker of the same batch, already in flight when the refusal came, is no evidence the limit lifted
+  const b = limitHits([{ at: HIT, ok: false, error: W }, { at: "2026-11-23T13:58:00Z", ok: true }]);
+  assert.equal(b[0].until, RESET, "a success inside the grace does not clear the park");
+  // a 5-hour limit behaves the same way
+  const f = limitHits([{ at: HIT, ok: false, error: "You've hit your 5-hour limit \u00b7 resets 11:10pm (UTC)" }, { at: "2026-11-23T15:00:00Z", ok: true }]);
+  assert.equal(f[0].until, Date.parse("2026-11-23T15:00:00Z"));
+});

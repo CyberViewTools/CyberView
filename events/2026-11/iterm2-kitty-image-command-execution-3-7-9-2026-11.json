@@ -1,0 +1,98 @@
+{
+  "action": "Update iTerm2 to 3.7.9, which iTerm2's release notes say fixes the issue; Cyber Security News also advises not printing raw contents of unfamiliar files into iTerm2 until then.",
+  "actor": "",
+  "attack": [
+    "command injection"
+  ],
+  "category": "vuln",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-20",
+  "date_note": "Date is the day iTerm2 3.7.9, which carries the fix, was built according to its release notes; the researcher's write-up is dated 21 November.",
+  "exec": "Developers and admins on Macs using iTerm2 could have commands run by viewing a crafted file; exploit code is public and a fix exists in 3.7.9.",
+  "first_seen": "2026-11-23T13:41:33Z",
+  "geo_basis": "no place is stated for the vendor or the flaw",
+  "lat": 0,
+  "lng": 0,
+  "org": "iTerm2",
+  "pin_type": "none",
+  "place": "Global (macOS software)",
+  "plain": "Viewing a booby-trapped file in the iTerm2 terminal app on a Mac could run commands. Version 3.7.9 fixes it, and the researcher has published code showing how it works.",
+  "products": [
+    "iTerm2"
+  ],
+  "report": {
+    "doc_id": "iTerm2 3.7.9 changelog",
+    "iocs_available": false,
+    "key_findings": [
+      "iTerm2 3.7.9 fixes a security issue where a crafted file displayed in the terminal could run arbitrary commands by abusing the Kitty image and drag-and-drop protocols.",
+      "Replies sent back to programs no longer include control characters that could be injected into the shell.",
+      "The researcher's write-up lists 3.6.1 – 3.7.8 as affected with default settings and includes proof-of-concept code.",
+      "Credited to Minseong Kim (@ii4gsp) of NSHC Red Alert Labs."
+    ],
+    "published": "2026-11-20",
+    "publisher": "iTerm2",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Update to iTerm2 3.7.9."
+    ],
+    "url": "https://iterm2.com/downloads/stable/iTerm2-3_7_9.changelog"
+  },
+  "sector": "Terminal software",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "severity": 3,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "iTerm2 3.7.9 release notes",
+      "url": "https://iterm2.com/downloads/stable/iTerm2-3_7_9.changelog",
+      "published": "2026-11-20"
+    },
+    {
+      "name": "Minseong Kim (ii4gsp) write-up",
+      "url": "https://ii4gsp.github.io/iterm2-rce/",
+      "published": "2026-11-21"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/iterm2-remote-code-execution-flaw/",
+      "published": "2026-11-23"
+    }
+  ],
+  "status": "official",
+  "summary": "iTerm2's 3.7.9 release notes, built on 20 November, say it fixes a security issue where a crafted file displayed in the terminal, for example with cat, could run arbitrary commands by abusing the Kitty image and drag-and-drop protocols. Researcher Minseong Kim of NSHC Red Alert Labs, credited by iTerm2, lists versions 3.6.1 – 3.7.8 as affected with default settings and has published proof-of-concept exploit code.",
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "tags": [
+    "poc-public"
+  ],
+  "title": "iTerm2 3.7.9 fixes command execution via crafted files displayed in the terminal; researcher publishes proof of concept",
+  "updated_at": "2026-11-23T13:41:33Z",
+  "validation": {
+    "checked_at": "2026-11-23T13:41:33Z",
+    "note": "Primary: iTerm2's own 3.7.9 changelog read in full. The researcher's write-up (ii4gsp.github.io) gives the affected range and a PoC; Cyber Security News relays both. No CVE appears on any of the three pages; none says the flaw has been exploited in the wild.",
+    "state": "corroborated"
+  },
+  "evidence": [
+    {
+      "url": "https://ii4gsp.github.io/iterm2-rce/",
+      "quote": "3.6.1 – 3.7.8 | 3.7.9 | iTerm2 installed (default settings)"
+    },
+    {
+      "url": "https://cybersecuritynews.com/iterm2-remote-code-execution-flaw/",
+      "quote": "The reported affected range is 3.6.1 through 3.7.8, and the flaw can affect installations using default settings."
+    },
+    {
+      "url": "https://iterm2.com/downloads/stable/iTerm2-3_7_9.changelog",
+      "quote": "Version 3.7.9 of iTerm2 was built on November 20, 2026."
+    }
+  ]
+}

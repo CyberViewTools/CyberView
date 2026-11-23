@@ -9,6 +9,7 @@
 //   routine    routines.json key whose max_age_hours is the limit (else max_min)
 //   when_work  only judged while there is work for it (researchers, reviewers, updaters, grid desk): their queues are
 //              checked on their own (unreviewed events, the research queue, grid outages waiting)
+// Routines not listed here are added by derivedStages() from routines.json (see UNJUDGED for the ones left out).
 export const STAGES = [
   { key: "collect", label: "the lead collector (RSS feeds)", status: "last_collect_at", routine: "collect", heal: "collect.yml" },
   { key: "osint", label: "the other open-source collectors", status: "last_osint_at", routine: "osint", heal: "collect.yml" },
@@ -36,10 +37,34 @@ export const STAGES = [
   { key: "pipecheck", label: "the pipeline check", status: "last_pipecheck_at", routine: "pipecheck", heal: "pipecheck.yml" },
 ];
 
+// Routines with a status_key and max_age_hours that the check does NOT judge, and why. The hand table above only covered 14
+// of 34 (2026-11-23: verify and advisory were 30 h silent, unalerted), so every other active routine is now derived from
+// routines.json (derivedStages). Left out only where the heartbeat is not written by the routine's own schedule, so its
+// max_age_hours would judge something else:
+export const UNJUDGED = {
+  moderator: "stamped by the flow loop on every sixth cycle (also when no post waits), not by its own schedule; the sweep stage covers the loop",
+  claims: "stamped by the flow loop each cycle (cron is empty); a dead claims desk is the loop's death, which the sweep stage already reports",
+  "gdelt-gkg": "collect.yml skips the script while the research loop holds its leader lease, so the heartbeat stops by design for hours",
+};
+
+/** Pure: a stage for every active, non-retired routine with a status_key and max_age_hours that the hand table does not
+ *  already judge (same heartbeat or same routine) and that is not in UNJUDGED. Key = the routine's key, heal "" (a routine
+ *  is restarted by its own schedule or the ops session). `since` (active_since) lets a routine that never ran be told apart
+ *  from one that has not had its first run yet. */
+export function derivedStages(routines) {
+  const taken = new Set(STAGES.map((s) => s.key)), status = new Set(STAGES.map((s) => s.status).filter(Boolean)), by = new Set(STAGES.map((s) => s.routine).filter(Boolean));
+  return (routines || []).filter((r) => r && r.active === true && !r.retired && r.status_key && r.max_age_hours > 0 && !UNJUDGED[r.key]
+    && !status.has(r.status_key) && !by.has(r.key) && !taken.has(r.key))
+    .map((r) => ({ key: r.key, label: `the ${String(r.name || r.key).replace(/^the /i, "")} routine`, status: r.status_key, routine: r.key, heal: "", derived: true, since: r.active_since || "" }));
+}
+
+/** Pure: the hand table plus the derived stages. */
+export const allStages = (routines) => [...STAGES, ...derivedStages(routines)];
+
 /** Pure: each stage's limit in minutes (routines.json max_age_hours wins over the table's max_min). */
 export function limits(routines) {
   const by = new Map((routines || []).map((r) => [r.key, r]));
-  return Object.fromEntries(STAGES.map((s) => { const r = s.routine && by.get(s.routine); return [s.key, r && r.max_age_hours ? r.max_age_hours * 60 : s.max_min || 24 * 60]; }));
+  return Object.fromEntries(allStages(routines).map((s) => { const r = s.routine && by.get(s.routine); return [s.key, r && r.max_age_hours ? r.max_age_hours * 60 : s.max_min || 24 * 60]; }));
 }
 
 /** Pure: the stage table. last: {stageKey: iso or ""}; routines: routines.json routines; busy: {stageKey: true} for the
@@ -47,20 +72,23 @@ export function limits(routines) {
 export function stageStates(last, routines, now = Date.now(), busy = {}, lim = limits(routines)) {
   const out = [];
   const inactive = new Set((routines || []).filter((r) => r.active === false).map((r) => r.key));
-  for (const s of STAGES) {
+  for (const s of allStages(routines)) {
     if (s.routine && inactive.has(s.routine)) continue;
     const at = (last && last[s.key]) || "", t = Date.parse(at), age = isFinite(t) ? Math.round((now - t) / 6e4) : null, max = lim[s.key];
     if (!(max > 0)) continue;
     let state = age === null ? "never" : age > max ? "late" : "ok";
     if (s.when_work && state !== "ok" && !busy[s.key]) state = "idle";
-    out.push({ key: s.key, label: s.label, last_at: isFinite(t) ? at : "", max_min: max, age_min: age, state, heal: s.heal });
+    // a derived routine within its first max_age of being switched on is not "never ran" yet, just waiting for its first run
+    const born = Date.parse(s.since || ""), young = isFinite(born) && (now - born) / 6e4 <= max;
+    if (s.derived && state === "never" && young) state = "idle";
+    out.push({ key: s.key, label: s.label, last_at: isFinite(t) ? at : "", max_min: max, age_min: age, state, heal: s.heal, ...(s.derived ? { derived: true, since: s.since || "" } : {}) });
   }
   return out;
 }
 
 /** Pure: {stageKey: iso} from data/status.json (and the files named in the table, read by the caller into `files`). */
-export function lastRuns(status, files = {}) {
+export function lastRuns(status, files = {}, stages = STAGES) {
   const out = {};
-  for (const s of STAGES) out[s.key] = s.status ? String((status && status[s.status]) || "") : String((files[s.file] && files[s.file][s.field]) || "");
+  for (const s of stages) out[s.key] = s.status ? String((status && status[s.status]) || "") : String((files[s.file] && files[s.file][s.field]) || "");
   return out;
 }

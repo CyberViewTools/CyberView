@@ -16,7 +16,7 @@ import { apiFallbackReport } from "../../scripts/efficiency.mjs";
 import { fallbackStatus, fallbackLine } from "../../scripts/budget.mjs";
 
 const NOW = Date.parse("2026-11-23T12:00:00Z"), iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z"), m = (min) => iso(NOW - min * 6e4);
-const SECRET = "sk-ant-SECRET-DO-NOT-LEAK-0001";
+const SECRET = "FAKEKEY-cyberview-fallback-must-not-leak-0001";   // deliberately NOT sk-ant-shaped so the secret scanner does not flag the test; masking is value-agnostic
 const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 test("decision table: subscription stays primary; the API key bills only while the window is exhausted", () => {

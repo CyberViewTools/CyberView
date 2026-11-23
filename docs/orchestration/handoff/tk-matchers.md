@@ -97,4 +97,14 @@ Discovery output for the toolkit's offline `match` command. Research and proposa
   - 10 new unit tests (adapters, crafted-input bounds, the CLI's refusals and both exposure paths) in
     `tests/unit/scanner.test.mjs`, fixture `tests/fixtures/scanner/nmap.xml`; `security-check.mjs` section 7 green
     (`match` imports neither the probe functions nor the web data source).
-- **Still open:** the offline `lookup <CVE>` reader from the Discovery list. Needs its own Design.
+- **#140 also shipped the offline `lookup <CVE>` reader** (`scanner/lib/lookup.mjs`), the last item on the Discovery
+  list. Designed as a READER, not a matcher, and it adds no data path: the same `workbench.json`, `psirt.json` and CVE
+  lookup file through the same `dirSource`. It prints the identity, KEV status with the deadline, EPSS, the CyberView
+  rating with every note, CISA's SSVC priority for BOTH exposure answers (no inventory was given, so assuming one would
+  be a guess), the NVD ranges, the vendor's fix and workarounds, and `detectionFor`: whether this scanner's own
+  fingerprints read the product's version, name it only, or cannot find it — stated as a detection gap, never as
+  evidence the product is absent. `--version` runs the engine's own comparison and names the state it returned
+  (`affected`, `check`, `clear`, `none`) with the backport caveat. A CVE the catalog does not hold is reported absent
+  with why, and nothing is invented for it. Rules 11 and 15 hold: the analysis and check steps stay linked, never
+  copied, and anything CyberView wrote is labelled. 5 new tests.
+- **tk-matchers is now complete.** Nothing from the Discovery list remains open.

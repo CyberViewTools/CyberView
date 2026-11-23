@@ -112,6 +112,7 @@ each of these rules; the hello and industrial test files mutate each checker rul
 | `scanner/lib/html-report.mjs` | `--html`: the self-contained `report.html`, scope-file advice, the scan profile, the stale-data warning; pure |
 | `scanner/lib/cert-inventory.mjs`, `mail-starttls.mjs`, `diff.mjs`, `kev-coverage.mjs` | the report pack: `--certs`, `--mail`, `--compare` and the `coverage` command; pure, no network |
 | `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `match`, `import`, `depmap` and `rematch` commands; no network |
+| `scanner/lib/lookup.mjs` | the `lookup` reader: one CVE from a local snapshot — rating, both exposure deadlines, NVD ranges, the fix, whether a fingerprint can find the product, and a version the operator holds against the ranges; no network, nothing new fetched |
 | `scanner/lib/inputs.mjs` | the `match` adapters: nmap `-oX` hosts and services, CPE and purl vendors, an inventory with no address as one pseudo-host; returns the records `fingerprint.mjs` builds, so the matching, rating and outputs are unchanged |
 | `site/scanner-lib.js`, `site/scanner.js` | the Scanner page's report viewer and scope-file builder (browser only; mirrors of `diff.mjs` and `checkScope` that the unit tests compare with the real modules) |
 
@@ -320,6 +321,26 @@ is opt-in and built only from what the scan already holds:
   tables and lists the known-exploited products the scanner cannot identify. No scope file, no target, no network.
   (Products named only by modules outside `FINGERPRINT_TABLES` are not counted until they register there.)
 - **`--dns-records`** writes `dns.csv` and `report.json`'s `dns` (see "Opt-in protocol checks" below).
+
+### One CVE from the snapshot (`lookup`, no network)
+
+`lookup CVE-… --data DIR` is a reader, not a matcher: an analyst with a CVE number from a bulletin, in a change freeze
+or an air-gapped SOC, gets what the Vulnerabilities page would tell them without a browser or a network. It adds no data
+path — the same `workbench.json`, `psirt.json` and CVE lookup file the scan reads, through the same `dirSource`
+(`scanner/lib/lookup.mjs`).
+
+It prints the identity, whether CISA lists it as known-exploited (with the catalog date, the deadline and whether it has
+passed), EPSS, the CyberView rating with every note, and CISA's SSVC priority for **both** exposure answers, because no
+inventory was given and assuming one would be a guess. Then the affected ranges as NVD states them, the vendor's fixed
+versions, workarounds and advisory, and `detectionFor`: whether this scanner's own fingerprints can read the product's
+version, name it only (findings stay low confidence), or not find it at all — stated as a detection gap, never as
+evidence the product is absent. `--version` runs the engine's own comparison on a version the operator holds and names
+the state it returned (`affected`, `check`, `clear`, `none`), each with the backport caveat.
+
+A CVE the catalog does not hold is reported as absent, with why (the catalog is CISA's known-exploited flaws plus recent
+high-risk ones, not every CVE), plus the CVE lookup row if the snapshot happens to have it. Nothing is invented for it.
+Rule 11 and rule 15 hold: the exploitation analysis, check steps and signs of compromise stay on CyberView's page,
+linked and never copied, and the guide and analysis are labelled as written by CyberView AI (a Claude model).
 
 ### Matching a list you already hold (`match`, no network)
 

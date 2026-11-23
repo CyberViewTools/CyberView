@@ -26,8 +26,11 @@ Open (this session):
   list), for assets that cannot be scanned. New `scanner/lib/inputs.mjs` adapters return `fingerprint.mjs`'s own record
   shape, so the matching, rating, CISA priority and all five outputs are the scan's code unchanged; CPE/purl give the
   vendor the matcher needs; `--assume-exposed` (default internal) moves only CISA's deadline. Nothing is contacted and the
-  report says so. Closes most of tk-matchers; only an offline `lookup <CVE>` reader remains. Decision 23 in
-  `docs/scanner.md`.
+  report says so. Decision 23 in `docs/scanner.md`.
+  Also in #140: the offline `lookup <CVE>` reader (`scanner/lib/lookup.mjs`) — one CVE from the same snapshot, with the
+  rating, CISA's deadline for both exposure answers, the NVD ranges, the fix, whether a fingerprint can find the product
+  at all, and `--version` to check a version you hold. A reader, not a matcher: no new data path, and a CVE the catalog
+  does not hold is reported absent rather than guessed at. **tk-matchers is complete** with this.
 
 Prior open item (merged):
 - Public + internal description refresh. Surfaces the recent operational work (#127 accuracy eval set, #129 API fallback, #132 cost tiering) in the public prose and corrects drift:

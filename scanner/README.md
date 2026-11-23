@@ -440,15 +440,23 @@ anything still looks thin, re-scan slower with `--rate 0.1`.
 
 ## Working offline on your own files
 
-Four commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
+Five commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
 
 ```
+node scanner/cyberview-scan.mjs lookup  CVE-2026-1234 --data cyberview-data --version 8.2p1
 node scanner/cyberview-scan.mjs match   --nmap scan.xml --data cyberview-data
 node scanner/cyberview-scan.mjs import  --packages pkgs.txt --sbom app.cdx.json --data cyberview-data
 node scanner/cyberview-scan.mjs depmap  --report cyberview-scan-<time>/report.json --scope scope.json
 node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.json --data newer-cyberview-data
 ```
 
+- `lookup` answers "what does CyberView know about this CVE?" from the same snapshot: the rating with every point, CISA's
+  BOD 26-04 deadline for **both** exposure answers (no inventory was given, so neither is assumed), the affected version
+  ranges from NVD, the vendor's fix and workarounds, and whether this scanner can find the product at all — with the
+  version, by name only, or not at all, which is a detection gap and not evidence the product is absent. `--version`
+  checks a version you hold against the ranges, with the backport caveat. A CVE the catalog does not hold is said to be
+  absent, never guessed at. It prints to the screen and writes `lookup.json` and `lookup.txt` only with `--out`. Check
+  steps, signs of compromise and the exploitation analysis stay on CyberView's page: linked, never copied.
 - `match` produces a full report — the same `report.json`, `findings.csv`, `report.sarif`, `inventory.csv` and
   `summary.txt` a scan writes — from a list you already hold, for assets you cannot scan: a change freeze, third-party or
   air-gapped systems, "scanning is forbidden", or an SBOM is all you have. Give `--nmap scan.xml` (run nmap with `-sV`,

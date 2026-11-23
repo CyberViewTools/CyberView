@@ -18,7 +18,7 @@
 //         [--identify [--identify-bmc]] (one standard hello per service: SMTP EHLO, POP3 CAPA, RTSP/SIP OPTIONS, unicast mDNS; off by default)
 //         [--dns-records DOMAIN[,DOMAIN] [--dkim-selectors a,b]] (SPF, DMARC, CAA, BIMI, MTA-STS TXT, DKIM for named selectors; attested names only)
 //   coverage --data DIR [--out FILE]          KEV products the scanner cannot fingerprint (local snapshot only; no network)
-//   match / import / depmap / rematch         offline: the operator's own files (nmap -oX, an SBOM, a package list), a report.json,
+//   lookup / match / import / depmap / rematch  offline: one CVE from a local snapshot, the operator's own files (nmap -oX, an SBOM, a package list), a report.json,
 //                                             a local snapshot — nothing is contacted (scanner/lib/offline-cmds.mjs)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -132,7 +132,7 @@ export async function main(argv, io = {}) {
     io.out(coverageText(c) + (a.out ? `\nWritten to ${a.out}.` : ""));
     return 0;
   }
-  if (OFFLINE_CMDS.has(cmd)) return offlineCommand(cmd, a, io);   // match, import, depmap, rematch: local files only, no scope, no network
+  if (OFFLINE_CMDS.has(cmd)) return offlineCommand(cmd, a, io);   // lookup, match, import, depmap, rematch: local files only, no scope, no network
   if (cmd !== "scan" && cmd !== "check") { io.err(USAGE); return 1; }
   // ---- the authorization gate: nothing below runs without a valid scope file and attestation ----
   const sc = loadScope(a.scope, today);

@@ -20,6 +20,7 @@ import { udpProbe } from "../../scanner/lib/udp.mjs";
 import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
 import { parseCpe, parsePurl, mergeName, parseNmapXml, inventoryHost, INPUT_LIMITS } from "../../scanner/lib/inputs.mjs";
 import { sbomIdentity, parseSbom } from "../../scanner/lib/imports.mjs";
+import { cveId, versionVerdict, detectionFor } from "../../scanner/lib/lookup.mjs";
 import { main } from "../../scanner/cyberview-scan.mjs";
 import { NOCODE } from "../../scripts/lib/validate.mjs";
 import { startServers } from "../fixtures/scanner/servers.mjs";
@@ -971,4 +972,83 @@ test("an SBOM with no address is rated internal, and --assume-exposed only moves
   const s = JSON.parse(readFileSync(join(outB, "report.sarif"), "utf8"));
   assert.match(s.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri, /^file:\/\/\//);
   assert.equal(s.runs[0].results[0].locations[0].logicalLocations[0].kind, "resource");
+});
+
+/* ---- the lookup command: one CVE from a local snapshot, read-only ---- */
+
+test("a CVE number is required, and only a CVE number is taken", () => {
+  assert.equal(cveId("cve-2026-90101"), "CVE-2026-90101");
+  assert.equal(cveId(" CVE-2026-1234 "), "CVE-2026-1234");
+  for (const bad of ["", "2026-90101", "CVE-2026", "CVE-20260-90101", "../../etc/passwd", "CVE-2026-90101; rm -rf /", null, 7]) assert.equal(cveId(bad), "");
+});
+
+test("a version the operator holds is judged against the flaw's own ranges, with the backport caveat", () => {
+  const flaws = cleanFlaws(wb);
+  const ssh = flaws.find((f) => f.cve === "CVE-2026-90101");
+  assert.equal(versionVerdict(ssh, "8.2p1").state, "affected");
+  assert.deepEqual(versionVerdict(ssh, "8.2p1").fixed_in, ["9.8"]);
+  assert.match(versionVerdict(ssh, "8.2p1").caveat, /backported/);
+  assert.equal(versionVerdict(ssh, "9.9").state, "clear");            // compared and outside every range
+  assert.match(versionVerdict(ssh, "9.9").says, /outside all of them/);
+  assert.equal(versionVerdict(ssh, ""), null);
+  const forti = flaws.find((f) => f.cve === "CVE-2026-90105");
+  assert.equal(versionVerdict(forti, "7.2.0").state, "affected");    // 7.0.0 <= 7.2.0 < 7.4.9
+  assert.equal(versionVerdict(forti, "7.6.1").state, "clear");        // 7.6.1 is past 7.4.9
+  const named = flaws.find((f) => f.cve === "CVE-2026-90201");       // name-only, no range
+  assert.equal(versionVerdict(named, "1.0").state, "check");
+  assert.match(versionVerdict(named, "1.0").says, /no comparable range/);
+});
+
+test("lookup says whether this scanner could find the product at all, and never overstates it", () => {
+  const flaws = cleanFlaws(wb);
+  const ssh = detectionFor(flaws.find((f) => f.cve === "CVE-2026-90101"));
+  assert.equal(ssh.can_name, true);
+  assert.equal(ssh.reads_version, true);
+  assert.match(ssh.how.join(" "), /OpenSSH \(SSH banner\)/);
+  assert.match(ssh.what_it_means, /version-confirmed/);
+  const php = detectionFor(flaws.find((f) => f.cve === "CVE-2026-90103"));   // PHP: no scanner fingerprint reads it by name alone
+  assert.equal(typeof php.can_name, "boolean");
+  if (!php.can_name) assert.match(php.what_it_means, /detection gap, not evidence the product is absent/);
+});
+
+test("lookup reads one CVE from the snapshot: the rating, both exposure deadlines, the ranges and the fix", async () => {
+  const d = tmp(), x = io();
+  assert.equal(await main(["lookup", "CVE-2026-90101", "--data", SNAP, "--version", "8.2p1", "--out", d], x), 0);
+  assert.deepEqual(readdirSync(d).sort(), ["lookup.json", "lookup.txt"]);
+  const r = JSON.parse(readFileSync(join(d, "lookup.json"), "utf8"));
+  assert.equal(r.known, true);
+  assert.equal(r.tool.command, "lookup");
+  assert.match(r.network, /^none:/);
+  assert.equal(r.flaw.known_exploited, true);
+  assert.equal(r.rating.score, 8.1);
+  assert.ok(r.priority.internet_facing && r.priority.internal);       // no inventory, so both answers are given
+  assert.notEqual(r.priority.internet_facing.label, r.priority.internal.label);
+  assert.deepEqual(r.affected, ["openbsd openssh before 9.8"]);
+  assert.equal(r.your_version.state, "affected");
+  assert.equal(r.detection.reads_version, true);
+  // anything CyberView wrote is labelled, and the analysis is linked, never copied
+  assert.equal(r.fix.analysis.by, "CyberView AI (a Claude model)");
+  assert.equal(r.fix.guide_by, "CyberView AI (a Claude model)");
+  assert.match(r.fix.details_note, /linked, never copied/);
+  const text = readFileSync(join(d, "lookup.txt"), "utf8");
+  assert.match(text, /CyberView rating: CVSS 8\.1/);
+  assert.doesNotMatch(text, /= 8\.1 High = 8\.1 High/);               // the rating text already carries score and band
+  assert.match(text, /Nothing was contacted/);
+});
+
+test("lookup says plainly when a CVE is not in the catalog, and refuses a bad call", async () => {
+  const x = io();
+  assert.equal(await main(["lookup", "CVE-2019-11111", "--data", SNAP], x), 0);
+  const out = x.lines.out.join("\n");
+  assert.match(out, /not in CyberView's catalog/);
+  assert.match(out, /known-exploited flaws .* and recent high-risk flaws/);
+  assert.doesNotMatch(out, /CyberView rating: CVSS/);                  // nothing is invented for a CVE it does not hold
+  const a = io(); assert.equal(await main(["lookup", "--data", SNAP], a), 1);
+  assert.match(a.lines.err.join("\n"), /give the CVE number/);
+  const b = io(); assert.equal(await main(["lookup", "not-a-cve", "--data", SNAP], b), 1);
+  assert.match(b.lines.err.join("\n"), /is not one/);
+  const c = io(); assert.equal(await main(["lookup", "CVE-2026-90101"], c), 1);
+  assert.match(c.lines.err.join("\n"), /--data DIR is required/);
+  const e = io(); assert.equal(await main(["lookup", "CVE-2026-90101", "--data", SNAP, "--online"], e), 1);
+  assert.match(e.lines.err.join("\n"), /works offline only/);
 });

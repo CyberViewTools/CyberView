@@ -1,0 +1,31 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-23T10:58:56Z",
+  "finished_at": "2026-11-23T11:02:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-16 --limit 900 (431 events in window)",
+    "q.mjs get plaid-karte-unauthorized-access-2026-11 --fields date,occurred_at,first_seen"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+    "plaid-karte-unauthorized-access-2026-11",
+    "fireworks-ai-october-incidents-update-2026-11",
+    "us-lawmakers-demand-answers-outages-2026-11"
+  ],
+  "skipped": [
+    {"title": "Events dated before 2026-11-16 dropped from patterns: caribbean-airlines-amadeus, daou-office update malware, la-poste-maileva, takarakuji, Microsoft-outage hotel chlorine report, Greiz-Ronneburg hospital", "url": "", "reason": "outside the 7-day window"},
+    {"title": "PLAID KARTE origin event (dated 2026-11-13) kept as the origin of the supplier chain", "url": "", "reason": "first seen 2026-11-18, every in-window customer notice names it; caveat says it predates the window"},
+    {"title": "government-networks merged into state-impersonation (now 'State actors')", "url": "", "reason": "to make room for the new crypto-drains pattern within the 12-pattern limit"},
+    {"title": "Ripples left as chosen on 2026-11-22 (10 items), timestamp refreshed", "url": "", "reason": "no new event in the last day reaches wider than the ten on file"}
+  ],
+  "open_leads": [
+    {"title": "F5 advisory K000164320 for CVE-2026-126714 on BIG-IP not read", "url": "https://www.hkcert.org/security-bulletin/f5-big-ip-remote-code-execution-vulnerability_20261123", "note": "HKCERT says authenticated RCE with public PoC; confirm F5's own wording and whether BIG-IP's bundled PHP is the path", "priority": 2},
+    {"title": "CHU de Guadeloupe: which IT provider was hacked first", "url": "https://la1ere.franceinfo.fr/guadeloupe/cyberattaque-au-chu-de-guadeloupe-plusieurs-jours-de-perturbations-a-prevoir-l-hopital-s-organise-1760535.html", "note": "if the provider is named and serves other hospitals, this becomes a stated supplier edge", "priority": 2},
+    {"title": "Meir Medical Center outage cause", "url": "https://www.theyeshivaworld.com/news/israel-news/2626358/hospital-systems-down-all-computer-systems-crash-at-meir-medical-center-as-officials-probe-possible-cyberattack.html", "note": "one outlet, no official cause; kept in the outage pattern as timing only", "priority": 2}
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns: kept 10 from yesterday with stale events removed, merged government-networks into state-impersonation, added crypto-drains (inferred, confidence 1)); new events of Nov 21-23 added: HKCERT F5 BIG-IP CVE-2026-126714 (stated edge to phpAfterShell, same CVE), CHU Guadeloupe / Persistent Systems / netbeat (supplier route), Suzlon, Taiwan substation claim, US ports (OT), Delta and Meir outages (timing), Samsung Securities and MSIT count (Korea cluster), Chainflip and CYBER bridge (crypto). Added 8 missing stated links to earlier events (5 PLAID->KARTE customers, Fireworks AI->Uber, lawmakers->officials, phpAfterShell->HKCERT F5), each with the URL of the page that states the link, taken from the linked event's own cited source. ripples.json timestamp refreshed; snapshot written to data/snapshots/analysis/2026-11-23.json. Build passes. No web pages read in this run: everything comes from events on file."
+}

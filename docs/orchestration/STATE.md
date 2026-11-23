@@ -77,6 +77,17 @@ Also measured, deliberately NOT changed:
 - The usage ledger is blind to 25-50% of consumption (dispatchers, interactive sessions, subagent-run claims/outage/moderator). `canBuild`'s 35% pipeline reserve is computed on headless-only numbers, so the real reserve is smaller than intended.
 - Leave the ~154 old hygiene warnings, and `action-unsourced` / `corroborated-note` (chance-level precision).
 
+## Usage audit of 2026-11-23 evening (scheduled tasks, dispatcher sessions, workers)
+
+Measured, not estimated (session transcripts via list_events, data/usage ledger):
+- **Dispatcher sessions are the context problem.** 17 "CyberView 4: ..." scheduled tasks resume ONE session (session_013C7AZ5CZCr8dMQSMHM1eo5, ~5-6 wakes an hour: Research :05/:20/:35/:50, Backlog :55, Review, Triage, Analyst ...) and 2 "standby" tasks resume another (session_013C7AZ7WzHrDL7e9QagpvvF, :12/:42). Sonnet's 1 M window means they almost never compact: ops is at ~440 K tokens, standby ~530 K. Every API call of a wake re-reads all of it: ~$0.22-0.30 per wake (3-5 calls x 430-530 K cache reads) for one shell command. Lifetime: ops $222, standby $36 - none of it in the usage ledger. Most standby wakes only print "standby, loop running elsewhere".
+- **Workers carried ~38 K tokens of context they never use.** `claude -p` loaded the full default tool set and the session's MCP servers (~30 K; `--allowedTools` only blocks use, it does not remove definitions) plus CLAUDE.md (~8 K). One-turn worker measured: 47.6 K -> 17.5 K (`--tools` + `--strict-mcp-config`) -> 9.4 K (`CLAUDE_CODE_DISABLE_CLAUDE_MDS=1`). Average worker turn re-read 32-59 K, so this is roughly half of all worker input tokens. FIXED in scripts/run-job.mjs `workerArgs`/`workerEnv` (permissions and the git deny unchanged; e2e-checked: node, WebFetch work, git denied). Workers get no SETUP section, so nothing tells them to read CLAUDE.md; their rules are the preamble.
+- Worker spend: ~$230/day, 95% inside the research loop (researcher-deep $87/day; claims, outage, follow-up gated today).
+- The fresh-session tasks "CyberView health watch" and "CyberView Grok review" start with NO checkout and no GitHub access (health watch 23 Nov 22:33 reported a 403 and an empty home dir) and run on the default model (Opus, ~$0.29 a run). They cannot do their job as configured; the Guardian clones the public repo itself and works.
+
+- **Fresh session per wake does NOT work with tool-created scheduled tasks (probed 2026-11-23 22:55).** A task made with create_trigger(create_new_session_on_fire) starts a session with no checkout, no `add_repo` tool and no push access, even when created from the `cyberview` environment (which has the repo saved). Headless `claude -p` does work there. Options: tasks created in the claude.ai routines UI with the repository attached, or the loop in GitHub Actions with a CLAUDE_CODE_OAUTH_TOKEN secret. `node scripts/dispatch.mjs <job> --exec` (this PR) makes either one a single shell call.
+- Disabled 2026-11-23 (owner): "CyberView health watch" and "CyberView Grok review" (no checkout, ran on Opus, could not do their job). The Guardian still runs every 2 h.
+
 ## Pending owner actions
 
 1. Set env var `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` in the cyberview environment to arm the API fallback. The subscription stays primary (see CLAUDE.md "Reliability rules"). Name only — never a value here.

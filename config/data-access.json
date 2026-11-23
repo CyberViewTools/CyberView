@@ -1,6 +1,6 @@
 {
   "_note": "Data sources CyberView would like to use but may not yet: terms forbid or restrict reuse or automated access, robots.txt disallows the path, the site blocks automated readers, a key or account is needed, or the site could not be reached. scripts/pages.mjs renders it as site/access.html; scripts/access.mjs checks it (node scripts/access.mjs check). kind is grid or cyber. The owner sends each request himself: request is the text to paste (at most 900 characters, signed by CyberView, never by a person), priority is the order to ask in (1 first: open-data teams and public bodies, coverage gaps and productive sources first). contact holds only an address or page the operator itself publishes, checked by fetching it on the date in updated; never guess one. contact_note says where it was published, or why there is none. When a request is granted, set status to granted with the date in updated, and the builder connects the source. Compiled by CyberView AI (a Claude model).",
-  "updated": "2026-11-21",
+  "updated": "2026-11-23",
   "sources": [
     {
       "key": "georgia-power",
@@ -1650,12 +1650,12 @@
       "what": "open-data API",
       "customers_served": null,
       "why_not": "robots",
-      "detail": "The open-data portal's robots.txt says \"User-agent: * ... Disallow: /api/\", and the live power cut data is under /api/.",
+      "detail": "The open-data portal's robots.txt says \"User-agent: * ... Disallow: /api/\", and the live power cut data is under /api/. Re-verified 2026-11-23: the site also 403s our identifying reader.",
       "contact": "opendata@northernpowergrid.com",
       "contact_note": "Open data team, published on northernpowergrid.opendatasoft.com",
       "status": "not_asked",
       "priority": 5,
-      "updated": "2026-11-20",
+      "updated": "2026-11-23",
       "request": "Subject: Permission to show Northern Powergrid Live Power Cut Data on CyberView\n\nHello Northern Powergrid team,\n\nYour robots.txt asks automated readers not to fetch your Northern Powergrid Live Power Cut Data, and we respect that, so we are asking first.\n\nCyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and outages for defenders.\n\nWe would like to read your Northern Powergrid Live Power Cut Data every 10 minutes and show current outages on the map as context, credited to Northern Powergrid with a link to your page. We never call an outage an attack, collect no personal data and never resell it.\n\nMay we have permission for this automated reading and display with attribution? We will follow any conditions you set and stop whenever you ask.\n\nThank you,\n— CyberView (https://xanderhutch.github.io/CyberView)"
     },
     {
@@ -1668,12 +1668,12 @@
       "what": "open-data API",
       "customers_served": null,
       "why_not": "key_or_account",
-      "detail": "The dataset is marked Open (CC BY 4.0), but its records answer 403 without a portal account key; the portal's robots.txt also disallows /api/.",
+      "detail": "The dataset is marked Open (CC BY 4.0), but its records answer 403 without a portal account key; the portal's robots.txt also disallows /api/. Re-verified 2026-11-23: the site 403s our reader.",
       "contact": "https://electricitynorthwest.opendatasoft.com/pages/homepage/",
       "contact_note": "Open data portal (sign-up for the key); the enwl.co.uk open data page serves a bot check",
       "status": "not_asked",
       "priority": 21,
-      "updated": "2026-11-20",
+      "updated": "2026-11-23",
       "request": "Subject: Permission to show SP Electricity North West Live Incidents (open data) on CyberView\n\nHello SP Electricity North West team,\n\nSP Electricity North West Live Incidents (open data) needs a key or an account, so we are asking how CyberView may get access.\n\nCyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and outages for defenders.\n\nWe would like to read this data every 15 minutes and show current outages on the map as context, credited to SP Electricity North West with a link to your page. We never call an outage an attack, collect no personal data and never resell it.\n\nMay we have permission for this automated reading and display with attribution? We will follow any conditions you set and stop whenever you ask.\n\nThank you,\n— CyberView (https://xanderhutch.github.io/CyberView)"
     },
     {
@@ -1686,12 +1686,12 @@
       "what": "open-data API",
       "customers_served": null,
       "why_not": "key_or_account",
-      "detail": "The dataset is CC BY 4.0, but its records answer 403 without a portal account key; the portal's robots.txt also disallows /api/.",
+      "detail": "The dataset is CC BY 4.0, but its records answer 403 without a portal account key; the portal's robots.txt also disallows /api/. Re-verified 2026-11-23: the site 403s our reader.",
       "contact": "opendata@spenergynetworks.co.uk",
       "contact_note": "Open data team, published on spenergynetworks.opendatasoft.com",
       "status": "not_asked",
       "priority": 6,
-      "updated": "2026-11-20",
+      "updated": "2026-11-23",
       "request": "Subject: Permission to show SP Energy Networks Distribution Network Live Outages on CyberView\n\nHello SP Energy Networks team,\n\nSP Energy Networks Distribution Network Live Outages needs a key or an account, so we are asking how CyberView may get access.\n\nCyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and outages for defenders.\n\nWe would like to read this data every 15 minutes and show current outages on the map as context, credited to SP Energy Networks with a link to your page. We never call an outage an attack, collect no personal data and never resell it.\n\nMay we have permission for this automated reading and display with attribution? We will follow any conditions you set and stop whenever you ask.\n\nThank you,\n— CyberView (https://xanderhutch.github.io/CyberView)"
     },
     {
@@ -2874,12 +2874,12 @@
       "what": "open-data API",
       "customers_served": null,
       "why_not": "robots",
-      "detail": "The open-data portal's robots.txt says \"User-agent: * ... Disallow: /api/\", and the live faults feed is under /api/. Paused on 2026-11-19.",
+      "detail": "The open-data portal's robots.txt says \"User-agent: * ... Disallow: /api/\", and the live faults feed is under /api/. Paused on 2026-11-19. Re-verified 2026-11-23; the main site also 403s our reader.",
       "contact": "https://ukpowernetworks.opendatasoft.com/pages/contact-us/",
       "contact_note": "Open data portal contact page",
       "status": "not_asked",
       "priority": 4,
-      "updated": "2026-11-20",
+      "updated": "2026-11-23",
       "request": "Subject: Permission to show UK Power Networks live faults (open data) on CyberView\n\nHello UK Power Networks team,\n\nThank you for UK Power Networks' open data. The portal's robots.txt disallows /api/, where the live faults feed is, so we paused and are asking first.\n\nCyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and outages for defenders.\n\nWe would like to read this data every 10 minutes and show current outages on the map as context, credited to UK Power Networks with a link to your page. We never call an outage an attack, collect no personal data and never resell it.\n\nMay we have permission for this automated reading and display with attribution? We will follow any conditions you set and stop whenever you ask.\n\nThank you,\n— CyberView (https://xanderhutch.github.io/CyberView)"
     },
     {

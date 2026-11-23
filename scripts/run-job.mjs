@@ -28,12 +28,17 @@ const TIGHT_CUTS = tightCuts(PIPE.usage_budget || {});
 const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
 
-/** Pure: the claude command line for one role. */
+/** Pure: the built-in tools a toolset needs, by name ("Bash(node:*)" -> "Bash"), for claude's --tools. */
+export const builtinTools = (tools) => [...new Set((tools || []).map((t) => String(t).replace(/\(.*$/, "").trim()).filter(Boolean))];
+/** Pure: the claude command line for one role. Context is cost, re-read on every turn (2026-11-23, measured with a
+ *  one-turn worker in this checkout): the default tool set and the session's MCP servers put ~30 K tokens of tool
+ *  definitions into every worker that --allowedTools only stops it USING (47.6 K -> 17.5 K with --tools and
+ *  --strict-mcp-config), so a worker is now given only the built-in tools its toolset names and no MCP server. */
 export function workerArgs(role, prompt, models = MODELS) {
   const r = { model: "sonnet", max_turns: 40, tools: "research", ...(models.roles[role] || {}) };
   const tools = models.toolsets[r.tools] || models.toolsets.research || [];
   return { model: r.model, timeoutMs: (r.timeout_min || 20) * 60000,
-    args: ["-p", prompt, "--model", r.model, "--max-turns", String(r.max_turns), "--output-format", "json", "--allowedTools", ...tools, "--disallowedTools", ...(models.deny || ["Bash(git:*)"])] };
+    args: ["-p", prompt, "--model", r.model, "--max-turns", String(r.max_turns), "--output-format", "json", "--tools", builtinTools(tools).join(","), "--strict-mcp-config", "--allowedTools", ...tools, "--disallowedTools", ...(models.deny || ["Bash(git:*)"])] };
 }
 /** Pure: one usage-ledger line from claude's JSON result. Two ways of ending are marked, so nothing reads them as a
  *  generic failure: `capped` (the worker reached its turn cap, config/models.json max_turns, before it finished: claude's
@@ -115,7 +120,10 @@ const FALLBACK_KEY = process.env[FB.env_var] || "";     // the VALUE: read here 
  *  subscription OAuth stays primary everywhere else; any ambient ANTHROPIC_API_KEY is removed so a stray one can never make
  *  the API primary. The key is never written to a log or a data file. */
 export function workerEnv(served, key, base = process.env) {
-  const env = { ...base, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1" };
+  // CLAUDE_CODE_DISABLE_CLAUDE_MDS: a worker's rules are its prompt (docs/jobs.md preamble + its section, which carry the
+  // event checklist and the data rules); CLAUDE.md is the repository guide for people and the build lane, ~8 K tokens
+  // re-read on every worker turn (17.5 K -> 9.4 K measured). Workers get no SETUP section, so nothing tells them to read it.
+  const env = { ...base, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1", CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" };
   if (served === "api-fallback" && key) env.ANTHROPIC_API_KEY = key; else delete env.ANTHROPIC_API_KEY;
   return env;
 }
@@ -250,7 +258,7 @@ const WEB_ROLES = new Set(["researcher", "gap", "regional-researcher", "reviewer
 function webOk() {
   const f = "/tmp/cyberview-webprobe.json", c = readJson(f, null);
   if (c && Date.now() - Date.parse(c.at) < 6 * 36e5) return c.ok;
-  const r = spawnSync("claude", ["-p", "Use the WebFetch tool to open https://www.cisa.gov/news-events/cybersecurity-advisories and reply with only the word OK if the page loaded, or FAIL if it did not.", "--model", "haiku", "--max-turns", "3", "--output-format", "json", "--allowedTools", "WebFetch"], { cwd: ROOT, encoding: "utf8", timeout: 120000 });
+  const r = spawnSync("claude", ["-p", "Use the WebFetch tool to open https://www.cisa.gov/news-events/cybersecurity-advisories and reply with only the word OK if the page loaded, or FAIL if it did not.", "--model", "haiku", "--max-turns", "3", "--output-format", "json", "--tools", "WebFetch", "--strict-mcp-config", "--allowedTools", "WebFetch"], { cwd: ROOT, encoding: "utf8", timeout: 120000, env: { ...process.env, CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" } });
   let ok = false; try { const j = JSON.parse(r.stdout); ok = !j.is_error && /\bOK\b/.test(String(j.result)); } catch {}
   writeJson(f, { at: nowIso(), ok }); return ok;
 }

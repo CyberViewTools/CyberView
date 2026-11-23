@@ -630,6 +630,9 @@
 
   /* ---------------- C. what needs attention ---------------- */
 
+  // the attention list is sorted worst-first and capped: the page has a hard 3,000 px budget (tests/test_all.py) and
+  // pipecheck's problems feed this list, so it must not grow without bound as more checks are added.
+  var ATTN_MAX = 12;
   function renderAttention(h, attn) {
     if (h && h.backlog && h.backlog.waiting) attn.push({ cls: h.backlog.waiting > 60 || h.backlog.oldest_incident_hours > 2 ? "warn" : "info", badge: "Waiting", text: plural(h.backlog.waiting, "report") + " in the research queue waiting for a decision; oldest " + h.backlog.oldest_hours + " h", jump: "dQueue" });
     if (h && h.grid_waiting && h.grid_waiting.count) attn.push({ cls: h.grid_waiting.oldest_min > 120 ? "warn" : "info", badge: "Waiting", text: plural(h.grid_waiting.count, "grid outage") + " waiting for a cause check", jump: "gridSrcBox" });
@@ -646,12 +649,17 @@
     // "bad" ranks 0: `rank[cls] || 3` sorted every red item LAST (found 2026-11-21), so look the rank up explicitly
     var rk = function (c) { return has(rank, c) ? rank[c] : 3; };
     attn.sort(function (a, b) { return rk(a.cls) - rk(b.cls); });
-    attn.slice(0, 20).forEach(function (x) {
+    // the pipeline check's own problems are never hidden: they are why this page exists. The cap falls on the long tail of
+    // routine, feed and grid warnings, so widening pipecheck's coverage can never push the page over its height budget.
+    var shown = attn.filter(function (x) { return x.kind === "quality"; });
+    attn.forEach(function (x) { if (x.kind !== "quality" && shown.length < ATTN_MAX) shown.push(x); });
+    shown.sort(function (a, b) { return rk(a.cls) - rk(b.cls); });
+    shown.forEach(function (x) {
       var li = el("li"); li.dataset.kind = x.cls; if (x.id) li.dataset.check = x.id; li.appendChild(badge(x.cls, x.badge)); li.appendChild(document.createTextNode(" " + x.text + " "));
       if (x.href) li.appendChild(link(x.href, "details")); else if (x.jump) li.appendChild(jump(x.jump, "details"));
       ul.appendChild(li);
     });
-    if (attn.length > 20) ul.appendChild(el("li", "muted", (attn.length - 20) + " more in the details below."));
+    if (attn.length > shown.length) ul.appendChild(el("li", "muted", (attn.length - shown.length) + " more in the details below."));
     if (!attn.length) ul.appendChild(el("li", "okline", "Nothing needs attention right now."));
     return attn.length;
   }

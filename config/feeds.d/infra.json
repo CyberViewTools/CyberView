@@ -1,1432 +1,1550 @@
 {
- "_note": "Feeds for scripts/collect.mjs (shard infra). Each was checked by scripts/feed-check.mjs before it was added; see config/feeds.json _note for the fields.",
- "first_run_hours": 3,
- "feeds": [
-  {
-   "name": "JPRS (Japan)",
-   "tier": "vendor",
-   "url": "https://jprs.jp/whatsnew/rss/jprs.rdf",
-   "lang": "ja",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": ".jp registry. Checked 2026-11-24: 20 items, newest 2026-11-24, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "LINX (UK)",
-   "tier": "vendor",
-   "url": "https://www.linx.net/feed/",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Internet exchange. Checked 2026-11-24: 10 items, newest 2026-10-14, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Drinking Water Inspectorate (UK)",
-   "tier": "gov",
-   "url": "https://www.dwi.gov.uk/feed/",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Drinking water regulator. Checked 2026-11-24: 12 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Punktum dk (Denmark)",
-   "tier": "vendor",
-   "url": "https://punktum.dk/rss.xml",
-   "lang": "da",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": ".dk registry. Checked 2026-11-24: 10 items, newest 2026-10-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GRTgaz (France)",
-   "tier": "vendor",
-   "url": "https://www.natrangroupe.com/rss.xml",
-   "lang": "fr",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Gas transmission. Checked 2026-11-24: 10 items, newest 2026-08-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "National Gas (UK)",
-   "tier": "vendor",
-   "url": "https://www.nationalgas.com/rss.xml",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Gas transmission. Checked 2026-11-24: 10 items, newest 2026-09-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "EPRA (Kenya)",
-   "tier": "gov",
-   "url": "https://www.epra.go.ke/rss.xml",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Energy regulator. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GOV.UK Pay Status (UK)",
-   "tier": "gov",
-   "url": "https://payments.statuspage.io/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "UK government payments service incidents. Checked 2026-11-24: 25 items, newest 2026-10-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Hostinger Statuspage",
-   "tier": "vendor",
-   "url": "https://statuspage.hostinger.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-12-03, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Equinix Metal Status",
-   "tier": "vendor",
-   "url": "https://status.equinixmetal.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Bare-metal cloud incidents. Checked 2026-11-24: 25 items, newest 2026-10-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Panama Canal Authority (Panama)",
-   "tier": "gov",
-   "url": "https://pancanal.com/en/feed/",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Canal authority notices and advisories. Checked 2026-11-24: 12 items, newest 2026-10-29, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GOV.UK Notify Status (UK)",
-   "tier": "gov",
-   "url": "https://status.notifications.service.gov.uk/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "UK government messaging service incidents. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GOV.UK One Login Status (UK)",
-   "tier": "gov",
-   "url": "https://status.account.gov.uk/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "UK government identity service incidents. Checked 2026-11-24: 25 items, newest 2026-11-11, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "OpenSRS Status",
-   "tier": "vendor",
-   "url": "https://www.opensrsstatus.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Domain registrar platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Contabo Status (Germany)",
-   "tier": "vendor",
-   "url": "https://contabo-status.com/rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting provider incident and maintenance notices. Checked 2026-11-24: 3 items, newest 2026-11-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Sipgate Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.sipgate.de/history.rss",
-   "lang": "de",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "German telephony provider incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Syria Emergency Ministry CAP (Syria)",
-   "tier": "gov",
-   "url": "https://climweb.med.gov.sy/api/cap/rss.xml",
-   "lang": "ar",
-   "region": "middle-east",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Emergency and disaster management alerts. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Mollie Status",
-   "tier": "vendor",
-   "url": "https://status.mollie.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments infrastructure incidents. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Paystack Status",
-   "tier": "vendor",
-   "url": "https://status.paystack.com/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments infrastructure incidents. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NordLayer Status",
-   "tier": "vendor",
-   "url": "https://status.nordlayer.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-10-27, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "KnowBe4 Status",
-   "tier": "vendor",
-   "url": "https://status.knowbe4.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NinjaOne Status",
-   "tier": "vendor",
-   "url": "https://status.ninjaone.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "RMM platform incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "N-able Status",
-   "tier": "vendor",
-   "url": "https://status.n-able.com/feed/",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "RMM platform status. Checked 2026-11-24: 50 items, newest 2026-11-23, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "TeamViewer Status",
-   "tier": "vendor",
-   "url": "https://status.teamviewer.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Remote-access tool incidents. Checked 2026-11-24: 25 items, newest 2026-11-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Barracuda Status",
-   "tier": "vendor",
-   "url": "https://status.barracuda.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Security services incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Xendit Status",
-   "tier": "vendor",
-   "url": "https://status.xendit.co/history.rss",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-12-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "DIDWW Status",
-   "tier": "vendor",
-   "url": "https://status.didww.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom carrier incidents. Checked 2026-11-24: 11 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Check Point Status",
-   "tier": "vendor",
-   "url": "https://status.checkpoint.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Security services incidents. Checked 2026-11-24: 25 items, newest 2026-12-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Flowroute Status",
-   "tier": "vendor",
-   "url": "https://status.flowroute.com/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom carrier incidents. Checked 2026-11-24: 25 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Tink Status",
-   "tier": "vendor",
-   "url": "https://status.tink.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open-banking infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "CM.com Status",
-   "tier": "vendor",
-   "url": "https://status.cm.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom messaging incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "VoIP.ms Status",
-   "tier": "vendor",
-   "url": "https://status.voip.ms/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "VoIP carrier incidents. Checked 2026-11-24: 50 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "TextMagic Status",
-   "tier": "vendor",
-   "url": "https://status.textmagic.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS gateway incidents. Checked 2026-11-24: 25 items, newest 2026-08-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "AnyDesk Status",
-   "tier": "vendor",
-   "url": "https://status.anydesk.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Remote-access tool status: incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Infobip Status",
-   "tier": "vendor",
-   "url": "https://status.infobip.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Messaging and telecom connectivity incidents. Checked 2026-11-24: 25 items, newest 2027-01-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Kaleyra Status",
-   "tier": "vendor",
-   "url": "https://status.kaleyra.com/history.rss",
-   "region": "south-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom messaging incidents. Checked 2026-11-24: 25 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Kaseya Status",
-   "tier": "vendor",
-   "url": "https://status.kaseya.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "RMM platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Flutterwave Status",
-   "tier": "vendor",
-   "url": "https://status.flutterwave.com/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Yubico Status",
-   "tier": "vendor",
-   "url": "https://status.yubico.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-09-30, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "ClickSend Status",
-   "tier": "vendor",
-   "url": "https://status.clicksend.com/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS gateway incidents. Checked 2026-11-24: 25 items, newest 2026-09-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "DNSFilter Status",
-   "tier": "vendor",
-   "url": "https://status.dnsfilter.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": " . Checked 2026-11-24: 25 items, newest 2026-11-04, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Africa's Talking Status",
-   "tier": "vendor",
-   "url": "https://status.africastalking.com/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom API incidents across African networks. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GoCardless Status",
-   "tier": "vendor",
-   "url": "https://www.gocardless-status.com/feed.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments incidents. Checked 2026-11-24: 9 items, newest 2026-11-12, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "one.com Status",
-   "tier": "vendor",
-   "url": "https://status.one.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GOV.UK Forms Status (UK)",
-   "tier": "gov",
-   "url": "https://status.forms.service.gov.uk/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "UK government service incidents. Checked 2026-11-24: 12 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "CloudSigma Status",
-   "tier": "vendor",
-   "url": "https://status.cloudsigma.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Yapily Status",
-   "tier": "vendor",
-   "url": "https://status.yapily.com/feed.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open-banking incidents. Checked 2026-11-24: 9 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Safespring Status (Sweden)",
-   "tier": "vendor",
-   "url": "https://status.safespring.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Nordic cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "TrueLayer Status",
-   "tier": "vendor",
-   "url": "https://status.truelayer.com/feed.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open-banking incidents. Checked 2026-11-24: 39 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Combell Status (Belgium)",
-   "tier": "vendor",
-   "url": "https://status.combell.com/en/rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 3 items, newest 2026-11-23, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Exabytes Status (Malaysia)",
-   "tier": "vendor",
-   "url": "https://status.exabytes.com/rss",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 8 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Cloudways Statuspage",
-   "tier": "vendor",
-   "url": "https://status.cloudways.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Liquid Web Status",
-   "tier": "vendor",
-   "url": "https://status.liquidweb.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 8 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "DonWeb Status (Argentina)",
-   "tier": "vendor",
-   "url": "https://status.donweb.com/history.rss",
-   "lang": "es",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Fasthosts Status (UK)",
-   "tier": "vendor",
-   "url": "https://www.fasthosts-status.co.uk/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Pulsant Status (UK)",
-   "tier": "vendor",
-   "url": "https://status.pulsant.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Data centre incidents. Checked 2026-11-24: 25 items, newest 2026-12-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Nexcess Status",
-   "tier": "vendor",
-   "url": "https://status.nexcess.net/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Azion Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.azion.com/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Edge/CDN incidents. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "green.ch Status (Switzerland)",
-   "tier": "vendor",
-   "url": "https://status.green.ch/history.rss",
-   "lang": "de",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Swiss ISP and data centre incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 8 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Register.it Status (Italy)",
-   "tier": "vendor",
-   "url": "https://status.register.it/history.rss",
-   "lang": "it",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Registrar and hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-14, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Domains.co.za Status (South Africa)",
-   "tier": "vendor",
-   "url": "https://status.domains.co.za/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-08, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Uniweb Status (Norway)",
-   "tier": "vendor",
-   "url": "https://status.uniweb.no/history.rss",
-   "lang": "no",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "manitu Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.manitu.de/rss2/",
-   "lang": "de",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Hosting incidents. Checked 2026-11-24: 735 items, newest 2026-11-18, 13 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Papaki Status (Greece)",
-   "tier": "vendor",
-   "url": "https://status.papaki.com/rss",
-   "lang": "el",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Registrar incidents. Checked 2026-11-24: 1915 items, newest 2026-11-19, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NTT East Topics (Japan)",
-   "tier": "vendor",
-   "url": "https://www.ntt-east.co.jp/rss/topics.rdf",
-   "lang": "ja",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Fixed operator notices. Checked 2026-11-24: 5 items, newest 2026-10-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Singapore MPA (Singapore)",
-   "tier": "gov",
-   "url": "https://www.mpa.gov.sg/feeds/media-releases",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Maritime and port authority releases. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Macau DSAT Emergency (Macau)",
-   "tier": "gov",
-   "url": "https://www.dsat.gov.mo/tc/emergency_rss.aspx",
-   "lang": "zh",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Transport bureau emergency notices. Checked 2026-11-24: 8 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "KDDI Newsroom (Japan)",
-   "tier": "vendor",
-   "url": "https://newsroom.kddi.com/news/newsrelease.xml",
-   "lang": "ja",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Telecom operator releases incl. outages. Checked 2026-11-24: 10 items, newest 2026-11-18, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Japan Post Notices (Japan)",
-   "tier": "vendor",
-   "url": "https://www.post.japanpost.jp/rss/notice.xml",
-   "lang": "ja",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Postal service disruption notices. Checked 2026-11-24: 30 items, newest 2026-11-24, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Macau DSAT Notices (Macau)",
-   "tier": "gov",
-   "url": "https://www.dsat.gov.mo/tc/notice_rss.aspx",
-   "lang": "zh",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Transport bureau notices. Checked 2026-11-24: 20 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Macau Bus Road Changes (Macau)",
-   "tier": "gov",
-   "url": "https://www.dsat.gov.mo/bus/tc/bus_croad_rss.aspx",
-   "lang": "zh",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Transit service changes. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "MCF Rakel Network (Sweden)",
-   "tier": "gov",
-   "url": "https://www.mcf.se/sv/rss-floden/rss-alla-nyheter-fran-myndigheten-for-civilt-forsvar-om-rakel/",
-   "lang": "sv",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Rakel emergency radio network notices. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "DSB Aktuelt (Norway)",
-   "tier": "gov",
-   "url": "https://www.dsb.no/rss/rss-dsb---aktuelt/",
-   "lang": "no",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Directorate for civil protection news. Checked 2026-11-24: 25 items, newest 2026-11-17, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "RFI Rete Ferroviaria (Italy)",
-   "tier": "vendor",
-   "url": "https://www.rfi.it/content/rfi/it/news-e-media/novita-on-line.rss.type.novit%C3%A0_online.xml",
-   "lang": "it",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Rail infrastructure manager notices incl. line works and disruptions. Checked 2026-11-24: 100 items, newest 2026-11-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Network Rail Media Centre (UK)",
-   "tier": "vendor",
-   "url": "https://www.networkrailmediacentre.co.uk/feed/rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Rail infrastructure notices incl. disruption. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "CFR Infrastructura (Romania)",
-   "tier": "vendor",
-   "url": "https://cfr.ro/feed/",
-   "lang": "ro",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Romanian rail infrastructure manager. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "PANSA Air Navigation (Poland)",
-   "tier": "gov",
-   "url": "https://www.pansa.pl/feed/",
-   "lang": "pl",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Polish air navigation services agency. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Metro Sao Paulo (Brazil)",
-   "tier": "vendor",
-   "url": "https://www.metro.sp.gov.br/feed/",
-   "lang": "pt",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Metro operator notices. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Secretaria Gestion Riesgos (Ecuador)",
-   "tier": "gov",
-   "url": "https://www.gestionderiesgos.gob.ec/feed/",
-   "lang": "es",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "National risk management secretariat alerts. Checked 2026-11-24: 10 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NEMA Nigeria (Nigeria)",
-   "tier": "gov",
-   "url": "https://nema.gov.ng/feed/",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Emergency management agency alerts. Checked 2026-11-24: 19 items, newest 2026-09-06, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Airservices Australia (Australia)",
-   "tier": "gov",
-   "url": "https://www.airservicesaustralia.com/feed/",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Air navigation service provider notices. Checked 2026-11-24: 10 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Africa CDC (Africa)",
-   "tier": "gov",
-   "url": "https://africacdc.org/news-item/feed/",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Continental public health emergencies. Checked 2026-11-24: 10 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Johannesburg Water (South Africa)",
-   "tier": "vendor",
-   "url": "https://www.johannesburgwater.co.za/feed/",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Water interruption and maintenance notices. Checked 2026-11-24: 10 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Klarna Status (Sweden)",
-   "tier": "vendor",
-   "url": "https://status.klarna.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment service incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Iugu Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.iugu.com/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Nextiva Status",
-   "tier": "vendor",
-   "url": "https://status.nextiva.com/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "VoIP incidents. Checked 2026-11-24: 25 items, newest 2026-10-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Genesys Cloud Status",
-   "tier": "vendor",
-   "url": "https://status.mypurecloud.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Contact centre platform incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Asaas Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.asaas.com/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment and Pix incidents. Checked 2026-11-24: 25 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Bird Status (Netherlands)",
-   "tier": "vendor",
-   "url": "https://status.bird.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS and messaging carrier incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Sinch Status (Sweden)",
-   "tier": "vendor",
-   "url": "https://status.sinch.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS and voice carrier incidents by operator. Checked 2026-11-24: 25 items, newest 2027-01-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Zepto Payments Status (Australia)",
-   "tier": "vendor",
-   "url": "https://status.zeptopayments.com/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "NPP payment incidents. Checked 2026-11-24: 25 items, newest 2026-10-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Mercado Pago Status (Argentina)",
-   "tier": "vendor",
-   "url": "https://status.mercadopago.com/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents across Latin America. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Cielo Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.cielo.com.br/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Card acquiring incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Pagar.me Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.pagar.me/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment processing incidents incl. Pix. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "CIRA Status (Canada)",
-   "tier": "gov",
-   "url": "https://status.cira.ca/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": ".ca registry and DNS incidents. Checked 2026-11-24: 10 items, newest 2026-11-20, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Toss Payments Status (South Korea)",
-   "tier": "vendor",
-   "url": "https://status.tosspayments.com/history.rss",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Placetel Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.placetel.de/feed.xml",
-   "lang": "de",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud telephony incidents. Checked 2026-11-24: 31 items, newest 2026-09-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Omise Status (Thailand)",
-   "tier": "vendor",
-   "url": "https://status.omise.co/history.rss",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Airwallex Status",
-   "tier": "vendor",
-   "url": "https://status.airwallex.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payments incidents. Checked 2026-11-24: 25 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Vipps MobilePay Status (Norway)",
-   "tier": "vendor",
-   "url": "https://status.vippsmobilepay.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Nordic mobile payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "InternetNZ Status (New Zealand)",
-   "tier": "gov",
-   "url": "https://status.internetnz.nz/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": ".nz registry and DNS incidents. Checked 2026-11-24: 25 items, newest 2026-11-11, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Pin Payments Status (Australia)",
-   "tier": "vendor",
-   "url": "https://pin.statuspage.io/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-07-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "EBANX Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.ebanx.com/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cross-border payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "GoTo Status",
-   "tier": "vendor",
-   "url": "https://status.goto.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Remote access and telephony incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Tyro Status (Australia)",
-   "tier": "vendor",
-   "url": "https://status.tyro.com/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "EFTPOS and banking incidents. Checked 2026-11-24: 25 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Peach Payments Status (South Africa)",
-   "tier": "vendor",
-   "url": "https://status.peachpayments.com/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Aircall Status (France)",
-   "tier": "vendor",
-   "url": "https://status.aircall.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud telephony incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Eway Status (Australia)",
-   "tier": "vendor",
-   "url": "https://status.eway.com.au/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2027-02-03, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Basiq Status (Australia)",
-   "tier": "vendor",
-   "url": "https://status.basiq.io/history.rss",
-   "region": "oceania",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open banking incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Telesign Status",
-   "tier": "vendor",
-   "url": "https://status.telesign.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS and voice verification incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Messente Status (Estonia)",
-   "tier": "vendor",
-   "url": "https://status.messente.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "SMS delivery incidents by operator. Checked 2026-11-24: 25 items, newest 2026-10-30, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "PagBank Status (Brazil)",
-   "tier": "vendor",
-   "url": "https://status.pagbank.com.br/history.rss",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "RIPE NCC Status (Netherlands)",
-   "tier": "gov",
-   "url": "https://status.ripe.net/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "RIR services incidents incl. RPKI. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Yoco Status (South Africa)",
-   "tier": "vendor",
-   "url": "https://status.yoco.com/feed.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Card payment incidents. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NFON Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.nfon.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud telephony incidents. Checked 2026-11-24: 10 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "CTA Rail Alerts (US)",
-   "tier": "gov",
-   "url": "https://www.transitchicago.com/rss/railalertsrss.aspx",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Chicago rail service disruptions by line and time. Checked 2026-11-24: 8 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Saskatoon Service Alerts (Canada)",
-   "tier": "gov",
-   "url": "https://www.saskatoon.ca/service-alerts/all/feed",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Water main breaks, water and power interruptions by street. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "BC Hydro Outages (Canada)",
-   "tier": "vendor",
-   "url": "https://www.bchydro.com/rss/outages/all.xml",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Unplanned power outages by area, cause and times. Checked 2026-11-24: 88 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "cloud.gov Status (US)",
-   "tier": "gov",
-   "url": "https://cloudgov.statuspage.io/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Federal cloud platform incidents. Checked 2026-11-24: 25 items, newest 2027-02-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Bunny.net Status (Slovenia)",
-   "tier": "vendor",
-   "url": "https://status.bunny.net/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "CDN and DNS incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Linode Status",
-   "tier": "vendor",
-   "url": "https://status.linode.com/history.rss",
-   "added": "2026-11-24",
-   "why": "Cloud incidents by datacentre. Checked 2026-11-24: 25 items, newest 2026-12-16, 13 about cyber security; robots.txt allows it."
-  },
-  {
-   "name": "Login.gov Status (US)",
-   "tier": "gov",
-   "url": "https://status.login.gov/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Federal sign-in service incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Idura eID Status (Denmark)",
-   "tier": "vendor",
-   "url": "https://status.idura.app/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Nordic eID broker incidents naming MitID, BankID. Checked 2026-11-24: 25 items, newest 2026-11-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "MyParcel Status (Netherlands)",
-   "tier": "vendor",
-   "url": "https://status.myparcel.nl/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Parcel carrier incidents naming PostNL, DHL. Checked 2026-11-24: 25 items, newest 2026-11-18, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "STACKIT Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.stackit.cloud/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Sovereign cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "IDnow Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.idnow.de/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Identity verification incidents. Checked 2026-11-24: 25 items, newest 2027-01-13, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Gandi Status (France)",
-   "tier": "vendor",
-   "url": "https://status.gandi.net/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Registrar and DNS incidents. Checked 2026-11-24: 25 items, newest 2026-12-08, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "UpCloud Status (Finland)",
-   "tier": "vendor",
-   "url": "https://status.upcloud.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud incidents by zone. Checked 2026-11-24: 25 items, newest 2026-12-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "BankID Status (Sweden)",
-   "tier": "vendor",
-   "url": "https://status.bankid.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "National eID incidents. Checked 2026-11-24: 9 items, newest 2026-10-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "plusserver Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.plusserver.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud and datacentre incidents. Checked 2026-11-24: 25 items, newest 2026-12-15, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "IONOS Cloud Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.ionos.cloud/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-25, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Singpass Status (Singapore)",
-   "tier": "gov",
-   "url": "https://status.singpass.gov.sg/feed",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "National digital identity incidents. Checked 2026-11-24: 25 items, newest 2026-10-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Tibber Status (Norway)",
-   "tier": "vendor",
-   "url": "https://status.tibber.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Energy retailer and smart-meter platform incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Scaleway Status (France)",
-   "tier": "vendor",
-   "url": "https://status.scaleway.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cloud incidents by zone. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Signicat Status (Norway)",
-   "tier": "vendor",
-   "url": "https://status.signicat.com/feed.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "eID and signing incidents naming national eIDs. Checked 2026-11-24: 181 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "PAHO (Latin America)",
-   "tier": "gov",
-   "url": "https://www.paho.org/en/rss.xml",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Regional public health alerts and outbreaks. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Health Canada News (Canada)",
-   "tier": "gov",
-   "url": "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofhealth&sort=publishedDate&orderBy=desc&publishedDate%3E=2020-08-09&pick=100&format=atom&atomtitle=Canada%20News%20Centre%20-%20Health%20Canada",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Health Canada advisories and recalls. Checked 2026-11-24: 100 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Schiphol News (Netherlands)",
-   "tier": "vendor",
-   "url": "https://news.schiphol.com/tagfeed/en/tags/news",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Airport operations notices incl. disruptions. Checked 2026-11-24: 50 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Correo Argentino (Argentina)",
-   "tier": "gov",
-   "url": "https://www.correoargentino.com.ar/rss.xml",
-   "lang": "es",
-   "region": "latin-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "National postal service notices. Checked 2026-11-24: 10 items, newest 2026-10-08, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Port of Hamburg (Germany)",
-   "tier": "vendor",
-   "url": "https://www.hafen-hamburg.de/de/rss/",
-   "lang": "de",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Port operations notices. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "NICD (South Africa)",
-   "tier": "gov",
-   "url": "https://www.nicd.ac.za/feed/",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Communicable disease outbreak alerts. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Paysafe Status",
-   "tier": "vendor",
-   "url": "https://status.paysafe.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment processing incidents. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Lemonway Status (France)",
-   "tier": "vendor",
-   "url": "https://status.lemonway.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment institution incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Modulr Status (UK)",
-   "tier": "vendor",
-   "url": "https://status.modulrfinance.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Faster Payments and Bacs incidents. Checked 2026-11-24: 25 items, newest 2026-12-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Dwolla Status (US)",
-   "tier": "vendor",
-   "url": "https://status.dwolla.com/history.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "ACH payment incidents. Checked 2026-11-24: 25 items, newest 2026-09-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Currencycloud Status (UK)",
-   "tier": "vendor",
-   "url": "https://status.currencycloud.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Cross-border payment rail incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Solaris Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.solarisgroup.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Banking platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Komoju Status (Japan)",
-   "tier": "vendor",
-   "url": "https://status.komoju.com/history.rss",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents naming Japanese methods. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Tabby Status (UAE)",
-   "tier": "vendor",
-   "url": "https://www.tabby-status.com/history.rss",
-   "region": "middle-east",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "PAY.JP Status (Japan)",
-   "tier": "vendor",
-   "url": "https://status.pay.jp/history.rss",
-   "lang": "ja",
-   "region": "east-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2027-02-07, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Unzer Status (Germany)",
-   "tier": "vendor",
-   "url": "https://status.unzer.com/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-12-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Mono Status (Nigeria)",
-   "tier": "vendor",
-   "url": "https://status.mono.co/history.rss",
-   "region": "africa",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open banking incidents naming Nigerian banks. Checked 2026-11-24: 25 items, newest 2026-11-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "HitPay Status (Singapore)",
-   "tier": "vendor",
-   "url": "https://status.hitpayapp.com/feed",
-   "region": "southeast-asia",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment incidents incl. PayNow. Checked 2026-11-24: 70 items, newest 2026-10-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Swan Status (France)",
-   "tier": "vendor",
-   "url": "https://status.swan.io/history.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Banking-as-a-service incidents incl. SEPA. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "PayTabs Status (Saudi Arabia)",
-   "tier": "vendor",
-   "url": "https://status.paytabs.com/feed",
-   "region": "middle-east",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Payment gateway incidents incl. mada. Checked 2026-11-24: 145 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "MX Status (US)",
-   "tier": "vendor",
-   "url": "https://status.mx.com/feed.rss",
-   "region": "north-america",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Bank connectivity incidents naming institutions. Checked 2026-11-24: 9 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Salt Edge Status (Canada)",
-   "tier": "vendor",
-   "url": "https://www.saltedgestatus.com/history.rss",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open banking incidents naming banks. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  },
-  {
-   "name": "Volt Status (UK)",
-   "tier": "vendor",
-   "url": "https://status.volt.io/feed.rss",
-   "region": "europe",
-   "filter": true,
-   "added": "2026-11-24",
-   "why": "Open banking payment incidents naming banks. Checked 2026-11-24: 5 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
-  }
- ]
+  "_note": "Feeds for scripts/collect.mjs (shard infra). Each was checked by scripts/feed-check.mjs before it was added; see config/feeds.json _note for the fields.",
+  "first_run_hours": 3,
+  "feeds": [
+    {
+      "name": "JPRS (Japan)",
+      "tier": "vendor",
+      "url": "https://jprs.jp/whatsnew/rss/jprs.rdf",
+      "lang": "ja",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": ".jp registry. Checked 2026-11-24: 20 items, newest 2026-11-24, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "LINX (UK)",
+      "tier": "vendor",
+      "url": "https://www.linx.net/feed/",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Internet exchange. Checked 2026-11-24: 10 items, newest 2026-10-14, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Drinking Water Inspectorate (UK)",
+      "tier": "gov",
+      "url": "https://www.dwi.gov.uk/feed/",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Drinking water regulator. Checked 2026-11-24: 12 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Punktum dk (Denmark)",
+      "tier": "vendor",
+      "url": "https://punktum.dk/rss.xml",
+      "lang": "da",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": ".dk registry. Checked 2026-11-24: 10 items, newest 2026-10-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GRTgaz (France)",
+      "tier": "vendor",
+      "url": "https://www.natrangroupe.com/rss.xml",
+      "lang": "fr",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Gas transmission. Checked 2026-11-24: 10 items, newest 2026-08-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "National Gas (UK)",
+      "tier": "vendor",
+      "url": "https://www.nationalgas.com/rss.xml",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Gas transmission. Checked 2026-11-24: 10 items, newest 2026-09-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "EPRA (Kenya)",
+      "tier": "gov",
+      "url": "https://www.epra.go.ke/rss.xml",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Energy regulator. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GOV.UK Pay Status (UK)",
+      "tier": "gov",
+      "url": "https://payments.statuspage.io/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "UK government payments service incidents. Checked 2026-11-24: 25 items, newest 2026-10-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Hostinger Statuspage",
+      "tier": "vendor",
+      "url": "https://statuspage.hostinger.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-12-03, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Equinix Metal Status",
+      "tier": "vendor",
+      "url": "https://status.equinixmetal.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Bare-metal cloud incidents. Checked 2026-11-24: 25 items, newest 2026-10-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Panama Canal Authority (Panama)",
+      "tier": "gov",
+      "url": "https://pancanal.com/en/feed/",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Canal authority notices and advisories. Checked 2026-11-24: 12 items, newest 2026-10-29, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GOV.UK Notify Status (UK)",
+      "tier": "gov",
+      "url": "https://status.notifications.service.gov.uk/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "UK government messaging service incidents. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GOV.UK One Login Status (UK)",
+      "tier": "gov",
+      "url": "https://status.account.gov.uk/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "UK government identity service incidents. Checked 2026-11-24: 25 items, newest 2026-11-11, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "OpenSRS Status",
+      "tier": "vendor",
+      "url": "https://www.opensrsstatus.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Domain registrar platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Contabo Status (Germany)",
+      "tier": "vendor",
+      "url": "https://contabo-status.com/rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting provider incident and maintenance notices. Checked 2026-11-24: 3 items, newest 2026-11-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Sipgate Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.sipgate.de/history.rss",
+      "lang": "de",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "German telephony provider incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Syria Emergency Ministry CAP (Syria)",
+      "tier": "gov",
+      "url": "https://climweb.med.gov.sy/api/cap/rss.xml",
+      "lang": "ar",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Emergency and disaster management alerts. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Mollie Status",
+      "tier": "vendor",
+      "url": "https://status.mollie.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments infrastructure incidents. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Paystack Status",
+      "tier": "vendor",
+      "url": "https://status.paystack.com/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments infrastructure incidents. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NordLayer Status",
+      "tier": "vendor",
+      "url": "https://status.nordlayer.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-10-27, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "KnowBe4 Status",
+      "tier": "vendor",
+      "url": "https://status.knowbe4.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NinjaOne Status",
+      "tier": "vendor",
+      "url": "https://status.ninjaone.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "RMM platform incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "N-able Status",
+      "tier": "vendor",
+      "url": "https://status.n-able.com/feed/",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "RMM platform status. Checked 2026-11-24: 50 items, newest 2026-11-23, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "TeamViewer Status",
+      "tier": "vendor",
+      "url": "https://status.teamviewer.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Remote-access tool incidents. Checked 2026-11-24: 25 items, newest 2026-11-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Barracuda Status",
+      "tier": "vendor",
+      "url": "https://status.barracuda.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Security services incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Xendit Status",
+      "tier": "vendor",
+      "url": "https://status.xendit.co/history.rss",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-12-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "DIDWW Status",
+      "tier": "vendor",
+      "url": "https://status.didww.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom carrier incidents. Checked 2026-11-24: 11 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Check Point Status",
+      "tier": "vendor",
+      "url": "https://status.checkpoint.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Security services incidents. Checked 2026-11-24: 25 items, newest 2026-12-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Flowroute Status",
+      "tier": "vendor",
+      "url": "https://status.flowroute.com/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom carrier incidents. Checked 2026-11-24: 25 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Tink Status",
+      "tier": "vendor",
+      "url": "https://status.tink.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open-banking infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "CM.com Status",
+      "tier": "vendor",
+      "url": "https://status.cm.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom messaging incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "VoIP.ms Status",
+      "tier": "vendor",
+      "url": "https://status.voip.ms/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "VoIP carrier incidents. Checked 2026-11-24: 50 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "TextMagic Status",
+      "tier": "vendor",
+      "url": "https://status.textmagic.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS gateway incidents. Checked 2026-11-24: 25 items, newest 2026-08-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "AnyDesk Status",
+      "tier": "vendor",
+      "url": "https://status.anydesk.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Remote-access tool status: incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Infobip Status",
+      "tier": "vendor",
+      "url": "https://status.infobip.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Messaging and telecom connectivity incidents. Checked 2026-11-24: 25 items, newest 2027-01-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Kaleyra Status",
+      "tier": "vendor",
+      "url": "https://status.kaleyra.com/history.rss",
+      "region": "south-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom messaging incidents. Checked 2026-11-24: 25 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Kaseya Status",
+      "tier": "vendor",
+      "url": "https://status.kaseya.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "RMM platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Flutterwave Status",
+      "tier": "vendor",
+      "url": "https://status.flutterwave.com/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments infrastructure incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Yubico Status",
+      "tier": "vendor",
+      "url": "https://status.yubico.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Operator status page: incidents naming the affected service and times. Checked 2026-11-24: 25 items, newest 2026-09-30, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "ClickSend Status",
+      "tier": "vendor",
+      "url": "https://status.clicksend.com/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS gateway incidents. Checked 2026-11-24: 25 items, newest 2026-09-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "DNSFilter Status",
+      "tier": "vendor",
+      "url": "https://status.dnsfilter.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": " . Checked 2026-11-24: 25 items, newest 2026-11-04, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Africa's Talking Status",
+      "tier": "vendor",
+      "url": "https://status.africastalking.com/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom API incidents across African networks. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GoCardless Status",
+      "tier": "vendor",
+      "url": "https://www.gocardless-status.com/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments incidents. Checked 2026-11-24: 9 items, newest 2026-11-12, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "one.com Status",
+      "tier": "vendor",
+      "url": "https://status.one.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GOV.UK Forms Status (UK)",
+      "tier": "gov",
+      "url": "https://status.forms.service.gov.uk/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "UK government service incidents. Checked 2026-11-24: 12 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "CloudSigma Status",
+      "tier": "vendor",
+      "url": "https://status.cloudsigma.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Yapily Status",
+      "tier": "vendor",
+      "url": "https://status.yapily.com/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open-banking incidents. Checked 2026-11-24: 9 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Safespring Status (Sweden)",
+      "tier": "vendor",
+      "url": "https://status.safespring.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Nordic cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "TrueLayer Status",
+      "tier": "vendor",
+      "url": "https://status.truelayer.com/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open-banking incidents. Checked 2026-11-24: 39 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Combell Status (Belgium)",
+      "tier": "vendor",
+      "url": "https://status.combell.com/en/rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 3 items, newest 2026-11-23, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Exabytes Status (Malaysia)",
+      "tier": "vendor",
+      "url": "https://status.exabytes.com/rss",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 8 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Cloudways Statuspage",
+      "tier": "vendor",
+      "url": "https://status.cloudways.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Liquid Web Status",
+      "tier": "vendor",
+      "url": "https://status.liquidweb.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 8 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "DonWeb Status (Argentina)",
+      "tier": "vendor",
+      "url": "https://status.donweb.com/history.rss",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Fasthosts Status (UK)",
+      "tier": "vendor",
+      "url": "https://www.fasthosts-status.co.uk/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Pulsant Status (UK)",
+      "tier": "vendor",
+      "url": "https://status.pulsant.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Data centre incidents. Checked 2026-11-24: 25 items, newest 2026-12-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Nexcess Status",
+      "tier": "vendor",
+      "url": "https://status.nexcess.net/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Azion Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.azion.com/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Edge/CDN incidents. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "green.ch Status (Switzerland)",
+      "tier": "vendor",
+      "url": "https://status.green.ch/history.rss",
+      "lang": "de",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Swiss ISP and data centre incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 8 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Register.it Status (Italy)",
+      "tier": "vendor",
+      "url": "https://status.register.it/history.rss",
+      "lang": "it",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Registrar and hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-14, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Domains.co.za Status (South Africa)",
+      "tier": "vendor",
+      "url": "https://status.domains.co.za/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-08, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Uniweb Status (Norway)",
+      "tier": "vendor",
+      "url": "https://status.uniweb.no/history.rss",
+      "lang": "no",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 25 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "manitu Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.manitu.de/rss2/",
+      "lang": "de",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Hosting incidents. Checked 2026-11-24: 735 items, newest 2026-11-18, 13 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Papaki Status (Greece)",
+      "tier": "vendor",
+      "url": "https://status.papaki.com/rss",
+      "lang": "el",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Registrar incidents. Checked 2026-11-24: 1915 items, newest 2026-11-19, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NTT East Topics (Japan)",
+      "tier": "vendor",
+      "url": "https://www.ntt-east.co.jp/rss/topics.rdf",
+      "lang": "ja",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Fixed operator notices. Checked 2026-11-24: 5 items, newest 2026-10-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Singapore MPA (Singapore)",
+      "tier": "gov",
+      "url": "https://www.mpa.gov.sg/feeds/media-releases",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Maritime and port authority releases. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Macau DSAT Emergency (Macau)",
+      "tier": "gov",
+      "url": "https://www.dsat.gov.mo/tc/emergency_rss.aspx",
+      "lang": "zh",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Transport bureau emergency notices. Checked 2026-11-24: 8 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "KDDI Newsroom (Japan)",
+      "tier": "vendor",
+      "url": "https://newsroom.kddi.com/news/newsrelease.xml",
+      "lang": "ja",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telecom operator releases incl. outages. Checked 2026-11-24: 10 items, newest 2026-11-18, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Japan Post Notices (Japan)",
+      "tier": "vendor",
+      "url": "https://www.post.japanpost.jp/rss/notice.xml",
+      "lang": "ja",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Postal service disruption notices. Checked 2026-11-24: 30 items, newest 2026-11-24, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Macau DSAT Notices (Macau)",
+      "tier": "gov",
+      "url": "https://www.dsat.gov.mo/tc/notice_rss.aspx",
+      "lang": "zh",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Transport bureau notices. Checked 2026-11-24: 20 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Macau Bus Road Changes (Macau)",
+      "tier": "gov",
+      "url": "https://www.dsat.gov.mo/bus/tc/bus_croad_rss.aspx",
+      "lang": "zh",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Transit service changes. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "MCF Rakel Network (Sweden)",
+      "tier": "gov",
+      "url": "https://www.mcf.se/sv/rss-floden/rss-alla-nyheter-fran-myndigheten-for-civilt-forsvar-om-rakel/",
+      "lang": "sv",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Rakel emergency radio network notices. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "DSB Aktuelt (Norway)",
+      "tier": "gov",
+      "url": "https://www.dsb.no/rss/rss-dsb---aktuelt/",
+      "lang": "no",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Directorate for civil protection news. Checked 2026-11-24: 25 items, newest 2026-11-17, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "RFI Rete Ferroviaria (Italy)",
+      "tier": "vendor",
+      "url": "https://www.rfi.it/content/rfi/it/news-e-media/novita-on-line.rss.type.novit%C3%A0_online.xml",
+      "lang": "it",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Rail infrastructure manager notices incl. line works and disruptions. Checked 2026-11-24: 100 items, newest 2026-11-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Network Rail Media Centre (UK)",
+      "tier": "vendor",
+      "url": "https://www.networkrailmediacentre.co.uk/feed/rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Rail infrastructure notices incl. disruption. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "CFR Infrastructura (Romania)",
+      "tier": "vendor",
+      "url": "https://cfr.ro/feed/",
+      "lang": "ro",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Romanian rail infrastructure manager. Checked 2026-11-24: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "PANSA Air Navigation (Poland)",
+      "tier": "gov",
+      "url": "https://www.pansa.pl/feed/",
+      "lang": "pl",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Polish air navigation services agency. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Metro Sao Paulo (Brazil)",
+      "tier": "vendor",
+      "url": "https://www.metro.sp.gov.br/feed/",
+      "lang": "pt",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Metro operator notices. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Secretaria Gestion Riesgos (Ecuador)",
+      "tier": "gov",
+      "url": "https://www.gestionderiesgos.gob.ec/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "National risk management secretariat alerts. Checked 2026-11-24: 10 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NEMA Nigeria (Nigeria)",
+      "tier": "gov",
+      "url": "https://nema.gov.ng/feed/",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Emergency management agency alerts. Checked 2026-11-24: 19 items, newest 2026-09-06, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Airservices Australia (Australia)",
+      "tier": "gov",
+      "url": "https://www.airservicesaustralia.com/feed/",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Air navigation service provider notices. Checked 2026-11-24: 10 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Africa CDC (Africa)",
+      "tier": "gov",
+      "url": "https://africacdc.org/news-item/feed/",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Continental public health emergencies. Checked 2026-11-24: 10 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Johannesburg Water (South Africa)",
+      "tier": "vendor",
+      "url": "https://www.johannesburgwater.co.za/feed/",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Water interruption and maintenance notices. Checked 2026-11-24: 10 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Klarna Status (Sweden)",
+      "tier": "vendor",
+      "url": "https://status.klarna.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment service incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Iugu Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.iugu.com/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Nextiva Status",
+      "tier": "vendor",
+      "url": "https://status.nextiva.com/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "VoIP incidents. Checked 2026-11-24: 25 items, newest 2026-10-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Genesys Cloud Status",
+      "tier": "vendor",
+      "url": "https://status.mypurecloud.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Contact centre platform incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Asaas Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.asaas.com/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment and Pix incidents. Checked 2026-11-24: 25 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Bird Status (Netherlands)",
+      "tier": "vendor",
+      "url": "https://status.bird.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS and messaging carrier incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Sinch Status (Sweden)",
+      "tier": "vendor",
+      "url": "https://status.sinch.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS and voice carrier incidents by operator. Checked 2026-11-24: 25 items, newest 2027-01-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Zepto Payments Status (Australia)",
+      "tier": "vendor",
+      "url": "https://status.zeptopayments.com/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "NPP payment incidents. Checked 2026-11-24: 25 items, newest 2026-10-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Mercado Pago Status (Argentina)",
+      "tier": "vendor",
+      "url": "https://status.mercadopago.com/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents across Latin America. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Cielo Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.cielo.com.br/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Card acquiring incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Pagar.me Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.pagar.me/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment processing incidents incl. Pix. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "CIRA Status (Canada)",
+      "tier": "gov",
+      "url": "https://status.cira.ca/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": ".ca registry and DNS incidents. Checked 2026-11-24: 10 items, newest 2026-11-20, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Toss Payments Status (South Korea)",
+      "tier": "vendor",
+      "url": "https://status.tosspayments.com/history.rss",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Placetel Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.placetel.de/feed.xml",
+      "lang": "de",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud telephony incidents. Checked 2026-11-24: 31 items, newest 2026-09-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Omise Status (Thailand)",
+      "tier": "vendor",
+      "url": "https://status.omise.co/history.rss",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Airwallex Status",
+      "tier": "vendor",
+      "url": "https://status.airwallex.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payments incidents. Checked 2026-11-24: 25 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Vipps MobilePay Status (Norway)",
+      "tier": "vendor",
+      "url": "https://status.vippsmobilepay.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Nordic mobile payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "InternetNZ Status (New Zealand)",
+      "tier": "gov",
+      "url": "https://status.internetnz.nz/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": ".nz registry and DNS incidents. Checked 2026-11-24: 25 items, newest 2026-11-11, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Pin Payments Status (Australia)",
+      "tier": "vendor",
+      "url": "https://pin.statuspage.io/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-07-28, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "EBANX Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.ebanx.com/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cross-border payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "GoTo Status",
+      "tier": "vendor",
+      "url": "https://status.goto.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Remote access and telephony incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Tyro Status (Australia)",
+      "tier": "vendor",
+      "url": "https://status.tyro.com/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "EFTPOS and banking incidents. Checked 2026-11-24: 25 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Peach Payments Status (South Africa)",
+      "tier": "vendor",
+      "url": "https://status.peachpayments.com/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Aircall Status (France)",
+      "tier": "vendor",
+      "url": "https://status.aircall.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud telephony incidents. Checked 2026-11-24: 25 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Eway Status (Australia)",
+      "tier": "vendor",
+      "url": "https://status.eway.com.au/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2027-02-03, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Basiq Status (Australia)",
+      "tier": "vendor",
+      "url": "https://status.basiq.io/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open banking incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Telesign Status",
+      "tier": "vendor",
+      "url": "https://status.telesign.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS and voice verification incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Messente Status (Estonia)",
+      "tier": "vendor",
+      "url": "https://status.messente.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "SMS delivery incidents by operator. Checked 2026-11-24: 25 items, newest 2026-10-30, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "PagBank Status (Brazil)",
+      "tier": "vendor",
+      "url": "https://status.pagbank.com.br/history.rss",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "RIPE NCC Status (Netherlands)",
+      "tier": "gov",
+      "url": "https://status.ripe.net/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "RIR services incidents incl. RPKI. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Yoco Status (South Africa)",
+      "tier": "vendor",
+      "url": "https://status.yoco.com/feed.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Card payment incidents. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NFON Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.nfon.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud telephony incidents. Checked 2026-11-24: 10 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "CTA Rail Alerts (US)",
+      "tier": "gov",
+      "url": "https://www.transitchicago.com/rss/railalertsrss.aspx",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Chicago rail service disruptions by line and time. Checked 2026-11-24: 8 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Saskatoon Service Alerts (Canada)",
+      "tier": "gov",
+      "url": "https://www.saskatoon.ca/service-alerts/all/feed",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Water main breaks, water and power interruptions by street. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "BC Hydro Outages (Canada)",
+      "tier": "vendor",
+      "url": "https://www.bchydro.com/rss/outages/all.xml",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Unplanned power outages by area, cause and times. Checked 2026-11-24: 88 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "cloud.gov Status (US)",
+      "tier": "gov",
+      "url": "https://cloudgov.statuspage.io/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Federal cloud platform incidents. Checked 2026-11-24: 25 items, newest 2027-02-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Bunny.net Status (Slovenia)",
+      "tier": "vendor",
+      "url": "https://status.bunny.net/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "CDN and DNS incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Linode Status",
+      "tier": "vendor",
+      "url": "https://status.linode.com/history.rss",
+      "added": "2026-11-24",
+      "why": "Cloud incidents by datacentre. Checked 2026-11-24: 25 items, newest 2026-12-16, 13 about cyber security; robots.txt allows it."
+    },
+    {
+      "name": "Login.gov Status (US)",
+      "tier": "gov",
+      "url": "https://status.login.gov/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Federal sign-in service incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Idura eID Status (Denmark)",
+      "tier": "vendor",
+      "url": "https://status.idura.app/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Nordic eID broker incidents naming MitID, BankID. Checked 2026-11-24: 25 items, newest 2026-11-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "MyParcel Status (Netherlands)",
+      "tier": "vendor",
+      "url": "https://status.myparcel.nl/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Parcel carrier incidents naming PostNL, DHL. Checked 2026-11-24: 25 items, newest 2026-11-18, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "STACKIT Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.stackit.cloud/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Sovereign cloud incidents. Checked 2026-11-24: 25 items, newest 2026-12-01, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "IDnow Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.idnow.de/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Identity verification incidents. Checked 2026-11-24: 25 items, newest 2027-01-13, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Gandi Status (France)",
+      "tier": "vendor",
+      "url": "https://status.gandi.net/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Registrar and DNS incidents. Checked 2026-11-24: 25 items, newest 2026-12-08, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "UpCloud Status (Finland)",
+      "tier": "vendor",
+      "url": "https://status.upcloud.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud incidents by zone. Checked 2026-11-24: 25 items, newest 2026-12-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "BankID Status (Sweden)",
+      "tier": "vendor",
+      "url": "https://status.bankid.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "National eID incidents. Checked 2026-11-24: 9 items, newest 2026-10-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "plusserver Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.plusserver.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud and datacentre incidents. Checked 2026-11-24: 25 items, newest 2026-12-15, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "IONOS Cloud Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.ionos.cloud/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud incidents by region. Checked 2026-11-24: 25 items, newest 2026-11-25, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Singpass Status (Singapore)",
+      "tier": "gov",
+      "url": "https://status.singpass.gov.sg/feed",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "National digital identity incidents. Checked 2026-11-24: 25 items, newest 2026-10-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Tibber Status (Norway)",
+      "tier": "vendor",
+      "url": "https://status.tibber.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Energy retailer and smart-meter platform incidents. Checked 2026-11-24: 25 items, newest 2026-11-21, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Scaleway Status (France)",
+      "tier": "vendor",
+      "url": "https://status.scaleway.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cloud incidents by zone. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Signicat Status (Norway)",
+      "tier": "vendor",
+      "url": "https://status.signicat.com/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "eID and signing incidents naming national eIDs. Checked 2026-11-24: 181 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "PAHO (Latin America)",
+      "tier": "gov",
+      "url": "https://www.paho.org/en/rss.xml",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Regional public health alerts and outbreaks. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Health Canada News (Canada)",
+      "tier": "gov",
+      "url": "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofhealth&sort=publishedDate&orderBy=desc&publishedDate%3E=2020-08-09&pick=100&format=atom&atomtitle=Canada%20News%20Centre%20-%20Health%20Canada",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Health Canada advisories and recalls. Checked 2026-11-24: 100 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Schiphol News (Netherlands)",
+      "tier": "vendor",
+      "url": "https://news.schiphol.com/tagfeed/en/tags/news",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Airport operations notices incl. disruptions. Checked 2026-11-24: 50 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Correo Argentino (Argentina)",
+      "tier": "gov",
+      "url": "https://www.correoargentino.com.ar/rss.xml",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "National postal service notices. Checked 2026-11-24: 10 items, newest 2026-10-08, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Port of Hamburg (Germany)",
+      "tier": "vendor",
+      "url": "https://www.hafen-hamburg.de/de/rss/",
+      "lang": "de",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Port operations notices. Checked 2026-11-24: 20 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "NICD (South Africa)",
+      "tier": "gov",
+      "url": "https://www.nicd.ac.za/feed/",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Communicable disease outbreak alerts. Checked 2026-11-24: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Paysafe Status",
+      "tier": "vendor",
+      "url": "https://status.paysafe.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment processing incidents. Checked 2026-11-24: 25 items, newest 2026-11-26, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Lemonway Status (France)",
+      "tier": "vendor",
+      "url": "https://status.lemonway.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment institution incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Modulr Status (UK)",
+      "tier": "vendor",
+      "url": "https://status.modulrfinance.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Faster Payments and Bacs incidents. Checked 2026-11-24: 25 items, newest 2026-12-06, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Dwolla Status (US)",
+      "tier": "vendor",
+      "url": "https://status.dwolla.com/history.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "ACH payment incidents. Checked 2026-11-24: 25 items, newest 2026-09-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Currencycloud Status (UK)",
+      "tier": "vendor",
+      "url": "https://status.currencycloud.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cross-border payment rail incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Solaris Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.solarisgroup.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Banking platform incidents. Checked 2026-11-24: 25 items, newest 2026-12-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Komoju Status (Japan)",
+      "tier": "vendor",
+      "url": "https://status.komoju.com/history.rss",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents naming Japanese methods. Checked 2026-11-24: 25 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Tabby Status (UAE)",
+      "tier": "vendor",
+      "url": "https://www.tabby-status.com/history.rss",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "PAY.JP Status (Japan)",
+      "tier": "vendor",
+      "url": "https://status.pay.jp/history.rss",
+      "lang": "ja",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment gateway incidents. Checked 2026-11-24: 25 items, newest 2027-02-07, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Unzer Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.unzer.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents. Checked 2026-11-24: 25 items, newest 2026-12-02, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Mono Status (Nigeria)",
+      "tier": "vendor",
+      "url": "https://status.mono.co/history.rss",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open banking incidents naming Nigerian banks. Checked 2026-11-24: 25 items, newest 2026-11-15, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "HitPay Status (Singapore)",
+      "tier": "vendor",
+      "url": "https://status.hitpayapp.com/feed",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment incidents incl. PayNow. Checked 2026-11-24: 70 items, newest 2026-10-22, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Swan Status (France)",
+      "tier": "vendor",
+      "url": "https://status.swan.io/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Banking-as-a-service incidents incl. SEPA. Checked 2026-11-24: 50 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "PayTabs Status (Saudi Arabia)",
+      "tier": "vendor",
+      "url": "https://status.paytabs.com/feed",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Payment gateway incidents incl. mada. Checked 2026-11-24: 145 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "MX Status (US)",
+      "tier": "vendor",
+      "url": "https://status.mx.com/feed.rss",
+      "region": "north-america",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Bank connectivity incidents naming institutions. Checked 2026-11-24: 9 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Salt Edge Status (Canada)",
+      "tier": "vendor",
+      "url": "https://www.saltedgestatus.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open banking incidents naming banks. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Volt Status (UK)",
+      "tier": "vendor",
+      "url": "https://status.volt.io/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Open banking payment incidents naming banks. Checked 2026-11-24: 5 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Ubiquiti UniFi Status",
+      "tier": "vendor",
+      "url": "https://status.ui.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Network device cloud management incidents. Checked 2026-11-24: 25 items, newest 2026-11-04, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Singlewire InformaCast Status",
+      "tier": "vendor",
+      "url": "https://status.singlewire.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Mass emergency notification incidents. Checked 2026-11-24: 25 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Verkada Status",
+      "tier": "vendor",
+      "url": "https://status.verkada.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Physical security cloud incidents. Checked 2026-11-24: 25 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Brivo Status",
+      "tier": "vendor",
+      "url": "https://status.brivo.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Access control cloud incidents. Checked 2026-11-24: 25 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "emnify Status (Germany)",
+      "tier": "vendor",
+      "url": "https://status.emnify.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "IoT cellular incidents naming carriers and countries. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "HotDoc Status (Australia)",
+      "tier": "vendor",
+      "url": "https://status.hotdoc.com.au/history.rss",
+      "region": "oceania",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Clinic booking incidents. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Cradlepoint Status",
+      "tier": "vendor",
+      "url": "https://status.cradlepoint.com/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Cellular router management incidents. Checked 2026-11-24: 25 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "The Things Network Status (Netherlands)",
+      "tier": "vendor",
+      "url": "https://status.thethings.network/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "LoRaWAN network incidents by cluster. Checked 2026-11-24: 25 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Soracom Status (Japan)",
+      "tier": "vendor",
+      "url": "https://status.soracom.io/history.rss",
+      "region": "east-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "IoT cellular connectivity incidents naming carriers. Checked 2026-11-24: 12 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Unabiz Sigfox Status (France)",
+      "tier": "vendor",
+      "url": "https://status.unabiz.com/history.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "0G IoT network incidents. Checked 2026-11-24: 25 items, newest 2026-11-17, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Genetec Status (Canada)",
+      "tier": "vendor",
+      "url": "https://status.genetec.com/feed.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Physical security cloud incidents. Checked 2026-11-24: 27 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Hologram Status",
+      "tier": "vendor",
+      "url": "https://status.hologram.io/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "IoT cellular incidents naming carriers. Checked 2026-11-24: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Doxy.me Status",
+      "tier": "vendor",
+      "url": "https://status.doxy.me/history.rss",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Telehealth incidents. Checked 2026-11-24: 25 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    },
+    {
+      "name": "Accurx Status (UK)",
+      "tier": "vendor",
+      "url": "https://status.accurx.com/feed.rss",
+      "region": "europe",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "NHS clinician messaging incidents. Checked 2026-11-24: 22 items, newest 2026-11-13, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+    }
+  ]
 }

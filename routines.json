@@ -112,6 +112,19 @@
    "does": "Runs with the open-source collectors and asks each official breach register at most hourly (California, Washington and Iowa attorneys general, the UK ICO's enforcement actions, and SEC 8-K Item 1.05 filings once a contact address is set): every new notice is a lead from a government source, read by a researcher who cites the regulator's own page."
   },
   {
+   "key": "crypto-hacks",
+   "name": "Crypto hacks and exploits",
+   "tier": "automation",
+   "workflow": "collect.yml",
+   "cron": "11,41 * * * *",
+   "model": null,
+   "status_key": "last_crypto_hacks_at",
+   "max_age_hours": 3,
+   "active": true,
+   "active_since": "2026-11-24T00:00:00Z",
+   "does": "Runs with the open-source collectors and reads SlowMist's public archive of crypto hacks at most hourly (DeFi exploits and exchange, bridge and wallet thefts): every new row is a lead with the project, date, loss, attack method, target type and chain as the database states them, a fact to check that a researcher confirms from the project's own statement or the reference source before anything reaches the map."
+  },
+  {
    "key": "grid",
    "name": "Power grid outages",
    "tier": "automation",

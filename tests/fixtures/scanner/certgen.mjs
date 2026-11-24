@@ -20,7 +20,7 @@ export function makeCert({ type = "rsa", bits = 2048, curve = "P-256", hash = "s
   const { publicKey, privateKey } = type === "ec" ? generateKeyPairSync("ec", { namedCurve: curve }) : generateKeyPairSync("rsa", { modulusLength: bits });
   const algOid = SIG[`${type}:${hash}`], alg = type === "ec" ? seq(oid(algOid)) : seq(oid(algOid), Buffer.from([0x05, 0x00]));
   const sanExt = san.length ? tlv(0xa3, seq(seq(oid("2.5.29.17"), tlv(0x04, seq(...san.map((d) => tlv(0x82, Buffer.from(d)))))))) : Buffer.alloc(0);
-  const serial = randomBytes(8); serial[0] &= 0x7f;
+  const serial = randomBytes(8); serial[0] = (serial[0] & 0x7f) | 0x40; // positive, and never a leading 0x00 (DER forbids that padding)
   const tbs = seq(tlv(0xa0, tlv(0x02, Buffer.from([2]))), tlv(0x02, serial), alg, name(cn, "CyberView test fixture"), seq(time(from), time(to)),
     name(cn, "CyberView test fixture"), publicKey.export({ type: "spki", format: "der" }), sanExt);
   const sig = sign(hash, tbs, privateKey), der = seq(tbs, alg, tlv(0x03, Buffer.concat([Buffer.from([0]), sig])));

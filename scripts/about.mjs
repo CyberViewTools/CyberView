@@ -19,7 +19,7 @@ const fmt = (n) => (Number.isFinite(n) && n > 0 ? n.toLocaleString("en-US") : ""
 export async function numbers() {
   let feeds = 0;
   try { feeds = (await import("./collect.mjs")).FEEDS.length; } catch { feeds = 0; }
-  const extra = readJson(join(ROOT, "config", "feeds.json"), {}); if (Array.isArray(extra.feeds)) feeds += extra.feeds.length;
+  try { const c = await import("./collect.mjs"); feeds = c.activeFeeds(c.loadFeedConfig()).length; } catch { /* counted above */ }
   let events = 0;
   const ed = join(DATA, "events");
   if (existsSync(ed)) for (const m of readdirSync(ed)) { try { events += readdirSync(join(ed, m)).filter((f) => f.endsWith(".json")).length; } catch { /* not a month */ } }

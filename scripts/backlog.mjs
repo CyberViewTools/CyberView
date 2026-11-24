@@ -17,6 +17,10 @@ import { build, isOpen } from "./fuse.mjs";
 
 // a regulator's breach notice (kind "breach-notice", scripts/breaches.mjs) is NOT a row: it is the official confirmation, read by an agent
 const ROWS = ["cve", "breach-db", "status"];
+// a crypto-hack archive row (scripts/crypto-hacks.mjs, via "slowmist-hacked") is a database row that records a theft that
+// happened, not a bare listing: it is read like a report of exploitation, never closed unread as a row
+const READ_ROWS = ["slowmist-hacked"];
+const bareRow = (l) => ROWS.includes(l.kind) && !READ_ROWS.includes(l.via);
 /** Pure: why a rule can close this story without anyone reading it, or "" when a person or agent has to look. */
 export function autoReason(s, now = Date.now()) {
   if (s.claim_only) return "";                                                    // leak-site claims are their own queue
@@ -24,7 +28,7 @@ export function autoReason(s, now = Date.now()) {
   const ageH = (now - Date.parse(s.published)) / 36e5;
   if (s.dated && ageH > 6 * 24) return "published more than six days ago: older than the map window";
   if (s.explainer) return "commentary, advice or an explainer, not an event";
-  if (s.leads.length && s.leads.every((l) => ROWS.includes(l.kind))) return "a bare database row with no report of exploitation";
+  if (s.leads.length && s.leads.every(bareRow)) return "a bare database row with no report of exploitation";
   if (s.routine && !s.tiers.includes("gov")) return "a routine vendor bulletin with no sign of exploitation";
   if (s.routine && s.publishers <= 1 && !s.incident) return "a routine advisory repeated by one agency, with no sign of exploitation";
   // the owner's rule (2026-11-19): agents read incidents, exploited flaws, official sources and anything two publishers report;

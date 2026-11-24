@@ -409,3 +409,43 @@ test("grid-news never reads Google News (its robots.txt disallows /rss/)", async
   const src = readFileSync(new URL("../../scripts/grid-news.mjs", import.meta.url), "utf8");
   assert.doesNotMatch(src, /news\.google\.com\/rss\/search/);
 });
+
+test("news-12: queries reach Africa, the Middle East, Asia, Latin America, the Caribbean, Central Asia and the Pacific", () => {
+  const langs = new Set(CFG.queries.map((q) => q.hl.split("-")[0])), gls = new Set(CFG.queries.map((q) => q.gl));
+  for (const l of ["fa", "tl", "hr", "ms", "th", "he"]) assert.ok(langs.has(l), `no ${l} query`);
+  for (const cc of ["UG", "RW", "MW", "MZ", "AO", "CM", "CD", "ML", "TG", "SD", "SY", "YE", "JO", "IR", "AF", "NP", "LK", "PE", "BO", "DO", "HN", "JM", "TT", "KG", "UZ", "MD", "FJ", "PG"])
+    assert.ok(gls.has(cc), `no query for ${cc}`);
+  // every query is one the collector will run, and each runs within a few hours of rotation
+  assert.ok(CFG.queries.every((q) => q.q.length <= 120 && /^[\w-]{2,8}$/.test(q.hl) && /^[A-Z]{2}$/.test(q.gl)));
+  assert.equal(new Set(CFG.queries.map((q) => `${q.q}|${q.gl}`)).size, CFG.queries.length, "duplicate query");
+  assert.ok(CFG.queries.length / CFG.per_run * CFG.every_minutes <= 6 * 60, "a full rotation takes over 6 hours");
+  // a country code used for places or utilities has a centre, so its reports can be drawn
+  const ccs = new Set([...ENTS.filter((e) => e.kind === "country").map((e) => e.country), ...Object.keys(CFG.country_centres)]);
+  for (const x of [...CFG.places, ...CFG.utilities]) assert.ok(ccs.has(x[1]), `no centre for ${x[1]} (${x[0]})`);
+});
+
+test("news-12: headlines in other languages and countries are classified and placed", () => {
+  const at = (t, s = "") => { const l = locate(t, s, ENTS); return l ? `${l.place}|${l.country}|${l.how}` : null; };
+  for (const [t, want] of [
+    ["Brownout sa Cebu", "Cebu|PH|place"],
+    ["Coupure de courant à Lomé ce mardi", "Lomé|TG|place"],
+    ["Load shedding in Lilongwe as ESCOM struggles", "Lilongwe|MW|place"],
+    ["انقطاع الكهرباء في إربد", "Irbid|JO|place"],
+    ["قطعی برق در مشهد", "Mashhad|IR|place"],
+    ["Corte de energía en Santa Cruz de la Sierra", "Santa Cruz de la Sierra|BO|place"],
+    ["Отключение света в Волгограде", "Volgograd|RU|place"],
+    ["Stroomstoring in Arnhem", "Arnhem|NL|place"],
+    ["Power outage hits Port Moresby", "Port Moresby|PG|place"],
+    ["Power cut in Tripoli, Libya", "Tripoli (Libya)|LY|place"],
+  ]) {
+    assert.equal(classify(t).ok, true, t);
+    assert.equal(at(t), want, t);
+  }
+  // a utility places a headline that names no place, in its own country
+  const l = locate("NamPower outage", "", ENTS);
+  assert.deepEqual([l.country, l.how, l.utility], ["NA", "utility", "NamPower"]);
+  // ambiguous city names need their country: Kingston, Ontario is not Jamaica; Tripoli alone is not placed in Libya
+  assert.equal(at("Power outage in Kingston, Ontario"), "Ontario|CA|place");
+  assert.notEqual(at("Power outage in Tripoli")?.split("|")[1], "LY");
+  assert.equal(at("JPS outage leaves Kingston, Jamaica without power"), "Kingston (Jamaica)|JM|place");
+});

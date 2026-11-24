@@ -1,0 +1,57 @@
+{
+  "action": "Seqrite publishes indicators of compromise (file hashes, the C2 IP address and URLs, a certificate hash) in its report; hunt for them and apply Seqrite's detections.",
+  "actor": "Unattributed",
+  "attack": [],
+  "category": "report",
+  "country": "Ukraine",
+  "cves": [],
+  "date": "2026-11-23",
+  "date_note": "Date of Seqrite's report; the page gives no earlier publication day. It says the phishing email was observed on 13 October 2026.",
+  "exec": "Seqrite says a phishing email aimed at a Ukrainian regional government led to a commercial remote-access trojan, Azalea Agent, which it says is sold to multiple operators.",
+  "first_seen": "2026-11-24T12:45:00Z",
+  "geo_basis": "country",
+  "lat": 50.4501,
+  "lng": 30.5234,
+  "org": "Ukrainian government bodies",
+  "pin_type": "country",
+  "place": "Ukraine",
+  "plain": "Security firm Seqrite describes a phishing campaign against Ukrainian government bodies that used a fake military financial-aid letter to install a remote-access trojan called Azalea Agent.",
+  "products": ["Azalea Agent"],
+  "report": {
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Seqrite says a phishing email was sent from a sm.gov.ua account to recipients on the Donetsk regional government domain dn.gov.ua on 13 October 2026, with a RAR archive named after a letter about redistributing a subvention for a military unit.",
+      "A shortcut disguised as a PDF downloads an executable that leads through several loader stages to the Azalea RAT.",
+      "Seqrite tracks the activity as an unattributed campaign and says it found no confirmed infrastructure overlap with previously reported clusters."
+    ],
+    "published": "2026-11-23",
+    "publisher": "Seqrite",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": ["Hunt for the indicators of compromise listed in the report."],
+    "url": "https://www.seqrite.com/blog/from-phishing-email-to-azalea-agent-uncovering-a-multi-stage-attack-on-ukrainian-government-bodies/"
+  },
+  "sector": "Government",
+  "sectors": {"values": ["government-facilities"], "basis": "stated"},
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Seqrite Blog: From Phishing Email to Azalea Agent",
+      "url": "https://www.seqrite.com/blog/from-phishing-email-to-azalea-agent-uncovering-a-multi-stage-attack-on-ukrainian-government-bodies/",
+      "published": "2026-11-23"
+    }
+  ],
+  "status": "official",
+  "summary": "Seqrite reports a phishing campaign against Ukrainian government bodies, with an email observed on 13 October 2026 carrying a RAR archive built around a military financial-assistance lure. Its multi-stage chain ends in Azalea Agent, which Seqrite describes as a commercial malware-as-a-service tool available to multiple operators. Seqrite tracks the activity as unattributed.",
+  "surface": {"value": "email-phishing", "basis": "stated"},
+  "tags": ["phishing", "malware"],
+  "title": "Seqrite: phishing campaign on Ukrainian government bodies delivers Azalea Agent trojan",
+  "updated_at": "2026-11-24T12:45:00Z",
+  "validation": {
+    "checked_at": "2026-11-24T12:45:00Z",
+    "note": "Single source: Seqrite's own report, read in full; no second publisher read.",
+    "state": "single_source"
+  }
+}

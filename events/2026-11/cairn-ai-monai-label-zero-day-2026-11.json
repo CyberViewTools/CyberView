@@ -19,7 +19,7 @@
   "action": "ENISA's record lists MONAI Label versions before 0.8.6 as affected; follow the maintainers' advisory GHSA-qc22-rmgc-vg94, which BleepingComputer links as the security update.",
   "tags": [
     "zero-day",
-    "ai"
+    "ai-enabled"
   ],
   "cves": [
     "CVE-2026-133968"
@@ -70,15 +70,19 @@
     "checked_at": "2026-11-23T20:43:00Z"
   },
   "first_seen": "2026-11-20T17:43:41Z",
-  "updated_at": "2026-11-24T01:27:18Z",
+  "updated_at": "2026-11-24T01:41:03Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-23T21:41:19Z",
+    "state": "corrected",
+    "at": "2026-11-24T01:41:04Z",
     "first_at": "2026-11-20T17:46:01Z",
-    "note": "Compared 11 minutes, 8-10 Sept dates, root access, moderate-confidence China-nexus attribution, CVE-2026-133968 before 0.8.6, conflicting fix status against BleepingComputer, The Record, Startup Fortune and ENISA EUVD",
-    "flags": []
+    "note": "invalid tag ai changed to ai-enabled; evidence quote for the 11 minutes figure added",
+    "flags": [],
+    "categories": [
+      "figure",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-23T21:41:19Z",
+  "qa_checked_at": "2026-11-24T01:41:04Z",
   "sectors": {
     "values": [
       "education"
@@ -96,6 +100,12 @@
       "epss": 0.03664,
       "kev": true,
       "kev_due": "2026-11-26"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "quote": "within 11 minutes, they went from mapping the application's API to exploiting the vulnerability"
     }
   ]
 }

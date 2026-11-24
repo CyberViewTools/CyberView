@@ -6,24 +6,25 @@ send security headers, so `frame-ancestors`, `X-Content-Type-Options` and the li
 behind Cloudflare fixes both.
 
 The repository is ready: the address lives in one place (`config/site.json` `site_url`, overridden by the repository
-variable `SITE_URL`, read by `scripts/lib/site-url.mjs` and every workflow). Replace `cyberview.example` below with the
-real domain.
+variable `SITE_URL`, read by `scripts/lib/site-url.mjs` and every workflow). The owner's domain is `cyberview.tools`
+(2026-11-24). Do NOT change `site_url` or `SITE_URL` until step 2 shows the site answering on https://cyberview.tools,
+or the guard, the monitor and the feeds would point at an address that does not answer yet.
 
 ## 1. Domain and DNS (Cloudflare dashboard)
 1. Buy or transfer the domain on Cloudflare (Domain Registration), or add an existing domain to Cloudflare and switch
    its nameservers.
-2. DNS: for the apex `cyberview.example`, add four `A` records to GitHub Pages: `185.199.108.153`, `185.199.109.153`,
+2. DNS: for the apex `cyberview.tools`, add four `A` records to GitHub Pages: `185.199.108.153`, `185.199.109.153`,
    `185.199.110.153`, `185.199.111.153`, and four `AAAA` records: `2606:50c0:8000::153`, `2606:50c0:8001::153`,
    `2606:50c0:8002::153`, `2606:50c0:8003::153`. For `www`, a `CNAME` to `xanderhutch.github.io`.
    Leave them **DNS only (grey cloud)** for now, so GitHub can issue its certificate.
 
 ## 2. GitHub
-1. Settings → Pages → Custom domain: `cyberview.example`. Wait for the DNS check and the certificate, then tick
+1. Settings → Pages → Custom domain: `cyberview.tools`. Wait for the DNS check and the certificate, then tick
    **Enforce HTTPS**.
 2. Settings → Pages: verify the domain for the account (Settings → Pages → Verified domains) so nobody else can claim it.
-3. Settings → Secrets and variables → Actions → Variables: `SITE_URL` = `https://cyberview.example`.
-4. In the repository: set `"site_url": "https://cyberview.example"` in `config/site.json` (a pull request), and add the
-   host to `V.BASE_HOSTS` in `site/scanner-lib.js` (the scanner report's own-site link allowlist).
+3. Settings → Secrets and variables → Actions → Variables: `SITE_URL` = `https://cyberview.tools`.
+4. In the repository: set `"site_url": "https://cyberview.tools"` in `config/site.json` (a pull request).
+   `cyberview.tools` is already in `V.BASE_HOSTS` in `site/scanner-lib.js` (the scanner report's own-site link allowlist).
    GitHub redirects `xanderhutch.github.io/CyberView/...` to the new domain by itself.
 
 ## 3. Cloudflare proxy and headers
@@ -42,7 +43,7 @@ real domain.
    that, or the site's freshness check will show old data.
 
 ## 4. Check
-- `curl -sI https://cyberview.example/ | grep -i -E "frame|nosniff|referrer|strict-transport"` shows the headers.
+- `curl -sI https://cyberview.tools/ | grep -i -E "frame|nosniff|referrer|strict-transport"` shows the headers.
 - `node scripts/guard.mjs` and the monitor (`SITE_URL` set) report healthy against the new address.
 - The `.well-known/security.txt` is now at the origin root, where scanners look for it.
 - If accounts are turned on later, add the new domain to the Supabase project's allowed redirect URLs.

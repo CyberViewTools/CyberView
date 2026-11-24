@@ -40,17 +40,52 @@
   "exec": "A new extortion group is reportedly using phone-based phishing against SSO logins; the seven victims it lists are unverified claims.",
   "action": "ReversingLabs advises phishing-resistant authentication such as FIDO2 keys or passkeys, verifying identity before credential or MFA resets, and hunting DNS, proxy and identity logs from October 21, 2026 onward.",
   "impact": "ReversingLabs says the leak-site listings are unverified claims.",
-  "tags": ["phishing", "identity"],
+  "tags": [
+    "phishing",
+    "identity"
+  ],
   "cves": [],
-  "products": ["Okta", "NetIQ"],
-  "attack": ["vishing", "SSO credential phishing"],
+  "products": [
+    "Okta",
+    "NetIQ"
+  ],
+  "attack": [
+    "vishing",
+    "SSO credential phishing"
+  ],
   "sources": [
-    {"name": "ReversingLabs", "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-sso-vishing-campaign-associated-with-emerging-inception-extortion-group", "published": "2026-11-23"}
+    {
+      "name": "ReversingLabs",
+      "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-sso-vishing-campaign-associated-with-emerging-inception-extortion-group",
+      "published": "2026-11-23"
+    }
   ],
   "source_tier": "primary",
-  "validation": {"state": "single_source", "checked_at": "2026-11-24T08:43:29Z", "note": "Vendor research post by ReversingLabs (primary); no second publisher read."},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T08:43:29Z",
+    "note": "Vendor research post by ReversingLabs (primary); no second publisher read."
+  },
   "first_seen": "2026-11-24T08:43:29Z",
   "updated_at": "2026-11-24T08:43:29Z",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "identity", "basis": "stated"}
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "identity",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T09:12:32Z",
+    "first_at": "2026-11-24T09:12:32Z",
+    "note": "Compared title, date, seven unverified claims, almost certainly wording, products, recommendations and Oct 21 window with the ReversingLabs post; actor-unsourced flag is a false positive (summary says ReversingLabs).",
+    "flags": [
+      "actor-unsourced"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T09:12:32Z"
 }

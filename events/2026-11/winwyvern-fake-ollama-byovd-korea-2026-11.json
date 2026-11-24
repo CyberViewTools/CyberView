@@ -1,0 +1,59 @@
+{
+  "title": "AhnLab: WinWyvern malware spread via fake Ollama site uses BYOVD to disable Korean security products",
+  "date": "2026-11-23",
+  "date_note": "The AhnLab ASEC post gives only its own publication day; no earlier date is stated.",
+  "category": "incident",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "South Korean users and domestic security products (AhnLab ASEC research)",
+  "sector": "Individuals / security software",
+  "country": "South Korea",
+  "place": "South Korea",
+  "lat": 37.57,
+  "lng": 126.98,
+  "geo_basis": "Country stated by the source (South Korean users and domestic security products); Seoul used as a country-level pin",
+  "pin_type": "country",
+  "summary": "AhnLab's ASEC says malware called WinWyvern is spread through a Korean-language fake download site imitating the official Ollama AI tool page. According to ASEC, the installer also installs genuine Ollama components, and a malicious DLL uses the BYOVD technique with a signed anti-cheat driver to load WinWyvern. ASEC says WinWyvern patches the memory of domestic antivirus products to disable detection and blocking.",
+  "plain": "AhnLab says a fake Ollama download site in Korean spreads malware that abuses a legitimate driver to switch off Korean antivirus products.",
+  "exec": "AhnLab reports malware disguised as an AI tool that disables domestic security products in South Korea, which could let follow-on malware go undetected.",
+  "action": "AhnLab advises caution with disguised AI tool download sites; it says the latest AhnLab V3 (Lite) is not affected by the memory patching and can detect and remove the components.",
+  "tags": [
+    "malware"
+  ],
+  "cves": [],
+  "products": [
+    "Ollama",
+    "AhnLab V3"
+  ],
+  "attack": [
+    "BYOVD",
+    "fake download site"
+  ],
+  "sources": [
+    {
+      "name": "AhnLab ASEC Blog",
+      "url": "https://asec.ahnlab.com/ko/96707/",
+      "published": "2026-11-23"
+    }
+  ],
+  "source_tier": "primary",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T23:30:00Z",
+    "note": "Only AhnLab's own ASEC research post was read; no independent publisher found."
+  },
+  "first_seen": "2026-11-24T23:28:41Z",
+  "updated_at": "2026-11-24T23:28:41Z",
+  "sectors": {
+    "values": [
+      "individuals",
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "stated"
+  },
+  "evidence": []
+}

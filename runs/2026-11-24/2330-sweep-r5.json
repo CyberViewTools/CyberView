@@ -1,47 +1,74 @@
 {
-  "job": "sweep-r5",
-  "started_at": "2026-11-24T22:30:00Z",
-  "finished_at": "2026-11-24T22:40:00Z",
+  "job": "researcher",
+  "started_at": "2026-11-24T23:25:00Z",
+  "finished_at": "2026-11-24T23:32:00Z",
   "model": "claude-sonnet-5-5",
-  "searches": [
-    "CIA open source intelligence network breach"
-  ],
+  "searches": [],
   "pages_read": [
     {
-      "url": "https://www.pinpointnews.co.kr/news/articleView.html?idxno=507716",
-      "title": "pinpointnews CIA hack",
-      "used_in": "none (already on file)"
+      "url": "https://www.yangtse.com/news/sh/202611/t20261124_415556.html",
+      "title": "Fake DeepSeek site spreads Yinhu Trojan",
+      "used_in": "fake-deepseek-site-yinhu-trojan-2026-11"
+    },
+    {
+      "url": "https://katadata.co.id/digital/teknologi/6b03db88dc8f8/peretas-kembali-targetkan-sistem-fbi-database-kriminal-jadi-sasaran-berikutnya",
+      "title": "FBI NCIC",
+      "used_in": "closed as already on file"
+    },
+    {
+      "url": "https://status.telesign.com/incidents/sgw02mfr55kp",
+      "title": "Telesign Phone ID Sim Swap CA",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-124446",
+      "title": "OpenEMR CVE",
+      "used_in": "open lead"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-134354",
+      "title": "rclone CVE",
+      "used_in": "skipped"
     }
   ],
-  "added": [],
+  "added": [
+    "fake-deepseek-site-yinhu-trojan-2026-11"
+  ],
   "updated": [],
   "skipped": [
     {
-      "title": "Steven Hack obituary (5 stories)",
-      "url": "",
-      "reason": "not a cyber event"
+      "title": "CVE-2025-70341 / ffmpeg / gonc Sploitus listings",
+      "url": "https://sploitus.com",
+      "reason": "exploit/tool listings, no incident"
     },
     {
-      "title": "2027 trends",
-      "url": "",
-      "reason": "opinion piece"
+      "title": "CVE-2026-134354 rclone",
+      "url": "https://securitycontext.com/cve/CVE-2026-134354",
+      "reason": "low CVSS 3.3, no exploitation"
     },
     {
-      "title": "CVE-2026-135809 SurveyKing",
-      "url": "https://vuldb.com/vuln/442773",
-      "reason": "niche, no exploitation evidence; VulDB 403"
+      "title": "Telesign status",
+      "url": "https://status.telesign.com/incidents/sgw02mfr55kp",
+      "reason": "minor, closed as duplicate"
     },
     {
-      "title": "CIA story ed6e518e",
+      "title": "FBI NCIC",
       "url": "",
-      "reason": "on file as cia-odni-osint-network-breach-2026-11"
+      "reason": "already on file fbi-ncic-apparent-breach-2026-11"
     }
   ],
-  "open_leads": [],
-  "failed_sites": [
-    "vuldb.com 403"
+  "open_leads": [
+    {
+      "title": "OpenEMR CVE-2026-124446 path traversal, fixed in 8.3.0",
+      "url": "https://securitycontext.com/cve/CVE-2026-124446",
+      "note": "Aggregator says VulnCheck lists it as known exploited since 2026-11-10; GHSA-x2vr-jgg8-c57c returned 403; needs vendor advisory or VulnCheck page",
+      "priority": "medium"
+    }
   ],
-  "notes": "",
-  "worker_role": "researcher-deep",
+  "failed_sites": [
+    "github.com advisory (403)"
+  ],
+  "notes": "Sploitus items not opened.",
+  "worker_role": "researcher",
   "worker_model": "sonnet"
 }

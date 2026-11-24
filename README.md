@@ -20,7 +20,7 @@ CyberView is always growing; its full, current description is generated from [`c
 - **Runs itself, in the open.** A [status page](https://cyberview.tools/status.html) lists every routine, when it last ran and what it found; a collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
 - **Globe and context layers.** Switch the map to a globe you can turn (G), and open the layers panel (L) for internet-disruption signals (IODA) and orange and red disaster alerts (GDACS). Each layer shows its source, its age and whether it is live, stale or offline. They are context, never counted as cyber events.
 - **Optional accounts.** Sign in with an email link to sync your environment across devices (encrypted in your browser with your own passphrase) and get email alerts when something matches it. Export or delete everything yourself at any time. See [privacy](https://cyberview.tools/privacy.html) and [docs/accounts.md](docs/accounts.md).
-- **Static site.** One HTML page reading one JSON bundle. No tracking, no cookies, no account needed; your environment stays in your browser unless you choose to sync it.
+- **Static site.** One HTML page reading one JSON bundle. No cookies, no advertising, no account needed; page views are counted with cookieless Cloudflare Web Analytics (not on the Vulnerabilities or account pages, see the privacy page); your environment stays in your browser unless you choose to sync it.
 
 ## How it stays current
 

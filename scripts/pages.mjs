@@ -7,6 +7,7 @@ import { join, basename } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
 import { SITE_URL } from "./lib/site-url.mjs";
+import { withAnalytics } from "./lib/analytics.mjs";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'";
@@ -50,7 +51,7 @@ export function render(name, body, cfg, page = {}) {
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="${page.connect ? CSP.replace("connect-src 'self'", `connect-src 'self' ${page.connect}`) : CSP}">${(page.meta || []).map(([n, v]) => `\n<meta name="${n}" content="${esc(v)}">`).join("")}
+<meta http-equiv="Content-Security-Policy" content="${withAnalytics(page.connect ? CSP.replace("connect-src 'self'", `connect-src 'self' ${page.connect}`) : CSP, name + ".html")}">${(page.meta || []).map(([n, v]) => `\n<meta name="${n}" content="${esc(v)}">`).join("")}
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">

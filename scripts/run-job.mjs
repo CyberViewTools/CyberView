@@ -134,7 +134,11 @@ export function workerEnv(served, key, base = process.env) {
   // network proxy adds GitHub's real credentials to every request itself (gh works with any token value), so the worker
   // needs no real token in its environment.
   for (const k of WORKER_ENV_BLANK) env[k] = "";
-  for (const k of ["GH_TOKEN", "GITHUB_TOKEN"]) env[k] = "proxy-supplied";
+  // On a GitHub Actions runner (.github/workflows/ai-launch.yml) there is no proxy to add GitHub's credentials, so the
+  // workflow hands workers its own short-lived, permission-scoped job token as CYBERVIEW_WORKER_GH_TOKEN (the verify desk,
+  // moderator and improver run gh). That token ends with the job; it is the only GitHub credential a worker ever sees.
+  const ghWorker = String(base.CYBERVIEW_WORKER_GH_TOKEN || ""); delete env.CYBERVIEW_WORKER_GH_TOKEN;
+  for (const k of ["GH_TOKEN", "GITHUB_TOKEN"]) env[k] = ghWorker || "proxy-supplied";
   return env;
 }
 /** Set empty in every worker (a deleted one can be put back by the cloud session). */

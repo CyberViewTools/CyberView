@@ -4,6 +4,18 @@
 All 18 jobs run as "CyberView L: ..." scheduled tasks into ONE new launcher session, `session_013C7AZ885AhztvsH9xiZ9PL` (Haiku, repo attached, ~100 K tokens at start instead of 440-530 K), with the one-call prompt below. Every "CyberView 4: ..." task and both standby tasks are DISABLED (not deleted), and the Guardian now points at the launcher. This session still grows slowly (a few K tokens a wake); replace it with the fresh-session routines below, or start a new launcher session and re-point the tasks when it passes ~250 K.
 
 
+## Moving the launches to GitHub Actions (ai-launch.yml, 2026-11-24)
+The launcher session re-reads its whole history on every wake (measured 24 Nov: 320 K -> 690 K tokens between 01:21 and 03:21 UTC, about $0.60-0.70 per research wake on a fresh container, outside the usage ledger). `.github/workflows/ai-launch.yml` makes the same one call, `node scripts/dispatch.mjs <job> --exec`, on a GitHub runner with no session, on the same schedules (tests/unit/ai-launch.test.mjs keeps them equal to routines.json). Workers sign in with the owner's subscription through the `CLAUDE_CODE_OAUTH_TOKEN` repository secret; `ANTHROPIC_API_KEY` is never set, so the API bills only through the existing fallback. Workers get the job's own short-lived GitHub token for `gh` (run-job.mjs workerEnv, `CYBERVIEW_WORKER_GH_TOKEN`).
+
+Cutover, in this order (never run both at once):
+1. Owner: `claude setup-token` on their own machine; add the result as repository secret `CLAUDE_CODE_OAUTH_TOKEN` (optional: `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` too, for the API fallback).
+2. Actions -> AI launch -> Run workflow with job `backlog` (cheap); check the run summary ends with "CyberView backlog: ..." and a data commit.
+3. Disable every "CyberView L: ..." scheduled task (do not delete), then set repository variable `AI_LAUNCH` = `actions`.
+4. Re-point the Guardian: its step 4a messages the launcher session; replace it with "start the AI launch workflow for sweep" (`gh workflow run ai-launch.yml -f job=sweep`).
+5. After a day with the pipeline check green, archive the launcher session.
+Rollback: unset `AI_LAUNCH` and re-enable the "CyberView L:" tasks.
+Known limits: GitHub can start scheduled runs several minutes late at busy times; pull requests opened with the job token (scripts/propose.mjs) do not start CI by GitHub's design, so a job's config/docs proposal waits for a person to re-run CI. The community moderator (routines.json `moderator`, `10 */3 * * *`) has no "CyberView L:" task today and is not added here either.
+
 Each scheduled job runs in its OWN fresh session, created in the claude.ai Routines screen with:
 - Repository: xanderhutch/cyberview, Environment: cyberview, Model: Haiku (the session only launches a script).
 - "Start a new session each run" (not one persistent session: that is what grew to 440-530 K tokens and cost ~$0.25 a wake).

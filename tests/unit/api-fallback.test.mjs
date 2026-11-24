@@ -167,3 +167,14 @@ test("workers never inherit the fallback key under its own name or cloud credent
     assert.equal(e.PATH, "/bin");
   }
 });
+
+test("on a GitHub Actions runner workers get the job token handed over as CYBERVIEW_WORKER_GH_TOKEN, nothing else", () => {
+  const base = { PATH: "/bin", GH_TOKEN: "ghs_parent", CYBERVIEW_WORKER_GH_TOKEN: "ghs_job_scoped", CLAUDE_CODE_OAUTH_TOKEN: "oauth-x" };
+  const e = workerEnv("subscription", "", base);
+  assert.equal(e.GH_TOKEN, "ghs_job_scoped"); assert.equal(e.GITHUB_TOKEN, "ghs_job_scoped");
+  assert.ok(!("CYBERVIEW_WORKER_GH_TOKEN" in e));
+  assert.equal(e.CLAUDE_CODE_OAUTH_TOKEN, "oauth-x");        // the worker signs in to the subscription with it
+  assert.ok(!("ANTHROPIC_API_KEY" in e));
+  // without the hand-over (a cloud session) the placeholder stays: the proxy supplies GitHub's credentials there
+  assert.equal(workerEnv("subscription", "", { GH_TOKEN: "ghs_parent" }).GH_TOKEN, "proxy-supplied");
+});

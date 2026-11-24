@@ -1,0 +1,144 @@
+name: AI launch
+
+# Starts the scheduled Claude jobs (research loop, desks, brief, analysis ...) on a GitHub runner instead of waking a
+# long-lived Claude Code session. Each run is ONE shell call, `node scripts/dispatch.mjs <job> --exec`, exactly what the
+# "CyberView L: <job>" scheduled tasks ask the launcher session to run (docs/orchestration/ROUTINES.md); the script then
+# starts its own short `claude -p` workers (scripts/run-job.mjs) and commits through scripts/finish.mjs. No Claude
+# session sits in between, so nothing re-reads a growing history on every wake (owner, 2026-11-24).
+#
+# Sign-in: repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`): the workers use the owner's Claude
+# subscription, as they do in the launcher session. ANTHROPIC_API_KEY is never set here, so nothing bills the API except
+# the existing fallback (scripts/lib/usage.mjs), and only if the optional CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY secret
+# exists, within usage_budget.api_fallback.monthly_usd_cap.
+#
+# Switch: scheduled runs do nothing until the repository variable AI_LAUNCH is "actions", so this can merge while the
+# launcher session still runs the jobs; set it when the "CyberView L:" scheduled tasks are disabled, never both at once.
+# A manual run (Run workflow) always runs, for testing one job.
+#
+# Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
+on:
+  schedule:
+    - cron: "5,20,35,50 * * * *"   # sweep (research loop)
+    - cron: "55 * * * *"           # backlog
+    - cron: "25 */2 * * *"         # review
+    - cron: "31 */3 * * *"         # analyst
+    - cron: "13 */6 * * *"         # triage
+    - cron: "47 11,23 * * *"       # brief
+    - cron: "19 3,15 * * *"        # verify
+    - cron: "27 4,16 * * *"        # advisory
+    - cron: "43 6 * * *"           # regional
+    - cron: "37 9 * * *"           # improver
+    - cron: "53 10 * * *"          # analysis
+    - cron: "17 13 * * *"          # report-review
+    - cron: "5 8 * * 1"            # security-review
+    - cron: "37 15 * * 5"          # tabletop
+    - cron: "13 5 * * 0"           # scout
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Job to run once"
+        required: true
+        type: choice
+        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout]
+
+permissions:
+  contents: write         # data commits on the data branch
+  issues: write           # pipeline alerts; verify desk and moderator replies (scripts/issues.mjs, scripts/chat.mjs)
+  actions: write          # finish.mjs starts the deploy after pushing data
+  pull-requests: write    # finish.mjs proposes config/ and docs/ changes (scripts/propose.mjs)
+
+# one run per job at a time (a second sweep waits for the first; the research loop's leader lease covers the rest);
+# different jobs may overlap, as they do with the data workflows, and git-sync heals their data commits
+concurrency:
+  group: ai-launch-${{ github.event.schedule || inputs.job }}
+  cancel-in-progress: false
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: github.event_name == 'workflow_dispatch' || vars.AI_LAUNCH == 'actions'
+    env:
+      HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+    steps:
+      - name: Pick the job
+        id: pick
+        run: |
+          case "${{ github.event.schedule }}" in
+            "5,20,35,50 * * * *") job=sweep ;;
+            "55 * * * *")         job=backlog ;;
+            "25 */2 * * *")       job=review ;;
+            "31 */3 * * *")       job=analyst ;;
+            "13 */6 * * *")       job=triage ;;
+            "47 11,23 * * *")     job=brief ;;
+            "19 3,15 * * *")      job=verify ;;
+            "27 4,16 * * *")      job=advisory ;;
+            "43 6 * * *")         job=regional ;;
+            "37 9 * * *")         job=improver ;;
+            "53 10 * * *")        job=analysis ;;
+            "17 13 * * *")        job=report-review ;;
+            "5 8 * * 1")          job=security-review ;;
+            "37 15 * * 5")        job=tabletop ;;
+            "13 5 * * 0")         job=scout ;;
+            *)                    job="${{ inputs.job }}" ;;
+          esac
+          case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
+          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "Job: $job" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Skip when no Claude sign-in is set up
+        if: env.HAS_OAUTH != 'true'
+        run: echo "Repository secret CLAUDE_CODE_OAUTH_TOKEN is not set (run \`claude setup-token\` and add it); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@v4
+        if: env.HAS_OAUTH == 'true'
+        with:
+          ref: main
+          fetch-depth: 50
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        if: env.HAS_OAUTH == 'true'
+        uses: ./.github/actions/data
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_OAUTH == 'true'
+        with:
+          node-version: "22"
+
+      - name: Install Claude Code
+        if: env.HAS_OAUTH == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
+
+      - name: Run the job
+        id: run
+        if: env.HAS_OAUTH == 'true'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          # handed to workers as their GH_TOKEN by scripts/run-job.mjs workerEnv (no proxy adds it on a runner)
+          CYBERVIEW_WORKER_GH_TOKEN: ${{ github.token }}
+          JOB: ${{ steps.pick.outputs.job }}
+        run: |
+          unset ANTHROPIC_API_KEY
+          node scripts/dispatch.mjs "$JOB" --exec 2>&1 | tee out.txt
+          { echo '```'; tail -15 out.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          # DISPATCH means the job needs a session's judgment (headless unavailable); a runner has none, so say so loudly
+          if grep -q '^DISPATCH' out.txt; then echo "::error::$JOB needs a Claude session (headless unavailable on this runner)"; exit 1; fi
+
+      - name: Check what was pushed
+        if: env.HAS_OAUTH == 'true' && always()
+        run: |
+          d=.; [ -e data/.git ] && d=data
+          git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$(git -C "$d" status --porcelain)" ]; then echo "Uncommitted data was left behind (the next run commits it with finish.mjs --force):" >> "$GITHUB_STEP_SUMMARY"; git -C "$d" status --short | head -20 >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Alert on failure
+        if: failure() && env.HAS_OAUTH == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**AI launch failed: ${{ steps.pick.outputs.job }}** (run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." > report.md
+          bash .github/scripts/alert.sh job-failure "AI launch failing: ${{ steps.pick.outputs.job }}" report.md failing

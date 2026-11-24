@@ -1,5 +1,5 @@
 {
-  "action": "Warn staff not to click 'restore messages' links in outage emails. Search mail logs for Microsoft's published sender domains and subject patterns, remove delivered copies, and reset passwords and revoke sessions for anyone who clicked and signed in.",
+  "action": "Microsoft advises searching mail telemetry for the published sender domains and subject patterns, quarantining matches, and, for anyone who may have entered credentials, resetting the password and revoking sessions and tokens.",
   "actor": "",
   "attack": [
     "T1566.002 Phishing: Spearphishing Link",
@@ -18,11 +18,11 @@
   "org": "Microsoft 365 customers",
   "pin_type": "none",
   "place": "",
-  "plain": "Scammers are sending fake Microsoft 365 notices that mention the recent outage and threaten to delete held emails.",
+  "plain": "Scammers are sending fake Microsoft 365 service notices that claim messages were held after an outage, according to Microsoft.",
   "products": [
     "Microsoft 365"
   ],
-  "qa_checked_at": "2026-11-19T05:12:40Z",
+  "qa_checked_at": "2026-11-24T13:43:17Z",
   "report": {
     "doc_id": "",
     "iocs_available": true,
@@ -67,7 +67,7 @@
     "phishing"
   ],
   "title": "Phishing campaign uses the Microsoft 365 outage as a lure",
-  "updated_at": "2026-11-24T13:15:03Z",
+  "updated_at": "2026-11-24T13:43:30Z",
   "validation": {
     "checked_at": "2026-11-17T23:58:00Z",
     "note": "Reviewed against the original Microsoft Threat Intelligence report. The incident number EX1550543 appears only in an AI-assisted forum post, not in Microsoft's post, so it is not asserted here. KnowBe4 Threat Lab (24 November) independently reports outage-themed phishing on November 13.",
@@ -76,9 +76,18 @@
   "date_note": "Date of Microsoft's post; the campaign was observed on November 13.",
   "review": {
     "state": "corrected",
-    "at": "2026-11-19T05:12:40Z",
-    "note": "EX1550543 and 'Microsoft says not a cyberattack' are not in Microsoft's post (only an AI-assisted forum page); removed them, dropped that source, retitled, fixed publish date to Nov 16",
-    "flags": []
+    "at": "2026-11-24T13:43:17Z",
+    "first_at": "2026-11-19T05:12:40Z",
+    "note": "plain said 'threaten to delete held emails' (not in summary or source); action now names Microsoft and matches its advice (credentials 'may have' been entered). Date, 468x figure and status checked against Microsoft and KnowBe4.",
+    "flags": [
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "misstated"
+    ]
   },
   "sectors": {
     "values": [

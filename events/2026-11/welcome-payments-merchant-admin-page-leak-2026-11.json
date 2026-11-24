@@ -9,7 +9,7 @@
   "products": [],
   "time_basis": "reported",
   "first_seen": "2026-11-24T02:42:30Z",
-  "updated_at": "2026-11-24T06:12:00Z",
+  "updated_at": "2026-11-24T06:25:02Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -31,7 +31,7 @@
   "summary": "Daily SECU reports that Welcome Payments announced a leak of payment-service users' data after abnormal access to its merchant admin page from 4 November 11:00 to 6 November 08:00. A second notice on 24 November corrected the scale from 1,388 to 1,326 cases (건). The company says card numbers, passwords, expiry dates and CVC were not leaked and the leaked data alone cannot enable unauthorized payments.",
   "plain": "Daily SECU reports Welcome Payments told users that data such as names, phone numbers and payment details leaked via its merchant admin page. The company says card numbers and CVC codes were not leaked. The scale is 1,326 cases.",
   "exec": "A Korean payment gateway says abnormal access to its merchant admin page exposed payment-service users' data, now put at 1,326 cases; the company says card numbers were not leaked.",
-  "action": "No action needed; for awareness.",
+  "action": "Welcome Payments, per ZDNet Korea, urges users to be careful that the leaked data is not misused for voice phishing and smishing.",
   "sources": [
     {
       "name": "Daily SECU (Korea), 24 Nov 2026",
@@ -74,11 +74,18 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T02:54:56Z",
+    "state": "corrected",
+    "at": "2026-11-24T06:25:12Z",
     "first_at": "2026-11-24T02:54:56Z",
-    "note": "Compared access window, 1,388 to 1,326 correction, not-leaked data and dates against Daily SECU; evidence quotes found",
-    "flags": []
+    "note": "action advice: said no action although the company urged caution against voice phishing and smishing (ZDNet Korea); now states it. Dates, 1,388 to 1,326, not-leaked data match Daily SECU and ZDNet. possible-duplicate flag with KIS/NHN KCP is false: different companies on one ZDNet article.",
+    "flags": [
+      "possible-duplicate"
+    ],
+    "categories": [
+      "overstated",
+      "action",
+      "figure"
+    ]
   },
-  "qa_checked_at": "2026-11-24T02:54:56Z"
+  "qa_checked_at": "2026-11-24T06:25:12Z"
 }

@@ -260,7 +260,7 @@ export const FEEDS = [
 // Extra feeds come from config/feeds.json (the source scout's hand-kept list, with its retired and watch lists) and from the
 // shards in config/feeds.d/*.json (the bulk source lists, one file per region or sector, each {_note, first_run_hours?, feeds}).
 // Every entry is checked by scripts/feed-check.mjs before it is added (robots.txt, parses, recent items, publisher's own links).
-export const MAX_EXTRA = 5000;
+export const MAX_EXTRA = 10000;
 /** The merged feed config: config/feeds.json plus every shard in config/feeds.d. A broken shard is skipped, never fatal.
  *  A shard's first_run_hours is copied onto each of its feeds (bulk additions file little on their first run). */
 export function loadFeedConfig(root = ROOT) {

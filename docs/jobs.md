@@ -423,7 +423,7 @@ STEPS:
 5. Status pages: `node scripts/status-pages.mjs status` names every provider page in config/status-pages.json that failed its last read. Repair a moved feed (same provider, its own machine-readable feed), and add up to 3 providers that many people depend on (cloud, CDN, DNS, payment, telecom), each only after reading its robots.txt (a disallowed feed or one that refuses automated readers goes under "skipped" with the reason and the date, never fetched) and after `node scripts/status-pages.mjs collect <id>` reads it. Give each a tier (1 only for providers a very large share of the internet depends on) and robots_checked.
 6. Run `node scripts/collect.mjs --test` (a dry run; set COLLECT_BUDGET_S=60) once to confirm nothing broke.
 RULES: never add aggregators that republish others' work without credit, paywalled feeds, social-media accounts, anonymous blogs, leak sites, or anything needing a key or login; never loosen a rule about sources.
-LIMITS: at most 5,000 extra feeds (config/feeds.json and config/feeds.d together; scripts/collect.mjs MAX_EXTRA) and 60 queries in total; retire the weakest before adding past that. A shard's feeds are retired like any other: their name in config/feeds.json "retired".
+LIMITS: at most 10,000 extra feeds (config/feeds.json and config/feeds.d together; scripts/collect.mjs MAX_EXTRA) and 60 queries in total; retire the weakest before adding past that. A shard's feeds are retired like any other: their name in config/feeds.json "retired".
 DONE WHEN: every added feed passed feed-check.mjs in this run, and every retired one names its reason.
 TIMESTAMP: last_scout_at, scout_note (one line: repaired, retired, added by region).
 ```

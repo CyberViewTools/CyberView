@@ -1,33 +1,39 @@
 {
-  "job": "update-u1",
-  "started_at": "2026-11-24",
-  "finished_at": "2026-11-24",
+  "job": "update",
+  "started_at": "2026-11-24T00:00:00Z",
+  "finished_at": "2026-11-24T00:05:00Z",
   "model": "claude-sonnet-5-5",
   "searches": [],
   "pages_read": [
     {
-      "url": "https://frenchbreaches.com/blog/des-numeros-de-cartes-bancaires-et-leurs-cryptogrammes-voles-lors-du-piratage-de-cleverbridge",
-      "title": "FrenchBreaches Cleverbridge",
-      "used_in": "unchanged"
+      "url": "https://note.com/phoenixs/n/n72f317caca44?hl=en",
+      "title": "note.com blog on MONAI Label/MailAssure KEV",
+      "used_in": "none (unchanged)"
     }
   ],
   "added": [],
   "updated": [],
   "unchanged": [
-    "cleverbridge-payment-card-data-breach-2026-11"
+    "cairn-ai-monai-label-zero-day-2026-11"
   ],
   "unrelated": [],
-  "skipped": [],
+  "skipped": [
+    {
+      "title": "note.com blog",
+      "url": "https://note.com/phoenixs/n/n72f317caca44?hl=en",
+      "reason": "personal blog relaying Amazon/CISA; KEV listing already in cve_meta; its claim that 0.8.6 is a security release is not confirmed by a primary page"
+    }
+  ],
   "open_leads": [
     {
-      "title": "The Register Cleverbridge report",
-      "url": "",
-      "note": "frenchbreaches relays The Register for extra fields (email, billing address, phone; CVV only in a minority of cases); not read, so not added",
-      "priority": "low"
+      "title": "MONAI Label 0.8.6 release",
+      "url": "https://github.com/Project-MONAI/MONAILabel",
+      "note": "blog says 0.8.6 is the fixed security release; verify on maintainers' page or CISA KEV entry to settle the fix-status discrepancy",
+      "priority": "medium"
     }
   ],
   "failed_sites": [],
-  "notes": "Relay page; no new sourced fact.",
-  "worker_role": "updater",
+  "notes": "No event change.",
+  "worker_role": "updater-deep",
   "worker_model": "sonnet"
 }

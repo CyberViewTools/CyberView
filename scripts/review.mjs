@@ -4,7 +4,9 @@
 // checks only a reader can do (does the source really say this?).
 //   node scripts/review.mjs queue [--limit 30] [--json]   events added or changed in the last 72 hours that have no review
 //                                                         of their current version: any waiting over 20 minutes first
-//                                                         (oldest first), then highest risk, each with its flags
+//                                                         (oldest first), then highest risk, each with its flags. The output is
+//                                                         one summary line, then the shown items grouped Critical (severity 3),
+//                                                         High (exploited, patch immediately, or claimed), Routine (tier())
 //   node scripts/review.mjs flags <id>                    the mechanical flags for one event
 //   node scripts/review.mjs pass <id> "<what was checked>"            reviewed against its sources; nothing wrong
 //   node scripts/review.mjs corrected <id> "<what was wrong and is now fixed>"   reviewed; the reviewer fixed the record first
@@ -113,6 +115,24 @@ export function classifyCorrection(note) {
   const text = parts.join(" ");
   const out = ERROR_TYPES.filter((t) => t.re.test(text)).map((t) => t.key);
   return out.length || !text.trim() ? out : ["other"];
+}
+
+/** Display tier for the queue listing (display only; the queue order itself is unchanged, see order()).
+ *  critical: severity 3. high: known or public exploitation, an official "patch immediately", or an unconfirmed claim.
+ *  routine: everything else. */
+export const TIERS = ["critical", "high", "routine"];
+const EXPLOITED = /\b(actively exploited|exploited in the wild|known exploited|being exploited|patch immediately)\b/i;
+export function tier(e) {
+  if (Number(e.severity) >= 3) return "critical";
+  const kev = (e.cve_meta || []).some((c) => c && c.kev);
+  if (kev || EXPLOITED.test(`${e.title || ""} ${e.summary || ""} ${e.action || ""}`) || e.status === "claimed") return "high";
+  return "routine";
+}
+/** Pure: group queue rows ({e}) by tier, keeping their order inside each group. -> {critical, high, routine} arrays + counts. */
+export function groupByTier(rows) {
+  const g = { critical: [], high: [], routine: [] };
+  for (const r of rows) g[tier(r.e)].push(r);
+  return { groups: g, counts: { critical: g.critical.length, high: g.high.length, routine: g.routine.length } };
 }
 
 /** Risk order for the queue: high severity, more flags, serious flags first. */
@@ -246,9 +266,15 @@ function main() {
   }
   if (cmd === "queue") {
     const q = queue(), li = process.argv.indexOf("--limit"), lim = li > 0 ? Number(process.argv[li + 1]) : 30;
-    if (process.argv.includes("--json")) { console.log(JSON.stringify(q.slice(0, lim).map((x) => ({ id: x.e.id, severity: x.e.severity, status: x.e.status, category: x.e.category, title: x.e.title, flags: x.flags, sources: (x.e.sources || []).map((s) => s.url) })))); return; }
-    console.log(`${q.length} event(s) waiting for a second review (added or changed in the last 72 hours). Waiting over ${OVERDUE_MIN} minutes first, then highest risk:`);
-    q.slice(0, lim).forEach((x) => console.log(`[sev ${x.e.severity}${x.e.status === "claimed" ? " claim" : ""}] ${x.e.id}  ${String(x.e.title).slice(0, 90)}\n       ${x.flags.length ? "FLAGS: " + x.flags.map((f) => f.code).join(", ") : "no mechanical flags"}  |  ${(x.e.sources || []).length} source(s)`));
+    const shown = q.slice(0, lim), { groups, counts } = groupByTier(shown);
+    if (process.argv.includes("--json")) { console.log(JSON.stringify(shown.map((x) => ({ id: x.e.id, tier: tier(x.e), severity: x.e.severity, status: x.e.status, category: x.e.category, title: x.e.title, flags: x.flags, sources: (x.e.sources || []).map((s) => s.url) })))); return; }
+    // one summary line, then the shown items grouped Critical, High, Routine (the order inside each group is the queue order)
+    console.log(`REVIEW QUEUE: ${q.length} waiting (showing ${shown.length}): critical ${counts.critical}, high ${counts.high}, routine ${counts.routine}. Waiting over ${OVERDUE_MIN} minutes first, then highest risk.`);
+    for (const t of TIERS) {
+      if (!groups[t].length) continue;
+      console.log(`\n${t[0].toUpperCase() + t.slice(1)} (${groups[t].length}):`);
+      groups[t].forEach((x) => console.log(`[sev ${x.e.severity}${x.e.status === "claimed" ? " claim" : ""}] ${x.e.id}  ${String(x.e.title).slice(0, 90)}\n       ${x.flags.length ? "FLAGS: " + x.flags.map((f) => f.code).join(", ") : "no mechanical flags"}  |  ${(x.e.sources || []).length} source(s)`));
+    }
     return;
   }
   if (cmd === "errors") {   // what the second review corrects, by type and by the role and model that wrote the event

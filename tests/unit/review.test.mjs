@@ -112,6 +112,30 @@ test("queue grouping: counts per tier, queue order kept inside each group, every
   assert.deepEqual(groups.critical.map((x) => x.e.id), ["c1", "c2"], "queue order kept inside the tier");
   assert.equal(Object.values(counts).reduce((a, b) => a + b, 0), rows.length);
 });
+test("tier first, with an overdue share: a routine event waiting over 20 minutes is not starved by higher tiers", () => {
+  const now = Date.parse("2026-11-24T12:00:00Z"), ago = (m) => new Date(now - m * 6e4).toISOString();
+  const crit = Array.from({ length: 9 }, (_, i) => ({ e: { id: `c${i}`, severity: 3, first_seen: ago(5 + i) }, risk: 0 }));   // fresh critical
+  const routineOld = Array.from({ length: 3 }, (_, i) => ({ e: { id: `r${i}`, severity: 1, first_seen: ago(60 + i) }, risk: 0 })); // overdue routine
+  const items = [...routineOld, ...crit];
+  const ids = order(items, now, 3).map((x) => x.e.id);
+  assert.equal(ids.length, 12); assert.equal(new Set(ids).size, 12, "every event once");
+  // slots 3, 6 and 9 (1-based) are the overdue share: the three overdue routine events each get one
+  assert.deepEqual([ids[2], ids[5], ids[8]], ["r2", "r1", "r0"], "the oldest overdue first");
+  assert.ok(ids.indexOf("r2") < 3, "an overdue routine event is placed within the first 3 slots");
+  // without the share (every 0), tier order holds: the routine events come last
+  assert.deepEqual(order(items, now, 0).map((x) => x.e.id).slice(-3), ["r2", "r1", "r0"]);
+  // the critical tier still leads the queue
+  assert.equal(order(items, now, 3)[0].e.id, "c8");
+});
+test("tier order: critical before high before routine, overdue first inside a tier", () => {
+  const now = Date.parse("2026-11-24T12:00:00Z"), ago = (m) => new Date(now - m * 6e4).toISOString();
+  const items = [
+    { e: { id: "routine-new", severity: 1, first_seen: ago(1) }, risk: 0 },
+    { e: { id: "high", severity: 1, status: "claimed", first_seen: ago(2) }, risk: 0 },
+    { e: { id: "crit", severity: 3, first_seen: ago(3) }, risk: 0 },
+  ];
+  assert.deepEqual(order(items, now, 0).map((x) => x.e.id), ["crit", "high", "routine-new"]);
+});
 test("skip: an event reviewed after its last change is not queued again; a change after the review queues it", () => {
   const at = "2026-11-18T12:00:00Z";
   assert.equal(needsReview(base({ severity: 3, review: { state: "passed", at }, updated_at: "2026-11-18T11:59:00Z" })), false);

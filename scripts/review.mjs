@@ -152,9 +152,33 @@ export const waitingSince = (e) => String((e.review && e.review.at && e.updated_
 export const OVERDUE_MIN = 20;
 /** Pure: queue order. Anything waiting longer than OVERDUE_MIN minutes goes first, oldest first, so a run of high-risk
  *  events can never hold a quiet one back for hours; the rest by risk, then oldest first. items: [{e, risk}]. */
-export function order(items, now = Date.now()) {
+export function order(items, now = Date.now(), every = shareEvery()) {
   const late = (x) => now - Date.parse(waitingSince(x.e)) > OVERDUE_MIN * 6e4, older = (a, b) => waitingSince(a.e).localeCompare(waitingSince(b.e));
-  return items.slice().sort((a, b) => (late(b) - late(a)) || (late(a) ? older(a, b) : (b.risk - a.risk) || older(a, b)));
+  const rank = (x) => TIERS.indexOf(tier(x.e));
+  // tier first (critical, high, routine); inside a tier, overdue first (oldest), then risk, then oldest
+  const main = items.slice().sort((a, b) => (rank(a) - rank(b)) || (late(b) - late(a)) || (late(a) ? older(a, b) : (b.risk - a.risk) || older(a, b)));
+  return withOverdueShare(main, late, older, every);
+}
+/** Pure: the overdue share. Every `every`th slot of the queue goes to the oldest overdue item not yet placed (any tier), so
+ *  a steady stream of higher-tier events cannot hold an overdue routine event back. every 0 (or no overdue item) keeps main. */
+export function withOverdueShare(main, isLate, older, every) {
+  if (!(every >= 2)) return main;
+  const pool = main.filter(isLate).sort(older), used = new Set(), out = [];
+  let mi = 0, pi = 0;
+  while (out.length < main.length) {
+    const slot = out.length + 1;
+    let pick = null;
+    if (slot % every === 0) { while (pi < pool.length && used.has(pool[pi])) pi++; if (pi < pool.length) pick = pool[pi]; }
+    if (!pick) { while (mi < main.length && used.has(main[mi])) mi++; pick = main[mi]; }
+    used.add(pick); out.push(pick);
+  }
+  return out;
+}
+/** The overdue share from config (review.overdue_share_every: one slot in every N; 0 turns it off). Clamped to 2 to 10. */
+export function shareEvery() {
+  const v = Number((readJson(join(ROOT, "config", "pipeline.json"), {}).review || {}).overdue_share_every);
+  if (!Number.isFinite(v) || v <= 0) return v === 0 ? 0 : 3;
+  return Math.max(2, Math.min(10, Math.round(v)));
 }
 /** Pure: split the head of the queue between up to n reviewers, at most `per` events each, at least 4 per reviewer before
  *  another starts. With two or more reviewers the first takes the events that started waiting most recently (published

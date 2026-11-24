@@ -14,11 +14,11 @@
   "geo_basis": "vendor headquarters",
   "pin_type": "hq",
   "actor": "",
-  "summary": "Synology published two advisories on 19 November. CVE-2026-120382 (CVSS 9.8) lets remote attackers read or write arbitrary files or conduct denial-of-service attacks through the DSM OAuth API. CVE-2026-123007 (CVSS 8.1) is an NGINX HTTP/2 heap buffer overflow. The revised advisories list fixes in DSM 7.4.1-90080-2 and 7.3.2-86009-6, with other versions marked OnGoing. Neither mentions exploitation.",
+  "summary": "Synology published two advisories on 19 November. CVE-2026-120382 (CVSS 9.8) lets remote attackers read or write arbitrary files or conduct denial-of-service attacks through the DSM OAuth API. CVE-2026-123007 (CVSS 8.1) is an NGINX HTTP/2 heap buffer overflow. The revised advisories list fixes in DSM 7.4.1-90080-2 and 7.3.2-86009-6, with other versions marked OnGoing. Neither mentions exploitation. Caschys Blog reported on 24 November that DSM 7.1.1-42962 Update 10 closes both flaws.",
   "plain": "Synology has warned of two serious flaws in the software of its NAS storage devices. Fixed versions exist for DSM 7.3 and 7.4; fixes for other versions are still ongoing, and the vendor gives workarounds.",
   "exec": "Synology rates the DSM OAuth flaw Critical (CVSS 9.8) and says remote attackers can read or write arbitrary files; fixes exist for DSM 7.3 and 7.4.",
   "action": "Synology advises upgrading to DSM 7.4.1-90080-2 or 7.3.2-86009-6 or above. For versions it lists as OnGoing, Synology's workarounds are to deactivate the OAuth Service package and disable HTTP/2 under Control Panel > Network > Connectivity.",
-  "impact": "DSM 7.1 to 7.4 and BeeStation OS 1.5 are listed as affected; DSM 7.2.x, 7.1 and BeeStation OS had no fix yet when read (advisories marked Ongoing).",
+  "impact": "DSM 7.1 to 7.4 and BeeStation OS 1.5 are listed as affected; DSM 7.2.x and BeeStation OS had no fix yet when read (advisories marked Ongoing); Caschys Blog reports DSM 7.1.1-42962 Update 10 for DSM 7.1, rolled out in waves.",
   "tags": [],
   "cves": [
     "CVE-2026-120382",
@@ -42,6 +42,11 @@
     {
       "name": "GBHackers",
       "url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"
+    },
+    {
+      "name": "Caschys Blog",
+      "url": "https://stadt-bremerhaven.de/synology-mit-alt-kisten-update-dsm-7-1-1-42962-update-10-schliesst-zwei-kritische-sicherheitsluecken/",
+      "published": "2026-11-24"
     }
   ],
   "source_tier": "primary",
@@ -51,7 +56,7 @@
     "note": "Synology's own advisories SA_26_21 and SA_26_20 (primary, read in full) and GBHackers, which independently reports the same CVEs and scores. Neither states exploitation."
   },
   "first_seen": "2026-11-19T13:35:00Z",
-  "updated_at": "2026-11-24T15:02:12Z",
+  "updated_at": "2026-11-24T22:13:50Z",
   "review": {
     "state": "passed",
     "at": "2026-11-24T16:15:00Z",

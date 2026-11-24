@@ -1,5 +1,5 @@
 {
-  "action": "Update WordPress to 7.1.5 now (Dashboard, Updates), or confirm the background auto-update ran; older branches are being backported, so watch for those releases.",
+  "action": "WordPress.org recommends updating your sites immediately (Dashboard > Updates > Update Now); sites with automatic background updates will update automatically.",
   "actor": "",
   "attack": [
     "T1190 Exploit Public-Facing Application"
@@ -16,7 +16,7 @@
   "org": "WordPress",
   "pin_type": "hq",
   "place": "San Francisco, United States",
-  "plain": "WordPress released an update fixing about 20 security problems, including one that lets someone without an account gain higher access and possibly run code. Site owners should update now.",
+  "plain": "WordPress released an update; Patchstack counts twenty fixes, including one that lets someone without an account gain higher access and possibly run code. The project recommends updating immediately.",
   "products": [
     "WordPress"
   ],
@@ -43,11 +43,13 @@
   "sources": [
     {
       "name": "WordPress.org: WordPress 7.1.5 release",
-      "url": "https://wordpress.org/news/2026/11/wordpress-7-1-5-release/"
+      "url": "https://wordpress.org/news/2026/11/wordpress-7-1-5-release/",
+      "published": "2026-11-18"
     },
     {
       "name": "GBHackers",
-      "url": "https://gbhackers.com/wordpress-7-1-5-patches-critical-privilege-escalation/"
+      "url": "https://gbhackers.com/wordpress-7-1-5-patches-critical-privilege-escalation/",
+      "published": "2026-11-19"
     },
     {
       "name": "Patchstack: WordPress 7.1.5 security release",
@@ -56,22 +58,31 @@
     }
   ],
   "status": "official",
-  "summary": "WordPress 7.1.5, released November 18, is a security release listing 20 items, including unauthenticated privilege escalation through Template Part block attributes that the project says could lead to remote code execution. It also fixes two SQL injections, a Multisite Super Admin takeover and stored XSS in comments. The project recommends updating immediately and does not report exploitation.",
+  "summary": "WordPress 7.1.5, released November 18, is a security release; Patchstack counts twenty fixes. They include unauthenticated privilege escalation through Template Part block attributes that the project says could lead to remote code execution, two SQL injections, a Multisite Super Admin takeover and stored XSS in comments. The project recommends updating immediately and its post does not mention exploitation.",
   "tags": [],
   "title": "WordPress 7.1.5 security release fixes unauthenticated privilege escalation and SQL injection",
-  "updated_at": "2026-11-24T02:10:18Z",
+  "updated_at": "2026-11-24T02:26:23Z",
   "validation": {
     "checked_at": "2026-11-24T02:10:18Z",
     "note": "WordPress.org release post and GBHackers agree on release date, the Template Part flaw, SQL injection and XSS fixes. Neither gives CVE ids. Patchstack (18 Nov) also lists the fixes, states no CVE ids had been assigned at publication and does not report exploitation.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T06:26:29Z",
-    "note": "Compared title, 18 Nov date, 20 items, Template Part unauthenticated privilege escalation/RCE wording, two SQLi, Multisite Super Admin, comment XSS, no exploitation stated, update advice against WordPress.org post and GBHackers",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-24T02:26:38Z",
+    "first_at": "2026-11-19T06:26:29Z",
+    "note": "figure: '20 items' was not stated by the WordPress post (Patchstack says twenty fixes), reworded with attribution and evidence quote; action advice now names WordPress.org; added source published days",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "figure",
+      "source",
+      "attribution",
+      "place"
+    ]
   },
-  "qa_checked_at": "2026-11-19T06:26:29Z",
+  "qa_checked_at": "2026-11-24T02:26:38Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -81,5 +92,11 @@
   "surface": {
     "value": "web-app",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://patchstack.com/articles/wordpress-7-1-5-security-release/",
+      "quote": "It is a security release with twenty fixes, eighteen of which we have added to the Patchstack database as vulnerabilities"
+    }
+  ]
 }

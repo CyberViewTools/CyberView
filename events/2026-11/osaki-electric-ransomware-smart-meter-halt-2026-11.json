@@ -1,5 +1,5 @@
 {
-  "action": "Utilities and meter buyers: ask Osaki about delivery schedules and watch for phishing that uses the company's name. Osaki asks recipients to be wary of suspicious emails and calls claiming to be from it.",
+  "action": "Osaki asks recipients to be wary of suspicious emails and calls claiming to be from the company.",
   "actor": "",
   "attack": [
     "T1486 Data Encrypted for Impact"
@@ -43,7 +43,8 @@
   "sources": [
     {
       "name": "Osaki Electric: notice on production stop due to ransomware attack (first report, Japanese)",
-      "url": "https://www.osaki.co.jp/ja/notice/20261118.html"
+      "url": "https://www.osaki.co.jp/ja/notice/20261118.html",
+      "published": "2026-11-18"
     },
     {
       "name": "Osaki Electric: second report (Japanese)",
@@ -62,27 +63,31 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Osaki Electric, a Japanese maker of smart meters, says it found its servers encrypted on November 17 in a ransomware attack. Its second report (November 20) says it learned on November 19 that technical information apparently from its systems was posted on a website, and that the attacker got in through a VPN device whose authentication was bypassed. Production and shipping remain suspended with no restart date. Rocket Boys reports Qilin listed Osaki on its leak site; Osaki does not name the group.",
+  "summary": "Osaki Electric, a Japanese smart meter maker, says it found its servers encrypted on November 17 in a ransomware attack. Its November 20 report says technical information apparently from its systems was posted on a website and the attacker got in through a VPN device whose authentication was bypassed. Production and shipping remain suspended. Rocket Boys reports Qilin listed Osaki; Osaki does not name the group.",
   "tags": [
-    "ransomware",
-    "critical-infrastructure"
+    "ransomware"
   ],
   "time_basis": "reported",
   "title": "Osaki Electric halts smart meter production after ransomware attack",
-  "updated_at": "2026-11-24T06:40:44Z",
+  "updated_at": "2026-11-24T06:56:34Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-24T06:40:44Z",
     "note": "Primary source: Osaki Electric notice of 18 Nov (first report). Business+IT (sbbit.jp, 18 Nov) relays the same notice: encryption found 17 Nov about 10:35, Saitama, Iwate Osaki Denki and Osaki Platec production systems stopped, restart undetermined. On 22 Nov osaki.co.jp returned 403, so no later report could be checked; Business+IT mentions none. Update 2026-11-24T06:40:44Z: Osaki second report of 20 Nov read (data posted online, VPN device authentication bypassed, restart undetermined); Rocket Boys relays the Qilin leak-site listing, which Osaki has not confirmed."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-22T16:26:24Z",
+    "state": "corrected",
+    "at": "2026-11-24T06:56:44Z",
     "first_at": "2026-11-19T05:12:54Z",
-    "note": "Compared title, 17 Nov date, about 10:35 JST encryption, noon network cut, Saitama/Iwate/Platec stop, restart undecided, data-leak investigation, police, phishing warning against Osaki notice and Business+IT",
-    "flags": []
+    "note": "action advice (unsourced removed), tags (critical-infrastructure unsupported), summary length, missing published day",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "action",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-22T16:26:24Z",
+  "qa_checked_at": "2026-11-24T06:56:44Z",
   "sectors": {
     "values": [
       "critical-manufacturing",

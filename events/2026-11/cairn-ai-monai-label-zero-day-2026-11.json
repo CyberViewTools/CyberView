@@ -1,116 +1,112 @@
 {
- "title": "Amazon: attackers used the Cairn AI tool to exploit a MONAI Label zero-day and take over a server, BleepingComputer reports",
- "date": "2026-11-20",
- "date_note": "Date of BleepingComputer's report; it says the attacks ran 8 to 10 September 2026 and the maintainers released a security update on 18 November.",
- "category": "incident",
- "severity": 2,
- "status": "developing",
- "org": "East Asian educational institutions (MONAI Label users)",
- "sector": "Education",
- "country": "",
- "place": "East Asia",
- "lat": 35,
- "lng": 105,
- "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
- "pin_type": "region",
- "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server. Amazon attributes it to a Chinese-nexus actor with moderate confidence. ENISA lists CVE-2026-133968; The Hacker News says CISA added it to its KEV catalog.",
- "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. Reports differ on whether a fixed release is out yet.",
- "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should follow the maintainers' advisory.",
- "action": "ENISA's record lists MONAI Label versions before 0.8.6 as affected; follow the maintainers' advisory GHSA-qc22-rmgc-vg94, which BleepingComputer links as the security update.",
- "tags": [
-  "zero-day",
-  "ai-enabled"
- ],
- "cves": [
-  "CVE-2026-133968"
- ],
- "products": [
-  "MONAI Label"
- ],
- "attack": [
-  "path traversal"
- ],
- "actor": "China-nexus actor (unnamed)",
- "attribution": {
-  "by": "Amazon Threat Intelligence",
-  "by_type": "investigator",
-  "actor": "China-nexus threat actor (unnamed)",
-  "origin_country": "China",
+  "title": "Amazon: attackers used the Cairn AI tool to exploit a MONAI Label zero-day and take over a server, BleepingComputer reports",
+  "date": "2026-11-20",
+  "date_note": "Date of BleepingComputer's report; it says the attacks ran 8 to 10 September 2026 and the maintainers released a security update on 18 November.",
+  "category": "incident",
+  "severity": 2,
+  "status": "developing",
+  "org": "East Asian educational institutions (MONAI Label users)",
+  "sector": "Education",
+  "country": "",
+  "place": "East Asia",
   "lat": 35,
   "lng": 105,
-  "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
-  "note": "moderate confidence, from prompt language, activity timestamps and target choice, as relayed by BleepingComputer"
- },
- "sources": [
-  {
-   "name": "ENISA EU Vulnerability Database (EUVD-2026-131722)",
-   "url": "https://euvdservices.enisa.europa.eu/api/enisaid?id=EUVD-2026-131722",
-   "published": "2026-11-20"
-  },
-  {
-   "name": "BleepingComputer",
-   "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
-   "published": "2026-11-20"
-  },
-  {
-   "name": "The Record",
-   "url": "https://therecord.media/amazon-research-cairn-ai-university-attacks-possible-zero-day",
-   "published": "2026-11-20"
-  },
-  {
-   "name": "Startup Fortune",
-   "url": "https://startupfortune.com/china-linked-hackers-used-ai-agents-to-exploit-a-monai-label-zero-day-amazon-says/",
-   "published": "2026-11-22"
-  },
-  {
-   "name": "The Hacker News",
-   "url": "https://thehackernews.com/2026/11/hackers-exploit-n-able-mailassure-flaw.html",
-   "published": "2026-11-24"
-  }
- ],
- "source_tier": "primary",
- "validation": {
-  "state": "corroborated",
-  "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read. Follow-up 23 Nov: Startup Fortune (22 Nov, relaying SecurityWeek and The Hacker News) says the fix is merged in source but not in a release, against BleepingComputer's 18 November security update; the GitHub advisory returned 403 and Amazon's post did not load, so both accounts are given. Follow-up 23 Nov: ENISA's EUVD record (read via its API) gives CVE-2026-133968, affected versions before 0.8.6, and says exploitation in the wild from September 2026. Follow-up 24 Nov: The Hacker News (24 Nov) says CISA added CVE-2026-133968 to KEV on 23 November; it states no fix or affected versions.",
-  "checked_at": "2026-11-24T06:40:02Z"
- },
- "first_seen": "2026-11-20T17:43:41Z",
- "updated_at": "2026-11-24T06:40:02Z",
- "review": {
-  "state": "corrected",
-  "at": "2026-11-24T01:41:04Z",
-  "first_at": "2026-11-20T17:46:01Z",
-  "note": "invalid tag ai changed to ai-enabled; evidence quote for the 11 minutes figure added",
-  "flags": [],
-  "categories": [
-   "figure",
-   "tags"
-  ]
- },
- "qa_checked_at": "2026-11-24T01:41:04Z",
- "sectors": {
-  "values": [
-   "education"
+  "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
+  "pin_type": "region",
+  "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server. Amazon attributes it to a Chinese-nexus actor with moderate confidence. ENISA lists CVE-2026-133968; The Hacker News says CISA added it to its KEV catalog.",
+  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. Reports differ on whether a fixed release is out yet.",
+  "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should follow the maintainers' advisory.",
+  "action": "ENISA's record lists MONAI Label versions before 0.8.6 as affected; follow the maintainers' advisory GHSA-qc22-rmgc-vg94, which BleepingComputer links as the security update.",
+  "tags": [
+    "zero-day",
+    "ai-enabled"
   ],
-  "basis": "stated"
- },
- "surface": {
-  "value": "web-app",
-  "basis": "inferred"
- },
- "cve_meta": [
-  {
-   "id": "CVE-2026-133968",
-   "cvss": 9.8,
-   "epss": 0.03664,
-   "kev": true,
-   "kev_due": "2026-11-26"
-  }
- ],
- "evidence": [
-  {
-   "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
-   "quote": "within 11 minutes, they went from mapping the application's API to exploiting the vulnerability"
-  }
- ]
+  "cves": [
+    "CVE-2026-133968"
+  ],
+  "products": [
+    "MONAI Label"
+  ],
+  "attack": [
+    "path traversal"
+  ],
+  "actor": "China-nexus actor (unnamed)",
+  "attribution": {
+    "by": "Amazon Threat Intelligence",
+    "by_type": "investigator",
+    "actor": "China-nexus threat actor (unnamed)",
+    "origin_country": "China",
+    "lat": 35,
+    "lng": 105,
+    "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+    "note": "moderate confidence, from prompt language, activity timestamps and target choice, as relayed by BleepingComputer"
+  },
+  "sources": [
+    {
+      "name": "ENISA EU Vulnerability Database (EUVD-2026-131722)",
+      "url": "https://euvdservices.enisa.europa.eu/api/enisaid?id=EUVD-2026-131722",
+      "published": "2026-11-20"
+    },
+    {
+      "name": "BleepingComputer",
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "published": "2026-11-20"
+    },
+    {
+      "name": "The Record",
+      "url": "https://therecord.media/amazon-research-cairn-ai-university-attacks-possible-zero-day",
+      "published": "2026-11-20"
+    },
+    {
+      "name": "Startup Fortune",
+      "url": "https://startupfortune.com/china-linked-hackers-used-ai-agents-to-exploit-a-monai-label-zero-day-amazon-says/",
+      "published": "2026-11-22"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/hackers-exploit-n-able-mailassure-flaw.html",
+      "published": "2026-11-24"
+    }
+  ],
+  "source_tier": "primary",
+  "validation": {
+    "state": "corroborated",
+    "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read. Follow-up 23 Nov: Startup Fortune (22 Nov, relaying SecurityWeek and The Hacker News) says the fix is merged in source but not in a release, against BleepingComputer's 18 November security update; the GitHub advisory returned 403 and Amazon's post did not load, so both accounts are given. Follow-up 23 Nov: ENISA's EUVD record (read via its API) gives CVE-2026-133968, affected versions before 0.8.6, and says exploitation in the wild from September 2026. Follow-up 24 Nov: The Hacker News (24 Nov) says CISA added CVE-2026-133968 to KEV on 23 November; it states no fix or affected versions.",
+    "checked_at": "2026-11-24T06:40:02Z"
+  },
+  "first_seen": "2026-11-20T17:43:41Z",
+  "updated_at": "2026-11-24T06:40:02Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T06:56:39Z",
+    "first_at": "2026-11-20T17:46:01Z",
+    "note": "Compared 11 minutes, Amazon attribution moderate confidence, 18 Nov update, ENISA CVE and 0.8.6, KEV 23 Nov against BleepingComputer, The Record, ENISA, The Hacker News",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T06:56:39Z",
+  "sectors": {
+    "values": [
+      "education"
+    ],
+    "basis": "stated"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "cve_meta": [
+    {
+      "id": "CVE-2026-133968",
+      "cvss": 9.8,
+      "epss": 0.03664,
+      "kev": true,
+      "kev_due": "2026-11-26"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-use-autonomous-ai-tool-cairn-to-find-zero-day-take-over-server/",
+      "quote": "within 11 minutes, they went from mapping the application's API to exploiting the vulnerability"
+    }
+  ]
 }

@@ -1,34 +1,36 @@
 {
-  "updated_at": "2026-11-24T06:39:07Z",
+  "updated_at": "2026-11-24T06:55:30Z",
   "pipeline": {
     "stages": {
       "collect_min": 0,
-      "news_min": 30,
-      "research_min": 148,
+      "news_min": 16,
+      "research_min": 164,
       "analysis_min": 0
     },
     "open_incidents": 6,
     "waiting_for_research": 0,
     "oldest_waiting_min": 0,
     "sizes_kb": {
-      "series": 2653,
+      "series": 2661,
       "history": 18,
       "news": 211,
-      "live": 136
+      "live": 170
     },
-    "series_expected_kb": 21525,
+    "series_expected_kb": 31500,
     "flags": []
   },
   "flag_counts": {
     "paused": 1,
-    "not_connected": 1
+    "not_connected": 1,
+    "stale_data": 2,
+    "future_times": 3
   },
   "sources": {
     "hydroquebec": {
       "name": "Hydro-Québec",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 9,
         "customers": 152,
@@ -509,7 +511,7 @@
       "name": "BC Hydro",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 6,
         "customers": 184,
@@ -1473,7 +1475,7 @@
       "name": "Eskom",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -1954,7 +1956,7 @@
       "name": "ERCOT",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -2435,7 +2437,7 @@
       "name": "AEMO",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -2916,7 +2918,7 @@
       "name": "EIA hourly electric grid monitor",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -3397,7 +3399,7 @@
       "name": "Cloudflare Radar outage center",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -4357,15 +4359,98 @@
         }
       ]
     },
+    "reg-rwanda": {
+      "name": "Rwanda Energy Group (REG)",
+      "ok": true,
+      "error": "stale: the operator's data is from 2026-11-22T08:03:00Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [
+        "stale_data"
+      ],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "ceb-mauritius": {
+      "name": "Central Electricity Board (CEB)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "nmb-electricity": {
+      "name": "Nelson Mandela Bay Municipality (Electricity and Energy)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 3,
+        "customers": 0,
+        "outages": 3,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 3,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 3,
+          "c": 0
+        }
+      ]
+    },
     "pema-pa": {
       "name": "Pennsylvania (PEMA)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 13,
-        "customers": 4192,
-        "outages": 13,
+        "items": 11,
+        "customers": 1448,
+        "outages": 11,
         "no_location": 0,
         "far_from_country": 0,
         "future_start": 0,
@@ -4623,10 +4708,10 @@
       "name": "Maryland (MDEM)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 8,
-        "customers": 51,
+        "customers": 65,
         "outages": 8,
         "no_location": 0,
         "far_from_country": 0,
@@ -4885,10 +4970,10 @@
       "name": "SEC Chile (via SENAPRED)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 13,
-        "customers": 1785,
+        "customers": 1797,
         "outages": 13,
         "no_location": 0,
         "far_from_country": 0,
@@ -5143,11 +5228,146 @@
         }
       ]
     },
+    "mainpower-nz": {
+      "name": "MainPower (North Canterbury)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "topenergy-nz": {
+      "name": "Top Energy (Far North)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "tlc-nz": {
+      "name": "The Lines Company (King Country)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "ea-networks-nz": {
+      "name": "EA Networks (Ashburton)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "aemo-wem": {
+      "name": "AEMO market advisories (Western Australia)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
     "london-hydro": {
       "name": "London Hydro",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 9,
         "customers": 27,
@@ -5628,7 +5848,7 @@
       "name": "AESO Grid Alert",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -6109,7 +6329,7 @@
       "name": "IESO emergency advisories",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -6590,7 +6810,7 @@
       "name": "IESO same-day advisories",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -7071,7 +7291,7 @@
       "name": "IESO advisories, days 1-34",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -7548,15 +7768,205 @@
         }
       ]
     },
+    "loe-gpv": {
+      "name": "Lvivoblenergo",
+      "ok": true,
+      "error": "stale: the operator's data is from 2026-11-23T17:44:00Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 8,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 8,
+        "far_from_country": 0,
+        "future_start": 6,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": [
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-1.2-1930"
+          },
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-2.1-2200"
+          },
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-5.1-1600"
+          },
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-5.2-1230"
+          },
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-6.1-1230"
+          },
+          {
+            "check": "future_start",
+            "id": "loe-gpv:2026-11-24-6.2-1600"
+          }
+        ]
+      },
+      "flags": [
+        "stale_data",
+        "future_times"
+      ],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 8,
+          "c": 0
+        }
+      ]
+    },
+    "hoe-gpv": {
+      "name": "Khmelnytskoblenergo",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 25,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 25,
+        "far_from_country": 0,
+        "future_start": 17,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": [
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-1.1-1200"
+          },
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-1.1-1900"
+          },
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-1.2-1200"
+          },
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-1.2-1900"
+          },
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-2.1-1200"
+          },
+          {
+            "check": "future_start",
+            "id": "hoe-gpv:2026-11-24-2.2-1200"
+          }
+        ]
+      },
+      "flags": [
+        "future_times"
+      ],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 25,
+          "c": 0
+        }
+      ]
+    },
+    "roe-gpv": {
+      "name": "Rivneoblenergo",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 10,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 10,
+        "far_from_country": 0,
+        "future_start": 8,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": [
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-1.1-2200"
+          },
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-1.2-2000"
+          },
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-2.1-1700"
+          },
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-2.2-1700"
+          },
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-4.1-1400"
+          },
+          {
+            "check": "future_start",
+            "id": "roe-gpv:2026-11-24-4.2-1400"
+          }
+        ]
+      },
+      "flags": [
+        "future_times"
+      ],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 10,
+          "c": 0
+        }
+      ]
+    },
+    "elenia-katkokartta": {
+      "name": "Elenia",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 3,
+        "customers": 10,
+        "outages": 3,
+        "no_location": 3,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 3,
+          "c": 10
+        }
+      ]
+    },
     "ssen-powertrack": {
       "name": "SSEN Distribution",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 5,
+        "items": 7,
         "customers": 66,
-        "outages": 5,
+        "outages": 7,
         "no_location": 0,
         "far_from_country": 0,
         "future_start": 0,
@@ -8033,7 +8443,7 @@
       "name": "National Grid Electricity Distribution",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 11,
         "customers": 267,
@@ -8514,7 +8924,7 @@
       "name": "NESO system warnings (Elexon BMRS)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -8995,7 +9405,7 @@
       "name": "NESO demand control instructions (Elexon BMRS)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -9476,11 +9886,11 @@
       "name": "Liander",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 4,
-        "customers": 176,
-        "outages": 4,
+        "items": 5,
+        "customers": 201,
+        "outages": 5,
         "no_location": 0,
         "far_from_country": 0,
         "future_start": 0,
@@ -9957,17 +10367,17 @@
       "name": "TAURON Dystrybucja",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 29,
+        "items": 31,
         "customers": 0,
-        "outages": 29,
+        "outages": 31,
         "no_location": 0,
         "far_from_country": 0,
         "future_start": 0,
         "old_start": 0,
         "dup_ids": 0,
-        "no_customers": 29,
+        "no_customers": 31,
         "off_host_links": 0,
         "examples": []
       },
@@ -10438,7 +10848,7 @@
       "name": "Elvia",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 164,
@@ -10919,7 +11329,7 @@
       "name": "OCCTO wide-area reserve (Japan)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 10,
         "customers": 0,
@@ -11181,7 +11591,7 @@
       "name": "Fingrid power system state",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -11662,7 +12072,7 @@
       "name": "RTE Ecowatt",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -12143,7 +12553,7 @@
       "name": "KPX real-time supply (Korea Power Exchange)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -12620,14 +13030,149 @@
         }
       ]
     },
+    "cnfl-suspensiones": {
+      "name": "Compañía Nacional de Fuerza y Luz (CNFL)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "edesur-do-mantenimientos": {
+      "name": "Edesur Dominicana",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "eegsa-mantenimientos": {
+      "name": "Empresa Eléctrica de Guatemala (EEGSA)",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
+    "spp-conditions": {
+      "name": "Southwest Power Pool",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 2,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 2,
+          "c": 0
+        }
+      ]
+    },
+    "riverside-pu": {
+      "name": "Riverside Public Utilities",
+      "ok": true,
+      "error": "",
+      "fetched_at": "2026-11-24T06:55:28Z",
+      "checks": {
+        "items": 0,
+        "customers": 0,
+        "outages": 0,
+        "no_location": 0,
+        "far_from_country": 0,
+        "future_start": 0,
+        "old_start": 0,
+        "dup_ids": 0,
+        "no_customers": 0,
+        "off_host_links": 0,
+        "examples": []
+      },
+      "flags": [],
+      "history": [
+        {
+          "h": "2026-11-24T06",
+          "n": 0,
+          "c": 0
+        }
+      ]
+    },
     "eversource": {
       "name": "Eversource",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 7,
-        "customers": 30,
+        "customers": 68,
         "outages": 7,
         "no_location": 7,
         "far_from_country": 0,
@@ -13105,7 +13650,7 @@
       "name": "Nashville Electric Service",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 2,
         "customers": 3,
@@ -13586,10 +14131,10 @@
       "name": "Rocky Mountain Power",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 4,
-        "customers": 21,
+        "customers": 100,
         "outages": 4,
         "no_location": 4,
         "far_from_country": 0,
@@ -14067,7 +14612,7 @@
       "name": "Pacific Power",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 19,
@@ -14548,10 +15093,10 @@
       "name": "LADWP",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
-        "customers": 630,
+        "customers": 694,
         "outages": 1,
         "no_location": 0,
         "far_from_country": 0,
@@ -15029,12 +15574,12 @@
       "name": "DOE/ORNL ODIN",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 83,
-        "customers": 16102,
-        "outages": 83,
-        "no_location": 83,
+        "items": 79,
+        "customers": 16150,
+        "outages": 79,
+        "no_location": 79,
         "far_from_country": 0,
         "future_start": 0,
         "old_start": 0,
@@ -15510,7 +16055,7 @@
       "name": "California ISO",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -15991,7 +16536,7 @@
       "name": "NYISO",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -16472,11 +17017,11 @@
       "name": "Endeavour Energy",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
-        "items": 15,
-        "customers": 377,
-        "outages": 15,
+        "items": 16,
+        "customers": 426,
+        "outages": 16,
         "no_location": 0,
         "far_from_country": 0,
         "future_start": 0,
@@ -16953,7 +17498,7 @@
       "name": "TasNetworks",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -17434,7 +17979,7 @@
       "name": "Taiwan Power Company",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 1,
         "customers": 0,
@@ -17915,7 +18460,7 @@
       "name": "Electricity Company of Ghana",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -18396,7 +18941,7 @@
       "name": "ENRE (Edenor area)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 0,
         "customers": 0,
@@ -18877,10 +19422,10 @@
       "name": "ENRE (Edesur area)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 7,
-        "customers": 2302,
+        "customers": 1974,
         "outages": 7,
         "no_location": 7,
         "far_from_country": 0,
@@ -19358,7 +19903,7 @@
       "name": "ONS (Brazil grid operator)",
       "ok": true,
       "error": "",
-      "fetched_at": "2026-11-24T06:39:05Z",
+      "fetched_at": "2026-11-24T06:55:28Z",
       "checks": {
         "items": 6,
         "customers": 0,

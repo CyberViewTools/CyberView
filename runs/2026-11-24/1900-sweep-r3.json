@@ -1,42 +1,58 @@
 {
   "job": "researcher",
-  "started_at": "2026-11-24",
-  "finished_at": "2026-11-24",
+  "started_at": "2026-11-24T18:57:00Z",
+  "finished_at": "2026-11-24T19:15:00Z",
   "model": "claude-sonnet-5-5",
-  "searches": [],
-  "pages_read": [],
-  "added": [],
+  "searches": [
+    "policía desmantela 57 servicios streaming ilegal 7,3 millones de visitas"
+  ],
+  "pages_read": [
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/819",
+      "title": "oss-security newgidmap fix",
+      "used_in": "shadow-newgidmap-fix-4-20-4-2026-11"
+    },
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/876",
+      "title": "oss-security newgidmap follow-up",
+      "used_in": "shadow-newgidmap-fix-4-20-4-2026-11"
+    },
+    {
+      "url": "https://blog.elhacker.net/2026/11/golpe-al-streaming-ilegal-la-policia.html",
+      "title": "streaming blog",
+      "used_in": "none (headline only)"
+    }
+  ],
+  "added": [
+    "shadow-newgidmap-fix-4-20-4-2026-11"
+  ],
   "updated": [],
   "skipped": [
     {
-      "title": "jdn Iran tanker story",
-      "url": "https://www.jdn.co.il/news/2770900/",
-      "reason": "already on file (developing, single-origin WSJ relay); no new fact in headline"
-    },
-    {
-      "title": "rb.ru driverless car survey",
-      "url": "https://rb.ru/news/62-voditelej-hoteli-prokatitsya-na-bespilotnom-avto-no-lish-kazhdyj-pyatyj-vidit-v-nyom-polzu-dlya-goroda/",
-      "reason": "not a cyber event"
-    },
-    {
-      "title": "ohmynews Russian casualties",
-      "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003287769",
-      "reason": "not a cyber event"
-    },
-    {
-      "title": "Hacker News OpenAI/Cisco",
-      "url": "https://thehackernews.com/2026/11/openai-and-cisco-unveil-ai-assisted.html",
-      "reason": "already on file, corroborated"
-    },
-    {
-      "title": "Douzone-AhnLab MoU",
-      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209694",
-      "reason": "routine MoU, not an event category; page not read"
+      "title": "CVE-2012-10033, CVE-2020-10224/10225, CVE-2021-42230 (cve.now)",
+      "url": "https://cve.now/CVE-2012-10033",
+      "reason": "old CVEs re-rated, no exploitation or advisory; older than map window"
     }
   ],
-  "open_leads": [],
-  "failed_sites": [],
-  "notes": "No pages opened; all closed by dupes check and headline.",
+  "open_leads": [
+    {
+      "title": "Streaming takedown 57 services, 7.3 million visits",
+      "url": "https://blog.elhacker.net/2026/11/golpe-al-streaming-ilegal-la-policia.html",
+      "note": "no agency/date on page; find original police/Europol release",
+      "priority": "medium"
+    },
+    {
+      "title": "MISP 2.5.52 fixes CVE-2026-135239/135232/135242 with googlesky PoCs",
+      "url": "https://sploitus.com/exploit?id=85CFA9C4-FCD3-5A05-9C5A-349AA987B0B7",
+      "note": "need MISP release notes/advisory (GitHub 403); authenticated medium flaws",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "github.com/MISP/MISP/releases (403)",
+    "github.com/shadow-maint/shadow releases (403)"
+  ],
+  "notes": "Shadow event is single_source (one list); severity 2 as no page states a severity-3 condition.",
   "worker_role": "researcher",
   "worker_model": "sonnet"
 }

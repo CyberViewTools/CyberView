@@ -1,0 +1,47 @@
+{
+  "action": "Traefik says it strongly recommends upgrading as soon as possible to 2.11.64, 3.7.20 or 3.8.0; v3.6 and earlier v3 releases get no patch, so move them to 3.7.20 or 3.8.0.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-24",
+  "date_note": "Date of Traefik's security announcement; Sempre Update says the releases came out on 23 November.",
+  "exec": "Traefik has patched a High-severity memory-exhaustion flaw and two Medium-severity flaws in its reverse proxy; the post does not say whether any is exploited.",
+  "first_seen": "2026-11-24T18:59:28Z",
+  "geo_basis": "no place; vendor software advisory",
+  "lat": 0,
+  "lng": 0,
+  "org": "Traefik Labs",
+  "pin_type": "country",
+  "place": "",
+  "plain": "The Traefik reverse proxy has updates fixing three security flaws: one lets unauthenticated clients exhaust memory, one can leak credentials into debug logs, and one can let a router take over a host protected by client-certificate TLS.",
+  "products": ["Traefik"],
+  "sector": "Information technology",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "Traefik community announcement",
+      "url": "https://community.traefik.io/t/new-security-update-for-traefik-2-11-2-11-64-3-7-3-7-20-and-3-8-3-8-0/30561",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Sempre Update",
+      "url": "https://sempreupdate.com.br/traefik-corrige-falhas-memoria-credenciais-tls/",
+      "published": "2026-11-24"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Traefik's announcement lists three advisories fixed in 2.11.64, 3.7.20 and 3.8.0. GHSA-3rh5-223h-cpwr (High) lets unauthenticated clients exhaust memory through Brotli compression in the Compress middleware; GHSA-42x2-976f-ph52 (Medium) exposes Docker/Swarm passwords, Knative tokens and HTTP provider headers in debug logs; GHSA-9657-c2gv-wjpj (Medium) lets a trailing-dot host router take over a client-certificate-protected host. The post does not state whether any is exploited.",
+  "tags": [],
+  "title": "Traefik patches Brotli memory-exhaustion, debug-log credential exposure and TLS option flaws",
+  "updated_at": "2026-11-24T18:59:28Z",
+  "validation": {
+    "checked_at": "2026-11-24T18:59:28Z",
+    "note": "Vendor announcement (Traefik community post) read, plus Sempre Update; primary source.",
+    "state": "primary"
+  },
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "surface": {"value": "web-app", "basis": "inferred"}
+}

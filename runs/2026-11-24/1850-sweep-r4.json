@@ -1,0 +1,28 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-24T18:41:00Z",
+  "finished_at": "2026-11-24T18:58:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["Microsoft Code Red outage internal memos Reuters", "Check Point Research retail 28% Black Friday", "CVE-2026-132224 Optimizely"],
+  "pages_read": [
+    {"url": "https://certvde.com/en/advisories/VDE-2026-096/", "title": "WAGO VDE-2026-096", "used_in": "wago-vde-2026-096-privilege-escalation-2026-11"},
+    {"url": "https://distribucionactualidad.com/los-ciberataques-comercio-minorista-aumentan-28-antes-black-friday/", "title": "DARetail Black Friday", "used_in": "checkpoint-retail-attacks-28pct-black-friday-2026-11"},
+    {"url": "https://www.bitsight.com/blog/cve-2026-132224-optimizely-third-party-supply-chain-attack", "title": "Bitsight Optimizely", "used_in": "optimizely-web-script-injection-2026-11"},
+    {"url": "https://www.helpnetsecurity.com/2026/11/24/aws-european-sovereign-cloud-details/", "title": "AWS ESC (sponsored)", "used_in": "skipped"},
+    {"url": "https://www.makeuseof.com/oxloader-dll-hijacking-password-stealers/", "title": "MakeUseOf OXLoader", "used_in": "skipped (already on file)"},
+    {"url": "https://krypt3ia.wordpress.com/2026/11/22/weekly-all-source-espionage-intelligence-brief-11-24-26/", "title": "Krypt3ia weekly brief", "used_in": "skipped"}
+  ],
+  "added": ["wago-vde-2026-096-privilege-escalation-2026-11", "checkpoint-retail-attacks-28pct-black-friday-2026-11"],
+  "updated": ["optimizely-web-script-injection-2026-11"],
+  "skipped": [
+    {"title": "AWS European Sovereign Cloud", "url": "https://www.helpnetsecurity.com/2026/11/24/aws-european-sovereign-cloud-details/", "reason": "AWS-sponsored product description, no cyber event"},
+    {"title": "OXLoader DLL hijacking (MakeUseOf)", "url": "https://www.makeuseof.com/oxloader-dll-hijacking-password-stealers/", "reason": "already on file: malwarebytes-oxloader-dll-hijacking-2026-11; MakeUseOf relays Malwarebytes"},
+    {"title": "Krypt3ia weekly espionage brief", "url": "https://krypt3ia.wordpress.com/2026/11/22/weekly-all-source-espionage-intelligence-brief-11-24-26/", "reason": "blog roundup"}
+  ],
+  "open_leads": [
+    {"title": "Microsoft declares 'Code Red' after historic outage, internal memos show", "url": "https://www.reuters.com/business/microsoft-declares-code-red-after-historic-outage-internal-memos-show-2026-11-24/", "note": "Reuters page not readable; search found no other coverage. Relates to the 12 Nov Microsoft 365 outage (microsoft-365-global-outage-2026-11).", "priority": "medium"},
+    {"title": "Check Point Research original report on retail attacks", "url": "", "note": "Not found; DARetail event is single_source", "priority": "low"}
+  ],
+  "failed_sites": ["euvd.enisa.europa.eu (application could not be loaded)", "reuters.com (fetch refused)"],
+  "notes": "Optimizely event: added CVE-2026-132224 from Bitsight (which says Optimizely's notice names it); ENISA page did not load. Existing event has 9 sources without published days (pre-existing)."
+}

@@ -1,0 +1,79 @@
+{
+  "action": "WAGO advises (per CERT@VDE) updating to firmware 4.10.0 (FW32) or higher; for custom firmware, contact WAGO support.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "Germany",
+  "cves": [
+    "CVE-2026-80466",
+    "CVE-2026-88850"
+  ],
+  "date": "2026-11-23",
+  "date_note": "The CERT@VDE advisory page gives 23 November as its publication day and no earlier date.",
+  "exec": "CERT@VDE lists two flaws in WAGO controller firmware earlier than 4.10.0 (FW32); one may allow command execution with root privileges.",
+  "first_seen": "2026-11-24T18:50:00Z",
+  "geo_basis": "headquarters",
+  "lat": 52.29,
+  "lng": 8.92,
+  "org": "WAGO",
+  "pin_type": "headquarters",
+  "place": "Minden, Germany",
+  "plain": "CERT@VDE says WAGO controllers and panels running firmware earlier than 4.10.0 (FW32) have two flaws, one of which may let a low-privileged attacker run commands as root. WAGO's fix is firmware 4.10.0 (FW32) or higher.",
+  "products": [
+    "WAGO CC100",
+    "WAGO PFC100 G2",
+    "WAGO PFC200 G2",
+    "WAGO TP600",
+    "WAGO Edge Controller",
+    "WAGO WP400"
+  ],
+  "report": {
+    "doc_id": "VDE-2026-096",
+    "iocs_available": false,
+    "key_findings": [
+      "Covers CVE-2026-80466 (OS command injection in web-based management routing configuration) and CVE-2026-88850 (missing authorization in PROFIBUS configuration).",
+      "Affected: wago_os_linux earlier than 4.10.0 (FW32) and custom wago_os_linux earlier than 4.10.0 (70)."
+    ],
+    "published": "2026-11-23",
+    "publisher": "CERT@VDE",
+    "publisher_type": "government",
+    "read_depth": "full",
+    "recommendations": [
+      "Update to firmware 4.10.0 (FW32) or higher; for custom firmware contact WAGO support."
+    ],
+    "url": "https://certvde.com/en/advisories/VDE-2026-096/"
+  },
+  "sector": "Industrial control systems",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "CERT@VDE VDE-2026-096: WAGO Improper Authorization and Privilege Escalation",
+      "url": "https://certvde.com/en/advisories/VDE-2026-096/",
+      "published": "2026-11-23"
+    }
+  ],
+  "status": "official",
+  "summary": "CERT@VDE advisory VDE-2026-096 lists two flaws in WAGO wago_os_linux earlier than 4.10.0 (FW32). CVE-2026-80466, an OS command injection in web-based management, may allow a low-privileged attacker to execute commands with root privileges; CVE-2026-88850 is missing authorization in PROFIBUS configuration. The fix is firmware 4.10.0 (FW32) or higher.",
+  "tags": [
+    "ot-ics",
+    "rce"
+  ],
+  "title": "CERT@VDE: WAGO controller firmware flaws allow command injection and missing authorization",
+  "updated_at": "2026-11-24T18:50:00Z",
+  "validation": {
+    "checked_at": "2026-11-24T18:50:00Z",
+    "note": "Primary source: CERT@VDE advisory VDE-2026-096, read in full. No second publisher read.",
+    "state": "primary"
+  },
+  "sectors": {
+    "values": [
+      "critical-manufacturing"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "ot-ics",
+    "basis": "inferred"
+  }
+}

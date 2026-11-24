@@ -1,0 +1,26 @@
+{
+  "job": "sweep-r3",
+  "started_at": "2026-11-24T18:41:00Z",
+  "finished_at": "2026-11-24T18:50:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": ["Iran suspected cyberattacks ships", "BTSO siber saldırı Matlı", "Microsoft code red outage", "cyberattaques centres frigorifiques"],
+  "pages_read": [
+    {"url": "https://vulnerability.circl.lu/vuln/cve-2026-135790", "title": "CVE-2026-135790", "used_in": "panabit-smart-application-gateway-cve-2026-135790-os-command-injection-2026-11"},
+    {"url": "https://cvefeed.io/vuln/detail/CVE-2026-135788", "title": "CVE-2026-135788", "used_in": "d-link-dir-x1860-cve-2026-135788-anweb-command-injection-2026-11"},
+    {"url": "https://www.newser.com/story/400551/us-thinks-iran-has-turned-its-cyberattacks-on-a-new-target.html", "title": "US Thinks Iran...", "used_in": "closed as already on file"},
+    {"url": "https://krypt3ia.wordpress.com/2026/11/23/iran-threat-intelligence-update-radiological-and-chemical-attack-reporting-11-23-26/", "title": "Krypt3ia update", "used_in": "closed as not an event"}
+  ],
+  "added": ["panabit-smart-application-gateway-cve-2026-135790-os-command-injection-2026-11", "d-link-dir-x1860-cve-2026-135788-anweb-command-injection-2026-11"],
+  "updated": [],
+  "skipped": [
+    {"title": "US Thinks Iran Has Turned Its Cyberattacks on a New Target", "url": "https://www.newser.com/story/400551/us-thinks-iran-has-turned-its-cyberattacks-on-a-new-target.html", "reason": "already on file: us-investigates-iran-ship-cyberattacks-bomb-threats-2026-11 (same WSJ report)"},
+    {"title": "Iran threat intelligence update 11.23.26", "url": "https://krypt3ia.wordpress.com/2026/11/23/iran-threat-intelligence-update-radiological-and-chemical-attack-reporting-11-23-26/", "reason": "blog analysis, no concrete cyber event"}
+  ],
+  "open_leads": [
+    {"title": "BTSO'ya siber saldırı", "url": "https://www.habergundemim.com/btsoya-siber-saldiri-baskan-matli-surec-ve-bulgulari-acikladi-5032548", "note": "403; a search found nothing; needs another Turkish publisher or BTSO's own statement", "priority": "medium"},
+    {"title": "Microsoft Code Red after 24-hour outage", "url": "https://www.businessworld.in/article/microsoft-declares-code-red-after-24-hour-outage-exposes-system-weaknesses-635037", "note": "page loaded empty; search found no 'code red' report; related Microsoft outage of 12-13 Nov may already be on file", "priority": "medium"},
+    {"title": "Cyberattaques: les centres frigorifiques", "url": "https://www.24heures.ch/cyberattaques-les-centres-frigorifiques-cibles-sensibles-880556995330", "note": "redirect loop; search shows the CISA/FBI 5 Nov refrigeration warning and fridge attacks in Europe; check whether on file", "priority": "medium"}
+  ],
+  "failed_sites": ["vuldb.com (403)", "habergundemim.com (403)", "businessworld.in (empty)", "24heures.ch (redirects)"],
+  "notes": "Both CVE events are single_source from database mirrors; vendor pages not read."
+}

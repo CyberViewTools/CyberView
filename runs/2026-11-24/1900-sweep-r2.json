@@ -1,0 +1,84 @@
+{
+  "job": "researcher-sweep-r2",
+  "started_at": "2026-11-24T18:57:00Z",
+  "finished_at": "2026-11-24T19:03:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209706",
+      "title": "Suncheon National University leak",
+      "used_in": "suncheon-national-university-legacy-system-leak-2026-11"
+    },
+    {
+      "url": "https://community.traefik.io/t/new-security-update-for-traefik-2-11-2-11-64-3-7-3-7-20-and-3-8-3-8-0/30561",
+      "title": "Traefik security update",
+      "used_in": "traefik-security-update-brotli-dos-debug-log-tls-2026-11"
+    },
+    {
+      "url": "https://sempreupdate.com.br/traefik-corrige-falhas-memoria-credenciais-tls/",
+      "title": "Sempre Update Traefik",
+      "used_in": "traefik-security-update-brotli-dos-debug-log-tls-2026-11"
+    },
+    {
+      "url": "https://developer.joomla.org/security-centre/1099-20261101-core-improper-acl-checks-in-webservice-endpoints.html",
+      "title": "Joomla 20261101",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://sploitus.com/exploit?id=37EAF1DF-A566-5A33-9F1E-F2CC509A48EC",
+      "title": "MISP PoC",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://sploitus.com/exploit?id=A41664AB-0871-5D54-BCAB-AE4DA076ECA5",
+      "title": "MISP PoC",
+      "used_in": "skipped"
+    }
+  ],
+  "added": [
+    "suncheon-national-university-legacy-system-leak-2026-11",
+    "traefik-security-update-brotli-dos-debug-log-tls-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Joomla 20261101 ACL",
+      "url": "https://developer.joomla.org/security-centre/1099-20261101-core-improper-acl-checks-in-webservice-endpoints.html",
+      "reason": "Low severity, no exploitation stated"
+    },
+    {
+      "title": "MISP PoCs CVE-2026-135250/135257",
+      "url": "https://sploitus.com/exploit?id=37EAF1DF-A566-5A33-9F1E-F2CC509A48EC",
+      "reason": "PoC listings only; MISP advisory not read"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Joomla RCE media custom field CVE-2026-129393 (9.4)",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-129393",
+      "note": "Vendor advisory 20261156 not found; retry later",
+      "priority": "medium"
+    },
+    {
+      "title": "Adobe Campaign Classic CVE-2026-123723 and sibling CVEs",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-123723",
+      "note": "Adobe bulletin 403",
+      "priority": "medium"
+    },
+    {
+      "title": "WP Recipe Maker <=10.9.2 broken access control",
+      "url": "https://vulners.com/patchstack/PATCHSTACK:6485CFCB833CDEC2EA9DB89475B0300B",
+      "note": "403",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "helpx.adobe.com (403)",
+    "vulners.com (403)",
+    "cve.org (empty)"
+  ],
+  "notes": "Dailysecu fetch first failed with ECONNRESET then loaded.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

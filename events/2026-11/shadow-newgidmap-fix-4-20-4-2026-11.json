@@ -1,0 +1,66 @@
+{
+  "action": "General advice: shadow maintainer Alejandro Colomar released shadow 4.20.4 with the fix, so update to that release on systems that install newgidmap SUID.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "",
+  "date": "2026-11-22",
+  "exec": "A local flaw in shadow's newgidmap, which a reporter reproduced with a public write-up, is fixed in shadow 4.20.4.",
+  "first_seen": "2026-11-24T19:01:51Z",
+  "geo_basis": "",
+  "impact": "",
+  "lat": null,
+  "lng": null,
+  "org": "shadow-maint",
+  "pin_type": "none",
+  "place": "",
+  "plain": "A flaw in newgidmap, part of the shadow tools on Linux, let a local user make the privileged helper write to a file of their choosing. A fixed version, shadow 4.20.4, has been released.",
+  "products": [
+    "shadow (newgidmap, newuidmap)"
+  ],
+  "cves": [
+    "CVE-2026-135901"
+  ],
+  "sector": "Technology / open source",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "oss-security: Re: [PATCH v7 0/2] shadow: Security fix for newgidmap(1) (Alejandro Colomar)",
+      "url": "https://seclists.org/oss-sec/2026/q4/819",
+      "published": "2026-11-22"
+    },
+    {
+      "name": "oss-security: Re: Re: [PATCH v7 0/2] shadow: Security fix for newgidmap(1) (Solar Designer)",
+      "url": "https://seclists.org/oss-sec/2026/q4/876",
+      "published": "2026-11-24"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "Shadow maintainer Alejandro Colomar said on oss-security on 22 November that shadow 4.20.4 was released with a fix for newgidmap. The reporter, Dickson Wu, reproduced it on release 4.20.3 with the helper installed SUID and called it a local integrity/DoS issue rather than code execution. Solar Designer's follow-up post cites CVE-2026-135901 and says the fix uses openat2(2) with RESOLVE_NO_XDEV.",
+  "tags": [],
+  "time_basis": "published",
+  "title": "shadow 4.20.4 fixes newgidmap flaw reproduced on 4.20.3",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T19:05:00Z",
+    "note": "Both pages are posts on the oss-security list (one publisher); the maintainer's post states the release. Release notes on GitHub returned 403 and were not read."
+  },
+  "evidence": [
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/819",
+      "quote": "I've released publicly shadow-4.20.4 a moment ago."
+    }
+  ],
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "updated_at": "2026-11-24T19:01:51Z"
+}

@@ -26,11 +26,11 @@
   "pin_type": "none",
   "geo_basis": "No page read states where Chainflip is based or where the affected systems are.",
   "actor": "",
-  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults, and offered a 10% bounty. Its incident report of 23 November says a further 10.48288011 BTC was taken after the first key rotation, and that the attacker used validator access to exploit a flaw in a third-party networking library; some steps are not fully confirmed.",
+  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults, and offered a 10% bounty. Its incident report says a further 10.48288011 BTC was taken afterwards, and that investigators believe the attacker exploited a memory-safety bug in a third-party networking library used by validator software; some steps are not yet fully confirmed.",
   "plain": "The crypto service Chainflip says an attacker took bitcoin, ether and stablecoins from its vaults on 21 November. It offers to let the attacker keep 10% if 90% is returned by 23 November.",
-  "exec": "Chainflip says vault funds were taken through key exposure and its protocol is in safe mode, per Shattered and CryptoTicker.",
+  "exec": "Chainflip says funds were taken from its vaults and that governance put the protocol into safe mode, per its incident report; investigators believe a third-party library bug was exploited.",
   "action": "No action needed; for awareness.",
-  "impact": "Funds taken from Chainflip's vaults; protocol in safe mode according to Shattered and CryptoTicker.",
+  "impact": "Funds taken from Chainflip vaults; swaps, deposits and withdrawals paused in safe mode according to Chainflip incident report.",
   "products": [
     "Chainflip"
   ],
@@ -48,7 +48,7 @@
     {
       "name": "Chainflip Labs: Message from Chainflip Labs",
       "url": "https://chainflip.io/return",
-      "published": "2026-11-21"
+      "published": "2026-11-23"
     },
     {
       "name": "CryptoTicker",
@@ -57,7 +57,8 @@
     },
     {
       "name": "Shattered",
-      "url": "https://shattered.io/chainflip-ethereum-vault-drain-4-86-million-one-valid-signature-bridge-security/"
+      "url": "https://shattered.io/chainflip-ethereum-vault-drain-4-86-million-one-valid-signature-bridge-security/",
+      "published": "2026-11-22"
     },
     {
       "name": "Bitcoin.com (Portuguese)",
@@ -113,15 +114,16 @@
     "url": "https://chainflip.io/return"
   },
   "first_seen": "2026-11-22T11:55:17Z",
-  "updated_at": "2026-11-24T10:45:12Z",
+  "updated_at": "2026-11-24T11:15:12Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-23T17:28:32Z",
+    "state": "corrected",
+    "at": "2026-11-24T11:15:12Z",
     "first_at": "2026-11-22T11:58:46Z",
-    "note": "Compared amounts, 10% bounty, 18:38 UTC deadline, key-exposure and validator wording against chainflip.io/return; safe mode and 2:10 a.m. ET against CryptoTicker, Shattered, Bitcoin.com; evidence quotes found",
-    "flags": [
-      "source-published-partial"
+    "note": "stronger than the source: summary now says investigators believe the library bug was exploited; exec no longer cites outlets for key exposure, uses Chainflip report; source published days filled. Amounts, bounty, 10.48288011 BTC, time confirmed.",
+    "flags": [],
+    "categories": [
+      "overstated"
     ]
   },
-  "qa_checked_at": "2026-11-23T17:28:32Z"
+  "qa_checked_at": "2026-11-24T11:15:12Z"
 }

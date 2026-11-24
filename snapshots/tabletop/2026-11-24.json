@@ -1,0 +1,130 @@
+{
+ "label": "exercise",
+ "generated_at": "2026-11-24T05:06:43.896Z",
+ "date": "2026-11-24",
+ "title": "Exercise: a poisoned package release steals cloud and CI credentials from your build pipeline",
+ "based_on": [
+  "microsoft-agent-framework-pypi-compromise-2026-11"
+ ],
+ "real_story": "On November 17, 2026, versions 1.26.1 and 1.26.2 of Microsoft's agent-framework package were published on PyPI with a credential stealer. A .pth file ran it at Python startup, even if the package was never imported. It targeted environment variables, credential files, Azure managed-identity and Azure DevOps tokens and, in 1.26.2, GitHub Actions OIDC tokens, and sent them to a webhook.site endpoint. Wiz says both versions were unavailable on PyPI by about 21:30 UTC and that 1.26.0 is the most recent safe version. BleepingComputer says it remains unclear how the attacker gained access to publish; Microsoft had not responded by publication time.",
+ "facts": [
+  {
+   "text": "Versions 1.26.1 and 1.26.2 of the agent-framework package were published on November 17, 2026 with a stealer that BleepingComputer says executed automatically during normal Python startup in affected environments, even if the package was never imported.",
+   "source_url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+  },
+  {
+   "text": "Wiz says 1.26.2 restored the clean __init__.py and used a new trigger (af_runtime_diag.pth), so searching only for 1.26.1 filenames will miss it.",
+   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  },
+  {
+   "text": "Wiz says the stealer targets environment variables matching terms such as token, secret, key, azure, aws, github and npm, credential files, and Azure DevOps and Entra OIDC tokens; 1.26.2 adds GitHub Actions OIDC tokens for workflows with id-token: write.",
+   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  },
+  {
+   "text": "Socket reports that the collected data is compressed, Base64-encoded and sent by POST to a webhook.site endpoint, and that the reported payloads do not download or execute additional code.",
+   "source_url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
+  },
+  {
+   "text": "Wiz says its analysis of the 50 requests kept by the webhook found 17 that represent three unique successful victim exfiltrations.",
+   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  },
+  {
+   "text": "Wiz says the most recent safe version is 1.26.0, and advises searching lockfiles, CI logs, virtualenvs and container images for 1.26.1 or 1.26.2.",
+   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  },
+  {
+   "text": "BleepingComputer says it remains unclear how the attacker gained access to publish under Microsoft's project.",
+   "source_url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+  },
+  {
+   "text": "Wiz advises rotating every secret present in affected hosts and runners and notes that stolen tokens may be valid for up to 24 hours.",
+   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  }
+ ],
+ "scenario": "Hypothetical: Northbridge Components, a 600-person manufacturer, has a six-person platform team and a data team building an internal AI assistant in Python. A popular open-source package used by the data team's notebooks, a build runner and one production container is replaced overnight by a malicious release. Nothing breaks, because the package still works. Your cloud provider and the package index each send notices: the release was malicious, and any Python process in an affected environment may have leaked its secrets. Builds run on a self-hosted CI runner with cloud deploy permissions.",
+ "duration_min": 75,
+ "roles": [
+  "Incident commander",
+  "Platform/DevOps engineer",
+  "Cloud/identity administrator",
+  "Data/ML team lead",
+  "Security analyst",
+  "Communications lead",
+  "Legal or privacy officer",
+  "IT operations manager"
+ ],
+ "injects": [
+  {
+   "at_min": 0,
+   "title": "A notice arrives",
+   "text": "At 07:45 a package-index notice and a vendor blog say two releases of a package you use were malicious and ran at Python startup. The data team lead says they updated dependencies two days ago but is unsure which environments pulled the new version.",
+   "ask": "Who owns this, and what is your first 30-minute plan to find out where the versions ran?"
+  },
+  {
+   "at_min": 12,
+   "title": "Confirmation",
+   "text": "A lockfile search finds the bad version in one CI runner image and two developer laptops. The container registry shows a production image rebuilt that night on the runner. Proxy logs show outbound requests to a public webhook service from the runner at the time of the build.",
+   "ask": "What evidence do you preserve, and do you pause all pipelines now? What does a completed request versus a blocked one tell you?"
+  },
+  {
+   "at_min": 25,
+   "title": "Which secrets were reachable?",
+   "text": "The runner held a cloud service principal with deploy rights, a container registry token, a repository token and a package-publishing token. Cloud logs show the managed identity requested tokens at an odd hour. Nobody has a full inventory of what the runner could reach.",
+   "ask": "In what order do you rotate secrets, and how do you rotate without breaking production deploys? How long might stolen tokens remain valid?"
+  },
+  {
+   "at_min": 40,
+   "title": "Customer and auditor pressure",
+   "text": "A key customer's security team heard about the incident from news coverage and asks whether their data or your software releases could be affected. Your auditor asks whether a notification obligation has been triggered.",
+   "ask": "What can you truthfully say now, who says it, and what do you need to find out before you can say more?"
+  },
+  {
+   "at_min": 52,
+   "title": "Is the build trustworthy?",
+   "text": "The analyst finds that the rebuilt production image was deployed before the notice. Public reports say the stealer did not download more code, but you cannot yet rule out that the stolen deploy credentials were used.",
+   "ask": "Do you roll back, rebuild from a clean environment, or leave it running while you check the cloud audit logs? Who decides?"
+  },
+  {
+   "at_min": 65,
+   "title": "Recovery and prevention",
+   "text": "Secrets are rotated and images rebuilt from a pinned known-good version. The executive asks what will stop this happening again and when the incident can be closed.",
+   "ask": "What are your exit criteria, and which controls (pinning, hash-checked installs, a delay before adopting new releases, least-privilege runners, egress filtering) do you commit to, with owners and dates?"
+  }
+ ],
+ "questions": [
+  "How would you find every place a given package version ran: laptops, runners, containers, notebooks?",
+  "Which of your CI and cloud secrets are reachable by any process on a build runner, and who knows?",
+  "How do you tell a completed exfiltration from a blocked one in your logs?",
+  "What is your order of rotation, and what breaks when you rotate each secret?",
+  "How do you decide whether an image built during the exposure window can stay in production?",
+  "Which cloud and CI audit logs would you review for use of stolen tokens, and how far back?",
+  "Who may pause all pipelines, and how does that decision get made out of hours?",
+  "What do you tell customers and auditors while the scope is still unknown?",
+  "What would make you consider your build pipeline trusted again?"
+ ],
+ "good_looks_like": [
+  "The team searches lockfiles, CI logs, virtualenvs and container images for the bad versions, and checks for both known file names rather than only the first.",
+  "Affected environments are isolated and rebuilt from a known-clean pinned version, not cleaned in place.",
+  "Every secret present on affected hosts and runners is treated as exposed and rotated, with an owner and an order.",
+  "Proxy, DNS and egress logs are searched for the exfiltration destination and completed transfers are separated from blocked ones.",
+  "Cloud and CI sign-in and activity logs are audited for managed identities and federated credentials reachable from affected resources.",
+  "Workflows that could request OIDC tokens are identified and trusting federated credentials reviewed.",
+  "Communications to customers and auditors state only confirmed facts and name what is still being investigated.",
+  "Follow-up actions with owners: version pinning, least-privilege runners and egress restrictions."
+ ],
+ "adapt": "Small team: drop the auditor inject, merge roles (one person as commander and cloud admin) and run 45 minutes focusing on the first three injects. Software or regulated sectors: add a question on whether shipped builds could carry the compromise and on notification duties to regulators and customers. Teams with no CI: replace the runner with developer laptops and a shared notebook server.",
+ "sources": [
+  {
+   "name": "Wiz",
+   "url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+  },
+  {
+   "name": "Socket",
+   "url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
+  },
+  {
+   "name": "BleepingComputer",
+   "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+  }
+ ]
+}

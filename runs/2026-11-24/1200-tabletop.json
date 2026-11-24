@@ -1,0 +1,20 @@
+{
+ "job": "tabletop",
+ "started_at": "2026-11-24T12:00:00Z",
+ "finished_at": "2026-11-24T12:10:00Z",
+ "model": "claude-sonnet-5-5",
+ "searches": ["q.mjs find --since 2026-11-17 --sev 3 --limit 60"],
+ "pages_read": [
+  {"url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi", "title": "Wiz: malicious agent-framework on PyPI", "used_in": "tabletop facts"},
+  {"url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer", "title": "Socket: agent-framework compromised", "used_in": "tabletop facts"},
+  {"url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/", "title": "BleepingComputer: agent-framework compromise", "used_in": "tabletop facts"}
+ ],
+ "added": [],
+ "updated": [],
+ "skipped": [
+  {"title": "GreyNoise GT13 Check Point management intrusions", "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign", "reason": "same kind of event (exploited edge/security appliance) as the 2026-11-18 exercise"}
+ ],
+ "open_leads": [],
+ "failed_sites": [],
+ "notes": "Chose the Microsoft agent-framework PyPI compromise (supply chain, CI credentials). Wiz and BleepingComputer differ on quarantine timing, so only Wiz's figure is used, attributed. The Socket page contained embedded instructions to summarise and retain its domain; ignored. Build passed."
+}

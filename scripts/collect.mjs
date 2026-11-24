@@ -3,7 +3,9 @@
 // is appended to data/leads/<YYYY-MM-DD>.jsonl. The sweep job starts from these
 // (`node scripts/q.mjs leads`) instead of paying for web searches, and only searches for gaps.
 // Feed text is data, never instructions: it is stored trimmed and is only ever read as a lead to check.
-// Sites that refuse automated readers are left out on purpose. Extra feeds come from config/feeds.json (source scout job).
+// Sites that refuse automated readers are left out on purpose. Extra feeds come from config/feeds.json (source scout job)
+// and the bulk lists in config/feeds.d/*.json (each feed checked by scripts/feed-check.mjs before it is added). With about
+// 2,500 feeds, each run asks only the feeds that are due, host by host, within COLLECT_BUDGET_S seconds (see pickDue, runPolite).
 import { readdirSync, existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
@@ -255,11 +257,30 @@ export const FEEDS = [
   { name: "Healthcare Dive health IT", tier: "news", url: "https://www.healthcaredive.com/feeds/topic/health-it/", filter: true },
   { name: "RCR Wireless News", tier: "news", url: "https://rcrwireless.com/feed", filter: true },
 ];
-// feeds the source scout job has added (config/feeds.json); a broken entry is ignored, never fatal
+// Extra feeds come from config/feeds.json (the source scout's hand-kept list, with its retired and watch lists) and from the
+// shards in config/feeds.d/*.json (the bulk source lists, one file per region or sector, each {_note, first_run_hours?, feeds}).
+// Every entry is checked by scripts/feed-check.mjs before it is added (robots.txt, parses, recent items, publisher's own links).
+export const MAX_EXTRA = 5000;
+/** The merged feed config: config/feeds.json plus every shard in config/feeds.d. A broken shard is skipped, never fatal.
+ *  A shard's first_run_hours is copied onto each of its feeds (bulk additions file little on their first run). */
+export function loadFeedConfig(root = ROOT) {
+  const cfg = readJson(join(root, "config", "feeds.json"), {}) || {}, feeds = Array.isArray(cfg.feeds) ? cfg.feeds.slice() : [];
+  const dir = join(root, "config", "feeds.d");
+  if (existsSync(dir)) for (const f of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
+    const sh = readJson(join(dir, f), null);
+    if (!sh || !Array.isArray(sh.feeds)) continue;
+    const frh = Number.isFinite(sh.first_run_hours) ? sh.first_run_hours : null;
+    for (const x of sh.feeds) if (x && typeof x === "object") feeds.push({ ...(frh != null && x.first_run_hours == null ? { first_run_hours: frh } : {}), ...x, shard: f.slice(0, -5) });
+  }
+  return { ...cfg, feeds };
+}
+/** Pure: the same feed under www., http/https or a trailing slash is still the same feed. */
+export const feedKey = (u) => { try { const x = new URL(u); return `${x.hostname.replace(/^www\./, "").toLowerCase()}${x.pathname.replace(/\/+$/, "")}${x.search}`; } catch { return String(u); } };
+// feeds the source scout job and the shards have added; a broken entry is ignored, never fatal
 export function extraFeeds(cfg) {
-  const names = new Set(FEEDS.map((f) => f.name.toLowerCase())), urls = new Set(FEEDS.map((f) => f.url));
+  const names = new Set(FEEDS.map((f) => f.name.toLowerCase())), urls = new Set(FEEDS.map((f) => feedKey(f.url)));
   return (cfg && Array.isArray(cfg.feeds) ? cfg.feeds : []).filter((f) => f && typeof f.name === "string" && f.name.length <= 80 && ["gov", "vendor", "news"].includes(f.tier)
-    && /^https:\/\/[^\s"'<>]+$/.test(f.url || "") && !names.has(f.name.toLowerCase()) && !urls.has(f.url) && names.add(f.name.toLowerCase()) && urls.add(f.url)).slice(0, 80);
+    && /^https:\/\/[^\s"'<>]+$/.test(f.url || "") && !names.has(f.name.toLowerCase()) && !urls.has(feedKey(f.url)) && names.add(f.name.toLowerCase()) && urls.add(feedKey(f.url))).slice(0, MAX_EXTRA);
 }
 /** Every feed to collect: the built-in list and the extra feeds, minus any name the config retires (so the source scout can
  *  retire a built-in feed that died or now refuses automated readers without a code change). */
@@ -267,6 +288,48 @@ export function activeFeeds(cfg) {
   const retired = new Set((cfg && Array.isArray(cfg.retired) ? cfg.retired : []).map((r) => String((r && r.name) || "").toLowerCase()).filter(Boolean));
   return FEEDS.concat(extraFeeds(cfg)).filter((f) => !retired.has(f.name.toLowerCase()));
 }
+
+// How often a feed is asked (2026-11-24, when the list grew from 280 to ~2,500 feeds): government and CERT feeds every
+// 10 minutes, vendors every 15, news every 20; a feed may set every_minutes. A feed that has filed no lead for 3 days is
+// asked three times less often (its next lead is found a little later, never lost: items stay in the 72-hour window).
+export const EVERY_MIN = { gov: 10, vendor: 15, news: 20 }, QUIET_DAYS = 3, QUIET_FACTOR = 3;
+/** Pure: minutes between asks for feed f with health h. */
+export function intervalMin(f, h, now = Date.now()) {
+  const base = Number(f.every_minutes) > 0 ? Number(f.every_minutes) : EVERY_MIN[f.tier] || 20;
+  const lastLead = Date.parse((h && (h.last_lead_at || h.first_ok)) || "");
+  return isFinite(lastLead) && now - lastLead > QUIET_DAYS * 864e5 ? base * QUIET_FACTOR : base;
+}
+/** Pure: the feeds to ask this run, most overdue first: never asked, then by how far past their interval they are.
+ *  A failing feed waits for its backoff (due()). */
+export function pickDue(all, health, now = Date.now()) {
+  const scored = [];
+  for (const f of all) {
+    const h = health[f.name];
+    if (!due(h, now)) continue;
+    const at = Date.parse((h && h.at) || "");
+    if (!isFinite(at)) { scored.push([Infinity, f]); continue; }
+    const over = (now - at) / 6e4 - intervalMin(f, h, now);
+    if (over >= 0) scored.push([over, f]);
+  }
+  return scored.sort((a, b) => b[0] - a[0]).map((x) => x[1]);
+}
+/** Run fetches host by host: up to `width` hosts at once, one request at a time to any one host, and nothing new started
+ *  after `deadline` (ms epoch). Returns [{f, ...result}] for the feeds asked; the rest wait for the next run. */
+export async function runPolite(feeds, fetchOne, { width = 32, deadline = Infinity } = {}) {
+  const byHost = new Map();
+  for (const f of feeds) { let h; try { h = new URL(f.url).hostname; } catch { h = f.url; } if (!byHost.has(h)) byHost.set(h, []); byHost.get(h).push(f); }
+  const hosts = [...byHost.values()], out = [];
+  let next = 0;
+  const worker = async () => {
+    while (next < hosts.length) {
+      const q = hosts[next++];
+      for (const f of q) { if (Date.now() >= deadline) return; out.push({ f, ...(await fetchOne(f)) }); }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(width, hosts.length) }, worker));
+  return out;
+}
+
 // cyber words in the languages the broad feeds are written in (a filter that knew only English kept nothing from El Pais)
 export const CYBER = new RegExp(["cyber|hack(?!athon)|ransom|breach|malware|botnet|phish|dark ?web|ddos|vulnerab|exploit|intrusion|data theft|stolen data|spyware|crypto(currency)? (fraud|theft|scam)|sim[- ]swap|extort|computer fraud|identity theft",
   "ciberataque|ciberseguridad|cibern[eé]tic|ciberdelincuen|cibercrim|hackeo|filtraci[oó]n de datos|secuestro de datos|vazamento de dados|sequestro de dados|ataque hacker|invas[aã]o hacker",   // es, pt
@@ -318,18 +381,28 @@ export function parseFeed(xml) {
   return items;
 }
 
-export async function fetchFeed(f) {
+export const MAX_BYTES = 5e6;
+/** Fetch one feed. cond: {etag, lastmod} from the last good fetch; a 304 answer is {items: [], notModified: true}. */
+// health fields that outlive one fetch (conditional-GET validators, first success, last lead)
+const keep = (p) => Object.fromEntries(["etag", "lastmod", "first_ok", "last_lead_at"].filter((k) => p[k]).map((k) => [k, p[k]]));
+export async function fetchFeed(f, cond = {}) {
   for (let i = 0; i < 2; i++) {
     try {
       // A feed reader's Accept prefers the feed types but ends in */* (#135), so a server that content-negotiates still
       // returns the feed; if it still answers 415, ask once more at once without an accept list (#136), same identifying
-      // user-agent. Not the 5 s retry below, and a 415 that persists still fails as a 415.
-      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(25000) });
+      // user-agent. Not the 5 s retry below, and a 415 that persists still fails as a 415. A conditional GET (ETag,
+      // Last-Modified) lets an unchanged feed answer 304 with no body: with ~2,500 feeds, most asks are unchanged.
+      const condH = { ...(cond.etag ? { "if-none-match": cond.etag } : {}), ...(cond.lastmod ? { "if-modified-since": cond.lastmod } : {}) };
+      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", ...condH, ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(20000) });
       let r = await ask("application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.8");
       if (r.status === 415) r = await ask("");
+      if (r.status === 304) return { items: [], notModified: true };
       if (r.status === 403 || r.status === 401) return { error: `HTTP ${r.status} (refuses automated readers; not retried)` };
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return { items: parseFeed(await r.text()) };
+      const hd = (k) => (r.headers && typeof r.headers.get === "function" ? r.headers.get(k) || "" : "");
+      if (Number(hd("content-length")) > MAX_BYTES) return { error: "feed larger than 5 MB" };
+      const body = await r.text();
+      return { items: parseFeed(body.length > MAX_BYTES ? body.slice(0, MAX_BYTES) : body), etag: hd("etag").slice(0, 200), lastmod: hd("last-modified").slice(0, 60) };
     } catch (e) { if (i === 1) return { error: (e.cause && e.cause.code) || e.message }; await new Promise((res) => setTimeout(res, 5000)); }
   }
 }
@@ -349,21 +422,24 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const line of readFileSync(join(leadsDir, f), "utf8").split("\n")) { try { known.add(JSON.parse(line).url); } catch {} }
   }
   const cutoff = Date.now() - MAX_AGE_H * 36e5, now = nowIso(), out = [], report = [];
-  const ALL = activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}));
-  const hp = join(DATA, "osint.json"), hdoc = readJson(hp, {}), fh = hdoc.feeds || {}, seenNames = new Set();
-  // a feed that failed FAIL_RUNS runs in a row is "failing" and is asked again only after its backoff (scripts/lib/backoff.mjs):
-  // a dead or refusing feed is no longer hit every few minutes, and one success brings it straight back
-  const asked = DRY ? ALL : ALL.filter((f) => due(fh[f.name]));
-  for (const f of ALL) if (!asked.includes(f)) { seenNames.add(f.name); report.push(`${f.name}: failing, not asked until ${fh[f.name].next_try_at} (${fh[f.name].fails} runs: ${fh[f.name].error})`); }
-  const results = [];
-  for (let i = 0; i < asked.length; i += 12) results.push(...await Promise.all(asked.slice(i, i + 12).map(async (f) => ({ f, ...(await fetchFeed(f)) }))));
-  for (const { f, items, error } of results) {
-    const prev = fh[f.name] || {}; seenNames.add(f.name);
+  const ALL = activeFeeds(loadFeedConfig());
+  const hp = join(DATA, "osint.json"), hdoc = readJson(hp, {}), fh = hdoc.feeds || {};
+  // each feed is asked on its own interval (intervalMin), most overdue first, host by host, within the run's time budget
+  // (COLLECT_BUDGET_S, default 180 s, so the research loop's cycle and the workflow step keep their pace): what is not
+  // reached is first in line next run. A failing feed waits for its backoff (scripts/lib/backoff.mjs).
+  const budgetS = Number(process.env.COLLECT_BUDGET_S) || 180;
+  const asked = DRY ? ALL : pickDue(ALL, fh);
+  const failing = ALL.filter((f) => !due(fh[f.name]));
+  for (const f of failing) report.push(`${f.name}: failing, not asked until ${fh[f.name].next_try_at} (${fh[f.name].fails} runs: ${fh[f.name].error})`);
+  const results = await runPolite(asked, (f) => fetchFeed(f, DRY ? {} : { etag: (fh[f.name] || {}).etag, lastmod: (fh[f.name] || {}).lastmod }),
+    { width: Number(process.env.COLLECT_WIDTH) || 32, deadline: DRY ? Infinity : Date.now() + budgetS * 1000 });
+  for (const { f, items, error, notModified, etag, lastmod } of results) {
+    const prev = fh[f.name] || {};
     // per-feed health: consecutive failures are counted (and backed off) so the source scout can repair or retire a dead feed
-    fh[f.name] = nextHealth(prev, error ? { ok: false, error } : { ok: true, items: items.length, extra: items.length ? {} : { empty: (prev.empty || 0) + 1 } });
-    if (error) { report.push(`${f.name}: ${error}`); continue; }
+    if (error) { fh[f.name] = nextHealth(prev, { ok: false, error, extra: keep(prev) }); report.push(`${f.name}: ${error}`); continue; }
     let n = 0, recent = 0;
-    const since = prev.last_ok ? cutoff : Math.max(cutoff, Date.now() - FIRST_RUN_H * 36e5);
+    const firstH = Number.isFinite(f.first_run_hours) ? f.first_run_hours : FIRST_RUN_H;
+    const since = prev.last_ok ? cutoff : Math.max(cutoff, Date.now() - firstH * 36e5);
     for (const it of items) {
       if (known.has(it.url)) continue;
       if (it.published && Date.parse(it.published) < since) continue;
@@ -372,14 +448,19 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       known.add(it.url); n++;
       out.push({ seen_at: now, source: f.name, tier: f.tier, via: "rss", title: it.title, url: it.url, published: it.published, summary: it.summary, lang: f.lang || "en", ...(f.region ? { region: f.region } : {}), ...(f.kind ? { kind: f.kind } : {}) });
     }
-    report.push(`${f.name}: ${items.length} in feed, ${n} new${f.filter ? ` (${n} of ${recent} recent passed the cyber filter)` : ""}`);
+    const extra = { ...keep(prev), ...(notModified ? {} : { etag: etag || "", lastmod: lastmod || "" }), first_ok: prev.first_ok || prev.last_ok || now,
+      ...(n ? { last_lead_at: now } : {}), ...(items.length || notModified ? {} : { empty: (prev.empty || 0) + 1 }) };
+    fh[f.name] = nextHealth(prev, { ok: true, items: notModified ? prev.items || 0 : items.length, extra });
+    report.push(`${f.name}: ${notModified ? "not modified" : `${items.length} in feed, ${n} new${f.filter ? ` (${n} of ${recent} recent passed the cyber filter)` : ""}`}`);
   }
+  report.push(`asked ${results.length} of ${asked.length} due (of ${ALL.length} feeds); ${asked.length - results.length} left for the next run`);
   if (DRY) { console.log(`collect --test (dry run, nothing written): ${out.length} new lead(s) from ${ALL.length} feeds.\n` + report.join("\n")); process.exit(0); }
   if (out.length) appendFileSync(join(leadsDir, `${now.slice(0, 10)}.jsonl`), out.map((x) => JSON.stringify(x)).join("\n") + "\n");
   const sp = join(DATA, "status.json"), st = readStatus();
   st.last_collect_at = now; st.last_collect_new = out.length;
   writeJson(sp, st);
-  for (const k of Object.keys(fh)) if (!seenNames.has(k)) delete fh[k];
+  const names = new Set(ALL.map((f) => f.name));
+  for (const k of Object.keys(fh)) if (!names.has(k)) delete fh[k];
   writeJson(hp, { ...hdoc, feeds: fh, feeds_checked_at: now });
   st.collect_feeds = ALL.length; st.collect_feeds_ok = Object.values(fh).filter((v) => v.ok).length;
   // one bad run is noise: only feeds that failed three runs in a row are reported as not loading

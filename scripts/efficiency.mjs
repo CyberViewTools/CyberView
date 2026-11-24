@@ -464,7 +464,7 @@ export async function loadInputs(days = 30, now = Date.now()) {
 }
 // every RSS feed collected (scripts/collect.mjs activeFeeds), as {tier, lang, region}; none when it cannot be read
 async function feedList() {
-  try { const m = await import("./collect.mjs"); return m.activeFeeds(readJson(join(ROOT, "config", "feeds.json"), {}) || {}).map((f) => ({ tier: f.tier, lang: f.lang || "en", region: f.region || "" })); } catch { return []; }
+  try { const m = await import("./collect.mjs"); return m.activeFeeds(m.loadFeedConfig()).map((f) => ({ tier: f.tier, lang: f.lang || "en", region: f.region || "" })); } catch { return []; }
 }
 
 /** Pure: how many days a list of timestamps really covers before now (never more than `max`). */

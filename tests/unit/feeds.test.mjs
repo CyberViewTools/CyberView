@@ -4,9 +4,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { FEEDS, CYBER, activeFeeds, extraFeeds } from "../../scripts/collect.mjs";
+import { FEEDS, CYBER, activeFeeds, extraFeeds, loadFeedConfig } from "../../scripts/collect.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CFG = JSON.parse(readFileSync(join(ROOT, "config", "feeds.json"), "utf8"));
+// config/feeds.json plus the bulk source lists in config/feeds.d/*.json (each feed tagged with its shard)
+const ALL_CFG = loadFeedConfig(ROOT);
 const REGIONS = new Set(["africa", "latin-america", "middle-east", "south-asia", "southeast-asia", "east-asia", "europe", "oceania", "north-america"]);
 
 test("every built-in feed is well formed: unique, https, a tier, an ISO language code and a known region", () => {
@@ -81,15 +83,17 @@ test("the cyber filter reads Swahili, Hausa, Amharic and Afrikaans, more Arabic,
     "Zambia welcomes S&P sovereign credit rating upgrade", "Burkina : Faso Academy 2026 : Sylvain Pardevan remporte la première place"]) assert.ok(!CYBER.test(t), t);
 });
 
-test("every extra feed in config/feeds.json is well formed: a tier, https, an ISO language, a known region, the date added and why", () => {
-  for (const f of CFG.feeds) {
+test("every extra feed (config/feeds.json and every shard in config/feeds.d) is well formed: a tier, https, an ISO language, a known region, the date added and why", () => {
+  for (const f of ALL_CFG.feeds) {
+    assert.ok(typeof f.name === "string" && f.name.trim() && f.name.length <= 80, `${f.shard || "feeds.json"}: ${f.name}`);
+    if (f.kind) assert.ok(["cve", "exploit"].includes(f.kind), f.name);
     assert.ok(["gov", "vendor", "news"].includes(f.tier), f.name);
     assert.match(f.url, /^https:\/\/[^\s"'<>]+$/, f.name);
     if (f.lang) assert.match(f.lang, /^[a-z]{2}$/, `${f.name}: lang is a language code`);
     if (f.region) assert.ok(REGIONS.has(f.region), `${f.name}: region ${f.region}`);
     assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(f.added || "") && f.why, `${f.name}: added and why`);
   }
-  assert.equal(extraFeeds(CFG).length, CFG.feeds.length, "every extra feed is collected (none repeats a built-in one or passes the cap)");
+  assert.equal(extraFeeds(ALL_CFG).length, ALL_CFG.feeds.length, "every extra feed is collected (none repeats a built-in one or another shard, or passes the cap)");
 });
 
 // normalised host and path: the same feed under www. or with a trailing slash is still the same feed
@@ -110,7 +114,9 @@ const ROBOTS_DISALLOWED = new Set(["3news.com", "4hou.com", "agenceecofin.com", 
   "milliyet.com.tr", "ncsc.jo", "rfi.fr", "stabroeknews.com", "techeconomy.ng", "tecnoblog.net", "trinidadexpress.com", "tynmagazine.com"]);
 
 test("no two feeds read the same host and path, and none comes from a host whose robots.txt disallows it", () => {
-  const all = activeFeeds(CFG), keys = all.map((f) => feedKey(f.url));
+  const all = activeFeeds(ALL_CFG), keys = all.map((f) => feedKey(f.url));
+  const names = all.map((f) => f.name.toLowerCase());
+  assert.deepEqual(names.filter((n, i) => names.indexOf(n) !== i), [], "the same name twice");
   assert.deepEqual(keys.filter((k, i) => keys.indexOf(k) !== i), [], "the same feed twice");
   assert.deepEqual(all.filter((f) => ROBOTS_DISALLOWED.has(new URL(f.url).hostname.replace(/^www\./, ""))).map((f) => f.name), []);
 });

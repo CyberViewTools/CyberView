@@ -1,0 +1,57 @@
+{
+  "action": "ACN advises updating exposed systems quickly (or isolating them from the internet), prioritising actively exploited CVEs, putting management interfaces behind a VPN with MFA, and feeding its MISP indicators into SIEM and EDR.",
+  "actor": "",
+  "attack": [],
+  "category": "report",
+  "country": "Italy",
+  "cves": [],
+  "date": "2026-11-23",
+  "evidence": [
+    {"url": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate", "quote": "81 CVE"}
+  ],
+  "exec": "Italy's national CSIRT says it has seen mass compromise campaigns run by AI-driven autonomous agents, and lists 81 CVEs with PoC availability and active exploitation noted.",
+  "first_seen": "2026-11-24T15:58:14Z",
+  "geo_basis": "agency",
+  "lat": 41.9,
+  "lng": 12.5,
+  "org": "ACN / CSIRT Italia",
+  "pin_type": "agency",
+  "place": "Rome",
+  "plain": "Italy's national cyber agency says it has seen large-scale attacks carried out by autonomous AI agents, and tells organisations to patch exposed systems quickly.",
+  "products": [],
+  "sector": "Cross-sector",
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {"name": "ACN / CSIRT Italia bulletin BL01/261123/CSIRT-ITA", "url": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate", "published": "2026-11-23"}
+  ],
+  "status": "official",
+  "summary": "CSIRT Italia says it detected, in the national context, mass compromise campaigns carried out by autonomous agents orchestrated with AI. In the cases it observed directly, a large number of systems were compromised within a few hours. The bulletin lists 81 CVEs with PoC availability and active exploitation noted, names tools such as PentAGI and DeepSeek Harness, and publishes MISP feeds.",
+  "surface": {"value": "unknown", "basis": "inferred"},
+  "tags": ["ai-enabled"],
+  "title": "ACN bulletin: CSIRT Italia detects mass compromise campaigns by AI-orchestrated autonomous agents",
+  "updated_at": "2026-11-24T15:58:14Z",
+  "validation": {"state": "corroborated", "checked_at": "2026-11-24T15:58:14Z", "note": "Primary source: the ACN/CSIRT Italia bulletin itself was read."},
+  "report": {
+    "publisher": "ACN / CSIRT Italia",
+    "publisher_type": "government",
+    "doc_id": "BL01/261123/CSIRT-ITA",
+    "published": "2026-11-23",
+    "key_findings": [
+      "CSIRT Italia detected mass compromise campaigns run by autonomous agents orchestrated with AI.",
+      "The agents automate the classic attack phases, explore several vectors in parallel and chain vulnerabilities, misconfigurations and compromised credentials.",
+      "In directly observed cases a large number of systems was compromised within a few hours.",
+      "The bulletin lists 81 CVEs with PoC availability and active exploitation noted."
+    ],
+    "recommendations": [
+      "Update exposed systems quickly, or isolate or segment them and block outbound traffic.",
+      "Prioritise CVEs actively exploited in the observed campaigns.",
+      "Protect management interfaces with VPN and MFA; apply least privilege; keep offline or immutable backups.",
+      "Integrate the MISP feeds into SIEM, EDR, NDR, IDS/IPS and SOAR."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate"
+  }
+}

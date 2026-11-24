@@ -1,103 +1,801 @@
 {
- "_note": "Extra RSS or Atom feeds for scripts/collect.mjs, on top of the built-in list. The source scout job adds and retires entries here (never in code). Each: name, tier (gov, vendor or news), https url, optional filter (true keeps only items that mention a cyber topic in any of the languages the collector knows; use it for broad feeds), optional lang (ISO code) and region, added (date) and why. A name listed in retired is not collected, built-in or not: retire a dead feed, one whose robots.txt now disallows it, or one on the watch list that still has nothing useful when its review date comes. watch: feeds that work but showed little yield; each has the evidence (from data/leads and data/runs closures; the lead files begin on 2026-11-18, so the first audit saw only 2.5 days) and a review date.",
- "feeds": [
-  { "name": "ITWeb (South Africa)", "tier": "news", "url": "https://www.itweb.co.za/rss", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "South Africa's main IT trade daily; covers breaches, the Information Regulator and ransomware at SA firms. 40 items, newest 2026-11-20, 5 passed the cyber filter." },
-  { "name": "Gadget (South Africa)", "tier": "news", "url": "https://gadget.co.za/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "South African technology news. 30 items, newest 2026-11-19, 3 passed the cyber filter." },
-  { "name": "BusinessTech (South Africa)", "tier": "news", "url": "https://businesstech.co.za/news/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "South African business news that reports breaches at SA companies and state bodies (sister of MyBroadband, which refuses automated readers). 20 items, newest 2026-11-21." },
-  { "name": "Technext (Nigeria)", "tier": "news", "url": "https://technext24.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Nigerian technology news. 10 items, newest 2026-11-21, 2 passed the cyber filter (SIM-swap fraud, a data leak)." },
-  { "name": "Nairametrics (Nigeria)", "tier": "news", "url": "https://nairametrics.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Nigerian financial news: bank and fintech fraud, crypto thefts, regulators. 20 items, newest 2026-11-21." },
-  { "name": "Premium Times (Nigeria)", "tier": "news", "url": "https://www.premiumtimesng.com/feed", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Nigerian national newspaper. 15 items, newest 2026-11-21." },
-  { "name": "Vanguard (Nigeria)", "tier": "news", "url": "https://www.vanguardngr.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Nigerian national newspaper; robots.txt explicitly allows /feed/. 20 items, newest 2026-11-21." },
-  { "name": "Graphic Online (Ghana)", "tier": "news", "url": "https://www.graphic.com.gh/news.feed?type=rss", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Ghana's state-owned daily (Daily Graphic). 25 items, newest 2026-11-21." },
-  { "name": "TechTrendsKE (Kenya)", "tier": "news", "url": "https://techtrendske.co.ke/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Kenyan technology news (telecoms, mobile money, government systems). 41 items, newest 2026-11-21." },
-  { "name": "Capital (Ethiopia)", "tier": "news", "url": "https://capitalethiopia.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Ethiopian business weekly; Ethiopia has no other feed. 4 items, newest 2026-11-21." },
-  { "name": "Daily News (Tanzania)", "tier": "news", "url": "https://dailynews.co.tz/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Tanzania's government daily. 10 items, newest 2026-11-21." },
-  { "name": "HabariLeo (Tanzania)", "tier": "news", "url": "https://habarileo.co.tz/feed/", "lang": "sw", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Swahili-language daily from the Daily News group; the first Swahili feed. 10 items, newest 2026-11-21." },
-  { "name": "Lusaka Times (Zambia)", "tier": "news", "url": "https://www.lusakatimes.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Zambian news site. 10 items, newest 2026-11-21." },
-  { "name": "Lefaso.net (Burkina Faso)", "tier": "news", "url": "https://lefaso.net/spip.php?page=backend", "lang": "fr", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Burkina Faso's main news site; it carried the cybercrime brigade's October figures. 87 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Actu Cameroun", "tier": "news", "url": "https://actucameroun.com/feed/", "lang": "fr", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Cameroonian news site (French). 20 items, newest 2026-11-21." },
-  { "name": "Afrique IT News", "tier": "news", "url": "https://afriqueitnews.com/feed/", "lang": "fr", "region": "africa", "filter": true, "added": "2026-11-21", "why": "IT trade news for Francophone Africa. 10 items, newest 2026-11-19." },
-  { "name": "Daily News Egypt", "tier": "news", "url": "https://dailynewsegypt.com/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Egyptian English-language daily. 10 items, newest 2026-11-21." },
-  { "name": "Hespress (Morocco, Arabic)", "tier": "news", "url": "https://www.hespress.com/feed", "lang": "ar", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Arabic edition of Morocco's largest news site (the French one is already read). 12 items, newest 2026-11-21." },
-  { "name": "Echorouk (Algeria)", "tier": "news", "url": "https://www.echoroukonline.com/feed", "lang": "ar", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Algerian Arabic daily. 10 items, newest 2026-11-21." },
-  { "name": "INTIC (Mozambique)", "tier": "gov", "url": "https://intic.gov.mz/feed/", "lang": "pt", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Mozambique's national ICT institute, which posts on national cyber security and CSIRT work; the first Lusophone African government feed. 5 items, newest 2026-11-19, 2 on CSIRTs and cyber security." },
-  { "name": "NDPC (Nigeria)", "tier": "gov", "url": "https://ndpc.gov.ng/feed/", "lang": "en", "region": "africa", "filter": true, "added": "2026-11-21", "why": "Nigeria Data Protection Commission: investigations and sanctions after data breaches. 10 items, newest 2026-11-06 (posts a few times a month)." },
-  { "name": "BBC Afrique", "tier": "news", "url": "https://feeds.bbci.co.uk/afrique/rss.xml", "lang": "fr", "region": "africa", "filter": true, "added": "2026-11-21", "why": "BBC's French service for Africa. 35 items, newest 2026-11-21." },
-  { "name": "BBC Swahili", "tier": "news", "url": "https://feeds.bbci.co.uk/swahili/rss.xml", "lang": "sw", "region": "africa", "filter": true, "added": "2026-11-21", "why": "BBC's Swahili service (East Africa). 46 items, newest 2026-11-21." },
-  { "name": "BBC Hausa", "tier": "news", "url": "https://feeds.bbci.co.uk/hausa/rss.xml", "lang": "ha", "region": "africa", "filter": true, "added": "2026-11-21", "why": "BBC's Hausa service (Nigeria, Niger, Ghana). 35 items, newest 2026-11-21." },
-  { "name": "BBC Amharic", "tier": "news", "url": "https://feeds.bbci.co.uk/amharic/rss.xml", "lang": "am", "region": "africa", "filter": true, "added": "2026-11-21", "why": "BBC's Amharic service (Ethiopia). 43 items, newest 2026-11-21; 1 passed the cyber filter (a US cyber-attack item, in Amharic)." },
-  { "name": "Anadolu Ajansi bilim teknoloji (Turkey)", "tier": "news", "url": "https://www.aa.com.tr/tr/rss/default?cat=bilim-teknoloji", "lang": "tr", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Turkey's state news agency, science and technology section. 30 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Euronews Turkce", "tier": "news", "url": "https://tr.euronews.com/rss", "lang": "tr", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Euronews in Turkish. 50 items, newest 2026-11-21, 1 passed the cyber filter." },
-  { "name": "Euronews Arabic", "tier": "news", "url": "https://arabic.euronews.com/rss", "lang": "ar", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Euronews in Arabic. 50 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Sky News Arabia", "tier": "news", "url": "https://www.skynewsarabia.com/rss", "lang": "ar", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Abu Dhabi-based Arabic news channel. 60 items, newest 2026-11-21, 1 passed the cyber filter." },
-  { "name": "BBC Arabic", "tier": "news", "url": "https://feeds.bbci.co.uk/arabic/rss.xml", "lang": "ar", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "BBC's Arabic service. 23 items, newest 2026-11-21." },
-  { "name": "BBC Persian", "tier": "news", "url": "https://feeds.bbci.co.uk/persian/rss.xml", "lang": "fa", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "BBC's Persian service (Iran, Afghanistan). 28 items, newest 2026-11-21, 1 passed the cyber filter." },
-  { "name": "Independent Persian", "tier": "news", "url": "https://www.independentpersian.com/rss.xml", "lang": "fa", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Persian-language news on Iran. 10 items, newest 2026-11-21." },
-  { "name": "Ynet digital (Israel)", "tier": "news", "url": "https://www.ynet.co.il/Integration/StoryRss544.xml", "lang": "he", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Ynet's Hebrew technology section (ynetnews.com, the English site, disallows ClaudeBot; ynet.co.il does not). 30 items, newest 2026-11-20, 5 passed the cyber filter." },
-  { "name": "Israel Hayom", "tier": "news", "url": "https://www.israelhayom.co.il/rss.xml", "lang": "he", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Israeli Hebrew daily. 100 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Jerusalem Post", "tier": "news", "url": "https://www.jpost.com/rss/rssfeedsfrontpage.aspx", "lang": "en", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Israeli English-language daily (Times of Israel and Haaretz disallow automated readers). 26 items, newest 2026-11-21." },
-  { "name": "Tahawul Tech (UAE)", "tier": "news", "url": "https://www.tahawultech.com/feed/", "lang": "en", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Gulf IT trade news from Dubai. 14 items, newest 2026-11-20, 3 passed the cyber filter." },
-  { "name": "Doha News (Qatar)", "tier": "news", "url": "https://dohanews.co/feed/", "lang": "en", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "Qatari news site. 9 items, newest 2026-11-20." },
-  { "name": "Times of Central Asia", "tier": "news", "url": "https://timesca.com/feed/", "lang": "en", "region": "middle-east", "filter": true, "added": "2026-11-21", "why": "English news on Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan and Turkmenistan (region label as for UzCERT). 10 items, newest 2026-11-21." },
-  { "name": "Segu-Info (Argentina)", "tier": "news", "url": "https://blog.segu-info.com.ar/feeds/posts/default", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Long-running Argentine security news blog, daily posts in Spanish. 25 items, newest 2026-11-21, 17 passed the cyber filter." },
-  { "name": "Minuto da Seguranca (Brazil)", "tier": "news", "url": "https://minutodaseguranca.blog.br/feed/", "lang": "pt", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Brazilian security news. 20 items, newest 2026-11-21, 3 passed the cyber filter." },
-  { "name": "Security Leaders (Brazil)", "tier": "news", "url": "https://securityleaders.com.br/feed/", "lang": "pt", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Brazilian security trade news (CISO Advisor refuses automated readers). 12 items, newest 2026-11-19, 8 passed the cyber filter." },
-  { "name": "Crypto ID (Brazil)", "tier": "news", "url": "https://cryptoid.com.br/feed/", "lang": "pt", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Brazilian digital identity and security news. 10 items, newest 2026-11-21." },
-  { "name": "ITSitio (Latin America)", "tier": "news", "url": "https://www.itsitio.com/feed/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Regional IT trade news (Argentina, Mexico, Colombia, Chile). 10 items, newest 2026-11-20, 4 passed the cyber filter." },
-  { "name": "Impacto TIC (Colombia)", "tier": "news", "url": "https://impactotic.co/feed/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Colombian IT news. 20 items, newest 2026-11-20, 3 passed the cyber filter." },
-  { "name": "Enter.co (Colombia)", "tier": "news", "url": "https://www.enter.co/feed/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Colombian technology news. 30 items, newest 2026-11-21, 1 passed the cyber filter." },
-  { "name": "Infosertec (Argentina)", "tier": "news", "url": "https://infosertecla.com/feed/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Argentine security and IT news (infosertec.com.ar redirects here). 10 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Prensa Libre (Guatemala)", "tier": "news", "url": "https://www.prensalibre.com/feed/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Guatemala's main daily; Central America had no feed. 99 items, newest 2026-11-21." },
-  { "name": "Jamaica Observer", "tier": "news", "url": "https://www.jamaicaobserver.com/feed/", "lang": "en", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Jamaican daily; the Caribbean had no feed. 37 items, newest 2026-11-21, 2 passed the cyber filter." },
-  { "name": "Clarin tecnologia (Argentina)", "tier": "news", "url": "https://www.clarin.com/rss/tecnologia/", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Technology section of Argentina's largest daily. 10 items, newest 2026-11-21." },
-  { "name": "Mexico News Daily", "tier": "news", "url": "https://mexiconewsdaily.com/feed/", "lang": "en", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "English news on Mexico. 10 items, newest 2026-11-21." },
-  { "name": "Exame (Brazil)", "tier": "news", "url": "https://exame.com/feed/", "lang": "pt", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "Brazilian business magazine. 25 items, newest 2026-11-21." },
-  { "name": "BBC Mundo", "tier": "news", "url": "https://feeds.bbci.co.uk/mundo/rss.xml", "lang": "es", "region": "latin-america", "filter": true, "added": "2026-11-21", "why": "BBC's Spanish service for Latin America. 34 items, newest 2026-11-21." }
- ],
- "retired": [
-  { "name": "The Register", "url": "https://www.theregister.com/security/headlines.atom", "retired": "2026-11-20", "why": "robots.txt is default-deny for every reader not named (User-agent: * Disallow: /). 37 leads in 2.5 days, 9 credited to events; its stories also reach us through other publishers." },
-  { "name": "Kaspersky Securelist", "url": "https://securelist.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows */feed and */rss for all readers. 2 leads, both credited; Kaspersky research is retold by the news feeds." },
-  { "name": "CSO Online", "url": "https://www.csoonline.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows /feed/. 19 leads, 3 credited." },
-  { "name": "Graham Cluley", "url": "https://grahamcluley.com/feed/", "retired": "2026-11-20", "why": "robots.txt disallows /feed/. 3 leads, none credited." },
-  { "name": "Lobsters security", "url": "https://lobste.rs/t/security.rss", "retired": "2026-11-20", "why": "robots.txt disallows / for all readers. No leads in 2.5 days." },
-  { "name": "KE-CIRT/CC (Kenya)", "url": "https://www.ke-cirt.go.ke/feed/", "retired": "2026-11-20", "why": "Dead: the newest of its 8 items is from 2021-03-16 and the site offers no other feed. Kenya stays covered by the Bing News search (cyber attack, KE)." },
-  { "name": "Industrial Cyber", "url": "https://industrialcyber.co/feed/", "retired": "2026-11-20", "why": "The feed answers HTTP 403 to automated readers (158 runs, every one refused); CyberView does not work around sites that block automated readers." }
- ],
- "watch": [
-  { "name": "ZDNet security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "29 leads in 2.5 days, none credited, all 29 closed by rule (commentary, single-source items)." },
-  { "name": "Security Boulevard", "since": "2026-11-20", "review": "2026-12-04", "evidence": "42 leads, none credited; 28 closed by rule, 6 by agents. Mostly reposted vendor blogs." },
-  { "name": "Qualys", "since": "2026-11-20", "review": "2026-12-04", "evidence": "7 leads, none credited, all closed by rule." },
-  { "name": "Computer Weekly security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "15 leads, none credited, 6 agent closures; agents report its article pages answer 403, so its leads cost reading time and cannot be cited." },
-  { "name": "Okta security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
-  { "name": "GreyNoise", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
-  { "name": "Huntress", "since": "2026-11-20", "review": "2026-12-04", "evidence": "2 leads, none credited, both closed by rule." },
-  { "name": "Proofpoint", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-10 (broad feed, filtered)." },
-  { "name": "GitHub Security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-10." },
-  { "name": "Exploit-DB", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-11." },
-  { "name": "CISA ICS advisories", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days although it has 30 current items: every one also arrives first through CISA advisories (all.xml) and is dropped as already collected. Retire if that holds." },
-  { "name": "Arctic Wolf", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days (broad feed, filtered)." },
-  { "name": "Fortinet threat research", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-12." },
-  { "name": "Trail of Bits", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; newest item 2026-11-06." },
-  { "name": "FedScoop", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days (broad feed, filtered)." },
-  { "name": "Daily Sabah (Turkey)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days: a general Türkiye news feed; nothing in its current 50 items passes the cyber filter. Kept for now because Turkey is thinly covered." },
-  { "name": "El Pais tecnologia", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days because the cyber filter knew only English words; the filter now knows Spanish (2 of its current items pass). Review the yield." },
-  { "name": "CERT.br", "since": "2026-11-20", "review": "2026-12-04", "evidence": "No leads in 2.5 days; its feed carries courses and awareness campaigns (newest 2026-11-05), not advisories. Official, so retire only if no incident or advisory appears." },
-  { "name": "Microsoft MSRC advisories", "since": "2026-11-20", "review": "2026-12-04", "evidence": "127 leads, none credited, 74 agent closures in 2.5 days (one lead per CVE). Now tagged kind cve, so a CVE row is closed by rule unless it is exploited or widely reported; check that agent closures fall to near zero." },
-  { "name": "Zero Day Initiative", "since": "2026-11-20", "review": "2026-12-04", "evidence": "31 leads, none credited, 15 agent closures. Now tagged kind cve (one advisory per flaw)." },
-  { "name": "AWS security bulletins", "since": "2026-11-20", "review": "2026-12-04", "evidence": "28 leads, none credited, 17 agent closures. Now tagged kind cve (one bulletin per CVE)." },
-  { "name": "CSIRT Italy", "since": "2026-11-20", "review": "2026-12-04", "evidence": "33 leads, none credited, 9 closed by rule, 1 by an agent, 3 already on file: routine Italian advisories. Official, so keep unless it never carries an exploited flaw or incident; now tagged lang it." },
-  { "name": "Canadian Centre for Cyber Security", "since": "2026-11-20", "review": "2026-12-04", "evidence": "28 leads, none credited, all 28 closed by rule as routine advisories. Official; keep unless its alerts on exploited flaws also never become events." },
-  { "name": "Utility Dive", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for energy coverage, filtered; none of its 10 current items passed the filter. Keep only if grid or utility cyber items appear." },
-  { "name": "Light Reading", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for telecom coverage, filtered; none of its current items passed the filter." },
-  { "name": "Hespress (Morocco)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for North Africa (French), filtered general news; none of its 10 current items passed." },
-  { "name": "Techzim (Zimbabwe)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for southern Africa, filtered; none of its current items passed." },
-  { "name": "Bangkok Post", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for South-East Asia, filtered top stories; none of its 10 current items passed." },
-  { "name": "CIO Africa", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for Africa, filtered; of 34 items in 7 days only a hackathon passed, and the filter now skips hackathons." },
-  { "name": "Eskom media statements", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 (South African state utility, filtered): its 10 current statements are about generation and load reduction and none passed the cyber filter. Official; keep only if it announces a cyber incident or an outage cause the grid desk can use." },
-  { "name": "TechAfrica News", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for African telecoms, filtered; none of its 12 current items passed (one was a WACS cable outage restoration, which the filter does not keep)." },
-  { "name": "Capital FM (Kenya)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for East Africa, filtered general news; none of its 10 current items passed." },
-  { "name": "Egypt Independent", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for Egypt, filtered general news; none of its 10 current items passed." },
-  { "name": "ProPakistani", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for Pakistan telecoms, filtered; none of its 10 current items passed." },
-  { "name": "Blognone (Thailand)", "since": "2026-11-20", "review": "2026-12-04", "evidence": "Added 2026-11-20 for Thai tech news, filtered; none of its 10 current items passed." }
- ]
+  "_note": "Extra RSS or Atom feeds for scripts/collect.mjs, on top of the built-in list. The source scout job adds and retires entries here (never in code). Each: name, tier (gov, vendor or news), https url, optional filter (true keeps only items that mention a cyber topic in any of the languages the collector knows; use it for broad feeds), optional lang (ISO code) and region, added (date) and why. A name listed in retired is not collected, built-in or not: retire a dead feed, one whose robots.txt now disallows it, or one on the watch list that still has nothing useful when its review date comes. watch: feeds that work but showed little yield; each has the evidence (from data/leads and data/runs closures; the lead files begin on 2026-11-18, so the first audit saw only 2.5 days) and a review date.",
+  "feeds": [
+    {
+      "name": "ITWeb (South Africa)",
+      "tier": "news",
+      "url": "https://www.itweb.co.za/rss",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "South Africa's main IT trade daily; covers breaches, the Information Regulator and ransomware at SA firms. 40 items, newest 2026-11-20, 5 passed the cyber filter."
+    },
+    {
+      "name": "Gadget (South Africa)",
+      "tier": "news",
+      "url": "https://gadget.co.za/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "South African technology news. 30 items, newest 2026-11-19, 3 passed the cyber filter."
+    },
+    {
+      "name": "BusinessTech (South Africa)",
+      "tier": "news",
+      "url": "https://businesstech.co.za/news/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "South African business news that reports breaches at SA companies and state bodies (sister of MyBroadband, which refuses automated readers). 20 items, newest 2026-11-21."
+    },
+    {
+      "name": "Technext (Nigeria)",
+      "tier": "news",
+      "url": "https://technext24.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Nigerian technology news. 10 items, newest 2026-11-21, 2 passed the cyber filter (SIM-swap fraud, a data leak)."
+    },
+    {
+      "name": "Nairametrics (Nigeria)",
+      "tier": "news",
+      "url": "https://nairametrics.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Nigerian financial news: bank and fintech fraud, crypto thefts, regulators. 20 items, newest 2026-11-21."
+    },
+    {
+      "name": "Premium Times (Nigeria)",
+      "tier": "news",
+      "url": "https://www.premiumtimesng.com/feed",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Nigerian national newspaper. 15 items, newest 2026-11-21."
+    },
+    {
+      "name": "Vanguard (Nigeria)",
+      "tier": "news",
+      "url": "https://www.vanguardngr.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Nigerian national newspaper; robots.txt explicitly allows /feed/. 20 items, newest 2026-11-21."
+    },
+    {
+      "name": "Graphic Online (Ghana)",
+      "tier": "news",
+      "url": "https://www.graphic.com.gh/news.feed?type=rss",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Ghana's state-owned daily (Daily Graphic). 25 items, newest 2026-11-21."
+    },
+    {
+      "name": "TechTrendsKE (Kenya)",
+      "tier": "news",
+      "url": "https://techtrendske.co.ke/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Kenyan technology news (telecoms, mobile money, government systems). 41 items, newest 2026-11-21."
+    },
+    {
+      "name": "Capital (Ethiopia)",
+      "tier": "news",
+      "url": "https://capitalethiopia.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Ethiopian business weekly; Ethiopia has no other feed. 4 items, newest 2026-11-21."
+    },
+    {
+      "name": "Daily News (Tanzania)",
+      "tier": "news",
+      "url": "https://dailynews.co.tz/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Tanzania's government daily. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "HabariLeo (Tanzania)",
+      "tier": "news",
+      "url": "https://habarileo.co.tz/feed/",
+      "lang": "sw",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Swahili-language daily from the Daily News group; the first Swahili feed. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Lusaka Times (Zambia)",
+      "tier": "news",
+      "url": "https://www.lusakatimes.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Zambian news site. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Lefaso.net (Burkina Faso)",
+      "tier": "news",
+      "url": "https://lefaso.net/spip.php?page=backend",
+      "lang": "fr",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Burkina Faso's main news site; it carried the cybercrime brigade's October figures. 87 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Actu Cameroun",
+      "tier": "news",
+      "url": "https://actucameroun.com/feed/",
+      "lang": "fr",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Cameroonian news site (French). 20 items, newest 2026-11-21."
+    },
+    {
+      "name": "Afrique IT News",
+      "tier": "news",
+      "url": "https://afriqueitnews.com/feed/",
+      "lang": "fr",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "IT trade news for Francophone Africa. 10 items, newest 2026-11-19."
+    },
+    {
+      "name": "Daily News Egypt",
+      "tier": "news",
+      "url": "https://dailynewsegypt.com/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Egyptian English-language daily. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Hespress (Morocco, Arabic)",
+      "tier": "news",
+      "url": "https://www.hespress.com/feed",
+      "lang": "ar",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Arabic edition of Morocco's largest news site (the French one is already read). 12 items, newest 2026-11-21."
+    },
+    {
+      "name": "Echorouk (Algeria)",
+      "tier": "news",
+      "url": "https://www.echoroukonline.com/feed",
+      "lang": "ar",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Algerian Arabic daily. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "INTIC (Mozambique)",
+      "tier": "gov",
+      "url": "https://intic.gov.mz/feed/",
+      "lang": "pt",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Mozambique's national ICT institute, which posts on national cyber security and CSIRT work; the first Lusophone African government feed. 5 items, newest 2026-11-19, 2 on CSIRTs and cyber security."
+    },
+    {
+      "name": "NDPC (Nigeria)",
+      "tier": "gov",
+      "url": "https://ndpc.gov.ng/feed/",
+      "lang": "en",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Nigeria Data Protection Commission: investigations and sanctions after data breaches. 10 items, newest 2026-11-06 (posts a few times a month)."
+    },
+    {
+      "name": "BBC Afrique",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/afrique/rss.xml",
+      "lang": "fr",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's French service for Africa. 35 items, newest 2026-11-21."
+    },
+    {
+      "name": "BBC Swahili",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/swahili/rss.xml",
+      "lang": "sw",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Swahili service (East Africa). 46 items, newest 2026-11-21."
+    },
+    {
+      "name": "BBC Hausa",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/hausa/rss.xml",
+      "lang": "ha",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Hausa service (Nigeria, Niger, Ghana). 35 items, newest 2026-11-21."
+    },
+    {
+      "name": "BBC Amharic",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/amharic/rss.xml",
+      "lang": "am",
+      "region": "africa",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Amharic service (Ethiopia). 43 items, newest 2026-11-21; 1 passed the cyber filter (a US cyber-attack item, in Amharic)."
+    },
+    {
+      "name": "Anadolu Ajansi bilim teknoloji (Turkey)",
+      "tier": "news",
+      "url": "https://www.aa.com.tr/tr/rss/default?cat=bilim-teknoloji",
+      "lang": "tr",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Turkey's state news agency, science and technology section. 30 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Euronews Turkce",
+      "tier": "news",
+      "url": "https://tr.euronews.com/rss",
+      "lang": "tr",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Euronews in Turkish. 50 items, newest 2026-11-21, 1 passed the cyber filter."
+    },
+    {
+      "name": "Euronews Arabic",
+      "tier": "news",
+      "url": "https://arabic.euronews.com/rss",
+      "lang": "ar",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Euronews in Arabic. 50 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Sky News Arabia",
+      "tier": "news",
+      "url": "https://www.skynewsarabia.com/rss",
+      "lang": "ar",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Abu Dhabi-based Arabic news channel. 60 items, newest 2026-11-21, 1 passed the cyber filter."
+    },
+    {
+      "name": "BBC Arabic",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/arabic/rss.xml",
+      "lang": "ar",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Arabic service. 23 items, newest 2026-11-21."
+    },
+    {
+      "name": "BBC Persian",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/persian/rss.xml",
+      "lang": "fa",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Persian service (Iran, Afghanistan). 28 items, newest 2026-11-21, 1 passed the cyber filter."
+    },
+    {
+      "name": "Independent Persian",
+      "tier": "news",
+      "url": "https://www.independentpersian.com/rss.xml",
+      "lang": "fa",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Persian-language news on Iran. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Ynet digital (Israel)",
+      "tier": "news",
+      "url": "https://www.ynet.co.il/Integration/StoryRss544.xml",
+      "lang": "he",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Ynet's Hebrew technology section (ynetnews.com, the English site, disallows ClaudeBot; ynet.co.il does not). 30 items, newest 2026-11-20, 5 passed the cyber filter."
+    },
+    {
+      "name": "Israel Hayom",
+      "tier": "news",
+      "url": "https://www.israelhayom.co.il/rss.xml",
+      "lang": "he",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Israeli Hebrew daily. 100 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Jerusalem Post",
+      "tier": "news",
+      "url": "https://www.jpost.com/rss/rssfeedsfrontpage.aspx",
+      "lang": "en",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Israeli English-language daily (Times of Israel and Haaretz disallow automated readers). 26 items, newest 2026-11-21."
+    },
+    {
+      "name": "Tahawul Tech (UAE)",
+      "tier": "news",
+      "url": "https://www.tahawultech.com/feed/",
+      "lang": "en",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Gulf IT trade news from Dubai. 14 items, newest 2026-11-20, 3 passed the cyber filter."
+    },
+    {
+      "name": "Doha News (Qatar)",
+      "tier": "news",
+      "url": "https://dohanews.co/feed/",
+      "lang": "en",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Qatari news site. 9 items, newest 2026-11-20."
+    },
+    {
+      "name": "Times of Central Asia",
+      "tier": "news",
+      "url": "https://timesca.com/feed/",
+      "lang": "en",
+      "region": "middle-east",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "English news on Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan and Turkmenistan (region label as for UzCERT). 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Segu-Info (Argentina)",
+      "tier": "news",
+      "url": "https://blog.segu-info.com.ar/feeds/posts/default",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Long-running Argentine security news blog, daily posts in Spanish. 25 items, newest 2026-11-21, 17 passed the cyber filter."
+    },
+    {
+      "name": "Minuto da Seguranca (Brazil)",
+      "tier": "news",
+      "url": "https://minutodaseguranca.blog.br/feed/",
+      "lang": "pt",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Brazilian security news. 20 items, newest 2026-11-21, 3 passed the cyber filter."
+    },
+    {
+      "name": "Security Leaders (Brazil)",
+      "tier": "news",
+      "url": "https://securityleaders.com.br/feed/",
+      "lang": "pt",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Brazilian security trade news (CISO Advisor refuses automated readers). 12 items, newest 2026-11-19, 8 passed the cyber filter."
+    },
+    {
+      "name": "Crypto ID (Brazil)",
+      "tier": "news",
+      "url": "https://cryptoid.com.br/feed/",
+      "lang": "pt",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Brazilian digital identity and security news. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "ITSitio (Latin America)",
+      "tier": "news",
+      "url": "https://www.itsitio.com/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Regional IT trade news (Argentina, Mexico, Colombia, Chile). 10 items, newest 2026-11-20, 4 passed the cyber filter."
+    },
+    {
+      "name": "Impacto TIC (Colombia)",
+      "tier": "news",
+      "url": "https://impactotic.co/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Colombian IT news. 20 items, newest 2026-11-20, 3 passed the cyber filter."
+    },
+    {
+      "name": "Enter.co (Colombia)",
+      "tier": "news",
+      "url": "https://www.enter.co/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Colombian technology news. 30 items, newest 2026-11-21, 1 passed the cyber filter."
+    },
+    {
+      "name": "Infosertec (Argentina)",
+      "tier": "news",
+      "url": "https://infosertecla.com/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Argentine security and IT news (infosertec.com.ar redirects here). 10 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Prensa Libre (Guatemala)",
+      "tier": "news",
+      "url": "https://www.prensalibre.com/feed/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Guatemala's main daily; Central America had no feed. 99 items, newest 2026-11-21."
+    },
+    {
+      "name": "Jamaica Observer",
+      "tier": "news",
+      "url": "https://www.jamaicaobserver.com/feed/",
+      "lang": "en",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Jamaican daily; the Caribbean had no feed. 37 items, newest 2026-11-21, 2 passed the cyber filter."
+    },
+    {
+      "name": "Clarin tecnologia (Argentina)",
+      "tier": "news",
+      "url": "https://www.clarin.com/rss/tecnologia/",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Technology section of Argentina's largest daily. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Mexico News Daily",
+      "tier": "news",
+      "url": "https://mexiconewsdaily.com/feed/",
+      "lang": "en",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "English news on Mexico. 10 items, newest 2026-11-21."
+    },
+    {
+      "name": "Exame (Brazil)",
+      "tier": "news",
+      "url": "https://exame.com/feed/",
+      "lang": "pt",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "Brazilian business magazine. 25 items, newest 2026-11-21."
+    },
+    {
+      "name": "BBC Mundo",
+      "tier": "news",
+      "url": "https://feeds.bbci.co.uk/mundo/rss.xml",
+      "lang": "es",
+      "region": "latin-america",
+      "filter": true,
+      "added": "2026-11-21",
+      "why": "BBC's Spanish service for Latin America. 34 items, newest 2026-11-21."
+    },
+    {
+      "name": "CNA (Singapore)",
+      "tier": "news",
+      "url": "https://www.channelnewsasia.com/rssfeeds/8395986",
+      "lang": "en",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "Channel NewsAsia Asia/Singapore news; passed --test 2026-11-24 with 20 items, newest 2026-11-24. Filtered general news."
+    },
+    {
+      "name": "VnExpress So hoa (Vietnam)",
+      "tier": "news",
+      "url": "https://vnexpress.net/rss/so-hoa.rss",
+      "lang": "vi",
+      "region": "southeast-asia",
+      "filter": true,
+      "added": "2026-11-24",
+      "why": "VnExpress digital/tech section in Vietnamese; passed --test 2026-11-24 with 60 items, newest 2026-11-24."
+    }
+  ],
+  "retired": [
+    {
+      "name": "The Register",
+      "url": "https://www.theregister.com/security/headlines.atom",
+      "retired": "2026-11-20",
+      "why": "robots.txt is default-deny for every reader not named (User-agent: * Disallow: /). 37 leads in 2.5 days, 9 credited to events; its stories also reach us through other publishers."
+    },
+    {
+      "name": "Kaspersky Securelist",
+      "url": "https://securelist.com/feed/",
+      "retired": "2026-11-20",
+      "why": "robots.txt disallows */feed and */rss for all readers. 2 leads, both credited; Kaspersky research is retold by the news feeds."
+    },
+    {
+      "name": "CSO Online",
+      "url": "https://www.csoonline.com/feed/",
+      "retired": "2026-11-20",
+      "why": "robots.txt disallows /feed/. 19 leads, 3 credited."
+    },
+    {
+      "name": "Graham Cluley",
+      "url": "https://grahamcluley.com/feed/",
+      "retired": "2026-11-20",
+      "why": "robots.txt disallows /feed/. 3 leads, none credited."
+    },
+    {
+      "name": "Lobsters security",
+      "url": "https://lobste.rs/t/security.rss",
+      "retired": "2026-11-20",
+      "why": "robots.txt disallows / for all readers. No leads in 2.5 days."
+    },
+    {
+      "name": "KE-CIRT/CC (Kenya)",
+      "url": "https://www.ke-cirt.go.ke/feed/",
+      "retired": "2026-11-20",
+      "why": "Dead: the newest of its 8 items is from 2021-03-16 and the site offers no other feed. Kenya stays covered by the Bing News search (cyber attack, KE)."
+    },
+    {
+      "name": "Industrial Cyber",
+      "url": "https://industrialcyber.co/feed/",
+      "retired": "2026-11-20",
+      "why": "The feed answers HTTP 403 to automated readers (158 runs, every one refused); CyberView does not work around sites that block automated readers."
+    }
+  ],
+  "watch": [
+    {
+      "name": "ZDNet security",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "29 leads in 2.5 days, none credited, all 29 closed by rule (commentary, single-source items)."
+    },
+    {
+      "name": "Security Boulevard",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "42 leads, none credited; 28 closed by rule, 6 by agents. Mostly reposted vendor blogs."
+    },
+    {
+      "name": "Qualys",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "7 leads, none credited, all closed by rule."
+    },
+    {
+      "name": "Computer Weekly security",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "15 leads, none credited, 6 agent closures; agents report its article pages answer 403, so its leads cost reading time and cannot be cited."
+    },
+    {
+      "name": "Okta security",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "2 leads, none credited, both closed by rule."
+    },
+    {
+      "name": "GreyNoise",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "2 leads, none credited, both closed by rule."
+    },
+    {
+      "name": "Huntress",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "2 leads, none credited, both closed by rule."
+    },
+    {
+      "name": "Proofpoint",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; newest item 2026-11-10 (broad feed, filtered)."
+    },
+    {
+      "name": "GitHub Security",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; newest item 2026-11-10."
+    },
+    {
+      "name": "Exploit-DB",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; newest item 2026-11-11."
+    },
+    {
+      "name": "CISA ICS advisories",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days although it has 30 current items: every one also arrives first through CISA advisories (all.xml) and is dropped as already collected. Retire if that holds."
+    },
+    {
+      "name": "Arctic Wolf",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days (broad feed, filtered)."
+    },
+    {
+      "name": "Fortinet threat research",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; newest item 2026-11-12."
+    },
+    {
+      "name": "Trail of Bits",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; newest item 2026-11-06."
+    },
+    {
+      "name": "FedScoop",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days (broad feed, filtered)."
+    },
+    {
+      "name": "Daily Sabah (Turkey)",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days: a general Türkiye news feed; nothing in its current 50 items passes the cyber filter. Kept for now because Turkey is thinly covered."
+    },
+    {
+      "name": "El Pais tecnologia",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days because the cyber filter knew only English words; the filter now knows Spanish (2 of its current items pass). Review the yield."
+    },
+    {
+      "name": "CERT.br",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "No leads in 2.5 days; its feed carries courses and awareness campaigns (newest 2026-11-05), not advisories. Official, so retire only if no incident or advisory appears."
+    },
+    {
+      "name": "Microsoft MSRC advisories",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "127 leads, none credited, 74 agent closures in 2.5 days (one lead per CVE). Now tagged kind cve, so a CVE row is closed by rule unless it is exploited or widely reported; check that agent closures fall to near zero."
+    },
+    {
+      "name": "Zero Day Initiative",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "31 leads, none credited, 15 agent closures. Now tagged kind cve (one advisory per flaw)."
+    },
+    {
+      "name": "AWS security bulletins",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "28 leads, none credited, 17 agent closures. Now tagged kind cve (one bulletin per CVE)."
+    },
+    {
+      "name": "CSIRT Italy",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "33 leads, none credited, 9 closed by rule, 1 by an agent, 3 already on file: routine Italian advisories. Official, so keep unless it never carries an exploited flaw or incident; now tagged lang it."
+    },
+    {
+      "name": "Canadian Centre for Cyber Security",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "28 leads, none credited, all 28 closed by rule as routine advisories. Official; keep unless its alerts on exploited flaws also never become events."
+    },
+    {
+      "name": "Utility Dive",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for energy coverage, filtered; none of its 10 current items passed the filter. Keep only if grid or utility cyber items appear."
+    },
+    {
+      "name": "Light Reading",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for telecom coverage, filtered; none of its current items passed the filter."
+    },
+    {
+      "name": "Hespress (Morocco)",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for North Africa (French), filtered general news; none of its 10 current items passed."
+    },
+    {
+      "name": "Techzim (Zimbabwe)",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for southern Africa, filtered; none of its current items passed."
+    },
+    {
+      "name": "Bangkok Post",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for South-East Asia, filtered top stories; none of its 10 current items passed."
+    },
+    {
+      "name": "CIO Africa",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for Africa, filtered; of 34 items in 7 days only a hackathon passed, and the filter now skips hackathons."
+    },
+    {
+      "name": "Eskom media statements",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 (South African state utility, filtered): its 10 current statements are about generation and load reduction and none passed the cyber filter. Official; keep only if it announces a cyber incident or an outage cause the grid desk can use."
+    },
+    {
+      "name": "TechAfrica News",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for African telecoms, filtered; none of its 12 current items passed (one was a WACS cable outage restoration, which the filter does not keep)."
+    },
+    {
+      "name": "Capital FM (Kenya)",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for East Africa, filtered general news; none of its 10 current items passed."
+    },
+    {
+      "name": "Egypt Independent",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for Egypt, filtered general news; none of its 10 current items passed."
+    },
+    {
+      "name": "ProPakistani",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for Pakistan telecoms, filtered; none of its 10 current items passed."
+    },
+    {
+      "name": "Blognone (Thailand)",
+      "since": "2026-11-20",
+      "review": "2026-12-04",
+      "evidence": "Added 2026-11-20 for Thai tech news, filtered; none of its 10 current items passed."
+    }
+  ]
 }

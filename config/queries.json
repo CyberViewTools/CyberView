@@ -1,56 +1,335 @@
 {
- "_note": "Standing searches for scripts/osint.mjs, asked of Bing News (each in its own language and country edition: hl/gl, cc and setlang) and of GDELT. Google News is not asked: its robots.txt disallows /rss/ for automated readers and its links are redirects that can never be cited. The editor job tunes this list from the weekly pipeline metrics. q is plain words (OR between phrases); region is a label for coverage metrics. GDELT is no longer asked these searches once scripts/gdelt-gkg.mjs (GDELT's raw 15-minute files, filtered by theme) has run cleanly for a week: the owner retires the DOC API collector after 2026-11-28 (config/gdelt.json).",
- "queries": [
-  { "q": "ransomware attack", "hl": "en", "gl": "US", "region": "global" },
-  { "q": "data breach notification", "hl": "en", "gl": "US", "region": "global" },
-  { "q": "cyberattack outage", "hl": "en", "gl": "GB", "region": "global" },
-  { "q": "zero-day exploited", "hl": "en", "gl": "US", "region": "global" },
-  { "q": "cyber attack", "hl": "en", "gl": "ZA", "region": "africa" },
-  { "q": "cyber attack", "hl": "en", "gl": "NG", "region": "africa" },
-  { "q": "cyber attack", "hl": "en", "gl": "KE", "region": "africa" },
-  { "q": "cyberattaque", "hl": "fr", "gl": "FR", "region": "europe" },
-  { "q": "cyberattaque", "hl": "fr", "gl": "SN", "region": "africa" },
-  { "q": "ciberataque", "hl": "es-419", "gl": "MX", "region": "latin-america" },
-  { "q": "ciberataque", "hl": "es-419", "gl": "CO", "region": "latin-america" },
-  { "q": "ciberataque", "hl": "es-419", "gl": "AR", "region": "latin-america" },
-  { "q": "ataque cibernético", "hl": "pt-BR", "gl": "BR", "region": "latin-america" },
-  { "q": "siber saldırı", "hl": "tr", "gl": "TR", "region": "middle-east" },
-  { "q": "هجوم سيبراني", "hl": "ar", "gl": "AE", "region": "middle-east" },
-  { "q": "هجوم سيبراني", "hl": "ar", "gl": "EG", "region": "middle-east" },
-  { "q": "cyber attack", "hl": "en", "gl": "IN", "region": "south-asia" },
-  { "q": "cyber attack", "hl": "en", "gl": "SG", "region": "southeast-asia" },
-  { "q": "serangan siber", "hl": "id", "gl": "ID", "region": "southeast-asia" },
-  { "q": "サイバー攻撃", "hl": "ja", "gl": "JP", "region": "east-asia" },
-  { "q": "사이버 공격", "hl": "ko", "gl": "KR", "region": "east-asia" },
-  { "q": "Cyberangriff", "hl": "de", "gl": "DE", "region": "europe" },
-  { "q": "cyber attack", "hl": "en", "gl": "AU", "region": "oceania" },
-  { "q": "hospital ransomware", "hl": "en", "gl": "US", "region": "global" },
-  { "q": "water utility cyberattack", "hl": "en", "gl": "US", "region": "global" },
-  { "q": "energy company cyberattack", "hl": "en", "gl": "GB", "region": "global" },
-  { "q": "telecom cyberattack", "hl": "en", "gl": "GB", "region": "global" },
-  { "q": "cyber attack", "hl": "en", "gl": "GH", "region": "africa" },
-  { "q": "cyberattaque", "hl": "fr", "gl": "MA", "region": "africa" },
-  { "q": "ciberataque", "hl": "es-419", "gl": "CL", "region": "latin-america" },
-  { "q": "ciberataque", "hl": "es-419", "gl": "PE", "region": "latin-america" },
-  { "q": "vazamento de dados", "hl": "pt-BR", "gl": "BR", "region": "latin-america" },
-  { "q": "هجوم سيبراني", "hl": "ar", "gl": "SA", "region": "middle-east" },
-  { "q": "cyber attack", "hl": "en", "gl": "IL", "region": "middle-east" },
-  { "q": "serangan siber", "hl": "ms", "gl": "MY", "region": "southeast-asia" },
-  { "q": "tấn công mạng", "hl": "vi", "gl": "VN", "region": "southeast-asia" },
-  { "q": "網路攻擊", "hl": "zh-TW", "gl": "TW", "region": "east-asia" },
-  { "q": "حمله سایبری", "hl": "fa", "gl": "IR", "region": "middle-east" },
-  { "q": "מתקפת סייבר", "hl": "he", "gl": "IL", "region": "middle-east" },
-  { "q": "veri sızıntısı", "hl": "tr", "gl": "TR", "region": "middle-east" },
-  { "q": "fidye yazılımı", "hl": "tr", "gl": "TR", "region": "middle-east" },
-  { "q": "تسريب بيانات", "hl": "ar", "gl": "AE", "region": "middle-east" },
-  { "q": "اختراق إلكتروني", "hl": "ar", "gl": "SA", "region": "middle-east" },
-  { "q": "هجوم إلكتروني", "hl": "ar", "gl": "EG", "region": "africa" },
-  { "q": "cybercriminalité", "hl": "fr", "gl": "CI", "region": "africa" },
-  { "q": "hackers", "hl": "en", "gl": "KE", "region": "africa" },
-  { "q": "filtración de datos", "hl": "es-419", "gl": "MX", "region": "latin-america" },
-  { "q": "hackeo", "hl": "es-419", "gl": "CO", "region": "latin-america" },
-  { "q": "ataque hacker", "hl": "pt-BR", "gl": "BR", "region": "latin-america" },
-  { "q": "cyber attack Pakistan", "hl": "en", "gl": "PK", "region": "south-asia" },
-  { "q": "кибератака", "hl": "ru", "gl": "KZ", "region": "middle-east" }
- ]
+  "_note": "Standing searches for scripts/osint.mjs, asked of Bing News (each in its own language and country edition: hl/gl, cc and setlang) and of GDELT. Google News is not asked: its robots.txt disallows /rss/ for automated readers and its links are redirects that can never be cited. The editor job tunes this list from the weekly pipeline metrics. q is plain words (OR between phrases); region is a label for coverage metrics. GDELT is no longer asked these searches once scripts/gdelt-gkg.mjs (GDELT's raw 15-minute files, filtered by theme) has run cleanly for a week: the owner retires the DOC API collector after 2026-11-28 (config/gdelt.json).",
+  "queries": [
+    {
+      "q": "ransomware attack",
+      "hl": "en",
+      "gl": "US",
+      "region": "global"
+    },
+    {
+      "q": "data breach notification",
+      "hl": "en",
+      "gl": "US",
+      "region": "global"
+    },
+    {
+      "q": "cyberattack outage",
+      "hl": "en",
+      "gl": "GB",
+      "region": "global"
+    },
+    {
+      "q": "zero-day exploited",
+      "hl": "en",
+      "gl": "US",
+      "region": "global"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "ZA",
+      "region": "africa"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "NG",
+      "region": "africa"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "KE",
+      "region": "africa"
+    },
+    {
+      "q": "cyberattaque",
+      "hl": "fr",
+      "gl": "FR",
+      "region": "europe"
+    },
+    {
+      "q": "cyberattaque",
+      "hl": "fr",
+      "gl": "SN",
+      "region": "africa"
+    },
+    {
+      "q": "ciberataque",
+      "hl": "es-419",
+      "gl": "MX",
+      "region": "latin-america"
+    },
+    {
+      "q": "ciberataque",
+      "hl": "es-419",
+      "gl": "CO",
+      "region": "latin-america"
+    },
+    {
+      "q": "ciberataque",
+      "hl": "es-419",
+      "gl": "AR",
+      "region": "latin-america"
+    },
+    {
+      "q": "ataque cibernético",
+      "hl": "pt-BR",
+      "gl": "BR",
+      "region": "latin-america"
+    },
+    {
+      "q": "siber saldırı",
+      "hl": "tr",
+      "gl": "TR",
+      "region": "middle-east"
+    },
+    {
+      "q": "هجوم سيبراني",
+      "hl": "ar",
+      "gl": "AE",
+      "region": "middle-east"
+    },
+    {
+      "q": "هجوم سيبراني",
+      "hl": "ar",
+      "gl": "EG",
+      "region": "middle-east"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "IN",
+      "region": "south-asia"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "SG",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "serangan siber",
+      "hl": "id",
+      "gl": "ID",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "サイバー攻撃",
+      "hl": "ja",
+      "gl": "JP",
+      "region": "east-asia"
+    },
+    {
+      "q": "사이버 공격",
+      "hl": "ko",
+      "gl": "KR",
+      "region": "east-asia"
+    },
+    {
+      "q": "Cyberangriff",
+      "hl": "de",
+      "gl": "DE",
+      "region": "europe"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "AU",
+      "region": "oceania"
+    },
+    {
+      "q": "hospital ransomware",
+      "hl": "en",
+      "gl": "US",
+      "region": "global"
+    },
+    {
+      "q": "water utility cyberattack",
+      "hl": "en",
+      "gl": "US",
+      "region": "global"
+    },
+    {
+      "q": "energy company cyberattack",
+      "hl": "en",
+      "gl": "GB",
+      "region": "global"
+    },
+    {
+      "q": "telecom cyberattack",
+      "hl": "en",
+      "gl": "GB",
+      "region": "global"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "GH",
+      "region": "africa"
+    },
+    {
+      "q": "cyberattaque",
+      "hl": "fr",
+      "gl": "MA",
+      "region": "africa"
+    },
+    {
+      "q": "ciberataque",
+      "hl": "es-419",
+      "gl": "CL",
+      "region": "latin-america"
+    },
+    {
+      "q": "ciberataque",
+      "hl": "es-419",
+      "gl": "PE",
+      "region": "latin-america"
+    },
+    {
+      "q": "vazamento de dados",
+      "hl": "pt-BR",
+      "gl": "BR",
+      "region": "latin-america"
+    },
+    {
+      "q": "هجوم سيبراني",
+      "hl": "ar",
+      "gl": "SA",
+      "region": "middle-east"
+    },
+    {
+      "q": "cyber attack",
+      "hl": "en",
+      "gl": "IL",
+      "region": "middle-east"
+    },
+    {
+      "q": "serangan siber",
+      "hl": "ms",
+      "gl": "MY",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "tấn công mạng",
+      "hl": "vi",
+      "gl": "VN",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "網路攻擊",
+      "hl": "zh-TW",
+      "gl": "TW",
+      "region": "east-asia"
+    },
+    {
+      "q": "حمله سایبری",
+      "hl": "fa",
+      "gl": "IR",
+      "region": "middle-east"
+    },
+    {
+      "q": "מתקפת סייבר",
+      "hl": "he",
+      "gl": "IL",
+      "region": "middle-east"
+    },
+    {
+      "q": "veri sızıntısı",
+      "hl": "tr",
+      "gl": "TR",
+      "region": "middle-east"
+    },
+    {
+      "q": "fidye yazılımı",
+      "hl": "tr",
+      "gl": "TR",
+      "region": "middle-east"
+    },
+    {
+      "q": "تسريب بيانات",
+      "hl": "ar",
+      "gl": "AE",
+      "region": "middle-east"
+    },
+    {
+      "q": "اختراق إلكتروني",
+      "hl": "ar",
+      "gl": "SA",
+      "region": "middle-east"
+    },
+    {
+      "q": "هجوم إلكتروني",
+      "hl": "ar",
+      "gl": "EG",
+      "region": "africa"
+    },
+    {
+      "q": "cybercriminalité",
+      "hl": "fr",
+      "gl": "CI",
+      "region": "africa"
+    },
+    {
+      "q": "hackers",
+      "hl": "en",
+      "gl": "KE",
+      "region": "africa"
+    },
+    {
+      "q": "filtración de datos",
+      "hl": "es-419",
+      "gl": "MX",
+      "region": "latin-america"
+    },
+    {
+      "q": "hackeo",
+      "hl": "es-419",
+      "gl": "CO",
+      "region": "latin-america"
+    },
+    {
+      "q": "ataque hacker",
+      "hl": "pt-BR",
+      "gl": "BR",
+      "region": "latin-america"
+    },
+    {
+      "q": "cyber attack Pakistan",
+      "hl": "en",
+      "gl": "PK",
+      "region": "south-asia"
+    },
+    {
+      "q": "кибератака",
+      "hl": "ru",
+      "gl": "KZ",
+      "region": "middle-east"
+    },
+    {
+      "q": "rò rỉ dữ liệu OR mã độc tống tiền",
+      "hl": "vi",
+      "gl": "VN",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "kebocoran data OR ransomware",
+      "hl": "id",
+      "gl": "ID",
+      "region": "southeast-asia"
+    },
+    {
+      "q": "violation de données OR rançongiciel",
+      "hl": "fr",
+      "gl": "CI",
+      "region": "africa"
+    },
+    {
+      "q": "data breach OR ransomware hospital OR utility",
+      "hl": "en",
+      "gl": "GH",
+      "region": "africa"
+    }
+  ]
 }

@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-24T08:31:37Z",
+  "updated_at": "2026-11-24T10:33:20Z",
   "window_days": 365,
   "sources": {
     "cisa": {
       "name": "CISA ICS advisories",
       "tier": "gov",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 524,
       "error": "",
@@ -17,7 +17,7 @@
     "siemens": {
       "name": "Siemens ProductCERT",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 132,
       "error": "",
@@ -29,7 +29,7 @@
     "schneider": {
       "name": "Schneider Electric CPCERT",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 37,
       "error": "",
@@ -41,19 +41,19 @@
     "abb": {
       "name": "ABB PSIRT",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
-      "count": 51,
+      "count": 52,
       "error": "",
-      "fetched": 0,
+      "fetched": 1,
       "failed": 0,
       "waiting": 0,
-      "listed": 51
+      "listed": 52
     },
     "phoenix": {
       "name": "Phoenix Contact PSIRT (CERT@VDE)",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 30,
       "error": "",
@@ -65,15 +65,15 @@
     "certvde": {
       "name": "CERT@VDE",
       "tier": "gov",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
-      "count": 559,
+      "count": 558,
       "error": ""
     },
     "moxa": {
       "name": "Moxa security advisories",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 96,
       "error": ""
@@ -81,13 +81,13 @@
     "mitsubishi": {
       "name": "Mitsubishi Electric PSIRT",
       "tier": "vendor",
-      "at": "2026-11-24T08:31:37Z",
+      "at": "2026-11-24T10:33:20Z",
       "ok": true,
       "count": 5,
       "error": ""
     }
   },
-  "count": 918,
+  "count": 919,
   "advisories": [
     {
       "products": [],
@@ -150,6 +150,50 @@
       "title": "CODESYS Visualization - multiple vulnerabilities",
       "url": "https://certvde.com/en/advisories/VDE-2026-154/",
       "published": "2026-11-24T10:00:00Z"
+    },
+    {
+      "id": "3KXG141034R4801",
+      "source": "abb",
+      "vendor": "ABB",
+      "title": "ACF5000 LCS/CCUS Linux kernel IPv4 TCP use-after-free vulnerability",
+      "products": [
+        "ACF5000 LCS",
+        "ACF5000 CCUS"
+      ],
+      "products_total": 2,
+      "cves": [
+        "CVE-2026-98432"
+      ],
+      "cve_cvss": {
+        "CVE-2026-98432": 9.8
+      },
+      "cvss": 9.8,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "C",
+      "cwes": [
+        "CWE-416"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "vendor_fix",
+        "workaround"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://search.abb.com/library/Download.aspx?DocumentID=3KXG141034R4801&LanguageCode=en&DocumentPartId=&Action=Launch",
+      "doc": "https://psirt.abb.com/csaf/2026/3kxg141034r4801.json",
+      "summary": "ABB is aware of an internally identified vulnerability in the Linux kernel used in the product versions listed as affected in the advisory. An attacker who successfully exploits this vulnerability can crash the Linux kernel of the affected product, which stops its operation. The product restarts aut",
+      "published": "2026-11-24T00:30:00Z",
+      "updated": "2026-11-24T00:30:00Z",
+      "src_at": "2026-11-24T10:15:00Z",
+      "v": 2
     },
     {
       "products": [],
@@ -48684,6 +48728,7 @@
     "phoenix:VDE-2026-144": "2026-11-22T05:15:39Z",
     "phoenix:VDE-2026-150": "2026-11-22T05:15:39Z",
     "phoenix:VDE-2026-159": "2026-11-22T05:15:39Z",
-    "cisa:ICSA-26-321-01": "2026-11-22T05:15:39Z"
+    "cisa:ICSA-26-321-01": "2026-11-22T05:15:39Z",
+    "abb:3KXG141034R4801": "2026-11-24T10:33:20Z"
   }
 }

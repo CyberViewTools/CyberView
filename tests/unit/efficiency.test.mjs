@@ -153,7 +153,7 @@ test("report: never presents fewer days of data as a full window", () => {
   const r = report(inp, { now: NOW, days: 7, clusterFn: noCluster });
   assert.equal(r.covered.leads, 2.5); assert.equal(r.covered.usage, 0.4); assert.match(r.note, /leads 2\.5 days/);
   assert.equal(r.targets.find((t) => t.key === "earns").state, "unknown");
-  assert.ok(r.gaps.some((g) => /usage not logged/.test(g)));
+  assert.equal(r.gaps, undefined, "internal method notes are never published");
   assert.equal(spanDays([], 7, NOW), 0);
 });
 

@@ -511,12 +511,14 @@ export function report(inp, { now = Date.now(), days = 7, speed = null, windows 
     coverage: { d7: coverage(inp.events, leadByUrl, 7, now), d30: coverage(inp.events, leadByUrl, 30, now), events_from: inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))).sort()[0] || null,
       // how many of the 30 days the event files really hold (first_seen), so the page never shows a 2-day count as a 30-day one
       days_of_data: spanDays(inp.events.map((e) => e.first_seen).filter((t) => isFinite(Date.parse(t))), 30, now) },
-    gaps: ["Jobs run as subagents in the ops session write no data/usage line: their usage is unknown and shown as \"usage not logged\", never as zero.",
-      "Cost is the API-equivalent price data/usage records; on the Max plan the limit is the usage window, not money.",
-      "Second reviews run both inside the research loop and in the hourly review desk; their run logs are counted under review, their usage under the job that started them.",
-      "A lead counts as used when the story it was fused into became or updated an event; stories larger than 30 leads are credited lead by lead."],
   };
 }
+
+// Method notes for the maintainer's command-line report only; never published (owner, 2026-11-24: not shown on the website).
+const METHOD_NOTES = ["Jobs run as subagents in the ops session write no data/usage line: their usage is unknown and shown as \"usage not logged\", never as zero.",
+  "Cost is the API-equivalent price data/usage records; on the Max plan the limit is the usage window, not money.",
+  "Second reviews run both inside the research loop and in the hourly review desk; their run logs are counted under review, their usage under the job that started them.",
+  "A lead counts as used when the story it was fused into became or updated an event; stories larger than 30 leads are credited lead by lead."];
 
 /** Pure: how the workers of the window ended, from data/usage lines: finished, reached their turn cap (`capped`), were
  *  refused by the plan's usage limit (`limit`), or failed otherwise. */
@@ -601,5 +603,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   if (r.gates) console.log("Gates (due / skipped: nothing new since the last check): " + ["followup", "claims", "outage", "updater"].map((k) => { const g = r.gates[k] || {}; return g.error ? `${k} ?` : `${k} ${g.due}/${g.skipped ?? g.skipped_redirect_only ?? 0}${g.next_due_at ? ` (next due ${String(g.next_due_at).slice(5, 16).replace("T", " ")})` : ""}`; }).join("; ") + (r.gates.gap && !r.gates.gap.error ? `; gap pass every ${r.gates.gap.every_minutes} min (${r.gates.gap.runs_in_a_row_without_an_event} run(s) in a row added nothing)` : ""));
   if (r.worker_ends) console.log(`Workers (${r.days} days): ${r.worker_ends.ok} of ${r.worker_ends.runs} finished, ${r.worker_ends.capped} reached their turn cap, ${r.worker_ends.usage_limit} refused by the usage limit${r.worker_ends.last_limit_at ? ` (last ${r.worker_ends.last_limit_at}${r.worker_ends.last_limit_until ? ", reset " + r.worker_ends.last_limit_until : ""})` : ""}, ${r.worker_ends.failed} failed otherwise.`);
   if (r.api_fallback) console.log(`API fallback: ${r.api_fallback.enabled ? "enabled" : "disabled"}, cap $${r.api_fallback.monthly_usd_cap}/month; ${r.api_fallback.cycles_on_fallback} worker line(s) on the API this month, est $${r.api_fallback.est_usd_this_month}${r.api_fallback.last_fallback_at ? ", last " + r.api_fallback.last_fallback_at : ""}${r.api_fallback.cap_reached ? " — CAP REACHED" : ""}.`);
-  r.gaps.forEach((g) => console.log("Gap: " + g));
+  METHOD_NOTES.forEach((g) => console.log("Note: " + g));
 }

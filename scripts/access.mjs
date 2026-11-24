@@ -31,7 +31,7 @@ export const COUNTRIES = {
   LT: "Lithuania", LV: "Latvia", SI: "Slovenia", HU: "Hungary", AT: "Austria", RO: "Romania", HR: "Croatia", RS: "Serbia", BG: "Bulgaria",
   UA: "Ukraine", TR: "Turkey", AU: "Australia", NZ: "New Zealand", JP: "Japan", TW: "Taiwan", KR: "South Korea", PH: "Philippines",
   MY: "Malaysia", SG: "Singapore", IN: "India", PK: "Pakistan", BD: "Bangladesh", ID: "Indonesia", VN: "Vietnam", TH: "Thailand",
-  ZA: "South Africa", KE: "Kenya", NG: "Nigeria", ZM: "Zambia", ZW: "Zimbabwe", CL: "Chile", MX: "Mexico", PR: "Puerto Rico",
+  ZA: "South Africa", KE: "Kenya", NG: "Nigeria", ZM: "Zambia", ZW: "Zimbabwe", CL: "Chile", MX: "Mexico", PR: "Puerto Rico", GU: "Guam",
   CO: "Colombia", PE: "Peru", BR: "Brazil", LK: "Sri Lanka", RU: "Russia", IL: "Israel", LB: "Lebanon", IQ: "Iraq", AE: "United Arab Emirates", SA: "Saudi Arabia", KW: "Kuwait",
   BE: "Belgium", NO: "Norway", BH: "Bahrain", QA: "Qatar", JO: "Jordan", PS: "Palestine", IR: "Iran", MA: "Morocco", DZ: "Algeria",
   TN: "Tunisia", SN: "Senegal", CI: "Côte d'Ivoire", GH: "Ghana", CM: "Cameroon", ET: "Ethiopia", UG: "Uganda", TZ: "Tanzania", MW: "Malawi",

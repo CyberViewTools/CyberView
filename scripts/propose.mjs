@@ -15,10 +15,11 @@ import { repoSlug } from "./lib/repo.mjs";
 
 const git = (cwd, ...a) => spawnSync("git", a, { cwd, encoding: "utf8", timeout: 120000 });
 const gh = (...a) => spawnSync("gh", a, { cwd: ROOT, encoding: "utf8", timeout: 60000 });
-export const PROPOSABLE = /^(config|docs)\//;
+// swarm/REQUESTS.md is the build-lane inbox the improver appends to; proposing it keeps the working tree clean (see the restore below).
+export const PROPOSABLE = /^((config|docs)\/|swarm\/REQUESTS\.md$)/;
 
 export function propose(job, root = ROOT) {
-  const files = git(root, "status", "--porcelain", "--", "config", "docs").stdout.split("\n").filter(Boolean)
+  const files = git(root, "status", "--porcelain", "--", "config", "docs", "swarm/REQUESTS.md").stdout.split("\n").filter(Boolean)
     .map((l) => l.slice(3).trim()).filter((f) => PROPOSABLE.test(f) && existsSync(join(root, f)));
   if (!files.length) return { ok: true, msg: "nothing to propose" };
   const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 12), branch = `bot/${job}-${stamp}`;
@@ -41,6 +42,8 @@ export function propose(job, root = ROOT) {
     try { const j = JSON.parse(pr.stdout); url = j.html_url || ""; node = j.node_id || ""; } catch { /* below */ }
     if (!url) return { ok: false, msg: `branch ${branch} pushed; opening the pull request failed: ${(pr.stderr || "").trim().split("\n").pop()}` };
     const am = node ? gh("api", "graphql", "-f", `query=mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,mergeMethod:SQUASH}){clientMutationId}}`, "-f", `id=${node}`) : { status: 1 };
+    // the proposed inbox file goes back to main's copy here, so the working tree is clean and the next pull brings the merged version
+    for (const f of files) if (f === "swarm/REQUESTS.md") git(root, "checkout", "--", f);
     return { ok: true, msg: `proposed ${url}${am.status === 0 ? " (merges itself once CI passes)" : " (waiting for the owner: auto-merge is off)"}` };
   } finally { git(root, "worktree", "remove", "--force", wt); }
 }

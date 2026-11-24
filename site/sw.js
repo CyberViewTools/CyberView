@@ -6,7 +6,7 @@
 var CACHE = "cyberview-v2";
 self.addEventListener("install", function () { self.skipWaiting(); });
 self.addEventListener("activate", function (ev) {
-  ev.waitUntil(caches.keys().then(function (keys) { return Promise.all(keys.filter(function (k) { return k !== CACHE && /^cyberview-/.test(k);   // only our own older copies, never another site on this origin }).map(function (k) { return caches.delete(k); })); }).then(function () { return self.clients.claim(); }));
+  ev.waitUntil(caches.keys().then(function (keys) { return Promise.all(keys.filter(function (k) { return k !== CACHE && /^cyberview-/.test(k); /* only our own older copies, never another site on this origin */ }).map(function (k) { return caches.delete(k); })); }).then(function () { return self.clients.claim(); }));
 });
 // one stored copy per file: the key is the path only (no query, no hash), so links with made-up query strings cannot
 // fill a visitor's storage with copies (pen test 2026-11-23)

@@ -1,15 +1,15 @@
 {
-  "updated_at": "2026-11-24T17:06:35Z",
+  "updated_at": "2026-11-24T19:06:40Z",
   "window_days": 365,
   "sources": {
     "cisa": {
       "name": "CISA ICS advisories",
       "tier": "gov",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 527,
       "error": "",
-      "fetched": 21,
+      "fetched": 18,
       "failed": 0,
       "waiting": 0,
       "listed": 527
@@ -17,7 +17,7 @@
     "siemens": {
       "name": "Siemens ProductCERT",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 132,
       "error": "",
@@ -29,7 +29,7 @@
     "schneider": {
       "name": "Schneider Electric CPCERT",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 37,
       "error": "",
@@ -41,19 +41,19 @@
     "abb": {
       "name": "ABB PSIRT",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
-      "count": 52,
+      "count": 54,
       "error": "",
-      "fetched": 0,
+      "fetched": 2,
       "failed": 0,
       "waiting": 0,
-      "listed": 52
+      "listed": 54
     },
     "phoenix": {
       "name": "Phoenix Contact PSIRT (CERT@VDE)",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 30,
       "error": "",
@@ -65,15 +65,15 @@
     "certvde": {
       "name": "CERT@VDE",
       "tier": "gov",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
-      "count": 559,
+      "count": 558,
       "error": ""
     },
     "moxa": {
       "name": "Moxa security advisories",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 96,
       "error": ""
@@ -81,13 +81,13 @@
     "mitsubishi": {
       "name": "Mitsubishi Electric PSIRT",
       "tier": "vendor",
-      "at": "2026-11-24T17:06:35Z",
+      "at": "2026-11-24T19:06:40Z",
       "ok": true,
       "count": 5,
       "error": ""
     }
   },
-  "count": 922,
+  "count": 924,
   "advisories": [
     {
       "products": [],
@@ -120,6 +120,49 @@
       "title": "Moxa’s Response Regarding CVE-2026-114938 (Java4Shell)",
       "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-260003-moxa’s-response-regarding-cve-2026-114938-(java4shell)",
       "published": "2026-11-24T15:26:53Z"
+    },
+    {
+      "id": "7PAA025875",
+      "source": "abb",
+      "vendor": "ABB",
+      "title": "DoS Vulnerability in System 800xA Batch Management - TCP Connection Resource Exhaustion",
+      "products": [
+        "System 800xA Batch Management"
+      ],
+      "products_total": 1,
+      "cves": [
+        "CVE-2026-78354"
+      ],
+      "cve_cvss": {
+        "CVE-2026-78354": 4.3
+      },
+      "cvss": 4.3,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:U/RL:W/RC:C",
+      "severity": "M",
+      "cwes": [
+        "CWE-772"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "no_fix_planned",
+        "workaround"
+      ],
+      "fix": false,
+      "not_affected": false,
+      "url": "https://search.abb.com/library/Download.aspx?DocumentID=7PAA025875&LanguageCode=en&DocumentPartId=&Action=Launch",
+      "doc": "https://psirt.abb.com/csaf/2026/7paa025875.json",
+      "summary": "ABB is aware of a vulnerability affecting the versions of 800xA Batch Management listed as affected in the advisory. Under specific network conditions, a malicious user with access to the control network could cause temporary service degradation or a temporary denial of service. Successful exploitat",
+      "published": "2026-11-24T00:30:00Z",
+      "updated": "2026-11-24T12:30:00Z",
+      "src_at": "2026-11-24T18:20:00Z",
+      "v": 2
     },
     {
       "products": [],
@@ -326,6 +369,49 @@
       "published": "2026-11-24T00:30:00Z",
       "updated": "2026-11-24T00:30:00Z",
       "src_at": "2026-11-24T10:15:00Z",
+      "v": 2
+    },
+    {
+      "id": "9AKK108473A5769",
+      "source": "abb",
+      "vendor": "ABB",
+      "title": "ACS380-E Drives User Lock Remains Open After Closure Under Specific Conditions",
+      "products": [
+        "ACS380-E4C02C"
+      ],
+      "products_total": 1,
+      "cves": [
+        "CVE-2026-103236"
+      ],
+      "cve_cvss": {
+        "CVE-2026-103236": 6.1
+      },
+      "cvss": 6.1,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:L/E:H/RL:O/RC:C",
+      "severity": "M",
+      "cwes": [
+        "CWE-863"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "vendor_fix",
+        "workaround"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://search.abb.com/library/Download.aspx?DocumentID=9AKK108473A5769&LanguageCode=en&DocumentPartId=&Action=Launch",
+      "doc": "https://psirt.abb.com/csaf/2026/9akk108473a5769.json",
+      "summary": "An internally identified software defect in ACS380-E firmware can cause User Lock to remain unintentionally open after closure when specific User Lock settings are used with the default Adaptive Programming application. Under these conditions, User Lock parameters may remain accessible to users with",
+      "published": "2026-11-24T00:30:00Z",
+      "updated": "2026-11-24T00:30:00Z",
+      "src_at": "2026-11-24T17:15:00Z",
       "v": 2
     },
     {

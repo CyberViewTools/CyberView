@@ -1,0 +1,40 @@
+{
+  "action": "NoMachine advises: do not install the package and delete it if downloaded in the affected window; if it was installed, disconnect the machine, change passwords from a clean device and reinstall the operating system.",
+  "actor": "",
+  "attack": [],
+  "category": "incident",
+  "country": "Luxembourg",
+  "cves": [],
+  "date": "2026-11-20",
+  "date_note": "NoMachine's advisory is dated 20 November (updated 23 November); the affected downloads fell on 19 and 20 November.",
+  "exec": "Anyone who downloaded the NoMachine Personal Edition for Windows installer in the window NoMachine specifies may have received a tampered file, according to NoMachine.",
+  "first_seen": "2026-11-24T11:45:11Z",
+  "geo_basis": "organisation headquarters as stated in the NoMachine advisory (Luxembourg); no city given in the sources",
+  "lat": 49.61,
+  "lng": 6.13,
+  "org": "NoMachine",
+  "pin_type": "hq",
+  "place": "Luxembourg",
+  "plain": "NoMachine says a download server for its Windows Personal Edition installer was compromised and the installer was altered. People who downloaded it in the window NoMachine specifies should not install it.",
+  "products": ["NoMachine Personal Edition for Windows"],
+  "sector": "Technology",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {"name": "NoMachine advisory", "url": "https://kb.nomachine.com/SU11X00294", "published": "2026-11-20", "read_depth": "full"},
+    {"name": "CSIRT Italia (ACN)", "url": "https://www.acn.gov.it/portale/w/supply-chain-attack-installer-malevolo-di-nomachine-personal-edition-per-windows-distribuito-attraverso-il-server-ufficiale-di-download", "published": "2026-11-24", "read_depth": "full"}
+  ],
+  "status": "confirmed",
+  "summary": "NoMachine says a Windows Personal Edition installer on one of its download servers was altered to add malicious components, and that the compromise happened at its hosting provider, not through a flaw in its code, so the altered file came through a supplier. Only downloads of one installer file, nomachine-personal-edition_10.2.3_1_x64.exe, in a stated window are affected. NoMachine says it reported the incident to local authorities and its investigation is ongoing.",
+  "tags": ["supply-chain", "malware"],
+  "time_basis": "published",
+  "title": "NoMachine says Windows Personal Edition installer on its download server was altered with malicious code",
+  "updated_at": "2026-11-24T11:45:11Z",
+  "validation": {
+    "checked_at": "2026-11-24T11:45:11Z",
+    "note": "Primary: NoMachine's own advisory plus CSIRT Italia's bulletin (a government CERT), both read.",
+    "state": "primary"
+  },
+  "sectors": {"values": ["information-technology"], "basis": "inferred"},
+  "surface": {"value": "supply-chain", "basis": "stated"}
+}

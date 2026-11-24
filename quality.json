@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-11-24T13:04:32Z",
+  "checked_at": "2026-11-24T14:05:45Z",
   "problems": [
     {
       "id": "stage-sweep",
       "level": "warn",
       "threshold_min": 30,
       "heal": "",
-      "text": "the research loop (commits) last ran 6 hours ago (limit 2 h): only the ops session can restart it",
+      "text": "the research loop (commits) last ran 7 hours ago (limit 2 h): only the ops session can restart it",
       "since": "2026-11-24T10:11:49Z",
       "over": true
     },
@@ -15,15 +15,24 @@
       "level": "warn",
       "threshold_min": 30,
       "heal": "",
-      "text": "the follow-up desk last ran 6 hours ago (limit 6 h): only the ops session can restart it",
+      "text": "the follow-up desk last ran 7 hours ago (limit 6 h): only the ops session can restart it",
       "since": "2026-11-24T13:04:32Z",
+      "over": true
+    },
+    {
+      "id": "stage-outage",
+      "level": "warn",
+      "threshold_min": 30,
+      "heal": "",
+      "text": "the outage desk last ran 7 hours ago (limit 6 h): only the ops session can restart it",
+      "since": "2026-11-24T14:05:45Z",
       "over": false
     },
     {
       "id": "leads-growth",
       "level": "warn",
       "threshold_min": 180,
-      "text": "today's lead file is on course for 10897 leads (the last week's median is 1749 a day): a collector may be looping",
+      "text": "today's lead file is on course for 10727 leads (the last week's median is 1749 a day): a collector may be looping",
       "since": "2026-11-24T09:03:16Z",
       "over": true
     },
@@ -32,7 +41,7 @@
       "level": "warn",
       "page": false,
       "threshold_min": 360,
-      "text": "the speed target fails: 97 min for nine in ten (203 events, last 139 h) (goal: under 15 min, nine times in ten)",
+      "text": "the speed target fails: 127 min for nine in ten (214 events, last 142 h) (goal: under 15 min, nine times in ten)",
       "since": "2026-11-22T05:13:19Z",
       "over": true
     },
@@ -41,7 +50,7 @@
       "level": "warn",
       "page": false,
       "threshold_min": 360,
-      "text": "the accuracy target fails: 42.9% corrected (307 of 715, last 7 days); 17 more flagged (goal: second review corrects under 10%)",
+      "text": "the accuracy target fails: 41.9% corrected (305 of 728, last 7 days); 18 more flagged (goal: second review corrects under 10%)",
       "since": "2026-11-22T05:13:19Z",
       "over": true
     },
@@ -50,7 +59,7 @@
       "level": "warn",
       "page": false,
       "threshold_min": 360,
-      "text": "the usage target fails: 15% of the estimated 5-hour window, 60% of the estimated week (level ok), headless workers only (the dispatcher and interactive sessions share the window and ar (goal: never run out of the 5-hour or weekly window)",
+      "text": "the usage target fails: 16% of the estimated 5-hour window, 60% of the estimated week (level ok), headless workers only (the dispatcher and interactive sessions share the window and ar (goal: never run out of the 5-hour or weekly window)",
       "since": "2026-11-22T05:13:19Z",
       "over": true
     },
@@ -67,52 +76,52 @@
     {
       "key": "collect",
       "label": "the lead collector (RSS feeds)",
-      "last_at": "2026-11-24T12:36:00Z",
+      "last_at": "2026-11-24T13:35:36Z",
       "max_min": 180,
-      "age_min": 29,
+      "age_min": 30,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "osint",
       "label": "the other open-source collectors",
-      "last_at": "2026-11-24T12:38:55Z",
+      "last_at": "2026-11-24T13:38:42Z",
       "max_min": 180,
-      "age_min": 26,
+      "age_min": 27,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "x-leads",
       "label": "X (Twitter) lead ingest (Grok handoff)",
-      "last_at": "2026-11-24T12:11:15Z",
+      "last_at": "2026-11-24T13:11:08Z",
       "max_min": 360,
-      "age_min": 53,
+      "age_min": 55,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "lead-triage",
       "label": "the rules that clear leads already on file",
-      "last_at": "2026-11-24T12:55:55Z",
+      "last_at": "2026-11-24T13:56:14Z",
       "max_min": 180,
-      "age_min": 9,
+      "age_min": 10,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "fuse",
       "label": "grouping leads into stories",
-      "last_at": "2026-11-24T12:40:58Z",
+      "last_at": "2026-11-24T13:40:05Z",
       "max_min": 180,
-      "age_min": 24,
+      "age_min": 26,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "backlog-auto",
       "label": "the rules that close routine items",
-      "last_at": "2026-11-24T12:55:59Z",
+      "last_at": "2026-11-24T13:56:19Z",
       "max_min": 180,
       "age_min": 9,
       "state": "ok",
@@ -123,7 +132,7 @@
       "label": "the research loop (commits)",
       "last_at": "2026-11-24T07:11:05Z",
       "max_min": 120,
-      "age_min": 353,
+      "age_min": 415,
       "state": "late",
       "heal": ""
     },
@@ -132,7 +141,7 @@
       "label": "researchers",
       "last_at": "2026-11-24T07:11:05Z",
       "max_min": 1440,
-      "age_min": 353,
+      "age_min": 415,
       "state": "ok",
       "heal": ""
     },
@@ -141,7 +150,7 @@
       "label": "second reviewers in the loop",
       "last_at": "2026-11-24T07:11:05Z",
       "max_min": 1440,
-      "age_min": 353,
+      "age_min": 415,
       "state": "ok",
       "heal": ""
     },
@@ -150,7 +159,7 @@
       "label": "the review desk",
       "last_at": "2026-11-24T12:27:38Z",
       "max_min": 300,
-      "age_min": 37,
+      "age_min": 98,
       "state": "ok",
       "heal": ""
     },
@@ -159,7 +168,7 @@
       "label": "updaters",
       "last_at": "2026-11-24T07:11:05Z",
       "max_min": 2880,
-      "age_min": 353,
+      "age_min": 415,
       "state": "ok",
       "heal": ""
     },
@@ -168,34 +177,34 @@
       "label": "the follow-up desk",
       "last_at": "2026-11-24T06:41:44Z",
       "max_min": 360,
-      "age_min": 383,
+      "age_min": 444,
       "state": "late",
       "heal": ""
     },
     {
       "key": "grid",
       "label": "the power grid collector",
-      "last_at": "2026-11-24T12:41:15Z",
+      "last_at": "2026-11-24T13:40:28Z",
       "max_min": 120,
-      "age_min": 23,
+      "age_min": 25,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "grid-news",
       "label": "power outages in the news",
-      "last_at": "2026-11-24T12:41:15Z",
+      "last_at": "2026-11-24T13:40:28Z",
       "max_min": 120,
-      "age_min": 23,
+      "age_min": 25,
       "state": "ok",
       "heal": "collect.yml"
     },
     {
       "key": "grid-analysis",
       "label": "the power grid analysis",
-      "last_at": "2026-11-24T12:41:15Z",
+      "last_at": "2026-11-24T13:40:28Z",
       "max_min": 120,
-      "age_min": 23,
+      "age_min": 25,
       "state": "ok",
       "heal": "collect.yml"
     },
@@ -204,7 +213,7 @@
       "label": "the grid researchers",
       "last_at": "2026-11-24T04:11:10Z",
       "max_min": 1440,
-      "age_min": 533,
+      "age_min": 595,
       "state": "ok",
       "heal": ""
     },
@@ -213,8 +222,8 @@
       "label": "the outage desk",
       "last_at": "2026-11-24T07:11:05Z",
       "max_min": 360,
-      "age_min": 353,
-      "state": "ok",
+      "age_min": 415,
+      "state": "late",
       "heal": ""
     },
     {
@@ -222,7 +231,7 @@
       "label": "the CVE corpus",
       "last_at": "2026-11-24T12:55:02Z",
       "max_min": 180,
-      "age_min": 10,
+      "age_min": 71,
       "state": "ok",
       "heal": "cve.yml"
     },
@@ -231,7 +240,7 @@
       "label": "the vulnerability feeds",
       "last_at": "2026-11-24T12:28:21Z",
       "max_min": 300,
-      "age_min": 36,
+      "age_min": 97,
       "state": "ok",
       "heal": "feeds.yml"
     },
@@ -240,7 +249,7 @@
       "label": "CISA's known-exploited catalog",
       "last_at": "2026-11-24T12:28:21Z",
       "max_min": 480,
-      "age_min": 36,
+      "age_min": 97,
       "state": "ok",
       "heal": "feeds.yml"
     },
@@ -249,7 +258,7 @@
       "label": "the map context layers (IODA, GDACS)",
       "last_at": "2026-11-24T12:28:28Z",
       "max_min": 360,
-      "age_min": 36,
+      "age_min": 97,
       "state": "ok",
       "heal": "feeds.yml"
     },
@@ -258,7 +267,7 @@
       "label": "the exploit watch",
       "last_at": "2026-11-24T12:30:17Z",
       "max_min": 480,
-      "age_min": 34,
+      "age_min": 95,
       "state": "ok",
       "heal": "feeds.yml"
     },
@@ -267,14 +276,14 @@
       "label": "the source link check",
       "last_at": "2026-11-22T12:47:23Z",
       "max_min": 12000,
-      "age_min": 2897,
+      "age_min": 2958,
       "state": "ok",
       "heal": "linkcheck.yml"
     },
     {
       "key": "pipecheck",
       "label": "the pipeline check",
-      "last_at": "2026-11-24T13:04:32.884Z",
+      "last_at": "2026-11-24T14:05:45.128Z",
       "max_min": 180,
       "age_min": 0,
       "state": "ok",
@@ -283,9 +292,9 @@
     {
       "key": "breach-registers",
       "label": "the Breach notification registers routine",
-      "last_at": "2026-11-24T12:40:07Z",
+      "last_at": "2026-11-24T13:39:57Z",
       "max_min": 180,
-      "age_min": 24,
+      "age_min": 26,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -294,9 +303,9 @@
     {
       "key": "crypto-hacks",
       "label": "the Crypto hacks and exploits routine",
-      "last_at": "2026-11-24T12:40:23Z",
+      "last_at": "2026-11-24T13:39:57Z",
       "max_min": 180,
-      "age_min": 24,
+      "age_min": 26,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -307,7 +316,7 @@
       "label": "the Vendor security advisories routine",
       "last_at": "2026-11-24T12:30:26Z",
       "max_min": 480,
-      "age_min": 34,
+      "age_min": 95,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -318,7 +327,7 @@
       "label": "the Industrial advisories routine",
       "last_at": "2026-11-24T12:30:17Z",
       "max_min": 480,
-      "age_min": 34,
+      "age_min": 95,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -329,7 +338,7 @@
       "label": "the Scam warnings routine",
       "last_at": "2026-11-24T12:28:28Z",
       "max_min": 480,
-      "age_min": 36,
+      "age_min": 97,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -338,9 +347,9 @@
     {
       "key": "backlog",
       "label": "the Backlog desk routine",
-      "last_at": "2026-11-24T13:00:18Z",
+      "last_at": "2026-11-24T14:02:56Z",
       "max_min": 420,
-      "age_min": 4,
+      "age_min": 3,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -351,7 +360,7 @@
       "label": "the Verify routine",
       "last_at": "2026-11-24T04:49:10Z",
       "max_min": 1080,
-      "age_min": 495,
+      "age_min": 557,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -360,9 +369,9 @@
     {
       "key": "report-review",
       "label": "the Report review routine",
-      "last_at": "2026-11-24T05:02:19Z",
+      "last_at": "2026-11-24T13:20:55Z",
       "max_min": 1800,
-      "age_min": 482,
+      "age_min": 45,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -373,7 +382,7 @@
       "label": "the Analysis routine",
       "last_at": "2026-11-24T11:01:07Z",
       "max_min": 1800,
-      "age_min": 123,
+      "age_min": 185,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -384,7 +393,7 @@
       "label": "the Daily brief routine",
       "last_at": "2026-11-24T11:49:02Z",
       "max_min": 840,
-      "age_min": 76,
+      "age_min": 137,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -395,7 +404,7 @@
       "label": "the Security review routine",
       "last_at": "2026-11-24T05:05:10Z",
       "max_min": 12000,
-      "age_min": 479,
+      "age_min": 541,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -406,7 +415,7 @@
       "label": "the Triage desk routine",
       "last_at": "2026-11-24T06:15:19Z",
       "max_min": 780,
-      "age_min": 409,
+      "age_min": 470,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -417,7 +426,7 @@
       "label": "the Regional desk routine",
       "last_at": "2026-11-24T06:45:57Z",
       "max_min": 1800,
-      "age_min": 379,
+      "age_min": 440,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -428,7 +437,7 @@
       "label": "the Tabletop exercise routine",
       "last_at": "2026-11-24T05:07:20Z",
       "max_min": 12000,
-      "age_min": 477,
+      "age_min": 538,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -439,7 +448,7 @@
       "label": "the Advisory desk routine",
       "last_at": "2026-11-24T04:35:33Z",
       "max_min": 1080,
-      "age_min": 509,
+      "age_min": 570,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -450,7 +459,7 @@
       "label": "the Exploit analyst routine",
       "last_at": "2026-11-24T12:31:18Z",
       "max_min": 420,
-      "age_min": 33,
+      "age_min": 94,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -461,7 +470,7 @@
       "label": "the Source scout routine",
       "last_at": "2026-11-24T05:11:51Z",
       "max_min": 12000,
-      "age_min": 473,
+      "age_min": 534,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -472,7 +481,7 @@
       "label": "the Improver routine",
       "last_at": "2026-11-24T09:39:03Z",
       "max_min": 1800,
-      "age_min": 205,
+      "age_min": 267,
       "state": "ok",
       "heal": "",
       "derived": true,
@@ -480,79 +489,79 @@
     }
   ],
   "status_keys": {
-    "last_collect_at": "2026-11-24T13:04:32Z",
-    "last_collect_new": "2026-11-24T13:04:32Z",
-    "collect_feeds": "2026-11-24T13:04:32Z",
-    "collect_feeds_ok": "2026-11-24T13:04:32Z",
-    "collect_failed": "2026-11-24T13:04:32Z",
-    "last_osint_at": "2026-11-24T13:04:32Z",
-    "last_osint_new": "2026-11-24T13:04:32Z",
-    "last_grid_at": "2026-11-24T13:04:32Z",
-    "last_grid_news_at": "2026-11-24T13:04:32Z",
-    "sweep_planned": "2026-11-24T13:04:32Z",
-    "sweep_handled": "2026-11-24T13:04:32Z",
-    "last_sweep_at": "2026-11-24T13:04:32Z",
-    "last_sweep_added": "2026-11-24T13:04:32Z",
-    "last_sweep_updated": "2026-11-24T13:04:32Z",
-    "last_cve_at": "2026-11-24T13:04:32Z",
-    "cve_total": "2026-11-24T13:04:32Z",
-    "cve_note": "2026-11-24T13:04:32Z",
-    "last_backlog_at": "2026-11-24T13:04:32Z",
-    "last_kev_at": "2026-11-24T13:04:32Z",
-    "last_feeds_at": "2026-11-24T13:04:32Z",
-    "last_context_at": "2026-11-24T13:04:32Z",
-    "last_exploits_at": "2026-11-24T13:04:32Z",
-    "last_followup_at": "2026-11-24T13:04:32Z",
-    "followup_note": "2026-11-24T13:04:32Z",
-    "last_fuse_at": "2026-11-24T13:04:32Z",
-    "stories_open": "2026-11-24T13:04:32Z",
-    "stories_corroborated": "2026-11-24T13:04:32Z",
-    "stories_claims": "2026-11-24T13:04:32Z",
-    "leads_72h": "2026-11-24T13:04:32Z",
-    "last_triage_at": "2026-11-24T13:04:32Z",
-    "last_review_at": "2026-11-24T13:04:32Z",
-    "last_analyst_at": "2026-11-24T13:04:32Z",
-    "last_linkcheck_at": "2026-11-24T13:04:32Z",
-    "last_validation_at": "2026-11-24T13:04:32Z",
-    "last_reports_at": "2026-11-24T13:04:32Z",
-    "last_analysis_at": "2026-11-24T13:04:32Z",
-    "last_brief_at": "2026-11-24T13:04:32Z",
-    "last_regional_at": "2026-11-24T13:04:32Z",
-    "last_tabletop_at": "2026-11-24T13:04:32Z",
-    "last_advisory_at": "2026-11-24T13:04:32Z",
-    "last_improver_at": "2026-11-24T13:04:32Z",
-    "last_grid_research_at": "2026-11-24T13:04:32Z",
-    "last_outage_at": "2026-11-24T13:04:32Z",
-    "outage_note": "2026-11-24T13:04:32Z",
-    "last_moderator_at": "2026-11-24T13:04:32Z",
-    "moderator_note": "2026-11-24T13:04:32Z",
-    "last_validation_checked": "2026-11-24T13:04:32Z",
-    "validation_note": "2026-11-24T13:04:32Z",
-    "health": "2026-11-24T13:04:32Z",
-    "last_breaches_at": "2026-11-24T13:04:32Z",
-    "last_breaches_new": "2026-11-24T13:04:32Z",
-    "last_lead_triage_at": "2026-11-24T13:04:32Z",
-    "last_backlog_auto_at": "2026-11-24T13:04:32Z",
-    "last_researcher_at": "2026-11-24T13:04:32Z",
-    "last_updater_at": "2026-11-24T13:04:32Z",
-    "last_claims_at": "2026-11-24T13:04:32Z",
-    "claims_note": "2026-11-24T13:04:32Z",
-    "last_reviewer_at": "2026-11-24T13:04:32Z",
-    "last_gdelt_gkg_at": "2026-11-24T13:04:32Z",
-    "last_gdelt_gkg_new": "2026-11-24T13:04:32Z",
-    "last_pipecheck_at": "2026-11-24T13:04:32Z",
-    "pipecheck_note": "2026-11-24T13:04:32Z",
-    "last_scams_at": "2026-11-24T13:04:32Z",
-    "scams_sources_ok": "2026-11-24T13:04:32Z",
-    "scams_sources": "2026-11-24T13:04:32Z",
-    "last_ics_at": "2026-11-24T13:04:32Z",
-    "last_psirt_at": "2026-11-24T13:04:32Z",
-    "psirt_note": "2026-11-24T13:04:32Z",
-    "last_x_leads_at": "2026-11-24T13:04:32Z",
-    "last_security_review_at": "2026-11-24T13:04:32Z",
-    "last_scout_at": "2026-11-24T13:04:32Z",
-    "last_crypto_hacks_at": "2026-11-24T13:04:32Z",
-    "last_crypto_hacks_new": "2026-11-24T13:04:32Z"
+    "last_collect_at": "2026-11-24T14:05:45Z",
+    "last_collect_new": "2026-11-24T14:05:45Z",
+    "collect_feeds": "2026-11-24T14:05:45Z",
+    "collect_feeds_ok": "2026-11-24T14:05:45Z",
+    "collect_failed": "2026-11-24T14:05:45Z",
+    "last_osint_at": "2026-11-24T14:05:45Z",
+    "last_osint_new": "2026-11-24T14:05:45Z",
+    "last_grid_at": "2026-11-24T14:05:45Z",
+    "last_grid_news_at": "2026-11-24T14:05:45Z",
+    "sweep_planned": "2026-11-24T14:05:45Z",
+    "sweep_handled": "2026-11-24T14:05:45Z",
+    "last_sweep_at": "2026-11-24T14:05:45Z",
+    "last_sweep_added": "2026-11-24T14:05:45Z",
+    "last_sweep_updated": "2026-11-24T14:05:45Z",
+    "last_cve_at": "2026-11-24T14:05:45Z",
+    "cve_total": "2026-11-24T14:05:45Z",
+    "cve_note": "2026-11-24T14:05:45Z",
+    "last_backlog_at": "2026-11-24T14:05:45Z",
+    "last_kev_at": "2026-11-24T14:05:45Z",
+    "last_feeds_at": "2026-11-24T14:05:45Z",
+    "last_context_at": "2026-11-24T14:05:45Z",
+    "last_exploits_at": "2026-11-24T14:05:45Z",
+    "last_followup_at": "2026-11-24T14:05:45Z",
+    "followup_note": "2026-11-24T14:05:45Z",
+    "last_fuse_at": "2026-11-24T14:05:45Z",
+    "stories_open": "2026-11-24T14:05:45Z",
+    "stories_corroborated": "2026-11-24T14:05:45Z",
+    "stories_claims": "2026-11-24T14:05:45Z",
+    "leads_72h": "2026-11-24T14:05:45Z",
+    "last_triage_at": "2026-11-24T14:05:45Z",
+    "last_review_at": "2026-11-24T14:05:45Z",
+    "last_analyst_at": "2026-11-24T14:05:45Z",
+    "last_linkcheck_at": "2026-11-24T14:05:45Z",
+    "last_validation_at": "2026-11-24T14:05:45Z",
+    "last_reports_at": "2026-11-24T14:05:45Z",
+    "last_analysis_at": "2026-11-24T14:05:45Z",
+    "last_brief_at": "2026-11-24T14:05:45Z",
+    "last_regional_at": "2026-11-24T14:05:45Z",
+    "last_tabletop_at": "2026-11-24T14:05:45Z",
+    "last_advisory_at": "2026-11-24T14:05:45Z",
+    "last_improver_at": "2026-11-24T14:05:45Z",
+    "last_grid_research_at": "2026-11-24T14:05:45Z",
+    "last_outage_at": "2026-11-24T14:05:45Z",
+    "outage_note": "2026-11-24T14:05:45Z",
+    "last_moderator_at": "2026-11-24T14:05:45Z",
+    "moderator_note": "2026-11-24T14:05:45Z",
+    "last_validation_checked": "2026-11-24T14:05:45Z",
+    "validation_note": "2026-11-24T14:05:45Z",
+    "health": "2026-11-24T14:05:45Z",
+    "last_breaches_at": "2026-11-24T14:05:45Z",
+    "last_breaches_new": "2026-11-24T14:05:45Z",
+    "last_lead_triage_at": "2026-11-24T14:05:45Z",
+    "last_backlog_auto_at": "2026-11-24T14:05:45Z",
+    "last_researcher_at": "2026-11-24T14:05:45Z",
+    "last_updater_at": "2026-11-24T14:05:45Z",
+    "last_claims_at": "2026-11-24T14:05:45Z",
+    "claims_note": "2026-11-24T14:05:45Z",
+    "last_reviewer_at": "2026-11-24T14:05:45Z",
+    "last_gdelt_gkg_at": "2026-11-24T14:05:45Z",
+    "last_gdelt_gkg_new": "2026-11-24T14:05:45Z",
+    "last_pipecheck_at": "2026-11-24T14:05:45Z",
+    "pipecheck_note": "2026-11-24T14:05:45Z",
+    "last_scams_at": "2026-11-24T14:05:45Z",
+    "scams_sources_ok": "2026-11-24T14:05:45Z",
+    "scams_sources": "2026-11-24T14:05:45Z",
+    "last_ics_at": "2026-11-24T14:05:45Z",
+    "last_psirt_at": "2026-11-24T14:05:45Z",
+    "psirt_note": "2026-11-24T14:05:45Z",
+    "last_x_leads_at": "2026-11-24T14:05:45Z",
+    "last_security_review_at": "2026-11-24T14:05:45Z",
+    "last_scout_at": "2026-11-24T14:05:45Z",
+    "last_crypto_hacks_at": "2026-11-24T14:05:45Z",
+    "last_crypto_hacks_new": "2026-11-24T14:05:45Z"
   },
   "status_key_count": 73,
   "unreviewed": {
@@ -562,9 +571,9 @@
   },
   "duplicates": [],
   "leads": {
-    "today": 5937,
+    "today": 6300,
     "median": 1749,
-    "projected": 10897,
+    "projected": 10727,
     "abnormal": true
   },
   "size_history": [
@@ -578,33 +587,25 @@
     },
     {
       "date": "2026-11-24",
-      "bytes": 92322903
+      "bytes": 92913708
     }
   ],
   "feeds_failing": [
     {
-      "name": "Cybersecurity.com (Japan)",
-      "fails": 4,
-      "since": "2026-11-24T09:09:02Z",
-      "error": "HTTP 404",
-      "days": 0.2,
-      "next_try_at": "2026-11-24T12:39:44Z"
-    },
-    {
       "name": "Styrelsen for Samfundssikkerhed (Denmark)",
-      "fails": 5,
+      "fails": 6,
       "since": "2026-11-24T08:09:35Z",
       "error": "HTTP 403 (refuses automated readers; not retried)",
       "days": 0.2,
-      "next_try_at": "2026-11-24T12:38:32Z"
+      "next_try_at": "2026-11-24T17:09:58Z"
     },
     {
       "name": "Tunisie Telegraph",
-      "fails": 3,
+      "fails": 4,
       "since": "2026-11-24T11:39:45Z",
       "error": "HTTP 404",
       "days": 0.1,
-      "next_try_at": "2026-11-24T13:08:54Z"
+      "next_try_at": "2026-11-24T14:38:41Z"
     },
     {
       "name": "Tech42 Korea",
@@ -623,6 +624,14 @@
       "next_try_at": "2026-11-24T13:39:44Z"
     },
     {
+      "name": "Korea Shinailbo",
+      "fails": 3,
+      "since": "2026-11-24T12:09:21Z",
+      "error": "HTTP 403 (refuses automated readers; not retried)",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T13:39:58Z"
+    },
+    {
       "name": "Atlantic Council cyber",
       "fails": 5,
       "since": "2026-11-24T06:53:30Z",
@@ -639,20 +648,12 @@
       "next_try_at": "2026-11-24T14:38:54Z"
     },
     {
-      "name": "Kenya News Agency",
-      "fails": 3,
-      "since": "2026-11-24T11:39:44Z",
-      "error": "UND_ERR_CONNECT_TIMEOUT",
-      "days": 0.1,
-      "next_try_at": "2026-11-24T13:08:54Z"
-    },
-    {
       "name": "Cybersecurity Italia (Italy)",
-      "fails": 3,
+      "fails": 4,
       "since": "2026-11-24T11:10:07Z",
-      "error": "UND_ERR_CONNECT_TIMEOUT",
+      "error": "ECONNRESET",
       "days": 0.1,
-      "next_try_at": "2026-11-24T12:39:21Z"
+      "next_try_at": "2026-11-24T14:09:58Z"
     },
     {
       "name": "24ur Tech (Slovenia)",
@@ -664,19 +665,19 @@
     },
     {
       "name": "Telefonino.net (Italy)",
-      "fails": 3,
+      "fails": 4,
       "since": "2026-11-24T11:10:07Z",
       "error": "ECONNRESET",
       "days": 0.1,
-      "next_try_at": "2026-11-24T12:39:21Z"
+      "next_try_at": "2026-11-24T14:09:58Z"
     },
     {
       "name": "Fokus Macedonia (N. Macedonia)",
-      "fails": 3,
+      "fails": 4,
       "since": "2026-11-24T11:10:07Z",
-      "error": "HTTP 522",
+      "error": "The operation was aborted due to timeout",
       "days": 0.1,
-      "next_try_at": "2026-11-24T12:39:21Z"
+      "next_try_at": "2026-11-24T14:09:58Z"
     },
     {
       "name": "Mobile BG News (Bulgaria)",
@@ -688,19 +689,27 @@
     },
     {
       "name": "FBI national press releases",
-      "fails": 5,
+      "fails": 6,
       "since": "2026-11-24T06:53:30Z",
       "error": "HTTP 403 (refuses automated readers; not retried)",
       "days": 0.3,
-      "next_try_at": "2026-11-24T12:38:31Z"
+      "next_try_at": "2026-11-24T17:09:58Z"
     },
     {
       "name": "Nigeria NAICOM",
-      "fails": 5,
+      "fails": 6,
       "since": "2026-11-24T06:53:30Z",
       "error": "HTTP 404",
       "days": 0.3,
-      "next_try_at": "2026-11-24T12:38:32Z"
+      "next_try_at": "2026-11-24T17:09:58Z"
+    },
+    {
+      "name": "Net Insight (Italy)",
+      "fails": 3,
+      "since": "2026-11-24T12:38:54Z",
+      "error": "ECONNRESET",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T14:08:41Z"
     },
     {
       "name": "Key4biz (Italy)",
@@ -709,6 +718,14 @@
       "error": "UND_ERR_CONNECT_TIMEOUT",
       "days": 0.1,
       "next_try_at": "2026-11-24T13:38:54Z"
+    },
+    {
+      "name": "El Salvador Diario Co Latino",
+      "fails": 3,
+      "since": "2026-11-24T12:38:54Z",
+      "error": "The operation was aborted due to timeout",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T14:08:41Z"
     },
     {
       "name": "Mexico Tec Monterrey Conecta",
@@ -720,19 +737,19 @@
     },
     {
       "name": "Paraguay MITIC",
-      "fails": 4,
+      "fails": 6,
       "since": "2026-11-24T09:09:02Z",
       "error": "UND_ERR_CONNECT_TIMEOUT",
       "days": 0.2,
-      "next_try_at": "2026-11-24T12:39:44Z"
+      "next_try_at": "2026-11-24T17:38:41Z"
     },
     {
-      "name": "samba.org Samba News",
+      "name": "Paraguay IP Agencia",
       "fails": 3,
-      "since": "2026-11-24T11:10:07Z",
-      "error": "The operation was aborted due to timeout",
+      "since": "2026-11-24T12:38:54Z",
+      "error": "UND_ERR_CONNECT_TIMEOUT",
       "days": 0.1,
-      "next_try_at": "2026-11-24T12:39:21Z"
+      "next_try_at": "2026-11-24T14:08:41Z"
     },
     {
       "name": "HarfangLab blog",
@@ -775,6 +792,22 @@
       "next_try_at": "2026-11-24T13:39:44Z"
     },
     {
+      "name": "Peru La Mula",
+      "fails": 3,
+      "since": "2026-11-24T12:38:54Z",
+      "error": "HTTP 403 (refuses automated readers; not retried)",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T14:08:41Z"
+    },
+    {
+      "name": "Retail Gazette",
+      "fails": 3,
+      "since": "2026-11-24T12:38:54Z",
+      "error": "HTTP 403 (refuses automated readers; not retried)",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T14:08:41Z"
+    },
+    {
       "name": "New Mexico Political Report",
       "fails": 5,
       "since": "2026-11-24T06:53:30Z",
@@ -792,11 +825,11 @@
     },
     {
       "name": "Denmark Anklagemyndigheden (Denmark)",
-      "fails": 5,
+      "fails": 6,
       "since": "2026-11-24T07:09:02Z",
       "error": "HTTP 403 (refuses automated readers; not retried)",
-      "days": 0.2,
-      "next_try_at": "2026-11-24T12:38:32Z"
+      "days": 0.3,
+      "next_try_at": "2026-11-24T17:09:58Z"
     },
     {
       "name": "The Aviation Times",
@@ -805,6 +838,30 @@
       "error": "HTTP 409",
       "days": 0.2,
       "next_try_at": "2026-11-24T14:38:54Z"
+    },
+    {
+      "name": "The Pitt News (Pittsburgh, PA)",
+      "fails": 3,
+      "since": "2026-11-24T12:09:21Z",
+      "error": "HTTP 403 (refuses automated readers; not retried)",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T13:39:59Z"
+    },
+    {
+      "name": "Governo de Goiás (Brazil)",
+      "fails": 3,
+      "since": "2026-11-24T12:38:54Z",
+      "error": "UND_ERR_SOCKET",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T14:08:41Z"
+    },
+    {
+      "name": "Jornal do Acre",
+      "fails": 3,
+      "since": "2026-11-24T12:09:21Z",
+      "error": "HTTP 403 (refuses automated readers; not retried)",
+      "days": 0.1,
+      "next_try_at": "2026-11-24T13:39:59Z"
     },
     {
       "name": "El Capitalino (Mexico)",
@@ -829,7 +886,7 @@
     "collect.yml": "2026-11-23T05:18:10Z"
   },
   "alerts": {
-    "at": "2026-11-24T13:04:54Z",
-    "open": 5
+    "at": "2026-11-24T14:06:04Z",
+    "open": 6
   }
 }

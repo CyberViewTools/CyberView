@@ -1,7 +1,11 @@
 {
   "action": "NVISO advises hardening network perimeters with segmentation, security telemetry from all assets and attack-surface management, and publishes YARA rules and indicators of compromise to hunt for.",
   "actor": "",
-  "attack": ["malware", "backdoor", "persistence"],
+  "attack": [
+    "malware",
+    "backdoor",
+    "persistence"
+  ],
   "category": "report",
   "country": "Belgium",
   "cves": [],
@@ -17,23 +21,52 @@
   "pin_type": "country",
   "place": "Belgium",
   "plain": "Security firm NVISO found a new hidden backdoor for Linux servers, called ZQAgent. It lets attackers run commands, work with files and keep access across restarts.",
-  "products": ["Linux"],
+  "products": [
+    "Linux"
+  ],
   "sector": "Unknown",
   "severity": 2,
   "source_tier": "primary",
   "sources": [
-    {"name": "NVISO Labs", "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/", "published": "2026-11-23"},
-    {"name": "Cyber Security News", "url": "https://cybersecuritynews.com/hackers-deploy-zqagent-backdoor/", "published": "2026-11-24"}
+    {
+      "name": "NVISO Labs",
+      "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/hackers-deploy-zqagent-backdoor/",
+      "published": "2026-11-24"
+    }
   ],
   "status": "confirmed",
   "summary": "NVISO says it observed the ZQAgent Linux backdoor deployed by the LLM tool ARTEX during an incident response engagement in Belgium, with similar samples reported from Taiwan. NVISO says ZQAgent gives arbitrary code execution, filesystem operations and network tunneling, and persists through systemd and cron. NVISO associates the command infrastructure with a cluster it calls FOG0003.",
-  "tags": ["malware", "ai-enabled"],
+  "tags": [
+    "malware",
+    "ai-enabled"
+  ],
   "title": "NVISO describes ZQAgent Linux backdoor deployed by ARTEX tool in Belgium",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-24T13:43:47Z",
     "note": "NVISO's own report (primary) read; Cyber Security News relays it."
   },
-  "sectors": {"values": ["unknown"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "unknown"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T14:14:07Z",
+    "first_at": "2026-11-24T14:14:07Z",
+    "note": "Compared title, Belgium/Taiwan, FOG0003, capabilities, persistence and advice with NVISO report and Cyber Security News",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T14:14:07Z"
 }

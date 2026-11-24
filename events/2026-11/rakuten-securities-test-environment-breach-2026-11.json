@@ -1,5 +1,5 @@
 {
-  "action": "Rakuten Securities customers: be wary of messages or calls posing as the company or its partners, never share passwords or PINs, and watch for the company's notice.",
+  "action": "Rakuten Securities advises customers to be careful with suspicious emails, SMS messages, phone calls and mail, and to set up passkey authentication.",
   "actor": "",
   "attack": [],
   "category": "incident",
@@ -7,7 +7,7 @@
   "cves": [],
   "date": "2026-11-16",
   "date_note": "Date the company says it learned a third party may have accessed its systems; Security NEXT published on 2026-11-18.",
-  "exec": "Test-environment data held financial details of millions of brokerage customers, so keep real customer data out of test systems.",
+  "exec": "Rakuten Securities says its second report found names, birth dates, addresses and phone numbers among the leaked customer data.",
   "first_seen": "2026-11-19T04:08:00Z",
   "geo_basis": "company headquarters",
   "lat": 35.612,
@@ -15,7 +15,7 @@
   "org": "Rakuten Securities",
   "pin_type": "victim",
   "place": "Tokyo, Japan",
-  "plain": "Rakuten Securities says an outsider may have reached its systems and some customer details, including income and asset information, may have leaked. It has not confirmed a leak of passwords or PINs.",
+  "plain": "Rakuten Securities' second report says about 4.41 million records include names, birth dates, addresses and phone numbers. The company says it has not confirmed a leak of passwords or PINs.",
   "products": [],
   "sector": "Finance",
   "severity": 3,
@@ -36,28 +36,36 @@
     {
       "name": "SBbit",
       "url": "https://www.sbbit.jp/article/fj/188551"
+    },
+    {
+      "name": "Impress Watch",
+      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
+      "published": "2026-11-24"
     }
   ],
   "status": "confirmed",
-  "summary": "Rakuten Securities said it learned on November 16 that a third party may have accessed its systems. Test-environment data may have leaked on November 11: details of up to about 4.47 million accounts, and customer codes and login IDs for up to about 11.25 million. No password or PIN leak or unauthorised trades were found as of November 17. On November 19 the company said it received a report-collection order from Japan's Financial Services Agency.",
+  "summary": "Rakuten Securities said on 17 November that a third party may have accessed its systems, and test-environment data may have leaked. In its second report of 24 November, relayed by Impress Watch, it said customer codes and login IDs of about 11.98 million accounts leaked, and about 4.41 million records also hold names, birth dates, addresses and phone numbers. The company said no password or PIN leak and no unauthorised trades were confirmed.",
   "tags": [
     "data-breach"
   ],
-  "title": "Rakuten Securities says test-environment data on up to about 4.47 million accounts may have leaked",
-  "updated_at": "2026-11-21T10:18:10Z",
+  "title": "Rakuten Securities second report: leaked customer data includes names, addresses and phone numbers",
+  "updated_at": "2026-11-24T14:17:00Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T04:23:05Z",
     "note": "Security NEXT and ITmedia NEWS (read in full) independently report the company disclosure; ITmedia adds the company explanation that live data was copied to the test server. Rakuten Securities' own 19 Nov press release read: it states receipt of a report-collection order from the FSA that day; the earlier 17 Nov notice was not retrieved."
   },
   "review": {
-    "state": "corrected",
-    "at": "2026-11-21T10:18:13Z",
+    "state": "passed",
+    "at": "2026-11-24T14:27:00Z",
     "first_at": "2026-11-19T04:28:13Z",
-    "note": "Checked 4 sources (Security NEXT, ITmedia, SBbit, Rakuten 19 Nov PDF): dates, up-to 4.47M/11.25M figures, FSA order of 19 Nov, test environment match. Plain said it reports no leak of passwords/PINs; sources say leak not confirmed; reworded.",
-    "flags": []
+    "note": "Compared 17 Nov announcement, 11.98M accounts, 4.41M records, data types, no password or PIN leak, no unauthorised trades against Impress Watch; two non-error warnings remain",
+    "flags": [
+      "figure-no-evidence",
+      "source-published-partial"
+    ]
   },
-  "qa_checked_at": "2026-11-21T10:18:13Z",
+  "qa_checked_at": "2026-11-24T14:27:00Z",
   "sectors": {
     "values": [
       "financial-services"
@@ -67,5 +75,24 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
-  }
+  },
+  "records_affected": "about 4.41 million records",
+  "evidence": [
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
+      "quote": "約441万件"
+    },
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
+      "quote": "約1,198万口座"
+    },
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
+      "quote": "約119万件"
+    },
+    {
+      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
+      "quote": "楽天証券のログインに必要なパスワード、暗証番号など取引に必要な情報についての漏えいは確認されていない。"
+    }
+  ]
 }

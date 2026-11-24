@@ -1,0 +1,50 @@
+{
+  "actor": "",
+  "attack": [],
+  "country": "",
+  "cves": ["CVE-2026-133842", "CVE-2026-133845"],
+  "first_seen": "2026-11-24T17:43:54Z",
+  "updated_at": "2026-11-24T17:43:54Z",
+  "products": ["Flatpak"],
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "title": "Flatpak 1.18.6 fixes two vulnerabilities: setuid root files and a sandbox escape",
+  "summary": "Flatpak maintainer Simon McVittie announced on oss-security that Flatpak 1.18.6 fixes two flaws. CVE-2026-133842 lets a compromised or malicious app, runtime or extension with extra-data create setuid root files on the host; CVE-2026-133845 lets a malicious app escape the sandbox through file descriptor passing in flatpak-portal. The advisory says all older releases should be assumed vulnerable. Neither page reports exploitation.",
+  "plain": "Flatpak, the Linux app packaging system, has released 1.18.6 to fix two flaws that a malicious app could use to gain root-owned files or break out of its sandbox. Older releases are assumed to be affected.",
+  "exec": "Two Flatpak flaws could let a malicious or compromised app gain setuid root files or escape its sandbox; the maintainers say all older releases should be assumed vulnerable.",
+  "action": "The Flatpak advisory says to upgrade to Flatpak 1.18.6; older LTS distributions can backport the fixes, and Linuxiac says to update once your distribution ships patched packages.",
+  "org": "Flatpak",
+  "sector": "Technology",
+  "place": "Not stated",
+  "lat": 0,
+  "lng": 0,
+  "pin_type": "global",
+  "geo_basis": "open-source project; no place stated",
+  "date": "2026-11-24",
+  "date_note": "The oss-security post and Linuxiac article are both dated 24 November; neither gives an earlier release day.",
+  "time_basis": "published",
+  "tags": [],
+  "sectors": { "values": ["cross-sector"], "basis": "inferred" },
+  "surface": { "value": "endpoint", "basis": "inferred" },
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "oss-security (Simon McVittie)",
+      "url": "https://seclists.org/oss-sec/2026/q4/875",
+      "published": "2026-11-24",
+      "read_depth": "full"
+    },
+    {
+      "name": "Linuxiac",
+      "url": "https://linuxiac.com/flatpak-1-18-6-patches-two-security-vulnerabilities/",
+      "published": "2026-11-24",
+      "read_depth": "full"
+    }
+  ],
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-24T17:43:54Z",
+    "note": "The maintainer's own oss-security advisory and Linuxiac were read; both state the two flaws and the fixed release."
+  }
+}

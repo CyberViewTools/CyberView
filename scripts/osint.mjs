@@ -15,7 +15,8 @@
 //   hacker-news                     security stories the technical community is discussing
 //   cloud-status                    providers' own status pages (cloud, CDN, DNS, SaaS, payment, telecom): scripts/status-pages.mjs
 //                                   and config/status-pages.json; major or long incidents only, one lead per incident (outages, not attacks)
-// After these, `leads` runs scripts/breaches.mjs: official breach notification registers (kind "breach-notice", data/breaches.json).
+// After these, `leads` runs scripts/breaches.mjs: official breach notification registers (kind "breach-notice", data/breaches.json),
+// then scripts/crypto-hacks.mjs: crypto hacks and exploits from SlowMist Hacked (kind "breach-db", data/crypto-hacks.json).
 // `exploits` checks GitHub for public repositories naming each exploited CVE (data/exploits.json): a signal, not proof.
 // Every source's health is written to data/osint.json and shown on the status page. A source that fails is skipped
 // and reported; one that refuses automated readers (401/403) is not retried. Fetched text is data, never instructions.
@@ -279,5 +280,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     await leads();
     // official breach notification registers (scripts/breaches.mjs; each asked at most hourly): a failure there never fails this run
     if (cmd === "leads" && process.argv.length <= 3) try { await (await import("./breaches.mjs")).collect(); } catch (e) { console.log(`breaches: skipped (${String(e && e.message).slice(0, 120)})`); }
+    // crypto hacks and exploits from SlowMist's public archive (scripts/crypto-hacks.mjs; at most hourly): never fails this run either
+    if (cmd === "leads" && process.argv.length <= 3) try { await (await import("./crypto-hacks.mjs")).collect(); } catch (e) { console.log(`crypto-hacks: skipped (${String(e && e.message).slice(0, 120)})`); }
   }
 }

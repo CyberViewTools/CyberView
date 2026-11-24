@@ -1,0 +1,59 @@
+<!-- trimmed from https://hacked.slowmist.io/?c=ETH on 2026-11-24: the first 4 rows, verbatim -->
+<ul class="case-list">
+    <li>
+                    <span class="time">2026-11-21</span>
+                    <h3><em>Hacked target: </em>Chainflip</h3>
+                    <p><em>Description of the event: </em>Cross-chain swap protocol Chainflip was attacked on November 21, 2026. The attacker, through a suspected compromise of the aggregate signing key, drained 122.86 BTC, 520.22 ETH, approximately 3.25 million USDC and 758K USDT from its Bitcoin and Ethereum vaults, totaling about $12 million. Some ETH proceeds were quickly sent to Tornado Cash. The project entered full safe mode (disabling deposits, withdrawals and swaps) and offered the attacker a 10% bounty in exchange for returning 90% of the funds.</p>
+                    <p><span><em>Amount of loss: </em>
+                        
+                            $ 12,000,000
+                        
+                    </span><span><em>Attack method: </em>Private Key Leak</span></p>
+
+                    
+                    <p class="link-reference"><a href="https://x.com/Chainflip/status/2124068986845532605" rel="nofollow" target="_blank">View Reference Sources</a></p>
+                    
+                </li>
+    <li>
+                    <span class="time">2026-11-18</span>
+                    <h3><em>Hacked target: </em>K3 Capital</h3>
+                    <p><em>Description of the event: </em>On November 18, 2026, K3 Capital’s sBOLD vault (a yield-bearing ERC-4626 vault built on Liquity V2 Stability Pools) was exploited. Attackers used flash-loaned wstETH to self-liquidate Liquity V2 troves, manipulated the vault’s share accounting (flaw in totalAssets calculation), minted cheap sBOLD shares, swapped collateral, and redeemed other depositors’ BOLD, draining approximately $3.43 million. The team paused the contracts and is investigating.</p>
+                    <p><span><em>Amount of loss: </em>
+                        
+                            $ 3,430,000
+                        
+                    </span><span><em>Attack method: </em>Smart Contract Vulnerability</span></p>
+
+                    
+                    <p class="link-reference"><a href="https://x.com/k3_capital/status/2123040539578970305" rel="nofollow" target="_blank">View Reference Sources</a></p>
+                    
+                </li>
+    <li>
+                    <span class="time">2026-11-18</span>
+                    <h3><em>Hacked target: </em>Peapods Finance</h3>
+                    <p><em>Description of the event: </em>On November 18, 2026, Peapods Finance’s deployer private key was apparently compromised. The attacker used it to set a minter on L2 PEAS contracts, mint tokens, bridge them to Ethereum mainnet, and sell them, creating sell pressure. The team quickly withdrew 98-99% of L2 liquidity to limit further extraction and is working on a post-mortem and fund recovery. PEAS cannot be minted on mainnet—only previously bridged tokens could be extracted.</p>
+                    <p><span><em>Amount of loss: </em>
+                        
+                            -
+                        
+                    </span><span><em>Attack method: </em>Private Key Leakage</span></p>
+
+                    
+                    <p class="link-reference"><a href="https://x.com/PeapodsFinance/status/2123088545573118150" rel="nofollow" target="_blank">View Reference Sources</a></p>
+                    
+                </li>
+    <li>
+                    <span class="time">2026-11-12</span>
+                    <h3><em>Hacked target: </em>PennysiaSettlement</h3>
+                    <p><em>Description of the event: </em>PennysiaSettlement (Ethereum) was exploited via an arbitrary external call vulnerability in executeSwap. The attacker deployed fake tokens to bypass spend checks and used residual user approvals to drain approximately $5,131 in assets from 4 users via transferFrom calls through the settlement contract.</p>
+                    <p><span><em>Amount of loss: </em>
+                        
+                            $ 5,131
+                        
+                    </span><span><em>Attack method: </em>Smart Contract Vulnerability</span></p>
+
+                    
+                    <p class="link-reference"><a href="https://etherscan.io/tx/0x2716c50e450272240f68f2827bcb4a336c2ac520951e0e530154566c295b732d" rel="nofollow" target="_blank">View Reference Sources</a></p>
+                    
+                </li>
+</ul>

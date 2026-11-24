@@ -1,0 +1,44 @@
+{
+  "title": "3CX tells self-managed customers to update to V20 Update 10 for two NGINX HTTP/2 vulnerabilities",
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-20",
+  "date_note": "3CX's advisory is dated 20 November 2026; the page gives no earlier day (the NGINX flaws were published 18 November, per the same page).",
+  "time_basis": "published",
+  "org": "3CX",
+  "actor": "",
+  "attack": ["http2-vulnerability"],
+  "products": ["3CX V20 (self-managed)", "NGINX"],
+  "cves": ["CVE-2026-123633", "CVE-2026-123007"],
+  "tags": [],
+  "country": "",
+  "place": "",
+  "pin_type": "none",
+  "geo_basis": "vendor advisory, no place stated",
+  "lat": null,
+  "lng": null,
+  "sector": "Technology",
+  "summary": "3CX's advisory says two HTTP/2 vulnerabilities in NGINX (CVE-2026-123633 and CVE-2026-123007) affect self-managed 3CX systems on Linux and Windows running V20 Update 10 or Update 9. It says the fix is V20 Update 10, Build 20.0.10.1801. 3CX says 3CX-hosted and SMB systems were already updated. Born's IT Blog relays the advice on 24 November.",
+  "plain": "3CX says its phone-system software contains two flaws from the NGINX web server. Customers who run 3CX on their own servers are told to install the newer build.",
+  "exec": "Self-managed 3CX phone systems need the vendor's update; hosted and SMB systems were already updated, according to 3CX.",
+  "action": "3CX advises self-managed customers to install V20 Update 10, Build 20.0.10.1801, and until then to restrict access to the 3CX web port (HTTPS) to the office, VPN or known IP addresses.",
+  "impact": "",
+  "source_tier": "primary",
+  "sources": [
+    {"name": "3CX (3cx.de)", "url": "https://www.3cx.de/blog/nginx-security-update/", "published": "2026-11-20"},
+    {"name": "Borns IT Blog", "url": "https://borncity.com/blog/2026/11/24/3cx-kritisches-nginx-sicherheitsupdate-dringend-patchen/", "published": "2026-11-24"}
+  ],
+  "evidence": [
+    {"url": "https://borncity.com/blog/2026/11/24/3cx-kritisches-nginx-sicherheitsupdate-dringend-patchen/", "quote": "Führen Sie so bald wie möglich ein Update auf V20 Update 10, Build 20.0.10.1801 oder höher durch."}
+  ],
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-24T16:59:39Z",
+    "note": "Primary source: 3CX (3cx.de) own advisory; Borns IT Blog (borncity.com) also states the fix. Neither page mentions exploitation."
+  },
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "surface": {"value": "web-app", "basis": "inferred"},
+  "first_seen": "2026-11-24T16:59:39Z",
+  "updated_at": "2026-11-24T16:59:39Z"
+}

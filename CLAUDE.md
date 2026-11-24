@@ -83,6 +83,10 @@ Grok files work for Claude Code in either of these ways:
 
 Claude Code implements that work on pull requests to `main`. The build lane owns `scripts/`, `site/`, `docs/`, `tests/`, `config/`, `routines.json` and the workflows; Grok does not open those pull requests and does not commit on `data`. See `swarm/LANES.md`.
 
+## Launcher sessions
+
+A launcher session only dispatches scheduled jobs. For each job notification it runs the job's dispatch command once, in one foreground call, and replies with only that command's last line (or carries out a `DISPATCH` instruction). It does not re-run a job, re-read notifications or check the repository unless the output needs it, and does not narrate. When several jobs arrive together, it runs them one after another, once each.
+
 ## Reliability rules
 
 - Fresh data must always get out: never add a step to `pages.yml`, `collect.yml` or `feeds.yml` that lets one bad record, one failing source or one failing optional step stop the commit or the deploy. Quarantine and report instead.

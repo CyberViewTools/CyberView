@@ -1,0 +1,88 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-24T11:50:00Z",
+  "finished_at": "2026-11-24T12:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://security.paloaltonetworks.com/CVE-2026-0322",
+      "title": "PAN-OS CVE-2026-0322",
+      "used_in": "CVE-2026-0322"
+    },
+    {
+      "url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-122",
+      "title": "FG-IR-26-122",
+      "used_in": "CVE-2025-61624"
+    },
+    {
+      "url": "https://confluence.atlassian.com/security/cve-2026-21589-arbitrary-file-access-vulnerability-impacts-multiple-products-1870495748.html",
+      "title": "Atlassian CVE-2026-21589",
+      "used_in": "CVE-2026-21589"
+    },
+    {
+      "url": "https://www.ahsay.com/en/company/announcements/patch-cve-105133-105134-update",
+      "title": "Ahsay alert",
+      "used_in": "CVE-2026-105133, CVE-2026-105134"
+    },
+    {
+      "url": "https://www.eg-secure.co.jp/siteguard/news/alert-202610-1",
+      "title": "SiteGuard alert",
+      "used_in": "CVE-2026-106931"
+    }
+  ],
+  "added": [
+    "CVE-2026-0322",
+    "CVE-2025-61624",
+    "CVE-2026-21589",
+    "CVE-2026-105133",
+    "CVE-2026-105134",
+    "CVE-2026-106931"
+  ],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "CVE-2026-133968 MONAI Label",
+      "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94",
+      "note": "403 to the reader",
+      "priority": "medium"
+    },
+    {
+      "title": "CVE-2026-102764 BeyondTrust Remote Support",
+      "url": "https://www.beyondtrust.com/trust-center/security-advisories/bt26-05",
+      "note": "403 to the reader",
+      "priority": "high"
+    },
+    {
+      "title": "CVE-2026-134624 N-able MailAssure",
+      "url": "https://me.n-able.com/s/security-advisory/aArVy0000002mrlKAA",
+      "note": "page returned only an interface shell",
+      "priority": "medium"
+    },
+    {
+      "title": "Earlier leads not retried this run: CVE-2026-129448 Apache Roller, 2025-42884 SAP, 115731 Puppet, 114713 UnrealIRCd, 125350 Chromium, 90817 REDCap, 90436 Axis, 124194, 96951 Microsoft, 111793 Openwave, 19868 SonicWall, 119977 WordPress, 109618/109619 PHP, 110447 Collabora, 111497 Brotli, 104935 Ivanti",
+      "url": "",
+      "note": "not attempted: 8-guide budget used on fresh pages; several known JS-only or 403",
+      "priority": "medium"
+    },
+    {
+      "title": "CVE-2026-0322 and CVE-2026-106931 listed IoC IPs / JVN link; not copied",
+      "url": "",
+      "note": "rule: no IP lists; JVN#88474777 not read",
+      "priority": "low"
+    },
+    {
+      "title": "CVE-2025-61624 Fortinet virtual patch FG-VD-59270.0day (FMWP db 25.120)",
+      "url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-122",
+      "note": "not a downloadable rule file, left out of hunt",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "github.com (MONAI) 403",
+    "beyondtrust.com 403",
+    "me.n-able.com shell only"
+  ],
+  "notes": "6 guides from 5 advisories. Ahsay page is summary depth (no versions ranges). build.mjs passes."
+}

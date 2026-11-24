@@ -1,7 +1,7 @@
 {
   "title": "Yamada Denki says its reform management system was accessed without authorisation; customer data may have leaked",
-  "date": "2026-11-20",
-  "date_note": "Security NEXT, dated 20 November, reports the company's disclosure; the company says it found the intrusion on 12 November. The disclosure day is not stated on the page, so the article's day is used.",
+  "date": "2026-11-13",
+  "date_note": "NHK (13 Nov) and ScanNetSecurity report the company announced the incident on 13 November; the company says it found the access on 12 November.",
   "category": "incident",
   "severity": 2,
   "status": "confirmed",
@@ -14,11 +14,11 @@
   "geo_basis": "country",
   "pin_type": "agency",
   "actor": "",
-  "summary": "According to Security NEXT, Yamada Denki said a third party gained unauthorised access to its reform management system, found on 12 November. Customer names, addresses, phone numbers, renovation history and estimate data may have leaked, in up to 3.5 million records. The company says it has cut off external access and is still investigating the cause and scope.",
-  "plain": "Yamada Denki says someone got into its renovation management system and customer details may have leaked, in up to 3.5 million records. It is still investigating.",
-  "exec": "A possible leak of up to 3.5 million customer records at Yamada Denki raises impersonation and fraud risk for its customers.",
-  "action": "If you are a Yamada Denki customer, be wary of calls, messages or emails claiming to be from the company, as the company itself warns.",
-  "impact": "Up to 3.5 million records of customer data possibly leaked; number of people not stated.",
+  "summary": "According to NHK and ScanNetSecurity, Yamada Denki said its reform management system was accessed without authorisation, which the company confirmed on 12 November. Names, addresses, phone numbers and renovation history may have been affected, in up to 3.5 million records, and ScanNetSecurity adds estimate data. The company says it blocked external access and is still investigating the scope and cause.",
+  "plain": "Yamada Denki says its renovation management system was accessed without authorisation and customer details may have been affected, in up to 3.5 million records. It is still investigating.",
+  "exec": "Up to 3.5 million possibly affected Yamada Denki customer records raise impersonation and fraud risk for its customers.",
+  "action": "General advice: Yamada Denki customers should treat unexpected calls, messages or emails claiming to be from the company with caution.",
+  "impact": "Up to 3.5 million records possibly affected; number of people not stated.",
   "records_affected": 3500000,
   "tags": [
     "data-breach"
@@ -28,18 +28,29 @@
   "attack": [],
   "sources": [
     {
-      "name": "Security NEXT",
-      "url": "https://www.security-next.com/192867"
+      "name": "NHK News, 13 Nov 2026 (Japanese)",
+      "url": "https://news.web.nhk/newsweb/na/nd-20261113de75739",
+      "published": "2026-11-13"
+    },
+    {
+      "name": "ScanNetSecurity, 25 Nov 2026 (Japanese)",
+      "url": "https://scan.netsecurity.ne.jp/article/2026/11/25/56893.html",
+      "published": "2026-11-25"
+    },
+    {
+      "name": "Security NEXT, 20 Nov 2026 (Japanese)",
+      "url": "https://www.security-next.com/192867",
+      "published": "2026-11-20"
     }
   ],
   "source_tier": "established",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-20T15:27:00Z",
-    "note": "Security NEXT (Japan) report citing the company's disclosure. The company's own notice was not linked on the page and was not read."
+    "state": "corroborated",
+    "checked_at": "2026-11-24T23:58:00Z",
+    "note": "Corroborated by NHK, ScanNetSecurity and Security NEXT, independent publishers that each state the unauthorised access and the up-to-3.5-million figure. The company notice itself was not opened."
   },
   "first_seen": "2026-11-20T15:27:00Z",
-  "updated_at": "2026-11-20T15:34:33Z",
+  "updated_at": "2026-11-24T23:58:00Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-20T15:35:05Z",
@@ -57,5 +68,11 @@
   "surface": {
     "value": "unknown",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://scan.netsecurity.ne.jp/article/2026/11/25/56893.html",
+      "quote": "最大350万件"
+    }
+  ]
 }

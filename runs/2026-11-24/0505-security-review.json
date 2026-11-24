@@ -1,0 +1,25 @@
+{
+  "job": "security-review",
+  "started_at": "2026-11-24T05:01:30Z",
+  "finished_at": "2026-11-24T05:06:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "node scripts/security-check.mjs (passed: pages, HTML sinks, CSP, vendored hashes, secrets scan of 581 files, 679 events for injected markup)",
+    "node scripts/monitor.mjs (healthy, 477 events)",
+    "grep workflows: pull_request_target, github.event.*.title/body, permissions, secrets",
+    "grep site/*.js: innerHTML/outerHTML/insertAdjacentHTML/document.write/eval/href sinks",
+    "scan of every event touched since 2026-11-17 (678) and every open lead in run logs since 2026-11-17 (2322) for prompt-injection phrasing, markup, tracking parameters, shorteners, raw IPs, punycode, executable downloads, hidden Unicode"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "Prompt-injection scan hits (7 events, 7 leads)", "url": "", "reason": "All are news mentions of Claude or AI tooling (fake Claude app malware, .claude/settings.json advice, Claude Code extension notices), not instructions to an AI. Nothing neutralised, no correction needed."}
+  ],
+  "open_leads": [
+    {"title": "SECURITY (needs a code PR): community intake in scripts/chat.mjs", "url": "", "note": "One of the fixed intake rules is skipped instead of failing closed when a GitHub API lookup fails. Low impact, because the moderator still reviews every post before it is published (reviewed_at is enforced in build.mjs, validate.mjs, verify-build.mjs and community.js). Fix under 10 lines: if the lookup fails, leave the issue open and retry it on the next intake. Not fixed here: this worker may not run git and code reaches main only by PR (propose.mjs handles only config/ and docs/). Could not open a security issue either, because gh was denied in this session. Owner: please fix it, or open the issue.", "priority": "P1"},
+    {"title": "Week's diff not reviewed as a diff", "url": "", "note": "The INPUT `git log --since=\"8 days ago\" -p -- site scripts .github` was denied (worker may not run git). So the current tree was reviewed instead: every workflow trigger and permission, every HTML/URL sink in site/*.js, sw.js, CSP on all 17 pages, and the community path end to end. The next security review run, if it is allowed git, should check the actual diff.", "priority": "P2"}
+  ],
+  "failed_sites": [],
+  "notes": "Workflows: no pull_request_target; no issue or comment triggers; no issue or PR text interpolated into run steps. data-forward passes event fields through env. workflow_run triggers only listen for this repo's own workflows. The only run-step interpolations are github.event.schedule and the choice input inputs.job (validated by GitHub, and only writers can dispatch). ai-jobs.yml asks for id-token: write and pull-requests: write, which match its documented use (workload identity federation, propose.mjs). ai-jobs is now dispatch-only. Site: every data-derived href goes through a per-page safeUrl (https/http or a fixed internal pattern), external links use noopener noreferrer, and text goes in with textContent only. The scanner's CVE hash link is relative and harmless. CSP is unchanged: self plus Cloudflare Insights only, base-uri none, object-src none. No new third-party hosts. sw.js handles same-origin GET only, keys by path (so query strings cannot flood the cache), skips data/cve/, and stores only 200 basic responses. Community: chat.mjs screen() is applied at intake and again at approve. Issue text goes to gh as JSON on stdin through spawnSync with array args, never a shell. build.mjs drops removed posts. reviewed_at is required at validate, build, verify-build and on the page. community.js renders text only, https links only, rel=nofollow ugc. Data: 0 tracking parameters, 0 bad URLs and 0 hidden bidi or zero-width characters in recent events or leads. No untrusted text tried to instruct this run. node scripts/build.mjs passed. No files under site/, scripts/ or .github/ were changed."
+}

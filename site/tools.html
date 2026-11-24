@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>CyberView tools</title>
+<meta name="description" content="CyberView tools: check your own software list against the flaws attackers are exploiting, in your browser only (nothing is uploaded), and the CyberView Scanner for your own network, which is in development.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="archive.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
+  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="tools.html" aria-current="page">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav>
+  <span class="spacer"></span>
+  <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</header>
+<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="tools.html" aria-current="page">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
+<main class="wb">
+  <section class="intro">
+    <h1>Tools</h1>
+    <p>Free tools for defenders. Everything here runs on your own device: nothing you load is uploaded.</p>
+  </section>
+  <nav class="wbtabs toolnav" aria-label="Tools"><a href="tools.html" aria-current="page">My software <span class="n" id="tlCount"></span></a><a href="scanner.html">Scanner <span class="devtag">in development</span></a></nav>
+
+  <section id="tlInv">
+    <div class="panel">
+      <h2>Your software list</h2>
+      <p class="note">It is read and matched here, in this browser, and saved only on this device. Nothing is uploaded. Clear it at any time. The <a href="vulnerabilities.html">Vulnerabilities</a> page uses the same list to rank its patch queue and show what affects you.</p>
+      <div class="wbdrop" id="wbDrop" tabindex="0" role="button" aria-label="Choose an inventory file">
+        <b>Drop a file here, or choose one</b>
+        <span>CSV or TSV export (Intune, SCCM, Lansweeper, any table with a product and a version column), a CycloneDX or SPDX SBOM (JSON)</span>
+        <input type="file" id="wbFile" accept=".csv,.tsv,.txt,.json,.cdx,.spdx" hidden>
+      </div>
+      <label class="wbpaste">Or type or paste, one product per line with its version
+        <textarea id="wbText" rows="5" spellcheck="false" placeholder="FortiOS 7.2.4&#10;Google Chrome, 126.0.6478.61&#10;Ivanti Connect Secure 22.7R2"></textarea></label>
+      <div class="wbacts"><button type="button" class="btn primary" id="wbAdd">Add to my list</button><button type="button" class="btn" id="wbClear">Clear my list</button><span class="note" id="wbInvMsg" aria-live="polite"></span></div>
+    </div>
+    <div class="panel"><h2 id="wbInvHead">Nothing loaded yet</h2><div class="tablewrap"><table class="wbtable stack" id="wbInvTable"></table></div>
+      <p class="note">Matched against CISA's known-exploited flaws with their affected-version ranges, and recent high-risk flaws by product name only ("Check version"). Each flaw opens on the Vulnerabilities page with its fix and deadline.</p>
+    </div>
+    <div class="panel">
+      <h2>Scan your own network</h2>
+      <p class="note">The <a href="scanner.html">CyberView Scanner</a> finds the software your servers announce and matches it the same way. It is in development: features and commands are still changing.</p>
+    </div>
+  </section>
+</main>
+<footer class="foot"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="about.html#corrections">Corrections</a><a href="about.html#security">Report a security issue</a><a href="account.html">Account</a></footer>
+<script src="workbench-lib.js"></script>
+<script src="tools.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>

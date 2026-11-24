@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>CyberView vulnerabilities</title>
-<meta name="description" content="Known exploited flaws ranked for patching with federal deadlines, every published CVE to look up and browse, and your own software list matched by version. Runs in your browser; your list never leaves your device.">
+<meta name="description" content="Known exploited flaws ranked for patching with federal deadlines, every published CVE to look up and browse, matched against the software list you keep under Tools. Runs in your browser; your list never leaves your device.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -16,11 +16,11 @@
 <body>
 <header class="bar">
   <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
-  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html" aria-current="page">Vulnerabilities</a><a href="scanner.html">Scanner</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav>
+  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html" aria-current="page">Vulnerabilities</a><a href="tools.html">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav>
   <span class="spacer"></span>
   <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </header>
-<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html" aria-current="page">Vulnerabilities</a><a href="scanner.html">Scanner</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
+<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html" aria-current="page">Vulnerabilities</a><a href="tools.html">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
 <main class="wb">
   <section class="intro">
     <h1>Vulnerabilities</h1>
@@ -29,7 +29,6 @@
   <div class="wbtabs" role="tablist" aria-label="Vulnerabilities">
     <button type="button" role="tab" id="wbt-queue" aria-selected="true" aria-controls="wbp-queue">Known exploited <span class="n" id="wbnQueue"></span></button>
     <button type="button" role="tab" id="wbt-all" aria-selected="false" aria-controls="wbp-all">All CVEs <span class="n" id="wbnAll"></span></button>
-    <button type="button" role="tab" id="wbt-inv" aria-selected="false" aria-controls="wbp-inv">My software <span class="n" id="wbnInv"></span></button>
     <button type="button" role="tab" id="wbt-hunt" aria-selected="false" aria-controls="wbp-hunt">Hunt pack <span class="n" id="wbnHunt"></span></button>
     <button type="button" role="tab" id="wbt-ot" aria-selected="false" aria-controls="wbp-ot">Industrial (ICS/OT) <span class="n" id="wbnOt"></span></button>
   </div>
@@ -51,7 +50,7 @@
       <button type="button" class="btn" id="wbCsv" title="A spreadsheet of this list, for Jira, ServiceNow or a change meeting">Download CSV</button>
       <button type="button" class="btn" id="wbCopy" title="The top items as a plain-text change request">Copy change request</button>
     </div>
-    <p class="caveat" id="wbNoInv">No software list loaded, so this is the general ranking. Add yours under <button type="button" class="linkbtn" id="wbGoInv">My software</button> to see which versions you run are affected. It stays in this browser.</p>
+    <p class="caveat" id="wbNoInv">No software list loaded, so this is the general ranking. Add yours under <a href="tools.html">Tools: My software</a> to see which versions you run are affected. It stays in this browser.</p>
     <details class="wbhow"><summary>How the patch queue rank works</summary>
       <p>The patch queue is ordered by points, up to 100, and every point is listed on its row. The points only order this list; they are not a CVSS score or the CyberView rating, which are shown in All CVEs. Points: known exploited per CISA 35 (or 15 if only rated high severity) · used by ransomware groups 10 · EPSS, the estimated chance of exploitation in 30 days, up to 15 · public exploit code 5 · internet-facing 10 · federal deadline passed 5, within 7 days 3 · you run an affected version 20, or you run the product and the version needs checking 10.</p>
       <p>"Internet-facing" comes from the vendor advisory when a fix guide exists; otherwise it is a guess from the product name and is labelled as one. Version ranges come from NIST's NVD and can lag or be incomplete: treat "not affected" as a prompt to confirm against the vendor advisory, not as proof.</p>
@@ -106,30 +105,6 @@
         <p><b>Rejected CVEs</b> are IDs the CVE Program withdrew: duplicates, reports found not to be vulnerabilities, or IDs reserved and never used. They are kept for completeness (NVD lists the same 19,000 or so) and are never rated.</p>
         <p class="note">Sources: <a href="https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc" rel="noopener">CISA SSVC</a> · <a href="https://github.com/CERTCC/SSVC" rel="noopener">CERT/CC SSVC decision tables</a> · <a href="https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk" rel="noopener">CISA BOD 26-04</a> · <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" rel="noopener">CISA KEV catalog</a> · <a href="https://www.first.org/cvss/v3.1/specification-document" rel="noopener">FIRST CVSS v3.1 specification</a> · <a href="https://www.first.org/epss/using-epss" rel="noopener">FIRST: using EPSS</a> · <a href="https://www.ncsc.gov.uk/collection/vulnerability-management/guidance/policy-update-by-default" rel="noopener">NCSC update by default</a> · <a href="https://csrc.nist.gov/pubs/sp/800/40/r4/final" rel="noopener">NIST SP 800-40 Rev. 4</a></p>
       </details>
-    </div>
-  </section>
-
-  <section id="wbp-inv" role="tabpanel" aria-labelledby="wbt-inv" hidden>
-    <div class="panel">
-      <h2>Your software list</h2>
-      <p class="note">It is read and matched here, in this browser, and saved only on this device. Nothing is uploaded. Clear it at any time.</p>
-      <div class="wbdrop" id="wbDrop" tabindex="0" role="button" aria-label="Choose an inventory file">
-        <b>Drop a file here, or choose one</b>
-        <span>CSV or TSV export (Intune, SCCM, Lansweeper, any table with a product and a version column), a CycloneDX or SPDX SBOM (JSON)</span>
-        <input type="file" id="wbFile" accept=".csv,.tsv,.txt,.json,.cdx,.spdx" hidden>
-      </div>
-      <label class="wbpaste">Or type or paste, one product per line with its version
-        <textarea id="wbText" rows="5" spellcheck="false" placeholder="FortiOS 7.2.4&#10;Google Chrome, 126.0.6478.61&#10;Ivanti Connect Secure 22.7R2"></textarea></label>
-      <div class="wbacts"><button type="button" class="btn primary" id="wbAdd">Add to my list</button><button type="button" class="btn" id="wbClear">Clear my list</button><span class="note" id="wbInvMsg" aria-live="polite"></span></div>
-    </div>
-    <div class="panel"><h2 id="wbInvHead">Nothing loaded yet</h2><div class="tablewrap"><table class="wbtable stack" id="wbInvTable"></table></div></div>
-    <div class="panel" id="scanner">
-      <h2>Scan your own network: the CyberView Scanner</h2>
-      <p class="caveat"><strong>Only scan systems you own, or systems whose owner has given you written permission to test.</strong> Scanning other people's systems without permission may be unlawful. The scanner will not start until you list your targets in a scope file and attest there that you are authorized; it prints your attestation and scope at the start of every run and writes them into the report.</p>
-      <p class="note">A command-line tool (Node.js 22, nothing to install) that finds the software your servers announce (SSH banners, web server headers, mail greetings, TLS certificates, and optional read-only DNS, NTP and SNMP service checks), matches the versions against the known-exploited flaws and ranges on this page, and ranks what to patch first by the CyberView rating, listing every point, with the fix and how sure it is. It writes JSON, CSV, SARIF and a software list this view can import. It can find the hosts for you within the scope you attest to — sweep your ranges, resolve and expand your own domains from Certificate Transparency, import an asset list, or read your own read-only cloud inventory — and scan every TCP port on your own private ranges.</p>
-      <p class="note">Detection only: it never exploits anything, logs in, tests passwords or SNMP community strings, floods or hides what it is. It names itself in its requests and SSH identification, sends only a benign version or banner probe (a TLS handshake, and a single standard query for each UDP check), keeps to polite limits you can lower but not raise, re-checks every host it discovers against your scope, needs an extra confirmation for any public address and keeps a hard cap on how much public space it will touch, never runs your cloud CLI or reads your keys, and never uploads your results. It can run offline from a downloaded copy of CyberView's data, for networks with no internet access. No AI model runs in it.</p>
-      <div class="wbacts"><a class="btn primary" href="https://github.com/xanderhutch/CyberView/tree/main/scanner" target="_blank" rel="noopener noreferrer">Get the scanner</a><a class="btn" href="https://github.com/xanderhutch/CyberView/blob/main/scanner/README.md" target="_blank" rel="noopener noreferrer">Read the guide and what it sends</a><a class="btn" href="scanner.html" id="scannerPage">Full scanner page</a></div>
-      <p class="note">A proprietary CyberView product, free to download and use on your own authorised systems under its <a href="https://github.com/xanderhutch/CyberView/blob/main/scanner/LICENSE" target="_blank" rel="noopener noreferrer">licence</a>; no redistribution without permission.</p>
     </div>
   </section>
 

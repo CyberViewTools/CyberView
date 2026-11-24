@@ -3,11 +3,11 @@
 A command-line tool an operator downloads and runs against their **own, authorized** network to find known-vulnerable
 software and rank what to patch first. Approved by the owner on 2026-11-21 as a detection and prioritization tool. The
 operator's guide, with the authorization notice and the exact network behaviour, is `scanner/README.md`; the site offers
-the tool on its own Scanner page (`scanner.html`, with counts read from `scanner/lib` at every build by
+the tool on its own Scanner page in the site's Tools section (`scanner.html`, marked "in development", with counts read from `scanner/lib` at every build by
 `scripts/scanner-stats.mjs`, its "Recently added" list from `config/scanner-page.json`, and two browser-only tools: a
 viewer for one or more `report.json` files with what changed between them, and a scope-file builder that checks targets
 with the scanner's own rules and will not produce a file until the exact attestation is ticked; nothing is uploaded) and in
-the Vulnerabilities page's "My software" view (`vulnerabilities.html#scanner`).
+the Tools section's "My software" page (`tools.html`; the old `vulnerabilities.html#scanner` and `#inv` links redirect there).
 Mechanical code only, no AI model, Node's standard library only, nothing scheduled (no `routines.json` entry).
 
 ## Design limits (the product, not options)

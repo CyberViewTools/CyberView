@@ -8,7 +8,7 @@ export const ANALYTICS = {
   provider: "Cloudflare Web Analytics",
   script: "https://static.cloudflareinsights.com",
   beacon: "https://cloudflareinsights.com",
-  excluded: ["vulnerabilities.html", "workbench.html", "cve.html", "account.html", "unsubscribe.html"],
+  excluded: ["vulnerabilities.html", "tools.html", "workbench.html", "cve.html", "account.html", "unsubscribe.html"],
 };
 /** Pure: does this page (file name) allow the analytics beacon? */
 export const analyticsOn = (file) => !ANALYTICS.excluded.includes(String(file).replace(/^.*\//, ""));

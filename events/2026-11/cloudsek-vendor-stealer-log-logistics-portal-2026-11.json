@@ -1,0 +1,103 @@
+{
+  "actor": "",
+  "attack": [
+    "infostealer",
+    "sql-injection"
+  ],
+  "impact": "",
+  "tags": [
+    "malware",
+    "third-party",
+    "data-breach"
+  ],
+  "geo_basis": "no place stated in the source",
+  "first_seen": "2026-11-24T08:15:30Z",
+  "updated_at": "2026-11-24T08:15:30Z",
+  "date": "2026-11-24",
+  "date_note": "Date is CloudSEK's blog publication day; the page gives no earlier day for the research.",
+  "category": "report",
+  "title": "CloudSEK: stealer-log credentials from an infected vendor workstation exposed a logistics vendor's portal and data of 40+ enterprise client groups",
+  "org": "Unnamed corporate transportation and ground logistics vendor",
+  "sector": "Transportation / logistics",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "products": [],
+  "cves": [],
+  "severity": 1,
+  "status": "developing",
+  "source_tier": "established",
+  "summary": "CloudSEK's research team reports that an infostealer infection on a workstation at an external corporate transportation and ground logistics vendor put plaintext administrative portal credentials into a stealer log on a dark web forum. CloudSEK says it reached 18 MS SQL database instances. It says the exposed data covered 40+ enterprise client groups, and gives record counts only as \"potentially\" up to 4.2 million and up to 1.85 million.",
+  "plain": "Security firm CloudSEK says one infected computer at a transport vendor leaked login details that exposed data of 40+ of the vendor's corporate client groups. The vendor is not named.",
+  "exec": "CloudSEK says a single vendor infection exposed 40+ enterprise client groups, showing how supplier credentials leaked in stealer logs can reach customers' data.",
+  "action": "CloudSEK advises vendors to invalidate exposed credentials and isolate the infected machine, and customers to monitor vendors for leaked credentials and require SSO with MFA for third-party portals.",
+  "sources": [
+    {
+      "name": "CloudSEK blog",
+      "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+      "published": "2026-11-24"
+    }
+  ],
+  "report": {
+    "publisher": "CloudSEK",
+    "publisher_type": "vendor",
+    "published": "2026-11-24",
+    "read_depth": "full",
+    "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+    "key_findings": [
+      "Plaintext admin portal credentials from a stealer log gave access to the vendor's portal",
+      "A SQL injection parameter was escalated to remote code execution on the database server",
+      "A broken access control flaw in the invoice PDF endpoint let unauthenticated requesters retrieve invoices"
+    ],
+    "recommendations": [
+      "Invalidate exposed credentials and isolate the infected machine",
+      "Require SSO with MFA for third-party portals"
+    ],
+    "iocs_available": false
+  },
+  "evidence": [
+    {
+      "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+      "quote": "18 MS SQL Database Instances Compromised"
+    },
+    {
+      "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+      "quote": "40+ Major Global Enterprise Client Groups Affected"
+    },
+    {
+      "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+      "quote": "Potentially Up to 4.2 Million Passenger Movement & GPS Records"
+    },
+    {
+      "url": "https://www.cloudsek.com/blog/vendor-infostealer-infection-corporate-executive-data-exposure",
+      "quote": "Potentially Up to 1.85 Million Downloadable E-Invoice PDFs"
+    }
+  ],
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T08:15:30Z",
+    "note": "Only CloudSEK's own research blog read (24 Nov 2026); the vendor and its clients are not named and no second publisher or victim statement was found. Figures are CloudSEK's, and the record counts are hedged with 'potentially'."
+  },
+  "sectors": {
+    "values": [
+      "transportation-systems"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "identity",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T08:26:00Z",
+    "first_at": "2026-11-24T08:26:00Z",
+    "note": "Compared 18 MS SQL instances, 40+ groups, 4.2M and 1.85M with potentially, date, advice against the CloudSEK blog; 40+ is source wording",
+    "flags": [
+      "figure-plus"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T08:26:00Z"
+}

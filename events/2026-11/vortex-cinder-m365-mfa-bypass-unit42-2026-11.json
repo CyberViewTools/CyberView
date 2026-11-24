@@ -1,0 +1,62 @@
+{
+  "title": "Borncity: Vortex and Cinder groups bypass MFA to steal mailbox, OneDrive and SharePoint data, citing Palo Alto researchers",
+  "date": "2026-11-24",
+  "date_note": "Borncity's article gives only its publication day; the Palo Alto team is said to have analysed attacks from September 2026.",
+  "category": "incident",
+  "severity": 2,
+  "status": "developing",
+  "org": "",
+  "sector": "Cross-sector",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "geo_basis": "no victim or location named",
+  "pin_type": "none",
+  "actor": "Vortex and Cinder (names as used by the Palo Alto team, per Borncity)",
+  "summary": "Borncity reports that Palo Alto Networks' security team analysed attacks from September 2026 by two groups it calls Vortex and Cinder. Vortex used adversary-in-the-middle phishing and registered its own MFA device after login; Cinder reused a session token from a persistent login, so no new Duo MFA prompt appeared. According to the article, both groups extracted data and then demanded ransom.",
+  "plain": "Borncity, relaying Palo Alto researchers, says two groups got into Microsoft cloud accounts despite MFA, took data and demanded ransom. One registered its own MFA device; the other reused a login session.",
+  "exec": "Per Borncity's account of the Palo Alto findings, MFA alone did not stop these data-theft and ransom attacks on Microsoft cloud accounts.",
+  "action": "Palo Alto researchers recommend phishing-resistant MFA, verification of helpdesk requests, browser-extension allowlists and targeted revocation of existing sessions during incidents, per Borncity.",
+  "impact": "Data taken from mailboxes, OneDrive and SharePoint, per the article; no victim count given.",
+  "tags": [
+    "phishing",
+    "identity",
+    "cloud"
+  ],
+  "cves": [],
+  "products": [
+    "Microsoft 365",
+    "Duo MFA"
+  ],
+  "attack": [
+    "adversary-in-the-middle phishing",
+    "session token reuse"
+  ],
+  "sources": [
+    {
+      "name": "Borncity",
+      "url": "https://borncity.com/news/microsoft-365-vortex-und-cinder-umgehen-mfa-per-it-support-anruf/",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T21:10:22Z",
+    "note": "One publisher (Borncity) read; it relays Palo Alto researchers but links no original, and a search did not find their report naming Vortex."
+  },
+  "first_seen": "2026-11-24T21:10:22Z",
+  "updated_at": "2026-11-24T21:11:08Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "identity",
+    "basis": "stated"
+  }
+}

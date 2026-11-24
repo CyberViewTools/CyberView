@@ -1,13 +1,13 @@
 {
   "actor": "",
   "first_seen": "2026-11-24T20:59:49Z",
-  "updated_at": "2026-11-24T20:59:49Z",
+  "updated_at": "2026-11-24T21:08:27Z",
   "title": "RedTrack tells customers an attacker reached its log store, which held API keys, ad-network tokens and certificate private keys",
   "category": "incident",
   "status": "confirmed",
   "severity": 2,
-  "date": "2026-11-24",
-  "date_note": "Notice to customers sent 24 November (the day Privacy Affairs published); the article places the attack on 22 and 23 November.",
+  "date": "2026-11-22",
+  "date_note": "Privacy Affairs, relaying RedTrack's notice, says the attack began at 22:01 UTC on 22 November; the article was published 24 November.",
   "org": "RedTrack Technologies Ltd",
   "country": "Cyprus",
   "place": "Cyprus",
@@ -15,18 +15,32 @@
   "lng": 33.43,
   "pin_type": "hq",
   "geo_basis": "country stated by the source (RedTrack Technologies Ltd, Cyprus); no city stated",
-  "summary": "Privacy Affairs, citing a notice RedTrack sent customers on 24 November, reports an attacker reached the ad tracker's log store, which held API keys, session tokens, ad-network tokens and private keys of customer certificates. RedTrack says its logs show no access to the click, conversion and report databases. It says misuse was found in 3 advertising accounts and phishing or fraud was tied to 7 accounts.",
+  "summary": "Privacy Affairs, relaying a notice from RedTrack, reports an attacker reached the ad tracker's log store, which held API keys, session tokens, ad-network tokens and private keys of customer certificates. RedTrack says its logs show no access to the click, conversion and report databases. It says misuse was found in 3 advertising accounts and phishing or fraud was tied to 7 accounts.",
   "plain": "Ad-tracking company RedTrack says an attacker got into logs containing customers' keys and tokens. RedTrack says it replaced all user, publisher and advertiser API keys.",
   "exec": "RedTrack told customers that keys and tokens stored in its logs were reachable by an attacker, so linked ad accounts may need new credentials, according to Privacy Affairs.",
   "action": "Per RedTrack's notice as relayed by Privacy Affairs: update API keys in all integrations, renew stored ad-network credentials, and have the CA revoke any certificate you uploaded.",
   "products": [],
   "cves": [],
-  "tags": ["data-breach"],
+  "tags": [
+    "data-breach"
+  ],
   "attack": [],
-  "sectors": {"values": ["professional-services"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "stated"},
+  "sectors": {
+    "values": [
+      "professional-services"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "stated"
+  },
   "sources": [
-    {"name": "Privacy Affairs", "url": "https://www.privacyaffairs.com/redtrack-data-breach/", "published": "2026-11-24"}
+    {
+      "name": "Privacy Affairs",
+      "url": "https://www.privacyaffairs.com/redtrack-data-breach/",
+      "published": "2026-11-24"
+    }
   ],
   "source_tier": "established",
   "validation": {
@@ -34,5 +48,16 @@
     "checked_at": "2026-11-24T20:59:49Z",
     "note": "Only Privacy Affairs read; it relays RedTrack's customer notice (the notice itself and RedTrack's website were not read)."
   },
-  "evidence": []
+  "evidence": [],
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T21:08:33Z",
+    "first_at": "2026-11-24T21:08:33Z",
+    "note": "date: attack began 22 Nov per page (was 24 Nov publication day); removed unverified sent-on-24-November from summary",
+    "flags": [],
+    "categories": [
+      "other"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T21:08:33Z"
 }

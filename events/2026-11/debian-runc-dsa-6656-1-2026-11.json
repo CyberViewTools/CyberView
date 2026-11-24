@@ -1,0 +1,69 @@
+{
+  "actor": "",
+  "impact": "",
+  "tags": [],
+  "cves": [
+    "CVE-2025-31133",
+    "CVE-2025-52565",
+    "CVE-2026-41579"
+  ],
+  "products": [
+    "runc"
+  ],
+  "time_basis": "published",
+  "first_seen": "2026-11-24T21:11:28Z",
+  "updated_at": "2026-11-24T21:11:28Z",
+  "category": "vuln",
+  "status": "confirmed",
+  "attack": [],
+  "geo_basis": "none",
+  "date": "2026-11-24",
+  "date_note": "Date is the day of the Debian announcement email; the advisory body is dated 25 November.",
+  "title": "Debian issues runc update DSA-6656-1 for three flaws that could expose host resources or allow container escape",
+  "org": "Debian",
+  "sector": "Software",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "severity": 2,
+  "source_tier": "primary",
+  "summary": "Debian published security advisory DSA-6656-1 for runc, covering CVE-2025-31133, CVE-2025-52565 and CVE-2026-41579. The advisory says exploitation could expose host resources, cause a denial of service, or permit container escape. For Debian 13 (trixie) it says the problems are fixed in version 1.1.15+ds1-2+deb13u1 and recommends upgrading runc packages.",
+  "plain": "Debian released a runc update fixing three flaws that, per its advisory, could expose host resources, cause denial of service or allow escape from a container.",
+  "exec": "Debian says the runc flaws could permit container escape, so Debian-based container hosts need the update.",
+  "action": "Debian recommends upgrading runc packages; on Debian 13 (trixie) the fixed version is 1.1.15+ds1-2+deb13u1.",
+  "sources": [
+    {
+      "name": "Debian security announce, DSA-6656-1 runc",
+      "url": "https://lists.debian.org/debian-security-announce/2026/msg00578.html",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "LinuxSecurity, DSA-6656-1 runc",
+      "url": "https://linuxsecurity.com/advisories/debian/debian-dsa-6656-1-runc",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://lists.debian.org/debian-security-announce/2026/msg00578.html",
+      "quote": "We recommend that you upgrade your runc packages."
+    }
+  ],
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-24T21:12:00Z",
+    "note": "Debian's own security announcement read; LinuxSecurity relays it."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  }
+}

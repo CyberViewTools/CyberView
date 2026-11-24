@@ -178,3 +178,9 @@ test("on a GitHub Actions runner workers get the job token handed over as CYBERV
   // without the hand-over (a cloud session) the placeholder stays: the proxy supplies GitHub's credentials there
   assert.equal(workerEnv("subscription", "", { GH_TOKEN: "ghs_parent" }).GH_TOKEN, "proxy-supplied");
 });
+
+test("workers never inherit the launcher's early-compaction settings", () => {
+  const e = workerEnv("subscription", "", { PATH: "/bin", CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000", CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20" });
+  assert.ok(!("CLAUDE_CODE_AUTO_COMPACT_WINDOW" in e)); assert.ok(!("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE" in e));
+  assert.equal(e.PATH, "/bin");
+});

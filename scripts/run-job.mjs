@@ -134,6 +134,9 @@ export function workerEnv(served, key, base = process.env) {
   // network proxy adds GitHub's real credentials to every request itself (gh works with any token value), so the worker
   // needs no real token in its environment.
   for (const k of WORKER_ENV_BLANK) env[k] = "";
+  // The launcher session is restarted by compaction (CLAUDE_CODE_AUTO_COMPACT_WINDOW in the cyberview environment,
+  // owner 2026-11-24). A worker is one short task: it must never compact mid-research and lose what it read.
+  for (const k of WORKER_COMPACT_VARS) delete env[k];
   // On a GitHub Actions runner (.github/workflows/ai-launch.yml) there is no proxy to add GitHub's credentials, so the
   // workflow hands workers its own short-lived, permission-scoped job token as CYBERVIEW_WORKER_GH_TOKEN (the verify desk,
   // moderator and improver run gh). That token ends with the job; it is the only GitHub credential a worker ever sees.
@@ -141,6 +144,8 @@ export function workerEnv(served, key, base = process.env) {
   for (const k of ["GH_TOKEN", "GITHUB_TOKEN"]) env[k] = ghWorker || "proxy-supplied";
   return env;
 }
+/** Environment settings that make a session compact early: meant for the launcher session, never for a worker. */
+export const WORKER_COMPACT_VARS = ["CLAUDE_CODE_AUTO_COMPACT_WINDOW", "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE"];
 /** Set empty in every worker (a deleted one can be put back by the cloud session). */
 export const WORKER_ENV_BLANK = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN", "CLOUDSDK_AUTH_ACCESS_TOKEN", "GOOGLE_APPLICATION_CREDENTIALS"];
 /** Environment variables removed from every worker: the fallback key under its own name and cloud credentials. */

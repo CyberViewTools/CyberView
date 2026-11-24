@@ -19,18 +19,61 @@
   "exec": "Malwarebytes reports that exposed cloud keys were tested within seconds in a university study, so a brief exposure can matter.",
   "action": "Malwarebytes advises that if a key was ever published, even briefly, you revoke it, replace it, and review account activity and charges.",
   "impact": "Research findings only; no real victim.",
-  "tags": ["cloud", "identity"],
-  "cves": [],
-  "products": ["AWS access keys"],
-  "attack": ["credential exposure"],
-  "sources": [
-    {"name": "Malwarebytes", "url": "https://www.malwarebytes.com/blog/ai/2026/11/a-bot-tested-an-aws-key-within-8-seconds-of-exposure", "published": "2026-11-24"}
+  "tags": [
+    "cloud",
+    "identity"
   ],
-  "evidence": [],
+  "cves": [],
+  "products": [
+    "AWS access keys"
+  ],
+  "attack": [
+    "credential exposure"
+  ],
+  "sources": [
+    {
+      "name": "Malwarebytes",
+      "url": "https://www.malwarebytes.com/blog/ai/2026/11/a-bot-tested-an-aws-key-within-8-seconds-of-exposure",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.malwarebytes.com/blog/ai/2026/11/a-bot-tested-an-aws-key-within-8-seconds-of-exposure",
+      "quote": "Over four months, they published 300 honeypot images across eight public registries."
+    },
+    {
+      "url": "https://www.malwarebytes.com/blog/ai/2026/11/a-bot-tested-an-aws-key-within-8-seconds-of-exposure",
+      "quote": "The fastest observed use came just 7.86 seconds after publication."
+    }
+  ],
   "source_tier": "established",
-  "validation": {"state": "single_source", "checked_at": "2026-11-24T17:44:30Z", "note": "Single publisher (Malwarebytes) relaying the Stony Brook study; the paper itself was not read."},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T17:44:30Z",
+    "note": "Single publisher (Malwarebytes) relaying the Stony Brook study; the paper itself was not read."
+  },
   "first_seen": "2026-11-24T17:44:30Z",
-  "updated_at": "2026-11-24T17:44:30Z",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "cloud-saas", "basis": "inferred"}
+  "updated_at": "2026-11-24T18:13:32Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T18:13:34Z",
+    "first_at": "2026-11-24T18:13:34Z",
+    "note": "missing evidence quotes for 7.86 seconds, four months, eight registries added from Malwarebytes",
+    "flags": [],
+    "categories": [
+      "other"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T18:13:34Z"
 }

@@ -6,7 +6,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>CyberView Scanner</title>
+<title>CyberView Scanner (in development)</title>
 <meta name="description" content="The CyberView Scanner: a free, detection-only vulnerability scanner you run on your own authorized network. It matches the versions your services state against CISA's known-exploited flaws and NVD's ranges, and never uploads anything.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
@@ -17,17 +17,19 @@
 <body>
 <header class="bar">
   <a class="brand" href="./"><img src="logo.svg" alt="" width="26" height="26">CyberView</a>
-  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="scanner.html" aria-current="page">Scanner</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav>
+  <nav class="sitenav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="tools.html" aria-current="page">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav>
   <span class="spacer"></span>
   <button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </header>
-<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="scanner.html" aria-current="page">Scanner</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
+<div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div><nav class="sheetnav" aria-label="Site"><a href="./">Map</a><a href="vulnerabilities.html">Vulnerabilities</a><a href="tools.html" aria-current="page">Tools</a><a href="archive.html">Archive</a><a href="trends.html">Trends</a><a href="tabletop.html">Exercise</a><a href="community.html">Community</a><a href="status.html">Status</a><a href="about.html">About</a></nav></div>
 <main class="scn">
+  <nav class="wbtabs toolnav" aria-label="Tools"><a href="tools.html">My software</a><a href="scanner.html" aria-current="page">Scanner <span class="devtag">in development</span></a></nav>
+  <div class="devnotice" role="note" id="devNotice"><b>In development.</b> The CyberView Scanner is being actively built. What it checks, its commands and its output formats are still changing, and new releases may work differently from this one. Use it on your own authorised systems, check its findings before you act on them, and expect updates.</div>
   <section class="intro schero">
-    <p class="eyebrow">Free download &middot; detection only &middot; runs on your machine</p>
+    <p class="eyebrow">In development &middot; free download &middot; detection only &middot; runs on your machine</p>
     <h1>The CyberView Scanner</h1>
     <p class="lede">Find known-vulnerable software on your own network and see what to patch first. The scanner reads the version each service states about itself, matches it against CISA's known-exploited flaws and NVD's affected-version ranges with the same code as the <a href="vulnerabilities.html">Vulnerabilities page</a>, and ranks what it finds by the CyberView rating, every point listed. Nothing is uploaded: results stay in a folder on your machine.</p>
-    <div class="wbacts heroacts"><a class="btn primary" href="https://github.com/xanderhutch/CyberView/tree/main/scanner" target="_blank" rel="noopener noreferrer">Get the scanner</a><a class="btn" href="https://github.com/xanderhutch/CyberView/blob/main/scanner/README.md" target="_blank" rel="noopener noreferrer">Read the guide and what it sends</a><a class="btn" href="vulnerabilities.html#inv">Import results into My software</a></div>
+    <div class="wbacts heroacts"><a class="btn primary" href="https://github.com/xanderhutch/CyberView/tree/main/scanner" target="_blank" rel="noopener noreferrer">Get the scanner</a><a class="btn" href="https://github.com/xanderhutch/CyberView/blob/main/scanner/README.md" target="_blank" rel="noopener noreferrer">Read the guide and what it sends</a><a class="btn" href="tools.html">Import results into My software</a></div>
     <p class="caveat"><strong>Only scan systems you own, or systems whose owner has given you written permission to test.</strong> Scanning other people's systems without permission may be unlawful. The scanner will not start until you list your targets in a scope file and attest there that you are authorized; it prints your attestation and scope at the start of every run and writes them into the report.</p>
   </section>
 
@@ -105,7 +107,7 @@
           <tr><td><code>report.json</code></td><td>Everything: attestation, scope, limits used, what was sent, every service seen.</td></tr>
           <tr><td><code>findings.csv</code></td><td>One row per CVE and place it was seen.</td></tr>
           <tr><td><code>report.sarif</code></td><td>SARIF 2.1.0 for dashboards that read code-scanning results.</td></tr>
-          <tr><td><code>inventory.csv</code></td><td>The software found, ready to import into <a href="vulnerabilities.html#inv">My software</a>.</td></tr>
+          <tr><td><code>inventory.csv</code></td><td>The software found, ready to import into <a href="tools.html">My software</a>.</td></tr>
           <tr><td><code>report.html</code></td><td>With <code>--html</code>: one self-contained page, no script.</td></tr>
         </tbody>
       </table>

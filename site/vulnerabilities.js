@@ -223,42 +223,10 @@
     });
   }
 
-  /* ---- my software ---- */
-  function renderInv() { safe("inv", drawInv); }
-  function drawInv() {
-    $("wbnInv").textContent = inv.length ? String(inv.length) : "";
-    var t = $("wbInvTable"); t.textContent = "";
-    if (!inv.length) { $("wbInvHead").textContent = "Nothing loaded yet"; return; }
-    var hit = {}; rows.forEach(function (r) { if (r.m) r.m.items.forEach(function (h) { var k = h.name + "|" + h.version; (hit[k] = hit[k] || []).push({ cve: r.f.cve, state: h.state }); }); });
-    var order = { affected: 0, check: 1, clear: 2, none: 3 }, list = inv.map(function (it) { var h = hit[it.name + "|" + it.version] || []; var worst = h.reduce(function (w, x) { return order[x.state] < order[w] ? x.state : w; }, "none"); return { it: it, h: h, worst: worst }; })
-      .sort(function (a, b) { return order[a.worst] - order[b.worst] || a.it.name.localeCompare(b.it.name); });
-    var nAff = list.filter(function (x) { return x.worst === "affected"; }).length, noVer = inv.filter(function (x) { return !x.version; }).length;
-    $("wbInvHead").textContent = inv.length + " products on your list · " + nAff + " with an affected version" + (noVer ? " · " + noVer + " without a version (matched by name only)" : "");
-    var hr = el("tr"); ["Product", "Version", "Devices", "Exploited flaws"].forEach(function (h) { hr.appendChild(el("th", null, h)); }); var th = el("thead"); th.appendChild(hr); t.appendChild(th);
-    var tb = el("tbody");
-    list.slice(0, 400).forEach(function (x) {
-      var tr = el("tr"); tr.appendChild(el("td", null, (x.it.vendor ? x.it.vendor + " " : "") + x.it.name)); tr.appendChild(el("td", "nowrap", x.it.version || "none given")); tr.appendChild(el("td", null, x.it.count));
-      var td = el("td");
-      if (!x.h.length) td.appendChild(el("span", "note", "none on file"));
-      x.h.slice(0, 6).forEach(function (h) { var b = el("button", "badge " + STATE[h.state][1], h.cve + " · " + STATE[h.state][0]); b.type = "button"; b.addEventListener("click", function () { $("wbQ").value = h.cve; $("wbShow").value = "all"; openCve = h.cve; tab("queue"); renderQueue(); showOpen(); }); td.appendChild(b); });
-      tr.appendChild(td); tb.appendChild(tr);
-    });
-    t.appendChild(tb);
-    if (list.length > 400) $("wbInvHead").textContent += " · first 400 shown";
-  }
-  function addItems(name, text) {
-    var r = W.parseInventory(name, text), before = inv.length;
-    if (!r.items.length) { $("wbInvMsg").textContent = r.kind === "unreadable JSON" ? "That JSON file could not be read." : "No products found. Use one product per line with its version, or a table with a product column."; return; }
-    var seen = {}; inv.forEach(function (x) { seen[W.norm(x.vendor + " " + x.name) + "|" + x.version] = x; });
-    r.items.forEach(function (x) { var k = W.norm(x.vendor + " " + x.name) + "|" + x.version; if (seen[k]) seen[k].count = Math.max(seen[k].count, x.count); else if (inv.length < W.MAX_ITEMS) { inv.push(x); seen[k] = x; } });
-    var saved = saveInv();
-    $("wbInvMsg").textContent = "Read as " + r.kind + ": " + r.items.length + " products, " + (inv.length - before) + " new." + (saved ? "" : " This browser would not save the list, so it lasts until you close the page.") + (inv.length >= W.MAX_ITEMS ? " The list is full at " + W.MAX_ITEMS + "." : "");
-    $("wbText").value = ""; compute(); renderInv(); renderQueue(); calLabel();
-  }
-  function readFile(f) {
-    if (!f) return; if (f.size > 8e6) { $("wbInvMsg").textContent = "That file is over 8 MB. Export just the product, version and count columns."; return; }
-    var fr = new FileReader(); fr.onload = function () { addItems(f.name, String(fr.result || "")); }; fr.onerror = function () { $("wbInvMsg").textContent = "The file could not be read."; }; fr.readAsText(f);
-  }
+  /* ---- my software ----
+     The list itself is kept and edited on the Tools page (tools.html, tools.js); this page only reads it from this
+     browser (localStorage "cwm.inv") to rank the queue, filter "Affects my software", the hunt pack and the calendar. */
+
 
   /* ---- hunt pack: what to look for in your logs, per exploited flaw and per reported campaign, most urgent first ---- */
   var huntShown = 12;
@@ -825,14 +793,16 @@
   $("otMore").addEventListener("click", function () { OT.shown += 40; renderOt(); });
 
   /* ---- tabs, links and wiring ---- */
-  var VIEWS = ["queue", "all", "inv", "hunt", "ot"], HASH = { known: "queue", queue: "queue", all: "all", inv: "inv", hunt: "hunt", ot: "ot", industrial: "ot", scanner: "inv" }, cur = "queue";
+  var VIEWS = ["queue", "all", "hunt", "ot"], HASH = { known: "queue", queue: "queue", all: "all", hunt: "hunt", ot: "ot", industrial: "ot" }, cur = "queue";
+  // the software list and the scanner moved to the Tools section: old links (and the scanner's User-Agent URL) still land there
+  var MOVED = { inv: "tools.html", scanner: "scanner.html" };
   function tab(t, keepHash) {
     cur = t;
     VIEWS.forEach(function (k) { $("wbt-" + k).setAttribute("aria-selected", k === t ? "true" : "false"); $("wbp-" + k).hidden = k !== t; });
     $("wbSearchBar").hidden = t !== "queue" && t !== "all";
     $("wbSearchHint").textContent = t === "all" ? "Filters the years you have loaded. To look up one CVE, type its id and press Enter. Nothing you type is sent anywhere." : "Filters the list below. Nothing you type is sent anywhere.";
     if (!keepHash) { try { history.replaceState(null, "", "#" + (t === "queue" ? "known" : t)); } catch (e) {} }
-    if (t === "inv") renderInv(); if (t === "hunt") renderHunt();
+    if (t === "hunt") renderHunt();
     if (t === "all") ensureIndex().then(function () { renderAll(); });
     if (t === "queue") renderQueue();
     if (t === "ot") ensureOt().then(function () { renderOt(); });
@@ -845,11 +815,10 @@
       if (flaws.some(function (f) { return f.cve === h; })) { openCve = h; $("wbQ").value = h; tab("queue", true); renderQueue(); showOpen(); return; }
       $("wbQ").value = h; tab("all", true); lookup(); return;
     }
+    if (MOVED[h]) { try { location.replace(MOVED[h]); } catch (e) {} return; }
     tab(HASH[h] || "queue", true);
-    if (h === "scanner") { var sc = $("scanner"); if (sc) try { sc.scrollIntoView({ block: "start" }); } catch (e) {} }
   }
   VIEWS.forEach(function (k) { $("wbt-" + k).addEventListener("click", function () { tab(k); }); });
-  $("wbGoInv").addEventListener("click", function () { tab("inv"); $("wbText").focus(); });
   var qt = 0; $("wbQ").addEventListener("input", function () { clearTimeout(qt); qt = setTimeout(function () { if (cur === "all") { CV.page = 0; renderAll(); } else renderQueue(); }, 140); });
   $("wbQ").addEventListener("keydown", function (ev) { if (ev.key === "Enter" && cur === "all") { ev.preventDefault(); lookup(); } });
   $("wbShow").addEventListener("change", function () { if ($("wbShow").value === "ot") ensureOt().then(renderQueue); else renderQueue(); });
@@ -873,16 +842,8 @@
   window.addEventListener("hashchange", function () { route(location.hash); });
   $("wbCsv").addEventListener("click", function () { var a = el("a"); a.href = blobUrl(new Blob([toCsv()], { type: "text/csv" })); var u = a.href; a.download = "cyberview-patch-queue-" + TODAY + ".csv"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
   $("wbCopy").addEventListener("click", function () { var b = $("wbCopy"); try { navigator.clipboard.writeText(toChange()).then(function () { flash(b, "Copied"); }, function () { flash(b, "Copy blocked"); }); } catch (e) { flash(b, "Copy blocked"); } });
-  var drop = $("wbDrop"), file = $("wbFile");
-  drop.addEventListener("click", function () { file.click(); });
-  drop.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); file.click(); } });
-  file.addEventListener("change", function () { readFile(file.files && file.files[0]); file.value = ""; });
-  ["dragenter", "dragover"].forEach(function (n) { drop.addEventListener(n, function (ev) { ev.preventDefault(); drop.classList.add("over"); }); });
-  ["dragleave", "drop"].forEach(function (n) { drop.addEventListener(n, function (ev) { ev.preventDefault(); drop.classList.remove("over"); }); });
-  drop.addEventListener("drop", function (ev) { readFile(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]); });
-  $("wbAdd").addEventListener("click", function () { var t = $("wbText").value; if (!t.trim()) { $("wbInvMsg").textContent = "Type or paste at least one product first."; return; } addItems("pasted", t); });
-  $("wbClear").addEventListener("click", function () { inv = []; saveInv(); try { localStorage.removeItem("cwm.inv"); } catch (e) {} $("wbInvMsg").textContent = "Your list is cleared from this browser."; compute(); renderInv(); renderQueue(); calLabel(); });
-
+  /* a list changed on the Tools page in another tab: re-rank here too */
+  window.addEventListener("storage", function (ev) { if (ev.key === "cwm.inv" || ev.key === null) { loadInv(); compute(); renderQueue(); renderHunt(); calLabel(); } });
   loadInv();
   fetch("data/workbench.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (d) {
     builtAt = str(d && d.built_at, 30);
@@ -897,7 +858,7 @@
     var fm = {}; hunt.forEach(function (h) { fm[h.format] = 1; });
     Object.keys(fm).sort().forEach(function (k) { var o = el("option", null, FORMATS[k]); o.value = k; $("wbFmt").appendChild(o); });
     compute(); buildKev();
-    renderQueue(); renderDeadlines(); renderInv(); renderHunt(); calLabel();
+    renderQueue(); renderDeadlines(); renderHunt(); calLabel();
     route(location.hash);
   }).catch(function () {
     $("wbSummary").textContent = "The known-exploited data can't be loaded right now. Try again in a minute.";

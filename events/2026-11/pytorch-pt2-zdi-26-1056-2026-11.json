@@ -13,7 +13,7 @@
   "lng": null,
   "geo_basis": "none",
   "pin_type": "none",
-  "summary": "The Zero Day Initiative published advisory ZDI-26-1056 (CVE-2026-136429) for a flaw in how PyTorch parses PT2 files that exposes a dangerous method. ZDI says a remote attacker could run arbitrary code in the context of the current process, and that exploitation requires a user to open a malicious file. ZDI says the vendor rejected the report as expected behavior; the advisory names no patch.",
+  "summary": "The Zero Day Initiative published advisory ZDI-26-1056 (CVE-2026-136429) for a flaw in how PyTorch parses PT2 files that exposes a dangerous function. ZDI says a remote attacker could run arbitrary code in the context of the current process, and that exploitation requires a user to open a malicious file. ZDI says the vendor rejected the report as expected behavior; the advisory names no patch.",
   "plain": "ZDI disclosed a flaw in how PyTorch opens PT2 files that could let an attacker run code if a user opens a malicious file. ZDI says the vendor called it expected behavior and the advisory names no patch.",
   "exec": "ZDI says opening a malicious PT2 file in PyTorch could allow code execution; the vendor rejected the report as expected behavior, per ZDI.",
   "action": "ZDI's only stated mitigation is to restrict interaction with the product; the advisory names no vendor patch.",
@@ -54,17 +54,18 @@
     "note": "Only the ZDI advisory was read; it is the researcher's own primary page."
   },
   "first_seen": "2026-11-24T21:18:06Z",
-  "updated_at": "2026-11-24T22:57:14Z",
+  "updated_at": "2026-11-24T23:11:50Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T21:42:16Z",
+    "state": "corrected",
+    "at": "2026-11-24T23:11:51Z",
     "first_at": "2026-11-24T21:42:16Z",
-    "note": "Compared title, date, CVE, vendor rejection as expected behavior, mitigation against the ZDI advisory",
-    "flags": [
-      "no-cve-meta"
+    "note": "wording: dangerous method changed to ZDI's dangerous function; rest matches ZDI",
+    "flags": [],
+    "categories": [
+      "other"
     ]
   },
-  "qa_checked_at": "2026-11-24T21:42:16Z",
+  "qa_checked_at": "2026-11-24T23:11:51Z",
   "cve_meta": [
     {
       "id": "CVE-2026-136429",

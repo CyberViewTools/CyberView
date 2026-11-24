@@ -1,35 +1,66 @@
 {
- "title": "Radware says unauthorized party accessed internal Cloud WAF management API, exposing customer contact details and some storage credentials",
- "category": "incident",
- "status": "confirmed",
- "severity": 2,
- "date": "2026-11-19",
- "date_note": "BleepingComputer (24 November) reports Radware dating the unauthorized access to 19 November.",
- "org": "Radware",
- "country": "Israel",
- "place": "Radware headquarters (not stated by the source)",
- "lat": 32.08,
- "lng": 34.78,
- "pin_type": "headquarters",
- "geo_basis": "organisation headquarters; the source gives no location",
- "sector": "Technology",
- "sectors": {"values": ["information-technology"], "basis": "inferred"},
- "surface": {"value": "cloud-saas", "basis": "stated"},
- "actor": "",
- "attack": ["unauthenticated API access"],
- "products": ["Radware Cloud WAF"],
- "cves": [],
- "tags": ["data-breach", "cloud"],
- "summary": "BleepingComputer reports that Radware says an unauthorized party accessed an internal-only Cloud WAF management API that was reachable from the Public Internet without requiring authentication. Radware says customer contact details were exposed and, for a subset of customers, credentials used for log export to AWS S3, Azure Blob Storage or SFTP. Radware says it found no evidence of changes to customer security policies or access to application traffic.",
- "plain": "Radware says someone reached an internal management interface that required no login. Customer contact details and, for some customers, storage credentials were exposed. Radware says it found no access to application traffic.",
- "exec": "Radware says a subset of customers had log-export storage credentials exposed; it is still investigating whether any exposed keys were used without authorization.",
- "action": "Radware advises customers to rotate Cloud WAF log export credentials as soon as possible and to review cloud storage access logs for unexpected access since at least November 19.",
- "impact": "Radware says WAF inspection and protection continued without interruption.",
- "sources": [
-  {"name": "BleepingComputer (Sergiu Gatlan)", "url": "https://www.bleepingcomputer.com/news/security/radware-discloses-breach-exposing-customer-cloud-access-keys/", "published": "2026-11-24"}
- ],
- "source_tier": "established",
- "validation": {"state": "single_source", "checked_at": "2026-11-24T19:00:10Z", "note": "One publisher (BleepingComputer) relaying Radware's customer notice; Radware's own page not read."},
- "first_seen": "2026-11-24T19:00:10Z",
- "updated_at": "2026-11-24T19:00:10Z"
+  "title": "Radware says unauthorized party accessed internal Cloud WAF management API, exposing customer contact details and some storage credentials",
+  "category": "incident",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-19",
+  "date_note": "BleepingComputer (24 November) reports Radware dating the unauthorized access to 19 November.",
+  "org": "Radware",
+  "country": "Israel",
+  "place": "Radware headquarters (not stated by the source)",
+  "lat": 32.08,
+  "lng": 34.78,
+  "pin_type": "headquarters",
+  "geo_basis": "organisation headquarters; the source gives no location",
+  "sector": "Technology",
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "stated"
+  },
+  "actor": "",
+  "attack": [
+    "unauthenticated API access"
+  ],
+  "products": [
+    "Radware Cloud WAF"
+  ],
+  "cves": [],
+  "tags": [
+    "data-breach",
+    "cloud"
+  ],
+  "summary": "BleepingComputer reports that Radware says an unauthorized party accessed an internal-only Cloud WAF management API that was reachable from the Public Internet without requiring authentication. Radware says customer contact details were exposed and, for a subset of customers, credentials used for log export to AWS S3, Azure Blob Storage or SFTP. Radware says it found no evidence of changes to customer security policies or access to application traffic.",
+  "plain": "Radware says someone reached an internal management interface that required no login. Customer contact details and, for some customers, storage credentials were exposed. Radware says it found no access to application traffic.",
+  "exec": "Radware says a subset of customers had log-export storage credentials exposed; it is still investigating whether any exposed keys were used without authorization.",
+  "action": "Radware advises customers to rotate Cloud WAF log export credentials as soon as possible and to review cloud storage access logs for unexpected access since at least November 19.",
+  "impact": "Radware says WAF inspection and protection continued without interruption.",
+  "sources": [
+    {
+      "name": "BleepingComputer (Sergiu Gatlan)",
+      "url": "https://www.bleepingcomputer.com/news/security/radware-discloses-breach-exposing-customer-cloud-access-keys/",
+      "published": "2026-11-24"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T19:00:10Z",
+    "note": "One publisher (BleepingComputer) relaying Radware's customer notice; Radware's own page not read."
+  },
+  "first_seen": "2026-11-24T19:00:10Z",
+  "updated_at": "2026-11-24T19:00:10Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T20:30:29Z",
+    "first_at": "2026-11-24T20:30:29Z",
+    "note": "Compared date, exposed data, advice, no-evidence statements against BleepingComputer relaying Radware",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T20:30:29Z"
 }

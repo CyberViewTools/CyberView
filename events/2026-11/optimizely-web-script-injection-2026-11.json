@@ -1,5 +1,5 @@
 {
-  "action": "Sites using Optimizely Web Experimentation: confirm your snippet is clean, review what loaded for visitors since November 16, and assess whether payment data was exposed. Visitors who paid on affected sites should watch card statements.",
+  "action": "Sophos X-Ops advises Web Experimentation users to check their projects for code injected on November 16; Palo Alto Networks advises reviewing Project JavaScript for 1688360.cc and \"atob(\" and rotating credentials.",
   "actor": "",
   "attack": [
     "T1195.002 Supply Chain Compromise: Compromise Software Supply Chain",
@@ -11,16 +11,15 @@
     "CVE-2026-132224"
   ],
   "date": "2026-11-16",
-  "exec": "One compromised web supplier put harmful code on 178 organisations' sites, creating customer fraud risk and possible breach duties.",
+  "exec": "Per Krebs, citing Report URI, at least 178 organizations’ sites served malicious code via one supplier; Optimizely says less than 5% of its customers were impacted.",
   "first_seen": "2026-11-17T22:08:00Z",
   "geo_basis": "vendor HQ",
   "lat": 40.741,
   "lng": -73.99,
-  "occurred_at": "2026-11-16T21:12:00-05:00",
   "org": "Optimizely",
   "pin_type": "hq",
   "place": "New York, NY",
-  "plain": "Attackers tampered with a website tool from Optimizely, so 178 organisations' websites, including major news and retail sites, loaded harmful code. It could reportedly steal card details. Optimizely says the code is removed.",
+  "plain": "Attackers tampered with a website tool from Optimizely. Researchers say at least 178 organisations’ sites loaded harmful code that reportedly searched for card details. Optimizely says the code is removed and the flaw fixed.",
   "products": [
     "Optimizely Web Experimentation"
   ],
@@ -50,11 +49,13 @@
   "sources": [
     {
       "name": "Optimizely status: Web Experimentation Security Incident",
-      "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z"
+      "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z",
+      "published": "2026-11-17"
     },
     {
       "name": "BleepingComputer",
-      "url": "https://www.bleepingcomputer.com/news/security/optimizely-supply-chain-attack-delivers-malware-to-cnn-fox-news-bbc-salesforce-sites/"
+      "url": "https://www.bleepingcomputer.com/news/security/optimizely-supply-chain-attack-delivers-malware-to-cnn-fox-news-bbc-salesforce-sites/",
+      "published": "2026-11-16"
     },
     {
       "name": "Cyber Security News",
@@ -62,15 +63,18 @@
     },
     {
       "name": "TMZ",
-      "url": "https://www.tmz.com/2026/11/17/massive-cyberattack-hits-178-websites/"
+      "url": "https://www.tmz.com/2026/11/17/massive-cyberattack-hits-178-websites/",
+      "published": "2026-11-17"
     },
     {
       "name": "Unit 42 (OPTIMJACK)",
-      "url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/"
+      "url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/",
+      "published": "2026-11-17"
     },
     {
       "name": "Krebs on Security",
-      "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/"
+      "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/",
+      "published": "2026-11-17"
     },
     {
       "name": "Sophos X-Ops",
@@ -78,11 +82,13 @@
     },
     {
       "name": "Zscaler ThreatLabz",
-      "url": "https://www.zscaler.com/blogs/security-research/attackers-exploit-optimizely-flaw-inject-malicious-javascript"
+      "url": "https://www.zscaler.com/blogs/security-research/attackers-exploit-optimizely-flaw-inject-malicious-javascript",
+      "published": "2026-11-18"
     },
     {
       "name": "Censys ARC: MCH and Caishen",
-      "url": "https://censys.com/blog/mch-and-caishen-supply-chain-poisoning-pushes-ios-exploits/"
+      "url": "https://censys.com/blog/mch-and-caishen-supply-chain-poisoning-pushes-ios-exploits/",
+      "published": "2026-11-17"
     },
     {
       "name": "Bitsight: The Optimizely Hack",
@@ -91,27 +97,36 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Optimizely says an unauthorised party exploited a flaw in its Web Experimentation signup flow to inject malicious JavaScript into some customer projects. It reports the flaw fixed and code removed, and on November 18 said under 5% of customers were affected. Researcher Scott Helme counted 178 organisations; coverage says the code skimmed cards and swapped crypto addresses. Krebs, citing Report URI, says about $7,500 was stolen.",
+  "summary": "Optimizely says an unauthorised party exploited a flaw in its Web Experimentation signup flow to inject malicious JavaScript into some customer projects. It says the flaw is fixed, the code removed and, on 18 November, that less than 5% of its customers were impacted. Krebs, citing Report URI, reports at least 178 organizations and around $7,500 of virtual currency stolen; BleepingComputer says the script searched for card data.",
   "tags": [
-    "supply-chain",
-    "data-breach"
+    "supply-chain"
   ],
   "time_basis": "reported",
-  "title": "Optimizely script injection reaches 178 organizations' websites",
-  "updated_at": "2026-11-24T19:04:59Z",
+  "title": "Optimizely script injection reaches at least 178 organizations’ websites, researchers say",
+  "updated_at": "2026-11-24T20:31:30Z",
   "validation": {
     "checked_at": "2026-11-19T02:12:54Z",
     "note": "Reviewed against the original Optimizely report. The 178-organisation count and the script's behaviour come from a researcher and news coverage, not Optimizely. Krebs on Security and Sophos X-Ops read in the 2026-11-19 sweep; Krebs figures (26 rebuilds, about $7,500, iOS exploit kits) are attributed to Report URI. Status page re-read 2026-11-19: Nov 18 update says remediation complete and under 5% of customers affected. Zscaler ThreatLabz blog read 2026-11-19: more than 450 domains and 3,000 URLs, no attribution.",
     "state": "corroborated"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T20:05:50Z",
+    "state": "corrected",
+    "at": "2026-11-24T20:32:03Z",
     "first_at": "2026-11-19T03:27:52Z",
-    "note": "Compared Nov 16 detection, fix within three hours, under 5% customers, signup-flow flaw, 178 orgs (Report URI via Krebs), about $7,500 and 26 rebuilds against Optimizely status page and Krebs; occurred_at clock time not stated on status page, time_basis reported",
-    "flags": []
+    "note": "figure qualifiers (at least 178, around 7,500 dollars), evidence quotes added, unsupported occurred_at and data-breach tag removed, action advice sourced, source published days added",
+    "flags": [
+      "figure-no-evidence",
+      "source-published-partial"
+    ],
+    "categories": [
+      "unsourced",
+      "action",
+      "figure",
+      "occurred_at",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-20T20:05:50Z",
+  "qa_checked_at": "2026-11-24T20:32:03Z",
   "sectors": {
     "values": [
       "information-technology",
@@ -131,5 +146,20 @@
       "kev": false,
       "kev_due": ""
     }
-  ]
+  ],
+  "evidence": [
+    {
+      "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/",
+      "quote": "At least 178 top web destinations unwittingly served a variety of malware exploits against visitors"
+    },
+    {
+      "url": "https://krebsonsecurity.com/2026/11/attackers-used-optimizely-to-a-b-test-malware-on-top-websites/",
+      "quote": "the purveyors of this malware attack managed to steal only around $7,500 worth of virtual currency"
+    },
+    {
+      "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z",
+      "quote": "Less than 5% of our customers were impacted."
+    }
+  ],
+  "date_note": "Date is the day Optimizely and the researchers say the script was served (16 November); the status page was first posted 17 November."
 }

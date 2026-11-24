@@ -47,7 +47,7 @@ Accepted risks, with their mitigations:
 2. **Create the schema.**
    - Open **SQL Editor**, choose **New query**, paste the whole of `supabase/migrations/0001_accounts.sql`, and press **Run**. It is safe to run again.
 3. **Set up sign-in.**
-   - Under **Authentication → URL Configuration**, set **Site URL** to `https://xanderhutch.github.io/CyberView/account.html` and add the same address under **Redirect URLs**.
+   - Under **Authentication → URL Configuration**, set **Site URL** to `https://cyberview.tools/account.html` and add the same address under **Redirect URLs**.
    - Under **Authentication → Providers → Email**, keep **Confirm email** on and set **OTP expiry** to 3600 seconds.
    - **Authentication → SMTP Settings**: Supabase's built-in mailer only sends a few emails an hour and is meant for testing. Turn on **Custom SMTP** with Brevo (SMTP server `smtp-relay.brevo.com`, port 587, your Brevo SMTP login and key, sender = your verified sender address).
    - Optional, for GitHub login: create a GitHub OAuth app at https://github.com/settings/developers.

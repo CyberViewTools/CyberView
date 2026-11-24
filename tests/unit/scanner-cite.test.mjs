@@ -65,7 +65,7 @@ test("the claims rule: only confirmed or official AND passed or corrected are ci
   assert.equal(citation(by["fixture-ssh-mass-exploitation"]), null);
   const c = citation(by["fixture-ssh-intrusion-hospital"]);
   assert.deepEqual(Object.keys(c).sort(), ["attribution", "date", "event_id", "link", "review", "sources", "status", "title"]);
-  assert.equal(c.sources, 2); assert.equal(c.link, eventLink("fixture-ssh-intrusion-hospital")); assert.match(c.link, /^https:\/\/xanderhutch\.github\.io\/CyberView\/archive\.html#q=/);
+  assert.equal(c.sources, 2); assert.equal(c.link, eventLink("fixture-ssh-intrusion-hospital")); assert.match(c.link, /^https:\/\/cyberview\.tools\/archive\.html#q=/);
   assert.deepEqual(c.attribution, { by: "Fixture National CERT", by_type: "government", url: "https://gov.example/attribution-1" });   // who and where, no actor name
   for (const s of NEVER) assert.ok(!JSON.stringify(c).includes(s), s);
 });

@@ -6,7 +6,7 @@ A live, verified picture of cyber threats worldwide for defenders: what happened
 
 What CyberView is and does is described in ONE place, `config/about.json` (rendered into the About page with live numbers at every build). Whenever you add a page, a view, a map layer or a routine, add or extend an entry there in the same change: `node scripts/about.mjs check` (in `npm run ci` and build.yml) fails otherwise.
 
-Live site: https://xanderhutch.github.io/CyberView (GitHub Pages), deployed by `.github/workflows/pages.yml` after every merge to `main` and after every data push.
+Live site: https://cyberview.tools (GitHub Pages behind Cloudflare; the old https://xanderhutch.github.io/CyberView redirects there), deployed by `.github/workflows/pages.yml` after every merge to `main` and after every data push.
 
 Code and data are on separate branches (owner, 2026-11-20; full explanation in `docs/branches.md`): `main` holds the code and changes only through pull requests; `data` holds everything under `data/` (history kept), is mounted at `./data` in every checkout and takes every automated commit. Scripts read and write `data/...` as before. A pull of `main` never touches `./data` (`pullAll` in scripts/lib/repo.mjs), and a data commit that would delete records that are never deleted is undone before it is made (`protectDeletes`).
 

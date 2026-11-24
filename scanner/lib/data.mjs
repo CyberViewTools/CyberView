@@ -13,7 +13,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { USER_AGENT } from "./probe.mjs";
 
-export const DEFAULT_SOURCE = "https://xanderhutch.github.io/CyberView/";
+export const DEFAULT_SOURCE = "https://cyberview.tools/";
 /** The only paths the scanner will ever ask for. */
 export const ALLOWED = /^data\/(workbench\.json|psirt\.json|cve\/index\.json|cve\/\d{4}\/\d{1,5}\.json|archive\/search\.json|archive\/\d{4}-\d{2}\.json)$/;
 

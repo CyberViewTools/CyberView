@@ -2,11 +2,11 @@
 
 # CyberView
 
-**Live site: https://xanderhutch.github.io/CyberView** · [Archive](https://xanderhutch.github.io/CyberView/archive.html) · [Trends](https://xanderhutch.github.io/CyberView/trends.html)
+**Live site: https://cyberview.tools** · [Archive](https://cyberview.tools/archive.html) · [Trends](https://cyberview.tools/trends.html)
 
 A live, verified picture of cyber threats worldwide for defenders: what happened, what is being exploited, and the outages around it, updated around the clock.
 
-CyberView is always growing; its full, current description is generated from [`config/about.json`](config/about.json) and published on the [About page](https://xanderhutch.github.io/CyberView/about.html#what), and CI fails if a new page, view, map layer or routine is added without an entry there.
+CyberView is always growing; its full, current description is generated from [`config/about.json`](config/about.json) and published on the [About page](https://cyberview.tools/about.html#what), and CI fails if a new page, view, map layer or routine is added without an entry there.
 
 - **Map, Timeline and Correlation views**, a known-exploited feed with patch deadlines, a daily brief, and a copy-ready shift handover.
 - **Sources first.** Events are reviewed against original government and vendor documents where possible; corrections are logged; unverified attacker claims are hidden unless you ask for them.
@@ -14,12 +14,12 @@ CyberView is always growing; its full, current description is generated from [`c
 - **Patch deadlines in your calendar.** One click saves the open deadlines for known-exploited flaws (only those matching your environment, if you set one) as a calendar file with a reminder 3 days before.
 - **Desktop notifications.** Turn on "Notify me on this device" and get a notification when a new event or exploited flaw matches your environment, while CyberView is open in a tab.
 - **Exposure check.** Your environment drives a report: known-exploited flaws with patch deadlines (overdue ones flagged), this week's matching events, and matches across the whole archive. It runs in your browser; the list never leaves your device.
-- **Share and subscribe.** Every event has a link (`#e=<id>`) and a Copy link button. High-severity and known-exploited events are published as an [RSS feed](https://xanderhutch.github.io/CyberView/data/feed.xml) and a [JSON Feed](https://xanderhutch.github.io/CyberView/data/feed.json).
-- **Trends.** [What is moving](https://xanderhutch.github.io/CyberView/trends.html): this week against last by event type, sector, country, actor, product and theme, with daily counts and an honest caveat while history is short.
+- **Share and subscribe.** Every event has a link (`#e=<id>`) and a Copy link button. High-severity and known-exploited events are published as an [RSS feed](https://cyberview.tools/data/feed.xml) and a [JSON Feed](https://cyberview.tools/data/feed.json).
+- **Trends.** [What is moving](https://cyberview.tools/trends.html): this week against last by event type, sector, country, actor, product and theme, with daily counts and an honest caveat while history is short.
 - **Time-lapse and deep search.** Play the window day by day on the map; searches also point to older matches in the archive.
-- **Runs itself, in the open.** A [status page](https://xanderhutch.github.io/CyberView/status.html) lists every routine, when it last ran and what it found; a collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
+- **Runs itself, in the open.** A [status page](https://cyberview.tools/status.html) lists every routine, when it last ran and what it found; a collector reads 22 agency, vendor and news feeds so the AI jobs start from leads instead of web searches.
 - **Globe and context layers.** Switch the map to a globe you can turn (G), and open the layers panel (L) for internet-disruption signals (IODA) and orange and red disaster alerts (GDACS). Each layer shows its source, its age and whether it is live, stale or offline. They are context, never counted as cyber events.
-- **Optional accounts.** Sign in with an email link to sync your environment across devices (encrypted in your browser with your own passphrase) and get email alerts when something matches it. Export or delete everything yourself at any time. See [privacy](https://xanderhutch.github.io/CyberView/privacy.html) and [docs/accounts.md](docs/accounts.md).
+- **Optional accounts.** Sign in with an email link to sync your environment across devices (encrypted in your browser with your own passphrase) and get email alerts when something matches it. Export or delete everything yourself at any time. See [privacy](https://cyberview.tools/privacy.html) and [docs/accounts.md](docs/accounts.md).
 - **Static site.** One HTML page reading one JSON bundle. No tracking, no cookies, no account needed; your environment stays in your browser unless you choose to sync it.
 
 ## How it stays current

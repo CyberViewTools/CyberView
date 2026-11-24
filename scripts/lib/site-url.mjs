@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const DEFAULT = "https://xanderhutch.github.io/CyberView";
+const DEFAULT = "https://cyberview.tools";
 function fromConfig() {
   try { return String(JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "..", "config", "site.json"), "utf8")).site_url || ""); } catch { return ""; }
 }

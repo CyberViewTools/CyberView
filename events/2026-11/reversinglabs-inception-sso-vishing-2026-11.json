@@ -1,0 +1,56 @@
+{
+  "title": "ReversingLabs links SSO vishing campaign to new extortion group Inception",
+  "date": "2026-11-23",
+  "date_note": "Date of ReversingLabs' blog post; it says the campaign has been active since late October 2026.",
+  "category": "report",
+  "severity": 2,
+  "status": "official",
+  "report": {
+    "publisher": "ReversingLabs",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-23",
+    "key_findings": [
+      "ReversingLabs says the operation uses voice phishing (vishing) to compromise single sign-on (SSO) credentials.",
+      "It links the campaign to Inception, a data-extortion group that appeared on a Tor leak site in mid-November 2026.",
+      "ReversingLabs assesses the lure domains almost certainly to be staged Inception resources targeting the brands named.",
+      "The group's seven leak-site listings are unverified claims, not independently confirmed breaches."
+    ],
+    "recommendations": [
+      "Require phishing-resistant authentication such as FIDO2 keys or passkeys.",
+      "Verify identity before resetting credentials or MFA.",
+      "Monitor new domain registrations and block suspicious domains at DNS and web proxies.",
+      "Hunt DNS, proxy and identity provider logs from October 21, 2026 onward."
+    ],
+    "iocs_available": true,
+    "read_depth": "partial",
+    "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-sso-vishing-campaign-associated-with-emerging-inception-extortion-group"
+  },
+  "org": "ReversingLabs",
+  "sector": "Cross-sector",
+  "country": "United States",
+  "place": "United States (no victim location stated; pin at country)",
+  "lat": 39.8,
+  "lng": -98.6,
+  "geo_basis": "country; the report names no single location",
+  "pin_type": "country",
+  "actor": "Inception (per ReversingLabs)",
+  "summary": "ReversingLabs says a vishing campaign aimed at single sign-on credentials is associated with Inception, a data-extortion group that appeared on a Tor leak site in mid-November 2026. It assesses the lure domains to be 'almost certainly' staged Inception resources targeting named brands. The group has listed seven victims, which ReversingLabs describes as unverified claims, not independently confirmed breaches.",
+  "plain": "Security firm ReversingLabs says phone-call scams targeting company single sign-on logins are tied to a new extortion group, Inception. Its seven listed victims are unverified claims.",
+  "exec": "A new extortion group is reportedly using phone-based phishing against SSO logins; the seven victims it lists are unverified claims.",
+  "action": "ReversingLabs advises phishing-resistant authentication such as FIDO2 keys or passkeys, verifying identity before credential or MFA resets, and hunting DNS, proxy and identity logs from October 21, 2026 onward.",
+  "impact": "ReversingLabs says the leak-site listings are unverified claims.",
+  "tags": ["phishing", "identity"],
+  "cves": [],
+  "products": ["Okta", "NetIQ"],
+  "attack": ["vishing", "SSO credential phishing"],
+  "sources": [
+    {"name": "ReversingLabs", "url": "https://www.reversinglabs.com/blog/threat-researchers-notebook-sso-vishing-campaign-associated-with-emerging-inception-extortion-group", "published": "2026-11-23"}
+  ],
+  "source_tier": "primary",
+  "validation": {"state": "single_source", "checked_at": "2026-11-24T08:43:29Z", "note": "Vendor research post by ReversingLabs (primary); no second publisher read."},
+  "first_seen": "2026-11-24T08:43:29Z",
+  "updated_at": "2026-11-24T08:43:29Z",
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "surface": {"value": "identity", "basis": "stated"}
+}

@@ -1,0 +1,83 @@
+{
+  "title": "ASUSTOR advisory AS-2026-029: six high-rated ADM flaws including OpenVPN profile command execution (CVE-2026-134896)",
+  "date": "2026-11-23",
+  "date_note": "Advisory page gives 2026-11-24 with initial public release 2026-11-23.",
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "org": "ASUSTOR",
+  "sector": "Technology",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "geo_basis": "none",
+  "actor": "",
+  "impact": "",
+  "attack": [],
+  "tags": [],
+  "products": [
+    "ASUSTOR ADM"
+  ],
+  "cves": [
+    "CVE-2026-120934",
+    "CVE-2026-120936",
+    "CVE-2026-120946",
+    "CVE-2026-120948",
+    "CVE-2026-134896",
+    "CVE-2026-134897"
+  ],
+  "summary": "ASUSTOR's advisory AS-2026-029 lists six CVEs in ADM, each rated High under CVSS 4.0, which let an authenticated user run commands with elevated privileges or create and truncate system files. One, CVE-2026-134896, is command execution through a crafted OpenVPN .ovpn profile. Affected are ADM 4.1.0 through 4.3.3.RY62 and 5.0.0 through 5.1.4.RM62; the advisory lists fixes in ADM 5.1.5.RNN1 and 4.3.4.Rxxx.",
+  "plain": "ASUSTOR says six flaws in its NAS operating system ADM let a logged-in user run commands or alter system files. Its advisory lists fixed versions.",
+  "exec": "ASUSTOR's advisory says the ADM flaws could fully compromise confidentiality, integrity and availability of an affected device.",
+  "action": "ASUSTOR advises upgrading to ADM 5.1.5.RNN1 or above (ADM 5.0) or ADM 4.3.4.Rxxx or above (ADM 4.3, 4.2 and 4.1); it lists no workarounds.",
+  "sources": [
+    {
+      "name": "ASUSTOR Product Security Advisory AS-2026-029: ADM",
+      "url": "https://www.asustor.com/security/security_advisory_detail?id=78",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "CVE Feed: CVE-2026-134896",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-134896",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [],
+  "source_tier": "primary",
+  "time_basis": "published",
+  "first_seen": "2026-11-24T10:15:30Z",
+  "updated_at": "2026-11-24T10:27:30Z",
+  "validation": {
+    "checked_at": "2026-11-24T10:15:30Z",
+    "state": "corroborated",
+    "note": "Publishers: ASUSTOR (primary, its own advisory AS-2026-029) and CVE Feed, which repeats the CVE-2026-134896 row. VulDB returned 403."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "edge-appliance",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T10:27:24Z",
+    "first_at": "2026-11-24T10:27:24Z",
+    "note": "plain overstated that fixes were released (advisory lists 4.3.4 later); validation note names publishers; CVEs, versions, ratings match ASUSTOR advisory",
+    "flags": [
+      "no-cve-meta",
+      "corroborated-note"
+    ],
+    "categories": [
+      "overstated",
+      "validation",
+      "misstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T10:27:24Z"
+}

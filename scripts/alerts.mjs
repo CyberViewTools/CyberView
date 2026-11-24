@@ -11,8 +11,9 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
 import { get } from "./lib/net.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
-const SITE = "https://xanderhutch.github.io/CyberView";
+const SITE = SITE_URL;
 const MAX_ITEMS = 20, SEV = ["", "low", "medium", "high"];
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const wordRe = (t) => new RegExp("(^|[^a-z0-9])" + t.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "($|[^a-z0-9])");

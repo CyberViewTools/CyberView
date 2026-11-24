@@ -39,6 +39,14 @@ An overview, with live counts of the products it can identify, is on CyberView's
     (Get-FileHash .\cyberview-scan-<version>.mjs -Algorithm SHA256).Hash   # Windows PowerShell: compare with SHA256SUMS
     ```
 
+    The checksum only shows the download is not damaged: SHA256SUMS sits in the same release. To check the file was
+    built by this repository's release workflow from a tagged commit, and not swapped in the release afterwards,
+    verify its signed build provenance (every release published after 24 November 2026; needs the GitHub CLI):
+
+    ```
+    gh attestation verify cyberview-scan-<version>.mjs --repo xanderhutch/CyberView
+    ```
+
     It must print `cyberview-scan-<version>.mjs: OK` (on Windows, the same hash as in `SHA256SUMS`). Then run it with
     `node cyberview-scan-<version>.mjs` wherever the commands below say `node scanner/cyberview-scan.mjs`. The file is
     the scanner and the site's matching and rating code in one, built by CI from the tagged commit (named in its first

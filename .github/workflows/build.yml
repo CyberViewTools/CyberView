@@ -87,14 +87,14 @@ jobs:
             /*
             !/data/
           sparse-checkout-cone-mode: false
-      - name: Apply the migration twice and run the attacks
+      - name: Apply the migrations twice and run the attacks
         env:
           PGPASSWORD: postgres
         run: |
           P="psql -h localhost -U postgres -v ON_ERROR_STOP=1 -q -tA"
           $P -c "create database t"
-          for f in tests/sql/supabase_shim.sql supabase/migrations/0001_accounts.sql supabase/migrations/0001_accounts.sql tests/sql/rls_test.sql; do $P -d t -f "$f"; done | tee out.txt
-          grep -q "SQL SECURITY TESTS: ALL PASS" out.txt
+          for f in tests/sql/supabase_shim.sql supabase/migrations/0001_accounts.sql supabase/migrations/0002_consent_trigger.sql supabase/migrations/0001_accounts.sql supabase/migrations/0002_consent_trigger.sql tests/sql/rls_test.sql tests/sql/consent_test.sql; do $P -d t -f "$f"; done | tee out.txt
+          grep -q "SQL SECURITY TESTS: ALL PASS" out.txt && grep -q "CONSENT TESTS: ALL PASS" out.txt
 
   browser-tests:
     needs: validate

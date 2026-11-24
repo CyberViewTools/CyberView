@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { join, basename } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'";
@@ -128,8 +129,8 @@ export async function buildPages() {
     ...(cfg.contact_email ? [`Contact: mailto:${cfg.contact_email}`] : []),
     `Expires: ${exp}`,
     "Preferred-Languages: en",
-    "Canonical: https://xanderhutch.github.io/CyberView/.well-known/security.txt",
-    "Policy: https://xanderhutch.github.io/CyberView/about.html#security",
+    `Canonical: ${SITE_URL}/.well-known/security.txt`,
+    `Policy: ${SITE_URL}/about.html#security`,
     "",
   ].join("\n"));
   out.push(".well-known/security.txt");

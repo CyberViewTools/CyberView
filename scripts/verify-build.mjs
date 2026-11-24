@@ -11,9 +11,10 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
 const OUT = join(ROOT, "site", "data");
-const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");
+const SITE = SITE_URL;
 const CATS = ["incident", "outage", "vuln", "report", "policy", "investment", "enforcement"];
 const sha = (b) => createHash("sha256").update(b).digest("hex");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

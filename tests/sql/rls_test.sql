@@ -28,7 +28,10 @@ select pg_temp.expect((select count(*) from public.accounts) = 1, 'A sees exactl
 -- user A cannot break the rules on their own row
 select pg_temp.expect_fail($q$ update public.accounts set alert_terms = array['<script>'] where user_id = auth.uid() $q$, 'markup in alert terms');
 select pg_temp.expect_fail($q$ update public.accounts set alert_terms = (select array_agg('term'||g) from generate_series(1,151) g) where user_id = auth.uid() $q$, 'more than 150 terms');
-select pg_temp.expect_fail($q$ update public.accounts set alerts_enabled = true, consent_at = null where user_id = auth.uid() $q$, 'alerts without consent');
+-- alerts without consent: refused by the check constraint, or (with 0002_consent_trigger) the stored consent is kept;
+-- either way no row may end up with alerts on and no consent
+do $$ begin begin update public.accounts set alerts_enabled = true, consent_at = null where user_id = auth.uid(); exception when others then null; end; end $$;
+select pg_temp.expect((select bool_and(not alerts_enabled or (consent_at is not null and consent_text is not null)) from public.accounts), 'alerts without consent');
 select pg_temp.expect_fail($q$ update public.accounts set unsubscribe_token = gen_random_uuid() where user_id = auth.uid() $q$, 'changing own unsubscribe token');
 select pg_temp.expect_fail($q$ update public.accounts set last_alert_at = now() where user_id = auth.uid() $q$, 'changing last_alert_at');
 select pg_temp.expect_fail($q$ insert into public.alert_log (user_id, event_id) values (auth.uid(), 'x') $q$, 'writing the alert log');

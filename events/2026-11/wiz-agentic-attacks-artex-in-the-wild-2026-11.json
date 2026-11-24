@@ -36,7 +36,7 @@
     "ai-enabled"
   ],
   "title": "Wiz: successful AI-agent attacks with ARTEX and similar frameworks grew sharply in three weeks",
-  "updated_at": "2026-11-23T17:41:41Z",
+  "updated_at": "2026-11-24T05:01:43Z",
   "validation": {
     "checked_at": "2026-11-23T17:29:33Z",
     "note": "Wiz's own research post read in full (primary for its findings). Figures and the ARTEX-Harvester link are Wiz's own; no second publisher read.",
@@ -72,5 +72,35 @@
       "action"
     ]
   },
-  "qa_checked_at": "2026-11-23T17:41:48Z"
+  "qa_checked_at": "2026-11-23T17:41:48Z",
+  "report": {
+    "publisher": "Wiz Research",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-23",
+    "key_findings": [
+      "Wiz says it tied one ARTEX-Harvester campaign, at varying confidence, to activity at more than a dozen organizations between late October and mid-November.",
+      "Wiz describes ARTEX as an open-source agentic offensive framework with hundreds of forks, and says its activity comes from multiple unrelated operators and should not be read as a single campaign.",
+      "Wiz says twenty additional related incidents were disclosed in the three weeks after its Black October post, and that its incident response team saw a 3x increase in engagement requests.",
+      "Wiz lists the ways in as stolen or leaked credentials, exposed or vulnerable services, tenant-isolation escapes, upstream breaches and opportunistic spraying often routed through residential proxies.",
+      "Wiz says the tooling runs at machine speed and labels its own work, for example with pentest-recon user agents, and that exposed operator consoles leaked prompts and agent transcripts."
+    ],
+    "recommendations": [
+      "Rotate exposed credentials and restrict services that still use default credentials.",
+      "Do not expose agent control panels to the internet.",
+      "Monitor cloud activity for mass secret retrieval, known offensive tool API calls and long-dormant access keys being used.",
+      "Focus on behavioural patterns such as speed and breadth rather than IP blocking, which Wiz says does little against rotating residential proxies."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://www.wiz.io/blog/agentic-attacks-artex-offensive-ai-frameworks"
+  },
+  "hunt": [
+    {
+      "name": "Agentic attacks in the wild IOCs",
+      "format": "csv",
+      "url": "https://github.com/wiz-sec-public/wiz-research-iocs/blob/main/reports/agentic_attacks_in_the_wild_iocs.csv",
+      "publisher": "Wiz Research"
+    }
+  ]
 }

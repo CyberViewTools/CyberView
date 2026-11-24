@@ -17,7 +17,7 @@
   "summary": "CSIRT Italia's bulletin says attackers are using AI agents built on language models to automate the phases of an intrusion with little human input. It names tools including ARTEX, CyberStrikeAI, DeepSeek Harness - Red Team and PentAGI. The bulletin says directly observed cases involved the compromise of a large number of systems in hours or days, and lists CVEs marked as exploited or with public proof of concept.",
   "plain": "Italy's national CSIRT says attackers are using AI agents to run intrusions automatically, which it says can compromise many systems quickly.",
   "exec": "CSIRT Italia says AI-driven attack tooling can compromise many systems quickly, so unpatched exposed systems are at risk.",
-  "action": "CSIRT Italia advises patching exposed systems as soon as possible, restricting management interfaces to authorised users via VPN with MFA, applying least privilege and keeping offline or immutable backups.",
+  "action": "CSIRT Italia advises updating exposed systems as soon as possible, limiting management interfaces to dedicated networks or VPN with MFA, applying least privilege and keeping offline or immutable backups.",
   "impact": "Faster, continuous automated attacks that chain flaws, misconfigurations and stale credentials, per CSIRT Italia.",
   "tags": [
     "ai",
@@ -35,8 +35,27 @@
   ],
   "evidence": [],
   "report": {
+    "publisher": "CSIRT Italia (ACN)",
+    "publisher_type": "government",
+    "doc_id": "BL01/261123/CSIRT-ITA",
+    "published": "2026-11-23",
+    "key_findings": [
+      "CSIRT Italia says it detected mass-compromise campaigns run by autonomous AI-orchestrated agents that automate the usual phases of an attack.",
+      "The bulletin names the tools ARTEX, CyberStrikeAI, DeepSeek Harness (Red Team mode) and PentAGI, and describes a six-agent setup controlled through a web interface with natural-language commands.",
+      "In the observed cases a large number of systems were compromised within hours by several agents working in parallel; the bulletin gives no precise number.",
+      "Agents start from internet-exposed applications or interfaces, favour known vulnerabilities and unauthenticated interfaces, also use misconfigurations and valid or compromised credentials, then move laterally.",
+      "The bulletin says chained, individually legitimate actions are hard to detect, and that agents wrote malicious code in real time to evade endpoint defences."
+    ],
+    "recommendations": [
+      "Update exposed systems as soon as possible; if that is not possible, disconnect them from the internet, segregate them and block outbound traffic until fixed.",
+      "Remove admin consoles, APIs and CI/CD management interfaces from direct exposure; allow access only through dedicated networks or VPN with MFA.",
+      "Apply least privilege, enable MFA, replace long-lived keys with temporary credentials and remove secrets from code and repositories.",
+      "Monitor for anomalous authentication sources, high-frequency admin calls, mass downloads and unexpected outbound tunnelling or AI-platform traffic.",
+      "Keep offline or immutable backups."
+    ],
+    "iocs_available": true,
     "read_depth": "full",
-    "note": "Bulletin BL01/261123/CSIRT-ITA read in full by the researcher."
+    "url": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate"
   },
   "source_tier": "primary",
   "validation": {
@@ -45,7 +64,7 @@
     "note": "CSIRT Italia's own bulletin; no independent publisher read."
   },
   "first_seen": "2026-11-23T20:56:30Z",
-  "updated_at": "2026-11-23T20:56:30Z",
+  "updated_at": "2026-11-24T05:01:16Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -63,5 +82,37 @@
     "note": "Compared title, date, tools named, observed-cases wording, CVE listing and the four mitigations against the ACN bulletin BL01/261123/CSIRT-ITA",
     "flags": []
   },
-  "qa_checked_at": "2026-11-23T21:11:26Z"
+  "qa_checked_at": "2026-11-23T21:11:26Z",
+  "hunt": [
+    {
+      "name": "CSIRT Italia MISP feed: ARTEX",
+      "format": "misp",
+      "url": "https://www.csirt.gov.it/feed-misp/930b9576-d44f-4644-a5ff-12a321ae40f7.json",
+      "publisher": "CSIRT Italia"
+    },
+    {
+      "name": "CSIRT Italia MISP feed: DeepSeek Harness",
+      "format": "misp",
+      "url": "https://www.csirt.gov.it/feed-misp/28bbc302-0ea6-45f8-9ae0-66e5eb6a3e5d.json",
+      "publisher": "CSIRT Italia"
+    },
+    {
+      "name": "CSIRT Italia MISP feed: PentAGI",
+      "format": "misp",
+      "url": "https://www.csirt.gov.it/feed-misp/b8979116-210b-4c95-bb46-dc9f19771659.json",
+      "publisher": "CSIRT Italia"
+    },
+    {
+      "name": "CSIRT Italia MISP feed: CyberStrike",
+      "format": "misp",
+      "url": "https://www.csirt.gov.it/feed-misp/0bd6f2fd-05f8-4ea4-9df4-2e54398651c4.json",
+      "publisher": "CSIRT Italia"
+    },
+    {
+      "name": "CSIRT Italia MISP feed: YARA rules",
+      "format": "misp",
+      "url": "https://www.csirt.gov.it/feed-misp/3b2d7750-d6a4-4839-b5ee-e05b739fd26f.json",
+      "publisher": "CSIRT Italia"
+    }
+  ]
 }

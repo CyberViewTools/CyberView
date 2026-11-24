@@ -175,10 +175,22 @@ function fallbackNote(now = Date.now()) {
   }
   return `subscription window exhausted${s.limited_until ? ", resets " + s.limited_until : ""}; billing the API fallback ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
 }
+/** The time by which a bounded research loop's workers must be done (flow sets it from its span's END); Infinity elsewhere. */
+let workerDeadline = Infinity;
+export const MIN_WORKER_MS = 60000;
+/** Pure: how long a worker may run: its role's timeout, cut at the bounded loop's end (deadline), or 0 (do not start it)
+ *  when less than MIN_WORKER_MS is left. 24 November: collection took 2.5-3.5 minutes of a 7-minute span and the pool
+ *  waited for every worker past the span's end, so the dispatcher's kill landed before the cycle's commit and heartbeats. */
+export function workerBudget(timeoutMs, deadline, now = Date.now()) {
+  if (deadline == null || !Number.isFinite(deadline)) return timeoutMs;
+  const left = deadline - now;
+  return left < MIN_WORKER_MS ? 0 : Math.min(timeoutMs, left);
+}
 function runWorker(job, role, batch, served = "subscription") {
   return new Promise((resolve) => {
     let prompt; try { prompt = promptFor(role, batch); } catch (e) { const l = ledgerLine(job, role, batch, "-", 0, "", String(e.message), served); record(l); return resolve(l); }
     const w = workerArgs(role, prompt), t0 = Date.now();
+    w.timeoutMs = workerBudget(w.timeoutMs, workerDeadline, t0);
     const ch = spawn("claude", w.args, { cwd: ROOT, env: workerEnv(served, FALLBACK_KEY), stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "", done = false;
     const kill = setTimeout(() => { if (!done) { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); } }, w.timeoutMs);
@@ -237,17 +249,19 @@ export const limitHolds = (hit, now = Date.now()) => !!(hit && hit.limit && now 
  *  (not started, no ledger line: their items stay in their queues and leases are released as usual); the budget then holds
  *  the loop at "stop" until the reset time the message gave (scripts/lib/usage.mjs budgetState). */
 export async function pool(job, list) {
-  const res = []; let i = 0, held = 0, fb = 0;
+  const res = []; let i = 0, held = 0, fb = 0, late = 0;
   await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => {
     while (i < list.length) {
       const k = i++, served = servedNow();
       if (served === "park") { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; }
+      if (!workerBudget(1, workerDeadline)) { late++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: the loop's span ends" }; continue; }
       if (served === "api-fallback") fb++;
       res[k] = await runWorker(job, list[k][0], list[k][1], served);
     }
   }));
   if (fb) log(`  ${fb} worker(s) ran on the API fallback: ${fallbackNote()}`);
   if (held) log(`  ${held} worker(s) not started: ${fallbackNote()}; their work stays in the queue`);
+  if (late) log(`  ${late} worker(s) not started: the loop's span ends; their work stays in the queue for the next span`);
   if (list.length && unavailable >= Math.min(list.length, 2)) { log("HEADLESS UNAVAILABLE: claude could not start workers"); process.exit(3); }
   return res;
 }
@@ -488,6 +502,9 @@ async function flow() {
   // the loop's end is known up front: a span-bounded loop leases the leader slot only until then (lib/lease.mjs leaderLease)
   const t0 = Date.now(), sweepCron = ((readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).find((r) => r.key === "sweep") || {}).cron;
   const END = flowDeadline(t0, LIFE, cronMinutes(sweepCron)), took = [];
+  // workers stop 30 s before END, leaving that and the time up to the dispatcher's kill (about 90 s more) for the apply steps, the build (~45 s), the commit and the
+  // heartbeats; a stopped worker's unfinished stories are logged as open leads and stay in the queue
+  workerDeadline = END - 30000;
   pullAll(); heal(dataGitDir());
   const other = leaderOf(readLeases());
   // no loop runs in this container (checked above), so a lease taken by this session belongs to a loop that died: take over

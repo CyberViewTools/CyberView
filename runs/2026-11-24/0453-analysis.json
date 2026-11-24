@@ -1,0 +1,65 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-24T04:53:02Z",
+  "finished_at": "2026-11-24T04:59:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-17 --limit 300 (431 matches; first 300 listed)",
+    "q.mjs runs --days 1"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "european-commission-cyberattack-payroll-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "Crypto drains pattern (Chainflip vaults, CYBER bridge)",
+      "url": "",
+      "reason": "Dropped from analysis.json to stay within 12 patterns; it was confidence 1, linked only by timing, and two of its four events (GTIG North Korea Claude Code backdoor) aged out of the 7-day window."
+    },
+    {
+      "title": "Events dated 2026-11-16 or earlier (Confluence/Axis, N-central zero-day, ScreenConnect, Optimizely, Infoblox, Google AI reports, BundID, TfL, Danfoss, France IRGC sanctions, EU NoName057 sanctions, JPMorgan/United/Docomo outages, etc.)",
+      "url": "",
+      "reason": "Outside the 7-day window (since 2026-11-17); removed from patterns and ripples and noted in caveats where relevant. PLAID KARTE origin (Nov 13) kept deliberately as the stated source of every customer notice, as in earlier runs."
+    },
+    {
+      "title": "Duplicate records referenced by yesterday's analysis",
+      "url": "",
+      "reason": "visa-third-party-provider-incident-n0n-claim-2026-11 is a duplicate of jpmorgan-third-party-vendors-cyberattack-2026-11; victoria-education-student-credentials-ovic-2026-11 is a duplicate of an October event. Both removed from patterns."
+    },
+    {
+      "title": "Fireworks AI -> Uber edge",
+      "url": "",
+      "reason": "Uber event dated 2026-11-16 aged out; Fireworks alone does not form a pattern, so both were removed from the KARTE pattern."
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "GreyNoise GT13 / Check Point CVE-2026-16232",
+      "url": "",
+      "note": "No Check Point advisory or CISA KEV entry on file for CVE-2026-16232; if one appears, add a stated link from the advisory to greynoise-gt13-check-point-management-intrusions-2026-11.",
+      "priority": "high"
+    },
+    {
+      "title": "US investigation of Iran and energy-tanker cyberattacks",
+      "url": "",
+      "note": "us-investigates-iran-cyberattacks-energy-tankers-2026-11 is a duplicate of the Nov 24 record; any official attribution would let the inferred edge from us-accuses-iran-cyber-infrastructure-2026-11 be reassessed. Currently no evidence linking Iran per an administration official.",
+      "priority": "medium"
+    },
+    {
+      "title": "Peninsula Energy Lance uranium project attack",
+      "url": "",
+      "note": "Read only through The Northern Miner; production impact and attack type unknown. Check for an ASX announcement.",
+      "priority": "medium"
+    },
+    {
+      "title": "European Commission -> EU Academy link",
+      "url": "https://www.euronews.com/2026/11/23/exclusive-china-backed-hackers-suspected-behind-ongoing-eu-commission-cyberattack",
+      "note": "Link added from the event record's stated summary (Euronews reports the Commission confirmed the EU Academy leak as part of the attack); page not re-read in this run. A Commission statement tying both explicitly would strengthen it.",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns: exploited-now, nginx2root, patch-pressure, supplier-cascades, one-vendor-many-victims, ai-both-ends, dev-supply-chain [new], account-takeover, state-impersonation, ot-refrigeration [retitled energy/industry/shipping], sector-breach-clusters, outages-and-knock-on) and data/ripples.json (10 items; added GT13 Check Point, European Commission/EU Academy, Wiz ARTEX; dropped Confluence/Axis, Optimizely and RIKEN Fugaku as aged out). Built from yesterday's snapshot (2026-11-23) plus event records dated Nov 22-24. Every pattern has kind, caveat and 4+ events on file; all IDs checked to exist, not be duplicates and fall on or after 2026-11-17 (except the PLAID origin, explained in its caveat). Stated edges: EC->EU Academy (new link added to the EC event with Euronews URL); Spain Burgos arrest->NoName057 blacklist (same group named in both event sources; not added as a globe arc since it is not one campaign, supplier or flaw); lawmakers->officials on outages (same as yesterday). Existing links for KARTE, NGINX2Root, Java4Shell and phpAfterShell edges confirmed present. Saved snapshot data/snapshots/analysis/2026-11-24.json. node scripts/build.mjs passes (301 pre-existing hygiene warnings, none from analysis files). No web pages read; no instructions found in data. Did not edit status.json (script sets last_analysis_at)."
+}

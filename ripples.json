@@ -1,224 +1,227 @@
 {
-  "generated_at": "2026-11-23T11:01:38Z",
-  "items": [
-    {
-      "event_id": "cert-fr-nginx-http2-rce-2026-11",
-      "basis": "stated",
-      "direct": [
-        "NGINX Open Source and Plus from 1.9.5 with HTTP/2 can be made to run code as the nginx worker without a login; fixes are in 1.30.7 and 1.31.9, and proof-of-concept code is public for one flaw."
-      ],
-      "downstream": [
-        "Xint chained one flaw with an unpatched Linux kernel SCTP bug to reach root and escape a Docker container, so a web front end can become a host compromise.",
-        "NGINX is embedded in load balancers, Kubernetes ingress controllers and appliances that update on their vendors' schedules; Synology has already listed the same CVE in DSM, so expect more appliance advisories."
-      ],
-      "watch_for": [
-        "Ingress and appliance vendors shipping fixed NGINX builds",
-        "Worker crashes on HTTP/2 traffic",
-        "A Linux kernel fix and CVE for the SCTP flaw",
-        "Reports of in-the-wild exploitation",
-        "Appliance advisories naming CVE-2026-123007"
-      ],
-      "who_should_care": [
-        "Web operations",
-        "Kubernetes teams",
-        "Appliance owners"
-      ]
-    },
-    {
-      "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11",
-      "basis": "stated",
-      "direct": [
-        "An unauthenticated attacker can bypass authentication on VMware vCenter Server (CVE-2026-123890, CVSS 9.8); Google says ARMORY CASTLE exploited it as a zero-day, and Rapid7 reports activity from as early as September. Fixes include vCenter 8.0 U3m; there is no workaround."
-      ],
-      "downstream": [
-        "vCenter controls every virtual machine it manages, so one compromised server can expose a whole virtual estate.",
-        "Exploitation predates the fix, so patching does not show whether a server was already entered; logs back to September matter."
-      ],
-      "watch_for": [
-        "vCenter servers reachable from untrusted networks",
-        "Unexpected vCenter sign-ins or new local accounts",
-        "Hunting guidance and indicators from Google and Broadcom",
-        "Victims named in follow-up reporting"
-      ],
-      "who_should_care": [
-        "Virtualisation admins",
-        "SOC analysts",
-        "Incident responders"
-      ]
-    },
-    {
-      "event_id": "plaid-karte-unauthorized-access-2026-11",
-      "basis": "stated",
-      "direct": [
-        "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
-      ],
-      "downstream": [
-        "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million ZOZOTOWN customers, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million, plus Sharp, Mitsumo, Timee, Mainichi Shimbun, Schoo and PLUS.",
-        "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
-        "Companies that ended their KARTE contract are included, so former customers should check too."
-      ],
-      "watch_for": [
-        "Further KARTE customers announcing leaks",
-        "Phishing that uses shop names, member IDs and dates of birth",
-        "Use of integration keys connected to KARTE",
-        "Regulator action by Japan's Personal Information Protection Commission"
-      ],
-      "who_should_care": [
-        "Japanese retailers and banks",
-        "Marketing technology owners",
-        "Vendor management"
-      ]
-    },
-    {
-      "event_id": "kepco-hanjeon-on-srm-personal-data-leak-2026-11",
-      "basis": "inferred",
-      "direct": [
-        "KEPCO says personal data of over 1.5 million people (a simple sum, overlap unchecked) leaked from its Hanjeon ON customer platform and SRM procurement system, including resident registration, bank account and card numbers; it believes an outside attacker broke in, blocked external IP access, suspended some services and asked police to investigate."
-      ],
-      "downstream": [
-        "Inferred: resident registration numbers with bank and card details are the material for fraud and for convincing phishing that poses as KEPCO bills or refunds.",
-        "Inferred: the SRM system serves KEPCO suppliers, so supplier staff may receive targeted phishing posing as KEPCO procurement."
-      ],
-      "watch_for": [
-        "KEPCO notices naming exactly what each person lost",
-        "Electricity bill or refund phishing in Korean",
-        "PIPC or police findings on how the attacker got in",
-        "Suppliers reporting phishing that uses procurement details"
-      ],
-      "who_should_care": [
-        "Korean banks and card issuers",
-        "KEPCO suppliers",
-        "Fraud teams"
-      ]
-    },
-    {
-      "event_id": "rapid7-java-17-rce-cve-2026-114938-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Any service that decodes untrusted Base64 on an affected x86-64 HotSpot Java runtime could be crashed or taken over without a login; CISA said to patch immediately."
-      ],
-      "downstream": [
-        "Siemens says every version of its Industrial Edge Management products is affected and has no fix yet, only the advice to block internet access, so the flaw reaches factory software.",
-        "Java is bundled inside third-party applications, appliances and container images, so exposure extends to products you did not build and depends on each vendor shipping a new runtime."
-      ],
-      "watch_for": [
-        "Unexpected JVM crashes and restarts",
-        "Vendor advisories naming a bundled Java runtime",
-        "Siemens fix releases for Industrial Edge",
-        "Signs of exploitation reported by CISA or vendors"
-      ],
-      "who_should_care": [
-        "App owners",
-        "OT engineers",
-        "Vendor management"
-      ]
-    },
-    {
-      "event_id": "atlassian-confluence-axis-cve-2026-90436-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Self-hosted Confluence Data Center with the Remote API enabled can be taken over without a login; CISA lists the Axis flaw as exploited."
-      ],
-      "downstream": [
-        "In the case Rapid7 saw, the intruder took database credentials, queried a cloud data warehouse and signed in to Microsoft 365 as a service account.",
-        "Apache Axis 1.x is end-of-life and may sit inside other Java products that will not get a fix."
-      ],
-      "watch_for": [
-        "Unusual Remote API requests to Confluence",
-        "Service accounts signing in from new places",
-        "Other products bundling Apache Axis 1.x"
-      ],
-      "who_should_care": [
-        "Confluence admins",
-        "Identity teams",
-        "SOC analysts"
-      ]
-    },
-    {
-      "event_id": "optimizely-web-script-injection-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Malicious JavaScript was injected into some Optimizely Web Experimentation customer projects, reaching 178 organisations by one researcher's count."
-      ],
-      "downstream": [
-        "Coverage says the code skimmed payment cards and swapped crypto addresses on customers' sites, so their visitors were the victims.",
-        "Sites that load third-party scripts without integrity checks or a strict Content-Security-Policy inherit the supplier's compromise."
-      ],
-      "watch_for": [
-        "Unexpected scripts on checkout pages",
-        "CSP violation reports",
-        "Notices from script and tag vendors"
-      ],
-      "who_should_care": [
-        "E-commerce teams",
-        "Web developers",
-        "Payment compliance"
-      ]
-    },
-    {
-      "event_id": "cairn-ai-monai-label-zero-day-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Amazon says AI agents run through the open-source Cairn tool found and exploited a path traversal zero-day in MONAI Label within 11 minutes of mapping its API and gained root; a fix came on Nov 18."
-      ],
-      "downstream": [
-        "The operator then gave the agents a proxy into a second university network running the same software, so one exposed research server can lead to others.",
-        "Medical imaging research platforms hold patient-derived data and often run outside central IT's patch cycle.",
-        "If agents can find a zero-day this quickly, the time between exposure and compromise for niche, internet-facing tools shrinks to minutes."
-      ],
-      "watch_for": [
-        "MONAI Label servers reachable from the internet",
-        "Unexpected file uploads or new root processes on research servers",
-        "Amazon indicators and further victims",
-        "Other Cairn-driven campaigns"
-      ],
-      "who_should_care": [
-        "University and hospital research IT",
-        "Medical imaging teams",
-        "SOC analysts"
-      ]
-    },
-    {
-      "event_id": "riken-fugaku-supercomputer-cyberattack-2026-11",
-      "basis": "stated",
-      "direct": [
-        "RIKEN took the Fugaku supercomputer offline after an intrusion; 4,222 users' data and 430 credentials, including 233 SSH private keys without a passphrase, were taken. There is no restart date."
-      ],
-      "downstream": [
-        "RIKEN says that for some of the stolen credentials, connections to external systems were confirmed, so universities and labs whose researchers used Fugaku may have been reached too.",
-        "Research computing relies on long-lived SSH keys; any key that was on Fugaku should be treated as compromised."
-      ],
-      "watch_for": [
-        "Notices from institutions whose users had Fugaku accounts",
-        "SSH logins with keys that were stored on Fugaku",
-        "An attacker or leak claim"
-      ],
-      "who_should_care": [
-        "Research computing admins",
-        "University IT",
-        "Identity teams"
-      ]
-    },
-    {
-      "event_id": "glinet-cloud-management-router-kvm-malware-2026-11",
-      "basis": "stated",
-      "direct": [
-        "GL.iNet says an unauthorized party exploited a flaw in its cloud remote management service to install malicious software on some GL.iNet routers and KVM devices; it fixed the cloud flaw and blocked the access used, and is still determining scope."
-      ],
-      "downstream": [
-        "GL.iNet says the fix does not remove malware from devices already infected, so owners must check and clean devices themselves.",
-        "A KVM device gives keyboard, screen and power control of the machine it is attached to, so an infected KVM can reach servers behind it (our inference from what the device does)."
-      ],
-      "watch_for": [
-        "GL.iNet guidance on how to detect and remove the malware",
-        "Unexpected outbound traffic from GL.iNet routers and KVMs",
-        "Devices enrolled in GL.iNet cloud management that nobody uses"
-      ],
-      "who_should_care": [
-        "Small office and remote-site IT",
-        "Data centre and lab admins using IP KVMs",
-        "Home-office users"
-      ]
-    }
-  ]
+ "generated_at": "2026-11-24T04:58:27Z",
+ "items": [
+  {
+   "event_id": "cert-fr-nginx-http2-rce-2026-11",
+   "basis": "stated",
+   "direct": [
+    "NGINX Open Source and Plus from 1.9.5 with HTTP/2 can be made to run code as the nginx worker without a login; fixes are in 1.30.7 and 1.31.9, and proof-of-concept code is public for one flaw."
+   ],
+   "downstream": [
+    "Xint chained one flaw with an unpatched Linux kernel SCTP bug to reach root and escape a Docker container, so a web front end can become a host compromise.",
+    "NGINX is embedded in load balancers, Kubernetes ingress controllers and appliances that update on their vendors' schedules; Synology has already listed the same CVE in DSM, so expect more appliance advisories."
+   ],
+   "watch_for": [
+    "Ingress and appliance vendors shipping fixed NGINX builds",
+    "Worker crashes on HTTP/2 traffic",
+    "A Linux kernel fix and CVE for the SCTP flaw",
+    "Reports of in-the-wild exploitation",
+    "Appliance advisories naming CVE-2026-123007"
+   ],
+   "who_should_care": [
+    "Web operations",
+    "Kubernetes teams",
+    "Appliance owners"
+   ]
+  },
+  {
+   "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11",
+   "basis": "stated",
+   "direct": [
+    "An unauthenticated attacker can bypass authentication on VMware vCenter Server (CVE-2026-123890, CVSS 9.8); Google says ARMORY CASTLE exploited it as a zero-day, and Rapid7 reports activity from as early as September. Fixes include vCenter 8.0 U3m; there is no workaround."
+   ],
+   "downstream": [
+    "vCenter controls every virtual machine it manages, so one compromised server can expose a whole virtual estate.",
+    "Exploitation predates the fix, so patching does not show whether a server was already entered; logs back to September matter."
+   ],
+   "watch_for": [
+    "vCenter servers reachable from untrusted networks",
+    "Unexpected vCenter sign-ins or new local accounts",
+    "Hunting guidance and indicators from Google and Broadcom",
+    "Victims named in follow-up reporting"
+   ],
+   "who_should_care": [
+    "Virtualisation admins",
+    "SOC analysts",
+    "Incident responders"
+   ]
+  },
+  {
+   "event_id": "greynoise-gt13-check-point-management-intrusions-2026-11",
+   "basis": "stated",
+   "direct": [
+    "GreyNoise says GT13 used 99 IP addresses against Check Point Security Management Servers from Oct 17 to Nov 2, reaching at least 22 organisations, running over 100 management tasks and taking data from 24 servers; it lists CVE-2026-16232 among the flaws."
+   ],
+   "downstream": [
+    "A management server holds policy, credentials and configuration for every gateway it manages, so a compromise there can change or expose firewall rules across the estate (our inference from how the product works).",
+    "Victims that have not checked management-server logs since October may not know they were reached."
+   ],
+   "watch_for": [
+    "A Check Point advisory or CISA KEV entry for CVE-2026-16232",
+    "Unexpected management tasks or admin sessions in SmartConsole audit logs since Oct 17",
+    "Policy pushes nobody scheduled",
+    "Further GT13 reporting or attribution"
+   ],
+   "who_should_care": [
+    "Check Point customers",
+    "Network security teams",
+    "MSSPs running firewall management"
+   ]
+  },
+  {
+   "event_id": "plaid-karte-unauthorized-access-2026-11",
+   "basis": "stated",
+   "direct": [
+    "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
+   ],
+   "downstream": [
+    "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million ZOZOTOWN customers, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million, plus Sharp, Mitsumo, Timee, Mainichi Shimbun, Schoo and PLUS.",
+    "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
+    "Companies that ended their KARTE contract are included, so former customers should check too."
+   ],
+   "watch_for": [
+    "Further KARTE customers announcing leaks",
+    "Phishing that uses shop names, member IDs and dates of birth",
+    "Use of integration keys connected to KARTE",
+    "Regulator action by Japan's Personal Information Protection Commission"
+   ],
+   "who_should_care": [
+    "Japanese retailers and banks",
+    "Marketing technology owners",
+    "Vendor management"
+   ]
+  },
+  {
+   "event_id": "kepco-hanjeon-on-srm-personal-data-leak-2026-11",
+   "basis": "inferred",
+   "direct": [
+    "KEPCO says personal data of over 1.5 million people (a simple sum, overlap unchecked) leaked from its Hanjeon ON customer platform and SRM procurement system, including resident registration, bank account and card numbers; it believes an outside attacker broke in, blocked external IP access, suspended some services and asked police to investigate."
+   ],
+   "downstream": [
+    "Inferred: resident registration numbers with bank and card details are the material for fraud and for convincing phishing that poses as KEPCO bills or refunds.",
+    "Inferred: the SRM system serves KEPCO suppliers, so supplier staff may receive targeted phishing posing as KEPCO procurement."
+   ],
+   "watch_for": [
+    "KEPCO notices naming exactly what each person lost",
+    "Electricity bill or refund phishing in Korean",
+    "PIPC or police findings on how the attacker got in",
+    "Suppliers reporting phishing that uses procurement details"
+   ],
+   "who_should_care": [
+    "Korean banks and card issuers",
+    "KEPCO suppliers",
+    "Fraud teams"
+   ]
+  },
+  {
+   "event_id": "european-commission-cyberattack-payroll-2026-11",
+   "basis": "stated",
+   "direct": [
+    "The Commission confirmed a campaign it calls AI-generated, detected Oct 22, that took applications offline, and on Nov 23 that names and email addresses were stolen from its EU Academy learning platform."
+   ],
+   "downstream": [
+    "EU Academy users were notified and should expect phishing that uses the Commission's name; the Commission itself warned of this.",
+    "Euronews, citing two sources, reports a suspected China-backed actor and an attack not fully contained, which would keep EU institutions and their contacts in scope."
+   ],
+   "watch_for": [
+    "Phishing posing as EU Academy or Commission HR",
+    "A formal attribution or CERT-EU guidance",
+    "Confirmation the intrusion is contained",
+    "Notices from other EU bodies sharing the affected systems"
+   ],
+   "who_should_care": [
+    "EU institutions and agencies",
+    "EU Academy users",
+    "Public bodies working with the Commission"
+   ]
+  },
+  {
+   "event_id": "rapid7-java-17-rce-cve-2026-114938-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Any service that decodes untrusted Base64 on an affected x86-64 HotSpot Java runtime could be crashed or taken over without a login; CISA said to patch immediately."
+   ],
+   "downstream": [
+    "Siemens says every version of its Industrial Edge Management products is affected and has no fix yet, only the advice to block internet access, so the flaw reaches factory software.",
+    "Java is bundled inside third-party applications, appliances and container images, so exposure extends to products you did not build and depends on each vendor shipping a new runtime."
+   ],
+   "watch_for": [
+    "Unexpected JVM crashes and restarts",
+    "Vendor advisories naming a bundled Java runtime",
+    "Siemens fix releases for Industrial Edge",
+    "Signs of exploitation reported by CISA or vendors"
+   ],
+   "who_should_care": [
+    "App owners",
+    "OT engineers",
+    "Vendor management"
+   ]
+  },
+  {
+   "event_id": "cairn-ai-monai-label-zero-day-2026-11",
+   "basis": "stated",
+   "direct": [
+    "Amazon says AI agents run through the open-source Cairn tool found and exploited a path traversal zero-day in MONAI Label within 11 minutes of mapping its API and gained root; a fix came on Nov 18."
+   ],
+   "downstream": [
+    "The operator then gave the agents a proxy into a second university network running the same software, so one exposed research server can lead to others.",
+    "Medical imaging research platforms hold patient-derived data and often run outside central IT's patch cycle.",
+    "If agents can find a zero-day this quickly, the time between exposure and compromise for niche, internet-facing tools shrinks to minutes."
+   ],
+   "watch_for": [
+    "MONAI Label servers reachable from the internet",
+    "Unexpected file uploads or new root processes on research servers",
+    "Amazon indicators and further victims",
+    "Other Cairn-driven campaigns"
+   ],
+   "who_should_care": [
+    "University and hospital research IT",
+    "Medical imaging teams",
+    "SOC analysts"
+   ]
+  },
+  {
+   "event_id": "glinet-cloud-management-router-kvm-malware-2026-11",
+   "basis": "stated",
+   "direct": [
+    "GL.iNet says an unauthorized party exploited a flaw in its cloud remote management service to install malicious software on some GL.iNet routers and KVM devices; it fixed the cloud flaw and blocked the access used, and is still determining scope."
+   ],
+   "downstream": [
+    "GL.iNet says the fix does not remove malware from devices already infected, so owners must check and clean devices themselves.",
+    "A KVM device gives keyboard, screen and power control of the machine it is attached to, so an infected KVM can reach servers behind it (our inference from what the device does)."
+   ],
+   "watch_for": [
+    "GL.iNet guidance on how to detect and remove the malware",
+    "Unexpected outbound traffic from GL.iNet routers and KVMs",
+    "Devices enrolled in GL.iNet cloud management that nobody uses"
+   ],
+   "who_should_care": [
+    "Small office and remote-site IT",
+    "Data centre and lab admins using IP KVMs",
+    "Home-office users"
+   ]
+  },
+  {
+   "event_id": "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+   "basis": "inferred",
+   "direct": [
+    "Wiz reports that successful attacks by agent frameworks such as ARTEX grew sharply over three weeks, with about twenty further incidents disclosed by vendors, from several unrelated operators; CSIRT Italia and New Zealand's NCSC issued warnings in the same days."
+   ],
+   "downstream": [
+    "Agents scan, exploit and move through many organisations at once, so time from public exploit to compromise shrinks (our inference from the cases on file).",
+    "Because the tools are open source and copied, takedowns of one build do not stop use, as NZ's NCSC described."
+   ],
+   "watch_for": [
+    "Bursts of exploitation across many targets within hours",
+    "ARTEX indicators published by Wiz or CERTs",
+    "Victim notices that describe \"agentic\" or \"AI-generated\" intrusions",
+    "Exploited CVEs listed by CSIRT Italia"
+   ],
+   "who_should_care": [
+    "SOC teams",
+    "Vulnerability management",
+    "Organisations with internet-facing apps"
+   ]
+  }
+ ]
 }

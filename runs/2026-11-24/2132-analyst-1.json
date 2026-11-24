@@ -1,0 +1,37 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-24T21:32:08Z",
+  "finished_at": "2026-11-24T21:55:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "watchTowr Idunno.AntiCsrf CVE-2026-131914",
+    "Drupal CVE-2026-132165 install.php exploited analysis",
+    "drupal.org documentation securing the installer install.php after installation",
+    "watchTowr labs Idunno AntiCsrf deserialization exploitation honeypot",
+    "Idunno.AntiCsrf CVE-2026-131914 exploited in the wild research blog"
+  ],
+  "pages_read": [
+    {"url": "https://www.drupal.org/sa-core-2026-017", "title": "Drupal SA-CORE-2026-017", "used_in": "CVE-2026-132165"},
+    {"url": "https://www.drupal.org/node/3636972", "title": "Drupal SA-CORE-2026-017 (node alias)", "used_in": "CVE-2026-132165"},
+    {"url": "https://thehackernews.com/2026/11/drupal-patches-critical-installer-flaw.html", "title": "The Hacker News: Drupal patches critical installer flaw", "used_in": "CVE-2026-132165"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-13", "title": "CISA KEV catalog entries", "used_in": "CVE-2026-131914, CVE-2026-132165, CVE-2026-132224"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-131914", "title": "CVE record CVE-2026-131914", "used_in": "CVE-2026-131914"},
+    {"url": "https://thehackernews.com/2026/11/hackers-exploit-critical-aspnet-anti.html", "title": "The Hacker News: ASP.NET anti-CSRF flaw exploited", "used_in": "CVE-2026-131914"},
+    {"url": "https://status.optimizely.com/incidents/ftw0fh9wx43z", "title": "Optimizely status: Web Experimentation Security Incident", "used_in": "CVE-2026-132224"},
+    {"url": "https://pages.optimizely.com/rs/947-RKE-048/images/Security%20Incident%20Report%20-%20Optimizely%20Web%20Experimentation%20-%20Nov%2017%202026.pdf", "title": "Optimizely Security Incident Report (summary version, 20 Nov)", "used_in": "CVE-2026-132224"},
+    {"url": "https://unit42.paloaltonetworks.com/optimjack-supply-chain-attack/", "title": "Unit 42: OPTIMJACK", "used_in": "CVE-2026-132224"},
+    {"url": "https://www.zscaler.com/blogs/security-research/attackers-exploit-optimizely-flaw-inject-malicious-javascript", "title": "Zscaler ThreatLabz on Optimizely flaw", "used_in": "CVE-2026-132224"},
+    {"url": "https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-060/", "title": "CSA Singapore AL-2026-060", "used_in": "not used: covers CVE-2026-9082, a different Drupal flaw"}
+  ],
+  "added": ["CVE-2026-131914", "CVE-2026-132165", "CVE-2026-132224"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Mandiant MNDT-2026-0048 (Idunno.AntiCsrf) not read directly", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "note": "Page answered 403 to the automated reader; not worked around. CVE-2026-131914 analysis rests on CISA, the CVE record and The Hacker News, confidence medium. Re-read when reachable to confirm detection and replacement guidance.", "priority": "high"},
+    {"title": "watchTowr write-up on Idunno.AntiCsrf exploitation", "url": "https://thehackernews.com/2026/11/hackers-exploit-critical-aspnet-anti.html", "note": "THN cites watchTowr honeypot probes; the watchTowr post itself was not found by search.", "priority": "medium"},
+    {"title": "Drupal installer-hardening documentation and any incident write-up for CVE-2026-132165", "url": "https://www.drupal.org/sa-core-2026-017", "note": "The linked guide on securing the installer was not located; no responder write-up of the live exploitation found yet. Analysis confidence medium.", "priority": "medium"},
+    {"title": "Optimizely final forensic report / root cause", "url": "https://status.optimizely.com/incidents/ftw0fh9wx43z", "note": "Investigation still open on 20 Nov; full report is in the customer portal only.", "priority": "low"}
+  ],
+  "failed_sites": ["github.com (Mandiant Vulnerability-Disclosures, HTTP 403)", "nvd.nist.gov (returned only the home page)"],
+  "notes": "analyses/CVE-2026-131914.json and CVE-2026-132165.json already existed and were overwritten with new analyses without reading the prior versions first; the earlier content is recoverable from data-branch history if needed. No data/guides files existed for these CVEs. Some aggregators (securityonline CVE Watchtower) wrongly list Idunno 0.9.1.0 as patched and say no exploitation; they were not used. No instructions were found in page text."
+}

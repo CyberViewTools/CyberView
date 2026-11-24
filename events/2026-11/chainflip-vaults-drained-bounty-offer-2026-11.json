@@ -26,7 +26,7 @@
   "pin_type": "none",
   "geo_basis": "No page read states where Chainflip is based or where the affected systems are.",
   "actor": "",
-  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults. It offered a 10% bounty if 90% is returned by 18:38 UTC on 23 November and says it has identified the mechanism of key exposure. Bitcoin.com reports Chainflip linked the incident to a newly registered validator; Shattered and CryptoTicker report safe mode.",
+  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults, and offered a 10% bounty. Its incident report of 23 November says a further 10.48288011 BTC was taken after the first key rotation, and that the attacker used validator access to exploit a flaw in a third-party networking library; some steps are not fully confirmed.",
   "plain": "The crypto service Chainflip says an attacker took bitcoin, ether and stablecoins from its vaults on 21 November. It offers to let the attacker keep 10% if 90% is returned by 23 November.",
   "exec": "Chainflip says vault funds were taken through key exposure and its protocol is in safe mode, per Shattered and CryptoTicker.",
   "action": "No action needed; for awareness.",
@@ -40,6 +40,11 @@
   "cves": [],
   "tags": [],
   "sources": [
+    {
+      "name": "Chainflip: Incident Report: Bitcoin and Ethereum Vault Exploit (Part 1)",
+      "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-1",
+      "published": "2026-11-23"
+    },
     {
       "name": "Chainflip Labs: Message from Chainflip Labs",
       "url": "https://chainflip.io/return",
@@ -58,6 +63,11 @@
       "name": "Bitcoin.com (Portuguese)",
       "url": "https://news.bitcoin.com/pt/security/hacker-do-chainflip-rouba-us-12-milhoes-token-flip-cai-69/",
       "published": "2026-11-22"
+    },
+    {
+      "name": "Crypto Insiders (Netherlands)",
+      "url": "https://www.crypto-insiders.nl/nieuws/wallets-en-exchanges/hacker-steelt-twee-keer-bitcoin-bij-hetzelfde-cryptoplatform/",
+      "published": "2026-11-24"
     }
   ],
   "evidence": [
@@ -76,6 +86,10 @@
     {
       "url": "https://cryptoticker.io/en/chainflip-hack-12-million-vaults-drained-signing-key/",
       "quote": "According to The Block, the attack began on November 21 at around 2:10 a.m. Eastern Time, or about 8:10 a.m. German time."
+    },
+    {
+      "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-1",
+      "quote": "10.48288011 BTC remaining in the vault, still accessible via the stolen key, was taken."
     }
   ],
   "source_tier": "primary",
@@ -99,7 +113,7 @@
     "url": "https://chainflip.io/return"
   },
   "first_seen": "2026-11-22T11:55:17Z",
-  "updated_at": "2026-11-23T13:40:58Z",
+  "updated_at": "2026-11-24T10:45:12Z",
   "review": {
     "state": "passed",
     "at": "2026-11-23T17:28:32Z",

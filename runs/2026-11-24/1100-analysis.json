@@ -1,0 +1,31 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-24T10:54:26Z",
+  "finished_at": "2026-11-24T11:01:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-17 --limit 600 (one line per event)",
+    "q.mjs find binance --since 2026-10-25",
+    "q.mjs find karte --since 2026-11-10",
+    "q.mjs runs --days 1"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "plaid-karte-unauthorized-access-2026-11",
+    "binance-adgm-freezing-order-2026-11"
+  ],
+  "skipped": [
+    {"title": "DOJ civil forfeiture of $1.1bn USDC from Binance theft", "url": "https://www.justice.gov/opa/pr/united-states-files-action-recover-more-1-billion-cryptocurrency-assets-stolen-north-korean", "reason": "Filed as duplicate of doj-facestealer-infrastructure-seizure-2026-11 (Nov 12, outside window); mentioned in the Binance pattern narrative, not cited as an event id."},
+    {"title": "Spanish NoName057(16) arrest and Knack blacklist report (edge)", "url": "", "reason": "Edge downgraded from stated to inferred: both name the same group but no source links the two actions, so no globe arc was added."},
+    {"title": "n0n claims (JPMorgan vendor data and Samsung smart-TV data)", "url": "", "reason": "Linked only by group name on unconfirmed claims; edge kept inferred, no globe arc."},
+    {"title": "Inception leak-site listings vs ReversingLabs vishing report", "url": "", "reason": "ReversingLabs calls the listings unverified and ties no listed victim to the vishing; edge kept inferred, no globe arc."}
+  ],
+  "open_leads": [
+    {"title": "Hana Savings Bank identity re-verification intrusion (Hankyung tally of five savings banks)", "url": "https://www.hankyung.com/article/2026112476381", "note": "Only Hankyung's tally on file; a bank or FSS statement would allow a stand-alone event and confirm whether the five share a supplier.", "priority": "medium"},
+    {"title": "US investigation of Iran over tanker cyberattacks", "url": "https://www.al-monitor.com/originals/2026/11/us-eyes-iran-possible-culprit-dozens-new-cyberattacks-against-ships-wsj-reports", "note": "Attribution unconfirmed (official says no evidence yet); watch for a Coast Guard or CISA statement before any stated edge to US-Iran events.", "priority": "medium"},
+    {"title": "Bell incident filed under three event ids", "url": "", "note": "bell-canada-agentic-actor-enterprise-data-2026-11, bell-virgin-customer-data-intrusion-2026-11 and bell-agentic-threat-actor-incident-2026-11 are all on file as separate, non-duplicate events for the same Nov 17 incident; a review job should merge them.", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns) and data/ripples.json (10 items), and saved data/snapshots/analysis/2026-11-24.json (overwrote the earlier run's file from today). Continuity with the 04:58 analysis: NGINX2Root merged into patch-pressure; outages merged with the hospital part of sector clusters; the Korea part of sector clusters became a new pattern on South Korean financial hacks and liability policy (inferred); new stated pattern on the Binance theft laundering, plus bridge/vault drains grouped by sector and timing only; account-takeover widened to Inception vishing, Black Friday device-code phishing and GTA VI lures; AI pattern adds Wiz CyberStrikeAI EKS case, UK NCSC blog and Fortinet's Godzilla AI; developer pattern adds Cato fake AI-tool installer ads and Apiiro's Claude Code settings secrets; KARTE adds Kaunet, Canon MJ, Kurashiru, Suntory Wellness and Tinpan Alley; vendor pattern adds CloudSEK logistics vendor and netaffinity. Ripples: KEPCO replaced by the Binance laundering (Elliptic). Stated links added to earlier events: PLAID KARTE -> 5 customers (customers' own notices or Cybersecurity.com), Binance ADGM freezing order -> Lookonchain move (crypto.news) and Elliptic report (elliptic.co). A first script run wrote two malformed link entries (missing 'to'); they were removed and the build passes. No pages were opened this run: all reasoning uses fields already on file. No instructions found in data. No events added. Did not edit status.json or run git (worker rules); last_analysis_at is for the script to set."
+}

@@ -1,12 +1,12 @@
 {
-  "action": "Ipsos clients: no action required yet. You may ask your account contact whether the affected system held your data, and watch for an official update.",
+  "action": "Ipsos says it will contact clients, project or business partners directly if its investigation finds their information was affected.",
   "actor": "",
   "attack": [],
   "category": "incident",
   "country": "France",
   "cves": [],
   "date": "2026-11-16",
-  "exec": "A limited intrusion at a global research firm that holds client and survey data; no data loss figures have been given.",
+  "exec": "Ipsos says a breach of one internal system had no impact on its operations; its investigation is ongoing.",
   "first_seen": "2026-11-17T22:28:00Z",
   "geo_basis": "victim HQ",
   "lat": 48.83,
@@ -14,53 +14,38 @@
   "org": "Ipsos",
   "pin_type": "victim",
   "place": "Paris",
-  "plain": "Market research company Ipsos said on November 16 that intruders got into one of its internal systems. It reported no effect on its operations and has filed a complaint with the authorities.",
+  "plain": "Market research company Ipsos said on 16 November that one of its internal information systems was breached. It says operations were not affected and it has filed a complaint with the authorities.",
   "products": [
     "Ipsos"
   ],
   "sector": "Professional services / market research",
   "severity": 2,
-  "source_tier": "aggregator",
+  "source_tier": "primary",
   "sources": [
     {
-      "name": "Ipsos press release via Finanzwire (16 November 2026)",
-      "url": "https://www.finanzwire.com/press-release/ipsos-epa-ips-ipsos-announced-that-it-filed-a-complaint-on-wednesday-11-november-regarding-a-breach-on-one-of-its-internal-information-systems-L4xQZYjZXcz"
+      "name": "Ipsos press release via Finanzwire",
+      "url": "https://www.finanzwire.com/press-release/ipsos-epa-ips-ipsos-announced-that-it-filed-a-complaint-on-wednesday-11-november-regarding-a-breach-on-one-of-its-internal-information-systems-L4xQZYjZXcz",
+      "published": "2026-11-16"
     },
     {
       "name": "Security.nl",
       "url": "https://www.security.nl/posting/962870/Ransomwaregroep+claimt+hack+van+systemen+marktonderzoeker+Ipsos",
       "published": "2026-11-24"
-    },
-    {
-      "name": "MLQ.ai outage roundup",
-      "url": "https://mlq.ai/news/a-week-of-outages-the-faa-ground-stop-microsoft-365-chase-nsa-net-and-apple-and-what-is-known-about-the-causes/"
-    },
-    {
-      "name": "Windows Forum",
-      "url": "https://windowsforum.com/news/microsoft-365-outage-sparks-phishing-campaign-using-real-incident-id-ex1550543.452782/"
     }
   ],
   "status": "confirmed",
-  "summary": "Ipsos announced on November 16 that it had filed a complaint with the authorities on November 11 over a breach of one internal information system, and says operations were not affected. Its statement did not specify the type of incident. Security.nl reported on 24 November that the Qilin ransomware group claims to have stolen files, relaying a Hackmanac post on X.",
+  "summary": "Ipsos announced on 16 November that it filed a complaint with the authorities on 11 November over a breach of one of its internal information systems, and says the incident had no impact on its operations. Its statement did not say what kind of incident it was. Security.nl reported on 24 November that the Qilin ransomware group claims to have stolen files, citing a Hackmanac post on X; Ipsos has not confirmed the scope.",
   "tags": [
     "data-breach"
   ],
-  "title": "Ipsos says hackers accessed one internal system",
-  "updated_at": "2026-11-24T10:52:00Z",
+  "title": "Ipsos reports a breach of one internal information system",
+  "updated_at": "2026-11-24T11:13:36Z",
   "validation": {
-    "state": "corroborated",
-    "checked_at": "2026-11-19T05:12:12Z",
-    "note": "Company press release read in full; MLQ and Windows Forum agree."
+    "state": "primary",
+    "checked_at": "2026-11-24T11:13:36Z",
+    "note": "Ipsos press release (distributed by Finanzwire) read; Security.nl reports the same statement and adds the Qilin claim, which rests on a Hackmanac post."
   },
-  "review": {
-    "state": "corrected",
-    "at": "2026-11-19T05:12:35Z",
-    "note": "Added Ipsos press release: complaint filed Nov 11, announced Nov 16, no operational impact; now corroborated",
-    "flags": [
-      "confirmed-on-aggregator"
-    ]
-  },
-  "qa_checked_at": "2026-11-19T05:12:35Z",
+  "qa_checked_at": "2026-11-24T11:13:46Z",
   "sectors": {
     "values": [
       "professional-services"
@@ -70,5 +55,21 @@
   "surface": {
     "value": "unknown",
     "basis": "inferred"
+  },
+  "date_note": "Date is the day Ipsos announced it; the page gives no earlier announcement day. Ipsos says it filed its complaint on 11 November.",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T11:13:46Z",
+    "first_at": "2026-11-24T11:13:46Z",
+    "note": "source not read/validation: dropped MLQ and Windows Forum roundups (not about Ipsos), added published days, tier primary (Ipsos release read), removed unsourced exec/action advice, title softened to company wording, date_note added",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "date",
+      "validation",
+      "source"
+    ]
   }
 }

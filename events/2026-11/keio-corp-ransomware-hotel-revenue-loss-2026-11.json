@@ -1,5 +1,5 @@
 {
-  "action": "No action needed; for awareness. Hotel and retail operators should keep reservation and payment systems segmented and backed up so one ransomware infection cannot halt bookings.",
+  "action": "General advice: hotel and retail operators should keep reservation and payment systems segmented and backed up; no page read gives Keio's advice to the public.",
   "actor": "",
   "attack": [
     "ransomware"
@@ -9,7 +9,7 @@
   "cves": [],
   "date": "2026-11-17",
   "date_note": "Date Keio disclosed the revenue impact (as reported by Business+IT); the ransomware attack itself was confirmed on 26 September 2026.",
-  "exec": "A ransomware attack on a major Japanese rail and hotel group has halted hotel bookings for weeks and is expected to cost about 1.8 billion yen in hotel income.",
+  "exec": "A ransomware attack on a major Japanese rail and hotel group has suspended new hotel reservations and, per Keio, is expected to cut hotel income by about 1.8 billion yen.",
   "first_seen": "2026-11-20T00:30:00Z",
   "geo_basis": "headquarters",
   "lat": 35.6896,
@@ -26,12 +26,12 @@
     {
       "name": "Business+IT (sbbit)",
       "url": "https://www.sbbit.jp/article/cont1/188498",
-    "published": "2026-11-17"
+      "published": "2026-11-17"
     },
     {
       "name": "BleepingComputer",
       "url": "https://www.bleepingcomputer.com/news/security/japans-keio-confirms-ransomware-attack-disrupted-business-systems/",
-    "published": "2026-09-28"
+      "published": "2026-09-28"
     },
     {
       "name": "Security Measures Lab (Rocket Boys)",
@@ -52,30 +52,42 @@
     {
       "url": "https://www.watch.impress.co.jp/docs/news/2158875.html",
       "quote": "最大約1,108万人分の個人情報の漏えい可能性があるとしており、このうち従業員や退職者など約12,000人分の氏名や人事情報などの漏えいが確認された。"
+    },
+    {
+      "url": "https://www.sbbit.jp/article/cont1/188498",
+      "quote": "京王電鉄は11月17日、ランサムウェア攻撃によるシステム障害の影響で、ホテル「京王プレッソイン」の宿泊収入が2026年10～12月の3カ月累計で18億円程度減少する見通しだと明らかにした。"
     }
   ],
   "status": "confirmed",
-  "summary": "Keio Corporation said on 17 November that a ransomware attack, confirmed on its group servers in the early hours of 26 September, will cut Keio Presso Inn accommodation income by about 1.8 billion yen over October to December. On 24 November Keio published investigation results which, per Impress Watch, put possible leaks at up to about 11.08 million people; leaks were confirmed for employees and retirees. Business+IT reports Qilin; Keio did not name a group.",
+  "summary": "Keio Corporation said on 17 November that a ransomware attack, confirmed on 26 September, will cut Keio Presso Inn accommodation income by about 1.8 billion yen over October to December. On 24 November Keio published investigation results which, per Impress Watch, put possible leaks at up to about 11.08 million people; leaks were confirmed for employees and retirees. Business+IT says an outside expert told Keio Qilin was likely responsible.",
   "tags": [
     "ransomware",
-    "hospitality",
-    "japan"
+    "data-breach"
   ],
   "time_basis": "published",
-  "title": "Keio Corporation expects 1.8 billion yen hotel income loss after September ransomware attack",
-  "updated_at": "2026-11-24T10:45:12Z",
+  "title": "Keio Corporation expects hotel income loss after September ransomware attack",
+  "updated_at": "2026-11-24T11:13:30Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-20T00:30:00Z",
     "note": "Business+IT (17 Nov, free part of article) and BleepingComputer (28 Sep) read; both report the 26 September ransomware attack on Keio. Keio's own release PDF was linked but not opened. 24 Nov update: Security Measures Lab (Rocket Boys) read; it relays Keio's 24 Nov findings; Keio's own release not read. The Qilin link is Business+IT's relay of a KSB News report, not read. Update 24 Nov: Impress Watch (24 Nov) read for the investigation-results announcement (up to about 11.08 million possible, about 12,000 confirmed); Keio's own release was not opened."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T00:23:56Z",
-    "note": "Compared title, 17 Nov date, 26 Sep attack, 1.8bn yen Oct-Dec figure, suspended bookings, December reopening, possible data leak and Qilin relay against Business+IT (free part) and BleepingComputer (28 Sep)",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-24T11:13:41Z",
+    "first_at": "2026-11-20T00:23:56Z",
+    "note": "action advice unsourced -> General advice; exec 'for weeks' removed; Qilin restated as outside expert view per Business+IT; invalid tags removed; figure evidence added and figure dropped from title",
+    "flags": [
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "unsourced",
+      "action",
+      "figure",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-20T00:23:56Z",
+  "qa_checked_at": "2026-11-24T11:13:41Z",
   "sectors": {
     "values": [
       "transportation-systems",

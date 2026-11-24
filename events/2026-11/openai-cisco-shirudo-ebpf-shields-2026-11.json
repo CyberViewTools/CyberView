@@ -17,21 +17,58 @@
   "summary": "OpenAI says it and Cisco have open-sourced Shirudo, a runtime that uses eBPF 'shields' to block the code paths an exploit relies on in running Linux systems, without a restart, while a permanent fix is prepared. OpenAI describes one controlled test in which a Codex-generated shield blocked a Java4Shell exploit attempt against a running Elasticsearch service. Cyber Security News notes the GitHub project is listed as pre-release.",
   "plain": "OpenAI and Cisco released an open-source tool that can block a specific exploit on a running Linux server without a restart, while a permanent patch is prepared. The GitHub project is listed as pre-release.",
   "exec": "OpenAI says Shirudo is meant to close the gap between learning of a vulnerability and fixing every affected system; the project is listed as pre-release.",
-  "action": "No action needed; for awareness. Cyber Security News notes the shield does not replace the OpenJDK update.",
+  "action": "OpenAI advises monitoring how a proposed shield affects applications before enforcing it; it describes shields as temporary safeguards, not replacements for patching.",
   "impact": "Tool release; one controlled test described.",
-  "tags": ["ai-enabled"],
+  "tags": [
+    "ai-enabled"
+  ],
   "cves": [],
-  "products": ["Shirudo", "Linux", "Elasticsearch"],
+  "products": [
+    "Shirudo",
+    "Linux",
+    "Elasticsearch"
+  ],
   "attack": [],
   "sources": [
-    {"name": "OpenAI", "url": "https://openai.com/index/introducing-shirudo/", "published": "2026-11-23"},
-    {"name": "Cyber Security News", "url": "https://cybersecuritynews.com/openai-and-cisco-launch-shirudo/", "published": "2026-11-24"}
+    {
+      "name": "OpenAI",
+      "url": "https://openai.com/index/introducing-shirudo/",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/openai-and-cisco-launch-shirudo/",
+      "published": "2026-11-24"
+    }
   ],
   "evidence": [],
   "source_tier": "primary",
-  "validation": {"state": "corroborated", "checked_at": "2026-11-24T04:40:37Z", "note": "OpenAI's own announcement (primary) and Cyber Security News, which relays it and adds the pre-release status from GitHub."},
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-24T04:40:37Z",
+    "note": "OpenAI's own announcement (primary) and Cyber Security News, which relays it and adds the pre-release status from GitHub."
+  },
   "first_seen": "2026-11-24T04:40:37Z",
-  "updated_at": "2026-11-24T04:40:37Z",
-  "sectors": {"values": ["information-technology"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"}
+  "updated_at": "2026-11-24T04:42:46Z",
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T04:42:49Z",
+    "first_at": "2026-11-24T04:42:49Z",
+    "note": "action advice: replaced a Cyber Security News paraphrase with OpenAI's own stated advice (monitor before enforcing; shields are temporary, not a replacement for patching). Title, date, test, pre-release status, sources checked OK.",
+    "flags": [],
+    "categories": [
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T04:42:49Z"
 }

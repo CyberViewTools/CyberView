@@ -1,0 +1,83 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-24T21:17:00Z",
+  "finished_at": "2026-11-24T21:25:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1056/",
+      "title": "ZDI-26-1056",
+      "used_in": "pytorch-pt2-zdi-26-1056-2026-11"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-124286",
+      "title": "CVE-2026-124286",
+      "used_in": "lead only"
+    },
+    {
+      "url": "https://www.securityfocus.com/cve/CVE-2026-135250",
+      "title": "CVE-2026-135250",
+      "used_in": "lead only"
+    },
+    {
+      "url": "https://sploitus.com/exploit?id=37EAF1DF-A566-5A33-9F1E-F2CC509A48EC",
+      "title": "Sploitus PoC",
+      "used_in": "lead only"
+    }
+  ],
+  "added": [
+    "pytorch-pt2-zdi-26-1056-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "fastcore CVE-2026-65320",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-65320",
+      "reason": "database row, niche library"
+    },
+    {
+      "title": "Store Exporter CSRF",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-135046",
+      "reason": "database row"
+    },
+    {
+      "title": "Joomla XSS",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-129363",
+      "reason": "database row"
+    },
+    {
+      "title": "WP Recipe Maker",
+      "url": "https://vulners.com/patchstack/PATCHSTACK:6485CFCB833CDEC2EA9DB89475B0300B",
+      "reason": "database row"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Erlang OTP CVE-2026-124286 TLS 1.2 client accepts handshake without server certificate (CVSS 9.1)",
+      "url": "https://github.com/erlang/otp/security/advisories/GHSA-7mff-v332-665j",
+      "note": "GitHub advisory 403; try cna.erlef.org/cves/CVE-2026-124286.html; fixed in OTP 27.3.4.14, 28.5.0.9, 29.0.3 per aggregator",
+      "priority": "medium"
+    },
+    {
+      "title": "MISP CVE-2026-135250 DoS with public PoC, fixed in 2.5.52",
+      "url": "https://www.securityfocus.com/cve/CVE-2026-135250",
+      "note": "needs MISP advisory or commit page",
+      "priority": "low"
+    },
+    {
+      "title": "Adobe Campaign Classic code-injection CVEs (CVSS 9.9)",
+      "url": "https://helpx.adobe.com/security.html",
+      "note": "Adobe bulletin 403",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "helpx.adobe.com (403)",
+    "github.com advisory (403)",
+    "cve.org (empty page)"
+  ],
+  "notes": "Database-row leads without exploitation were closed as not events.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

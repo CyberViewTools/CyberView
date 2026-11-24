@@ -88,7 +88,7 @@ export function deletionsToRestore(deleted) {
 /** Run after `git add` and before `git commit` in the data checkout (cwd); prefix "data/" in the old layout. Returns
  *  how many deletions were undone. */
 export function protectDeletes(cwd, prefix = "") {
-  const del = run(cwd, ["diff", "--cached", "--name-only", "--diff-filter=D", "--", prefix || "."]).stdout.split("\n").filter(Boolean);
+  const del = run(cwd, ["diff", "--cached", "--name-only", "--no-renames", "--diff-filter=D", "--", prefix || "."]).stdout.split("\n").filter(Boolean);
   const back = deletionsToRestore(del.map((f) => f.slice(prefix.length)));
   if (!back.length) return 0;
   const paths = back.map((f) => prefix + f);

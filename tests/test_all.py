@@ -1580,7 +1580,10 @@ async def main():
             pg = await ctx.new_page(); errs = []
             pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
             await pg.goto(url); await pg.wait_for_timeout(1800)       # the globe is still spinning here
-            mk = await pg.evaluate("(() => { const r = document.querySelector('#svg g.m').getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()")
+            # a single marker whose centre is not under a neighbouring cluster's larger touch target (which data can put there)
+            mk = await pg.evaluate("(() => { for (const m of document.querySelectorAll('#svg g.m')) { const r = m.getBoundingClientRect(), x = r.x + r.width / 2, y = r.y + r.height / 2, at = document.elementFromPoint(x, y); if (at && at.closest('g.m') === m) return [x, y]; } return null; })()")
+            ok("phone: a single marker is tappable on the globe", mk is not None)
+            mk = mk or [0, 0]
             await pg.touchscreen.tap(mk[0], mk[1]); await pg.wait_for_timeout(600)
             top = await pg.evaluate("Math.round(document.getElementById('dbar').getBoundingClientRect().top)")
             ok("phone: a tap on a marker opens it even while the globe spins, with the details in view", await pg.locator("#dcard").count() == 1 and 0 <= top < 200, top)

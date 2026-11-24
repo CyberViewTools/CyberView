@@ -88,6 +88,12 @@ Measured, not estimated (session transcripts via list_events, data/usage ledger)
 - **Fresh session per wake does NOT work with tool-created scheduled tasks (probed 2026-11-23 22:55).** A task made with create_trigger(create_new_session_on_fire) starts a session with no checkout, no `add_repo` tool and no push access, even when created from the `cyberview` environment (which has the repo saved). Headless `claude -p` does work there. Options: tasks created in the claude.ai routines UI with the repository attached, or the loop in GitHub Actions with a CLAUDE_CODE_OAUTH_TOKEN secret. `node scripts/dispatch.mjs <job> --exec` (this PR) makes either one a single shell call.
 - Disabled 2026-11-23 (owner): "CyberView health watch" and "CyberView Grok review" (no checkout, ran on Opus, could not do their job). The Guardian still runs every 2 h.
 
+## Pen test of 2026-11-23 (PR "Pen test fixes")
+
+Fixed: fallback key no longer in worker env; protectDeletes --no-renames; issue intake (verify desk reads only `scripts/issues.mjs list`: pipeline issues from automation/maintainers + fenced event-report tips, answers via `issues.mjs reply`; moderator answers reports via `chat.mjs resolve-report`; neither role has `gh api` any more); Grok trust (`scripts/lib/grok-trust.mjs`: write access + for-claude label); event-report issue form (the old `?labels=` link was ignored for visitors); frame-buster in nav/account/unsubscribe; sw.js cache v2 keyed by path, only deletes cyberview-* caches; ReDoS in workbench isVer and scanner VER; leak-host trailing-dot bypass.
+Owner decided to KEEP (2026-11-23): `Bash(node:*)` for workers (the site auto-publishes by design) and auto-merge of job config/docs PRs.
+Open, not fixed: shared origin xanderhutch.github.io (real fix: custom domain), Supabase session in localStorage (before turning accounts on), consent columns user-writable (SQL trigger), scanner release has no provenance attestation, public cost telemetry in ops/efficiency.json, malformed run-log timestamps in ops.json, platform re-injects GH/AWS/GCloud vars into worker shells.
+
 ## Pending owner actions
 
 1. Set env var `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` in the cyberview environment to arm the API fallback. The subscription stays primary (see CLAUDE.md "Reliability rules"). Name only — never a value here.

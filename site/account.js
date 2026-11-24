@@ -6,6 +6,9 @@
 //   - export and deletion are self-service. No HTML string sinks: every node is built and filled with textContent.
 (function () {
   "use strict";
+  // not framed by another site (pen test 2026-11-23): GitHub Pages cannot send frame-ancestors, so a framed copy hides
+  // itself and tries to take over the top window; this blocks clickjacking of the list and account controls
+  if (window.top !== window.self) { document.documentElement.style.display = "none"; try { window.top.location = window.self.location.href; } catch (e) {} return; }
   var $ = function (id) { return document.getElementById(id); };
   var meta = function (n) { var m = document.querySelector('meta[name="' + n + '"]'); return m ? m.getAttribute("content") || "" : ""; };
   var URL_ = meta("cv-supabase-url"), KEY = meta("cv-supabase-key");

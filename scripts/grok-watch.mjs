@@ -21,17 +21,20 @@ const short = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
 // (and mislabel replies as Grok messages). Every relay seen to date says "Grok Bot here".
 const isGrokTitle = (t) => /^\s*\[grok\b/i.test(t || "");
 const isGrokMsg = (b) => /\bgrok bot\b|\[grok\b/i.test(b || "");
+import { trustedAuthor, grokIssue, grokComment } from "./lib/grok-trust.mjs";
 
 const DAYS = Number(arg("days", 21)) || 21;
 const since = new Date(Date.now() - DAYS * 864e5).toISOString();
 
 // 1) candidate issue/PR numbers: [Grok]-titled issues + any thread with a recent "Grok Bot" comment (repo-wide)
 const cand = new Map();   // number -> { number, isPr, title }
+const ignored = [];       // "Grok"-looking items from people without write access, or briefs without the for-claude label
 for (const i of gh("issues", "?state=all&per_page=50&sort=created&direction=desc") || [])
-  if (i && isGrokTitle(i.title)) cand.set(i.number, { number: i.number, isPr: !!i.pull_request, title: i.title });
+  if (i && isGrokTitle(i.title)) { if (grokIssue(i)) cand.set(i.number, { number: i.number, isPr: !!i.pull_request, title: i.title }); else ignored.push(`#${i.number} ${short(i.title, 80)} (by ${(i.user && i.user.login) || "?"}: ${!trustedAuthor(i) ? "no write access" : "no for-claude label"})`); }
 for (const path of ["issues/comments", "pulls/comments"])
   for (const c of gh(path, "?sort=updated&direction=desc&per_page=100") || []) {
     if ((c.updated_at || "") < since || !isGrokMsg(c.body)) continue;
+    if (!grokComment(c)) { ignored.push(`comment by ${(c.user && c.user.login) || "?"} (no write access): ${c.html_url || ""}`); continue; }
     const n = Number(((c.issue_url || c.pull_request_url || c.html_url || "").match(/\/(?:issues|pull|pulls)\/(\d+)/) || [])[1] || 0);
     if (n && !cand.has(n)) cand.set(n, { number: n, isPr: path.startsWith("pulls") || /\/pull\//.test(c.html_url || ""), title: "" });
   }
@@ -42,12 +45,12 @@ const allPulls = gh("pulls", "?state=all&per_page=100") || [];   // fetched once
 const items = [...cand.values()].map((x) => {
   const meta = gh(`issues/${x.number}`) || {};                         // the issues API serves PRs too
   const comments = gh(`issues/${x.number}/comments`, "?per_page=100") || [];
-  const grok = comments.filter((c) => isGrokMsg(c.body));
+  const grok = comments.filter(grokComment);
   // the time of Grok's most recent word on the thread (the [Grok] title counts as its first)
   const lastGrokAt = grok.length ? grok[grok.length - 1].created_at : (isGrokTitle(meta.title) ? meta.created_at : "");
   const isPr = x.isPr || !!meta.pull_request;
   // handled = a non-Grok reply after Grok's last word, or the thread is closed/merged, or (for an issue brief) a PR links it
-  const replied = comments.some((c) => !isGrokMsg(c.body) && (c.created_at || "") > lastGrokAt);
+  const replied = comments.some((c) => !grokComment(c) && trustedAuthor(c) && (c.created_at || "") > lastGrokAt);
   const linkedPr = !isPr && allPulls.some((p) => new RegExp(`#${x.number}\\b`).test((p.body || "") + " " + (p.title || "")));
   const handled = meta.state === "closed" || replied || linkedPr;
   return { number: x.number, isPr, title: meta.title || x.title || "(thread)", state: meta.state || "?",
@@ -69,4 +72,5 @@ else {
     if (x.lastComment) console.log(`  last: ${x.lastComment}`);
   }
   if (!show.length) console.log("  nothing waiting.");
+  if (ignored.length) { console.log(`\nIGNORED (${ignored.length}): "Grok"-looking items that are not trusted; never acted on:`); for (const l of ignored.slice(0, 20)) console.log(`  ${l}`); }
 }

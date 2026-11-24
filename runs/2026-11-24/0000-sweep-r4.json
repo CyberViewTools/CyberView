@@ -1,37 +1,45 @@
 {
   "job": "sweep-r4",
   "model": "claude-sonnet-5-5",
+  "searches": [],
   "pages_read": [
     {
-      "url": "https://www.ice.co.il/digital-140/news/article/1138859",
-      "title": "Ice Israel police",
-      "used_in": "closed as already on file"
+      "url": "https://securitycontext.com/cve/CVE-2026-129705",
+      "title": "Mosquitto row",
+      "used_in": "none"
     },
     {
-      "url": "https://objective-see.org/blog/blog_0x56.html",
-      "title": "The S in Zoom",
-      "used_in": "dated 2020-03-30"
+      "url": "https://sploitus.com/exploit?id=KITPLOIT:TOOLS-GITHUB-FANBYPRINCIPLE-IMAGEMAGICK-LFI-POC",
+      "title": "ImageMagick PoC",
+      "used_in": "none"
     }
   ],
   "added": [],
   "updated": [],
   "skipped": [
     {
-      "title": "Objective-See posts 0x38,0x40,0x45,0x55,0x56",
-      "reason": "older than map window"
+      "title": "ImageMagick-lfi-poc",
+      "url": "https://sploitus.com/exploit?id=KITPLOIT:TOOLS-GITHUB-FANBYPRINCIPLE-IMAGEMAGICK-LFI-POC",
+      "reason": "PoC for old CVE-2022-44268"
     },
     {
-      "title": "CISO AI advice",
-      "reason": "commentary"
-    },
-    {
-      "title": "Surigao cyberlibel",
-      "reason": "legal dispute, not a cyber event"
+      "title": "CVE-2026-124460/124449/121480/113408/102945/134348",
+      "url": "https://securitycontext.com/cve/",
+      "reason": "medium severity database rows, no exploitation, no urgent notice, only an aggregator page"
     }
   ],
-  "open_leads": [],
-  "failed_sites": [],
-  "notes": "Only 0x56 had its date read; the other four Objective-See posts were closed on the series being years old, not on their own dates. Israel Police story already on file.",
+  "open_leads": [
+    {
+      "title": "CVE-2026-129705 Eclipse Mosquitto 2.1.0-2.1.2 PROXY v2 spoofing, CVSS 9.1",
+      "url": "https://securitycontext.com/cve/CVE-2026-129705",
+      "note": "GHSA-m6rg-rrm7-h727 and PoC repo returned 403; find vendor or other page",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "github.com (403)"
+  ],
+  "notes": "No events written.",
   "worker_role": "researcher",
   "worker_model": "sonnet"
 }

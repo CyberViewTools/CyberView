@@ -14,14 +14,13 @@
   "geo_basis": "agency headquarters",
   "pin_type": "agency",
   "actor": "",
-  "summary": "CSIRT Italia's bulletin says attackers are using AI agents built on language models to automate the phases of an intrusion with little human input. It names tools including ARTEX, CyberStrikeAI, DeepSeek Harness - Red Team and PentAGI. The bulletin says directly observed cases involved the compromise of a large number of systems in hours or days, and lists CVEs marked as exploited or with public proof of concept.",
+  "summary": "CSIRT Italia's bulletin says attackers are using AI agents built on language models to automate the phases of an intrusion with little human input. It names tools including ARTEX, CyberStrikeAI, DeepSeek Harness - Red Team and PentAGI. The bulletin says directly observed cases involved the compromise of a large number of systems within hours, and lists CVEs marked as exploited or with public proof of concept.",
   "plain": "Italy's national CSIRT says attackers are using AI agents to run intrusions automatically, which it says can compromise many systems quickly.",
   "exec": "CSIRT Italia says AI-driven attack tooling can compromise many systems quickly, so unpatched exposed systems are at risk.",
   "action": "CSIRT Italia advises updating exposed systems as soon as possible, limiting management interfaces to dedicated networks or VPN with MFA, applying least privilege and keeping offline or immutable backups.",
   "impact": "Faster, continuous automated attacks that chain flaws, misconfigurations and stale credentials, per CSIRT Italia.",
   "tags": [
-    "ai",
-    "advisory"
+    "ai-enabled"
   ],
   "cves": [],
   "products": [],
@@ -64,7 +63,7 @@
     "note": "CSIRT Italia's own bulletin; no independent publisher read."
   },
   "first_seen": "2026-11-23T20:56:30Z",
-  "updated_at": "2026-11-24T05:01:16Z",
+  "updated_at": "2026-11-24T05:17:21Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -76,13 +75,17 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-23T21:11:26Z",
+    "state": "corrected",
+    "at": "2026-11-24T05:17:27Z",
     "first_at": "2026-11-23T21:11:26Z",
-    "note": "Compared title, date, tools named, observed-cases wording, CVE listing and the four mitigations against the ACN bulletin BL01/261123/CSIRT-ITA",
-    "flags": []
+    "note": "tags: invalid ai/advisory replaced by ai-enabled; summary hours or days narrowed to within hours per bulletin",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "tags"
+    ]
   },
-  "qa_checked_at": "2026-11-23T21:11:26Z",
+  "qa_checked_at": "2026-11-24T05:17:27Z",
   "hunt": [
     {
       "name": "CSIRT Italia MISP feed: ARTEX",

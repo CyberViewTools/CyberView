@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { latency, startOf, addClosures } from "../../scripts/lib/latency.mjs";
 import { leaderBlocks, hostId } from "../../scripts/lib/lease.mjs";
-import { clampFuture, cronMinutes, flowDeadline } from "../../scripts/run-job.mjs";
+import { clampFuture, cronMinutes, flowDeadline, workerBudget } from "../../scripts/run-job.mjs";
 import { order, reviewRecord, waitingSince, flagsFor, passBlockers } from "../../scripts/review.mjs";
 
 const T = (s) => `2026-11-19T${s}:00Z`;
@@ -72,6 +72,18 @@ test("the loop ends a minute before the last restart schedule inside its life, n
   assert.equal(flowDeadline(t0, life, null), t0 + life);
   assert.equal(flowDeadline(t0, 5 * 6e4, ticks), t0 + 5 * 6e4, "no tick inside a short life: the life decides");
   assert.ok(flowDeadline(t0, life, ticks) <= t0 + life);
+});
+
+// 24 November: collection took 2.5-3.5 minutes of a 7-minute span and the pool waited for every worker with no regard to
+// the span's end, so the dispatcher killed the loop at 8.5 minutes before its commit and heartbeats (11 h with none)
+test("a worker in a bounded loop is stopped at the span's end, and none starts with too little time left", () => {
+  const now = Date.parse(T("07:08")), end = Date.parse(T("07:12"));
+  assert.equal(workerBudget(25 * 6e4, end, now), 4 * 6e4, "capped at the span's end");
+  assert.equal(workerBudget(3 * 6e4, end, now), 3 * 6e4, "its own timeout when that comes first");
+  assert.equal(workerBudget(25 * 6e4, Infinity, now), 25 * 6e4, "no span: its own timeout");
+  assert.equal(workerBudget(25 * 6e4, null, now), 25 * 6e4, "no span: its own timeout");
+  assert.equal(workerBudget(25 * 6e4, now + 30000, now), 0, "under the minimum: not started");
+  assert.equal(workerBudget(25 * 6e4, now - 1, now), 0, "past the end: not started");
 });
 
 // ---- the review queue ----

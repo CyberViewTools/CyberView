@@ -5,7 +5,14 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 | Tier | What | Workflow | Model |
 |---|---|---|---|
 | 0 | Deploy: build with quarantine, verify the build, publish to GitHub Pages, then confirm the live copy matches, after every push and every data workflow | `pages.yml` | none |
-| 0 | Lead collector: 228 built-in agency, vendor and news RSS and Atom feeds plus config/feeds.json and the shards in config/feeds.d (about 2,500 feeds, each asked when due), then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
+| 0 | Lead collector: 228 built-in agency, vendor and news RSS and Atom feeds plus config/feeds.json and the shards in config/feeds.d (about 5,900 feeds, among them banks, central banks and financial regulators, critical-infrastructure operators and crypto security feeds, each asked when due), then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
+| 0 | Breach notification registers: official registers (state attorneys general, UK ICO, SEC 8-K Item 1.05), each at most hourly (`scripts/breaches.mjs`) | `collect.yml` | none |
+| 0 | Crypto hacks and exploits: SlowMist's public archive of DeFi, exchange, bridge and wallet hacks, at most hourly (`scripts/crypto-hacks.mjs`) | `collect.yml` | none |
+| 0 | GDELT knowledge graph files: the 15-minute GKG files, cyber-tagged articles as leads (`scripts/gdelt-gkg.mjs`) | `collect.yml` | none |
+| 0 | X (Twitter) leads: posts Grok Bot files on an `x-leads` issue, as leads only (`scripts/x-leads.mjs`) | `collect.yml` | none |
+| 0 | Vendor security advisories (psirt): twelve vendors' own advisories as structured data, every 2 h (`scripts/psirt.mjs`) | `feeds.yml` | none |
+| 0 | Exploit watch: public GitHub repositories naming each exploited flaw, flagged in the workbench | `feeds.yml` | none |
+| 0 | Scam warnings: official scam and phishing warnings by country (`scripts/scams.mjs`, config/scams.json) | `feeds.yml` | none |
 | 0 | Feeds: CISA known-exploited catalog, EPSS, CVSS, `cve_meta`, re-rating to severity 2 (every 2 h) | `feeds.yml` | none |
 | 0 | Live monitor: pages, CSP, data and sweep freshness hourly; browser check twice a day | `monitor.yml` | none |
 | 0 | Security: static check on every code push and deploy, live check weekly | `build.yml`, `security.yml` | none |

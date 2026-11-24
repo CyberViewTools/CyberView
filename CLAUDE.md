@@ -71,6 +71,7 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - `main` changes only through pull requests: branch from `origin/main`, commit, push the branch, open a pull request. CI (build.yml) must pass; auto-merge merges it on green. Never push to `main` directly.
 - Jobs never push code: a job's changes to `config/` or `docs/` become a pull request through `scripts/propose.mjs` (finish.mjs does this); anything else in code is a GitHub issue.
 - A code branch never carries data: commit data only on the data branch.
+- Documentation is part of every change, in the same pull request: a new or changed script, config file, workflow, routine, source group or count updates `docs/layout.md`, `docs/jobs.md`, `README.md` and `config/about.json` as they apply. `node scripts/docs-check.mjs` (in `npm run ci` and build.yml) fails when a script, config file or workflow is not in docs/layout.md, an active routine is not in docs/jobs.md, or a stated feed or grid count is more than 20% off the live count.
 
 ## Grok Bot / Claude Code
 

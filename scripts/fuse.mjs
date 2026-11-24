@@ -7,7 +7,8 @@
 //   node scripts/fuse.mjs show <id>               one story with all its leads
 //   node scripts/fuse.mjs done <id> "<event id, or why it is not an event>"   close a story: every lead in it is logged as handled
 // Grouping is by shared CVE id, or by shared distinctive words in the headline (names, products, places), never by
-// generic words like "ransomware attack". Leak-site claims are grouped too but a story made only of claims stays low.
+// generic words like "ransomware attack", and never by a chain (see cluster()). Leak-site claims are grouped too but a
+// story made only of claims stays low.
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
@@ -22,7 +23,17 @@ const GENERIC = new Set(("cyber cyberattack cyberattacks attack attacks attacked
   "ciberataque cyberattaque angriff hit hits impact impacted affected affecting following amid against more than its their has have been were will " +
   // breach notices from regulators' registers (scripts/breaches.mjs): the register's words and legal forms say nothing about which breach
   // (nor do the words most filers' names share: two clinics' notices are not one story because both say "Health Care")
-  "notice notices notification notifications filed filing attorney general inc llc llp ltd corp plc pllc limited companies holdings technologies health healthcare care medical management solutions investigation").split(/\s+/));
+  "notice notices notification notifications filed filing attorney general inc llc llp ltd corp plc pllc limited companies holdings technologies health healthcare care medical management solutions investigation " +
+  // headline filler that two unrelated incidents share ("Some Bell customers' data accessed" / "Next says some data accessed";
+  // "Bell Canada data breach: what you need to know" / "Staples Canada data breach: what customers need to know")
+  "some need know you your what may last week nov november accessed exposed exposes exposing customer issues issued statement investigating investigates investigate investigated " +
+  "not but can who all now out about one two get gets got still just been being had there they them than then also only even very much many any each other most such might should would " +
+  "involving cybersecurity cyber-attack cyber-attacks cyberattacked hackers latest warns warn hits impacts affect affects suffers suffered becomes behind live " +
+  // function words and incident vocabulary in the other languages the collectors read (accents are folded first)
+  "une des les par pour que qui est dans sur avec son ses aux apres victime victimes touche frappe vise visant subit fuite donnees attaque informatique piratage pirates " +
+  "una los las del con por para contra sobre segun ataque hackeo datos confirma confirmo investiga investigan posible presunto " +
+  "der die das und von mit fur auf bei nach neu hoch mittel niedrig kritisch mehrere schwachstelle schwachstellen ermoglicht ermoglichen hackerangriff cyberangriff " +
+  "della dei per che con gli attacco hacker dos das com ataque ciberataque ciberataques").split(/\s+/));
 const THIN = new Set(["africa", "latin-america", "middle-east", "south-asia", "southeast-asia"]);
 const TIER_RANK = { gov: 3, vendor: 2, news: 1 };
 const SEARCH = new Set(["google-news", "bing-news", "gdelt", "gdelt-gkg"]);
@@ -37,13 +48,37 @@ export function countPublishers(names) {
   return kept;
 }
 export const cvesIn = (s) => [...new Set((String(s || "").toUpperCase().match(/CVE-\d{4}-\d{4,}/g) || []))];
-export const keyTokens = (title) => new Set([...tokens(String(title).replace(/^Claim: \S+ lists /, "").replace(/ on its leak site$/, "").replace(/: data breach notification filed with .*$/, ""))].filter((w) => !GENERIC.has(w) && !/^\d+$/.test(w)));
+// accents folded first, so "déclenché" is one word and not "d", "clench": the tokenizer keeps only a-z, 0-9 and hyphens
+const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss");
+export const keyTokens = (title) => new Set([...tokens(fold(title).replace(/^Claim: \S+ lists /, "").replace(/ on its leak site$/, "").replace(/: data breach notification filed with .*$/, ""))].filter((w) => !GENERIC.has(w) && !/^\d+$/.test(w)));
 
-/** Group leads into stories. leads: [{title,url,source,tier,via,kind,seen_at,published,lang,region}] -> [[lead,...],...] */
+/** Two leads' headlines say the same thing: the pairwise test (shared distinctive words, or a leak-site claim's whole
+ *  victim name inside a report's headline). ta, tb are keyTokens. Returns { w, name } or null. */
+function similar(a, b, ta, tb) {
+  let inter = 0; ta.forEach((w) => tb.has(w) && inter++);
+  const small = Math.min(ta.size, tb.size), union = ta.size + tb.size - inter;
+  // a leak-site claim carries only the victim's name: it joins a report when the whole name is in the headline
+  const claim = (a.kind === "claim") !== (b.kind === "claim"), claimTok = a.kind === "claim" ? ta : tb, other = a.kind === "claim" ? b : a;
+  const name = claim && inter === claimTok.size && /ransom|attack|breach|hack|leak|extort|stolen|incident/i.test(other.title) && (inter >= 2 || [...claimTok][0].length >= 6);
+  // two routine bulletins ("[UPDATE] [hoch] GIMP: Mehrere Schwachstellen") are different documents unless they share a CVE,
+  // which the CVE pass has already joined: their words are the bulletin's boilerplate plus a product name. News of an
+  // exploited or critical flaw is not routine here, as in story().
+  const routine = (l) => ROUTINE.test(l.title || "") && !CRITICAL.test(l.title || "") && l.kind !== "exploited";
+  if (routine(a) && routine(b)) return null;
+  if ((inter >= 2 && inter / union >= 0.4) || (inter >= 2 && small <= 5 && inter / small >= 0.5 && inter / union >= 0.25) || (inter >= 3 && inter / small >= 0.6) || name) return { w: union ? inter / union : 0, name };
+  return null;
+}
+
+/** Group leads into stories. leads: [{title,url,source,tier,via,kind,seen_at,published,lang,region}] -> [[lead,...],...]
+ *  Not single-linkage: "A is like B and B is like C" must not put A and C in one story when they share nothing (on
+ *  24 November that joined Bell Canada with Next plc and Staples, the CHU de Guadeloupe with Banque Delubac and Quimper,
+ *  and ninety unrelated BSI bulletins, and closed their leads under the wrong event). Pairs that pass the headline test
+ *  are merged strongest first, and two groups merge only when their cores agree: the words most of each group's
+ *  headlines use. A shared CVE (or one filer's notices on several breach registers) still joins outright. */
 export function cluster(leads) {
   const n = leads.length, parent = leads.map((_, i) => i);
   const find = (i) => { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; };
-  const join2 = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[Math.max(a, b)] = Math.min(a, b); };
+  const join2 = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[Math.max(a, b)] = Math.min(a, b); return Math.min(a, b); };
   const toks = leads.map((l) => keyTokens(l.title)), byCve = new Map(), byTok = new Map();
   leads.forEach((l, i) => {
     cvesIn(l.title).forEach((c) => { if (byCve.has(c)) join2(byCve.get(c), i); else byCve.set(c, i); });
@@ -51,20 +86,51 @@ export function cluster(leads) {
     if (l.kind === "breach-notice" && l.org) { const k = "org:" + l.org; if (byCve.has(k)) join2(byCve.get(k), i); else byCve.set(k, i); }
     toks[i].forEach((w) => { if (!byTok.has(w)) byTok.set(w, []); byTok.get(w).push(i); });
   });
-  // only compare leads that share a distinctive word that is not everywhere
-  const seen = new Set();
+  // only compare leads that share a distinctive word that is not everywhere (a big story's own name, "fbi" in a hundred
+  // headlines, still counts: the core test below, not this cap, is what stops chaining)
+  const seen = new Set(), edges = [];
   for (const [, ids] of byTok) {
-    if (ids.length < 2 || ids.length > 40) continue;
+    if (ids.length < 2 || ids.length > 150) continue;
     for (let x = 0; x < ids.length; x++) for (let y = x + 1; y < ids.length; y++) {
-      const a = ids[x], b = ids[y], k = a * n + b; if (seen.has(k) || find(a) === find(b)) continue; seen.add(k);
-      let inter = 0; toks[a].forEach((w) => toks[b].has(w) && inter++);
-      const small = Math.min(toks[a].size, toks[b].size), union = toks[a].size + toks[b].size - inter;
-      // a leak-site claim carries only the victim's name: it joins a report when the whole name is in the headline
-      const claim = (leads[a].kind === "claim") !== (leads[b].kind === "claim"), claimTok = leads[a].kind === "claim" ? toks[a] : toks[b];
-      const other = leads[a].kind === "claim" ? leads[b] : leads[a];
-      const nameHit = claim && inter === claimTok.size && /ransom|attack|breach|hack|leak|extort|stolen|incident/i.test(other.title) && (inter >= 2 || [...claimTok][0].length >= 6);
-      if ((inter >= 2 && inter / union >= 0.4) || (inter >= 2 && small <= 5 && inter / small >= 0.5 && inter / union >= 0.25) || (inter >= 3 && inter / small >= 0.6) || nameHit) join2(a, b);
+      const a = ids[x], b = ids[y], k = a * n + b; if (seen.has(k)) continue; seen.add(k);
+      const m = similar(leads[a], leads[b], toks[a], toks[b]); if (m) edges.push({ a, b, ...m });
     }
+  }
+  // each group's word counts; its core is the words more than half its headlines use (at least its two commonest)
+  const size = new Map(), freq = new Map(), cores = new Map();
+  leads.forEach((_, i) => { const r = find(i); size.set(r, (size.get(r) || 0) + 1); if (!freq.has(r)) freq.set(r, new Map()); const f = freq.get(r); toks[i].forEach((w) => f.set(w, (f.get(w) || 0) + 1)); });
+  // a group's vocabulary: the words at least two and at least a third of its headlines use (a looser core)
+  const vocab = (r) => { const s = size.get(r); return new Set([...freq.get(r)].filter(([, k]) => k >= 2 && k * 3 >= s).map(([w]) => w)); };
+  const cveOf = new Map(); leads.forEach((l, i) => { const c = cvesIn(l.title); if (c.length) { const r = find(i); if (!cveOf.has(r)) cveOf.set(r, new Set()); c.forEach((x) => cveOf.get(r).add(x)); } });
+  const core = (r) => {
+    if (cores.has(r)) return cores.get(r);
+    const f = [...freq.get(r)].sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)), s = size.get(r);
+    const c = new Set(f.filter(([, k], j) => k * 2 > s || (j < 2 && (k >= 2 || s === 1))).map(([w]) => w));
+    cores.set(r, c); return c;
+  };
+  edges.sort((x, y) => y.w - x.w || x.a - y.a || x.b - y.b);
+  // a pair turned down before its group's core had settled is tried again on the next pass, until nothing more merges
+  for (let pass = 0, todo = edges, merged = true; merged && pass < 6; pass++) {
+   merged = false; const later = [];
+   for (const e of todo) {
+    const ra = find(e.a), rb = find(e.b); if (ra === rb) continue;
+    const ca = core(ra), cb = core(rb); let shared = 0; ca.forEach((w) => cb.has(w) && shared++);
+    // a claim's victim name joins the report group whose core carries the whole name
+    const claimIn = (i, c) => leads[i].kind === "claim" && size.get(find(i)) === 1 && toks[i].size > 0 && [...toks[i]].every((w) => c.has(w));
+    // or one group's core hits two words much of the other uses: "Trump reacts to FBI database breach" (core trump, fbi)
+    // joins the FBI database story (core fbi, database), but "FBI warns hackers target water supply" does not.
+    // Never across two different flaws: "Azure" names many CVEs that are separate stories.
+    const xa = cveOf.get(ra), xb = cveOf.get(rb), twoFlaws = xa && xb && ![...xa].some((c) => xb.has(c));
+    const hits = (c, v) => { let k = 0; c.forEach((w) => v.has(w) && k++); return k; };
+    const soft = !twoFlaws && Math.max(hits(ca, vocab(rb)), hits(cb, vocab(ra))) >= 2;
+    const ok = shared >= Math.min(2, ca.size, cb.size) && shared > 0 || soft || (e.name && (claimIn(e.a, cb) || claimIn(e.b, ca)));
+    if (!ok) { later.push(e); continue; }
+    const r = join2(ra, rb), gone = r === ra ? rb : ra, f = freq.get(r);
+    freq.get(gone).forEach((k, w) => f.set(w, (f.get(w) || 0) + k));
+    size.set(r, size.get(ra) + size.get(rb)); freq.delete(gone); size.delete(gone); cores.delete(ra); cores.delete(rb); merged = true;
+    if (cveOf.has(gone)) { if (!cveOf.has(r)) cveOf.set(r, new Set()); cveOf.get(gone).forEach((c) => cveOf.get(r).add(c)); cveOf.delete(gone); }
+   }
+   todo = later;
   }
   const groups = new Map();
   leads.forEach((l, i) => { const r = find(i); if (!groups.has(r)) groups.set(r, []); groups.get(r).push(l); });

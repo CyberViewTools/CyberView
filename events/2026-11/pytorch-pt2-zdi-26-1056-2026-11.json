@@ -1,19 +1,68 @@
 {
-"id":"pytorch-pt2-zdi-26-1056-2026-11",
-"title":"ZDI publishes 0-day advisory on PyTorch PT2 file parsing code execution (ZDI-26-1056)",
-"date":"2026-11-24","date_note":"Coordinated public release date stated on the ZDI advisory.",
-"category":"vuln","severity":2,"status":"confirmed",
-"org":"PyTorch Foundation","sector":"Software","country":"","place":"","lat":null,"lng":null,"geo_basis":"none","pin_type":"none",
-"summary":"The Zero Day Initiative published advisory ZDI-26-1056 (CVE-2026-136429) for a flaw in how PyTorch parses PT2 files that exposes a dangerous method. ZDI says a remote attacker could run arbitrary code in the context of the current process, and that exploitation requires a user to open a malicious file. ZDI says the vendor rejected the report as expected behavior; the advisory names no patch.",
-"plain":"ZDI disclosed a flaw in how PyTorch opens PT2 files that could let an attacker run code if a user opens a malicious file. ZDI says the vendor called it expected behavior and the advisory names no patch.",
-"exec":"ZDI says opening a malicious PT2 file in PyTorch could allow code execution; the vendor rejected the report as expected behavior, per ZDI.",
-"action":"ZDI's only stated mitigation is to restrict interaction with the product; the advisory names no vendor patch.",
-"sectors":{"values":["cross-sector"],"basis":"inferred"},
-"surface":{"value":"endpoint","basis":"inferred"},
-"products":["PyTorch"],"attack":["remote code execution"],"tags":["rce"],"cves":["CVE-2026-136429"],
-"sources":[{"name":"Zero Day Initiative","url":"http://www.zerodayinitiative.com/advisories/ZDI-26-1056/","published":"2026-11-24"}],
-"evidence":[],
-"source_tier":"primary",
-"validation":{"state":"single_source","checked_at":"2026-11-24T21:18:06Z","note":"Only the ZDI advisory was read; it is the researcher's own primary page."},
-"first_seen":"2026-11-24T21:18:06Z","updated_at":"2026-11-24T21:18:06Z"
+  "title": "ZDI publishes 0-day advisory on PyTorch PT2 file parsing code execution (ZDI-26-1056)",
+  "date": "2026-11-24",
+  "date_note": "Coordinated public release date stated on the ZDI advisory.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "PyTorch Foundation",
+  "sector": "Software",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "geo_basis": "none",
+  "pin_type": "none",
+  "summary": "The Zero Day Initiative published advisory ZDI-26-1056 (CVE-2026-136429) for a flaw in how PyTorch parses PT2 files that exposes a dangerous method. ZDI says a remote attacker could run arbitrary code in the context of the current process, and that exploitation requires a user to open a malicious file. ZDI says the vendor rejected the report as expected behavior; the advisory names no patch.",
+  "plain": "ZDI disclosed a flaw in how PyTorch opens PT2 files that could let an attacker run code if a user opens a malicious file. ZDI says the vendor called it expected behavior and the advisory names no patch.",
+  "exec": "ZDI says opening a malicious PT2 file in PyTorch could allow code execution; the vendor rejected the report as expected behavior, per ZDI.",
+  "action": "ZDI's only stated mitigation is to restrict interaction with the product; the advisory names no vendor patch.",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "products": [
+    "PyTorch"
+  ],
+  "attack": [
+    "remote code execution"
+  ],
+  "tags": [
+    "rce"
+  ],
+  "cves": [
+    "CVE-2026-136429"
+  ],
+  "sources": [
+    {
+      "name": "Zero Day Initiative",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1056/",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [],
+  "source_tier": "primary",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T21:18:06Z",
+    "note": "Only the ZDI advisory was read; it is the researcher's own primary page."
+  },
+  "first_seen": "2026-11-24T21:18:06Z",
+  "updated_at": "2026-11-24T21:18:06Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T21:42:16Z",
+    "first_at": "2026-11-24T21:42:16Z",
+    "note": "Compared title, date, CVE, vendor rejection as expected behavior, mitigation against the ZDI advisory",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T21:42:16Z"
 }

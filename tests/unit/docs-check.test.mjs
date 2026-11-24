@@ -50,3 +50,10 @@ test("docs-check: the scanned set includes scripts and workflows", () => {
   const files = codeFiles();
   assert.ok(files.includes("scripts/docs-check.mjs") && files.some((f) => f.startsWith(".github/workflows/")));
 });
+
+test("docs-check: 'Reads N feeds' and 'hundreds of feeds' are stated figures too", () => {
+  const f = statedFigures("routines.json", "Reads 131 agency, vendor and news feeds; check hundreds of government, vendor and news feeds");
+  assert.deepEqual(f.map((x) => x.said), [131, 500]);
+  assert.equal(problems({ ...base, figures: f }).length, 2);
+  assert.deepEqual(problems({ ...base, figures: f, live: { feeds: 520, grid: 60 } }).filter((x) => /says 500/.test(x)), []);
+});

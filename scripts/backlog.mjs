@@ -47,8 +47,14 @@ export function summary(stories, now = Date.now()) {
     closable_by_rule: open.filter((s) => autoReason(s, now)).length, claims: open.filter((s) => s.claim_only).length, oldest_hours: ages.length ? Math.round(Math.max(...ages)) : 0,
     oldest_incident_hours: Math.round(Math.max(0, ...work.filter((s) => s.incident).map((s) => (now - Date.parse(s.waiting_since || s.first_seen)) / 36e5).filter(isFinite))) };
 }
-const closeAll = (job, items) => items.length ? writeRunLog(job, { started_at: nowIso(), finished_at: nowIso(), model: null,
-  skipped: items.flatMap(({ s, why }) => s.urls.slice(0, 40).map((u) => ({ title: String(s.title).slice(0, 120), url: u, reason: `story ${s.id}: ${why}`.slice(0, 220) }))) }) : null;
+/** Pure: the run-log lines that close these stories. Every still-open link is logged (that is what closes it); links that
+ *  are already handled add nothing. Until 2026-11-24 this logged the first 40 links of a story, so a story of more than 40
+ *  whose first 40 were already handled kept its open links forever and was "closed" again at every collection. */
+export function closeLines(items) {
+  return items.flatMap(({ s, why }) => (Array.isArray(s.open_urls) ? s.open_urls : s.urls).slice(0, 500)
+    .map((u) => ({ title: String(s.title).slice(0, 120), url: u, reason: `story ${s.id}: ${why}`.slice(0, 220) })));
+}
+const closeAll = (job, items) => items.length ? writeRunLog(job, { started_at: nowIso(), finished_at: nowIso(), model: null, skipped: closeLines(items) }) : null;
 const answerFiles = () => existsSync(DATA) ? readdirSync(DATA).filter((f) => /^backlog-triage-\d+\.json$/.test(f)) : [];
 /** Every triage answer on disk, by story id: "" = keep, otherwise the reason to close. A keep always wins over a close. */
 function answers() {

@@ -47,3 +47,11 @@ or the guard, the monitor and the feeds would point at an address that does not 
 - `node scripts/guard.mjs` and the monitor (`SITE_URL` set) report healthy against the new address.
 - The `.well-known/security.txt` is now at the origin root, where scanners look for it.
 - If accounts are turned on later, add the new domain to the Supabase project's allowed redirect URLs.
+
+## Status (2026-11-24)
+Live: cyberview.tools on GitHub Pages behind Cloudflare (proxied; Full (strict); Always Use HTTPS; TLS 1.2+; HSTS 6 months;
+the six security headers above as one response-header Transform Rule; Email Obfuscation off). The Cloudflare token on the
+cyberview environment has Radar Read plus Zone Read, DNS Edit, Zone Settings Edit and Transform Rules Edit for this zone.
+Cloudflare Web Analytics (cookieless) is on by the owner's decision and disclosed on the privacy page; the CSP allows its
+two hosts on every page except the software-list and account pages (scripts/lib/analytics.mjs, enforced by
+scripts/security-check.mjs).

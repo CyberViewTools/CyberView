@@ -15,6 +15,7 @@ import { pathToFileURL } from "node:url";
 import { railProblems } from "./lib/scanner-rail-check.mjs";
 import { helloProblems } from "./lib/scanner-hello-check.mjs";
 import { icsProblems } from "./lib/scanner-ics-check.mjs";
+import { ANALYTICS, analyticsOn } from "./lib/analytics.mjs";
 
 const fails = [], passes = [];
 const rel = (p) => p.slice(ROOT.length + 1);
@@ -61,11 +62,13 @@ const SUPABASE = (() => { try { const u = JSON.parse(readFileSync(join(ROOT, "co
   return u; } catch { return ""; } })();
 function checkCsp(csp, where) {
   const dir = Object.fromEntries(csp.split(";").map((d) => d.trim().split(/\s+/)).filter((d) => d[0]).map((d) => [d[0], d.slice(1).join(" ")]));
-  if (dir["script-src"] !== "'self'") fails.push(`${where}: CSP script-src must be exactly 'self' (is "${dir["script-src"]}")`);
+  // analytics (scripts/lib/analytics.mjs): exactly Cloudflare's two hosts where allowed, never on the visitor-data pages
+  const an = analyticsOn(where), aS = an ? ` ${ANALYTICS.script}` : "", aB = an ? ` ${ANALYTICS.beacon}` : "";
+  if (dir["script-src"] !== `'self'${aS}`) fails.push(`${where}: CSP script-src must be exactly 'self'${an ? " plus the analytics script host" : " (no analytics on this page)"} (is "${dir["script-src"]}")`);
   if (dir["default-src"] !== "'self'") fails.push(`${where}: CSP default-src must be 'self' (is "${dir["default-src"]}")`);
   if (dir["base-uri"] !== "'none'") fails.push(`${where}: CSP must keep base-uri 'none'`);
   const extra = ACCOUNT_PAGES.has(where.replace(/^site\//, "")) && SUPABASE ? ` ${SUPABASE}` : "";
-  if ((dir["connect-src"] || "") !== `'self'${extra}`) fails.push(`${where}: CSP connect-src must be 'self'${extra ? " plus the configured Supabase project" : " only"}`);
+  if ((dir["connect-src"] || "") !== `'self'${extra}${aB}`) fails.push(`${where}: CSP connect-src must be 'self'${extra ? " plus the configured Supabase project" : ""}${an ? " plus the analytics beacon host" : " only"} (is "${dir["connect-src"]}")`);
   if (/'unsafe-eval'/.test(csp)) fails.push(`${where}: CSP must not allow 'unsafe-eval'`);
 }
 for (const p of pages) {

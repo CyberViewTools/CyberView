@@ -9,7 +9,7 @@ The CyberView Scanner finds known-vulnerable software on your own network and te
 version each service states about itself (an SSH banner, a web server's `Server` header, a mail server's greeting, a TLS
 certificate), matches it against CyberView's published data on known-exploited flaws (CISA's KEV catalog with NVD's
 affected-version ranges), and ranks what it finds by the CyberView rating, the same calculation the
-[Vulnerabilities page](https://xanderhutch.github.io/CyberView/vulnerabilities.html) uses.
+[Vulnerabilities page](https://cyberview.tools/vulnerabilities.html) uses.
 
 It is a **detection tool**. It does not exploit anything, log in, guess or test passwords or SNMP community strings, send
 crafted input, flood, hide what it is, or scan the internet at large. There is no "aggressive" setting. Mechanical code
@@ -23,7 +23,7 @@ standard question per service: identify hellos (`--identify`), mail-domain DNS r
 industrial identification on private ranges (`--ics`).
 
 An overview, with live counts of the products it can identify, is on CyberView's
-[Scanner page](https://xanderhutch.github.io/CyberView/scanner.html).
+[Scanner page](https://cyberview.tools/scanner.html).
 
 ## What you need
 
@@ -241,14 +241,14 @@ Every opt-in exchange counts against the same rate, per-host and total budgets a
 and the run header lists exactly what each flag sends (and says "off" when it is not given).
 
 Every web request carries the User-Agent
-`CyberView-Scanner/<version> (authorized vulnerability scan, detection only; +https://xanderhutch.github.io/CyberView/vulnerabilities.html#scanner)`.
+`CyberView-Scanner/<version> (authorized vulnerability scan, detection only; +https://cyberview.tools/vulnerabilities.html#scanner)`.
 
 A host is first tried on up to four discovery ports (22, 80, 443, 3389 when in the list), then on the rest of the port
 list even if none of those answered (a firewall or IPS may drop the first probes); a host that answers on no port is
 reported in Coverage as unreachable, never as clean. `--assume-up` skips the discovery-port step.
 
 Host names in the scope are resolved with your system's resolver. With `--online` the scanner also downloads CyberView's
-public data, read-only, with GET requests and no key, cookie or account, from `https://xanderhutch.github.io/CyberView/`:
+public data, read-only, with GET requests and no key, cookie or account, from `https://cyberview.tools/`:
 
 - `data/workbench.json`: the known-exploited flaws with affected-version ranges, CISA's due dates and required actions,
   EPSS, and fix guides

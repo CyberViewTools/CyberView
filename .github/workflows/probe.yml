@@ -24,7 +24,7 @@ jobs:
         run: |
           case "$URL" in https://*) ;; *) echo "only https:// URLs"; exit 1;; esac
           host=$(printf '%s' "$URL" | sed -E 's#^https://([^/]+).*#\1#')
-          ua="CyberView source probe (+https://xanderhutch.github.io/CyberView)"
+          ua="CyberView source probe (+https://cyberview.tools)"
           {
             echo "## Probe of $URL"
             echo '```'

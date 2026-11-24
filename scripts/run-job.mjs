@@ -27,6 +27,16 @@ const MAXPAR = Math.max(1, Math.min(12, Number(PIPE.max_parallel) || 6));
 const TIGHT_CUTS = tightCuts(PIPE.usage_budget || {});
 const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
+// The launcher kills this run when its Bash call nears the 10-minute tool cap (dispatch.mjs --exec passes FLOW_HARD_AT):
+// by then the workers must have stopped, so the commit still fits. 24 November: cycle 1 (6 minutes of collecting, then
+// the workers) ran past the kill on every wake from 08:06 and nothing was committed for 11 hours. 0 = no hard stop.
+const HARD_AT = Number(process.env.FLOW_HARD_AT) || 0;
+const leftMs = (now = Date.now()) => (HARD_AT ? HARD_AT - now : Infinity);
+/** Pure: how long a worker may run when `left` ms remain before the hard stop (never under 30 s, never over its own limit). */
+export const workerLimitMs = (own, left) => Math.min(own, Math.max(30000, left));
+/** Pure: a network collector's timeout with `left` ms before the hard stop and `floor` ms kept for the workers and commit;
+ *  0 = skip it this cycle (its sources are read again next cycle, and collect.yml collects on its own schedule). */
+export const collectorMs = (left, floor, own = 300000) => (left === Infinity ? own : left - floor < 20000 ? 0 : Math.min(own, left - floor));
 
 /** Pure: the built-in tools a toolset needs, by name ("Bash(node:*)" -> "Bash"), for claude's --tools. */
 export const builtinTools = (tools) => [...new Set((tools || []).map((t) => String(t).replace(/\(.*$/, "").trim()).filter(Boolean))];
@@ -181,12 +191,13 @@ function runWorker(job, role, batch, served = "subscription") {
     const w = workerArgs(role, prompt), t0 = Date.now();
     const ch = spawn("claude", w.args, { cwd: ROOT, env: workerEnv(served, FALLBACK_KEY), stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "", done = false;
-    const kill = setTimeout(() => { if (!done) { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); } }, w.timeoutMs);
+    const lim = workerLimitMs(w.timeoutMs, leftMs(t0));
+    const kill = setTimeout(() => { if (!done) { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); } }, lim);
     ch.stdout.on("data", (d) => { out += d; }); ch.stderr.on("data", (d) => { err += d; });
     ch.on("error", (e) => { unavailable++; err += String(e.message); });
     ch.on("close", (code) => {
       done = true; clearTimeout(kill);
-      const timedOut = Date.now() - t0 >= w.timeoutMs - 1000;
+      const timedOut = Date.now() - t0 >= lim - 1000;
       const l = ledgerLine(job, role, batch, w.model, Date.now() - t0, out, timedOut ? "timeout" : code !== 0 && !out ? (err.trim().split("\n").pop() || `exit ${code}`).slice(0, 160) : null, served);
       record(l); try { stampRunLogs(role, batch, w.model, t0); } catch {}
       try { logUnfinished(l, t0); } catch {}
@@ -237,16 +248,19 @@ export const limitHolds = (hit, now = Date.now()) => !!(hit && hit.limit && now 
  *  (not started, no ledger line: their items stay in their queues and leases are released as usual); the budget then holds
  *  the loop at "stop" until the reset time the message gave (scripts/lib/usage.mjs budgetState). */
 export async function pool(job, list) {
-  const res = []; let i = 0, held = 0, fb = 0;
+  const res = []; let i = 0, held = 0, fb = 0, late = 0;
   await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => {
     while (i < list.length) {
       const k = i++, served = servedNow();
+      // too close to the launcher's kill: a worker started now would be cut off and its work lost; the item stays queued
+      if (leftMs() < 90000) { late++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: no time left in this run" }; continue; }
       if (served === "park") { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; }
       if (served === "api-fallback") fb++;
       res[k] = await runWorker(job, list[k][0], list[k][1], served);
     }
   }));
   if (fb) log(`  ${fb} worker(s) ran on the API fallback: ${fallbackNote()}`);
+  if (late) log(`  ${late} worker(s) not started: too little time left before this run is stopped; their work stays in the queue`);
   if (held) log(`  ${held} worker(s) not started: ${fallbackNote()}; their work stays in the queue`);
   if (list.length && unavailable >= Math.min(list.length, 2)) { log("HEADLESS UNAVAILABLE: claude could not start workers"); process.exit(3); }
   return res;
@@ -529,8 +543,20 @@ async function flow() {
   const UW = Math.max(0, Math.min(4, Number(F.update_workers ?? 2))), UPER = Math.max(1, Math.min(6, Number(F.updates_per_worker) || 3)), FOLLOW = Math.max(30, Number(F.followup_every_minutes) || 120) * 6e4;
   const beat = (note) => writeJson(FLOW_LOCK, { pid: process.pid, started: new Date(t0).toISOString(), beat: nowIso(), cycle, budget: B.level, note: `${note} · usage ${B.level}` });
   // gdelt-gkg reads each 15-minute GDELT file once (its state says which), so running it every cycle costs one small request
-  const collectors = () => { for (const [c, a] of [["bash", ["scripts/kick.sh"]], ["node", ["scripts/collect.mjs"]], ["node", ["scripts/osint.mjs"]], ["node", ["scripts/gdelt-gkg.mjs"]], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) sh(c, a); polled = Date.now(); };
-  const gridCollect = () => { if (existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], 120000).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
+  // under a hard stop the network collectors share what is left after COLLECT_FLOOR (plans, workers and the commit);
+  // the local steps (triage, fuse, backlog rules) always run. Returns how long each took, for the cycle's record.
+  const COLLECT_FLOOR = 5 * 6e4;
+  const collectors = () => {
+    const took = [], skipped = [];
+    for (const [c, a, net] of [["bash", ["scripts/kick.sh"], 1], ["node", ["scripts/collect.mjs"], 1], ["node", ["scripts/osint.mjs"], 1], ["node", ["scripts/gdelt-gkg.mjs"], 1], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) {
+      const name = a[0].replace(/^scripts\/|\.(mjs|sh)$/g, ""), ms = net ? collectorMs(leftMs(), COLLECT_FLOOR) : 300000;
+      if (!ms) { skipped.push(name); continue; }
+      const t = Date.now(); sh(c, a, ms); took.push(`${name} ${Math.round((Date.now() - t) / 1000)}s`);
+    }
+    polled = Date.now();
+    return took.join(", ") + (skipped.length ? `; skipped for time: ${skipped.join(", ")}` : "");
+  };
+  const gridCollect = () => { const ms = collectorMs(leftMs(), COLLECT_FLOOR, 120000); if (ms && existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], ms).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
   /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */
   const probe = () => {
     collectors(); gridCollect(); B = budgetState();
@@ -547,7 +573,7 @@ async function flow() {
     if (idleRun) rec.idle_before = idleRun;                 // idle cycles leave no record of their own: counted on the next one
     const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[c${cycle} ${name}] ${note || ""}`); };
     beat("collecting");
-    if (Date.now() - polled > 60000) collectors();        // a light poll that just ran them leaves them out
+    if (Date.now() - polled > 60000) phase("collect", collectors());   // a light poll that just ran them leaves them out
     // the plan's usage decides what this cycle may start (scripts/lib/usage.mjs; config/pipeline.json usage_budget)
     B = budgetState(); const lvl = planLevel(B), can = workAt(lvl); rec.budget = { level: B.level, window_pct: B.window_pct, week_pct: B.week_pct, ...(B.limited_until ? { limited_until: B.limited_until } : {}), ...(lvl !== B.level ? { plan_level: lvl, served: "api-fallback" } : {}) };
     if (B.level !== "ok") { total[B.level]++; phase("budget", budgetLine(B)); }
@@ -629,6 +655,7 @@ async function flow() {
         // no retry while the pool is parked (the plan's limit holds and no API fallback is available): the stories stay in
         // the queue for the first cycle after the reset; on the API fallback the retry runs on the fallback key like the rest
         if (!chk.ok && parked()) phase("retry", `not started: ${fallbackNote()}; the missing stories stay in the queue`);
+        else if (!chk.ok && leftMs() < 4 * 6e4) phase("retry", "not started: too little time left in this run; the missing stories stay in the queue");
         else if (!chk.ok) { sh("node", ["scripts/sweep-plan.mjs", "retry"]); res = res.concat(await pool("sweep", [[researcherRole(plan("sweep-plan.json"), "retry"), "retry"]])); phase("retry", sh("node", ["scripts/sweep-plan.mjs", "check"]).out[0] || ""); }
       }
       if (work.some((w) => w[0] === "gap")) gapDry = clocks().gapDry;
@@ -657,7 +684,7 @@ async function flow() {
       let f = finish("sweep");
       // a broken record never holds back the cycle's good work: a fixer when one may start, and the commit either way
       // (finish --force: the deploy quarantines what is still broken and reports it)
-      if (f.fixer) { if (can.fixer && !parked()) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); } else phase("fix", "build failed and no fixer may start (usage): committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
+      if (f.fixer) { if (can.fixer && !parked() && leftMs() > 4 * 6e4) { phase("fix", "build failed: starting a fixer"); await pool("sweep", [["fixer", null]]); } else phase("fix", "build failed and no fixer may start (usage): committing; the deploy quarantines the broken record"); f = { out: sh("node", ["scripts/finish.mjs", "sweep", "--force"], 600000).out }; }
       phase("commit", f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || "");
     }
     took.push(Date.now() - cs);
@@ -685,7 +712,7 @@ async function flow() {
   else { try { spawnSync("git", ["checkout", "--", dataRel("data/leases.json")], { cwd: dataGitDir(), timeout: 30000 }); } catch {} }
   log(`CyberView sweep: flow ${yielded ? "gave way to an older loop" : "ended"} after ${total.cycles} cycle(s) (${total.idle} idle${total.tight ? `, ${total.tight} tight` : ""}${total.stop ? `, ${total.stop} stopped by usage` : ""}), ${Math.round((Date.now() - t0) / 6e4)} min, ${total.workers} worker(s), $${total.cost.toFixed(2)}`);
   handedOver = true; stop();
-  if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, 200000).unref(); });
+  if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, Math.max(0, Math.min(200000, leftMs() + 60000))).unref(); });
 }
 
 async function main() {

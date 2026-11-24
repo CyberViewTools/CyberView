@@ -16,8 +16,13 @@ const job = process.argv[2];
 const EXEC = process.argv.includes("--exec");
 /** Run one headless command in the foreground and print its last lines; on HEADLESS UNAVAILABLE fall back to printing
  *  the subagent instructions (CYBERVIEW_SUBAGENTS=1), which the session then carries out. */
-function execHeadless(env, args, ms, endLine) {
-  const x = spawnSync("node", args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...env } });
+// The launcher's Bash call (the git pull, then this script) has 600 s; this run must return before that, with time for the
+// session's reply. The run's workers must stop FLOW_HARD_AT (90 s before the kill) so its commit still fits.
+const BASH_T0 = Date.now() - Math.round(process.uptime() * 1000);
+const execBudgetMs = (now, t0 = BASH_T0) => Math.max(60000, t0 + 560000 - now);
+function execHeadless(env, args, endLine) {
+  const ms = execBudgetMs(Date.now());
+  const x = spawnSync("node", args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...env, FLOW_HARD_AT: String(Date.now() + ms - 90000) } });
   const lines = `${x.stdout || ""}${x.stderr || ""}`.split("\n").filter((l) => l.trim());
   if (lines.some((l) => /HEADLESS UNAVAILABLE/.test(l))) {
     const f = spawnSync("node", [join(ROOT, "scripts", "dispatch.mjs"), job], { cwd: ROOT, encoding: "utf8", env: { ...process.env, CYBERVIEW_SUBAGENTS: "1" } });
@@ -67,7 +72,7 @@ if (job === "sweep" && (PL.flow || {}).enabled !== false && (PL.headless === tru
   // commits before the turn ends; the frequent sweep schedules give continuous coverage, and FLOW_LOCK still makes a
   // second session stand by. config/pipeline.json flow.foreground_minutes tunes the span (kept under the 10-min tool cap).
   const fm = Math.max(2, Math.min(9, Number((PL.flow || {}).foreground_minutes) || 7)), tmo = Math.min(600000, (fm + 2) * 60000);
-  if (EXEC) execHeadless({ FLOW_MINUTES: String(fm) }, [join(ROOT, "scripts", "run-job.mjs"), "flow"], tmo - 30000, "CyberView sweep:");
+  if (EXEC) execHeadless({ FLOW_MINUTES: String(fm) }, [join(ROOT, "scripts", "run-job.mjs"), "flow"], "CyberView sweep:");
   console.log([`DISPATCH sweep (bounded foreground flow). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it runs about ${fm} minutes of research cycles, committing every few minutes, then returns: FLOW_MINUTES=${fm} node scripts/run-job.mjs flow 2>&1 | tail -3`,
     `   Run it in the foreground so the cycles finish and commit before this turn ends; do NOT background it (a backgrounded loop is reaped by the cloud session and publishes nothing).`,
@@ -82,7 +87,7 @@ if ((PL.headless === true || (Array.isArray(PL.headless_jobs) && PL.headless_job
   // commits before the turn ends. config/pipeline.json headless_foreground_minutes caps it under the 10-minute tool cap;
   // if a job ever needs longer it is cut and the next scheduled run commits the leftover with finish.mjs --force.
   const hm = Math.max(2, Math.min(9, Number(PL.headless_foreground_minutes) || 8)), tmo = Math.min(600000, (hm + 1) * 60000);
-  if (EXEC) execHeadless({}, [join(ROOT, "scripts", "run-job.mjs"), job], tmo - 30000, `CyberView ${job}:`);
+  if (EXEC) execHeadless({}, [join(ROOT, "scripts", "run-job.mjs"), job], `CyberView ${job}:`);
   console.log([`DISPATCH ${job} (headless). The owner approved running jobs through scripts/run-job.mjs, which starts headless workers with only the tools each role needs and git denied.`,
     `1. Run this ONE command in the FOREGROUND (run_in_background FALSE) with timeout ${tmo} — it plans, runs the headless workers and commits, then returns (usually a few minutes): node scripts/run-job.mjs ${job} 2>&1 | tail -3`,
     `   Run it in the foreground so the workers finish and commit before this turn ends; do NOT background it (a backgrounded run is reaped by the cloud session before its workers finish, so nothing is researched).`,

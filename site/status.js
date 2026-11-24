@@ -144,7 +144,6 @@
       accuracy: { days: nn(A.days) || 7, reviewed: int0(A.reviewed), corrected: int0(A.corrected), flagged: int0(A.flagged), corrected_pct: nn(A.corrected_pct),
         weeks: arr(A.weeks, 60).slice(-8).filter(function (x) { return obj(x) && /^\d{4}-\d{2}-\d{2}$/.test(x.week); }).map(function (x) { return { week: x.week, reviewed: int0(x.reviewed), corrected: int0(x.corrected), corrected_pct: nn(x.corrected_pct) }; }),
         categories: arr(A.categories, 12).filter(function (c) { return obj(c) && typeof c.name === "string"; }).map(function (c) { return { name: txt(c.name, 40), n: int0(c.n) }; }) },
-      gaps: arr(o.gaps, 6).map(function (g) { return txt(g, 300); }).filter(Boolean),
       flow: cleanFlow(o.flow), sources: cleanSources(o.sources)
     };
   }
@@ -579,8 +578,6 @@
     var cb = $("accCats").querySelector("tbody"); cb.textContent = "";
     A.categories.forEach(function (c) { var tr = el("tr"); tr.appendChild(el("td", null, c.name.replace(/-/g, " "))); tr.appendChild(el("td", "num", String(c.n))); cb.appendChild(tr); });
     if (!A.categories.length) { var tr1 = el("tr"); tr1.appendChild(el("td", "muted", "Nothing recorded yet.")); cb.appendChild(tr1); }
-    var ul = $("effGaps"); ul.textContent = "";
-    e.gaps.forEach(function (g) { var li = el("li"); li.appendChild(badge("info", "Note")); li.appendChild(document.createTextNode(" " + g)); ul.appendChild(li); });
     $("accSum").textContent = A.corrected_pct === null ? "nothing reviewed yet" : A.corrected_pct + "% corrected of " + A.reviewed;
   }
 

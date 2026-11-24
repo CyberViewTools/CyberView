@@ -1,35 +1,48 @@
 {
   "job": "updater",
   "started_at": "2026-11-24",
-  "finished_at": "2026-11-24",
   "model": "claude-sonnet-5-5",
-  "searches": [],
-  "pages_read": [
-    {
-      "url": "https://www.techradar.com/pro/security/meta-muse-can-be-hacked-to-access-user-private-chats-using-just-a-single-malicious-web-page",
-      "title": "TechRadar Meta Muse",
-      "used_in": "unchanged (relays NebuSec/THN)"
-    }
-  ],
-  "added": [],
   "updated": [],
   "unchanged": [
-    "nebusec-meta-muse-private-chats-browser-chain-2026-11"
+    "cleverbridge-payment-card-data-breach-2026-11 (ThaiCERT relays BleepingComputer, adds nothing new)",
+    "eu-academy-platform-cyberattack-2026-11 (wtae and koco carry the AP article already cited via mynbc5)"
   ],
-  "unrelated": [],
+  "unrelated": [
+    "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11 (BtCIRT page is about the PHP session handler, not F5 BIG-IP)"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.thaicert.or.th/2026/11/24/cleverbridge",
+      "title": "ThaiCERT Cleverbridge",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://btcirt.bt/phpaftershell-critical-rce-in-phps-default-session-handler-cve-2026-126714-20261120019/",
+      "title": "BtCIRT phpAfterShell",
+      "used_in": "unrelated"
+    },
+    {
+      "url": "https://www.wtae.com/article/eu-academy-data-leak-ai-driven-cyberattack/74515041",
+      "title": "AP via WTAE",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://www.koco.com/article/eu-academy-data-leak-ai-driven-cyberattack/74515041",
+      "title": "AP via KOCO",
+      "used_in": "unchanged"
+    }
+  ],
   "skipped": [],
   "open_leads": [
     {
-      "title": "Staples Canada breach, niagarathisweek",
-      "url": "https://www.niagarathisweek.com/news/staples-canada-data-breach-staplesprint/article_d9f57d76-bbed-574b-bfe7-783e617c317a.html",
-      "note": "fetch refused twice",
-      "priority": "low"
+      "title": "CVE-2026-126714 attached to both F5 BIG-IP (HKCERT) and PHP (BtCIRT)",
+      "url": "https://btcirt.bt/phpaftershell-critical-rce-in-phps-default-session-handler-cve-2026-126714-20261120019/",
+      "note": "The two sources describe different products under one CVE number; the F5 record may carry a wrong CVE. Needs the vendor pages (F5 K000164320, php.net advisory).",
+      "priority": "medium"
     }
   ],
-  "failed_sites": [
-    "niagarathisweek.com"
-  ],
-  "notes": "Staples page unreachable.",
+  "failed_sites": [],
+  "notes": "No event changed.",
   "worker_role": "updater",
   "worker_model": "sonnet"
 }

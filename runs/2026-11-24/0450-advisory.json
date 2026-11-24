@@ -1,0 +1,32 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-24T04:33:00Z",
+  "finished_at": "2026-11-24T04:55:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://support.apple.com/en-us/120896", "title": "Safari 17.5", "used_in": "CVE-2024-27834"},
+    {"url": "https://support.apple.com/en-us/120898", "title": "iOS 16.7.8 / iPadOS 16.7.8", "used_in": "CVE-2024-27834"},
+    {"url": "https://support.apple.com/en-us/120901", "title": "tvOS 17.5", "used_in": "CVE-2024-27834"},
+    {"url": "https://support.apple.com/en-us/120902", "title": "watchOS 10.5", "used_in": "CVE-2024-27834"}
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "CVE-2026-90817 (REDCap)", "url": "https://projectredcap.org/resources/community", "reason": "Page is a login-gated community site with no advisory text."}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-133968 MONAILabel", "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94", "note": "HTTP 403 for the reader; gh API path outside the session's repository was refused. No workaround attempted.", "priority": "high"},
+    {"title": "CVE-2026-134624 N-able", "url": "https://me.n-able.com/s/security-advisory/aArVy0000002mrlKAA", "note": "JavaScript portal; no advisory text loaded.", "priority": "high"},
+    {"title": "CVE-2026-129448 Apache Pony Mail", "url": "https://lists.apache.org/thread/cc0jck13nb9vvcmzxzwotr6n16mx28z9", "note": "Mailing-list page returned only the title; try the project's security page.", "priority": "medium"},
+    {"title": "CVE-2026-90436 Apache", "url": "https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz", "note": "Same: only title loaded.", "priority": "medium"},
+    {"title": "CVE-2026-114713 UnrealIRCd", "url": "https://forums.unrealircd.org/viewtopic.php?t=9487", "note": "HTTP 403 (site blocks automated readers).", "priority": "medium"},
+    {"title": "CVE-2026-115731 Perforce", "url": "https://portal.perforce.com/s/cve/a91Qi000003IaHpIAK/report-deserialization-code-execution", "note": "JavaScript portal; no text loaded.", "priority": "medium"},
+    {"title": "CVE-2026-125350 Chrome", "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_018223192.html", "note": "Post body did not load.", "priority": "medium"},
+    {"title": "CVE-2026-124194 Microsoft", "url": "https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2026-124194", "note": "MSRC page is script-rendered; no text loaded.", "priority": "medium"},
+    {"title": "CVE-2025-42884 SAP", "url": "https://support.sap.com/en/my-support/knowledge-base/security-notes-news/bulletin-2025.html", "note": "Not attempted this run (needs SAP login for notes).", "priority": "low"},
+    {"title": "Unguided KEV: CVE-2026-109618, 109619, 110447, 111497, 111793, 119977, 19868, 46300", "url": "", "note": "Not reached this run.", "priority": "low"}
+  ],
+  "failed_sites": ["github.com (403)", "me.n-able.com", "lists.apache.org", "forums.unrealircd.org (403)", "portal.perforce.com", "chromereleases.googleblog.com", "msrc.microsoft.com"],
+  "notes": "1 guide written (CVE-2024-27834, from Apple's four release-note pages; read via summarizer so depth is summary; Apple pages give no check command, so check lists affected products only). Most vendor portals are script-rendered or block automated readers; none were worked around. I did not retry after 60 s and 120 s waits, because sleeping in the foreground is blocked; one retry was made through a different tool (gh), which was refused."
+}

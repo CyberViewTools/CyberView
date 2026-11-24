@@ -1,5 +1,5 @@
 {
-  "action": "Siemens advises operators of Industrial Edge Management Pro or Virtual to shut down instances or disable internet connectivity until a fix is available; watch SSA-272816 for the fix Siemens says it is preparing.",
+  "action": "Siemens advises blocking direct internet access to IEM Pro and IEM Virtual and limiting inbound access to authorized sources with firewall rules; watch SSA-272816 for the fix Siemens says it is preparing.",
   "actor": "",
   "attack": [],
   "category": "vuln",
@@ -16,7 +16,7 @@
   "org": "Siemens",
   "pin_type": "headquarters",
   "place": "Munich, Germany",
-  "plain": "Siemens says its Industrial Edge Management Pro and Virtual products are affected by the Java flaw called Java4Shell. No fix exists yet; Siemens advises cutting direct internet access.",
+  "plain": "Siemens says its Industrial Edge Management Pro and Virtual products are affected by the Java flaw called Java4Shell. No fix exists yet; Siemens advises blocking direct internet access.",
   "products": [
     "Siemens Industrial Edge Management Pro V1",
     "Siemens Industrial Edge Management Pro V2",
@@ -36,7 +36,7 @@
     "publisher_type": "vendor",
     "read_depth": "full",
     "recommendations": [
-      "Siemens calls shutting down instances or disabling internet connectivity the most effective immediate measure."
+      "Siemens says to block direct internet access to IEM Pro / IEM Virtual; inbound access should be limited to authorized sources through firewall rules, while outbound connectivity should remain enabled for IEM Pro."
     ],
     "url": "https://cert-portal.siemens.com/productcert/html/ssa-272816.html"
   },
@@ -51,13 +51,13 @@
     }
   ],
   "status": "official",
-  "summary": "Siemens published advisory SSA-272816 on 18 November: all versions of Industrial Edge Management Pro V1, Pro V2 and Management Virtual are affected by the Java4Shell flaw CVE-2026-114938 (CVSS 8.1), and Siemens lists no fix yet. Siemens says it is preparing fixes. Its advisory calls shutting down instances or disabling internet connectivity the most effective immediate measure.",
+  "summary": "Siemens published advisory SSA-272816 on 18 November: all versions of Industrial Edge Management Pro V1, Pro V2 and Management Virtual are affected by the Java4Shell flaw CVE-2026-114938 (CVSS 8.1), and Siemens lists no fix yet. Siemens says it is preparing fixes. Its advisory, revised on 23 November, says to block direct internet access to the affected products.",
   "tags": [
     "ot-ics",
     "critical-infrastructure"
   ],
   "title": "Siemens: Java4Shell flaw affects all Industrial Edge Management Pro and Virtual versions, no fix yet",
-  "updated_at": "2026-11-24T15:02:12Z",
+  "updated_at": "2026-11-24T15:14:10Z",
   "validation": {
     "checked_at": "2026-11-20T11:25:03Z",
     "note": "Primary source: Siemens ProductCERT advisory SSA-272816, read in full.",
@@ -65,16 +65,15 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-23T17:28:32Z",
+    "at": "2026-11-24T15:14:10Z",
     "first_at": "2026-11-20T11:30:32Z",
-    "note": "source published day missing (added 2026-11-18); mitigation wording differed from source: now 'shut down instances or disable internet connectivity' as Siemens states, action names Siemens' advice",
+    "note": "action advice/stale source: Siemens V1.1 (23 Nov) adjusted mitigation to block direct internet access; summary, plain, action, report updated",
     "flags": [],
     "categories": [
-      "action",
-      "source"
+      "action"
     ]
   },
-  "qa_checked_at": "2026-11-23T17:28:32Z",
+  "qa_checked_at": "2026-11-24T15:14:10Z",
   "cve_meta": [
     {
       "id": "CVE-2026-114938",

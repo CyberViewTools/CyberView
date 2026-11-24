@@ -13,24 +13,68 @@
   "pin_type": "hq",
   "geo_basis": "Microsoft headquarters; the article names no victim location",
   "actor": "",
-  "attack": ["device code phishing"],
-  "products": ["Microsoft 365"],
+  "attack": [
+    "device code phishing"
+  ],
+  "products": [
+    "Microsoft 365"
+  ],
   "cves": [],
-  "tags": ["phishing", "identity"],
-  "summary": "Cyber Security News reports that researchers at VMRay noted leftover EvilTokens phishing activity in a report published on 24 November 2026, although Microsoft shut the service down on 22 September 2026. Per the article, VMRay's chart shows 25 hosts in October after the takedown, and many new hosts now sit on Bunny CDN instead of Workers.dev.",
+  "tags": [
+    "phishing",
+    "identity"
+  ],
+  "summary": "Cyber Security News reports, and VMRay's own report states, that VMRay noted leftover EvilTokens phishing activity in a report published on 24 November 2026, although Microsoft shut the service down on 22 September 2026. Per the article, VMRay's chart shows 25 hosts in October after the takedown, and many new hosts now sit on Bunny CDN instead of Workers.dev.",
   "plain": "Researchers say phishing sites built with the EvilTokens kit are still appearing after Microsoft shut the service down, now often on a different hosting network.",
   "exec": "According to VMRay, EvilTokens-style phishing against Microsoft accounts continued after the shutdown.",
   "action": "No action needed; for awareness.",
   "sources": [
-    {"name": "Cyber Security News", "url": "https://cybersecuritynews.com/eviltokens-phishing/", "published": "2026-11-24"}
+    {
+      "name": "VMRay",
+      "url": "https://www.vmray.com/hunting-eviltokens-residual-activity-after-takedown/",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/eviltokens-phishing/",
+      "published": "2026-11-24"
+    }
   ],
   "evidence": [
-    {"url": "https://cybersecuritynews.com/eviltokens-phishing/", "quote": "The chart then shows four hosts in the last days of September and 25 in October, after the takedown."}
+    {
+      "url": "https://cybersecuritynews.com/eviltokens-phishing/",
+      "quote": "The chart then shows four hosts in the last days of September and 25 in October, after the takedown."
+    }
   ],
   "source_tier": "established",
-  "validation": {"state": "single_source", "checked_at": "2026-11-24T11:44:25Z", "note": "Only Cyber Security News was read; VMRay's own report could not be found, so its findings are relayed secondhand."},
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "identity", "basis": "inferred"},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T11:44:25Z",
+    "note": "Cyber Security News relays VMRay; VMRay's own report (linked by the article) was read in review and agrees on the 22 September takedown and Bunny CDN. Its Figure 13 shows 25 October hosts; its IOC table lists more October hosts. Single vendor report, not independently corroborated."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "identity",
+    "basis": "inferred"
+  },
   "first_seen": "2026-11-24T11:44:25Z",
-  "updated_at": "2026-11-24T11:44:25Z"
+  "updated_at": "2026-11-24T12:13:30Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T12:13:03Z",
+    "first_at": "2026-11-24T12:13:03Z",
+    "note": "source: added VMRay's own report (read, matches 22 Sept takedown, Bunny CDN, 25 Oct hosts in Figure 13); validation note fixed; stays single_source",
+    "flags": [],
+    "categories": [
+      "figure",
+      "validation",
+      "source"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T12:13:03Z"
 }

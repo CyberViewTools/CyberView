@@ -100,7 +100,7 @@ scripts/finish.mjs       mechanical end of a job: timestamp, build, commit data 
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/unit/*.test.mjs    unit tests (node --test, no dependencies)
 tests/smoke_live.py      browser check of the live site
-.github/workflows/       pages.yml (deploy), build.yml (code pushes), collect.yml, feeds.yml, cve.yml (CVE corpus, hourly), pipecheck.yml (pipeline check, hourly), monitor.yml, security.yml, data-forward.yml (safety net: anything that still lands under data/ on main is moved onto the data branch), ai-jobs.yml (manual fallback only); data workflows check out main without data/ and mount the data branch with .github/actions/data
+.github/workflows/       pages.yml (deploy), build.yml (code pushes), collect.yml, feeds.yml, cve.yml (CVE corpus, hourly), pipecheck.yml (pipeline check, hourly), monitor.yml, security.yml, data-forward.yml (safety net: anything that still lands under data/ on main is moved onto the data branch), ai-launch.yml (starts the scheduled AI jobs with dispatch.mjs --exec on a runner once vars.AI_LAUNCH is "actions"; signs in with the CLAUDE_CODE_OAUTH_TOKEN subscription secret), ai-jobs.yml (manual fallback only); data workflows check out main without data/ and mount the data branch with .github/actions/data
 Claude jobs             run as Claude Code scheduled tasks "CyberView: <job>" in the "CyberView ops" session (see docs/jobs.md)
 docs/                    data schema (schema.md) and the scheduled jobs (jobs.md)
 ```

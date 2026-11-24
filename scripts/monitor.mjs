@@ -5,6 +5,7 @@ import { writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./lib/store.mjs";
 import { SITE_URL } from "./lib/site-url.mjs";
+import { ANALYTICS, analyticsOn } from "./lib/analytics.mjs";
 
 const BASE = (process.argv[2] || SITE_URL).replace(/\/$/, "");
 const fails = [], warns = [], notes = [];
@@ -28,7 +29,12 @@ else {
   // GitHub Pages cannot send custom headers: the policy is a meta tag in the page
   const csp = (home.body.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i) || [])[1] || home.headers.get("content-security-policy") || "";
   if (!csp) fails.push("Content-Security-Policy is missing from the page");
-  else if (!/script-src 'self'(;|$)/.test(csp)) fails.push(`CSP script-src is not exactly 'self': ${csp}`);
+  else {
+    // the same rule scripts/security-check.mjs enforces: exactly 'self', plus the analytics script host where it is allowed
+    const want = `'self'${analyticsOn("index.html") ? " " + ANALYTICS.script : ""}`;
+    const got = ((csp.match(/(?:^|;)\s*script-src\s+([^;]*)/) || [])[1] || "").trim();
+    if (got !== want) fails.push(`CSP script-src is not exactly ${want}: ${csp}`);
+  }
   if (!/<meta\s+name="referrer"/i.test(home.body)) warns.push("Referrer policy meta tag is missing");
   if (!/^https:/.test(BASE)) fails.push("Site is not served over HTTPS");
 }

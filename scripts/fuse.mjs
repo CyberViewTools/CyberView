@@ -140,7 +140,7 @@ export function story(group, evs = [], now = Date.now()) {
     publishers: publishers.size, vias: [...vias], tiers: [...tiers], kinds: [...kinds], cves, regions, langs, first_seen: new Date(first).toISOString().replace(/\.\d+Z$/, "Z"), waiting_since: new Date(waitingSince).toISOString().replace(/\.\d+Z$/, "Z"), last_seen: new Date(last).toISOString().replace(/\.\d+Z$/, "Z"),
     claim_only: claimOnly, event: ev ? ev.id : "", open, published: new Date(newest).toISOString().replace(/\.\d+Z$/, "Z"), dated, incident: incident && !explainer, eventlike: (incident || EVENTLIKE.test(titles)) && !explainer, routine, explainer,
     leads: group.slice().sort((a, b) => (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0)).slice(0, 14).map((l) => ({ source: l.source, tier: l.tier, via: l.via || "rss", ...(l.kind ? { kind: l.kind } : {}), ...(l.lang ? { lang: l.lang } : {}), title: String(l.title).slice(0, 160), url: l.url, open: !!l._open })),
-    more: Math.max(0, group.length - 14), urls: group.map((l) => l.url),
+    more: Math.max(0, group.length - 14), urls: group.map((l) => l.url), open_urls: group.filter((l) => l._open).map((l) => l.url),
   };
 }
 

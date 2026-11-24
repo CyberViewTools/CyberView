@@ -1,0 +1,98 @@
+{
+  "job": "sweep-r2",
+  "started_at": "2026-11-24T00:39:33Z",
+  "finished_at": "2026-11-24T01:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "Alberta voters list",
+    "El Cajon Rhysida",
+    "アイル不正アクセス",
+    "ベストコ不正アクセス"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.etoday.co.kr/news/view/2651971",
+      "title": "etoday Binance forfeiture",
+      "used_in": "closed as already on file"
+    },
+    {
+      "url": "https://cybersecurity-jp.com/news/118781",
+      "title": "Ail breach",
+      "used_in": "not written (event file could not be created)"
+    },
+    {
+      "url": "https://cybersecurity-jp.com/news/118784",
+      "title": "Bestco breach",
+      "used_in": "not written"
+    },
+    {
+      "url": "https://www.theyeshivaworld.com/news/israel-news/2626930/cyber-surge-phishing-attacks-in-israel-jump-145-more-than-26000-suspected-incidents-reported.html",
+      "title": "Israel phishing",
+      "used_in": "not written"
+    },
+    {
+      "url": "https://diamond.jp/articles/-/404015",
+      "title": "Tanker cyberattacks (WSJ)",
+      "used_in": "not written"
+    },
+    {
+      "url": "https://www.nbcsandiego.com/news/local/suspected-cyberattack-targets-city-el-cajon/4105754/",
+      "title": "El Cajon",
+      "used_in": "skipped"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Binance forfeiture (etoday)",
+      "url": "https://www.etoday.co.kr/news/view/2651971",
+      "reason": "already on file: doj-facestealer-infrastructure-seizure-2026-11"
+    },
+    {
+      "title": "El Cajon",
+      "url": "https://www.nbcsandiego.com/news/local/suspected-cyberattack-targets-city-el-cajon/4105754/",
+      "reason": "page undated, city confirmation 27 Sept, older than map window; Rhysida claim via Breachsense only"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Ail SaaS test environment breach (a Nov 22 disclosure)",
+      "url": "https://cybersecurity-jp.com/news/118781",
+      "note": "Read; facts: confirmed 18 Nov, disclosed 22 Nov, real partner/member/order info and part of API credentials taken, no production intrusion confirmed. Event file not written (Bash approval denied for the write script). Find Ail's own notice.",
+      "priority": "high"
+    },
+    {
+      "title": "Bestco / Best Kobetsu leak up to 146,133 records",
+      "url": "https://cybersecurity-jp.com/news/118784",
+      "note": "Read; confirmed access 20 Nov, announced 21 Nov; up to 50,196 enrollees + 95,937 inquiries. Event not written.",
+      "priority": "high"
+    },
+    {
+      "title": "Israel INCD phishing up approx 145%",
+      "url": "https://www.theyeshivaworld.com/news/israel-news/2626930/cyber-surge-phishing-attacks-in-israel-jump-145-more-than-26000-suspected-incidents-reported.html",
+      "note": "Read; not written; find INCD release.",
+      "priority": "low"
+    },
+    {
+      "title": "WSJ: US probes Iran role in dozens of tanker cyberattacks",
+      "url": "https://diamond.jp/articles/-/404015",
+      "note": "Read paywalled partial; up to 50 ships, Iran main suspect per officials. Not written; find WSJ/English source.",
+      "priority": "medium"
+    },
+    {
+      "title": "Alberta voters list access tightening",
+      "url": "https://edmontonjournal.com/news/alberta-tighten-criteria-provincial-voters-list",
+      "note": "Pages did not load; search shows CTV/Elections Alberta pages exist; breach itself from September (2.9 million per class action).",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "calgaryherald.com",
+    "calgarysun.com",
+    "edmontonjournal.com (fetch blocked)"
+  ],
+  "notes": "The Bash tool denied approval for the Python script that writes event files, so no events were written. Stories a08253c2, 930d0c8e, 0b8cd075 closed; 70bf95c7, 914653c6, dfe94d28, f10b90ea left open for the next cycle.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

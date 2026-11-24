@@ -16,19 +16,71 @@
   "summary": "ANY.RUN's blog post describes five holiday-themed campaigns it observed: a fake Thanksgiving invitation leading to a Google Workspace login page, an e-card that downloads a ScreenConnect installer, a fake MyChart survey collecting personal data, a Black Friday newsletter hiding an NDA phishing link, and a Word coupon with an embedded VBS script. ANY.RUN says the script's download failed in all observed tasks.",
   "plain": "Security firm ANY.RUN lists five holiday-themed scams and malware lures it saw this autumn, from fake logins to a fake coupon document.",
   "exec": "ANY.RUN reports holiday-themed lures aimed at employees and shoppers, including a credential-theft page and a remote-access installer.",
-  "action": "No action needed; for awareness.",
-  "tags": ["phishing", "malware"],
+  "action": "ANY.RUN advises investigating what happens after a user clicks a link or opens a file, monitoring for unauthorized remote-management installs, and watching for Office-to-script process chains such as WINWORD.EXE to wscript.exe to schtasks.exe.",
+  "tags": [
+    "phishing",
+    "malware"
+  ],
   "cves": [],
-  "products": ["ScreenConnect", "Google Workspace", "MyChart"],
+  "products": [
+    "ScreenConnect",
+    "Google Workspace",
+    "MyChart"
+  ],
   "attack": [],
   "sources": [
-    {"name": "ANY.RUN blog", "url": "https://any.run/cybersecurity-blog/thanksgiving-black-friday-cyber-threats-2026/", "published": "2026-11-23"}
+    {
+      "name": "ANY.RUN blog",
+      "url": "https://any.run/cybersecurity-blog/thanksgiving-black-friday-cyber-threats-2026/",
+      "published": "2026-11-23"
+    }
   ],
   "evidence": [],
   "source_tier": "primary",
-  "validation": {"state": "single_source", "checked_at": "2026-11-24T12:58:30Z", "note": "Only the ANY.RUN post itself was read."},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T12:58:30Z",
+    "note": "Only the ANY.RUN post itself was read."
+  },
   "first_seen": "2026-11-24T12:58:30Z",
-  "updated_at": "2026-11-24T12:58:30Z",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "email-phishing", "basis": "stated"}
+  "updated_at": "2026-11-24T13:19:57Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "email-phishing",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T13:13:24Z",
+    "first_at": "2026-11-24T13:13:24Z",
+    "note": "Compared five campaigns, VBS failure, date, severity against ANY.RUN post",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T13:13:24Z",
+  "report": {
+    "publisher": "ANY.RUN",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-23",
+    "key_findings": [
+      "ANY.RUN describes five holiday-themed campaigns: a fake Google Workspace login, a ScreenConnect installer delivered via a fake e-card PDF, a fake MyChart survey, an NDA phishing link inside a genuine newsletter, and a coupon document with an embedded VBS script.",
+      "It says the Google Workspace phishing operation had been active since August 2026.",
+      "For the ScreenConnect case it says intended victims and follow-on activity were not confirmed.",
+      "It says the VBS script attempted a second-stage download and a scheduled task, but the download failed in all nine observed tasks."
+    ],
+    "recommendations": [
+      "Investigate what happens after a user clicks a link or opens a file, not just the email itself.",
+      "Monitor for unauthorized remote-management installs and unexpected PDF-to-browser transitions.",
+      "Watch for Office-to-script process chains such as WINWORD.EXE to wscript.exe to schtasks.exe.",
+      "Inspect image-only emails and trace traffic distribution system redirect chains."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://any.run/cybersecurity-blog/thanksgiving-black-friday-cyber-threats-2026/"
+  }
 }

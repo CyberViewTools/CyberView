@@ -6,7 +6,7 @@
   "date": "2026-11-20",
   "date_note": "Date of SOCRadar's report; it says the activity lasted nine days in November 2026 and the operator's server was offline by 16 November",
   "first_seen": "2026-11-23T06:56:52Z",
-  "updated_at": "2026-11-23T13:19:48Z",
+  "updated_at": "2026-11-24T13:19:21Z",
   "org": "SOCRadar",
   "country": "France",
   "place": "Belgium, France and Switzerland",
@@ -79,13 +79,14 @@
       "SOCRadar says the model API key was revoked on 14 November 2026 and deployed implants checked in until 15 November."
     ],
     "recommendations": [
-      "Treat anything reachable without authentication as already indexed.",
-      "Do not let a web application process read a database superuser password.",
-      "Inventory internet-facing tools, and rate-limit SMS and email sending.",
-      "Hunt in logs for the 5 to 17 November 2026 window and monitor model API and Telegram traffic."
+      "Hunt logs for the report's indicators from 5 to 17 November 2026 and check for the implant artifacts SOCRadar describes.",
+      "Inventory internet-facing tools, storage interfaces, test portals and API docs, and treat anything reachable without authentication as already exposed.",
+      "Keep secrets out of application runtime environments.",
+      "Add authentication, rate limits and account-enumeration protections to sign-in flows and SMS or email functions.",
+      "Monitor for unexplained traffic to model-provider APIs and the Telegram bot API."
     ],
     "iocs_available": true,
-    "read_depth": "summary",
+    "read_depth": "full",
     "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/"
   },
   "source_tier": "primary",
@@ -109,6 +110,20 @@
       "epss": 0.99478,
       "kev": false,
       "kev_due": ""
+    }
+  ],
+  "hunt": [
+    {
+      "name": "SOCRadar indicators of compromise (in article)",
+      "format": "text",
+      "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/#indicators-of-compromise",
+      "publisher": "SOCRadar"
+    },
+    {
+      "name": "SOCRadar YARA rules (in article)",
+      "format": "yara",
+      "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/#yara-rule",
+      "publisher": "SOCRadar"
     }
   ]
 }

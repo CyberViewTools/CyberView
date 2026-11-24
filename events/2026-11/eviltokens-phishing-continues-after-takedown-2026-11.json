@@ -1,7 +1,7 @@
 {
   "title": "VMRay report: EvilTokens phishing hosts kept appearing after Microsoft's September shutdown",
   "category": "report",
-  "status": "developing",
+  "status": "official",
   "severity": 2,
   "date": "2026-11-24",
   "date_note": "Article gives only its publication day and says VMRay's report was published on 24 November 2026.",
@@ -27,7 +27,7 @@
   "summary": "Cyber Security News reports, and VMRay's own report states, that VMRay noted leftover EvilTokens phishing activity in a report published on 24 November 2026, although Microsoft shut the service down on 22 September 2026. Per the article, VMRay's chart shows 25 hosts in October after the takedown, and many new hosts now sit on Bunny CDN instead of Workers.dev.",
   "plain": "Researchers say phishing sites built with the EvilTokens kit are still appearing after Microsoft shut the service down, now often on a different hosting network.",
   "exec": "According to VMRay, EvilTokens-style phishing against Microsoft accounts continued after the shutdown.",
-  "action": "No action needed; for awareness.",
+  "action": "VMRay advises blocking device code flow with an Entra ID Conditional Access policy (report-only mode first), and on detection revoking sessions and refresh tokens and removing devices the identity registered.",
   "sources": [
     {
       "name": "VMRay",
@@ -46,7 +46,7 @@
       "quote": "The chart then shows four hosts in the last days of September and 25 in October, after the takedown."
     }
   ],
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
     "state": "single_source",
     "checked_at": "2026-11-24T11:44:25Z",
@@ -63,7 +63,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-24T11:44:25Z",
-  "updated_at": "2026-11-24T12:13:30Z",
+  "updated_at": "2026-11-24T13:19:21Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-24T12:13:03Z",
@@ -76,5 +76,33 @@
       "source"
     ]
   },
-  "qa_checked_at": "2026-11-24T12:13:03Z"
+  "qa_checked_at": "2026-11-24T12:13:03Z",
+  "report": {
+    "publisher": "VMRay",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-24",
+    "key_findings": [
+      "EvilTokens is a phishing-as-a-service kit that abuses the OAuth device-code sign-in flow to take over Microsoft 365 accounts.",
+      "VMRay says Microsoft took the service down on September 22 but it still observed activity afterward, with new hosts appearing, many on Bunny CDN.",
+      "Lures show a real device code and send victims to the genuine Microsoft device-login page, so URL checks alone do not catch it.",
+      "VMRay says the kit uses AI features for evasion, page generation, mailbox reconnaissance and BEC content."
+    ],
+    "recommendations": [
+      "Block device code flow with an Entra ID Conditional Access policy, running it in report-only mode first.",
+      "If blocking is not possible, review Entra sign-in logs filtered to the device-code authentication protocol.",
+      "On detection, revoke sessions and refresh tokens, remove devices the identity registered, and disable the account rather than relying on a password reset alone."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://www.vmray.com/hunting-eviltokens-residual-activity-after-takedown/"
+  },
+  "hunt": [
+    {
+      "name": "VMRay indicators of compromise (in article)",
+      "format": "text",
+      "url": "https://www.vmray.com/hunting-eviltokens-residual-activity-after-takedown/#iocs",
+      "publisher": "VMRay"
+    }
+  ]
 }

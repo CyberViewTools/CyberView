@@ -16,7 +16,9 @@
   "pin_type": "country",
   "place": "Ukraine",
   "plain": "Security firm Seqrite describes a phishing campaign against Ukrainian government bodies that used a fake military financial-aid letter to install a remote-access trojan called Azalea Agent.",
-  "products": ["Azalea Agent"],
+  "products": [
+    "Azalea Agent"
+  ],
   "report": {
     "doc_id": "",
     "iocs_available": true,
@@ -29,11 +31,18 @@
     "publisher": "Seqrite",
     "publisher_type": "vendor",
     "read_depth": "full",
-    "recommendations": ["Hunt for the indicators of compromise listed in the report."],
+    "recommendations": [
+      "Hunt for the indicators of compromise listed in the report."
+    ],
     "url": "https://www.seqrite.com/blog/from-phishing-email-to-azalea-agent-uncovering-a-multi-stage-attack-on-ukrainian-government-bodies/"
   },
   "sector": "Government",
-  "sectors": {"values": ["government-facilities"], "basis": "stated"},
+  "sectors": {
+    "values": [
+      "government-facilities"
+    ],
+    "basis": "stated"
+  },
   "severity": 2,
   "source_tier": "primary",
   "sources": [
@@ -45,13 +54,27 @@
   ],
   "status": "official",
   "summary": "Seqrite reports a phishing campaign against Ukrainian government bodies, with an email observed on 13 October 2026 carrying a RAR archive built around a military financial-assistance lure. Its multi-stage chain ends in Azalea Agent, which Seqrite describes as a commercial malware-as-a-service tool available to multiple operators. Seqrite tracks the activity as unattributed.",
-  "surface": {"value": "email-phishing", "basis": "stated"},
-  "tags": ["phishing", "malware"],
+  "surface": {
+    "value": "email-phishing",
+    "basis": "stated"
+  },
+  "tags": [
+    "phishing",
+    "malware"
+  ],
   "title": "Seqrite: phishing campaign on Ukrainian government bodies delivers Azalea Agent trojan",
   "updated_at": "2026-11-24T12:45:00Z",
   "validation": {
     "checked_at": "2026-11-24T12:45:00Z",
     "note": "Single source: Seqrite's own report, read in full; no second publisher read.",
     "state": "single_source"
-  }
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T13:13:19Z",
+    "first_at": "2026-11-24T13:13:19Z",
+    "note": "Compared 13 Oct email, domains, MaaS wording, unattributed status and IOCs with the Seqrite report",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T13:13:19Z"
 }

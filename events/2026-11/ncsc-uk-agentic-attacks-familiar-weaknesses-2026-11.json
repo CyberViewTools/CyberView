@@ -6,7 +6,7 @@
   "products": [],
   "attack": [],
   "first_seen": "2026-11-24T10:44:26Z",
-  "updated_at": "2026-11-24T10:44:26Z",
+  "updated_at": "2026-11-24T13:19:21Z",
   "time_basis": "published",
   "geo_basis": "country",
   "pin_type": "country",
@@ -60,5 +60,27 @@
     "note": "compared title, date, summary and action against the NCSC blog; all match",
     "flags": []
   },
-  "qa_checked_at": "2026-11-24T11:13:47Z"
+  "qa_checked_at": "2026-11-24T11:13:47Z",
+  "report": {
+    "publisher": "UK National Cyber Security Centre",
+    "publisher_type": "government",
+    "doc_id": "",
+    "published": "2026-11-24",
+    "key_findings": [
+      "The NCSC says it has seen a rise in AI-assisted attacks using agentic offensive frameworks, which are red-teaming tools repurposed for malicious use.",
+      "It says the weaknesses being exploited are not new and the tools give attackers no capability they lacked before; what changed is speed, persistence and low cost.",
+      "It says current frameworks are noisy, which makes them easier to detect, though future versions may be stealthier.",
+      "Targets named include credentials committed to code repositories, infrastructure-as-code misconfigurations, default credentials or missing authentication, API weaknesses, over-privileged credentials and flat networks."
+    ],
+    "recommendations": [
+      "Keep an inventory of internet-facing assets, including forgotten legacy systems, and review it regularly.",
+      "Put services behind identity-aware proxies, firewalls or mutual TLS so only authenticated users can reach them.",
+      "Detect agent activity: look for bursts of requests, wide endpoint and parameter variety and high error rates, and retain correlated logs.",
+      "Patch internet-facing systems, audit identity and access settings for drift, and use pre-commit checks to stop secrets reaching repositories.",
+      "Apply rate limits per account, token or session at the API level, and consider honeytokens and decoy systems for high-confidence alerts."
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://www.ncsc.gov.uk/blogs/familiar-weaknesses-exploited-faster-defending-against-agentic-cyber-attacks"
+  }
 }

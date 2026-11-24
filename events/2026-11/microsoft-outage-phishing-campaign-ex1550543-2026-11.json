@@ -52,19 +52,25 @@
   "sources": [
     {
       "name": "Microsoft Threat Intelligence",
-      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/"
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/16/high-volume-phishing-campaign-uses-microsoft-365-outage-lures-target-multiple-industry-sectors-2/",
+      "published": "2026-11-16"
+    },
+    {
+      "name": "KnowBe4 Threat Lab",
+      "url": "https://blog.knowbe4.com/microsoft-outage-phishing-email-surge",
+      "published": "2026-11-24"
     }
   ],
   "status": "confirmed",
-  "summary": "Microsoft Threat Intelligence describes a high-volume phishing campaign seen on November 13 that poses as Microsoft 365 service-health notices. The emails claim four messages were held after an Exchange Online incident on November 12 and will be deleted within 24 hours unless the reader clicks to restore them. Microsoft has not named an actor or confirmed credential capture.",
+  "summary": "Microsoft Threat Intelligence describes a high-volume phishing campaign seen on November 13 that poses as Microsoft 365 service-health notices claiming messages were held after a November 12 Exchange Online incident. Microsoft has not named an actor or confirmed credential capture. KnowBe4 reported that on November 13 outage-related phishing emails reached about 468 times the November 9 to 11 daily average in detections.",
   "tags": [
     "phishing"
   ],
   "title": "Phishing campaign uses the Microsoft 365 outage as a lure",
-  "updated_at": "2026-11-19T05:12:00Z",
+  "updated_at": "2026-11-24T13:15:03Z",
   "validation": {
     "checked_at": "2026-11-17T23:58:00Z",
-    "note": "Reviewed against the original Microsoft Threat Intelligence report. The incident number EX1550543 appears only in an AI-assisted forum post, not in Microsoft's post, so it is not asserted here.",
+    "note": "Reviewed against the original Microsoft Threat Intelligence report. The incident number EX1550543 appears only in an AI-assisted forum post, not in Microsoft's post, so it is not asserted here. KnowBe4 Threat Lab (24 November) independently reports outage-themed phishing on November 13.",
     "state": "corroborated"
   },
   "date_note": "Date of Microsoft's post; the campaign was observed on November 13.",
@@ -83,5 +89,11 @@
   "surface": {
     "value": "email-phishing",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://blog.knowbe4.com/microsoft-outage-phishing-email-surge",
+      "quote": "On Nov. 13, outage-related phishing emails reached about 468 times the Nov. 9 to Nov. 11 daily average in detections"
+    }
+  ]
 }

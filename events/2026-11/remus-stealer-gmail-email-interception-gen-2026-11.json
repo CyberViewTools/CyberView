@@ -15,16 +15,26 @@
   "pin_type": "country",
   "actor": "unknown",
   "summary": "Gen Threat Research says the Remus infostealer's new email interception feature installs a malicious Chrome extension, disguised as Google Sheets, that checks for new Gmail messages every minute and sends sender, subject and text to the attacker. The developers claimed a Gmail zero-day that survives password changes; Gen says it found no vulnerability and the extension does not bypass password changes or session revocation. The post does not mention a Google response.",
-  "plain": "Gen says a data-stealing program's claimed Gmail 'zero-day' is really a malicious browser extension that keeps reading mail until it is removed, even after a password change.",
+  "plain": "Gen says a data-stealing program's claimed Gmail 'zero-day' is really a malicious Chrome extension that stays installed, so mail reading can resume when the victim signs back in.",
   "exec": "Gen says the claimed Gmail zero-day is a malicious Chrome extension; changing a password alone may not remove it.",
   "action": "General advice: check chrome://extensions for unfamiliar extensions and remove them after a password change; Gen's post lists hashes and extension IDs for hunting.",
   "impact": "Gen says the feature appears only in some Remus builds.",
-  "tags": ["malware"],
+  "tags": [
+    "malware"
+  ],
   "cves": [],
-  "products": ["Remus", "Gmail", "Google Chrome"],
+  "products": [
+    "Remus",
+    "Gmail",
+    "Google Chrome"
+  ],
   "attack": [],
   "sources": [
-    {"name": "Gen Threat Research", "url": "https://www.gendigital.com/blog/insights/research/remus-stealer-email-interception-analysis", "published": "2026-11-24"}
+    {
+      "name": "Gen Threat Research",
+      "url": "https://www.gendigital.com/blog/insights/research/remus-stealer-email-interception-analysis",
+      "published": "2026-11-24"
+    }
   ],
   "source_tier": "primary",
   "validation": {
@@ -33,7 +43,27 @@
     "note": "Only Gen's own research post was read; no second publisher yet."
   },
   "first_seen": "2026-11-24T16:44:30Z",
-  "updated_at": "2026-11-24T16:44:30Z",
-  "sectors": {"values": ["individuals"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"}
+  "updated_at": "2026-11-24T17:05:00Z",
+  "sectors": {
+    "values": [
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-24T17:12:46Z",
+    "first_at": "2026-11-24T17:12:46Z",
+    "note": "stronger than the source: plain said it persists after password change; Gen says interception stops on session revocation and resumes on sign-in",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "misstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T17:12:46Z"
 }

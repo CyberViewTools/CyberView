@@ -8,7 +8,10 @@
   "date": "2026-11-24",
   "date_note": "Date is the day Coinkite's blog post was published (the linked report is dated 23 November); thefts began 29 July.",
   "evidence": [
-    {"url": "https://blog.coinkite.com/coldcard-postmortem-published/", "quote": "300 loss-related tickets to 236 customer accounts"}
+    {
+      "url": "https://blog.coinkite.com/coldcard-postmortem-published/",
+      "quote": "300 loss-related tickets to 236 customer accounts"
+    }
   ],
   "exec": "Coinkite says a seed-generation defect in Coldcard firmware, not hacked devices, let thieves regenerate private keys and take bitcoin.",
   "first_seen": "2026-11-24T16:44:18Z",
@@ -19,15 +22,33 @@
   "pin_type": "none",
   "place": "",
   "plain": "Coinkite, maker of the Coldcard bitcoin wallet, says a flaw in how its firmware made seeds let thieves work out private keys offline. It says no device was hacked, and updating firmware does not fix an old seed.",
-  "products": ["Coldcard"],
+  "products": [
+    "Coldcard"
+  ],
   "sector": "Cryptocurrency",
-  "sectors": {"values": ["financial-services"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "financial-services"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
   "severity": 2,
   "source_tier": "primary",
   "sources": [
-    {"name": "Coinkite blog: Coldcard postmortem published", "url": "https://blog.coinkite.com/coldcard-postmortem-published/", "published": "2026-11-24"},
-    {"name": "Bitcoin Magazine", "url": "https://bitcoinmagazine.com/news/coldcard-postmortem-seed-flaw", "published": "2026-11-24"}
+    {
+      "name": "Coinkite blog: Coldcard postmortem published",
+      "url": "https://blog.coinkite.com/coldcard-postmortem-published/",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Bitcoin Magazine",
+      "url": "https://bitcoinmagazine.com/news/coldcard-postmortem-seed-flaw",
+      "published": "2026-11-24"
+    }
   ],
   "status": "confirmed",
   "summary": "Coinkite's postmortem says a seed-generation defect in Coldcard firmware, not hacked devices, enabled the thefts. Its post says every theft was carried out offline by regenerating affected private keys, that thefts began on 29 July, and that it identified the defect on 30 July and shipped fixed firmware on 31 July. Support matched 300 loss-related tickets to 236 customer accounts, which the company says is likely an undercount.",
@@ -38,5 +59,13 @@
     "state": "primary",
     "checked_at": "2026-11-24T16:44:18Z",
     "note": "Coinkite's own blog post (24 Nov) read via fetch summary; Bitcoin Magazine (24 Nov) reports the same postmortem. The 18-page PDF report was not opened; Bitcoin Magazine's figures (242 accounts, BTC totals from Galaxy Research) differ from the blog's 236 and are not used."
-  }
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T17:12:31Z",
+    "first_at": "2026-11-24T17:12:31Z",
+    "note": "Compared title, dates, 300/236 figure, action and status against Coinkite blog and Bitcoin Magazine",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-24T17:12:31Z"
 }

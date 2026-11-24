@@ -1,19 +1,75 @@
 {
-  "updated_at": "2026-11-24T05:28:59Z",
+  "updated_at": "2026-11-24T05:33:49Z",
   "anomalies": [
     {
       "id": "grid-doe-odin-oregon-202611232040",
       "source": "doe-odin",
       "region": "Oregon",
       "name": "Oregon",
-      "at": "2026-11-24T05:15:00Z",
+      "at": "2026-11-24T05:30:00Z",
       "kind": "customers",
       "value": 5576,
       "median": 56,
       "mad": 44,
       "z": 84.6,
-      "points": 358,
+      "points": 359,
       "basis": "all_hours"
+    },
+    {
+      "id": "grid-doe-odin-washington-202611240528",
+      "source": "doe-odin",
+      "region": "Washington",
+      "name": "Washington",
+      "at": "2026-11-24T05:30:00Z",
+      "kind": "customers",
+      "value": 6130,
+      "median": 184,
+      "mad": 150,
+      "z": 26.7,
+      "points": 359,
+      "basis": "all_hours"
+    },
+    {
+      "id": "grid-occto-reserve-chubu-202611240533",
+      "source": "occto-reserve",
+      "region": "Chubu",
+      "name": "Chubu",
+      "at": "2026-11-24T05:30:00Z",
+      "kind": "level",
+      "value": 1,
+      "median": 0,
+      "mad": 0,
+      "z": null,
+      "points": 0,
+      "basis": "normal_is_zero"
+    },
+    {
+      "id": "grid-occto-reserve-hokuriku-202611240533",
+      "source": "occto-reserve",
+      "region": "Hokuriku",
+      "name": "Hokuriku",
+      "at": "2026-11-24T05:30:00Z",
+      "kind": "level",
+      "value": 1,
+      "median": 0,
+      "mad": 0,
+      "z": null,
+      "points": 0,
+      "basis": "normal_is_zero"
+    },
+    {
+      "id": "grid-occto-reserve-kansai-202611240533",
+      "source": "occto-reserve",
+      "region": "Kansai",
+      "name": "Kansai",
+      "at": "2026-11-24T05:30:00Z",
+      "kind": "level",
+      "value": 1,
+      "median": 0,
+      "mad": 0,
+      "z": null,
+      "points": 0,
+      "basis": "normal_is_zero"
     }
   ],
   "corroboration": [
@@ -23,7 +79,7 @@
         {
           "kind": "operator",
           "source": "doe-odin",
-          "detail": "DOE/ORNL ODIN: 3,887 customers without power",
+          "detail": "DOE/ORNL ODIN: 3,819 customers without power",
           "url": "https://odin.ornl.gov/"
         }
       ],
@@ -58,19 +114,73 @@
         }
       ],
       "score": 1
+    },
+    {
+      "id": "grid-occto-reserve-chubu-202611240533",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "occto-reserve",
+          "detail": "OCCTO wide-area reserve (Japan): supply warning level 1 in Chubu",
+          "url": "https://web-kohyo.occto.or.jp/kks-web-public/"
+        },
+        {
+          "kind": "news",
+          "source": "日テレNEWS NNN",
+          "detail": "長野県北部で約860戸の停電続く 大雪による倒木が影響 24日午後8時 ...",
+          "url": "https://news.ntv.co.jp/n/tsb/category/society/ts85934192dc2e4355af70beb553b471b9"
+        }
+      ],
+      "score": 2
+    },
+    {
+      "id": "grid-occto-reserve-hokuriku-202611240533",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "occto-reserve",
+          "detail": "OCCTO wide-area reserve (Japan): supply warning level 1 in Hokuriku",
+          "url": "https://web-kohyo.occto.or.jp/kks-web-public/"
+        },
+        {
+          "kind": "news",
+          "source": "日テレNEWS NNN",
+          "detail": "長野県北部で約860戸の停電続く 大雪による倒木が影響 24日午後8時 ...",
+          "url": "https://news.ntv.co.jp/n/tsb/category/society/ts85934192dc2e4355af70beb553b471b9"
+        }
+      ],
+      "score": 2
+    },
+    {
+      "id": "grid-occto-reserve-kansai-202611240533",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "occto-reserve",
+          "detail": "OCCTO wide-area reserve (Japan): supply warning level 1 in Kansai",
+          "url": "https://web-kohyo.occto.or.jp/kks-web-public/"
+        },
+        {
+          "kind": "news",
+          "source": "日テレNEWS NNN",
+          "detail": "長野県北部で約860戸の停電続く 大雪による倒木が影響 24日午後8時 ...",
+          "url": "https://news.ntv.co.jp/n/tsb/category/society/ts85934192dc2e4355af70beb553b471b9"
+        }
+      ],
+      "score": 2
     }
   ],
   "trends": {
     "window_days": 30,
-    "from": "2026-10-25T05:28:59Z",
-    "to": "2026-11-24T05:28:59Z",
+    "from": "2026-10-25T05:33:49Z",
+    "to": "2026-11-24T05:33:49Z",
     "regions": {
       "enre-edesur|Buenos Aires": {
         "source": "enre-edesur",
         "region": "Buenos Aires",
         "name": "Buenos Aires (Edesur area)",
         "incidents": 4,
-        "customer_hours": 86651,
+        "customer_hours": 86780,
         "coverage": 0.13,
         "largest": {
           "id": "grid-enre-edesur-buenos-aires-202611200024",
@@ -121,7 +231,7 @@
         "region": "Quebec",
         "name": "Quebec",
         "incidents": 3,
-        "customer_hours": 116026,
+        "customer_hours": 116041,
         "coverage": 0.1,
         "largest": {
           "id": "grid-hydroquebec-quebec-202611201842",
@@ -159,7 +269,7 @@
         "region": "California",
         "name": "California",
         "incidents": 3,
-        "customer_hours": 234628,
+        "customer_hours": 234936,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-california-202611201848",
@@ -176,7 +286,7 @@
         "region": "Ohio",
         "name": "Ohio",
         "incidents": 1,
-        "customer_hours": 17549,
+        "customer_hours": 17561,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-ohio-202611210415",
@@ -210,7 +320,7 @@
         "region": "Buenos Aires",
         "name": "Buenos Aires (Edenor area)",
         "incidents": 1,
-        "customer_hours": 21519,
+        "customer_hours": 21689,
         "coverage": 0.13,
         "largest": {
           "id": "grid-enre-edenor-buenos-aires-202611212250",
@@ -236,7 +346,7 @@
         "region": "La Araucanía",
         "name": "La Araucanía",
         "incidents": 2,
-        "customer_hours": 33300,
+        "customer_hours": 33309,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-la-araucania-202611220234",
@@ -253,7 +363,7 @@
         "region": "Oregon",
         "name": "Oregon",
         "incidents": 2,
-        "customer_hours": 70056,
+        "customer_hours": 70504,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-oregon-202611220616",
@@ -270,7 +380,7 @@
         "region": "Coquimbo",
         "name": "Coquimbo",
         "incidents": 2,
-        "customer_hours": 49838,
+        "customer_hours": 49843,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-coquimbo-202611230017",
@@ -287,7 +397,7 @@
         "region": "Arica y Parinacota",
         "name": "Arica y Parinacota",
         "incidents": 1,
-        "customer_hours": 53467,
+        "customer_hours": 53468,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-arica-y-parinacota-202611220812",
@@ -304,7 +414,7 @@
         "region": "Central southern England",
         "name": "Central southern England (SSEN, SEPD)",
         "incidents": 1,
-        "customer_hours": 33357,
+        "customer_hours": 33361,
         "coverage": 0.13,
         "largest": {
           "id": "grid-ssen-powertrack-central-southern-england-202611221013",
@@ -334,7 +444,7 @@
         "region": "Antofagasta",
         "name": "Antofagasta",
         "incidents": 1,
-        "customer_hours": 14065,
+        "customer_hours": 14066,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-antofagasta-202611221325",
@@ -351,7 +461,7 @@
         "region": "Michigan",
         "name": "Michigan",
         "incidents": 1,
-        "customer_hours": 48572,
+        "customer_hours": 48573,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-michigan-202611220812",
@@ -385,7 +495,7 @@
         "region": "Maule",
         "name": "Maule",
         "incidents": 1,
-        "customer_hours": 22822,
+        "customer_hours": 22823,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-maule-202611230039",
@@ -402,7 +512,7 @@
         "region": "Atacama",
         "name": "Atacama",
         "incidents": 1,
-        "customer_hours": 23079,
+        "customer_hours": 23091,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-atacama-202611231223",
@@ -419,7 +529,7 @@
         "region": "Los Ríos",
         "name": "Los Ríos",
         "incidents": 1,
-        "customer_hours": 10648,
+        "customer_hours": 10656,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-los-rios-202611231926",
@@ -436,7 +546,7 @@
         "region": "Santiago Metropolitan",
         "name": "Santiago Metropolitan",
         "incidents": 1,
-        "customer_hours": 82997,
+        "customer_hours": 83083,
         "coverage": 0.07,
         "largest": {
           "id": "grid-sec-chile-senapred-santiago-metropolitan-202611231223",
@@ -453,7 +563,7 @@
         "region": "West Virginia",
         "name": "West Virginia",
         "incidents": 1,
-        "customer_hours": 25559,
+        "customer_hours": 25563,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-west-virginia-202611231339",
@@ -470,7 +580,7 @@
         "region": "Washington",
         "name": "Washington",
         "incidents": 1,
-        "customer_hours": 51245,
+        "customer_hours": 51639,
         "coverage": 0.13,
         "largest": {
           "id": "grid-doe-odin-washington-202611240528",
@@ -482,12 +592,78 @@
         "causes": [],
         "week": null
       },
+      "occto-reserve|Chubu": {
+        "source": "occto-reserve",
+        "region": "Chubu",
+        "name": "Chubu",
+        "incidents": 1,
+        "customer_hours": 0,
+        "coverage": 0.07,
+        "largest": {
+          "id": "grid-occto-reserve-chubu-202611240533",
+          "name": "OCCTO wide-area reserve (Japan): supply warning level 1 in Chubu",
+          "peak_customers": null,
+          "peak_level": 1,
+          "opened_at": "2026-11-24T05:33:41Z"
+        },
+        "causes": [
+          {
+            "cause": "wide-area reserve 4.78% (below 5%: the government's tight-supply advisory (注意報) range); area demand 18,651 of 20,025 MW",
+            "customers": 0
+          }
+        ],
+        "week": null
+      },
+      "occto-reserve|Hokuriku": {
+        "source": "occto-reserve",
+        "region": "Hokuriku",
+        "name": "Hokuriku",
+        "incidents": 1,
+        "customer_hours": 0,
+        "coverage": 0.07,
+        "largest": {
+          "id": "grid-occto-reserve-hokuriku-202611240533",
+          "name": "OCCTO wide-area reserve (Japan): supply warning level 1 in Hokuriku",
+          "peak_customers": null,
+          "peak_level": 1,
+          "opened_at": "2026-11-24T05:33:41Z"
+        },
+        "causes": [
+          {
+            "cause": "wide-area reserve 4.78% (below 5%: the government's tight-supply advisory (注意報) range); area demand 3,790 of 3,974 MW",
+            "customers": 0
+          }
+        ],
+        "week": null
+      },
+      "occto-reserve|Kansai": {
+        "source": "occto-reserve",
+        "region": "Kansai",
+        "name": "Kansai",
+        "incidents": 1,
+        "customer_hours": 0,
+        "coverage": 0.07,
+        "largest": {
+          "id": "grid-occto-reserve-kansai-202611240533",
+          "name": "OCCTO wide-area reserve (Japan): supply warning level 1 in Kansai",
+          "peak_customers": null,
+          "peak_level": 1,
+          "opened_at": "2026-11-24T05:33:41Z"
+        },
+        "causes": [
+          {
+            "cause": "wide-area reserve 4.78% (below 5%: the government's tight-supply advisory (注意報) range); area demand 19,498 of 19,693 MW",
+            "customers": 0
+          }
+        ],
+        "week": null
+      },
       "bchydro|British Columbia": {
         "source": "bchydro",
         "region": "British Columbia",
         "name": "British Columbia",
         "incidents": 0,
-        "customer_hours": 34067,
+        "customer_hours": 34082,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -641,7 +817,7 @@
         "region": "Endeavour Energy area",
         "name": "Western Sydney, Illawarra and South Coast (NSW)",
         "incidents": 0,
-        "customer_hours": 30371,
+        "customer_hours": 30399,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1059,7 +1235,7 @@
         "region": "North of Scotland",
         "name": "North of Scotland (SSEN, SHEPD)",
         "incidents": 0,
-        "customer_hours": 8121,
+        "customer_hours": 8122,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1114,7 +1290,7 @@
         "region": "Liander area",
         "name": "Liander area (Gelderland, Noord-Holland, Flevoland, Friesland)",
         "incidents": 0,
-        "customer_hours": 28676,
+        "customer_hours": 28682,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1169,7 +1345,7 @@
         "region": "Massachusetts",
         "name": "Massachusetts",
         "incidents": 0,
-        "customer_hours": 15591,
+        "customer_hours": 15596,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1202,7 +1378,7 @@
         "region": "Utah",
         "name": "Utah",
         "incidents": 0,
-        "customer_hours": 14084,
+        "customer_hours": 14085,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1235,7 +1411,7 @@
         "region": "Oregon",
         "name": "Oregon",
         "incidents": 0,
-        "customer_hours": 14603,
+        "customer_hours": 14605,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1268,7 +1444,7 @@
         "region": "Los Angeles",
         "name": "Los Angeles",
         "incidents": 0,
-        "customer_hours": 30600,
+        "customer_hours": 30728,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1290,7 +1466,7 @@
         "region": "Colorado",
         "name": "Colorado",
         "incidents": 0,
-        "customer_hours": 6095,
+        "customer_hours": 6096,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1312,7 +1488,7 @@
         "region": "Hawaii",
         "name": "Hawaii",
         "incidents": 0,
-        "customer_hours": 9096,
+        "customer_hours": 9100,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1356,7 +1532,7 @@
         "region": "Kansas",
         "name": "Kansas",
         "incidents": 0,
-        "customer_hours": 10441,
+        "customer_hours": 10444,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1378,7 +1554,7 @@
         "region": "Minnesota",
         "name": "Minnesota",
         "incidents": 0,
-        "customer_hours": 14317,
+        "customer_hours": 14318,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1389,7 +1565,7 @@
         "region": "New Jersey",
         "name": "New Jersey",
         "incidents": 0,
-        "customer_hours": 8458,
+        "customer_hours": 8466,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1411,7 +1587,7 @@
         "region": "North Carolina",
         "name": "North Carolina",
         "incidents": 0,
-        "customer_hours": 17017,
+        "customer_hours": 17020,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1444,7 +1620,7 @@
         "region": "Tennessee",
         "name": "Tennessee",
         "incidents": 0,
-        "customer_hours": 20444,
+        "customer_hours": 20464,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1455,7 +1631,7 @@
         "region": "Texas",
         "name": "Texas",
         "incidents": 0,
-        "customer_hours": 51746,
+        "customer_hours": 51759,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1587,7 +1763,7 @@
         "region": "Missouri",
         "name": "Missouri",
         "incidents": 0,
-        "customer_hours": 6103,
+        "customer_hours": 6105,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1851,7 +2027,7 @@
         "region": "Pennsylvania",
         "name": "Pennsylvania",
         "incidents": 0,
-        "customer_hours": 44937,
+        "customer_hours": 44984,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1862,7 +2038,7 @@
         "region": "Maryland",
         "name": "Maryland",
         "incidents": 0,
-        "customer_hours": 5045,
+        "customer_hours": 5049,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1873,7 +2049,7 @@
         "region": "Tarapacá",
         "name": "Tarapacá",
         "incidents": 0,
-        "customer_hours": 14451,
+        "customer_hours": 14470,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1884,7 +2060,7 @@
         "region": "Valparaíso",
         "name": "Valparaíso",
         "incidents": 0,
-        "customer_hours": 39170,
+        "customer_hours": 39171,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1895,7 +2071,7 @@
         "region": "Los Lagos",
         "name": "Los Lagos",
         "incidents": 0,
-        "customer_hours": 48664,
+        "customer_hours": 48666,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1906,7 +2082,7 @@
         "region": "Biobío",
         "name": "Biobío",
         "incidents": 0,
-        "customer_hours": 22848,
+        "customer_hours": 22854,
         "coverage": 0.07,
         "largest": null,
         "causes": [],
@@ -1949,39 +2125,6 @@
         "source": "occto-reserve",
         "region": "Tokyo",
         "name": "Tokyo",
-        "incidents": 0,
-        "customer_hours": 0,
-        "coverage": 0.07,
-        "largest": null,
-        "causes": [],
-        "week": null
-      },
-      "occto-reserve|Chubu": {
-        "source": "occto-reserve",
-        "region": "Chubu",
-        "name": "Chubu",
-        "incidents": 0,
-        "customer_hours": 0,
-        "coverage": 0.07,
-        "largest": null,
-        "causes": [],
-        "week": null
-      },
-      "occto-reserve|Hokuriku": {
-        "source": "occto-reserve",
-        "region": "Hokuriku",
-        "name": "Hokuriku",
-        "incidents": 0,
-        "customer_hours": 0,
-        "coverage": 0.07,
-        "largest": null,
-        "causes": [],
-        "week": null
-      },
-      "occto-reserve|Kansai": {
-        "source": "occto-reserve",
-        "region": "Kansai",
-        "name": "Kansai",
         "incidents": 0,
         "customer_hours": 0,
         "coverage": 0.07,
@@ -2064,8 +2207,8 @@
       "error": ""
     },
     "bchydro": {
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "bad_json"
     },
     "ukpn": {
       "ok": false,

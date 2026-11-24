@@ -28,7 +28,7 @@ export const STATUS = { not_asked: ["Not asked yet", "wait"], asked: ["Asked, wa
 export const COUNTRIES = {
   US: "United States", CA: "Canada", GB: "United Kingdom", IE: "Ireland", IM: "Isle of Man", NL: "Netherlands", FR: "France", DE: "Germany", ES: "Spain",
   PT: "Portugal", IT: "Italy", GR: "Greece", PL: "Poland", CZ: "Czechia", SE: "Sweden", FI: "Finland", DK: "Denmark", EE: "Estonia",
-  LT: "Lithuania", LV: "Latvia", SI: "Slovenia", HU: "Hungary", AT: "Austria", RO: "Romania", HR: "Croatia", RS: "Serbia", BG: "Bulgaria",
+  LT: "Lithuania", LV: "Latvia", SI: "Slovenia", HU: "Hungary", HK: "Hong Kong", AT: "Austria", RO: "Romania", HR: "Croatia", RS: "Serbia", BG: "Bulgaria",
   UA: "Ukraine", TR: "Turkey", AU: "Australia", NZ: "New Zealand", JP: "Japan", TW: "Taiwan", KR: "South Korea", PH: "Philippines",
   MY: "Malaysia", SG: "Singapore", IN: "India", PK: "Pakistan", BD: "Bangladesh", ID: "Indonesia", VN: "Vietnam", TH: "Thailand",
   ZA: "South Africa", KE: "Kenya", NG: "Nigeria", ZM: "Zambia", ZW: "Zimbabwe", CL: "Chile", MX: "Mexico", PR: "Puerto Rico", GU: "Guam",

@@ -129,8 +129,16 @@ export function workerEnv(served, key, base = process.env) {
   // anything in their environment can be exfiltrated by a prompt injection. The fallback key reaches a worker ONLY as
   // ANTHROPIC_API_KEY in api-fallback mode (above); cloud credentials never.
   for (const k of Object.keys(env)) if (WORKER_ENV_DENY.test(k)) delete env[k];
+  // Deleting is not enough for every variable: the cloud session puts some back into the worker's shell. Set to a value
+  // they are left alone (measured 2026-11-24): cloud keys blank; the GitHub tokens a placeholder, because the session's
+  // network proxy adds GitHub's real credentials to every request itself (gh works with any token value), so the worker
+  // needs no real token in its environment.
+  for (const k of WORKER_ENV_BLANK) env[k] = "";
+  for (const k of ["GH_TOKEN", "GITHUB_TOKEN"]) env[k] = "proxy-supplied";
   return env;
 }
+/** Set empty in every worker (a deleted one can be put back by the cloud session). */
+export const WORKER_ENV_BLANK = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN", "CLOUDSDK_AUTH_ACCESS_TOKEN", "GOOGLE_APPLICATION_CREDENTIALS"];
 /** Environment variables removed from every worker: the fallback key under its own name and cloud credentials. */
 export const WORKER_ENV_DENY = /^(CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY|AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|CLOUDSDK_AUTH_ACCESS_TOKEN|GOOGLE_APPLICATION_CREDENTIALS)$/;
 // the fallback decision reads the plan's live limit (budgetState) and the month's fallback spend (the ledger), cached briefly

@@ -14,6 +14,7 @@ import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
 
 import { fence } from "./lib/untrusted.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 const REPO = "xanderhutch/CyberView";
 export const MAX_TEXT = 600, MAX_LINKS = 2, MAX_PER_DAY = 5, MIN_ACCOUNT_DAYS = 3;
 export const KINDS = { comment: "comment", tip: "tip", question: "question" };
@@ -106,7 +107,7 @@ function intake() {
     const isBot = i.user && i.user.type !== "User";
     const res = isBot ? { ok: false, reason: "Automated accounts cannot post." } : screen(post, { recentByAuthor: recent, accountAgeDays: age, knownEvent: (id) => events.has(id) });
     if (!res.ok) {
-      comment(i.number, `Thanks for posting. This one was not published: ${res.reason}\n\nThe community rules are on https://xanderhutch.github.io/CyberView/community.html. You are welcome to post again within them.`);
+      comment(i.number, `Thanks for posting. This one was not published: ${res.reason}\n\nThe community rules are on ${SITE_URL}/community.html. You are welcome to post again within them.`);
       close(i.number, "not_planned"); refused.push({ issue: i.number, reason: res.reason });
     } else pend.push({ issue: i.number, at: i.created_at, author, kind: post.kind, text: post.text, event_id: res.event_id, links: res.links });
   }
@@ -133,12 +134,12 @@ function main() {
     const p = takePending(n);
     const again = screen(p, {}); if (!again.ok) { console.error(`#${n} fails the fixed rules (${again.reason}); it cannot be approved`); process.exit(1); }
     writeJson(join(chatDir, p.at.slice(0, 7), `${n}.json`), { id: n, at: p.at, author: p.author, kind: p.kind, text: p.text, event_id: p.event_id || "", links: again.links, reviewed_at: nowIso(), ...(note ? { note } : {}) });
-    comment(n, "Reviewed and published on https://xanderhutch.github.io/CyberView/community.html (it appears after the next site build, a few minutes)."); close(n, "completed");
+    comment(n, `Reviewed and published on ${SITE_URL}/community.html (it appears after the next site build, a few minutes).`); close(n, "completed");
     console.log(`chat: #${n} published`);
   } else if (cmd === "reject") {
     if (!note) { console.error("a reason is required"); process.exit(1); }
     takePending(n);
-    comment(n, `Thanks for posting. After review this one was not published: ${note}\n\nThe community rules are on https://xanderhutch.github.io/CyberView/community.html.`); close(n, "not_planned");
+    comment(n, `Thanks for posting. After review this one was not published: ${note}\n\nThe community rules are on ${SITE_URL}/community.html.`); close(n, "not_planned");
     console.log(`chat: #${n} refused`);
   } else if (cmd === "remove") {
     if (!note) { console.error("a reason is required"); process.exit(1); }

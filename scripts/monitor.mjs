@@ -4,8 +4,9 @@
 import { writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./lib/store.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
-const BASE = (process.argv[2] || process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");
+const BASE = (process.argv[2] || SITE_URL).replace(/\/$/, "");
 const fails = [], warns = [], notes = [];
 const hours = (iso) => (Date.now() - Date.parse(iso)) / 36e5;
 

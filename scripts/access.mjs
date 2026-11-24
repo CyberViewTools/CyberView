@@ -11,6 +11,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./lib/store.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const load = () => JSON.parse(readFileSync(join(ROOT, "config", "data-access.json"), "utf8"));
@@ -33,17 +34,17 @@ export const COUNTRIES = {
   ZA: "South Africa", KE: "Kenya", NG: "Nigeria", ZM: "Zambia", ZW: "Zimbabwe", CL: "Chile", MX: "Mexico", PR: "Puerto Rico",
   CO: "Colombia", PE: "Peru", BR: "Brazil", LK: "Sri Lanka", RU: "Russia", IL: "Israel", LB: "Lebanon", IQ: "Iraq", AE: "United Arab Emirates", SA: "Saudi Arabia", KW: "Kuwait",
 };
-export const SITE = "https://xanderhutch.github.io/CyberView/";
+export const SITE = SITE_URL + "/";
 export const KINDS = { grid: "Power grid and outage data", cyber: "Cyber security sources" };
 // Every request ends with this line and names no person and no personal address.
-export const SIGN = "\u2014 CyberView (https://xanderhutch.github.io/CyberView)";
+export const SIGN = `\u2014 CyberView (${SITE_URL})`;
 
 // The shape every request follows. Each entry carries its own text (`request`), written for that operator and that feed.
 export const REQUEST = `Subject: Permission to show [feed] on CyberView
 
 Hello [operator] team,
 
-CyberView (https://xanderhutch.github.io/CyberView) is a free, public, read-only, non-commercial map of verified cyber incidents and infrastructure outages for security defenders.
+CyberView (${SITE_URL}) is a free, public, read-only, non-commercial map of verified cyber incidents and infrastructure outages for security defenders.
 
 We would like to read [feed] automatically every few minutes and show it on the map as context, credited to [operator] with a link back to your page. We would never resell it, collect personal data or call an outage an attack.
 

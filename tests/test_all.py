@@ -1075,7 +1075,9 @@ async def main():
             session = {"access_token": jwt({"sub": uid, "role": "authenticated", "exp": exp, "email": "a@example.test"}), "token_type": "bearer", "expires_in": 3600, "expires_at": exp,
                        "refresh_token": "r", "user": {"id": uid, "aud": "authenticated", "role": "authenticated", "email": "a@example.test", "app_metadata": {}, "user_metadata": {}, "created_at": "2026-11-18T00:00:00Z"}}
             ctx = await browser.new_context(viewport={"width": 1280, "height": 900})
-            await ctx.add_init_script(f"localStorage.setItem('sb-{REF}-auth-token', JSON.stringify({json.dumps(session)})); localStorage.setItem('cwm.wl', JSON.stringify(['Fortinet','Ivanti','Microsoft']));")
+            # the session lives in the tab's sessionStorage (pen test 2026-11-24); a stale long-lived copy in localStorage
+            # from an older version must be removed on load
+            await ctx.add_init_script(f"sessionStorage.setItem('sb-{REF}-auth-token', JSON.stringify({json.dumps(session)})); if (!sessionStorage.getItem('cv.t.seeded')) {{ localStorage.setItem('sb-{REF}-auth-token', 'stale'); sessionStorage.setItem('cv.t.seeded', '1'); }} localStorage.setItem('cwm.wl', JSON.stringify(['Fortinet','Ivanti','Microsoft']));")
             pg = await ctx.new_page()
             errs = []
             pg.on("pageerror", lambda e: errs.append(str(e)[:160]))
@@ -1119,6 +1121,7 @@ async def main():
             await pg.wait_for_timeout(1200)
             ok("account: signed-in view shown", await pg.locator("#signedIn").is_visible(), await pg.inner_text("body"))
             ok("account: shows who and region", "a@example.test" in await pg.inner_text("#who") and "Canada" in await pg.inner_text("#region"))
+            ok("account: no long-lived sign-in token left in localStorage", await pg.evaluate(f"localStorage.getItem('sb-{REF}-auth-token')") is None)
             # encrypted sync
             await pg.fill("#pass", "short")
             await pg.click("#push")

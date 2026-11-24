@@ -32,6 +32,7 @@ import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
 import { get as netGet } from "./lib/net.mjs";
 import { matchEvent } from "./triage.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
 
 export const KIND = "breach-notice";
 const EVERY_MIN = 60;          // each register is asked at most once an hour (they change a few times a day at most)
@@ -127,7 +128,7 @@ export function parseSec(d) {
 }
 
 /* ---------- registers ---------- */
-const UA = "CyberView breach-register collector (+https://xanderhutch.github.io/CyberView)";
+const UA = `CyberView breach-register collector (+${SITE_URL})`;
 async function fetchText(url, o = {}) { return netGet(url, { as: "text", retries: 1, timeoutMs: 30000, ...o }); }
 async function postJson(url, body) {
   const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json", accept: "application/json", "user-agent": UA }, body: JSON.stringify(body), signal: AbortSignal.timeout(30000) });

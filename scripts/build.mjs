@@ -30,6 +30,9 @@ import { STAGES, lastRuns, limits as stageLimits } from "./lib/stages.mjs";
 import { sectorsOf, surfaceOf, SECTOR, SURFACE } from "./lib/taxonomy.mjs";
 import { advisory as psirtAdvisory, byCve as psirtByCve } from "./lib/psirt.mjs";
 import { checkAttribution, checkLinks, checkTabletop, checkHunt, checkGuide, checkChat, checkAnalysis, checkEventQuality, sharedSourceProblems, QUALITY_STRICT_FROM, TAGS } from "./lib/validate.mjs";
+import { runLogAt, stripCosts } from "./lib/runlog.mjs";
+import { SITE_URL } from "./lib/site-url.mjs";
+
 
 const OUT = join(ROOT, "site", "data"), ARCH = join(OUT, "archive");
 const WINDOW_DAYS = 9, KEV_DAYS = 45;
@@ -511,8 +514,10 @@ try {
   const runsDir = join(DATA, "runs"), runs = [];
   if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(7)).sort().reverse())
     for (const f of readdirSync(join(runsDir, d)).filter((f) => f.endsWith(".json")).sort().reverse()) {
-      const r = readJson(join(runsDir, d, f), {}); if (runs.length >= 40) break;
-      runs.push({ at: `${d}T${f.slice(0, 2)}:${f.slice(2, 4)}:00Z`, job: String(r.job || f.slice(5, -5)).slice(0, 40),
+      if (runs.length >= 40) break;
+      if (/-tmp\.json$/.test(f)) continue;   // a worker's unfinished scratch file, not a run log
+      const r = readJson(join(runsDir, d, f), {}), at = runLogAt(d, f, r); if (!at) continue;
+      runs.push({ at, job: String(r.job || f.slice(5, -5)).slice(0, 40),
         added: (r.added || r.kev_added || []).length, updated: (r.updated || r.events_updated || []).length,
         failed: (r.failed || r.failed_sites || []).length, note: String(r.notes || r.mode || "").slice(0, 200) });
     }
@@ -531,14 +536,14 @@ try {
   const changes = existsSync(chP) ? readFileSync(chP, "utf8").trim().split("\n").filter(Boolean).slice(-10).reverse().map((l) => { try { const x = JSON.parse(l); return { at: String(x.at).slice(0, 20), key: String(x.key).slice(0, 80), from: String(x.from).slice(0, 20), to: String(x.to).slice(0, 20), reason: String(x.reason).slice(0, 300) }; } catch { return null; } }).filter(Boolean) : [];
   const improve = imp ? { at: imp.at, days: imp.days, events_added: imp.events_added, cost_usd: imp.cost_usd, cost_per_event: imp.cost_per_event, review: imp.review, guard: imp.guard,
     roles: Object.fromEntries(Object.entries(imp.roles || {}).slice(0, 30)), changes } : { changes };
-  writeFileSync(join(OUT, "ops.json"), JSON.stringify({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline, improve, speed: (() => { try { return speedOf(24); } catch { return null; } })() }));
+  writeFileSync(join(OUT, "ops.json"), JSON.stringify(stripCosts({ built_at, routines, runs, leads: { last_24h: leads24, by_tier: byTier, failed_feeds: st.collect_failed || [] }, sources, pipeline, improve, speed: (() => { try { return speedOf(24); } catch { return null; } })() })));
 }
 
 // efficiency: every routine and feed against the owner's four targets (scripts/efficiency.mjs, no AI model), for the
 // status page (flow, sources, usage, feeds, coverage, accuracy; it no longer shows the targets) and the improver and guard. A failure here never fails the build or the deploy: the page gets a note saying the report is missing.
 try {
   const eff = await (await import("./efficiency.mjs")).build(7);
-  writeFileSync(join(OUT, "efficiency.json"), JSON.stringify({ built_at, ...eff }));
+  writeFileSync(join(OUT, "efficiency.json"), JSON.stringify(stripCosts({ built_at, ...eff })));
   console.log("Efficiency: " + eff.targets.map((t) => `${t.key} ${t.state}`).join(", ") + `; ${eff.note}`);
 } catch (err) {
   writeFileSync(join(OUT, "efficiency.json"), JSON.stringify({ built_at, error: "The efficiency report could not be built: " + String((err && err.message) || err).slice(0, 200) }));
@@ -546,7 +551,7 @@ try {
 }
 
 // subscribable feeds: high-severity and known-exploited events, newest first (unverified claims never included)
-const SITE = (process.env.SITE_URL || "https://xanderhutch.github.io/CyberView").replace(/\/$/, "");
+const SITE = SITE_URL;
 const link = (id) => `${SITE}/#e=${encodeURIComponent(id)}`;
 const isKev = (e) => Array.isArray(e.cve_meta) && e.cve_meta.some((c) => c && c.kev);
 const when = (e) => (/^\d{4}-\d{2}-\d{2}T/.test(e.first_seen || "") ? e.first_seen : `${e.date}T12:00:00Z`);

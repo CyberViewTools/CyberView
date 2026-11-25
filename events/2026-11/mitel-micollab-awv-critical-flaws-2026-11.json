@@ -6,7 +6,7 @@
   "impact": "",
   "tags": [],
   "first_seen": "2026-11-20T10:58:30Z",
-  "updated_at": "2026-11-25T23:45:53Z",
+  "updated_at": "2026-11-25T23:56:31Z",
   "category": "vuln",
   "pin_type": "agency",
   "status": "official",
@@ -76,21 +76,19 @@
   "validation": {
     "checked_at": "2026-11-23T01:27:25Z",
     "state": "corroborated",
-    "note": "Mitel advisory MISA-2026-0012 (vendor original, revision 1.0 of 16 November) read in full, and the Italy CSIRT (ACN) alert: both give five MiCollab AWV flaws, two critical (CVSS 10.0 and 9.0), in 10.3 (10.3.0.18) and earlier, patch per KB000129195. Mitel lists no CVE IDs (requested, not assigned) and says nothing on exploitation; the CVE IDs, the unauthenticated wording and the exploitation mark come from ACN only."
+    "note": "Mitel advisory MISA-2026-0012 (vendor original, revision 2.0 of 24 November, which lists the five CVE IDs) and the Italy CSIRT (ACN) alert both give five MiCollab AWV flaws, two critical (CVSS 10.0 and 9.0), in 10.3 (10.3.0.18) and earlier, patch per KB000129195. CISA KEV entries (25 November) mark all five as known exploited; ACN listed no known exploitation as of 20 November."
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-25T23:23:52Z",
+    "at": "2026-11-25T23:56:42Z",
     "first_at": "2026-11-20T11:13:41Z",
-    "note": "figure/stale: CISA KEV lists all five Mitel CVEs (added 25 Nov), record said three; removed unsourced 'blind' and unquotable CVSS figures; ACN exploitation wording clarified; correction file added",
+    "note": "validation: note was stale (said Mitel lists no CVE IDs, ignored KEV); updated to rev 2.0 and KEV. Title, date, CVSS, patch, mitigation checked against Mitel and ACN",
     "flags": [],
     "categories": [
-      "unsourced",
-      "figure",
-      "misstated"
+      "validation"
     ]
   },
-  "qa_checked_at": "2026-11-25T23:23:52Z",
+  "qa_checked_at": "2026-11-25T23:56:42Z",
   "cve_meta": [
     {
       "id": "CVE-2026-133275",

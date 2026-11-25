@@ -1,0 +1,71 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-25T00:11:00Z",
+  "finished_at": "2026-11-25T00:30:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "NKN National Knowledge Network Pixelleaks breach claim",
+    "MediaWiki security release 1.43.12 1.45.7 1.46.3 announcement"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.dexpose.io/pixelleaks-targets-indias-national-knowledge-network/",
+      "title": "DeXpose Pixelleaks NKN",
+      "used_in": "none"
+    },
+    {
+      "url": "https://www.ransomware.live/id/R29sZGVuIFN0YXRlIEJhcHRpc3QgQ29sbGVnZUBEYXJrIFByb2plY3Q",
+      "title": "ransomware.live Golden State Baptist College",
+      "used_in": "none"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132736",
+      "title": "CVE Feed MediaWiki",
+      "used_in": "none"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Golden State Baptist College",
+      "url": "",
+      "reason": "small-org leak-site claim"
+    },
+    {
+      "title": "uptime-kuma CVE-2026-136135",
+      "url": "https://vuldb.com/vuln/442872",
+      "reason": "vuldb 403; no exploitation"
+    },
+    {
+      "title": "MediaWiki CVEs 132736/132728",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132736",
+      "reason": "database rows, no vendor announcement read"
+    },
+    {
+      "title": "CIA hack (zn.ua)",
+      "url": "https://zn.ua/usa/khakery-vzlomali-sistemu-tsru-i-eshchjo-dvukh-razvedyvatelnykh-vedomstv-ssha-nyt.html",
+      "reason": "already on file: cia-odni-osint-network-breach-2026-11"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "NKN Delhi PoP Pixelleaks claim",
+      "url": "https://www.dexpose.io/pixelleaks-targets-indias-national-knowledge-network/",
+      "note": "claim 24 Nov, trackers only; look for official/independent report",
+      "priority": "low"
+    },
+    {
+      "title": "MediaWiki 1.43.12/1.45.7/1.46.3 security release",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132736",
+      "note": "find Wikimedia announcement; CVSS 4.0 8.7 per CVE Feed",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "vuldb.com (403)"
+  ],
+  "notes": "No events written.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

@@ -1,5 +1,5 @@
 {
-  "title": "D-Link DIR-600L end-of-life router has critical unauthenticated stack overflow with public proof of concept",
+  "title": "INCIBE-CERT rates D-Link DIR-600L end-of-life router flaw critical: unauthenticated stack overflow, public proof of concept",
   "date": "2026-11-16",
   "date_note": "INCIBE-CERT advisory INCIBE-2026-896 published November 16.",
   "category": "vuln",
@@ -14,9 +14,9 @@
   "geo_basis": "advisory publisher; the flaw affects devices worldwide",
   "pin_type": "agency",
   "summary": "INCIBE-CERT rates CVE-2026-129354 critical (importance 5). In the D-Link DIR-600L router, hardware revision B, firmware 2.17b02, the hnap_main function does not check the length of the HTTP SOAPAction header, so a remote unauthenticated attacker can overflow a stack buffer. A published proof of concept crashes the CGI process in an emulated setup. INCIBE lists exploitation as not observed. D-Link says revision B is end of life.",
-  "plain": "An old D-Link router that no longer gets updates has a serious flaw that lets anyone on the internet crash it, and a public demonstration exists.",
-  "exec": "Unsupported edge routers cannot be patched and are easy targets once a public proof of concept exists.",
-  "action": "Replace DIR-600L rev B routers with a supported model; until then disable remote administration and limit the management interface to a trusted network.",
+  "plain": "INCIBE-CERT says a remote attacker without a login can overflow a memory buffer in the D-Link DIR-600L router, hardware revision B. D-Link says that revision is end of life, and a public proof of concept exists.",
+  "exec": "INCIBE-CERT rates the flaw critical, notes a public proof of concept and lists exploitation as not observed; D-Link says revision B is end of life.",
+  "action": "INCIBE-CERT recommends replacing the router with a supported model and, in the meantime, disabling remote administration and restricting the management interface to a trusted network.",
   "impact": "Remote buffer overflow without authentication on an unsupported router; no fix will be issued.",
   "tags": [],
   "cves": [
@@ -31,17 +31,18 @@
   "sources": [
     {
       "name": "INCIBE-CERT",
-      "url": "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/desbordamiento-de-bufer-basado-en-pila-en-dir-600l-de-d-link"
+      "url": "https://www.incibe.es/incibe-cert/alerta-temprana/avisos/desbordamiento-de-bufer-basado-en-pila-en-dir-600l-de-d-link",
+      "published": "2026-11-16"
     }
   ],
   "source_tier": "primary",
   "validation": {
-    "state": "disputed",
+    "state": "primary",
     "checked_at": "2026-11-22T15:26:29Z",
-    "note": "Second review: source unreachable: INCIBE-CERT page failed to load again (ECONNRESET twice, 22 Nov); only source, nothing could be compared; action also lacks a named source"
+    "note": "INCIBE-CERT (Spain's national CERT) advisory INCIBE-2026-896, read in full on 25 Nov after earlier load failures; it relays D-Link's end-of-life statement. No second publisher read."
   },
   "first_seen": "2026-11-19T01:14:34Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:12:52Z",
   "cve_meta": [
     {
       "id": "CVE-2026-129354",
@@ -52,18 +53,19 @@
     }
   ],
   "review": {
-    "state": "flagged",
-    "at": "2026-11-22T15:26:29Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:13:13Z",
     "first_at": "2026-11-19T05:09:53Z",
-    "note": "source unreachable: INCIBE-CERT page failed to load again (ECONNRESET twice, 22 Nov); only source, nothing could be compared; action also lacks a named source",
-    "flags": [
-      "action-unsourced"
-    ],
+    "note": "Source INCIBE-CERT now loads and matches CVE, importance 5, PoC, exploitation No, EOL; fixed action advice unsourced (now INCIBE-CERT recommends), exec unsourced claim, plain stronger than source, validation disputed -> primary, surface basis stated -> inferred",
+    "flags": [],
     "categories": [
-      "action"
+      "overstated",
+      "unsourced",
+      "action",
+      "validation"
     ]
   },
-  "qa_checked_at": "2026-11-22T15:26:29Z",
+  "qa_checked_at": "2026-11-25T16:13:13Z",
   "sectors": {
     "values": [
       "individuals"
@@ -72,6 +74,6 @@
   },
   "surface": {
     "value": "edge-appliance",
-    "basis": "stated"
+    "basis": "inferred"
   }
 }

@@ -8,7 +8,7 @@
   "geo_basis": "hq",
   "time_basis": "published",
   "first_seen": "2026-11-18T22:11:48Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:13:30Z",
   "date": "2026-11-18",
   "category": "vuln",
   "title": "F5 warns of six critical BIG-IP flaws in the TMM data plane; hotfixes only",
@@ -79,26 +79,30 @@
   "severity": 2,
   "status": "official",
   "source_tier": "established",
-  "summary": "F5 disclosed six critical stack-based buffer overflows in the BIG-IP Traffic Management Microkernel, CVSS 9.8, that can crash the data plane without logging in on specific virtual-server setups, including iRules and one APM policy. The report says they may allow remote code execution. F5 lists no exploitation. Fixes are engineering hotfixes only, with no workaround.",
-  "plain": "F5 reported six serious flaws in its BIG-IP load balancers that an attacker with no login could use to crash the device, and possibly run code, on certain configurations.",
-  "exec": "BIG-IP sits at the network edge of many large organisations; hotfix-only fixes mean teams must request builds rather than apply a routine update.",
-  "action": "Check whether BIG-IP virtual servers use the iRules or the APM per-request policy named in the advisories, and request the engineering hotfixes from F5 (security notification K000164058, hotfix policy K4918); F5 lists no workaround.",
+  "summary": "According to The Hacker News, F5 disclosed six critical stack-based buffer overflows in the BIG-IP Traffic Management Microkernel (CVSS 9.8) that an unauthenticated attacker can use to crash the data plane on specific virtual-server setups, including iRules and one APM policy; F5 says they may allow remote code execution. The Hacker News says no advisory reports exploitation, and that fixes are engineering hotfixes with no workaround.",
+  "plain": "According to The Hacker News, F5 reported six serious flaws in BIG-IP load balancers that an attacker with no login could use to crash the device, and that F5 says may allow code execution, on certain configurations.",
+  "exec": "Per The Hacker News, the six BIG-IP flaws are fixed only by engineering hotfixes, so teams must request builds from F5 rather than apply a routine update.",
+  "action": "The Hacker News reports F5 advises checking whether BIG-IP virtual servers use the iRules or APM per-request policy named in the advisories and requesting the engineering hotfixes (security notification K000164058, hotfix policy K4918); it says F5 lists no workaround.",
   "sources": [
     {
       "name": "The Hacker News",
-      "url": "https://thehackernews.com/2026/11/f5-warns-6-critical-big-ip-flaws-can.html"
+      "url": "https://thehackernews.com/2026/11/f5-warns-6-critical-big-ip-flaws-can.html",
+      "published": "2026-11-18"
     },
     {
       "name": "Dailysecu (Korea)",
-      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209642"
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209642",
+      "published": "2026-11-20"
     },
     {
       "name": "GBHackers",
-      "url": "https://gbhackers.com/critical-f5-big-ip-stack-buffer-overflow-flaw/"
+      "url": "https://gbhackers.com/critical-f5-big-ip-stack-buffer-overflow-flaw/",
+      "published": "2026-11-21"
     },
     {
       "name": "Canadian Centre for Cyber Security, AV26-1178 (19 Nov)",
-      "url": "https://cyber.gc.ca/en/alerts-advisories/f5-security-advisory-av26-1178"
+      "url": "https://cyber.gc.ca/en/alerts-advisories/f5-security-advisory-av26-1178",
+      "published": "2026-11-19"
     }
   ],
   "report": {
@@ -124,13 +128,18 @@
     "note": "Verify desk read The Hacker News (18 Nov) and the Canadian Centre for Cyber Security AV26-1178 (19 Nov): both list the same six CVEs with engineering-hotfix fixes. CVSS 9.8, no workaround and no exploitation are stated by The Hacker News only (CCCS gives no CVSS and does not mention exploitation). F5 own portal (K000164058) did not load (JavaScript shell), not read."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-21T15:25:38Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:13:37Z",
     "first_at": "2026-11-19T16:40:34Z",
-    "note": "Compared with The Hacker News, CCCS AV26-1178, GBHackers, Dailysecu: six CVEs, CVSS 9.8, unauthenticated TMM crash, may allow RCE, hotfix-only, no workaround, no exploitation listed, date 18 Nov",
-    "flags": []
+    "note": "unattributed claims (no exploitation, hotfix only, no workaround) now attributed to The Hacker News; exec unsourced description removed; source published days and date_note added",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "date",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-21T15:25:38Z",
+  "qa_checked_at": "2026-11-25T16:13:37Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -140,5 +149,6 @@
   "surface": {
     "value": "edge-appliance",
     "basis": "inferred"
-  }
+  },
+  "date_note": "The Hacker News is dated 18 November and says F5 disclosed the flaws that day; the Canadian Centre for Cyber Security page says 'As of November 18, 2026, F5 is affected'."
 }

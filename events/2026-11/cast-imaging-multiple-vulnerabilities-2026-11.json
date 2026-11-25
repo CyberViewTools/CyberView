@@ -1,12 +1,12 @@
 {
-  "action": "Upgrade CAST Imaging to a newer version than 3.6.2 as the vendor advises, and restrict network access to the Imaging web interface and its Keycloak endpoints until patched.",
+  "action": "CERT Polska relays the vendor's advice to upgrade CAST Imaging to a newer version than 3.6.2. General advice: until then, limit network access to the Imaging web interface.",
   "actor": "",
   "attack": [
     "auth-bypass",
     "path-traversal"
   ],
   "category": "vuln",
-  "country": "France",
+  "country": "",
   "cves": [
     "CVE-2026-109857",
     "CVE-2026-109858",
@@ -18,15 +18,15 @@
     "CVE-2026-109864"
   ],
   "date": "2026-11-18",
-  "exec": "Software used to map application architecture has flaws that let outsiders impersonate administrators or read files; unpatched installs expose internal code analysis data.",
+  "exec": "CERT Polska lists eight flaws in CAST Imaging, including an authentication bypass and unauthenticated Keycloak email changes; the vendor says newer versions fix them.",
   "first_seen": "2026-11-19T20:50:00Z",
-  "geo_basis": "vendor headquarters (not stated in source; CAST Software is based in Paris)",
-  "lat": 48.86,
-  "lng": 2.35,
+  "geo_basis": "advisory names no place for the vendor",
+  "lat": null,
+  "lng": null,
   "org": "CAST Software",
-  "pin_type": "headquarters",
-  "place": "Paris, France",
-  "plain": "CERT Polska reports several security flaws in CAST Imaging, software that analyses application code. Some let attackers pose as administrators or read files. The vendor says newer versions fix them.",
+  "pin_type": "none",
+  "place": "",
+  "plain": "CERT Polska reports several security flaws in CAST Imaging, software that analyses application code. They include an authentication bypass and flaws that let a logged-in user read files. The vendor says newer versions fix them.",
   "products": [
     "CAST Imaging"
   ],
@@ -55,29 +55,37 @@
   "sources": [
     {
       "name": "CERT Polska advisory",
-      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-109857/"
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-109857/",
+      "published": "2026-11-18"
     }
   ],
   "status": "official",
   "summary": "CERT Polska published an advisory on November 18 covering eight vulnerabilities in CAST Imaging, including an authentication bypass through a trusted header, unauthenticated Keycloak email changes, a hard-coded token, path traversal and missing authorization checks. Version 3.6.2 is confirmed affected. The advisory reports no exploitation; the vendor says newer versions fix the issues.",
-  "tags": [
-    "advisory",
-    "auth-bypass"
-  ],
+  "tags": [],
   "title": "CERT Polska reports eight vulnerabilities in CAST Imaging, including authentication bypass",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:13:30Z",
   "validation": {
     "checked_at": "2026-11-19T20:50:00Z",
-    "note": "CERT Polska advisory read in full; primary government coordinator source. Reporters credited: STM Cyber.",
-    "state": "corroborated"
+    "note": "CERT Polska advisory (a national CSIRT, primary) read in full; one publisher only. Reporters credited: STM Cyber.",
+    "state": "primary"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T21:16:44Z",
-    "note": "Compared title, 8 CVEs, 3.6.2 only confirmed, no exploitation, vendor newer-versions wording, 18 Nov date against the CERT Polska advisory",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-25T16:13:35Z",
+    "first_at": "2026-11-19T21:16:44Z",
+    "note": "invalid tags removed; exec stronger than source; action advice not in source marked General advice; assumed place (Paris) removed; validation corroborated to primary; source published and date_note added",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "unsourced",
+      "action",
+      "date",
+      "validation",
+      "tags",
+      "place"
+    ]
   },
-  "qa_checked_at": "2026-11-19T21:16:44Z",
+  "qa_checked_at": "2026-11-25T16:13:35Z",
   "cve_meta": [
     {
       "id": "CVE-2026-109857",
@@ -145,5 +153,6 @@
   "surface": {
     "value": "web-app",
     "basis": "inferred"
-  }
+  },
+  "date_note": "CERT Polska's advisory page is dated 18 November 2026 and gives no earlier day."
 }

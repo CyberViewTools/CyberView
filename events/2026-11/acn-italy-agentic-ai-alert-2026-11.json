@@ -1,7 +1,7 @@
 {
-  "title": "Italy's cybersecurity agency ACN warns of serious risks from agentic AI, ANSA reports",
-  "date": "2026-11-24",
-  "date_note": "ANSA's article is dated 24 November and gives no earlier date for the alert.",
+  "title": "Italy's CSIRT/ACN bulletin warns of compromise campaigns run by autonomous AI agents",
+  "date": "2026-11-23",
+  "date_note": "ACN's bulletin page gives 23 November 2026 as its publication day (ANSA reported it on 24 November); the page gives no earlier day for the campaigns.",
   "category": "report",
   "severity": 2,
   "status": "confirmed",
@@ -14,10 +14,10 @@
   "geo_basis": "national agency; ANSA's article is datelined Rome",
   "pin_type": "agency",
   "actor": "",
-  "summary": "ANSA reports that Italy's national cybersecurity agency ACN has issued an alert on the serious risks of agentic AI, which it says exposes organisations and critical infrastructure to new risk scenarios. ACN says it has detected compromise campaigns using autonomous agents, and that attackers use agentic frameworks and AI to exploit critical vulnerabilities quickly. Its advice includes updating, isolating or disconnecting outdated exposed systems and applying least privilege.",
-  "plain": "Italy's cyber agency warns that autonomous AI agents are being used in attacks that run fast and continuously. It urges organisations to patch or isolate exposed systems and limit account privileges.",
-  "exec": "Italy's national cyber agency says agentic AI attacks exploit critical flaws quickly and threaten critical infrastructure.",
-  "action": "ACN advises updating, isolating or disconnecting exposed systems that lack the latest version, inventorying internet-facing assets, applying least privilege and monitoring for abnormal behaviour.",
+  "summary": "ACN's CSIRT Italia bulletin says it detected compromise campaigns in Italy run by autonomous agents orchestrated through AI, which can probe many attack paths, adapt to results and chain vulnerabilities and misconfigurations. The bulletin names the tools ARTEX, CyberStrikeAI, DeepSeek Harness (Red Team Mode) and PentAGI. It advises updating exposed systems quickly, isolating those that cannot be patched, and applying least privilege.",
+  "plain": "Italy's cyber agency says it has seen attack campaigns run by autonomous AI agents. It urges organisations to patch or isolate exposed systems and limit account privileges.",
+  "exec": "Italy's national cyber agency says AI-agent campaigns can chain flaws and misconfigurations with little human input.",
+  "action": "ACN advises updating exposed systems as quickly as possible, taking unpatchable ones off the Internet or isolating them, using MFA and least privilege, and loading its MISP indicators into detection tools.",
   "impact": "",
   "tags": [
     "ai-enabled"
@@ -27,20 +27,25 @@
   "attack": [],
   "sources": [
     {
+      "name": "ACN / CSIRT Italia bulletin",
+      "url": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate",
+      "published": "2026-11-23"
+    },
+    {
       "name": "ANSA",
       "url": "https://www.ansa.it/canale_tecnologia/notizie/cybersecurity/2026/11/24/lalert-dellagenzia-cyber-gravi-rischi-dallia-agentica_dc521472-87fc-42f7-9891-cab13b7a3df7.html",
       "published": "2026-11-24"
     }
   ],
   "evidence": [],
-  "source_tier": "established",
+  "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-24T23:03:40Z",
-    "note": "Only ANSA's report was read (L'Adige and Alto Adige carry the same agency text); ACN's own alert page on its website was not read. ACN's statements are as ANSA relays them."
+    "state": "primary",
+    "checked_at": "2026-11-25T16:20:00Z",
+    "note": "ACN's own bulletin read, plus ANSA's report of it."
   },
   "first_seen": "2026-11-24T23:03:40Z",
-  "updated_at": "2026-11-24T23:03:40Z",
+  "updated_at": "2026-11-25T16:13:57Z",
   "sectors": {
     "values": [
       "cross-sector"

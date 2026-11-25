@@ -1,7 +1,7 @@
 {
   "title": "ASUSTOR advisory AS-2026-029: six high-rated ADM flaws including OpenVPN profile command execution (CVE-2026-134896)",
   "date": "2026-11-23",
-  "date_note": "Advisory page gives 2026-11-24 with initial public release 2026-11-23.",
+  "date_note": "The advisory's revision history gives 2026-11-23 as the initial release; later revisions (to 2026-11-25) added CVE IDs and fixed builds.",
   "category": "vuln",
   "status": "confirmed",
   "severity": 2,
@@ -28,10 +28,10 @@
     "CVE-2026-134896",
     "CVE-2026-134897"
   ],
-  "summary": "ASUSTOR's advisory AS-2026-029 lists six CVEs in ADM, each rated High under CVSS 4.0, which let an authenticated user run commands with elevated privileges or create and truncate system files. One, CVE-2026-134896, is command execution through a crafted OpenVPN .ovpn profile. Affected are ADM 4.1.0 through 4.3.3.RY62 and 5.0.0 through 5.1.4.RM62; the advisory lists fixes in ADM 5.1.5.RNN1 and 4.3.4.Rxxx.",
+  "summary": "ASUSTOR's advisory AS-2026-029 lists six CVEs in ADM, each rated High under CVSS 4.0, which let an authenticated user run commands with elevated privileges or create and truncate system files. One, CVE-2026-134896, is command execution through a crafted OpenVPN .ovpn profile. Affected are ADM 4.1.0 through 4.3.3.RY62 and 5.0.0 through 5.1.4.RM62; the advisory lists fixes in ADM 5.1.5.RNN1 and 4.3.4.RBO1.",
   "plain": "ASUSTOR says six flaws in its NAS operating system ADM let a logged-in user run commands or alter system files. Its advisory lists fixed versions.",
   "exec": "ASUSTOR's advisory says the ADM flaws could fully compromise confidentiality, integrity and availability of an affected device.",
-  "action": "ASUSTOR advises upgrading to ADM 5.1.5.RNN1 or above (ADM 5.0) or ADM 4.3.4.Rxxx or above (ADM 4.3, 4.2 and 4.1); it lists no workarounds.",
+  "action": "ASUSTOR advises upgrading to ADM 5.1.5.RNN1 or above (ADM 5.0) or ADM 4.3.4.RBO1 or above (ADM 4.3, 4.2 and 4.1); it lists no workarounds.",
   "sources": [
     {
       "name": "ASUSTOR Product Security Advisory AS-2026-029: ADM",
@@ -48,7 +48,7 @@
   "source_tier": "primary",
   "time_basis": "published",
   "first_seen": "2026-11-24T10:15:30Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:13:30Z",
   "validation": {
     "checked_at": "2026-11-24T10:15:30Z",
     "state": "primary",
@@ -66,15 +66,17 @@
   },
   "review": {
     "state": "corrected",
-    "at": "2026-11-24T16:14:59Z",
+    "at": "2026-11-25T16:13:34Z",
     "first_at": "2026-11-24T10:27:24Z",
-    "note": "validation: state corroborated changed to primary (own advisory is primary; CVE Feed only repeats one row); CVEs, ratings, versions, dates match advisory",
+    "note": "stale fix version: advisory rev 4 names ADM 4.3.4.RBO1, record said 4.3.4.Rxxx; summary, action, date_note updated, correction file added",
     "flags": [],
     "categories": [
-      "validation"
+      "action",
+      "date",
+      "misstated"
     ]
   },
-  "qa_checked_at": "2026-11-24T16:14:59Z",
+  "qa_checked_at": "2026-11-25T16:13:34Z",
   "cve_meta": [
     {
       "id": "CVE-2026-120934",

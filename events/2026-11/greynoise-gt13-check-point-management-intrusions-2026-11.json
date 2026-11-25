@@ -1,117 +1,124 @@
 {
-  "title": "GreyNoise reports GT13 intrusion campaign against Check Point Security Management Servers affecting at least 22 organisations",
-  "date": "2026-11-23",
-  "date_note": "Date of GreyNoise's disclosure (its post is dated 23 November 2026); GreyNoise says confirmed attack activity ran between October 17th and November 2nd, 2026.",
-  "time_basis": "published",
-  "first_seen": "2026-11-23T17:31:38Z",
-  "updated_at": "2026-11-23T19:30:04Z",
-  "category": "incident",
-  "status": "developing",
-  "severity": 3,
-  "org": "Check Point Security Management Server customers",
-  "sector": "Multiple organisations",
-  "country": "Global",
-  "place": "Global (no location stated)",
-  "lat": 38.9,
-  "lng": -77,
-  "pin_type": "global",
-  "geo_basis": "global report; GreyNoise says victims are global; pin is a placeholder",
-  "actor": "",
-  "impact": "",
-  "attack": [
-    "exploitation",
-    "data theft"
-  ],
-  "products": [
-    "Check Point Security Management Server",
-    "Check Point SmartConsole",
-    "Rejetto HFS"
-  ],
-  "cves": [
-    "CVE-2026-16232",
-    "CVE-2026-61500"
-  ],
-  "cve_meta": [
-    {
-      "id": "CVE-2026-16232",
-      "cvss": null,
-      "epss": 0.03517,
-      "kev": true,
-      "kev_due": "2026-07-25"
-    },
-    {
-      "id": "CVE-2026-61500",
-      "cvss": null,
-      "epss": 0.01908,
-      "kev": false,
-      "kev_due": ""
-    }
-  ],
-  "tags": [
-    "active-exploitation",
-    "check-point",
-    "edge-device"
-  ],
-  "summary": "GreyNoise says an actor it tracks as GT13 used 99 IP addresses against Check Point Security Management Servers, with confirmed attack activity between October 17th and November 2nd, 2026, impacting at least 22 distinct organizations globally. GreyNoise says the actor launched over 100 management tasks and obtained command results and data stolen from 24 distinct servers; it lists CVE-2026-16232 among the flaws. It does not attribute GT13 to any known group.",
-  "plain": "Security firm GreyNoise says an unidentified attacker broke into the central management servers of Check Point firewalls at at least 22 organisations around the world between October and early November and stole data from them.",
-  "exec": "GreyNoise reports intrusions into Check Point firewall management servers at at least 22 organisations; firewall admin systems are high-value targets.",
-  "action": "Check Point advises installing its jumbo hotfix for CVE-2026-16232 (July 2026), limiting Trusted Clients (GUI clients) to trusted IP addresses and restricting Management access to trusted IP addresses.",
-  "sources": [
-    {
-      "name": "GreyNoise, 23 Nov 2026",
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "published": "2026-11-23"
-    },
-    {
-      "name": "Check Point security advisory, CVE-2026-16232 (22 Jul 2026)",
-      "url": "https://blog.checkpoint.com/security/security-advisory-action-required-active-exploitation-of-check-point-smartconsole-authentication-bypass-cve-2026-16232",
-      "published": "2026-07-22"
-    }
-  ],
-  "evidence": [
-    {
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "quote": "The actor used 99 IP addresses, much of which were disposable network infrastructure"
-    },
-    {
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "quote": "impacting at least 22 distinct organizations globally."
-    },
-    {
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "quote": "data stolen from 24 distinct Check Point Security Management Servers."
-    },
-    {
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "quote": "the actor launched over 100 management tasks on multiple Check Point Management Servers"
-    },
-    {
-      "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
-      "quote": "with confirmed attack activity between October 17th and November 2nd, 2026,"
-    }
-  ],
-  "source_tier": "primary",
-  "validation": {
-    "checked_at": "2026-11-23T17:31:38Z",
-    "state": "single_source",
-    "note": "GreyNoise's own research post (the investigating firm) is the only report of the campaign read; no second publisher found by search. Check Point's July 2026 advisory confirms CVE-2026-16232 was exploited in the wild against a handful of customers and gives the fix, but does not mention this campaign. GreyNoise gives no defender advice; the action is Check Point's."
+ "title": "GreyNoise reports GT13 intrusion campaign against Check Point Security Management Servers affecting at least 22 organisations",
+ "date": "2026-11-23",
+ "date_note": "Date of GreyNoise's disclosure (its post is dated 23 November 2026); GreyNoise says confirmed attack activity ran between October 17th and November 2nd, 2026.",
+ "time_basis": "published",
+ "first_seen": "2026-11-23T17:31:38Z",
+ "updated_at": "2026-11-25T01:27:40Z",
+ "category": "incident",
+ "status": "developing",
+ "severity": 3,
+ "org": "Check Point Security Management Server customers",
+ "sector": "Multiple organisations",
+ "country": "Global",
+ "place": "Global (no location stated)",
+ "lat": 38.9,
+ "lng": -77,
+ "pin_type": "global",
+ "geo_basis": "global report; GreyNoise says victims are global; pin is a placeholder",
+ "actor": "",
+ "impact": "",
+ "attack": [
+  "exploitation",
+  "data theft"
+ ],
+ "products": [
+  "Check Point Security Management Server",
+  "Check Point SmartConsole",
+  "Rejetto HFS"
+ ],
+ "cves": [
+  "CVE-2026-16232",
+  "CVE-2026-61500"
+ ],
+ "cve_meta": [
+  {
+   "id": "CVE-2026-16232",
+   "cvss": null,
+   "epss": 0.03517,
+   "kev": true,
+   "kev_due": "2026-07-25"
   },
-  "sectors": {
-    "values": [
-      "cross-sector"
-    ],
-    "basis": "inferred"
+  {
+   "id": "CVE-2026-61500",
+   "cvss": null,
+   "epss": 0.01908,
+   "kev": false,
+   "kev_due": ""
+  }
+ ],
+ "tags": [
+  "active-exploitation",
+  "check-point",
+  "edge-device"
+ ],
+ "summary": "GreyNoise says an actor it tracks as GT13 used 99 IP addresses against Check Point Security Management Servers, with confirmed attack activity between October 17th and November 2nd, 2026, impacting at least 22 distinct organizations globally. GreyNoise says the actor obtained data stolen from 24 distinct servers, and it believes the actor used agentic tooling. It does not attribute GT13 to any known group.",
+ "plain": "Security firm GreyNoise says an unidentified attacker broke into the central management servers of Check Point firewalls at at least 22 organisations around the world between October and early November and stole data from them.",
+ "exec": "GreyNoise reports intrusions into Check Point firewall management servers at at least 22 organisations; firewall admin systems are high-value targets.",
+ "action": "Check Point advises installing its jumbo hotfix for CVE-2026-16232 (July 2026), limiting Trusted Clients (GUI clients) to trusted IP addresses and restricting Management access to trusted IP addresses.",
+ "sources": [
+  {
+   "name": "GreyNoise, 23 Nov 2026",
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "published": "2026-11-23"
   },
-  "surface": {
-    "value": "edge-appliance",
-    "basis": "stated"
+  {
+   "name": "Check Point security advisory, CVE-2026-16232 (22 Jul 2026)",
+   "url": "https://blog.checkpoint.com/security/security-advisory-action-required-active-exploitation-of-check-point-smartconsole-authentication-bypass-cve-2026-16232",
+   "published": "2026-07-22"
   },
-  "review": {
-    "state": "passed",
-    "at": "2026-11-23T19:41:18Z",
-    "first_at": "2026-11-23T17:42:00Z",
-    "note": "Compared title, 99 IPs, 22 orgs, 24 servers, 100+ tasks, 17 Oct-2 Nov window, CVE list, no attribution and Check Point advice against GreyNoise (23 Nov) and Check Point advisory (22 Jul); evidence quotes verbatim",
-    "flags": []
+  {
+   "name": "SecurityWeek, 24 Nov 2026 (relays GreyNoise)",
+   "url": "https://www.securityweek.com/check-point-security-management-servers-hacked-in-ai-assisted-campaign/",
+   "published": "2026-11-24"
+  }
+ ],
+ "evidence": [
+  {
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "quote": "The actor used 99 IP addresses, much of which were disposable network infrastructure"
   },
-  "qa_checked_at": "2026-11-23T19:41:18Z"
+  {
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "quote": "impacting at least 22 distinct organizations globally."
+  },
+  {
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "quote": "data stolen from 24 distinct Check Point Security Management Servers."
+  },
+  {
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "quote": "the actor launched over 100 management tasks on multiple Check Point Management Servers"
+  },
+  {
+   "url": "https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign",
+   "quote": "with confirmed attack activity between October 17th and November 2nd, 2026,"
+  }
+ ],
+ "source_tier": "primary",
+ "validation": {
+  "checked_at": "2026-11-23T17:31:38Z",
+  "state": "single_source",
+  "note": "GreyNoise's own research post (the investigating firm) is the only report of the campaign read; no second publisher found by search. Check Point's July 2026 advisory confirms CVE-2026-16232 was exploited in the wild against a handful of customers and gives the fix, but does not mention this campaign. GreyNoise gives no defender advice; the action is Check Point's. SecurityWeek (24 Nov) relays GreyNoise only and adds no Check Point statement, so still single_source."
+ },
+ "sectors": {
+  "values": [
+   "cross-sector"
+  ],
+  "basis": "inferred"
+ },
+ "surface": {
+  "value": "edge-appliance",
+  "basis": "stated"
+ },
+ "review": {
+  "state": "passed",
+  "at": "2026-11-23T19:41:18Z",
+  "first_at": "2026-11-23T17:42:00Z",
+  "note": "Compared title, 99 IPs, 22 orgs, 24 servers, 100+ tasks, 17 Oct-2 Nov window, CVE list, no attribution and Check Point advice against GreyNoise (23 Nov) and Check Point advisory (22 Jul); evidence quotes verbatim",
+  "flags": []
+ },
+ "qa_checked_at": "2026-11-23T19:41:18Z",
+ "last_followup_at": "2026-11-25T01:27:40Z",
+ "followup_note": "updated: SecurityWeek relays GreyNoise, adds agentic-tooling belief; no Check Point statement or attribution"
 }

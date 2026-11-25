@@ -105,7 +105,7 @@ A launcher session only dispatches scheduled jobs. For each job notification it 
 
 ## Known limits
 
-- Coverage is thin for Africa, Turkey, most of the Middle East and Latin America. Feeds now reach all 200 countries (North Korea only through specialist outlets abroad: NK News, Daily NK and VOA Korean; its own state sites cannot be reached) (`node scripts/feed-check.mjs coverage`), but in small countries they are mostly general news read through the cyber filter, and most big national broadcasters, national CERTs and privacy regulators block automated readers or publish no feed.
+- Coverage is thin for Africa, Turkey, most of the Middle East and Latin America. Feeds now reach all 200 countries, 150 of them with at least 10 (North Korea only through specialist outlets abroad: NK News, Daily NK and VOA Korean; its own state sites cannot be reached) (`node scripts/feed-check.mjs coverage`), but in small countries they are mostly general news read through the cyber filter, and most big national broadcasters, national CERTs and privacy regulators block automated readers or publish no feed.
 - Attack-surface and sector rows in the analysis views, trends and status coverage come from each event's `sectors` and `surface` (fixed lists, `scripts/lib/taxonomy.mjs`, each "stated by the source" or "inferred by CyberView AI"); events without them (until `scripts/classify.mjs` backfills them) are placed by keyword, can be wrong, and every view counts and labels them "keyword-assigned".
 - Germany's BSI, Australia's cyber.gov.au and SAP notes block automated readers.
 - Error reports from visitors arrive as GitHub issues labelled `event-report`; the verify desk handles them.

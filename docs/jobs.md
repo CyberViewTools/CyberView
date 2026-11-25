@@ -5,7 +5,7 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 | Tier | What | Workflow | Model |
 |---|---|---|---|
 | 0 | Deploy: build with quarantine, verify the build, publish to GitHub Pages, then confirm the live copy matches, after every push and every data workflow | `pages.yml` | none |
-| 0 | Lead collector: 228 built-in agency, vendor and news RSS and Atom feeds plus config/feeds.json and the shards in config/feeds.d (about 6,600 feeds, among them banks, central banks and financial regulators, critical-infrastructure operators and crypto security feeds, each asked when due), then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
+| 0 | Lead collector: 228 built-in agency, vendor and news RSS and Atom feeds plus config/feeds.json and the shards in config/feeds.d (about 7,000 feeds, among them banks, central banks and financial regulators, critical-infrastructure operators and crypto security feeds, each asked when due), then the other open-source collectors (`scripts/osint.mjs`) and story grouping (`scripts/fuse.mjs`), every 30 min | `collect.yml` | none |
 | 0 | Breach notification registers: official registers (state attorneys general, UK ICO, SEC 8-K Item 1.05), each at most hourly (`scripts/breaches.mjs`) | `collect.yml` | none |
 | 0 | Crypto hacks and exploits: SlowMist's public archive of DeFi, exchange, bridge and wallet hacks, at most hourly (`scripts/crypto-hacks.mjs`) | `collect.yml` | none |
 | 0 | GDELT knowledge graph files: the 15-minute GKG files, cyber-tagged articles as leads (`scripts/gdelt-gkg.mjs`) | `collect.yml` | none |

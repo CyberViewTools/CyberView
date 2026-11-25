@@ -1,0 +1,25 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-25T04:25:00Z",
+  "finished_at": "2026-11-25T04:35:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://www.drupal.org/sa-core-2026-017", "title": "SA-CORE-2026-017", "used_in": "CVE-2026-132165"},
+    {"url": "https://status.optimizely.com/incidents/ftw0fh9wx43z", "title": "Optimizely incident", "used_in": "CVE-2026-132224"}
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "CVE-2026-132224 Optimizely PDF report", "url": "https://pages.optimizely.com/rs/947-RKE-048/images/Security%20Incident%20Report%20-%20Optimizely%20Web%20Experimentation%20-%20Nov%2017%202026.pdf", "reason": "compressed PDF text could not be read; guide based on the status page only (read_depth summary)"}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-131914 Idunno.AntiCsrf", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "note": "403 to the reader", "priority": "high"},
+    {"title": "CVE-2026-125350 Chromium", "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_018223192.html", "note": "reader returned only the index page, no CVE text", "priority": "medium"},
+    {"title": "CVE-2026-133968 MONAI Label", "url": "https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94", "note": "403 in earlier runs; not retried", "priority": "medium"},
+    {"title": "CVE-2026-134624 N-able MailAssure", "url": "https://me.n-able.com/s/security-advisory/aArVy0000002mrlKAA", "note": "JS-only portal in earlier runs; not retried", "priority": "medium"},
+    {"title": "CVE-2026-129448, 90436, 115731, 114713, 90817, 42884", "url": "", "note": "earlier-run failures (Pony Mail shell, JS portals, 403); not retried this run", "priority": "medium"}
+  ],
+  "failed_sites": ["github.com/mandiant (403)", "optimizely PDF (unreadable)"],
+  "notes": "Wrote 2 guides. Stopped early: remaining candidates had failed in earlier runs with 403 or JS-only pages, which are not worked around."
+}

@@ -9,7 +9,7 @@ import { railEvidence, railPlan, railResult, railCoverage, PATHS_PER_HOST } from
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
 import { fromEdge } from "./fp-edge.mjs";
-import { cleanFlaws, candidates, findings as matchFindings, named, indexFlaws, relevance, rank } from "./match.mjs";
+import { cleanFlaws, candidates, findings as matchFindings, named, indexFlaws, relevance, rank, distroCandidates, distroAdjust } from "./match.mjs";
 import { appServices } from "./fp-apps.mjs";
 import { withPack2 } from "./fp-apps2.mjs";
 import { bucketPath } from "./data.mjs";
@@ -255,11 +255,27 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     cveIndex = { used: true, cves: total, with_ranges: ranged, candidates: ix.flaws.length, findings: more.length, built_at: (idx && idx.built_at) || "" };
     namedList = named(hosts, keep, { skip: new Set(found.map((f) => f.cve)), ranged: true });
   }
+  // the distributions' own fix records, for packages a signed-in check read with their release (data/distro/, full snapshot)
+  let distroInfo = null, vendorFixed = [];
+  const releases = [...new Set(hosts.flatMap((h) => (h.services || []).map((s) => s.release).filter(Boolean)))];
+  if (releases.length) {
+    const rels = {}; for (const k of releases) { const j = /^(debian|ubuntu)-[\d.]{1,8}$/.test(k) ? await src.json(`data/distro/${k}.json`, { optional: true }) : null; if (j && j.src) rels[k] = j; }
+    if (Object.keys(rels).length) {
+      for (const id of distroCandidates(hosts, rels, new Set(found.map((f) => f.cve)))) { if (rows.has(id)) continue; const p = bucketPath(D, id); if (!p) continue;
+        if (!files.has(p)) files.set(p, await src.json(p, { optional: true }).then((j) => (j ? D.parseFile(j) : []), () => [])); const r = files.get(p).find((x) => x.id === id); if (r) rows.set(id, r); }
+      const adj = distroAdjust(found, hosts, rels, rows, { today }); found = adj.findings; vendorFixed = adj.vendor_fixed;
+      distroInfo = { used: Object.keys(rels), missing: releases.filter((k) => !rels[k]), vendor_fixed: adj.vendor_fixed.length, added: adj.added, capped: adj.capped };
+    } else distroInfo = { used: [], missing: releases, vendor_fixed: 0, added: 0 };
+  }
   // incident citations (opt-in, --data-incidents) and hunt links: CyberView's own published data only, never the targets
   const cites = incidents ? await loadIncidents(src, found.map((f) => f.cve)) : null;
   if (cites) attachIncidents(found, cites);
   attachHunt(found, wb);
+  const distroNote = !distroInfo ? [] : distroInfo.used.length
+    ? [`Package builds were checked against ${distroInfo.used.map((k) => k.replace(/^ubuntu-/, "Ubuntu ").replace(/^debian-/, "Debian ")).join(", ")}'s own fix records: ${distroInfo.vendor_fixed} upstream match(es) are already fixed in the installed build (listed under vendor_fixed), and ${distroInfo.added} flaw(s) were found only in the distribution's records.`]
+    : [`No distribution fix records for ${distroInfo.missing.join(", ")} in the data used, so package builds keep the backport caveat.`];
   const notes = [
+    ...distroNote,
     "Detection only: versions were read from what each service states about itself. A service can hide or misstate its version, and a Linux distribution's package can carry a backported fix under an old version number; confidence says which.",
     cveIndex.used
       ? `Matching uses CyberView's whole CVE index (${cveIndex.cves} CVEs, ${cveIndex.with_ranges} with NVD's affected-version ranges) as well as the known-exploited flaws and recent high-risk flaws. A CVE with no published range, or for a product this scanner cannot name, is not reported. A clean result is not proof that a host has no vulnerabilities.`
@@ -273,7 +289,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
       udp: probed.udp || [], paths: probed.paths || { enabled: false }, ics: probed.ics || { enabled: false }, network: matched ? { sent: 0, note: "none: every host, port and product was read from the operator's own files; no target was contacted", sends: {} } : { ...probed.stats, sends: { ...SENDS, ...icsSends(!!(probed.ics && probed.ics.enabled)), ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
-      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null, cve_index: cveIndex,
+      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null, cve_index: cveIndex, distro: distroInfo,
         ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },
@@ -284,7 +300,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
           note: "nothing was contacted: this covers exactly what the supplied files list, and nothing else" }
       : { ...coverage(hosts, { ports, interrupted: probed.interrupted, stop_reason: probed.stop_reason }), paths: railCoverage(hosts, { enabled: !!(probed.paths && probed.paths.enabled), perHost: probed.paths && probed.paths.per_host, bmc: probed.paths && probed.paths.bmc }) },
     hosts: hosts.map((h) => ({ address: h.address, names: h.names, kind: h.kind, public: h.public, up: h.up, source: h.source || "scope", ports: h.ports, services: h.services, http: h.http, tls: h.tls, udp: h.udp || [], ...(h.ssh ? { ssh: h.ssh } : {}), ...(h.rail ? { paths: h.rail } : {}), ...(h.identify ? { identify: h.identify } : {}), ...(h.ics ? { ics: h.ics } : {}), observations: h.observations, ...(h.observations_dropped ? { observations_dropped: h.observations_dropped } : {}) })),
-    findings: found, named: namedList, notes,
+    findings: found, named: namedList, ...(vendorFixed.length ? { vendor_fixed: vendorFixed } : {}), notes,
   };
 }
 export { classify };

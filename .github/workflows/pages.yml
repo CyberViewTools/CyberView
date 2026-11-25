@@ -71,6 +71,35 @@ jobs:
         env:
           CVE_CORPUS: ${{ github.workspace }}/cache/cve
         run: if [ -f "$CVE_CORPUS/state.json" ]; then node scripts/cve.mjs site; else echo "No CVE corpus in the cache yet."; fi
+      - name: Day stamp for the distribution fix records
+        id: day
+        run: echo "d=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      - name: Restore today's distribution fix records (optional)
+        id: distro-cache
+        continue-on-error: true
+        uses: actions/cache/restore@v4
+        with:
+          path: cache/distro
+          key: distro-${{ steps.day.outputs.d }}
+      - name: Distribution fix records from OSV (Debian, Ubuntu; once a day; optional)
+        if: steps.distro-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        run: |
+          mkdir -p cache/osv cache/distro
+          for d in Debian Ubuntu; do
+            curl -sSfL --retry 3 "https://osv-vulnerabilities.storage.googleapis.com/$d/all.zip" -o "cache/osv/$d.zip"
+            unzip -q -o "cache/osv/$d.zip" -d "cache/osv/$d"
+          done
+          node scripts/distro.mjs cache/osv cache/distro
+      - name: Save today's distribution fix records
+        if: steps.distro-cache.outputs.cache-hit != 'true' && hashFiles('cache/distro/index.json') != ''
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: cache/distro
+          key: distro-${{ steps.day.outputs.d }}
+      - name: Publish the distribution fix records with the site (optional; the scanner's signed-in checks read them)
+        run: if [ -f cache/distro/index.json ]; then mkdir -p site/data/distro && cp cache/distro/*.json site/data/distro/ && du -sh site/data/distro; else echo "No distribution fix records."; fi
       - name: Verify the build before publishing
         run: node scripts/verify-build.mjs --against-live
         env:

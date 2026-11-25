@@ -15,7 +15,7 @@ import { USER_AGENT } from "./probe.mjs";
 
 export const DEFAULT_SOURCE = "https://cyberview.tools/";
 /** The only paths the scanner will ever ask for. */
-export const ALLOWED = /^data\/(workbench\.json|psirt\.json|cve\/index\.json|cve\/\d{4}\/\d{1,5}\.json|archive\/search\.json|archive\/\d{4}-\d{2}\.json)$/;
+export const ALLOWED = /^data\/(workbench\.json|psirt\.json|cve\/index\.json|cve\/\d{4}\/\d{1,5}\.json|archive\/search\.json|archive\/\d{4}-\d{2}\.json|distro\/index\.json|distro\/(?:debian|ubuntu)-[\d.]{1,8}\.json)$/;
 
 /** A base URL must be https, or plain http on this machine (for a local mirror or a test). */
 export function checkBase(u) {
@@ -99,6 +99,9 @@ export async function snapshot(src, out, D, { full = false, log = () => {} } = {
   const idx = await src.json("data/cve/index.json", { optional: true }); if (idx) { save("data/cve/index.json", idx); log("data/cve/index.json"); }
   const files = new Set();
   if (full && idx && idx.files_by_year) for (const [y, list] of Object.entries(idx.files_by_year)) if (/^\d{4}$/.test(y) && Array.isArray(list)) list.forEach((n) => Number.isInteger(n) && files.add(`data/cve/${y}/${n}.json`));
+  // the distributions' own fix records (Debian, Ubuntu): what a signed-in check needs to tell a backported fix from a missing one
+  const dx = full ? await src.json("data/distro/index.json", { optional: true }) : null;
+  if (dx) { save("data/distro/index.json", dx); log("data/distro/index.json"); for (const k of Object.keys(dx.releases || {})) if (/^(debian|ubuntu)-[\d.]{1,8}$/.test(k)) files.add(`data/distro/${k}.json`); }
   for (const k of (wb && wb.kev) || []) { const p = k && bucketPath(D, k.cve); if (p) files.add(p); }
   for (const v of (wb && wb.vulns) || []) { const p = v && bucketPath(D, v.cve); if (p) files.add(p); }
   let got = 0, missing = 0;

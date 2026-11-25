@@ -6,6 +6,7 @@
 // strict parsing (JSON.parse, fixed TSV/CSV/text grammars; YAML is NOT parsed), type checks, row caps and clipped strings.
 // Package lists and SBOMs are matched with the site's own parser and matcher (site/workbench-lib.js parseInventory and
 // matchFlaw, the Vulnerabilities page's "My software" path), never a fork.
+import { releaseKey } from "./distro.mjs";
 import { parseCloud } from "./discover.mjs";
 import { parseTarget } from "./scope.mjs";
 import { parseCpe, parsePurl, mergeName } from "./inputs.mjs";
@@ -145,9 +146,13 @@ export function dpkgUpstream(v) {
 export function parsePackages(text) {
   const s = String(text || "").replace(/^\uFEFF/, ""), lines = s.split(/\r?\n/).slice(0, IMPORT_LIMITS.rows), items = [], problems = [];
   const push = (name, version, vendor, distro, raw) => { name = clip(name, 120); if (name.length < 2 || items.length >= IMPORT_LIMITS.items) return; items.push({ name, vendor: clip(vendor, 80), version: clip(version, 40), count: 1, distro, raw_version: clip(raw, 80) }); };
+  // "#os <ID> <VERSION_ID> <codename>" is written by the app's signed-in check (from /etc/os-release); with it, each dpkg line
+  // is "ii <package> <version> <arch> <source package>", so the distribution's own fix records can be looked up.
+  const osl = (lines.find((l) => /^#os\s/.test(l)) || "").trim().split(/\s+/), release = releaseKey(osl[1], osl[2]);
   const dpkg = lines.filter((l) => /^(ii|hi|rc|iU|iF|un|pn|hn)\s+\S+\s+\S+/.test(l));
   if (dpkg.length) {
-    for (const l of dpkg) { if (!/^(ii|hi)\s/.test(l)) continue; const p = l.trim().split(/\s+/); const name = p[1].replace(/:(amd64|arm64|i386|armhf|all)$/, ""); push(name, dpkgUpstream(p[2]), "", "Debian/Ubuntu package (dpkg)", p[2]); }
+    for (const l of dpkg) { if (!/^(ii|hi)\s/.test(l)) continue; const p = l.trim().split(/\s+/); const name = p[1].replace(/:(amd64|arm64|i386|armhf|all)$/, ""); push(name, dpkgUpstream(p[2]), "", "Debian/Ubuntu package (dpkg)", p[2]);
+      if (release && items.length) { const it = items[items.length - 1]; it.release = release; it.src = /^[a-z0-9][a-z0-9+.-]{0,100}$/.test(p[4] || "") ? p[4] : name; } }
     return { kind: "dpkg -l", items, problems: items.length ? problems : ["packages: dpkg -l output with no installed (ii) package"] };
   }
   const rpm = lines.map((l) => l.trim()).filter((l) => l && !/\s/.test(l) && /^[A-Za-z0-9_.+-]+-\d[\w.+~^]*-[\w.+~^]+$/.test(l.replace(RPM_ARCH, "")));

@@ -181,13 +181,15 @@ export function inventoryHost(items, { file = "inventory", assumeExposed = false
     if (!name) continue;
     const version = clip(x && x.version, 40);
     const from = clip(x && x.from, 40);
-    services.push(svc(null, proto, clip(x && x.vendor, 80), name, version, {
+    const sv = svc(null, proto, clip(x && x.vendor, 80), name, version, {
       label: name,
       distro: clip(x && x.distro, 40) || distroOf(clip(x && x.raw_version, 80)),
       source: from ? `imported ${from}` : "imported list",
       evidence: clip(`${from || "import"}: ${name}${version ? " " + version : " (no version stated)"}`, 200),
       guessed: !version,
-    }));
+    });
+    if (x && x.release) { sv.release = clip(x.release, 20); sv.src = clip(x.src, 100); sv.raw_version = clip(x.raw_version, 80); }
+    services.push(sv);
   }
   return {
     address, names: [], kind: assumeExposed ? "public" : "private", public: !!assumeExposed, up: true,

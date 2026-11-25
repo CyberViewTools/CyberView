@@ -2,6 +2,7 @@
 // Detected services -> findings: matched against CyberView's flaws with the site's own matchFlaw, rated with the site's own
 // CyberView rating and SSVC priority, and ranked. No network here: rows are handed in by the caller.
 import { W, D } from "./shared.mjs";
+import { verdict } from "./distro.mjs";
 import { DEFAULT_SOURCE } from "./data.mjs";
 
 const str = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
@@ -112,12 +113,18 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
       const [conf, why] = confidenceOf(m.state, s);
       if (!byCve.has(f.cve)) byCve.set(f.cve, { f, seen: [], fixed: new Set() });
       const g = byCve.get(f.cve);
-      g.seen.push({ host: h.address, names: h.names || [], public: !!h.public, port: s.port, proto: s.proto, product: s.label || [s.vendor, s.product].filter(Boolean).join(" "), version: s.version, shown_version: s.shown_version, distro: s.distro, evidence: s.evidence, state: m.state, confidence: conf, confidence_why: why });
+      g.seen.push({ host: h.address, names: h.names || [], public: !!h.public, port: s.port, proto: s.proto, product: s.label || [s.vendor, s.product].filter(Boolean).join(" "), version: s.version, shown_version: s.shown_version, distro: s.distro, ...(s.release ? { release: s.release, src: s.src, bin: s.product, raw_version: s.raw_version } : {}), evidence: s.evidence, state: m.state, confidence: conf, confidence_why: why });
       m.fixed.forEach((v) => g.fixed.add(v));
     }
   }
   const out = [];
-  for (const { f, seen, fixed } of byCve.values()) {
+  for (const g0 of byCve.values()) out.push(makeFinding(g0, rows, { today, source }));
+  return rank(out);
+}
+
+/** One finding from a flaw and the places it was seen (shared by the range matcher and the distribution records). */
+export function makeFinding({ f, seen, fixed }, rows, { today = new Date().toISOString().slice(0, 10), source = "" } = {}) {
+  {
     const state = seen.some((x) => x.state === "affected") ? "affected" : "check";
     const exposed = seen.some((x) => x.public);
     const { row, from } = rowFor(f, rows);
@@ -125,7 +132,7 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
     const pts = W.score(f, { state }, today);
     const best = seen.slice().sort((a, b) => CONF[b.confidence] - CONF[a.confidence])[0];
     const g = f.guide;
-    out.push({
+    return {
       ...(source ? { source } : {}),
       cve: f.cve, title: f.name || f.desc.slice(0, 120), vendor: f.vendor, product: f.product, state,
       kev: f.kev, kev_added: f.added && f.kev ? f.added : "", cisa_due: f.due, overdue: !!(f.due && f.due < today), ransomware: f.ransomware, epss: f.epss,
@@ -141,9 +148,8 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
         details_note: "Check steps, signs of compromise and detection resources are on CyberView's page for this CVE (linked, not copied).",
         analysis: f.analysis ? { url: pageFor(f.cve), by: "CyberView AI (a Claude model)" } : null,
       },
-    });
+    };
   }
-  return rank(out);
 }
 
 /** Ranked by the CyberView rating, with CISA's evidence first: known exploited (KEV), then exploited by other evidence, then past
@@ -232,4 +238,60 @@ export function named(hosts, allRows, { per = 10, skip = new Set(), ranged = fal
         : "Named in the CVE List, versions not checked: CyberView's lookup files hold no version ranges for these. Compare each with the vendor's advisory." });
   }
   return out;
+}
+
+/* ---- the distributions' own fix records (Debian, Ubuntu), for packages read by a signed-in check ----
+   rels: { "ubuntu-22.04": release file }. A package build the distribution has fixed is taken out of the finding (listed in
+   vendor_fixed, so the answer can be checked); an older build becomes version-confirmed with the distribution's fixed build;
+   a CVE the distribution lists for an installed package that no upstream range caught is added. */
+const DLABEL = (k) => String(k).replace(/^ubuntu-pro-/, "Ubuntu Pro ").replace(/^ubuntu-/, "Ubuntu ").replace(/^debian-/, "Debian ");
+const pkgOf = (s) => ({ src: s.src, name: s.bin || s.product, raw_version: s.raw_version });
+export function distroCandidates(hosts, rels, have) {
+  const out = new Map();
+  for (const h of hosts) for (const s of h.services || []) {
+    const rel = s.release && rels[s.release]; if (!rel || !s.raw_version) continue;
+    for (const p of [...new Set([s.src, s.product].filter(Boolean))]) for (const [cve] of rel.src[p] || []) {
+      if (have.has(cve) || out.has(cve)) continue;
+      const v = verdict(rel, { src: s.src, name: s.product, raw_version: s.raw_version }, cve);
+      if (v && v.state !== "fixed") out.set(cve, true);
+    }
+  }
+  return [...out.keys()];
+}
+export function distroAdjust(found, hosts, rels, rows, { today, cap = 3000 } = {}) {
+  const keep = [], vendorFixed = [];
+  for (const f of found) {
+    const seen = [], gone = []; let touched = false;
+    for (const s of f.seen_on) {
+      const rel = s.release && rels[s.release], v = rel ? verdict(rel, pkgOf(s), f.cve) : null;
+      if (!v) { seen.push(s); continue; }
+      touched = true; const who = DLABEL(s.release);
+      if (v.state === "fixed") { gone.push({ host: s.host, product: s.product, installed: s.raw_version, fixed_in: v.fixed, why: `${who} fixed this in ${v.pkg} ${v.fixed}; this computer has ${s.raw_version}` }); continue; }
+      seen.push({ ...s, state: "affected", confidence: "high", distro_fix: v.fixed || "",
+        confidence_why: v.state === "affected" ? `${who} fixed this in ${v.pkg} ${v.fixed}; this computer has ${s.raw_version}` : `${who} lists ${v.pkg} as affected and has not released a fix yet` });
+    }
+    if (!touched) { keep.push(f); continue; }
+    if (!seen.length) { vendorFixed.push({ cve: f.cve, title: f.title, on: gone.slice(0, 20) }); continue; }
+    const best = seen.slice().sort((a, b) => CONF[b.confidence] - CONF[a.confidence])[0];
+    const fx = [...new Set(seen.map((x) => x.distro_fix).filter(Boolean))];
+    keep.push({ ...f, seen_on: seen, state: seen.some((x) => x.state === "affected") ? "affected" : f.state, confidence: best.confidence, confidence_why: best.confidence_why,
+      ...(gone.length ? { distro_fixed_on: gone.slice(0, 20) } : {}), fix: { ...f.fix, distro_fixed: fx } });
+  }
+  // CVEs the distribution lists for installed packages that no upstream range caught
+  const have = new Set([...keep.map((f) => f.cve), ...vendorFixed.map((x) => x.cve)]), added = [];
+  for (const h of hosts) for (const s of h.services || []) {
+    const rel = s.release && rels[s.release]; if (!rel || !s.raw_version) continue;
+    for (const p of [...new Set([s.src, s.product].filter(Boolean))]) for (const [cve] of rel.src[p] || []) {
+      if (have.has(cve) || added.length >= cap) continue;
+      const v = verdict(rel, { src: s.src, name: s.product, raw_version: s.raw_version }, cve); if (!v || v.state === "fixed") continue;
+      have.add(cve); const r = rows.get(cve), who = DLABEL(s.release);
+      const f = r ? flawFromRow(r) : { cve, kev: false, vendor: "", product: "", name: "", added: "", due: "", ransomware: false, desc: "", cvss: null, epss: null, av: "", required: "", refs: [], affected: [], guide: null, analysis: false, exposure: "", exploit_public: false, severity: 2, repos: 0 };
+      if (!f.name) f.name = `${cve} in ${v.pkg}`;
+      added.push(makeFinding({ f, fixed: new Set(), seen: [{ host: h.address, names: h.names || [], public: !!h.public, port: s.port, proto: s.proto, product: s.label || s.product, version: s.version, shown_version: s.shown_version, distro: s.distro,
+        release: s.release, src: s.src, bin: s.product, raw_version: s.raw_version, evidence: s.evidence, state: "affected", confidence: "high", distro_fix: v.fixed || "",
+        confidence_why: v.state === "affected" ? `${who} fixed this in ${v.pkg} ${v.fixed}; this computer has ${s.raw_version}` : `${who} lists ${v.pkg} as affected and has not released a fix yet` }] }, rows, { today, source: "distro" }));
+    }
+  }
+  for (const f of added) f.fix = { ...f.fix, distro_fixed: f.seen_on.map((x) => x.distro_fix).filter(Boolean) };
+  return { findings: rank(keep.concat(added)), vendor_fixed: vendorFixed, added: added.length, capped: added.length >= cap };
 }

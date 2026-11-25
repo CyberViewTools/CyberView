@@ -1,0 +1,94 @@
+{
+  "job": "researcher-2",
+  "started_at": "2026-11-25T21:57:00Z",
+  "finished_at": "2026-11-25T22:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "CIA open-source intelligence system hacked NYT Artex",
+    "Хинштейн прямая линия хакерская атака",
+    "CIA ODNI NGA OSINT breach NYT Nov 2026"
+  ],
+  "pages_read": [
+    {
+      "url": "https://aif.ru/society/servery-pryamoy-linii-gubernatora-hinshteyna-podverglis-kiberatake",
+      "title": "AiF Khinshtein direct line attack",
+      "used_in": "kursk-khinshtein-direct-line-servers-attack-2026-11"
+    },
+    {
+      "url": "https://www.tokyo-sports.co.jp/articles/-/411178",
+      "title": "Tokyo Sports CIA",
+      "used_in": "not written"
+    },
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/842",
+      "title": "StormCrawler advisory",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://aws.amazon.com/security/security-bulletins/rss/2026-203-aws/",
+      "title": "AWS bulletin 2026-203",
+      "used_in": "aws-ssm-session-manager-runbook-cve-2026-134070-2026-11"
+    },
+    {
+      "url": "https://www.agazeta.com.br/mundo/meio-milhao-de-mortos-vazamento-de-dados-revela-numeros-impressionantes-de-soldados-russos-que-perderam-a-vida-na-guerra-na-ucrania-1126",
+      "title": "A Gazeta / BBC News Brasil",
+      "used_in": "rosstat-war-dead-records-leak-2026-11"
+    },
+    {
+      "url": "https://www.correiobraziliense.com.br/mundo/2026/11/7544295-meio-milhao-de-mortos-vazamento-de-dados-revela-numeros-impressionantes-de-soldados-russos-que-perderam-a-vida-na-guerra-na-ucrania.html",
+      "title": "Correio Braziliense",
+      "used_in": "read, same BBC text"
+    },
+    {
+      "url": "https://senego.com/le-chroniqueur-abdou-nguer-place-en-garde-a-vue-a-la-dsc_2028040.html",
+      "title": "Senego",
+      "used_in": "skipped"
+    }
+  ],
+  "added": [
+    "kursk-khinshtein-direct-line-servers-attack-2026-11",
+    "aws-ssm-session-manager-runbook-cve-2026-134070-2026-11"
+  ],
+  "updated": [
+    "rosstat-war-dead-records-leak-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "CVE-2026-82442 StormCrawler",
+      "url": "https://seclists.org/oss-sec/2026/q4/842",
+      "reason": "low severity, niche, no exploitation"
+    },
+    {
+      "title": "Abdou Nguer garde à vue",
+      "url": "https://senego.com/le-chroniqueur-abdou-nguer-place-en-garde-a-vue-a-la-dsc_2028040.html",
+      "reason": "no grounds stated, no cyber incident"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "CIA OSINT system cyberattack (NYT, 24 Nov)",
+      "url": "https://www.tokyo-sports.co.jp/articles/-/411178",
+      "note": "only Tokyo Sports relaying NYT; NYT original not found",
+      "priority": "medium"
+    },
+    {
+      "title": "CVE-2026-133464 SeaweedFS SFTP ValidatePassword",
+      "url": "https://vuldb.com/vuln/444001",
+      "note": "VulDB 403; check upstream advisory / exploit",
+      "priority": "low"
+    },
+    {
+      "title": "349 Russian fighters dead in Mali leak",
+      "url": "https://www.eremnews.com/news/world/n35sgnt",
+      "note": "403; likely from Rosstat leak",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "vuldb.com (403)",
+    "eremnews.com (403)"
+  ],
+  "notes": "Rosstat event left claimed/severity 1; BBC figures omitted since evidence quotes must match English wording.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

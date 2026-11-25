@@ -470,7 +470,7 @@ message carries no version, the row says so.
 
 ## Working offline on your own files
 
-Five commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
+Six commands need no scope file, because they contact nothing (no connection, request, datagram or DNS query):
 
 ```
 node scanner/cyberview-scan.mjs lookup  CVE-2026-1234 --data cyberview-data --version 8.2p1
@@ -478,6 +478,7 @@ node scanner/cyberview-scan.mjs match   --nmap scan.xml --data cyberview-data
 node scanner/cyberview-scan.mjs import  --packages pkgs.txt --sbom app.cdx.json --data cyberview-data
 node scanner/cyberview-scan.mjs depmap  --report cyberview-scan-<time>/report.json --scope scope.json
 node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.json --data newer-cyberview-data
+node scanner/cyberview-scan.mjs fix     --packages packages.csv --data cyberview-data
 ```
 
 - `lookup` answers "what does CyberView know about this CVE?" from the same snapshot: the rating with every point, CISA's
@@ -503,6 +504,23 @@ node scanner/cyberview-scan.mjs rematch --report cyberview-scan-<time>/report.js
   outside it).
 - `rematch` re-checks an old scan's recorded services against newer data: newly matched, no longer matched, still
   matched (`rematch.json`, `rematch.txt`). Nothing is rescanned, so rescan to confirm.
+
+- `fix` turns a Windows computer's own package list into a plan and a PowerShell script that brings it up to date:
+  software CyberView flags first (with `--data`), then the current .NET patch and, where an installed .NET major is out
+  of support, the current major, then `winget upgrade --all` for everything else, and only then removal of superseded
+  side-by-side copies (an old .NET 8.0.8 left beside a newer 8.0 patch). Out-of-support .NET itself is removed only with
+  the script's `-RemoveEndOfSupport` switch, because apps built only for it stop starting. On the Windows computer:
+
+  ```
+  Get-Package | Select-Object Name, Version, ProviderName | Export-Csv -NoTypeInformation packages.csv
+  node cyberview-scan-<version>.mjs fix --packages packages.csv --data cyberview-data
+  powershell -ExecutionPolicy Bypass -File .\cyberview-fix-<time>\cyberview-fix.ps1            # dry run: read what it would do
+  powershell -ExecutionPolicy Bypass -File .\cyberview-fix-<time>\cyberview-fix.ps1 -Apply     # as administrator
+  ```
+
+  The scanner itself runs nothing: it writes `fix-plan.txt`, `fix-plan.json` and `cyberview-fix.ps1`, and you read the
+  script before you run it. Without `-Apply` the script changes nothing. Names from the list that hold anything but plain
+  characters never reach the script; the plan lists them to handle by hand.
 
 The files you can give (`match`, `import`, `depmap`, or `scan --depmap`): `--packages` (`dpkg -l`, `rpm -qa`, a Windows
 `Get-Package` CSV), `--sbom` (CycloneDX or SPDX JSON), `--manifest` (Docker Compose or Kubernetes saved **as JSON**:
@@ -540,7 +558,7 @@ not as a product.
   register read, no S7 job other than one system-status read, no BACnet broadcast or ReadProperty, no OPC UA session, no
   DICOM command), and only to private, loopback or link-local addresses, never to a public one.
 - It does not run `ss`, `netstat`, a package manager, a cloud CLI or a radio survey for you, or log in to a host to collect
-  them; it does not resolve or scan a name it finds in a certificate or redirect.
+  them (`fix` writes a script for you to read and run; the scanner never runs it); it does not resolve or scan a name it finds in a certificate or redirect.
 
 `scripts/security-check.mjs` checks the scanner's code for these on every change. More detail: `docs/scanner.md`.
 

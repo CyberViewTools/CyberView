@@ -15,8 +15,10 @@ import { buildDepmap, toMermaid, depmapText, scopeFromReport } from "./depmap.mj
 import { loadOldReport, loadMatchData, rematch, rematchText, REMATCH_LIMITS } from "./rematch.mjs";
 import { checkScope, hostInScope, inScope as ipInScope } from "./scope.mjs";
 import { isIP } from "node:net";
+import { planFix, fixText, fixScript } from "./fix.mjs";
+import { VERSION } from "./probe.mjs";
 
-export const OFFLINE_CMDS = new Set(["lookup", "match", "import", "depmap", "rematch"]);
+export const OFFLINE_CMDS = new Set(["lookup", "match", "import", "depmap", "rematch", "fix"]);
 export const IMPORT_USAGE = `Offline (no network; nothing is sent to any host):
   node scanner/cyberview-scan.mjs lookup  CVE-2026-1234 --data DIR [--version 8.2p1] [--out DIR]
   node scanner/cyberview-scan.mjs match   --data DIR (--nmap F | --sbom F | --packages F | --manifest F) [--assume-exposed] [--out DIR]
@@ -24,6 +26,7 @@ export const IMPORT_USAGE = `Offline (no network; nothing is sent to any host):
                                           [--cloud F [--cloud-provider aws-ec2|aws-elb|gcp|azure]] [--data DIR] [--out DIR]
   node scanner/cyberview-scan.mjs depmap  --report R/report.json [--scope scope.json] [import flags] [--out DIR]
   node scanner/cyberview-scan.mjs rematch --report OLD/report.json --data NEWER-SNAPSHOT [--out DIR]
+  node scanner/cyberview-scan.mjs fix     --packages packages.csv [--data DIR] [--out DIR]
   scan ... --depmap [import flags]   also writes depmap.json and depmap.mmd (and a section in report.html with --html)
 Import files are your own exports (dpkg -l, rpm -qa, Get-Package CSV, CycloneDX/SPDX JSON, compose/Kubernetes as JSON,
 Zeek conn.log, a Wi-Fi/Bluetooth survey CSV, ss/netstat or /proc/net/tcp text captured on the host itself, a cloud CLI's
@@ -36,7 +39,10 @@ match writes the same five report files as a scan (report.json, findings.csv, re
 a list you already hold, for assets you cannot scan (change freeze, third-party, air-gapped, "scanning is forbidden"). Run
 the data command first for --data DIR; no scope file and no attestation are needed, because no host is contacted. An nmap
 file needs -sV, or nmap states no product or version. An SBOM or package list has no address: it is rated as internal
-unless you state --assume-exposed, which only moves CISA's deadline (the CyberView rating does not depend on exposure).`;
+unless you state --assume-exposed, which only moves CISA's deadline (the CyberView rating does not depend on exposure).
+fix reads a Windows package list (Get-Package | Export-Csv) and writes fix-plan.txt, fix-plan.json and cyberview-fix.ps1: remove
+superseded side-by-side versions, move out-of-support .NET to the current major, then winget upgrade --all, flagged software
+first (with --data). The scanner runs nothing; you read the script and run it. It is a dry run unless you pass -Apply.`;
 
 const stamp = (cmd) => `cyberview-${cmd}-${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`;
 const sizeOf = (f) => statSync(f).size;
@@ -151,6 +157,27 @@ export async function offlineCommand(cmd, a, io) {
     im.imports.problems.slice(0, 20).forEach((p) => lines.push("  note: " + p));
     const files = write([["imports.json", JSON.stringify(doc, null, 2) + "\n"]]);
     io.out(lines.join("\n") + `\n\nWritten to ${out}/ (${files}). Nothing was sent to any host.`);
+    return 0;
+  }
+
+  if (cmd === "fix") {
+    // A plan and a script for the operator, from their own Windows package list. Nothing is run, installed or removed here.
+    if (!im.given.includes("packages")) return fail("give --packages packages.csv (on the Windows computer: Get-Package | Select-Object Name, Version, ProviderName | Export-Csv -NoTypeInformation packages.csv)");
+    const src0 = im.imports.sources.packages;
+    if (/dpkg|rpm/.test(src0.kind)) return fail(`--packages ${a.packages}: read as ${src0.kind}; fix writes a Windows script and needs a Windows Get-Package or uninstall-key CSV`);
+    let findings = [], built = "";
+    if (a.data) {
+      let src; try { src = dirSource(a.data); } catch (e) { return fail(e.message); }
+      const d = await loadMatchData(src); built = d.built_at;
+      findings = matchInventory(src0.items, d.flaws, { today });
+    }
+    const plan = planFix(src0.items, { today, findings });
+    const meta = { file: a.packages, version: VERSION };
+    const text = fixText(plan, meta);
+    const doc = { tool: { name: "CyberView Scanner", command: "fix", version: VERSION, runs_nothing: true }, at: new Date().toISOString(), network: "none: parsed from local files only",
+      packages_file: a.packages, data_workbench_built_at: built || null, ...plan };
+    const files = write([["fix-plan.txt", text + "\n"], ["fix-plan.json", JSON.stringify(doc, null, 2) + "\n"], ["cyberview-fix.ps1", fixScript(plan, meta)]]);
+    io.out(text + `\n\nWritten to ${out}/ (${files}). Nothing was installed, removed or sent anywhere.`);
     return 0;
   }
 

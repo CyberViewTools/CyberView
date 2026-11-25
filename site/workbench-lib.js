@@ -38,10 +38,22 @@
   var GENERIC = { server: 1, client: 1, manager: 1, core: 1, enterprise: 1, security: 1, cloud: 1, connect: 1, gateway: 1, office: 1, desktop: 1, agent: 1, platform: 1, suite: 1, center: 1, service: 1, services: 1, firmware: 1, software: 1, edge: 1, access: 1, one: 1, pro: 1 };
   // Does an inventory name refer to this vendor/product? Every word of the product must be in the name;
   // a short or generic product word ("server", "edge") also needs the vendor in the name.
+  // Windows the operating system (KEV/NVD product "windows", "windows 10 1809", "windows server 2022" ...) versus the many
+  // separate products named after it ("Microsoft Windows Desktop Runtime", "Windows SDK", "Windows Subsystem for Linux",
+  // "Windows Driver Package - ..."): a name is the OS only when every word after "windows" is in the product or is an
+  // edition, version or architecture word. Without this, every Windows flaw matched the .NET Desktop Runtime.
+  var WIN_EDITION = /^(\d+[a-z0-9]*|server|pro|professional|home|enterprise|education|ltsc|ltsb|iot|core|datacenter|standard|essentials|embedded|ultimate|starter|business|workstation|x64|x86|arm64|amd64|bit|for|based|systems|edition|n|kn|version|sp\d*|rt|r2|and|insider|preview|build|update|feature|cumulative|kb\d+)$/;
+  function otherWindowsProduct(n, words) {
+    if (words[0] !== "windows") return false;
+    var nw = n.trim().split(" "), at = nw.indexOf("windows");
+    if (at < 0) return false;
+    return nw.slice(at + 1).some(function (w) { return words.indexOf(w) < 0 && !WIN_EDITION.test(w); });
+  }
   L.nameHit = function (name, vendor, product) {
     var n = " " + norm(name) + " ", pv = norm(product), vv = norm(vendor);
     if (!pv || n.length < 4) return false;
     var words = pv.split(" "), all = words.every(function (w) { return n.indexOf(" " + w + " ") >= 0; });
+    if (otherWindowsProduct(n, words)) return false;
     if (!all && n.replace(/ /g, "").indexOf(pv.replace(/ /g, "")) < 0) return false;
     if (!all && pv.replace(/ /g, "").length < 5) return false;
     var hasVendor = !!vv && vv.split(" ").some(function (w) { return w.length > 2 && n.indexOf(" " + w + " ") >= 0; });

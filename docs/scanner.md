@@ -110,6 +110,7 @@ each of these rules; the hello and industrial test files mutate each checker rul
 | `scanner/lib/cert-inventory.mjs`, `mail-starttls.mjs`, `diff.mjs`, `kev-coverage.mjs` | the report pack: `--certs`, `--mail`, `--compare` and the `coverage` command; pure, no network |
 | `scanner/lib/depmap.mjs`, `imports.mjs`, `rematch.mjs`, `offline-cmds.mjs` | report pack 2: the relationship map (`--depmap`), the operator's import parsers and local package matching, the offline rematch, and the `match`, `import`, `depmap` and `rematch` commands; no network |
 | `scanner/lib/lookup.mjs` | the `lookup` reader: one CVE from a local snapshot — rating, both exposure deadlines, NVD ranges, the fix, whether a fingerprint can find the product, and a version the operator holds against the ranges; no network, nothing new fetched |
+| `scanner/lib/fix.mjs` | the `fix` command: a plan (`fix-plan.txt`, `fix-plan.json`) and a PowerShell script (`cyberview-fix.ps1`) from the operator's own Windows package list; pure text in, text out, runs nothing |
 | `scanner/lib/inputs.mjs` | the `match` adapters: nmap `-oX` hosts and services, CPE and purl vendors, an inventory with no address as one pseudo-host; returns the records `fingerprint.mjs` builds, so the matching, rating and outputs are unchanged |
 | `site/scanner-lib.js`, `site/scanner.js` | the Scanner page's report viewer and scope-file builder (browser only; mirrors of `diff.mjs` and `checkScope` that the unit tests compare with the real modules) |
 
@@ -151,7 +152,10 @@ client picks a strong algorithm first.
 
 Matching and rating are not reimplemented. `site/workbench-lib.js` holds `cleanRange`, `matchFlaw` (version ranges first,
 name-only flaws as "check"), `cmp`, `inRange`, `nameHit` and the patch-queue `score`; the Vulnerabilities page and the
-scanner both call them. `site/cvedb-lib.js` holds the lookup rows (`cleanRow`, `parseFile`), the CyberView rating
+scanner both call them. `nameHit` treats a name as Windows the operating system only when every word after "windows" is
+in the product or is an edition, version or architecture word, so separate products named after Windows ("Microsoft
+Windows Desktop Runtime", "Windows SDK", "Windows Subsystem for Linux", driver packages) are not matched to Windows flaws
+(until 2026-11-25 the .NET Desktop Runtime matched every Windows KEV entry). `site/cvedb-lib.js` holds the lookup rows (`cleanRow`, `parseFile`), the CyberView rating
 (`score`: CVSS base x CVSS v3.1 Exploit Code Maturity) and CISA's SSVC priority (`rate`, with BOD 26-04 timelines). The
 scanner rates each finding from its CVE lookup row, with vendor advisories attached as the page attaches them; if the
 lookup file is missing it rates from the KEV entry and says so in the finding. The unit tests compare the scanner's
@@ -566,6 +570,41 @@ Two details are deliberate. MQTT sets Clean Session, because leaving it clear wo
 session state** for the scanner's client id — a change to the operator's own broker. And the MongoDB finding says in so
 many words that `hello` is answered before authentication by design, so it does **not** show whether access control is
 enabled; the alternative would be a reassuring sentence that happens to be wrong.
+
+### A fix plan for a Windows computer (`fix`, no network, runs nothing)
+
+`fix --packages packages.csv [--data DIR] [--out DIR]` reads the operator's own Windows package list (on that computer:
+`Get-Package | Select-Object Name, Version, ProviderName | Export-Csv -NoTypeInformation packages.csv`, or an
+uninstall-key CSV) and writes three files: `fix-plan.txt` to read, `fix-plan.json`, and `cyberview-fix.ps1`. A `dpkg -l`
+or `rpm -qa` list is refused, because the script is for Windows.
+
+The scanner installs, updates and removes nothing, and starts no program: it writes the script, and the operator reads
+it and runs it. The script is a dry run unless it is given `-Apply` (then it needs PowerShell opened as administrator,
+and writes a transcript log and `packages-after.csv` to plan again on). It works in this order, so nothing is removed
+before its replacement is in place:
+
+1. **Flagged** (with `--data`): software CyberView matches to a known-exploited or affected flaw, named with the CVE,
+   updated first with `winget upgrade --name <name> --exact`.
+2. **.NET**: for each runtime family (Desktop Runtime, .NET Runtime, ASP.NET Core Runtime, SDK) and architecture, the
+   current patch of every supported major (`winget upgrade --id Microsoft.DotNet.<family>.<major>`), and the current major
+   (`winget install`) where an installed one is out of support. The support windows are a dated table in `fix.mjs`
+   (`SUPPORT`, from Microsoft's .NET support policy); a plan made more than 180 days after its date says so.
+3. **Everything else**: `winget upgrade --all`. The scanner cannot know every app's newest version offline; winget does,
+   from its sources, when the script runs. The dry run prints winget's own list of what is out of date.
+4. **Superseded copies**: an older patch beside a newer one of the same major.minor (an old .NET 8.0.8 left beside
+   8.0.22, an orphaned Python 3.11.4 beside 3.11.9) is removed with `winget uninstall --name <name> --exact`. Apps use
+   the newest patch of their major on their own, so nothing that ran before stops running.
+5. **Out of support** (only with `-RemoveEndOfSupport`): the remaining copy of an out-of-support .NET major. Off by
+   default, because apps built only for that major stop starting until they move to the current one; the plan says so
+   next to each item.
+
+Left alone: Windows and Office updates (KB entries; Windows Update manages them), anything installed "from Visual
+Studio" (the Visual Studio Installer manages it), and the parts a .NET runtime or SDK installs with itself (host,
+targeting packs and the like), which go with their runtime. Every name in the list is untrusted: only names made of
+plain characters (letters, digits, spaces and `.,+()_&/:#@[]-`) are written into the script, as single-quoted PowerShell
+strings, and the script writer checks every row again before writing it; any other name is listed under "By hand" in
+the plan and never reaches the script. The script contains no download, no `Invoke-Expression` and no other program
+than `winget`.
 
 ## Deliberately left out
 

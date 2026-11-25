@@ -37,6 +37,17 @@ test("names: product words must all be present; generic words need the vendor", 
   assert.ok(W.nameHit("Microsoft Edge", "microsoft", "edge"));
   assert.ok(!W.nameHit("EdgeRouter", "microsoft", "edge"));
   assert.ok(!W.nameHit("SAP NetWeaver", "apple", "safari"));
+  // products named after Windows are not Windows the OS (the .NET Desktop Runtime matched every Windows KEV entry)
+  assert.ok(!W.nameHit("Microsoft Windows Desktop Runtime - 8.0.8 (x64)", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Microsoft Windows Desktop Runtime - 8.0.8 (x64)", "microsoft", "windows 8.0"));
+  assert.ok(!W.nameHit("Windows Software Development Kit - Windows 10.0.22621.3233", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Windows Subsystem for Linux", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Windows Driver Package - Intel (e1dexpress) Net", "microsoft", "windows"));
+  assert.ok(W.nameHit("Microsoft Windows 11 Pro", "microsoft", "windows"));
+  assert.ok(W.nameHit("Windows 10 Enterprise 1809 x64", "microsoft", "windows 10 1809"));
+  assert.ok(W.nameHit("Windows Server 2022 Datacenter", "microsoft", "windows server 2022"));
+  assert.ok(W.nameHit("Windows Defender", "microsoft", "windows defender"));
+  assert.ok(W.nameHit("Microsoft Windows Desktop Runtime 8.0.8", "microsoft", "windows desktop runtime"));
 });
 test("inventory: plain lines, with versions and device counts", () => {
   const r = W.parseInventory("x.txt", "FortiOS 7.2.4, 12\nGoogle Chrome, 126.0.6478.61\n# note\nIvanti Connect Secure 22.7R2\nSlack");

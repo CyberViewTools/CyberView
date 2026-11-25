@@ -47,11 +47,11 @@ ${caps}
 
 /** What exists in the code: pages, views, map layers, active routines. */
 export async function inventory() {
-  const { NAV } = await import("./pages.mjs");
+  const { NAV, LIBNAV } = await import("./pages.mjs");
   const index = readFileSync(join(ROOT, "site", "index.html"), "utf8"), app = readFileSync(join(ROOT, "site", "app.js"), "utf8");
   const block = (name) => { const i = app.indexOf(`var ${name}={`); if (i < 0) return []; const j = app.indexOf("\n};", i); return [...app.slice(i, j).matchAll(/^\s{2}([a-z]+):\{label:/gm)].map((m) => m[1]); };
   return {
-    pages: NAV.map((x) => x[2]),
+    pages: NAV.concat(LIBNAV || []).map((x) => x[2]),
     views: [...new Set([...index.matchAll(/data-view="([a-z]+)"/g)].map((m) => m[1]))],
     layers: [...block("CTX_DEFS"), ...block("ARC_DEFS")],
     routines: (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r.active !== false).map((r) => r.key),

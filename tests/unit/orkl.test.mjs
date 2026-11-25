@@ -31,7 +31,7 @@ test("cleanReport keeps metadata and links, never the plain_text", () => {
   assert.equal(r.lang, "en");                                                    // lowercased
   assert.deepEqual(r.sources, ["Malpedia", "web"]);
   assert.deepEqual(r.actors, ["APT Example", "Second Group"]);
-  assert.equal(r.url, "https://orkl.eu/library/11111111-2222-3333-4444-555555555555");
+  assert.equal(r.url, "https://orkl.eu/libraryEntry/11111111-2222-3333-4444-555555555555");
   assert.equal(r.pdf, "https://archive.orkl.eu/abcdef0123456789abcdef0123456789abcdef01.pdf");
   assert.equal(r.txt_url, "https://archive.orkl.eu/abcdef0123456789abcdef0123456789abcdef01.txt");
   // the whole record, serialised, must not leak the report body anywhere
@@ -152,7 +152,15 @@ test("libraryIndex builds a compact browsable index, metadata and links only", (
   assert.deepEqual(idx.actors.map((a) => a.n), ["Alpha Group", "Zeta Group"]);
   assert.deepEqual(idx.actors.find((a) => a.n === "Zeta Group").al, ["Z1"]);
   assert.equal(idx.actors.find((a) => a.n === "Zeta Group").s, "ETDA");
+  assert.equal(idx.actors.find((a) => a.n === "Zeta Group").i, "a1");                 // ORKL id -> orkl.eu/taEntry/<id>
 
   // the whole index, serialised, never contains any report body
   assert.ok(!/SECRET FULL REPORT TEXT/.test(JSON.stringify(idx)));
+});
+
+test("libraryIndex keeps every actor a report names, once each", () => {
+  const many = cleanReport({ ...rawReport(), threat_actors: Array.from({ length: 12 }, (_, i) => ({ id: "x" + i, main_name: "Group " + (i % 9) })) });
+  const idx = libraryIndex([many], [], "");
+  assert.equal(idx.reports[0].a.length, 9);                                          // 12 names, 9 distinct, none dropped
+  assert.equal(new Set(idx.reports[0].a).size, idx.reports[0].a.length);
 });

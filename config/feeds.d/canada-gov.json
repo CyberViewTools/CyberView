@@ -1,0 +1,836 @@
+{
+ "_note": "Feeds for scripts/collect.mjs (shard canada-gov). Each was checked by scripts/feed-check.mjs before it was added; see config/feeds.json _note for the fields.",
+ "first_run_hours": 3,
+ "feeds": [
+  {
+   "name": "Interac news (Canada)",
+   "tier": "vendor",
+   "url": "https://www.interac.ca/en/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "payment network. Checked 2026-11-25: 10 items, newest 2026-11-09, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Alberta government news (Canada)",
+   "tier": "gov",
+   "url": "https://www.alberta.ca/NewsRoom/newsroom.cfm?rss=1",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Alberta newsroom. Checked 2026-11-25: 63 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Public Safety Canada news (Canada)",
+   "tier": "gov",
+   "url": "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=publicsafetycanada&sort=publishedDate&orderBy=desc&pick=50&format=atom",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "federal public safety department. Checked 2026-11-25: 50 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "SPVM communiques (Canada)",
+   "tier": "gov",
+   "url": "https://spvm.qc.ca/fr/Communiques/rss",
+   "lang": "fr",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Montreal police. Checked 2026-11-25: 30 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Toronto news (Canada)",
+   "tier": "gov",
+   "url": "https://www.toronto.ca/news/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Toronto city newsroom. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Magnet Forensics blog (Canada)",
+   "tier": "vendor",
+   "url": "https://www.magnetforensics.com/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "forensics vendor. Checked 2026-11-25: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Halifax municipality news (Canada)",
+   "tier": "gov",
+   "url": "https://www.halifax.ca/news/rss-feed",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Halifax municipality news. Checked 2026-11-25: 840 items, newest 2026-11-24, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "UBC news (Canada)",
+   "tier": "gov",
+   "url": "https://news.ubc.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 21 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Manitoba Hydro news (Canada)",
+   "tier": "gov",
+   "url": "https://www.hydro.mb.ca/articles/index.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Manitoba utility. Checked 2026-11-25: 250 items, newest 2026-11-12, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Rogers news (Canada)",
+   "tier": "vendor",
+   "url": "https://about.rogers.com/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "telecom. Checked 2026-11-25: 10 items, newest 2026-11-10, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Regina Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.reginapolice.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Regina police. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Flare blog (Canada)",
+   "tier": "vendor",
+   "url": "https://flare.io/feed",
+   "region": "north-america",
+   "country": "CA",
+   "added": "2026-11-25",
+   "why": "threat exposure vendor. Checked 2026-11-25: 10 items, newest 2026-11-23, 9 about cyber security; robots.txt allows it."
+  },
+  {
+   "name": "Communications Security Establishment news (Canada)",
+   "tier": "gov",
+   "url": "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=communicationssecurity&sort=publishedDate&orderBy=desc&pick=50&format=atom",
+   "region": "north-america",
+   "country": "CA",
+   "added": "2026-11-25",
+   "why": "signals intelligence and cyber agency. Checked 2026-11-25: 46 items, newest 2026-10-01, 38 about cyber security; robots.txt allows it."
+  },
+  {
+   "name": "Queen's University news (Canada)",
+   "tier": "gov",
+   "url": "https://www.queensu.ca/gazette/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Guelph news (Canada)",
+   "tier": "gov",
+   "url": "https://guelph.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Guelph city news. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Quebec fil de presse (Canada)",
+   "tier": "gov",
+   "url": "https://www.quebec.ca/fil-de-presse.rss",
+   "lang": "fr",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Quebec government press releases. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Canadian Centre for Cyber Security alerts FR (Canada)",
+   "tier": "gov",
+   "url": "https://www.cyber.gc.ca/api/cccs/atom/v1/get?feed=alerts_advisories&lang=fr",
+   "lang": "fr",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "national cyber centre alerts, French. Checked 2026-11-25: 50 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Whitehorse news (Canada)",
+   "tier": "gov",
+   "url": "https://www.whitehorse.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Yukon capital city news. Checked 2026-11-25: 10 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Kitchener news (Canada)",
+   "tier": "gov",
+   "url": "https://www.kitchener.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Kitchener city news. Checked 2026-11-25: 1547 items, newest 2026-11-24, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "PEI government news (Canada)",
+   "tier": "gov",
+   "url": "https://www.princeedwardisland.ca/en/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "PEI newsroom. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Durham Regional Police (Canada)",
+   "tier": "gov",
+   "url": "https://www.drps.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Durham police. Checked 2026-11-25: 888 items, newest 2026-11-24, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Western University news (Canada)",
+   "tier": "gov",
+   "url": "https://news.westernu.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 25 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Waterloo Regional Police (Canada)",
+   "tier": "gov",
+   "url": "https://wrps.ca/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Waterloo police. Checked 2026-11-25: 10 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Canadian Centre for Cyber Security news (Canada)",
+   "tier": "gov",
+   "url": "https://www.cyber.gc.ca/api/cccs/atom/v1/get?feed=news_events_guidance&lang=en",
+   "region": "north-america",
+   "country": "CA",
+   "added": "2026-11-25",
+   "why": "national cyber centre news and guidance. Checked 2026-11-25: 50 items, newest 2026-11-23, 30 about cyber security; robots.txt allows it."
+  },
+  {
+   "name": "Ottawa Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.ottawapolice.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ottawa police. Checked 2026-11-25: 252 items, newest 2026-11-24, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Manitoba government news (Canada)",
+   "tier": "gov",
+   "url": "https://news.gov.mb.ca/news/index.rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Manitoba newsroom. Checked 2026-11-25: 30 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Oshawa news (Canada)",
+   "tier": "gov",
+   "url": "https://www.oshawa.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Oshawa city news. Checked 2026-11-25: 71 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Thunder Bay Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.thunderbaypolice.ca/feed/rss2",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Thunder Bay police. Checked 2026-11-25: 460 items, newest 2026-11-24, 20 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Carleton University news (Canada)",
+   "tier": "gov",
+   "url": "https://carleton.ca/news/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 10 items, newest 2026-10-27, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Sarnia news (Canada)",
+   "tier": "gov",
+   "url": "https://www.sarnia.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Sarnia city news. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Whitby news (Canada)",
+   "tier": "gov",
+   "url": "https://www.whitby.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Whitby town news. Checked 2026-11-25: 381 items, newest 2026-11-23, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Vancouver Airport news (Canada)",
+   "tier": "gov",
+   "url": "https://news.yvr.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Vancouver airport. Checked 2026-11-25: 25 items, newest 2026-11-12, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Burlington news (Canada)",
+   "tier": "gov",
+   "url": "https://www.burlington.ca/news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Burlington city news. Checked 2026-11-25: 881 items, newest 2026-11-24, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Pickering news (Canada)",
+   "tier": "gov",
+   "url": "https://www.pickering.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Pickering city news. Checked 2026-11-25: 324 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Newfoundland and Labrador news (Canada)",
+   "tier": "gov",
+   "url": "https://www.gov.nl.ca/releases/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "NL newsroom. Checked 2026-11-25: 10 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Niagara Region news (Canada)",
+   "tier": "gov",
+   "url": "https://www.niagararegion.ca/news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "regional municipality news. Checked 2026-11-25: 14 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of St Catharines news (Canada)",
+   "tier": "gov",
+   "url": "https://www.stcatharines.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "St Catharines city news. Checked 2026-11-25: 157 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Centre canadien pour la cybersecurite nouvelles (Canada)",
+   "tier": "gov",
+   "url": "https://www.cyber.gc.ca/api/cccs/atom/v1/get?feed=news_events_guidance&lang=fr",
+   "lang": "fr",
+   "region": "north-america",
+   "country": "CA",
+   "added": "2026-11-25",
+   "why": "national cyber centre news, French. Checked 2026-11-25: 50 items, newest 2026-11-23, 26 about cyber security; robots.txt allows it."
+  },
+  {
+   "name": "Region of Waterloo news (Canada)",
+   "tier": "gov",
+   "url": "https://www.regionofwaterloo.ca/news-public-notices-and-council-info/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "regional municipality news. Checked 2026-11-25: 585 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Milton news (Canada)",
+   "tier": "gov",
+   "url": "https://www.milton.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Milton town news. Checked 2026-11-25: 481 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Iqaluit news (Canada)",
+   "tier": "gov",
+   "url": "https://iqaluit.ca/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Nunavut capital city news. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Peterborough news (Canada)",
+   "tier": "gov",
+   "url": "https://www.peterborough.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Peterborough city news. Checked 2026-11-25: 742 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Brantford news (Canada)",
+   "tier": "gov",
+   "url": "https://www.brantford.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Brantford city news. Checked 2026-11-25: 896 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Aurora news (Canada)",
+   "tier": "gov",
+   "url": "https://www.aurora.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Aurora town news. Checked 2026-11-25: 409 items, newest 2026-11-17, 4 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Durham Region news (Canada)",
+   "tier": "gov",
+   "url": "https://www.durham.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "regional municipality news. Checked 2026-11-25: 1128 items, newest 2026-11-24, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Cambridge news (Canada)",
+   "tier": "gov",
+   "url": "https://www.cambridge.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Cambridge city news. Checked 2026-11-25: 430 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Canadian Nuclear Laboratories news (Canada)",
+   "tier": "gov",
+   "url": "https://www.cnl.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "federal nuclear lab operator. Checked 2026-11-25: 10 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Lethbridge news (Canada)",
+   "tier": "gov",
+   "url": "https://www.lethbridge.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Lethbridge city news. Checked 2026-11-25: 1589 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Alectra Utilities news (Canada)",
+   "tier": "gov",
+   "url": "https://alectrautilities.com/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ontario electricity distributor. Checked 2026-11-25: 10 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Waterloo news (Canada)",
+   "tier": "gov",
+   "url": "https://www.waterloo.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Waterloo city news. Checked 2026-11-25: 1070 items, newest 2026-11-24, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Cornwall news (Canada)",
+   "tier": "gov",
+   "url": "https://www.cornwall.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Cornwall city news. Checked 2026-11-25: 337 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Belleville news (Canada)",
+   "tier": "gov",
+   "url": "https://www.belleville.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Belleville city news. Checked 2026-11-25: 196 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Guelph Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.guelphpolice.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Guelph police. Checked 2026-11-25: 57 items, newest 2026-11-24, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Thunder Bay news (Canada)",
+   "tier": "gov",
+   "url": "https://www.thunderbay.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Thunder Bay city news. Checked 2026-11-25: 2775 items, newest 2026-11-23, 5 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Greater Sudbury Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.gsps.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Sudbury police. Checked 2026-11-25: 992 items, newest 2026-11-24, 14 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "University of Saskatchewan news (Canada)",
+   "tier": "gov",
+   "url": "https://news.usask.ca/index.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 61 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Kingston Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.kingstonpolice.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Kingston police. Checked 2026-11-25: 368 items, newest 2026-11-23, 9 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of St. John's news (Canada)",
+   "tier": "gov",
+   "url": "https://www.stjohns.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "NL capital city news. Checked 2026-11-25: 2309 items, newest 2026-11-24, 3 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Saskatoon Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.saskatoonpolice.ca/rss/news/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Saskatoon police. Checked 2026-11-25: 15 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "York University news (Canada)",
+   "tier": "gov",
+   "url": "https://www.yorku.ca/yfile/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 10 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Brandon news (Canada)",
+   "tier": "gov",
+   "url": "https://www.brandon.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Brandon city news. Checked 2026-11-25: 1374 items, newest 2026-11-24, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "London Police news (Canada)",
+   "tier": "gov",
+   "url": "https://www.londonpolice.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "London ON police. Checked 2026-11-25: 204 items, newest 2026-11-24, 7 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Orillia news (Canada)",
+   "tier": "gov",
+   "url": "https://www.orillia.ca/news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Orillia city news. Checked 2026-11-25: 57 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Statistics Canada news (Canada)",
+   "tier": "gov",
+   "url": "https://www.statcan.gc.ca/en/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "statistics agency. Checked 2026-11-25: 10 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Fort Erie news (Canada)",
+   "tier": "gov",
+   "url": "https://www.forterie.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Fort Erie town news. Checked 2026-11-25: 78 items, newest 2026-11-20, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Niagara Falls news (Canada)",
+   "tier": "gov",
+   "url": "https://niagarafalls.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Niagara Falls city news. Checked 2026-11-25: 102 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Oro-Medonte news (Canada)",
+   "tier": "gov",
+   "url": "https://www.oro-medonte.ca/township-news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ontario township news. Checked 2026-11-25: 118 items, newest 2026-11-18, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Sault Ste Marie news (Canada)",
+   "tier": "gov",
+   "url": "https://saultstemarie.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Sault Ste Marie city news. Checked 2026-11-25: 10 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Norfolk County news (Canada)",
+   "tier": "gov",
+   "url": "https://www.norfolkcounty.ca/news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ontario county news. Checked 2026-11-25: 756 items, newest 2026-11-23, 2 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Kawartha Lakes news (Canada)",
+   "tier": "gov",
+   "url": "https://www.kawarthalakes.ca/news-and-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Kawartha Lakes city news. Checked 2026-11-25: 953 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Welland news (Canada)",
+   "tier": "gov",
+   "url": "https://www.welland.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Welland city news. Checked 2026-11-25: 178 items, newest 2026-11-19, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Municipality of Clarington news (Canada)",
+   "tier": "gov",
+   "url": "https://www.clarington.net/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Clarington municipality news. Checked 2026-11-25: 480 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Medicine Hat news (Canada)",
+   "tier": "gov",
+   "url": "https://www.medicinehat.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Medicine Hat city news. Checked 2026-11-25: 3016 items, newest 2026-11-23, 1 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Grimsby news (Canada)",
+   "tier": "gov",
+   "url": "https://www.grimsby.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Grimsby town news. Checked 2026-11-25: 464 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Pembroke news (Canada)",
+   "tier": "gov",
+   "url": "https://www.pembroke.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Pembroke city news. Checked 2026-11-25: 39 items, newest 2026-11-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Centre Wellington news (Canada)",
+   "tier": "gov",
+   "url": "https://www.centrewellington.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ontario township news. Checked 2026-11-25: 222 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Haldimand County news (Canada)",
+   "tier": "gov",
+   "url": "https://www.haldimandcounty.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Ontario county news. Checked 2026-11-25: 347 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Stratford news (Canada)",
+   "tier": "gov",
+   "url": "https://www.stratford.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Stratford city news. Checked 2026-11-25: 4 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Bruce Power news (Canada)",
+   "tier": "gov",
+   "url": "https://www.brucepower.com/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "nuclear generator. Checked 2026-11-25: 10 items, newest 2026-11-16, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "University of Manitoba news (Canada)",
+   "tier": "gov",
+   "url": "https://www.umanitoba.ca/rss.xml",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 10 items, newest 2026-09-25, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Town of Cobourg news (Canada)",
+   "tier": "gov",
+   "url": "https://www.cobourg.ca/news/rss",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Cobourg town news. Checked 2026-11-25: 465 items, newest 2026-11-23, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "Memorial University Gazette (Canada)",
+   "tier": "gov",
+   "url": "https://gazette.mun.ca/feed/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "university. Checked 2026-11-25: 10 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  },
+  {
+   "name": "City of Owen Sound news (Canada)",
+   "tier": "gov",
+   "url": "https://www.owensound.ca/news-and-public-notices/rss/",
+   "region": "north-america",
+   "country": "CA",
+   "filter": true,
+   "added": "2026-11-25",
+   "why": "Owen Sound city news. Checked 2026-11-25: 730 items, newest 2026-11-24, 0 about cyber security (broad feed: cyber filter on); robots.txt allows it."
+  }
+ ]
+}

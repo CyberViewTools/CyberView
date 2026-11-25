@@ -1,0 +1,66 @@
+{
+  "title": "CERT@VDE advisory VDE-2026-154: four vulnerabilities in CODESYS Visualization",
+  "date": "2026-11-24",
+  "date_note": "The day CERT@VDE published the advisory; the page gives no earlier day.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "CERT@VDE",
+  "sector": "Industrial automation",
+  "country": "Germany",
+  "place": "Germany",
+  "lat": 51.16,
+  "lng": 10.45,
+  "geo_basis": "country; CERT@VDE is a German CERT",
+  "pin_type": "country",
+  "summary": "CERT@VDE advisory VDE-2026-154 lists CVE-2026-121016, CVE-2026-121017 and CVE-2026-121018 (each rated 8.8) and CVE-2026-121019 (rated 3.3) in CODESYS Visualization. Per the advisory, the first three need a user logged in to a CODESYS Control runtime and an attacker controlling a malicious runtime or intercepting the traffic. The advisory does not state whether they are exploited.",
+  "plain": "Four flaws in CODESYS Visualization, used with industrial controllers, were published. The advisory says three could let a malicious runtime or an interceptor run functions on an engineering workstation.",
+  "exec": "CERT@VDE lists four CODESYS Visualization flaws; the advisory does not say whether any is exploited.",
+  "action": "CERT@VDE advises activating encrypted online communication between the CODESYS Development System and the CODESYS Control runtime, and using only CODESYS archives and projects from trusted sources.",
+  "impact": "",
+  "tags": [],
+  "cves": [
+    "CVE-2026-121016",
+    "CVE-2026-121017",
+    "CVE-2026-121018",
+    "CVE-2026-121019"
+  ],
+  "products": [
+    "CODESYS Visualization"
+  ],
+  "attack": [
+    "local program execution",
+    "path traversal"
+  ],
+  "sources": [
+    {
+      "name": "CERT@VDE: CODESYS Visualization - multiple vulnerabilities (VDE-2026-154)",
+      "url": "https://certvde.com/en/advisories/VDE-2026-154/",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Canadian Centre for Cyber Security: Codesys security advisory (AV26-1199)",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/control-systems-codesys-security-advisory-av26-1199",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [],
+  "source_tier": "primary",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-25T18:50:00Z",
+    "note": "Primary: CERT@VDE's advisory VDE-2026-154, the Canadian Centre for Cyber Security's AV26-1199 notice lists no CVEs, so it is not counted as corroboration."
+  },
+  "first_seen": "2026-11-25T18:48:16Z",
+  "updated_at": "2026-11-25T18:48:16Z",
+  "sectors": {
+    "values": [
+      "critical-manufacturing"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "ot-ics",
+    "basis": "inferred"
+  }
+}

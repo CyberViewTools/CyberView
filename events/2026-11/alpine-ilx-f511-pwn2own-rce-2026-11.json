@@ -13,24 +13,60 @@
   "sector": "Automotive",
   "org": "Alpine",
   "actor": "",
-  "cves": ["CVE-2026-118606"],
+  "cves": [
+    "CVE-2026-118606"
+  ],
   "attack": [],
-  "products": ["Alpine iLX-F511"],
+  "products": [
+    "Alpine iLX-F511"
+  ],
   "first_seen": "2026-11-25T10:13:10Z",
   "updated_at": "2026-11-25T10:13:10Z",
   "summary": "Compass Security's blog says its team demonstrated unauthenticated remote code execution as root on the Alpine iLX-F511 in-vehicle infotainment system at Pwn2Own Tokyo 2026. The blog says the framework-service listens on all interfaces and passes received code to a Lua client. The ZDI advisory ZDI-26-824 (CVE-2026-118606) lists no patch and advises only restricting interaction with the product.",
   "plain": "Researchers showed that someone on the same network could run code as root on an Alpine iLX-F511 car infotainment unit. ZDI's advisory lists no patch.",
   "exec": "A flaw shown at Pwn2Own lets a network-adjacent attacker take over an Alpine infotainment unit; ZDI's advisory lists no fix.",
   "action": "ZDI's advisory advises restricting interaction with the product; it lists no vendor fix.",
-  "tags": ["rce"],
+  "tags": [
+    "rce"
+  ],
   "sources": [
-    {"name": "ZDI: ZDI-26-824 Alpine iLX-F511 Framework Service Exposed Dangerous Function RCE", "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-824/", "published": "2026-10-28"},
-    {"name": "Compass Security blog: Pwn2Own Tokyo 2026 – Alpine iLX-F511", "url": "https://blog.compass-security.com/2026/11/pwn2own-tokyo-2026-alpine-ilx-f511/", "published": "2026-11-25"}
+    {
+      "name": "ZDI: ZDI-26-824 Alpine iLX-F511 Framework Service Exposed Dangerous Function RCE",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-824/",
+      "published": "2026-10-28"
+    },
+    {
+      "name": "Compass Security blog: Pwn2Own Tokyo 2026 – Alpine iLX-F511",
+      "url": "https://blog.compass-security.com/2026/11/pwn2own-tokyo-2026-alpine-ilx-f511/",
+      "published": "2026-11-25"
+    }
   ],
   "source_tier": "primary",
   "date_note": "Dated by Compass Security's blog post of 25 November; the ZDI advisory was published 28 October.",
-  "validation": {"state": "primary", "checked_at": "2026-11-25T10:13:10Z", "note": "ZDI's own advisory and the discovering team's blog were read."},
-  "sectors": {"values": ["unknown"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "inferred"},
-  "evidence": []
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-25T10:13:10Z",
+    "note": "ZDI's own advisory and the discovering team's blog were read."
+  },
+  "sectors": {
+    "values": [
+      "unknown"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
+  "evidence": [],
+  "review": {
+    "state": "passed",
+    "at": "2026-11-25T10:26:01Z",
+    "first_at": "2026-11-25T10:26:01Z",
+    "note": "Compared title, CVE, no-patch, adjacent, unauthenticated, root against ZDI-26-824 and Compass blog",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T10:26:01Z"
 }

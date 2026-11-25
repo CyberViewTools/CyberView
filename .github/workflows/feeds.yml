@@ -68,6 +68,12 @@ jobs:
         timeout-minutes: 5
         continue-on-error: true
         run: node scripts/ics.mjs || true
+      - name: ORKL threat-report library (metadata and links only; incremental, no AI)
+        if: steps.gate.outputs.go == '1'
+        # optional: a failure here keeps the last mirror and never stops the commit or the deploy; the first full backfill is run by hand
+        timeout-minutes: 6
+        continue-on-error: true
+        run: node scripts/orkl.mjs || true
       - name: Vendor security advisories (PSIRT CSAF, feeds and pages; leads for exploited or critical)
         if: steps.gate.outputs.go == '1'
         # every source fails on its own and keeps its last advisories; a total failure is reported, never stops the commit

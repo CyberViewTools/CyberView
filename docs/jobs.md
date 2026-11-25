@@ -13,6 +13,7 @@ CyberView runs itself. The mechanical tiers run on GitHub (the repository is pub
 | 0 | Vendor security advisories (psirt): twelve vendors' own advisories as structured data, every 2 h (`scripts/psirt.mjs`) | `feeds.yml` | none |
 | 0 | Exploit watch: public GitHub repositories naming each exploited flaw, flagged in the workbench | `feeds.yml` | none |
 | 0 | Scam warnings: official scam and phishing warnings by country (`scripts/scams.mjs`, config/scams.json) | `feeds.yml` | none |
+| 0 | orkl: mirror of ORKL's public threat-report library (orkl.eu) and threat-actor catalogue — metadata and links only (title, authors, date, language, sources, named actors, report-page and archive.orkl.eu links), never the report body; first run backfills the whole library, later runs add only what is new; feeds no events, drawn on no map, shown on the status page (`scripts/orkl.mjs`), every 2 h | `feeds.yml` | none |
 | 0 | Feeds: CISA known-exploited catalog, EPSS, CVSS, `cve_meta`, re-rating to severity 2 (every 2 h) | `feeds.yml` | none |
 | 0 | Live monitor: pages, CSP, data and sweep freshness hourly; browser check twice a day | `monitor.yml` | none |
 | 0 | Security: static check on every code push and deploy, live check weekly | `build.yml`, `security.yml` | none |

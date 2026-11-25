@@ -176,6 +176,19 @@
    "does": "Reads industrial control system (ICS/OT) advisories as structured data: CISA's ICS and ICS medical advisories and Siemens, Schneider Electric, ABB and Phoenix Contact as CSAF documents, CERT@VDE, Moxa and Mitsubishi Electric from their RSS feeds; joins them with CISA's known-exploited catalog for the Vulnerabilities page's Industrial view, and files exploited or critical ones, and high-scoring ones in lifeline sectors, as leads for the research loop (scripts/ics.mjs, no AI model)."
   },
   {
+   "key": "orkl",
+   "name": "ORKL threat-report library",
+   "tier": "automation",
+   "workflow": "feeds.yml",
+   "cron": "23 */2 * * *",
+   "model": null,
+   "status_key": "last_orkl_at",
+   "max_age_hours": 24,
+   "active": true,
+   "active_since": "2026-11-25T06:33:49Z",
+   "does": "Mirrors the metadata and links of ORKL's public threat-report library (orkl.eu) and its threat-actor catalogue: report title, authors, date, language, sources, named actors, and links to the report page and the archived PDF/text on archive.orkl.eu, never the report body itself. The first run backfills the whole library newest-first; later runs add only what is new. It writes no leads, is never a source for an event, and uses no AI model (scripts/orkl.mjs); the ingest totals are shown on the status page."
+  },
+  {
    "key": "scams",
    "name": "Scam warnings",
    "tier": "automation",

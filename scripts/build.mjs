@@ -385,6 +385,13 @@ try {
   const sd = d ? (await import("./ics.mjs")).siteData(d, built_at) : null;
   if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
 } catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
+// the ORKL threat-report library summary (scripts/orkl.mjs, no AI model) for the status page; a broken or missing
+// state file only leaves that panel empty, with a warning, never the build
+try {
+  const p = join(DATA, "orkl", "state.json"), d = existsSync(p) ? readJson(p) : null;
+  const sd = d ? (await import("./orkl.mjs")).siteData(d, built_at) : null;
+  if (sd) writeFileSync(join(OUT, "orkl.json"), JSON.stringify(sd)); else if (d) warnings.push("orkl/state.json: not readable, the ORKL library summary is left out");
+} catch (e) { warnings.push(`orkl/state.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // vendor security advisories (data/psirt/advisories.json, scripts/psirt.mjs) joined on CVE for the Vulnerabilities page: each
 // record checked again here; a missing or unreadable file gives an empty join, never a failed build

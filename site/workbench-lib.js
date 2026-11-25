@@ -12,15 +12,25 @@
   /* ---- versions ---- */
   // Compare dotted versions piece by piece: numbers as numbers, letters as text; a missing piece counts as 0 (7.2 == 7.2.0).
   function parts(v) { return String(v || "").toLowerCase().replace(/^v/, "").split(/[.\-_+~:]/).reduce(function (a, p) { return a.concat(p.match(/\d+|[a-z]+/g) || []); }, []); }
+  // A letter part directly after a release number: "rc", "beta", "alpha", "pre", "dev" (and a/b before a number, as in 2.0b1)
+  // mark a build BEFORE that release; any other letters (OpenSSH 9.8p1, OpenSSL 1.0.2k, ProFTPD 1.3.5a) a patch AFTER it.
+  var PRE = { rc: 1, alpha: 1, beta: 1, pre: 1, dev: 1, snapshot: 1, preview: 1, nightly: 1, cr: 1, m: 1 };
+  function isPre(t, i) { var w = t[i]; return !!PRE[w] || ((w === "a" || w === "b") && /^\d+$/.test(t[i + 1] || "")); }
   L.cmp = function (a, b) {
     var x = parts(a), y = parts(b), n = Math.max(x.length, y.length);
     for (var i = 0; i < n; i++) {
       var p = x[i], q = y[i];
-      if (p === undefined) p = "0"; if (q === undefined) q = "0";
+      if (p === undefined && q === undefined) return 0;
+      // one version has ended: the other's next part decides (1.0 == 1; 9.8p1 > 9.8; 7.2rc1 < 7.2)
+      if (p === undefined || q === undefined) {
+        var t = p === undefined ? y : x, sign = p === undefined ? -1 : 1, w = t[i];
+        if (/^\d+$/.test(w)) { for (var j = i; j < t.length; j++) { if (!/^\d+$/.test(t[j])) return isPre(t, j) ? -sign : sign; if (parseInt(t[j], 10) !== 0) return sign; } return 0; }
+        return isPre(t, i) ? -sign : sign;
+      }
       var pn = /^\d+$/.test(p), qn = /^\d+$/.test(q);
       if (pn && qn) { var d = parseInt(p, 10) - parseInt(q, 10); if (d) return d < 0 ? -1 : 1; }
-      else if (pn !== qn) return pn ? 1 : -1;          // 7.2.1 is later than 7.2.rc
-      else if (p !== q) return p < q ? -1 : 1;
+      else if (pn !== qn) { var pre = pn ? isPre(y, i) : isPre(x, i); return (pn ? 1 : -1) * (pre ? 1 : -1); }   // 7.2.1 is later than 7.2.rc; 1.0.2k is later than 1.0.2.0
+      else if (p !== q) { var ap = isPre(x, i), bp = isPre(y, i); if (ap !== bp) return ap ? -1 : 1; return p < q ? -1 : 1; }
     }
     return 0;
   };
@@ -38,10 +48,22 @@
   var GENERIC = { server: 1, client: 1, manager: 1, core: 1, enterprise: 1, security: 1, cloud: 1, connect: 1, gateway: 1, office: 1, desktop: 1, agent: 1, platform: 1, suite: 1, center: 1, service: 1, services: 1, firmware: 1, software: 1, edge: 1, access: 1, one: 1, pro: 1 };
   // Does an inventory name refer to this vendor/product? Every word of the product must be in the name;
   // a short or generic product word ("server", "edge") also needs the vendor in the name.
+  // Windows the operating system (KEV/NVD product "windows", "windows 10 1809", "windows server 2022" ...) versus the many
+  // separate products named after it ("Microsoft Windows Desktop Runtime", "Windows SDK", "Windows Subsystem for Linux",
+  // "Windows Driver Package - ..."): a name is the OS only when every word after "windows" is in the product or is an
+  // edition, version or architecture word. Without this, every Windows flaw matched the .NET Desktop Runtime.
+  var WIN_EDITION = /^(\d+[a-z0-9]*|server|pro|professional|home|enterprise|education|ltsc|ltsb|iot|core|datacenter|standard|essentials|embedded|ultimate|starter|business|workstation|x64|x86|arm64|amd64|bit|for|based|systems|edition|n|kn|version|sp\d*|rt|r2|and|insider|preview|build|update|feature|cumulative|kb\d+)$/;
+  function otherWindowsProduct(n, words) {
+    if (words[0] !== "windows") return false;
+    var nw = n.trim().split(" "), at = nw.indexOf("windows");
+    if (at < 0) return false;
+    return nw.slice(at + 1).some(function (w) { return words.indexOf(w) < 0 && !WIN_EDITION.test(w); });
+  }
   L.nameHit = function (name, vendor, product) {
     var n = " " + norm(name) + " ", pv = norm(product), vv = norm(vendor);
     if (!pv || n.length < 4) return false;
     var words = pv.split(" "), all = words.every(function (w) { return n.indexOf(" " + w + " ") >= 0; });
+    if (otherWindowsProduct(n, words)) return false;
     if (!all && n.replace(/ /g, "").indexOf(pv.replace(/ /g, "")) < 0) return false;
     if (!all && pv.replace(/ /g, "").length < 5) return false;
     var hasVendor = !!vv && vv.split(" ").some(function (w) { return w.length > 2 && n.indexOf(" " + w + " ") >= 0; });

@@ -18,6 +18,28 @@ test("versions compare piece by piece", () => {
   assert.equal(W.cmp("v1.10", "1.9"), 1);
   assert.equal(W.cmp("7.2.1", "7.2.rc"), 1);
 });
+test("versions: a patch suffix sorts after its release; rc, beta, alpha, pre and dev sort before it", () => {
+  for (const [lo, hi] of [["1.9", "1.10"], ["9.8", "9.8p1"], ["9.8p1", "9.8p2"], ["9.8p1", "9.9"], ["7.2rc1", "7.2"], ["7.2rc1", "7.2rc2"], ["2.0b1", "2.0"], ["1.0.2", "1.0.2k"], ["1.0.2k", "1.0.2zh"], ["1.3.5", "1.3.5a"], ["1.3.5rc3", "1.3.5"], ["1.3.5", "1.3.6rc1"], ["1.0beta1", "1.0"], ["1.0alpha1", "1.0"], ["1.0pre1", "1.0"], ["1.0dev1", "1.0"]]) assert.equal(W.cmp(lo, hi), -1, `${lo} < ${hi}`);
+  for (const [a, b] of [["1.0", "1"], ["1.0.0", "1"], ["v2.4", "2.4"], ["8.5:p1", "8.5p1"], ["7.2", "7.2.0"]]) assert.equal(W.cmp(a, b), 0, `${a} == ${b}`);
+  assert.equal(W.inRange("9.8p1", { to: "9.8", to_incl: true }), false);
+  assert.equal(W.inRange("9.7p1", { to: "9.8", to_incl: true }), true);
+  assert.equal(W.inRange("1.3.5a", { exact: "1.3.5" }), false);
+  assert.equal(W.inRange("1.3.5", { exact: "1.3.5" }), true);
+  assert.equal(W.inRange("8.5p1", { from: "8.5", from_incl: true, to: "9.8", to_incl: false }), true);
+  assert.equal(W.inRange("7.2rc1", { from: "7.2", from_incl: true }), false);
+});
+test("versions: comparison stays a consistent order", () => {
+  let seed = 7; const rnd = (n) => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed % n; };
+  const suf = ["", "", "", "p1", "p2", "a", "b", "k", "rc1", "rc2", "beta1", "b1", ".0", "-1", "_2", ":p1"];
+  const mk = () => { let v = String(rnd(12)); for (let i = rnd(3); i >= 0; i--) v += "." + rnd(30); return v + suf[rnd(suf.length)]; };
+  const vs = Array.from({ length: 4000 }, mk);
+  for (let i = 0; i < 4000; i++) {
+    const a = vs[i], b = vs[rnd(4000)], c = vs[rnd(4000)];
+    assert.equal(W.cmp(a, b) + W.cmp(b, a), 0, `antisymmetric ${a} ${b}`);
+    assert.equal(W.cmp(a, a), 0);
+    if (W.cmp(a, b) <= 0 && W.cmp(b, c) <= 0) assert.ok(W.cmp(a, c) <= 0, `transitive ${a} <= ${b} <= ${c}`);
+  }
+});
 test("ranges: start, end, exact and all-versions", () => {
   const r = { from: "6.4.0", from_incl: true, to: "7.4.10", to_incl: false };
   assert.equal(W.inRange("7.2.4", r), true);
@@ -37,6 +59,20 @@ test("names: product words must all be present; generic words need the vendor", 
   assert.ok(W.nameHit("Microsoft Edge", "microsoft", "edge"));
   assert.ok(!W.nameHit("EdgeRouter", "microsoft", "edge"));
   assert.ok(!W.nameHit("SAP NetWeaver", "apple", "safari"));
+  // products named after Windows are not Windows the OS (the .NET Desktop Runtime matched every Windows KEV entry)
+  assert.ok(!W.nameHit("Microsoft Windows Desktop Runtime - 8.0.8 (x64)", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Microsoft Windows Desktop Runtime - 8.0.8 (x64)", "microsoft", "windows 8.0"));
+  assert.ok(!W.nameHit("Microsoft Windows Desktop Runtime - 8.0.8", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Windows Software Development Kit - Windows 10.0.22621.3233", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Windows Subsystem for Linux", "microsoft", "windows"));
+  assert.ok(!W.nameHit("Windows Driver Package - Intel (e1dexpress) Net", "microsoft", "windows"));
+  assert.ok(W.nameHit("Microsoft Windows 11 Pro", "microsoft", "windows"));
+  assert.ok(W.nameHit("Windows 11 Pro", "microsoft", "windows"));
+  assert.ok(W.nameHit("Windows 10 Enterprise 1809 x64", "microsoft", "windows 10 1809"));
+  assert.ok(W.nameHit("Windows Server 2022 Datacenter", "microsoft", "windows server 2022"));
+  assert.ok(W.nameHit("Windows Defender", "microsoft", "windows defender"));
+  assert.ok(W.nameHit("Microsoft Windows Desktop Runtime 8.0.8", "microsoft", "windows desktop runtime"));
+  assert.ok(W.nameHit("Microsoft Office", "microsoft", "office"));
 });
 test("inventory: plain lines, with versions and device counts", () => {
   const r = W.parseInventory("x.txt", "FortiOS 7.2.4, 12\nGoogle Chrome, 126.0.6478.61\n# note\nIvanti Connect Secure 22.7R2\nSlack");

@@ -1,0 +1,44 @@
+{
+  "action": "Braiins advises miners to remove every stratum+tcp:// entry, including backups, and use Stratum V2 or TLS on firmware that verifies certificates; it tells network operators to turn on RPKI route origin validation.",
+  "actor": "",
+  "attack": ["bgp-hijack"],
+  "category": "incident",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-25",
+  "date_note": "Braiins' post is dated 25 Nov and reports attack waves from 7 to 20 Nov; the post gives no earlier single day for the disclosure.",
+  "exec": "Braiins says miners on plain-text Stratum V1 can have their hashrate silently redirected to an attacker.",
+  "first_seen": "2026-11-25T21:43:00Z",
+  "geo_basis": "none stated",
+  "impact": "Braiins says its own systems and pool accounts were not compromised.",
+  "lat": null,
+  "lng": null,
+  "org": "Bitcoin mining sites on Stratum V1",
+  "pin_type": "none",
+  "place": "Latin America and Europe (per Braiins)",
+  "plain": "Braiins says an attacker rerouted internet traffic so miners' computing power went to a fake mining pool, and the rewards went to the attacker. It says miners using unencrypted connections are exposed.",
+  "products": ["Stratum V1"],
+  "sector": "Cryptocurrency mining",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {"name": "Braiins", "url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1", "published": "2026-11-25"},
+    {"name": "The Block", "url": "https://www.theblock.co/news/ecosystems/2026-11-25-bitcoin-miners-hit-hashrate-hijacking-attack-exploiting-unencrypted-connections-446723", "published": "2026-11-25"},
+    {"name": "Decrypt", "url": "https://decrypt.co/383999/another-bitcoin-mining-firm-hashrate-hijacking-attacks", "published": "2026-11-25"}
+  ],
+  "status": "confirmed",
+  "summary": "Bitcoin mining firm Braiins says an attacker used BGP route manipulation to impersonate mining pools to miners on plain-text Stratum V1, so their hashrate was diverted to a fake server. Braiins says the attacks came in waves from early November, starting in Latin America and reaching Europe, and one hit more than a thousand mining sites in the same second. Braiins says neither the miners' ASICs nor Braiins Pool were compromised.",
+  "tags": [],
+  "title": "Braiins reports bitcoin hashrate hijacking through BGP route manipulation of unencrypted Stratum V1 connections",
+  "updated_at": "2026-11-25T21:43:00Z",
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-25T21:43:00Z",
+    "note": "Braiins' own post was read; The Block and Decrypt report the same findings from Braiins. The attacker and the amount of rewards stolen are not stated in the pages read."
+  },
+  "sectors": {"values": ["financial-services"], "basis": "inferred"},
+  "surface": {"value": "unknown", "basis": "inferred"},
+  "evidence": [
+    {"url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1", "quote": "more than a thousand mining sites"}
+  ]
+}

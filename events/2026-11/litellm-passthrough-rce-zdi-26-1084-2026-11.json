@@ -1,77 +1,77 @@
 {
- "title": "ZDI publishes authenticated remote code execution flaw in LiteLLM pass-through endpoints (CVE-2026-136539), found at Pwn2Own",
- "date": "2026-11-24",
- "date_note": "ZDI's coordinated public release day; the advisory gives no earlier public day.",
- "category": "vuln",
- "severity": 2,
- "status": "confirmed",
- "org": "LiteLLM",
- "sector": "AI software",
- "country": "Unknown",
- "place": "Unknown",
- "lat": null,
- "lng": null,
- "geo_basis": "software flaw; no location stated",
- "pin_type": "none",
- "summary": "The Zero Day Initiative advisory ZDI-26-1084 (CVE-2026-136539) describes a code injection flaw in how LiteLLM handles pass_through_endpoints. A remote attacker can execute arbitrary code on LiteLLM installations, but only after authenticating, in the context of the service account. ZDI says LiteLLM released an update to fix it, and credits k3vg3n.",
- "plain": "ZDI says a logged-in attacker could run code on LiteLLM servers through a flaw in pass-through endpoints. ZDI says LiteLLM has released an update.",
- "exec": "ZDI says authenticated attackers could run code on LiteLLM installations; a vendor update exists.",
- "action": "ZDI says LiteLLM released an update to fix the flaw; apply the vendor's update.",
- "impact": "ZDI rates it CVSS 7.2; the advisory does not list affected versions.",
- "tags": [
-  "rce"
- ],
- "cves": [
-  "CVE-2026-136539"
- ],
- "products": [
-  "LiteLLM"
- ],
- "attack": [
-  "code injection"
- ],
- "sources": [
-  {
-   "name": "Zero Day Initiative",
-   "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-1084/",
-   "published": "2026-11-24"
-  }
- ],
- "source_tier": "established",
- "validation": {
-  "state": "single_source",
-  "checked_at": "2026-11-24T22:42:06Z",
-  "note": "Only the ZDI advisory was read; the vendor's own page and the fix pull request were not read."
- },
- "first_seen": "2026-11-24T22:42:06Z",
- "updated_at": "2026-11-24T22:57:14Z",
- "sectors": {
-  "values": [
-   "cross-sector"
+  "title": "ZDI publishes authenticated remote code execution flaw in LiteLLM pass-through endpoints (CVE-2026-136539), found at Pwn2Own",
+  "date": "2026-11-24",
+  "date_note": "ZDI's coordinated public release day; the advisory gives no earlier public day.",
+  "category": "vuln",
+  "severity": 2,
+  "status": "confirmed",
+  "org": "LiteLLM",
+  "sector": "AI software",
+  "country": "Unknown",
+  "place": "Unknown",
+  "lat": null,
+  "lng": null,
+  "geo_basis": "software flaw; no location stated",
+  "pin_type": "none",
+  "summary": "The Zero Day Initiative advisory ZDI-26-1084 (CVE-2026-136539) describes a code injection flaw in how LiteLLM handles pass_through_endpoints. A remote attacker can execute arbitrary code on LiteLLM installations, but only after authenticating, in the context of the service account. ZDI says LiteLLM released an update to fix it, and credits k3vg3n.",
+  "plain": "ZDI says a logged-in attacker could run code on LiteLLM servers through a flaw in pass-through endpoints. ZDI says LiteLLM has released an update.",
+  "exec": "ZDI says authenticated attackers could run code on LiteLLM installations; a vendor update exists.",
+  "action": "ZDI says LiteLLM released an update to fix the flaw; apply the vendor's update.",
+  "impact": "ZDI rates it CVSS 7.2; the advisory does not list affected versions.",
+  "tags": [
+    "rce"
   ],
-  "basis": "inferred"
- },
- "surface": {
-  "value": "web-app",
-  "basis": "inferred"
- },
- "review": {
-  "state": "passed",
-  "at": "2026-11-24T22:55:57Z",
-  "first_at": "2026-11-24T22:55:57Z",
-  "note": "Compared title, date, CVE, CVSS 7.2, auth requirement, vendor update and credit with ZDI advisory",
-  "flags": [
-   "no-cve-meta"
+  "cves": [
+    "CVE-2026-136539"
+  ],
+  "products": [
+    "LiteLLM"
+  ],
+  "attack": [
+    "code injection"
+  ],
+  "sources": [
+    {
+      "name": "Zero Day Initiative",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-1084/",
+      "published": "2026-11-24"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-24T22:42:06Z",
+    "note": "Only the ZDI advisory was read; the vendor's own page and the fix pull request were not read."
+  },
+  "first_seen": "2026-11-24T22:42:06Z",
+  "updated_at": "2026-11-25T15:12:49Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-24T22:55:57Z",
+    "first_at": "2026-11-24T22:55:57Z",
+    "note": "Compared title, date, CVE, CVSS 7.2, auth requirement, vendor update and credit with ZDI advisory",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-24T22:55:57Z",
+  "cve_meta": [
+    {
+      "id": "CVE-2026-136539",
+      "cvss": null,
+      "epss": 0.01111,
+      "kev": false,
+      "kev_due": ""
+    }
   ]
- },
- "qa_checked_at": "2026-11-24T22:55:57Z",
- "cve_meta": [
-  {
-   "id": "CVE-2026-136539",
-   "cvss": null,
-   "epss": null,
-   "kev": false,
-   "kev_due": ""
-  }
- ]
 }

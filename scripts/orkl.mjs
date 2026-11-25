@@ -73,7 +73,7 @@ export function cleanReport(raw) {
     refs,
     pdf: archiveUrl(files.pdf),
     txt_url: archiveUrl(files.text),
-    url: id ? `https://orkl.eu/library/${id}` : "",
+    url: id ? `https://orkl.eu/libraryEntry/${id}` : "",   // ORKL's own record page (/library/<id> is a dead end there)
   };
 }
 
@@ -170,7 +170,7 @@ export function libraryIndex(reports, actors, builtAt = "") {
   // those stands in for a publication year: an undated report gets "" (shown as "Undated", not filtered by year).
   const pubYear = (r) => { const m = String(r.file_date || "").match(/^(\d{4})/); const y = m ? Number(m[1]) : 0; return y >= 1990 && y <= 2100 ? m[1] : ""; };
   // The PDF link is always https://archive.orkl.eu/<sha1>.pdf and the library page is always
-  // https://orkl.eu/library/<id>, so we store only the sha1 (`s`) and library id (`i`) and the Library page
+  // https://orkl.eu/libraryEntry/<id>, so we store only the sha1 (`s`) and library id (`i`) and the Library page
   // rebuilds both links itself, host-checked — it keeps the index small without storing a URL twice.
   const rows = arr(reports).filter((r) => r && hex40(r.sha1))
     .sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")))
@@ -181,12 +181,20 @@ export function libraryIndex(reports, actors, builtAt = "") {
       y: pubYear(r),
       l: lidx(r.lang),
       c: arr(r.sources).map(sidx).filter((n) => n >= 0).slice(0, 12),
-      a: arr(r.actors).map((x) => txt(x, 120)).filter(Boolean).slice(0, 6),
+      // every actor the report names, once each (ORKL lists a group once per catalogue); a cap of 6 used to drop the
+      // rest, so an actor's record undercounted its reports (TraderTraitor: 21 of 34)
+      a: [...new Set(arr(r.actors).map((x) => txt(x, 120)).filter(Boolean))].slice(0, 40),
     }));
   // actor catalogue: name, up to 6 stated aliases, and the catalogue it comes from (source_id is the clean system
   // name — MISPGALAXY, ETDA, MITRE, Secureworks — whereas `source` is that prefixed onto the name).
   const acts = arr(actors).filter(Boolean)
-    .map((a) => ({ n: clip(a.name, 160), al: arr(a.aliases).map((x) => txt(x, 120)).filter(Boolean).slice(0, 6), s: txt(a.source_id, 40) }))
+    .map((a) => {
+      const o = { n: clip(a.name, 160), al: arr(a.aliases).map((x) => txt(x, 120)).filter(Boolean).slice(0, 12), s: txt(a.source_id, 40) };
+      // the ORKL actor id (its profile is https://orkl.eu/taEntry/<id>, rebuilt and host-checked by the page) and its tools
+      const id = clip(a.id, 64); if (/^[0-9A-Za-z-]{1,64}$/.test(id)) o.i = id;
+      const tl = arr(a.tools).map((x) => txt(x, 80)).filter(Boolean).slice(0, 20); if (tl.length) o.tl = tl;
+      return o;
+    })
     .filter((a) => a.n)
     .sort((a, b) => a.n.localeCompare(b.n));
   return { built_at: builtAt, reports_total: rows.length, actors_total: acts.length, sources, langs, reports: rows, actors: acts };

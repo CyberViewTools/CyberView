@@ -220,7 +220,7 @@ async def main():
             ok("archive: lists events", await pg.locator(".row").count() > 0)
             await pg.fill("#q", "zzzz-no-such-thing")
             await pg.wait_for_timeout(400)
-            ok("archive: search filters", "0 events" in await pg.inner_text("#count") and not await pg.is_visible("#more"))
+            ok("archive: search filters", "0 events" in await pg.inner_text("#count") and not await pg.is_visible("#pager"))
             await pg.fill("#q", "")
             await pg.wait_for_timeout(400)
             await pg.locator(".row button").first.click()
@@ -1215,7 +1215,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "Library", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Tools", "Library", "Trends", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1267,7 +1267,7 @@ async def main():
             for sub in ["archive.html", "vulnerabilities.html", "tools.html", "trends.html", "actors.html", "tabletop.html", "community.html", "status.html", "about.html", "privacy.html", "terms.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "Library", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Tools", "Library", "Trends", "Exercise", "Community", "Status", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1980,7 +1980,8 @@ async def main():
             pg, errs = await open_page(browser, url.replace("index.html", "actors.html"), wait=900)
             ok("actors: summary counts named and claims-only groups", "1 group named" in await pg.text_content("#summary") and "1 more appears only in its own" in await pg.text_content("#summary"), await pg.text_content("#summary"))
             ok("actors: a bad record is dropped, claims-only groups hidden by default", await pg.locator("details.actor").count() == 1)
-            ok("actors: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Actors")
+            ok("actors: nav marks Library, the section strip marks Actors in events", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Library" and await pg.locator("#libnav a[aria-current=page]").text_content() == "Actors in events")
+            ok("actors: a profile links to its record in the Library's actor catalogue", await pg.locator("#a-g0094-kimsuky a[href='library.html#tab=actors&q=Kimsuky']").count() == 1)
             await pg.click("#a-g0094-kimsuky > summary"); await pg.wait_for_timeout(100)
             body = await pg.inner_text("#a-g0094-kimsuky")
             ok("actors: attribution says who said so", "Attributed by Genians Security Center (investigating firm)" in body and await pg.locator("#a-g0094-kimsuky a[href='https://example.com/report']").count() >= 1, body[:400])
@@ -2011,6 +2012,60 @@ async def main():
             await pg.screenshot(path=os.environ.get("CV_SHOT_DIR", tempfile.gettempdir()) + "/actors-desktop.png", full_page=True)
             await pg.context.close()
         await serve(site_act, vact)
+        # v1.80 (owner, 2026-11-25): the Library (data/orkl-index.json) in pages; a link opens the record on its page; ORKL
+        # links go to the record itself (libraryEntry / taEntry); an actor opens its own record
+        blib = copy.deepcopy(bundle)
+        import datetime as _dl
+        wkl = (_dl.datetime.now(_dl.timezone.utc).date() - _dl.timedelta(days=4)).isoformat()
+        evc = [e for e in blib["events"] if e.get("status") != "claimed" and e["date"] >= wkl][0]
+        evc["cves"] = ["CVE-2026-1111", "not-a-cve"]; evc["summary"] = (evc.get("summary") or "") + " The vendor also fixed CVE-2026-22222."
+        evc["cve_meta"] = [{"id": "CVE-2026-1111", "cvss": 9.8, "epss": 0.5, "kev": True, "kev_due": "2026-12-01"}]
+        site_lib = make_site(blib)
+        reps = [{"s": "%040x" % (i + 1), "i": "%08d-0000-0000-0000-000000000000" % i, "t": "Report %d" % i, "y": "2024", "l": 0, "c": [0],
+                 "a": (["Fixture Bear"] if i % 10 == 0 else [])} for i in range(130)]
+        reps[3]["t"] = "<img src=x id=pwnL>"; reps[5]["i"] = "javascript:alert(1)"
+        lix = {"built_at": "2026-11-25T00:00:00Z", "reports_total": 130, "actors_total": 2, "sources": ["Malpedia"], "langs": ["en"], "reports": reps,
+               "actors": [{"n": "Fixture Bear", "al": ["FB1", "Paw Group"], "s": "MITRE", "i": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "tl": ["ToolOne"]},
+                          {"n": "Kimsuky", "al": ["Emerald Sleet"], "s": "ETDA", "i": "javascript:alert(2)"}]}
+        json.dump(lix, open(os.path.join(site_lib, "data", "orkl-index.json"), "w"))
+        json.dump(act, open(os.path.join(site_lib, "data", "actors.json"), "w"))
+        async def vlib(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "library.html"), wait=900)
+            ok("library: nav marks Library; Actors and Archive sit in the section strip", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Library"
+               and await pg.eval_on_selector_all("#libnav a", "as => as.map(a => a.textContent.replace(/[0-9,]+$/, ''))") == ["Reports", "Actor catalogue", "Actors in events", "Event archive"])
+            ok("library: pages, not Show more", await pg.locator("#repPager").is_visible() and "Page 1 of 3 (50 per page)" == await pg.text_content("#repPage") and await pg.locator("#list .row").count() == 50, await pg.text_content("#repPage"))
+            await pg.click("#repNext"); await pg.wait_for_timeout(100)
+            ok("library: Next turns the page", "Page 2 of 3" in await pg.text_content("#repPage") and await pg.locator("#rp-" + reps[50]["s"]).count() == 1)
+            ok("library: injected markup stays text", await pg.locator("#pwnL").count() == 0)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "library.html#r=" + reps[123]["s"]), wait=900)
+            ok("library: a report link opens the record on the page that holds it", "Page 3 of 3" in await pg.text_content("#repPage") and await pg.locator("#rp-" + reps[123]["s"] + ".on").count() == 1)
+            ok("library: the ORKL link goes to the record itself", await pg.locator("#det a[href='https://orkl.eu/libraryEntry/00000123-0000-0000-0000-000000000000']").count() == 1)
+            ok("library: no javascript links anywhere", await pg.locator("a[href^='javascript']").count() == 0)
+            await pg.context.close()
+            pg, errs = await open_page(browser, url.replace("index.html", "library.html#tab=actors&ta=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"), wait=1200)
+            det = await pg.inner_text("#actDet")
+            ok("library: an actor link opens its record: aliases, tools, reports that name it", "Paw Group" in det and "ToolOne" in det and "Reports that name it (13)" in det, det[:400])
+            ok("library: the actor's ORKL profile and its CyberView profile are linked", await pg.locator("#actDet a[href='https://orkl.eu/taEntry/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee']").count() == 1)
+            await pg.click("#actDet button.linkish >> nth=0"); await pg.wait_for_timeout(200)
+            ok("library: a report in the actor's record opens that report", await pg.locator("#repGrid").is_visible() and await pg.locator("#det").inner_text() != "")
+            await pg.goto(url.replace("index.html", "library.html#tab=actors&q=Kimsuky")); await pg.wait_for_timeout(600)
+            await pg.click("#actList .row button"); await pg.wait_for_timeout(600)
+            ok("library: an actor without a valid ORKL id gets no profile link, and CyberView's profile is linked by name", await pg.locator("#actDet a[href^='https://orkl.eu']").count() == 0 and await pg.locator("#actDet a[href='actors.html#a=g0094-kimsuky']").count() == 1)
+            ok("library: no script errors", not errs, errs)
+            await pg.context.close()
+            # every CVE a write-up names, from its list or its text, links to its records
+            pg, errs = await open_page(browser, url + "#e=" + evc["id"], wait=1800)
+            cvl = pg.locator("#dcard .cvl")
+            ok("event: CVEs link to CVE.org, NVD, CISA (when listed) and the Vulnerabilities page", await cvl.locator("a[href='https://www.cve.org/CVERecord?id=CVE-2026-1111']").count() == 1
+               and await cvl.locator("a[href='https://nvd.nist.gov/vuln/detail/CVE-2026-1111']").count() == 1
+               and await cvl.locator("a[href='https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-1111']").count() == 1
+               and await cvl.locator("a[href='vulnerabilities.html#CVE-2026-1111']").count() == 1)
+            ok("event: a CVE named only in the text is linked too, without a CISA link; a bad id is dropped", await cvl.locator("a[href='https://nvd.nist.gov/vuln/detail/CVE-2026-22222']").count() == 1
+               and await cvl.locator("a[href*='field_cve=CVE-2026-22222']").count() == 0 and "not-a-cve" not in await cvl.inner_text())
+            ok("event: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(site_lib, vlib)
         # v1.63: sector and attack surface from the event's own fields, labelled stated, inferred or keyword-assigned
         bcl = copy.deepcopy(bundle)
         import datetime as _dt

@@ -14,7 +14,7 @@
   "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
   "pin_type": "region",
   "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server. Amazon attributes it to a Chinese-nexus actor with moderate confidence. Minuto da Segurança (25 Nov) says advisory GHSA-qc22-rmgc-vg94 is fixed in version 0.8.6.",
-  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a university server. Reports differ on whether a fixed release is out yet.",
+  "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a server. Minuto da Segurança says a fixed version, 0.8.6, exists.",
   "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should follow the maintainers' advisory.",
   "action": "Minuto da Segurança advises updating MONAI Label to 0.8.6 after testing, not exposing the server directly to the internet, and checking exposed instances for unexpected files such as sitecustomize.py.",
   "tags": [
@@ -80,15 +80,18 @@
     "checked_at": "2026-11-25T12:12:46Z"
   },
   "first_seen": "2026-11-20T17:43:41Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:40:28Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-25T12:27:29Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:40:29Z",
     "first_at": "2026-11-20T17:46:01Z",
-    "note": "Compared title, 11-minute quote, root, Amazon attribution, 18 Nov update, CVE and versions (ENISA), KEV (THN), 0.8.6 and advice (Minuto) against sources",
-    "flags": []
+    "note": "plain: stale 'reports differ on fix' replaced with Minuto's 0.8.6; 'university server' dropped; rest checked vs BleepingComputer and Minuto",
+    "flags": [],
+    "categories": [
+      "other"
+    ]
   },
-  "qa_checked_at": "2026-11-25T12:27:29Z",
+  "qa_checked_at": "2026-11-25T16:40:29Z",
   "sectors": {
     "values": [
       "education"

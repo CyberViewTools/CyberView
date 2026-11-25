@@ -157,6 +157,12 @@ scanner rates each finding from its CVE lookup row, with vendor advisories attac
 lookup file is missing it rates from the KEV entry and says so in the finding. The unit tests compare the scanner's
 answers with the libraries loaded independently.
 
+Speed: each distinct name is normalised once (`norm` in workbench-lib caches it), and `wordIndex` in `match.mjs` compares a
+detected product only with the products whose first word is inside its name with the spaces removed. That never drops a
+match, because `nameHit` can only be true in that case, and `nameHit` still decides (`tests/unit/scanner-speed.test.mjs`
+checks it against the plain loop). On a Windows program list matched against the whole CVE list this took a check from
+about 4 minutes to about 10 seconds with identical results.
+
 A finding's exposure answer for SSVC comes from the address: a public address counts as exposed, a private one as
 internal.
 

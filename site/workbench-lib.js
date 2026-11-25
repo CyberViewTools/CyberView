@@ -5,7 +5,15 @@
   var L = {};
   var MAX_ITEMS = 5000;
   function txt(v, n) { return String(v == null ? "" : v).replace(/[\u0000-\u001f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 120); }
-  function norm(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  // normalised names are asked for millions of times while a long software list is matched against the whole CVE list:
+  // each distinct string is worked out once (the cache is bounded and simply starts again when full)
+  var NORM = new Map();
+  function norm(s) {
+    s = String(s || ""); var v = NORM.get(s); if (v !== undefined) return v;
+    v = s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (NORM.size >= 200000) NORM.clear();
+    NORM.set(s, v); return v;
+  }
   function isVer(s) { return String(s).length <= 40 && /^v?\d+(?:[.\-_+~:][A-Za-z0-9]+)*$/i.test(s) && /\d/.test(s); }   // separators and parts never overlap: no catastrophic backtracking
   L.norm = norm;
 

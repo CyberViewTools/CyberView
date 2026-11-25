@@ -71,12 +71,38 @@ export function rowFor(f, rows) {
  * flaws: cleanFlaws(...); rows: Map(cve -> cleanRow) for the CVEs that matched (see candidates()); today: YYYY-MM-DD
  * -> findings ranked, each listing every rating point
  */
+/**
+ * A first-word index over products, so each name is compared only with the products that could match it. Exact by
+ * construction: workbench-lib's nameHit(name, vendor, product) is true only when every word of the product is a word of the
+ * name, or the product with its spaces removed is inside the name with its spaces removed; either way the name with its
+ * spaces removed contains the product's first word. So "squashed name contains the first word" never drops a real match;
+ * nameHit itself still decides. keysOf(item) -> the product strings to index the item by.
+ */
+export function wordIndex(items, keysOf) {
+  const by = new Map(), any = [];
+  for (const it of items) {
+    const firsts = new Set();
+    for (const p of keysOf(it)) { const w = W.norm(p).split(" ")[0]; if (w) firsts.add(w); }
+    if (!firsts.size) any.push(it);
+    for (const w of firsts) { if (!by.has(w)) by.set(w, []); by.get(w).push(it); }
+  }
+  const keys = [...by.keys()];
+  return { by, any, size: items.length,
+    for(name) {
+      const sq = W.norm(name).replace(/ /g, ""), seen = new Set(), out = [...this.any];
+      for (const k of keys) if (sq.includes(k)) for (const it of by.get(k)) if (!seen.has(it)) { seen.add(it); out.push(it); }
+      return out;
+    } };
+}
+const flawKeys = (f) => [f.product, ...(Array.isArray(f.affected) ? f.affected.map((r) => r && r.product) : [])].filter(Boolean);
+const nameOf = (s) => (s.vendor ? s.vendor + " " : "") + s.product;
+
 export function findings(hosts, flaws, rows, { today = new Date().toISOString().slice(0, 10) } = {}) {
-  const byCve = new Map();
+  const byCve = new Map(), idx = wordIndex(flaws, flawKeys);
   for (const h of hosts) for (const s of h.services || []) {
     if (!s.product) continue;
     const inv = [toItem(s)];
-    for (const f of flaws) {
+    for (const f of idx.for(nameOf(s))) {
       const m = W.matchFlaw(f, inv);
       if (!m || (m.state !== "affected" && m.state !== "check")) continue;
       const [conf, why] = confidenceOf(m.state, s);
@@ -131,7 +157,8 @@ export function rank(list) {
 /** The CVEs worth loading lookup rows for: every flaw some service matches. */
 export function candidates(hosts, flaws) {
   const set = new Set();
-  for (const h of hosts) for (const s of h.services || []) if (s.product) for (const f of flaws) { const m = W.matchFlaw(f, [toItem(s)]); if (m && (m.state === "affected" || m.state === "check")) set.add(f.cve); }
+  const idx = wordIndex(flaws, flawKeys);
+  for (const h of hosts) for (const s of h.services || []) if (s.product) for (const f of idx.for(nameOf(s))) { const m = W.matchFlaw(f, [toItem(s)]); if (m && (m.state === "affected" || m.state === "check")) set.add(f.cve); }
   return [...set];
 }
 
@@ -142,9 +169,10 @@ export function candidates(hosts, flaws) {
 export function named(hosts, allRows, { per = 10, skip = new Set() } = {}) {
   const prods = new Map();
   for (const h of hosts) for (const s of h.services || []) if (s.product && !s.guessed) { const k = `${s.vendor} ${s.product}`.trim(); if (!prods.has(k)) prods.set(k, { product: k, version: s.shown_version, hosts: new Set() }); prods.get(k).hosts.add(h.address); }
-  const out = [];
+  const out = [], live = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id)), idx = wordIndex(live, (r) => [r.product]);
+  const order = new Map(allRows.map((r, i) => [r, i]));
   for (const p of prods.values()) {
-    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && W.nameHit(p.product, r.vendor, r.product));
+    const hits = idx.for(p.product).sort((a, b) => order.get(a) - order.get(b)).filter((r) => W.nameHit(p.product, r.vendor, r.product));
     if (!hits.length) continue;
     const top = hits.map((r) => ({ r, s: D.score(r) })).sort((a, b) => ((b.s && b.s.score) ?? -1) - ((a.s && a.s.score) ?? -1)).slice(0, per)
       .map(({ r, s }) => ({ cve: r.id, title: r.title || r.desc.slice(0, 120), rating: s && s.score != null ? `${s.score.toFixed(1)} ${s.band}` : "Not scored", exploited: D.exploitation(r).value === "active" }));

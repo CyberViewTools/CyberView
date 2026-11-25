@@ -3,11 +3,16 @@
   "impact": "",
   "cve_meta": [],
   "first_seen": "2026-11-25T04:10:38Z",
-  "updated_at": "2026-11-25T04:10:38Z",
+  "updated_at": "2026-11-25T04:25:19Z",
   "attack": [],
   "cves": [],
-  "products": ["OVHcloud Public Cloud Compute Instance", "OVHcloud Managed Kubernetes Service"],
-  "tags": ["cloud"],
+  "products": [
+    "OVHcloud Public Cloud Compute Instance",
+    "OVHcloud Managed Kubernetes Service"
+  ],
+  "tags": [
+    "cloud"
+  ],
   "category": "outage",
   "status": "confirmed",
   "date": "2026-11-24",
@@ -23,16 +28,48 @@
   "geo_basis": "region named on the status page: EU-WEST-PAR (Paris)",
   "severity": 2,
   "source_tier": "primary",
-  "summary": "OVHcloud's status page says a Compute Instance incident in zone EU-WEST-PAR-A left customers unable to reach their instances; the resolved notice says all instances were unavailable. A separate notice says some Managed Kubernetes worker nodes in EU-WEST-PAR were unavailable and new clusters could not be ordered. OVHcloud attributes both to an unexpected underlying infrastructure malfunction and marked both resolved on 24 November.",
-  "plain": "OVHcloud says customers in its Paris cloud region lost access to virtual servers and some Kubernetes nodes on 24 November, caused by an infrastructure malfunction. Both notices are marked resolved.",
+  "summary": "OVHcloud's status page says a Compute Instance incident in zone EU-WEST-PAR-A left customers temporarily unable to access their instances; an update says all compute instances were unavailable between 12:30 and 12:50 UTC. A separate notice says some Managed Kubernetes worker nodes in EU-WEST-PAR were unavailable and new cluster orders could not be placed. OVHcloud attributes both to an unexpected underlying infrastructure malfunction and marked both resolved on 24 November.",
+  "plain": "OVHcloud says customers in its Paris cloud region temporarily lost access to virtual servers and some Kubernetes nodes on 24 November, caused by an infrastructure malfunction. Both notices are marked resolved.",
   "exec": "OVHcloud's own notices report Paris-region servers and Kubernetes nodes unavailable; it cites an infrastructure malfunction.",
   "action": "No action needed; for awareness.",
   "sources": [
-    {"name": "OVHcloud Public Cloud status: Compute Instance incident", "url": "https://public-cloud.status-ovhcloud.com/incidents/wdx4b5mpjvn2", "published": "2026-11-24"},
-    {"name": "OVHcloud Public Cloud status: Managed Kubernetes Service incident", "url": "https://public-cloud.status-ovhcloud.com/incidents/qxh2jk27c2s2", "published": "2026-11-24"}
+    {
+      "name": "OVHcloud Public Cloud status: Compute Instance incident",
+      "url": "https://public-cloud.status-ovhcloud.com/incidents/wdx4b5mpjvn2",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "OVHcloud Public Cloud status: Managed Kubernetes Service incident",
+      "url": "https://public-cloud.status-ovhcloud.com/incidents/qxh2jk27c2s2",
+      "published": "2026-11-24"
+    }
   ],
   "evidence": [],
-  "validation": {"state": "primary", "checked_at": "2026-11-25T04:10:38Z", "note": "Provider's own status notices."},
-  "sectors": {"values": ["information-technology"], "basis": "inferred"},
-  "surface": {"value": "cloud-saas", "basis": "inferred"}
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-25T04:10:38Z",
+    "note": "Provider's own status notices."
+  },
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T04:25:28Z",
+    "first_at": "2026-11-25T04:25:28Z",
+    "note": "stronger than the source: summary said all instances were unavailable in the resolved notice; now says customers temporarily unable to access instances, all compute instances unavailable 12:30-12:50 UTC per update; plain adjusted",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "misstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T04:25:28Z"
 }

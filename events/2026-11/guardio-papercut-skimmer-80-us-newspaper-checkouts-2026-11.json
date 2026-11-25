@@ -1,0 +1,38 @@
+{
+  "title": "Guardio: PaperCut card skimmer infected 80 US newspaper checkouts",
+  "category": "incident",
+  "status": "developing",
+  "severity": 2,
+  "date": "2026-11-13",
+  "date_note": "Guardio says the extra line of code loaded malware from 13 November; its report is dated 22 November.",
+  "country": "United States",
+  "place": "United States",
+  "lat": 39.8,
+  "lng": -98.6,
+  "pin_type": "country",
+  "geo_basis": "country as the source states it; no city given",
+  "org": "Naviga / Payway newspaper checkouts",
+  "sector": "Media",
+  "sectors": {"values": ["commercial-facilities"], "basis": "inferred"},
+  "surface": {"value": "supply-chain", "basis": "stated"},
+  "actor": "",
+  "attack": ["skimmer"],
+  "products": ["Naviga subscription checkout", "Payway card form"],
+  "tags": ["fraud", "malware", "third-party"],
+  "cves": [],
+  "summary": "Guardio Labs reports that 80 newspaper checkouts were infected through a card form hosted by payment processor Payway, built on Naviga's subscription software. Guardio says one extra script line loaded malware from 13 November and was removed on 19 November, after its report. It says stolen data left over WebRTC, and it does not claim a link to an earlier skimmer.",
+  "plain": "Guardio Labs says 80 newspaper checkouts were infected with a card skimmer through a shared payment form. It says the line was removed on 19 November after its report.",
+  "exec": "Guardio says a shared third-party payment form put card skimming code on 80 newspaper checkouts.",
+  "action": "Guardio advises anyone who entered a card on an affected paper since 13 November to ask their bank for a new card, and businesses to remove the injected line and monitor third-party payment frames, including WebRTC connections.",
+  "sources": [
+    {"name": "Guardio Labs: PaperCut", "url": "https://guard.io/labs/papercut---80-us-newspaper-websites-served-a-credit-card-stealer", "published": "2026-11-22"},
+    {"name": "Risky Bulletin", "url": "https://news.risky.biz/risky-bulletin-card-stealer-found-on-80-major-us-news-sites/", "published": "2026-11-25"}
+  ],
+  "evidence": [
+    {"url": "https://guard.io/labs/papercut---80-us-newspaper-websites-served-a-credit-card-stealer", "quote": "80 newspaper checkouts were infected"}
+  ],
+  "validation": {"state": "single_source", "checked_at": "2026-11-25T02:59:00Z", "note": "Guardio Labs is the only original; Risky Bulletin relays it and gives a different end date (22 Nov) than Guardio (19 Nov). No Naviga or Payway statement was read."},
+  "source_tier": "established",
+  "first_seen": "2026-11-25T02:59:00Z",
+  "updated_at": "2026-11-25T02:59:00Z"
+}

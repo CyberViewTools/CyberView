@@ -34,6 +34,19 @@ const LIBS = [
   { vendor: "vuejs", product: "vue.js", label: "Vue.js", names: ["vue"], suffix: ["global", "runtime", "prod", "min"], dirs: ["vue"] },
   { vendor: "handlebarsjs", product: "handlebars", label: "Handlebars", names: ["handlebars"], suffix: ["runtime", "min"], dirs: ["handlebars.js", "handlebars"] },
   { vendor: "underscorejs", product: "underscore", label: "Underscore.js", names: ["underscore"], suffix: ["min"], dirs: ["underscore.js", "underscore"] },
+  // page-technology slice: libraries with a CVE history in NVD under these CPE names
+  { vendor: "cure53", product: "DOMPurify", label: "DOMPurify", names: ["purify", "dompurify"], suffix: ["min", "es", "cjs"], dirs: ["dompurify"], banner: /\/\*!\s*@license DOMPurify (\d+\.\d+\.\d+)/ },
+  { vendor: "knockoutjs", product: "knockout", label: "Knockout", names: ["knockout"], suffix: ["min", "debug"], dirs: ["knockout"] },
+  { vendor: "backbonejs", product: "backbone", label: "Backbone.js", names: ["backbone"], suffix: ["min"], dirs: ["backbone.js", "backbone"] },
+  { vendor: "emberjs", product: "ember.js", label: "Ember.js", names: ["ember"], suffix: ["min", "prod", "debug"], dirs: ["ember.js", "ember"] },
+  { vendor: "select2", product: "select2", label: "Select2", names: ["select2"], suffix: ["full", "min"], dirs: ["select2"] },
+  { vendor: "chartjs", product: "chart.js", label: "Chart.js", names: ["chart"], suffix: ["bundle", "umd", "min"], dirs: ["chart.js"] },
+  { vendor: "highcharts", product: "highcharts", label: "Highcharts", names: ["highcharts"], suffix: ["src", "min"], dirs: ["highcharts"] },
+  { vendor: "tiny", product: "tinymce", label: "TinyMCE", names: ["tinymce"], suffix: ["min"], dirs: ["tinymce"] },
+  { vendor: "ckeditor", product: "ckeditor", label: "CKEditor", names: ["ckeditor"], suffix: ["min"], dirs: ["ckeditor", "ckeditor4"] },
+  { vendor: "prototypejs", product: "prototype", label: "Prototype", names: ["prototype"], suffix: ["min"], dirs: ["prototype"] },
+  { vendor: "axios", product: "axios", label: "Axios", names: ["axios"], suffix: ["min"], dirs: ["axios"] },
+  { vendor: "dojotoolkit", product: "dojo", label: "Dojo", names: ["dojo"], suffix: ["min"], dirs: ["dojo"] },
 ];
 function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 for (const L of LIBS) L.file = new RegExp(`^(?:${L.names.map(esc).join("|")})(?:[-.]v?${VER})?(?:[.-](?:${L.suffix.map(esc).join("|")}))*\\.js$`, "i");
@@ -65,6 +78,19 @@ const PRODUCTS = [
   { row: "webpros-cpanel-and-whm-and-wp2-wordpress-squared", vendor: "WebPros", product: "cPanel", label: "cPanel & WHM", signals: [
     { header: "server", re: /^cpsrvd\/(\S+)/, v: 1, how: "stated" }, { header: "server", re: /^cpsrvd\b/ },
     { body: /<title>\s*(?:cPanel Login|WHM Login|cPanel&reg;)\s*<\/title>/i }, { body: /sys_cpanel\/images\/powered_by\.gif/ }] },
+  // page-technology slice: web platforms a page names in its generator, headers, cookie names or markup
+  { row: "page-tech-ghost", vendor: "Ghost", product: "Ghost", signals: [{ gen: /^Ghost (\d+\.\d+(?:\.\d+)?)/, v: 1, how: "stated", dotted: true }, { gen: /^Ghost\b/ }] },
+  { row: "page-tech-mediawiki", vendor: "MediaWiki", product: "MediaWiki", signals: [{ gen: /^MediaWiki (\d+\.\d+\.\d+)/, v: 1, how: "stated" }, { gen: /^MediaWiki\b/ }, { body: /\/load\.php\?[^"'<>]{0,200}skin=/ }] },
+  { row: "page-tech-discourse", vendor: "Discourse", product: "Discourse", signals: [{ gen: /^Discourse (\d+\.\d+\.\d+)/, v: 1, how: "stated" }, { gen: /^Discourse\b/ }] },
+  { row: "page-tech-vbulletin", vendor: "vBulletin", product: "vBulletin", signals: [{ gen: /^vBulletin (\d+\.\d+\.\d+)/, v: 1, how: "stated" }, { gen: /^vBulletin\b/ }, { cookie: "bb_sessionhash" }] },
+  { row: "page-tech-liferay", vendor: "Liferay", product: "Liferay Portal", signals: [{ header: "liferay-portal", re: /Portal (\d+\.\d+\.\d+(?:\.\d+)?)/, v: 1, how: "stated" }, { header: "liferay-portal" }, { body: /\bLiferay\.(?:ThemeDisplay|authToken)\b/ }] },
+  { row: "page-tech-typo3", vendor: "TYPO3", product: "TYPO3", signals: [{ gen: /^TYPO3 (?:CMS )?(\d+\.\d+)/, v: 1, how: "query" }, { gen: /^TYPO3\b/ }, { body: /\/typo3(?:conf|temp)\// }] },
+  { row: "page-tech-moodle", vendor: "Moodle", product: "Moodle", signals: [{ cookie: "MoodleSession" }, { body: /\bM\.cfg\s*=\s*\{"wwwroot"/ }] },
+  { row: "page-tech-magento", vendor: "Magento", product: "Magento", signals: [{ header: "x-magento-cache-debug" }, { cookie: "X-Magento-Vary" }, { body: /\/static\/version\d+\/frontend\// }, { body: /\bMage\.Cookies\b/ }] },
+  { row: "page-tech-prestashop", vendor: "PrestaShop", product: "PrestaShop", signals: [{ gen: /^PrestaShop\b/i }, { body: /\bvar prestashop\s*=/ }] },
+  { row: "page-tech-nextjs", vendor: "Vercel", product: "Next.js", signals: [{ header: "x-powered-by", re: /^Next\.js(?:\s(\d+\.\d+\.\d+))?/, v: 1, how: "stated" }, { body: /<script id=["']__NEXT_DATA__["']/ }] },
+  { row: "page-tech-nuxt", vendor: "Nuxt", product: "Nuxt", signals: [{ body: /\bwindow\.__NUXT__\s*=/ }, { body: /<div id=["']__nuxt["']/ }] },
+  { row: "page-tech-umbraco", vendor: "Umbraco", product: "Umbraco CMS", signals: [{ header: "x-umbraco-version", re: /(\d+\.\d+\.\d+)/, v: 1, how: "stated" }, { body: /\/umbraco\/(?:surface|api)\//i }] },
   { row: "xwiki-platform", vendor: "XWiki", product: "XWiki Platform", signals: [
     { body: /id=["']xwikiplatformversion["'][^>]{0,200}>(?:\s*<a\b[^>]{0,300}>)?[^<]{0,80}?(\d+\.\d+(?:\.\d+)?)/, v: 1, how: "stated" },
     { body: /\bdata-xwiki-/ }, { body: /<meta name=["']wiki["'] content=["']xwiki["']/i }, { body: /<div id=["']xwikilicence["']/ }] },

@@ -59,7 +59,7 @@ test("cms: a bare generator tag stays guessed with no version", () => {
     assert.equal(r.length, 1, g); assert.equal(r[0].guessed, true); assert.equal(r[0].version, "");
   }
   // generators of products no catalog row assigns to this slice are not read
-  assert.deepEqual(fromHttp({ headers: {}, body: '<meta name="generator" content="MediaWiki 1.39.5">' }, 80, false), []);
+  assert.deepEqual(fromHttp({ headers: {}, body: '<meta name="generator" content="Hugo 0.111.3">' }, 80, false), []);
   // the existing Drupal/Joomla generator handling is unchanged
   const dr = fromHttp({ headers: {}, body: '<meta name="Generator" content="Drupal 10 (https://www.drupal.org)">' }, 80, false);
   assert.equal(dr.length, 1); assert.equal(dr[0].guessed, true); assert.equal(dr[0].version, "");

@@ -1,0 +1,55 @@
+{
+  "action": "Mozilla's advisory names the fixed Thunderbird version; the Saudi National Cybersecurity Authority's alert encourages users to review the advisory and apply the updates.",
+  "actor": "",
+  "attack": [],
+  "category": "vuln",
+  "country": "United States",
+  "cves": ["CVE-2026-136226", "CVE-2026-136227"],
+  "date": "2026-11-24",
+  "exec": "Mozilla rates the overall impact Critical, so unpatched Thunderbird mail clients are worth updating.",
+  "first_seen": "2026-11-25T06:46:26Z",
+  "geo_basis": "vendor HQ",
+  "lat": 37.39,
+  "lng": -122.08,
+  "org": "Mozilla",
+  "pin_type": "vendor",
+  "place": "Mountain View, CA",
+  "plain": "Mozilla released a Thunderbird update with security fixes, including one rated Critical that could make a signed email appear to come from a different sender.",
+  "products": ["Thunderbird"],
+  "report": {
+    "doc_id": "MFSA 2026-134",
+    "iocs_available": false,
+    "key_findings": [
+      "Mozilla Foundation Security Advisory 2026-134 was announced on November 24, 2026, overall impact Critical.",
+      "The advisory page does not say whether any of the issues are exploited in the wild.",
+      "CVE-2026-136226 (Critical): an attacker could make Thunderbird display a different sender than the one used to verify an OpenPGP signature.",
+      "The Saudi National Cybersecurity Authority issued a Critical-severity alert for Mozilla products on 24 November."
+    ],
+    "published": "2026-11-24",
+    "publisher": "Mozilla",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": ["Update Thunderbird to the fixed version named in the advisory."],
+    "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2026-134/"
+  },
+  "sector": "Software / email clients",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {"name": "Mozilla MFSA 2026-134", "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2026-134/", "published": "2026-11-24"},
+    {"name": "Saudi NCA CERT alert (Mozilla)", "url": "https://nca.gov.sa/en/cert/8201/", "published": "2026-11-24"}
+  ],
+  "status": "official",
+  "summary": "Mozilla's advisory MFSA 2026-134, announced on 24 November, lists security fixes in a new Thunderbird release with an overall impact of Critical. The one Critical entry, CVE-2026-136226, could let an attacker make Thunderbird show a different sender than the one used to verify an OpenPGP signature. The page does not say whether any flaw is exploited. Saudi Arabia's NCA issued a Critical-severity alert.",
+  "tags": [],
+  "title": "Mozilla fixes Thunderbird flaws, including a Critical OpenPGP sender-spoofing bug (MFSA 2026-134)",
+  "updated_at": "2026-11-25T06:46:26Z",
+  "validation": {
+    "checked_at": "2026-11-25T06:46:26Z",
+    "note": "Mozilla advisory read in full; Saudi NCA alert read and points to the same advisory (not an independent report).",
+    "state": "single_source"
+  },
+  "date_note": "Date is the advisory's announcement day, 24 November, as stated on the page.",
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "surface": {"value": "endpoint", "basis": "inferred"}
+}

@@ -12,15 +12,25 @@
   /* ---- versions ---- */
   // Compare dotted versions piece by piece: numbers as numbers, letters as text; a missing piece counts as 0 (7.2 == 7.2.0).
   function parts(v) { return String(v || "").toLowerCase().replace(/^v/, "").split(/[.\-_+~:]/).reduce(function (a, p) { return a.concat(p.match(/\d+|[a-z]+/g) || []); }, []); }
+  // A letter part directly after a release number: "rc", "beta", "alpha", "pre", "dev" (and a/b before a number, as in 2.0b1)
+  // mark a build BEFORE that release; any other letters (OpenSSH 9.8p1, OpenSSL 1.0.2k, ProFTPD 1.3.5a) a patch AFTER it.
+  var PRE = { rc: 1, alpha: 1, beta: 1, pre: 1, dev: 1, snapshot: 1, preview: 1, nightly: 1, cr: 1, m: 1 };
+  function isPre(t, i) { var w = t[i]; return !!PRE[w] || ((w === "a" || w === "b") && /^\d+$/.test(t[i + 1] || "")); }
   L.cmp = function (a, b) {
     var x = parts(a), y = parts(b), n = Math.max(x.length, y.length);
     for (var i = 0; i < n; i++) {
       var p = x[i], q = y[i];
-      if (p === undefined) p = "0"; if (q === undefined) q = "0";
+      if (p === undefined && q === undefined) return 0;
+      // one version has ended: the other's next part decides (1.0 == 1; 9.8p1 > 9.8; 7.2rc1 < 7.2)
+      if (p === undefined || q === undefined) {
+        var t = p === undefined ? y : x, sign = p === undefined ? -1 : 1, w = t[i];
+        if (/^\d+$/.test(w)) { for (var j = i; j < t.length; j++) { if (!/^\d+$/.test(t[j])) return isPre(t, j) ? -sign : sign; if (parseInt(t[j], 10) !== 0) return sign; } return 0; }
+        return isPre(t, i) ? -sign : sign;
+      }
       var pn = /^\d+$/.test(p), qn = /^\d+$/.test(q);
       if (pn && qn) { var d = parseInt(p, 10) - parseInt(q, 10); if (d) return d < 0 ? -1 : 1; }
-      else if (pn !== qn) return pn ? 1 : -1;          // 7.2.1 is later than 7.2.rc
-      else if (p !== q) return p < q ? -1 : 1;
+      else if (pn !== qn) { var pre = pn ? isPre(y, i) : isPre(x, i); return (pn ? 1 : -1) * (pre ? 1 : -1); }   // 7.2.1 is later than 7.2.rc; 1.0.2k is later than 1.0.2.0
+      else if (p !== q) { var ap = isPre(x, i), bp = isPre(y, i); if (ap !== bp) return ap ? -1 : 1; return p < q ? -1 : 1; }
     }
     return 0;
   };

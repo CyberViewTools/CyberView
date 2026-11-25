@@ -46,7 +46,32 @@ export function cleanFlaws(wb) {
 }
 
 /** A detected service as an inventory line, the shape the page's "My software" list uses. */
-export const toItem = (s) => ({ name: s.product, vendor: s.vendor, version: s.version || "", count: 1 });
+/** The version to match with: the one the service stated in full when it is the bare number plus a patch suffix (OpenSSH 9.8p1,
+ *  ProFTPD 1.3.5a, OpenSSL 1.0.2k), because the suffix decides whether a fix is in. Anything less tidy falls back to the number. */
+export const matchVersion = (s) => { const v = s.version || "", full = String(s.shown_version || "").trim(); return v && full !== v && full.startsWith(v) && /^[a-z]{1,2}\d{0,2}$/i.test(full.slice(v.length)) ? full : v; };
+export const toItem = (s) => ({ name: s.product, vendor: s.vendor, version: matchVersion(s), count: 1 });
+
+/* ---- soundness rules on top of the site's matcher, applied to every finding ----
+   The site's name test only asks for the vendor when the product name is short or generic, so "IBM HTTP Server" ranges would
+   match an Apache HTTP Server. A scan knows the vendor of what it detected, so a range only counts when its vendor agrees. */
+const NOISE = new Set(["project", "software", "foundation", "group", "inc", "corporation", "corp", "ltd", "llc", "the", "team", "technologies", "systems", "labs"]);
+const wordsOf = (x) => W.norm(x).split(" ").filter((w) => w.length > 1 && !NOISE.has(w));
+const squash = (x) => W.norm(x).replace(/ /g, "");
+export function vendorAgrees(s, r) {
+  const rv = wordsOf(r.vendor); if (!rv.length) return false;
+  if (!String(s.vendor || "").trim()) return true;                    // an imported package list states no vendor: the site's name rule is all there is
+  const mine = new Set([...wordsOf(s.vendor), ...wordsOf(s.product)]);
+  if (rv.some((w) => mine.has(w)) || (squash(s.vendor).length > 3 && squash(r.vendor) === squash(s.vendor))) return true;                       // openbsd ~ OpenBSD, apache ~ Apache Software Foundation, f5 ~ F5
+  return squash(rv.join(" ")) === squash(r.product) && squash(s.product) === squash(r.product);   // self-named projects: nginx/nginx, exim/exim
+}
+const bounded = (r) => !!(r.exact || r.from || r.to);
+const nameOf = (s) => (s.vendor ? s.vendor + " " : "") + s.product;
+/** For one service and one flaw: is there a range that names this product, from an agreeing vendor? With inRange: and holds the version. */
+export function soundFor(s, f, { inRange = false } = {}) {
+  const rs = Array.isArray(f.affected) ? f.affected : []; if (!rs.length) return !inRange;
+  const v = matchVersion(s);
+  return rs.some((r) => W.nameHit(nameOf(s), r.vendor, r.product) && vendorAgrees(s, r) && (!inRange || (bounded(r) && !!v && W.inRange(v, r) === true)));
+}
 
 /** Confidence for one place a flaw was seen, with the reason. */
 export function confidenceOf(state, s) {
@@ -80,6 +105,10 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
       const m = W.matchFlaw(f, inv);
       if (!m || (m.state !== "affected" && m.state !== "check")) continue;
       if (affectedOnly && m.state !== "affected") continue;
+      // A finding from the whole CVE index needs a bounded range, from a vendor that agrees with the detected one, that holds the
+      // version. The known-exploited set keeps the site's own rule: its fingerprints were written against those entries, and
+      // vendors there change names (Kemp/Progress, Pulse/Ivanti) in ways a word test would wrongly refuse.
+      if (affectedOnly && !soundFor(s, f, { inRange: true })) continue;
       const [conf, why] = confidenceOf(m.state, s);
       if (!byCve.has(f.cve)) byCve.set(f.cve, { f, seen: [], fixed: new Set() });
       const g = byCve.get(f.cve);
@@ -189,12 +218,12 @@ export function candidates(hosts, flaws) {
  */
 export function named(hosts, allRows, { per = 10, skip = new Set(), ranged = false } = {}) {
   const prods = new Map();
-  for (const h of hosts) for (const s of h.services || []) if (s.product && !s.guessed) { const k = `${s.vendor} ${s.product}`.trim(); if (!prods.has(k)) prods.set(k, { product: k, version: s.shown_version, checked: false, hosts: new Set() }); const p = prods.get(k); p.hosts.add(h.address); if (s.version) p.checked = true; }
+  for (const h of hosts) for (const s of h.services || []) if (s.product && !s.guessed) { const k = `${s.vendor} ${s.product}`.trim(); if (!prods.has(k)) prods.set(k, { product: k, version: s.shown_version, checked: false, services: [], hosts: new Set() }); const p = prods.get(k); p.hosts.add(h.address); if (s.version) { p.checked = true; if (p.services.length < 4) p.services.push(s); } }
   const out = [];
   for (const p of prods.values()) {
     // ranged: the caller matched every row that has ranges against the version seen, so for a product with a version those
     // rows are settled (a finding, or the version is outside the range) and only rows with no range are still leads
-    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && !(ranged && p.checked && r.affected && r.affected.length) && W.nameHit(p.product, r.vendor, r.product));
+    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && !(ranged && p.checked && r.affected && r.affected.some((a) => bounded(a) && p.services.some((s) => W.nameHit(nameOf(s), a.vendor, a.product) && vendorAgrees(s, a)))) && W.nameHit(p.product, r.vendor, r.product));
     if (!hits.length) continue;
     const top = hits.map((r) => ({ r, s: D.score(r) })).sort((a, b) => ((b.s && b.s.score) ?? -1) - ((a.s && a.s.score) ?? -1)).slice(0, per)
       .map(({ r, s }) => ({ cve: r.id, title: r.title || r.desc.slice(0, 120), rating: s && s.score != null ? `${s.score.toFixed(1)} ${s.band}` : "Not scored", exploited: D.exploitation(r).value === "active" }));

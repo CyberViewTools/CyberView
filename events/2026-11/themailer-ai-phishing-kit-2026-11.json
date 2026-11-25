@@ -17,7 +17,7 @@
   "summary": "Varonis Threat Labs describes TheMailer, a self-hosted phishing platform sold for a lifetime licence of about $3,000 to $6,000. It uses operator-supplied keys for AI services to rewrite lures, send test emails and retry until they reach the inbox. A sample target list held 145,133 mostly Japanese .co.jp and .ac.jp addresses.",
   "plain": "A phishing kit sold to criminals uses AI chatbots to rewrite scam emails until spam filters let them through.",
   "exec": "Per-recipient rewriting defeats content-based email filtering, so defences must rely on sender behaviour and link checks.",
-  "action": "Enforce SPF, DKIM and DMARC at p=reject, check links through the full redirect chain at click time, and tune detection to sender behaviour rather than message content.",
+  "action": "General advice: enforce SPF, DKIM and DMARC at p=reject, check links through the full redirect chain at click time, and tune detection to sender behaviour rather than message content.",
   "tags": [
     "phishing"
   ],
@@ -30,16 +30,21 @@
     {
       "name": "Varonis",
       "url": "https://www.varonis.com/blog/themailer-ai-phishing-kit"
+    },
+    {
+      "name": "TechRadar, 22 Nov 2026",
+      "url": "https://www.techradar.com/pro/security/while-attackers-use-ai-to-create-better-phishing-lures-todays-cybercrime-tools-do-much-more-experts-warn-themailer-ai-phishing-kit-runs-on-claude-and-chatgpt-and-constantly-evolves-until-it-gets-past-your-spam-filter",
+      "published": "2026-11-22"
     }
   ],
   "source_tier": "primary",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T04:30:00Z",
-    "note": "Varonis' own write-up read in full; Dark Reading carries it but its page refused automated reading. Vendor also promotes its own product."
+    "state": "corroborated",
+    "checked_at": "2026-11-25T01:03:10Z",
+    "note": "Varonis' own write-up and TechRadar (22 Nov, citing Varonis Threat Labs) both describe the kit; TechRadar relays Varonis, so the vendor's own page remains the primary. Vendor also promotes its own product."
   },
   "first_seen": "2026-11-19T04:30:00Z",
-  "updated_at": "2026-11-19T04:30:00Z",
+  "updated_at": "2026-11-25T01:03:10Z",
   "review": {
     "state": "passed",
     "at": "2026-11-19T05:13:03Z",

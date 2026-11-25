@@ -1,48 +1,87 @@
 {
-  "job": "researcher",
-  "started_at": "2026-11-25T00:55:00Z",
-  "finished_at": "2026-11-25T01:05:00Z",
+  "job": "sweep-r4",
+  "started_at": "2026-11-25T01:00:00Z",
+  "finished_at": "2026-11-25T01:20:00Z",
   "model": "claude-sonnet-5-5",
   "searches": [
-    "BADBOX 40 billion",
-    "CJEU refund ruling"
+    "Drupal critical RCE",
+    "Reuters Meta Muse"
   ],
   "pages_read": [
     {
-      "url": "https://www.security-insider.de/openssh-luecke-lange-passwoerter-musl-ohne-pam-a-713a30c539540281ec195e70c72f5617/",
-      "title": "OpenSSH",
-      "used_in": "closed, on file"
+      "url": "https://web3isgoinggreat.com/single/initia-exploit-1",
+      "title": "Initia exploit",
+      "used_in": "skipped"
     },
     {
-      "url": "https://bits.media/khakery-sozdali-480-domenov-radi-krazhi-sid-fraz-i-paroley-kriptokoshelkov/",
-      "title": "MoldyRoost",
-      "used_in": "closed, on file"
+      "url": "https://9to5mac.com/2026/11/19/major-privacy-breaches-reported-in-muse-ai-including-bank-balances/",
+      "title": "Muse",
+      "used_in": "meta-muse-ai-agent-privacy-reports-2026-11"
     },
     {
-      "url": "https://www.boannews.com/news/articleView.html?idxno=147458",
-      "title": "NIS nominee",
-      "used_in": "closed"
+      "url": "https://inet.detik.com/security/d-8763106/ai-muse-meta-bikin-karyawan-waswas-munculkan-saldo-bank-misterius",
+      "title": "Detik Muse",
+      "used_in": "meta-muse-ai-agent-privacy-reports-2026-11"
     },
     {
-      "url": "https://securitycontext.com/cve/CVE-2026-58209",
-      "title": "CVE-2026-58209",
-      "used_in": "closed"
+      "url": "https://telanganatoday.com/tgcsb-busts-movie-piracy-network-two-arrested-1769bcc9",
+      "title": "TGCSB",
+      "used_in": "tgcsb-movie-piracy-network-kurnool-arrests-2026-11"
+    },
+    {
+      "url": "https://borncity.com/blog/2026/11/21/exploit-fuer-windows-active-directory-schwachstelle-cve-2026-70229/",
+      "title": "Born AD PoC",
+      "used_in": "windows-ad-ds-cve-2026-70229-poc-2026-11"
+    },
+    {
+      "url": "https://www.tenable.com/cve/CVE-2026-70229",
+      "title": "Tenable",
+      "used_in": "windows-ad-ds-cve-2026-70229-poc-2026-11"
     }
   ],
-  "added": [],
+  "added": [
+    "meta-muse-ai-agent-privacy-reports-2026-11",
+    "tgcsb-movie-piracy-network-kurnool-arrests-2026-11",
+    "windows-ad-ds-cve-2026-70229-poc-2026-11"
+  ],
   "updated": [],
   "skipped": [
     {
-      "title": "CJEU refund ruling",
-      "url": "libertatea.ro",
-      "reason": "older than map window (ruling 15 Oct 2026); libertatea page not fetchable"
+      "title": "Initia $2.7M exploit",
+      "url": "https://web3isgoinggreat.com/single/initia-exploit-1",
+      "reason": "older than map window (Oct 2026)"
+    },
+    {
+      "title": "WazirX/Binance complaints",
+      "url": "https://telanganatoday.com/crypto-investors-seek-govt-action-against-wazirx-binance-over-alleged-fraud",
+      "reason": "single-source allegations, no new incident"
+    },
+    {
+      "title": "Bitcoin Core / Amazon Cairn / Drupal",
+      "url": "",
+      "reason": "already on file"
     }
   ],
-  "open_leads": [],
-  "failed_sites": [
-    "libertatea.ro"
+  "open_leads": [
+    {
+      "title": "Meta Muse Reuters original",
+      "url": "https://www.reuters.com/investigations/meta-bets-big-muse-ai-agent-early-safety-mishaps-surface-2026-11-18/",
+      "note": "could not open; read to upgrade validation",
+      "priority": "low"
+    },
+    {
+      "title": "CVE-2026-70229 Microsoft MSRC page",
+      "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-70229",
+      "note": "did not load; confirm patch and PoC",
+      "priority": "medium"
+    }
   ],
-  "notes": "All 9 closed; none new.",
+  "failed_sites": [
+    "reuters.com",
+    "msrc.microsoft.com",
+    "cysecurity.news (no body)"
+  ],
+  "notes": "Event timestamps from clock at write.",
   "worker_role": "researcher",
   "worker_model": "sonnet"
 }

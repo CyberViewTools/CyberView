@@ -66,7 +66,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-25T11:42:08Z",
-  "updated_at": "2026-11-25T11:42:08Z",
+  "updated_at": "2026-11-25T13:19:09Z",
   "review": {
     "state": "passed",
     "at": "2026-11-25T12:10:33Z",
@@ -76,5 +76,27 @@
       "no-cve-meta"
     ]
   },
-  "qa_checked_at": "2026-11-25T12:10:33Z"
+  "qa_checked_at": "2026-11-25T12:10:33Z",
+  "report": {
+    "publisher": "NSFOCUS",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-25",
+    "key_findings": [
+      "NSFOCUS says a new Cling variant targets Linux servers and IoT devices, with infection scale reported for mainland China.",
+      "It keeps long-term control of hosts (command execution, program download, task termination, node updates); scanning, exploitation, proxy and DDoS modules were removed, and NSFOCUS says the main aim is not DDoS.",
+      "From 9 to 20 November 2026 about 5,600 devices were infected, with a daily active peak of 2,730.",
+      "The observed variant mainly exploits CVE-2021-3539; earlier versions used router, DVR and CCTV flaws including CVE-2023-41011 and CVE-2024-3721.",
+      "Command traffic is hidden in the Transaction ID field of public STUN services and encrypted with ChaCha20."
+    ],
+    "recommendations": [
+      "Keep an asset inventory and patch known vulnerabilities, including IoT firmware.",
+      "Monitor for anomalous STUN traffic, especially periodic UDP 3478 registrations to multiple nodes.",
+      "Inspect startup entries related to .alya in /etc/inittab and /etc/rc.d/rc.boot.",
+      "If infected, verify scope and entry vector, isolate and remediate the host, and report to the competent local authority."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://nsfocusglobal.com/risk-alert-widespread-spread-of-a-new-variant-of-the-cling-remote-access-botnet/"
+  }
 }

@@ -65,7 +65,7 @@
     "note": "Two publishers state the core fact: Palo Alto Networks Unit 42 (primary report) and Cyber Press, which reports the same findings."
   },
   "first_seen": "2026-11-25T11:43:25Z",
-  "updated_at": "2026-11-25T12:10:40Z",
+  "updated_at": "2026-11-25T13:19:09Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-25T12:10:33Z",
@@ -76,5 +76,26 @@
       "validation"
     ]
   },
-  "qa_checked_at": "2026-11-25T12:10:33Z"
+  "qa_checked_at": "2026-11-25T12:10:33Z",
+  "report": {
+    "publisher": "Palo Alto Networks Unit 42",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-24",
+    "key_findings": [
+      "Unit 42 says it tracked more than 10 global campaigns between July and September 2026 against government, logistics, hospitality, manufacturing, agriculture and education organisations.",
+      "Every campaign began with a web shell deployed through a vulnerable web application; AI agents then handled reconnaissance, credential harvesting, privilege escalation, lateral movement and cloud enumeration.",
+      "One attack ran about 800 unique commands in 140 minutes; another ran over 8,000 commands across 12 days.",
+      "The researchers found no custom compiled malware and heavy reliance on public exploits, including CVE-2026-31431, PwnKit and CVE-2024-1086.",
+      "What is new is the speed, scale and adaptive retry behaviour, not the techniques; agents left artefacts such as section-header delimiters and reasoning comments in scripts."
+    ],
+    "recommendations": [
+      "Enforce multi-factor authentication, sign-in rate limiting and IP restrictions on self-managed GitLab, and keep instances patched.",
+      "Hunt for AI-generated artefacts such as section-header delimiters and reasoning comments in scripts.",
+      "Use behavioural detection, DNS and URL filtering and privileged-access controls; Unit 42 names Palo Alto Networks products for this."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://unit42.paloaltonetworks.com/autonomous-ai-agent-threat-campaigns/"
+  }
 }

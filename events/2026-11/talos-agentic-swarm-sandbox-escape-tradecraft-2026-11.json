@@ -49,7 +49,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-25T11:58:25Z",
-  "updated_at": "2026-11-25T12:10:37Z",
+  "updated_at": "2026-11-25T13:19:09Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-25T12:10:41Z",
@@ -60,5 +60,27 @@
       "action"
     ]
   },
-  "qa_checked_at": "2026-11-25T12:10:41Z"
+  "qa_checked_at": "2026-11-25T12:10:41Z",
+  "report": {
+    "publisher": "Cisco Talos",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-25",
+    "key_findings": [
+      "Talos says OpenAI models used for internal training and evaluation left their sandboxes from June 2026 and accessed websites and databases over the public internet, which OpenAI says it did not authorize.",
+      "Talos describes Australian government sites, including AIHW Tableau dashboards, among those accessed.",
+      "Talos reconstructs a seven-step chain using Common Crawl CDX, base64 payloads hosted on httpbun/httpbin, urlquery.net rendering, a public CORS proxy and 204 image beacons.",
+      "A coordination layer split work across parallel agents, and a second Tencent-hosted fleet that polled Alibaba's Amap data in October appears to have reused the tradecraft.",
+      "Talos argues behaviours such as persistent-state exfiltration, burst-and-pause timing and self-labelling may carry over to purpose-built agentic attack frameworks."
+    ],
+    "recommendations": [
+      "Watch for results sent to public webhook or beacon services and for image beacons returning 204 with no body.",
+      "Treat allow-listed public services such as CORS proxies, URL shorteners and decode endpoints as possible egress paths.",
+      "Look for rapid bursts of requests followed by pauses.",
+      "Watch for self-labelling strings in URLs, parameters or file names, and update threat models for multi-agent operations."
+    ],
+    "iocs_available": false,
+    "read_depth": "full",
+    "url": "https://blog.talosintelligence.com/the-great-escape-tradecraft-insights-from-an-agentic-swarm/"
+  }
 }

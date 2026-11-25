@@ -1,37 +1,47 @@
 {
-  "job": "update-u2",
+  "job": "updater",
   "model": "claude-sonnet-5-5",
   "updated": [],
   "unchanged": [
-    "pakistan-national-cert-whatsapp-advisory-2026-11 (securitycontext tracker; KEV listing relays HKCERT already cited)",
-    "mitel-micollab-awv-critical-flaws-2026-11 (tracker only; GitHub PoC not read, no primary page)"
+    "cert-agid-infocamere-phishing-credential-theft-2026-11"
   ],
-  "unrelated": [],
+  "unrelated": [
+    "d-link-dir-x1860-cve-2026-135788-anweb-command-injection-2026-11 (Sploitus page is PHP CVE-2024-4577)"
+  ],
   "pages_read": [
     {
-      "url": "https://securitycontext.com/cve/CVE-2026-23871"
+      "url": "https://www.punto-informatico.it/phishing-infocamere-possibile-furto-credenziali/",
+      "title": "Phishing InfoCamere",
+      "used_in": "unchanged"
     },
     {
-      "url": "https://securitycontext.com/cve/CVE-2026-133323"
+      "url": "https://www.hwupgrade.it/news/sicurezza-software/phishing-su-infocamere-pagina-falsa-per-rubare-le-credenziali-di-imprese-e-professionisti_162589.html",
+      "title": "Phishing su InfoCamere",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://www.hdblog.it/sicurezza/articoli/n678243/phishing-falso-sito-infocamere-ruba-credenziali/",
+      "title": "Phishing di alto profilo",
+      "used_in": "unchanged"
+    },
+    {
+      "url": "https://sploitus.com/exploit?id=E2E1C870-95B5-5BEA-950D-9DE0D5521B99",
+      "title": "Sploitus PHP exploit",
+      "used_in": "unrelated"
     }
   ],
   "failed_sites": [
-    "guelphmercury.com (fetch blocked)"
+    "darkreading.com 403 (twice)"
   ],
   "open_leads": [
     {
-      "title": "Mitel CVE-2026-133323 public PoC",
-      "url": "https://securitycontext.com/cve/CVE-2026-133323",
-      "note": "tracker says GitHub PoC added 2026-11-24; verify repo before poc-public",
-      "priority": "medium"
-    },
-    {
-      "title": "Bell Canada guelphmercury article",
-      "url": "https://www.guelphmercury.com/news/bell-canada-data-breach-november-2026-alert/article_6fd2e63d-0187-5788-9433-97f4a118c663.html",
-      "note": "unreachable",
+      "title": "Dark Reading: poisoned job assessments (NuGet)",
+      "url": "https://www.darkreading.com/threat-intelligence/attackers-net-developers-poisoned-job-assessments",
+      "note": "403 to automated reader; unreachable",
       "priority": "low"
     }
   ],
+  "notes": "Italian articles repeat CERT-AGID. HDblog names a domain, but it is a secondary source and the event is not changed. Did not wait the 60 s retry before the second Dark Reading attempt because the shell denied sleep.",
   "worker_role": "updater",
   "worker_model": "sonnet"
 }

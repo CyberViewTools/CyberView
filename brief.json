@@ -1,56 +1,56 @@
 {
-  "generated_at": "2026-11-24T23:48:30.515Z",
-  "date": "2026-11-24",
-  "headline": "Exploited flaws in VMware vCenter, Drupal and MONAI Label need patching",
-  "plain_summary": "Several software flaws are being used in real attacks, including VMware vCenter, Drupal and a medical imaging tool. Vendors have released fixes for most of them, and US agencies have set deadlines of 26 and 27 November for some. A suspected Chinese espionage group is linked to the vCenter attacks, but Google names no victims. Organisations running these products should patch now.",
+  "generated_at": "2026-11-25T11:48:34.958Z",
+  "date": "2026-11-25",
+  "headline": "Exploited flaws in PAN-OS, Puppet Enterprise and LiteLLM need patching",
+  "plain_summary": "Several software flaws are being used in real attacks, including in Palo Alto firewalls, Puppet Enterprise and LiteLLM. Vendors have published fixes for most of them, and a US agency has set a December 1 deadline for Puppet. Microsoft confirmed a read-only data exposure in a cloud service. Organisations running these products should check and patch.",
   "items": [
     {
-      "title": "VMware vCenter zero-day exploited since September",
-      "why": "Google says a suspected PRC-nexus espionage actor has exploited an unauthenticated vCenter authentication bypass (CVE-2026-123890) since early September.",
-      "action": "Apply Broadcom's patches (8.0 U3m, 9.0.2.0200, 9.1.1.0200) and restrict inbound and egress access to vCenter; 7.0 has no public patch.",
-      "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11"
+      "title": "PAN-OS management interface exploited via Fragnesia (CVE-2026-46300)",
+      "why": "Palo Alto Networks says exploitation has been observed against internet-exposed PAN-OS management interfaces.",
+      "action": "If the management interface is reachable from the internet, upgrade immediately (for example to 12.2.4-h3, 11.2.16-h3, 11.1.16-h6 or 10.2.18-h15) and restrict access to trusted internal IPs.",
+      "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11"
     },
     {
-      "title": "MONAI Label zero-day exploited; CISA deadline 26 Nov",
-      "why": "Amazon reports AI agents exploited a path traversal flaw in MONAI Label and gained root on a server; the flaw is on CISA's list.",
-      "action": "Update MONAI Label to 0.8.6 or later per advisory GHSA-qc22-rmgc-vg94.",
-      "event_id": "cairn-ai-monai-label-zero-day-2026-11"
+      "title": "CISA lists exploited Puppet Enterprise flaw CVE-2026-115731",
+      "why": "CISA cites active exploitation; federal agencies must fix it by December 1.",
+      "action": "Upgrade Puppet Enterprise to 2026.0.1, 2025.12.1 or 2023.8.13 and restart the server; review autosign configuration as a temporary mitigation.",
+      "event_id": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11"
     },
     {
-      "title": "N-able Mail Assure server accessed; CISA deadline 26 Nov",
-      "why": "N-able says one hosted server was accessed and found no evidence customer data was compromised; a related SSRF flaw, CVE-2026-134624, is under a CISA deadline.",
-      "action": "SpamExperts Local Cloud operators should confirm build 20261121.1943; Hosted Cloud users have nothing to install.",
-      "event_id": "nable-mail-assure-spamexperts-breach-2026-11"
+      "title": "CISA adds Synology DSM, LiteLLM, Apache Axis and REDCap flaws",
+      "why": "CISA cites active exploitation of all four, including ransomware on Synology NAS.",
+      "action": "Find these products in your environment and apply vendor fixes where they exist; Axis 1.x is reported end of life and unpatched, so plan a migration.",
+      "event_id": "cisa-kev-four-additions-2026-11-18"
     },
     {
-      "title": "Drupal core flaw exploited on live sites",
-      "why": "Drupal says a flaw in install.php can allow site takeover and was reported exploited from 19 November; CISA's deadline is 27 Nov.",
-      "action": "Update Drupal core to 10.6.22, 11.3.22 or 11.4.13, or secure the installer as Drupal describes.",
-      "event_id": "drupal-core-installer-rce-sa-core-2026-017-2026-11"
+      "title": "Entra Connect Health API flaw exposed customer metadata",
+      "why": "Microsoft says read-only access exposed tenant IDs, domain names and technical contacts' emails, but not passwords or keys.",
+      "action": "Audit exposure with Microsoft's read-only PowerShell script, use phishing-resistant MFA and confirm notification recipients are legitimate.",
+      "event_id": "microsoft-entra-connect-health-metadata-exposure-2026-11"
     },
     {
-      "title": "Unpatched Idunno.AntiCsrf library exploited",
-      "why": "Mandiant says exploitation of CVE-2026-131914 is observed, and the project is defunct with no official patch.",
-      "action": "Stop using Idunno.AntiCsrf, replace it, and audit Web.config files and bin/ directories for references to it.",
-      "event_id": "idunno-anticsrf-aspnet-cve-2026-131914-exploited-2026-11"
+      "title": "Vortex and Cinder groups bypass MFA in Microsoft 365 attacks",
+      "why": "Palo Alto researchers, per Borncity, describe session-token reuse and attacker-registered MFA devices followed by ransom demands.",
+      "action": "Use phishing-resistant MFA, verify helpdesk requests, allowlist browser extensions and revoke existing sessions during incidents.",
+      "event_id": "vortex-cinder-m365-mfa-bypass-unit42-2026-11"
     },
     {
-      "title": "Optimizely script injection reaches 178+ sites",
-      "why": "Krebs, citing Report URI, reports at least 178 organizations were affected; Optimizely says the flaw is fixed; CISA's deadline is 27 Nov.",
-      "action": "Check Optimizely projects for code injected on 16 November and audit project modifications made while the malicious code was available.",
-      "event_id": "optimizely-web-script-injection-2026-11"
+      "title": "SolarWinds fixes critical Serv-U flaws, including CVE-2026-123172",
+      "why": "The privilege escalation could give root on Linux installations; the pages read do not mention exploitation.",
+      "action": "Update Serv-U to the fixed release named in SolarWinds' advisories.",
+      "event_id": "solarwinds-serv-u-2026-4-privilege-escalation-2026-11"
     },
     {
-      "title": "GT13 campaign hits Check Point management servers",
-      "why": "GreyNoise says the actor reached at least 22 organizations between 17 October and 2 November; the event is still developing.",
-      "action": "Install Check Point's jumbo hotfix for CVE-2026-16232 and limit management and GUI client access to trusted IP addresses.",
-      "event_id": "greynoise-gt13-check-point-management-intrusions-2026-11"
+      "title": "Deichmann says attackers accessed German online-store customer data",
+      "why": "Names, addresses, emails, phones and chosen payment method may be affected; Deichmann says passwords and payment data were not stolen.",
+      "action": "Be alert to phishing; the company says it never asks for passwords or payment data by email, phone or SMS.",
+      "event_id": "deichmann-online-store-data-theft-2026-11"
     },
     {
-      "title": "South Korea drafts no-fault liability for digital asset operators",
-      "why": "A draft law would make operators liable for user losses from hacking even without fault, with a surcharge capped at 10% of sales.",
+      "title": "South Korea briefs industry on amended network act",
+      "why": "Companies must designate an executive CISO, notify affected users of breaches and can face fines for repeated breaches.",
       "action": "No action needed; for awareness.",
-      "event_id": "kr-fsc-digital-asset-act-draft-no-fault-liability-2026-11"
+      "event_id": "korea-msit-ict-network-act-ciso-briefing-2026-11"
     }
   ]
 }

@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-11-25T11:48:34.958Z",
+  "date": "2026-11-25",
+  "headline": "Exploited flaws in PAN-OS, Puppet Enterprise and LiteLLM need patching",
+  "plain_summary": "Several software flaws are being used in real attacks, including in Palo Alto firewalls, Puppet Enterprise and LiteLLM. Vendors have published fixes for most of them, and a US agency has set a December 1 deadline for Puppet. Microsoft confirmed a read-only data exposure in a cloud service. Organisations running these products should check and patch.",
+  "items": [
+    {
+      "title": "PAN-OS management interface exploited via Fragnesia (CVE-2026-46300)",
+      "why": "Palo Alto Networks says exploitation has been observed against internet-exposed PAN-OS management interfaces.",
+      "action": "If the management interface is reachable from the internet, upgrade immediately (for example to 12.2.4-h3, 11.2.16-h3, 11.1.16-h6 or 10.2.18-h15) and restrict access to trusted internal IPs.",
+      "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11"
+    },
+    {
+      "title": "CISA lists exploited Puppet Enterprise flaw CVE-2026-115731",
+      "why": "CISA cites active exploitation; federal agencies must fix it by December 1.",
+      "action": "Upgrade Puppet Enterprise to 2026.0.1, 2025.12.1 or 2023.8.13 and restart the server; review autosign configuration as a temporary mitigation.",
+      "event_id": "cisa-kev-puppet-enterprise-cve-2026-115731-2026-11"
+    },
+    {
+      "title": "CISA adds Synology DSM, LiteLLM, Apache Axis and REDCap flaws",
+      "why": "CISA cites active exploitation of all four, including ransomware on Synology NAS.",
+      "action": "Find these products in your environment and apply vendor fixes where they exist; Axis 1.x is reported end of life and unpatched, so plan a migration.",
+      "event_id": "cisa-kev-four-additions-2026-11-18"
+    },
+    {
+      "title": "Entra Connect Health API flaw exposed customer metadata",
+      "why": "Microsoft says read-only access exposed tenant IDs, domain names and technical contacts' emails, but not passwords or keys.",
+      "action": "Audit exposure with Microsoft's read-only PowerShell script, use phishing-resistant MFA and confirm notification recipients are legitimate.",
+      "event_id": "microsoft-entra-connect-health-metadata-exposure-2026-11"
+    },
+    {
+      "title": "Vortex and Cinder groups bypass MFA in Microsoft 365 attacks",
+      "why": "Palo Alto researchers, per Borncity, describe session-token reuse and attacker-registered MFA devices followed by ransom demands.",
+      "action": "Use phishing-resistant MFA, verify helpdesk requests, allowlist browser extensions and revoke existing sessions during incidents.",
+      "event_id": "vortex-cinder-m365-mfa-bypass-unit42-2026-11"
+    },
+    {
+      "title": "SolarWinds fixes critical Serv-U flaws, including CVE-2026-123172",
+      "why": "The privilege escalation could give root on Linux installations; the pages read do not mention exploitation.",
+      "action": "Update Serv-U to the fixed release named in SolarWinds' advisories.",
+      "event_id": "solarwinds-serv-u-2026-4-privilege-escalation-2026-11"
+    },
+    {
+      "title": "Deichmann says attackers accessed German online-store customer data",
+      "why": "Names, addresses, emails, phones and chosen payment method may be affected; Deichmann says passwords and payment data were not stolen.",
+      "action": "Be alert to phishing; the company says it never asks for passwords or payment data by email, phone or SMS.",
+      "event_id": "deichmann-online-store-data-theft-2026-11"
+    },
+    {
+      "title": "South Korea briefs industry on amended network act",
+      "why": "Companies must designate an executive CISO, notify affected users of breaches and can face fines for repeated breaches.",
+      "action": "No action needed; for awareness.",
+      "event_id": "korea-msit-ict-network-act-ciso-briefing-2026-11"
+    }
+  ]
+}

@@ -118,7 +118,7 @@ export async function probeAll(targets, { ports = DEFAULT_PORTS, settings, probe
     const release = await lim.acquire(h.address);
     if (!release) return false;   // budget or time ran out: the port is left unchecked (coverage counts it)
     try {
-      const r = await probe(h.address, port, { servername: h.names[0] || "", hostHeader: h.names[0] || "", signal: ac.signal, httpPorts, httpsPorts });
+      const r = await probe(h.address, port, { servername: h.names[0] || "", hostHeader: h.names[0] || "", signal: ac.signal, httpPorts, httpsPorts, guessWeb: !!(identify && identify.enabled === true) });   // with --identify a silent high port is asked once for a web page
       // record EVERY outcome, not just open ports, so a filtered/errored/truncated probe can never read as "nothing here"
       h.outcomes.push({ port, state: r.state, error: r.error || "", truncated: r.state === "open" && isTruncatedBanner(r.banner) });
       if (r.state === "open" || r.state === "closed") h.up = true;

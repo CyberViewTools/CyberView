@@ -28,6 +28,10 @@ export const DEFAULT_PORTS = [21, 22, 23, 25, 80, 110, 143, 443, 465, 587, 993, 
 export const HTTP_PORTS = new Set([80, 591, 3000, 5000, 8000, 8008, 8080, 8081, 8888, 9000, 9090]);
 export const HTTPS_PORTS = new Set([443, 4443, 8443, 9443, 10443]);
 export const TLS_PORTS = new Set([465, 636, 990, 993, 995, ...HTTPS_PORTS]);
+// Ports that are never sent a web request on a guess: industrial and building-control protocols (a stray request can upset a
+// controller), databases, directory, file-sharing and remote-desktop services, and message brokers. They stay silent-in, silent-out.
+export const NEVER_GUESS_WEB = new Set([102, 502, 789, 1911, 1962, 2222, 2404, 2455, 4840, 4911, 5094, 9600, 18245, 20000, 34962, 34963, 34964, 44818, 47808,
+  53, 88, 111, 135, 137, 138, 139, 161, 389, 445, 464, 593, 623, 636, 873, 1433, 1521, 1883, 2049, 2181, 3268, 3269, 3306, 3389, 5432, 5672, 5900, 5901, 6379, 8883, 9042, 9092, 11211, 27017, 27018, 50000]);
 /** What each kind of port is sent: shown in the run header and the report. */
 export const SENDS = {
   connect: "a TCP connect; the connection is closed after the read",
@@ -43,7 +47,7 @@ export const SENDS = {
  * -> { port, state: open | closed | filtered, banner, raw (Buffer, MySQL only), ssh_kex (SSH: the server's KEXINIT lists), http: { status, headers, body },
  *      tls: { protocol, cipher, cipher_std, kex: { type, name, size }, cert: { ..., bits, curve, fingerprint256, raw (DER) } }, error }
  */
-export async function probePort(ip, port, { servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS, httpPorts = [], httpsPorts = [] } = {}) {
+export async function probePort(ip, port, { servername = "", hostHeader = "", signal = null, timeouts = TIMEOUTS, httpPorts = [], httpsPorts = [], guessWeb = false } = {}) {
   const out = { port, state: "filtered", banner: "", raw: null, http: null, tls: null, error: "" };
   let sock = null;
   const kill = () => { try { sock && sock.destroy(); } catch { /* closed */ } };
@@ -89,6 +93,20 @@ export async function probePort(ip, port, { servername = "", hostHeader = "", si
           kx = kexinitFrom(Buffer.concat([buf, more])); sock.end();
         }
         if (kx.kex) out.ssh_kex = kx.kex;
+      }
+      // A port outside the usual web ports that says nothing first is very often a web server (admin consoles, APIs,
+      // application servers). Ask once for the root page, as a browser would: plain first, then over TLS. Only for a
+      // service that stayed silent; one that greeted (SSH, FTP, mail, a database) is never sent this. Only with --identify:
+      // without it a silent port is sent nothing at all.
+      else if (guessWeb && !out.banner.trim() && !out.raw && !useTls && port >= 1024 && !NEVER_GUESS_WEB.has(port)) {
+        kill();
+        for (const tlsTry of [false, true]) {
+          try {
+            sock = await connect(ip, port, tlsTry, servername, timeouts.connectMs);
+            const h = await httpGet(sock, tlsTry, hostHeader || ip, port, timeouts);
+            if (h && h.status) { out.http = h; out.web_guess = tlsTry ? "https" : "http"; break; }
+          } catch { /* not a web server this way */ } finally { kill(); }
+        }
       }
     }
   } catch (e) {

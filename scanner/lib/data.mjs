@@ -26,21 +26,32 @@ export function checkBase(u) {
 }
 
 /** Online source: GET requests to the CyberView site, one at a time, each retried once. */
-export function webSource(base = DEFAULT_SOURCE, { fetchImpl = globalThis.fetch, timeoutMs = 60000 } = {}) {
+/**
+ * known: { rel: { etag, lm } } from an earlier download, and reuse(rel) -> that download's JSON (or null). With both, a file is
+ * asked for with If-None-Match / If-Modified-Since and a 304 answer reuses the earlier copy: a daily refresh, or a download
+ * that was cut off, then only transfers what changed. seen collects the validators of this run for the next one.
+ */
+export function webSource(base = DEFAULT_SOURCE, { fetchImpl = globalThis.fetch, timeoutMs = 60000, known = {}, reuse = null } = {}) {
   const b = checkBase(base);
   if (!b) throw new Error(`the data source must be an https address (or http on localhost): ${base}`);
-  const log = [];
+  const log = [], seen = {}, stats = { fetched: 0, reused: 0 };
   return {
-    kind: "online", where: b, log,
+    kind: "online", where: b, log, seen, stats,
     async json(rel, { optional = false } = {}) {
       if (!ALLOWED.test(rel)) throw new Error(`not a CyberView data file: ${rel}`);
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
-          const r = await fetchImpl(b + rel, { method: "GET", headers: { "User-Agent": USER_AGENT, Accept: "application/json" }, redirect: "error", signal: AbortSignal.timeout(timeoutMs) });
+          const k = known[rel], old = k && reuse && attempt === 0 ? reuse(rel) : null, cond = {};
+          if (old && k.etag) cond["If-None-Match"] = k.etag; else if (old && k.lm) cond["If-Modified-Since"] = k.lm;
+          const r = await fetchImpl(b + rel, { method: "GET", headers: { "User-Agent": USER_AGENT, Accept: "application/json", ...cond }, redirect: "error", signal: AbortSignal.timeout(timeoutMs) });
           log.push({ path: rel, status: r.status });
+          if (r.status === 304 && old) { seen[rel] = k; stats.reused++; return old; }
           if (r.status === 404 && optional) return null;
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return await r.json();
+          const j = await r.json(), h = r.headers && r.headers.get ? { etag: r.headers.get("etag") || "", lm: r.headers.get("last-modified") || "" } : null;
+          if (h && (h.etag || h.lm)) seen[rel] = h;
+          stats.fetched++;
+          return j;
         } catch (e) {
           if (attempt === 1) { if (optional) return null; throw new Error(`could not read ${b + rel}: ${e.message}`); }
           await new Promise((res) => setTimeout(res, 2000));
@@ -66,6 +77,14 @@ export function dirSource(dir) {
   };
 }
 
+/** Where a snapshot keeps the HTTP validators of its files, and how a later download reads them back (newest folder first). */
+export const HTTP_STATE = ".http.json";
+export function earlier(dirs) {
+  const known = {}, where = {};
+  for (const d of dirs.filter(Boolean).reverse()) { try { const k = JSON.parse(readFileSync(join(d, HTTP_STATE), "utf8")); for (const rel of Object.keys(k)) { known[rel] = k[rel]; where[rel] = d; } } catch { /* none */ } }
+  return { known, reuse: (rel) => { try { return where[rel] && ALLOWED.test(rel) ? JSON.parse(readFileSync(join(where[rel], rel), "utf8")) : null; } catch { return null; } } };
+}
+
 /** The lookup file that holds a CVE id ("CVE-2024-3400" -> "data/cve/2024/3.json"), as cvedb-lib.js bucketFile. */
 export const bucketPath = (D, id) => (D.bucketFile(id) ? "data/cve/" + D.bucketFile(id) : "");
 
@@ -83,12 +102,14 @@ export async function snapshot(src, out, D, { full = false, log = () => {} } = {
   for (const k of (wb && wb.kev) || []) { const p = k && bucketPath(D, k.cve); if (p) files.add(p); }
   for (const v of (wb && wb.vulns) || []) { const p = v && bucketPath(D, v.cve); if (p) files.add(p); }
   let got = 0, missing = 0;
+  const keep = () => { if (src.seen) { try { writeFileSync(join(out, HTTP_STATE), JSON.stringify(src.seen)); } catch { /* best effort */ } } };
   for (const rel of [...files].sort()) {
     const j = await src.json(rel, { optional: true });
     if (j) { save(rel, j); got++; } else missing++;
-    if ((got + missing) % 50 === 0) log(`${got + missing} of ${files.size} lookup files`);
+    if ((got + missing) % 50 === 0) { log(`${got + missing} of ${files.size} lookup files`); keep(); }
   }
-  const manifest = { cyberview_snapshot: 1, fetched_at: new Date().toISOString(), source: src.where, full, workbench_built_at: (wb && wb.built_at) || "", cve_index_built_at: (idx && idx.built_at) || "", lookup_files: got, lookup_files_missing: missing };
+  keep();
+  const manifest = { cyberview_snapshot: 1, fetched_at: new Date().toISOString(), source: src.where, full, workbench_built_at: (wb && wb.built_at) || "", cve_index_built_at: (idx && idx.built_at) || "", lookup_files: got, lookup_files_missing: missing, ...(src.stats ? { transferred: src.stats.fetched, unchanged: src.stats.reused } : {}) };
   writeFileSync(join(out, "manifest.json"), JSON.stringify(manifest, null, 2));
   return manifest;
 }

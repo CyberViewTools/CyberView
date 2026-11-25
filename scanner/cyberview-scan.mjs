@@ -7,7 +7,7 @@
 // Read scanner/README.md first. Commands:
 //   init  [--out scope.json]                  write a scope file to fill in (targets, owner, your attestation)
 //   check --scope FILE [--i-am-authorized-for-public-ranges]   check the scope file and show what a scan would do; no network
-//   data  --out DIR [--source URL] [--full] [--data-incidents]   download CyberView's data for offline (air-gapped) scans
+//   data  --out DIR [--source URL] [--full] [--data-incidents] [--prev DIR]   download CyberView's data for offline (air-gapped) scans
 //   scan  --scope FILE (--data DIR | --online [--source URL]) [--ports LIST] [--out DIR] [--assume-up]
 //         [--http-ports LIST] [--https-ports LIST] (web services on non-standard ports)
 //         [--rate N] [--concurrency N] [--host-concurrency N] [--host-budget N] [--budget N] [--max-minutes N]
@@ -29,7 +29,7 @@ import { isIP } from "node:net";
 import { settings as checkSettings, CAPS } from "./lib/limits.mjs";
 import { DEFAULT_PORTS, SENDS, VERSION } from "./lib/probe.mjs";
 import { UDP_SERVICES, UDP_SENDS } from "./lib/udp.mjs";
-import { webSource, dirSource, snapshot, DEFAULT_SOURCE } from "./lib/data.mjs";
+import { webSource, dirSource, snapshot, earlier, DEFAULT_SOURCE } from "./lib/data.mjs";
 import { parsePorts, resolveScope, probeAll, buildReport, allPorts } from "./lib/scan.mjs";
 import { runDiscovery } from "./lib/discover.mjs";
 import { header, toCsv, toSarif, toInventory, summaryText } from "./lib/report.mjs";
@@ -115,10 +115,12 @@ export async function main(argv, io = {}) {
 
   if (cmd === "data") {
     if (!a.out) return fail(io, ["--out DIR is required (where the snapshot is written)"], 1);
-    const src = webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl });
+    // --prev DIR: an earlier snapshot. Files the site says are unchanged are reused from it (and from a cut-off download in --out).
+    const src = webSource(a.source || DEFAULT_SOURCE, { fetchImpl: io.fetchImpl, ...earlier([a.out, a.prev]) });
     io.out(`Downloading CyberView's public data from ${src.where} into ${a.out}${a.full ? " (every CVE lookup file)" : ""}. Read-only GET requests; nothing is uploaded.`);
     const m = await snapshot(src, a.out, D, { full: !!a.full, log: (s) => io.out("  " + s) });
     if (a["data-incidents"]) { const r = await snapshotIncidentsTo(src, a.out, { log: (s) => io.out("  " + s) }); io.out(`  incident archive: ${r.incident_events} event(s) in ${r.incident_months} month file(s)`); }
+    if (m.unchanged) io.out(`  ${m.unchanged} file(s) unchanged since the earlier download were reused; ${m.transferred} transferred.`);
     io.out(`Snapshot ready: ${m.lookup_files} lookup file(s), workbench built ${m.workbench_built_at || "?"}. Scan offline with --data ${a.out}`);
     return 0;
   }

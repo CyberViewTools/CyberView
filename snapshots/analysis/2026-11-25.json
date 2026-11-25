@@ -1,0 +1,812 @@
+{
+  "analysis": {
+    "generated_at": "2026-11-25T11:00:09Z",
+    "summary": "Patch the management plane and the PHP layer first: Palo Alto Networks now says its PAN-OS management interface was exploited through a path that starts with PHP2Shell, the flaw set used against Check Point gateways earlier this month, while Check Point management servers (GT13), vCenter and SAP NetWeaver stay on the exploited list. New since yesterday: Hex.pm and Microsoft Entra Connect Health are confirmed as exploited services; Broadcom fixed 23 VMware flaws; a run of US federal intrusions (CIA, NGA and ODNI open-source system, FinCEN) are close in time but not linked by any source; ARTEX agent tooling turned up in Belgian and Hugging Face cases; Douzone Bizon's backup service adds victims in Korea next to the PLAID KARTE notices in Japan; Korean savings banks keep reporting hacks; and the DOJ moved to forfeit over $1.1 billion from the Binance theft. Grouping by attribute is labelled as inference; timing alone is never a cause.",
+    "patterns": [
+      {
+        "id": "exploited-now",
+        "title": "Exploited now: PAN-OS management via PHP2Shell and Fragnesia, Check Point management servers, vCenter, Hex.pm, Entra Connect Health, Vite dev servers",
+        "kind": "stated",
+        "confidence": 3,
+        "narrative": "Exploitation is stated by a vendor, agency or the victim for each item here. New on Nov 24: Palo Alto Networks bulletin PAN-SA-2026-0015 says the Linux kernel privilege-escalation flaw Fragnesia (CVE-2026-46300) was exploited against PAN-OS management interfaces exposed to the internet, and that the only known path first requires PHP2Shell, the PHP flaw set Check Point says was chained to root unpatched gateways from Oct 30. Hex says an attacker used CVE-2026-129514 on Nov 23 to run commands on hex.pm web servers and could have read password hashes, API key hashes and 2FA secrets. Microsoft says a flaw in the Entra Connect Health API gave read-only access to tenant metadata (tenant IDs, domains, technical contacts) from July until a fix on Nov 19. HoneyLabs saw exploit attempts against exposed Vite dev servers from Nov 15 hunting for .env files and cloud keys. Still open from earlier in the week: GreyNoise's GT13 campaign against Check Point Security Management Servers, Google's report of ARMORY CASTLE exploiting a vCenter authentication bypass as a zero-day, CISA's KEV entry for SAP NetWeaver CVE-2025-42884, GL.iNet's abused cloud management, and Amazon's account of AI agents exploiting a MONAI Label zero-day. The common thread is management and developer-facing surfaces: interfaces that should not be reachable from the internet at all.",
+        "caveat": "Each exploitation claim concerns one product and different attackers; grouping them is by attribute, not by a shared actor. Palo Alto rates its bulletin informational and names no victims or count. The two Entra Connect Health records describe one incident reported twice. HoneyLabs saw attempts on honeypots, not successful compromises. GT13's activity window ended Nov 2.",
+        "event_ids": [
+          "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+          "check-point-php2shell-gateway-wiper-campaign-2026-11",
+          "hexpm-registry-rce-exploited-2026-11",
+          "microsoft-entra-connect-health-api-metadata-access-2026-11",
+          "microsoft-entra-connect-health-metadata-exposure-2026-11",
+          "vite-dev-server-exploit-attempts-honeylabs-2026-11",
+          "greynoise-gt13-check-point-management-intrusions-2026-11",
+          "gtig-armory-castle-vcenter-zero-day-2026-11",
+          "cisa-kev-sap-netweaver-cve-2025-42884-2026-11",
+          "cisa-kev-four-additions-2026-11-18",
+          "glinet-cloud-management-router-kvm-malware-2026-11",
+          "cairn-ai-monai-label-zero-day-2026-11",
+          "vulncheck-credential-harvesting-cve-exploitation-report-2026-11",
+          "idunno-anticsrf-aspnet-cve-2026-131914-exploited-2026-11",
+          "drupal-core-installer-rce-sa-core-2026-017-2026-11",
+          "cisco-expressway-cve-2026-76466-exploited-2026-11"
+        ],
+        "chain": [
+          "check-point-php2shell-gateway-wiper-campaign-2026-11",
+          "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "check-point-php2shell-gateway-wiper-campaign-2026-11",
+            "to": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+            "rel": "PAN-OS exploit path starts with the same PHP2Shell flaw",
+            "basis": "stated",
+            "url": "https://security.paloaltonetworks.com/PAN-SA-2026-0015"
+          },
+          {
+            "from": "greynoise-gt13-check-point-management-intrusions-2026-11",
+            "to": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+            "rel": "both target firewall management planes; different products, no shared actor stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "vite-dev-server-exploit-attempts-honeylabs-2026-11",
+            "to": "vulncheck-credential-harvesting-cve-exploitation-report-2026-11",
+            "rel": "both describe credential harvesting through exposed web dev tooling; different observers",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "patch-pressure",
+        "title": "Patch before attacks: NGINX HTTP/2, phpAfterShell, 23 VMware flaws and a batch of unpatched ZDI 0-day advisories",
+        "kind": "stated",
+        "confidence": 3,
+        "narrative": "Critical fixes with public detail keep landing faster than most patch cycles. CERT-FR's NGINX HTTP/2 remote code execution alert (public proof of concept for CVE-2026-123007) reaches into Synology DSM, which fixed the same CVE, and Xint chained one of the NGINX flaws with a Linux kernel bug for root. phpAfterShell (CVE-2026-126714) bypasses the October PHP2Shell fixes, and HKCERT lists the same CVE in F5 BIG-IP; that matters more now that Palo Alto says PHP2Shell is the first step in exploiting PAN-OS. On Nov 24 Broadcom's VMSA-2026-0011 fixed 23 VMware flaws, including a vCenter directory-service authentication bypass (CVE-2026-123903), in the same week Google reported a different vCenter bypass exploited as a zero-day. ZDI published 0-day advisories with no vendor fix for GNU Inetutils ftp, BusyBox ftpd, PyTorch file loading, pip and LiteLLM. SolarWinds Serv-U, Chrome 158, Adobe (113 flaws), Thunderbird, Joomla, Roundcube, WHMCS, nginx early-data, runc and Flatpak fixes also landed. OpenSSL rated its QUIC flaw Low and schedules fixes for Dec 1.",
+        "caveat": "Most items have no reported exploitation; this pattern ranks urgency from vendor and agency ratings and public exploit code, not from attacks seen. The two vCenter flaws are different CVEs. ZDI 0-day advisories mean no fix was available at publication, not that attacks are happening.",
+        "event_ids": [
+          "cert-fr-nginx-http2-rce-2026-11",
+          "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+          "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
+          "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+          "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11",
+          "php-critical-security-release-announced-2026-11",
+          "broadcom-vmsa-2026-0011-vmware-23-flaws-2026-11",
+          "zdi-26-1044-gnu-inetutils-ftp-client-cve-2026-136613-2026-11",
+          "busybox-ftpd-zdi-26-1069-0day-2026-11",
+          "pytorch-pt2-zdi-26-1056-2026-11",
+          "pytorch-torch-save-to-dcp-zdi-26-1059-2026-11",
+          "pypa-pip-zdi-26-1066-2026-11",
+          "litellm-passthrough-rce-zdi-26-1084-2026-11",
+          "solarwinds-serv-u-2026-4-privilege-escalation-2026-11",
+          "chrome-158-cve-2026-134401-variations-2026-11",
+          "adobe-aem-campaign-classic-csirt-it-2026-11",
+          "mozilla-thunderbird-161-mfsa-2026-134-2026-11",
+          "joomla-5-4-11-6-2-1-security-fixes-2026-11",
+          "roundcube-1-7-7-1-6-22-security-updates-2026-11",
+          "whmcs-sql-injection-cve-2026-82981-2026-11",
+          "nginx-ssl-early-data-cpu-cve-2026-132779-2026-11",
+          "debian-runc-dsa-6656-1-2026-11",
+          "flatpak-1-18-6-setuid-sandbox-escape-fixes-2026-11",
+          "openssl-quic-fragment-reassembly-cve-2026-84785-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "cert-fr-nginx-http2-rce-2026-11",
+            "to": "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
+            "rel": "chained to kernel bug for root (Xint)",
+            "basis": "stated",
+            "url": "https://xint.io/blog/nginx2root-remote-code-execution"
+          },
+          {
+            "from": "cert-fr-nginx-http2-rce-2026-11",
+            "to": "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+            "rel": "same CVE-2026-123007, fixed in Synology DSM",
+            "basis": "stated",
+            "url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"
+          },
+          {
+            "from": "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+            "to": "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11",
+            "rel": "same flaw CVE-2026-126714 in F5 BIG-IP (HKCERT)",
+            "basis": "stated",
+            "url": "https://www.hkcert.org/security-bulletin/f5-big-ip-remote-code-execution-vulnerability_20261123"
+          },
+          {
+            "from": "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+            "to": "php-critical-security-release-announced-2026-11",
+            "rel": "same day, likely the same PHP releases",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "supplier-cascades",
+        "title": "One platform, many victims: PLAID KARTE notices keep coming in Japan, and Douzone Bizon's backup service adds victims in Korea",
+        "kind": "stated",
+        "confidence": 3,
+        "narrative": "PLAID says a vulnerability in its KARTE customer-experience platform was exploited on Nov 13; since then customer companies have published their own counts, each saying the data was taken from KARTE, not their own systems. ZOZO (about 15.18 million), SMBC (up to about 14 million) and Marui Group (about 8.8 million) are the largest, with DHC, MUFG Bank, Sharp, Mainichi, Canon Marketing Japan, Suntory Wellness, Timee and others behind them; on Nov 24 Kaunet's second report put its count at 300,525 records after removing duplicates. In Korea a smaller cascade runs through Douzone Bizon's outsourced APO backup service: the Damyang County Cultural Foundation said on Nov 20 that data may have leaked through a breach of Douzone backup servers, and on Nov 23 Boannews listed Genesis Lab and Incheon Airport Facilities Management as further Douzone clients told their backup data may have been taken. For defenders the lesson is the same in both: a single SaaS or backup supplier holds copies of many customers' data, and notices arrive one customer at a time over weeks.",
+        "caveat": "KARTE links are stated by each customer; the Douzone victims each name Douzone's backup service, but no source on file ties the Damyang notice and the Boannews list to one intrusion, so the edge between them is an inference. Counts are each company's own and may include duplicates.",
+        "event_ids": [
+          "plaid-karte-unauthorized-access-2026-11",
+          "zozo-karte-customer-data-leak-2026-11",
+          "smbc-karte-customer-data-leak-2026-11",
+          "marui-group-karte-customer-data-leak-2026-11",
+          "dhc-karte-19-million-customer-data-leak-2026-11",
+          "mufg-bank-karte-customer-data-leak-2026-11",
+          "sharp-cocoro-store-karte-leak-2026-11",
+          "mainichi-digital-karte-member-data-leak-2026-11",
+          "canon-mj-karte-customer-data-leak-2026-11",
+          "suntory-wellness-comado-karte-947667-leak-2026-11",
+          "timee-karte-contractor-breach-2026-11",
+          "kurashiru-karte-recichalle-chirashi-leak-2026-11",
+          "go-karte-plaid-user-data-leak-2026-11",
+          "kaunet-karte-300525-records-leak-2026-11",
+          "damyang-cultural-foundation-douzone-bizon-breach-2026-11",
+          "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11"
+        ],
+        "chain": [
+          "plaid-karte-unauthorized-access-2026-11",
+          "zozo-karte-customer-data-leak-2026-11",
+          "smbc-karte-customer-data-leak-2026-11",
+          "marui-group-karte-customer-data-leak-2026-11",
+          "kaunet-karte-300525-records-leak-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "zozo-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://corp.zozo.com/information/20261120-482917/"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "smbc-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://cybersecurity-jp.com/news/118712"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "marui-group-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://www.0101maruigroup.co.jp/nr/26_1120_1"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "kaunet-karte-300525-records-leak-2026-11",
+            "rel": "customer of breached supplier PLAID",
+            "basis": "stated",
+            "url": "https://cybersecurity-jp.com/news/118877"
+          },
+          {
+            "from": "damyang-cultural-foundation-douzone-bizon-breach-2026-11",
+            "to": "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11",
+            "rel": "both name Douzone Bizon's backup service; no source ties them to one intrusion",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "one-vendor-many-victims",
+        "title": "Breaches through a provider, not the front door: Next, Decathlon, Gatwick AutoPay, Little Vista and the n0n vendor claims",
+        "kind": "inferred",
+        "confidence": 3,
+        "narrative": "A large share of this week's confirmed breaches happened at a supplier. Next told investors an external technology supplier had a cyber incident with access to data linked to Next; Decathlon confirmed malicious access to customer data at an external service provider; Gatwick disabled AutoPay after unauthorised access to that third-party parking payment system; Dublin childcare software firm Little Vista told crèches that children's and parents' data could be accessed. Earlier in the week JPMorgan said vendors that serve it were hit, Samsung named a third-party provider for its North American TV business, MoEngage reported access to its cloud, Carnegie's donation vendor and Phoebe's former vendor sent notices, and CloudSEK described a logistics portal reached with stealer-log credentials from a vendor's machine. The defender's action is the same each time: know which suppliers hold your customer data, and what they would tell you and when.",
+        "caveat": "These are grouped because each victim names a provider; the providers are different and no shared attacker is stated. The n0n group name appears in claims about JPMorgan- and Samsung-related vendors, which is a claim, not a confirmed link. Next says customer personal data was not compromised.",
+        "event_ids": [
+          "next-plc-supplier-cyber-incident-2026-11",
+          "next-third-party-provider-cyber-incident-2026-11",
+          "decathlon-customer-data-claim-2026-11",
+          "gatwick-autopay-third-party-unauthorised-access-2026-11",
+          "little-vista-creche-software-breach-2026-11",
+          "jpmorgan-third-party-vendors-cyberattack-2026-11",
+          "samsung-smart-tv-data-leak-claim-n0n-2026-11",
+          "moengage-vendor-account-breach-2026-11",
+          "carnegie-endowment-donation-vendor-breach-2026-11",
+          "phoebe-medcom-vendor-breach-notices-2026-11",
+          "persistent-systems-law-firm-immigration-data-2026-11",
+          "cloudsek-vendor-stealer-log-logistics-portal-2026-11",
+          "netaffinity-smarthotel-incident-2026-11",
+          "kai-iwi-lakes-seekom-breach-2026-11",
+          "publica-pk-softech-data-leak-2026-11",
+          "black-diamond-korea-erp-breach-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "jpmorgan-third-party-vendors-cyberattack-2026-11",
+            "to": "samsung-smart-tv-data-leak-claim-n0n-2026-11",
+            "rel": "same group name (n0n) in both claims; separate victims, no shared supplier stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "kai-iwi-lakes-seekom-breach-2026-11",
+            "to": "netaffinity-smarthotel-incident-2026-11",
+            "rel": "both hospitality booking platforms; different providers",
+            "basis": "inferred"
+          },
+          {
+            "from": "next-plc-supplier-cyber-incident-2026-11",
+            "to": "decathlon-customer-data-claim-2026-11",
+            "rel": "both retailers name an external provider; different providers",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "ai-both-ends",
+        "title": "AI-run intrusions: ARTEX shows up in a Belgian incident and on Hugging Face, CyberStrikeAI in a cloud breach, and agencies warn",
+        "kind": "inferred",
+        "confidence": 3,
+        "narrative": "Agent frameworks are now in incident reports, not only in research. NVISO says the LLM tool ARTEX deployed the ZQAgent Linux backdoor in a Belgian incident (with similar samples from Taiwan), tied to a cluster it calls FOG0003; JFrog says with high confidence that malicious Hugging Face models which stole host secrets were created inside an ARTEX agent task and leaked their own operator. Wiz counts a sharp rise in successful ARTEX-style attacks and describes a CyberStrikeAI-run intrusion that reached 3,392 users' sessions across seven EKS clusters. Amazon says Cairn-driven agents exploited a MONAI Label zero-day within minutes. Agencies are responding: Italy's ACN and CSIRT Italia, Canada's Cyber Centre, NZ's NCSC and the UK NCSC all warned in the last week, the UK NCSC's point being that the agents exploit familiar weaknesses, faster. On the other side, malware is using models too (F6's RatHat Android trojan uses Gemini) and Fortinet describes 'Godzilla AI', a marketplace for malicious tooling.",
+        "caveat": "ARTEX and CyberStrikeAI are open-source tools used by different operators; sharing a tool is not sharing an actor, and no source links the Belgian, Hugging Face and Wiz cases to one operator. Vendor counts of 'AI-driven' attacks depend on each vendor's attribution method.",
+        "event_ids": [
+          "nviso-zqagent-linux-backdoor-artex-2026-11",
+          "jfrog-artex-ai-agent-hugging-face-malware-2026-11",
+          "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+          "wiz-cyberstrikeai-eks-intrusion-3392-users-2026-11",
+          "recorded-future-ai-industrial-attack-workflow-2026-11",
+          "cairn-ai-monai-label-zero-day-2026-11",
+          "italy-acn-autonomous-ai-agents-warning-2026-11",
+          "acn-italy-agentic-ai-alert-2026-11",
+          "csirt-italia-ai-agents-automated-compromise-2026-11",
+          "canada-cyber-centre-ai-hacking-warning-2026-11",
+          "nz-ncsc-warns-ai-tool-artex-attacks-2026-11",
+          "ncsc-uk-agentic-attacks-familiar-weaknesses-2026-11",
+          "f6-rathat-android-gemini-russia-belarus-2026-11",
+          "godzilla-ai-malicious-marketplace-fortinet-2026-11",
+          "socradar-babidighost-jailbroken-ai-agent-2026-11",
+          "european-commission-cyberattack-payroll-2026-11",
+          "eu-academy-platform-cyberattack-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "wiz-cyberstrikeai-eks-intrusion-3392-users-2026-11",
+            "to": "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+            "rel": "same Wiz post",
+            "basis": "stated",
+            "url": "https://www.wiz.io/blog/agentic-attacks-artex-offensive-ai-frameworks"
+          },
+          {
+            "from": "nviso-zqagent-linux-backdoor-artex-2026-11",
+            "to": "jfrog-artex-ai-agent-hugging-face-malware-2026-11",
+            "rel": "same tool (ARTEX) named; no shared operator stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "european-commission-cyberattack-payroll-2026-11",
+            "to": "eu-academy-platform-cyberattack-2026-11",
+            "rel": "EU Academy user data leaked in the same Commission attack (Euronews)",
+            "basis": "stated",
+            "url": "https://www.euronews.com/2026/11/23/exclusive-china-backed-hackers-suspected-behind-ongoing-eu-commission-cyberattack"
+          },
+          {
+            "from": "nz-ncsc-warns-ai-tool-artex-attacks-2026-11",
+            "to": "italy-acn-autonomous-ai-agents-warning-2026-11",
+            "rel": "national agencies warn about the same tool class within days",
+            "basis": "timing"
+          }
+        ]
+      },
+      {
+        "id": "dev-supply-chain",
+        "title": "Developers as the way in: fake Ollama and Claude installers, poisoned models and packages, and package-registry compromise",
+        "kind": "inferred",
+        "confidence": 2,
+        "narrative": "Attackers keep going after the people and tools that build software. AhnLab says a Korean-language fake Ollama site installs real Ollama alongside WinWyvern, which uses a signed driver (BYOVD) to blind local antivirus; Vietnamese media relayed the same finding on Nov 24. A fake 'Claude Opus 5 Free Desktop' app spreads RevStealer, and Cato saw Google ads for fake Codex, Claude Code and Homebrew installers on macOS. Socket found 13 malicious NuGet packages posing as job-interview tests; JFrog found poisoned Hugging Face models; Hex.pm's web servers were breached (no changed packages found); NoMachine says a Windows installer was compromised; Wordfence held backdoored releases of WP plugins; a study of LLM API routers found some inject malicious code. Apiiro reports Claude Code 'don't ask again' approvals leaving secrets in public repositories, and eSentire saw Vinci RAT delivered through a Microsoft Store app.",
+        "caveat": "Different actors and techniques; the grouping is by target (developers and their tools), not by campaign. The two fake-Ollama records describe the same AhnLab finding.",
+        "event_ids": [
+          "winwyvern-fake-ollama-byovd-korea-2026-11",
+          "fake-ollama-installer-byovd-malware-2026-11",
+          "fake-claude-opus-5-revstealer-2026-11",
+          "fake-dev-tool-google-ads-macos-cato-2026-11",
+          "socket-malicious-nuget-fake-job-assessments-2026-11",
+          "jfrog-artex-ai-agent-hugging-face-malware-2026-11",
+          "hexpm-registry-rce-exploited-2026-11",
+          "nomachine-personal-edition-windows-installer-compromised-2026-11",
+          "wp-connect-plugins-backdoored-releases-held-2026-11",
+          "llm-api-router-attacks-study-2026-11",
+          "apiiro-claude-code-settings-secrets-2026-11",
+          "vinci-rat-microsoft-store-setup-assistant-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "winwyvern-fake-ollama-byovd-korea-2026-11",
+            "to": "fake-ollama-installer-byovd-malware-2026-11",
+            "rel": "same AhnLab finding on fake Ollama installer (VTV)",
+            "basis": "stated",
+            "url": "https://vtv.vn/hat-hien-ma-doc-gia-mao-ai-vo-hieu-hoa-chuong-trinh-diet-virus-100261124195419137.htm"
+          },
+          {
+            "from": "fake-claude-opus-5-revstealer-2026-11",
+            "to": "fake-dev-tool-google-ads-macos-cato-2026-11",
+            "rel": "both pose as AI coding/assistant installers; different malware and platforms",
+            "basis": "inferred"
+          },
+          {
+            "from": "socket-malicious-nuget-fake-job-assessments-2026-11",
+            "to": "jfrog-artex-ai-agent-hugging-face-malware-2026-11",
+            "rel": "both plant code in public registries for developers to load; different actors",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "account-takeover",
+        "title": "Access through people: help-desk vishing that defeats MFA, device-code phishing, and Black Friday lures",
+        "kind": "inferred",
+        "confidence": 2,
+        "narrative": "Most initial access described this week needed no exploit. Palo Alto Networks researchers say two clusters it calls Vortex and Cinder phoned staff as IT support: Vortex registered its own MFA device after an adversary-in-the-middle login, Cinder reused a persistent session token so no new Duo prompt appeared, and both stole Microsoft 365 data and demanded payment. ReversingLabs ties SSO vishing to a new extortion group, Inception, and Unit 42 describes Com-affiliated vishing. VMRay says EvilTokens phishing hosts kept appearing after Microsoft's September takedown, now on Bunny CDN. Device-code phishing appears with SharePoint lures (Hornetsecurity) and Black Friday lures (Cofense). The shopping season brings fake shops (CloudSEK: 4,660 domains), fake deals (Doppel), fake delivery notices (FortiGuard), brand giveaways (Spar) and fake recall SMS (Porsche China); police in Styria and Austria warn of phishing using data from tourism-sector leaks, and Israel's INCD of fake police traffic-fine SMS.",
+        "caveat": "Shared techniques, not a shared actor: no source links Vortex, Cinder, Inception and Com. Two records each describe the Unit 42 Vortex/Cinder research and the Austrian tourism-data warnings. Seasonal volume figures come from vendors with different methods.",
+        "event_ids": [
+          "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+          "vishing-mfa-bypass-unit42-m365-2026-11",
+          "reversinglabs-inception-sso-vishing-2026-11",
+          "unit42-com-vishing-data-theft-2026-11",
+          "eviltokens-phishing-continues-after-takedown-2026-11",
+          "hornetsecurity-device-code-phishing-sharepoint-2026-11",
+          "cofense-black-friday-device-code-phishing-2026-11",
+          "cloudsek-fake-shop-network-black-friday-2026-11",
+          "doppel-black-friday-fake-deals-report-2026-11",
+          "fortinet-holiday-shopping-scam-domains-2026-11",
+          "checkpoint-retail-attacks-28pct-black-friday-2026-11",
+          "spar-black-friday-giveaway-scam-2026-11",
+          "porsche-china-fake-recall-sms-warning-2026-11",
+          "styria-police-tourism-data-leak-phishing-warning-2026-11",
+          "austria-police-phishing-warning-after-tourism-data-leaks-2026-11",
+          "israel-incd-fake-police-traffic-fine-sms-2026-11",
+          "knowbe4-government-supervisor-impersonation-phishing-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "unit42-com-vishing-data-theft-2026-11",
+            "to": "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+            "rel": "same research team and technique (IT-support vishing); clusters named differently, no link stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "reversinglabs-inception-sso-vishing-2026-11",
+            "to": "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+            "rel": "same technique (SSO vishing); no shared actor stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "hornetsecurity-device-code-phishing-sharepoint-2026-11",
+            "to": "cofense-black-friday-device-code-phishing-2026-11",
+            "rel": "same technique (device-code phishing), different lures",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "us-federal-intrusions",
+        "title": "US federal intrusions in one week: CIA, NGA and ODNI open-source system, FinCEN, FBI's NCIC, USDA",
+        "kind": "timing",
+        "confidence": 2,
+        "narrative": "Within six days several US federal bodies reported or were reported to have intrusions. The New York Times reported (relayed by Reuters and others) that the CIA and ODNI, and per later reports the NGA, found an intrusion into an open-source intelligence analysis system that exposed some unclassified information; ODNI says classified systems and critical capabilities were not affected, and two Times sources said early indicators point to China, though investigators do not yet know who is responsible. On Nov 24 FinCEN said it is investigating unauthorized access to a limited part of its systems and took some offline. Before that, the FBI was reported to be investigating an apparent breach of its NCIC criminal database (Nov 20) and USDA took systems offline after an internal incident (Nov 19). Defenders in government and their contractors should treat each as a prompt to check exposure, not as one campaign.",
+        "caveat": "Only timing connects these. No source states a common actor or method; the China indication applies only to the CIA/ODNI case and comes from unnamed sources. Several records describe the CIA/ODNI story from different outlets and are likely duplicates.",
+        "event_ids": [
+          "cia-odni-osint-network-breach-2026-11",
+          "cia-ngc-odni-unclassified-system-intrusion-nyt-2026-11",
+          "cia-odni-open-source-system-intrusion-2026-11",
+          "fincen-cybersecurity-incident-unauthorized-access-2026-11",
+          "fbi-ncic-apparent-breach-2026-11",
+          "fbi-ncic-criminal-database-reported-breach-2026-11",
+          "usda-security-incident-systems-offline-2026-11",
+          "trump-clayton-dni-interim-cyber-oversight-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "fbi-ncic-apparent-breach-2026-11",
+            "to": "cia-odni-osint-network-breach-2026-11",
+            "rel": "days apart; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "cia-odni-osint-network-breach-2026-11",
+            "to": "fincen-cybersecurity-incident-unauthorized-access-2026-11",
+            "rel": "reported the same week; no stated link",
+            "basis": "timing"
+          }
+        ]
+      },
+      {
+        "id": "state-pressure",
+        "title": "State pressure on Europe and the Middle East: a new Iran-nexus espionage group, Albania's warning, tanker attacks, and UK alerts on Russian sabotage",
+        "kind": "inferred",
+        "confidence": 2,
+        "narrative": "Check Point describes Volant Manticore, a previously undocumented Iran-nexus espionage group (high confidence on Iran, medium on an MOIS link) that sent a fake CV with the KuboShell backdoor to a Cyprus-based airline and from September 2026 healthcare-themed lures to Saudi organisations. Albania's State Security Agency chief says Iranian operations against Albania continue into 2026 as smaller, more frequent data theft and leak operations with pressure via Telegram. The US is investigating whether Iran was behind attacks on up to 50 energy tankers, with Russia also considered and no direct evidence found yet. In the UK, the NPSA and Ministry of Defence alerted firms supplying Ukraine's forces to increased Russian sabotage attempts via proxies, and the government briefed defence and infrastructure chief executives on Russian threats including cyber attacks. NoName057(16) put a Belgian DDoS researcher on its blacklist; Seqrite reported phishing of Ukrainian government bodies.",
+        "caveat": "Each item names one state at most and these are separate operations; grouping them by region is our inference. Tanker attribution is under investigation, not established. Israel Police's shutdown of internal systems this week has no stated cause and is not included as state activity.",
+        "event_ids": [
+          "check-point-volant-manticore-iran-espionage-2026-11",
+          "checkpoint-volant-manticore-cyprus-saudi-2026-11",
+          "albania-state-security-chief-iran-cyber-warning-2026-11",
+          "us-investigates-iran-cyberattacks-energy-tankers-2026-11",
+          "us-investigates-iran-ship-cyberattacks-bomb-threats-2026-11",
+          "uk-npsa-mod-alert-ukraine-suppliers-sabotage-2026-11",
+          "uk-government-alert-russia-threat-defence-suppliers-2026-11",
+          "noname057-blacklist-belgian-researcher-2026-11",
+          "seqrite-azalea-agent-ukraine-government-phishing-2026-11",
+          "germany-bundesrat-active-cyber-defence-law-2026-11",
+          "le-monde-fsb-linked-phishing-signal-telegram-journalists-2026-11",
+          "india-pio-whatsapp-groups-defence-espionage-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "uk-npsa-mod-alert-ukraine-suppliers-sabotage-2026-11",
+            "to": "uk-government-alert-russia-threat-defence-suppliers-2026-11",
+            "rel": "same UK warning on Russian threats to defence suppliers, reported from two angles",
+            "basis": "inferred"
+          },
+          {
+            "from": "check-point-volant-manticore-iran-espionage-2026-11",
+            "to": "albania-state-security-chief-iran-cyber-warning-2026-11",
+            "rel": "both describe Iranian operations against European states; different targets, no link stated",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "korea-finance-hacks-liability",
+        "title": "South Korea: savings-bank hacks keep coming while regulators move hacking liability onto firms",
+        "kind": "inferred",
+        "confidence": 2,
+        "narrative": "Hankyung counts five savings banks (Yegaram, Welcome, DB, OK and Hana) hacked since late September; Hana says its mobile customer re-verification system was breached on Nov 16 (552 customers), and on Nov 25 Korea Investment Savings Bank said abnormal external transactions on its mobile homepage overnight on Nov 22-23 leaked data of about 86,000 customers. Payment processors KICC and Welcome Payments and Samsung Securities also reported leaks this week. Policy is moving in the same direction: the FSC's draft digital asset act would make exchanges liable without fault for hacking losses and set revenue-based penalties, lawmakers have not yet settled a revenue-based fine in the electronic financial transactions amendment, the FTC asked banks to fix 73 unfair terms on hacking liability, the FSC fined Lotte Card for under-disclosing hacking risk, regulators ran a joint crisis drill with major banks, and the science ministry counts intrusions up 31 percent.",
+        "caveat": "No source links the savings-bank intrusions to one actor or one flaw; they hit different systems. The policy moves are not stated to respond to any particular hack. Several FSC draft-law records are the same announcement from different outlets.",
+        "event_ids": [
+          "korea-savings-banks-five-hacks-hankyung-2026-11",
+          "hana-savings-bank-reverification-breach-2026-11",
+          "korea-investment-savings-bank-mobile-homepage-leak-2026-11",
+          "kicc-van-merchant-data-leak-2026-11",
+          "welcome-payments-merchant-admin-page-leak-2026-11",
+          "samsung-securities-voc-attachment-leak-2026-11",
+          "kg-eduone-savings-bank-training-site-breach-2026-11",
+          "kr-fsc-digital-asset-act-draft-no-fault-liability-2026-11",
+          "korea-fsc-digital-asset-act-hack-surcharge-2026-11",
+          "korea-efta-amendment-hack-fine-subcommittee-2026-11",
+          "korea-ftc-bank-terms-hacking-liability-2026-11",
+          "lotte-card-fsc-disclosure-fine-2026-11",
+          "korea-fsc-joint-crisis-drill-banks-2026-11",
+          "korea-msit-intrusions-up-31-percent-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "hana-savings-bank-reverification-breach-2026-11",
+            "to": "korea-savings-banks-five-hacks-hankyung-2026-11",
+            "rel": "one of five savings-bank hacks counted by Hankyung",
+            "basis": "stated",
+            "url": "https://www.hankyung.com/article/2026112476381"
+          },
+          {
+            "from": "hana-savings-bank-reverification-breach-2026-11",
+            "to": "korea-investment-savings-bank-mobile-homepage-leak-2026-11",
+            "rel": "both savings banks' mobile web channels; no shared actor or flaw stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "lotte-card-fsc-disclosure-fine-2026-11",
+            "to": "korea-efta-amendment-hack-fine-subcommittee-2026-11",
+            "rel": "both about penalties for hacked financial firms; no source ties them",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "binance-laundering-crypto-thefts",
+        "title": "Binance theft: freezing order, coinjoin laundering, and a US forfeiture action for over $1.1 billion; smaller bridges and vaults drained",
+        "kind": "stated",
+        "confidence": 3,
+        "narrative": "The Oct 29 Binance theft is moving through recovery and laundering at once. Binance won a $6.5 billion worldwide freezing order from the ADGM Courts (Nov 18); Lookonchain saw the thief move another 137,602 ETH on Nov 19; Elliptic traced at least 3,930 BTC into coinjoins across thousands of wallets; and on Nov 23 the US Justice Department filed a civil action to forfeit over $1.1 billion in USDC it says are proceeds of the theft by North Korean cyber actors. Smaller thefts continued: Chainflip vaults drained, the CYBER bridge's validator key taken, unbacked tokens minted on the Fusionist ACE bridge, Wagyu's XMR1 deployer drained and Malaysian exchange SINEGY's hot wallet breached. For exchanges and bridges, signing-key custody remains the single point of failure.",
+        "caveat": "The Binance records are one theft, linked by the sources named; North Korean attribution is the DOJ's. The smaller thefts are grouped by sector only, with no shared attacker stated.",
+        "event_ids": [
+          "binance-adgm-freezing-order-2026-11",
+          "binance-theft-lookonchain-137602-eth-moved-2026-11",
+          "elliptic-binance-theft-coinjoin-laundering-2026-11",
+          "doj-forfeiture-1b-usdc-binance-theft-2026-11",
+          "chainflip-vaults-drained-bounty-offer-2026-11",
+          "cyber-bridge-exploit-upbit-bithumb-2026-11",
+          "fusionist-ace-bridge-exploit-2026-11",
+          "wagyu-xmr1-deployer-drain-2026-11",
+          "sinegy-hot-wallet-breach-rm131780-2026-11"
+        ],
+        "chain": [
+          "binance-adgm-freezing-order-2026-11",
+          "binance-theft-lookonchain-137602-eth-moved-2026-11",
+          "elliptic-binance-theft-coinjoin-laundering-2026-11",
+          "doj-forfeiture-1b-usdc-binance-theft-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "binance-adgm-freezing-order-2026-11",
+            "to": "binance-theft-lookonchain-137602-eth-moved-2026-11",
+            "rel": "same Oct 29 Binance theft; thief moves more ETH for laundering",
+            "basis": "stated",
+            "url": "https://crypto.news/binance-hacker-moves-another-248m-in-eth-where-are-the-stolen-funds/"
+          },
+          {
+            "from": "binance-adgm-freezing-order-2026-11",
+            "to": "elliptic-binance-theft-coinjoin-laundering-2026-11",
+            "rel": "same Oct 29 Binance theft; Elliptic traces laundering through coinjoins",
+            "basis": "stated",
+            "url": "https://www.elliptic.co/insights/how-north-korea-is-laundering-the-6-4-billion-stolen-from-binance/"
+          },
+          {
+            "from": "binance-adgm-freezing-order-2026-11",
+            "to": "doj-forfeiture-1b-usdc-binance-theft-2026-11",
+            "rel": "DOJ forfeiture action over the same Binance theft",
+            "basis": "stated",
+            "url": "https://www.justice.gov/opa/pr/united-states-files-action-recover-more-1-billion-cryptocurrency-assets-stolen-north-korean"
+          },
+          {
+            "from": "cyber-bridge-exploit-upbit-bithumb-2026-11",
+            "to": "fusionist-ace-bridge-exploit-2026-11",
+            "rel": "both bridges had unbacked tokens minted; no shared attacker stated",
+            "basis": "inferred"
+          }
+        ]
+      },
+      {
+        "id": "ot-energy-industry",
+        "title": "Energy and industry: fuel sales halted in Bolivia, a US steel plant subsidiary, a uranium site and a wind maker hit; tankers under attack",
+        "kind": "inferred",
+        "confidence": 2,
+        "narrative": "Operational businesses reported intrusions across the week. Bolivia's state fuel company YPFB said a breach suspended billing and fuel sales at its stations until service was restored; Kyoei Steel said its US subsidiary with a plant in El Paso was hit from Nov 17-19 with no effect on shipments so far; Peninsula Energy said an operating server at its Lance uranium project was attacked; Suzlon Energy reported a cyber incident to CERT-In. At sea, the US is investigating attacks on up to 50 energy tankers. Exposed controllers remain an open door: UK agencies are working to secure refrigeration controllers, CISA and INCIBE published Danfoss advisories (including default credentials), CERT@VDE flagged WAGO controller flaws, and a forum seller claims SCADA access to a Taiwan substation.",
+        "caveat": "Grouped by sector only; these organisations were hit by different, mostly unnamed attackers, and several reports do not say whether operational technology was touched. The Taiwan substation item is an unverified sale claim.",
+        "event_ids": [
+          "ypfb-bolivia-computer-breach-fuel-sales-2026-11",
+          "kyoei-steel-us-subsidiary-cyberattack-2026-11",
+          "peninsula-energy-lance-cyberattack-2026-11",
+          "suzlon-energy-cyber-incident-2026-11",
+          "us-investigates-iran-cyberattacks-energy-tankers-2026-11",
+          "uk-rdm-refrigeration-controllers-operation-2026-11",
+          "danfoss-aksm8xxa-cve-2026-129713-2026-11",
+          "incibe-danfoss-ak-sc355-default-credentials-cve-2026-127057-2026-11",
+          "wago-vde-2026-096-privilege-escalation-2026-11",
+          "taiwan-substation-scada-access-sale-claim-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "peninsula-energy-lance-cyberattack-2026-11",
+            "to": "suzlon-energy-cyber-incident-2026-11",
+            "rel": "energy firms reporting in the same days; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "ypfb-bolivia-computer-breach-fuel-sales-2026-11",
+            "to": "kyoei-steel-us-subsidiary-cyberattack-2026-11",
+            "rel": "both disrupted operating businesses this week; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "danfoss-aksm8xxa-cve-2026-129713-2026-11",
+            "to": "incibe-danfoss-ak-sc355-default-credentials-cve-2026-127057-2026-11",
+            "rel": "same vendor's controllers, different flaws",
+            "basis": "inferred"
+          }
+        ]
+      }
+    ]
+  },
+  "ripples": {
+    "generated_at": "2026-11-25T11:00:09Z",
+    "items": [
+      {
+        "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Palo Alto Networks says Fragnesia (CVE-2026-46300), a Linux kernel privilege-escalation flaw, was exploited against PAN-OS management interfaces exposed to the internet, after attackers first exploited PHP2Shell; fixed PAN-OS builds are listed in PAN-SA-2026-0015."
+        ],
+        "downstream": [
+          "PHP2Shell was already used to root and in some cases wipe unpatched Check Point gateways from Oct 30, so the same entry point now reaches two firewall vendors (stated by each vendor).",
+          "A firewall rooted through its management interface can expose VPN credentials, configuration and traffic policy for the whole network (our inference from how the product works).",
+          "Any other appliance that bundles PHP with the PHP2Shell or phpAfterShell flaws may be reachable the same way (inference; no other vendor has said so)."
+        ],
+        "watch_for": [
+          "A CISA KEV entry for CVE-2026-46300",
+          "Other appliance vendors naming PHP2Shell or phpAfterShell in their products",
+          "Unexpected admin sessions or files on PAN-OS management interfaces",
+          "Victim reports or counts from Palo Alto Networks"
+        ],
+        "who_should_care": [
+          "Palo Alto Networks customers with management interfaces reachable from the internet",
+          "Check Point and F5 customers",
+          "Network security teams",
+          "MSSPs"
+        ]
+      },
+      {
+        "event_id": "greynoise-gt13-check-point-management-intrusions-2026-11",
+        "basis": "stated",
+        "direct": [
+          "GreyNoise says GT13 used 99 IP addresses against Check Point Security Management Servers from Oct 17 to Nov 2, reaching at least 22 organisations, running over 100 management tasks and taking data from 24 servers; it lists CVE-2026-16232 among the flaws."
+        ],
+        "downstream": [
+          "A management server holds policy, credentials and configuration for every gateway it manages, so a compromise there can change or expose firewall rules across the estate (our inference from how the product works).",
+          "Victims that have not checked management-server logs since October may not know they were reached."
+        ],
+        "watch_for": [
+          "A Check Point advisory or CISA KEV entry for CVE-2026-16232",
+          "Unexpected management tasks or admin sessions in SmartConsole audit logs since Oct 17",
+          "Policy pushes nobody scheduled",
+          "Further GT13 reporting or attribution"
+        ],
+        "who_should_care": [
+          "Check Point customers",
+          "Network security teams",
+          "MSSPs running firewall management"
+        ]
+      },
+      {
+        "event_id": "gtig-armory-castle-vcenter-zero-day-2026-11",
+        "basis": "stated",
+        "direct": [
+          "An unauthenticated attacker can bypass authentication on VMware vCenter Server (CVE-2026-123890, CVSS 9.8); Google says ARMORY CASTLE exploited it as a zero-day, and Rapid7 reports activity from as early as September. Fixes include vCenter 8.0 U3m; there is no workaround."
+        ],
+        "downstream": [
+          "vCenter controls every virtual machine it manages, so one compromised server can expose a whole virtual estate.",
+          "Exploitation predates the fix, so patching does not show whether a server was already entered; logs back to September matter."
+        ],
+        "watch_for": [
+          "vCenter servers reachable from untrusted networks",
+          "Unexpected vCenter sign-ins or new local accounts",
+          "Hunting guidance and indicators from Google and Broadcom",
+          "Victims named in follow-up reporting"
+        ],
+        "who_should_care": [
+          "Virtualisation admins",
+          "SOC analysts",
+          "Incident responders"
+        ]
+      },
+      {
+        "event_id": "microsoft-entra-connect-health-api-metadata-access-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Microsoft says a flaw in the Entra Connect Health API gave unauthorized read-only access to tenant-level metadata, exposed from 23 July; a fix was deployed on Nov 19 and impacted customers were told via Azure Service Health. Exposed items include tenant IDs, organisation and domain names and technical contacts' email addresses; Microsoft says no passwords, hashes, tokens or keys were exposed."
+        ],
+        "downstream": [
+          "Tenant IDs, domains and named technical contacts are what a targeted phishing or help-desk vishing campaign needs, so affected tenants should expect better-aimed lures (our inference; no misuse reported).",
+          "Microsoft has not said how many organisations were affected, so customers must check Service Health themselves."
+        ],
+        "watch_for": [
+          "Azure Service Health notices for your tenant",
+          "Phishing or calls naming your Entra technical contacts",
+          "A count of affected organisations from Microsoft"
+        ],
+        "who_should_care": [
+          "Microsoft Entra administrators",
+          "Identity and help-desk teams",
+          "Security awareness teams"
+        ]
+      },
+      {
+        "event_id": "plaid-karte-unauthorized-access-2026-11",
+        "basis": "stated",
+        "direct": [
+          "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
+        ],
+        "downstream": [
+          "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million ZOZOTOWN customers, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million, plus Sharp, Mitsumo, Timee, Mainichi Shimbun, Schoo and PLUS.",
+          "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
+          "Companies that ended their KARTE contract are included, so former customers should check too."
+        ],
+        "watch_for": [
+          "Further KARTE customers announcing leaks",
+          "Phishing that uses shop names, member IDs and dates of birth",
+          "Use of integration keys connected to KARTE",
+          "Regulator action by Japan's Personal Information Protection Commission"
+        ],
+        "who_should_care": [
+          "Japanese retailers and banks",
+          "Marketing technology owners",
+          "Vendor management"
+        ]
+      },
+      {
+        "event_id": "hexpm-registry-rce-exploited-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Hex says an attacker exploited CVE-2026-129514 on Nov 23 to run commands on hex.pm web servers. It found no changed packages or lasting access, but cannot rule out that email addresses, password hashes, API key hashes and 2FA secrets were read; it rotated credentials."
+        ],
+        "downstream": [
+          "Hex tells users to change passwords and reset 2FA; any reused password or unrotated API key is at risk (stated advice).",
+          "Elixir and Erlang teams that publish packages could see attempts to take over publisher accounts and push malicious versions (our inference; none reported)."
+        ],
+        "watch_for": [
+          "New package versions published by unexpected accounts",
+          "Hex follow-up findings on package integrity",
+          "Phishing aimed at Hex package maintainers"
+        ],
+        "who_should_care": [
+          "Elixir and Erlang developers",
+          "Package maintainers on hex.pm",
+          "Software supply chain teams"
+        ]
+      },
+      {
+        "event_id": "cia-odni-osint-network-breach-2026-11",
+        "basis": "inferred",
+        "direct": [
+          "The New York Times, relayed by Reuters and others, reports that the CIA and ODNI found an intrusion into a network used to gather intelligence from public sources, exposing some unclassified information; ODNI says classified systems and critical capabilities were not affected. Unnamed sources say early indicators point to China; investigators have not named who is responsible."
+        ],
+        "downstream": [
+          "What analysts searched for in an open-source collection system could reveal intelligence priorities even if no classified data was touched (our inference).",
+          "Contractors and vendors that run or feed such systems may be asked to check their own access (inference; not reported)."
+        ],
+        "watch_for": [
+          "An official statement on scope or attribution",
+          "Advisories to contractors that support open-source intelligence platforms",
+          "Any link stated between this and the FinCEN or NCIC incidents (none so far)"
+        ],
+        "who_should_care": [
+          "US government agencies and contractors",
+          "Vendors of OSINT and analytics platforms"
+        ]
+      },
+      {
+        "event_id": "doj-forfeiture-1b-usdc-binance-theft-2026-11",
+        "basis": "stated",
+        "direct": [
+          "The Justice Department filed a civil action to forfeit over $1.1 billion in USDC it says are proceeds of the Oct 29 Binance theft by North Korean cyber actors, and says it is helping Binance recover over $6 billion in stolen assets."
+        ],
+        "downstream": [
+          "Stablecoin issuers and exchanges are being used as recovery points, so frozen USDC can be pursued in court (stated by the DOJ action).",
+          "The rest of the theft is being laundered through coinjoins and many wallets (Elliptic), so services that receive those funds risk freezes and legal exposure (inference from the freezing order and forfeiture)."
+        ],
+        "watch_for": [
+          "Further forfeiture or seizure actions",
+          "Wallet lists from Binance's ADGM freezing order reaching more services",
+          "Sanctions designations tied to the laundering"
+        ],
+        "who_should_care": [
+          "Exchanges and stablecoin issuers",
+          "Crypto compliance teams",
+          "Bridges and mixers' counterparties"
+        ]
+      },
+      {
+        "event_id": "cert-fr-nginx-http2-rce-2026-11",
+        "basis": "stated",
+        "direct": [
+          "NGINX Open Source and Plus from 1.9.5 with HTTP/2 can be made to run code as the nginx worker without a login; fixes are in 1.30.7 and 1.31.9, and proof-of-concept code is public for one flaw."
+        ],
+        "downstream": [
+          "Xint chained one flaw with an unpatched Linux kernel SCTP bug to reach root and escape a Docker container, so a web front end can become a host compromise.",
+          "NGINX is embedded in load balancers, Kubernetes ingress controllers and appliances that update on their vendors' schedules; Synology has already listed the same CVE in DSM, so expect more appliance advisories."
+        ],
+        "watch_for": [
+          "Ingress and appliance vendors shipping fixed NGINX builds",
+          "Worker crashes on HTTP/2 traffic",
+          "A Linux kernel fix and CVE for the SCTP flaw",
+          "Reports of in-the-wild exploitation",
+          "Appliance advisories naming CVE-2026-123007"
+        ],
+        "who_should_care": [
+          "Web operations",
+          "Kubernetes teams",
+          "Appliance owners"
+        ]
+      },
+      {
+        "event_id": "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Genesis Lab says Douzone Bizon told it that its APO data backup server was accessed without authorisation and stored data, possibly including employees' names, resident registration numbers, account numbers and addresses, may have been taken; Incheon Airport Facilities Management names the same backup service as the cause."
+        ],
+        "downstream": [
+          "Every Douzone APO backup customer may hold copies of employee and payroll data on the affected servers, so more notices are likely (our inference from the pattern of named clients).",
+          "Resident registration and bank account numbers enable identity fraud and targeted phishing against staff (inference)."
+        ],
+        "watch_for": [
+          "Further organisations naming Douzone Bizon's backup service",
+          "A statement from Douzone Bizon on scope and cause",
+          "PIPC investigation or guidance"
+        ],
+        "who_should_care": [
+          "Douzone Bizon customers in Korea",
+          "HR and payroll teams",
+          "Korean public bodies using outsourced backup"
+        ]
+      }
+    ]
+  }
+}

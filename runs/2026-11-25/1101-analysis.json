@@ -1,0 +1,33 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-25T10:40:00Z",
+  "finished_at": "2026-11-25T11:01:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-18 --limit 2000",
+    "q.mjs find php2shell --since 2026-11-01",
+    "q.mjs find Douzone --since 2026-10-15",
+    "q.mjs find Fragnesia"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "check-point-php2shell-gateway-wiper-campaign-2026-11",
+    "winwyvern-fake-ollama-byovd-korea-2026-11",
+    "hana-savings-bank-reverification-breach-2026-11",
+    "binance-adgm-freezing-order-2026-11"
+  ],
+  "skipped": [
+    {"title": "Israel Police shut down internal messaging apps / systems", "url": "https://alghad.com/", "reason": "Cause not determined (cyberattack or technical failure); left out of the state-pressure pattern so no state link is implied"},
+    {"title": "Outages-and-hospitals pattern (OVHcloud Paris, TikTok, Claude errors, CHdN Luxembourg)", "url": "", "reason": "Dropped to stay within 12 patterns; nothing but timing connects them"},
+    {"title": "Apache Roller exploited (2026-11-17)", "url": "", "reason": "Older than the 7-day window; dropped from exploited-now"}
+  ],
+  "open_leads": [
+    {"title": "Douzone Bizon APO backup breach: are Damyang Cultural Foundation and the Genesis Lab / Incheon Airport Facilities notices one intrusion?", "url": "https://www.boannews.com/news/articleView.html?idxno=147443", "note": "Could not open the Boannews page in this run (fetch denied), so the edge stays inferred and no arc was drawn. If Boannews or Douzone names Damyang as part of the same breach, add a stated link damyang -> douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities.", "priority": "medium"},
+    {"title": "Possible duplicate records for the update/merge desk", "url": "", "note": "CIA/ODNI open-source system intrusion appears as 7 records (cia-odni-osint-network-breach, cia-ngc-odni-unclassified-system-intrusion-nyt, cia-odni-open-source-system-intrusion, cia-odni-open-source-network-intrusion, cia-odni-osint-system-breach, cia-open-source-network-intrusion-reported, cia-reported-hack-government-system); Entra Connect Health (2026-11-20 and 2026-11-25 records); Unit 42 Vortex/Cinder (two records); Volant Manticore (two records); fake Ollama / WinWyvern (two records); Next supplier (two records); Allied Press / Allied Media NZ (two records); Korea FSC digital asset act (five records); Austria tourism-data phishing warnings (two records).", "priority": "medium"},
+    {"title": "PAN-OS Fragnesia: CISA KEV entry or victim count", "url": "https://security.paloaltonetworks.com/PAN-SA-2026-0015", "note": "Bulletin is informational with no victim count; watch for KEV and for other appliance vendors naming PHP2Shell", "priority": "high"},
+    {"title": "NZ media: Allied Media (Nov 24) and RNZ (Nov 25) breaches", "url": "https://www.1news.co.nz/2026/11/25/rnz-investigates-potential-cyber-breach-odt-laid-out-by-hand/", "note": "Two NZ media organisations within two days; only timing connects them. Not made a pattern; revisit if a source links them", "priority": "low"}
+  ],
+  "failed_sites": ["boannews.com (fetch denied in this run)"],
+  "notes": "Rewrote data/analysis.json (12 patterns: 3 stated, 8 inferred, 1 timing) and data/ripples.json (10 items, 4 carried from yesterday: greynoise-gt13, gtig vCenter, PLAID KARTE, CERT-FR NGINX; 6 new: PAN-OS Fragnesia, Entra Connect Health, Hex.pm, CIA/ODNI (inferred basis), DOJ Binance forfeiture, Douzone Bizon). Snapshot saved to data/snapshots/analysis/2026-11-25.json. Stated edges added as links on the earlier event, each with the URL of the page that states it: check-point-php2shell -> palo-alto fragnesia (PAN-SA-2026-0015 names PHP2Shell as the required first step); winwyvern -> fake-ollama (VTV relays the same AhnLab ASEC finding); hana-savings-bank -> korea-savings-banks-five-hacks (Hankyung counts Hana among five); binance-adgm -> doj-forfeiture (DOJ names the Oct 29 Binance theft). The US federal intrusions pattern is labelled timing only; the China indication is attributed to unnamed NYT sources and applies only to the CIA/ODNI case. Every pattern was checked by script: it has a kind and a caveat, has at least 2 events on file inside the window (PLAID root and the Check Point PHP2Shell event kept as context for their chains), and every stated edge has a url. No events were added. node scripts/build.mjs passes (265 hygiene warnings that were already there, none from this job). No instructions found in the data."
+}

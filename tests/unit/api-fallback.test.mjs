@@ -9,11 +9,11 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { fallbackDecision, fallbackConfig, fallbackSpend, estimateCost, PRICES, FALLBACK_ENV, DEFAULT_FALLBACK } from "../../scripts/lib/usage.mjs";
+import { fallbackDecision, fallbackConfig, fallbackSpend, estimateCost, PRICES, FALLBACK_ENV, DEFAULT_FALLBACK, apiPrimaryLive, apiTestReport, budgetState, limitHits } from "../../scripts/lib/usage.mjs";
 import { workerEnv, ledgerLine, planLevelFor } from "../../scripts/run-job.mjs";
 import { fallbackProblems, THRESHOLD } from "../../scripts/pipecheck.mjs";
 import { apiFallbackReport } from "../../scripts/efficiency.mjs";
-import { fallbackStatus, fallbackLine } from "../../scripts/budget.mjs";
+import { fallbackStatus, fallbackLine, apiTestLines } from "../../scripts/budget.mjs";
 
 const NOW = Date.parse("2026-11-23T12:00:00Z"), iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z"), m = (min) => iso(NOW - min * 6e4);
 const SECRET = "FAKEKEY-cyberview-fallback-must-not-leak-0001";   // deliberately NOT sk-ant-shaped so the secret scanner does not flag the test; masking is value-agnostic
@@ -120,7 +120,7 @@ test("config: the dials default, and a broken cap falls back to 150; the env var
   assert.equal(fallbackConfig({}).env_var, "CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY");
   // the real config carries the dials
   const real = JSON.parse(readFileSync(join(repo, "config", "pipeline.json"), "utf8")).usage_budget.api_fallback;
-  assert.equal(real.enabled, true); assert.equal(real.monthly_usd_cap, 150); assert.ok(typeof real._note === "string" && real._note.includes("CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY"));
+  assert.equal(real.enabled, true); assert.ok(real.monthly_usd_cap > 0); assert.ok(typeof real._note === "string" && real._note.includes("CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY"));
 });
 
 test("pipecheck: an info problem while on the API fallback, a needs-attention problem at the cap; both via health.json", () => {
@@ -183,4 +183,80 @@ test("workers never inherit the launcher's early-compaction settings", () => {
   const e = workerEnv("subscription", "", { PATH: "/bin", CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000", CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "20" });
   assert.ok(!("CLAUDE_CODE_AUTO_COMPACT_WINDOW" in e)); assert.ok(!("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE" in e));
   assert.equal(e.PATH, "/bin");
+});
+
+// ---------- API-primary window (owner, 2026-11-25: measure 24 hours of the pipeline on the API) ----------
+test("api_primary: parsed only when from < until, both ISO; live only inside the window", () => {
+  assert.equal(fallbackConfig({ api_fallback: {} }).api_primary, null);
+  assert.equal(fallbackConfig({ api_fallback: { api_primary: { from: "2026-11-25T16:00:00Z" } } }).api_primary, null, "no until");
+  assert.equal(fallbackConfig({ api_fallback: { api_primary: { from: "2026-11-26T16:00:00Z", until: "2026-11-25T16:00:00Z" } } }).api_primary, null, "until before from");
+  assert.equal(fallbackConfig({ api_fallback: { api_primary: { from: "tomorrow", until: "2026-11-25T16:00:00Z" } } }).api_primary, null, "not ISO");
+  const fb = fallbackConfig({ api_fallback: { api_primary: { from: "2026-11-25T16:00:00Z", until: "2026-11-26T16:00:00Z" } } });
+  assert.deepEqual(fb.api_primary, { from: "2026-11-25T16:00:00Z", until: "2026-11-26T16:00:00Z" });
+  assert.equal(apiPrimaryLive(fb, Date.parse("2026-11-25T15:59:00Z")), false);
+  assert.equal(apiPrimaryLive(fb, Date.parse("2026-11-25T16:00:00Z")), true);
+  assert.equal(apiPrimaryLive(fb, Date.parse("2026-11-26T15:59:00Z")), true);
+  assert.equal(apiPrimaryLive(fb, Date.parse("2026-11-26T16:00:00Z")), false, "ends at until");
+  assert.equal(apiPrimaryLive(fallbackConfig({}), NOW), false);
+});
+
+test("api_primary decision: the key bills first; without it (no key, disabled, cap, its own limit) the old rules apply", () => {
+  const base = { now: NOW, fallbackKeyPresent: true, enabled: true, monthSpendUsd: 0, cap: 400, fallbackKeyLimited: false, apiPrimary: true };
+  const live = new Date(NOW + 3600e3).toISOString();
+  assert.equal(fallbackDecision({ ...base, limited_until: null }), "api");
+  assert.equal(fallbackDecision({ ...base, limited_until: live }), "api", "a subscription limit does not matter");
+  assert.equal(fallbackDecision({ ...base, fallbackKeyPresent: false }), "subscription", "no key: subscription");
+  assert.equal(fallbackDecision({ ...base, enabled: false }), "subscription", "disabled: subscription");
+  assert.equal(fallbackDecision({ ...base, monthSpendUsd: 400 }), "subscription", "cap reached: subscription");
+  assert.equal(fallbackDecision({ ...base, fallbackKeyLimited: true }), "subscription", "the key hit its limit: subscription");
+  assert.equal(fallbackDecision({ ...base, fallbackKeyLimited: true, limited_until: live }), "park", "both limited: park");
+  assert.equal(fallbackDecision({ ...base, apiPrimary: false }), "subscription", "outside the window: unchanged");
+});
+
+test("api_primary: the worker gets the key, the ledger says served api, the plan level is ok, spend counts toward the cap", () => {
+  const env = workerEnv("api", "sk-test-not-real", { PATH: "/bin", ANTHROPIC_API_KEY: "stray", CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: "sk-test-not-real" });
+  assert.equal(env.ANTHROPIC_API_KEY, "sk-test-not-real"); assert.equal(env.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, undefined);
+  assert.equal(workerEnv("subscription", "sk-test-not-real", { PATH: "/bin", ANTHROPIC_API_KEY: "stray" }).ANTHROPIC_API_KEY, undefined);
+  const l = ledgerLine("sweep", "researcher", 1, "sonnet", 1000, JSON.stringify({ is_error: false, num_turns: 3, total_cost_usd: 0.5, usage: {} }), null, "api");
+  assert.equal(l.served, "api");
+  assert.equal(ledgerLine("sweep", "researcher", 1, "sonnet", 1, "{}", null, "bogus").served, "subscription");
+  assert.equal(planLevelFor({ level: "stop", limited_until: null }, "api"), "ok");
+  const mk = new Date(NOW).toISOString().slice(0, 7);
+  assert.ok(fallbackSpend([{ at: mk + "-02T00:00:00Z", served: "api", model: "sonnet", in: 1e6 }], NOW).usd > 0);
+});
+
+test("api_primary: API-billed lines leave the subscription estimate and limit hits alone", () => {
+  const at = new Date(NOW - 600e3).toISOString();
+  const lim = { at, ok: false, error: "Claude AI usage limit reached", served: "api" };
+  assert.deepEqual(limitHits([lim]), [], "the key's own limit is not the plan's");
+  const cfg = { window_hours: 5, window_cost: 10, week_cost: 100, stop_pct: 120, tight_pct: 80 };
+  const b = budgetState(NOW, cfg, [{ at, ok: true, served: "api", cost: 50, in: 1 }]);
+  assert.equal(b.level, "ok"); assert.equal(b.window.cost, 0);
+});
+
+test("api-test report: CLI cost first, the estimate for unpriced lines, scaled to 24 hours", () => {
+  const w = { from: "2026-11-25T16:00:00Z", until: "2026-11-26T16:00:00Z" };
+  const lines = [
+    { at: "2026-11-25T16:10:00Z", served: "api", job: "sweep", model: "sonnet", ok: true, cost: 1.5, in: 1e6 },
+    { at: "2026-11-25T17:10:00Z", served: "api", job: "analysis", model: "opus", ok: true, cost: 2.5 },
+    { at: "2026-11-25T18:10:00Z", served: "api", job: "sweep", model: "sonnet", ok: false, cost: null, in: 1e6 },
+    { at: "2026-11-25T17:00:00Z", served: "subscription", job: "sweep", model: "sonnet", ok: true, cost: 9 },
+    { at: "2026-11-25T15:00:00Z", served: "api", job: "sweep", model: "sonnet", ok: true, cost: 9 },
+  ];
+  const r = apiTestReport(lines, w, Date.parse("2026-11-25T18:10:00Z"));
+  assert.equal(r.workers, 3); assert.equal(r.ok, 2); assert.equal(r.unpriced, 1);
+  assert.equal(r.cost_usd, 6); assert.equal(r.hours, 2); assert.equal(r.per_24h_usd, 72);
+  assert.deepEqual(r.by_model, { sonnet: 3.5, opus: 2.5 }); assert.deepEqual(r.by_job, { sweep: 3.5, analysis: 2.5 });
+  const txt = apiTestLines(r, Date.parse("2026-11-25T18:10:00Z")).join("\n");
+  assert.match(txt, /running/); assert.match(txt, /About \$72 per 24 hours/); assert.doesNotMatch(txt, /sk-/);
+  assert.equal(apiTestReport([], w, NOW).workers, 0);
+  assert.match(apiTestLines(apiTestReport([], w, NOW), NOW).join(" "), /No worker/);
+  assert.equal(apiTestReport(lines, null), null);
+});
+
+test("pipecheck: an info problem during the API cost test", () => {
+  const fb = { enabled: true, monthly_usd_cap: 400, api_primary: { from: "2026-11-25T16:00:00Z", until: "2026-11-26T16:00:00Z" } };
+  const p = fallbackProblems([{ at: m(5), served: "api", model: "sonnet", in: 1e5 }], fb, NOW);
+  const i = p.find((x) => x.id === "api-primary");
+  assert.ok(i); assert.equal(i.level, "info"); assert.equal(i.threshold_min, THRESHOLD["api-primary"]); assert.match(i.text, /API cost test/);
 });

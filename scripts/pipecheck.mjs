@@ -38,7 +38,7 @@ import { budgetState, budgetConfig, fallbackConfig, fallbackSpend, readUsage } f
 
 export const LABEL = "pipeline-alert";
 // minutes a problem must last before an issue is opened (the status page lists it at once)
-export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60, "api-fallback": 0, "api-fallback-cap": 3 * 60 };
+export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60, "api-fallback": 0, "api-primary": 0, "api-fallback-cap": 3 * 60 };
 export const UNREVIEWED_MIN = 120, KEY_MEMORY_DAYS = 3, KEY_KEEP_DAYS = 14, HEAL_EVERY_MIN = 60, REMIND_HOURS = 24, MAX_OPEN_PER_RUN = 5;
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const ago = (m) => (m === null ? "never" : m < 120 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`);
@@ -205,6 +205,10 @@ export function fallbackProblems(lines, fb, now = Date.now()) {
     const since = fbLines.length ? String(fbLines[0]).slice(0, 16).replace("T", " ") + " UTC" : "recently";
     out.push({ id: "api-fallback", level: "info", threshold_min: THRESHOLD["api-fallback"],
       text: `running on the API fallback since ${since}: the subscription 5-hour window is exhausted, so pipeline workers are billed to the Anthropic API (expected; ${spend.workers} worker line(s), est $${spend.usd} this month, cap $${fb.monthly_usd_cap})` });
+  }
+  if (recent[0] && recent[0].served === "api" && fb.api_primary) {
+    out.push({ id: "api-primary", level: "info", threshold_min: THRESHOLD["api-primary"],
+      text: `API cost test: pipeline workers are billed to the Anthropic API until ${String(fb.api_primary.until).slice(0, 16).replace("T", " ")} UTC (usage_budget.api_fallback.api_primary; est $${spend.usd} this month, cap $${fb.monthly_usd_cap})` });
   }
   if (fb.enabled && fb.monthly_usd_cap > 0 && spend.usd >= fb.monthly_usd_cap) {
     out.push({ id: "api-fallback-cap", level: "warn", threshold_min: THRESHOLD["api-fallback-cap"],

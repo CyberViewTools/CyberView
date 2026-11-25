@@ -62,7 +62,10 @@ export function siteConfig() {
   return { ...c, contact_email: email };
 }
 
-export const NAV = [["./", "Map", "index"], ["vulnerabilities.html", "Vulnerabilities", "vulnerabilities"], ["tools.html", "Tools", "tools"], ["archive.html", "Archive", "archive"], ["trends.html", "Trends", "trends"], ["actors.html", "Actors", "actors"], ["tabletop.html", "Exercise", "tabletop"], ["community.html", "Community", "community"], ["status.html", "Status", "status"], ["about.html", "About", "about"]];
+// the site's top bar (owner, 2026-11-25): Actors and the event Archive live under Library (its section links), not in the bar
+export const NAV = [["./", "Map", "index"], ["vulnerabilities.html", "Vulnerabilities", "vulnerabilities"], ["tools.html", "Tools", "tools"], ["library.html", "Library", "library"], ["trends.html", "Trends", "trends"], ["tabletop.html", "Exercise", "tabletop"], ["community.html", "Community", "community"], ["status.html", "Status", "status"], ["about.html", "About", "about"]];
+// pages reached from the Library section strip (site/library.html, actors.html, archive.html), no longer in the top bar
+export const LIBNAV = [["actors.html", "Actors in events", "actors"], ["archive.html", "Event archive", "archive"]];
 export const navMarkup = (cur, cls) => `<nav class="${cls}" aria-label="Site">` + NAV.map(([h, t, k]) => `<a href="${h}"${k === cur ? ' aria-current="page"' : ""}>${t}</a>`).join("") + "</nav>";
 const BURGER = '<button type="button" class="navbtn" id="navBtn" aria-expanded="false" aria-controls="navSheet" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
 

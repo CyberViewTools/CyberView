@@ -1,0 +1,66 @@
+{
+  "job": "updater",
+  "started_at": "2026-11-25T23:05:00Z",
+  "finished_at": "2026-11-25T23:20:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "title": "CISA KEV catalog",
+      "used_in": "mitel-micollab-awv-critical-flaws-2026-11"
+    },
+    {
+      "url": "https://cve.now/CVE-2026-133311",
+      "title": "cve.now aggregator",
+      "used_in": "read, not cited"
+    },
+    {
+      "url": "https://cve.now/CVE-2026-133323",
+      "title": "cve.now aggregator",
+      "used_in": "read, not cited"
+    },
+    {
+      "url": "https://cve.now/CVE-2026-133324",
+      "title": "cve.now aggregator",
+      "used_in": "read, not cited"
+    },
+    {
+      "url": "https://cyber.gc.ca/en/alerts-advisories/gitlab-security-advisory-av26-1210",
+      "title": "GitLab security advisory AV26-1210",
+      "used_in": "unrelated"
+    }
+  ],
+  "updated": [
+    {
+      "id": "mitel-micollab-awv-critical-flaws-2026-11",
+      "what": "CISA KEV added 3 CVEs on 25 Nov; severity 3; correction file added"
+    }
+  ],
+  "unchanged": [],
+  "unrelated": [
+    "cccs-gitlab-advisory-av26-1168-2026-11: AV26-1210 is a different GitLab release (19.6.2 etc.), not AV26-1168"
+  ],
+  "added": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "GitLab AV26-1210 (patch releases 19.6.2, 19.5.9, 19.4.11 ...)",
+      "url": "https://cyber.gc.ca/en/alerts-advisories/gitlab-security-advisory-av26-1210",
+      "note": "possible new event for research loop",
+      "priority": "low"
+    },
+    {
+      "title": "Decathlon: Le Dauphine reports 163 000 clients",
+      "url": "https://www.ledauphine.com/faits-divers-justice/2026/11/25/decathlon-victime-d-une-cyberattaque-163-000-clients-exposes-a-une-fuite-de-donnees",
+      "note": "could not be opened (fetch tool refused the host); figure 163 000 vs 137 000 on file unchecked",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "ledauphine.com"
+  ],
+  "notes": "cve.now is a model-generated aggregator; claims taken from CISA's own catalog instead.",
+  "worker_role": "updater",
+  "worker_model": "sonnet"
+}

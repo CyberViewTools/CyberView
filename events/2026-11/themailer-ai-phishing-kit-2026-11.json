@@ -1,7 +1,7 @@
 {
   "title": "Varonis documents TheMailer, a self-hosted phishing kit that uses commercial AI models to reach inboxes",
   "date": "2026-11-18",
-  "date_note": "Publication date not stated on the Varonis page; coverage appeared November 17-18.",
+  "date_note": "Publication date not stated on the Varonis page; the earliest date available is when this record was first seen (19 November); TechRadar's article is dated 22 November.",
   "category": "report",
   "severity": 2,
   "status": "confirmed",
@@ -14,10 +14,10 @@
   "geo_basis": "researcher HQ",
   "pin_type": "researcher",
   "actor": "",
-  "summary": "Varonis Threat Labs describes TheMailer, a self-hosted phishing platform sold for a lifetime licence of about $3,000 to $6,000. It uses operator-supplied keys for AI services to rewrite lures, send test emails and retry until they reach the inbox. A sample target list held 145,133 mostly Japanese .co.jp and .ac.jp addresses.",
+  "summary": "Varonis Threat Labs describes TheMailer, a self-hosted phishing platform sold with a lifetime licence of $3,000 to $6,000. It uses operator-supplied keys for AI services to rewrite lures, send test emails and retry until they reach the inbox. An Autopilot screenshot shows a list of 145,133 entries, nearly all Japanese .co.jp and .ac.jp domains.",
   "plain": "A phishing kit sold to criminals uses AI chatbots to rewrite scam emails until spam filters let them through.",
-  "exec": "Per-recipient rewriting defeats content-based email filtering, so defences must rely on sender behaviour and link checks.",
-  "action": "General advice: enforce SPF, DKIM and DMARC at p=reject, check links through the full redirect chain at click time, and tune detection to sender behaviour rather than message content.",
+  "exec": "Varonis says the kit rewrites messages that spam filters block and retries delivery; TechRadar notes this makes detection based on identical templates less reliable.",
+  "action": "Varonis advises enforcing SPF, DKIM and DMARC at p=reject and checking links through their full redirect chain at click time.",
   "tags": [
     "phishing"
   ],
@@ -44,14 +44,23 @@
     "note": "Varonis' own write-up and TechRadar (22 Nov, citing Varonis Threat Labs) both describe the kit; TechRadar relays Varonis, so the vendor's own page remains the primary. Vendor also promotes its own product."
   },
   "first_seen": "2026-11-19T04:30:00Z",
-  "updated_at": "2026-11-25T01:03:10Z",
+  "updated_at": "2026-11-25T01:11:00Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-19T05:13:03Z",
-    "note": "Varonis post: 3,000-6,000 USD licence, operator API keys, 145,133 mostly .co.jp/.ac.jp entries match; publication date not visible on page.",
-    "flags": []
+    "state": "corrected",
+    "at": "2026-11-25T01:11:00Z",
+    "first_at": "2026-11-19T05:13:03Z",
+    "note": "figure qualifier (removed 'about' from licence price), evidence added, action sourced to Varonis, unsourced exec removed, date_note",
+    "flags": [
+      "source-published-partial"
+    ],
+    "categories": [
+      "unsourced",
+      "action",
+      "figure",
+      "date"
+    ]
   },
-  "qa_checked_at": "2026-11-19T05:13:03Z",
+  "qa_checked_at": "2026-11-25T01:11:00Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -61,5 +70,15 @@
   "surface": {
     "value": "email-phishing",
     "basis": "stated"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://www.varonis.com/blog/themailer-ai-phishing-kit",
+      "quote": "TheMailer is sold with a lifetime license for $3,000 to $6,000"
+    },
+    {
+      "url": "https://www.varonis.com/blog/themailer-ai-phishing-kit",
+      "quote": "145,133"
+    }
+  ]
 }

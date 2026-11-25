@@ -1,0 +1,86 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-25T01:09:58Z",
+  "finished_at": "2026-11-25T01:15:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://ascii.jp/elem/000/004/454/4454398/",
+      "title": "JAXAに不正アクセス、2000人分のアカウント情報漏えい",
+      "used_in": "jaxa-earth-observation-public-system-breach-2026-11"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-61512",
+      "title": "VeraCrypt CVE-2026-61512",
+      "used_in": "closed, not event"
+    },
+    {
+      "url": "https://www.vulncheck.com/advisories/veracrypt-before-1.26.30-command-injection-via-coreunix-checkfilesystem",
+      "title": "VulnCheck VeraCrypt advisory",
+      "used_in": "closed, not event"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132739",
+      "title": "MediaWiki CentralNotice CSRF",
+      "used_in": "closed, not event"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132743",
+      "title": "WikiLambda injection",
+      "used_in": "closed, not event"
+    },
+    {
+      "url": "https://www.mt.co.kr/stock/2026/11/25/2026112510002777458",
+      "title": "AhnLab 52-week high",
+      "used_in": "closed, not event"
+    },
+    {
+      "url": "https://www.econovill.com/news/articleView.html?idxno=758433",
+      "title": "SKT satisfaction survey",
+      "used_in": "closed, not event"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "jaxa-earth-observation-public-system-breach-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "CVE-2026-132739 MediaWiki CentralNotice",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132739",
+      "reason": "medium severity, no exploitation"
+    },
+    {
+      "title": "CVE-2026-132743 WikiLambda",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-132743",
+      "reason": "medium severity, no exploitation"
+    },
+    {
+      "title": "CVE-2026-61512 VeraCrypt",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-61512",
+      "reason": "local-only; PoC repo returned 403 to reader"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Hana Savings Bank breach (552 customers, 16th) and NYT report of CIA/ODNI hack",
+      "url": "https://www.mt.co.kr/stock/2026/11/25/2026112510002777458",
+      "note": "mentioned in stock article only; need primary reports",
+      "priority": "medium"
+    },
+    {
+      "title": "VeraCrypt CVE-2026-61512 PoC",
+      "url": "https://github.com/Haitam-lazaar/veracrypt-checkfs-lpe",
+      "note": "GitHub returned 403; confirm public exploit code",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "github.com (403)",
+    "python3/sed edits needed approval; JAXA file edited directly"
+  ],
+  "notes": "JAXA event rewritten from ASCII.jp (cybersecurity-jp page unreadable by reviewer, dropped); figure written as 2000 to match page quote. Cofense event left single_source.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

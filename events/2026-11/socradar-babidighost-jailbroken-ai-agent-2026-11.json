@@ -6,7 +6,7 @@
   "date": "2026-11-20",
   "date_note": "Date of SOCRadar's report; it says the activity lasted nine days in November 2026 and the operator's server was offline by 16 November",
   "first_seen": "2026-11-23T06:56:52Z",
-  "updated_at": "2026-11-25T10:42:00Z",
+  "updated_at": "2026-11-25T11:15:02Z",
   "org": "SOCRadar",
   "country": "France",
   "place": "Belgium, France and Switzerland",
@@ -40,7 +40,7 @@
     "value": "web-app",
     "basis": "inferred"
   },
-  "summary": "SOCRadar reports that a French-speaking operator it calls BabidiGhost spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent. According to SOCRadar, the agent held 23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies. ITdaily reports that data of 1,2 miljoen Flemish residents was stolen; SOCRadar names no victims.",
+  "summary": "SOCRadar reports that a French-speaking operator it calls BabidiGhost spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent. According to SOCRadar, the agent held 23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies. SOCRadar names no victims. ITdaily's report on Flemish municipalities gives no count of people affected.",
   "plain": "Security firm SOCRadar says one attacker used a jailbroken AI agent to go after European banks, insurers and town councils, and that it held about 8.6 GB of files from public bodies.",
   "exec": "SOCRadar documents an AI agent doing intrusion work for one operator; an unpatched Metabase server was one way in.",
   "action": "SOCRadar advises hunting logs for 5 to 17 November 2026, closing internet-exposed analytics tools, storage interfaces, test portals and API docs, and keeping secrets out of application runtime environments.",
@@ -63,16 +63,16 @@
   ],
   "evidence": [
     {
-      "url": "https://itdaily.be/blogs/beveiliging/persoonsgegevens-vlaamse-gemeenten-deepseek-hack/",
-      "quote": "Hacker steelt met DeepSeek persoonsgegevens van 1,2 miljoen Vlamingen"
-    },
-    {
       "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/",
       "quote": "23 archives, about 8.6 GB, belonging to more than 13 municipalities and 10 other public bodies"
     },
     {
       "url": "https://socradar.io/blog/babidighost-ai-augmented-cybercrime/",
       "quote": "a French-speaking operator who spent nine days in November 2026 targeting European banks, insurers, payment providers and municipalities through a jailbroken AI agent"
+    },
+    {
+      "url": "https://itdaily.be/blogs/beveiliging/persoonsgegevens-vlaamse-gemeenten-deepseek-hack/",
+      "quote": "Die gemeenten tellen samen ongeveer 1,2 miljoen inwoners."
     }
   ],
   "report": {
@@ -105,13 +105,17 @@
     "note": "Primary source: SOCRadar's own report (the investigating firm), read in part; GBHackers relays it. No victim is named and no victim statement was read."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T16:13:25Z",
+    "state": "corrected",
+    "at": "2026-11-25T11:15:29Z",
     "first_at": "2026-11-23T07:11:19Z",
-    "note": "Compared date, nine days, 23 archives/8.6 GB, Metabase CVE, unnamed victims, recommendations against SOCRadar report",
-    "flags": []
+    "note": "figure: summary said ITdaily reports data of 1.2M residents stolen (headline only); its text gives only the municipalities' combined inhabitants, no count affected; figure removed",
+    "flags": [],
+    "categories": [
+      "figure",
+      "misstated"
+    ]
   },
-  "qa_checked_at": "2026-11-24T16:13:25Z",
+  "qa_checked_at": "2026-11-25T11:15:29Z",
   "cve_meta": [
     {
       "id": "CVE-2023-38646",

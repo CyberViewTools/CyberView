@@ -1,0 +1,33 @@
+{
+  "job": "advisory",
+  "started_at": "2026-11-25T16:25:00Z",
+  "finished_at": "2026-11-25T16:36:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {"url": "https://www.php.net/archive/2026.php", "title": "PHP Security Advisory 21 Oct 2026", "used_in": ["CVE-2026-109619"]},
+    {"url": "https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching", "title": "CISA alert PHP", "used_in": []},
+    {"url": "https://help.nextcloud.com/t/to-collabora-built-in-user-update-asap/250516", "title": "Nextcloud forum thread (not vendor advisory)", "used_in": []}
+  ],
+  "added": ["CVE-2026-109619"],
+  "updated": [],
+  "skipped": [
+    {"title": "CVE-2026-110447 Collabora CODE", "url": "https://github.com/CollaboraOnline/online/security/advisories/GHSA-g3vx-3m76-fghh", "reason": "vendor advisory returned 403; forum thread is not a vendor page"},
+    {"title": "CVE-2026-131914 AntiCsrf", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "reason": "403"},
+    {"title": "CVE-2026-111497 Brotli", "url": "https://github.com/google/brotli/releases/tag/v1.2.1", "reason": "403"},
+    {"title": "CVE-2026-111793 Openwave", "url": "https://github.com/GISOpenwave/security-advisories-public/blob/main/CAN-2026-2032674.md", "reason": "403"}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-110447 Collabora CODE", "url": "https://github.com/CollaboraOnline/online/security/advisories/GHSA-g3vx-3m76-fghh", "note": "vendor advisory blocked (403); no guide written", "priority": "high"},
+    {"title": "CVE-2026-129448 Apache Roller", "url": "https://lists.apache.org/thread/cc0jck13nb9vvcmzxzwotr6n16mx28z9", "note": "page returned no content (JS-rendered)", "priority": "high"},
+    {"title": "CVE-2026-115731 Puppet", "url": "https://portal.perforce.com/s/cve/a91Qi000003IaHpIAK/report-deserialization-code-execution", "note": "portal did not render", "priority": "high"},
+    {"title": "CVE-2026-131914 AntiCsrf", "url": "https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md", "note": "403", "priority": "high"},
+    {"title": "CVE-2026-124194 Outlook", "url": "https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2026-124194", "note": "MSRC page did not render", "priority": "medium"},
+    {"title": "CVE-2026-111497 Brotli", "url": "https://github.com/google/brotli/releases/tag/v1.2.1", "note": "403", "priority": "low"},
+    {"title": "CVE-2026-111793 Openwave", "url": "https://github.com/GISOpenwave/security-advisories-public/blob/main/CAN-2026-2032674.md", "note": "403", "priority": "low"},
+    {"title": "CVE-2026-133968, 134624, 19868, 46300, 90436, 90817, 96951", "url": "", "note": "unguided KEV entries not reached this run", "priority": "medium"},
+    {"title": "CVE-2026-109619 hunt", "url": "", "note": "CISA SIGMA rule exists per CISA alert but exact URL not seen; hunt left empty", "priority": "low"}
+  ],
+  "failed_sites": ["github.com (403 via fetch; gh not enabled)", "lists.apache.org (empty)", "portal.perforce.com (empty)", "msrc.microsoft.com (empty)"],
+  "notes": "One guide written from the PHP project's own advisory. Others skipped because the vendor page would not load; no guide written from forum or news coverage."
+}

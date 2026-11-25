@@ -27,7 +27,7 @@
   "lat": null,
   "lng": null,
   "sector": "Technology",
-  "summary": "3CX's advisory says two HTTP/2 vulnerabilities in NGINX (CVE-2026-123633 and CVE-2026-123007) affect self-managed 3CX systems on Linux and Windows running V20 Update 10 or Update 9. It says the fix is V20 Update 10, Build 20.0.10.1801. 3CX says 3CX-hosted and SMB systems were already updated. Palo Alto Networks' research team reports no confirmed in-the-wild exploitation of CVE-2026-123633 in NGINX.",
+  "summary": "3CX's advisory says two HTTP/2 vulnerabilities in NGINX (CVE-2026-123633 and CVE-2026-123007) affect self-managed 3CX systems on Linux and Windows running V20 Update 10 or Update 9. It says the fix is V20 Update 10, Build 20.0.10.1801. 3CX says 3CX-hosted and SMB systems were already updated. Palo Alto Networks' research on CVE-2026-123633 in NGINX reports no confirmed indicators of compromise; 3CX's advisory does not mention exploitation.",
   "plain": "3CX says its phone-system software contains two flaws from the NGINX web server. Customers who run 3CX on their own servers are told to install the newer build.",
   "exec": "Self-managed 3CX phone systems need the vendor's update; hosted and SMB systems were already updated, according to 3CX.",
   "action": "3CX advises self-managed customers to install V20 Update 10, Build 20.0.10.1801, and until then to restrict access to the 3CX web port (HTTPS) to the office, VPN or known IP addresses.",
@@ -72,7 +72,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-24T16:59:39Z",
-  "updated_at": "2026-11-25T01:26:30Z",
+  "updated_at": "2026-11-25T01:39:40Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123633",
@@ -90,11 +90,15 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T17:12:55Z",
+    "state": "corrected",
+    "at": "2026-11-25T01:40:02Z",
     "first_at": "2026-11-24T17:12:55Z",
-    "note": "compared CVEs, versions, fix build, hosted/SMB, mitigations, date against 3CX advisory and Borns IT Blog",
-    "flags": []
+    "note": "stronger than the source: Unit 42 reports no confirmed indicators of compromise, not no confirmed in-the-wild exploitation; summary reworded",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "figure"
+    ]
   },
-  "qa_checked_at": "2026-11-24T17:12:55Z"
+  "qa_checked_at": "2026-11-25T01:40:02Z"
 }

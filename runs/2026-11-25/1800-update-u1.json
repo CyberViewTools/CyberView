@@ -1,34 +1,45 @@
 {
   "job": "updater",
-  "batch": 1,
+  "started_at": "2026-11-25T17:50:00Z",
+  "finished_at": "2026-11-25T18:00:00Z",
   "model": "claude-sonnet-5-5",
-  "updated": [],
-  "unchanged": [
-    "geoserver-exploited-wfs-ows-flaws-rce-chain-2026-11"
-  ],
-  "unrelated": [],
-  "unreachable": [
-    "idunno-anticsrf-aspnet-cve-2026-131914-exploited-2026-11"
-  ],
+  "searches": [],
   "pages_read": [
     {
-      "url": "https://kylesinvestigation.com/2026/11/25/geoserver-flaws-under-attack-can-be-chained-into-unauthenticated-remote-code-execution/",
-      "title": "GeoServer Flaws Under Attack...",
-      "used_in": "unchanged: secondary rewrite of The Hacker News/Eye Security; Rapid7 chain mentioned but primary not read"
+      "url": "https://www.newsweek.com/major-insurer-allstate-hit-by-3-day-outage-amid-spate-of-us-service-issues-12768326",
+      "title": "Newsweek Allstate outage",
+      "used_in": "allstate-website-app-outage-2026-11"
+    },
+    {
+      "url": "https://sploitus.com/exploit?id=1DAYEXPLOIT:CVE-2026-101296",
+      "title": "Sploitus Tomcat JNDI realm auth bypass",
+      "used_in": "unrelated to apache-tomcat-cve-2026-133325-cluster-tls-psk (different CVE)"
     }
   ],
-  "failed_sites": [
-    "threatcluster.io (403)"
+  "added": [],
+  "updated": [
+    {
+      "id": "allstate-website-app-outage-2026-11",
+      "what": "added Newsweek as second publisher; now corroborated; summary notes site update message"
+    }
   ],
+  "unchanged": [],
+  "unrelated": [
+    "apache-tomcat-cve-2026-133325-cluster-tls-psk: sploitus page is CVE-2026-101296, a different flaw"
+  ],
+  "skipped": [],
   "open_leads": [
     {
-      "title": "Rapid7 GeoServer chain (Jonah Burgess)",
-      "url": "",
-      "note": "mentioned by kylesinvestigation; read Rapid7 primary before adding",
+      "title": "Todoist breach, Teknoblog page",
+      "url": "https://www.teknoblog.com/todoist-veri-ihlali-etkilenen-hesaplar/",
+      "note": "403 to automated reader; recorded unreachable",
       "priority": "low"
     }
   ],
-  "notes": "Idunno event already cites KEV via SecurityWeek.",
-  "worker_role": "updater-deep",
+  "failed_sites": [
+    "teknoblog.com (403)"
+  ],
+  "notes": "Teknoblog retry after 60 s was not run.",
+  "worker_role": "updater",
   "worker_model": "sonnet"
 }

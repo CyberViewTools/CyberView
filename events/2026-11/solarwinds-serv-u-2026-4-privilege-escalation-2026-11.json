@@ -24,15 +24,15 @@
   "tags": [],
   "country": "US",
   "place": "",
-  "pin_type": "agency",
+  "pin_type": "none",
   "geo_basis": "vendor, no place stated",
-  "lat": 0,
-  "lng": 0,
+  "lat": null,
+  "lng": null,
   "sector": "Technology",
   "summary": "SolarWinds published advisories for several Serv-U flaws rated critical (CVSS 9.1), including CVE-2026-123172, a privilege escalation that could give root on Linux installations; the advisory says Windows installations face lower risk. Other advisories describe path traversal, insufficient validation and time-of-check to time-of-use flaws. The advisories name affected Serv-U versions and a fixed release. The pages read do not mention exploitation.",
   "plain": "SolarWinds says several serious flaws in its Serv-U file transfer software are fixed in a new release. The advisories read do not mention attacks.",
   "exec": "SolarWinds rates these Serv-U flaws critical (CVSS 9.1) and names a fixed release.",
-  "action": "SolarWinds' advisories name the fixed Serv-U release; update to it.",
+  "action": "SolarWinds advises updating to Serv-U 2026.4, the fixed version named in its advisories (affected: 2026.3 and below).",
   "impact": "",
   "source_tier": "primary",
   "sources": [
@@ -78,7 +78,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-24T20:32:08Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:28:30Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123172",
@@ -117,13 +117,29 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T21:08:03Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:28:03Z",
     "first_at": "2026-11-24T21:08:03Z",
-    "note": "Checked all five SolarWinds advisories: CVSS 9.1, versions 2026.3 and below, fix 2026.4, date 11/24/2026, no exploitation mentioned",
-    "flags": [
-      "no-cve-meta"
+    "note": "action vague and figure without evidence: names 2026.4 fix with evidence; removed 0,0 coordinates; CVSS 9.1, versions, date match three advisories",
+    "flags": [],
+    "categories": [
+      "action",
+      "figure"
     ]
   },
-  "qa_checked_at": "2026-11-24T21:08:03Z"
+  "qa_checked_at": "2026-11-25T16:28:03Z",
+  "evidence": [
+    {
+      "url": "https://www.solarwinds.com/trust-center/security-advisories/cve-2026-123172",
+      "quote": "9.1 Critical"
+    },
+    {
+      "url": "https://www.solarwinds.com/trust-center/security-advisories/cve-2026-123172",
+      "quote": "SolarWinds Serv-U 2026.3 and below"
+    },
+    {
+      "url": "https://www.solarwinds.com/trust-center/security-advisories/cve-2026-123172",
+      "quote": "SolarWinds Serv-U 2026.4"
+    }
+  ]
 }

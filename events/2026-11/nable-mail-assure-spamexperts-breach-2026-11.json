@@ -1,108 +1,112 @@
 {
-  "title": "N-able says attackers accessed a Mail Assure and SpamExperts cloud server",
-  "date": "2026-11-18",
-  "date_note": "N-able began investigating a disruption on 16 Nov; the security incident was disclosed on Wednesday 18 Nov per The Hacker News, which gives no exact disclosure date.",
-  "category": "incident",
-  "severity": 2,
-  "status": "confirmed",
-  "org": "N-able",
-  "sector": "Technology",
-  "country": "US",
-  "place": "Burlington, Massachusetts",
-  "lat": 42.5048,
-  "lng": -71.1956,
-  "geo_basis": "vendor headquarters",
-  "pin_type": "hq",
-  "actor": "",
-  "summary": "N-able says unknown actors accessed one server in its hosted Mail Assure and SpamExperts cloud, and it found no evidence customer data was compromised. N-able told SecurityWeek exploitation was confined to a single hosted server and the impacted functionality is restored. Per The Hacker News, a separate SSRF flaw, CVE-2026-134624 (CVSS 4.0 score 9.3), was found during the investigation; N-able has not said whether it was the way in.",
-  "plain": "A security vendor's email filtering service was breached on one server. N-able told SecurityWeek the affected functionality is restored.",
-  "exec": "N-able told SecurityWeek the email filtering service's impacted functionality is restored and exploitation was confined to one hosted server.",
-  "action": "As The Hacker News reports N-able's advisory, SpamExperts Local Cloud operators should confirm they run build 20261121.1943; Hosted Cloud users have nothing to install. N-able told SecurityWeek it revoked customer API tokens and reset local-user passwords.",
-  "impact": "Portal and API access were disabled during the incident (SecurityWeek, 20 Nov); N-able told SecurityWeek on 23 Nov it has restored the impacted functionality.",
-  "products": [
-    "Mail Assure",
-    "SpamExperts Hosted Cloud"
-  ],
-  "attack": [
-    "unauthorized server access"
-  ],
-  "tags": [
-    "cloud",
-    "third-party"
-  ],
-  "cves": [
-    "CVE-2026-134624"
-  ],
-  "evidence": [
-    {
-      "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
-      "quote": "The bug, tracked as CVE-2026-134624, is a server-side request forgery (SSRF) flaw."
-    },
-    {
-      "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
-      "quote": "The advisory gives the flaw a CVSS 4.0 score of 9.3"
-    }
-  ],
-  "sources": [
-    {
-      "name": "SecurityWeek (patch and restoration)",
-      "url": "https://www.securityweek.com/n-able-patches-critical-flaw-disclosed-after-mail-assure-cyberattack/",
-      "published": "2026-11-23"
-    },
-    {
-      "name": "The Hacker News (CVE disclosure)",
-      "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
-      "published": "2026-11-23"
-    },
-    {
-      "name": "The Hacker News",
-      "url": "https://thehackernews.com/2026/11/n-able-confirms-hackers-accessed-cloud.html",
-      "published": "2026-11-19"
-    },
-    {
-      "name": "GBHackers",
-      "url": "https://gbhackers.com/n-able-confirms-security-breach-in-mail-assure/",
-      "published": "2026-11-19"
-    },
-    {
-      "name": "SecurityWeek",
-      "url": "https://www.securityweek.com/n-able-blames-service-disruption-on-cyberattack/",
-      "published": "2026-11-20"
-    }
-  ],
-  "source_tier": "established",
-  "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-19T10:30:00Z",
-    "note": "The Hacker News relays N-able's own statement; N-able's status page (uptime.n-able.com/event/202672) returned 403 to our reader, so it was not read. GBHackers (19 Nov) relays the same N-able notice: more detail, not independent confirmation. 20 Nov: SecurityWeek (N-able's own statement to the outlet, status page cited) adds possible credential access and containment steps; same N-able notice, not independent confirmation."
+ "title": "N-able says attackers accessed a Mail Assure and SpamExperts cloud server",
+ "date": "2026-11-18",
+ "date_note": "N-able began investigating a disruption on 16 Nov; the security incident was disclosed on Wednesday 18 Nov per The Hacker News, which gives no exact disclosure date.",
+ "category": "incident",
+ "severity": 2,
+ "status": "confirmed",
+ "org": "N-able",
+ "sector": "Technology",
+ "country": "US",
+ "place": "Burlington, Massachusetts",
+ "lat": 42.5048,
+ "lng": -71.1956,
+ "geo_basis": "vendor headquarters",
+ "pin_type": "hq",
+ "actor": "",
+ "summary": "N-able says unknown actors accessed one server in its hosted Mail Assure and SpamExperts cloud, and it found no evidence customer data was compromised. N-able told SecurityWeek exploitation was confined to a single hosted server and the impacted functionality is restored. Per The Hacker News, a separate SSRF flaw, CVE-2026-134624 (CVSS 4.0 score 9.3), was found during the investigation; N-able has not said whether it was the way in.",
+ "plain": "A security vendor's email filtering service was breached on one server. N-able told SecurityWeek the affected functionality is restored.",
+ "exec": "N-able told SecurityWeek the email filtering service's impacted functionality is restored and exploitation was confined to one hosted server.",
+ "action": "As The Hacker News reports N-able's advisory, SpamExperts Local Cloud operators should confirm they run build 20261121.1943; Hosted Cloud users have nothing to install. The Hacker News says N-able revoked customers' existing API tokens and reset local users' passwords.",
+ "impact": "Portal and API access were disabled during the incident (SecurityWeek, 20 Nov); N-able told SecurityWeek on 23 Nov it has restored the impacted functionality.",
+ "products": [
+  "Mail Assure",
+  "SpamExperts Hosted Cloud"
+ ],
+ "attack": [
+  "unauthorized server access"
+ ],
+ "tags": [
+  "cloud",
+  "third-party"
+ ],
+ "cves": [
+  "CVE-2026-134624"
+ ],
+ "evidence": [
+  {
+   "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
+   "quote": "The bug, tracked as CVE-2026-134624, is a server-side request forgery (SSRF) flaw."
   },
-  "first_seen": "2026-11-19T10:30:00Z",
-  "updated_at": "2026-11-25T15:12:49Z",
-  "review": {
-    "state": "passed",
-    "at": "2026-11-24T15:14:31Z",
-    "first_at": "2026-11-19T19:19:41Z",
-    "note": "single server, no evidence customer data compromised, restoration, CVE CVSS 9.3, build, tokens and passwords checked against SecurityWeek and The Hacker News",
-    "flags": []
+  {
+   "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
+   "quote": "The advisory gives the flaw a CVSS 4.0 score of 9.3"
+  }
+ ],
+ "sources": [
+  {
+   "name": "SecurityWeek (patch and restoration)",
+   "url": "https://www.securityweek.com/n-able-patches-critical-flaw-disclosed-after-mail-assure-cyberattack/",
+   "published": "2026-11-23"
   },
-  "qa_checked_at": "2026-11-24T15:14:31Z",
-  "sectors": {
-    "values": [
-      "information-technology"
-    ],
-    "basis": "stated"
+  {
+   "name": "The Hacker News (CVE disclosure)",
+   "url": "https://thehackernews.com/2026/11/n-able-discloses-critical-mail-assure.html",
+   "published": "2026-11-23"
   },
-  "surface": {
-    "value": "cloud-saas",
-    "basis": "stated"
+  {
+   "name": "The Hacker News",
+   "url": "https://thehackernews.com/2026/11/n-able-confirms-hackers-accessed-cloud.html",
+   "published": "2026-11-19"
   },
-  "cve_meta": [
-    {
-      "id": "CVE-2026-134624",
-      "cvss": 9.3,
-      "epss": 0.01793,
-      "kev": true,
-      "kev_due": "2026-11-26"
-    }
+  {
+   "name": "GBHackers",
+   "url": "https://gbhackers.com/n-able-confirms-security-breach-in-mail-assure/",
+   "published": "2026-11-19"
+  },
+  {
+   "name": "SecurityWeek",
+   "url": "https://www.securityweek.com/n-able-blames-service-disruption-on-cyberattack/",
+   "published": "2026-11-20"
+  }
+ ],
+ "source_tier": "established",
+ "validation": {
+  "state": "single_source",
+  "checked_at": "2026-11-19T10:30:00Z",
+  "note": "The Hacker News relays N-able's own statement; N-able's status page (uptime.n-able.com/event/202672) returned 403 to our reader, so it was not read. GBHackers (19 Nov) relays the same N-able notice: more detail, not independent confirmation. 20 Nov: SecurityWeek (N-able's own statement to the outlet, status page cited) adds possible credential access and containment steps; same N-able notice, not independent confirmation."
+ },
+ "first_seen": "2026-11-19T10:30:00Z",
+ "updated_at": "2026-11-25T16:27:55Z",
+ "review": {
+  "state": "corrected",
+  "at": "2026-11-25T16:27:45Z",
+  "first_at": "2026-11-19T19:19:41Z",
+  "note": "action advice attribution: password resets are reported by The Hacker News, not SecurityWeek; fixed",
+  "flags": [],
+  "categories": [
+   "action",
+   "attribution"
   ]
+ },
+ "qa_checked_at": "2026-11-25T16:27:45Z",
+ "sectors": {
+  "values": [
+   "information-technology"
+  ],
+  "basis": "stated"
+ },
+ "surface": {
+  "value": "cloud-saas",
+  "basis": "stated"
+ },
+ "cve_meta": [
+  {
+   "id": "CVE-2026-134624",
+   "cvss": 9.3,
+   "epss": 0.01793,
+   "kev": true,
+   "kev_due": "2026-11-26"
+  }
+ ]
 }

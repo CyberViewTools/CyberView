@@ -8,11 +8,11 @@
   "org": "PyTorch Foundation",
   "sector": "Software",
   "country": "",
-  "place": "PyTorch Foundation (location not stated)",
-  "lat": 37.77,
-  "lng": -122.42,
-  "geo_basis": "location not stated by source; map pin is a placeholder",
-  "pin_type": "hq",
+  "place": "Unknown",
+  "lat": null,
+  "lng": null,
+  "geo_basis": "software flaw; no location stated",
+  "pin_type": "none",
   "summary": "Zero Day Initiative published ZDI-26-1059 (CVE-2026-136433) as a 0-day: deserialization of untrusted data in PyTorch's torch_save_to_dcp checkpoint conversion could let an attacker execute code as the current user, with a CVSS 3.0 score of 7.8. ZDI says it reported the issue on 2026-08-26 and the vendor rejected it as expected behavior on 2026-09-01. The page mentions no patch.",
   "plain": "ZDI says a checkpoint conversion tool in PyTorch can run attacker code when a user opens a malicious file. ZDI says the vendor treated it as expected behavior, and its page lists no patch.",
   "exec": "ZDI's advisory says the flaw lets code run as the current user when a malicious file is opened; its page lists no fix.",
@@ -43,7 +43,7 @@
   },
   "source_tier": "established",
   "first_seen": "2026-11-24T21:19:00Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:27:32Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -55,13 +55,18 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T23:11:58Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:28:24Z",
     "first_at": "2026-11-24T21:42:12Z",
-    "note": "Compared CVE, CVSS 7.8, timeline, vendor rejection and mitigation with ZDI-26-1059",
-    "flags": []
+    "note": "place: San Francisco pin was a placeholder not stated by any source; set to no location. CVE, CVSS 7.8, timeline, vendor rejection, mitigation match ZDI",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "occurred_at",
+      "place"
+    ]
   },
-  "qa_checked_at": "2026-11-24T23:11:58Z",
+  "qa_checked_at": "2026-11-25T16:28:24Z",
   "cve_meta": [
     {
       "id": "CVE-2026-136433",

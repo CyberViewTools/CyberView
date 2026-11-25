@@ -14,11 +14,11 @@
   "geo_basis": "vendor headquarters",
   "pin_type": "hq",
   "actor": "",
-  "summary": "Synology published two advisories on 19 November. CVE-2026-120382 (CVSS 9.8) lets remote attackers read or write arbitrary files or conduct denial-of-service attacks through the DSM OAuth API. CVE-2026-123007 (CVSS 8.1) is an NGINX HTTP/2 heap buffer overflow. The revised advisories list fixes in DSM 7.4.1-90080-2 and 7.3.2-86009-6, with other versions marked OnGoing. Neither mentions exploitation. Caschys Blog reported on 24 November that DSM 7.1.1-42962 Update 10 closes both flaws.",
-  "plain": "Synology has warned of two serious flaws in the software of its NAS storage devices. Fixed versions exist for DSM 7.3 and 7.4; fixes for other versions are still ongoing, and the vendor gives workarounds.",
-  "exec": "Synology rates the DSM OAuth flaw Critical (CVSS 9.8) and says remote attackers can read or write arbitrary files; fixes exist for DSM 7.3 and 7.4.",
-  "action": "Synology advises upgrading to DSM 7.4.1-90080-2 or 7.3.2-86009-6 or above. For versions it lists as OnGoing, Synology's workarounds are to deactivate the OAuth Service package and disable HTTP/2 under Control Panel > Network > Connectivity.",
-  "impact": "DSM 7.1 to 7.4 and BeeStation OS 1.5 are listed as affected; DSM 7.2.x and BeeStation OS had no fix yet when read (advisories marked Ongoing); Caschys Blog reports DSM 7.1.1-42962 Update 10 for DSM 7.1, rolled out in waves.",
+  "summary": "Synology published two advisories on 19 November. CVE-2026-120382 (CVSS 9.8) lets remote attackers read or write arbitrary files or conduct denial-of-service attacks through the DSM OAuth API. CVE-2026-123007 (CVSS 8.1) is an NGINX HTTP/2 heap buffer overflow. As revised on 24 and 25 November, the advisories list fixes for DSM 7.1 to 7.4; BeeStation OS 1.5 has none yet. Neither mentions exploitation.",
+  "plain": "Synology has warned of two serious flaws in the software of its NAS storage devices. Fixed versions are listed for DSM 7.1 to 7.4; BeeStation OS 1.5 has no fix yet, and the vendor gives workarounds.",
+  "exec": "Synology rates the DSM OAuth flaw Critical (CVSS 9.8) and says remote attackers can read or write arbitrary files; its advisories list fixes for DSM 7.1 to 7.4.",
+  "action": "Synology advises upgrading DSM to 7.4.1-90080-2, 7.3.2-86009-6 or the fixed build for your version (7.1.1-42962-10 for DSM 7.1). Until a fix ships (BeeStation OS 1.5), it advises deactivating the OAuth Service package and disabling HTTP/2.",
+  "impact": "Synology's advisories list DSM 7.1 to 7.4 and BeeStation OS 1.5 as affected by the OAuth flaw; the NGINX advisory also lists APM and DSM Enterprise 1.0. As of 25 November, BeeStation OS 1.5 (both) and DSM Enterprise 1.0 (NGINX flaw) are marked Ongoing with no fix. Caschys Blog reports DSM 7.1.1-42962 Update 10 for DSM 7.1, rolled out in waves.",
   "tags": [],
   "cves": [
     "CVE-2026-120382",
@@ -59,18 +59,18 @@
     "note": "Synology's own advisories SA_26_21 and SA_26_20 (primary, read in full) and GBHackers, which independently reports the same CVEs and scores. Neither states exploitation."
   },
   "first_seen": "2026-11-19T13:35:00Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:27:32Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-24T22:25:07Z",
+    "at": "2026-11-25T16:28:24Z",
     "first_at": "2026-11-19T16:40:09Z",
-    "note": "source published days added (19 Nov per advisories and GBHackers); CVEs, CVSS, fixed builds, OnGoing rows, workarounds checked",
+    "note": "stale fix status: advisories revised 24-25 Nov list fixes for DSM 7.1, 7.2.1, 7.2.2 (and APM); summary, plain, exec, action, impact updated; only BeeStation OS 1.5 and DSM Enterprise 1.0 (NGINX) still Ongoing; correction file added",
     "flags": [],
     "categories": [
-      "other"
+      "action"
     ]
   },
-  "qa_checked_at": "2026-11-24T22:25:07Z",
+  "qa_checked_at": "2026-11-25T16:28:24Z",
   "cve_meta": [
     {
       "id": "CVE-2026-120382",

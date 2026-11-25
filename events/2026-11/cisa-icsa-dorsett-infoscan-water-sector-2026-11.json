@@ -1,5 +1,5 @@
 {
-  "action": "Upgrade InfoScan to version 1.46 or later (System Maintenance, Check for Updates, or the Dorsett customer portal for offline sites). Keep control systems off the internet, behind firewalls and reachable only through an up-to-date VPN.",
+  "action": "Dorsett Controls recommends updating InfoScan to v1.46 or higher (System Maintenance, or the Customer Portal for offline sites); CISA advises keeping control systems off the internet, behind firewalls and reachable only through an up-to-date VPN.",
   "actor": "",
   "attack": [],
   "category": "vuln",
@@ -18,7 +18,6 @@
   "geo_basis": "agency",
   "lat": 38.87,
   "lng": -77.01,
-  "occurred_at": "2026-11-17T06:00:00+00:00",
   "org": "CISA",
   "pin_type": "agency",
   "place": "Washington, DC area",
@@ -55,11 +54,8 @@
   "sources": [
     {
       "name": "CISA ICSA-26-321-01 (CSAF)",
-      "url": "https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/OT/white/2026/icsa-26-321-01.json"
-    },
-    {
-      "name": "CISA ICSA-26-321-01 (web page, did not load)",
-      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-321-01"
+      "url": "https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/OT/white/2026/icsa-26-321-01.json",
+      "published": "2026-11-17"
     }
   ],
   "status": "official",
@@ -68,13 +64,12 @@
     "ot-ics",
     "critical-infrastructure"
   ],
-  "time_basis": "published",
   "title": "CISA: Dorsett Controls InfoScan flaws expose water-sector monitoring data and credentials",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:27:59Z",
   "validation": {
     "checked_at": "2026-11-17T23:38:00Z",
-    "note": "Reviewed against the original CISA document (the advisory's CSAF file; the web page would not load).",
-    "state": "corroborated"
+    "note": "CISA's own advisory file (CSAF ICSA-26-321-01) read; the cisa.gov web page was not read and is no longer listed.",
+    "state": "primary"
   },
   "cve_meta": [
     {
@@ -121,13 +116,20 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T15:35:05Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:29:02Z",
     "first_at": "2026-11-19T05:09:46Z",
-    "note": "Compared with CISA CSAF ICSA-26-321-01: released 17 Nov, InfoScan 1.45.0 and earlier, six CVEs, 8.1 TLS flaw, hostname/user/MFA leak, hard-coded keys, no known exploitation, fix 1.46 and update steps.",
-    "flags": []
+    "note": "action advice unattributed (now Dorsett/CISA named); occurred_at removed (no stated time quote); unread cisa.gov page dropped from sources; validation set to primary. Compared with CSAF: 17 Nov, 1.45.0 and earlier, six CVEs, 8.1, fix 1.46, no known exploitation",
+    "flags": [],
+    "categories": [
+      "action",
+      "occurred_at",
+      "validation",
+      "source",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-20T15:35:05Z",
+  "qa_checked_at": "2026-11-25T16:29:02Z",
   "sectors": {
     "values": [
       "water-wastewater"

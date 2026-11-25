@@ -10,7 +10,7 @@
   ],
   "date": "2026-11-23",
   "date_note": "The CERT@VDE advisory page gives 23 November as its publication day and no earlier date.",
-  "exec": "CERT@VDE lists two flaws in WAGO controller firmware earlier than 4.10.0 (FW32); one may allow command execution with root privileges.",
+  "exec": "CERT@VDE lists two flaws in WAGO device firmware earlier than 4.10.0 (FW32); one may allow command execution with root privileges.",
   "first_seen": "2026-11-24T18:50:00Z",
   "geo_basis": "headquarters",
   "lat": 52.29,
@@ -18,7 +18,7 @@
   "org": "WAGO",
   "pin_type": "headquarters",
   "place": "Minden, Germany",
-  "plain": "CERT@VDE says WAGO controllers and panels running firmware earlier than 4.10.0 (FW32) have two flaws, one of which may let a low-privileged attacker run commands as root. WAGO's fix is firmware 4.10.0 (FW32) or higher.",
+  "plain": "CERT@VDE says WAGO devices running firmware earlier than 4.10.0 (FW32) have two flaws, one of which may let a low-privileged attacker run commands as root. WAGO's fix is firmware 4.10.0 (FW32) or higher.",
   "products": [
     "WAGO CC100",
     "WAGO PFC100 G2",
@@ -59,8 +59,8 @@
     "ot-ics",
     "rce"
   ],
-  "title": "CERT@VDE: WAGO controller firmware flaws allow command injection and missing authorization",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "title": "CERT@VDE: WAGO device firmware flaws allow command injection and missing authorization",
+  "updated_at": "2026-11-25T16:27:59Z",
   "validation": {
     "checked_at": "2026-11-24T18:50:00Z",
     "note": "Primary source: CERT@VDE advisory VDE-2026-096, read in full. No second publisher read.",
@@ -93,11 +93,15 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T20:30:29Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:29:05Z",
     "first_at": "2026-11-24T20:30:29Z",
-    "note": "Compared date, CVEs, affected versions, fix against CERT@VDE advisory",
-    "flags": []
+    "note": "stronger than source: controller/panels not classified by advisory, now device; CVEs, 4.10.0 (FW32) fix and custom-firmware advice match CERT@VDE",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "action"
+    ]
   },
-  "qa_checked_at": "2026-11-24T20:30:29Z"
+  "qa_checked_at": "2026-11-25T16:29:05Z"
 }

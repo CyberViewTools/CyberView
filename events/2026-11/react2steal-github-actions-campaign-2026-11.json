@@ -1,5 +1,5 @@
 {
-  "action": "Upgrade React and Next.js to fixed versions; until then strip or reject the x-middleware-subrequest header at the proxy or WAF, check logs for it and for /_next/image requests aimed at the metadata address, rotate every secret the server could reach, and enforce IMDSv2.",
+  "action": "OpenSourceMalware advises: upgrade React and Next.js to fixed versions; until then strip or reject the x-middleware-subrequest header at the proxy or WAF, check logs for it and for /_next/image requests aimed at the metadata address, rotate exposed secrets, and enforce IMDSv2.",
   "actor": "",
   "attack": [
     "T1190 Exploit Public-Facing Application",
@@ -53,18 +53,20 @@
   "sources": [
     {
       "name": "OpenSourceMalware",
-      "url": "https://opensourcemalware.com/blog/react2steal-github-actions"
+      "url": "https://opensourcemalware.com/blog/react2steal-github-actions",
+      "published": "2026-11-18"
     },
     {
       "name": "Security Boulevard (GitGuardian)",
-      "url": "https://securityboulevard.com/2026/11/react2steal-hijacked-github-accounts-exploit-react2shell-and-publish-stolen-secrets/"
+      "url": "https://securityboulevard.com/2026/11/react2steal-hijacked-github-accounts-exploit-react2shell-and-publish-stolen-secrets/",
+      "published": "2026-11-20"
     }
   ],
   "status": "confirmed",
   "summary": "OpenSourceMalware published research on November 18 on a campaign it named React2STEAL: 45 GitHub repositories across 44 accounts run scanners for React2Shell (CVE-2025-55182) and CVE-2025-29927 and commit results to public repositories. It found at least 1,281 victim hostnames across about 1,100 domains. It lists the actor as unknown. GitGuardian's write-up says patches for both flaws have been available for months.",
   "tags": [],
   "title": "React2STEAL: GitHub Actions scanners exploit React2Shell and publish stolen secrets",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-25T16:27:50Z",
   "validation": {
     "checked_at": "2026-11-20T10:09:00Z",
     "note": "Read OpenSourceMalware's research and GitGuardian's write-up (via Security Boulevard); the primary source states the core facts.",
@@ -87,13 +89,18 @@
     }
   ],
   "review": {
-    "state": "passed",
-    "at": "2026-11-20T10:24:43Z",
+    "state": "corrected",
+    "at": "2026-11-25T16:28:03Z",
     "first_at": "2026-11-20T10:24:43Z",
-    "note": "Compared title, 18 Nov date, 45 repos/44 accounts, 1,281 hostnames/~1,100 domains, CVEs, unknown actor, recommendations against OpenSourceMalware and GitGuardian (Security Boulevard); severity 3 fits KEV flaw",
-    "flags": []
+    "note": "action advice not attributed (now OpenSourceMalware advises); added missing evidence for 45 repos, 1,281 hostnames, about 1,100 domains and source published days",
+    "flags": [],
+    "categories": [
+      "action",
+      "figure",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-20T10:24:43Z",
+  "qa_checked_at": "2026-11-25T16:28:03Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -103,5 +110,19 @@
   "surface": {
     "value": "web-app",
     "basis": "inferred"
-  }
+  },
+  "evidence": [
+    {
+      "url": "https://opensourcemalware.com/blog/react2steal-github-actions",
+      "quote": "In total we found 45 React2STEAL repos, set up in three waves since October 22."
+    },
+    {
+      "url": "https://opensourcemalware.com/blog/react2steal-github-actions",
+      "quote": "Those results list at least 1,281 victim hostnames across about 1,100 domains."
+    },
+    {
+      "url": "https://securityboulevard.com/2026/11/react2steal-hijacked-github-accounts-exploit-react2shell-and-publish-stolen-secrets/",
+      "quote": "identified 45 repositories across 44 GitHub accounts"
+    }
+  ]
 }

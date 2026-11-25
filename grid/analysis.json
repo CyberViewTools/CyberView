@@ -1,6 +1,35 @@
 {
-  "updated_at": "2026-11-25T07:09:13Z",
-  "anomalies": [],
+  "updated_at": "2026-11-25T08:07:14Z",
+  "anomalies": [
+    {
+      "id": "grid-bchydro-british-columbia-202611250806",
+      "source": "bchydro",
+      "region": "British Columbia",
+      "name": "British Columbia",
+      "at": "2026-11-25T08:00:00Z",
+      "kind": "customers",
+      "value": 14416,
+      "median": 82,
+      "mad": 82,
+      "z": 117.9,
+      "points": 397,
+      "basis": "all_hours"
+    },
+    {
+      "id": "grid-doe-odin-oregon-202611250806",
+      "source": "doe-odin",
+      "region": "Oregon",
+      "name": "Oregon",
+      "at": "2026-11-25T08:00:00Z",
+      "kind": "customers",
+      "value": 5577,
+      "median": 67,
+      "mad": 56,
+      "z": 66.4,
+      "points": 391,
+      "basis": "all_hours"
+    }
+  ],
   "corroboration": [
     {
       "id": "grid-doe-odin-washington-202611241640",
@@ -8,7 +37,43 @@
         {
           "kind": "operator",
           "source": "doe-odin",
-          "detail": "DOE/ORNL ODIN: 3,547 customers without power",
+          "detail": "DOE/ORNL ODIN: 249 customers without power",
+          "url": "https://odin.ornl.gov/"
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "grid-bchydro-british-columbia-202611250806",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "bchydro",
+          "detail": "BC Hydro: 14,448 customers without power",
+          "url": "https://www.bchydro.com/power-outages/app/outage-map.html"
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "grid-doe-odin-california-202611250806",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "doe-odin",
+          "detail": "DOE/ORNL ODIN: 6,276 customers without power",
+          "url": "https://odin.ornl.gov/"
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "grid-doe-odin-oregon-202611250806",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "doe-odin",
+          "detail": "DOE/ORNL ODIN: 5,577 customers without power",
           "url": "https://odin.ornl.gov/"
         }
       ],
@@ -17,15 +82,15 @@
   ],
   "trends": {
     "window_days": 30,
-    "from": "2026-10-26T07:09:13Z",
-    "to": "2026-11-25T07:09:13Z",
+    "from": "2026-10-26T08:07:14Z",
+    "to": "2026-11-25T08:07:14Z",
     "regions": {
       "enre-edesur|Buenos Aires": {
         "source": "enre-edesur",
         "region": "Buenos Aires",
         "name": "Buenos Aires (Edesur area)",
         "incidents": 4,
-        "customer_hours": 105715,
+        "customer_hours": 105736,
         "coverage": 0.16,
         "largest": {
           "id": "grid-enre-edesur-buenos-aires-202611200024",
@@ -59,7 +124,7 @@
         "region": "Connecticut",
         "name": "Connecticut",
         "incidents": 1,
-        "customer_hours": 12266,
+        "customer_hours": 12283,
         "coverage": 0.16,
         "largest": {
           "id": "grid-eversource-connecticut-202611201414",
@@ -76,7 +141,7 @@
         "region": "Quebec",
         "name": "Quebec",
         "incidents": 4,
-        "customer_hours": 141976,
+        "customer_hours": 142004,
         "coverage": 0.13,
         "largest": {
           "id": "grid-hydroquebec-quebec-202611241611",
@@ -113,8 +178,8 @@
         "source": "doe-odin",
         "region": "California",
         "name": "California",
-        "incidents": 3,
-        "customer_hours": 278135,
+        "incidents": 4,
+        "customer_hours": 278893,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-california-202611201848",
@@ -131,7 +196,7 @@
         "region": "Ohio",
         "name": "Ohio",
         "incidents": 1,
-        "customer_hours": 20379,
+        "customer_hours": 20397,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-ohio-202611210415",
@@ -148,7 +213,7 @@
         "region": "Massachusetts",
         "name": "Massachusetts",
         "incidents": 1,
-        "customer_hours": 21685,
+        "customer_hours": 21686,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-massachusetts-202611211501",
@@ -165,7 +230,7 @@
         "region": "Buenos Aires",
         "name": "Buenos Aires (Edenor area)",
         "incidents": 1,
-        "customer_hours": 39531,
+        "customer_hours": 39547,
         "coverage": 0.16,
         "largest": {
           "id": "grid-enre-edenor-buenos-aires-202611212250",
@@ -191,7 +256,7 @@
         "region": "La Araucanía",
         "name": "La Araucanía",
         "incidents": 2,
-        "customer_hours": 52043,
+        "customer_hours": 52085,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-la-araucania-202611220234",
@@ -207,8 +272,8 @@
         "source": "doe-odin",
         "region": "Oregon",
         "name": "Oregon",
-        "incidents": 2,
-        "customer_hours": 162479,
+        "incidents": 3,
+        "customer_hours": 163152,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-oregon-202611220616",
@@ -225,7 +290,7 @@
         "region": "Coquimbo",
         "name": "Coquimbo",
         "incidents": 2,
-        "customer_hours": 54071,
+        "customer_hours": 54086,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-coquimbo-202611230017",
@@ -242,7 +307,7 @@
         "region": "Arica y Parinacota",
         "name": "Arica y Parinacota",
         "incidents": 1,
-        "customer_hours": 58827,
+        "customer_hours": 58863,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-arica-y-parinacota-202611220812",
@@ -259,7 +324,7 @@
         "region": "Central southern England",
         "name": "Central southern England (SSEN, SEPD)",
         "incidents": 1,
-        "customer_hours": 35794,
+        "customer_hours": 35816,
         "coverage": 0.16,
         "largest": {
           "id": "grid-ssen-powertrack-central-southern-england-202611221013",
@@ -306,7 +371,7 @@
         "region": "Michigan",
         "name": "Michigan",
         "incidents": 1,
-        "customer_hours": 48976,
+        "customer_hours": 48979,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-michigan-202611220812",
@@ -323,7 +388,7 @@
         "region": "Ñuble",
         "name": "Ñuble",
         "incidents": 1,
-        "customer_hours": 25524,
+        "customer_hours": 25530,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-nuble-202611221709",
@@ -340,7 +405,7 @@
         "region": "Maule",
         "name": "Maule",
         "incidents": 1,
-        "customer_hours": 38482,
+        "customer_hours": 38493,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-maule-202611230039",
@@ -357,7 +422,7 @@
         "region": "Atacama",
         "name": "Atacama",
         "incidents": 1,
-        "customer_hours": 27780,
+        "customer_hours": 27802,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-atacama-202611231223",
@@ -391,7 +456,7 @@
         "region": "Santiago Metropolitan",
         "name": "Santiago Metropolitan",
         "incidents": 2,
-        "customer_hours": 132207,
+        "customer_hours": 132416,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-santiago-metropolitan-202611231223",
@@ -408,7 +473,7 @@
         "region": "West Virginia",
         "name": "West Virginia",
         "incidents": 1,
-        "customer_hours": 26515,
+        "customer_hours": 26521,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-west-virginia-202611231339",
@@ -425,11 +490,11 @@
         "region": "Washington",
         "name": "Washington",
         "incidents": 3,
-        "customer_hours": 156254,
+        "customer_hours": 156284,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-washington-202611241640",
-          "name": "DOE/ORNL ODIN: 3,547 customers without power",
+          "name": "DOE/ORNL ODIN: 249 customers without power",
           "peak_customers": 21461,
           "peak_level": null,
           "opened_at": "2026-11-24T16:40:44Z"
@@ -508,7 +573,7 @@
         "region": "Biobío",
         "name": "Biobío",
         "incidents": 1,
-        "customer_hours": 56154,
+        "customer_hours": 56229,
         "coverage": 0.09,
         "largest": {
           "id": "grid-sec-chile-senapred-biobio-202611241040",
@@ -547,7 +612,7 @@
         "region": "Liander area",
         "name": "Liander area (Gelderland, Noord-Holland, Flevoland, Friesland)",
         "incidents": 1,
-        "customer_hours": 46313,
+        "customer_hours": 46340,
         "coverage": 0.16,
         "largest": {
           "id": "grid-liander-storingen-liander-area-202611241710",
@@ -573,7 +638,7 @@
         "region": "Texas",
         "name": "Texas",
         "incidents": 1,
-        "customer_hours": 73216,
+        "customer_hours": 73521,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-texas-202611241740",
@@ -589,28 +654,32 @@
         "source": "bchydro",
         "region": "British Columbia",
         "name": "British Columbia",
-        "incidents": 1,
-        "customer_hours": 105850,
+        "incidents": 2,
+        "customer_hours": 107591,
         "coverage": 0.16,
         "largest": {
-          "id": "grid-bchydro-british-columbia-202611241411",
-          "name": "BC Hydro: 1,561 customers without power",
-          "peak_customers": 12509,
+          "id": "grid-bchydro-british-columbia-202611250806",
+          "name": "BC Hydro: 14,448 customers without power",
+          "peak_customers": 14448,
           "peak_level": null,
-          "opened_at": "2026-11-24T14:11:54Z"
+          "opened_at": "2026-11-25T08:06:53Z"
         },
         "causes": [
           {
             "cause": "Under investigation",
-            "customers": 964
+            "customers": 7016
+          },
+          {
+            "cause": "Transmission circuit failure",
+            "customers": 4952
+          },
+          {
+            "cause": "Tree down across our wires",
+            "customers": 3539
           },
           {
             "cause": "Wire down",
             "customers": 266
-          },
-          {
-            "cause": "Tree down across our wires",
-            "customers": 172
           }
         ],
         "week": null
@@ -708,7 +777,7 @@
         "region": "London",
         "name": "London, Ontario",
         "incidents": 0,
-        "customer_hours": 1633,
+        "customer_hours": 1634,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -763,7 +832,7 @@
         "region": "Endeavour Energy area",
         "name": "Western Sydney, Illawarra and South Coast (NSW)",
         "incidents": 0,
-        "customer_hours": 34954,
+        "customer_hours": 35031,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1181,7 +1250,7 @@
         "region": "North of Scotland",
         "name": "North of Scotland (SSEN, SHEPD)",
         "incidents": 0,
-        "customer_hours": 8997,
+        "customer_hours": 9132,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1192,7 +1261,7 @@
         "region": "South West",
         "name": "South West England (NGED)",
         "incidents": 0,
-        "customer_hours": 25828,
+        "customer_hours": 25831,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1203,7 +1272,7 @@
         "region": "South Wales",
         "name": "South Wales (NGED)",
         "incidents": 0,
-        "customer_hours": 10774,
+        "customer_hours": 10842,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1214,7 +1283,7 @@
         "region": "West Midlands",
         "name": "West Midlands (NGED)",
         "incidents": 0,
-        "customer_hours": 19798,
+        "customer_hours": 19807,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1225,7 +1294,7 @@
         "region": "East Midlands",
         "name": "East Midlands (NGED)",
         "incidents": 0,
-        "customer_hours": 23724,
+        "customer_hours": 23733,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1247,7 +1316,7 @@
         "region": "Eastern Norway (Elvia area)",
         "name": "Eastern Norway (Elvia area)",
         "incidents": 0,
-        "customer_hours": 6210,
+        "customer_hours": 6238,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1269,7 +1338,7 @@
         "region": "Massachusetts",
         "name": "Massachusetts",
         "incidents": 0,
-        "customer_hours": 18681,
+        "customer_hours": 18716,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1302,7 +1371,7 @@
         "region": "Utah",
         "name": "Utah",
         "incidents": 0,
-        "customer_hours": 15594,
+        "customer_hours": 15595,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1390,7 +1459,7 @@
         "region": "Colorado",
         "name": "Colorado",
         "incidents": 0,
-        "customer_hours": 7098,
+        "customer_hours": 7104,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1401,7 +1470,7 @@
         "region": "Delaware",
         "name": "Delaware",
         "incidents": 0,
-        "customer_hours": 754,
+        "customer_hours": 755,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1412,7 +1481,7 @@
         "region": "Hawaii",
         "name": "Hawaii",
         "incidents": 0,
-        "customer_hours": 9975,
+        "customer_hours": 9980,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1478,7 +1547,7 @@
         "region": "Minnesota",
         "name": "Minnesota",
         "incidents": 0,
-        "customer_hours": 15120,
+        "customer_hours": 15123,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1489,7 +1558,7 @@
         "region": "New Jersey",
         "name": "New Jersey",
         "incidents": 0,
-        "customer_hours": 10507,
+        "customer_hours": 10520,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1500,7 +1569,7 @@
         "region": "New York",
         "name": "New York",
         "incidents": 0,
-        "customer_hours": 58054,
+        "customer_hours": 58064,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1511,7 +1580,7 @@
         "region": "North Carolina",
         "name": "North Carolina",
         "incidents": 0,
-        "customer_hours": 18835,
+        "customer_hours": 18951,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1665,7 +1734,7 @@
         "region": "Mississippi",
         "name": "Mississippi",
         "incidents": 0,
-        "customer_hours": 1564,
+        "customer_hours": 1567,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1676,7 +1745,7 @@
         "region": "Missouri",
         "name": "Missouri",
         "incidents": 0,
-        "customer_hours": 13161,
+        "customer_hours": 13163,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1940,7 +2009,7 @@
         "region": "Pennsylvania",
         "name": "Pennsylvania",
         "incidents": 0,
-        "customer_hours": 69927,
+        "customer_hours": 69972,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -1951,7 +2020,7 @@
         "region": "Maryland",
         "name": "Maryland",
         "incidents": 0,
-        "customer_hours": 8770,
+        "customer_hours": 8777,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -1962,7 +2031,7 @@
         "region": "Tarapacá",
         "name": "Tarapacá",
         "incidents": 0,
-        "customer_hours": 15911,
+        "customer_hours": 15912,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -1973,7 +2042,7 @@
         "region": "Valparaíso",
         "name": "Valparaíso",
         "incidents": 0,
-        "customer_hours": 55025,
+        "customer_hours": 55157,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -1984,7 +2053,7 @@
         "region": "Los Lagos",
         "name": "Los Lagos",
         "incidents": 0,
-        "customer_hours": 60730,
+        "customer_hours": 60733,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -2083,7 +2152,7 @@
         "region": "Aysén",
         "name": "Aysén",
         "incidents": 0,
-        "customer_hours": 3890,
+        "customer_hours": 3891,
         "coverage": 0.09,
         "largest": null,
         "causes": [],
@@ -2594,6 +2663,347 @@
         "largest": null,
         "causes": [],
         "week": null
+      },
+      "reg-rwanda|Rwanda": {
+        "source": "reg-rwanda",
+        "region": "Rwanda",
+        "name": "Rwanda",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Gasabo": {
+        "source": "reg-rwanda",
+        "region": "Gasabo",
+        "name": "Gasabo District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Kicukiro": {
+        "source": "reg-rwanda",
+        "region": "Kicukiro",
+        "name": "Kicukiro District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyarugenge": {
+        "source": "reg-rwanda",
+        "region": "Nyarugenge",
+        "name": "Nyarugenge District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Bugesera": {
+        "source": "reg-rwanda",
+        "region": "Bugesera",
+        "name": "Bugesera District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Gatsibo": {
+        "source": "reg-rwanda",
+        "region": "Gatsibo",
+        "name": "Gatsibo District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Kayonza": {
+        "source": "reg-rwanda",
+        "region": "Kayonza",
+        "name": "Kayonza District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Kirehe": {
+        "source": "reg-rwanda",
+        "region": "Kirehe",
+        "name": "Kirehe District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Ngoma": {
+        "source": "reg-rwanda",
+        "region": "Ngoma",
+        "name": "Ngoma District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyagatare": {
+        "source": "reg-rwanda",
+        "region": "Nyagatare",
+        "name": "Nyagatare District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Rwamagana": {
+        "source": "reg-rwanda",
+        "region": "Rwamagana",
+        "name": "Rwamagana District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Burera": {
+        "source": "reg-rwanda",
+        "region": "Burera",
+        "name": "Burera District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Gakenke": {
+        "source": "reg-rwanda",
+        "region": "Gakenke",
+        "name": "Gakenke District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Gicumbi": {
+        "source": "reg-rwanda",
+        "region": "Gicumbi",
+        "name": "Gicumbi District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Musanze": {
+        "source": "reg-rwanda",
+        "region": "Musanze",
+        "name": "Musanze District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Rulindo": {
+        "source": "reg-rwanda",
+        "region": "Rulindo",
+        "name": "Rulindo District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Gisagara": {
+        "source": "reg-rwanda",
+        "region": "Gisagara",
+        "name": "Gisagara District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Huye": {
+        "source": "reg-rwanda",
+        "region": "Huye",
+        "name": "Huye District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Kamonyi": {
+        "source": "reg-rwanda",
+        "region": "Kamonyi",
+        "name": "Kamonyi District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Muhanga": {
+        "source": "reg-rwanda",
+        "region": "Muhanga",
+        "name": "Muhanga District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyamagabe": {
+        "source": "reg-rwanda",
+        "region": "Nyamagabe",
+        "name": "Nyamagabe District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyanza": {
+        "source": "reg-rwanda",
+        "region": "Nyanza",
+        "name": "Nyanza District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyaruguru": {
+        "source": "reg-rwanda",
+        "region": "Nyaruguru",
+        "name": "Nyaruguru District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Ruhango": {
+        "source": "reg-rwanda",
+        "region": "Ruhango",
+        "name": "Ruhango District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Karongi": {
+        "source": "reg-rwanda",
+        "region": "Karongi",
+        "name": "Karongi District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Ngororero": {
+        "source": "reg-rwanda",
+        "region": "Ngororero",
+        "name": "Ngororero District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyabihu": {
+        "source": "reg-rwanda",
+        "region": "Nyabihu",
+        "name": "Nyabihu District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Nyamasheke": {
+        "source": "reg-rwanda",
+        "region": "Nyamasheke",
+        "name": "Nyamasheke District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Rubavu": {
+        "source": "reg-rwanda",
+        "region": "Rubavu",
+        "name": "Rubavu District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Rusizi": {
+        "source": "reg-rwanda",
+        "region": "Rusizi",
+        "name": "Rusizi District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
+      },
+      "reg-rwanda|Rutsiro": {
+        "source": "reg-rwanda",
+        "region": "Rutsiro",
+        "name": "Rutsiro District",
+        "incidents": 0,
+        "customer_hours": 0,
+        "coverage": 0,
+        "largest": null,
+        "causes": [],
+        "week": null
       }
     }
   },
@@ -2637,7 +3047,7 @@
     },
     "reg-rwanda": {
       "ok": true,
-      "error": "stale: the operator's data is from 2026-11-22T08:03:00Z"
+      "error": ""
     },
     "ceb-mauritius": {
       "ok": true,
@@ -2721,7 +3131,7 @@
     },
     "nged-live-power-cuts": {
       "ok": true,
-      "error": "stale: the operator's data is from 2026-11-24T23:40:00Z"
+      "error": ""
     },
     "elexon-system-warnings": {
       "ok": true,

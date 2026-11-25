@@ -24,7 +24,6 @@ or the guard, the monitor and the feeds would point at an address that does not 
 2. Settings → Pages: verify the domain for the account (Settings → Pages → Verified domains) so nobody else can claim it.
 3. Settings → Secrets and variables → Actions → Variables: `SITE_URL` = `https://cyberview.tools`.
 4. In the repository: set `"site_url": "https://cyberview.tools"` in `config/site.json` (a pull request).
-   `cyberview.tools` is already in `V.BASE_HOSTS` in `site/scanner-lib.js` (the scanner report's own-site link allowlist).
    GitHub redirects `xanderhutch.github.io/CyberView/...` to the new domain by itself.
 
 ## 3. Cloudflare proxy and headers

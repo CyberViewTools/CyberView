@@ -1215,7 +1215,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Scanner", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1264,10 +1264,10 @@ async def main():
             vs = await pg.locator("#viewseg").bounding_box()
             fb = await pg.locator("#filtersBtn").bounding_box()
             ok("phone: Filters and the view switcher share one row", vs["width"] > 230 and abs(fb["y"] - vs["y"]) < 14 and fb["x"] + fb["width"] <= vs["x"] + 2 or vs["x"] + vs["width"] <= fb["x"] + 2, [vs, fb])
-            for sub in ["archive.html", "vulnerabilities.html", "scanner.html", "trends.html", "actors.html", "tabletop.html", "community.html", "status.html", "about.html", "privacy.html", "terms.html"]:
+            for sub in ["archive.html", "vulnerabilities.html", "tools.html", "trends.html", "actors.html", "tabletop.html", "community.html", "status.html", "about.html", "privacy.html", "terms.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Scanner", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -2107,140 +2107,25 @@ async def main():
         bn = copy.deepcopy(bundle); bn["docs"] = {k: v for k, v in (bundle.get("docs") or {}).items() if k != "scams/warnings"}
         await serve(make_site(bn), v163b)
 
-        # the Scanner page (site/scanner.html from data/scanner.json, scripts/scanner-stats.mjs): live numbers, nav tab, text only
-        async def vscan(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
-            ok("scanner: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Scanner")
-            ok("scanner: Scanner sits after Vulnerabilities in the nav", (await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => a.textContent)"))[1:3] == ["Vulnerabilities", "Scanner"])
-            for i in ["nProducts", "nRules", "nVersion"]:
-                t = (await pg.text_content("#" + i)).strip()
-                ok(f"scanner: live number {i} shown", t and t != "—" and any(c.isdigit() for c in t), t)
-            ok("scanner: counted-at note", "Counted at the site build" in await pg.text_content("#glanceNote"))
-            ok("scanner: area counts filled from the code", "detection rows" in await pg.text_content("[data-area=edge] .acount") and "built-in entries" in await pg.text_content("[data-area=services] .acount"))
-            ok("scanner: opt-ins listed from the scanner's own flags", await pg.locator("#optins li code").count() >= 3 and "--html" in await pg.text_content("#optins"))
-            ok("scanner: recently added list", await pg.locator("#recent li.rc").count() >= 5 and await pg.locator("#recent a[href='https://github.com/xanderhutch/CyberView/pull/112']").count() == 1)
-            ok("scanner: authorization warning and download links", "Only scan systems you own" in await pg.text_content(".schero .caveat") and await pg.locator(".schero a[href='https://github.com/xanderhutch/CyberView/tree/main/scanner']").count() == 1)
-            ok("scanner: quick start commands", "cyberview-scan.mjs init --out scope.json" in await pg.text_content(".steps") and await pg.locator(".steps pre code").count() == 3)
-            ok("scanner: links to My software", await pg.locator("a[href='vulnerabilities.html#inv']").count() >= 1)
-            ok("scanner: no script errors", not errs, errs)
+        # the Tools page (legal/tools.html via scripts/pages.mjs): under development, a note only; the Scanner page, tab and
+        # the Vulnerabilities page's scanner panel were removed (owner, 2026-11-24)
+        async def vtools(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "tools.html"), wait=600)
+            ok("tools: nav marks the page", await pg.locator("header .sitenav a[aria-current=page]").text_content() == "Tools")
+            ok("tools: Tools sits after Vulnerabilities in the nav", (await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => a.textContent)"))[1:3] == ["Vulnerabilities", "Tools"])
+            ok("tools: says it is under development", "under development" in (await pg.text_content("main")).lower())
+            ok("tools: no Scanner link left in the nav", await pg.locator("a[href='scanner.html']").count() == 0)
+            ok("tools: no script errors", not errs, errs)
             await pg.context.close()
-            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), w=390, h=844, wait=900)
-            ok("scanner: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
-            ok("scanner: phone shows the menu button", await pg.locator("#navBtn").is_visible() and await pg.locator("header .sitenav").is_hidden())
+            pg, errs = await open_page(browser, url.replace("index.html", "tools.html"), w=390, h=844, wait=600)
+            ok("tools: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+            ok("tools: phone shows the menu button", await pg.locator("#navBtn").is_visible() and await pg.locator("header .sitenav").is_hidden())
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "vulnerabilities.html#scanner"), wait=900)
-            ok("scanner: the Vulnerabilities panel links to the full page", await pg.locator("#scanner a[href='scanner.html']").count() == 1)
+            ok("vulnerabilities: the scanner panel is gone", await pg.locator("#scanner").count() == 0 and await pg.locator("a[href='scanner.html']").count() == 0)
+            ok("vulnerabilities: an old #scanner link opens the default view without errors", not errs, errs)
             await pg.context.close()
-        await serve(make_site(bundle), vscan)
-
-        site_sc = make_site(bundle)
-        json.dump({"built_at": "2026-11-22T10:00:00Z", "version": "<b>1</b>", "products": "<img src=x id=pwnS1>", "rules": -5, "kev_products": 10, "kev_covered": 50,
-                   "areas": {"edge": 3, "apps": None}, "opt_ins": [{"flag": "<img src=x id=pwnS2>", "what": "x"}, {"flag": "--html", "what": "<i id=pwnS3>html</i>"}],
-                   "recent": [{"title": "<img src=x id=pwnS4>", "line": "line", "date": "2026-11-20", "pr": "javascript:alert(1)"}, {"title": "No date", "date": "soon"}]},
-                  open(os.path.join(site_sc, "data", "scanner.json"), "w"))
-        async def vscanbad(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
-            ok("scanner bad data: bad numbers show a dash", (await pg.text_content("#nProducts")).strip() == "—" and (await pg.text_content("#nRules")).strip() == "—" and (await pg.text_content("#nVersion")).strip() == "—")
-            ok("scanner bad data: impossible KEV coverage dropped", (await pg.text_content("#nKev")).strip() == "—")
-            ok("scanner bad data: a missing module says so", "Not in this release yet" in await pg.text_content("[data-area=apps] .acount") and "3 detection rows" in await pg.text_content("[data-area=edge] .acount"))
-            ok("scanner bad data: markup stays text, bad flags and dates dropped", all([await pg.locator(f"#pwnS{i}").count() == 0 for i in range(1, 5)]) and await pg.locator("#optins li code").count() == 1 and await pg.locator("#recent li.rc").count() == 1)
-            ok("scanner bad data: no unsafe link", await pg.locator("a[href^='javascript']").count() == 0)
-            ok("scanner bad data: no script errors", not errs, errs)
-            await pg.context.close()
-        await serve(site_sc, vscanbad)
-
-        site_sc2 = make_site(bundle)
-        os.remove(os.path.join(site_sc2, "data", "scanner.json"))
-        async def vscanmissing(url):
-            pg, errs = await open_page(browser, url.replace("index.html", "scanner.html"), wait=900)
-            ok("scanner missing data: dashes and a note", (await pg.text_content("#nProducts")).strip() == "—" and "could not be loaded" in await pg.text_content("#glanceNote"))
-            ok("scanner missing data: the static guide still shows", await pg.locator(".steps pre code").count() == 3 and await pg.locator(".area").count() >= 9)
-            await pg.context.close()
-        await serve(site_sc2, vscanmissing)
-
-        # the Scanner page's report viewer and scope builder (site/scanner-lib.js, scanner.js): browser only, text only
-        vfix = os.path.join(ROOT, "tests", "fixtures", "scanner", "viewer")
-        rep_a = json.load(open(os.path.join(vfix, "report-a.json"))); rep_b = json.load(open(os.path.join(vfix, "report-b.json")))
-        def jfile(name, obj): return {"name": name, "mimeType": "application/json", "buffer": (obj if isinstance(obj, str) else json.dumps(obj)).encode()}
-        hostile = copy.deepcopy(rep_a)
-        hostile["scope"]["owner"] = "<img src=x id=pwnV1>"
-        hostile["findings"][0]["title"] = "<script>document.body.id='pwnV2'</script>"
-        hostile["findings"][0]["fix"]["advisory"] = {"name": "evil advisory", "url": "javascript:alert(1)"}
-        hostile["findings"][0]["hunt"] = [{"name": "evil hunt", "format": "yara", "publisher": "x", "url": "https://evil.example/rule"}]
-        hostile["findings"][1]["fix"]["references"] = ["http://plain.example/"]
-        hostile["hosts"][0]["observations"].append({"port": 80, "kind": "<b id=pwnV3>k</b>", "severity": "high", "text": "<img src=x id=pwnV4 onerror=alert(1)>"})
-        hostile["hosts"][0]["services"][0]["evidence"] = "<svg id=pwnV5 onload=alert(1)>"
-        async def vscanview(url):
-            page_url = url.replace("index.html", "scanner.html")
-            pg, errs = await open_page(browser, page_url, wait=900)
-            ok("scanner viewer: both tools are labelled and say everything stays in the browser", "View a scan report" in await pg.text_content("#viewH") and "Build a scope file" in await pg.text_content("#scopeH")
-               and "never uploaded" in await pg.text_content("#tools"))
-            await pg.set_input_files("#repFile", [jfile("report-a.json", rep_a)]); await pg.wait_for_timeout(400)
-            tile = lambda k: pg.text_content(f"#repTiles [data-k={k}] .tn")
-            ok("scanner viewer: tiles use the scanner's own counts", [await tile(k) for k in ["known_exploited", "critical", "act", "overdue"]] == [str(rep_a["summary"][k]) for k in ["known_exploited", "critical", "act", "overdue"]],
-               [await tile(k) for k in ["known_exploited", "critical", "act", "overdue"]])
-            ok("scanner viewer: findings table rows", await pg.locator("#repTable tbody tr").count() == 3)
-            ok("scanner viewer: every rating point listed", await pg.locator("#repTable tr[data-cve='CVE-2026-90101'] .ptl li").count() == len(rep_a["findings"][0]["points"]["list"]))
-            ok("scanner viewer: CVE links to the Vulnerabilities page", await pg.locator("#repTable a[href='vulnerabilities.html#CVE-2026-90101']").count() >= 1)
-            ok("scanner viewer: run header shows owner, attestation and coverage", "Example lab" in await pg.text_content("#repOut") and "Test Operator" in await pg.text_content("#repOut") and "Incomplete" in await pg.text_content("#repOut"))
-            ok("scanner viewer: hosts, certificates, observations and coverage gaps", await pg.locator("#repHosts > li").count() == 3 and await pg.locator("#repCerts tbody tr").count() == 1
-               and await pg.locator("#repObs li").count() >= 1 and "10.0.0.7" in await pg.text_content("#repGaps"))
-            ok("scanner viewer: link to an unlisted host shown as text", await pg.locator("#repOut a[href^='https://advisories.example.com']").count() == 0 and "Fixture advisory" in await pg.text_content("#repTable"))
-            await pg.select_option("#fBand", "Critical"); await pg.wait_for_timeout(100)
-            ok("scanner viewer: rating filter", await pg.locator("#repTable tbody tr").count() == 1 and "1 of 3" in await pg.text_content("#repCount"))
-            await pg.select_option("#fBand", ""); await pg.select_option("#fHost", "10.0.0.6"); await pg.wait_for_timeout(100)
-            ok("scanner viewer: host filter", await pg.locator("#repTable tbody tr").count() == 1)
-            await pg.select_option("#fHost", ""); await pg.check("#fKev"); await pg.select_option("#fConf", "high"); await pg.wait_for_timeout(100)
-            ok("scanner viewer: known-exploited and confidence filters", await pg.locator("#repTable tbody tr").count() == 3)
-            # hostile fields stay text
-            await pg.set_input_files("#repFile", [jfile("hostile.json", hostile)]); await pg.wait_for_timeout(400)
-            ok("scanner viewer hostile: markup stays text", all([await pg.locator(f"#pwnV{i}").count() == 0 for i in range(1, 6)]) and await pg.evaluate("document.body.id") != "pwnV2"
-               and "<img src=x id=pwnV1>" in await pg.text_content("#repOut"))
-            ok("scanner viewer hostile: no javascript:, http or unlisted-host link", await pg.locator("a[href^='javascript']").count() == 0 and await pg.locator("#repOut a[href*='evil.example']").count() == 0
-               and await pg.locator("#repOut a[href^='http:']").count() == 0 and "evil hunt" in await pg.text_content("#repTable"))
-            # bad files: an error, nothing rendered from them
-            await pg.click("#repClear"); await pg.wait_for_timeout(100)
-            await pg.set_input_files("#repFile", [jfile("broken.json", "{nope"), jfile("other.json", {"hello": "world"})]); await pg.wait_for_timeout(400)
-            msg = await pg.text_content("#repMsg")
-            ok("scanner viewer: bad JSON and a non-report show errors", "broken.json: the file is not valid JSON" in msg and "other.json: the file is not a CyberView Scanner report.json" in msg, msg)
-            ok("scanner viewer: nothing shown from bad files", await pg.locator("#repOut").is_hidden())
-            # two reports: the diff
-            await pg.set_input_files("#repFile", [jfile("report-b.json", rep_b), jfile("report-a.json", rep_a)]); await pg.wait_for_timeout(500)
-            dt = lambda k: pg.text_content(f"#dTiles [data-k='{k}'] .tn")
-            ok("scanner viewer diff: counts", [await dt(k) for k in ["findings.new", "findings.fixed", "findings.still_open", "findings.gone"]] == ["0", "1", "1", "1"], [await dt(k) for k in ["findings.new", "findings.fixed", "findings.still_open", "findings.gone"]])
-            ok("scanner viewer diff: fixed only when the port answered again; gone is not a fix", "CVE-2026-90101" in await pg.text_content("#dFixed") and "not proof of a fix" in await pg.text_content("#dGone"))
-            ok("scanner viewer diff: certificate issuer change flagged for review", "not evidence of compromise" in await pg.text_content("#repDiff") and await pg.locator("#dIssuer li").count() == 1)
-            ok("scanner viewer diff: the later report is shown below", "report-b.json" in await pg.text_content("#repPick option:checked"))
-            ok("scanner viewer: no script errors", not errs, errs)
-            # the scope builder
-            await pg.fill("#scOwner", "Example lab"); await pg.fill("#scName", "Test Operator"); await pg.fill("#scTargets", "10.0.0.0/24\nfiles.lab.example")
-            await pg.click("#scMake"); await pg.wait_for_timeout(200)
-            ok("scope builder: refuses without the attestation", await pg.locator("#scProblems").count() == 1 and "Attestation" in await pg.text_content("#scProblems") and await pg.locator("#scDownload").count() == 0)
-            ok("scope builder: shows the scanner's exact attestation and the warning", (await pg.text_content("#scStatement")).strip() == "I own the systems listed in targets, or I hold written permission from their owner to scan them for known vulnerabilities, and this scan stays within that permission."
-               and "Only list systems you own" in await pg.text_content("#scWarn"))
-            await pg.check("#scAgree"); await pg.click("#scMake"); await pg.wait_for_timeout(200)
-            href = await pg.get_attribute("#scDownload", "href")
-            ok("scope builder: a download of scope.json", href and href.startswith("blob:") and await pg.get_attribute("#scDownload", "download") == "scope.json", href)
-            sc = json.loads(await pg.text_content("#scPreview"))
-            ok("scope builder: valid scope JSON", sc.get("cyberview_scope") == 1 and sc["attestation"]["agreed"] is True and sc["targets"] == ["10.0.0.0/24", "files.lab.example"] and "ports" not in sc, sc)
-            cmds = await pg.text_content("#scCmds")
-            ok("scope builder: check then scan, no init", "cyberview-scan.mjs check --scope scope.json" in cmds and "scan --scope scope.json --online" in cmds and "init" not in cmds and "--i-am-authorized" not in cmds)
-            await pg.fill("#scTargets", "203.0.113.0/28"); await pg.wait_for_timeout(100)
-            ok("scope builder: editing withdraws the old file", await pg.locator("#scDownload").count() == 0)
-            ok("scope builder: public range flagged with the scanner's rule", await pg.locator("#scPublic").is_visible() and "--i-am-authorized-for-public-ranges" in await pg.text_content("#scPublic") and "/24" in await pg.text_content("#scRule"))
-            await pg.click("#scMake"); await pg.wait_for_timeout(200)
-            ok("scope builder: public commands carry the flag", (await pg.text_content("#scCmds")).count("--i-am-authorized-for-public-ranges") == 2)
-            await pg.fill("#scTargets", "8.8.0.0/16"); await pg.click("#scMake"); await pg.wait_for_timeout(200)
-            ok("scope builder: a too-wide public range is refused", "public range wider than a /24" in await pg.text_content("#scProblems") and await pg.locator("#scDownload").count() == 0)
-            ok("scope builder: no script errors", not errs, errs)
-            await pg.context.close()
-            pg, errs = await open_page(browser, page_url, w=390, h=844, wait=900)
-            await pg.set_input_files("#repFile", [jfile("report-a.json", rep_a), jfile("report-b.json", rep_b)]); await pg.wait_for_timeout(500)
-            await pg.check("#scAgree"); await pg.fill("#scOwner", "Example lab"); await pg.fill("#scName", "Test Operator"); await pg.fill("#scTargets", "10.0.0.5"); await pg.click("#scMake"); await pg.wait_for_timeout(200)
-            ok("scanner tools: phone width has no sideways scroll", await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), await pg.evaluate("document.documentElement.scrollWidth"))
-            ok("scanner tools phone: no script errors", not errs, errs)
-            await pg.context.close()
-        await serve(make_site(bundle), vscanview)
+        await serve(make_site(bundle), vtools)
 
         await browser.close()
 

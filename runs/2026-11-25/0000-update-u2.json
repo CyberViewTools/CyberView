@@ -1,32 +1,37 @@
 {
-  "job": "updater",
+  "job": "update-u2",
   "model": "claude-sonnet-5-5",
   "updated": [],
   "unchanged": [
-    {
-      "id": "wp-connect-plugins-backdoored-releases-held-2026-11",
-      "note": "Sploitus PoC listing for CVE-2026-135202: aggregator, describes a different flaw (unauthenticated PHP object injection RCE) from a third-party GitHub repo; not validated, not added"
-    }
+    "pakistan-national-cert-whatsapp-advisory-2026-11 (securitycontext tracker; KEV listing relays HKCERT already cited)",
+    "mitel-micollab-awv-critical-flaws-2026-11 (tracker only; GitHub PoC not read, no primary page)"
   ],
   "unrelated": [],
   "pages_read": [
     {
-      "url": "https://sploitus.com/exploit?id=9246A3FC-D252-5BA2-9FE2-30E4F90B1D57",
-      "used_in": "none"
+      "url": "https://securitycontext.com/cve/CVE-2026-23871"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-133323"
     }
   ],
   "failed_sites": [
-    "elpitazo.net (403)",
-    "scworld.com (403)"
+    "guelphmercury.com (fetch blocked)"
   ],
   "open_leads": [
     {
-      "title": "CVE-2026-135202 PoC on Sploitus conflicts with Wordfence description (backdoor vs PHP object injection)",
-      "note": "needs vendor/NVD source before any poc-public tag",
+      "title": "Mitel CVE-2026-133323 public PoC",
+      "url": "https://securitycontext.com/cve/CVE-2026-133323",
+      "note": "tracker says GitHub PoC added 2026-11-24; verify repo before poc-public",
+      "priority": "medium"
+    },
+    {
+      "title": "Bell Canada guelphmercury article",
+      "url": "https://www.guelphmercury.com/news/bell-canada-data-breach-november-2026-alert/article_6fd2e63d-0187-5788-9433-97f4a118c663.html",
+      "note": "unreachable",
       "priority": "low"
     }
   ],
-  "notes": "Blocked sites not worked around.",
   "worker_role": "updater",
   "worker_model": "sonnet"
 }

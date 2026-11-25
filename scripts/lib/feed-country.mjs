@@ -55,6 +55,21 @@ export function countryFromName(name) {
   return "";
 }
 
+// Country names that are also common words or names elsewhere ("Georgia" the US state, "Jordan", "Chad"): never read
+// from the free text of a feed name, only from a bracketed label.
+const AMBIGUOUS = new Set(["GE", "JO", "TD", "US", "PR", "VA", "TO", "CN"]);
+const WORDS = Object.entries(ALIAS).filter(([w, cc]) => w.length > 3 && !AMBIGUOUS.has(cc) && /^[\p{L} .'-]+$/u.test(w))
+  .sort((a, b) => b[0].length - a[0].length);
+/** Pure: a country named as a whole word anywhere in a feed name ("Burundi Iwacu", "Times of Malta"), longest name first. */
+export function countryInText(name) {
+  const low = ` ${String(name || "").toLowerCase().replace(/&/g, "and").replace(/[^\p{L}' .-]+/gu, " ")} `;
+  for (const [w, cc] of WORDS) {
+    const i = low.indexOf(w);
+    if (i > 0 && !/[\p{L}-]/u.test(low[i - 1]) && !/[\p{L}-]/u.test(low[i + w.length] || " ")) return cc;
+  }
+  return "";
+}
+
 /** Pure: the country a feed covers (ISO alpha-2), or "" for an international feed. */
 export function countryOf(feed) {
   const f = feed || {};
@@ -64,9 +79,8 @@ export function countryOf(feed) {
   let host = ""; try { host = new URL(f.url).hostname.toLowerCase(); } catch { return ""; }
   const tld = host.split(".").pop();
   if (tld === "gov" || tld === "mil") return "US";
-  if (tld.length !== 2 || VANITY.has(tld)) return "";
-  const cc = TLD[tld] || tld.toUpperCase();
-  return SET.has(cc) ? cc : "";
+  const cc = tld.length === 2 && !VANITY.has(tld) ? TLD[tld] || tld.toUpperCase() : "";
+  return SET.has(cc) ? cc : countryInText(f.name);
 }
 
 /** Pure: feeds -> { counts: {CC: n}, international: n, thin: [{cc, name, n}] (fewer than `under`, fewest first) }. */

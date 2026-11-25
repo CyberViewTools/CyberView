@@ -49,3 +49,14 @@ test("the checker refuses a country code CyberView does not count", () => {
   assert.equal(shapeProblem({ ...base, country: "KE" }), "");
   assert.match(shapeProblem({ ...base, country: "ZZ" }), /country ZZ/);
 });
+
+test("a country named as a whole word in a .com feed's name places it; ambiguous names do not", async () => {
+  const { countryInText } = await import("../../scripts/lib/feed-country.mjs");
+  assert.equal(countryOf({ name: "Burundi Iwacu", url: "https://www.iwacu-burundi.org/feed/" }), "BI");
+  assert.equal(countryOf({ name: "Times of Malta", url: "https://timesofmalta.com/rss" }), "MT");
+  assert.equal(countryInText("Papua New Guinea Post-Courier"), "PG");
+  assert.equal(countryInText("Nigerian Tribune"), "");
+  assert.equal(countryInText("Georgia Public Broadcasting"), "");
+  assert.equal(countryInText("Jordan's blog"), "");
+  assert.equal(countryOf({ name: "Krebs on Security", url: "https://krebsonsecurity.com/feed/" }), "");
+});

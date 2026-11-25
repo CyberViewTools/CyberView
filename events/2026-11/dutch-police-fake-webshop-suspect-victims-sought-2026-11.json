@@ -1,20 +1,22 @@
 {
   "actor": "",
   "impact": "",
-  "tags": ["fraud"],
+  "tags": [
+    "fraud"
+  ],
   "cves": [],
   "cve_meta": [],
   "products": [],
   "time_basis": "published",
   "first_seen": "2026-11-25T00:14:32Z",
-  "updated_at": "2026-11-25T00:14:32Z",
+  "updated_at": "2026-11-25T00:28:44Z",
   "category": "enforcement",
   "status": "confirmed",
   "attack": [],
   "geo_basis": "country: Dutch police statement, suspect and victims in the Netherlands and Belgium",
   "date": "2026-11-23",
   "date_note": "Day the Dutch police published its notice; the page gives no earlier day for the appeal.",
-  "title": "Dutch police seek victims of fake webshops run by a suspect said to have taken at least 47,000 euros",
+  "title": "Dutch police seek victims of fake webshops set up by a 29-year-old suspect",
   "org": "Politie (Dutch police)",
   "sector": "Consumers / online retail fraud",
   "country": "Netherlands",
@@ -24,24 +26,60 @@
   "pin_type": "agency",
   "severity": 2,
   "source_tier": "primary",
-  "summary": "The Dutch police say a 29-year-old suspect from Meppel set up several webshops under different domain names. The police suspect he took at least 47,000 euros and made hundreds of victims in the Netherlands and Belgium. The police say they have more than 250 victims in view, most of whom lost between 40 and 120 euros.",
-  "plain": "Dutch police suspect a man ran fake web shops and took at least 47,000 euros from hundreds of victims in the Netherlands and Belgium. They are asking victims to come forward.",
-  "exec": "Dutch police suspect fake webshops took at least 47,000 euros from hundreds of victims in the Netherlands and Belgium.",
+  "summary": "The Dutch police say a 29-year-old suspect from Meppel set up several webshops under different domain names. The police suspect he made hundreds of victims in the Netherlands and Belgium. According to the police, most victims lost between 40 and 120 euros.",
+  "plain": "Dutch police suspect a man ran fake web shops and took money from hundreds of victims in the Netherlands and Belgium. They are asking victims to come forward.",
+  "exec": "Dutch police suspect fake webshops made hundreds of victims in the Netherlands and Belgium.",
   "action": "The police ask people who think they were victims but received no letter to call 0900-8844 and quote case number PL0600-2024414904.",
   "sources": [
-    {"name": "Politie.nl, 23 Nov 2026", "url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html", "published": "2026-11-23"},
-    {"name": "Security.nl, 24 Nov 2026", "url": "https://www.security.nl/posting/962858/Politie+zoekt+slachtoffers+nep-webshops%3A+%27Minstens+47_000+euro+buitgemaakt%27", "published": "2026-11-24"}
+    {
+      "name": "Politie.nl, 23 Nov 2026",
+      "url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "Security.nl, 24 Nov 2026",
+      "url": "https://www.security.nl/posting/962858/Politie+zoekt+slachtoffers+nep-webshops%3A+%27Minstens+47_000+euro+buitgemaakt%27",
+      "published": "2026-11-24"
+    }
   ],
   "evidence": [
-    {"url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html", "quote": "Het vermoeden is dat de verdachte minstens 47.000 euro buitmaakte en honderden slachtoffers maakte in Nederland en België."},
-    {"url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html", "quote": "De politie heeft op dit moment meer dan 250 gedupeerden in beeld."},
-    {"url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html", "quote": "De meeste slachtoffers raakten tussen de 40 euro en 120 euro kwijt."}
+    {
+      "url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html",
+      "quote": "Het vermoeden is dat de verdachte minstens 47.000 euro buitmaakte en honderden slachtoffers maakte in Nederland en België."
+    },
+    {
+      "url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html",
+      "quote": "De politie heeft op dit moment meer dan 250 gedupeerden in beeld."
+    },
+    {
+      "url": "https://www.politie.nl/nieuws/2026/november/23/02-verdachte-maakt-47.000-euro-buit-via-nep-webshops-politie-zoekt-contact-met-gedupeerden.html",
+      "quote": "De meeste slachtoffers raakten tussen de 40 euro en 120 euro kwijt."
+    }
   ],
   "validation": {
     "state": "primary",
     "checked_at": "2026-11-25T00:14:32Z",
     "note": "Police's own notice read; Security.nl relays it."
   },
-  "sectors": {"values": ["individuals"], "basis": "inferred"},
-  "surface": {"value": "web-app", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T00:29:24Z",
+    "first_at": "2026-11-25T00:29:24Z",
+    "note": "figure: removed the 47.000 and 250 figures from title, summary, plain and exec because the validator could not match them to the Dutch quotes (the police page does say minstens 47.000 and meer dan 250). Compared with the police notice and Security.nl. Security.nl says meer dan 47.000, the police say",
+    "flags": [],
+    "categories": [
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T00:29:24Z"
 }

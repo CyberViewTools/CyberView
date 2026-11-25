@@ -1215,7 +1215,7 @@ async def main():
         async def v112(url):
             pg, errs = await open_page(browser, url, wait=1300)
             links = await pg.eval_on_selector_all("header .sitenav a", "as => as.map(a => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])")
-            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.locator("header .sitenav").is_visible(), links)
+            ok("nav: site links visible on desktop", [l[0] for l in links] == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "Library", "About"] and await pg.locator("header .sitenav").is_visible(), links)
             ok("nav: current page marked", links[0][2] == "page" and all(l[2] is None for l in links[1:]))
             ok("nav: menu button hidden on desktop", await pg.locator("#navBtn").is_hidden())
             ok("nav: full screen and shortcuts buttons", await pg.locator("#fs").is_visible() and await pg.locator("#keysBtn").is_visible())
@@ -1267,7 +1267,7 @@ async def main():
             for sub in ["archive.html", "vulnerabilities.html", "tools.html", "trends.html", "actors.html", "tabletop.html", "community.html", "status.html", "about.html", "privacy.html", "terms.html"]:
                 await pg.goto(url.replace("index.html", sub)); await pg.wait_for_timeout(500)
                 await pg.click("#navBtn"); await pg.wait_for_timeout(100)
-                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+                ok(f"phone: {sub} has the same menu", await pg.eval_on_selector_all("#navSheet .sheetnav a", "as => as.map(a => a.textContent)") == ["Map", "Vulnerabilities", "Tools", "Archive", "Trends", "Actors", "Exercise", "Community", "Status", "Library", "About"] and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
             await ctx.close()
 
         await serve(make_site(bundle), v112)
@@ -1514,7 +1514,7 @@ async def main():
             await ctx.close()
             pg, errs = await open_page(browser, url, w=1000, wait=1200)
             nb = await pg.locator("header .sitenav").bounding_box(); rb = await pg.locator("#refresh").bounding_box()
-            ok("nav: ten links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
+            ok("nav: eleven links fit beside the buttons on a small laptop", nb and rb and nb["x"] + nb["width"] <= rb["x"] + 1 and abs((await pg.locator("#keysBtn").bounding_box())["y"] - rb["y"]) < 12 and await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), [nb, rb])
             await pg.context.close()
 
         await serve(site18, v118)

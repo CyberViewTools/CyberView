@@ -27,3 +27,23 @@ test("collectorMs: network collectors share only the time left above the floor",
   assert.equal(collectorMs(5 * 6e4 + 10000, 5 * 6e4), 0);          // under 20 s above the floor: skipped
   assert.equal(collectorMs(30 * 6e4, 5 * 6e4, 120000), 120000);    // never over its own limit
 });
+
+test("leaveCollectToActions: under a hard stop, a fresh collection is left to collect.yml", async () => {
+  const { leaveCollectToActions } = await import("../../scripts/run-job.mjs");
+  const now = Date.parse("2026-11-25T17:06:00Z");
+  assert.equal(leaveCollectToActions(9 * 6e4, "2026-11-25T16:45:00Z", 25, now), true);     // 21 min old: left to Actions
+  assert.equal(leaveCollectToActions(9 * 6e4, "2026-11-25T16:30:00Z", 25, now), false);    // 36 min old: collect here
+  assert.equal(leaveCollectToActions(Infinity, "2026-11-25T17:00:00Z", 25, now), false);   // no hard stop: always collect
+  assert.equal(leaveCollectToActions(9 * 6e4, undefined, 25, now), false);                 // never collected: collect here
+  assert.equal(leaveCollectToActions(9 * 6e4, "2026-11-25T17:00:00Z", 0, now), false);     // 0 turns it off
+  assert.equal(leaveCollectToActions(9 * 6e4, "2026-11-25T17:30:00Z", 25, now), false);    // a stamp in the future is not trusted
+});
+test("minStartMs: a worker starts only with time to finish before the hard stop", async () => {
+  const { minStartMs } = await import("../../scripts/run-job.mjs");
+  assert.equal(minStartMs("researcher"), 4 * 6e4);
+  assert.equal(minStartMs("researcher-deep"), 4 * 6e4);
+  assert.equal(minStartMs("reviewer"), 150000);
+  assert.equal(minStartMs("updater-deep"), 150000);
+  assert.equal(minStartMs("claims"), 90000);
+  assert.equal(minStartMs(undefined), 90000);
+});

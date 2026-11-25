@@ -37,6 +37,19 @@ export const workerLimitMs = (own, left) => Math.min(own, Math.max(30000, left))
 /** Pure: a network collector's timeout with `left` ms before the hard stop and `floor` ms kept for the workers and commit;
  *  0 = skip it this cycle (its sources are read again next cycle, and collect.yml collects on its own schedule). */
 export const collectorMs = (left, floor, own = 300000) => (left === Infinity ? own : left - floor < 20000 ? 0 : Math.min(own, left - floor));
+/** Pure: leave the lead collectors (collect.mjs, osint.mjs) to collect.yml in this cycle? Only under a hard stop (a span of
+ *  about 9 minutes) and only when a collection landed under `fresh` minutes ago (collect.yml runs them at :11 and :41).
+ *  25 November: collecting took about 3 of the span's 9 minutes, researchers started with under 4 left and 16 of 18
+ *  workers in one span were cut off with nothing written; the leads come in through collect.yml all the same. */
+export const leaveCollectToActions = (left, lastCollectAt, freshMin = 25, now = Date.now()) => {
+  const age = (now - Date.parse(lastCollectAt || "")) / 6e4;
+  return left !== Infinity && freshMin > 0 && age >= 0 && age < freshMin;
+};
+/** Pure: the least time left before the hard stop at which a worker of this role is still started (else its item stays
+ *  queued for the next span). Measured 23 to 25 November: researchers take 2 to 4 minutes (p75), reviewers, updaters
+ *  and follow-ups 1.5 to 2.5; a worker cut off at the stop writes nothing but is still billed for what it read. */
+export const minStartMs = (role) => { const b = String(role || "").replace(/-deep$/, "");
+  return b === "researcher" || b === "gap" ? 4 * 6e4 : ["reviewer", "updater", "followup", "fixer"].includes(b) ? 150000 : 90000; };
 
 /** Pure: the built-in tools a toolset needs, by name ("Bash(node:*)" -> "Bash"), for claude's --tools. */
 export const builtinTools = (tools) => [...new Set((tools || []).map((t) => String(t).replace(/\(.*$/, "").trim()).filter(Boolean))];
@@ -255,7 +268,7 @@ export async function pool(job, list) {
     while (i < list.length) {
       const k = i++, served = servedNow();
       // too close to the launcher's kill: a worker started now would be cut off and its work lost; the item stays queued
-      if (leftMs() < 90000) { late++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: no time left in this run" }; continue; }
+      if (leftMs() < minStartMs(list[k][0])) { late++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: no time left in this run" }; continue; }
       if (served === "park") { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; }
       if (served === "api-fallback") fb++;
       if (served === "api") api++;
@@ -552,14 +565,15 @@ async function flow() {
   // the local steps (triage, fuse, backlog rules) always run. Returns how long each took, for the cycle's record.
   const COLLECT_FLOOR = 5 * 6e4;
   const collectors = () => {
-    const took = [], skipped = [];
-    for (const [c, a, net] of [["bash", ["scripts/kick.sh"], 1], ["node", ["scripts/collect.mjs"], 1], ["node", ["scripts/osint.mjs"], 1], ["node", ["scripts/gdelt-gkg.mjs"], 1], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) {
+    const took = [], skipped = [], left = [], lastAt = readStatus().last_collect_at, leaveToActions = leaveCollectToActions(leftMs(), lastAt, Number(F.collect_fresh_minutes ?? 25));
+    for (const [c, a, net] of [["bash", ["scripts/kick.sh"], 1], ["node", ["scripts/collect.mjs"], 2], ["node", ["scripts/osint.mjs"], 2], ["node", ["scripts/gdelt-gkg.mjs"], 1], ["node", ["scripts/triage.mjs"]], ["node", ["scripts/fuse.mjs"]], ["node", ["scripts/backlog.mjs", "auto"]]]) {
       const name = a[0].replace(/^scripts\/|\.(mjs|sh)$/g, ""), ms = net ? collectorMs(leftMs(), COLLECT_FLOOR) : 300000;
+      if (net === 2 && leaveToActions) { left.push(name); continue; }
       if (!ms) { skipped.push(name); continue; }
       const t = Date.now(); sh(c, a, ms); took.push(`${name} ${Math.round((Date.now() - t) / 1000)}s`);
     }
     polled = Date.now();
-    return took.join(", ") + (skipped.length ? `; skipped for time: ${skipped.join(", ")}` : "");
+    return took.join(", ") + (left.length ? `; left to collect.yml (last collection ${Math.round((Date.now() - Date.parse(lastAt)) / 6e4)} min ago): ${left.join(", ")}` : "") + (skipped.length ? `; skipped for time: ${skipped.join(", ")}` : "");
   };
   const gridCollect = () => { const ms = collectorMs(leftMs(), COLLECT_FLOOR, 120000); if (ms && existsSync(join(ROOT, "scripts", "grid.mjs"))) { try { return sh("node", ["scripts/grid.mjs", "collect"], ms).stdout.trim().split("\n").pop() || ""; } catch {} } return ""; };
   /** A light poll between cycles while idle: collectors on their usual cadence, then is anything waiting that a cycle would start a worker for? */

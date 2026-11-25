@@ -1337,10 +1337,26 @@ async def main():
             ok("replay: panel opens on step 1", await pg.locator("#replay").is_visible() and (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
             ok("replay: stage named", len((await pg.locator("#rpStage").text_content()).strip()) > 3)
             ok("replay: step markers drawn", await pg.locator("#svg .stepn").count() >= 1 and await pg.locator("#svg .rpcur").count() == 1)
-            await pg.click("#rpPlay"); await pg.click("#rpNext"); await pg.wait_for_timeout(1600)
-            # the path needs two steps with a location on the near side of the globe, which depends on the day's data;
-            # moving on and drawing the current step does not
-            ok("replay: next moves on and draws the current step", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and await pg.locator("#svg .rpcur").count() == 1 and await pg.locator("#svg .stepn").count() >= 1)
+            await pg.click("#rpPlay"); await pg.click("#rpNext")
+            # Stepping fires a ~1400ms globe flight that re-centres the next step. Mid-flight the
+            # step's point can sit on the far side of the globe, where drawReplay() back-face culls
+            # it, so a fixed pause races the animation and is flaky under CI load. Wait for the
+            # flight to settle instead: the step count and its drawn marker must hold on a second
+            # check a moment later (a transient mid-flight state would have flipped back by then).
+            # The path still needs two steps with a location on the near side of the globe, which
+            # depends on the day's data; moving on and drawing the current step does not.
+            async def replay_settled():
+                return ((await pg.locator("#rpCount").text_content()) or "").startswith("Step 2 of") \
+                    and await pg.locator("#svg .rpcur").count() == 1 \
+                    and await pg.locator("#svg .stepn").count() >= 1
+            stable = False
+            for _ in range(30):  # up to ~6s for the flight to finish and the marker to settle
+                if await replay_settled():
+                    await pg.wait_for_timeout(200)
+                    if await replay_settled():
+                        stable = True; break
+                await pg.wait_for_timeout(200)
+            ok("replay: next moves on and draws the current step", stable, await pg.locator("#rpCount").text_content())
             await pg.keyboard.press("ArrowLeft"); await pg.wait_for_timeout(300)
             ok("replay: arrow keys step back", (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)

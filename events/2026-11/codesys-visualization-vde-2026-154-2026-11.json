@@ -16,7 +16,7 @@
   "summary": "CERT@VDE advisory VDE-2026-154 lists CVE-2026-121016, CVE-2026-121017 and CVE-2026-121018 (each rated 8.8) and CVE-2026-121019 (rated 3.3) in CODESYS Visualization. Per the advisory, the first three need a user logged in to a CODESYS Control runtime and an attacker controlling a malicious runtime or intercepting the traffic. The advisory does not state whether they are exploited.",
   "plain": "Four flaws in CODESYS Visualization, used with industrial controllers, were published. The advisory says three could let a malicious runtime or an interceptor run functions on an engineering workstation.",
   "exec": "CERT@VDE lists four CODESYS Visualization flaws; the advisory does not say whether any is exploited.",
-  "action": "CERT@VDE advises activating encrypted online communication between the CODESYS Development System and the CODESYS Control runtime, and using only CODESYS archives and projects from trusted sources.",
+  "action": "CERT@VDE advises updating CODESYS Visualization to version 4.11.0.0, enabling encrypted online communication between the CODESYS Development System and Control runtime, and using only trusted CODESYS projects.",
   "impact": "",
   "tags": [],
   "cves": [
@@ -52,7 +52,7 @@
     "note": "Primary: CERT@VDE's advisory VDE-2026-154, the Canadian Centre for Cyber Security's AV26-1199 notice lists no CVEs, so it is not counted as corroboration."
   },
   "first_seen": "2026-11-25T18:48:16Z",
-  "updated_at": "2026-11-25T18:48:16Z",
+  "updated_at": "2026-11-25T19:10:54Z",
   "sectors": {
     "values": [
       "critical-manufacturing"
@@ -62,5 +62,18 @@
   "surface": {
     "value": "ot-ics",
     "basis": "inferred"
-  }
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T19:10:59Z",
+    "first_at": "2026-11-25T19:10:59Z",
+    "note": "action: added the advisory's own remediation (update to 4.11.0.0); CVEs, scores, preconditions and date match CERT@VDE",
+    "flags": [
+      "no-cve-meta"
+    ],
+    "categories": [
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T19:10:59Z"
 }

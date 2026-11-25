@@ -1,0 +1,91 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-25T05:25:00Z",
+  "finished_at": "2026-11-25T05:35:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://seclists.org/oss-sec/2026/q4/873",
+      "title": "rsyslog omdtls advisory",
+      "used_in": "rsyslog-omdtls-dtls-identity-cve-2026-132145"
+    },
+    {
+      "url": "https://note.com/365medical_tokyo/n/nbf064b4f2aba?hl=en",
+      "title": "Osaka hospital commentary",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://www.ithome.com/1/031/989.htm",
+      "title": "OpenAI cyber business (ITHome)",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-135708",
+      "title": "FFmpeg CVE page",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-77331",
+      "title": "memtomem-stm CVE page",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-136131",
+      "title": "hping3 CVE page",
+      "used_in": "skipped"
+    }
+  ],
+  "added": [
+    "rsyslog-omdtls-dtls-identity-cve-2026-132145"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "CVE-2026-135708 FFmpeg WHIP",
+      "url": "https://vuldb.com/vuln/442708",
+      "reason": "medium CVSS 5.5; only aggregator pages read, no vendor page"
+    },
+    {
+      "title": "CVE-2026-77331 memtomem-stm",
+      "url": "https://securitycontext.com/cve/CVE-2026-77331",
+      "reason": "low severity, niche product, aggregator only"
+    },
+    {
+      "title": "CVE-2026-136131 hping3",
+      "url": "https://vuldb.com/vuln/443008",
+      "reason": "medium, niche tool, aggregator only"
+    },
+    {
+      "title": "Osaka hospital 1 billion yen settlement",
+      "url": "https://note.com/365medical_tokyo/n/nbf064b4f2aba",
+      "reason": "commentary on 2022 attack, older than the map window"
+    },
+    {
+      "title": "OpenAI cybersecurity business (x2)",
+      "url": "https://www.ithome.com/1/031/989.htm",
+      "reason": "media report on strategy, no event"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "CVE-2026-132694 MediaWiki OATHAuth passwordless login (CVSS 9.1)",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-132694",
+      "note": "VulDB 403, cve.org page empty; look for Wikimedia Phabricator or release announcement",
+      "priority": "medium"
+    },
+    {
+      "title": "CVE-2026-135708 FFmpeg WHIP muxer, public PoC",
+      "url": "https://securitycontext.com/cve/CVE-2026-135708",
+      "note": "find FFmpeg commit or advisory to cite",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "vuldb.com (403)",
+    "cve.org (empty page)"
+  ],
+  "notes": "build.mjs not run in this worker due to command-permission limits; validate and review flags run on the new event with no problems.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

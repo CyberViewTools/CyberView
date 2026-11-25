@@ -1,6 +1,49 @@
 {
-  "updated_at": "2026-11-25T14:09:30Z",
-  "anomalies": [],
+  "updated_at": "2026-11-25T14:25:44Z",
+  "anomalies": [
+    {
+      "id": "grid-doe-odin-oregon-202611250806",
+      "source": "doe-odin",
+      "region": "Oregon",
+      "name": "Oregon",
+      "at": "2026-11-25T14:15:00Z",
+      "kind": "customers",
+      "value": 5563,
+      "median": 67,
+      "mad": 56,
+      "z": 66.2,
+      "points": 394,
+      "basis": "all_hours"
+    },
+    {
+      "id": "grid-bchydro-british-columbia-202611250806",
+      "source": "bchydro",
+      "region": "British Columbia",
+      "name": "British Columbia",
+      "at": "2026-11-25T14:15:00Z",
+      "kind": "customers",
+      "value": 5152,
+      "median": 84.5,
+      "mad": 84.5,
+      "z": 40.4,
+      "points": 400,
+      "basis": "all_hours"
+    },
+    {
+      "id": "grid-sec-chile-senapred-santiago-metropolitan-202611251425",
+      "source": "sec-chile-senapred",
+      "region": "Santiago Metropolitan",
+      "name": "Santiago Metropolitan",
+      "at": "2026-11-25T14:15:00Z",
+      "kind": "customers",
+      "value": 6132,
+      "median": 967,
+      "mad": 598.5,
+      "z": 5.8,
+      "points": 208,
+      "basis": "all_hours"
+    }
+  ],
   "corroboration": [
     {
       "id": "grid-bchydro-british-columbia-202611250806",
@@ -8,7 +51,7 @@
         {
           "kind": "operator",
           "source": "bchydro",
-          "detail": "BC Hydro: 6,503 customers without power",
+          "detail": "BC Hydro: 5,153 customers without power",
           "url": "https://www.bchydro.com/power-outages/app/outage-map.html"
         }
       ],
@@ -25,19 +68,31 @@
         }
       ],
       "score": 1
+    },
+    {
+      "id": "grid-sec-chile-senapred-santiago-metropolitan-202611251425",
+      "signals": [
+        {
+          "kind": "operator",
+          "source": "sec-chile-senapred",
+          "detail": "SEC Chile (via SENAPRED): 6,132 customers without power",
+          "url": "https://www.arcgis.com/home/item.html?id=6cfc6313f3214b7d953f38fe5857bd4d"
+        }
+      ],
+      "score": 1
     }
   ],
   "trends": {
     "window_days": 30,
-    "from": "2026-10-26T14:09:30Z",
-    "to": "2026-11-25T14:09:30Z",
+    "from": "2026-10-26T14:25:44Z",
+    "to": "2026-11-25T14:25:44Z",
     "regions": {
       "enre-edesur|Buenos Aires": {
         "source": "enre-edesur",
         "region": "Buenos Aires",
         "name": "Buenos Aires (Edesur area)",
         "incidents": 4,
-        "customer_hours": 106216,
+        "customer_hours": 106256,
         "coverage": 0.16,
         "largest": {
           "id": "grid-enre-edesur-buenos-aires-202611200024",
@@ -71,7 +126,7 @@
         "region": "Connecticut",
         "name": "Connecticut",
         "incidents": 1,
-        "customer_hours": 12421,
+        "customer_hours": 12431,
         "coverage": 0.16,
         "largest": {
           "id": "grid-eversource-connecticut-202611201414",
@@ -88,7 +143,7 @@
         "region": "Quebec",
         "name": "Quebec",
         "incidents": 4,
-        "customer_hours": 145263,
+        "customer_hours": 145724,
         "coverage": 0.14,
         "largest": {
           "id": "grid-hydroquebec-quebec-202611241611",
@@ -126,7 +181,7 @@
         "region": "California",
         "name": "California",
         "incidents": 4,
-        "customer_hours": 287405,
+        "customer_hours": 287856,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-california-202611201848",
@@ -143,7 +198,7 @@
         "region": "Ohio",
         "name": "Ohio",
         "incidents": 1,
-        "customer_hours": 20814,
+        "customer_hours": 20840,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-ohio-202611210415",
@@ -160,7 +215,7 @@
         "region": "Massachusetts",
         "name": "Massachusetts",
         "incidents": 1,
-        "customer_hours": 21709,
+        "customer_hours": 21716,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-massachusetts-202611211501",
@@ -203,7 +258,7 @@
         "region": "La Araucanía",
         "name": "La Araucanía",
         "incidents": 2,
-        "customer_hours": 54237,
+        "customer_hours": 54655,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-la-araucania-202611220234",
@@ -220,7 +275,7 @@
         "region": "Oregon",
         "name": "Oregon",
         "incidents": 3,
-        "customer_hours": 179182,
+        "customer_hours": 180178,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-oregon-202611220616",
@@ -237,7 +292,7 @@
         "region": "Coquimbo",
         "name": "Coquimbo",
         "incidents": 2,
-        "customer_hours": 54265,
+        "customer_hours": 54308,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-coquimbo-202611230017",
@@ -254,7 +309,7 @@
         "region": "Arica y Parinacota",
         "name": "Arica y Parinacota",
         "incidents": 1,
-        "customer_hours": 59567,
+        "customer_hours": 59623,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-arica-y-parinacota-202611220812",
@@ -271,7 +326,7 @@
         "region": "Central southern England",
         "name": "Central southern England (SSEN, SEPD)",
         "incidents": 1,
-        "customer_hours": 36418,
+        "customer_hours": 36461,
         "coverage": 0.16,
         "largest": {
           "id": "grid-ssen-powertrack-central-southern-england-202611221013",
@@ -301,7 +356,7 @@
         "region": "Antofagasta",
         "name": "Antofagasta",
         "incidents": 2,
-        "customer_hours": 33590,
+        "customer_hours": 33591,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-antofagasta-202611221325",
@@ -318,7 +373,7 @@
         "region": "Michigan",
         "name": "Michigan",
         "incidents": 1,
-        "customer_hours": 49029,
+        "customer_hours": 49030,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-michigan-202611220812",
@@ -335,7 +390,7 @@
         "region": "Ñuble",
         "name": "Ñuble",
         "incidents": 1,
-        "customer_hours": 25905,
+        "customer_hours": 25959,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-nuble-202611221709",
@@ -352,7 +407,7 @@
         "region": "Maule",
         "name": "Maule",
         "incidents": 1,
-        "customer_hours": 39330,
+        "customer_hours": 39966,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-maule-202611230039",
@@ -369,7 +424,7 @@
         "region": "Atacama",
         "name": "Atacama",
         "incidents": 1,
-        "customer_hours": 27979,
+        "customer_hours": 28139,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-atacama-202611231223",
@@ -386,7 +441,7 @@
         "region": "Los Ríos",
         "name": "Los Ríos",
         "incidents": 1,
-        "customer_hours": 13751,
+        "customer_hours": 13778,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-los-rios-202611231926",
@@ -402,8 +457,8 @@
         "source": "sec-chile-senapred",
         "region": "Santiago Metropolitan",
         "name": "Santiago Metropolitan",
-        "incidents": 2,
-        "customer_hours": 135080,
+        "incidents": 3,
+        "customer_hours": 136178,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-santiago-metropolitan-202611231223",
@@ -420,7 +475,7 @@
         "region": "West Virginia",
         "name": "West Virginia",
         "incidents": 1,
-        "customer_hours": 26662,
+        "customer_hours": 26671,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-west-virginia-202611231339",
@@ -437,7 +492,7 @@
         "region": "Washington",
         "name": "Washington",
         "incidents": 3,
-        "customer_hours": 157074,
+        "customer_hours": 157201,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-washington-202611241640",
@@ -520,7 +575,7 @@
         "region": "Biobío",
         "name": "Biobío",
         "incidents": 1,
-        "customer_hours": 57898,
+        "customer_hours": 58114,
         "coverage": 0.1,
         "largest": {
           "id": "grid-sec-chile-senapred-biobio-202611241040",
@@ -559,7 +614,7 @@
         "region": "Liander area",
         "name": "Liander area (Gelderland, Noord-Holland, Flevoland, Friesland)",
         "incidents": 1,
-        "customer_hours": 47431,
+        "customer_hours": 47503,
         "coverage": 0.16,
         "largest": {
           "id": "grid-liander-storingen-liander-area-202611241710",
@@ -585,7 +640,7 @@
         "region": "Texas",
         "name": "Texas",
         "incidents": 1,
-        "customer_hours": 77964,
+        "customer_hours": 78497,
         "coverage": 0.16,
         "largest": {
           "id": "grid-doe-odin-texas-202611241740",
@@ -602,11 +657,11 @@
         "region": "British Columbia",
         "name": "British Columbia",
         "incidents": 2,
-        "customer_hours": 135247,
-        "coverage": 0.16,
+        "customer_hours": 136170,
+        "coverage": 0.17,
         "largest": {
           "id": "grid-bchydro-british-columbia-202611250806",
-          "name": "BC Hydro: 6,503 customers without power",
+          "name": "BC Hydro: 5,153 customers without power",
           "peak_customers": 14448,
           "peak_level": null,
           "opened_at": "2026-11-25T08:06:53Z"
@@ -614,15 +669,15 @@
         "causes": [
           {
             "cause": "Under investigation",
-            "customers": 6349
+            "customers": 4956
           },
           {
             "cause": "Tree down across our wires",
-            "customers": 953
+            "customers": 944
           },
           {
             "cause": "Wire down",
-            "customers": 441
+            "customers": 480
           }
         ],
         "week": null
@@ -644,7 +699,7 @@
         "name": "South Africa",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -655,7 +710,7 @@
         "name": "Texas (ERCOT)",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -666,7 +721,7 @@
         "name": "South Australia",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -677,7 +732,7 @@
         "name": "New South Wales",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -688,7 +743,7 @@
         "name": "Queensland",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -699,7 +754,7 @@
         "name": "Victoria",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -710,7 +765,7 @@
         "name": "Tasmania",
         "incidents": 0,
         "customer_hours": 0,
-        "coverage": 0.16,
+        "coverage": 0.17,
         "largest": null,
         "causes": [],
         "week": null
@@ -720,7 +775,7 @@
         "region": "London",
         "name": "London, Ontario",
         "incidents": 0,
-        "customer_hours": 1662,
+        "customer_hours": 1668,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -775,7 +830,7 @@
         "region": "Endeavour Energy area",
         "name": "Western Sydney, Illawarra and South Coast (NSW)",
         "incidents": 0,
-        "customer_hours": 35963,
+        "customer_hours": 35988,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -786,7 +841,7 @@
         "region": "Tasmania",
         "name": "Tasmania",
         "incidents": 0,
-        "customer_hours": 11151,
+        "customer_hours": 11179,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1193,7 +1248,7 @@
         "region": "North of Scotland",
         "name": "North of Scotland (SSEN, SHEPD)",
         "incidents": 0,
-        "customer_hours": 11987,
+        "customer_hours": 12155,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1204,7 +1259,7 @@
         "region": "South West",
         "name": "South West England (NGED)",
         "incidents": 0,
-        "customer_hours": 26241,
+        "customer_hours": 26282,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1215,7 +1270,7 @@
         "region": "South Wales",
         "name": "South Wales (NGED)",
         "incidents": 0,
-        "customer_hours": 11724,
+        "customer_hours": 11758,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1226,7 +1281,7 @@
         "region": "West Midlands",
         "name": "West Midlands (NGED)",
         "incidents": 0,
-        "customer_hours": 20027,
+        "customer_hours": 20078,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1237,7 +1292,7 @@
         "region": "East Midlands",
         "name": "East Midlands (NGED)",
         "incidents": 0,
-        "customer_hours": 24110,
+        "customer_hours": 24131,
         "coverage": 0.13,
         "largest": null,
         "causes": [],
@@ -1259,7 +1314,7 @@
         "region": "Eastern Norway (Elvia area)",
         "name": "Eastern Norway (Elvia area)",
         "incidents": 0,
-        "customer_hours": 6462,
+        "customer_hours": 6469,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1281,7 +1336,7 @@
         "region": "Massachusetts",
         "name": "Massachusetts",
         "incidents": 0,
-        "customer_hours": 18986,
+        "customer_hours": 18997,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1292,7 +1347,7 @@
         "region": "New Hampshire",
         "name": "New Hampshire",
         "incidents": 0,
-        "customer_hours": 3362,
+        "customer_hours": 3379,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1314,7 +1369,7 @@
         "region": "Utah",
         "name": "Utah",
         "incidents": 0,
-        "customer_hours": 15708,
+        "customer_hours": 15715,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1358,7 +1413,7 @@
         "region": "Washington",
         "name": "Washington (south-central)",
         "incidents": 0,
-        "customer_hours": 840,
+        "customer_hours": 842,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1391,7 +1446,7 @@
         "region": "Arizona",
         "name": "Arizona",
         "incidents": 0,
-        "customer_hours": 5374,
+        "customer_hours": 5375,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1402,7 +1457,7 @@
         "region": "Colorado",
         "name": "Colorado",
         "incidents": 0,
-        "customer_hours": 7189,
+        "customer_hours": 7193,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1413,7 +1468,7 @@
         "region": "Delaware",
         "name": "Delaware",
         "incidents": 0,
-        "customer_hours": 760,
+        "customer_hours": 764,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1424,7 +1479,7 @@
         "region": "Hawaii",
         "name": "Hawaii",
         "incidents": 0,
-        "customer_hours": 10110,
+        "customer_hours": 10118,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1446,7 +1501,7 @@
         "region": "Indiana",
         "name": "Indiana",
         "incidents": 0,
-        "customer_hours": 3372,
+        "customer_hours": 3373,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1457,7 +1512,7 @@
         "region": "Iowa",
         "name": "Iowa",
         "incidents": 0,
-        "customer_hours": 4563,
+        "customer_hours": 4581,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1468,7 +1523,7 @@
         "region": "Kansas",
         "name": "Kansas",
         "incidents": 0,
-        "customer_hours": 10932,
+        "customer_hours": 10935,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1490,7 +1545,7 @@
         "region": "Minnesota",
         "name": "Minnesota",
         "incidents": 0,
-        "customer_hours": 15161,
+        "customer_hours": 15175,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1501,7 +1556,7 @@
         "region": "New Jersey",
         "name": "New Jersey",
         "incidents": 0,
-        "customer_hours": 10822,
+        "customer_hours": 10841,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1512,7 +1567,7 @@
         "region": "New York",
         "name": "New York",
         "incidents": 0,
-        "customer_hours": 58203,
+        "customer_hours": 58247,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1523,7 +1578,7 @@
         "region": "North Carolina",
         "name": "North Carolina",
         "incidents": 0,
-        "customer_hours": 21835,
+        "customer_hours": 21866,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1545,7 +1600,7 @@
         "region": "South Dakota",
         "name": "South Dakota",
         "incidents": 0,
-        "customer_hours": 281,
+        "customer_hours": 282,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1556,7 +1611,7 @@
         "region": "Tennessee",
         "name": "Tennessee",
         "incidents": 0,
-        "customer_hours": 22467,
+        "customer_hours": 22473,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1644,7 +1699,7 @@
         "region": "Kentucky",
         "name": "Kentucky",
         "incidents": 0,
-        "customer_hours": 1868,
+        "customer_hours": 1869,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1677,7 +1732,7 @@
         "region": "Mississippi",
         "name": "Mississippi",
         "incidents": 0,
-        "customer_hours": 1600,
+        "customer_hours": 1610,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1688,7 +1743,7 @@
         "region": "Missouri",
         "name": "Missouri",
         "incidents": 0,
-        "customer_hours": 13186,
+        "customer_hours": 13187,
         "coverage": 0.16,
         "largest": null,
         "causes": [],
@@ -1952,7 +2007,7 @@
         "region": "Pennsylvania",
         "name": "Pennsylvania",
         "incidents": 0,
-        "customer_hours": 71053,
+        "customer_hours": 71420,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -1963,7 +2018,7 @@
         "region": "Maryland",
         "name": "Maryland",
         "incidents": 0,
-        "customer_hours": 9056,
+        "customer_hours": 9103,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -1974,7 +2029,7 @@
         "region": "Tarapacá",
         "name": "Tarapacá",
         "incidents": 0,
-        "customer_hours": 15930,
+        "customer_hours": 15976,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -1985,7 +2040,7 @@
         "region": "Valparaíso",
         "name": "Valparaíso",
         "incidents": 0,
-        "customer_hours": 56370,
+        "customer_hours": 56406,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -1996,7 +2051,7 @@
         "region": "Los Lagos",
         "name": "Los Lagos",
         "incidents": 0,
-        "customer_hours": 61480,
+        "customer_hours": 61847,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -2095,7 +2150,7 @@
         "region": "Aysén",
         "name": "Aysén",
         "incidents": 0,
-        "customer_hours": 4028,
+        "customer_hours": 4064,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -2106,7 +2161,7 @@
         "region": "Magallanes",
         "name": "Magallanes",
         "incidents": 0,
-        "customer_hours": 725,
+        "customer_hours": 742,
         "coverage": 0.1,
         "largest": null,
         "causes": [],
@@ -2986,7 +3041,7 @@
     },
     "entsoe": {
       "ok": false,
-      "error": "timeout"
+      "error": "not connected (no key saved for web-api.tp.entsoe.eu)"
     },
     "reg-rwanda": {
       "ok": true,
@@ -3054,7 +3109,7 @@
     },
     "loe-gpv": {
       "ok": true,
-      "error": "stale: the operator's data is from 2026-11-25T10:31:00Z"
+      "error": ""
     },
     "hoe-gpv": {
       "ok": true,
@@ -3173,8 +3228,8 @@
       "error": ""
     },
     "taipower-supply": {
-      "ok": false,
-      "error": "network"
+      "ok": true,
+      "error": ""
     },
     "ecg-ghana": {
       "ok": true,

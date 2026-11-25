@@ -1,7 +1,7 @@
 // ORKL library ingest (scripts/orkl.mjs): metadata + links only, never the report text. Run: node --test tests/unit/
 import test from "node:test";
 import assert from "node:assert/strict";
-import { cleanReport, cleanActor, mergeReports, summarize, siteData, https, archiveUrl } from "../../scripts/orkl.mjs";
+import { cleanReport, cleanActor, mergeReports, summarize, siteData, libraryIndex, https, archiveUrl } from "../../scripts/orkl.mjs";
 
 const rawReport = () => ({
   id: "11111111-2222-3333-4444-555555555555",
@@ -113,4 +113,46 @@ test("summarize and siteData report counts without any report body", () => {
   assert.ok(sd.recent.length <= 30);
   assert.ok(!/SECRET FULL REPORT TEXT/.test(JSON.stringify(sd)));
   assert.equal(siteData(null), null);
+});
+
+test("libraryIndex builds a compact browsable index, metadata and links only", () => {
+  const dated = cleanReport(rawReport());                                        // file_creation_date 2024-05-01
+  const undated = cleanReport({
+    ...rawReport(),
+    id: "77777777-2222-3333-4444-555555555555",
+    sha1_hash: "cc00000000000000000000000000000000000000",
+    title: "An undated report",
+    file_creation_date: "0001-01-01T00:00:00Z",                                  // ORKL zero value -> no year
+    created_at: "2025-01-01T00:00:00Z",                                          // newest, so sorts first
+    language: "FR",
+    threat_actors: [],
+  });
+  const idx = libraryIndex([dated, undated], [cleanActor({ id: "a1", main_name: "Zeta Group", aliases: ["Z1"], source_id: "ETDA" }), cleanActor({ id: "a2", main_name: "Alpha Group", source_id: "MITRE" })], "2026-11-25T01:00:00Z");
+
+  assert.equal(idx.built_at, "2026-11-25T01:00:00Z");
+  assert.equal(idx.reports_total, 2);
+  assert.equal(idx.actors_total, 2);
+
+  // rows are sorted by `created` descending: the undated report (2025) comes before the dated one (2024)
+  assert.equal(idx.reports[0].s, "cc00000000000000000000000000000000000000");
+  assert.equal(idx.reports[0].y, "");                                            // zero-value file_date -> Undated
+  assert.equal(idx.reports[0].a.length, 0);
+  assert.equal(idx.reports[1].s, "abcdef0123456789abcdef0123456789abcdef01");
+  assert.equal(idx.reports[1].y, "2024");                                        // real file_date year
+  assert.equal(idx.reports[1].i, "11111111-2222-3333-4444-555555555555");       // library id kept (has url)
+  assert.deepEqual(idx.reports[1].a, ["APT Example", "Second Group"]);
+
+  // sources and languages are dictionary-encoded; the row stores indexes into them
+  assert.ok(idx.sources.includes("Malpedia"));
+  assert.deepEqual(idx.reports[1].c.map((n) => idx.sources[n]), ["Malpedia", "web"]);
+  assert.equal(idx.langs[idx.reports[1].l], "en");
+  assert.equal(idx.langs[idx.reports[0].l], "fr");
+
+  // actor catalogue is sorted by name and carries aliases and the source catalogue
+  assert.deepEqual(idx.actors.map((a) => a.n), ["Alpha Group", "Zeta Group"]);
+  assert.deepEqual(idx.actors.find((a) => a.n === "Zeta Group").al, ["Z1"]);
+  assert.equal(idx.actors.find((a) => a.n === "Zeta Group").s, "ETDA");
+
+  // the whole index, serialised, never contains any report body
+  assert.ok(!/SECRET FULL REPORT TEXT/.test(JSON.stringify(idx)));
 });

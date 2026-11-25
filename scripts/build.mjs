@@ -389,8 +389,16 @@ try {
 // state file only leaves that panel empty, with a warning, never the build
 try {
   const p = join(DATA, "orkl", "state.json"), d = existsSync(p) ? readJson(p) : null;
-  const sd = d ? (await import("./orkl.mjs")).siteData(d, built_at) : null;
+  const orkl = await import("./orkl.mjs");
+  const sd = d ? orkl.siteData(d, built_at) : null;
   if (sd) writeFileSync(join(OUT, "orkl.json"), JSON.stringify(sd)); else if (d) warnings.push("orkl/state.json: not readable, the ORKL library summary is left out");
+  // the full browsable index for the Library page (metadata and links only, never any report body); a failure
+  // here only leaves the Library page empty, with a warning, never the build
+  try {
+    const { reports, actors } = orkl.loadLibrary();
+    if (reports.length) writeFileSync(join(OUT, "orkl-index.json"), JSON.stringify(orkl.libraryIndex(reports, actors, built_at)));
+    else if (d) warnings.push("orkl: no stored reports, the Library page is left empty");
+  } catch (e) { warnings.push(`orkl index: ${String(e.message).slice(0, 80)}`); }
 } catch (e) { warnings.push(`orkl/state.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // vendor security advisories (data/psirt/advisories.json, scripts/psirt.mjs) joined on CVE for the Vulnerabilities page: each

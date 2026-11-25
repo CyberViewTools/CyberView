@@ -9,7 +9,7 @@ import { railEvidence, railPlan, railResult, railCoverage, PATHS_PER_HOST } from
 import { udpProbe as realUdpProbe, UDP_SERVICES, UDP_SENDS } from "./udp.mjs";
 import { fromSsh, fromGreeting, fromMysql, fromHttp, fromCert, fromUdp, httpInfo, certInfo, tlsInfo, observations, httpObservations, mailObservations, udpObservations } from "./fingerprint.mjs";
 import { fromEdge } from "./fp-edge.mjs";
-import { cleanFlaws, candidates, findings as matchFindings, named } from "./match.mjs";
+import { cleanFlaws, candidates, findings as matchFindings, named, indexFlaws, relevance, rank } from "./match.mjs";
 import { appServices } from "./fp-apps.mjs";
 import { withPack2 } from "./fp-apps2.mjs";
 import { bucketPath } from "./data.mjs";
@@ -237,21 +237,33 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     if (!files.has(p)) files.set(p, await src.json(p, { optional: true }).then((j) => (j ? D.parseFile(j) : []), () => []));
     const r = files.get(p).find((x) => x.id === id); if (r) rows.set(id, r);
   }
-  const found = matchFindings(hosts, flaws, rows, { today });
+  let found = matchFindings(hosts, flaws, rows, { today });
+  // The whole CVE index, only from a full offline snapshot: every CVE whose lookup row carries NVD's affected-version ranges
+  // is matched against each detected version with the same matcher. A version inside a range is a finding; a product that is
+  // only named (no range, or the version is outside it) stays a lead in `named`, never a finding.
+  let namedList = [], cveIndex = { used: false, why: "the data is not a full offline snapshot (make one with: data --full)" };
+  if (src.kind === "offline" && src.manifest && src.manifest.full) {
+    const idx = await src.json("data/cve/index.json", { optional: true }), keep = [], rel = relevance(hosts);
+    let total = 0, ranged = 0;   // read bucket by bucket and keep only rows that can matter here: the whole list is ~430,000 rows
+    for (const [y, list] of Object.entries((idx && idx.files_by_year) || {})) for (const n of list || []) {
+      const j = await src.json(`data/cve/${y}/${n}.json`, { optional: true }); if (!j) continue;
+      for (const r of D.parseFile(j)) { total++; if (!r.rejected && r.affected && r.affected.length) ranged++; if (rel(r)) keep.push(r); }
+    }
+    const ix = indexFlaws(hosts, keep, { skip: new Set(flaws.map((f) => f.cve)) });
+    const more = matchFindings(hosts, ix.flaws, ix.rows, { today, affectedOnly: true, source: "cve-index" });
+    if (more.length) found = rank(found.concat(more));
+    cveIndex = { used: true, cves: total, with_ranges: ranged, candidates: ix.flaws.length, findings: more.length, built_at: (idx && idx.built_at) || "" };
+    namedList = named(hosts, keep, { skip: new Set(found.map((f) => f.cve)), ranged: true });
+  }
   // incident citations (opt-in, --data-incidents) and hunt links: CyberView's own published data only, never the targets
   const cites = incidents ? await loadIncidents(src, found.map((f) => f.cve)) : null;
   if (cites) attachIncidents(found, cites);
   attachHunt(found, wb);
-  // the whole CVE List, only from a full offline snapshot: other CVEs that name a detected product (versions not checked)
-  let namedList = [];
-  if (src.kind === "offline" && src.manifest && src.manifest.full) {
-    const idx = await src.json("data/cve/index.json", { optional: true }), all = [];
-    for (const [y, list] of Object.entries((idx && idx.files_by_year) || {})) for (const n of list || []) { const j = await src.json(`data/cve/${y}/${n}.json`, { optional: true }); if (j) all.push(...D.parseFile(j)); }
-    namedList = named(hosts, all, { skip: new Set(found.map((f) => f.cve)) });
-  }
   const notes = [
     "Detection only: versions were read from what each service states about itself. A service can hide or misstate its version, and a Linux distribution's package can carry a backported fix under an old version number; confidence says which.",
-    "Matching uses CyberView's known-exploited flaws (CISA's KEV catalog with NVD's affected-version ranges) and recent high-risk flaws; a flaw outside them is not reported. A clean result is not proof that a host has no vulnerabilities.",
+    cveIndex.used
+      ? `Matching uses CyberView's whole CVE index (${cveIndex.cves} CVEs, ${cveIndex.with_ranges} with NVD's affected-version ranges) as well as the known-exploited flaws and recent high-risk flaws. A CVE with no published range, or for a product this scanner cannot name, is not reported. A clean result is not proof that a host has no vulnerabilities.`
+      : "Matching uses CyberView's known-exploited flaws (CISA's KEV catalog with NVD's affected-version ranges) and recent high-risk flaws; a flaw outside them is not reported (a full offline snapshot adds the whole CVE index). A clean result is not proof that a host has no vulnerabilities.",
     "The CyberView rating is the CVSS base score adjusted for exploitation evidence (CVSS v3.1 Exploit Code Maturity), the same calculation as the Vulnerabilities page; every point is listed with each finding.",
     "Exploitation analyses and fix guides on the linked pages are written by CyberView AI (a Claude model) from vendor and government sources.",
   ];
@@ -261,7 +273,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     tool: { name: "CyberView Scanner", version: VERSION, user_agent: USER_AGENT, detection_only: true },
     run: { started_at: startedAt, finished_at: new Date().toISOString(), interrupted: probed.interrupted, stop_reason: probed.stop_reason, settings, ports,
       udp: probed.udp || [], paths: probed.paths || { enabled: false }, ics: probed.ics || { enabled: false }, network: matched ? { sent: 0, note: "none: every host, port and product was read from the operator's own files; no target was contacted", sends: {} } : { ...probed.stats, sends: { ...SENDS, ...icsSends(!!(probed.ics && probed.ics.enabled)), ...((probed.udp || []).length ? Object.fromEntries((probed.udp).map((k) => [`udp-${k}`, UDP_SENDS[k]])) : {}) } },
-      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null,
+      data: { mode: src.kind, source: src.where, workbench_built_at: (wb && wb.built_at) || "", requests: (src.log || []).length, snapshot: src.manifest || null, cve_index: cveIndex,
         ...(cites ? { incidents: { requested: true, available: cites.available, months_read: cites.months_read, months_skipped: cites.months_skipped } } : {}) } },
     scope: { file: scopeFile, sha256: scopeHash, owner: scope.owner, contact: scope.contact, attestation: scope.attestation, targets: scope.targets.map((t) => t.text), exclude: scope.exclude.map((t) => t.text),
       public_addresses: scope.publicCount, public_confirmed: !!allowPublic, refused },

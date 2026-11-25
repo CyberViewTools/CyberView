@@ -71,7 +71,7 @@ export function rowFor(f, rows) {
  * flaws: cleanFlaws(...); rows: Map(cve -> cleanRow) for the CVEs that matched (see candidates()); today: YYYY-MM-DD
  * -> findings ranked, each listing every rating point
  */
-export function findings(hosts, flaws, rows, { today = new Date().toISOString().slice(0, 10) } = {}) {
+export function findings(hosts, flaws, rows, { today = new Date().toISOString().slice(0, 10), affectedOnly = false, source = "" } = {}) {
   const byCve = new Map();
   for (const h of hosts) for (const s of h.services || []) {
     if (!s.product) continue;
@@ -79,6 +79,7 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
     for (const f of flaws) {
       const m = W.matchFlaw(f, inv);
       if (!m || (m.state !== "affected" && m.state !== "check")) continue;
+      if (affectedOnly && m.state !== "affected") continue;
       const [conf, why] = confidenceOf(m.state, s);
       if (!byCve.has(f.cve)) byCve.set(f.cve, { f, seen: [], fixed: new Set() });
       const g = byCve.get(f.cve);
@@ -96,6 +97,7 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
     const best = seen.slice().sort((a, b) => CONF[b.confidence] - CONF[a.confidence])[0];
     const g = f.guide;
     out.push({
+      ...(source ? { source } : {}),
       cve: f.cve, title: f.name || f.desc.slice(0, 120), vendor: f.vendor, product: f.product, state,
       kev: f.kev, kev_added: f.added && f.kev ? f.added : "", cisa_due: f.due, overdue: !!(f.due && f.due < today), ransomware: f.ransomware, epss: f.epss,
       exploitation: D.exploitation(row),
@@ -128,6 +130,52 @@ export function rank(list) {
   return list;
 }
 
+/* ---- the whole CVE index (full snapshot only): every CVE whose lookup row carries NVD's affected-version ranges ---- */
+const words = (s) => W.norm(s).split(" ").filter(Boolean);
+/** A lookup row with ranges -> the flaw shape matchFlaw and the rating code take. No fix guide: those exist for workbench flaws only. */
+export function flawFromRow(r) {
+  return { cve: r.id, kev: !!r.kev, vendor: r.vendor, product: r.product, name: r.title, added: isDay(r.kev) ? r.kev : "", due: r.due || "", ransomware: r.ransom === true,
+    desc: str(r.desc, 300), cvss: r.cvss != null ? r.cvss : r.ncvss, epss: r.epss, av: "", required: "", refs: [], affected: r.affected,
+    guide: null, analysis: false, exposure: "", exploit_public: r.expl === "poc" || r.expl === "active", severity: 2, repos: 0 };
+}
+/**
+ * allRows: every cleaned lookup row of a full snapshot. Returns the flaws worth matching for these hosts, and their rows.
+ * A row is a candidate when one of its ranges names a product some detected service names: the first word of the range's
+ * product must be a word of the service's vendor+product name (a cheap pre-filter; matchFlaw then decides, with the same
+ * name and range rules as the Vulnerabilities page). Rejected CVEs, rows without ranges and CVEs in `skip` are left out.
+ * Only a version INSIDE a range becomes a finding (the caller passes affectedOnly): a name-only hit stays a lead in `named`.
+ */
+export function indexFlaws(hosts, allRows, { skip = new Set() } = {}) {
+  const have = new Set();
+  for (const h of hosts) for (const s of h.services || []) if (s.product && s.version) words(`${s.vendor || ""} ${s.product}`).forEach((w) => have.add(w));
+  const flaws = [], rows = new Map(); let ranged = 0;
+  if (!have.size) return { flaws, rows, ranged: allRows.filter((r) => !r.rejected && r.affected && r.affected.length).length };
+  for (const r of allRows) {
+    if (r.rejected || !r.affected || !r.affected.length) continue;
+    ranged++;
+    if (skip.has(r.id)) continue;
+    if (!r.affected.some((a) => { const w = words(a.product)[0]; return w && have.has(w); })) continue;
+    flaws.push(flawFromRow(r)); rows.set(r.id, r);
+  }
+  return { flaws, rows, ranged };
+}
+
+/**
+ * A cheap test used while reading a full snapshot bucket by bucket, so the whole CVE List is never held in memory: can this
+ * row matter to these hosts at all, as a range candidate (indexFlaws) or as a name-only lead (named)? Deliberately loose.
+ */
+export function relevance(hosts) {
+  const have = new Set(), squashed = [];
+  for (const h of hosts) for (const s of h.services || []) if (s.product) { const n = `${s.vendor || ""} ${s.product}`; words(n).forEach((w) => have.add(w)); squashed.push(W.norm(n).replace(/ /g, "")); }
+  return (r) => {
+    if (r.rejected || !have.size) return false;
+    const pw = words(r.product);
+    if (pw[0] && have.has(pw[0])) return true;
+    const sq = pw.join(""); if (sq.length >= 5 && squashed.some((n) => n.includes(sq))) return true;
+    return !!(r.affected && r.affected.some((a) => { const w = words(a.product)[0]; return w && have.has(w); }));
+  };
+}
+
 /** The CVEs worth loading lookup rows for: every flaw some service matches. */
 export function candidates(hosts, flaws) {
   const set = new Set();
@@ -139,17 +187,20 @@ export function candidates(hosts, flaws) {
  * Other CVEs in the CVE List that name a detected product (full snapshot only). The CVE List's rows carry no version ranges,
  * so these are leads to check by hand, never findings: counted per product with the highest-rated few listed.
  */
-export function named(hosts, allRows, { per = 10, skip = new Set() } = {}) {
+export function named(hosts, allRows, { per = 10, skip = new Set(), ranged = false } = {}) {
   const prods = new Map();
-  for (const h of hosts) for (const s of h.services || []) if (s.product && !s.guessed) { const k = `${s.vendor} ${s.product}`.trim(); if (!prods.has(k)) prods.set(k, { product: k, version: s.shown_version, hosts: new Set() }); prods.get(k).hosts.add(h.address); }
+  for (const h of hosts) for (const s of h.services || []) if (s.product && !s.guessed) { const k = `${s.vendor} ${s.product}`.trim(); if (!prods.has(k)) prods.set(k, { product: k, version: s.shown_version, checked: false, hosts: new Set() }); const p = prods.get(k); p.hosts.add(h.address); if (s.version) p.checked = true; }
   const out = [];
   for (const p of prods.values()) {
-    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && W.nameHit(p.product, r.vendor, r.product));
+    // ranged: the caller matched every row that has ranges against the version seen, so for a product with a version those
+    // rows are settled (a finding, or the version is outside the range) and only rows with no range are still leads
+    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && !(ranged && p.checked && r.affected && r.affected.length) && W.nameHit(p.product, r.vendor, r.product));
     if (!hits.length) continue;
     const top = hits.map((r) => ({ r, s: D.score(r) })).sort((a, b) => ((b.s && b.s.score) ?? -1) - ((a.s && a.s.score) ?? -1)).slice(0, per)
       .map(({ r, s }) => ({ cve: r.id, title: r.title || r.desc.slice(0, 120), rating: s && s.score != null ? `${s.score.toFixed(1)} ${s.band}` : "Not scored", exploited: D.exploitation(r).value === "active" }));
     out.push({ product: p.product, version_seen: p.version, hosts: [...p.hosts].slice(0, 50), cves_naming_it: hits.length, exploited: hits.filter((r) => D.exploitation(r).value === "active").length, top,
-      note: "Named in the CVE List, versions not checked: CyberView's lookup files hold no version ranges for these. Compare each with the vendor's advisory." });
+      note: ranged ? "Named in the CVE List, versions not checked: no affected-version range is published for these (or no version was read from the service). Compare each with the vendor's advisory."
+        : "Named in the CVE List, versions not checked: CyberView's lookup files hold no version ranges for these. Compare each with the vendor's advisory." });
   }
   return out;
 }

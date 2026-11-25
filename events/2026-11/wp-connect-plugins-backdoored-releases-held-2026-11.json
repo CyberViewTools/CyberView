@@ -1,115 +1,116 @@
 {
- "title": "Wordfence: backdoored releases of six WP connect WordPress plugins were held back by WordPress.org",
- "category": "incident",
- "status": "developing",
- "severity": 2,
- "date": "2026-11-22",
- "date_note": "Wordfence says the backdoored releases were committed on 22 November (US Eastern); its post is dated 23 November.",
- "first_seen": "2026-11-23T17:30:10Z",
- "updated_at": "2026-11-25T09:10:19Z",
- "org": "WP connect",
- "country": "",
- "place": "",
- "pin_type": "none",
- "geo_basis": "no location stated: WordPress plugin developer, location not given by the source",
- "summary": "Wordfence says evidence strongly suggests the developer's WordPress.org account was compromised and that backdoored releases of six WP connect plugins, together estimated to have more than 3,600 active installations, were committed on 22 November. Wordfence says WordPress.org's release delay held the versions back and they were never released to sites. The plugins are closed and no patch exists, per Wordfence.",
- "plain": "Someone used a WordPress plugin maker's own account and tried to push hidden backdoors into six plugins, Wordfence says. WordPress.org's release hold stopped the updates before they reached websites.",
- "exec": "Wordfence says an attacker used a developer's account to try to ship backdoored plugin updates; WordPress.org held them back before they reached sites.",
- "action": "Wordfence advises anyone with an affected version installed to remove the plugin immediately and run a full malware scan, and to treat any site that ran an affected version as compromised and rotate administrator passwords and secret keys.",
- "products": [
-  "Air WP Sync 2.9.1 - 2.9.4",
-  "WP Sync for Notion 1.7.4",
-  "Add-on Brevo for Gravity Forms 2.6.3",
-  "Add-On for Contact Form 7 to Airtable 2.5.4",
-  "Add-On for Contact Form 7 to Notion 1.6.4",
-  "Orders Sync to Airtable for WooCommerce 1.0.2"
- ],
- "cves": [
-  "CVE-2026-135202"
- ],
- "attack": [
-  "T1195.002 Supply Chain Compromise: Compromise Software Supply Chain"
- ],
- "tags": [
-  "supply-chain"
- ],
- "actor": "",
- "sources": [
-  {
-   "name": "Wordfence (Chloe Chamberland)",
-   "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
-   "published": "2026-11-23"
-  },
-  {
-   "name": "CyberPress",
-   "url": "https://cyberpress.org/hackers-target-wordpress-plugins/",
-   "published": "2026-11-24"
-  },
-  {
-   "name": "The Hacker News",
-   "url": "https://thehackernews.com/2026/11/wordpress-blocks-six-backdoored-wp.html",
-   "published": "2026-11-25"
-  }
- ],
- "evidence": [
-  {
-   "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
-   "quote": "together are estimated to have more than 3,600 active installations"
-  }
- ],
- "report": {
-  "publisher": "Wordfence",
-  "publisher_type": "vendor",
-  "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
-  "published": "2026-11-23T17:12:20Z",
-  "read_depth": "full",
-  "doc_id": "",
-  "iocs_available": true,
-  "key_findings": [
-   "Backdoored releases of six WP connect plugins were committed with the developer's own WordPress.org account between roughly 4:30 PM and 5:40 PM US Eastern on 22 November; the Plugins Team reports the developer says the account was compromised.",
-   "The backdoor phones home to an attacker-controlled server and executes any PHP code it is sent.",
-   "WordPress.org's release delay held the versions back and its automated reviewer halted them; Wordfence says they were never released to sites.",
-   "The plugins are closed on WordPress.org and no patched versions are available; the release before each backdoored version does not contain the backdoor."
+  "title": "Wordfence: backdoored releases of six WP connect WordPress plugins were held back by WordPress.org",
+  "category": "incident",
+  "status": "developing",
+  "severity": 2,
+  "date": "2026-11-22",
+  "date_note": "Wordfence says the backdoored releases were committed on 22 November (US Eastern); its post is dated 23 November.",
+  "first_seen": "2026-11-23T17:30:10Z",
+  "updated_at": "2026-11-25T10:10:29Z",
+  "org": "WP connect",
+  "country": "",
+  "place": "",
+  "pin_type": "none",
+  "geo_basis": "no location stated: WordPress plugin developer, location not given by the source",
+  "summary": "Wordfence says backdoored releases of six WP connect plugins, together estimated to have more than 3,600 active installations, were committed on 22 November and held back by WordPress.org before reaching sites. CyberPress reports the WordPress.org Plugins Team said the developer reported an account compromise. The plugins are closed and Wordfence says no patched versions were available.",
+  "plain": "Someone used a WordPress plugin maker's own account and tried to push hidden backdoors into six plugins, Wordfence says. WordPress.org's release hold stopped the updates before they reached websites.",
+  "exec": "Wordfence says an attacker used a developer's account to try to ship backdoored plugin updates; WordPress.org held them back before they reached sites.",
+  "action": "Wordfence advises anyone with an affected version installed to remove the plugin immediately and run a full malware scan, and to treat any site that ran an affected version as compromised and rotate administrator passwords and secret keys.",
+  "products": [
+    "Air WP Sync 2.9.1 - 2.9.4",
+    "WP Sync for Notion 1.7.4",
+    "Add-on Brevo for Gravity Forms 2.6.3",
+    "Add-On for Contact Form 7 to Airtable 2.5.4",
+    "Add-On for Contact Form 7 to Notion 1.6.4",
+    "Orders Sync to Airtable for WooCommerce 1.0.2"
   ],
-  "recommendations": [
-   "Remove an affected plugin immediately and run a full malware scan.",
-   "Treat any site that ran an affected version as compromised and rotate all administrator passwords and secret keys."
-  ]
- },
- "source_tier": "established",
- "validation": {
-  "state": "single_source",
-  "checked_at": "2026-11-25T09:10:19Z",
-  "note": "Wordfence post still not readable by this run; The Hacker News (read) relays Wordfence on the six plugins, versions, 22 November date, account-compromise statement and closure, so it is not independent."
- },
- "sectors": {
-  "values": [
-   "cross-sector"
+  "cves": [
+    "CVE-2026-135202"
   ],
-  "basis": "inferred"
- },
- "surface": {
-  "value": "supply-chain",
-  "basis": "stated"
- },
- "review": {
-  "state": "flagged",
-  "at": "2026-11-24T15:14:32Z",
-  "first_at": "2026-11-23T17:42:12Z",
-  "note": "Wordfence post returned empty to my reader; CyberPress confirms six plugins, 3,600 installs, block, CVE, but version list, 22 Nov commit times and developer-account-compromise statement not verified from a page I read",
-  "flags": [],
-  "categories": [
-   "other"
+  "attack": [
+    "T1195.002 Supply Chain Compromise: Compromise Software Supply Chain"
+  ],
+  "tags": [
+    "supply-chain"
+  ],
+  "actor": "",
+  "sources": [
+    {
+      "name": "Wordfence (Chloe Chamberland)",
+      "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "CyberPress",
+      "url": "https://cyberpress.org/hackers-target-wordpress-plugins/",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "The Hacker News",
+      "url": "https://thehackernews.com/2026/11/wordpress-blocks-six-backdoored-wp.html",
+      "published": "2026-11-25"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+      "quote": "together are estimated to have more than 3,600 active installations"
+    }
+  ],
+  "report": {
+    "publisher": "Wordfence",
+    "publisher_type": "vendor",
+    "url": "https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/",
+    "published": "2026-11-23T17:12:20Z",
+    "read_depth": "full",
+    "doc_id": "",
+    "iocs_available": true,
+    "key_findings": [
+      "Backdoored releases of six WP connect plugins were committed with the developer's own WordPress.org account between roughly 4:30 PM and 5:40 PM US Eastern on 22 November; the Plugins Team reports the developer says the account was compromised.",
+      "The backdoor phones home to an attacker-controlled server and executes any PHP code it is sent.",
+      "WordPress.org's release delay held the versions back and its automated reviewer halted them; Wordfence says they were never released to sites.",
+      "The plugins are closed on WordPress.org and no patched versions are available; the release before each backdoored version does not contain the backdoor."
+    ],
+    "recommendations": [
+      "Remove an affected plugin immediately and run a full malware scan.",
+      "Treat any site that ran an affected version as compromised and rotate all administrator passwords and secret keys."
+    ]
+  },
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-25T09:10:19Z",
+    "note": "Wordfence post still not readable by this run; The Hacker News (read) relays Wordfence on the six plugins, versions, 22 November date, account-compromise statement and closure, so it is not independent."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T10:10:36Z",
+    "first_at": "2026-11-23T17:42:12Z",
+    "note": "stronger than the source: summary had Wordfence saying evidence strongly suggests account compromise; CyberPress attributes it to the Plugins Team (developer reported compromise). Rewrote with attribution. Wordfence page unreadable to me, so evidence quote and commit times unverified; stays single_s",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "attribution"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T10:10:36Z",
+  "cve_meta": [
+    {
+      "id": "CVE-2026-135202",
+      "cvss": null,
+      "epss": 0.00594,
+      "kev": false,
+      "kev_due": ""
+    }
   ]
- },
- "qa_checked_at": "2026-11-24T15:14:32Z",
- "cve_meta": [
-  {
-   "id": "CVE-2026-135202",
-   "cvss": null,
-   "epss": 0.00594,
-   "kev": false,
-   "kev_due": ""
-  }
- ]
 }

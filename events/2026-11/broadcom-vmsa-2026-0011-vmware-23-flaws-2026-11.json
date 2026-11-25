@@ -11,7 +11,7 @@
   "geo_basis": "vendor (Broadcom, advisory publisher); the flaws affect users worldwide",
   "pin_type": "agency",
   "actor": "",
-  "summary": "Broadcom published advisory VMSA-2026-0011 on 24 November, fixing 23 vulnerabilities in VMware products. Securityonline lists CVE-2026-123910 as a heap out-of-bounds write and CVE-2026-123911 as a use-after-free. ThaiCERT also lists CVE-2026-123903, an authentication bypass in vCenter's VMware Directory Service, and urges prompt vCenter updates. For ESX and vCenter 7.0 the advisory points to Broadcom support.",
+  "summary": "Broadcom published advisory VMSA-2026-0011 on 24 November, fixing 23 vulnerabilities in VMware products. Securityonline lists CVE-2026-123910 as a heap out-of-bounds write and CVE-2026-123911 as a use-after-free. ThaiCERT also lists CVE-2026-123903, an authentication bypass in vCenter's VMware Directory Service, and advises updating vCenter. For ESX and vCenter 7.0 the advisory points to Broadcom support.",
   "plain": "Broadcom released fixes for 23 vulnerabilities in VMware products, including ESX and vCenter. Administrators can find the fixed version for each product in the advisory.",
   "exec": "Broadcom's advisory fixes 23 vulnerabilities in VMware products such as ESX and vCenter.",
   "action": "Broadcom's advisory VMSA-2026-0011 lists the fixed version for each product; apply the fix for your version, and for ESX and vCenter 7.0 contact Broadcom support.",
@@ -85,15 +85,18 @@
   },
   "source_tier": "primary",
   "first_seen": "2026-11-24T11:59:30Z",
-  "updated_at": "2026-11-25T09:16:00Z",
+  "updated_at": "2026-11-25T10:10:37Z",
   "review": {
-    "state": "passed",
-    "at": "2026-11-25T04:10:40Z",
+    "state": "corrected",
+    "at": "2026-11-25T10:10:37Z",
     "first_at": "2026-11-24T12:12:53Z",
-    "note": "Compared date, 23 CVEs, two CVE types, 7.0 guidance, products, HKCERT Medium against Broadcom, Securityonline, HKCERT",
-    "flags": []
+    "note": "stronger than the source: ThaiCERT urges prompt updates changed to advises updating; rest checked against Broadcom, Securityonline, HKCERT, ThaiCERT",
+    "flags": [],
+    "categories": [
+      "overstated"
+    ]
   },
-  "qa_checked_at": "2026-11-25T04:10:40Z",
+  "qa_checked_at": "2026-11-25T10:10:37Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123910",

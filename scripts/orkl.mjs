@@ -156,6 +156,42 @@ export function siteData(state, builtAt = "") {
   };
 }
 
+/** Pure: the full browsable library index written to site/data/orkl-index.json for the Library page —
+ *  one compact row per report (title, year, language, sources, actors, links) plus the actor catalogue.
+ *  Metadata and links ONLY, never any report body. Source names and language codes are dictionary-encoded
+ *  (an index into `sources` / `langs`) to keep the file small; everything is re-clamped defensively. */
+export function libraryIndex(reports, actors, builtAt = "") {
+  const sources = [], srcIx = new Map();
+  const sidx = (s) => { const k = txt(s, 80); if (!k) return -1; let i = srcIx.get(k); if (i === undefined) { i = sources.length; sources.push(k); srcIx.set(k, i); } return i; };
+  const langs = [], langIx = new Map();
+  const lidx = (l) => { const k = txt(l, 12).toLowerCase(); if (!k) return -1; let i = langIx.get(k); if (i === undefined) { i = langs.length; langs.push(k); langIx.set(k, i); } return i; };
+  // The report's own publication year, from file_date when it is a real date. ORKL leaves file_date at the zero
+  // value 0001-01-01 for undated reports, and `created` is only the day ORKL ingested the record, so neither of
+  // those stands in for a publication year: an undated report gets "" (shown as "Undated", not filtered by year).
+  const pubYear = (r) => { const m = String(r.file_date || "").match(/^(\d{4})/); const y = m ? Number(m[1]) : 0; return y >= 1990 && y <= 2100 ? m[1] : ""; };
+  // The PDF link is always https://archive.orkl.eu/<sha1>.pdf and the library page is always
+  // https://orkl.eu/library/<id>, so we store only the sha1 (`s`) and library id (`i`) and the Library page
+  // rebuilds both links itself, host-checked — it keeps the index small without storing a URL twice.
+  const rows = arr(reports).filter((r) => r && hex40(r.sha1))
+    .sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")))
+    .map((r) => ({
+      s: String(r.sha1).toLowerCase(),
+      i: https(r.url) ? clip(r.id, 64) : "",
+      t: clip(r.title, 300),
+      y: pubYear(r),
+      l: lidx(r.lang),
+      c: arr(r.sources).map(sidx).filter((n) => n >= 0).slice(0, 12),
+      a: arr(r.actors).map((x) => txt(x, 120)).filter(Boolean).slice(0, 6),
+    }));
+  // actor catalogue: name, up to 6 stated aliases, and the catalogue it comes from (source_id is the clean system
+  // name — MISPGALAXY, ETDA, MITRE, Secureworks — whereas `source` is that prefixed onto the name).
+  const acts = arr(actors).filter(Boolean)
+    .map((a) => ({ n: clip(a.name, 160), al: arr(a.aliases).map((x) => txt(x, 120)).filter(Boolean).slice(0, 6), s: txt(a.source_id, 40) }))
+    .filter((a) => a.n)
+    .sort((a, b) => a.n.localeCompare(b.n));
+  return { built_at: builtAt, reports_total: rows.length, actors_total: acts.length, sources, langs, reports: rows, actors: acts };
+}
+
 /* ---------- collection ---------- */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function api(path, params = {}) {
@@ -171,6 +207,14 @@ function loadReports() {
   return store;
 }
 const flat = (store) => Object.values(store || {}).flatMap((shard) => Object.values(shard || {}));
+
+/** Load the whole stored library off the data branch for the build: a flat array of report records plus the actors. */
+export function loadLibrary() {
+  const reports = flat(loadReports());
+  const raw = existsSync(ACTORS_FILE) ? (readJson(ACTORS_FILE, {}) || {}) : {};
+  const actors = Array.isArray(raw) ? raw : Object.values(raw);
+  return { reports, actors };
+}
 
 /** Page through an ORKL list endpoint; stopWhen(record) ends the walk early (for incremental runs). */
 async function pageAll(path, { limit = 100, max = Infinity, stopWhen = null, extra = {} } = {}) {

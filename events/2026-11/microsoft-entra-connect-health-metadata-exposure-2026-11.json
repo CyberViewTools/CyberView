@@ -1,43 +1,69 @@
 {
- "action": "Microsoft advises administrators to use its read-only PowerShell script to audit what metadata may have been exposed, to strengthen phishing-resistant multifactor authentication, and to confirm that notification recipients are legitimate; the article says no extra update is needed.",
- "actor": "",
- "attack": [],
- "category": "incident",
- "country": "United States",
- "cves": [],
- "date": "2026-11-25",
- "date_note": "The only page read (escudodigital.com, 25 November) gives no earlier disclosure day; it says Microsoft's teams detected the issue on 9 November and the flaw was fully mitigated on 19 November.",
- "exec": "Microsoft says attackers read metadata in Entra Connect Health, including technical contacts' email addresses, which it warns could be used for convincing phishing.",
- "first_seen": "2026-11-25T07:12:30Z",
- "geo_basis": "Microsoft headquarters, Redmond (the article names no victim location)",
- "lat": 47.67,
- "lng": -122.12,
- "org": "Microsoft (Entra Connect Health customers)",
- "pin_type": "headquarters",
- "place": "Redmond, Washington",
- "plain": "Microsoft told administrators that an API flaw in Entra Connect Health let attackers read customer metadata such as organisation names, domains and contact emails. Microsoft says passwords and keys were not exposed.",
- "products": ["Microsoft Entra Connect Health"],
- "sector": "IT services / cloud",
- "severity": 2,
- "source_tier": "established",
- "sources": [
-  {
-   "name": "escudodigital.com (DigitalShield), 25 Nov 2026",
-   "url": "https://www.escudodigital.com/en/cybersecurity/microsoft-vulnerability-exposed-technical-contacts-and-domains-of-thousands-of-companies-for-months.html",
-   "published": "2026-11-25"
-  }
- ],
- "status": "confirmed",
- "summary": "According to escudodigital.com, Microsoft confirmed that attackers gained unauthorized access to customer information in Microsoft Entra Connect Health through a flaw in the service's API, exposed from 23 July. Exposed metadata included tenant IDs, organisation names, domain names and technical contacts' email addresses. Microsoft says access was read-only and did not expose passwords, hashes, tokens or keys.",
- "tags": ["data-breach", "cloud", "identity"],
- "time_basis": "published",
- "title": "Microsoft says Entra Connect Health flaw exposed customer metadata including technical contacts' emails",
- "updated_at": "2026-11-25T07:12:30Z",
- "validation": {
-  "state": "single_source",
-  "checked_at": "2026-11-25T07:12:30Z",
-  "note": "Only escudodigital.com read; it relays Microsoft's notice to administrators. No Microsoft page or second publisher found or read in this run."
- },
- "sectors": {"values": ["cross-sector"], "basis": "inferred"},
- "surface": {"value": "cloud-saas", "basis": "stated"}
+  "action": "Microsoft advises administrators to use its read-only PowerShell script to audit what metadata may have been exposed, to strengthen phishing-resistant multifactor authentication, and to confirm that notification recipients are legitimate; the article says no extra update is needed.",
+  "actor": "",
+  "attack": [],
+  "category": "incident",
+  "country": "United States",
+  "cves": [],
+  "date": "2026-11-25",
+  "date_note": "The only page read (escudodigital.com, 25 November) gives no earlier disclosure day; it says Microsoft's teams detected the issue on 9 November and the flaw was fully mitigated on 19 November.",
+  "exec": "Microsoft says attackers read metadata in Entra Connect Health, including technical contacts' email addresses; the article says these could be used for convincing phishing.",
+  "first_seen": "2026-11-25T07:12:30Z",
+  "geo_basis": "Microsoft headquarters, Redmond (the article names no victim location)",
+  "lat": 47.67,
+  "lng": -122.12,
+  "org": "Microsoft (Entra Connect Health customers)",
+  "pin_type": "headquarters",
+  "place": "Redmond, Washington",
+  "plain": "Microsoft told administrators that an API flaw in Entra Connect Health let attackers read customer metadata such as organisation names, domains and contact emails. Microsoft says passwords and keys were not exposed.",
+  "products": [
+    "Microsoft Entra Connect Health"
+  ],
+  "sector": "IT services / cloud",
+  "severity": 2,
+  "source_tier": "established",
+  "sources": [
+    {
+      "name": "escudodigital.com (DigitalShield), 25 Nov 2026",
+      "url": "https://www.escudodigital.com/en/cybersecurity/microsoft-vulnerability-exposed-technical-contacts-and-domains-of-thousands-of-companies-for-months.html",
+      "published": "2026-11-25"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "According to escudodigital.com, Microsoft confirmed that attackers gained unauthorized access to customer information in Microsoft Entra Connect Health through a flaw in the service's API, exposed from 23 July. Exposed metadata included tenant IDs, organisation names, domain names and technical contacts' email addresses. Microsoft says access was read-only and did not expose passwords, hashes, tokens or keys.",
+  "tags": [
+    "data-breach",
+    "cloud",
+    "identity"
+  ],
+  "time_basis": "published",
+  "title": "Microsoft says Entra Connect Health flaw exposed customer metadata including technical contacts' emails",
+  "updated_at": "2026-11-25T08:10:50Z",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-25T08:10:50Z",
+    "note": "Only escudodigital.com read; it relays Microsoft's notice to administrators. No Microsoft page or second publisher found or read in this run."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T08:10:51Z",
+    "first_at": "2026-11-25T08:10:51Z",
+    "note": "unsourced voice: exec phishing warning attributed to the article",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "attribution"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T08:10:51Z"
 }

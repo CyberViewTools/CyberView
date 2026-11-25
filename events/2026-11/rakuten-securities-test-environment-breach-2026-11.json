@@ -19,23 +19,22 @@
   "products": [],
   "sector": "Finance",
   "severity": 3,
-  "source_tier": "primary",
+  "source_tier": "established",
   "sources": [
     {
-      "name": "Rakuten Securities press release (19 Nov 2026)",
-      "url": "https://www.rakuten-sec.co.jp/web/company/newsrelease/pdf/press2026111901.pdf"
-    },
-    {
       "name": "Security NEXT",
-      "url": "https://www.security-next.com/193015"
+      "url": "https://www.security-next.com/193015",
+      "published": "2026-11-18"
     },
     {
       "name": "ITmedia NEWS",
-      "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003312/"
+      "url": "https://www.itmedia.co.jp/news/article/2611/19/2000003312/",
+      "published": "2026-11-19"
     },
     {
       "name": "SBbit",
-      "url": "https://www.sbbit.jp/article/fj/188551"
+      "url": "https://www.sbbit.jp/article/fj/188551",
+      "published": "2026-11-18"
     },
     {
       "name": "Impress Watch",
@@ -49,28 +48,30 @@
     }
   ],
   "status": "confirmed",
-  "summary": "Rakuten Securities said on 17 November that a third party may have accessed its systems. In its second report of 24 November, relayed by Impress Watch and INTERNET Watch, it said about 4.41 million accounts' data includes names, birth dates, addresses and phone numbers, and about 11.98 million hold only branch and customer codes, a total of about 16.39 million accounts. The company said no password or PIN leak was confirmed.",
+  "summary": "Rakuten Securities said on 17 November that a third party may have accessed its systems. In its second report of 24 November, relayed by Impress Watch, it said about 4.41 million records include names, birth dates, addresses and phone numbers, and about 11.98 million accounts hold only branch and customer codes and login IDs. The company said no password or PIN leak was confirmed.",
   "tags": [
     "data-breach"
   ],
   "title": "Rakuten Securities second report: leaked customer data includes names, addresses and phone numbers",
-  "updated_at": "2026-11-25T03:00:00Z",
+  "updated_at": "2026-11-25T03:10:39Z",
   "validation": {
     "state": "corroborated",
     "checked_at": "2026-11-19T04:23:05Z",
-    "note": "Security NEXT and ITmedia NEWS (read in full) independently report the company disclosure; ITmedia adds the company explanation that live data was copied to the test server. Rakuten Securities' own 19 Nov press release read: it states receipt of a report-collection order from the FSA that day; the earlier 17 Nov notice was not retrieved."
+    "note": "Security NEXT and ITmedia NEWS independently report the company's 17 Nov disclosure (detected 16 Nov); Impress Watch relays the 24 Nov second report. The company's own press release PDF could not be read by the reviewer and was removed from sources. Impress Watch says 441万 is a count of records (件) while INTERNET Watch's headline says accounts (口座)."
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T14:27:00Z",
+    "state": "corrected",
+    "at": "2026-11-25T03:10:45Z",
     "first_at": "2026-11-19T04:28:13Z",
-    "note": "Compared 17 Nov announcement, 11.98M accounts, 4.41M records, data types, no password or PIN leak, no unauthorised trades against Impress Watch; two non-error warnings remain",
+    "note": "figure/source: 4.41M is records (件) per Impress Watch, not accounts; dropped unverifiable 16.39M total; removed unreadable press release PDF (tier now established); added published days; evidence quotes updated",
     "flags": [
-      "figure-no-evidence",
-      "source-published-partial"
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "figure"
     ]
   },
-  "qa_checked_at": "2026-11-24T14:27:00Z",
+  "qa_checked_at": "2026-11-25T03:10:45Z",
   "sectors": {
     "values": [
       "financial-services"
@@ -84,10 +85,6 @@
   "records_affected": "about 4.41 million records",
   "evidence": [
     {
-      "url": "https://internet.watch.impress.co.jp/docs/news/2158982.html",
-      "quote": "約441万口座で氏名、住所、電話番号など含む漏えい確認 部店・お客様コードなどに限る約1198万口座を含め、計1639万口座が漏えい"
-    },
-    {
       "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
       "quote": "約441万件"
     },
@@ -97,11 +94,7 @@
     },
     {
       "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
-      "quote": "約119万件"
-    },
-    {
-      "url": "https://www.watch.impress.co.jp/docs/news/2158909.html",
-      "quote": "楽天証券のログインに必要なパスワード、暗証番号など取引に必要な情報についての漏えいは確認されていない。"
+      "quote": "楽天証券のログインに必要なパスワード、暗証番号など取引に必要な情報の漏えいは確認されていない。"
     }
   ]
 }

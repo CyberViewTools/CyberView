@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock, leaderLease } from "./lib/lease.mjs";
-import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend } from "./lib/usage.mjs";
+import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend, apiPrimaryLive } from "./lib/usage.mjs";
 import { roleFor, baseRole } from "./lib/routing.mjs";
 import { lastRunOf, gapDryRun, gapEveryMinutes } from "./lib/gates.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -61,7 +61,7 @@ export function ledgerLine(job, role, batch, model, ms, out, err, served = "subs
   const error = err || (capped ? `turn cap reached (${j.num_turns ?? "?"} turns)` : j && j.is_error ? String(j.result || j.subtype || "error").slice(0, 160) : null);
   const l = { at: nowIso(), job, role, batch: batch ?? null, model, ms, ok, turns: j ? j.num_turns : null, cost: j ? +(j.total_cost_usd || 0).toFixed(4) : null,
     in: u.input_tokens ?? null, out: u.output_tokens ?? null, cache_read: u.cache_read_input_tokens ?? null, cache_write: u.cache_creation_input_tokens ?? null,
-    error, served: served === "api-fallback" ? "api-fallback" : "subscription", last: j ? String(j.result || "").trim().split("\n").pop().slice(0, 200) : "" };
+    error, served: served === "api-fallback" || served === "api" ? served : "subscription", last: j ? String(j.result || "").trim().split("\n").pop().slice(0, 200) : "" };
   if (capped) l.capped = true;
   if (!ok && error && !capped && LIMIT_RE.test(String(error))) { l.limit = true; const at = Date.parse(l.at), r = resetFrom(error, at); if (r && r > at && r - at <= 8 * 864e5) l.limit_until = new Date(r).toISOString().replace(/\.\d+Z$/, "Z"); }
   return l;
@@ -126,7 +126,8 @@ let unavailable = 0, limitHit = null, fallbackKeyLimited = false;
 // the CLI would use ahead of the subscription). With the env var unset, behaviour is exactly as before (park on a limit).
 const FB = fallbackConfig(PIPE.usage_budget || {});
 const FALLBACK_KEY = process.env[FB.env_var] || "";     // the VALUE: read here only, never logged, never committed
-/** Pure: the environment one worker is spawned with. ANTHROPIC_API_KEY is injected ONLY in "api-fallback" mode, so the
+/** Pure: the environment one worker is spawned with. ANTHROPIC_API_KEY is injected ONLY in "api-fallback" or "api" (the
+ *  api_primary window) mode, so the
  *  subscription OAuth stays primary everywhere else; any ambient ANTHROPIC_API_KEY is removed so a stray one can never make
  *  the API primary. The key is never written to a log or a data file. */
 export function workerEnv(served, key, base = process.env) {
@@ -134,7 +135,7 @@ export function workerEnv(served, key, base = process.env) {
   // event checklist and the data rules); CLAUDE.md is the repository guide for people and the build lane, ~8 K tokens
   // re-read on every worker turn (17.5 K -> 9.4 K measured). Workers get no SETUP section, so nothing tells them to read it.
   const env = { ...base, NO_HOUSEKEEPING: "1", CYBERVIEW_WORKER: "1", NODE_USE_ENV_PROXY: "1", CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" };
-  if (served === "api-fallback" && key) env.ANTHROPIC_API_KEY = key; else delete env.ANTHROPIC_API_KEY;
+  if ((served === "api-fallback" || served === "api") && key) env.ANTHROPIC_API_KEY = key; else delete env.ANTHROPIC_API_KEY;
   // Secrets a worker never needs (pen test, 2026-11-23): workers read untrusted web pages and issues and can run node, so
   // anything in their environment can be exfiltrated by a prompt injection. The fallback key reaches a worker ONLY as
   // ANTHROPIC_API_KEY in api-fallback mode (above); cloud credentials never.
@@ -167,7 +168,7 @@ function fallbackState(now = Date.now()) {
   let limited_until = null; try { limited_until = budgetState(now).limited_until; } catch {}
   let spend = { usd: 0, workers: 0, last_at: null };
   try { spend = fallbackSpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
-  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited });
+  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited, apiPrimary: apiPrimaryLive(FB, now) });
   fbCache = { at: now, served, spend, limited_until };
   return fbCache;
 }
@@ -183,6 +184,7 @@ function fallbackNote(now = Date.now()) {
     if (FB.monthly_usd_cap > 0 && s.spend.usd >= FB.monthly_usd_cap) return `usage limit reached; the API-fallback monthly cap ($${FB.monthly_usd_cap}) is reached ($${s.spend.usd} this month)`;
     return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
   }
+  if (s.served === "api") return `API-primary test window until ${FB.api_primary.until}: billing the API ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
   return `subscription window exhausted${s.limited_until ? ", resets " + s.limited_until : ""}; billing the API fallback ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
 }
 function runWorker(job, role, batch, served = "subscription") {
@@ -203,9 +205,9 @@ function runWorker(job, role, batch, served = "subscription") {
       try { logUnfinished(l, t0); } catch {}
       // a limit on the subscription parks (or, if a fallback key is set, flips to the API key); a limit the fallback key
       // itself returns parks for the rest of this run instead of looping on an exhausted key
-      if (l.limit) { if (served === "api-fallback") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
-      else if (l.served === "api-fallback") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
-      log(`  ${served === "api-fallback" ? "[api-fallback] " : ""}${role}${batch != null ? " " + batch : ""}: ${l.ok ? "ok" : l.limit ? `USAGE LIMIT REACHED${l.limit_until ? ", resets " + l.limit_until : ""}: ` + (l.error || "") : l.capped ? "TURN CAP " + (l.error || "") + ": unfinished work logged as open leads" : "FAILED " + (l.error || "")} · ${l.turns ?? "?"} turns · $${l.cost ?? "?"} · ${Math.round(l.ms / 1000)}s${l.last ? " · " + l.last.slice(0, 120) : ""}`);
+      if (l.limit) { if (served === "api-fallback" || served === "api") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
+      else if (l.served === "api-fallback" || l.served === "api") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
+      log(`  ${served === "api-fallback" || served === "api" ? `[${served}] ` : ""}${role}${batch != null ? " " + batch : ""}: ${l.ok ? "ok" : l.limit ? `USAGE LIMIT REACHED${l.limit_until ? ", resets " + l.limit_until : ""}: ` + (l.error || "") : l.capped ? "TURN CAP " + (l.error || "") + ": unfinished work logged as open leads" : "FAILED " + (l.error || "")} · ${l.turns ?? "?"} turns · $${l.cost ?? "?"} · ${Math.round(l.ms / 1000)}s${l.last ? " · " + l.last.slice(0, 120) : ""}`);
       resolve(l);
     });
   });
@@ -248,7 +250,7 @@ export const limitHolds = (hit, now = Date.now()) => !!(hit && hit.limit && now 
  *  (not started, no ledger line: their items stay in their queues and leases are released as usual); the budget then holds
  *  the loop at "stop" until the reset time the message gave (scripts/lib/usage.mjs budgetState). */
 export async function pool(job, list) {
-  const res = []; let i = 0, held = 0, fb = 0, late = 0;
+  const res = []; let i = 0, held = 0, fb = 0, api = 0, late = 0;
   await Promise.all(Array.from({ length: Math.min(MAXPAR, list.length) }, async () => {
     while (i < list.length) {
       const k = i++, served = servedNow();
@@ -256,10 +258,12 @@ export async function pool(job, list) {
       if (leftMs() < 90000) { late++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: no time left in this run" }; continue; }
       if (served === "park") { held++; res[k] = { ok: false, role: list[k][0], batch: list[k][1], cost: 0, not_started: true, error: "not started: usage limit reached" }; continue; }
       if (served === "api-fallback") fb++;
+      if (served === "api") api++;
       res[k] = await runWorker(job, list[k][0], list[k][1], served);
     }
   }));
   if (fb) log(`  ${fb} worker(s) ran on the API fallback: ${fallbackNote()}`);
+  if (api) log(`  ${api} worker(s) billed to the API: ${fallbackNote()}`);
   if (late) log(`  ${late} worker(s) not started: too little time left before this run is stopped; their work stays in the queue`);
   if (held) log(`  ${held} worker(s) not started: ${fallbackNote()}; their work stays in the queue`);
   if (list.length && unavailable >= Math.min(list.length, 2)) { log("HEADLESS UNAVAILABLE: claude could not start workers"); process.exit(3); }
@@ -377,6 +381,7 @@ export function workAt(level, cuts = TIGHT_CUTS) {
  *  normal cycle and the pool runs those workers on the fallback API key; an estimate-only stop (no limited_until) is left
  *  to park as before. b: budgetState(); served: servedNow(). */
 export function planLevelFor(b, served) {
+  if (served === "api") return "ok";   // api_primary window: the subscription's window does not limit API-billed workers
   if (b && b.level === "stop" && b.limited_until && served === "api-fallback") return "ok";
   return b ? b.level : "ok";
 }

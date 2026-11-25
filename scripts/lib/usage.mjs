@@ -96,6 +96,7 @@ export function limitHits(lines, backoffMin = 60) {
   const out = [];
   for (const l of all) {
     if (l.ok || !l.error || !LIMIT_RE.test(String(l.error))) continue;
+    if (l.served === "api") continue;   // the API key's own limit during an API-primary window is not the plan's limit
     const at = Date.parse(l.at); if (!isFinite(at)) continue;
     const r = resetFrom(l.error, at);
     const reset = r && r > at && r - at <= 8 * 24 * HOUR ? r : at + (/weekly limit/i.test(l.error) ? Math.max(backoffMin, 360) : backoffMin) * 6e4;   // a weekly window never resets in an hour
@@ -118,7 +119,9 @@ const pct = (used, cap) => (Number(cap) > 0 ? Math.round((used / cap) * 1000) / 
 export function budgetState(now = Date.now(), cfg = budgetConfig(), lines = null) {
   const c = { ...DEFAULT_BUDGET, ...(cfg || {}) }, wh = Math.max(1, Number(c.window_hours) || 5);
   const L = lines || readUsage(now - 7 * 24 * HOUR, now);
-  const w = windowUsage(now, wh, L), k = weekUsage(now, L);
+  // workers billed to the API in an api_primary window did not use the subscription, so they do not count against its estimate
+  const S = L.filter((l) => !(l && l.served === "api"));
+  const w = windowUsage(now, wh, S), k = weekUsage(now, S);
   const window_pct = Math.max(pct(w.tokens, c.window_tokens), pct(w.cost, c.window_cost)), week_pct = Math.max(pct(k.tokens, c.week_tokens), pct(k.cost, c.week_cost));
   const hits = limitHits(L.filter((l) => Date.parse(l.at) <= now), Number(c.limit_backoff_minutes) || 60), live = hits.filter((h) => h.until > now).sort((a, b) => b.until - a.until)[0];
   const recent = hits.some((h) => h.at > now - wh * HOUR);
@@ -174,7 +177,42 @@ export const DEFAULT_FALLBACK = { enabled: true, monthly_usd_cap: 150 };
 export function fallbackConfig(budget = budgetConfig()) {
   const f = (budget && typeof budget.api_fallback === "object" && budget.api_fallback) || {};
   const cap = Number(f.monthly_usd_cap);
-  return { enabled: f.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 ? cap : DEFAULT_FALLBACK.monthly_usd_cap, env_var: FALLBACK_ENV };
+  const p = (f.api_primary && typeof f.api_primary === "object" && f.api_primary) || {};
+  const t = (v) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}T/.test(v) && isFinite(Date.parse(v)) ? v : null);
+  const from = t(p.from), until = t(p.until);
+  return { enabled: f.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 ? cap : DEFAULT_FALLBACK.monthly_usd_cap, env_var: FALLBACK_ENV,
+    api_primary: from && until && Date.parse(until) > Date.parse(from) ? { from, until } : null };
+}
+// ---------- API-primary window (owner, 2026-11-25: "lets test how much it costs to run for 24 hours") ----------
+// usage_budget.api_fallback.api_primary { from, until }: between those times every pipeline worker is billed to the API key
+// (served "api") instead of the subscription, so the real API cost of running CyberView can be measured
+// (`node scripts/budget.mjs api-test`). Outside the window nothing changes. The monthly cap, the enable switch and a limit on
+// the key itself still apply; when one of them stops the API, workers run on the subscription as before.
+/** Pure: is the API-primary window open now? */
+export function apiPrimaryLive(fb, now = Date.now()) {
+  const w = fb && fb.api_primary; if (!w) return false;
+  return now >= Date.parse(w.from) && now < Date.parse(w.until);
+}
+/** Pure: what the API-primary window cost, from the ledger lines served "api" inside it. cost: what the CLI reported
+ *  (total_cost_usd), or the PRICES x tokens estimate for a line the CLI gave no cost (unpriced, e.g. a timeout).
+ *  per_24h_usd scales the measured hours (first API worker to the window's end or now) to one day.
+ *  -> { from, until, first_at, hours, workers, ok, cost_usd, estimate_usd, unpriced, per_24h_usd, by_model, by_job } */
+export function apiTestReport(lines, w, now = Date.now(), prices = PRICES) {
+  if (!w) return null;
+  const a = Date.parse(w.from), z = Date.parse(w.until), b = Math.min(z, now);
+  const L = (lines || []).filter((l) => l && l.served === "api" && typeof l.at === "string" && Date.parse(l.at) >= a && Date.parse(l.at) <= z);
+  const r2 = (x) => Math.round(x * 100) / 100, by_model = {}, by_job = {};
+  let cost = 0, est = 0, ok = 0, unpriced = 0, first = null;
+  for (const l of L) {
+    const c = l.cost != null && isFinite(Number(l.cost)) ? Number(l.cost) : null, e = estimateCost(l, prices);
+    if (c == null) unpriced++;
+    const v = c != null ? c : e; cost += v; est += e; if (l.ok) ok++;
+    if (!first || l.at < first) first = l.at;
+    by_model[l.model || "?"] = r2((by_model[l.model || "?"] || 0) + v); by_job[l.job || "?"] = r2((by_job[l.job || "?"] || 0) + v);
+  }
+  const start = first ? Math.max(a, Date.parse(first)) : a, hours = Math.max(0, (b - start) / 36e5);
+  return { from: w.from, until: w.until, first_at: first, hours: Math.round(hours * 10) / 10, workers: L.length, ok, cost_usd: r2(cost), estimate_usd: r2(est), unpriced,
+    per_24h_usd: hours >= 1 ? r2((cost / hours) * 24) : null, by_model, by_job };
 }
 // API list price per MILLION tokens (input / output), one place. The owner updates these when Anthropic changes prices.
 // Cache reads are billed at 0.1x the input rate, cache writes (5-minute) at 1.25x. Keyed by the model alias the workers
@@ -188,12 +226,12 @@ export function estimateCost(line, prices = PRICES) {
   const usd = (n(line && line.in) * p.in + n(line && line.out) * p.out + n(line && line.cache_read) * p.in * CACHE_READ_MULT + n(line && line.cache_write) * p.in * CACHE_WRITE_MULT) / 1e6;
   return Math.round(usd * 1e4) / 1e4;
 }
-/** Pure: the estimated API-fallback spend this calendar month, from the ledger lines marked served "api-fallback".
+/** Pure: the estimated API spend this calendar month, from the ledger lines marked served "api-fallback" or "api".
  *  -> { month: "YYYY-MM", usd, workers, last_at }. */
 export function fallbackSpend(lines, now = Date.now(), prices = PRICES) {
   const mk = iso(now).slice(0, 7); let usd = 0, workers = 0, last_at = null;
   for (const l of lines || []) {
-    if (!l || l.served !== "api-fallback" || typeof l.at !== "string" || l.at.slice(0, 7) !== mk) continue;
+    if (!l || (l.served !== "api-fallback" && l.served !== "api") || typeof l.at !== "string" || l.at.slice(0, 7) !== mk) continue;
     workers++; usd += estimateCost(l, prices); if (!last_at || l.at > last_at) last_at = l.at;
   }
   return { month: mk, usd: Math.round(usd * 100) / 100, workers, last_at };
@@ -205,9 +243,13 @@ export function fallbackSpend(lines, now = Date.now(), prices = PRICES) {
  *    live, the fallback key itself hit a limit -> "park" (don't loop on an exhausted key)
  *    live, spend has reached the cap           -> "park"
  *    live, key present, enabled, under cap     -> "api-fallback"
+ *  Checked first: apiPrimary (the api_primary window is open), key present, enabled, under cap, key not limited -> "api".
  *  limited_until: the subscription's reset time (ISO string or ms), from budgetState().limited_until; null/past = usable. */
-export function fallbackDecision({ limited_until = null, now = Date.now(), fallbackKeyPresent = false, enabled = true, monthSpendUsd = 0, cap = DEFAULT_FALLBACK.monthly_usd_cap, fallbackKeyLimited = false } = {}) {
+export function fallbackDecision({ limited_until = null, now = Date.now(), fallbackKeyPresent = false, enabled = true, monthSpendUsd = 0, cap = DEFAULT_FALLBACK.monthly_usd_cap, fallbackKeyLimited = false, apiPrimary = false } = {}) {
   const until = typeof limited_until === "number" ? limited_until : limited_until ? Date.parse(limited_until) : NaN;
+  const capN = Number(cap), underCap = !(isFinite(capN) && Number(monthSpendUsd) >= capN);
+  // inside the API-primary window the key bills first; if it cannot (no key, disabled, its own limit, the cap), the rules below apply
+  if (apiPrimary && fallbackKeyPresent && enabled && !fallbackKeyLimited && underCap) return "api";
   if (!(isFinite(until) && until > now)) return "subscription";
   if (!fallbackKeyPresent || !enabled) return "park";
   if (fallbackKeyLimited) return "park";

@@ -16,7 +16,7 @@ import { appendFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { budgetConfig, canBuild, readUsage, budgetState, fallbackConfig, fallbackDecision, fallbackSpend } from "./lib/usage.mjs";
+import { budgetConfig, canBuild, readUsage, budgetState, fallbackConfig, fallbackDecision, fallbackSpend, apiPrimaryLive, apiTestReport } from "./lib/usage.mjs";
 
 export const BUILD_LEDGER = () => process.env.CYBERVIEW_BUILD_LEDGER || join(tmpdir(), "cyberview-build-usage.jsonl");
 /** The build work recorded with `spent` (lines of the last 7 days; a missing or broken file is no usage). */
@@ -40,12 +40,25 @@ export function verdict(r) {
 export function fallbackStatus(now = Date.now(), cfg = budgetConfig(), lines = [], keyPresent = false) {
   const fb = fallbackConfig(cfg), spend = fallbackSpend(lines, now);
   let limited_until = null; try { limited_until = budgetState(now, cfg, lines).limited_until; } catch {}
-  const state = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!keyPresent, enabled: fb.enabled, monthSpendUsd: spend.usd, cap: fb.monthly_usd_cap, fallbackKeyLimited: false });
-  return { enabled: fb.enabled, cap_usd: fb.monthly_usd_cap, env_var: fb.env_var, key_present: !!keyPresent, state, month: spend.month, usd: spend.usd, workers: spend.workers, last_at: spend.last_at, limited_until };
+  const state = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!keyPresent, enabled: fb.enabled, monthSpendUsd: spend.usd, cap: fb.monthly_usd_cap, fallbackKeyLimited: false, apiPrimary: apiPrimaryLive(fb, now) });
+  return { api_primary: fb.api_primary, enabled: fb.enabled, cap_usd: fb.monthly_usd_cap, env_var: fb.env_var, key_present: !!keyPresent, state, month: spend.month, usd: spend.usd, workers: spend.workers, last_at: spend.last_at, limited_until };
 }
 /** Pure: the one line `status` prints for the fallback. Never contains the key value. */
 export function fallbackLine(f) {
-  return `API fallback: ${f.enabled ? "enabled" : "disabled"}, cap $${f.cap_usd}/month, key ${f.key_present ? "present" : `not set (${f.env_var})`}; now ${f.state}; $${f.usd} billed to the API this month (${f.workers} worker line(s)${f.last_at ? ", last " + f.last_at : ""}).`;
+  const w = f.api_primary ? ` API-primary test window ${f.api_primary.from} to ${f.api_primary.until}.` : "";
+  return `API fallback: ${f.enabled ? "enabled" : "disabled"}, cap $${f.cap_usd}/month, key ${f.key_present ? "present" : `not set (${f.env_var})`}; now ${f.state}; $${f.usd} billed to the API this month (${f.workers} worker line(s)${f.last_at ? ", last " + f.last_at : ""}).${w}`;
+}
+
+/** Pure: the lines `api-test` prints. */
+export function apiTestLines(r, now = Date.now()) {
+  const st = now < Date.parse(r.from) ? "not started" : now < Date.parse(r.until) ? "running" : "finished";
+  const out = [`API-primary test window ${r.from} to ${r.until} (${st}).`];
+  if (!r.workers) { out.push("No worker has been billed to the API in this window yet."); return out; }
+  out.push(`${r.workers} worker(s) billed to the API (${r.ok} ok) over ${r.hours} h from ${r.first_at}: $${r.cost_usd} (CLI-reported; token estimate $${r.estimate_usd}${r.unpriced ? `, ${r.unpriced} line(s) without a reported cost counted at the estimate` : ""}).`);
+  if (r.per_24h_usd != null) out.push(`About $${r.per_24h_usd} per 24 hours at this rate.`);
+  const top = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} $${v}`).join(", ");
+  out.push(`By model: ${top(r.by_model)}.`, `By job: ${top(r.by_job)}.`);
+  return out;
 }
 
 function main() {
@@ -56,6 +69,15 @@ function main() {
     if (!(tokens >= 0) && !(cost > 0)) { console.error("usage: budget.mjs spent --tokens N [--cost C] [--note TEXT]"); process.exit(2); }
     const l = spentLine(tokens || 0, cost, arg("note", ""), now); appendFileSync(BUILD_LEDGER(), JSON.stringify(l) + "\n");
     console.log(`recorded: ${l.in.toLocaleString("en-US")} tokens, $${l.cost} of build work (${BUILD_LEDGER()})`);
+    return;
+  }
+  if (cmd === "api-test") {
+    const w = fallbackConfig(budgetConfig()).api_primary;
+    if (!w) { console.log("No API-primary window is set (usage_budget.api_fallback.api_primary)."); return; }
+    let lines = []; try { lines = readUsage(Date.parse(w.from), now); } catch {}
+    const r = apiTestReport(lines, w, now);
+    if (rest.includes("--json")) { console.log(JSON.stringify(r)); return; }
+    console.log(apiTestLines(r, now).join("\n"));
     return;
   }
   if (cmd === "status" || cmd === "can-build") {
@@ -71,6 +93,6 @@ function main() {
     if (cmd === "can-build") process.exit(v.code);
     return;
   }
-  console.error("usage: budget.mjs status [--json] | can-build [--json] | spent --tokens N [--cost C] [--note TEXT]"); process.exit(2);
+  console.error("usage: budget.mjs status [--json] | can-build [--json] | api-test [--json] | spent --tokens N [--cost C] [--note TEXT]"); process.exit(2);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

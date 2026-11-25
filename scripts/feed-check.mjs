@@ -1,7 +1,9 @@
 // Checks candidate RSS, Atom or RDF feeds before they are added to the collector, and writes the ones that pass into a
 // shard of config/feeds.d/. No AI model. Run:
 //   node scripts/feed-check.mjs <candidates.json> --shard <name> [--write] [--report <file>]
-// candidates.json: an array (or JSON lines) of {name, tier, url, lang?, region?, kind?, filter?, why?}. url may be the feed
+// Coverage by country (which countries have fewer than N feeds):  node scripts/feed-check.mjs coverage [--under N] [--json]
+// candidates.json: an array (or JSON lines) of {name, tier, url, lang?, region?, country?, kind?, filter?, why?} (country:
+// ISO 3166-1 alpha-2, the country the feed covers; scripts/lib/feed-country.mjs counts it). url may be the feed
 // itself or the site's home page: the page's <link rel="alternate"> feed is found, then the common feed paths are tried.
 // A candidate passes only when ALL of these hold (each failure is reported with its reason):
 //   - https, and the feed answers 200 to the collector's own user-agent (401/403 means it refuses automated readers: left out)
@@ -16,6 +18,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, readJson, nowIso } from "./lib/store.mjs";
 import { parseFeed, isCyber, activeFeeds, loadFeedConfig, feedKey, runPolite } from "./collect.mjs";
+import { COUNTRIES, coverage } from "./lib/feed-country.mjs";
 
 export const MIN_ITEMS = 3, MAX_AGE_DAYS = 30, MAX_AGE_DAYS_SLOW = 120, PER_HOST = 4, CYBER_SHARE = 0.5;
 export const REGIONS = ["africa", "latin-america", "middle-east", "south-asia", "southeast-asia", "east-asia", "europe", "oceania", "north-america"];
@@ -137,7 +140,7 @@ export async function check(c, now = Date.now()) {
   const filter = c.filter === true || cyber < items.length * CYBER_SHARE;
   const feedLang = (r.body.match(/<language>\s*([a-z]{2})/i) || r.body.match(/<feed[^>]*xml:lang=["']([a-z]{2})/i) || [])[1];
   const lang = (c.lang || feedLang || "en").toLowerCase();
-  const entry = { name: String(c.name).slice(0, 80), tier: c.tier, url, ...(lang !== "en" ? { lang } : {}), ...(c.region ? { region: c.region } : {}), ...(c.kind ? { kind: c.kind } : {}), ...(filter ? { filter: true } : {}),
+  const entry = { name: String(c.name).slice(0, 80), tier: c.tier, url, ...(lang !== "en" ? { lang } : {}), ...(c.region ? { region: c.region } : {}), ...(c.country ? { country: c.country } : {}), ...(c.kind ? { kind: c.kind } : {}), ...(filter ? { filter: true } : {}),
     added: new Date(now).toISOString().slice(0, 10),
     why: `${c.why ? String(c.why).slice(0, 160).replace(/\.?$/, ". ") : ""}Checked ${new Date(now).toISOString().slice(0, 10)}: ${j.items} items, newest ${j.newest}, ${cyber} about cyber security${filter ? " (broad feed: cyber filter on)" : ""}; robots.txt allows it.` };
   return { ok: true, entry };
@@ -149,6 +152,7 @@ export function shapeProblem(c) {
   if (!["gov", "vendor", "news"].includes(c.tier)) return `tier ${c.tier} is not gov, vendor or news`;
   if (c.lang && !/^[a-z]{2}$/.test(c.lang)) return `lang ${c.lang} is not an ISO 639-1 code`;
   if (c.region && !REGIONS.includes(c.region)) return `region ${c.region} is not one of ${REGIONS.join(", ")}`;
+  if (c.country && !COUNTRIES.includes(c.country)) return `country ${c.country} is not an ISO 3166-1 alpha-2 code CyberView counts`;
   if (c.kind && !["cve", "exploit"].includes(c.kind)) return `kind ${c.kind}`;
   return "";
 }
@@ -161,6 +165,16 @@ function readCandidates(p) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2), opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : ""; };
+  if (args[0] === "coverage") {
+    const under = Number(opt("--under")) || 5, r = coverage(activeFeeds(loadFeedConfig()), { under });
+    if (args.includes("--json")) console.log(JSON.stringify(r, null, 1));
+    else {
+      const top = Object.entries(r.counts).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([c, n]) => `${c} ${n}`).join(", ");
+      console.log(`feed-check coverage: ${Object.values(r.counts).filter((n) => n > 0).length} of ${COUNTRIES.length} countries have a feed; ${r.international} feeds are international. Most: ${top}.`);
+      console.log(`${r.thin.length} with fewer than ${under}: ` + r.thin.map((t) => `${t.name} (${t.cc}) ${t.n}`).join("; "));
+    }
+    process.exit(0);
+  }
   const file = args[0], shard = opt("--shard"), WRITE = args.includes("--write"), reportPath = opt("--report");
   if (!file || !existsSync(file) || !/^[a-z0-9-]{2,40}$/.test(shard)) { console.error("usage: node scripts/feed-check.mjs <candidates.json> --shard <name: a-z0-9-> [--write] [--report <file>]"); process.exit(2); }
   const dir = join(ROOT, "config", "feeds.d"), sp = join(dir, `${shard}.json`);

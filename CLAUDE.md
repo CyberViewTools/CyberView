@@ -71,6 +71,7 @@ Full field list: `docs/schema.md`. Scheduled job prompts: `docs/jobs.md`.
 - `main` changes only through pull requests: branch from `origin/main`, commit, push the branch, open a pull request. CI (build.yml) must pass; auto-merge merges it on green. Never push to `main` directly.
 - Jobs never push code: a job's changes to `config/` or `docs/` become a pull request through `scripts/propose.mjs` (finish.mjs does this); anything else in code is a GitHub issue.
 - A code branch never carries data: commit data only on the data branch.
+- Documentation is part of every change, in the same pull request: a new or changed script, config file, workflow, routine, source group or count updates `docs/layout.md`, `docs/jobs.md`, `README.md` and `config/about.json` as they apply. `node scripts/docs-check.mjs` (in `npm run ci` and build.yml) fails when a script, config file or workflow is not in docs/layout.md, an active routine is not in docs/jobs.md, or a stated feed or grid count is more than 20% off the live count.
 
 ## Grok Bot / Claude Code
 
@@ -104,7 +105,7 @@ A launcher session only dispatches scheduled jobs. For each job notification it 
 
 ## Known limits
 
-- Coverage is thin for Africa, Turkey, most of the Middle East and Latin America.
+- Coverage is thin for Africa, Turkey, most of the Middle East and Latin America. Feeds now reach 199 of 200 countries (`node scripts/feed-check.mjs coverage`), but in small countries they are mostly general news read through the cyber filter, and most big national broadcasters, national CERTs and privacy regulators block automated readers or publish no feed.
 - Attack-surface and sector rows in the analysis views, trends and status coverage come from each event's `sectors` and `surface` (fixed lists, `scripts/lib/taxonomy.mjs`, each "stated by the source" or "inferred by CyberView AI"); events without them (until `scripts/classify.mjs` backfills them) are placed by keyword, can be wrong, and every view counts and labels them "keyword-assigned".
 - Germany's BSI, Australia's cyber.gov.au and SAP notes block automated readers.
 - Error reports from visitors arrive as GitHub issues labelled `event-report`; the verify desk handles them.

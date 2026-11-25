@@ -17,6 +17,7 @@
     "q": "node scripts/q.mjs",
     "preview": "node scripts/build.mjs && cd site && python3 ../tests/serve.py 8000",
     "about": "node scripts/about.mjs check",
-    "ci": "npm run build && npm run security && npm run about && npm run unit && npm run test"
+    "docs": "node scripts/docs-check.mjs",
+    "ci": "npm run build && npm run security && npm run about && npm run docs && npm run unit && npm run test"
   }
 }

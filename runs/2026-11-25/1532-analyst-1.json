@@ -1,0 +1,35 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-25T15:32:14Z",
+  "finished_at": "2026-11-25T15:37:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-123910 ESX I/O filter service",
+    "Broadcom KB463535 ESX I/O filter workaround",
+    "VMSA-2026-0011 supplemental FAQ vCenter CVE-2026-123903",
+    "ZDI VMware ESXi IOFilterVP use-after-free remote code execution DEVCORE"
+  ],
+  "pages_read": [
+    {"url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626", "title": "Broadcom VMSA-2026-0011", "used_in": ["CVE-2026-123903", "CVE-2026-123910", "CVE-2026-123911"]},
+    {"url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter", "title": "Rapid7 ETR CVE-2026-123903", "used_in": ["CVE-2026-123903"]},
+    {"url": "https://socradar.io/blog/cve-2026-123903-vcenter-auth-bypass/", "title": "SOCRadar: CVE-2026-123903 vCenter auth bypass", "used_in": ["CVE-2026-123903", "CVE-2026-123910", "CVE-2026-123911"]},
+    {"url": "https://www.hkcert.org/security-bulletin/vmware-products-multiple-vulnerabilities_20261125", "title": "HKCERT VMware Products Multiple Vulnerabilities", "used_in": ["CVE-2026-123903", "CVE-2026-123910", "CVE-2026-123911"]},
+    {"url": "https://knowledge.broadcom.com/external/article/463535", "title": "Broadcom KB463535 interim workaround for CVE-2026-123910/123911", "used_in": ["CVE-2026-123910", "CVE-2026-123911"]},
+    {"url": "https://www.thaicert.or.th/2026/11/25/broadcom-%e0%b8%ad%e0%b8%ad%e0%b8%81%e0%b8%ad%e0%b8%b1%e0%b8%9b%e0%b9%80%e0%b8%94%e0%b8%95%e0%b9%81%e0%b8%81%e0%b9%89%e0%b9%84%e0%b8%82%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7-2/", "title": "ThaiCERT bulletin on VMSA-2026-0011", "used_in": ["CVE-2026-123903", "CVE-2026-123910", "CVE-2026-123911"]},
+    {"url": "https://1898advisories.burnsmcd.com/active-internet-scanning-targets-critical-authentication-bypass-and-remote-code-execution-vulnerabilities-in-vmware-vcenter-and-esx", "title": "1898 & Co. scanning advisory (VMSA-2026-0006)", "used_in": []},
+    {"url": "https://its.ny.gov/2026-074", "title": "NY ITS Advisory 2026-074 (VMSA-2026-0006)", "used_in": []}
+  ],
+  "added": ["CVE-2026-123903", "CVE-2026-123910", "CVE-2026-123911"],
+  "updated": [],
+  "skipped": [
+    {"title": "1898 & Co. scanning advisory", "url": "https://1898advisories.burnsmcd.com/active-internet-scanning-targets-critical-authentication-bypass-and-remote-code-execution-vulnerabilities-in-vmware-vcenter-and-esx", "reason": "Covers the July advisory VMSA-2026-0006 (CVE-2026-59309/59310/47876), not the assigned CVEs"},
+    {"title": "NY ITS Advisory 2026-074", "url": "https://its.ny.gov/2026-074", "reason": "Covers VMSA-2026-0006, not VMSA-2026-0011"}
+  ],
+  "open_leads": [
+    {"title": "CVE-2026-123903 public PoC status disputed", "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter", "note": "Rapid7 says a public PoC exists and it validated it; SOCRadar says none identified. Recheck and watch for CISA KEV addition or in-the-wild reports; a vmdir sibling (CVE-2026-123890) was exploited as a zero-day.", "priority": "high"},
+    {"title": "Technical write-ups for ESX I/O filter flaws CVE-2026-123910 / 123911", "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626", "note": "No CrowdStrike (123910) or DEVCORE/ZDI (123911) write-up found yet; update analyses and raise confidence when published.", "priority": "medium"},
+    {"title": "VMSA-2026-0011 supplemental FAQ", "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626", "note": "The advisory references a supplemental FAQ that was not located or read.", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Wrote three analyses from Broadcom VMSA-2026-0011, Broadcom KB463535, Rapid7, SOCRadar, ThaiCERT and HKCERT. None of the three is in CISA KEV, so no CISA entry exists to read. CVE-2026-123903: priority immediate, because Rapid7 reports a public PoC it validated for an unauthenticated network flaw; confidence medium because the sources disagree on the PoC and there is no root cause. ESX CVE-2026-123910/123911: priority urgent (critical, unauthenticated, no exploitation reported); confidence medium (vendor-only detail). No exploit code was opened. No instructions found in page text."
+}

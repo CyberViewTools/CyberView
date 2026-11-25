@@ -8,9 +8,15 @@
   "time_basis": "published",
   "org": "ChargePoint",
   "actor": "",
-  "attack": ["authentication-bypass"],
-  "products": ["ChargePoint Home Flex"],
-  "cves": ["CVE-2026-131816"],
+  "attack": [
+    "authentication-bypass"
+  ],
+  "products": [
+    "ChargePoint Home Flex"
+  ],
+  "cves": [
+    "CVE-2026-131816"
+  ],
   "tags": [],
   "country": "",
   "place": "",
@@ -22,16 +28,46 @@
   "summary": "Zero Day Initiative's advisory ZDI-26-1112, a Pwn2Own entry, describes hard-coded credentials in the ssh service of the ChargePoint Home Flex EV charger. ZDI says a network-adjacent attacker can bypass authentication without credentials. The advisory lists a fix in firmware version 2024.02.00.259-alpha and was published on 2026-11-24.",
   "plain": "ZDI says the ssh service on the ChargePoint Home Flex home EV charger uses hard-coded credentials, so someone on the same network can get in without a login. The advisory lists a firmware fix.",
   "exec": "ZDI says hard-coded ssh credentials let a network-adjacent attacker bypass authentication on ChargePoint Home Flex chargers; the advisory lists a firmware fix.",
-  "action": "ZDI's advisory lists a fix in Home Flex firmware version 2024.02.00.259-alpha; check that the charger runs that firmware or later.",
+  "action": "ZDI's advisory lists the fix as Home Flex firmware version 2024.02.00.259-alpha.",
   "impact": "",
   "source_tier": "primary",
   "sources": [
-    {"name": "Zero Day Initiative", "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1112/", "published": "2026-11-24"}
+    {
+      "name": "Zero Day Initiative",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1112/",
+      "published": "2026-11-24"
+    }
   ],
   "evidence": [],
-  "validation": {"state": "single_source", "checked_at": "2026-11-25T22:27:15Z", "note": "Single source: ZDI's own advisory. ChargePoint's own page was not read."},
-  "sectors": {"values": ["energy"], "basis": "inferred"},
-  "surface": {"value": "ot-ics", "basis": "inferred"},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-25T22:27:15Z",
+    "note": "Single source: ZDI's own advisory. ChargePoint's own page was not read."
+  },
+  "sectors": {
+    "values": [
+      "energy"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "ot-ics",
+    "basis": "inferred"
+  },
   "first_seen": "2026-11-25T22:27:15Z",
-  "updated_at": "2026-11-25T22:27:15Z"
+  "updated_at": "2026-11-25T22:31:50Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T22:31:51Z",
+    "first_at": "2026-11-25T22:31:51Z",
+    "note": "action advice: removed unsourced advice; now states ZDI's listed fix. Title, CVE, date, fix version checked against ZDI advisory",
+    "flags": [
+      "no-cve-meta"
+    ],
+    "categories": [
+      "unsourced",
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T22:31:51Z"
 }

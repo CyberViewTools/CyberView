@@ -1,8 +1,8 @@
 {
   "title": "Aikido Security reports 42 phishing pages on Hugging Face Spaces, 29 linked to DeepSite",
   "category": "report",
-  "date": "2026-11-25",
-  "date_note": "Cyber Security News gives only its own publication day for the report; Aikido's page was not read.",
+  "date": "2026-11-24",
+  "date_note": "Aikido's post is dated 24 Nov (pages found and reported to Hugging Face 16 Oct); the page gives no earlier disclosure day.",
   "severity": 2,
   "status": "developing",
   "summary": "Cyber Security News reports that Aikido Security found 42 phishing pages on Hugging Face Spaces impersonating 28 brands, including Microsoft, Google, PayPal, Chase and Coinbase. According to Aikido, 29 pages were linked to the DeepSite AI website builder. The article says Aikido reported them on October 16 and that by October 29 all 42 were paused or no longer publicly reachable.",
@@ -18,22 +18,72 @@
   "org": "Hugging Face",
   "actor": "",
   "attack": [],
-  "products": ["Hugging Face Spaces", "DeepSite"],
+  "products": [
+    "Hugging Face Spaces",
+    "DeepSite"
+  ],
   "cves": [],
-  "tags": ["phishing", "ai-enabled", "cloud"],
+  "tags": [
+    "phishing",
+    "ai-enabled",
+    "cloud"
+  ],
   "sector": "Technology",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "email-phishing", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "email-phishing",
+    "basis": "inferred"
+  },
   "sources": [
-    {"name": "Cyber Security News", "url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/", "published": "2026-11-25"}
+    {
+      "name": "Aikido Security",
+      "url": "https://aikido.dev/blog/hugging-face-phishing-pages",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/",
+      "published": "2026-11-25"
+    }
   ],
   "evidence": [
-    {"url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/", "quote": "Aikido Security identified 42 pages on Hugging Face Spaces that impersonated 28 brands"},
-    {"url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/", "quote": "Researchers linked 29 of the pages to DeepSite."},
-    {"url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/", "quote": "By October 29, all 42 were paused or no longer publicly reachable."}
+    {
+      "url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/",
+      "quote": "Aikido Security identified 42 pages on Hugging Face Spaces that impersonated 28 brands"
+    },
+    {
+      "url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/",
+      "quote": "Researchers linked 29 of the pages to DeepSite."
+    },
+    {
+      "url": "https://cybersecuritynews.com/hugging-face-ai-phishing-pages/",
+      "quote": "By October 29, all 42 were paused or no longer publicly reachable."
+    }
   ],
-  "source_tier": "established",
-  "validation": {"state": "single_source", "checked_at": "2026-11-25T15:02:00Z", "note": "Only Cyber Security News read; Aikido's own report and any Hugging Face statement were not found."},
+  "source_tier": "primary",
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-25T15:11:30Z",
+    "note": "Aikido Security's own post read (42 pages, 28 brands, 29 DeepSite, reported 16 Oct, paused or unreachable by 29 Oct); Cyber Security News relays it. No Hugging Face statement read."
+  },
   "first_seen": "2026-11-25T15:02:00Z",
-  "updated_at": "2026-11-25T15:02:00Z"
+  "updated_at": "2026-11-25T15:11:30Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T15:11:22Z",
+    "first_at": "2026-11-25T15:11:22Z",
+    "note": "source not read/validation: added Aikido's own post (24 Nov) as first source, date moved 25 to 24 Nov, validation primary; figures matched",
+    "flags": [],
+    "categories": [
+      "date",
+      "validation",
+      "source"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T15:11:22Z"
 }

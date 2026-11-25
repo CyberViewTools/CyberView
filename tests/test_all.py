@@ -1339,8 +1339,9 @@ async def main():
             ok("replay: step markers drawn", await pg.locator("#svg .stepn").count() >= 1 and await pg.locator("#svg .rpcur").count() == 1)
             await pg.click("#rpPlay"); await pg.click("#rpNext"); await pg.wait_for_timeout(1600)
             # the path needs two steps with a location on the near side of the globe, which depends on the day's data;
-            # moving on and drawing the current step does not
-            ok("replay: next moves on and draws the current step", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and await pg.locator("#svg .rpcur").count() == 1 and await pg.locator("#svg .stepn").count() >= 1)
+            # moving on and drawing the current step does not. A step with no map location says so and draws no current ring.
+            rpw = await pg.locator("#rpWhen").text_content(); rpc = await pg.locator("#svg .rpcur").count()
+            ok("replay: next moves on and draws the current step", (await pg.locator("#rpCount").text_content()).startswith("Step 2 of") and rpc == (0 if "no map location" in rpw else 1) and await pg.locator("#svg .stepn").count() >= 1, f"{rpw} rpcur={rpc}")
             await pg.keyboard.press("ArrowLeft"); await pg.wait_for_timeout(300)
             ok("replay: arrow keys step back", (await pg.locator("#rpCount").text_content()).startswith("Step 1 of"))
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)

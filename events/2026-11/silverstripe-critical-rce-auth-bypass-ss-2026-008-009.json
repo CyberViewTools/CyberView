@@ -1,16 +1,24 @@
 {
   "actor": "",
   "impact": "",
-  "tags": ["rce"],
+  "tags": [
+    "rce"
+  ],
   "cves": [],
   "cve_meta": [],
-  "products": ["Silverstripe CMS", "silverstripe/framework", "silverstripe/template-engine"],
+  "products": [
+    "Silverstripe CMS",
+    "silverstripe/framework",
+    "silverstripe/template-engine"
+  ],
   "time_basis": "published",
   "first_seen": "2026-11-25T23:26:34Z",
-  "updated_at": "2026-11-25T23:26:34Z",
+  "updated_at": "2026-11-25T23:40:06Z",
   "category": "vuln",
   "status": "confirmed",
-  "attack": ["vulnerability-exploit"],
+  "attack": [
+    "vulnerability-exploit"
+  ],
   "geo_basis": "none stated",
   "date": "2026-11-24",
   "date_note": "Date of Silverstripe's security release as listed on its security releases page.",
@@ -24,19 +32,46 @@
   "pin_type": "none",
   "severity": 2,
   "source_tier": "primary",
-  "summary": "Silverstripe's security releases page lists two critical advisories released on 24 November: SS-2026-008, unauthenticated remote code execution via form submissions (CVSS 9.8), and SS-2026-009, a login bypass for accounts without a password (CVSS 9.1). Neither has a CVE listed. SecurityBrief Australia reports no confirmed in-the-wild exploitation. Fixes are in silverstripe/framework releases, plus template-engine 1.0.3 for CMS 6.",
+  "summary": "Silverstripe's security releases page lists two critical advisories released on 24 November: SS-2026-008, unauthenticated remote code execution via form submissions (CVSS 9.8), and SS-2026-009, a login bypass for accounts without a password (CVSS 9.1). Neither has a CVE listed. SecurityBrief Australia does not report any observed exploitation. Fixes are in silverstripe/framework releases, plus template-engine 1.0.3 for CMS 6.",
   "plain": "Silverstripe released fixes for two critical flaws in its CMS: one lets an unauthenticated attacker run code through a form, the other allows login to accounts that have no password.",
   "exec": "Websites built on Silverstripe CMS face a critical remote code execution flaw and a login bypass until patched.",
   "action": "Silverstripe's page says to update silverstripe/framework to a fixed release and, on CMS 6.x, also silverstripe/template-engine to 1.0.3.",
   "sources": [
-    {"name": "Silverstripe security releases", "url": "https://silverstripe.org/download/security-releases", "published": "2026-11-24"},
-    {"name": "SecurityBrief Australia", "url": "https://securitybrief.com.au/story/silverstripe-patches-critical-cms-flaws-in-australia", "published": "2026-11-25"}
+    {
+      "name": "Silverstripe security releases",
+      "url": "https://silverstripe.org/download/security-releases",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "SecurityBrief Australia",
+      "url": "https://securitybrief.com.au/story/silverstripe-patches-critical-cms-flaws-in-australia",
+      "published": "2026-11-26"
+    }
   ],
   "validation": {
     "checked_at": "2026-11-25T23:26:34Z",
     "state": "primary",
-    "note": "Vendor security releases page read (primary), plus SecurityBrief Australia. The article reports no confirmed in-the-wild exploitation; the vendor page gives no CVE."
+    "note": "Vendor security releases page read (primary), plus SecurityBrief Australia. The article does not report any observed exploitation; the vendor page gives no CVE."
   },
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "web-app", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T23:40:23Z",
+    "first_at": "2026-11-25T23:40:23Z",
+    "note": "stronger than source: 'no confirmed in-the-wild exploitation' now 'does not report any observed exploitation'; SecurityBrief published day set to 2026-11-26 as on page. Vendor page checked",
+    "flags": [],
+    "categories": [
+      "overstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T23:40:23Z"
 }

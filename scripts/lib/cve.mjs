@@ -102,17 +102,21 @@ export function toLead(row, seenAt) {
 // (served to browsers) small. parseAffected is pure, so this stays network-free.
 export const RANGE_CAP = 16;
 export function affectedFromNvd(nvdCve) {
-  const out = [];
+  const all = [], seen = new Set();
   for (const r of parseAffected(nvdCve)) {            // [{vendor, product, part, from, from_incl, to, to_incl, exact}]
     if (!r.product) continue;
     const o = { vendor: r.vendor || "", product: r.product };
     if (r.from) { o.from = r.from; if (r.from_incl) o.from_incl = true; }
     if (r.to) { o.to = r.to; if (r.to_incl) o.to_incl = true; }
     if (r.exact) o.exact = r.exact;
-    out.push(o);
-    if (out.length >= RANGE_CAP) break;
+    const k = JSON.stringify(o); o.__dup = seen.has(k); seen.add(k);
+    // when a CVE lists more products than the cap holds (CVE-2024-6387 lists dozens of appliances before OpenSSH itself),
+    // keep what a version can be matched against first: ranges with version bounds, and software before firmware and systems
+    all.push({ o, w: (o.from || o.to || o.exact ? 2 : 0) + (r.part === "a" ? 1 : 0), i: all.length });
   }
-  return out;
+  const strip = (x) => { delete x.o.__dup; return x.o; };
+  if (all.length <= RANGE_CAP) return all.map(strip);            // within the cap: exactly as NVD lists them
+  return all.filter((x) => !x.o.__dup).sort((x, y) => y.w - x.w || x.i - y.i).slice(0, RANGE_CAP).map(strip);
 }
 
 // fields of the site's lookup files, in order (rows are arrays to keep the files small). `aff` is the affected-version

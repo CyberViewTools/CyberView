@@ -70,7 +70,7 @@ const nameOf = (s) => (s.vendor ? s.vendor + " " : "") + s.product;
 export function soundFor(s, f, { inRange = false } = {}) {
   const rs = Array.isArray(f.affected) ? f.affected : []; if (!rs.length) return !inRange;
   const v = matchVersion(s);
-  return rs.some((r) => W.nameHit(nameOf(s), r.vendor, r.product) && vendorAgrees(s, r) && (!inRange || (bounded(r) && !!v && W.inRange(v, r) === true)));
+  return rs.some((r) => W.nameHit(nameOf(s), r.vendor, r.product) && vendorAgrees(s, r) && (!inRange || ((bounded(r) || f.kev) && !!v && W.inRange(v, r) === true)));   // a known-exploited entry listing every version (end-of-life devices) counts
 }
 
 /** Confidence for one place a flaw was seen, with the reason. */
@@ -223,7 +223,7 @@ export function named(hosts, allRows, { per = 10, skip = new Set(), ranged = fal
   for (const p of prods.values()) {
     // ranged: the caller matched every row that has ranges against the version seen, so for a product with a version those
     // rows are settled (a finding, or the version is outside the range) and only rows with no range are still leads
-    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && !(ranged && p.checked && r.affected && r.affected.some((a) => bounded(a) && p.services.some((s) => W.nameHit(nameOf(s), a.vendor, a.product) && vendorAgrees(s, a)))) && W.nameHit(p.product, r.vendor, r.product));
+    const hits = allRows.filter((r) => !r.rejected && r.product && !skip.has(r.id) && !(ranged && p.checked && r.affected && r.affected.some((a) => bounded(a) && p.services.some((s) => W.nameHit(nameOf(s), a.vendor, a.product) && vendorAgrees(s, a)))) && (W.nameHit(p.product, r.vendor, r.product) || (ranged && r.affected && r.affected.length >= 16 && p.services.some((s) => squash(s.product).length > 4 && (r.hay || "").replace(/[^a-z0-9]/g, "").includes(squash(s.product))))));   // a row whose range list was cut off at the cap and whose text names the product: a lead, since its own range may be missing
     if (!hits.length) continue;
     const top = hits.map((r) => ({ r, s: D.score(r) })).sort((a, b) => ((b.s && b.s.score) ?? -1) - ((a.s && a.s.score) ?? -1)).slice(0, per)
       .map(({ r, s }) => ({ cve: r.id, title: r.title || r.desc.slice(0, 120), rating: s && s.score != null ? `${s.score.toFixed(1)} ${s.band}` : "Not scored", exploited: D.exploitation(r).value === "active" }));

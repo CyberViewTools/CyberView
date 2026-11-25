@@ -1,7 +1,9 @@
 {
   "action": "Braiins advises miners to remove every stratum+tcp:// entry, including backups, and use Stratum V2 or TLS on firmware that verifies certificates; it tells network operators to turn on RPKI route origin validation.",
   "actor": "",
-  "attack": ["bgp-hijack"],
+  "attack": [
+    "bgp-hijack"
+  ],
   "category": "incident",
   "country": "",
   "cves": [],
@@ -17,14 +19,28 @@
   "pin_type": "none",
   "place": "Latin America and Europe (per Braiins)",
   "plain": "Braiins says an attacker rerouted internet traffic so miners' computing power went to a fake mining pool, and the rewards went to the attacker. It says miners using unencrypted connections are exposed.",
-  "products": ["Stratum V1"],
+  "products": [
+    "Stratum V1"
+  ],
   "sector": "Cryptocurrency mining",
   "severity": 2,
   "source_tier": "primary",
   "sources": [
-    {"name": "Braiins", "url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1", "published": "2026-11-25"},
-    {"name": "The Block", "url": "https://www.theblock.co/news/ecosystems/2026-11-25-bitcoin-miners-hit-hashrate-hijacking-attack-exploiting-unencrypted-connections-446723", "published": "2026-11-25"},
-    {"name": "Decrypt", "url": "https://decrypt.co/383999/another-bitcoin-mining-firm-hashrate-hijacking-attacks", "published": "2026-11-25"}
+    {
+      "name": "Braiins",
+      "url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1",
+      "published": "2026-11-25"
+    },
+    {
+      "name": "The Block",
+      "url": "https://www.theblock.co/news/ecosystems/2026-11-25-bitcoin-miners-hit-hashrate-hijacking-attack-exploiting-unencrypted-connections-446723",
+      "published": "2026-11-25"
+    },
+    {
+      "name": "Decrypt",
+      "url": "https://decrypt.co/383999/another-bitcoin-mining-firm-hashrate-hijacking-attacks",
+      "published": "2026-11-25"
+    }
   ],
   "status": "confirmed",
   "summary": "Bitcoin mining firm Braiins says an attacker used BGP route manipulation to impersonate mining pools to miners on plain-text Stratum V1, so their hashrate was diverted to a fake server. Braiins says the attacks came in waves from early November, starting in Latin America and reaching Europe, and one hit more than a thousand mining sites in the same second. Braiins says neither the miners' ASICs nor Braiins Pool were compromised.",
@@ -36,9 +52,28 @@
     "checked_at": "2026-11-25T21:43:00Z",
     "note": "Braiins' own post was read; The Block and Decrypt report the same findings from Braiins. The attacker and the amount of rewards stolen are not stated in the pages read."
   },
-  "sectors": {"values": ["financial-services"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "financial-services"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
   "evidence": [
-    {"url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1", "quote": "more than a thousand mining sites"}
-  ]
+    {
+      "url": "https://braiins.com/blog/bitcoin-hashrate-hijacking-unencrypted-stratum-v1",
+      "quote": "more than a thousand mining sites"
+    }
+  ],
+  "review": {
+    "state": "passed",
+    "at": "2026-11-25T22:10:35Z",
+    "first_at": "2026-11-25T22:10:35Z",
+    "note": "Compared Braiins post with The Block and Decrypt: waves, regions, 1,000 sites, not-compromised statement, advice",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-25T22:10:35Z"
 }

@@ -17,12 +17,15 @@
   "attack": [],
   "products": [],
   "first_seen": "2026-11-25T11:42:28Z",
-  "updated_at": "2026-11-25T11:42:28Z",
+  "updated_at": "2026-11-25T12:10:40Z",
   "summary": "Spamhaus published an analysis of the hosting providers and nameservers behind phishing and fraud domains shared at Maple Disruption 2.0, a sprint organised by Canadian law enforcement. Spamhaus says Cloudflare's abuse posture has not meaningfully improved, calls fxmail.club a likely rogue provider that it added to ASN-DROP, and says cloudzy.com is on ASN-DROP. It found no systematic avoidance of DROP or ASN-DROP networks by Canada-targeting actors.",
   "plain": "Spamhaus looked at which hosting companies carry phishing and fraud sites aimed at Canadians and says some are weak on abuse; it lists two on its ASN-DROP blocklist.",
   "exec": "Spamhaus's own analysis names hosting and DNS providers behind phishing aimed at Canadians; blocklist data may affect mail and web filtering.",
-  "action": "No action needed; for awareness.",
-  "tags": ["phishing", "fraud"],
+  "action": "Spamhaus advises applying BCL, DROP and ASN-DROP on perimeter devices such as firewalls and web proxies, and DBL on web proxies and DNS resolvers.",
+  "tags": [
+    "phishing",
+    "fraud"
+  ],
   "sources": [
     {
       "name": "Spamhaus: Maple Disruption 2.0 aftermath: Hosting providers enabling phishing and fraud targeting Canadians",
@@ -38,6 +41,25 @@
     "checked_at": "2026-11-25T11:42:28Z",
     "note": "Only Spamhaus's own post read; findings are Spamhaus's own analysis and are stated as such."
   },
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "email-phishing", "basis": "inferred"}
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "email-phishing",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T12:10:33Z",
+    "first_at": "2026-11-25T12:10:33Z",
+    "note": "action advice: Spamhaus gives recommendations; replaced No action needed. Rest matches post.",
+    "flags": [],
+    "categories": [
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T12:10:33Z"
 }

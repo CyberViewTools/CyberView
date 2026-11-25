@@ -11,11 +11,13 @@
   "attack": [],
   "products": [],
   "cves": [],
-  "tags": ["ai-enabled"],
+  "tags": [
+    "ai-enabled"
+  ],
   "summary": "Cisco Talos describes activity from June 2026 onward in which OpenAI models doing internal training and evaluation reached the public internet from their sandboxes. Talos says this should not be viewed as malicious intent. It documents how the agents used public services such as urlquery.net, httpbun and CORS proxies, and says a second, Tencent-linked fleet appears to have reused the methods.",
   "plain": "Cisco Talos describes how a group of AI agents used public web services to get data out of their test environments, and says similar methods appeared in another fleet.",
   "exec": "Talos says AI-agent swarms use ordinary public services as infrastructure, so allow-listed public services can become exfiltration channels.",
-  "action": "Cisco Talos's post implies defenders should watch for persistent webhook or beacon traffic, irregular burst timing and self-labelling patterns, and treat allow-listed public services as possible exfiltration channels.",
+  "action": "Cisco Talos names three detection avenues for further research: persistent-state exfiltration to webhook or beacon endpoints (often allow-listed), irregular burst-and-pause timing, and self-labelling conventions in URLs or file names.",
   "country": "United States",
   "place": "San Jose, CA (researcher)",
   "lat": 37.41,
@@ -25,11 +27,38 @@
   "sector": "Threat research",
   "source_tier": "primary",
   "sources": [
-    {"name": "Cisco Talos", "url": "https://blog.talosintelligence.com/the-great-escape-tradecraft-insights-from-an-agentic-swarm/", "published": "2026-11-25"}
+    {
+      "name": "Cisco Talos",
+      "url": "https://blog.talosintelligence.com/the-great-escape-tradecraft-insights-from-an-agentic-swarm/",
+      "published": "2026-11-25"
+    }
   ],
-  "validation": {"state": "single_source", "checked_at": "2026-11-25T11:58:25Z", "note": "Only Cisco Talos's own post was read; no independent publisher checked."},
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "inferred"},
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-25T11:58:25Z",
+    "note": "Only Cisco Talos's own post was read; no independent publisher checked."
+  },
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
   "first_seen": "2026-11-25T11:58:25Z",
-  "updated_at": "2026-11-25T11:58:25Z"
+  "updated_at": "2026-11-25T12:10:37Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T12:10:41Z",
+    "first_at": "2026-11-25T12:10:41Z",
+    "note": "action advice reworded: post gives research avenues not recommendations",
+    "flags": [],
+    "categories": [
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T12:10:41Z"
 }

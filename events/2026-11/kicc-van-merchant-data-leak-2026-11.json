@@ -9,16 +9,16 @@
   "products": [],
   "time_basis": "reported",
   "first_seen": "2026-11-24T23:14:00Z",
-  "updated_at": "2026-11-24T23:14:00Z",
+  "updated_at": "2026-11-25T12:10:33Z",
   "category": "incident",
-  "status": "developing",
+  "status": "confirmed",
   "attack": [
     "unauthorized-access"
   ],
   "geo_basis": "country",
   "date": "2026-11-20",
   "date_note": "Date of the abnormal access attempt as stated by ETNews; the article was published 25 November (KST).",
-  "title": "Korea Information & Communications (KICC) VAN reportedly hit by abnormal access that exposed some merchant data, ETNews says",
+  "title": "Korea Information & Communications (KICC) VAN says some merchant data leaked after unauthorized access, Daily Security reports",
   "org": "Korea Information & Communications (한국정보통신, KICC)",
   "sector": "Financial services (VAN payment network)",
   "country": "South Korea",
@@ -28,11 +28,16 @@
   "pin_type": "country",
   "severity": 2,
   "source_tier": "established",
-  "summary": "ETNews, citing industry sources, reports that VAN provider Korea Information & Communications (KICC) was accessed by an abnormal user on 20 November and that some merchant information was leaked. ETNews says the attacker's IP address was then blocked. The exposed data includes business name, registration number, representative's name, address, MID, transaction numbers and affiliated simple-payment transaction history. The article says this follows a breach at payment gateway (PG) companies.",
-  "plain": "ETNews reports, citing industry sources, that a Korean payment network provider was accessed by an abnormal user on 20 November and some merchant data leaked. KICC is not quoted in the article.",
-  "exec": "A Korean VAN payment provider reportedly leaked some merchant data; ETNews warns it could be misused to set up fake settlement accounts.",
+  "summary": "Daily Security reports that KICC announced on 23 November a leak of some merchant and customer information after an unauthorized outside user accessed a merchant server on 20 November; the attacker's IP address was blocked. Per Daily Security the data includes merchant name, business registration number, representative's name, address and MID. ETNews, citing industry sources, also lists transaction numbers. KICC has not disclosed how many merchants were affected, according to Daily Security.",
+  "plain": "Daily Security reports that KICC, a Korean payment network provider, announced a leak of some merchant and customer information after unauthorized access on 20 November.",
+  "exec": "A Korean VAN payment provider announced a leak of some merchant data; Daily Security says it could be used for secondary fraud against merchants.",
   "action": "No action needed; for awareness.",
   "sources": [
+    {
+      "name": "Daily Security (Korea)",
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209734",
+      "published": "2026-11-25"
+    },
     {
       "name": "ETNews (Korea), 25 Nov 2026",
       "url": "https://www.etnews.com/20261125000064",
@@ -41,9 +46,9 @@
   ],
   "evidence": [],
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-24T23:14:00Z",
-    "note": "Only ETNews (citing industry sources) read; no KICC notice or regulator page read."
+    "state": "corroborated",
+    "checked_at": "2026-11-25T12:10:33Z",
+    "note": "ETNews and Daily Security (two publishers) state the access and leak; Daily Security relays KICC's 23 November notice; the notice itself was not read."
   },
   "sectors": {
     "values": [

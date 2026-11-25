@@ -1,0 +1,47 @@
+{
+  "job": "updater",
+  "model": "claude-sonnet-5-5",
+  "updated": [
+    {
+      "id": "idunno-anticsrf-aspnet-cve-2026-131914-exploited-2026-11",
+      "what": "added CISA KEV addition (SecurityWeek) and watchTowr honeypot probes; 2 sources"
+    }
+  ],
+  "unchanged": [
+    "picussecurity blog (idunno)",
+    "securitycontext CVE-2026-114713 (UnrealIRCd, already covered)"
+  ],
+  "unrelated": [],
+  "unreachable": [
+    "threatcluster.io LiteLLM cluster (403)"
+  ],
+  "pages_read": [
+    {
+      "url": "https://www.securityweek.com/hackers-exploit-unpatched-flaw-in-defunct-idunno-anticsrf-library/",
+      "used_in": "idunno"
+    },
+    {
+      "url": "https://www.helpnetsecurity.com/2026/11/25/idunno-anticsrf-rce-cve-2026-131914-exploited/",
+      "used_in": "idunno"
+    },
+    {
+      "url": "https://www.picussecurity.com/resource/blog/cve-2026-131914-idunno-anticsrf-asp-net-deserialization-rce-explained",
+      "used_in": "idunno (unchanged)"
+    },
+    {
+      "url": "https://securitycontext.com/cve/CVE-2026-114713",
+      "used_in": "check-point-gaia (unchanged)"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "threatcluster LiteLLM CVE-2026-40217",
+      "url": "https://threatcluster.io/cluster/cve-2026-40217-litellm-guardrail-sandbox-escape-enables-code-6bab3daf",
+      "note": "403; retry later",
+      "priority": "low"
+    }
+  ],
+  "notes": "Not retried threatcluster after 403.",
+  "worker_role": "updater-deep",
+  "worker_model": "sonnet"
+}

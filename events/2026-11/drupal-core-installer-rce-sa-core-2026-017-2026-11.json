@@ -1,126 +1,127 @@
 {
- "actor": "",
- "attack": [
-  "rce"
- ],
- "impact": "",
- "tags": [],
- "cves": [
-  "CVE-2026-132165",
-  "CVE-2026-132166"
- ],
- "cve_meta": [
-  {
-   "id": "CVE-2026-132165",
-   "cvss": null,
-   "epss": null,
-   "kev": true,
-   "kev_due": "2026-11-27"
-  },
-  {
-   "id": "CVE-2026-132166",
-   "cvss": null,
-   "epss": null,
-   "kev": false,
-   "kev_due": ""
-  }
- ],
- "products": [
-  "Drupal core"
- ],
- "first_seen": "2026-11-19T00:14:29Z",
- "updated_at": "2026-11-25T20:40:27Z",
- "time_basis": "published",
- "category": "vuln",
- "date": "2026-11-18",
- "title": "Drupal reports core flaw CVE-2026-132165 exploited on live sites; fixed in 10.6.22, 11.3.22 and 11.4.13",
- "org": "Drupal Security Team",
- "sector": "Technology / web platforms",
- "country": "United States",
- "place": "United States (country level)",
- "lat": 39.8,
- "lng": -98.6,
- "geo_basis": "country",
- "pin_type": "country",
- "severity": 3,
- "status": "official",
- "source_tier": "primary",
- "summary": "Drupal rates SA-CORE-2026-017, CVE-2026-132165, highly critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. Drupal's advisory update says it received a report of exploitation on live sites as early as 2026-11-19 19:00 UTC. Fixed in 10.6.22, 11.3.22 and 11.4.13. CISA added CVE-2026-132165 to its known-exploited catalog on 24 November. Help Net Security (25 November) says Searchlight Cyber published a write-up on 24 November.",
- "plain": "Drupal fixed a serious flaw that can let an attacker take over a website by re-running its installer, and says it has a report of the flaw being exploited on live sites.",
- "exec": "Drupal has a report that this highly critical flaw was exploited on live sites; Drupal sites on older versions need its fix.",
- "action": "Drupal advises updating core to 10.6.22, 11.3.22 or 11.4.13; if you cannot upgrade, secure the installer as Drupal describes. Older branches are end of life, per Drupal.",
- "sources": [
-  {
-   "name": "Drupal SA-CORE-2026-017",
-   "url": "https://www.drupal.org/sa-core-2026-017",
-   "published": "2026-11-18"
-  },
-  {
-   "name": "Drupal SA-CORE-2026-018",
-   "url": "https://www.drupal.org/sa-core-2026-018",
-   "published": "2026-11-18"
-  },
-  {
-   "name": "CISA",
-   "url": "https://www.cisa.gov/news-events/alerts/2026/11/24/cisa-adds-three-known-exploited-vulnerabilities-catalog",
-   "published": "2026-11-24"
-  },
-  {
-   "name": "Help Net Security",
-   "url": "https://www.helpnetsecurity.com/2026/11/25/drupal-installer-rce-cve-2026-132165-exploited/",
-   "published": "2026-11-25"
-  }
- ],
- "report": {
-  "doc_id": "",
-  "iocs_available": false,
-  "key_findings": [
-   "SA-CORE-2026-017 (Highly critical, CVE-2026-132165): installer reinstall leading to takeover or RCE; advisory update reports exploitation on live sites as early as 2026-11-19 19:00 UTC.",
-   "Affected: below 10.6.22, 11.0.0 to below 11.3.22, 11.4.0 to below 11.4.13; fixed in 10.6.22, 11.3.22, 11.4.13.",
-   "SA-CORE-2026-018 (CVE-2026-132166) is a gadget chain needing a separate unsafe-unserialize flaw."
+  "actor": "",
+  "attack": [
+    "rce"
   ],
-  "published": "2026-11-18",
-  "publisher": "Drupal Security Team",
-  "publisher_type": "vendor",
-  "read_depth": "full",
-  "recommendations": [
-   "Upgrade; secure the installer if you cannot."
+  "impact": "",
+  "tags": [
+    "rce"
   ],
-  "url": "https://www.drupal.org/sa-core-2026-017"
- },
- "validation": {
-  "state": "corroborated",
-  "checked_at": "2026-11-25T20:40:27Z",
-  "note": "Read Drupal SA-CORE-2026-017 and SA-CORE-2026-018 (Drupal Security Team, primary) and the CISA alert of 24 November (CISA, authority); Drupal and CISA each state CVE-2026-132165. Advisory 017 re-read on 25 November: carries the exploitation update."
- },
- "review": {
-  "state": "corrected",
-  "at": "2026-11-25T11:15:16Z",
-  "first_at": "2026-11-19T02:27:46Z",
-  "note": "Added source published days, validation note names Drupal and CISA; versions, CVEs, exploitation update checked against SA-017/018 and CISA",
-  "flags": [],
-  "categories": [
-   "validation",
-   "source"
-  ]
- },
- "qa_checked_at": "2026-11-25T11:15:16Z",
- "sectors": {
-  "values": [
-   "cross-sector"
+  "cves": [
+    "CVE-2026-132165",
+    "CVE-2026-132166"
   ],
-  "basis": "inferred"
- },
- "surface": {
-  "value": "web-app",
-  "basis": "inferred"
- },
- "evidence": [
-  {
-   "url": "https://www.drupal.org/sa-core-2026-017",
-   "quote": "Update: the Security Team has received a report this was exploited on live sites as early as 2026-11-19 19:00 UTC."
-  }
- ],
- "last_followup_at": "2026-11-25T20:40:27Z",
- "followup_note": "Updated: Help Net Security 25 Nov read (adds Searchlight write-up). 1 page read."
+  "cve_meta": [
+    {
+      "id": "CVE-2026-132165",
+      "cvss": null,
+      "epss": null,
+      "kev": true,
+      "kev_due": "2026-11-27"
+    },
+    {
+      "id": "CVE-2026-132166",
+      "cvss": null,
+      "epss": null,
+      "kev": false,
+      "kev_due": ""
+    }
+  ],
+  "products": [
+    "Drupal core"
+  ],
+  "first_seen": "2026-11-19T00:14:29Z",
+  "updated_at": "2026-11-25T21:10:46Z",
+  "time_basis": "published",
+  "category": "vuln",
+  "date": "2026-11-18",
+  "title": "Drupal reports core flaw CVE-2026-132165 exploited on live sites; fixed in 10.6.22, 11.3.22 and 11.4.13",
+  "org": "Drupal Security Team",
+  "sector": "Technology / web platforms",
+  "country": "United States",
+  "place": "United States (country level)",
+  "lat": 39.8,
+  "lng": -98.6,
+  "geo_basis": "country",
+  "pin_type": "country",
+  "severity": 3,
+  "status": "official",
+  "source_tier": "primary",
+  "summary": "Drupal rates SA-CORE-2026-017, CVE-2026-132165, highly critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. Drupal's advisory update says it received a report of exploitation on live sites as early as 2026-11-19 19:00 UTC. Fixed in 10.6.22, 11.3.22 and 11.4.13. CISA added CVE-2026-132165 to its known-exploited catalog on 24 November. Help Net Security (25 November) says Searchlight Cyber published a write-up on 24 November.",
+  "plain": "Drupal fixed a serious flaw that can let an attacker take over a website by re-running its installer, and says it has a report of the flaw being exploited on live sites.",
+  "exec": "Drupal has a report that this highly critical flaw was exploited on live sites; Drupal sites on older versions need its fix.",
+  "action": "Drupal advises updating core to 10.6.22, 11.3.22 or 11.4.13; if you cannot upgrade, secure the installer as Drupal describes. Older branches are end of life, per Drupal.",
+  "sources": [
+    {
+      "name": "Drupal SA-CORE-2026-017",
+      "url": "https://www.drupal.org/sa-core-2026-017",
+      "published": "2026-11-18"
+    },
+    {
+      "name": "Drupal SA-CORE-2026-018",
+      "url": "https://www.drupal.org/sa-core-2026-018",
+      "published": "2026-11-18"
+    },
+    {
+      "name": "CISA",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/11/24/cisa-adds-three-known-exploited-vulnerabilities-catalog",
+      "published": "2026-11-24"
+    },
+    {
+      "name": "Help Net Security",
+      "url": "https://www.helpnetsecurity.com/2026/11/25/drupal-installer-rce-cve-2026-132165-exploited/",
+      "published": "2026-11-25"
+    }
+  ],
+  "report": {
+    "doc_id": "",
+    "iocs_available": false,
+    "key_findings": [
+      "SA-CORE-2026-017 (Highly critical, CVE-2026-132165): installer reinstall leading to takeover or RCE; advisory update reports exploitation on live sites as early as 2026-11-19 19:00 UTC.",
+      "Affected: below 10.6.22, 11.0.0 to below 11.3.22, 11.4.0 to below 11.4.13; fixed in 10.6.22, 11.3.22, 11.4.13.",
+      "SA-CORE-2026-018 (CVE-2026-132166) is a gadget chain needing a separate unsafe-unserialize flaw."
+    ],
+    "published": "2026-11-18",
+    "publisher": "Drupal Security Team",
+    "publisher_type": "vendor",
+    "read_depth": "full",
+    "recommendations": [
+      "Upgrade; secure the installer if you cannot."
+    ],
+    "url": "https://www.drupal.org/sa-core-2026-017"
+  },
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-25T20:40:27Z",
+    "note": "Read Drupal SA-CORE-2026-017 and SA-CORE-2026-018 (Drupal Security Team, primary) and the CISA alert of 24 November (CISA, authority); Drupal and CISA each state CVE-2026-132165. Advisory 017 re-read on 25 November: carries the exploitation update."
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-25T21:11:08Z",
+    "first_at": "2026-11-19T02:27:46Z",
+    "note": "added rce tag the advisory supports; versions, CVE, exploitation and CISA KEV checked",
+    "flags": [],
+    "categories": [
+      "tags"
+    ]
+  },
+  "qa_checked_at": "2026-11-25T21:11:08Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "evidence": [
+    {
+      "url": "https://www.drupal.org/sa-core-2026-017",
+      "quote": "Update: the Security Team has received a report this was exploited on live sites as early as 2026-11-19 19:00 UTC."
+    }
+  ],
+  "last_followup_at": "2026-11-25T20:40:27Z",
+  "followup_note": "Updated: Help Net Security 25 Nov read (adds Searchlight write-up). 1 page read."
 }

@@ -1,43 +1,76 @@
 {
-  "job": "sweep-r4",
+  "job": "researcher-sweep-r4",
+  "started_at": "2026-11-25T11:56:37Z",
+  "finished_at": "2026-11-25T12:05:00Z",
   "model": "claude-sonnet-5-5",
-  "searches": [],
+  "searches": [
+    "CVE-2026-112732 Visio Exchange remote code execution",
+    "3.5 billion records exposed two databases",
+    "Russland Datenleak Söldner Afrika"
+  ],
   "pages_read": [
     {
-      "url": "https://securitycontext.com/cve/CVE-2026-93658",
-      "title": "CVE-2026-93658",
-      "used_in": "closed"
+      "url": "https://www.security.nl/posting/963084/Microsoft+meldt+kritiek+Visio-lek+dat+via+Exchange-servers+is+te+misbruiken",
+      "title": "Security.nl Visio",
+      "used_in": "govcert-hk-microsoft-office-rce-cve-2026-112732-2026-11"
     },
     {
-      "url": "https://blog.cybozu.io/entry/2026/11/25/113000",
-      "title": "Cybozu Horos",
-      "used_in": "closed"
+      "url": "https://www.heise.de/news/Angriffswarnung-Drupal-Core-AntiCsrf-und-Optimizely-11537363.html",
+      "title": "heise Angriffswarnung",
+      "used_in": "closed: all three on file"
     },
     {
-      "url": "https://vulnerability.circl.lu/vuln/debian-temp-0000000-eb8629",
-      "title": "Debian TEMP entry",
-      "used_in": "closed"
+      "url": "https://www.redeszone.net/noticias/seguridad/extension-falsa-google-sheets-roba-gmail/",
+      "title": "RedesZone Remus extension",
+      "used_in": "closed: on file"
+    },
+    {
+      "url": "https://www.gendigital.com/blog/insights/research/remus-stealer-email-interception-analysis",
+      "title": "Gen Threat Labs Remus",
+      "used_in": "closed: on file"
+    },
+    {
+      "url": "https://united24media.com/world/leaked-records-reveal-russian-casualties-in-moscows-african-military-campaigns-24381",
+      "title": "United24 Rosstat leak",
+      "used_in": "675b7237 closed as older"
     }
   ],
   "added": [],
-  "updated": [],
+  "updated": [
+    "govcert-hk-microsoft-office-rce-cve-2026-112732-2026-11"
+  ],
   "skipped": [
     {
-      "title": "9 assigned stories",
+      "title": "Visio stub visio-cve-2026-112732-exchange-attachment-rce-2026-11",
       "url": "",
-      "reason": "no incident, or PoC-only aggregator rows with no exploitation and no primary source read"
+      "reason": "created, then marked duplicate_of the GovCERT.HK event for the same CVE (file could not be deleted)"
+    },
+    {
+      "title": "Rosstat leak Russian deaths in Africa",
+      "url": "https://www.tagesanzeiger.ch/datenleak-russland-in-diesen-afrikanischen-laendern-sterben-soeldner-352552167396",
+      "reason": "leak first reported 13-15 Nov, older than map window; tagesanzeiger page did not load"
     }
   ],
   "open_leads": [
     {
-      "title": "MISP CVE-2026-135260 / CVE-2026-135243 (fixed in 2.5.52), PoCs on GitHub",
-      "url": "https://securitycontext.com/cve/CVE-2026-135260",
-      "note": "widely used threat-sharing tool; could be written up if the MISP advisory is read",
+      "title": "3.5 billion passwords/login details, two exposed databases",
+      "url": "https://navbharattimes.indiatimes.com/tech/gadgets-news/3-5-billion-records-exposed-personal-details-email-address-in-danger/articleshow/136151076.cms",
+      "note": "page blocked, no original report found; may relate to exposed-db-2-billion-credentials-fowler-2026-11",
       "priority": "low"
+    },
+    {
+      "title": "Visio CVE-2026-112732 Microsoft MSRC page",
+      "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-112732",
+      "note": "did not load; Exchange attachment vector and CVSS 9.8 only from Security.nl",
+      "priority": "medium"
     }
   ],
-  "failed_sites": [],
-  "notes": "No events written.",
+  "failed_sites": [
+    "msrc.microsoft.com (JS page)",
+    "navbharattimes.indiatimes.com (blocked)",
+    "tagesanzeiger.ch (too many redirects)"
+  ],
+  "notes": "Closed as already on file: Optimizely, EU Commission, CIA/ODNI, Drupal/AntiCsrf/Optimizely, Remus extension.",
   "worker_role": "researcher",
   "worker_model": "sonnet"
 }

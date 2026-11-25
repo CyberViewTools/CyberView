@@ -12,6 +12,48 @@ import { withAnalytics } from "./lib/analytics.mjs";
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'";
 export const LEGAL_PAGES = ["about", "privacy", "terms"];
+// document pages: a search header, a contents rail and the sections as a full-width grid of glass panels (site/doc.js)
+export const DOC_PAGES = { about: "Search this page", privacy: "Search the privacy policy", terms: "Search the terms", tools: "Search the tools" };
+const SEARCH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+const slug = (h) => h.replace(/<[^>]+>/g, "").replace(/&[a-z#0-9]+;/gi, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+const plainText = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+/** Lay out a document page: intro -> page head with its own search; any block before the first panel stays as the
+ *  facts band; every panel gets an id (existing ids are kept, so old links still work) and a line in the contents rail.
+ *  Long panels and panels with tables span the grid and set their text in columns. Input is the page's own template. */
+export function docLayout(html, label) {
+  const m = html.match(/<section class="intro">([\s\S]*?)<\/section>\s*/);
+  if (!m) return html;
+  const h1 = (m[1].match(/<h1>[\s\S]*?<\/h1>/) || [""])[0];
+  const sub = m[1].replace(h1, "").trim().replace(/<p>/g, '<p class="sub">');
+  const rest = html.slice(m.index + m[0].length), first = rest.search(/<section class="panel legal"/);
+  const band = first > 0 ? rest.slice(0, first).trim() : "";
+  const used = new Set(), toc = [];
+  const body = (first >= 0 ? rest.slice(first) : rest).replace(/<section class="panel legal"(?: id="([\w-]+)")?>\s*<h2>([\s\S]*?)<\/h2>([\s\S]*?)<\/section>/g, (all, id, h, inner) => {
+    let s = id || slug(h) || "part";
+    while (used.has(s)) s += "-2";
+    used.add(s);
+    toc.push([s, plainText(h)]);
+    const wide = s === "what" || /<table/.test(inner) || plainText(inner).length > 1300;
+    return `<section class="panel legal${wide ? " wide" : ""}" id="${s}" aria-labelledby="${s}-h">\n  <h2 id="${s}-h">${h}</h2>${inner}</section>`;
+  });
+  return `<section class="intro phead">
+  <div>
+    ${h1}
+    ${sub}
+  </div>
+  <span class="hl"></span>
+  <form class="psearch" id="qform" role="search"><label><span class="sr-only">${label}</span>${SEARCH_SVG}<input id="q" type="search" placeholder="${label}" autocomplete="off" spellcheck="false" maxlength="80"><kbd>/</kbd></label></form>
+</section>
+${band}
+<p class="qcount" id="qcount" aria-live="polite" hidden></p>
+<div class="docgrid">
+  <aside class="docrail"><nav class="doctoc" aria-label="On this page"><p class="tochead">On this page</p><ol>${toc.map(([s, t]) => `<li><a href="#${s}">${t}</a></li>`).join("")}</ol></nav></aside>
+  <div class="docbody">
+${body.trim()}
+  </div>
+</div>`;
+}
 
 export function siteConfig() {
   const c = JSON.parse(readFileSync(join(ROOT, "config", "site.json"), "utf8"));
@@ -43,6 +85,7 @@ export function render(name, body, cfg, page = {}) {
   const title = (body.match(/<!--\s*title:\s*(.+?)\s*-->/) || [])[1] || name;
   const desc = (body.match(/<!--\s*description:\s*(.+?)\s*-->/) || [])[1] || "";
   let html = body.replace(/<!--[\s\S]*?-->\n?/g, "").replace(/\{\{(\w+)\}\}/g, (m, k) => (k in cfg ? esc(cfg[k]) : m));
+  if (page.doc) html = docLayout(html, page.doc);
   if (/\{\{\w+\}\}/.test(html)) throw new Error(`legal/${name}.html: unknown placeholder ${html.match(/\{\{\w+\}\}/)[0]}`);
   html = cfg.contact_email
     ? html.replace(/<a data-contact-link href="mailto:">/g, `<a href="mailto:${esc(cfg.contact_email)}">`).replace(/ data-contact>/g, ">")
@@ -70,10 +113,10 @@ export function render(name, body, cfg, page = {}) {
   ${BURGER}
 </header>
 <div class="navsheet" id="navSheet" hidden role="dialog" aria-modal="true" aria-label="Menu"><div class="sheethead">CyberView<button type="button" class="sheetclose" id="navClose" aria-label="Close menu">&times;</button></div>${navMarkup(name, "sheetnav")}</div>
-<main>
+<main${page.doc ? ' class="doc"' : ""}>
 ${html.trim()}
 </main>
-${footer()}${["nav.js", ...(page.scripts || [])].map((s) => `\n<script src="${s}"></script>`).join("")}
+${footer()}${["nav.js", ...(page.scripts || []), ...(page.doc ? ["doc.js"] : [])].map((s) => `\n<script src="${s}"></script>`).join("")}
 </body>
 </html>
 `;
@@ -97,9 +140,21 @@ export async function buildPages() {
         credits = `<li><strong>Power grid data</strong>: published by each grid operator under its own terms; CyberView uses only sources whose terms and robots.txt allow it (see <a href="access.html">data CyberView would like to use</a>). Credits the licences require:<ul>${[...new Set(list)].join("")}</ul></li>`;
       } catch { credits = ""; }
       body = body.replace("    <li data-grid-credits></li>\n", credits ? `    ${credits}\n` : "");
+      // the situation band: live figures, each shown only when the data gave a real number
+      const kpi = (l, v, d) => `<div class="kpi" role="listitem"><div class="kl">${esc(l)}</div><div class="kv">${esc(v)}</div><div class="kd flat">${esc(d)}</div></div>`;
+      const num = (v) => /^\d/.test(String(v));
+      const tiles = [
+        num(n.events) && kpi("Events on file", n.events, "checked and kept"),
+        num(n.cves) && kpi("CVEs indexed", n.cves, "every published CVE"),
+        num(n.feeds) && kpi("Feeds read", n.feeds, "government, vendor and news"),
+        num(n.grid) && kpi("Grid sources", n.grid, "power grid operators"),
+        kpi("Capabilities", String(a.capabilities.length), "described below"),
+        kpi("Cost", "Free", "non-commercial, open source"),
+      ].filter(Boolean);
+      body = body.replace("<div data-about-kpis></div>", `<div class="kpis" role="list" aria-label="CyberView at a glance">${tiles.join("")}</div>`);
     }
     // the data access page lists config/data-access.json (scripts/access.mjs); access.js filters it and copies each source's own request
-    let page = {};
+    let page = name in DOC_PAGES ? { doc: DOC_PAGES[name] } : {};
     if (name === "access") {
       const { about, numbers, fill } = await import("./about.mjs"), { load, accessSection, problems } = await import("./access.mjs");
       let doc = { sources: [] };

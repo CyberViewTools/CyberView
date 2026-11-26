@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { fallbackDecision, fallbackConfig, fallbackSpend, estimateCost, PRICES, FALLBACK_ENV, DEFAULT_FALLBACK, apiPrimaryLive, apiTestReport, budgetState, limitHits } from "../../scripts/lib/usage.mjs";
+import { fallbackDecision, actionsServed, fallbackConfig, fallbackSpend, estimateCost, PRICES, FALLBACK_ENV, DEFAULT_FALLBACK, apiPrimaryLive, apiTestReport, budgetState, limitHits } from "../../scripts/lib/usage.mjs";
 import { workerEnv, ledgerLine, planLevelFor } from "../../scripts/run-job.mjs";
 import { fallbackProblems, THRESHOLD } from "../../scripts/pipecheck.mjs";
 import { apiFallbackReport } from "../../scripts/efficiency.mjs";
@@ -268,4 +268,14 @@ test("pipecheck: an info problem during the API cost test", () => {
   const p = fallbackProblems([{ at: m(5), served: "api", model: "sonnet", in: 1e5 }], fb, NOW);
   const i = p.find((x) => x.id === "api-primary");
   assert.ok(i); assert.equal(i.level, "info"); assert.equal(i.threshold_min, THRESHOLD["api-primary"]); assert.match(i.text, /API cost test/);
+});
+
+test("Actions with the API key alone: no subscription to fall back to, so a worker parks instead of failing to sign in", () => {
+  const A = { onActions: true, hasSubscription: false };
+  assert.equal(actionsServed("api", A), "api", "the key bills as usual");
+  assert.equal(actionsServed("subscription", A), "park", "key missing, capped or limited: park");
+  assert.equal(actionsServed("park", A), "park");
+  assert.equal(actionsServed("subscription", { onActions: true, hasSubscription: true }), "subscription", "with the token, the subscription is the fallback");
+  assert.equal(actionsServed("subscription", { onActions: false, hasSubscription: false }), "subscription", "the cloud launcher is untouched");
+  assert.equal(actionsServed("subscription"), "subscription", "defaults change nothing");
 });

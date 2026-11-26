@@ -262,7 +262,7 @@
    "status_key": "last_sweep_at",
    "max_age_hours": 2,
    "active": true,
-   "does": "Continuous research loop: every few minutes it collects leads, researches new stories and second-reviews earlier events in parallel, then commits (target: lead to published and reviewed in under 15 minutes). The four schedules restart it when it is not running.",
+   "does": "Continuous research loop: every few minutes it collects leads, researches new stories and second-reviews earlier events in parallel, then commits (target: lead to published and reviewed in under 15 minutes). Four launcher schedules start it 56 times a day (:05 and :35 every hour, :20 and :50 also in the busiest hours, 09-12 UTC; docs/orchestration/ROUTINES.md).",
    "reviewed": "2026-11-20"
   },
   {
@@ -596,12 +596,13 @@
    "name": "Library reports",
    "tier": "ai",
    "workflow": "claude-task",
-   "cron": "37 * * * *",
+   "cron": "17,37,57 * * * *",
    "model": "claude-sonnet-5-5",
    "status_key": "last_library_at",
    "max_age_hours": 6,
-   "active": false,
-   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks every card against the report before its summary can be shown), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored (only CyberView's own summary, facts and quotes of at most 160 characters, on the data branch and never shown on the site). It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and starts nothing while the map pipeline needs the usage window. Switching it on is one edit here: set \"active\": true and \"active_since\" on this routine (the config, about entry, docs and heartbeat are already in place), then create its scheduled task. Off until the owner starts the pilot.",
+   "active": true,
+   "active_since": "2026-11-26T17:57:50Z",
+   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks every card against the report before its summary can be shown), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored (only CyberView's own summary, facts and quotes of at most 160 characters, on the data branch and never shown on the site). It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and never uses the subscription, so it takes nothing from the map pipeline's usage window. Switched on by the owner on 2026-11-26: it runs on GitHub Actions (.github/workflows/ai-launch.yml) three times an hour, bills only the API key within its own monthly cap (config/pipeline.json library.api, $75), and with library.backfill true goes from the pilot straight on to the backlog. Set \"active\": false here to stop it.",
    "reviewed": "2026-11-25"
   }
  ]

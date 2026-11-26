@@ -123,6 +123,15 @@ test("config: the dials default, and a broken cap falls back to 150; the env var
   assert.equal(real.enabled, true); assert.ok(real.monthly_usd_cap > 0); assert.ok(typeof real._note === "string" && real._note.includes("CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY"));
 });
 
+test("config: api_on_actions parses to a strict boolean, and the real config turns it on", () => {
+  assert.equal(fallbackConfig({ api_fallback: {} }).api_on_actions, false, "absent -> false");
+  assert.equal(fallbackConfig({ api_fallback: { api_on_actions: false } }).api_on_actions, false);
+  assert.equal(fallbackConfig({ api_fallback: { api_on_actions: "yes" } }).api_on_actions, false, "only strict true counts");
+  assert.equal(fallbackConfig({ api_fallback: { api_on_actions: true } }).api_on_actions, true);
+  const real = JSON.parse(readFileSync(join(repo, "config", "pipeline.json"), "utf8")).usage_budget.api_fallback;
+  assert.equal(fallbackConfig({ api_fallback: real }).api_on_actions, true, "the shipped config bills the API on Actions");
+});
+
 test("pipecheck: an info problem while on the API fallback, a needs-attention problem at the cap; both via health.json", () => {
   const fb = { enabled: true, monthly_usd_cap: 150 };
   assert.deepEqual(fallbackProblems([], fb, NOW), [], "nothing on fallback: no problem");

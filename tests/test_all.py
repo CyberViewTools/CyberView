@@ -359,7 +359,8 @@ async def main():
             ok("status: routine names are not doubled with their key", await pg.locator("#routines .sub, #routines .codename").count() == 0 and "Sweep sweep" not in await pg.inner_text("#routines"))
             # the owner took the targets off the status page (2026-11-20): no target cards, no speed note, no "Target" rows;
             # efficiency.json keeps them for the improver, the guard and swarm.mjs board
-            mt = await pg.text_content("main")
+            # page text without third-party report titles (the ORKL sample lists live titles such as "Attacks Target Windows")
+            mt = await pg.evaluate("() => { const m = document.querySelector('main').cloneNode(true); m.querySelectorAll('#orklRecent').forEach((x) => x.remove()); return m.textContent; }")
             ok("status: no targets on the page", await pg.locator("#eff, #effTargets, .tcard, #flowSpeed, [data-speed], [data-target]").count() == 0
                and "four targets" not in mt and "nine in ten" not in mt and "Target" not in mt and "Not met" not in mt, [w for w in ("four targets", "nine in ten", "Target", "Not met") if w in mt])
             ok("status: the improver's stale speed and review rate are gone", await pg.locator("#speedSum").count() == 0 and "corrected or flagged" not in await pg.text_content("#impSum"))

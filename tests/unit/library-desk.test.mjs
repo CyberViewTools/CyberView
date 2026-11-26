@@ -296,13 +296,12 @@ test("pipeline.json: the library block ships with backfill off and every dial do
   assert.deepEqual(deskConfig(join(ROOT, "config", "pipeline.json")), { ...DESK_DEFAULTS });
 });
 test("pipeline.json: the library job is headless", () => assert.ok(rj("config/pipeline.json").headless_jobs.includes("library")));
-test("routines.json: library is an AI routine, on since the owner started the pilot, with a heartbeat and a max age longer than its schedule", () => {
+test("routines.json: library is an AI routine that ships off, with a heartbeat and a max age longer than its schedule", () => {
   const r = rj("routines.json").routines.find((x) => x.key === "library");
   assert.equal(r.name, "Library reports"); assert.equal(r.tier, "ai"); assert.equal(r.workflow, "claude-task");
   assert.equal(r.cron, "37 * * * *"); assert.equal(r.model, "claude-sonnet-5-5");
-  assert.equal(r.status_key, "last_library_at"); assert.equal(r.max_age_hours, 6); assert.equal(r.active, true);
-  assert.ok(isFinite(Date.parse(r.active_since)), "an active routine says since when");
-  assert.match(r.does, /Haiku/); assert.match(r.does, /On since 2026-11-26, when the owner started the pilot\.$/);
+  assert.equal(r.status_key, "last_library_at"); assert.equal(r.max_age_hours, 6); assert.equal(r.active, false);
+  assert.match(r.does, /Haiku/); assert.match(r.does, /Off until the owner starts the pilot\.$/);
   const orkl = rj("routines.json").routines.find((x) => x.key === "orkl");
   assert.match(orkl.does, /Library reports/);
 });
@@ -451,12 +450,12 @@ test("run: a usage-ledger check before every wave: canStart false after the firs
 });
 
 /* ---------- activation is one edit ---------- */
-test("routines.json: switching library on or off is one edit (active + active_since): about, docs and the jobs tests hold either way", async () => {
+test("routines.json: switching library on is one edit (active + active_since): about, docs and the jobs tests are already satisfied", async () => {
   const real = rj("routines.json").routines, lib = real.find((r) => r.key === "library");
-  assert.equal(lib.active, true); assert.ok(lib.active_since);
+  assert.equal(lib.active, false);
   const flipped = real.map((r) => (r.key === "library" ? { ...r, active: true, active_since: "2026-12-01T00:00:00Z" } : r));
   const inv = await inventory(), on = { ...inv, routines: flipped.filter((r) => r.active !== false).map((r) => r.key) };
-  assert.ok(inv.routines.includes("library"), "the routine is described whether it is on or off");
+  assert.ok(inv.routines.includes("library"), "an off routine is described too, so the about entry ships now");
   assert.deepEqual(aboutProblems(about(), on), []); assert.deepEqual(aboutProblems(about(), inv), []);
   const jobs = readFileSync(join(ROOT, "docs", "jobs.md"), "utf8");
   assert.deepEqual(docsProblems({ files: [], layout: "", jobs, routines: flipped, figures: [], live: {} }), []);

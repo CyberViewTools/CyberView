@@ -20,10 +20,9 @@ test("routines: the 25 AI routines are all still listed, active, retired or off 
 });
 
 const RETIRED = AI.filter((x) => x.active === false && x.retired);
-test("routines: no AI routine is off without being retired; the Library reports desk is on since the owner started the pilot", () => {
-  assert.deepEqual(AI.filter((x) => x.active === false && !x.retired).map((x) => x.key), []);
-  const lib = AI.find((x) => x.key === "library");
-  assert.equal(lib.active, true); assert.ok(isFinite(Date.parse(lib.active_since)));
+test("routines: an AI routine that is off without being retired is only the Library reports desk, which waits for the owner's pilot", () => {
+  assert.deepEqual(AI.filter((x) => x.active === false && !x.retired).map((x) => x.key), ["library"]);
+  assert.match(AI.find((x) => x.key === "library").does, /Off until the owner starts the pilot\.$/);
 });
 
 test("routines: a retired routine says why, with evidence, and names an active routine that took its duties", () => {

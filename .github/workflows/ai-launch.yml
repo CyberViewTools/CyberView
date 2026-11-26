@@ -25,9 +25,9 @@ name: AI launch
 # once for the same job. A manual run (Run workflow) always runs, for testing any one job.
 #
 # Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
-# The Library desk (library, owner 2026-11-26) runs here on its own schedule whatever AI_LAUNCH says: it bills only the API key
-# (secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, within config/pipeline.json library.api.monthly_usd_cap), needs no subscription token,
-# and a runner reaches orkl.eu. Switch it off with "active": false on the library routine in routines.json.
+# The Library desk has its own workflow, library.yml (GitHub did not start its schedule here among 16 others). An API key that
+# belongs to no workspace needs the anthropic-workspace-id header: the repository variable ANTHROPIC_WORKSPACE_ID is sent with
+# every worker's calls when it is set (ANTHROPIC_CUSTOM_HEADERS).
 on:
   schedule:
     - cron: "5,20,35,50 * * * *"   # sweep (research loop)
@@ -45,14 +45,13 @@ on:
     - cron: "5 8 * * 1"            # security-review
     - cron: "37 15 * * 5"          # tabletop
     - cron: "13 5 * * 0"           # scout
-    - cron: "17,37,57 * * * *"     # library (API-billed; runs whatever AI_LAUNCH says)
   workflow_dispatch:
     inputs:
       job:
         description: "Job to run once"
         required: true
         type: choice
-        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout, library]
+        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout]
 
 permissions:
   contents: write         # data commits on the data branch
@@ -97,12 +96,11 @@ jobs:
             "5 8 * * 1")          job=security-review ;;
             "37 15 * * 5")        job=tabletop ;;
             "13 5 * * 0")         job=scout ;;
-            "17,37,57 * * * *")   job=library ;;
             *)                    job="${{ inputs.job }}" ;;
           esac
           case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
           # Scheduled runs, three groups (#214 + #215):
-          #  - library: always, billed only to the API key (its own switch is "active" on the routine in routines.json)
+          #  - library: its own workflow, library.yml (a manual run here still bills only the API key)
           #  - the web-independent jobs (triage, brief, improver, analysis, security-review, tabletop): only once AI_LAUNCH is "actions"
           #  - the web jobs: never on a schedule (runner IPs get bot-challenged on core sources); they stay on the cloud launchers
           # A manual run (Run workflow) always runs, any job.
@@ -159,8 +157,11 @@ jobs:
           # handed to workers as their GH_TOKEN by scripts/run-job.mjs workerEnv (no proxy adds it on a runner)
           CYBERVIEW_WORKER_GH_TOKEN: ${{ github.token }}
           JOB: ${{ steps.pick.outputs.job }}
+          WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
         run: |
           unset ANTHROPIC_API_KEY
+          # a key that belongs to no workspace is refused without this header (API Error 400, 2026-11-26)
+          if [ -n "$WORKSPACE_ID" ]; then export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: $WORKSPACE_ID"; fi
           # the Library bills only the API key (scripts/run-job.mjs libraryServedNow hands it to each call as ANTHROPIC_API_KEY): no subscription token in reach
           if [ "$JOB" = library ]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi
           node scripts/dispatch.mjs "$JOB" --exec 2>&1 | tee out.txt

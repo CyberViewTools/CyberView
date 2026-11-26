@@ -19,7 +19,7 @@ test("every schedule in ai-launch.yml picks a job, and each job's cron equals ro
   assert.equal(new Set(cases.values()).size, cases.size, "a job is scheduled twice");
 });
 
-test("ai-launch.yml signs in with the subscription token, keeps every other scheduled job off until AI_LAUNCH is set, and runs only the Library on the API key regardless", () => {
+test("ai-launch.yml signs in with the subscription token, keeps every other scheduled job off until AI_LAUNCH is set, and sends the workspace header", () => {
   assert.match(yml, /CLAUDE_CODE_OAUTH_TOKEN: \$\{\{ secrets\.CLAUDE_CODE_OAUTH_TOKEN \}\}/);
   assert.doesNotMatch(yml, /secrets\.ANTHROPIC_API_KEY/);
   assert.match(yml, /unset ANTHROPIC_API_KEY/);
@@ -33,8 +33,21 @@ test("ai-launch.yml signs in with the subscription token, keeps every other sche
   assert.match(yml, /\*\)\n\s*echo "READY=off" >> "\$GITHUB_ENV"; echo "Job: \$job runs on the cloud launcher/);
   const opts = (yml.match(/options: \[([^\]]+)\]/) || [])[1].split(",").map((s) => s.trim());
   assert.deepEqual([...opts].sort(), [...new Set(cases.values())].sort());
-  // the Library (owner, 2026-11-26): its own schedule runs whatever AI_LAUNCH says, gated on the API key, never the subscription token
-  const lib = [...cases].find(([, j]) => j === "library"); assert.ok(lib, "the Library has a schedule");
-  assert.match(yml, /if \[ "\$job" = library \]; then ready=\$HAS_KEY; elif \[ "\$HAS_KEY" = true \] \|\| \[ "\$HAS_OAUTH" = true \]; then ready=true; else ready=false; fi/);
-  assert.match(yml, /if \[ "\$JOB" = library \]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi/);
+  // the Library moved to its own workflow, library.yml (GitHub never started its slot among these 16 schedules)
+  assert.ok(![...cases.values()].includes("library"), "the Library is not scheduled in ai-launch.yml");
+  // a key that belongs to no workspace needs the anthropic-workspace-id header
+  assert.match(yml, /WORKSPACE_ID: \$\{\{ vars\.ANTHROPIC_WORKSPACE_ID \}\}/);
+  assert.match(yml, /export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: \$WORKSPACE_ID"/);
+});
+
+const lib = readFileSync(new URL("../../.github/workflows/library.yml", import.meta.url), "utf8");
+test("library.yml: one schedule equal to routines.json, the API key only, the workspace header", () => {
+  const c = [...lib.matchAll(/^\s*- cron: "([^"]+)"/gm)].map((m) => m[1]);
+  assert.deepEqual(c, [routines.find((r) => r.key === "library").cron]);
+  assert.match(lib, /workflow_dispatch:/);
+  assert.match(lib, /HAS_KEY: \$\{\{ secrets\.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' \}\}/);
+  assert.doesNotMatch(lib, /secrets\.CLAUDE_CODE_OAUTH_TOKEN|secrets\.ANTHROPIC_API_KEY/);
+  assert.match(lib, /unset ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN/);
+  assert.match(lib, /export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: \$WORKSPACE_ID"/);
+  assert.match(lib, /node scripts\/dispatch\.mjs library --exec/);
 });

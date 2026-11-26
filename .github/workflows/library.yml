@@ -1,0 +1,84 @@
+name: Library
+
+# The Library desk (routine `library`, scripts/library-desk.mjs; owner 2026-11-26) on its own workflow with ONE schedule:
+# inside ai-launch.yml, with 16 schedules, GitHub never started its slots. It bills only the API key: repository secret
+# CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, within config/pipeline.json library.api.monthly_usd_cap ($75 a month); the
+# subscription token is never in reach. An API key that belongs to no workspace is refused by the API unless each
+# call names one, so the repository variable ANTHROPIC_WORKSPACE_ID (the Console workspace's ID, not a secret) is sent
+# as the anthropic-workspace-id header when it is set (ANTHROPIC_CUSTOM_HEADERS). A runner reaches orkl.eu.
+# Switch it off with "active": false on the library routine in routines.json. Keep the cron equal to routines.json.
+on:
+  schedule:
+    - cron: "17,37,57 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write         # data commits on the data branch
+  issues: write           # pipeline alerts
+  actions: write          # finish.mjs starts the deploy after pushing data
+
+concurrency:
+  group: library
+  cancel-in-progress: false
+
+jobs:
+  library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HAS_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' }}
+    steps:
+      - name: Skip when the API key is not set
+        if: env.HAS_KEY != 'true'
+        run: |
+          echo "The repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY is not set; the Library bills only the API key, so nothing runs." >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          ref: main
+          fetch-depth: 50
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        if: env.HAS_KEY == 'true'
+        uses: ./.github/actions/data
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          node-version: "22"
+
+      - name: Install Claude Code
+        if: env.HAS_KEY == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
+
+      - name: Run the Library desk
+        if: env.HAS_KEY == 'true'
+        env:
+          CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
+          WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          GH_TOKEN: ${{ github.token }}
+          CYBERVIEW_WORKER_GH_TOKEN: ${{ github.token }}
+        run: |
+          unset ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN
+          if [ -n "$WORKSPACE_ID" ]; then export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: $WORKSPACE_ID"; fi
+          node scripts/dispatch.mjs library --exec 2>&1 | tee out.txt
+          { echo '```'; tail -15 out.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if grep -q '^DISPATCH' out.txt; then echo "::error::the Library needs a Claude session (headless unavailable on this runner)"; exit 1; fi
+
+      - name: Check what was pushed
+        if: env.HAS_KEY == 'true' && always()
+        run: |
+          d=.; [ -e data/.git ] && d=data
+          git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Alert on failure
+        if: failure() && env.HAS_KEY == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**Library run failed** (run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." > report.md
+          bash .github/scripts/alert.sh job-failure "Library run failing" report.md failing

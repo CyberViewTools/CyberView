@@ -1,7 +1,7 @@
 // The Library's writer desk: for each subject (every ORKL actor, plus unattributed reports with enough detail) Sonnet drafts a
 // story from the fact cards (never from report text), the draft is checked (library-check.mjs storyProblems) and stored in
 // data/orkl/stories/<key>.json as { live, next }. The writer NEVER publishes and never changes `live` except to mark it `stale`:
-// a draft or rejected rewrite goes only to `next`. Run: node scripts/library-write.mjs run [--max N] | status
+// a draft or rejected rewrite goes only to `next`. Run: node scripts/library-write.mjs run [--max N] --owner-override | status (the desk calls run() in-process)
 // A usage limit or a failed model call writes nothing; a real reply that is unusable or fails the check is a `rejected` draft
 // (tries + 1, `parked` after two). A story file that cannot be read is never written over.
 import { join } from "node:path";
@@ -55,11 +55,12 @@ export function writeQueue(subjects, stories, cards, { order = null, max = Infin
   const allowed = only && Array.isArray(order) ? new Set(order) : null;
   const todo = (subjects || []).filter((s) => {
     if (allowed && !allowed.has(s.key)) return false;
-    const readN = (s.sha1s || []).filter((x) => { const c = cards.get(x); return c && c.status === "read"; }).length;
+    const readN = (s.sha1s || []).filter((x) => { const c = cards.get(x); return c && c.status === "read" && c.withdrawn !== true; }).length;
     if (s.kind === "subject" && !readN) return false;
     const f = stories.get(s.key);
     if (!f || (!f.live && !f.next)) return true;
     const b = basedOn(s, cards);
+    if (f.live && f.live.status === "withdrawn" && f.live.based_on === b) return false;   // withdrawn by the owner: rewritten only when its cards change
     if (f.next && f.next.status === "parked" && f.next.based_on === b) return false;   // parked stays parked until its cards change
     if (f.next && f.next.status === "rejected" && (Number(f.next.tries) || 0) < MAX_TRIES) return true;
     return (!f.live || f.live.based_on !== b) && (!f.next || f.next.based_on !== b);
@@ -86,7 +87,7 @@ export function codesOf(problems) {
 }
 
 /** Pure: the cards a story is written and checked from: the subject's read cards, newest report first, at most MAX_CARDS. */
-export const cardsFor = (subject, all) => (subject.sha1s || []).map((x) => all.get(x)).filter((c) => c && c.status === "read").slice(0, MAX_CARDS);
+export const cardsFor = (subject, all) => (subject.sha1s || []).map((x) => all.get(x)).filter((c) => c && c.status === "read" && c.withdrawn !== true).slice(0, MAX_CARDS);
 
 /** Pure: a model reply -> the story to store. Every system field is set here, never taken from the reply. */
 export function buildStory(subject, reply, readCards, ctx) {
@@ -173,6 +174,9 @@ export function parseMax(argv) {
   return v != null && /^\d+$/.test(String(v)) ? Number(v) : 10;
 }
 
+const OWNER_OVERRIDE = "--owner-override";
+/** The stage CLIs bypass the desk's pilot, backfill and usage-window gates, so they refuse unless the owner passes --owner-override. */
+const refuseOutsideDesk = (name) => { if (process.argv.includes(OWNER_OVERRIDE)) return false; console.error(`${name}: refused. The Library desk (node scripts/library-desk.mjs run) runs this stage with its pilot, backfill and usage-window gates; to run it by hand anyway, pass ${OWNER_OVERRIDE}.`); process.exitCode = 1; return true; };
 async function main() {
   const cmd = process.argv[2];
   if (cmd === "status") {
@@ -180,7 +184,8 @@ async function main() {
     console.log(statusLine([...actorSubjects(actors, reports, cards), ...looseSubjects(reports, cards, actorIndex(actors))], loadStories(), cards));
     return;
   }
-  if (cmd !== "run") { console.error("usage: library-write.mjs run [--max N] | status"); process.exit(1); }
+  if (cmd !== "run") { console.error("usage: library-write.mjs run [--max N] [--owner-override] | status"); process.exit(1); }
+  if (refuseOutsideDesk("library-write run")) return;
   await run({ max: parseMax(process.argv) });
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

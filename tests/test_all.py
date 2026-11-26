@@ -2026,7 +2026,8 @@ async def main():
         reps[3]["t"] = "<img src=x id=pwnL>"; reps[5]["i"] = "javascript:alert(1)"
         lix = {"built_at": "2026-11-25T00:00:00Z", "reports_total": 130, "actors_total": 2, "sources": ["Malpedia"], "langs": ["en"], "reports": reps,
                "actors": [{"n": "Fixture Bear", "al": ["FB1", "Paw Group"], "s": "MITRE", "i": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "tl": ["ToolOne"]},
-                          {"n": "Kimsuky", "al": ["Emerald Sleet"], "s": "ETDA", "i": "javascript:alert(2)"}]}
+                          {"n": "Kimsuky", "al": ["Emerald Sleet"], "s": "ETDA", "i": "javascript:alert(2)"},
+                          {"n": "Plain Panda", "al": [], "s": "MISPGALAXY", "st": "plain-panda"}]}
         # Task 8 fixtures: read cards (one shard, all fixture sha1s start "00"), three published stories, one story file that is missing
         reps[12]["a"] = ["Kimsuky"]
         for ix in (7, 10, 20): reps[ix]["k"] = 1
@@ -2049,9 +2050,12 @@ async def main():
         story_evil = {"key": "evil-one", "kind": "subject", "name": "Evil", "headline": "<img src=x id=pwnS onerror=alert(1)>", "in_short": "<b>bold</b>",
                       "sections": [{"h": "who", "sentences": [sent("<img src=x id=pwnT onerror=alert(2)> text", sh(16))]}], "by": "CyberView AI (a Claude model)",
                       "reviewed_at": "2026-11-22T09:00:00Z", "n": 1, "src": [{"sha1": sh(16), "title": "<script>x</script>", "authors": [], "year": "2024"}]}
+        story_pp = {"key": "plain-panda", "kind": "actor", "name": "Plain Panda", "headline": "Plain Panda in the catalogue", "in_short": "A catalogue-only profile.",
+                    "sections": [{"h": "takeaway", "sentences": [sent("Watch for its tools.", sh(20))]}, {"h": "who", "sentences": [sent("Plain Panda is listed in the catalogue.", "catalogue")]}],
+                    "by": "CyberView AI (a Claude model)", "reviewed_at": "2026-11-20T09:00:00Z", "n": 1, "src": [{"sha1": sh(20), "title": "Report 20", "authors": [], "year": "2023"}]}
         lib_dir = os.path.join(site_lib, "data", "library"); os.makedirs(os.path.join(lib_dir, "cards"), exist_ok=True); os.makedirs(os.path.join(lib_dir, "stories"), exist_ok=True)
         json.dump(cards, open(os.path.join(lib_dir, "cards", "00.json"), "w"))
-        for st in (story_fb, story_loose, story_evil): json.dump(st, open(os.path.join(lib_dir, "stories", st["key"] + ".json"), "w"))
+        for st in (story_fb, story_loose, story_evil, story_pp): json.dump(st, open(os.path.join(lib_dir, "stories", st["key"] + ".json"), "w"))
         json.dump({"built_at": "x", "stories": [{k: st[k] for k in ("key", "kind", "name", "headline", "in_short", "reviewed_at", "n")} for st in (story_loose, story_fb, story_evil)]
                    + [{"key": "missing-story", "kind": "actor", "name": "Kimsuky", "headline": "Kimsuky story", "in_short": "x", "reviewed_at": "2026-11-21T09:00:00Z", "n": 1}]},
                   open(os.path.join(lib_dir, "stories.json"), "w"))
@@ -2092,6 +2096,8 @@ async def main():
             ok("library: a read report shows its summary and the AI byline", "What this report says" in det and "Fixture Bear <b>used</b> a loader" in det and "CyberView AI (a Claude model)" in det
                and "Read from part of the report" in det and "ToolOne" in det and "Canada" in det and await pg.locator("#det b").count() == 0
                and await pg.locator("#det a[href='https://nvd.nist.gov/vuln/detail/CVE-2026-1111']").count() == 1 and "not-a-cve" not in det, det[:500])
+            ok("library: a summary has the same Report an error link a story has", await pg.locator("#det .rcard a.reporterr[href^='https://github.com/xanderhutch/CyberView/issues/new?template=event-report.yml'][href*='Library%20summary%20" + sh(7) + "']").count() == 1)
+            ok("library: the catalogue note next to a summary does not say only the title is kept", "title, source and links only" not in det and "mirrored from ORKL" in det, det[-300:])
             await pg.goto(url.replace("index.html", "library.html#r=" + sh(8))); await pg.wait_for_timeout(700)
             det = await pg.inner_text("#det")
             ok("library: an unread report says it has not been summarised and shows no empty panel", "CyberView has not summarised this report." in det and "What this report says" not in det
@@ -2123,7 +2129,8 @@ async def main():
             ok("library: the intro line counts cards and stories", "CyberView's AI has read 3 of them and written 4 reviewed stories; every fact links to the report it came from." in await pg.inner_text("#summary"), await pg.inner_text("#summary"))
             fr = await pg.eval_on_selector_all("#featured a.fcard .fh", "ns => ns.map(n => n.textContent)")
             ok("library: Featured reads lists reviewed stories, newest first", await pg.locator("#featured").is_visible() and fr[:2] == ["The loader family nobody named", "Fixture Bear: the quiet loader crew"] and len(fr) == 4
-               and await pg.evaluate("document.querySelector('#featured').compareDocumentPosition(document.querySelector('#libnav')) & Node.DOCUMENT_POSITION_FOLLOWING") != 0, fr)
+               and await pg.evaluate("document.querySelector('#featured').compareDocumentPosition(document.querySelector('#libnav')) & Node.DOCUMENT_POSITION_FOLLOWING") != 0
+               and await pg.evaluate("document.querySelector('h1').compareDocumentPosition(document.querySelector('#featH')) & Node.DOCUMENT_POSITION_FOLLOWING") != 0, fr)
             await pg.click("#featured a.fcard >> nth=1"); await pg.wait_for_timeout(900)
             ok("library: a Featured actor story opens the actor's record with its story", await pg.locator("#actView").is_visible() and await pg.locator("#actDet .story").count() == 1 and "tab=actors" in pg.url)
             await pg.context.close()
@@ -2136,6 +2143,11 @@ async def main():
             pg, errs = await open_page(browser, url.replace("index.html", "library.html#tab=actors&an=Kimsuky"), wait=1200)
             ad = await pg.inner_text("#actDet")
             ok("library: a missing story file shows the can't-be-loaded line and the aliases and reports still render", "This write-up can't be loaded right now." in ad and "Emerald Sleet" in ad and "Reports that name it (1)" in ad, ad[:400])
+            await pg.goto(url.replace("index.html", "library.html#tab=actors&an=Plain%20Panda")); await pg.wait_for_timeout(1000)
+            ok("library: a catalogue cite for an actor without a valid ORKL id is plain text, not a link", await pg.locator("#actDet .story span.cite").count() == 1
+               and "ORKL catalogue" in await itx(pg, "#actDet .story span.cite") and await pg.locator("#actDet .story a.cite:has-text('ORKL catalogue')").count() == 0, await pg.inner_text("#actDet"))
+            hs = await pg.eval_on_selector_all("#actDet .story h3", "ns => ns.map(n => n.textContent)")
+            ok("library: story sections are shown in the fixed order whatever the file's order", hs[:2] == ["Who they are", "What defenders should take from it"], hs)
             await pg.context.close()
             # every CVE a write-up names, from its list or its text, links to its records
             pg, errs = await open_page(browser, url + "#e=" + evc["id"], wait=1800)
@@ -2149,6 +2161,22 @@ async def main():
             ok("event: no script errors", not errs, errs)
             await pg.context.close()
         await serve(site_lib, vlib)
+        # zero state: the Library before anything is read: no library folder, no story list (404), no counts
+        site_lib0 = make_site(blib)
+        lix0 = copy.deepcopy(lix)
+        for r in lix0["reports"]: r.pop("k", None); r.pop("st", None)
+        for a in lix0["actors"]: a.pop("st", None)
+        json.dump(lix0, open(os.path.join(site_lib0, "data", "orkl-index.json"), "w"))
+        json.dump(act, open(os.path.join(site_lib0, "data", "actors.json"), "w"))
+        async def vlib0(url):
+            pg, errs = await open_page(browser, url.replace("index.html", "library.html#r=" + reps[7]["s"]), wait=1200)
+            summ = await pg.inner_text("#summary"); det = await pg.inner_text("#det")
+            ok("library zero state: Featured hidden, the intro says nothing is summarised yet, no empty panels",
+               await pg.locator("#featured").is_hidden() and "CyberView has not summarised these reports yet." in summ
+               and "CyberView has not summarised this report." in det and await pg.locator("#det .rcard, #det .story, #det .storylink").count() == 0 and "can't be loaded" not in det, summ + " | " + det[:300])
+            ok("library zero state: no script errors", not errs, errs)
+            await pg.context.close()
+        await serve(site_lib0, vlib0)
         # v1.63: sector and attack surface from the event's own fields, labelled stated, inferred or keyword-assigned
         bcl = copy.deepcopy(bundle)
         import datetime as _dt

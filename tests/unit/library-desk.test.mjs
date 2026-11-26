@@ -71,6 +71,7 @@ function withActors(w) {
   return w;
 }
 const AT = "2026-11-26T00:00:00Z";
+const MIRROR = { backfill_done: true };   // the ORKL mirror's first full pass is done (B-M5); the run tests never read data/orkl/state.json
 const PCFG = { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 };
 
 test("selectPilot: the 200 newest reports plus the top actors' reports (40 per actor, newest first), and 10 + 5 actors", () => {
@@ -335,16 +336,16 @@ test("run: chooses and stores the pilot, plans, runs the stages, stamps the hear
   const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async (o) => { calls.push([k, o.max]); return { read: o.max, drafted: o.max, ok: o.max, published: o.max, stopped: "" }; }]));
   const cfg = { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 }, wave: { read: 8, write: 2, review: 2, audit: 2 } };
   try {
-    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.match(out.note, /^waiting: the pipeline needs the usage window/); assert.deepEqual(calls, []);
     assert.ok(existsSync(pilotFile), "the pilot is chosen even while waiting"); assert.match(JSON.parse(readFileSync(statusFile, "utf8")).last_library_at, /^\d{4}-\d\d-\d\dT/);
     const before = readFileSync(pilotFile, "utf8");
-    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.equal(out2.plan.mode, "pilot"); assert.equal(readFileSync(pilotFile, "utf8"), before, "the stored pilot is not chosen again");
     assert.deepEqual(calls.map((c) => c[0]).filter((v, i, a) => a.indexOf(v) === i), ["write", "read"], "no drafts and nothing to audit yet; the pilot's stories and reports are worked on");
     assert.match(JSON.parse(readFileSync(statusFile, "utf8")).library_note, /^pilot: /);
     assert.ok(logs.some((l) => /^CyberView library: /.test(l)));
-    const off = await run({ cfg: { ...cfg, enabled: false }, library: w, deps, can: true, pilotFile, statusFile, log: () => {} });
+    const off = await run({ cfg: { ...cfg, enabled: false }, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, log: () => {} });
     assert.match(off.note, /^off/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -434,7 +435,7 @@ test("run: a deadline that leaves no time for a wave starts nothing, still stamp
   const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async () => { calls.push(k); return {}; }]));
   const cfg = { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } };
   try {
-    const out = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, deadlineMs: Date.now() + 30000, log: () => {} });
+    const out = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, deadlineMs: Date.now() + 30000, log: () => {} });
     assert.deepEqual(calls, []); assert.match(out.note, /deadline/);
     const st = JSON.parse(readFileSync(statusFile, "utf8")); assert.match(st.last_library_at, /^\d{4}/); assert.match(st.library_note, /deadline/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
@@ -443,7 +444,7 @@ test("run: a usage-ledger check before every wave: canStart false after the firs
   const dir = mkdtempSync(join(tmpdir(), "desk-")), calls = [], w = withActors(world(200)); let asks = 0;
   const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async (o) => { calls.push(k); return { read: o.max, drafted: o.max, ok: o.max, published: o.max }; }]));
   try {
-    const out = await run({ cfg: { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } }, library: w, deps, canStart: () => ++asks <= 1, pilotFile: join(dir, "p.json"), statusFile: join(dir, "s.json"), deadlineMs: Date.now() + 1e9, log: () => {} });
+    const out = await run({ cfg: { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } }, library: w, deps, canStart: () => ++asks <= 1, pilotFile: join(dir, "p.json"), statusFile: join(dir, "s.json"), mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: () => {} });
     assert.equal(calls.length, 1); assert.match(out.note, /the pipeline needs the usage window/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -510,4 +511,45 @@ test("pilotComplete: a parked record is resolved (unread) and named", () => {
   const r = pilotComplete(p, cards, new Map(), null, { parked: new Set([hx(3)]) });
   assert.equal(r.done, true); assert.deepEqual(r.parked, [hx(3)]);
   assert.match(describePilot({ live: r }), new RegExp(`parked.*${hx(3).slice(0, 8)}`));
+});
+
+// B-M5: the pilot is never chosen from a partial library
+test("run: no pilot is chosen until the mirror's first full pass is done; the desk says why and does nothing", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "desk-")), pilotFile = join(dir, "pilot.json"), statusFile = join(dir, "status.json"), calls = [];
+  const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async () => { calls.push(k); return {}; }]));
+  try {
+    const out = await run({ cfg: { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } }, library: withActors(world(200)), deps, can: true, pilotFile, statusFile, mirror: { backfill_done: false }, deadlineMs: Date.now() + 1e9, log: () => {} });
+    assert.match(out.note, /first full pass/); assert.ok(!existsSync(pilotFile)); assert.deepEqual(calls, []);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+// B-M4: every desk run leaves a run log: codes and counts only
+test("run: writes a run log with counts read, written, reviewed, audited, skipped and the stop reasons", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "desk-")), logs = [];
+  const deps = { review: async (o) => ({ published: 1, corrected: 0, rejected: 0, parked: 0, skipped: 1 }), audit: async (o) => ({ ok: 2, wrong: 1, skipped: 0 }),
+    write: async (o) => ({ drafted: 2, rejected: 1, parked: 0, requeued: 0 }), read: async (o) => ({ read: 3, "no-text": 1, unread: 0, requeued: 2, stopped: "ORKL unreachable" }) };
+  const w = withActors(world(200));
+  try {
+    const out = await run({ cfg: { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 }, wave: { read: 4, write: 3, review: 2, audit: 3 } }, library: w, deps, can: true,
+      pilotFile: join(dir, "p.json"), statusFile: join(dir, "s.json"), mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: () => {}, runLog: (l) => logs.push(l) });
+    assert.equal(logs.length, 1);
+    const l = logs[0];
+    assert.match(l.started_at, /^\d{4}-/); assert.match(l.finished_at, /^\d{4}-/); assert.equal(l.mode, out.plan.mode);
+    for (const k of ["read", "written", "reviewed", "audited", "skipped"]) assert.equal(typeof l.counts[k], "number", k);
+    assert.ok(l.stopped.includes("read: ORKL unreachable"), JSON.stringify(l.stopped));
+    assert.ok(Array.isArray(l.open_leads) && Array.isArray(l.added));
+    const waiting = []; await run({ cfg: { ...DESK_DEFAULTS }, library: w, deps, can: false, pilotFile: join(dir, "p.json"), statusFile: join(dir, "s.json"), mirror: MIRROR, log: () => {}, runLog: (x) => waiting.push(x) });
+    assert.equal(waiting.length, 1); assert.equal(waiting[0].mode, "wait");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+// B-M2: the routine's reviewed date is not in the future
+test("routines.json: the library routine's reviewed date is 2026-11-25", () => {
+  assert.equal(rj("routines.json").routines.find((r) => r.key === "library").reviewed, "2026-11-25");
+});
+// B-M3: the stage CLIs refuse to run outside the desk unless the owner overrides
+import { spawnSync } from "node:child_process";
+test("CLI: library-read run, library-write run and library-review run|audit refuse without --owner-override", () => {
+  for (const [f, cmd] of [["library-read.mjs", "run"], ["library-write.mjs", "run"], ["library-review.mjs", "run"], ["library-review.mjs", "audit"]]) {
+    const r = spawnSync(process.execPath, [join(ROOT, "scripts", f), cmd, "--max", "0"], { encoding: "utf8", env: { ...process.env, LIBRARY_DESK: "" } });
+    assert.notEqual(r.status, 0, `${f} ${cmd}`); assert.match(r.stderr, /owner-override/, `${f} ${cmd}: ${r.stderr}`);
+  }
 });

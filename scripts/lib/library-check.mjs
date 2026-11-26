@@ -2,6 +2,7 @@
 // A card's facts are only kept if each quote is found in the report text; a story sentence is only kept if what it names is held by a card it cites.
 import { NOCODE, figuresIn } from "./validate.mjs";
 import { txt, clip } from "../orkl.mjs";
+import { COUNTRIES, AMBIGUOUS } from "./library-countries.mjs";
 
 export const BY = "CyberView AI (a Claude model)";
 export const KINDS = ["actor-campaign", "malware-analysis", "vulnerability", "incident", "overview", "not-a-threat-report"];
@@ -131,7 +132,7 @@ export function cleanStory(raw) {
       t: clip(x.t, 400),
       cites: (Array.isArray(x.cites) ? x.cites : []).map((c) => String(c).toLowerCase()).filter((c) => SHA1.test(c) || c === "catalogue").slice(0, 8),
     })).filter((x) => x.t),
-  }));
+  })).sort((a, b) => SECTIONS.indexOf(a.h) - SECTIONS.indexOf(b.h));   // the fixed reading order
   const story = {
     key, kind: raw.kind, name: txt(raw.name, 120), headline: clip(raw.headline, 120), in_short: clip(raw.in_short, 240), sections,
     status: raw.status, based_on: txt(raw.based_on, 80), tries: Number.isFinite(raw.tries) ? Math.max(0, Math.min(99, Math.floor(raw.tries))) : 0,
@@ -179,6 +180,26 @@ function countryNames(country) {
   }
   return { words: [...words], codes: [...codes] };
 }
+// The fixed country list as whole-word, case-sensitive patterns. Short upper-case codes (US, UK, UAE, DPRK) do not match next to a hyphen
+// (US-CERT); "America(n)" after Latin/North/South/Central is a region, not the United States.
+const nameRe = (n) => {
+  const short = /^[A-Z.]{2,6}$/.test(n), edge = short ? "\\p{L}\\p{N}-" : "\\p{L}\\p{N}";
+  const region = /^America/.test(n) ? "(?<!(?:Latin|North|South|Central) )" : "";
+  return new RegExp(`${region}(?<![${edge}])${esc(n)}(?![${edge}])`, "u");
+};
+const COUNTRY_PATTERNS = COUNTRIES.map((g) => ({ g, res: g.map((n) => ({ n, re: nameRe(n) })) }));
+const apos = (t) => fold(t).replace(/[‘’‛′]/g, "'");
+/** The countries (entries of the fixed list) a piece of text names. An AMBIGUOUS name counts only when the text has a state word. */
+export function countriesIn(text) {
+  const t = apos(text), state = STATE_WORDS.test(t);
+  return COUNTRY_PATTERNS.filter(({ res }) => res.some(({ n, re }) => (state || !AMBIGUOUS.has(n)) && re.test(t))).map(({ g }) => g).sort((a, b) => a[0].localeCompare(b[0]));
+}
+/** True when one of the strings names the country (any of its names: case-insensitive whole words, short codes case-sensitive). */
+const namesCountry = (strings, g) => strings.some((x) => {
+  const raw = apos(x), low = normText(x);
+  return g.some((n) => /^[A-Z.]{2,6}$/.test(n) ? nameRe(n).test(raw) : new RegExp(`(?<![\\p{L}\\p{N}])${esc(normText(n))}(?![\\p{L}\\p{N}])`, "u").test(low));
+});
+
 const mentions = (rawText, country) => {
   const { words, codes } = countryNames(country), ns = normText(rawText);
   return words.some((w) => holds(ns, w)) || codes.some((c) => new RegExp(`(?<![A-Za-z0-9])${esc(c)}(?![A-Za-z0-9])`).test(rawText));
@@ -206,9 +227,13 @@ export function storyProblems(story, cards, actor) {
   }
   catalogue.forEach((t) => vocab.add(t));
 
+  // what a cited card or the cited catalogue record says, for the country check: every fact value, who attributes, what happened when
+  const catalogueText = actor ? [actor.name, ...(actor.aliases || []), ...(actor.tools || []), actor.source].filter((x) => typeof x === "string" && x.trim()) : [];
   // What a piece of text names that none of the given cards (or the catalogue, when allowed) holds.
   const unbackedIn = (t, held, useCatalogue) => {
     const text = fold(t), cf = held.flatMap(allFacts), bad = [];
+    const heldText = [...cf.flatMap((f) => [f.v, f.by, f.what]).filter((x) => typeof x === "string" && x), ...(useCatalogue ? catalogueText : [])];
+    for (const g of countriesIn(t)) if (!namesCountry(heldText, g)) bad.push(g.find((n) => nameRe(n).test(apos(t))) || g[0]);
     const cardHas = (term) => cf.some((f) => normText(f.v) === normText(term) || holds(normText(f.v), term) || holds(normText(term), f.v));
     const catHas = (term) => useCatalogue && catalogue.some((c) => normText(c) === normText(term));
     for (const m of text.matchAll(CVE_ANY)) if (!cf.some((f) => normText(f.v) === normText(m[0]))) bad.push(m[0]);
@@ -229,7 +254,8 @@ export function storyProblems(story, cards, actor) {
     }
     return [...new Set(bad)].slice(0, 4);
   };
-  const bareAttribution = (t) => STATE_WORDS.test(t) && !HEDGE_WORDS.test(t) && [...countries].some((c) => mentions(t, c));
+  // a state link written as fact: a state word, no word saying who says so, and a country from the fixed list (or one a card holds)
+  const bareAttribution = (t) => STATE_WORDS.test(t) && !HEDGE_WORDS.test(t) && (countriesIn(t).length > 0 || [...countries].some((c) => mentions(t, c)));
 
   const citedAll = new Set();
   let anyCatalogue = false, coded = hasCode(s.headline, s.in_short);

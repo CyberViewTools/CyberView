@@ -38,7 +38,8 @@ function resolveActors(report, ix) {
   return ids;
 }
 const stamp = (r) => String(r.created || r.file_date || "");
-const readCard = (cards, s) => { const c = cards && cards.get ? cards.get(s) : null; return c && c.status === "read" ? c : null; };
+// a card the owner withdrew (library-review.mjs withdraw) counts as not read: it feeds no story and no basedOn
+const readCard = (cards, s) => { const c = cards && cards.get ? cards.get(s) : null; return c && c.status === "read" && c.withdrawn !== true ? c : null; };
 
 /** One subject per actor, with or without read reports. sha1s: read cards of the reports that resolve to the actor, newest report first. */
 export function actorSubjects(actors, reports, cards) {
@@ -58,7 +59,7 @@ export function actorSubjects(actors, reports, cards) {
 
 /** A card detailed enough to carry a story without an actor. */
 export function eligibleLoose(card) {
-  if (!isObj(card) || card.status !== "read" || NOT_LOOSE.includes(card.kind)) return false;
+  if (!isObj(card) || card.status !== "read" || card.withdrawn === true || NOT_LOOSE.includes(card.kind)) return false;
   if (!isObj(card.subject) || String(card.subject.name || "").trim().length < MIN_NAME) return false;
   const f = isObj(card.facts) ? card.facts : {};
   return FACT_LISTS.reduce((n, k) => n + (Array.isArray(f[k]) ? f[k].length : 0), 0) >= MIN_FACTS;

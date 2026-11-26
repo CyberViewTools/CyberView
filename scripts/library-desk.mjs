@@ -8,11 +8,11 @@
 // only with the time left that a worker of its role needs (reserveMs). The desk commits nothing: scripts/run-job.mjs library runs it and
 // then scripts/finish.mjs library, the same path as every headless job. It stamps last_library_at and library_note in status.json.
 // Usage: node scripts/library-desk.mjs run | status | pilot-report   (behind a proxy: NODE_USE_ENV_PROXY=1)
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, writeJson, readStatus, nowIso } from "./lib/store.mjs";
-import { DIR, loadLibrary } from "./orkl.mjs";
+import { ROOT, DATA, readJson, writeJson, readStatus, nowIso, writeRunLog } from "./lib/store.mjs";
+import { DIR, STATE_FILE, loadLibrary } from "./orkl.mjs";
 import { loadCards, readQueue, loadReadState, parkedRecords, READ_STATE_FILE, run as readRun, statusLine as readStatusLine } from "./library-read.mjs";
 import { loadStories, writeQueue, run as writeRun, statusLine as writeStatusLine } from "./library-write.mjs";
 import { reviewQueue, auditPick, run as reviewRun, runAudit, statusLine as reviewStatusLine } from "./library-review.mjs";
@@ -195,7 +195,7 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
   // a new record: a report created after the pilot's newest, or a card an audit sent back for a re-read
   const inPilot = todo.filter((r) => pset.has(r.sha1)), fresh = todo.filter((r) => !pset.has(r.sha1) && (isNew(r) || auditFailed(cards.get(r.sha1)))), old = todo.filter((r) => !pset.has(r.sha1) && !isNew(r) && !auditFailed(cards.get(r.sha1)));
   const reportBy = new Map(reports.map((r) => [r.sha1, r]));
-  const newCard = (s) => s.sha1s.some((x) => { const k = cards.get(x), r = reportBy.get(x); return k && k.status === "read" && r && isNew(r); });
+  const newCard = (s) => s.sha1s.some((x) => { const k = cards.get(x), r = reportBy.get(x); return k && k.status === "read" && k.withdrawn !== true && r && isNew(r); });
   const wq = writeQueue(subjects, stories, cards, {}), pk = new Set(pilotKeys(pilot));
   const hasStory = (k) => { const f = stories.get(k); return !!(f && (f.live || f.next)); };
   const pilotQ = wq.filter((s) => pk.has(s.key)), steadyQ = wq.filter((s) => pk.has(s.key) || hasStory(s.key) || newCard(s));
@@ -233,7 +233,7 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
   const out = {}, isPilot = pilot || p.mode === "pilot";
   let left = ORDER.filter((k) => num(p[k]) > 0).length;
   stages: for (const k of ORDER) {
-    const r = out[k] = { done: 0, stopped: "", error: "", skipped: "" };
+    const r = out[k] = { done: 0, stopped: "", error: "", skipped: "", tally: {} };
     const quota = num(p[k]);
     if (!quota) continue;
     const reserve = reserveMs(ROLES[k]), t0 = now(), share = (deadline - t0) / left--;
@@ -249,6 +249,7 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
       try { tally = (await deps[k]({ max: n, order: order ? [...order] : allow ? [...allow] : undefined, pilot: isPilot, timeoutMs })) || {}; }
       catch (e) { r.error = String((e && e.name) || "Error").slice(0, 40); log(`library-desk: ${k} failed (${r.error})`); break; }
       r.done += n; if (order) order = order.slice(n);
+      for (const [tk, tv] of Object.entries(tally)) if (typeof tv === "number" && Number.isFinite(tv)) r.tally[tk] = (r.tally[tk] || 0) + tv;
       if (tally.stopped) {
         r.stopped = String(tally.stopped);
         if (/usage limit/i.test(r.stopped)) { out.halt = r.stopped; log(`library-desk: ${r.stopped}; the run ends`); break stages; }
@@ -336,12 +337,34 @@ function realDeps(library) {
 }
 const summary = (r) => ORDER.map((k) => `${k} ${r[k] ? r[k].done : 0}${r[k] && (r[k].stopped || r[k].error) ? ` (${r[k].stopped || r[k].error})` : ""}`).join(", ");
 
+/** Pure: the desk's run log (data/runs/, like every job's): counts and stop codes only, never a report's or a model's text. */
+export function deskRunLog({ startedAt, finishedAt, mode = "", note = "", results = {} }) {
+  const t = (k) => (results[k] && results[k].tally) || {}, n = (k, f) => num(t(k)[f]);
+  const counts = {
+    read: n("read", "read"), no_text: n("read", "no-text"), unread: n("read", "unread"),
+    written: n("write", "drafted"), write_rejected: n("write", "rejected") + n("write", "parked"),
+    reviewed: n("review", "published") + n("review", "corrected") + n("review", "rejected") + n("review", "parked"), published: n("review", "published"), cards_flagged: n("review", "cardsFlagged"),
+    audited: n("audit", "ok") + n("audit", "wrong"), audit_wrong: n("audit", "wrong"),
+    skipped: ORDER.reduce((s, k) => s + n(k, "skipped") + n(k, "requeued"), 0),
+  };
+  const stopped = [...ORDER.flatMap((k) => { const r = results[k]; return r ? [r.stopped, r.error, r.skipped].filter(Boolean).map((x) => `${k}: ${String(x).slice(0, 80)}`) : []; }), ...(results.halt ? [`run: ${String(results.halt).slice(0, 80)}`] : [])];
+  return { started_at: startedAt, finished_at: finishedAt, model: "none (script; its workers are the library-* roles)", mode, counts, stopped,
+    searches: [], pages_read: [], added: [], updated: [], skipped: [], failed_sites: [], open_leads: [], notes: String(note).slice(0, 300) };
+}
+
 /** One desk run. Stamps last_library_at and library_note in status.json when it ends, whatever it did (also when the deadline ended it).
  *  deadlineMs: the absolute time (ms) by which every model call must have ended; run-job.mjs passes its own cut-off minus 30 s.
  *  can: the usage-window answer for the plan (tests); canStart: asked before every wave (default: the usage ledger and canBuild, re-read each time). */
-export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE, readStateFile = READ_STATE_FILE } = {}) {
+export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE, readStateFile = READ_STATE_FILE, mirror = null, runLog = null } = {}) {
+  const startedAt = nowIso();
+  // the run log goes to data/runs/ like every job's; a test run (statusFile elsewhere) writes it beside its own status file
+  const writeLog = runLog || ((l) => (statusFile === join(DATA, "status.json") ? writeRunLog("library", l) : writeJson(join(dirname(statusFile), "library-run.json"), { job: "library", ...l })));
   const stamp = (note) => { try { const st = readStatus(); st.last_library_at = nowIso(); st.library_note = String(note).slice(0, 300); writeJson(statusFile, st); } catch (e) { log(`library-desk: status not written (${String((e && e.name) || "Error")})`); } return note; };
-  const end = (note, p = null, results = {}) => { stamp(note); log(`CyberView library: ${note}`); return { note, plan: p, results }; };
+  const end = (note, p = null, results = {}) => {
+    stamp(note); log(`CyberView library: ${note}`);
+    try { writeLog(deskRunLog({ startedAt, finishedAt: nowIso(), mode: p ? p.mode : "none", note, results })); } catch (e) { log(`library-desk: run log not written (${String((e && e.name) || "Error")})`); }
+    return { note, plan: p, results };
+  };
   if (cfg.enabled === false) return end("off (library.enabled is false in config/pipeline.json)");
   const lb = library || loadLibrary();
   if (!(lb.reports || []).length || !(lb.actors || []).length) return end("library not loaded (no reports or no actors): nothing done");
@@ -349,7 +372,12 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
   if (bad.length) return end(`card shards unreadable (${bad.join(", ")}): nothing done`);
   let pf = loadPilot(pilotFile);
   if (pf.state === "bad") return end("data/orkl/pilot.json cannot be read: nothing done, it is never overwritten");
-  if (pf.state === "none") { savePilot(pilotFile, selectPilot(lb.reports, lb.actors, cfg.pilot, nowIso())); pf = loadPilot(pilotFile); }
+  if (pf.state === "none") {
+    // the pilot is chosen once, so never from a partial library: only after the mirror's first full pass (data/orkl/state.json backfill_done)
+    const ms = mirror || readJson(STATE_FILE, {}) || {};
+    if (ms.backfill_done !== true) return end("the ORKL mirror has not finished its first full pass (data/orkl/state.json backfill_done is not true): the pilot is not chosen from a partial library; nothing done");
+    savePilot(pilotFile, selectPilot(lb.reports, lb.actors, cfg.pilot, nowIso())); pf = loadPilot(pilotFile);
+  }
   const loose = pilotLoose(pf.pilot, lb.reports, lb.actors, cards, cfg.pilot.loose);
   if (loose.length) { addLoose(pilotFile, loose); pf = loadPilot(pilotFile); }
   const badS = [], stories = loadStories(undefined, badS), failures = loadReadState(readStateFile).failures;

@@ -1,7 +1,7 @@
 // The Library's reader desk: each ORKL report's text is fetched, Haiku turns it into a fact card (scripts/lib/library-prompts.mjs),
 // the card is checked against the text (scripts/lib/library-check.mjs) and ONLY the card is stored, in data/orkl/cards/<shard>.json
 // keyed by the report's sha1. The report text lives in one local variable inside readOne() and is never written, logged or returned
-// by run(). Run: node scripts/library-read.mjs run [--max N] | status   (behind a proxy: NODE_USE_ENV_PROXY=1)
+// by run(). Run: node scripts/library-read.mjs run [--max N] --owner-override | status (the desk calls run() in-process; the CLI run refuses without the override)   (behind a proxy: NODE_USE_ENV_PROXY=1)
 // A card is `read`, `no-text` (ORKL has no text, or under TEXT_MIN characters) or `unread` (the model's card failed the check; it
 // is tried once more, tries < 2). ORKL unreachable, a usage limit, or a failed model call (CLI missing, API error, timeout) writes
 // nothing: the record stays queued with its tries unchanged, but its failure count in data/orkl/read-state.json goes up (FAIL_LAST failures:
@@ -240,10 +240,14 @@ export function statusLine(reports, cards, failures = {}, now = Date.now()) {
   return `reports ${reports.length}, read ${n.read}, no-text ${n["no-text"]}, unread ${n.unread}, queued ${queued}, share read ${reports.length ? (100 * n.read / reports.length).toFixed(1) : "0.0"}%, parked after ${FAIL_PARK} failures ${parked.length}${parked.length ? ` (${parked.slice(0, 10).map((s) => s.slice(0, 8)).join(", ")})` : ""}`;
 }
 
+const OWNER_OVERRIDE = "--owner-override";
+/** The stage CLIs bypass the desk's pilot, backfill and usage-window gates, so they refuse unless the owner passes --owner-override. */
+const refuseOutsideDesk = (name) => { if (process.argv.includes(OWNER_OVERRIDE)) return false; console.error(`${name}: refused. The Library desk (node scripts/library-desk.mjs run) runs this stage with its pilot, backfill and usage-window gates; to run it by hand anyway, pass ${OWNER_OVERRIDE}.`); process.exitCode = 1; return true; };
 async function main() {
   const cmd = process.argv[2];
   if (cmd === "status") { console.log(statusLine(loadLibrary().reports, loadCards(), loadReadState().failures)); return; }
-  if (cmd !== "run") { console.error("usage: library-read.mjs run [--max N] | status"); process.exit(1); }
+  if (cmd !== "run") { console.error("usage: library-read.mjs run [--max N] [--owner-override] | status"); process.exit(1); }
+  if (refuseOutsideDesk("library-read run")) return;
   const mi = process.argv.indexOf("--max");
   await run({ max: mi >= 0 ? Number(process.argv[mi + 1]) || 10 : 10 });
 }

@@ -539,3 +539,57 @@ test("staleStoriesCiting: card-wrong is recorded and wins over new-report", () =
     for (const k of ["a-7", "a-8"]) { const f = JSON.parse(readFileSync(join(dir, "stories", `${k}.json`), "utf8")); assert.equal(f.live.status, "stale"); assert.equal(f.live.stale_reason, "card-wrong"); }
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+// B-I8: the owner's withdraw command takes a story or a card off the site, records why, and keeps it off until something changes
+import { withdraw } from "../../scripts/library-review.mjs";
+import { siteStory, siteCard } from "../../scripts/orkl.mjs";
+import { actorSubjects, looseSubjects, actorIndex } from "../../scripts/lib/library-subjects.mjs";
+test("withdraw: a story is withdrawn (not shown, no pending draft) and a correction with role owner is written", () => {
+  const dir = mk();
+  try {
+    setup(dir, { f: { live: PUBLISHED, next: DRAFT }, cards: loose() });
+    const r = withdraw("a-7", "a figure was wrong", { dir: join(dir, "stories"), cardsDir: join(dir, "cards"), corrDir: join(dir, "corr"), now: NOW, log: () => {} });
+    assert.equal(r.ok, true); assert.equal(r.kind, "story");
+    const f = files(dir);
+    assert.equal(f.live.status, "withdrawn"); assert.equal(f.live.withdrawn_reason, "a figure was wrong"); assert.equal(f.next, null);
+    assert.equal(siteStory({ live: f.live }, LIB.reports), null);
+    const corr = JSON.parse(readFileSync(join(dir, "corr", "a-7.json"), "utf8"));
+    assert.equal(corr[0].role, "owner"); assert.equal(corr[0].code, "withdrawn");
+    // the writer does not write it again while its cards are the same
+    const subj = { key: "a-7", kind: "actor", name: "TT", actor: ACTOR, sha1s: [h("a")] };
+    const withdrawn = new Map([["a-7", { live: { ...f.live, based_on: basedOn(subj, loose()) }, next: null }]]);
+    assert.equal(writeQueue([subj], withdrawn, loose(), {}).length, 0);
+    assert.equal(writeQueue([subj], new Map([["a-7", { live: { ...f.live, based_on: "older" }, next: null }]]), loose(), {}).length, 1, "new cards: a fresh draft");
+    assert.equal(withdraw("a-nope", "x", { dir: join(dir, "stories"), cardsDir: join(dir, "cards"), corrDir: join(dir, "corr"), now: NOW, log: () => {} }).ok, false);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("withdraw: a card is withdrawn: not published, not read for subjects, citing stories go stale card-wrong", () => {
+  const dir = mk();
+  try {
+    const c = { ...card("a"), audit: { at: NOW, ok: true, note: "", by: "auditor" } };
+    setup(dir, { f: { live: PUBLISHED, next: null }, cards: new Map([[h("a"), c]]) });
+    const r = withdraw(h("a"), "summary misstates the victim", { dir: join(dir, "stories"), cardsDir: join(dir, "cards"), corrDir: join(dir, "corr"), now: NOW, log: () => {} });
+    assert.equal(r.ok, true); assert.equal(r.kind, "card");
+    const stored = R.loadCards(join(dir, "cards")).get(h("a"));
+    assert.equal(stored.withdrawn, true); assert.equal(stored.status, "read"); assert.equal(siteCard(stored), null);
+    const m = new Map([[h("a"), stored]]);
+    assert.deepEqual(actorSubjects([ACTOR], LIB.reports, m)[0].sha1s, [], "a withdrawn card feeds no story");
+    assert.equal(R.readQueue(LIB.reports, m).length, 0, "and is not read again");
+    assert.equal(files(dir).live.status, "stale"); assert.equal(files(dir).live.stale_reason, "card-wrong");
+    assert.equal(JSON.parse(readFileSync(join(dir, "corr", `${h("a")}.json`), "utf8"))[0].role, "owner");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// B-M1: a "pass" that lists changes is a contradiction: a bad reply, nothing changes
+test("settle and run: a pass with a non-empty changes list changes nothing", async () => {
+  const f = { live: PUBLISHED, next: DRAFT };
+  const r = settle(f, { verdict: "pass", changes: [{ code: "wrong", note: "fixed a name" }] }, CARDS, null, NOW, "sonnet");
+  assert.equal(r.file, f); assert.deepEqual(r.corrections, []);
+  const dir = mk();
+  try {
+    setup(dir, { cards: loose() });
+    const lines = [];
+    const t = await run({ ...deps(dir, reply({ verdict: "pass", changes: [{ code: "tone", note: "x" }] })), log: (l) => lines.push(l), max: 5 });
+    assert.equal(t.published, 0); assert.equal(files(dir).next.status, "draft"); assert.ok(lines.some((l) => /bad-reply/.test(l)));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

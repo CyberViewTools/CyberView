@@ -1,6 +1,6 @@
 // CyberView library page. Reads data/orkl-index.json (one compact row per report and per actor, mirrored from ORKL)
-// and lets you browse and search the catalogue in pages. CyberView stores the title, source, year, language and the
-// links to ORKL only, never the report text. All text is inserted as text, never as HTML; every link is rebuilt and
+// and lets you browse and search the catalogue in pages. The catalogue holds the title, source, year, language and the
+// links to ORKL, never the report text. All text is inserted as text, never as HTML; every link is rebuilt and
 // host-checked. A link to one record (library.html#r=<sha1> for a report, #tab=actors&ta=<ORKL id> for an actor)
 // opens that record straight away, on the page of the list that holds it.
 // CyberView AI (a Claude model) also reads some of the reports: a read report shows a plain-language summary and the facts it
@@ -60,6 +60,8 @@
       }).filter(Boolean);
       return ss.length ? { h: sec.h, sentences: ss } : null;
     }).filter(Boolean);
+    // the fixed reading order, whatever order the file has: who, targets, methods, operations, takeaway
+    var ORDER = Object.keys(SECHEAD); sections.sort(function (a, b) { return ORDER.indexOf(a.h) - ORDER.indexOf(b.h); });
     if (!sections.length) return null;
     return { key: key, kind: raw.kind === "actor" ? "actor" : "subject", name: clip(raw.name, 120), headline: clip(raw.headline, 120), in_short: clip(raw.in_short, 240), sections: sections,
       reviewed_at: clip(raw.reviewed_at, 40), src: src, stale: raw.stale === true };
@@ -74,17 +76,19 @@
   function getJson(url) { return fetch(url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }); }
   function loadCard(sha) {
     if (!SHA1.test(sha)) return Promise.reject(new Error("bad id"));
-    var sh = sha.slice(0, 2); if (!shards[sh]) shards[sh] = getJson("data/library/cards/" + sh + ".json");
+    // a failed fetch is not cached: the entry is dropped so the next open tries again
+    var sh = sha.slice(0, 2); if (!shards[sh]) shards[sh] = getJson("data/library/cards/" + sh + ".json").catch(function (e) { delete shards[sh]; throw e; });
     return shards[sh].then(function (o) { var c = isObj(o) && Object.prototype.hasOwnProperty.call(o, sha) ? cleanCard(o[sha]) : null; if (!c) throw new Error("no card"); return c; });
   }
   function loadStory(key) {
     if (!SKEY.test(key)) return Promise.reject(new Error("bad key"));
-    if (!storyCache[key]) storyCache[key] = getJson("data/library/stories/" + key + ".json").then(function (o) { var s = cleanStory(o, key); if (!s) throw new Error("bad story"); return s; });
+    if (!storyCache[key]) storyCache[key] = getJson("data/library/stories/" + key + ".json").then(function (o) { var s = cleanStory(o, key); if (!s) throw new Error("bad story"); return s; })
+      .catch(function (e) { delete storyCache[key]; throw e; });
     return storyCache[key];
   }
   // the list of reviewed stories, newest review first; empty when there is none or it cannot be read
   function loadStoryIndex() {
-    if (!storyIdx) storyIdx = getJson("data/library/stories.json").then(function (o) { return cleanStoryIndex(o).sort(function (a, b) { return b.reviewed_at.localeCompare(a.reviewed_at) || a.key.localeCompare(b.key); }); }).catch(function () { return []; });
+    if (!storyIdx) storyIdx = getJson("data/library/stories.json").then(function (o) { return cleanStoryIndex(o).sort(function (a, b) { return b.reviewed_at.localeCompare(a.reviewed_at) || a.key.localeCompare(b.key); }); }).catch(function () { storyIdx = null; return []; });
     return storyIdx;
   }
 
@@ -149,7 +153,7 @@
     var t = rt.toLocaleString("en") + " public threat-intelligence reports and " + at.toLocaleString("en") + " tracked threat actors, mirrored from ORKL. ";
     if (c && c.cards > 0 && c.stories > 0) t += "CyberView's AI has read " + c.cards.toLocaleString("en") + " of them and written " + plural(c.stories, "reviewed story").replace("storys", "stories") + "; every fact links to the report it came from.";
     else if (c && c.cards > 0) t += "CyberView's AI has read " + c.cards.toLocaleString("en") + " of them; every fact links to the report it came from.";
-    else t += "CyberView's AI summaries and stories are being prepared; each report can be read on ORKL.";
+    else t += "CyberView has not summarised these reports yet.";
     $("summary").textContent = t;
   }
   // Featured reads: up to six of the most recently reviewed stories, above the section strip; hidden when there are none
@@ -268,7 +272,7 @@
       });
       box.appendChild(ap);
     }
-    box.appendChild(el("p", "note", "Catalogued from ORKL. CyberView stores the title, source and links only — the report itself is read on ORKL."));
+    box.appendChild(el("p", "note", "Catalogued from ORKL: the title, source and links are mirrored from ORKL, and the report itself is read there."));
     var lp = el("p", "arlink"), lk = el("a", null, "Link to this report");
     lk.href = "library.html#r=" + encodeURIComponent(r.s); lp.appendChild(lk); box.appendChild(lp);
   }
@@ -278,7 +282,7 @@
     if (!r.k) { box.appendChild(el("p", "note", "CyberView has not summarised this report.")); }
     else {
       var host = el("div", "rcard"); box.appendChild(host);
-      loadCard(r.s).then(function (c) { if (OPEN !== r.s) return; safe("summary", function () { drawCard(host, c); }); })
+      loadCard(r.s).then(function (c) { if (OPEN !== r.s) return; safe("summary", function () { drawCard(host, c, r); }); })
         .catch(function () { if (OPEN === r.s) host.appendChild(el("p", "note", FAIL)); });
     }
     if (r.st) {
@@ -289,7 +293,13 @@
       });
     }
   }
-  function drawCard(host, c) {
+  // the same "Report an error" route a story has: an event-report issue naming the Library summary or story
+  function errorLink(label, title) {
+    var ep = el("p", "storyend note"), ea = el("a", "reporterr", "Report an error");
+    ea.href = "https://github.com/xanderhutch/CyberView/issues/new?template=event-report.yml&title=" + encodeURIComponent("Error report: " + label) + "&event=" + encodeURIComponent(String(title).slice(0, 120) + " (" + label + ")");
+    ea.target = "_blank"; ea.rel = "noopener noreferrer"; ep.appendChild(ea); return ep;
+  }
+  function drawCard(host, c, r) {
     host.appendChild(el("h3", null, "What this report says"));
     host.appendChild(el("p", "summary", c.sm));
     function group(label, items, titled) {
@@ -309,6 +319,7 @@
       });
     }
     host.appendChild(el("p", "note aiby", "Summarised by " + AI_BY + "." + (c.p ? " Read from part of the report." : "")));
+    host.appendChild(errorLink("Library summary " + r.s, r.t || "Untitled report"));
   }
 
   // one reviewed story: headline, in short, byline, sections of sentences each followed by numbered citations, the numbered sources, and the error link
@@ -350,9 +361,7 @@
       });
       w.appendChild(ol);
     }
-    var ep = el("p", "storyend note"), ea = el("a", "reporterr", "Report an error");
-    ea.href = "https://github.com/xanderhutch/CyberView/issues/new?template=event-report.yml&title=" + encodeURIComponent("Error report: Library story " + s.key) + "&event=" + encodeURIComponent((s.headline || s.name).slice(0, 120) + " (Library story " + s.key + ")");
-    ea.target = "_blank"; ea.rel = "noopener noreferrer"; ep.appendChild(ea); w.appendChild(ep);
+    w.appendChild(errorLink("Library story " + s.key, s.headline || s.name));
     box.appendChild(w);
   }
   // fetch a story into its own slot; a failure shows the one line there and nothing else on the page changes

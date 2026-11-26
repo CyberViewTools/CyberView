@@ -195,3 +195,43 @@ test("cleanStory and cleanCard keep the fields later stages read", () => {
   const c = cleanCard({ ...card(), withdrawn: true, withdrawn_at: "2026-11-25T00:00:00Z", withdrawn_reason: "owner", tries: 1 }, A);
   assert.equal(c.withdrawn, true); assert.equal(c.withdrawn_reason, "owner"); assert.equal(c.tries, 1);
 });
+
+// B-I4: countries and nationalities a sentence names must be held by a cited card (or the cited catalogue record), from a fixed list
+import { COUNTRIES, AMBIGUOUS } from "../../scripts/lib/library-countries.mjs";
+import { countriesIn } from "../../scripts/lib/library-check.mjs";
+test("country list: every UN member is listed, with demonyms for at least 40", () => {
+  assert.ok(COUNTRIES.length >= 193);
+  assert.ok(COUNTRIES.filter((g) => g.length >= 2).length >= 40);
+  for (const n of ["Chad", "Georgia", "Jordan", "Turkey"]) assert.ok(AMBIGUOUS.has(n));
+});
+test("storyProblems: the probe sentence (a nationality and a country no card holds, a bare attribution) is refused", () => {
+  const other = card({ tools: [{ v: "Manuscrypt", q: Q1 }] });
+  const s = story([{ h: "who", sentences: [{ t: "APT99 is a Russian military intelligence unit that has run operations against Ukraine.", cites: [A] }] }]);
+  const p = storyProblems(s, new Map([[A, other]]), null);
+  assert.ok(p.some((x) => x.startsWith("unbacked:") && x.includes("Russian") && x.includes("Ukraine")), p.join(" | "));
+  assert.ok(p.some((x) => x.startsWith("bare-attribution")), p.join(" | "));
+});
+test("storyProblems: a country held by a cited card (any of its names), or by the cited catalogue record, passes", () => {
+  const ru = card({ countries: [{ v: "Ukraine", q: "x" }], actors: [{ v: "APT99", q: "y", by: "Russia's GRU, according to the vendor" }] });
+  const s = story([{ h: "targets", sentences: [{ t: "According to the vendor, it is a Russian unit that targets Ukrainian energy firms.", cites: [A] }] }]);
+  assert.deepEqual(storyProblems(s, new Map([[A, ru]]), null).filter((x) => x.startsWith("unbacked") || x.startsWith("bare")), []);
+  const cat = story([{ h: "who", sentences: [{ t: "ORKL's catalogue lists it as an Iranian group.", cites: ["catalogue"] }] }]);
+  assert.deepEqual(storyProblems(cat, new Map(), { name: "APT99", aliases: ["Iranian Kitten"], tools: [] }), []);
+  assert.ok(storyProblems(cat, new Map(), { name: "APT99", aliases: [], tools: [] }).some((x) => x.includes("Iranian")));
+});
+test("countriesIn: whole words, case-sensitive; ambiguous names only with a state word; US codes are not pronouns", () => {
+  const names = (t) => countriesIn(t).map((g) => g[0]);
+  assert.deepEqual(names("They stuffed a turkey and polished the china set."), []);
+  assert.deepEqual(names("Jordan from Georgia wrote the loader."), []);
+  assert.deepEqual(names("A Jordan government agency was hit."), ["Jordan"]);
+  assert.deepEqual(names("Help us patch; the US-CERT note helps."), []);
+  assert.deepEqual(names("The US and UK agencies agree."), ["United Kingdom", "United States"]);
+  assert.deepEqual(names("Firms in Latin America and North American banks."), []);
+  assert.deepEqual(names("North Korean operators"), ["Korea", "North Korea"]);
+});
+
+// B-M6: sections are kept in the fixed reading order
+test("cleanStory: sections are sorted who, targets, methods, operations, takeaway", () => {
+  const s = cleanStory(story([{ h: "takeaway", sentences: [{ t: "T.", cites: [] }] }, { h: "methods", sentences: [{ t: "M.", cites: [A] }] }, { h: "who", sentences: [{ t: "W.", cites: [A] }] }]));
+  assert.deepEqual(s.sections.map((x) => x.h), ["who", "methods", "takeaway"]);
+});

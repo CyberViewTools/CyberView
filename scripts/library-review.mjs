@@ -13,7 +13,8 @@
 //           for story corrections and "library-reader" for cards, with the model that wrote the thing corrected (counted by
 //           `node scripts/review.mjs errors`). Kept apart from data/corrections/, which holds event corrections.
 // A usage limit stops new work and changes nothing; a failed call changes nothing (three in a row stop); an unreachable original means
-// the story is not reviewed this run. Usage: node scripts/library-review.mjs run [--max N] | audit [--max N] [--pilot] | status
+// the story is not reviewed this run. Usage: node scripts/library-review.mjs run [--max N] | audit [--max N] [--pilot] (both need --owner-override outside the desk) | status
+//   | withdraw <story key | card sha1> --reason "<text>"   (the owner's way to take a story or a summary off the site; see withdraw())
 import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { randomBytes } from "node:crypto";
@@ -71,6 +72,7 @@ export function settle(file, verdict, cards, actor, now, model, runId = "") {
   const writerFault = changes.length ? changes.map((c) => ({ at: now, ...who, code: c.code, note: c.note })) : [{ at: now, ...who, code: "other", note: "" }];
   const refuse = (reasons, corrections) => ({ file: { live: file.live, next: { ...next, status: tries >= MAX_TRIES ? "parked" : "rejected", tries, reasons: reasons.slice(0, 10) } }, corrections });
   if (verdict.verdict === "pass") {
+    if (changes.length) return { file, corrections: [] };       // a pass that lists changes contradicts itself: a bad reply, nothing changes
     const problems = storyProblems(next, cm, subject.actor);
     if (problems.length) return refuse(codesOf(problems), []);
     return { file: { live: cleanStory({ ...next, status: "published", tries: 0, reviewed_at: now, reviewer_model: model }), next: null }, corrections: [] };
@@ -99,7 +101,7 @@ export const markCardWrong = (card, note, at, by = "auditor") => ({
  *  no current audit); never one with a current audit, one in `seen`, or one that is not `read`. */
 export function auditPick(cards, pct, seen = new Set()) {
   const all = cards instanceof Map ? [...cards.values()] : Array.isArray(cards) ? cards : Object.values(cards || {});
-  return all.filter((c) => c && HEX40.test(String(c.sha1)) && !c.audit && !seen.has(c.sha1) && (!c.status || c.status === "read")
+  return all.filter((c) => c && HEX40.test(String(c.sha1)) && !c.audit && !seen.has(c.sha1) && (!c.status || c.status === "read") && c.withdrawn !== true
     && ((Array.isArray(c.audit_history) && c.audit_history.length > 0) || parseInt(String(c.sha1).slice(0, 8), 16) % 100 < pct))
     .map((c) => ({ s: c.sha1, first: Array.isArray(c.audit_history) && c.audit_history.length > 0 }))
     .sort((a, b) => (b.first - a.first) || a.s.localeCompare(b.s)).map((x) => x.s);
@@ -177,6 +179,7 @@ async function reviewOne(key, draft, subj, all, deps) {
   if (reply.error) return { why: "error" };
   const j = reply.ok && reply.json && typeof reply.json === "object" ? reply.json : null;
   if (!j || !["pass", "corrected", "reject"].includes(j.verdict)) return { why: "bad-reply" };     // a reviewer fault: the story is untouched
+  if (j.verdict === "pass" && cleanChanges(j.changes).length) return { why: "bad-reply" };         // "pass" with changes listed contradicts itself
   const cp = (Array.isArray(j.card_problems) ? j.card_problems : []).filter((p) => p && cardMap.has(String(p.sha1).toLowerCase())).slice(0, 10);
   return cp.length ? { cardProblems: cp.map((p) => ({ sha1: String(p.sha1).toLowerCase(), note: p.note })), cardMap } : { verdict: j, cardMap };
 }
@@ -331,11 +334,49 @@ export function statusLine(stories, cards, cfg = DEFAULTS, subjectKeys = null) {
   return `drafts waiting ${reviewQueue(stories).length}${orphans == null ? "" : `, orphan drafts ${orphans}`}, audited ${st.audited} cards, wrong ${st.wrong} (${st.pct.toFixed(1)}%)${w.length ? `, wrong: ${w.join(", ")}` : ""}, retired after a failed audit ${retired}, ${st.paused ? "PAUSED: " + PAUSE_NOTICE : "not paused"}`;
 }
 
+/** The owner's withdrawal (`withdraw <story key | sha1> --reason "<text>"`): the promise that a story or summary found wrong is corrected or
+ *  removed. A story: live.status "withdrawn" (the site skips it), any pending draft dropped; the writer writes it again only when its cards
+ *  change (basedOn), and the new draft is reviewed as usual. A card: `withdrawn: true` (the site skips it, it no longer feeds any story and is
+ *  not read again) and every live story citing it goes stale with reason card-wrong. Each file is re-read just before its write, an unreadable
+ *  one is left alone, and a correction with role "owner" is recorded. -> { ok, kind, why } */
+export function withdraw(target, reason, { dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, now = nowIso(), log = console.log } = {}) {
+  const t = String(target || "").trim(), note = cleanNote(reason);
+  if (!note) return { ok: false, kind: "", why: "a --reason is required" };
+  const entry = { at: now, role: "owner", model: "", code: "withdrawn", note };
+  if (HEX40.test(t.toLowerCase())) {
+    const sha1 = t.toLowerCase(), all = loadCards(cardsDir, []), cur = all.get(sha1);
+    if (!cur) return { ok: false, kind: "card", why: "no card with that sha1" };
+    const done = updateCards(cardsDir, [{ sha1, read_at: cur.read_at, fn: (d) => ({ ...d, withdrawn: true, withdrawn_at: now, withdrawn_reason: note }) }]);
+    if (!done.length) return { ok: false, kind: "card", why: "the card shard cannot be read or changed meanwhile" };
+    appendCorrections(corrDir, sha1, [entry]);
+    const stale = staleStoriesCiting(dir, [sha1], log);
+    log(`library-review: card ${sha1.slice(0, 8)} withdrawn; ${stale.length} live stor${stale.length === 1 ? "y" : "ies"} citing it marked stale`);
+    return { ok: true, kind: "card", why: "", stale };
+  }
+  if (!/^[A-Za-z0-9-]{1,70}$/.test(t)) return { ok: false, kind: "", why: "not a story key or a card sha1" };
+  const f = readStory(dir, t);
+  if (!f) return { ok: false, kind: "story", why: "the story file cannot be read" };
+  if (!f.live) return { ok: false, kind: "story", why: "no live story with that key" };
+  writeJson(join(dir, `${t}.json`), { live: { ...f.live, status: "withdrawn", withdrawn_at: now, withdrawn_reason: note }, next: null });
+  appendCorrections(corrDir, t, [entry]);
+  log(`library-review: story ${t} withdrawn`);
+  return { ok: true, kind: "story", why: "" };
+}
+
+const OWNER_OVERRIDE = "--owner-override";
+/** The stage CLIs bypass the desk's pilot, backfill and usage-window gates, so they refuse unless the owner passes --owner-override. */
+const refuseOutsideDesk = (name) => { if (process.argv.includes(OWNER_OVERRIDE)) return false; console.error(`${name}: refused. The Library desk (node scripts/library-desk.mjs run) runs this stage with its pilot, backfill and usage-window gates; to run it by hand anyway, pass ${OWNER_OVERRIDE}.`); process.exitCode = 1; return true; };
 async function main() {
   const cmd = process.argv[2];
+  if (cmd === "withdraw") {
+    const ri = process.argv.indexOf("--reason"), r = withdraw(process.argv[3], ri >= 0 ? process.argv[ri + 1] : "");
+    if (!r.ok) { console.error(`library-review withdraw: ${r.why}`); process.exit(1); }
+    return;
+  }
   if (cmd === "status") { const cards = loadCards(), lib = loadLibrary();
     console.log(statusLine(loadStories(), cards, loadConfig(), new Set(subjectsOf(lib, cards).keys()))); return; }
-  if (cmd !== "run" && cmd !== "audit") { console.error("usage: library-review.mjs run [--max N] | audit [--max N] [--pilot] | status"); process.exit(1); }
+  if (cmd !== "run" && cmd !== "audit") { console.error('usage: library-review.mjs run [--max N] | audit [--max N] [--pilot] | status | withdraw <story key | sha1> --reason "<text>"'); process.exit(1); }
+  if (refuseOutsideDesk(`library-review ${cmd}`)) return;
   const i = process.argv.indexOf("--max"), v = i >= 0 ? process.argv[i + 1] : undefined, max = v != null && /^\d+$/.test(v) ? Number(v) : 10;
   await (cmd === "run" ? run({ max }) : runAudit({ max, pilot: process.argv.includes("--pilot") }));
 }

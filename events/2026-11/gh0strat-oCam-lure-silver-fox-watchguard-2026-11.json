@@ -1,0 +1,65 @@
+{
+  "actor": "",
+  "attack": [
+    "SEO poisoning",
+    "Gh0stRAT"
+  ],
+  "products": [
+    "oCam"
+  ],
+  "cves": [],
+  "evidence": [
+    {
+      "url": "https://gbhackers.com/seo-poisoning-campaign-2/",
+      "quote": "Endpoint detection and response (EDR) stopped the infection roughly 90 seconds after the installer launched."
+    }
+  ],
+  "title": "WatchGuard Red Cell report: fake oCam installer, suspected SEO poisoning, delivered a Gh0stRAT variant; researchers link it to Silver Fox",
+  "date": "2026-11-26",
+  "date_note": "The page gives only its publication day; the article places the search in mid-September 2026.",
+  "time_basis": "published",
+  "category": "report",
+  "status": "developing",
+  "severity": 2,
+  "country": "",
+  "region": "global",
+  "city": "",
+  "lat": null,
+  "lng": null,
+  "geo_basis": "No location stated in the source",
+  "pin_type": "none",
+  "tags": [
+    "malware"
+  ],
+  "summary": "GBHackers reports WatchGuard Red Cell research on a trojanised oCam installer that a user reached after searching Google in mid-September 2026 and opening a third-party download portal. The chain ended in a Gh0stRAT variant; researchers link the activity to Silver Fox and suspect SEO poisoning, though telemetry could not confirm the search result was manipulated. The article says EDR stopped the infection roughly 90 seconds after the installer launched.",
+  "plain": "GBHackers reports researchers found a fake oCam installer carrying a Gh0stRAT remote-access trojan, reached via a search. They suspect SEO poisoning and link it to Silver Fox; EDR stopped it.",
+  "exec": "Reported search-led fake software downloads can deliver a remote-access trojan; here EDR stopped it, per GBHackers.",
+  "action": "GBHackers lists: audit Microsoft Defender exclusions and Controlled Folder Access settings, hunt for TaskLoad.exe in Public Documents, and keep an internal software catalog.",
+  "impact": "Single reported infection attempt, blocked by EDR, per the article.",
+  "sectors": {
+    "values": [
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "sources": [
+    {
+      "name": "GBHackers",
+      "url": "https://gbhackers.com/seo-poisoning-campaign-2/",
+      "published": "2026-11-26"
+    }
+  ],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-26T21:00:49Z",
+    "note": "One publisher read (GBHackers); the WatchGuard Red Cell original could not be found or read."
+  },
+  "first_seen": "2026-11-26T21:00:49Z",
+  "updated_at": "2026-11-26T21:00:49Z",
+  "checked_at": "2026-11-26T21:00:49Z"
+}

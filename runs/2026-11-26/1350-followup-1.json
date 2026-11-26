@@ -1,0 +1,57 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-26T13:40:00Z",
+  "finished_at": "2026-11-26T13:50:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "Fugaku supercomputer RIKEN intrusion resume operation",
+    "GHSA-p4f5-76q4-ffq7 Vite"
+  ],
+  "pages_read": [
+    {
+      "url": "http://www.riken.jp/en/news_pubs/news/2026/index.html",
+      "title": "RIKEN 2026 news index",
+      "used_in": "unchanged_checked riken"
+    },
+    {
+      "url": "https://osv.dev/vulnerability/GHSA-p4f5-76q4-ffq7",
+      "title": "OSV (no record returned)",
+      "used_in": "unchanged_checked vite"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "unchanged_checked": [
+    {
+      "id": "riken-fugaku-supercomputer-cyberattack-2026-11",
+      "url": "http://www.riken.jp/en/news_pubs/news/2026/index.html"
+    },
+    {
+      "id": "vite-dev-server-exploit-attempts-honeylabs-2026-11",
+      "url": "https://osv.dev/vulnerability/GHSA-p4f5-76q4-ffq7"
+    }
+  ],
+  "unfinished": [],
+  "skipped": [
+    {
+      "title": "BleepingComputer Fugaku article",
+      "url": "https://www.bleepingcomputer.com/news/security/japan-takes-fugaku-supercomputer-offline-after-cyberattack/",
+      "reason": "fetch returned 404; snippet only, no record changed"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Vite advisory GHSA-p4f5-76q4-ffq7 primary page",
+      "url": "https://github.com/vitejs/vite/security/advisories/GHSA-p4f5-76q4-ffq7",
+      "note": "not readable (403 earlier; OSV has no record); needed to move beyond single_source",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "github.com advisory (403 earlier)",
+    "bleepingcomputer.com (404)"
+  ],
+  "notes": "RIKEN index shows no notice after 20 Nov; no restart announced in anything read. No record changed.",
+  "worker_role": "followup-deep",
+  "worker_model": "sonnet"
+}

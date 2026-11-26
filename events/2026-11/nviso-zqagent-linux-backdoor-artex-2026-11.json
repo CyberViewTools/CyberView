@@ -1,101 +1,101 @@
 {
- "action": "NVISO advises hardening network perimeters with segmentation, security telemetry from all assets and attack-surface management, and publishes YARA rules and indicators of compromise to hunt for.",
- "actor": "",
- "attack": [
-  "malware",
-  "backdoor",
-  "persistence"
- ],
- "category": "report",
- "country": "Belgium",
- "cves": [],
- "date": "2026-11-23",
- "date_note": "Date of NVISO's report; the intrusion itself is undated in the sources.",
- "exec": "NVISO describes a new Linux backdoor, ZQAgent, seen in a Belgian incident response engagement, which gives attackers lasting remote access.",
- "first_seen": "2026-11-24T13:43:47Z",
- "updated_at": "2026-11-26T13:20:08Z",
- "geo_basis": "NVISO says it observed ZQAgent's deployment in Belgium; country-level pin",
- "lat": 50.85,
- "lng": 4.35,
- "org": "NVISO",
- "pin_type": "country",
- "place": "Belgium",
- "plain": "Security firm NVISO found a new hidden backdoor for Linux servers, called ZQAgent. It lets attackers run commands, work with files and keep access across restarts.",
- "products": [
-  "Linux"
- ],
- "sector": "Unknown",
- "severity": 2,
- "source_tier": "primary",
- "sources": [
-  {
-   "name": "NVISO Labs",
-   "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/",
-   "published": "2026-11-23"
+  "action": "NVISO advises hardening network perimeters with segmentation, security telemetry from all assets and attack-surface management, and publishes YARA rules and indicators of compromise to hunt for.",
+  "actor": "",
+  "attack": [
+    "malware",
+    "backdoor",
+    "persistence"
+  ],
+  "category": "report",
+  "country": "Belgium",
+  "cves": [],
+  "date": "2026-11-23",
+  "date_note": "Date of NVISO's report; the intrusion itself is undated in the sources.",
+  "exec": "NVISO describes a new Linux backdoor, ZQAgent, seen in a Belgian incident response engagement, which gives attackers lasting remote access.",
+  "first_seen": "2026-11-24T13:43:47Z",
+  "updated_at": "2026-11-26T13:20:08Z",
+  "geo_basis": "NVISO says it observed ZQAgent's deployment in Belgium; country-level pin",
+  "lat": 50.85,
+  "lng": 4.35,
+  "org": "NVISO",
+  "pin_type": "country",
+  "place": "Belgium",
+  "plain": "Security firm NVISO found a new hidden backdoor for Linux servers, called ZQAgent. It lets attackers run commands, work with files and keep access across restarts.",
+  "products": [
+    "Linux"
+  ],
+  "sector": "Unknown",
+  "severity": 2,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "NVISO Labs",
+      "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/",
+      "published": "2026-11-23"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/hackers-deploy-zqagent-backdoor/",
+      "published": "2026-11-24"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "NVISO says it observed the ZQAgent Linux backdoor deployed by the LLM tool ARTEX during an incident response engagement in Belgium, with similar samples reported from Taiwan. NVISO says ZQAgent gives arbitrary code execution, filesystem operations and network tunneling, and persists through systemd and cron. NVISO associates the command infrastructure with a cluster it calls FOG0003.",
+  "tags": [
+    "malware",
+    "ai-enabled"
+  ],
+  "title": "NVISO describes ZQAgent Linux backdoor deployed by ARTEX tool in Belgium",
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-26T13:20:08Z",
+    "note": "NVISO's own report (primary) read; Cyber Security News relays it."
   },
-  {
-   "name": "Cyber Security News",
-   "url": "https://cybersecuritynews.com/hackers-deploy-zqagent-backdoor/",
-   "published": "2026-11-24"
-  }
- ],
- "status": "confirmed",
- "summary": "NVISO says it observed the ZQAgent Linux backdoor deployed by the LLM tool ARTEX during an incident response engagement in Belgium, with similar samples reported from Taiwan. NVISO says ZQAgent gives arbitrary code execution, filesystem operations and network tunneling, and persists through systemd and cron. NVISO associates the command infrastructure with a cluster it calls FOG0003.",
- "tags": [
-  "malware",
-  "ai-enabled"
- ],
- "title": "NVISO describes ZQAgent Linux backdoor deployed by ARTEX tool in Belgium",
- "validation": {
-  "state": "corroborated",
-  "checked_at": "2026-11-26T13:20:08Z",
-  "note": "NVISO's own report (primary) read; Cyber Security News relays it."
- },
- "sectors": {
-  "values": [
-   "unknown"
-  ],
-  "basis": "inferred"
- },
- "surface": {
-  "value": "endpoint",
-  "basis": "inferred"
- },
- "review": {
-  "state": "passed",
-  "at": "2026-11-24T14:14:07Z",
-  "first_at": "2026-11-24T14:14:07Z",
-  "note": "Compared title, Belgium/Taiwan, FOG0003, capabilities, persistence and advice with NVISO report and Cyber Security News",
-  "flags": []
- },
- "qa_checked_at": "2026-11-24T14:14:07Z",
- "report": {
-  "publisher": "NVISO Labs",
-  "publisher_type": "vendor",
-  "doc_id": "",
-  "published": "2026-11-23",
-  "key_findings": [
-   "NVISO saw the ZQAgent Linux backdoor deployed by the LLM tool ARTEX in Belgium; related samples were reported from Taiwan.",
-   "ZQAgent gives arbitrary code execution, filesystem operations and network tunneling, and gives the operator a long-lasting foothold.",
-   "It copies itself into an anonymous memory file, relaunches under a spoofed dbus-daemon command line and persists through a systemd service and a cron job.",
-   "NVISO says this operator-directed use departs from ARTEX's usually autonomous pattern; the post does not state the initial access vector.",
-   "Team Cymru intelligence cited by NVISO suggests activity attributed to FOG0003 targets government and human-rights organizations in Asia."
-  ],
-  "recommendations": [
-   "Contain by isolating the initial-access vector, revoking compromised and staged credentials and removing leftover artifacts.",
-   "Harden perimeters with segmentation, asset security telemetry and external attack surface management.",
-   "Hunt for the persistence artifacts the post describes: staged binaries, service units, cron entries, memfd process names and unusual dbus-daemon arguments."
-  ],
-  "iocs_available": true,
-  "read_depth": "full",
-  "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/"
- },
- "hunt": [
-  {
-   "name": "ZQAgent YARA rules and IOCs (in the post)",
-   "format": "yara",
-   "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/",
-   "publisher": "NVISO Labs"
-  }
- ]
+  "sectors": {
+    "values": [
+      "unknown"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-26T13:41:26Z",
+    "first_at": "2026-11-24T14:14:07Z",
+    "note": "Compared title, Belgium/Taiwan, FOG0003, capabilities, persistence and advice with NVISO post and Cyber Security News",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-26T13:41:26Z",
+  "report": {
+    "publisher": "NVISO Labs",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-23",
+    "key_findings": [
+      "NVISO saw the ZQAgent Linux backdoor deployed by the LLM tool ARTEX in Belgium; related samples were reported from Taiwan.",
+      "ZQAgent gives arbitrary code execution, filesystem operations and network tunneling, and gives the operator a long-lasting foothold.",
+      "It copies itself into an anonymous memory file, relaunches under a spoofed dbus-daemon command line and persists through a systemd service and a cron job.",
+      "NVISO says this operator-directed use departs from ARTEX's usually autonomous pattern; the post does not state the initial access vector.",
+      "Team Cymru intelligence cited by NVISO suggests activity attributed to FOG0003 targets government and human-rights organizations in Asia."
+    ],
+    "recommendations": [
+      "Contain by isolating the initial-access vector, revoking compromised and staged credentials and removing leftover artifacts.",
+      "Harden perimeters with segmentation, asset security telemetry and external attack surface management.",
+      "Hunt for the persistence artifacts the post describes: staged binaries, service units, cron entries, memfd process names and unusual dbus-daemon arguments."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/"
+  },
+  "hunt": [
+    {
+      "name": "ZQAgent YARA rules and IOCs (in the post)",
+      "format": "yara",
+      "url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/",
+      "publisher": "NVISO Labs"
+    }
+  ]
 }

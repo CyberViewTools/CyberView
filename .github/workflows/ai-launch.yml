@@ -16,7 +16,9 @@ name: AI launch
 # A manual run (Run workflow) always runs, for testing one job.
 #
 # Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
-# The Library desk (library) is in the manual choices only, with no schedule: a runner never starts it unattended.
+# The Library desk (library, owner 2026-11-26) runs here on its own schedule whatever AI_LAUNCH says: it bills only the API key
+# (secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, within config/pipeline.json library.api.monthly_usd_cap), needs no subscription token,
+# and a runner reaches orkl.eu. Switch it off with "active": false on the library routine in routines.json.
 on:
   schedule:
     - cron: "5,20,35,50 * * * *"   # sweep (research loop)
@@ -34,6 +36,7 @@ on:
     - cron: "5 8 * * 1"            # security-review
     - cron: "37 15 * * 5"          # tabletop
     - cron: "13 5 * * 0"           # scout
+    - cron: "17,37,57 * * * *"     # library (API-billed; runs whatever AI_LAUNCH says)
   workflow_dispatch:
     inputs:
       job:
@@ -57,10 +60,14 @@ concurrency:
 jobs:
   launch:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    if: github.event_name == 'workflow_dispatch' || vars.AI_LAUNCH == 'actions'
+    timeout-minutes: 30
+    # scheduled runs: the Library always (its own switch is routines.json); every other job only once AI_LAUNCH is "actions" (Pick step)
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     env:
       HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+      HAS_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' }}
+      AI_LAUNCH: ${{ vars.AI_LAUNCH }}
+      EVENT: ${{ github.event_name }}
     steps:
       - name: Pick the job
         id: pick
@@ -81,17 +88,26 @@ jobs:
             "5 8 * * 1")          job=security-review ;;
             "37 15 * * 5")        job=tabletop ;;
             "13 5 * * 0")         job=scout ;;
+            "17,37,57 * * * *")   job=library ;;
             *)                    job="${{ inputs.job }}" ;;
           esac
           case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
+          # the Library bills only the API key; every other job signs in with the subscription token
+          if [ "$job" = library ]; then ready=$HAS_KEY; else ready=$HAS_OAUTH; fi
+          # a scheduled run of any other job waits for the switch: vars.AI_LAUNCH == 'actions'
+          if [ "$EVENT" = schedule ] && [ "$job" != library ] && [ "$AI_LAUNCH" != actions ]; then
+            echo "READY=off" >> "$GITHUB_ENV"; echo "Job: $job (scheduled runs are off until AI_LAUNCH is actions)" >> "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          echo "READY=$ready" >> "$GITHUB_ENV"
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "Job: $job" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Skip when no Claude sign-in is set up
-        if: env.HAS_OAUTH != 'true'
-        run: echo "Repository secret CLAUDE_CODE_OAUTH_TOKEN is not set (run \`claude setup-token\` and add it); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
+        if: env.READY != 'true' && env.READY != 'off'
+        run: |
+          echo "No credential for ${{ steps.pick.outputs.job }} (the Library needs the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, every other job CLAUDE_CODE_OAUTH_TOKEN from \`claude setup-token\`); skipping." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
-        if: env.HAS_OAUTH == 'true'
+        if: env.READY == 'true'
         with:
           ref: main
           fetch-depth: 50
@@ -100,21 +116,21 @@ jobs:
             !/data/
           sparse-checkout-cone-mode: false
       - name: Mount the data branch at ./data
-        if: env.HAS_OAUTH == 'true'
+        if: env.READY == 'true'
         uses: ./.github/actions/data
 
       - uses: actions/setup-node@v4
-        if: env.HAS_OAUTH == 'true'
+        if: env.READY == 'true'
         with:
           node-version: "22"
 
       - name: Install Claude Code
-        if: env.HAS_OAUTH == 'true'
+        if: env.READY == 'true'
         run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
 
       - name: Run the job
         id: run
-        if: env.HAS_OAUTH == 'true'
+        if: env.READY == 'true'
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
@@ -124,20 +140,22 @@ jobs:
           JOB: ${{ steps.pick.outputs.job }}
         run: |
           unset ANTHROPIC_API_KEY
+          # the Library bills only the API key (scripts/run-job.mjs libraryServedNow hands it to each call as ANTHROPIC_API_KEY): no subscription token in reach
+          if [ "$JOB" = library ]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi
           node scripts/dispatch.mjs "$JOB" --exec 2>&1 | tee out.txt
           { echo '```'; tail -15 out.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           # DISPATCH means the job needs a session's judgment (headless unavailable); a runner has none, so say so loudly
           if grep -q '^DISPATCH' out.txt; then echo "::error::$JOB needs a Claude session (headless unavailable on this runner)"; exit 1; fi
 
       - name: Check what was pushed
-        if: env.HAS_OAUTH == 'true' && always()
+        if: env.READY == 'true' && always()
         run: |
           d=.; [ -e data/.git ] && d=data
           git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$(git -C "$d" status --porcelain)" ]; then echo "Uncommitted data was left behind (the next run commits it with finish.mjs --force):" >> "$GITHUB_STEP_SUMMARY"; git -C "$d" status --short | head -20 >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: Alert on failure
-        if: failure() && env.HAS_OAUTH == 'true'
+        if: failure() && env.READY == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

@@ -61,10 +61,13 @@ jobs:
   launch:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name == 'workflow_dispatch' || vars.AI_LAUNCH == 'actions' || github.event.schedule == '17,37,57 * * * *'
+    # scheduled runs: the Library always (its own switch is routines.json); every other job only once AI_LAUNCH is "actions" (Pick step)
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     env:
       HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
       HAS_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' }}
+      AI_LAUNCH: ${{ vars.AI_LAUNCH }}
+      EVENT: ${{ github.event_name }}
     steps:
       - name: Pick the job
         id: pick
@@ -91,11 +94,15 @@ jobs:
           case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
           # the Library bills only the API key; every other job signs in with the subscription token
           if [ "$job" = library ]; then ready=$HAS_KEY; else ready=$HAS_OAUTH; fi
+          # a scheduled run of any other job waits for the switch: vars.AI_LAUNCH == 'actions'
+          if [ "$EVENT" = schedule ] && [ "$job" != library ] && [ "$AI_LAUNCH" != actions ]; then
+            echo "READY=off" >> "$GITHUB_ENV"; echo "Job: $job (scheduled runs are off until AI_LAUNCH is actions)" >> "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
           echo "READY=$ready" >> "$GITHUB_ENV"
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "Job: $job" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Skip when no Claude sign-in is set up
-        if: env.READY != 'true'
+        if: env.READY != 'true' && env.READY != 'off'
         run: echo "No credential for ${{ steps.pick.outputs.job }}: the Library needs the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, every other job CLAUDE_CODE_OAUTH_TOKEN (run \`claude setup-token\` and add it); skipping." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4

@@ -744,12 +744,27 @@ async function flow() {
   if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, Math.max(0, Math.min(200000, leftMs() + 60000))).unref(); });
 }
 
+/** The Library desk (scripts/library-desk.mjs): the desk decides, waits for the usage window and runs its own waves (workers have no tools
+ *  and never run git); this hands what it wrote to the same commit step as every job. It stops starting waves in time for the commit. */
+function libraryJob() {
+  const t0 = Date.now(), hm = Math.max(2, Math.min(9, Number(PIPE.headless_foreground_minutes) || 8));
+  const left = Math.min(hm * 60000, leftMs()), tmo = Math.max(60000, left - 90000);
+  log(`RUN library ${RUN}`);
+  const d = sh("node", ["scripts/library-desk.mjs", "run"], tmo);
+  const lines = d.out.filter((l) => /^CyberView library:/.test(l)), note = (lines.pop() || d.out.slice(-1)[0] || "desk produced no output").replace(/^CyberView library: /, "");
+  let f = finish("library");
+  if (f.fixer) f = { out: sh("node", ["scripts/finish.mjs", "library", "--force"], 600000).out };   // no fixer worker: the deploy quarantines a broken record
+  const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
+  log(`CyberView library: ${note} | ${last.replace(/^CyberView [a-z-]+: /, "")} | ${Math.round((Date.now() - t0) / 6e4)} min`);
+}
+
 async function main() {
   if (process.argv[2] === "flow") return flow();
   const job = process.argv[2], reg = readJson(join(ROOT, "routines.json"), { routines: [] });
   const rr = reg.routines.find((x) => x.key === job && x.tier === "ai");
   if (!rr) { console.error(`unknown AI job "${job}"`); process.exit(1); }
-  if (rr.active === false) { log(`CyberView ${job}: retired, duties moved to ${rr.merged_into || "another job"}`); return; }
+  if (rr.active === false) { log(rr.retired || rr.merged_into ? `CyberView ${job}: retired, duties moved to ${rr.merged_into || "another job"}` : `CyberView ${job}: switched off (active is false in routines.json)`); return; }
+  if (job === "library") return libraryJob();
   const t0 = Date.now(), rec = { run: RUN, job, started_at: nowIso(), phases: [] };
   const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[${name}] ${note || ""}`); };
   log(`RUN ${job} ${RUN}`);

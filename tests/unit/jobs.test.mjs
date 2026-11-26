@@ -14,14 +14,20 @@ const AI = REG.filter((r) => r.tier === "ai");
 const MD = readFileSync(join(ROOT, "docs", "jobs.md"), "utf8");
 const prompt = (args, env = {}) => spawnSync("node", [join(ROOT, "scripts", "job-prompt.mjs"), ...args], { cwd: ROOT, encoding: "utf8", timeout: 60000, env: { ...process.env, NO_HOUSEKEEPING: "1", ...env } });
 
-test("routines: the 24 AI routines are all still listed, active or retired (the outage desk joined on 2026-11-20, the claims desk on 2026-11-21)", () => {
+test("routines: the 25 AI routines are all still listed, active, retired or off (the outage desk joined on 2026-11-20, the claims desk on 2026-11-21, the Library reports desk on 2026-11-26)", () => {
   const keys = AI.map((r) => r.key).sort();
-  assert.deepEqual(keys, ["advisory", "analysis", "analyst", "backlog", "brief", "claims", "deep-sweep", "editor", "followup", "guardian", "improver", "moderator", "outage", "regional", "report-review", "review", "scout", "security-review", "steward", "sweep", "tabletop", "triage", "verify", "watchdog"]);
+  assert.deepEqual(keys, ["advisory", "analysis", "analyst", "backlog", "brief", "claims", "deep-sweep", "editor", "followup", "guardian", "improver", "library", "moderator", "outage", "regional", "report-review", "review", "scout", "security-review", "steward", "sweep", "tabletop", "triage", "verify", "watchdog"]);
+});
+
+const RETIRED = AI.filter((x) => x.active === false && x.retired);
+test("routines: an AI routine that is off without being retired is only the Library reports desk, which waits for the owner's pilot", () => {
+  assert.deepEqual(AI.filter((x) => x.active === false && !x.retired).map((x) => x.key), ["library"]);
+  assert.match(AI.find((x) => x.key === "library").does, /Off until the owner starts the pilot\.$/);
 });
 
 test("routines: a retired routine says why, with evidence, and names an active routine that took its duties", () => {
   const active = new Set(AI.filter((r) => r.active !== false).map((r) => r.key));
-  for (const r of AI.filter((x) => x.active === false)) {
+  for (const r of RETIRED) {
     assert.match(String(r.retired || ""), /^\d{4}-\d{2}-\d{2}: .{60,}/, `${r.key}: retired needs the date and the evidence`);
     const to = String(r.merged_into || "").split(/,\s*/).filter(Boolean);
     assert.ok(to.length, `${r.key}: merged_into is empty`);
@@ -50,7 +56,7 @@ test("jobs.md: every active scheduled AI routine has a section in the standard f
 });
 
 test("job-prompt: a retired routine and the workers only it starts print a retired notice and nothing else", () => {
-  for (const r of AI.filter((x) => x.active === false)) {
+  for (const r of RETIRED) {
     const p = prompt([r.key]);
     assert.equal(p.status, 0);
     assert.match(p.stdout, /^RETIRED: /);

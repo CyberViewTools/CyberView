@@ -47,6 +47,7 @@
   "backlog",
   "brief",
   "improver",
+  "library",
   "moderator",
   "review",
   "security-review",
@@ -114,6 +115,27 @@
   "max_tries": 3,
   "reopen_tries": 2,
   "match_days": 45
+ },
+ "library": {
+  "_note": "The Library's desk (scripts/library-desk.mjs, routine `library`, run through scripts/run-job.mjs): how much reading, writing, reviewing and auditing of ORKL threat reports each run does. enabled: false stops the desk entirely (it only stamps its heartbeat). backfill: the OWNER's switch for the backlog (about 29,000 reports); it ships false and nothing but the owner sets it true, after approving the pilot stories. While it is false the desk, once the pilot is complete, reads only new reports (newer than the newest report at the pilot's start) and rewrites only stale stories; with it true the reader takes reports of the biggest actors first, then the rest newest first. A true backfill never skips an incomplete pilot. pilot: what the pilot covers, chosen once and stored in data/orkl/pilot.json: reports = the newest reports always read; top_actors = actors with the most reports (all their reports are read too, at most 40 each); thin_actors = actors with one or no report; loose = subjects named in no actor's report, picked from the newest reports once those are read. While the pilot is incomplete the desk works only on this set and the audit checks every card. wave: the most work one run plans per stage: read = reports read, write = stories drafted, review = drafts reviewed, audit = cards audited (a wave starts only with the time left that its role needs; the usage window comes first: canBuild with usage_budget.pipeline_reserve_pct). reread: how many of a story's most-cited original reports the reviewer re-reads. audit_pct: the share of read cards the auditor checks once the pilot is complete (100 during the pilot and while paused). audit_pause_pct and audit_min: the reader is paused (no writing, no review, only failed cards read again) when more than audit_pause_pct of the last audit_min or more audited cards were wrong. The roles and models are frozen in config/models.json.",
+  "enabled": true,
+  "backfill": false,
+  "pilot": {
+   "reports": 200,
+   "top_actors": 10,
+   "thin_actors": 5,
+   "loose": 5
+  },
+  "wave": {
+   "read": 40,
+   "write": 6,
+   "review": 6,
+   "audit": 4
+  },
+  "reread": 3,
+  "audit_pct": 10,
+  "audit_pause_pct": 5,
+  "audit_min": 50
  },
  "usage_budget": {
   "_note": "The Max plan has no dollar limit but a 5-hour and a weekly usage window, and it does not publish them. These are estimates (scripts/lib/usage.mjs reads data/usage/*.jsonl, headless workers only; the ops and interactive sessions use the same plan and are not counted, so keep a margin). Derived 2026-11-20 from 26.6 hours of the usage log (2026-11-19 04:35 to 11-20 07:13), no limit hit in that time: peak rolling 5 hours 86.0 M tokens and $40.05 (19 Nov 17:47 to 22:47, while two loops ran at once), x 1.5 = window_tokens and window_cost. The log holds less than a week, so the weekly figures are the peak rolling 24 hours (319.1 M tokens, $152.25) x 7 x 1.5. Levels: tight at tight_pct of either window (the loop runs only researchers on incidents and exploited flaws and reviewers past 20 minutes; the jobs in tight_skip_jobs wait), stop at stop_pct of the 5-hour window or on a real limit hit (no workers until the reset time the error gives, else limit_backoff_minutes). The weekly estimate never stops the loop by itself. Re-derive these once a full week of the log exists (node scripts/lib/usage.mjs prints the current level and the peaks). Owner, 2026-11-21: \"use whatever it needs\": the only protection left is the stop level. tight_cuts_work false (the default) makes tight work like ok: researchers, reviewers, updaters, grid and outage workers, the follow-up desk, gap searchers and the jobs in tight_skip_jobs all run; set it to true to restore the old tight behaviour (scripts/run-job.mjs workAt, scripts/dispatch.mjs). Re-derived 2026-11-22 (owner: fix the loop stopping for usage) from 3.6 days of the log: the 5-hour peak with no limit hit inside it is 126.1 M tokens and $74.42 (12:58 to 17:58 UTC on 22 Nov), x 1.5 = window_tokens 189 M and window_cost $112 (was 129 M / $60, which stopped the loop at $72 while no limit was near). Real 5-hour limit hits (2026-11-21 22:55, 2026-11-22 01:58 and 09:07) came at only $19 to $66 of headless spend because the ops and interactive sessions share the window and are not counted, so no headless-only estimate can predict them: the real-limit stop (a worker's limit error, until the reset time it gives) is what catches those. The weekly figures are left as they were: the 24-hour peak window includes those limit hits, and the account's 7-day limit was already at a warning, so the weekly estimate is not loosened. pipeline_reserve_pct (owner, 2026-11-23, after a code-build swarm used the whole 5-hour window on 22 November and the pipeline published nothing for 2.5 hours): this share of the 5-hour estimate is kept for the pipeline. Work that is not the pipeline (code builds, swarms) runs `node scripts/budget.mjs can-build` before it launches agents and between waves, and waits while it exits non-zero: the window above (100 - reserve)% of the estimate, or the plan refused a pipeline worker in the last hour (scripts/lib/usage.mjs canBuild). It does not change when the pipeline itself stops. A worker that hits the limit is recorded as that (ledger `limit`, `limit_until`), no further worker is started in that run, and the pipeline check reports \"usage limit reached, resets <time>\".",

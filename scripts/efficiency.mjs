@@ -569,6 +569,8 @@ export async function build(days = 7, now = Date.now()) {
   r.gates = await gateSummary(now);
   r.worker_ends = workerEnds(inp.usage, now - days * DAY, now);
   try { r.api_fallback = apiFallbackReport(inp.usage, fallbackConfig(budgetConfig()), now); } catch {}
+  // the Library reports desk: cards, the reader audit, stories and the last 7 days' tokens and estimated cost by role (a failure leaves the block out)
+  try { r.library = await (await import("./library-desk.mjs")).efficiencyBlock(inp.usage, now); } catch (e) { r.library = { error: String((e && e.message) || e).slice(0, 160) }; }
   return r;
 }
 

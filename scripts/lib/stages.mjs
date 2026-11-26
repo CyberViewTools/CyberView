@@ -21,6 +21,7 @@ export const STAGES = [
   { key: "researchers", label: "researchers", status: "last_researcher_at", max_min: 24 * 60, heal: "", when_work: true },
   { key: "reviewers", label: "second reviewers in the loop", status: "last_reviewer_at", max_min: 24 * 60, heal: "", when_work: true },
   { key: "review-desk", label: "the review desk", status: "last_review_at", routine: "review", heal: "" },
+  { key: "library", label: "the Library desk (ORKL report cards and stories)", status: "last_library_at", routine: "library", heal: "" },
   { key: "updaters", label: "updaters", status: "last_updater_at", max_min: 48 * 60, heal: "", when_work: true },
   { key: "followup", label: "the follow-up desk", status: "last_followup_at", routine: "followup", heal: "" },
   { key: "grid", label: "the power grid collector", status: "last_grid_at", routine: "grid", heal: "collect.yml" },

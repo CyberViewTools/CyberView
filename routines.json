@@ -186,7 +186,7 @@
    "max_age_hours": 24,
    "active": true,
    "active_since": "2026-11-25T06:33:49Z",
-   "does": "Mirrors the metadata and links of ORKL's public threat-report library (orkl.eu) and its threat-actor catalogue: report title, authors, date, language, sources, named actors, and links to the report page and the archived PDF/text on archive.orkl.eu, never the report body itself. The first run backfills the whole library newest-first; later runs add only what is new. It writes no leads, is never a source for an event, and uses no AI model (scripts/orkl.mjs); the ingest totals are shown on the status page."
+   "does": "Mirrors the metadata and links of ORKL's public threat-report library (orkl.eu) and its threat-actor catalogue: report title, authors, date, language, sources, named actors, and links to the report page and the archived PDF/text on archive.orkl.eu, never the report body itself. The first run backfills the whole library newest-first; later runs add only what is new. It writes no leads, is never a source for an event, and uses no AI model (scripts/orkl.mjs); the ingest totals are shown on the status page. Its reports are read by the separate Library reports routine (library), which turns them into fact cards and written stories."
   },
   {
    "key": "scams",
@@ -590,6 +590,19 @@
    "active": true,
    "does": "Continuous improvement: reads the week's cost, yield, speed and second-review results and makes up to three small, bounded, logged changes to the pipeline's dials and per-role models; on Saturdays it also does the weekly editor's review (the three biggest problems, precise instruction fixes for recurring corrections, data/pipeline.json). Anything bigger goes to the owner as a request.",
    "reviewed": "2026-11-20"
+  },
+  {
+   "key": "library",
+   "name": "Library reports",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "cron": "37 * * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_library_at",
+   "max_age_hours": 6,
+   "active": false,
+   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks a share), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored. It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and starts nothing while the map pipeline needs the usage window. Off until the owner starts the pilot.",
+   "reviewed": "2026-11-26"
   }
  ]
 }

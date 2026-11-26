@@ -378,8 +378,8 @@ export function deskRunLog({ startedAt, finishedAt, mode = "", note = "", result
 
 /** One desk run. Stamps last_library_at and library_note in status.json when it ends, whatever it did (also when the deadline ended it).
  *  deadlineMs: the absolute time (ms) by which every model call must have ended; run-job.mjs passes its own cut-off minus 30 s.
- *  can: the usage-window answer for the plan (tests); canStart: asked before every wave (default: the usage ledger and canBuild, re-read each time). */
-export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE, readStateFile = READ_STATE_FILE, mirror = null, runLog = null } = {}) {
+ *  cardsDir/storiesDir: where cards and stories are read (tests use empty folders; default the data branch). can: the usage-window answer for the plan (tests); canStart: asked before every wave (default: the usage ledger and canBuild, re-read each time). */
+export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE, readStateFile = READ_STATE_FILE, mirror = null, runLog = null, cardsDir = undefined, storiesDir = undefined } = {}) {
   const startedAt = nowIso();
   // the run log goes to data/runs/ like every job's; a test run (statusFile elsewhere) writes it beside its own status file
   const writeLog = runLog || ((l) => (statusFile === join(DATA, "status.json") ? writeRunLog("library", l) : writeJson(join(dirname(statusFile), "library-run.json"), { job: "library", ...l })));
@@ -392,7 +392,7 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
   if (cfg.enabled === false) return end("off (library.enabled is false in config/pipeline.json)");
   const lb = library || loadLibrary();
   if (!(lb.reports || []).length || !(lb.actors || []).length) return end("library not loaded (no reports or no actors): nothing done");
-  const bad = [], cards = loadCards(undefined, bad);
+  const bad = [], cards = loadCards(cardsDir, bad);
   if (bad.length) return end(`card shards unreadable (${bad.join(", ")}): nothing done`);
   let pf = loadPilot(pilotFile);
   if (pf.state === "bad") return end("data/orkl/pilot.json cannot be read: nothing done, it is never overwritten");
@@ -404,7 +404,7 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
   }
   const loose = pilotLoose(pf.pilot, lb.reports, lb.actors, cards, cfg.pilot.loose);
   if (loose.length) { addLoose(pilotFile, loose); pf = loadPilot(pilotFile); }
-  const badS = [], stories = loadStories(undefined, badS), failures = loadReadState(readStateFile).failures;
+  const badS = [], stories = loadStories(storiesDir, badS), failures = loadReadState(readStateFile).failures;
   let ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg, failures });
   if (!pf.pilot.completed_at && ds.pilotStatus.done && latchPilot(pilotFile, nowIso())) {      // the first time the predicate holds: latched for good
     pf = loadPilot(pilotFile); ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg, failures });

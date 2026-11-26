@@ -1,0 +1,24 @@
+name: "Job: Tabletop"
+
+# The tabletop job on its own single schedule, billed to the API key (shared steps: ai-job.yml). Keep the cron equal to routines.json.
+on:
+  schedule:
+    - cron: "37 15 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: write         # data commits on the data branch
+  issues: write           # pipeline alerts; replies by the jobs that answer issues
+  actions: write          # finish.mjs starts the deploy after pushing data
+  pull-requests: write    # finish.mjs proposes config/ and docs/ changes (scripts/propose.mjs)
+
+concurrency:
+  group: job-tabletop
+  cancel-in-progress: false
+
+jobs:
+  tabletop:
+    uses: ./.github/workflows/ai-job.yml
+    with:
+      job: tabletop
+    secrets: inherit

@@ -334,20 +334,21 @@ test("libraryProblems: a paused Library needs attention and names the cards; par
 /* ---------- the run ---------- */
 test("run: chooses and stores the pilot, plans, runs the stages, stamps the heartbeat; waiting still stamps it and starts nothing", async () => {
   const dir = mkdtempSync(join(tmpdir(), "desk-")), pilotFile = join(dir, "pilot.json"), statusFile = join(dir, "status.json");
+  const iso = { cardsDir: join(dir, "cards"), storiesDir: join(dir, "stories"), readStateFile: join(dir, "read-state.json") };   // never the real data branch
   const w = withActors(world(200)), calls = [], logs = [];
   const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async (o) => { calls.push([k, o.max]); return { read: o.max, drafted: o.max, ok: o.max, published: o.max, stopped: "" }; }]));
   const cfg = { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 }, wave: { read: 8, write: 2, review: 2, audit: 2 } };
   try {
-    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, mirror: MIRROR, ...iso, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.match(out.note, /^waiting: the pipeline needs the usage window/); assert.deepEqual(calls, []);
     assert.ok(existsSync(pilotFile), "the pilot is chosen even while waiting"); assert.match(JSON.parse(readFileSync(statusFile, "utf8")).last_library_at, /^\d{4}-\d\d-\d\dT/);
     const before = readFileSync(pilotFile, "utf8");
-    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, ...iso, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.equal(out2.plan.mode, "pilot"); assert.equal(readFileSync(pilotFile, "utf8"), before, "the stored pilot is not chosen again");
     assert.deepEqual(calls.map((c) => c[0]).filter((v, i, a) => a.indexOf(v) === i), ["write", "read"], "no drafts and nothing to audit yet; the pilot's stories and reports are worked on");
     assert.match(JSON.parse(readFileSync(statusFile, "utf8")).library_note, /^pilot: /);
     assert.ok(logs.some((l) => /^CyberView library: /.test(l)));
-    const off = await run({ cfg: { ...cfg, enabled: false }, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, log: () => {} });
+    const off = await run({ cfg: { ...cfg, enabled: false }, library: w, deps, can: true, pilotFile, statusFile, mirror: MIRROR, ...iso, log: () => {} });
     assert.match(off.note, /^off/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });

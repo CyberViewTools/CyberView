@@ -1,0 +1,70 @@
+{
+  "action": "WatchGuard advises treating installers from third-party download portals as untrusted, checking Defender's exclusion list and Controlled Folder Access on affected endpoints, and hunting for legitimate executables running from C:\\Users\\Public\\Documents.",
+  "actor": "",
+  "attack": [
+    "malware"
+  ],
+  "category": "vuln",
+  "country": "",
+  "cves": [],
+  "date": "2026-11-25",
+  "date_note": "WatchGuard's post, published 25 November, describes activity from mid-September 2026; the post gives no earlier disclosure day.",
+  "evidence": [
+    {
+      "url": "https://www.watchguard.com/wgrd-security-hub/secplicity-blog/silver-fox-seo-poisoning-how-fake-software-downloads-spread",
+      "quote": "a Windows executable of about 114 MB (113,685,436 bytes)"
+    }
+  ],
+  "exec": "WatchGuard reports a fake oCam installer that installs the real app while loading a Gh0stRAT variant, so users may not notice an infection.",
+  "first_seen": "2026-11-26T18:00:48Z",
+  "geo_basis": "no victim location stated",
+  "lat": 0,
+  "lng": 0,
+  "org": "WatchGuard Red Cell research",
+  "pin_type": "country",
+  "place": "Global",
+  "products": [
+    "oCam"
+  ],
+  "sector": "Technology",
+  "severity": 1,
+  "source_tier": "primary",
+  "sources": [
+    {
+      "name": "WatchGuard: Silver Fox SEO poisoning, how fake software downloads spread",
+      "url": "https://www.watchguard.com/wgrd-security-hub/secplicity-blog/silver-fox-seo-poisoning-how-fake-software-downloads-spread",
+      "published": "2026-11-25",
+      "read_depth": "full"
+    },
+    {
+      "name": "Cyber Press: Hackers hide spyware in fake software downloads",
+      "url": "https://cyberpress.org/fake-downloads-spread-spyware/",
+      "published": "2026-11-26",
+      "read_depth": "full"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "WatchGuard researchers say a fake installer for the Windows screen recorder oCam, downloaded from a third-party portal in mid-September 2026, installed the genuine app and a Gh0stRAT variant. The download was a Windows executable of about 114 MB, and a PowerShell step tried to add broad Microsoft Defender exclusions. WatchGuard attributes the campaign to Silver Fox, calling its evidence consistent with that profile.",
+  "tags": [
+    "malware"
+  ],
+  "time_basis": "published",
+  "title": "WatchGuard: fake oCam installer delivers Gh0stRAT, attributed to Silver Fox",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-26T18:00:48Z",
+    "note": "WatchGuard is the only research source; Cyber Press relays it and is not independent."
+  },
+  "plain": "WatchGuard says a fake installer for the oCam screen recorder installed the real app plus a Gh0stRAT remote-access variant. It attributes the campaign to Silver Fox.",
+  "updated_at": "2026-11-26T18:00:48Z",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  }
+}

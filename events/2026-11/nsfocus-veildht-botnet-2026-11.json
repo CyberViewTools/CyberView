@@ -1,5 +1,4 @@
 {
-  "id": "nsfocus-veildht-botnet-2026-11",
   "title": "NSFOCUS: new VeilDHT botnet spreads to Linux servers and IoT devices",
   "date": "2026-11-26",
   "date_note": "NSFOCUS's post gives only its publication day; the infection counts it cites are for 16 to 26 October 2026.",
@@ -14,21 +13,47 @@
   "geo_basis": "country named by the source for the infections (mainland China)",
   "pin_type": "country",
   "actor": "",
-  "attack": ["botnet"],
-  "products": ["ASUS routers", "Realtek Jungle SDK"],
-  "cves": ["CVE-2024-3912", "CVE-2021-35394"],
-  "tags": ["malware", "ddos"],
+  "attack": [
+    "botnet"
+  ],
+  "products": [
+    "ASUS routers",
+    "Realtek Jungle SDK"
+  ],
+  "cves": [
+    "CVE-2024-3912",
+    "CVE-2021-35394"
+  ],
+  "tags": [
+    "malware",
+    "ddos"
+  ],
   "summary": "NSFOCUS's risk alert describes VeilDHT, a previously unseen botnet it says mainly targets Linux servers and IoT devices. NSFOCUS says it spreads by exploiting flaws including CVE-2024-3912 (ASUS routers) and CVE-2021-35394 (Realtek Jungle SDK), can run DDoS attacks and commands, and hides a backup C2 channel in a public P2P network. CNCERT observed as many as 15,805 active bots in a single day, with a cumulative total of 40,467 infected devices.",
   "plain": "Researchers at NSFOCUS describe a new hidden botnet that infects Linux servers and internet-connected devices such as routers, and can launch DDoS attacks and run commands on them.",
   "exec": "NSFOCUS says the new botnet, with as many as 15,805 active bots in a single day, targets Linux servers and IoT devices.",
   "action": "NSFOCUS advises keeping an up-to-date asset inventory, patching known vulnerabilities including IoT firmware, monitoring DNS and IP activity tied to its IOCs, and isolating and remediating any infected host.",
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
   "sources": [
-    {"name": "NSFOCUS blog", "url": "https://nsfocusglobal.com/risk-alert-widespread-propagation-of-the-emerging-veildht-botnet/", "published": "2026-11-26"}
+    {
+      "name": "NSFOCUS blog",
+      "url": "https://nsfocusglobal.com/risk-alert-widespread-propagation-of-the-emerging-veildht-botnet/",
+      "published": "2026-11-26"
+    }
   ],
   "evidence": [
-    {"url": "https://nsfocusglobal.com/risk-alert-widespread-propagation-of-the-emerging-veildht-botnet/", "quote": "as many as 15,805 active bots in a single day, with a cumulative total of 40,467 infected devices"}
+    {
+      "url": "https://nsfocusglobal.com/risk-alert-widespread-propagation-of-the-emerging-veildht-botnet/",
+      "quote": "as many as 15,805 active bots in a single day, with a cumulative total of 40,467 infected devices"
+    }
   ],
   "source_tier": "established",
   "validation": {
@@ -58,5 +83,15 @@
     "url": "https://nsfocusglobal.com/risk-alert-widespread-propagation-of-the-emerging-veildht-botnet/"
   },
   "first_seen": "2026-11-26T15:01:13Z",
-  "updated_at": "2026-11-26T15:01:13Z"
+  "updated_at": "2026-11-26T15:01:13Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-26T15:11:12Z",
+    "first_at": "2026-11-26T15:11:12Z",
+    "note": "Compared title, CVEs, 15,805/40,467 figures with dates, CNCERT attribution, advice against NSFOCUS post",
+    "flags": [
+      "no-cve-meta"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T15:11:12Z"
 }

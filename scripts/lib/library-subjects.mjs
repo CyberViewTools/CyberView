@@ -47,10 +47,13 @@ export function actorSubjects(actors, reports, cards) {
     if (!readCard(cards, r.sha1)) continue;
     for (const id of resolveActors(r, ix)) (mine.get(id) || mine.set(id, []).get(id)).push(r.sha1);
   }
-  return (actors || []).filter((a) => isObj(a) && a.name).map((a) => ({
-    key: "a-" + (SAFE_ID.test(String(a.id)) ? a.id : sha1(a.name).slice(0, 16)),
-    kind: "actor", name: String(a.name), actor: a, sha1s: mine.get(a.id) || [],
-  }));
+  return (actors || []).filter((a) => isObj(a) && (a.name || (a.id != null && String(a.id)))).map((a) => {
+    const name = String(a.name || a.id), actor = a.name ? a : { ...a, name };
+    return {
+      key: "a-" + (SAFE_ID.test(String(a.id)) ? a.id : sha1(a.id != null ? `${a.id}\0${name}` : name).slice(0, 16)),
+      kind: "actor", name, actor, sha1s: mine.get(a.id) || [],
+    };
+  });
 }
 
 /** A card detailed enough to carry a story without an actor. */

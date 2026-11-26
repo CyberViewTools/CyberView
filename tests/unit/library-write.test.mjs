@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { BY, cleanStory } from "../../scripts/lib/library-check.mjs";
 import { basedOn } from "../../scripts/lib/library-subjects.mjs";
-import { placeDraft, writeQueue, loadStories, run, STORIES_DIR } from "../../scripts/library-write.mjs";
+import { placeDraft, writeQueue, loadStories, run, parseMax, codesOf, STORIES_DIR } from "../../scripts/library-write.mjs";
 
 const h = (c) => c.repeat(40);
 const story = (o = {}) => ({ key: "a-7", kind: "actor", name: "TT Group", headline: "h", in_short: "i", sections: [], status: "draft", based_on: "x", tries: 0, by: BY, written_at: "t", writer_model: "sonnet", ...o });
@@ -32,7 +32,7 @@ test("placeDraft: first draft has no live", () => {
 test("writeQueue: unchanged published stories are skipped; a parked story is not retried", () => {
   const pub = new Map([["a-7", { live: story({ status: "published", based_on: bA() }), next: null }]]);
   assert.equal(writeQueue([subA], pub, cards, {}).length, 0);
-  const parked = new Map([["a-7", { live: null, next: story({ status: "parked", tries: 2, based_on: "old" }) }]]);
+  const parked = new Map([["a-7", { live: null, next: story({ status: "parked", tries: 2, based_on: bA() }) }]]);
   assert.equal(writeQueue([subA], parked, cards, {}).length, 0);
 });
 test("writeQueue: no file, changed cards, and rejected under two tries are queued", () => {
@@ -147,4 +147,50 @@ test("run: unreadable card shards stop the run before any call", async () => {
     const t = await run({ ...deps(dir, async () => { calls++; return bad; }), cards: undefined, cardsDir: cdir, max: 5 });
     assert.equal(calls, 0); assert.match(t.stopped, /unreadable/); assert.deepEqual(readdirSync(dir), []);
   } finally { rmSync(dir, { recursive: true, force: true }); rmSync(cdir, { recursive: true, force: true }); }
+});
+
+test("writeQueue: a parked story is retried when its basedOn changed, and not when it is unchanged", () => {
+  const changed = new Map([["a-7", { live: null, next: story({ status: "parked", tries: 2, based_on: "old" }) }]]);
+  assert.equal(writeQueue([subA], changed, cards, {}).length, 1);
+});
+test("run: a parked story whose cards changed gets a fresh draft with tries 0", async () => {
+  const dir = mk();
+  try {
+    writeFileSync(join(dir, "a-8.json"), JSON.stringify({ live: null, next: story({ key: "a-8", name: "QuietActor", status: "parked", tries: 2, based_on: "old" }) }));
+    await run({ ...deps(dir, async () => catalogueReply()), library: { ...LIB, actors: [QUIET] }, max: 5 });
+    const n = file(dir, "a-8").next;
+    assert.equal(n.status, "draft"); assert.equal(n.tries, 0);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: bare-string problem codes (code) are kept in reasons; reasons are never empty on a rejected draft", async () => {
+  const dir = mk();
+  try {
+    const coded = { ok: true, limit: false, error: false, json: { headline: "Quiet", in_short: "Little.", sections: [{ h: "who", sentences: [{ t: "QuietActor runs `powershell -enc AAAA` on hosts.", cites: ["catalogue"] }] }] } };
+    await run({ ...deps(dir, async () => coded), library: { ...LIB, actors: [QUIET] }, max: 5 });
+    const n = file(dir, "a-8").next;
+    assert.equal(n.status, "rejected"); assert.ok(n.reasons.includes("code"), JSON.stringify(n.reasons));
+    assert.deepEqual(codesOf(["no-byline", "code", "unbacked: who[0] x"]), ["no-byline", "code", "unbacked"]);
+    assert.deepEqual(codesOf(["??? bad", ""]), ["unknown"]);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: only the 40 newest read cards are shown; citing the 41st is a bad-cite rejection", async () => {
+  const dir = mk(); let prompt = "";
+  try {
+    const hx = (i) => i.toString(16).padStart(40, "0");
+    const reports = Array.from({ length: 41 }, (_, i) => ({ sha1: hx(i + 1), actors: ["TT Group"], created: `2024-01-${String(i + 1).padStart(2, "0")}` }));
+    const c = new Map(reports.map((r) => [r.sha1, { ...card("a"), sha1: r.sha1 }]));
+    const reply = { ok: true, limit: false, error: false, json: { headline: "h", in_short: "i", sections: [{ h: "who", sentences: [{ t: "A claim.", cites: [hx(1)] }] }] } };
+    await run({ ...deps(dir, async (_r, p) => { prompt = p; return reply; }), cards: c, library: { reports, actors: [TT] }, max: 1 });
+    assert.ok(!prompt.includes(hx(1))); assert.ok(prompt.includes(hx(2))); assert.ok(prompt.includes(hx(41)));
+    const n = file(dir, "a-7").next;
+    assert.equal(n.status, "rejected"); assert.ok(n.reasons.includes("bad-cite"));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("parseMax: 0 means 0; missing or invalid means 10", () => {
+  assert.equal(parseMax(["run", "--max", "0"]), 0); assert.equal(parseMax(["run", "--max", "3"]), 3);
+  assert.equal(parseMax(["run"]), 10); assert.equal(parseMax(["run", "--max", "x"]), 10); assert.equal(parseMax(["run", "--max", "-2"]), 10);
+});
+test("run: max 0 makes no calls", async () => {
+  const dir = mk(); let calls = 0;
+  try { await run({ ...deps(dir, async () => { calls++; return bad; }), max: 0 }); assert.equal(calls, 0); } finally { rmSync(dir, { recursive: true, force: true }); }
 });

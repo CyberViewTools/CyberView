@@ -85,3 +85,8 @@ test("basedOn: a card marked unread later drops out and changes it", () => {
   assert.notEqual(basedOn(s, c), b);                                    // same subject, the card is no longer read
   assert.equal(basedOn(s, c), basedOn(actorSubjects([TT], [repTT1, repTT2], c)[0], c));
 });
+test("actorSubjects: an actor with an id but no name still gets a subject named by its id; hashed keys differ per id", () => {
+  const out = actorSubjects([{ id: "5" }, { id: "../a", name: "Same" }, { id: "../b", name: "Same" }], [], new Map());
+  assert.equal(out.length, 3); assert.equal(out[0].name, "5"); assert.equal(out[0].key, "a-5");
+  assert.notEqual(out[1].key, out[2].key);
+});

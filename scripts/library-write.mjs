@@ -55,9 +55,9 @@ export function writeQueue(subjects, stories, cards, { order = null, max = Infin
     if (s.kind === "subject" && !readN) return false;
     const f = stories.get(s.key);
     if (!f || (!f.live && !f.next)) return true;
-    if (f.next && f.next.status === "parked") return false;
-    if (f.next && f.next.status === "rejected" && (Number(f.next.tries) || 0) < MAX_TRIES) return true;
     const b = basedOn(s, cards);
+    if (f.next && f.next.status === "parked" && f.next.based_on === b) return false;   // parked stays parked until its cards change
+    if (f.next && f.next.status === "rejected" && (Number(f.next.tries) || 0) < MAX_TRIES) return true;
     return (!f.live || f.live.based_on !== b) && (!f.next || f.next.based_on !== b);
   });
   const rank = new Map((Array.isArray(order) ? order : []).map((k, i) => [k, i]));
@@ -73,7 +73,11 @@ export function placeDraft(file, story) {
   return { live, next: story };
 }
 
-const codesOf = (problems) => [...new Set(problems.map((p) => String(p).split(":")[0].trim()).filter((c) => /^[a-z][a-z-]{0,39}$/.test(c)))].slice(0, 10);
+/** Problem codes only (the part before ":"; bare codes such as `code` and `no-byline` have no colon). Never empty. */
+export function codesOf(problems) {
+  const c = [...new Set(problems.map((p) => String(p).split(":")[0].trim()).filter((x) => /^[a-z][a-z-]{0,39}$/.test(x)))].slice(0, 10);
+  return c.length ? c : ["unknown"];
+}
 
 /** Pure: a model reply -> the story to store. Every system field is set here, never taken from the reply. */
 export function buildStory(subject, reply, readCards, ctx) {
@@ -152,6 +156,12 @@ export function statusLine(subjects, stories, cards) {
   return `subjects ${subjects.length}, stories ${stories.size}, live published ${n.published} stale ${n.stale}, first drafts ${n.draft} rejected ${n.rejected} parked ${n.parked}, queued ${queued}`;
 }
 
+/** --max N from argv: 0 means 0; missing or not a whole number >= 0 means 10. */
+export function parseMax(argv) {
+  const i = argv.indexOf("--max"), v = i >= 0 ? argv[i + 1] : undefined;
+  return v != null && /^\d+$/.test(String(v)) ? Number(v) : 10;
+}
+
 async function main() {
   const cmd = process.argv[2];
   if (cmd === "status") {
@@ -160,7 +170,6 @@ async function main() {
     return;
   }
   if (cmd !== "run") { console.error("usage: library-write.mjs run [--max N] | status"); process.exit(1); }
-  const mi = process.argv.indexOf("--max");
-  await run({ max: mi >= 0 ? Number(process.argv[mi + 1]) || 10 : 10 });
+  await run({ max: parseMax(process.argv) });
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

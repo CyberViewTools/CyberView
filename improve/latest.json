@@ -1,136 +1,106 @@
 {
-  "at": "2026-11-25T09:38:04Z",
+  "at": "2026-11-26T09:38:05Z",
   "days": 7,
-  "events_added": 746,
-  "cost_usd": 1016.46,
-  "cost_per_event": 1.363,
+  "events_added": 845,
+  "cost_usd": 1075.88,
+  "cost_per_event": 1.273,
   "review": {
-    "reviewed": 746,
-    "corrected_or_flagged": 303,
-    "rate": 0.406
+    "reviewed": 844,
+    "corrected_or_flagged": 353,
+    "rate": 0.418
   },
   "backlog": {
-    "at": "2026-11-25T09:32:02Z",
-    "waiting": 209,
-    "incidents": 58,
-    "strong": 40,
+    "at": "2026-11-26T09:32:13Z",
+    "waiting": 90,
+    "incidents": 2,
+    "strong": 4,
     "closable_by_rule": 0,
-    "claims": 27,
-    "oldest_hours": 0,
-    "oldest_incident_hours": 0
+    "claims": 48,
+    "oldest_hours": 19,
+    "oldest_incident_hours": 2
   },
   "guard": {
     "blocked": true,
-    "why": "second review corrected or flagged 41% of events; 209 reports waiting"
+    "why": "second review corrected or flagged 42% of events; 90 reports waiting"
   },
   "roles": {
-    "triage": {
-      "model": "haiku",
-      "runs": 29,
-      "ok_rate": 0.97,
-      "cost": 0.54,
-      "cost_per_run": 0.019,
-      "turns_per_run": 10,
-      "min_per_run": 1.5,
-      "timeouts": 1
-    },
-    "researcher": {
-      "model": "sonnet",
-      "runs": 972,
-      "ok_rate": 0.88,
-      "cost": 242.52,
-      "cost_per_run": 0.25,
-      "turns_per_run": 14,
-      "min_per_run": 1.6,
-      "timeouts": 100
-    },
     "gap": {
       "model": "sonnet",
-      "runs": 278,
+      "runs": 260,
       "ok_rate": 1,
-      "cost": 76.56,
-      "cost_per_run": 0.275,
+      "cost": 70.87,
+      "cost_per_run": 0.273,
       "turns_per_run": 11,
       "min_per_run": 0.7,
       "timeouts": 0
     },
+    "researcher": {
+      "model": "sonnet",
+      "runs": 1044,
+      "ok_rate": 0.84,
+      "cost": 246.16,
+      "cost_per_run": 0.236,
+      "turns_per_run": 14,
+      "min_per_run": 1.9,
+      "timeouts": 159
+    },
+    "improver": {
+      "model": "sonnet",
+      "runs": 7,
+      "ok_rate": 1,
+      "cost": 1.24,
+      "cost_per_run": 0.176,
+      "turns_per_run": 11,
+      "min_per_run": 1,
+      "timeouts": 0
+    },
     "reviewer": {
       "model": "sonnet",
-      "runs": 535,
-      "ok_rate": 0.99,
-      "cost": 151.62,
-      "cost_per_run": 0.283,
+      "runs": 606,
+      "ok_rate": 0.98,
+      "cost": 160.34,
+      "cost_per_run": 0.265,
       "turns_per_run": 17,
-      "min_per_run": 1.4,
-      "timeouts": 0
+      "min_per_run": 1.6,
+      "timeouts": 7
     },
     "brief": {
       "model": "sonnet",
-      "runs": 14,
+      "runs": 15,
       "ok_rate": 1,
-      "cost": 4.17,
-      "cost_per_run": 0.298,
+      "cost": 4.27,
+      "cost_per_run": 0.285,
       "turns_per_run": 16,
       "min_per_run": 1.2,
       "timeouts": 0
     },
-    "exploit-analyst": {
-      "model": "opus",
-      "runs": 13,
-      "ok_rate": 1,
-      "cost": 10.68,
-      "cost_per_run": 0.822,
-      "turns_per_run": 23,
-      "min_per_run": 2.7,
-      "timeouts": 0
-    },
-    "regional": {
-      "model": "sonnet",
-      "runs": 8,
-      "ok_rate": 1,
-      "cost": 3.1,
-      "cost_per_run": 0.388,
-      "turns_per_run": 24,
-      "min_per_run": 2.2,
-      "timeouts": 0
-    },
-    "regional-researcher": {
-      "model": "sonnet",
-      "runs": 3,
-      "ok_rate": 1,
-      "cost": 1.07,
-      "cost_per_run": 0.358,
-      "turns_per_run": 18,
-      "min_per_run": 1.2,
-      "timeouts": 0
-    },
-    "improver": {
-      "model": "sonnet",
-      "runs": 6,
-      "ok_rate": 1,
-      "cost": 1.12,
-      "cost_per_run": 0.187,
-      "turns_per_run": 12,
-      "min_per_run": 0.9,
-      "timeouts": 0
+    "triage": {
+      "model": "haiku",
+      "runs": 29,
+      "ok_rate": 0.83,
+      "cost": 0.48,
+      "cost_per_run": 0.017,
+      "turns_per_run": 9,
+      "min_per_run": 2.5,
+      "timeouts": 5
     },
     "analysis": {
       "model": "opus",
-      "runs": 8,
-      "ok_rate": 1,
+      "runs": 9,
+      "ok_rate": 0.89,
       "cost": 16.7,
-      "cost_per_run": 2.087,
-      "turns_per_run": 37,
-      "min_per_run": 5.4,
-      "timeouts": 0
+      "cost_per_run": 1.855,
+      "turns_per_run": 33,
+      "min_per_run": 5.7,
+      "timeouts": 1
     },
     "report-review": {
       "model": "sonnet",
-      "runs": 7,
+      "runs": 8,
       "ok_rate": 1,
-      "cost": 2.99,
-      "cost_per_run": 0.427,
-      "turns_per_run": 23,
+      "cost": 3.29,
+      "cost_per_run": 0.411,
+      "turns_per_run": 22,
       "min_per_run": 2.2,
       "timeouts": 0
     },
@@ -146,43 +116,53 @@
     },
     "verify": {
       "model": "sonnet",
-      "runs": 10,
+      "runs": 12,
       "ok_rate": 1,
-      "cost": 5.51,
-      "cost_per_run": 0.551,
-      "turns_per_run": 14,
-      "min_per_run": 2.5,
+      "cost": 6.06,
+      "cost_per_run": 0.505,
+      "turns_per_run": 16,
+      "min_per_run": 2.8,
       "timeouts": 0
+    },
+    "exploit-analyst": {
+      "model": "opus",
+      "runs": 18,
+      "ok_rate": 0.94,
+      "cost": 15.87,
+      "cost_per_run": 0.882,
+      "turns_per_run": 28,
+      "min_per_run": 4.4,
+      "timeouts": 1
     },
     "advisory": {
       "model": "sonnet",
-      "runs": 10,
+      "runs": 12,
       "ok_rate": 1,
-      "cost": 3.04,
-      "cost_per_run": 0.304,
+      "cost": 3.47,
+      "cost_per_run": 0.289,
       "turns_per_run": 23,
-      "min_per_run": 1.8,
+      "min_per_run": 1.9,
       "timeouts": 0
     },
     "followup": {
       "model": "sonnet",
-      "runs": 67,
+      "runs": 81,
       "ok_rate": 0.99,
-      "cost": 21.29,
-      "cost_per_run": 0.318,
-      "turns_per_run": 16,
+      "cost": 23.72,
+      "cost_per_run": 0.293,
+      "turns_per_run": 15,
       "min_per_run": 1.2,
       "timeouts": 0
     },
     "updater": {
       "model": "sonnet",
-      "runs": 288,
-      "ok_rate": 0.99,
-      "cost": 63.85,
-      "cost_per_run": 0.222,
-      "turns_per_run": 12,
-      "min_per_run": 0.9,
-      "timeouts": 1
+      "runs": 331,
+      "ok_rate": 0.98,
+      "cost": 71.58,
+      "cost_per_run": 0.216,
+      "turns_per_run": 13,
+      "min_per_run": 1.1,
+      "timeouts": 2
     },
     "steward": {
       "model": "haiku",
@@ -194,14 +174,24 @@
       "min_per_run": 1.7,
       "timeouts": 0
     },
+    "regional": {
+      "model": "sonnet",
+      "runs": 8,
+      "ok_rate": 1,
+      "cost": 3.21,
+      "cost_per_run": 0.401,
+      "turns_per_run": 26,
+      "min_per_run": 2.5,
+      "timeouts": 0
+    },
     "fixer": {
       "model": "sonnet",
-      "runs": 44,
-      "ok_rate": 0.93,
-      "cost": 5.02,
+      "runs": 47,
+      "ok_rate": 0.89,
+      "cost": 5.37,
       "cost_per_run": 0.114,
       "turns_per_run": 7,
-      "min_per_run": 0.4,
+      "min_per_run": 0.6,
       "timeouts": 0
     },
     "tabletop": {
@@ -216,9 +206,9 @@
     },
     "backlog-triager": {
       "model": "haiku",
-      "runs": 62,
+      "runs": 118,
       "ok_rate": 1,
-      "cost": 0.34,
+      "cost": 0.62,
       "cost_per_run": 0.005,
       "turns_per_run": 3,
       "min_per_run": 0.4,
@@ -226,21 +216,21 @@
     },
     "grid": {
       "model": "sonnet",
-      "runs": 35,
+      "runs": 40,
       "ok_rate": 0.97,
-      "cost": 6.1,
-      "cost_per_run": 0.174,
+      "cost": 6.66,
+      "cost_per_run": 0.166,
       "turns_per_run": 9,
-      "min_per_run": 0.6,
+      "min_per_run": 0.8,
       "timeouts": 0
     },
     "outage": {
       "model": "sonnet",
-      "runs": 137,
+      "runs": 158,
       "ok_rate": 0.99,
-      "cost": 29.29,
-      "cost_per_run": 0.214,
-      "turns_per_run": 7,
+      "cost": 31.81,
+      "cost_per_run": 0.201,
+      "turns_per_run": 8,
       "min_per_run": 0.7,
       "timeouts": 0
     },
@@ -256,42 +246,42 @@
     },
     "researcher-deep": {
       "model": "sonnet",
-      "runs": 431,
-      "ok_rate": 0.84,
-      "cost": 220.85,
-      "cost_per_run": 0.512,
-      "turns_per_run": 18,
-      "min_per_run": 2.6,
-      "timeouts": 59
+      "runs": 615,
+      "ok_rate": 0.7,
+      "cost": 244.76,
+      "cost_per_run": 0.398,
+      "turns_per_run": 16,
+      "min_per_run": 3.3,
+      "timeouts": 173
     },
     "claims": {
       "model": "sonnet",
-      "runs": 165,
+      "runs": 200,
       "ok_rate": 0.99,
-      "cost": 41.88,
-      "cost_per_run": 0.254,
+      "cost": 47.91,
+      "cost_per_run": 0.24,
       "turns_per_run": 10,
       "min_per_run": 0.5,
       "timeouts": 0
     },
     "updater-deep": {
       "model": "sonnet",
-      "runs": 38,
-      "ok_rate": 0.89,
-      "cost": 14.4,
-      "cost_per_run": 0.379,
+      "runs": 53,
+      "ok_rate": 0.92,
+      "cost": 16.12,
+      "cost_per_run": 0.304,
       "turns_per_run": 11,
-      "min_per_run": 1.2,
+      "min_per_run": 1.3,
       "timeouts": 2
     },
     "followup-deep": {
       "model": "sonnet",
-      "runs": 61,
-      "ok_rate": 0.95,
-      "cost": 86.57,
-      "cost_per_run": 1.419,
-      "turns_per_run": 38,
-      "min_per_run": 3.4,
+      "runs": 71,
+      "ok_rate": 0.96,
+      "cost": 88.14,
+      "cost_per_run": 1.241,
+      "turns_per_run": 34,
+      "min_per_run": 3.1,
       "timeouts": 0
     },
     "security-review": {
@@ -316,69 +306,45 @@
     }
   },
   "jobs": {
-    "feeds": {
-      "runs": 100,
-      "added": 0,
-      "updated": 0,
-      "skipped": 0,
-      "cost": null,
-      "add_rate": null
-    },
     "sweep": {
-      "runs": 1434,
-      "added": 482,
-      "updated": 163,
-      "skipped": 3596,
-      "cost": 898.95,
+      "runs": 1509,
+      "added": 485,
+      "updated": 170,
+      "skipped": 3812,
+      "cost": 929.33,
       "add_rate": 0.15
     },
-    "context": {
-      "runs": 98,
-      "added": 0,
-      "updated": 0,
-      "skipped": 0,
-      "cost": null,
-      "add_rate": null
-    },
-    "verify": {
-      "runs": 11,
-      "added": 0,
-      "updated": 58,
-      "skipped": 10,
-      "cost": 5.51,
-      "add_rate": 0.85
-    },
     "triage": {
-      "runs": 469,
+      "runs": 515,
       "added": 0,
       "updated": 0,
-      "skipped": 2687,
-      "cost": 0.69,
+      "skipped": 3095,
+      "cost": 0.63,
       "add_rate": 0
-    },
-    "tabletop": {
-      "runs": 3,
-      "added": 0,
-      "updated": 0,
-      "skipped": 5,
-      "cost": 1.15,
-      "add_rate": 0
-    },
-    "advisory": {
-      "runs": 12,
-      "added": 20,
-      "updated": 0,
-      "skipped": 11,
-      "cost": 3.04,
-      "add_rate": 0.65
     },
     "reviewer": {
-      "runs": 225,
+      "runs": 254,
       "added": 0,
-      "updated": 2,
+      "updated": 4,
       "skipped": 0,
       "cost": null,
       "add_rate": 1
+    },
+    "context": {
+      "runs": 107,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "feeds": {
+      "runs": 107,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
     },
     "steward": {
       "runs": 2,
@@ -389,20 +355,20 @@
       "add_rate": 0.59
     },
     "analysis": {
-      "runs": 9,
+      "runs": 10,
       "added": 0,
-      "updated": 33,
-      "skipped": 35,
+      "updated": 37,
+      "skipped": 38,
       "cost": 16.7,
       "add_rate": 0.49
     },
     "brief": {
-      "runs": 10,
+      "runs": 12,
       "added": 0,
-      "updated": 4,
+      "updated": 6,
       "skipped": 7,
-      "cost": 4.17,
-      "add_rate": 0.36
+      "cost": 4.37,
+      "add_rate": 0.46
     },
     "gap": {
       "runs": 2,
@@ -412,29 +378,37 @@
       "cost": null,
       "add_rate": 0.14
     },
+    "verify": {
+      "runs": 12,
+      "added": 0,
+      "updated": 59,
+      "skipped": 10,
+      "cost": 6.06,
+      "add_rate": 0.86
+    },
     "backlog-auto": {
-      "runs": 1086,
+      "runs": 1135,
       "added": 0,
       "updated": 0,
-      "skipped": 123492,
+      "skipped": 125181,
       "cost": null,
       "add_rate": 0
     },
     "backlog-triage": {
-      "runs": 25,
+      "runs": 47,
       "added": 0,
       "updated": 0,
-      "skipped": 1359,
+      "skipped": 2240,
       "cost": null,
       "add_rate": 0
     },
     "researcher": {
-      "runs": 198,
-      "added": 189,
-      "updated": 57,
-      "skipped": 584,
+      "runs": 262,
+      "added": 245,
+      "updated": 73,
+      "skipped": 791,
       "cost": null,
-      "add_rate": 0.3
+      "add_rate": 0.29
     },
     "stories": {
       "runs": 41,
@@ -452,29 +426,37 @@
       "cost": null,
       "add_rate": 0.91
     },
+    "advisory": {
+      "runs": 13,
+      "added": 17,
+      "updated": 0,
+      "skipped": 15,
+      "cost": 3.47,
+      "add_rate": 0.53
+    },
     "analyst": {
-      "runs": 16,
-      "added": 26,
+      "runs": 24,
+      "added": 45,
       "updated": 9,
-      "skipped": 1,
-      "cost": 10.81,
-      "add_rate": 0.97
+      "skipped": 3,
+      "cost": 16.08,
+      "add_rate": 0.95
     },
     "review": {
-      "runs": 289,
+      "runs": 341,
       "added": 0,
       "updated": 4,
       "skipped": 0,
-      "cost": 28.53,
+      "cost": 22.18,
       "add_rate": 1
     },
     "regional": {
-      "runs": 8,
+      "runs": 9,
       "added": 4,
       "updated": 0,
-      "skipped": 19,
-      "cost": 3.23,
-      "add_rate": 0.17
+      "skipped": 21,
+      "cost": 3.34,
+      "add_rate": 0.16
     },
     "deep-sweep-a": {
       "runs": 1,
@@ -501,26 +483,26 @@
       "add_rate": 0
     },
     "improver": {
-      "runs": 6,
+      "runs": 7,
       "added": 0,
       "updated": 0,
       "skipped": 1,
-      "cost": 1.12,
+      "cost": 1.24,
       "add_rate": 0
     },
     "updater": {
-      "runs": 169,
+      "runs": 196,
       "added": 0,
-      "updated": 56,
+      "updated": 70,
       "skipped": 3,
       "cost": null,
-      "add_rate": 0.95
+      "add_rate": 0.96
     },
     "report review": {
-      "runs": 5,
+      "runs": 6,
       "added": 0,
-      "updated": 18,
-      "skipped": 6,
+      "updated": 21,
+      "skipped": 7,
       "cost": null,
       "add_rate": 0.75
     },
@@ -533,25 +515,25 @@
       "add_rate": null
     },
     "update-u1": {
-      "runs": 64,
+      "runs": 69,
       "added": 1,
-      "updated": 23,
+      "updated": 30,
       "skipped": 9,
       "cost": null,
-      "add_rate": 0.73
+      "add_rate": 0.78
     },
     "followup": {
-      "runs": 126,
+      "runs": 147,
       "added": 1,
-      "updated": 136,
+      "updated": 143,
       "skipped": 67,
       "cost": 0.24,
-      "add_rate": 0.67
+      "add_rate": 0.68
     },
     "update-u2": {
-      "runs": 12,
+      "runs": 17,
       "added": 0,
-      "updated": 11,
+      "updated": 16,
       "skipped": 0,
       "cost": null,
       "add_rate": 1
@@ -565,10 +547,10 @@
       "add_rate": 0.94
     },
     "grid": {
-      "runs": 355,
+      "runs": 382,
       "added": 0,
       "updated": 0,
-      "skipped": 38,
+      "skipped": 44,
       "cost": null,
       "add_rate": 0
     },
@@ -577,51 +559,59 @@
       "added": 0,
       "updated": 5,
       "skipped": 1,
-      "cost": 2.99,
+      "cost": 3.29,
       "add_rate": 0.83
     },
-    "grid-desk": {
-      "runs": 32,
+    "tabletop": {
+      "runs": 2,
       "added": 0,
-      "updated": 36,
+      "updated": 0,
+      "skipped": 3,
+      "cost": 1.15,
+      "add_rate": 0
+    },
+    "grid-desk": {
+      "runs": 37,
+      "added": 0,
+      "updated": 42,
       "skipped": 0,
       "cost": null,
       "add_rate": 1
     },
     "outage": {
-      "runs": 97,
+      "runs": 118,
       "added": 1,
       "updated": 0,
-      "skipped": 90,
+      "skipped": 113,
       "cost": null,
       "add_rate": 0.01
     },
     "outage-desk": {
-      "runs": 107,
+      "runs": 128,
       "added": 0,
-      "updated": 231,
+      "updated": 277,
       "skipped": 9,
       "cost": null,
-      "add_rate": 0.96
+      "add_rate": 0.97
     },
     "claims": {
-      "runs": 93,
+      "runs": 113,
       "added": 0,
       "updated": 0,
-      "skipped": 75,
+      "skipped": 84,
       "cost": null,
       "add_rate": 0
     },
     "claims-desk": {
-      "runs": 115,
+      "runs": 138,
       "added": 0,
-      "updated": 424,
+      "updated": 516,
       "skipped": 6,
       "cost": null,
       "add_rate": 0.99
     },
     "scams": {
-      "runs": 45,
+      "runs": 58,
       "added": 0,
       "updated": 0,
       "skipped": 0,
@@ -629,12 +619,12 @@
       "add_rate": null
     },
     "claims-c1": {
-      "runs": 24,
+      "runs": 39,
       "added": 1,
       "updated": 0,
-      "skipped": 26,
+      "skipped": 30,
       "cost": null,
-      "add_rate": 0.04
+      "add_rate": 0.03
     },
     "followup-1-unfinished": {
       "runs": 1,
@@ -669,12 +659,12 @@
       "add_rate": null
     },
     "researcher-sweep": {
-      "runs": 11,
-      "added": 11,
-      "updated": 3,
-      "skipped": 41,
+      "runs": 17,
+      "added": 15,
+      "updated": 6,
+      "skipped": 66,
       "cost": null,
-      "add_rate": 0.25
+      "add_rate": 0.24
     },
     "scout": {
       "runs": 1,
@@ -685,7 +675,55 @@
       "add_rate": 0
     },
     "updater-1-unfinished": {
+      "runs": 4,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "reviewer-1-unfinished": {
       "runs": 3,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "reviewer-2-unfinished": {
+      "runs": 2,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "reviewer-3-unfinished": {
+      "runs": 1,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "reviewer-4-unfinished": {
+      "runs": 1,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "updater-2-unfinished": {
+      "runs": 1,
+      "added": 0,
+      "updated": 0,
+      "skipped": 0,
+      "cost": null,
+      "add_rate": null
+    },
+    "w": {
+      "runs": 1,
       "added": 0,
       "updated": 0,
       "skipped": 0,
@@ -694,126 +732,124 @@
     }
   },
   "skip_reasons": {
-    "already on file": 122205,
-    "other": 6559,
-    "not an event (commentary or marketing)": 1511,
-    "minor advisory": 1314,
-    "too old": 547,
-    "source unreadable": 122
+    "already on file": 123192,
+    "other": 8394,
+    "not an event (commentary or marketing)": 1884,
+    "minor advisory": 1553,
+    "too old": 571,
+    "source unreadable": 142
   },
   "review_notes": [
     {
-      "id": "jeonju-university-aha-service-breach-2026-11",
+      "id": "deichmann-online-store-data-theft-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "stronger than source: removed 'chosen payment method' not on any page read; date moved to 24 Nov per notice dated Tuesday (Berliner Zeitung)"
+    },
+    {
+      "id": "eneco-belgium-customer-data-theft-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "stronger than the source: RTBF quotes Eneco conditionally (auraient été dérobées); now says apparently stolen"
+    },
+    {
+      "id": "seoul-police-hacked-portal-accounts-fake-clinic-reviews-2026-11",
       "state": "corrected",
       "flags": [
-        "figure-no-evidence"
+        "figure-qualifier"
       ],
-      "note": "invalid tag removed; exec had unsourced advice, now restates summary; figures, time, date, action checked against ZDNet Korea and Dailysecu"
+      "note": "figure qualifiers about 800 and about 8,400; removed unsourced claim from exec"
     },
     {
-      "id": "adobe-aem-campaign-classic-csirt-it-2026-11",
+      "id": "joomla-web-installer-missing-auth-cve-2026-123214-2026-11",
+      "state": "flagged",
+      "flags": [],
+      "note": "source unreachable: Joomla advisory shows bot-verification page; search finds no second publisher or trace of the CVE or fixed versions"
+    },
+    {
+      "id": "nccia-karachi-call-center-medical-billing-fraud-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "plain attributed its bulletin to Adobe; page is the CSIRT Italy table: reworded. 113 count, products, impacts, bulletin IDs checked"
+      "note": "source not read / validation: Phoneworld page would not load for review, so its added claim (five others at large) and corroboration were removed; now single_source on Arab News Pakistan (title, date,"
     },
     {
-      "id": "fincen-cybersecurity-incident-unauthorized-access-2026-11",
+      "id": "japan-blocking-leak-sites-law-review-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "exec stated unsourced fact about SARs held; reworded to the article statements. Date, limited access, offline, help line checked"
+      "note": "date: panel first met 20 Nov per Digital Today, not publication day 26 Nov; removed time_basis; rest matches source"
     },
     {
-      "id": "netbeat-hosting-cyberattack-password-reset-2026-11",
+      "id": "seoul-clinic-fake-reviews-hacked-accounts-2026-11",
+      "state": "corrected",
+      "flags": [],
+      "note": "stronger than source: plan to ask portals to delete now asked portals; date, laws, Chinese group checked against Herald Business"
+    },
+    {
+      "id": "kai-iwi-lakes-seekom-breach-2026-11",
       "state": "corrected",
       "flags": [
-        "source-published-partial"
+        "long-summary"
       ],
-      "note": "invalid tag data-leak replaced by data-breach; title, date, attack, offline servers, password reset plan, misuse, no customer count checked against Caschys Blog and Borns IT Blog"
+      "note": "stronger/different than source: Seekom does not say it cannot confirm a link; it says messages appear to contain booking info from its platform but it cannot know for sure. Also council changed to cam"
     },
     {
-      "id": "temairazu-final-findings-exposure-up-to-1-million-2026-11",
+      "id": "mekari-cyberattack-talenta-payroll-outage-2026-11",
       "state": "corrected",
       "flags": [],
-      "note": "action said no advice though article gives user advice; now sourced. Figures, dates, no confirmed leak checked"
+      "note": "stronger than the source: plain/exec stated payroll delay as fact; Katadata says users reported late payments"
     },
     {
-      "id": "cia-odni-osint-network-breach-2026-11",
+      "id": "us-intel-osint-platform-reported-breach-2026-11",
       "state": "corrected",
       "flags": [
-        "corroborated-note"
+        "long-summary"
       ],
-      "note": "status: confirmed had no on-record CIA/ODNI confirmation; set developing; validation note names publishers. Checked against WTVB, Fox, The Star"
+      "note": "stronger than the source: summary said VTC News relayed Beijing suggestion (VTC does not mention China; Tin Tuc does); agencies' statement attributed to RBC"
     },
     {
-      "id": "cleverbridge-payment-card-data-breach-2026-11",
-      "state": "corrected",
-      "flags": [
-        "source-published-partial"
-      ],
-      "note": "tag: invented payment-card removed; stronger than the source: plain/exec said security codes without in a minority of cases; unused evidence removed. Facts checked against Cleverbridge page, BleepingC"
-    },
-    {
-      "id": "jade-group-ec-system-breach-descente-fitfit-2026-11",
-      "state": "corrected",
+      "id": "fake-claude-opus-5-revstealer-2026-11",
+      "state": "flagged",
       "flags": [],
-      "note": "source list: removed roundup; facts match both brand notices"
+      "note": "Content matches sources, but Help Net Security 1 Sep shows disclosure about 12 weeks before first_seen: older than the map window; needs maintainer decision"
     },
     {
-      "id": "microsoft-entra-connect-health-metadata-exposure-2026-11",
-      "state": "corrected",
+      "id": "incibe-danfoss-ak-sc355-default-credentials-cve-2026-127057-2026-11",
+      "state": "flagged",
       "flags": [],
-      "note": "unsourced voice: exec phishing warning attributed to the article"
-    },
-    {
-      "id": "mozilla-thunderbird-161-mfsa-2026-134-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "action: kept sourced Mozilla/NCA advice, no unevidenced figure; date, impact, CVEs, NCA alert verified"
-    },
-    {
-      "id": "checkpoint-retail-attacks-28pct-black-friday-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "action advice: replaced unsourced General advice with Check Point advice relayed by DARetail; 28%, 22%, 4 000 verified"
-    },
-    {
-      "id": "symfony-stimulus-bridge-cve-2026-133780-2026-11",
-      "state": "corrected",
-      "flags": [],
-      "note": "place: removed 0,0 Unknown pin (no place stated), pin_type none; text matches Symfony advisory"
+      "note": "source unreachable: incibe.es/node/702409 returns page-not-found on 26 Nov; no second publisher"
     }
   ],
   "review_errors": {
     "types": [
       {
+        "key": "overstated",
+        "n": 98,
+        "pct_of_corrected": 29.5,
+        "checks": [
+          "claim-title"
+        ]
+      },
+      {
         "key": "unsourced",
-        "n": 117,
-        "pct_of_corrected": 32.4,
+        "n": 87,
+        "pct_of_corrected": 26.2,
         "checks": [
           "figure-no-evidence",
           "figure-not-in-summary"
         ]
       },
       {
-        "key": "overstated",
-        "n": 103,
-        "pct_of_corrected": 28.5,
-        "checks": [
-          "claim-title"
-        ]
-      },
-      {
         "key": "action",
-        "n": 95,
-        "pct_of_corrected": 26.3,
+        "n": 80,
+        "pct_of_corrected": 24.1,
         "checks": [
           "action-unsourced"
         ]
       },
       {
         "key": "figure",
-        "n": 73,
-        "pct_of_corrected": 20.2,
+        "n": 63,
+        "pct_of_corrected": 19,
         "checks": [
           "figure-no-evidence",
           "figure-qualifier",
@@ -822,24 +858,16 @@
       },
       {
         "key": "misstated",
-        "n": 71,
-        "pct_of_corrected": 19.7,
+        "n": 56,
+        "pct_of_corrected": 16.9,
         "checks": [
           "figure-no-evidence"
         ]
       },
       {
-        "key": "attribution",
-        "n": 64,
-        "pct_of_corrected": 17.7,
-        "checks": [
-          "actor-unsourced"
-        ]
-      },
-      {
         "key": "source",
-        "n": 51,
-        "pct_of_corrected": 14.1,
+        "n": 46,
+        "pct_of_corrected": 13.9,
         "checks": [
           "listing-source",
           "confirmed-on-secondary",
@@ -847,9 +875,17 @@
         ]
       },
       {
+        "key": "attribution",
+        "n": 45,
+        "pct_of_corrected": 13.6,
+        "checks": [
+          "actor-unsourced"
+        ]
+      },
+      {
         "key": "validation",
-        "n": 38,
-        "pct_of_corrected": 10.5,
+        "n": 39,
+        "pct_of_corrected": 11.7,
         "checks": [
           "corroborated-one-host",
           "corroborated-note",
@@ -859,22 +895,22 @@
       },
       {
         "key": "tags",
-        "n": 36,
-        "pct_of_corrected": 10,
+        "n": 35,
+        "pct_of_corrected": 10.5,
         "checks": [
           "tag-unsupported"
         ]
       },
       {
         "key": "other",
-        "n": 35,
-        "pct_of_corrected": 9.7,
+        "n": 31,
+        "pct_of_corrected": 9.3,
         "checks": []
       },
       {
         "key": "date",
-        "n": 29,
-        "pct_of_corrected": 8,
+        "n": 20,
+        "pct_of_corrected": 6,
         "checks": [
           "date-is-publication",
           "source-published-missing",
@@ -882,28 +918,28 @@
         ]
       },
       {
-        "key": "occurred_at",
-        "n": 17,
-        "pct_of_corrected": 4.7,
-        "checks": [
-          "occurred-placeholder",
-          "occurred-no-evidence"
-        ]
-      },
-      {
         "key": "place",
-        "n": 13,
-        "pct_of_corrected": 3.6,
+        "n": 15,
+        "pct_of_corrected": 4.5,
         "checks": [
           "no-pin"
         ]
       },
       {
         "key": "summary",
-        "n": 13,
-        "pct_of_corrected": 3.6,
+        "n": 9,
+        "pct_of_corrected": 2.7,
         "checks": [
           "long-summary"
+        ]
+      },
+      {
+        "key": "occurred_at",
+        "n": 7,
+        "pct_of_corrected": 2.1,
+        "checks": [
+          "occurred-placeholder",
+          "occurred-no-evidence"
         ]
       }
     ],
@@ -911,185 +947,168 @@
       {
         "role": "researcher",
         "model": "sonnet",
-        "reviewed": 274,
-        "corrected": 99,
+        "reviewed": 250,
+        "corrected": 92,
         "flagged": 1,
         "types": {
-          "overstated": 29,
-          "unsourced": 29,
-          "action": 22,
-          "misstated": 21,
-          "source": 17,
+          "overstated": 28,
+          "unsourced": 27,
+          "misstated": 23,
+          "action": 19,
+          "source": 16,
           "attribution": 13,
-          "figure": 13,
+          "figure": 11,
           "validation": 10,
-          "date": 10,
-          "other": 9,
-          "tags": 7,
+          "other": 7,
+          "tags": 6,
+          "date": 6,
           "place": 5,
-          "summary": 2,
+          "summary": 1,
           "occurred_at": 1
         },
-        "corrected_pct": 36.1
+        "corrected_pct": 36.8
+      },
+      {
+        "role": "researcher-deep",
+        "model": "sonnet",
+        "reviewed": 140,
+        "corrected": 56,
+        "flagged": 0,
+        "types": {
+          "overstated": 16,
+          "unsourced": 15,
+          "action": 11,
+          "figure": 10,
+          "attribution": 9,
+          "other": 8,
+          "source": 7,
+          "tags": 7,
+          "validation": 6,
+          "misstated": 5,
+          "date": 3,
+          "place": 2,
+          "occurred_at": 1
+        },
+        "corrected_pct": 40
       },
       {
         "role": "feeds",
         "model": "unknown",
         "reviewed": 113,
-        "corrected": 42,
+        "corrected": 40,
         "flagged": 2,
         "types": {
-          "action": 18,
-          "unsourced": 17,
-          "validation": 10,
-          "attribution": 9,
-          "overstated": 7,
-          "other": 6,
+          "action": 19,
+          "unsourced": 10,
+          "overstated": 8,
+          "validation": 8,
           "figure": 6,
-          "occurred_at": 4,
-          "misstated": 4,
-          "date": 2,
-          "tags": 2,
-          "source": 2,
-          "summary": 1,
-          "place": 1
-        },
-        "corrected_pct": 37.2
-      },
-      {
-        "role": "researcher-deep",
-        "model": "sonnet",
-        "reviewed": 91,
-        "corrected": 39,
-        "flagged": 0,
-        "types": {
-          "unsourced": 12,
-          "figure": 10,
-          "tags": 9,
-          "overstated": 9,
-          "action": 9,
-          "attribution": 6,
-          "misstated": 6,
-          "validation": 5,
-          "other": 5,
+          "tags": 5,
+          "attribution": 5,
           "source": 4,
-          "place": 2,
-          "occurred_at": 2,
-          "date": 1
-        },
-        "corrected_pct": 42.9
-      },
-      {
-        "role": "followup-deep",
-        "model": "opus",
-        "reviewed": 80,
-        "corrected": 55,
-        "flagged": 1,
-        "types": {
-          "action": 22,
-          "unsourced": 21,
-          "overstated": 21,
-          "figure": 15,
-          "attribution": 11,
-          "misstated": 9,
-          "source": 8,
-          "validation": 6,
-          "date": 6,
-          "tags": 6,
-          "other": 5,
-          "place": 3,
+          "date": 4,
+          "place": 4,
+          "other": 3,
+          "misstated": 2,
           "occurred_at": 2,
           "summary": 1
         },
-        "corrected_pct": 68.8
+        "corrected_pct": 35.4
+      },
+      {
+        "role": "unknown",
+        "model": "unknown",
+        "reviewed": 86,
+        "corrected": 37,
+        "flagged": 0,
+        "types": {
+          "figure": 13,
+          "overstated": 8,
+          "tags": 7,
+          "unsourced": 7,
+          "action": 7,
+          "other": 4,
+          "validation": 4,
+          "misstated": 3,
+          "summary": 3,
+          "attribution": 3,
+          "source": 2,
+          "place": 1,
+          "date": 1
+        },
+        "corrected_pct": 43
       },
       {
         "role": "researcher-deep",
         "model": "opus",
-        "reviewed": 74,
-        "corrected": 31,
+        "reviewed": 68,
+        "corrected": 27,
         "flagged": 0,
         "types": {
           "overstated": 10,
           "unsourced": 10,
           "misstated": 8,
-          "source": 7,
+          "source": 6,
           "figure": 5,
-          "date": 5,
           "attribution": 4,
           "action": 3,
-          "other": 3,
-          "validation": 2,
+          "date": 3,
+          "other": 2,
+          "validation": 1,
           "place": 1,
           "tags": 1
         },
-        "corrected_pct": 41.9
-      },
-      {
-        "role": "unknown",
-        "model": "unknown",
-        "reviewed": 38,
-        "corrected": 16,
-        "flagged": 0,
-        "types": {
-          "figure": 4,
-          "tags": 3,
-          "unsourced": 3,
-          "action": 3,
-          "overstated": 3,
-          "attribution": 3,
-          "other": 2,
-          "misstated": 2,
-          "summary": 2,
-          "validation": 1
-        },
-        "corrected_pct": 42.1
+        "corrected_pct": 39.7
       },
       {
         "role": "updater",
         "model": "sonnet",
-        "reviewed": 35,
-        "corrected": 17,
-        "flagged": 1,
+        "reviewed": 48,
+        "corrected": 27,
+        "flagged": 0,
         "types": {
-          "figure": 6,
-          "overstated": 5,
-          "unsourced": 4,
-          "action": 4,
-          "tags": 4,
-          "misstated": 4,
-          "attribution": 3,
-          "source": 2,
-          "summary": 2,
-          "validation": 1
+          "overstated": 9,
+          "figure": 7,
+          "misstated": 6,
+          "action": 6,
+          "unsourced": 5,
+          "validation": 4,
+          "source": 4,
+          "attribution": 4,
+          "summary": 3,
+          "tags": 3,
+          "date": 2,
+          "other": 1,
+          "place": 1
         },
-        "corrected_pct": 48.6
+        "corrected_pct": 56.3
       },
       {
-        "role": "verify",
-        "model": "sonnet",
-        "reviewed": 19,
-        "corrected": 6,
-        "flagged": 9,
+        "role": "followup-deep",
+        "model": "opus",
+        "reviewed": 43,
+        "corrected": 27,
+        "flagged": 1,
         "types": {
-          "attribution": 3,
-          "occurred_at": 3,
-          "figure": 2,
-          "unsourced": 2,
-          "action": 2,
-          "date": 2,
-          "overstated": 1,
+          "action": 10,
+          "overstated": 9,
+          "figure": 9,
+          "unsourced": 5,
+          "attribution": 4,
+          "validation": 4,
+          "other": 4,
+          "source": 3,
+          "misstated": 3,
           "summary": 1,
-          "misstated": 1,
-          "validation": 1,
-          "source": 1
+          "date": 1,
+          "place": 1
         },
-        "corrected_pct": 31.6
+        "corrected_pct": 62.8
       },
       {
         "role": "report-review",
         "model": "sonnet",
-        "reviewed": 18,
+        "reviewed": 21,
         "corrected": 6,
         "flagged": 0,
         "types": {
@@ -1101,265 +1120,276 @@
           "attribution": 1,
           "occurred_at": 1
         },
-        "corrected_pct": 33.3
+        "corrected_pct": 28.6
+      },
+      {
+        "role": "verify",
+        "model": "sonnet",
+        "reviewed": 13,
+        "corrected": 2,
+        "flagged": 7,
+        "types": {
+          "validation": 2,
+          "action": 1
+        },
+        "corrected_pct": 15.4
       },
       {
         "role": "followup",
         "model": "sonnet",
-        "reviewed": 14,
-        "corrected": 10,
+        "reviewed": 10,
+        "corrected": 6,
         "flagged": 0,
         "types": {
-          "overstated": 5,
-          "unsourced": 5,
-          "misstated": 4,
-          "action": 3,
-          "figure": 2,
-          "source": 2,
-          "occurred_at": 2,
-          "attribution": 2,
-          "other": 1,
-          "date": 1
+          "unsourced": 3,
+          "misstated": 2,
+          "overstated": 2,
+          "tags": 1,
+          "action": 1,
+          "occurred_at": 1,
+          "attribution": 1,
+          "other": 1
         },
-        "corrected_pct": 71.4
+        "corrected_pct": 60
+      },
+      {
+        "role": "reviewer",
+        "model": "sonnet",
+        "reviewed": 5,
+        "corrected": 5,
+        "flagged": 0,
+        "types": {
+          "overstated": 3,
+          "unsourced": 1,
+          "source": 1,
+          "tags": 1,
+          "misstated": 1,
+          "other": 1
+        },
+        "corrected_pct": 100
       },
       {
         "role": "analysis",
         "model": "opus",
-        "reviewed": 9,
-        "corrected": 6,
-        "flagged": 0,
-        "types": {
-          "figure": 3,
-          "misstated": 3,
-          "attribution": 3,
-          "unsourced": 2,
-          "action": 2,
-          "tags": 1,
-          "source": 1,
-          "summary": 1,
-          "overstated": 1
-        },
-        "corrected_pct": 66.7
-      },
-      {
-        "role": "gap",
-        "model": "sonnet",
         "reviewed": 5,
-        "corrected": 1,
+        "corrected": 3,
         "flagged": 0,
         "types": {
-          "figure": 1,
-          "date": 1
+          "figure": 2,
+          "tags": 1,
+          "misstated": 1,
+          "overstated": 1,
+          "unsourced": 1,
+          "action": 1
         },
-        "corrected_pct": 20
+        "corrected_pct": 60
       }
     ]
   },
   "evals": {
-    "reviews": 1643,
-    "corrected_pct": 40.7,
-    "first_review_corrected_pct": 34.4,
-    "with_diff": 645,
+    "reviews": 1695,
+    "corrected_pct": 42.2,
+    "first_review_corrected_pct": 36.5,
+    "with_diff": 692,
     "mistakes": [
       {
         "key": "detail-not-in-source",
         "label": "a detail no page states was removed or reworded (summary, plain, exec)",
-        "n": 249,
-        "pct_of_corrected": 37.2,
+        "n": 240,
+        "pct_of_corrected": 33.5,
         "caught_pct": 0,
-        "missed": 240,
+        "missed": 231,
         "by_writer": {
-          "researcher/sonnet": 109,
-          "followup-deep/opus": 27,
-          "researcher-deep/opus": 24,
-          "unknown/unknown": 20,
-          "updater/sonnet": 17
+          "researcher/sonnet": 104,
+          "researcher-deep/opus": 23,
+          "followup-deep/opus": 23,
+          "researcher-deep/sonnet": 23,
+          "updater/sonnet": 21
         },
         "examples": [
-          "jeonju-university-aha-service-breach-2026-11",
-          "fincen-cybersecurity-incident-unauthorized-access-2026-11",
-          "cleverbridge-payment-card-data-breach-2026-11"
+          "seoul-police-hacked-portal-accounts-fake-clinic-reviews-2026-11",
+          "1password-github-account-breach-2026-11",
+          "kai-iwi-lakes-seekom-breach-2026-11"
         ]
       },
       {
         "key": "action-not-from-source",
         "label": "action gave advice no page gives, or did not say whose advice it is",
-        "n": 158,
-        "pct_of_corrected": 23.6,
-        "caught_pct": 18.2,
-        "missed": 126,
+        "n": 184,
+        "pct_of_corrected": 25.7,
+        "caught_pct": 18.9,
+        "missed": 146,
         "by_writer": {
-          "researcher/sonnet": 63,
-          "followup-deep/opus": 28,
-          "unknown/unknown": 13,
-          "updater/sonnet": 11,
-          "researcher-deep/sonnet": 11
+          "researcher/sonnet": 69,
+          "followup-deep/opus": 26,
+          "unknown/unknown": 21,
+          "researcher-deep/sonnet": 17,
+          "updater/sonnet": 16
         },
         "examples": [
-          "temairazu-final-findings-exposure-up-to-1-million-2026-11",
-          "checkpoint-retail-attacks-28pct-black-friday-2026-11",
-          "mediawiki-editaccount-cve-2026-132669-2026-11"
+          "cleansui-goqsystem-order-data-10466-2026-11",
+          "france-eu-sanctions-iran-irgc-refrigeration-attacks-2026-11",
+          "jesta-opencode-agent-decoy-key-2026-11"
         ]
       },
       {
         "key": "who-said-it-missing",
         "label": "a finding in CyberView's voice; the reviewer added who said it",
-        "n": 147,
-        "pct_of_corrected": 22,
-        "caught_pct": 7.7,
-        "missed": 132,
+        "n": 131,
+        "pct_of_corrected": 18.3,
+        "caught_pct": 2.4,
+        "missed": 124,
         "by_writer": {
-          "researcher/sonnet": 52,
-          "followup-deep/opus": 24,
-          "unknown/unknown": 18,
-          "researcher-deep/sonnet": 15,
-          "analysis/opus": 9
-        },
-        "examples": [
-          "microsoft-entra-connect-health-metadata-exposure-2026-11",
-          "korea-fsc-joint-crisis-drill-banks-2026-11",
-          "microsoft-365-global-outage-2026-11"
-        ]
-      },
-      {
-        "key": "figure-changed",
-        "label": "a figure, its qualifier or its unit was wrong or unsupported",
-        "n": 77,
-        "pct_of_corrected": 11.5,
-        "caught_pct": 25,
-        "missed": 57,
-        "by_writer": {
-          "researcher/sonnet": 28,
+          "researcher/sonnet": 44,
+          "followup-deep/opus": 20,
+          "researcher-deep/sonnet": 19,
           "unknown/unknown": 12,
-          "researcher-deep/sonnet": 9,
-          "followup-deep/opus": 7,
-          "analysis/opus": 6
+          "updater/sonnet": 9
         },
         "examples": [
-          "rakuten-securities-test-environment-breach-2026-11",
-          "dutch-police-fake-webshop-suspect-victims-sought-2026-11",
-          "fortinet-korea-ransomware-listings-ai-summit-2026-11"
-        ]
-      },
-      {
-        "key": "certainty-overstated",
-        "label": "stated as fact what the source hedges (may have, reportedly, claims)",
-        "n": 76,
-        "pct_of_corrected": 11.4,
-        "caught_pct": 0,
-        "missed": 68,
-        "by_writer": {
-          "researcher/sonnet": 33,
-          "followup-deep/opus": 10,
-          "updater/sonnet": 8,
-          "followup/sonnet": 6,
-          "researcher-deep/sonnet": 6
-        },
-        "examples": [
-          "decathlon-customer-data-claim-2026-11",
-          "jpmorgan-third-party-vendors-cyberattack-2026-11",
-          "el-cajon-city-network-security-incident-2026-11"
+          "us-intel-osint-platform-reported-breach-2026-11",
+          "jcb-karte-myjcb-management-codes-leak-2026-11",
+          "pipc-merger-personal-data-inspection-korean-air-gmarket-remember-2026-11"
         ]
       },
       {
         "key": "source-published-missing",
         "label": "a source's own publication day was missing or wrong",
-        "n": 68,
-        "pct_of_corrected": 10.2,
-        "caught_pct": 79.4,
-        "missed": 14,
+        "n": 88,
+        "pct_of_corrected": 12.3,
+        "caught_pct": 69.3,
+        "missed": 27,
         "by_writer": {
           "followup-deep/opus": 27,
-          "researcher/sonnet": 10,
+          "researcher/sonnet": 17,
+          "updater/sonnet": 9,
           "researcher-deep/opus": 9,
-          "updater/sonnet": 8,
+          "unknown/unknown": 7
+        },
+        "examples": [
+          "carnegie-endowment-donation-vendor-breach-2026-11",
+          "silverstripe-critical-rce-auth-bypass-ss-2026-008-009",
+          "bulgaria-government-networks-five-year-espionage-2026-11"
+        ]
+      },
+      {
+        "key": "certainty-overstated",
+        "label": "stated as fact what the source hedges (may have, reportedly, claims)",
+        "n": 73,
+        "pct_of_corrected": 10.2,
+        "caught_pct": 0,
+        "missed": 65,
+        "by_writer": {
+          "researcher/sonnet": 31,
+          "updater/sonnet": 9,
+          "followup-deep/opus": 9,
+          "researcher-deep/sonnet": 8,
           "followup/sonnet": 5
         },
         "examples": [
-          "synology-dsm-oauth-nginx-critical-flaws-2026-11",
-          "microsoft-agent-framework-pypi-compromise-2026-11",
-          "optimizely-web-script-injection-2026-11"
+          "eneco-belgium-customer-data-theft-2026-11",
+          "mitel-micollab-awv-critical-flaws-2026-11",
+          "osaki-electric-ransomware-smart-meter-halt-2026-11"
         ]
       },
       {
-        "key": "occurred-at-invented",
-        "label": "occurred_at was not a time the page states (removed or re-based)",
-        "n": 52,
-        "pct_of_corrected": 7.8,
-        "caught_pct": 55.8,
-        "missed": 23,
+        "key": "figure-changed",
+        "label": "a figure, its qualifier or its unit was wrong or unsupported",
+        "n": 70,
+        "pct_of_corrected": 9.8,
+        "caught_pct": 27.5,
+        "missed": 50,
         "by_writer": {
-          "researcher/sonnet": 15,
-          "verify/sonnet": 8,
-          "analysis/opus": 6,
-          "followup-deep/opus": 5,
-          "updater/sonnet": 4
+          "researcher/sonnet": 22,
+          "unknown/unknown": 15,
+          "researcher-deep/sonnet": 11,
+          "followup-deep/opus": 6,
+          "verify/sonnet": 4
         },
         "examples": [
-          "quantum-systems-drone-maker-cyberattack-2026-11",
-          "check-point-php2shell-gateway-wiper-campaign-2026-11",
-          "jpmorgan-chase-banking-outage-2026-11"
-        ]
-      },
-      {
-        "key": "source-list-wrong",
-        "label": "a source was unread, unrelated, a tracker or a listing; or the original was missing",
-        "n": 52,
-        "pct_of_corrected": 7.8,
-        "caught_pct": 12,
-        "missed": 44,
-        "by_writer": {
-          "researcher/sonnet": 21,
-          "unknown/unknown": 6,
-          "researcher-deep/sonnet": 6,
-          "followup-deep/opus": 4,
-          "followup/sonnet": 3
-        },
-        "examples": [
-          "jade-group-ec-system-breach-descente-fitfit-2026-11",
-          "ghostscript-dsafer-bypass-upload2shell-2026-11",
-          "cia-open-source-network-intrusion-reported-2026-11"
+          "medusalocker-claims-yahoo-brazil-emails-2026-11",
+          "piedmont-city-cyberattack-2026-11",
+          "best-egg-data-breach-notice-2026-11"
         ]
       },
       {
         "key": "evidence-missing",
         "label": "an evidence quote was missing or not word for word",
-        "n": 51,
-        "pct_of_corrected": 7.6,
-        "caught_pct": 35.3,
-        "missed": 33,
+        "n": 69,
+        "pct_of_corrected": 9.6,
+        "caught_pct": 23.2,
+        "missed": 53,
         "by_writer": {
-          "researcher/sonnet": 14,
-          "followup-deep/opus": 12,
-          "researcher-deep/sonnet": 12,
-          "updater/sonnet": 5,
-          "unknown/unknown": 4
+          "researcher/sonnet": 16,
+          "researcher-deep/sonnet": 15,
+          "unknown/unknown": 14,
+          "followup-deep/opus": 13,
+          "updater/sonnet": 5
         },
         "examples": [
-          "korea-fsc-digital-asset-act-hack-surcharge-2026-11",
-          "colla-health-metabase-breach-notice-2026-11",
-          "themailer-ai-phishing-kit-2026-11"
+          "sapporo-drug-store-cyberagent-line-data-exposure-2026-11",
+          "mjs-ma-partners-unauthorized-access-2026-11",
+          "nccia-karachi-elderly-fraud-gang-cash-recovered-2026-11"
         ]
       },
       {
         "key": "tag-unsupported",
         "label": "a tag the sources do not support",
-        "n": 51,
-        "pct_of_corrected": 7.6,
-        "caught_pct": 8.2,
-        "missed": 45,
+        "n": 62,
+        "pct_of_corrected": 8.7,
+        "caught_pct": 8.3,
+        "missed": 55,
         "by_writer": {
           "researcher/sonnet": 16,
-          "researcher-deep/sonnet": 10,
+          "researcher-deep/sonnet": 12,
+          "unknown/unknown": 9,
           "followup-deep/opus": 8,
-          "updater/sonnet": 6,
+          "updater/sonnet": 6
+        },
+        "examples": [
+          "infonet-infocms-shared-server-unauthorized-access-2026-11",
+          "tether-20-percent-reissuance-fee-hack-victims-2026-11",
+          "ghana-csa-cybercrime-4938-reported-2026-11"
+        ]
+      },
+      {
+        "key": "validation-overstated",
+        "label": "validation, status, severity or source_tier claimed more than the sources carry",
+        "n": 54,
+        "pct_of_corrected": 7.5,
+        "caught_pct": 23.5,
+        "missed": 39,
+        "by_writer": {
+          "researcher/sonnet": 14,
+          "unknown/unknown": 14,
+          "verify/sonnet": 6,
+          "researcher-deep/sonnet": 6,
+          "updater/sonnet": 4
+        },
+        "examples": [
+          "nccia-karachi-call-center-medical-billing-fraud-2026-11",
+          "inmac-wstore-cyberattack-orders-disrupted-2026-11",
+          "virtuemart-joomla-lfi-cve-2026-133335"
+        ]
+      },
+      {
+        "key": "occurred-at-invented",
+        "label": "occurred_at was not a time the page states (removed or re-based)",
+        "n": 51,
+        "pct_of_corrected": 7.1,
+        "caught_pct": 58.8,
+        "missed": 21,
+        "by_writer": {
+          "researcher/sonnet": 13,
+          "verify/sonnet": 8,
+          "analysis/opus": 6,
+          "updater/sonnet": 4,
           "unknown/unknown": 4
         },
         "examples": [
-          "netbeat-hosting-cyberattack-password-reset-2026-11",
-          "coinbase-state-dept-dublin-dprk-symposium-2026-11",
-          "greynoise-gt13-check-point-management-intrusions-2026-11"
+          "japan-blocking-leak-sites-law-review-2026-11",
+          "oracle-ebs-cve-2026-114924-114925-2026-11",
+          "cisa-icsa-dorsett-infoscan-water-sector-2026-11"
         ]
       }
     ],
@@ -1367,97 +1397,97 @@
       {
         "role": "researcher",
         "model": "sonnet",
-        "reviewed": 722,
+        "reviewed": 699,
         "corrected_pct": 37.5,
         "mistakes": {
-          "detail-not-in-source": 109,
-          "action-not-from-source": 63,
-          "who-said-it-missing": 52,
-          "certainty-overstated": 33
+          "detail-not-in-source": 104,
+          "action-not-from-source": 69,
+          "who-said-it-missing": 44,
+          "certainty-overstated": 31
+        }
+      },
+      {
+        "role": "researcher-deep",
+        "model": "sonnet",
+        "reviewed": 263,
+        "corrected_pct": 36.1,
+        "mistakes": {
+          "detail-not-in-source": 23,
+          "who-said-it-missing": 19,
+          "action-not-from-source": 17,
+          "evidence-missing": 15
         }
       },
       {
         "role": "unknown",
         "model": "unknown",
-        "reviewed": 212,
-        "corrected_pct": 30.7,
+        "reviewed": 182,
+        "corrected_pct": 43.4,
         "mistakes": {
-          "detail-not-in-source": 20,
-          "who-said-it-missing": 18,
-          "action-not-from-source": 13,
-          "figure-changed": 12
-        }
-      },
-      {
-        "role": "researcher-deep",
-        "model": "sonnet",
-        "reviewed": 152,
-        "corrected_pct": 40.8,
-        "mistakes": {
-          "detail-not-in-source": 17,
-          "who-said-it-missing": 15,
-          "evidence-missing": 12,
-          "action-not-from-source": 11
-        }
-      },
-      {
-        "role": "researcher-deep",
-        "model": "opus",
-        "reviewed": 132,
-        "corrected_pct": 41.7,
-        "mistakes": {
-          "detail-not-in-source": 24,
-          "source-published-missing": 9,
-          "action-not-from-source": 8,
-          "who-said-it-missing": 7
-        }
-      },
-      {
-        "role": "followup-deep",
-        "model": "opus",
-        "reviewed": 125,
-        "corrected_pct": 64,
-        "mistakes": {
-          "action-not-from-source": 28,
-          "detail-not-in-source": 27,
-          "source-published-missing": 27,
-          "who-said-it-missing": 24
+          "action-not-from-source": 21,
+          "figure-changed": 15,
+          "validation-overstated": 14,
+          "evidence-missing": 14
         }
       },
       {
         "role": "updater",
         "model": "sonnet",
-        "reviewed": 98,
-        "corrected_pct": 51,
+        "reviewed": 134,
+        "corrected_pct": 50.7,
         "mistakes": {
-          "detail-not-in-source": 17,
-          "action-not-from-source": 11,
-          "who-said-it-missing": 8,
-          "certainty-overstated": 8
+          "detail-not-in-source": 21,
+          "action-not-from-source": 16,
+          "who-said-it-missing": 9,
+          "certainty-overstated": 9
+        }
+      },
+      {
+        "role": "researcher-deep",
+        "model": "opus",
+        "reviewed": 134,
+        "corrected_pct": 42.5,
+        "mistakes": {
+          "detail-not-in-source": 23,
+          "source-published-missing": 9,
+          "action-not-from-source": 8,
+          "who-said-it-missing": 6
+        }
+      },
+      {
+        "role": "followup-deep",
+        "model": "opus",
+        "reviewed": 111,
+        "corrected_pct": 64.9,
+        "mistakes": {
+          "source-published-missing": 27,
+          "action-not-from-source": 26,
+          "detail-not-in-source": 23,
+          "who-said-it-missing": 20
         }
       },
       {
         "role": "verify",
         "model": "sonnet",
-        "reviewed": 59,
-        "corrected_pct": 28.8,
+        "reviewed": 61,
+        "corrected_pct": 34.4,
         "mistakes": {
           "occurred-at-invented": 8,
-          "figure-changed": 5,
-          "action-not-from-source": 5,
-          "who-said-it-missing": 4
+          "action-not-from-source": 8,
+          "who-said-it-missing": 6,
+          "detail-not-in-source": 6
         }
       },
       {
         "role": "analysis",
         "model": "opus",
-        "reviewed": 49,
-        "corrected_pct": 46.9,
+        "reviewed": 33,
+        "corrected_pct": 57.6,
         "mistakes": {
-          "detail-not-in-source": 9,
-          "who-said-it-missing": 9,
-          "action-not-from-source": 8,
-          "figure-changed": 6
+          "detail-not-in-source": 7,
+          "action-not-from-source": 7,
+          "occurred-at-invented": 6,
+          "who-said-it-missing": 6
         }
       },
       {
@@ -1467,64 +1497,63 @@
         "corrected_pct": 64.3,
         "mistakes": {
           "detail-not-in-source": 9,
-          "certainty-overstated": 6,
-          "who-said-it-missing": 5,
-          "source-published-missing": 5
+          "certainty-overstated": 5,
+          "source-published-missing": 5,
+          "action-not-from-source": 3
         }
       },
       {
         "role": "gap",
         "model": "sonnet",
-        "reviewed": 18,
-        "corrected_pct": 27.8,
+        "reviewed": 14,
+        "corrected_pct": 21.4,
         "mistakes": {
-          "date-note-missing": 2,
           "validation-overstated": 2,
           "occurred-at-invented": 1,
-          "date-wrong": 1
-        }
-      },
-      {
-        "role": "sweep",
-        "model": "sonnet",
-        "reviewed": 16,
-        "corrected_pct": 50,
-        "mistakes": {
-          "occurred-at-invented": 2,
-          "date-wrong": 2,
-          "detail-not-in-source": 2,
-          "action-not-from-source": 2
+          "date-wrong": 1,
+          "who-said-it-missing": 1
         }
       },
       {
         "role": "updater-deep",
         "model": "opus",
-        "reviewed": 8,
-        "corrected_pct": 62.5,
+        "reviewed": 9,
+        "corrected_pct": 55.6,
         "mistakes": {
           "detail-not-in-source": 3,
           "who-said-it-missing": 2,
           "source-published-missing": 2,
           "action-not-from-source": 1
         }
+      },
+      {
+        "role": "updater-deep",
+        "model": "sonnet",
+        "reviewed": 9,
+        "corrected_pct": 55.6,
+        "mistakes": {
+          "source-published-missing": 2,
+          "summary-too-long": 1,
+          "action-not-from-source": 1,
+          "occurred-at-invented": 1
+        }
       }
     ]
   },
   "flag_counts": {
     "corroborated-note": 3,
-    "no-cve-meta": 6,
-    "outage-as-attack": 7,
-    "figure-no-evidence": 18,
-    "figure-qualifier": 12,
-    "long-summary": 7,
+    "no-cve-meta": 8,
+    "outage-as-attack": 8,
+    "figure-no-evidence": 20,
+    "figure-qualifier": 13,
+    "long-summary": 9,
     "source-published-partial": 17,
-    "actor-unsourced": 6,
+    "actor-unsourced": 3,
     "figure-plus": 2,
-    "possible-duplicate": 12,
-    "action-unsourced": 1,
-    "old-date": 1,
+    "possible-duplicate": 10,
     "tag-unsupported": 1,
     "front-page-source": 2,
-    "roundup-source": 2
+    "roundup-source": 1,
+    "single-source-high": 1
   }
 }

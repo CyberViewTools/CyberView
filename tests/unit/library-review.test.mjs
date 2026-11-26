@@ -92,7 +92,7 @@ test("auditState: pauses above 5% once 50 cards are audited, not before", () => 
   assert.equal(auditState(audited(100, 6), DEFAULTS).paused, true);
   assert.equal(auditState(audited(100, 5), DEFAULTS).paused, false);
   assert.equal(paused(audited(100, 6), DEFAULTS), true);
-  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 10, audit_pause_pct: 5, audit_min: 50 });
+  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50 });
 });
 test("auditState: counts only the most recent 500 audits", () => {
   const m = new Map();
@@ -276,7 +276,7 @@ test("audit: pilot audits every unaudited read card; otherwise the configured sh
     for (let i = 0; i < 200; i++) { const s = i.toString(16).padStart(8, "0") + "0".repeat(32); (sh[s.slice(0, 2)] ||= {})[s] = { ...card("a"), sha1: s }; reports.push({ sha1: s, id: i }); }
     for (const [k, v] of Object.entries(sh)) writeFileSync(join(dir, "cards", `${k}.json`), JSON.stringify(v));
     const d = (extra) => ({ ...deps(dir, reply({ ok: true, wrong: [] })), library: { reports, actors: [] }, concurrency: 20, max: 500, ...extra });
-    const t0 = await runAudit(d({}));                       // not pilot, nothing audited yet: still only the share (i % 100 < 10 -> 20 cards)
+    const t0 = await runAudit(d({ cfg: { ...DEFAULTS, audit_pct: 10 } }));   // not pilot, a 10% share set by the owner: only the share (i % 100 < 10 -> 20 cards)
     assert.equal(t0.ok, 20);
     const t1 = await runAudit(d({ pilot: true }));
     assert.equal(t1.ok, 180);
@@ -485,4 +485,22 @@ test("settle: a correction against a reviewer-authored draft is recorded against
   const d = { ...DRAFT, corrected_by: "opus-x", corrections: 1 };
   const r = settle({ live: null, next: d }, { verdict: "reject", changes: [{ code: "wrong", note: "n" }] }, CARDS, null, NOW, "sonnet");
   assert.deepEqual([r.corrections[0].role, r.corrections[0].model], ["library-reviewer", "opus-x"]);
+});
+
+// B-I6: a card found wrong a second time is retired (tries spent), so a disputed card cannot loop read -> audit -> wrong forever
+import { retiredAfterAudit } from "../../scripts/lib/library-audit.mjs";
+import { libraryProblems } from "../../scripts/pipecheck.mjs";
+test("markCardWrong: a card that already failed an audit is retired instead of queued again; the loop ends", () => {
+  let c = card("b");
+  c = markCardWrong(c, "first", NOW);                                   // first failure: back to the reader
+  assert.equal(c.tries, 0); assert.equal(readQueue([{ sha1: h("b") }], new Map([[h("b"), c]])).length, 1);
+  // the reader reads it again: the failed audit moves into audit_history and the card is read
+  const again = { ...card("b", { read_at: "2026-11-27T00:00:00Z" }), audit_history: [c.audit] };
+  const twice = markCardWrong(again, "second", NOW, "reviewer");
+  assert.equal(twice.status, "unread"); assert.equal(twice.tries, R.MAX_TRIES);
+  assert.equal(readQueue([{ sha1: h("b") }], new Map([[h("b"), twice]])).length, 0, "not read again");
+  assert.deepEqual(retiredAfterAudit(new Map([[h("b"), twice], [h("a"), card("a")], [h("c"), { ...card("c"), status: "unread", tries: 2, reason: "bad-reply" }]])), [h("b")]);
+  const p = libraryProblems({ paused: false, wrong: [], parked: 0, orphans: 0, retired: 1 });
+  assert.equal(p.length, 1); assert.equal(p[0].id, "library-retired"); assert.match(p[0].text, /1/);
+  assert.match(statusLine(new Map(), new Map([[h("b"), twice]]), DEFAULTS), /retired after a failed audit 1/);
 });

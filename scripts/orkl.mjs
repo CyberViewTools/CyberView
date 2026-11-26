@@ -203,7 +203,7 @@ export function libraryIndex(reports, actors, builtAt = "", links = {}) {
       // rest, so an actor's record undercounted its reports (TraderTraitor: 21 of 34)
       a: [...new Set(arr(r.actors).map((x) => txt(x, 120)).filter(Boolean))].slice(0, 40),
     };
-    if (read.has(sha)) row.k = 1;                       // a read fact card is published for this report
+    if (read.has(sha)) row.k = 1;                       // a fact card is published for this report (cardPublished)
     if (looseStory.has(sha)) row.st = looseStory.get(sha);   // the report belongs to a live subject story
     return row;
   });
@@ -231,9 +231,12 @@ const SKEY = /^[A-Za-z0-9-]{1,70}$/;
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
 const FACT_KEYS = { actors: "a", sectors: "s", countries: "c", dates: "d", tools: "t", techniques: "q", cves: "v", figures: "g" };
 
-/** Pure: a card as the site may show it, or null unless status is "read". Values only: never a quote, hedge, audit, reason, tries or model. */
+/** Pure: is this card shown on the site? Only a read card whose CURRENT audit is the auditor's and passed (owner's ruling, final review
+ *  2026-11-25: a summary is shown only after the audit has checked it against the report). */
+export const cardPublished = (card) => isObj(card) && card.status === "read" && card.withdrawn !== true && isObj(card.audit) && card.audit.by === "auditor" && card.audit.ok === true;
+/** Pure: a card as the site may show it, or null unless cardPublished. Values only: never a quote, hedge, audit, reason, tries or model. */
 export function siteCard(card) {
-  if (!isObj(card) || card.status !== "read") return null;
+  if (!cardPublished(card)) return null;
   const facts = isObj(card.facts) ? card.facts : {}, f = {};
   for (const [list, k] of Object.entries(FACT_KEYS)) {
     const items = arr(facts[list]).filter(isObj).map((x) => {
@@ -282,6 +285,11 @@ export function siteStory(file, reports, warn = () => {}) {
   if (!sections.length) return null;
   const src = cited.map((sha) => { const r = byHash.get(sha); return { sha1: sha, title: clip(r.title, 300), authors: arr(r.authors).map((a) => txt(a, 120)).filter(Boolean).slice(0, 5), year: yearOf(r) }; });
   const out = { key, kind: txt(live.kind, 20), name: txt(live.name, 120), headline: clip(live.headline, 120), in_short: clip(live.in_short, 240), sections, by: STORY_BY, reviewed_at: txt(live.reviewed_at, 40), n: src.length, src };
+  // the rules verify-build applies to library/stories.json (a key, a headline and a review time on every listed story) are enforced
+  // here, so a story that would fail them is left out with a warning instead of stopping every deploy
+  if (!out.headline) { warn(`orkl story ${key}: the headline is empty, so the story is not published`); return null; }
+  if (!out.in_short) { warn(`orkl story ${key}: the in short line is empty, so the story is not published`); return null; }
+  if (!out.reviewed_at) { warn(`orkl story ${key}: no review time, so the story is not published`); return null; }
   if (live.status === "stale") out.stale = true;
   return out;
 }
@@ -296,7 +304,7 @@ export function storyIndex(published) {
 /** Pure: which actors and reports have a live story or a read card, for libraryIndex. liveKeys: keys of published stories. */
 export function storyLinks(reports, actors, cards, liveKeys) {
   const read = new Set(), actorStory = new Map(), looseStory = new Map();
-  for (const [sha, c] of cards) if (c && c.status === "read") read.add(sha);
+  for (const [sha, c] of cards) if (cardPublished(c)) read.add(sha);     // `k` on a row = this card is published (the same gate as siteCard)
   for (const s of actorSubjects(actors, reports, cards)) if (liveKeys.has(s.key)) actorStory.set(actorLinkKey({ id: s.actor.id, name: s.name }), s.key);
   for (const s of looseSubjects(reports, cards, actorIndex(actors))) if (liveKeys.has(s.key)) for (const sha of s.sha1s) looseStory.set(sha, s.key);
   return { read, actorStory, looseStory };

@@ -21,14 +21,14 @@ import { pathToFileURL } from "node:url";
 import { ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
 import { NOCODE } from "./lib/validate.mjs";
 import { loadLibrary, shardOf } from "./orkl.mjs";
-import { CARDS_DIR, loadCards, readShard } from "./library-read.mjs";
+import { CARDS_DIR, loadCards, readShard, MAX_TRIES as READ_TRIES } from "./library-read.mjs";
 import { STORIES_DIR, MAX_TRIES, loadStories, readStory, buildStory, cardsFor, codesOf } from "./library-write.mjs";
 import { cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { reviewerPrompt, auditorPrompt } from "./lib/library-prompts.mjs";
 import { fetchText } from "./lib/orkl-text.mjs";
 import { oneShot, withTimeout } from "./lib/oneshot.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
-import { DEFAULTS, auditState, wrongCards, paused, loadConfig, pauseHelp, PAUSE_NOTICE, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
+import { DEFAULTS, auditState, wrongCards, paused, loadConfig, pauseHelp, PAUSE_NOTICE, PAUSE_MESSAGE, CORRECTIONS_DIR, retiredAfterAudit } from "./lib/library-audit.mjs";
 
 export { DEFAULTS, auditState, paused, pauseHelp };
 const ROLE = "library-reviewer", AUDIT_ROLE = "library-auditor";
@@ -85,9 +85,12 @@ export function settle(file, verdict, cards, actor, now, model, runId = "") {
   return refuse(["review-reject", ...new Set(changes.map((c) => c.code))], writerFault);
 }
 
-/** Pure: a card the reviewer (by "reviewer") or auditor (by "auditor") found wrong goes back to the reader's queue. */
+/** Pure: a card the reviewer (by "reviewer") or auditor (by "auditor") found wrong goes back to the reader's queue, once. A card that
+ *  already failed an audit before (a failed entry in audit_history) is retired instead: its tries are set to the reader's MAX_TRIES so it
+ *  is not read again, and the loop read -> audit -> wrong cannot run forever (retiredAfterAudit counts these for the pipeline check). */
 export const markCardWrong = (card, note, at, by = "auditor") => ({
-  ...card, status: "unread", tries: 0, reason: "audit-wrong",
+  ...card, status: "unread", reason: "audit-wrong",
+  tries: (Array.isArray(card.audit_history) ? card.audit_history : []).some((e) => e && typeof e === "object" && e.ok !== true) ? READ_TRIES : 0,
   ...(Array.isArray(card.audit_history) || card.audit ? { audit_history: [...(card.audit_history || []), ...(card.audit ? [card.audit] : [])].slice(-5) } : {}),
   audit: { at, ok: false, note: cleanNote(note), by },
 });
@@ -321,7 +324,8 @@ export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir =
 export function statusLine(stories, cards, cfg = DEFAULTS, subjectKeys = null) {
   const st = auditState(cards, cfg), w = wrongCards(cards, cfg).slice(0, 10).map((x) => x.slice(0, 8));
   const orphans = subjectKeys ? reviewQueue(stories).filter((k) => !subjectKeys.has(k)).length : null;
-  return `drafts waiting ${reviewQueue(stories).length}${orphans == null ? "" : `, orphan drafts ${orphans}`}, audited ${st.audited} cards, wrong ${st.wrong} (${st.pct.toFixed(1)}%)${w.length ? `, wrong: ${w.join(", ")}` : ""}, ${st.paused ? "PAUSED: " + PAUSE_NOTICE : "not paused"}`;
+  const retired = retiredAfterAudit(cards).length;
+  return `drafts waiting ${reviewQueue(stories).length}${orphans == null ? "" : `, orphan drafts ${orphans}`}, audited ${st.audited} cards, wrong ${st.wrong} (${st.pct.toFixed(1)}%)${w.length ? `, wrong: ${w.join(", ")}` : ""}, retired after a failed audit ${retired}, ${st.paused ? "PAUSED: " + PAUSE_NOTICE : "not paused"}`;
 }
 
 async function main() {

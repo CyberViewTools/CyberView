@@ -49,7 +49,7 @@ test("writerPrompt: the no-cards sentence is cited to the catalogue, and such a 
   assert.doesNotMatch(p, /\(no cite\)/);
   assert.match(p, /also citing "catalogue"/);
   const actor = SUBJECT.actor;
-  const story = { by: BY, key: "actor:1", kind: "actor", sections: [{ h: "who", sentences: [
+  const story = { by: BY, key: "actor:1", kind: "actor", headline: "Jade Sleet", in_short: "A profile from the catalogue.", sections: [{ h: "who", sentences: [
     { t: "Jade Sleet is also tracked as TraderTraitor.", cites: ["catalogue"] },
     { t: "No public report in this library describes its operations.", cites: ["catalogue"] }] }] };
   assert.deepEqual(storyProblems(story, new Map(), actor), []);
@@ -64,4 +64,14 @@ test("reviewerPrompt and auditorPrompt say when an original text was cut", () =>
   assert.match(reviewerPrompt({}, [CARD], [{ sha1: A, text: big }]), /cut at 60000 characters/);
   assert.doesNotMatch(reviewerPrompt({}, [CARD], [{ sha1: A, text: "short" }]), /was cut at/);
   assert.match(auditorPrompt(CARD, big), /cut at 60000 characters/);
+});
+
+// B-C2: the auditor judges the summary, each hedge and each actor's "by" too, since the summary is shown to visitors
+test("auditorPrompt: asks for the summary, hedges and who-attributes to be judged by path", () => {
+  const p = auditorPrompt(CARD, "text");
+  for (const s of ['"summary"', '"hedges[0]"', '"actors[0].by"']) assert.ok(p.includes(s), s);
+});
+test("config: every card is audited before it can be shown (audit_pct 100) and the note says what lowering it does", () => {
+  const L = JSON.parse(readFileSync(new URL("../../config/pipeline.json", import.meta.url), "utf8")).library;
+  assert.equal(L.audit_pct, 100); assert.match(L._note, /unaudited cards then show no summary/);
 });

@@ -160,3 +160,26 @@ test("normText: minus sign and em dash fold to a hyphen", () => {
   assert.equal(quoteInText("state—sponsored actors operate", "a state-sponsored actors operate"), true);
   assert.equal(quoteInText("state−sponsored actors operate", "a state-sponsored actors operate"), true);
 });
+
+// B-C1: an empty headline or in_short (after cleaning) is a problem, never a pass
+test("storyProblems: an empty or whitespace headline or in_short is refused", () => {
+  const ok = story([{ h: "takeaway", sentences: [{ t: "Patch.", cites: [] }] }]);
+  assert.ok(!storyProblems(ok, new Map(), null).some((x) => x === "no-headline" || x === "no-in-short"));
+  assert.ok(storyProblems({ ...ok, headline: "   " }, new Map(), null).includes("no-headline"));
+  assert.ok(storyProblems({ ...ok, headline: "\u0001\u0002" }, new Map(), null).includes("no-headline"));
+  assert.ok(storyProblems({ ...ok, in_short: "" }, new Map(), null).includes("no-in-short"));
+  assert.ok(storyProblems({ ...ok, in_short: undefined }, new Map(), null).includes("no-in-short"));
+});
+
+// B-C2: a summary or a fact value carrying a link, a domain or an email address is refused
+test("cardProblems: link-in-text for a URL, a domain-like token or an email in the summary or a fact value", () => {
+  const text = "Lazarus exploited CVE-2023-42793 in JetBrains TeamCity servers during October 2023. The loader called evil-update.com and mail@bad.ru for orders.";
+  const base = card({ cves: [{ v: "CVE-2023-42793", q: "Lazarus exploited CVE-2023-42793 in JetBrains TeamCity" }] });
+  assert.deepEqual(cardProblems(base, text), []);
+  for (const sm of ["See https://example.org/x for more.", "It beacons to evil-update.com daily.", "Defanged evil-update[.]com was used.", "Orders came from mail@bad.ru.", "Visit www.example.net now."])
+    assert.ok(cardProblems({ ...base, summary: sm }, text).includes("link-in-text"), sm);
+  const tool = card({ tools: [{ v: "evil-update.com", q: "The loader called evil-update.com and mail" }] });
+  assert.ok(cardProblems(tool, text).includes("link-in-text"));
+  for (const sm of ["The U.S. and e.g. allies were hit.", "It used ASP.NET and Node.js web shells.", "Version 2.1 of the tool appeared in 2023."])
+    assert.ok(!cardProblems({ ...base, summary: sm }, text).includes("link-in-text"), sm);
+});

@@ -288,7 +288,7 @@ test("pipeline.json: the library block ships with backfill off and every dial do
   assert.equal(L.backfill, false); assert.equal(L.enabled, true);
   assert.deepEqual(L.pilot, { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 });
   assert.deepEqual(L.wave, { read: 40, write: 6, review: 6, audit: 4 });
-  assert.equal(L.reread, 3); assert.equal(L.audit_pct, 10); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50);
+  assert.equal(L.reread, 3); assert.equal(L.audit_pct, 100); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50);
   for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
   assert.match(L._note, /owner/);
   assert.deepEqual(deskConfig(join(ROOT, "config", "pipeline.json")), { ...DESK_DEFAULTS });

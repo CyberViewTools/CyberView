@@ -18,7 +18,7 @@ import { loadConfig, paused, auditFailed, PAUSE_NOTICE, PAUSE_MESSAGE } from "./
 
 export const CARDS_DIR = join(DIR, "cards");
 const ROLE = "library-reader";
-const MAX_TRIES = 2;
+export const MAX_TRIES = 2;
 const STOP_AFTER_ERRORS = 3;
 const STOP_AFTER_UNREACHABLE = 5;
 const modelName = () => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[ROLE]; return (r && r.model) || ""; };

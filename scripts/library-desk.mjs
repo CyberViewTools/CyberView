@@ -16,7 +16,7 @@ import { DIR, loadLibrary } from "./orkl.mjs";
 import { loadCards, readQueue, run as readRun, statusLine as readStatusLine } from "./library-read.mjs";
 import { loadStories, writeQueue, run as writeRun, statusLine as writeStatusLine } from "./library-write.mjs";
 import { reviewQueue, auditPick, run as reviewRun, runAudit, statusLine as reviewStatusLine } from "./library-review.mjs";
-import { loadConfig, auditState, auditFailed, paused, wrongCards, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
+import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAudit, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, nameKey } from "./lib/library-subjects.mjs";
 import { canBuild, estimateCost, readUsage, budgetConfig, PRICES } from "./lib/usage.mjs";
 import { readBuild, BUILD_LEDGER } from "./budget.mjs";
@@ -301,12 +301,12 @@ export async function efficiencyBlock(usage, now = Date.now()) {
 /** The Library's health for the pipeline check: { paused, wrong (card sha1s), parked, orphans }. While the routine is off and no card
  *  exists, nothing is loaded. */
 export async function libraryHealth() {
-  const cards = loadCards(), none = { paused: false, wrong: [], parked: 0, orphans: 0 };
+  const cards = loadCards(), none = { paused: false, wrong: [], parked: 0, orphans: 0, retired: 0 };
   if (libraryIdle(routinesFile(), cards)) return none;
   const lb = loadLibrary(), stories = loadStories(), cfg = deskConfig();
   if (!lb.reports.length) return none;
   const keys = new Set([...actorSubjects(lb.actors, lb.reports, cards), ...looseSubjects(lb.reports, cards, actorIndex(lb.actors))].map((s) => s.key));
-  return { paused: paused(cards, cfg), wrong: wrongCards(cards), parked: storyCounts(stories).parked, orphans: reviewQueue(stories).filter((k) => !keys.has(k)).length };
+  return { paused: paused(cards, cfg), wrong: wrongCards(cards), parked: storyCounts(stories).parked, orphans: reviewQueue(stories).filter((k) => !keys.has(k)).length, retired: retiredAfterAudit(cards).length };
 }
 
 /* ---------------- the run ---------------- */

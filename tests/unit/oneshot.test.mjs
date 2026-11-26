@@ -50,3 +50,26 @@ test("parseReply: a failed call is error, a bad reply and a limit are not", () =
   assert.equal(parseReply(JSON.stringify({ result: "no object here" })).error, false);
   assert.equal(parseReply(JSON.stringify({ result: '{"a":1}' })).error, false);
 });
+
+// B-I5: the committed usage ledger never holds the model's reply text (report text could be echoed in it)
+import { ledgerFor } from "../../scripts/lib/oneshot.mjs";
+test("ledgerFor: no reply text reaches the recorded line; errors are short codes", () => {
+  const SECRET = "The report says SECRET-REPORT-TEXT about the victim";
+  const env = (o) => JSON.stringify({ num_turns: 1, usage: { input_tokens: 10, output_tokens: 5 }, ...o });
+  const cases = [
+    [env({ result: `{"summary":"${SECRET}"}` }), null, {}, null],
+    [env({ result: SECRET, is_error: true }), null, {}, "api-error"],
+    [env({ result: "x", subtype: "error_max_turns" }), null, {}, "turn-cap"],
+    ["", "timeout", { timedOut: true }, "timeout"],
+    ["", `boom ${SECRET}`, { code: 3 }, "exit-3"],
+    ["not json " + SECRET, null, { code: 0 }, "no-json"],
+    [env({ result: "You've hit your usage limit · resets 3pm (UTC)", is_error: true }), null, {}, "limit"],
+  ];
+  for (const [out, err, meta, code] of cases) {
+    const l = ledgerFor("library", "library-reader", "abc", "haiku", 5, out, err, "subscription", meta);
+    const s = JSON.stringify(l);
+    assert.ok(!s.includes("SECRET") && !s.includes("victim"), s);
+    assert.equal(l.last, ""); assert.equal(l.error, code, s);
+  }
+  assert.equal(ledgerFor("library", "library-reader", "abc", "haiku", 5, env({ result: "You've hit your usage limit · resets 3pm (UTC)", is_error: true }), null, "subscription", {}).limit, true);
+});

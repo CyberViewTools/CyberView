@@ -11,7 +11,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { ROOT, readJson } from "./store.mjs";
 import { DIR } from "../orkl.mjs";
 
-export const DEFAULTS = { reread: 3, audit_pct: 10, audit_pause_pct: 5, audit_min: 50 };
+export const DEFAULTS = { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50 };   // audit_pct 100: every card is audited before the site may show it
 export const WINDOW = 500;                                // the most recent audited cards that count
 export const PAUSE_MESSAGE = "Library reader accuracy below target";
 export const pauseHelp = "Clears when the failed cards are read again and audited ok by the auditor, or when the owner raises library.audit_pause_pct in config/pipeline.json.";
@@ -66,6 +66,9 @@ export function auditState(cards, cfg = DEFAULTS) {
   const pct = audited ? (100 * wrong) / audited : 0;
   return { audited, wrong, pct, paused: audited >= c.audit_min && pct > c.audit_pause_pct };
 }
+/** The sha1s of cards retired after a failed audit: found wrong again after being read again, so the reader does not read them a third
+ *  time (markCardWrong sets their tries to the reader's limit). Counted for the pipeline check and status; a person decides what next. */
+export const retiredAfterAudit = (cards) => list(cards).filter((c) => c && c.status === "unread" && (Number(c.tries) || 0) >= 2 && c.reason === "audit-wrong").map((c) => c.sha1).sort();
 /** The sha1s of the cards currently counted as wrong. */
 export const wrongCards = (cards) => recent(cards).filter((x) => x.v.ok !== true).map((x) => x.sha1);
 export const paused = (cards, cfg = DEFAULTS) => auditState(cards, cfg).paused;

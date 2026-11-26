@@ -86,8 +86,9 @@ export function reviewerPrompt(story, cards, originals) {
 export function auditorPrompt(card, text) {
   return [
     "You audit one fact card against the report text it was made from. For each fact decide whether its value is what its quote and the text actually say (right name, right figure, right date, right who-says-it, nothing stronger than the text).",
+    'The summary is shown to the public: judge "summary" too (every claim in it must be what the text says, with its hedges kept), and each hedge ("hedges[0]", "hedges[1]", ...) and each actor\'s attribution ("actors[0].by": is that who the text says makes the attribution).',
     DATA_NOTE,
-    '- Name each wrong fact by its path in the card, such as "actors[0]" or "figures[2]", with a short note. Judge only what the text says; use no outside knowledge.',
+    '- Name each wrong item by its path in the card, such as "summary", "hedges[1]", "actors[0]", "actors[0].by" or "figures[2]", with a short note. Judge only what the text says; use no outside knowledge.',
     JSON_ONLY,
     'Shape: {"ok":true|false,"wrong":[{"path":"actors[0]","note":"..."}]}  ("ok" is true only when "wrong" is empty)',
     wrap("THE CARD", JSON.stringify(card ? cardView(card) : {})),

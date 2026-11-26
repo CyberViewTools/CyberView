@@ -73,6 +73,19 @@ export function cleanCard(raw, sha1) {
 
 const hasCode = (...parts) => parts.some((p) => NOCODE.test(String(p == null ? "" : p)));
 
+// A link, a domain-like token (also defanged, evil[.]com) or an email address. The summary and the fact values are shown to visitors,
+// and indicators are linked, never copied: none of these may sit in them. Top-level domains are matched in lower case only, so
+// framework names such as ASP.NET are not taken for a domain; words like "e.g." and "U.S." are not.
+const TLDS = "com|net|org|info|biz|io|co|xyz|top|site|online|club|shop|live|app|dev|cloud|ru|cn|su|ir|kp|uk|de|fr|jp|kr|tk|ml|ga|cf|gq|pw|cc|ws|onion|gov|edu|mil|int|ca|au|br|nl|pl|ua|by|kz|tw|hk|vn|tv|eu|ch|se|es|ro|tr|il|sg";
+const LINKISH = [
+  /\b(?:https?|hxxps?|ftp|sftp):\/\//i,
+  /\bwww\[?\.\]?[a-z0-9-]+/i,
+  /[A-Za-z0-9._%+-]+(?:@|\[at\]|\[@\])[A-Za-z0-9-]+(?:\[?\.\]?[A-Za-z0-9-]+)*\[?\.\]?[A-Za-z]{2,}/,
+  new RegExp(`(?<![A-Za-z0-9-])[A-Za-z0-9][A-Za-z0-9-]*(?:(?:\\[\\.\\]|\\(\\.\\)|\\.)[A-Za-z0-9-]+)*(?:\\[\\.\\]|\\(\\.\\)|\\.)(?:${TLDS})(?![A-Za-z0-9-])`),
+];
+/** True when the text holds a URL, a domain-like token or an email address. */
+export const hasLink = (s) => { const t = String(s == null ? "" : s); return LINKISH.some((re) => re.test(t)); };
+
 /** Why a card cannot be kept (empty = pass). `text` is the report text, in memory only. */
 export function cardProblems(card, text) {
   const p = [];
@@ -96,6 +109,9 @@ export function cardProblems(card, text) {
     });
   }
   if (hasCode(...strs)) p.push("code");
+  // what the site may show: the summary, the subject's name and every fact value (quotes and hedges are never shown)
+  const shown = [c.summary, c.subject && c.subject.name, ...LISTS.flatMap((k) => (Array.isArray(facts[k]) ? facts[k] : []).filter(isObj).flatMap((f) => [f.v, f.by, f.what]))];
+  if (shown.some(hasLink)) p.push("link-in-text");
   return p;
 }
 
@@ -169,6 +185,9 @@ export function storyProblems(story, cards, actor) {
   const cardMap = cards instanceof Map ? cards : new Map();
   if (s.by !== BY) p.push("no-byline");
   if (!filled.length) p.push("missing-section");
+  // the site lists a story by its headline and in_short: either one empty once cleaned would fail verify-build and stop the deploy
+  if (!clip(s.headline, 120)) p.push("no-headline");
+  if (!clip(s.in_short, 240)) p.push("no-in-short");
 
   const catalogue = actor ? [actor.name, ...(actor.aliases || []), ...(actor.tools || [])].filter((x) => typeof x === "string" && x.trim()) : [];
   const vocab = new Set();

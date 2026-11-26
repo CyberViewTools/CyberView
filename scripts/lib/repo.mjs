@@ -80,7 +80,7 @@ export function commitData(msg, paths = [], root = ROOT) {
 
 /** Files that are never deleted by design (CLAUDE.md: never delete event files). A staged deletion of any of them means
  *  something went wrong (a wiped ./data, a bad merge): every staged deletion is put back from HEAD before committing. */
-export const NEVER_DELETED = /^(events|kev|corrections|guides|analyses)\/|^status\.json$/;
+export const NEVER_DELETED = /^(events|kev|corrections|guides|analyses)\/|^status\.json$|^orkl\/(cards|stories|corrections)\/|^orkl\/pilot\.json$/;
 /** Pure: which staged deletions to put back. `deleted` are paths relative to the data root. */
 export function deletionsToRestore(deleted) {
   return deleted.some((f) => NEVER_DELETED.test(f)) ? deleted : [];

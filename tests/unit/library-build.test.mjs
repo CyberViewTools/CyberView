@@ -174,3 +174,36 @@ test("writeLibrarySite (f): storyLinks throwing still leaves the swapped-in file
   assert.deepEqual(files(join(out, "library", "cards")), ["aa.json", "bb.json"]); assert.ok(warns.some((m) => m.includes("links exploded")));
   rmSync(out, { recursive: true });
 });
+
+// B-C1: a story siteStory accepts never fails verify-build's Library rules (which would stop every deploy)
+import { checkOutputs } from "../../scripts/verify-build.mjs";
+test("siteStory/storyIndex enforce every rule verify-build applies to library/stories.json", () => {
+  const variants = [S, { ...S, headline: "   " }, { ...S, headline: "\u0001" }, { ...S, in_short: "" }, { ...S, in_short: " \t" }, { ...S, reviewed_at: " " },
+    { ...S, key: "" }, { ...S, name: "" }, { ...S, headline: "<b></b>" }];
+  const warns = [], published = [];
+  variants.forEach((v, i) => { const s = siteStory({ live: { ...v, key: v.key === "" ? "" : `a-${i}` } }, R, (m) => warns.push(m)); if (s) published.push(s); });
+  assert.equal(published.length, 2, "only the good story and the one with an empty name are published");
+  const files = { "library/stories.json": { stories: storyIndex(published) } };
+  for (const s of published) files[`library/stories/${s.key}.json`] = s;
+  assert.deepEqual(checkOutputs(files).filter((p) => p.startsWith("library/")), []);
+  assert.ok(warns.some((m) => /headline/.test(m)) && warns.some((m) => /in short/.test(m)));
+});
+
+// B-C2: a card reaches the site only when its current audit is the auditor's and passed
+import { storyLinks } from "../../scripts/orkl.mjs";
+test("siteCard: only a card the auditor passed is published", () => {
+  assert.ok(siteCard(card("a")));
+  assert.equal(siteCard(card("a", { audit: undefined })), null, "never audited");
+  assert.equal(siteCard(card("a", { audit: { at: "x", ok: true, note: "", by: "reviewer" } })), null, "a reviewer's verdict is not the audit");
+  assert.equal(siteCard(card("a", { audit: { at: "x", ok: false, note: "", by: "auditor" } })), null, "failed audit");
+  assert.equal(siteCard(card("a", { audit: { at: "x", ok: "true", by: "auditor" } })), null, "not boolean true");
+});
+test("storyLinks and writeLibrarySite: the k flag and the shards hold published cards only", () => {
+  const cs = cardsMap(card("a"), card("b", { audit: undefined }));
+  const l = storyLinks(R, actors, cs, new Set());
+  assert.ok(l.read.has(h("a"))); assert.ok(!l.read.has(h("b")));
+  const out = tmp();
+  const r = writeLibrarySite({ reports: R, actors, cards: cs, stories: new Map(), outDir: out, builtAt: "t", warn() {} });
+  assert.deepEqual(files(join(out, "library", "cards")), ["aa.json"]); assert.equal(r.counts.cards_read, 1);
+  rmSync(out, { recursive: true });
+});

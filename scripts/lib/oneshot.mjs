@@ -51,6 +51,24 @@ export function parseReply(stdout) {
 /** Pure: `call` with a per-call timeout (ms) added to its options; 0 leaves the role's own timeout. */
 export const withTimeout = (call, ms) => (ms > 0 ? (role, prompt, o = {}) => call(role, prompt, { ...o, timeoutMs: ms }) : call);
 
+/** Pure: the usage-ledger line for one call, as ledgerLine builds it for every worker, then stripped of anything the model wrote: `last`
+ *  is "" and `error` is a short code (limit, timeout, exit-<n>, spawn-failed, turn-cap, api-error, no-json), so no reply text, and so no
+ *  report text a reply might echo, reaches the committed ledger. ledgerLine itself is unchanged for the other workers.
+ *  meta: { timedOut, code (the exit code), spawnFailed }. */
+export function ledgerFor(job, role, batch, model, ms, out, err, served, meta = {}) {
+  const l = ledgerLine(job, role, batch, model, ms, out, err, served);
+  let j = null; try { j = JSON.parse(String(out || "")); } catch {}
+  const code = l.limit ? "limit"
+    : meta.timedOut ? "timeout"
+    : meta.spawnFailed ? "spawn-failed"
+    : Number.isInteger(meta.code) && meta.code !== 0 ? `exit-${meta.code}`
+    : l.capped ? "turn-cap"
+    : !j || typeof j !== "object" ? "no-json"
+    : j.is_error ? "api-error"
+    : l.error ? "error" : null;
+  return { ...l, last: "", error: code };
+}
+
 /** One call. Writes one usage-ledger line (role, model, tokens; never the prompt). A parked plan limit returns limit: true without a call. */
 export async function oneShot(role, prompt, { job = "library", batch = "", timeoutMs = 0 } = {}) {
   const cfg = roleOf(role, MODELS);
@@ -59,17 +77,17 @@ export async function oneShot(role, prompt, { job = "library", batch = "", timeo
   const model = cfg.model, roleMs = (Number(cfg.timeout_min) || 6) * 60000, ms = timeoutMs > 0 ? Math.min(roleMs, timeoutMs) : roleMs, t0 = Date.now();   // timeoutMs: the desk's time left, never more than the role's own
   // run from an empty directory so the repository's CLAUDE.md, settings and hooks are not loaded into a no-tools call
   const cwd = mkdtempSync(join(tmpdir(), "cyberview-oneshot-"));
-  const { out, err } = await new Promise((resolve) => {
-    let out = "", err = "";
-    let ch; try { ch = spawn("claude", oneShotArgs(role), { cwd, env: envFor(served), stdio: ["pipe", "pipe", "pipe"] }); } catch (e) { return resolve({ out: "", err: String(e.message) }); }
+  const { out, err, meta } = await new Promise((resolve) => {
+    let out = "", err = "", timedOut = false, spawnFailed = false;
+    let ch; try { ch = spawn("claude", oneShotArgs(role), { cwd, env: envFor(served), stdio: ["pipe", "pipe", "pipe"] }); } catch (e) { return resolve({ out: "", err: String(e.message), meta: { spawnFailed: true } }); }
     ch.stdin.on("error", () => {}); ch.stdin.end(String(prompt));
-    const kill = setTimeout(() => { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); err += "timeout"; }, ms);
+    const kill = setTimeout(() => { timedOut = true; ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); }, ms);
     ch.stdout.on("data", (d) => { out += d; }); ch.stderr.on("data", (d) => { err += d; });
-    ch.on("error", (e) => { err += String(e.message); });
-    ch.on("close", (code) => { clearTimeout(kill); resolve({ out, err: err.includes("timeout") ? "timeout" : code !== 0 && !out ? (err.trim().split("\n").pop() || `exit ${code}`).slice(0, 160) : null }); });
+    ch.on("error", (e) => { spawnFailed = true; err += String(e.message); });
+    ch.on("close", (code) => { clearTimeout(kill); resolve({ out, err: timedOut ? "timeout" : code !== 0 && !out ? (err.trim().split("\n").pop() || `exit ${code}`).slice(0, 160) : null, meta: { timedOut, spawnFailed, code } }); });
   });
   try { rmSync(cwd, { recursive: true, force: true }); } catch {}
-  const l = ledgerLine(job, role, batch, model, Date.now() - t0, out, err, served);
+  const l = ledgerFor(job, role, batch, model, Date.now() - t0, out, err, served, meta);
   record(l); noteOutcome(l, served);
   const r = parseReply(out);
   // error: the call itself failed (spawn failure, timeout, non-zero exit with no result, envelope error); the caller must not count it as a bad reply

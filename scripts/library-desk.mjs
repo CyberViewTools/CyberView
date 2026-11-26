@@ -194,6 +194,9 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
   const todo = readQueue(reports, cards, { failures, now }), pset = new Set(pilotSha1s(pilot)), isNew = (r) => stampOf(r) > String(pilot.newest_at || "");
   // a new record: a report created after the pilot's newest, or a card an audit sent back for a re-read
   const inPilot = todo.filter((r) => pset.has(r.sha1)), fresh = todo.filter((r) => !pset.has(r.sha1) && (isNew(r) || auditFailed(cards.get(r.sha1)))), old = todo.filter((r) => !pset.has(r.sha1) && !isNew(r) && !auditFailed(cards.get(r.sha1)));
+  // once the pilot has latched, its own reports that are due again (a no-text card's one retry after 30 days, a card an audit sent
+  // back, a parked record whose park is over) are steady work too: nothing else would ever read them with backfill off
+  const steady = pilotDone ? [...fresh, ...inPilot] : fresh;
   const reportBy = new Map(reports.map((r) => [r.sha1, r]));
   const newCard = (s) => s.sha1s.some((x) => { const k = cards.get(x), r = reportBy.get(x); return k && k.status === "read" && k.withdrawn !== true && r && isNew(r); });
   const wq = writeQueue(subjects, stories, cards, {}), pk = new Set(pilotKeys(pilot));
@@ -204,9 +207,9 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
   if (isPaused) readOrder = todo.filter((r) => auditFailed(cards.get(r.sha1))).map((r) => r.sha1);
   else if (!pilotDone) readOrder = inPilot.map((r) => r.sha1);
   else if (c.backfill) { const q = new Set(todo.map((r) => r.sha1)); readOrder = backfillOrder(reports, actors).filter((s) => q.has(s)); }
-  else readOrder = fresh.map((r) => r.sha1);
+  else readOrder = steady.map((r) => r.sha1);
   const state = { pilotDone, paused: isPaused, failedCards: todo.filter((r) => auditFailed(cards.get(r.sha1))).length,
-    pilot: { read: inPilot.length, write: pilotQ.length }, newRecords: fresh.length, backlog: old.length,
+    pilot: { read: inPilot.length, write: pilotQ.length }, newRecords: steady.length, backlog: old.length,
     writeNew: steadyQ.length, writeBacklog: wq.length - steadyQ.length, drafts: reviewQueue(stories).filter((k) => subjectKeys.has(k) && (pilotDone || pk.has(k))).length, auditable: auditPick(cards, pct).length };
   const writeOrder = !pilotDone ? pilotQ.map((s) => s.key) : steadyQ.map((s) => s.key);
   // review: before the latch only the pilot's stories are reviewed (null = every draft)

@@ -235,3 +235,13 @@ test("cleanStory: sections are sorted who, targets, methods, operations, takeawa
   const s = cleanStory(story([{ h: "takeaway", sentences: [{ t: "T.", cites: [] }] }, { h: "methods", sentences: [{ t: "M.", cites: [A] }] }, { h: "who", sentences: [{ t: "W.", cites: [A] }] }]));
   assert.deepEqual(s.sections.map((x) => x.h), ["who", "methods", "takeaway"]);
 });
+
+// Open item 3 (final review): a bare file or product name that ends in a suffix that is also a web suffix is not a link
+test("cardProblems: a bare name ending in .app, .pl or .io is not a link; anything shaped like an address still is", () => {
+  const text = "The dropper Finder.app ran cleanup.pl and loaded Socket.io before calling c2.evil.io and evil[.]io for orders.";
+  const tools = card({ tools: [{ v: "Finder.app", q: "The dropper Finder.app ran cleanup.pl" }, { v: "cleanup.pl", q: "The dropper Finder.app ran cleanup.pl" }, { v: "Socket.io", q: "loaded Socket.io before calling" }] });
+  assert.deepEqual(cardProblems(tools, text), []);
+  assert.ok(!cardProblems({ ...tools, summary: "The dropper Finder.app ran cleanup.pl and loaded Socket.io." }, text).includes("link-in-text"));
+  for (const sm of ["It called c2.evil.io for orders.", "Defanged evil[.]io was used.", "See https://evil.app now.", "It fetched evil.io/payload daily.", "Mail went to boss@evil.io.", "It used evil.app:8443.", "Visit www.evil.app.", "It beacons to evil-update.com."])
+    assert.ok(cardProblems({ ...tools, summary: sm }, text).includes("link-in-text"), sm);
+});

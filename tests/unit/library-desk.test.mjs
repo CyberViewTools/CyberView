@@ -595,3 +595,19 @@ test("read stage: a usage limit ends the run but the held no-text cards are stil
   const { out, cards } = await readStage(12, async (r, reports) => (reports.findIndex((x) => x.sha1 === r.sha1) < 4 ? { error: "none" } : { text: LTEXT, partial: false }), async () => ({ ok: false, json: null, limit: true, error: false }));
   assert.equal(out.halt, "usage limit"); assert.equal(cards.length, 4); assert.ok(cards.every((c) => c.status === "no-text"));
 });
+
+// Open item 3 (final review): after the pilot latches, its own reports that are due again are still read in steady mode
+test("deskState: after the latch a pilot report whose no-text card is due its one retry, or that an audit sent back, is in the steady read queue", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const [p1, p2, p3] = pilotSha1s(pilot), now = Date.parse("2027-01-15T00:00:00Z");
+  const c2 = new Map(cards);
+  c2.set(p1, { sha1: p1, status: "no-text", reason: "no text at ORKL", read_at: "2026-11-26T01:00:00Z", model: "haiku" });            // due: 30 days have passed
+  c2.set(p2, { sha1: p2, status: "no-text", reason: "no text at ORKL", read_at: "2026-11-26T01:00:00Z", model: "haiku", retried: true }); // already retried: not due
+  c2.set(p3, { sha1: p3, status: "unread", tries: 0, audit: { ok: false, by: "auditor", at: "2026-11-26T02:00:00Z" } });               // sent back by an audit
+  const { orders, state } = deskState({ reports, actors: w.actors, cards: c2, stories: new Map(), pilot, cfg: { ...CFG, backfill: false }, now });
+  assert.equal(state.pilotDone, true);
+  assert.ok(orders.read.includes(p1), "the due no-text pilot report is read again"); assert.ok(orders.read.includes(p3), "the audit-failed pilot card is read again");
+  assert.ok(!orders.read.includes(p2), "a no-text card already retried is left alone");
+  assert.equal(state.newRecords, orders.read.length, "the plan's read count matches the queue");
+  assert.equal(plan(state, { ...CFG, backfill: false }, true).read, Math.min(CFG.wave.read, orders.read.length));
+});

@@ -139,6 +139,9 @@ let unavailable = 0, limitHit = null, fallbackKeyLimited = false, libraryKeyLimi
 // the CLI would use ahead of the subscription). With the env var unset, behaviour is exactly as before (park on a limit).
 const FB = fallbackConfig(PIPE.usage_budget || {});
 const FALLBACK_KEY = process.env[FB.env_var] || "";     // the VALUE: read here only, never logged, never committed
+// On a GitHub Actions runner (ai-launch.yml) with api_on_actions, bill the API key for real (no proxy forces the
+// subscription there, unlike the cloud launcher sessions). Cloud sessions keep billing the subscription. See usage.mjs.
+const onActionsApi = FB.api_on_actions === true && process.env.GITHUB_ACTIONS === "true";
 /** Pure: the environment one worker is spawned with. ANTHROPIC_API_KEY is injected ONLY in "api-fallback" or "api" (the
  *  api_primary window) mode, so the
  *  subscription OAuth stays primary everywhere else; any ambient ANTHROPIC_API_KEY is removed so a stray one can never make
@@ -181,7 +184,7 @@ function fallbackState(now = Date.now()) {
   let limited_until = null; try { limited_until = budgetState(now).limited_until; } catch {}
   let spend = { usd: 0, workers: 0, last_at: null };
   try { spend = fallbackSpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
-  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited, apiPrimary: apiPrimaryLive(FB, now) });
+  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited, apiPrimary: apiPrimaryLive(FB, now) || onActionsApi });
   fbCache = { at: now, served, spend, limited_until };
   return fbCache;
 }
@@ -197,7 +200,10 @@ export function fallbackNote(now = Date.now()) {
     if (FB.monthly_usd_cap > 0 && s.spend.usd >= FB.monthly_usd_cap) return `usage limit reached; the API-fallback monthly cap ($${FB.monthly_usd_cap}) is reached ($${s.spend.usd} this month)`;
     return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
   }
-  if (s.served === "api") return `API-primary test window until ${FB.api_primary.until}: billing the API ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
+  if (s.served === "api") {
+    const why = FB.api_primary ? `API-primary test window until ${FB.api_primary.until}` : "on GitHub Actions (usage_budget.api_fallback.api_on_actions)";
+    return `${why}: billing the API ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
+  }
   return `subscription window exhausted${s.limited_until ? ", resets " + s.limited_until : ""}; billing the API fallback ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
 }
 /** After any worker (also the no-tools one-shot callers in scripts/lib/oneshot.mjs): remember a usage limit and re-check

@@ -183,6 +183,7 @@ export function fallbackConfig(budget = budgetConfig()) {
   const t = (v) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}T/.test(v) && isFinite(Date.parse(v)) ? v : null);
   const from = t(p.from), until = t(p.until);
   return { enabled: f.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 ? cap : DEFAULT_FALLBACK.monthly_usd_cap, env_var: FALLBACK_ENV,
+    api_on_actions: f.api_on_actions === true,
     api_primary: from && until && Date.parse(until) > Date.parse(from) ? { from, until } : null };
 }
 // ---------- API-primary window (owner, 2026-11-25: "lets test how much it costs to run for 24 hours") ----------
@@ -190,6 +191,12 @@ export function fallbackConfig(budget = budgetConfig()) {
 // (served "api") instead of the subscription, so the real API cost of running CyberView can be measured
 // (`node scripts/budget.mjs api-test`). Outside the window nothing changes. The monthly cap, the enable switch and a limit on
 // the key itself still apply; when one of them stops the API, workers run on the subscription as before.
+// ---------- API on GitHub Actions (owner, 2026-11-26: "connect them to the API, $200 budget there") ----------
+// usage_budget.api_fallback.api_on_actions true + process.env.GITHUB_ACTIONS === "true" bills a worker to the API key
+// (served "api"), same as an api_primary window but gated on the runner instead of a clock. Cloud launcher sessions run
+// through a proxy that forces subscription billing, so only the .github/workflows/ai-launch.yml runner bills the API for
+// real; the split keeps web research on the subscription (cloud) and runs web-independent jobs on Actions (API). The usual
+// guards still apply: the enable switch, the monthly cap, and a limit on the key itself all fall back to the subscription.
 /** Pure: is the API-primary window open now? */
 export function apiPrimaryLive(fb, now = Date.now()) {
   const w = fb && fb.api_primary; if (!w) return false;

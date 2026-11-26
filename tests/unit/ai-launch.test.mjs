@@ -24,7 +24,13 @@ test("ai-launch.yml signs in with the subscription token, keeps every other sche
   assert.doesNotMatch(yml, /secrets\.ANTHROPIC_API_KEY/);
   assert.match(yml, /unset ANTHROPIC_API_KEY/);
   assert.match(yml, /AI_LAUNCH: \$\{\{ vars\.AI_LAUNCH \}\}/);
-  assert.match(yml, /if \[ "\$EVENT" = schedule \] && \[ "\$job" != library \] && \[ "\$AI_LAUNCH" != actions \]; then/);
+  // scheduled runs (#214 + #215): the Library always; the web-independent jobs only once AI_LAUNCH is "actions";
+  // the web jobs never (runner IPs get bot-challenged on core sources, so they stay on the cloud launchers)
+  assert.match(yml, /if \[ "\$EVENT" = schedule \] && \[ "\$job" != library \]; then/);
+  const webFree = (yml.match(/^\s*([a-z|-]+)\)\n\s*if \[ "\$AI_LAUNCH" != actions \]; then/m) || [])[1];
+  assert.ok(webFree, "the web-independent jobs wait for AI_LAUNCH");
+  assert.deepEqual(webFree.split("|").sort(), ["analysis", "brief", "improver", "security-review", "tabletop", "triage"]);
+  assert.match(yml, /\*\)\n\s*echo "READY=off" >> "\$GITHUB_ENV"; echo "Job: \$job runs on the cloud launcher/);
   const opts = (yml.match(/options: \[([^\]]+)\]/) || [])[1].split(",").map((s) => s.trim());
   assert.deepEqual([...opts].sort(), [...new Set(cases.values())].sort());
   // the Library (owner, 2026-11-26): its own schedule runs whatever AI_LAUNCH says, gated on the API key, never the subscription token

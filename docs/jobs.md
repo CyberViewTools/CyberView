@@ -232,10 +232,11 @@ TIMESTAMP: last_validation_at, last_validation_checked, validation_note (one lin
 
 ## Report review (13:17 daily, Sonnet 5.5)
 
+
 ```
 JOB: report review.
 GOAL: the original documents from governments and security vendors are read in full and reviewed on the map, not just news coverage of them.
-INPUTS: existing events with report.read_depth "summary" or "secondary" (`q.mjs find --cat report --since <8 days ago>`, then get --fields report); stories from gov and vendor sources (`fuse.mjs list --limit 60`).
+INPUTS: `data/report-plan.json` first (the HOUSEKEEPING plan, written by `scripts/report-plan.mjs plan`: events whose report.read_depth is "summary" or "secondary" from the last 8 days, in tier order, Critical, then High, then Routine, newest first inside each tier, capped at config report_review.max_items; work down this list in order). Then stories from gov and vendor sources (`fuse.mjs list --limit 60`). Read-only: the plan changes no event.
 STEPS:
 1. Find original documents from the last 4 days by government agencies (FBI and IC3, CISA, NSA, DOJ, Treasury, HHS, UK NCSC, Canadian Cyber Centre, ASD, ENISA, CERT-EU, ANSSI, BSI, JPCERT, CSA Singapore, CERT-In, Europol) and security vendors (Microsoft, Google GTIG and Mandiant, Unit 42, Talos, CrowdStrike, ESET, Kaspersky, Check Point, Recorded Future, SentinelOne, Sophos, Trend Micro, Fortinet, Rapid7, Huntress, Amazon, Cloudflare, Proofpoint, Dragos, Claroty). Upgrade existing summary or secondary reviews first.
 2. Read each original as far as it will load. Write the "report" object: publisher, publisher_type (government or vendor), doc_id (the document's own number, else ""), published, key_findings (3 to 5, one sentence each: who is affected, what the actor or flaw does, scale, how it gets in, what is new), recommendations (2 to 5, each one direct instruction from the document's own guidance), iocs_available, read_depth (full, summary or secondary), url.

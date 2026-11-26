@@ -818,6 +818,11 @@ async function main() {
   } else if (job === "followup") {
     followRun = followupDesk(RUN, true); phase("plan", followRun.note || "no plan");
     followRun.work.forEach((w) => work.push(w));
+  } else if (job === "report-review") {
+    // the planner lists the documents to read, Critical then High then Routine; the worker reads the plan and writes nothing else
+    const rp = sh("node", ["scripts/report-plan.mjs", "plan"]);
+    rp.out.forEach((l) => log(l));
+    phase("plan", rp.out[0] || "REPORT PLAN: no output"); work.push([job, null]);
   } else if (job === "moderator") {
     const waiting = sh("node", ["scripts/chat.mjs", "intake"]).out.filter((l) => /^(PENDING|REPORT) /.test(l)).length;
     if (waiting) work.push(["moderator", null]); phase("plan", `${waiting} post(s) waiting`);

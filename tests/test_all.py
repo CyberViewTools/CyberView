@@ -1276,6 +1276,11 @@ async def main():
         b16 = copy.deepcopy(bundle)
         recent_day = (datetime.datetime.utcnow() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")   # inside the seven-day list whatever the data holds today
         geo = [e for e in b16["events"] if e.get("lat") is not None and e.get("status") != "claimed" and e.get("lng") is not None and e.get("date", "") >= recent_day]
+        # the linked pair must be at different places: the map draws no arc between two pins at one spot (arcD in site/app.js),
+        # and the first two events of the day can share one (two notices from one agency)
+        apart = lambda a, b: abs(a["lat"] - b["lat"]) + abs(a["lng"] - b["lng"]) > 5
+        far = next(e for e in geo[1:] if apart(geo[0], e))
+        geo = [geo[0], far] + [e for e in geo[1:] if e is not far]
         src, dst, vic = geo[0], geo[1], geo[2]
         src["links"] = [{"to": dst["id"], "rel": "customer of breached supplier", "url": "https://example.com/story"}]
         vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}

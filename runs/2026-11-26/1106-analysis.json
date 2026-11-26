@@ -1,0 +1,30 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-26T11:03:15Z",
+  "finished_at": "2026-11-26T11:06:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-19 --limit 300",
+    "q.mjs find \"\" --since 2026-11-01 --limit 3000 --json (id validation only)",
+    "q.mjs runs --days 1"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "binance-co-ceos-describe-october-29-theft-2026-11"
+  ],
+  "skipped": [
+    {"title": "ArcBlock / ArkBlock cyberattack disclosures", "url": "https://www.panewslab.com/zh/articles/01a216ad-9fba-709d-8ea3-dd646b059509", "reason": "Not added to the crypto-thefts pattern: no loss reported and no source links it to Binance or other thefts; closeness in time only."},
+    {"title": "Kaspersky: pre-installed Android malware doubled", "url": "https://ria.ru/20261126/kaspersky-2134025080.html", "reason": "Annual vendor statistic; no shared actor or supplier with other events this week."},
+    {"title": "RISC Zero proof-forgery flaw", "url": "", "reason": "Standalone patch; no connection to other events on file."},
+    {"title": "Seoul police: hacked portal accounts used for fake clinic reviews", "url": "https://www.fnnews.com/news/202611260849299369", "reason": "Standalone enforcement case; no pattern on file it fits without guessing."},
+    {"title": "PIPC merger checks, Kerala scam, India FRI figures", "url": "", "reason": "Local policy/fraud items with no connection to the week's patterns."}
+  ],
+  "open_leads": [
+    {"title": "ArcBlock and ArkBlock appear to be the same company reported twice", "url": "https://bloomingbit.io/feed/news/125294", "note": "arcblock-cyberattack-disclosure-2026-11 and arkblock-cyberattack-response-2026-11 have near-identical summaries (rebuilding nodes, rotating credentials, no asset loss); likely a transliteration duplicate. Review job should merge.", "priority": "medium"},
+    {"title": "Seoul fake-review case logged twice", "url": "https://www.fnnews.com/news/202611260849299369", "note": "seoul-police-hacked-portal-accounts-fake-clinic-reviews-2026-11 and seoul-clinic-fake-reviews-hacked-accounts-2026-11 look like the same case; review should merge.", "priority": "low"},
+    {"title": "MİT Wi-Fi espionage case logged twice", "url": "https://www.haberler.com/guncel/mit-kamu-kurumlarini-hedefleyen-casusluk-20464055-haberi/", "note": "mit-wifi-espionage-two-detained-2026-11 and mit-cyber-espionage-network-wireless-networks-2026-11 appear to be one operation; both kept in state-pressure with a caveat saying so.", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Refresh run: the previous analysis was generated at 10:58Z today, so it was kept and extended rather than rewritten. Validated that every event id in analysis.json and ripples.json exists on file, every pattern has a kind, caveat and 2+ events, and all 49 edges marked stated carry a url. One stated edge (Binance theft -> UK FCA DeFi rules, url cointelegraph) was missing from the earlier event's links; added it to binance-co-ceos-describe-october-29-theft-2026-11. Patterns updated: ai-run-intrusions (+Radware/Technion hidden text aimed at AI agents on GitHub, labelled as a lab study, not a compromise), one-vendor-many-victims (+Yebyeol Life / LK contractor oversight report), state-pressure (+second MİT report, caveat that both are one case). Summary got one added sentence. Ripples unchanged in substance (10 items, still the widest-reaching); generated_at refreshed. Snapshot data/snapshots/analysis/2026-11-26.json overwritten. Totals: 12 patterns, 10 ripples. No pages opened; no instructions found in data. node scripts/build.mjs passes."
+}

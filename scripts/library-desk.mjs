@@ -13,7 +13,7 @@ import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, readStatus, nowIso, writeRunLog } from "./lib/store.mjs";
 import { DIR, STATE_FILE, loadLibrary } from "./orkl.mjs";
-import { loadCards, readQueue, loadReadState, parkedRecords, READ_STATE_FILE, run as readRun, statusLine as readStatusLine } from "./library-read.mjs";
+import { loadCards, readQueue, loadReadState, parkedRecords, READ_STATE_FILE, run as readRun, statusLine as readStatusLine, noTextGuard, settleNoText } from "./library-read.mjs";
 import { loadStories, writeQueue, run as writeRun, statusLine as writeStatusLine } from "./library-write.mjs";
 import { reviewQueue, auditPick, run as reviewRun, runAudit, statusLine as reviewStatusLine } from "./library-review.mjs";
 import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAudit, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
@@ -215,7 +215,7 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
 
 /* ---------------- the stage loop ---------------- */
 const progress = {
-  read: (t) => num(t.read) + num(t["no-text"]) + num(t.unread),
+  read: (t) => num(t.read) + num(t["no-text"]) + num(t.unread) + num(t.held),   // held: no-text cards waiting for the end of the stage
   write: (t) => num(t.drafted) + num(t.rejected) + num(t.parked),
   review: (t) => num(t.published) + num(t.corrected) + num(t.rejected) + num(t.parked) + num(t.cardsFlagged),
   audit: (t) => num(t.ok) + num(t.wrong),
@@ -232,7 +232,7 @@ const roleMs = (role) => (Number(((MODELS.roles || {})[role] || {}).timeout_min)
 export async function runStages({ plan: p, orders = {}, deps, now = Date.now, deadline, chunk = CHUNK, pilot = false, canStart = null, log = console.log }) {
   const out = {}, isPilot = pilot || p.mode === "pilot";
   let left = ORDER.filter((k) => num(p[k]) > 0).length;
-  stages: for (const k of ORDER) {
+  for (const k of ORDER) {
     const r = out[k] = { done: 0, stopped: "", error: "", skipped: "", tally: {} };
     const quota = num(p[k]);
     if (!quota) continue;
@@ -243,7 +243,7 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
       const t = now();
       if (deadline - t < reserve) { r.skipped = "no time left"; break; }
       if (r.done > 0 && t - t0 >= share) { r.skipped = "its share of the time is used"; break; }
-      if (canStart && !canStart()) { out.halt = WINDOW_STOP; log(`library-desk: ${WINDOW_STOP}; the run ends`); break stages; }
+      if (canStart && !canStart()) { out.halt = WINDOW_STOP; log(`library-desk: ${WINDOW_STOP}; the run ends`); break; }
       const n = Math.min(num(chunk[k]) || 1, quota - r.done), timeoutMs = Math.max(1000, Math.min(roleMs(ROLES[k]), deadline - t - 20000));
       let tally;
       try { tally = (await deps[k]({ max: n, order: order ? [...order] : allow ? [...allow] : undefined, pilot: isPilot, timeoutMs })) || {}; }
@@ -252,11 +252,21 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
       for (const [tk, tv] of Object.entries(tally)) if (typeof tv === "number" && Number.isFinite(tv)) r.tally[tk] = (r.tally[tk] || 0) + tv;
       if (tally.stopped) {
         r.stopped = String(tally.stopped);
-        if (/usage limit/i.test(r.stopped)) { out.halt = r.stopped; log(`library-desk: ${r.stopped}; the run ends`); break stages; }
+        if (/usage limit/i.test(r.stopped)) { out.halt = r.stopped; log(`library-desk: ${r.stopped}; the run ends`); }
         break;
       }
       if (!progress[k](tally)) { r.skipped = "no progress"; break; }
     }
+    // the stage's own closing step, however the stage ended (also on a usage limit or the window stop): the read stage settles
+    // its held no-text cards here. Its stop reason is taken only when the stage has none, so "usage limit" is never overwritten.
+    if (deps.end && deps.end[k]) {
+      try {
+        const e = (await deps.end[k]()) || {};
+        for (const [tk, tv] of Object.entries(e)) if (typeof tv === "number" && Number.isFinite(tv)) r.tally[tk] = (r.tally[tk] || 0) + tv;
+        if (e.stopped && !r.stopped) r.stopped = String(e.stopped);
+      } catch (e) { if (!r.error) r.error = String((e && e.name) || "Error").slice(0, 40); log(`library-desk: ${k} closing step failed (${String((e && e.name) || "Error").slice(0, 40)})`); }
+    }
+    if (out.halt) break;
   }
   return out;
 }
@@ -326,13 +336,18 @@ export async function libraryHealth() {
 }
 
 /* ---------------- the run ---------------- */
-function realDeps(library) {
+export function realDeps(library, opts = {}) {
+  // one no-text counter for every reader call of this desk run: the reader is called CHUNK.read (4) at a time and its "ORKL text
+  // missing" rule needs 5 answered reports, so a counter per call would never reach it. The run's no-text cards are held in the
+  // counter and written at the end of the read stage only if the rule was never met.
+  const guard = noTextGuard(), ro = opts.read || {};
   return {
+    end: { read: async () => { const s = settleNoText(guard, { ...(ro.dir ? { dir: ro.dir } : {}), ...(ro.stateFile ? { stateFile: ro.stateFile } : {}), ...(ro.log ? { log: ro.log } : {}) }); return { "no-text": s.written.length, requeued: s.held - s.written.length, held: -s.held, stopped: s.missing ? "ORKL text missing" : "" }; } },
     // the queues are restricted to the desk's orders (only: true), so a gate is never filled from outside it; review gets the allowed keys
     review: ({ max, order, timeoutMs }) => reviewRun({ max, keys: order, library, concurrency: CHUNK.review, timeoutMs }),
     audit: ({ max, pilot, timeoutMs }) => runAudit({ max, pilot, library, concurrency: CHUNK.audit, timeoutMs }),
     write: ({ max, order, timeoutMs }) => writeRun({ max, order, only: true, library, concurrency: CHUNK.write, timeoutMs }),
-    read: ({ max, order, timeoutMs }) => readRun({ max, order, only: true, library, concurrency: CHUNK.read, timeoutMs }),
+    read: ({ max, order, timeoutMs }) => readRun({ max, order, only: true, library, concurrency: CHUNK.read, timeoutMs, guard, ...ro }),
   };
 }
 const summary = (r) => ORDER.map((k) => `${k} ${r[k] ? r[k].done : 0}${r[k] && (r[k].stopped || r[k].error) ? ` (${r[k].stopped || r[k].error})` : ""}`).join(", ");

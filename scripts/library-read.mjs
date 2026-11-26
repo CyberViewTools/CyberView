@@ -175,12 +175,34 @@ export function saveCards(dir, fresh, bad = new Set()) {
   return written;
 }
 
-const tallyZero = () => ({ read: 0, "no-text": 0, unread: 0, requeued: 0, stopped: "", unreadableShards: [] });
+const tallyZero = () => ({ read: 0, "no-text": 0, unread: 0, held: 0, requeued: 0, stopped: "", unreadableShards: [] });
 
-/** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
+/** The no-text guard's counter: how many reports ORKL answered for, how many of them had no text, whether the systemic rule
+ *  (SYSTEMIC_MIN answered, SYSTEMIC_SHARE or more of them none) was ever met, and the no-text cards held in memory until the rule is settled.
+ *  One `run` makes its own. The desk reads CHUNK.read (4) at a time, fewer than SYSTEMIC_MIN, so it makes ONE for all the reader calls
+ *  of a desk run and passes it into each: the count then spans the whole read stage, and the desk settles it at the stage's end. */
+export const noTextGuard = () => ({ answered: 0, none: 0, met: false, pending: [] });
+const MISSING = "ORKL text missing";
+/** Settle a guard: when the rule was never met, write its held no-text cards (additively, as saveCards does); when it was met, write
+ *  none of them, so the records stay queued. The guard is emptied either way. -> { missing, written, held, unreadableShards } */
+export function settleNoText(guard, { dir = CARDS_DIR, stateFile = dir === CARDS_DIR ? READ_STATE_FILE : join(dir, "read-state.json"), log = console.log } = {}) {
+  const held = guard.pending.splice(0), bad = new Set();
+  if (guard.met) {
+    log(`library-read: ${guard.none} of ${guard.answered} answered reports had no text: ORKL's text looks missing, no no-text card written, the records stay queued`);
+    return { missing: true, written: [], held: held.length, unreadableShards: [] };
+  }
+  const written = held.length ? saveCards(dir, held, bad) : [];
+  if (written.length) saveReadState(stateFile, { failed: [], cleared: written.map((c) => c.sha1) });   // saveReadState never writes over a file it cannot read
+  return { missing: false, written, held: held.length, unreadableShards: [...bad].sort() };
+}
+
+/** Read up to `max` records. `guard`: a shared noTextGuard (the desk's): this call adds to its counts, leaves its no-text cards held
+ *  in it (tally.held) and does not settle it; the caller does, once, with settleNoText. Without one the run settles its own at the end.
+ *  Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
  *  just before the write and the wave's cards merged into it, so another run's cards survive; a shard that cannot be read is never written. */
-export async function run({ max = 10, order = "newest", only = false, concurrency = 4, dir = CARDS_DIR, stateFile = dir === CARDS_DIR ? READ_STATE_FILE : join(dir, "read-state.json"), library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+export async function run({ max = 10, order = "newest", only = false, concurrency = 4, dir = CARDS_DIR, stateFile = dir === CARDS_DIR ? READ_STATE_FILE : join(dir, "read-state.json"), library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, guard = null, log = console.log } = {}) {
   call = withTimeout(call, timeoutMs);
+  const g = guard || noTextGuard();
   const { reports } = library || loadLibrary();
   const bad = new Set();
   const badList = [];
@@ -192,8 +214,7 @@ export async function run({ max = 10, order = "newest", only = false, concurrenc
   if (rs.state === "bad") log("library-read: read-state.json cannot be read; failure counts are not kept this run");
   const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1)) && (!isPaused || auditFailed(cards.get(r.sha1)))), cards, { order, max, only, failures: rs.failures });
   const tally = tallyZero();
-  let failedCalls = 0, outage = 0, answered = 0, none = 0;
-  const pendingNoText = [];                                   // written at the end, only when the run was not a systemic no-text
+  let failedCalls = 0, outage = 0;
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {
     const wave = queue.slice(i, i + concurrency);
     const results = await Promise.all(wave.map((r) => readOne(r, cards.get(r.sha1), { fetch, call, model }).catch((e) => {
@@ -204,8 +225,8 @@ export async function run({ max = 10, order = "newest", only = false, concurrenc
     results.forEach((d, j) => {
       if (!d.card && (d.why === "unreachable" || d.why === "error")) failed.push(wave[j].sha1);
       const id = wave[j].sha1.slice(0, 8);
-      if (d.why !== "unreachable" && !d.crashed) answered++;          // ORKL answered for this report (text or none)
-      if (d.card && d.card.status === "no-text") { none++; pendingNoText.push(d.card); log(`${id} no-text${d.card.reason ? " " + d.card.reason : ""} (held to the end of the run)`); }
+      if (d.why !== "unreachable" && !d.crashed) g.answered++;        // ORKL answered for this report (text or none)
+      if (d.card && d.card.status === "no-text") { g.none++; g.pending.push(d.card); tally.held++; log(`${id} no-text${d.card.reason ? " " + d.card.reason : ""} (held until the no-text rule is settled)`); }
       else if (d.card) { fresh.push(d.card); log(`${id} ${d.card.status}${d.card.reason ? " " + d.card.reason : ""}`); }
       else { tally.requeued++; log(`${id} not read (${d.why || "retry"}), stays queued`); }
       if (d.why === "limit") tally.stopped = "usage limit";
@@ -218,18 +239,19 @@ export async function run({ max = 10, order = "newest", only = false, concurrenc
     if (rs.state !== "bad") saveReadState(stateFile, { failed, cleared: written.map((c) => c.sha1) });
     if (!tally.stopped && outage >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
     if (!tally.stopped && failedCalls >= STOP_AFTER_ERRORS) tally.stopped = `${failedCalls} failed model calls in a row`;
-    if (answered >= SYSTEMIC_MIN && none >= SYSTEMIC_SHARE * answered) tally.stopped = "ORKL text missing";
+    // the rule, over the guard's whole count (every reader call of a desk run): once met it stays met. It stops this call, but an
+    // earlier stop reason (a usage limit above all, which ends the whole desk run) is never overwritten
+    if (g.answered >= SYSTEMIC_MIN && g.none >= SYSTEMIC_SHARE * g.answered) { g.met = true; if (!tally.stopped) tally.stopped = MISSING; }
   }
-  if (tally.stopped === "ORKL text missing") { tally.requeued += pendingNoText.length; log(`library-read: ${none} of ${answered} answered reports had no text: ORKL's text looks missing, no no-text card written, the records stay queued`); }
-  else if (pendingNoText.length) {
-    const written = saveCards(dir, pendingNoText, bad);
-    for (const c of written) { tally[c.status]++; cards.set(c.sha1, c); }
-    tally.requeued += pendingNoText.length - written.length;
-    if (rs.state !== "bad") saveReadState(stateFile, { failed: [], cleared: written.map((c) => c.sha1) });
+  if (!guard) {                                               // this run's own guard: settled here; a shared one is the caller's to settle
+    const s = settleNoText(g, { dir, stateFile, log });
+    for (const c of s.written) { tally[c.status]++; cards.set(c.sha1, c); }
+    tally.requeued += s.held - s.written.length; tally.held = 0;
+    s.unreadableShards.forEach((b) => bad.add(b));
   }
   tally.unreadableShards = [...bad].sort();
   if (bad.size) log(`library-read: ${bad.size} shard(s) unreadable, left untouched: ${tally.unreadableShards.join(", ")}`);
-  log(`library-read: ${tally.read} read, ${tally["no-text"]} no-text, ${tally.unread} unread, ${tally.requeued} left queued${tally.stopped ? `; stopped: ${tally.stopped}` : ""}`);
+  log(`library-read: ${tally.read} read, ${tally["no-text"]} no-text, ${tally.unread} unread, ${tally.held ? `${tally.held} no-text held, ` : ""}${tally.requeued} left queued${tally.stopped ? `; stopped: ${tally.stopped}` : ""}`);
   return tally;
 }
 

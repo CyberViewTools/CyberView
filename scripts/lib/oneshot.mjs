@@ -51,14 +51,17 @@ export function parseReply(stdout) {
 /** Pure: `call` with a per-call timeout (ms) added to its options; 0 leaves the role's own timeout. */
 export const withTimeout = (call, ms) => (ms > 0 ? (role, prompt, o = {}) => call(role, prompt, { ...o, timeoutMs: ms }) : call);
 
+// What a usage-limit line says in the ledger: a fixed string that limitHits (scripts/lib/usage.mjs) counts, so the budget check and
+// canBuild see a Library worker's limit hit. Never the reply's own text; the reset time stays on the line as limit_until.
+export const LIMIT_CODE = "usage limit reached";
 /** Pure: the usage-ledger line for one call, as ledgerLine builds it for every worker, then stripped of anything the model wrote: `last`
- *  is "" and `error` is a short code (limit, timeout, exit-<n>, spawn-failed, turn-cap, api-error, no-json), so no reply text, and so no
+ *  is "" and `error` is a short code ("usage limit reached" for a limit, with `limit_until` kept; timeout, exit-<n>, spawn-failed, turn-cap, api-error, no-json), so no reply text, and so no
  *  report text a reply might echo, reaches the committed ledger. ledgerLine itself is unchanged for the other workers.
  *  meta: { timedOut, code (the exit code), spawnFailed }. */
 export function ledgerFor(job, role, batch, model, ms, out, err, served, meta = {}) {
   const l = ledgerLine(job, role, batch, model, ms, out, err, served);
   let j = null; try { j = JSON.parse(String(out || "")); } catch {}
-  const code = l.limit ? "limit"
+  const code = l.limit ? LIMIT_CODE
     : meta.timedOut ? "timeout"
     : meta.spawnFailed ? "spawn-failed"
     : Number.isInteger(meta.code) && meta.code !== 0 ? `exit-${meta.code}`

@@ -29,6 +29,7 @@ export function readerPrompt(report, text) {
     `- Every fact is {"v": the value, "q": a verbatim quote from the text that states it}. A quote is copied exactly, at most ${QUOTE_MAX} characters, and must contain the value (a name, CVE id, figure or year). The lists are: ${LIST_KEYS}.`,
     "- Never record code, commands, payloads, request strings or step-by-step technique detail. Name a technique in a few plain words only.",
     '- Attribution always says who makes it: an actor fact carries "by" (the vendor, agency or the report itself). Never turn "assessed" or "linked to" into a flat statement; put the report\'s own hedges in "hedges".',
+    "- Never put a link, a domain name or an email address in the summary or in a fact value: a card that holds one is refused. Name the organisation, product or tool in plain words instead.",
     '- Set "subject" only when the report names one (a malware family, campaign, vulnerability or incident); otherwise null.',
     `- If the text is not a threat report (a product page, a marketing piece, a job ad, an index or an error page), set "kind" to "not-a-threat-report" and keep the lists empty.`,
     "- Write everything in English whatever language the report is in; quotes stay in the report's language.",

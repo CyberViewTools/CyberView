@@ -108,3 +108,14 @@ test("limitHits: a park ends when a worker is served again, but a genuine limit 
   const f = limitHits([{ at: HIT, ok: false, error: "You've hit your 5-hour limit \u00b7 resets 11:10pm (UTC)" }, { at: "2026-11-23T15:00:00Z", ok: true }]);
   assert.equal(f[0].until, Date.parse("2026-11-23T15:00:00Z"));
 });
+
+// Fix A: a line that carries limit_until (the Library's one-shot workers record a fixed error string, never the reply) uses it
+test("limitHits: a line's limit_until is the reset when present; an absurd one falls back to the backoff", () => {
+  const AT = "2026-11-23T13:57:25Z";
+  const h = limitHits([{ at: AT, ok: false, error: "usage limit reached", limit: true, limit_until: "2026-11-23T18:00:00Z" }], 60);
+  assert.equal(h.length, 1); assert.equal(h[0].until, Date.parse("2026-11-23T18:00:00Z"));
+  const far = limitHits([{ at: AT, ok: false, error: "usage limit reached", limit: true, limit_until: "2100-01-01T00:00:00Z" }], 60);
+  assert.equal(far[0].until - far[0].at, 60 * 6e4);
+  const none = limitHits([{ at: AT, ok: false, error: "usage limit reached", limit: true }], 60);
+  assert.equal(none[0].until - none[0].at, 60 * 6e4);
+});

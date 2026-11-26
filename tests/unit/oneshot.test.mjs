@@ -63,7 +63,7 @@ test("ledgerFor: no reply text reaches the recorded line; errors are short codes
     ["", "timeout", { timedOut: true }, "timeout"],
     ["", `boom ${SECRET}`, { code: 3 }, "exit-3"],
     ["not json " + SECRET, null, { code: 0 }, "no-json"],
-    [env({ result: "You've hit your usage limit · resets 3pm (UTC)", is_error: true }), null, {}, "limit"],
+    [env({ result: "You've hit your usage limit · resets 3pm (UTC)", is_error: true }), null, {}, "usage limit reached"],
   ];
   for (const [out, err, meta, code] of cases) {
     const l = ledgerFor("library", "library-reader", "abc", "haiku", 5, out, err, "subscription", meta);
@@ -72,4 +72,21 @@ test("ledgerFor: no reply text reaches the recorded line; errors are short codes
     assert.equal(l.last, ""); assert.equal(l.error, code, s);
   }
   assert.equal(ledgerFor("library", "library-reader", "abc", "haiku", 5, env({ result: "You've hit your usage limit · resets 3pm (UTC)", is_error: true }), null, "subscription", {}).limit, true);
+});
+
+// Fix A (open after the final review, item 1): a Library worker's usage-limit hit must reach the budget check
+import { limitHits, budgetState } from "../../scripts/lib/usage.mjs";
+test("ledgerFor: a usage-limit reply is counted by limitHits, keeps its reset time and holds none of the reply's text", () => {
+  const REPLY = "You've hit your usage limit · resets 3pm (UTC). SECRET-REPORT-TEXT about the victim";
+  const out = JSON.stringify({ num_turns: 1, usage: { input_tokens: 10, output_tokens: 5 }, result: REPLY, is_error: true });
+  const l = ledgerFor("library", "library-reader", "abc", "haiku", 5, out, null, "subscription", {});
+  const s = JSON.stringify(l);
+  assert.ok(!s.includes("SECRET") && !s.includes("victim") && !s.includes("resets 3pm") && !s.includes("You've"), s);
+  assert.equal(l.error, "usage limit reached"); assert.equal(l.last, ""); assert.equal(l.limit, true);
+  assert.ok(l.limit_until && isFinite(Date.parse(l.limit_until)), "limit_until is kept on the line");
+  const hits = limitHits([l]);
+  assert.equal(hits.length, 1, "the budget check sees the hit");
+  assert.equal(hits[0].until, Date.parse(l.limit_until), "the park lasts until the line's limit_until");
+  const b = budgetState(Date.parse(l.at) + 1000, undefined, [l]);
+  assert.equal(b.level, "stop"); assert.equal(b.limited_until, l.limit_until);
 });

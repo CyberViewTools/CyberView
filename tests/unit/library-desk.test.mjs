@@ -484,7 +484,7 @@ test("deskState and runStages: before the latch the review stage gets the pilot 
 });
 test("realDeps: the reader and writer are always called with only:true", async () => {
   const src = readFileSync(join(ROOT, "scripts", "library-desk.mjs"), "utf8");
-  const block = src.slice(src.indexOf("function realDeps"), src.indexOf("function realDeps") + 900);
+  const block = src.slice(src.indexOf("function realDeps"), src.indexOf("function realDeps") + 2400);
   assert.match(block, /readRun\(\{[^}]*only: true/); assert.match(block, /writeRun\(\{[^}]*only: true/); assert.match(block, /reviewRun\(\{[^}]*keys: order/);
 });
 
@@ -552,4 +552,46 @@ test("CLI: library-read run, library-write run and library-review run|audit refu
     const r = spawnSync(process.execPath, [join(ROOT, "scripts", f), cmd, "--max", "0"], { encoding: "utf8", env: { ...process.env, LIBRARY_DESK: "" } });
     assert.notEqual(r.status, 0, `${f} ${cmd}`); assert.match(r.stderr, /owner-override/, `${f} ${cmd}: ${r.stderr}`);
   }
+});
+
+// Fix B (open after the final review, item 2): the reader's "ORKL text missing" guard must fire from the desk, which reads 4 at a time
+import { realDeps } from "../../scripts/library-desk.mjs";
+import { loadCards as loadCardsIn } from "../../scripts/library-read.mjs";
+const lrep = (i) => { const sha1 = hx(0xb000 + i); return { id: "id-" + i, sha1, title: "T " + i, created: `2020-04-${String(i + 1).padStart(2, "0")}`, txt_url: `https://archive.orkl.eu/${sha1}.txt` }; };
+const LTEXT = "The group APT-Example, assessed by the vendor to be state-sponsored, exploited CVE-2024-12345 in March 2024 against energy firms. " + "x".repeat(500);
+const readStage = async (n, fetch, call) => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-desk-read-"));
+  const reports = Array.from({ length: n }, (_, i) => lrep(i)), chunks = [];
+  const deps = realDeps({ reports, actors: [] }, { read: { dir, fetch: (r) => fetch(r, reports), call, model: "haiku", log: () => {} } });
+  const read = deps.read; deps.read = (o) => { chunks.push(o.max); return read(o); };
+  const out = await runStages({ plan: { read: n, write: 0, review: 0, audit: 0, mode: "steady" }, orders: { read: reports.map((r) => r.sha1) }, deps, now: () => 0, deadline: 1e9, log: () => {} });
+  const cards = [...loadCardsIn(dir).values()];
+  rmSync(dir, { recursive: true, force: true });
+  return { out, chunks, cards, reports };
+};
+test("read stage: reader called in chunks of 4, every fetch \"none\": no no-text card is stored and the stage stops with \"ORKL text missing\"", async () => {
+  let asked = 0;
+  const { out, chunks, cards } = await readStage(12, async () => ({ error: "none" }), async () => { asked++; return { ok: false, json: null, limit: false, error: true }; });
+  assert.deepEqual(chunks, [4, 4], "the reader is called 4 at a time and the third chunk never starts");
+  assert.equal(out.read.stopped, "ORKL text missing");
+  assert.equal(cards.length, 0, "no no-text card is stored");
+  assert.equal(asked, 0, "no model call for a report without text");
+  assert.equal(out.halt, undefined, "missing text ends the read stage, not the run");
+});
+test("read stage: no-text cards of a run that never met the rule are written once, at the end of the stage", async () => {
+  const { out, chunks, cards } = await readStage(4, async () => ({ error: "none" }), async () => ({ ok: false, json: null, limit: false, error: true }));
+  assert.deepEqual(chunks, [4]);
+  assert.equal(out.read.stopped, ""); assert.equal(cards.length, 4); assert.ok(cards.every((c) => c.status === "no-text"));
+  assert.equal(out.read.tally["no-text"], 4);
+});
+test("read stage: an earlier \"usage limit\" stop reason is never overwritten by \"ORKL text missing\", and the held cards are not stored", async () => {
+  // chunk 1: four without text; chunk 2: three without text and one with text whose model call hits the usage limit (7 of 8 none: the rule is met)
+  const { out, cards } = await readStage(12, async (r, reports) => (r.sha1 === reports[7].sha1 ? { text: LTEXT, partial: false } : { error: "none" }), async () => ({ ok: false, json: null, limit: true, error: false }));
+  assert.equal(out.read.stopped, "usage limit"); assert.equal(out.halt, "usage limit");
+  assert.equal(cards.length, 0, "the rule was met, so no no-text card is stored");
+});
+test("read stage: a usage limit ends the run but the held no-text cards are still written when the rule was never met", async () => {
+  // chunk 1: four without text; chunk 2: four with text, the model call hits the limit (4 of 8 none: not systemic)
+  const { out, cards } = await readStage(12, async (r, reports) => (reports.findIndex((x) => x.sha1 === r.sha1) < 4 ? { error: "none" } : { text: LTEXT, partial: false }), async () => ({ ok: false, json: null, limit: true, error: false }));
+  assert.equal(out.halt, "usage limit"); assert.equal(cards.length, 4); assert.ok(cards.every((c) => c.status === "no-text"));
 });

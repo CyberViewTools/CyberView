@@ -75,3 +75,9 @@ test("config: every card is audited before it can be shown (audit_pct 100) and t
   const L = JSON.parse(readFileSync(new URL("../../config/pipeline.json", import.meta.url), "utf8")).library;
   assert.equal(L.audit_pct, 100); assert.match(L._note, /unaudited cards then show no summary/);
 });
+
+// cardProblems refuses a summary or fact value holding a link, a domain or an email address: the reader is told so
+test("readerPrompt: tells the model to keep links, domain names and email addresses out of the summary and fact values", () => {
+  const rules = readerPrompt({ title: "T", sha1: "a".repeat(40) }, "x").split("THE REPORT")[0];
+  assert.match(rules, /Never put a link, a domain name or an email address in the summary or in a fact value/);
+});

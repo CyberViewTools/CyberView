@@ -39,11 +39,13 @@ export const dataGitDir = (root = ROOT) => (dataMode(root) === "branch" ? join(r
 /** A data/ path as the data checkout sees it ("data/leads/x.jsonl" -> "leads/x.jsonl" in branch mode). */
 export const dataRel = (p, root = ROOT) => (dataMode(root) === "branch" ? String(p).replace(/^data\/?/, "") || "." : p);
 
-/** owner/repo from the origin remote (credentials stripped). */
-export function repoSlug(root = ROOT) {
-  const u = run(root, ["remote", "get-url", "origin"]).stdout.trim();
-  const m = /github\.com[/:]([^/]+)\/([^/.]+?)(?:\.git)?$/.exec(u);
-  return m ? `${m[1]}/${m[2]}` : process.env.GITHUB_REPOSITORY || "CyberViewTools/CyberView";
+/** The repository's canonical owner/repo. Not read from the origin remote: a checkout made before the repository moved
+ *  (xanderhutch/CyberView -> CyberViewTools/CyberView, 26 Nov 2026) still names the old address there, git follows the
+ *  move but API calls to the old name (the deploy request, issues, pull requests) do not, and no deploy was requested
+ *  for 12 hours. GitHub Actions sets GITHUB_REPOSITORY; CYBERVIEW_REPO overrides it for a fork. */
+export const REPO = "CyberViewTools/CyberView";
+export function repoSlug(_root = ROOT, env = process.env) {
+  return env.GITHUB_REPOSITORY || env.CYBERVIEW_REPO || REPO;
 }
 
 /** Files that never need a deploy (the old pages.yml paths-ignore). */
@@ -55,7 +57,11 @@ export function dispatchDeploy(root = ROOT) {
   if (process.env.CYBERVIEW_NO_DEPLOY === "1") return false;                // tests and rehearsals
   const r = spawnSync("gh", ["api", "-X", "POST", `repos/${repoSlug(root)}/actions/workflows/pages.yml/dispatches`, "-f", "ref=main"], { cwd: root, encoding: "utf8", timeout: 30000 });
   if (r.status === 0) return true;
-  console.error(`deploy request failed: ${((r.stderr || r.error && r.error.message) || "").trim().split("\n").pop()}`);
+  // printed to stdout as well as stderr: the launcher shows only the tail of a job's combined output, and a failed request
+  // must be visible there (it went unseen for 12 hours on 26 Nov 2026)
+  const why = ((r.stderr || r.error && r.error.message) || "").trim().split("\n").pop();
+  console.error(`deploy request failed: ${why}`);
+  console.log(`DEPLOY REQUEST FAILED (${repoSlug(root)}): ${why}`);
   return false;
 }
 

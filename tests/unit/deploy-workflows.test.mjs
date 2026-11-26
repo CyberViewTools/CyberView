@@ -29,3 +29,9 @@ test("build.yml: pull requests and pushes to main, against the data branch", () 
   assert.match(y, SPARSE);
   assert.ok((y.match(/uses: \.\/\.github\/actions\/data/g) || []).length >= 2, "validate and browser jobs mount the data");
 });
+
+test("collect, feeds and the pipeline check never share a concurrency group (a pending run would cancel another)", () => {
+  const groups = ["collect.yml", "feeds.yml", "pipecheck.yml"].map((f) => /concurrency:[\s\S]*?group: (\S+)/.exec(read(f))[1]);
+  assert.equal(new Set(groups).size, 3, `groups: ${groups.join(", ")}`);
+  assert.ok(!groups.includes("data-writes"));
+});

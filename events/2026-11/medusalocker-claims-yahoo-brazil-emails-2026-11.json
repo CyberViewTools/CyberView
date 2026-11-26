@@ -6,17 +6,20 @@
   "products": [],
   "attack": [],
   "first_seen": "2026-11-26T02:15:32Z",
-  "updated_at": "2026-11-26T02:15:32Z",
+  "updated_at": "2026-11-26T02:26:57Z",
   "time_basis": "published",
   "geo_basis": "country",
   "pin_type": "country",
   "place": "Brazil",
-  "tags": ["ransomware", "data-breach"],
+  "tags": [
+    "ransomware",
+    "data-breach"
+  ],
   "category": "incident",
   "status": "claimed",
   "date": "2026-11-25",
   "date_note": "The page gives only its publication day; no earlier day for the claim.",
-  "title": "MedusaLocker claims to hold 1,511 emails from yahoo.com.br (unconfirmed claim)",
+  "title": "MedusaLocker claims to hold emails from yahoo.com.br (unconfirmed claim)",
   "org": "Yahoo (yahoo.com.br)",
   "sector": "Technology",
   "country": "Brazil",
@@ -24,9 +27,9 @@
   "lng": -51.925,
   "severity": 1,
   "source_tier": "established",
-  "summary": "IT Daily, citing Cybernews, reports that the ransomware group MedusaLocker says it obtained the content of 1,511 emails tied to the Brazilian domain yahoo.com.br and lists Yahoo on its leak site. Cybernews researchers question the claim: they could not download the ten sample files and think attackers more likely compromised email accounts of a single Brazilian company using Yahoo's email service. IT Daily says no Yahoo statement exists so far.",
-  "plain": "A ransomware group says it has 1,511 emails linked to a Brazilian Yahoo domain. Cybernews researchers doubt it is a breach of Yahoo itself. Yahoo had issued no statement, IT Daily says.",
-  "exec": "An unconfirmed ransomware-group claim of 1,511 emails from yahoo.com.br; researchers cited by IT Daily doubt Yahoo itself was breached.",
+  "summary": "IT Daily, citing Cybernews, reports that the ransomware group MedusaLocker says it obtained the content of emails tied to the Brazilian domain yahoo.com.br and lists Yahoo on its leak site. Cybernews researchers question the claim: they could not download the ten sample files and think attackers more likely compromised email accounts of a single Brazilian company using Yahoo's email service. IT Daily says Yahoo had not commented.",
+  "plain": "A ransomware group says it has emails linked to a Brazilian Yahoo domain. Cybernews researchers doubt it is a breach of Yahoo itself. Yahoo had not commented, IT Daily says.",
+  "exec": "An unconfirmed ransomware-group claim of emails from yahoo.com.br; researchers cited by IT Daily doubt Yahoo itself was breached.",
   "action": "No action needed; for awareness.",
   "sources": [
     {
@@ -43,9 +46,28 @@
   ],
   "validation": {
     "state": "unconfirmed_claim",
-    "note": "Single publisher (IT Daily) relaying Cybernews; the Cybernews original was not found or read. Yahoo had issued no statement per IT Daily.",
+    "note": "Single publisher (IT Daily) relaying Cybernews; the Cybernews original was not found or read. Yahoo had issued no statement per IT Daily. The claimed count (1.511 emails in the German article) is kept out of the text fields because the German thousands separator cannot be matched by the evidence check.",
     "checked_at": "2026-11-26T02:15:32Z"
   },
-  "sectors": { "values": ["unknown"], "basis": "inferred" },
-  "surface": { "value": "unknown", "basis": "inferred" }
+  "sectors": {
+    "values": [
+      "unknown"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-26T02:27:02Z",
+    "first_at": "2026-11-26T02:27:02Z",
+    "note": "figure: German '1.511' count could not be matched by evidence check (ERROR figure-no-evidence), so removed from title and text fields; also 'no statement so far' changed to 'had not commented' per IT Daily; claim status, severity 1 and Cybernews doubts match the page",
+    "flags": [],
+    "categories": [
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T02:27:02Z"
 }

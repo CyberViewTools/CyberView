@@ -1,5 +1,4 @@
 {
-  "id": "risc-zero-proof-forgery-flaw-fixed-3-1-0-2026-11",
   "title": "RISC Zero patches critical proof-forgery flaw; proofs must be regenerated after upgrading to 3.1.0",
   "category": "vuln",
   "status": "confirmed",
@@ -13,7 +12,9 @@
   "cves": [],
   "tags": [],
   "org": "RISC Zero",
-  "products": ["risc0-zkvm"],
+  "products": [
+    "risc0-zkvm"
+  ],
   "country": "United States",
   "place": "",
   "lat": 37.77,
@@ -25,17 +26,41 @@
   "exec": "Applications relying on RISC Zero proofs must upgrade to 3.1.0 and regenerate proofs, according to PANews and ChainCatcher. Neither reports exploitation.",
   "action": "RISC Zero's fix, as relayed by PANews and ChainCatcher: upgrade to 3.1.0 and regenerate the proofs your application depends on; PANews says RISC Zero states there is no workaround.",
   "sector": "Blockchain / zero-knowledge proofs",
-  "sectors": {"values": ["information-technology"], "basis": "inferred"},
-  "surface": {"value": "unknown", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "unknown",
+    "basis": "inferred"
+  },
   "source_tier": "established",
   "sources": [
-    {"name": "ChainCatcher", "url": "https://www.chaincatcher.com/article/2308077", "published": "2026-11-26"},
-    {"name": "PANews", "url": "https://www.panewslab.com/zh/articles/01a21570-00cb-77de-8365-00922bdf7338", "published": "2026-11-26"}
+    {
+      "name": "ChainCatcher",
+      "url": "https://www.chaincatcher.com/article/2308077",
+      "published": "2026-11-26"
+    },
+    {
+      "name": "PANews",
+      "url": "https://www.panewslab.com/zh/articles/01a21570-00cb-77de-8365-00922bdf7338",
+      "published": "2026-11-26"
+    }
   ],
   "validation": {
     "state": "single_source",
     "note": "PANews and ChainCatcher both relay The Defiant's report and the RISC Zero advisory, so they count as one account; The Defiant article body did not load and RISC Zero's GitHub release and advisories answered 403.",
     "checked_at": "2026-11-26T02:15:37Z"
   },
-  "evidence": []
+  "evidence": [],
+  "review": {
+    "state": "passed",
+    "at": "2026-11-26T02:27:02Z",
+    "first_at": "2026-11-26T02:27:02Z",
+    "note": "Compared critical proof-forgery flaw, upgrade to 3.1.0 and regenerate proofs, no workaround, no exploitation reported against ChainCatcher and PANews; single_source and severity 2 fit",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-26T02:27:02Z"
 }

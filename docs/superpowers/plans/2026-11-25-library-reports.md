@@ -394,7 +394,7 @@ test("pipeline.json: library.backfill ships false", () => { /* read the file */ 
   - `siteStory(file, reports): object | null` — `null` unless `file.live` exists with `reviewed_at` and `status` `published` or `stale`; returns headline, in_short, sections, `by`, `reviewed_at`, `n` (source count) and `src`: for each cited sha1 its title, authors, year and sha1 (from the report record). A `stale` live story is still published.
   - `storyIndex(files): { key, kind, name, headline, in_short, reviewed_at, n }[]` — newest review first.
   - `libraryIndex` rows gain `k: 1` when the report has a read card, and actor rows gain `st: <story key>` when a story is live; reports in a loose story gain `st` too.
-- Files written: `site/data/orkl-cards/<xx>.json` (256 shards, keyed by sha1), `site/data/orkl-stories/<key>.json`, `site/data/orkl-stories.json` (the index). A missing or broken card or story file is a warning, never a build error, and the Library still builds.
+- Files written: `site/data/library/cards/<xx>.json` (256 shards, keyed by sha1), `site/data/library/stories/<key>.json`, `site/data/library/stories.json` (the index). A missing or broken card or story file is a warning, never a build error, and the Library still builds.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -427,7 +427,7 @@ test("siteCard: unread and no-text cards publish nothing", () => { /* null twice
 - Test: `tests/test_all.py` (extend the Library block near line 2015)
 
 **Interfaces:**
-- Consumes: `data/orkl-index.json` (`k`, `st` flags), `data/orkl-cards/<xx>.json`, `data/orkl-stories/<key>.json`, `data/orkl-stories.json`.
+- Consumes: `data/orkl-index.json` (`k`, `st` flags), `data/library/cards/<xx>.json`, `data/library/stories/<key>.json`, `data/library/stories.json`.
 - Behaviour:
   - **Report record:** when the row has `k`, fetch its shard and show "What this report says" (the summary), then Who, Targets, Tools and CVEs (CVEs linked as the event write-ups link them), the byline `CyberView AI (a Claude model)`, and "Read from part of the report" when `p`. Without `k`: the line "CyberView has not summarised this report." The ORKL and PDF links stay as they are.
   - **Actor record:** when the actor has `st`, fetch and render the story above the existing aliases, tools and report list: headline, in-short, byline with "from N reports · reviewed <date>", each section under a plain heading (`who` "Who they are", `targets` "Who they go after", `methods` "How they work", `operations` "Notable operations", `takeaway` "What defenders should take from it"), each sentence followed by its numbered citations, and a numbered Sources list linking to the report's Library record (`#r=<sha1>`). A `catalogue` cite renders as "ORKL catalogue" linking to the actor's ORKL profile.

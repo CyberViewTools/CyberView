@@ -234,9 +234,36 @@ export function fallbackSpend(lines, now = Date.now(), prices = PRICES) {
   const mk = iso(now).slice(0, 7); let usd = 0, workers = 0, last_at = null;
   for (const l of lines || []) {
     if (!l || (l.served !== "api-fallback" && l.served !== "api") || typeof l.at !== "string" || l.at.slice(0, 7) !== mk) continue;
+    if (l.job === "library") continue;   // the Library has its own API budget (library.api, librarySpend below)
     workers++; usd += estimateCost(l, prices); if (!last_at || l.at > last_at) last_at = l.at;
   }
   return { month: mk, usd: Math.round(usd * 100) / 100, workers, last_at };
+}
+// ---------- The Library's own API budget (owner, 2026-11-26: "this needs to go through the api", "cap it at $75 for now").
+// config/pipeline.json library.api { enabled, monthly_usd_cap }. The Library desk bills ONLY the API key (never the subscription);
+// its spend is counted apart from the pipeline's fallback cap, and at its cap it stops until the next calendar month.
+export const DEFAULT_LIBRARY_API = { enabled: true, monthly_usd_cap: 75 };
+/** Pure: the library.api block with defaults; a cap that is not a number >= 0 falls back to the default. */
+export function libraryApiConfig(library = {}) {
+  const a = (library && typeof library.api === "object" && library.api) || {}, cap = Number(a.monthly_usd_cap);
+  return { enabled: a.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 && a.monthly_usd_cap !== null && a.monthly_usd_cap !== "" ? cap : DEFAULT_LIBRARY_API.monthly_usd_cap };
+}
+/** Pure: the Library's API spend this calendar month (UTC), from ledger lines with job "library" served "api". A line's own
+ *  cost (what the CLI reported) is used when it has one, else the PRICES x tokens estimate. */
+export function librarySpend(lines, now = Date.now(), prices = PRICES) {
+  const mk = iso(now).slice(0, 7); let usd = 0, workers = 0, last_at = null;
+  for (const l of lines || []) {
+    if (!l || l.job !== "library" || l.served !== "api" || typeof l.at !== "string" || l.at.slice(0, 7) !== mk) continue;
+    const c = l.cost != null && l.cost !== "" && isFinite(Number(l.cost)) ? Number(l.cost) : estimateCost(l, prices);
+    workers++; usd += c; if (!last_at || l.at > last_at) last_at = l.at;
+  }
+  return { month: mk, usd: Math.round(usd * 100) / 100, workers, last_at };
+}
+/** Pure decision for a Library call: "api" (bill the key) or "park" (start nothing). Never "subscription". */
+export function libraryDecision({ keyPresent = false, enabled = true, monthSpendUsd = 0, cap = DEFAULT_LIBRARY_API.monthly_usd_cap, keyLimited = false } = {}) {
+  if (!keyPresent || !enabled || keyLimited) return "park";
+  const c = Number(cap); if (isFinite(c) && Number(monthSpendUsd) >= c) return "park";
+  return "api";
 }
 /** Pure decision: which credential the pipeline pool should use right now. The subscription stays primary; the API key
  *  bills ONLY while the subscription window is exhausted. Covers every branch:

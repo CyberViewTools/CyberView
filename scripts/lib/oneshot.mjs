@@ -8,7 +8,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { ROOT, readJson } from "./store.mjs";
 import { LIMIT_RE } from "./usage.mjs";
-import { ledgerLine, record, servedNow, fallbackNote, noteOutcome, envFor } from "../run-job.mjs";
+import { ledgerLine, record, servedNow, fallbackNote, noteOutcome, envFor, libraryServedNow, libraryNote } from "../run-job.mjs";
 
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {} });
 
@@ -75,8 +75,9 @@ export function ledgerFor(job, role, batch, model, ms, out, err, served, meta = 
 /** One call. Writes one usage-ledger line (role, model, tokens; never the prompt). A parked plan limit returns limit: true without a call. */
 export async function oneShot(role, prompt, { job = "library", batch = "", timeoutMs = 0 } = {}) {
   const cfg = roleOf(role, MODELS);
-  const served = servedNow();
-  if (served === "park") return { ok: false, json: null, limit: true, error: false, note: fallbackNote() };
+  // the Library bills only the API key, within its own monthly cap (library.api); every other caller follows the pipeline's rule
+  const lib = job === "library", served = lib ? libraryServedNow() : servedNow();
+  if (served === "park") return { ok: false, json: null, limit: true, error: false, note: lib ? libraryNote() : fallbackNote() };
   const model = cfg.model, roleMs = (Number(cfg.timeout_min) || 6) * 60000, ms = timeoutMs > 0 ? Math.min(roleMs, timeoutMs) : roleMs, t0 = Date.now();   // timeoutMs: the desk's time left, never more than the role's own
   // run from an empty directory so the repository's CLAUDE.md, settings and hooks are not loaded into a no-tools call
   const cwd = mkdtempSync(join(tmpdir(), "cyberview-oneshot-"));

@@ -19,14 +19,18 @@ test("every schedule in ai-launch.yml picks a job, and each job's cron equals ro
   assert.equal(new Set(cases.values()).size, cases.size, "a job is scheduled twice");
 });
 
-test("ai-launch.yml signs in with the subscription token only and stays off until AI_LAUNCH is set", () => {
+test("ai-launch.yml signs in with the subscription token, stays off until AI_LAUNCH is set, and runs only the Library on the API key regardless", () => {
   assert.match(yml, /CLAUDE_CODE_OAUTH_TOKEN: \$\{\{ secrets\.CLAUDE_CODE_OAUTH_TOKEN \}\}/);
   assert.doesNotMatch(yml, /secrets\.ANTHROPIC_API_KEY/);
   assert.match(yml, /unset ANTHROPIC_API_KEY/);
   assert.match(yml, /vars\.AI_LAUNCH == 'actions'/);
-  // the manual choices are the scheduled jobs plus the Library desk, which is manual only: it has no schedule here, so a
-  // runner never starts it unattended (the owner turns it on and off; routines.json `library`)
   const opts = (yml.match(/options: \[([^\]]+)\]/) || [])[1].split(",").map((s) => s.trim());
-  assert.deepEqual([...opts].sort(), [...new Set([...cases.values(), "library"])].sort());
-  assert.ok(![...cases.values()].includes("library"), "the Library desk has no schedule in ai-launch.yml");
+  assert.deepEqual([...opts].sort(), [...new Set(cases.values())].sort());
+  // the Library (owner, 2026-11-26): its own schedule runs whatever AI_LAUNCH says, gated on the API key, never the subscription token
+  const lib = [...cases].find(([, j]) => j === "library"); assert.ok(lib, "the Library has a schedule");
+  assert.ok(yml.includes(`github.event.schedule == '${lib[0]}'`), "the Library's schedule bypasses AI_LAUNCH");
+  assert.match(yml, /if \[ "\$job" = library \]; then ready=\$HAS_KEY; else ready=\$HAS_OAUTH; fi/);
+  assert.match(yml, /if \[ "\$JOB" = library \]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi/);
+  // no other schedule bypasses the switch
+  assert.equal((yml.match(/github\.event\.schedule == '/g) || []).length, 1);
 });

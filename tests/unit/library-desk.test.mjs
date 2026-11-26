@@ -285,23 +285,25 @@ test("libraryBlock: cards, audit, stories, and tokens and estimated cost by role
 });
 
 /* ---------- config, routine, heartbeat, roles ---------- */
-test("pipeline.json: the library block ships with backfill off and every dial documented", () => {
+test("pipeline.json: the library block as the owner set it on 2026-11-26 (backfill on, bigger waves, API only) with every dial documented", () => {
   const L = rj("config/pipeline.json").library;
-  assert.equal(L.backfill, false); assert.equal(L.enabled, true);
+  assert.equal(L.backfill, true); assert.equal(L.enabled, true);
   assert.deepEqual(L.pilot, { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 });
-  assert.deepEqual(L.wave, { read: 40, write: 6, review: 6, audit: 4 });
+  assert.deepEqual(L.wave, { read: 150, write: 16, review: 16, audit: 150 });
+  assert.deepEqual(L.api, { enabled: true, monthly_usd_cap: 75 });
   assert.equal(L.reread, 3); assert.equal(L.audit_pct, 100); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50);
-  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
+  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min", "api", "monthly_usd_cap", "concurrency", "run_minutes"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
   assert.match(L._note, /owner/);
-  assert.deepEqual(deskConfig(join(ROOT, "config", "pipeline.json")), { ...DESK_DEFAULTS });
+  const c = deskConfig(join(ROOT, "config", "pipeline.json"));
+  assert.equal(c.backfill, true); assert.deepEqual(c.wave, L.wave); assert.deepEqual(c.pilot, DESK_DEFAULTS.pilot);
 });
 test("pipeline.json: the library job is headless", () => assert.ok(rj("config/pipeline.json").headless_jobs.includes("library")));
-test("routines.json: library is an AI routine that ships off, with a heartbeat and a max age longer than its schedule", () => {
+test("routines.json: library is an AI routine, switched on, with a heartbeat and a max age longer than its schedule", () => {
   const r = rj("routines.json").routines.find((x) => x.key === "library");
   assert.equal(r.name, "Library reports"); assert.equal(r.tier, "ai"); assert.equal(r.workflow, "claude-task");
-  assert.equal(r.cron, "37 * * * *"); assert.equal(r.model, "claude-sonnet-5-5");
-  assert.equal(r.status_key, "last_library_at"); assert.equal(r.max_age_hours, 6); assert.equal(r.active, false);
-  assert.match(r.does, /Haiku/); assert.match(r.does, /Off until the owner starts the pilot\.$/);
+  assert.equal(r.cron, "17,37,57 * * * *"); assert.equal(r.model, "claude-sonnet-5-5");
+  assert.equal(r.status_key, "last_library_at"); assert.equal(r.max_age_hours, 6); assert.equal(r.active, true);
+  assert.match(r.does, /Haiku/); assert.match(r.does, /bills only the API key/); assert.match(r.does, /"active": false/);
   const orkl = rj("routines.json").routines.find((x) => x.key === "orkl");
   assert.match(orkl.does, /Library reports/);
 });
@@ -450,10 +452,10 @@ test("run: a usage-ledger check before every wave: canStart false after the firs
 });
 
 /* ---------- activation is one edit ---------- */
-test("routines.json: switching library on is one edit (active + active_since): about, docs and the jobs tests are already satisfied", async () => {
+test("routines.json: the Library is switched on (active + active_since): about, docs and the jobs tests are satisfied", async () => {
   const real = rj("routines.json").routines, lib = real.find((r) => r.key === "library");
-  assert.equal(lib.active, false);
-  const flipped = real.map((r) => (r.key === "library" ? { ...r, active: true, active_since: "2026-12-01T00:00:00Z" } : r));
+  assert.equal(lib.active, true); assert.ok(lib.active_since);
+  const flipped = real;
   const inv = await inventory(), on = { ...inv, routines: flipped.filter((r) => r.active !== false).map((r) => r.key) };
   assert.ok(inv.routines.includes("library"), "an off routine is described too, so the about entry ships now");
   assert.deepEqual(aboutProblems(about(), on), []); assert.deepEqual(aboutProblems(about(), inv), []);
@@ -462,8 +464,7 @@ test("routines.json: switching library on is one edit (active + active_since): a
   const jt = readFileSync(join(ROOT, "tests", "unit", "jobs.test.mjs"), "utf8");
   assert.match(jt, /r\.key === "library"\) continue/, "the jobs test exempts the desk (it has no job-prompt section)");
   const iv = lib.cron.split(" ")[1] === "*" ? 1 : 24; assert.ok(lib.max_age_hours >= iv * 1.15);
-  assert.match(lib.does, /"active": true/); assert.match(lib.does, /active_since/);
-  assert.match(jobs, /"active": true/);
+  assert.match(lib.does, /"active": false/);
 });
 
 // B-I1: the desk passes only:true and, before the latch, the pilot's story keys to the review stage

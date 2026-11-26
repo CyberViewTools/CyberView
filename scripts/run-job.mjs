@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock, leaderLease } from "./lib/lease.mjs";
-import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend, apiPrimaryLive } from "./lib/usage.mjs";
+import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend, apiPrimaryLive, libraryApiConfig, librarySpend, libraryDecision } from "./lib/usage.mjs";
 import { roleFor, baseRole } from "./lib/routing.mjs";
 import { lastRunOf, gapDryRun, gapEveryMinutes } from "./lib/gates.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -133,7 +133,7 @@ function logUnfinished(l, t0) {
   const name = `${baseRole(l.role)}${l.batch != null ? "-" + String(l.batch).replace(/[^A-Za-z0-9]/g, "") : ""}-unfinished`;
   writeJson(join(dir, `${l.at.slice(11, 13)}${l.at.slice(14, 16)}-${name}.json`), { job: name, ...log });
 }
-let unavailable = 0, limitHit = null, fallbackKeyLimited = false;
+let unavailable = 0, limitHit = null, fallbackKeyLimited = false, libraryKeyLimited = false;
 // ---------- API-key fallback (scripts/lib/usage.mjs): subscription primary, the API key bills only while the subscription
 // window is exhausted. The owner stores the key under CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY (never ANTHROPIC_API_KEY, which
 // the CLI would use ahead of the subscription). With the env var unset, behaviour is exactly as before (park on a limit).
@@ -204,8 +204,33 @@ export function fallbackNote(now = Date.now()) {
  *  the fallback state. A limit on the subscription parks (or, if a fallback key is set, flips to the API key); a limit the
  *  fallback key itself returns parks for the rest of this run instead of looping on an exhausted key. */
 export function noteOutcome(l, served) {
+  if (l.limit && l.job === "library" && served === "api") { libraryKeyLimited = true; libCache.at = 0; return; }   // the Library's key hit a limit: the Library parks, the pipeline is untouched
+  if (l.job === "library") { libCache.at = 0; return; }   // a Library call's spend just landed: re-check its own cap
   if (l.limit) { if (served === "api-fallback" || served === "api") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
   else if (l.served === "api-fallback" || l.served === "api") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
+}
+// ---------- The Library bills only the API (config/pipeline.json library.api; owner, 2026-11-26). The key is the same one the
+// fallback uses (CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY), handed to a Library worker only as ANTHROPIC_API_KEY by workerEnv("api").
+const LIBAPI = libraryApiConfig(PIPE.library || {});
+let libCache = { at: 0, served: null, spend: { usd: 0, workers: 0, last_at: null } };
+function libraryState(now = Date.now()) {
+  if (libCache.served && now - libCache.at < 15000) return libCache;
+  let spend = { usd: 0, workers: 0, last_at: null };
+  try { spend = librarySpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
+  const served = libraryDecision({ keyPresent: !!FALLBACK_KEY, enabled: LIBAPI.enabled, monthSpendUsd: spend.usd, cap: LIBAPI.monthly_usd_cap, keyLimited: libraryKeyLimited });
+  libCache = { at: now, served, spend };
+  return libCache;
+}
+/** "api" or "park" for a Library call right now. */
+export const libraryServedNow = (now = Date.now()) => libraryState(now).served;
+/** A plain reason when the Library is parked; never contains the key. The words "usage limit reached" end the desk run. */
+export function libraryNote(now = Date.now()) {
+  const s = libraryState(now);
+  if (!FALLBACK_KEY) return `usage limit reached; the Library bills only the API and the key (${FB.env_var}) is not set here`;
+  if (!LIBAPI.enabled) return "usage limit reached; the Library's API billing is switched off (library.api.enabled)";
+  if (libraryKeyLimited) return "usage limit reached; the API key hit its own limit";
+  if (s.spend.usd >= LIBAPI.monthly_usd_cap) return `usage limit reached; the Library's API cap ($${LIBAPI.monthly_usd_cap} a month) is reached ($${s.spend.usd} this month)`;
+  return `Library on the API ($${s.spend.usd} of $${LIBAPI.monthly_usd_cap} this month)`;
 }
 /** The limit state noteOutcome keeps (for tests and status lines). */
 export const limitState = () => ({ limitHit, fallbackKeyLimited });
@@ -746,8 +771,14 @@ async function flow() {
 
 /** The Library desk (scripts/library-desk.mjs): the desk decides, waits for the usage window and runs its own waves (workers have no tools
  *  and never run git); this hands what it wrote to the same commit step as every job. It stops starting waves in time for the commit. */
+/** Pure: how many minutes one Library run may take. In a launcher session the 10-minute tool call caps it (headless_foreground_minutes,
+ *  2 to 9); on a GitHub Actions runner (.github/workflows/ai-launch.yml) there is no such cap, so library.run_minutes (2 to 22) applies. */
+export function libraryMinutes(pipe = PIPE, env = process.env) {
+  const fg = Math.max(2, Math.min(9, Number(pipe.headless_foreground_minutes) || 8)), rm = Number(((pipe.library || {}).run_minutes));
+  return env.GITHUB_ACTIONS === "true" && Number.isFinite(rm) && rm > 0 ? Math.max(2, Math.min(22, rm)) : fg;
+}
 function libraryJob() {
-  const t0 = Date.now(), hm = Math.max(2, Math.min(9, Number(PIPE.headless_foreground_minutes) || 8));
+  const t0 = Date.now(), hm = libraryMinutes();
   const left = Math.min(hm * 60000, leftMs()), tmo = Math.max(60000, left - 90000);
   log(`RUN library ${RUN}`);
   const d = sh("node", ["scripts/library-desk.mjs", "run"], tmo, { LIBRARY_DEADLINE_MS: String(Date.now() + tmo - 30000) });   // every model call ends 30 s before this run is cut off

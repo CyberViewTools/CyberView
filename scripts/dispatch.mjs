@@ -19,7 +19,13 @@ const EXEC = process.argv.includes("--exec");
 // The launcher's Bash call (the git pull, then this script) has 600 s; this run must return before that, with time for the
 // session's reply. The run's workers must stop FLOW_HARD_AT (90 s before the kill) so its commit still fits.
 const BASH_T0 = Date.now() - Math.round(process.uptime() * 1000);
-const execBudgetMs = (now, t0 = BASH_T0) => Math.max(60000, t0 + 560000 - now);
+// On a GitHub Actions runner there is no 600 s tool call: the Library's run may take library.run_minutes (scripts/run-job.mjs libraryMinutes)
+// plus its commit; every other job keeps the launcher's budget.
+const execBudgetMs = (now, t0 = BASH_T0) => {
+  const rm = Number((PL.library || {}).run_minutes);
+  if (process.env.GITHUB_ACTIONS === "true" && job === "library" && Number.isFinite(rm) && rm > 0) return Math.max(60000, t0 + (Math.min(22, rm) + 3) * 60000 - now);
+  return Math.max(60000, t0 + 560000 - now);
+};
 function execHeadless(env, args, endLine) {
   const ms = execBudgetMs(Date.now());
   const x = spawnSync("node", args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...env, FLOW_HARD_AT: String(Date.now() + ms - 90000) } });

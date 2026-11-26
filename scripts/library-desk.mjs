@@ -3,7 +3,8 @@
 //   (data/orkl/pilot.json, chosen once: the 200 newest reports plus every report of the 10 biggest actors, 40 per actor at most;
 //   those 10 actors, 5 actors with one or no report and 5 loose subjects) and the audit checks every card.
 //   Then only new records and stale stories (mode "steady"); the backlog (library.backfill, the OWNER's switch, ships false).
-//   Never while the map pipeline needs the usage window: canBuild (scripts/lib/usage.mjs) is asked first, and the shared 35% reserve holds.
+//   Billing: the Library bills only the API key, within its own monthly cap (library.api; owner, 2026-11-26), so the subscription's usage
+//   window does not hold it back; with no key, at the cap or with the key limited it starts nothing (libraryServedNow in scripts/run-job.mjs).
 // `run` order: review, audit, write, read (finish what is closest to publishing first), each in waves of one worker batch; a wave starts
 // only with the time left that a worker of its role needs (reserveMs). The desk commits nothing: scripts/run-job.mjs library runs it and
 // then scripts/finish.mjs library, the same path as every headless job. It stamps last_library_at and library_note in status.json.
@@ -20,11 +21,12 @@ import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAu
 import { actorIndex, actorSubjects, looseSubjects, nameKey } from "./lib/library-subjects.mjs";
 import { canBuild, estimateCost, readUsage, budgetConfig, PRICES } from "./lib/usage.mjs";
 import { readBuild, BUILD_LEDGER } from "./budget.mjs";
+import { libraryServedNow, libraryNote } from "./run-job.mjs";
 
 export const PILOT_FILE = join(DIR, "pilot.json");
 export const DESK_DEFAULTS = { enabled: true, backfill: false, pilot: { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 }, wave: { read: 40, write: 6, review: 6, audit: 4 }, ...AUDIT_DEFAULTS };
 const PER_ACTOR = 40;                          // reports of one actor read for the pilot: the writer shows at most 40 cards per story anyway
-const CHUNK = { review: 2, audit: 2, write: 3, read: 4 };   // one worker batch = the concurrency of the desk's own run
+const CHUNK = { review: 2, audit: 2, write: 3, read: 4 };   // one worker batch = the concurrency of the desk's own run (library.concurrency overrides, 1 to 10)
 const ROLES = { review: "library-reviewer", audit: "library-auditor", write: "library-writer", read: "library-reader" };
 const ORDER = ["review", "audit", "write", "read"];
 const MODELS = readJson(join(ROOT, "config", "models.json"), { roles: {} });
@@ -39,6 +41,13 @@ export function deskConfig(file = join(ROOT, "config", "pipeline.json")) {
     if (typeof lib.backfill === "boolean") out.backfill = lib.backfill;
     for (const g of ["pilot", "wave"]) if (lib[g] && typeof lib[g] === "object") for (const k of Object.keys(out[g])) if (Number.isFinite(lib[g][k]) && lib[g][k] >= 0) out[g][k] = lib[g][k];
   }
+  out.concurrency = chunkFor(lib && lib.concurrency);
+  return out;
+}
+/** Pure: the per-stage concurrency (library.concurrency over CHUNK); each a whole number from 1 to 10, anything else keeps the default. */
+export function chunkFor(c) {
+  const out = { ...CHUNK };
+  if (c && typeof c === "object") for (const k of Object.keys(out)) { const v = c[k]; if (Number.isInteger(v) && v >= 1 && v <= 10) out[k] = v; }
   return out;
 }
 
@@ -336,7 +345,7 @@ export async function libraryHealth() {
 }
 
 /* ---------------- the run ---------------- */
-export function realDeps(library, opts = {}) {
+export function realDeps(library, opts = {}, CHUNK = chunkFor(null)) {
   // one no-text counter for every reader call of this desk run: the reader is called CHUNK.read (4) at a time and its "ORKL text
   // missing" rule needs 5 answered reports, so a counter per call would never reach it. The run's no-text cards are held in the
   // counter and written at the end of the read stage only if the rule was never met.
@@ -401,7 +410,11 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
     pf = loadPilot(pilotFile); ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg, failures });
     log(`library-desk: the pilot is complete (latched ${pf.pilot.completed_at})`);
   }
-  const canNow = () => { try { const t = now(); return canBuild(t, budgetConfig(), readUsage(t - 7 * 864e5, t), readBuild(BUILD_LEDGER(), t)).ok; } catch { return false; } };
+  // The Library bills only the API key (library.api; owner, 2026-11-26), so the subscription's usage window does not hold it back;
+  // with no key, its own cap reached or the key limited it starts nothing and says why. Tests inject `can`/`canStart` instead.
+  const injected = can != null || canStart != null, served = injected ? "api" : libraryServedNow();
+  if (served === "park") { const why = libraryNote(); log(`library-desk: ${why}`); return end(`waiting: ${why}`, plan(ds.state, cfg, false)); }
+  const canNow = () => true;
   const gate = canStart || (can != null ? () => !!can : canNow), ok = can != null ? !!can : canStart ? true : canNow();
   const p = plan(ds.state, cfg, ok), tail = badS.length ? `; ${badS.length} story file(s) unreadable, left alone` : "";
   log(`library-desk: mode ${p.mode}; ${ds.state.pilotDone ? "pilot complete" : "pilot not complete: " + ds.pilotStatus.why.join("; ")}; plan read ${p.read}, write ${p.write}, review ${p.review}, audit ${p.audit}${ok ? "" : "; the pipeline needs the usage window"}`);
@@ -409,7 +422,8 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
   const hm = Math.max(2, Math.min(9, Number(readJson(join(ROOT, "config", "pipeline.json"), {}).headless_foreground_minutes) || 8));
   const hard = Number(process.env.FLOW_HARD_AT) || 0, own = now() + hm * 60000 - 120000;
   const deadline = deadlineMs != null ? deadlineMs : hard ? Math.min(hard - 30000, own) : own;
-  const results = await runStages({ plan: p, orders: ds.orders, deps: deps || realDeps(lb), now, deadline, canStart: gate, log });
+  const chunk = cfg.concurrency || chunkFor(null);
+  const results = await runStages({ plan: p, orders: ds.orders, deps: deps || realDeps(lb, {}, chunk), now, deadline, chunk, canStart: gate, log });
   const late = ORDER.some((k) => results[k] && results[k].skipped === "no time left");
   return end(`${p.mode}: ${summary(results)}; pilot ${ds.state.pilotDone ? "complete" : "not complete"}${results.halt ? `; stopped: ${results.halt}` : ""}${late ? "; stopped at the deadline" : ""}${tail}`, p, results);
 }

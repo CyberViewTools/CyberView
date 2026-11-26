@@ -1,25 +1,87 @@
 {
   "a21cc43a35d77457657a6d51cb119e46e388ca15": {
     "sha1": "a21cc43a35d77457657a6d51cb119e46e388ca15",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:19:10Z",
+    "read_at": "2026-11-26T23:21:51Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Dutch firm Tesorion released a free decrypter for the Lorenz ransomware, which can recover some files without paying the ransom. A bug in Lorenz's encryption permanently destroys the last 48 bytes of files whose size is a multiple of 48 bytes. The decrypter works only in some cases. Lorenz was first seen in spring, appears to have evolved from ThunderCrypt and SZ40, targets enterprises, and its leak site listed thirteen victims.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "Lorenz gang",
+          "q": "Just like similar \"big-game hunting\" ransomware operations, the Lorenz gang also runs a leak site on the dark web",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "enterprise",
+          "q": "In its most recent incarnation, Lorenz has been used exclusively in attacks carried out against enterprise targets."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2023-01-18",
+          "q": "Published: 2023-01-18 · Archived: 2026-11-25 02:10:51 UTC",
+          "what": "Article published; the free decrypter was released the same day"
+        },
+        {
+          "v": "spring",
+          "q": "The Lorenz ransomware was first seen in attacks that took place this spring, and according to security researchers,",
+          "what": "Lorenz first seen in attacks"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Lorenz ransomware",
+          "q": "Free decrypter available for Lorenz ransomware"
+        },
+        {
+          "v": "Free decrypter",
+          "q": "Free decrypter available for Lorenz ransomware"
+        },
+        {
+          "v": "ThunderCrypt",
+          "q": "the ransomware's code appears to have evolved from the old ThunderCrypt and SZ40 families."
+        },
+        {
+          "v": "SZ40",
+          "q": "the ransomware's code appears to have evolved from the old ThunderCrypt and SZ40 families."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "encryption process contains a bug",
+          "q": "encryption process contains a bug where files that have a size that is a multiple of 48 bytes are"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "Thirteen victims",
+          "q": "Thirteen victims have been listed on this site so far."
+        },
+        {
+          "v": "48 bytes",
+          "q": "encryption process contains a bug where files that have a size that is a multiple of 48 bytes are"
+        },
+        {
+          "v": "hundreds of thousands of US dollars",
+          "q": "without paying hundreds of thousands of US dollars to the"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Lorenz ransomware"
+    },
+    "hedges": [
+      "The decrypter is not universal and works only in some cases, according to the Tesorion researcher.",
+      "Decryption is possible only for non-corrupted files and in some cases, according to the researcher.",
+      "The link to the ThunderCrypt and SZ40 families is described as appearing to exist, not as confirmed."
+    ]
   }
 }

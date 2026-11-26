@@ -3,7 +3,7 @@
     "sha1": "9cf695fcbc5312d99eaa150e0fb2da49f03fcd1b",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-26T21:16:53Z",
+    "read_at": "2026-11-26T23:21:16Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -20,6 +20,173 @@
     "subject": null,
     "hedges": [],
     "reason": "quote-not-in-text",
+    "tries": 2
+  },
+  "9c3cdce371315fb798062765c99ca44d4a6821ff": {
+    "sha1": "9c3cdce371315fb798062765c99ca44d4a6821ff",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-26T23:27:17Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote, quote-not-in-text",
     "tries": 1
+  },
+  "9cfb80b069d364603d4d881ba452943a871ca536": {
+    "sha1": "9cfb80b069d364603d4d881ba452943a871ca536",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:31:32Z",
+    "model": "haiku",
+    "summary": "Report on a second stage of the GhostAction campaign, which steals secrets through malicious GitHub Actions workflows. Stage 2 adds a hidden VS Code task and a file disguised as a font that runs a plain Node.js credential stealer and installs a cron job for remote commands. The cron job persists after the workflow is removed. The report found 94 compromised repositories across 66 owners in October 2026 and analysed 79 of them, all carrying Stage 2. It labels the campaign a copycat of the North Korea-linked PolinRider technique, not an extension of it.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "North Korea",
+          "q": "this technique was pioneered by North Korea for the PolinRider campaign.",
+          "by": "the report (OpenSourceMalware), referring to PolinRider"
+        },
+        {
+          "v": "GhostAction actor",
+          "q": "Did the GhostAction actor try a second PolinRider technique",
+          "by": "the report (OpenSourceMalware)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-10-16",
+          "q": "Published: 2026-10-16 · Archived: 2026-10-24 02:00:44 UTC",
+          "what": "The report was published."
+        },
+        {
+          "v": "January 2026",
+          "q": "discovered this trick way back in January 2026.",
+          "what": "A community member discovered the technique the copycat reuses."
+        },
+        {
+          "v": "September 2, 2025",
+          "q": "went in on September 2, 2025.",
+          "what": "The first GhostAction workflow in one repository, an earlier infection, was added."
+        },
+        {
+          "v": "October 8",
+          "q": "October 8: Stage 1 went in first. Between 13:03 and 22:41 UTC, 72 of the 79 repositories we analyzed",
+          "what": "Stage 1 workflow was pushed to 72 of the 79 analysed repositories."
+        },
+        {
+          "v": "October 9",
+          "q": "On October 9, GitHub started preventing the malicious workflow from",
+          "what": "GitHub began preventing the malicious workflow from running."
+        },
+        {
+          "v": "October 12",
+          "q": "October 12-14: Four more repos received Stage 1, well after the first group.",
+          "what": "Four more repositories received Stage 1."
+        },
+        {
+          "v": "October 14",
+          "q": "October 14: Stage 2 began quietly. In three repos the second workflow arrived between 13:23 and 18:58",
+          "what": "Stage 2 began, with the second workflow arriving in three repositories."
+        },
+        {
+          "v": "October 15",
+          "q": "October 15: The main burst came between 01:00 and 10:31 UTC. In 76 repos the second workflow, the",
+          "what": "Main Stage 2 burst: the second workflow, font file and tasks file landed together in 76 repositories."
+        }
+      ],
+      "tools": [
+        {
+          "v": "VS Code",
+          "q": "VS Code runs the task when someone opens the folder."
+        },
+        {
+          "v": "GitHub Actions",
+          "q": "and a second GitHub Actions workflow."
+        },
+        {
+          "v": "Node.js",
+          "q": "38 lines of plain Node.js."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "push a fake “security audit” workflow into every repository",
+          "q": "push a fake “security audit” workflow into every repository an"
+        },
+        {
+          "v": "VS Code runs the task when someone opens the folder",
+          "q": "VS Code runs the task when someone opens the folder."
+        },
+        {
+          "v": "cron job",
+          "q": "install a cron job that runs whatever the"
+        },
+        {
+          "v": "git history",
+          "q": "credentials found in its git history"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "94",
+          "q": "he found a cluster of 94 compromised repos with the VS"
+        },
+        {
+          "v": "66 owners",
+          "q": "The 94 repos in this cluster belong to 66 owners."
+        },
+        {
+          "v": "79",
+          "q": "We were able to clone 79 of them, and all 79 carried Stage 2."
+        },
+        {
+          "v": "6.3 days",
+          "q": "The median is 6.3 days, and 80% of repos fall between 6.1 and 6.7 days."
+        },
+        {
+          "v": "792 days",
+          "q": "792 days quiet at the median, and a dormant project has little CI to steal from."
+        },
+        {
+          "v": "16 percent",
+          "q": "only 16 percent of the 772 repositories in the August and September wave had"
+        },
+        {
+          "v": "nine of ten runs",
+          "q": "in the repository we followed, nine of ten runs were held."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "GhostAction"
+    },
+    "hedges": [
+      "At this time the report labels GhostAction a copycat rather than an extension of PolinRider, since it found no shared indicators.",
+      "The report has not retrieved what the server returns, so it cannot say what Stage 3 does.",
+      "The report says it did not test two suspected bugs in the infostealer.",
+      "The report says how the malicious pushes were made is not established.",
+      "The report does not know who ran either push and cannot connect the owner to the operator.",
+      "The report cannot tell whether a second GitHub account belongs to the owner or to someone controlling their work email.",
+      "The report calls the link between its posts and the operator's changes an inference; it does not prove the operator read them.",
+      "The report says it does not know what the date in the batch tag means, or what the server does with the tag."
+    ]
   }
 }

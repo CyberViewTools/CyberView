@@ -1,25 +1,119 @@
 {
   "a6d6457f8411de5595f371100b5766ddbcb227d2": {
     "sha1": "a6d6457f8411de5595f371100b5766ddbcb227d2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:10:22Z",
+    "read_at": "2026-11-26T23:19:39Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "A blog-style writeup, archived copy, arguing that iOS lets a web page launch third-party apps through registered URL schemes without the user's authorization. The author's example is Skype, which starts a call from a link, while the tel: scheme prompts first. The author reports that Apple's security team puts the onus on third-party apps, and that Skype did not reply. Recommendations: let apps register schemes that Safari prompts for, publish a registry of schemes, and audit apps for URL-scheme risks. No CVE, threat actor, or incident is named.",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "enterprise",
+          "q": "make it easier for enterprises to figure out what third"
+        },
+        {
+          "v": "health-care",
+          "q": "with our personal, financial, and health-care data"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-11-26",
+          "q": "Archived: 2026-11-26 02:17:35 UTC",
+          "what": "Date and time this archived copy of the article was captured"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Skype",
+          "q": "Now, let us assume the user has Skype.app installed."
+        },
+        {
+          "v": "Safari",
+          "q": "Safari throws no warning, and yanks the user into Skype"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistent XSS",
+          "q": "a website whose client code may have been compromised by a persistent XSS"
+        },
+        {
+          "v": "Insecure Handling of URL Schemes",
+          "q": "Insecure Handling of URL Schemes in Apple’s iOS"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "Insecure Handling of URL Schemes in Apple’s iOS"
+    },
+    "hedges": [
+      "The author reports contacting Apple's security team and Skype; Apple's stance is second-hand and Skype did not reply.",
+      "The author calls the Skype case an example and says the risk is 'I feel the risk posed by how URL Schemes are handled in iOS is significant', so it is the author's opinion.",
+      "The Skype abuse case assumes the user has launched Skype before and that its credentials are cached, which the author says is 'most often the case'.",
+      "The author notes that Info.plist lists only the initial scheme string, so the full set of accepted patterns is in app code and cannot be read from it."
+    ]
+  },
+  "a62058803308b7f202208d5e99e7d5989c7c77cd": {
+    "sha1": "a62058803308b7f202208d5e99e7d5989c7c77cd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:22:05Z",
+    "model": "haiku",
+    "summary": "Malware analysis report by Mayank Malik on PirateStealer, described as a new info stealer, with the sample named Discord_beta.exe. The sample checks for a virtualized environment and exits if it finds one. If not, it harvests credentials from local application data, archives them, and sends the archive over HTTPS to an external endpoint. The report says no traces were found on Malware Bazaar or Malpedia. Published 2022-12-01.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2022-12-01",
+          "q": "Published: 2022-12-01",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PirateStealer",
+          "q": "PirateStealer is a new Info Stealer in the scene."
+        },
+        {
+          "v": "Discord_beta.exe",
+          "q": "Malware Analysis and Triage Report : PirateStealer - Discord_beta.exe"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "checks for virtualized environment",
+          "q": "checks for presence of Virtualized Environment"
+        },
+        {
+          "v": "harvest credentials from local app data",
+          "q": "to harvest credentials, create an archive"
+        },
+        {
+          "v": "HTTPS exfiltration",
+          "q": "exfiltrate it over HTTPS to an endpoint on"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "link-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "PirateStealer"
+    },
+    "hedges": [
+      "Not much info is provided about this family and the sample is relatively new.",
+      "No traces has been found on either Malware Bazaar or Malpedia."
+    ]
   }
 }

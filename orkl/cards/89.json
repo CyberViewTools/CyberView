@@ -1,0 +1,194 @@
+{
+  "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5": {
+    "sha1": "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:29:16Z",
+    "model": "haiku",
+    "summary": "Genians Security Center (GSC) describes a reply-based spearphishing campaign that impersonated a senior aide in a South Korean National Assembly member's office in September 2026. The LNK-based chain used PowerShell and a public note page as a command channel, and the operator swapped in XenoRAT, information-collection and document-theft scripts, then NodeLinkRAT, a Node.js-based remote access tool, on October 16, 2026. GSC assesses the campaign as Kimsuky with moderate confidence.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "GSC therefore assesses this campaign as the work of the North Korea-linked threat group Kimsuky, with moderate confidence.",
+          "by": "Genians Security Center (GSC)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government (National Assembly office)",
+          "q": "a threat actor impersonating a senior aide in a South Korean National Assembly"
+        },
+        {
+          "v": "policy and security professionals",
+          "q": "policy and security professionals through reply-based spearphishing, then used a public note service as a command channel"
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "a threat actor impersonating a senior aide in a South Korean National Assembly"
+        },
+        {
+          "v": "Japan",
+          "q": "NodeLinkRAT uses the Japan-based host"
+        },
+        {
+          "v": "North Korea",
+          "q": "The attack resembles the activities of North Korea-backed hacking groups in its TTPs, infrastructure preferences, and lure"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 12 and 18, 2026",
+          "q": "Between September 12 and 18, 2026, a threat actor impersonating a senior aide in a South Korean National Assembly",
+          "what": "Spearphishing attack against an attendee of a September 9 seminar"
+        },
+        {
+          "v": "June and October 2026",
+          "q": "GSC collected multiple third-stage code samples between June and October 2026.",
+          "what": "GSC collected third-stage code samples"
+        },
+        {
+          "v": "June 18, 2026",
+          "q": "3-3-1. In-Memory Execution of XenoRAT (June 18, 2026)",
+          "what": "In-memory execution of a XenoRAT variant"
+        },
+        {
+          "v": "September 18, 2026",
+          "q": "3-3-2. Dropbox-Based Information Collection and Exfiltration (September 18, 2026)",
+          "what": "Dropbox-based information collection and exfiltration"
+        },
+        {
+          "v": "September 27, 2026",
+          "q": "3-3-3. Information Exfiltration Through MEGA Cloud (September 27, 2026)",
+          "what": "Exfiltration via MEGA cloud"
+        },
+        {
+          "v": "September 28, 2026",
+          "q": "3-3-4. Dropbox App Replacement and Document Exfiltration (September 28, 2026)",
+          "what": "Dropbox app replacement and document theft"
+        },
+        {
+          "v": "October 16, 2026",
+          "q": "3-3-5. NodeLinkRAT, a Node.js-Based Remote Access Tool (October 16, 2026)",
+          "what": "NodeLinkRAT installed and run on the victim PC"
+        },
+        {
+          "v": "2026-11-15",
+          "q": "Published: 2026-11-15 · Archived: 2026-11-17 02:00:40 UTC",
+          "what": "Report published by Genians"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XenoRAT",
+          "q": "Three XenoRAT variants were identified in this attack."
+        },
+        {
+          "v": "NodeLinkRAT",
+          "q": "named this remote access tool NodeLinkRAT."
+        },
+        {
+          "v": "MEGAcmd",
+          "q": "The attacker focused on its official command-line tool, MEGAcmd."
+        },
+        {
+          "v": "Dropbox API",
+          "q": "Uploads to external cloud storage using the Dropbox API and MEGAcmd"
+        },
+        {
+          "v": "Node.js",
+          "q": "This code instead installs Node.js, a legitimate"
+        },
+        {
+          "v": "aNotepad",
+          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
+        },
+        {
+          "v": "PowerShell",
+          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "reply-based spearphishing",
+          "q": "Reply-based spearphishing impersonating a senior aide in a National Assembly member's office under the pretext of"
+        },
+        {
+          "v": "multistage fileless chain",
+          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
+        },
+        {
+          "v": "public note page C2 channel",
+          "q": "Installation of XenoRAT or NodeLinkRAT by replacing code on a public note page"
+        },
+        {
+          "v": "polymorphic second-stage code",
+          "q": "Different second-stage code delivered on each C2 connection to hinder analysis and repeated collection"
+        },
+        {
+          "v": "scheduled task persistence",
+          "q": "The second-stage script downloaded when the LNK file runs establishes persistence through a scheduled task."
+        },
+        {
+          "v": "character substitution obfuscation",
+          "q": "This character substitution obfuscation is designed to evade static detection."
+        },
+        {
+          "v": "fileless in-memory execution",
+          "q": "The second-stage loader itself runs in memory without being written to disk, using a fileless approach"
+        },
+        {
+          "v": "cloud storage exfiltration",
+          "q": "Uploads to external cloud storage using the Dropbox API and MEGAcmd"
+        },
+        {
+          "v": "document theft",
+          "q": "The remaining sample is a script that steals document files themselves rather than collecting information."
+        },
+        {
+          "v": "LOLBins (living-off-the-land tools)",
+          "q": "The attack also uses only legitimate tools included with the operating system (LOLBins),"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "Three XenoRAT variants",
+          "q": "Three XenoRAT variants were identified in this attack."
+        },
+        {
+          "v": "four code samples",
+          "q": "On September 28, four code samples were observed on the note page."
+        },
+        {
+          "v": "three Base64 blocks",
+          "q": "On September 18, three Base64 blocks were posted consecutively on the note page."
+        },
+        {
+          "v": "every 38 minutes",
+          "q": "Because \"UPA.ps1\" re-executes the note page contents every 38 minutes, documents the victim is working on are exfiltrated"
+        },
+        {
+          "v": "AES-256-GCM",
+          "q": "Communications are encrypted with AES-256-GCM, but the key is hardcoded as"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NodeLinkRAT"
+    },
+    "hedges": [
+      "GSC assesses the Kimsuky attribution with moderate confidence; no single decisive piece of evidence has been obtained.",
+      "Attribution from individual factors alone is difficult, since XenoRAT and Dropbox or free hosting are widely abused by many actors.",
+      "Third-party imitation of the same techniques cannot be completely ruled out.",
+      "Deliberate deception is possible, since Korean strings and South Korean services may reflect targeting or be used to mislead.",
+      "Some attack stages may not have been identified, because the note page code changed frequently.",
+      "Victim-specific code selection through another, unconfirmed method cannot be ruled out.",
+      "Organisational changes in North Korean actors may cause partial overlap or confusion with their previous campaigns."
+    ]
+  }
+}

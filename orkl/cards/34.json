@@ -1,0 +1,210 @@
+{
+  "34bd24381e1c7ef52abe5ac8b4433649d40f0dba": {
+    "sha1": "34bd24381e1c7ef52abe5ac8b4433649d40f0dba",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:30:11Z",
+    "model": "haiku",
+    "summary": "Socket reports that a threat actor used compromised maintainer accounts and the project's own GitHub automation to publish a malicious @ethersphere/bee-js 13.3.0 npm release and a trojanized Swarm Desktop 0.56.2 on November 9, 2026. Both carry a loader that fetches and runs remote JavaScript, reusing SleepyDuck Ethereum-addressed C2 infrastructure that Pluto Security linked to a 2025 campaign. Later stages reportedly install a Go backdoor on macOS and Linux and ScreenConnect remote access on Windows, and target node config and keys. npm removed 13.3.0 after about 75 minutes. Socket assesses…",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "actor behind the 2025 SleepyDuck campaign",
+          "q": "that Pluto attributes to the actor behind the 2025 SleepyDuck campaign.",
+          "by": "Pluto Security (cited by Socket)"
+        },
+        {
+          "v": "threat actor",
+          "q": "a threat actor used the project’s own GitHub automation to publish",
+          "by": "Socket Research Team"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "developers working with Ethereum tooling and wallets",
+          "q": "The target profile, developers working with Ethereum tooling and wallets, did not change."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 9, 2026",
+          "q": "the November 9, 2026 compromise of Ethersphere’s release pipeline",
+          "what": "Compromise of Ethersphere’s release pipeline; malicious bee-js 13.3.0 and Swarm Desktop 0.56.2 released"
+        },
+        {
+          "v": "October 1, 2026",
+          "q": "On October 1, 2026, Pluto Security published an analysis",
+          "what": "Pluto Security published an analysis of the EtherDuck Open VSX campaign"
+        },
+        {
+          "v": "March 14, 2026",
+          "q": "March 14, 2026: the contract is deployed 13 minutes after the owner wallet is funded.",
+          "what": "Ethereum configuration contract deployed"
+        },
+        {
+          "v": "November 6",
+          "q": "Because the November 6 harvest failed",
+          "what": "Failed credential harvest from Ethersphere’s CI"
+        }
+      ],
+      "tools": [
+        {
+          "v": "evjawbreaker",
+          "q": "a Go backdoor whose module is named evjawbreaker"
+        },
+        {
+          "v": "ScreenConnect 25.4.3",
+          "q": "installs a genuine, ConnectWise-signed ScreenConnect 25.4.3 client"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Compromise Software Supply Chain",
+          "q": "T1195.002 Compromise Software Supply Chain"
+        },
+        {
+          "v": "Valid Accounts",
+          "q": "T1078 Valid Accounts"
+        },
+        {
+          "v": "Command and Scripting Interpreter: JavaScript",
+          "q": "T1059.007 Command and Scripting Interpreter: JavaScript"
+        },
+        {
+          "v": "Masquerading",
+          "q": "T1036 Masquerading"
+        },
+        {
+          "v": "Web Service: Dead Drop Resolver",
+          "q": "T1102.001 Web Service: Dead Drop Resolver"
+        },
+        {
+          "v": "Subvert Trust Controls: Code Signing",
+          "q": "T1553.002 Subvert Trust Controls: Code Signing"
+        },
+        {
+          "v": "Bypass User Account Control",
+          "q": "T1548.002 Abuse Elevation Control Mechanism: Bypass User Account Control"
+        },
+        {
+          "v": "Exfiltration Over C2 Channel",
+          "q": "T1041 Exfiltration Over C2 Channel"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "470 npm downloads a day",
+          "q": "It averaged about 470 npm downloads a day in early November 2026"
+        },
+        {
+          "v": "3,741 downloads",
+          "q": "had 3,741 downloads between November 1 and 8."
+        },
+        {
+          "v": "38 captured requests",
+          "q": "Across 38 captured requests, no request carries a body"
+        },
+        {
+          "v": "75 minutes",
+          "q": "npm removed 13.3.0 about 75 minutes after it was published"
+        },
+        {
+          "v": "eight and a half hours",
+          "q": "the Swarm Desktop release stayed up for about eight and a half hours."
+        },
+        {
+          "v": "6,769 files",
+          "q": "exactly seven of the 6,769 files in the archive"
+        },
+        {
+          "v": "65",
+          "q": "the v0.56.2 download counters reached 65 by 08:27 UTC"
+        },
+        {
+          "v": "ten fetches",
+          "q": "we estimate on the order of ten fetches of 13.3.0, including scanners and mirrors."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SleepyDuck"
+    },
+    "hedges": [
+      "Socket assesses with moderate confidence that nothing was exfiltrated.",
+      "the origin of both compromises predates November 6 and remains unexplained.",
+      "Whether the served code read the runner’s environment or requested an OIDC token cannot be determined from public data.",
+      "Socket could not determine why they produced no data",
+      "we did not test this on a Windows host",
+      "Per-version counts for it are not available; based on daily traffic, we estimate on the order of ten fetches of 13.3.0",
+      "These are upper bounds that include researchers.",
+      "most likely an exchange or swap service"
+    ]
+  },
+  "34d1144c2183487f403172e7b3c629fdeeb9688a": {
+    "sha1": "34d1144c2183487f403172e7b3c629fdeeb9688a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:30:57Z",
+    "model": "haiku",
+    "summary": "Malwarebytes Threat Intelligence describes a late-June malspam campaign it attributes to the FIN7 APT group. The attack drops JSSLoader, a rewrite of the loader with expanded capabilities including data exfiltration, and a secondary .NET payload. The report also notes an earlier XLL-format component of FIN7 that others had described.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "that we attribute to the FIN7",
+          "by": "Malwarebytes Threat Intelligence team (the report's authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 15, 2022",
+          "q": "Posted: August 15, 2022 by Mark Stockley",
+          "what": "Blog post published"
+        },
+        {
+          "v": "late June",
+          "q": "malspam campaign in late June that we attribute to the FIN7",
+          "what": "Malspam campaign observed by Malwarebytes Threat Intelligence"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSSLoader",
+          "q": "dubbed JSSLoader."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malspam email delivery",
+          "q": "malspam campaign in late June that we attribute to the FIN7"
+        },
+        {
+          "v": "XLL file format delivery",
+          "q": "used by this group, delivered in XLL format. That element was"
+        },
+        {
+          "v": "drops a secondary .NET payload",
+          "q": "secondary payload, written in .NET."
+        },
+        {
+          "v": "data exfiltration",
+          "q": "data exfiltration."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "JSSLoader"
+    },
+    "hedges": []
+  }
+}

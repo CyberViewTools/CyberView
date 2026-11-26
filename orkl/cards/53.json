@@ -1,49 +1,152 @@
 {
   "53df10cc3e045218c62e0bceb2d1c6f309487ed4": {
     "sha1": "53df10cc3e045218c62e0bceb2d1c6f309487ed4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:10:25Z",
+    "read_at": "2026-11-26T23:19:45Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Perception Point's blog (published 2024-11-07) describes a trojan hidden in a concatenated ZIP file disguised as a .rar shipping document and sent in a phishing email. It says 7zip shows only a benign PDF, while WinRAR and Windows File Explorer reveal an AutoIt-based executable. The report links the attack path to SmokeLoader and says 7zip's developers consider the behaviour intentional. The post also promotes the vendor's own recursive unpacking detection.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "In a recent attack, threat actors distributed Trojan malware disguised as a legitimate shipping document.",
+          "by": "Perception Point (report author)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2024-11-07",
+          "q": "Published: 2024-11-07 · Archived: 2026-11-26 02:07:18 UTC",
+          "what": "Blog post published by Perception Point"
+        }
+      ],
+      "tools": [
+        {
+          "v": "7zip",
+          "q": "Opening the concatenated file with 7zip reveals only a benign-looking PDF titled x.pdf"
+        },
+        {
+          "v": "WinRAR",
+          "q": "WinRAR, on the other hand, reads the second central directory and displays the contents of the second archive"
+        },
+        {
+          "v": "Windows File Explorer",
+          "q": "Windows File Explorer struggles with concatenated ZIPs."
+        },
+        {
+          "v": "AutoIt",
+          "q": "leverages the AutoIt scripting language to execute a range of malicious activities."
+        },
+        {
+          "v": "SmokeLoader",
+          "q": "Here is the full attack path of the SmokeLoader, as seen on Perception Point’s X-Ray UI."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "ZIP file concatenation",
+          "q": "Threat actors continually seek innovative methods to evade detection, and ZIP file concatenation has proven to"
+        },
+        {
+          "v": "phishing email with shipping lure",
+          "q": "The attack began with a phishing email sent under the guise of a shipping company."
+        },
+        {
+          "v": "renamed file extension to look like a RAR archive",
+          "q": "The attackers deliberately changed the file name/extension to disguise its true nature"
+        },
+        {
+          "v": "hiding payloads where some archive readers do not look",
+          "q": "tools by hiding malicious payloads in parts of the archive that some ZIP readers cannot or do not access."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "7zip version 22.01",
+          "q": "The analysis below will utilize 7zip version 22.01, WinRAR version 7.01, and Windows version 23H2"
+        },
+        {
+          "v": "WinRAR version 7.01",
+          "q": "The analysis below will utilize 7zip version 22.01, WinRAR version 7.01, and Windows version 23H2"
+        },
+        {
+          "v": "Windows version 23H2",
+          "q": "The analysis below will utilize 7zip version 22.01, WinRAR version 7.01, and Windows version 23H2"
+        },
+        {
+          "v": "22631.4317",
+          "q": "(22631.4317); however, the evasion techniques discussed are applicable to the latest versions of these tools as of"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "SmokeLoader"
+    },
+    "hedges": [
+      "A warning about extra data after the archive end may appear in 7zip, but the report says it is easily overlooked.",
+      "Windows File Explorer may fail to open the concatenated file altogether.",
+      "The executable is described as a variant of a trojan family; the payload could include banking trojans or ransomware.",
+      "The analysis uses 7zip 22.01, WinRAR 7.01 and Windows 23H2; the report says the techniques apply to latest versions as of its date."
+    ]
   },
   "533c303b40c86968abbaf0ae8f3c1efa4ed2c3a4": {
     "sha1": "533c303b40c86968abbaf0ae8f3c1efa4ed2c3a4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:15:50Z",
+    "read_at": "2026-11-26T23:21:18Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "A GitHub README for a Python script that decrypts Ursnif beacon check-ins, revealing the data the malware sends to its command-and-control servers. It covers the check-in parameters, a usage example, and the note that the decryption key is usually shared across samples and rarely changed. The report names the malware family and its aliases but no threat actor, sector, country or CVE.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2019-04-15",
+          "q": "[2019-04-15 11:24:25 - INFO]",
+          "what": "timestamp of the example decryption run shown in the README"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ursnif beacon decryptor",
+          "q": "Ursnif beacon decryptor"
+        },
+        {
+          "v": "Ursnif",
+          "q": "Ursnif v.3 aka Dreambot/Gozi/ISFB"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "decrypting C2 check-in URLs",
+          "q": "decrypt the URL check-in on the fly to get the data sent to the C2 server"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "v.3",
+          "q": "Ursnif v.3 aka Dreambot/Gozi/ISFB"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Ursnif"
+    },
+    "hedges": [
+      "The key is usually shared among a lot of samples and rarely changed, based on observations.",
+      "Different versions could have more parametres.",
+      "Some reverse engineering is required to get that info."
+    ]
   },
   "53902a361038e8799b421b08c886f0ff7fd9b69f": {
     "sha1": "53902a361038e8799b421b08c886f0ff7fd9b69f",

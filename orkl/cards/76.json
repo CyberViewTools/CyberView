@@ -1,25 +1,132 @@
 {
   "7628f6e877da63dfb48dcb45e140f205eb83c40e": {
     "sha1": "7628f6e877da63dfb48dcb45e140f205eb83c40e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:14:16Z",
+    "read_at": "2026-11-26T23:20:29Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "IBM Trusteer researchers describe ZeuS.Maple, a heavily modified ZeuS 2.0.8.9 variant seen since January 2014 that mainly targets Canadian banks. It uses browser re-patching, an encrypted registry-stored configuration, disguised executable names, anti-debugging and anti-VM checks, and nginx-based command and control. Its configuration lists 14 leading Canadian financial institutions plus generic e-commerce URL patterns. The report was published on 2014-06-09.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "malware authors",
+          "q": "Ever since the ZeuS cyber crime toolkit source code leaked in 2011, malware authors have used its",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Online banking",
+          "q": "New ZeuS.Maple Variant Targets Canadian Online Banking Customers"
+        },
+        {
+          "v": "financial institutions",
+          "q": "the main targets include 14 leading financial institutions located in Canada"
+        },
+        {
+          "v": "e-commerce",
+          "q": "ZeuS.Maple targets general e-commerce transactions"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Canada",
+          "q": "the main targets include 14 leading financial institutions located in Canada"
+        },
+        {
+          "v": "Russia",
+          "q": "we see it is located in Russia"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2011",
+          "q": "Ever since the ZeuS cyber crime toolkit source code leaked in 2011",
+          "what": "ZeuS toolkit source code leaked"
+        },
+        {
+          "v": "January 2014",
+          "q": "since January 2014.",
+          "what": "Series of attacks by the new ZeuS variant began being identified"
+        },
+        {
+          "v": "2014-06-09",
+          "q": "Published: 2014-06-09 · Archived: 2026-11-26 02:05:48 UTC",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ZeuS",
+          "q": "Ever since the ZeuS cyber crime toolkit source code leaked in 2011"
+        },
+        {
+          "v": "ZeuS 2.0.8.9",
+          "q": "ZeuS.Maple is a heavily modified version of ZeuS 2.0.8.9."
+        },
+        {
+          "v": "nginx",
+          "q": "ZeuS.Maple uses nginx-based C&C"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "browser re-patching",
+          "q": "It implements unique browser re-patching techniques"
+        },
+        {
+          "v": "Web-injection via browser patching",
+          "q": "ZeuS.Maple uses browser patching to implement Web-injection functionality"
+        },
+        {
+          "v": "anti-debugging",
+          "q": "different anti-debugging and new anti-VM capabilities"
+        },
+        {
+          "v": "anti-VM checks",
+          "q": "different anti-debugging and new anti-VM capabilities"
+        },
+        {
+          "v": "disguising the executable in existing system folders",
+          "q": "This technique of dissimulating the malicious executable within existing system paths"
+        },
+        {
+          "v": "configuration stored in Windows registry",
+          "q": "configuration is stored in the Windows registry"
+        },
+        {
+          "v": "encryption with AES-128",
+          "q": "The data is encrypted with AES-128 instead of RC4"
+        },
+        {
+          "v": "custom packer written in Visual Basic",
+          "q": "ZeuS.Maple uses a unique packer that is written in Visual Basic"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "14 leading financial institutions",
+          "q": "the main targets include 14 leading financial institutions located in Canada"
+        },
+        {
+          "v": "3.3.6.0",
+          "q": "designated this variant as ZeuS version 3.3.6.0"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "ZeuS.Maple"
+    },
+    "hedges": [
+      "The enhancements introduced in ZeuS.Maple are improvements of known ZeuS capabilities, but they don't really add new functionality.",
+      "It could be a leftover action from ZeuS source code.",
+      "However this isn't unique since AES-128 has been previously used with other variants.",
+      "The new anti-VM capabilities that were added to this variant of ZeuS are not so impressive.",
+      "The server IP address seems to be registered to a Russian Internet service provider.",
+      "The suffix of the server name would normally suggest India, but the server was found to be located in Russia."
+    ]
   }
 }

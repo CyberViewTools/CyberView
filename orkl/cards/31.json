@@ -1,0 +1,188 @@
+{
+  "3109d080d2613ed01f1459ac88244706dce591d1": {
+    "sha1": "3109d080d2613ed01f1459ac88244706dce591d1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:29:08Z",
+    "model": "haiku",
+    "summary": "Palo Alto Networks Unit 42 reports campaign CL-UNK-1211, observed from October 2025 to April 2026, targeting government entities and state-affiliated infrastructure on Linux servers. Attackers used web shells, a custom Go remote access trojan (SysGoRAT), open-source tools, credential harvesting, mailbox theft, database dumping and anti-forensics. The report says artifacts suggest AI-generated payloads. Whether the cluster is nation-state or cybercrime is not yet determined.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "CL-UNK-1211",
+          "q": "We track this activity as CL-UNK-1211.",
+          "by": "Palo Alto Networks Unit 42"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government entities",
+          "q": "The attackers targeted government entities and state-affiliated infrastructure,"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "October 2025",
+          "q": "activity spanning from October 2025–April 2026.",
+          "what": "start of observed activity"
+        },
+        {
+          "v": "April 2026",
+          "q": "activity spanning from October 2025–April 2026.",
+          "what": "end of observed activity"
+        },
+        {
+          "v": "2026-10-15",
+          "q": "Published: 2026-10-15 · Archived: 2026-11-16 02:00:26 UTC",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SysGoRAT",
+          "q": "We named this malware SysGoRAT."
+        },
+        {
+          "v": "LinPEAS",
+          "q": "open-source tool called LinPEAS to check for local privilege escalation paths"
+        },
+        {
+          "v": "revsocks",
+          "q": "The attackers deployed the open-source tool revsocks, a reverse SOCKS5 tunneling tool with"
+        },
+        {
+          "v": "pysoxy",
+          "q": "The tool set also included pysoxy, an open-source Python SOCKS proxy script used to route"
+        },
+        {
+          "v": "GSocket",
+          "q": "GSocket and gs-netcat: The attackers misused Global Socket, a framework designed to solve NAT and"
+        },
+        {
+          "v": "custom vulnerability scanner",
+          "q": "The attackers deployed a custom vulnerability scanner written in Go that scans for servers vulnerable to CVE-"
+        },
+        {
+          "v": "PwnKit",
+          "q": "PwnKit, a self-contained exploit for CVE-2021-4034"
+        },
+        {
+          "v": "web shells",
+          "q": "the attackers deployed a variety of web shells on the targeted Linux servers"
+        },
+        {
+          "v": "sshpass",
+          "q": "The attackers also used the sshpass command with hard-coded administrative credentials to enable lateral"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "PHP configuration hijacking",
+          "q": "Global PHP configuration hijacking for persistent access"
+        },
+        {
+          "v": "credential harvesting",
+          "q": "Initial access via web shell deployment and credential harvesting"
+        },
+        {
+          "v": "cleartext passwords",
+          "q": "Scanning the network for cleartext passwords"
+        },
+        {
+          "v": "reverse shell",
+          "q": "The attackers employed multiple reverse shell techniques across at least seven distinct C2 servers."
+        },
+        {
+          "v": "SSH public key",
+          "q": "The attackers achieved SSH-based persistence by injecting an SSH public key into the compromised user’s"
+        },
+        {
+          "v": "Lateral Movement",
+          "q": "SSH for Lateral Movement"
+        },
+        {
+          "v": "Data Exfiltration",
+          "q": "Additional Data Exfiltration Attempts"
+        },
+        {
+          "v": "Privilege Escalation",
+          "q": "Privilege Escalation Using Open Source Tools"
+        },
+        {
+          "v": "dumped entire database contents",
+          "q": "dumped entire database contents before attempting to exfiltrate the data."
+        },
+        {
+          "v": "enumerated mailboxes",
+          "q": "The attackers enumerated mailboxes to identify and gain access to social media accounts tied to government email"
+        },
+        {
+          "v": "double-hop execution chain",
+          "q": "created a double-hop execution chain to reach another segment"
+        },
+        {
+          "v": "red team",
+          "q": "They attempted to disguise their activity as a red team operation"
+        },
+        {
+          "v": "disable endpoint protections",
+          "q": "attempting to disable endpoint protections on compromised systems"
+        },
+        {
+          "v": "anti-forensics",
+          "q": "A core component of the attackers’ playbook involved anti-forensics techniques, specifically:"
+        },
+        {
+          "v": "timestomping",
+          "q": "For scripts that were meant for long-term use, the attackers used timestomping."
+        },
+        {
+          "v": "log deletion",
+          "q": "Following the mass log deletion, the attackers executed several automated cleanup commands"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2025-55182",
+          "q": "CVE-2025-55182 (React2Shell) vulnerability scanner"
+        },
+        {
+          "v": "CVE-2021-4034",
+          "q": "PwnKit, a self-contained exploit for CVE-2021-4034"
+        }
+      ],
+      "figures": [
+        {
+          "v": "seven distinct C2 servers",
+          "q": "The attackers employed multiple reverse shell techniques across at least seven distinct C2 servers."
+        },
+        {
+          "v": "seven command types",
+          "q": "SysGoRAT supports a fixed set of seven command types, described in Table 1."
+        },
+        {
+          "v": "three separate C2 servers",
+          "q": "deployed across three separate C2 servers"
+        },
+        {
+          "v": "each capped at 100 rows",
+          "q": "writing four tables, each capped at 100 rows"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "CL-UNK-1211"
+    },
+    "hedges": [
+      "Artifacts suggest the code was either generated using LLMs or executed by an automated AI agent; this is not confirmed.",
+      "UNK designates clusters whose affiliation with nation-state or cybercrime activity has not yet been determined.",
+      "The credential logger most likely targets a database authentication routine.",
+      "No evidence that SolarWinds systems were compromised; the name was misused as an evasion method.",
+      "Some attempted exfiltration scripts contained syntax errors and would fail upon execution.",
+      "Attribution to CL-UNK-1211 follows the Unit 42 attribution framework."
+    ]
+  }
+}

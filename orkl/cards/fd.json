@@ -51,5 +51,70 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fdf53fac0af9cced76179fb1b9df0ce009952e36": {
+    "sha1": "fdf53fac0af9cced76179fb1b9df0ce009952e36",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:28:05Z",
+    "model": "haiku",
+    "summary": "ESRC malware analysis (February 2022) of a malicious Word document disguised as a customer-center guide from Klip, a digital asset wallet service. When users enable content, macros run, drop an XML file that executes, and attempt to contact a command server. The server could not be reached, so analysis stopped there. The report links the threat to the Smoke Screen campaign and to Thallium (also known as Kimsuky), and describes the actor as North Korea-linked. It is currently detected as Trojan.Downloader.DOC.Gen.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "North Korea-linked APT",
+          "q": "North Korea-linked APT attack found disguised as a",
+          "by": "the report itself (ESRC)"
+        },
+        {
+          "v": "Thallium (also known as Kimsuky)",
+          "q": "of the three major threats of 'Thallium (also known as Kimsuky)'.",
+          "by": "the report itself (ESRC)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "February 16, 2022",
+          "q": "February 16, 2022",
+          "what": "Date the report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Trojan.Downloader.DOC.Gen",
+          "q": "Currently, the pill is being detected as Trojan.Downloader.DOC.Gen"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "disguised as a customer-center document",
+          "q": "A malicious file disguised as the Klip customer center was recently discovered, and users"
+        },
+        {
+          "v": "malicious macros that prompt users to enable content",
+          "q": "The file contains malicious macros, convincing users to click the Enable Content button,"
+        },
+        {
+          "v": "macro drops an XML file that then runs",
+          "q": "When the macro is executed, the file is dropped in xml format, and the dropped file is"
+        },
+        {
+          "v": "connects to a command server (C&C)",
+          "q": "automatically executed and then attempts to connect to the C&C."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Smoke Screen"
+    },
+    "hedges": [
+      "At the time of analysis, access to the C&C server was not possible, so further analysis was not possible."
+    ]
   }
 }

@@ -91,5 +91,147 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "81c9d894e544493159a57c858c0e9203fc405fab": {
+    "sha1": "81c9d894e544493159a57c858c0e9203fc405fab",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:30:17Z",
+    "model": "haiku",
+    "summary": "Check Point Research describes VoidLink, a Linux malware framework written in Zig with loaders, implants, rootkits and more than 30 plugins, aimed at cloud and container environments. The report says it appears to be built by Chinese-affiliated developers, with exact affiliation unclear, and appears to be in development. It found no evidence of real-world infections. It describes adaptive stealth, rootkit deployment, multiple command-and-control channels and credential harvesting. The intended use, commercial or criminal, remains unclear.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Chinese-affiliated developers",
+          "q": "The framework appears to be built and maintained by Chinese-affiliated developers (exact affiliation",
+          "by": "Check Point Research (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "software engineers",
+          "q": "indicating that software engineers may be a potential target"
+        },
+        {
+          "v": "cloud environments",
+          "q": "tailored towards modern cloud environments with a focus on stealth"
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "that appear to originate from a Chinese-affiliated development environment"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-01-13",
+          "q": "Published: 2026-01-13",
+          "what": "Report published"
+        },
+        {
+          "v": "December 2025",
+          "q": "In December 2025, Check Point Research identified a small cluster of previously unseen Linux malware samples",
+          "what": "Check Point Research identified a cluster of previously unseen Linux malware samples"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VoidLink",
+          "q": "The framework, internally referred to by its original developers as VoidLink, is a cloud-first implant written in Zig"
+        },
+        {
+          "v": "VoidStream",
+          "q": "All are managed through a protocol dubbed VoidStream by the developers"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "rootkit-style capabilities",
+          "q": "It includes rootkit-style capabilities (LD_PRELOAD, LKM, and eBPF)"
+        },
+        {
+          "v": "self-deletion upon tampering",
+          "q": "encryption, self-deletion upon tampering, and adaptive behavior based on the detected environment,"
+        },
+        {
+          "v": "container escapes",
+          "q": "from automated container escapes over secret extraction to dedicated"
+        },
+        {
+          "v": "adaptive stealth",
+          "q": "adaptive stealth that adjusts runtime evasion based"
+        },
+        {
+          "v": "SSH-based worm",
+          "q": "an SSH-based worm that attempts to connect to known hosts and spread laterally."
+        },
+        {
+          "v": "harvest credentials",
+          "q": "Multiple plugins to harvest credentials and secrets, including SSH keys, git"
+        },
+        {
+          "v": "wipe or edit logs",
+          "q": "Components that wipe or edit logs and shell history based on keywords and"
+        },
+        {
+          "v": "timestomping",
+          "q": "perform timestomping of files to disrupt forensic timelines."
+        },
+        {
+          "v": "selectively hide its processes, files, and network sockets",
+          "q": "Using the rootkits, the implant can selectively hide its processes, files, and network sockets, as well as hide the"
+        },
+        {
+          "v": "HTTP camouflage",
+          "q": "There is a layer responsible for HTTP camouflage, which attempts to make requests"
+        },
+        {
+          "v": "DNS tunneling",
+          "q": "including HTTP/HTTPS, ICMP, and DNS tunneling, and"
+        },
+        {
+          "v": "mesh C2",
+          "q": "While not fully implemented, analyzed samples also contain methods for mesh C2—a peer-to-peer networking"
+        },
+        {
+          "v": "anti-debugging",
+          "q": "In addition to anti-debugging techniques, VoidLink detects"
+        },
+        {
+          "v": "self-modifying code",
+          "q": "a self-modifying code option decrypts protected code regions at runtime and encrypts"
+        },
+        {
+          "v": "Dirty Pipe",
+          "q": "Privilege-escalation module that implements a Dirty Pipe,"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "30+ plug-in modules",
+          "q": "more than 30+ plug-in modules available by default."
+        },
+        {
+          "v": "37 plugins",
+          "q": "At the time of our research, 37 plugins were available,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "VoidLink"
+    },
+    "hedges": [
+      "The exact affiliation of the developers remains unclear.",
+      "The framework's intended use remains unclear; it may be a commercial product or a tool built for one customer.",
+      "As of writing, no evidence of real-world infections has been observed.",
+      "Mesh C2 is described as not fully implemented in the analysed samples.",
+      "Many binaries included debug symbols, suggesting in-progress builds rather than a finished, widely deployed tool.",
+      "The commercial purpose is suggested by the design and documentation, not confirmed.",
+      "The report says it is not clear whether the framework is meant as a penetration testing tool, a criminal tool, or a product for a single customer."
+    ]
   }
 }

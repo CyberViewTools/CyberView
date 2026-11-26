@@ -111,5 +111,115 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "8f336de69d213b62b8a2a59cb441646e99310ec1": {
+    "sha1": "8f336de69d213b62b8a2a59cb441646e99310ec1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:22:20Z",
+    "model": "haiku",
+    "summary": "A SANS Internet Storm Center diary entry by Didier Stevens analyses a packet capture containing Cobalt Strike traffic. The author filters HTTP URIs for patterns typical of Cobalt Strike shellcode, notes that the followed stream looks encoded and may use XOR encoding, exports the data, and runs it through a Cobalt Strike beacon analysis tool. The result is the configuration of a beacon. The entry gives no threat actor, victim sector, country or CVE.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike traffic."
+        },
+        {
+          "v": "Cobalt Strike beacon analysis tool",
+          "q": "1768.py Cobalt Strike beacon analysis tool:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "XOR-encoded data in HTTP stream",
+          "q": "XOR encoding:"
+        },
+        {
+          "v": "beacon configuration extraction",
+          "q": "And this is indeed the configuration of a beacon."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Cobalt Strike"
+    },
+    "hedges": [
+      "this might be some kind of XOR encoding",
+      "data that looks encoded and has some repetitions"
+    ]
+  },
+  "8fb41a6db4044de0619582b12dbb6bb3627e50db": {
+    "sha1": "8fb41a6db4044de0619582b12dbb6bb3627e50db",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:23:47Z",
+    "model": "haiku",
+    "summary": "A 2021 Medium blog post by Michael Koczwara analyses a PowerShell payload identified as Cobalt Strike, which the author spotted via a tweet. The post says a Base64 block is XOR-encoded and that it can be decrypted with CyberChef after extracting the encoded payload from the PowerShell script. The report names no threat actor, sector, country, CVE or victim.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-09-06",
+          "q": "Published: 2021-09-06 · Archived: 2026-11-25 02:08:33 UTC",
+          "what": "Blog post published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "I have spotted this interesting tweet from Malwar3Ninja and decided to take a look and analyse the Cobalt Strike"
+        },
+        {
+          "v": "CyberChef",
+          "q": "we can decrypt it using CyberChef"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "XOR encoding of a Base64 block",
+          "q": "Base64 block is encrypted with XOR"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Cobalt Strike"
+    },
+    "hedges": []
+  },
+  "8f513eb3c4f32592cee418d14747b2097e317b54": {
+    "sha1": "8f513eb3c4f32592cee418d14747b2097e317b54",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:25:01Z",
+    "model": "haiku",
+    "summary": "A GitHub repository page for deICEr, a small Go tool described as a crude config extractor for IcedID second-stage loaders. The page is mostly repository navigation, file names, commit history and license details. It contains no threat findings, actors, attack dates or campaign details, so it is a tool listing rather than a threat report.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
   }
 }

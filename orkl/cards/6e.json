@@ -27,5 +27,102 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "6eb53e3942c14de6b0d14f42eef6409a5d6fac5a": {
+    "sha1": "6eb53e3942c14de6b0d14f42eef6409a5d6fac5a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:25:28Z",
+    "model": "haiku",
+    "summary": "S2W LAB report on the July 2021 Kaseya VSA supply chain attack. Attackers reportedly bypassed authentication on the VSA web panel and pushed ransomware to connected clients via a hotfix package that disabled antivirus. REvil is named as the ransomware group, asking $40,000 to $45,000 per file extension or $500,000 for full decryption. Managed service providers Visma EssCom, Synnex and Avtex are listed, with over 1,000 companies estimated affected, including Swedish supermarket and pharmacy chains and SJ public transport. The attacker reportedly said no data was stolen.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "REvil",
+          "q": "REvil 은 최근 사고에 대한 협상 채팅에서",
+          "by": "S2W LAB (report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Visma EssCom",
+          "q": "MSP : Visma EssCom, Synnex, Avtex"
+        },
+        {
+          "v": "Synnex",
+          "q": "MSP : Visma EssCom, Synnex, Avtex"
+        },
+        {
+          "v": "Avtex",
+          "q": "MSP : Visma EssCom, Synnex, Avtex"
+        },
+        {
+          "v": "Swedish Coop",
+          "q": "Swedish Coop 수퍼마켓 체인, 스웨덴 약국 체인, SJ"
+        },
+        {
+          "v": "SJ",
+          "q": "Swedish Coop 수퍼마켓 체인, 스웨덴 약국 체인, SJ"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021",
+          "q": "2021 년 7 월 3 일 오후 21:00 (EDT), Kaseya 는 공지사항으로 침해여부를 탐지할 수 있는",
+          "what": "Kaseya posted a notice offering a detection tool on request to check for compromise"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VSA",
+          "q": "“VSA 에이전트 핫픽스” 패키지를 배포"
+        },
+        {
+          "v": "Microsoft Defender",
+          "q": "취약한 이전 버전의 Microsoft Defender 앱을 사용하여 바이러스 백신"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "authentication bypass on the VSA web panel",
+          "q": "VSA 웹 패널에서 인증을 우회한 이후"
+        },
+        {
+          "v": "mass ransomware deployment to all connected clients",
+          "q": "연결 된 모든 클라이언트에 랜섬웨어 배포"
+        },
+        {
+          "v": "disabling antivirus through a hotfix package",
+          "q": "솔루션을 무력화하는 “VSA 에이전트 핫픽스” 패키지를 배포"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$40,000 ~ $45,000",
+          "q": "1 개 확장자 당 복호화 비용 : $40,000 ~ $45,000"
+        },
+        {
+          "v": "$500,000",
+          "q": "전체 파일 복호화 비용 : $500,000"
+        },
+        {
+          "v": "1,000",
+          "q": "1,000 개 이상의 기업이 공격에 영향을 받은 것으로 추정됨"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "Kaseya supply chain attack"
+    },
+    "hedges": [
+      "The victim list covers only companies known so far, according to the report.",
+      "The figure of over 1,000 affected companies is an estimate, not a confirmed count.",
+      "The attacker's claim that only files were encrypted and no data was stolen is reported, not verified.",
+      "The victim trend is cited to an ESET official social media post."
+    ]
   }
 }

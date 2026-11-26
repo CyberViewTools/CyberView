@@ -29,5 +29,173 @@
         "by": "auditor"
       }
     ]
+  },
+  "8ae77b40bf44aff69e51e6a6e5111a288e3877d3": {
+    "sha1": "8ae77b40bf44aff69e51e6a6e5111a288e3877d3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:22:15Z",
+    "model": "haiku",
+    "summary": "Introductory page of a Chinese-language documentation series on Cobalt Strike 4.1, a penetration-testing and adversary-simulation tool. It outlines the series in three parts: basic use, advanced topics such as C2 configuration and proxying, and internals. It describes no threat actor, campaign, malware incident or vulnerability, so it is not a threat report.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The author says they are not a specialist in Cobalt Strike and the notes are a spare-time record.",
+      "The author says updates are irregular and errors may be present, and asks readers to point them out.",
+      "The page says it provides no finished tools, only ideas or reference material.",
+      "The page says it will not cover antivirus bypass techniques, which are planned for a separate document."
+    ]
+  },
+  "8ae7243e78d70618e1eff845156b8d689095e493": {
+    "sha1": "8ae7243e78d70618e1eff845156b8d689095e493",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:24:55Z",
+    "model": "haiku",
+    "summary": "BlackBerry's Research and Intelligence Team describes BHunt, a .NET crypto-stealer. Bitdefender first reported it, with a dropper likely packaged with KMS cracking utilities. BHunt looks for crypto wallet files, steals browser passwords, monitors the clipboard for 12 or 13 word recovery phrases, and checks whether a system suits a crypto miner (XMRig). It uses commercial packers (VMProtect, Themida), autorun registry persistence, and legitimate NirSoft WebBrowserPassView. Some payload retrieval used Pastebin links that are no longer hosted.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "The threat actors packed the sample with VMProtect to hide their contents",
+          "by": "BlackBerry Research and Intelligence Team"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017",
+          "q": "purchased by security company Avast in 2017.",
+          "what": "Avast purchased Piriform Software Ltd., developer of CCleaner, whose name the BHunt dropper's certificate used"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VMProtect",
+          "q": "The threat actors packed the sample with VMProtect to hide their contents"
+        },
+        {
+          "v": "Key Management Service (KMS) cracking utilities",
+          "q": "that was likely packaged with Key Management Service (KMS) cracking utilities."
+        },
+        {
+          "v": "WebBrowserPassView",
+          "q": "file is NirSoft’s WebBrowserPassView tool."
+        },
+        {
+          "v": "Themida",
+          "q": "this time with a packer called Themida."
+        },
+        {
+          "v": "XMRig",
+          "q": "we found this file to be XMRig, a high-performance crypto miner."
+        },
+        {
+          "v": "Pastebin",
+          "q": "reaches out to two unique Pastebin links to retrieve some encrypted data."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "obfuscating files with commercial binary packers",
+          "q": "obfuscating files with commercial binary packers and splitting its"
+        },
+        {
+          "v": "splitting functionality across multiple files",
+          "q": "splitting its functionality across multiple files."
+        },
+        {
+          "v": "masquerading as a Microsoft file",
+          "q": "to masquerade as a Microsoft file"
+        },
+        {
+          "v": "borrowing a company's certificate to look legitimate",
+          "q": "embedded a certificate from “Piriform Ltd” to help the file appear legitimate."
+        },
+        {
+          "v": "autorun registry key persistence",
+          "q": "and persisted using an autorun registry key."
+        },
+        {
+          "v": "terminating Firefox to free locked database files",
+          "q": "The malware terminates any running instances of Firefox"
+        },
+        {
+          "v": "clipboard monitoring for wallet recovery phrases",
+          "q": "periodically check the victim’s clipboard for a string containing 12 or 13 words."
+        },
+        {
+          "v": "stealing crypto wallet files",
+          "q": "The Blackjack function is responsible for stealing wallet files."
+        },
+        {
+          "v": "stealing browser passwords",
+          "q": "The Sweet_Bonanza function attempts to steal the victim’s browser passwords."
+        },
+        {
+          "v": "deploying a crypto miner",
+          "q": "deploy a crypto miner to the victim’s device"
+        },
+        {
+          "v": "using legitimate tools for malicious purposes",
+          "q": "BHunt also takes it a step further by leveraging legitimate tools for nefarious"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "12 or 13 words",
+          "q": "containing 12 or 13 words."
+        },
+        {
+          "v": "two unique Pastebin links",
+          "q": "reaches out to two unique Pastebin links to retrieve some encrypted data."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "BHunt"
+    },
+    "hedges": [
+      "The dropper was likely packaged with Key Management Service (KMS) cracking utilities, per the report's description of the initial infection.",
+      "The Pastebin links are no longer hosted, so the downloaded data could not be confirmed.",
+      "The purpose of the Chaos_crew function appears to be evaluating a system's suitability for installing a crypto miner.",
+      "The purpose of the Copier binary is a mystery; the report believes it is part of the same malware campaign.",
+      "The miner file is believed to be XMRig."
+    ]
+  },
+  "8aa950c31ded5e0ba99bb4ccc632b7e897c48032": {
+    "sha1": "8aa950c31ded5e0ba99bb4ccc632b7e897c48032",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:25:50Z",
+    "model": "haiku",
+    "summary": "The page gives a title about Kimsuky's multi-staged cyberattack and a publication date of 2024-10-04, but the body holds only vendor navigation and marketing text. It has no analysis, so no threat facts can be recorded.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
   }
 }

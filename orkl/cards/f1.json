@@ -1,26 +1,159 @@
 {
   "f1041799719ddb6d23d004cb21e8b09a9316d0c3": {
     "sha1": "f1041799719ddb6d23d004cb21e8b09a9316d0c3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:14:34Z",
+    "read_at": "2026-11-26T23:21:00Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "IBM X-Force IRIS tracks ITG07, which it says most closely aligns with activity other vendors call Chafer or APT39. Over the past nine months ITG07 intruded into transportation-sector organisations, using legacy tools and a custom backdoor that IRIS named TREKX. The report describes credential theft, lateral movement and data exfiltration. IRIS views ITG07 as mainly engaged in surveillance and tracking of individuals. The initial access vector could not be confirmed.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "ITG07",
+          "q": "which we call ITG07, that has conducted intrusions in a number of geographically dispersed organizations",
+          "by": "IBM X-Force IRIS (report authors)"
+        },
+        {
+          "v": "Chafer",
+          "q": "this adversarial group most closely aligns with activity reported by other vendors as Chafer, or APT39.",
+          "by": "IBM X-Force IRIS, citing other vendors"
+        },
+        {
+          "v": "APT39",
+          "q": "this adversarial group most closely aligns with activity reported by other vendors as Chafer, or APT39.",
+          "by": "IBM X-Force IRIS, citing other vendors"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "transportation",
+          "q": "in the transportation sector."
+        },
+        {
+          "v": "aviation",
+          "q": "in the aviation industry, primarily in the Middle East."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Iran",
+          "q": "Chafer is an alleged Iran-based hacking group"
+        }
+      ],
+      "dates": [
+        {
+          "v": "past nine months",
+          "q": "During the past nine months, our team has been tracking a threat",
+          "what": "IRIS tracked ITG07 intrusions over this period"
+        },
+        {
+          "v": "March 2019",
+          "q": "It appears the same malware was reported by NCCGroup in March 2019 and attributed to Chafer",
+          "what": "NCCGroup reported the same malware and attributed it to Chafer"
+        }
+      ],
+      "tools": [
+        {
+          "v": "mimikatz",
+          "q": "A particular, customized version of mimikatz named mnl.exe/mnl32.exe"
+        },
+        {
+          "v": "TREKX",
+          "q": "(RAT) that we then named TREKX, based on strings and file markers of command output files, to support early"
+        },
+        {
+          "v": "NBTScan",
+          "q": "the threat actors used NBTScan, a common tool widely used by ITG07"
+        },
+        {
+          "v": "JSPSPY",
+          "q": "webshells such as JSPSPY and ASPXSPY"
+        },
+        {
+          "v": "ASPXSPY",
+          "q": "webshells such as JSPSPY and ASPXSPY"
+        },
+        {
+          "v": "GoogleDrive RAT",
+          "q": "those reported as the GoogleDrive RAT by Nyotron."
+        },
+        {
+          "v": "ps.exe",
+          "q": "the group used a custom portscanner named ps.exe"
+        },
+        {
+          "v": "Navicat",
+          "q": "observed ITG07 using the Navicat utility in an attempt to harvest database information"
+        },
+        {
+          "v": "PsExec",
+          "q": "In this case, PsExec was identified."
+        },
+        {
+          "v": "RemCom",
+          "q": "such as RemCom and Plink to create"
+        },
+        {
+          "v": "Plink",
+          "q": "such as RemCom and Plink to create"
+        },
+        {
+          "v": "BITS",
+          "q": "The legitimate Microsoft Background Intelligence Transfer Service (BITS) for moving files in and out of"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "legitimate Citrix connections",
+          "q": "A preference for access to the environment via legitimate Citrix connections;"
+        },
+        {
+          "v": "communicated via HTTP requests",
+          "q": "are communicated via HTTP requests."
+        },
+        {
+          "v": "service that would look legitimate",
+          "q": "service that would look legitimate unless further investigated."
+        },
+        {
+          "v": "extraction of credential",
+          "q": "a utility that enables the extraction of credential"
+        },
+        {
+          "v": "Pass the Hash and Pass the Ticket",
+          "q": "These credentials could then be used in attacks such as Pass the Hash and Pass the Ticket."
+        },
+        {
+          "v": "move to additional hosts",
+          "q": "tools the attackers used to attempt to move to additional hosts on the network."
+        },
+        {
+          "v": "exfiltrating valuable data",
+          "q": "its objective of exfiltrating valuable data"
+        },
+        {
+          "v": "phishing",
+          "q": "phishing, exploitation of vulnerable web applications, SQL injection and remote code execution."
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "TREKX"
+    },
+    "hedges": [
+      "IRIS links this activity to ITG07 based on its own data sources, and notes each vendor has an overlapping but unique view of threat activity.",
+      "ITG07 most closely aligns with activity other vendors report as Chafer or APT39; this is an alignment, not a confirmed identity.",
+      "Symantec's analysis describes Chafer as an alleged Iran-based hacking group.",
+      "IRIS says the TREKX backdoor is probably custom-built.",
+      "The report says Remexi, a malware long reported for this group, was not observed in this activity.",
+      "Definitive identification of the initial attack vector was not possible; the listed vectors are possibilities only.",
+      "IRIS says ITG07 appears to be primarily engaged in surveillance and tracking of individuals, with attacks likely carried out to gather information.",
+      "IRIS assesses it is very likely the transportation industry will continue to be a high-value target."
+    ]
   },
   "f14090e9d13611088d28a9f182575a70b357636a": {
     "sha1": "f14090e9d13611088d28a9f182575a70b357636a",

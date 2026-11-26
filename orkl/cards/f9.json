@@ -1,25 +1,78 @@
 {
   "f9f591c7139b1a46232d5e944469f2579542d648": {
     "sha1": "f9f591c7139b1a46232d5e944469f2579542d648",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:16:09Z",
+    "read_at": "2026-11-26T23:21:15Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Hybrid Analysis sandbox page for an unnamed Windows sample (hash prefix 5d631d774016…) with a score of 100/100 and a malicious rating of 100%. Static analysis and ML by CrowdStrike flagged it with relatively high confidence, and many antivirus engines flagged it. Listed behaviours include a YARA match, unusual PE entropy, registry key monitoring, reads of terminal service keys, process hooking and suspicious API imports. No malware family, actor, CVE, sector or country is named.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
+      "dates": [
+        {
+          "v": "2018-03-30",
+          "q": "Published: 2018-03-30",
+          "what": "Sample page published"
+        },
+        {
+          "v": "2026-11-25",
+          "q": "Archived: 2026-11-25 02:14:57 UTC",
+          "what": "Sample page archived"
+        }
+      ],
       "tools": [],
-      "techniques": [],
+      "techniques": [
+        {
+          "v": "Registry key change monitoring",
+          "q": "Monitors specific registry key for changes"
+        },
+        {
+          "v": "Terminal service key reads",
+          "q": "Reads terminal service related keys (often RDP related)"
+        },
+        {
+          "v": "Process hooking or patching",
+          "q": "Installs hooks/patches the running process"
+        },
+        {
+          "v": "Dynamic API call resolution",
+          "q": "Contains ability to dynamically determine API calls"
+        },
+        {
+          "v": "Suspicious API imports",
+          "q": "Imports suspicious APIs"
+        },
+        {
+          "v": "Active computer name lookup",
+          "q": "Reads the active computer name"
+        },
+        {
+          "v": "YARA signature match",
+          "q": "YARA signature match"
+        },
+        {
+          "v": "Unusual PE entropy sections",
+          "q": "PE file has unusual entropy sections"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "100/100",
+          "q": "Score 100/100"
+        },
+        {
+          "v": "100%",
+          "q": "Malicious (100%)"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "Sample detected by CrowdStrike Static Analysis and ML with relatively high confidence"
+    ]
   }
 }

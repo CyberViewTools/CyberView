@@ -1,25 +1,419 @@
 {
   "ac4c3b4a10aef757b0147bd614add2fea2afc7ee": {
     "sha1": "ac4c3b4a10aef757b0147bd614add2fea2afc7ee",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:07:38Z",
+    "read_at": "2026-11-26T23:18:49Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "BlackBerry describes WhisperGate, a multi-stage wiper disguised as ransomware, reported as targeting Ukrainian government, non-profit and IT organisations. The post covers stages three and four: an obfuscated loader that tries to disable antivirus and remove Windows Defender, and a final payload that overwrites files with a fixed byte pattern. The report does not name the threat actor.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
-      "sectors": [],
-      "countries": [],
+      "sectors": [
+        {
+          "v": "Government",
+          "q": "targeting Ukrainian government, non-profit, and IT organizations"
+        },
+        {
+          "v": "Non-profit",
+          "q": "targeting Ukrainian government, non-profit, and IT organizations"
+        },
+        {
+          "v": "IT",
+          "q": "targeting Ukrainian government, non-profit, and IT organizations"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "WhisperGate Wiper Wreaks Havoc in Ukraine"
+        }
+      ],
       "dates": [],
-      "tools": [],
-      "techniques": [],
+      "tools": [
+        {
+          "v": "Eazfuscator",
+          "q": "used by the obfuscation tool Eazfuscator"
+        },
+        {
+          "v": "AdvanceRun",
+          "q": "AdvanceRun.exe is a free tool available through Nirsoft"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "disabling antivirus software",
+          "q": "disabling antivirus software and launching the fourth and final stage payload."
+        },
+        {
+          "v": "obfuscation",
+          "q": "Stage three of WhisperGate is a heavily obfuscated C# binary"
+        },
+        {
+          "v": "escalate privileges",
+          "q": "attempt to escalate itself"
+        },
+        {
+          "v": "exclusion",
+          "q": "adds the targeted logical drive to the Windows Defenders list of exclusions"
+        },
+        {
+          "v": "Windows Defender",
+          "q": "stops the Windows Defender service from using"
+        },
+        {
+          "v": "injected",
+          "q": "The malicious code is then injected into the"
+        },
+        {
+          "v": "overwrite",
+          "q": "designed to overwrite all files that match a hard-coded list of file"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three",
+          "q": "The DLL contains the following three"
+        },
+        {
+          "v": "256-byte",
+          "q": "in addition to being a 256-byte array"
+        },
+        {
+          "v": "1MB",
+          "q": "creates a 1MB buffer of 0xCC bytes"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "WhisperGate"
+    },
+    "hedges": [
+      "It's possible that this was done to hinder reverse engineering, or to prevent static analysis tools from identifying standard cryptographic functions.",
+      "It's not clear if this was the intended design of the malware developers or merely an oversight.",
+      "The report says the wiper may or may not have been intentional in how it wipes files."
+    ]
+  },
+  "ac2e7d3a76300c22081310b368f22de25b2c3af8": {
+    "sha1": "ac2e7d3a76300c22081310b368f22de25b2c3af8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:30:41Z",
+    "model": "haiku",
+    "summary": "Check Point Research describes CopperDragon, a possible developer and supplier of the Sparrow cross-platform malware framework used by several China-nexus threat actors. It reports three clusters: SilentDelivery, which uses watering-hole attacks with a fake certificate warning to deliver the SquadC backdoor in Europe and Asia; OceanGate, which targets government and critical infrastructure in Asia using SparrowDoor and SparrowShell; and DarkWire, which targets telecom providers and government entities in Latin America using CopperDoor and CopperDNS. The report states its attribution links…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "CopperDragon",
+          "q": "We track the entity behind the Sparrow framework as CopperDragon, a potential digital quartermaster",
+          "by": "Check Point Research"
+        },
+        {
+          "v": "FamousSparrow",
+          "q": "China-nexus threat actors, including FamousSparrow, Earth Estries, TropicTrooper, UAT-9244, and others.",
+          "by": "Check Point Research"
+        },
+        {
+          "v": "Earth Estries",
+          "q": "China-nexus threat actors, including FamousSparrow, Earth Estries, TropicTrooper, UAT-9244, and others.",
+          "by": "Check Point Research"
+        },
+        {
+          "v": "TropicTrooper",
+          "q": "China-nexus threat actors, including FamousSparrow, Earth Estries, TropicTrooper, UAT-9244, and others.",
+          "by": "Check Point Research"
+        },
+        {
+          "v": "UAT-9244",
+          "q": "China-nexus threat actors, including FamousSparrow, Earth Estries, TropicTrooper, UAT-9244, and others.",
+          "by": "Check Point Research"
+        },
+        {
+          "v": "Salt Typhoon",
+          "q": "FamousSparrow was previously also linked to Salt Typhoon, but the relationship details remain unclear.",
+          "by": "Check Point Research"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "telecommunications",
+          "q": "DarkWire targets telecommunications providers and government organizations across Latin America, using"
+        },
+        {
+          "v": "government organizations",
+          "q": "targeting telecommunications providers, government organizations, military"
+        },
+        {
+          "v": "military",
+          "q": "targeting telecommunications providers, government organizations, military"
+        },
+        {
+          "v": "research institutions",
+          "q": "entities, research institutions, and critical infrastructure."
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "entities, research institutions, and critical infrastructure."
+        },
+        {
+          "v": "shipping",
+          "q": "All the compromised websites we confirmed were related to the government, shipping, and IT and research sectors."
+        },
+        {
+          "v": "IT",
+          "q": "All the compromised websites we confirmed were related to the government, shipping, and IT and research sectors."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Czech Republic",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "Germany",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "France",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "Taiwan",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "Nepal",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        },
+        {
+          "v": "Indonesia",
+          "q": "such as the Czech Republic, Germany, France, Taiwan, Nepal, Hong Kong and Indonesia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-11-10",
+          "q": "Published: 2026-11-10 · Archived: 2026-11-12 02:00:33 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "early 2026",
+          "q": "Beginning in early 2026, we started tracking new activity related to CopperDragon that introduces a unique",
+          "what": "SilentDelivery activity tracking began"
+        },
+        {
+          "v": "2025-2026",
+          "q": "The OceanGate operation was observed during 2025-2026 primarily targeting government organizations and critical",
+          "what": "OceanGate operation observed"
+        },
+        {
+          "v": "mid-2025",
+          "q": "In mid-2025, we identified a new wave of activity, tracked as DarkWire.",
+          "what": "DarkWire activity first identified"
+        },
+        {
+          "v": "2021",
+          "q": "FamousSparrow is a threat actor that was first identified in 2021, whose main backdoor is SparrowDoor.",
+          "what": "FamousSparrow first identified"
+        },
+        {
+          "v": "2023",
+          "q": "we identified several similarities with the Melofee backdoor, which was first discovered in 2023.",
+          "what": "Melofee backdoor first discovered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SquadC",
+          "q": "SquadC is a Windows backdoor written in C/C++ that provides operators with basic remote control over a compromised"
+        },
+        {
+          "v": "SparrowDoor",
+          "q": "FamousSparrow is a threat actor that was first identified in 2021, whose main backdoor is SparrowDoor."
+        },
+        {
+          "v": "SparrowShell",
+          "q": "Later in the attack, the actor also deployed another backdoor we named SparrowShell."
+        },
+        {
+          "v": "CopperDoor",
+          "q": "The main backdoor used in the DarkWire operation was CopperDoor, a newly identified advanced modular backdoor that"
+        },
+        {
+          "v": "CopperDNS",
+          "q": "queries, which we named CopperDNS."
+        },
+        {
+          "v": "CopperLoader",
+          "q": "CopperLoader is a reflective loader typically deployed through DLL sideloading."
+        },
+        {
+          "v": "CopperProxy",
+          "q": "CopperProxy is a SOCKS5 proxy tool."
+        },
+        {
+          "v": "PyProxy",
+          "q": "PyProxy is a lightweight UDP relay written in Python and packaged as a standalone executable using PyInstaller."
+        },
+        {
+          "v": "CopperLsass",
+          "q": "CopperLsass is a DLL module that loads a component named"
+        },
+        {
+          "v": "CopperLsa",
+          "q": "For credential theft on Windows systems, the actor deployed CopperLsa, a tool that collects credentials directly through the"
+        },
+        {
+          "v": "CopperAdu",
+          "q": "CopperAdu is a post-exploitation tool that configures a compromised Windows host for remote administrative access,"
+        },
+        {
+          "v": "CopperList",
+          "q": "The actor then deployed CopperList, a Windows reconnaissance tool that collects host information, disk details, and a"
+        },
+        {
+          "v": "CopperLogger",
+          "q": "On some hosts, the actor deployed CopperLogger, a Raw Input-based keylogger."
+        },
+        {
+          "v": "AnnobinDoor",
+          "q": "The first backdoor deployed after initial access was AnnobinDoor, a statically linked, Go-based backdoor packed with UPX"
+        },
+        {
+          "v": "FRPC",
+          "q": "Besides custom tools and scripts, the threat actor also used popular publicly available tools, including FRPC and Chisel,"
+        },
+        {
+          "v": "Chisel",
+          "q": "Besides custom tools and scripts, the threat actor also used popular publicly available tools, including FRPC and Chisel,"
+        },
+        {
+          "v": "ASimplePortScanner",
+          "q": "The actor also used ASimplePortScanner, an open-source Python scanner, to discover additional hosts in the network."
+        },
+        {
+          "v": "SoftEther VPN",
+          "q": "publicly available software, such as SoftEther VPN renamed to names"
+        },
+        {
+          "v": "WinDivert",
+          "q": "WinDivert drivers embedded as resources for x86 and x64."
+        },
+        {
+          "v": "Reptile rootkit",
+          "q": "The kernel component is a modified version of the open-source Reptile rootkit and supports capabilities such as hiding files,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "watering-hole attacks",
+          "q": "highly selective watering-hole attacks."
+        },
+        {
+          "v": "SSL certificate warning",
+          "q": "completely replaced the legitimate content with a Google Chrome SSL certificate warning customized to the website’s language."
+        },
+        {
+          "v": "XSS",
+          "q": "the website was exploited using an XSS attack on an unsensitized input field."
+        },
+        {
+          "v": "exploitation of a vulnerable internet-facing Linux server",
+          "q": "The intrusion began with the exploitation of a vulnerable internet-facing Linux server, followed by the deployment of two"
+        },
+        {
+          "v": "DLL sideloading",
+          "q": "The operation heavily relies on DLL sideloading as a primary execution technique,"
+        },
+        {
+          "v": "reflective loader",
+          "q": "CopperLoader is a reflective loader typically deployed through DLL sideloading."
+        },
+        {
+          "v": "keystroke logging",
+          "q": "Beyond keystroke logging, the malware also collects contextual information, including:"
+        },
+        {
+          "v": "dump the LSASS process",
+          "q": "a dedicated module used to dump the LSASS process for credential harvesting."
+        },
+        {
+          "v": "LSA security package",
+          "q": "one installs a custom LSA security package inside"
+        },
+        {
+          "v": "kernel rootkit",
+          "q": "SparrowShell supports integration with an embedded kernel rootkit."
+        },
+        {
+          "v": "kernel-level packet interception",
+          "q": "Some observed versions of the Windows backdoor SparrowDoor include kernel-level packet interception capabilities,"
+        },
+        {
+          "v": "DNS tunneling",
+          "q": "communicates through DNS tunneling using MX"
+        },
+        {
+          "v": "hidden administrator account",
+          "q": "Creates a hidden administrator account, enables SMB services, and"
+        },
+        {
+          "v": "SMB",
+          "q": "For lateral movement, they transferred files over SMB and executed remote"
+        },
+        {
+          "v": "RDP",
+          "q": "The actor attempted to log in to several Windows machines over RDP, trying different passwords until it successfully"
+        },
+        {
+          "v": "registry Run key",
+          "q": "To survive host reboots, the backdoor achieves persistence by manipulating the registry Run key under a key"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "several dozens",
+          "q": "targeting several dozens of high-"
+        },
+        {
+          "v": "three distinct operational clusters",
+          "q": "During a year-long investigation, Check Point Research identified three distinct operational clusters spanning"
+        },
+        {
+          "v": "at least three major telecom providers",
+          "q": "including at least three major telecom providers in the region, as well as the foreign"
+        },
+        {
+          "v": "three S3 buckets",
+          "q": "we also identified three S3 buckets that we believe were compromised by the threat actor."
+        },
+        {
+          "v": "300",
+          "q": "supporting up to 300"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Sparrow framework"
+    },
+    "hedges": [
+      "CopperDragon is described as a potential digital quartermaster, and its role as developer or supplier is stated only as possible.",
+      "The relationship between FamousSparrow and Salt Typhoon is described as previously linked, but the relationship details remain unclear.",
+      "The actors using the shared toolset are described as potentially supplied by the same entity, not confirmed as the same group.",
+      "Sharing a backdoor or C2 infrastructure does not necessarily mean that two intrusions were conducted by the same actor.",
+      "The report assesses that CopperDragon is involved in maintaining and supplying Melofee variants, and says some vendors classify SparrowShell as Melofee.",
+      "No direct code similarities were found for the DarkWire cluster beyond general design patterns; the FamousSparrow link rests on shared infrastructure.",
+      "The S3 buckets are believed, not confirmed, to have been compromised by the threat actor.",
+      "SilentDelivery is attributed to CopperDragon on the basis of two primary observations."
+    ]
   }
 }

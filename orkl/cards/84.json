@@ -1,0 +1,357 @@
+{
+  "848de7371104decdd0c19a77f65d193d88f4345a": {
+    "sha1": "848de7371104decdd0c19a77f65d193d88f4345a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:23:31Z",
+    "model": "haiku",
+    "summary": "GreyNoise tracks GT13, an intrusion campaign against Check Point Security Management Servers with confirmed activity from October 17th to November 2nd, 2026, and at least 22 victim organisations across many countries and sectors. The actor forged admin sessions on an HFS server, built a relay box, and used several CVEs, including a Check Point SmartConsole auth bypass. GreyNoise does not attribute GT13 to any known group and suspects AI-assisted tooling.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "GT13",
+          "q": "We are tracking this set of threat activity as GreyNoise Threat 13 (GT13)",
+          "by": "GreyNoise"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial services",
+          "q": "The victim orgs sit in sectors including financial services, energy, government,"
+        },
+        {
+          "v": "energy",
+          "q": "The victim orgs sit in sectors including financial services, energy, government,"
+        },
+        {
+          "v": "government",
+          "q": "The victim orgs sit in sectors including financial services, energy, government,"
+        },
+        {
+          "v": "transportation",
+          "q": "transportation, mining, engineering, and manufacturing."
+        },
+        {
+          "v": "mining",
+          "q": "transportation, mining, engineering, and manufacturing."
+        },
+        {
+          "v": "engineering",
+          "q": "transportation, mining, engineering, and manufacturing."
+        },
+        {
+          "v": "manufacturing",
+          "q": "transportation, mining, engineering, and manufacturing."
+        }
+      ],
+      "countries": [
+        {
+          "v": "United Kingdom",
+          "q": "The impacted orgs include victims with assets in the United Kingdom, Ireland, France, Netherlands, Greece,"
+        },
+        {
+          "v": "Ireland",
+          "q": "The impacted orgs include victims with assets in the United Kingdom, Ireland, France, Netherlands, Greece,"
+        },
+        {
+          "v": "France",
+          "q": "The impacted orgs include victims with assets in the United Kingdom, Ireland, France, Netherlands, Greece,"
+        },
+        {
+          "v": "Netherlands",
+          "q": "The impacted orgs include victims with assets in the United Kingdom, Ireland, France, Netherlands, Greece,"
+        },
+        {
+          "v": "Greece",
+          "q": "The impacted orgs include victims with assets in the United Kingdom, Ireland, France, Netherlands, Greece,"
+        },
+        {
+          "v": "Germany",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Austria",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Bulgaria",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Poland",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "India",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Thailand",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Vietnam",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "South Korea",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Hong Kong",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "China",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "Australia",
+          "q": "Germany, Austria, Bulgaria, Poland, India, Thailand, Vietnam, South Korea, Hong Kong, China, Australia,"
+        },
+        {
+          "v": "United States",
+          "q": "and the United States."
+        }
+      ],
+      "dates": [
+        {
+          "v": "October 17th",
+          "q": "with confirmed attack activity between October 17th and November 2nd, 2026, impacting at least 22",
+          "what": "Start of confirmed attack activity window"
+        },
+        {
+          "v": "2026-10-02 13:17:45 UTC",
+          "q": "2026-10-02 13:17:45 UTC - The actor scanned and began exploitation against the HFS server.",
+          "what": "Actor scanned and began exploiting an HFS server"
+        },
+        {
+          "v": "2026-10-05 12:21:30 UTC",
+          "q": "2026-10-05 12:21:30 UTC - A few days later, the actor used this same flow to gain access to install HFS",
+          "what": "Actor gained access to install HFS middleware hooks that issue commands"
+        },
+        {
+          "v": "2026-10-20 07:22:08 UTC",
+          "q": "2026-10-20 07:22:08 UTC - The actor created a script",
+          "what": "Actor set up an unauthenticated HTTP server on the relay box and began uploading files"
+        },
+        {
+          "v": "2026-10-20 13:54:30 UTC",
+          "q": "2026-10-20 13:54:30 UTC - First use of exploit.py against a Victim A Check Point server.",
+          "what": "First use of an exploit script against a victim Check Point server"
+        },
+        {
+          "v": "2026-10-26 02:17:30 UTC",
+          "q": "2026-10-26 02:17:30 UTC - The actor issued a bulk certificate managing task to 24 compromised Check Point",
+          "what": "Bulk certificate task issued to 24 compromised servers; the task failed"
+        },
+        {
+          "v": "2026-11-02 02:28:27 UTC",
+          "q": "2026-11-02 02:28:27 UTC - By early November, other threat actors had begun to scan and attempt to abuse the",
+          "what": "Actor checked for and tried to patch a Linux bug on the relay box"
+        },
+        {
+          "v": "November 2nd, 2026",
+          "q": "Our visibility into this attack activity stopped around November 2nd, 2026, but given the actor’s persistent",
+          "what": "GreyNoise's visibility into the activity stopped"
+        },
+        {
+          "v": "2026-03-13 12:46:28 UTC",
+          "q": "was first registered on 2026-03-13 12:46:28 UTC.",
+          "what": "Attack infrastructure domain first registered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Nmap",
+          "q": "The actor used Nmap, Chisel, Impacket, Paramiko and other Python tooling to perform intrusion activities"
+        },
+        {
+          "v": "Chisel",
+          "q": "The actor used Nmap, Chisel, Impacket, Paramiko and other Python tooling to perform intrusion activities"
+        },
+        {
+          "v": "Impacket",
+          "q": "The actor used Nmap, Chisel, Impacket, Paramiko and other Python tooling to perform intrusion activities"
+        },
+        {
+          "v": "Paramiko",
+          "q": "The actor used Nmap, Chisel, Impacket, Paramiko and other Python tooling to perform intrusion activities"
+        },
+        {
+          "v": "Python tooling",
+          "q": "The actor used Nmap, Chisel, Impacket, Paramiko and other Python tooling to perform intrusion activities"
+        },
+        {
+          "v": "exploit.py",
+          "q": "2026-10-20 13:54:30 UTC - First use of exploit.py against a Victim A Check Point server."
+        },
+        {
+          "v": "ZULT",
+          "q": "was intending to download an apparent “ZULT”"
+        },
+        {
+          "v": "nftables",
+          "q": "command-line tool nftables to drop IPv4 packets with IP options that may trigger the bug."
+        },
+        {
+          "v": "ExpressVPN",
+          "q": "all of which were either egresses through ExpressVPN or"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "automated scanning and exploitation pipeline",
+          "q": "The GT13 threat actor used an automated scanning and exploitation pipeline to compromise an HFS server using"
+        },
+        {
+          "v": "forged session cookies",
+          "q": "admin requests with forged session cookies, leading us to"
+        },
+        {
+          "v": "SSH key",
+          "q": "This allowed the attacker to append an SSH key"
+        },
+        {
+          "v": "operational relay box",
+          "q": "“operational relay box” (ORB) or more simply, a “hop,”"
+        },
+        {
+          "v": "reverse proxy",
+          "q": "set up a Chisel server as a reverse proxy."
+        },
+        {
+          "v": "copying the firewall database",
+          "q": "This included copying the firewall database and the Internal CA,"
+        },
+        {
+          "v": "steals credentials",
+          "q": "this steals credentials, internal CA files, and firewall configuration."
+        },
+        {
+          "v": "common/default/weak passwords",
+          "q": "note that this contained common/default/weak passwords, and those apparently"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "attempts to perform internal reconnaissance, privilege escalation, and lateral movement."
+        },
+        {
+          "v": "lateral movement",
+          "q": "attempts to perform internal reconnaissance, privilege escalation, and lateral movement."
+        },
+        {
+          "v": "LLMs and agentic systems",
+          "q": "LLMs and agentic systems to perform vulnerability scanning, exploitation, tool development, and"
+        },
+        {
+          "v": "broad port scanning",
+          "q": "The actor runs broad port scanning using curl, telnet, nmap scripts,"
+        },
+        {
+          "v": "exploit scripts",
+          "q": "The actor uses exploit scripts against multiple target servers in the"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2026-61500",
+          "q": "believe this exploitation was indeed CVE-2026-61500 for session forgery, which was not patched on this server."
+        },
+        {
+          "v": "CVE-2025-5777",
+          "q": "61500 (Rejetto HFS), CVE-2025-5777 (Citrix NetScaler), CVE-2024-21893 (Ivanti), CVE-2026-41089"
+        },
+        {
+          "v": "CVE-2024-21893",
+          "q": "CVE-2024-21893 (Ivanti Connect Secure),"
+        },
+        {
+          "v": "CVE-2026-41089",
+          "q": "61500 (Rejetto HFS), CVE-2025-5777 (Citrix NetScaler), CVE-2024-21893 (Ivanti), CVE-2026-41089"
+        },
+        {
+          "v": "CVE-2026-16232",
+          "q": "for CVE-2026-16232 (Check Point SmartConsole auth bypass to Run"
+        },
+        {
+          "v": "CVE-2026-98432",
+          "q": "free bug (CVE-2026-98432). After the check, the actor attempted to patch the system using Linux’s own"
+        },
+        {
+          "v": "CVE-2020-1472",
+          "q": "CVE-2020-1472 (Microsoft Netlogon),"
+        },
+        {
+          "v": "CVE-2023-4966",
+          "q": "CVE-2023-4966 (Citrix Netscaler),"
+        },
+        {
+          "v": "CVE-2021-26855",
+          "q": "CVE-2021-26855/34473 (Microsoft Exchange) and"
+        },
+        {
+          "v": "CVE-2021-21972",
+          "q": "CVE-2021-21972 / CVE-2023-34048 (VMware vCenter)"
+        },
+        {
+          "v": "CVE-2023-34048",
+          "q": "CVE-2021-21972 / CVE-2023-34048 (VMware vCenter)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "at least 22",
+          "q": "impacting at least 22"
+        },
+        {
+          "v": "99 IP addresses",
+          "q": "The actor used 99 IP addresses, much of which were disposable network infrastructure to conduct"
+        },
+        {
+          "v": "24 distinct Check Point",
+          "q": "stolen from 24 distinct Check Point"
+        },
+        {
+          "v": "1400+ network sessions",
+          "q": "1400+ network sessions, 800+ command line artifacts, and 1200+ files downloaded, uploaded, or created."
+        },
+        {
+          "v": "800+ command line artifacts",
+          "q": "1400+ network sessions, 800+ command line artifacts, and 1200+ files downloaded, uploaded, or created."
+        },
+        {
+          "v": "1200+ files downloaded, uploaded, or created",
+          "q": "1400+ network sessions, 800+ command line artifacts, and 1200+ files downloaded, uploaded, or created."
+        },
+        {
+          "v": "at least 30 Python scripts",
+          "q": "The actor used at least 30 Python scripts, many of"
+        },
+        {
+          "v": "over 100 management tasks",
+          "q": "launched over 100 management tasks on multiple Check Point Management Servers."
+        },
+        {
+          "v": "21 other victim Check Point devices",
+          "q": "bulk actions on 21 other victim Check Point devices."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "GreyNoise Threat 13 (GT13)"
+    },
+    "hedges": [
+      "GreyNoise does not attribute GT13 to any known or publicly tracked threat group at this time.",
+      "GreyNoise lacks enough information to assess the actor's motivation or nation of origin.",
+      "GreyNoise believes the actor used LLMs and agentic systems and suspects a mature AI-enabled offensive apparatus.",
+      "GreyNoise expects the campaign is ongoing given persistent access to victim devices; its visibility stopped around November 2nd, 2026.",
+      "GreyNoise could not determine when or how the actor first gained access to the Check Point assets.",
+      "Time-zone patterns are not weighted heavily; some timeline oddities may reflect agentic offensive operations.",
+      "Some egress IP attributions are inferred from a /24 range, and the bulk certificate task was not seen being sent by the actor.",
+      "One error message may indicate an implant; the report presents this only as possible."
+    ]
+  }
+}

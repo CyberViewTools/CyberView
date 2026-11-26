@@ -1,49 +1,208 @@
 {
   "ee83e8e1e26af1b5a99f8971514442501806fc70": {
     "sha1": "ee83e8e1e26af1b5a99f8971514442501806fc70",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:12:03Z",
+    "read_at": "2026-11-26T23:20:17Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "F-Secure's blog post describes the Havex RAT, delivered by trojanizing ICS/SCADA software installers on three vendor websites based in Germany, Switzerland and Belgium. Most victims are in Europe, with at least one in California. The report says the attackers appear to be conducting industrial espionage. Its ICS/SCADA component appears to be used for intelligence gathering, and the report had not yet seen payloads that control hardware.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
+      "actors": [
+        {
+          "v": "the attackers behind Havex",
+          "q": "The attackers behind Havex are conducting industrial espionage using a clever method.",
+          "by": "F-Secure blog post (authors Daavid and Antti)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "industrial applications",
+          "q": "all three companies are involved in development of applications and appliances for use in industrial applications"
+        },
+        {
+          "v": "education",
+          "q": "two are major educational institutions in France that are known for technology-related research"
+        },
+        {
+          "v": "construction",
+          "q": "one is a Russian construction company that appears to specialize in structural engineering."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Germany",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "Switzerland",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "Belgium",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "France",
+          "q": "two are major educational institutions in France that are known for technology-related research"
+        },
+        {
+          "v": "Russia",
+          "q": "one is a Russian construction company that appears to specialize in structural engineering."
+        }
+      ],
       "dates": [],
-      "tools": [],
-      "techniques": [],
+      "tools": [
+        {
+          "v": "Havex RAT",
+          "q": "The software installers available on the sites were trojanized to include the Havex RAT."
+        },
+        {
+          "v": "Backdoor:W32/Havex.A",
+          "q": "F-Secure detects this threat as Backdoor:W32/Havex.A."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "watering-hole attack",
+          "q": "could be considered a form of \"watering-hole attack\""
+        },
+        {
+          "v": "trojanized software installers",
+          "q": "Trojanizing ICS/SCADA software installers is an effective method in gaining access to target systems"
+        },
+        {
+          "v": "compromised vendor sites",
+          "q": "Trojanized installers planted on compromised vendor sites"
+        },
+        {
+          "v": "compromised servers as C&C's",
+          "q": "The method of using compromised servers as C&C's is typical for this group."
+        },
+        {
+          "v": "ICS/SCADA sniffing",
+          "q": "Our analysis of Havex sample codes also uncovered its \"ICS/SCADA sniffing\" behavior."
+        },
+        {
+          "v": "intelligence gathering",
+          "q": "It appears that this component is used as a tool for intelligence gathering."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three software vendor sites",
+          "q": "Our research uncovered three software vendor sites that were compromised in this manner."
+        },
+        {
+          "v": "three companies",
+          "q": "all three companies are involved in development of applications and appliances for use in industrial applications"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Havex"
+    },
+    "hedges": [
+      "We suspect more similar cases exist but have not been identified yet.",
+      "It appears the attackers abuse vulnerabilities in the software used to run the websites to break in and replace legitimate software installers.",
+      "It appears that this component is used as a tool for intelligence gathering.",
+      "So far, we have not seen any payloads that attempt to control the connected hardware.",
+      "The majority of the victims are located in Europe, though at the time of writing at least one company in California was also observed sending data to the C&C servers.",
+      "The method of using compromised servers as C&C's is typical for this group."
+    ]
   },
   "ee5996779b3952cb5225fae31594301f69206383": {
     "sha1": "ee5996779b3952cb5225fae31594301f69206383",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:17:26Z",
+    "read_at": "2026-11-26T23:21:24Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "WIRED article (published 2020-10-19) on a US Department of Justice indictment that names and charges six men for allegedly carrying out costly cyberattacks by Sandworm, described as Russia's most destructive cyberwar unit. The article lists Sandworm attacks: a first-ever cyberattack causing a blackout in Western Ukraine (about half a decade before 2020), a 2016 blackout attack on Kyiv, the 2017 NotPetya worm that spread globally and caused about $10 billion in damage, and a 2018 attack that temporarily destroyed the IT backend of the Winter Olympics in South Korea.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Sandworm",
+          "q": "the Russian hackers known as Sandworm hit Western Ukraine",
+          "by": "the report (WIRED article by Andy Greenberg)"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "Russia's Most Destructive Cyberwar Unit"
+        },
+        {
+          "v": "Ukraine",
+          "q": "the Russian hackers known as Sandworm hit Western Ukraine"
+        },
+        {
+          "v": "South Korea",
+          "q": "temporarily destroyed the IT backend of the 2018 Winter Olympics in South Korea"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2016",
+          "q": "another blackout attack on the Ukrainian capital of Kyiv in 2016",
+          "what": "Blackout attack on the Ukrainian capital of Kyiv"
+        },
+        {
+          "v": "2017",
+          "q": "the release of the NotPetya worm in 2017 that spread globally",
+          "what": "Release of the NotPetya worm, which spread globally from Ukraine"
+        },
+        {
+          "v": "2018",
+          "q": "temporarily destroyed the IT backend of the 2018 Winter Olympics in South Korea",
+          "what": "Cyberattack that temporarily destroyed the IT backend of the Winter Olympics"
+        },
+        {
+          "v": "2020-10-19",
+          "q": "Published: 2020-10-19",
+          "what": "Article published on the US indictment of Sandworm members"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NotPetya",
+          "q": "the release of the NotPetya worm in 2017 that spread globally from Ukraine to cause $10 billion in damage"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "blackout-causing cyberattacks",
+          "q": "the first-ever cyberattack to cause a blackout"
+        },
+        {
+          "v": "destructive attacks",
+          "q": "embarked on a years-long spree of wantonly destructive attacks"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "six men",
+          "q": "The Department of Justice has named and charged six men for allegedly carrying out many of the most costly"
+        },
+        {
+          "v": "a quarter million",
+          "q": "turned off the lights for a quarter million"
+        },
+        {
+          "v": "$10 billion",
+          "q": "the release of the NotPetya worm in 2017 that spread globally from Ukraine to cause $10 billion in damage"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "The DOJ charges against the six men are allegations; the article says the men were charged for allegedly carrying out the attacks.",
+      "The article lists some attacks as examples ('among others'), so the list is not presented as complete."
+    ]
   },
   "eeda2cd0c11937ecdaf26d2801aa9dd7a706f623": {
     "sha1": "eeda2cd0c11937ecdaf26d2801aa9dd7a706f623",
@@ -126,5 +285,77 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "eedc2668633b73cc14f81eaea5fedbecf9f4de6b": {
+    "sha1": "eedc2668633b73cc14f81eaea5fedbecf9f4de6b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:25:44Z",
+    "model": "haiku",
+    "summary": "VMware's Threat Analysis Unit reports that Winnti 4.0 malware, a modular remote access trojan, is still in use by Chinese threat actors such as APT41. Over two years it found 43 C2 servers (34 unique IPs) and released their indicators of compromise. Hosts may have been reappropriated for legitimate use, so results should be verified before acting.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT41",
+          "q": "Winnti is a prominent malware family used by the multiple Chinese threat actors like APT41 for many years.",
+          "by": "VMware Threat Analysis Unit (TAU)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Chinese",
+          "q": "Winnti is a prominent malware family used by the multiple Chinese threat actors like APT41 for many years."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2021-11-15",
+          "q": "Published: 2021-11-15 · Archived: 2026-11-25 02:21:11 UTC",
+          "what": "Report published by VMware TAU"
+        },
+        {
+          "v": "2026-11-25",
+          "q": "Published: 2021-11-15 · Archived: 2026-11-25 02:21:11 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Winnti 4.0",
+          "q": "One family that TAU has tracked for years is Winnti 4.0 malware."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "C2 protocol reverse engineering and emulation to find active servers",
+          "q": "TAU has reversed and emulated the network Command and Control (C2) protocols of high-profile malware families"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "43 servers",
+          "q": "There are 43 servers (34 unique IPs) in total."
+        },
+        {
+          "v": "34 unique IPs",
+          "q": "There are 43 servers (34 unique IPs) in total."
+        },
+        {
+          "v": "nine C2 servers",
+          "q": "TAU reported last year that nine C2 servers were found."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Winnti 4.0"
+    },
+    "hedges": [
+      "As these are typically hosted servers, there are cases where the server may have been reappropriated to a legitimate use.",
+      "It is advisable to verify any positive results in your environment to prevent false positives."
+    ]
   }
 }

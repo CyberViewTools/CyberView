@@ -25,5 +25,149 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "753f6e8856abbb4ddb5b93a3aa409979f93f8ff5": {
+    "sha1": "753f6e8856abbb4ddb5b93a3aa409979f93f8ff5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:28:53Z",
+    "model": "haiku",
+    "summary": "Microsoft Security Research reports threat actors abusing GSocket, an open-source remote access tool, on compromised Linux servers, mostly web applications and hosting. GSocket relays traffic through a shared public network, so there is no actor-owned IP address to block, and it keeps access after the original web vulnerability is patched. Telemetry shows GSocket-related detections rising 356.2% from March to August 2026. In a few incidents actors attempted privilege escalation using CVE-2026-43284. Education and research was the most-affected sector at 30.7% of organisations.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "multiple unrelated threat actors",
+          "q": "GSocket addresses these drawbacks, which helps explain why multiple unrelated threat actors have adopted it.",
+          "by": "Microsoft Security Research (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Education and research",
+          "q": "Education and research accounted for the largest share of affected organizations (30.7%), followed by technology and"
+        },
+        {
+          "v": "telecommunications",
+          "q": "telecommunications (22.9%)."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-11-11",
+          "q": "Published: 2026-11-11 · Archived: 2026-11-13 02:00:16 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "March through August 2026",
+          "q": "From March through August 2026, devices with GSocket-related detections increased 356.2%, although the increase was not consistent",
+          "what": "Telemetry period in which GSocket-related detections grew"
+        }
+      ],
+      "tools": [
+        {
+          "v": "GSocket",
+          "q": "Microsoft observed multiple incidents in which threat actors deployed GSocket, an open source remote access tool, on"
+        },
+        {
+          "v": "gs-netcat",
+          "q": "gs-netcat payloads were staged under the dot-prefixed"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit public-facing application",
+          "q": "T1190 Exploit Public-Facing Application"
+        },
+        {
+          "v": "Scheduled cron job persistence",
+          "q": "T1053.003 Scheduled Task/Job: Cron"
+        },
+        {
+          "v": "Systemd service persistence",
+          "q": "T1543.002 Create or Modify System Process: Systemd Service"
+        },
+        {
+          "v": "Masquerading as a system service name",
+          "q": "T1036 Masquerading"
+        },
+        {
+          "v": "Hidden files and directories",
+          "q": "T1564.001 Hide Artifacts: Hidden Files and Directories"
+        },
+        {
+          "v": "Timestomping",
+          "q": "T1070.006 Indicator Removal: Timestomp"
+        },
+        {
+          "v": "File deletion to remove traces",
+          "q": "T1070.004 Indicator Removal: File Deletion"
+        },
+        {
+          "v": "Ingress tool transfer",
+          "q": "T1105 Ingress Tool Transfer"
+        },
+        {
+          "v": "External proxy via shared relay",
+          "q": "T1090.002 Proxy: External Proxy"
+        },
+        {
+          "v": "Shared-secret reconnection without fixed address",
+          "q": "GSocket identifies endpoints by a shared secret instead of an IP address or hostname."
+        },
+        {
+          "v": "Kernel-thread-like process names",
+          "q": "Threat actors disguised GSocket with kernel-thread-like process names"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2026-43284",
+          "q": "to exploit CVE-2026-43284, one of the recent Linux kernel vulnerabilities also known as Dirty Frag, to elevate privileges to"
+        }
+      ],
+      "figures": [
+        {
+          "v": "356.2%",
+          "q": "From March through August 2026, devices with GSocket-related detections increased 356.2%, although the increase was not consistent"
+        },
+        {
+          "v": "87.1%",
+          "q": "Web applications and hosting accounted for 87.1% of attributable Microsoft Defender for Endpoint incidents in the analysed"
+        },
+        {
+          "v": "63.9%",
+          "q": "PHP web applications and cPanel hosting represented 63.9% of incidents and Apache"
+        },
+        {
+          "v": "24.3%",
+          "q": "represented 24.3% (Figure 3)."
+        },
+        {
+          "v": "30.7%",
+          "q": "Education and research accounted for the largest share of affected organizations (30.7%), followed by technology and"
+        },
+        {
+          "v": "22.9%",
+          "q": "telecommunications (22.9%)."
+        },
+        {
+          "v": "59 Linux kernel bug reports",
+          "q": "FORGE Lab recently documented 59 Linux kernel bug reports, including eight vulnerabilities for which researchers"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "GSocket"
+    },
+    "hedges": [
+      "Not every stage occurred in every intrusion.",
+      "These figures reflect the share of affected organizations and do not indicate that threat actors selected these sectors deliberately.",
+      "An individual alert does not establish the initial access method or confirm that every stage of an intrusion succeeded.",
+      "Some outcomes, such as persistence across reboot and successful relay session establishment, were not confirmed in every case.",
+      "The indicators below represent specific observations rather than a complete inventory of GSocket tooling or infrastructure."
+    ]
   }
 }

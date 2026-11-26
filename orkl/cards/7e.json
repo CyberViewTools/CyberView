@@ -1,25 +1,155 @@
 {
   "7ef2738a018c93e352f5f06048bc248cd7940819": {
     "sha1": "7ef2738a018c93e352f5f06048bc248cd7940819",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:10:45Z",
+    "read_at": "2026-11-26T23:19:57Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Cylance report on a campaign it calls The Deception Project, which it says appeared to target Japanese companies and individuals from around August 2016. Attacks used spear phishing with LNK and PowerShell droppers, and the Ham and Tofu backdoors. Cylance tracks the group as Snake Wine. Samples were signed with a leaked Hacking Team certificate, which the report says may be an attempt to throw off attribution. Some infrastructure overlaps with MenuPass domains, but Cylance says it does not believe this is probable MenuPass activity.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Snake Wine",
+          "q": "Cylance tracks this threat group internally as ‘Snake Wine’.",
+          "by": "Cylance"
+        },
+        {
+          "v": "MenuPass",
+          "q": "MenuPass is a well-documented CN-APT group, whose roots go back to 2009.",
+          "by": "Cylance"
+        },
+        {
+          "v": "APT28",
+          "q": "was previously heavily leveraged by the well-known Russian group APT28.",
+          "by": "Cylance"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "The exclusive interest in Japanese government, education, and commerce will likely continue"
+        },
+        {
+          "v": "education",
+          "q": "The exclusive interest in Japanese government, education, and commerce will likely continue"
+        },
+        {
+          "v": "commerce",
+          "q": "The exclusive interest in Japanese government, education, and commerce will likely continue"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Japan",
+          "q": "persistently target both private and government entities within Japan."
+        },
+        {
+          "v": "South Korea",
+          "q": "South Korea’s National Intelligence Service (NIS) previously leveraged It Itch’s services"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2016",
+          "q": "around August 2016.",
+          "what": "the campaign began"
+        },
+        {
+          "v": "November 2016",
+          "q": "All of the samples Cylance identified were compiled in November 2016",
+          "what": "the analysed backdoor samples were compiled"
+        },
+        {
+          "v": "8/5/2011",
+          "q": "Valid: 1:00 AM 8/5/2011 to 12:59 AM 8/5/2012",
+          "what": "start of validity of the certificate used for signing"
+        },
+        {
+          "v": "2009",
+          "q": "MenuPass is a well-documented CN-APT group, whose roots go back to 2009.",
+          "what": "MenuPass roots date back to this year"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ham Backdoor",
+          "q": "The Ham Backdoor functions primarily as a modular platform, which provides the attacker with the ability to directly"
+        },
+        {
+          "v": "Tofu Backdoor",
+          "q": "Based upon Cylance’s observations, the Tofu Backdoor was deployed in far fewer instances than the Ham Backdoor."
+        },
+        {
+          "v": "LNK files",
+          "q": "The latest batch used well-crafted LNK files contained within similarly named password-protected ZIP files."
+        },
+        {
+          "v": "PowerSploit",
+          "q": "modified from ‘PowerSploit'."
+        },
+        {
+          "v": "RC.exe",
+          "q": "a side loading vulnerability in the legitimate Microsoft Resource Compiler, ‘RC.exe.’"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing",
+          "q": "all observed attacks were the result of spear phishing attempts against the victim organizations."
+        },
+        {
+          "v": "shellcode-based backdoor",
+          "q": "The move to a shellcode-based backdoor was presumably done to decrease overall AV detection"
+        },
+        {
+          "v": "code-signing certificate",
+          "q": "Signing the malware with a stolen and subsequently publicly leaked code-signing certificate is sloppy"
+        },
+        {
+          "v": "Dynamic DNS",
+          "q": "Cylance also found an extensive network of Dynamic DNS (DDNS) domains registered via multiple free providers"
+        },
+        {
+          "v": "side loading",
+          "q": "a side loading vulnerability in the legitimate Microsoft Resource Compiler, ‘RC.exe.’"
+        },
+        {
+          "v": "Run key",
+          "q": "The only observed persistence method to date is the use of the standard Windows Run key"
+        },
+        {
+          "v": "obfuscation",
+          "q": "The malware employs a number of techniques for obfuscation"
+        },
+        {
+          "v": "mimicking Windows update domains",
+          "q": "Many of the DDNS domains were concocted to mimic legitimate windows update domains such as"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "at least half",
+          "q": "Cylance found that at least half of the infrastructure associated with The Deception Project appeared to be dark or at least"
+        },
+        {
+          "v": "v1.2.2",
+          "q": "the latest referenced backdoor version Cylance identified was ‘v1.2.2.’"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "The Deception Project"
+    },
+    "hedges": [
+      "Cylance believes some of the steps taken by the attacker could possibly be an attempt at a larger disinformation campaign.",
+      "Why the attackers chose to use this expired certificate to sign their malware samples is unknown.",
+      "The malware was likely done purely as an attempt to throw off attribution.",
+      "Cylance does not believe the MenuPass scenario to be probable, as a significant amount of time has elapsed between the activity sets.",
+      "Many of those MenuPass-linked domains were inactive for as long as two years and could have easily been re-registered by another entity.",
+      "These backdoors may have simply been tests as later samples moved back to the shellcode-based Ham Backdoors."
+    ]
   }
 }

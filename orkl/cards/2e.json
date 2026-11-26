@@ -1,0 +1,71 @@
+{
+  "2e21dde48be974440193a00e7b6441e6a9ca1b9a": {
+    "sha1": "2e21dde48be974440193a00e7b6441e6a9ca1b9a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:25:44Z",
+    "model": "haiku",
+    "summary": "Part 1 of an analysis of the Panda Banker banking trojan by Crovax, published 2021-08-26. The malware shares code with Zeus, injects code into web browsers to steal banking and credit card credentials, uses anti-analysis and obfuscation, and deletes itself when it detects analysis tools. Memory analysis shows an unknown process spawning data_1.exe. Behavioural and reverse engineering findings are deferred to part 2.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "banking",
+          "q": "It’s known to inject code into the users web browser and attempt to steal banking/credit card credentials."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-08-26",
+          "q": "Published: 2021-08-26 · Archived: 2026-11-25 02:03:14 UTC",
+          "what": "Analysis part 1 published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Zeus",
+          "q": "shares some of its code base with an older malware variant called ‘Zeus.’"
+        },
+        {
+          "v": "volatility",
+          "q": "We can see this during the process tree listing in volatility"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "anti-analysis and code obfuscation",
+          "q": "Panda banker has a series of different anti-analysis and code obfuscation techniques to thwart any attempt in"
+        },
+        {
+          "v": "checking for analysis tools",
+          "q": "Some of these techniques consist of checking for process monitoring tools and packet analysis tool."
+        },
+        {
+          "v": "web browser code injection",
+          "q": "It’s known to inject code into the users web browser and attempt to steal banking/credit card credentials."
+        },
+        {
+          "v": "self-deletion",
+          "q": "The executable, once it has detected one of these tools, it will delete itself from the host system."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "two",
+          "q": "it would spawn two"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Panda Banker"
+    },
+    "hedges": [
+      "Findings are based on the author's initial analysis, which covers only part of the malware.",
+      "The behavioural and reverse engineering sections are deferred to part 2 of the write-up."
+    ]
+  }
+}

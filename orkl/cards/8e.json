@@ -1,0 +1,87 @@
+{
+  "8e37ec89a058e3a46c1b9d2a72834771630f2827": {
+    "sha1": "8e37ec89a058e3a46c1b9d2a72834771630f2827",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:26:38Z",
+    "model": "haiku",
+    "summary": "A malware analysis from The Safe Mac, reporting F-Secure's July 2013 announcement of Janicab, a trojan for Mac OS X. It disguises an application as a PDF using a right-to-left override character in the file name and is signed with a developer certificate, so it can run with little warning. Once run, it opens a decoy document, hides components in a folder in the home directory, sets a cron job, takes screenshots, records audio and polls a server for commands. At the time, most anti-virus software did not detect it. A July 16 update says the signing certificate appeared to be revoked.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "July 15th, 2013",
+          "q": "Published July 15th, 2013 at 2:27 PM EDT",
+          "what": "F-Secure announced the discovery of the Janicab trojan; the report was published"
+        },
+        {
+          "v": "July 16, 2013",
+          "q": "July 16, 2013: Looks like the developer certificate used to sign this trojan has already been revoked.",
+          "what": "Update: the developer certificate used to sign the trojan appeared to be revoked"
+        }
+      ],
+      "tools": [
+        {
+          "v": "cron",
+          "q": "creates a cron job to keep components running"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "disguising an application as a document",
+          "q": "disguising an application as a document to trick the user into opening it"
+        },
+        {
+          "v": "right-to-left override (RLO)",
+          "q": "use of a right-to-left override (RLO) character in the name."
+        },
+        {
+          "v": "app is signed",
+          "q": "is that the app is signed. Thus, the system will allow it to run unimpeded"
+        },
+        {
+          "v": "invisible folder",
+          "q": "installs a number of components in an invisible folder"
+        },
+        {
+          "v": "cron job",
+          "q": "creates a cron job to keep components running"
+        },
+        {
+          "v": "opens a document",
+          "q": "the trojan opens a document to avoid causing further suspicion"
+        },
+        {
+          "v": "taking screenshots and recording audio",
+          "q": "it begins taking screenshots and recording audio,"
+        },
+        {
+          "v": "polling the server for other commands",
+          "q": "polling the server for other commands to run"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "most anti-virus software",
+          "q": "At this time, Janicab is not detected by most anti-virus software"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Janicab"
+    },
+    "hedges": [
+      "At this time, the built in defenses in Mac OS X will allow this trojan to run without much in the way of warnings",
+      "Presumably it uses cron since that is older technology that has been abandoned in favor of launchd.",
+      "I don't know yet what versions of Mac OS X this malware is capable of infecting",
+      "At this time, Janicab is not detected by most anti-virus software",
+      "Seeing other malware using a signed app is troubling, as it may indicate that Gatekeeper will not offer as much security as had been hoped for.",
+      "Looks like the developer certificate used to sign this trojan has already been revoked."
+    ]
+  }
+}

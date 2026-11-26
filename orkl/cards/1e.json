@@ -3,7 +3,7 @@
     "sha1": "1e60e90d8ea9a2aa86477c13b5a5f10a33939205",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-26T21:15:03Z",
+    "read_at": "2026-11-26T23:20:36Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -19,7 +19,155 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "reason": "value-not-in-quote",
+    "tries": 2
+  },
+  "1e1a17fcb3e37aabc54d38e4328d0e58cea7e5dc": {
+    "sha1": "1e1a17fcb3e37aabc54d38e4328d0e58cea7e5dc",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:31:26Z",
+    "model": "haiku",
+    "summary": "SOCRadar's Threat Research Unit describes ICMacOS (Icarus macOS), a macOS infostealer sold as malware-as-a-service since early September 2026 and promoted by the Russian-speaking actor GlowComa. It is delivered through ClickFix copy-and-paste pages that show fake system dialogs to capture the login password. It steals browser data, crypto wallets, messaging data, keychain contents and developer secrets. Version 2 adds a persistent RAT with a LaunchAgent and WebSocket-driven remote shell access. The malware checks locale and IP address to avoid Russia and CIS countries.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "GlowComa",
+          "q": "ICMacOS is advertised by GlowComa, a financially motivated, Russian-speaking actor active since January 2026.",
+          "by": "SOCRadar Threat Research Unit (STRU)"
+        },
+        {
+          "v": "MADHASH",
+          "q": "Operating under the banner of the MADHASH crypto-draining affiliate group, GlowComa promotes ICMacOS as",
+          "by": "SOCRadar Threat Research Unit (STRU)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "while enforcing strict exclusions for Russia and Commonwealth of Independent States (CIS) countries."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-10-12",
+          "q": "Published: 2026-10-12 · Archived: 2026-10-29 02:22:21 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "September 2026",
+          "q": "In September 2026, SOCRadar Threat Research Unit (STRU) identified ICMacOS (Icarus macOS), a newly",
+          "what": "SOCRadar identified ICMacOS"
+        },
+        {
+          "v": "early September 2026",
+          "q": "a new macOS infostealer distributed under a MaaS subscription model since early September 2026.",
+          "what": "ICMacOS began being distributed under a MaaS subscription model"
+        },
+        {
+          "v": "January 2026",
+          "q": "a financially motivated, Russian-speaking actor active since January 2026.",
+          "what": "GlowComa active since"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ICMacOS",
+          "q": "ICMacOS, also known as Icarus macOS, is a macOS infostealer sold under a Malware-as-a-Service (MaaS)"
+        },
+        {
+          "v": "Icarus ClickFix",
+          "q": "GlowComa promotes ICMacOS alongside Icarus ClickFix, a companion panel designed to deliver payloads"
+        },
+        {
+          "v": "keychainbreaker",
+          "q": "The binary integrates keychainbreaker, an embedded Go library designed to parse and decrypt macOS Keychain files"
+        },
+        {
+          "v": "Gorilla WebSocket",
+          "q": "Alongside its background theft modules, Version 2 launches an interactive C2 client built on the Gorilla WebSocket"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "ClickFix social engineering",
+          "q": "ICMacOS spreads through ClickFix social engineering pages that trick victims into running copy-and-paste terminal"
+        },
+        {
+          "v": "fake system dialogs",
+          "q": "the dropper deploys fake macOS system dialogs to trick the victim into entering their login password"
+        },
+        {
+          "v": "LaunchAgent persistence",
+          "q": "a persistent RAT equipped with LaunchAgent persistence mechanisms"
+        },
+        {
+          "v": "system clipboard",
+          "q": "Captures whatever text is currently in the system clipboard at execution time via the"
+        },
+        {
+          "v": "interactive C2",
+          "q": "direct interactive C2 capabilities"
+        },
+        {
+          "v": "geo-fencing check",
+          "q": "conducts a geo-fencing check to determine if the target is located in a CIS country"
+        },
+        {
+          "v": "Browser Credential",
+          "q": "Browser Credential & Extensions Theft"
+        },
+        {
+          "v": "developer credentials",
+          "q": "Its focus on developer credentials, including SSH keys, cloud configurations, Kubernetes credentials, and"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$699 weekly",
+          "q": "subscription model: $699 weekly, $1,199 biweekly, or $1,699 monthly"
+        },
+        {
+          "v": "$1,699 monthly",
+          "q": "subscription model: $699 weekly, $1,199 biweekly, or $1,699 monthly"
+        },
+        {
+          "v": "$899",
+          "q": "(discounted to $899 for existing users of their"
+        },
+        {
+          "v": "29",
+          "q": "It iterates over a pre-configured map of 29"
+        },
+        {
+          "v": "five",
+          "q": "The script allows up to five password attempts before terminating."
+        },
+        {
+          "v": "60 minutes",
+          "q": "re-invokes it every 60 minutes as a fallback mechanism"
+        },
+        {
+          "v": "10.12",
+          "q": "spanning macOS Sierra (10.12) through current builds"
+        },
+        {
+          "v": "one in three",
+          "q": "roughly one in three software developers works on macOS."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ICMacOS"
+    },
+    "hedges": [
+      "Platform support is described 'According to its developer', so it is the seller's stated claim.",
+      "The list of targeted data is described 'According to the developer', i.e. the seller's stated coverage.",
+      "GlowComa's reputation is described as mixed, citing Exploit.in arbitration disputes over payload conversion and unfulfilled guarantees."
+    ]
   }
 }

@@ -27,5 +27,150 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "70e6aaa207a65eed4b4833d0696a7d4e130bda33": {
+    "sha1": "70e6aaa207a65eed4b4833d0696a7d4e130bda33",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T23:29:58Z",
+    "model": "haiku",
+    "summary": "Lookout describes KoSpy, an Android spyware family disguised as utility apps and distributed through Google Play and Firebase Firestore, aimed at Korean and English-speaking users. Lookout attributes it to the North Korean group ScarCruft (APT37) with medium confidence and notes ties to APT43 infrastructure. Samples date from March 2022 to March 2024. The apps were removed from Google Play and the Firebase projects deactivated.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "ScarCruft",
+          "q": "ScarCruft is a North Korean state-sponsored cyber espionage group active since 2012.",
+          "by": "Lookout"
+        },
+        {
+          "v": "APT37",
+          "q": "Lookout researchers attribute this KoSpy activity to APT37 with medium confidence.",
+          "by": "Lookout"
+        },
+        {
+          "v": "APT43",
+          "q": "In addition to its ties to APT37, this KoSpy campaign also has ties to infrastructure used by APT43 - another North Korean",
+          "by": "Lookout"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "located in South Korea. This IP address was associated with many potentially malicious Korea-related"
+        },
+        {
+          "v": "Japan",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "Vietnam",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "Russia",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "Nepal",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "China",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "India",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        },
+        {
+          "v": "Romania",
+          "q": "Korea, it has also conducted operations in countries including Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-03-12",
+          "q": "Published: 2025-03-12 · Archived: 2026-11-06 02:00:55 UTC",
+          "what": "Lookout published the report"
+        },
+        {
+          "v": "March 2022",
+          "q": "is a relatively new family with early samples going back to March 2022.",
+          "what": "Earliest known KoSpy samples"
+        },
+        {
+          "v": "March 2024",
+          "q": "samples were acquired in March 2024.",
+          "what": "Most recent KoSpy samples acquired"
+        },
+        {
+          "v": "2012",
+          "q": "ScarCruft is a North Korean state-sponsored cyber espionage group active since 2012.",
+          "what": "ScarCruft active since"
+        }
+      ],
+      "tools": [
+        {
+          "v": "KoSpy",
+          "q": "Lookout Threat Lab researchers have discovered a novel Android surveillance tool, dubbed KoSpy, which appears to target"
+        },
+        {
+          "v": "Firebase Firestore",
+          "q": "The spyware leveraged the Google Play Store and Firebase Firestore to distribute the"
+        },
+        {
+          "v": "Konni",
+          "q": "Konni5 is a Windows RAT family linked to the APT376 threat actor."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fake utility application lures",
+          "q": "KoSpy has been observed using fake utility application lures, such as"
+        },
+        {
+          "v": "two-staged C2 management",
+          "q": "This two-staged C2 management approach provides the threat actor with flexibility and resiliency."
+        },
+        {
+          "v": "keystroke recording via accessibility services",
+          "q": "Recording key strokes by abusing accessibility services"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "five different apps",
+          "q": "KoSpy samples in Lookout’s corpus masquerade as five different apps:"
+        },
+        {
+          "v": "five different Firebase projects",
+          "q": "Lookout researchers observed five different Firebase projects and five different C2 servers during the analysis"
+        },
+        {
+          "v": "five different C2 servers",
+          "q": "Lookout researchers observed five different Firebase projects and five different C2 servers during the analysis"
+        },
+        {
+          "v": "more than ten times",
+          "q": "downloaded more than ten times."
+        },
+        {
+          "v": "two languages",
+          "q": "the apps have Korean language titles and the UI supports two languages: English and Korean."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "KoSpy"
+    },
+    "hedges": [
+      "APT37 attribution is made with medium confidence. The report notes North Korean groups share infrastructure, targeting and TTPs, which makes attribution to one actor harder.",
+      "The plugin download could not be confirmed because no C2 server was active during the analysis.",
+      "Some KoSpy C2 domains are still online but do not respond to client requests."
+    ]
   }
 }

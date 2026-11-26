@@ -1,0 +1,886 @@
+{
+  "analysis": {
+    "generated_at": "2026-11-26T10:58:31Z",
+    "summary": "Patch Drupal now and check for compromise: Drupal says a second core flaw (SA-CORE-2026-019) is exploited a week after the installer flaw (SA-CORE-2026-017), and sites exposed after 017 may already be taken over; GeoServer and VirtueMart are also exploited, and the PAN-OS and Check Point management-plane attacks continue. AI-run intrusions are now confirmed by victims and agencies, not only researchers: a DeepSeek-driven agent took data on 1.2 million people from 82 Flemish municipalities, Switzerland reports its first successful AI-agent attacks, and Microsoft names Salt Typhoon among ARTEX users. Binance says its $6.34 billion theft began with a malicious coding test given to an engineer, the same lure Socket found in NuGet packages (no stated link), while 1Password and Todoist report intrusions through developer accounts. Contractor breaches keep spreading (KARTE adds JCB and Shikoku Bank; Planzer exposes Digitec Galaxus customers; Yamato, Sapporo Drug, Flight Centre, Hong Kong City Ticketing), and Deichmann-group web shops were breached before Black Friday. The cluster of US federal intrusions is close in time only; no source links them.",
+    "patterns": [
+      {
+        "id": "exploited-now",
+        "kind": "stated",
+        "confidence": 3,
+        "title": "Exploited now: Drupal core twice in a week, GeoServer, VirtueMart, PAN-OS management via PHP2Shell, Check Point management, vCenter, Hex.pm",
+        "narrative": "Each item here is stated as exploited by the vendor, an agency or the researchers who saw it. New since yesterday: Drupal published a second highly critical core advisory, SA-CORE-2026-019 (CVE-2026-136716, access bypass), and says it is exploited in the wild; it follows SA-CORE-2026-017 (install.php reinstall, CVE-2026-132165), which Drupal says was exploited from Nov 19 and CISA added to KEV on Nov 24. Drupal warns that sites whose installer was reachable after 017 may already be compromised, so patching 019 alone is not enough. watchTowr reports exploitation of two GeoServer flaws, and the CVE record for VirtueMart (Joomla) CVE-2026-133335 says it is exploited. Carried over: Palo Alto Networks says PAN-OS management interfaces were reached through PHP2Shell then Fragnesia (CVE-2026-46300), the same PHP2Shell flaw Check Point says was used to root and in some cases wipe its gateways from Oct 30; GreyNoise's GT13 Check Point management intrusions, the vCenter zero-day reported by Google, Hex.pm, Entra Connect Health, SAP NetWeaver in KEV and Cisco Expressway. For defenders: CMS installers and appliance management planes facing the internet are this week's main entry points.",
+        "caveat": "Exploitation is as reported by each vendor or researcher; scale is mostly unknown. The GeoServer item relies on watchTowr via The Hacker News. The F5 Labs Ivanti Connect Secure data are scanning attempts from late October, not confirmed compromises. Grouping these flaws together is ours; apart from the edges marked stated, they are separate campaigns.",
+        "chain": [
+          "drupal-core-installer-rce-sa-core-2026-017-2026-11",
+          "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "drupal-core-installer-rce-sa-core-2026-017-2026-11",
+            "to": "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11",
+            "rel": "follow-up advisory; 017 sites may be compromised",
+            "basis": "stated",
+            "url": "https://www.drupal.org/sa-core-2026-019"
+          },
+          {
+            "from": "check-point-php2shell-gateway-wiper-campaign-2026-11",
+            "to": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+            "rel": "PAN-OS exploit path starts with the same PHP2Shell flaw",
+            "basis": "stated",
+            "url": "https://security.paloaltonetworks.com/PAN-SA-2026-0015"
+          },
+          {
+            "from": "greynoise-gt13-check-point-management-intrusions-2026-11",
+            "to": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+            "rel": "both target firewall management planes; different products, no shared actor stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "geoserver-exploited-wfs-ows-flaws-rce-chain-2026-11",
+            "to": "virtuemart-joomla-lfi-cve-2026-133335",
+            "rel": "both unauthenticated file read or inclusion flaws in web platforms exploited the same week; no shared actor stated",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "drupal-core-installer-rce-sa-core-2026-017-2026-11",
+          "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11",
+          "geoserver-exploited-wfs-ows-flaws-rce-chain-2026-11",
+          "virtuemart-joomla-lfi-cve-2026-133335",
+          "ivanti-connect-secure-cve-2026-104935-f5-scanning-2026-11",
+          "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+          "check-point-php2shell-gateway-wiper-campaign-2026-11",
+          "hexpm-registry-rce-exploited-2026-11",
+          "microsoft-entra-connect-health-api-metadata-access-2026-11",
+          "vite-dev-server-exploit-attempts-honeylabs-2026-11",
+          "greynoise-gt13-check-point-management-intrusions-2026-11",
+          "gtig-armory-castle-vcenter-zero-day-2026-11",
+          "cisa-kev-sap-netweaver-cve-2025-42884-2026-11",
+          "glinet-cloud-management-router-kvm-malware-2026-11",
+          "cairn-ai-monai-label-zero-day-2026-11",
+          "vulncheck-credential-harvesting-cve-exploitation-report-2026-11",
+          "cisco-expressway-cve-2026-76466-exploited-2026-11"
+        ]
+      },
+      {
+        "id": "patch-pressure",
+        "kind": "stated",
+        "confidence": 3,
+        "title": "Patch before attacks: Exchange indexing hits Visio flaw, HPE AirWave, Silverstripe, NGINX HTTP/2 and PHP flaws, 23 VMware fixes",
+        "narrative": "None of these is reported exploited yet, but each is critical or has a public exploit path. New: Microsoft's Visio flaw CVE-2026-112732 can be triggered when an Exchange server indexes a crafted attachment, so the recipient never has to open it (Security.nl; GovCERT.HK alert); HPE fixed critical unauthenticated command injection in AirWave 8.3.0.7 and below; Silverstripe fixed unauthenticated RCE and an auth bypass. Carried over: the NGINX HTTP/2 flaw that Xint chains to a Linux SCTP kernel bug for root and that Synology fixed in DSM; phpAfterShell (CVE-2026-126714), which HKCERT says also affects F5 BIG-IP; Broadcom's 23 VMware fixes; and a batch of ZDI 0-day advisories in PyTorch, pip, LiteLLM and BusyBox. Exchange servers and appliances that bundle PHP or NGINX are where a fix closes the most exposure.",
+        "caveat": "No exploitation is stated for these items as of this run; that can change quickly, as the Drupal installer flaw did within a day of its advisory. The link between phpAfterShell and the PHP security release is inferred from timing.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "cert-fr-nginx-http2-rce-2026-11",
+            "to": "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
+            "rel": "chained to kernel bug for root (Xint)",
+            "basis": "stated",
+            "url": "https://xint.io/blog/nginx2root-remote-code-execution"
+          },
+          {
+            "from": "cert-fr-nginx-http2-rce-2026-11",
+            "to": "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+            "rel": "same CVE-2026-123007, fixed in Synology DSM",
+            "basis": "stated",
+            "url": "https://gbhackers.com/synology-fixes-critical-security-flaws/"
+          },
+          {
+            "from": "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+            "to": "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11",
+            "rel": "same flaw CVE-2026-126714 in F5 BIG-IP (HKCERT)",
+            "basis": "stated",
+            "url": "https://www.hkcert.org/security-bulletin/f5-big-ip-remote-code-execution-vulnerability_20261123"
+          },
+          {
+            "from": "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+            "to": "php-critical-security-release-announced-2026-11",
+            "rel": "same day, likely the same PHP releases",
+            "basis": "inferred"
+          },
+          {
+            "from": "govcert-hk-microsoft-office-rce-cve-2026-112732-2026-11",
+            "to": "broadcom-vmsa-2026-0011-vmware-23-flaws-2026-11",
+            "rel": "both server-side platforms where one flaw reaches many users; unrelated vendors",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "govcert-hk-microsoft-office-rce-cve-2026-112732-2026-11",
+          "hpe-airwave-critical-flaws-cve-2026-133973",
+          "silverstripe-critical-rce-auth-bypass-ss-2026-008-009",
+          "cert-fr-nginx-http2-rce-2026-11",
+          "synology-dsm-oauth-nginx-critical-flaws-2026-11",
+          "xint-linux-sctp-kernel-lpe-unpatched-2026-11",
+          "phpaftershell-php-session-rce-cve-2026-126714-2026-11",
+          "hkcert-f5-big-ip-php-rce-cve-2026-126714-2026-11",
+          "php-critical-security-release-announced-2026-11",
+          "broadcom-vmsa-2026-0011-vmware-23-flaws-2026-11",
+          "zdi-26-1044-gnu-inetutils-ftp-client-cve-2026-136613-2026-11",
+          "busybox-ftpd-zdi-26-1069-0day-2026-11",
+          "pytorch-pt2-zdi-26-1056-2026-11",
+          "pytorch-torch-save-to-dcp-zdi-26-1059-2026-11",
+          "pypa-pip-zdi-26-1066-2026-11",
+          "litellm-passthrough-rce-zdi-26-1084-2026-11",
+          "solarwinds-serv-u-2026-4-privilege-escalation-2026-11",
+          "chrome-158-cve-2026-134401-variations-2026-11",
+          "adobe-aem-campaign-classic-csirt-it-2026-11",
+          "mozilla-thunderbird-161-mfsa-2026-134-2026-11",
+          "joomla-5-4-11-6-2-1-security-fixes-2026-11",
+          "roundcube-1-7-7-1-6-22-security-updates-2026-11",
+          "whmcs-sql-injection-cve-2026-82981-2026-11",
+          "nginx-ssl-early-data-cpu-cve-2026-132779-2026-11",
+          "debian-runc-dsa-6656-1-2026-11",
+          "flatpak-1-18-6-setuid-sandbox-escape-fixes-2026-11",
+          "openssl-quic-fragment-reassembly-cve-2026-84785-2026-11"
+        ]
+      },
+      {
+        "id": "supplier-cascades",
+        "kind": "stated",
+        "confidence": 3,
+        "title": "One platform, many victims: JCB and Shikoku Bank join the PLAID KARTE notices, and East Security joins the Douzone Bizon backup victims",
+        "narrative": "PLAID says a vulnerability in its KARTE customer-experience platform was exploited on Nov 13; since then customer companies have published their own counts, each saying the data was taken from KARTE, not their own systems. ZOZO (about 15.18 million), SMBC (up to about 14 million) and Marui Group (about 8.8 million) are the largest, with DHC, MUFG Bank, Sharp, Mainichi, Canon Marketing Japan, Suntory Wellness, Timee and others behind them; on Nov 24 Kaunet's second report put its count at 300,525 records after removing duplicates. In Korea a smaller cascade runs through Douzone Bizon's outsourced APO backup service: the Damyang County Cultural Foundation said on Nov 20 that data may have leaked through a breach of Douzone backup servers, and on Nov 23 Boannews listed Genesis Lab and Incheon Airport Facilities Management as further Douzone clients told their backup data may have been taken. For defenders the lesson is the same in both: a single SaaS or backup supplier holds copies of many customers' data, and notices arrive one customer at a time over weeks. New since yesterday: JCB says management codes for up to about 150,000 MyJCB customers leaked through KARTE (no card numbers, names or logins), Shikoku Bank says Mikatano users' email addresses leaked the same way, and GO's notice covers users of the GO, GO Dine and JapanTaxi apps. In Korea, Boannews reports East Security is also among Douzone Bizon APO backup customers told data may have leaked. Expect phishing in Japanese and Korean that names these brands.",
+        "caveat": "KARTE links are stated by each customer; the Douzone victims each name Douzone's backup service, but no source on file ties the Damyang notice and the Boannews list to one intrusion, so the edge between them is an inference. Counts are each company's own and may include duplicates. East Security says an actual leak is not yet confirmed.",
+        "chain": [
+          "plaid-karte-unauthorized-access-2026-11",
+          "go-karte-plaid-user-data-leak-2026-11",
+          "shikoku-bank-mikatano-karte-email-leak-2026-11",
+          "jcb-karte-myjcb-management-codes-leak-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "zozo-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://corp.zozo.com/information/20261120-482917/"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "smbc-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://cybersecurity-jp.com/news/118712"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "marui-group-karte-customer-data-leak-2026-11",
+            "rel": "customer data leaked via KARTE",
+            "basis": "stated",
+            "url": "https://www.0101maruigroup.co.jp/nr/26_1120_1"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "kaunet-karte-300525-records-leak-2026-11",
+            "rel": "customer of breached supplier PLAID",
+            "basis": "stated",
+            "url": "https://cybersecurity-jp.com/news/118877"
+          },
+          {
+            "from": "damyang-cultural-foundation-douzone-bizon-breach-2026-11",
+            "to": "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11",
+            "rel": "both name Douzone Bizon's backup service; no source ties them to one intrusion",
+            "basis": "inferred"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "jcb-karte-myjcb-management-codes-leak-2026-11",
+            "rel": "JCB says codes leaked via its contractor Plaid's KARTE",
+            "basis": "stated",
+            "url": "https://www.jcb.co.jp/release/pdf/oshirase_20261125.pdf"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "shikoku-bank-mikatano-karte-email-leak-2026-11",
+            "rel": "Mikatano user emails leaked via KARTE",
+            "basis": "stated",
+            "url": "https://cybersecurity-jp.com/news/118924"
+          },
+          {
+            "from": "plaid-karte-unauthorized-access-2026-11",
+            "to": "go-karte-plaid-user-data-leak-2026-11",
+            "rel": "GO user IDs may have leaked via contractor Plaid's KARTE",
+            "basis": "stated",
+            "url": "https://goinc.jp/news/info/2026/11/19/1ged4wbk8ug0heonnp2cm0/"
+          },
+          {
+            "from": "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11",
+            "to": "east-security-douzone-bizon-backup-breach-2026-11",
+            "rel": "another victim of Douzone Bizon backup breach",
+            "basis": "stated",
+            "url": "https://www.boannews.com/news/articleView.html?idxno=147544"
+          }
+        ],
+        "event_ids": [
+          "plaid-karte-unauthorized-access-2026-11",
+          "zozo-karte-customer-data-leak-2026-11",
+          "smbc-karte-customer-data-leak-2026-11",
+          "marui-group-karte-customer-data-leak-2026-11",
+          "dhc-karte-19-million-customer-data-leak-2026-11",
+          "mufg-bank-karte-customer-data-leak-2026-11",
+          "sharp-cocoro-store-karte-leak-2026-11",
+          "mainichi-digital-karte-member-data-leak-2026-11",
+          "canon-mj-karte-customer-data-leak-2026-11",
+          "suntory-wellness-comado-karte-947667-leak-2026-11",
+          "timee-karte-contractor-breach-2026-11",
+          "kurashiru-karte-recichalle-chirashi-leak-2026-11",
+          "go-karte-plaid-user-data-leak-2026-11",
+          "kaunet-karte-300525-records-leak-2026-11",
+          "damyang-cultural-foundation-douzone-bizon-breach-2026-11",
+          "douzone-bizon-backup-breach-genesis-lab-incheon-airport-facilities-2026-11",
+          "jcb-karte-myjcb-management-codes-leak-2026-11",
+          "shikoku-bank-mikatano-karte-email-leak-2026-11",
+          "east-security-douzone-bizon-backup-breach-2026-11"
+        ]
+      },
+      {
+        "id": "one-vendor-many-victims",
+        "kind": "inferred",
+        "confidence": 3,
+        "title": "Breaches through a contractor: Planzer exposes Digitec Galaxus customers, Yamato via Chatplus, Sapporo Drug via CyberAgent, Flight Centre, Hong Kong's City Ticketing, Halfords and n0n",
+        "narrative": "Each victim states that the data sat with a contractor or third-party service, not in its own systems; what connects them is that pattern, not a shared supplier. New: Swiss carrier Planzer was attacked and Digitec Galaxus says its customers' delivery data were taken there (stated in one event); Yamato says its chat provider Chatplus had servers accessed on Nov 13; Sapporo Drug Store says its app contractor CyberAgent left a file on 229,026 accounts in public storage for 16 months and it was retrieved nine times; Flight Centre says a third-party accommodation booking system exposed a significant number of records, some with passport details; Hong Kong's LCSD says the contractor-built City Ticketing system was hacked, about 1.3 million users preliminarily. Extortion group n0n listed Halfords, which says a third-party digital service was hit; n0n was also named in the JPMorgan vendor and Samsung claims. Earlier in the week: Next, Gatwick AutoPay, Little Vista and others. Defenders should ask which contractors hold customer copies and how they would hear about it.",
+        "caveat": "Apart from Planzer and Digitec Galaxus, no two of these share a stated supplier or attacker. The n0n connection is only the same group name on leak-site listings; n0n claims are unverified where the victim has not confirmed them.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "jpmorgan-third-party-vendors-cyberattack-2026-11",
+            "to": "halfords-third-party-n0n-listing-2026-11",
+            "rel": "same group name (n0n) and both say a third-party service was hit; no shared supplier stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "jpmorgan-third-party-vendors-cyberattack-2026-11",
+            "to": "samsung-smart-tv-data-leak-claim-n0n-2026-11",
+            "rel": "same group name (n0n) in both claims; separate victims, no shared supplier stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "yamato-holdings-chatplus-possible-leak-2026-11",
+            "to": "sapporo-drug-store-cyberagent-line-data-exposure-2026-11",
+            "rel": "Japanese firms both exposed through a customer-service contractor; different contractors",
+            "basis": "inferred"
+          },
+          {
+            "from": "next-third-party-provider-cyber-incident-2026-11",
+            "to": "decathlon-customer-data-claim-2026-11",
+            "rel": "both retailers name an external provider; different providers",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "planzer-digitec-galaxus-data-theft-2026-11",
+          "yamato-holdings-chatplus-possible-leak-2026-11",
+          "sapporo-drug-store-cyberagent-line-data-exposure-2026-11",
+          "flight-centre-accommodation-booking-system-breach-2026-11",
+          "hk-lcsd-city-ticketing-hacked-1-3m-users-2026-11",
+          "halfords-third-party-n0n-listing-2026-11",
+          "next-third-party-provider-cyber-incident-2026-11",
+          "decathlon-customer-data-claim-2026-11",
+          "gatwick-autopay-third-party-unauthorised-access-2026-11",
+          "little-vista-creche-software-breach-2026-11",
+          "jpmorgan-third-party-vendors-cyberattack-2026-11",
+          "samsung-smart-tv-data-leak-claim-n0n-2026-11",
+          "moengage-vendor-account-breach-2026-11",
+          "carnegie-endowment-donation-vendor-breach-2026-11",
+          "phoebe-medcom-vendor-breach-notices-2026-11",
+          "persistent-systems-law-firm-immigration-data-2026-11",
+          "netaffinity-smarthotel-incident-2026-11",
+          "kai-iwi-lakes-seekom-breach-2026-11"
+        ]
+      },
+      {
+        "id": "ai-run-intrusions",
+        "kind": "inferred",
+        "confidence": 3,
+        "title": "AI-run intrusions are now confirmed by victims and agencies: Flemish municipalities via a DeepSeek-driven agent, Swiss firms, Beazley's case, and Microsoft names Salt Typhoon using ARTEX",
+        "narrative": "Several independent sources now describe completed intrusions in which AI agents did most of the work. The Flemish case: Secutec and SOCRadar say an operator they call BabidiGhost used a DeepSeek-driven agent (over 5,800 instructions between Nov 6 and 15) to reach a service provider's server and take identity data of about 1.2 million people in 82 municipalities; SOCRadar had described the same operator's nine-day campaign against European banks, insurers and municipalities on Nov 20. Switzerland's NCSC says it has its first reports of successful attacks with AI agents, all of which led to compromise, mostly through weak passwords and known flaws. Beazley Security investigated an intrusion where agents ran nearly every stage after an ASP.NET ViewState weakness; Unit 42 counts more than 10 campaigns starting from a web shell; Jesta saw an OpenCode agent take a planted decoy key in under six minutes. Microsoft says China-linked Salt Typhoon and Crystal Typhoon use ARTEX, and Shadowserver counts about 4,200 exposed AI attack-framework instances, mostly ARTEX. Earlier this week Wiz, NVISO and JFrog reported ARTEX in the wild. Microsoft and the Swiss NCSC both say the agents use familiar weaknesses, so the defensive answer is the usual one done faster: patch, remove default passwords, watch for high-volume command bursts from one source.",
+        "caveat": "Grouping these is ours: apart from BabidiGhost (SOCRadar and the Flemish case) and Wiz's two findings, no source ties these incidents to one actor. The Flemish attribution comes from two private firms; Belgium's CCB says it cannot confirm all details. Shadowserver's count is exposed instances, not proven attackers. Cisco Talos's 'agentic swarm' report describes model evaluation traffic it says should not be viewed as malicious, and is listed only as context.",
+        "chain": [
+          "socradar-babidighost-jailbroken-ai-agent-2026-11",
+          "babidighost-deepseek-flemish-municipalities-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "socradar-babidighost-jailbroken-ai-agent-2026-11",
+            "to": "babidighost-deepseek-flemish-municipalities-2026-11",
+            "rel": "same operator (BabidiGhost)",
+            "basis": "stated",
+            "url": "https://www.vrt.be/vrtnws/nl/2026/11/25/gegevens-van-1-2-miljoen-vlamingen-gestolen-door-hackersgroep-gh/"
+          },
+          {
+            "from": "wiz-cyberstrikeai-eks-intrusion-3392-users-2026-11",
+            "to": "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+            "rel": "same Wiz post",
+            "basis": "stated",
+            "url": "https://www.wiz.io/blog/agentic-attacks-artex-offensive-ai-frameworks"
+          },
+          {
+            "from": "microsoft-salt-typhoon-artex-2026-11",
+            "to": "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+            "rel": "same framework (ARTEX); Microsoft names state actors, Wiz does not; no shared intrusion stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "switzerland-ncsc-first-ai-agent-attacks-2026-11",
+            "to": "beazley-security-ai-agent-intrusion-2026-11",
+            "rel": "both describe completed AI-agent intrusions; different victims, no link stated",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "babidighost-deepseek-flemish-municipalities-2026-11",
+          "socradar-babidighost-jailbroken-ai-agent-2026-11",
+          "switzerland-ncsc-first-ai-agent-attacks-2026-11",
+          "beazley-security-ai-agent-intrusion-2026-11",
+          "unit42-autonomous-ai-agent-campaigns-2026-11",
+          "jesta-opencode-agent-decoy-key-2026-11",
+          "microsoft-salt-typhoon-artex-2026-11",
+          "shadowserver-ai-attack-framework-exposure-2026-11",
+          "talos-agentic-swarm-sandbox-escape-tradecraft-2026-11",
+          "wiz-agentic-attacks-artex-in-the-wild-2026-11",
+          "wiz-cyberstrikeai-eks-intrusion-3392-users-2026-11",
+          "nviso-zqagent-linux-backdoor-artex-2026-11",
+          "jfrog-artex-ai-agent-hugging-face-malware-2026-11",
+          "ncsc-uk-agentic-attacks-familiar-weaknesses-2026-11",
+          "italy-acn-autonomous-ai-agents-warning-2026-11"
+        ]
+      },
+      {
+        "id": "dev-credentials",
+        "kind": "inferred",
+        "confidence": 2,
+        "title": "Developers as the way in: a fake coding test behind the Binance theft, 1Password and Todoist reached through developer accounts, poisoned packages and fake installers",
+        "narrative": "Binance's chief security officer now says the Oct 29 theft began when an engineer, approached through a recruitment platform in September, ran a coding assignment that contained malware (WuBlockchain, BleepingComputer); the FBI attributes the theft to North Korea. The same lure, malicious fake job assessments for developers, is what Socket describes in 13 NuGet packages active until Nov 4. In the same week 1Password says an attacker used an employee's corporate GitHub account to push code to backend services and download account records (vaults not affected), and Todoist says a stolen development credential let an attacker change automated workflows and then reach production databases. Fake Ollama installers, a signed malicious installer and backdoored WordPress plugin releases round out the picture. A developer's laptop, GitHub account or CI credential now reaches production and, at Binance, billions in assets.",
+        "caveat": "No source links the Socket NuGet packages to the Binance theft or to North Korea; the shared lure is our observation. 1Password and Todoist do not say their incidents are related or how the credentials were obtained.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "socket-malicious-nuget-fake-job-assessments-2026-11",
+            "to": "binance-co-ceos-describe-october-29-theft-2026-11",
+            "rel": "same lure (malicious coding assessment for a job); no shared actor stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "todoist-security-incident-stolen-credential-2026-11",
+            "to": "1password-github-account-breach-2026-11",
+            "rel": "developer-credential intrusions disclosed a day apart; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "winwyvern-fake-ollama-byovd-korea-2026-11",
+            "to": "fake-ollama-installer-byovd-malware-2026-11",
+            "rel": "same AhnLab finding on fake Ollama installer (VTV)",
+            "basis": "stated",
+            "url": "https://vtv.vn/hat-hien-ma-doc-gia-mao-ai-vo-hieu-hoa-chuong-trinh-diet-virus-100261124195419137.htm"
+          }
+        ],
+        "event_ids": [
+          "binance-co-ceos-describe-october-29-theft-2026-11",
+          "socket-malicious-nuget-fake-job-assessments-2026-11",
+          "1password-github-account-breach-2026-11",
+          "todoist-security-incident-stolen-credential-2026-11",
+          "trusted-signing-mozilla-signed-malware-hardwareinfo-2026-11",
+          "winwyvern-fake-ollama-byovd-korea-2026-11",
+          "fake-ollama-installer-byovd-malware-2026-11",
+          "fake-dev-tool-google-ads-macos-cato-2026-11",
+          "hexpm-registry-rce-exploited-2026-11",
+          "nomachine-personal-edition-windows-installer-compromised-2026-11",
+          "wp-connect-plugins-backdoored-releases-held-2026-11",
+          "vinci-rat-microsoft-store-setup-assistant-2026-11"
+        ]
+      },
+      {
+        "id": "retail-web-shops",
+        "kind": "inferred",
+        "confidence": 2,
+        "title": "Web shops before Black Friday: Deichmann, Ochsner Sport and Dosenbach, vanHaren, Weleda Japan, while lure volume rises",
+        "narrative": "Deichmann says hackers accessed customer data in its online shop and dpa says Snipes was also affected; Ochsner Sport says the same for its online store and bluewin reports Dosenbach and parent Deichmann are affected too (stated). Dutch shoe chain vanHaren reports a cyberattack with the same data fields (names, addresses, invoices, contact details, payment method, no card numbers). Weleda's Japanese shop says card data including security codes may have leaked, and Inmac Wstore had orders disrupted. At the same time Check Point counts 28% more attacks on consumer goods before Black Friday and several firms report fake-shop networks and device-code phishing with holiday lures. Customers of these shops will get convincing order and delivery phishing in the coming weeks.",
+        "caveat": "Only Deichmann, Ochsner Sport, Dosenbach and Snipes are stated to be one incident. vanHaren's notice, as reported, does not mention Deichmann; we group it because the data fields match and it is a shoe retailer the same week, which is an inference. The other shops are separate incidents; the Black Friday timing does not show they are connected.",
+        "chain": [
+          "deichmann-online-store-data-theft-2026-11",
+          "ochsner-sport-online-store-data-access-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "deichmann-online-store-data-theft-2026-11",
+            "to": "ochsner-sport-online-store-data-access-2026-11",
+            "rel": "same incident hits Deichmann group shops",
+            "basis": "stated",
+            "url": "https://www.bluewin.ch/en/digital/hacker-attack-on-ochsner-sport-and-dosenbach-what-customers-need-to-know-li.3687264"
+          },
+          {
+            "from": "deichmann-online-store-data-theft-2026-11",
+            "to": "vanharen-cyberattack-customer-data-leak-2026-11",
+            "rel": "same week, same data fields listed; group link not stated in the vanHaren source",
+            "basis": "inferred"
+          },
+          {
+            "from": "weleda-japan-online-shop-breach-2026-11",
+            "to": "checkpoint-retail-attacks-28pct-black-friday-2026-11",
+            "rel": "shop breaches in the pre-Black Friday period; no causal link",
+            "basis": "timing"
+          }
+        ],
+        "event_ids": [
+          "deichmann-online-store-data-theft-2026-11",
+          "ochsner-sport-online-store-data-access-2026-11",
+          "vanharen-cyberattack-customer-data-leak-2026-11",
+          "weleda-japan-online-shop-breach-2026-11",
+          "inmac-wstore-cyberattack-orders-disrupted-2026-11",
+          "checkpoint-retail-attacks-28pct-black-friday-2026-11",
+          "cloudsek-fake-shop-network-black-friday-2026-11",
+          "doppel-black-friday-fake-deals-report-2026-11",
+          "fortinet-holiday-shopping-scam-domains-2026-11"
+        ]
+      },
+      {
+        "id": "account-takeover",
+        "kind": "inferred",
+        "confidence": 2,
+        "title": "Access through people: help-desk vishing that defeats MFA, device-code phishing, Sneaky 2FA session-cookie theft",
+        "narrative": "Several research teams describe the same goal reached different ways: getting a valid session without breaking MFA. Unit 42 describes help-desk vishing against Microsoft 365 (Vortex Cinder) and data theft after IT-support calls; ReversingLabs describes SSO vishing; Hornetsecurity and Cofense describe device-code phishing, the latter with Black Friday lures; and, new today, Barracuda reports a Sneaky 2FA phishing campaign that steals session cookies. Police and agencies in Austria, Israel and elsewhere warn of impersonation texts. MFA alone does not stop these; phishing-resistant sign-in, blocking device-code flow where unused, and call-back checks at the help desk do.",
+        "caveat": "Same technique families, not one actor: none of the reports ties its campaign to another.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "unit42-com-vishing-data-theft-2026-11",
+            "to": "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+            "rel": "same research team and technique (IT-support vishing); clusters named differently, no link stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "reversinglabs-inception-sso-vishing-2026-11",
+            "to": "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+            "rel": "same technique (SSO vishing); no shared actor stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "hornetsecurity-device-code-phishing-sharepoint-2026-11",
+            "to": "cofense-black-friday-device-code-phishing-2026-11",
+            "rel": "same technique (device-code phishing), different lures",
+            "basis": "inferred"
+          },
+          {
+            "from": "barracuda-sneaky-2fa-session-cookie-phishing-2026-11",
+            "to": "hornetsecurity-device-code-phishing-sharepoint-2026-11",
+            "rel": "both bypass MFA by capturing a session or token; different kits",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "barracuda-sneaky-2fa-session-cookie-phishing-2026-11",
+          "vortex-cinder-m365-mfa-bypass-unit42-2026-11",
+          "vishing-mfa-bypass-unit42-m365-2026-11",
+          "reversinglabs-inception-sso-vishing-2026-11",
+          "unit42-com-vishing-data-theft-2026-11",
+          "eviltokens-phishing-continues-after-takedown-2026-11",
+          "hornetsecurity-device-code-phishing-sharepoint-2026-11",
+          "cofense-black-friday-device-code-phishing-2026-11",
+          "styria-police-tourism-data-leak-phishing-warning-2026-11",
+          "austria-police-phishing-warning-after-tourism-data-leaks-2026-11",
+          "israel-incd-fake-police-traffic-fine-sms-2026-11",
+          "knowbe4-government-supervisor-impersonation-phishing-2026-11"
+        ]
+      },
+      {
+        "id": "us-federal-intrusions",
+        "kind": "timing",
+        "confidence": 2,
+        "title": "US federal intrusions in one week: CIA and ODNI open-source system, FinCEN, FBI's NCIC, USDA",
+        "narrative": "Within six days several US federal bodies reported or were reported to have intrusions. The New York Times reported (relayed by Reuters and others) that the CIA and ODNI, and per later reports the NGA, found an intrusion into an open-source intelligence analysis system that exposed some unclassified information; ODNI says classified systems and critical capabilities were not affected, and two Times sources said early indicators point to China, though investigators do not yet know who is responsible. On Nov 24 FinCEN said it is investigating unauthorized access to a limited part of its systems and took some offline. Before that, the FBI was reported to be investigating an apparent breach of its NCIC criminal database (Nov 20) and USDA took systems offline after an internal incident (Nov 19). Defenders in government and their contractors should treat each as a prompt to check exposure, not as one campaign.",
+        "caveat": "Only timing connects these. No source states a common actor or method; the China indication applies only to the CIA/ODNI case and comes from unnamed sources. Several records describe the CIA/ODNI story from different outlets and are likely duplicates.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "fbi-ncic-apparent-breach-2026-11",
+            "to": "cia-odni-osint-network-breach-2026-11",
+            "rel": "days apart; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "cia-odni-osint-network-breach-2026-11",
+            "to": "fincen-cybersecurity-incident-unauthorized-access-2026-11",
+            "rel": "reported the same week; no stated link",
+            "basis": "timing"
+          }
+        ],
+        "event_ids": [
+          "cia-odni-osint-network-breach-2026-11",
+          "fincen-cybersecurity-incident-unauthorized-access-2026-11",
+          "fbi-ncic-apparent-breach-2026-11",
+          "usda-security-incident-systems-offline-2026-11",
+          "trump-clayton-dni-interim-cyber-oversight-2026-11"
+        ]
+      },
+      {
+        "id": "state-pressure",
+        "kind": "inferred",
+        "confidence": 2,
+        "title": "State pressure on Europe and the Middle East: Iran-nexus espionage, Albania's warning, tanker attacks, UK alerts on Russian sabotage, and Turkey detains Wi-Fi mappers",
+        "narrative": "Check Point describes Volant Manticore, a previously undocumented Iran-nexus espionage group (high confidence on Iran, medium on an MOIS link) that sent a fake CV with the KuboShell backdoor to a Cyprus-based airline and from September 2026 healthcare-themed lures to Saudi organisations. Albania's State Security Agency chief says Iranian operations against Albania continue into 2026 as smaller, more frequent data theft and leak operations with pressure via Telegram. The US is investigating whether Iran was behind attacks on up to 50 energy tankers, with Russia also considered and no direct evidence found yet. In the UK, the NPSA and Ministry of Defence alerted firms supplying Ukraine's forces to increased Russian sabotage attempts via proxies, and the government briefed defence and infrastructure chief executives on Russian threats including cyber attacks. NoName057(16) put a Belgian DDoS researcher on its blacklist; Seqrite reported phishing of Ukrainian government bodies. New: Turkey's MİT and Istanbul police detained two people accused of mapping the wireless networks of critical institutions, including defence firms, for an unnamed foreign intelligence service; they say they were recruited through social-media job ads and paid in crypto. That matches the recruitment-of-locals pattern UK agencies warned defence suppliers about, but no source ties them.",
+        "caveat": "Each item names one state at most and these are separate operations; grouping them by region is our inference. Tanker attribution is under investigation, not established. Israel Police's shutdown of internal systems this week has no stated cause and is not included as state activity. The Turkish case names no foreign service; any link to Russia or Iran would be a guess.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "uk-npsa-mod-alert-ukraine-suppliers-sabotage-2026-11",
+            "to": "uk-government-alert-russia-threat-defence-suppliers-2026-11",
+            "rel": "same UK warning on Russian threats to defence suppliers, reported from two angles",
+            "basis": "inferred"
+          },
+          {
+            "from": "check-point-volant-manticore-iran-espionage-2026-11",
+            "to": "albania-state-security-chief-iran-cyber-warning-2026-11",
+            "rel": "both describe Iranian operations against European states; different targets, no link stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "uk-government-alert-russia-threat-defence-suppliers-2026-11",
+            "to": "mit-wifi-espionage-two-detained-2026-11",
+            "rel": "both describe locals recruited to target defence-sector sites; different countries, no stated link",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "mit-wifi-espionage-two-detained-2026-11",
+          "check-point-volant-manticore-iran-espionage-2026-11",
+          "checkpoint-volant-manticore-cyprus-saudi-2026-11",
+          "albania-state-security-chief-iran-cyber-warning-2026-11",
+          "us-investigates-iran-ship-cyberattacks-bomb-threats-2026-11",
+          "uk-npsa-mod-alert-ukraine-suppliers-sabotage-2026-11",
+          "uk-government-alert-russia-threat-defence-suppliers-2026-11",
+          "noname057-blacklist-belgian-researcher-2026-11",
+          "seqrite-azalea-agent-ukraine-government-phishing-2026-11",
+          "germany-bundesrat-active-cyber-defence-law-2026-11",
+          "le-monde-fsb-linked-phishing-signal-telegram-journalists-2026-11",
+          "india-pio-whatsapp-groups-defence-espionage-2026-11"
+        ]
+      },
+      {
+        "id": "binance-laundering-crypto-thefts",
+        "kind": "stated",
+        "confidence": 3,
+        "title": "Binance theft: Binance says $6.34 billion affected and a fake coding test was the way in; laundering, forfeiture, and regulators react",
+        "narrative": "Binance executives now say about $6.34 billion was affected and about $2.85 billion frozen or intercepted, and that an engineer was compromised through a malicious coding assignment from a recruiter; the FBI attributes the theft to North Korea's TraderTraitor. Elliptic traces laundering through coinjoin, Lookonchain sees more ETH moved, and the US Justice Department has filed to forfeit over $1.1 billion in USDC. Regulators are reacting: the UK FCA is reported to press ahead with DeFi authorization rules, citing the Binance theft and how fast stolen funds move. Tether is reported to have sought a 20% fee from some hack victims to reissue frozen USDT. Smaller thefts continue: Chainflip vaults, the CYBER bridge and Fusionist ACE bridge, and Sinegy's hot wallet.",
+        "caveat": "Totals come from Binance and differ between reports; the Tether fee is a Bloomberg report relayed by others. The smaller thefts are not linked to the Binance theft by any source.",
+        "chain": [
+          "binance-adgm-freezing-order-2026-11",
+          "elliptic-binance-theft-coinjoin-laundering-2026-11",
+          "binance-co-ceos-describe-october-29-theft-2026-11",
+          "uk-fca-defi-authorization-rules-ft-report-2026-11"
+        ],
+        "edges": [
+          {
+            "from": "binance-adgm-freezing-order-2026-11",
+            "to": "binance-theft-lookonchain-137602-eth-moved-2026-11",
+            "rel": "same Oct 29 Binance theft; thief moves more ETH for laundering",
+            "basis": "stated",
+            "url": "https://crypto.news/binance-hacker-moves-another-248m-in-eth-where-are-the-stolen-funds/"
+          },
+          {
+            "from": "binance-adgm-freezing-order-2026-11",
+            "to": "elliptic-binance-theft-coinjoin-laundering-2026-11",
+            "rel": "same Oct 29 Binance theft; Elliptic traces laundering through coinjoins",
+            "basis": "stated",
+            "url": "https://www.elliptic.co/insights/how-north-korea-is-laundering-the-6-4-billion-stolen-from-binance/"
+          },
+          {
+            "from": "cyber-bridge-exploit-upbit-bithumb-2026-11",
+            "to": "fusionist-ace-bridge-exploit-2026-11",
+            "rel": "both bridges had unbacked tokens minted; no shared attacker stated",
+            "basis": "inferred"
+          },
+          {
+            "from": "doj-facestealer-infrastructure-seizure-2026-11",
+            "to": "binance-co-ceos-describe-october-29-theft-2026-11",
+            "rel": "same Oct 29 Binance theft",
+            "basis": "stated",
+            "url": "https://www.bleepingcomputer.com/news/security/binance-says-fake-job-interview-led-to-63-billion-crypto-heist/"
+          },
+          {
+            "from": "binance-co-ceos-describe-october-29-theft-2026-11",
+            "to": "uk-fca-defi-authorization-rules-ft-report-2026-11",
+            "rel": "FCA cites the Binance theft when pressing DeFi rules",
+            "basis": "stated",
+            "url": "https://cointelegraph.com/news/uk-fca-defi-regulation-binance-hack"
+          }
+        ],
+        "event_ids": [
+          "binance-co-ceos-describe-october-29-theft-2026-11",
+          "doj-facestealer-infrastructure-seizure-2026-11",
+          "uk-fca-defi-authorization-rules-ft-report-2026-11",
+          "tether-20-percent-reissuance-fee-hack-victims-2026-11",
+          "binance-adgm-freezing-order-2026-11",
+          "binance-theft-lookonchain-137602-eth-moved-2026-11",
+          "elliptic-binance-theft-coinjoin-laundering-2026-11",
+          "chainflip-vaults-drained-bounty-offer-2026-11",
+          "cyber-bridge-exploit-upbit-bithumb-2026-11",
+          "fusionist-ace-bridge-exploit-2026-11",
+          "wagyu-xmr1-deployer-drain-2026-11",
+          "sinegy-hot-wallet-breach-rm131780-2026-11"
+        ]
+      },
+      {
+        "id": "ot-energy-industry",
+        "kind": "inferred",
+        "confidence": 2,
+        "title": "Energy, water and industry: ransomware reaches a US water plant's network, fuel sales halted in Bolivia, a steel subsidiary and an energy supplier hit",
+        "narrative": "ThreatDown says Booba ransomware started on the network of an East Coast US water treatment plant and spread toward the local government that oversees it; its MDR stopped it at the edge it monitored, while the plant's side was run by another provider. Bolivia's YPFB halted fuel sales after a computer breach, Kyoei Steel's US subsidiary and Czech distributor Pro-Doma (back to paper) report attacks, and Belgium's CCB told Eneco customer data had apparently been stolen. Peninsula Energy and Suzlon reported incidents, and refrigeration and building controllers (Danfoss, WAGO) got fixes. The water case shows the usual weak point: shared networks between an operator and its local government, with split monitoring.",
+        "caveat": "These are separate incidents; apart from same-vendor advisories no source links them. Edges marked timing are only close in time. The water plant is unnamed and the account is the security vendor's.",
+        "chain": [],
+        "edges": [
+          {
+            "from": "threatdown-booba-water-plant-local-government-2026-11",
+            "to": "ypfb-bolivia-computer-breach-fuel-sales-2026-11",
+            "rel": "both disrupted operators of essential services this week; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "ypfb-bolivia-computer-breach-fuel-sales-2026-11",
+            "to": "kyoei-steel-us-subsidiary-cyberattack-2026-11",
+            "rel": "both disrupted operating businesses this week; no stated link",
+            "basis": "timing"
+          },
+          {
+            "from": "danfoss-aksm8xxa-cve-2026-129713-2026-11",
+            "to": "incibe-danfoss-ak-sc355-default-credentials-cve-2026-127057-2026-11",
+            "rel": "same vendor's controllers, different flaws",
+            "basis": "inferred"
+          }
+        ],
+        "event_ids": [
+          "threatdown-booba-water-plant-local-government-2026-11",
+          "pro-doma-cyberattack-manual-operations-2026-11",
+          "eneco-belgium-customer-data-theft-2026-11",
+          "ypfb-bolivia-computer-breach-fuel-sales-2026-11",
+          "kyoei-steel-us-subsidiary-cyberattack-2026-11",
+          "peninsula-energy-lance-cyberattack-2026-11",
+          "suzlon-energy-cyber-incident-2026-11",
+          "danfoss-aksm8xxa-cve-2026-129713-2026-11",
+          "incibe-danfoss-ak-sc355-default-credentials-cve-2026-127057-2026-11",
+          "wago-vde-2026-096-privilege-escalation-2026-11",
+          "taiwan-substation-scada-access-sale-claim-2026-11"
+        ]
+      }
+    ]
+  },
+  "ripples": {
+    "generated_at": "2026-11-26T10:58:31Z",
+    "items": [
+      {
+        "event_id": "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Drupal says the core access bypass CVE-2026-136716 (SA-CORE-2026-019) is exploited in the wild; fixed in 10.6.23, 11.3.23 and 11.4.14. It comes a week after SA-CORE-2026-017 (install.php reinstall), exploited from Nov 19 and in CISA KEV since Nov 24."
+        ],
+        "downstream": [
+          "Drupal says sites whose installer stayed reachable after 017 may already be compromised, so updating now does not clean a site that was taken over (stated).",
+          "Government, university and media sites run Drupal widely; defacement, data theft or use as phishing hosts are likely follow-ons (inference)."
+        ],
+        "watch_for": [
+          "A CISA KEV entry for CVE-2026-136716",
+          "Unexpected admin accounts or a reinstalled site",
+          "Mass-scanning reports for install.php and the 019 path"
+        ],
+        "who_should_care": [
+          "Drupal site owners and hosting providers",
+          "Public-sector web teams"
+        ]
+      },
+      {
+        "event_id": "babidighost-deepseek-flemish-municipalities-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Secutec and SOCRadar say an operator (BabidiGhost) used a DeepSeek-driven agent to take identity data of about 1.2 million people in 82 Flemish municipalities from a service provider's server; the CCB was told on Nov 16 and a prosecutor is investigating."
+        ],
+        "downstream": [
+          "Residents of the 82 municipalities can expect targeted phishing using their identity data (inference).",
+          "SOCRadar says the same operator also went after European banks, insurers and payment providers, so other victims may follow (stated by SOCRadar; victims not named).",
+          "Shows a low-skill operator reaching large data sets with an AI agent, as the Swiss NCSC also reports (inference from both)."
+        ],
+        "watch_for": [
+          "CCB confirmation of scope",
+          "Named victims from SOCRadar's list",
+          "Data offered for sale"
+        ],
+        "who_should_care": [
+          "Belgian municipalities and their IT providers",
+          "European financial firms",
+          "SOC teams"
+        ]
+      },
+      {
+        "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Palo Alto Networks says Fragnesia (CVE-2026-46300), a Linux kernel privilege-escalation flaw, was exploited against PAN-OS management interfaces exposed to the internet, after attackers first exploited PHP2Shell; fixed PAN-OS builds are listed in PAN-SA-2026-0015."
+        ],
+        "downstream": [
+          "PHP2Shell was already used to root and in some cases wipe unpatched Check Point gateways from Oct 30, so the same entry point now reaches two firewall vendors (stated by each vendor).",
+          "A firewall rooted through its management interface can expose VPN credentials, configuration and traffic policy for the whole network (our inference from how the product works).",
+          "Any other appliance that bundles PHP with the PHP2Shell or phpAfterShell flaws may be reachable the same way (inference; no other vendor has said so)."
+        ],
+        "watch_for": [
+          "A CISA KEV entry for CVE-2026-46300",
+          "Other appliance vendors naming PHP2Shell or phpAfterShell in their products",
+          "Unexpected admin sessions or files on PAN-OS management interfaces",
+          "Victim reports or counts from Palo Alto Networks"
+        ],
+        "who_should_care": [
+          "Palo Alto Networks customers with management interfaces reachable from the internet",
+          "Check Point and F5 customers",
+          "Network security teams",
+          "MSSPs"
+        ]
+      },
+      {
+        "event_id": "plaid-karte-unauthorized-access-2026-11",
+        "basis": "stated",
+        "direct": [
+          "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
+        ],
+        "downstream": [
+          "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million; this week JCB (up to about 150,000 management codes), Shikoku Bank's Mikatano and GO added notices.",
+          "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
+          "Companies that ended their KARTE contract are included, so former customers should check too."
+        ],
+        "watch_for": [
+          "Further KARTE customers announcing leaks",
+          "Phishing that uses shop names, member IDs and dates of birth",
+          "Use of integration keys connected to KARTE",
+          "Regulator action by Japan's Personal Information Protection Commission"
+        ],
+        "who_should_care": [
+          "Japanese retailers and banks",
+          "Marketing technology owners",
+          "Vendor management"
+        ]
+      },
+      {
+        "event_id": "binance-co-ceos-describe-october-29-theft-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Binance says about $6.34 billion was affected and about $2.85 billion frozen or intercepted; the way in was malware in a coding assignment given to an engineer through a recruitment platform. The FBI attributes the theft to North Korea."
+        ],
+        "downstream": [
+          "Fake job tests aimed at developers are a proven route to exchange infrastructure; Socket reports the same lure in NuGet packages (no stated link).",
+          "UK FCA reportedly presses ahead with DeFi authorization rules, citing the theft (stated).",
+          "Laundering through coinjoin and DeFi continues, and US forfeiture covers over $1.1 billion (stated)."
+        ],
+        "watch_for": [
+          "More seizures or freezes",
+          "Recruiter approaches with take-home coding tests",
+          "Other exchanges disclosing the same lure"
+        ],
+        "who_should_care": [
+          "Crypto exchanges and custodians",
+          "Engineering managers and recruiters",
+          "Financial regulators"
+        ]
+      },
+      {
+        "event_id": "1password-github-account-breach-2026-11",
+        "basis": "stated",
+        "direct": [
+          "1Password says an attacker used an employee's corporate GitHub account to push malicious code to backend services, which downloaded account records for a subset of users (names, emails, tokens in some invitation and recovery emails); source code was copied. Vaults were not affected, it says."
+        ],
+        "downstream": [
+          "Affected users may get phishing that quotes real account details or recovery flows (inference).",
+          "Copied source code may be studied for flaws (inference).",
+          "Todoist reported a stolen development credential reaching production the day before; no link is stated."
+        ],
+        "watch_for": [
+          "1Password's final count and token revocations",
+          "Phishing posing as 1Password recovery",
+          "Other firms reporting GitHub account takeover"
+        ],
+        "who_should_care": [
+          "1Password business admins",
+          "Engineering and CI/CD owners"
+        ]
+      },
+      {
+        "event_id": "microsoft-salt-typhoon-artex-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Microsoft says China-linked Salt Typhoon and Crystal Typhoon use the ARTEX AI attack framework and that North Korean and Chinese groups have adopted it; its best signal is a large volume of anomalous traffic from one source."
+        ],
+        "downstream": [
+          "State groups with telecom focus (Salt Typhoon) can now scan and exploit at agent speed (inference).",
+          "Shadowserver counts about 4,200 exposed AI attack-framework instances, mostly ARTEX, which can feed blocklists (stated by Shadowserver; not all are proven attackers)."
+        ],
+        "watch_for": [
+          "Detection rules for ARTEX traffic",
+          "Telecom intrusions attributed to agent tooling",
+          "Updates to the FBI ARTEX FLASH"
+        ],
+        "who_should_care": [
+          "Telecom operators",
+          "SOC teams",
+          "Edge-device owners"
+        ]
+      },
+      {
+        "event_id": "deichmann-online-store-data-theft-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Deichmann says hackers accessed customer data in its online shop (names, addresses, invoices, emails, phones; no passwords or card numbers); Snipes, Ochsner Sport and Dosenbach are also affected per dpa and bluewin."
+        ],
+        "downstream": [
+          "Customers in Germany, Austria and Switzerland are likely to get fake order and delivery messages before Black Friday (inference).",
+          "vanHaren reported the same data fields the same week; whether it is the same incident is not stated."
+        ],
+        "watch_for": [
+          "A combined customer count",
+          "The cause (shop platform or supplier)",
+          "Phishing using Deichmann-group invoices"
+        ],
+        "who_should_care": [
+          "European retail security teams",
+          "E-commerce platform operators"
+        ]
+      },
+      {
+        "event_id": "threatdown-booba-water-plant-local-government-2026-11",
+        "basis": "stated",
+        "direct": [
+          "ThreatDown says Booba ransomware started on an East Coast US water treatment plant's network and spread toward the local government that oversees it; it stopped it at the edge it monitored."
+        ],
+        "downstream": [
+          "Where a utility and its municipality share networks but not monitoring, an attack crosses unseen (stated by ThreatDown as the lesson).",
+          "Other small utilities with outsourced IT may face the same ransomware (inference)."
+        ],
+        "watch_for": [
+          "The utility named or an EPA or CISA notice",
+          "Booba indicators in other utilities",
+          "Any effect on water treatment"
+        ],
+        "who_should_care": [
+          "Small water utilities",
+          "Municipal IT",
+          "MSPs serving utilities"
+        ]
+      },
+      {
+        "event_id": "planzer-digitec-galaxus-data-theft-2026-11",
+        "basis": "stated",
+        "direct": [
+          "Swiss carrier Planzer says delivery data and customer-portal credentials (encrypted) were stolen; Digitec Galaxus says its customers' parcel numbers, names, addresses, emails and some phone numbers were affected, though its own systems were not."
+        ],
+        "downstream": [
+          "Delivery-notice phishing in Switzerland during peak parcel season (inference).",
+          "Other shippers' customers of Planzer may be affected; none named yet."
+        ],
+        "watch_for": [
+          "Other retailers naming Planzer",
+          "Planzer portal password resets",
+          "Parcel-tracking phishing"
+        ],
+        "who_should_care": [
+          "Swiss retailers and logistics firms",
+          "Consumers expecting parcels"
+        ]
+      }
+    ]
+  }
+}

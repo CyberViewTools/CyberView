@@ -114,7 +114,7 @@
   },
   "8f336de69d213b62b8a2a59cb441646e99310ec1": {
     "sha1": "8f336de69d213b62b8a2a59cb441646e99310ec1",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-26T23:22:20Z",
     "model": "haiku",
@@ -155,7 +155,15 @@
     "hedges": [
       "this might be some kind of XOR encoding",
       "data that looks encoded and has some repetitions"
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-26T23:49:12Z",
+      "ok": false,
+      "note": "techniques[0]: The value states as fact that the data is XOR-encoded. The text only says 'this might be some kind of XOR encoding', so the card drops the hedge ",
+      "by": "auditor"
+    }
   },
   "8fb41a6db4044de0619582b12dbb6bb3627e50db": {
     "sha1": "8fb41a6db4044de0619582b12dbb6bb3627e50db",
@@ -199,7 +207,13 @@
       "type": "malware",
       "name": "Cobalt Strike"
     },
-    "hedges": []
+    "hedges": [],
+    "audit": {
+      "at": "2026-11-26T23:49:20Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   },
   "8f513eb3c4f32592cee418d14747b2097e317b54": {
     "sha1": "8f513eb3c4f32592cee418d14747b2097e317b54",
@@ -220,6 +234,12 @@
       "figures": []
     },
     "subject": null,
-    "hedges": []
+    "hedges": [],
+    "audit": {
+      "at": "2026-11-26T23:49:12Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

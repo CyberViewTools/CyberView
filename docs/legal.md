@@ -8,6 +8,7 @@ This is a working checklist for running CyberView responsibly. It is **not legal
 |---|---|---|---|
 | Defamation | Saying an organisation was breached when it was not | Facts only from sources actually read, each source linked. Attacker claims are labelled "unverified claim" with severity 1 and hidden by default. Denials are recorded, and corrections are logged publicly. A private correction and removal route is on the About page. | ✅ |
 | Copyright | Copying articles | Summaries are written in our own words with short, attributed quotes only, and link to the original. Fair dealing for news reporting applies in Canada. | ✅ |
+| Threat-report library (ORKL) | Ownership of the reports; republishing report text | The reports belong to their authors and publishers. See "Threat-report library" below. | ✅ |
 | Takedown requests | Rights holders or named parties asking for removal | Private contact on the About page (needs `contact_email`). Review promptly; correct or remove what is inaccurate or unlawful. | 🟡 contact email |
 | Leak-site data | Spreading stolen personal data | Only organisation names from leak-site listings; never files, samples or personal data. Stated in the privacy policy. | ✅ |
 | People named in events | Privacy of individuals | Only what official or published sources state (for example court records). Removal route provided. | ✅ |
@@ -18,6 +19,15 @@ This is a working checklist for running CyberView responsibly. It is **not legal
 | Data source terms | Licence conditions | CISA KEV (public domain), FIRST EPSS, NVD (required "not endorsed" notice included), IODA and GDACS are attributed on About. | ✅ |
 | Trademarks | Implying endorsement | Names are used only to identify vendors; stated in the terms. | ✅ |
 | Third-party code | Licence notices | d3 and topojson (ISC), supabase-js (MIT) are credited on About and in the README. | ✅ |
+
+## Threat-report library (ORKL)
+
+How CyberView handles the reports in the Library, as built (a statement of facts, not a legal opinion):
+- The reports belong to their authors and publishers. ORKL (orkl.eu) lists them and links the originals on archive.orkl.eu; the originals stay there and every Library story links to them.
+- The 2-hourly mirror stores metadata and links only (title, authors, date, language, sources, named actors, links) and never reads the report text.
+- The separate Library reports job, when its scheduled job is switched on (it ships off), reads each report's text in passing (fetched, handed to a model that has no tools, then dropped). The text is never stored, written to a file or logged, and never republished.
+- What is stored is CyberView's own summary, facts and short evidence quotes of at most 160 characters. The quotes are kept only to verify each fact against the report and are never shown on the site. They stay on the data branch, which is public in the repository, so they can be read there. The owner approved storing short quotes on 2026-11-25.
+- The summaries and stories shown are CyberView's own words, written by CyberView AI (a Claude model) and carrying that label. A summary is shown only after script checks and a separate AI audit against the report have passed it (every card is audited before it can be shown; if the owner lowers the audited share, unaudited cards show no summary). A story is published only after script checks and a pass from a separate AI review run, and cites the reports for every factual sentence. Stories and summaries each have a Report an error link (an issue in the repository); a wrong or objectionable entry is corrected or withdrawn (`node scripts/library-review.mjs withdraw`), and the withdrawal is recorded.
 
 ## Accounts and personal information
 

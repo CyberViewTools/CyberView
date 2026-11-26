@@ -125,13 +125,24 @@
       "key": "orkl",
       "title": "Threat-report library mirror",
       "link": "library.html",
-      "text": "A keyless mirror of ORKL's public library of historical threat-intelligence reports (orkl.eu) and its threat-actor catalogue, kept as metadata and links only: for each report its title, authors, date, language, sources and named actors, with links to the report's page and the archived PDF and text on archive.orkl.eu, never the report body. The first run backfills the whole library, newest first; later runs add only what is new. It feeds no events and is drawn on no map. The Library page (in the top bar; its section strip also holds Actors in events and the Event archive) lets you search and filter every report and actor, fifty to a page, and open each record: a report links to its own ORKL record and PDF; an actor's record shows its aliases, tools, the reports in the library that name it, its ORKL profile and, when CyberView has it on file, its profile among the actors in events. A link to a report or an actor opens that record on the page of the list that holds it. Its totals, languages and most-named actors are also shown on the Status page. Collected by a script with no AI model.",
+      "text": "A keyless mirror of ORKL's public library of historical threat-intelligence reports (orkl.eu) and its threat-actor catalogue, kept as metadata and links only by the mirror itself, which reads no report text and uses no AI model: for each report its title, authors, date, language, sources and named actors, with links to the report's page and the archived PDF and text on archive.orkl.eu, never the report body. The first run backfills the whole library, newest first; later runs add only what is new. It feeds no events and is drawn on no map. The Library page (in the top bar; its section strip also holds Actors in events and the Event archive) lets you search and filter every report and actor, fifty to a page, and open each record: a report links to its own ORKL record and PDF; an actor's record shows its aliases, tools, the reports in the library that name it, its ORKL profile and, when CyberView has it on file, its profile among the actors in events. A link to a report or an actor opens that record on the page of the list that holds it. Its totals, languages and most-named actors are also shown on the Status page. Collected every two hours by a script with no AI model; the AI-written summaries and stories on the same page come from the separate Library reports entry below.",
       "covers": {
         "pages": [
           "library"
         ],
         "routines": [
           "orkl"
+        ]
+      }
+    },
+    {
+      "key": "library-reports",
+      "title": "Library reports (AI-written summaries and stories)",
+      "link": "library.html",
+      "text": "Short summaries, fact cards and written stories about the mirrored ORKL threat reports and the threat actors they describe, shown on the Library page. A Haiku model reads each report's text in passing and returns a card of facts and short evidence quotes; the text is never stored, and what is kept is CyberView's own summary, facts and quotes of at most 160 characters, which stay in the data branch (public in the repository) and are never shown on the site. A separate Sonnet auditor re-checks every card against the report, its summary included, and a summary is shown only after that audit has passed it (the owner may audit a smaller share; unaudited cards then show no summary). A Sonnet model writes a story per threat actor from the fact cards only. A story is published only after script checks and a pass from a separate Sonnet review run that re-reads the original reports; every factual sentence cites its reports, and the original stays on ORKL. Everything on these pages is written by CyberView AI (a Claude model), the models have no tools, and the work starts with a small pilot and never takes the usage window the map needs. It runs when its scheduled job is switched on. If a summary or story is wrong, use Report an error on it, or open an issue in the repository, and it is corrected or withdrawn; a story that rests on a card found wrong is taken down until a corrected version passes review.",
+      "covers": {
+        "routines": [
+          "library"
         ]
       }
     },

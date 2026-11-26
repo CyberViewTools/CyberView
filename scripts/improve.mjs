@@ -34,6 +34,7 @@ export function checkChange(c, cfg, models, guard, changedToday = new Set()) {
   const m = c.key.match(/^models\.roles\.([a-z-]+)\.(model|max_turns)$/);
   if (m) {
     const role = models.roles[m[1]]; if (!role) return `no role ${m[1]}`;
+    if ((models.frozen || []).includes(m[1])) return `${m[1]} is frozen: only the owner changes it, in config/models.json`;
     if (m[2] === "model") {
       const from = TIERS.indexOf(role.model), to = TIERS.indexOf(c.to); if (to < 0) return "model must be haiku, sonnet or opus";
       if (Math.abs(to - from) !== 1) return "a model moves one tier at a time";

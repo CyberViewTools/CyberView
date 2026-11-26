@@ -186,7 +186,7 @@
    "max_age_hours": 24,
    "active": true,
    "active_since": "2026-11-25T06:33:49Z",
-   "does": "Mirrors the metadata and links of ORKL's public threat-report library (orkl.eu) and its threat-actor catalogue: report title, authors, date, language, sources, named actors, and links to the report page and the archived PDF/text on archive.orkl.eu, never the report body itself. The first run backfills the whole library newest-first; later runs add only what is new. It writes no leads, is never a source for an event, and uses no AI model (scripts/orkl.mjs); the ingest totals are shown on the status page."
+   "does": "Mirrors the metadata and links of ORKL's public threat-report library (orkl.eu) and its threat-actor catalogue every two hours: report title, authors, date, language, sources, named actors, and links to the report page and the archived PDF/text on archive.orkl.eu. This mirror stores metadata and links only, never reads the report body, and uses no AI model (scripts/orkl.mjs). The first run backfills the whole library newest-first; later runs add only what is new. It writes no leads, is never a source for an event, and its ingest totals are shown on the status page. Separately, the Library reports routine (library) reads each report's text in passing, never stores it, and keeps only CyberView's own summary, facts and short evidence quotes (at most 160 characters, on the data branch, never shown on the site); the stories it writes (Sonnet, from the fact cards only) are published only after script checks and a pass from a separate review run, every factual sentence cites its reports, and the original stays on ORKL."
   },
   {
    "key": "scams",
@@ -590,6 +590,19 @@
    "active": true,
    "does": "Continuous improvement: reads the week's cost, yield, speed and second-review results and makes up to three small, bounded, logged changes to the pipeline's dials and per-role models; on Saturdays it also does the weekly editor's review (the three biggest problems, precise instruction fixes for recurring corrections, data/pipeline.json). Anything bigger goes to the owner as a request.",
    "reviewed": "2026-11-20"
+  },
+  {
+   "key": "library",
+   "name": "Library reports",
+   "tier": "ai",
+   "workflow": "claude-task",
+   "cron": "37 * * * *",
+   "model": "claude-sonnet-5-5",
+   "status_key": "last_library_at",
+   "max_age_hours": 6,
+   "active": false,
+   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks every card against the report before its summary can be shown), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored (only CyberView's own summary, facts and quotes of at most 160 characters, on the data branch and never shown on the site). It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and starts nothing while the map pipeline needs the usage window. Switching it on is one edit here: set \"active\": true and \"active_since\" on this routine (the config, about entry, docs and heartbeat are already in place), then create its scheduled task. Off until the owner starts the pilot.",
+   "reviewed": "2026-11-25"
   }
  ]
 }

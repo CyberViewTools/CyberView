@@ -25,7 +25,7 @@ const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
 const MAXPAR = Math.max(1, Math.min(12, Number(PIPE.max_parallel) || 6));
 // owner, 2026-11-21: the "tight" usage level no longer cuts work unless usage_budget.tight_cuts_work is true
 const TIGHT_CUTS = tightCuts(PIPE.usage_budget || {});
-const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
+const sh = (cmd, args, ms = 300000, extraEnv = {}) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...extraEnv, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
 // The launcher kills this run when its Bash call nears the 10-minute tool cap (dispatch.mjs --exec passes FLOW_HARD_AT):
 // by then the workers must have stopped, so the commit still fits. 24 November: cycle 1 (6 minutes of collecting, then
@@ -95,7 +95,7 @@ export function unfinishedLog(l, items = [], done = new Set()) {
     open_leads: left.map((x) => ({ title: String(x.title || x.id).slice(0, 200), url: String(x.url || "").slice(0, 400), note: `${l.role}${l.batch != null ? " " + l.batch : ""} ${why} before it got to this (${x.id}); it is handed out again`, priority: "normal" })),
     notes: `Written by scripts/run-job.mjs: the ${l.role} worker${l.batch != null ? " " + l.batch : ""} ${why}. ${left.length} of ${items.length} assigned item(s) were not finished and stay in their queue.` };
 }
-function record(line) {
+export function record(line) {
   const dir = join(DATA, "usage"); mkdirSync(dir, { recursive: true });
   appendFileSync(join(dir, `${line.at.slice(0, 7)}.jsonl`), JSON.stringify(line) + "\n");
 }
@@ -185,10 +185,10 @@ function fallbackState(now = Date.now()) {
   fbCache = { at: now, served, spend, limited_until };
   return fbCache;
 }
-const servedNow = (now = Date.now()) => fallbackState(now).served;
+export const servedNow = (now = Date.now()) => fallbackState(now).served;
 const parked = (now = Date.now()) => fallbackState(now).served === "park";
 /** A plain reason for the "not started"/"on fallback" log lines; never contains the key. */
-function fallbackNote(now = Date.now()) {
+export function fallbackNote(now = Date.now()) {
   const s = fallbackState(now);
   if (s.served === "park") {
     if (!FALLBACK_KEY) return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
@@ -200,11 +200,22 @@ function fallbackNote(now = Date.now()) {
   if (s.served === "api") return `API-primary test window until ${FB.api_primary.until}: billing the API ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
   return `subscription window exhausted${s.limited_until ? ", resets " + s.limited_until : ""}; billing the API fallback ($${s.spend.usd} this month, cap $${FB.monthly_usd_cap})`;
 }
+/** After any worker (also the no-tools one-shot callers in scripts/lib/oneshot.mjs): remember a usage limit and re-check
+ *  the fallback state. A limit on the subscription parks (or, if a fallback key is set, flips to the API key); a limit the
+ *  fallback key itself returns parks for the rest of this run instead of looping on an exhausted key. */
+export function noteOutcome(l, served) {
+  if (l.limit) { if (served === "api-fallback" || served === "api") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
+  else if (l.served === "api-fallback" || l.served === "api") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
+}
+/** The limit state noteOutcome keeps (for tests and status lines). */
+export const limitState = () => ({ limitHit, fallbackKeyLimited });
+/** The environment for a worker served this way; the fallback key is read here and handed straight to workerEnv. */
+export const envFor = (served) => workerEnv(served, FALLBACK_KEY);
 function runWorker(job, role, batch, served = "subscription") {
   return new Promise((resolve) => {
     let prompt; try { prompt = promptFor(role, batch); } catch (e) { const l = ledgerLine(job, role, batch, "-", 0, "", String(e.message), served); record(l); return resolve(l); }
     const w = workerArgs(role, prompt), t0 = Date.now();
-    const ch = spawn("claude", w.args, { cwd: ROOT, env: workerEnv(served, FALLBACK_KEY), stdio: ["ignore", "pipe", "pipe"] });
+    const ch = spawn("claude", w.args, { cwd: ROOT, env: envFor(served), stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "", done = false;
     const lim = workerLimitMs(w.timeoutMs, leftMs(t0));
     const kill = setTimeout(() => { if (!done) { ch.kill("SIGTERM"); setTimeout(() => ch.kill("SIGKILL"), 5000); } }, lim);
@@ -218,8 +229,7 @@ function runWorker(job, role, batch, served = "subscription") {
       try { logUnfinished(l, t0); } catch {}
       // a limit on the subscription parks (or, if a fallback key is set, flips to the API key); a limit the fallback key
       // itself returns parks for the rest of this run instead of looping on an exhausted key
-      if (l.limit) { if (served === "api-fallback" || served === "api") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
-      else if (l.served === "api-fallback" || l.served === "api") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
+      noteOutcome(l, served);
       log(`  ${served === "api-fallback" || served === "api" ? `[${served}] ` : ""}${role}${batch != null ? " " + batch : ""}: ${l.ok ? "ok" : l.limit ? `USAGE LIMIT REACHED${l.limit_until ? ", resets " + l.limit_until : ""}: ` + (l.error || "") : l.capped ? "TURN CAP " + (l.error || "") + ": unfinished work logged as open leads" : "FAILED " + (l.error || "")} · ${l.turns ?? "?"} turns · $${l.cost ?? "?"} · ${Math.round(l.ms / 1000)}s${l.last ? " · " + l.last.slice(0, 120) : ""}`);
       resolve(l);
     });
@@ -734,12 +744,27 @@ async function flow() {
   if (newsChild) await new Promise((r) => { newsChild.once("exit", r); setTimeout(r, Math.max(0, Math.min(200000, leftMs() + 60000))).unref(); });
 }
 
+/** The Library desk (scripts/library-desk.mjs): the desk decides, waits for the usage window and runs its own waves (workers have no tools
+ *  and never run git); this hands what it wrote to the same commit step as every job. It stops starting waves in time for the commit. */
+function libraryJob() {
+  const t0 = Date.now(), hm = Math.max(2, Math.min(9, Number(PIPE.headless_foreground_minutes) || 8));
+  const left = Math.min(hm * 60000, leftMs()), tmo = Math.max(60000, left - 90000);
+  log(`RUN library ${RUN}`);
+  const d = sh("node", ["scripts/library-desk.mjs", "run"], tmo, { LIBRARY_DEADLINE_MS: String(Date.now() + tmo - 30000) });   // every model call ends 30 s before this run is cut off
+  const lines = d.out.filter((l) => /^CyberView library:/.test(l)), note = (lines.pop() || d.out.slice(-1)[0] || "desk produced no output").replace(/^CyberView library: /, "");
+  let f = finish("library");
+  if (f.fixer) f = { out: sh("node", ["scripts/finish.mjs", "library", "--force"], 600000).out };   // no fixer worker: the deploy quarantines a broken record
+  const last = f.out.filter((l) => /^CyberView|PUSH FAILED|COMMIT FAILED/.test(l)).pop() || f.out.slice(-1)[0] || "";
+  log(`CyberView library: ${note} | ${last.replace(/^CyberView [a-z-]+: /, "")} | ${Math.round((Date.now() - t0) / 6e4)} min`);
+}
+
 async function main() {
   if (process.argv[2] === "flow") return flow();
   const job = process.argv[2], reg = readJson(join(ROOT, "routines.json"), { routines: [] });
   const rr = reg.routines.find((x) => x.key === job && x.tier === "ai");
   if (!rr) { console.error(`unknown AI job "${job}"`); process.exit(1); }
-  if (rr.active === false) { log(`CyberView ${job}: retired, duties moved to ${rr.merged_into || "another job"}`); return; }
+  if (rr.active === false) { log(rr.retired || rr.merged_into ? `CyberView ${job}: retired, duties moved to ${rr.merged_into || "another job"}` : `CyberView ${job}: switched off (active is false in routines.json)`); return; }
+  if (job === "library") return libraryJob();
   const t0 = Date.now(), rec = { run: RUN, job, started_at: nowIso(), phases: [] };
   const phase = (name, note) => { rec.phases.push({ name, at: nowIso(), note: String(note || "").slice(0, 200) }); log(`[${name}] ${note || ""}`); };
   log(`RUN ${job} ${RUN}`);

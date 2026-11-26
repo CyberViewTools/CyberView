@@ -45,7 +45,7 @@ ${caps}
 </section>`;
 }
 
-/** What exists in the code: pages, views, map layers, active routines. */
+/** What exists in the code: pages, views, map layers, routines that are on, and AI routines that ship off (not retired). */
 export async function inventory() {
   const { NAV, LIBNAV } = await import("./pages.mjs");
   const index = readFileSync(join(ROOT, "site", "index.html"), "utf8"), app = readFileSync(join(ROOT, "site", "app.js"), "utf8");
@@ -54,7 +54,8 @@ export async function inventory() {
     pages: NAV.concat(LIBNAV || []).map((x) => x[2]),
     views: [...new Set([...index.matchAll(/data-view="([a-z]+)"/g)].map((m) => m[1]))],
     layers: [...block("CTX_DEFS"), ...block("ARC_DEFS")],
-    routines: (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r.active !== false).map((r) => r.key),
+    // a routine that ships switched off (not retired) is described already, so turning it on is one edit in routines.json
+    routines: (readJson(join(ROOT, "routines.json"), { routines: [] }).routines || []).filter((r) => r.active !== false || (r.tier === "ai" && !r.retired)).map((r) => r.key),
   };
 }
 

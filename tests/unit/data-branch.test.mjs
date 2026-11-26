@@ -124,6 +124,9 @@ test("data branch: deletions of records that are never deleted are put back befo
   assert.deepEqual(deletionsToRestore(["runs/2026-11-01/0100-x.json", "grid/series/2026-10-01.jsonl"]), [], "routine compaction passes");
   assert.deepEqual(deletionsToRestore(["leads/d.jsonl", "events/2026-11/a.json"]), ["leads/d.jsonl", "events/2026-11/a.json"], "a wipe is undone whole");
   assert.deepEqual(deletionsToRestore(["status.json"]), ["status.json"]);
+  // the Library's own records (cards, stories, corrections, the pilot latch) are never deleted either
+  for (const f of ["orkl/cards/ab.json", "orkl/stories/a-1.json", "orkl/corrections/a-1.json", "orkl/pilot.json"]) assert.deepEqual(deletionsToRestore([f]), [f], f);
+  assert.deepEqual(deletionsToRestore(["orkl/state.json", "orkl/pilot.json.bak"]), [], "the mirror's state file is rewritten, not protected");
   // end to end: a wiped ./data is not committed
   const { clone } = world();
   const A = clone("A");

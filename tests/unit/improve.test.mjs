@@ -27,3 +27,14 @@ test("models move one tier, never below a role's floor, and never down while the
   assert.match(checkChange({ key: "pipeline.sweep.researchers", to: 5, reason: why }, cfg, models, on), /quality guard/);
   assert.match(checkChange({ key: "pipeline.sweep.researchers", to: 7, reason: why }, cfg, models, off, new Set(["pipeline.sweep.researchers"])), /already changed today/);
 });
+
+test("library roles are frozen: no model or max_turns change, up or down", () => {
+  const roles = { "library-reader": "haiku", "library-writer": "sonnet", "library-reviewer": "sonnet", "library-auditor": "sonnet" };
+  const m = { frozen: Object.keys(roles), min_tier: {}, roles: Object.fromEntries(Object.entries(roles).map(([k, v]) => [k, { model: v, max_turns: 1 }])) };
+  const up = { haiku: "sonnet", sonnet: "opus" }, down = { sonnet: "haiku", haiku: "haiku" };
+  for (const [r, tier] of Object.entries(roles)) {
+    assert.match(checkChange({ key: `models.roles.${r}.model`, to: up[tier], reason: why }, cfg, m, off), /frozen/);
+    if (tier === "sonnet") assert.match(checkChange({ key: `models.roles.${r}.model`, to: down[tier], reason: why }, cfg, m, off), /frozen/);
+    assert.match(checkChange({ key: `models.roles.${r}.max_turns`, to: 12, reason: why }, cfg, m, off), /frozen/);
+  }
+});

@@ -11,6 +11,7 @@
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
 //   site/data/psirt.json             vendor security advisories joined on CVE (scripts/psirt.mjs), for the Vulnerabilities page
 //   site/data/chat.json              reviewed community posts (newest 300)
+//   site/data/library/ (cards/, stories/, stories.json)   the Library's read fact cards (values only) and reviewed stories (scripts/orkl.mjs)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
 //   site/data/manifest.json          counts and a SHA-256 of every data file, for scripts/verify-build.mjs
@@ -385,20 +386,22 @@ try {
   const sd = d ? (await import("./ics.mjs")).siteData(d, built_at) : null;
   if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
 } catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
-// the ORKL threat-report library summary (scripts/orkl.mjs, no AI model) for the status page; a broken or missing
+// the ORKL threat-report library summary (scripts/orkl.mjs; the summary and index are mechanical, no AI model) for the status page; a broken or missing
 // state file only leaves that panel empty, with a warning, never the build
 try {
   const p = join(DATA, "orkl", "state.json"), d = existsSync(p) ? readJson(p) : null;
   const orkl = await import("./orkl.mjs");
-  const sd = d ? orkl.siteData(d, built_at) : null;
-  if (sd) writeFileSync(join(OUT, "orkl.json"), JSON.stringify(sd)); else if (d) warnings.push("orkl/state.json: not readable, the ORKL library summary is left out");
-  // the full browsable index for the Library page (metadata and links only, never any report body); a failure
-  // here only leaves the Library page empty, with a warning, never the build
+  // the Library's reviewed stories and read fact cards (values only, never a quote or a draft) are written all-or-nothing, and the
+  // browsable index (the mirror's metadata and links only, never any report body) is written whatever happens to them; failures are warnings
+  let lib = { counts: {} };
   try {
     const { reports, actors } = orkl.loadLibrary();
-    if (reports.length) writeFileSync(join(OUT, "orkl-index.json"), JSON.stringify(orkl.libraryIndex(reports, actors, built_at)));
-    else if (d) warnings.push("orkl: no stored reports, the Library page is left empty");
+    const { loadCards } = await import("./library-read.mjs"), { loadStories } = await import("./library-write.mjs");
+    lib = orkl.publishLibrary({ reports, actors, loadCards: (bad) => loadCards(undefined, bad), loadStories: (bad) => loadStories(undefined, bad), outDir: OUT, builtAt: built_at, warn: (m) => warnings.push(m) });
+    if (!reports.length && d) warnings.push("orkl: no stored reports, the Library page is left empty");
   } catch (e) { warnings.push(`orkl index: ${String(e.message).slice(0, 80)}`); }
+  const sd = d ? orkl.siteData(d, built_at, lib.counts) : null;
+  if (sd) writeFileSync(join(OUT, "orkl.json"), JSON.stringify(sd)); else if (d) warnings.push("orkl/state.json: not readable, the ORKL library summary is left out");
 } catch (e) { warnings.push(`orkl/state.json: ${String(e.message).slice(0, 80)}`); }
 writeFileSync(join(OUT, "chat.json"), JSON.stringify({ built_at, posts: chat.slice(0, 300) }));
 // vendor security advisories (data/psirt/advisories.json, scripts/psirt.mjs) joined on CVE for the Vulnerabilities page: each

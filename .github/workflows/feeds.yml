@@ -68,7 +68,7 @@ jobs:
         timeout-minutes: 5
         continue-on-error: true
         run: node scripts/ics.mjs || true
-      - name: ORKL threat-report library (metadata and links only; incremental, no AI)
+      - name: ORKL threat-report library mirror (the mirror stores metadata and links only; incremental, no AI model)
         if: steps.gate.outputs.go == '1'
         # optional: a failure here keeps the last mirror and never stops the commit or the deploy; the first full backfill is run by hand
         timeout-minutes: 6

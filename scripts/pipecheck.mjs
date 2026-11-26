@@ -35,10 +35,11 @@ import { feedProposals, failingDays, PROPOSE_DAYS } from "./lib/backoff.mjs";
 import { needsReview, waitingSince } from "./review.mjs";
 import { tokens } from "./triage.mjs";
 import { budgetState, budgetConfig, fallbackConfig, fallbackSpend, readUsage } from "./lib/usage.mjs";
+import { PAUSE_NOTICE } from "./lib/library-audit.mjs";
 
 export const LABEL = "pipeline-alert";
 // minutes a problem must last before an issue is opened (the status page lists it at once)
-export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60, "api-fallback": 0, "api-primary": 0, "api-fallback-cap": 3 * 60 };
+export const THRESHOLD = { stage: 30, stage_never: 24 * 60, "status-keys": 0, duplicates: 24 * 60, unreviewed: 60, "leads-growth": 180, "data-size": 24 * 60, collector: 24 * 60, "feeds-propose": 0, target: 6 * 60, "usage-limit": 3 * 60, "api-fallback": 0, "api-primary": 0, "api-fallback-cap": 3 * 60, "library-paused": 6 * 60, "library-parked": 0, "library-orphans": 0, "library-retired": 0 };
 export const UNREVIEWED_MIN = 120, KEY_MEMORY_DAYS = 3, KEY_KEEP_DAYS = 14, HEAL_EVERY_MIN = 60, REMIND_HOURS = 24, MAX_OPEN_PER_RUN = 5;
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const ago = (m) => (m === null ? "never" : m < 120 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`);
@@ -217,6 +218,17 @@ export function fallbackProblems(lines, fb, now = Date.now()) {
   return out;
 }
 
+/** Pure: the Library's health as pipeline-check problems (scripts/library-desk.mjs libraryHealth). A paused reader needs attention and names
+ *  up to 10 of the cards found wrong; parked stories and drafts without a subject are information. */
+export function libraryProblems(h) {
+  const out = [], x = h || {};
+  if (x.paused) out.push({ id: "library-paused", level: "warn", threshold_min: THRESHOLD["library-paused"], text: `${PAUSE_NOTICE}${(x.wrong || []).length ? ` Cards found wrong: ${x.wrong.slice(0, 10).map((s) => String(s).slice(0, 8)).join(", ")}.` : ""}` });
+  if (x.parked > 0) out.push({ id: "library-parked", level: "info", threshold_min: THRESHOLD["library-parked"], text: `Library stories parked: ${x.parked}` });
+  if (x.orphans > 0) out.push({ id: "library-orphans", level: "info", threshold_min: THRESHOLD["library-orphans"], text: `Library orphan drafts: ${x.orphans}` });
+  if (x.retired > 0) out.push({ id: "library-retired", level: "info", threshold_min: THRESHOLD["library-retired"], text: `Library cards retired after a failed audit (found wrong twice, not read again): ${x.retired}` });
+  return out;
+}
+
 export async function check(now = Date.now()) {
   const qp = join(DATA, "quality.json"), prev = readJson(qp, {}) || {}, st = readStatus();
   const routines = (readJson(join(ROOT, "routines.json"), { routines: [] }) || { routines: [] }).routines || [];
@@ -233,6 +245,8 @@ export async function check(now = Date.now()) {
   try { const up = usageProblem(budgetState(now)); if (up) problems.push(up); } catch {}
   // the API-key fallback: billing the Anthropic API while the subscription window is exhausted (info), or its cap reached (warn)
   try { const fb = fallbackConfig(budgetConfig()); for (const p of fallbackProblems(readUsage(now - 24 * 36e5, now), fb, now)) problems.push(p); } catch {}
+  // the Library: a paused reader (accuracy below target), parked stories, drafts without a subject (never fails the check)
+  try { const { libraryHealth } = await import("./library-desk.mjs"); problems.push(...libraryProblems(await libraryHealth())); } catch (e) { console.warn("pipecheck: the Library check could not run: " + String((e && e.message) || e).slice(0, 160)); }
   const dupes = missedDuplicates(events, now);
   if (dupes.length) problems.push({ id: "duplicates", level: "warn", threshold_min: THRESHOLD.duplicates, text: `${dupes.length} pair(s) of events look like one story recorded twice: ${dupes.slice(0, 3).map((d) => `${d.a} / ${d.b}`).join("; ")}` });
   if (rev.count) problems.push({ id: "unreviewed", level: "warn", threshold_min: THRESHOLD.unreviewed, text: `${rev.count} event(s) have waited over ${UNREVIEWED_MIN / 60} hours for their second review, the oldest ${ago(rev.oldest_min).replace(" ago", "")}` });

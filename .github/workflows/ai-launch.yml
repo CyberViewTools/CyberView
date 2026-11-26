@@ -7,13 +7,21 @@ name: AI launch
 # session sits in between, so nothing re-reads a growing history on every wake (owner, 2026-11-24).
 #
 # Sign-in: repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`): the workers use the owner's Claude
-# subscription, as they do in the launcher session. ANTHROPIC_API_KEY is never set here, so nothing bills the API except
-# the existing fallback (scripts/lib/usage.mjs), and only if the optional CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY secret
-# exists, within usage_budget.api_fallback.monthly_usd_cap.
+# subscription, as they do in the launcher session. ANTHROPIC_API_KEY is never set here directly, so by default nothing
+# bills the API except the existing fallback (scripts/lib/usage.mjs), and only if the optional
+# CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY secret exists, within usage_budget.api_fallback.monthly_usd_cap.
+#
+# Billing split (config/pipeline.json usage_budget.api_fallback.api_on_actions, owner 2026-11-26, $200 API budget): this
+# runner has no proxy forcing the subscription, so with api_on_actions true scripts/run-job.mjs bills the fallback key for
+# real here (served "api"). To keep source coverage (runner IPs get bot-challenged on core sources), the SPLIT runs only
+# the web-independent jobs here on a SCHEDULE — triage, brief, improver, analysis, security-review, tabletop — and the
+# web research/review/updater jobs (sweep, backlog, review, analyst, verify, advisory, regional, report-review, scout)
+# stay on the cloud launchers (subscription). The crons for all 15 are kept (so this file matches routines.json and the
+# "Run workflow" button can still test any one of them); the Pick step skips the web jobs on a schedule.
 #
 # Switch: scheduled runs do nothing until the repository variable AI_LAUNCH is "actions", so this can merge while the
-# launcher session still runs the jobs; set it when the "CyberView L:" scheduled tasks are disabled, never both at once.
-# A manual run (Run workflow) always runs, for testing one job.
+# launcher session still runs the jobs; set it when the web "CyberView L:" scheduled tasks are disabled, never both at
+# once for the same job. A manual run (Run workflow) always runs, for testing any one job.
 #
 # Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
 # The Library desk (library) is in the manual choices only, with no schedule: a runner never starts it unattended.
@@ -84,14 +92,25 @@ jobs:
             *)                    job="${{ inputs.job }}" ;;
           esac
           case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
-          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "Job: $job" >> "$GITHUB_STEP_SUMMARY"
+          # Billing split: on a SCHEDULE only the web-independent jobs run here (billed to the API, api_on_actions); the
+          # web jobs stay on the cloud launchers (subscription). A manual run (workflow_dispatch) always runs, any job.
+          run=true
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "$job" in
+              triage|brief|improver|analysis|security-review|tabletop) run=true ;;
+              *) run=false ;;
+            esac
+          fi
+          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "Job: $job (run=$run)" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$run" != "true" ]; then echo "$job runs on the cloud launcher (subscription), not on Actions; skipping." >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: Skip when no Claude sign-in is set up
-        if: env.HAS_OAUTH != 'true'
+        if: env.HAS_OAUTH != 'true' && steps.pick.outputs.run == 'true'
         run: echo "Repository secret CLAUDE_CODE_OAUTH_TOKEN is not set (run \`claude setup-token\` and add it); skipping ${{ steps.pick.outputs.job }}." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
-        if: env.HAS_OAUTH == 'true'
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         with:
           ref: main
           fetch-depth: 50
@@ -100,21 +119,21 @@ jobs:
             !/data/
           sparse-checkout-cone-mode: false
       - name: Mount the data branch at ./data
-        if: env.HAS_OAUTH == 'true'
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         uses: ./.github/actions/data
 
       - uses: actions/setup-node@v4
-        if: env.HAS_OAUTH == 'true'
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         with:
           node-version: "22"
 
       - name: Install Claude Code
-        if: env.HAS_OAUTH == 'true'
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
 
       - name: Run the job
         id: run
-        if: env.HAS_OAUTH == 'true'
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
@@ -130,14 +149,14 @@ jobs:
           if grep -q '^DISPATCH' out.txt; then echo "::error::$JOB needs a Claude session (headless unavailable on this runner)"; exit 1; fi
 
       - name: Check what was pushed
-        if: env.HAS_OAUTH == 'true' && always()
+        if: env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true' && always()
         run: |
           d=.; [ -e data/.git ] && d=data
           git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$(git -C "$d" status --porcelain)" ]; then echo "Uncommitted data was left behind (the next run commits it with finish.mjs --force):" >> "$GITHUB_STEP_SUMMARY"; git -C "$d" status --short | head -20 >> "$GITHUB_STEP_SUMMARY"; fi
 
       - name: Alert on failure
-        if: failure() && env.HAS_OAUTH == 'true'
+        if: failure() && env.HAS_OAUTH == 'true' && steps.pick.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

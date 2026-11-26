@@ -386,13 +386,13 @@ try {
   const sd = d ? (await import("./ics.mjs")).siteData(d, built_at) : null;
   if (sd) writeFileSync(join(OUT, "ics.json"), JSON.stringify(sd)); else if (d) warnings.push("ics/advisories.json: not readable, industrial advisories left out");
 } catch (e) { warnings.push(`ics/advisories.json: ${String(e.message).slice(0, 80)}`); }
-// the ORKL threat-report library summary (scripts/orkl.mjs, no AI model) for the status page; a broken or missing
+// the ORKL threat-report library summary (scripts/orkl.mjs; the summary and index are mechanical, no AI model) for the status page; a broken or missing
 // state file only leaves that panel empty, with a warning, never the build
 try {
   const p = join(DATA, "orkl", "state.json"), d = existsSync(p) ? readJson(p) : null;
   const orkl = await import("./orkl.mjs");
   // the Library's reviewed stories and read fact cards (values only, never a quote or a draft) are written all-or-nothing, and the
-  // browsable index (metadata and links only, never any report body) is written whatever happens to them; failures are warnings
+  // browsable index (the mirror's metadata and links only, never any report body) is written whatever happens to them; failures are warnings
   let lib = { counts: {} };
   try {
     const { reports, actors } = orkl.loadLibrary();

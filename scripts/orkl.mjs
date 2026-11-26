@@ -1,13 +1,22 @@
-// The ORKL APT report library (https://orkl.eu/) as structured reference data. No AI model.
+// The ORKL APT report library (https://orkl.eu/) as structured reference data. The mirror itself uses no AI model.
 // Run: node scripts/orkl.mjs [collect] [--full] [--dry] [--max N]  |  node scripts/orkl.mjs status
 // (behind a proxy: NODE_USE_ENV_PROXY=1)
 //
 // ORKL is a community library of threat-intelligence reports (APT and crimeware write-ups published by vendors,
 // CERTs and researchers) and the threat actors they describe. It offers a keyless REST API (https://orkl.eu/api/v1)
-// and a public archive of the original files at archive.orkl.eu. CyberView reads it as a reference corpus: who wrote
-// a report, who it is about, where the original lives — never the report's own text.
+// and a public archive of the original files at archive.orkl.eu. This 2-hourly mirror reads it as a reference corpus: who
+// wrote a report, who it is about, where the original lives. It never reads or stores the report's own text, and it uses
+// no model; it stores metadata and links only.
 //
-// What is stored (metadata + links ONLY, so the licence and the no-exploit-code rules are never in question):
+// The separate Library reports job (scripts/library-desk.mjs, routine `library`) does read each report's text, in passing:
+// the text is fetched, handed to a no-tools model call and dropped, and never stored or logged. What that job stores is
+// CyberView's own summary, facts and short evidence quotes (at most 160 characters, kept on the data branch, never shown
+// on the site) in data/orkl/cards/, and its stories (written by Sonnet from the fact cards only, published only after
+// script checks and a pass from a separate review run) in data/orkl/stories/. Every factual sentence of a story cites its
+// reports and the original stays on ORKL. This file's build step (publishLibrary) writes the reviewed stories and read
+// cards to site/data/library/.
+//
+// What the mirror stores (metadata + links ONLY, so the licence and the no-exploit-code rules are never in question):
 //   data/orkl/reports/<xx>.json     one object per shard (sha1 first two hex chars), keyed by sha1: title, authors,
 //                                    language, dates, the named sources, the threat actors named, the https references,
 //                                    the archive.orkl.eu file links and the orkl.eu library page. NEVER plain_text.
@@ -49,7 +58,7 @@ const arr = (v) => (Array.isArray(v) ? v : []);
 const hex40 = (s) => /^[0-9a-f]{40}$/i.test(String(s || ""));
 
 /** Pure: an ORKL library entry -> the record we store, or null when it has no usable sha1 to key it by.
- *  Metadata and links only; raw.plain_text (the full report body) is deliberately never read here. */
+ *  The mirror stores metadata and links only; raw.plain_text (the full report body) is deliberately never read here. */
 export function cleanReport(raw) {
   if (!raw || typeof raw !== "object") return null;
   const sha1 = String(raw.sha1_hash || "").toLowerCase();
@@ -164,7 +173,7 @@ const actorLinkKey = (a) => `${a.id}\0${a.name || a.id}`;
 
 /** Pure: the full browsable library index written to site/data/orkl-index.json for the Library page —
  *  one compact row per report (title, year, language, sources, actors, links) plus the actor catalogue.
- *  Metadata and links ONLY, never any report body. Source names and language codes are dictionary-encoded
+ *  Metadata and links ONLY (the report's own text is never in it). Source names and language codes are dictionary-encoded
  *  (an index into `sources` / `langs`) to keep the file small; everything is re-clamped defensively. */
 export function libraryIndex(reports, actors, builtAt = "", links = {}) {
   const read = links.read instanceof Set ? links.read : new Set(), looseStory = links.looseStory instanceof Map ? links.looseStory : new Map(), actorStory = links.actorStory instanceof Map ? links.actorStory : new Map();

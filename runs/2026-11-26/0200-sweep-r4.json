@@ -1,0 +1,101 @@
+{
+  "job": "researcher-sweep-r4",
+  "started_at": "2026-11-26T02:00:29Z",
+  "finished_at": "2026-11-26T02:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "GAO report cybersecurity verification gaps agencies November 2026"
+  ],
+  "pages_read": [
+    {
+      "url": "https://ktul.com/news/nation-world/gao-warns-gaps-in-cybersecurity-checks-raise-risk-of-disruptions-as-attacks-accelerate-online",
+      "title": "GAO warns gaps in cybersecurity checks",
+      "used_in": "none (no report named)"
+    },
+    {
+      "url": "https://www.bacs.admin.ch/en/26-ki-agenten-1-en",
+      "title": "Swiss NCSC: Cyberattacks involving AI agents",
+      "used_in": "duplicate record swiss-ncsc-ai-agent-attacks-critical-infrastructure-2026-11 (duplicate_of switzerland-ncsc-first-ai-agent-attacks-2026-11)"
+    },
+    {
+      "url": "https://brandefense.io/security-news/ai-assisted-cyberattacks-switzerland/",
+      "title": "Brandefense on Swiss NCSC",
+      "used_in": "pointer"
+    },
+    {
+      "url": "https://aif.ru/politics/world/pozor-otstavka-sud-stalo-izvestno-o-dokumentah-s-kompromatom-na-makrona",
+      "title": "aif.ru Macron",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://vulnerability.circl.lu/vuln/cve-2026-15369",
+      "title": "CVE-2026-15369",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://vulnerability.circl.lu/vuln/dhi-wo7j-dxtv-iflp-6b2l",
+      "title": "DHI Dovecot",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://vulnerability.circl.lu/vuln/debian-cve-2026-136156",
+      "title": "Valkey CVE-2026-136156",
+      "used_in": "open lead"
+    },
+    {
+      "url": "https://security-tracker.debian.org/tracker/CVE-2026-136156",
+      "title": "Debian tracker Valkey",
+      "used_in": "open lead"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "FinCEN cybersecurity incident (two stories)",
+      "url": "https://www.wibw.com/2026/11/25/cybersecurity-incident-impacts-treasury-department-services/",
+      "reason": "already on file: fincen-cybersecurity-incident-unauthorized-access-2026-11"
+    },
+    {
+      "title": "Swiss NCSC AI-assisted intrusions",
+      "url": "https://brandefense.io/security-news/ai-assisted-cyberattacks-switzerland/",
+      "reason": "already on file: switzerland-ncsc-first-ai-agent-attacks-2026-11 (dupes search missed it; my duplicate file is marked duplicate_of)"
+    },
+    {
+      "title": "Macron compromat documents",
+      "url": "https://aif.ru/politics/world/pozor-otstavka-sud-stalo-izvestno-o-dokumentah-s-kompromatom-na-makrona",
+      "reason": "not a cyber event: alleged insider leak of judicial information, no hacking"
+    },
+    {
+      "title": "CVE-2026-15369 WooCommerce plugin",
+      "url": "https://vulnerability.circl.lu/vuln/cve-2026-15369",
+      "reason": "older than the map window (published 2026-08-29), no exploitation"
+    },
+    {
+      "title": "DHI Dovecot OAuth2",
+      "url": "https://vulnerability.circl.lu/vuln/dhi-wo7j-dxtv-iflp-6b2l",
+      "reason": "older than the map window (CVE 2026-08-28), no exploit known"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Valkey CVE-2026-136156 cluster bus heap overflow",
+      "url": "https://github.com/valkey-io/valkey/security/advisories/GHSA-f4q9-j22m-xqq9",
+      "note": "GitHub advisory and VuldB gave 403; only circl/Debian rows read. CVE published 2026-11-24, authenticated, no exploitation stated.",
+      "priority": "low"
+    },
+    {
+      "title": "GAO report on cybersecurity verification gaps",
+      "url": "https://ktul.com/news/nation-world/gao-warns-gaps-in-cybersecurity-checks-raise-risk-of-disruptions-as-attacks-accelerate-online",
+      "note": "TV article names no report; find the GAO original",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "vuldb.com (403)",
+    "github.com valkey advisory and PR (403)"
+  ],
+  "notes": "Wrote one duplicate Swiss NCSC record by mistake (dupes search found nothing); it is marked duplicate_of switzerland-ncsc-first-ai-agent-attacks-2026-11.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

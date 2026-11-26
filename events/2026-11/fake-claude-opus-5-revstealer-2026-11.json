@@ -15,13 +15,12 @@
   "geo_basis": "no location stated; global campaign",
   "pin_type": "country",
   "actor": "",
-  "summary": "Cyberint researchers, as relayed by GBHackers and Cyber Security News, describe a fake \"Claude Opus 5 Free Desktop\" app that installs RevStealer, a Windows infostealer. Cyber Security News says Cyberint did not attribute it to a named threat actor. GBHackers says there is no sign Anthropic was compromised, and that Morphisec confirmed it looks for 12 password managers and more than 50 crypto wallets.",
+  "summary": "A fake \"Claude Opus 5 Free Desktop\" app installs RevStealer, a Windows infostealer, according to GBHackers (citing Morphisec) and Cyber Security News (citing Cyberint). Cyber Security News says Cyberint did not attribute it to a named threat actor. GBHackers says there is no sign Anthropic was compromised, and that Morphisec confirmed it looks for 12 password managers and more than 50 crypto wallets.",
   "plain": "A fake Claude desktop app installs password- and crypto-wallet-stealing malware. GBHackers says there is no sign Anthropic itself was compromised.",
   "exec": "Fake AI-app lure can steal saved passwords and crypto wallets from Windows users who run it.",
   "action": "GBHackers advises downloading Claude only from claude.com/download, and if the fake app was run, treating the system as compromised and rotating passwords from a clean device.",
   "impact": "Credential and crypto-wallet theft on Windows PCs that run the fake app.",
   "tags": [
-    "infostealer",
     "malware"
   ],
   "cves": [],
@@ -56,12 +55,12 @@
   ],
   "source_tier": "established",
   "validation": {
-    "state": "single_source",
-    "checked_at": "2026-11-23T18:28:20Z",
-    "note": "GBHackers and Cyber Security News both relay Cyberint's research, so they are not independent; the Cyberint and Morphisec originals were not read."
+    "state": "disputed",
+    "checked_at": "2026-11-26T01:25:11Z",
+    "note": "Second review: Fixed: invalid tag infostealer removed; summary credited Cyberint only though GBHackers says Morphisec published the analysis. Unsettled: Help Net Security reported the same campaign on 2026-09-01, so true disclosure is about"
   },
   "first_seen": "2026-11-23T18:28:20Z",
-  "updated_at": "2026-11-26T01:17:39Z",
+  "updated_at": "2026-11-26T01:25:09Z",
   "sectors": {
     "values": [
       "cross-sector"
@@ -73,15 +72,19 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "corrected",
-    "at": "2026-11-23T18:31:33Z",
+    "state": "flagged",
+    "at": "2026-11-26T01:25:11Z",
     "first_at": "2026-11-23T18:31:33Z",
-    "note": "stronger than the source: plain said researchers say Anthropic not compromised; GBHackers says no sign",
+    "note": "Fixed: invalid tag infostealer removed; summary credited Cyberint only though GBHackers says Morphisec published the analysis. Unsettled: Help Net Security reported the same campaign on 2026-09-01, so true disclosure is about 12 weeks before first_seen and likely older than the map window; date 2026",
     "flags": [],
     "categories": [
       "overstated",
+      "figure",
+      "date",
+      "attribution",
+      "tags",
       "misstated"
     ]
   },
-  "qa_checked_at": "2026-11-23T18:31:33Z"
+  "qa_checked_at": "2026-11-26T01:25:11Z"
 }

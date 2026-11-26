@@ -1,0 +1,38 @@
+{
+  "job": "triage",
+  "started_at": "2026-11-26T23:05:00Z",
+  "finished_at": "2026-11-26T23:16:08Z",
+  "model": "claude-haiku-5-5",
+  "searches": [],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {"title": "Cyberattacchi, Corazza (Parlamento Ue): interview", "url": "https://www.adnkronos.com/economia/cyberattacchi-corazza-parlamento-ue-sappiamo-chi-attacca-e-perche-potremmo-difenderci-se-uniti_6GfPo2Um8CO8iNMvHoIbWz", "reason": "closed as not an event: politician interview/opinion (story b005aabb, 6 publishers, reprints of one interview)"},
+    {"title": "Senegal: journalist Abdou Nguer held over online insults (DSC)", "url": "", "reason": "closed as not a cyber event: arrest and trial over speech; story e6124dd1 closed, 02c85d5e (3 publishers) left open unopened"},
+    {"title": "Binance withdrawals resume", "url": "", "reason": "already on file: binance-says-withdrawal-restoration-complete-2026-11-26 (story 0003858d)"},
+    {"title": "AFP Forum cyberattack (Arabic reports)", "url": "", "reason": "already on file: afp-forum-cyberattack-2026-11 (stories 5447e72f, 90ff6c6d; dupe score 1.00)"},
+    {"title": "Regulatory and governance notices (Taiwan FSC; Arab cybersecurity ministers council)", "url": "", "reason": "not an incident (stories 8ae2652c, 9fcc2310)"},
+    {"title": "Niche product CVEs with no exploitation signal (WordPress plugins, SourceCodester app, Laravel package, Joomla extension, Eclipse Ditto, Panorama Suite, PentestAgent, Cerebras ModelZoo, Airflow provider, InDesign)", "url": "", "reason": "closed: niche software, no sign of exploitation, no public exploit, no official urgency (stories fefaeeb6, 9f000d72, 67b6c50f, e0fefa8b, 8d0076a5, ed94f90e, 7cdd9d6d, b045b611, 79ce4418, c44c7f36, 159b3621, 80363a12). CVE.org/VulDB records were read through their show-output descriptions, not by opening pages"}
+  ],
+  "open_leads": [
+    {"title": "FreeRDP: PoC available for CVE-2026-137077 (CSIRT Italy + 5 others)", "url": "", "note": "public PoC for a remote-desktop client flaw; 6 publishers incl. national CERT; not opened", "priority": 1},
+    {"title": "Myanmar MMCERT: critical VMware vCenter authorisation bypass", "url": "", "note": "government CERT source; vCenter is widely deployed; exploitation status unknown; not opened", "priority": 1},
+    {"title": "SingCERT: critical F5 BIG-IP flaws", "url": "", "note": "government source; F5 TMM flaws (six critical, hotfixes only per vendor) also on file; check whether exploited; not opened", "priority": 1},
+    {"title": "Leak of data on Russian soldier deaths (BBC Mundo et al.)", "url": "", "note": "6 publishers; data leak with state-level political stakes; check source and verification; not opened", "priority": 1},
+    {"title": "Turkish police: espionage network targeting defence industry dismantled", "url": "", "note": "3 publishers, mostly Turkish state-aligned outlets; verify with a primary source; not opened", "priority": 1},
+    {"title": "Slovenia: cyberattack reaching cooling devices (Delo Tech, rtvslo, primorske)", "url": "", "note": "3 publishers; ties to Belgian police advisory on supermarket cooling-system attacks already in queue; not opened", "priority": 1},
+    {"title": "Simple Membership WordPress plugin unauthenticated privilege escalation (CVE-2026-133951)", "url": "", "note": "public exploit listed on Sploitus; 5 publishers incl. CVE.org; check for exploitation in the wild", "priority": 1},
+    {"title": "Denmark civil registry breach, 11,000 people (2634bbe6)", "url": "", "note": "3 publishers; possibly the same event as denmark-cpr-new-breach-11000-people-2026-11 on file (dupe score 0.6); compare before writing up", "priority": 2},
+    {"title": "BSSN Indonesia warning on critical Google Chrome flaw (9db8ee72)", "url": "", "note": "government source; likely covered by Chrome 158 release on file (dupe 0.67); check", "priority": 2},
+    {"title": "ToolJet SSO authentication bypass, account takeover (CVE-2026-137536, d52d01b3)", "url": "", "note": "CVSS 9.3; NVD and CVE.org; no exploitation seen yet; not opened", "priority": 2},
+    {"title": "llama.cpp RPC server out-of-bounds write (CVE-2026-137567, 1cd2bf54)", "url": "", "note": "CVSS 9.3 unauthenticated; widely used project; no exploitation seen yet", "priority": 2},
+    {"title": "fastify/express middleware bypass (CVE-2026-135279, 0cc1ae68)", "url": "", "note": "CVSS 9.1; widely used npm package; no exploitation seen yet", "priority": 2},
+    {"title": "Budibase unauthenticated CVEs (3fc0b255, 5e22688f, c2e84a74)", "url": "", "note": "CVSS 8.5 to 9.9 on a low-code platform; not opened; no exploitation seen", "priority": 2},
+    {"title": "Coder database password exposure (d2678e2f) and Traefik authorisation flaw (e224cf7e)", "url": "", "note": "CVSS 9.2 and 7.8; not opened", "priority": 2},
+    {"title": "Unidentified SSRF with CVSS 10 (CVE-2026-126984, f21f9144)", "url": "", "note": "CVSS 10 but product not in the snippet; only NIST and securitycontext; not opened", "priority": 2},
+    {"title": "Opinion: Cyberattacchi, Corazza interview (b005aabb) and AI-security opinion pieces (a4753d4c, 603eaff7, 5a985c24, c55161e6, 4cfc74b2)", "url": "", "note": "left open, not closed: 3 or more publishers and I did not open the pages; likely closable as opinion or marketing on next pass", "priority": 3}
+  ],
+  "failed_sites": [],
+  "notes": "Top 80 of 702 open stories reviewed (list --limit 80). Closed 18 stories (see skipped). Left about 62 of the top 80 open, most of them unread CVEs and 3+-publisher items, under the rule to leave doubtful stories open. The rest of the queue (622 stories below the top 80) was not reviewed. The oldest open strong story was not computed. show calls are about 12 s each, so most of the turn budget went to show output; a faster triage would use fewer show calls. The worker does not edit data/status.json, so last_triage_at and triage_note are left for the script. Build not run: triage instructions do not ask for it and no code changed. The --claims flag appeared to return the same top 40 as the default list in this run, so the leak-site claim queue was not checked separately."
+}

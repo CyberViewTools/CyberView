@@ -1,0 +1,25 @@
+{
+  "job": "analyst-2",
+  "started_at": "2026-11-26T03:32:05Z",
+  "finished_at": "2026-11-26T03:40:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-133311 Mitel MiCollab",
+    "CISA adds known exploited vulnerabilities catalog November 25 2026 Mitel MiCollab",
+    "MiCollab AWV MISA-2026-0012 exploitation researchers analysis"
+  ],
+  "pages_read": [
+    {"url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012", "title": "Mitel Product Security Advisory MISA-2026-0012 (rev 2.0, 2026-11-24)", "used_in": "CVE-2026-133311"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-133311", "title": "CISA KEV catalog entry CVE-2026-133311", "used_in": "CVE-2026-133311"},
+    {"url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel", "title": "CSIRT Italia: Aggiornamenti di sicurezza Mitel (v1.1, 2026-11-20)", "used_in": "CVE-2026-133311"},
+    {"url": "https://securityonline.info/micollab-vulnerabilities-cvss-10-command-injection/", "title": "SecurityOnline: MiCollab vulnerabilities CVSS 10 command injection", "used_in": "CVE-2026-133311"}
+  ],
+  "added": ["CVE-2026-133311"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "CVE-2026-133311: no technical or incident-responder write-up yet", "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012", "note": "CISA lists it as exploited (KEV 2026-11-25) but no source describes the attacks, the affected AWV function or indicators. Recheck for a researcher/responder write-up or a Mitel advisory update and raise confidence if found.", "priority": "medium"}
+  ],
+  "failed_sites": [],
+  "notes": "Analysis written with confidence medium (vendor advisory plus CISA only). analyst.mjs check: valid. node scripts/build.mjs FAILS on a problem outside this job's scope: event id 'fake-claude-opus-5-revstealer-2026-11' is stored twice (data/events/2026-09/ and data/events/2026-11/). Not touched, as this worker may edit only its analysis file and run log; needs fixing by an editor job. A curl fetch of the CISA KEV JSON feed was denied by the permission system; the CISA KEV web catalog page was read instead. No instructions were found in page text."
+}

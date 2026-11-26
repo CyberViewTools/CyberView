@@ -15,6 +15,8 @@
 // of the event's first review, kept through re-reviews of later updates); "flagged" also lowers
 // validation to "disputed" so the site shows low confidence until the verify job settles it.
 import { leased } from "./lib/lease.mjs";
+import { libraryErrorReport, loadCorrections } from "./lib/library-audit.mjs";
+export { libraryErrorReport };
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { existsSync, readdirSync } from "node:fs";
@@ -254,11 +256,14 @@ function main() {
   if (cmd === "errors") {   // what the second review corrects, by type and by the role and model that wrote the event
     const argv = [id, ...rest], di = argv.indexOf("--days"), days = di >= 0 ? Math.max(1, Math.min(30, Number(argv[di + 1]) || 7)) : 7;
     const r = errorReport(listEventFiles().map((x) => x.e).filter(Boolean), writersFrom(loadRunLogs(days)), Date.now(), days);
-    if (argv.includes("--json")) { console.log(JSON.stringify(r)); return; }
+    const lib = libraryErrorReport(loadCorrections(), Date.now(), days);   // the Library's own corrections, kept apart from the event totals
+    if (argv.includes("--json")) { console.log(JSON.stringify({ ...r, library: lib })); return; }
     console.log(`SECOND REVIEW, last ${days} days: ${r.corrected} of ${r.reviewed} corrected (${r.corrected_pct ?? "-"}%), ${r.flagged} flagged. Correction types (a correction can have several):`);
     r.types.forEach((t) => console.log(`  ${t.key.padEnd(12)} ${String(t.n).padStart(4)}  ${String(t.pct_of_corrected).padStart(5)}%  ${t.label}${t.checks.length ? "  [checks: " + t.checks.join(", ") + "]" : ""}`));
     console.log("By who wrote the event (role, model: corrected of reviewed; top types):");
     r.by_writer.forEach((b) => console.log(`  ${b.role.padEnd(20)} ${b.model.padEnd(8)} ${String(b.corrected).padStart(3)} of ${String(b.reviewed).padStart(3)} (${b.corrected_pct ?? "-"}%)  ${Object.entries(b.types).slice(0, 4).map(([k, n]) => `${k} ${n}`).join(", ")}`));
+    console.log(`LIBRARY, last ${days} days: ${lib.corrections} correction(s) (stories by library-writer, fact cards by library-reader; not in the event totals above):`);
+    lib.by_writer.forEach((b) => console.log(`  ${b.role.padEnd(20)} ${b.model.padEnd(8)} ${String(b.corrected).padStart(3)}  ${Object.entries(b.types).slice(0, 4).map(([k, n]) => `${k} ${n}`).join(", ")}`));
     return;
   }
   const f = id && findEvent(id);

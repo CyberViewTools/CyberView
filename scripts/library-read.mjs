@@ -14,6 +14,7 @@ import { prepText, fetchText, TEXT_MIN } from "./lib/orkl-text.mjs";
 import { cleanCard, cardProblems } from "./lib/library-check.mjs";
 import { readerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
+import { loadConfig, paused, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
 const ROLE = "library-reader";
@@ -23,7 +24,7 @@ const STOP_AFTER_UNREACHABLE = 5;
 const modelName = () => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[ROLE]; return (r && r.model) || ""; };
 
 /** One shard file: {} when it does not exist yet; null when it exists but is not a JSON object (unreadable: never write over it). */
-function readShard(dir, sh) {
+export function readShard(dir, sh) {
   const p = join(dir, `${sh}.json`);
   if (!existsSync(p)) return {};
   const j = readJson(p, null);
@@ -73,6 +74,11 @@ export function readQueue(reports, cards, { order = "newest", max = Infinity } =
 /** Pure: the whole outcome table. { card, retry }: card null = nothing is written; retry = the record stays queued untouched.
  *  `ctx` carries the previous card (for tries), the time and the model name. */
 export function decide(report, fetched, reply, ctx = {}) {
+  const d = decideNow(report, fetched, reply, ctx), a = ctx.prev && ctx.prev.audit;
+  if (d.card && a && a.ok === false) d.card = { ...d.card, audit: a };       // a card found wrong stays on the record when it is read again
+  return d;
+}
+function decideNow(report, fetched, reply, ctx) {
   const sha1 = report.sha1, at = ctx.at || nowIso(), model = ctx.model == null ? modelName() : ctx.model;
   const tries = (ctx.prev && ctx.prev.status === "unread" ? Number(ctx.prev.tries) || 0 : 0) + 1;
   const f = fetched || {};
@@ -103,16 +109,33 @@ async function readOne(report, prev, deps) {
   return { ...d, why: d.card ? "" : reply.limit ? "limit" : "error" };
 }
 
+/** Write cards into their shards, additively: each shard is re-read from disk just before its write; a shard that cannot be read is
+ *  never written (its name goes onto `bad`). Returns the cards written. */
+export function saveCards(dir, fresh, bad = new Set()) {
+  const written = [];
+  for (const sh of new Set(fresh.map((c) => shardOf(c.sha1)))) {
+    const mine = fresh.filter((c) => shardOf(c.sha1) === sh);
+    const onDisk = readShard(dir, sh);
+    if (!onDisk) { bad.add(sh); continue; }
+    writeJson(join(dir, `${sh}.json`), mergeCards({ [sh]: onDisk }, mine)[sh]);
+    written.push(...mine);
+  }
+  return written;
+}
+
+const tallyZero = () => ({ read: 0, "no-text": 0, unread: 0, requeued: 0, stopped: "", unreadableShards: [] });
+
 /** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
  *  just before the write and the wave's cards merged into it, so another run's cards survive; a shard that cannot be read is never written. */
-export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), log = console.log } = {}) {
+export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), log = console.log } = {}) {
   const { reports } = library || loadLibrary();
   const bad = new Set();
   const badList = [];
   const cards = loadCards(dir, badList);
   badList.forEach((b) => bad.add(b));
+  if (paused(cards, cfg)) { log(PAUSE_MESSAGE); return { ...tallyZero(), stopped: PAUSE_MESSAGE.toLowerCase() }; }
   const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1))), cards, { order, max });
-  const tally = { read: 0, "no-text": 0, unread: 0, requeued: 0, stopped: "", unreadableShards: [] };
+  const tally = tallyZero();
   let failedCalls = 0, outage = 0;
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {
     const wave = queue.slice(i, i + concurrency);
@@ -129,13 +152,9 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
       failedCalls = d.why === "error" ? failedCalls + 1 : d.why === "unreachable" ? failedCalls : 0;
       outage = d.why === "unreachable" ? outage + 1 : 0;
     });
-    for (const sh of new Set(fresh.map((c) => shardOf(c.sha1)))) {
-      const mine = fresh.filter((c) => shardOf(c.sha1) === sh);
-      const onDisk = readShard(dir, sh);
-      if (!onDisk) { bad.add(sh); tally.requeued += mine.length; continue; }          // went unreadable meanwhile: leave it alone
-      writeJson(join(dir, `${sh}.json`), mergeCards({ [sh]: onDisk }, mine)[sh]);
-      for (const c of mine) { tally[c.status]++; cards.set(c.sha1, c); }
-    }
+    const written = saveCards(dir, fresh, bad);
+    for (const c of written) { tally[c.status]++; cards.set(c.sha1, c); }
+    tally.requeued += fresh.length - written.length;
     if (!tally.stopped && outage >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
     if (!tally.stopped && failedCalls >= STOP_AFTER_ERRORS) tally.stopped = `${failedCalls} failed model calls in a row`;
   }

@@ -14,18 +14,19 @@ import { loadCards } from "./library-read.mjs";
 import { BY, cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { writerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
+import { loadConfig, paused, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
 
 export const STORIES_DIR = join(DIR, "stories");
 const ROLE = "library-writer";
-const MAX_TRIES = 2;
+export const MAX_TRIES = 2;
 const STOP_AFTER_ERRORS = 3;
-const MAX_CARDS = 40;                                   // cards given to one prompt, newest reports first (basedOn still covers them all)
+export const MAX_CARDS = 40;                                   // cards given to one prompt, newest reports first (basedOn still covers them all)
 const KEY = /^[A-Za-z0-9-]{1,70}$/;
 const modelName = () => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[ROLE]; return (r && r.model) || ""; };
 
 /** One story file: {live:null,next:null} when it does not exist; null when it exists but cannot be read (never write over it). */
-function readStory(dir, key) {
+export function readStory(dir, key) {
   if (!KEY.test(key)) return null;
   const p = join(dir, `${key}.json`);
   if (!existsSync(p)) return { live: null, next: null };
@@ -79,13 +80,16 @@ export function codesOf(problems) {
   return c.length ? c : ["unknown"];
 }
 
+/** Pure: the cards a story is written and checked from: the subject's read cards, newest report first, at most MAX_CARDS. */
+export const cardsFor = (subject, all) => (subject.sha1s || []).map((x) => all.get(x)).filter((c) => c && c.status === "read").slice(0, MAX_CARDS);
+
 /** Pure: a model reply -> the story to store. Every system field is set here, never taken from the reply. */
 export function buildStory(subject, reply, readCards, ctx) {
   const tries = ctx.tries;
   const base = { key: subject.key, kind: subject.kind, name: subject.name, based_on: ctx.basedOn, by: BY, written_at: ctx.at, writer_model: ctx.model, written_run: ctx.run };
   const reject = (reasons, extra = {}) => ({ ...(cleanStory({ headline: "", in_short: "", sections: [], ...extra, ...base, status: "rejected", tries, reasons })), status: tries >= MAX_TRIES ? "parked" : "rejected" });
   const j = reply && reply.ok && reply.json && typeof reply.json === "object" ? reply.json : null;
-  const story = j ? cleanStory({ headline: j.headline, in_short: j.in_short, sections: j.sections, ...base, status: "draft", tries: 0 }) : null;
+  const story = j ? cleanStory({ headline: j.headline, in_short: j.in_short, sections: j.sections, ...base, status: "draft", tries: Math.max(0, tries - 1) }) : null;   // a draft carries the failed attempts before it
   if (!story) return reject(["bad-reply"]);
   const problems = storyProblems(story, readCards, subject.actor);
   if (problems.length) return reject(codesOf(problems), { headline: j.headline, in_short: j.in_short, sections: j.sections });
@@ -93,7 +97,7 @@ export function buildStory(subject, reply, readCards, ctx) {
 }
 
 /** Draft up to `max` stories. Each is written after its wave: the file is re-read just before the write, and an unreadable one is left alone. */
-export async function run({ max = 10, order = null, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), log = console.log } = {}) {
+export async function run({ max = 10, order = null, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), cfg = loadConfig(), log = console.log } = {}) {
   const tally = { drafted: 0, rejected: 0, parked: 0, requeued: 0, stopped: "", unreadable: [] };
   const badCards = [];
   const all = cards || loadCards(cardsDir, badCards);
@@ -102,6 +106,7 @@ export async function run({ max = 10, order = null, concurrency = 3, dir = STORI
     log(`library-write: ${tally.stopped}; nothing written`);
     return tally;
   }
+  if (paused(all, cfg)) { log(PAUSE_MESSAGE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
   const { reports, actors } = library || loadLibrary();
   const subjects = [...actorSubjects(actors, reports, all), ...looseSubjects(reports, all, actorIndex(actors))];
   const badStories = [];
@@ -111,7 +116,7 @@ export async function run({ max = 10, order = null, concurrency = 3, dir = STORI
   const runId = randomBytes(4).toString("hex");
   let failed = 0;
   const one = async (s) => {
-    const cs = s.sha1s.map((x) => all.get(x)).filter((c) => c && c.status === "read").slice(0, MAX_CARDS);
+    const cs = cardsFor(s, all);
     const reply = await call(ROLE, writerPrompt(s, cs), { job: "library", batch: s.key });
     if (reply.limit) return { why: "limit" };
     if (reply.error) return { why: "error" };

@@ -32,7 +32,7 @@ import { retryAfterMs } from "./lib/net.mjs";
 import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";
 import { collect as collectStatusPages } from "./status-pages.mjs";
 
-const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
+const UA = "cyberview-collector/1.0 (+https://cyberview.tools)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const txt = (s, n) => String(s == null ? "" : s).replace(/<[^>]*>/g, " ").replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
 const iso = (d) => { const t = Date.parse(d); return isNaN(t) ? "" : new Date(t).toISOString().replace(/\.\d+Z$/, "Z"); };

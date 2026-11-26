@@ -101,7 +101,7 @@ async function delta() {
 }
 
 async function epss() {
-  const r = await fetch(EPSS, { signal: AbortSignal.timeout(120000), headers: { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)" } });
+  const r = await fetch(EPSS, { signal: AbortSignal.timeout(120000), headers: { "user-agent": "cyberview-feeds/1.0 (+https://cyberview.tools)" } });
   if (!r.ok) { console.error(`EPSS: HTTP ${r.status}`); process.exit(1); }
   const csv = gunzipSync(Buffer.from(await r.arrayBuffer())).toString("utf8"), m = parseEpss(csv);
   const date = (csv.match(/score_date:(\d{4}-\d{2}-\d{2})/) || [])[1] || dayAgo(0);
@@ -151,7 +151,7 @@ async function nvd() {
   for (const w of windows) {
     for (let start = 0, total = Infinity; start < total; start += 2000) {
       let j = null;
-      for (let t = 0; t < 4 && !j; t++) { try { j = await fetch(`${NVD}?resultsPerPage=2000&startIndex=${start}${w}`, { headers: { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)", ...(key ? { apiKey: key } : {}) }, signal: AbortSignal.timeout(120000) }).then((r) => (r.ok ? r.json() : null)); } catch {} if (!j) await sleep(30000); }
+      for (let t = 0; t < 4 && !j; t++) { try { j = await fetch(`${NVD}?resultsPerPage=2000&startIndex=${start}${w}`, { headers: { "user-agent": "cyberview-feeds/1.0 (+https://cyberview.tools)", ...(key ? { apiKey: key } : {}) }, signal: AbortSignal.timeout(120000) }).then((r) => (r.ok ? r.json() : null)); } catch {} if (!j) await sleep(30000); }
       if (!j) { console.log(`NVD: page at ${start} failed four times; stopping, the next run resumes`); saveAll(byYear); return; }
       total = j.totalResults || 0; pages++;
       for (const it of j.vulnerabilities || []) {

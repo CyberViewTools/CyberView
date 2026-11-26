@@ -8,7 +8,7 @@ Prepared 2026-11-17 for moving the project from a Claude artifact to **GitHub + 
 
 A rolling seven-day world map of publicly reported cyber events, built for defenders. Each event says what happened, why it matters and what to do, with its sources.
 
-- **Owner:** Xander.
+- **Owner:** the CyberView maintainer.
 - **Audience:** public. Visitors read; they do not mark anything. Watchlists stay in each visitor's browser.
 - **Covers:** incidents and breaches, outages, exploited vulnerabilities and patches, government and vendor threat reports, laws and regulation, law enforcement, and security investment and vendor news.
 

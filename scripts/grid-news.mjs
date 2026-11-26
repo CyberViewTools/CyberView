@@ -22,7 +22,7 @@ import { publisherKey } from "./fuse.mjs";
 import { COUNTRIES, str, slug } from "./grid.mjs";
 
 const H = 3600e3;
-const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
+const UA = "cyberview-collector/1.0 (+https://cyberview.tools)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export const UNITS = ["customers", "homes", "people", "unstated"];
 export const CFG_PATH = join(ROOT, "config", "grid-news.json");

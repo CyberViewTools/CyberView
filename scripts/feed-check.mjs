@@ -22,7 +22,7 @@ import { COUNTRIES, coverage } from "./lib/feed-country.mjs";
 
 export const MIN_ITEMS = 3, MAX_AGE_DAYS = 30, MAX_AGE_DAYS_SLOW = 120, PER_HOST = 4, CYBER_SHARE = 0.5;
 export const REGIONS = ["africa", "latin-america", "middle-east", "south-asia", "southeast-asia", "east-asia", "europe", "oceania", "north-america"];
-const UA = "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)";
+const UA = "cyberview-collector/1.0 (+https://cyberview.tools)";
 const AGENTS = ["cyberview-collector", "claudebot", "anthropic-ai"];
 const AGGREGATORS = /(^|\.)(news\.google\.com|google\.com|bing\.com|feedproxy\.google\.com|t\.co|reddit\.com|msn\.com|yahoo\.com|flipboard\.com|newsnow\.co\.uk|feedly\.com)$/i;
 const FEED_PATHS = ["/feed/", "/rss", "/rss.xml", "/feed.xml", "/atom.xml", "/index.xml", "/feed", "/rss/", "/feeds/posts/default"];

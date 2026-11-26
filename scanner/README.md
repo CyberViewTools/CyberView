@@ -546,7 +546,7 @@ not as a product.
 
 ## Licence
 
-Copyright (c) 2026 xanderhutch (the CyberView maintainer). All rights reserved.
+Copyright (c) 2026 the CyberView maintainer (cyberview.tools). All rights reserved.
 
 The CyberView Scanner is a **proprietary CyberView product**, licensed under
 `scanner/LICENSE`. CyberView as a whole is proprietary (root `LICENSE`); this

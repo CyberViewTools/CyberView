@@ -216,3 +216,16 @@ test("run: unreachable and failed calls are counted in read-state.json; a writte
     assert.equal(readFileSync(join(dir, "read-state.json"), "utf8"), "{ bad", "an unreadable state file is never written over");
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+// Open item 3 (final review): the owner's withdrawal stays on a card that is read (again) later
+test("decide: a withdrawn card that is read later keeps its withdrawn flag, time and reason", () => {
+  const W = { withdrawn: true, withdrawn_at: "2026-11-26T03:00:00Z", withdrawn_reason: "the vendor retracted it" };
+  for (const prev of [{ sha1: A, status: "unread", tries: 1, ...W }, { sha1: A, status: "no-text", read_at: "2026-01-01T00:00:00Z", ...W }]) {
+    const read = decide(rA, f(), good(), { ...ctx, prev }).card;
+    assert.equal(read.status, "read"); assert.equal(read.withdrawn, true);
+    assert.equal(read.withdrawn_at, W.withdrawn_at); assert.equal(read.withdrawn_reason, W.withdrawn_reason);
+    const none = decide(rA, { error: "none" }, null, { ...ctx, prev }).card;
+    assert.equal(none.status, "no-text"); assert.equal(none.withdrawn, true);
+  }
+  assert.equal(decide(rA, f(), good(), { ...ctx, prev: { sha1: A, status: "unread", tries: 1 } }).card.withdrawn, undefined);
+});

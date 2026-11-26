@@ -87,10 +87,22 @@ const LINKISH = [
   /\b(?:https?|hxxps?|ftp|sftp):\/\//i,
   /\bwww\[?\.\]?[a-z0-9-]+/i,
   /[A-Za-z0-9._%+-]+(?:@|\[at\]|\[@\])[A-Za-z0-9-]+(?:\[?\.\]?[A-Za-z0-9-]+)*\[?\.\]?[A-Za-z]{2,}/,
-  new RegExp(`(?<![A-Za-z0-9-])[A-Za-z0-9][A-Za-z0-9-]*(?:(?:\\[\\.\\]|\\(\\.\\)|\\.)[A-Za-z0-9-]+)*(?:\\[\\.\\]|\\(\\.\\)|\\.)(?:${TLDS})(?![A-Za-z0-9-])`),
 ];
+// A bare two-part name whose ending is also a file type or a product suffix (Finder.app, cleanup.pl, Socket.io) is a file or product
+// name, not an address: only exactly `name.suffix`, written with a plain dot, with no path, port or further label after it. Anything
+// longer (c2.evil.io), defanged (evil[.]io), or carrying a scheme, www, a path, a port or an @ is still a link.
+const NAME_SUFFIX = /^[A-Za-z0-9][A-Za-z0-9-]*\.(?:app|pl|io)$/;
+const DOMAIN = new RegExp(`(?<![A-Za-z0-9-])[A-Za-z0-9][A-Za-z0-9-]*(?:(?:\\[\\.\\]|\\(\\.\\)|\\.)[A-Za-z0-9-]+)*(?:\\[\\.\\]|\\(\\.\\)|\\.)(?:${TLDS})(?![A-Za-z0-9-])`, "g");
 /** True when the text holds a URL, a domain-like token or an email address. */
-export const hasLink = (s) => { const t = String(s == null ? "" : s); return LINKISH.some((re) => re.test(t)); };
+export const hasLink = (s) => {
+  const t = String(s == null ? "" : s);
+  if (LINKISH.some((re) => re.test(t))) return true;
+  for (const m of t.matchAll(DOMAIN)) {
+    const after = t[m.index + m[0].length] || "", before = t[m.index - 1] || "";
+    if (!(NAME_SUFFIX.test(m[0]) && !"/:".includes(after || " ") && before !== "." && before !== "/")) return true;
+  }
+  return false;
+};
 
 /** Why a card cannot be kept (empty = pass). `text` is the report text, in memory only. */
 export function cardProblems(card, text) {

@@ -128,6 +128,8 @@ export function decide(report, fetched, reply, ctx = {}) {
   // a card read again: its old audit moves into audit_history (last 5) and the new card has no current audit, so it is audited afresh
   const hist = [...(Array.isArray(p.audit_history) ? p.audit_history : []), ...(p.audit ? [p.audit] : [])].slice(-5);
   if (d.card && hist.length) d.card = { ...d.card, audit_history: hist };
+  // the owner's withdrawal (library-review.mjs withdraw) stays on the card whatever a later read makes of the report
+  if (d.card && p.withdrawn === true) d.card = { ...d.card, withdrawn: true, withdrawn_at: String(p.withdrawn_at || "").slice(0, 40), withdrawn_reason: String(p.withdrawn_reason || "").slice(0, 200) };
   return d;
 }
 function decideNow(report, fetched, reply, ctx) {

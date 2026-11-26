@@ -1,0 +1,47 @@
+{
+  "action": "As the researchers advise, give AI agents that process external content minimal permissions, keep them isolated from secrets, and check who wrote hidden text before trusting it.",
+  "actor": "",
+  "attack": [],
+  "category": "report",
+  "country": "Israel",
+  "cves": [],
+  "date": "2026-11-26",
+  "date_note": "ITmedia's page gives only its publication day (26 November 2026); the paper's own date was not read.",
+  "exec": "Researchers say hidden text aimed at AI agents exists on GitHub, and a small fast model followed 8 of 43 malicious instances in their tests.",
+  "first_seen": "2026-11-26T04:11:12Z",
+  "updated_at": "2026-11-26T04:11:12Z",
+  "geo_basis": "researchers' country as stated by the source (Radware and Technion, Israel)",
+  "lat": 31.78,
+  "lng": 35.22,
+  "org": "Radware / Technion",
+  "pin_type": "researcher",
+  "place": "Israel (researchers)",
+  "plain": "Researchers scanned GitHub posts and READMEs for text people cannot see but AI agents read. Most was harmless; 43 instances were attacks, and one small model followed 8 of them.",
+  "products": ["GitHub"],
+  "severity": 1,
+  "source_tier": "established",
+  "sources": [
+    {
+      "name": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/article/2611/26/2000003460/",
+      "published": "2026-11-26"
+    }
+  ],
+  "status": "confirmed",
+  "summary": "According to ITmedia, researchers from Radware and the Technion analysed GitHub posts and READMEs for hidden text such as HTML comments that AI agents read but people do not see. They identified 2,281 instances in issues, pull requests and comments, of which 43 were attacks aimed at other people's AI agents. A small, fast model followed the attack instructions in 8 of the 43 cases in their tests.",
+  "tags": ["ai-enabled"],
+  "title": "Researchers find hidden text aimed at AI agents on GitHub, 43 instances malicious",
+  "validation": {
+    "checked_at": "2026-11-26T04:11:12Z",
+    "note": "Single source: ITmedia NEWS (26 Nov) read; the Radware/Technion paper (arxiv link given by ITmedia) was not opened.",
+    "state": "single_source"
+  },
+  "evidence": [
+    {"url": "https://www.itmedia.co.jp/news/article/2611/26/2000003460/", "quote": "研究チームは、GitHub上の投稿やREADME約1億4500万件を解析し、画面上では人間から見えないのにAIには届くAI向けの隠しテキスト（HTMLコメントなど）の実態を調査した。"},
+    {"url": "https://www.itmedia.co.jp/news/article/2611/26/2000003460/", "quote": "Issue、プルリクエスト、コメントから特定された2281件の内訳を見ると、"},
+    {"url": "https://www.itmedia.co.jp/news/article/2611/26/2000003460/", "quote": "一方、残りの2％（43件）は悪意ある攻撃（他者のAIエージェントを狙った攻撃）だった。"},
+    {"url": "https://www.itmedia.co.jp/news/article/2611/26/2000003460/", "quote": "大量のIssue処理で選ばれやすい小型・高速モデル（gpt-5.6-luna）は43件中8件（19％）で攻撃の指示に従い、不正な操作を行おうとした。"}
+  ],
+  "sectors": {"values": ["information-technology"], "basis": "inferred"},
+  "surface": {"value": "unknown", "basis": "inferred"}
+}

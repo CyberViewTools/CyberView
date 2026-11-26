@@ -54,5 +54,7 @@ const c = dgit("commit", "-q", "-m", msg);
 if (c.status !== 0) { console.log(`COMMIT FAILED: ${(c.stderr || c.stdout).trim().split("\n")[0]}`); process.exit(1); }
 // git-sync merges the files every job writes (status.json, leads) instead of failing on them, and asks for a deploy
 const sy = run("node", ["scripts/git-sync.mjs"]), pushed = sy.status === 0, why = `${sy.stderr || ""}`.trim().split("\n").pop();
-console.log(pushed ? `CyberView ${job}: ${added} new, ${updated} updated; committed and pushed${proposed ? "; " + proposed : ""}` : `PUSH FAILED after 3 tries (${why}). The commit is local; the next job will push it.`);
+// a failed deploy request goes on the summary line, the only line the launcher shows (unseen for 12 hours on 26 Nov 2026)
+const deployFailed = /DEPLOY REQUEST FAILED/.test(`${sy.stdout || ""}`) ? "; DEPLOY REQUEST FAILED (the site was not rebuilt)" : "";
+console.log(pushed ? `CyberView ${job}: ${added} new, ${updated} updated; committed and pushed${proposed ? "; " + proposed : ""}${deployFailed}` : `PUSH FAILED after 3 tries (${why}). The commit is local; the next job will push it.`);
 process.exit(pushed ? 0 : 1);

@@ -21,7 +21,10 @@ permissions:
   issues: write    # the pipeline-alert issues
 
 concurrency:
-  group: data-writes
+  # its own group, not data-writes: GitHub keeps one pending run per group and cancels the older one, so a feeds run and a
+  # pipeline check queued by the same finished deploy cancelled each other and a waiting Collect run (26 Nov 2026: no
+  # collection for 6 hours). Concurrent data pushes are safe: git-sync merges and retries.
+  group: pipecheck
   cancel-in-progress: false
 
 jobs:

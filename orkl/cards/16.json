@@ -1,7 +1,7 @@
 {
   "16d1caeac2a7d8ab2470d56fe8231aaec0251c5d": {
     "sha1": "16d1caeac2a7d8ab2470d56fe8231aaec0251c5d",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-26T22:32:42Z",
     "model": "haiku",
@@ -77,6 +77,14 @@
         "note": "summary: States flatly that attackers relied on spearphishing emails without exploits. The text says only that they 'probably just relied on' social engineering",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-26T22:46:01Z",
+      "ok": false,
+      "note": "summary: The author emulated the backdoor (a Python script posing as a ByeBye infected host that checks in to the real C&C), not the command server. The summary",
+      "by": "auditor"
+    }
   }
 }

@@ -1,26 +1,73 @@
 {
   "74cb8653a1971d3707c6bfd8614db10c3e5711f6": {
     "sha1": "74cb8653a1971d3707c6bfd8614db10c3e5711f6",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T22:33:58Z",
+    "read_at": "2026-11-26T22:46:57Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "A 2015 blog post by MobileIron (Michael T. Raggo, October 2015) on XARA, a group of iOS and OS X vulnerabilities reported by Indiana University researchers. It describes URL scheme hijacking, where a malicious app registers the same URL scheme as a legitimate app, intercepts inter-app requests, and can be used for phishing and credential theft. The researchers say their discoveries date back to fall 2014, and FireEye's Masque Attack II (February 2015) is cited as earlier work. Mitigations are MobileIron's AppConnect product and general iOS best practices.",
+    "kind": "vulnerability",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
+      "dates": [
+        {
+          "v": "fall of 2014",
+          "q": "stated that their discoveries date back to the fall of 2014",
+          "what": "Researchers say their discoveries of the URL scheme issue date back to this period"
+        },
+        {
+          "v": "February, 2015",
+          "q": "February, 2015 that they referred to as the Masque Attack II.",
+          "what": "FireEye outlined attacks it called the Masque Attack II"
+        },
+        {
+          "v": "October 01, 2015",
+          "q": "Michael T. Raggo | October 01, 2015",
+          "what": "The MobileIron blog post was published"
+        }
+      ],
       "tools": [],
-      "techniques": [],
+      "techniques": [
+        {
+          "v": "URL Scheme Hijacking",
+          "q": "The use of URL Scheme Hijacking is actually nothing new."
+        },
+        {
+          "v": "Masque Attack II",
+          "q": "February, 2015 that they referred to as the Masque Attack II."
+        },
+        {
+          "v": "phishing attack",
+          "q": "essentially allows the URL Scheme to be hijacked and thus used in a phishing attack."
+        },
+        {
+          "v": "user not prompted",
+          "q": "But in the case of URL Schemes the user is not prompted, and the App is then"
+        },
+        {
+          "v": "credentials are stolen",
+          "q": "where credentials are stolen through"
+        },
+        {
+          "v": "malicious App",
+          "q": "Post malicious App to AppStore - User unknowingly downloads a malicious App to their device."
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "vulnerability",
+      "name": "XARA"
+    },
+    "hedges": [
+      "The attack flow is described as a possible one, and the post notes that there are variants.",
+      "Apple does reserve some system schemes that cannot be used by third-party apps.",
+      "The white paper states that its authors loaded apps to the Apple AppStore; the post reports this as the paper's claim.",
+      "Depending on the malware, the next phase of the phishing attack can occur."
+    ],
     "audit_history": [
       {
         "at": "2026-11-26T22:25:28Z",

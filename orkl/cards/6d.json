@@ -1,26 +1,62 @@
 {
   "6d66502ec4e40b1a02b150ae0c248e72c1347b0e": {
     "sha1": "6d66502ec4e40b1a02b150ae0c248e72c1347b0e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T22:35:27Z",
+    "read_at": "2026-11-26T22:46:50Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CheckMAL, an anti-ransomware vendor (AppCheck), published a video page on WhiteBlackGroup Ransomware, which uses the .encrpt3d file extension. The page lists an MD5 hash, two antivirus detection names (GData and Microsoft), a file created at C:\\ProgramData\\CheckServiceD.exe, and offline encryption as a major characteristic. The distribution method is listed as unknown. Most of the page is product promotion. The page was archived on 2026-11-25.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2026-11-25",
+          "q": "Archived: 2026-11-25 02:13:59 UTC",
+          "what": "Page archived (the report's own archive timestamp)"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CheckServiceD.exe",
+          "q": "Malicious File Creation Location : C:\\ProgramData\\CheckServiceD.exe"
+        },
+        {
+          "v": "Win64.Trojan-Ransom.WhiteBlackCrypt.A (GData)",
+          "q": "Major Detection Name : Win64.Trojan-Ransom.WhiteBlackCrypt.A (GData)"
+        },
+        {
+          "v": "Ransom:Win64/FileCoder!MSR (Microsoft)",
+          "q": "Ransom:Win64/FileCoder!MSR (Microsoft)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "offline encryption",
+          "q": "Major Characteristics : Offline Encryption"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "b36e5c508efea796731d444c189b413c",
+          "q": "MD5 : b36e5c508efea796731d444c189b413c"
+        },
+        {
+          "v": ".encrpt3d",
+          "q": "Encrypted File Pattern : .encrpt3d"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "WhiteBlackGroup Ransomware"
+    },
+    "hedges": [
+      "The report lists the distribution method as Unknown."
+    ],
     "audit_history": [
       {
         "at": "2026-11-26T22:25:21Z",

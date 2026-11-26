@@ -1,7 +1,7 @@
 {
   "07b52e38400bda0f72ed393ad8b26b35ae79d5fe": {
     "sha1": "07b52e38400bda0f72ed393ad8b26b35ae79d5fe",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-26T22:32:39Z",
     "model": "haiku",
@@ -131,6 +131,14 @@
         "note": "tools[2]: CrowdStrike Falcon is the defender's product, used to detect and stop the actor. The text does not describe it as an actor tool.; techniques[1]: The q",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-26T22:46:01Z",
+      "ok": false,
+      "note": "tools[0]: CrowdStrike Falcon is the defender's product that detected the activity, not a tool used by the actor. The quote shows it detecting the webshell.",
+      "by": "auditor"
+    }
   }
 }

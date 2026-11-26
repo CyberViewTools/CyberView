@@ -1,0 +1,45 @@
+# Library reports: decisions made during the build
+
+Branch `feat/library-reports`. Each line is a decision the build controller made on the owner's behalf, in order, with why and what it costs if wrong. Rework any you disagree with.
+
+- every task that adds a script, config key or site data file adds its docs/layout.md line (and config/about.json where about check needs it) in the same task — CLAUDE.md "documentation is part of every change"; docs-check would otherwise fail CI — cost if wrong: duplicated doc lines Task 9 tidies.
+- Task 6 also adds the last_library_at row to scripts/lib/stages.mjs and sets max_age_hours above the schedule interval — CLAUDE.md reliability rule — cost if wrong: one extra row.
+- Task 3 Step 5 (live run) is best-effort; if the claude CLI, network or data mount is not available the implementer reports it not run and it moves to the pilot (Task 10) — cost if wrong: first real run happens after merge with backfill off, bounded by the pilot gate.
+- Task 10 in this session = npm run ci, push the branch, open the PR (owner asked for the PR). Merge and pilot steps 3-5 are the owner's/pipeline's after merge — a merge is an outside side effect.
+- CLAUDE.md usage rule — run `node scripts/budget.mjs can-build` before each agent launch when the data branch is mounted; if it cannot be evaluated here, proceed one agent at a time (never parallel) — cost if wrong: build agents share the pipeline's window.
+- Important 1 (headline/in_short unchecked) and Important 2 (demonyms, 2-letter countries escape bare-attribution) are fixed in Task 1 although the brief's code list omits them — spec anti-goal "a story that states something no report says" binds; cost if wrong: stricter gate, more rejected drafts.
+- Minors 3 (year-shaped figure), 4 (hyphen join false refusal, dash folding), 7 (empty sections), 8 (null guards) join round 1 — they are false refusals/crashes in the fact gate and cheap; Minors 5, 6, 9 deferred.
+- Important 1 — add a `frozen` role list in config/models.json that scripts/improve.mjs checkChange refuses to move (the four library roles); owner can still edit the file directly — global constraint fixes the models, no Opus — cost if wrong: improver cannot tune these roles.
+- Important 2 (plan-mandated argv prompt) — prompt goes to the CLI on stdin, not argv; oneShotArgs becomes (role, models) and the brief's test changes accordingly — spec: text exists only in memory, and E2BIG on long reports would look like model failures — cost if wrong: one signature differs from the plan; later briefs only use oneShot().
+- confirmed gap (cannot-verify item) — the no-cards "No public report in this library describes its operations." sentence must cite "catalogue" so storyProblems does not refuse it as uncited; fix in the writer prompt.
+- an envelope/API error (not a model reply) must not count as a failed read — Task 3 decide() treats it like "unreachable" (retry, tries unchanged) — otherwise a signed-out CLI would burn every record's two tries — cost if wrong: a permanently bad record retries forever; bounded by a per-run cap.
+- fetchText tries the stored archive text file (report.txt_url, a URL ORKL itself gave us) first and the guessed API entry second; any 4xx from either falls through to the other, only network/5xx is "unreachable" — the brief's order (API first) rests on an unverified path — cost if wrong: one extra request per report when the archive file is missing. Owner to be told: first live fetch happens at the pilot.
+- a parked story is retried when its basedOn changes (tries reset to 0) — spec "a new report that names an actor marks that actor's story stale; it is rewritten" — cost if wrong: a few extra writer calls on stories that failed before.
+- audit share is 100% whenever the caller says pilot (desk passes it from the pilot gate), not tied to audit_min — spec line "every pilot card is audited".
+- failures move to audit_history; a re-read card has no current audit and is always picked (100%).
+- flagging a card marks every live story citing it stale at once, no model call.
+- only auditor verdicts count in the rate (reviewer flags are not a sample; flagged cards are re-read then audited); while paused the audit runs at 100% and the reader may re-read audit-failed cards only; a card's latest audit is what counts in the window — spec allows owner-only recovery but an unrecoverable pause from 3 early errors would stall the Library; cost if wrong: reader does a little work while paused.
+- a corrected story goes back as a draft authored by the review run and is published only when a later run passes it; at most 2 correction rounds, then rejected — spec "second review by a run that did not write it" and owner "everything reviewed and validated"; cost: one more reviewer call per corrected story.
+- no-subject is never parked, only skipped and logged — ORKL storage is additive so a missing subject almost always means a degraded load — cost: an orphan draft sits unshown.
+- the audit rate measures cards in use: a failed card whose re-read ended no-text or unread-with-tries-spent stops counting as wrong (it backs no story) — otherwise the pause can never clear — cost if wrong: the rate slightly understates reader errors; the corrections file still records them.
+- pilot thin actors exclude ORKL placeholder entries ("[Unnamed group ...]") — a profile of a placeholder tells the owner nothing — cost: none.
+- activation is one edit (active true + active_since); ship the about.json entry and the jobs.test exemption now; an inactive routine is not dispatchable (docs corrected) — the owner flipping it is the pilot start.
+- pilot completion latches once (completed_at in pilot.json, additive); the live predicate is for status/report only; pilot audit share 100% applies until the latch.
+- the desk gives every model call a deadline (per-call timeout = min(role timeout, time left - 20 s) passed to oneShot); a call cut by the deadline is an `error` outcome (nothing written, retried next run) — no child outlives the run.
+- all Library site output lives in ONE folder site/data/library/ (cards/<xx>.json, stories/<key>.json, stories.json) so one rename swaps the whole set consistently — three separate targets cannot be swapped atomically — cost: Task 8 reads the new paths (not built yet).
+- to meet the owner's "hurry up", Task 9's task review runs in parallel with the final whole-branch review and both feed the single final fix wave — cost if wrong: one fix wave carries a few more doc items.
+- a card summary is shown only after the Sonnet auditor passes that card, the auditor now judges the summary too, and audit_pct defaults to 100 — owner's "everything reviewed and validated" — cost: one Sonnet audit per card across the full library when the backfill runs (owner can lower audit_pct; unaudited cards then show no summary).
+- a story resting on a card found wrong is taken off the site until its rewrite passes review; a story that is only behind on new reports stays up with a plain note.
+- named countries/demonyms must be backed by a cited card (fixed list); ambiguous names need a state word — cost: some true sentences refused and rewritten.
+- pilot latches only with >= 50% of pilot reports read and card-cited top-actor stories; a run with >= 80% "none" fetches writes no no-text cards; no-text retried once after 30 days.
+- per-record failure counter; 6 failures park a record for 7 days.
+- add an owner `withdraw` command for stories and cards so "corrected or removed" is real.
+- the standalone read/write/review run commands refuse without an explicit owner override, so only the desk (with its gates) runs them.
+- one fix wave on opus (breadth: ~25 items across the whole branch), then one scoped re-review; no second wave.
+- no second fix wave (process rule); the two open Important items are surfaced to the owner as "fix before switching the job on" — merging is safe because oneShot and the desk never run while the routine is off — cost if wrong: none while off.
+
+## Open after the final review (fix before the Library job is switched on)
+
+1. A Library worker that hits the plan's usage limit is recorded with the code "limit", which the budget check does not count, so the pipeline would not see the limit (scripts/lib/oneshot.mjs, scripts/lib/usage.mjs limitHits).
+2. The guard that stops the reader when ORKL returns no text for nearly every report never fires from the hourly desk, because the desk reads 4 at a time and the guard needs 5 (scripts/library-read.mjs, scripts/library-desk.mjs).
+3. Smaller: the link check refuses file names ending in a web suffix (.app, .pl, .io) and the reader prompt does not tell the model to leave links out; pilot reports with no text are not retried after the pilot; a withdrawn card that was not yet read loses its flag when read; a few wording lines.

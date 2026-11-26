@@ -1,7 +1,7 @@
 // Mechanical end of a job, no AI model. Run: node scripts/finish.mjs <job> [--force]
 // The dispatcher runs this after the workers have finished, so committing never depends on an agent remembering to:
 //   1. timestamp in data/status.json (the job's status_key from routines.json)
-//   2. node scripts/build.mjs (strict). If a record is broken it prints the errors and exits 1 WITHOUT committing, so the
+//   2. a NEW event file with an invalid name is renamed (scripts/lib/event-names.mjs); node scripts/build.mjs (strict). If a record is broken it prints the errors and exits 1 WITHOUT committing, so the
 //      dispatcher can have them fixed. With --force it commits anyway: the deploy quarantines a broken record and reports it,
 //      which is better than holding back everyone else's good work.
 //   3. git add data config docs, commit ("data: <job>, N new, M updated"), pull --rebase, push (three tries)
@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { ROOT, DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
 import { heal, marked } from "./lib/conflicts.mjs";
 import { dataMode, protectDeletes } from "./lib/repo.mjs";
+import { fixNewEventNames } from "./lib/event-names.mjs";
 // code and data on separate branches (scripts/lib/repo.mjs): data is committed to the data branch at ./data; anything a
 // job changed outside data/ (config/, docs/) is proposed to main as a pull request (scripts/propose.mjs), never pushed
 const BRANCH = dataMode(ROOT) === "branch", DDIR = BRANCH ? join(ROOT, "data") : ROOT;
@@ -28,6 +29,13 @@ st[key] = nowIso();
 if (job === "sweep") { st.last_sweep_added = added; st.last_sweep_updated = updated; }
 writeJson(join(DATA, "status.json"), st);
 
+// a NEW event file whose name is not a valid id (capitals, spaces...) is renamed before the build, so a --force commit never
+// carries a record that turns build.yml red for every pull request (2026-11-26)
+{
+  const fresh = dgit("status", "--porcelain", "--untracked-files=all", "--", BRANCH ? "events" : "data/events").stdout.split("\n")
+    .filter((l) => l.startsWith("??")).map((l) => l.slice(3).trim().replace(/^data\//, ""));
+  for (const r of fixNewEventNames(DATA, fresh)) console.log(r.to ? `RENAMED ${r.from} -> ${r.to} (event file names are lowercase letters, digits and hyphens)` : `BAD NAME ${r.from}: no valid name could be made; the build reports it`);
+}
 const b = run("node", ["scripts/build.mjs"]);
 if (b.status !== 0) {
   const errs = `${b.stdout}${b.stderr}`.split("\n").filter((l) => /^error:/.test(l)).slice(0, 20);

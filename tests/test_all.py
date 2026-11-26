@@ -2169,6 +2169,10 @@ async def main():
         await serve(site_lib, vlib)
         # zero state: the Library before anything is read: no library folder, no story list (404), no counts
         site_lib0 = make_site(blib)
+        # make_site copies the built site/, which holds the live Library (cards, stories, counts) once it has read reports
+        # (2026-11-26): remove them so this really is the state before anything is read
+        shutil.rmtree(os.path.join(site_lib0, "data", "library"), ignore_errors=True)
+        if os.path.exists(os.path.join(site_lib0, "data", "orkl.json")): os.remove(os.path.join(site_lib0, "data", "orkl.json"))
         lix0 = copy.deepcopy(lix)
         for r in lix0["reports"]: r.pop("k", None); r.pop("st", None)
         for a in lix0["actors"]: a.pop("st", None)

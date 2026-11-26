@@ -49,9 +49,12 @@ export function loadStories(dir = STORIES_DIR, bad = []) {
   return m;
 }
 
-/** Pure: the subjects to write now. Order: `order` (a key list) first, then those with most read cards, then key. */
-export function writeQueue(subjects, stories, cards, { order = null, max = Infinity } = {}) {
+/** Pure: the subjects to write now. Order: `order` (a key list) first, then those with most read cards, then key.
+ *  only: true with a key list restricts the queue to that list (the desk always passes it). */
+export function writeQueue(subjects, stories, cards, { order = null, max = Infinity, only = false } = {}) {
+  const allowed = only && Array.isArray(order) ? new Set(order) : null;
   const todo = (subjects || []).filter((s) => {
+    if (allowed && !allowed.has(s.key)) return false;
     const readN = (s.sha1s || []).filter((x) => { const c = cards.get(x); return c && c.status === "read"; }).length;
     if (s.kind === "subject" && !readN) return false;
     const f = stories.get(s.key);
@@ -67,10 +70,12 @@ export function writeQueue(subjects, stories, cards, { order = null, max = Infin
   return todo.slice(0, max);
 }
 
-/** Pure: a new draft (or rejected, or parked) goes to `next`; `live` is untouched except that a published one whose cards changed becomes stale. */
+/** Pure: a new draft (or rejected, or parked) goes to `next`; `live` is untouched except that a published one whose cards changed becomes
+ *  stale with stale_reason "new-report" (a "card-wrong" reason, set by staleStoriesCiting, is kept: it wins). */
 export function placeDraft(file, story) {
   const live = file && file.live ? { ...file.live } : null;
-  if (live && live.status === "published" && live.based_on !== story.based_on) live.status = "stale";
+  if (live && live.status === "published" && live.based_on !== story.based_on) { live.status = "stale"; live.stale_reason = "new-report"; }
+  else if (live && live.status === "stale" && live.stale_reason !== "card-wrong") live.stale_reason = "new-report";
   return { live, next: story };
 }
 
@@ -97,7 +102,7 @@ export function buildStory(subject, reply, readCards, ctx) {
 }
 
 /** Draft up to `max` stories. Each is written after its wave: the file is re-read just before the write, and an unreadable one is left alone. */
-export async function run({ max = 10, order = null, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+export async function run({ max = 10, order = null, only = false, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
   call = withTimeout(call, timeoutMs);
   const tally = { drafted: 0, rejected: 0, parked: 0, requeued: 0, stopped: "", unreadable: [] };
   const badCards = [];
@@ -113,7 +118,7 @@ export async function run({ max = 10, order = null, concurrency = 3, dir = STORI
   const badStories = [];
   const stories = loadStories(dir, badStories);
   tally.unreadable = badStories.sort();
-  const queue = writeQueue(subjects.filter((s) => !badStories.includes(s.key)), stories, all, { order, max });
+  const queue = writeQueue(subjects.filter((s) => !badStories.includes(s.key)), stories, all, { order, max, only });
   const runId = randomBytes(4).toString("hex");
   let failed = 0;
   const one = async (s) => {

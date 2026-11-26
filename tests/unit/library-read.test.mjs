@@ -151,3 +151,68 @@ test("run: stores only cards, never the report text; stops after 3 failed calls 
     rmSync(dir2, { recursive: true, force: true });
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+// B-I2: short archive text is not an answer; a run where ORKL's text is missing everywhere writes no no-text cards; a no-text card is retried once after 30 days
+test("fetchText: archive text shorter than TEXT_MIN falls through to the API entry", async () => {
+  const body = "y".repeat(TEXT_MIN + 1);
+  const mk = (arch, api) => async (u) => { const x = u.includes("/library/entry/") ? api : arch; if (x instanceof Error) throw x; return x; };
+  assert.equal((await fetchText(rA, { getter: mk("short text", { data: { plain_text: body } }) })).text, body);
+  assert.deepEqual(await fetchText(rA, { getter: mk("short text", fe("timeout")) }), { error: "unreachable" }, "the API did not answer: not none");
+  const both = await fetchText(rA, { getter: mk("short text", fe("http_404")) });
+  assert.equal(both.error, undefined); assert.equal(both.text, "short text", "every source answered: the short text is the answer (no-text, too short)");
+});
+test("run: five or more finished fetches with 80% or more none is systemic: no no-text cards, records stay queued", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-read-"));
+  try {
+    const many = Array.from({ length: 6 }, (_, i) => rep(String(i).repeat(40), `2020-03-0${i + 1}`));
+    const fetch = async (r) => (r.sha1 === many[0].sha1 ? { text: TEXT, partial: false } : { error: "none" });
+    const t = await run({ max: 6, concurrency: 3, dir, library: { reports: many }, fetch, model: "haiku", log: () => {}, call: async () => good() });
+    assert.equal(t.stopped, "ORKL text missing"); assert.equal(t["no-text"], 0);
+    assert.ok([...loadCards(dir).values()].every((c) => c.status !== "no-text"), "no no-text card written");
+    // four fetches, all none: too few to call it systemic
+    const dir2 = mkdtempSync(join(tmpdir(), "lib-read-"));
+    const t2 = await run({ max: 4, concurrency: 4, dir: dir2, library: { reports: many.slice(0, 4).map((r, i) => (i === 0 ? { ...r, sha1: "f".repeat(40) } : r)) }, fetch: async () => ({ error: "none" }), model: "haiku", log: () => {}, call: async () => good() });
+    assert.equal(t2.stopped, ""); assert.equal(t2["no-text"], 4);
+    rmSync(dir2, { recursive: true, force: true });
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("readQueue: a no-text card is retried once, 30 days after read_at; the retry is recorded", () => {
+  const now = Date.parse("2026-11-25T00:00:00Z");
+  const nt = (at, o = {}) => ({ sha1: A, status: "no-text", read_at: at, ...o });
+  assert.equal(readQueue([rA], new Map([[A, nt("2026-11-01T00:00:00Z")]]), { now }).length, 0, "not yet 30 days");
+  assert.equal(readQueue([rA], new Map([[A, nt("2026-10-01T00:00:00Z")]]), { now }).length, 1, "30 days on: once more");
+  assert.equal(readQueue([rA], new Map([[A, nt("2026-01-01T00:00:00Z", { retried: true })]]), { now }).length, 0, "retried already");
+  const d = decide(rA, { error: "none" }, null, { ...ctx, prev: nt("2026-10-01T00:00:00Z") });
+  assert.equal(d.card.status, "no-text"); assert.equal(d.card.retried, true);
+});
+
+// B-I10: a record that keeps failing (unreachable, failed call) sorts last after 3 failures and is parked for 7 days at 6
+import { bumpFailures, loadReadState, parkedRecords, FAIL_LAST, FAIL_PARK } from "../../scripts/library-read.mjs";
+test("bumpFailures and readQueue: failing records sort last, then are parked for 7 days; a success clears the count", () => {
+  const now = Date.parse("2026-11-25T00:00:00Z");
+  let f = {};
+  for (let i = 0; i < FAIL_LAST; i++) f = bumpFailures(f, { failed: [A] }, now);
+  assert.equal(f[A].n, 3); assert.equal(f[A].parked_until, undefined);
+  assert.deepEqual(readQueue([rA, rB], new Map(), { order: [A, B], failures: f, now }).map((r) => r.sha1), [B, A], "three failures: last, even when listed first");
+  for (let i = FAIL_LAST; i < FAIL_PARK; i++) f = bumpFailures(f, { failed: [A] }, now);
+  assert.equal(f[A].n, 6); assert.equal(f[A].parked_until, "2026-12-02T00:00:00Z");
+  assert.deepEqual(readQueue([rA, rB], new Map(), { failures: f, now }).map((r) => r.sha1), [B], "parked: skipped");
+  assert.deepEqual(readQueue([rA, rB], new Map(), { failures: f, now: now + 8 * 864e5 }).map((r) => r.sha1), [B, A], "after 7 days it is tried again, last");
+  assert.deepEqual(parkedRecords(f, now), [A]);
+  assert.equal(bumpFailures(f, { cleared: [A] }, now)[A], undefined, "a success clears it");
+});
+test("run: unreachable and failed calls are counted in read-state.json; a written card clears its count", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-read-"));
+  try {
+    const fetch = async (r) => (r.sha1 === A ? { error: "unreachable" } : { text: TEXT, partial: false });
+    await run({ max: 2, dir, library: { reports: [rA, rB] }, fetch, model: "haiku", log: () => {}, call: async () => ({ ok: false, json: null, limit: false, error: true }) });
+    const st = loadReadState(join(dir, "read-state.json"));
+    assert.equal(st.state, "ok"); assert.equal(st.failures[A].n, 1); assert.equal(st.failures[B].n, 1);
+    await run({ max: 2, dir, library: { reports: [rA, rB] }, fetch, model: "haiku", log: () => {}, call: async () => good() });
+    const st2 = loadReadState(join(dir, "read-state.json"));
+    assert.equal(st2.failures[A].n, 2); assert.equal(st2.failures[B], undefined);
+    writeFileSync(join(dir, "read-state.json"), "{ bad");
+    await run({ max: 1, dir, library: { reports: [rA] }, fetch, model: "haiku", log: () => {}, call: async () => good() });
+    assert.equal(readFileSync(join(dir, "read-state.json"), "utf8"), "{ bad", "an unreadable state file is never written over");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

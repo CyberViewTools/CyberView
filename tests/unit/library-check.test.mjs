@@ -183,3 +183,15 @@ test("cardProblems: link-in-text for a URL, a domain-like token or an email in t
   for (const sm of ["The U.S. and e.g. allies were hit.", "It used ASP.NET and Node.js web shells.", "Version 2.1 of the tool appeared in 2023."])
     assert.ok(!cardProblems({ ...base, summary: sm }, text).includes("link-in-text"), sm);
 });
+
+// B-I3 / B-I8: cleanStory keeps stale_reason (only on a stale story) and the withdrawn status; cleanCard keeps withdrawn
+test("cleanStory and cleanCard keep the fields later stages read", () => {
+  const s = story([{ h: "who", sentences: [{ t: "A.", cites: [A] }] }], { status: "stale", stale_reason: "card-wrong" });
+  assert.equal(cleanStory(s).stale_reason, "card-wrong");
+  assert.equal(cleanStory({ ...s, stale_reason: "whatever" }).stale_reason, undefined);
+  assert.equal(cleanStory({ ...s, status: "published" }).stale_reason, undefined, "a published story carries no stale reason");
+  const w = cleanStory({ ...s, status: "withdrawn", withdrawn_at: "2026-11-25T00:00:00Z", withdrawn_reason: "owner: wrong victim" });
+  assert.equal(w.status, "withdrawn"); assert.equal(w.withdrawn_at, "2026-11-25T00:00:00Z"); assert.equal(w.withdrawn_reason, "owner: wrong victim");
+  const c = cleanCard({ ...card(), withdrawn: true, withdrawn_at: "2026-11-25T00:00:00Z", withdrawn_reason: "owner", tries: 1 }, A);
+  assert.equal(c.withdrawn, true); assert.equal(c.withdrawn_reason, "owner"); assert.equal(c.tries, 1);
+});

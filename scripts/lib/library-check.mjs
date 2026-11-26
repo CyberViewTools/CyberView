@@ -10,7 +10,8 @@ export const QUOTE_MAX = 160;
 
 const LISTS = ["actors", "sectors", "countries", "dates", "tools", "techniques", "cves", "figures"];
 const CARD_STATUS = ["read", "no-text", "unread"];
-const STORY_STATUS = ["draft", "published", "stale", "rejected", "parked"];
+const STORY_STATUS = ["draft", "published", "stale", "rejected", "parked", "withdrawn"];
+export const STALE_REASONS = ["card-wrong", "new-report"];
 const SUBJECT_TYPES = ["malware", "campaign", "vulnerability", "incident"];
 const LIST_MAX = 20;
 const SHA1 = /^[0-9a-f]{40}$/;
@@ -65,6 +66,10 @@ export function cleanCard(raw, sha1) {
     hedges: (Array.isArray(raw.hedges) ? raw.hedges : []).map((h) => clip(h, 200)).filter(Boolean).slice(0, 8),
   };
   if (raw.reason) card.reason = clip(raw.reason, 200);
+  // fields later stages read: the reader's tries, the one no-text retry, and the owner's withdrawal (library-review.mjs withdraw)
+  if (Number.isFinite(raw.tries)) card.tries = Math.max(0, Math.min(9, Math.floor(raw.tries)));
+  if (raw.retried === true) card.retried = true;
+  if (raw.withdrawn === true) { card.withdrawn = true; card.withdrawn_at = txt(raw.withdrawn_at, 40); card.withdrawn_reason = clip(raw.withdrawn_reason, 200); }
   const aud = (a) => { const o = { at: txt(a.at, 40), ok: a.ok === true, note: clip(a.note, 160) }; if (AUDIT_BY.includes(a.by)) o.by = a.by; return o; };
   if (isObj(raw.audit)) card.audit = aud(raw.audit);
   if (Array.isArray(raw.audit_history) && raw.audit_history.length) card.audit_history = raw.audit_history.filter(isObj).map(aud).slice(-5);
@@ -138,6 +143,9 @@ export function cleanStory(raw) {
   if (raw.corrected_by) story.corrected_by = txt(raw.corrected_by, 60);
   if (Number.isFinite(raw.corrections) && raw.corrections > 0) story.corrections = Math.min(9, Math.floor(raw.corrections));
   if (raw.written_run) story.written_run = txt(raw.written_run, 40);
+  // why a live story is stale: "card-wrong" (a card it cites was found wrong: the site takes it down) or "new-report" (new reports arrived)
+  if (raw.status === "stale" && STALE_REASONS.includes(raw.stale_reason)) story.stale_reason = raw.stale_reason;
+  if (raw.status === "withdrawn") { story.withdrawn_at = txt(raw.withdrawn_at, 40); story.withdrawn_reason = clip(raw.withdrawn_reason, 200); }
   return story;
 }
 

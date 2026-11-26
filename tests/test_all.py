@@ -2101,7 +2101,7 @@ async def main():
                await itx(pg, "#actDet .story h2") == "Fixture Bear: the quiet loader crew" and "A group that targets hospitals." in await itx(pg, "#actDet .story")
                and await itx(pg, "#actDet .story h3") == "Who they are" and "What defenders should take from it" in await itx(pg, "#actDet .story")
                and "from 2 reports" in await itx(pg, "#actDet .story .byline") and "reviewed" in await itx(pg, "#actDet .story .byline") and "someone else" not in await itx(pg, "#actDet .story")
-               and "New reports have arrived since this was reviewed. An updated version is being checked." in await itx(pg, "#actDet .story")
+               and "New reports have arrived since this was reviewed." in await itx(pg, "#actDet .story") and "being checked" not in await itx(pg, "#actDet .story")
                and await pg.locator("#actDet .story .srcs li").count() == 2, await pg.inner_text("#actDet"))
             c1 = pg.locator("#actDet .story a.cite[aria-label^='Source 1: ']").first
             lbl = await c1.get_attribute("aria-label")

@@ -126,14 +126,15 @@ export function updateCards(dir, updates, bad = new Set()) {
 }
 
 const citesAny = (story, set) => ((story && story.sections) || []).some((sec) => (sec.sentences || []).some((x) => (x.cites || []).some((c) => set.has(c))));
-/** A published story that cites a card now found wrong is marked stale at once (no model call). Each file is re-read just before its write. */
+/** A live story (published, or stale for new reports) that cites a card now found wrong or withdrawn is marked stale with stale_reason
+ *  "card-wrong" at once (no model call); the site does not show it until a rewrite passes review. Each file is re-read just before its write. */
 export function staleStoriesCiting(dir, sha1s, log = () => {}) {
   const set = new Set(sha1s), done = [];
   if (!set.size) return done;
   for (const key of loadStories(dir, []).keys()) {
     const f = readStory(dir, key);
-    if (!f || !f.live || f.live.status !== "published" || !citesAny(f.live, set)) continue;
-    writeJson(join(dir, `${key}.json`), { live: { ...f.live, status: "stale" }, next: f.next });
+    if (!f || !f.live || !["published", "stale"].includes(f.live.status) || f.live.stale_reason === "card-wrong" || !citesAny(f.live, set)) continue;
+    writeJson(join(dir, `${key}.json`), { live: { ...f.live, status: "stale", stale_reason: "card-wrong" }, next: f.next });
     done.push(key); log(`${key} live story marked stale (a card it cites was found wrong)`);
   }
   return done;
@@ -202,8 +203,8 @@ function parkDraft(dir, key, draft, reason) {
   return true;
 }
 
-/** Review up to `max` draft stories. `runId` is this review run's id (injectable); a draft written by the same run id is refused. */
-export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), timeoutMs = 0, log = console.log } = {}) {
+/** Review up to `max` draft stories (only those in `keys` when it is given). `runId` is this review run's id (injectable); a draft written by the same run id is refused. */
+export async function run({ max = 10, keys = null, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), timeoutMs = 0, log = console.log } = {}) {
   call = withTimeout(call, timeoutMs);
   const tally = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, orphans: 0, stopped: "", unreadable: [] };
   const badCards = [], all = cards || loadCards(cardsDir, badCards);
@@ -214,7 +215,9 @@ export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsD
   const subjects = subjectsOf(lib, all);
   const badStories = [], stories = loadStories(dir, badStories);
   tally.unreadable = badStories.sort();
-  const waiting = reviewQueue(stories).filter((k) => !badStories.includes(k));
+  // keys: the story keys this run may review (the desk passes the pilot's keys until the pilot is latched); null = every draft
+  const allowed = Array.isArray(keys) ? new Set(keys) : null;
+  const waiting = reviewQueue(stories).filter((k) => !badStories.includes(k) && (!allowed || allowed.has(k)));
   // a missing subject can be a library that did not load: the draft is left untouched and counted, never parked
   for (const k of waiting.filter((x) => !subjects.has(x))) { tally.orphans++; log(`${k.slice(0, 12)} no-subject, left untouched`); }
   const queue = waiting.filter((k) => subjects.has(k)).slice(0, max);

@@ -4,7 +4,9 @@
 // by run(). Run: node scripts/library-read.mjs run [--max N] | status   (behind a proxy: NODE_USE_ENV_PROXY=1)
 // A card is `read`, `no-text` (ORKL has no text, or under TEXT_MIN characters) or `unread` (the model's card failed the check; it
 // is tried once more, tries < 2). ORKL unreachable, a usage limit, or a failed model call (CLI missing, API error, timeout) writes
-// nothing: the record stays queued with its tries unchanged.
+// nothing: the record stays queued with its tries unchanged, but its failure count in data/orkl/read-state.json goes up (FAIL_LAST failures:
+// it goes last in the queue; FAIL_PARK: parked for PARK_DAYS; a written card clears it). A no-text card is read once more after 30 days.
+// A run where ORKL answered for 5 or more reports and 80% or more had no text writes no no-text card (stopped "ORKL text missing").
 import { join } from "node:path";
 import { existsSync, readdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -17,10 +19,15 @@ import { oneShot, withTimeout } from "./lib/oneshot.mjs";
 import { loadConfig, paused, auditFailed, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
+export const READ_STATE_FILE = join(DIR, "read-state.json");   // per-record failure counts: { failures: { sha1: { n, last_at, parked_until? } } }
+export const FAIL_LAST = 3, FAIL_PARK = 6, PARK_DAYS = 7;
 const ROLE = "library-reader";
 export const MAX_TRIES = 2;
 const STOP_AFTER_ERRORS = 3;
 const STOP_AFTER_UNREACHABLE = 5;
+// a run in which ORKL answered for at least SYSTEMIC_MIN reports and SYSTEMIC_SHARE or more of them had no text is treated as ORKL's text
+// missing everywhere (an outage that answers), not as that many reports without text: no no-text card is written and the run stops
+const SYSTEMIC_MIN = 5, SYSTEMIC_SHARE = 0.8;
 const modelName = () => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[ROLE]; return (r && r.model) || ""; };
 
 /** One shard file: {} when it does not exist yet; null when it exists but is not a JSON object (unreadable: never write over it). */
@@ -59,14 +66,55 @@ export function mergeCards(store, cards) {
 }
 
 const stamp = (r) => String(r.created || r.file_date || "");
-/** Pure: the records still to read: no card, or an `unread` card tried fewer than MAX_TRIES times. order "newest" or a sha1 list (listed first, in that order, then newest). */
-export function readQueue(reports, cards, { order = "newest", max = Infinity } = {}) {
-  const todo = (reports || []).filter((r) => {
-    const c = cards.get ? cards.get(r.sha1) : cards[r.sha1];
-    return !c || (c.status === "unread" && (Number(c.tries) || 0) < MAX_TRIES);
-  });
+const iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, "Z");
+
+/** The reader's per-record failure counts: { state: "none" | "ok" | "bad", failures }. A file that exists but cannot be read is "bad" and is never written over. */
+export function loadReadState(file = READ_STATE_FILE) {
+  if (!existsSync(file)) return { state: "none", failures: {} };
+  const j = readJson(file, null);
+  return j && typeof j === "object" && !Array.isArray(j) && j.failures && typeof j.failures === "object" && !Array.isArray(j.failures) ? { state: "ok", failures: j.failures } : { state: "bad", failures: {} };
+}
+/** Pure: the failure counts after a run: each failed sha1 (ORKL unreachable or a failed model call) + 1, parked for PARK_DAYS from FAIL_PARK
+ *  failures on; each cleared sha1 (a card was written) dropped. Nothing else changes. */
+export function bumpFailures(failures, { failed = [], cleared = [] } = {}, now = Date.now()) {
+  const out = { ...(failures || {}) };
+  for (const s of failed) {
+    const n = (Number(out[s] && out[s].n) || 0) + 1, e = { n, last_at: iso(now) };
+    if (n >= FAIL_PARK) e.parked_until = iso(now + PARK_DAYS * 864e5);
+    out[s] = e;
+  }
+  for (const s of cleared) delete out[s];
+  return out;
+}
+const failN = (failures, s) => Number(failures && failures[s] && failures[s].n) || 0;
+const isParked = (failures, s, now) => { const e = failures && failures[s]; return !!e && !!e.parked_until && Date.parse(e.parked_until) > now; };
+/** Pure: the sha1s parked now (FAIL_PARK failures, their PARK_DAYS not over). */
+export const parkedRecords = (failures, now = Date.now()) => Object.keys(failures || {}).filter((s) => isParked(failures, s, now)).sort();
+/** Re-read the state file just before writing and apply this run's outcomes (additive). An unreadable file is left alone. */
+export function saveReadState(file, outcome, now = Date.now()) {
+  const cur = loadReadState(file);
+  if (cur.state === "bad") return false;
+  if (!outcome.failed.length && !outcome.cleared.some((s) => cur.failures[s])) return true;
+  writeJson(file, { failures: bumpFailures(cur.failures, outcome, now) });
+  return true;
+}
+export const NO_TEXT_RETRY_DAYS = 30;
+/** Pure: a no-text card is read once more, NO_TEXT_RETRY_DAYS after its read_at (ORKL may have added the text); the retry's card says
+ *  `retried`, so it is never retried again. */
+export const noTextDue = (c, now = Date.now()) => !!c && c.status === "no-text" && c.retried !== true && Date.parse(c.read_at) + NO_TEXT_RETRY_DAYS * 864e5 <= now;
+/** Pure: the records still to read: no card, or an `unread` card tried fewer than MAX_TRIES times. order "newest" or a sha1 list (listed first, in that order, then newest).
+ *  only: true with a sha1 list restricts the queue to that list (the desk always passes it, so its gates are never filled from elsewhere). */
+export function readQueue(reports, cards, { order = "newest", max = Infinity, only = false, now = Date.now(), failures = {} } = {}) {
   const rank = Array.isArray(order) ? new Map(order.map((s, i) => [s, i])) : new Map();
-  todo.sort((a, b) => (rank.has(a.sha1) ? rank.get(a.sha1) : 1e9) - (rank.has(b.sha1) ? rank.get(b.sha1) : 1e9)
+  const todo = (reports || []).filter((r) => {
+    if (only && Array.isArray(order) && !rank.has(r.sha1)) return false;
+    if (isParked(failures, r.sha1, now)) return false;                   // FAIL_PARK failures: left alone for PARK_DAYS
+    const c = cards.get ? cards.get(r.sha1) : cards[r.sha1];
+    return !c || (c.status === "unread" && (Number(c.tries) || 0) < MAX_TRIES) || noTextDue(c, now);
+  });
+  // a record that failed FAIL_LAST times or more goes last, so it cannot hold the queue (and the pilot) up
+  todo.sort((a, b) => (failN(failures, a.sha1) >= FAIL_LAST) - (failN(failures, b.sha1) >= FAIL_LAST)
+    || (rank.has(a.sha1) ? rank.get(a.sha1) : 1e9) - (rank.has(b.sha1) ? rank.get(b.sha1) : 1e9)
     || stamp(b).localeCompare(stamp(a)) || a.sha1.localeCompare(b.sha1));
   return todo.slice(0, max);
 }
@@ -75,6 +123,8 @@ export function readQueue(reports, cards, { order = "newest", max = Infinity } =
  *  `ctx` carries the previous card (for tries), the time and the model name. */
 export function decide(report, fetched, reply, ctx = {}) {
   const d = decideNow(report, fetched, reply, ctx), p = ctx.prev || {};
+  // the one retry of a no-text card is recorded on whatever card it produces, so it is not retried again
+  if (d.card && p.status === "no-text") d.card = { ...d.card, retried: true };
   // a card read again: its old audit moves into audit_history (last 5) and the new card has no current audit, so it is audited afresh
   const hist = [...(Array.isArray(p.audit_history) ? p.audit_history : []), ...(p.audit ? [p.audit] : [])].slice(-5);
   if (d.card && hist.length) d.card = { ...d.card, audit_history: hist };
@@ -129,7 +179,7 @@ const tallyZero = () => ({ read: 0, "no-text": 0, unread: 0, requeued: 0, stoppe
 
 /** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
  *  just before the write and the wave's cards merged into it, so another run's cards survive; a shard that cannot be read is never written. */
-export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+export async function run({ max = 10, order = "newest", only = false, concurrency = 4, dir = CARDS_DIR, stateFile = dir === CARDS_DIR ? READ_STATE_FILE : join(dir, "read-state.json"), library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
   call = withTimeout(call, timeoutMs);
   const { reports } = library || loadLibrary();
   const bad = new Set();
@@ -138,19 +188,25 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
   badList.forEach((b) => bad.add(b));
   const isPaused = paused(cards, cfg);
   if (isPaused) log(PAUSE_NOTICE);                      // while paused only the cards an audit found wrong are read again
-  const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1)) && (!isPaused || auditFailed(cards.get(r.sha1)))), cards, { order, max });
+  const rs = loadReadState(stateFile);
+  if (rs.state === "bad") log("library-read: read-state.json cannot be read; failure counts are not kept this run");
+  const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1)) && (!isPaused || auditFailed(cards.get(r.sha1)))), cards, { order, max, only, failures: rs.failures });
   const tally = tallyZero();
-  let failedCalls = 0, outage = 0;
+  let failedCalls = 0, outage = 0, answered = 0, none = 0;
+  const pendingNoText = [];                                   // written at the end, only when the run was not a systemic no-text
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {
     const wave = queue.slice(i, i + concurrency);
     const results = await Promise.all(wave.map((r) => readOne(r, cards.get(r.sha1), { fetch, call, model }).catch((e) => {
       log(`${r.sha1.slice(0, 8)} crashed ${String((e && e.name) || "Error").slice(0, 40)} ${String((e && e.code) || "").slice(0, 40)}`.trim());
-      return { card: null, retry: true, why: "error" };
+      return { card: null, retry: true, why: "error", crashed: true };
     })));
-    const fresh = [];
+    const fresh = [], failed = [];
     results.forEach((d, j) => {
+      if (!d.card && (d.why === "unreachable" || d.why === "error")) failed.push(wave[j].sha1);
       const id = wave[j].sha1.slice(0, 8);
-      if (d.card) { fresh.push(d.card); log(`${id} ${d.card.status}${d.card.reason ? " " + d.card.reason : ""}`); }
+      if (d.why !== "unreachable" && !d.crashed) answered++;          // ORKL answered for this report (text or none)
+      if (d.card && d.card.status === "no-text") { none++; pendingNoText.push(d.card); log(`${id} no-text${d.card.reason ? " " + d.card.reason : ""} (held to the end of the run)`); }
+      else if (d.card) { fresh.push(d.card); log(`${id} ${d.card.status}${d.card.reason ? " " + d.card.reason : ""}`); }
       else { tally.requeued++; log(`${id} not read (${d.why || "retry"}), stays queued`); }
       if (d.why === "limit") tally.stopped = "usage limit";
       failedCalls = d.why === "error" ? failedCalls + 1 : d.why === "unreachable" ? failedCalls : 0;
@@ -159,8 +215,17 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
     const written = saveCards(dir, fresh, bad);
     for (const c of written) { tally[c.status]++; cards.set(c.sha1, c); }
     tally.requeued += fresh.length - written.length;
+    if (rs.state !== "bad") saveReadState(stateFile, { failed, cleared: written.map((c) => c.sha1) });
     if (!tally.stopped && outage >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
     if (!tally.stopped && failedCalls >= STOP_AFTER_ERRORS) tally.stopped = `${failedCalls} failed model calls in a row`;
+    if (answered >= SYSTEMIC_MIN && none >= SYSTEMIC_SHARE * answered) tally.stopped = "ORKL text missing";
+  }
+  if (tally.stopped === "ORKL text missing") { tally.requeued += pendingNoText.length; log(`library-read: ${none} of ${answered} answered reports had no text: ORKL's text looks missing, no no-text card written, the records stay queued`); }
+  else if (pendingNoText.length) {
+    const written = saveCards(dir, pendingNoText, bad);
+    for (const c of written) { tally[c.status]++; cards.set(c.sha1, c); }
+    tally.requeued += pendingNoText.length - written.length;
+    if (rs.state !== "bad") saveReadState(stateFile, { failed: [], cleared: written.map((c) => c.sha1) });
   }
   tally.unreadableShards = [...bad].sort();
   if (bad.size) log(`library-read: ${bad.size} shard(s) unreadable, left untouched: ${tally.unreadableShards.join(", ")}`);
@@ -168,16 +233,16 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
   return tally;
 }
 
-export function statusLine(reports, cards) {
+export function statusLine(reports, cards, failures = {}, now = Date.now()) {
   const n = { read: 0, "no-text": 0, unread: 0 };
   for (const r of reports) { const c = cards.get(r.sha1); if (c && n[c.status] != null) n[c.status]++; }
-  const queued = readQueue(reports, cards, { max: Infinity }).length;
-  return `reports ${reports.length}, read ${n.read}, no-text ${n["no-text"]}, unread ${n.unread}, queued ${queued}, share read ${reports.length ? (100 * n.read / reports.length).toFixed(1) : "0.0"}%`;
+  const queued = readQueue(reports, cards, { max: Infinity, failures, now }).length, parked = parkedRecords(failures, now);
+  return `reports ${reports.length}, read ${n.read}, no-text ${n["no-text"]}, unread ${n.unread}, queued ${queued}, share read ${reports.length ? (100 * n.read / reports.length).toFixed(1) : "0.0"}%, parked after ${FAIL_PARK} failures ${parked.length}${parked.length ? ` (${parked.slice(0, 10).map((s) => s.slice(0, 8)).join(", ")})` : ""}`;
 }
 
 async function main() {
   const cmd = process.argv[2];
-  if (cmd === "status") { console.log(statusLine(loadLibrary().reports, loadCards())); return; }
+  if (cmd === "status") { console.log(statusLine(loadLibrary().reports, loadCards(), loadReadState().failures)); return; }
   if (cmd !== "run") { console.error("usage: library-read.mjs run [--max N] | status"); process.exit(1); }
   const mi = process.argv.indexOf("--max");
   await run({ max: mi >= 0 ? Number(process.argv[mi + 1]) || 10 : 10 });

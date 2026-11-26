@@ -207,3 +207,10 @@ test("storyLinks and writeLibrarySite: the k flag and the shards hold published 
   assert.deepEqual(files(join(out, "library", "cards")), ["aa.json"]); assert.equal(r.counts.cards_read, 1);
   rmSync(out, { recursive: true });
 });
+
+// B-I3: a story citing a card found wrong is taken down until a rewrite passes; one with new reports says so, and only that
+test("siteStory: stale_reason card-wrong is not published; new-report is flagged stale", () => {
+  assert.equal(siteStory({ live: { ...S, status: "stale", stale_reason: "card-wrong" } }, R), null);
+  assert.equal(siteStory({ live: { ...S, status: "stale", stale_reason: "new-report" } }, R).stale, true);
+  assert.ok(!("stale_reason" in siteStory({ live: { ...S, status: "stale", stale_reason: "new-report" } }, R)));
+});

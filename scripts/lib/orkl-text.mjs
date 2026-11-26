@@ -20,24 +20,27 @@ export function prepText(raw) {
 const answered = (e) => e && /^http_4\d\d$/.test(e.code) && !/^http_(408|425|429)$/.test(e.code);
 
 /** The report's text: the archive text file first (report.txt_url, only when archiveUrl() accepts it), then the API entry's plain_text.
- *  Any 4xx from one source falls through to the other. { error: "none" } only when every available source answered without usable
- *  text; { error: "unreachable" } when a source failed (network, timeout, circuit open, 5xx, throttle) and none produced text. */
+ *  Any 4xx from one source falls through to the other, and so does text shorter than TEXT_MIN (an empty or error page is not an answer).
+ *  { error: "unreachable" } when a source failed (network, timeout, circuit open, 5xx, throttle) and none produced usable text; when every
+ *  available source answered, the longest short text they gave (the reader records it as no-text, too short), else { error: "none" }. */
 export async function fetchText(report, { getter = get } = {}) {
   const r = report || {};
-  let failed = false;
+  let failed = false, short = "";
+  const take = (t) => { const p = prepText(t); if (p.text.trim().length >= TEXT_MIN) return p; if (p.text.trim().length > short.trim().length) short = p.text; return null; };
   const u = archiveUrl(r.txt_url);
   if (u) {
     try {
       const t = await getter(u, { as: "text", timeoutMs: 30000, retries: 2, delayMs: 2000 });
-      if (typeof t === "string" && t.trim()) return prepText(t);
+      if (typeof t === "string" && t.trim()) { const p = take(t); if (p) return p; }
     } catch (e) { if (!answered(e)) failed = true; }
   }
   if (r.id) {
     try {
       const body = await getter(`${API}/library/entry/${encodeURIComponent(r.id)}`, { timeoutMs: 30000, retries: 2, delayMs: 2000, key: "orkl.eu" });
       const d = body && typeof body === "object" ? (body.data && typeof body.data === "object" ? body.data : body) : null;
-      if (d && typeof d.plain_text === "string" && d.plain_text.trim()) return prepText(d.plain_text);
+      if (d && typeof d.plain_text === "string" && d.plain_text.trim()) { const p = take(d.plain_text); if (p) return p; }
     } catch (e) { if (!answered(e)) failed = true; }
   }
-  return { error: failed ? "unreachable" : "none" };
+  if (failed) return { error: "unreachable" };
+  return short.trim() ? { text: short, partial: false } : { error: "none" };
 }

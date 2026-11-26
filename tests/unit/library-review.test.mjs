@@ -504,3 +504,38 @@ test("markCardWrong: a card that already failed an audit is retired instead of q
   assert.equal(p.length, 1); assert.equal(p[0].id, "library-retired"); assert.match(p[0].text, /1/);
   assert.match(statusLine(new Map(), new Map([[h("b"), twice]]), DEFAULTS), /retired after a failed audit 1/);
 });
+
+// B-I1: the queues never fill empty slots from outside the gates' order, and before the pilot latch only pilot stories are reviewed
+test("readQueue and writeQueue: with only:true the queue is restricted to the given order", () => {
+  const reports = [{ sha1: h("a"), created: "2024-01-01" }, { sha1: h("b"), created: "2024-01-02" }];
+  const read = new Map([[h("a"), card("a")]]);                                   // a is read: it needs nothing
+  assert.deepEqual(readQueue(reports, read, { order: [h("a")], only: true }), []);
+  assert.deepEqual(readQueue(reports, read, { order: [h("a")] }).map((r) => r.sha1), [h("b")], "without only, other records fill the slots");
+  const pilotS = { key: "a-pilot", kind: "actor", name: "P", actor: { aliases: [], tools: [] }, sha1s: [h("a")] }, other = { key: "a-other", kind: "actor", name: "O", actor: { aliases: [], tools: [] }, sha1s: [] };
+  const stories = new Map([["a-pilot", { live: { status: "published", based_on: basedOn(pilotS, read) }, next: null }]]);
+  assert.deepEqual(writeQueue([pilotS, other], stories, read, { order: ["a-pilot"], only: true }), []);
+  assert.deepEqual(writeQueue([pilotS, other], stories, read, { order: ["a-pilot"] }).map((s) => s.key), ["a-other"]);
+});
+test("run: with keys given, a draft outside them is not reviewed", async () => {
+  const dir = mk(); let calls = 0;
+  try {
+    setup(dir, { cards: loose() });
+    const t = await run({ ...deps(dir, async () => { calls++; return { ok: true, json: { verdict: "pass", changes: [] }, limit: false, error: false }; }), keys: ["a-pilot-only"], max: 5 });
+    assert.equal(calls, 0); assert.equal(t.published, 0); assert.equal(files(dir).next.status, "draft");
+    await run({ ...deps(dir, async () => { calls++; return { ok: true, json: { verdict: "pass", changes: [] }, limit: false, error: false }; }), keys: ["a-7"], max: 5 });
+    assert.equal(calls, 1); assert.equal(files(dir).live.status, "published");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// B-I3: staleStoriesCiting marks the live story stale with reason card-wrong, also over a new-report stale
+import { staleStoriesCiting } from "../../scripts/library-review.mjs";
+test("staleStoriesCiting: card-wrong is recorded and wins over new-report", () => {
+  const dir = mk();
+  try {
+    mkdirSync(join(dir, "stories"), { recursive: true });
+    writeFileSync(join(dir, "stories", "a-7.json"), JSON.stringify({ live: story({ status: "published", reviewed_at: NOW }), next: null }));
+    writeFileSync(join(dir, "stories", "a-8.json"), JSON.stringify({ live: story({ key: "a-8", status: "stale", stale_reason: "new-report", reviewed_at: NOW }), next: null }));
+    assert.deepEqual(staleStoriesCiting(join(dir, "stories"), [h("a")]).sort(), ["a-7", "a-8"]);
+    for (const k of ["a-7", "a-8"]) { const f = JSON.parse(readFileSync(join(dir, "stories", `${k}.json`), "utf8")); assert.equal(f.live.status, "stale"); assert.equal(f.live.stale_reason, "card-wrong"); }
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});

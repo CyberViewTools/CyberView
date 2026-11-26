@@ -322,7 +322,7 @@
     if (s.in_short) w.appendChild(el("p", "inshort", s.in_short));
     var d = fmtDate(s.reviewed_at);
     w.appendChild(el("p", "byline", "Written by " + AI_BY + " · from " + plural(s.src.length, "report") + (d ? " · reviewed " + d : "")));
-    if (s.stale) w.appendChild(el("p", "staleline", "New reports have arrived since this was reviewed. An updated version is being checked."));
+    if (s.stale) w.appendChild(el("p", "staleline", "New reports have arrived since this was reviewed."));
     s.sections.forEach(function (sec) {
       w.appendChild(el("h3", null, SECHEAD[sec.h]));
       var p = el("p", "prose");

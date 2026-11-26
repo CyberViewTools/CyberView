@@ -261,6 +261,8 @@ const yearOf = (r) => { const m = String(r.file_date || r.created || "").match(/
 export function siteStory(file, reports, warn = () => {}) {
   const live = file && file.live;
   if (!isObj(live) || !live.reviewed_at || !["published", "stale"].includes(live.status)) return null;
+  // a story citing a card found wrong (or withdrawn) is not shown until a rewrite passes review
+  if (live.status === "stale" && live.stale_reason === "card-wrong") return null;
   const key = txt(live.key, 70), byHash = reportMap(reports), cited = [], seen = new Set(), sections = [];
   if (!SKEY.test(key)) return null;
   if (live.by !== STORY_BY) { warn(`orkl story ${key}: the byline is not "${STORY_BY}", so the story is not published`); return null; }

@@ -121,7 +121,8 @@ test("pilotLoose: waits for the newest 200 to be read, then picks the loose subj
 
 test("pilotComplete: every report resolved, every read card audited by the auditor, every pilot subject published or parked", () => {
   const p = { newest: [hx(1), hx(2), hx(3)], extra: [], actors: [{ key: "a-1" }], loose: [{ key: "s-1" }] };
-  const cards = new Map([[hx(1), audited(card(hx(1)))], [hx(2), { sha1: hx(2), status: "no-text" }], [hx(3), { sha1: hx(3), status: "unread", tries: 2 }]]);
+  // two of the three reports read (the pilot needs at least half read, B-I2)
+  const cards = new Map([[hx(1), audited(card(hx(1)))], [hx(2), audited(card(hx(2)))], [hx(3), { sha1: hx(3), status: "unread", tries: 2 }]]);
   const live = (s) => ({ live: { status: s }, next: null });
   const stories = new Map([["a-1", live("published")], ["s-1", { live: null, next: { status: "parked" } }]]);
   assert.equal(pilotComplete(p, cards, stories).done, true);
@@ -462,4 +463,51 @@ test("routines.json: switching library on is one edit (active + active_since): a
   const iv = lib.cron.split(" ")[1] === "*" ? 1 : 24; assert.ok(lib.max_age_hours >= iv * 1.15);
   assert.match(lib.does, /"active": true/); assert.match(lib.does, /active_since/);
   assert.match(jobs, /"active": true/);
+});
+
+// B-I1: the desk passes only:true and, before the latch, the pilot's story keys to the review stage
+test("deskState and runStages: before the latch the review stage gets the pilot keys only; drafts outside it are not counted", async () => {
+  const w = withActors(world());
+  const pilot = selectPilot(w.reports, w.actors, PCFG, AT);
+  const pk = pilotKeys(pilot), outside = "a-zz-not-in-pilot";
+  const draft = { live: null, next: { status: "draft" } };
+  const stories = new Map([[pk[0], draft], [outside, draft]]);
+  const { orders } = deskState({ reports: w.reports, actors: w.actors, cards: new Map(), stories, pilot, cfg: CFG });
+  assert.deepEqual([...orders.review].sort(), [...pk].sort());
+  const seen = [];
+  const deps = { review: async (o) => { seen.push(o.order); return { published: 1 }; } };
+  await runStages({ plan: { read: 0, write: 0, review: 2, audit: 0, mode: "pilot" }, orders: { ...orders }, deps, now: () => 0, deadline: 1e9, chunk: { review: 1 }, log: () => {} });
+  assert.ok(seen.length && seen.every((o) => Array.isArray(o) && !o.includes(outside)));
+  const done = deskState({ reports: w.reports, actors: w.actors, cards: new Map(), stories, pilot: { ...pilot, completed_at: AT }, cfg: CFG });
+  assert.equal(done.orders.review, null, "after the latch every draft may be reviewed");
+});
+test("realDeps: the reader and writer are always called with only:true", async () => {
+  const src = readFileSync(join(ROOT, "scripts", "library-desk.mjs"), "utf8");
+  const block = src.slice(src.indexOf("function realDeps"), src.indexOf("function realDeps") + 900);
+  assert.match(block, /readRun\(\{[^}]*only: true/); assert.match(block, /writeRun\(\{[^}]*only: true/); assert.match(block, /reviewRun\(\{[^}]*keys: order/);
+});
+
+// B-I2: the pilot cannot latch with (almost) nothing read, or with a top-actor story that cites no report
+test("pilotComplete: at least half the pilot reports read, and every published top-actor story cites a card", () => {
+  const p = { newest: [hx(1), hx(2), hx(3), hx(4)], extra: [], actors: [{ key: "a-1", group: "top" }, { key: "a-2", group: "thin" }], loose: [] };
+  const nt = (s) => ({ sha1: s, status: "no-text" });
+  const cite = (c) => ({ live: { status: "published", sections: [{ h: "who", sentences: [{ t: "x", cites: c }] }] }, next: null });
+  const cards = new Map([[hx(1), audited(card(hx(1)))], [hx(2), audited(card(hx(2)))], [hx(3), nt(hx(3))], [hx(4), nt(hx(4))]]);
+  const stories = new Map([["a-1", cite([hx(1)])], ["a-2", cite(["catalogue"])]]);
+  assert.equal(pilotComplete(p, cards, stories).done, true, "2 of 4 read; the thin actor may be catalogue-only");
+  const few = pilotComplete(p, new Map([...cards, [hx(2), nt(hx(2))]]), stories);
+  assert.equal(few.done, false); assert.ok(few.why.some((w) => /half/.test(w)), few.why.join("; "));
+  const bare = pilotComplete(p, cards, new Map([["a-1", cite(["catalogue"])], ["a-2", cite(["catalogue"])]]));
+  assert.equal(bare.done, false); assert.ok(bare.why.some((w) => /cites no report/.test(w)), bare.why.join("; "));
+  assert.match(describePilot({ live: few }), /half/);
+});
+
+// B-I10: a parked record counts as resolved-unread for the pilot and is named
+test("pilotComplete: a parked record is resolved (unread) and named", () => {
+  const p = { newest: [hx(1), hx(2), hx(3)], extra: [], actors: [], loose: [] };
+  const cards = new Map([[hx(1), audited(card(hx(1)))], [hx(2), audited(card(hx(2)))]]);
+  assert.equal(pilotComplete(p, cards, new Map()).done, false);
+  const r = pilotComplete(p, cards, new Map(), null, { parked: new Set([hx(3)]) });
+  assert.equal(r.done, true); assert.deepEqual(r.parked, [hx(3)]);
+  assert.match(describePilot({ live: r }), new RegExp(`parked.*${hx(3).slice(0, 8)}`));
 });

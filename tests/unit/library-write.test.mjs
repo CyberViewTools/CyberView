@@ -194,3 +194,11 @@ test("run: max 0 makes no calls", async () => {
   const dir = mk(); let calls = 0;
   try { await run({ ...deps(dir, async () => { calls++; return bad; }), max: 0 }); assert.equal(calls, 0); } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+// B-I3: the reason a live story is stale is recorded; "card-wrong" wins over "new-report"
+test("placeDraft: a changed card set marks live stale with stale_reason new-report; a card-wrong reason is kept", () => {
+  const f = placeDraft({ live: story({ status: "published", based_on: "old" }), next: null }, story({ based_on: "new" }));
+  assert.equal(f.live.stale_reason, "new-report");
+  const g = placeDraft({ live: story({ status: "stale", stale_reason: "card-wrong", based_on: "old" }), next: null }, story({ based_on: "new" }));
+  assert.equal(g.live.status, "stale"); assert.equal(g.live.stale_reason, "card-wrong");
+});

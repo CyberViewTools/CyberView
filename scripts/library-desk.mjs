@@ -13,7 +13,7 @@ import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, writeJson, readStatus, nowIso } from "./lib/store.mjs";
 import { DIR, loadLibrary } from "./orkl.mjs";
-import { loadCards, readQueue, run as readRun, statusLine as readStatusLine } from "./library-read.mjs";
+import { loadCards, readQueue, loadReadState, parkedRecords, READ_STATE_FILE, run as readRun, statusLine as readStatusLine } from "./library-read.mjs";
 import { loadStories, writeQueue, run as writeRun, statusLine as writeStatusLine } from "./library-write.mjs";
 import { reviewQueue, auditPick, run as reviewRun, runAudit, statusLine as reviewStatusLine } from "./library-review.mjs";
 import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAudit, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
@@ -112,18 +112,30 @@ export function pilotLoose(pilot, reports, actors, cards, want) {
 
 /** Pure: is the pilot complete NOW (the live predicate; the mode itself uses the latch, `completed_at` in pilot.json), and if not what is
  *  missing. Every report has a card that is read, no-text or unread with tries spent; every read pilot card has a current auditor verdict;
- *  every pilot subject has a published live story or a parked next. A pilot subject key that no longer resolves to a subject
+ *  every pilot subject has a published live story or a parked next; at least half the pilot reports are read; every published top-actor
+ *  pilot story cites at least one card. A pilot subject key that no longer resolves to a subject
  *  (`subjectKeys` given) cannot be written, so it does not block: it is counted as finished-unresolved and named. */
-export function pilotComplete(pilot, cards, stories, subjectKeys = null) {
+export function pilotComplete(pilot, cards, stories, subjectKeys = null, { parked: parkedSet = new Set() } = {}) {
   const why = [], shas = pilotSha1s(pilot), keys = pilotKeys(pilot);
-  const unread = shas.filter((s) => !resolved(cards.get(s))).length;
+  // a record the reader parked after repeated failures counts as resolved (unread), and is named
+  const parked = shas.filter((s) => !resolved(cards.get(s)) && parkedSet.has(s));
+  const unread = shas.filter((s) => !resolved(cards.get(s)) && !parkedSet.has(s)).length;
   if (unread) why.push(`${unread} pilot report(s) not read yet`);
   const unaudited = shas.filter((s) => { const c = cards.get(s); return c && c.status === "read" && !(c.audit && c.audit.by === "auditor" && c.audit.ok === true); }).length;
   if (unaudited) why.push(`${unaudited} read pilot card(s) without the auditor's verdict`);
   const unresolved = subjectKeys ? keys.filter((k) => !subjectKeys.has(k)) : [];
   const unfinished = keys.filter((k) => !unresolved.includes(k) && !((f) => f && ((f.live && f.live.status === "published") || (f.next && f.next.status === "parked")))(stories.get(k))).length;
   if (unfinished) why.push(`${unfinished} pilot subject(s) without a published or parked story`);
-  return { done: !why.length, why, counts: { unread, unaudited, unfinished, unresolved: unresolved.length }, unresolved };
+  // the pilot measures reading: it cannot latch with most reports unread (no-text, retired or parked), and a top actor's published story
+  // must rest on at least one card, not on the catalogue alone
+  const readN = shas.filter((s) => { const c = cards.get(s); return c && c.status === "read" && c.withdrawn !== true; }).length;
+  if (shas.length && readN * 2 < shas.length) why.push(`only ${readN} of ${shas.length} pilot reports read: at least half must be read before the pilot can complete`);
+  const bare = ((pilot && pilot.actors) || []).filter((a) => a && a.group === "top").map((a) => a.key).filter((k) => {
+    const f = stories.get(k), l = f && f.live;
+    return l && l.status === "published" && !(l.sections || []).some((sec) => (sec.sentences || []).some((x) => (x.cites || []).some((c) => /^[0-9a-f]{40}$/.test(c))));
+  });
+  if (bare.length) why.push(`${bare.length} top-actor pilot stor${bare.length === 1 ? "y" : "ies"} cites no report (${bare.join(", ")})`);
+  return { done: !why.length, why, counts: { unread, unaudited, unfinished, unresolved: unresolved.length, read: readN, bare: bare.length, parked: parked.length }, unresolved, parked };
 }
 /** Pure: the lines `status` and `pilot-report` print about the pilot: the mode, the latch time and, while the live predicate is false, why. */
 export function describePilot({ latched = "", live, mode = "" }) {
@@ -131,6 +143,7 @@ export function describePilot({ latched = "", live, mode = "" }) {
   if (live && !live.done) { out.push(`pilot incomplete now: ${live.why.join("; ")}`); if (live.counts) out.push(`  counts: unread reports ${live.counts.unread || 0}, unaudited cards ${live.counts.unaudited || 0}, unfinished subjects ${live.counts.unfinished || 0}, unresolved keys ${live.counts.unresolved || 0}`); }
   else if (live && !latched) out.push("the pilot predicate holds now: the next run latches it");
   if (live && live.unresolved && live.unresolved.length) out.push(`unresolved pilot subject key(s): ${live.unresolved.join(", ")} (no longer a subject; counted as finished)`);
+  if (live && live.parked && live.parked.length) out.push(`parked pilot report(s) after repeated failures (counted as resolved, unread): ${live.parked.map((s) => String(s).slice(0, 8)).join(", ")}`);
   return out.join("\n");
 }
 /** Is the Library switched off with nothing stored? Then nothing needs the whole library loaded (the pipeline check, efficiency). */
@@ -174,11 +187,11 @@ export function backfillOrder(reports, actors) {
 
 /* ---------------- the desk's picture of the Library ---------------- */
 /** Pure: counts for plan() and the reader's and writer's orders, from stored state. */
-export function deskState({ reports, actors, cards, stories, pilot, cfg }) {
+export function deskState({ reports, actors, cards, stories, pilot, cfg, failures = {}, now = Date.now() }) {
   const ix = actorIndex(actors), c = { ...DESK_DEFAULTS, ...(cfg || {}) };
   const subjects = [...actorSubjects(actors, reports, cards), ...looseSubjects(reports, cards, ix)], subjectKeys = new Set(subjects.map((s) => s.key));
-  const live = pilotComplete(pilot, cards, stories, subjectKeys), latched = String(pilot.completed_at || ""), pilotDone = !!latched, isPaused = paused(cards, c);
-  const todo = readQueue(reports, cards, {}), pset = new Set(pilotSha1s(pilot)), isNew = (r) => stampOf(r) > String(pilot.newest_at || "");
+  const live = pilotComplete(pilot, cards, stories, subjectKeys, { parked: new Set(parkedRecords(failures, now)) }), latched = String(pilot.completed_at || ""), pilotDone = !!latched, isPaused = paused(cards, c);
+  const todo = readQueue(reports, cards, { failures, now }), pset = new Set(pilotSha1s(pilot)), isNew = (r) => stampOf(r) > String(pilot.newest_at || "");
   // a new record: a report created after the pilot's newest, or a card an audit sent back for a re-read
   const inPilot = todo.filter((r) => pset.has(r.sha1)), fresh = todo.filter((r) => !pset.has(r.sha1) && (isNew(r) || auditFailed(cards.get(r.sha1)))), old = todo.filter((r) => !pset.has(r.sha1) && !isNew(r) && !auditFailed(cards.get(r.sha1)));
   const reportBy = new Map(reports.map((r) => [r.sha1, r]));
@@ -194,9 +207,10 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg }) {
   else readOrder = fresh.map((r) => r.sha1);
   const state = { pilotDone, paused: isPaused, failedCards: todo.filter((r) => auditFailed(cards.get(r.sha1))).length,
     pilot: { read: inPilot.length, write: pilotQ.length }, newRecords: fresh.length, backlog: old.length,
-    writeNew: steadyQ.length, writeBacklog: wq.length - steadyQ.length, drafts: reviewQueue(stories).filter((k) => subjectKeys.has(k)).length, auditable: auditPick(cards, pct).length };
+    writeNew: steadyQ.length, writeBacklog: wq.length - steadyQ.length, drafts: reviewQueue(stories).filter((k) => subjectKeys.has(k) && (pilotDone || pk.has(k))).length, auditable: auditPick(cards, pct).length };
   const writeOrder = !pilotDone ? pilotQ.map((s) => s.key) : steadyQ.map((s) => s.key);
-  return { state, orders: { read: readOrder, write: writeOrder }, subjectKeys, pilotStatus: { ...live, latched } };
+  // review: before the latch only the pilot's stories are reviewed (null = every draft)
+  return { state, orders: { read: readOrder, write: writeOrder, review: pilotDone ? null : [...pk] }, subjectKeys, pilotStatus: { ...live, latched } };
 }
 
 /* ---------------- the stage loop ---------------- */
@@ -224,6 +238,7 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
     if (!quota) continue;
     const reserve = reserveMs(ROLES[k]), t0 = now(), share = (deadline - t0) / left--;
     let order = k === "read" ? [...(orders.read || [])] : k === "write" ? [...(orders.write || [])] : null;
+    const allow = k === "review" && Array.isArray(orders.review) ? [...orders.review] : null;   // review: an allow-list, never used up
     while (r.done < quota) {
       const t = now();
       if (deadline - t < reserve) { r.skipped = "no time left"; break; }
@@ -231,7 +246,7 @@ export async function runStages({ plan: p, orders = {}, deps, now = Date.now, de
       if (canStart && !canStart()) { out.halt = WINDOW_STOP; log(`library-desk: ${WINDOW_STOP}; the run ends`); break stages; }
       const n = Math.min(num(chunk[k]) || 1, quota - r.done), timeoutMs = Math.max(1000, Math.min(roleMs(ROLES[k]), deadline - t - 20000));
       let tally;
-      try { tally = (await deps[k]({ max: n, order: order ? [...order] : undefined, pilot: isPilot, timeoutMs })) || {}; }
+      try { tally = (await deps[k]({ max: n, order: order ? [...order] : allow ? [...allow] : undefined, pilot: isPilot, timeoutMs })) || {}; }
       catch (e) { r.error = String((e && e.name) || "Error").slice(0, 40); log(`library-desk: ${k} failed (${r.error})`); break; }
       r.done += n; if (order) order = order.slice(n);
       if (tally.stopped) {
@@ -312,10 +327,11 @@ export async function libraryHealth() {
 /* ---------------- the run ---------------- */
 function realDeps(library) {
   return {
-    review: ({ max, timeoutMs }) => reviewRun({ max, library, concurrency: CHUNK.review, timeoutMs }),
+    // the queues are restricted to the desk's orders (only: true), so a gate is never filled from outside it; review gets the allowed keys
+    review: ({ max, order, timeoutMs }) => reviewRun({ max, keys: order, library, concurrency: CHUNK.review, timeoutMs }),
     audit: ({ max, pilot, timeoutMs }) => runAudit({ max, pilot, library, concurrency: CHUNK.audit, timeoutMs }),
-    write: ({ max, order, timeoutMs }) => writeRun({ max, order, library, concurrency: CHUNK.write, timeoutMs }),
-    read: ({ max, order, timeoutMs }) => readRun({ max, order, library, concurrency: CHUNK.read, timeoutMs }),
+    write: ({ max, order, timeoutMs }) => writeRun({ max, order, only: true, library, concurrency: CHUNK.write, timeoutMs }),
+    read: ({ max, order, timeoutMs }) => readRun({ max, order, only: true, library, concurrency: CHUNK.read, timeoutMs }),
   };
 }
 const summary = (r) => ORDER.map((k) => `${k} ${r[k] ? r[k].done : 0}${r[k] && (r[k].stopped || r[k].error) ? ` (${r[k].stopped || r[k].error})` : ""}`).join(", ");
@@ -323,7 +339,7 @@ const summary = (r) => ORDER.map((k) => `${k} ${r[k] ? r[k].done : 0}${r[k] && (
 /** One desk run. Stamps last_library_at and library_note in status.json when it ends, whatever it did (also when the deadline ended it).
  *  deadlineMs: the absolute time (ms) by which every model call must have ended; run-job.mjs passes its own cut-off minus 30 s.
  *  can: the usage-window answer for the plan (tests); canStart: asked before every wave (default: the usage ledger and canBuild, re-read each time). */
-export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE } = {}) {
+export async function run({ cfg = deskConfig(), library = null, deps = null, now = Date.now, deadlineMs = null, can = null, canStart = null, log = console.log, statusFile = join(DATA, "status.json"), pilotFile = PILOT_FILE, readStateFile = READ_STATE_FILE } = {}) {
   const stamp = (note) => { try { const st = readStatus(); st.last_library_at = nowIso(); st.library_note = String(note).slice(0, 300); writeJson(statusFile, st); } catch (e) { log(`library-desk: status not written (${String((e && e.name) || "Error")})`); } return note; };
   const end = (note, p = null, results = {}) => { stamp(note); log(`CyberView library: ${note}`); return { note, plan: p, results }; };
   if (cfg.enabled === false) return end("off (library.enabled is false in config/pipeline.json)");
@@ -336,10 +352,10 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
   if (pf.state === "none") { savePilot(pilotFile, selectPilot(lb.reports, lb.actors, cfg.pilot, nowIso())); pf = loadPilot(pilotFile); }
   const loose = pilotLoose(pf.pilot, lb.reports, lb.actors, cards, cfg.pilot.loose);
   if (loose.length) { addLoose(pilotFile, loose); pf = loadPilot(pilotFile); }
-  const badS = [], stories = loadStories(undefined, badS);
-  let ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg });
+  const badS = [], stories = loadStories(undefined, badS), failures = loadReadState(readStateFile).failures;
+  let ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg, failures });
   if (!pf.pilot.completed_at && ds.pilotStatus.done && latchPilot(pilotFile, nowIso())) {      // the first time the predicate holds: latched for good
-    pf = loadPilot(pilotFile); ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg });
+    pf = loadPilot(pilotFile); ds = deskState({ reports: lb.reports, actors: lb.actors, cards, stories, pilot: pf.pilot, cfg, failures });
     log(`library-desk: the pilot is complete (latched ${pf.pilot.completed_at})`);
   }
   const canNow = () => { try { const t = now(); return canBuild(t, budgetConfig(), readUsage(t - 7 * 864e5, t), readBuild(BUILD_LEDGER(), t)).ok; } catch { return false; } };
@@ -356,19 +372,19 @@ export async function run({ cfg = deskConfig(), library = null, deps = null, now
 }
 
 function loadAll() {
-  const lb = loadLibrary(), cards = loadCards(), stories = loadStories(), cfg = deskConfig(), pf = loadPilot();
-  return { lb, cards, stories, cfg, pilot: pf.pilot, pstate: pf.state };
+  const lb = loadLibrary(), cards = loadCards(), stories = loadStories(), cfg = deskConfig(), pf = loadPilot(), failures = loadReadState().failures;
+  return { lb, cards, stories, cfg, pilot: pf.pilot, pstate: pf.state, failures };
 }
 async function main() {
   const cmd = process.argv[2];
   if (cmd === "run") { await run({ deadlineMs: Number(process.env.LIBRARY_DEADLINE_MS) || null }); return; }
   if (cmd === "status") {
     const x = loadAll(), t = Date.now();
-    console.log(readStatusLine(x.lb.reports, x.cards));
+    console.log(readStatusLine(x.lb.reports, x.cards, x.failures));
     console.log(`${writeStatusLine([...actorSubjects(x.lb.actors, x.lb.reports, x.cards), ...looseSubjects(x.lb.reports, x.cards, actorIndex(x.lb.actors))], x.stories, x.cards)}`);
     console.log(reviewStatusLine(x.stories, x.cards, x.cfg));
     if (!x.pilot) { console.log(`pilot: ${x.pstate === "bad" ? "data/orkl/pilot.json cannot be read" : "not chosen yet (the first run chooses it)"}`); return; }
-    const ds = deskState({ reports: x.lb.reports, actors: x.lb.actors, cards: x.cards, stories: x.stories, pilot: x.pilot, cfg: x.cfg });
+    const ds = deskState({ reports: x.lb.reports, actors: x.lb.actors, cards: x.cards, stories: x.stories, pilot: x.pilot, cfg: x.cfg, failures: x.failures });
     let ok = false; try { ok = canBuild(t, budgetConfig(), readUsage(t - 7 * 864e5, t), readBuild(BUILD_LEDGER(), t)).ok; } catch {}
     const p = plan(ds.state, x.cfg, ok);
     console.log(describePilot({ latched: ds.pilotStatus.latched, live: ds.pilotStatus, mode: p.mode }));
@@ -379,7 +395,7 @@ async function main() {
     const x = loadAll(), t = Date.now();
     let usage = []; try { usage = readUsage(t - 30 * 864e5, t); } catch {}
     console.log(pilotReport(x.cards, x.stories, { pilot: x.pilot, usage, cfg: x.cfg }));
-    if (x.pilot) { const ds = deskState({ reports: x.lb.reports, actors: x.lb.actors, cards: x.cards, stories: x.stories, pilot: x.pilot, cfg: x.cfg }); console.log(describePilot({ latched: ds.pilotStatus.latched, live: ds.pilotStatus, mode: ds.state.pilotDone ? (x.cfg.backfill ? "backfill" : "steady") : "pilot" })); }
+    if (x.pilot) { const ds = deskState({ reports: x.lb.reports, actors: x.lb.actors, cards: x.cards, stories: x.stories, pilot: x.pilot, cfg: x.cfg, failures: x.failures }); console.log(describePilot({ latched: ds.pilotStatus.latched, live: ds.pilotStatus, mode: ds.state.pilotDone ? (x.cfg.backfill ? "backfill" : "steady") : "pilot" })); }
     return;
   }
   console.error("usage: library-desk.mjs run | status | pilot-report"); process.exit(1);

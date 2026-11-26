@@ -391,21 +391,14 @@ try {
 try {
   const p = join(DATA, "orkl", "state.json"), d = existsSync(p) ? readJson(p) : null;
   const orkl = await import("./orkl.mjs");
-  // the Library's reviewed stories and read fact cards (values only, never a quote or a draft), written fresh each build;
-  // an unreadable shard or story file is a warning and the rest still builds
-  let lib = { counts: {}, links: {} };
+  // the Library's reviewed stories and read fact cards (values only, never a quote or a draft) are written all-or-nothing, and the
+  // browsable index (metadata and links only, never any report body) is written whatever happens to them; failures are warnings
+  let lib = { counts: {} };
   try {
     const { reports, actors } = orkl.loadLibrary();
-    const badCards = [], badStories = [];
-    const cards = (await import("./library-read.mjs")).loadCards(undefined, badCards);
-    const stories = (await import("./library-write.mjs")).loadStories(undefined, badStories);
-    for (const sh of badCards) warnings.push(`orkl/cards/${sh}.json: not readable, its fact cards are left out`);
-    for (const k of badStories) warnings.push(`orkl/stories/${k}.json: not readable, the story is left out`);
-    lib = orkl.writeLibrarySite({ reports, actors, cards, stories, outDir: OUT, builtAt: built_at, warn: (m) => warnings.push(m) });
-    // the full browsable index for the Library page (metadata and links only, never any report body); a failure
-    // here only leaves the Library page empty, with a warning, never the build
-    if (reports.length) writeFileSync(join(OUT, "orkl-index.json"), JSON.stringify(orkl.libraryIndex(reports, actors, built_at, lib.links)));
-    else if (d) warnings.push("orkl: no stored reports, the Library page is left empty");
+    const { loadCards } = await import("./library-read.mjs"), { loadStories } = await import("./library-write.mjs");
+    lib = orkl.publishLibrary({ reports, actors, loadCards: (bad) => loadCards(undefined, bad), loadStories: (bad) => loadStories(undefined, bad), outDir: OUT, builtAt: built_at, warn: (m) => warnings.push(m) });
+    if (!reports.length && d) warnings.push("orkl: no stored reports, the Library page is left empty");
   } catch (e) { warnings.push(`orkl index: ${String(e.message).slice(0, 80)}`); }
   const sd = d ? orkl.siteData(d, built_at, lib.counts) : null;
   if (sd) writeFileSync(join(OUT, "orkl.json"), JSON.stringify(sd)); else if (d) warnings.push("orkl/state.json: not readable, the ORKL library summary is left out");

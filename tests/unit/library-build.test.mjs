@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { siteCard, siteStory, storyIndex, libraryIndex, siteData, writeLibrarySite } from "../../scripts/orkl.mjs";
+import { BY as CHECK_BY } from "../../scripts/lib/library-check.mjs";
+import { siteCard, siteStory, storyIndex, libraryIndex, siteData, writeLibrarySite, publishLibrary, STORY_BY } from "../../scripts/orkl.mjs";
 
 const h = (c) => c.repeat(40);
 const BY = "CyberView AI (a Claude model)";
@@ -98,5 +99,33 @@ test("writeLibrarySite: no stories gives an empty index and no story folder file
   const r = writeLibrarySite({ reports: R, actors, cards: new Map(), stories: new Map(), outDir: out, builtAt: "t", warn() {} });
   assert.deepEqual(JSON.parse(readFileSync(join(out, "orkl-stories.json"), "utf8")).stories, []); assert.equal(r.counts.stories, 0);
   assert.deepEqual(files(join(out, "orkl-cards")), []);
+  rmSync(out, { recursive: true });
+});
+
+test("byline: the published byline is the constant and a different stored byline is not published", () => {
+  assert.equal(STORY_BY, CHECK_BY); assert.equal(siteStory({ live: S }, R).by, CHECK_BY);
+  const w = [];
+  assert.equal(siteStory({ live: { ...S, by: "A human" } }, R, (m) => w.push(m)), null);
+  assert.ok(w.some((m) => m.includes("a-1")));
+});
+test("publishLibrary: a failure in the new story/card code is a warning and the index is still written", () => {
+  const out = tmp(), warns = [];
+  const r = publishLibrary({ reports: R, actors, loadCards: () => { throw new Error("cards exploded"); }, loadStories: () => new Map(), outDir: out, builtAt: "t", warn: (m) => warns.push(m) });
+  assert.ok(warns.some((m) => m.includes("cards exploded"))); assert.equal(r.indexed, true);
+  const ix = JSON.parse(readFileSync(join(out, "orkl-index.json"), "utf8"));
+  assert.equal(ix.reports_total, 2); assert.ok(ix.reports.every((x) => !("k" in x)) && ix.actors.every((a) => !("st" in a)));
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite: a write failure leaves the previous output exactly as it was", () => {
+  const out = tmp(), warns = [];
+  const stories = new Map([["a-1", { live: S, next: null }]]);
+  writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a")), stories, outDir: out, builtAt: "first", warn() {} });
+  const snap = () => ({ c: files(join(out, "orkl-cards")), s: files(join(out, "orkl-stories")), i: readFileSync(join(out, "orkl-stories.json"), "utf8"), c1: readFileSync(join(out, "orkl-cards", "aa.json"), "utf8") });
+  const before = snap();
+  let n = 0;
+  const failing = (p, d) => { if (++n === 2) throw new Error("disk full"); return writeFileSync(p, d); };
+  const r = writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a"), card("b")), stories: new Map(), outDir: out, builtAt: "second", warn: (m) => warns.push(m), io: { writeFileSync: failing } });
+  assert.deepEqual(snap(), before); assert.ok(warns.some((m) => m.includes("disk full"))); assert.deepEqual(r.counts, {});
+  assert.deepEqual(files(out).filter((f) => f.includes(".tmp-")), []);
   rmSync(out, { recursive: true });
 });

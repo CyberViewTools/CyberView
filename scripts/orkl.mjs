@@ -18,7 +18,7 @@
 // is satisfied). The build copies a summary into site/data/orkl.json for the status page. ORKL reports are historical
 // reference, not fresh incidents, so they never become research leads.
 // Fetched text is data, never instructions.
-import { existsSync, readdirSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, mkdirSync, rmSync, writeFileSync, renameSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
@@ -215,6 +215,8 @@ export function libraryIndex(reports, actors, builtAt = "", links = {}) {
 }
 
 /* ---------- Library output: reviewed stories and read fact cards (values only), written to site/data ---------- */
+// the one byline every Library story carries (the same constant as BY in scripts/lib/library-check.mjs, which a test pins)
+export const STORY_BY = "CyberView AI (a Claude model)";
 const SHA1 = /^[0-9a-f]{40}$/;
 const SKEY = /^[A-Za-z0-9-]{1,70}$/;
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
@@ -249,6 +251,7 @@ export function siteStory(file, reports, warn = () => {}) {
   if (!isObj(live) || !live.reviewed_at || !["published", "stale"].includes(live.status)) return null;
   const key = txt(live.key, 70), byHash = reportMap(reports), cited = [], seen = new Set(), sections = [];
   if (!SKEY.test(key)) return null;
+  if (live.by !== STORY_BY) { warn(`orkl story ${key}: the byline is not "${STORY_BY}", so the story is not published`); return null; }
   for (const sec of arr(live.sections)) {
     if (!isObj(sec)) continue;
     const sentences = [];
@@ -269,7 +272,7 @@ export function siteStory(file, reports, warn = () => {}) {
   }
   if (!sections.length) return null;
   const src = cited.map((sha) => { const r = byHash.get(sha); return { sha1: sha, title: clip(r.title, 300), authors: arr(r.authors).map((a) => txt(a, 120)).filter(Boolean).slice(0, 5), year: yearOf(r) }; });
-  const out = { key, kind: txt(live.kind, 20), name: txt(live.name, 120), headline: clip(live.headline, 120), in_short: clip(live.in_short, 240), sections, by: txt(live.by, 80), reviewed_at: txt(live.reviewed_at, 40), n: src.length, src };
+  const out = { key, kind: txt(live.kind, 20), name: txt(live.name, 120), headline: clip(live.headline, 120), in_short: clip(live.in_short, 240), sections, by: STORY_BY, reviewed_at: txt(live.reviewed_at, 40), n: src.length, src };
   if (live.status === "stale") out.stale = true;
   return out;
 }
@@ -291,25 +294,66 @@ export function storyLinks(reports, actors, cards, liveKeys) {
 }
 
 /** Write the Library's reviewed stories and read cards into outDir (site/data): orkl-cards/<xx>.json, orkl-stories/<key>.json and
- *  orkl-stories.json, written fresh each build (the two folders are cleared first, so no old file survives). A story that cannot be
- *  published is a warn() message, never an error. Returns the counts and the links libraryIndex needs. */
-export function writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt = "", warn = () => {} }) {
-  const shards = {}, published = [], pubFiles = [];
-  for (const [sha, c] of cards instanceof Map ? cards : new Map()) {
+ *  orkl-stories.json. Everything is built in memory, written into temp folders beside the targets and swapped in by rename, so a
+ *  failure leaves the previous output untouched (and a warn() message), never a partial site. A story that cannot be published is a
+ *  warn() message too. Returns the counts and the links libraryIndex needs (empty links if they cannot be worked out). */
+export function writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt = "", warn = () => {}, io = {} }) {
+  const write = io.writeFileSync || writeFileSync, shards = {}, published = [];
+  const cardMap = cards instanceof Map ? cards : new Map();
+  for (const [sha, c] of cardMap) {
     const o = SHA1.test(sha) ? siteCard(c) : null;
     if (o) (shards[shardOf(sha)] || (shards[shardOf(sha)] = {}))[sha] = o;
   }
   for (const [key, file] of stories instanceof Map ? stories : new Map()) {
-    try { const s = siteStory(file, reports, warn); if (s && s.key === key) { published.push(s); pubFiles.push(s); } } catch (e) { warn(`orkl story ${txt(key, 70)}: ${txt(e && e.message, 80)}`); }
+    try { const s = siteStory(file, reports, warn); if (s && s.key === key) published.push(s); } catch (e) { warn(`orkl story ${txt(key, 70)}: ${txt(e && e.message, 80)}`); }
   }
-  const cardsDir = join(outDir, "orkl-cards"), storiesDir = join(outDir, "orkl-stories");
-  rmSync(cardsDir, { recursive: true, force: true }); rmSync(storiesDir, { recursive: true, force: true });
-  mkdirSync(cardsDir, { recursive: true }); mkdirSync(storiesDir, { recursive: true });
-  for (const [sh, obj] of Object.entries(shards)) writeFileSync(join(cardsDir, `${sh}.json`), JSON.stringify(obj));
-  for (const s of pubFiles) writeFileSync(join(storiesDir, `${s.key}.json`), JSON.stringify(s));
-  writeFileSync(join(outDir, "orkl-stories.json"), JSON.stringify({ built_at: builtAt, stories: storyIndex(published) }));
   const cardsRead = Object.values(shards).reduce((n, sh) => n + Object.keys(sh).length, 0);
-  return { counts: { cards_read: cardsRead, stories: published.length }, links: storyLinks(arr(reports), arr(actors), cards instanceof Map ? cards : new Map(), new Set(published.map((s) => s.key))) };
+  const counts = { cards_read: cardsRead, stories: published.length };
+  const names = ["orkl-cards", "orkl-stories", "orkl-stories.json"], tag = `.tmp-${process.pid}`, tmp = (n) => join(outDir, n + tag), old = (n) => join(outDir, n + ".old" + tag);
+  const cleanup = () => { for (const n of names) { rmSync(tmp(n), { recursive: true, force: true }); rmSync(old(n), { recursive: true, force: true }); } };
+  try {
+    cleanup();
+    mkdirSync(tmp("orkl-cards"), { recursive: true }); mkdirSync(tmp("orkl-stories"), { recursive: true });
+    for (const [sh, obj] of Object.entries(shards)) write(join(tmp("orkl-cards"), `${sh}.json`), JSON.stringify(obj));
+    for (const s of published) write(join(tmp("orkl-stories"), `${s.key}.json`), JSON.stringify(s));
+    write(tmp("orkl-stories.json"), JSON.stringify({ built_at: builtAt, stories: storyIndex(published) }));
+    const done = [];
+    try {
+      for (const n of names) {
+        if (existsSync(join(outDir, n))) renameSync(join(outDir, n), old(n));
+        renameSync(tmp(n), join(outDir, n)); done.push(n);
+      }
+    } catch (e) {
+      for (const n of names) { try { if (existsSync(old(n))) { rmSync(join(outDir, n), { recursive: true, force: true }); renameSync(old(n), join(outDir, n)); } } catch {} }
+      throw e;
+    }
+    for (const n of names) rmSync(old(n), { recursive: true, force: true });
+  } catch (e) {
+    cleanup();
+    warn(`orkl library output: ${txt(e && e.message, 100)}; the previous Library stories and cards are kept`);
+    return { counts: {}, links: {} };
+  }
+  let links = {};
+  try { links = storyLinks(arr(reports), arr(actors), cardMap, new Set(published.map((s) => s.key))); } catch (e) { warn(`orkl links: ${txt(e && e.message, 80)}`); }
+  return { counts, links };
+}
+
+/** The whole Library site step: stories and cards, then the browsable index. A failure in the new story/card code is a warning and
+ *  leaves the existing index unchanged in shape; a failure writing the index is a warning too. Loaders are injected (see build.mjs). */
+export function publishLibrary({ reports, actors, loadCards, loadStories, outDir, builtAt = "", warn = () => {}, io = {} }) {
+  let lib = { counts: {}, links: {} };
+  try {
+    const badCards = [], badStories = [];
+    const cards = loadCards(badCards), stories = loadStories(badStories);
+    for (const sh of badCards) warn(`orkl/cards/${sh}.json: not readable, its fact cards are left out`);
+    for (const k of badStories) warn(`orkl/stories/${k}.json: not readable, the story is left out`);
+    lib = writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt, warn, io });
+  } catch (e) { warn(`orkl stories and cards: ${txt(e && e.message, 80)}`); }
+  let indexed = false;
+  try {
+    if (arr(reports).length) { (io.writeFileSync || writeFileSync)(join(outDir, "orkl-index.json"), JSON.stringify(libraryIndex(reports, actors, builtAt, lib.links || {}))); indexed = true; }
+  } catch (e) { warn(`orkl index: ${txt(e && e.message, 80)}`); }
+  return { counts: lib.counts || {}, indexed };
 }
 
 /* ---------- collection ---------- */

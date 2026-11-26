@@ -115,6 +115,8 @@ export function cleanStory(raw) {
   };
   if (raw.reviewed_at) story.reviewed_at = txt(raw.reviewed_at, 40);
   if (raw.reviewer_model) story.reviewer_model = txt(raw.reviewer_model, 60);
+  if (Array.isArray(raw.reasons) && raw.reasons.length) story.reasons = raw.reasons.slice(0, 10).map((x) => txt(x, 40)).filter(Boolean);
+  if (raw.written_run) story.written_run = txt(raw.written_run, 40);
   return story;
 }
 

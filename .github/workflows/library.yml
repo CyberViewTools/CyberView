@@ -7,9 +7,15 @@ name: Library
 # call names one, so the repository variable ANTHROPIC_WORKSPACE_ID (the Console workspace's ID, not a secret) is sent
 # as the anthropic-workspace-id header when it is set (ANTHROPIC_CUSTOM_HEADERS). A runner reaches orkl.eu.
 # Switch it off with "active": false on the library routine in routines.json. Keep the cron equal to routines.json.
+# GitHub's scheduler skipped every slot of this cron for hours after the workflow was added (2026-11-26), so the Library
+# also starts after every site deploy, which runs several times an hour; the "Too soon" step skips a run that comes less
+# than 5 minutes after the last one ended (data/status.json last_library_at; a run works about 15), so it runs about three times an hour either way.
 on:
   schedule:
     - cron: "17,37,57 * * * *"
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -46,17 +52,32 @@ jobs:
         if: env.HAS_KEY == 'true'
         uses: ./.github/actions/data
 
-      - uses: actions/setup-node@v4
+      - name: Too soon after the last run
+        id: gap
         if: env.HAS_KEY == 'true'
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          # a manual run always goes ahead; scheduled and after-deploy runs wait 5 minutes after the last one ended (a run works about 15)
+          node -e '
+            let at = null; try { at = JSON.parse(require("fs").readFileSync("data/status.json", "utf8")).last_library_at; } catch {}
+            const min = at ? (Date.now() - Date.parse(at)) / 60000 : Infinity;
+            const go = process.env.EVENT === "workflow_dispatch" || !(min < 5);
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, "go=" + go + "\n");
+            if (!go) require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, "Skipped: the last Library run ended " + Math.round(min) + " minutes ago (a new one starts 5 minutes after the last ended).\n");
+          '
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_KEY == 'true' && steps.gap.outputs.go == 'true'
         with:
           node-version: "22"
 
       - name: Install Claude Code
-        if: env.HAS_KEY == 'true'
+        if: env.HAS_KEY == 'true' && steps.gap.outputs.go == 'true'
         run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
 
       - name: Run the Library desk
-        if: env.HAS_KEY == 'true'
+        if: env.HAS_KEY == 'true' && steps.gap.outputs.go == 'true'
         env:
           CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
           WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
@@ -70,7 +91,7 @@ jobs:
           if grep -q '^DISPATCH' out.txt; then echo "::error::the Library needs a Claude session (headless unavailable on this runner)"; exit 1; fi
 
       - name: Check what was pushed
-        if: env.HAS_KEY == 'true' && always()
+        if: env.HAS_KEY == 'true' && steps.gap.outputs.go == 'true' && always()
         run: |
           d=.; [ -e data/.git ] && d=data
           git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"

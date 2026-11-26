@@ -11,10 +11,19 @@
   "pin_type": "none",
   "org": "DeepSpeed",
   "actor": "",
-  "attack": ["deserialization of untrusted data", "remote code execution"],
-  "cves": ["CVE-2026-136439"],
-  "products": ["DeepSpeed"],
-  "tags": ["rce"],
+  "attack": [
+    "deserialization of untrusted data",
+    "remote code execution"
+  ],
+  "cves": [
+    "CVE-2026-136439"
+  ],
+  "products": [
+    "DeepSpeed"
+  ],
+  "tags": [
+    "rce"
+  ],
   "severity": 2,
   "status": "official",
   "source_tier": "primary",
@@ -28,17 +37,42 @@
   "summary": "Zero Day Initiative's advisory ZDI-26-1065 describes a deserialization of untrusted data remote code execution flaw in DeepSpeed's _get_zero_stage, scored CVSS 7.8. ZDI says it reported the bug to the vendor on 7 May 2026 and notified its intent to publish it as a 0-day advisory on 19 November. The page says exploitation requires the target to visit a malicious page or open a malicious file.",
   "plain": "ZDI published details of a code-execution flaw in the DeepSpeed software. Exploiting it requires the target to visit a malicious page or open a malicious file, according to ZDI.",
   "exec": "ZDI rates the DeepSpeed flaw CVSS 7.8 and published it as a 0-day advisory after reporting it to the vendor on 7 May 2026.",
-  "action": "General advice: avoid opening untrusted files or pages with DeepSpeed tooling, and watch the DeepSpeed project for a fix.",
+  "action": "ZDI advises that the only salient mitigation is to restrict interaction with the product; the page records no vendor reply.",
   "validation": {
     "state": "single_source",
     "note": "Only ZDI's own advisory was read; the page does not say whether the maintainers responded or patched.",
     "checked_at": "2026-11-26T19:13:39Z"
   },
   "evidence": [
-    {"url": "https://www.zerodayinitiative.com/advisories/ZDI-26-1065/", "quote": "CVSS 7.8 AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H"}
+    {
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-1065/",
+      "quote": "CVSS 7.8 AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H"
+    }
   ],
-  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
-  "surface": {"value": "endpoint", "basis": "inferred"},
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
   "first_seen": "2026-11-26T19:13:39Z",
-  "updated_at": "2026-11-26T19:13:39Z"
+  "updated_at": "2026-11-26T19:41:09Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-26T19:41:10Z",
+    "first_at": "2026-11-26T19:41:10Z",
+    "note": "action advice: replaced unsourced advice with ZDI stated mitigation; CVSS, dates, CVE checked",
+    "flags": [
+      "no-cve-meta"
+    ],
+    "categories": [
+      "unsourced",
+      "action"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T19:41:10Z"
 }

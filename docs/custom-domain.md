@@ -1,6 +1,6 @@
 # Moving CyberView to its own domain (Cloudflare in front of GitHub Pages)
 
-Why (pen test, 2026-11-23): on `xanderhutch.github.io` the site shares one browser origin with every other GitHub Pages
+Why (pen test, 2026-11-23): on `cyberviewtools.github.io` the site shares one browser origin with every other GitHub Pages
 site of the account, so their scripts could read CyberView's browser storage and offline cache. GitHub Pages also cannot
 send security headers, so `frame-ancestors`, `X-Content-Type-Options` and the like are impossible there. Its own domain
 behind Cloudflare fixes both.
@@ -15,7 +15,7 @@ or the guard, the monitor and the feeds would point at an address that does not 
    its nameservers.
 2. DNS: for the apex `cyberview.tools`, add four `A` records to GitHub Pages: `185.199.108.153`, `185.199.109.153`,
    `185.199.110.153`, `185.199.111.153`, and four `AAAA` records: `2606:50c0:8000::153`, `2606:50c0:8001::153`,
-   `2606:50c0:8002::153`, `2606:50c0:8003::153`. For `www`, a `CNAME` to `xanderhutch.github.io`.
+   `2606:50c0:8002::153`, `2606:50c0:8003::153`. For `www`, a `CNAME` to `cyberviewtools.github.io`.
    Leave them **DNS only (grey cloud)** for now, so GitHub can issue its certificate.
 
 ## 2. GitHub
@@ -24,7 +24,7 @@ or the guard, the monitor and the feeds would point at an address that does not 
 2. Settings → Pages: verify the domain for the account (Settings → Pages → Verified domains) so nobody else can claim it.
 3. Settings → Secrets and variables → Actions → Variables: `SITE_URL` = `https://cyberview.tools`.
 4. In the repository: set `"site_url": "https://cyberview.tools"` in `config/site.json` (a pull request).
-   GitHub redirects `xanderhutch.github.io/CyberView/...` to the new domain by itself.
+   GitHub redirects `cyberviewtools.github.io/CyberView/...` to the new domain by itself.
 
 ## 3. Cloudflare proxy and headers
 1. Once Enforce HTTPS is on, switch the DNS records to **Proxied (orange cloud)** and set SSL/TLS mode to **Full (strict)**.

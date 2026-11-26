@@ -4,7 +4,7 @@
 # If the schedules do start working, every workflow will have a recent run and this does nothing.
 # Usage: bash scripts/kick.sh        (needs gh; uses the REST API only)
 set -u
-REPO=xanderhutch/CyberView
+REPO=CyberViewTools/CyberView
 now=$(date -u +%s)
 # workflow, start it when its newest run (any trigger) is older than this many minutes
 specs="collect.yml 40|feeds.yml 110|monitor.yml 70|linkcheck.yml 10080"

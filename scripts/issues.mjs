@@ -11,7 +11,7 @@ import { execFileSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { fence, plain, httpsLinks } from "./lib/untrusted.mjs";
 
-const REPO = "xanderhutch/CyberView";
+const REPO = "CyberViewTools/CyberView";
 const PIPELINE = new Set(["data-quarantine", "site-monitor", "job-failure", "security", "pipeline-alert"]);
 const TRUSTED = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const labelsOf = (i) => ((i && i.labels) || []).map((l) => String((l && l.name) || l).toLowerCase());

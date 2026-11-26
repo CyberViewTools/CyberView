@@ -485,7 +485,7 @@ async def main():
             built = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40, "data_commit": "d" * 40, "counts": {"events_total": 1, "events_bundle": 1, "kev_total": 1}})
             ok("status: live line names the data and code commit", vis and t == "Live: data ddddddd (just now), code aaaaaaa", t)
-            ok("status: live commits link to GitHub", hrefs == ["https://github.com/xanderhutch/CyberView/commit/" + "d" * 40, "https://github.com/xanderhutch/CyberView/commit/" + "a" * 40], hrefs)
+            ok("status: live commits link to GitHub", hrefs == ["https://github.com/CyberViewTools/CyberView/commit/" + "d" * 40, "https://github.com/CyberViewTools/CyberView/commit/" + "a" * 40], hrefs)
             ok("status: live line without script errors", not errs, errs)
             vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40})
             ok("status: an old deploy without data_commit shows code only", vis and "data not recorded" in t and "code aaaaaaa" in t and len(hrefs) == 1, t)
@@ -1503,7 +1503,7 @@ async def main():
             async with pg.context.expect_page() as np:
                 await pg.click("#cmPost")
             gh = await np.value; await gh.wait_for_load_state()
-            ok("post: opens the GitHub form prefilled, nothing sent from the page", "github.com/xanderhutch/CyberView/issues/new" in gh.url and "template=chat.yml" in gh.url and "Seeing%20scans" in gh.url and "event=" + ev0 in gh.url, gh.url[:160])
+            ok("post: opens the GitHub form prefilled, nothing sent from the page", "github.com/CyberViewTools/CyberView/issues/new" in gh.url and "template=chat.yml" in gh.url and "Seeing%20scans" in gh.url and "event=" + ev0 in gh.url, gh.url[:160])
             await gh.close()
             ok("community: no script errors", not errs, errs)
             await pg.goto(url.replace("index.html", "community.html#e=" + ev0)); await pg.reload(); await pg.wait_for_timeout(600)

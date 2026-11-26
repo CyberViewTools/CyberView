@@ -20,7 +20,7 @@ Rollback: unset `AI_LAUNCH` and re-enable the "CyberView L:" tasks.
 Known limits: GitHub can start scheduled runs several minutes late at busy times; pull requests opened with the job token (scripts/propose.mjs) do not start CI by GitHub's design, so a job's config/docs proposal waits for a person to re-run CI. The community moderator (routines.json `moderator`, `10 */3 * * *`) has no "CyberView L:" task today and is not added here either.
 
 Each scheduled job runs in its OWN fresh session, created in the claude.ai Routines screen with:
-- Repository: xanderhutch/cyberview, Environment: cyberview, Model: Haiku (the session only launches a script).
+- Repository: CyberViewTools/CyberView, Environment: cyberview, Model: Haiku (the session only launches a script).
 - "Start a new session each run" (not one persistent session: that is what grew to 440-530 K tokens and cost ~$0.25 a wake).
 - No connectors.
 

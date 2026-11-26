@@ -10,7 +10,7 @@
 //   node scripts/grok-watch.mjs --days=N   how far back to scan comments (default 21)
 import { execFileSync } from "node:child_process";
 
-const REPO = process.env.GROK_REPO || "xanderhutch/CyberView";
+const REPO = process.env.GROK_REPO || "CyberViewTools/CyberView";
 const has = (f) => process.argv.includes(f);
 const arg = (k, d) => { const a = process.argv.find((x) => x.startsWith(`--${k}=`)); return a ? a.split("=")[1] : d; };
 const gh = (path, q = "") => { try { return JSON.parse(execFileSync("gh", ["api", `repos/${REPO}/${path}${q}`], { encoding: "utf8", maxBuffer: 2e7 })); } catch { return []; } };

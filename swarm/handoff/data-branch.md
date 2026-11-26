@@ -5,7 +5,7 @@ there, each push starts the deploy). Why and how it works: `docs/branches.md`. T
 `scripts/data-branch.mjs`, `scripts/data-commit.mjs`, `scripts/propose.mjs`, `.github/actions/data`,
 `.github/workflows/data-forward.yml`.
 
-Repository: `xanderhutch/CyberView`. Run the commands from a checkout of it. Behind the session proxy add
+Repository: `CyberViewTools/CyberView`. Run the commands from a checkout of it. Behind the session proxy add
 `NODE_USE_ENV_PROXY=1` to node commands that reach the network.
 
 ## Stage A: the data branch takes the data
@@ -86,7 +86,7 @@ owner's (repository settings).
 
 ### B1. Allow auto-merge
 
-Settings → General → Pull Requests → tick "Allow auto-merge". (`gh api -X PATCH repos/xanderhutch/CyberView -F allow_auto_merge=true`)
+Settings → General → Pull Requests → tick "Allow auto-merge". (`gh api -X PATCH repos/CyberViewTools/CyberView -F allow_auto_merge=true`)
 
 ### B2. Remove data/ from main by pull request
 
@@ -95,7 +95,7 @@ Back up first: every checkout's data is committed and pushed (`git -C data statu
 
 ```bash
 cd "$(mktemp -d)"
-git clone --depth 1 https://github.com/xanderhutch/CyberView cv && cd cv
+git clone --depth 1 https://github.com/CyberViewTools/CyberView cv && cd cv
 git switch -c stage-b/remove-data
 git rm -r -q data
 printf '\n# the data branch is mounted here (docs/branches.md)\n/data/\n/data.pre-*/\n' >> .gitignore
@@ -134,7 +134,7 @@ Settings → Rules → Rulesets → New ruleset → New branch ruleset. The exac
 The same with the API (the owner's token needs admin rights on the repository):
 
 ```bash
-gh api -X POST repos/xanderhutch/CyberView/rulesets --input - <<'JSON'
+gh api -X POST repos/CyberViewTools/CyberView/rulesets --input - <<'JSON'
 {"name":"main: pull requests and CI","target":"branch","enforcement":"active","bypass_actors":[],
  "conditions":{"ref_name":{"include":["~DEFAULT_BRANCH"],"exclude":[]}},
  "rules":[{"type":"deletion"},{"type":"non_fast_forward"},
@@ -143,7 +143,7 @@ gh api -X POST repos/xanderhutch/CyberView/rulesets --input - <<'JSON'
   {"type":"required_status_checks","parameters":{"strict_required_status_checks_policy":false,
    "required_status_checks":[{"context":"validate"},{"context":"browser-tests"},{"context":"sql-security-tests"}]}}]}
 JSON
-gh api -X POST repos/xanderhutch/CyberView/rulesets --input - <<'JSON'
+gh api -X POST repos/CyberViewTools/CyberView/rulesets --input - <<'JSON'
 {"name":"data: no force push or deletion","target":"branch","enforcement":"active","bypass_actors":[],
  "conditions":{"ref_name":{"include":["refs/heads/data"],"exclude":[]}},
  "rules":[{"type":"deletion"},{"type":"non_fast_forward"}]}
@@ -153,8 +153,8 @@ JSON
 Check:
 
 ```bash
-gh api repos/xanderhutch/CyberView/rules/branches/main --jq '.[].type'   # deletion non_fast_forward pull_request required_status_checks
-gh api repos/xanderhutch/CyberView/rules/branches/data --jq '.[].type'   # deletion non_fast_forward
+gh api repos/CyberViewTools/CyberView/rules/branches/main --jq '.[].type'   # deletion non_fast_forward pull_request required_status_checks
+gh api repos/CyberViewTools/CyberView/rules/branches/data --jq '.[].type'   # deletion non_fast_forward
 git push origin HEAD:main                         # from any checkout: refused ("Changes must be made through a pull request")
 ```
 
@@ -174,8 +174,8 @@ no `data/` on main it has nothing to do.
 Set the ruleset's Enforcement status to Disabled (Settings → Rules → Rulesets → the ruleset), or:
 
 ```bash
-gh api repos/xanderhutch/CyberView/rulesets --jq '.[] | "\(.id) \(.name)"'
-gh api -X PUT repos/xanderhutch/CyberView/rulesets/<id> -f enforcement=disabled
+gh api repos/CyberViewTools/CyberView/rulesets --jq '.[] | "\(.id) \(.name)"'
+gh api -X PUT repos/CyberViewTools/CyberView/rulesets/<id> -f enforcement=disabled
 ```
 
 The data branch keeps working; nothing else changes.
@@ -189,7 +189,7 @@ The data branch keeps working; nothing else changes.
 3. Put the data branch's files back into `main` (the data branch has everything `main` had, plus everything since):
 
    ```bash
-   cd "$(mktemp -d)" && git clone https://github.com/xanderhutch/CyberView cv && cd cv
+   cd "$(mktemp -d)" && git clone https://github.com/CyberViewTools/CyberView cv && cd cv
    git fetch origin data
    git rm -r -q --ignore-unmatch data
    git read-tree --prefix=data/ -u origin/data
@@ -200,7 +200,7 @@ The data branch keeps working; nothing else changes.
    ```
 
 4. Rename the data branch so nothing switches to it again (its history is kept):
-   `gh api -X POST repos/xanderhutch/CyberView/branches/data/rename -f new_name=data-retired`.
+   `gh api -X POST repos/CyberViewTools/CyberView/branches/data/rename -f new_name=data-retired`.
    With no `data` branch, `ensure` keeps the old layout and `.github/actions/data` uses `main`'s `data/`.
 5. In every switched checkout, back to the old layout:
 

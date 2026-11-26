@@ -1,0 +1,154 @@
+{
+  "c277fd563613cda6767258838574386d16e830eb": {
+    "sha1": "c277fd563613cda6767258838574386d16e830eb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:52Z",
+    "model": "haiku",
+    "summary": "Analysis by the Swiss government CERT (GovCERT) of Fobber, an eBanking trojan first described by Malwarebytes as a spinoff of Tinba. Its code stays encrypted until each function is called, then is re-encrypted. It is self-contained and resolves imports by hashing function names. The samples share one encryption key and seem to come from one campaign. As of publication, no Swiss financial institutions were known to be targeted. The report was published September 11, 2015 and updated November 26, 2015.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber."
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "to find out whether Swiss critical infrastructures are targeted by it."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Switzerland",
+          "q": "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 11, 2015",
+          "q": "Published on September 11, 2015 08:00 UTC",
+          "what": "Report first published"
+        },
+        {
+          "v": "November 26, 2015",
+          "q": "Last updated on November 26, 2015 09:07 UTC",
+          "what": "Report last updated"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Fobber",
+          "q": "about Fobber, a new e-banking focussed malware"
+        },
+        {
+          "v": "Tinba",
+          "q": "in the arena that seems to be a Tinba spinoff."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "in encrypted form until it's actually called",
+          "q": "keeps the content in encrypted form until it's actually called"
+        },
+        {
+          "v": "cyclic XOR",
+          "q": "not much more than a cyclic XOR that preserves the original function length"
+        },
+        {
+          "v": "position independent",
+          "q": "position independent and additionally confuses disassemblers like IDA Pro quite effectively"
+        },
+        {
+          "v": "calculating hash values over function names",
+          "q": "For imports, fobber scans through loaded modules, finds function by calculating hash values over function names."
+        },
+        {
+          "v": "memory snapshots",
+          "q": "This makes most automated analysis method using memory snapshots ineffective and also ensures that the full"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "70",
+          "q": "Around 70 functions are protected by this mechanism that keeps the content"
+        },
+        {
+          "v": "09d3e3f36f1e3856bcbd0c7f9bfb39fb",
+          "q": "09d3e3f36f1e3856bcbd0c7f9bfb39fb"
+        },
+        {
+          "v": "1bf6c466a6ac06c41210a76cc0d4e253",
+          "q": "1bf6c466a6ac06c41210a76cc0d4e253"
+        },
+        {
+          "v": "2f8fab3d0710f1bb0f7198c543dd0f72",
+          "q": "2f8fab3d0710f1bb0f7198c543dd0f72"
+        },
+        {
+          "v": "45446231addbaf0ea542b64c462d7c2c",
+          "q": "45446231addbaf0ea542b64c462d7c2c"
+        },
+        {
+          "v": "4f68362896e34d8777a96dd8990a3609",
+          "q": "4f68362896e34d8777a96dd8990a3609"
+        },
+        {
+          "v": "6072a433ac0836eb91254541f3474405",
+          "q": "6072a433ac0836eb91254541f3474405"
+        },
+        {
+          "v": "64d89db0c17970510864bbdbc94b7fdd",
+          "q": "64d89db0c17970510864bbdbc94b7fdd"
+        },
+        {
+          "v": "691ce6807925fed03cb61f4add0e5ffd",
+          "q": "691ce6807925fed03cb61f4add0e5ffd"
+        },
+        {
+          "v": "7706b210bf33682065c35ed667acba17",
+          "q": "7706b210bf33682065c35ed667acba17"
+        },
+        {
+          "v": "7ffa59d686b719711a3e5025adb3128f",
+          "q": "7ffa59d686b719711a3e5025adb3128f"
+        },
+        {
+          "v": "9bc5cb7268012c9786e2e107b64a1adb",
+          "q": "9bc5cb7268012c9786e2e107b64a1adb"
+        },
+        {
+          "v": "a6471d1cc581d20eea3f580ad445d4c4",
+          "q": "a6471d1cc581d20eea3f580ad445d4c4"
+        },
+        {
+          "v": "ae970c5dab644373d53d51a3f97b1aa1",
+          "q": "ae970c5dab644373d53d51a3f97b1aa1"
+        },
+        {
+          "v": "e42944ea45489f31552c807dbe62e879",
+          "q": "e42944ea45489f31552c807dbe62e879"
+        },
+        {
+          "v": "f088a4e21decd52af53b8ba313ab2eec",
+          "q": "f088a4e21decd52af53b8ba313ab2eec"
+        },
+        {
+          "v": "f78245a07c00e4c7a30b7f6df31f6534",
+          "q": "f78245a07c00e4c7a30b7f6df31f6534"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Fobber"
+    },
+    "hedges": [
+      "they all seem to be from the same campaign (we don't know if there even is more than one campaign)",
+      "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber.",
+      "we will continue to monitor this threat and will update our blog post if anything changes"
+    ]
+  }
+}

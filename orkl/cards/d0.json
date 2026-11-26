@@ -1,0 +1,320 @@
+{
+  "d0a311081328f2e0a769614c57c594afb47337f7": {
+    "sha1": "d0a311081328f2e0a769614c57c594afb47337f7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:07:11Z",
+    "model": "haiku",
+    "summary": "JFrog Security Research describes the 'testmetest' campaign: an npm worm and a hidden CI publisher that armed 42 GitHub repositories across 11 owners, including accounts of real developers and organizations. It uses a native addon that decrypts a hidden file at runtime, forged commit dates, and execution hooks for AI coding assistants and IDEs. The report links this infrastructure to shellpanel scanning of cPanel systems via CVE-2026-41940, but says downstream compromises are not confirmed. Attribution to the original Miasma operators is not established.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "CementBeetleSteeple",
+          "q": "The account CementBeetleSteeple hosted 17 campaign repositories.",
+          "by": "JFrog Security Research (report authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-10-26",
+          "q": "Published: 2026-10-26 · Archived: 2026-11-26 02:00:23 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "October 21",
+          "q": "During October 21 our scanners alerted us about shai-hulud packages found in the npm ecosystem.",
+          "what": "scanners alerted about shai-hulud packages in npm"
+        },
+        {
+          "v": "October 22",
+          "q": "SafeDep's October 22 analysis first documented the npm/package side of this activity",
+          "what": "SafeDep analysis first documented the npm side"
+        },
+        {
+          "v": "October 21",
+          "q": "published at 11:13:23 UTC on October 21, but no retained Actions run aligns with that event.",
+          "what": "npm release data-pipeline-testmetest@2.0.1 published"
+        },
+        {
+          "v": "July 22, 2026",
+          "q": "Socket's July 22, 2026 report documented a broad campaign that abused GitHub Actions runners",
+          "what": "Socket reported broad campaign abusing GitHub Actions to scan cPanel systems"
+        },
+        {
+          "v": "September 28",
+          "q": "On September 28, however, the operator ran scripted arming batches across victim accounts.",
+          "what": "scripted arming batches across victim accounts"
+        }
+      ],
+      "tools": [
+        {
+          "v": "shai-hulud",
+          "q": "During October 21 our scanners alerted us about shai-hulud packages found in the npm ecosystem."
+        },
+        {
+          "v": "Miasma",
+          "q": "SafeDep described the payload as Miasma-family while explicitly noting uncertainty about its"
+        },
+        {
+          "v": "native addon",
+          "q": "The campaign also shifted to a new camouflage: a compiled native addon that contains no payload of its own,"
+        },
+        {
+          "v": "Bun 1.2.18",
+          "q": "located or downloaded Bun 1.2.18."
+        },
+        {
+          "v": "npm worm",
+          "q": "This publisher is distinct from the full credential-stealing npm worm bundle, but the two are directly linked"
+        },
+        {
+          "v": "GitHub Actions",
+          "q": "which was built to run inside GitHub Actions."
+        },
+        {
+          "v": "Shellpanel",
+          "q": "Shellpanel workflows targeting cPanel systems through CVE-2026-41940"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "postinstall",
+          "q": "a one-line postinstall that"
+        },
+        {
+          "v": "polymorphic wrappers",
+          "q": "12.9 to 13.7 MB polymorphic wrappers that all decode to the same hidden CI-publisher payload."
+        },
+        {
+          "v": "stole GitHub and npm credentials",
+          "q": "which stole GitHub and npm credentials that could provide"
+        },
+        {
+          "v": "forged commit timelines",
+          "q": "The investigation also uncovered account hijacks, forged commit timelines, short-lived publishing branches and"
+        },
+        {
+          "v": "account hijacks",
+          "q": "The investigation also uncovered account hijacks, forged commit timelines, short-lived publishing branches and"
+        },
+        {
+          "v": "sandboxes",
+          "q": "stays asleep inside the CI runners, containers and sandboxes that automated package scanners use."
+        },
+        {
+          "v": "smoke-test placeholders",
+          "q": "Within hijacked repositories, the campaign left smoke-test placeholders or"
+        },
+        {
+          "v": "encrypted data sink",
+          "q": "also operates as an active encrypted data sink, receiving snapshot"
+        },
+        {
+          "v": "trusted publishing",
+          "q": "and use npm tokens or trusted publishing to produce further malicious testmetest releases"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2026-41940",
+          "q": "Shellpanel workflows targeting cPanel systems through CVE-2026-41940"
+        }
+      ],
+      "figures": [
+        {
+          "v": "42",
+          "q": "JFrog Security Research has identified 42 armed third-party GitHub repositories across 11 legitimate owners"
+        },
+        {
+          "v": "11",
+          "q": "JFrog Security Research has identified 42 armed third-party GitHub repositories across 11 legitimate owners"
+        },
+        {
+          "v": "17",
+          "q": "hosted 17 campaign repositories."
+        },
+        {
+          "v": "68",
+          "q": "We recovered 68 pushed branch heads and 16 distinct polymorphic"
+        },
+        {
+          "v": "10",
+          "q": "Across the 42 repositories we found 10 distinct wrapper blobs."
+        },
+        {
+          "v": "29",
+          "q": "We captured 29 of these artifacts before expiry."
+        },
+        {
+          "v": "three",
+          "q": "They contained three distinct, real-format npm access tokens"
+        },
+        {
+          "v": "12.9 to 13.7 MB",
+          "q": "12.9 to 13.7 MB polymorphic wrappers that all decode to the same hidden CI-publisher payload."
+        },
+        {
+          "v": "25",
+          "q": "As of October 26, the registry inventory spans 25 package names and 82 known"
+        },
+        {
+          "v": "82",
+          "q": "As of October 26, the registry inventory spans 25 package names and 82 known"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "testmetest"
+    },
+    "hedges": [
+      "The report uses 'testmetest campaign' because its evidence shows shared tooling, but does not establish that the original Miasma operators are responsible.",
+      "There is not one proven continuous execution chain from every npm infection to CVE exploitation.",
+      "No evidence confirms successful exploitation of downstream cPanel systems, so scanner targets are not counted as victims.",
+      "Whether Git credentials were harvested after compromise is described as an inference that remains unproven.",
+      "The most likely explanation for the Wedding repository infection is stolen collaborator access rather than compromise of the ismahhaziq account itself.",
+      "The recovered ci.js code establishes the intended automated mechanism, not that this particular release used it.",
+      "The metadata-only review cannot establish downstream victim identities, the number of affected systems, or the envelopes' plaintext contents.",
+      "Listing a package in the campaign inventory does not make its benign releases malicious."
+    ]
+  },
+  "d02941ad349dc5ff4e9692fd3181a8f7047d49c6": {
+    "sha1": "d02941ad349dc5ff4e9692fd3181a8f7047d49c6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:11:43Z",
+    "model": "haiku",
+    "summary": "Trend Micro's TrendLabs blog, published 2011-10-05, analyses Android malware it detects as ANDROIDOS_ANSERVER.A. The app arrives as an e-book reader from a third-party Chinese app store and requests broad permissions. It has two hardcoded C&C servers, one of which is a blog with encrypted posts holding backup C&C URLs. The report found 18 binaries uploaded to the blog, a capability to show notifications that trick users into approving updates, and a capability to terminate four security-related apps.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2011-10-05",
+          "q": "Published: 2011-10-05 · Archived: 2026-11-26 02:00:42 UTC",
+          "what": "Trend Micro blog post analysing the Android malware was published"
+        },
+        {
+          "v": "July 23",
+          "q": "18 binaries have been uploaded to the blog from July 23 to just last September 26.",
+          "what": "Binaries began being uploaded to the blog"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ANDROIDOS_ANSERVER.A",
+          "q": "which Trend Micro detects as ANDROIDOS_ANSERVER.A, arrives as an e-book reader"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "blog site with encrypted content used as C&C",
+          "q": "This is a blog site with encrypted content, which based on our research, is the first time Android malware implemented this kind of technique to communicate."
+        },
+        {
+          "v": "trick users into approving update downloads",
+          "q": "the newer versions had the capability to display notifications that attempt to trick users into approving the download of an update"
+        },
+        {
+          "v": "terminate security-related apps",
+          "q": "Another addition to later versions is the capability to terminate four security-related apps:"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "two",
+          "q": "we found that this malware has two hardcoded C&C servers to which it connects in order to"
+        },
+        {
+          "v": "six",
+          "q": "Further analysis of the blog content revealed six encrypted posts containing backup C&C"
+        },
+        {
+          "v": "18",
+          "q": "18 binaries have been uploaded to the blog from July 23 to just last September 26."
+        },
+        {
+          "v": "four",
+          "q": "Another addition to later versions is the capability to terminate four security-related apps:"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ANDROIDOS_ANSERVER.A"
+    },
+    "hedges": [
+      "Newer and more complicated Android malware variants are expected to emerge, along with the rising number of malicious Android apps.",
+      "This is a blog site with encrypted content, which based on our research, is the first time Android malware implemented this kind of technique to communicate.",
+      "one of the updates is named _test, which suggests that this malware is still being further developed."
+    ]
+  },
+  "d0fc20efe406f4e563db7d82a7d9acb97b03f23b": {
+    "sha1": "d0fc20efe406f4e563db7d82a7d9acb97b03f23b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:19:16Z",
+    "model": "haiku",
+    "summary": "Tutorial by the Zero2Automated course team, published 2020-06-07, on statically deobfuscating a malicious document macro that is used to deliver NanoCore. It covers finding the auto-run entry point, removing junk strings and renaming identifiers, and shows the macro fetching a further file and running it from disk. It cites MuddyWater as an example of heavy macro obfuscation and says some threat groups push ISFB.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "MuddyWater",
+          "q": "as possible (such as the MuddyWater",
+          "by": "Zero2Automated Course Team (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-06-07",
+          "q": "Published: 2020-06-07 · Archived: 2026-11-25 02:06:28 UTC",
+          "what": "Article published by the course team"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Nanocore",
+          "q": "reversing a malicious Nanocore document"
+        },
+        {
+          "v": "ISFB",
+          "q": "one of the many pushing ISFB"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "execute without the user specifically calling them",
+          "q": "methods that macros use to execute without the user specifically calling them"
+        },
+        {
+          "v": "junk string and function names added to the macros",
+          "q": "the obfuscation is just junk string and function names added to the macros"
+        },
+        {
+          "v": "execute the file from disk",
+          "q": "execute the file from disk. And that brings an end to our short analysis"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NanoCore"
+    },
+    "hedges": [
+      "Obfuscation is described as easy to recognise only in this case; the author says the approach assumes the attackers reuse the same code obfuscator and tricks.",
+      "The author says there is a high probability that a line referenced only once is junk.",
+      "The author says macro obfuscation is unlikely to change until a new vulnerability or feature is discovered and exploited."
+    ]
+  }
+}

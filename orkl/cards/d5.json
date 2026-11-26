@@ -1,0 +1,144 @@
+{
+  "d5e34ba54f56b89718b2c6e849407bb3dedf3f8d": {
+    "sha1": "d5e34ba54f56b89718b2c6e849407bb3dedf3f8d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:16:10Z",
+    "model": "haiku",
+    "summary": "Dutch national police (Politie) news item, published 13 November 2025, reporting that Operation Endgame disrupted the infostealer Rhadamanthys, the remote access trojan VenomRAT and the Elysium botnet. The police say these malware types infected hundreds of thousands of victims worldwide. They describe Operation Endgame as started in 2022 and as the largest international operation against ransomware and cybercrime.",
+    "kind": "incident",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-11-13",
+          "q": "Published: 2025-11-13",
+          "what": "Police news item on the takedown was published"
+        },
+        {
+          "v": "2022",
+          "q": "De acties zijn onderdeel van Operatie Endgame die in 2022 gestart is",
+          "what": "Operation Endgame started"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Rhadamanthys",
+          "q": "een van de grootste infostealers Rhadamanthys, een Remote Access Trojan"
+        },
+        {
+          "v": "VenomRAT",
+          "q": "(RAT) VenomRAT en botnet Elysium."
+        },
+        {
+          "v": "Elysium",
+          "q": "(RAT) VenomRAT en botnet Elysium."
+        }
+      ],
+      "techniques": [],
+      "cves": [],
+      "figures": [
+        {
+          "v": "honderdduizenden",
+          "q": "Er zijn honderdduizenden slachtoffers wereldwijd besmet geraakt"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Operation Endgame"
+    },
+    "hedges": []
+  },
+  "d575a6482d9b8e691b7033592928e91ae53c2aa1": {
+    "sha1": "d575a6482d9b8e691b7033592928e91ae53c2aa1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:18:27Z",
+    "model": "haiku",
+    "summary": "InQuest blog post (December 2021) on an ongoing Dridex campaign that delivers malware through password-protected Microsoft Excel spreadsheets containing macrosheets. Lures included a fake CDC COVID-19 form, a fake resume, fake spreadsheets, and impersonation of NPD Group's DecisionKey software, plus emails with team memos and numeric passwords. The post reports an uptick on December 15 and a multi-stage download via an embedded script, with payloads hosted on Discord CDN servers. Payload identifiers were withheld. The post also promotes InQuest's email attack simulation.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Dridex operators",
+          "q": "Dridex operators have gone as far as crafting",
+          "by": "InQuest (the report's author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "December 15",
+          "q": "On Monday, December 15th we noticed an uptick in the amount of verified malware",
+          "what": "Uptick in verified malware hidden behind password-protected Excel spreadsheets was noticed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dridex",
+          "q": "Dridex continues to target large organizations with somewhat elaborate lures to ensure user interaction and infection."
+        },
+        {
+          "v": "Microsoft Excel",
+          "q": "protected Microsoft Excel spreadsheets, specifically ones containing the dated"
+        },
+        {
+          "v": "DecisionKey reporting software",
+          "q": "attackers seem to also be masquerading as the NPD group and their DecisionKey reporting software."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "macrosheet",
+          "q": "specifically ones containing the dated \"macrosheet\" functionality."
+        },
+        {
+          "v": "numerical passwords",
+          "q": "numerical passwords to protect attached Microsoft Office docs."
+        },
+        {
+          "v": "evasion method",
+          "q": "An effective evasion method to slow analysis efforts, especially if one is not actively cracking documents or zip"
+        },
+        {
+          "v": "legitimate team/department memos",
+          "q": "emails that appear to be legitimate team/department memos and instructions."
+        },
+        {
+          "v": "embedded .vbs file",
+          "q": "the macro calls an embedded .vbs file that fetches the next step of the attack chain."
+        },
+        {
+          "v": "Discord’s CDN servers",
+          "q": "Using Discord’s CDN servers for distribution as threat actors have been leveraging heavily in recent campaigns"
+        },
+        {
+          "v": "CDC COVID-19",
+          "q": "including a CDC COVID-19"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "75%",
+          "q": "Did you know, 75% of an organization's malware is delivered via email?*"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Dridex"
+    },
+    "hedges": [
+      "At first glance, the image-lure samples appear to use blurred documents to entice users to enable macros.",
+      "Attackers seem to be masquerading as the NPD group and its DecisionKey reporting software.",
+      "The team and department memo emails appear to be legitimate.",
+      "Future iterations of Dridex are expected to change tactics; this is an expectation, not an observation.",
+      "Payload-specific URI patterns and file names are withheld from publication."
+    ]
+  }
+}

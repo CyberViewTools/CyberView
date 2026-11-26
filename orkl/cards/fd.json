@@ -1,0 +1,49 @@
+{
+  "fd543cb36d7ed24db4e6054a23fe4d0004359f4a": {
+    "sha1": "fd543cb36d7ed24db4e6054a23fe4d0004359f4a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:31Z",
+    "model": "haiku",
+    "summary": "An overview article, part 1 of 2, on user-mode dynamic hooking: placing hooks at runtime to intercept and redirect program execution. It covers IAT hooking, LD_PRELOAD library hooking, inline hooking and the Microsoft Detours framework, and notes uses in tracing, HIDS/HIPS, reverse engineering and rootkits.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [
+        {
+          "v": "Detours",
+          "q": "Microsoft released a framework to help in placing inline hooks on Win32 API functions called Detours."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "dynamic hooking",
+          "q": "focuses on dynamic hooking, where hooks are placed at runtime in memory."
+        },
+        {
+          "v": "IAT hooking",
+          "q": "IAT hooking happens in user mode and is a relatively easy way to hook every call to a specific API"
+        },
+        {
+          "v": "inline hooking",
+          "q": "Inline hooking can be used in user mode, although similar techniques can also work in kernel mode."
+        },
+        {
+          "v": "LD_PRELOAD library hooking",
+          "q": "The LD_PRELOAD environment variable specifies a list of libraries to load first when a program is executed,"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The article assumes the reader already has sufficient access to modify a program's memory to place a hook.",
+      "IAT hooking is a user mode technique, which makes it easier to implement but also easier to detect, so it has limitations.",
+      "Address randomisation such as ASLR may make the simple return-address lookup approach impossible."
+    ]
+  }
+}

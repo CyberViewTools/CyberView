@@ -1,0 +1,89 @@
+{
+  "8169044b5dfdfa8b016de9ace6703c3337be84e2": {
+    "sha1": "8169044b5dfdfa8b016de9ace6703c3337be84e2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:14:16Z",
+    "model": "haiku",
+    "summary": "Blackpoint Cyber reports that in November 2026 a legitimate business application used in the automotive industry was compromised through its software supply chain. Malicious JavaScript was inserted into the application's document rendering bundle, delivering a Node.js backdoor named IkonRAT that provides persistence and remote command execution. The report also describes recovered scripts for UAC bypass and exporting Windows registry hives, but says successful credential theft was not confirmed. The vendor removed the affected component.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "automotive industry",
+          "q": "endpoints running legitimate software used in the automotive industry."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 2026",
+          "q": "In November 2026, Blackpoint Cyber investigated a software supply chain compromise involving a legitimate",
+          "what": "Blackpoint Cyber investigated a software supply chain compromise"
+        }
+      ],
+      "tools": [
+        {
+          "v": "IkonRAT",
+          "q": "IkonRAT leverages the existing Node.js runtime to establish persistence, retrieve commands, and report execution"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "software supply chain compromise",
+          "q": "In November 2026, Blackpoint Cyber investigated a software supply chain compromise involving a legitimate"
+        },
+        {
+          "v": "malicious JavaScript inserted at the beginning of the file",
+          "q": "Examination of server.bundle.js revealed 6,438 bytes of malicious JavaScript inserted at the beginning of the file,"
+        },
+        {
+          "v": "persistence through two Windows mechanisms",
+          "q": "IkonRAT attempts to establish persistence through two Windows mechanisms. It creates a registry"
+        },
+        {
+          "v": "polling mechanism",
+          "q": "Rather than maintaining a continuous connection, IkonRAT uses a polling mechanism to retrieve instructions"
+        },
+        {
+          "v": "export the Windows SAM, SECURITY, and SYSTEM registry hives",
+          "q": "privileges, export the Windows SAM, SECURITY, and SYSTEM registry hives, and transmit the collected data to"
+        },
+        {
+          "v": "UAC bypass",
+          "q": "The attacker had prepared scripts to bypass UAC, collect"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "6,438 bytes",
+          "q": "Examination of server.bundle.js revealed 6,438 bytes of malicious JavaScript inserted at the beginning of the file,"
+        },
+        {
+          "v": "90 seconds",
+          "q": "approximately every 90 seconds."
+        },
+        {
+          "v": "three configured endpoints",
+          "q": "The backdoor contains three configured endpoints using HTTPS on ports 443 and 8443, and HTTP on port 8080. If a"
+        },
+        {
+          "v": "3,500 characters",
+          "q": "Commands are limited to a 90 second execution window, with up to 3,500 characters of output returned to the operator."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "IkonRAT"
+    },
+    "hedges": [
+      "The activity was later linked to a software supply chain compromise.",
+      "Successful credential theft was not confirmed on the affected endpoints.",
+      "Successful privilege escalation, credential collection and exfiltration were not observed on the affected endpoints.",
+      "The UAC bypass depends on the affected account's permissions and Windows configuration and does not guarantee elevation."
+    ]
+  }
+}

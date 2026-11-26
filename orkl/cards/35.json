@@ -1,0 +1,124 @@
+{
+  "35bf489476a86d10e9db778be16b5e0c018b5dc8": {
+    "sha1": "35bf489476a86d10e9db778be16b5e0c018b5dc8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:12Z",
+    "model": "haiku",
+    "summary": "IBM Security X-Force Red analysed a remote code execution flaw in Cobalt Strike 4.7.1, a command-and-control framework used in red team operations. HelpSystems issued an out-of-band patch on September 20, 2022, marked as cross-site scripting under CVE-2022-39197. X-Force found the patch insufficient, requested CVE-2022-42948 and gave the technical details to HelpSystems. The write-up covers patch analysis, root cause review and vulnerability weaponization, using Java Swing HTML handling and the Apache Batik library. It says the flaw could also be triggered through data from a real beacon.",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "vulnerabilities in C2 frameworks are high priority targets for threat actors and",
+          "by": "the report (IBM Security X-Force Red)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "September 20, 2022",
+          "q": "On September 20, 2022, HelpSystems published an out-of-band patch for",
+          "what": "HelpSystems published an out-of-band patch for Cobalt Strike"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is one of several third-party C2 frameworks IBM Security X-Force Red leverages to simulate"
+        },
+        {
+          "v": "Tabby",
+          "q": "For this phase of research, X-Force chose to use an open-source code analysis tool called Tabby."
+        },
+        {
+          "v": "Fermion",
+          "q": "To trigger the exploit, X-Force used Fermion. Fermion is a cross-platform Electron application that leverages"
+        },
+        {
+          "v": "Apache Batik",
+          "q": "explained how Apache Batik allows developers to call Java code by including a Java JAR file reference within a"
+        },
+        {
+          "v": "CobaltStrikeParser",
+          "q": "Public tooling already exists to perform such tests, for example CobaltStrikeParser created by Sentinel One."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Cross-Site Scripting",
+          "q": "The vulnerability was marked as Cross-Site Scripting (XSS) and was identified with"
+        },
+        {
+          "v": "patch analysis",
+          "q": "CVE-2022-39197 Patch Analysis"
+        },
+        {
+          "v": "root cause review",
+          "q": "patch analysis, root cause review and vulnerability weaponization"
+        },
+        {
+          "v": "vulnerability weaponization",
+          "q": "patch analysis, root cause review and vulnerability weaponization"
+        },
+        {
+          "v": "RCE",
+          "q": "Our analysis proved that RCE was indeed possible and that the update in version 4.7.1 was insufficient to mitigate"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-39197",
+          "q": "was identified with the number CVE-2022-39197. Analysis revealed that the XSS vulnerability could be"
+        },
+        {
+          "v": "CVE-2022-42948",
+          "q": "X-Force requested a new CVE (CVE-2022-42948) and provided the technical details"
+        }
+      ],
+      "figures": [
+        {
+          "v": "forty-eight functions",
+          "q": "X-Force discovered forty-eight functions that met the criteria mentioned earlier."
+        },
+        {
+          "v": "two validator functions",
+          "q": "revealed two validator functions (potentialXSS and potentialUserNameXSS)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "Cobalt Strike remote code execution (CVE-2022-42948)"
+    },
+    "hedges": [
+      "It is not clear why HelpSystems implemented two separate validators, one would suffice to perform input sanitization.",
+      "a malicious actor would most likely seek to trigger this vulnerability remotely by manipulating a real beacon in memory or simulating such a beacon."
+    ]
+  },
+  "350fcbf3debd32b7fa297e9af9bfcefa483d39f1": {
+    "sha1": "350fcbf3debd32b7fa297e9af9bfcefa483d39f1",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-26T21:08:38Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
+  }
+}

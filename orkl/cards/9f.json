@@ -1,0 +1,120 @@
+{
+  "9fe6716f7bff41b986c467afc82c6c357fb19baf": {
+    "sha1": "9fe6716f7bff41b986c467afc82c6c357fb19baf",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:11:55Z",
+    "model": "haiku",
+    "summary": "Fortinet's 2014 analysis, republished from Virus Bulletin, describes the Andromeda modular botnet. The loader fetches modules and updates from its C&C server, uses anti-VM and anti-debug checks, injects into trusted processes and sets up autostart. Version 2.06 is the latest official build. Modules include a form grabber, a ring3 rootkit and a SOCKS4 proxy. The bot can also distribute other malware, including ZeroAccess, Kelihos and FakeAV.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2014-04-16",
+          "q": "Published: 2014-04-16",
+          "what": "Article published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Andromeda",
+          "q": "Andromeda is a modular bot."
+        },
+        {
+          "v": "r.pack",
+          "q": "The r.pack module is a ring3 rootkit."
+        },
+        {
+          "v": "f.pack",
+          "q": "The f.pack module is a form grabber."
+        },
+        {
+          "v": "s.pack",
+          "q": "The s.pack module acts as a local proxy"
+        },
+        {
+          "v": "ZeroAccess",
+          "q": "in this case the bot is only used to distribute other malware (e.g. ZeroAccess, Kelihos, FakeAV, etc.)"
+        },
+        {
+          "v": "Kelihos",
+          "q": "in this case the bot is only used to distribute other malware (e.g. ZeroAccess, Kelihos, FakeAV, etc.)"
+        },
+        {
+          "v": "FakeAV",
+          "q": "in this case the bot is only used to distribute other malware (e.g. ZeroAccess, Kelihos, FakeAV, etc.)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "anti-VM and anti-debug",
+          "q": "The loader has both anti-VM and anti-debug features."
+        },
+        {
+          "v": "inject into trusted processes",
+          "q": "It will inject into trusted processes to hide itself and then delete the original bot."
+        },
+        {
+          "v": "RC4 algorithm",
+          "q": "they are encrypted with the RC4 algorithm and with a fake ZIP header"
+        },
+        {
+          "v": "hook the following APIs",
+          "q": "hook the following APIs to hide the bot itself"
+        },
+        {
+          "v": "packer",
+          "q": "The packer contains a lot of redundant code, so the real code can be hidden amongst it."
+        },
+        {
+          "v": "run automatically at the next system start-up",
+          "q": "add itself to the registry so that it will run automatically at the next system start-up."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "2.06",
+          "q": "The latest official build version of the Andromeda bot is 2.06."
+        },
+        {
+          "v": "$500",
+          "q": "f.pack Formgrabber $500"
+        },
+        {
+          "v": "$300",
+          "q": "r.pack Ring3 RootKit $300"
+        },
+        {
+          "v": "six days",
+          "q": "which means more than six days each time."
+        },
+        {
+          "v": "three VMs",
+          "q": "The current loader detected three VMs, as shown in Figure 4."
+        },
+        {
+          "v": "three modules",
+          "q": "There are three modules in total"
+        },
+        {
+          "v": "1080",
+          "q": "This module will open local port 0438h (1080) and wait for a remote connection"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Andromeda"
+    },
+    "hedges": [
+      "It can be difficult to obtain information about network traffic between the infected system and the C&C server because the bot hibernates for long periods.",
+      "Monitoring network traffic over a short period may not be sufficient to detect the presence of Andromeda.",
+      "The bid value is hard-coded and may refer to the build id; the bv value may mean build version.",
+      "The proxy module will be useless if the compromised system is behind a firewall."
+    ]
+  }
+}

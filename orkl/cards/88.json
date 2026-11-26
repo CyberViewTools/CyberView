@@ -1,0 +1,100 @@
+{
+  "8829d551d5aef47e8e108773c49e191c8e0227f1": {
+    "sha1": "8829d551d5aef47e8e108773c49e191c8e0227f1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:37Z",
+    "model": "haiku",
+    "summary": "Intel 471 blog post, published 4 May 2020, on version 2.2 of the REvil ransomware-as-a-service operation's malware. The update restores a registry Run-key persistence mechanism that version 2.1 had removed. It adds use of the Windows Restart Manager to end processes and services that hold files open before encryption, and a silent-mode option that skips termination of blacklisted processes and shadow copy deletion. The report notes that the same Restart Manager technique appears in SamSam and LockerGoga, and that stopping protected processes may cause undefined behaviour on victim systems.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "REvil ransomware-as-a-service (RaaS) operation",
+          "q": "The REvil ransomware-as-a-service (RaaS) operation continues to impact businesses worldwide.",
+          "by": "Intel 471"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-05-04",
+          "q": "Published: 2020-05-04 · Archived: 2026-11-26 02:14:15 UTC",
+          "what": "Intel 471 published the report on REvil version 2.2"
+        },
+        {
+          "v": "March 15, 2020",
+          "q": "In version 2.1, first collected by our systems March 15, 2020, this persistence mechanism was removed.",
+          "what": "REvil version 2.1 first collected; its persistence mechanism was removed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Windows Restart Manager",
+          "q": "the use of the Windows Restart Manager to terminate processes and services that can lock files targeted for encryption."
+        },
+        {
+          "v": "SamSam",
+          "q": "the Windows Restart Manager also used by other ransomware such as SamSam and LockerGoga (see:"
+        },
+        {
+          "v": "LockerGoga",
+          "q": "the Windows Restart Manager also used by other ransomware such as SamSam and LockerGoga (see:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistence",
+          "q": "REvil ransomware persists on a machine if the arn configuration field is set to true."
+        },
+        {
+          "v": "terminate processes and services",
+          "q": "the use of the Windows Restart Manager to terminate processes and services that can lock files targeted for encryption."
+        },
+        {
+          "v": "shadow copy deletion",
+          "q": "shadow copy deletion. However, this flag does not impact the new Restart Manager functionality."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "version 2.2",
+          "q": "version 2.2. In this short blog post, we will cover the significant changes from the previous version, which we covered in"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "REvil ransomware"
+    },
+    "hedges": [
+      "It seems this little experiment didn't go as planned",
+      "This may lead to undefined behavior on the victim system."
+    ]
+  },
+  "88832209d51f193186daf5d026225be82513aefa": {
+    "sha1": "88832209d51f193186daf5d026225be82513aefa",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:41Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
+  }
+}

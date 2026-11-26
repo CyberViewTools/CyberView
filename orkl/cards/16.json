@@ -1,0 +1,90 @@
+{
+  "16d1caeac2a7d8ab2470d56fe8231aaec0251c5d": {
+    "sha1": "16d1caeac2a7d8ab2470d56fe8231aaec0251c5d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:07:39Z",
+    "model": "haiku",
+    "summary": "Rapid7 Labs analysis of a campaign that appears mostly directed at Pakistani targets. Attackers relied on spearphishing emails without exploits. The malware arrives as a .scr file and drops a Cabinet self-extractor plus a custom reverse-shell backdoor named ByeByeShell, which checks in to a command server and accepts operator commands. Decoy documents reuse Pakistani news articles. The operator was seen briefly searching files, but no clear origin could be determined. The campaign was assumed active for at least six months.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Pakistan",
+          "q": "ByeBye Shell and the targeting of Pakistan"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2013-08-19",
+          "q": "Published: 2013-08-19 · Archived: 2026-11-26 02:17:48 UTC",
+          "what": "Analysis of the campaign published by Rapid7 Labs"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ByeByeShell",
+          "q": "dub this family as ByeByeShell."
+        },
+        {
+          "v": "Cabinet Self-Extractor",
+          "q": "Subsequently the malware creates and launches a Cabinet Self-Extractor, which drops two additional executable"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spearphishing",
+          "q": "social engineering the victim through well-crafted spearphishing emails."
+        },
+        {
+          "v": "hide file extensions",
+          "q": "As you can see, it enforces some configuration in the registry in order to hide file extensions and not show hidden"
+        },
+        {
+          "v": "reverse shell",
+          "q": "In the following screenshot you can see how the reverse shell is implemented: it just launches a cmd.exe and"
+        },
+        {
+          "v": "checks in with some basic information",
+          "q": "Subsequently it establishes a connection to it (generally on port 80) and checks in with some basic information"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "8b4224dac114a9b8433913a1977f88b2",
+          "q": "8b4224dac114a9b8433913a1977f88b2"
+        },
+        {
+          "v": "469cf94c457c17d8f24dacf9f9d41f33",
+          "q": "469cf94c457c17d8f24dacf9f9d41f33"
+        },
+        {
+          "v": "6b349e439a17c4b66fb2a25965432aa9",
+          "q": "6b349e439a17c4b66fb2a25965432aa9"
+        },
+        {
+          "v": "d36da5c48d8fb7ee8c736ae183bf3f8a",
+          "q": "d36da5c48d8fb7ee8c736ae183bf3f8a"
+        },
+        {
+          "v": "6 months",
+          "q": "last 6 months, possibly even more."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ByeByeShell"
+    },
+    "hedges": [
+      "appears to have been active since at least the beginning of the year, and seems mostly directed at Pakistani targets",
+      "the attackers probably just relied on social engineering the victim through well-crafted spearphishing emails",
+      "we can safely assume that the operators behind this campaign are successful enough to maintain the operations running for at least the last 6 months, possibly even more",
+      "No clear indicator is available to make an informed estimate on what could be the origin of the attacks.",
+      "[P130813] line appears to be a constant value, possibly a target identifier"
+    ]
+  }
+}

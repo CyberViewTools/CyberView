@@ -1,0 +1,59 @@
+{
+  "502cad0107b46cc6d3bd154bbb5d32cb04c570d3": {
+    "sha1": "502cad0107b46cc6d3bd154bbb5d32cb04c570d3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:16:14Z",
+    "model": "haiku",
+    "summary": "CERT-UA reports a phishing campaign it tracks as UAC-0098. A password-protected ZIP holding a DOCX lure, emailed with a claimed sender of Ukraine's State Tax Service, exploits CVE-2022-30190 to load HTML and JavaScript, which then delivers a Cobalt Strike Beacon. The report lists file hashes, network indicators and a host file path.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UAC-0098",
+          "q": "Активність має персистентний характер та відстежується за ідентифікатором UAC-0098.",
+          "by": "CERT-UA"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "16.06.2022",
+          "q": "завантаження та запуск шкідливої програми Cobalt Strike Beacon (дата компіляції: 16.06.2022).",
+          "what": "Compile date of the Cobalt Strike Beacon payload"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike Beacon",
+          "q": "завантаження та запуск шкідливої програми Cobalt Strike Beacon (дата компіляції: 16.06.2022)."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Malicious DOCX opens remote HTML and runs JavaScript",
+          "q": "завантаження HTML-файлу та виконання JavaScript-коду (CVE-2022-30190)"
+        },
+        {
+          "v": "Password-protected ZIP archive delivered by email",
+          "q": "захищеному паролем архіві \"НакладенняШтрафнихСанкцiй.zip\", який"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-30190",
+          "q": "завантаження HTML-файлу та виконання JavaScript-коду (CVE-2022-30190)"
+        }
+      ],
+      "figures": []
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "UAC-0098"
+    },
+    "hedges": [
+      "The email only purports (\"начебто\") to come from the State Tax Service of Ukraine; the report does not confirm the sender."
+    ]
+  }
+}

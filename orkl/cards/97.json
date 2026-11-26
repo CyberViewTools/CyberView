@@ -1,0 +1,120 @@
+{
+  "97bceaeb6c7f0156ddcd1353c91d2ddc86adc942": {
+    "sha1": "97bceaeb6c7f0156ddcd1353c91d2ddc86adc942",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:12:05Z",
+    "model": "haiku",
+    "summary": "enSilo reports new activity it believes is by Chinese cyber espionage group APT10, detected in April 2019 and surfacing in Southeast Asia. Two loader variants abuse the legitimate Java executable jjs.exe to sideload a DLL and inject a decrypted payload into svchost.exe. Payloads include PlugX and a modified Quasar RAT with SharpSploit. The samples originated from the Philippines, and the report links the infrastructure to APT10's history, including servers in South Korea.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT10",
+          "q": "we believe to be new activity by APT10, a Chinese cyber",
+          "by": "enSilo Intelligence Team"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "against different government and private"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Philippines",
+          "q": "The samples we analyzed originated from the Philippines."
+        },
+        {
+          "v": "South Korea",
+          "q": "Using C&C servers located in South Korea."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "was registered in Hong Kong."
+        }
+      ],
+      "dates": [
+        {
+          "v": "April 2019",
+          "q": "In April 2019, enSilo detected what it believes to be new activity by Chinese cyber espionage group APT10.",
+          "what": "enSilo detected what it believes is new APT10 activity"
+        },
+        {
+          "v": "22.12.2018",
+          "q": "sample was issued at 22.12.2018, which correlates with the file’s compilation date.",
+          "what": "Certificate in the Quasar sample was issued, matching the file's compilation date"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PlugX",
+          "q": "Among the payloads we found are PlugX and Quasar RATs."
+        },
+        {
+          "v": "Quasar RAT",
+          "q": "Among the payloads we found are PlugX and Quasar RATs."
+        },
+        {
+          "v": "jjs.exe",
+          "q": "jjs.exe is a JVM-based implementation of a javascript engine as part of the Java platform developed by Oracle, but"
+        },
+        {
+          "v": "Poison Ivy",
+          "q": "The zip contained a sample of the Poison Ivy malware which is also known"
+        },
+        {
+          "v": "SharpSploit",
+          "q": "This version contains an addition of SharpSploit to extract"
+        },
+        {
+          "v": "mimikatz",
+          "q": "passwords from the victim machine using the framework’s built-in mimikatz capabilities."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL side-loading",
+          "q": "The method is known as DLL Side-Loading."
+        },
+        {
+          "v": "injection into svchost.exe",
+          "q": "that is injected into svchost.exe and contains the actual malicious payload."
+        },
+        {
+          "v": "service persistence",
+          "q": "The first variant uses a service as its persistency method."
+        },
+        {
+          "v": "Run registry key persistence",
+          "q": "Unlike the first variant, this variant uses the Run registry key for the current user under the name"
+        },
+        {
+          "v": "typosquatting domain names",
+          "q": "Use of typosquatting domain names similar to real, legitimate tech companies."
+        },
+        {
+          "v": "reflective loads in-memory",
+          "q": "The injected shellcode reflective loads in-memory an executable it reconstructs from data which is bundled with"
+        },
+        {
+          "v": "header magic values replaced",
+          "q": "headers magic values, MZ and PE respectively, were replaced with VX"
+        },
+        {
+          "v": "dummy calls",
+          "q": "with dummy calls to GetForegroundWindow API function, as can be seen in Figure 7."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The report says enSilo believes this is new APT10 activity rather than stating it as confirmed fact.",
+      "The report says it is very reasonable to assume the same group operates both loader variants, based on infrastructure overlaps.",
+      "The report says the samples may be part of a testing environment or a short-lived attack that has already finished."
+    ]
+  }
+}

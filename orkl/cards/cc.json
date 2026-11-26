@@ -1,0 +1,250 @@
+{
+  "cc8adc7615cd66cf3589c50b1e32feccbee3c778": {
+    "sha1": "cc8adc7615cd66cf3589c50b1e32feccbee3c778",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:08:48Z",
+    "model": "haiku",
+    "summary": "Microsoft Windows Defender Research guidance, published 2017-11-06, on Qakbot and Emotet, two information-stealing malware families that aim to steal online banking credentials and can spread within corporate networks. It lists mitigation steps: cutting off infected machines, hunting for new services and scheduled tasks, removing the malware, monitoring for reinfection, and using Windows 10 protections. It also gives indicators of compromise for recent variants, including file hashes, file paths, registry changes and command-and-control server addresses.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "cybercriminals behind Qakbot and Emotet",
+          "q": "Over the years, the cybercriminals behind Qakbot and Emotet have improved the code behind their malware.",
+          "by": "Windows Defender Research (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "enterprises, small and medium businesses, and other organizations",
+          "q": "more and more enterprises, small and medium businesses, and other organizations have been affected by indiscriminate"
+        },
+        {
+          "v": "online banking users",
+          "q": "Even though these malware families are typically known to target individual online banking users, more and more"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-11-06",
+          "q": "Published: 2017-11-06 · Archived: 2026-11-26 02:04:48 UTC",
+          "what": "The report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Qakbot",
+          "q": "Qakbot and Emotet are information stealers that have been showing renewed activity in recent months."
+        },
+        {
+          "v": "Emotet",
+          "q": "Qakbot and Emotet are information stealers that have been showing renewed activity in recent months."
+        },
+        {
+          "v": "DDEDownloader",
+          "q": "install Qakbot and Emotet, or the more recent DDEDownloader that install other malware) and scripts."
+        },
+        {
+          "v": "Sysinternals Autoruns",
+          "q": "The Sysinternals Autoruns tool can be your friend here."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "keylogging",
+          "q": "They can also steal other sensitive information using techniques like keylogging."
+        },
+        {
+          "v": "online banking credentials",
+          "q": "ultimate goal of stealing online banking credentials that malware operators can then use to steal money from"
+        },
+        {
+          "v": "lateral movement",
+          "q": "They can also be spread by other malware during the lateral movement stage of a"
+        },
+        {
+          "v": "trojan droppers",
+          "q": "Block malicious emails carrying trojan droppers that install Qakbot and Emotet using Microsoft Exchange Online"
+        },
+        {
+          "v": "macro code",
+          "q": "malicious documents (such as those that use macro code to"
+        },
+        {
+          "v": "service creation and scheduled tasks",
+          "q": "2. Look for new service creations and scheduled tasks"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "upward trend",
+          "q": "Figure 1. Qakbot and Emotet monthly machine encounters show an upward trend."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Qakbot and Emotet"
+    },
+    "hedges": [
+      "Some Qakbot and Emotet variants might not exhibit all of the behaviors above and might be capable of unique routines.",
+      "This data doesn't include Qakbot and Emotet variants blocked by automation and cloud rules.",
+      "Based on our experience helping organizations get rid of Qakbot and Emotet, the following steps mitigate infection and ultimately remove the said malware from corporate networks."
+    ]
+  },
+  "ccf2539410685e38cc3fe0bddfca9722a1964d00": {
+    "sha1": "ccf2539410685e38cc3fe0bddfca9722a1964d00",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:16:37Z",
+    "model": "haiku",
+    "summary": "Black Lotus Labs (Lumen) describes ReverseRat 2.0, a remote access trojan run by a suspected Pakistani actor, and a new agent called NightFury. Added features include webcam photos, USB file theft and registry key handling. The infection chain uses a shortcut file posing as a PDF, a decoy UN document, and a loader that changes its path depending on which antivirus product (such as Kaspersky or Quick Heal) is found. Observed victims were mainly in Afghanistan, with some in Jordan, India and Iran, including one government entity. The campaign began June 28, 2021, according to metadata.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Pakistani actor",
+          "q": "Pakistani actor that was targeting government and energy sector organizations in South and Central Asia.",
+          "by": "Black Lotus Labs (Lumen), in the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "targeting government and energy sector organizations in South and Central Asia."
+        },
+        {
+          "v": "energy",
+          "q": "targeting government and energy sector organizations in South and Central Asia."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Afghanistan",
+          "q": "targeted organizations located in Afghanistan, and to a lesser extent, Jordan, India and Iran."
+        },
+        {
+          "v": "Jordan",
+          "q": "targeted organizations located in Afghanistan, and to a lesser extent, Jordan, India and Iran."
+        },
+        {
+          "v": "India",
+          "q": "targeted organizations located in Afghanistan, and to a lesser extent, Jordan, India and Iran."
+        },
+        {
+          "v": "Iran",
+          "q": "targeted organizations located in Afghanistan, and to a lesser extent, Jordan, India and Iran."
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 2021",
+          "q": "In early June 2021, Black Lotus Labs identified ReverseRat, a remote access trojan (RAT) operated by a suspected",
+          "what": "Black Lotus Labs first identified ReverseRat"
+        },
+        {
+          "v": "June 28, 2021",
+          "q": "Metadata from the campaign indicates that it began on June 28, 2021.",
+          "what": "campaign began, according to metadata"
+        },
+        {
+          "v": "2021-08-11",
+          "q": "Published: 2021-08-11 · Archived: 2026-11-25 02:01:22 UTC",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ReverseRat 2.0",
+          "q": "the ReverseRat agent, which we are calling ReverseRat 2.0."
+        },
+        {
+          "v": "NightFury",
+          "q": "Lastly, we observed a new agent the actor referred to as NightFury, which was sideloaded with a legitimate"
+        },
+        {
+          "v": "preBotHta",
+          "q": "We also uncovered an updated version of the preBotHta loader file, which included new evasion techniques to counter Kaspersky or"
+        },
+        {
+          "v": "AllaKore",
+          "q": "First, the AllaKore agent that was installed in"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "AV products",
+          "q": "The file checked for the presence of AV products that are installed on the host machine using Windows Management"
+        },
+        {
+          "v": "decoy",
+          "q": "The PDF served as a decoy to distract the user as the shortcut file covertly executed the HTA file."
+        },
+        {
+          "v": "zip file",
+          "q": "the infection process began when a victim received a zip file that contained a Microsoft shortcut"
+        },
+        {
+          "v": "sideloaded",
+          "q": "executed, which in turn sideloaded the malicious MSFTEDIT.dll."
+        },
+        {
+          "v": "persistence",
+          "q": "persistence on the infected machine via the Run registry key."
+        },
+        {
+          "v": "remote photos",
+          "q": "Some of the more prominent modifications allowed for added functionality such as taking remote photos via"
+        },
+        {
+          "v": "steal documents",
+          "q": "steal documents stored on a USB drive inserted into an infected computer."
+        },
+        {
+          "v": "document files",
+          "q": "NightFury then searched the computer for document files (txt, pdf, xlsx, xls, pptx, ppt, docx, doc, jpg, png, accdb,"
+        },
+        {
+          "v": "remote file transfers",
+          "q": "allowed for remote file transfers enabling the agent to download and execute additional payloads."
+        },
+        {
+          "v": "registry keys",
+          "q": "The updated agent called functions to create, list and delete registry keys, in addition to pulling a list of installed"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "20 pre-built functions",
+          "q": "identified that there were 20 pre-built functions; however, not all functions were utilized. In fact, eleven of them"
+        },
+        {
+          "v": "eleven",
+          "q": "identified that there were 20 pre-built functions; however, not all functions were utilized. In fact, eleven of them"
+        },
+        {
+          "v": "one entity",
+          "q": "We were able to identify one entity that was associated with a government organization."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ReverseRat"
+    },
+    "hedges": [
+      "operated by a suspected Pakistani actor",
+      "We suspect this was to allow the actor to execute it in the future.",
+      "We hypothesize that during testing, the threat actor realized Kaspersky and Quick Heal products signatured and blocked certain aspects of the infection chain.",
+      "We believe this to be related to the Quick Heal security products.",
+      "we suspect that this is a first stage agent, and that the threat actor has subsequent payloads at its disposal",
+      "This suggests that NightFury is still under development and is not yet fully implemented.",
+      "the document itself appears to have been fabricated as the UN Journal lists no such meeting on that topic.",
+      "We do not believe that this list entails the totality of their operations, as some potential victims were associated with dynamic IP addresses"
+    ]
+  }
+}

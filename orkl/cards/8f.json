@@ -1,0 +1,109 @@
+{
+  "8f3989339145fde6a96e3e9e40864516ecae181f": {
+    "sha1": "8f3989339145fde6a96e3e9e40864516ecae181f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:06:43Z",
+    "model": "haiku",
+    "summary": "Blog post by Matt Graeber, published 2017-12-22, describing code signing attacks in which an attacker clones a legitimate Microsoft certificate chain and trusts the cloned root on victim systems, so malicious code appears Microsoft-signed. It explains why signature validation accepts such chains, how root CA installation can be detected with Sysmon, how per-user root trust can be restricted through a registry setting, and how root trust can be checked against the authroot.stl list. It also names the Microsoft flight root as a possible cloning candidate.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-12-22",
+          "q": "Published: 2017-12-22 · Archived: 2026-11-26 02:14:59 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2017-12-20",
+          "q": "UtcTime: 2017-12-20 17:12:11.999",
+          "what": "Example Sysmon registry event time for a root certificate installation, shown in the report"
+        }
+      ],
+      "tools": [
+        {
+          "v": "New-SelfSignedCertificate",
+          "q": "2. Build a cloned certificate chain using the chain that was exported to disk. The New-SelfSignedCertificate"
+        },
+        {
+          "v": "Autoruns",
+          "q": "enterprise, you run Autoruns across every system, and forward the results to a Splunk dashboard that allows you"
+        },
+        {
+          "v": "Splunk",
+          "q": "enterprise, you run Autoruns across every system, and forward the results to a Splunk dashboard that allows you"
+        },
+        {
+          "v": "VirusTotal",
+          "q": "enabled VirusTotal integration with Autoruns (assuming your organization has accepted that risk) and"
+        },
+        {
+          "v": "sigcheck",
+          "q": "version 2.60 of sigcheck was released and the introduced the -v switch for use with -t or -tu:"
+        },
+        {
+          "v": "certutil",
+          "q": "It is also possible to parse authroot.stl with certutil.exe:"
+        },
+        {
+          "v": "Sysmon",
+          "q": "Sysmon serves this purpose really well and what follows is an ideal"
+        },
+        {
+          "v": "WMI",
+          "q": "use WMI to remotely install and trust a cloned root CA certificate:"
+        },
+        {
+          "v": "PowerShell",
+          "q": "PowerShell makes inspecting certificates really easy."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Certificate Chain Cloning",
+          "q": "Certificate Chain Cloning and Cloned Root Trust Attacks"
+        },
+        {
+          "v": "Cloned Root Trust",
+          "q": "Certificate Chain Cloning and Cloned Root Trust Attacks"
+        },
+        {
+          "v": "installation of a root CA certificate",
+          "q": "Considering the root of this attack involves installation of a root CA certificate, this action will be the focus of"
+        },
+        {
+          "v": "hijack Subject Interface Packages",
+          "q": "research on how to hijack Subject Interface Packages that effectively allows you to apply legitimate digital"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "40,000 hosts",
+          "q": "tasked with baselining persistence entries across 40,000 hosts."
+        },
+        {
+          "v": "6 systems",
+          "q": "6 systems out of 40,000:"
+        },
+        {
+          "v": "0 positive AV hits",
+          "q": "it comes back with 0 positive AV hits."
+        },
+        {
+          "v": "2.60",
+          "q": "version 2.60 of sigcheck was released and the introduced the -v switch for use with -t or -tu:"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The report says the cloned chain passes validation checks, so signature tools will likely be fooled, and the Microsoft flight chain may be a more viable candidate for cloning.",
+      "The report calls its registry prevention 'not the most robust' and says there may not be strong preventative mitigations for certificate installation by an admin.",
+      "The report says it leaves discussion of further anomalies in the cloned chain and signed code for another blog post."
+    ]
+  }
+}

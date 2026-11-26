@@ -1,0 +1,100 @@
+{
+  "5e9cb9311f81bf1ad9fcef04d32034119ebd1008": {
+    "sha1": "5e9cb9311f81bf1ad9fcef04d32034119ebd1008",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:07:41Z",
+    "model": "haiku",
+    "summary": "Describes two new Monero cryptocurrency-mining malware attacks, one on Windows PCs and one on Android devices, both disguised as legitimate updates. The Windows infection, reported by Quick Heal Security Labs, unpacks scripts and a mining program, keeps itself persistent, caps mining CPU use at 35 percent and checks for analysis and antivirus tools. The Android malware HiddenMiner, reported by Fortinet, poses as a Google Play Store update, asks for administrator rights and shuts down in emulators. The article notes IBM X-Force Exchange guidance that HiddenMiner does not run on Android 7.0 or…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [
+        {
+          "v": "driverhost.exe",
+          "q": "Finally, it runs the driverhost.exe mining program, which mines for Monero, while xvvq.bat regularly checks for"
+        },
+        {
+          "v": "ouyk.vbs",
+          "q": "It then launches ouyk.vbs to maintain"
+        },
+        {
+          "v": "xvvq.bat",
+          "q": "persistence and xvvq.bat to keep the computer on by modifying the PowerCFG command."
+        },
+        {
+          "v": "PowerCFG",
+          "q": "persistence and xvvq.bat to keep the computer on by modifying the PowerCFG command."
+        },
+        {
+          "v": "Android/HiddenMiner.A!tr",
+          "q": "the Android/HiddenMiner.A!tr malware attempts to compromise Android"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "self-extracting executable unpacking scripts",
+          "q": "Once installed, this self-extracting executable unpacks a VBS script, extraction utility, password-protected"
+        },
+        {
+          "v": "persistence",
+          "q": "persistence and xvvq.bat to keep the computer on by modifying the PowerCFG command."
+        },
+        {
+          "v": "keeps computer on by changing power settings",
+          "q": "persistence and xvvq.bat to keep the computer on by modifying the PowerCFG command."
+        },
+        {
+          "v": "checks for analysis and antivirus tools",
+          "q": "analysis and antivirus tools using the tasklist command."
+        },
+        {
+          "v": "masquerades as legitimate application updates",
+          "q": "plain sight and masquerade as legitimate application updates."
+        },
+        {
+          "v": "poses as Google Play Store update",
+          "q": "appears in the Google Play Store as an update to the Store itself."
+        },
+        {
+          "v": "asks for administrative privileges",
+          "q": "If installed on a mobile device, it activates and asks for administrative privileges."
+        },
+        {
+          "v": "shuts down on emulators or virtual machines",
+          "q": "If installed on an emulator or virtual machine, it shuts"
+        },
+        {
+          "v": "caps mining CPU usage",
+          "q": "(CPU) usage to 35 percent for all mining activity."
+        },
+        {
+          "v": "spear phishing and malvertising (suspected)",
+          "q": "Heal speculated that spear phishing and malvertising are likely culprits."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "35 percent",
+          "q": "(CPU) usage to 35 percent for all mining activity."
+        },
+        {
+          "v": "Android 7.0 or later",
+          "q": "on Android 7.0 or later thanks to a change in Android PacKage (APK) format that introduced a new signing"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Android/HiddenMiner.A!tr"
+    },
+    "hedges": [
+      "The infection vector is currently unknown; Quick Heal only speculated that spear phishing and malvertising are likely culprits.",
+      "Users may not encounter performance issues because of the low CPU cap; the report says they may not."
+    ]
+  }
+}

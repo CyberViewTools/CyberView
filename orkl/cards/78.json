@@ -1,0 +1,92 @@
+{
+  "784131a2839c62caf31b827110dd70d925d7cfdd": {
+    "sha1": "784131a2839c62caf31b827110dd70d925d7cfdd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:09:19Z",
+    "model": "haiku",
+    "summary": "Carbon Black's Threat Analysis Unit (published 2019-02-25) describes defeating compiler-level obfuscations, opaque predicates and control flow flattening, in APT10's ANEL RAT. The unit modified the public IDA Pro plugin HexRaysDeob. The modified tool deobfuscated 34 of 38 functions (89%) in one ANEL 5.4.1 sample.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT10",
+          "q": "ANEL (also referred to as UpperCut) is a RAT program used by APT10 and observed in Japan uniquely.",
+          "by": "the report itself (VMware Carbon Black Threat Analysis Unit)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Japan",
+          "q": "ANEL (also referred to as UpperCut) is a RAT program used by APT10 and observed in Japan uniquely."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2019-02-25",
+          "q": "Published: 2019-02-25 · Archived: 2026-11-26 02:07:13 UTC",
+          "what": "Carbon Black Threat Analysis Unit blog post on deobfuscating APT10 ANEL malware published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ANEL",
+          "q": "ANEL (also referred to as UpperCut) is a RAT program used by APT10 and observed in Japan uniquely."
+        },
+        {
+          "v": "HexRaysDeob",
+          "q": "HexRaysDeob is an IDA Pro plugin written by Rolf Rolles to address obfuscation seen in binaries."
+        },
+        {
+          "v": "IDA Pro",
+          "q": "HexRaysDeob is an IDA Pro plugin written by Rolf Rolles to address obfuscation seen in binaries."
+        },
+        {
+          "v": "Dharma ransomware packer",
+          "q": "Another obfuscation, control flow flattening, was applied to APT10 ANEL and Dharma ransomware packer."
+        },
+        {
+          "v": "Turla mosquito",
+          "q": "For example, opaque predicates were applied to Turla mosquito and APT10 ANEL."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "opaque predicates",
+          "q": "Opaque predicate is a programming term that refers to decision making where there is actually only one path."
+        },
+        {
+          "v": "control flow flattening",
+          "q": "Control flow flattening is an obfuscation method where programs do not cleanly flow from beginning to end."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "34 of 38 functions (89%)",
+          "q": "The code is able to deobfuscate 34 of 38 functions (89%)."
+        },
+        {
+          "v": "5.3.0",
+          "q": "all ANEL samples whose version is 5.3.0 or later are obfuscated with opaque predicates and control flow flattening."
+        },
+        {
+          "v": "5.4.1",
+          "q": "The modified tool was tested with an ANEL 5.4.1 payload dropped from a malicious document with the following"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ANEL"
+    },
+    "hedges": [
+      "The guessing is not 100% accurate however it works for the majority of obfuscated functions tested.",
+      "It should be noted every function is not always obfuscated.",
+      "The tool may not work for updated ANEL versions if they are compiled with different options of the obfuscating compiler.",
+      "The report expects other threat actors may adopt these obfuscations, but malware using them is currently limited.",
+      "Some failure cases are not yet implemented and are to be prioritised for future releases."
+    ]
+  }
+}

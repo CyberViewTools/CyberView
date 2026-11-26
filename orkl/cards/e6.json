@@ -1,0 +1,83 @@
+{
+  "e6c2558dd35f707f4d1cc8ec4285d49c74e612aa": {
+    "sha1": "e6c2558dd35f707f4d1cc8ec4285d49c74e612aa",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:10:20Z",
+    "model": "haiku",
+    "summary": "A 2015 TrendLabs blog post by Trend Micro senior threat researcher David Sancho describes how malware uses steganography to hide code and command-and-control (C&C) traffic. It cites a DarkComet dropper, seen in November 2014, that hides encrypted code in a bitmap image in its resources. It describes the Morto Trojan sending Base64-encoded C&C commands in DNS responses, the TDSS/Alureon botnet fetching JPG images from popular blogging sites with commands hidden inside, and ShadyRAT hiding commands in HTML comments and in JPG files using LSB encoding. The post presents these as techniques to…",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2015-05-11",
+          "q": "Published: 2015-05-11 · Archived: 2026-11-26 02:15:24 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "November 2014",
+          "q": "This particular variant surfaced in November 2014 and is relatively simple.",
+          "what": "DarkComet dropper variant surfaced"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DarkComet",
+          "q": "DarkComet dropper carries a bitmap… with data inside"
+        },
+        {
+          "v": "Morto",
+          "q": "The Morto Trojan uses a very shrewd way of concealing its C&C traffic."
+        },
+        {
+          "v": "TDSS",
+          "q": "The now-defunct TDSS botnet also used an unusual method of C&C communication:"
+        },
+        {
+          "v": "ShadyRAT",
+          "q": "ShadyRAT hides C&C communication inside HTML code"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "steganography",
+          "q": "I will talk about how steganography is used with seemingly innocuous data files that actually hide binary code."
+        },
+        {
+          "v": "encrypted code in pixels",
+          "q": "the pixels are encrypted code, not designed to be looked at."
+        },
+        {
+          "v": "C&C via DNS requests",
+          "q": "Instead of using HTTP, it uses simple DNS requests looking for non-existent domain names."
+        },
+        {
+          "v": "Base64 encoding",
+          "q": "The text being exchanged is further obfuscated by a simple Base64 encoding."
+        },
+        {
+          "v": "commands hidden in JPG images",
+          "q": "requesting JPG images that were hosted on popular blogging sites."
+        },
+        {
+          "v": "commands hidden in HTML comments",
+          "q": "the commands are encrypted and encoded into HTML comments, interspersed with what appears to be legitimate"
+        },
+        {
+          "v": "LSB technique",
+          "q": "using the LSB technique as seen in the first entry of this series"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "this technique was possibly a contributing factor",
+      "Alternately, he may have just learned about steganography and wanted to try out new things."
+    ]
+  }
+}

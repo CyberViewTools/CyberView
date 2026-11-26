@@ -1,0 +1,107 @@
+{
+  "7a77e72ec3fb27917d72165d36949f0f24713dff": {
+    "sha1": "7a77e72ec3fb27917d72165d36949f0f24713dff",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:09:30Z",
+    "model": "haiku",
+    "summary": "CrowdStrike's technical analysis of WhisperGate, malware reported in January 2022 against Ukrainian targets. The malicious bootloader overwrites the master boot record of infected hosts, shows a ransom note, and corrupts disks. It has no decryption or recovery mechanism, and the report assesses it, with moderate confidence, as aimed at destroying data rather than genuine ransomware. It accompanies a file wiper and a Discord-based downloader. The report notes similarities to NotPetya but could not identify any technical overlap with VOODOO BEAR.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "VOODOO BEAR",
+          "q": "no technical overlap could currently be identified with VOODOO BEAR operations",
+          "by": "CrowdStrike Intelligence Team"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "multiple websites belonging to the Ukrainian government were defaced"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukrainian",
+          "q": "multiple websites belonging to the Ukrainian government were defaced"
+        }
+      ],
+      "dates": [
+        {
+          "v": "Jan. 15, 2022",
+          "q": "On Jan. 15, 2022, a set of malware dubbed WhisperGate was reported to have been deployed against Ukrainian",
+          "what": "WhisperGate was reported deployed against Ukrainian targets"
+        },
+        {
+          "v": "2022-01-10",
+          "q": "contains a build timestamp of 2022-01-10 10:37:18 UTC",
+          "what": "Build timestamp of the installer component"
+        },
+        {
+          "v": "2022-01-19",
+          "q": "Published: 2022-01-19",
+          "what": "The CrowdStrike report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "bootloader malware",
+          "q": "The WhisperGate bootloader malware complements its file-wiper counterpart"
+        },
+        {
+          "v": "file-wiper",
+          "q": "The WhisperGate bootloader malware complements its file-wiper counterpart"
+        },
+        {
+          "v": "Discord-based downloader",
+          "q": "a Discord-based downloader and a file wiper"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "overwrites the master boot record",
+          "q": "This component overwrites the master boot record (MBR) of an infected host"
+        },
+        {
+          "v": "displays a ransom note",
+          "q": "that displays a ransom note when the host boots"
+        },
+        {
+          "v": "destructive operations",
+          "q": "performs destructive operations on the infected host’s hard drives"
+        },
+        {
+          "v": "overwrites sectors",
+          "q": "At periodic offsets, the bootloader overwrites sectors of an infected host’s entire hard drive"
+        },
+        {
+          "v": "does not initiate a reboot",
+          "q": "The bootloader installer does not initiate a reboot of the infected system"
+        },
+        {
+          "v": "masquerade as genuine modern ransomware",
+          "q": "attempt to masquerade as genuine modern ransomware operations"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three individual components",
+          "q": "The incident is widely reported to contain three individual components deployed by the same adversary"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "WhisperGate"
+    },
+    "hedges": [
+      "Attribution of the three components to one adversary is described as widely reported, not confirmed by the report.",
+      "The assessment that the activity aims to destroy data is made with moderate confidence as analysis continues.",
+      "The report says the activity very likely aims to destroy data; this is an assessment, not a certainty.",
+      "No technical overlap with VOODOO BEAR could currently be identified; the NotPetya comparison is only a reminiscence.",
+      "The lack of a forced reboot suggests other steps or a user-initiated reboot; this is a suggestion, not a finding."
+    ]
+  }
+}

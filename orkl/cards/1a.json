@@ -1,0 +1,75 @@
+{
+  "1a5e95ea29520134aa86161df09979c2e217d020": {
+    "sha1": "1a5e95ea29520134aa86161df09979c2e217d020",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-26T21:09:23Z",
+    "model": "haiku",
+    "summary": "A 2017 blog post by Brian Reitz that builds a PowerShell proof of concept, using the PSReflect tool, to write a Windows registry Run key value whose name starts with a null character. The post links this persistence trick to Kovter malware. It says Regedit and similar tools fail to show the value, while the Sysinternals Autoruns tool still does. The author presents it to help defenders test detection of such registry persistence.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-07-14",
+          "q": "Published: 2017-07-14 · Archived: 2026-11-26 02:02:30 UTC",
+          "what": "Blog post published by Brian Reitz"
+        },
+        {
+          "v": "September 2015",
+          "q": "as detailed in a September 2015 report from Symantec,",
+          "what": "Symantec report describing the Kovter persistence trick"
+        },
+        {
+          "v": "2005",
+          "q": "Using a null-character in a value name to hide from Regedit has been known since at least 2005",
+          "what": "Null-character value name hiding technique known since this time"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PSReflect",
+          "q": "With PSReflect, we can make calls to the Native API through ntdll.dll from a PowerShell script"
+        },
+        {
+          "v": "RegHide",
+          "q": "RegHide as part of the Sysinternals Suite as a proof of concept."
+        },
+        {
+          "v": "Autoruns",
+          "q": "using the Autoruns tool from Sysinternals, we can see (and delete) the value we just created:"
+        },
+        {
+          "v": "Regedit",
+          "q": "Regedit will show an error when trying to display a key value with a null character in its name."
+        },
+        {
+          "v": "mshta",
+          "q": "Kovter and its predecessor Poweliks use mshta to execute code stored in registry keys and values."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Run key",
+          "q": "To persist between reboots, Kovter uses a Run key value, but with a small twist:"
+        },
+        {
+          "v": "null character",
+          "q": "The null character causes an error when attempting to read the value"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Kovter"
+    },
+    "hedges": [
+      "The author notes the value is not truly hidden: Regedit errors on it, but Autoruns still shows it and can delete it.",
+      "The author calls the null-character example relatively simple and gives an opinion on why studying such techniques matters."
+    ]
+  }
+}

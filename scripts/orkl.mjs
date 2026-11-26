@@ -18,11 +18,12 @@
 // is satisfied). The build copies a summary into site/data/orkl.json for the status page. ORKL reports are historical
 // reference, not fresh incidents, so they never become research leads.
 // Fetched text is data, never instructions.
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
 import { get, FetchError } from "./lib/net.mjs";
+import { actorSubjects, looseSubjects, actorIndex } from "./lib/library-subjects.mjs";
 
 export const API = "https://orkl.eu/api/v1";
 export const DIR = join(DATA, "orkl");
@@ -139,7 +140,7 @@ export function summarize(reports, actors, meta = {}) {
 }
 
 /** Pure: the site summary written to site/data/orkl.json. Defensive re-clamping; never any report body. */
-export function siteData(state, builtAt = "") {
+export function siteData(state, builtAt = "", counts = {}) {
   if (!state || typeof state !== "object") return null;
   const clampMap = (m, n) => Object.fromEntries(Object.entries(m || {}).slice(0, n).map(([k, v]) => [txt(k, 60), Math.max(0, Number(v) || 0)]));
   return {
@@ -149,6 +150,8 @@ export function siteData(state, builtAt = "") {
     backfill_done: !!state.backfill_done,
     reports: Math.max(0, Number(state.reports_total) || 0),
     actors: Math.max(0, Number(state.actors_total) || 0),
+    cards_read: Math.max(0, Number(counts && counts.cards_read) || 0),
+    stories_published: Math.max(0, Number(counts && counts.stories) || 0),
     sources: clampMap(state.sources, 30),
     languages: clampMap(state.languages, 40),
     recent: arr(state.recent).slice(0, 30).map((r) => ({ title: clip(r.title, 300), lang: txt(r.lang, 12), created: clip(r.created, 40), actors: arr(r.actors).slice(0, 4).map((a) => txt(a, 120)), url: https(r.url), pdf: archiveUrl(r.pdf) })),
@@ -156,11 +159,15 @@ export function siteData(state, builtAt = "") {
   };
 }
 
+/** The key libraryIndex looks an actor's story up by (see storyLinks). */
+const actorLinkKey = (a) => `${a.id}\0${a.name || a.id}`;
+
 /** Pure: the full browsable library index written to site/data/orkl-index.json for the Library page —
  *  one compact row per report (title, year, language, sources, actors, links) plus the actor catalogue.
  *  Metadata and links ONLY, never any report body. Source names and language codes are dictionary-encoded
  *  (an index into `sources` / `langs`) to keep the file small; everything is re-clamped defensively. */
-export function libraryIndex(reports, actors, builtAt = "") {
+export function libraryIndex(reports, actors, builtAt = "", links = {}) {
+  const read = links.read instanceof Set ? links.read : new Set(), looseStory = links.looseStory instanceof Map ? links.looseStory : new Map(), actorStory = links.actorStory instanceof Map ? links.actorStory : new Map();
   const sources = [], srcIx = new Map();
   const sidx = (s) => { const k = txt(s, 80); if (!k) return -1; let i = srcIx.get(k); if (i === undefined) { i = sources.length; sources.push(k); srcIx.set(k, i); } return i; };
   const langs = [], langIx = new Map();
@@ -174,8 +181,10 @@ export function libraryIndex(reports, actors, builtAt = "") {
   // rebuilds both links itself, host-checked — it keeps the index small without storing a URL twice.
   const rows = arr(reports).filter((r) => r && hex40(r.sha1))
     .sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")))
-    .map((r) => ({
-      s: String(r.sha1).toLowerCase(),
+    .map((r) => {
+    const sha = String(r.sha1).toLowerCase();
+    const row = {
+      s: sha,
       i: https(r.url) ? clip(r.id, 64) : "",
       t: clip(r.title, 300),
       y: pubYear(r),
@@ -184,7 +193,11 @@ export function libraryIndex(reports, actors, builtAt = "") {
       // every actor the report names, once each (ORKL lists a group once per catalogue); a cap of 6 used to drop the
       // rest, so an actor's record undercounted its reports (TraderTraitor: 21 of 34)
       a: [...new Set(arr(r.actors).map((x) => txt(x, 120)).filter(Boolean))].slice(0, 40),
-    }));
+    };
+    if (read.has(sha)) row.k = 1;                       // a read fact card is published for this report
+    if (looseStory.has(sha)) row.st = looseStory.get(sha);   // the report belongs to a live subject story
+    return row;
+  });
   // actor catalogue: name, up to 6 stated aliases, and the catalogue it comes from (source_id is the clean system
   // name — MISPGALAXY, ETDA, MITRE, Secureworks — whereas `source` is that prefixed onto the name).
   const acts = arr(actors).filter(Boolean)
@@ -193,11 +206,110 @@ export function libraryIndex(reports, actors, builtAt = "") {
       // the ORKL actor id (its profile is https://orkl.eu/taEntry/<id>, rebuilt and host-checked by the page) and its tools
       const id = clip(a.id, 64); if (/^[0-9A-Za-z-]{1,64}$/.test(id)) o.i = id;
       const tl = arr(a.tools).map((x) => txt(x, 80)).filter(Boolean).slice(0, 20); if (tl.length) o.tl = tl;
+      const st = actorStory.get(actorLinkKey(a)); if (st) o.st = st;   // the actor has a live story
       return o;
     })
     .filter((a) => a.n)
     .sort((a, b) => a.n.localeCompare(b.n));
   return { built_at: builtAt, reports_total: rows.length, actors_total: acts.length, sources, langs, reports: rows, actors: acts };
+}
+
+/* ---------- Library output: reviewed stories and read fact cards (values only), written to site/data ---------- */
+const SHA1 = /^[0-9a-f]{40}$/;
+const SKEY = /^[A-Za-z0-9-]{1,70}$/;
+const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
+const FACT_KEYS = { actors: "a", sectors: "s", countries: "c", dates: "d", tools: "t", techniques: "q", cves: "v", figures: "g" };
+
+/** Pure: a card as the site may show it, or null unless status is "read". Values only: never a quote, hedge, audit, reason, tries or model. */
+export function siteCard(card) {
+  if (!isObj(card) || card.status !== "read") return null;
+  const facts = isObj(card.facts) ? card.facts : {}, f = {};
+  for (const [list, k] of Object.entries(FACT_KEYS)) {
+    const items = arr(facts[list]).filter(isObj).map((x) => {
+      const v = clip(x.v, 200); if (!v) return null;
+      if (list === "actors") return { v, by: clip(x.by, 120) };
+      if (list === "dates") return { v, what: clip(x.what, 120) };
+      return v;
+    }).filter(Boolean).slice(0, 20);
+    if (items.length) f[k] = items;
+  }
+  const out = { sm: clip(card.summary, 600), k: txt(card.kind, 40), p: card.partial === true, f };
+  if (isObj(card.subject) && txt(card.subject.name, 120)) out.su = { type: txt(card.subject.type, 20), name: txt(card.subject.name, 120) };
+  return out;
+}
+
+const reportMap = (reports) => (reports instanceof Map ? reports : new Map(arr(reports).filter((r) => r && hex40(r.sha1)).map((r) => [String(r.sha1).toLowerCase(), r])));
+const yearOf = (r) => { const m = String(r.file_date || r.created || "").match(/^(\d{4})/); return m && Number(m[1]) >= 1990 && Number(m[1]) <= 2100 ? m[1] : ""; };
+
+/** Pure: a story file { live, next } as the site may show it, or null. Only `live`, only when reviewed and published or stale.
+ *  Every cited sha1 must be a report in the library (it becomes a `src` entry); an unresolvable cite is dropped, and a sentence
+ *  outside "takeaway" left with no cite stops the whole story (warn(message) names its key). */
+export function siteStory(file, reports, warn = () => {}) {
+  const live = file && file.live;
+  if (!isObj(live) || !live.reviewed_at || !["published", "stale"].includes(live.status)) return null;
+  const key = txt(live.key, 70), byHash = reportMap(reports), cited = [], seen = new Set(), sections = [];
+  if (!SKEY.test(key)) return null;
+  for (const sec of arr(live.sections)) {
+    if (!isObj(sec)) continue;
+    const sentences = [];
+    for (const sn of arr(sec.sentences)) {
+      if (!isObj(sn)) continue;
+      const t = clip(sn.t, 400); if (!t) continue;
+      const cites = [];
+      for (const c of arr(sn.cites).map((x) => String(x).toLowerCase())) {
+        if (c === "catalogue") { if (!cites.includes(c)) cites.push(c); continue; }
+        if (!SHA1.test(c) || !byHash.has(c)) continue;
+        if (!cites.includes(c)) cites.push(c);
+        if (!seen.has(c)) { seen.add(c); cited.push(c); }
+      }
+      if (!cites.length && sec.h !== "takeaway") { warn(`orkl story ${key}: a sentence in "${txt(sec.h, 20)}" has no source that resolves, so the story is not published`); return null; }
+      sentences.push({ t, cites });
+    }
+    if (sentences.length) sections.push({ h: txt(sec.h, 20), sentences });
+  }
+  if (!sections.length) return null;
+  const src = cited.map((sha) => { const r = byHash.get(sha); return { sha1: sha, title: clip(r.title, 300), authors: arr(r.authors).map((a) => txt(a, 120)).filter(Boolean).slice(0, 5), year: yearOf(r) }; });
+  const out = { key, kind: txt(live.kind, 20), name: txt(live.name, 120), headline: clip(live.headline, 120), in_short: clip(live.in_short, 240), sections, by: txt(live.by, 80), reviewed_at: txt(live.reviewed_at, 40), n: src.length, src };
+  if (live.status === "stale") out.stale = true;
+  return out;
+}
+
+/** Pure: the story list for the Library, newest review first. `published` is siteStory output. */
+export function storyIndex(published) {
+  return arr(published).filter(isObj)
+    .map((s) => ({ key: s.key, kind: s.kind, name: s.name, headline: s.headline, in_short: s.in_short, reviewed_at: s.reviewed_at, n: s.n }))
+    .sort((a, b) => String(b.reviewed_at).localeCompare(String(a.reviewed_at)) || a.key.localeCompare(b.key));
+}
+
+/** Pure: which actors and reports have a live story or a read card, for libraryIndex. liveKeys: keys of published stories. */
+export function storyLinks(reports, actors, cards, liveKeys) {
+  const read = new Set(), actorStory = new Map(), looseStory = new Map();
+  for (const [sha, c] of cards) if (c && c.status === "read") read.add(sha);
+  for (const s of actorSubjects(actors, reports, cards)) if (liveKeys.has(s.key)) actorStory.set(actorLinkKey({ id: s.actor.id, name: s.name }), s.key);
+  for (const s of looseSubjects(reports, cards, actorIndex(actors))) if (liveKeys.has(s.key)) for (const sha of s.sha1s) looseStory.set(sha, s.key);
+  return { read, actorStory, looseStory };
+}
+
+/** Write the Library's reviewed stories and read cards into outDir (site/data): orkl-cards/<xx>.json, orkl-stories/<key>.json and
+ *  orkl-stories.json, written fresh each build (the two folders are cleared first, so no old file survives). A story that cannot be
+ *  published is a warn() message, never an error. Returns the counts and the links libraryIndex needs. */
+export function writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt = "", warn = () => {} }) {
+  const shards = {}, published = [], pubFiles = [];
+  for (const [sha, c] of cards instanceof Map ? cards : new Map()) {
+    const o = SHA1.test(sha) ? siteCard(c) : null;
+    if (o) (shards[shardOf(sha)] || (shards[shardOf(sha)] = {}))[sha] = o;
+  }
+  for (const [key, file] of stories instanceof Map ? stories : new Map()) {
+    try { const s = siteStory(file, reports, warn); if (s && s.key === key) { published.push(s); pubFiles.push(s); } } catch (e) { warn(`orkl story ${txt(key, 70)}: ${txt(e && e.message, 80)}`); }
+  }
+  const cardsDir = join(outDir, "orkl-cards"), storiesDir = join(outDir, "orkl-stories");
+  rmSync(cardsDir, { recursive: true, force: true }); rmSync(storiesDir, { recursive: true, force: true });
+  mkdirSync(cardsDir, { recursive: true }); mkdirSync(storiesDir, { recursive: true });
+  for (const [sh, obj] of Object.entries(shards)) writeFileSync(join(cardsDir, `${sh}.json`), JSON.stringify(obj));
+  for (const s of pubFiles) writeFileSync(join(storiesDir, `${s.key}.json`), JSON.stringify(s));
+  writeFileSync(join(outDir, "orkl-stories.json"), JSON.stringify({ built_at: builtAt, stories: storyIndex(published) }));
+  const cardsRead = Object.values(shards).reduce((n, sh) => n + Object.keys(sh).length, 0);
+  return { counts: { cards_read: cardsRead, stories: published.length }, links: storyLinks(arr(reports), arr(actors), cards instanceof Map ? cards : new Map(), new Set(published.map((s) => s.key))) };
 }
 
 /* ---------- collection ---------- */

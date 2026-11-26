@@ -41,6 +41,10 @@ export function checkOutputs(files, now = Date.now()) {
   const w = need("workbench.json"); if (w && (!Array.isArray(w.kev) || typeof w.guides !== "object")) p.push("workbench.json: kev or guides missing");
   const o = need("ops.json"); if (o && (!Array.isArray(o.routines) || !o.routines.length)) p.push("ops.json: no routines");
   const c = need("chat.json"); if (c && (!Array.isArray(c.posts) || c.posts.some((x) => !x || !x.reviewed_at))) p.push("chat.json: a post without a review is in the feed");
+  // the Library's story list is expected only when the library has published stories; a missing Library output never fails the proof
+  const ls = files["orkl-stories.json"];
+  if (ls && (!Array.isArray(ls.stories) || ls.stories.some((x) => !x || !x.key || !x.headline || !x.reviewed_at))) p.push("orkl-stories.json: a story without a key, headline or review is listed");
+  if (ls && Array.isArray(ls.stories)) for (const x of ls.stories) if (!files[`orkl-stories/${x.key}.json`]) p.push(`orkl-stories/${x.key}.json: listed but missing`);
   need("trends.json"); need("tabletop.json"); need("health.json"); need("feed.json");
   return p;
 }

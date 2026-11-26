@@ -1,0 +1,41 @@
+{
+  "id": "risc-zero-proof-forgery-flaw-fixed-3-1-0-2026-11",
+  "title": "RISC Zero patches critical proof-forgery flaw; proofs must be regenerated after upgrading to 3.1.0",
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-26",
+  "date_note": "The articles say the fix shipped in the November 10 release; neither gives an earlier disclosure day for the advisory, so the publication day (26 November) is used.",
+  "first_seen": "2026-11-26T02:15:37Z",
+  "updated_at": "2026-11-26T02:15:37Z",
+  "actor": "",
+  "attack": [],
+  "cves": [],
+  "tags": [],
+  "org": "RISC Zero",
+  "products": ["risc0-zkvm"],
+  "country": "United States",
+  "place": "",
+  "lat": 37.77,
+  "lng": -122.42,
+  "pin_type": "country",
+  "geo_basis": "no place stated by the sources; placeholder pin",
+  "summary": "PANews and ChainCatcher, both relaying The Defiant, report that RISC Zero fixed a critical proof-forgery flaw in its zero-knowledge software. Per ChainCatcher, an attacker holding one valid Groth16 receipt could get any claim accepted. Both say users must upgrade to 3.1.0 and regenerate proofs. Neither article reports exploitation.",
+  "plain": "A serious flaw in RISC Zero's proof system could let someone with one valid proof get false claims accepted. Users must upgrade to 3.1.0 and regenerate their proofs, according to the reports.",
+  "exec": "Applications relying on RISC Zero proofs must upgrade to 3.1.0 and regenerate proofs, according to PANews and ChainCatcher. Neither reports exploitation.",
+  "action": "RISC Zero's fix, as relayed by PANews and ChainCatcher: upgrade to 3.1.0 and regenerate the proofs your application depends on; PANews says RISC Zero states there is no workaround.",
+  "sector": "Blockchain / zero-knowledge proofs",
+  "sectors": {"values": ["information-technology"], "basis": "inferred"},
+  "surface": {"value": "unknown", "basis": "inferred"},
+  "source_tier": "established",
+  "sources": [
+    {"name": "ChainCatcher", "url": "https://www.chaincatcher.com/article/2308077", "published": "2026-11-26"},
+    {"name": "PANews", "url": "https://www.panewslab.com/zh/articles/01a21570-00cb-77de-8365-00922bdf7338", "published": "2026-11-26"}
+  ],
+  "validation": {
+    "state": "single_source",
+    "note": "PANews and ChainCatcher both relay The Defiant's report and the RISC Zero advisory, so they count as one account; The Defiant article body did not load and RISC Zero's GitHub release and advisories answered 403.",
+    "checked_at": "2026-11-26T02:15:37Z"
+  },
+  "evidence": []
+}

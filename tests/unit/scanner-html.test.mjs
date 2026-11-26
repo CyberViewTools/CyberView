@@ -31,7 +31,7 @@ const finding = (o = {}) => ({
   fix: { fixed_in: ["9.8"], vendor_fixed: [], workaround: [], cisa_required_action: "Apply updates " + EVIL,
     advisory: { name: "Advisory " + EVIL, url: "https://advisories.example.com/a?x=1&y=2" },
     references: ["javascript:alert(1)", "http://plain.example.com/ref", "https://user:pw@creds.example.com/", "https://ok.example.com/ref"],
-    details: "https://xanderhutch.github.io/CyberView/vulnerabilities.html#CVE-2026-90101", details_note: "linked, not copied", analysis: null },
+    details: "https://cyberview.tools/vulnerabilities.html#CVE-2026-90101", details_note: "linked, not copied", analysis: null },
   ...o,
 });
 const report = (o = {}) => {

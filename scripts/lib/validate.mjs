@@ -310,9 +310,17 @@ export const ACCURACY_STRICT_FROM = "2026-11-22T06:00:00Z";
 const COUNTABLE = /(?<![\w.,:/#-])(about|around|approximately|roughly|some|nearly|almost|under|less than|fewer than|up to|over|more than|at least)?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(\s?(?:million|billion|bn|m\b|k\b)|\s?(?:%|percent|per cent))?(?![\w.,:/-]*\d)(?![\w-])/gi;
 const MONTH = /^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i, MONTH_BEFORE = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s*$/i;
 const NOT_FIGURE_BEFORE = /(cve-\d{4}-|cvss(v\d(\.\d)?)?:?\s*|version\s*|\bv|\bkb|\bno\.\s*|\b(build|release|patch|update|firmware|step|phase|level|tier|grade|article|section|chapter|paragraph|rule|room|apt|apt-|unc|ta|storm-|fin|sha|md|top|series|gen|ios|android|windows|win|chrome|firefox|python|php|java|node|rust|office|server|exchange|sharepoint|forti\w*|tls|ssl|http|ipv|wpa|802\.)\s*-?)$/i;
+// East Asian myriad notation in a quoted page (Japanese, Chinese): 1万466 is 10,466, 4万2,107 is 42,107, 3億2000万 is
+// 320,000,000. Written out as plain digits so a word-for-word quote from such a page can state an event's figure.
+const FULLWIDTH = /[\uFF10-\uFF19\uFF0C\uFF0E]/g, MYRIAD = /(?:(\d[\d,]*(?:\.\d+)?)[\u5104\u4EBF])?(?:(\d[\d,]*(?:\.\d+)?)[\u4E07\u842C])?(\d,\d{3}|\d{1,4})?/g;
+const myriads = (s) => !/[\u5104\u4EBF\u4E07\u842C]/.test(s) ? s : s.replace(FULLWIDTH, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(MYRIAD, (m, oku, man, rest) => {
+  if (oku === undefined && man === undefined) return m;
+  const n = (x) => Number(String(x || "0").replace(/,/g, ""));
+  return String(Math.round(n(oku) * 1e8 + n(man) * 1e4 + n(rest)));
+});
 /** Pure: the countable figures in a text: [{raw, value, q}] with q the qualifier class (exact, about, below, above). */
 export function countables(t) {
-  const s = String(t || ""), out = [];
+  const s = myriads(String(t || "")), out = [];
   for (const m of s.matchAll(COUNTABLE)) {
     const num = m[2], unit = (m[3] || "").trim().toLowerCase(), at = m.index + m[0].indexOf(num), before = s.slice(Math.max(0, at - 24), at), after = s.slice(at + num.length, at + num.length + 12);
     if (NOT_FIGURE_BEFORE.test(before) || MONTH.test(after) || MONTH_BEFORE.test(before) || /^\s?(am|pm|a\.m|p\.m|h\b|utc|gmt)/i.test(after)) continue;
@@ -323,6 +331,15 @@ export function countables(t) {
     const q = m[1] ? QCLASS[m[1].toLowerCase()] || "about" : "exact";
     out.push({ raw: m[0].trim(), value: +(plain * mult).toPrecision(12), pct: /%|percent|per cent/.test(unit), q });
   }
+  return out;
+}
+// A quote is copied word for word from a page in any language, and much of Europe writes thousands with a full stop
+// (German "1.511 E-Mails" is 1,511). For quotes only, a figure of that shape also counts with its thousands reading;
+// the event's own fields are English and keep the one reading above. Not when a unit or a decimal comma follows.
+const DOT_THOUSANDS = /(?<![\d.,])\d{1,3}(?:\.\d{3})+(?!\d|,\d|\s?(?:million|billion|bn\b|m\b|k\b|%|percent|per cent))/gi;
+export function quoteCountables(t) {
+  const s = String(t || ""), out = countables(s), alt = s.replace(DOT_THOUSANDS, (m) => m.replace(/\./g, ","));
+  if (alt !== s) for (const f of countables(alt)) if (!out.some((o) => o.value === f.value && o.q === f.q && o.pct === f.pct)) out.push(f);
   return out;
 }
 // an action that says whose advice it is, or marks itself as CyberView's own general advice
@@ -347,7 +364,7 @@ function accuracyProblems(e, src) {
       add("error", "evidence-shape", 'evidence is a list of at most 12 {url, quote}: quote copied word for word from the page (at most 240 characters), url one of "sources"');
     else for (const x of ev) if (!urls.has(x.url)) { add(lvl, "evidence-unsourced", `evidence quote "${x.quote.slice(0, 50)}" is from ${x.url.slice(0, 80)}, which is not in sources: cite every page you quote`); break; }
   }
-  const quotes = (ev || []).filter((x) => x && typeof x.quote === "string").map((x) => x.quote), qfig = quotes.flatMap(countables);
+  const quotes = (ev || []).filter((x) => x && typeof x.quote === "string").map((x) => x.quote), qfig = quotes.flatMap(quoteCountables);
   if (ev || strict) {
     const fields = ["title", "summary", "plain", "exec", "action", "impact"];
     let missing = null, qual = null;

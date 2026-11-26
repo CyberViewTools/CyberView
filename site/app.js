@@ -2958,7 +2958,7 @@ window.addEventListener("popstate",function(){pushedEvent=false;popping=true;try
 /* ---------- data store: one static JSON bundle, re-read on a timer ---------- */
 var STORE_URL="data/bundle.json",POLL_MS=5*60*1000;
 // Error reports open a pre-filled GitHub issue (label event-report) that the verify and watchdog jobs read.
-var REPORT_URL="https://github.com/xanderhutch/CyberView/issues/new";
+var REPORT_URL="https://github.com/CyberViewTools/CyberView/issues/new";
 function sendReport(p){
   // the issue form (.github/ISSUE_TEMPLATE/event-report.yml) labels the report event-report for everyone; a bare
   // ?labels= is ignored for visitors without triage rights, so reports used to arrive unlabelled

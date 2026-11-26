@@ -90,7 +90,7 @@ CI run, so `propose.mjs` runs in the Claude sessions with their own GitHub crede
 ## Running things on your own computer
 
 ```bash
-git clone https://github.com/xanderhutch/CyberView && cd CyberView
+git clone https://github.com/CyberViewTools/CyberView && cd CyberView
 node scripts/data-branch.mjs ensure     # mounts the data branch at ./data (does nothing until the branch exists)
 node scripts/data-branch.mjs status     # which layout this checkout uses, and whether origin/data exists
 npm run build                           # or: npm run preview, npm run ci

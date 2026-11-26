@@ -43,7 +43,7 @@ export const dataRel = (p, root = ROOT) => (dataMode(root) === "branch" ? String
 export function repoSlug(root = ROOT) {
   const u = run(root, ["remote", "get-url", "origin"]).stdout.trim();
   const m = /github\.com[/:]([^/]+)\/([^/.]+?)(?:\.git)?$/.exec(u);
-  return m ? `${m[1]}/${m[2]}` : process.env.GITHUB_REPOSITORY || "xanderhutch/CyberView";
+  return m ? `${m[1]}/${m[2]}` : process.env.GITHUB_REPOSITORY || "CyberViewTools/CyberView";
 }
 
 /** Files that never need a deploy (the old pages.yml paths-ignore). */

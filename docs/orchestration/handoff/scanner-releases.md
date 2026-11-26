@@ -40,7 +40,7 @@ The docs agent owns those two files; the text below is ready to paste.
 
 - Node.js 22 or later (`node --version`). Nothing else to install: the scanner uses Node's standard library only.
 - The scanner itself, in one of two ways:
-  - **One file (recommended).** From the repository's [Releases](https://github.com/xanderhutch/CyberView/releases),
+  - **One file (recommended).** From the repository's [Releases](https://github.com/CyberViewTools/CyberView/releases),
     take the latest `scanner-v…` release and download `cyberview-scan-<version>.mjs` and `SHA256SUMS` into one folder.
     Check the file before you run it:
 
@@ -54,7 +54,7 @@ The docs agent owns those two files; the text below is ready to paste.
     `node cyberview-scan-<version>.mjs` wherever the commands below say `node scanner/cyberview-scan.mjs`. The file is
     the scanner and the site's matching and rating code in one, built by CI from the tagged commit (named in its first
     lines); it contains nothing the repository's scanner does not.
-  - **From the repository** (developers): [download the ZIP](https://github.com/xanderhutch/CyberView/archive/refs/heads/main.zip)
+  - **From the repository** (developers): [download the ZIP](https://github.com/CyberViewTools/CyberView/archive/refs/heads/main.zip)
     or clone it, then run the commands below from the repository's folder.
 ~~~
 

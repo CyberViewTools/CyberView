@@ -36,7 +36,7 @@ export async function get(url, o = {}) {
   let wait = delayMs, last, noAccept = false;
   for (let i = 0; i <= retries; i++) {
     try {
-      const headers = { "user-agent": "cyberview-feeds/1.0 (+https://github.com/xanderhutch/CyberView)" };
+      const headers = { "user-agent": "cyberview-feeds/1.0 (+https://cyberview.tools)" };
       if (/^bytes=-?\d+(-\d*)?$/.test(range)) headers.range = range;                   // part of a large file (e.g. the tail of a CSV)
       if (!noAccept && /^[\w.+\/-]+$/.test(o.accept || "")) headers.accept = o.accept;               // a format the server picks by Accept (the MSRC API answers XML otherwise)
       const r = await fetch(url, { headers, signal: AbortSignal.timeout(timeoutMs) });

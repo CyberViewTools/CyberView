@@ -2,7 +2,7 @@
 // review records (scripts/review.mjs ERROR_TYPES, errors). Run: node --test tests/unit/
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkEventQuality, countables, siteOf, ACCURACY_STRICT_FROM, QUALITY_STRICT_FROM } from "../../scripts/lib/validate.mjs";
+import { checkEventQuality, countables, quoteCountables, siteOf, ACCURACY_STRICT_FROM, QUALITY_STRICT_FROM } from "../../scripts/lib/validate.mjs";
 import { classifyCorrection, errorReport, writersFrom, reviewRecord, passBlockers, ERROR_TYPES } from "../../scripts/review.mjs";
 
 const A = "https://acme.example/news/security-notice", R = "https://reuters.example/tech/acme-breach-2026-11-22/";
@@ -30,6 +30,29 @@ test("countables: counts, money, percentages and durations; never years, version
   assert.deepEqual(countables("over 125 million SMS").map((f) => [f.value, f.q]), [[125e6, "above"]]);
   assert.deepEqual(countables("8.83M records and 40% of firms").map((f) => [f.value, f.pct]), [[8830000, false], [40, true]]);
   assert.deepEqual(countables("CVSS 9.8, version 6.1.4, CVE-2026-12345, Windows 11, in 2024, on 17 Nov at 09:46, 5 hosts"), []);
+});
+
+test("countables: Japanese and Chinese myriad figures in a quote read as their plain value", () => {
+  const v = (t) => countables(t).map((f) => f.value);
+  assert.deepEqual(v("顧客は1万466名である。"), [10466]);
+  assert.deepEqual(v("漏えいが確認された件数は4万2,107件である。"), [42107]);
+  assert.deepEqual(v("顧客情報4万2107件が流出"), [42107]);
+  assert.deepEqual(v("約3億2000万件"), [320000000]);
+  assert.deepEqual(v("１万５０００人に影響"), [15000]);
+  assert.deepEqual(v("1.5万件"), [15000]);
+  assert.deepEqual(v("copied 1,200 customer records"), [1200]);
+  assert.equal(level(ev({ title: "Acme confirms breach of 10,466 customer records", summary: "Acme said attackers copied 10,466 customer records.", evidence: [{ url: A, quote: "顧客は1万466名である。" }] }), "figure-no-evidence"), undefined);
+});
+
+test("quoteCountables: a full stop as thousands separator in a quoted page also counts as its thousands value", () => {
+  const v = (t) => quoteCountables(t).map((f) => f.value);
+  assert.deepEqual(v("Inhalte von 1.511 E-Mails der brasilianischen Yahoo-Domain"), [1511]);
+  assert.deepEqual(v("1.234.567 Datensätze"), [1234567]);
+  assert.deepEqual(v("4.125 million records"), [4125000]);
+  assert.deepEqual(v("copied 1,200 customer records"), [1200]);
+  assert.deepEqual(countables("held 1.511 emails").map((f) => f.value), []);
+  assert.equal(level(ev({ title: "Acme confirms breach of 1,511 customer records", summary: "Acme said attackers copied 1,511 customer records.", evidence: [{ url: A, quote: "Die Gruppe behauptet, 1.511 Kundendaten kopiert zu haben." }] }), "figure-no-evidence"), undefined);
+  assert.equal(level(ev({ title: "Acme confirms breach of 1,512 customer records", summary: "Acme said attackers copied 1,512 customer records.", evidence: [{ url: A, quote: "Die Gruppe behauptet, 1.511 Kundendaten kopiert zu haben." }] }), "figure-no-evidence"), "error");
 });
 
 test("figure-no-evidence: every figure needs a quote that states it (error for new events, warning for older ones with evidence, nothing for older ones without)", () => {

@@ -485,7 +485,7 @@ async def main():
             built = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40, "data_commit": "d" * 40, "counts": {"events_total": 1, "events_bundle": 1, "kev_total": 1}})
             ok("status: live line names the data and code commit", vis and t == "Live: data ddddddd (just now), code aaaaaaa", t)
-            ok("status: live commits link to GitHub", hrefs == ["https://github.com/xanderhutch/CyberView/commit/" + "d" * 40, "https://github.com/xanderhutch/CyberView/commit/" + "a" * 40], hrefs)
+            ok("status: live commits link to GitHub", hrefs == ["https://github.com/CyberViewTools/CyberView/commit/" + "d" * 40, "https://github.com/CyberViewTools/CyberView/commit/" + "a" * 40], hrefs)
             ok("status: live line without script errors", not errs, errs)
             vis, t, hrefs, errs = await live_line({"built_at": built, "commit": "a" * 40})
             ok("status: an old deploy without data_commit shows code only", vis and "data not recorded" in t and "code aaaaaaa" in t and len(hrefs) == 1, t)
@@ -1276,6 +1276,11 @@ async def main():
         b16 = copy.deepcopy(bundle)
         recent_day = (datetime.datetime.utcnow() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")   # inside the seven-day list whatever the data holds today
         geo = [e for e in b16["events"] if e.get("lat") is not None and e.get("status") != "claimed" and e.get("lng") is not None and e.get("date", "") >= recent_day]
+        # the linked pair must be at different places: the map draws no arc between two pins at one spot (arcD in site/app.js),
+        # and the first two events of the day can share one (two notices from one agency)
+        apart = lambda a, b: abs(a["lat"] - b["lat"]) + abs(a["lng"] - b["lng"]) > 5
+        far = next(e for e in geo[1:] if apart(geo[0], e))
+        geo = [geo[0], far] + [e for e in geo[1:] if e is not far]
         src, dst, vic = geo[0], geo[1], geo[2]
         src["links"] = [{"to": dst["id"], "rel": "customer of breached supplier", "url": "https://example.com/story"}]
         vic["attribution"] = {"actor": "Test Group", "origin_country": "Iceland", "lat": 64.15, "lng": -21.94, "by": "Test Agency", "by_type": "government", "url": "https://example.gov/advisory"}
@@ -1503,7 +1508,7 @@ async def main():
             async with pg.context.expect_page() as np:
                 await pg.click("#cmPost")
             gh = await np.value; await gh.wait_for_load_state()
-            ok("post: opens the GitHub form prefilled, nothing sent from the page", "github.com/xanderhutch/CyberView/issues/new" in gh.url and "template=chat.yml" in gh.url and "Seeing%20scans" in gh.url and "event=" + ev0 in gh.url, gh.url[:160])
+            ok("post: opens the GitHub form prefilled, nothing sent from the page", "github.com/CyberViewTools/CyberView/issues/new" in gh.url and "template=chat.yml" in gh.url and "Seeing%20scans" in gh.url and "event=" + ev0 in gh.url, gh.url[:160])
             await gh.close()
             ok("community: no script errors", not errs, errs)
             await pg.goto(url.replace("index.html", "community.html#e=" + ev0)); await pg.reload(); await pg.wait_for_timeout(600)

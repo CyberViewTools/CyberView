@@ -19,7 +19,7 @@ export function classify(status, code) {
 export async function check(u) {
   for (const method of ["HEAD", "GET"]) {
     try {
-      const r = await fetch(u, { method, redirect: "follow", signal: AbortSignal.timeout(15000), headers: { "user-agent": "cyberview-linkcheck/1.0 (+https://github.com/xanderhutch/CyberView)" } });
+      const r = await fetch(u, { method, redirect: "follow", signal: AbortSignal.timeout(15000), headers: { "user-agent": "cyberview-linkcheck/1.0 (+https://cyberview.tools)" } });
       if (method === "HEAD" && (r.status === 405 || r.status === 403 || r.status === 400 || r.status === 404 || r.status === 410)) continue;   // some servers refuse HEAD only, or answer it 404 for a live page: only a GET that agrees makes a link broken
       return { status: r.status, code: "" };
     } catch (e) { const code = (e.cause && e.cause.code) || e.name || "error"; if (method === "GET") return { status: 0, code }; }

@@ -15,7 +15,7 @@ import { DATA, readJson, writeJson, nowIso } from "./lib/store.mjs";
 
 import { fence } from "./lib/untrusted.mjs";
 import { SITE_URL } from "./lib/site-url.mjs";
-const REPO = "xanderhutch/CyberView";
+const REPO = "CyberViewTools/CyberView";
 export const MAX_TEXT = 600, MAX_LINKS = 2, MAX_PER_DAY = 5, MIN_ACCOUNT_DAYS = 3;
 export const KINDS = { comment: "comment", tip: "tip", question: "question" };
 

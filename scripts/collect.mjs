@@ -393,7 +393,7 @@ export async function fetchFeed(f, cond = {}) {
       // user-agent. Not the 5 s retry below, and a 415 that persists still fails as a 415. A conditional GET (ETag,
       // Last-Modified) lets an unchanged feed answer 304 with no body: with ~2,500 feeds, most asks are unchanged.
       const condH = { ...(cond.etag ? { "if-none-match": cond.etag } : {}), ...(cond.lastmod ? { "if-modified-since": cond.lastmod } : {}) };
-      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://github.com/xanderhutch/CyberView)", ...condH, ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(20000) });
+      const ask = (accept) => fetch(f.url, { headers: { "user-agent": "cyberview-collector/1.0 (+https://cyberview.tools)", ...condH, ...(accept ? { accept } : {}) }, signal: AbortSignal.timeout(20000) });
       let r = await ask("application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.8");
       if (r.status === 415) r = await ask("");
       if (r.status === 304) return { items: [], notModified: true };

@@ -24,7 +24,7 @@ import { NO_DEPLOY } from "./lib/repo.mjs";
 import { stageStates } from "./lib/stages.mjs";
 import { SITE_URL } from "./lib/site-url.mjs";
 
-const SITE = SITE_URL, REPO = "xanderhutch/CyberView";
+const SITE = SITE_URL, REPO = "CyberViewTools/CyberView";
 // brief, analysis and analyst: the routines' own max_age_hours in routines.json (a unit test keeps them equal; until
 // 2026-11-21 the guard warned about the twice-daily brief after 7 hours and the daily analysis after 15)
 export const LIMITS = { build_min: 90, sweep_min: 45, collect_min: 120, feeds_min: 360, deploy_lag_min: 20, cve_min: 180, brief_min: 840, analysis_min: 1800, analyst_min: 420, grid_min: 120,

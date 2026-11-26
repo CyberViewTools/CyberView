@@ -23,7 +23,7 @@ import { DATA, ROOT, readJson, writeJson, nowIso, readStatus } from "./lib/store
 import { knownLeads } from "./osint.mjs";
 
 export const OUT = join(DATA, "x-leads.json");
-const REPO = process.env.GITHUB_REPOSITORY || process.env.GROK_REPO || "xanderhutch/CyberView";
+const REPO = process.env.GITHUB_REPOSITORY || process.env.GROK_REPO || "CyberViewTools/CyberView";
 
 const TIERS = new Set(["gov", "vendor", "grid", "research", "news"]);
 const KINDS = new Set(["x-post", "x-news"]);

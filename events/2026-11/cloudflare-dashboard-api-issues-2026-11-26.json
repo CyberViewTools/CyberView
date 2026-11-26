@@ -6,8 +6,13 @@
   "updated_at": "2026-11-26T17:10:33Z",
   "attack": [],
   "cves": [],
-  "products": ["Cloudflare Dashboard", "Cloudflare API"],
-  "tags": ["cloud"],
+  "products": [
+    "Cloudflare Dashboard",
+    "Cloudflare API"
+  ],
+  "tags": [
+    "cloud"
+  ],
   "time_basis": "occurred",
   "category": "outage",
   "status": "confirmed",
@@ -28,12 +33,39 @@
   "exec": "Cloudflare's own status page records a Dashboard and API incident; it says CDN cached file serving was not affected.",
   "action": "No action needed; for awareness.",
   "sources": [
-    {"name": "Cloudflare status", "url": "https://www.cloudflarestatus.com/incidents/xiqj67vl5pqm", "published": "2026-11-26"}
+    {
+      "name": "Cloudflare status",
+      "url": "https://www.cloudflarestatus.com/incidents/xiqj67vl5pqm",
+      "published": "2026-11-26"
+    }
   ],
   "evidence": [
-    {"url": "https://www.cloudflarestatus.com/incidents/xiqj67vl5pqm", "quote": "Cloudflare is investigating issues with the Dashboard and related APIs."}
+    {
+      "url": "https://www.cloudflarestatus.com/incidents/xiqj67vl5pqm",
+      "quote": "Cloudflare is investigating issues with the Dashboard and related APIs."
+    }
   ],
-  "validation": {"state": "primary", "checked_at": "2026-11-26T17:10:33Z", "note": "Cloudflare's own status page only; cause not stated there."},
-  "sectors": {"values": ["information-technology"], "basis": "inferred"},
-  "surface": {"value": "cloud-saas", "basis": "inferred"}
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-26T17:10:33Z",
+    "note": "Cloudflare's own status page only; cause not stated there."
+  },
+  "sectors": {
+    "values": [
+      "information-technology"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "cloud-saas",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "passed",
+    "at": "2026-11-26T17:40:27Z",
+    "first_at": "2026-11-26T17:40:27Z",
+    "note": "Compared title, date, times, CDN-unaffected statement, fix implemented against the Cloudflare status page",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-26T17:40:27Z"
 }

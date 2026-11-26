@@ -1,0 +1,24 @@
+name: "Job: Analysis"
+
+# The analysis job on its own single schedule, billed to the API key (shared steps: ai-job.yml). Keep the cron equal to routines.json.
+on:
+  schedule:
+    - cron: "53 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write         # data commits on the data branch
+  issues: write           # pipeline alerts; replies by the jobs that answer issues
+  actions: write          # finish.mjs starts the deploy after pushing data
+  pull-requests: write    # finish.mjs proposes config/ and docs/ changes (scripts/propose.mjs)
+
+concurrency:
+  group: job-analysis
+  cancel-in-progress: false
+
+jobs:
+  analysis:
+    uses: ./.github/workflows/ai-job.yml
+    with:
+      job: analysis
+    secrets: inherit

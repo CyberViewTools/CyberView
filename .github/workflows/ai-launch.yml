@@ -1,57 +1,21 @@
 name: AI launch
 
-# Starts the scheduled Claude jobs (research loop, desks, brief, analysis ...) on a GitHub runner instead of waking a
-# long-lived Claude Code session. Each run is ONE shell call, `node scripts/dispatch.mjs <job> --exec`, exactly what the
-# "CyberView L: <job>" scheduled tasks ask the launcher session to run (docs/orchestration/ROUTINES.md); the script then
-# starts its own short `claude -p` workers (scripts/run-job.mjs) and commits through scripts/finish.mjs. No Claude
-# session sits in between, so nothing re-reads a growing history on every wake (owner, 2026-11-24).
-#
-# Sign-in (owner 2026-11-26): the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY is enough: with api_on_actions the
-# workers bill it first. CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`) is optional; with it, a worker falls back to the
-# subscription when the key is capped or limited; without it, the worker parks. ANTHROPIC_API_KEY is never set here directly, so by default nothing
-# bills the API except the existing fallback (scripts/lib/usage.mjs), and only if the optional
-# CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY secret exists, within usage_budget.api_fallback.monthly_usd_cap.
-#
-# Billing split (config/pipeline.json usage_budget.api_fallback.api_on_actions, owner 2026-11-26, $200 API budget): this
-# runner has no proxy forcing the subscription, so with api_on_actions true scripts/run-job.mjs bills the fallback key for
-# real here (served "api"). To keep source coverage (runner IPs get bot-challenged on core sources), the SPLIT runs only
-# the web-independent jobs here on a SCHEDULE — triage, brief, improver, analysis, security-review, tabletop — and the
-# web research/review/updater jobs (sweep, backlog, review, analyst, verify, advisory, regional, report-review, scout)
-# stay on the cloud launchers (subscription). The crons for all 15 are kept (so this file matches routines.json and the
-# "Run workflow" button can still test any one of them); the Pick step skips the web jobs on a schedule.
-#
-# Switch: scheduled runs do nothing until the repository variable AI_LAUNCH is "actions", so this can merge while the
-# launcher session still runs the jobs; set it when the web "CyberView L:" scheduled tasks are disabled, never both at
-# once for the same job. A manual run (Run workflow) always runs, for testing any one job.
-#
-# Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
-# The Library desk has its own workflow, library.yml (GitHub did not start its schedule here among 16 others). An API key that
-# belongs to no workspace needs the anthropic-workspace-id header: the repository variable ANTHROPIC_WORKSPACE_ID is sent with
-# every worker's calls when it is set (ANTHROPIC_CUSTOM_HEADERS).
+# Manual only (owner 2026-11-26): "Run workflow" runs any one AI job once on a GitHub runner, for testing. The scheduled
+# web-independent jobs each have their own workflow with one schedule (job-triage.yml, job-brief.yml, job-improver.yml,
+# job-analysis.yml, job-security-review.yml, job-tabletop.yml, sharing ai-job.yml), and the Library has library.yml:
+# GitHub did not reliably start the 16 schedules this file used to hold. The web research jobs stay on the cloud launchers
+# (runner IPs get bot-challenged on core news sources). Sign-in: CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY (billed first with
+# usage_budget.api_fallback.api_on_actions) or CLAUDE_CODE_OAUTH_TOKEN; ANTHROPIC_WORKSPACE_ID is sent as the
+# anthropic-workspace-id header.
+
 on:
-  schedule:
-    - cron: "5,20,35,50 * * * *"   # sweep (research loop)
-    - cron: "55 * * * *"           # backlog
-    - cron: "25 */2 * * *"         # review
-    - cron: "31 */3 * * *"         # analyst
-    - cron: "13 */6 * * *"         # triage
-    - cron: "47 11,23 * * *"       # brief
-    - cron: "19 3,15 * * *"        # verify
-    - cron: "27 4,16 * * *"        # advisory
-    - cron: "43 6 * * *"           # regional
-    - cron: "37 9 * * *"           # improver
-    - cron: "53 10 * * *"          # analysis
-    - cron: "17 13 * * *"          # report-review
-    - cron: "5 8 * * 1"            # security-review
-    - cron: "37 15 * * 5"          # tabletop
-    - cron: "13 5 * * 0"           # scout
   workflow_dispatch:
     inputs:
       job:
         description: "Job to run once"
         required: true
         type: choice
-        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout]
+        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout, library]
 
 permissions:
   contents: write         # data commits on the data branch
@@ -62,66 +26,29 @@ permissions:
 # one run per job at a time (a second sweep waits for the first; the research loop's leader lease covers the rest);
 # different jobs may overlap, as they do with the data workflows, and git-sync heals their data commits
 concurrency:
-  group: ai-launch-${{ github.event.schedule || inputs.job }}
+  group: ai-launch-${{ inputs.job }}
   cancel-in-progress: false
 
 jobs:
   launch:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # scheduled runs: the Library always (its own switch is routines.json); the web-independent jobs only once AI_LAUNCH is "actions"; the web jobs never (Pick step)
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     env:
       HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
       HAS_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' }}
-      AI_LAUNCH: ${{ vars.AI_LAUNCH }}
-      EVENT: ${{ github.event_name }}
     steps:
       - name: Pick the job
         id: pick
         run: |
-          case "${{ github.event.schedule }}" in
-            "5,20,35,50 * * * *") job=sweep ;;
-            "55 * * * *")         job=backlog ;;
-            "25 */2 * * *")       job=review ;;
-            "31 */3 * * *")       job=analyst ;;
-            "13 */6 * * *")       job=triage ;;
-            "47 11,23 * * *")     job=brief ;;
-            "19 3,15 * * *")      job=verify ;;
-            "27 4,16 * * *")      job=advisory ;;
-            "43 6 * * *")         job=regional ;;
-            "37 9 * * *")         job=improver ;;
-            "53 10 * * *")        job=analysis ;;
-            "17 13 * * *")        job=report-review ;;
-            "5 8 * * 1")          job=security-review ;;
-            "37 15 * * 5")        job=tabletop ;;
-            "13 5 * * 0")         job=scout ;;
-            *)                    job="${{ inputs.job }}" ;;
-          esac
-          case "$job" in [a-z-]*) ;; *) echo "no job for this trigger"; exit 1 ;; esac
-          # Scheduled runs, three groups (#214 + #215):
-          #  - library: its own workflow, library.yml (a manual run here still bills only the API key)
-          #  - the web-independent jobs (triage, brief, improver, analysis, security-review, tabletop): only once AI_LAUNCH is "actions"
-          #  - the web jobs: never on a schedule (runner IPs get bot-challenged on core sources); they stay on the cloud launchers
-          # A manual run (Run workflow) always runs, any job.
-          # the Library bills only the API key; every other job starts with the API key or the subscription token (owner 2026-11-26:
-          # the web-independent jobs run on the key alone; with no token, run-job.mjs parks instead of falling back to a subscription it lacks)
+          job="${{ inputs.job }}"
+          case "$job" in [a-z-]*) ;; *) echo "no job given"; exit 1 ;; esac
+          # the Library bills only the API key; every other job starts with the API key or the subscription token
           if [ "$job" = library ]; then ready=$HAS_KEY; elif [ "$HAS_KEY" = true ] || [ "$HAS_OAUTH" = true ]; then ready=true; else ready=false; fi
-          if [ "$EVENT" = schedule ] && [ "$job" != library ]; then
-            case "$job" in
-              triage|brief|improver|analysis|security-review|tabletop)
-                if [ "$AI_LAUNCH" != actions ]; then
-                  echo "READY=off" >> "$GITHUB_ENV"; echo "Job: $job (scheduled runs are off until AI_LAUNCH is actions)" >> "$GITHUB_STEP_SUMMARY"; exit 0
-                fi ;;
-              *)
-                echo "READY=off" >> "$GITHUB_ENV"; echo "Job: $job runs on the cloud launcher (subscription), not on Actions; skipping." >> "$GITHUB_STEP_SUMMARY"; exit 0 ;;
-            esac
-          fi
           echo "READY=$ready" >> "$GITHUB_ENV"
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "Job: $job" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Skip when no Claude sign-in is set up
-        if: env.READY != 'true' && env.READY != 'off'
+        if: env.READY != 'true'
         run: |
           echo "No credential for ${{ steps.pick.outputs.job }} (every job needs the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY; jobs other than the Library may use CLAUDE_CODE_OAUTH_TOKEN from \`claude setup-token\` instead); skipping." >> "$GITHUB_STEP_SUMMARY"
 

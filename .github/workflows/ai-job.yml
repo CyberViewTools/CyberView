@@ -1,0 +1,87 @@
+name: AI job (shared steps)
+
+# The shared steps for one scheduled AI job on a GitHub runner, called by the per-job workflows (job-triage.yml, job-brief.yml,
+# job-improver.yml, job-analysis.yml, job-security-review.yml, job-tabletop.yml; owner 2026-11-26: "go through 1 - 2").
+# Each per-job workflow has ONE schedule, because GitHub did not reliably start the 16 schedules of ai-launch.yml, and these
+# jobs no longer wake the long launcher session, which re-read its whole history on every wake. One shell call,
+# `node scripts/dispatch.mjs <job> --exec`, starts the job's own short `claude -p` workers (scripts/run-job.mjs) and commits
+# through scripts/finish.mjs. Billing: with usage_budget.api_fallback.api_on_actions the workers bill the API key
+# (CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY) within usage_budget.api_fallback.monthly_usd_cap; CLAUDE_CODE_OAUTH_TOKEN is the
+# optional fallback. The repository variable ANTHROPIC_WORKSPACE_ID is sent as the anthropic-workspace-id header (a key
+# that belongs to no workspace is refused without it). Only web-independent jobs belong here: runner IPs get bot-challenged
+# on core news sources, so the web research jobs stay on the cloud launchers.
+on:
+  workflow_call:
+    inputs:
+      job:
+        required: true
+        type: string
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      HAS_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY != '' }}
+      HAS_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+      JOB: ${{ inputs.job }}
+    steps:
+      - name: Check a credential is set
+        id: cred
+        run: |
+          if [ "$HAS_KEY" = true ] || [ "$HAS_OAUTH" = true ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "No credential for $JOB (repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, or CLAUDE_CODE_OAUTH_TOKEN); skipping." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.cred.outputs.ready == 'true'
+        with:
+          ref: main
+          fetch-depth: 50
+          sparse-checkout: |
+            /*
+            !/data/
+          sparse-checkout-cone-mode: false
+      - name: Mount the data branch at ./data
+        if: steps.cred.outputs.ready == 'true'
+        uses: ./.github/actions/data
+
+      - uses: actions/setup-node@v4
+        if: steps.cred.outputs.ready == 'true'
+        with:
+          node-version: "22"
+
+      - name: Install Claude Code
+        if: steps.cred.outputs.ready == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.331 && claude --version
+
+      - name: Run the job
+        if: steps.cred.outputs.ready == 'true'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY: ${{ secrets.CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          # handed to workers as their GH_TOKEN by scripts/run-job.mjs workerEnv (no proxy adds it on a runner)
+          CYBERVIEW_WORKER_GH_TOKEN: ${{ github.token }}
+          WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+        run: |
+          unset ANTHROPIC_API_KEY
+          if [ -n "$WORKSPACE_ID" ]; then export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: $WORKSPACE_ID"; fi
+          node scripts/dispatch.mjs "$JOB" --exec 2>&1 | tee out.txt
+          { echo "Job: $JOB"; echo '```'; tail -15 out.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if grep -q '^DISPATCH' out.txt; then echo "::error::$JOB needs a Claude session (headless unavailable on this runner)"; exit 1; fi
+
+      - name: Check what was pushed
+        if: steps.cred.outputs.ready == 'true' && always()
+        run: |
+          d=.; [ -e data/.git ] && d=data
+          git -C "$d" log --oneline -5 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Alert on failure
+        if: failure() && steps.cred.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "**AI job failed: $JOB** (run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." > report.md
+          bash .github/scripts/alert.sh job-failure "AI job failing: $JOB" report.md failing

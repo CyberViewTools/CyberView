@@ -1,140 +1,145 @@
 {
-  "title": "Broadcom's VMSA-2026-0011 fixes 23 vulnerabilities across VMware products, including ESX and vCenter",
-  "date": "2026-11-24",
-  "date_note": "Broadcom's advisory is dated by its initial publication day; no earlier day is given.",
-  "category": "vuln",
-  "status": "confirmed",
-  "severity": 3,
-  "country": "United States",
-  "lat": 37.39,
-  "lng": -122.08,
-  "geo_basis": "vendor (Broadcom, advisory publisher); the flaws affect users worldwide",
-  "pin_type": "agency",
-  "actor": "",
-  "summary": "Broadcom published advisory VMSA-2026-0011 on 24 November, fixing 23 vulnerabilities in VMware products. Rapid7 says CVE-2026-123903, an authentication bypass in vCenter's VMware Directory Service, has a Broadcom CVSSv3.1 score of 9.8 and a public proof-of-concept exploit that Rapid7 validated; it knows of no public reports of exploitation. Rapid7 recommends urgent remediation outside normal patching cycles.",
-  "plain": "Broadcom fixed 23 VMware flaws, including a critical vCenter login bypass. Rapid7 says a public proof-of-concept exploit works and recommends urgent patching.",
-  "exec": "Rapid7 says a public exploit works against a critical vCenter flaw (CVSSv3.1 9.8) fixed in Broadcom's advisory.",
-  "action": "Rapid7 recommends remediating exposed systems on an urgent basis outside of normal patching cycles; Broadcom's advisory VMSA-2026-0011 lists the fixed version for each product, and for ESX and vCenter 7.0 contact Broadcom support.",
-  "attack": [
-    "vulnerability"
+ "title": "Broadcom's VMSA-2026-0011 fixes 23 vulnerabilities across VMware products, including ESX and vCenter",
+ "date": "2026-11-24",
+ "date_note": "Broadcom's advisory is dated by its initial publication day; no earlier day is given.",
+ "category": "vuln",
+ "status": "confirmed",
+ "severity": 3,
+ "country": "United States",
+ "lat": 37.39,
+ "lng": -122.08,
+ "geo_basis": "vendor (Broadcom, advisory publisher); the flaws affect users worldwide",
+ "pin_type": "agency",
+ "actor": "",
+ "summary": "Broadcom published advisory VMSA-2026-0011 on 24 November, fixing 23 vulnerabilities in VMware products. Rapid7 says CVE-2026-123903, a vCenter authentication bypass, has a Broadcom CVSSv3.1 score of 9.8 and a public proof-of-concept exploit that Rapid7 validated; it knows of no public reports of exploitation. ThaiCERT says Broadcom has not confirmed exploitation of these flaws.",
+ "plain": "Broadcom fixed 23 VMware flaws, including a critical vCenter login bypass. Rapid7 says a public proof-of-concept exploit works and recommends urgent patching.",
+ "exec": "Rapid7 says a public exploit works against a critical vCenter flaw (CVSSv3.1 9.8) fixed in Broadcom's advisory.",
+ "action": "Rapid7 advises urgent remediation outside normal patching cycles; apply the fixed versions in Broadcom's VMSA-2026-0011 (7.0: contact Broadcom support). ThaiCERT, citing Broadcom KB463535, suggests limiting the IOFilterVP port to the vCenter Server on ESXi 8.x meanwhile.",
+ "attack": [
+  "vulnerability"
+ ],
+ "products": [
+  "VMware ESX",
+  "VMware vCenter",
+  "VMware Workstation",
+  "VMware Fusion",
+  "VMware Tools",
+  "VMware Cloud Foundation",
+  "VMware Avi Load Balancer",
+  "VMware vSphere Foundation",
+  "VMware Telco Cloud Platform",
+  "VMware Telco Cloud Infrastructure"
+ ],
+ "tags": [
+  "poc-public"
+ ],
+ "cves": [
+  "CVE-2026-123910",
+  "CVE-2026-123911",
+  "CVE-2026-123903"
+ ],
+ "sectors": {
+  "values": [
+   "cross-sector"
   ],
-  "products": [
-    "VMware ESX",
-    "VMware vCenter",
-    "VMware Workstation",
-    "VMware Fusion",
-    "VMware Tools",
-    "VMware Cloud Foundation",
-    "VMware Avi Load Balancer",
-    "VMware vSphere Foundation",
-    "VMware Telco Cloud Platform",
-    "VMware Telco Cloud Infrastructure"
-  ],
-  "tags": [
-    "poc-public"
-  ],
-  "cves": [
-    "CVE-2026-123910",
-    "CVE-2026-123911",
-    "CVE-2026-123903"
-  ],
-  "sectors": {
-    "values": [
-      "cross-sector"
-    ],
-    "basis": "inferred"
+  "basis": "inferred"
+ },
+ "surface": {
+  "value": "endpoint",
+  "basis": "inferred"
+ },
+ "sources": [
+  {
+   "name": "Broadcom",
+   "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626",
+   "published": "2026-11-24"
   },
-  "surface": {
-    "value": "endpoint",
-    "basis": "inferred"
+  {
+   "name": "Rapid7",
+   "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
+   "published": "2026-11-25"
   },
-  "sources": [
-    {
-      "name": "Broadcom",
-      "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626",
-      "published": "2026-11-24"
-    },
-    {
-      "name": "Rapid7",
-      "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
-      "published": "2026-11-25"
-    },
-    {
-      "name": "Cybersecurity News (securityonline.info)",
-      "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
-      "published": "2026-11-24"
-    },
-    {
-      "name": "HKCERT",
-      "url": "https://www.hkcert.org/security-bulletin/vmware-products-multiple-vulnerabilities_20261125",
-      "published": "2026-11-25"
-    },
-    {
-      "name": "ThaiCERT",
-      "url": "https://www.thaicert.or.th/2026/11/25/broadcom-%e0%b8%ad%e0%b8%ad%e0%b8%81%e0%b8%ad%e0%b8%b1%e0%b8%9b%e0%b9%80%e0%b8%94%e0%b8%95%e0%b9%81%e0%b8%81%e0%b9%89%e0%b9%84%e0%b8%82%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7-2/",
-      "published": "2026-11-25"
-    },
-    {
-      "name": "SOCRadar",
-      "url": "https://socradar.io/blog/cve-2026-123903-vcenter-auth-bypass/",
-      "published": "2026-11-25"
-    }
-  ],
-  "evidence": [
-    {
-      "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
-      "quote": "Broadcom released VMSA-2026-0011 on November 24, 2026, fixing 23 vulnerabilities."
-    },
-    {
-      "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
-      "quote": "CVE-2026-123910 is a heap out-of-bounds write, and CVE-2026-123911 is a use-after-free."
-    },
-    {
-      "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
-      "quote": "Broadcom assigned it a CVSSv3.1 score of 9.8 Critical."
-    },
-    {
-      "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
-      "quote": "As of this writing, there are no known public reports of exploitation of CVE-2026-123903 in the wild."
-    }
-  ],
-  "validation": {
-    "state": "primary",
-    "checked_at": "2026-11-24T11:59:30Z",
-    "note": "Broadcom's own advisory VMSA-2026-0011 and Securityonline agree on the date and the 23 CVEs."
+  {
+   "name": "Cybersecurity News (securityonline.info)",
+   "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
+   "published": "2026-11-24"
   },
-  "source_tier": "primary",
-  "first_seen": "2026-11-24T11:59:30Z",
-  "updated_at": "2026-11-26T16:08:23Z",
-  "review": {
-    "state": "passed",
-    "at": "2026-11-25T14:27:18Z",
-    "first_at": "2026-11-24T12:12:53Z",
-    "note": "title, date, 23 CVE IDs, 9.8, PoC, no exploitation, 7.0 support note against Broadcom, Rapid7, Securityonline",
-    "flags": []
+  {
+   "name": "HKCERT",
+   "url": "https://www.hkcert.org/security-bulletin/vmware-products-multiple-vulnerabilities_20261125",
+   "published": "2026-11-25"
   },
-  "qa_checked_at": "2026-11-25T14:27:18Z",
-  "cve_meta": [
-    {
-      "id": "CVE-2026-123910",
-      "cvss": null,
-      "epss": 0.00391,
-      "kev": false,
-      "kev_due": ""
-    },
-    {
-      "id": "CVE-2026-123911",
-      "cvss": null,
-      "epss": 0.00365,
-      "kev": false,
-      "kev_due": ""
-    },
-    {
-      "id": "CVE-2026-123903",
-      "cvss": null,
-      "epss": 0.00614,
-      "kev": false,
-      "kev_due": ""
-    }
-  ]
+  {
+   "name": "ThaiCERT",
+   "url": "https://www.thaicert.or.th/2026/11/25/broadcom-%e0%b8%ad%e0%b8%ad%e0%b8%81%e0%b8%ad%e0%b8%b1%e0%b8%9b%e0%b9%80%e0%b8%94%e0%b8%95%e0%b9%81%e0%b8%81%e0%b9%89%e0%b9%84%e0%b8%82%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7-2/",
+   "published": "2026-11-25"
+  },
+  {
+   "name": "ThaiCERT (26 Nov alert)",
+   "url": "https://www.thaicert.or.th/2026/11/26/%e0%b9%81%e0%b8%88%e0%b9%89%e0%b8%87%e0%b9%80%e0%b8%95%e0%b8%b7%e0%b8%ad%e0%b8%99-%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7%e0%b9%88%e0%b8%a3%e0%b8%b0%e0%b8%94%e0%b8%b1-10/",
+   "published": "2026-11-26"
+  },
+  {
+   "name": "SOCRadar",
+   "url": "https://socradar.io/blog/cve-2026-123903-vcenter-auth-bypass/",
+   "published": "2026-11-25"
+  }
+ ],
+ "evidence": [
+  {
+   "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
+   "quote": "Broadcom released VMSA-2026-0011 on November 24, 2026, fixing 23 vulnerabilities."
+  },
+  {
+   "url": "https://securityonline.info/vmware-update-vmsa-2026-0011/",
+   "quote": "CVE-2026-123910 is a heap out-of-bounds write, and CVE-2026-123911 is a use-after-free."
+  },
+  {
+   "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
+   "quote": "Broadcom assigned it a CVSSv3.1 score of 9.8 Critical."
+  },
+  {
+   "url": "https://www.rapid7.com/blog/post/etr-cve-2026-123903-critical-vmware-directory-service-authentication-bypass-affects-vcenter",
+   "quote": "As of this writing, there are no known public reports of exploitation of CVE-2026-123903 in the wild."
+  }
+ ],
+ "validation": {
+  "state": "primary",
+  "checked_at": "2026-11-24T11:59:30Z",
+  "note": "Broadcom's own advisory VMSA-2026-0011 and Securityonline agree on the date and the 23 CVEs."
+ },
+ "source_tier": "primary",
+ "first_seen": "2026-11-24T11:59:30Z",
+ "updated_at": "2026-11-26T16:10:32Z",
+ "review": {
+  "state": "passed",
+  "at": "2026-11-25T14:27:18Z",
+  "first_at": "2026-11-24T12:12:53Z",
+  "note": "title, date, 23 CVE IDs, 9.8, PoC, no exploitation, 7.0 support note against Broadcom, Rapid7, Securityonline",
+  "flags": []
+ },
+ "qa_checked_at": "2026-11-25T14:27:18Z",
+ "cve_meta": [
+  {
+   "id": "CVE-2026-123910",
+   "cvss": null,
+   "epss": 0.00391,
+   "kev": false,
+   "kev_due": ""
+  },
+  {
+   "id": "CVE-2026-123911",
+   "cvss": null,
+   "epss": 0.00365,
+   "kev": false,
+   "kev_due": ""
+  },
+  {
+   "id": "CVE-2026-123903",
+   "cvss": null,
+   "epss": 0.00614,
+   "kev": false,
+   "kev_due": ""
+  }
+ ]
 }

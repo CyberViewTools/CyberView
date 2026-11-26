@@ -4,7 +4,7 @@
   "products": [],
   "evidence": [],
   "first_seen": "2026-11-25T17:00:43Z",
-  "updated_at": "2026-11-26T15:22:56Z",
+  "updated_at": "2026-11-26T16:11:04Z",
   "impact": "",
   "actor": "",
   "tags": [
@@ -21,7 +21,7 @@
   "pin_type": "country",
   "date": "2026-11-24",
   "date_note": "The blog says the attack occurred in November 2026 without a day; its publication day is used.",
-  "title": "ThreatDown says Booba ransomware hit an East Coast US water plant network and spread toward the local government that oversees it",
+  "title": "ThreatDown says Booba ransomware hit an East Coast US water plant network and reached the local government network that oversees it",
   "org": "Unnamed US water treatment plant and local government",
   "sector": "Water and local government",
   "country": "United States",
@@ -30,8 +30,8 @@
   "lng": -98.6,
   "severity": 3,
   "source_tier": "primary",
-  "summary": "Malwarebytes ThreatDown says a ransomware attack began on the network of an East Coast water treatment plant in November 2026 and spread toward the local government that oversees it. ThreatDown says its managed detection and response team stopped it at the edge of the network it monitored, and that the plant's side was run by a separate provider without its coverage. It names the ransomware as Booba; the victims are not named.",
-  "plain": "ThreatDown says ransomware hit a US water plant's network and spread toward its local government before its team stopped it. The victims are not named.",
+  "summary": "Malwarebytes ThreatDown says a ransomware attack began on the network of an East Coast water treatment plant in November 2026 and reached the network of the local government that oversees it. ThreatDown says its managed detection and response team contained it three machines past the line where its coverage began; the plant side was run by a separate provider without ThreatDown oversight. It names the ransomware as Booba; the victims are not named.",
+  "plain": "ThreatDown says ransomware hit a US water plant’s network and reached its local government’s network before its team contained it. The victims are not named.",
   "exec": "ThreatDown says ransomware moved from an unmonitored water-plant network into a local government network.",
   "action": "ThreatDown advises knowing exactly where your security coverage ends and not reconnecting machines until the whole network is verified clean.",
   "sources": [
@@ -58,13 +58,16 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-26T04:08:52Z",
+    "state": "corrected",
+    "at": "2026-11-26T16:11:05Z",
     "first_at": "2026-11-25T17:11:02Z",
-    "note": "Compared title, summary, 24 Nov date, Booba, MDR stop and advice with ThreatDown blog; severity 3 follows rule 6",
+    "note": "stronger/weaker than source: attack reached the local government network (not 'toward') and was contained three machines past coverage line; title, summary, plain fixed",
     "flags": [
       "single-source-high"
+    ],
+    "categories": [
+      "overstated"
     ]
   },
-  "qa_checked_at": "2026-11-26T04:08:52Z"
+  "qa_checked_at": "2026-11-26T16:11:05Z"
 }

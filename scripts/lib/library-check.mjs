@@ -19,23 +19,26 @@ const STATE_WORDS = /state[- ]sponsored|backed by|linked to|works for|intelligen
 const HEDGE_WORDS = /according to|assess|attribut|says|said|reports?|tracks|believes?/i;
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
 
-/** Text as compared for quotes: PDF noise (soft hyphens, line-break hyphens, curly quotes, runs of space) removed. */
-export function normText(s) {
-  return String(s == null ? "" : s)
-    .normalize("NFKC")
-    .replace(/[‘’‚‛′]/g, "'")
-    .replace(/[“”„‟″]/g, '"')
-    .replace(/­/g, "")
-    .replace(/-[ \t]*\r?\n[ \t]*/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
+const DASHES = /[‐‑‒–]/g;
+const fold = (s) => String(s == null ? "" : s).replace(DASHES, "-");
+const norm = (s, join) => fold(String(s == null ? "" : s).normalize("NFKC"))
+  .replace(/[‘’‚‛′]/g, "'")
+  .replace(/[“”„‟″]/g, '"')
+  .replace(/­/g, "")
+  .replace(/-[ \t]*\r?\n[ \t]*/g, join ? "" : "-")
+  .toLowerCase()
+  .replace(/\s+/g, " ")
+  .trim();
 
-/** True when the quote (at least 12 characters once normalised) appears in the text. */
+/** Text as compared for quotes: PDF noise (soft hyphens, line-break hyphens, curly quotes, typographic dashes, runs of space) removed. */
+export const normText = (s) => norm(s, true);
+
+/** True when the quote (at least 12 characters once normalised) appears in the text; a hyphen at a line break counts as joined or as a real hyphen. */
 export function quoteInText(quote, text) {
-  const q = normText(quote);
-  return q.length >= 12 && normText(text).includes(q);
+  return [true, false].some((join) => {
+    const q = norm(quote, join);
+    return q.length >= 12 && norm(text, join).includes(q);
+  });
 }
 
 const cleanFacts = (list, extra) => (Array.isArray(list) ? list : []).filter(isObj).slice(0, LIST_MAX).map((f) => {
@@ -74,9 +77,10 @@ export function cardProblems(card, text) {
   const facts = isObj(c.facts) ? c.facts : {};
   if (!c.summary || !String(c.summary).trim()) p.push("empty-summary");
   if (!KINDS.includes(c.kind)) p.push("bad-kind");
-  const strs = [c.summary, c.subject && c.subject.name, ...(c.hedges || [])];
+  const strs = [c.summary, c.subject && c.subject.name, ...(Array.isArray(c.hedges) ? c.hedges : [])];
   for (const k of LISTS) {
     (Array.isArray(facts[k]) ? facts[k] : []).forEach((f, i) => {
+      if (!isObj(f)) return;
       const at = `${k}[${i}]`, v = String(f.v == null ? "" : f.v), q = String(f.q == null ? "" : f.q);
       strs.push(v, q);
       if (q.length > QUOTE_MAX) p.push(`quote-too-long: ${at}`);
@@ -119,66 +123,106 @@ const holds = (normSentence, term) => {
   const t = normText(term);
   return t.length >= 3 && new RegExp(`(?<![a-z0-9])${esc(t)}(?![a-z0-9])`).test(normSentence);
 };
-const allFacts = (card) => LISTS.flatMap((k) => (isObj(card && card.facts) && Array.isArray(card.facts[k]) ? card.facts[k] : []));
+const allFacts = (card) => LISTS.flatMap((k) => (isObj(card && card.facts) && Array.isArray(card.facts[k]) ? card.facts[k] : [])).filter((f) => isObj(f) && f.v);
+
+// Countries and what people call their governments: any member of a group stands for the whole group.
+const COUNTRY_GROUPS = [
+  ["russia", "russian"], ["china", "chinese", "prc"], ["iran", "iranian"], ["north korea", "north korean", "dprk", "d.p.r.k."],
+  ["pakistan", "pakistani"], ["india", "indian"], ["vietnam", "vietnamese"], ["turkey", "turkish", "turkiye"], ["israel", "israeli"],
+  ["belarus", "belarusian"], ["ukraine", "ukrainian"], ["syria", "syrian"], ["lebanon", "lebanese"],
+  ["united states", "american", "usa", "u.s.", "u.s.a."], ["united kingdom", "british", "britain"],
+];
+const CODES = { "united states": ["US"], "united kingdom": ["UK"] };
+/** Words (lower-case, whole-word) and 2-letter codes (case-sensitive) that name a country in a sentence. */
+function countryNames(country) {
+  const n = normText(country);
+  const g = COUNTRY_GROUPS.find((x) => x.includes(n));
+  const words = new Set(g || [n]), codes = new Set(g ? CODES[g[0]] || [] : []);
+  if (/^[A-Z]{2}$/.test(String(country).trim())) { codes.add(String(country).trim()); words.delete(n); }
+  if (!g) { // generic stem rule: Peru/Peruvian is not guessed, but Chad -> Chadian, Cuba -> Cuban, Japan -> Japanese
+    const base = n.replace(/[aeiy]$/, "");
+    if (base.length >= 3 && !words.has(n + "x")) for (const suf of ["ian", "an", "ese", "i", "ish"]) words.add(base + suf);
+  }
+  return { words: [...words], codes: [...codes] };
+}
+const mentions = (rawText, country) => {
+  const { words, codes } = countryNames(country), ns = normText(rawText);
+  return words.some((w) => holds(ns, w)) || codes.some((c) => new RegExp(`(?<![A-Za-z0-9])${esc(c)}(?![A-Za-z0-9])`).test(rawText));
+};
 
 /** Why a story cannot be published (empty = pass). `cards` maps sha1 to Card; `actor` is the catalogue entry for an actor story, or null. */
 export function storyProblems(story, cards, actor) {
   const p = [];
   const s = isObj(story) ? story : {};
-  const sections = Array.isArray(s.sections) ? s.sections : [];
+  const sections = (Array.isArray(s.sections) ? s.sections : []).filter(isObj);
+  const filled = sections.filter((x) => (Array.isArray(x.sentences) ? x.sentences : []).some(isObj));
   const cardMap = cards instanceof Map ? cards : new Map();
   if (s.by !== BY) p.push("no-byline");
-  if (!sections.length) p.push("missing-section");
+  if (!filled.length) p.push("missing-section");
 
   const catalogue = actor ? [actor.name, ...(actor.aliases || []), ...(actor.tools || [])].filter((x) => typeof x === "string" && x.trim()) : [];
   const vocab = new Set();
   const countries = new Set();
   for (const c of cardMap.values()) {
-    for (const f of allFacts(c)) if (f && f.v) vocab.add(String(f.v));
-    for (const f of (c && c.facts && c.facts.countries) || []) if (f && f.v) countries.add(String(f.v));
+    for (const f of allFacts(c)) vocab.add(String(f.v));
+    for (const f of (isObj(c) && isObj(c.facts) && Array.isArray(c.facts.countries) ? c.facts.countries : [])) if (isObj(f) && f.v) countries.add(String(f.v));
   }
   catalogue.forEach((t) => vocab.add(t));
 
+  // What a piece of text names that none of the given cards (or the catalogue, when allowed) holds.
+  const unbackedIn = (t, held, useCatalogue) => {
+    const text = fold(t), cf = held.flatMap(allFacts), bad = [];
+    const cardHas = (term) => cf.some((f) => normText(f.v) === normText(term) || holds(normText(f.v), term) || holds(normText(term), f.v));
+    const catHas = (term) => useCatalogue && catalogue.some((c) => normText(c) === normText(term));
+    for (const m of text.matchAll(CVE_ANY)) if (!cf.some((f) => normText(f.v) === normText(m[0]))) bad.push(m[0]);
+    const figureText = held.flatMap((c) => (isObj(c.facts) && Array.isArray(c.facts.figures) ? c.facts.figures : [])).filter(isObj).map((f) => normText(f.v)).filter((v) => /\d/.test(v));
+    for (const m of text.replace(CVE_ANY, " ").matchAll(/\b(?:19|20)\d{2}\b/g)) {
+      const inDates = held.some((c) => (isObj(c.facts) && Array.isArray(c.facts.dates) ? c.facts.dates : []).some((d) => isObj(d) && `${d.v} ${d.q}`.includes(m[0])));
+      if (!inDates && !figureText.some((v) => v.includes(m[0]) && normText(text).includes(v))) bad.push(m[0]);
+    }
+    const heldFigs = cf.flatMap((f) => figuresIn(f.v).map((x) => x.value));
+    for (const f of figuresIn(text)) if (!heldFigs.includes(f.value)) bad.push(f.raw);
+    const ns = normText(text);
+    for (const term of vocab) {
+      if (!holds(ns, term) || CVE_EXACT.test(term) || /^\d+$/.test(term)) continue;
+      if (!cardHas(term) && !catHas(term)) bad.push(term);
+    }
+    return [...new Set(bad)].slice(0, 4);
+  };
+  const bareAttribution = (t) => STATE_WORDS.test(t) && !HEDGE_WORDS.test(t) && [...countries].some((c) => mentions(t, c));
+
   const citedAll = new Set();
-  let coded = hasCode(s.headline, s.in_short);
+  let anyCatalogue = false, coded = hasCode(s.headline, s.in_short);
   for (const sec of sections) {
     for (const [i, sn] of (Array.isArray(sec.sentences) ? sec.sentences : []).entries()) {
+      if (!isObj(sn)) continue;
       const t = String(sn.t == null ? "" : sn.t), cites = Array.isArray(sn.cites) ? sn.cites : [];
       const at = `${sec.h}[${i}]`;
       if (hasCode(t)) coded = true;
       if (!cites.length && sec.h !== "takeaway") p.push(`uncited: ${at}`);
-      const held = []; // cards cited
+      const held = [];
       let useCatalogue = false;
       for (const c of cites) {
-        if (c === "catalogue") { if (!actor) p.push(`bad-cite: ${at} catalogue`); else useCatalogue = true; }
-        else if (cardMap.has(c)) { held.push(cardMap.get(c)); citedAll.add(c); }
+        if (c === "catalogue") { if (!actor) p.push(`bad-cite: ${at} catalogue`); else useCatalogue = anyCatalogue = true; }
+        else if (typeof c === "string" && isObj(cardMap.get(c))) { held.push(cardMap.get(c)); citedAll.add(c); }
         else p.push(`bad-cite: ${at} ${String(c).slice(0, 12)}`);
       }
-      const cf = held.flatMap(allFacts);
-      const cardHas = (term) => cf.some((f) => normText(f.v) === normText(term) || holds(normText(f.v), term) || holds(normText(term), f.v));
-      const catHas = (term) => useCatalogue && catalogue.some((c) => normText(c) === normText(term));
-      const bad = [];
-      const bare = t.replace(CVE_ANY, " ");
-      for (const m of t.matchAll(CVE_ANY)) if (!cf.some((f) => normText(f.v) === normText(m[0]))) bad.push(m[0]);
-      for (const m of bare.matchAll(/\b(?:19|20)\d{2}\b/g)) {
-        const ok = held.some((c) => ((c.facts && c.facts.dates) || []).some((d) => `${d.v} ${d.q}`.includes(m[0])));
-        if (!ok) bad.push(m[0]);
-      }
-      const figs = figuresIn(t);
-      const heldFigs = cf.flatMap((f) => figuresIn(f.v).map((x) => x.value));
-      for (const f of figs) if (!heldFigs.includes(f.value)) bad.push(f.raw);
-      const ns = normText(t);
-      for (const term of vocab) {
-        if (!holds(ns, term) || CVE_EXACT.test(term) || /^\d+$/.test(term)) continue;
-        if (!cardHas(term) && !catHas(term)) bad.push(term);
-      }
-      if (bad.length) p.push(`unbacked: ${at} ${[...new Set(bad)].slice(0, 4).join(", ")}`);
-      if (STATE_WORDS.test(t) && !HEDGE_WORDS.test(t) && [...countries].some((c) => holds(ns, c))) p.push(`bare-attribution: ${at}`);
+      const bad = unbackedIn(t, held, useCatalogue);
+      if (bad.length) p.push(`unbacked: ${at} ${bad.join(", ")}`);
+      if (bareAttribution(t)) p.push(`bare-attribution: ${at}`);
     }
+  }
+  // headline and in_short rest on every card the story cites, and on the catalogue when any sentence cites it
+  const union = [...citedAll].map((c) => cardMap.get(c));
+  for (const field of ["headline", "in_short"]) {
+    const t = String(s[field] == null ? "" : s[field]);
+    const bad = unbackedIn(t, union, anyCatalogue);
+    if (bad.length) p.push(`unbacked: ${field} ${bad.join(", ")}`);
+    if (bareAttribution(t)) p.push(`bare-attribution: ${field}`);
   }
   if (coded) p.push("code");
   if (s.kind === "actor" && citedAll.size >= 2) {
-    const have = new Set(sections.filter((x) => Array.isArray(x.sentences) && x.sentences.length).map((x) => x.h));
+    const have = new Set(filled.map((x) => x.h));
     for (const h of ["who", "targets", "methods"]) if (!have.has(h)) p.push(`missing-section: ${h}`);
   }
   return p;

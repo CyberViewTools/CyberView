@@ -1,11 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { oneShotArgs, parseReply } from "../../scripts/lib/oneshot.mjs";
+import { oneShotArgs, parseReply, oneShot } from "../../scripts/lib/oneshot.mjs";
+import { noteOutcome, limitState } from "../../scripts/run-job.mjs";
 
 const MODELS = { roles: { "library-reader": { model: "haiku", max_turns: 1, tools: "none" } } };
 
 test("oneShotArgs: no tools, one turn, the role's model", () => {
-  const a = oneShotArgs("library-reader", "P", MODELS);
+  const a = oneShotArgs("library-reader", MODELS);
+  assert.ok(!a.some((x) => x === "P" || x.length > 60), "the prompt is sent on stdin, not in argv");
+  assert.equal(a[0], "-p"); assert.equal(a[1], "--model");
   assert.equal(a[a.indexOf("--tools") + 1], "");
   assert.equal(a[a.indexOf("--max-turns") + 1], "1");
   assert.equal(a[a.indexOf("--model") + 1], "haiku");
@@ -24,4 +27,18 @@ test("parseReply: braces inside strings and a later object are handled; a reply 
 test("parseReply: a card that merely mentions a rate limit is not a limit", () => {
   const r = parseReply(JSON.stringify({ result: '{"summary":"rate limiting bypass"}' }));
   assert.equal(r.limit, false); assert.equal(r.ok, true);
+});
+test("an unknown role throws instead of falling back to sonnet", async () => {
+  assert.throws(() => oneShotArgs("library-nope", MODELS), /unknown role/);
+  await assert.rejects(() => oneShot("library-nope", "P"), /unknown role/);
+});
+test("noteOutcome: a subscription limit sets the limit state; a limit on the fallback key sets the fallback-limited state", () => {
+  const at = new Date().toISOString();
+  noteOutcome({ ok: true, at }, "subscription");
+  const before = limitState();
+  noteOutcome({ ok: false, limit: true, at, error: "usage limit" }, "subscription");
+  assert.equal(limitState().limitHit.limit, true);
+  assert.equal(limitState().fallbackKeyLimited, before.fallbackKeyLimited);
+  noteOutcome({ ok: false, limit: true, at, error: "usage limit" }, "api-fallback");
+  assert.equal(limitState().fallbackKeyLimited, true);
 });

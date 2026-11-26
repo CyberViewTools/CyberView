@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { storyProblems, BY } from "../../scripts/lib/library-check.mjs";
 import { readerPrompt, writerPrompt, reviewerPrompt, auditorPrompt } from "../../scripts/lib/library-prompts.mjs";
 
 const A = "a".repeat(40);
@@ -42,4 +43,25 @@ test("models.json: the four library roles exist with no tools; reviewer and audi
   assert.deepEqual(MODELS.toolsets.none, []);
   assert.equal(MODELS.roles["library-reader"].model, "haiku");
   assert.equal(MODELS.min_tier["library-reviewer"], "sonnet"); assert.equal(MODELS.min_tier["library-auditor"], "sonnet");
+});
+test("writerPrompt: the no-cards sentence is cited to the catalogue, and such a story passes storyProblems", () => {
+  const p = writerPrompt(SUBJECT, []);
+  assert.doesNotMatch(p, /\(no cite\)/);
+  assert.match(p, /also citing "catalogue"/);
+  const actor = SUBJECT.actor;
+  const story = { by: BY, key: "actor:1", kind: "actor", sections: [{ h: "who", sentences: [
+    { t: "Jade Sleet is also tracked as TraderTraitor.", cites: ["catalogue"] },
+    { t: "No public report in this library describes its operations.", cites: ["catalogue"] }] }] };
+  assert.deepEqual(storyProblems(story, new Map(), actor), []);
+});
+test("writerPrompt: a subject kind never gets the no-cards wording", () => {
+  const sub = { key: "s:1", kind: "subject", name: "X", actor: null, sha1s: [A] };
+  assert.doesNotMatch(writerPrompt(sub, [CARD]), /no cards|No public report/);
+  assert.doesNotMatch(writerPrompt(sub, []), /No public report/);
+});
+test("reviewerPrompt and auditorPrompt say when an original text was cut", () => {
+  const big = "x".repeat(70000);
+  assert.match(reviewerPrompt({}, [CARD], [{ sha1: A, text: big }]), /cut at 60000 characters/);
+  assert.doesNotMatch(reviewerPrompt({}, [CARD], [{ sha1: A, text: "short" }]), /was cut at/);
+  assert.match(auditorPrompt(CARD, big), /cut at 60000 characters/);
 });

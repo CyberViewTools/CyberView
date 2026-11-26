@@ -207,6 +207,8 @@ export function noteOutcome(l, served) {
   if (l.limit) { if (served === "api-fallback" || served === "api") { fallbackKeyLimited = true; fbCache.at = 0; } else { limitHit = l; fbCache.at = 0; } }
   else if (l.served === "api-fallback" || l.served === "api") fbCache.at = 0;    // a fallback worker's spend just landed: re-check the cap
 }
+/** The limit state noteOutcome keeps (for tests and status lines). */
+export const limitState = () => ({ limitHit, fallbackKeyLimited });
 /** The environment for a worker served this way; the fallback key is read here and handed straight to workerEnv. */
 export const envFor = (served) => workerEnv(served, FALLBACK_KEY);
 function runWorker(job, role, batch, served = "subscription") {

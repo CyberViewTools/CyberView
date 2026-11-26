@@ -38,13 +38,15 @@ export function readerPrompt(report, text) {
   ].join("\n");
 }
 
+const CUT = 60000;
+const cutNote = (n) => `This text was cut at ${CUT} characters (it has ${n}); a fact you cannot find may be past the cut. Do not mark it unsupported for that reason alone.`;
 const cardView = (c) => ({ sha1: c.sha1, summary: c.summary, kind: c.kind, subject: c.subject || null, hedges: c.hedges || [], facts: c.facts || {} });
 
 /** Writer: the cards and the catalogue record in, one story out. */
 export function writerPrompt(subject, cards) {
   const s = subject || {}, list = Array.isArray(cards) ? cards : [];
   const cat = s.actor ? { name: s.actor.name, aliases: s.actor.aliases || [], source: s.actor.source || "", tools: s.actor.tools || [] } : null;
-  const none = !list.length;
+  const none = !list.length && !!cat;
   return [
     `You write one short, accurate profile of a ${s.kind === "actor" ? "threat actor" : "threat subject"} (${String(s.name || "").slice(0, 120)}) for a public library of threat reports, from fact cards other readers made.`,
     DATA_NOTE,
@@ -54,7 +56,7 @@ export function writerPrompt(subject, cards) {
     "- Keep the hedges. A sentence that rests on an assessment says whose: \"According to X\", \"Y assesses\". Never write a country or state link (sponsored, backed, linked to, works for) as a flat statement; always say who attributes it.",
     "- Voice: a magazine explainer. Short sentences, concrete detail, plain words. No dramatisation, no jokes about victims, no hype.",
     `- Sections, in this order, any of: ${SECTIONS.join(", ")}. Leave out a section nothing supports. No code, commands or payloads.`,
-    none ? `- This actor has no cards. Write one "who" section from the catalogue record, citing "catalogue", and add the sentence "No public report in this library describes its operations." as its last sentence (no cite). Nothing else.` : "",
+    none ? `- This actor has no cards. Write one "who" section from the catalogue record, citing "catalogue", and add the sentence "No public report in this library describes its operations." as its last sentence, also citing "catalogue". Nothing else.` : "",
     `- The byline "${BY}" is added by the system; do not write it.`,
     JSON_ONLY,
     `Shape: ${SHAPE_STORY}`,
@@ -65,7 +67,7 @@ export function writerPrompt(subject, cards) {
 
 /** Reviewer: a story, its cards and the original report texts in; a verdict out. */
 export function reviewerPrompt(story, cards, originals) {
-  const orig = (Array.isArray(originals) ? originals : []).map((o) => ({ sha1: o.sha1, text: String(o.text || "").slice(0, 60000) }));
+  const orig = (Array.isArray(originals) ? originals : []).map((o) => { const t = String(o.text || ""); return t.length > CUT ? { sha1: o.sha1, text: t.slice(0, CUT), note: cutNote(t.length) } : { sha1: o.sha1, text: t }; });
   return [
     "You are the second reviewer of a story written for a public library of threat reports. Check every sentence against the cards it cites and against the original report text.",
     DATA_NOTE,
@@ -89,6 +91,6 @@ export function auditorPrompt(card, text) {
     JSON_ONLY,
     'Shape: {"ok":true|false,"wrong":[{"path":"actors[0]","note":"..."}]}  ("ok" is true only when "wrong" is empty)',
     wrap("THE CARD", JSON.stringify(card ? cardView(card) : {})),
-    wrap("THE REPORT TEXT", text),
+    wrap("THE REPORT TEXT", String(text == null ? "" : text).length > CUT ? `${String(text).slice(0, CUT)}\n[${cutNote(String(text).length)}]` : text),
   ].join("\n");
 }

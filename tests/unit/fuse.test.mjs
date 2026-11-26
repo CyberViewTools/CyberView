@@ -1,7 +1,7 @@
 // Story ranking and the "reported, being checked" list (scripts/fuse.mjs). Run: node --test tests/unit/
 import test from "node:test";
 import assert from "node:assert/strict";
-import { story, developing } from "../../scripts/fuse.mjs";
+import { story, developing, donePairs } from "../../scripts/fuse.mjs";
 
 const NOW = Date.parse("2026-11-19T02:00:00Z");
 const lead = (o) => ({ title: "x", url: "https://example.org/" + Math.random(), source: "Example", tier: "news", via: "rss", seen_at: "2026-11-19T01:30:00Z", published: "2026-11-19T01:00:00Z", lang: "en", region: "north-america", _open: true, ...o });
@@ -61,4 +61,14 @@ test("an advisory lead whose vendor states exploitation ranks as listed exploite
   const yes = story([{ ...lead(1), exploited: true }], [], now), no = story([lead(2)], [], now);
   const why = (s) => JSON.stringify(s);
   assert.ok(why(yes).includes("listed as exploited") && !why(no).includes("listed as exploited"));
+});
+
+test("donePairs: one or many closures per call (triage timed out closing 120 stories one 12 s call each)", () => {
+  assert.deepEqual(donePairs(["1720914f", "not an event: explainer"]), [{ id: "1720914f", why: "not an event: explainer" }]);
+  assert.deepEqual(donePairs(["1720914f", "explainer", "fefaeeb6", "niche", "CVE,", "no", "exploitation"]),
+    [{ id: "1720914f", why: "explainer" }, { id: "fefaeeb6", why: "niche CVE, no exploitation" }]);
+  assert.deepEqual(donePairs(["1720914f"]), [], "an id without a reason closes nothing");
+  assert.deepEqual(donePairs(["reason first", "1720914f", "ok"]), [{ id: "1720914f", why: "ok" }]);
+  assert.equal(donePairs(["1720914f", "x".repeat(500)])[0].why.length, 200);
+  assert.deepEqual(donePairs([]), []);
 });

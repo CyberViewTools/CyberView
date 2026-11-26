@@ -54,6 +54,7 @@ data/status.json, analysis.json, ripples.json, brief.json, history.json   curren
 data/evals/cases.jsonl, summary.json   the accuracy test set and its baseline score (scripts/evals.mjs build, written by the improver; never article text)
 data/quality.json        the pipeline check's findings (scripts/pipecheck.mjs): stage table, problems with first-seen times, status.json key memory, data size per day, failing feeds
 scripts/lib/store.mjs    the one place that knows the data layout
+scripts/lib/event-names.mjs   event file names are their ids (lowercase letters, digits, hyphens): `validId` and `fixNewEventNames`, which finish.mjs runs on NEW event files before the build, so a badly named record never reaches the data branch and turns build.yml red for every pull request
 scripts/lib/repo.mjs     where data lives in git: dataMode (data branch or old layout), commitData, pullAll, dispatchDeploy
 scripts/data-branch.mjs  the switch: `status`, `create` (once), `ensure` (switches a checkout, carrying uncommitted data over), `forward` (data still pushed to main, for data-forward.yml)
 scripts/data-commit.mjs  commit and push data/ paths in either layout, then start the deploy (the data workflows use it)
@@ -167,7 +168,7 @@ scripts/job-prompt.mjs   prints a scheduled AI job's full prompt from docs/jobs.
 scripts/dispatch.mjs     what the ops session runs for every scheduled job: plans the work and says which subagents to start
 scripts/grok-watch.mjs   no AI model: surfaces the `[Grok]` issues/briefs (Grok has no GitHub account; its briefs are relayed as [Grok]-titled issues) with what is still unhandled, so Claude (the lead) can act; writes nothing, Grok's briefs are proposals a person still gates
 scripts/sweep-plan.mjs   assigns stories to the sweep's researchers by rule and scores the run afterwards (config/pipeline.json sets how many)
-scripts/finish.mjs       mechanical end of a job: timestamp, build, commit data to the data branch, push (starts the deploy); config/ and docs/ changes go to propose.mjs
+scripts/finish.mjs       mechanical end of a job: timestamp, rename new event files with an invalid name, build, commit data to the data branch, push (starts the deploy); config/ and docs/ changes go to propose.mjs
 tests/test_all.py        browser regression suite, served with the production headers; must print ALL PASS
 tests/unit/*.test.mjs    unit tests (node --test, no dependencies)
 tests/smoke_live.py      browser check of the live site

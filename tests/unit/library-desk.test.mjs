@@ -6,12 +6,16 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { run, plan, selectPilot, latchPilot, describePilot, libraryIdle, pilotSha1s, pilotKeys, pilotLoose, pilotComplete, loadPilot, savePilot, addLoose, backfillOrder, deskState, runStages, pilotReport, libraryBlock, deskConfig, reserveMs, DESK_DEFAULTS } from "../../scripts/library-desk.mjs";
+import { run as runDesk, plan, selectPilot, latchPilot, describePilot, libraryIdle, pilotSha1s, pilotKeys, pilotLoose, pilotComplete, loadPilot, savePilot, addLoose, backfillOrder, deskState, runStages, pilotReport, libraryBlock, deskConfig, reserveMs, DESK_DEFAULTS } from "../../scripts/library-desk.mjs";
 import { STAGES } from "../../scripts/lib/stages.mjs";
 import { libraryProblems, THRESHOLD } from "../../scripts/pipecheck.mjs";
 import { inventory, problems as aboutProblems, about } from "../../scripts/about.mjs";
 import { problems as docsProblems } from "../../scripts/docs-check.mjs";
 import { PAUSE_NOTICE } from "../../scripts/lib/library-audit.mjs";
+// every desk run in these tests reads cards, stories and read-state from empty folders, never the real data branch (the
+// Library writes real cards there since 2026-11-26, which made run tests depend on live data); a test may pass its own
+const ISO = mkdtempSync(join(tmpdir(), "desk-iso-"));
+const run = (o = {}) => runDesk({ cardsDir: join(ISO, "cards"), storiesDir: join(ISO, "stories"), readStateFile: join(ISO, "read-state.json"), ...o });
 
 const ROOT = join(import.meta.dirname, "..", "..");
 const rj = (f) => JSON.parse(readFileSync(join(ROOT, f), "utf8"));

@@ -5,7 +5,7 @@
 //   node scripts/fuse.mjs                         group, print a summary, write data/stories.json (working file, not committed)
 //   node scripts/fuse.mjs list [--limit 25] [--claims] [--region africa] [--min 2] [--json]   open stories, strongest first
 //   node scripts/fuse.mjs show <id>               one story with all its leads
-//   node scripts/fuse.mjs done <id> "<event id, or why it is not an event>"   close a story: every lead in it is logged as handled
+//   node scripts/fuse.mjs done <id> "<event id, or why it is not an event>" [<id> "<reason>" ...]   close one or many stories in one call: every lead in them is logged as handled
 // Grouping is by shared CVE id, or by shared distinctive words in the headline (names, products, places), never by
 // generic words like "ransomware attack". Leak-site claims are grouped too but a story made only of claims stays low.
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, rmSync } from "node:fs";
@@ -165,6 +165,18 @@ function fmt(s) {
   return `[${String(s.score).padStart(2)}] ${s.id}  ${s.title.slice(0, 110)}\n       ${s.publishers} publisher(s): ${[...new Set(s.leads.map((l) => l.source))].slice(0, 6).join(", ")}${s.more ? " +" + s.more + " more" : ""}${tags ? "  |  " + tags : ""}`;
 }
 
+/** Pure: the closures in a `done` call's arguments: each 8-hex story id followed by its reason (one quoted argument, or the
+ *  words up to the next id). A reason is trimmed to 200 characters; an id with no reason is dropped. */
+export const STORY_ID = /^[0-9a-f]{8}$/;
+export function donePairs(args) {
+  const out = []; let cur = null;
+  for (const a of (args || []).map(String)) {
+    if (STORY_ID.test(a)) { if (cur) out.push(cur); cur = { id: a, words: [] }; } else if (cur) cur.words.push(a);
+  }
+  if (cur) out.push(cur);
+  return out.map(({ id, words }) => ({ id, why: words.join(" ").replace(/\s+/g, " ").trim().slice(0, 200) })).filter((p) => p.why);
+}
+
 function main() {
   const [cmd, ...rest] = process.argv.slice(2), opt = (k, d) => { const i = rest.indexOf("--" + k); return i >= 0 ? rest[i + 1] : d; };
   const d = build(), open = d.stories.filter(isOpen);
@@ -175,12 +187,22 @@ function main() {
     return;
   }
   if (cmd === "done") {
-    const s = d.stories.find((x) => x.id === rest[0]), why = String(rest.slice(1).join(" ")).replace(/\s+/g, " ").trim().slice(0, 200);
-    if (!s || !why) { console.error('usage: fuse.mjs done <id> "<event id, or why it is not an event>"'); process.exit(1); }
+    // one or many closures per call: done <id> "<reason>" [<id> "<reason>" ...]. Every call rebuilds the stories from all leads
+    // (about 12 s with 19,000 leads, 2026-11-26), so the triage desk closing 120 stories one call each ran out of time on every run
+    // from 25 November; one call for many closures costs one build.
+    const pairs = donePairs(rest);
+    if (!pairs.length) { console.error('usage: fuse.mjs done <id> "<event id, or why it is not an event>" [<id> "<reason>" ...]'); process.exit(1); }
     // one line per closure in a daily file (a file per closure was hundreds of tiny files a day, all re-read by every plan)
     const day = nowIso().slice(0, 10), dir = join(DATA, "runs", day); mkdirSync(dir, { recursive: true });
-    appendFileSync(join(dir, "closures.jsonl"), JSON.stringify({ at: nowIso(), story: s.id, title: s.title.slice(0, 120), reason: why, urls: s.urls }) + "\n");
-    console.log(`story ${s.id} closed (${s.urls.length} lead${s.urls.length === 1 ? "" : "s"}): ${why}`); return;
+    let bad = 0;
+    for (const { id, why } of pairs) {
+      const s = d.stories.find((x) => x.id === id);
+      if (!s) { console.error(`story ${id}: not found (ids change as leads arrive; run list again)`); bad++; continue; }
+      appendFileSync(join(dir, "closures.jsonl"), JSON.stringify({ at: nowIso(), story: s.id, title: s.title.slice(0, 120), reason: why, urls: s.urls }) + "\n");
+      console.log(`story ${s.id} closed (${s.urls.length} lead${s.urls.length === 1 ? "" : "s"}): ${why}`);
+    }
+    if (bad) process.exitCode = 1;
+    return;
   }
   if (cmd === "compact") {
     // fold the old one-file-per-closure logs (<HHMM>-stories*.json) into each day's closures.jsonl; nothing is lost

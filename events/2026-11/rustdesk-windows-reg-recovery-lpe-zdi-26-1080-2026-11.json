@@ -1,0 +1,55 @@
+{
+  "title": "ZDI advisory: RustDesk Client for Windows reg_recovery local privilege escalation (CVE-2026-131827), fixed by vendor",
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-24",
+  "date_note": "ZDI gives 24 November 2026 as the coordinated public release date; the page gives no earlier day.",
+  "org": "RustDesk",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "geo_basis": "Vulnerability advisory; no place",
+  "sector": "Technology",
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "stated"
+  },
+  "actor": "",
+  "attack": [],
+  "products": [
+    "RustDesk Client for Windows"
+  ],
+  "cves": [
+    "CVE-2026-131827"
+  ],
+  "tags": [],
+  "summary": "Zero Day Initiative advisory ZDI-26-1080 describes a missing-authorization flaw in the main IPC endpoint exposed by the RustDesk service in the Windows client. An attacker who can already run low-privileged code could exploit it to execute arbitrary code as SYSTEM. ZDI lists a CVSS score of 7.8 and says RustDesk has issued an update to correct the vulnerability.",
+  "plain": "A flaw in RustDesk's Windows client lets someone who already runs low-privileged code gain SYSTEM rights. ZDI says RustDesk has issued an update.",
+  "exec": "A local privilege escalation in a remote-desktop client could give SYSTEM rights; ZDI says a vendor fix exists.",
+  "action": "ZDI points to RustDesk's update, described in GitHub pull request #17040, as the fix.",
+  "sources": [
+    {
+      "name": "Zero Day Initiative",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1080/",
+      "published": "2026-11-24"
+    }
+  ],
+  "evidence": [],
+  "source_tier": "established",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-26T01:45:00Z",
+    "note": "Only the ZDI advisory was read; VulDB, CVE Feed and Vulners entries were not opened."
+  },
+  "first_seen": "2026-11-26T01:43:32Z",
+  "updated_at": "2026-11-26T01:43:32Z"
+}

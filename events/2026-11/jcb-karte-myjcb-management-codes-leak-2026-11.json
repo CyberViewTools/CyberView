@@ -1,0 +1,46 @@
+{
+  "actor": "",
+  "impact": "",
+  "tags": ["data-breach", "third-party"],
+  "cves": [],
+  "cve_meta": [],
+  "products": ["PLAID KARTE", "MyJCB"],
+  "time_basis": "published",
+  "first_seen": "2026-11-26T01:43:00Z",
+  "updated_at": "2026-11-26T01:43:00Z",
+  "category": "incident",
+  "status": "confirmed",
+  "attack": ["intrusion"],
+  "geo_basis": "hq",
+  "date": "2026-11-25",
+  "date_note": "Date is JCB's notice of 25 November; the notice says the third-party access to Plaid's KARTE happened on 13 November and Plaid reported the maximum range to JCB on 24 November.",
+  "title": "JCB says up to about 150,000 MyJCB management codes leaked after unauthorized access to contractor Plaid's KARTE",
+  "org": "JCB Co., Ltd.",
+  "sector": "Finance",
+  "country": "Japan",
+  "place": "Tokyo",
+  "lat": 35.68,
+  "lng": 139.76,
+  "pin_type": "hq",
+  "severity": 2,
+  "source_tier": "primary",
+  "summary": "JCB says a third party gained unauthorized access to KARTE, a service run by its contractor Plaid, and that management code values used inside JCB to identify which customers get notices leaked, up to about 150,000 items. JCB says the data includes no card numbers, names, addresses, phone numbers, email addresses or MyJCB login IDs and passwords. JCB says no card misuse or unauthorized MyJCB logins have been confirmed.",
+  "plain": "JCB says up to about 150,000 internal management codes leaked from its contractor Plaid's KARTE service. JCB says the codes do not identify customers or give contact details, and no misuse has been confirmed.",
+  "exec": "A card issuer reports a leak of up to about 150,000 internal codes via a contractor's marketing platform; JCB says no card misuse is confirmed.",
+  "action": "JCB asks customers not to open URLs or attachments or enter personal information in suspicious messages posing as companies, and says it will contact possibly affected customers individually by email.",
+  "records_affected": 150000,
+  "sources": [
+    {"name": "JCB notice, 25 Nov 2026 (PDF)", "url": "https://www.jcb.co.jp/release/pdf/oshirase_20261125.pdf", "published": "2026-11-25"},
+    {"name": "Cybersecurity.com (Japan)", "url": "https://cybersecurity-jp.com/news/118923", "published": "2026-11-26"}
+  ],
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-26T01:43:00Z",
+    "note": "JCB's own notice (PDF, read as page images) is the primary source; Cybersecurity.com (Japan) relays it. Plaid's own notices were not opened in this run."
+  },
+  "sectors": {"values": ["financial-services"], "basis": "inferred"},
+  "surface": {"value": "supply-chain", "basis": "stated"},
+  "evidence": [
+    {"url": "https://www.jcb.co.jp/release/pdf/oshirase_20261125.pdf", "quote": "件数：最大約15万件"}
+  ]
+}

@@ -26,7 +26,7 @@ import { STORIES_DIR, MAX_TRIES, loadStories, readStory, buildStory, cardsFor, c
 import { cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { reviewerPrompt, auditorPrompt } from "./lib/library-prompts.mjs";
 import { fetchText } from "./lib/orkl-text.mjs";
-import { oneShot } from "./lib/oneshot.mjs";
+import { oneShot, withTimeout } from "./lib/oneshot.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
 import { DEFAULTS, auditState, wrongCards, paused, loadConfig, pauseHelp, PAUSE_NOTICE, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
 
@@ -200,7 +200,8 @@ function parkDraft(dir, key, draft, reason) {
 }
 
 /** Review up to `max` draft stories. `runId` is this review run's id (injectable); a draft written by the same run id is refused. */
-export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), log = console.log } = {}) {
+export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), timeoutMs = 0, log = console.log } = {}) {
+  call = withTimeout(call, timeoutMs);
   const tally = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, orphans: 0, stopped: "", unreadable: [] };
   const badCards = [], all = cards || loadCards(cardsDir, badCards);
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-review: ${tally.stopped}; nothing written`); return tally; }
@@ -267,7 +268,8 @@ export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsD
 
 /** Audit up to `max` of the reader's cards against freshly fetched report text. The share is audit_pct; 100 with `pilot` (the
  *  pilot gate, Task 6) and while the Library is paused. A card read again after a failed audit is always audited. */
-export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, fetch = fetchText, call = oneShot, cfg = loadConfig(), log = console.log } = {}) {
+export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, fetch = fetchText, call = oneShot, cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+  call = withTimeout(call, timeoutMs);
   const tally = { ok: 0, wrong: 0, skipped: 0, stopped: "" };
   const badCards = [], all = loadCards(cardsDir, badCards);
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-audit: ${tally.stopped}; nothing written`); return tally; }

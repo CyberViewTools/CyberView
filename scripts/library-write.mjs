@@ -13,7 +13,7 @@ import { DIR, loadLibrary } from "./orkl.mjs";
 import { loadCards } from "./library-read.mjs";
 import { BY, cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { writerPrompt } from "./lib/library-prompts.mjs";
-import { oneShot } from "./lib/oneshot.mjs";
+import { oneShot, withTimeout } from "./lib/oneshot.mjs";
 import { loadConfig, paused, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
 
@@ -97,7 +97,8 @@ export function buildStory(subject, reply, readCards, ctx) {
 }
 
 /** Draft up to `max` stories. Each is written after its wave: the file is re-read just before the write, and an unreadable one is left alone. */
-export async function run({ max = 10, order = null, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), cfg = loadConfig(), log = console.log } = {}) {
+export async function run({ max = 10, order = null, concurrency = 3, dir = STORIES_DIR, library = null, cards = null, cardsDir = undefined, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+  call = withTimeout(call, timeoutMs);
   const tally = { drafted: 0, rejected: 0, parked: 0, requeued: 0, stopped: "", unreadable: [] };
   const badCards = [];
   const all = cards || loadCards(cardsDir, badCards);

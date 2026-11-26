@@ -6,9 +6,11 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { run, plan, selectPilot, pilotSha1s, pilotKeys, pilotLoose, pilotComplete, loadPilot, savePilot, addLoose, backfillOrder, deskState, runStages, pilotReport, libraryBlock, deskConfig, reserveMs, DESK_DEFAULTS } from "../../scripts/library-desk.mjs";
+import { run, plan, selectPilot, latchPilot, describePilot, libraryIdle, pilotSha1s, pilotKeys, pilotLoose, pilotComplete, loadPilot, savePilot, addLoose, backfillOrder, deskState, runStages, pilotReport, libraryBlock, deskConfig, reserveMs, DESK_DEFAULTS } from "../../scripts/library-desk.mjs";
 import { STAGES } from "../../scripts/lib/stages.mjs";
 import { libraryProblems, THRESHOLD } from "../../scripts/pipecheck.mjs";
+import { inventory, problems as aboutProblems, about } from "../../scripts/about.mjs";
+import { problems as docsProblems } from "../../scripts/docs-check.mjs";
 import { PAUSE_NOTICE } from "../../scripts/lib/library-audit.mjs";
 
 const ROOT = join(import.meta.dirname, "..", "..");
@@ -180,7 +182,7 @@ test("deskState: a report newer than the pilot's newest is a new record; a finis
   const pilot = selectPilot(w.reports, w.actors, { ...PCFG, reports: 10, top_actors: 0, thin_actors: 0 }, AT);
   const cards = new Map(w.reports.map((r) => [r.sha1, audited(card(r.sha1))]));
   const fresh = { sha1: hx(999), created: "2030-01-01T00:00:00Z", actors: [] };
-  const { state, orders } = deskState({ reports: [...w.reports, fresh], actors: [], cards, stories: new Map(), pilot: { ...pilot, actors: [], loose: [] }, cfg: CFG });
+  const { state, orders } = deskState({ reports: [...w.reports, fresh], actors: [], cards, stories: new Map(), pilot: { ...pilot, actors: [], loose: [], completed_at: AT }, cfg: CFG });
   assert.equal(state.pilotDone, true); assert.equal(state.newRecords, 1); assert.equal(state.backlog, 0);
   assert.deepEqual(orders.read, [hx(999)]);
 });
@@ -202,16 +204,43 @@ test("runStages: review, audit, write, read in that order; each in waves; stops 
   assert.deepEqual(calls.filter((c) => c[0] === "read")[1][2], orders.read.slice(4), "what was tried is not listed again");
   assert.equal(out.review.done, 4); assert.equal(out.read.done, 10);
 });
-test("runStages: nothing starts without the time for the role, and a stage with no progress or a stop ends", async () => {
+test("runStages: nothing starts without the time for the role, and a stage with no progress ends", async () => {
   const calls = []; let t = 0;
-  const deps = { review: async () => { calls.push("review"); return { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, stopped: "" }; },
-    audit: async () => { calls.push("audit"); return { ok: 1, wrong: 0, stopped: "usage limit" }; }, write: async () => { calls.push("write"); return { drafted: 1, stopped: "" }; }, read: async () => { calls.push("read"); return { read: 1, stopped: "" }; } };
+  const none = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, stopped: "" };
+  const deps = { review: async () => { calls.push("review"); return none; },
+    audit: async () => { calls.push("audit"); return { ok: 1, stopped: "ORKL unreachable" }; }, write: async () => { calls.push("write"); return { drafted: 1, stopped: "" }; }, read: async () => { calls.push("read"); return { read: 1, stopped: "" }; } };
   const p = { read: 4, write: 4, review: 4, audit: 4, mode: "steady" };
   await runStages({ plan: { ...p, read: 2 }, orders: { read: [], write: [] }, deps, now: () => t, deadline: reserveMs("library-writer") - 1, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
   assert.deepEqual(calls, ["read"], "only the reader (a shorter reserve) still fits");
   calls.length = 0;
-  await runStages({ plan: p, orders: { read: [], write: [] }, deps, now: () => t, deadline: 1e9, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
-  assert.deepEqual(calls, ["review", "audit", "write", "write", "read", "read"], "review made no progress; the audit stopped on a usage limit");
+  const out = await runStages({ plan: p, orders: { read: [], write: [] }, deps, now: () => t, deadline: 1e9, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
+  assert.deepEqual(calls, ["review", "audit", "write", "write", "read", "read"], "review made no progress; an unreachable ORKL ends only the audit stage");
+  assert.equal(out.halt, undefined);
+});
+test("runStages: a usage limit ends the whole run, no later stage makes a call", async () => {
+  const calls = [];
+  const deps = { review: async () => { calls.push("review"); return { published: 1, stopped: "" }; }, audit: async () => { calls.push("audit"); return { ok: 1, stopped: "usage limit" }; },
+    write: async () => { calls.push("write"); return { drafted: 1, stopped: "" }; }, read: async () => { calls.push("read"); return { read: 1, stopped: "" }; } };
+  const out = await runStages({ plan: { read: 4, write: 4, review: 2, audit: 4, mode: "steady" }, orders: { read: [], write: [] }, deps, now: () => 0, deadline: 1e9, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
+  assert.deepEqual(calls, ["review", "audit"]); assert.match(out.halt, /usage limit/);
+});
+test("runStages: canStart is asked before every wave and ends the run, with its reason, when it turns false", async () => {
+  const calls = []; let asks = 0;
+  const ok = (k) => async () => { calls.push(k); return { published: 1, ok: 1, drafted: 1, read: 1, stopped: "" }; };
+  const out = await runStages({ plan: { read: 4, write: 4, review: 4, audit: 4, mode: "steady" }, orders: { read: [], write: [] }, deps: { review: ok("review"), audit: ok("audit"), write: ok("write"), read: ok("read") },
+    now: () => 0, deadline: 1e9, chunk: { review: 2, audit: 2, write: 2, read: 2 }, canStart: () => ++asks <= 2, log: () => {} });
+  assert.deepEqual(calls, ["review", "review"]); assert.equal(out.halt, "the pipeline needs the usage window"); assert.equal(asks, 3);
+});
+test("runStages: every call gets a timeout of at most the role's own and the time left minus 20 s", async () => {
+  const seen = []; let t = 0;
+  const deps = { review: async (o) => { seen.push(["review", o.timeoutMs, 1e6 - t]); t += 100000; return { published: 1, stopped: "" }; }, audit: async (o) => { seen.push(["audit", o.timeoutMs, 1e6 - t]); t += 50000; return { ok: 1, stopped: "" }; },
+    write: async () => ({ drafted: 1 }), read: async (o) => { seen.push(["read", o.timeoutMs, 1e6 - t]); return { read: 1, stopped: "" }; } };
+  await runStages({ plan: { read: 1, write: 0, review: 2, audit: 1, mode: "steady" }, orders: { read: [] }, deps, now: () => t, deadline: 1e6, chunk: { review: 1, audit: 1, write: 1, read: 1 }, log: () => {} });
+  assert.equal(seen.length, 4);
+  for (const [k, ms, left] of seen) { assert.ok(ms <= left - 20000, `${k}: ${ms} > ${left} - 20000`); assert.ok(ms <= 6 * 60000); assert.ok(ms > 0); }
+  const late = []; let t2 = 0;
+  await runStages({ plan: { read: 1, write: 0, review: 0, audit: 0, mode: "steady" }, orders: { read: [] }, deps: { read: async (o) => { late.push(o.timeoutMs); return { read: 1 }; } }, now: () => t2, deadline: 100000 + 5, chunk: { read: 1 }, log: () => {} });
+  assert.deepEqual(late, [80005], "90 s are left: the reader may start, with 80 s");
 });
 test("runStages: a stage that throws does not stop the others", async () => {
   const calls = [];
@@ -235,7 +264,7 @@ test("pilotReport: counts, error rate, tokens and cost per card and per story, a
   assert.match(s, /3 reports/); assert.match(s, /read 1/); assert.match(s, /no-text 1/); assert.match(s, /unread 1/);
   assert.match(s, /audited 2, wrong 1 \(50\.0%\)/);
   assert.match(s, /library-reader[^\n]*2 call/); assert.doesNotMatch(s, /map-researcher/);
-  assert.match(s, /per card \$/); assert.match(s, /per story \$/);
+  assert.match(s, /er card \(estimate\) \$/); assert.match(s, /er story \(estimate\) \$/);
   assert.match(s, /a-1[^\n]*published/); assert.match(s, /s-1[^\n]*no story yet/);
   assert.equal(typeof pilotReport(cards, stories), "string");
 });
@@ -305,11 +334,11 @@ test("run: chooses and stores the pilot, plans, runs the stages, stamps the hear
   const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async (o) => { calls.push([k, o.max]); return { read: o.max, drafted: o.max, ok: o.max, published: o.max, stopped: "" }; }]));
   const cfg = { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 }, wave: { read: 8, write: 2, review: 2, audit: 2 } };
   try {
-    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, deadline: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out = await run({ cfg, library: w, deps, can: false, pilotFile, statusFile, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.match(out.note, /^waiting: the pipeline needs the usage window/); assert.deepEqual(calls, []);
     assert.ok(existsSync(pilotFile), "the pilot is chosen even while waiting"); assert.match(JSON.parse(readFileSync(statusFile, "utf8")).last_library_at, /^\d{4}-\d\d-\d\dT/);
     const before = readFileSync(pilotFile, "utf8");
-    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, deadline: Date.now() + 1e9, log: (l) => logs.push(l) });
+    const out2 = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, deadlineMs: Date.now() + 1e9, log: (l) => logs.push(l) });
     assert.equal(out2.plan.mode, "pilot"); assert.equal(readFileSync(pilotFile, "utf8"), before, "the stored pilot is not chosen again");
     assert.deepEqual(calls.map((c) => c[0]).filter((v, i, a) => a.indexOf(v) === i), ["write", "read"], "no drafts and nothing to audit yet; the pilot's stories and reports are worked on");
     assert.match(JSON.parse(readFileSync(statusFile, "utf8")).library_note, /^pilot: /);
@@ -317,4 +346,120 @@ test("run: chooses and stores the pilot, plans, runs the stages, stamps the hear
     const off = await run({ cfg: { ...cfg, enabled: false }, library: w, deps, can: true, pilotFile, statusFile, log: () => {} });
     assert.match(off.note, /^off/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+/* ---------- fix round 1 ---------- */
+const readOn = (c, at = "2026-11-26T01:00:00Z") => audited(card(c, { read_at: at }));
+function steadyWorld() {
+  const w = world(10);
+  w.reports[0].actors = [w.actors[2].name];                     // Actor C: an old report, read during the pilot, outside it
+  const pilot = { ...selectPilot(w.reports, w.actors, { ...PCFG, reports: 3, top_actors: 0, thin_actors: 0 }, AT), completed_at: "2026-11-27T00:00:00Z" };
+  const fresh = { sha1: hx(500), created: "2030-01-01T00:00:00Z", actors: [w.actors[3].name] };      // Actor D: a report newer than the pilot's newest
+  const reports = [...w.reports, fresh];
+  const cards = new Map(reports.filter((r) => pilotSha1s(pilot).includes(r.sha1) || r.sha1 === hx(1) || r.sha1 === hx(500)).map((r) => [r.sha1, readOn(r.sha1)]));
+  return { w, pilot, reports, cards };
+}
+test("deskState: with backfill off the writer's steady queue is the pilot, stories that exist, and subjects with a card from a NEW report", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const { orders, state } = deskState({ reports, actors: w.actors, cards, stories: new Map(), pilot, cfg: { ...CFG, backfill: false } });
+  assert.equal(state.pilotDone, true);
+  assert.ok(!orders.write.includes("a-102"), "Actor C: a card read during the pilot is not a new record");
+  assert.ok(orders.write.includes("a-103"), "Actor D: its report is newer than the pilot's newest");
+  const withStory = deskState({ reports, actors: w.actors, cards, stories: new Map([["a-102", { live: { status: "published", based_on: "old" }, next: null }]]), pilot, cfg: CFG });
+  assert.ok(withStory.orders.write.includes("a-102"), "a subject that already has a story is rewritten when stale");
+  assert.equal(state.writeNew, orders.write.length);
+});
+test("deskState: the reader's steady queue is the new reports and the audit-failed re-reads only", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const oldFailed = { sha1: hx(2), status: "unread", tries: 0, audit: { ok: false, by: "auditor", at: "2026-11-26T02:00:00Z" } };
+  const c2 = new Map([...cards, [hx(2), oldFailed]]); c2.delete(hx(500));
+  const { orders, state } = deskState({ reports, actors: w.actors, cards: c2, stories: new Map(), pilot, cfg: CFG });
+  assert.deepEqual([...orders.read].sort(), [hx(2), hx(500)].sort()); assert.equal(state.newRecords, 2);
+  assert.ok(!orders.read.includes(hx(3)), "an old unread report is backlog");
+});
+test("pilot latch: the live predicate does not decide the mode, completed_at does; latchPilot writes it once", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const open = { ...pilot }; delete open.completed_at;
+  const ds = deskState({ reports, actors: w.actors, cards, stories: new Map(), pilot: open, cfg: CFG });
+  assert.equal(ds.pilotStatus.done, true); assert.equal(ds.state.pilotDone, false, "not latched yet: the mode stays pilot");
+  const dir = mkdtempSync(join(tmpdir(), "latch-")), f = join(dir, "pilot.json");
+  try {
+    savePilot(f, open);
+    assert.equal(latchPilot(f, "2026-11-27T01:00:00Z"), true); assert.equal(loadPilot(f).pilot.completed_at, "2026-11-27T01:00:00Z");
+    assert.equal(latchPilot(f, "2030-01-01T00:00:00Z"), false); assert.equal(loadPilot(f).pilot.completed_at, "2026-11-27T01:00:00Z", "never changed");
+    // a live predicate that turns false later does not unlatch
+    const back = deskState({ reports, actors: w.actors, cards: new Map(), stories: new Map(), pilot: loadPilot(f).pilot, cfg: CFG });
+    assert.equal(back.pilotStatus.done, false); assert.equal(back.state.pilotDone, true);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("pilotComplete: a pilot subject key that no longer resolves does not block, and is named", () => {
+  const p = { newest: [], extra: [], actors: [{ key: "a-1" }, { key: "a-gone", name: "Gone" }], loose: [] };
+  const stories = new Map([["a-1", { live: { status: "published" }, next: null }]]);
+  const r = pilotComplete(p, new Map(), stories, new Set(["a-1"]));
+  assert.equal(r.done, true); assert.deepEqual(r.unresolved, ["a-gone"]);
+  assert.equal(pilotComplete(p, new Map(), stories, new Set(["a-1", "a-gone"])).done, false, "a resolvable subject without a story still blocks");
+});
+test("describePilot: the mode, the latch time and, when the live predicate is false, every reason with counts", () => {
+  const open = describePilot({ latched: "", live: { done: false, why: ["3 report(s) not read yet", "2 read card(s) without the auditor's verdict"], counts: { unread: 3, unaudited: 2, unfinished: 1, unresolved: 1 }, unresolved: ["a-gone"] } });
+  assert.match(open, /mode pilot/); assert.match(open, /not latched/); assert.match(open, /3 report\(s\) not read yet/); assert.match(open, /unresolved pilot subject key\(s\): a-gone/);
+  const done = describePilot({ latched: "2026-11-27T00:00:00Z", live: { done: true, why: [], counts: {}, unresolved: [] } });
+  assert.match(done, /latched at 2026-11-27T00:00:00Z/); assert.doesNotMatch(done, /not read yet/);
+});
+test("selectPilot: placeholder catalogue entries (names starting with \"[\") are never thin actors; fewer than wanted is fine", () => {
+  const w = world(40);
+  w.actors.push({ id: 900, name: "[Unnamed group USA]", aliases: [] });
+  const p = selectPilot(w.reports, w.actors.slice(0, 3).concat(w.actors.slice(-1)), { ...PCFG, top_actors: 0, thin_actors: 5 }, AT);
+  const thin = p.actors.map((a) => a.name);
+  assert.deepEqual(thin, ["Actor A", "Actor B", "Actor C"]); assert.equal(p.counts.thin_actors, 3);
+});
+test("plan: a null config does not crash the paused branch", () => {
+  assert.equal(plan({ ...STATE, pilotDone: true, paused: true, failedCards: 2 }, null, true).read, 2);
+});
+test("pilotReport: no NaN when a role has no ledger lines, costs are labelled estimates, per-card and per-story count only the pilot's", () => {
+  const p = { newest: [hx(1)], extra: [], actors: [{ key: "a-1", name: "Actor A", group: "top" }], loose: [], counts: { reports: 1 } };
+  const cards = new Map([[hx(1), audited(card(hx(1)))], [hx(7), audited(card(hx(7)))], [hx(8), audited(card(hx(8)))]]);
+  const stories = new Map([["a-1", { live: { status: "published" }, next: null }], ["a-9", { live: { status: "published" }, next: null }]]);
+  const s = pilotReport(cards, stories, { pilot: p, usage: [{ ...U("library-reader", "haiku"), in: 1e7, out: 0 }], cfg: CFG });
+  assert.doesNotMatch(s, /NaN/); assert.match(s, /Cost per card \(estimate\)/); assert.match(s, /cost per story \(estimate\)/);
+  assert.match(s, /Cost per card \(estimate\) \$1\.000/, "$1 over one pilot card, not three");
+});
+test("libraryIdle: an inactive routine with no cards is idle: nothing loads the whole library", () => {
+  const off = [{ key: "library", active: false }], on = [{ key: "library", active: true }];
+  assert.equal(libraryIdle(off, new Map()), true); assert.equal(libraryIdle(on, new Map()), false); assert.equal(libraryIdle(off, new Map([["a", {}]])), false);
+});
+test("run: a deadline that leaves no time for a wave starts nothing, still stamps the heartbeat and says so", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "desk-")), pilotFile = join(dir, "pilot.json"), statusFile = join(dir, "status.json"), calls = [];
+  const w = withActors(world(200));
+  const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async () => { calls.push(k); return {}; }]));
+  const cfg = { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } };
+  try {
+    const out = await run({ cfg, library: w, deps, can: true, pilotFile, statusFile, deadlineMs: Date.now() + 30000, log: () => {} });
+    assert.deepEqual(calls, []); assert.match(out.note, /deadline/);
+    const st = JSON.parse(readFileSync(statusFile, "utf8")); assert.match(st.last_library_at, /^\d{4}/); assert.match(st.library_note, /deadline/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: a usage-ledger check before every wave: canStart false after the first wave ends the run with the window reason", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "desk-")), calls = [], w = withActors(world(200)); let asks = 0;
+  const deps = Object.fromEntries(["review", "audit", "write", "read"].map((k) => [k, async (o) => { calls.push(k); return { read: o.max, drafted: o.max, ok: o.max, published: o.max }; }]));
+  try {
+    const out = await run({ cfg: { ...DESK_DEFAULTS, pilot: { reports: 20, top_actors: 2, thin_actors: 1, loose: 1 } }, library: w, deps, canStart: () => ++asks <= 1, pilotFile: join(dir, "p.json"), statusFile: join(dir, "s.json"), deadlineMs: Date.now() + 1e9, log: () => {} });
+    assert.equal(calls.length, 1); assert.match(out.note, /the pipeline needs the usage window/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+/* ---------- activation is one edit ---------- */
+test("routines.json: switching library on is one edit (active + active_since): about, docs and the jobs tests are already satisfied", async () => {
+  const real = rj("routines.json").routines, lib = real.find((r) => r.key === "library");
+  assert.equal(lib.active, false);
+  const flipped = real.map((r) => (r.key === "library" ? { ...r, active: true, active_since: "2026-12-01T00:00:00Z" } : r));
+  const inv = await inventory(), on = { ...inv, routines: flipped.filter((r) => r.active !== false).map((r) => r.key) };
+  assert.ok(inv.routines.includes("library"), "an off routine is described too, so the about entry ships now");
+  assert.deepEqual(aboutProblems(about(), on), []); assert.deepEqual(aboutProblems(about(), inv), []);
+  const jobs = readFileSync(join(ROOT, "docs", "jobs.md"), "utf8");
+  assert.deepEqual(docsProblems({ files: [], layout: "", jobs, routines: flipped, figures: [], live: {} }), []);
+  const jt = readFileSync(join(ROOT, "tests", "unit", "jobs.test.mjs"), "utf8");
+  assert.match(jt, /r\.key === "library"\) continue/, "the jobs test exempts the desk (it has no job-prompt section)");
+  const iv = lib.cron.split(" ")[1] === "*" ? 1 : 24; assert.ok(lib.max_age_hours >= iv * 1.15);
+  assert.match(lib.does, /"active": true/); assert.match(lib.does, /active_since/);
+  assert.match(jobs, /"active": true/);
 });

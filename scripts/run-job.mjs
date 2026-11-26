@@ -25,7 +25,7 @@ const PIPE = readJson(join(ROOT, "config", "pipeline.json"), {});
 const MAXPAR = Math.max(1, Math.min(12, Number(PIPE.max_parallel) || 6));
 // owner, 2026-11-21: the "tight" usage level no longer cuts work unless usage_budget.tight_cuts_work is true
 const TIGHT_CUTS = tightCuts(PIPE.usage_budget || {});
-const sh = (cmd, args, ms = 300000) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
+const sh = (cmd, args, ms = 300000, extraEnv = {}) => { const x = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", timeout: ms, env: { ...process.env, ...extraEnv, NODE_USE_ENV_PROXY: "1", NO_HOUSEKEEPING: "1", NODE_NO_WARNINGS: "1" } }); return { ok: x.status === 0, stdout: String(x.stdout || ""), out: `${x.stdout || ""}${x.stderr || ""}`.trim().split("\n").filter(Boolean) }; };
 const log = (s) => console.log(s);
 // The launcher kills this run when its Bash call nears the 10-minute tool cap (dispatch.mjs --exec passes FLOW_HARD_AT):
 // by then the workers must have stopped, so the commit still fits. 24 November: cycle 1 (6 minutes of collecting, then
@@ -750,7 +750,7 @@ function libraryJob() {
   const t0 = Date.now(), hm = Math.max(2, Math.min(9, Number(PIPE.headless_foreground_minutes) || 8));
   const left = Math.min(hm * 60000, leftMs()), tmo = Math.max(60000, left - 90000);
   log(`RUN library ${RUN}`);
-  const d = sh("node", ["scripts/library-desk.mjs", "run"], tmo);
+  const d = sh("node", ["scripts/library-desk.mjs", "run"], tmo, { LIBRARY_DEADLINE_MS: String(Date.now() + tmo - 30000) });   // every model call ends 30 s before this run is cut off
   const lines = d.out.filter((l) => /^CyberView library:/.test(l)), note = (lines.pop() || d.out.slice(-1)[0] || "desk produced no output").replace(/^CyberView library: /, "");
   let f = finish("library");
   if (f.fixer) f = { out: sh("node", ["scripts/finish.mjs", "library", "--force"], 600000).out };   // no fixer worker: the deploy quarantines a broken record

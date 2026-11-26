@@ -13,7 +13,7 @@ import { DIR, loadLibrary, shardOf } from "./orkl.mjs";
 import { prepText, fetchText, TEXT_MIN } from "./lib/orkl-text.mjs";
 import { cleanCard, cardProblems } from "./lib/library-check.mjs";
 import { readerPrompt } from "./lib/library-prompts.mjs";
-import { oneShot } from "./lib/oneshot.mjs";
+import { oneShot, withTimeout } from "./lib/oneshot.mjs";
 import { loadConfig, paused, auditFailed, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
@@ -129,7 +129,8 @@ const tallyZero = () => ({ read: 0, "no-text": 0, unread: 0, requeued: 0, stoppe
 
 /** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
  *  just before the write and the wave's cards merged into it, so another run's cards survive; a shard that cannot be read is never written. */
-export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), log = console.log } = {}) {
+export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), cfg = loadConfig(), timeoutMs = 0, log = console.log } = {}) {
+  call = withTimeout(call, timeoutMs);
   const { reports } = library || loadLibrary();
   const bad = new Set();
   const badList = [];

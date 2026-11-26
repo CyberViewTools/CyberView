@@ -44,6 +44,7 @@ test("routines: the guardian, second review, moderator and the four research res
 
 test("jobs.md: every active scheduled AI routine has a section in the standard format that prints", () => {
   for (const r of AI.filter((x) => x.active !== false)) {
+    if (r.key === "library") continue;   // the Library desk runs scripts/library-desk.mjs; it has no job-prompt section
     if (r.key === "backlog") { assert.equal(prompt(["backlog-triager", "--batch", "1"]).status, 0, "the backlog desk's triager section"); continue; }   // planned by scripts, no section of its own
     const p = prompt([r.key, "--worker"]);
     assert.equal(p.status, 0, `${r.key}: job-prompt failed: ${p.stderr}`);

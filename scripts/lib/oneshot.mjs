@@ -48,12 +48,15 @@ export function parseReply(stdout) {
   return { ok: !!json, json, limit, error, usage: env.usage && typeof env.usage === "object" ? env.usage : {} };
 }
 
+/** Pure: `call` with a per-call timeout (ms) added to its options; 0 leaves the role's own timeout. */
+export const withTimeout = (call, ms) => (ms > 0 ? (role, prompt, o = {}) => call(role, prompt, { ...o, timeoutMs: ms }) : call);
+
 /** One call. Writes one usage-ledger line (role, model, tokens; never the prompt). A parked plan limit returns limit: true without a call. */
-export async function oneShot(role, prompt, { job = "library", batch = "" } = {}) {
+export async function oneShot(role, prompt, { job = "library", batch = "", timeoutMs = 0 } = {}) {
   const cfg = roleOf(role, MODELS);
   const served = servedNow();
   if (served === "park") return { ok: false, json: null, limit: true, error: false, note: fallbackNote() };
-  const model = cfg.model, ms = (Number(cfg.timeout_min) || 6) * 60000, t0 = Date.now();
+  const model = cfg.model, roleMs = (Number(cfg.timeout_min) || 6) * 60000, ms = timeoutMs > 0 ? Math.min(roleMs, timeoutMs) : roleMs, t0 = Date.now();   // timeoutMs: the desk's time left, never more than the role's own
   // run from an empty directory so the repository's CLAUDE.md, settings and hooks are not loaded into a no-tools call
   const cwd = mkdtempSync(join(tmpdir(), "cyberview-oneshot-"));
   const { out, err } = await new Promise((resolve) => {

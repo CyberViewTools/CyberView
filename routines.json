@@ -601,7 +601,7 @@
    "status_key": "last_library_at",
    "max_age_hours": 6,
    "active": false,
-   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks a share), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored. It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and starts nothing while the map pipeline needs the usage window. Off until the owner starts the pilot.",
+   "does": "The Library desk (scripts/library-desk.mjs): turns the mirrored ORKL threat reports into fact cards (Haiku reads each report and a Sonnet auditor re-checks a share), writes a story per threat actor and per detailed unattributed subject from the cards (Sonnet), and has a second Sonnet reviewer check every story against the original reports before it is published; no worker has tools and the report text is never stored. It starts with a pilot set, works on the backlog only when the owner sets library.backfill, and starts nothing while the map pipeline needs the usage window. Switching it on is one edit here: set \"active\": true and \"active_since\" on this routine (the config, about entry, docs and heartbeat are already in place), then create its scheduled task. Off until the owner starts the pilot.",
    "reviewed": "2026-11-26"
   }
  ]

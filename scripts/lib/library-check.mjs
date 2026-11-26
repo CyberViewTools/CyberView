@@ -47,6 +47,7 @@ const cleanFacts = (list, extra) => (Array.isArray(list) ? list : []).filter(isO
   return o;
 }).filter((f) => f.v);
 
+const AUDIT_BY = ["auditor", "reviewer"];
 /** A card as stored: every string clipped, unknown keys dropped, lists capped. null when the shape is wrong. */
 export function cleanCard(raw, sha1) {
   if (!isObj(raw)) return null;
@@ -64,7 +65,9 @@ export function cleanCard(raw, sha1) {
     hedges: (Array.isArray(raw.hedges) ? raw.hedges : []).map((h) => clip(h, 200)).filter(Boolean).slice(0, 8),
   };
   if (raw.reason) card.reason = clip(raw.reason, 200);
-  if (isObj(raw.audit)) card.audit = { at: txt(raw.audit.at, 40), ok: raw.audit.ok === true, note: clip(raw.audit.note, 300) };
+  const aud = (a) => { const o = { at: txt(a.at, 40), ok: a.ok === true, note: clip(a.note, 160) }; if (AUDIT_BY.includes(a.by)) o.by = a.by; return o; };
+  if (isObj(raw.audit)) card.audit = aud(raw.audit);
+  if (Array.isArray(raw.audit_history) && raw.audit_history.length) card.audit_history = raw.audit_history.filter(isObj).map(aud).slice(-5);
   return card;
 }
 
@@ -116,6 +119,8 @@ export function cleanStory(raw) {
   if (raw.reviewed_at) story.reviewed_at = txt(raw.reviewed_at, 40);
   if (raw.reviewer_model) story.reviewer_model = txt(raw.reviewer_model, 60);
   if (Array.isArray(raw.reasons) && raw.reasons.length) story.reasons = raw.reasons.slice(0, 10).map((x) => txt(x, 40)).filter(Boolean);
+  if (raw.corrected_by) story.corrected_by = txt(raw.corrected_by, 60);
+  if (Number.isFinite(raw.corrections) && raw.corrections > 0) story.corrections = Math.min(9, Math.floor(raw.corrections));
   if (raw.written_run) story.written_run = txt(raw.written_run, 40);
   return story;
 }

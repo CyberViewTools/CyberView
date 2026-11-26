@@ -1,7 +1,10 @@
 // The Library's reader accuracy gate and the Library's correction counts. Pure apart from loadConfig/loadCorrections (reads only).
-// Shared by the reader, writer and review desks so none of them imports another (no cycle). A card the reviewer or auditor found
-// wrong keeps `audit: { at, ok: false }` for good: re-reading it makes a new card, but the error stays on the record (the reader
-// carries it forward), so a re-read cannot make the reader's error rate look better than it was.
+// Shared by the reader, writer and review desks so none of them imports another (no cycle).
+// The pause: only the AUDITOR's verdicts count (card.audit.by === "auditor"); a reviewer's flag marks the card for re-reading but is not
+// in the rate. Each card counts once, by its latest auditor verdict. When a card is read again its old `audit` moves into
+// `audit_history` (the last 5) and the new card has no current audit; such a card is always audited again (auditPick), and until
+// then its failed verdict still counts. While paused: the writer and the review run do nothing; the reader reads only cards queued
+// by a failed audit (auditFailed); the audit run audits at 100% so the failed cards are checked again. See pauseHelp.
 import { join } from "node:path";
 import { existsSync, readdirSync } from "node:fs";
 import { ROOT, readJson } from "./store.mjs";
@@ -10,6 +13,7 @@ import { DIR } from "../orkl.mjs";
 export const DEFAULTS = { reread: 3, audit_pct: 10, audit_pause_pct: 5, audit_min: 50 };
 export const WINDOW = 500;                                // the most recent audited cards that count
 export const PAUSE_MESSAGE = "Library reader accuracy below target";
+export const pauseHelp = "Clears when the failed cards are read again and audited ok by the auditor, or when the owner raises library.audit_pause_pct in config/pipeline.json.";
 export const CORRECTIONS_DIR = join(DIR, "corrections");
 
 /** config/pipeline.json `library` over the defaults (numbers only; anything else is ignored). */
@@ -21,14 +25,26 @@ export function loadConfig(file = join(ROOT, "config", "pipeline.json")) {
 }
 
 const list = (cards) => (cards instanceof Map ? [...cards.values()] : Array.isArray(cards) ? cards : Object.values(cards || {}));
+const failedEntry = (x) => x && typeof x === "object" && x.ok !== true;
 
-/** Over the most recent WINDOW audited cards: how many, how many wrong, the wrong share, and whether the Library is paused. */
+/** A card's latest AUDITOR verdict: its current audit when the auditor made it, else the newest auditor entry in audit_history
+ *  (a card read again after a failed audit has no current audit and still counts as wrong until the auditor passes it). */
+export function auditorVerdict(card) {
+  if (card && card.audit && card.audit.by === "auditor") return card.audit;
+  const h = (card && Array.isArray(card.audit_history) ? card.audit_history : []).filter((e) => e && e.by === "auditor");
+  return h.length ? h[h.length - 1] : null;
+}
+/** A card queued for the reader because an audit (the auditor's or the reviewer's) found it wrong: unread, with a failed current audit or history. */
+export const auditFailed = (c) => !!c && c.status === "unread" && (failedEntry(c.audit) || (Array.isArray(c.audit_history) && c.audit_history.some(failedEntry)));
+
+/** Over the WINDOW most recent audited cards, each counted once by its latest AUDITOR verdict (a reviewer's flag does not count):
+ *  how many, how many wrong, the wrong share, and whether the Library is paused. */
 export function auditState(cards, cfg = DEFAULTS) {
   const c = { ...DEFAULTS, ...(cfg || {}) };
-  const all = list(cards).filter((x) => x && x.audit && typeof x.audit === "object")
-    .sort((a, b) => String(b.audit.at || "").localeCompare(String(a.audit.at || "")) || String(a.sha1 || "").localeCompare(String(b.sha1 || "")))
+  const all = list(cards).map((x) => ({ sha1: x && x.sha1, v: auditorVerdict(x) })).filter((x) => x.v)
+    .sort((a, b) => String(b.v.at || "").localeCompare(String(a.v.at || "")) || String(a.sha1 || "").localeCompare(String(b.sha1 || "")))
     .slice(0, WINDOW);
-  const wrong = all.filter((x) => x.audit.ok !== true).length, audited = all.length;
+  const wrong = all.filter((x) => x.v.ok !== true).length, audited = all.length;
   const pct = audited ? (100 * wrong) / audited : 0;
   return { audited, wrong, pct, paused: audited >= c.audit_min && pct > c.audit_pause_pct };
 }

@@ -9,7 +9,8 @@ import { writeQueue, STORIES_DIR } from "../../scripts/library-write.mjs";
 import * as W from "../../scripts/library-write.mjs";
 import * as R from "../../scripts/library-read.mjs";
 import { readQueue } from "../../scripts/library-read.mjs";
-import { DEFAULTS, reviewQueue, rereadPick, settle, auditPick, auditState, paused, markCardWrong, run, runAudit } from "../../scripts/library-review.mjs";
+import { pauseHelp } from "../../scripts/lib/library-audit.mjs";
+import { DEFAULTS, cleanNote, reviewQueue, rereadPick, settle, auditPick, auditState, paused, markCardWrong, run, runAudit } from "../../scripts/library-review.mjs";
 import { errorReport, libraryErrorReport } from "../../scripts/review.mjs";
 
 const h = (c) => c.repeat(40);
@@ -35,14 +36,23 @@ test("settle: a 'corrected' story that fails the script checks is rejected, and 
   assert.equal(f.file.live, PUBLISHED); assert.equal(f.file.next.status, "rejected"); assert.equal(f.file.next.tries, 1);
   assert.ok(f.file.next.reasons.includes("uncited"));
 });
-test("settle: a clean 'corrected' story is published, with script-owned fields taken from the draft, never from the reviewer", () => {
-  const evil = { ...body({ headline: "Thing, corrected" }), key: "evil", kind: "actor", name: "Evil", based_on: "evil", by: "someone", status: "draft", tries: 7, written_run: "ffff", writer_model: "x", written_at: "t" };
-  const r = settle({ live: null, next: DRAFT }, { verdict: "corrected", story: evil, changes: [{ code: "wrong", note: "fixed a name" }] }, CARDS, null, NOW, "sonnet");
-  const l = r.file.live;
-  assert.equal(l.headline, "Thing, corrected"); assert.equal(l.status, "published");
-  for (const k of ["key", "kind", "name", "based_on", "by", "written_at", "writer_model", "written_run"]) assert.equal(l[k], DRAFT[k], k);
-  assert.equal(l.tries, 0);
+test("settle: a clean 'corrected' story is never published: it becomes a new draft for a later run, script-owned fields from the draft", () => {
+  const evil = { ...body({ headline: "Thing, corrected" }), key: "evil", kind: "actor", name: "Evil", based_on: "evil", by: "someone", status: "published", tries: 7, written_run: "ffff", writer_model: "x", written_at: "t", corrections: 0 };
+  const r = settle({ live: PUBLISHED, next: DRAFT }, { verdict: "corrected", story: evil, changes: [{ code: "wrong", note: "fixed a name" }] }, CARDS, null, NOW, "sonnet", "rrrr9999");
+  assert.equal(r.file.live, PUBLISHED);
+  const n = r.file.next;
+  assert.equal(n.headline, "Thing, corrected"); assert.equal(n.status, "draft"); assert.equal(n.written_run, "rrrr9999"); assert.equal(n.corrected_by, "sonnet"); assert.equal(n.corrections, 1);
+  for (const k of ["key", "kind", "name", "based_on", "by", "written_at", "writer_model", "tries"]) assert.equal(n[k], DRAFT[k], k);
   assert.deepEqual(r.corrections.map((c) => [c.role, c.model, c.code, c.at]), [["library-writer", "sonnet", "wrong", NOW]]);
+  // a later run passes it and it goes live
+  const p = settle(r.file, { verdict: "pass", changes: [] }, CARDS, null, NOW, "sonnet", "later000");
+  assert.equal(p.file.live.headline, "Thing, corrected"); assert.equal(p.file.live.status, "published"); assert.equal(p.file.next, null);
+});
+test("settle: the third correction in a row is a rejection (correction-loop)", () => {
+  const c = (f) => settle(f, { verdict: "corrected", story: body({ headline: "Again" }), changes: [] }, CARDS, null, NOW, "sonnet", "r1");
+  let f = c({ live: null, next: DRAFT }).file; assert.equal(f.next.corrections, 1);
+  f = c(f).file; assert.equal(f.next.corrections, 2); assert.equal(f.next.status, "draft");
+  f = c(f).file; assert.equal(f.next.status, "rejected"); assert.deepEqual(f.next.reasons, ["correction-loop"]); assert.equal(f.next.tries, 1);
 });
 test("settle: a pass on a draft that itself fails the checks does not publish", () => {
   const r = settle({ live: PUBLISHED, next: story(UNCITED) }, { verdict: "pass", changes: [] }, CARDS, null, NOW, "sonnet");
@@ -56,14 +66,15 @@ test("settle: reject rejects, counts a try, and a second one parks; live is unto
   r = settle({ live: PUBLISHED, next: { ...DRAFT, tries: 1 } }, { verdict: "reject", changes: [] }, CARDS, null, NOW, "sonnet");
   assert.equal(r.file.next.status, "parked"); assert.equal(r.file.next.tries, 2);
 });
-test("settle: a failed reviewer reply changes nothing", () => {
+test("settle: a failed reviewer reply or an unusable verdict changes nothing", () => {
   const file = { live: PUBLISHED, next: DRAFT };
   const r = settle(file, null, CARDS, null, NOW, "sonnet");
   assert.deepEqual(r.file, file); assert.deepEqual(r.corrections, []);
+  assert.deepEqual(settle(file, { verdict: "unusable" }, CARDS, null, NOW, "sonnet").file, file);
 });
 test("settle: correction notes are clipped, kept free of code, and unknown codes become other", () => {
   const r = settle({ live: null, next: DRAFT }, { verdict: "reject", changes: [{ code: "zzz", note: "x".repeat(900) }, { code: "wrong", note: "run `rm -rf /` now" }] }, CARDS, null, NOW, "sonnet");
-  assert.equal(r.corrections[0].code, "other"); assert.ok(r.corrections[0].note.length <= 300);
+  assert.equal(r.corrections[0].code, "other"); assert.ok(r.corrections[0].note.length <= 160);
   assert.equal(r.corrections[1].note, "");
 });
 
@@ -75,7 +86,7 @@ test("reviewQueue: only drafts; rereadPick: most-cited first, ties by first appe
   assert.deepEqual(rereadPick(s, 1), [h("b")]);
 });
 
-const audited = (n, wrong) => new Map(Array.from({ length: n }, (_, i) => [`${i}`.padStart(40, "0"), { sha1: `${i}`.padStart(40, "0"), status: "read", audit: { at: `2026-11-${10 + (i % 9)}T00:00:00Z`, ok: i >= wrong, note: "" } }]));
+const audited = (n, wrong) => new Map(Array.from({ length: n }, (_, i) => [`${i}`.padStart(40, "0"), { sha1: `${i}`.padStart(40, "0"), status: "read", audit: { at: `2026-11-${10 + (i % 9)}T00:00:00Z`, ok: i >= wrong, note: "", by: "auditor" } }]));
 test("auditState: pauses above 5% once 50 cards are audited, not before", () => {
   assert.equal(auditState(audited(40, 4), DEFAULTS).paused, false);
   assert.equal(auditState(audited(100, 6), DEFAULTS).paused, true);
@@ -85,7 +96,7 @@ test("auditState: pauses above 5% once 50 cards are audited, not before", () => 
 });
 test("auditState: counts only the most recent 500 audits", () => {
   const m = new Map();
-  for (let i = 0; i < 600; i++) m.set(`${i}`.padStart(40, "0"), { audit: { at: `2026-01-01T00:${String(Math.floor(i / 60)).padStart(2, "0")}:${String(i % 60).padStart(2, "0")}Z`, ok: i >= 100, note: "" } });
+  for (let i = 0; i < 600; i++) m.set(`${i}`.padStart(40, "0"), { audit: { at: `2026-01-01T00:${String(Math.floor(i / 60)).padStart(2, "0")}:${String(i % 60).padStart(2, "0")}Z`, ok: i >= 100, note: "", by: "auditor" } });
   const s = auditState(m, DEFAULTS);
   assert.equal(s.audited, 500); assert.equal(s.wrong, 0); assert.equal(s.paused, false);
 });
@@ -109,7 +120,8 @@ test("a card found wrong is queued for re-reading and its stories go stale", () 
   const files = new Map([["a-7", { live: story({ status: "published", based_on: basedOn(subj, two) }), next: null }]]);
   assert.equal(writeQueue([subj], files, two, {}).length, 0);
   const bad = markCardWrong(two.get(h("b")), "the figure is wrong", NOW);
-  assert.equal(bad.status, "unread"); assert.equal(bad.tries, 0); assert.deepEqual(bad.audit, { at: NOW, ok: false, note: "the figure is wrong" });
+  assert.equal(bad.status, "unread"); assert.equal(bad.tries, 0); assert.deepEqual(bad.audit, { at: NOW, ok: false, note: "the figure is wrong", by: "auditor" });
+  assert.equal(markCardWrong(two.get(h("b")), "n", NOW, "reviewer").audit.by, "reviewer");
   const after = new Map([[h("a"), two.get(h("a"))], [h("b"), bad]]);
   assert.equal(readQueue([{ sha1: h("b") }], after).length, 1);
   assert.equal(writeQueue([subj], files, after, {}).length, 1);
@@ -163,7 +175,7 @@ test("run: an unreachable original means no review; a 'none' original is reviewe
     const t = await run({ ...deps(dir, async () => { calls++; return { ok: true, json: { verdict: "pass", changes: [] } }; }), fetch: async () => ({ error: "unreachable" }), max: 5 });
     assert.equal(calls, 0); assert.equal(files(dir).next.status, "draft"); assert.equal(t.published, 0);
     await run({ ...deps(dir, async () => { calls++; return { ok: true, json: { verdict: "pass", changes: [] } }; }), fetch: async () => ({ error: "none" }), max: 5 });
-    assert.equal(calls, 0); assert.equal(files(dir).next.status, "draft");
+    assert.equal(calls, 0); assert.equal(files(dir).next.status, "parked");        // every original gone: it can never be reviewed
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 test("run: a limit stops and changes nothing; failed calls change nothing and three in a row stop", async () => {
@@ -215,7 +227,7 @@ test("runAudit: ok cards get audit ok, wrong cards are requeued, and the audit u
     const t2 = await runAudit({ ...deps(dir, reply({ ok: true, wrong: [] })), cfg: { ...DEFAULTS, audit_pct: 100 }, max: 5 });
     assert.equal(t2.ok, 1);
     const s2 = JSON.parse(readFileSync(join(dir, "cards", `${h("a").slice(0, 2)}.json`), "utf8"))[h("a")];
-    assert.equal(s2.status, "read"); assert.deepEqual(s2.audit, { at: s2.audit.at, ok: true, note: "" });
+    assert.equal(s2.status, "read"); assert.deepEqual(s2.audit, { at: s2.audit.at, ok: true, note: "", by: "auditor" });
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -225,7 +237,7 @@ test("pause: the reader and the writer return without calling a model while the 
     const cards = audited(100, 10); mkdirSync(join(dir, "c")); const sh = {}; for (const c of cards.values()) (sh[c.sha1.slice(0, 2)] ||= {})[c.sha1] = c; for (const [k, v] of Object.entries(sh)) writeFileSync(join(dir, "c", `${k}.json`), JSON.stringify(v)); const call = async () => { calls++; return { ok: false, limit: false, error: true }; };
     const t1 = await R.run({ dir: join(dir, "c"), library: { reports: [{ sha1: h("a"), created: "2024" }], actors: [] }, call, fetch: async () => ({ text: TEXT }), log: (m) => logs.push(m), cfg: DEFAULTS });
     const t2 = await W.run({ dir: join(dir, "s"), library: { reports: [], actors: [{ id: "7", name: "TT" }] }, cards, call, log: (m) => logs.push(m), cfg: DEFAULTS });
-    assert.equal(calls, 0); assert.ok(t1.stopped && t2.stopped);
+    assert.equal(calls, 0); assert.ok(t2.stopped); assert.equal(t1.read, 0);
     assert.ok(logs.some((m) => /Library reader accuracy below target/.test(m)));
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -241,10 +253,144 @@ test("tries: write, reject, rewrite, reject parks the story; the rewrite draft c
   const r2 = settle({ live: null, next: rewrite }, { verdict: "reject", changes: [] }, CARDS, null, NOW, "sonnet").file;
   assert.equal(r2.next.status, "parked");
 });
-test("the reader keeps a failed audit on the card when it reads it again", () => {
-  const prev = { ...card("a"), status: "unread", audit: { at: NOW, ok: false, note: "n" } };
+test("a re-read card moves its old audit into audit_history (capped at 5) and has no current audit", () => {
+  const prev = { ...card("a"), status: "unread", audit: { at: NOW, ok: false, note: "n", by: "auditor" }, audit_history: Array.from({ length: 5 }, (_, i) => ({ at: `2026-01-0${i + 1}T00:00:00Z`, ok: true, note: "" })) };
   const text = "the operators used Mimikatz on hosts. ".repeat(20);
-  const reply = { ok: true, json: { summary: "s", kind: "malware-analysis", subject: null, hedges: [], facts: facts({ tools: [{ v: "Mimikatz", q: "the operators used Mimikatz on hosts" }] }) } };
-  const d = R.decide({ sha1: h("a") }, { text, partial: false }, reply, { prev, model: "haiku", at: NOW });
-  assert.equal(d.card.status, "read"); assert.deepEqual(d.card.audit, prev.audit);
+  const rep = { ok: true, json: { summary: "s", kind: "malware-analysis", subject: null, hedges: [], facts: facts({ tools: [{ v: "Mimikatz", q: "the operators used Mimikatz on hosts" }] }) } };
+  const d = R.decide({ sha1: h("a") }, { text, partial: false }, rep, { prev, model: "haiku", at: "2026-11-27T00:00:00Z" });
+  assert.equal(d.card.status, "read"); assert.equal(d.card.audit, undefined);
+  assert.equal(d.card.audit_history.length, 5); assert.equal(d.card.audit_history[4].ok, false); assert.equal(d.card.audit_history[0].at, "2026-01-02T00:00:00Z");
+});
+test("auditPick: a card with audit history and no current audit is always picked; one with a current audit never", () => {
+  const sha = (i) => i.toString(16).padStart(8, "0") + "0".repeat(32);
+  const withHist = { sha1: sha(99), status: "read", audit_history: [{ at: NOW, ok: false, note: "" }] };      // 99 % 100 is not under pct 0
+  const cur = { sha1: sha(5), status: "read", audit: { at: NOW, ok: true, note: "", by: "auditor" }, audit_history: [{ at: NOW, ok: false, note: "" }] };
+  const cards = new Map([[withHist.sha1, withHist], [cur.sha1, cur], [sha(98), { sha1: sha(98), status: "read" }]]);
+  assert.deepEqual(auditPick(cards, 0, new Set()), [withHist.sha1]);
+});
+test("audit: pilot audits every unaudited read card; otherwise the configured share", async () => {
+  const dir = mk();
+  try {
+    mkdirSync(join(dir, "cards"), { recursive: true });
+    const sh = {}, reports = [];
+    for (let i = 0; i < 200; i++) { const s = i.toString(16).padStart(8, "0") + "0".repeat(32); (sh[s.slice(0, 2)] ||= {})[s] = { ...card("a"), sha1: s }; reports.push({ sha1: s, id: i }); }
+    for (const [k, v] of Object.entries(sh)) writeFileSync(join(dir, "cards", `${k}.json`), JSON.stringify(v));
+    const d = (extra) => ({ ...deps(dir, reply({ ok: true, wrong: [] })), library: { reports, actors: [] }, concurrency: 20, max: 500, ...extra });
+    const t0 = await runAudit(d({}));                       // not pilot, nothing audited yet: still only the share (i % 100 < 10 -> 20 cards)
+    assert.equal(t0.ok, 20);
+    const t1 = await runAudit(d({ pilot: true }));
+    assert.equal(t1.ok, 180);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("auditState: only auditor verdicts count; a reviewer flag alone never changes it", () => {
+  const m = audited(60, 0);
+  const first = [...m.values()][0];
+  m.set(first.sha1, { ...first, status: "unread", audit: { at: NOW, ok: false, note: "x", by: "reviewer" } });
+  const s = auditState(m, DEFAULTS);
+  assert.equal(s.wrong, 0); assert.equal(s.audited, 59);
+});
+test("auditState: 3 wrong of 50 pauses; re-read and audited ok clears it; counted once by the latest auditor verdict", () => {
+  const m = audited(50, 3);
+  assert.equal(auditState(m, DEFAULTS).paused, true);
+  const text = "the operators used Mimikatz on hosts. ".repeat(20);
+  const rep = { ok: true, json: { summary: "s", kind: "malware-analysis", subject: null, hedges: [], facts: facts({ tools: [{ v: "Mimikatz", q: "the operators used Mimikatz on hosts" }] }) } };
+  for (const c of [...m.values()].slice(0, 3)) {
+    const d = R.decide({ sha1: c.sha1 }, { text, partial: false }, rep, { prev: { ...c, status: "unread" }, model: "haiku", at: "2026-12-01T00:00:00Z" });
+    m.set(c.sha1, d.card);
+  }
+  assert.equal(auditState(m, DEFAULTS).wrong, 3);             // read again but not yet audited: still counted wrong
+  assert.equal(auditState(m, DEFAULTS).paused, true);
+  for (const c of [...m.values()].slice(0, 3)) m.set(c.sha1, { ...c, audit: { at: "2026-12-02T00:00:00Z", ok: true, note: "", by: "auditor" } });
+  const s = auditState(m, DEFAULTS);
+  assert.equal(s.audited, 50); assert.equal(s.wrong, 0); assert.equal(s.paused, false);
+});
+test("pause: the reader while paused touches only audit-failed cards; the review run stays paused; pauseHelp is exported", async () => {
+  const dir = mk(), logs = []; const called = [];
+  try {
+    const cards = audited(60, 6); mkdirSync(join(dir, "c"));
+    const hex = [...cards.keys()];
+    const reports = hex.map((s) => ({ sha1: s, created: "2024" }));
+    const mine = new Map(cards);
+    const failed = mine.get(hex[0]); mine.set(hex[0], { ...failed, status: "unread", tries: 0 });
+    const extra = "e".repeat(40); mine.set(extra, { sha1: extra, status: "unread", tries: 0 }); reports.push({ sha1: extra, created: "2025" });
+    const sh = {}; for (const c of mine.values()) (sh[c.sha1.slice(0, 2)] ||= {})[c.sha1] = c;
+    for (const [k, v] of Object.entries(sh)) writeFileSync(join(dir, "c", `${k}.json`), JSON.stringify(v));
+    const call = async (_r, p) => { called.push(p); return { ok: false, limit: false, error: true }; };
+    await R.run({ dir: join(dir, "c"), library: { reports: [...reports, ...[]], actors: [] }, call, fetch: async (r) => { called.push(r.sha1); return { text: TEXT }; }, log: (m) => logs.push(m), cfg: DEFAULTS });
+    assert.deepEqual(called.filter((x) => /^[0-9a-f]{40}$/.test(x)), [hex[0]]);
+    assert.ok(logs.some((m) => /Library reader accuracy below target/.test(m)));
+    const lg = []; let n = 0;
+    await run({ ...deps(dir, async () => { n++; return {}; }), cards: audited(100, 10), log: (m) => lg.push(m) });
+    assert.equal(n, 0); assert.ok(lg.some((m) => /Library reader accuracy below target/.test(m)));
+    assert.match(pauseHelp, /audit_pause_pct/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("a flagged card makes the published story stale at once, with no writer run", async () => {
+  const dir = mk();
+  try {
+    setup(dir, { f: { live: story({ status: "published", based_on: "old" }), next: DRAFT }, cards: loose() });
+    const t = await runAudit({ ...deps(dir, reply({ ok: false, wrong: [{ path: "tools[0]", note: "no" }] })), cfg: { ...DEFAULTS, audit_pct: 100 }, max: 5 });
+    assert.equal(t.wrong, 1);
+    assert.equal(files(dir).live.status, "stale");
+    setup(dir, { f: { live: story({ status: "published", based_on: "old" }), next: DRAFT }, cards: loose() });
+    await run({ ...deps(dir, reply({ verdict: "pass", changes: [], card_problems: [{ sha1: h("a"), note: "differs" }] })), max: 5 });
+    assert.equal(files(dir).live.status, "stale");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("an audit result is dropped when the reader re-read the card meanwhile", async () => {
+  const dir = mk();
+  try {
+    setup(dir, { cards: loose() });
+    const p = join(dir, "cards", `${h("a").slice(0, 2)}.json`);
+    const call = async () => { const j = JSON.parse(readFileSync(p, "utf8")); j[h("a")].read_at = "2026-12-05T00:00:00Z"; writeFileSync(p, JSON.stringify(j)); return { ok: true, json: { ok: false, wrong: [{ path: "tools[0]", note: "x" }] }, limit: false, error: false }; };
+    await runAudit({ ...deps(dir, call), cfg: { ...DEFAULTS, audit_pct: 100 }, max: 5 });
+    const c = JSON.parse(readFileSync(p, "utf8"))[h("a")];
+    assert.equal(c.status, "read"); assert.equal(c.audit, undefined);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: an unusable reviewer reply changes nothing and a note is clipped to 160", async () => {
+  const dir = mk();
+  try {
+    setup(dir, { cards: loose() });
+    const before = readFileSync(join(dir, "stories", "a-7.json"), "utf8");
+    await run({ ...deps(dir, async () => ({ ok: false, json: null, limit: false, error: false })), max: 5 });
+    assert.equal(readFileSync(join(dir, "stories", "a-7.json"), "utf8"), before);
+    assert.ok(cleanNote("x ".repeat(200)).length <= 160);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: originals all 'none' parks the draft (no-original); a vanished subject parks it (no-subject)", async () => {
+  const dir = mk();
+  try {
+    setup(dir, { cards: loose() });
+    await run({ ...deps(dir, reply({ verdict: "pass", changes: [] })), fetch: async () => ({ error: "none" }), max: 5 });
+    assert.deepEqual([files(dir).next.status, files(dir).next.reasons], ["parked", ["no-original"]]);
+    setup(dir, { cards: loose() });
+    await run({ ...deps(dir, reply({ verdict: "pass", changes: [] })), library: { reports: [], actors: [] }, max: 5 });
+    assert.deepEqual([files(dir).next.status, files(dir).next.reasons], ["parked", ["no-subject"]]);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: the same-run refusal; some originals none and the rest reviewed; a catalogue-only story is reviewed with no originals", async () => {
+  const dir = mk(); let calls = 0, prompt = "";
+  try {
+    setup(dir, { cards: loose() });
+    await run({ ...deps(dir, async () => { calls++; return {}; }), runId: DRAFT.written_run, max: 5 });
+    assert.equal(calls, 0); assert.equal(files(dir).next.status, "draft");
+    // two cards, one original gone
+    const two = new Map([[h("a"), card("a")], [h("b"), card("b")]]);
+    const subj = { key: "a-7", kind: "actor", name: "TT", actor: ACTOR, sha1s: [h("b"), h("a")] };
+    setup(dir, { cards: two });
+    writeFileSync(join(dir, "stories", "a-7.json"), JSON.stringify({ live: null, next: story({ based_on: basedOn(subj, two), sections: [{ h: "who", sentences: [sent("The operators used Mimikatz.", h("a"))] }, { h: "targets", sentences: [sent("They used Mimikatz again.", h("b"))] }, { h: "methods", sentences: [sent("Mimikatz was used.", h("a"), h("b"))] }] }) }));
+    const lib = { reports: [{ sha1: h("b"), id: 2, actors: ["TT"], created: "2024-01-02" }, ...LIB.reports], actors: [ACTOR] };
+    const t = await run({ ...deps(dir, async (_r, p) => { calls++; prompt = p; return { ok: true, json: { verdict: "pass", changes: [] } }; }), library: lib, fetch: async (r) => (r.sha1 === h("b") ? { error: "none" } : { text: TEXT, partial: false }), max: 5 });
+    assert.equal(calls, 1); assert.equal(t.published, 1); assert.ok(prompt.includes(TEXT));
+    // catalogue only
+    const cat = story({ based_on: basedOn({ ...subj, sha1s: [] }, new Map()), sections: [{ h: "who", sentences: [sent("TT is a tracked actor.", "catalogue"), sent("No public report in this library describes its operations.", "catalogue")] }], headline: "TT", in_short: "Little is known." });
+    writeFileSync(join(dir, "stories", "a-7.json"), JSON.stringify({ live: null, next: cat }));
+    rmSync(join(dir, "cards"), { recursive: true }); mkdirSync(join(dir, "cards"));
+    calls = 0;
+    const t2 = await run({ ...deps(dir, async () => { calls++; return { ok: true, json: { verdict: "pass", changes: [] } }; }), library: { reports: [], actors: [ACTOR] }, fetch: async () => { throw new Error("no fetch expected"); }, max: 5 });
+    assert.equal(calls, 1); assert.equal(t2.published, 1);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
 });

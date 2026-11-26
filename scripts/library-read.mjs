@@ -14,7 +14,7 @@ import { prepText, fetchText, TEXT_MIN } from "./lib/orkl-text.mjs";
 import { cleanCard, cardProblems } from "./lib/library-check.mjs";
 import { readerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
-import { loadConfig, paused, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
+import { loadConfig, paused, auditFailed, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
 const ROLE = "library-reader";
@@ -74,8 +74,10 @@ export function readQueue(reports, cards, { order = "newest", max = Infinity } =
 /** Pure: the whole outcome table. { card, retry }: card null = nothing is written; retry = the record stays queued untouched.
  *  `ctx` carries the previous card (for tries), the time and the model name. */
 export function decide(report, fetched, reply, ctx = {}) {
-  const d = decideNow(report, fetched, reply, ctx), a = ctx.prev && ctx.prev.audit;
-  if (d.card && a && a.ok === false) d.card = { ...d.card, audit: a };       // a card found wrong stays on the record when it is read again
+  const d = decideNow(report, fetched, reply, ctx), p = ctx.prev || {};
+  // a card read again: its old audit moves into audit_history (last 5) and the new card has no current audit, so it is audited afresh
+  const hist = [...(Array.isArray(p.audit_history) ? p.audit_history : []), ...(p.audit ? [p.audit] : [])].slice(-5);
+  if (d.card && hist.length) d.card = { ...d.card, audit_history: hist };
   return d;
 }
 function decideNow(report, fetched, reply, ctx) {
@@ -133,8 +135,9 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
   const badList = [];
   const cards = loadCards(dir, badList);
   badList.forEach((b) => bad.add(b));
-  if (paused(cards, cfg)) { log(PAUSE_MESSAGE); return { ...tallyZero(), stopped: PAUSE_MESSAGE.toLowerCase() }; }
-  const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1))), cards, { order, max });
+  const isPaused = paused(cards, cfg);
+  if (isPaused) log(PAUSE_MESSAGE);                      // while paused only the cards an audit found wrong are read again
+  const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1)) && (!isPaused || auditFailed(cards.get(r.sha1)))), cards, { order, max });
   const tally = tallyZero();
   let failedCalls = 0, outage = 0;
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {

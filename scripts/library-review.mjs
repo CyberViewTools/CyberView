@@ -5,32 +5,34 @@
 //           corrected story as text, carries every script-owned field from the draft and runs the same script checks as the writer.
 //   audit : Sonnet (library-auditor) re-checks a share of the Haiku reader's cards against the report text. A card found wrong (by the
 //           auditor or the reviewer) keeps `audit: { ok: false }`, goes back to `unread` to be read again, and every story that rests on
-//           it goes stale (the writer's basedOn counts read cards only). The reader's error rate over the last 500 audits pauses the
-//           reader and the writer (library-audit.mjs auditState/paused) and this desk's `run`; `audit` always runs, so the rate can recover.
+//           it goes stale at once (a published story citing it is marked stale here, no model call; the writer's basedOn also changes). Only
+//           the AUDITOR's verdicts make the reader's error rate (a reviewer's flag re-queues the card but does not count); over the
+//           last 500 audited cards above audit_pause_pct it pauses the writer and this desk's `run`, and limits the reader to the
+//           failed cards. `audit` always runs (at 100% while paused, or with --pilot), so the rate can recover: see pauseHelp.
 //   corrections: data/orkl/corrections/<story key or card sha1>.json, a list of { at, role, model, code, note }: role "library-writer"
 //           for story corrections and "library-reader" for cards, with the model that wrote the thing corrected (counted by
 //           `node scripts/review.mjs errors`). Kept apart from data/corrections/, which holds event corrections.
 // A usage limit stops new work and changes nothing; a failed call changes nothing (three in a row stop); an unreachable original means
-// the story is not reviewed this run. Usage: node scripts/library-review.mjs run [--max N] | audit [--max N] | status
+// the story is not reviewed this run. Usage: node scripts/library-review.mjs run [--max N] | audit [--max N] [--pilot] | status
 import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
 import { NOCODE } from "./lib/validate.mjs";
-import { loadLibrary } from "./orkl.mjs";
-import { CARDS_DIR, loadCards, saveCards } from "./library-read.mjs";
+import { loadLibrary, shardOf } from "./orkl.mjs";
+import { CARDS_DIR, loadCards, readShard } from "./library-read.mjs";
 import { STORIES_DIR, MAX_TRIES, loadStories, readStory, buildStory, cardsFor, codesOf } from "./library-write.mjs";
 import { cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { reviewerPrompt, auditorPrompt } from "./lib/library-prompts.mjs";
 import { fetchText } from "./lib/orkl-text.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
-import { DEFAULTS, auditState, paused, loadConfig, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
+import { DEFAULTS, auditState, paused, loadConfig, pauseHelp, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
 
-export { DEFAULTS, auditState, paused };
+export { DEFAULTS, auditState, paused, pauseHelp };
 const ROLE = "library-reviewer", AUDIT_ROLE = "library-auditor";
-const STOP_AFTER_ERRORS = 3, STOP_AFTER_UNREACHABLE = 5, CORRECTIONS_KEEP = 200;
+const MAX_CORRECTIONS = 2, STOP_AFTER_ERRORS = 3, STOP_AFTER_UNREACHABLE = 5, CORRECTIONS_KEEP = 200;
 const CODES = ["unsupported", "wrong", "attribution", "hedge-lost", "tone", "other"];
 const HEX40 = /^[0-9a-f]{40}$/;
 const modelOf = (role) => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[role]; return (r && r.model) || ""; };
@@ -45,48 +47,89 @@ export function rereadPick(story, max) {
   return [...n.keys()].map((k, i) => ({ k, i, n: n.get(k) })).sort((a, b) => b.n - a.n || a.i - b.i).slice(0, Math.max(0, max)).map((x) => x.k);
 }
 
-/** A note as stored: one line, 300 characters, and "" when it looks like code (the build's NOCODE rule). */
+/** A note as stored: one line, 160 characters, and "" when it looks like code (the build's NOCODE rule). */
 export function cleanNote(s) {
-  const t = String(s == null ? "" : s).replace(/<[^>]*>/g, " ").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, 300);
+  const t = String(s == null ? "" : s).replace(/<[^>]*>/g, " ").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
   return NOCODE.test(t) ? "" : t;
 }
 const cleanChanges = (list) => (Array.isArray(list) ? list : []).filter((c) => c && typeof c === "object").slice(0, 10)
   .map((c) => ({ code: CODES.includes(c.code) ? c.code : "other", note: cleanNote(c.note) }));
 
-/** Pure: apply a reviewer's verdict to a story file. Returns { file, corrections }. `verdict` null (no usable reply) changes nothing.
+/** Pure: apply a reviewer's verdict to a story file. Returns { file, corrections }. `verdict` null (no usable reply) or without a
+ *  known verdict changes nothing. Only "pass" publishes; "corrected" stores the reviewer's text as a new draft (written_run = this
+ *  review run, corrected_by, corrections + 1) for a LATER run to review, and a third correction is a rejection (correction-loop).
  *  `cards` is the card set the writer used (read cards only, same cap and order); `actor` the catalogue record or null. */
-export function settle(file, verdict, cards, actor, now, model) {
+export function settle(file, verdict, cards, actor, now, model, runId = "") {
   const next = file && file.next;
   if (!next || next.status !== "draft" || !verdict || typeof verdict !== "object") return { file, corrections: [] };
+  if (!["pass", "corrected", "reject"].includes(verdict.verdict)) return { file, corrections: [] };
   const changes = cleanChanges(verdict.changes), tries = (Number(next.tries) || 0) + 1;
   const subject = { key: next.key, kind: next.kind, name: next.name, actor: actor || null };
   const cm = cards instanceof Map ? cards : new Map();
   const writerFault = changes.length ? changes.map((c) => ({ at: now, role: "library-writer", model: next.writer_model || "", code: c.code, note: c.note })) : [{ at: now, role: "library-writer", model: next.writer_model || "", code: "other", note: "" }];
   const refuse = (reasons, corrections) => ({ file: { live: file.live, next: { ...next, status: tries >= MAX_TRIES ? "parked" : "rejected", tries, reasons: reasons.slice(0, 10) } }, corrections });
-  const publish = (story, corrections) => {
-    const s = cleanStory({ ...story, status: "published", tries: 0, reviewed_at: now, reviewer_model: model });
-    return { file: { live: s, next: null }, corrections };
-  };
   if (verdict.verdict === "pass") {
     const problems = storyProblems(next, cm, subject.actor);
-    return problems.length ? refuse(codesOf(problems), []) : publish(next, []);
+    if (problems.length) return refuse(codesOf(problems), []);
+    return { file: { live: cleanStory({ ...next, status: "published", tries: 0, reviewed_at: now, reviewer_model: model }), next: null }, corrections: [] };
   }
   if (verdict.verdict === "corrected") {
-    const built = buildStory(subject, { ok: true, json: verdict.story }, cm, { tries, basedOn: next.based_on, at: next.written_at, model: next.writer_model, run: next.written_run });
-    return built.status === "draft" ? publish(built, writerFault) : refuse(built.reasons || ["bad-reply"], writerFault);
+    const n = (Number(next.corrections) || 0) + 1;
+    if (n > MAX_CORRECTIONS) return refuse(["correction-loop"], writerFault);
+    const built = buildStory(subject, { ok: true, json: verdict.story }, cm, { tries, basedOn: next.based_on, at: next.written_at, model: next.writer_model, run: runId });
+    if (built.status !== "draft") return refuse(built.reasons || ["bad-reply"], writerFault);
+    return { file: { live: file.live, next: cleanStory({ ...built, corrected_by: model, corrections: n }) }, corrections: writerFault };
   }
-  if (verdict.verdict === "reject") return refuse(["review-reject", ...new Set(changes.map((c) => c.code))], writerFault);
-  return refuse(["bad-reply"], []);          // a real reply with no usable verdict counts as a try, like the writer's bad-reply
+  return refuse(["review-reject", ...new Set(changes.map((c) => c.code))], writerFault);
 }
 
-/** Pure: a card the reviewer or auditor found wrong goes back to the reader's queue. */
-export const markCardWrong = (card, note, at) => ({ ...card, status: "unread", tries: 0, reason: "audit-wrong", audit: { at, ok: false, note: cleanNote(note) } });
+/** Pure: a card the reviewer (by "reviewer") or auditor (by "auditor") found wrong goes back to the reader's queue. */
+export const markCardWrong = (card, note, at, by = "auditor") => ({
+  ...card, status: "unread", tries: 0, reason: "audit-wrong",
+  ...(Array.isArray(card.audit_history) || card.audit ? { audit_history: [...(card.audit_history || []), ...(card.audit ? [card.audit] : [])].slice(-5) } : {}),
+  audit: { at, ok: false, note: cleanNote(note), by },
+});
 
-/** Pure: the cards to audit now: a fixed share by sha1, never one already audited or in `seen`, never one that is not `read`. */
+/** Pure: the cards to audit now: those in the share (by sha1), and always a card read again after a failed audit (audit_history and
+ *  no current audit); never one with a current audit, one in `seen`, or one that is not `read`. */
 export function auditPick(cards, pct, seen = new Set()) {
   const all = cards instanceof Map ? [...cards.values()] : Array.isArray(cards) ? cards : Object.values(cards || {});
   return all.filter((c) => c && HEX40.test(String(c.sha1)) && !c.audit && !seen.has(c.sha1) && (!c.status || c.status === "read")
-    && parseInt(String(c.sha1).slice(0, 8), 16) % 100 < pct).map((c) => c.sha1).sort();
+    && ((Array.isArray(c.audit_history) && c.audit_history.length > 0) || parseInt(String(c.sha1).slice(0, 8), 16) % 100 < pct)).map((c) => c.sha1).sort();
+}
+
+/** Apply `fn` to stored cards, but only those still the card that was audited (same sha1 and read_at): a card read again meanwhile is
+ *  left alone. Each shard is re-read just before its write; an unreadable shard is never written (its name goes onto `bad`).
+ *  updates: [{ sha1, read_at, fn(diskCard) -> card | null }]. Returns the cards written. */
+export function updateCards(dir, updates, bad = new Set()) {
+  const out = [];
+  for (const sh of new Set(updates.map((u) => shardOf(u.sha1)))) {
+    const disk = readShard(dir, sh);
+    if (!disk) { bad.add(sh); continue; }
+    let changed = false;
+    for (const u of updates.filter((x) => shardOf(x.sha1) === sh)) {
+      const cur = disk[u.sha1];
+      if (!cur || cur.read_at !== u.read_at) continue;
+      const nu = u.fn(cur);
+      if (nu) { disk[u.sha1] = nu; out.push(nu); changed = true; }
+    }
+    if (changed) writeJson(join(dir, `${sh}.json`), disk);
+  }
+  return out;
+}
+
+const citesAny = (story, set) => ((story && story.sections) || []).some((sec) => (sec.sentences || []).some((x) => (x.cites || []).some((c) => set.has(c))));
+/** A published story that cites a card now found wrong is marked stale at once (no model call). Each file is re-read just before its write. */
+export function staleStoriesCiting(dir, sha1s, log = () => {}) {
+  const set = new Set(sha1s), done = [];
+  if (!set.size) return done;
+  for (const key of loadStories(dir, []).keys()) {
+    const f = readStory(dir, key);
+    if (!f || !f.live || f.live.status !== "published" || !citesAny(f.live, set)) continue;
+    writeJson(join(dir, `${key}.json`), { live: { ...f.live, status: "stale" }, next: f.next });
+    done.push(key); log(`${key} live story marked stale (a card it cites was found wrong)`);
+  }
+  return done;
 }
 
 /** Append to <dir>/<key>.json (a list). A file that exists but cannot be read is never written over. Returns whether it was written. */
@@ -104,7 +147,7 @@ const subjectsOf = (library, cards) => {
   return new Map([...actorSubjects(actors, reports, cards), ...looseSubjects(reports, cards, actorIndex(actors))].map((s) => [s.key, s]));
 };
 
-/** Fetch the originals; { originals } or { why }. why "unreachable" means no review. */
+/** Fetch the originals: { originals } (possibly empty when every one is gone), or { why: "unreachable" } (no review without them). */
 async function reread(shas, reportBy, fetch) {
   const originals = [];
   for (const sha1 of shas) {
@@ -120,39 +163,52 @@ async function reviewOne(key, draft, subj, all, deps) {
   const picks = rereadPick(draft, deps.cfg.reread).filter((x) => cardMap.has(x));
   const got = await reread(picks, deps.reportBy, deps.fetch);
   if (got.why) return { why: got.why };
-  if (picks.length && !got.originals.length) return { why: "no-original" };
+  if (picks.length && !got.originals.length) return { park: "no-original" };           // ORKL has no text for any of them any more
   const reply = await deps.call(ROLE, reviewerPrompt(draft, cs, got.originals), { job: "library", batch: key });
   if (reply.limit) return { why: "limit" };
   if (reply.error) return { why: "error" };
-  const j = reply.ok && reply.json && typeof reply.json === "object" ? reply.json : { verdict: "unusable" };
+  if (!reply.ok || !reply.json || typeof reply.json !== "object") return { why: "bad-reply" };     // a reviewer fault: the story is untouched
+  const j = reply.json;
   const cp = (Array.isArray(j.card_problems) ? j.card_problems : []).filter((p) => p && cardMap.has(String(p.sha1).toLowerCase())).slice(0, 10);
   return cp.length ? { cardProblems: cp.map((p) => ({ sha1: String(p.sha1).toLowerCase(), note: p.note })), cardMap } : { verdict: j, cardMap };
 }
 
-/** Mark cards wrong: stored through the reader's shard write, with a correction on each. Returns the sha1s written. */
-function flagCards(items, all, deps, bad) {
-  const at = nowIso(), marked = items.map((p) => all.get(p.sha1) && markCardWrong(all.get(p.sha1), p.note, at)).filter(Boolean);
-  const written = saveCards(deps.cardsDir, marked, bad);
+/** Mark cards wrong (by "auditor" or "reviewer"): only if the stored card is still the one examined; a correction on each; every
+ *  published story citing one is marked stale at once. Returns the sha1s flagged. */
+function flagCards(items, by, all, deps, bad) {
+  const at = nowIso(), updates = items.filter((p) => all.get(p.sha1)).map((p) => ({ sha1: p.sha1, read_at: all.get(p.sha1).read_at, fn: (d) => markCardWrong(d, p.note, at, by) }));
+  const written = updateCards(deps.cardsDir, updates, bad);
   for (const c of written) {
     all.set(c.sha1, c);
     const p = items.find((x) => x.sha1 === c.sha1);
     appendCorrections(deps.corrDir, c.sha1, [{ at, role: "library-reader", model: c.model || "", code: "card-wrong", note: cleanNote(p && p.note) }]);
   }
+  staleStoriesCiting(deps.dir, written.map((c) => c.sha1), deps.log);
   return written.map((c) => c.sha1);
 }
 
-/** Review up to `max` draft stories. */
-export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), log = console.log } = {}) {
-  const tally = { published: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, stopped: "", unreadable: [] };
+/** A draft that can never be reviewed (no originals, no subject) is parked with a reason; it is retried when its cards change. */
+function parkDraft(dir, key, draft, reason) {
+  const f = readStory(dir, key), n = f && f.next;
+  if (!n || n.status !== "draft" || n.written_at !== draft.written_at || n.written_run !== draft.written_run) return false;
+  writeJson(join(dir, `${key}.json`), { live: f.live, next: { ...n, status: "parked", reasons: [reason] } });
+  return true;
+}
+
+/** Review up to `max` draft stories. `runId` is this review run's id (injectable); a draft written by the same run id is refused. */
+export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), log = console.log } = {}) {
+  const tally = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, stopped: "", unreadable: [] };
   const badCards = [], all = cards || loadCards(cardsDir, badCards);
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-review: ${tally.stopped}; nothing written`); return tally; }
   if (paused(all, cfg)) { log(PAUSE_MESSAGE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
   const lib = library || loadLibrary(), subjects = subjectsOf(lib, all);
   const badStories = [], stories = loadStories(dir, badStories);
   tally.unreadable = badStories.sort();
-  const queue = reviewQueue(stories).filter((k) => !badStories.includes(k) && subjects.has(k)).slice(0, max);
-  const runId = randomBytes(4).toString("hex"), badShards = new Set();
-  const deps = { cfg, fetch, call, cardsDir, corrDir, reportBy: new Map((lib.reports || []).map((r) => [r.sha1, r])) };
+  const waiting = reviewQueue(stories).filter((k) => !badStories.includes(k));
+  for (const k of waiting.filter((x) => !subjects.has(x))) if (parkDraft(dir, k, stories.get(k).next, "no-subject")) { tally.parked++; log(`${k} parked (no-subject)`); }
+  const queue = waiting.filter((k) => subjects.has(k)).slice(0, max);
+  const badShards = new Set();
+  const deps = { cfg, fetch, call, cardsDir, corrDir, dir, log, reportBy: new Map((lib.reports || []).map((r) => [r.sha1, r])) };
   let failed = 0, unreachable = 0;
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {
     const wave = queue.slice(i, i + concurrency);
@@ -164,16 +220,21 @@ export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsD
     }));
     for (const [j, d] of results.entries()) {
       const key = wave[j], draft = stories.get(key).next, subj = subjects.get(key);
+      if (d.park) {
+        if (parkDraft(dir, key, draft, d.park)) { tally.parked++; log(`${key} parked (${d.park})`); } else tally.skipped++;
+        continue;
+      }
       if (d.why) {
         tally.skipped++; log(`${key} not reviewed (${d.why}), stays a draft`);
         if (d.why === "limit") tally.stopped = "usage limit";
-        failed = d.why === "error" ? failed + 1 : d.why === "unreachable" ? failed : 0;
-        unreachable = d.why === "unreachable" ? unreachable + 1 : 0;
+        // only a model call that failed counts; a skip that made no call neither adds to nor resets the count
+        if (d.why === "error" || d.why === "bad-reply") failed++;
+        if (d.why === "unreachable") unreachable++; else if (d.why === "error" || d.why === "bad-reply" || !["stale", "same-run"].includes(d.why)) unreachable = 0;
         continue;
       }
       failed = 0; unreachable = 0;
       if (d.cardProblems) {
-        const n = flagCards(d.cardProblems, all, { cardsDir, corrDir }, badShards);
+        const n = flagCards(d.cardProblems, "reviewer", all, deps, badShards);
         tally.cardsFlagged += n.length; log(`${key} not settled: ${n.length} card(s) sent back to be read again`);
         continue;
       }
@@ -181,31 +242,34 @@ export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsD
       if (!onDisk) { tally.unreadable.push(key); log(`${key} story file unreadable, left untouched`); continue; }
       const n = onDisk.next;
       if (!n || n.status !== "draft" || n.written_at !== draft.written_at || n.written_run !== draft.written_run || n.based_on !== basedOn(subj, all)) { tally.skipped++; log(`${key} changed meanwhile, not settled`); continue; }
-      const r = settle(onDisk, d.verdict, d.cardMap, subj.actor, nowIso(), model);
+      const r = settle(onDisk, d.verdict, d.cardMap, subj.actor, nowIso(), model, runId);
       if (r.file === onDisk) { tally.skipped++; continue; }
       writeJson(join(dir, `${key}.json`), r.file);
       stories.set(key, r.file);
       const wrote = appendCorrections(corrDir, key, r.corrections);
-      const st = r.file.next ? r.file.next.status : "published";
-      tally[st === "published" ? "published" : st]++;
+      const st = r.file.next ? (r.file.next.status === "draft" ? "corrected" : r.file.next.status) : "published";
+      tally[st]++;
       log(`${key} ${st}${r.file.next && r.file.next.reasons ? " " + r.file.next.reasons.join(",") : ""}${r.corrections.length && !wrote ? " (corrections file unreadable, not written)" : ""}`);
     }
     if (!tally.stopped && unreachable >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
     if (!tally.stopped && failed >= STOP_AFTER_ERRORS) tally.stopped = `${failed} failed model calls in a row`;
   }
-  log(`library-review: ${tally.published} published, ${tally.rejected} rejected, ${tally.parked} parked, ${tally.cardsFlagged} cards sent back, ${tally.skipped} left as drafts${tally.stopped ? `; stopped: ${tally.stopped}` : ""}`);
+  log(`library-review: ${tally.published} published, ${tally.corrected} corrected (to be reviewed again), ${tally.rejected} rejected, ${tally.parked} parked, ${tally.cardsFlagged} cards sent back, ${tally.skipped} left as drafts${tally.stopped ? `; stopped: ${tally.stopped}` : ""}`);
   return tally;
 }
 
-/** Audit up to `max` of the reader's cards against freshly fetched report text. Pilot: every card is picked until audit_min are audited. */
-export async function runAudit({ max = 10, concurrency = 2, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, fetch = fetchText, call = oneShot, cfg = loadConfig(), log = console.log } = {}) {
+/** Audit up to `max` of the reader's cards against freshly fetched report text. The share is audit_pct; 100 with `pilot` (the
+ *  pilot gate, Task 6) and while the Library is paused. A card read again after a failed audit is always audited. */
+export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, fetch = fetchText, call = oneShot, cfg = loadConfig(), log = console.log } = {}) {
   const tally = { ok: 0, wrong: 0, skipped: 0, stopped: "" };
   const badCards = [], all = loadCards(cardsDir, badCards);
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-audit: ${tally.stopped}; nothing written`); return tally; }
   const lib = library || loadLibrary(), reportBy = new Map((lib.reports || []).map((r) => [r.sha1, r]));
-  const pct = auditState(all, cfg).audited < cfg.audit_min ? 100 : cfg.audit_pct;
+  const isPaused = paused(all, cfg);
+  if (isPaused) log(PAUSE_MESSAGE);
+  const pct = pilot || isPaused ? 100 : cfg.audit_pct;
   const queue = auditPick(all, pct, new Set()).filter((s) => reportBy.has(s)).slice(0, max);
-  const badShards = new Set();
+  const badShards = new Set(), deps = { cardsDir, corrDir, dir, log };
   let failed = 0, unreachable = 0;
   const one = async (sha1) => {
     const f = await fetch(reportBy.get(sha1));
@@ -228,19 +292,20 @@ export async function runAudit({ max = 10, concurrency = 2, cardsDir = CARDS_DIR
       if (d.why) {
         tally.skipped++; log(`${sha1.slice(0, 8)} not audited (${d.why})`);
         if (d.why === "limit") tally.stopped = "usage limit";
-        failed = d.why === "error" ? failed + 1 : d.why === "unreachable" ? failed : 0;
+        failed = d.why === "error" || d.why === "bad-reply" ? failed + 1 : d.why === "unreachable" ? failed : 0;
         unreachable = d.why === "unreachable" ? unreachable + 1 : 0;
       } else { failed = 0; unreachable = 0; (d.ok ? good : bad).push({ sha1, note: d.note }); }
     });
-    const okCards = good.map((g) => ({ ...all.get(g.sha1), audit: { at, ok: true, note: "" } }));
-    for (const c of saveCards(cardsDir, okCards, badShards)) { all.set(c.sha1, c); tally.ok++; }
-    tally.wrong += flagCards(bad, all, { cardsDir, corrDir }, badShards).length;
+    // a result is applied only to the card that was audited: one read again meanwhile (new read_at) is left alone
+    const okUp = good.map((g) => ({ sha1: g.sha1, read_at: all.get(g.sha1).read_at, fn: (d) => (d.status === "read" ? { ...d, audit: { at, ok: true, note: "", by: "auditor" } } : null) }));
+    for (const c of updateCards(cardsDir, okUp, badShards)) { all.set(c.sha1, c); tally.ok++; }
+    tally.wrong += flagCards(bad, "auditor", all, deps, badShards).length;
     for (const b of bad) log(`${b.sha1.slice(0, 8)} audit: wrong`);
     if (!tally.stopped && unreachable >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
     if (!tally.stopped && failed >= STOP_AFTER_ERRORS) tally.stopped = `${failed} failed model calls in a row`;
   }
   const st = auditState(all, cfg);
-  log(`library-audit: ${tally.ok} ok, ${tally.wrong} wrong, ${tally.skipped} not audited${tally.stopped ? `; stopped: ${tally.stopped}` : ""}; reader error rate ${st.pct.toFixed(1)}% of ${st.audited} audited${st.paused ? " (PAUSED)" : ""}`);
+  log(`library-audit: ${tally.ok} ok, ${tally.wrong} wrong, ${tally.skipped} not audited${tally.stopped ? `; stopped: ${tally.stopped}` : ""}; reader error rate ${st.pct.toFixed(1)}% of ${st.audited} audited${st.paused ? ` (PAUSED: ${pauseHelp})` : ""}`);
   return tally;
 }
 
@@ -252,8 +317,8 @@ export function statusLine(stories, cards, cfg = DEFAULTS) {
 async function main() {
   const cmd = process.argv[2];
   if (cmd === "status") { console.log(statusLine(loadStories(), loadCards(), loadConfig())); return; }
-  if (cmd !== "run" && cmd !== "audit") { console.error("usage: library-review.mjs run [--max N] | audit [--max N] | status"); process.exit(1); }
+  if (cmd !== "run" && cmd !== "audit") { console.error("usage: library-review.mjs run [--max N] | audit [--max N] [--pilot] | status"); process.exit(1); }
   const i = process.argv.indexOf("--max"), v = i >= 0 ? process.argv[i + 1] : undefined, max = v != null && /^\d+$/.test(v) ? Number(v) : 10;
-  await (cmd === "run" ? run({ max }) : runAudit({ max }));
+  await (cmd === "run" ? run({ max }) : runAudit({ max, pilot: process.argv.includes("--pilot") }));
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

@@ -6,8 +6,9 @@ name: AI launch
 # starts its own short `claude -p` workers (scripts/run-job.mjs) and commits through scripts/finish.mjs. No Claude
 # session sits in between, so nothing re-reads a growing history on every wake (owner, 2026-11-24).
 #
-# Sign-in: repository secret CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`): the workers use the owner's Claude
-# subscription, as they do in the launcher session. ANTHROPIC_API_KEY is never set here directly, so by default nothing
+# Sign-in (owner 2026-11-26): the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY is enough: with api_on_actions the
+# workers bill it first. CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`) is optional; with it, a worker falls back to the
+# subscription when the key is capped or limited; without it, the worker parks. ANTHROPIC_API_KEY is never set here directly, so by default nothing
 # bills the API except the existing fallback (scripts/lib/usage.mjs), and only if the optional
 # CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY secret exists, within usage_budget.api_fallback.monthly_usd_cap.
 #
@@ -105,7 +106,9 @@ jobs:
           #  - the web-independent jobs (triage, brief, improver, analysis, security-review, tabletop): only once AI_LAUNCH is "actions"
           #  - the web jobs: never on a schedule (runner IPs get bot-challenged on core sources); they stay on the cloud launchers
           # A manual run (Run workflow) always runs, any job.
-          if [ "$job" = library ]; then ready=$HAS_KEY; else ready=$HAS_OAUTH; fi
+          # the Library bills only the API key; every other job starts with the API key or the subscription token (owner 2026-11-26:
+          # the web-independent jobs run on the key alone; with no token, run-job.mjs parks instead of falling back to a subscription it lacks)
+          if [ "$job" = library ]; then ready=$HAS_KEY; elif [ "$HAS_KEY" = true ] || [ "$HAS_OAUTH" = true ]; then ready=true; else ready=false; fi
           if [ "$EVENT" = schedule ] && [ "$job" != library ]; then
             case "$job" in
               triage|brief|improver|analysis|security-review|tabletop)
@@ -122,7 +125,7 @@ jobs:
       - name: Skip when no Claude sign-in is set up
         if: env.READY != 'true' && env.READY != 'off'
         run: |
-          echo "No credential for ${{ steps.pick.outputs.job }} (the Library needs the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY, every other job CLAUDE_CODE_OAUTH_TOKEN from \`claude setup-token\`); skipping." >> "$GITHUB_STEP_SUMMARY"
+          echo "No credential for ${{ steps.pick.outputs.job }} (every job needs the repository secret CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY; jobs other than the Library may use CLAUDE_CODE_OAUTH_TOKEN from \`claude setup-token\` instead); skipping." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/checkout@v4
         if: env.READY == 'true'

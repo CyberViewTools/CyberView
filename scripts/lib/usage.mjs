@@ -292,6 +292,10 @@ export function fallbackDecision({ limited_until = null, now = Date.now(), fallb
   const c = Number(cap); if (isFinite(c) && Number(monthSpendUsd) >= c) return "park";
   return "api-fallback";
 }
+/** Pure: a worker on a GitHub Actions runner with no subscription token (ai-launch.yml signs the web-independent jobs in
+ *  with the API key alone, owner 2026-11-26) has no subscription to fall back to: where the decision says "subscription"
+ *  (key missing, disabled, limited or at its cap) it parks instead of starting a worker that cannot sign in. */
+export const actionsServed = (served, { onActions = false, hasSubscription = true } = {}) => (onActions && !hasSubscription && served === "subscription" ? "park" : served);
 /** One line for logs and the loop's heartbeat. */
 export const budgetLine = (b) => `budget ${b.level}: 5 h ${b.window_pct}%, week ${b.week_pct}%${b.limited_until ? `, limited until ${b.limited_until}` : ""}${b.reason ? ` (${b.reason})` : ""}`;
 /** Pure: the highest usage in any rolling `hours` within lines: { tokens, cost, at } (at: the end of that span). */

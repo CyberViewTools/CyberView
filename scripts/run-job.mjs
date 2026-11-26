@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, DATA, readJson, readStatus, writeJson, nowIso, listEventFiles } from "./lib/store.mjs";
 import { claim, release, RUN_ID, readLeases, leaderOf, LEADER_MIN, hostId, leaderBlocks, yieldsTo, takeLock, leaderLease } from "./lib/lease.mjs";
-import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, fallbackSpend, apiPrimaryLive, libraryApiConfig, librarySpend, libraryDecision } from "./lib/usage.mjs";
+import { budgetState, budgetLine, tightCuts, readUsage, LIMIT_RE, resetFrom, fallbackConfig, fallbackDecision, actionsServed, fallbackSpend, apiPrimaryLive, libraryApiConfig, librarySpend, libraryDecision } from "./lib/usage.mjs";
 import { roleFor, baseRole } from "./lib/routing.mjs";
 import { lastRunOf, gapDryRun, gapEveryMinutes } from "./lib/gates.mjs";
 import { waitingSince, OVERDUE_MIN } from "./review.mjs";
@@ -142,6 +142,8 @@ const FALLBACK_KEY = process.env[FB.env_var] || "";     // the VALUE: read here 
 // On a GitHub Actions runner (ai-launch.yml) with api_on_actions, bill the API key for real (no proxy forces the
 // subscription there, unlike the cloud launcher sessions). Cloud sessions keep billing the subscription. See usage.mjs.
 const onActionsApi = FB.api_on_actions === true && process.env.GITHUB_ACTIONS === "true";
+// on a runner signed in with the API key alone (no CLAUDE_CODE_OAUTH_TOKEN) there is no subscription to fall back to
+const noSubscription = process.env.GITHUB_ACTIONS === "true" && !process.env.CLAUDE_CODE_OAUTH_TOKEN;
 /** Pure: the environment one worker is spawned with. ANTHROPIC_API_KEY is injected ONLY in "api-fallback" or "api" (the
  *  api_primary window) mode, so the
  *  subscription OAuth stays primary everywhere else; any ambient ANTHROPIC_API_KEY is removed so a stray one can never make
@@ -184,7 +186,7 @@ function fallbackState(now = Date.now()) {
   let limited_until = null; try { limited_until = budgetState(now).limited_until; } catch {}
   let spend = { usd: 0, workers: 0, last_at: null };
   try { spend = fallbackSpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
-  const served = fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited, apiPrimary: apiPrimaryLive(FB, now) || onActionsApi });
+  const served = actionsServed(fallbackDecision({ limited_until, now, fallbackKeyPresent: !!FALLBACK_KEY, enabled: FB.enabled, monthSpendUsd: spend.usd, cap: FB.monthly_usd_cap, fallbackKeyLimited, apiPrimary: apiPrimaryLive(FB, now) || onActionsApi }), { onActions: process.env.GITHUB_ACTIONS === "true", hasSubscription: !noSubscription });
   fbCache = { at: now, served, spend, limited_until };
   return fbCache;
 }
@@ -194,6 +196,7 @@ const parked = (now = Date.now()) => fallbackState(now).served === "park";
 export function fallbackNote(now = Date.now()) {
   const s = fallbackState(now);
   if (s.served === "park") {
+    if (noSubscription && !(s.limited_until && Date.parse(s.limited_until) > now)) return `on GitHub Actions with the API key only: the key is missing, disabled, limited or at its cap ($${s.spend.usd} of $${FB.monthly_usd_cap} this month); nothing started`;
     if (!FALLBACK_KEY) return `usage limit reached${s.limited_until ? ", resets " + s.limited_until : ""}`;
     if (!FB.enabled) return "usage limit reached; the API fallback is disabled (usage_budget.api_fallback.enabled)";
     if (fallbackKeyLimited) return "usage limit reached; the fallback API key also hit a limit";

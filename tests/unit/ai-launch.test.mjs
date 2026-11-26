@@ -35,6 +35,6 @@ test("ai-launch.yml signs in with the subscription token, keeps every other sche
   assert.deepEqual([...opts].sort(), [...new Set(cases.values())].sort());
   // the Library (owner, 2026-11-26): its own schedule runs whatever AI_LAUNCH says, gated on the API key, never the subscription token
   const lib = [...cases].find(([, j]) => j === "library"); assert.ok(lib, "the Library has a schedule");
-  assert.match(yml, /if \[ "\$job" = library \]; then ready=\$HAS_KEY; else ready=\$HAS_OAUTH; fi/);
+  assert.match(yml, /if \[ "\$job" = library \]; then ready=\$HAS_KEY; elif \[ "\$HAS_KEY" = true \] \|\| \[ "\$HAS_OAUTH" = true \]; then ready=true; else ready=false; fi/);
   assert.match(yml, /if \[ "\$JOB" = library \]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi/);
 });

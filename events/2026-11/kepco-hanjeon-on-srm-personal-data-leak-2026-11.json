@@ -6,7 +6,7 @@
   "cve_meta": [],
   "products": [],
   "first_seen": "2026-11-22T10:07:58Z",
-  "updated_at": "2026-11-25T01:12:00Z",
+  "updated_at": "2026-11-26T19:02:10Z",
   "category": "incident",
   "status": "confirmed",
   "attack": [
@@ -26,11 +26,16 @@
   "geo_basis": "KEPCO headquarters in Naju; the sources give no location for the affected systems",
   "severity": 3,
   "source_tier": "established",
-  "summary": "KEPCO said on 22 November it confirmed on 20 November a leak from Hanjeon ON and the SRM procurement system: 1,520,248 people by simple sum (Newsis), overlap unchecked (Dailian). Exposed: ID, bank account and card numbers. Dailian says KEPCO presumes an outside attacker. On 25 November KEPCO said it will give affected customers free security services and compensate up to ten million won (최대 1,000만 원) for financial fraud (Newsis).",
+  "summary": "KEPCO said on 22 November it confirmed on 20 November a leak from Hanjeon ON and the SRM procurement system: 1,520,248 people by simple sum (Newsis), overlap unchecked (Dailian). Exposed: ID, bank account and card numbers. Dailian says KEPCO presumes an outside attacker. SBS reports a hacker offered KEPCO customer data on Telegram at 500 won per record; KEPCO told SBS the data being sold is from this attack.",
   "plain": "South Korea's power company KEPCO says personal data of over one and a half million people, including ID, bank account and card numbers, leaked from two of its online systems; it presumes an outside attacker.",
   "exec": "Personal data from a national utility's customer and supplier systems leaked, including ID, bank and card numbers that can be used for fraud and impersonation.",
-  "action": "KEPCO urges caution with calls, texts and emails that impersonate KEPCO or come from unclear sources; on 25 November it said affected customers get free security services and compensation of up to ten million won for financial fraud.",
+  "action": "KEPCO urges caution with calls, texts and emails that impersonate KEPCO or come from unclear sources; on 25 November it said affected customers get free security services and compensation for financial fraud under its terms (Newsis).",
   "sources": [
+    {
+      "name": "SBS News (이태권), Telegram sale report",
+      "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008865831",
+      "published": "2026-11-26"
+    },
     {
       "name": "Newsis (손차민), 25 November",
       "url": "https://www.newsis.com/view/NISX20261125_0003882264",
@@ -84,6 +89,14 @@
   ],
   "evidence": [
     {
+      "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008865831",
+      "quote": "그러면서 1건당 500원에 팔겠다며 일부 명단을 샘플로 보내기까지 했습니다."
+    },
+    {
+      "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008865831",
+      "quote": "한전 측은 이 해커가 판매 중인 고객정보가 이번 공격에서 유출된 게 맞다면서 2차 피해를 막기 위해 보상 보험 가입을 제공하는 등 추가 피해 방지에 주력하고 있다고 강조했습니다."
+    },
+    {
       "url": "https://www.newsis.com/view/NISX20261125_0003882264",
       "quote": "약관에서 정한 금융사기로 금전 손해가 발생하면 최대 1,000만 원까지 보상합니다."
     },
@@ -94,18 +107,6 @@
     {
       "url": "https://en.sedaily.com/economy/2026/11/23/kepco-data-breach-exposes-152-million-records-including",
       "quote": "A simple sum puts the number of people whose sensitive information was compromised at 1,520,248."
-    },
-    {
-      "url": "https://en.sedaily.com/economy/2026/11/23/kepco-data-breach-exposes-152-million-records-including",
-      "quote": "From the SRM system, four categories of data on 426,827 people who took part in procurement were exposed"
-    },
-    {
-      "url": "https://en.sedaily.com/economy/2026/11/23/kepco-data-breach-exposes-152-million-records-including",
-      "quote": "Six categories of data on 442,934 KEPCO and corporate employees who used the system were also breached"
-    },
-    {
-      "url": "https://en.sedaily.com/economy/2026/11/23/kepco-data-breach-exposes-152-million-records-including",
-      "quote": "The ministry said the data breach is not currently affecting power operations."
     },
     {
       "url": "https://www.newsis.com/view/NISX20261122_0003878304",
@@ -135,7 +136,7 @@
   "validation": {
     "checked_at": "2026-11-23T08:42:25Z",
     "state": "corroborated",
-    "note": "Newsis, Dailian and Segye Ilbo each report KEPCO's 22 November statement with the same per-system figures and CEO Kim Dong-cheol's apology. KEPCO's own apology notice was not read: home.kepco.co.kr timed out and online.kepco.co.kr reset the connection. No attacker named; Dailian says KEPCO presumes an external attacker. The sources give counts in Korean notation (152만248명 total; Hanjeon ON 65만487명, SRM 86만9761명); the record keeps that notation with words because the figure check cannot read it. The Korea Herald (22 November) adds that KEPCO launched an investigation in cooperation with the National Intelligence Service, relevant government agencies and outside experts. The Korea Times (Yonhap, 22 November) gives the same per-system counts (650,487 KEPCO ON users, 869,761 SRM users) and says KEPCO disclosed a separate breach of 35,528 people a month earlier. Seoul Economic Daily (23 November, AI-translated English edition) splits the SRM count into 426,827 procurement participants and 442,934 KEPCO and corporate employees, says KEPCO blocked IP access at 6 a.m. on 20 November and filed with the Personal Information Protection Commission at 6:30 p.m. on 22 November, and reports the climate ministry saying the breach is not currently affecting power operations. Etnews (23 November) reports the Personal Information Protection Commission saying on 23 November it received KEPCO's leak report, formed an initial response team and will carry out on-site inspections to establish the leak route and scale; Etnews also says KEPCO received a hacker's extortion email on the 19th."
+    "note": "Newsis, Dailian and Segye Ilbo each report KEPCO's 22 November statement with the same per-system figures and CEO Kim Dong-cheol's apology. KEPCO's own apology notice was not read: home.kepco.co.kr timed out and online.kepco.co.kr reset the connection. No attacker named; Dailian says KEPCO presumes an external attacker. The sources give counts in Korean notation (152만248명 total; Hanjeon ON 65만487명, SRM 86만9761명); the record keeps that notation with words because the figure check cannot read it. The Korea Herald (22 November) adds that KEPCO launched an investigation in cooperation with the National Intelligence Service, relevant government agencies and outside experts. The Korea Times (Yonhap, 22 November) gives the same per-system counts (650,487 KEPCO ON users, 869,761 SRM users) and says KEPCO disclosed a separate breach of 35,528 people a month earlier. Seoul Economic Daily (23 November, AI-translated English edition) splits the SRM count into 426,827 procurement participants and 442,934 KEPCO and corporate employees, says KEPCO blocked IP access at 6 a.m. on 20 November and filed with the Personal Information Protection Commission at 6:30 p.m. on 22 November, and reports the climate ministry saying the breach is not currently affecting power operations. Etnews (23 November) reports the Personal Information Protection Commission saying on 23 November it received KEPCO's leak report, formed an initial response team and will carry out on-site inspections to establish the leak route and scale; Etnews also says KEPCO received a hacker's extortion email on the 19th. SBS (page stamped 27 Nov KST) reports a hacker posted on Telegram on the 23rd offering KEPCO customer data; SBS contacted the seller posing as a buyer; the offer is the hacker's claim, KEPCO's statement to SBS is that the data is from this attack."
   },
   "sectors": {
     "values": [

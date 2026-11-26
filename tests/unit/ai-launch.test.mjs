@@ -24,7 +24,9 @@ test("ai-launch.yml signs in with the subscription token only and stays off unti
   assert.doesNotMatch(yml, /secrets\.ANTHROPIC_API_KEY/);
   assert.match(yml, /unset ANTHROPIC_API_KEY/);
   assert.match(yml, /vars\.AI_LAUNCH == 'actions'/);
-  // the manual choices are exactly the scheduled jobs
+  // the manual choices are the scheduled jobs plus the Library desk, which is manual only: it has no schedule here, so a
+  // runner never starts it unattended (the owner turns it on and off; routines.json `library`)
   const opts = (yml.match(/options: \[([^\]]+)\]/) || [])[1].split(",").map((s) => s.trim());
-  assert.deepEqual([...opts].sort(), [...new Set(cases.values())].sort());
+  assert.deepEqual([...opts].sort(), [...new Set([...cases.values(), "library"])].sort());
+  assert.ok(![...cases.values()].includes("library"), "the Library desk has no schedule in ai-launch.yml");
 });

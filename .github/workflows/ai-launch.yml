@@ -16,6 +16,7 @@ name: AI launch
 # A manual run (Run workflow) always runs, for testing one job.
 #
 # Keep the crons equal to routines.json and docs/orchestration/ROUTINES.md.
+# The Library desk (library) is in the manual choices only, with no schedule: a runner never starts it unattended.
 on:
   schedule:
     - cron: "5,20,35,50 * * * *"   # sweep (research loop)
@@ -39,7 +40,7 @@ on:
         description: "Job to run once"
         required: true
         type: choice
-        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout]
+        options: [sweep, backlog, review, analyst, triage, brief, verify, advisory, regional, improver, analysis, report-review, security-review, tabletop, scout, library]
 
 permissions:
   contents: write         # data commits on the data branch

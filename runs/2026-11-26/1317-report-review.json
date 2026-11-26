@@ -1,0 +1,32 @@
+{
+ "job": "report review",
+ "started_at": "2026-11-26T13:17:53Z",
+ "finished_at": "2026-11-26T13:25:00Z",
+ "model": "claude-sonnet-5-5",
+ "searches": ["q.mjs find --cat report --since 2026-11-18", "fuse.mjs list --limit 60"],
+ "pages_read": [
+  {"url": "https://files.gao.gov/reports/GAO-27-108661/index.html", "title": "GAO-27-108661 online report", "used_in": "gao-zero-trust-17-agencies-guidance-2026-11"},
+  {"url": "https://www.ncsc.govt.nz/news/cyber-security-incidents-hit-highest-level-in-two-years-and-financial-losses-surge/", "title": "NCSC NZ Q3 2026", "used_in": "nz-ncsc-q3-2026-incident-reports-two-year-high-2026-11"},
+  {"url": "https://www.acn.gov.it/portale/w/operational-summary-ottobre-2026", "title": "ACN operational summary October 2026", "used_in": "acn-italy-operational-summary-october-2026"},
+  {"url": "https://blog.nviso.eu/2026/11/23/artex-fog0003-zqagent-backdoor/", "title": "NVISO ZQAgent", "used_in": "nviso-zqagent-linux-backdoor-artex-2026-11"},
+  {"url": "https://blog.checkpoint.com/security/darknet-forums-are-fragmenting-as-observed-breach-activity-rises/", "title": "Check Point darknet forums", "used_in": "checkpoint-darknet-forums-fragmenting-2026-11"},
+  {"url": "https://www.fortinet.com/blog/threat-research/fake-delivery-notices-stolen-logins-and-malicious-domains-threaten-holiday-shoppers", "title": "FortiGuard holiday threats", "used_in": "fortinet-holiday-shopping-scam-domains-2026-11"},
+  {"url": "https://www.bacs.admin.ch/en/26-ki-agenten-1-en", "title": "BACS AI agents", "used_in": "duplicate check"},
+  {"url": "https://www.kyberturvallisuuskeskus.fi/en/news/cyber-weather-october-2026", "title": "NCSC-FI cyber weather", "used_in": "no change"},
+  {"url": "https://www.netscout.com/threatreport/emea/angola/", "title": "NETSCOUT Angola", "used_in": "no change"},
+  {"url": "https://www.gao.gov/products/gao-27-108458", "title": "GAO-27-108458", "used_in": "no change"}
+ ],
+ "added": [],
+ "updated": ["gao-zero-trust-17-agencies-guidance-2026-11", "nz-ncsc-q3-2026-incident-reports-two-year-high-2026-11", "acn-italy-operational-summary-october-2026", "nviso-zqagent-linux-backdoor-artex-2026-11", "checkpoint-darknet-forums-fragmenting-2026-11", "fortinet-holiday-shopping-scam-domains-2026-11", "bacs-ai-agent-attacks-switzerland-2026-11", "acn-italy-agentic-ai-alert-2026-11", "csirt-italia-ai-agents-automated-compromise-2026-11", "checkpoint-volant-manticore-cyprus-saudi-2026-11"],
+ "skipped": [
+  {"title": "GAO-27-108458 AI report", "url": "https://www.gao.gov/products/gao-27-108458", "reason": "stays read_depth summary: the 70-page PDF text could not be extracted"},
+  {"title": "NCSC Finland cyber weather October 2026", "url": "https://www.kyberturvallisuuskeskus.fi/en/news/cyber-weather-october-2026", "reason": "stays summary: page has no figures; linked PDF not read"},
+  {"title": "NETSCOUT Angola", "url": "https://www.netscout.com/threatreport/emea/angola/", "reason": "stays summary: data page with no recommendations; report download not read"}
+ ],
+ "open_leads": [
+  {"title": "italy-acn-autonomous-ai-agents-warning-2026-11", "url": "", "note": "cites only news pages; probably another duplicate of acn-bulletin-ai-agent-mass-compromise-campaigns-2026-11; needs a merge check", "priority": "low"},
+  {"title": "Microsoft ARTEX original, Gen Digital Remus, Spamhaus Maple, Talos swarm, Kaspersky secondary reports", "url": "", "note": "vendor originals not reached in this run", "priority": "medium"}
+ ],
+ "failed_sites": ["curl was denied in this environment; WebFetch used instead, which returns summaries of pages"],
+ "notes": "Added report objects to six events. Marked four duplicates with duplicate_of (Swiss BACS, two ACN agentic AI, Check Point Volant Manticore). Validator passes on all ten; build printed no errors. last_reports_at in status.json left to the script."
+}

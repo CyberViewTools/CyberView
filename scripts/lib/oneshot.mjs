@@ -35,21 +35,24 @@ function firstJsonObject(s) {
   return null;
 }
 
-/** Pure: read claude's JSON envelope. ok = a JSON object was found in the reply; limit = the plan's usage limit said no. */
+/** Pure: read claude's JSON envelope. ok = a JSON object was found in the reply; limit = the plan's usage limit said no;
+ *  error = the call failed for a reason that is not a reply (no readable envelope, is_error, an API-error terminal_reason). */
 export function parseReply(stdout) {
   let env = null; try { env = JSON.parse(String(stdout || "")); } catch {}
-  if (!env || typeof env !== "object") return { ok: false, json: null, limit: false, usage: {} };
+  if (!env || typeof env !== "object") return { ok: false, json: null, limit: false, error: true, usage: {} };
   const result = String(env.result == null ? "" : env.result);
   const limit = LIMIT_RE.test(result) && (env.is_error === true || !firstJsonObject(result));
   const json = env.is_error ? null : firstJsonObject(result);
-  return { ok: !!json, json, limit, usage: env.usage && typeof env.usage === "object" ? env.usage : {} };
+  // error = the call itself failed (an API or envelope error), not "the model replied with something unusable"
+  const error = !limit && (env.is_error === true || /error/i.test(String(env.terminal_reason || "")) || env.subtype === "error_during_execution");
+  return { ok: !!json, json, limit, error, usage: env.usage && typeof env.usage === "object" ? env.usage : {} };
 }
 
 /** One call. Writes one usage-ledger line (role, model, tokens; never the prompt). A parked plan limit returns limit: true without a call. */
 export async function oneShot(role, prompt, { job = "library", batch = "" } = {}) {
   const cfg = roleOf(role, MODELS);
   const served = servedNow();
-  if (served === "park") return { ok: false, json: null, limit: true, note: fallbackNote() };
+  if (served === "park") return { ok: false, json: null, limit: true, error: false, note: fallbackNote() };
   const model = cfg.model, ms = (Number(cfg.timeout_min) || 6) * 60000, t0 = Date.now();
   // run from an empty directory so the repository's CLAUDE.md, settings and hooks are not loaded into a no-tools call
   const cwd = mkdtempSync(join(tmpdir(), "cyberview-oneshot-"));
@@ -66,5 +69,6 @@ export async function oneShot(role, prompt, { job = "library", batch = "" } = {}
   const l = ledgerLine(job, role, batch, model, Date.now() - t0, out, err, served);
   record(l); noteOutcome(l, served);
   const r = parseReply(out);
-  return { ok: r.ok && l.ok, json: r.json, limit: r.limit || !!l.limit };
+  // error: the call itself failed (spawn failure, timeout, non-zero exit with no result, envelope error); the caller must not count it as a bad reply
+  return { ok: r.ok && l.ok, json: r.json, limit: r.limit || !!l.limit, error: !(r.limit || l.limit) && (r.error || !!err) };
 }

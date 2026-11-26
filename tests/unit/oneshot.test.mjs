@@ -42,3 +42,11 @@ test("noteOutcome: a subscription limit sets the limit state; a limit on the fal
   noteOutcome({ ok: false, limit: true, at, error: "usage limit" }, "api-fallback");
   assert.equal(limitState().fallbackKeyLimited, true);
 });
+test("parseReply: a failed call is error, a bad reply and a limit are not", () => {
+  assert.equal(parseReply("not json").error, true);
+  assert.equal(parseReply(JSON.stringify({ result: "boom", is_error: true })).error, true);
+  assert.equal(parseReply(JSON.stringify({ result: "x", terminal_reason: "api_error" })).error, true);
+  assert.equal(parseReply(JSON.stringify({ result: "You've hit your usage limit", is_error: true })).error, false);
+  assert.equal(parseReply(JSON.stringify({ result: "no object here" })).error, false);
+  assert.equal(parseReply(JSON.stringify({ result: '{"a":1}' })).error, false);
+});

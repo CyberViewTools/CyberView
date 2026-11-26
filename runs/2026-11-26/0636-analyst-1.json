@@ -1,0 +1,28 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-26T06:31:48Z",
+  "finished_at": "2026-11-26T06:37:30Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-136716 Drupal installer exploited",
+    "Canadian Centre for Cyber Security AV26-1209 Drupal security advisory",
+    "drupal.org documentation \"Securing the installer\" install.php"
+  ],
+  "pages_read": [
+    {"url": "https://www.drupal.org/sa-core-2026-019", "title": "SA-CORE-2026-019 Drupal core access bypass", "used_in": "CVE-2026-136716"},
+    {"url": "https://www.drupal.org/sa-core-2026-017", "title": "SA-CORE-2026-017 Drupal core RCE (installer)", "used_in": "CVE-2026-136716"},
+    {"url": "https://www.drupal.org/docs/administering-a-drupal-site/security-in-drupal/securing-the-installer-installphp", "title": "Securing the installer", "used_in": "CVE-2026-136716"},
+    {"url": "https://www.cyber.gc.ca/en/alerts-advisories/drupal-security-advisory-av26-1209", "title": "Cyber Centre AV26-1209", "used_in": "CVE-2026-136716"},
+    {"url": "https://www.hkcert.org/security-bulletin/drupal-security-restriction-bypass-vulnerability_20261126", "title": "HKCERT Drupal security restriction bypass", "used_in": "CVE-2026-136716"},
+    {"url": "https://brandefense.io/security-news/drupal-installer-takeover-response-playbook/", "title": "Brandefense Drupal installer takeover response steps", "used_in": "CVE-2026-136716"}
+  ],
+  "added": ["CVE-2026-136716"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Technical or incident-response write-up for CVE-2026-136716", "url": "https://www.drupal.org/sa-core-2026-019", "note": "No researcher or responder detail yet on the exploitable install states or post-takeover activity; analysis confidence is medium. Recheck later and raise confidence if one appears.", "priority": "medium"},
+    {"title": "CISA KEV listing for CVE-2026-136716", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog", "note": "Not in KEV on file; vendor says exploited in the wild, so a KEV addition is likely.", "priority": "medium"}
+  ],
+  "failed_sites": ["cybersixt.com (403, not worked around)"],
+  "notes": "One assigned CVE written from the vendor advisory, the vendor installer-hardening guide and two government bulletins. The Brandefense page is a playbook derived from the advisory, not independent attack data. The analyst check passes and the build passes. No instructions were found in page text."
+}

@@ -1,27 +1,75 @@
 {
- "actor": "", "impact": "", "cves": [], "cve_meta": [],
- "first_seen": "2026-11-26T01:41:40Z", "updated_at": "2026-11-26T01:41:40Z",
- "tags": ["data-breach", "third-party", "supply-chain"],
- "products": ["PLAID KARTE", "Mikatano"],
- "time_basis": "published",
- "category": "incident", "status": "confirmed",
- "attack": ["intrusion", "supply-chain"],
- "geo_basis": "hq",
- "date": "2026-11-24",
- "date_note": "Date of the bank's announcement as stated in the article; the article says the access to KARTE was detected on 13 November.",
- "title": "Shikoku Bank says Mikatano users' email addresses leaked after unauthorized access to KARTE",
- "org": "Shikoku Bank", "sector": "Banking", "country": "Japan", "place": "Kochi",
- "lat": 33.56, "lng": 133.53, "pin_type": "hq",
- "severity": 2, "source_tier": "established",
- "summary": "Cybersecurity.com (Japan) reports that Shikoku Bank announced on 24 November that Mikatano user information, including email addresses, leaked after a third party accessed Preid's KARTE, which Mikatano uses for on-screen notices. The article says the bank's own systems were not directly breached and that passwords, card and account information were not linked to KARTE. The bank warns of phishing emails.",
- "plain": "Shikoku Bank says Mikatano users' email addresses leaked through a breach of the KARTE service. It says passwords, card and account information were not affected and warns of phishing emails.",
- "exec": "A vendor's marketing tool breach exposed email addresses of users of a service the bank uses, per the bank's announcement as reported.",
- "action": "Shikoku Bank warns that the leaked addresses could receive phishing emails that lead to fake sites to steal PINs and other information.",
- "sources": [
-  {"name": "Cybersecurity.com (Japan)", "url": "https://cybersecurity-jp.com/news/118924", "published": "2026-11-26"}
- ],
- "evidence": [],
- "validation": {"state": "single_source", "checked_at": "2026-11-26T01:41:40Z", "note": "One publisher (Cybersecurity.com Japan) relaying the bank's announcement; the bank's notice page and Money Forward X's notice were not read."},
- "sectors": {"values": ["financial-services"], "basis": "inferred"},
- "surface": {"value": "supply-chain", "basis": "stated"}
+  "actor": "",
+  "impact": "",
+  "cves": [],
+  "cve_meta": [],
+  "first_seen": "2026-11-26T01:41:40Z",
+  "updated_at": "2026-11-26T01:55:09Z",
+  "tags": [
+    "data-breach",
+    "third-party",
+    "supply-chain"
+  ],
+  "products": [
+    "PLAID KARTE",
+    "Mikatano"
+  ],
+  "time_basis": "published",
+  "category": "incident",
+  "status": "confirmed",
+  "attack": [
+    "intrusion",
+    "supply-chain"
+  ],
+  "geo_basis": "hq",
+  "date": "2026-11-24",
+  "date_note": "Date of the bank's announcement as stated in the article; the article says the access to KARTE was detected on 13 November.",
+  "title": "Shikoku Bank says Mikatano users' email addresses leaked after unauthorized access to KARTE",
+  "org": "Shikoku Bank",
+  "sector": "Banking",
+  "country": "Japan",
+  "place": "Kochi",
+  "lat": 33.56,
+  "lng": 133.53,
+  "pin_type": "hq",
+  "severity": 2,
+  "source_tier": "established",
+  "summary": "Cybersecurity.com (Japan) reports that Shikoku Bank announced on 24 November that Mikatano user information, including email addresses, leaked after a third party accessed Plaid's KARTE, which Mikatano uses for on-screen notices. The article says the bank's own systems were not directly breached and that passwords, card and account information were not linked to KARTE. The bank warns of phishing emails.",
+  "plain": "Shikoku Bank says Mikatano users' email addresses leaked through a breach of the KARTE service. It says passwords, card and account information were not affected and warns of phishing emails.",
+  "exec": "A third-party tool used by Mikatano was accessed without authorisation, and Mikatano users' email addresses leaked, per the bank's announcement as reported.",
+  "action": "Shikoku Bank warns that the leaked addresses could receive phishing emails that lead to fake sites to steal PINs and other information.",
+  "sources": [
+    {
+      "name": "Cybersecurity.com (Japan)",
+      "url": "https://cybersecurity-jp.com/news/118924",
+      "published": "2026-11-26"
+    }
+  ],
+  "evidence": [],
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-26T01:41:40Z",
+    "note": "One publisher (Cybersecurity.com Japan) relaying the bank's announcement; the bank's notice page and Money Forward X's notice were not read."
+  },
+  "sectors": {
+    "values": [
+      "financial-services"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-26T01:55:26Z",
+    "first_at": "2026-11-26T01:55:26Z",
+    "note": "wrong name and stronger than the source: vendor is Plaid (not Preid); exec no longer calls KARTE a marketing tool. Date, status and leak scope match the page.",
+    "flags": [],
+    "categories": [
+      "overstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T01:55:26Z"
 }

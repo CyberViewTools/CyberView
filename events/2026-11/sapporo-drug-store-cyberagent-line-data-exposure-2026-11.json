@@ -14,28 +14,62 @@
   "severity": 2,
   "status": "confirmed",
   "source_tier": "established",
-  "summary": "Sapporo Drug Store announced on 25 November that data on 22万9026 customer accounts was exposed by its app contractor CyberAgent, which placed a file in a publicly set storage area during a system migration. ITmedia reports the file was public from 16 July 2025 to 18 November 2026 and a third party retrieved it nine times. The company says it was not an external cyberattack.",
-  "plain": "Sapporo Drug Store says a contractor's mistake left data on 22万9026 customer accounts publicly accessible for more than a year. A third party retrieved it nine times, according to ITmedia.",
+  "summary": "Sapporo Drug Store announced on 25 November that data on 22万9026 customer accounts was exposed by its app contractor CyberAgent, which placed a file in a publicly set storage area during a system migration. ITmedia reports the file was public from 16 July 2025 to 18 November 2026 and a third party retrieved it nine times between 3 January and 31 October 2026. The company says it was not an external cyberattack.",
+  "plain": "Sapporo Drug Store says a contractor's mistake left data on 22万9026 customer accounts publicly accessible for more than a year. According to ITmedia, third parties retrieved it nine times between 3 January and 31 October 2026.",
   "exec": "A contractor's migration error exposed data on 22万9026 customer accounts of a retail chain, which says it was not an external cyberattack.",
   "action": "No action needed; for awareness.",
   "actor": "",
   "attack": [],
   "cves": [],
   "products": [],
-  "tags": ["data-breach", "third-party"],
+  "tags": [
+    "data-breach",
+    "third-party"
+  ],
   "sources": [
-    {"name": "ITmedia NEWS", "url": "https://www.itmedia.co.jp/news/article/2611/26/2000003469/", "published": "2026-11-26"}
+    {
+      "name": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/article/2611/26/2000003469/",
+      "published": "2026-11-26"
+    }
   ],
   "evidence": [
-    {"url": "https://www.itmedia.co.jp/news/article/2611/26/2000003469/", "quote": "22万9026アカウント分が流出したと発表した"}
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/26/2000003469/",
+      "quote": "22万9026アカウント分が流出したと発表した"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/26/2000003469/",
+      "quote": "26年1月3日から10月31日までの間に、第三者により計9回取得されていたことを確認した。"
+    }
   ],
-  "sectors": {"values": ["commercial-facilities"], "basis": "inferred"},
-  "surface": {"value": "supply-chain", "basis": "stated"},
+  "sectors": {
+    "values": [
+      "commercial-facilities"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
   "validation": {
     "state": "single_source",
     "note": "One publisher (ITmedia NEWS) relaying the company's announcement; the company's own notice was not found or read.",
     "checked_at": "2026-11-26T01:42:33Z"
   },
   "first_seen": "2026-11-26T01:42:33Z",
-  "updated_at": "2026-11-26T01:42:33Z"
+  "updated_at": "2026-11-26T01:55:47Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-26T01:56:36Z",
+    "first_at": "2026-11-26T01:56:36Z",
+    "note": "figure: retrieval count nine times now scoped to 3 Jan-31 Oct 2026 as ITmedia states, plural third parties, evidence quote added",
+    "flags": [],
+    "categories": [
+      "overstated",
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T01:56:36Z"
 }

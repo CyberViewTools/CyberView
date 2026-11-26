@@ -34,7 +34,7 @@
   "summary": "Mitsubishi Chemical Cleansui says a third party accessed the order management system of its vendor GoQSystem on 10 and 11 November, through what the notice calls a vulnerability in an inquiry form. Per GoQSystem's findings, 10,466 customers (purchasers and recipients) are affected; names, addresses, phone numbers, email addresses and order details may have been exposed. Cleansui says GoQSystem holds no credit card data.",
   "plain": "A vendor's order system used by Cleansui's online shops was accessed by a third party. Cleansui says 10,466 customers are affected and personal details may have been exposed, but no card data.",
   "exec": "A vendor breach exposed order data of 10,466 customers of a brand's online shops, per Cleansui's notice.",
-  "action": "Cleansui advises customers to be wary of suspicious emails, SMS or calls impersonating Cleansui, GoQSystem, shops or delivery firms, and not to click links or open attachments in them.",
+  "action": "Cleansui advises customers not to open links in emails or SMS messages and to check through its official contact, as relayed by Cybersecurity.com (Japan).",
   "records_affected": 10466,
   "sources": [
     {
@@ -50,16 +50,36 @@
   ],
   "evidence": [
     {
-      "url": "https://cleansui.com/info/11560.html",
-      "quote": "対象件数：ご注文 9,894件（楽天市場 7,152件、Yahoo!ショッピング 2,431件、au PAY マーケット 311件）／お客様 10,466名"
+      "url": "https://cybersecurity-jp.com/news/118925",
+      "quote": "顧客は1万466名である。"
+    },
+    {
+      "url": "https://cybersecurity-jp.com/news/118925",
+      "quote": "11月10日から11日にかけて、GoQSystem社の受注管理システムに第三者による不正アクセスが発生し、注文データの一部が持ち出された。"
     }
   ],
-  "source_tier": "primary",
+  "source_tier": "established",
   "validation": {
-    "state": "primary",
-    "checked_at": "2026-11-26T01:45:00Z",
-    "note": "Cleansui's own notice read; Cybersecurity.com (Japan) relays it. Same GoQSystem incident as goqsystem-order-system-unauthorized-access-2026-11, a different victim organisation."
+    "state": "disputed",
+    "checked_at": "2026-11-26T01:55:47Z",
+    "note": "Second review: Cleansui's own notice did not load (verification page); facts checked against Cybersecurity.com (Japan), downgraded to single_source and action narrowed. Build still errors figure-no-evidence for 10,466: the only reachable pa"
   },
   "first_seen": "2026-11-26T01:43:32Z",
-  "updated_at": "2026-11-26T01:43:32Z"
+  "updated_at": "2026-11-26T01:55:50Z",
+  "review": {
+    "state": "flagged",
+    "at": "2026-11-26T01:55:47Z",
+    "first_at": "2026-11-26T01:55:47Z",
+    "note": "Cleansui's own notice did not load (verification page); facts checked against Cybersecurity.com (Japan), downgraded to single_source and action narrowed. Build still errors figure-no-evidence for 10,466: the only reachable page writes 1万466名, so a digit-form quote cannot be copied word for word",
+    "flags": [
+      "figure-no-evidence"
+    ],
+    "categories": [
+      "overstated",
+      "action",
+      "figure",
+      "validation"
+    ]
+  },
+  "qa_checked_at": "2026-11-26T01:55:47Z"
 }

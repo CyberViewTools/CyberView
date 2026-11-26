@@ -293,12 +293,22 @@ export function storyLinks(reports, actors, cards, liveKeys) {
   return { read, actorStory, looseStory };
 }
 
-/** Write the Library's reviewed stories and read cards into outDir (site/data): orkl-cards/<xx>.json, orkl-stories/<key>.json and
- *  orkl-stories.json. Everything is built in memory, written into temp folders beside the targets and swapped in by rename, so a
- *  failure leaves the previous output untouched (and a warn() message), never a partial site. A story that cannot be published is a
- *  warn() message too. Returns the counts and the links libraryIndex needs (empty links if they cannot be worked out). */
-export function writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt = "", warn = () => {}, io = {} }) {
-  const write = io.writeFileSync || writeFileSync, shards = {}, published = [];
+/** Remove what an earlier or crashed publish left in outDir (any pid, and the round-1 layout); if `library` is missing and exactly one
+ *  `library.old-*` exists (a crash between the two renames) it is renamed back first. */
+function tidyLibraryOutput(outDir, io) {
+  const names = existsSync(outDir) ? readdirSync(outDir) : [];
+  const olds = names.filter((n) => /^library\.old-/.test(n));
+  if (!names.includes("library") && olds.length === 1) { io.renameSync(join(outDir, olds[0]), join(outDir, "library")); }
+  for (const n of readdirSync(outDir)) if (/^library\.(tmp|old)-/.test(n) || /^orkl-(cards|stories)(\.|$)/.test(n)) io.rmSync(join(outDir, n), { recursive: true, force: true });
+}
+
+/** Write the Library's reviewed stories and read cards into ONE folder, outDir/library (site/data/library): cards/<xx>.json,
+ *  stories/<key>.json and stories.json (the story index). Everything is built in memory, written into library.tmp-<pid>, then swapped
+ *  in by rename (library -> library.old-<pid>, tmp -> library, old removed), so a failure leaves the previous folder untouched (and a
+ *  warn() message), never a partial site. A story that cannot be published is a warn() message too. `io` (writeFileSync, renameSync,
+ *  rmSync, mkdirSync) and `linksFn` are injectable for tests. Returns the counts and the links libraryIndex needs. */
+export function writeLibrarySite({ reports, actors, cards, stories, outDir, builtAt = "", warn = () => {}, io = {}, linksFn = storyLinks }) {
+  const fsx = { writeFileSync, renameSync, rmSync, mkdirSync, ...io }, shards = {}, published = [];
   const cardMap = cards instanceof Map ? cards : new Map();
   for (const [sha, c] of cardMap) {
     const o = SHA1.test(sha) ? siteCard(c) : null;
@@ -307,34 +317,32 @@ export function writeLibrarySite({ reports, actors, cards, stories, outDir, buil
   for (const [key, file] of stories instanceof Map ? stories : new Map()) {
     try { const s = siteStory(file, reports, warn); if (s && s.key === key) published.push(s); } catch (e) { warn(`orkl story ${txt(key, 70)}: ${txt(e && e.message, 80)}`); }
   }
-  const cardsRead = Object.values(shards).reduce((n, sh) => n + Object.keys(sh).length, 0);
-  const counts = { cards_read: cardsRead, stories: published.length };
-  const names = ["orkl-cards", "orkl-stories", "orkl-stories.json"], tag = `.tmp-${process.pid}`, tmp = (n) => join(outDir, n + tag), old = (n) => join(outDir, n + ".old" + tag);
-  const cleanup = () => { for (const n of names) { rmSync(tmp(n), { recursive: true, force: true }); rmSync(old(n), { recursive: true, force: true }); } };
+  const counts = { cards_read: Object.values(shards).reduce((n, sh) => n + Object.keys(sh).length, 0), stories: published.length };
+  const target = join(outDir, "library"), tmp = join(outDir, `library.tmp-${process.pid}`), old = join(outDir, `library.old-${process.pid}`);
   try {
-    cleanup();
-    mkdirSync(tmp("orkl-cards"), { recursive: true }); mkdirSync(tmp("orkl-stories"), { recursive: true });
-    for (const [sh, obj] of Object.entries(shards)) write(join(tmp("orkl-cards"), `${sh}.json`), JSON.stringify(obj));
-    for (const s of published) write(join(tmp("orkl-stories"), `${s.key}.json`), JSON.stringify(s));
-    write(tmp("orkl-stories.json"), JSON.stringify({ built_at: builtAt, stories: storyIndex(published) }));
-    const done = [];
-    try {
-      for (const n of names) {
-        if (existsSync(join(outDir, n))) renameSync(join(outDir, n), old(n));
-        renameSync(tmp(n), join(outDir, n)); done.push(n);
+    mkdirSync(outDir, { recursive: true });
+    tidyLibraryOutput(outDir, fsx);
+    fsx.mkdirSync(join(tmp, "cards"), { recursive: true }); fsx.mkdirSync(join(tmp, "stories"), { recursive: true });
+    for (const [sh, obj] of Object.entries(shards)) fsx.writeFileSync(join(tmp, "cards", `${sh}.json`), JSON.stringify(obj));
+    for (const s of published) fsx.writeFileSync(join(tmp, "stories", `${s.key}.json`), JSON.stringify(s));
+    fsx.writeFileSync(join(tmp, "stories.json"), JSON.stringify({ built_at: builtAt, stories: storyIndex(published) }));
+    const had = existsSync(target);
+    if (had) fsx.renameSync(target, old);
+    try { fsx.renameSync(tmp, target); }
+    catch (e) {
+      if (had) {
+        try { fsx.renameSync(old, target); } catch { throw new Error(`${txt(e && e.message, 60)}; the previous Library output could not be restored and is missing`); }
       }
-    } catch (e) {
-      for (const n of names) { try { if (existsSync(old(n))) { rmSync(join(outDir, n), { recursive: true, force: true }); renameSync(old(n), join(outDir, n)); } } catch {} }
       throw e;
     }
-    for (const n of names) rmSync(old(n), { recursive: true, force: true });
+    try { fsx.rmSync(old, { recursive: true, force: true }); } catch {}
   } catch (e) {
-    cleanup();
-    warn(`orkl library output: ${txt(e && e.message, 100)}; the previous Library stories and cards are kept`);
+    for (const d of [tmp, old]) { try { if (d === tmp || existsSync(target)) fsx.rmSync(d, { recursive: true, force: true }); } catch {} }
+    warn(`orkl library output: ${txt(e && e.message, 140)}`);
     return { counts: {}, links: {} };
   }
   let links = {};
-  try { links = storyLinks(arr(reports), arr(actors), cardMap, new Set(published.map((s) => s.key))); } catch (e) { warn(`orkl links: ${txt(e && e.message, 80)}`); }
+  try { links = linksFn(arr(reports), arr(actors), cardMap, new Set(published.map((s) => s.key))); } catch (e) { warn(`orkl links: ${txt(e && e.message, 80)}`); }
   return { counts, links };
 }
 

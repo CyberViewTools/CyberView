@@ -11,7 +11,7 @@
 //   site/data/workbench.json         known-exploited flaws with affected versions, fix guides and detection resources
 //   site/data/psirt.json             vendor security advisories joined on CVE (scripts/psirt.mjs), for the Vulnerabilities page
 //   site/data/chat.json              reviewed community posts (newest 300)
-//   site/data/orkl-cards/, orkl-stories/, orkl-stories.json   the Library's read fact cards (values only) and reviewed stories (scripts/orkl.mjs)
+//   site/data/library/ (cards/, stories/, stories.json)   the Library's read fact cards (values only) and reviewed stories (scripts/orkl.mjs)
 //   site/data/tabletop.json          the weekly tabletop exercise and past ones
 //   site/data/health.json            records left out by --quarantine, and the pipeline's last timestamps
 //   site/data/manifest.json          counts and a SHA-256 of every data file, for scripts/verify-build.mjs

@@ -1,7 +1,7 @@
 // Library build output (scripts/orkl.mjs): only reviewed stories and read cards reach site/data, never a quote or a draft.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, rmSync, renameSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { BY as CHECK_BY } from "../../scripts/lib/library-check.mjs";
@@ -81,14 +81,14 @@ const cardsMap = (...cs) => new Map(cs.map((c) => [c.sha1, c]));
 const actors = [{ id: "1", name: "TT Group", aliases: [], tools: [] }];
 test("writeLibrarySite: writes shards, stories and the index; clears stale files; one bad story warns, not fails", () => {
   const out = tmp(), warns = [];
-  mkdirSync(join(out, "orkl-cards"), { recursive: true }); mkdirSync(join(out, "orkl-stories"), { recursive: true });
-  writeFileSync(join(out, "orkl-cards", "zz.json"), "{}"); writeFileSync(join(out, "orkl-stories", "old.json"), "{}");
+  mkdirSync(join(out, "library", "cards"), { recursive: true }); mkdirSync(join(out, "library", "stories"), { recursive: true });
+  writeFileSync(join(out, "library", "cards", "zz.json"), "{}"); writeFileSync(join(out, "library", "stories", "old.json"), "{}");
   const stories = new Map([["a-1", { live: S, next: DRAFT }], ["a-2", { live: { ...S, key: "a-2", sections: [{ h: "who", sentences: [{ t: "X.", cites: [h("9")] }] }] }, next: null }], ["a-3", { live: null, next: DRAFT }]]);
   const r = writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a"), card("b", { status: "unread" })), stories, outDir: out, builtAt: "t", warn: (m) => warns.push(m) });
-  assert.deepEqual(files(join(out, "orkl-cards")), ["aa.json"]); assert.deepEqual(files(join(out, "orkl-stories")), ["a-1.json"]);
-  const shard = JSON.parse(readFileSync(join(out, "orkl-cards", "aa.json"), "utf8")); assert.deepEqual(Object.keys(shard), [h("a")]);
-  assert.ok(!readFileSync(join(out, "orkl-cards", "aa.json"), "utf8").includes("SECRET-QUOTE"));
-  const idx = JSON.parse(readFileSync(join(out, "orkl-stories.json"), "utf8")); assert.deepEqual(idx.stories.map((x) => x.key), ["a-1"]);
+  assert.deepEqual(files(join(out, "library", "cards")), ["aa.json"]); assert.deepEqual(files(join(out, "library", "stories")), ["a-1.json"]);
+  const shard = JSON.parse(readFileSync(join(out, "library", "cards", "aa.json"), "utf8")); assert.deepEqual(Object.keys(shard), [h("a")]);
+  assert.ok(!readFileSync(join(out, "library", "cards", "aa.json"), "utf8").includes("SECRET-QUOTE"));
+  const idx = JSON.parse(readFileSync(join(out, "library", "stories.json"), "utf8")); assert.deepEqual(idx.stories.map((x) => x.key), ["a-1"]);
   assert.equal(r.counts.cards_read, 1); assert.equal(r.counts.stories, 1);
   assert.ok(warns.some((m) => m.includes("a-2")));
   assert.equal(r.links.actorStory.get("1\0TT Group"), "a-1"); assert.ok(r.links.read.has(h("a")));
@@ -97,8 +97,8 @@ test("writeLibrarySite: writes shards, stories and the index; clears stale files
 test("writeLibrarySite: no stories gives an empty index and no story folder files", () => {
   const out = tmp();
   const r = writeLibrarySite({ reports: R, actors, cards: new Map(), stories: new Map(), outDir: out, builtAt: "t", warn() {} });
-  assert.deepEqual(JSON.parse(readFileSync(join(out, "orkl-stories.json"), "utf8")).stories, []); assert.equal(r.counts.stories, 0);
-  assert.deepEqual(files(join(out, "orkl-cards")), []);
+  assert.deepEqual(JSON.parse(readFileSync(join(out, "library", "stories.json"), "utf8")).stories, []); assert.equal(r.counts.stories, 0);
+  assert.deepEqual(files(join(out, "library", "cards")), []);
   rmSync(out, { recursive: true });
 });
 
@@ -116,16 +116,61 @@ test("publishLibrary: a failure in the new story/card code is a warning and the 
   assert.equal(ix.reports_total, 2); assert.ok(ix.reports.every((x) => !("k" in x)) && ix.actors.every((a) => !("st" in a)));
   rmSync(out, { recursive: true });
 });
-test("writeLibrarySite: a write failure leaves the previous output exactly as it was", () => {
+
+const snapDir = (d) => { const o = {}; const walk = (p, r) => { for (const n of readdirSync(p, { withFileTypes: true })) { const q = join(p, n.name), k = r + "/" + n.name; if (n.isDirectory()) walk(q, k); else o[k] = readFileSync(q, "utf8"); } }; if (existsSync(d)) walk(d, ""); return o; };
+const firstBuild = (out, over = {}) => writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a")), stories: new Map([["a-1", { live: S, next: null }]]), outDir: out, builtAt: "first", warn() {}, ...over });
+const second = (out, over = {}) => writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a"), card("b")), stories: new Map(), outDir: out, builtAt: "second", ...over });
+const strays = (out) => readdirSync(out).filter((f) => /^library\.(tmp|old)-/.test(f));
+const failNth = (name, n) => { let i = 0; return { ...fsReal, [name]: (...a) => { if (++i === n) throw new Error(name + " failed"); return fsReal[name](...a); } }; };
+const fsReal = { writeFileSync, renameSync, rmSync, mkdirSync };
+
+test("writeLibrarySite (a): a write failure in the temp phase leaves the previous library folder intact and no temp folder", () => {
+  const out = tmp(), warns = []; firstBuild(out); const before = snapDir(join(out, "library"));
+  const r = second(out, { warn: (m) => warns.push(m), io: failNth("writeFileSync", 2) });
+  assert.deepEqual(snapDir(join(out, "library")), before); assert.deepEqual(strays(out), []);
+  assert.ok(warns.some((m) => m.includes("writeFileSync failed"))); assert.deepEqual(r, { counts: {}, links: {} });
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite (b): a failure of the second rename restores the previous folder", () => {
+  const out = tmp(), warns = []; firstBuild(out); const before = snapDir(join(out, "library"));
+  second(out, { warn: (m) => warns.push(m), io: failNth("renameSync", 2) });
+  assert.deepEqual(snapDir(join(out, "library")), before); assert.deepEqual(strays(out), []);
+  assert.ok(warns.some((m) => m.includes("renameSync failed") && !/missing/.test(m)));
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite (c): on a first-ever build a rename failure leaves no library, no temp folder, and warns", () => {
   const out = tmp(), warns = [];
-  const stories = new Map([["a-1", { live: S, next: null }]]);
-  writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a")), stories, outDir: out, builtAt: "first", warn() {} });
-  const snap = () => ({ c: files(join(out, "orkl-cards")), s: files(join(out, "orkl-stories")), i: readFileSync(join(out, "orkl-stories.json"), "utf8"), c1: readFileSync(join(out, "orkl-cards", "aa.json"), "utf8") });
-  const before = snap();
-  let n = 0;
-  const failing = (p, d) => { if (++n === 2) throw new Error("disk full"); return writeFileSync(p, d); };
-  const r = writeLibrarySite({ reports: R, actors, cards: cardsMap(card("a"), card("b")), stories: new Map(), outDir: out, builtAt: "second", warn: (m) => warns.push(m), io: { writeFileSync: failing } });
-  assert.deepEqual(snap(), before); assert.ok(warns.some((m) => m.includes("disk full"))); assert.deepEqual(r.counts, {});
-  assert.deepEqual(files(out).filter((f) => f.includes(".tmp-")), []);
+  const r = second(out, { warn: (m) => warns.push(m), io: failNth("renameSync", 1) });
+  assert.equal(existsSync(join(out, "library")), false); assert.deepEqual(strays(out), []);
+  assert.ok(warns.length >= 1); assert.deepEqual(r, { counts: {}, links: {} });
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite: if the restore also fails the warning says the Library output is missing", () => {
+  const out = tmp(), warns = []; firstBuild(out);
+  let n = 0; const io = { ...fsReal, renameSync: (a, b) => { if (++n >= 2) throw new Error("rename failed"); return renameSync(a, b); } };
+  second(out, { warn: (m) => warns.push(m), io });
+  assert.ok(warns.some((m) => /missing/.test(m)));
+  rmSync(out, { recursive: true, force: true });
+});
+test("writeLibrarySite (d): leftovers from any pid, and the previous layout, are removed", () => {
+  const out = tmp(); firstBuild(out);
+  for (const n of ["library.tmp-111", "library.old-222", "orkl-cards", "orkl-stories", "orkl-cards.tmp-9", "orkl-stories.old.tmp-9"]) mkdirSync(join(out, n));
+  writeFileSync(join(out, "orkl-stories.json"), "{}"); writeFileSync(join(out, "orkl-stories.json.tmp-9"), "{}"); writeFileSync(join(out, "library.tmp-5"), "x");
+  second(out, { warn() {} });
+  assert.deepEqual(readdirSync(out).sort(), ["library"]);
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite (e): a crash between the two renames is recovered from the one .old folder", () => {
+  const out = tmp(); firstBuild(out); const before = snapDir(join(out, "library"));
+  renameSync(join(out, "library"), join(out, "library.old-777"));
+  const r = second(out, { warn() {}, io: failNth("writeFileSync", 1) });   // the new publish fails, so what remains is the recovered folder
+  assert.deepEqual(snapDir(join(out, "library")), before); assert.deepEqual(strays(out), []); assert.deepEqual(r.counts, {});
+  rmSync(out, { recursive: true });
+});
+test("writeLibrarySite (f): storyLinks throwing still leaves the swapped-in files and returns links {}", () => {
+  const out = tmp(), warns = [];
+  const r = second(out, { warn: (m) => warns.push(m), linksFn: () => { throw new Error("links exploded"); } });
+  assert.deepEqual(r.links, {}); assert.equal(r.counts.cards_read, 2);
+  assert.deepEqual(files(join(out, "library", "cards")), ["aa.json", "bb.json"]); assert.ok(warns.some((m) => m.includes("links exploded")));
   rmSync(out, { recursive: true });
 });

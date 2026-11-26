@@ -194,8 +194,8 @@ Known-exploited flags are joined by the site from data/kev; EPSS is not stored (
 
 ## Library site data (generated, scripts/orkl.mjs `writeLibrarySite`)
 
-The build publishes only reviewed stories and read cards, never an evidence quote, a draft or report text, and writes the folders fresh each build.
-- `site/data/orkl-cards/<xx>.json` (by the first two hex of the sha1): `{ <sha1>: { sm summary, k kind, p partial, su {type, name}, f { a actors [{v, by}], s sectors, c countries, d dates [{v, what}], t tools, q techniques, v cves, g figures } } }`, status `read` only.
-- `site/data/orkl-stories/<key>.json`: `{ key, kind, name, headline, in_short, sections [{h, sentences [{t, cites}]}], by, reviewed_at, n, src [{sha1, title, authors, year}], stale? }` from the `live` story only. A cite that is not a library report is dropped; a sentence outside "takeaway" left with no cite stops the story (a build warning names its key).
-- `site/data/orkl-stories.json`: `{ built_at, stories: [{ key, kind, name, headline, in_short, reviewed_at, n }] }`, newest review first.
+The build publishes only reviewed stories and read cards, never an evidence quote, a draft or report text, and writes the one folder `site/data/library/` fresh each build (temp folder, then rename; a failed build keeps the previous one).
+- `site/data/library/cards/<xx>.json` (by the first two hex of the sha1): `{ <sha1>: { sm summary, k kind, p partial, su {type, name}, f { a actors [{v, by}], s sectors, c countries, d dates [{v, what}], t tools, q techniques, v cves, g figures } } }`, status `read` only.
+- `site/data/library/stories/<key>.json`: `{ key, kind, name, headline, in_short, sections [{h, sentences [{t, cites}]}], by, reviewed_at, n, src [{sha1, title, authors, year}], stale? }` from the `live` story only. A cite that is not a library report is dropped; a sentence outside "takeaway" left with no cite stops the story (a build warning names its key).
+- `site/data/library/stories.json`: `{ built_at, stories: [{ key, kind, name, headline, in_short, reviewed_at, n }] }`, newest review first.
 - `site/data/orkl-index.json` keeps its keys; report rows gain `k: 1` (a read card is published) and `st` (a live subject story), actor rows gain `st` (a live story). `site/data/orkl.json` gains `cards_read` and `stories_published`.

@@ -1,11 +1,11 @@
 {
   "ec6606822833912094053991858dc8d3444ed9cf": {
     "sha1": "ec6606822833912094053991858dc8d3444ed9cf",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:09:33Z",
+    "read_at": "2026-11-26T22:33:34Z",
     "model": "haiku",
-    "summary": "IBM X-Force IRIS links recent intrusions to Hive0065, also known as TA505, a financially motivated cybercrime group active since at least 2014. The group uses spear phishing with malicious Office documents and spoofed cloud services to deliver SDBbot, a remote-access Trojan used mainly as a second-stage payload. Victims were also seen with a Meterpreter reverse shell, a TinyMet stager and a DLL with CobaltStrike similarities. The report describes SDBbot's installer, loader and RAT components and lists indicators of compromise.",
+    "summary": "IBM X-Force IRIS reports attacks likely linked to Hive0065 (also known as TA505), a financially motivated cybercrime group active since at least 2014. The attacks used spear-phishing emails impersonating Onehub to deliver the SDBbot RAT, mainly as a second-stage payload, plus CobaltStrike-like DLLs and Meterpreter reverse shells. After gaining access, the actor escalated privileges, moved laterally and compromised a domain admin account. Attribution is hedged as likely, not confirmed.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
@@ -16,14 +16,24 @@
         },
         {
           "v": "TA505",
-          "q": "also known as TA505. We observed that Hive0065 continues to spread the SDBbot remote-access Trojan (RAT) alongside",
+          "q": "also known as TA505.",
+          "by": "IBM X-Force IRIS"
+        },
+        {
+          "v": "Hive0065",
+          "q": "likely that Hive0065 was behind the attacks.",
+          "by": "IBM X-Force IRIS"
+        },
+        {
+          "v": "Hive0065",
+          "q": "Hive0065 is a financially motivated cybercrime group that has been actively targeting various industries, including finance,",
           "by": "IBM X-Force IRIS"
         }
       ],
       "sectors": [
         {
           "v": "finance",
-          "q": "Hive0065 is a financially motivated cybercrime group that has been actively targeting various industries, including finance,"
+          "q": "targeting various industries, including finance,"
         },
         {
           "v": "retail and restaurants",
@@ -31,7 +41,7 @@
         },
         {
           "v": "healthcare",
-          "q": "Hive0065 targeted healthcare organizations with emails purporting to come from medical research groups and offering"
+          "q": "Hive0065 targeted healthcare organizations with emails purporting to come from medical research groups"
         }
       ],
       "countries": [],
@@ -39,105 +49,133 @@
         {
           "v": "2014",
           "q": "retail and restaurants, since at least 2014.",
-          "what": "Earliest activity noted for the group"
-        },
-        {
-          "v": "September 2019",
-          "q": "SDBbot RAT has been observed in Hive0065 attacks since at least September 2019 and has been used primarily as a",
-          "what": "SDBbot first observed in Hive0065 attacks"
+          "what": "Hive0065 reported active since at least 2014"
         },
         {
           "v": "November 2019",
           "q": "In November 2019, X-Force IRIS observed a threat actor targeting enterprise employees in Europe with a spear phishing",
-          "what": "Spear phishing email impersonating a cloud file-sharing service was observed"
+          "what": "X-Force IRIS observed a spear-phishing attack impersonating Onehub against enterprise employees in Europe"
+        },
+        {
+          "v": "September 2019",
+          "q": "SDBbot RAT has been observed in Hive0065 attacks since at least September 2019 and has been used primarily as a",
+          "what": "SDBbot RAT first reported in Hive0065 attacks"
         },
         {
           "v": "March 2020",
           "q": "More recent Hive0065 campaigns reported in March 2020 exploited the current interest in the COVID-19 pandemic, using",
-          "what": "COVID-19-themed phishing campaigns were reported"
+          "what": "Hive0065 COVID-19-themed campaigns delivering Locky and Dridex"
         }
       ],
       "tools": [
         {
           "v": "SDBbot RAT",
-          "q": "SDBbot RAT has been observed in Hive0065 attacks since at least September 2019 and has been used primarily as a"
-        },
-        {
-          "v": "Meterpreter",
-          "q": "A Meterpreter reverser shell was used in order to remotely control compromised systems within the internal network; it was"
-        },
-        {
-          "v": "TinyMet",
-          "q": "The investigation led our team to the discovery of a file named wsus.exe (a version of TinyMet, a tiny, flexible Meterpreter"
+          "q": "SDBbot RAT has been observed in Hive0065 attacks since at least September 2019"
         },
         {
           "v": "CobaltStrike",
-          "q": "with the CobaltStrike framework."
+          "q": "it dropped a malicious binary (DLL) similar to CobaltStrike"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "A Meterpreter reverser shell was used in order to remotely control compromised systems"
+        },
+        {
+          "v": "TinyMet",
+          "q": "(a version of TinyMet, a tiny, flexible Meterpreter"
         },
         {
           "v": "PingCastle",
-          "q": "account was compromised and the Active Directory audit tool PingCastle was run."
+          "q": "the Active Directory audit tool PingCastle was run"
+        },
+        {
+          "v": "FakeL.exe",
+          "q": "(FakeL.exe) was displayed to the user while a malicious payload executed in the background."
         },
         {
           "v": "Locky",
-          "q": "Coronavirus-themed phishing emails to deliver the Locky ransomware and the Dridex banking Trojan."
+          "q": "to deliver the Locky ransomware and the Dridex banking Trojan."
         },
         {
           "v": "Dridex",
-          "q": "Coronavirus-themed phishing emails to deliver the Locky ransomware and the Dridex banking Trojan."
+          "q": "to deliver the Locky ransomware and the Dridex banking Trojan."
+        },
+        {
+          "v": "TrickBot",
+          "q": "Dridex and TrickBot, ransomware such as Clop/Cryptomix and MINEBRIDGE, and extortion schemes demanding payment"
+        },
+        {
+          "v": "Clop/Cryptomix",
+          "q": "Dridex and TrickBot, ransomware such as Clop/Cryptomix and MINEBRIDGE, and extortion schemes demanding payment"
+        },
+        {
+          "v": "MINEBRIDGE",
+          "q": "Dridex and TrickBot, ransomware such as Clop/Cryptomix and MINEBRIDGE, and extortion schemes demanding payment"
+        },
+        {
+          "v": "UPX",
+          "q": "It used a custom packer that unpacks to UPX, an open-source executable packer,"
         }
       ],
       "techniques": [
         {
           "v": "spear phishing",
-          "q": "observed a threat actor targeting enterprise employees in Europe with a spear phishing"
+          "q": "targeting enterprise employees in Europe with a spear phishing"
         },
         {
           "v": "macro-enabled documents",
           "q": "Macro-enabled documents"
         },
         {
-          "v": "droppers containing embedded dynamic-link libraries",
+          "v": "droppers with embedded DLLs",
           "q": "The use of droppers containing embedded dynamic-link libraries (DLLs)"
         },
         {
-          "v": "Spoofing legitimate services",
+          "v": "legitimate cloud hosting for malware distribution",
+          "q": "The use of legitimate cloud hosting services for malware distribution"
+        },
+        {
+          "v": "spoofing legitimate services",
           "q": "Spoofing legitimate services like Microsoft and Google"
         },
         {
-          "v": "password harvester",
-          "q": "Once the code was executed, a persistence mechanism was installed and a malicious password harvester was executed."
+          "v": "privilege escalation and lateral movement",
+          "q": "The actor used the initially compromised system to escalate privileges and move"
         },
         {
-          "v": "fake Microsoft Office login window",
-          "q": "Every time main_template.docx was opened, VBA macros were executed and a fake Microsoft Office login window"
+          "v": "compromise of a domain admin account",
+          "q": "account was compromised and the Active Directory audit tool PingCastle was run."
         },
         {
-          "v": "compressed twice to hide actual code",
-          "q": "compressed twice to hide actual code. It used a custom packer that unpacks to UPX"
+          "v": "bind shells",
+          "q": "the installation of bind shells"
         },
         {
-          "v": "escalate privileges and move laterally",
-          "q": "The actor used the initially compromised system to escalate privileges and move laterally across additional systems on the network."
+          "v": "packing to hide code",
+          "q": "compressed twice to hide actual code."
         },
         {
-          "v": "bind-shells",
-          "q": "Meterpreter bind-shells that listen for incoming connections were also discovered."
+          "v": "password harvesting",
+          "q": "a malicious password harvester was executed"
+        },
+        {
+          "v": "COVID-19-themed phishing",
+          "q": "Coronavirus-themed phishing emails to deliver the Locky ransomware and the Dridex banking Trojan."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "two malicious IP addresses",
-          "q": "connecting back to two malicious IP addresses:"
+          "v": "four",
+          "q": "four new registry keys on the local Software hive were created"
         },
         {
           "v": "three additional files",
-          "q": "along with three additional files that were created and executed on the first compromised system."
+          "q": "along with three additional files that were created and executed"
         },
         {
-          "v": "four new registry keys",
-          "q": "four new registry keys on the local Software hive were created and"
+          "v": "two malicious IP addresses",
+          "q": "connecting back to two malicious IP addresses:"
         }
       ]
     },
@@ -146,20 +184,18 @@
       "name": "SDBbot RAT"
     },
     "hedges": [
-      "X-Force IRIS suspects it is highly likely that Hive0065 was behind the attacks.",
-      "Our team identified attacks likely linked to Hive0065.",
-      "The infrastructure is likely attacker-owned, and similar subdomains are likely to be used in a similar fashion.",
-      "Code suggests that the DLL can download and execute additional files after a successful server reply.",
-      "The TTPs used in these campaigns align with those of Hive0065/TA505.",
-      "The DLLs did not match existing, known code families; only a code comparison showed similarities with CobaltStrike."
+      "The report says the attacks are likely linked to Hive0065, and that it is highly likely Hive0065 was behind them.",
+      "Code suggests the DLL can download and execute additional files; this is the report's reading of the code.",
+      "The DLLs did not match known code families; the CobaltStrike similarity comes from a code comparison only.",
+      "The report calls the attacker-owned infrastructure likely, and says similar use of related infrastructure is likely, not observed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:48Z",
-      "ok": false,
-      "note": "summary: States flatly that X-Force IRIS 'links' the intrusions to Hive0065. The text hedges this: the attacks are 'likely linked' and X-Force IRIS 'suspects it",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:48Z",
+        "ok": false,
+        "note": "summary: States flatly that X-Force IRIS 'links' the intrusions to Hive0065. The text hedges this: the attacks are 'likely linked' and X-Force IRIS 'suspects it",
+        "by": "auditor"
+      }
+    ]
   }
 }

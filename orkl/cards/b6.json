@@ -1,43 +1,48 @@
 {
   "b6d8f9da3047891c179408bf937652d24d430b40": {
     "sha1": "b6d8f9da3047891c179408bf937652d24d430b40",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:15:02Z",
+    "read_at": "2026-11-26T22:34:06Z",
     "model": "haiku",
-    "summary": "IBM X-Force Research report (published 2016-08-16) on Zeus Sphinx, a commercial Zeus v2 banking Trojan variant. Sphinx v2 was found targeting online banking and Boleto payments of Brazilian and Colombian banks, and it can reroute Boleto payments to criminal-controlled accounts. The report links Sphinx v2 to the same developer as the original Sphinx, expects more variants, and cites one estimate of $3.75 billion in Boleto fraud losses.",
+    "summary": "IBM X-Force researchers report that Zeus Sphinx, a commercially sold banking Trojan that emerged in August 2015 against UK banks, has been found in Brazil. The Brazilian variant, Sphinx v2, targets online banking and Boleto payment services at three top Brazilian banks and one Colombian bank. It uses real-time webinjections to collect PINs and personal data, and can reroute Boleto payments to the criminal by generating altered barcodes. The malware is sold on underground forums. The researchers say the Brazilian version most likely comes from the same developer and that more variants may…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
-          "v": "Brazil-based cybercriminals",
-          "q": "collaboration between Brazil-based cybercriminals and cybercrime vendors from other countries",
-          "by": "the report (IBM X-Force Research)"
+          "v": "same developer",
+          "q": "most likely comes from the same developer and is customized to target local banks.",
+          "by": "IBM X-Force researchers, as reported"
         },
         {
-          "v": "cybercrime faction",
-          "q": "attributing $3.75 billion in fraud losses to just one cybercrime faction",
-          "by": "one estimate cited in the report"
+          "v": "Brazil-based cybercriminals",
+          "q": "the trending collaboration between Brazil-based cybercriminals and cybercrime vendors from other countries",
+          "by": "IBM X-Force researchers, as reported"
+        },
+        {
+          "v": "one cybercrime faction",
+          "q": "one estimate attributing $3.75 billion in fraud losses to just one cybercrime faction that targeted Brazilians from 2012 to 2014.",
+          "by": "an unnamed estimate cited in the report"
         }
       ],
       "sectors": [
         {
-          "v": "retail banking",
-          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia"
+          "v": "online banking",
+          "q": "now targets the online banking and Boleto payment services of three of the top Brazilian banks and one bank in Colombia,"
         },
         {
-          "v": "payment services",
-          "q": "targets the online banking and Boleto payment services of three of the top Brazilian banks"
+          "v": "retail banking",
+          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia."
         }
       ],
       "countries": [
         {
           "v": "Brazil",
-          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia"
+          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia."
         },
         {
           "v": "Colombia",
-          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia"
+          "q": "targets retail banking and Boleto payments of banks in Brazil and Colombia."
         },
         {
           "v": "U.K.",
@@ -45,7 +50,7 @@
         },
         {
           "v": "Australia",
-          "q": "launched initially in attacks targeting U.K. and Australian banks"
+          "q": "launched initially in attacks targeting U.K. and Australian banks."
         }
       ],
       "dates": [
@@ -57,39 +62,22 @@
         {
           "v": "August 2015",
           "q": "The malware emerged in August 2015, at which point it started targeting major banks in the U.K.",
-          "what": "Zeus Sphinx emerged and began targeting major banks in the U.K."
+          "what": "Zeus Sphinx emerged and began targeting major UK banks"
         },
         {
           "v": "2012 to 2014",
-          "q": "that targeted Brazilians from 2012 to 2014",
-          "what": "Period in which one cybercrime faction targeted Brazilians with Boleto fraud"
-        },
-        {
-          "v": "2016",
-          "q": "since the beginning of 2016",
-          "what": "Collaboration between Brazil-based cybercriminals and foreign vendors picked up speed"
+          "q": "one estimate attributing $3.75 billion in fraud losses to just one cybercrime faction that targeted Brazilians from 2012 to 2014.",
+          "what": "Period of fraud losses attributed by one estimate to one cybercrime faction"
         }
       ],
       "tools": [
         {
           "v": "Zeus Sphinx",
-          "q": "Zeus Sphinx is a banking Trojan and is a commercial offering"
+          "q": "Zeus Sphinx is a banking Trojan and is a commercial offering sold to cybercriminals via underground fraudster"
         },
         {
           "v": "Sphinx v2",
-          "q": "which is dubbed Sphinx v2"
-        },
-        {
-          "v": "Zeus Panda",
-          "q": "Within two weeks of the discovery of Zeus Panda"
-        },
-        {
-          "v": "Zeus Citadel",
-          "q": "considered to be as sophisticated as Panda and Zeus Citadel"
-        },
-        {
-          "v": "Zeus Trojan",
-          "q": "based on the leaked source code of the Zeus Trojan"
+          "q": "the Brazilian iteration of Zeus Sphinx, which is dubbed Sphinx v2, most likely comes from the same developer"
         },
         {
           "v": "Trojan-Spy.Win32.Zbot",
@@ -98,35 +86,35 @@
       ],
       "techniques": [
         {
-          "v": "man-in-the-middle webinjections",
-          "q": "enabled by real-time man-in-the-middle (MitM) webinjections"
+          "v": "man-in-the-middle (MitM) webinjections",
+          "q": "enabled by real-time man-in-the-middle (MitM) webinjections."
         },
         {
           "v": "social engineering injections",
-          "q": "Aside from social engineering injections that ask for payment card PIN codes and PII"
+          "q": "Aside from social engineering injections that ask for payment card PIN codes and PII,"
         },
         {
-          "v": "digital and physical social engineering",
-          "q": "mixing digital and physical social engineering to scam victims"
+          "v": "downloading a malware app to their mobile device",
+          "q": "tricked victims into downloading a malware app to their mobile device to steal transaction authentication codes sent from the bank via"
         },
         {
-          "v": "malware spam",
-          "q": "to lure users into opening malware spam and phishing"
+          "v": "reroutes the payment to the criminal",
+          "q": "which effectively reroutes the payment to the criminal."
+        },
+        {
+          "v": "mixing digital and physical social engineering",
+          "q": "mixing digital and physical social engineering to scam victims and empty their accounts"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "$3.75 billion",
-          "q": "attributing $3.75 billion in fraud losses to just one cybercrime faction"
+          "q": "one estimate attributing $3.75 billion in fraud losses to just one cybercrime faction that targeted Brazilians from 2012 to 2014."
         },
         {
           "v": "three of the top Brazilian banks",
-          "q": "three of the top Brazilian banks and one bank in Colombia"
-        },
-        {
-          "v": "two weeks",
-          "q": "Within two weeks of the discovery of Zeus Panda"
+          "q": "now targets the online banking and Boleto payment services of three of the top Brazilian banks and one bank in Colombia,"
         }
       ]
     },
@@ -135,21 +123,19 @@
       "name": "Zeus Sphinx"
     },
     "hedges": [
-      "According to X-Force researchers, the Brazilian iteration of Zeus Sphinx, which is dubbed Sphinx v2, most likely comes from the same developer",
-      "The timing of Sphinx's migration to Brazil hardly appears to be a coincidence",
-      "This migration may mark the beginning of a trend that will add to Brazil's existing cybercrime threats",
-      "Zeus Sphinx appears to be an active and evolving project, commercialized through Dark Web forums",
-      "We may see more variations of this malware in the coming months and an expanding list of targets in Brazil",
-      "One estimate attributing $3.75 billion in fraud losses to just one cybercrime faction",
-      "Sphinx is a modular banking Trojan and is considered to be as sophisticated as Panda and Zeus Citadel"
+      "most likely comes from the same developer and is customized to target local banks",
+      "hardly appears to be a coincidence",
+      "may mark the beginning of a trend",
+      "appears to be an active and evolving project",
+      "we may see more variations of this malware in the coming months"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:06Z",
-      "ok": false,
-      "note": "summary: It says the report 'links Sphinx v2 to the same developer as the original Sphinx' and drops the hedge. The text says only that Sphinx v2 'most likely c",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:06Z",
+        "ok": false,
+        "note": "summary: It says the report 'links Sphinx v2 to the same developer as the original Sphinx' and drops the hedge. The text says only that Sphinx v2 'most likely c",
+        "by": "auditor"
+      }
+    ]
   }
 }

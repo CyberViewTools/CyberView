@@ -1,11 +1,11 @@
 {
   "7a77e72ec3fb27917d72165d36949f0f24713dff": {
     "sha1": "7a77e72ec3fb27917d72165d36949f0f24713dff",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:09:30Z",
+    "read_at": "2026-11-26T22:33:13Z",
     "model": "haiku",
-    "summary": "CrowdStrike's technical analysis of WhisperGate, malware reported in January 2022 against Ukrainian targets. The malicious bootloader overwrites the master boot record of infected hosts, shows a ransom note, and corrupts disks. It has no decryption or recovery mechanism, and the report assesses it, with moderate confidence, as aimed at destroying data rather than genuine ransomware. It accompanies a file wiper and a Discord-based downloader. The report notes similarities to NotPetya but could not identify any technical overlap with VOODOO BEAR.",
+    "summary": "CrowdStrike's technical analysis of the WhisperGate malicious bootloader, reported in January 2022 as deployed against Ukrainian targets alongside a Discord-based downloader and a file wiper. The bootloader overwrites the master boot record, displays a fake ransom note and overwrites disk sectors, with no decryption or recovery mechanism. The report assesses with moderate confidence that the activity aims to destroy data, and finds no technical overlap with VOODOO BEAR so far.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
@@ -24,71 +24,59 @@
       "countries": [
         {
           "v": "Ukrainian",
-          "q": "multiple websites belonging to the Ukrainian government were defaced"
+          "q": "a set of malware dubbed WhisperGate was reported to have been deployed against Ukrainian"
         }
       ],
       "dates": [
         {
           "v": "Jan. 15, 2022",
           "q": "On Jan. 15, 2022, a set of malware dubbed WhisperGate was reported to have been deployed against Ukrainian",
-          "what": "WhisperGate was reported deployed against Ukrainian targets"
+          "what": "WhisperGate reported deployed against Ukrainian targets"
         },
         {
-          "v": "2022-01-10",
+          "v": "2022-01-10 10:37:18 UTC",
           "q": "contains a build timestamp of 2022-01-10 10:37:18 UTC",
-          "what": "Build timestamp of the installer component"
+          "what": "build timestamp of the bootloader installer"
         },
         {
           "v": "2022-01-19",
           "q": "Published: 2022-01-19",
-          "what": "The CrowdStrike report was published"
+          "what": "CrowdStrike report published"
         }
       ],
       "tools": [
         {
-          "v": "bootloader malware",
-          "q": "The WhisperGate bootloader malware complements its file-wiper counterpart"
+          "v": "malicious bootloader",
+          "q": "a malicious bootloader that corrupts detected local disks"
         },
         {
-          "v": "file-wiper",
-          "q": "The WhisperGate bootloader malware complements its file-wiper counterpart"
+          "v": "file wiper",
+          "q": "a Discord-based downloader and a file wiper."
         },
         {
-          "v": "Discord-based downloader",
-          "q": "a Discord-based downloader and a file wiper"
+          "v": "MinGW",
+          "q": "It was built using MinGW, similar to the file-wiper"
         }
       ],
       "techniques": [
         {
-          "v": "overwrites the master boot record",
-          "q": "This component overwrites the master boot record (MBR) of an infected host"
+          "v": "master boot record overwrite",
+          "q": "This component overwrites the master boot record (MBR) of an infected host with a malicious 16-bit"
         },
         {
-          "v": "displays a ransom note",
-          "q": "that displays a ransom note when the host boots"
-        },
-        {
-          "v": "destructive operations",
+          "v": "destructive disk operations",
           "q": "performs destructive operations on the infected host’s hard drives"
         },
         {
-          "v": "overwrites sectors",
-          "q": "At periodic offsets, the bootloader overwrites sectors of an infected host’s entire hard drive"
-        },
-        {
-          "v": "does not initiate a reboot",
-          "q": "The bootloader installer does not initiate a reboot of the infected system"
-        },
-        {
-          "v": "masquerade as genuine modern ransomware",
-          "q": "attempt to masquerade as genuine modern ransomware operations"
+          "v": "fake ransom note shown at boot",
+          "q": "that displays a ransom note when the host boots"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "three individual components",
-          "q": "The incident is widely reported to contain three individual components deployed by the same adversary"
+          "v": "three",
+          "q": "to contain three individual components deployed by the same adversary"
         }
       ]
     },
@@ -97,19 +85,19 @@
       "name": "WhisperGate"
     },
     "hedges": [
-      "Attribution of the three components to one adversary is described as widely reported, not confirmed by the report.",
-      "The assessment that the activity aims to destroy data is made with moderate confidence as analysis continues.",
-      "The report says the activity very likely aims to destroy data; this is an assessment, not a certainty.",
-      "No technical overlap with VOODOO BEAR could currently be identified; the NotPetya comparison is only a reminiscence.",
-      "The lack of a forced reboot suggests other steps or a user-initiated reboot; this is a suggestion, not a finding."
+      "The incident is widely reported to contain three individual components deployed by the same adversary.",
+      "no technical overlap could currently be identified with VOODOO BEAR operations.",
+      "These inconsistencies very likely indicate that WhisperGate activity aims to destroy data on the impacted assets.",
+      "This assessment is made with moderate confidence as technical analysis of the WhisperGate activity continues.",
+      "The lack of forced reboot suggests the threat actor took other steps to initiate it"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:25:36Z",
-      "ok": false,
-      "note": "sectors[0]: The text says only that the Ukrainian government website defacements happened at about the same time as the WhisperGate incident. It does not say go",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:25:36Z",
+        "ok": false,
+        "note": "sectors[0]: The text says only that the Ukrainian government website defacements happened at about the same time as the WhisperGate incident. It does not say go",
+        "by": "auditor"
+      }
+    ]
   }
 }

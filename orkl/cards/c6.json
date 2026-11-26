@@ -1,26 +1,21 @@
 {
   "c6036132d78900ce85a809e25e86317ce3a904d2": {
     "sha1": "c6036132d78900ce85a809e25e86317ce3a904d2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:18:11Z",
+    "read_at": "2026-11-26T22:35:31Z",
     "model": "haiku",
-    "summary": "KnowBe4's knowledgebase entry describes Pony Stealer, a password-stealing malware that can unlock passwords for over 110 applications and can turn infected PCs into a botnet. The entry says it is tied closely to the Reveton worm and was spread from late 2014 by phishing emails that impersonated the shipping company Maersk Line, using a PDF lure and phone numbers with Vietnamese area codes. Maersk warned customers about the fraud in January 2014.",
+    "summary": "KnowBe4 knowledgebase entry on Pony Stealer, a password-stealing malware that the report says can unlock passwords for over 110 applications and turn infected PCs into botnet nodes. It is described as closely tied to the Reveton worm. A late-2014 e-mail campaign impersonated shipping company Maersk Line with a fake overdue invoice, and the report says Maersk warned customers about this fraud in January 2014.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "Vietnam",
-          "q": "both of these phone numbers have a Vietnamese area code."
-        }
-      ],
+      "countries": [],
       "dates": [
         {
           "v": "late 2014",
           "q": "mail campaign that was started in late 2014.",
-          "what": "E-mail campaign spreading Pony Stealer was started"
+          "what": "Start of the e-mail campaign spreading the malware"
         },
         {
           "v": "January 2014",
@@ -30,28 +25,32 @@
       ],
       "tools": [
         {
+          "v": "Pony Stealer",
+          "q": "Pony Stealer is a password stealer that can decrypt or unlock passwords for over 110 different applications"
+        },
+        {
           "v": "Reveton worm",
-          "q": "Pony Stealer, which is tied closely to Reveton worm, is also well-known for spreading malware"
+          "q": "Pony Stealer, which is tied closely to Reveton worm,"
         }
       ],
       "techniques": [
         {
-          "v": "password theft from saved application credentials",
+          "v": "Credential theft from applications",
           "q": "Pony Stealer is a password stealer that can decrypt or unlock passwords for over 110 different applications"
         },
         {
-          "v": "turns infected PC into a botnet",
-          "q": "once it infects a PC it will turn the device into a botnet, allowing it to use the PCs it infects to infect other PCs."
+          "v": "Botnet formation and onward spread to other PCs",
+          "q": "it will turn the device into a botnet, allowing it to use the PCs it infects to infect other PCs."
         },
         {
-          "v": "phishing email with PDF download link impersonating a shipping company",
-          "q": "The victims are then provided with a link to a PDF download so they can download the overdue"
+          "v": "Phishing e-mails impersonating a shipping company",
+          "q": "The e-mail is supposedly sent from the shipping company Maersk"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "over 110 different applications",
+          "v": "110",
           "q": "Pony Stealer is a password stealer that can decrypt or unlock passwords for over 110 different applications"
         }
       ]
@@ -63,13 +62,13 @@
     "hedges": [
       "The e-mail is supposedly sent from the shipping company Maersk Line."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:23Z",
-      "ok": false,
-      "note": "summary: The summary says Maersk warned customers in January 2014, which matches the text. But the text says the campaign started in late 2014, so a January 201",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:23Z",
+        "ok": false,
+        "note": "summary: The summary says Maersk warned customers in January 2014, which matches the text. But the text says the campaign started in late 2014, so a January 201",
+        "by": "auditor"
+      }
+    ]
   }
 }

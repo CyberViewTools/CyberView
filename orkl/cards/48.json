@@ -1,11 +1,11 @@
 {
   "48eae6652508275bf04c0e275388f1d97aea2bd9": {
     "sha1": "48eae6652508275bf04c0e275388f1d97aea2bd9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:06:13Z",
+    "read_at": "2026-11-26T22:32:42Z",
     "model": "haiku",
-    "summary": "A 2014 blog post by LogRhythm describes how PowerShell and OSX one-liners can show a fake login prompt to capture plain-text passwords, presented as a proof of concept. It names tools such as PowerShell, PowerSploit, meterpreter and SSH, and closes with defensive advice: restrict SSH and PowerShell Remoting, monitor logs, use filtering proxies with SSL inspection, and segment networks. No threat actors, CVEs or figures are named.",
+    "summary": "A 2014 LogRhythm blog post presents a proof of concept that shows how a fake Windows error alert with a login prompt can capture a user's plain-text password once an attacker has administrative rights on a host. The author notes that a similar macOS prompt can be run over SSH. The post treats the technique as simple and says adversaries have many avenues. Defensive advice: disable or restrict SSH and PowerShell Remoting on desktops, rely on log data, and use network segmentation and a filtering web proxy with SSL inspection. The report names no threat actor, sector, country, CVE or figure.",
     "kind": "overview",
     "facts": {
       "actors": [],
@@ -14,19 +14,14 @@
       "dates": [
         {
           "v": "2014-10-03",
-          "q": "Published: 2014-10-03",
+          "q": "Published: 2014-10-03 · Archived: 2026-11-26 02:18:45 UTC",
           "what": "blog post published"
-        },
-        {
-          "v": "2026-11-26",
-          "q": "Archived: 2026-11-26 02:18:45 UTC",
-          "what": "archived copy captured"
         }
       ],
       "tools": [
         {
           "v": "PowerShell",
-          "q": "together a short PowerShell script."
+          "q": "I put together a short PowerShell script."
         },
         {
           "v": "PowerSploit",
@@ -34,41 +29,25 @@
         },
         {
           "v": "meterpreter",
-          "q": "you can use WMI, PSRemoting, PSExec, meterpreter"
+          "q": "you can use WMI, PSRemoting, PSExec, meterpreter, or my favorite avenue is hosting the"
         },
         {
           "v": "PSExec",
-          "q": "you can use WMI, PSRemoting, PSExec, meterpreter"
-        },
-        {
-          "v": "WMI",
-          "q": "you can use WMI, PSRemoting, PSExec, meterpreter"
-        },
-        {
-          "v": "PowerShell Remoting",
-          "q": "services such as SSH and PowerShell Remoting should be disabled"
-        },
-        {
-          "v": "SSH",
-          "q": "services such as SSH and PowerShell Remoting should be disabled"
+          "q": "you can use WMI, PSRemoting, PSExec, meterpreter, or my favorite avenue is hosting the"
         }
       ],
       "techniques": [
-        {
-          "v": "steal plain text credentials",
-          "q": "to steal plain text credentials using"
-        },
         {
           "v": "trusted dialog box",
           "q": "a ‘trusted dialog box.’"
         },
         {
           "v": "execute on remote hosts via SSH",
-          "q": "execute on remote hosts via SSH"
+          "q": "This is very easy to execute on remote hosts via SSH and makes my old pranks using the"
         },
         {
-          "v": "built-in Windows functionality",
-          "q": "built-in Windows functionality"
+          "v": "login prompt",
+          "q": "followed by a login prompt."
         }
       ],
       "cves": [],
@@ -76,18 +55,16 @@
     },
     "subject": null,
     "hedges": [
-      "Presented as a simple proof of concept demonstrating one of many ways to steal plain-text credentials.",
-      "The technique can be hit-or-miss depending on the target process and environmental restrictions.",
-      "The author describes their PowerShell script as very poorly coded and asks for recommendations.",
-      "The author says many other ways exist, including methods needing no user interaction, without detailing them."
+      "This is just a simple proof of concept that demonstrates one of the many ways to steal plain text credentials using a 'trusted dialog box.'",
+      "Please note, this can be hit-or-miss depending on the process you target."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:25:05Z",
-      "ok": false,
-      "note": "hedges[1]: The text says only that migrating to another user's process 'can be hit-or-miss depending on the process you target'. 'Environmental restrictions' ap",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:25:05Z",
+        "ok": false,
+        "note": "hedges[1]: The text says only that migrating to another user's process 'can be hit-or-miss depending on the process you target'. 'Environmental restrictions' ap",
+        "by": "auditor"
+      }
+    ]
   }
 }

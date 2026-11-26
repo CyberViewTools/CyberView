@@ -1,18 +1,18 @@
 {
   "efe7d2f7351d22d406e3117d510c62b8f556ed34": {
     "sha1": "efe7d2f7351d22d406e3117d510c62b8f556ed34",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:18:05Z",
+    "read_at": "2026-11-26T22:35:25Z",
     "model": "haiku",
-    "summary": "A first-person write-up by an individual author describing how they opened a password-protected archive that holds leaked source code of the Conti ransomware group. The method is a known-plaintext attack using a public tool. The text lists three archive file names and mentions a VirusTotal check. The article was published in March 2022.",
+    "summary": "A Medium blog post by Wade Hickey, published 2022-03-05, describing how the author recovered the password of a leaked Conti ransomware source code archive. One leaked archive was posted without a password, and known plaintext from it was used with the bkcrack tool to crack the password-protected one. The post names the Conti ransomware group and lists three archive file names, but gives no sector, country, or attribution detail.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "CONTI Ransomware Group",
-          "q": "How I Cracked CONTI Ransomware Group’s Leaked Source",
-          "by": "the report itself (author Wade Hickey)"
+          "q": "How I Cracked CONTI Ransomware Group’s Leaked Source Code ZIP File",
+          "by": "the report"
         }
       ],
       "sectors": [],
@@ -21,12 +21,12 @@
         {
           "v": "2022-03-05",
           "q": "Published: 2022-03-05 · Archived: 2026-11-25 02:15:50 UTC",
-          "what": "write-up published"
+          "what": "The write-up was published"
         },
         {
-          "v": "2026-11-25",
+          "v": "2026-11-25 02:15:50 UTC",
           "q": "Published: 2022-03-05 · Archived: 2026-11-25 02:15:50 UTC",
-          "what": "archived copy captured"
+          "what": "The page was archived"
         }
       ],
       "tools": [
@@ -37,7 +37,7 @@
       ],
       "techniques": [
         {
-          "v": "known-plaintext cracking of a password-protected zip archive",
+          "v": "known plaintext",
           "q": "3. Grab some known plaintext from the second, and you can crack the first with bkcrack."
         }
       ],
@@ -49,13 +49,13 @@
       "name": "Conti ransomware"
     },
     "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:55Z",
-      "ok": false,
-      "note": "summary: It calls bkcrack a \"public tool\", but the text never says that; it only says you can crack the archive with bkcrack. The text also doesn't say the file",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:55Z",
+        "ok": false,
+        "note": "summary: It calls bkcrack a \"public tool\", but the text never says that; it only says you can crack the archive with bkcrack. The text also doesn't say the file",
+        "by": "auditor"
+      }
+    ]
   }
 }

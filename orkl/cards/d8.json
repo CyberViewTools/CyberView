@@ -1,18 +1,18 @@
 {
   "d8a5f6dbe4f3365c6ee5c5d8c9b4b001f7c26e0e": {
     "sha1": "d8a5f6dbe4f3365c6ee5c5d8c9b4b001f7c26e0e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:13:59Z",
+    "read_at": "2026-11-26T22:33:56Z",
     "model": "haiku",
-    "summary": "Bitdefender Labs report, published 2018-02-01, on Operation PZChao, a custom-built malware campaign the team had monitored for several months, mainly in Asia. The report links the activity to the Iron Tiger APT and says Gh0st RAT variants were among the most-downloaded files. Its command-and-control setup uses a network of malicious subdomains for download, upload, remote-access actions and malware DLL delivery. The report states that the new samples connect to new attack infrastructure and frames the activity as a possible return of Iron Tiger.",
+    "summary": "Bitdefender blog post, published 2018-02-01, on Operation PZChao, a custom malware campaign that had been monitored for several months and was active in Asia. Among the most-downloaded files the authors found Gh0st RAT variants used in the Iron Tiger APT operation, and they say the new samples connect to a new attack infrastructure. The text describes a network of subdomains, each serving a task such as download, upload, RAT actions and DLL delivery, and payloads that can run binaries, collect data and run commands. The title frames the link to Iron Tiger as a possible return. The full…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Iron Tiger APT",
-          "q": "Operation PZChao: a possible return of the Iron Tiger APT",
-          "by": "the report (Bitdefender Labs)"
+          "q": "Among the most-downloaded malicious files, we found variants of Gh0st RAT used in Iron Tiger APT operation",
+          "by": "Bitdefender (report author)"
         }
       ],
       "sectors": [],
@@ -20,24 +20,24 @@
       "dates": [
         {
           "v": "2018-02-01",
-          "q": "Published: 2018-02-01",
-          "what": "Report published"
+          "q": "Published: 2018-02-01 · Archived: 2026-11-26 02:09:35 UTC",
+          "what": "Report published by Bitdefender"
         }
       ],
       "tools": [
         {
           "v": "Gh0st RAT",
-          "q": "variants of Gh0st RAT used in Iron Tiger APT operation"
+          "q": "Among the most-downloaded malicious files, we found variants of Gh0st RAT used in Iron Tiger APT operation"
         }
       ],
       "techniques": [
         {
-          "v": "malicious subdomain network",
-          "q": "features a network of malicious subdomains, each one used for a specific task"
+          "v": "multiple modules",
+          "q": "multiple modules with highly specialized uses to achieve a target’s compromise."
         },
         {
-          "v": "command and control servers",
-          "q": "we managed to retrieve the malware payloads hosted on one of the command and control"
+          "v": "remotely execute commands",
+          "q": "collect private information and remotely execute commands on the system."
         }
       ],
       "cves": [],
@@ -48,16 +48,16 @@
       "name": "Operation PZChao"
     },
     "hedges": [
-      "The title frames the activity as 'a possible return' of the Iron Tiger APT, not a confirmed one.",
-      "Background on Iron Tiger is pointed to a TrendMicro research paper rather than given in this report."
+      "The title frames the activity as 'a possible return of the Iron Tiger APT', so the link to that actor is presented as possible, not confirmed.",
+      "The text is a blog summary; the full attack chain and infrastructure analysis are only in a whitepaper behind a download link."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:39Z",
-      "ok": false,
-      "note": "summary: The text says the malware 'wrought havoc in Asia', not 'mainly in Asia', so 'mainly' is added. 'The report links the activity to the Iron Tiger APT' is",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:39Z",
+        "ok": false,
+        "note": "summary: The text says the malware 'wrought havoc in Asia', not 'mainly in Asia', so 'mainly' is added. 'The report links the activity to the Iron Tiger APT' is",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,12 +1,12 @@
 {
   "cc8adc7615cd66cf3589c50b1e32feccbee3c778": {
     "sha1": "cc8adc7615cd66cf3589c50b1e32feccbee3c778",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:08:48Z",
+    "read_at": "2026-11-26T22:33:11Z",
     "model": "haiku",
-    "summary": "Microsoft Windows Defender Research guidance, published 2017-11-06, on Qakbot and Emotet, two information-stealing malware families that aim to steal online banking credentials and can spread within corporate networks. It lists mitigation steps: cutting off infected machines, hunting for new services and scheduled tasks, removing the malware, monitoring for reinfection, and using Windows 10 protections. It also gives indicators of compromise for recent variants, including file hashes, file paths, registry changes and command-and-control server addresses.",
-    "kind": "overview",
+    "summary": "Microsoft Windows Defender Research report, published 2017-11-06, on the information-stealing malware families Qakbot and Emotet. Both aim to steal online banking credentials and have increasingly hit enterprises and small businesses. The report describes their common behaviour, recommends steps to contain, clean and prevent infection in corporate networks, and lists indicators of compromise for recent variants.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
@@ -17,20 +17,20 @@
       ],
       "sectors": [
         {
-          "v": "enterprises, small and medium businesses, and other organizations",
-          "q": "more and more enterprises, small and medium businesses, and other organizations have been affected by indiscriminate"
+          "v": "enterprises",
+          "q": "enterprises, small and medium businesses, and other organizations have been affected by indiscriminate"
         },
         {
-          "v": "online banking users",
-          "q": "Even though these malware families are typically known to target individual online banking users, more and more"
+          "v": "online banking",
+          "q": "typically known to target individual online banking users"
         }
       ],
       "countries": [],
       "dates": [
         {
           "v": "2017-11-06",
-          "q": "Published: 2017-11-06 · Archived: 2026-11-26 02:04:48 UTC",
-          "what": "The report was published"
+          "q": "Published: 2017-11-06",
+          "what": "Report published by Windows Defender Research"
         }
       ],
       "tools": [
@@ -44,7 +44,7 @@
         },
         {
           "v": "DDEDownloader",
-          "q": "install Qakbot and Emotet, or the more recent DDEDownloader that install other malware) and scripts."
+          "q": "or the more recent DDEDownloader that install other malware"
         },
         {
           "v": "Sysinternals Autoruns",
@@ -53,32 +53,36 @@
       ],
       "techniques": [
         {
+          "v": "stealing online banking credentials",
+          "q": "ultimate goal of stealing online banking credentials that malware operators can then use"
+        },
+        {
           "v": "keylogging",
           "q": "They can also steal other sensitive information using techniques like keylogging."
         },
         {
-          "v": "online banking credentials",
-          "q": "ultimate goal of stealing online banking credentials that malware operators can then use to steal money from"
-        },
-        {
-          "v": "lateral movement",
+          "v": "lateral movement spreading",
           "q": "They can also be spread by other malware during the lateral movement stage of a"
         },
         {
-          "v": "trojan droppers",
-          "q": "Block malicious emails carrying trojan droppers that install Qakbot and Emotet using Microsoft Exchange Online"
+          "v": "malicious emails carrying trojan droppers",
+          "q": "Block malicious emails carrying trojan droppers that install Qakbot and Emotet"
         },
         {
-          "v": "macro code",
-          "q": "malicious documents (such as those that use macro code to"
+          "v": "macro-enabled documents",
+          "q": "such as those that use macro code to install Qakbot and Emotet"
         },
         {
-          "v": "service creation and scheduled tasks",
-          "q": "2. Look for new service creations and scheduled tasks"
+          "v": "new service creations",
+          "q": "Look for new service creations by tracking event ID 7045 in the system log."
         }
       ],
       "cves": [],
       "figures": [
+        {
+          "v": "event ID 7045",
+          "q": "Look for new service creations by tracking event ID 7045 in the system log."
+        },
         {
           "v": "upward trend",
           "q": "Figure 1. Qakbot and Emotet monthly machine encounters show an upward trend."
@@ -91,17 +95,16 @@
     },
     "hedges": [
       "Some Qakbot and Emotet variants might not exhibit all of the behaviors above and might be capable of unique routines.",
-      "This data doesn't include Qakbot and Emotet variants blocked by automation and cloud rules.",
-      "Based on our experience helping organizations get rid of Qakbot and Emotet, the following steps mitigate infection and ultimately remove the said malware from corporate networks."
+      "This data doesn't include Qakbot and Emotet variants blocked by automation and cloud rules."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:23Z",
-      "ok": false,
-      "note": "tools[3]: Sysinternals Autoruns is a defender tool the report recommends for finding undetected variants. It is not a tool used by Qakbot or Emotet, so listing ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:23Z",
+        "ok": false,
+        "note": "tools[3]: Sysinternals Autoruns is a defender tool the report recommends for finding undetected variants. It is not a tool used by Qakbot or Emotet, so listing ",
+        "by": "auditor"
+      }
+    ]
   },
   "ccf2539410685e38cc3fe0bddfca9722a1964d00": {
     "sha1": "ccf2539410685e38cc3fe0bddfca9722a1964d00",

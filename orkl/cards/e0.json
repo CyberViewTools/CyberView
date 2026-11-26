@@ -1,11 +1,11 @@
 {
   "e0d7ea803158c275a7346347fb1e02b3f18be34e": {
     "sha1": "e0d7ea803158c275a7346347fb1e02b3f18be34e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:11:54Z",
+    "read_at": "2026-11-26T22:34:01Z",
     "model": "haiku",
-    "summary": "Trend Micro TrendLabs blog post, published 2013-02-27, describing BKDR_RARSTONE.A, a remote access trojan first obtained through a spear phishing email carrying a crafted DOC file. It decrypts itself in memory, loads a downloaded DLL into a hidden Internet Explorer process without dropping it to disk, and uses SSL to blend with normal traffic. Its routines include enumerating, downloading, executing and uploading files, and reading Uninstall Registry Key entries to find and silently remove installed applications such as anti-malware. The post compares it to PlugX, which it describes as used…",
+    "summary": "A Trend Micro TrendLabs blog post, published 2013-02-27, describes the remote access trojan BKDR_RARSTONE.A. It was found in a spear phishing email carrying a .DOC file. Like PlugX, it loads a backdoor directly into memory without dropping a file, and it injects code into a hidden Internet Explorer process. It communicates over SSL and can enumerate, transfer and execute files. It can also silently uninstall applications such as anti-malware software. Trend Micro says its products detect and block it and that it will monitor the trojan and investigate any campaigns behind it.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -15,12 +15,12 @@
         {
           "v": "2013-02-27",
           "q": "Published: 2013-02-27 · Archived: 2026-11-26 02:10:12 UTC",
-          "what": "Trend Micro TrendLabs blog post published"
+          "what": "Trend Micro blog post on BKDR_RARSTONE published"
         },
         {
           "v": "2012",
           "q": "In our 2012 Security Roundup, we noted that data breaches and other targeted attacks initiated last year used",
-          "what": "Trend Micro's 2012 Security Roundup noted targeted attacks using tools including PlugX"
+          "what": "Trend Micro 2012 Security Roundup noted attacks using tools such as PlugX"
         }
       ],
       "tools": [
@@ -31,36 +31,36 @@
         {
           "v": "PlugX",
           "q": "Last year, we reported about PlugX a breed of Remote Access Trojan (RAT) used in certain high-profile APT"
+        },
+        {
+          "v": "TROJ_ARTIEF.NTZ",
+          "q": "TROJ_ARTIEF.NTZ). This Trojan drops and executes BKDR_RARSTONE.A, which in turn drops the following"
         }
       ],
       "techniques": [
         {
-          "v": "spear phishing email",
+          "v": "spear phishing",
           "q": "We obtained the sample through a spear phishing email that contains a specially-crafted .DOC file (detected as"
         },
         {
-          "v": "decrypts itself in memory",
-          "q": "As with PlugX, the injected code decrypts itself in memory."
+          "v": "directly loaded in memory",
+          "q": "This “downloaded” file is actually not dropped onto the system, but instead directly loaded in memory, making file-based detection"
         },
         {
-          "v": "loads it in the memory space",
-          "q": "C&C server and again loads it in the memory space of the hidden Internet Explorer process. This “downloaded”"
+          "v": "hidden Internet Explorer process",
+          "q": "opens a hidden Internet Explorer process, in which it injects the codes contained in profile.dat"
         },
         {
-          "v": "Internet Explorer process",
-          "q": "Internet Explorer process, in which it injects the codes contained in profile.dat."
+          "v": "SSL",
+          "q": "Another interesting feature of this backdoor is the communication method it uses, specifically SSL."
         },
         {
           "v": "enumerating files and directories",
           "q": "include enumerating files and directories, downloading, executing, and uploading files, and updating itself and its"
         },
         {
-          "v": "Uninstall Registry Key",
-          "q": "Worth noting among its backdoor routine is its ability to get installer properties from Uninstall Registry Key"
-        },
-        {
-          "v": "SSL",
-          "q": "Another interesting feature of this backdoor is the communication method it uses, specifically SSL. This use of"
+          "v": "silently uninstalling applications",
+          "q": "This can be handy in silently uninstalling applications, which may interfere"
         }
       ],
       "cves": [],
@@ -71,15 +71,15 @@
       "name": "BKDR_RARSTONE"
     },
     "hedges": [
-      "Trend Micro will continue to monitor BKDR_RARSTONE's development and investigate if there are any campaigns behind it."
+      "Trend Micro will continue to monitor BKDR_RARSTONE’s development and investigate if there are any campaigns behind it."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:39Z",
-      "ok": false,
-      "note": "summary: The text says the Uninstall Registry Key data 'can be handy in silently uninstalling applications' that may interfere, such as anti-malware. The summar",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:39Z",
+        "ok": false,
+        "note": "summary: The text says the Uninstall Registry Key data 'can be handy in silently uninstalling applications' that may interfere, such as anti-malware. The summar",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,28 +1,28 @@
 {
   "c79dfffcac4a5e3aa9c8621bc8d9ee2ee8d0dacc": {
     "sha1": "c79dfffcac4a5e3aa9c8621bc8d9ee2ee8d0dacc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:11:19Z",
+    "read_at": "2026-11-26T22:33:14Z",
     "model": "haiku",
-    "summary": "A CrowdStrike blog describes HURRICANE PANDA, a China-based adversary tracked since 2013 that repeatedly tried to regain access to telecommunications and technology companies in 2014. Its methods included a China Chopper webshell, Mimikatz, and a Windows kernel zero-day (CVE-2014-4113). CrowdStrike Falcon detected and stopped the attempts, and the attackers stopped after a final attempt in late January. The report frames this as a deterrence strategy and is a vendor blog that promotes its product.",
+    "summary": "CrowdStrike's blog describes HURRICANE PANDA, a China-based actor it has investigated since 2013. The actor targeted telecommunications and technology companies using China Chopper webshells, credential theft tools and a Windows kernel zero-day (CVE-2014-4113). CrowdStrike Falcon detection and enterprise-wide remediation were reported to stop the intrusions, and the report describes the actor abandoning its attempts after the actor found CrowdStrike running on a victim system.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "HURRICANE PANDA",
-          "q": "HURRICANE PANDA. We have investigated their intrusions since 2013 and have been battling them nonstop",
-          "by": "CrowdStrike (the report's author)"
+          "q": "HURRICANE PANDA’s preferred initial vector of compromise and persistence is a China Chopper webshell",
+          "by": "CrowdStrike (report author Dmitri Alperovitch)"
         }
       ],
       "sectors": [
         {
           "v": "telecommunications",
-          "q": "over the last year at several large telecommunications and technology companies."
+          "q": "at several large telecommunications and technology companies."
         },
         {
           "v": "technology",
-          "q": "in a similar technology sector who"
+          "q": "another customer in a similar technology sector who"
         }
       ],
       "countries": [
@@ -33,29 +33,29 @@
       ],
       "dates": [
         {
+          "v": "2015-04-13",
+          "q": "Published: 2015-04-13",
+          "what": "The CrowdStrike blog post was published"
+        },
+        {
           "v": "2013",
-          "q": "HURRICANE PANDA. We have investigated their intrusions since 2013 and have been battling them nonstop",
+          "q": "We have investigated their intrusions since 2013 and have been battling them nonstop",
           "what": "CrowdStrike began investigating the actor's intrusions"
         },
         {
           "v": "late April 2014",
-          "q": "One of these companies identified a potential breach in late April 2014",
-          "what": "One company identified a potential breach"
+          "q": "One of these companies identified a potential breach in late April 2014 and brought in our CrowdStrike Services",
+          "what": "A client company identified a potential breach and brought in CrowdStrike for investigation"
         },
         {
           "v": "early June 2014",
-          "q": "Thus by early June 2014 the remediation process had been completed, enterprise-wide password reset",
-          "what": "Remediation completed and the adversary lost access to the victim network"
+          "q": "by early June 2014 the remediation process had been completed, enterprise-wide password reset",
+          "what": "Remediation was completed and the adversary lost access to the victim network"
         },
         {
           "v": "late January",
-          "q": "we saw a very interesting event in late January of this year",
-          "what": "The actor got a webshell on a server, checked whether CrowdStrike was loaded, and then left the system"
-        },
-        {
-          "v": "2015-04-13",
-          "q": "Published: 2015-04-13",
-          "what": "Report published"
+          "q": "we saw a very interesting event in late January of this year.",
+          "what": "The actor got a webshell on a server, checked whether CrowdStrike was loaded, then left the system"
         }
       ],
       "tools": [
@@ -69,17 +69,21 @@
         },
         {
           "v": "CrowdStrike Falcon",
-          "q": "In our client’s case, CrowdStrike Falcon immediately detected execution of the immediate use of the webshell"
+          "q": "CrowdStrike Falcon detecting adversary intrusion and 0-day use at a client site"
         }
       ],
       "techniques": [
         {
-          "v": "SQL injection or WebDAV vulnerability",
-          "q": "This script is typically uploaded to a web server via a SQL injection or WebDAV vulnerability"
+          "v": "webshell for initial access and persistence",
+          "q": "HURRICANE PANDA’s preferred initial vector of compromise and persistence is a China Chopper webshell"
         },
         {
-          "v": "webshell",
-          "q": "HURRICANE PANDA’s preferred initial vector of compromise and persistence is a China Chopper webshell"
+          "v": "SQL injection",
+          "q": "uploaded to a web server via a SQL injection or WebDAV vulnerability, which is often trivial to uncover"
+        },
+        {
+          "v": "WebDAV vulnerability",
+          "q": "uploaded to a web server via a SQL injection or WebDAV vulnerability, which is often trivial to uncover"
         },
         {
           "v": "credential theft",
@@ -87,21 +91,17 @@
         },
         {
           "v": "lateral movement",
-          "q": "the adversary was shut down before credential theft or lateral movement"
+          "q": "shut down before credential theft or lateral movement"
         },
         {
-          "v": "Windows Kernel 0-day vulnerability",
-          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113)"
-        },
-        {
-          "v": "repacked to avoid AV detection",
-          "q": "(repacked to avoid AV detection)"
+          "v": "Windows kernel zero-day exploitation",
+          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113). CrowdStrike discovered and reported this"
         }
       ],
       "cves": [
         {
           "v": "CVE-2014-4113",
-          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113)"
+          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113). CrowdStrike discovered and reported this"
         }
       ],
       "figures": [
@@ -111,15 +111,11 @@
         },
         {
           "v": "another month",
-          "q": "After another month of fruitless efforts"
+          "q": "After another month of fruitless efforts we saw a very interesting event in late January"
         },
         {
           "v": "70 byte",
           "q": "tiny and easily obfuscated 70 byte text file"
-        },
-        {
-          "v": "within hours",
-          "q": "within hours of the adversary lockout, the product detected the"
         }
       ]
     },
@@ -128,17 +124,17 @@
       "name": "HURRICANE PANDA"
     },
     "hedges": [
-      "The report says a few events do not yet make a trend.",
-      "The report says the approach may well be a promising path, so it presents this as tentative."
+      "While a few events don't make a trend yet, it is certainly exciting to see how attackers are now finding the need to react to a system that is detecting their activity",
+      "This may well be a very promising path forward to a new defensive security model"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:23Z",
-      "ok": false,
-      "note": "summary: The text says that in late January the actor got off that one system and ceased all further activity there after seeing CrowdStrike. It does not say th",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:23Z",
+        "ok": false,
+        "note": "summary: The text says that in late January the actor got off that one system and ceased all further activity there after seeing CrowdStrike. It does not say th",
+        "by": "auditor"
+      }
+    ]
   },
   "c74fa7ce49633c59300341d4eff91fc1618689de": {
     "sha1": "c74fa7ce49633c59300341d4eff91fc1618689de",

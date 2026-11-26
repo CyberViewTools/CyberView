@@ -1,22 +1,17 @@
 {
   "0f33cbad999b81f446858b93d6343deccd1d481a": {
     "sha1": "0f33cbad999b81f446858b93d6343deccd1d481a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:18:29Z",
+    "read_at": "2026-11-26T22:35:42Z",
     "model": "haiku",
-    "summary": "Yoroi Malware ZLab describes attackers' growing use of XLL files, Excel add-in binaries that Microsoft Excel loads in one click, as an emerging Office delivery method seen from mid-2021. The XLL dropper it analyses used Excel-DNA and process hollowing, and fetched AgentTesla, Formbook and Dridex payloads from Discord CDN. The report observed campaigns against manufacturing companies in Italy and frames the trend as a warning of possible new malicious email waves in 2022.",
+    "summary": "Yoroi Malware ZLab describes attackers delivering malware through XLL files, Excel add-in binaries that load in one click, starting in mid-2021. Samples in the report drop AgentTesla, Formbook and Dridex, with payloads fetched from Discord CDN and injected via process hollowing. The report describes campaigns against manufacturing companies in Italy and frames the trend as a warning for 2022.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
-          "v": "cybercriminal",
-          "q": "we observed cybercriminal campaigns leveraging XLL files against manufacturing companies",
-          "by": "Yoroi Malware ZLab (report authors)"
-        },
-        {
-          "v": "threat actors",
-          "q": "threat actors are starting to use the XLL",
+          "v": "cybercriminal campaigns",
+          "q": "we observed cybercriminal campaigns leveraging XLL files against manufacturing companies.",
           "by": "Yoroi Malware ZLab (report authors)"
         },
         {
@@ -28,11 +23,7 @@
       "sectors": [
         {
           "v": "manufacturing",
-          "q": "we observed cybercriminal campaigns leveraging XLL files against manufacturing companies"
-        },
-        {
-          "v": "private and public companies",
-          "q": "malware into private and public companies"
+          "q": "we observed cybercriminal campaigns leveraging XLL files against manufacturing companies."
         }
       ],
       "countries": [
@@ -43,45 +34,40 @@
       ],
       "dates": [
         {
-          "v": "2021-11-16",
-          "q": "Published: 2021-11-16",
-          "what": "Yoroi published the blog post"
+          "v": "1992",
+          "q": "a legacy technology present in Microsoft Office since 1992",
+          "what": "XLM Macro 4.0 scripts described as a legacy technology present in Office since this year"
         },
         {
           "v": "2017",
-          "q": "In 2017, two critical exploits were released to the public, and attackers extensively adopted it in widespread spam",
-          "what": "Two critical Office exploits were released publicly and widely used in spam"
-        },
-        {
-          "v": "1992",
-          "q": "legacy technology present in Microsoft Office since 1992 and compatible from Windows 3.1 to the newest versions.",
-          "what": "XLM macro scripts first appeared as a legacy Office technology"
+          "q": "In 2017, two critical exploits were released to the public",
+          "what": "two critical Office exploits released publicly and adopted by attackers"
         },
         {
           "v": "between 2018 and 2020",
           "q": "Then, between 2018 and 2020, we observed new spikes of VBA macro adoption in malicious documents.",
-          "what": "New spikes in VBA macro use in malicious Office documents"
+          "what": "new spikes in VBA macro use in malicious documents"
         },
         {
           "v": "beginning of 2020",
-          "q": "In the beginning of 2020, many attackers started to adopt",
-          "what": "Many attackers began exploiting XLM Macro 4.0 scripts"
+          "q": "In the beginning of 2020, many attackers started to adopt a new technique",
+          "what": "many attackers started adopting XLM Macro 4.0 scripts"
         },
         {
           "v": "middle of 2021",
-          "q": "Along the XLM and classic macros, in the middle of 2021 something is changing",
-          "what": "Threat actors started using XLL files"
+          "q": "in the middle of 2021 something is changing",
+          "what": "threat actors started using XLL files"
         },
         {
-          "v": "2022",
-          "q": "pointing us in the direction to forecast new potential explosion of diversified malicious email waves in 2022.",
-          "what": "Forecast year for possible new malicious email waves"
+          "v": "2021-11-16",
+          "q": "Published: 2021-11-16",
+          "what": "Yoroi report published"
         }
       ],
       "tools": [
         {
           "v": "Excel-DNA",
-          "q": "weaponized by using the open-source tool named Excel-DNA available on GitHub"
+          "q": "The sample has been weaponized by using the open-source tool named Excel-DNA available on GitHub"
         },
         {
           "v": "AgentTesla",
@@ -93,37 +79,29 @@
         },
         {
           "v": "Dridex",
-          "q": "a dll file able to load Dridex malware."
+          "q": "This dropper downloads a second payloand: a dll file able to load Dridex malware."
         }
       ],
       "techniques": [
         {
-          "v": "XLL files",
+          "v": "XLL file delivery",
           "q": "This emergent delivery technique leverages XLL files,"
         },
         {
-          "v": "XLM Macro 4.0",
+          "v": "VBA macro",
+          "q": "The VBA macro scripts are legit tool allowing users to automatize some elementary operations in complex documents."
+        },
+        {
+          "v": "XLM Macro 4.0 scripts",
           "q": "the exploitation of the XLM Macro 4.0 scripts"
         },
         {
-          "v": "VBA macro",
-          "q": "Before 2017, the most email-based attacks were based on VBA macro weaponized Office documents."
+          "v": "obfuscation",
+          "q": "the attackers improved in an intensive way the obfuscation of the payloads"
         },
         {
           "v": "Process Hollowing",
-          "q": "Classic Process Hollowing into aspnet_regbrowsers.exe"
-        },
-        {
-          "v": "injection self-defense",
-          "q": "it adopts the injection self-defense technique, inoculating"
-        },
-        {
-          "v": "XOR-like function",
-          "q": "Once decrypted with a XOR-like function,"
-        },
-        {
-          "v": "Discord CDN",
-          "q": "leverage Discord CDN to vehicolate other different payloads"
+          "q": "Injects (Process Hollowing) the first payload in aspnet_regbrowsers.exe"
         }
       ],
       "cves": [
@@ -138,34 +116,22 @@
       ],
       "figures": [
         {
-          "v": "one click",
-          "q": "binary libraries directly loaded by Microsoft Excel, just in one click"
-        },
-        {
-          "v": "two critical exploits",
-          "q": "In 2017, two critical exploits were released to the public"
-        },
-        {
           "v": "two other payloads",
-          "q": "the download and execution of two other payloads from the internet."
+          "q": "The goal of this payload is the download and execution of two other payloads from the internet."
         }
       ]
     },
-    "subject": {
-      "type": "malware",
-      "name": "XLL Dropper"
-    },
+    "subject": null,
     "hedges": [
-      "The report presents the XLL trend as a warning signal and a forecast of possible new malicious email waves in 2022, not as an observed fact.",
-      "The report says the Formbook shellcode routine was also reported by Fortinet; it does not restate that finding itself."
+      "The report calls the XLL trend a warning signal and says it points toward a potential new surge of malicious email waves in 2022."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:24:39Z",
-      "ok": false,
-      "note": "summary: It says the XLL dropper fetched AgentTesla, Formbook and Dridex from Discord CDN. The text ties only the AgentTesla and Formbook payloads to Discord CD",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:24:39Z",
+        "ok": false,
+        "note": "summary: It says the XLL dropper fetched AgentTesla, Formbook and Dridex from Discord CDN. The text ties only the AgentTesla and Formbook payloads to Discord CD",
+        "by": "auditor"
+      }
+    ]
   }
 }

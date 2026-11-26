@@ -1,40 +1,40 @@
 {
   "c277fd563613cda6767258838574386d16e830eb": {
     "sha1": "c277fd563613cda6767258838574386d16e830eb",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:06:52Z",
+    "read_at": "2026-11-26T22:32:46Z",
     "model": "haiku",
-    "summary": "Analysis by the Swiss government CERT (GovCERT) of Fobber, an eBanking trojan first described by Malwarebytes as a spinoff of Tinba. Its code stays encrypted until each function is called, then is re-encrypted. It is self-contained and resolves imports by hashing function names. The samples share one encryption key and seem to come from one campaign. As of publication, no Swiss financial institutions were known to be targeted. The report was published September 11, 2015 and updated November 26, 2015.",
+    "summary": "The Swiss government CERT (GovCERT) analysed Fobber, a new e-banking Trojan that appears to be a spinoff of Tinba, to check whether Swiss critical infrastructure was targeted. Highlights include function-level encryption that keeps code encrypted until it is called, position-independent code, and hash-based import resolution. The report says the samples it examined seem to share one campaign key. It knows of no Swiss financial institutions targeted so far.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [
         {
-          "v": "financial institutions",
-          "q": "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber."
+          "v": "critical infrastructure",
+          "q": "critical infrastructures are targeted by it"
         },
         {
-          "v": "critical infrastructure",
-          "q": "to find out whether Swiss critical infrastructures are targeted by it."
+          "v": "financial institutions",
+          "q": "we are not aware of any financial institutions in Switzerland being targeted by Fobber"
         }
       ],
       "countries": [
         {
           "v": "Switzerland",
-          "q": "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber."
+          "q": "we are not aware of any financial institutions in Switzerland being targeted by Fobber"
         }
       ],
       "dates": [
         {
           "v": "September 11, 2015",
           "q": "Published on September 11, 2015 08:00 UTC",
-          "what": "Report first published"
+          "what": "report first published"
         },
         {
           "v": "November 26, 2015",
           "q": "Last updated on November 26, 2015 09:07 UTC",
-          "what": "Report last updated"
+          "what": "report last updated"
         }
       ],
       "tools": [
@@ -44,100 +44,40 @@
         },
         {
           "v": "Tinba",
-          "q": "in the arena that seems to be a Tinba spinoff."
+          "q": "in the arena that seems to be a Tinba spinoff"
         }
       ],
       "techniques": [
         {
           "v": "in encrypted form until it's actually called",
-          "q": "keeps the content in encrypted form until it's actually called"
+          "q": "in encrypted form until it's actually called - with a granularity level of the function itself. It won't be decrypted"
+        },
+        {
+          "v": "re-encrypted using a new, random",
+          "q": "the code will be re-encrypted using a new, random"
         },
         {
           "v": "cyclic XOR",
           "q": "not much more than a cyclic XOR that preserves the original function length"
         },
         {
-          "v": "position independent",
-          "q": "position independent and additionally confuses disassemblers like IDA Pro quite effectively"
+          "v": "does not require import tables",
+          "q": "does not require import tables or any additional data segment"
         },
         {
-          "v": "calculating hash values over function names",
-          "q": "For imports, fobber scans through loaded modules, finds function by calculating hash values over function names."
+          "v": "hash values over function names",
+          "q": "finds function by calculating hash values over function names"
         },
         {
-          "v": "memory snapshots",
-          "q": "This makes most automated analysis method using memory snapshots ineffective and also ensures that the full"
+          "v": "mutex protection",
+          "q": "a per-function header that also supplies a mutex protection"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "70",
+          "v": "Around 70",
           "q": "Around 70 functions are protected by this mechanism that keeps the content"
-        },
-        {
-          "v": "09d3e3f36f1e3856bcbd0c7f9bfb39fb",
-          "q": "09d3e3f36f1e3856bcbd0c7f9bfb39fb"
-        },
-        {
-          "v": "1bf6c466a6ac06c41210a76cc0d4e253",
-          "q": "1bf6c466a6ac06c41210a76cc0d4e253"
-        },
-        {
-          "v": "2f8fab3d0710f1bb0f7198c543dd0f72",
-          "q": "2f8fab3d0710f1bb0f7198c543dd0f72"
-        },
-        {
-          "v": "45446231addbaf0ea542b64c462d7c2c",
-          "q": "45446231addbaf0ea542b64c462d7c2c"
-        },
-        {
-          "v": "4f68362896e34d8777a96dd8990a3609",
-          "q": "4f68362896e34d8777a96dd8990a3609"
-        },
-        {
-          "v": "6072a433ac0836eb91254541f3474405",
-          "q": "6072a433ac0836eb91254541f3474405"
-        },
-        {
-          "v": "64d89db0c17970510864bbdbc94b7fdd",
-          "q": "64d89db0c17970510864bbdbc94b7fdd"
-        },
-        {
-          "v": "691ce6807925fed03cb61f4add0e5ffd",
-          "q": "691ce6807925fed03cb61f4add0e5ffd"
-        },
-        {
-          "v": "7706b210bf33682065c35ed667acba17",
-          "q": "7706b210bf33682065c35ed667acba17"
-        },
-        {
-          "v": "7ffa59d686b719711a3e5025adb3128f",
-          "q": "7ffa59d686b719711a3e5025adb3128f"
-        },
-        {
-          "v": "9bc5cb7268012c9786e2e107b64a1adb",
-          "q": "9bc5cb7268012c9786e2e107b64a1adb"
-        },
-        {
-          "v": "a6471d1cc581d20eea3f580ad445d4c4",
-          "q": "a6471d1cc581d20eea3f580ad445d4c4"
-        },
-        {
-          "v": "ae970c5dab644373d53d51a3f97b1aa1",
-          "q": "ae970c5dab644373d53d51a3f97b1aa1"
-        },
-        {
-          "v": "e42944ea45489f31552c807dbe62e879",
-          "q": "e42944ea45489f31552c807dbe62e879"
-        },
-        {
-          "v": "f088a4e21decd52af53b8ba313ab2eec",
-          "q": "f088a4e21decd52af53b8ba313ab2eec"
-        },
-        {
-          "v": "f78245a07c00e4c7a30b7f6df31f6534",
-          "q": "f78245a07c00e4c7a30b7f6df31f6534"
         }
       ]
     },
@@ -146,17 +86,17 @@
       "name": "Fobber"
     },
     "hedges": [
-      "they all seem to be from the same campaign (we don't know if there even is more than one campaign)",
-      "So far, we are not aware of any financial institutions in Switzerland being targeted by Fobber.",
-      "we will continue to monitor this threat and will update our blog post if anything changes"
+      "The report says the MD5-listed samples all seem to be from the same campaign, and it does not know if there is more than one campaign.",
+      "Fobber is said to seem to be a Tinba spinoff.",
+      "So far the report is not aware of any financial institutions in Switzerland being targeted by Fobber; it will keep monitoring."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:15Z",
-      "ok": false,
-      "note": "summary: It says Malwarebytes described Fobber as a Tinba spinoff and drops the hedge. The text says only that Fobber 'seems to be a Tinba spinoff', and it does",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:15Z",
+        "ok": false,
+        "note": "summary: It says Malwarebytes described Fobber as a Tinba spinoff and drops the hedge. The text says only that Fobber 'seems to be a Tinba spinoff', and it does",
+        "by": "auditor"
+      }
+    ]
   }
 }

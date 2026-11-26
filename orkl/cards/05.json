@@ -1,32 +1,21 @@
 {
   "05123a3ef5d9c940aacb2a69e98ed5fce1791439": {
     "sha1": "05123a3ef5d9c940aacb2a69e98ed5fce1791439",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:06:06Z",
+    "read_at": "2026-11-26T22:32:36Z",
     "model": "haiku",
-    "summary": "A 2016 Cisco Umbrella blog post on domain generation algorithms (DGAs) used by malware, with the Necurs family as the worked example. It explains that analysing DGA DNS sessions can surface other malicious infrastructure. It then traces a Facebook-message campaign that delivered a malicious browser extension through linked sites, and notes many 'pw' domains hosting JavaScript files. The report says the sites were blocked or sinkholed and describes the attackers in general terms.",
+    "summary": "Cisco Umbrella blog post, published 2016-10-10, on why domain generation algorithms (DGAs) are effective for threat hunting. It uses a Necurs DGA session to surface related malicious domains tied to Facebook-linked campaigns that reportedly installed a malicious browser extension. It also notes a spike of JS-hosting domains under one top-level domain and a registrant account whose domains were blocked. No threat actor is named.",
     "kind": "overview",
     "facts": {
-      "actors": [
-        {
-          "v": "malware authors",
-          "q": "While malware authors have found DGAs to be an effective way of hiding C&C traffic",
-          "by": "the report itself (Cisco Umbrella blog)"
-        },
-        {
-          "v": "attackers",
-          "q": "reveals more infrastructure belonging to the attackers",
-          "by": "the report itself (Cisco Umbrella blog)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "2016-10-10",
-          "q": "Published: 2016-10-10 · Archived: 2026-11-26 02:04:54 UTC",
-          "what": "blog post published"
+          "q": "Published: 2016-10-10",
+          "what": "Blog post published"
         },
         {
           "v": "Oct 3rd",
@@ -37,11 +26,7 @@
       "tools": [
         {
           "v": "Necurs",
-          "q": "In an identified session of Necurs DGA callouts"
-        },
-        {
-          "v": "malicious browser extension",
-          "q": "this site was installing a malicious browser extension once a user clicked an image"
+          "q": "In an identified session of Necurs DGA callouts, we can identify the first DGA round beginning with a callout to"
         }
       ],
       "techniques": [
@@ -50,27 +35,19 @@
           "q": "Domain Generation Algorithms(DGAs) are used in malware to generate a large number of domain names that can"
         },
         {
-          "v": "hiding C&C traffic",
-          "q": "While malware authors have found DGAs to be an effective way of hiding C&C traffic"
+          "v": "sinkholed",
+          "q": "We find the majority of the 2nd and 3rd round DGAs to be sinkholed."
         },
         {
-          "v": "detect simulated network traffic",
-          "q": "used by the malware to detect simulated network traffic in order to evade analysis"
-        },
-        {
-          "v": "reverse engineered",
-          "q": "An algorithm needs to be reverse engineered."
-        },
-        {
-          "v": "Facebook",
-          "q": "messages were received by users on Facebook containing a link"
+          "v": "malicious browser extension",
+          "q": "this site was installing a malicious browser extension once a user clicked an image to view a “video” contained in"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "0.961",
-          "q": "the TLD ‘pw’ ranked at 0.961 (1 being the highest possible ranking.)"
+          "q": "0.961 (1 being the highest possible ranking.)"
         }
       ]
     },
@@ -79,18 +56,18 @@
       "name": "Necurs"
     },
     "hedges": [
-      "Reportedly, the linked site installed a malicious browser extension when a user clicked an image in the message.",
-      "The report finds the majority of the 2nd and 3rd round DGAs to be sinkholed.",
-      "Some of the domains seem to be moving IP addresses, according to the report.",
-      "The JavaScript 'TEST' samples are called suspicious only because of the infrastructure they came from."
+      "The report says the Facebook-linked site was reportedly installing a malicious browser extension once a user clicked an image.",
+      "The report says some of the domains seem to be moving IPs.",
+      "The report says the JS samples simply contained the word TEST, but that coming from this infrastructure it is suspicious.",
+      "The report says the domains seem to be involved in similar attacks."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:24:39Z",
-      "ok": false,
-      "note": "summary: It states as fact that the campaign 'delivered a malicious browser extension', but the text hedges this with 'Reportedly'. It also says 'the sites were",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:24:39Z",
+        "ok": false,
+        "note": "summary: It states as fact that the campaign 'delivered a malicious browser extension', but the text hedges this with 'Reportedly'. It also says 'the sites were",
+        "by": "auditor"
+      }
+    ]
   }
 }

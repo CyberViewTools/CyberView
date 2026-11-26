@@ -1,28 +1,24 @@
 {
   "86a1903adb53184fa1a8470d5f6fba7fa7b13d6e": {
     "sha1": "86a1903adb53184fa1a8470d5f6fba7fa7b13d6e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:14:17Z",
+    "read_at": "2026-11-26T22:34:01Z",
     "model": "haiku",
-    "summary": "Trend Micro's TrendLabs blog describes Dexter (detected as BKDR_DEXTR.A), an infostealer reportedly found on point-of-sale systems at hotels and other businesses. It collects data such as usernames, hostnames, OS information and running processes, and sends it to a remote server. Unlike ZeuS/ZBOT and SpyEye, it targets POS systems rather than users' own machines. How it arrives on those systems is undetermined.",
+    "summary": "Trend Micro's TrendLabs blog post, published 2012-12-21, describes the Dexter malware (BKDR_DEXTR.A). It is a data stealer that targets point-of-sale systems used at hotels and other businesses, and it sends collected information to a remote server. The executable is packed or encrypted to hinder analysis. The report says the initial infection vector was still undetermined.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
-          "v": "crooks behind BKDR_DEXTR",
-          "q": "Instead, the crooks behind BKDR_DEXTR figured that they can generate the same result by infecting",
-          "by": "the report (Trend Micro TrendLabs blog)"
+          "v": "the crooks behind BKDR_DEXTR",
+          "q": "the crooks behind BKDR_DEXTR figured",
+          "by": "Trend Micro (the report)"
         }
       ],
       "sectors": [
         {
           "v": "hotels",
-          "q": "of popular establishments, hotels, and other businesses."
-        },
-        {
-          "v": "businesses",
-          "q": "of popular establishments, hotels, and other businesses."
+          "q": "found in (POS) systems of popular establishments, hotels, and other businesses."
         }
       ],
       "countries": [],
@@ -30,41 +26,31 @@
         {
           "v": "2012-12-21",
           "q": "Published: 2012-12-21 · Archived: 2026-11-26 02:10:42 UTC",
-          "what": "the report was published"
-        },
-        {
-          "v": "2026-11-26",
-          "q": "Published: 2012-12-21 · Archived: 2026-11-26 02:10:42 UTC",
-          "what": "the archived copy of the report was captured"
-        },
-        {
-          "v": "2013",
-          "q": "In our 2013 Security Predictions, we foresee threats that can be found on home appliances like an Internet-",
-          "what": "the vendor's security predictions for the year were published"
+          "what": "Report published"
         }
       ],
       "tools": [
         {
           "v": "BKDR_DEXTR.A",
-          "q": "Trend Micro detection BKDR_DEXTR.A), the malware was reportedly found in (POS) systems"
+          "q": "(Trend Micro detection BKDR_DEXTR.A)"
         }
       ],
       "techniques": [
         {
           "v": "packed or encrypted executable",
-          "q": "The malware executable is found to be packed or encrypted and when loaded, it loads long garbage code to"
+          "q": "The malware executable is found to be packed or encrypted"
         },
         {
-          "v": "stolen from POS systems",
-          "q": "Some of the possible data that can be stolen from POS systems include such as"
+          "v": "downloads files, sends information, checks memory",
+          "q": "BKDR_DEXTR.A downloads files, sends information, and checks memory"
         },
         {
-          "v": "downloads files",
-          "q": "Based on our analysis of the malware, BKDR_DEXTR.A downloads files, sends information, and checks memory"
+          "v": "collect and send certain information",
+          "q": "its ability to collect and send certain"
         },
         {
-          "v": "information to a remote server",
-          "q": "information to a remote server."
+          "v": "infecting certain POS systems",
+          "q": "by infecting certain POS systems."
         }
       ],
       "cves": [],
@@ -72,23 +58,23 @@
     },
     "subject": {
       "type": "malware",
-      "name": "Dexter"
+      "name": "Dexter (BKDR_DEXTR.A)"
     },
     "hedges": [
       "The report says the arrival infector remains undetermined.",
-      "The report says it is unlikely the malware is downloaded from malicious sites, since POS systems are typically not used for web browsing.",
-      "The report says the malware was reportedly found in POS systems; this is reported, not confirmed.",
-      "The report says stolen data is presumably duplicated by remote malicious users.",
-      "The report says the perpetrators probably used packing to make analysis difficult.",
-      "The report names no actor group; it refers only to the crooks behind the malware."
+      "The report says the malware was reportedly found in POS systems.",
+      "The report says it is unlikely the malware is downloaded from malicious sites, since POS systems are not used for web browsing.",
+      "The report says the stolen data is presumably duplicated by remote malicious users.",
+      "The report says the obfuscation was probably done to make analysis difficult.",
+      "The report presents the list of stealable data as possible data, not confirmed data."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:25:36Z",
-      "ok": false,
-      "note": "summary: Says it 'targets POS systems rather than users' own machines' as contrasted with ZeuS/ZBOT and SpyEye; acceptable, but the summary says it 'collects da",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:25:36Z",
+        "ok": false,
+        "note": "summary: Says it 'targets POS systems rather than users' own machines' as contrasted with ZeuS/ZBOT and SpyEye; acceptable, but the summary says it 'collects da",
+        "by": "auditor"
+      }
+    ]
   }
 }

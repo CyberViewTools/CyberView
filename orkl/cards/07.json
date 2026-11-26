@@ -1,28 +1,24 @@
 {
   "07b52e38400bda0f72ed393ad8b26b35ae79d5fe": {
     "sha1": "07b52e38400bda0f72ed393ad8b26b35ae79d5fe",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:06:52Z",
+    "read_at": "2026-11-26T22:32:39Z",
     "model": "haiku",
-    "summary": "A 2015 CrowdStrike blog post by Dmitri Alperovitch describes HURRICANE PANDA, a China-based adversary the author says it has investigated since 2013. The actor targeted several large telecommunications and technology companies. The report recounts how CrowdStrike's incident response and endpoint monitoring repeatedly stopped the actor's attempts to regain access after remediation. It mentions a Windows kernel zero-day, CVE-2014-4113, which the actor used without success. The post is written as a deterrence case study and ends by promoting the CrowdStrike Falcon product.",
+    "summary": "A CrowdStrike blog post by Dmitri Alperovitch describes its response to HURRICANE PANDA, an actor it calls China-based and has tracked since 2013. In 2014 it reports endpoint detection stopping repeated intrusion attempts at several telecommunications and technology companies, and says the actor used a Windows kernel zero-day (CVE-2014-4113) before abandoning its efforts. The post promotes a deterrence approach and ends with a product call to action.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "HURRICANE PANDA",
-          "q": "HURRICANE PANDA’s preferred initial vector of compromise and persistence is a China Chopper webshell – a",
-          "by": "CrowdStrike (the report's author, Dmitri Alperovitch)"
+          "q": "HURRICANE PANDA. We have investigated their intrusions since 2013 and have been battling them nonstop",
+          "by": "CrowdStrike (blog author Dmitri Alperovitch)"
         }
       ],
       "sectors": [
         {
-          "v": "telecommunications",
-          "q": "over the last year at several large telecommunications and technology companies."
-        },
-        {
-          "v": "technology",
-          "q": "CrowdStrike was called in by another customer in a similar technology sector who"
+          "v": "telecommunications and technology",
+          "q": "several large telecommunications and technology companies."
         }
       ],
       "countries": [
@@ -33,73 +29,89 @@
       ],
       "dates": [
         {
+          "v": "2015-04-13",
+          "q": "Published: 2015-04-13 · Archived: 2026-11-26 02:15:53 UTC",
+          "what": "Blog post published"
+        },
+        {
           "v": "2013",
           "q": "We have investigated their intrusions since 2013 and have been battling them nonstop",
-          "what": "The report's author says investigation of the actor's intrusions began in this year."
+          "what": "CrowdStrike began investigating the actor's intrusions"
         },
         {
           "v": "late April 2014",
           "q": "One of these companies identified a potential breach in late April 2014 and brought in our CrowdStrike Services",
-          "what": "A client identified a potential breach and brought in CrowdStrike Services to investigate."
+          "what": "A client identified a potential breach and called in CrowdStrike"
         },
         {
           "v": "early June 2014",
-          "q": "Thus by early June 2014 the remediation process had been completed, enterprise-wide password reset",
-          "what": "Remediation was completed and the adversary had lost all access to the victim network."
+          "q": "Thus by early June 2014 the remediation process had been completed",
+          "what": "Remediation of the client intrusion completed"
         },
         {
           "v": "late January of this year",
           "q": "we saw a very interesting event in late January of this year.",
-          "what": "The actor got a webshell on a web server again, checked for CrowdStrike in memory, then left the system."
-        },
-        {
-          "v": "2015-04-13",
-          "q": "Published: 2015-04-13",
-          "what": "The blog post was published."
+          "what": "Actor obtained a webshell on a web server, checked for CrowdStrike, then left the system"
         }
       ],
       "tools": [
         {
-          "v": "China Chopper",
-          "q": "HURRICANE PANDA’s preferred initial vector of compromise and persistence is a China Chopper webshell – a"
+          "v": "CrowdStrike Falcon",
+          "q": "CrowdStrike Falcon immediately detected execution of the immediate use of the webshell"
+        },
+        {
+          "v": "China Chopper webshell",
+          "q": "preferred initial vector of compromise and persistence is a China Chopper webshell"
         },
         {
           "v": "Mimikatz",
-          "q": "Once inside, the adversary immediately moves on to execution of a credential theft tool such as Mimikatz"
-        },
-        {
-          "v": "CrowdStrike Falcon",
-          "q": "The client immediately deployed our CrowdStrike Falcon™ next-"
+          "q": "execution of a credential theft tool such as Mimikatz"
         }
       ],
       "techniques": [
         {
           "v": "SQL injection or WebDAV vulnerability",
-          "q": "This script is typically uploaded to a web server via a SQL injection or WebDAV vulnerability, which is often trivial to uncover in a company"
+          "q": "uploaded to a web server via a SQL injection or WebDAV vulnerability, which is often trivial to uncover"
+        },
+        {
+          "v": "webshell on web server",
+          "q": "HURRICANE PANDA once again managed to get a webshell on a webserver"
         },
         {
           "v": "credential theft",
-          "q": "the adversary was shut down before credential theft or lateral movement"
+          "q": "execution of a credential theft tool such as Mimikatz"
         },
         {
-          "v": "lateral movement",
-          "q": "the adversary was shut down before credential theft or lateral movement"
+          "v": "Windows kernel zero-day exploitation",
+          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113)"
         }
       ],
       "cves": [
         {
           "v": "CVE-2014-4113",
-          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113). CrowdStrike discovered and reported this"
+          "q": "brought in a Windows Kernel 0-day vulnerability (CVE-2014-4113)"
         }
       ],
       "figures": [
         {
-          "v": "about four months",
-          "q": "After about four months of consistent but futile attempts to get back in, the attackers elevated their tradecraft and"
-        },
-        {
           "v": "70 byte",
           "q": "tiny and easily obfuscated 70 byte text file"
+        },
+        {
+          "v": "about four months",
+          "q": "After about four months of consistent but futile attempts to get back in"
+        },
+        {
+          "v": "another month",
+          "q": "After another month of fruitless efforts we saw a very interesting event"
+        },
+        {
+          "v": "within hours",
+          "q": "within hours of the adversary lockout, the product detected the"
+        },
+        {
+          "v": "within minutes",
+          "q": "able to stop the intruders within minutes of each compromise attempt."
         }
       ]
     },
@@ -108,15 +120,17 @@
       "name": "HURRICANE PANDA"
     },
     "hedges": [
-      "The author says that 'a few events don't make a trend yet', so the observed reaction of the adversary is presented as an early signal rather than an established pattern."
+      "The report says 'a few events don't make a trend yet', so the deterrence effect it describes is not yet established.",
+      "The report says the approach 'may well be' a promising path forward, not a proven one.",
+      "The account is the vendor's own description of its customers' incidents, written to promote its product."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:24:39Z",
-      "ok": false,
-      "note": "tools[2]: CrowdStrike Falcon is the defender's product, used to detect and stop the actor. The text does not describe it as an actor tool.; techniques[1]: The q",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:24:39Z",
+        "ok": false,
+        "note": "tools[2]: CrowdStrike Falcon is the defender's product, used to detect and stop the actor. The text does not describe it as an actor tool.; techniques[1]: The q",
+        "by": "auditor"
+      }
+    ]
   }
 }

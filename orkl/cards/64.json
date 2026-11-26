@@ -1,33 +1,22 @@
 {
   "64169c8c9e3e95678dcd0fe8ef71a1bbd5298056": {
     "sha1": "64169c8c9e3e95678dcd0fe8ef71a1bbd5298056",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:09:56Z",
+    "read_at": "2026-11-26T22:33:38Z",
     "model": "haiku",
-    "summary": "Socket reports 13 malicious NuGet packages, published between July and November 2026, used in fake .NET developer job assessments built on WinUI 3. Building or running the lure triggers a build-time MSBuild stager, a DLL side-loading setup around the Windows On-Screen Keyboard, and a downloader in a button control that fetches executables from GitHub. Related components include a GitHub-based command and control loader, a Chrome profile stealer and a trojanized wallet analyzer app. The report does not attribute the campaign to a named threat actor.",
-    "kind": "malware-analysis",
+    "summary": "Socket reports 13 malicious NuGet packages used in a campaign that lures .NET developers with fake take-home job assessments. Building or running a lure project triggers a build-time MSBuild stager and a runtime control that launches a DLL side-loading pair. Other packages download and run executables from GitHub. Related fake axios repositories carry loaders and a Chrome profile stealer, and a trojanized crypto wallet app was also used. The campaign is not attributed to a named threat actor.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [
-        {
-          "v": "threat actor",
-          "q": "We have not attributed this campaign to a named threat actor.",
-          "by": "Socket"
-        }
-      ],
+      "actors": [],
       "sectors": [
         {
-          "v": ".NET developers",
-          "q": "projects to target Windows .NET developers."
+          "v": ".NET Developers",
+          "q": "13 Malicious NuGet Packages Target .NET Developers With Fake"
         }
       ],
       "countries": [],
       "dates": [
-        {
-          "v": "2026-11-23",
-          "q": "Published: 2026-11-23",
-          "what": "Report published"
-        },
         {
           "v": "July 2026",
           "q": "The operation began on npm in July 2026 and hosts its payloads on GitHub.",
@@ -39,37 +28,54 @@
           "what": "Most recent lure repository created"
         },
         {
+          "v": "July 23 to November 4, 2026",
+          "q": "The NuGet side of the operation ran from July 23 to November 4, 2026, across four accounts:",
+          "what": "NuGet side of the operation ran"
+        },
+        {
           "v": "September 2, 2026",
-          "q": "was published on September 2, 2026, by Carol-White-Super",
+          "q": "WinUI.Button 1.0.0 was published on September 2, 2026",
           "what": "WinUI.Button 1.0.0 published on NuGet"
         },
         {
-          "v": "November 13",
-          "q": "released on GitHub on November 13 hides a",
-          "what": "Trojanized wallet analyzer app released on GitHub"
+          "v": "November 13, 2026",
+          "q": "On November 13, 2026,",
+          "what": "Crypto Wallet Analyzer release published on GitHub"
         },
         {
-          "v": "July 14 and July 23, 2026",
-          "q": "Between July 14 and July 23, 2026, the threat actor published six packages",
-          "what": "Six npm packages published"
+          "v": "November 6",
+          "q": "NuGet unlisted and deleted every HappyOne package on November 6",
+          "what": "NuGet unlisted and deleted HappyOne packages"
         }
       ],
       "tools": [
         {
+          "v": "osk.exe",
+          "q": "around the Microsoft On-Screen Keyboard ( osk.exe )"
+        },
+        {
           "v": "PyInstaller",
-          "q": "The two August 1 builds are PyInstaller programs built with Python 3.14"
+          "q": "are PyInstaller programs built with Python 3.14"
         },
         {
           "v": "Themida",
-          "q": "three Themida-protected builds (August 27 to September 2)"
+          "q": "three Themida-protected builds"
         },
         {
-          "v": "osk.exe",
-          "q": "System32\\osk.exe"
+          "v": "MSBuild",
+          "q": "use MSBuild to decide whether the project needs"
         },
         {
-          "v": "WinUI.Button",
-          "q": "WinUI.Button 1.0.0 was published on September 2, 2026"
+          "v": "Telegram Bot API",
+          "q": "through the Telegram Bot API"
+        },
+        {
+          "v": "PowerShell",
+          "q": "Hidden PowerShell creates a Volume Shadow"
+        },
+        {
+          "v": "Chrome profile stealer",
+          "q": "a Chrome profile stealer that uploads to"
         }
       ],
       "techniques": [
@@ -78,104 +84,76 @@
           "q": "stages a DLL side-loading pair around the Microsoft On-Screen Keyboard"
         },
         {
-          "v": "code at build time",
-          "q": "A NuGet package can run code at build time through"
+          "v": "MSBuild targets file",
+          "q": "ships an MSBuild targets file"
+        },
+        {
+          "v": "two-way command and control (C2)",
+          "q": "as two-way command and control (C2)"
+        },
+        {
+          "v": "ClickFix",
+          "q": "hosts the ClickFix page (E)"
         },
         {
           "v": "credential theft",
           "q": "loading, credential theft, and GitHub-based malware."
         },
         {
-          "v": "two-way command and control",
-          "q": "as two-way command and control (C2)"
-        },
-        {
-          "v": "hypervisor",
-          "q": "reports a VMware, Xen, Hyper-V, KVM, QEMU or VirtualBox hypervisor"
-        },
-        {
-          "v": "deletes itself",
-          "q": "deletes itself with a batch"
+          "v": "checks its environment",
+          "q": "the loader checks its environment"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "13 malicious NuGet packages",
-          "q": "Socket researchers uncovered 13 malicious NuGet packages linked to fake developer job assessments"
+          "q": "Socket researchers uncovered 13 malicious NuGet packages"
         },
         {
           "v": "28 versions",
           "q": "These 13 IDs had 28 versions on NuGet."
         },
         {
-          "v": "about 160 downloads",
-          "q": "with about 160 downloads according to the NuGet search API."
-        },
-        {
-          "v": "four accounts",
-          "q": "across four accounts:"
-        },
-        {
-          "v": "five infection paths",
-          "q": "The diagram below shows five infection paths from one operation."
-        },
-        {
-          "v": "17 decoy calls",
-          "q": "The pipeline first makes 17 decoy calls that parse"
-        },
-        {
-          "v": "eight crypto wallet extensions",
-          "q": "inventories eight crypto wallet extensions in"
-        },
-        {
-          "v": "$8,500 to $10,000",
-          "q": "posted an $8,500 to $10,000 job for a C# WPF"
-        },
-        {
-          "v": "2,000 milliseconds",
-          "q": "The checks must finish within 2,000 milliseconds,"
-        },
-        {
-          "v": "4 GiB of RAM",
-          "q": "less than 4 GiB of RAM or less than 60 GiB of disk"
-        },
-        {
-          "v": "12 commits",
-          "q": "returned 12 commits in six repositories during our analysis"
+          "v": "Six npm packages",
+          "q": "Six npm packages pull payloads from the other fake axios"
         },
         {
           "v": "seven of the 13 packages",
           "q": "published seven of the 13 packages in July"
         },
         {
-          "v": "three to four hour",
-          "q": "a three to four hour exercise built on a starter Visual Studio solution."
+          "v": "about 160 downloads",
+          "q": "with about 160 downloads according to the NuGet search API"
         },
         {
-          "v": "nine binaries",
-          "q": "holds nine binaries:"
+          "v": "$8,500 to $10,000",
+          "q": "posted an $8,500 to $10,000 job for a C# WPF"
+        },
+        {
+          "v": "12 commits in six repositories",
+          "q": "returned 12 commits in six repositories during our analysis"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The report has not attributed this campaign to a named threat actor; resemblance to North Korean fake job interview operations is noted only.",
-      "The report could not determine how the Home Assessment lures reach candidates.",
-      "The DLL side-load was not tested, and whether a copied osk.exe starts from that folder on current Windows builds is an open question.",
-      "Several repositories and accounts returned 404 during analysis, so later stages are unknown.",
+      "We could not determine how the Home Assessment lures reach candidates; we found no recruiter message, email or job post for them.",
+      "We have not attributed this campaign to a named threat actor.",
+      "Take-home tests resemble lures that public reporting links to North Korea, but no shared indicator or code was found with published campaigns.",
+      "We did not test the side-load, and whether a copied osk.exe starts from the user's local app data folder on current Windows builds remains an open question.",
       "Download counts include mirrors and scanners and are not victim counts.",
-      "Timing links between packages and repositories are treated as timing evidence only.",
-      "The report could not determine whether one GitHub repository belongs to the threat actor or to a targeted developer.",
-      "Links between the button packages and the rest of the cluster rest on naming and technique, not shared indicators."
+      "We could not determine whether the repository belongs to the threat actor or to a targeted developer, so we do not name it.",
+      "The link between WinUI.Button and the rest of the cluster rests on naming and technique, not a shared indicator.",
+      "We treat that as timing evidence only."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:25:21Z",
-      "ok": false,
-      "note": "summary: It says building or running the lure triggers the button-control downloader. The text says the lure triggers the build-time stager and the FileButton r",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:25:21Z",
+        "ok": false,
+        "note": "summary: It says building or running the lure triggers the button-control downloader. The text says the lure triggers the build-time stager and the FileButton r",
+        "by": "auditor"
+      }
+    ]
   }
 }

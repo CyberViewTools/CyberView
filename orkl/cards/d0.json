@@ -189,65 +189,83 @@
   },
   "d02941ad349dc5ff4e9692fd3181a8f7047d49c6": {
     "sha1": "d02941ad349dc5ff4e9692fd3181a8f7047d49c6",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:11:43Z",
+    "read_at": "2026-11-26T22:33:55Z",
     "model": "haiku",
-    "summary": "Trend Micro's TrendLabs blog, published 2011-10-05, analyses Android malware it detects as ANDROIDOS_ANSERVER.A. The app arrives as an e-book reader from a third-party Chinese app store and requests broad permissions. It has two hardcoded C&C servers, one of which is a blog with encrypted posts holding backup C&C URLs. The report found 18 binaries uploaded to the blog, a capability to show notifications that trick users into approving updates, and a capability to terminate four security-related apps.",
+    "summary": "Trend Micro's TrendLabs blog (published 2011-10-05) describes the Android backdoor ANDROIDOS_ANSERVER.A, which arrives as a fake e-book reader app from a third-party Chinese app store. It uses an encrypted blog site as a backup command-and-control channel and has two hardcoded C&C servers. Eighteen binaries were uploaded to the blog between July 23 and September 26. Later versions show fake update prompts and try to terminate four security apps.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "can be downloaded from a third-party Chinese app store"
+        }
+      ],
       "dates": [
         {
           "v": "2011-10-05",
-          "q": "Published: 2011-10-05 · Archived: 2026-11-26 02:00:42 UTC",
-          "what": "Trend Micro blog post analysing the Android malware was published"
+          "q": "Published: 2011-10-05",
+          "what": "report published"
         },
         {
           "v": "July 23",
           "q": "18 binaries have been uploaded to the blog from July 23 to just last September 26.",
-          "what": "Binaries began being uploaded to the blog"
+          "what": "first binary upload to the blog"
+        },
+        {
+          "v": "September 26",
+          "q": "18 binaries have been uploaded to the blog from July 23 to just last September 26.",
+          "what": "last binary upload to the blog in the period described"
         }
       ],
       "tools": [
         {
           "v": "ANDROIDOS_ANSERVER.A",
-          "q": "which Trend Micro detects as ANDROIDOS_ANSERVER.A, arrives as an e-book reader"
+          "q": "which Trend Micro detects as ANDROIDOS_ANSERVER.A"
         }
       ],
       "techniques": [
         {
-          "v": "blog site with encrypted content used as C&C",
-          "q": "This is a blog site with encrypted content, which based on our research, is the first time Android malware implemented this kind of technique to communicate."
+          "v": "blog site as C&C with encrypted content",
+          "q": "is a blog site with encrypted content, which based on our research, is the first time Android malware implemented this kind of technique to communicate."
         },
         {
-          "v": "trick users into approving update downloads",
-          "q": "the newer versions had the capability to display notifications that attempt to trick users into approving the download of an update"
+          "v": "fake update prompts",
+          "q": "attempt to trick users into approving the download of an update"
         },
         {
-          "v": "terminate security-related apps",
+          "v": "terminating security apps",
           "q": "Another addition to later versions is the capability to terminate four security-related apps:"
+        },
+        {
+          "v": "broad app permissions requested at install",
+          "q": "It asks for the following permissions upon"
+        },
+        {
+          "v": "distribution via third-party app store",
+          "q": "can be downloaded from a third-party Chinese app store"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "two",
-          "q": "we found that this malware has two hardcoded C&C servers to which it connects in order to"
-        },
-        {
-          "v": "six",
-          "q": "Further analysis of the blog content revealed six encrypted posts containing backup C&C"
-        },
-        {
-          "v": "18",
+          "v": "18 binaries",
           "q": "18 binaries have been uploaded to the blog from July 23 to just last September 26."
         },
         {
-          "v": "four",
-          "q": "Another addition to later versions is the capability to terminate four security-related apps:"
+          "v": "two hardcoded C&C servers",
+          "q": "we found that this malware has two hardcoded C&C servers"
+        },
+        {
+          "v": "four security-related apps",
+          "q": "the capability to terminate four security-related apps:"
+        },
+        {
+          "v": "six encrypted posts",
+          "q": "revealed six encrypted posts containing backup C&C"
         }
       ]
     },
@@ -256,33 +274,32 @@
       "name": "ANDROIDOS_ANSERVER.A"
     },
     "hedges": [
-      "Newer and more complicated Android malware variants are expected to emerge, along with the rising number of malicious Android apps.",
-      "This is a blog site with encrypted content, which based on our research, is the first time Android malware implemented this kind of technique to communicate.",
-      "one of the updates is named _test, which suggests that this malware is still being further developed."
+      "Based on the research, the blog-based C&C is the first time Android malware implemented this kind of technique to communicate.",
+      "The report says the binary updates suggest that this malware is still being further developed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:31Z",
-      "ok": false,
-      "note": "summary: Says the notifications 'trick users into approving updates'. The text says they 'attempt to trick' users, so the hedge is dropped and the claim is stro",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:31Z",
+        "ok": false,
+        "note": "summary: Says the notifications 'trick users into approving updates'. The text says they 'attempt to trick' users, so the hedge is dropped and the claim is stro",
+        "by": "auditor"
+      }
+    ]
   },
   "d0fc20efe406f4e563db7d82a7d9acb97b03f23b": {
     "sha1": "d0fc20efe406f4e563db7d82a7d9acb97b03f23b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T21:19:16Z",
+    "read_at": "2026-11-26T22:36:05Z",
     "model": "haiku",
-    "summary": "Tutorial by the Zero2Automated course team, published 2020-06-07, on statically deobfuscating a malicious document macro that is used to deliver NanoCore. It covers finding the auto-run entry point, removing junk strings and renaming identifiers, and shows the macro fetching a further file and running it from disk. It cites MuddyWater as an example of heavy macro obfuscation and says some threat groups push ISFB.",
+    "summary": "A 2020 tutorial by the Zero2Automated Course Team on statically deobfuscating a malicious Word macro document, a NanoCore sample. It covers finding the auto-run entry points, removing junk strings and function names, and cleaning up the code. The sample's macro downloads a payload into the Templates folder and runs it from disk. The article uses the MuddyWater group only as an example of heavier macro obfuscation, and mentions ISFB as a malware family pushed by various groups.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "MuddyWater",
-          "q": "as possible (such as the MuddyWater",
-          "by": "Zero2Automated Course Team (the report)"
+          "q": "such as the MuddyWater",
+          "by": "Zero2Automated Course Team (the report's author)"
         }
       ],
       "sectors": [],
@@ -291,12 +308,12 @@
         {
           "v": "2020-06-07",
           "q": "Published: 2020-06-07 · Archived: 2026-11-25 02:06:28 UTC",
-          "what": "Article published by the course team"
+          "what": "Article published"
         }
       ],
       "tools": [
         {
-          "v": "Nanocore",
+          "v": "NanoCore",
           "q": "reversing a malicious Nanocore document"
         },
         {
@@ -306,16 +323,24 @@
       ],
       "techniques": [
         {
-          "v": "execute without the user specifically calling them",
-          "q": "methods that macros use to execute without the user specifically calling them"
+          "v": "execute upon document open, and document close",
+          "q": "execute upon document open, and document close"
         },
         {
-          "v": "junk string and function names added to the macros",
+          "v": "junk string and function names",
           "q": "the obfuscation is just junk string and function names added to the macros"
         },
         {
+          "v": "download their payload",
+          "q": "they only need it to download their payload"
+        },
+        {
+          "v": "Templates folder",
+          "q": "get the path to the Templates folder"
+        },
+        {
           "v": "execute the file from disk",
-          "q": "execute the file from disk. And that brings an end to our short analysis"
+          "q": "execute the file from disk"
         }
       ],
       "cves": [],
@@ -326,17 +351,17 @@
       "name": "NanoCore"
     },
     "hedges": [
-      "Obfuscation is described as easy to recognise only in this case; the author says the approach assumes the attackers reuse the same code obfuscator and tricks.",
-      "The author says there is a high probability that a line referenced only once is junk.",
-      "The author says macro obfuscation is unlikely to change until a new vulnerability or feature is discovered and exploited."
+      "until a new vulnerability or feature is discovered and exploited, that is unlikely to change",
+      "assuming they use the same code obfuscator using the same tricks",
+      "The difficulty of this depends on how much effort the attackers put into it"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T22:26:31Z",
-      "ok": false,
-      "note": "summary: The text does not say 'some threat groups push ISFB' as a claim about threat groups in general; it only uses 'one of the many pushing ISFB' as an examp",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T22:26:31Z",
+        "ok": false,
+        "note": "summary: The text does not say 'some threat groups push ISFB' as a claim about threat groups in general; it only uses 'one of the many pushing ISFB' as an examp",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -14,7 +14,7 @@ import { prepText, fetchText, TEXT_MIN } from "./lib/orkl-text.mjs";
 import { cleanCard, cardProblems } from "./lib/library-check.mjs";
 import { readerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
-import { loadConfig, paused, auditFailed, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
+import { loadConfig, paused, auditFailed, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
 const ROLE = "library-reader";
@@ -136,7 +136,7 @@ export async function run({ max = 10, order = "newest", concurrency = 4, dir = C
   const cards = loadCards(dir, badList);
   badList.forEach((b) => bad.add(b));
   const isPaused = paused(cards, cfg);
-  if (isPaused) log(PAUSE_MESSAGE);                      // while paused only the cards an audit found wrong are read again
+  if (isPaused) log(PAUSE_NOTICE);                      // while paused only the cards an audit found wrong are read again
   const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1)) && (!isPaused || auditFailed(cards.get(r.sha1)))), cards, { order, max });
   const tally = tallyZero();
   let failedCalls = 0, outage = 0;

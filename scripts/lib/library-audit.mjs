@@ -5,6 +5,7 @@
 // `audit_history` (the last 5) and the new card has no current audit; such a card is always audited again (auditPick), and until
 // then its failed verdict still counts. While paused: the writer and the review run do nothing; the reader reads only cards queued
 // by a failed audit (auditFailed); the audit run audits at 100% so the failed cards are checked again. See pauseHelp.
+// The rate measures cards in use: a card that ends `no-text`, or `unread` with its tries spent, is retired and counts as neither audited nor wrong.
 import { join } from "node:path";
 import { existsSync, readdirSync } from "node:fs";
 import { ROOT, readJson } from "./store.mjs";
@@ -37,17 +38,36 @@ export function auditorVerdict(card) {
 /** A card queued for the reader because an audit (the auditor's or the reviewer's) found it wrong: unread, with a failed current audit or history. */
 export const auditFailed = (c) => !!c && c.status === "unread" && (failedEntry(c.audit) || (Array.isArray(c.audit_history) && c.audit_history.some(failedEntry)));
 
-/** Over the WINDOW most recent audited cards, each counted once by its latest AUDITOR verdict (a reviewer's flag does not count):
- *  how many, how many wrong, the wrong share, and whether the Library is paused. */
+/** The cards the rate measures: those in use. A card counts by its latest auditor verdict when it is `read` (or has no status); one
+ *  awaiting a re-read (`unread`, tries < 2) counts only as wrong, if its auditor verdict failed. A `no-text` card, or an `unread`
+ *  one with its tries spent (>= 2), is retired: the reader will not read it again, so it counts as neither audited nor wrong. */
+function counted(cards) {
+  const out = [];
+  for (const x of list(cards)) {
+    const v = auditorVerdict(x);
+    if (!v) continue;
+    const st = x.status, tries = Number(x.tries) || 0;
+    if (st === "no-text" || (st === "unread" && tries >= 2)) continue;
+    if (st === "unread" && v.ok === true) continue;
+    out.push({ sha1: x.sha1, v });
+  }
+  return out;
+}
+const recent = (cards) => counted(cards)
+  .sort((a, b) => String(b.v.at || "").localeCompare(String(a.v.at || "")) || String(a.sha1 || "").localeCompare(String(b.sha1 || "")))
+  .slice(0, WINDOW);
+
+/** Over the WINDOW most recent audited cards in use, each counted once by its latest AUDITOR verdict (a reviewer's flag does not
+ *  count): how many, how many wrong, the wrong share, and whether the Library is paused. */
 export function auditState(cards, cfg = DEFAULTS) {
   const c = { ...DEFAULTS, ...(cfg || {}) };
-  const all = list(cards).map((x) => ({ sha1: x && x.sha1, v: auditorVerdict(x) })).filter((x) => x.v)
-    .sort((a, b) => String(b.v.at || "").localeCompare(String(a.v.at || "")) || String(a.sha1 || "").localeCompare(String(b.sha1 || "")))
-    .slice(0, WINDOW);
+  const all = recent(cards);
   const wrong = all.filter((x) => x.v.ok !== true).length, audited = all.length;
   const pct = audited ? (100 * wrong) / audited : 0;
   return { audited, wrong, pct, paused: audited >= c.audit_min && pct > c.audit_pause_pct };
 }
+/** The sha1s of the cards currently counted as wrong. */
+export const wrongCards = (cards) => recent(cards).filter((x) => x.v.ok !== true).map((x) => x.sha1);
 export const paused = (cards, cfg = DEFAULTS) => auditState(cards, cfg).paused;
 
 /** Pure: corrections files ({key: [{at, role, model, code, note}]}) -> counts by role and model for the last `days` days. */
@@ -76,3 +96,6 @@ export function loadCorrections(dir = CORRECTIONS_DIR) {
   }
   return out;
 }
+
+/** What every desk prints when it is paused: the message and how the pause clears. */
+export const PAUSE_NOTICE = `${PAUSE_MESSAGE}. ${pauseHelp}`;

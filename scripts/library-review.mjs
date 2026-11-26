@@ -28,7 +28,7 @@ import { reviewerPrompt, auditorPrompt } from "./lib/library-prompts.mjs";
 import { fetchText } from "./lib/orkl-text.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
-import { DEFAULTS, auditState, paused, loadConfig, pauseHelp, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
+import { DEFAULTS, auditState, wrongCards, paused, loadConfig, pauseHelp, PAUSE_NOTICE, PAUSE_MESSAGE, CORRECTIONS_DIR } from "./lib/library-audit.mjs";
 
 export { DEFAULTS, auditState, paused, pauseHelp };
 const ROLE = "library-reviewer", AUDIT_ROLE = "library-auditor";
@@ -66,7 +66,9 @@ export function settle(file, verdict, cards, actor, now, model, runId = "") {
   const changes = cleanChanges(verdict.changes), tries = (Number(next.tries) || 0) + 1;
   const subject = { key: next.key, kind: next.kind, name: next.name, actor: actor || null };
   const cm = cards instanceof Map ? cards : new Map();
-  const writerFault = changes.length ? changes.map((c) => ({ at: now, role: "library-writer", model: next.writer_model || "", code: c.code, note: c.note })) : [{ at: now, role: "library-writer", model: next.writer_model || "", code: "other", note: "" }];
+  // a draft a reviewer's correction wrote is the reviewer's work: the correction is recorded against it, not the writer
+  const who = next.corrected_by ? { role: "library-reviewer", model: next.corrected_by } : { role: "library-writer", model: next.writer_model || "" };
+  const writerFault = changes.length ? changes.map((c) => ({ at: now, ...who, code: c.code, note: c.note })) : [{ at: now, ...who, code: "other", note: "" }];
   const refuse = (reasons, corrections) => ({ file: { live: file.live, next: { ...next, status: tries >= MAX_TRIES ? "parked" : "rejected", tries, reasons: reasons.slice(0, 10) } }, corrections });
   if (verdict.verdict === "pass") {
     const problems = storyProblems(next, cm, subject.actor);
@@ -90,12 +92,14 @@ export const markCardWrong = (card, note, at, by = "auditor") => ({
   audit: { at, ok: false, note: cleanNote(note), by },
 });
 
-/** Pure: the cards to audit now: those in the share (by sha1), and always a card read again after a failed audit (audit_history and
+/** Pure: the cards to audit now, cards read again after a failed audit first, then the rest by sha1: those in the share, and always a card read again after a failed audit (audit_history and
  *  no current audit); never one with a current audit, one in `seen`, or one that is not `read`. */
 export function auditPick(cards, pct, seen = new Set()) {
   const all = cards instanceof Map ? [...cards.values()] : Array.isArray(cards) ? cards : Object.values(cards || {});
   return all.filter((c) => c && HEX40.test(String(c.sha1)) && !c.audit && !seen.has(c.sha1) && (!c.status || c.status === "read")
-    && ((Array.isArray(c.audit_history) && c.audit_history.length > 0) || parseInt(String(c.sha1).slice(0, 8), 16) % 100 < pct)).map((c) => c.sha1).sort();
+    && ((Array.isArray(c.audit_history) && c.audit_history.length > 0) || parseInt(String(c.sha1).slice(0, 8), 16) % 100 < pct))
+    .map((c) => ({ s: c.sha1, first: Array.isArray(c.audit_history) && c.audit_history.length > 0 }))
+    .sort((a, b) => (b.first - a.first) || a.s.localeCompare(b.s)).map((x) => x.s);
 }
 
 /** Apply `fn` to stored cards, but only those still the card that was audited (same sha1 and read_at): a card read again meanwhile is
@@ -167,8 +171,8 @@ async function reviewOne(key, draft, subj, all, deps) {
   const reply = await deps.call(ROLE, reviewerPrompt(draft, cs, got.originals), { job: "library", batch: key });
   if (reply.limit) return { why: "limit" };
   if (reply.error) return { why: "error" };
-  if (!reply.ok || !reply.json || typeof reply.json !== "object") return { why: "bad-reply" };     // a reviewer fault: the story is untouched
-  const j = reply.json;
+  const j = reply.ok && reply.json && typeof reply.json === "object" ? reply.json : null;
+  if (!j || !["pass", "corrected", "reject"].includes(j.verdict)) return { why: "bad-reply" };     // a reviewer fault: the story is untouched
   const cp = (Array.isArray(j.card_problems) ? j.card_problems : []).filter((p) => p && cardMap.has(String(p.sha1).toLowerCase())).slice(0, 10);
   return cp.length ? { cardProblems: cp.map((p) => ({ sha1: String(p.sha1).toLowerCase(), note: p.note })), cardMap } : { verdict: j, cardMap };
 }
@@ -197,15 +201,18 @@ function parkDraft(dir, key, draft, reason) {
 
 /** Review up to `max` draft stories. `runId` is this review run's id (injectable); a draft written by the same run id is refused. */
 export async function run({ max = 10, concurrency = 2, dir = STORIES_DIR, cardsDir = CARDS_DIR, corrDir = CORRECTIONS_DIR, library = null, cards = null, fetch = fetchText, call = oneShot, model = modelOf(ROLE), cfg = loadConfig(), runId = randomBytes(4).toString("hex"), log = console.log } = {}) {
-  const tally = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, stopped: "", unreadable: [] };
+  const tally = { published: 0, corrected: 0, rejected: 0, parked: 0, cardsFlagged: 0, skipped: 0, orphans: 0, stopped: "", unreadable: [] };
   const badCards = [], all = cards || loadCards(cardsDir, badCards);
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-review: ${tally.stopped}; nothing written`); return tally; }
-  if (paused(all, cfg)) { log(PAUSE_MESSAGE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
-  const lib = library || loadLibrary(), subjects = subjectsOf(lib, all);
+  if (paused(all, cfg)) { log(PAUSE_NOTICE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
+  const lib = library || loadLibrary();
+  if (!(lib.actors || []).length || !(lib.reports || []).length) { tally.stopped = "library not loaded"; log("library-review: library not loaded (no actors or no reports); nothing done"); return tally; }
+  const subjects = subjectsOf(lib, all);
   const badStories = [], stories = loadStories(dir, badStories);
   tally.unreadable = badStories.sort();
   const waiting = reviewQueue(stories).filter((k) => !badStories.includes(k));
-  for (const k of waiting.filter((x) => !subjects.has(x))) if (parkDraft(dir, k, stories.get(k).next, "no-subject")) { tally.parked++; log(`${k} parked (no-subject)`); }
+  // a missing subject can be a library that did not load: the draft is left untouched and counted, never parked
+  for (const k of waiting.filter((x) => !subjects.has(x))) { tally.orphans++; log(`${k.slice(0, 12)} no-subject, left untouched`); }
   const queue = waiting.filter((k) => subjects.has(k)).slice(0, max);
   const badShards = new Set();
   const deps = { cfg, fetch, call, cardsDir, corrDir, dir, log, reportBy: new Map((lib.reports || []).map((r) => [r.sha1, r])) };
@@ -266,7 +273,7 @@ export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir =
   if (badCards.length) { tally.stopped = `unreadable card shards: ${badCards.join(", ")}`; log(`library-audit: ${tally.stopped}; nothing written`); return tally; }
   const lib = library || loadLibrary(), reportBy = new Map((lib.reports || []).map((r) => [r.sha1, r]));
   const isPaused = paused(all, cfg);
-  if (isPaused) log(PAUSE_MESSAGE);
+  if (isPaused) log(PAUSE_NOTICE);
   const pct = pilot || isPaused ? 100 : cfg.audit_pct;
   const queue = auditPick(all, pct, new Set()).filter((s) => reportBy.has(s)).slice(0, max);
   const badShards = new Set(), deps = { cardsDir, corrDir, dir, log };
@@ -309,14 +316,16 @@ export async function runAudit({ max = 10, concurrency = 2, pilot = false, dir =
   return tally;
 }
 
-export function statusLine(stories, cards, cfg = DEFAULTS) {
-  const st = auditState(cards, cfg);
-  return `drafts waiting ${reviewQueue(stories).length}, audited ${st.audited} cards, wrong ${st.wrong} (${st.pct.toFixed(1)}%), ${st.paused ? "PAUSED: " + PAUSE_MESSAGE : "not paused"}`;
+export function statusLine(stories, cards, cfg = DEFAULTS, subjectKeys = null) {
+  const st = auditState(cards, cfg), w = wrongCards(cards, cfg).slice(0, 10).map((x) => x.slice(0, 8));
+  const orphans = subjectKeys ? reviewQueue(stories).filter((k) => !subjectKeys.has(k)).length : null;
+  return `drafts waiting ${reviewQueue(stories).length}${orphans == null ? "" : `, orphan drafts ${orphans}`}, audited ${st.audited} cards, wrong ${st.wrong} (${st.pct.toFixed(1)}%)${w.length ? `, wrong: ${w.join(", ")}` : ""}, ${st.paused ? "PAUSED: " + PAUSE_NOTICE : "not paused"}`;
 }
 
 async function main() {
   const cmd = process.argv[2];
-  if (cmd === "status") { console.log(statusLine(loadStories(), loadCards(), loadConfig())); return; }
+  if (cmd === "status") { const cards = loadCards(), lib = loadLibrary();
+    console.log(statusLine(loadStories(), cards, loadConfig(), new Set(subjectsOf(lib, cards).keys()))); return; }
   if (cmd !== "run" && cmd !== "audit") { console.error("usage: library-review.mjs run [--max N] | audit [--max N] [--pilot] | status"); process.exit(1); }
   const i = process.argv.indexOf("--max"), v = i >= 0 ? process.argv[i + 1] : undefined, max = v != null && /^\d+$/.test(v) ? Number(v) : 10;
   await (cmd === "run" ? run({ max }) : runAudit({ max, pilot: process.argv.includes("--pilot") }));

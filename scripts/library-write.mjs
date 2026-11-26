@@ -14,7 +14,7 @@ import { loadCards } from "./library-read.mjs";
 import { BY, cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { writerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot } from "./lib/oneshot.mjs";
-import { loadConfig, paused, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
+import { loadConfig, paused, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
 
 export const STORIES_DIR = join(DIR, "stories");
@@ -106,7 +106,7 @@ export async function run({ max = 10, order = null, concurrency = 3, dir = STORI
     log(`library-write: ${tally.stopped}; nothing written`);
     return tally;
   }
-  if (paused(all, cfg)) { log(PAUSE_MESSAGE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
+  if (paused(all, cfg)) { log(PAUSE_NOTICE); tally.stopped = PAUSE_MESSAGE.toLowerCase(); return tally; }
   const { reports, actors } = library || loadLibrary();
   const subjects = [...actorSubjects(actors, reports, all), ...looseSubjects(reports, all, actorIndex(actors))];
   const badStories = [];

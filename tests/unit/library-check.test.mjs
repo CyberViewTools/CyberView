@@ -135,3 +135,28 @@ test("storyProblems: hedged attribution passes, catalogue alias needs its cite, 
   assert.ok(storyProblems(one("Also tracked as Jade Sleet."), cards, cat).some((x) => x.startsWith("unbacked")));
   assert.deepEqual(storyProblems(one("It ran a pirate operation."), cards, null), []);
 });
+
+// Fix round 2
+test("storyProblems: a held figure exempts only its own number, never another year", () => {
+  assert.deepEqual(storyProblems(one("It hit 2000 hosts."), okCards(), null), []);
+  assert.ok(storyProblems(one("It began in 2000 and hit 2000 hosts."), okCards(), null).some((x) => x.startsWith("unbacked") && x.includes("2000")));
+  const c12 = okCards({ figures: [{ v: "12000 hosts", q: "12000 hosts were hit" }] });
+  assert.ok(storyProblems(one("It began in 2000 and hit 12000 hosts."), c12, null).some((x) => x.startsWith("unbacked") && x.includes("2000")));
+});
+test("storyProblems: more demonyms, and UK/US/USA facts expand to their groups", () => {
+  const withC = (v) => new Map([[A, card({ countries: [{ v, q: `analysts linked it to ${v} firms` }] }, { sha1: A })]]);
+  const bare = (v, t) => storyProblems(one(t), withC(v), null).some((x) => x.startsWith("bare-attribution"));
+  assert.ok(bare("Germany", "German military intelligence ran it."));
+  assert.ok(bare("Netherlands", "The Dutch government ran it."));
+  assert.ok(bare("Saudi Arabia", "Saudi intelligence ran it."));
+  assert.ok(bare("South Korea", "South Korean military ran it."));
+  assert.ok(bare("Taiwan", "Taiwanese intelligence ran it."));
+  assert.ok(bare("United Arab Emirates", "Emirati intelligence ran it."));
+  assert.ok(bare("UK", "The British government ran it."));
+  assert.ok(bare("USA", "American intelligence ran it."));
+  assert.ok(bare("US", "The U.S. government ran it."));
+});
+test("normText: minus sign and em dash fold to a hyphen", () => {
+  assert.equal(quoteInText("state—sponsored actors operate", "a state-sponsored actors operate"), true);
+  assert.equal(quoteInText("state−sponsored actors operate", "a state-sponsored actors operate"), true);
+});

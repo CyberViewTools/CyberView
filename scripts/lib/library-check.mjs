@@ -19,7 +19,7 @@ const STATE_WORDS = /state[- ]sponsored|backed by|linked to|works for|intelligen
 const HEDGE_WORDS = /according to|assess|attribut|says|said|reports?|tracks|believes?/i;
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
 
-const DASHES = /[‐‑‒–]/g;
+const DASHES = /[‐‑‒–—−]/g;
 const fold = (s) => String(s == null ? "" : s).replace(DASHES, "-");
 const norm = (s, join) => fold(String(s == null ? "" : s).normalize("NFKC"))
   .replace(/[‘’‚‛′]/g, "'")
@@ -131,12 +131,15 @@ const COUNTRY_GROUPS = [
   ["pakistan", "pakistani"], ["india", "indian"], ["vietnam", "vietnamese"], ["turkey", "turkish", "turkiye"], ["israel", "israeli"],
   ["belarus", "belarusian"], ["ukraine", "ukrainian"], ["syria", "syrian"], ["lebanon", "lebanese"],
   ["united states", "american", "usa", "u.s.", "u.s.a."], ["united kingdom", "british", "britain"],
+  ["germany", "german"], ["poland", "polish"], ["spain", "spanish"], ["france", "french"], ["netherlands", "dutch"],
+  ["saudi arabia", "saudi"], ["united arab emirates", "emirati", "uae"], ["south korea", "south korean"], ["taiwan", "taiwanese"], ["myanmar", "burmese"],
 ];
+const CODE_GROUP = { uk: "united kingdom", us: "united states", usa: "united states" };
 const CODES = { "united states": ["US"], "united kingdom": ["UK"] };
 /** Words (lower-case, whole-word) and 2-letter codes (case-sensitive) that name a country in a sentence. */
 function countryNames(country) {
   const n = normText(country);
-  const g = COUNTRY_GROUPS.find((x) => x.includes(n));
+  const g = COUNTRY_GROUPS.find((x) => x.includes(CODE_GROUP[n] || n));
   const words = new Set(g || [n]), codes = new Set(g ? CODES[g[0]] || [] : []);
   if (/^[A-Z]{2}$/.test(String(country).trim())) { codes.add(String(country).trim()); words.delete(n); }
   if (!g) { // generic stem rule: Peru/Peruvian is not guessed, but Chad -> Chadian, Cuba -> Cuban, Japan -> Japanese
@@ -175,10 +178,13 @@ export function storyProblems(story, cards, actor) {
     const cardHas = (term) => cf.some((f) => normText(f.v) === normText(term) || holds(normText(f.v), term) || holds(normText(term), f.v));
     const catHas = (term) => useCatalogue && catalogue.some((c) => normText(c) === normText(term));
     for (const m of text.matchAll(CVE_ANY)) if (!cf.some((f) => normText(f.v) === normText(m[0]))) bad.push(m[0]);
-    const figureText = held.flatMap((c) => (isObj(c.facts) && Array.isArray(c.facts.figures) ? c.facts.figures : [])).filter(isObj).map((f) => normText(f.v)).filter((v) => /\d/.test(v));
-    for (const m of text.replace(CVE_ANY, " ").matchAll(/\b(?:19|20)\d{2}\b/g)) {
+    const figureTexts = held.flatMap((c) => (isObj(c.facts) && Array.isArray(c.facts.figures) ? c.facts.figures : [])).filter(isObj).map((f) => fold(f.v).trim()).filter((v) => /\d/.test(v));
+    // a held figure's own number is not a year: mask each whole occurrence of the figure, then check what is left
+    let rest = text.replace(CVE_ANY, " ");
+    for (const v of figureTexts) rest = rest.replace(new RegExp(`(?<![\\w.,])${esc(v).replace(/\s+/g, "\\s+")}(?![\\w]|,\\d)`, "gi"), " ");
+    for (const m of rest.matchAll(/\b(?:19|20)\d{2}\b/g)) {
       const inDates = held.some((c) => (isObj(c.facts) && Array.isArray(c.facts.dates) ? c.facts.dates : []).some((d) => isObj(d) && `${d.v} ${d.q}`.includes(m[0])));
-      if (!inDates && !figureText.some((v) => v.includes(m[0]) && normText(text).includes(v))) bad.push(m[0]);
+      if (!inDates) bad.push(m[0]);
     }
     const heldFigs = cf.flatMap((f) => figuresIn(f.v).map((x) => x.value));
     for (const f of figuresIn(text)) if (!heldFigs.includes(f.value)) bad.push(f.raw);

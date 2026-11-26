@@ -1,7 +1,7 @@
 {
   "e7d9357d13840baf41b6c3a0a5a43cacb7209fcc": {
     "sha1": "e7d9357d13840baf41b6c3a0a5a43cacb7209fcc",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-26T21:11:10Z",
     "model": "haiku",
@@ -94,7 +94,15 @@
     },
     "hedges": [
       "Affected versions are given as 'at least' versions, based on the vendor's own analysis."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-26T22:26:48Z",
+      "ok": false,
+      "note": "hedges[0]: The text says the 'at least' versions come from 'Based on our analysis', meaning Trend Micro's own analysis. It does not attribute them to the vendor",
+      "by": "auditor"
+    }
   },
   "e7b50fe20edcbd0eaeb0db26485e1edeb347845f": {
     "sha1": "e7b50fe20edcbd0eaeb0db26485e1edeb347845f",
@@ -196,6 +204,12 @@
     },
     "hedges": [
       "This is probably a way for the attackers to keep their access inside the organization while still disturbing operations"
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-26T22:26:48Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

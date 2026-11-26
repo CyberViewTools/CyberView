@@ -55,4 +55,8 @@ test("library.yml: one schedule equal to routines.json, the API key only, the wo
   assert.match(lib, /unset ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN/);
   assert.match(lib, /export ANTHROPIC_CUSTOM_HEADERS="anthropic-workspace-id: \$WORKSPACE_ID"/);
   assert.match(lib, /node scripts\/dispatch\.mjs library --exec/);
+  // GitHub skipped the schedule for hours: it also starts after every deploy, at most one run 5 minutes after the last ended
+  assert.match(lib, /workflow_run:\n\s+workflows: \["Deploy to GitHub Pages"\]\n\s+types: \[completed\]/);
+  assert.match(lib, /!\(min < 5\)/);
+  assert.match(lib, /if: env\.HAS_KEY == 'true' && steps\.gap\.outputs\.go == 'true'\n\s+env:\n\s+CYBERVIEW_FALLBACK/);
 });

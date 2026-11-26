@@ -19,19 +19,31 @@ export const CARDS_DIR = join(DIR, "cards");
 const ROLE = "library-reader";
 const MAX_TRIES = 2;
 const STOP_AFTER_ERRORS = 3;
+const STOP_AFTER_UNREACHABLE = 5;
 const modelName = () => { const r = ((readJson(join(ROOT, "config", "models.json"), {}) || {}).roles || {})[ROLE]; return (r && r.model) || ""; };
 
-/** The stored cards by shard: {shard: {sha1: card}}. */
-export function loadStore(dir = CARDS_DIR) {
+/** One shard file: {} when it does not exist yet; null when it exists but is not a JSON object (unreadable: never write over it). */
+function readShard(dir, sh) {
+  const p = join(dir, `${sh}.json`);
+  if (!existsSync(p)) return {};
+  const j = readJson(p, null);
+  return j && typeof j === "object" && !Array.isArray(j) ? j : null;
+}
+/** The stored cards by shard: {shard: {sha1: card}}. An unreadable shard is left out and its name pushed onto `bad`. */
+export function loadStore(dir = CARDS_DIR, bad = []) {
   const store = {};
   if (!existsSync(dir)) return store;
-  for (const f of readdirSync(dir)) if (/^[0-9a-f]{2}\.json$/.test(f)) store[f.slice(0, 2)] = readJson(join(dir, f), {}) || {};
+  for (const f of readdirSync(dir)) {
+    if (!/^[0-9a-f]{2}\.json$/.test(f)) continue;
+    const sh = f.slice(0, 2), s = readShard(dir, sh);
+    if (s) store[sh] = s; else bad.push(sh);
+  }
   return store;
 }
-/** Every stored card by sha1. */
-export function loadCards(dir = CARDS_DIR) {
+/** Every stored card by sha1. Unreadable shards are named in `bad`, not read as empty. */
+export function loadCards(dir = CARDS_DIR, bad = []) {
   const m = new Map();
-  for (const shard of Object.values(loadStore(dir))) for (const [k, c] of Object.entries(shard)) m.set(k, c);
+  for (const shard of Object.values(loadStore(dir, bad))) for (const [k, c] of Object.entries(shard)) m.set(k, c);
   return m;
 }
 /** Pure: fold cards into the sharded store, additively (a card is replaced by its newer version; nothing else is dropped). */
@@ -74,7 +86,7 @@ export function decide(report, fetched, reply, ctx = {}) {
   const card = cleanCard({ ...reply.json, status: "read", partial: f.partial === true, read_at: at, model, reason: "" }, sha1);
   if (!card) return unread("bad-reply");
   const problems = cardProblems(card, f.text);
-  if (problems.length) return unread([...new Set(problems.map((p) => p.split(":")[0]))].slice(0, 3).join(", "));
+  if (problems.length) return unread([...new Set(problems.map((p) => p.split(":")[0]).filter((c) => /^[a-z][a-z-]{0,39}$/.test(c)))].slice(0, 3).join(", "));
   return { card, retry: false };
 }
 
@@ -91,28 +103,44 @@ async function readOne(report, prev, deps) {
   return { ...d, why: d.card ? "" : reply.limit ? "limit" : "error" };
 }
 
-/** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports. Returns the tally. */
+/** Read up to `max` records. Cards are written per shard after each wave of `concurrency` reports: the shard is re-read from disk
+ *  just before the write and the wave's cards merged into it, so another run's cards survive; a shard that cannot be read is never written. */
 export async function run({ max = 10, order = "newest", concurrency = 4, dir = CARDS_DIR, library = null, fetch = fetchText, call = oneShot, model = modelName(), log = console.log } = {}) {
   const { reports } = library || loadLibrary();
-  let store = loadStore(dir);
-  const cards = loadCards(dir);
-  const queue = readQueue(reports, cards, { order, max });
-  const tally = { read: 0, "no-text": 0, unread: 0, requeued: 0, stopped: "" };
-  let streak = 0;
+  const bad = new Set();
+  const badList = [];
+  const cards = loadCards(dir, badList);
+  badList.forEach((b) => bad.add(b));
+  const queue = readQueue(reports.filter((r) => !bad.has(shardOf(r.sha1))), cards, { order, max });
+  const tally = { read: 0, "no-text": 0, unread: 0, requeued: 0, stopped: "", unreadableShards: [] };
+  let failedCalls = 0, outage = 0;
   for (let i = 0; i < queue.length && !tally.stopped; i += concurrency) {
     const wave = queue.slice(i, i + concurrency);
-    const results = await Promise.all(wave.map((r) => readOne(r, cards.get(r.sha1), { fetch, call, model }).catch(() => ({ card: null, retry: true, why: "error" }))));
+    const results = await Promise.all(wave.map((r) => readOne(r, cards.get(r.sha1), { fetch, call, model }).catch((e) => {
+      log(`${r.sha1.slice(0, 8)} crashed ${String((e && e.name) || "Error").slice(0, 40)} ${String((e && e.code) || "").slice(0, 40)}`.trim());
+      return { card: null, retry: true, why: "error" };
+    })));
     const fresh = [];
     results.forEach((d, j) => {
       const id = wave[j].sha1.slice(0, 8);
-      if (d.card) { fresh.push(d.card); tally[d.card.status]++; log(`${id} ${d.card.status}${d.card.reason ? " " + d.card.reason : ""}`); }
+      if (d.card) { fresh.push(d.card); log(`${id} ${d.card.status}${d.card.reason ? " " + d.card.reason : ""}`); }
       else { tally.requeued++; log(`${id} not read (${d.why || "retry"}), stays queued`); }
       if (d.why === "limit") tally.stopped = "usage limit";
-      streak = d.why === "error" ? streak + 1 : d.why === "unreachable" ? streak : 0;
+      failedCalls = d.why === "error" ? failedCalls + 1 : d.why === "unreachable" ? failedCalls : 0;
+      outage = d.why === "unreachable" ? outage + 1 : 0;
     });
-    if (fresh.length) { store = mergeCards(store, fresh); for (const sh of new Set(fresh.map((c) => shardOf(c.sha1)))) writeJson(join(dir, `${sh}.json`), store[sh]); }
-    if (!tally.stopped && streak >= STOP_AFTER_ERRORS) tally.stopped = `${streak} failed model calls in a row`;
+    for (const sh of new Set(fresh.map((c) => shardOf(c.sha1)))) {
+      const mine = fresh.filter((c) => shardOf(c.sha1) === sh);
+      const onDisk = readShard(dir, sh);
+      if (!onDisk) { bad.add(sh); tally.requeued += mine.length; continue; }          // went unreadable meanwhile: leave it alone
+      writeJson(join(dir, `${sh}.json`), mergeCards({ [sh]: onDisk }, mine)[sh]);
+      for (const c of mine) { tally[c.status]++; cards.set(c.sha1, c); }
+    }
+    if (!tally.stopped && outage >= STOP_AFTER_UNREACHABLE) tally.stopped = "ORKL unreachable";
+    if (!tally.stopped && failedCalls >= STOP_AFTER_ERRORS) tally.stopped = `${failedCalls} failed model calls in a row`;
   }
+  tally.unreadableShards = [...bad].sort();
+  if (bad.size) log(`library-read: ${bad.size} shard(s) unreadable, left untouched: ${tally.unreadableShards.join(", ")}`);
   log(`library-read: ${tally.read} read, ${tally["no-text"]} no-text, ${tally.unread} unread, ${tally.requeued} left queued${tally.stopped ? `; stopped: ${tally.stopped}` : ""}`);
   return tally;
 }

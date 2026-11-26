@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, readFileSync, readdirSync } from "node:fs";
+import { mkdtempSync, rmSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { decide, readQueue, mergeCards, run, loadCards, statusLine } from "../../scripts/library-read.mjs";
@@ -74,14 +74,63 @@ test("prepText: capped text is marked partial; control characters removed", () =
   assert.equal(prepText("a\nb\tc").text, "a\nb\tc");
 });
 const fe = (code) => Object.assign(new Error(code), { code });
-test("fetchText: plain_text first, then the archive file; 404 is none, an outage is unreachable", async () => {
+test("fetchText: the archive file first, then the API entry; any 4xx falls through; none only when every source answered empty", async () => {
   const body = "y".repeat(TEXT_MIN + 1);
-  assert.equal((await fetchText(rA, { getter: async () => ({ data: { plain_text: body } }) })).text, body);
-  const viaArchive = async (u) => { if (u.includes("/library/entry/")) return { data: {} }; return body; };
-  assert.equal((await fetchText(rA, { getter: viaArchive })).text, body);
-  assert.deepEqual(await fetchText(rA, { getter: async () => { throw fe("http_404"); } }), { error: "none" });
-  assert.deepEqual(await fetchText({ ...rA, txt_url: "" }, { getter: async () => ({ data: {} }) }), { error: "none" });
-  for (const c of ["http_503", "timeout", "network", "circuit_open"]) assert.deepEqual(await fetchText(rA, { getter: async () => { throw fe(c); } }), { error: "unreachable" });
+  const calls = [];
+  const mk = (arch, api) => async (u) => { calls.push(u); const x = u.includes("/library/entry/") ? api : arch; if (x instanceof Error) throw x; return x; };
+  const hit = await fetchText(rA, { getter: mk(body, new Error("never")) });
+  assert.equal(hit.text, body); assert.ok(calls.every((u) => !u.includes("/library/entry/")), "archive hit: API never called");
+  assert.equal((await fetchText(rA, { getter: mk(fe("http_404"), { data: { plain_text: body } }) })).text, body);
+  assert.equal((await fetchText(rA, { getter: mk(fe("http_403"), { data: { plain_text: body } }) })).text, body);
+  assert.deepEqual(await fetchText(rA, { getter: mk(fe("http_404"), fe("http_404")) }), { error: "none" });
+  assert.deepEqual(await fetchText(rA, { getter: mk("", { data: {} }) }), { error: "none" });
+  assert.deepEqual(await fetchText(rA, { getter: mk(fe("http_503"), fe("http_404")) }), { error: "unreachable" });
+  assert.deepEqual(await fetchText(rA, { getter: mk(fe("http_404"), fe("timeout")) }), { error: "unreachable" });
+  assert.deepEqual(await fetchText(rA, { getter: mk(fe("http_429"), fe("http_404")) }), { error: "unreachable" });
+  assert.equal((await fetchText(rA, { getter: mk(fe("network"), { data: { plain_text: body } }) })).text, body);
+  assert.deepEqual(await fetchText({ ...rA, txt_url: "", id: "" }, { getter: mk(body, body) }), { error: "none" });
+  for (const c of ["http_503", "timeout", "network", "circuit_open"]) assert.deepEqual(await fetchText(rA, { getter: mk(fe(c), fe(c)) }), { error: "unreachable" });
+});
+test("loadCards: an unreadable shard is reported, not read as empty; run leaves it byte for byte and skips its records", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-read-"));
+  try {
+    writeFileSync(join(dir, "aa.json"), "{ not json");
+    writeFileSync(join(dir, "bb.json"), "[1,2]");
+    const bad = []; const m = loadCards(dir, bad);
+    assert.equal(m.size, 0); assert.deepEqual(bad.sort(), ["aa", "bb"]);
+    const lines = [];
+    const t = await run({ max: 10, dir, library: { reports: [rA, rB, rC] }, fetch: async () => ({ text: TEXT, partial: false }), model: "haiku", log: (l) => lines.push(l), call: async () => good() });
+    assert.equal(readFileSync(join(dir, "aa.json"), "utf8"), "{ not json");
+    assert.equal(readFileSync(join(dir, "bb.json"), "utf8"), "[1,2]");
+    assert.equal(t.read, 1); assert.equal(t.unreadableShards.length, 2);
+    assert.ok(lines.some((l) => /2 shard\(s\) unreadable, left untouched: aa, bb/.test(l)));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: a card another run wrote to the shard meanwhile survives the write", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-read-"));
+  try {
+    const other = { sha1: "a1" + "0".repeat(38), status: "read", summary: "other run" };
+    const fetch = async () => { writeFileSync(join(dir, "aa.json"), JSON.stringify({ [other.sha1]: other })); return { text: TEXT, partial: false }; };
+    await run({ max: 1, dir, library: { reports: [rA] }, fetch, model: "haiku", log: () => {}, call: async () => good() });
+    const got = JSON.parse(readFileSync(join(dir, "aa.json"), "utf8"));
+    assert.equal(got[other.sha1].summary, "other run"); assert.equal(got[A].status, "read");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("run: five unreachable outcomes in a row stop it; a thrown exception is logged by name and code only", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "lib-read-"));
+  try {
+    const many = Array.from({ length: 12 }, (_, i) => rep(String(i).repeat(40), `2020-02-${10 + i}`));
+    const t = await run({ max: 12, concurrency: 2, dir, library: { reports: many }, fetch: async () => ({ error: "unreachable" }), log: () => {}, call: async () => good() });
+    assert.equal(t.stopped, "ORKL unreachable"); assert.ok(t.requeued < 12 && t.requeued >= 5);
+    const lines = [];
+    await run({ max: 1, dir, library: { reports: [rA] }, fetch: async () => { throw Object.assign(new TypeError("SECRET REPORT TEXT"), { code: "E_X" }); }, log: (l) => lines.push(l), call: async () => good() });
+    assert.ok(lines.some((l) => /TypeError E_X/.test(l))); assert.ok(!lines.join("\n").includes("SECRET"));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+test("decide: reason holds only problem codes, short", () => {
+  const r = good(); r.json.facts.actors[0].q = "SECRET quote that the report never contains"; r.json.summary = "";
+  const d = decide(rA, f(), r, ctx);
+  assert.match(d.card.reason, /^[a-z][a-z-]*(, [a-z][a-z-]*){0,2}$/); assert.ok(d.card.reason.length <= 200); assert.ok(!/SECRET|\[/.test(d.card.reason));
 });
 test("run: stores only cards, never the report text; stops after 3 failed calls in a row; a limit stops it", async () => {
   const dir = mkdtempSync(join(tmpdir(), "lib-read-"));

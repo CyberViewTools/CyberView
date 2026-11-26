@@ -2,7 +2,7 @@
   "title": "3CX tells self-managed customers to update to V20 Update 10 for two NGINX HTTP/2 vulnerabilities",
   "category": "vuln",
   "status": "confirmed",
-  "severity": 2,
+  "severity": 3,
   "date": "2026-11-20",
   "date_note": "3CX's advisory is dated 20 November 2026; the page gives no earlier day (the NGINX flaws were published 18 November, per the same page).",
   "time_basis": "published",
@@ -19,7 +19,7 @@
     "CVE-2026-123633",
     "CVE-2026-123007"
   ],
-  "tags": [],
+  "tags": ["poc-public"],
   "country": "",
   "place": "",
   "pin_type": "none",
@@ -27,8 +27,8 @@
   "lat": null,
   "lng": null,
   "sector": "Technology",
-  "summary": "3CX's advisory says two HTTP/2 vulnerabilities in NGINX (CVE-2026-123633 and CVE-2026-123007) affect self-managed 3CX systems on Linux and Windows running V20 Update 10 or Update 9. It says the fix is V20 Update 10, Build 20.0.10.1801. 3CX says 3CX-hosted and SMB systems were already updated. Palo Alto Networks' research on CVE-2026-123633 in NGINX reports no confirmed indicators of compromise; 3CX's advisory does not mention exploitation.",
-  "plain": "3CX says its phone-system software contains two flaws from the NGINX web server. Customers who run 3CX on their own servers are told to install the newer build.",
+  "summary": "3CX's advisory says two NGINX HTTP/2 vulnerabilities (CVE-2026-123633, CVE-2026-123007) affect self-managed 3CX systems; the fix is V20 Update 10, Build 20.0.10.1801. 3CX says hosted and SMB systems were already updated. Greenbone says Rapid7 published a working proof of concept for CVE-2026-123007 and reports no attacks; 3CX's advisory does not mention exploitation.",
+  "plain": "3CX says its phone-system software contains two flaws from the NGINX web server. Customers who run 3CX on their own servers are told to install the newer build. Greenbone says a working proof of concept exists for one flaw.",
   "exec": "Self-managed 3CX phone systems need the vendor's update; hosted and SMB systems were already updated, according to 3CX.",
   "action": "3CX advises self-managed customers to install V20 Update 10, Build 20.0.10.1801, and until then to restrict access to the 3CX web port (HTTPS) to the office, VPN or known IP addresses.",
   "impact": "",
@@ -48,9 +48,18 @@
       "name": "Unit 42 (Palo Alto Networks)",
       "url": "https://unit42.paloaltonetworks.com/cve-2026-123633-nginx-http2-vulnerability/",
       "published": "2026-11-24"
+    },
+    {
+      "name": "Greenbone",
+      "url": "https://www.greenbone.net/en/blog/nginx2root-apache-roller-cve-2026-123007-cve-2026-129448/",
+      "published": "2026-11-26"
     }
   ],
   "evidence": [
+    {
+      "url": "https://www.greenbone.net/en/blog/nginx2root-apache-roller-cve-2026-123007-cve-2026-129448/",
+      "quote": "Rapid7 published a working proof of concept"
+    },
     {
       "url": "https://borncity.com/blog/2026/11/24/3cx-kritisches-nginx-sicherheitsupdate-dringend-patchen/",
       "quote": "Führen Sie so bald wie möglich ein Update auf V20 Update 10, Build 20.0.10.1801 oder höher durch."
@@ -72,7 +81,7 @@
     "basis": "inferred"
   },
   "first_seen": "2026-11-24T16:59:39Z",
-  "updated_at": "2026-11-25T15:12:49Z",
+  "updated_at": "2026-11-26T16:40:36Z",
   "cve_meta": [
     {
       "id": "CVE-2026-123633",

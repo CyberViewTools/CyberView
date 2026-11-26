@@ -1,0 +1,37 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-26T00:39:38Z",
+  "finished_at": "2026-11-26T01:05:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2023-25914 CVE-2023-25915 Danfoss AK-SM 800A",
+    "CVE-2026-133323 MiCollab AWV exploited",
+    "CISA adds known exploited vulnerabilities November 25 2026 Danfoss Mitel",
+    "Mitel MiCollab AWV command injection MISA-2026-0012 researcher analysis watchTowr OR Rapid7 OR Accenture"
+  ],
+  "pages_read": [
+    {"url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012", "title": "Mitel Product Security Advisory MISA-2026-0012", "used_in": "CVE-2026-133323"},
+    {"url": "https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-mitel", "title": "CSIRT Italia AL03/261117/CSIRT-ITA Mitel MiCollab", "used_in": "CVE-2026-133323"},
+    {"url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json", "title": "CISA KEV catalog feed (entries for the three CVEs)", "used_in": "CVE-2026-133323, CVE-2023-25914, CVE-2023-25915"},
+    {"url": "https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk", "title": "CISA BOD 26-04 implementation guidance", "used_in": "CVE-2026-133323, CVE-2023-25914, CVE-2023-25915"},
+    {"url": "https://csirt.divd.nl/cves/CVE-2023-25914/", "title": "DIVD CVE-2023-25914", "used_in": "CVE-2023-25914"},
+    {"url": "https://csirt.divd.nl/cves/CVE-2023-25915/", "title": "DIVD CVE-2023-25915", "used_in": "CVE-2023-25915"},
+    {"url": "https://csirt.divd.nl/cases/DIVD-2023-00025/", "title": "DIVD case DIVD-2023-00025 Danfoss AK-SM800A", "used_in": "CVE-2023-25914, CVE-2023-25915"},
+    {"url": "https://www.synacktiv.com/sites/default/files/2023-10/synacktiv-danfoss-sm800a-multiple-vulnerabilities.pdf", "title": "Synacktiv advisory: Danfoss SM800A < 3.3 (prose only used; PoC content ignored)", "used_in": "CVE-2023-25914, CVE-2023-25915"}
+  ],
+  "added": ["CVE-2026-133323", "CVE-2023-25914", "CVE-2023-25915"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Danfoss DSA-2023-08-01 vendor advisory unread (403)", "url": "https://www.danfoss.com/en/service-and-support/coordinated-vulnerability-disclosure/danfoss-security-advisories/dsa-2023-08-01", "note": "Confirm whether firmware 3.3 itself is fixed: CISA's product data marks up to and including 3.3 as affected, while DIVD and Synacktiv say 3.3 is the fix. Confidence stays medium until the vendor page is read.", "priority": "high"},
+    {"title": "MiCollab CVE-2026-133323: no technical or incident write-up yet", "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012", "note": "Look for researcher or incident-responder analysis and indicators. A DEV Community post claims Accenture saw exploitation before disclosure; unverified, not used.", "priority": "medium"},
+    {"title": "NHS England cyber alert CC-4894 (Mitel MiCollab)", "url": "https://digital.nhs.uk/cyber-alerts/2026/cc-4894", "note": "Returned 403; it may give remediation detail from a government source.", "priority": "low"}
+  ],
+  "failed_sites": [
+    "danfoss.com (403, not worked around)",
+    "cisa.gov KEV catalog web page (403; used the JSON feed instead)",
+    "digital.nhs.uk (403)",
+    "incibe.es (stream aborted)"
+  ],
+  "notes": "Danfoss analyses were written from CISA plus DIVD and Synacktiv, with confidence medium because the vendor page could not be read. Mitel is medium because only the vendor advisory and government notices exist, with no technical write-up. Synacktiv's PDF contains proof-of-concept material; only its prose was used and nothing was copied. Tenable plugin IDs and model numbers appeared only in search snippets and were removed. Build and analyst check pass."
+}

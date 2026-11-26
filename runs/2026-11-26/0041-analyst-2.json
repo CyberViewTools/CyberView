@@ -1,0 +1,38 @@
+{
+  "job": "analyst-2",
+  "started_at": "2026-11-26T00:39:37Z",
+  "finished_at": "2026-11-26T00:50:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-103406 Juniper Session Smart Router command injection",
+    "CVE-2026-133469 Xen Orchestra exploited",
+    "CVE-2026-133303 MiCollab exploited",
+    "Accenture MiCollab exploitation AWV November 2026",
+    "CISA adds known exploited vulnerabilities catalog November 25 2026 Juniper Mitel Xen Orchestra",
+    "JSA112183 CVE-2026-103406 exploitation SIRT salt minion conductor"
+  ],
+  "pages_read": [
+    {"url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012", "title": "Mitel MISA-2026-0012", "used_in": "CVE-2026-133303"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-133303", "title": "CISA KEV entry", "used_in": "CVE-2026-133303"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-133303", "title": "CVE record", "used_in": "CVE-2026-133303"},
+    {"url": "https://securityonline.info/micollab-vulnerabilities-cvss-10-command-injection/", "title": "SecurityOnline MiCollab AWV flaws", "used_in": "CVE-2026-133303"},
+    {"url": "https://docs.vates.tech/security-advisories/advisories/2026/vates-sa-2026-062/", "title": "Vates VSA-2026-062", "used_in": "CVE-2026-133469"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-133469", "title": "CISA KEV entry", "used_in": "CVE-2026-133469"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-133469", "title": "CVE record", "used_in": "CVE-2026-133469"},
+    {"url": "https://www.bleepingcomputer.com/news/security/critical-xen-orchestra-auth-bypass-flaw-exploited-to-hijack-vm-servers/", "title": "BleepingComputer Xen Orchestra auth bypass exploited", "used_in": "CVE-2026-133469"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-103406", "title": "CISA KEV entry", "used_in": "CVE-2026-103406"},
+    {"url": "https://cveawg.mitre.org/api/cve/CVE-2026-103406", "title": "CVE record (Juniper CNA)", "used_in": "CVE-2026-103406"},
+    {"url": "https://securityonline.info/juniper-session-smart-router-vulnerabilities/", "title": "SecurityOnline Juniper SSR vulnerabilities", "used_in": "CVE-2026-103406"},
+    {"url": "https://braindetox.kr/en/posts/juniper_session_smart_security_update_2026_10.html", "title": "Braindetox Juniper Session Smart update", "used_in": "CVE-2026-103406"}
+  ],
+  "added": ["CVE-2026-103406", "CVE-2026-133303", "CVE-2026-133469"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "Juniper JSA112183 vendor text for CVE-2026-103406", "url": "https://supportportal.juniper.net/s/article/2026-10-On-Demand-Security-Bulletin-Session-Smart-Router-and-Session-Smart-Conductor-Multiple-internally-discovered-vulnerabilities-resolved", "note": "Portal rendered only a loading/CSS error page (twice, also via kb.juniper.net redirect). Analysis is medium confidence from CISA + CVE record; recheck for workarounds, exploitation wording and the affected service.", "priority": "high"},
+    {"title": "Accenture page on MiCollab exploitation cited in CVE-2026-133303 record", "url": "", "note": "Referenced in the CVE record but not found by search; could give attacker and technique detail for the AWV flaws.", "priority": "medium"},
+    {"title": "Vates VSA-2026-063 (VM import path abused by same attackers)", "url": "", "note": "Mentioned in search results for Xen Orchestra; not read. May be a separate unfixed flaw worth an event or update.", "priority": "medium"}
+  ],
+  "failed_sites": ["supportportal.juniper.net (renders no content)", "nvd.nist.gov (JavaScript page, no content)"],
+  "notes": "All three analyses pass analyst.mjs check. Mitel: exploitation rests on CISA KEV only; vendor silent. Xen Orchestra: BleepingComputer gives fixed versions 6.9.1/6.10.0, which conflict with the vendor and CVE record (6.9.2/6.10.1); followed the vendor. No instructions found in page content."
+}

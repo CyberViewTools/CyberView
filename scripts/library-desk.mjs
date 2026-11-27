@@ -17,7 +17,7 @@ import { DIR, STATE_FILE, loadLibrary } from "./orkl.mjs";
 import { loadCards, readQueue, loadReadState, parkedRecords, READ_STATE_FILE, run as readRun, statusLine as readStatusLine, noTextGuard, settleNoText } from "./library-read.mjs";
 import { loadStories, writeQueue, run as writeRun, statusLine as writeStatusLine } from "./library-write.mjs";
 import { reviewQueue, auditPick, run as reviewRun, runAudit, statusLine as reviewStatusLine } from "./library-review.mjs";
-import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAudit, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
+import { loadConfig, auditState, auditFailed, paused, wrongCards, retiredAfterAudit, rewriteMsOf, DEFAULTS as AUDIT_DEFAULTS } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, nameKey } from "./lib/library-subjects.mjs";
 import { canBuild, estimateCost, readUsage, budgetConfig, PRICES } from "./lib/usage.mjs";
 import { readBuild, BUILD_LEDGER } from "./budget.mjs";
@@ -55,7 +55,8 @@ export function chunkFor(c) {
  *  reasoning as minStartMs in scripts/run-job.mjs: measured calls take 1 to 2.5 minutes, the role's own timeout is the ceiling). */
 export function reserveMs(role) {
   const t = Number(((MODELS.roles || {})[role] || {}).timeout_min) * 60000 || 360000;
-  return Math.min(t, role === "library-reader" ? 90000 : 150000);
+  const haiku = String((((MODELS.roles || {})[role]) || {}).model || "") === "haiku";   // a Haiku reader answers fast; Sonnet needs the longer reserve
+  return Math.min(t, role === "library-reader" && haiku ? 90000 : 150000);
 }
 
 /** Pure: what to do this run. `state` = deskState().state; canBuildOk = the pipeline can spare the window. */
@@ -208,7 +209,7 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
   const steady = pilotDone ? [...fresh, ...inPilot] : fresh;
   const reportBy = new Map(reports.map((r) => [r.sha1, r]));
   const newCard = (s) => s.sha1s.some((x) => { const k = cards.get(x), r = reportBy.get(x); return k && k.status === "read" && k.withdrawn !== true && r && isNew(r); });
-  const wq = writeQueue(subjects, stories, cards, {}), pk = new Set(pilotKeys(pilot));
+  const wq = writeQueue(subjects, stories, cards, { now, rewriteMs: rewriteMsOf(c) }), pk = new Set(pilotKeys(pilot));
   const hasStory = (k) => { const f = stories.get(k); return !!(f && (f.live || f.next)); };
   const pilotQ = wq.filter((s) => pk.has(s.key)), steadyQ = wq.filter((s) => pk.has(s.key) || hasStory(s.key) || newCard(s));
   const pct = !pilotDone || isPaused ? 100 : c.audit_pct;
@@ -220,7 +221,10 @@ export function deskState({ reports, actors, cards, stories, pilot, cfg, failure
   const state = { pilotDone, paused: isPaused, failedCards: todo.filter((r) => auditFailed(cards.get(r.sha1))).length,
     pilot: { read: inPilot.length, write: pilotQ.length }, newRecords: steady.length, backlog: old.length,
     writeNew: steadyQ.length, writeBacklog: wq.length - steadyQ.length, drafts: reviewQueue(stories).filter((k) => subjectKeys.has(k) && (pilotDone || pk.has(k))).length, auditable: auditPick(cards, pct).length };
-  const writeOrder = !pilotDone ? pilotQ.map((s) => s.key) : steadyQ.map((s) => s.key);
+  // backfill on: the steady queue first, then every other waiting subject (most read cards first); the writer writes only what is in
+  // its order, so without the rest the backlog was counted but never written (owner, 2026-11-27)
+  const steadyKeys = new Set(steadyQ.map((s) => s.key));
+  const writeOrder = !pilotDone ? pilotQ.map((s) => s.key) : c.backfill ? [...steadyQ, ...wq.filter((s) => !steadyKeys.has(s.key))].map((s) => s.key) : steadyQ.map((s) => s.key);
   // review: before the latch only the pilot's stories are reviewed (null = every draft)
   return { state, orders: { read: readOrder, write: writeOrder, review: pilotDone ? null : [...pk] }, subjectKeys, pilotStatus: { ...live, latched } };
 }

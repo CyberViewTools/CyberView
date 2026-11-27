@@ -11,7 +11,9 @@ import { existsSync, readdirSync } from "node:fs";
 import { ROOT, readJson } from "./store.mjs";
 import { DIR } from "../orkl.mjs";
 
-export const DEFAULTS = { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50 };   // audit_pct 100: every card is audited before the site may show it
+export const DEFAULTS = { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0 };   // audit_pct 100: every card is audited before the site may show it; rewrite_hours 0: no rewrite cool-down
+/** The writer's rewrite cool-down in ms (library.rewrite_hours). */
+export const rewriteMsOf = (cfg) => Math.max(0, Number((cfg || {}).rewrite_hours) || 0) * 3600000;
 export const WINDOW = 500;                                // the most recent audited cards that count
 export const PAUSE_MESSAGE = "Library reader accuracy below target";
 export const pauseHelp = "Clears when the failed cards are read again and audited ok by the auditor, or when the owner raises library.audit_pause_pct in config/pipeline.json.";

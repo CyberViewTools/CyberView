@@ -60,6 +60,34 @@ test("writeQueue: a card marked unread changes basedOn and so queues a rewrite o
   c.get(h("b")).status = "unread";
   assert.equal(writeQueue([s], files, c, {}).length, 1);
 });
+// owner, 2026-11-27: the backfill reads the biggest actors first, so their card set changed every run and the same stories were
+// rewritten (and parked) run after run while ~2,000 subjects waited. A story written within library.rewrite_hours is not rewritten
+// just because more cards arrived; a story citing a card found wrong, a first story and an immediate retry are never held back.
+const NOW = Date.parse("2026-11-27T12:00:00Z"), HOUR = 3600000, CD = { now: NOW, rewriteMs: 24 * HOUR };
+const at = (hAgo) => new Date(NOW - hAgo * HOUR).toISOString();
+test("writeQueue: a published story written within the cool-down is not rewritten for new cards; after it, it is", () => {
+  const recent = new Map([["a-7", { live: story({ status: "published", based_on: "old", written_at: at(3) }), next: null }]]);
+  assert.equal(writeQueue([subA], recent, cards, CD).length, 0);
+  const old = new Map([["a-7", { live: story({ status: "published", based_on: "old", written_at: at(30) }), next: null }]]);
+  assert.equal(writeQueue([subA], old, cards, CD).length, 1);
+});
+test("writeQueue: a parked or failed rewrite written within the cool-down waits, even when the cards changed", () => {
+  const parked = new Map([["a-7", { live: story({ status: "stale", stale_reason: "new-report", based_on: "old", written_at: at(40) }), next: story({ status: "parked", tries: 2, based_on: "older", written_at: at(2) }) }]]);
+  assert.equal(writeQueue([subA], parked, cards, CD).length, 0);
+  const parkedOld = new Map([["a-7", { live: null, next: story({ status: "parked", tries: 2, based_on: "older", written_at: at(25) }) }]]);
+  assert.equal(writeQueue([subA], parkedOld, cards, CD).length, 1);
+});
+test("writeQueue: the cool-down never holds back a card-wrong rewrite, a first story or a retry under two tries", () => {
+  const wrong = new Map([["a-7", { live: story({ status: "stale", stale_reason: "card-wrong", based_on: "old", written_at: at(1) }), next: null }]]);
+  assert.equal(writeQueue([subA], wrong, cards, CD).length, 1);
+  assert.equal(writeQueue([subA], new Map(), cards, CD).length, 1);
+  const rej = new Map([["a-7", { live: null, next: story({ status: "rejected", tries: 1, based_on: bA(), written_at: at(1) }) }]]);
+  assert.equal(writeQueue([subA], rej, cards, CD).length, 1);
+});
+test("writeQueue: no rewriteMs (0) keeps the old behaviour", () => {
+  const recent = new Map([["a-7", { live: story({ status: "published", based_on: "old", written_at: at(1) }), next: null }]]);
+  assert.equal(writeQueue([subA], recent, cards, { now: NOW, rewriteMs: 0 }).length, 1);
+});
 test("writeQueue: order list first, then max", () => {
   const ss = ["a-1", "a-2", "a-3"].map((k) => sub({ key: k }));
   assert.deepEqual(writeQueue(ss, new Map(), cards, { order: ["a-3"], max: 2 }).map((s) => s.key)[0], "a-3");

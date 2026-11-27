@@ -181,5 +181,172 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "1d2a2587e69517b4af1af2aca67f3048e624583c": {
+    "sha1": "1d2a2587e69517b4af1af2aca67f3048e624583c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:19:14Z",
+    "model": "haiku",
+    "summary": "Bitdefender white paper on a 2018 targeted attack, attributed to the Carbanak group, on an Eastern European financial institution. Spear-phishing with Word exploits and a Cobalt Strike beacon led to lateral movement, domain admin credential theft, and collection of banking documents, with the apparent aim of compromising the ATM network. The report gives a timeline of the intrusion from day 0 to day 55 and says Carbanak has targeted banks in many countries, stealing up to $1 billion. Tool and indicator lists are in appendices.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "showing how the infamous group Carbanak infiltrates organizations",
+          "by": "Bitdefender (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial sector",
+          "q": "specifically targeting the financial sector"
+        },
+        {
+          "v": "financial institutions",
+          "q": "targeted attack on an Eastern European financial institution"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "Banks in countries such as Russia, the United Kingdom, the Netherlands, Spain, Romania, Belarus,"
+        },
+        {
+          "v": "United Kingdom",
+          "q": "Banks in countries such as Russia, the United Kingdom, the Netherlands, Spain, Romania, Belarus,"
+        },
+        {
+          "v": "Spain",
+          "q": "the leader of the group was apprehended in Alicante, Spain, on March 26th, 2018"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2014",
+          "q": "Discovered in 2014, the campaign quickly gained notoriety",
+          "what": "Carbanak was first discovered"
+        },
+        {
+          "v": "mid-2018",
+          "q": "In mid-2018, Bitdefender researchers investigated a targeted attack",
+          "what": "Bitdefender investigated a targeted attack on a financial institution"
+        },
+        {
+          "v": "March 26th, 2018",
+          "q": "the leader of the group was apprehended in Alicante, Spain, on March 26th, 2018",
+          "what": "Leader of the group was apprehended in Alicante, Spain"
+        },
+        {
+          "v": "May 2018",
+          "q": "a security incident that started in May 2018 with an email",
+          "what": "Investigated incident began with a spear-phishing email received by two bank employees"
+        },
+        {
+          "v": "Day 0 16:48:53",
+          "q": "Day 0 16:48:53",
+          "what": "First endpoint compromised after an employee opened the spear-phishing email"
+        },
+        {
+          "v": "Day 46",
+          "q": "On Day 46, attackers deleted a series of documents and folders from the workstation",
+          "what": "Attackers deleted documents and folders from a workstation to cover their tracks"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "The same group is believed to have also been using the Cobalt Strike framework"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "deploying memory scraping tools, such as Mimikatz, or enumerating Active Directory"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "The initial point of compromise found in our investigation involved the use of spear-phishing emails"
+        },
+        {
+          "v": "exploitation of unpatched Remote Code Execution vulnerabilities",
+          "q": "exploit several unpatched Remote Code Execution Vulnerabilities and deploy a backdoor"
+        },
+        {
+          "v": "decoy documents",
+          "q": "open decoy documents similar to the one in"
+        },
+        {
+          "v": "lateral movement",
+          "q": "how it moves laterally across the infrastructure"
+        },
+        {
+          "v": "credential theft",
+          "q": "to find admin-level credentials that would allow them to move"
+        },
+        {
+          "v": "after-hours reconnaissance",
+          "q": "Infrastructure reconnaissance mainly occurred after business hours or on weekends to avoid triggering security alarms"
+        },
+        {
+          "v": "data staging for exfiltration",
+          "q": "identify critical documents and prepare them for exfiltration"
+        },
+        {
+          "v": "log and file cleanup",
+          "q": "delete files from the system and cleaning registry keys to leave fewer forensics traces"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-8570",
+          "q": "CVE-2017-8570"
+        },
+        {
+          "v": "CVE-2017-11882",
+          "q": "CVE-2017-11882, and CVE-2018-0802."
+        },
+        {
+          "v": "CVE-2018-0802",
+          "q": "CVE-2017-11882, and CVE-2018-0802."
+        }
+      ],
+      "figures": [
+        {
+          "v": "100 banks in 40 countries",
+          "q": "compromising the security systems of 100 banks in 40 countries and stealing"
+        },
+        {
+          "v": "$1 billion",
+          "q": "stealing up to $1 billion in the process"
+        },
+        {
+          "v": "Two victims",
+          "q": "Two victims were tricked into opening the spear-phishing attachment"
+        },
+        {
+          "v": "a couple hours",
+          "q": "It only took attackers a couple hours from initial compromise"
+        },
+        {
+          "v": "17 days",
+          "q": "over a period of 17 days"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Carbanak"
+    },
+    "hedges": [
+      "The same group is believed to have also been using the Cobalt Strike framework to run sophisticated campaigns",
+      "Banks in countries such as Russia, the United Kingdom, the Netherlands, Spain, Romania, Belarus, have allegedly been targeted",
+      "it appears that the cybercriminal group focused initially on mapping the internal processes and applications",
+      "The cybercriminal group could be actively improving its understanding of internal banking systems",
+      "potentially to cash out at ATMs",
+      "The documents prepared for exfiltration, which were relevant to the internal applications, as well as the connections to banking applications after regular office hours, point to a financially…",
+      "According to other threat reports, the same URL has been used in delivering other tainted documents, potentially part of similar campaigns"
+    ]
   }
 }

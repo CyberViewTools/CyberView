@@ -428,5 +428,109 @@
       "note": "techniques[2]: The quote about a malicious Windows service for process injection describes FIN7's previous approach, which the shim technique departed from. It ",
       "by": "auditor"
     }
+  },
+  "0fd73fb19634637c9d66265f9b891826d8fffbea": {
+    "sha1": "0fd73fb19634637c9d66265f9b891826d8fffbea",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:22:28Z",
+    "model": "haiku",
+    "summary": "A 2019 security research write-up by Objective-See describes the author's search for dylib hijacking flaws in macOS apps and how it led to local privilege escalation to root. Writes to root-owned App Store app folders could be redirected during installation. The author used a benign-looking App Store app, Crontab Creator, as a proof of concept for root access through a cron job. Apple treated the installer issue as an enhancement, did not assign a CVE, and fixed it in Mojave 10.14.5. The author says a bypass of that fix followed.",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "July 2, 2019",
+          "q": "July 2, 2019",
+          "what": "Date of the write-up"
+        },
+        {
+          "v": "2018 October",
+          "q": "This was in 2018 October",
+          "what": "Apple fixed the Mojave exploit path"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dylib Hijack Scanner",
+          "q": "Patrick’s “Dylib Hijack Scanner” (DHS) tool"
+        },
+        {
+          "v": "Monitor.app",
+          "q": "This is a procmon like app created by FireEye, it can be downloaded from here: Monitor.app It’s quite good!"
+        },
+        {
+          "v": "fs_usage",
+          "q": "Built-in fs_usage utility"
+        },
+        {
+          "v": "ProcInfo library",
+          "q": "Objective-See’s ProcInfo library & ProcInfoExample"
+        },
+        {
+          "v": "Crontab Creator",
+          "q": "is called “Crontab Creator”, which is actually very useful for creating crontab files"
+        },
+        {
+          "v": "StartUp",
+          "q": "I made a new POC, called StartUp:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "dylib hijacking",
+          "q": "trying to find dylib hijacking vulnerability in a specific application"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "Ideas for using this for privilege escalation"
+        },
+        {
+          "v": "symlink",
+          "q": "Even if we create a hardlink instead of symlink, that will be overwritten like in the 1st case."
+        },
+        {
+          "v": "Bypassing root folder permissions",
+          "q": "Bypassing root folder permissions in App Store installed apps"
+        },
+        {
+          "v": "Dropping AppStore files",
+          "q": "Taking it further - Dropping AppStore files anywhere"
+        },
+        {
+          "v": "Redistributing paid apps",
+          "q": "Redistributing paid apps"
+        },
+        {
+          "v": "bypass Gatekeeper",
+          "q": "you will need a method to bypass Gatekeeper"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "99$",
+          "q": "It’s 99$/ annum."
+        },
+        {
+          "v": "~24 hours",
+          "q": "I had to wait ~24 hours for it being reviewed"
+        },
+        {
+          "v": "10.14.5",
+          "q": "Finally this came with Mojave 10.14.5"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The author declines to name the specific application where the dylib hijack was first found.",
+      "The author says they are not even sure the 2019 fix directly addresses their proof of concept, or whether it was a coincidence.",
+      "The author says other folders may also be affected but that they did not explore other options.",
+      "The author says they bypassed Apple's fix and that an update will follow once the issue is fixed."
+    ]
   }
 }

@@ -497,5 +497,185 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "75e144bb2f67929f91e7565ad9a75464d2fba7f7": {
+    "sha1": "75e144bb2f67929f91e7565ad9a75464d2fba7f7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:17:43Z",
+    "model": "haiku",
+    "summary": "iDefense (Accenture Security) reports the Goldfin campaign, which used the SOCKSBOT backdoor in spear-phishing emails spoofing banks in CIS countries from February 2017 to May 2018. Infection ran through a JavaScript dropper and PowerShell stages that loaded SOCKSBOT in memory. iDefense assesses with moderate confidence that the campaign is unlikely to be linked to CANDLEFISH. It notes overlaps with FIN7 but says they are not enough to attribute the campaign to FIN7.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat group",
+          "q": "research by iDefense analysts shows that SOCKSBOT was in fact used by a threat group",
+          "by": "iDefense (Accenture Security)"
+        },
+        {
+          "v": "FIN7",
+          "q": "a PowerShell obfuscation technique with FIN7.",
+          "by": "iDefense (Accenture Security)"
+        },
+        {
+          "v": "CANDLEFISH",
+          "q": "claimed to be associated with CANDLEFISH (a.k.a.",
+          "by": "security vendors, as cited by iDefense"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "spoofing financial institutions in the"
+        }
+      ],
+      "countries": [
+        {
+          "v": "CIS countries",
+          "q": "18-month long campaign of spoofing banks in CIS countries, with the most recent"
+        },
+        {
+          "v": "Kazakhstan",
+          "q": "Halyk Bank (Kazakhstan)"
+        },
+        {
+          "v": "Ukraine",
+          "q": "PrivatBank (Ukraine)"
+        },
+        {
+          "v": "Belarus",
+          "q": "Idea Bank (Belarus)"
+        },
+        {
+          "v": "Iran",
+          "q": "Tejara Bank (Iran)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 26, 2018",
+          "q": "July 26, 2018",
+          "what": "report published"
+        },
+        {
+          "v": "February 2017",
+          "q": "since as early as February 2017 to",
+          "what": "earliest activity linked to the campaign"
+        },
+        {
+          "v": "May 2018",
+          "q": "as recently as May 2018.",
+          "what": "latest activity linked to the campaign"
+        },
+        {
+          "v": "October 2017",
+          "q": "two spear-phishing campaigns in October 2017 involving",
+          "what": "two spear-phishing campaigns using SOCKSBOT observed"
+        },
+        {
+          "v": "May 28, 2018",
+          "q": "observed on May 28, 2018 spoofing the Idea Bank CJSC:",
+          "what": "most recent campaign observed, spoofing Idea Bank CJSC"
+        },
+        {
+          "v": "August 2017",
+          "q": "back in August 2017.",
+          "what": "a HALFBAKED sample dropped a PowerShell component with a similar obfuscation"
+        },
+        {
+          "v": "2017-10-27",
+          "q": "Compiled Time Stamp: 2017-10-27 17:46:05",
+          "what": "compile timestamp of the analysed SOCKSBOT sample"
+        },
+        {
+          "v": "2017-02-01",
+          "q": "Compiled Time Stamp: 2017-02-01 13:40:14",
+          "what": "compile timestamp of a SOCKSBOT dropper variant"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SOCKSBOT",
+          "q": "research by iDefense analysts shows that SOCKSBOT was in fact used by a threat group"
+        },
+        {
+          "v": "Empire",
+          "q": "modified version of the function Invoke-EventVwrBypass from the Empire"
+        },
+        {
+          "v": "HALFBAKED",
+          "q": "HALFBAKED is a malware family associated with FIN7."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "two spear-phishing campaigns in October 2017 involving"
+        },
+        {
+          "v": "phishing email",
+          "q": "all involved a phishing email with two embedded URLs directing"
+        },
+        {
+          "v": "obfuscated code",
+          "q": "The JavaScript file contains heavily obfuscated code as Exhibit 5 shows."
+        },
+        {
+          "v": "anti-virus process",
+          "q": "To look for a running anti-virus processes, such as"
+        },
+        {
+          "v": "reflective loader",
+          "q": "The code is in fact a PowerShell reflective loader script"
+        },
+        {
+          "v": "inject into new processes",
+          "q": "Create and inject into new processes"
+        },
+        {
+          "v": "persistence",
+          "q": "establish persistence by creating a Windows service named Check for"
+        },
+        {
+          "v": "bypass UAC",
+          "q": "to bypass UAC and execute the above cmdlet"
+        },
+        {
+          "v": "in memory",
+          "q": "the implant exists only in memory and never touches the disk."
+        },
+        {
+          "v": "service spoofing",
+          "q": "creating a new service spoofing one of the services with an almost identical name."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "18-month",
+          "q": "18-month long campaign of spoofing banks in CIS countries, with the most recent"
+        },
+        {
+          "v": "three different C2 servers",
+          "q": "Only three different C2 servers have been observed:"
+        },
+        {
+          "v": "two spear-phishing campaigns",
+          "q": "iDefense analysts came across two spear-phishing campaigns in October 2017 involving"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Goldfin"
+    },
+    "hedges": [
+      "iDefense assesses with moderate confidence that the reported campaign is unlikely to be associated with CANDLEFISH.",
+      "Overlaps with FIN7 (WHOIS data, network hosting, a PowerShell obfuscation technique) are not enough to attribute the Goldfin campaign to FIN7.",
+      "The FIN7-linked hosting overlap is assessed with low confidence; the hosts are likely shared or parking hosts.",
+      "Some sort of phishing kit was likely used to generate the phishing emails.",
+      "The report states its content is based on information gathered at the time of creation and is subject to change."
+    ]
   }
 }

@@ -289,25 +289,251 @@
   },
   "28daf3ac0fd51cfb17d851fe8469d7f8a620452b": {
     "sha1": "28daf3ac0fd51cfb17d851fe8469d7f8a620452b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:00:25Z",
+    "read_at": "2026-11-27T12:13:58Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "French-language threat report (TLP:WHITE, created 22/10/2019, published 23/04/2020) on Silence, a cybercrime group described as allegedly Russian-speaking and active since 2016, targeting banks and ATM networks. It describes phishing with malicious attachments, the Truebot downloader, an Atmosphere DLL injected into ATM management software, compromise of card-processing systems via stolen employee credentials, and cash-outs by money mules. Cited thefts total about 4.2 million dollars from 2016 to 2019. The report suggests possible links to TA505, which it hedges as possibly stemming from…",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Silence",
+          "q": "Silence est un groupe de cybercriminels supposément russophone, actif",
+          "by": "the report (citing Group-IB)"
+        },
+        {
+          "v": "TA505",
+          "q": "Comme évoqué par Group-IB [10], il se pourrait que les liens entre TA505 et Silence soient dus au fait que Silence",
+          "by": "Group-IB, as cited in the report"
+        },
+        {
+          "v": "Lazarus",
+          "q": "Le MOA Lazarus utiliserait par exemple",
+          "by": "the report"
+        },
+        {
+          "v": "TEMP.TruthTeller",
+          "q": "FireEye dénomme TEMP.TruthTeller ce qu’il considère être une partie de l’activité de Silence.",
+          "by": "FireEye, as cited in the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Finance",
+          "q": "Secteur(s) d’activité concerné(s) Finance"
+        },
+        {
+          "v": "banks",
+          "q": "Ciblage privilégié de Silence : les banques"
+        },
+        {
+          "v": "financial institutions",
+          "q": "et ciblant des institutions financières à travers le monde."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "et d’Ukraine, mais a depuis étendu son périmètre à une trentaine de pays en Europe"
+        },
+        {
+          "v": "Bangladesh",
+          "q": "banques présentes au Bangladesh, mais aussi comme un certain nombre de banques en Asie."
+        },
+        {
+          "v": "Ghana",
+          "q": "en juillet 2019, il a attaqué des banques au Chili, au Costa Rica, en Bulgarie et au Ghana."
+        },
+        {
+          "v": "Kenya",
+          "q": "(dont le Ghana et le Kenya) [1]."
+        },
+        {
+          "v": "France",
+          "q": "des adresses IP localisées en France auraient communiqué avec l’infrastructure de com"
+        }
+      ],
+      "dates": [
+        {
+          "v": "22/10/2019",
+          "q": "Date de création 22/10/2019",
+          "what": "Report creation date"
+        },
+        {
+          "v": "23/04/2020",
+          "q": "Date de publication 23/04/2020",
+          "what": "Report publication date"
+        },
+        {
+          "v": "2016",
+          "q": "depuis 2016, et ciblant des institutions financières à travers le monde.",
+          "what": "Silence active since 2016"
+        },
+        {
+          "v": "2018",
+          "q": "en mai 2018 et février 2019, le groupe Silence a attaqué deux banques indiennes ;",
+          "what": "Silence attacked two Indian banks"
+        },
+        {
+          "v": "2018",
+          "q": "de septembre 2018 à août 2019, Group-IB décompte déjà 16 campagnes de Silence",
+          "what": "Group-IB counts 16 Silence campaigns from September 2018 to August 2019"
+        },
+        {
+          "v": "2019",
+          "q": "en février 2019, il a dérobé à la banque russe Omsk IT Bank environ 400000 dollars ;",
+          "what": "Omsk IT Bank theft of about 400000 dollars"
+        },
+        {
+          "v": "2019",
+          "q": "en mai 2019, il a dérobé à la banque bangladaise Dutch-Bangla Bank environ 3 millions de dollars ;",
+          "what": "Dutch-Bangla Bank theft of about 3 million dollars"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Truebot",
+          "q": "d’administration à distance Truebot (ou Silence.Downloader)."
+        },
+        {
+          "v": "Silence.Downloader",
+          "q": "d’administration à distance Truebot (ou Silence.Downloader)."
+        },
+        {
+          "v": "Atmosphere.Dropper",
+          "q": "Truebot distribue Atmosphere.Dropper dans le SI de la victime."
+        },
+        {
+          "v": "Atmosphere.Injector",
+          "q": "Atmosphere.Dropper ou Atmosphere.Injector (lui-même distribué par Atmosphere.Dropper),"
+        },
+        {
+          "v": "Silence.ProxyBot",
+          "q": "Silence utilise parfois un utilitaire proxy, Silence.ProxyBot (Turncard)"
+        },
+        {
+          "v": "Slowroll",
+          "q": "Slowroll (Silence.Mainmodule) : cette porte dérobée communique directement avec le serveur C2 ou par le"
+        },
+        {
+          "v": "EmpireDNSAgent",
+          "q": "EmpireDNSAgent (EDA) : cet outil, basé sur Empire et sur dnscat2te"
+        },
+        {
+          "v": "Cardcam",
+          "q": "Cardcam9 : cet utilitaire réalise des captures d’écran ainsi que des enregistrements vidéo"
+        },
+        {
+          "v": "Farse",
+          "q": "par le biais de l’outil Farse."
+        },
+        {
+          "v": "Mimikatz",
+          "q": "de Mimikatz (dont le code source est disponible sur Github)"
+        },
+        {
+          "v": "Ivoke",
+          "q": "Group-IB a identifié la propagation du code malveillant Ivoke en"
+        },
+        {
+          "v": "Kikothac",
+          "q": "ils utilisaient la porte dérobée Kikothac, développée par un tiers"
+        },
+        {
+          "v": "FlawedAmmyy.Downloader",
+          "q": "Or, FlawedAmmyy.Downloader aurait été utilisé depuis 2016 au cours de campagnes"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing emails impersonating financial institutions",
+          "q": "Silence cible ses victimes au travers de courriels d’hameçonnage usurpant l’image d’institutions financières."
+        },
+        {
+          "v": "malicious email attachments",
+          "q": "Ces courriels contiennent une pièce jointe malveillante :"
+        },
+        {
+          "v": "mass emailing to map targets",
+          "q": "En guise de phase préparatoire, il arrive également que Silence envoie massivement des milliers de courriels"
+        },
+        {
+          "v": "manipulating ATMs for fraudulent withdrawals",
+          "q": "réside dans la manipulation de distributeurs automatiques de"
+        },
+        {
+          "v": "injecting a malicious DLL into the ATM command process",
+          "q": "Une fois le processus repéré, Atmosphere.Dropper ou Atmosphere.Injector"
+        },
+        {
+          "v": "accessing bank card processing system to raise withdrawal limits",
+          "q": "Afin d’effectuer des retraits frauduleux aux DAB, Silence essaierait parfois d’accéder au système de traitement de"
+        },
+        {
+          "v": "simultaneous withdrawals by money mules",
+          "q": "Des retraits simultanés sont dans les deux cas réalisés par des mules"
+        },
+        {
+          "v": "compromising a privileged employee account via password theft",
+          "q": "Silence compromettrait le compte avec privilèges d’un employé"
+        },
+        {
+          "v": "DNS tunnel C2 communication",
+          "q": "communiquant avec le serveur C2 par tunnel DNS"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-0199",
+          "q": "exploitant les CVE-2017-01996 et CVE-2017-118827"
+        },
+        {
+          "v": "CVE-2017-11882",
+          "q": "exploitant les CVE-2017-01996 et CVE-2017-118827"
+        }
+      ],
+      "figures": [
+        {
+          "v": "4,2 million",
+          "q": "Au total, de juin 2016 à juin 2019, Silence aurait dérobé environ 4,2 millions de dollars à des banques [1]."
+        },
+        {
+          "v": "400000 dollars",
+          "q": "en février 2019, il a dérobé à la banque russe Omsk IT Bank environ 400000 dollars ;"
+        },
+        {
+          "v": "3 million",
+          "q": "en mai 2019, il a dérobé à la banque bangladaise Dutch-Bangla Bank environ 3 millions de dollars ;"
+        },
+        {
+          "v": "16 campagnes",
+          "q": "de septembre 2018 à août 2019, Group-IB décompte déjà 16 campagnes de Silence"
+        },
+        {
+          "v": "7 campagnes concluantes",
+          "q": "7 campagnes concluantes"
+        },
+        {
+          "v": "95%",
+          "q": "tout comme 95% des"
+        },
+        {
+          "v": "300",
+          "q": "incite à 300 contrôles de sécurité"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "hedges": [
+      "Silence is described as allegedly Russian-speaking and independent (supposément russophones et indépendants).",
+      "Per Group-IB, French IP addresses 'would have' communicated with Silence's C2 infrastructure in 2019.",
+      "The agency says it is unaware of France being targeted, but it is not excluded that France may be or have been targeted.",
+      "The roughly 4.2 million dollars stolen from banks is stated with 'aurait' (would have).",
+      "Links between Silence and TA505 are described as possibly due to Silence buying bank network access ('il se pourrait').",
+      "The report says a Lazarus technique 'would' use malicious code to approve fraudulent ATM withdrawals.",
+      "Lack of PCI DSS compliance is said to facilitate attacks ('seraient facilitées'), an explanation the report hedges.",
+      "The ATM DLL-injection technique is said to predate Silence, citing open-source material from 2009."
+    ]
   }
 }

@@ -555,5 +555,172 @@
       "note": "summary: It says the actor used SQL injection to run 'a download of the Demux loader'. The text says Falcon blocked that download, and the actor's later attempt",
       "by": "auditor"
     }
+  },
+  "1137d574278dedd79c844634a5d5239640fa5f40": {
+    "sha1": "1137d574278dedd79c844634a5d5239640fa5f40",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:17:33Z",
+    "model": "haiku",
+    "summary": "Virus Bulletin 2020 talk by Paul Jung of Excellium on an incident responded to in December 2019 at a Belgian healthcare organisation. The ransom operation was described as allegedly run by TA505. Attackers used phishing with macro-enabled Word documents, a GET2 dropper, the SDBbot backdoor, TinyMet, smbexec and credential dumping to reach domain admin rights. The responders contained the intrusion 21 days after the breach.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "TA505",
+          "q": "ransom operation run allegedly by the APT group TA505",
+          "by": "the report itself (author Paul Jung, CERT-XLM)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "responded to an incident affecting a Belgian actor in the healthcare sector"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Belgian",
+          "q": "responded to an incident affecting a Belgian actor in the healthcare sector"
+        },
+        {
+          "v": "Russian",
+          "q": "The emails were sent to individuals’ mailboxes by using a Russian university MTA"
+        },
+        {
+          "v": "Ukraine",
+          "q": "the geolocation seems to be in Ukraine but the owner of the AS is in the"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2019",
+          "q": "In December 2019 our team CERT-XLM responded to an incident affecting a Belgian actor",
+          "what": "CERT-XLM responded to an incident affecting a Belgian healthcare actor, a ransom operation"
+        },
+        {
+          "v": "November 2019",
+          "q": "for example Rouen Hospital in November 2019 and Maastricht University in December 2019",
+          "what": "Ransom victim cited as an example of the group's activity"
+        },
+        {
+          "v": "mid October 2019",
+          "q": "already extensively analysed by Proofpoint in mid October 2019",
+          "what": "GET2 dropper analysed by Proofpoint"
+        },
+        {
+          "v": "June 2020",
+          "q": "in June 2020, Telekom announced the discovery of SDBbot samples using TLS",
+          "what": "Telekom reported SDBbot samples using TLS and certificate pinning"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SDBbot",
+          "q": "the attackers installed a backdoor commonly named SDBbot"
+        },
+        {
+          "v": "TinyMet",
+          "q": "a repacked version of TinyMet, which is an open source small meterpreter stager hosted on GitHub"
+        },
+        {
+          "v": "GET2",
+          "q": "This DLL is a dropper known as GET2, which was already extensively analysed by Proofpoint"
+        },
+        {
+          "v": "smbexec",
+          "q": "the attackers then used smbexec to execute commands on remote Windows systems"
+        },
+        {
+          "v": "Metasploit",
+          "q": "launched Metasploit as TCP listen meterpreter in order to plant SDBbot backdoors"
+        },
+        {
+          "v": "procdump",
+          "q": "dumped the lsass process using procdump tools from sysinternals"
+        },
+        {
+          "v": "pwdump",
+          "q": "and finally using the pwdump tool"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing",
+          "q": "Our customer was hit by two separate waves of phishing emails."
+        },
+        {
+          "v": "macro-enabled Word document",
+          "q": "redirect the victims toward a macro-enabled Word document"
+        },
+        {
+          "v": "application shimming",
+          "q": "called application shimming (Att&ck T1138)"
+        },
+        {
+          "v": "start-up key",
+          "q": "The persistence is set with a simple start-up key using rundll32"
+        },
+        {
+          "v": "stored in the registry",
+          "q": "The binary including the CC configuration is stored in the registry along with a little randomly named DLL"
+        },
+        {
+          "v": "MS17-07",
+          "q": "they used MS17-07 directly against one domain controller to gain AD domain admin rights"
+        },
+        {
+          "v": "domain credentials",
+          "q": "To extract the domain credentials, the assailants used multiple solutions."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "more than 100 destination mailboxes",
+          "q": "Both waves were large, each with more than 100 destination mailboxes."
+        },
+        {
+          "v": "Four hours",
+          "q": "Four hours after the implant was installed, the attackers connected back to the target."
+        },
+        {
+          "v": "21 days",
+          "q": "It ha s been 21 days from the breach to the mitigation of the intruder."
+        },
+        {
+          "v": "124 distinct labels",
+          "q": "All the IOCs collected and attributed to this group gave us 124 distinct labels, resolving to only 1,900 hosts"
+        },
+        {
+          "v": "1,900 hosts",
+          "q": "All the IOCs collected and attributed to this group gave us 124 distinct labels, resolving to only 1,900 hosts"
+        },
+        {
+          "v": "11 running SDBbot servers",
+          "q": "By using this method, we discovered 11 running SDBbot servers, 10 of them still active in June 2020."
+        },
+        {
+          "v": "more than 50 servers and workstations",
+          "q": "to plant SDBbot backdoors in more than 50 servers and workstations."
+        },
+        {
+          "v": "Ubuntu 18.04",
+          "q": "mostly Ubuntu 18.04, but also Debian 10 and a few Ubuntu 16.4."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SDBbot"
+    },
+    "hedges": [
+      "The ransom operation was run allegedly by TA505, according to the report.",
+      "We do not know if the credential-dumping approach is a standard procedure for the group or if they just ran into issues.",
+      "The geolocation of the command server seems to be in Ukraine, but the owner of the network block is in Seychelles.",
+      "Domains allegedly belonging to TA505 are listed, and the group probably has been using the same techniques for months.",
+      "The report leaves attribution to readers: For fun, we will now allow readers to make their own attribution conclusions.",
+      "The purpose of the transient file profile3.7.exe remains unknown."
+    ]
   }
 }

@@ -170,7 +170,7 @@
   },
   "8dcd6158f82898310af73d9fbeae8e626dbfdb7b": {
     "sha1": "8dcd6158f82898310af73d9fbeae8e626dbfdb7b",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T12:00:52Z",
     "model": "haiku",
@@ -280,6 +280,365 @@
       "Some media reports suggest that the support portal for MICROS clients was also compromised.",
       "The Carbanak link to the MICROS support portal was reported by a media source, not confirmed by Visa.",
       "The Carbanak group activity description is attributed to Kaspersky Lab, as cited in the report."
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T12:09:52Z",
+      "ok": false,
+      "note": "summary: It says Visa 'links the activity' to Carbanak and MalumPOS. The text only says Visa is aware of two cybercrime threats that have previously targeted Or",
+      "by": "auditor"
+    }
+  },
+  "8d2d4525486671544cdb8a9f6328177430410204": {
+    "sha1": "8d2d4525486671544cdb8a9f6328177430410204",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:21:57Z",
+    "model": "haiku",
+    "summary": "Hunt.io analysed three exposed open directories of an active intrusion crew. Hospital staff credentials and a VPN session are reported in operator hands, though their validity is not established. A US manufacturer's cloud storage was listed with a live token. US law firms and federal agencies are targeted; one firm faces sustained attacks but no breach is confirmed. Tooling includes a malicious JDBC provider chaining to an Apollo-derived Windows payload and a Poseidon Linux implant. The attribution is an assessment only: a Chinese-speaking, Southeast Asia-based cybercrime operation.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Chinese-speaking, Southeast Asia-based cybercrime operation",
+          "q": "We read this as a Chinese-speaking, Southeast Asia-based cybercrime operation running a Russian-authored toolkit.",
+          "by": "the report (Hunt.io threat-research team)"
+        },
+        {
+          "v": "financially motivated, Chinese-speaking crew",
+          "q": "The indicators are present and point one way: a financially motivated, Chinese-speaking crew operating in the UTC+7",
+          "by": "the report (Hunt.io threat-research team)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "The primary healthcare victim is a large US hospital system."
+        },
+        {
+          "v": "manufacturer",
+          "q": "The firmest US impact in the whole corpus is not a hospital at all, but a manufacturer."
+        },
+        {
+          "v": "law firms",
+          "q": "US law firms and federal agencies are next."
+        },
+        {
+          "v": "federal agencies",
+          "q": "US law firms and federal agencies are next."
+        },
+        {
+          "v": "university",
+          "q": "A Bangladeshi university had its Kerberos key material exported:"
+        },
+        {
+          "v": "tax office",
+          "q": "A Swiss tax office (internal domain TABT"
+        },
+        {
+          "v": "medical-education",
+          "q": "This is attempted probing of the medical-education sector, not confirmed access."
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "A US manufacturer's cloud storage was accessed."
+        },
+        {
+          "v": "Bangladesh",
+          "q": "A Bangladeshi university had its Kerberos key material exported:"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-11-25",
+          "q": "Published: 2026-11-25 · Archived: 2026-11-27 02:00:41 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "2026-10-25",
+          "q": "VPS USAGE RULES (approved by operator 2026-10-25)",
+          "what": "operator-approved usage rules file for shared servers"
+        },
+        {
+          "v": "14 October",
+          "q": "Saved runtime output records the sequence on 14 October at 15:58:57 CEST",
+          "what": "launcher logged initialization, writing a temporary executable and starting it"
+        },
+        {
+          "v": "5 November 2026",
+          "q": "Its profile shows open-directory warnings dated 6 October, 25 October, and 5 November 2026.",
+          "what": "open-directory warning recorded for the first host"
+        },
+        {
+          "v": "27 October 2026",
+          "q": "observations, including 27 October 2026.",
+          "what": "Mythic-titled page observed on the configured callback host"
+        },
+        {
+          "v": "8 November",
+          "q": "on 8 November, port 8089 served a page titled User Portal",
+          "what": "User Portal page observed on a host linked to a callback domain"
+        },
+        {
+          "v": "5 November",
+          "q": "the retained port-8899 response exposed another directory on 5 November.",
+          "what": "staging directory with executable and script filenames retained"
+        }
+      ],
+      "tools": [
+        {
+          "v": "TlsChannelFix",
+          "q": "A malicious JDBC driver chains to an Apollo payload. A TlsChannelFix class runs when a Java app loads it, and a"
+        },
+        {
+          "v": "Apollo",
+          "q": "a launcher XOR-decodes a packed file into an Apollo-derived Windows executable."
+        },
+        {
+          "v": "Poseidon",
+          "q": "A Poseidon Linux implant"
+        },
+        {
+          "v": "Mythic",
+          "q": "Searching its HTTP observations on port 7443 exposed a page titled Mythic:"
+        },
+        {
+          "v": "Net Monitor for Employees Professional",
+          "q": "Treat the Net Monitor for Employees Professional agent port as context, not a standalone indicator."
+        },
+        {
+          "v": "Java HTTPS beacon",
+          "q": "The C2 mixes custom and commercial tooling: a custom Java HTTPS beacon plus clients for Net Monitor for"
+        },
+        {
+          "v": "Chisel",
+          "q": "with Microsoft 365 spraying (o365spray) and movement tooling (Chisel, proxychains)."
+        },
+        {
+          "v": "o365spray",
+          "q": "with Microsoft 365 spraying (o365spray) and movement tooling (Chisel, proxychains)."
+        },
+        {
+          "v": "PetitPotam",
+          "q": "The rest of the kit is standard: PetitPotam, krbrelayx, Responder, PKINITtools, mitm6, Impacket, netexec, DonPAPI, and an"
+        },
+        {
+          "v": "Impacket",
+          "q": "The rest of the kit is standard: PetitPotam, krbrelayx, Responder, PKINITtools, mitm6, Impacket, netexec, DonPAPI, and an"
+        },
+        {
+          "v": "UnprotectBlob.exe",
+          "q": "a DPAPI helper (UnprotectBlob.exe) were read statically as well"
+        },
+        {
+          "v": "vslist.py",
+          "q": "A script, vslist.py, lists objects in a Microsoft Azure blob container"
+        },
+        {
+          "v": "php2shell",
+          "q": "CVE-2026-109618 php2shell (PHP RCE) php2shell scanner output vs external hosts"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "credential-stuffing",
+          "q": "credential-stuffing against two Citrix NetScaler VPN gateways,"
+        },
+        {
+          "v": "Kerberos key",
+          "q": "Sensitive stores were retained: 414 keystroke-log rows and 35,601 Kerberos key records across 11,867 principals."
+        },
+        {
+          "v": "SQL injection",
+          "q": "SQL injection against a firm web app, username enumeration, an SMTP open-relay test, and"
+        },
+        {
+          "v": "lateral movement",
+          "q": "we describe this as a recovered large-scale key export with hands-on lateral movement, not a one-click DC dump."
+        },
+        {
+          "v": "DPAPI collection",
+          "q": "and a DPAPI collection run."
+        },
+        {
+          "v": "install-from-media",
+          "q": "is covered by the IFM (install-from-media) workflow."
+        },
+        {
+          "v": "pretext messages",
+          "q": "Support-form delivery scripts prepare pretext messages under a persona"
+        },
+        {
+          "v": "credential files",
+          "q": "scripts index Claude and OpenAI Codex credential files on victim hosts."
+        },
+        {
+          "v": "obfuscation",
+          "q": "This is obfuscation, not keyed encryption; HTTPS is the transport protection."
+        },
+        {
+          "v": "certificate and hostname checks disabled",
+          "q": "the transport is HTTPS with certificate and hostname checks disabled by the generated class."
+        },
+        {
+          "v": "local account",
+          "q": "creates a local account named svc_audit, adds"
+        },
+        {
+          "v": "Hash-candidate generators",
+          "q": "Hash-candidate generators do not establish successful cracking"
+        },
+        {
+          "v": "Azure blob container",
+          "q": "lists objects in a Microsoft Azure blob container"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-19781",
+          "q": "Citrix NetScaler: CVE-2025-5777, CVE-2019-19781"
+        },
+        {
+          "v": "CVE-2025-5777",
+          "q": "CVE-2025-5777 Citrix NetScaler (CitrixBleed 2) Citrix NetScaler tooling"
+        },
+        {
+          "v": "CVE-2025-57819",
+          "q": "CVE-2025-57819 FreePBX FreePBX exploit logic"
+        },
+        {
+          "v": "CVE-2026-109618",
+          "q": "CVE-2026-109618 php2shell (PHP RCE) php2shell scanner output vs external hosts"
+        },
+        {
+          "v": "CVE-2026-109619",
+          "q": "CVE-2026-109619 php2shell (PHP RCE) php2shell scanner output vs external hosts"
+        },
+        {
+          "v": "CVE-2021-42278",
+          "q": "CVE-2021-42278 Active Directory (sAMAccountName / noPac) AD relay and Kerberos kit"
+        },
+        {
+          "v": "CVE-2021-36942",
+          "q": "CVE-2021-36942 PetitPotam (AD coercion) AD relay and Kerberos kit"
+        },
+        {
+          "v": "CVE-2017-8563",
+          "q": "CVE-2017-8563 Active Directory / LDAP relay AD relay and Kerberos kit"
+        },
+        {
+          "v": "CVE-2020-1472",
+          "q": "CVE-2020-1472 Zerologon (Netlogon) AD relay and Kerberos kit"
+        },
+        {
+          "v": "CVE-2026-22153",
+          "q": "CVE-2026-22153 FortiOS, LDAP auth bypass fg_ldapbypass.sh"
+        },
+        {
+          "v": "CVE-2026-62911",
+          "q": "Microsoft Exchange MRSProxy pre-auth RCE (CVE-2026-62911,"
+        },
+        {
+          "v": "CVE-2024-42049",
+          "q": "TightVNC (CVE-2024-42049, tvnc_ctrl.py)"
+        },
+        {
+          "v": "CVE-2026-87902",
+          "q": "an LFI driver (CVE-2026-87902, lfi.py on host C)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "8,460",
+          "q": "Collection A holds a loot file of 8,460 unique nonempty"
+        },
+        {
+          "v": "3,570",
+          "q": "plus a separate 3,570-record authentication dump and a web-server phpinfo capture."
+        },
+        {
+          "v": "155,568",
+          "q": "capturing 155,568 object names including QuickBooks files, and ran its Windows hashes against a custom wordlist."
+        },
+        {
+          "v": "35,601",
+          "q": "Sensitive stores were retained: 414 keystroke-log rows and 35,601 Kerberos key records across 11,867 principals."
+        },
+        {
+          "v": "11,867",
+          "q": "Sensitive stores were retained: 414 keystroke-log rows and 35,601 Kerberos key records across 11,867 principals."
+        },
+        {
+          "v": "2,115 files",
+          "q": "The three primary collections contain 2,115 files and 1,981 distinct hashes."
+        },
+        {
+          "v": "1,981 distinct hashes",
+          "q": "The three primary collections contain 2,115 files and 1,981 distinct hashes."
+        },
+        {
+          "v": "9,195",
+          "q": "yields 9,195 records, of which"
+        },
+        {
+          "v": "563",
+          "q": "A legal-sector seed list holds 563 unique entries"
+        },
+        {
+          "v": "60 named firms",
+          "q": "than 60 named firms, including Kirkland & Ellis, DLA Piper, Latham & Watkins, Dentons, Skadden, Jones Day, Sidley"
+        },
+        {
+          "v": "22,312 lines",
+          "q": "Associated web output contains 22,312 lines, with 22,250 parser-matched"
+        },
+        {
+          "v": "1,051 .gov URLs",
+          "q": "records and 1,051 .gov URLs across 536 hostnames."
+        },
+        {
+          "v": "540 request records",
+          "q": "An expanded server access log contains 540 request records from 195 distinct client addresses."
+        },
+        {
+          "v": "542,861 objects",
+          "q": "Cloud enumeration reports 542,861 objects and 418.24 GB of metadata-derived sizes"
+        },
+        {
+          "v": "126 qualifying records",
+          "q": "Its results file records 126 qualifying records across eight addresses."
+        },
+        {
+          "v": "51,049 records",
+          "q": "Five packet captures contain 51,049 records."
+        },
+        {
+          "v": "4009",
+          "q": "returned invalid-credential errors (NetScaler 4009) and no"
+        },
+        {
+          "v": "23 observations",
+          "q": "The exact-hash search returned 23 observations, all on"
+        },
+        {
+          "v": "99 lines",
+          "q": "(pn_stb_lines.txt holds 99 lines)"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Named law firms and agencies were targeted or enumerated, not compromised by this operator, unless marked as confirmed.",
+      "Attribution is an assessment drawn from indicators in the files, not a validated attribution; no named group is tied.",
+      "Hospital credential material is not shown to be a proven domain login or patient-data loss; its validity is not established.",
+      "Cloud storage was listed, not downloaded, and the SAS token was not tested.",
+      "Hash-candidate generation does not establish successful cracking or access to an on-premises domain.",
+      "For Simpson Thacher, all captured credential-stuffing and exploit results show failure; no evidence the firm was breached.",
+      "Payload and implant artifacts were read statically; no sample was executed and a live implant callback is not shown.",
+      "Infrastructure associations listed by the platform are not proof of common ownership."
     ]
   }
 }

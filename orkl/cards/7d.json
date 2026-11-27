@@ -852,25 +852,100 @@
   },
   "7de0fbb852cc5be3fce91725a1b0aeb9abe3a43b": {
     "sha1": "7de0fbb852cc5be3fce91725a1b0aeb9abe3a43b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:55:29Z",
+    "read_at": "2026-11-27T12:11:18Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "FireEye's final post in a four-part series on the CARBANAK malware toolset. It describes CARBANAK's desktop video recording feature, the custom video file format and player that worked with it, and a recovered recording of an operator preparing post-exploitation tools. The report links the toolset to FIN7 and speculates about a front company, and it marks those points as speculation.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "which we now know was operated by FIN7 to recruit potentially unwitting",
+          "by": "FireEye (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "employees working at targeted banks"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "Oct. 7 to Oct. 10, 2019",
+          "q": "held Oct. 7 to Oct. 10, 2019, in Washington, D.C.",
+          "what": "FireEye Cyber Defense Summit 2019 held in Washington, D.C."
+        },
+        {
+          "v": "2018",
+          "q": "FireEye's Cyber Defense Summit 2018 presentation titled",
+          "what": "FireEye presentation 'Hello, Carbanak!' covering much of the same material at Cyber Defense Summit 2018"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CARBANAK",
+          "q": "The CARBANAK backdoor is capable of recording video of the victim’s desktop."
+        },
+        {
+          "v": "video player",
+          "q": "The CARBANAK authors wrote their own video player"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "to spawn Meterpreter instances and give unwitting operators access"
+        },
+        {
+          "v": "tinymet",
+          "q": "CARBANAK’s tinymet command"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "recording video of the victim’s desktop",
+          "q": "The CARBANAK backdoor is capable of recording video of the victim’s desktop."
+        },
+        {
+          "v": "insert fraudulent transactions",
+          "q": "allowing them to successfully insert fraudulent transactions that remained undetected"
+        },
+        {
+          "v": "persistence",
+          "q": "The list of commands in the figure centers around persistence"
+        },
+        {
+          "v": "spawn Meterpreter instances",
+          "q": "to spawn Meterpreter instances and give unwitting operators access"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two different versions",
+          "q": "there are at least two different versions of the video file format"
+        },
+        {
+          "v": "dozens of hours",
+          "q": "after spending dozens of hours reverse engineering a large, complex family"
+        },
+        {
+          "v": "four-part series",
+          "q": "This final installment concludes our four-part series"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "CARBANAK"
+    },
+    "hedges": [
+      "Attackers reportedly viewed recorded desktop videos to gain an understanding of the operational workflow of employees",
+      "While purely speculation, it is possible that this was an employee of the front company Combi Security",
+      "This could either be because the operator was testing CARBANAK, or because they were being monitored.",
+      "it could be the case that FIN7 used CARBANAK’s tinymet command to spawn Meterpreter instances"
+    ]
   }
 }

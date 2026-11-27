@@ -209,5 +209,93 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "8c07515bff49058298298366cbfa89478d71b47f": {
+    "sha1": "8c07515bff49058298298366cbfa89478d71b47f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:22:15Z",
+    "model": "haiku",
+    "summary": "Zscaler ThreatLabz blog post by Javier Vicente Vallejo, published 2024-01-31, tracing about 15 years of Qakbot malware development. It describes changes to the command-and-control protocol, encryption moving from RC4 to AES, a time-based domain generation fallback added in version 2.0.1, compromised FTP servers used for data exfiltration before that was changed, compromised systems used as relays, and RSA signatures added in version 3.0.0.443.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Qakbot author",
+          "q": "the Qakbot author replaced these string commands with integer values",
+          "by": "Zscaler ThreatLabz (report by Javier Vicente Vallejo)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-01-31",
+          "q": "Published: 2024-01-31",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-06",
+          "q": "Archived: 2026-04-06 00:10:49 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Qakbot",
+          "q": "Qakbot has leveraged HTTP for C2 communication from the beginning."
+        },
+        {
+          "v": "MatrixSSL",
+          "q": "(initially using the MatrixSSL library)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "HTTP for C2 communication",
+          "q": "Qakbot has leveraged HTTP for C2 communication from the beginning."
+        },
+        {
+          "v": "RC4",
+          "q": "Qakbot’s network encryption has used RC4 with the key consisting of 16 random bytes"
+        },
+        {
+          "v": "AES",
+          "q": "The most recent version of Qakbot now uses AES encryption with the key"
+        },
+        {
+          "v": "time-based DGA",
+          "q": "Qakbot used a time-based DGA to generate up to 5,000 C2 domains for a specific date interval as"
+        },
+        {
+          "v": "compromised FTP servers",
+          "q": "Qakbot versions 3.0.0 and earlier used compromised FTP servers to exfiltrate data rather than sending the data"
+        },
+        {
+          "v": "compromised systems as relays",
+          "q": "Using compromised systems as relays"
+        },
+        {
+          "v": "RSA digital signatures",
+          "q": "Qakbot version 3.0.0.443 introduced RSA digital signatures (initially using the MatrixSSL library) to prevent"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "5,000",
+          "q": "Qakbot used a time-based DGA to generate up to 5,000 C2 domains for a specific date interval as"
+        },
+        {
+          "v": "version 19",
+          "q": "Qakbot has continuously updated its message protocol with version 19 being the latest."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Qakbot"
+    },
+    "hedges": []
   }
 }

@@ -522,5 +522,169 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "9468ff9d1bc06b4c9f187e4ab55ae485750d6c5b": {
+    "sha1": "9468ff9d1bc06b4c9f187e4ab55ae485750d6c5b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:19:20Z",
+    "model": "haiku",
+    "summary": "FireEye FLARE analysis of a leaked CARBANAK source code dump. It confirms the code is CARBANAK and describes antivirus evasions disclosed to vendors (AVG, Trend Micro), public exploits used for privilege elevation, copied Mimikatz code, hardcoded passwords and keys, and network indicators overlapping earlier CARBANAK activity and FIN7. Author identities remain largely unknown; the malware refers to itself as 'bot'. CVE ids in the exploit table are split across lines and are not recorded.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "CARBANAK authors",
+          "q": "I wanted to know if the CARBANAK authors wielded any exploits that were not publicly",
+          "by": "FireEye (report authors, FLARE team)"
+        },
+        {
+          "v": "FIN7",
+          "q": "significant overlap with CARBANAK backdoor activity and FIN7 operations previously observed and documented by FireEye.",
+          "by": "FireEye (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 23, 2019",
+          "q": "April 23, 2019 | by Michael Bailey, James T. Bennett",
+          "what": "Blog post published by FireEye's FLARE team"
+        },
+        {
+          "v": "April 30",
+          "q": "Update (April 30): Following the release of our four-part CARBANAK Week blog series",
+          "what": "Post updated with more actionable data"
+        },
+        {
+          "v": "November 2017",
+          "q": "Ryan Warns confirmed in November 2017 that it still worked with one minor tweak.",
+          "what": "FLARE confirmed the AVG evasion still worked"
+        },
+        {
+          "v": "December 2017",
+          "q": "released OfficeScan XG SP1 in December 2017 with a new “Aggressive Event” detection feature",
+          "what": "Trend Micro released OfficeScan XG SP1 with a detection feature covering the process injection behaviour"
+        },
+        {
+          "v": "May 2013",
+          "q": "Exploit proof of concept (poc) from May 2013",
+          "what": "Date of the PathRec exploit proof of concept"
+        },
+        {
+          "v": "June 2013",
+          "q": "Exploit poc from June 2013",
+          "what": "Date of the Sdrop exploit proof of concept"
+        },
+        {
+          "v": "2018-11-15T10:27:07",
+          "q": "2018-11-15T10:27:07",
+          "what": "Last seen serving the test certificate on one listed IP"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mimikatz",
+          "q": "The CARBANAK source code also contains code copied wholesale from Mimikatz including"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Several of these IPs have been observed hosting Cobalt Strike BEACON payloads and METERPRETER"
+        },
+        {
+          "v": "METERPRETER",
+          "q": "Several of these IPs have been observed hosting Cobalt Strike BEACON payloads and METERPRETER"
+        },
+        {
+          "v": "Carberp",
+          "q": "The evasion mirrors a technique used in Carberp that replaces remote heap allocation and a call"
+        },
+        {
+          "v": "BlackEnergy2",
+          "q": "BlackEnergy2 AppCompat shim-based UAC bypass"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "process injection",
+          "q": "an evasion for Trend Micro’s detection of process injection that remained active in the CARBANAK source code"
+        },
+        {
+          "v": "evades AV",
+          "q": "It evades AV according to what is installed."
+        },
+        {
+          "v": "process name hash",
+          "q": "the function AVDetect in AV.cpp iterates processes to detect AV by process name hash as shown"
+        },
+        {
+          "v": "UAC bypass",
+          "q": "UACBypass UAC bypass by DLL hijacking found in Carberp"
+        },
+        {
+          "v": "Exploits for elevation",
+          "q": "Table 1: Exploits for elevation found in CARBANAK source code"
+        },
+        {
+          "v": "dumping passwords",
+          "q": "the sekurlsa module for dumping passwords from lsass.exe"
+        },
+        {
+          "v": "Terminal Services patching",
+          "q": "Terminal Services patching code to allow multiple remote desktop protocol connections"
+        },
+        {
+          "v": "brute force",
+          "q": "It was trivial to brute force this container by adapting a publicly available code"
+        },
+        {
+          "v": "unprotected private key",
+          "q": "I also parsed an unprotected private key from the source code dump."
+        },
+        {
+          "v": "string hashing",
+          "q": "how string hashing was used in CARBANAK to"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "512-bit",
+          "q": "Figure 4: Parsed 512-bit private key"
+        },
+        {
+          "v": "less than 1 second",
+          "q": "The password was found in less than 1 second because it was the single-character password"
+        },
+        {
+          "v": "a hundred thousand of lines of code",
+          "q": "searching through a hundred thousand of lines of code for new information"
+        },
+        {
+          "v": "a few dozen binaries",
+          "q": "analyzing a few dozen binaries."
+        },
+        {
+          "v": "several IPs",
+          "q": "still hosted on several IPs."
+        },
+        {
+          "v": "four-part",
+          "q": "Following the release of our four-part CARBANAK Week blog series"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CARBANAK"
+    },
+    "hedges": [
+      "Unfortunately, these data points don't yield many answers.",
+      "it appears as if the AVG evasion was retired",
+      "While these IPs have not been observed in any CARBANAK activity, this may be an indication of a common developer or a shared toolkit used for testing various malware",
+      "VPS IPs may change hands frequently, so additional malicious activity on them may not be associated with the same users.",
+      "as of this writing, not much else is known about the authors"
+    ]
   }
 }

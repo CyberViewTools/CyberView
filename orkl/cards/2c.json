@@ -305,5 +305,129 @@
       "note": "summary: Says lures were \"mainly\" malicious Excel documents. The text says only that \"many\" of the phishing emails included Excel documents and often relied on ",
       "by": "auditor"
     }
+  },
+  "2c020df4c788292e12938efd880cf53c867055e8": {
+    "sha1": "2c020df4c788292e12938efd880cf53c867055e8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:20:40Z",
+    "model": "haiku",
+    "summary": "Palo Alto Networks' Unit 42 scanned internet-exposed Docker daemons from September to December 2019 and found 1,400 unsecured hosts, 8,673 active containers and 17,927 images. Most malicious activity was cryptojacking, mostly mining Monero. Attackers also deployed malicious images, ran payloads inside benign containers, mounted the host file system to drop payloads on the host, and harvested credentials from Docker logs. The report says Docker removed the malicious images after being alerted.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "malicious actors",
+          "q": "Malicious actors who find these unsecured Docker daemons can gain full control of the Docker platform",
+          "by": "the report (Unit 42)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "September and December 2019",
+          "q": "Between September and December 2019, Unit 42 researchers periodically scanned and collected metadata from Docker",
+          "what": "Period of periodic scanning and metadata collection of exposed Docker hosts"
+        },
+        {
+          "v": "2020-01-29",
+          "q": "Published: 2020-01-29 · Archived: 2026-04-06 02:00:47 UTC",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Docker",
+          "q": "Docker daemon is a persistent background process that manages the containers on a single host."
+        },
+        {
+          "v": "Portainer",
+          "q": "Figure 13. Leaked portainer credential from the container command"
+        },
+        {
+          "v": "Shodan",
+          "q": "Using the Internet of Things search engines Shodan and Censys, we found around 5,000 Docker daemons exposed to the"
+        },
+        {
+          "v": "Censys",
+          "q": "Using the Internet of Things search engines Shodan and Censys, we found around 5,000 Docker daemons exposed to the"
+        },
+        {
+          "v": "Prisma Cloud",
+          "q": "Because the malicious code is built into the container images, composition analysis tools such as Prisma Cloud can"
+        },
+        {
+          "v": "xmrig",
+          "q": "xmrig monero miner."
+        },
+        {
+          "v": "Graboid",
+          "q": "The detail is published in Unit 42 blog Graboid."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cryptojacking",
+          "q": "While the majority of the malicious activities involved cryptojacking (mostly mining for Monero), some compromised"
+        },
+        {
+          "v": "Deploy Container Images with Malicious Code",
+          "q": "Deploy Container Images with Malicious Code."
+        },
+        {
+          "v": "Deploy Benign Container Images and Download Malicious Payloads at Run Time",
+          "q": "Deploy Benign Container Images and Download Malicious Payloads at Run Time."
+        },
+        {
+          "v": "mounted the entire host file system",
+          "q": "One interesting tactic we frequently saw was attackers mounted the entire host file system to a container and accessed the host"
+        },
+        {
+          "v": "Obtain Sensitive Information from the Docker Log",
+          "q": "Obtain Sensitive Information from the Docker Log."
+        },
+        {
+          "v": "no encryption or authentication",
+          "q": "There are Docker daemons that have no encryption or authentication."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "1,400",
+          "q": "In total, 1,400 unsecured Docker hosts, 8,673 active"
+        },
+        {
+          "v": "8,673",
+          "q": "In total, 1,400 unsecured Docker hosts, 8,673 active"
+        },
+        {
+          "v": "17,927",
+          "q": "containers, and 17,927 Docker images were discovered in our research."
+        },
+        {
+          "v": "15,229",
+          "q": "15,229 volumes. Figure 2 shows the location distribution of the Docker daemons."
+        },
+        {
+          "v": "5,000",
+          "q": "Using the Internet of Things search engines Shodan and Censys, we found around 5,000 Docker daemons exposed to the"
+        },
+        {
+          "v": "10-15%",
+          "q": "and 10-15% of these daemons can be accessed without authentication."
+        },
+        {
+          "v": "nine websites",
+          "q": "Table 3 lists nine websites that we saw multiple times."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Composition analysis tools are good at identifying malicious code in container images, they can't see the malicious payloads installed at run time.",
+      "The report says some compromised Docker engines were used for launching other attacks or installing rootkits on the hosts."
+    ]
   }
 }

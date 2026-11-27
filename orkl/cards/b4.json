@@ -28,7 +28,7 @@
   },
   "b4b3125d2c2217c262572cfe6023dc08d49c7c4e": {
     "sha1": "b4b3125d2c2217c262572cfe6023dc08d49c7c4e",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T11:51:14Z",
     "model": "haiku",
@@ -125,29 +125,197 @@
     },
     "hedges": [
       "The group is closely tied to the notorious Carbanak Gang, although so far evidence falls short of directly equating the two."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T12:10:00Z",
+      "ok": false,
+      "note": "sectors[1]: The text says the Carbanak Gang was responsible for attacks against financial institutions. It does not say FIN7 or the October 2017 attack targeted",
+      "by": "auditor"
+    }
   },
   "b418f8a762ec974f7ad7a7d02f01d69e0f3db0dc": {
     "sha1": "b418f8a762ec974f7ad7a7d02f01d69e0f3db0dc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:59:34Z",
+    "read_at": "2026-11-27T12:13:29Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ESET Research white paper on OpenSSH backdoors found in the wild. Analysts grouped their samples into 21 families, 12 of them undocumented at the time. Common features include hardcoded backdoor passwords, credential stealing, anti-logging and root-access tampering. Stolen credentials go to local files, network channels, DNS or email. The paper links the Kamino backdoor to DarkLeech and Carbanak, and reports a custom honeypot where operators of two backdoors were observed. The infection vector is hard to determine.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Windigo",
+          "q": "In March 2014 we released a paper about a large-scale Linux malware operation we named Windigo.",
+          "by": "ESET Research (the report)"
+        },
+        {
+          "v": "Carbanak",
+          "q": "targeted attacks against Russian banks by a group commonly known as Carbanak",
+          "by": "the report (ESET Research)"
+        },
+        {
+          "v": "Energetic Bear",
+          "q": "Attributed to Energetic Bear (aka Crouching Yeti) by Kaspersky:",
+          "by": "Kaspersky"
+        },
+        {
+          "v": "Cobalt",
+          "q": "Used by Cobalt and Carbanak (aka Anunak) backdoor according to Group-IB",
+          "by": "Group-IB"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "targeted attacks against Russian banks"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russian",
+          "q": "Logged in manually (from a Russian IP address) and did not use any scripts"
+        }
+      ],
+      "dates": [
+        {
+          "v": "March 2014",
+          "q": "In March 2014 we released a paper about a large-scale Linux malware operation we named Windigo.",
+          "what": "ESET paper on the Windigo operation released"
+        },
+        {
+          "v": "early 2013",
+          "q": "We encountered the first variant of it in early 2013.",
+          "what": "First Kamino variant encountered"
+        },
+        {
+          "v": "2014",
+          "q": "DarkLeech disappeared not long before Carbanak was discovered in 2014",
+          "what": "Carbanak discovered"
+        },
+        {
+          "v": "August 2018",
+          "q": "its C&C server domain has only resolved since August 2018",
+          "what": "Kessel command server first resolved"
+        },
+        {
+          "v": "October 2018",
+          "q": "was written (October 2018).",
+          "what": "Status of the undocumented-family count at the time the paper was written"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ebury",
+          "q": "At its core was an OpenSSH backdoor and credential stealer that we named Ebury."
+        },
+        {
+          "v": "DarkLeech",
+          "q": "Kamino was used together with an Apache module called DarkLeech to redirect internet traffic."
+        },
+        {
+          "v": "Kamino",
+          "q": "Kamino was used together with an Apache module called DarkLeech to redirect internet traffic."
+        },
+        {
+          "v": "Kessel",
+          "q": "Kessel encodes the data to be exfiltrated in hexadecimal and splits it into chunks"
+        },
+        {
+          "v": "Bonadan",
+          "q": "this was the case for Bonadan, for example, which reused code from Onderon."
+        },
+        {
+          "v": "Chandrila",
+          "q": "(documented as Chandrila backdoor)."
+        },
+        {
+          "v": "Perl",
+          "q": "uses scripts in Perl, a very portable scripting language,"
+        },
+        {
+          "v": "YARA",
+          "q": "we translated the various signatures into YARA rules."
+        },
+        {
+          "v": "Tor",
+          "q": "They used Tor each time they logged in so we could not trace their origin"
+        },
+        {
+          "v": "Netbox Far Manager plugin",
+          "q": "or the Netbox Far Manager plugin to browse the server"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "string stacking",
+          "q": "Despite the fact that string stacking (strings constructed on the stack) is not a"
+        },
+        {
+          "v": "credential stealing",
+          "q": "such as hardcoded credentials to activate a backdoor mode, and credential stealing."
+        },
+        {
+          "v": "DNS exfiltration",
+          "q": "we also observed the use of DNS exfiltration in one backdoor family, Kessel."
+        },
+        {
+          "v": "hardcoded password",
+          "q": "comparing the client-provided password with a hardcoded password"
+        },
+        {
+          "v": "anti-logging",
+          "q": "anti-logging feature"
+        },
+        {
+          "v": "UPX",
+          "q": "Even though UPX is not an obfuscator, it is still worth mentioning that a few of the samples are packed with it."
+        },
+        {
+          "v": "modifying and recompiling",
+          "q": "All of them are the result of modifying and recompiling the original portable OpenSSH source"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "21 families",
+          "q": "Out of the 21 families we analyzed, 12 of them were undocumented at the time this paper"
+        },
+        {
+          "v": "12",
+          "q": "Out of the 21 families we analyzed, 12 of them were undocumented at the time this paper"
+        },
+        {
+          "v": "25,000",
+          "q": "we discovered that more than 25,000 servers had been compromised and monetized via web"
+        },
+        {
+          "v": "47",
+          "q": "As of mid-2018, the script contains 47 signatures."
+        },
+        {
+          "v": "260",
+          "q": "includes 260 hashes of known-clean OpenSSH builds."
+        },
+        {
+          "v": "nine",
+          "q": "nine families feature a way to push the credentials"
+        },
+        {
+          "v": "more than 10 times",
+          "q": "the attackers logged into the honeypot more than 10 times within four days"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "The infection vector is hard to determine: the raw data was mostly malware samples only, missing contextual information.",
+      "Speculation that some attackers may use brute-force attacks to gain SSH access.",
+      "Several hypotheses explain the DarkLeech and Carbanak link: the same group changed activity, the same person was hired, or the backdoor is sold on underground markets.",
+      "Unclear whether the Akiva builder is from the author or was captured by a honeypot.",
+      "Transactions of one miner-backdoor sample could not be traced because its configuration file was missing."
+    ]
   }
 }

@@ -587,5 +587,92 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "f77eeb5b04172e0cdee4746ad943349081d22cbd": {
+    "sha1": "f77eeb5b04172e0cdee4746ad943349081d22cbd",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T12:16:05Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
+  },
+  "f7fa3bcb72b159a9dc93724dd582f2df15436e02": {
+    "sha1": "f7fa3bcb72b159a9dc93724dd582f2df15436e02",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:22:21Z",
+    "model": "haiku",
+    "summary": "Blog post by Phil Stokes at SentinelOne, published 2019-12-05, continuing a macOS red-team proof of concept. It describes running native Apple API code through AppleScript/Objective-C without compiled binaries, spoofing an administrator authorization dialog to capture a user's password, and using a scheduled cron job for repeated execution. The author presents it as educational material for defenders and says threat actors are unlikely to use these techniques in the wild.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-12-05",
+          "q": "Published: 2019-12-05",
+          "what": "Original publication of the blog post"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AppleScript",
+          "q": "AppleScript is very much like “the PowerShell of macOS”, only with much more power and much less scrutiny from the security community."
+        },
+        {
+          "v": "PyObjC",
+          "q": "JavaScript for Automation (JXA), a 3rd party Python/Objective C (PyObjC) and even Swift can be used as a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spoofed authorization dialog to capture a password",
+          "q": "generate a convincing-looking authorization request dialog"
+        },
+        {
+          "v": "social engineering the user at a chosen moment",
+          "q": "This will be an ideal time to socially engineer the user and see if we can catch"
+        },
+        {
+          "v": "running native API code in memory without a compiled binary",
+          "q": "execute our “malicious” AppleScript/Objective C code in memory, too,"
+        },
+        {
+          "v": "scheduled cron job for repeated execution",
+          "q": "For the sake of this example, I’m going to use a cron job because cron jobs are quick and easy to write and less visible to"
+        },
+        {
+          "v": "enumerating privileged helper tools and their parent apps",
+          "q": "a means of enumerating trusted, authorized helper tools and their"
+        },
+        {
+          "v": "living off the land scripting",
+          "q": "AppleScript can be leveraged as a “living off the land”"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The author finds it unlikely that threat actors would use these techniques in the wild.",
+      "The author says the process-ID handler is quick and dirty and probably needs more battle-testing."
+    ]
   }
 }

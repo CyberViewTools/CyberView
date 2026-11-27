@@ -321,7 +321,7 @@
     "sha1": "b454b2b902e819a5c464ac63d79a0439f2765d37",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:44:40Z",
+    "read_at": "2026-11-27T15:55:36Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -337,7 +337,183 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "reason": "quote-not-in-text, value-not-in-quote",
+    "tries": 2
+  },
+  "b4e8fe336e0611e81ea6a7ad24a4f47279a074a5": {
+    "sha1": "b4e8fe336e0611e81ea6a7ad24a4f47279a074a5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:02:47Z",
+    "model": "haiku",
+    "summary": "ESET analysis of Linux/Mumblehard, malware targeting Linux and BSD servers. It has a Perl backdoor, run from cron, that fetches and runs files, and a Perl spammer with a general proxy, both packed inside ELF binaries by a custom assembly packer. ESET sinkholed the backdoor and counted 8,867 unique IP addresses over a seven-month period, with web servers the most susceptible. The report finds a strong link between the group and Yellsoft, a company selling bulk e-mail software, and says cracked copies of its DirectMailer product install the backdoor. Activity was seen since at least 2009.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Yellsoft",
+          "q": "There is a strong link between Mumblehard and Yellsoft, an online company selling software to send bulk e-mail messages.",
+          "by": "ESET (report authors)"
+        },
+        {
+          "v": "Mumblehard operators",
+          "q": "the Mumblehard operators have been active for many years without disruption.",
+          "by": "ESET (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "web servers",
+          "q": "Among the compromised machines, web servers are the most susceptible to being infected."
+        },
+        {
+          "v": "website hosting",
+          "q": "The majority of them are servers that are used for hosting websites."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2009",
+          "q": "The first sample of the Mumblehard spammer component we were able to find was submitted to VirusTotal in 2009.",
+          "what": "First Mumblehard spammer sample submitted to VirusTotal"
+        },
+        {
+          "v": "2004",
+          "q": "Yellsoft is active since 2004.",
+          "what": "Yellsoft became active"
+        },
+        {
+          "v": "2009",
+          "q": "Mumblehard has been active since at least 2009.",
+          "what": "Earliest Mumblehard activity noted in the report"
+        },
+        {
+          "v": "September 19th 2014",
+          "q": "We collected data between September 19th 2014 and April 22nd 2015",
+          "what": "Start of sinkhole data collection"
+        },
+        {
+          "v": "April 22nd 2015",
+          "q": "We collected data between September 19th 2014 and April 22nd 2015",
+          "what": "End of sinkhole data collection"
+        },
+        {
+          "v": "December 7th 2014",
+          "q": "offline between December 7th 2014 and January 6th 2015.",
+          "what": "Sinkhole server offline from this date"
+        },
+        {
+          "v": "March 27th",
+          "q": "on March 27th, we were watching 2,508 bots that received a total",
+          "what": "Peak day with 2,508 bots receiving commands"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Linux/Mumblehard",
+          "q": "Linux/Mumblehard is a family of malware targeting servers running both the Linux and BSD operating systems."
+        },
+        {
+          "v": "DirectMailer",
+          "q": "It sells software called DirectMailer for sending bulk e-mail messages."
+        },
+        {
+          "v": "Mumblehard packer",
+          "q": "This executable file contains a Perl script packed with the Mumblehard packer."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Joomla and Wordpress exploits",
+          "q": "The most popular vector seems to be the use of Joomla and Wordpress exploits."
+        },
+        {
+          "v": "pirated copies",
+          "q": "The pirated copies actually install the Mumblehard backdoor"
+        },
+        {
+          "v": "packed inside ELF binaries",
+          "q": "Mumblehard components are mainly Perl scripts encrypted and packed inside ELF binaries."
+        },
+        {
+          "v": "crontab",
+          "q": "installed in crontab and executed every 15 minutes."
+        },
+        {
+          "v": "Set-Cookie HTTP header",
+          "q": "The command is hidden in the Set-Cookie HTTP header of the response."
+        },
+        {
+          "v": "SOCKS4 proxy",
+          "q": "is actually an implementation of the SOCKS4 protocol."
+        },
+        {
+          "v": "random message headers",
+          "q": "the use of random message headers that seems"
+        },
+        {
+          "v": "hardcoded user agent",
+          "q": "Mumblehard uses a hardcoded user agent when requesting a command."
+        },
+        {
+          "v": "httpd process disguise",
+          "q": "It also disguises itself as httpd by assigning"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "8,867",
+          "q": "A total of 8,867 unique IP addresses were seen in our sinkhole over a 7-month period."
+        },
+        {
+          "v": "7-month period",
+          "q": "A total of 8,867 unique IP addresses were seen in our sinkhole over a 7-month period."
+        },
+        {
+          "v": "3,292",
+          "q": "The highest number of unique IP addresses seen in a single day is as high as 3,292."
+        },
+        {
+          "v": "$240",
+          "q": "software that Yellsoft sells on their website for $240."
+        },
+        {
+          "v": "4 times per hour",
+          "q": "our sinkhole was hit by each infected machine 4 times per hour"
+        },
+        {
+          "v": "10 C&C servers",
+          "q": "There are 10 C&C servers in the list."
+        },
+        {
+          "v": "64%",
+          "q": "representing 64% of the time when traffic was monitored."
+        },
+        {
+          "v": "187 days",
+          "q": "Out of 187 days of collected data,"
+        },
+        {
+          "v": "2,508",
+          "q": "on March 27th, we were watching 2,508 bots that received a total"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Linux/Mumblehard"
+    },
+    "hedges": [
+      "It is unclear if they were involved in malicious activities between 2004 and 2009.",
+      "The others seem to be false flags.",
+      "It is difficult to explain these differences.",
+      "It is unclear whether these are added to fool anti-spam solutions and if so, whether their inclusion is effective.",
+      "we have never seen this feature used on an infected machine so it is hard to say what it is used for",
+      "It is unclear if spamming is the only goal of this group.",
+      "This strongly suggests that the five IP addresses are hosted on the same server.",
+      "This suggests that this group could be infecting a lot of different systems."
+    ]
   }
 }

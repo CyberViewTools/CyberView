@@ -741,9 +741,102 @@
   },
   "b76743a97db3664476bc8d8a49b64aecb30e6d28": {
     "sha1": "b76743a97db3664476bc8d8a49b64aecb30e6d28",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T15:55:01Z",
+    "model": "haiku",
+    "summary": "Digital Bond research paper. The title field names an unrelated 2016 CrowdStrike piece, which does not match the body. Ethernet cards in SCADA/DCS field devices, tested on Rockwell 1756 ENBT and Koyo H4-ECOM100 modules, accept firmware uploads without source or data authentication, so an attacker with network access could load malicious firmware. Hypothetical impacts include delayed attacks, bricked cards, and a field device worm. Management services (HTTP, FTP, SNMP) also had flaws, including cross site scripting. Recommended fixes: authenticated, signed firmware; physical keys; and…",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "DCS and SCADA",
+          "q": "Field devices essential for the monitoring and control in DCS and SCADA"
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "Some real time and embedded operating systems are used in numerous field devices that monitor and control critical infrastructures."
+        }
+      ],
+      "countries": [],
+      "dates": [],
+      "tools": [
+        {
+          "v": "IDA PRO",
+          "q": "We have loaded the file into the IDA PRO disassembler and debugger program and"
+        },
+        {
+          "v": "deezee",
+          "q": "Using a tool developed by Matasano named deezee, we scan the firmware image looking"
+        },
+        {
+          "v": "Wireshark",
+          "q": "the commonly used packet capture utility, Wireshark, we find that the firmware is upgraded"
+        },
+        {
+          "v": "ControlFlash",
+          "q": "upload it with the ControlFlash program"
+        },
+        {
+          "v": "netedit",
+          "q": "the upgrade program, netedit, seems to work over UDP broadcast protocol"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "unauthenticated firmware upload",
+          "q": "Keywords: Unauthenticated Firmware Upload, PAC, PLC, RTU, Controller, Field"
+        },
+        {
+          "v": "field device worm",
+          "q": "Field Device Worm, Field Device Ethernet Card"
+        },
+        {
+          "v": "denial of service",
+          "q": "Perhaps the simplest attack on the CPU card is a denial of service attack that could brick"
+        },
+        {
+          "v": "cross site scripting",
+          "q": "Several different forms of cross site scripting (XSS) were found on the sample field"
+        },
+        {
+          "v": "missing security patches",
+          "q": "One of the common findings in control system security assessments is missing security patches."
+        },
+        {
+          "v": "no authentication",
+          "q": "The management interface requires no authentication to access the device"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "two field device Ethernet cards",
+          "q": "load malicious code into two field device Ethernet cards"
+        },
+        {
+          "v": "tens or hundreds of field devices",
+          "q": "There are tens or hundreds of field devices in control"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "Field Device Ethernet Card Vulnerabilities"
+    },
+    "hedges": [
+      "The ping function was a proof-of-concept demonstration only; the authors say an attacker could load much more dangerous code.",
+      "The authors present the impacts as hypothetical scenarios (the paper says 'imagine' and 'could') rather than observed incidents.",
+      "The tests covered a small number of devices in the authors' lab, and the authors say the sample is limited.",
+      "The authors say operating system analysis is beyond the scope of this paper."
+    ]
+  },
+  "b7a30e31147edc126c459afbc50c59cabc8e9836": {
+    "sha1": "b7a30e31147edc126c459afbc50c59cabc8e9836",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:45:06Z",
+    "read_at": "2026-11-27T16:01:51Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -761,5 +854,209 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 1
+  },
+  "b753e38856e8d51ab8b6833481038af247fc52ce": {
+    "sha1": "b753e38856e8d51ab8b6833481038af247fc52ce",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:03:27Z",
+    "model": "haiku",
+    "summary": "Antiy CERT report, published Nov. 4, 2016, on the operational capability of the Equation Group across Linux, Solaris (SPARC), Windows and other platforms. It analyses a DoubleFantasy Linux sample and a Solaris SPARC rootkit, and describes the group's components (EquationLaser, EquationDrug, DoubleFantasy, TripleFantasy, Fanny, GrayFish), persistence methods, and a 2008 worm named Fanny. Several tactics are marked as unconfirmed, and the report says Mac OS X payloads exist although no samples were found.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Equation Group",
+          "q": "Revealing the multi-platform operational capability of Equation Group",
+          "by": "Antiy CERT (the report)"
+        },
+        {
+          "v": "A2PT",
+          "q": "A2PT characteristic by Antiy",
+          "by": "Antiy CERT (the report)"
+        },
+        {
+          "v": "NSA",
+          "q": "Hacked by the NSA [2] was published in The Hacker News",
+          "by": "the report, citing an article title"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "Jan. 15, 2014",
+          "q": "Draft: Jan. 15, 2014 16:43 (UTC+8)",
+          "what": "Report draft date"
+        },
+        {
+          "v": "Nov. 4, 2016",
+          "q": "Published: Nov. 4, 2016 10:00 (UTC+8)",
+          "what": "Report published"
+        },
+        {
+          "v": "2012",
+          "q": "since 2012, and trying to",
+          "what": "Antiy began tracking the group"
+        },
+        {
+          "v": "February 2015",
+          "q": "From February 2015, Antiy has published two reports about Equation Group",
+          "what": "Antiy began publishing reports on Equation Group"
+        },
+        {
+          "v": "2008",
+          "q": "A computer worm created in 2008 and used to collect",
+          "what": "Fanny worm created"
+        },
+        {
+          "v": "August 2016",
+          "q": "In August 2016, the malware used by",
+          "what": "Equation malware disclosed in an auction invitation"
+        },
+        {
+          "v": "October 31, 2016",
+          "q": "On October 31, 2016, an article called Shadow Brokers reveals list of servers",
+          "what": "Article on Shadow Brokers documents about servers hacked by the NSA"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DoubleFantasy",
+          "q": "Trojan/Linux.DoubleFantasy"
+        },
+        {
+          "v": "Trojan[Rootkit]/Solaris. Equation",
+          "q": "Trojan[Rootkit]/Solaris. Equation"
+        },
+        {
+          "v": "EquationLaser",
+          "q": "be the upgraded version of EquationLaser."
+        },
+        {
+          "v": "EquationDrug",
+          "q": "Highly complex, modular EquationDrug"
+        },
+        {
+          "v": "GRAYFISH",
+          "q": "as EQUATIONDRUG or GRAYFISH."
+        },
+        {
+          "v": "Fanny",
+          "q": "Fanny exploits LNK 0day, MS09-025"
+        },
+        {
+          "v": "ANT",
+          "q": "group was connected with attack weapon system named ANT for the first time."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "rootkit",
+          "q": "This is a rootkit program on the Solaris platform of the"
+        },
+        {
+          "v": "Bootkit start",
+          "q": "Bootkit start"
+        },
+        {
+          "v": "Hard drive firmware changes",
+          "q": "Hard drive firmware changes"
+        },
+        {
+          "v": "lateral movement",
+          "q": "lateral movement in Lan)"
+        },
+        {
+          "v": "Firewall and other network security devices implant",
+          "q": "Firewall and other network security devices implant"
+        },
+        {
+          "v": "Persistence targeted at mail server",
+          "q": "Persistence targeted at mail server"
+        },
+        {
+          "v": "Logistics hijack",
+          "q": "Logistics hijack (maybe)"
+        },
+        {
+          "v": "Personnel on-site implant",
+          "q": "Personnel on-site implant(maybe)"
+        },
+        {
+          "v": "Configuration data resources encryption",
+          "q": "Configuration data resources encryption,"
+        },
+        {
+          "v": "Registry stores samples",
+          "q": "Registry stores samples, Segmented decryption"
+        },
+        {
+          "v": "startup by using the service",
+          "q": "The script realizes the startup by using the service."
+        },
+        {
+          "v": "daemon mode",
+          "q": "Run with the daemon mode in the sample, achieve the ability of self-protection."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "six components",
+          "q": "six components:"
+        },
+        {
+          "v": "249 functions",
+          "q": "The samples have 249 functions, as shown in the sample main function flow."
+        },
+        {
+          "v": "115 times",
+          "q": "The algorithm is called 115 times."
+        },
+        {
+          "v": "63 times",
+          "q": "The decryption function is called for 63 times."
+        },
+        {
+          "v": "nine instruction branches",
+          "q": "of nine instruction branches, and the function is also roughly the same."
+        },
+        {
+          "v": "seven instructions",
+          "q": "There are only seven instructions on Solaris whose function is roughly the same as"
+        },
+        {
+          "v": "60 kinds",
+          "q": "there are no more than 60 kinds of malicious code variants"
+        },
+        {
+          "v": "two 0day vulnerabilities",
+          "q": "used exploits for two 0day vulnerabilities which were"
+        },
+        {
+          "v": "two reports",
+          "q": "From February 2015, Antiy has published two reports about Equation Group"
+        },
+        {
+          "v": "three PID threads",
+          "q": "Opening three PID threads (two of them are consecutive) after running."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Equation Group"
+    },
+    "hedges": [
+      "Report marks logistics hijack and on-site personnel implant as possible ('maybe'), not confirmed.",
+      "Report says some victims appear to have been upgraded from DoubleFantasy to EquationDrug.",
+      "Report says Equation may have created the first Rootkit-featured malware for SPARC architecture.",
+      "Report says a plugin-based platform may be an upgraded version of EquationLaser, and Fantasy is possibly a more recent validator-style plugin.",
+      "Neither Antiy nor Kaspersky had found Mac OS X samples; the report says the payload for Mac OS X does exist.",
+      "Report says the Solaris and Windows servers are basically determined as the same attack source, based on sharing a network segment.",
+      "Shadow Brokers documents claimed most infected servers run Solaris, with some running FreeBSD or Linux.",
+      "Report says some domestic reports misread hard-drive firmware implants as all hard disks having backdoors, which it calls a misunderstanding."
+    ]
   }
 }

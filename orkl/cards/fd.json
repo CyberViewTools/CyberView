@@ -904,5 +904,147 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fdf388b793a73c47a7caab35a5c4645c83c0931a": {
+    "sha1": "fdf388b793a73c47a7caab35a5c4645c83c0931a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:06:26Z",
+    "model": "haiku",
+    "summary": "ESET analysis of Dino, a modular C++ espionage backdoor found in a sample used against targets in Iran in 2013. ESET believes the Animal Farm group developed it, citing shared code with Casper, Bunny and Babar. A Canadian CSE leak assessed with moderate certainty that Animal Farm is a French intelligence agency. Dino includes a custom in-memory file system (ramFS), cron-style task scheduling, and a focus on exfiltrating files. Blog post by Joan Calvet of ESET, 30 June 2015.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Animal Farm",
+          "q": "software has been developed by the Animal Farm espionage group, who also created the infamous Casper,",
+          "by": "ESET (blog author Joan Calvet)"
+        },
+        {
+          "v": "French intelligence agency",
+          "q": "In those slides CSE assess with “moderate certainty” that this group is a French intelligence agency.",
+          "by": "Canada's Communications Security Establishment (CSE), as described in the report"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Iran",
+          "q": "The sample of Dino documented in this blog post was used in 2013 against targets in Iran."
+        }
+      ],
+      "dates": [
+        {
+          "v": "30 JUN 2015",
+          "q": "BY JOAN CALVET POSTED 30 JUN 2015",
+          "what": "Blog post published by ESET"
+        },
+        {
+          "v": "2013",
+          "q": "The sample of Dino documented in this blog post was used in 2013 against targets in Iran.",
+          "what": "Dino sample used against targets in Iran"
+        },
+        {
+          "v": "March 2014",
+          "q": "in a set of slides leaked by Edward Snowden in March 2014.",
+          "what": "CSE slides describing the group were leaked by Edward Snowden"
+        },
+        {
+          "v": "7th April 2015",
+          "q": "run on 7th April 2015 at 15:44:",
+          "what": "Example wakeup command scheduled in the report's cronlist output"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dino",
+          "q": "In this blog we describe a sophisticated backdoor, called Dino by its creators."
+        },
+        {
+          "v": "Casper",
+          "q": "Casper, Bunny and Babar malware."
+        },
+        {
+          "v": "Bunny",
+          "q": "Casper, Bunny and Babar malware."
+        },
+        {
+          "v": "Babar",
+          "q": "Babar, an espionage platform, also analyzed by Marion Marschalek"
+        },
+        {
+          "v": "ramFS",
+          "q": "Dino contains a custom file system named “ramFS” by its developers."
+        },
+        {
+          "v": "NBOT",
+          "q": "For example, here is the command executed by some NBOT droppers in the context of ramFS:"
+        },
+        {
+          "v": "SNOWBALL",
+          "q": "the SNOWBALL implant described in"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exfiltration of files from targets",
+          "q": "Dino’s main goal seems to be the exfiltration of files from its targets."
+        },
+        {
+          "v": "custom file system (ramFS)",
+          "q": "Dino contains a custom file system named “ramFS” by its developers."
+        },
+        {
+          "v": "cron-style task scheduling",
+          "q": "The syntax to define scheduled tasks is similar to the one used by the cron Unix command."
+        },
+        {
+          "v": "API call hiding by hashed names",
+          "q": "To hide its calls to certain API functions, Dino employs a classic Animal Farm ploy: a hash is calculated from"
+        },
+        {
+          "v": "process-name check against sandboxes",
+          "q": "the current process name is checked against process names used"
+        },
+        {
+          "v": "encrypted command-and-control communications",
+          "q": "contain cryptographic keys to encrypt the network communications with C&C"
+        },
+        {
+          "v": "compromised legitimate websites used as C&C servers",
+          "q": "Those C&Cs were compromised legitimate websites, which is standard"
+        },
+        {
+          "v": "file search and archive for upload",
+          "q": "The files found are packed in an archive, which is then"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "8 possible types",
+          "q": "A DataStore is a map from string keys to values of 8 possible types, such as integers or strings."
+        },
+        {
+          "v": "1036",
+          "q": "Dino’s binary contains a resource whose language code value is 1036."
+        },
+        {
+          "v": "at least two more indicators",
+          "q": "Dino adds at least two more indicators to those already documented suggesting that Animal Farm"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Dino"
+    },
+    "hedges": [
+      "Attribution to Animal Farm is stated as belief ('We believe'), not as established fact.",
+      "CSE assessed with 'moderate certainty' that the group is a French intelligence agency; the report calls the link to other Animal Farm malware convincingly established.",
+      "Language code and file-path indicators suggest French-speaking developers; the report notes a non-French developer could have set the value deliberately.",
+      "The original means of infection is unknown; the report believes Dino was installed by another program.",
+      "Victim knowledge is limited to Iran in 2013; the C&C servers were down when the report's analysis began."
+    ]
   }
 }

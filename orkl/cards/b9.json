@@ -378,25 +378,165 @@
   },
   "b9805bd188ebc18d211f2134dc18454c67feae44": {
     "sha1": "b9805bd188ebc18d211f2134dc18454c67feae44",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:40:33Z",
+    "read_at": "2026-11-27T15:54:03Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Unit 42 of Palo Alto Networks describes Xbash, a Linux and Windows malware family that combines a botnet, cryptocurrency mining, ransomware and self-propagation. On Linux it deletes databases on MySQL, PostgreSQL and MongoDB servers and leaves a Bitcoin ransom note; the report found no recovery functionality. Self-propagation uses weak passwords, unpatched vulnerabilities and three known flaws in Hadoop, Redis and ActiveMQ. The report links Xbash to the Iron group (aka Rocke), which it calls likely. Four versions were found, activity dates from May 2018, and 48 incoming Bitcoin transactions…",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Iron (aka Rocke)",
+          "q": "developed by an active cybercrime group Iron (aka Rocke) in this year.",
+          "by": "Unit 42 (Palo Alto Networks), the report's authors"
+        },
+        {
+          "v": "Iron",
+          "q": "We can tie this malware to the Iron Group, a threat actor group known for ransomware attacks in the past.",
+          "by": "Unit 42 (Palo Alto Networks), the report's authors"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "September 17, 2018",
+          "q": "September 17, 2018 at 5:00 AM",
+          "what": "Unit 42 published the Xbash report"
+        },
+        {
+          "v": "May 2018",
+          "q": "The botnet began to operate since as early as May 2018.",
+          "what": "botnet began operating, as early as this date"
+        },
+        {
+          "v": "October 2016",
+          "q": "which was first disclosed in October 2016 and has no CVE number assigned.",
+          "what": "Hadoop YARN weakness first disclosed"
+        },
+        {
+          "v": "October 2015",
+          "q": "which was first disclosed in October 2015 and has no CVE number assigned.",
+          "what": "Redis weakness first disclosed"
+        },
+        {
+          "v": "2016 and 2017",
+          "q": "at 2016 and 2017, which have compromised over 56,685 servers in the globe by report.",
+          "what": "earlier ransom waves with near-identical database ransom notes"
+        },
+        {
+          "v": "2015",
+          "q": "whose source code was believed to be stolen from the HackingTeam in 2015.",
+          "what": "RCS source code believed stolen from HackingTeam"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PyInstaller",
+          "q": "abusing the legitimate tool PyInstaller for"
+        },
+        {
+          "v": "Python",
+          "q": "Developed in Python: Xbash was developed using Python and then converted into"
+        },
+        {
+          "v": "WildFire",
+          "q": "Recently Unit 42 used WildFire to identify a new malware family targeting Linux servers."
+        },
+        {
+          "v": "phpMyAdmin",
+          "q": "If Xbash logged into a phpMyAdmin service, it will do exactly the same operations as above"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "weak passwords and unpatched vulnerabilities",
+          "q": "Xbash spreads by attacking weak passwords and unpatched vulnerabilities."
+        },
+        {
+          "v": "self-propagating capabilities",
+          "q": "It also has self-propagating capabilities"
+        },
+        {
+          "v": "destroying Linux-based databases",
+          "q": "destroying Linux-based databases as part of its ransomware"
+        },
+        {
+          "v": "weak passwords for brute forcing",
+          "q": "to fetch a list of weak passwords for brute forcing."
+        },
+        {
+          "v": "scanning for vulnerable servers within enterprise intranet",
+          "q": "capability of scanning for vulnerable servers within enterprise intranet."
+        },
+        {
+          "v": "IP addresses and domain names",
+          "q": "fetches from its C2 servers both IP addresses and domain names for service"
+        },
+        {
+          "v": "three known vulnerabilities",
+          "q": "Xbash uses three known vulnerabilities"
+        },
+        {
+          "v": "coinmining",
+          "q": "Xbash has ransomware and coinmining capabilities."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2016-3088",
+          "q": "ActiveMQ arbitrary file write vulnerability, CVE-2016-3088."
+        }
+      ],
+      "figures": [
+        {
+          "v": "48 incoming transactions",
+          "q": "To date, we have observed 48 incoming transactions to these wallets with total"
+        },
+        {
+          "v": "0.964 bitcoins",
+          "q": "income of about 0.964 bitcoins meaning 48 victims have paid about US$6,000 total"
+        },
+        {
+          "v": "about US$6,000",
+          "q": "income of about 0.964 bitcoins meaning 48 victims have paid about US$6,000 total"
+        },
+        {
+          "v": "0.02 BTC",
+          "q": "Send 0.02 BTC to this address and contact this email with your website or your ip"
+        },
+        {
+          "v": "1/57",
+          "q": "observed a 1/57 detection rate for Xbash in VirusTotal as shown in Figure 1."
+        },
+        {
+          "v": "four different versions",
+          "q": "We have discovered four different versions of Xbash so far."
+        },
+        {
+          "v": "over 56,685 servers",
+          "q": "which have compromised over 56,685 servers in the globe by report."
+        },
+        {
+          "v": "three different bitcoin wallet addresses",
+          "q": "Thus far, we have observed three different bitcoin wallet addresses hard-coded in the Xbash"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Xbash"
+    },
+    "hedges": [
+      "Our analysis shows this is likely the work of the Iron group",
+      "Some of these C2 domains are reused from previous Windows coinminers attributed to Iron cybercrime group.",
+      "Thus far, we've observed 48 incoming transactions to the Bitcoin wallet addresses used by the malware, which may indicate 48 victims of its ransom behavior.",
+      "At the time of this writing we have not found any Windows or macOS versions of Xbash.",
+      "The intranet scanning code has not been enabled that we can see; the report believes the author may enable it in coming versions.",
+      "While it may not be an intentional step, the inclusion of domain targeting has an anti-analysis benefit for the attackers.",
+      "The figure of over 56,685 compromised servers is given by report, not by the authors' own observation.",
+      "We believe that is the main motivation of Xbash's Intranet scanning code."
+    ]
   }
 }

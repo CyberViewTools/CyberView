@@ -500,5 +500,67 @@
       "note": "summary: It says flatly that the attackers regained access after about three months. The text hedges this: 'It looks as if it took the attackers three months to",
       "by": "auditor"
     }
+  },
+  "50c1d61b163f3a484b2b13a6eb6a87fd02567e52": {
+    "sha1": "50c1d61b163f3a484b2b13a6eb6a87fd02567e52",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T15:57:41Z",
+    "model": "haiku",
+    "summary": "Doctor Web reports Linux.Lady.1, a Linux Trojan written in Go that can run cryptocurrency mining software, find the infected computer's external IP address, and attack other computers. It tries to connect to Redis servers without a password, and if that succeeds it adds a downloader script to cron and an SSH key to the authorized keys. Dr.Web for Linux detects and removes Linux.Lady.1 and Linux.DownLoader.196.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 8, 2016",
+          "q": "August 8, 2016",
+          "what": "Doctor Web analysts detected and examined a new Linux Trojan"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Linux.Lady.1",
+          "q": "A Trojan, named Linux.Lady.1, can execute a limited range of actions"
+        },
+        {
+          "v": "Linux.DownLoader.196",
+          "q": "adds a downloader script, named Linux.DownLoader.196, to the cron scheduler"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cryptocurrency mining",
+          "q": "run a cryptocurrency mining program on an infected computer"
+        },
+        {
+          "v": "connects to Redis servers without a password",
+          "q": "tries to connect to the remote servers via a port used by the Redis"
+        },
+        {
+          "v": "attacks other computers on the network",
+          "q": "attack other computers of the network"
+        },
+        {
+          "v": "cron-scheduled downloader persistence",
+          "q": "adds a downloader script, named Linux.DownLoader.196, to the cron scheduler"
+        },
+        {
+          "v": "SSH key added for remote access",
+          "q": "adds a key for connection to the computer over SSH protocol"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Linux.Lady.1"
+    },
+    "hedges": [
+      "The Trojan's Redis connection attempt relies on the expectation that the system has not been configured correctly."
+    ]
   }
 }

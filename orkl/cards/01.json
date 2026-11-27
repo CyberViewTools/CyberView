@@ -785,5 +785,147 @@
       "note": "techniques[9]: The text says Symantec raised the possibility of a supply chain attack, and Kaspersky 'didn't find any compromised application that could suggest",
       "by": "auditor"
     }
+  },
+  "0120f4f065c62bcd218bbc21bc729bd3645adf14": {
+    "sha1": "0120f4f065c62bcd218bbc21bc729bd3645adf14",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:01:48Z",
+    "model": "haiku",
+    "summary": "Symantec's forensic analysis of two command-and-control servers used by the W32.Flamer cyber-espionage tool, which targeted the Middle East. The report covers the Newsforyou PHP web application, its code authors, the protocols it supports, the control panel, log-wiping steps, how stolen data was encrypted, and database contents. The servers were active in spring 2012, and one delivered a module that removed Flamer from computers in late May 2012. The report does not identify the entity behind the campaign, though it suggests a highly organized, possibly well-funded group.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "W32.Flamer attackers",
+          "q": "Data security compartmentalization used by W32.Flamer attackers",
+          "by": "Symantec (report authors)"
+        },
+        {
+          "v": "attack coordinators",
+          "q": "those holding the private key with the ability to decrypt the stolen data (attack coordinators)",
+          "by": "Symantec (report authors)"
+        },
+        {
+          "v": "operators",
+          "q": "The operators themselves may actually be completely unaware of the contents in the stolen data.",
+          "by": "Symantec (report authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Israel",
+          "q": "The entry left on the server had been successfully stolen from the computer located in Israel."
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 18, 2012",
+          "q": "The first server was set up on May 18, 2012, and, just five hours after it was set up",
+          "what": "First server set up; first client interaction followed about five hours later"
+        },
+        {
+          "v": "March 25, 2012",
+          "q": "The second server was set up on March 25, 2012, and controlled over a thousand clients",
+          "what": "Second server set up"
+        },
+        {
+          "v": "late May 2012",
+          "q": "delivered a module instructing Flamer to commit suicide and wipe itself off computers in late May 2012",
+          "what": "One server delivered a module that removed Flamer from computers"
+        },
+        {
+          "v": "June 1, 2012",
+          "q": "The last time a compromised client connected to the server was Friday, June 1, 2012, at 11:42:47",
+          "what": "Last recorded client connection to one server"
+        }
+      ],
+      "tools": [
+        {
+          "v": "W32.Flamer",
+          "q": "W32.Flamer is a sophisticated cyber espionage tool that targeted"
+        },
+        {
+          "v": "Newsforyou",
+          "q": "The Newsforyou application is written in PHP and contains the primary command-and-control functionality"
+        },
+        {
+          "v": "Shred",
+          "q": "Files are securely deleted using Shred, a tool that repeatedly overwrites files to prevent their recovery"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "man-in-the-middle attack against Windows Update",
+          "q": "a previously unknown man-in-the-middle attack against Windows Update"
+        },
+        {
+          "v": "encryption with a public key",
+          "q": "Files stored in this directory are encrypted with a public key stored in the database."
+        },
+        {
+          "v": "Data security compartmentalization",
+          "q": "Data security compartmentalization used by W32.Flamer attackers"
+        },
+        {
+          "v": "disabling logging",
+          "q": "They did this by disabling logging and securely removing existing log files."
+        },
+        {
+          "v": "URL redirections",
+          "q": "The attackers also set up some URL redirections to disguise the true nature of the requests to an inexperienced"
+        },
+        {
+          "v": "cronjob",
+          "q": "A cronjob was set up to periodically delete files from the file system"
+        },
+        {
+          "v": "module instructing Flamer to commit suicide",
+          "q": "delivered a module instructing Flamer to commit suicide and wipe itself off computers in late May 2012"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "1071 valid requests",
+          "q": "Examining the data in the table indicates that 1071 valid requests were recorded from compromised clients."
+        },
+        {
+          "v": "189 records",
+          "q": "the database reveals that 189 records had been created"
+        },
+        {
+          "v": "157,548 bytes",
+          "q": "There was a file of 157,548 bytes still left on the server"
+        },
+        {
+          "v": "75 MB",
+          "q": "A total of around 75 MB of stolen data was found in the backups on one of the servers"
+        },
+        {
+          "v": "5.7 GB",
+          "q": "the other server (server #2) saw a massive 5.7 GB of stolen data"
+        },
+        {
+          "v": "over a thousand clients",
+          "q": "controlled over a thousand clients in a period of just over one week"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "W32.Flamer"
+    },
+    "hedges": [
+      "Operators may be completely unaware of what the stolen data contains.",
+      "Operators possibly located in the EMEA region, which is only suggested by backup timestamps.",
+      "Server #2 is only summarised; in-depth details were left out for brevity.",
+      "Some command-and-control servers were likely Windows machines; this is an inference from the code.",
+      "Some logged sessions were likely from researchers, which the report says is likely.",
+      "The investigation is a snapshot in time, and remaining clues make the responsible entity virtually impossible to determine.",
+      "Involvement of a large, well-funded entity is suggested by the report, not confirmed.",
+      "Development of the web application may date back to 2006, possibly as early as that year."
+    ]
   }
 }

@@ -548,5 +548,98 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "0f93147df483ea3eb02b0fa7268f8d23c6d0b051": {
+    "sha1": "0f93147df483ea3eb02b0fa7268f8d23c6d0b051",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:00:18Z",
+    "model": "haiku",
+    "summary": "360 Netlab reports that the z0Miner mining botnet spreads by exploiting remote command execution flaws in ElasticSearch (CVE-2015-1427) and the Jenkins script console. Infected hosts kill competing miners, set up cron jobs that fetch scripts from Pastebin, and download an XMR miner. The report says over 22 XMR have been mined so far.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "z0Miner",
+          "q": "z0Miner is a malicious mining family that became active last year",
+          "by": "360 Netlab (the report itself)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Republic_of_Korea",
+          "q": "Republic_of_Korea|Seoul"
+        },
+        {
+          "v": "Netherlands",
+          "q": "Netherlands|North_Holland|Amsterdam"
+        }
+      ],
+      "dates": [
+        {
+          "v": "8 March 2021",
+          "q": "8 March 2021 / Botnet",
+          "what": "Report published by 360 Netlab"
+        },
+        {
+          "v": "2015",
+          "q": "Although it is an old vulnerability from 2015, z0Miner is still using it.",
+          "what": "Year of the ElasticSearch vulnerability CVE-2015-1427, which z0Miner still uses"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Anglerfish honeypot",
+          "q": "Recently, our Anglerfish honeypot system captured that z0Miner was also spreading by"
+        },
+        {
+          "v": "BotMon",
+          "q": "our BotMon system detects dozens of mining Botnet attacks pretty"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote command execution exploitation",
+          "q": "spreading by exploiting remote command execution vulnerabilities in ElasticSearch and Jenkins"
+        },
+        {
+          "v": "Kill the competitor",
+          "q": "1. Kill the competitor"
+        },
+        {
+          "v": "setting up Cron",
+          "q": "2. Setting up Cron"
+        },
+        {
+          "v": "Download & execute",
+          "q": "3. Download & execute the mining programs"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2015-1427",
+          "q": "ElasticSearch RCE vulnerability CVE-2015-1427"
+        }
+      ],
+      "figures": [
+        {
+          "v": "over 22 XMRs",
+          "q": "And now reads over 22 XMRs have been mined so far."
+        },
+        {
+          "v": "dozens of mining Botnet attacks",
+          "q": "our BotMon system detects dozens of mining Botnet attacks pretty"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "z0Miner"
+    },
+    "hedges": [
+      "The report says more malicious actions probably will be added in the future to the Pastebin scripts.",
+      "The Pastebin scripts currently contain only an exit command."
+    ]
   }
 }

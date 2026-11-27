@@ -98,5 +98,153 @@
       "note": "summary: The summary drops the text's hedges and misstates the content. The text says that after the 2018 arrests it was believed the group would cease activity",
       "by": "auditor"
     }
+  },
+  "20676725f96ecb865989fb60464f45ba38147dde": {
+    "sha1": "20676725f96ecb865989fb60464f45ba38147dde",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:00:37Z",
+    "model": "haiku",
+    "summary": "FireEye describes an SSH brute-force campaign that began on 15 November 2014 and targeted servers and network devices, mainly attacking root accounts. The report says a remote SSH command, invisible to standard Linux logging, triggers an on-demand build of XOR.DDoS, a C/C++ Linux DDoS bot with a kernel-level rootkit and multiple persistence mechanisms. The bot can kill other malware, launch DoS attacks, and download and execute further binaries. The report describes two variants, 41 recompiled binaries, and detection and mitigation advice. It attributes the attack IP block to a registrant…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Hee Thai Limited",
+          "q": "an address block that was registered to “Hee Thai Limited” only a few weeks prior.",
+          "by": "the report itself (FireEye)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "Nov. 15, 2014",
+          "q": "Our story begins on Nov. 15, 2014.",
+          "what": "First sighting of the SSH brute-force campaign"
+        },
+        {
+          "v": "Nov. 19",
+          "q": "began on Saturday, Nov. 19 and would last until Sunday, Nov. 30.",
+          "what": "Second phase of the campaign began"
+        },
+        {
+          "v": "Dec. 7th",
+          "q": "No activity was observed from the Hee Thai subnet between Monday, Dec. 1 and Sunday, Dec. 7th, which marked the beginning of the third",
+          "what": "Third phase began after a period with no observed activity"
+        },
+        {
+          "v": "Dec. 22, 2014",
+          "q": "First seen Dec. 22, 2014",
+          "what": "Variant 2 of XOR.DDoS first seen"
+        },
+        {
+          "v": "Jan. 20, 2015",
+          "q": "were replaced on Jan. 20, 2015, with a new set of binaries.",
+          "what": "Pre-compiled Variant 2 copies replaced with a new set of binaries"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XOR.DDoS",
+          "q": "XOR.DDoS is ostensibly a DDoS bot."
+        },
+        {
+          "v": "mini",
+          "q": "downloads a small ELF binary tool with wget, called ‘mini,’ and uses it to upload"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "SSH brute forcing",
+          "q": "This is the tale of an ongoing SSH brute forcing campaign, targeting servers and network devices,"
+        },
+        {
+          "v": "SSH remote command",
+          "q": "the second machine that logs in after root’s password is found will run a SSH remote command."
+        },
+        {
+          "v": "on-demand compilation",
+          "q": "The on-demand compilation mechanism is operated by the remote SSH command seen in the initial stage of a compromise."
+        },
+        {
+          "v": "rootkit",
+          "q": "The rootkit used by XOR.DDoS loads itself as a LKM."
+        },
+        {
+          "v": "persistence mechanisms",
+          "q": "incorporates multiple persistence mechanisms including a rare Linux rootkit."
+        },
+        {
+          "v": "DoS attacks",
+          "q": "The server may then send a list of targets at any time and the bot will start DoS attacks against them"
+        },
+        {
+          "v": "killing other malware",
+          "q": "XOR.DDoS appears to be killing other malware, ensuring there is no competition for the machine’s resources."
+        },
+        {
+          "v": "self-update feature",
+          "q": "All variants of XOR.DDoS have the ability to download and execute arbitrary binaries as well as a self-update feature"
+        },
+        {
+          "v": "root account",
+          "q": "The Hee Thai SSH brute force campaign always attempts to gain access to the root account."
+        },
+        {
+          "v": "evades standard Linux logging facilities",
+          "q": "This commonly used feature of OpenSSH, interestingly enough, evades standard Linux logging facilities."
+        },
+        {
+          "v": "hash signature-based detection",
+          "q": "This strategy makes hash signature-based detection systems ineffective for detecting XOR.DDoS."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "well over 20,000 SSH login attempts",
+          "q": "Within 24 hours of first sighting, we had observed well over 20,000 SSH login attempts, per server."
+        },
+        {
+          "v": "about 150,000",
+          "q": "FireEye’s research systems had each logged about 150,000 login"
+        },
+        {
+          "v": "nearly 1 million",
+          "q": "each server had seen nearly 1 million"
+        },
+        {
+          "v": "63%",
+          "q": "accounted for 63% of all observed port 22 traffic."
+        },
+        {
+          "v": "255 addresses",
+          "q": "from nearly every IP in Hee Thai Limited’s bucket of 255 addresses."
+        },
+        {
+          "v": "three distinct phases",
+          "q": "The brute forcing campaign had three distinct phases."
+        },
+        {
+          "v": "41 unique re-compiled binaries",
+          "q": "has delivered 41 unique re-compiled binaries from four distribution domains that were observed in the wild."
+        },
+        {
+          "v": "four distribution domains",
+          "q": "has delivered 41 unique re-compiled binaries from four distribution domains that were observed in the wild."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Hee Thai SSH brute force campaign"
+    },
+    "hedges": [
+      "The report says XOR.DDoS 'appears to be' killing other malware, judging from the contents of the files it fetches.",
+      "The report says it may not be straightforward or possible for end users to protect network devices and embedded systems from these attacks.",
+      "The report says that because there are multiple XOR.DDoS variants, only a subset of indicators will be seen in any one infection.",
+      "The report says that if a version with a rootkit has compromised a system, removal may not be feasible."
+    ]
   }
 }

@@ -627,25 +627,103 @@
   },
   "f52217bacada4ea36a090fc81cb7821640afa3d7": {
     "sha1": "f52217bacada4ea36a090fc81cb7821640afa3d7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:45:46Z",
+    "read_at": "2026-11-27T15:55:51Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Analysis of XOR.DDoS, a Linux botnet Trojan for distributed denial-of-service attacks, first reported at the end of September 2014. It gets onto systems by brute-forcing root SSH logins, persists through several startup mechanisms, and can install a loadable kernel module rootkit to hide its activity. It takes flooding commands from command-and-control servers and has variants for 32-bit, 64-bit and ARM systems. The report says the ARM variant has not been seen in the wild. The rootkit appears to borrow from the open-source Suterusu project.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "Internet of Things devices",
+          "q": "is extended for routers, Internet of Things devices, NAS storages"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "end of September 2014",
+          "q": "At the end of September 2014, a new",
+          "what": "New threat XOR.DDoS was reported by the MalwareMustDie! group"
+        },
+        {
+          "v": "6 Jan 2015",
+          "q": "Threat Intelligence Team 6 Jan 2015",
+          "what": "Vendor blog post on the analysis was published"
+        },
+        {
+          "v": "January 2013",
+          "q": "Another article related to Suterusu was published in January 2013.",
+          "what": "Another article related to Suterusu was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XOR.DDoS",
+          "q": "dubbed XOR.DDoS forming a botnet for distributed"
+        },
+        {
+          "v": "Suterusu",
+          "q": "it is likely that the malware authors were inspired by the open source project called Suterusu"
+        },
+        {
+          "v": "Agony rootkit",
+          "q": "some trojanized flooding tools had the Windows variant utilizing the Agony rootkit"
+        },
+        {
+          "v": "Hand of Thief",
+          "q": "Hand of Thief failed in its ambitions to be the first banking Trojan for Linux desktops."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute force SSH login",
+          "q": "The infection starts by an attempt to brute force SSH login credentials of the root user."
+        },
+        {
+          "v": "persistence in multiple ways",
+          "q": "The persistence of the Trojan is achieved in multiple ways."
+        },
+        {
+          "v": "loadable kernel module",
+          "q": "The rootkit component is a loadable kernel module (LKM)."
+        },
+        {
+          "v": "hide various aspects",
+          "q": "It’s main functionality is to hide various aspects of the Trojan’s activity"
+        },
+        {
+          "v": "encrypted in both directions",
+          "q": "The communication is encrypted in both directions with the same hard-coded XOR key"
+        },
+        {
+          "v": "start flooding, stop flooding",
+          "q": "To start flooding, to stop flooding, to download-and-execute, to self-update"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three infinite loops",
+          "q": "The functionality of the main executable lies in three infinite loops"
+        },
+        {
+          "v": "10-character",
+          "q": "with a random 10-character string"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "XOR.DDoS"
+    },
+    "hedges": [
+      "The ARM variant has not been observed in the wild yet",
+      "The Suterusu link is an inference from procedure names: it is likely the authors were inspired by it",
+      "The report says the botnet panel display is very likely, which is an inference",
+      "The listed files could serve as an indicator of compromise, as the report suggests"
+    ]
   }
 }

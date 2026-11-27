@@ -954,5 +954,118 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "34630d282ecd14f8396cfeb394c7ec2742f99df2": {
+    "sha1": "34630d282ecd14f8396cfeb394c7ec2742f99df2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T15:57:03Z",
+    "model": "haiku",
+    "summary": "Trend Micro's December 2021 blog reports on IoT Linux malware, mapped to MITRE ATT&CK techniques. It analysed malware found between January 2019 and August 2021 using static and dynamic analysis. The report says the malware is evolving, with botnet families adding and removing capabilities, data theft and lateral movement largely dropped, and propagation moved to centralized command-and-control servers. Brute-force password guessing and external remote services are the most common techniques, and the report stresses changing default passwords.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "December 9, 2021",
+          "q": "December 9, 2021",
+          "what": "Date the blog entry was published"
+        },
+        {
+          "v": "January 2019",
+          "q": "We selected malware discovered between January 2019 and",
+          "what": "Start of the period in which the analysed malware was discovered"
+        },
+        {
+          "v": "mid-2020",
+          "q": "introduced in a malware discovered in mid-2020",
+          "what": "Malware in which a file permissions modification technique was introduced"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ghidra",
+          "q": "static (Ghidra, IDA Pro)"
+        },
+        {
+          "v": "IDA Pro",
+          "q": "static (Ghidra, IDA Pro)"
+        },
+        {
+          "v": "strace",
+          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
+        },
+        {
+          "v": "ltrace",
+          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
+        },
+        {
+          "v": "GDB",
+          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
+        },
+        {
+          "v": "Dark Nexus",
+          "q": "In the Dark Nexus family, for example,"
+        },
+        {
+          "v": "QSnatch",
+          "q": "there is only one malware (QSnatch) that implements typical tactics"
+        },
+        {
+          "v": "StealthWorker GO",
+          "q": "a variant of StealthWorker GO, a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "File and Directory Discovery (T1083)",
+          "q": "Discovery File and Directory Discovery (T1083) 10"
+        },
+        {
+          "v": "Brute Force: Password Guessing (T1110.001)",
+          "q": "Brute Force: Password Guessing (T1110.001) 6"
+        },
+        {
+          "v": "External Remote Services (T1133)",
+          "q": "Initial Access External Remote Services (T1133) 8"
+        },
+        {
+          "v": "Match Legitimate Name or Location (T1036.005)",
+          "q": "Match Legitimate Name or Location (T1036.005)."
+        },
+        {
+          "v": "Scheduled Task/Job: Cron (T1053.003)",
+          "q": "Scheduled Task/Job: Cron (T1053.003)"
+        },
+        {
+          "v": "Exploitation of Remote Services (T1210)",
+          "q": "Remote Services (T1021) and Exploitation of Remote Services (T1210)"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "10",
+          "q": "Table 1 shows the 10 most implemented capabilities (or techniques) in our malware data set."
+        },
+        {
+          "v": "four",
+          "q": "During the observation period, we noted four new techniques added to threat actors’"
+        },
+        {
+          "v": "three",
+          "q": "we found three techniques relating to the lateral movement tactic to have"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "It is likely because, from a malware author’s standpoint, the benefits of executing malware that require higher privileges are not worth the effort of implementation.",
+      "This is likely because the market for malware-as-a-service is growing.",
+      "This may be because detection of botnet malware is more mature, so they require more frequent changes to avoid being easily detected.",
+      "The Masquerading technique likely reflect the manufacturers’ increasing interest and efforts in securing these IoT devices or appliances."
+    ]
   }
 }

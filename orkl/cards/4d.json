@@ -184,25 +184,113 @@
   },
   "4da1acf23e710c9275069409ac1c8491dd16837e": {
     "sha1": "4da1acf23e710c9275069409ac1c8491dd16837e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:41:51Z",
+    "read_at": "2026-11-27T15:55:09Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Cado Security describes CoinStomp, a shell-script malware family targeting Asian cloud service providers to mine cryptocurrency. Its noted techniques include timestomping, removal of system cryptographic policies, a reverse shell for C2 on port 443, and systemd persistence of root-level payloads, including a customised XMRig miner. The report notes a reference to the Xanthe campaign but considers CoinStomp likely distinct. The blog post is dated February 2, 2022.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "Timestomping has been used by the Rocke",
+          "by": "Cado Security (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Cloud Service Providers",
+          "q": "Targets Asian Cloud Service Providers"
+        },
+        {
+          "v": "cloud computing",
+          "q": "Many cloud computing instances will be vulnerable"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2022-02-02",
+          "q": "February 2, 2022",
+          "what": "Cado Security blog post on the CoinStomp malware was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "is a customised version of the XMRig Monero mining software"
+        },
+        {
+          "v": "masscan",
+          "q": "two lines are added to kill the tail and masscan utilities"
+        },
+        {
+          "v": "Sshno",
+          "q": "Sshno is a heavily-obfuscated 32 bit ELF binary"
+        },
+        {
+          "v": "dhcpclient",
+          "q": "The dhcpclient binary is a customised version"
+        },
+        {
+          "v": "Stater",
+          "q": "Stater and adupd were two additional payloads"
+        },
+        {
+          "v": "adupd",
+          "q": "Stater and adupd were two additional payloads"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "timestomping",
+          "q": "Timestomping (manipulation of timestamps) employed as an anti-forensics measure"
+        },
+        {
+          "v": "Removal of System Cryptographic Policies",
+          "q": "Removal of System Cryptographic Policies"
+        },
+        {
+          "v": "reverse shell",
+          "q": "method of creating a reverse shell or C2 communication channel"
+        },
+        {
+          "v": "systemd services",
+          "q": "persisted as system-wide systemd services"
+        },
+        {
+          "v": "anti-forensics",
+          "q": "Employing anti-forensics techniques and weakening the target machine"
+        },
+        {
+          "v": "cryptomining",
+          "q": "for the purpose of mining cryptocurrency"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "443",
+          "q": "the use of port 443 helps make this traffic appear legitimate"
+        },
+        {
+          "v": "two",
+          "q": "two lines are added to kill the tail and masscan utilities"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "CoinStomp"
+    },
+    "hedges": [
+      "It seems likely that timestomping was employed to obfuscate usage of the chmod and chattr utilities.",
+      "Report assumes the config files are XMRig configuration files but says it is unclear whether the spelling mistakes are intentional.",
+      "The payload at the anonymous DNS URL was unavailable, so the report cannot determine whether it was part of the Xanthe campaign.",
+      "Report says CoinStomp seems distinct from Xanthe, given no overlap in capabilities or infrastructure.",
+      "Report says inclusion of the URL may well have been an attempt to foil attribution.",
+      "Report says the extra payloads look like an attempt to establish additional backdoor or C2 channels."
+    ]
   }
 }

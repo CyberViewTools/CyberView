@@ -487,5 +487,142 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fad082e169f6f4bca710eef792f0711c6a9d98cc": {
+    "sha1": "fad082e169f6f4bca710eef792f0711c6a9d98cc",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:02:56Z",
+    "model": "haiku",
+    "summary": "Trend Micro's TrendLabs blog (February 2020) describes updates to the Outlaw hacking group's botnet kit. The updated kit kills older miners, runs large-scale scans, exploits dated vulnerabilities and weak SSH/Telnet credentials, and installs a Shellbot backdoor disguised as rsync. The authors say Outlaw has been active since 2018 and targets industries in the United States and Europe. They also say enterprises with unpatched, poorly monitored systems are likely targets, and they note cryptomining traces on Android TVs.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Outlaw",
+          "q": "Outlaw, which has been silent for the past few months, was simply developing their toolkit for illicit income sources.",
+          "by": "Trend Micro (the report's author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "automotive",
+          "q": "We analyzed the kits, which were designed to steal information from the automotive and finance industries, launch subsequent attacks"
+        },
+        {
+          "v": "finance",
+          "q": "We analyzed the kits, which were designed to steal information from the automotive and finance industries, launch subsequent attacks"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "We will continue to observe the group’s activities as they target industries from the United States and Europe."
+        }
+      ],
+      "dates": [
+        {
+          "v": "February 10, 2020",
+          "q": "Posted on:February 10, 2020 at 1:00 pm",
+          "what": "Trend Micro TrendLabs blog post published"
+        },
+        {
+          "v": "December",
+          "q": "we observed an increase in the group’s activities in December, with updates on the kits’ capabilities reminiscent of their previous attacks.",
+          "what": "Increase in Outlaw activity and kit updates observed"
+        },
+        {
+          "v": "June 2019",
+          "q": "In a previous execution (published in June 2019), we observed that dota2 had its own folder",
+          "what": "Earlier execution of a related sample, published in that month"
+        },
+        {
+          "v": "2018",
+          "q": "Since discovering the operations of this group in 2018, Outlaw continues to use scripts, codes, and commands that have been previously used and deployed.",
+          "what": "Trend Micro first discovered the group's operations"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Shellbot",
+          "q": "Shellbot is also used to control the botnet, with a command that is sent and run from the C&C"
+        },
+        {
+          "v": "dota3",
+          "q": "via the dota3 payload, as well"
+        },
+        {
+          "v": "tsm",
+          "q": "The tsm binary then runs in the background, forwarding a series of error"
+        },
+        {
+          "v": "init2",
+          "q": "Based on a bashtemp directory of the latest sample we found, there are other compiled ELF scripts, named init and init2"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploiting known vulnerabilities",
+          "q": "targeted Linux- and Unix-based operating systems, vulnerable servers, and internet of things (IoT) devices by exploiting known vulnerabilities"
+        },
+        {
+          "v": "PHP-based web shells",
+          "q": "Files using simple PHP-based web shells were also used to attack systems with weak SSH and Telnet credentials."
+        },
+        {
+          "v": "large-scale scanning operations",
+          "q": "These involved large-scale scanning operations of IP"
+        },
+        {
+          "v": "encoding the code for the scanner with base-64",
+          "q": "They attempted to evade traffic inspection by encoding the code for the scanner with base-64."
+        },
+        {
+          "v": "killing off both the competition and their own previous miners",
+          "q": "profits by killing off both the competition and their own previous miners."
+        },
+        {
+          "v": "disguises itself as a process named rsync",
+          "q": "The Shellbot disguises itself as a process named rsync, commonly the binary seen on many Unix- and Linux-based systems"
+        },
+        {
+          "v": "virtual private server (VPS)",
+          "q": "From the sample we analyzed, attacks started from one virtual private server (VPS) that searches for a vulnerable machine to compromise"
+        },
+        {
+          "v": "cryptocurrency mining activities",
+          "q": "Android Debug Bridge (ADB)-based commands that enable cryptocurrency mining activities in Android-"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2016-8655",
+          "q": "the group explored unpatched systems vulnerable to CVE-2016-8655 and Dirty COW exploit (CVE-2016-5195) as attack vectors."
+        },
+        {
+          "v": "CVE-2016-5195",
+          "q": "the group explored unpatched systems vulnerable to CVE-2016-8655 and Dirty COW exploit (CVE-2016-5195) as attack vectors."
+        }
+      ],
+      "figures": [
+        {
+          "v": "456 distinct IPs",
+          "q": "Based on the samples we collected and traced to 456 distinct IPs, we expect the group to be more active in the coming months"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Outlaw kit"
+    },
+    "hedges": [
+      "we think Outlaw may be aiming to go after enterprises that have yet to update their systems",
+      "and (possibly) sell stolen information",
+      "It remains unclear whether these are leftover code from the previous versions or their particular purposes were served.",
+      "We also considered the move as an obfuscation technique, as it was mixed with a lot of script kiddie activities",
+      "The honeynet graphs, which show activity peaks associated with specific actions, also suggest that the scans were timed.",
+      "We think the group has likely become more enterprising, and learned to take advantage of some details from their previous campaigns",
+      "Outlaw may find even more targets and victims for their updated botnets every time there is a patch released"
+    ]
   }
 }

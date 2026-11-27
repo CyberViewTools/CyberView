@@ -591,5 +591,156 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "23e76dd6426159173a0e9fbfceace4fd4f627e17": {
+    "sha1": "23e76dd6426159173a0e9fbfceace4fd4f627e17",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:06:34Z",
+    "model": "haiku",
+    "summary": "Check Point Threat Intelligence and Research describes a July 2015 compromise of a Linux DNS BIND server. Attackers gained root access through an SSH brute-force campaign, with attacking addresses mostly in ranges associated with Chinese internet service providers, then installed two payloads: XOR.DDoS, a DDoS bot, and Groundhog, a backdoor first reported in this document. The report judges them, with high probability, to be modules of one malware family made by the same actor. It describes a global campaign that can make infected Linux servers join DDoS attacks, and says the attackers may…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "the same actor",
+          "q": "and that they were designed and created by the same actor.",
+          "by": "Check Point Threat Intelligence and Research (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "commercial servers",
+          "q": "and also include commercial servers."
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "seems to point to China as the origin of the attack."
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 2015",
+          "q": "In July 2015, Check Point’s Incident Response team was contacted by a customer",
+          "what": "Check Point incident response team was contacted by a customer about a compromised server"
+        },
+        {
+          "v": "April 2015",
+          "q": "A later report3, from April 2015, mentioned removing all routing capabilities from this netblock",
+          "what": "A later report said routing capabilities were removed from the netblock used by the botnet"
+        },
+        {
+          "v": "day 6",
+          "q": "The attack peaked on day 6 and ended on approximately day 28.",
+          "what": "The SSH brute force attack peaked in the failed login log"
+        },
+        {
+          "v": "day 28",
+          "q": "The attack peaked on day 6 and ended on approximately day 28.",
+          "what": "The SSH brute force attack ended in the failed login log"
+        },
+        {
+          "v": "day 12",
+          "q": "the files relating to the first XOR.DDoS payload were created on day 12",
+          "what": "Files for the first XOR.DDoS payload were created"
+        },
+        {
+          "v": "day 36",
+          "q": "the files relating to the second Groundhog payload were created on day 36",
+          "what": "Files for the second Groundhog payload were created"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XOR.DDoS",
+          "q": "These payloads were the XOR.DDoS and Groundhog malware variants,"
+        },
+        {
+          "v": "Groundhog",
+          "q": "the Groundhog payload has yet to be reported."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "SSH brute force",
+          "q": "traced to an SSH brute force attack"
+        },
+        {
+          "v": "root access",
+          "q": "it took the attackers only a few days to gain root access and full control of the targeted server."
+        },
+        {
+          "v": "brute-force the root account password",
+          "q": "the attackers were able to brute-force the root account password on or before day 12"
+        },
+        {
+          "v": "auto start folder",
+          "q": "which serves as the auto start folder on GNU/Linux systems"
+        },
+        {
+          "v": "cron job",
+          "q": "This script file serves as a cron job that will be started every hour."
+        },
+        {
+          "v": "Loadable Kernel Module",
+          "q": "as well as usage of Loadable Kernel Module4 and Ring-0 code execution"
+        },
+        {
+          "v": "reverse shell",
+          "q": "providing reverse shell abilities to manually control the server as needed."
+        },
+        {
+          "v": "specified processes killing",
+          "q": "and perform remote code execution via reverse shell and specified processes killing."
+        },
+        {
+          "v": "DNS amplification",
+          "q": "Any of these methods can be used: SYN Flood, ACK Flood and DNS amplification attacks."
+        },
+        {
+          "v": "SYN Flood",
+          "q": "Any of these methods can be used: SYN Flood, ACK Flood and DNS amplification attacks."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "3 possible operation modes",
+          "q": "XOR.DDoS has 3 possible operation modes."
+        },
+        {
+          "v": "three main threads",
+          "q": "The malware then starts its three main threads."
+        },
+        {
+          "v": "AS63854",
+          "q": "a netblock assigned to the Chinese-based HEE THAI LIMITED (AS63854)"
+        },
+        {
+          "v": "AS23650",
+          "q": "netblock assigned to CHINANET Jiangsu province backbone (AS23650)"
+        },
+        {
+          "v": "TCP/3053",
+          "q": "using TCP/3053 or TCP/6001."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "XOR.DDoS"
+    },
+    "hedges": [
+      "Report says with a high probability that XOR.DDoS and Groundhog are different modules of one malware family made by the same actor.",
+      "Report says the attackers had possibly switched networks due to detection and prevention measures taken in recent months.",
+      "Report says the similarities perhaps mean the two were designed as 2 modules of one campaign, or written by the same author.",
+      "Report says the DDoS attacks may lead to attacks of as yet unseen proportions and persistency; this is a prediction.",
+      "Report says it leads them to believe the root password was brute-forced on or before day 12; this is an inference from log timing.",
+      "Report says each posted research report seems to point to China as the origin of the attack.",
+      "Report acknowledges its visualization of the campaign's targets is imperfect.",
+      "Report says the Loadable Kernel Module code exists but was disabled in all analysed samples, and no samples were seen using it."
+    ]
   }
 }

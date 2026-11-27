@@ -433,7 +433,7 @@
     "sha1": "7f9a0d22c62685ec3cc2c2436299ee6e88bfbad0",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:46:09Z",
+    "read_at": "2026-11-27T15:56:40Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -449,7 +449,154 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "reason": "value-not-in-quote, quote-not-in-text",
+    "tries": 2
+  },
+  "7f978cc7c21fa0cc47c0f13d09854c54bc0282dd": {
+    "sha1": "7f978cc7c21fa0cc47c0f13d09854c54bc0282dd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:04:21Z",
+    "model": "haiku",
+    "summary": "Threat report by Leonardo S.p.a. analysing a Linux variant called Penquin_x64 from the Turla APT toolkit. It describes a stealth backdoor that disguises itself as the cron scheduling utility and activates only when it receives a specially crafted packet. Samples were found in April 2020 on a multi-scanner service. The report estimates the most recent sample was built between 2016 and 2017. It states that it could not confirm the component is still in use and had no incident to investigate. It describes remote file commands and Blowfish-encrypted traffic, and provides a detection script for…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Turla",
+          "q": "The APT group known as Turla (aka Snake, Venomous Bear, Group 88, Uroburos, Waterbug and others)",
+          "by": "the report (Leonardo S.p.a.)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "This adversary is known for targeting, among the others, government, defense and"
+        },
+        {
+          "v": "defense",
+          "q": "This adversary is known for targeting, among the others, government, defense and"
+        },
+        {
+          "v": "education",
+          "q": "education sectors all around the globe."
+        },
+        {
+          "v": "defence",
+          "q": "published by the Swiss CERT in 2016 detailing a prolonged campaign against the defence contractor Ruag [3]."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Czech Republic",
+          "q": "have been submitted to VirusTotal service in April 2020 from the Czech Republic and"
+        },
+        {
+          "v": "Italy",
+          "q": "Italy respectively. We have reason to believe that the sample submitted from Italy is"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2004",
+          "q": "is a well-established collective that has been operational since at least 2004.",
+          "what": "Turla reported as operational since at least this year"
+        },
+        {
+          "v": "December 2014",
+          "q": "In December 2014, Kaspersky reported on a tool attributed to the Turla intrusion set used to",
+          "what": "Kaspersky reported on the Penquin tool"
+        },
+        {
+          "v": "2016",
+          "q": "published by the Swiss CERT in 2016 detailing a prolonged campaign against the defence contractor Ruag [3].",
+          "what": "Swiss CERT published a report on a campaign against Ruag"
+        },
+        {
+          "v": "2017",
+          "q": "In 2017, more information about this threat was discovered1.",
+          "what": "More information about the Penquin threat was discovered"
+        },
+        {
+          "v": "April 2020",
+          "q": "In April 2020, a few other samples similar to those detected in 2014 have been uploaded to a",
+          "what": "New Penquin_x64 samples were first detected"
+        },
+        {
+          "v": "2016 and 2017",
+          "q": "that the most recent sample we discovered has been built between 2016 and 2017.",
+          "what": "Estimated build window of the most recent sample"
+        },
+        {
+          "v": "April 2016",
+          "q": "the last version we currently know about was compiled after April 2016.",
+          "what": "Lower bound on the build date of the latest known version"
+        },
+        {
+          "v": "December 2017",
+          "q": "submitted to the Virus Total service in December 2017.",
+          "what": "A third Penquin_x64 sample was submitted to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Penquin_x64",
+          "q": "“Penquin_x64” is a stealth backdoor that, in addition, tries to hide itself from the eyes of the"
+        },
+        {
+          "v": "Penquin_2.0",
+          "q": "We named the second set of samples “Penquin_2.0”. One sample belonging to this set"
+        },
+        {
+          "v": "Penquin",
+          "q": "The first set, that we will call “Penquin”, is the one firstly"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "port knocking",
+          "q": "they implement the same sort of port knocking technique2 of the first “Penquin” version,"
+        },
+        {
+          "v": "sniffing technique",
+          "q": "One of its peculiar features is the sniffing technique initially attributed to the cd00r"
+        },
+        {
+          "v": "BlowFish",
+          "q": "BlowFish algorithm, and a symmetric key exchanged with Diffie Hellman."
+        },
+        {
+          "v": "Diffie Hellman",
+          "q": "BlowFish algorithm, and a symmetric key exchanged with Diffie Hellman."
+        },
+        {
+          "v": "custom cryptographic protocol",
+          "q": "Adversaries may use a custom cryptographic protocol or algorithm"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three",
+          "q": "we have been able to categorise them in three different sets"
+        },
+        {
+          "v": "64 bits",
+          "q": "these new samples target 64 bits architectures."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Penquin_x64"
+    },
+    "hedges": [
+      "The report says it is not possible to identify the exact date of build for the Penquin_x64 version.",
+      "The report cannot state that Penquin_x64 is still in use by Turla.",
+      "The report did not investigate an actual incident involving the implant, so its use in real incidents is not confirmed.",
+      "The report says build-date results are estimates, do not intersect perfectly, and give only a lower bound.",
+      "The report says it is highly likely the malware was used more often than known, but has no concrete data to support this.",
+      "The report says the binary does not allow confirmation of what the result on the remote peer would be for some commands; their purpose is presumed from their names."
+    ]
   }
 }

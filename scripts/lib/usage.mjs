@@ -250,10 +250,14 @@ export function fallbackSpend(lines, now = Date.now(), prices = PRICES) {
 // config/pipeline.json library.api { enabled, monthly_usd_cap }. The Library desk bills ONLY the API key (never the subscription);
 // its spend is counted apart from the pipeline's fallback cap, and at its cap it stops until the next calendar month.
 export const DEFAULT_LIBRARY_API = { enabled: true, monthly_usd_cap: 75 };
-/** Pure: the library.api block with defaults; a cap that is not a number >= 0 falls back to the default. */
-export function libraryApiConfig(library = {}) {
-  const a = (library && typeof library.api === "object" && library.api) || {}, cap = Number(a.monthly_usd_cap);
-  return { enabled: a.enabled !== false, monthly_usd_cap: Number.isFinite(cap) && cap >= 0 && a.monthly_usd_cap !== null && a.monthly_usd_cap !== "" ? cap : DEFAULT_LIBRARY_API.monthly_usd_cap };
+const capOk = (v) => v !== null && v !== "" && typeof v !== "boolean" && Number.isFinite(Number(v)) && Number(v) >= 0;
+/** Pure: the library.api block with defaults; a cap that is not a number >= 0 falls back to the default. `month_caps`
+ *  ({ "YYYY-MM": usd }) replaces the cap for that UTC month only (owner, 2026-11-27: $15 more for November, then $75 again). */
+export function libraryApiConfig(library = {}, now = Date.now()) {
+  const a = (library && typeof library.api === "object" && library.api) || {};
+  const base = capOk(a.monthly_usd_cap) ? Number(a.monthly_usd_cap) : DEFAULT_LIBRARY_API.monthly_usd_cap;
+  const mc = a.month_caps && typeof a.month_caps === "object" ? a.month_caps[iso(now).slice(0, 7)] : undefined;
+  return { enabled: a.enabled !== false, monthly_usd_cap: capOk(mc) ? Number(mc) : base };
 }
 /** Pure: the Library's API spend this calendar month (UTC), from ledger lines with job "library" served "api". A line's own
  *  cost (what the CLI reported) is used when it has one, else the PRICES x tokens estimate. */

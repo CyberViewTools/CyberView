@@ -203,25 +203,188 @@
   },
   "eb1800604354024c5c0f45099e608e652d12c055": {
     "sha1": "eb1800604354024c5c0f45099e608e652d12c055",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T09:55:21Z",
+    "read_at": "2026-11-27T10:35:11Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CERT-Yoroi analysis of threat group UNC1945, named by Mandiant, which the report says has targeted financial and banking institutions in Italy and Europe, tracked since at least 2015. The group uses a portable QEMU virtual machine carrying post-exploitation tools (credential harvesting, Mimikatz, EternalBlue exploits, Responder) against legacy systems. The report says attribution to Carbanak/Anunak is unconfirmed. Published November 30, 2020.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "UNC1945",
+          "q": "publicly disclosed with the name UNC1945 by Mandiant",
+          "by": "Mandiant"
+        },
+        {
+          "v": "TH-239",
+          "q": "(TH-239 in our",
+          "by": "CERT-Yoroi (its internal knowledge base)"
+        },
+        {
+          "v": "Carbanak/Anunak",
+          "q": "Carbanak/Anunak romainan cells dated back 2015-2016",
+          "by": "CERT-Yoroi (reserved intelligence information, unconfirmed)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Banking",
+          "q": "industry sectors: the Banking sector."
+        },
+        {
+          "v": "Financial institutions",
+          "q": "targeting financial institutions worldwide, in"
+        },
+        {
+          "v": "Financial and Banking institutions",
+          "q": "such as Financial and Banking institutions,"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Italy",
+          "q": "especially in Italy, at least since 2015."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2015",
+          "q": "especially in Italy, at least since 2015.",
+          "what": "Group operations against financial institutions in Italy first tracked, at least from this year"
+        },
+        {
+          "v": "2018",
+          "q": "referencing an intrusion potentially dated back to 2018.",
+          "what": "Intrusion potentially dated to this year, referenced in the Mandiant report"
+        },
+        {
+          "v": "2015-2016",
+          "q": "Carbanak/Anunak romainan cells dated back 2015-2016",
+          "what": "Old intrusions attributed to Carbanak/Anunak cells dated to this period"
+        },
+        {
+          "v": "2016",
+          "q": "environment is 2016 and the threat actor continues to use that since that period",
+          "what": "Virtual QEMU environment hypothesised to have been created in this year"
+        },
+        {
+          "v": "2016",
+          "q": "the 2.3 version of the Responder toolkit dates back to 2016",
+          "what": "Responder 2.3 toolkit version dated to this year"
+        },
+        {
+          "v": "November 30, 2020",
+          "q": "November 30, 2020",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "QEMU",
+          "q": "using a custom QEMU linux virtual machine instance"
+        },
+        {
+          "v": "TinyCore Linux 7.2",
+          "q": "The specific linux distribution adopted by the attackers is Tinycore Linux 7.2"
+        },
+        {
+          "v": "LaZagne",
+          "q": "LaZagne: historical tool to harvest credentials"
+        },
+        {
+          "v": "UACME",
+          "q": "UACME: tool to bypass user access control restrictions on Microsoft Windows"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Mimikatz: maybe the most popular post exploitation"
+        },
+        {
+          "v": "Bcwipe",
+          "q": "Bcwipe: a legit data wiping software"
+        },
+        {
+          "v": "procdump",
+          "q": "procdump: a sysinternal command-line utility to monitor and dump process memory."
+        },
+        {
+          "v": "tshd",
+          "q": "tshd: contains a TinyShell backdoor"
+        },
+        {
+          "v": "winexe",
+          "q": "There are also some tools statically compiled such as winexe."
+        },
+        {
+          "v": "Responder",
+          "q": "Responder is a LLMNR/NBT-NS/mDNS"
+        },
+        {
+          "v": "Impacket",
+          "q": "borrowed from the “Impacket” open source"
+        },
+        {
+          "v": "EternalBlue",
+          "q": "vulnerability also known as the EternalBlue family."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "enumeration (T1261)",
+          "q": "Enumeration (T1261):"
+        },
+        {
+          "v": "OS credential dumping (T1003)",
+          "q": "OS Credential Dumping (T1003):"
+        },
+        {
+          "v": "exploitation of known 1-day vulnerabilities (T1404)",
+          "q": "Exploit (T1404):"
+        },
+        {
+          "v": "man-in-the-middle to obtain hashes and tokens (T1557)",
+          "q": "Man-in-the-Middle (T1557):"
+        },
+        {
+          "v": "living off the land using legitimate tools (T1218)",
+          "q": "Living-off-the-Land tools (T1218):"
+        },
+        {
+          "v": "network pivoting and tunnelling (TA0011)",
+          "q": "Network communication (TA0011):"
+        },
+        {
+          "v": "manual control of the virtual machine over an SSH tunnel",
+          "q": "the QEMU virtual machine was manually controlled through an SSH tunnel"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2020-14871",
+          "q": "such as the CVE-2020-14871 described in"
+        }
+      ],
+      "figures": [
+        {
+          "v": "4 years",
+          "q": "is about 4 years old, but we have evidence it was still part of their cyber-arsenal during"
+        },
+        {
+          "v": "2.3",
+          "q": "Anyway, the 2.3 version of the Responder toolkit dates back to 2016"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "UNC1945"
+    },
+    "hedges": [
+      "Report says attribution of the group to known threat actors is still far from certain.",
+      "Report says there is still no hard evidence linking the Carbanak/Anunak intrusions to this particular group.",
+      "Report says the purposes of the recent intrusion reported by Mandiant are unclear.",
+      "Report hypothesises the QEMU environment was created in 2016 and used continuously since then."
+    ]
   }
 }

@@ -244,25 +244,186 @@
   },
   "e53bdd6305ffdc56960a6d31e8064bc5dc189214": {
     "sha1": "e53bdd6305ffdc56960a6d31e8064bc5dc189214",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T09:55:17Z",
+    "read_at": "2026-11-27T10:35:16Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Proofpoint reports on TA505's September to October 2019 email campaigns, which delivered the Get2 downloader and then the SDBbot remote access trojan. Get2 was seen downloading FlawedGrace, FlawedAmmyy, Snatch and SDBbot. Campaigns targeted financial institutions and other sectors, with a recent focus on Greece, Germany and Georgia. SDBbot uses application shimming, registry Run keys or image file execution options for persistence, and offers remote shell, screen recording, remote desktop and port forwarding.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "TA505",
+          "q": "Proofpoint researchers observed a prolific threat actor, TA505, sending email campaigns",
+          "by": "Proofpoint"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "TA505 continues to focus on targeting financial institutions alternating with more widely-targeted"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Greece",
+          "q": "A recent focus on Greece, Germany, and Georgia as targeted geographies."
+        },
+        {
+          "v": "Germany",
+          "q": "A recent focus on Greece, Germany, and Georgia as targeted geographies."
+        },
+        {
+          "v": "Georgia",
+          "q": "A recent focus on Greece, Germany, and Georgia as targeted geographies."
+        },
+        {
+          "v": "Singapore",
+          "q": "Greece, Singapore, United Arab Emirates, Georgia, Sweden, Lithuania, and a few other countries."
+        },
+        {
+          "v": "United Arab Emirates",
+          "q": "Greece, Singapore, United Arab Emirates, Georgia, Sweden, Lithuania, and a few other countries."
+        },
+        {
+          "v": "Canada",
+          "q": "Figure 4: Email delivering an ISO attachment in a French-language email targeting Canada."
+        },
+        {
+          "v": "United States",
+          "q": "various industries primarily in the United States."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 9, 2019",
+          "q": "September 9, 2019",
+          "what": "TA505 Get2 email campaign with Excel attachments; first observed use of Get2"
+        },
+        {
+          "v": "September 20, 2019",
+          "q": "September 20, 2019",
+          "what": "Excel and ISO lure campaign targeting companies in the United States and Canada; Get2 downloaded FlawedGrace"
+        },
+        {
+          "v": "October 7, 2019",
+          "q": "October 7, 2019",
+          "what": "Link-shortener campaign in which Get2 downloaded SDBbot for the first time"
+        },
+        {
+          "v": "October 16, 2019",
+          "q": "October 16, 2019 Dennis Schwarz | Kafeine | Matthew Mesa | Axel F and The Proofpoint Threat Insight",
+          "what": "Date of the Proofpoint blog post on Get2 and SDBbot"
+        },
+        {
+          "v": "November 2018",
+          "q": "“ServHelper” in November 2018, and a new downloader malware, AndroMut earlier this year.",
+          "what": "TA505 distributed the ServHelper backdoor"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Get2",
+          "q": "Get2 is a new downloader malware written in C++ and used in recent TA505 campaigns."
+        },
+        {
+          "v": "SDBbot",
+          "q": "SDBbot is a new remote access Trojan (RAT) written in C++ that has been delivered by the Get2"
+        },
+        {
+          "v": "FlawedGrace",
+          "q": "downloading FlawedGrace, FlawedAmmyy, Snatch, and SDBbot (a new RAT) as secondary payloads."
+        },
+        {
+          "v": "FlawedAmmyy",
+          "q": "downloading FlawedGrace, FlawedAmmyy, Snatch, and SDBbot (a new RAT) as secondary payloads."
+        },
+        {
+          "v": "Snatch",
+          "q": "downloading FlawedGrace, FlawedAmmyy, Snatch, and SDBbot (a new RAT) as secondary payloads."
+        },
+        {
+          "v": "AndroMut",
+          "q": "“ServHelper” in November 2018, and a new downloader malware, AndroMut earlier this year."
+        },
+        {
+          "v": "ServHelper",
+          "q": "“ServHelper” in November 2018, and a new downloader malware, AndroMut earlier this year."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Malicious spam email campaigns",
+          "q": "Figure 1: A selected chronology of TA505 malspam campaigns culminating with Get2 and SDBbot in"
+        },
+        {
+          "v": "Get2 embedded in Excel file and extracted by macro",
+          "q": "Get2 is embedded into the Microsoft Excel file as an object,"
+        },
+        {
+          "v": "Microsoft Office macros",
+          "q": "New Microsoft Office macros are used specifically with the Get2 downloader."
+        },
+        {
+          "v": "URL shortener links to landing page",
+          "q": "thousands of emails containing URL shortener links redirecting to a landing page that in turn links to an"
+        },
+        {
+          "v": "Registry Run key persistence",
+          "q": "If the bot is running with a regular user privilege, persistence is established using the registry “Run” method."
+        },
+        {
+          "v": "Image file execution options persistence",
+          "q": "established using the registry “image file execution options” method."
+        },
+        {
+          "v": "Application shimming persistence",
+          "q": "It also makes use of application shimming [1]"
+        },
+        {
+          "v": "Plaintext protocol over TCP port 443",
+          "q": "It uses a plaintext protocol over TCP port 443;"
+        },
+        {
+          "v": "XOR-encoded strings and data",
+          "q": "strings and data were XOR-encoded with a hardcoded 128-byte key."
+        },
+        {
+          "v": "Remote shell, screen video recording, remote desktop and port forwarding",
+          "q": "functionality such as command shell, video recording of the screen, remote desktop, port forwarding, and"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "tens of thousands of emails",
+          "q": "On September 9 Proofpoint researchers observed tens of thousands of emails attempting to deliver"
+        },
+        {
+          "v": "hundreds of thousands of emails",
+          "q": "On September 20, we observed hundreds of thousands of emails attempting to deliver Microsoft Excel and"
+        },
+        {
+          "v": "thousands of emails",
+          "q": "thousands of emails containing URL shortener links redirecting to a landing page that in turn links to an"
+        },
+        {
+          "v": "tens or hundreds of thousands of messages",
+          "q": "days tens or hundreds of thousands of messages, but sometimes pushing into millions)."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "SDBbot"
+    },
+    "hedges": [
+      "Proofpoint says it cannot verify the link between TA505 and AhnLab's South Korean SDBbot sample at this time.",
+      "Proofpoint researchers speculate that the reboot functionality in the Get2 downloader is used to continue SDBbot's execution.",
+      "The report says the RD86 argument name is possibly short for run DLL.",
+      "The RD64 code path had not been implemented at the time of research but will likely be similar to RD86.",
+      "The report says the exact functionality of one SDBbot command is unclear.",
+      "The report says the Get2 and SDBbot combination appears to be TA505's latest trick for the Fall of 2019."
+    ]
   }
 }

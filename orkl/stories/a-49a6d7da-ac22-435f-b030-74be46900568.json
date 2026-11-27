@@ -4,40 +4,34 @@
     "key": "a-49a6d7da-ac22-435f-b030-74be46900568",
     "kind": "actor",
     "name": "GOLD LOCUST",
-    "headline": "GOLD LOCUST: the Carbanak-linked crew also tracked as FIN7, from card skimming to ransomware",
-    "in_short": "Secureworks tracks GOLD LOCUST, a group whose aliases include FIN7 and Carbanak. Vendors describe a financially motivated group that moved from point-of-sale theft to ransomware work and anti-security tools.",
+    "headline": "GOLD LOCUST (FIN7): a financially driven group that moved from card theft to ransomware ties",
+    "in_short": "GOLD LOCUST is tracked by Secureworks and goes by names including FIN7 and Carbanak. Vendors describe a Russia-origin, profit-driven group that has used mailed USB drives, loaders and security-tool killers, and later ransomware links.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as GOLD LOCUST. The catalogue lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon, and names Carbanak as a tool.",
+            "t": "Secureworks tracks GOLD LOCUST under the aliases Anunak, Carbanak, Carbon Spider and FIN7, and lists Carbanak as its tool.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "SentinelOne describes FIN7 as an elusive, persistent and financially motivated group with origins in Russia.",
+            "t": "SentinelOne describes FIN7 as a financially motivated group with origins in Russia.",
             "cites": [
               "0434a411803905bad418971f437d75694530be03"
             ]
           },
           {
-            "t": "Microsoft tracks the group as Sangria Tempest, also called ELBRUS or FIN7. A news report on Microsoft's findings says the group has been operating since 2013.",
+            "t": "SentinelOne says that from 2020 the group shifted its focus to ransomware, affiliating with ransomware-as-a-service groups such as REvil and Conti.",
             "cites": [
-              "36306e003905c18244827376abe525ad46e1a655"
+              "0434a411803905bad418971f437d75694530be03"
             ]
           },
           {
-            "t": "The same report says three FIN7 members have been sentenced in the US: Fedir Hladyr, described as a high-level manager, and the \"pen testers\" Andrii Kolpakov and Denys Iarmak.",
+            "t": "S2W reports that Darkside, which it says FIN7 is known to have used, was rebranded as BlackMatter.",
             "cites": [
-              "36306e003905c18244827376abe525ad46e1a655"
-            ]
-          },
-          {
-            "t": "Morphisec Labs refers to the group as FIN7 (Carbanak Group).",
-            "cites": [
-              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
+              "02ddb0f91d9998840a475540ca2a07d9827e8613"
             ]
           }
         ]
@@ -46,25 +40,25 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "FireEye said FIN7 kept hitting the restaurant, hospitality and financial services sectors.",
+            "t": "FireEye wrote in 2017 that FIN7 kept hitting the restaurant, hospitality and financial services sectors.",
             "cites": [
               "94cf359a01b554eb46edd83952e99930d114046c"
             ]
           },
           {
-            "t": "According to the FBI, FIN7 mailed USB drives by USPS to retail, restaurant and hotel businesses.",
+            "t": "An FBI alert, as reported by BleepingComputer, said FIN7 mailed packages through USPS to retail, restaurant and hotel businesses.",
             "cites": [
               "2f159048db296cab9486e7a29595398e82453fb0"
             ]
           },
           {
-            "t": "The news report on Microsoft's findings says the group mainly targeted banks and point-of-sale terminals in Europe and the United States, most often at restaurants, gambling and hospitality firms.",
+            "t": "BleepingComputer reports that in 2018 the group hacked Saks Fifth Avenue and Lord & Taylor to steal payment card information.",
             "cites": [
-              "36306e003905c18244827376abe525ad46e1a655"
+              "0862fc27df0a2f1e905022e214d6071621e9d315"
             ]
           },
           {
-            "t": "SentinelOne lists energy, finance, high-tech and retail among sectors the group has hit. It says recent intrusions hit US manufacturing, legal and public sector firms.",
+            "t": "SentinelOne lists hospitality, energy, finance, high-tech and retail among the industries that suffered substantial losses.",
             "cites": [
               "0434a411803905bad418971f437d75694530be03"
             ]
@@ -75,49 +69,43 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "In the FBI's account, the USB drives acted as keyboards. They ran commands that fetched GRIFFON malware. One package posed as coming from Best Buy and offered a gift card.",
+            "t": "In the FBI-reported USB campaign, the drives were set up to act as keyboards and fetch GRIFFON malware. The packages used lures such as a gift card.",
             "cites": [
               "2f159048db296cab9486e7a29595398e82453fb0"
             ]
           },
           {
-            "t": "FireEye said that in April 2017 FIN7 shifted to running JavaScript with wscript.exe. It also said the group preferred to hide shortcut files in its phishing documents.",
+            "t": "Malpedia describes Griffon as a small JavaScript implant with no persistence. It receives modules, runs them in memory and sends results to its command servers.",
             "cites": [
-              "94cf359a01b554eb46edd83952e99930d114046c"
+              "b05e114fb83abe2200a05c5cfe7cb354c80f84a2"
             ]
           },
           {
-            "t": "Malwarebytes attributes a late-June malspam campaign to FIN7. It dropped JSSLoader and a secondary .NET payload.",
+            "t": "Malwarebytes attributes a late-June malspam campaign that dropped the JSSLoader malware to FIN7.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "Morphisec described a chain that began with a phishing lure. It used in-memory VBScript stages and a scheduled task. A script then loaded Carbanak reflectively.",
+            "t": "Morphisec says it has tracked FIN7 (Carbanak Group) for years. It describes a JSSLoader chain, starting with a phishing invoice lure, that ends in the in-memory loading of Carbanak.",
             "cites": [
-              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
+              "a8b545dd1d9998840a475540ca2a07d9827e8613"
             ]
           },
           {
-            "t": "SentinelOne says FIN7 historically used Carbanak, a privately developed backdoor. It says Lizar 2.0 (Diceloader) was found in Q1 2021 as an evolution of Carbanak and replaced it.",
-            "cites": [
-              "0434a411803905bad418971f437d75694530be03"
-            ]
-          },
-          {
-            "t": "SentinelOne attributes automated SQL injection intrusions to FIN7 with medium confidence. They used a platform called Checkmarks.",
+            "t": "SentinelOne assesses with high confidence that several underground forum sellers of antivirus-killer tools belong to the FIN7 cluster. It describes one of these tools, AvNeutralizer, as tampering with security products.",
             "cites": [
               "0434a411803905bad418971f437d75694530be03"
             ]
           },
           {
-            "t": "SentinelOne assesses with high confidence that several forum sellers of antivirus-killer tools, including those behind AvNeutralizer, belong to the FIN7 cluster. AvNeutralizer uses a driver to tamper with security products.",
+            "t": "SentinelOne attributes automated SQL injection intrusions to FIN7 with medium confidence. It says it cannot conclusively tell whether LockBit intrusions using AvNeutralizer were run by FIN7.",
             "cites": [
               "0434a411803905bad418971f437d75694530be03"
             ]
           },
           {
-            "t": "Harfanglab says the PackXOR packer's developers might be connected to the FIN7 cluster. It adds that the packer appears to be used for activity not related to FIN7.",
+            "t": "Harfanglab says the developers of the PackXOR packer might be connected to the FIN7 cluster. It adds that the packer appears to be used for activity unrelated to FIN7.",
             "cites": [
               "678ad058b3b1d73fd5e594432cb93c111a03ff26"
             ]
@@ -128,37 +116,13 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "BleepingComputer reports that FIN7 hacked Saks Fifth Avenue and Lord & Taylor in 2018 to steal payment card information.",
-            "cites": [
-              "0862fc27df0a2f1e905022e214d6071621e9d315"
-            ]
-          },
-          {
-            "t": "SentinelOne says the group shifted to ransomware in 2020, affiliating with groups such as REvil and Conti.",
-            "cites": [
-              "0434a411803905bad418971f437d75694530be03"
-            ]
-          },
-          {
-            "t": "S2W says DarkSide, known to be used by FIN7, was rebranded as BlackMatter.",
-            "cites": [
-              "02ddb0f91d9998840a475540ca2a07d9827e8613"
-            ]
-          },
-          {
-            "t": "SentinelLABS titled a November 2022 report on Black Basta attacks \"Tools Tied to FIN7 Threat Actor\". It covered custom EDR evasion tools.",
+            "t": "SentinelLABS reported in November 2022 that Black Basta ransomware attacks deployed custom EDR evasion tools it ties to FIN7.",
             "cites": [
               "88f5a8bd8832f5d326afca713c918e1c856afd18"
             ]
           },
           {
-            "t": "Microsoft linked FIN7 to attacks in April 2023 that deployed Clop ransomware. They used the POWERTRASH dropper and the Lizar tool. The report says it was the group's first ransomware campaign since late 2021.",
-            "cites": [
-              "36306e003905c18244827376abe525ad46e1a655"
-            ]
-          },
-          {
-            "t": "The Hacker News, citing NCC Group, reported Carbanak being used in ransomware attacks. The attack chain used compromised websites that hosted fake installers for business software.",
+            "t": "The Hacker News, citing NCC Group, reported in December 2023 that Carbanak was being used in ransomware attacks. The installers impersonated business software such as HubSpot, Veeam and Xero and were hosted on compromised websites.",
             "cites": [
               "af5382a738e0ba6828563f846abc64453866376c"
             ]
@@ -169,21 +133,22 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Do not rely on a single detection method. Treat unexpected USB drives that arrive in the post as hostile.",
+            "t": "Treat unexpected USB drives and unsolicited software installers as suspect, and protect security tools against tampering.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "ac0453facde19b0f0d78bce70de6a9b26309d375",
+    "based_on": "44b42f28d78043eb130a72355098a5a887f6f7a4",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T09:43:43Z",
+    "written_at": "2026-11-27T10:31:59Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked"
+      "unbacked",
+      "bad-cite"
     ],
-    "written_run": "29c67120"
+    "written_run": "3b3caf43"
   }
 }

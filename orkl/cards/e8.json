@@ -299,5 +299,82 @@
     "hedges": [],
     "reason": "quote-not-in-text, link-in-text",
     "tries": 2
+  },
+  "e82ccde24b5b3aca43b34b4bee23e8cb83b9cc91": {
+    "sha1": "e82ccde24b5b3aca43b34b4bee23e8cb83b9cc91",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:41:53Z",
+    "model": "haiku",
+    "summary": "The Register reports FireEye research on a hacking group dubbed NOTROBIN that exploits the Citrix NetScaler flaw CVE-2019-19781 to compromise VPN gateways. After gaining access, the group removes existing malware and cryptocurrency miners, installs a backdoor reachable with a secret passphrase, and blocks other attackers from exploiting the flaw. FireEye believes the actor may be collecting access for a later campaign. The page also carries unrelated news items, which were not recorded.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "NOTROBIN",
+          "q": "Researchers at FireEye report finding a hacking group (dubbed NOTROBIN) that has been",
+          "by": "FireEye"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "17 Jan 2020",
+          "q": "Shaun Nichols in San Francisco Fri 17 Jan 2020 // 19:49 UTC",
+          "what": "Article published on the threat report"
+        },
+        {
+          "v": "January 20",
+          "q": "Citrix has promised a complete patch for the flaw by January 20.",
+          "what": "Citrix's promised date for a complete patch of the flaw"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NOTROBIN",
+          "q": "and deploys NOTROBIN to block subsequent exploitation attempts,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploiting a vulnerable NetScaler flaw to gain access",
+          "q": "Upon gaining access to a vulnerable NetScaler device, this actor cleans up known malware"
+        },
+        {
+          "v": "installing a backdoor guarded by a passphrase",
+          "q": "But all is not as it seems, as NOTROBIN maintains backdoor access for those who know a"
+        },
+        {
+          "v": "removing other malware and blocking further exploitation",
+          "q": "The mitigation works by deleting staged exploit code found within NetScaler templates"
+        },
+        {
+          "v": "removing cryptocurrency miners to hide the compromise",
+          "q": "By uninstalling these unwanted utilities, the actor may hope that administrators overlook an obvious compromise of their NetScaler"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-19781",
+          "q": "Hackers exploiting the high-profile Citrix CVE-2019-19781 flaw to compromise VPN"
+        }
+      ],
+      "figures": [
+        {
+          "v": "nearly 100 per cent",
+          "q": "nearly 100 per cent of the CPU,\" said FireEye."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NOTROBIN"
+    },
+    "hedges": [
+      "FireEye says it has yet to work out all the details of the attack, but it is believed that most of the exploit is done through a single script.",
+      "FireEye believes that this actor may be quietly collecting access to NetScaler devices for a subsequent campaign.",
+      "Some devices will need to update their firmware in order for the vendor's mitigations to actually work."
+    ]
   }
 }

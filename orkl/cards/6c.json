@@ -158,5 +158,156 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "6ca19dd5d60b05d9ad0a1817f6bd071ef4f02fb1": {
+    "sha1": "6ca19dd5d60b05d9ad0a1817f6bd071ef4f02fb1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:42:03Z",
+    "model": "haiku",
+    "summary": "Proofpoint's July 31, 2017 blog post describes Bateleur, a JScript backdoor that Proofpoint attributes with high certainty to the group it calls FIN7, also referred to as Carbanak. Observed lures were macro-laden Word documents in phishing emails targeting U.S.-based chain restaurants; the report says FIN7 has also targeted hospitality organizations, retailers and merchant services. Bateleur persists through a scheduled task and offers remote command execution, PowerShell and EXE/DLL loading, process listing, screenshots and, possibly, password theft. The report links it to the…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "the threat actor commonly referred to as FIN7",
+          "by": "Proofpoint (the report)"
+        },
+        {
+          "v": "Carbanak",
+          "q": "referred to as FIN7 by FireEye [3] and as Carbanak by",
+          "by": "TrustWave (cited in the report)"
+        },
+        {
+          "v": "FIN7",
+          "q": "being used by the same group that is referred to as FIN7 by FireEye [3] and as Carbanak by",
+          "by": "Proofpoint (the report), with a high degree of certainty"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "chain restaurants",
+          "q": "to target U.S.-based chain restaurants, although"
+        },
+        {
+          "v": "hospitality organizations",
+          "q": "FIN7 has previously targeted hospitality organizations, retailers, merchant services, suppliers"
+        },
+        {
+          "v": "retailers",
+          "q": "FIN7 has previously targeted hospitality organizations, retailers, merchant services, suppliers"
+        },
+        {
+          "v": "merchant services",
+          "q": "FIN7 has previously targeted hospitality organizations, retailers, merchant services, suppliers"
+        }
+      ],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "to target U.S.-based chain restaurants, although"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 31, 2017",
+          "q": "July 31, 2017",
+          "what": "Proofpoint published its analysis of the Bateleur backdoor"
+        },
+        {
+          "v": "early June",
+          "q": "starting in early June, we observed this threat actor",
+          "what": "The actor began using macro documents to drop Bateleur instead of GGLDR"
+        },
+        {
+          "v": "2016",
+          "q": "at least as far back as 2016",
+          "what": "The Tinymet downloader was observed in use by this group"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Bateleur",
+          "q": "has added a new JScript backdoor called Bateleur and updated macros to its toolkit"
+        },
+        {
+          "v": "GGLDR",
+          "q": "usual document attachments delivering the GGLDR script [1]"
+        },
+        {
+          "v": "GGLDR/HALFBAKED",
+          "q": "Moreover, the GGLDR/HALFBAKED backdoor was recently equipped with a new command"
+        },
+        {
+          "v": "Tinymet",
+          "q": "A small Meterpreter downloader script, called Tinymet by the actor(s)"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "A small Meterpreter downloader script, called Tinymet by the actor(s)"
+        },
+        {
+          "v": "password grabber",
+          "q": "the Powershell password grabber utilized by Bateleur"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "sandbox evasion",
+          "q": "sandbox evasion techniques as they attempt to cloak their activities"
+        },
+        {
+          "v": "anti-sandbox features",
+          "q": "Bateleur has anti-sandbox features but they do not appear to be used at this time"
+        },
+        {
+          "v": "macro-laden Word document",
+          "q": "The email contains a macro-laden Word document."
+        },
+        {
+          "v": "Phishing email",
+          "q": "Figure 1: Phishing email containing JScript document dropper"
+        },
+        {
+          "v": "scheduled task",
+          "q": "When Bateleur first executes it creates a scheduled task"
+        },
+        {
+          "v": "process name blacklist",
+          "q": "The backdoor also contains a process name blacklist including"
+        },
+        {
+          "v": "exfiltrate passwords",
+          "q": "possibly the ability to exfiltrate passwords, although the latter requires an additional module"
+        },
+        {
+          "v": "payload re-use",
+          "q": "This further demonstrates the payload re-use between instances using the two different backdoors."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "1.0.4.1",
+          "q": "Bataleur jump from version 1.0 to 1.0.4.1"
+        },
+        {
+          "v": "less than one month",
+          "q": "In less than one month, we have observed Bataleur jump from version 1.0 to 1.0.4.1"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Bateleur"
+    },
+    "hedges": [
+      "possibly the ability to exfiltrate passwords, although the latter requires an additional module from the command and control server",
+      "Bateleur has anti-sandbox features but they do not appear to be used at this time.",
+      "we expect the Bateleur developer(s) may add those features in the near future",
+      "The timing and similarity between these campaigns suggest that they were sent by the same actor.",
+      "A small Meterpreter downloader script, called Tinymet by the actor(s) (possibly inspired by"
+    ]
   }
 }

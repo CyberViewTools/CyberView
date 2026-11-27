@@ -203,5 +203,121 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "ae3c675344b1fce1024af5af4390c5a11e42abcb": {
+    "sha1": "ae3c675344b1fce1024af5af4390c5a11e42abcb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:44:16Z",
+    "model": "haiku",
+    "summary": "Fortinet describes BIOLOAD, a loader it links to the FIN7 group. It runs through a legitimate Windows executable, FaceFodUninstaller.exe, abused via DLL search order hijacking and a scheduled task. It decrypts and runs an embedded payload in memory, the Carbanak backdoor. The report links it to FIN7 through shared code with BOOSTWRITE and suggests BIOLOAD is an earlier iteration of BOOSTWRITE. Samples were compiled in 2019. Deployment needs administrator rights, which the report says suggests the group gathers information about target networks. FortiEDR and FortiClient detections are…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "The shared codebase with recent tools attributed to FIN7, together with the same techniques and backdoor, allows to attribute this new loader",
+          "by": "Fortinet (report author)"
+        },
+        {
+          "v": "FIN7",
+          "q": "a recent publication by FireEye about FIN7’s new tools and techniques, specifically BOOSTWRITE.",
+          "by": "FireEye, as cited by the report"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "December 26, 2019",
+          "q": "December 26, 2019",
+          "what": "Report published"
+        },
+        {
+          "v": "March and July of 2019",
+          "q": "The samples target a 64-bit OS and were compiled in March and July of 2019.",
+          "what": "BIOLOAD samples compiled"
+        },
+        {
+          "v": "May 2019",
+          "q": "BOOSTWRITE targets 32-bit machines and was compiled (and signed) in May 2019.",
+          "what": "BOOSTWRITE compiled and signed"
+        },
+        {
+          "v": "January and April of 2019",
+          "q": "The samples we extracted from BIOLOAD are newer builds of the backdoor, dated January and April of 2019,",
+          "what": "Carbanak backdoor builds timestamped"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BIOLOAD",
+          "q": "Instead, BIOLOAD is tailor-made for every machine it infects as it relies on the machine"
+        },
+        {
+          "v": "BOOSTWRITE",
+          "q": "a recent publication by FireEye about FIN7’s new tools and techniques, specifically BOOSTWRITE."
+        },
+        {
+          "v": "Carbanak backdoor",
+          "q": "As mentioned, the payload this loader carries is the Carbanak backdoor."
+        },
+        {
+          "v": "FaceFodUninstaller.exe",
+          "q": "The abused application in this case is FaceFodUninstaller.exe."
+        },
+        {
+          "v": "WinBio.dll",
+          "q": "The loader file name is WinBio.dll (note the uppercase characters) and is placed by the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL search order hijacking",
+          "q": "a technique known as DLL search order hijacking (or binary planting)."
+        },
+        {
+          "v": "persistency",
+          "q": "Establishes persistency by using COM objects to access the task scheduler."
+        },
+        {
+          "v": "XOR decryption",
+          "q": "it uses a simple XOR decryption rather than a ChaCha cipher"
+        },
+        {
+          "v": "in-memory",
+          "q": "The worker process loads and executes the payload DLL in-memory."
+        },
+        {
+          "v": "Anti-Virus (AV)",
+          "q": "One notable addition is that it checks to see if another Anti-Virus (AV) is running on the"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "16 bytes",
+          "q": "The length of the key is 16 bytes and is also embedded in the loader."
+        },
+        {
+          "v": "30 seconds",
+          "q": "adds a trigger to start it 30 seconds after"
+        },
+        {
+          "v": "32",
+          "q": "Starts itself again as a child process with one command line argument comprised of 32"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "BIOLOAD"
+    },
+    "hedges": [
+      "The timestamps, together with simpler functionality, suggest BIOLOAD is a preceding iteration of BOOSTWRITE.",
+      "Since the loader is specifically built for each targeted machine and requires administrative permissions to deploy, it suggests the group gathers information about its targets’ networks.",
+      "According to previous reports on the group, they do not falsify compilation timestamps of the binaries.",
+      "The shared codebase with recent tools attributed to FIN7, together with the same techniques and backdoor, allows the report to attribute this new loader to the cybercrime group."
+    ]
   }
 }

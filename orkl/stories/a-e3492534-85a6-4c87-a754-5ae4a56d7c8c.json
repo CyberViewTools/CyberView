@@ -4,35 +4,41 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390 (Emissary Panda, APT27): a long-running espionage group that vendors say targets industry and…",
-    "in_short": "Vendors track Threat Group-3390 under many names. Reports describe watering-hole attacks, exploited servers and the HyperBro backdoor, aimed at industry, government and telecoms. Attribution to a country comes from named sources.",
+    "headline": "Threat Group-3390: a long-running China-attributed espionage group known as Emissary Panda and APT27",
+    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda, APT27 and Budworm. Vendors and a German agency describe a long-running espionage actor that uses watering holes, unpatched servers, DLL sideloading and tools like PlugX and…",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Threat Group-3390 is tracked under many names, including Emissary Panda, APT27, LuckyMouse, Iron Tiger, BRONZE UNION and Linen Typhoon.",
+            "t": "Threat Group-3390 is also tracked as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Dell SecureWorks researchers designated the group Threat Group 3390 and nicknamed it Emissary Panda in 2015. The article describes it as believed to be based in China.",
+            "t": "Dell SecureWorks researchers designated the group Threat Group 3390 and nicknamed it Emissary Panda. The report describes it as believed to be based in China.",
             "cites": [
               "4a50222f670f781ca703820d626b3a3bc659eb97",
               "96ceefd1027aca44cad0ada5de630d01bacfc012"
             ]
           },
           {
-            "t": "Symantec lists LuckyMouse, Emissary Panda and APT27 as other names for the group it calls Budworm. It believes Budworm has been active since at least 2013.",
+            "t": "Germany's Federal Office for the Protection of the Constitution (BfV) calls APT27, also known as Emissary Panda, a Chinese cyberespionage group.",
+            "cites": [
+              "56431f3e820e255605aa40ba4927121fff1ddd50"
+            ]
+          },
+          {
+            "t": "Symantec's Threat Hunter Team tracks the group as Budworm (aka LuckyMouse, Emissary Panda, APT27). It says the group is believed to have been active since at least 2013.",
             "cites": [
               "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
             ]
           },
           {
-            "t": "Germany's domestic intelligence agency, the BfV, describes APT27 as a Chinese cyberespionage group.",
+            "t": "Microsoft Threat Intelligence says Linen Typhoon has focused on stealing intellectual property since 2012.",
             "cites": [
-              "56431f3e820e255605aa40ba4927121fff1ddd50"
+              "eeba7b963e4002b7f15df2dd6c4cef6df6d9f9e1"
             ]
           }
         ]
@@ -41,14 +47,13 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "SecureWorks said most early targets were in the automotive, electronic, aerospace, energy and pharmaceutical industries. At least 50 organizations in the US and the United Kingdom had data stolen.",
+            "t": "In 2015, SecureWorks said most targets were in the automotive, electronic, aerospace, energy and pharmaceutical industries. It said at least 50 organizations in the US and UK had data stolen.",
             "cites": [
-              "4a50222f670f781ca703820d626b3a3bc659eb97",
-              "96ceefd1027aca44cad0ada5de630d01bacfc012"
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
             ]
           },
           {
-            "t": "The same research also named defense contractors, universities, law firms and political organizations as targets.",
+            "t": "The same report lists defense contractors, colleges and universities, law firms and political organizations among the targets.",
             "cites": [
               "96ceefd1027aca44cad0ada5de630d01bacfc012"
             ]
@@ -66,7 +71,7 @@
             ]
           },
           {
-            "t": "A Malpedia entry says the HyperBro backdoor has been seen mainly against the gambling industry, though it has appeared elsewhere too.",
+            "t": "A Malpedia entry says the HyperBro remote access trojan has been observed targeting mainly the gambling industry, though it has appeared elsewhere.",
             "cites": [
               "8e3cb1df4bfe919159e8adeff374e65f8a3d913c"
             ]
@@ -77,33 +82,43 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "In 2015, SecureWorks reported that the group broke into networks largely through watering-hole attacks launched from over 100 compromised websites. It used no zero-days, relying on old flaws such as CVE-2011-3544 and CVE-2010-0738, and used the PlugX remote access tool.",
+            "t": "SecureWorks said the group broke into networks largely through watering hole attacks launched from over 100 compromised websites. It used old vulnerabilities rather than zero-days, plus the PlugX remote access tool.",
             "cites": [
               "96ceefd1027aca44cad0ada5de630d01bacfc012"
             ]
           },
           {
-            "t": "The same report says the group appears to have used China's Baidu search engine to research targets.",
-            "cites": [
-              "96ceefd1027aca44cad0ada5de630d01bacfc012"
-            ]
-          },
-          {
-            "t": "The BfV says APT27 got in through unpatched, internet-exposed servers, using flaws in Microsoft Exchange and Zoho ManageEngine ADSelfService Plus. The final payload was HyperBro.",
+            "t": "The BfV says APT27 exploited unpatched, internet-exposed servers, using flaws in Microsoft Exchange and Zoho ManageEngine ADSelfService Plus. The final payload was HyperBro.",
             "cites": [
               "56431f3e820e255605aa40ba4927121fff1ddd50"
             ]
           },
           {
-            "t": "The Malpedia entry says HyperBro typically has three or more parts. These include a genuine loader and an encrypted, compressed payload with its command-server details built in.",
+            "t": "Symantec says Budworm runs its SysUpdate backdoor through DLL sideloading. It also used living-off-the-land and publicly available tools to map networks and dump credentials.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "The HyperBro entry says the malware typically has three or more components. These include a genuine loader and an encrypted, compressed payload that holds the command-and-control details.",
             "cites": [
               "8e3cb1df4bfe919159e8adeff374e65f8a3d913c"
             ]
           },
           {
-            "t": "Symantec says Budworm loads its SysUpdate backdoor by DLL sideloading. It also uses built-in and publicly available tools to map networks and dump credentials.",
+            "t": "One report calls the Redosdru downloader commonly associated with APT27/Iron Tiger.",
+            "cites": []
+          },
+          {
+            "t": "A detection test catalogue lists disabling HTTP logging on a Windows IIS server as a behavior seen from Threat Group 3390 (Bronze Union).",
             "cites": [
-              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+              "35133d4a5776cdd31b605dbf66355e9e7b352016"
+            ]
+          },
+          {
+            "t": "The catalogue record lists tools including PlugX, HyperBro, SysUpdate, China Chopper, Cobalt Strike, Mimikatz, Impacket and ZxShell.",
+            "cites": [
+              "catalogue"
             ]
           }
         ]
@@ -112,27 +127,27 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "Symantec reports that in August 2023 Budworm used an updated SysUpdate variant against the two victims above. Only credential harvesting was seen, so Symantec says the activity may have been stopped early.",
+            "t": "SecureWorks unveiled its report on the group at the Black Hat conference, and it was covered on 5 August 2015.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "The same coverage says a cultural site for the Uyghur ethnic group was also used, apparently to target members of that minority for surveillance.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "In January 2023 the BfV published indicators of compromise for its APT27 findings. It said it could not rule out supply chain attacks.",
+            "cites": [
+              "56431f3e820e255605aa40ba4927121fff1ddd50"
+            ]
+          },
+          {
+            "t": "Symantec reports that the August 2023 attacks showed only credential harvesting on infected machines. It says the activity may have been stopped early in the attack chain.",
             "cites": [
               "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
-            ]
-          },
-          {
-            "t": "Symantec says the targets suggest intelligence gathering as the motive.",
-            "cites": [
-              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
-            ]
-          },
-          {
-            "t": "In a July 2025 report, Microsoft said it observed Linen Typhoon, one of two named Chinese nation-state actors, exploiting flaws in on-premises SharePoint servers.",
-            "cites": [
-              "eeba7b963e4002b7f15df2dd6c4cef6df6d9f9e1"
-            ]
-          },
-          {
-            "t": "An eSentire report on a ransomware intrusion says its tactics resemble those of Emissary Panda. It stresses it has no strong evidence linking the two, and says the overlap could be a false flag.",
-            "cites": [
-              "1aa5a21d68cedb2cffb923a011be8e5cd7b1bb64"
             ]
           }
         ]
@@ -141,22 +156,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Patch internet-facing servers promptly and watch for unfamiliar web shells and DLL sideloading.",
+            "t": "Patch internet-facing servers quickly, since this activity has leaned on known flaws.",
+            "cites": []
+          },
+          {
+            "t": "Watch for DLL sideloading and unexpected credential dumping on your networks.",
             "cites": []
           }
         ]
       }
     ],
-    "status": "rejected",
+    "status": "parked",
     "based_on": "191630b1e4c666aaa82b754d23b7e4a96ca14d8b",
-    "tries": 1,
+    "tries": 2,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T09:44:37Z",
+    "written_at": "2026-11-27T10:32:47Z",
     "writer_model": "sonnet",
     "reasons": [
-      "bare-attribution",
-      "unbacked"
+      "unbacked",
+      "uncited"
     ],
-    "written_run": "b2fd98b2"
+    "written_run": "7ac2e83a"
   }
 }

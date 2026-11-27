@@ -84,5 +84,319 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "1269e37e6a2c2ba3c89a762b1d250a33e6ef30ae": {
+    "sha1": "1269e37e6a2c2ba3c89a762b1d250a33e6ef30ae",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:42:12Z",
+    "model": "haiku",
+    "summary": "FireEye's April 2017 report describes FIN7, a financially motivated group that many vendors call Carbanak Group. FIN7 ran spear phishing campaigns against restaurant chains, hospitality and financial service organizations. Lures in DOCX and RTF files use embedded hidden LNK shortcuts and VBScript run through mshta.exe to drop a Cobalt Strike stager and the HALFBAKED backdoor. Persistence uses scheduled tasks and a registry auto-start. FIN7 called victim stores to walk staff through infection. FireEye ran a Community Protection Event on April 12 to protect affected clients.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "FIN7 is a financially-motivated threat group that has been associated with malicious",
+          "by": "FireEye"
+        },
+        {
+          "v": "Carbanak",
+          "q": "FIN7 is referred to by many vendors as “Carbanak",
+          "by": "FireEye"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "restaurant chains",
+          "q": "rarely re-used, and they were sent to various locations of large restaurant chains, hospitality,"
+        },
+        {
+          "v": "hospitality",
+          "q": "rarely re-used, and they were sent to various locations of large restaurant chains, hospitality,"
+        },
+        {
+          "v": "financial service organizations",
+          "q": "and financial service organizations."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "Apr 24, 2017",
+          "q": "Apr 24, 2017",
+          "what": "FireEye blog post published"
+        },
+        {
+          "v": "late 2015",
+          "q": "operations dating back to late 2015.",
+          "what": "FIN7-associated malicious operations date back to this period, per the report"
+        },
+        {
+          "v": "April 12",
+          "q": "On April 12, in response to FIN7 actively targeting multiple clients, FireEye kicked off a",
+          "what": "FireEye started a Community Protection Event to secure clients affected by the FIN7 campaign"
+        },
+        {
+          "v": "03/21/2017",
+          "q": "UUID timestamp: 03/21/2017 (12:12:28.500) [UTC]",
+          "what": "Timestamp inside a FIN7 LNK file; the report says the attacker likely created the file then"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CARBANAK backdoor",
+          "q": "Group”, although we do not equate all usage of the CARBANAK backdoor with FIN7."
+        },
+        {
+          "v": "HALFBAKED",
+          "q": "The HALFBAKED malware family consists of multiple components designed to establish and"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "launches shellcode for a Cobalt Strike stager."
+        },
+        {
+          "v": "mshta.exe",
+          "q": "The malicious LNK launches “mshta.exe” with the following arguments passed to it:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing",
+          "q": "In this ongoing campaign, FIN7 is targeting organizations with spear phishing emails"
+        },
+        {
+          "v": "hidden shortcut files (LNK files)",
+          "q": "hidden shortcut files (LNK files) to initiate the infection and VBScript functionality launched by"
+        },
+        {
+          "v": "Office macros",
+          "q": "FIN7 has moved away from weaponized Microsoft Office macros in order to evade detection."
+        },
+        {
+          "v": "double-click",
+          "q": "attempt to convince the user to double-click on the image in the document, as seen in Figure"
+        },
+        {
+          "v": "named schedule task",
+          "q": "the script creates a named schedule task for persistence to launch"
+        },
+        {
+          "v": "auto-start registry entry",
+          "q": "one auto-start registry entry pointing to the LNK file."
+        },
+        {
+          "v": "calling stores",
+          "q": "FIN7 is calling stores at targeted organizations to ensure"
+        },
+        {
+          "v": "encoded",
+          "q": "All communication between the backdoor and attacker C2 are encoded using the following"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over a year",
+          "q": "While FIN7 has embedded VBE as OLE objects for over a year, they continue to update their"
+        },
+        {
+          "v": "every 25 minutes",
+          "q": "“58d2a83f7778d5.36783181.vbs” every 25 minutes."
+        },
+        {
+          "v": "two scheduled tasks",
+          "q": "the document creates two scheduled tasks and creates"
+        },
+        {
+          "v": "6a5a42ed234910121dbb7d1994ab5a5e",
+          "q": "MD5: 6a5a42ed234910121dbb7d1994ab5a5e"
+        },
+        {
+          "v": "1a9e113b2f3caa7a141a94c8bc187ea7",
+          "q": "MD5: 1a9e113b2f3caa7a141a94c8bc187ea7"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7 spear phishing campaign using LNK files"
+    },
+    "hedges": [
+      "FireEye does not equate all usage of the CARBANAK backdoor with FIN7, though many vendors refer to FIN7 as Carbanak Group.",
+      "The report says the attacker likely generated one LNK file on a VirtualBox system in March 2017.",
+      "The report says the double-click step is meant to evade dynamic detection, since many sandboxes do not simulate that user action.",
+      "The report describes the campaign as ongoing at the time of writing."
+    ]
+  },
+  "120cbc9526ac2273bc9be8e0092553fa87779154": {
+    "sha1": "120cbc9526ac2273bc9be8e0092553fa87779154",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:43:09Z",
+    "model": "haiku",
+    "summary": "An overview of five JavaScript-based Windows malware strains: VJw0rm, WSHRat, STRRAT, the BlackByte ransomware and a Carbanak/FIN7 JavaScript backdoor. It covers how each spreads, mostly through malicious email attachments, and what each does after running. The review is described as higher-level rather than in-depth. Caveats include an estimate that script-based attacks may be 40 percent or more of all cyberattacks, an estimated $1 billion in losses attributed to Carbanak/FIN7, and a link between Houdini/WSHRat and an aviation-industry espionage campaign.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak/FIN7",
+          "q": "Carbanak/FIN7 needs little introduction. Discovered in 2014, they are one of the most prolific",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "aviation industry",
+          "q": "reported, very protracted, espionage campaign that targeted the aviation industry."
+        },
+        {
+          "v": "financial institutions",
+          "q": "estimated $1 billion in losses to countless financial institutions worldwide."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2016",
+          "q": "“Vengeance Justice Worm” was first discovered in 2016 and is a highly multifunctional,",
+          "what": "VJw0rm first discovered"
+        },
+        {
+          "v": "2013",
+          "q": "and can trace its roots to 2013 when it was originally developed in",
+          "what": "WSHRat roots traced to 2013, originally developed in VBS"
+        },
+        {
+          "v": "2019",
+          "q": "The WSHRat variant, itself, emerged in 2019 as a JavaScript-based version of the",
+          "what": "JavaScript-based WSHRat variant emerged"
+        },
+        {
+          "v": "2020",
+          "q": "2020. Its core payload (a .JAR file) is contained under several layers of obfuscation and",
+          "what": "STRRAT discovered"
+        },
+        {
+          "v": "2014",
+          "q": "Carbanak/FIN7 needs little introduction. Discovered in 2014, they are one of the most prolific",
+          "what": "Carbanak/FIN7 discovered"
+        },
+        {
+          "v": "November 4, 2021",
+          "q": "November 4, 2021 | Shaul Vilkomir-Preisman",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VJw0rm",
+          "q": "VJw0rm is propagated primarily by malicious email attachments and by infecting removeable"
+        },
+        {
+          "v": "WSHRat",
+          "q": "WSHRat is propagated primarily by malicious email attachments and is also capable of"
+        },
+        {
+          "v": "STRRAT",
+          "q": "STRRAT is propagated by malicious email attachments. Its capabilities include standard RAT"
+        },
+        {
+          "v": "BlackByte",
+          "q": "BlackByte is recently discovered Ransomware with a .NET DLL core payload wrapped in"
+        },
+        {
+          "v": "Carbanak Backdoor",
+          "q": "Figure 15: Carbanak Backdoor gathers victim information"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Carbanak/FIN7 are known to employ Cobalt Strike as their post-breach follow-up malware."
+        },
+        {
+          "v": "NJrat/Bladabindi",
+          "q": "NJrat/Bladabindi and Remcos RAT are two common follow-up payloads of Houdini/WSHRat."
+        },
+        {
+          "v": "Remcos RAT",
+          "q": "NJrat/Bladabindi and Remcos RAT are two common follow-up payloads of Houdini/WSHRat."
+        },
+        {
+          "v": "Windows Script Host",
+          "q": "Windows Script Host (WSH), which executes JavaScript (and other Windows-supported scripting"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malicious email attachments",
+          "q": "VJw0rm is propagated primarily by malicious email attachments and by infecting removeable"
+        },
+        {
+          "v": "spear-phishing",
+          "q": "effective spear-phishing emails."
+        },
+        {
+          "v": "removable drive infection",
+          "q": "removeable storage drive infection if configured to do so and await further commands."
+        },
+        {
+          "v": "heavy code obfuscation",
+          "q": "static detection signatures through heavy code obfuscation and not employing compiled"
+        },
+        {
+          "v": "registry auto-runs",
+          "q": "Finally, VJw0rm establishes persistency in the form of registry auto-runs, system startup"
+        },
+        {
+          "v": "single symmetric encryption key",
+          "q": "Unlike most Ransomware today, BlackByte uses a single symmetric encryption key, and"
+        },
+        {
+          "v": "bypass AMSI",
+          "q": "attempt to bypass AMSI, delete system shadow-copies in order to hinder system recovery,"
+        },
+        {
+          "v": "delete system shadow-copies",
+          "q": "attempt to bypass AMSI, delete system shadow-copies in order to hinder system recovery,"
+        },
+        {
+          "v": "two-minute delay",
+          "q": "Once executed, the backdoor will initiate a two-minute delay in an effort to avoid automated"
+        },
+        {
+          "v": "worming capabilities",
+          "q": "As with most Ransomware today, BlackByte has worming capabilities and can infect"
+        },
+        {
+          "v": "credential harvesting",
+          "q": "credential harvesting, and a unique ransomware-like functionality – if instructed, it will add a"
+        },
+        {
+          "v": "Command-and-Control server",
+          "q": "report back to its Command-and-Control server and execute any code it receives back as response."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "40 percent",
+          "q": "putting these attacks at 40 percent or more of all global cyberattacks. A script can be"
+        },
+        {
+          "v": "$1 billion",
+          "q": "estimated $1 billion in losses to countless financial institutions worldwide."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Please note that this will not be an in-depth analysis of the different malware, but a higher-level review of each malware.",
+      "some estimates putting these attacks at 40 percent or more of all global cyberattacks",
+      "an estimated $1 billion in losses to countless financial institutions worldwide",
+      "appears to indicate a pivot in their activity",
+      "likely in an attempt to become less detectable to security vendors",
+      "A recently discovered JavaScript based backdoor associated with the actor"
+    ]
   }
 }

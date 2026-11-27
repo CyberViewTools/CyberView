@@ -282,5 +282,90 @@
       "note": "dates[0]: The text says activity 'пришлась на' (fell in) the second half of February 2020. It does not say activity 'peaked', which is stronger.; summary: 'Acti",
       "by": "auditor"
     }
+  },
+  "7179be20ccd05bac5d29b6bdbcbe9c6c6db65aca": {
+    "sha1": "7179be20ccd05bac5d29b6bdbcbe9c6c6db65aca",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T10:39:12Z",
+    "model": "haiku",
+    "summary": "Morphisec Labs reports a new, obfuscated variant of the JSSLoader .NET remote access trojan, delivered in 2022 through malicious Excel XLL add-in files. The report links JSSLoader to FIN7, which it calls a Russian criminal hacking group. The variant renames functions and splits strings to evade static scanners. The report says it adds no new capabilities, and it promotes Morphisec's own Moving Target Defense product.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "criminal hacking group FIN7’s JSSLoader: The Evolution of the FIN7 JSSLoader.",
+          "by": "Morphisec Labs (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "JSSLoader activity since December 2020 and published a thorough report on the Russian"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2020",
+          "q": "JSSLoader activity since December 2020 and published a thorough report on the Russian",
+          "what": "Morphisec began tracking JSSLoader activity"
+        },
+        {
+          "v": "March 23, 2022",
+          "q": "Posted by Hido Cohen on March 23, 2022",
+          "what": "Morphisec published the blog post on the new XLL-delivered JSSLoader variant"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSSLoader",
+          "q": "Morphisec Labs has observed a new wave of JSSLoader infections this year."
+        },
+        {
+          "v": "Excel",
+          "q": "Once the attachment is downloaded and executed, Excel loads and executes the malicious code inside the .xll file, which then"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malicious attachment",
+          "q": "The victim receives a malicious attachment, either an XLM or XLL file, inside an email."
+        },
+        {
+          "v": "Excel add-in",
+          "q": "The first stage of the malware responsible for downloading JSSLoader into an infected machine uses an Excel add-in file, denoted by an XLL file extension."
+        },
+        {
+          "v": "string obfuscation",
+          "q": "This variant introduces a new layer of string obfuscation, renaming all functions and variables names."
+        },
+        {
+          "v": "splitting the strings into substrings",
+          "q": "It does so by splitting the strings into substrings and concatenating them at runtime."
+        },
+        {
+          "v": "different User-Agent between samples",
+          "q": "An attacker uses a different User-Agent between samples to help avoid network signature-based security solutions."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "days or weeks",
+          "q": "It can take days or weeks before signatures are deployed, all while"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "JSSLoader"
+    },
+    "hedges": [
+      "Although it didn't present new capabilities, this new JSSLoader variant is a worry.",
+      "This version appears focused on breaking the string-based YARA rules used in the wild.",
+      "Most NGAV and EDR solutions won’t detect day zero .XLL files hiding a JSSLoader."
+    ]
   }
 }

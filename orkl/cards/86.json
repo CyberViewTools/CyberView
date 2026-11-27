@@ -236,5 +236,95 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "86dcb88e8ad174d9169c965836b00c32697ebb17": {
+    "sha1": "86dcb88e8ad174d9169c965836b00c32697ebb17",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:32:52Z",
+    "model": "haiku",
+    "summary": "AhnLab ASEC describes a campaign called KONO DIO DA that targets poorly managed Linux SSH servers through dictionary attacks. It installs XMRig CoinMiner under a disguised process name, drops SHC-built downloader scripts, and creates a backdoor SSH account. Past cases also used a planted SSH key, cron persistence and disabled security tools. The report recommends strong, changed passwords, patching, firewalls and updating the V3 product.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "KONO DIO DA",
+          "q": "the inclusion of a personalized message that says “KONO DIO DA” from the threat actor.",
+          "by": "AhnLab ASEC (the report itself)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022",
+          "q": "The attacks have been happening with a distinct pattern since 2022",
+          "what": "Attacks with a distinct pattern began"
+        },
+        {
+          "v": "2023-04-23",
+          "q": "Published: 2023-04-23",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "AhnLab Security Emergency response Center (ASEC) has recently discovered XMRig CoinMiner being installed on poorly"
+        },
+        {
+          "v": "SHC",
+          "q": "malware developed with Shell Script Compiler (SHC) when installing the XMRig, as well as the creation of a backdoor SSH"
+        },
+        {
+          "v": "kinsing",
+          "q": "kinsing is a malware strain that is primarily used to remove Aegis."
+        },
+        {
+          "v": "init0",
+          "q": "“init0” is a malware strain that provides various additional features such as installing the XMRig CoinMiner."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "dictionary attack",
+          "q": "and using the known account credentials to perform dictionary attacks and log in."
+        },
+        {
+          "v": "backdoor account",
+          "q": "This process is a persistence maintenance technique that creates a backdoor account on an infected system"
+        },
+        {
+          "v": "cron",
+          "q": "registering itself in the cron task."
+        },
+        {
+          "v": "disabling SELinux and AppArmor",
+          "q": "It is also capable of disabling SELinux and AppArmor."
+        },
+        {
+          "v": "delete the history",
+          "q": "There are also commands that delete the history of these"
+        },
+        {
+          "v": "conceal",
+          "q": "The threat actor uses this simple command instead of a rootkit to conceal the CoinMiner’s process."
+        },
+        {
+          "v": "mining for cryptocurrency",
+          "q": "to start mining for cryptocurrency on the infected system."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "KONO DIO DA"
+    },
+    "hedges": [
+      "The report assumes the uname and nproc commands are used so the actor can check which systems have a CoinMiner installed.",
+      "The initially installed file in the past cases cannot be confirmed."
+    ]
   }
 }

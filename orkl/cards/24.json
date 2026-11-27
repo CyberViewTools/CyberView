@@ -314,25 +314,91 @@
   },
   "243c3c5089789e3b641c19f5ff997c631beacc9f": {
     "sha1": "243c3c5089789e3b641c19f5ff997c631beacc9f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:11:37Z",
+    "read_at": "2026-11-27T13:27:42Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "The report analyses a Linux crypto-miner ELF binary (file named 41hs1z) and identifies it as a component of the Sysrv botnet. The loader script was presumably run after exploiting a web application vulnerability. The Go binary sets up cron persistence, checks a local port to avoid re-infecting the host, enumerates private SSH keys to spread, and carries a WordPress exploit and hardcoded brute-force credential lists.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Sysrv botnet",
+          "q": "Upon analysis, we discovered that the malware is a component of the Sysrv botnet.",
+          "by": "the report itself"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2024-04-14",
+          "q": "Published: 2024-04-14",
+          "what": "report published"
+        },
+        {
+          "v": "Feb 18",
+          "q": "Feb 18 15:11:01 miner cron[752]: (root) RELOAD (crontabs/root)",
+          "what": "cron log entries recording the malware's changing paths"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ghidra",
+          "q": "Upon opening the binary with Ghidra"
+        },
+        {
+          "v": "strace",
+          "q": "We utilize strace for the dynamic analysis of the malware."
+        },
+        {
+          "v": "GhidraScripts",
+          "q": "the GhidraScripts GitHub repository contains a README that will"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistence through a cronjob",
+          "q": "One of the initial steps following execution involves establishing persistence through a cronjob, utilizing"
+        },
+        {
+          "v": "exploiting a vulnerability",
+          "q": "presumably after exploiting a vulnerability in the"
+        },
+        {
+          "v": "brute-forcing login pages",
+          "q": "a list of hardcoded username/password combinations utilized for brute-forcing login pages."
+        },
+        {
+          "v": "enumerating all the private keys",
+          "q": "the script then turns to enumerating all the private keys stored on the hosts"
+        },
+        {
+          "v": "exploit aimed at a WordPress site",
+          "q": "Presented below is a sample exploit aimed at a WordPress site within our analyzed sample."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "one minute",
+          "q": "At intervals of one minute, the sample establishes a connection to localhost"
+        },
+        {
+          "v": "51933",
+          "q": "instance, 51933)"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Sysrv"
+    },
+    "hedges": [
+      "Initial access is only presumed: the script was presumably executed after exploiting a vulnerability in the internet-facing web application.",
+      "The loader server was no longer accessible for a thorough investigation, so only traces of the script's execution were found.",
+      "The folders and paths associated with each execution of the crypto miner may differ.",
+      "The Sysrv naming relies partly on public search results: numerous Google search results indicate infections attributed to Sysrv."
+    ]
   }
 }

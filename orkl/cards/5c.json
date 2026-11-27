@@ -390,7 +390,7 @@
   },
   "5c0d380e5e3e71df8f155eb60d8d0ea3a54f1ea5": {
     "sha1": "5c0d380e5e3e71df8f155eb60d8d0ea3a54f1ea5",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T13:11:39Z",
     "model": "haiku",
@@ -468,7 +468,15 @@
       "The sample does not seem to read or write the secret files it looks for; the author asks whether this is a gap in tracing.",
       "An analyst can likely assume the secret information is leveraged in some manner.",
       "Benign executables also access /etc/passwd, so context matters when judging that access."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T13:26:00Z",
+      "ok": false,
+      "note": "facts.techniques[2]: 'Secret file harvesting' is stronger than the text. The sample only looks for these files, and the author says it does not seem to read or ",
+      "by": "auditor"
+    }
   },
   "5c4d48bb3ac8d6ea7a48ba25605f217d506ffab4": {
     "sha1": "5c4d48bb3ac8d6ea7a48ba25605f217d506ffab4",
@@ -580,6 +588,12 @@
       "This list of privilege escalation methods is not a definitive list, because there are likely more methods out there (such as in GKE, which wasn't touched on in this post).",
       "A similar method may be possible with Cloud Tasks, but we were not able to do it in our testing.",
       "This was reported to the Google Bug Bounty program, but we were told it is working as intended and that it is a feature of the service."
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-27T13:26:00Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

@@ -679,5 +679,188 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "8ad66a8809e445a5434a8c1d35343be34169fa00": {
+    "sha1": "8ad66a8809e445a5434a8c1d35343be34169fa00",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:39:02Z",
+    "model": "haiku",
+    "summary": "ESET reports a Linux variant of the SideWalk backdoor, which it attributes with high confidence to the SparklingGoblin APT group. The variant was used against a Hong Kong university in February 2021; SparklingGoblin had first compromised that university in May 2020. ESET links the Linux variant to the Specter RAT documented by 360 Netlab and to the Windows SideWalk backdoor, citing shared code, ChaCha20 encryption and C&C commands. The initial access chain is unknown, and exploitation is suspected.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "SparklingGoblin",
+          "q": "we attribute with high confidence SideWalk Linux to the SparklingGoblin APT group.",
+          "by": "ESET"
+        },
+        {
+          "v": "Winnti Group",
+          "q": "we put those two different clusters of activity under the broader Winnti Group denomination.",
+          "by": "ESET"
+        },
+        {
+          "v": "Fishmonger",
+          "q": "Fishmonger (using the ShadowPad and Spyder backdoors)",
+          "by": "ESET"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "academic",
+          "q": "with a particular focus on the academic sector"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Hong Kong",
+          "q": "This variant was deployed against a Hong Kong university in"
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 2020",
+          "q": "SparklingGoblin first compromised this particular university in May 2020",
+          "what": "SparklingGoblin first compromised the Hong Kong university"
+        },
+        {
+          "v": "February 2021",
+          "q": "we first detected the Linux variant of SideWalk in that university’s network in February 2021.",
+          "what": "Linux variant of SideWalk first detected at the Hong Kong university"
+        },
+        {
+          "v": "August 24th, 2021",
+          "q": "described in its Windows form in our blogpost on August 24th, 2021",
+          "what": "ESET first described the Windows form of SideWalk"
+        },
+        {
+          "v": "July 2nd, 2021",
+          "q": "on July 2nd, 2021, without making the",
+          "what": "ESET first documented the Linux variant as StageClient"
+        },
+        {
+          "v": "Oct 26 2020",
+          "q": "from the value Oct 26 2020.",
+          "what": "hardcoded date used in the Linux version computation"
+        },
+        {
+          "v": "September 14, 2022",
+          "q": "September 14, 2022",
+          "what": "date the report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SideWalk",
+          "q": "SideWalk, which we first described in its Windows form"
+        },
+        {
+          "v": "Specter RAT",
+          "q": "the Specter RAT, first documented by 360 Netlab"
+        },
+        {
+          "v": "StageClient",
+          "q": "We originally named this backdoor StageClient, but now refer"
+        },
+        {
+          "v": "Motnug",
+          "q": "It makes use of Motnug and ChaCha20-based loaders"
+        },
+        {
+          "v": "CROSSWALK",
+          "q": "the CROSSWALK and SideWalk"
+        },
+        {
+          "v": "Korplug",
+          "q": "Korplug (aka PlugX) and Cobalt Strike"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Korplug (aka PlugX) and Cobalt Strike"
+        },
+        {
+          "v": "ShadowPad",
+          "q": "Fishmonger (using the ShadowPad and Spyder backdoors)"
+        },
+        {
+          "v": "Spyder",
+          "q": "Fishmonger (using the ShadowPad and Spyder backdoors)"
+        },
+        {
+          "v": "TaskSchedulerMod",
+          "q": "Added the module TaskSchedulerMod, which operates as a built-in cron utility"
+        },
+        {
+          "v": "SysInfoMgr",
+          "q": "Added the module SysInfoMgr, which provides information about the underlying system"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploitation",
+          "q": "we think that the initial attack vector could have been exploitation."
+        },
+        {
+          "v": "Google Docs",
+          "q": "It makes use of Google Docs as a dead-"
+        },
+        {
+          "v": "Cloudflare workers",
+          "q": "and Cloudflare workers as its C&C server."
+        },
+        {
+          "v": "ChaCha20",
+          "q": "A variant of ChaCha20 is used twice for encryption with LZ4 compression"
+        },
+        {
+          "v": "HTTPS",
+          "q": "SideWalk Linux communicates via HTTPS with"
+        },
+        {
+          "v": "five threads",
+          "q": "there are exactly five threads executed simultaneously"
+        },
+        {
+          "v": "additional modules",
+          "q": "can load additional modules sent from the C&C server"
+        },
+        {
+          "v": "webshells",
+          "q": "there were many attempts to install various webshells"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "only one victim",
+          "q": "we have found only one victim compromised with this SideWalk variant"
+        },
+        {
+          "v": "multiple key servers",
+          "q": "successfully compromising multiple key servers, including a print server"
+        },
+        {
+          "v": "Three out of the five known modules",
+          "q": "Three out of the five known modules are almost identical."
+        },
+        {
+          "v": "E5E6E100876E652189E7D25FFCF06DE959093433",
+          "q": "We compared the StageClient sample E5E6E100876E652189E7D25FFCF06DE959093433 with Specter"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SideWalk"
+    },
+    "hedges": [
+      "ESET says the compromise chain is currently unknown and thinks the initial attack vector could have been exploitation.",
+      "ESET attributes SideWalk Linux to SparklingGoblin with high confidence.",
+      "ESET says the reason for switching the implementation from C to C++ is unknown.",
+      "ESET hypothesises the operators' controller runs under Windows, based on the Windows-format boot time and shared ChaCha20 keys.",
+      "ESET says the hardcoded date in the versioning function could be the beginning or end of development of this version.",
+      "ESET says it has found only one victim compromised with this SideWalk variant in its telemetry."
+    ]
   }
 }

@@ -354,5 +354,296 @@
         "by": "auditor"
       }
     ]
+  },
+  "5d2bba227ea31c26a295bca051517ab9d8c9d11e": {
+    "sha1": "5d2bba227ea31c26a295bca051517ab9d8c9d11e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:35:33Z",
+    "model": "haiku",
+    "summary": "Sysdig Threat Research Team describes EtherRAT, a persistent Linux implant recovered on December 5, 2025 from a compromised Next.js application and linked to exploitation of CVE-2025-55182 (React2Shell). It resolves its C2 address through Ethereum smart contracts, deploys five persistence mechanisms, and replaces its own code after first contact. The report notes overlap with DPRK-linked tooling but says attribution to a specific actor is unconfirmed.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "DPRK",
+          "q": "Democratic People's Republic of Korea (DPRK) actors have pivoted to exploiting React2Shell",
+          "by": "Sysdig Threat Research Team"
+        },
+        {
+          "v": "UNC5342",
+          "q": "C2 techniques to the DPRK-associated threat actor UNC5342.",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "Earth Lamia",
+          "q": "China-nexus groups (i.e., Earth Lamia, Jackpot Panda, UNC5174) deploying Cobalt Strike beacons,",
+          "by": "the report, citing multiple security vendors"
+        },
+        {
+          "v": "Jackpot Panda",
+          "q": "China-nexus groups (i.e., Earth Lamia, Jackpot Panda, UNC5174) deploying Cobalt Strike beacons,",
+          "by": "the report, citing multiple security vendors"
+        },
+        {
+          "v": "UNC5174",
+          "q": "China-nexus groups (i.e., Earth Lamia, Jackpot Panda, UNC5174) deploying Cobalt Strike beacons,",
+          "by": "the report, citing multiple security vendors"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Democratic People's Republic of Korea (DPRK)",
+          "q": "Democratic People's Republic of Korea (DPRK) actors have pivoted to exploiting React2Shell"
+        },
+        {
+          "v": "China",
+          "q": "China-nexus groups (i.e., Earth Lamia, Jackpot Panda, UNC5174) deploying Cobalt Strike beacons,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-12-08",
+          "q": "Published: 2025-12-08 · Archived: 2026-04-05 17:59:01 UTC",
+          "what": "Sysdig published the EtherRAT analysis"
+        },
+        {
+          "v": "December 5, 2025",
+          "q": "On December 5, 2025, just two days after the public disclosure of CVE-2025-55182 – a maximum-severity",
+          "what": "Sysdig recovered the EtherRAT implant from a compromised Next.js application"
+        },
+        {
+          "v": "December 3, 2025",
+          "q": "Disclosed on December 3, 2025, by security researcher Lachlan Davidson,",
+          "what": "CVE-2025-55182 publicly disclosed"
+        },
+        {
+          "v": "December 5, 2025",
+          "q": "CISA added the vulnerability to its Known Exploited Vulnerabilities (KEV) catalog on December 5, 2025.",
+          "what": "CISA added CVE-2025-55182 to its KEV catalog"
+        }
+      ],
+      "tools": [
+        {
+          "v": "EtherRAT",
+          "q": "EtherRAT leverages Ethereum smart contracts for command-and-control (C2) resolution, deploys five"
+        },
+        {
+          "v": "BeaverTail",
+          "q": "The encrypted loader pattern used in EtherRAT closely matches the DPRK-affiliated BeaverTail malware used in"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "China-nexus groups (i.e., Earth Lamia, Jackpot Panda, UNC5174) deploying Cobalt Strike beacons,"
+        },
+        {
+          "v": "Sliver",
+          "q": "Sliver, and Vshell backdoors"
+        },
+        {
+          "v": "Vshell",
+          "q": "Sliver, and Vshell backdoors"
+        },
+        {
+          "v": "XMRig",
+          "q": "Opportunistic actors installing cryptocurrency miners (primarily XMRig)"
+        },
+        {
+          "v": "InvisibleFerret",
+          "q": "Unlike BeaverTail/InvisibleFerret, EtherRAT contains no cryptocurrency wallet"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Ethereum smart contracts for command-and-control (C2) resolution",
+          "q": "EtherRAT leverages Ethereum smart contracts for command-and-control (C2) resolution, deploys five"
+        },
+        {
+          "v": "deploys five independent Linux persistence mechanisms",
+          "q": "deploys five independent Linux persistence mechanisms, and"
+        },
+        {
+          "v": "executed via React2Shell",
+          "q": "The attack begins with a base64-encoded shell command executed via React2Shell, which downloads and"
+        },
+        {
+          "v": "dropper decrypts the main payload",
+          "q": "The dropper decrypts the main payload using AES-256-CBC with hardcoded key material:"
+        },
+        {
+          "v": "Downloads Node.js",
+          "q": "Downloads Node.js v20.10.0 directly from"
+        },
+        {
+          "v": "queries all nine endpoints in parallel",
+          "q": "EtherRAT queries all nine endpoints in parallel, collects responses, and selects the URL returned by the majority:"
+        },
+        {
+          "v": "replaces itself with the response",
+          "q": "On first successful C2 contact, it sends its own source code to a /api/reobf/ endpoint and replaces itself with the response:"
+        },
+        {
+          "v": "mimics Content Delivery Network (CDN) requests",
+          "q": "This URL structure mimics Content Delivery Network (CDN) requests for static assets"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2025-55182",
+          "q": "CVE-2025-55182 is an unsafe deserialization vulnerability in RSCs that allows unauthenticated remote code"
+        }
+      ],
+      "figures": [
+        {
+          "v": "nine",
+          "q": "EtherRAT queries all nine endpoints in parallel, collects responses, and selects the URL returned by the majority:"
+        },
+        {
+          "v": "every five minutes",
+          "q": "EtherRAT queries the blockchain every five minutes, allowing operators to update C2 infrastructure by modifying the smart"
+        },
+        {
+          "v": "four-stage attack chain",
+          "q": "Enter EtherRAT: A four-stage attack chain"
+        },
+        {
+          "v": "two days",
+          "q": "just two days after the public disclosure of CVE-2025-55182 – a maximum-severity"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "EtherRAT"
+    },
+    "hedges": [
+      "suggesting either Democratic People's Republic of Korea (DPRK) actors have pivoted to exploiting React2Shell, or sophisticated tool-sharing is occurring between nation-state groups.",
+      "without direct code overlap, we cannot confirm the threat actor behind EtherRAT is the same.",
+      "another sophisticated actor may be combining techniques from multiple documented campaigns to complicate attribution.",
+      "Without observing actual C2 responses, the exact purpose is unclear.",
+      "The file artifacts listed below are from our analyzed sample and should be treated as examples of the naming pattern, not universal indicators of compromise"
+    ]
+  },
+  "5d5f2ab93acbd96631e9a6762effdcacbf94272c": {
+    "sha1": "5d5f2ab93acbd96631e9a6762effdcacbf94272c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:40:23Z",
+    "model": "haiku",
+    "summary": "Cado Security blog post dated 21 December 2021 on a new version of a shell-script installer linked to the Abcbot botnet campaign. The script targets insecure cloud instances at cloud service providers such as Tencent, Baidu and Alibaba Cloud. It prepares hosts for compromise over SSH, kills processes of rival malware and miners, disables cloud monitoring agents, persists via rc.local and cron, changes iptables rules and propagates to known hosts. The authors link it to Abcbot based on code similarity and suggest a possible reference to TeamTNT. Trend Micro had reported an earlier version.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "Given the prevalence of the TeamTNT threat actor, it seems reasonable that the naming convention here is a reference to them.",
+          "by": "Cado Security (report author), hedged"
+        },
+        {
+          "v": "Abcbot",
+          "q": "360Netlab as “Abcbot”.",
+          "by": "360Netlab, as cited by Cado Security"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Cloud Service Providers",
+          "q": "Cloud Service Providers such as Tencent, Baidu and Alibaba Cloud has recently been"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-12-21",
+          "q": "December 21, 2021",
+          "what": "Blog post published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Tor",
+          "q": "Trend Micro mention that Tor is used by additional payloads to anonymise malicious network"
+        },
+        {
+          "v": "curl",
+          "q": "interestingly, data transfer utilities such as curl and wget are renamed."
+        },
+        {
+          "v": "wget",
+          "q": "interestingly, data transfer utilities such as curl and wget are renamed."
+        },
+        {
+          "v": "iptables",
+          "q": "Linux iptables firewall via the iptables command."
+        },
+        {
+          "v": "abchello",
+          "q": "saves it as “abchello”."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "disables SELinux protections",
+          "q": "This function disables SELinux protections, weakening the host"
+        },
+        {
+          "v": "kills off processes from competing threat actors",
+          "q": "kills off processes from competing threat actors and persists itself, before downloading an"
+        },
+        {
+          "v": "compromise over SSH",
+          "q": "shell script prepares the target host for additional compromise over SSH,"
+        },
+        {
+          "v": "persistence via rc.local and cron",
+          "q": "After initial configuration the malware establishes persistence via rc.local and cron, methods"
+        },
+        {
+          "v": "removing SSH keys",
+          "q": "the threat actor removing SSH keys left by similar attacks and inserting their own to"
+        },
+        {
+          "v": "disable and uninstall",
+          "q": "the ability to disable and uninstall"
+        },
+        {
+          "v": "propagation in a worm-like fashion",
+          "q": "propagation of the malware in a worm-like fashion and ensures rapid compromise of related"
+        },
+        {
+          "v": "curl and wget are renamed",
+          "q": "interestingly, data transfer utilities such as curl and wget are renamed."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "31, 32, 33 and 35 minutes",
+          "q": "at a frequency of 31, 32, 33 and 35 minutes respectively."
+        },
+        {
+          "v": "several hundred lines",
+          "q": "A function named kill_miner_proc, which consists of several hundred lines, is dedicated to"
+        },
+        {
+          "v": "TCP port 26800",
+          "q": "the malware adds a more generic rule, to allow all ingress traffic on TCP port 26800."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Abcbot"
+    },
+    "hedges": [
+      "The authors say they believe this shell script is an updated version of an installer used in the Abcbot campaign.",
+      "It seems reasonable that the renamed tools are a reference to TeamTNT, per the authors.",
+      "The disabling of cloud monitoring is likely used to avoid detection, per the authors.",
+      "The disabling of cloud monitoring suggests targeting of specific CSPs, per the authors.",
+      "The authors say the attacker appears to have attempted earlier iptables rules, which are no longer added.",
+      "The generic iptables rule likely facilitates communication with a C2 server, per the authors.",
+      "The authors say the code for the third payload appears to be commented-out."
+    ]
   }
 }

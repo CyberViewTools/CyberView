@@ -436,6 +436,136 @@
       "The author is not sure why the target filename has a + at the start.",
       "The author says they don't know why the symlink-related behaviour happens.",
       "The author says there is no dedicated sub-technique for this technique in MITRE ATT&CK."
+    ],
+    "audit": {
+      "at": "2026-11-27T13:26:18Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
+  },
+  "bdbf5cdbdeda1e29c4ea9beaa2797aaa71a8f0f4": {
+    "sha1": "bdbf5cdbdeda1e29c4ea9beaa2797aaa71a8f0f4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:32:04Z",
+    "model": "haiku",
+    "summary": "A news report on TrickBot's Anchor backdoor, which has been ported to Linux as Anchor_Linux. Anchor, first reported in late 2019 as a DNS-based command-and-control framework, is used against high-value targets, including point-of-sale and financial systems. The analysed Linux sample sets up cron-based persistence and carries an embedded Windows TrickBot executable. It copies that executable over SMB to Windows hosts on the same network, where it runs as a Windows service, letting attackers pivot from Linux and IoT devices into corporate networks. The analyst believes the malware is still in…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "TrickBot Anchor actors",
+          "q": "the TrickBot Anchor actors also use it as a backdoor in",
+          "by": "the report itself"
+        },
+        {
+          "v": "threat actors",
+          "q": "TrickBot is rented by threat actors who use it to infiltrate a network",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "point-of-sale and financial systems",
+          "q": "APT-like campaigns that target point-of-sale and financial systems."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "end of 2019",
+          "q": "At the end of 2019, both SentinelOne and NTT reported a new TrickBot framework called Anchor",
+          "what": "SentinelOne and NTT reported the new Anchor framework"
+        },
+        {
+          "v": "2020-07-31",
+          "q": "Published: 2020-07-31 · Archived: 2026-04-05 22:43:04 UTC",
+          "what": "The report article on Anchor_Linux was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "TrickBot",
+          "q": "TrickBot is a multi-purpose Windows malware platform that uses different modules"
+        },
+        {
+          "v": "Anchor_DNS",
+          "q": "Named Anchor_DNS, the malware is used on high-value, high-impact targets"
+        },
+        {
+          "v": "Anchor_Linux",
+          "q": "Anchor_DNS has been ported to a new Linux backdoor version called 'Anchor_Linux.'"
+        },
+        {
+          "v": "Ryuk",
+          "q": "used to deploy ransomware such as Ryuk and Conti to encrypt the network's devices"
+        },
+        {
+          "v": "Conti",
+          "q": "used to deploy ransomware such as Ryuk and Conti to encrypt the network's devices"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DNS-based command and control",
+          "q": "utilizes DNS to communicate with its command and control servers."
+        },
+        {
+          "v": "cron-based persistence",
+          "q": "Setting up persistence via CRON"
+        },
+        {
+          "v": "copying to Windows hosts over SMB",
+          "q": "malware to Windows hosts on the same network using SMB and $IPC."
+        },
+        {
+          "v": "configured as a Windows service",
+          "q": "configure it as a Windows service using the Service Control Manager Remote protocol"
+        },
+        {
+          "v": "pivoting from Linux into Windows networks",
+          "q": "used as a pivot for Windows exploitation"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "every minute",
+          "q": "Anchor_Linux will configure itself to run every minute using the"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Anchor_Linux"
+    },
+    "hedges": [
+      "Kremez told BleepingComputer that he believes that Anchor_Linux is still in development due to testing functionality in the Linux executable.",
+      "It is expected that TrickBot will continue its development to make it a full-featured addition to its Anchor framework."
     ]
+  },
+  "bd9dc8be4650cc39996d9aa5c9f65305dd8ab7de": {
+    "sha1": "bd9dc8be4650cc39996d9aa5c9f65305dd8ab7de",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T13:35:17Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
   }
 }

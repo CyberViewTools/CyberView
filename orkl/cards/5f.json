@@ -190,5 +190,163 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5f899ee38719ae1f42edb8c50c06c7d91526c909": {
+    "sha1": "5f899ee38719ae1f42edb8c50c06c7d91526c909",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:30:53Z",
+    "model": "haiku",
+    "summary": "A 2020 overview by Yossi Weizman, written for Azure Security Center, that presents a first ATT&CK-style attack matrix for Kubernetes. It lists nine tactics, from initial access to impact, and describes techniques attackers may use against container clusters. Examples include exposed dashboards, leaked kubeconfig files, privileged containers, and unauthenticated Kubelet and Tiller endpoints. The report names no specific threat actor, campaign or incident.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-04-02",
+          "q": "Published: 2020-04-02",
+          "what": "Report published"
+        },
+        {
+          "v": "May 10, 2021",
+          "q": "Updated on May 10, 2021: An updated version of the threat matrix for containers is available here.",
+          "what": "Updated version of the threat matrix noted"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 12:34:35 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "kubectl",
+          "q": "The kubeconfig file, also used by kubectl, contains details about Kubernetes clusters including their location and"
+        },
+        {
+          "v": "Kubernetes dashboard",
+          "q": "The Kubernetes dashboard is a web-based user interface that enables monitoring and managing a Kubernetes"
+        },
+        {
+          "v": "Helm",
+          "q": "Helm is a popular package manager for Kubernetes maintained by CNCF."
+        },
+        {
+          "v": "Tiller",
+          "q": "Tiller exposes internal gRPC endpoint in the cluster, listens to port 44134."
+        },
+        {
+          "v": "Kubelet",
+          "q": "Kubelet is the Kubernetes agent that is installed on each node."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Using cloud credentials",
+          "q": "Using cloud credentials"
+        },
+        {
+          "v": "Compromised images in registry",
+          "q": "Compromised images in registry"
+        },
+        {
+          "v": "Kubeconfig file",
+          "q": "Kubeconfig file"
+        },
+        {
+          "v": "Vulnerable application",
+          "q": "Vulnerable application"
+        },
+        {
+          "v": "Exposed dashboard",
+          "q": "Exposed dashboard"
+        },
+        {
+          "v": "Exec into container",
+          "q": "Exec into container"
+        },
+        {
+          "v": "New container",
+          "q": "New container"
+        },
+        {
+          "v": "Application exploit",
+          "q": "Application exploit"
+        },
+        {
+          "v": "SSH server running inside container",
+          "q": "SSH server running inside container"
+        },
+        {
+          "v": "Backdoor container",
+          "q": "Backdoor container"
+        },
+        {
+          "v": "Writable hostPath mount",
+          "q": "Writable hostPath mount"
+        },
+        {
+          "v": "Kubernetes CronJob",
+          "q": "Kubernetes CronJob"
+        },
+        {
+          "v": "Privileged container",
+          "q": "Privileged container"
+        },
+        {
+          "v": "Cluster-admin binding",
+          "q": "Cluster-admin binding"
+        },
+        {
+          "v": "hostPath mount",
+          "q": "hostPath mount"
+        },
+        {
+          "v": "Access cloud resources",
+          "q": "Access cloud resources"
+        },
+        {
+          "v": "Clear container logs",
+          "q": "Clear container logs"
+        },
+        {
+          "v": "Delete Kubernetes events",
+          "q": "Delete Kubernetes events"
+        },
+        {
+          "v": "Pod / container name similarity",
+          "q": "Pod / container name similarity"
+        },
+        {
+          "v": "Connect from proxy server",
+          "q": "Connect from proxy server"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "9 tactics",
+          "q": "As can be seen, the matrix contains the 9 tactics listed above."
+        },
+        {
+          "v": "port 44134",
+          "q": "Tiller exposes internal gRPC endpoint in the cluster, listens to port 44134."
+        },
+        {
+          "v": "TCP port 10255",
+          "q": "(TCP port 10255)."
+        },
+        {
+          "v": "version 2",
+          "q": "Helm up to version 2."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Entries describe what attackers may do; some access paths apply only in some cases, such as clusters deployed in a public cloud."
+    ]
   }
 }

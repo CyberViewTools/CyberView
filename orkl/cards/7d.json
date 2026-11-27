@@ -880,5 +880,180 @@
         "by": "auditor"
       }
     ]
+  },
+  "7df7b0ba31e1d9605e013286a3d0ffb2754886f7": {
+    "sha1": "7df7b0ba31e1d9605e013286a3d0ffb2754886f7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:33:43Z",
+    "model": "haiku",
+    "summary": "SentinelLabs overview (published 2021-02-16) of 20 built-in macOS utilities that threat actors and malware abuse. For each tool it lists common arguments, in-the-wild examples from families such as Bundlore, XCSSET, Shlayer and OceanLotus, and associated MITRE ATT&CK techniques. Uses described include permission changes, persistence via cron and launchd, system and sandbox discovery, process killing, and bypassing Gatekeeper checks by removing the quarantine attribute.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-02-16",
+          "q": "Published: 2021-02-16",
+          "what": "Original SentinelLabs post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 23:35:47 UTC",
+          "what": "Archived copy captured"
+        }
+      ],
+      "tools": [
+        {
+          "v": "chmod",
+          "q": "chmod (/bin/chmod)"
+        },
+        {
+          "v": "chown",
+          "q": "chown (/usr/sbin/chown)"
+        },
+        {
+          "v": "crontab",
+          "q": "crontab (/usr/bin/crontab)"
+        },
+        {
+          "v": "csrutil",
+          "q": "csrutil (/usr/bin/csrutil)"
+        },
+        {
+          "v": "curl",
+          "q": "curl (/usr/bin/curl)"
+        },
+        {
+          "v": "dirname",
+          "q": "dirname (/usr/bin/dirname)"
+        },
+        {
+          "v": "ioreg",
+          "q": "ioreg (/usr/sbin/ioreg)"
+        },
+        {
+          "v": "killall",
+          "q": "killall (/usr/bin/killall)"
+        },
+        {
+          "v": "launchctl",
+          "q": "launchctl (/bin/launchctl)"
+        },
+        {
+          "v": "mktemp",
+          "q": "mktemp (/usr/bin/mktemp)"
+        },
+        {
+          "v": "openssl",
+          "q": "openssl (/usr/bin/openssl)"
+        },
+        {
+          "v": "osacompile",
+          "q": "osacompile (/usr/bin/osacompile)"
+        },
+        {
+          "v": "osascript",
+          "q": "osascript (/usr/bin/osascript)"
+        },
+        {
+          "v": "ps",
+          "q": "ps (/bin/ps)"
+        },
+        {
+          "v": "sw_vers",
+          "q": "sw_vers (/usr/bin/sw_vers)"
+        },
+        {
+          "v": "sysctl",
+          "q": "sysctl (/usr/sbin/sysctl)"
+        },
+        {
+          "v": "system_profiler",
+          "q": "system_profiler (/usr/sbin/system_profiler)"
+        },
+        {
+          "v": "touch",
+          "q": "touch (/usr/bin/touch)"
+        },
+        {
+          "v": "whoami",
+          "q": "whoami (/usr/bin/whoami)"
+        },
+        {
+          "v": "xattr",
+          "q": "xattr (/usr/bin/xattr)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "File and Directory Permissions Modification",
+          "q": "File and Directory Permissions Modification T1222"
+        },
+        {
+          "v": "Scheduled Task/Job: Cron",
+          "q": "Scheduled Task/Job: Cron T1053"
+        },
+        {
+          "v": "Create or Modify System Process: Launch Agent",
+          "q": "Create or Modify System Process: Launch Agent T1543.001"
+        },
+        {
+          "v": "Impair Defenses: Disable or Modify Tools",
+          "q": "Impair Defenses: Disable or Modify Tools T1562"
+        },
+        {
+          "v": "Virtualization/Sandbox Evasion",
+          "q": "Virtualization/Sandbox Evasion T1497"
+        },
+        {
+          "v": "System Information Discovery",
+          "q": "System Information Discovery T1082"
+        },
+        {
+          "v": "Process Discovery",
+          "q": "Process Discovery T1057"
+        },
+        {
+          "v": "File and Directory Discovery",
+          "q": "File and Directory Discovery T1083"
+        },
+        {
+          "v": "Indicator Removal on Host: Timestomp",
+          "q": "Indicator Removal on Host: Timestomp T1070"
+        },
+        {
+          "v": "Masquerading",
+          "q": "Masquerading T1036"
+        },
+        {
+          "v": "Bypass or Subvert Trust Controls",
+          "q": "Bypass or Subvert Trust Controls T1553"
+        },
+        {
+          "v": "Command and Scripting Interpreter: AppleScript",
+          "q": "Command and Scripting Interpreter: AppleScript T1059"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "20",
+          "q": "20 of the most commonly used built-in tools (ab)used by threat actors"
+        },
+        {
+          "v": "macOS 10.11",
+          "q": "Introduced in macOS 10.11, this utility has only one publicly"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "This may or may not be hashed with another utility (e.g., md5) before being sent to the C2.",
+      "It may also be required in order to execute a file in certain, elevated context.",
+      "Despite the name, mktemp does not have to be used only in the /tmp directory."
+    ]
   }
 }

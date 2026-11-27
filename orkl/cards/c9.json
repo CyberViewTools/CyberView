@@ -432,7 +432,7 @@
     "sha1": "c937bf3704b9970e8f08ffc5171e8c151e9f4a54",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T13:10:38Z",
+    "read_at": "2026-11-27T13:27:35Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -449,6 +449,132 @@
     "subject": null,
     "hedges": [],
     "reason": "quote-not-in-text",
-    "tries": 1
+    "tries": 2
+  },
+  "c9fbf6cbb9f5ab705b5081e1684ca27d4b60fa30": {
+    "sha1": "c9fbf6cbb9f5ab705b5081e1684ca27d4b60fa30",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:39:09Z",
+    "model": "haiku",
+    "summary": "BleepingComputer reports a wave of ransomware attacks on VMware ESXi servers that exploit CVE-2021-21974, a heap overflow in the OpenSLP service patched in February 2021. The new ESXiArgs ransomware encrypts VM files and replaces the login message and ESXi home page with ransom notes. About 120 servers were encrypted on the first day and 2,400 were detected as compromised. OVHcloud's early link to the Nevada ransomware operation was later withdrawn. Only four ransom payments were tracked, and a free recovery guide helped many victims.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "Nevada ransomware operation",
+          "q": "linking this massive wave of attacks targeting VMware ESXi servers with the Nevada ransomware operation.",
+          "by": "OVHcloud"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "February 3, 2023",
+          "q": "February 3, 2023",
+          "what": "Article first published"
+        },
+        {
+          "v": "23 February 2021",
+          "q": "for which a patch has been available since 23 February 2021,",
+          "what": "Patch for CVE-2021-21974 became available"
+        },
+        {
+          "v": "February 6th",
+          "q": "In an advisory published on February 6th, VMware confirmed that this attack exploits older",
+          "what": "VMware advisory said the attack exploits older ESXi flaws, not a zero-day"
+        },
+        {
+          "v": "December 2022",
+          "q": "discovered by Juniper in December 2022, allowing the threat actors to remotely",
+          "what": "Juniper discovered a custom Python backdoor for VMware ESXi"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ESXiArgs",
+          "q": "New ESXiArgs ransomware"
+        },
+        {
+          "v": "encryptor",
+          "q": "encrypt - The encryptor ELF executable."
+        },
+        {
+          "v": "Babuk",
+          "q": "ransomware derived from the Babuk (ESXi variant) source code."
+        },
+        {
+          "v": "Python backdoor",
+          "q": "deleting logs, removing a Python backdoor"
+        },
+        {
+          "v": "OpenSLP",
+          "q": "OpenSLP service that can be exploited by unauthenticated threat actors in low-complexity"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote code execution",
+          "q": "old remote code execution vulnerability to deploy a new ESXiArgs ransomware."
+        },
+        {
+          "v": "heap overflow",
+          "q": "caused by a heap overflow issue in the"
+        },
+        {
+          "v": "encrypts files",
+          "q": "The ransomware encrypts files with the .vmxf, .vmx, .vmdk, .vmsd, and .nvram extensions on"
+        },
+        {
+          "v": "cleanup by deleting logs",
+          "q": "performs some cleanup by deleting logs, removing a Python backdoor"
+        },
+        {
+          "v": "ransom note",
+          "q": "index.html - The ransom note in HTML form that will replace VMware ESXi's home"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-21974",
+          "q": "CVE-2021-21974 affects the following systems:"
+        }
+      ],
+      "figures": [
+        {
+          "v": "approximately 120",
+          "q": "At the end of the first day of attacks, approximately 120 ESXi servers were encrypted."
+        },
+        {
+          "v": "2,400 VMware ESXi devices",
+          "q": "with 2,400 VMware ESXi devices"
+        },
+        {
+          "v": "$88,000",
+          "q": "reporting only four ransom payments for a total of $88,000."
+        },
+        {
+          "v": "500 GB",
+          "q": "machine had over 500 GB of data but typical daily usage of only 2 Mbps."
+        },
+        {
+          "v": "version 6.x and prior to 6.7",
+          "q": "in version 6.x and prior to 6.7."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ESXiArgs ransomware"
+    },
+    "hedges": [
+      "OVHcloud said the Nevada link was an assumption and that investigation was still ongoing to confirm it.",
+      "OVHcloud later said it attributed the attack to the wrong ransomware operation.",
+      "Threat actors claim to have stolen data, but one victim reported that was not the case in their incident.",
+      "The RSA-2048 key size is only a guess by the ID Ransomware analyst, since the code accepts any valid PEM key.",
+      "It is unclear whether ESXiArgs is a new variant or just a shared Babuk codebase.",
+      "The report says this is a developing story that will be updated as new information becomes available."
+    ]
   }
 }

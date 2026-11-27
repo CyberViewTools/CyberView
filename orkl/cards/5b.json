@@ -733,7 +733,7 @@
   },
   "5b29f671666c9e98a0fb600a486b2ae9dfaf9188": {
     "sha1": "5b29f671666c9e98a0fb600a486b2ae9dfaf9188",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T13:10:24Z",
     "model": "haiku",
@@ -837,6 +837,14 @@
       "The report says Kitsune may be responsible for certain behaviors observed in the rootkit.",
       "The report says several other behavioral rules may also trigger, depending on the execution chain.",
       "The report infers the rootkit is designed for older kernels because it does not use kprobes."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T13:26:00Z",
+      "ok": false,
+      "note": "summary: It states flatly that the dropper is 'disguised as a cron binary'. The text hedges this: the dropper 'possibly masquerad[es] as a legitimate process (l",
+      "by": "auditor"
+    }
   }
 }

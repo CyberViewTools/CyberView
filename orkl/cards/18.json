@@ -542,5 +542,85 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "18a79e3359e37d480b181e6658e95734a1fe44c4": {
+    "sha1": "18a79e3359e37d480b181e6658e95734a1fe44c4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:33:41Z",
+    "model": "haiku",
+    "summary": "SysJoker is cross-platform remote access malware targeting Windows, Linux and macOS, analysed by a threat analysis unit in a 2022 article. The Windows variant is a DLL that downloads and runs a payload, then sends system information to a command server. The Linux and macOS variants use cron and launchAgent persistence. The RAT can run commands and download and execute further files. The report says some commands were not fully functional in the samples analysed, and it lists indicators of compromise.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-03-23",
+          "q": "Published: 2022-03-23",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 14:54:24 UTC",
+          "what": "Report archived copy"
+        }
+      ],
+      "tools": [
+        {
+          "v": "powershell",
+          "q": "The DLL uses powershell commands to download the zip file from the url"
+        },
+        {
+          "v": "crontab",
+          "q": "The malware uses code shown in Figure. 8 to create a cron job by using the Linux crontab command."
+        },
+        {
+          "v": "launchAgents",
+          "q": "The malware persists on the system by using launchAgents named “Apple launch service”"
+        },
+        {
+          "v": "Google Drive",
+          "q": "It first decrypts the Google Drive URL that points to an encrypted file that is used to determine the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "sleeps to evade security products",
+          "q": "Msg.exe sleeps multiple times to evade security products."
+        },
+        {
+          "v": "execute commands remotely",
+          "q": "SysJoker has the ability to execute commands remotely as well as download and execute new malware on victim machines."
+        },
+        {
+          "v": "cron job persistence",
+          "q": "The malware will first create persistence with a cron job."
+        },
+        {
+          "v": "system information collection",
+          "q": "In sequence, the malware will run multiple command lines to collect various system information"
+        },
+        {
+          "v": "Base64 and XOR encoding",
+          "q": "by applying Base64 decode and XOR decryption"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four commands",
+          "q": "SysJoker supports receiving four commands from the C2"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SysJoker"
+    },
+    "hedges": [
+      "the remove_reg and exit commands were not fully functional in the samples analyzed"
+    ]
   }
 }

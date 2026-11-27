@@ -550,5 +550,176 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "a3fde87f597cecbd40ba069b1bdf2876c13ead98": {
+    "sha1": "a3fde87f597cecbd40ba069b1bdf2876c13ead98",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:48Z",
+    "model": "haiku",
+    "summary": "GoDaddy Security describes DollyWay, a website malware operation it traces back to 2016 and links to earlier campaigns named Master134, Fake Browser Updates and CountsTDS. Infected WordPress sites run injected redirect scripts and act as traffic direction and command-and-control nodes, sending visitors to scam pages through the VexTrio affiliate network. The report says over 20,000 sites were compromised over eight years and over 10,000 were infected as of February 2025. It also describes reinfection, removal of rival malware, hidden admin accounts, credential theft and backdoors.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "single sophisticated threat actor",
+          "q": "to a single sophisticated threat actor.",
+          "by": "GoDaddy Security researchers (the report)"
+        },
+        {
+          "v": "VexTrio",
+          "q": "traffic broker networks associated with VexTrio, one of the largest known",
+          "by": "GoDaddy Security researchers (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-03-17",
+          "q": "Published: 2025-03-17",
+          "what": "report published"
+        },
+        {
+          "v": "2016",
+          "q": "a long-running malware operation dating back to 2016 that has",
+          "what": "earliest activity of the operation (Master134 era)"
+        },
+        {
+          "v": "2018",
+          "q": "First identified by CheckPoint researchers in 2018",
+          "what": "Master134 first identified by CheckPoint researchers"
+        },
+        {
+          "v": "2018-2019",
+          "q": "Fake Browser Updates (2018-2019)",
+          "what": "Fake Browser Updates campaign period"
+        },
+        {
+          "v": "2022",
+          "q": "In 2022, bad actors installed a single “pseudo-legitimate” plugin that was responsible for injection of the redirect scripts into",
+          "what": "single pseudo-legitimate plugin used to inject redirect scripts"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, Dollyway shifted from using “pseudo-legitimate” plugins to outright fake “must use” plugins.",
+          "what": "shift from pseudo-legitimate plugins to fake must-use plugins"
+        },
+        {
+          "v": "October 2024",
+          "q": "As of October 2024, the injected WPCode snippets have specific dates associated with them that can be used as indicators of compromise.",
+          "what": "injected WPCode snippets with dates usable as indicators of compromise"
+        },
+        {
+          "v": "November 2024",
+          "q": "(in Nov 2024, changed to “test01” and “click01” respectively)",
+          "what": "change to parameters used to avoid repeat redirects"
+        },
+        {
+          "v": "November 20, 2024",
+          "q": "Redirects after November 20, 2024:",
+          "what": "redirect pattern changed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DollyRAT",
+          "q": "CountsTDS / DollyRAT / Backdoor.PHP.DOLLYWAY.A / Multistage WordPress Redirect Kit / R_Evil web shell"
+        },
+        {
+          "v": "R_Evil web shell",
+          "q": "CountsTDS / DollyRAT / Backdoor.PHP.DOLLYWAY.A / Multistage WordPress Redirect Kit / R_Evil web shell"
+        },
+        {
+          "v": "WPCode",
+          "q": "WPCode's presence is pretty visible in the WordPress admin interface"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "four-stage injection chain",
+          "q": "DollyWay v3 employs a sophisticated four-stage injection chain designed to evade detection."
+        },
+        {
+          "v": "distributed network of compromised WordPress sites",
+          "q": "Campaign infrastructure currently leverages a distributed network of compromised WordPress sites as TDS and"
+        },
+        {
+          "v": "Cryptographically signed data transfers",
+          "q": "Cryptographically signed data transfers"
+        },
+        {
+          "v": "Heterogeneous injection spread across files and database",
+          "q": "Heterogeneous injection spread across files and database"
+        },
+        {
+          "v": "Automatic reinfection mechanisms",
+          "q": "Automatic reinfection mechanisms"
+        },
+        {
+          "v": "Removal of competing third-party malware",
+          "q": "Removal of competing third-party malware"
+        },
+        {
+          "v": "employing multiple layers of obfuscation",
+          "q": "employing multiple layers of obfuscation,"
+        },
+        {
+          "v": "fake “must use” plugins",
+          "q": "In 2023, Dollyway shifted from using “pseudo-legitimate” plugins to outright fake “must use” plugins."
+        },
+        {
+          "v": "removes all WPCode menus",
+          "q": "To accomplish this, the malware removes all WPCode menus from the WordPress dashboard and removes the WPCode from"
+        },
+        {
+          "v": "multiple sophisticated backdoor mechanisms",
+          "q": "DollyWay v3 implements multiple sophisticated backdoor mechanisms with cryptographic verification to prevent"
+        },
+        {
+          "v": "Stealing WordPress admin credentials",
+          "q": "Stealing WordPress admin credentials"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 20,000 websites",
+          "q": "compromised over 20,000 websites globally in the past 8 years."
+        },
+        {
+          "v": "over 10,000 unique infected WordPress sites",
+          "q": "we have seen over 10,000 unique infected WordPress sites worldwide generating around 10 million"
+        },
+        {
+          "v": "around 10 million",
+          "q": "we have seen over 10,000 unique infected WordPress sites worldwide generating around 10 million"
+        },
+        {
+          "v": "around 102 different bot User-Agent strings",
+          "q": "Known bots (the malware maintains its own list of around 102 different bot User-Agent strings)"
+        },
+        {
+          "v": "14 nodes",
+          "q": "The list currently consists of 14 nodes and the Stage 3 script randomly picks three of"
+        },
+        {
+          "v": "over 150 complex signatures",
+          "q": "Back in 2020, malware operators already had over 150 complex signatures to detect and remove various types of malware,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "DollyWay"
+    },
+    "hedges": [
+      "The report says the campaigns appear to be connected to a single threat actor, which it presents as its own linkage finding rather than a confirmed fact.",
+      "VexTrio is described as associated with the redirect networks; the report does not present this as proven.",
+      "Several roles are described with hedges such as probably and likely, for example the purpose of the wpu-style maintenance script and the Google Play landing pages.",
+      "The report says it does not know whether all maintenance functions are used for every injection, and only speculates that they are used mainly on high-value sites.",
+      "Some malicious admin credentials may belong to earlier iterations of the campaign, according to the report.",
+      "The report says it is not clear what attackers do when they compromise a site that already uses the WPCode plugin."
+    ]
   }
 }

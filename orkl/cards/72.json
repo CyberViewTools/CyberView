@@ -1,0 +1,130 @@
+{
+  "72e2479bbb5eea0128fb8ca309856be3abd56f26": {
+    "sha1": "72e2479bbb5eea0128fb8ca309856be3abd56f26",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:32:53Z",
+    "model": "haiku",
+    "summary": "Aqua Nautilus describes a campaign by the 8220 gang that exploited the Confluence flaw CVE-2022-26134 and targeted one of its honeypots. The attackers ran a container with a shell script that downloaded payloads, used cron jobs for persistence, shut down security tools and tampered with logs, then scanned for SSH hosts, brute-forced logins and reused saved SSH keys to spread. The payload was a cryptominer plus an IRC-controlled backdoor called Tsunami. The report says the script gained new components within a few days.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "8220 gang",
+          "q": "A recent campaign by the 8220 gang, who have been known to exploit the newly discovered critical Confluence",
+          "by": "the report (Aqua Nautilus research team)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-07-07",
+          "q": "Published: 2022-07-07 · Archived: 2026-04-02 11:18:23 UTC",
+          "what": "blog post published"
+        },
+        {
+          "v": "June",
+          "q": "The name of the shell script is interesting since it’s reminiscent of an event in June when a new vulnerability was",
+          "what": "a new Confluence remote code execution vulnerability was discovered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Masscan",
+          "q": "Masscan binary file"
+        },
+        {
+          "v": "Spirit",
+          "q": "Spirit binary file"
+        },
+        {
+          "v": "spirit-pro",
+          "q": "SSH scanner – the attacker has updated the ssh scanner tool used spirit to spirit-pro"
+        },
+        {
+          "v": "hxx",
+          "q": "SSH brute-force tool – the attacker added a new tool called hxx"
+        },
+        {
+          "v": "pasx",
+          "q": "the attacker has updated the px file with the pasx"
+        },
+        {
+          "v": "Tsunami",
+          "q": "The Tsunami malware uses Internet Relay Chat (IRC) protocol to"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "misconfigured Docker daemon",
+          "q": "threat actors exploited a misconfigured Docker daemon to run a vanilla Alpine"
+        },
+        {
+          "v": "cron jobs",
+          "q": "The attacker creates a scheduled job using cron jobs to facilitate the initial execution"
+        },
+        {
+          "v": "shutting down the security tools",
+          "q": "the attacker is shutting down the security tools of Alibaba Cloud, Baidu Cloud, and Google Cloud"
+        },
+        {
+          "v": "SELinux mode to permissive",
+          "q": "the attacker changes SELinux mode to permissive"
+        },
+        {
+          "v": "deletes log files",
+          "q": "the attacker also deletes log files to hide any suspicious activity within the system"
+        },
+        {
+          "v": "running several scanners",
+          "q": "the threat actor is running several scanners to detect and find further targets in the local network"
+        },
+        {
+          "v": "ssh brute force",
+          "q": "the attacker can initiate ssh brute force against those hosts"
+        },
+        {
+          "v": "exploits previous connections",
+          "q": "the attacker exploits previous connections established between the compromised machine"
+        },
+        {
+          "v": "mine cryptocurrency",
+          "q": "to use the machine’s CPU to mine cryptocurrency"
+        },
+        {
+          "v": "enables HugePages",
+          "q": "enables HugePages, a feature that allows the operating system to"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-26134",
+          "q": "vulnerability (CVE-2022-26134), targeted one of our honeypots."
+        }
+      ],
+      "figures": [
+        {
+          "v": "nine detections",
+          "q": "Moving forward to our incident screen, we see these nine detections:"
+        },
+        {
+          "v": "10,000",
+          "q": "more than 10,000 records of usernames and passwords."
+        },
+        {
+          "v": "every five minutes",
+          "q": "defines an infinite loop that executes the payload every five minutes randomly in one of four paths."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "8220 Gang Confluence campaign (CVE-2022-26134)"
+    },
+    "hedges": [
+      "The functions in code, binaries, and C2 infrastructure are most commonly associated with the 8220 gang.",
+      "The malware serves as a cryptominer and is associated with the 8220 gang."
+    ]
+  }
+}

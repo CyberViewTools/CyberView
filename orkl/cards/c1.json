@@ -157,5 +157,129 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "c113d860308817fd565d73657bc12da6d142c7bd": {
+    "sha1": "c113d860308817fd565d73657bc12da6d142c7bd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:31:58Z",
+    "model": "haiku",
+    "summary": "FortiGuard Labs analysis of ELF/Sshdinjector.A!tr, a Linux malware collection injected into the SSH daemon. Samples surfaced around mid-November 2024 and the post says they are attributed to the DaggerFly espionage group. The collection includes a dropper, a malicious SSH library that communicates with a remote bot master and typically exfiltrates information, and persistence binaries. The post also evaluates using generative AI (r2ai with Radare2) for reverse engineering and notes hallucination, extrapolation and omissions in its output.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "DaggerFly",
+          "q": "they are attributed to the DaggerFly espionage group",
+          "by": "the report, citing existing threat intelligence"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-02-04",
+          "q": "Published: 2025-02-04",
+          "what": "Blog post on the malware published by FortiGuard Labs"
+        },
+        {
+          "v": "mid-November 2024",
+          "q": "surfaced around mid-November 2024",
+          "what": "Samples of the malware collection first surfaced"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Radare2",
+          "q": "Reverse engineering was performed using Radare2, assisted by Generative AI through the Radare2 extension"
+        },
+        {
+          "v": "r2ai",
+          "q": "For example, I used r2ai in “auto” mode."
+        },
+        {
+          "v": "Claude 3.5 Sonnet",
+          "q": "The results from this article were mainly obtained using Claude 3.5 Sonnet 2024-10-22."
+        },
+        {
+          "v": "libsshd.so",
+          "q": "A malicious SSH library named libsshd.so communicates with a remote bot master and will typically"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Injection into the SSH daemon",
+          "q": "is a collection of malware that can be injected into the SSH daemon"
+        },
+        {
+          "v": "Overwriting system binaries",
+          "q": "it attempts to overwrite the legitimate binaries ls, netstat, and crond with infected binaries"
+        },
+        {
+          "v": "Persistence through infected binaries",
+          "q": "Several other infected binaries (mainpasteheader, selfrecoverheader,…) ensure the host remains infected"
+        },
+        {
+          "v": "Restarting SSH and cron daemons",
+          "q": "it will kill and restart both the SSH and Cron daemons"
+        },
+        {
+          "v": "Remote shell and command execution",
+          "q": "Opens a shell terminal"
+        },
+        {
+          "v": "Reading the password file",
+          "q": "Reads users from /etc/shadow"
+        },
+        {
+          "v": "Hiding on the OS by infecting common binaries",
+          "q": "It hides on the OS by infecting common binaries such as netstat"
+        },
+        {
+          "v": "Data exfiltration",
+          "q": "Impact: Data exfiltration"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "Medium",
+          "q": "Severity Level: Medium"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ELF/Sshdinjector.A!tr"
+    },
+    "hedges": [
+      "The DaggerFly attribution is cited from existing threat intelligence, and the post says nobody had examined what the samples actually do.",
+      "AI-generated analysis can hallucinate, extrapolate or omit details; the author says its output must be checked against a disassembler.",
+      "The author says AI-generated source code details are not always correct, while decompiler output is accurate but hard to read.",
+      "The author says the AI's claims that the malware manipulates the MAC address and hides its network communications are exaggerated."
+    ]
+  },
+  "c1f9f0d2d77c1b350c7195058c7ac7bed463957a": {
+    "sha1": "c1f9f0d2d77c1b350c7195058c7ac7bed463957a",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T13:40:19Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1
   }
 }

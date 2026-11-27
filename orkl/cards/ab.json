@@ -353,5 +353,178 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "ab94b628493b6e25709ad7a5b4ea780741424be3": {
+    "sha1": "ab94b628493b6e25709ad7a5b4ea780741424be3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:36:22Z",
+    "model": "haiku",
+    "summary": "An iDEFENSE Labs white paper by Anton Chuvakin (February 2003) overviews Unix rootkits. It groups rootkit functions into maintaining access, attacking other systems and concealing evidence, and describes three implementation classes: binary, kernel (LKM) and library kits. It reviews three kits captured on Linux honeynets in 2002: an early binary kit, a w00tkit derivative of t0rn, and a custom rk kit with a Romanian-made component. It states that host integrity checkers such as Tripwire can detect the reviewed kits, and that the most effective recovery is a full system reinstall.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "amateur attackers",
+          "q": "is a backdoor tool of choice for many amateur attackers.",
+          "by": "the report (iDEFENSE Labs white paper)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Romania",
+          "q": "This RootKit is made in Romania."
+        }
+      ],
+      "dates": [
+        {
+          "v": "mid 1990s",
+          "q": "came into being sometime in the mid 1990s",
+          "what": "Rootkits as known today came into being"
+        },
+        {
+          "v": "1989",
+          "q": "1989: First log cleaners found on hacked systems",
+          "what": "First log cleaners found on hacked systems"
+        },
+        {
+          "v": "1999",
+          "q": "1999: Adore LKM kit released by TESO",
+          "what": "Adore LKM kit released by TESO"
+        },
+        {
+          "v": "2000",
+          "q": "2000: T0rnkit v8 libproc library Trojan released",
+          "what": "T0rnkit v8 libproc library Trojan released"
+        },
+        {
+          "v": "May 5, 2002",
+          "q": "On Sunday, May 5, 2002, the honeypot running at RedHat Linux 7.1 was hit",
+          "what": "Honeypot hit by the WU-FTPD exploit (Sa case study)"
+        },
+        {
+          "v": "summer 2002",
+          "q": "W00tkit was captured on a Linux honeynet in summer 2002.",
+          "what": "w00tkit captured on a Linux honeynet"
+        },
+        {
+          "v": "late 2002",
+          "q": "The rk kit was captured on a Linux honeynet in late 2002.",
+          "what": "rk kit captured on a Linux honeynet"
+        }
+      ],
+      "tools": [
+        {
+          "v": "linsniff",
+          "q": "a basic password sniffer (such as linsniff for Linux)"
+        },
+        {
+          "v": "AWU",
+          "q": "is AWU, the WU-FTPD mass exploitation tool."
+        },
+        {
+          "v": "SucKit",
+          "q": "SucKit is a user-friendly package that installs in the kernel"
+        },
+        {
+          "v": "Adore LKM",
+          "q": "1999: Adore LKM kit released by TESO"
+        },
+        {
+          "v": "T0rn 8",
+          "q": "of which T0rn 8 is the most famous representative"
+        },
+        {
+          "v": "muh",
+          "q": "The kit installs an IRC bouncer muh, a tool to reroute IRC connections"
+        },
+        {
+          "v": "Loki",
+          "q": "such as implemented by the classic Loki tool"
+        },
+        {
+          "v": "KIS",
+          "q": "The KIS kit, for example, attempts to evade the StMichael LKM detection module."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "replace critical system binaries",
+          "q": "The first rootkits seen in the wild used to replace critical system binaries"
+        },
+        {
+          "v": "trojaned",
+          "q": "The executable files were trojaned to perform an action conducive for an attacker"
+        },
+        {
+          "v": "malicious kernel modules",
+          "q": "Kernel-level rootkits first came into being as malicious kernel modules."
+        },
+        {
+          "v": "promiscuous mode",
+          "q": "placing a machine's network interface in promiscuous mode"
+        },
+        {
+          "v": "sanitizing various log files",
+          "q": "Removing existing evidence boils down to sanitizing various log files"
+        },
+        {
+          "v": "Runtime Kernel Patching",
+          "q": "paper of Silvio Cesare titled Runtime Kernel Patching"
+        },
+        {
+          "v": "magic password",
+          "q": "may contain a magic password"
+        },
+        {
+          "v": "covert channel",
+          "q": "A full-blown covert channel (in the sense defined in"
+        },
+        {
+          "v": "No-listener (sniffer-based) backdoor",
+          "q": "No-listener (sniffer-based) backdoor: This method of hidden communication"
+        },
+        {
+          "v": "Reverse shell",
+          "q": "Reverse shell/telnet: A backdoor that opens a connection from a target to an"
+        },
+        {
+          "v": "autorooters",
+          "q": "Remote attack tools include various scanners and autorooters."
+        },
+        {
+          "v": "DoS tools",
+          "q": "DoS tools are in a special category."
+        },
+        {
+          "v": "process hiding",
+          "q": "Provide process hiding."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "port 1100 TCP",
+          "q": "The daemon uses port 1100 TCP."
+        },
+        {
+          "v": "three rootkits",
+          "q": "iDEFENSE will now analyze three rootkits captured on compromised Linux machines."
+        },
+        {
+          "v": "812 or 1056 TCP",
+          "q": "running on a high port (such as 812 or 1056 TCP)"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Note that all dates below are the dates when information became publicly available and software might have been available much earlier in the underground",
+      "Surveyed rootkits did not utilize this technology.",
+      "These backdoors are just starting to pop up in rootkits.",
+      "It remains to be seen whether another backdoor in the ssh code backs up the high-port SSHD and /bin/login backdoor.",
+      "Tripwire might not look at the cgi-bin directory, and thus it would miss one backdoor."
+    ]
   }
 }

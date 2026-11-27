@@ -547,5 +547,312 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "d889f8ed2f6a73de74d4c8ec846a60281b64c951": {
+    "sha1": "d889f8ed2f6a73de74d4c8ec846a60281b64c951",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:31:11Z",
+    "model": "haiku",
+    "summary": "Cisco Talos report (published 2018-12-18) on illicit cryptocurrency mining. It links several groups, Rocke, the 8220 Mining Group and a group Talos named tor2mine, through shared tools, wallets and infrastructure. Methods include exploiting Apache Struts2, Oracle WebLogic, Drupal and Jenkins servers, malicious Git repositories, Pastebin-hosted scripts and XMRig miners. Rocke was observed developing destructive malware that poses as ransomware. The report estimates the groups hold about 1,200 Monero and earned hundreds of thousands of dollars combined.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "We first started tracking these groups when we began monitoring a prolific actor named Rocke and noticed that several other",
+          "by": "Cisco Talos (the report)"
+        },
+        {
+          "v": "8220 Mining Group",
+          "q": "8220 Mining Group —Active since 2017, this group leverages Pastebin sites, Git repositories and malicious Docker",
+          "by": "Cisco Talos (the report)"
+        },
+        {
+          "v": "tor2mine",
+          "q": "We also noticed a similar toolset being used by an actor we named \"tor2mine,\" based on the fact that they",
+          "by": "Cisco Talos (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2018-12-18",
+          "q": "Published: 2018-12-18 · Archived: 2026-04-05 14:28:28 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "March 2018",
+          "q": "We first observed the 8220 Mining Group in our Struts2 honeypots in March 2018.",
+          "what": "First observed the 8220 Mining Group in Struts2 honeypots"
+        },
+        {
+          "v": "February 2018",
+          "q": "Similarly, in February 2018, Trend Micro published a report on an actor exploiting an Oracle WebLogic WLS-WSAT",
+          "what": "Trend Micro published a report on a WebLogic exploitation campaign"
+        },
+        {
+          "v": "2018",
+          "q": "Rocke targeted vulnerable Apache Struts2 servers in the spring and summer of 2018.",
+          "what": "Rocke targeted Struts2 servers in spring and summer"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "The use of variants of the open-source miner XMRig intended for botnet mining, with versions dependent on the"
+        },
+        {
+          "v": "XHide Process Faker",
+          "q": "Tools such as XHide Process Faker, which can hide or change the name of Linux processes and PyInstaller, which"
+        },
+        {
+          "v": "PyInstaller",
+          "q": "This malware was developed in Python and then changed to ELF executables using the PyInstaller tool for distribution."
+        },
+        {
+          "v": "whatMiner",
+          "q": "In early October, Rocke forked a repository called whatMiner, developed by a Chinese-speaking actor."
+        },
+        {
+          "v": "XMRigCC",
+          "q": "32-bit variants of XMRigCC — a variant of the XMRig miner, Windows executable versions of publically available"
+        },
+        {
+          "v": "EternalBlue",
+          "q": "EternalBlue/EternalRomance exploit scripts,an open-source TCP port scanner, and shellcode that downloads and executes a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "illicit cryptocurrency mining",
+          "q": "Illicit cryptocurrency mining remained one of the most common threats Cisco Talos observed in 2018."
+        },
+        {
+          "v": "exploit recently published vulnerabilities",
+          "q": "Scanning for and attempting to exploit recently published vulnerabilities in servers such as Apache Struts2, Oracle"
+        },
+        {
+          "v": "malicious Git repositories",
+          "q": "to rely on malicious Git repositories, as well as malicious Amazon Machine Images. They have also been expanding their"
+        },
+        {
+          "v": "shell scripts masquerading as JPEG files",
+          "q": "Malicious shell scripts masquerading as JPEG files with the name \"logo*.jpg\" that install cron jobs and download"
+        },
+        {
+          "v": "destructive ransomware capabilities",
+          "q": "payloads to include malware with worm-like characteristics and destructive ransomware capabilities. Several campaigns"
+        },
+        {
+          "v": "tor2web gateway",
+          "q": "Recently, while searching through telemetry data, we observed malicious activity that leveraged a tor2web gateway to proxy"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-11776",
+          "q": "This actor was exploiting CVE-2018-11776, an Apache Struts 2 namespace vulnerability. The actor also relied on"
+        }
+      ],
+      "figures": [
+        {
+          "v": "hundreds of thousands of U.S. dollars",
+          "q": "hundreds of thousands of U.S. dollars combined."
+        },
+        {
+          "v": "nearly $200,000",
+          "q": "8220 Mining Group was able to amass nearly $200,000 worth of Monero through their"
+        },
+        {
+          "v": "around 1,200 Monero",
+          "q": "totaling around 1,200 Monero. Based on public reporting, these groups combined had earned hundreds of thousands"
+        },
+        {
+          "v": "three samples",
+          "q": "There were three samples in this folder: mr.sh, a"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "It is unclear how the initial exploitation occurs.",
+      "The report says the 8220 Mining Group tool link rests on the repository's default wallet and infrastructure, and that Talos believes the link exists.",
+      "Talos says the 8220 Mining Group is likely responsible for several other campaigns.",
+      "Some actors could not be connected to each other through network infrastructure or cryptocurrency wallets.",
+      "Exact earnings are hard to ascertain because the value of Monero is very volatile.",
+      "Talos could not track holdings and payments for certain wallet types, such as MinerGate.",
+      "Rocke activity tapered off late in the year, but the report says threat actors may shift to different payloads."
+    ]
+  },
+  "d8c342f73b2603fedc4913e6a2378a846331fa96": {
+    "sha1": "d8c342f73b2603fedc4913e6a2378a846331fa96",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:55Z",
+    "model": "haiku",
+    "summary": "This is a Linux documentation page (a how-to on Linux kernel modules, LKMs) explaining how to insert and remove them with insmod, rmmod, modprobe and depmod, how module dependencies and loading errors work, and how /proc/modules is read. It describes no threat actor, campaign, malware, vulnerability or incident, so it is not a threat report.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "d8141e5ae73b0856feae51f1c3dd07a979f15ad0": {
+    "sha1": "d8141e5ae73b0856feae51f1c3dd07a979f15ad0",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:40:22Z",
+    "model": "haiku",
+    "summary": "RapperBot is an IoT malware family that Fortinet FortiGuard Labs has tracked since mid-June 2022. It reuses Mirai source code but mainly brute-forces SSH servers rather than Telnet. It has limited DDoS capability and adds persistence through SSH keys and a root account. The report says its primary motivation is still unclear.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "This provides threat actors with continued access to infected devices via SSH even after the device is rebooted",
+          "by": "Fortinet FortiGuard Labs (report author)"
+        },
+        {
+          "v": "developers",
+          "q": "the developers of this malware maintain a relatively low profile",
+          "by": "Fortinet FortiGuard Labs (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Any organization",
+          "q": "Impacted Users: Any organization"
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        },
+        {
+          "v": "Taiwan",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        },
+        {
+          "v": "South Korea",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        }
+      ],
+      "dates": [
+        {
+          "v": "mid-June 2022",
+          "q": "FortiGuard Labs has been tracking a rapidly evolving IoT malware family known as “RapperBot” since mid-June 2022.",
+          "what": "FortiGuard Labs began tracking RapperBot"
+        },
+        {
+          "v": "June 2022",
+          "q": "In June 2022, FortiGuard Labs encountered IoT malware samples with SSH-related strings",
+          "what": "Samples with SSH-related strings first encountered"
+        },
+        {
+          "v": "late June",
+          "q": "In late June, however, FortiGuard Labs found some samples that attempted to self-propagate",
+          "what": "Samples found attempting self-propagation"
+        },
+        {
+          "v": "mid-July",
+          "q": "Since mid-July, RapperBot has switched from self-propagation to maintaining remote access",
+          "what": "Shift to maintaining remote access to brute-forced SSH servers"
+        },
+        {
+          "v": "August 3, 2022",
+          "q": "August 3, 2022",
+          "what": "Report published"
+        },
+        {
+          "v": "November 2021",
+          "q": "pivoting on these bot IDs allowed us to find older samples from November 2021",
+          "what": "Older samples found by pivoting on bot IDs"
+        },
+        {
+          "v": "late December 2021",
+          "q": "a separate cluster seen only in late December 2021",
+          "what": "Separate bot ID cluster seen"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mirai",
+          "q": "This family borrows heavily from the original Mirai source code"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute force credentials",
+          "q": "its built-in capability to brute force credentials and gain access to SSH servers"
+        },
+        {
+          "v": "maintain persistence",
+          "q": "its developers have started adding code to maintain persistence, which is rarely done in other Mirai"
+        },
+        {
+          "v": "adding the root user",
+          "q": "In the latest RapperBot samples, the malware also started adding the root user"
+        },
+        {
+          "v": "adds the root user account every hour",
+          "q": "it adds the root user account every hour by writing the following script"
+        },
+        {
+          "v": "extra obfuscation to the strings",
+          "q": "subsequent samples added extra obfuscation to the strings by building them on the stack"
+        },
+        {
+          "v": "XOR encoding",
+          "q": "Furthermore, these latest samples implemented an additional layer of Mirai-style XOR encoding to hide these strings"
+        },
+        {
+          "v": "self-propagate",
+          "q": "attempted to self-propagate via a remote binary downloader post-compromise"
+        },
+        {
+          "v": "UDP and TCP STOMP flood attacks",
+          "q": "plain UDP and TCP STOMP flood attacks that are very similar to Mirai’s implementation"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "3,500 unique IPs",
+          "q": "Over 3,500 unique IPs have been observed in the past 1.5 months"
+        },
+        {
+          "v": "Critical",
+          "q": "Severity Level: Critical"
+        },
+        {
+          "v": "ARM, MIPS, SPARC, and x86",
+          "q": "As is typical of most IoT malware, it targets ARM, MIPS, SPARC, and x86 architectures."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RapperBot"
+    },
+    "hedges": [
+      "we suspect the threat actors have implemented a separate loader system that would subsequently connect to the victim to download and execute the bot client",
+      "For unknown reasons, this propagation functionality was removed in samples collected a few days later",
+      "Could the DDoS functionality have been retained for masquerading as a typical DDoS botnet to avoid drawing too much attention?",
+      "It is also possible that this whole campaign is still a work in progress.",
+      "We can only speculate on why the threat actors are amassing a rapidly growing collection of compromised SSH servers.",
+      "its primary motivation is still a bit of a mystery",
+      "FortiGuard Labs assesses that the threat actor could perform but have not been observed in the wild"
+    ]
   }
 }

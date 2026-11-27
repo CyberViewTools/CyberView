@@ -432,25 +432,125 @@
   },
   "e66c3e6b12e93b94f0885ef6f8d74cbfa9702bbc": {
     "sha1": "e66c3e6b12e93b94f0885ef6f8d74cbfa9702bbc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:14:11Z",
+    "read_at": "2026-11-27T13:28:28Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Cisco Talos reports on XorDDoS, a Linux DDoS trojan first identified in 2014. Talos describes a new VIP sub-controller and a central controller that manage multiple bot controllers. Talos observed spread from November 2023 to February 2025, with the United States the largest share of compromised victims and attack activity. Talos assesses with high confidence that the operators are Chinese-speaking, and that the trojan tooling is sold on the underground market. The trojan gains access through SSH brute-force attacks and then persists using init and cron scripts.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Chinese-speaking individuals",
+          "q": "Talos assess with high confidence that the operators are Chinese-speaking individuals.",
+          "by": "Cisco Talos"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "with nearly 50 percent of its successfully compromised victims located in the United States."
+        },
+        {
+          "v": "Saudi Arabia",
+          "q": "Saudi Arabia, France, Turkey, the United Arab Emirates and South Korea."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2014",
+          "q": "First identified in 2014, its sub-controller was uncovered in 2015.",
+          "what": "XorDDoS first identified"
+        },
+        {
+          "v": "2015",
+          "q": "Although the sub-controller for XorDDoS was exposed in 2015, attacks have persisted over the last decade.",
+          "what": "XorDDoS sub-controller exposed"
+        },
+        {
+          "v": "2017",
+          "q": "trojan, the first instance of which we traced back to 2017.",
+          "what": "First instance of the VIP trojan version traced"
+        },
+        {
+          "v": "November 2023",
+          "q": "continuing to spread globally between November 2023 and February 2025.",
+          "what": "Start of observation period"
+        },
+        {
+          "v": "February 2025",
+          "q": "continuing to spread globally between November 2023 and February 2025.",
+          "what": "End of observation period"
+        },
+        {
+          "v": "2024",
+          "q": "In 2024, Talos discovered a new “VIP” version of the XorDDoS sub-controller, which can control the",
+          "what": "Talos discovered new VIP sub-controller"
+        },
+        {
+          "v": "2025-04-17",
+          "q": "Published: 2025-04-17",
+          "what": "Talos report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XorDDoS trojan",
+          "q": "The XorDDoS trojan is a well-known DDoS malware that targets Linux machines, turning them into"
+        },
+        {
+          "v": "XorDDoS builder",
+          "q": "The language settings of the muti-layer controller, XorDDoS builder and controller binding tool"
+        },
+        {
+          "v": "central controller",
+          "q": "the central controller enables threat actors to manage multiple XorDDoS controllers"
+        },
+        {
+          "v": "controller binder",
+          "q": "The central controller can generate a controller binder that will inject a DLL file to the XorDDoS controller to"
+        },
+        {
+          "v": "CyberChef",
+          "q": "Talos used CyberChef to successfully decrypt one of the examples."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Secure Shell (SSH) brute-force attacks",
+          "q": "Secure Shell (SSH) brute-force attacks to gain remote access to target devices."
+        },
+        {
+          "v": "init script and a cron job script",
+          "q": "the malware installs an init script and a cron job script."
+        },
+        {
+          "v": "DDoS attack",
+          "q": "to launch DDoS attack and the attacks are globalized."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "nearly 50 percent",
+          "q": "with nearly 50 percent of its successfully compromised victims located in the United States."
+        },
+        {
+          "v": "over 70 percent",
+          "q": "A significant finding shows that over 70 percent of attacks using XorDDoS targeted the United States from"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "XorDDoS"
+    },
+    "hedges": [
+      "Talos assess with high confidence that the operators are Chinese-speaking individuals.",
+      "The language settings ... strongly suggest that the operators are Chinese-speaking individuals.",
+      "Talos believes that this collection is a product suite developed for sale.",
+      "Talos believes the 2015 version 1.4 panel is no longer in use by threat actors."
+    ]
   }
 }

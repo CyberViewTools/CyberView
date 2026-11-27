@@ -290,26 +290,163 @@
   },
   "adc6c259bb0270e22e83f63cea05797cf0b5a8cc": {
     "sha1": "adc6c259bb0270e22e83f63cea05797cf0b5a8cc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:13:27Z",
+    "read_at": "2026-11-27T13:27:41Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Trend Micro article on the Erebus ransomware and its Linux variant. Erebus first emerged in September 2016, spread through malvertisements and the Rig exploit kit, and later used a User Account Control bypass. The Linux version infected 153 servers at South Korean web hosting company NAYANA in June, affecting around 3,400 businesses. The report says NAYANA appears to have paid a first ransom payment but has not received a decryption key. It also gives server hardening advice.",
+    "kind": "incident",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "cybercriminals",
+          "q": "it appears cybercriminals successfully forced NAYANA into",
+          "by": "the report (Trend Micro)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "web hosting",
+          "q": "South Korea-based web hosting company NAYANA became one of the latest high-profile victims of"
+        },
+        {
+          "v": "data centers",
+          "q": "Data centers and hosting/storage service providers also commonly use machines running Linux, for instance."
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "South Korea-based web hosting company NAYANA became one of the latest high-profile victims of"
+        },
+        {
+          "v": "South Korea",
+          "q": "This version of Erebus was observed using compromised websites in South Korea as its command and control"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 10",
+          "q": "On June 10, South Korea-based web hosting company NAYANA became one of the latest high-profile victims of",
+          "what": "NAYANA hit by Erebus ransomware; 153 Linux servers found infected"
+        },
+        {
+          "v": "September 2016",
+          "q": "first emerged last September 2016",
+          "what": "Erebus ransomware first emerged"
+        },
+        {
+          "v": "February 2017",
+          "q": "By February 2017, Erebus was found to have evolved and changed tactics",
+          "what": "Erebus found to have changed tactics to bypass User Account Control"
+        },
+        {
+          "v": "June 15, 2017",
+          "q": "(US$216 as of June 15, 2017)",
+          "what": "Date of the Bitcoin-to-US-dollar ransom conversion"
+        },
+        {
+          "v": "2014",
+          "q": "Linux ransomware emerged as early as 2014",
+          "what": "Linux ransomware first emerged"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Erebus ransomware",
+          "q": "Erebus ransomware (RANSOM_EREBUS.A) first emerged last September 2016"
+        },
+        {
+          "v": "Rig exploit kit",
+          "q": "Rig exploit kit, which infects the victim's systems with the ransomware."
+        },
+        {
+          "v": "RANSOM_ELFEREBUS.A",
+          "q": "Micro as RANSOM_ELFEREBUS.A) variant."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malvertisements",
+          "q": "being distributed by malvertisements (malicious advertisements). The malicious ads diverted victims to the"
+        },
+        {
+          "v": "bypassing User Account Control",
+          "q": "Erebus evolved from using exploit kits to bypassing User Account Control"
+        },
+        {
+          "v": "UNIX cron",
+          "q": "It also employs the UNIX cron"
+        },
+        {
+          "v": "fake Bluetooth service",
+          "q": "Its persistence mechanisms include adding a fake Bluetooth service to ensure that the"
+        },
+        {
+          "v": "RSA-2048 encryption",
+          "q": "scrambles files with RSA-2048 encryption algorithm"
+        },
+        {
+          "v": "deletes shadow copies",
+          "q": "This version (RANSOM_EREBUS.TOR) also deletes shadow copies to prevent"
+        },
+        {
+          "v": "compromised websites",
+          "q": "This version of Erebus was observed using compromised websites in South Korea as its command and control"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "153",
+          "q": "after 153 of its Linux servers were found infected with an Erebus ransomware (detected by Trend"
+        },
+        {
+          "v": "3,400",
+          "q": "around 3,400 businesses employing NAYANA"
+        },
+        {
+          "v": "423",
+          "q": "This Erebus variant targets 423 file types,"
+        },
+        {
+          "v": "433",
+          "q": "This iteration of Erebus targets 433 file types, some of which include:"
+        },
+        {
+          "v": "0.085 Bitcoin",
+          "q": "unless the ransom is paid, which is 0.085 Bitcoin"
+        },
+        {
+          "v": "96 hours",
+          "q": "within 96 hours unless the ransom is paid"
+        },
+        {
+          "v": "US$216",
+          "q": "(US$216 as of June 15, 2017)"
+        },
+        {
+          "v": "10 Bitcoins ($24,689)",
+          "q": "it originally demanded 10 Bitcoins ($24,689), but the ransom"
+        },
+        {
+          "v": "5 BTC ($12,344)",
+          "q": "has since gone down to 5 BTC ($12,344)."
+        },
+        {
+          "v": "three payments",
+          "q": "they paid the first of three payments they plan to make"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Erebus ransomware"
+    },
+    "hedges": [
+      "The report says it appears cybercriminals forced NAYANA into paying, and that NAYANA has yet to receive the first decryption key.",
+      "Trend Micro's ongoing analysis indicates the Linux variant uses RSA to encrypt AES keys; the report describes this analysis as ongoing."
+    ]
   },
   "ad6740045c5dc9af006d2517ce6f8b17bda5a79d": {
     "sha1": "ad6740045c5dc9af006d2517ce6f8b17bda5a79d",
@@ -482,6 +619,147 @@
       "The target was probably an Apache Tomcat webserver, based on the archive folder structure.",
       "The archives probably originate from an incident response on a compromised server.",
       "Gelsemium most likely acquires VPS from commercial providers."
+    ],
+    "audit": {
+      "at": "2026-11-27T13:26:08Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
+  },
+  "ad5861dd889241147f29105b1e93ce68d73dc5ad": {
+    "sha1": "ad5861dd889241147f29105b1e93ce68d73dc5ad",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:15Z",
+    "model": "haiku",
+    "summary": "A hosting-company blog post for server administrators. It lists Linux log files worth monitoring, such as the system, authentication, kernel, cron, package, mail, Apache and MySQL logs, and recommends centralized log monitoring. It describes no threat actor, campaign, malware, vulnerability or incident, so it is not a threat report.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "ad6a75c66b13ba9b3bf0b3ee2e286d66fe8aa1b4": {
+    "sha1": "ad6a75c66b13ba9b3bf0b3ee2e286d66fe8aa1b4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:34Z",
+    "model": "haiku",
+    "summary": "CloudSEK analysis of the files used in an ESXiArgs ransomware attack on VMware ESXi servers. Threat actors exploit CVE-2021-21974, a heap-overflow in OpenSLP, for remote code execution. A Bash script prepares virtual machines and runs a GCC-compiled binary that encrypts their files with RSA and the Sosemanuk stream cipher. It leaves a ransom note, deletes logs and alters files to hide traces. The report says more than 3200 organisations were infected, though the number of vulnerable servers is hard to ascertain. The files were shared by a forum member on 03 February 2023.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Threat actors",
+          "q": "Threat actors attack VMware ESXi servers using a custom Ransomware script.",
+          "by": "CloudSEK (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "03 February 2023",
+          "q": "On 03 February 2023, there was a surge in attacks targeting VMware ESXi servers.",
+          "what": "surge in attacks targeting VMware ESXi servers"
+        },
+        {
+          "v": "03 February 2023",
+          "q": "On 03 February 2023, a member on the Bleeping Computer forum thread, with access to a targeted server, shared",
+          "what": "forum member shared the attack script and executable"
+        }
+      ],
+      "tools": [
+        {
+          "v": "encrypt.sh",
+          "q": "encrypt.sh (The script)"
+        },
+        {
+          "v": "encrypt binary",
+          "q": "encrypt binary (Ransomware Payload)"
+        },
+        {
+          "v": "SOSEMANUK",
+          "q": "Uses an RSA public key and the SOSEMANUK stream cipher to encrypt files."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "heap-overflow",
+          "q": "vulnerable to a heap-overflow attack, which allowed attackers to"
+        },
+        {
+          "v": "Remote Code Execution",
+          "q": "to gain RCE (Remote Code Execution) and launch ransomware"
+        },
+        {
+          "v": "replaces the filenames",
+          "q": "It then replaces the filenames of the disk image and swap file in all config files with 1.vmdk and 1.vswp."
+        },
+        {
+          "v": "kill running VM processes",
+          "q": "Killing running VM processes"
+        },
+        {
+          "v": "target file extensions",
+          "q": "Looking for files with the target file extensions"
+        },
+        {
+          "v": "RSA public key",
+          "q": "Uses an RSA public key and the SOSEMANUK stream cipher to encrypt files."
+        },
+        {
+          "v": "deletes all log files",
+          "q": "It then deletes all log files in order to cover its tracks."
+        },
+        {
+          "v": "ransom note",
+          "q": "Once the files are encrypted, the script first replaces the Message of The Day (.motd) file with the ransom note."
+        },
+        {
+          "v": "hide any cron jobs",
+          "q": "executes the following steps to hide any cron jobs run by the root user:"
+        },
+        {
+          "v": "modifies the timestamp",
+          "q": "it modifies the timestamp of the file, to hide any changes made to the file."
+        },
+        {
+          "v": "starts the SSH service",
+          "q": "After the clean-up operations, the script starts the SSH service, possibly in the event"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-21974",
+          "q": "The ransomware exploits an old RCE vulnerability (CVE-2021-21974) in ESXi versions:7.0 before"
+        }
+      ],
+      "figures": [
+        {
+          "v": "3200+",
+          "q": "OSINT analysis revealed that 3200+ organizations were infected, even though it is tough to ascertain the number"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ESXiArgs"
+    },
+    "hedges": [
+      "it is tough to ascertain the number of vulnerable servers",
+      "these files were reportedly used to encrypt the contents of their ESXi servers.",
+      "Reportedly, the amount of Bitcoin and the TOX ID differ from victim to victim.",
+      "possibly in the event that the threat actor wants to return to the server."
     ]
   }
 }

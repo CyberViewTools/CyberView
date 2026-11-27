@@ -122,5 +122,248 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "51672fafe669cf99d78fbf7393084e04cf008325": {
+    "sha1": "51672fafe669cf99d78fbf7393084e04cf008325",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:31:33Z",
+    "model": "haiku",
+    "summary": "Mandiant report on UNC3886, a suspected China-nexus espionage actor. It describes exploitation of zero-day flaws in VMware and Fortinet products to reach guest VMs, ESXi hypervisors and TACACS+ servers since late 2021. It covers the REPTILE and MEDUSA rootkits, MOPSLED and RIFLESPINE backdoors that use GitHub and Google Drive for C2, backdoored SSH binaries that harvest credentials, a TACACS+ credential-capture effort, and VMCI backdoors. Victims are mainly in North America, Southeast Asia and Oceania, in government, telecom, technology, aerospace, defense and energy sectors.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC3886",
+          "q": "UNC3886, a suspected China-nexus cyber espionage actor that",
+          "by": "Mandiant"
+        },
+        {
+          "v": "APT41",
+          "q": "Mandiant observed sharing of MOPSLED between other Chinese cyber espionage groups including APT41.",
+          "by": "Mandiant"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "governments",
+          "q": "typically observed in espionage operations, namely governments, telecommunications, technology, aerospace and"
+        },
+        {
+          "v": "telecommunications",
+          "q": "typically observed in espionage operations, namely governments, telecommunications, technology, aerospace and"
+        },
+        {
+          "v": "technology",
+          "q": "typically observed in espionage operations, namely governments, telecommunications, technology, aerospace and"
+        },
+        {
+          "v": "aerospace",
+          "q": "typically observed in espionage operations, namely governments, telecommunications, technology, aerospace and"
+        },
+        {
+          "v": "energy and utility",
+          "q": "defense, and energy and utility sectors."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "September 2022",
+          "q": "Following the discovery of malware residing within ESXi hypervisors in September 2022, Mandiant began",
+          "what": "Malware found within ESXi hypervisors; Mandiant began investigating UNC3886 intrusions"
+        },
+        {
+          "v": "January 2023",
+          "q": "In January 2023, Mandiant provided detailed analysis of the exploitation of a now-patched vulnerability in FortiOS",
+          "what": "Mandiant provided analysis of a FortiOS vulnerability exploitation"
+        },
+        {
+          "v": "March 2023",
+          "q": "In March 2023, we provided details surrounding a custom malware ecosystem utilized on affected",
+          "what": "Details of a custom malware ecosystem on Fortinet devices were provided"
+        },
+        {
+          "v": "2024-06-18",
+          "q": "Published: 2024-06-18 · Archived: 2026-04-05 17:26:40 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "late 2021",
+          "q": "(VMware vCenter) since late 2021.",
+          "what": "UNC3886 exploitation of CVE-2023-34048 against vCenter servers began"
+        },
+        {
+          "v": "January 2024",
+          "q": "In January 2024, Mandiant published a blog post detailing UNC3886's activities exploiting CVE-2023-34048",
+          "what": "Mandiant published a blog post on the vCenter exploitation"
+        },
+        {
+          "v": "January 2023",
+          "q": "to obtain access in January 2023 after details of the vulnerability had been made public by",
+          "what": "Mandiant observed CVE-2022-42475 exploited against FortiOS SSL VPN"
+        },
+        {
+          "v": "Tue Oct 25 23:28:07 2022",
+          "q": "# Added lock on Tue Oct 25 23:28:07 2022",
+          "what": "A version lock was added to OpenSSH packages on a compromised system"
+        },
+        {
+          "v": "March 1, 2020",
+          "q": "which was introduced on March 1, 2020, potentially indicating the actor has been developing and/or operating this rootkit",
+          "what": "REPTILE version 2.1 code base was introduced"
+        },
+        {
+          "v": "Since March 2023",
+          "q": "Since March 2023, we have tracked UNC3886 activity leveraging zero-day exploits for Fortinet and VMware",
+          "what": "Mandiant began tracking UNC3886 activity as Campaign 23-022"
+        }
+      ],
+      "tools": [
+        {
+          "v": "REPTILE",
+          "q": "REPTILE is an open-source Linux rootkit, implemented as a loadable kernel module (LKM)"
+        },
+        {
+          "v": "MEDUSA",
+          "q": "Mandiant observed the actor use two publicly available rootkits, REPTILE and MEDUSA, on the guest"
+        },
+        {
+          "v": "SEAELF",
+          "q": "installer component, identified by Mandiant as SEAELF."
+        },
+        {
+          "v": "MOPSLED",
+          "q": "MOPSLED is a shellcode-based modular backdoor that has the capability to communicate over HTTP or a custom"
+        },
+        {
+          "v": "RIFLESPINE",
+          "q": "RIFLESPINE is a cross-platform backdoor that leverages Google Drive to transfer files and execute commands."
+        },
+        {
+          "v": "LOOKOVER",
+          "q": "LOOKOVER is a sniffer written in C that processes TACACS+ authentication"
+        },
+        {
+          "v": "VIRTUALSHINE",
+          "q": "VIRTUALSHINE is a simple VMware VMCI sockets-based backdoor that provides access to a bash shell."
+        },
+        {
+          "v": "VIRTUALPIE",
+          "q": "VIRTUALPIE is a backdoor written in Python that spawns a demonized IPv6 listener on a hard-coded"
+        },
+        {
+          "v": "VIRTUALSPHERE",
+          "q": "VIRTUALSPHERE is the controller part of a simple VMCI-based backdoor."
+        },
+        {
+          "v": "CROSSWALK",
+          "q": "Mandiant considered MOPSLED to be an evolution of CROSSWALK, which can act as a network proxy."
+        },
+        {
+          "v": "NMAP",
+          "q": "Mandiant successfully recovered scan logs generated by NMAP."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "publicly available rootkits for long-term persistence",
+          "q": "The use of publicly available rootkits for long-term persistence"
+        },
+        {
+          "v": "trusted third-party services for command and control",
+          "q": "Deployment of malware that leveraged trusted third-party services for command and control (C2 or C&C)"
+        },
+        {
+          "v": "SSH backdoors",
+          "q": "Subverting access and collecting credentials with Secure Shell (SSH) backdoors"
+        },
+        {
+          "v": "Extracting credentials from TACACS+ authentication",
+          "q": "Extracting credentials from TACACS+ authentication using custom malware"
+        },
+        {
+          "v": "port knocking",
+          "q": "evasively access and control the infected endpoints via port knocking."
+        },
+        {
+          "v": "backdoored SSH clients and daemons",
+          "q": "UNC3886 was observed deploying backdoored SSH clients and daemons."
+        },
+        {
+          "v": "custom SSH server",
+          "q": "leveraging MEDUSA rootkit to deploy a custom SSH server with the same malicious goals."
+        },
+        {
+          "v": "Virtual Machine Communication Interface",
+          "q": "Mandiant discovered a new variant of backdoors leveraging the Virtual Machine Communication Interface"
+        },
+        {
+          "v": "VMware Guest Operations abuse",
+          "q": "in conjunction with VMware Guest Operations abuse to facilitate malicious file"
+        },
+        {
+          "v": "TCP SYN scan",
+          "q": "Scanning parameters: TCP SYN scan was initiated in the aggressive mode without DNS resolution and"
+        },
+        {
+          "v": "dead-drop URL",
+          "q": "MOPSLED.LINUX was developed to communicate with a dead-drop URL to retrieve an actual C2 address."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-34048",
+          "q": "In January 2024, Mandiant published a blog post detailing UNC3886's activities exploiting CVE-2023-34048"
+        },
+        {
+          "v": "CVE-2022-41328",
+          "q": "CVE-2022-41328 in FortiOS was exploited to download and execute backdoors on FortiGate devices."
+        },
+        {
+          "v": "CVE-2022-22948",
+          "q": "CVE-2022-22948 in VMware vCenter was exploited to obtain encrypted credentials in the vCenter's"
+        },
+        {
+          "v": "CVE-2023-20867",
+          "q": "CVE-2023-20867 in VMware Tools was exploited to execute unauthenticated Guest Operations from ESXi"
+        },
+        {
+          "v": "CVE-2022-42475",
+          "q": "CVE-2022-42475 allows a remote unauthenticated attacker to execute arbitrary code or commands via specifically crafted requests."
+        }
+      ],
+      "figures": [
+        {
+          "v": "two publicly available rootkits",
+          "q": "Mandiant observed the actor use two publicly available rootkits, REPTILE and MEDUSA, on the guest"
+        },
+        {
+          "v": "three other zero-day vulnerabilities",
+          "q": "The threat actor exploited three other zero-day vulnerabilities, which have since been patched"
+        },
+        {
+          "v": "two versions",
+          "q": "Mandiant identified two versions of MEDUSA deployed in the compromised endpoints"
+        },
+        {
+          "v": "several layers",
+          "q": "UNC3886 employed several layers of organized persistence for redundancy to"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Campaign 23-022"
+    },
+    "hedges": [
+      "Mandiant describes UNC3886 as a suspected China-nexus cyber espionage actor.",
+      "The FortiOS-exploiting threat actor is only suspected to be UNC3886.",
+      "Mandiant assessed the use of MEDUSA to be experimental alternatives of REPTILE and SSH keyloggers.",
+      "The objectives of the threat actor were initially unclear due to limited visibility and the extensive use of rootkits, tools, and scripts.",
+      "It is reasonable to assume that the threat actor abandoned the idea of using MOPSLED.LINUX and RIFLESPINE as backdoors.",
+      "REPTILE appeared to be the first option to establish a foothold and possibly the last resort for maintaining access due to its small footprints.",
+      "Early development is potentially indicating the actor has been developing and/or operating this rootkit for some time."
+    ]
   }
 }

@@ -24,7 +24,7 @@
   },
   "00dcdb65370a0b56b2e7890e259ec8fb303d6924": {
     "sha1": "00dcdb65370a0b56b2e7890e259ec8fb303d6924",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T13:13:12Z",
     "model": "haiku",
@@ -124,6 +124,151 @@
       "this may not be the be-all and end-all of the possible abuse surrounding exposed Redis instances",
       "an action that may have been inspired by this repository",
       "As of the publication of this article, there are no transactions associated with the hard-coded Ethereum address."
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T13:25:42Z",
+      "ok": false,
+      "note": "summary: Calls Kinsing a \"downloader\". The text describes Kinsing as a bot with scanning and backdoor features, and the malicious Redis module is what downloads",
+      "by": "auditor"
+    }
+  },
+  "00ed8ff824930cc09fa3ce64165c8f25d476c290": {
+    "sha1": "00ed8ff824930cc09fa3ce64165c8f25d476c290",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:38:56Z",
+    "model": "haiku",
+    "summary": "McAfee Labs presentation on Duqu, a malware family that the report says shares code with Stuxnet. Targeted Duqu attacks were observed in Iran, England and the US in September and October 2011. The malware uses a rootkit, injects its modules into system processes, was signed with a valid certificate, and is designed to self-delete after 36 days. The primary infection vector had not been recovered. The report finds no ICS-specific attack code and no known targeting of energy sector companies. The known command and control server was hosted in India.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Stuxnet team",
+          "q": "Duqu (by Stuxnet team) is used for targeted attacks in (UK, IRAN, US)",
+          "by": "McAfee Labs (report by Peter Szor)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "energy sector (no known targeting reported)",
+          "q": "No known targeting of energy sector companies."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Iran",
+          "q": "Targeted attacks have been observed in Iran, England and US"
+        },
+        {
+          "v": "England",
+          "q": "Targeted attacks have been observed in Iran, England and US"
+        },
+        {
+          "v": "US",
+          "q": "Targeted attacks have been observed in Iran, England and US"
+        },
+        {
+          "v": "Austria",
+          "q": "Other reports: Austria, Hungary, Indonesia"
+        },
+        {
+          "v": "Hungary",
+          "q": "Other reports: Austria, Hungary, Indonesia"
+        },
+        {
+          "v": "Indonesia",
+          "q": "Other reports: Austria, Hungary, Indonesia"
+        },
+        {
+          "v": "India",
+          "q": "The known Command and Control server was hosted in India."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September-October 2011",
+          "q": "September, October 2011: Duqu",
+          "what": "Targeted Duqu attacks observed in Iran, England and US"
+        },
+        {
+          "v": "November 2007",
+          "q": "Stuxnet worm developed from November 2007",
+          "what": "Development of the Stuxnet worm began"
+        },
+        {
+          "v": "06/2009",
+          "q": "Certificate valid from 06/2009",
+          "what": "Validity start of the JMicron certificate used to sign a Stuxnet driver"
+        },
+        {
+          "v": "08/03/2009",
+          "q": "Certificate valid from 08/03/2009",
+          "what": "Validity start of the C-Media certificate used to sign a Duqu variant"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Keylogger",
+          "q": "The Keylogger component is a standalone module."
+        },
+        {
+          "v": "Stuxnet",
+          "q": "Stuxnet worm developed from November 2007"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "signed driver using a valid digital certificate",
+          "q": "The malware employed a valid digital certificate"
+        },
+        {
+          "v": "rootkit to hide activities",
+          "q": "Rootkit to hide its activities"
+        },
+        {
+          "v": "injection of decrypted modules into system processes",
+          "q": "Decrypted DLLs are directly injected into system"
+        },
+        {
+          "v": "self-deletion after a set period",
+          "q": "The malware is designed to self-delete after 36 days"
+        },
+        {
+          "v": "anti-firewall and anti-BB features",
+          "q": "Anti-firewall feature, Anti-BB feature"
+        },
+        {
+          "v": "command and control over web ports",
+          "q": "Once the DLL module is started, the known variants will try to contact"
+        },
+        {
+          "v": "keystroke logging and system reconnaissance",
+          "q": "Keystroke data"
+        },
+        {
+          "v": "delivery of update modules via command and control",
+          "q": "New update modules via C&C"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "36 days",
+          "q": "The malware is designed to self-delete after 36 days"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Duqu"
+    },
+    "hedges": [
+      "The report says the primary infection vector has not yet been discovered or recovered.",
+      "The report says the infected organizations appear to be limited.",
+      "The report says code-level similarities led it to believe Duqu was based on the same source code as Stuxnet.",
+      "The report says the hardcoded User-Agent may be used to identify infected machines."
     ]
   }
 }

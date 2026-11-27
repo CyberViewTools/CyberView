@@ -334,5 +334,201 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "25d1e0f161e755fb43a986a32487aaeaf06aa589": {
+    "sha1": "25d1e0f161e755fb43a986a32487aaeaf06aa589",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:32:18Z",
+    "model": "haiku",
+    "summary": "Mandiant reports a July 2023 supply chain compromise of a US-based software solutions entity, believed to have started with spear phishing against the JumpCloud directory platform. It attributes the activity to UNC4899, a suspected North Korean actor it assesses as a cryptocurrency-focused element of the Reconnaissance General Bureau. The intrusions deployed macOS backdoors FULLHOUSE.DOORED, STRATOFEAR and TIEDYE. The report also describes DPRK targeting of cryptocurrency and fintech executives and the groups' use of relay boxes and VPNs.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC4899",
+          "q": "Mandiant attributed these intrusions to UNC4899, a Democratic People's Republic of Korea (DPRK)-nexus actor",
+          "by": "Mandiant"
+        },
+        {
+          "v": "Reconnaissance General Bureau",
+          "q": "a cryptocurrency-focused element within the DPRK's Reconnaissance General Bureau (RGB).",
+          "by": "Mandiant"
+        },
+        {
+          "v": "TraderTraitor",
+          "q": "UNC4899 likely corresponds to TraderTraitor, a financially motivated DPRK threat group that primarily",
+          "by": "Mandiant, based on reporting from trusted partners"
+        },
+        {
+          "v": "APT43",
+          "q": "UNC4899 targeting overlaps with a separate RGB-aligned group, APT43, who in July, 2023 displayed interest",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC2970",
+          "q": "Mandiant has observed UNC2970, APT43, and UNC4899 all utilize similar infrastructure.",
+          "by": "Mandiant"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cryptocurrency",
+          "q": "history of targeting companies within the cryptocurrency vertical."
+        },
+        {
+          "v": "fintech",
+          "q": "specifically targeting a variety of C-Suite executives from multiple fintech and cryptocurrency"
+        },
+        {
+          "v": "software solutions",
+          "q": "a supply chain compromise affecting a US-based software solutions entity."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Democratic People's Republic of Korea",
+          "q": "Mandiant attributed these intrusions to UNC4899, a Democratic People's Republic of Korea (DPRK)-nexus actor"
+        },
+        {
+          "v": "United States",
+          "q": "companies in the United States, South Korea, Hong Kong, and Singapore."
+        },
+        {
+          "v": "South Korea",
+          "q": "companies in the United States, South Korea, Hong Kong, and Singapore."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "companies in the United States, South Korea, Hong Kong, and Singapore."
+        },
+        {
+          "v": "Singapore",
+          "q": "companies in the United States, South Korea, Hong Kong, and Singapore."
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 27, 2023",
+          "q": "On June 27, 2023, at 18:51:57 UTC, Mandiant identified a malicious Ruby script executed via the JumpCloud agent at a",
+          "what": "Malicious script identified as executed via the JumpCloud agent at a downstream customer"
+        },
+        {
+          "v": "July 2023",
+          "q": "In July 2023, Mandiant Consulting responded to a supply chain compromise affecting a US-based software solutions entity.",
+          "what": "Mandiant Consulting responded to a supply chain compromise"
+        },
+        {
+          "v": "2023-07-24",
+          "q": "Published: 2023-07-24",
+          "what": "Mandiant report published"
+        },
+        {
+          "v": "October 19, 2022",
+          "q": "that was first submitted to VirusTotal on October 19, 2022.",
+          "what": "Second STRATOFEAR-linked sample first submitted to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JumpCloud",
+          "q": "sophisticated spear phishing campaign aimed at JumpCloud, a"
+        },
+        {
+          "v": "FULLHOUSE.DOORED",
+          "q": "FULLHOUSE.DOORED is a backdoor written in C/C++ that communicates using HTTP. It incorporates the capabilities of"
+        },
+        {
+          "v": "STRATOFEAR",
+          "q": "STRATOFEAR is a modular backdoor that communicates with C2 servers using a protocol specified in its C2 configuration,"
+        },
+        {
+          "v": "TIEDYE",
+          "q": "A Mach-O executable named xpc.protect was identified and determined to be an evolution of the TIEDYE backdoor."
+        },
+        {
+          "v": "RABBITHUNT",
+          "q": "TIEDYE has similarities to RABBITHUNT, which is a backdoor written in C++ that communicates via a custom binary"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "supply chain compromise",
+          "q": "In July 2023, Mandiant Consulting responded to a supply chain compromise affecting a US-based software solutions entity."
+        },
+        {
+          "v": "spear phishing",
+          "q": "a sophisticated spear phishing campaign aimed at JumpCloud, a"
+        },
+        {
+          "v": "masquerading as legitimate files",
+          "q": "placed significant priority into masquerading as legitimate files and applications."
+        },
+        {
+          "v": "removing prior payloads from disk",
+          "q": "The threat actor was consistently observed removing prior payloads from disk;"
+        },
+        {
+          "v": "process injection",
+          "q": "file management, and process injection."
+        },
+        {
+          "v": "targeting MacOS keychains",
+          "q": "Mandiant identified UNC4899 targeting MacOS keychains and reconnaissance data"
+        },
+        {
+          "v": "various VPN providers as a final hop",
+          "q": "Mandiant observed UNC4899 utilize various VPN providers as a final hop, the most common being ExpressVPN, but"
+        },
+        {
+          "v": "Operational Relay Boxes",
+          "q": "Mandiant has observed RGB units utilize a series of Operational Relay Boxes (ORBs) using L2TP IPsec tunnels along with"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "fewer than five customers",
+          "q": "impacted fewer than five customers and less than 10 devices."
+        },
+        {
+          "v": "four (4) OSX Ventura systems",
+          "q": "observed the threat actor target four (4) OSX Ventura systems running either versions"
+        },
+        {
+          "v": "three unique signatures",
+          "q": "Mandiant identified three unique signatures associated with malicious files:"
+        },
+        {
+          "v": "five behavioral-based rules",
+          "q": "currently five behavioral-based rules defined by Apple."
+        },
+        {
+          "v": "up to 16 threads",
+          "q": "monitor system activity using up to 16 threads."
+        },
+        {
+          "v": "eight different monitors",
+          "q": "references eight different monitors and includes descriptions for all but one"
+        },
+        {
+          "v": "five predefined module types",
+          "q": "STRATOFEAR’s code references five predefined module types"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "UNC4899"
+    },
+    "hedges": [
+      "Mandiant describes UNC4899 as a suspected North Korean actor and tracks the activity under that name.",
+      "UNC4899 likely corresponds to TraderTraitor, based on reporting from trusted partners.",
+      "Mandiant believes the compromise ultimately began as a result of spear phishing aimed at JumpCloud.",
+      "Limited forensic evidence existed to determine how STRATOFEAR was deployed; it was preceded by FULLHOUSE.DOORED in each instance.",
+      "Mandiant assesses with moderate confidence that com.docker.vmnat was a version of the FULLHOUSE.DOORED backdoor.",
+      "Mandiant assesses with moderate confidence that the Windows DLL is a Windows version of STRATOFEAR.",
+      "Limited forensic evidence existed to determine exactly how TIEDYE was deployed; it was likely deployed as a second-stage backdoor."
+    ]
   }
 }

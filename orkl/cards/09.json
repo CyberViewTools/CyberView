@@ -65,5 +65,94 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "09f0abdfdcc9cc3038d147028c913c04958925d1": {
+    "sha1": "09f0abdfdcc9cc3038d147028c913c04958925d1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:33:46Z",
+    "model": "haiku",
+    "summary": "A 2022 defensive blog post by Pepe Berba on hunting for Linux persistence through systemd services, systemd timers and cron jobs. It describes how these mechanisms can be abused to keep a backdoor running after reboot, including user-level services and modifying existing services. It recommends detection with auditd, osquery, sysmon and auditbeat rules and notes gaps in each approach.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-01-30",
+          "q": "Published: 2022-01-30 · Archived: 2026-04-05 15:27:35 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2022-01-30 · Archived: 2026-04-05 15:27:35 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "systemd",
+          "q": "Adversaries may utilize systemd to install their own malicious services so that even after a reboot"
+        },
+        {
+          "v": "Cron",
+          "q": "Cron is the most traditional way to create scheduled tasks."
+        },
+        {
+          "v": "auditd",
+          "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
+        },
+        {
+          "v": "osquery",
+          "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
+        },
+        {
+          "v": "sysmon",
+          "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
+        },
+        {
+          "v": "auditbeat",
+          "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
+        },
+        {
+          "v": "metasploit",
+          "q": "This will fail to detect persistence installation such as those found in metasploit’s"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Create or Modify System Process: Systemd Service",
+          "q": "Create or Modify System Process: Systemd Service"
+        },
+        {
+          "v": "Scheduled Task/Job: Systemd Timers",
+          "q": "Scheduled Task/Job: Systemd Timers"
+        },
+        {
+          "v": "Scheduled Task/Job: Cron",
+          "q": "Scheduled Task/Job: Cron"
+        },
+        {
+          "v": "modify existing services",
+          "q": "Instead of creating a new systemd service, an attacker can just modify existing services."
+        },
+        {
+          "v": "user services",
+          "q": "There is less common class of systemd service called user services."
+        },
+        {
+          "v": "Staying covert",
+          "q": "5.2.3 Staying covert"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The commented out rules may not be immediately applicable because they might not exist depending on the distro you are using.",
+      "The sysmon rules above will not be triggered by this script (while the auditd rules above will catch this)."
+    ]
   }
 }

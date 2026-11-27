@@ -592,5 +592,132 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "10a3152db508b958e136fcd1f7dc17c089c3c148": {
+    "sha1": "10a3152db508b958e136fcd1f7dc17c089c3c148",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:31:00Z",
+    "model": "haiku",
+    "summary": "A BleepingComputer article reports CERT-UA findings that the Sandworm group, described as linked to Russia's GRU, compromised 11 Ukrainian telecom providers between May and September 2023. Reported methods include network scanning, exposed RDP/SSH and VPN accounts without multi-factor authentication, proxy routing, the Poemgate and Poseidon backdoors, log removal, and disruptive scripts aimed at Mikrotik equipment and backups.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "Sandworm",
+          "q": "The state-sponsored Russian hacking group tracked as 'Sandworm' has compromised eleven telecommunication service",
+          "by": "BleepingComputer article, citing CERT-UA"
+        },
+        {
+          "v": "Russia's GRU (armed forces)",
+          "q": "Sandworm is a very active espionage threat group linked to Russia's GRU (armed forces).",
+          "by": "BleepingComputer article, citing CERT-UA (\"linked to\")"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "telecommunications (telcos)",
+          "q": "The agency states that the Russian hackers \"interfered\" with the communication systems of 11 telcos in the country"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "That is based on a new report by Ukraine's Computer Emergency Response Team (CERT-UA) citing 'public resources' and"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-10-16",
+          "q": "Published: 2023-10-16",
+          "what": "Article published"
+        },
+        {
+          "v": "May and September 2023",
+          "q": "between May and September 2023",
+          "what": "Period over which the eleven telcos were compromised"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Poemgate",
+          "q": "CERT-UA reports seeing two backdoors in breached ISP systems, namely 'Poemgate' and 'Poseidon.'"
+        },
+        {
+          "v": "Poseidon",
+          "q": "CERT-UA reports seeing two backdoors in breached ISP systems, namely 'Poemgate' and 'Poseidon.'"
+        },
+        {
+          "v": "Whitecat",
+          "q": "Sandworm uses the 'Whitecat' tool to remove the attack's traces and delete access logs."
+        },
+        {
+          "v": "Dante",
+          "q": "To make their intrusions stealthier, Sandworm uses 'Dante', 'socks5,' and other proxy servers to route their"
+        },
+        {
+          "v": "nmap",
+          "q": "the attackers use tools like 'ffuf', 'dirbuster', 'gowitness', and 'nmap' to find potential vulnerabilities in web"
+        },
+        {
+          "v": "masscan",
+          "q": "Example of masscan script (CERT-UA)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "network reconnaissance and scanning",
+          "q": "The attacks begin with Sandworm performing reconnaissance on telecommunication company's networks using the"
+        },
+        {
+          "v": "exploiting unprotected remote access (RDP/SSH)",
+          "q": "Sandworm looks for open ports and unprotected RDP or SSH interfaces they can leverage to breach the network."
+        },
+        {
+          "v": "compromised VPN accounts without multi-factor authentication",
+          "q": "Compromised VPN accounts that weren't protected by multi-factor authentication have also been leveraged to gain network"
+        },
+        {
+          "v": "routing traffic through proxies inside compromised Ukrainian hosts",
+          "q": "To make their intrusions stealthier, Sandworm uses 'Dante', 'socks5,' and other proxy servers to route their"
+        },
+        {
+          "v": "capturing admin credentials",
+          "q": "Poemgate captures the credentials of admins who attempt to authenticate in the compromised endpoint, providing the"
+        },
+        {
+          "v": "persistence by modifying scheduled Cron jobs",
+          "q": "Persistence for Poseidon is achieved by modifying Cron to add rogue jobs."
+        },
+        {
+          "v": "removing traces and deleting access logs",
+          "q": "Sandworm uses the 'Whitecat' tool to remove the attack's traces and delete access logs."
+        },
+        {
+          "v": "service disruption and wiping backups",
+          "q": "focusing on Mikrotik equipment, and wipe backups to make recovery more challenging."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "11 telcos",
+          "q": "The agency states that the Russian hackers \"interfered\" with the communication systems of 11 telcos in the country"
+        },
+        {
+          "v": "two backdoors",
+          "q": "CERT-UA reports seeing two backdoors in breached ISP systems, namely 'Poemgate' and 'Poseidon.'"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "Russian Sandworm hackers breached 11 Ukrainian telcos since May"
+    },
+    "hedges": [
+      "Based on a new CERT-UA report citing 'public resources' and information retrieved from some breached providers.",
+      "Sandworm is described as 'linked to' Russia's GRU, not as a confirmed attribution.",
+      "Data breaches are described only as 'potential data breaches'."
+    ]
   }
 }

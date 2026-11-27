@@ -152,5 +152,127 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fb6303a0895e93c90afce4201750430d73e7c014": {
+    "sha1": "fb6303a0895e93c90afce4201750430d73e7c014",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:40:22Z",
+    "model": "haiku",
+    "summary": "360Netlab analysis of Icnanker, a Linux trojan-downloader whose scripts are packed with the SHC tool. It spreads through weak SSH credentials, persists at startup, hides processes, adds a user and downloads Elknot and Xor.DDoS botnet and XMRMiner samples. Sample hashes and command servers are listed as indicators.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Icnanker",
+          "q": "The author appeared to be an old player Icnanker.",
+          "by": "360Netlab (report authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 15, 2019",
+          "q": "On August 15, 2019, 360Netlab Threat Detecting System flagged an unknown ELF sample",
+          "what": "360Netlab's detection system flagged an unknown ELF sample generating Elknot-related traffic"
+        },
+        {
+          "v": "2015",
+          "q": "Internet in 2015 as a script programmer, who has a high-profile personality",
+          "what": "Icnanker was first exposed online as a script programmer"
+        },
+        {
+          "v": "March 12, 2020",
+          "q": "On March 12, 2020, IntezerLab twittered about a Icnanker variant",
+          "what": "IntezerLab posted on Twitter about an Icnanker variant"
+        },
+        {
+          "v": "23 March 2020",
+          "q": "23 March 2020 / Icnanker",
+          "what": "The 360Netlab blog report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SHC",
+          "q": "SHC uses the RC4 algorithm to encrypt the original script."
+        },
+        {
+          "v": "Elknot Botnet",
+          "q": "Downloader is mainly used to facilitate DDos and Mining attacks. Currently its samples include Elknot Botnet,"
+        },
+        {
+          "v": "Xor.DDoS Botnet",
+          "q": "Xor.DDoS Botnet"
+        },
+        {
+          "v": "XMRMiner",
+          "q": "Xor Botnet and XMRMiner."
+        },
+        {
+          "v": "UnSHc",
+          "q": "UnSHc to directly decrypt the script"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "RC4",
+          "q": "SHC uses the RC4 algorithm to encrypt the original script."
+        },
+        {
+          "v": "weak SSH credentials",
+          "q": "through weak SSH credentials."
+        },
+        {
+          "v": "Persistence",
+          "q": "Persistence, self-starting via re.local."
+        },
+        {
+          "v": "Self-hiding",
+          "q": "Self-hiding , so that management tools such as ss, ps, netstat cannot detect"
+        },
+        {
+          "v": "Add new user",
+          "q": "Add new user (ntps) to facilitate subsequent control of the victim's machine"
+        },
+        {
+          "v": "Delete some system files",
+          "q": "Delete some system files to increase the difficulty for repair."
+        },
+        {
+          "v": "Download and execute specific samples",
+          "q": "Download and execute specific samples, here it downloads the Elknot Botnet."
+        },
+        {
+          "v": "immutable attribute",
+          "q": "the immutable attribute is enabled to prevent from being deleted."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "20,114",
+          "q": "20,114, and about 500 increment per day."
+        },
+        {
+          "v": "500",
+          "q": "20,114, and about 500 increment per day."
+        },
+        {
+          "v": "14",
+          "q": "the RC4 decryption function is called a total of 14 times,and there are many unique"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Icnanker"
+    },
+    "hedges": [
+      "The report says the author 'appeared to be' Icnanker, based on the author ID in the script.",
+      "The report says that 'from what we have seen so far, all samples are the typical botnet families.'",
+      "The report says its view that the sample was not much new is 'in our opinion'."
+    ]
   }
 }

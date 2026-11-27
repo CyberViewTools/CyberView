@@ -878,5 +878,161 @@
       "note": "summary: Says exfiltration is 'supported only by circumstantial indicators'. The text says CrowdStrike has indicators and circumstantial evidence, but it also c",
       "by": "auditor"
     }
+  },
+  "f84278cc0a03a99623a410f68158f4b055300d74": {
+    "sha1": "f84278cc0a03a99623a410f68158f4b055300d74",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:39:08Z",
+    "model": "haiku",
+    "summary": "Palo Alto Networks Unit 42 analysed Amnesia, a new variant of the Tsunami IoT/Linux botnet. It exploits an unpatched March 2016 remote code execution flaw in TVT Digital DVRs, with about 227,000 devices found exposed. Amnesia checks for VirtualBox, VMware or QEMU and, if it finds one, deletes files on the system. It also sets up persistence, kills Telnet and SSH processes, and uses hard-coded C2 servers. At publication (April 6, 2017) the report said the botnet had not yet been used for large-scale attacks.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "author of Amnesia",
+          "q": "the author of Amnesia was aiming to defeat Linux-based malware analysis sandboxes",
+          "by": "Palo Alto Networks Unit 42 (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "VPS",
+          "q": "IoT/Linux malware may also affect Linux servers deployed in VPS or in public cloud."
+        },
+        {
+          "v": "DVR devices",
+          "q": "Distribution of Vulnerable TVT Digital's DVR devices"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Taiwan",
+          "q": "with Taiwan, the United States, Israel, Turkey, and India being the most"
+        },
+        {
+          "v": "United States",
+          "q": "with Taiwan, the United States, Israel, Turkey, and India being the most"
+        },
+        {
+          "v": "Israel",
+          "q": "with Taiwan, the United States, Israel, Turkey, and India being the most"
+        },
+        {
+          "v": "Turkey",
+          "q": "with Taiwan, the United States, Israel, Turkey, and India being the most"
+        },
+        {
+          "v": "India",
+          "q": "with Taiwan, the United States, Israel, Turkey, and India being the most"
+        }
+      ],
+      "dates": [
+        {
+          "v": "March 22, 2016",
+          "q": "On March 22, 2016, security researcher Rotem Kerner disclosed the vulnerability to the",
+          "what": "Vulnerability publicly disclosed by researcher Rotem Kerner"
+        },
+        {
+          "v": "April 6, 2017",
+          "q": "April 6, 2017 at 1:00 PM",
+          "what": "Report published"
+        },
+        {
+          "v": "December 1st, 2016",
+          "q": "since December 1st, 2016. Before that",
+          "what": "Three C2 domains began resolving to the same IP address"
+        },
+        {
+          "v": "Fall 2016",
+          "q": "attacks similar to the Mirai botnet attacks we saw in Fall 2016.",
+          "what": "Mirai botnet attacks observed by the researchers"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Amnesia",
+          "q": "we are calling “Amnesia”."
+        },
+        {
+          "v": "Tsunami",
+          "q": "Unit 42 researchers have identified a new variant of the IoT/Linux botnet “Tsunami”, which"
+        },
+        {
+          "v": "DropPerl",
+          "q": "to host other IoT/Linux malware such as DropPerl."
+        },
+        {
+          "v": "Mirai",
+          "q": "attacks similar to the Mirai botnet attacks we saw in Fall 2016."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote code execution",
+          "q": "targets an unpatched remote code execution"
+        },
+        {
+          "v": "evasion techniques",
+          "q": "machine evasion techniques to defeat malware analysis sandboxes."
+        },
+        {
+          "v": "deleting all the files",
+          "q": "by deleting all the files in file system."
+        },
+        {
+          "v": "persistence files",
+          "q": "After the VM check, Amnesia creates persistence files"
+        },
+        {
+          "v": "kills all Telnet and SSH related processes",
+          "q": "It then kills all Telnet and SSH related processes, and connects with a C2"
+        },
+        {
+          "v": "IRC protocol",
+          "q": "Amnesia communicates with its C2 server using the IRC protocol."
+        },
+        {
+          "v": "DDoS",
+          "q": "to launch broad DDoS"
+        },
+        {
+          "v": "Caesar",
+          "q": "the real C2 configuration is decrypted during runtime by simple Caesar"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "approximately 227,000 devices",
+          "q": "this vulnerability affects approximately 227,000 devices"
+        },
+        {
+          "v": "over 70 vendors",
+          "q": "branded by over 70 vendors worldwide"
+        },
+        {
+          "v": "about 50,000",
+          "q": "They reported about 50,000 and about 705,000 IP"
+        },
+        {
+          "v": "about 705,000",
+          "q": "They reported about 50,000 and about 705,000 IP"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Amnesia"
+    },
+    "hedges": [
+      "The report says it believes Amnesia is the first Linux malware to adopt virtual machine evasion techniques.",
+      "The report says the exposed devices are 'likely produced by TVT Digital', based on scan fingerprints and search-engine counts.",
+      "The report states Amnesia has not yet been used for large-scale attacks; DDoS use is described only as potential.",
+      "The report says it believes the author aimed to defeat Linux analysis sandboxes and cause trouble for security researchers.",
+      "The report notes VM-based sandboxes usually have snapshots, so impact there is limited; a VPS or cloud server could still be lost.",
+      "The report says its researchers were unable to find any vendor patch for the 2016 vulnerability.",
+      "The report says blocking the hard-coded C2 addresses as broadly and quickly as possible may prevent a Mirai-type attack."
+    ]
   }
 }

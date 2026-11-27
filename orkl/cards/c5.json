@@ -129,5 +129,112 @@
       "note": "summary: Says Carbanak 'used a trojanized RTF document'; the text says Forcepoint tied the RTF to the Carbanak gang. Also says Forcepoint notified Google and TR",
       "by": "auditor"
     }
+  },
+  "c589d0b60dbcddcd02590499a58f0d37c6d6c3a1": {
+    "sha1": "c589d0b60dbcddcd02590499a58f0d37c6d6c3a1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:33:50Z",
+    "model": "haiku",
+    "summary": "Summit Route blog post on a malicious public AWS AMI (community image). The author started the AMI in an isolated VPC, snapshotted its root volume and mounted it for analysis. Found a cron file tied to a miner-and-worm campaign that appears to use GitHub-hosted repos and free top-level domains. The report links it to the AWS CLI CVE-2018-15869 and to the Xbash malware, as described in a Palo Alto Networks write-up. The author also built a CloudMapper command to check existing EC2 instances against public AMIs.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2018-03-24",
+          "q": "2018-03-24: First cron logs recorded in instance, so this appears to the be the boot date of the instance.",
+          "what": "First cron logs recorded in the instance, taken as its boot date"
+        },
+        {
+          "v": "2018-04-20",
+          "q": "2018-04-20: Creation date of /etc/cron.d/root on the malicious AMI",
+          "what": "Creation date of the cron file on the malicious AMI"
+        },
+        {
+          "v": "2018-04-23",
+          "q": "2018-04-23: Last logs recorded, so this must have been when this instance was shutdown to create the",
+          "what": "Last logs recorded; instance shut down to create the AMI"
+        },
+        {
+          "v": "2018-08-13",
+          "q": "2018-08-13: The github issue appears where someone mentions they ended up with a malicious AMI.",
+          "what": "GitHub issue appears where someone reports a malicious AMI"
+        },
+        {
+          "v": "2018-09-14",
+          "q": "2018-09-14: CVE-2018-15869 is made public.",
+          "what": "CVE-2018-15869 made public"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AWS CLI",
+          "q": "A few weeks ago a CVE appeared for the AWS CLI, CVE-2018-15869."
+        },
+        {
+          "v": "CloudMapper",
+          "q": "CloudMapper that will cross-check all of the AMI IDs for your EC2s with the private AMIs in your account and"
+        },
+        {
+          "v": "Xbash",
+          "q": "titled Xbash Combines Botnet, Ransomware, Coinmining in Worm that Targets Linux and Windows."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "potentially malicious Amazon Machine Image",
+          "q": "“potentially malicious Amazon Machine Image (AMI) from the uncurated public community AMI catalog”."
+        },
+        {
+          "v": "mines cryptocurrencies",
+          "q": "mines cryptocurrencies, asks for ransom"
+        },
+        {
+          "v": "exploit vulnerabilities associated with Hadoop, Redis, and ActiveMQ",
+          "q": "This malware will attempt to exploit vulnerabilities associated with Hadoop, Redis, and ActiveMQ, so one"
+        },
+        {
+          "v": "cron",
+          "q": "2018-04-20: Creation date of /etc/cron.d/root on the malicious AMI"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-15869",
+          "q": "A few weeks ago a CVE appeared for the AWS CLI, CVE-2018-15869."
+        }
+      ],
+      "figures": [
+        {
+          "v": "236 commits",
+          "q": "that it has been around for over a year, with 236 commits to it, so this appears to be"
+        },
+        {
+          "v": "92MB",
+          "q": "This 92MB file will decompress to 1.3GB."
+        },
+        {
+          "v": "1.3GB",
+          "q": "This 92MB file will decompress to 1.3GB."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Xbash"
+    },
+    "hedges": [
+      "The author believes it is not possible to analyze an AMI without starting it as an EC2 instance.",
+      "The author believes the 2018-04-17 cron entries show the original download server, and that the instance was first exploited then.",
+      "The author says the change in cron download targets is likely just the adversary changing how their malware works.",
+      "One possibility is that the creator of the AMI had been a victim and was infected before creating it.",
+      "The GitHub repository appears to be the central repo used by this actor.",
+      "The author says the AMI provider did not know much about its origin.",
+      "The author notes there is no way they know of to easily confirm the Ubuntu account ID.",
+      "AWS said there were no infected Community AMIs to its knowledge, and the author says AWS appears to have taken action."
+    ]
   }
 }

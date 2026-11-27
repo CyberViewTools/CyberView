@@ -529,5 +529,113 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "dfa0daf8b5dc677a57d01f068173733c74cd73b2": {
+    "sha1": "dfa0daf8b5dc677a57d01f068173733c74cd73b2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:38Z",
+    "model": "haiku",
+    "summary": "Trend Micro's 2019 report on Skidmap, a Linux malware that installs a cryptocurrency miner and kernel-mode rootkits to hide it. It persists via crontab, weakens SELinux, adds SSH keys and replaces the pam_unix.so authentication module as backdoors, and fakes network and CPU statistics to conceal the miner.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-09-16",
+          "q": "Published: 2019-09-16 · Archived: 2026-04-05 18:03:23 UTC",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Skidmap",
+          "q": "Skidmap, a Linux malware that we recently stumbled upon"
+        },
+        {
+          "v": "kaudited",
+          "q": "kaudited — A file installed as /usr/bin/kaudited."
+        },
+        {
+          "v": "iproute",
+          "q": "iproute — This module hooks the system call, getdents"
+        },
+        {
+          "v": "netlink",
+          "q": "netlink — This rootkit fakes the network traffic statistics"
+        },
+        {
+          "v": "Backdoor.Linux.PAMDOR.A",
+          "q": "(detected as Backdoor.Linux.PAMDOR.A)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "kernel-mode rootkits",
+          "q": "These kernel-mode rootkits are not only more difficult to detect"
+        },
+        {
+          "v": "crontab",
+          "q": "The malware installs itself via crontab"
+        },
+        {
+          "v": "security settings",
+          "q": "it will decrease the affected machine’s security settings"
+        },
+        {
+          "v": "authorized_keys",
+          "q": "add the public key of its handlers to the authorized_keys file"
+        },
+        {
+          "v": "pam_unix.so",
+          "q": "The malware replaces the system’s pam_unix.so file"
+        },
+        {
+          "v": "getdents",
+          "q": "hooks the system call, getdents"
+        },
+        {
+          "v": "network traffic statistics",
+          "q": "fakes the network traffic statistics"
+        },
+        {
+          "v": "CPU load",
+          "q": "hide the “pamdicks” process and CPU load"
+        },
+        {
+          "v": "Triple DES",
+          "q": "using Triple DES cipher"
+        },
+        {
+          "v": "reinfect",
+          "q": "allow it to reinfect systems that have been restored or cleaned up"
+        },
+        {
+          "v": "fake “rm” binary",
+          "q": "One of the components contained in the tar file is a fake “rm” binary"
+        },
+        {
+          "v": "watchdog component",
+          "q": "also drops a watchdog component that will monitor the cryptocurrency miner file"
+        },
+        {
+          "v": "loadable kernel modules",
+          "q": "This binary will drop and install several loadable kernel"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Skidmap"
+    },
+    "hedges": [
+      "The attack vector Skidmap uses is most likely the same one that gives the attacker root or administrative access to the system.",
+      "Hiding high CPU load is likely to make the infected machine appear as if nothing is amiss to the user.",
+      "The fake rm routine's malicious cron job is only observed sometimes, because it is performed randomly."
+    ]
   }
 }

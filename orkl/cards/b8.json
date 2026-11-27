@@ -21,5 +21,117 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "b8de0e4d474e76c982a415968858fca44f1e540b": {
+    "sha1": "b8de0e4d474e76c982a415968858fca44f1e540b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:33:58Z",
+    "model": "haiku",
+    "summary": "CrowdStrike reports a cryptojacking campaign it calls Kiss-a-dog that targets exposed Docker and Kubernetes environments. Attackers used a host mount to escape containers, mined with XMRig through anonymous pool servers, and hid processes with kernel and user-mode rootkits. They also removed cloud monitoring agents, scanned for exposed Docker and Redis instances, and left a Redis backdoor. The report says the tools and techniques were previously associated with TeamTNT.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "Kiss-a-dog relies on tools and techniques previously associated with cryptojacking groups like TeamTNT",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "TeamTNT",
+          "q": "detected multiple campaigns targeting Docker from the same C2 servers previously used by TeamTNT",
+          "by": "CrowdStrike (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "September 2022",
+          "q": "In September 2022, one of CrowdStrike’s honeypots spotted a number of campaigns enumerating vulnerable",
+          "what": "A honeypot spotted campaigns enumerating vulnerable container attack surfaces"
+        },
+        {
+          "v": "October",
+          "q": "multiple campaigns were launched in October to take advantage of a low competitive environment",
+          "what": "Multiple campaigns were launched to take advantage of a low competitive environment"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Diamorphine",
+          "q": "The Kiss-a-dog campaign uses the Diamorphine and libprocesshide rootkits to hide the process from the user space"
+        },
+        {
+          "v": "libprocesshider",
+          "q": "Attackers used a similar technique to compile the libprocesshider rootkit as a shared library."
+        },
+        {
+          "v": "XMRig",
+          "q": "Attackers are using XMRig, a popular mining software, to mine the cryptocurrency."
+        },
+        {
+          "v": "pnscan, masscan and zgrab",
+          "q": "attackers download and compile network-scanning tools like pnscan, masscan and zgrab on the compromised container."
+        },
+        {
+          "v": "Redis",
+          "q": "The Kiss-a-dog campaign installs a Redis server in the background and listens on port 6379 for any incoming"
+        },
+        {
+          "v": "cURL",
+          "q": "The entry point verifies and installs cURL using a package manager and adds a malicious payload as a cron job."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "host mount to escape from the container",
+          "q": "The Kiss-a-dog campaign uses a host mount to escape from the container."
+        },
+        {
+          "v": "obscured with backslashes",
+          "q": "The URL used in the payload is obscured with backslashes to defeat automated"
+        },
+        {
+          "v": "user and kernel mode rootkits",
+          "q": "utilize user and kernel mode rootkits to hide the activity"
+        },
+        {
+          "v": "Removal of Cloud Monitoring Service",
+          "q": "Removal of Cloud Monitoring Service"
+        },
+        {
+          "v": "anonymous pool servers",
+          "q": "Instead, attackers hide wallet addresses by creating anonymous pool servers where mining"
+        },
+        {
+          "v": "cron job",
+          "q": "The entry point verifies and installs cURL using a package manager and adds a malicious payload as a cron job."
+        },
+        {
+          "v": "randomly scan the IP ranges",
+          "q": "These tools then randomly scan the IP ranges on the internet to look for vulnerable instances of Docker and Redis servers."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "10,000+",
+          "q": "Per Shodan, there are 10,000+ Docker instances exposed to the internet, as shown in Figure 6."
+        },
+        {
+          "v": "40% to 90%",
+          "q": "where several currencies — including Bitcoin — dropped 40% to 90% and some of them perished."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Kiss-a-dog"
+    },
+    "hedges": [
+      "The container escape technique itself is not new and seems to be common among cryptominers.",
+      "According to our research, the tactics, techniques and procedures of the attack are very similar in all of the campaigns."
+    ]
   }
 }

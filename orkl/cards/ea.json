@@ -240,5 +240,155 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "ea0df56e02ee19bcfa54de4de2c287d5d37fef7d": {
+    "sha1": "ea0df56e02ee19bcfa54de4de2c287d5d37fef7d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:51Z",
+    "model": "haiku",
+    "summary": "A 2019 SentinelOne blog post by Phil Stokes surveys how malware persists on macOS across logins and reboots. It names LaunchAgents as the most common method and also covers LaunchDaemons, configuration profiles, cron jobs, kernel extensions, login items, AppleScript Folder Actions, Mail rules, periodic scripts, LoginHooks, at jobs and the emond service. It names AdLoad and Mughthesec as using cron jobs, and says commodity adware and PUP developers abuse login items. It recommends behavioural endpoint detection and monitoring of the relevant locations.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "malware authors",
+          "q": "their potential for misuse has already been spotted by malware authors",
+          "by": "the report (SentinelOne blog by Phil Stokes)"
+        },
+        {
+          "v": "unscrupulous developers of commodity adware and PUP software",
+          "q": "unscrupulous developers of commodity adware and PUP software have been abusing this",
+          "by": "the report (SentinelOne blog by Phil Stokes)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-06-17",
+          "q": "Published: 2019-06-17 · Archived: 2026-04-05 13:06:27 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "OSX 10.5 Leopard",
+          "q": "Sometime around OSX 10.5 Leopard, Apple introduced a logging mechanism called",
+          "what": "Apple introduced the emond logging mechanism"
+        },
+        {
+          "v": "OSX 10.7 Lion",
+          "q": "from users by default all the way back in OSX 10.7 Lion, making it easier for threat actors to hide these agents",
+          "what": "Apple hid the parent Library folder from users by default"
+        },
+        {
+          "v": "macOS 10.11",
+          "q": "since this folder is now managed by macOS itself (since 10.11), malware is locked out of this location by default",
+          "what": "The system LaunchAgents folder became managed by macOS and locked to malware by default"
+        },
+        {
+          "v": "10.15 Catalina",
+          "q": "to install in 10.15 Catalina, it’s unlikely that this will do much to",
+          "what": "Apple announced that new cron jobs would require user interaction to install"
+        },
+        {
+          "v": "10.9 Mavericks",
+          "q": "support for StartupItems also appears to have been removed after 10.9 Mavericks",
+          "what": "StartupItems support appears to have been removed"
+        },
+        {
+          "v": "10.14 Mojave",
+          "q": "remains available even on macOS 10.14 Mojave",
+          "what": "The emond service remained available"
+        },
+        {
+          "v": "2016",
+          "q": "In 2016, James Reynolds provided the most comprehensive analysis to-date of",
+          "what": "James Reynolds published the most comprehensive analysis of emond"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AdLoad",
+          "q": "used by AdLoad and Mughthesec malware, among others, to achieve persistence"
+        },
+        {
+          "v": "Mughthesec",
+          "q": "used by AdLoad and Mughthesec malware, among others, to achieve persistence"
+        },
+        {
+          "v": "MacKeeper",
+          "q": "by so-called PUP software like MacKeeper"
+        },
+        {
+          "v": "logkext",
+          "q": "An open-source keylogger, logkext, has also been around for some"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "LaunchAgent",
+          "q": "By far the most common way malware persists on macOS is via a LaunchAgent."
+        },
+        {
+          "v": "LaunchDaemon",
+          "q": "Persistence By LaunchDaemon"
+        },
+        {
+          "v": "Profiles",
+          "q": "Persistence with Profiles"
+        },
+        {
+          "v": "Cron",
+          "q": "Cron Still Persists on macOS"
+        },
+        {
+          "v": "Kernel extensions",
+          "q": "Kernel extensions are widely used by legitimate software for persistent behavior"
+        },
+        {
+          "v": "Login Items",
+          "q": "Changes made by Apple to Login Items have, on the other hand, resulted in more attractive opportunities for"
+        },
+        {
+          "v": "Folder Actions",
+          "q": "The first leverages Folder Actions and allows an attacker to execute"
+        },
+        {
+          "v": "Mail rules",
+          "q": "An even more wily trick leverages Mail rules, either local or iCloud-based, to achieve persistence"
+        },
+        {
+          "v": "Periodics",
+          "q": "Periodics As a Means of Persistence"
+        },
+        {
+          "v": "LoginHooks",
+          "q": "LoginHooks and LogoutHooks have been around for years"
+        },
+        {
+          "v": "at jobs",
+          "q": "At Jobs: Run Once, Persist Forever"
+        },
+        {
+          "v": "emond",
+          "q": "Emond – The Forgotten Event Monitor"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "3",
+          "q": "by 3 separate, malicious LaunchDaemons"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Periodics, LoginHooks, at jobs and emond are described as persistence tricks not yet seen used in the wild.",
+      "Some legitimate LaunchDaemons point to unsigned code that could be replaced by something malicious.",
+      "The report says user prompts for cron jobs are unlikely to do much to hinder attackers.",
+      "Kernel extensions are described as not a favoured trick because they are comparatively difficult to create and lack stealth.",
+      "The LaunchAgents folder is locked to malware by default only so long as System Integrity Protection has not been disabled or bypassed."
+    ]
   }
 }

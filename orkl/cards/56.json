@@ -582,7 +582,7 @@
   },
   "5680c21a347bfdc57a46d79a2acb6749a0c88f0c": {
     "sha1": "5680c21a347bfdc57a46d79a2acb6749a0c88f0c",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T13:16:43Z",
     "model": "haiku",
@@ -741,6 +741,155 @@
     "hedges": [
       "The report says it looks like the actor used an open-source project for some tools, presented as an inference rather than a confirmed fact.",
       "The reasons given for patching AMSI and ETW functions are framed as typical associations and possibilities ('may', 'potential'), not confirmed intent."
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T13:26:00Z",
+      "ok": false,
+      "note": "tools[4]: The text names sysrv only as one of the 'other known cryptocurrency miners' that the actor's script kills. It is not a tool the 8220 Gang uses.",
+      "by": "auditor"
+    }
+  },
+  "56180159314949b2e90170af26a62b33bc972ea9": {
+    "sha1": "56180159314949b2e90170af26a62b33bc972ea9",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:34:47Z",
+    "model": "haiku",
+    "summary": "Unit 42 (Palo Alto Networks) report on Rocke, a group described as China-based that mainly targets public cloud infrastructure for cryptomining. Rocke was earlier linked to Xbash, a data-destruction tool used in ransomware campaigns. The report analyses NetFlow data from December 2018 to June 2019 and finds 28.1% of surveyed cloud environments had at least one connection to known Rocke command-and-control infrastructure. It describes a third-stage component, the Godlua agent, which adds denial-of-service, proxy and shell features. The report says Rocke exploits vulnerabilities released in…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "Unit 42 spent six months researching the China-based cybercrime group Rocke, which is the best-known threat",
+          "by": "the report (Unit 42, Palo Alto Networks)"
+        },
+        {
+          "v": "Iron Group",
+          "q": "The activities of Rocke, aka the Iron Group, SystemTen, Kerberods/Khugepageds, and even ex-Rocke, were",
+          "by": "the report (Unit 42, Palo Alto Networks)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "public cloud infrastructure",
+          "q": "Rocke, which primarily targets public cloud infrastructure for criminal gain, continues to evolve its tools and take"
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "Unit 42 spent six months researching the China-based cybercrime group Rocke, which is the best-known threat"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2018",
+          "q": "originally reported in August 2018. Researchers have since blogged on its use of the Golang programming",
+          "what": "Rocke activities first publicly reported"
+        },
+        {
+          "v": "December 2018 to June 16, 2019",
+          "q": "By analyzing NetFlow data from December 2018 to June 16, 2019, we found that 28.1% of the cloud",
+          "what": "period of NetFlow data analysed"
+        },
+        {
+          "v": "March 12, 2019",
+          "q": "As of March 12, 2019, Rocke actors began to also use Golang.",
+          "what": "Rocke actors began using Golang"
+        },
+        {
+          "v": "December 4, 2018",
+          "q": "The earliest witnessed connection took place on December 4, 2018, and continued through at least June 10, 2019",
+          "what": "earliest witnessed connection to a known Rocke domain"
+        },
+        {
+          "v": "2016 and 2017",
+          "q": "using vulnerabilities released in 2016 and 2017.",
+          "what": "years the exploited vulnerabilities were released"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Godlua",
+          "q": "The group has also released a new tool called Godlua, which could function as an agent, allowing the group’s"
+        },
+        {
+          "v": "Xbash",
+          "q": "Rocke was initially associated with ransomware campaigns through the use of its Linux-focused Xbash tool, a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cryptomining",
+          "q": "actor engaged in cryptomining operations targeting the cloud. We released high-level results from our"
+        },
+        {
+          "v": "ransomware",
+          "q": "Rocke was initially associated with ransomware campaigns through the use of its Linux-focused Xbash tool, a"
+        },
+        {
+          "v": "denial of service (DoS) attacks",
+          "q": "including denial of service (DoS) attacks, network proxying, and"
+        },
+        {
+          "v": "beaconing",
+          "q": "which is another indicator of beaconing capabilities and of the"
+        },
+        {
+          "v": "lateral movement",
+          "q": "Xbash performed lateral movement by leveraging an organization’s unpatched vulnerabilities"
+        },
+        {
+          "v": "spear phishing",
+          "q": "Entices victim to navigate to Pastebin/GitHub (e.g., spear phishing)"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "28.1%",
+          "q": "By analyzing NetFlow data from December 2018 to June 16, 2019, we found that 28.1% of the cloud"
+        },
+        {
+          "v": "20%",
+          "q": "Meanwhile, 20% of the organizations maintained hourly heartbeats consistent with Rocke tactics, techniques, and"
+        },
+        {
+          "v": "eight domains",
+          "q": "As of the time of this writing, eight domains have been tied to Rocke C2 operations through hardcoded IP"
+        },
+        {
+          "v": "0.964 BTC",
+          "q": "wallet contained 0.964 BTC (equivalent to US$10,130 today) from just 48"
+        },
+        {
+          "v": "0.2, 0.15, or 0.02 bitcoin",
+          "q": "organization, it demanded that victims pay 0.2, 0.15, or 0.02 bitcoin (BTC) to restore lost data."
+        },
+        {
+          "v": "411",
+          "q": "Unit 42 researchers identified 411 unique"
+        },
+        {
+          "v": "50 organizations",
+          "q": "Researchers found that a total of 50 organizations made network connections to"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Godlua"
+    },
+    "hedges": [
+      "It is impossible to positively identify precisely what time an organization was compromised, since NetFlow gives only one-hour granularity and no full packet capture.",
+      "It is currently unknown what functionality the other features of the Stage 3 malware accomplish.",
+      "It is possible this malware is the beginning of a modular system agent allowing actors more flexibility beyond cryptomining or data destruction.",
+      "The Godlua report states that actors performed a DoS attack against a domain that no longer resolves to a known system.",
+      "The report says the operational style appears to have remained consistent since Rocke was first reported.",
+      "The report says the Stage 3 malware appears to provide modular functionality to Rocke's operational playbook."
     ]
   }
 }

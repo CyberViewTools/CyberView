@@ -46,5 +46,126 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "9e7d0ed0ee13c063e15d90d82e7a08442c7220f8": {
+    "sha1": "9e7d0ed0ee13c063e15d90d82e7a08442c7220f8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:36:33Z",
+    "model": "haiku",
+    "summary": "NCSC malware analysis (TLP:CLEAR, Version 3, 7 November 2024) of Pygmy Goat, a 32-bit Linux shared object reported on Sophos XG firewalls. It is loaded into sshd via LD_PRELOAD and gives backdoor access. It is woken by an ICMP port knock or a magic SSH banner, then connects to a TLS-protected C2 channel. Commands cover a remote shell, packet capture, cron tasks and a reverse SOCKS5 proxy built on EarthWorm. The report says the embedded root certificate names FortiGate, which suggests FortiGate may have been an intended target. It states the techniques are not novel. No threat actor is named.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "07th November 2024",
+          "q": "07th November 2024",
+          "what": "Report date (Version 3, TLP:CLEAR)"
+        },
+        {
+          "v": "2009",
+          "q": "it was released in 2009",
+          "what": "OpenSSH protocol version string used in the fake banner was first released"
+        }
+      ],
+      "tools": [
+        {
+          "v": "EarthWorm",
+          "q": "EarthWorm is an open-source network tunnelling tool designed for offensive"
+        },
+        {
+          "v": "BusyBox",
+          "q": "launch a crond daemon through a statically compiled embedded BusyBox 1.33.1"
+        },
+        {
+          "v": "libpcap",
+          "q": "Pygmy Goat uses the libpcap library to start capturing traffic on the specified"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "LD_PRELOAD",
+          "q": "Uses LD_PRELOAD to get loaded into /bin/sshd and hook its accept function."
+        },
+        {
+          "v": "Port knock via ICMP raw socket",
+          "q": "Port knock via ICMP raw socket."
+        },
+        {
+          "v": "Response to the hooked SSH accept",
+          "q": "Response to the hooked SSH accept."
+        },
+        {
+          "v": "Fake SSH Handshake",
+          "q": "Fake SSH Handshake (C2 -> Malware)"
+        },
+        {
+          "v": "AES encrypted",
+          "q": "which contain an AES encrypted TCP callback IP and port for the sample"
+        },
+        {
+          "v": "TLS connection",
+          "q": "Fortinet to establish a TLS connection with the C2 and verify its peer."
+        },
+        {
+          "v": "start-up script",
+          "q": "a start-up script, with similar contents to:"
+        },
+        {
+          "v": "reverse SOCKS proxy server",
+          "q": "creating a reverse SOCKS proxy server."
+        },
+        {
+          "v": "remote shell",
+          "q": "Functionality includes remote shell, packet capture, cron tasks, and"
+        },
+        {
+          "v": "packet capture",
+          "q": "Functionality includes remote shell, packet capture, cron tasks, and"
+        },
+        {
+          "v": "cron tasks",
+          "q": "Functionality includes remote shell, packet capture, cron tasks, and"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "1,759,412 bytes",
+          "q": "1,759,412 bytes"
+        },
+        {
+          "v": "3,056,741 bytes",
+          "q": "3,056,741 bytes"
+        },
+        {
+          "v": "60 seconds",
+          "q": "for over 60 seconds"
+        },
+        {
+          "v": "10 seconds",
+          "q": "hardcoded timeout of 10 seconds"
+        },
+        {
+          "v": "c71cd27efcdb8c44ab8c29d51f033a22",
+          "q": "c71cd27efcdb8c44ab8c29d51f033a22"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Pygmy Goat"
+    },
+    "hedges": [
+      "Persistence via a boot-time LD_PRELOAD setting is inferred ('suggests'); the startup script is given only as an example.",
+      "Example data in the report was generated in a virtual environment, not taken from any victim or actor.",
+      "The report says design choices suggest it may have been intended for FortiGate devices, and also that it could target a range of Linux devices.",
+      "The embedded root certificate claims to have been issued by FortiGate, Fortinet Ltd.",
+      "EarthWorm is described as not directly malicious, though threat actors have used it according to other reporting.",
+      "A footnote says the 2009 OpenSSH version string was presumably chosen because developers thought it unlikely to appear naturally."
+    ]
   }
 }

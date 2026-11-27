@@ -45,8 +45,8 @@
     "key": "a-5a0483f5-09b3-4673-bb5a-56d41eaf91ed",
     "kind": "actor",
     "name": "MageCart",
-    "headline": "MageCart: the card-skimming operations that hide script code in online checkout pages",
-    "in_short": "MageCart is a name for web card skimming. Malicious JavaScript on checkout pages copies card details. Several groups use it, and reports describe victims from airlines to campus stores.",
+    "headline": "MageCart: web skimmers that steal card details at online checkout",
+    "in_short": "MageCart is a name for malicious JavaScript, and the groups that use it, that steals payment card data from online checkout pages. Reports describe attacks on single retailers and on shared platforms.",
     "sections": [
       {
         "h": "who",
@@ -58,13 +58,13 @@
             ]
           },
           {
-            "t": "Trend Micro says multiple groups are using the Magecart code, which it describes as a piece of malicious JavaScript.",
+            "t": "Trend Micro says multiple groups use the Magecart code, which it describes as a piece of malicious JavaScript.",
             "cites": [
               "7e621fd5ba97bd5ae4c19d0f28b0b8e4e0622726"
             ]
           },
           {
-            "t": "Malpedia's reference list carries headlines naming Magecart Group 4, Group 8, Group 12 and a group called Keeper.",
+            "t": "Headlines in Malpedia's reference list name several groups or clusters, including Magecart Groups 4, 8 and 12, Keeper, FIN6, Mirrorthief and ATMZOW.",
             "cites": [
               "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d"
             ]
@@ -74,6 +74,12 @@
             "cites": [
               "c9af65927e7b013cfdb566cd32de2941c915ee0e"
             ]
+          },
+          {
+            "t": "WIRED says Magecart has been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
+            "cites": [
+              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+            ]
           }
         ]
       },
@@ -81,31 +87,25 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "WIRED says Magecart hackers cast the widest possible net to find vulnerable ecommerce sites.",
+            "t": "The main targets are e-commerce sites. WIRED says Magecart hackers cast the widest possible net to find vulnerable ones.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "WIRED also says Magecart has been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
-            "cites": [
-              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
-            ]
-          },
-          {
-            "t": "Trend Micro points to online campus stores serving nearly 200 universities in the US and Canada.",
-            "cites": [
-              "7e621fd5ba97bd5ae4c19d0f28b0b8e4e0622726"
-            ]
-          },
-          {
-            "t": "One headline in Malpedia's list reports campaigns that infected 311 restaurants through online ordering platforms.",
+            "t": "Malpedia's reference list also points to online ordering platforms and restaurants, with one headline citing 311 infected restaurants.",
             "cites": [
               "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d"
             ]
           },
           {
-            "t": "ANY.RUN reports a long-running campaign that mostly hit retail e-commerce companies, with victims in at least 12 countries, concentrated in Spain, France and the United States. It says banks, not merchants, bear the primary impact.",
+            "t": "Trend Micro lists victims across retail, airline and ticketing brands, and online campus stores serving nearly 200 universities in the US and Canada.",
+            "cites": [
+              "7e621fd5ba97bd5ae4c19d0f28b0b8e4e0622726"
+            ]
+          },
+          {
+            "t": "ANY.RUN describes a campaign hitting mostly retail e-commerce sites, with victims in at least 12 countries and most in Spain, France and the United States. It says banks, not merchants, bear the primary impact.",
             "cites": [
               "a90ac4e3c02a1ea796f99068f59350546a1537eb"
             ]
@@ -116,39 +116,39 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Malpedia says the first stage is typically JavaScript on a compromised checkout page, which sends card data to command and control servers.",
+            "t": "According to Malpedia, the first stage is typically JavaScript on a compromised checkout page. It copies data from input fields and sends it to command and control servers.",
             "cites": [
               "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d"
             ]
           },
           {
-            "t": "Trend Micro lists three tactics: infecting third-party companies that supply code to other sites, scanning the internet for unsecured servers, and writing skimming code that works across many payment pages.",
-            "cites": [
-              "7e621fd5ba97bd5ae4c19d0f28b0b8e4e0622726"
-            ]
-          },
-          {
-            "t": "One report says most Magecart attacks happen when hackers use vulnerabilities in self-hosted stores to plant skimmer code.",
+            "t": "One report says most Magecart attacks begin when hackers use vulnerabilities in self-hosted stores to plant skimmer code.",
             "cites": [
               "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
             ]
           },
           {
-            "t": "Malwarebytes found skimmers hosted on Heroku. A rogue iframe overlays the real payment form, and stolen data goes back in encoded form.",
+            "t": "Trend Micro describes infecting third-party firms that supply code to other sites, and scanning the internet for unsecured servers. It also describes writing skimming code that works across many payment pages.",
+            "cites": [
+              "7e621fd5ba97bd5ae4c19d0f28b0b8e4e0622726"
+            ]
+          },
+          {
+            "t": "Malwarebytes found Magecart-linked skimmers hosted on Heroku. The skimmers overlay a fake payment frame on the checkout form and send stolen data back in encoded form.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           },
           {
-            "t": "ANY.RUN describes a campaign that imitated payment pages and sent card data out over WebSocket.",
+            "t": "Sucuri describes the ATMZOW skimmer being planted through Google Tag Manager containers, with heavy obfuscation and many domains hidden behind a firewall.",
             "cites": [
-              "a90ac4e3c02a1ea796f99068f59350546a1537eb"
+              "53626c1051da5e12ff8b7cade2ef7872314c17b2"
             ]
           },
           {
-            "t": "A Malpedia headline says Magecart groups abuse Google Tag Manager.",
+            "t": "ANY.RUN describes checkout hijacking, imitation of payment pages and card data sent over WebSocket. It says the same injected code was also used to push an Android app.",
             "cites": [
-              "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d"
+              "a90ac4e3c02a1ea796f99068f59350546a1537eb"
             ]
           }
         ]
@@ -157,7 +157,7 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "RiskIQ reports that Magecart operators registered a lookalike domain on August 13th, 2018. It says the skimmer on Newegg's payment page became active around August 14th and was removed on September 18th.",
+            "t": "RiskIQ reports a Magecart attack on Newegg. A lookalike domain was registered on August 13, 2018, and the skimmer was active around August 14. It was removed on September 18.",
             "cites": [
               "3e58e6bdc409d0498c76749dbdc044772063afdb"
             ]
@@ -175,21 +175,21 @@
             ]
           },
           {
-            "t": "In October 2019, hackers breached Volusion, a cloud-hosted store provider. The report says more than 6,500 stores were affected and calls it a Magecart-style supply-chain attack.",
+            "t": "In October 2019, hackers breached the infrastructure of store provider Volusion. The report says more than 6,500 stores were affected and the number could be higher. It calls the incident a Magecart-style supply-chain attack.",
             "cites": [
               "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
             ]
           },
           {
-            "t": "Malwarebytes reported skimmers on Heroku in December 2019 and says the abusive instances were reported and taken down.",
+            "t": "ANY.RUN describes a campaign active for at least 24 months and supported by over 100 domains.",
             "cites": [
-              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+              "a90ac4e3c02a1ea796f99068f59350546a1537eb"
             ]
           },
           {
-            "t": "ANY.RUN reports a campaign active for at least 24 months and supported by over 100 domains.",
+            "t": "Sucuri says ATMZOW actors used 40 newly registered domains in late 2023. It says Google removed one container, and the actors created new ones and reinfected sites.",
             "cites": [
-              "a90ac4e3c02a1ea796f99068f59350546a1537eb"
+              "53626c1051da5e12ff8b7cade2ef7872314c17b2"
             ]
           }
         ]
@@ -198,21 +198,21 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Shop owners should review every script that loads on their checkout pages and investigate any they do not recognise.",
+            "t": "Merchants should treat unexpected scripts on payment pages as a sign of compromise and review any third-party code loaded at checkout.",
             "cites": []
           }
         ]
       }
     ],
-    "status": "rejected",
+    "status": "parked",
     "based_on": "ff5e4885a8792d5a65d566f7652d1bac4636bdc0",
-    "tries": 1,
+    "tries": 2,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T13:04:06Z",
+    "written_at": "2026-11-27T13:26:55Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "6ea58391"
+    "written_run": "b7cfaa17"
   }
 }

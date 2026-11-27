@@ -231,7 +231,7 @@
   },
   "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f": {
     "sha1": "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T02:09:26Z",
     "model": "haiku",
@@ -380,7 +380,15 @@
       "The exfiltration claim is the agent's own assertion in its code comments and was not independently verified.",
       "The Bitcoin address is a documentation example and also a live wallet; the report cannot tell whether the agent hallucinated it or an operator configured it.",
       "The LLM-driven assessment rests on the report's own evidence, and Sysdig has no visibility into the operator's system prompt or agent configuration."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T02:30:44Z",
+      "ok": false,
+      "note": "hedges[6]: The report says it has no visibility into the system prompt or agent configuration only when explaining why it cannot tell whether the agent hallucin",
+      "by": "auditor"
+    }
   },
   "4cc0024b221effc8ae71cd54f6391a929ecbacf1": {
     "sha1": "4cc0024b221effc8ae71cd54f6391a929ecbacf1",
@@ -516,6 +524,12 @@
       "UnitedHealth Group VP Tyler Mason did not confirm whether BlackCat was responsible for the attack.",
       "BlackCat has not been publicly linked to any foreign government agencies.",
       "The link to BlackCat comes from unnamed sources familiar with the investigation, reported by BleepingComputer; the SEC filing describes suspected 'nation-state' hackers."
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-27T02:30:44Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

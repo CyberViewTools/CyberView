@@ -529,106 +529,126 @@
   },
   "8aceafada32998d60eb1c26278b11140b63fc12d": {
     "sha1": "8aceafada32998d60eb1c26278b11140b63fc12d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:56:44Z",
+    "read_at": "2026-11-27T06:33:24Z",
     "model": "haiku",
-    "summary": "A news article, published 2021-01-05, reports that the North Korean group Thallium targeted users of a private stock investment messenger app in a software supply chain attack. ESTsecurity's Security Response Center (ESRC) found an altered NSIS installer that fetched a malicious XSL script and ran it via wmic.exe. The payload created folders, ran a RAT, and used a scheduled task for persistence. Macro-laden Excel documents also distributed the XSL payload. The report says the motive is unclear.",
+    "summary": "The report, based on research by ESTsecurity's Security Response Center, says North Korean hacking group Thallium altered the installer of a private stock investment messaging app to deliver malicious code. The installer used NSIS packaging and fetched a malicious script to run it. Thallium also sent tainted installers and macro-laden Office documents, set up persistence with a rogue scheduled task, and deployed a remote access trojan after reconnaissance. The researchers said the motive was unclear, whether monetary gain or espionage on traders. The article also notes the SolarWinds attack…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Thallium",
           "q": "North Korean hacking group Thallium has targeted users of a private stock investment messenger service",
-          "by": "ESTsecurity Security Response Center (ESRC), as reported in the article"
+          "by": "the report itself, citing ESTsecurity Security Response Center (ESRC)"
         }
       ],
       "sectors": [
         {
-          "v": "stock investors",
-          "q": "North Korean software supply chain attack targets stock investors"
+          "v": "stock investment",
+          "q": "North Korean hacking group Thallium has targeted users of a private stock investment messenger service"
         }
       ],
       "countries": [
         {
-          "v": "North Korean",
-          "q": "North Korean hacking group Thallium"
+          "v": "North Korea",
+          "q": "North Korean hacking group Thallium has targeted users of a private stock investment messenger service"
         }
       ],
       "dates": [
         {
           "v": "2021-01-05",
           "q": "Published: 2021-01-05 · Archived: 2026-04-05 17:06:04 UTC",
-          "what": "Article published; the report on the attack was published this week"
+          "what": "Article published reporting the Thallium supply chain attack"
         },
         {
           "v": "7-Jan-2021",
           "q": "Update 7-Jan-2021: Removed reference to APT37.",
-          "what": "Article updated to remove reference to APT37"
+          "what": "Update removing a reference to APT37"
         }
       ],
       "tools": [
         {
-          "v": "NSIS",
-          "q": "produced a Windows executable using Nullsoft Scriptable Install System (NSIS)"
+          "v": "Nullsoft Scriptable Install System (NSIS)",
+          "q": "The group known as Thallium produced a Windows executable using Nullsoft Scriptable Install System (NSIS), a"
         },
         {
           "v": "wmic.exe",
-          "q": "via the in-built wmic.exe utility"
-        },
-        {
-          "v": "VBScript",
-          "q": "The next stage of attack executes a VBScript to create files and folders"
+          "q": "executed it on Windows systems via the in-built wmic.exe utility."
         },
         {
           "v": "Remote Access Trojan (RAT)",
-          "q": "deploy a Remote Access Trojan (RAT) on the machine"
+          "q": "deploy a Remote Access Trojan (RAT) on the machine to further conduct their sinister activities."
         }
       ],
       "techniques": [
         {
           "v": "XSL Script Processing",
-          "q": "leverage the \"XSL Script Processing\""
+          "q": "ESRC is paying attention to the fact that the Thallium organization is using the 'XSL Script Processing' technique not only"
         },
         {
-          "v": "software supply chain attack",
-          "q": "North Korean software supply chain attack targets stock investors"
+          "v": "supply chain attack",
+          "q": "supply chain attacks have become a common nuisance of these times."
         },
         {
-          "v": "phishing",
-          "q": "the group mainly relied on phishing attacks"
+          "v": "tainted Windows installers",
+          "q": "Thallium is now leveraging multiple ways, such as shipping tainted Windows installers and macro-laden Office"
         },
         {
-          "v": "scheduled task",
-          "q": "By creating a rogue scheduled task called activate"
+          "v": "macro-laden Office",
+          "q": "Thallium is now leveraging multiple ways, such as shipping tainted Windows installers and macro-laden Office"
+        },
+        {
+          "v": "Excel macros",
+          "q": "Excel macros also used to deliver the payload"
+        },
+        {
+          "v": "rogue scheduled task",
+          "q": "By creating a rogue scheduled task called activate under a misleading directory"
+        },
+        {
+          "v": "spear phishing",
+          "q": "not only in spear phishing attacks based on malicious documents, but also for niche attacks including supply chain attacks,"
         },
         {
           "v": "reconnaissance",
-          "q": "The threat actors perform reconnaissance of the infected system"
+          "q": "The threat actors perform reconnaissance of the infected system and after an initial screening,"
+        },
+        {
+          "v": "command-and-control",
+          "q": "The payload then connects to the command-and-control (C2) server hosted on"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "15 minutes",
-          "q": "instructing Windows Scheduler to run the dropped code every 15 minutes"
+          "v": "over 18,000 entities",
+          "q": "The recent large-scale SolarWinds attack impacted over 18,000 entities including reputable government and private"
+        },
+        {
+          "v": "at least two ways",
+          "q": "ESTsecurity researchers have demonstrated at least two ways in which the attackers leverage the"
+        },
+        {
+          "v": "every 15 minutes",
+          "q": "instructing Windows Scheduler to run the dropped code every 15 minutes."
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The threat actors' reasons for targeting users investing in stock remain unclear.",
+      "According to the researchers, the threat actors' reasons for targeting users investing in stock remain unclear.",
       "Whether the goal behind this attack was monetary gain or espionage on traders",
-      "Update 7-Jan-2021: Removed reference to APT37.",
-      "Quoted from a translated ESTsecurity report."
+      "Researcher quotes come from a translated report.",
+      "Update 7-Jan-2021: Removed reference to APT37."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:22Z",
-      "ok": false,
-      "note": "hedges[2]: This is an editorial correction note (a reference to APT37 was removed), not a hedge or uncertainty about any claim in the text.",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:22Z",
+        "ok": false,
+        "note": "hedges[2]: This is an editorial correction note (a reference to APT37 was removed), not a hedge or uncertainty about any claim in the text.",
+        "by": "auditor"
+      }
+    ]
   }
 }

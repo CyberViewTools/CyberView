@@ -426,28 +426,28 @@
   },
   "56431f3e820e255605aa40ba4927121fff1ddd50": {
     "sha1": "56431f3e820e255605aa40ba4927121fff1ddd50",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T06:01:40Z",
+    "read_at": "2026-11-27T06:35:17Z",
     "model": "haiku",
-    "summary": "A German government warning (BfV, as reported in January 2023) says the Chinese cyberespionage group APT27, also called Emissary Panda, has repeatedly attacked German companies since at least March 2021. The attacks exploited unpatched Microsoft Exchange and Zoho ManageEngine ADSelfService Plus flaws to install the HyperBro malware for intelligence collection. The report says the Exchange bugs were also used by a group Microsoft calls Hafnium, and that the Zoho bug was used to breach the Port of Houston authority. Past victims named include TeamViewer, ThyssenKrupp and Bayer.",
+    "summary": "The German Federal Office for the Protection of the Constitution (BfV) warned that APT27, a Chinese cyberespionage group also known as Emissary Panda, has repeatedly attacked German companies since at least March 2021. The attacks exploited unpatched internet-exposed servers, using Microsoft Exchange and Zoho ManageEngine ADSelfService Plus flaws, to install the HyperBro malware for intelligence collection. The BfV said it cannot rule out supply chain attacks and published indicators of compromise. The report places this within a wider trend of Chinese hacking against large German companies.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "APT27",
           "q": "a Chinese cyberespionage group known as APT27 has repeatedly",
-          "by": "German government (BfV), as reported"
+          "by": "German government (Federal Office for the Protection of the Constitution, BfV)"
         },
         {
           "v": "Emissary Panda",
           "q": "APT27, also known as Emissary Panda, has used the following exploits as a way to get a",
-          "by": "German government (BfV), as reported"
+          "by": "German government (BfV), per the agency's account in the report"
         },
         {
           "v": "Hafnium",
           "q": "Hafnium, according to Microsoft.",
-          "by": "Microsoft, as cited in the report"
+          "by": "Microsoft"
         }
       ],
       "sectors": [
@@ -456,59 +456,71 @@
           "q": "German authorities have warned the local business sector about Chinese cyber-espionage since at least 2018."
         },
         {
-          "v": "software",
+          "v": "large German companies",
+          "q": "often targeted large German companies, from where they are believed to have stolen intellectual property and"
+        },
+        {
+          "v": "software company",
           "q": "Past victims include software company TeamViewer, steel producer ThyssenKrupp, pharmaceutical giant Bayer,"
         },
         {
-          "v": "steel",
+          "v": "steel producer",
           "q": "Past victims include software company TeamViewer, steel producer ThyssenKrupp, pharmaceutical giant Bayer,"
         },
         {
-          "v": "pharmaceutical",
+          "v": "pharmaceutical giant",
           "q": "Past victims include software company TeamViewer, steel producer ThyssenKrupp, pharmaceutical giant Bayer,"
         }
       ],
       "countries": [
         {
-          "v": "Chinese",
-          "q": "a Chinese cyberespionage group known as APT27 has repeatedly"
+          "v": "German",
+          "q": "The German government said on Tuesday that a Chinese cyberespionage group known as APT27 has repeatedly"
         },
         {
-          "v": "German",
-          "q": "The German government said on Tuesday that a Chinese cyberespionage group"
+          "v": "Chinese",
+          "q": "a Chinese cyberespionage group known as APT27 has repeatedly"
         }
       ],
       "dates": [
         {
           "v": "2023-01-17",
           "q": "Published: 2023-01-17 · Archived: 2026-04-05 15:24:07 UTC",
-          "what": "News article on the German government warning published"
+          "what": "Article published reporting the BfV warning"
         },
         {
           "v": "March 2021",
-          "q": "have been taking place since at least March 2021",
-          "what": "Attacks began, per the report, since at least this time"
+          "q": "The attacks, which have been taking place since at least March 2021, have aimed to install a version of the",
+          "what": "Attacks against German companies began (since at least this date)"
         },
         {
           "v": "2018",
-          "q": "a malware strain seen in attacks as far back as 2018",
-          "what": "HyperBro seen in attacks as far back as this year"
+          "q": "German authorities have warned the local business sector about Chinese cyber-espionage since at least 2018.",
+          "what": "German authorities began warning the business sector about Chinese cyber-espionage"
         }
       ],
       "tools": [
         {
           "v": "HyperBro",
-          "q": "the final payload was HyperBro, a malware"
+          "q": "the BfV said that the final payload was HyperBro, a malware"
+        },
+        {
+          "v": "Microsoft Exchange",
+          "q": "attacked German companies over the past few months using vulnerabilities in software like Microsoft Exchange"
+        },
+        {
+          "v": "Zoho SelfService",
+          "q": "and Zoho SelfService."
         }
       ],
       "techniques": [
         {
-          "v": "exploiting unpatched internet-facing software",
-          "q": "using vulnerabilities in software like Microsoft Exchange"
+          "v": "exploiting unpatched internet-exposed servers for initial foothold",
+          "q": "foothold inside companies that failed to patch their internet-exposed servers:"
         },
         {
-          "v": "supply chain attack",
-          "q": "trying to infiltrate the networks of (corporate) customers or service providers (supply chain attack)"
+          "v": "possible supply chain attack",
+          "q": "(supply chain attack),"
         }
       ],
       "cves": [
@@ -535,27 +547,31 @@
       ],
       "figures": [
         {
-          "v": "four",
+          "v": "four Exchange bugs",
           "q": "the four Exchange bugs, also known as ProxyLogon, were also used by a group known as"
+        },
+        {
+          "v": "indicators of compromise",
+          "q": "The BfV reports [PDF, TXT] contains indicators of compromise that both German and non-German organizations"
         }
       ]
     },
     "subject": {
-      "type": "malware",
-      "name": "HyperBro"
+      "type": "campaign",
+      "name": "APT27 attacks on German companies"
     },
     "hedges": [
-      "The BfV says it cannot be ruled out that the actors, besides stealing business secrets, are also trying to infiltrate networks of corporate customers or service providers.",
-      "Chinese hackers are believed to have stolen intellectual property and other business information from large German companies.",
-      "The report attributes the APT27 activity to the German government's account; the Hafnium link is attributed to Microsoft."
+      "The BfV says it cannot be ruled out that the actors also try to infiltrate networks of customers or service providers (supply chain attack).",
+      "Chinese hackers are believed to have stolen intellectual property and business information from large German companies.",
+      "Report says APT27 is linked to the attacks as attributed by the agency, and the intrusions are described as the agency's assessment."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:05Z",
-      "ok": false,
-      "note": "techniques[1]: The BfV only says it 'cannot be ruled out' that the actors are trying to infiltrate customer or service-provider networks (supply chain attack). ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:05Z",
+        "ok": false,
+        "note": "techniques[1]: The BfV only says it 'cannot be ruled out' that the actors are trying to infiltrate customer or service-provider networks (supply chain attack). ",
+        "by": "auditor"
+      }
+    ]
   }
 }

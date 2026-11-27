@@ -596,29 +596,34 @@
   },
   "ac41b40ccaa293dab11bfab2f1383e852f147efa": {
     "sha1": "ac41b40ccaa293dab11bfab2f1383e852f147efa",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:58:16Z",
+    "read_at": "2026-11-27T06:34:48Z",
     "model": "haiku",
-    "summary": "ESET Research reports that the ToolShell zero-day chain against on-premises Microsoft SharePoint Server (CVE-2025-49704, CVE-2025-49706, CVE-2025-53770, CVE-2025-53771) was exploited in the wild from July 17, 2025, by everyone from petty cybercriminals to nation-state groups. Attackers deployed webshells to extract data and could bypass MFA and SSO. The US was the most targeted country at 13.3% of attacks. Microsoft reported that China-aligned actors joined in, and ESET saw a backdoor associated with LuckyMouse on a machine in Vietnam. Recommended steps: use supported versions, apply…",
-    "kind": "vulnerability",
+    "summary": "ESET Research reports that ToolShell, a chain of Microsoft SharePoint Server flaws (CVE-2025-49704, CVE-2025-49706, CVE-2025-53770, CVE-2025-53771), was widely exploited from 17 July 2025 against on-premises SharePoint 2016, 2019 and Subscription Edition. SharePoint Online is not affected. Attackers deployed webshells to extract data and could bypass MFA and SSO. Microsoft reported that China-aligned threat actors joined the exploitation. ESET saw a backdoor associated with LuckyMouse on a machine in Vietnam. Per ESET telemetry, the US was the most targeted country (13.3% of attacks).…",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
-          "v": "LuckyMouse",
-          "q": "we detected a backdoor associated with LuckyMouse – a cyberespionage group that",
-          "by": "ESET Research (report authors)"
-        },
-        {
           "v": "China-aligned threat actors",
           "q": "Microsoft has reported that several China-aligned threat actors have joined in on the exploitation",
-          "by": "Microsoft, as relayed by ESET Research"
+          "by": "Microsoft (as relayed by ESET Research)"
+        },
+        {
+          "v": "LuckyMouse",
+          "q": "we detected a backdoor associated with LuckyMouse – a cyberespionage group that targets mainly governments",
+          "by": "ESET Research"
+        },
+        {
+          "v": "China-aligned APT groups",
+          "q": "China-aligned APT groups have certainly seized the opportunity to add the exploit chain to their",
+          "by": "ESET Research"
         }
       ],
       "sectors": [
         {
-          "v": "government",
-          "q": "the victims of the ToolShell attacks include several high-value government"
+          "v": "government organizations",
+          "q": "the victims of the ToolShell attacks include several high-value government organizations that have been"
         },
         {
           "v": "telecommunications companies",
@@ -631,43 +636,43 @@
           "q": "with the US (13.3% of attacks) being the most targeted country according to our telemetry data."
         },
         {
+          "v": "Vietnam",
+          "q": "Vietnam targeted via ToolShell. At this stage, it remains unclear whether the system had been previously"
+        },
+        {
           "v": "Germany",
-          "q": "on July 17th in Germany. However, because this attempt was blocked, the final webshell"
+          "q": "vulnerability – on July 17th in Germany. However, because this attempt was blocked, the final webshell"
         },
         {
           "v": "Italy",
           "q": "on a server in Italy."
-        },
-        {
-          "v": "Vietnam",
-          "q": "Vietnam targeted via ToolShell."
         }
       ],
       "dates": [
         {
-          "v": "July 17th",
-          "q": "Starting from July 17th, ToolShell has been widely exploited by all sorts of threat actors, from petty",
-          "what": "Wide exploitation of ToolShell began, per ESET telemetry"
+          "v": "July 19th, 2025",
+          "q": "On July 19th, 2025, Microsoft confirmed that a set of zero-day vulnerabilities in SharePoint Server called",
+          "what": "Microsoft confirmed the ToolShell zero-day vulnerabilities were being exploited in the wild"
         },
         {
           "v": "July 17th",
-          "q": "on July 17th in Germany. However, because this attempt was blocked, the final webshell",
-          "what": "First exploit attempt on the chain detected by ESET, in Germany, and blocked"
+          "q": "Starting from July 17th, ToolShell has been widely exploited by all sorts of threat actors, from petty",
+          "what": "ToolShell exploitation became widespread"
+        },
+        {
+          "v": "July 17th",
+          "q": "vulnerability – on July 17th in Germany. However, because this attempt was blocked, the final webshell",
+          "what": "An exploit attempt on part of the chain was detected in Germany and blocked"
         },
         {
           "v": "July 18th",
           "q": "The first time we registered the payload itself was on July 18th",
-          "what": "First registration of the final webshell payload, on a server in Italy"
-        },
-        {
-          "v": "July 19th, 2025",
-          "q": "On July 19th, 2025, Microsoft confirmed that a set of zero-day vulnerabilities in SharePoint Server called",
-          "what": "Microsoft confirmed ToolShell zero-days were being exploited in the wild"
+          "what": "The first webshell payload was registered, on a server in Italy"
         },
         {
           "v": "July 22nd, 2025",
           "q": "Additionally, on July 22nd, 2025, we observed that attackers attempted to deploy other simple ASP webshells",
-          "what": "Attackers attempted to deploy further simple ASP webshells"
+          "what": "Attackers attempted to deploy further ASP webshells"
         }
       ],
       "tools": [
@@ -686,22 +691,26 @@
       ],
       "techniques": [
         {
-          "v": "webshells",
-          "q": "After getting inside the targeted server, attackers were seen deploying malicious webshells to extract information"
+          "v": "bypass multi-factor authentication",
+          "q": "Exploiting ToolShell allows the attackers to bypass multi-factor authentication (MFA), and single sign-on (SSO)."
         },
         {
-          "v": "multi-factor authentication",
-          "q": "Exploiting ToolShell allows the attackers to bypass multi-factor authentication (MFA), and single sign-on (SSO)."
+          "v": "webshell deployment to extract data",
+          "q": "attackers were seen deploying malicious webshells to extract information"
+        },
+        {
+          "v": "chaining four vulnerabilities",
+          "q": "the threat actors often chain together four vulnerabilities"
         }
       ],
       "cves": [
         {
           "v": "CVE-2025-49704",
-          "q": "Threat actors exploited CVE-2025-49704, CVE-"
+          "q": "the previously patched CVE‑2025‑49704 and CVE-2025-49706, alongside"
         },
         {
           "v": "CVE-2025-49706",
-          "q": "the previously patched CVE‑2025‑49704 and CVE-2025-49706, alongside"
+          "q": "CVE-2025-49706, alongside the already mentioned CVE-2025-53770"
         },
         {
           "v": "CVE-2025-53770",
@@ -709,17 +718,17 @@
         },
         {
           "v": "CVE-2025-53771",
-          "q": "CVE‑2025‑53771, a server spoofing vulnerability."
+          "q": "vulnerability, and CVE‑2025‑53771, a server spoofing vulnerability."
         }
       ],
       "figures": [
         {
-          "v": "13.3%",
+          "v": "13.3% of attacks",
           "q": "with the US (13.3% of attacks) being the most targeted country according to our telemetry data."
         },
         {
           "v": "four vulnerabilities",
-          "q": "the threat actors often chain together four vulnerabilities: the previously patched"
+          "q": "the threat actors often chain together four vulnerabilities"
         }
       ]
     },
@@ -729,17 +738,16 @@
     },
     "hedges": [
       "At this stage, it remains unclear whether the system had been previously compromised or if the backdoor was introduced during the current attack.",
-      "Microsoft has reported that several China-aligned threat actors have joined in on the exploitation attempts; ESET relays this.",
-      "The US share is stated as being according to the report's own telemetry data.",
-      "we expect many more opportunistic attackers to take advantage of unpatched systems"
+      "ESET expects many more opportunistic attackers to take advantage of unpatched systems.",
+      "The most-targeted-country figure is based on ESET's telemetry data."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:29Z",
-      "ok": false,
-      "note": "sectors[1]: The quote describes who the LuckyMouse group mainly targets, not who the ToolShell victims were. The text names only government organizations as Too",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:29Z",
+        "ok": false,
+        "note": "sectors[1]: The quote describes who the LuckyMouse group mainly targets, not who the ToolShell victims were. The text names only government organizations as Too",
+        "by": "auditor"
+      }
+    ]
   }
 }

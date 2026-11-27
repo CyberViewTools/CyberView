@@ -173,33 +173,39 @@
   },
   "c77fcf46b9d3f1ca7121da40666f05358fc29163": {
     "sha1": "c77fcf46b9d3f1ca7121da40666f05358fc29163",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:57:45Z",
+    "read_at": "2026-11-27T06:33:21Z",
     "model": "haiku",
-    "summary": "Malpedia family entry for MedusaLocker, a Windows ransomware that runs tasks to prepare the target system before encrypting files. It uses AES and RSA-2048 and reportedly appends extensions such as .encrypted. Most of the page is a dated list of reports on the family from vendors and agencies, from 2019 to 2023, including a 2022 CISA advisory. The page was archived on 2026-04-02.",
-    "kind": "overview",
+    "summary": "Malpedia reference entry for MedusaLocker, a Windows ransomware that runs preparation tasks before encrypting files. The report says it reportedly uses AES and RSA-2048, reportedly appends several file extensions, and probably avoids executable files. The page is mainly an index of third-party articles and alerts about MedusaLocker, including a 2022 CISA #StopRansomware alert and a 2023 AhnLab/ASEC write-up on GlobeImposter distributed with MedusaLocker via RDP. The entry was archived on 2026-04-02.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
         {
-          "v": "2026-04-02",
-          "q": "Archived: 2026-04-02 12:21:53 UTC",
-          "what": "Malpedia family page archived"
+          "v": "2019-10-15",
+          "q": "2019-10-15 ⋅ Andrew Ivanov",
+          "what": "Publication 'MedusaLocker Ransomware' by Andrew Ivanov listed in the report"
+        },
+        {
+          "v": "2020-06-03",
+          "q": "2020-06-03 ⋅ VMWare Carbon Black ⋅ Brian Baskin",
+          "what": "Carbon Black publication 'Medusa Locker Ransomware' listed in the report"
         },
         {
           "v": "2022-07-01",
           "q": "2022-07-01 ⋅ CISA ⋅ CISA, Department of the Treasury (Treasury), FBI, FINCEN",
-          "what": "CISA, Treasury, FBI and FinCEN joint alert AA22-181A on MedusaLocker"
+          "what": "CISA alert AA22-181A on MedusaLocker listed in the report"
+        },
+        {
+          "v": "2023-03-08",
+          "q": "MedusaLocker 2023-03-08 ⋅ AhnLab ⋅ ASEC",
+          "what": "AhnLab/ASEC write-up on GlobeImposter distributed with MedusaLocker via RDP listed in the report"
         }
       ],
       "tools": [
-        {
-          "v": "MedusaLocker",
-          "q": "MedusaLocker avoids executable files, probably to avoid rendering the targeted system unusable for paying the"
-        },
         {
           "v": "GlobeImposter",
           "q": "GlobeImposter Ransomware Being Distributed with MedusaLocker via RDP"
@@ -207,19 +213,19 @@
       ],
       "techniques": [
         {
-          "v": "system preparation before file encryption",
-          "q": "will run certain tasks to prepare the target system for the encryption of files."
+          "v": "run certain tasks to prepare the target system",
+          "q": "A Windows ransomware that will run certain tasks to prepare the target system for the encryption of files."
         },
         {
-          "v": "avoids encrypting executable files",
+          "v": "avoids executable files",
           "q": "MedusaLocker avoids executable files, probably to avoid rendering the targeted system unusable for paying the"
         },
         {
           "v": "AES and RSA-2048 encryption",
-          "q": "It uses a combination of AES and RSA-2048, and reportedly appends extensions such as"
+          "q": "It uses a combination of AES and RSA-2048, and reportedly appends extensions such as .encrypted,"
         },
         {
-          "v": "appends extensions to encrypted files",
+          "v": "appends extensions such as .encrypted",
           "q": "reportedly appends extensions such as .encrypted,"
         }
       ],
@@ -227,7 +233,7 @@
       "figures": [
         {
           "v": "RSA-2048",
-          "q": "It uses a combination of AES and RSA-2048, and reportedly appends extensions such as"
+          "q": "It uses a combination of AES and RSA-2048, and reportedly appends extensions such as .encrypted,"
         }
       ]
     },
@@ -236,18 +242,18 @@
       "name": "MedusaLocker"
     },
     "hedges": [
-      "The extension list is reported, not confirmed: 'reportedly appends extensions such as'.",
-      "The reason given for avoiding executable files is hedged with 'probably'.",
-      "The entry is a family profile built from a list of other reports; the page itself does not analyse them."
+      "The report says MedusaLocker probably avoids executable files, probably to avoid rendering the targeted system unusable for paying the ransom.",
+      "Extension names are reported, not confirmed: 'reportedly appends extensions such as .encrypted'.",
+      "Encryption scheme is stated with the word 'reportedly' in the source text."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:29Z",
-      "ok": false,
-      "note": "hedges[2]: The text contains no hedge here. It is an editorial comment on how the page is built, not a hedge the text makes about a claim.",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:29Z",
+        "ok": false,
+        "note": "hedges[2]: The text contains no hedge here. It is an editorial comment on how the page is built, not a hedge the text makes about a claim.",
+        "by": "auditor"
+      }
+    ]
   },
   "c76498620a3adf5c0c2a106abfae0197f2418e7a": {
     "sha1": "c76498620a3adf5c0c2a106abfae0197f2418e7a",

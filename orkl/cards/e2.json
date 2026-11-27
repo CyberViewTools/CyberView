@@ -1,89 +1,72 @@
 {
   "e2f9503e43f3bb1947bbbe9bf4729f62f8434e1d": {
     "sha1": "e2f9503e43f3bb1947bbbe9bf4729f62f8434e1d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:54:30Z",
+    "read_at": "2026-11-27T06:33:23Z",
     "model": "haiku",
-    "summary": "Symantec (Broadcom) describes Carderbee, a previously unknown APT group that used the legitimate Cobra DocGuard software in a supply chain attack to deploy the Korplug (PlugX) backdoor. Most victims are in Hong Kong, with some in other parts of Asia. The attackers used malware signed with a Microsoft certificate. Symantec could not link the activity to a known group, so it named the actor Carderbee, and did not find evidence tying it to Budworm. Malicious activity was seen on about 100 computers, while the software was installed on about 2,000. The activity began in April 2023.",
+    "summary": "Symantec reports that Carderbee, a previously unknown APT group, carried out a supply chain attack using the legitimate Cobra DocGuard software to deploy the Korplug (PlugX) backdoor. Most victims are in Hong Kong, and the attackers used malware signed with a Microsoft certificate. About 100 computers showed malicious activity while the software was installed on around 2,000. Symantec could not link the activity to a known group. ESET earlier attributed a 2022 compromise of a Hong Kong gambling company, using the same software, to Budworm.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Carderbee",
-          "q": "so we have given the actor behind this activity a new name — Carderbee.",
-          "by": "Symantec Threat Hunter Team (Broadcom)"
+          "q": "so we have given the actor behind this activity a new name — Carderbee",
+          "by": "Symantec Threat Hunter Team"
         },
         {
           "v": "Budworm",
-          "q": "using the same technique by Budworm (aka LuckyMouse, APT27), which led ESET to attribute this September",
-          "by": "ESET, as reported in the Symantec report"
-        },
-        {
-          "v": "APT41",
-          "q": "Korplug is a backdoor that is known to be used by multiple APTs, including APT41 and Budworm.",
-          "by": "Symantec Threat Hunter Team (Broadcom)"
+          "q": "which led ESET to attribute this September 2022 attack to Budworm too",
+          "by": "ESET"
         }
       ],
       "sectors": [
         {
           "v": "gambling",
-          "q": "a gambling company in Hong Kong."
+          "q": "The same gambling company had been compromised in September 2021"
         }
       ],
       "countries": [
         {
           "v": "Hong Kong",
           "q": "Most of the victims in this campaign are based in Hong Kong, with some victims based in other regions of Asia."
-        },
-        {
-          "v": "China",
-          "q": "Cobra DocGuard Client is software produced by a China-based company called EsafeNet and appears to"
-        },
-        {
-          "v": "Asia",
-          "q": "Most of the victims in this campaign are based in Hong Kong, with some victims based in other regions of Asia."
         }
       ],
       "dates": [
         {
-          "v": "April 2023",
-          "q": "This activity began in April 2023.",
-          "what": "The activity investigated by Symantec began."
+          "v": "22 August 2023",
+          "q": "12.20pm BST, 22 August 2023: Updated with additional IoCs",
+          "what": "Report updated with additional indicators of compromise"
         },
         {
           "v": "September 2022",
-          "q": "According to a report from ESET, in September 2022, a malicious update to this software was used to",
-          "what": "A malicious update to Cobra DocGuard was used to compromise a gambling company in Hong Kong, per ESET."
+          "q": "According to a report from ESET, in September 2022, a malicious update to this software was used to compromise",
+          "what": "Malicious update to Cobra DocGuard used to compromise a Hong Kong gambling company"
         },
         {
           "v": "September 2021",
-          "q": "had been compromised in September 2021",
-          "what": "The same gambling company in Hong Kong was compromised using the same technique by Budworm, per ESET."
+          "q": "The same gambling company had been compromised in September 2021",
+          "what": "Same gambling company compromised using the same technique, attributed to Budworm"
+        },
+        {
+          "v": "April 2023",
+          "q": "This activity began in April 2023",
+          "what": "Activity investigated by Symantec began"
         },
         {
           "v": "December 2022",
           "q": "In December 2022, Mandiant noted a POORTRY driver",
-          "what": "Mandiant noted a POORTRY driver sample signed with a Microsoft certificate."
-        },
-        {
-          "v": "22 August 2023",
-          "q": "12.20pm BST, 22 August 2023: Updated with additional IoCs",
-          "what": "Report updated with additional indicators of compromise."
+          "what": "Mandiant noted a POORTRY driver sample signed with a Microsoft certificate"
         }
       ],
       "tools": [
         {
           "v": "Cobra DocGuard",
-          "q": "used the legitimate Cobra DocGuard software to"
+          "q": "Cobra DocGuard Client is software produced by a China-based company called EsafeNet"
         },
         {
           "v": "Korplug",
           "q": "deploying the Korplug backdoor (aka PlugX) onto victim"
-        },
-        {
-          "v": "Microsoft Windows Hardware Compatibility Publisher",
-          "q": "Microsoft, called Microsoft Windows Hardware Compatibility Publisher."
         },
         {
           "v": "POORTRY",
@@ -93,19 +76,15 @@
       "techniques": [
         {
           "v": "supply chain attack",
-          "q": "carry out a supply chain attack with the goal of deploying the Korplug backdoor"
+          "q": "carry out a supply chain attack with the goal of deploying the Korplug backdoor (aka PlugX) onto victim"
         },
         {
           "v": "malware signed with a legitimate Microsoft certificate",
-          "q": "the attackers used malware signed with a legitimate Microsoft certificate."
+          "q": "the attackers used malware signed with a legitimate Microsoft certificate"
         },
         {
-          "v": "selectively pushing payloads to specific victims",
-          "q": "indicating that the attacker may be selectively pushing payloads to specific victims."
-        },
-        {
-          "v": "keylogger",
-          "q": "Act as a keylogger"
+          "v": "selective payload delivery to specific victims",
+          "q": "indicating that the attacker may be selectively pushing"
         }
       ],
       "cves": [],
@@ -116,7 +95,7 @@
         },
         {
           "v": "around 2,000 computers",
-          "q": "the Cobra DocGuard software was installed on around 2,000 computers"
+          "q": "software was installed on around 2,000 computers"
         }
       ]
     },
@@ -129,19 +108,17 @@
       "it was not possible to link this activity definitively to a known group",
       "we did not find any other evidence to indicate that this attack was carried out by Budworm",
       "the attacker may be selectively pushing payloads to specific victims",
-      "Malware signed with what appears to be a legitimate certificate can make it much harder for security software to detect.",
-      "Cobra DocGuard Client is software produced by a China-based company called EsafeNet and appears to legitimately be used to protect, encrypt, and decrypt software",
-      "it may have been modified to try to bypass ESET products",
-      "Some unanswered questions remain about the activity of Carderbee, including whether there are links to other actors such as Budworm."
+      "Malware signed with what appears to be a legitimate certificate can make it much harder for security software to detect",
+      "some unanswered questions remain, such as what sectors the group was targeting and whether there are links between Carderbee and other actors such as Budworm"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:39Z",
-      "ok": false,
-      "note": "sectors[0]: The gambling company belongs to the earlier ESET-reported incident (Budworm, 2021/2022). The text says Symantec has no indication of the sectors tar",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:39Z",
+        "ok": false,
+        "note": "sectors[0]: The gambling company belongs to the earlier ESET-reported incident (Budworm, 2021/2022). The text says Symantec has no indication of the sectors tar",
+        "by": "auditor"
+      }
+    ]
   },
   "e2514c7b0cd05a881ddd6209fed0815cd7ff0576": {
     "sha1": "e2514c7b0cd05a881ddd6209fed0815cd7ff0576",

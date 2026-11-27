@@ -61,36 +61,41 @@
   },
   "82c459aa6c5ad1880851e4fcaed3a989434caf3a": {
     "sha1": "82c459aa6c5ad1880851e4fcaed3a989434caf3a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:58:55Z",
+    "read_at": "2026-11-27T06:34:33Z",
     "model": "haiku",
-    "summary": "Malpedia family entry for RokRAT, described as a backdoor distributed as an encoded binary that is decrypted by shellcode after weaponized documents are exploited. It can capture screenshots, log keystrokes, evade analysis with anti-virtual machine checks and use cloud storage APIs. Most of the page is a dated list of third-party report titles from 2017 to 2025 that link RokRAT to APT37, ScarCruft and related groups.",
+    "summary": "Malpedia family page for RokRAT, a backdoor the page says is commonly distributed as an encoded binary that is downloaded and decrypted by shellcode after weaponized documents are exploited. Listed capabilities include screenshots, keystroke logging, anti-virtual machine checks and cloud storage APIs. The page lists third-party reports from 2017 to 2025 that link RokRAT to APT37, ScarCruft and related names. These attributions come from report titles, not from the page itself.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "APT37",
-          "q": "APT37 (REAPER) The Overlooked North Korean Actor",
-          "by": "FireEye (cited report title)"
+          "q": "An in-depth analysis of APT37’s latest campaign",
+          "by": "the report itself (listing a reference title by ZW01f)"
+        },
+        {
+          "v": "ScarCruft",
+          "q": "Scarcruft Bolsters Arsenal for targeting individual Android devices",
+          "by": "the report itself (listing a reference title by s2wlab)"
         },
         {
           "v": "APT-C-28",
           "q": "APT-C-28 Group Launched New Cyber Attack With Fileless RokRat Malware",
-          "by": "Cyber Security News (cited report title)"
-        },
-        {
-          "v": "ScarCruft",
-          "q": "RokRAT Malware Distributed Through LNK Files (*.lnk): RedEyes (ScarCruft)",
-          "by": "AhnLab (cited report title)"
+          "by": "the report itself (listing a reference title by Cyber Security News)"
         },
         {
           "v": "ITG10",
           "q": "ITG10 Likely Targeting South Korean Entities of Interest to the Democratic People’s Republic of Korea (DPRK)",
-          "by": "Security Intelligence (cited report title)"
+          "by": "the report itself (listing a reference title from Security Intelligence)"
         }
       ],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "Think Tank",
+          "q": "Analysis of APT37 Attack Case Disguised as a Think Tank for National Security Strategy in South Korea"
+        }
+      ],
       "countries": [
         {
           "v": "South Korea",
@@ -105,27 +110,32 @@
         {
           "v": "2017-01-01",
           "q": "RokRAT 2017-01-01 ⋅ Cisco Talos ⋅ Paul Rascagnères, Warren Mercer",
-          "what": "Cisco Talos report 'Introducing ROKRAT' listed"
+          "what": "Cisco Talos reference 'Introducing ROKRAT' listed on the page"
         },
         {
           "v": "2018-02-20",
           "q": "RokRAT 2018-02-20 ⋅ FireEye ⋅ FireEye",
-          "what": "FireEye report on APT37 (REAPER) listed"
+          "what": "FireEye reference on APT37 (REAPER) listed on the page"
         },
         {
           "v": "2023-05-01",
           "q": "RokRAT 2023-05-01 ⋅ Check Point Research ⋅ Check Point Research",
-          "what": "Check Point Research report 'Chain Reaction: RokRAT's Missing Link' listed"
+          "what": "Check Point Research reference 'Chain Reaction: RokRAT's Missing Link' listed on the page"
         },
         {
           "v": "2025-07-21",
           "q": "RokRAT 2025-07-21 ⋅ AhnLab ⋅ ASEC",
-          "what": "AhnLab report on RokRAT malware using malicious HWP documents listed"
+          "what": "AhnLab ASEC reference on RokRAT malware using malicious Hangul documents listed on the page"
         },
         {
           "v": "2025-12-21",
           "q": "2025-12-21 ⋅ Genians ⋅ Genians",
-          "what": "Genians report 'Operation Artemis' on HWP-based DLL side loading listed"
+          "what": "Genians reference 'Operation Artemis' on HWP-based DLL side loading listed on the page"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 23:47:16 UTC",
+          "what": "Date the page was archived"
         }
       ],
       "tools": [
@@ -138,26 +148,50 @@
           "q": "DOGCALL is capable of"
         },
         {
-          "v": "Final1stspy",
-          "q": "APT37: Final1stspy Reaping the FreeMilk"
+          "v": "CloudMensis",
+          "q": "Twitter Thread linking CloudMensis to RokRAT / ScarCruft"
         }
       ],
       "techniques": [
         {
-          "v": "capturing screenshots, logging keystrokes",
-          "q": "capturing screenshots, logging keystrokes, evading analysis with"
+          "v": "Shellcode decryption of a downloaded binary",
+          "q": "binary file downloaded and decrypted by shellcode following the"
         },
         {
-          "v": "anti-virtual machine detections",
-          "q": "anti-virtual machine detections, and leveraging cloud storage"
+          "v": "Anti-virtual machine detection",
+          "q": "anti-virtual machine detections, and leveraging cloud storage APIs"
         },
         {
-          "v": "cloud storage",
-          "q": "anti-virtual machine detections, and leveraging cloud storage"
+          "v": "Capturing screenshots",
+          "q": "capable of capturing screenshots, logging keystrokes, evading analysis with"
         },
         {
-          "v": "exploitation of weaponized documents",
-          "q": "exploitation of weaponized documents. DOGCALL is capable of"
+          "v": "Logging keystrokes",
+          "q": "capable of capturing screenshots, logging keystrokes, evading analysis with"
+        },
+        {
+          "v": "Cloud storage API use",
+          "q": "leveraging cloud storage APIs"
+        },
+        {
+          "v": "Process Injection",
+          "q": "T1055 Process Injection"
+        },
+        {
+          "v": "Fileless",
+          "q": "Fileless RokRat Malware"
+        },
+        {
+          "v": "VBA self decode technique",
+          "q": "VBA self decode technique to inject RokRat"
+        },
+        {
+          "v": "DLL Side Loading",
+          "q": "Operation Artemis: Analysis of HWP-Based DLL Side Loading Attacks"
+        },
+        {
+          "v": "LNK File",
+          "q": "LNK File Disguised as Certificate Distributing RokRAT Malware"
         }
       ],
       "cves": [],
@@ -168,18 +202,18 @@
       "name": "RokRAT"
     },
     "hedges": [
-      "Most of the page is a list of third-party report titles; the family description is brief and the page makes no attribution of its own.",
-      "The description names DOGCALL, which the page does not otherwise connect to RokRAT.",
-      "Cited source titles carry their own hedges, for example 'ITG10 Likely Targeting South Korean Entities of Interest'."
+      "The page says RokRAT is 'commonly' distributed as an encoded binary; no further sourcing is given.",
+      "The listed ITG10 report title says 'Likely Targeting', so that attribution is hedged.",
+      "The listed Twitter thread is titled as 'linking CloudMensis to RokRAT / ScarCruft', which is a linkage, not a confirmed attribution."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:13Z",
-      "ok": false,
-      "note": "summary: The text says 'DOGCALL is capable of' capturing screenshots, logging keystrokes, anti-VM evasion and cloud storage APIs. The summary states these as Ro",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:13Z",
+        "ok": false,
+        "note": "summary: The text says 'DOGCALL is capable of' capturing screenshots, logging keystrokes, anti-VM evasion and cloud storage APIs. The summary states these as Ro",
+        "by": "auditor"
+      }
+    ]
   },
   "829baa80e743d4ebf8feb5631f98ecc82d0e53cc": {
     "sha1": "829baa80e743d4ebf8feb5631f98ecc82d0e53cc",

@@ -24,18 +24,23 @@
   },
   "92c37a8def1ad20659b82eba04c2aaec4efc9cca": {
     "sha1": "92c37a8def1ad20659b82eba04c2aaec4efc9cca",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:56:53Z",
+    "read_at": "2026-11-27T06:33:20Z",
     "model": "haiku",
-    "summary": "FortiGuard Labs (Fortinet) describes a Russian-language phishing email with a ZIP attachment. Its macro-enabled add-in file runs a script that creates a scheduled task for persistence and tries to reach a command and control server. The report links the activity to the Konni RAT and to APT 37, a group said to align with North Korean government objectives, but hedges that link. The C2 server was not responding at the time of writing, so the RAT executable could not be analysed. The blog was published 2022-09-19.",
+    "summary": "Fortinet FortiGuard Labs describes a Russian-language phishing email carrying a Zip archive with a decoy PowerPoint file and a macro add-in. The macro drops a VBScript that creates a scheduled task for persistence and tries to reach a command and control server. The report links the activity to the Konni RAT, tied to the group APT 37, which it says aligns with North Korean government objectives. The command and control server was not responding, so the RAT itself was not obtained.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "APT 37",
           "q": "that has been tied to the group APT 37 (aka: Ricochet Chollima, InkySquid, ScarCruft, Reaper, and Group123)",
-          "by": "Fortinet FortiGuard Labs (report author)"
+          "by": "Fortinet FortiGuard Labs (the report)"
+        },
+        {
+          "v": "Ricochet Chollima",
+          "q": "that has been tied to the group APT 37 (aka: Ricochet Chollima, InkySquid, ScarCruft, Reaper, and Group123)",
+          "by": "Fortinet FortiGuard Labs (the report)"
         }
       ],
       "sectors": [
@@ -46,52 +51,55 @@
       ],
       "countries": [
         {
-          "v": "Russia",
-          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
-        },
-        {
-          "v": "China",
-          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
-        },
-        {
           "v": "North Korea",
-          "q": "Republic of Korea (DPRK), commonly known as North Korea."
+          "q": "the government of the Democratic People’s Republic of Korea (DPRK), commonly known as North Korea"
+        },
+        {
+          "v": "Russia",
+          "q": "spoofing an address for the Consulate General of Russia in Shenyang, China."
         },
         {
           "v": "Ukraine",
-          "q": "This is interesting because this is the English spelling of an area of Ukraine."
+          "q": "This is the English spelling of an area of Ukraine."
         }
       ],
       "dates": [
         {
           "v": "2022-09-19",
           "q": "Published: 2022-09-19 · Archived: 2026-04-05 21:30:55 UTC",
-          "what": "Blog post published"
-        },
-        {
-          "v": "2026-04-05",
-          "q": "Published: 2022-09-19 · Archived: 2026-04-05 21:30:55 UTC",
-          "what": "Page archived"
+          "what": "Fortinet blog post on the phishing email was published"
         }
       ],
       "tools": [
         {
           "v": "Konni",
-          "q": "Konni, a remote administration tool (RAT)"
+          "q": "consistent with previous instances of Konni, a remote administration tool (RAT)"
+        },
+        {
+          "v": "Microsoft PowerPoint",
+          "q": "Contained within the Zip archive are two Microsoft PowerPoint files"
         },
         {
           "v": "Certutil",
           "q": "Using the Microsoft “Certutil” tool"
-        },
-        {
-          "v": "PowerShell",
-          "q": "The second purpose of “oup.vbs” is to execute a base 64-encoded PowerShell command."
         }
       ],
       "techniques": [
         {
-          "v": "spoofing an address",
-          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
+          "v": "phishing email",
+          "q": "came across an unassuming phishing email that proved to be far more than it initially seemed"
+        },
+        {
+          "v": "zip archive",
+          "q": "Attached to the email is a Zip archive"
+        },
+        {
+          "v": "decoy",
+          "q": "This PowerPoint file is actually a decoy."
+        },
+        {
+          "v": "spoofing",
+          "q": "spoofing an address for the Consulate General of Russia in Shenyang, China."
         },
         {
           "v": "malicious macro",
@@ -99,52 +107,44 @@
         },
         {
           "v": "scheduled task",
-          "q": "The first is to create a scheduled task called"
-        },
-        {
-          "v": "persistence",
-          "q": "once attackers are in, they mean to stay through the use of persistence mechanisms"
+          "q": "The first is to create a scheduled task called “Office Updatev2.2”."
         },
         {
           "v": "command and control",
           "q": "frequent check-ins with command and control."
-        },
-        {
-          "v": "decoy",
-          "q": "This PowerPoint file is actually a decoy."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "Medium",
-          "q": "Severity Level: Medium"
+          "v": "once every 5 minutes",
+          "q": "The purpose of this task is to continually run “oup.vbs” once every 5 minutes."
         },
         {
-          "v": "5 minutes",
-          "q": "The purpose of this task is to continually run “oup.vbs” once every 5 minutes."
+          "v": "Medium",
+          "q": "Severity Level: Medium"
         }
       ]
     },
     "subject": {
       "type": "malware",
-      "name": "Konni"
+      "name": "Konni RAT"
     },
     "hedges": [
-      "The group APT 37 is described as tied to Konni, not confirmed as its operator.",
-      "The group has been known to align its targeting and objectives with those of the North Korean government.",
-      "The actions used are described as consistent with previous instances of Konni, not as a confirmed match.",
-      "The command and control server was not responding at the time of writing, so the RAT executable could not be obtained for analysis.",
-      "Persistence and C2 activity are said to match prior attempts at deploying Konni."
+      "The actions used to execute this strategy are consistent with previous instances of Konni.",
+      "The group has been known to align its targeting and objectives with those of the DPRK government.",
+      "As of the time of this writing, the command and control server was not responding, preventing further analysis.",
+      "The activity to ensure persistence and connect to a C2 matches prior attempts at deploying Konni.",
+      "With the C2 site no longer available, obtaining the executable for the RAT for further analysis was not possible."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:22Z",
-      "ok": false,
-      "note": "actors[0].by: The text says Konni 'has been tied to the group APT 37' in the passive voice and names no one who makes that link. Crediting it to Fortinet FortiG",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:22Z",
+        "ok": false,
+        "note": "actors[0].by: The text says Konni 'has been tied to the group APT 37' in the passive voice and names no one who makes that link. Crediting it to Fortinet FortiG",
+        "by": "auditor"
+      }
+    ]
   },
   "927e005f5cdd9887481a10b2b8a854ec57389e5b": {
     "sha1": "927e005f5cdd9887481a10b2b8a854ec57389e5b",

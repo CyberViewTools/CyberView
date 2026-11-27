@@ -212,200 +212,31 @@
     "sha1": "bb38ec9e943645f3568e94c0b66ec04218dd65f2",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T06:02:09Z",
+    "read_at": "2026-11-27T06:35:37Z",
     "model": "haiku",
-    "summary": "ESET Research describes two previously unknown backdoors, LunarWeb (HTTP(S) command and control) and LunarMail (email-based), used in compromises of a European ministry of foreign affairs and its diplomatic missions, mainly in the Middle East. ESET attributes the activity to Turla with medium confidence. Initial access is not confirmed; possible spearphishing and abuse of Zabbix monitoring software are suggested. The report says the toolset has been operational since at least 2020.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Turla",
-          "q": "we attribute these compromises to the infamous Russia-aligned cyberespionage group Turla, with",
-          "by": "ESET Research"
-        },
-        {
-          "v": "Snake",
-          "q": "Turla, also known as Snake, has been active since at least 2004,",
-          "by": "ESET Research"
-        },
-        {
-          "v": "Russian FSB",
-          "q": "part of the Russian FSB, Turla mainly targets high-profile entities such as governments and diplomatic organizations in",
-          "by": "ESET Research"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "diplomatic missions",
-          "q": "primarily related to its diplomatic missions in the Middle East."
-        },
-        {
-          "v": "ministry of foreign affairs",
-          "q": "compromising a European ministry of foreign affairs (MFA) and its diplomatic missions abroad."
-        },
-        {
-          "v": "governments and diplomatic organizations",
-          "q": "part of the Russian FSB, Turla mainly targets high-profile entities such as governments and diplomatic organizations in"
-        }
-      ],
+      "actors": [],
+      "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2004",
-          "q": "Turla, also known as Snake, has been active since at least 2004,",
-          "what": "Turla reported active since at least this year"
-        },
-        {
-          "v": "2008",
-          "q": "Department of Defense in 2008 and the Swiss defense company RUAG in 2014.",
-          "what": "Turla breach of the US Department of Defense"
-        },
-        {
-          "v": "2014",
-          "q": "Department of Defense in 2008 and the Swiss defense company RUAG in 2014.",
-          "what": "Turla breach of the Swiss defense company RUAG"
-        },
-        {
-          "v": "2020",
-          "q": "operational since at least 2020, possibly earlier.",
-          "what": "LunarWeb and LunarMail toolset operational since at least this year"
-        }
-      ],
-      "tools": [
-        {
-          "v": "LunarWeb",
-          "q": "ESET researchers discovered two previously unknown backdoors – which we named LunarWeb and LunarMail –"
-        },
-        {
-          "v": "LunarMail",
-          "q": "ESET researchers discovered two previously unknown backdoors – which we named LunarWeb and LunarMail –"
-        },
-        {
-          "v": "LunarLoader",
-          "q": "The execution chain begins with a loader that we have named LunarLoader."
-        },
-        {
-          "v": "LightNeuron",
-          "q": "LunarMail shares ideas of its operation with LightNeuron, another Turla backdoor that uses email messages for C&C"
-        },
-        {
-          "v": "AdmPwd",
-          "q": "with a trojanized AdmPwd, which is a part of Windows Local Administrator Password Solution (LAPS)."
-        },
-        {
-          "v": "Zabbix",
-          "q": "abuse of misconfigured network and application monitoring software Zabbix."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "spearphishing",
-          "q": "Additionally, evidence of spearphishing includes a Word document installing a LunarMail backdoor via a malicious macro."
-        },
-        {
-          "v": "malicious macro",
-          "q": "Additionally, evidence of spearphishing includes a Word document installing a LunarMail backdoor via a malicious macro."
-        },
-        {
-          "v": "steganography",
-          "q": "Both backdoors employ the technique of steganography, hiding commands in images to avoid detection."
-        },
-        {
-          "v": "Group Policy extension",
-          "q": "Finally, to maintain access and execute their code, the attacker set up a Group Policy extension in the registry using the"
-        },
-        {
-          "v": "Outlook add-in",
-          "q": "LunarMail loader is persisted as an Outlook add-in."
-        },
-        {
-          "v": "Lua scripts",
-          "q": "LunarWeb and LunarMail can execute Lua scripts."
-        },
-        {
-          "v": "email messages for C&C",
-          "q": "LunarMail uses email messages for C&C"
-        },
-        {
-          "v": "impersonates legitimate domains",
-          "q": "LunarWeb impersonates legitimate domains in C&C"
-        },
-        {
-          "v": "execution guardrail",
-          "q": "Using the DNS domain name for payload decryption serves as an execution guardrail."
-        },
-        {
-          "v": "self-removal",
-          "q": "LunarWeb and LunarMail can uninstall themselves"
-        },
-        {
-          "v": "screenshots",
-          "q": "LunarMail can capture screenshots."
-        },
-        {
-          "v": "exfiltration",
-          "q": "LunarMail searches its staging directory for output files produced by the backdoor, preparing them for exfiltration by"
-        },
-        {
-          "v": "WMI queries",
-          "q": "unique victim identification obtained via WMI queries:"
-        },
-        {
-          "v": "mimic legitimate files",
-          "q": "Filenames used by LunarWeb and LunarMail loading chains mimic legitimate files."
-        },
-        {
-          "v": "deletes email messages",
-          "q": "LunarMail deletes email messages used for C&C"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "two previously unknown backdoors",
-          "q": "ESET researchers discovered two previously unknown backdoors – which we named LunarWeb and LunarMail –"
-        },
-        {
-          "v": "three diplomatic institutions",
-          "q": "During another attack, we observed simultaneous deployments of a chain with LunarWeb at three diplomatic institutions of"
-        },
-        {
-          "v": "three URLs",
-          "q": "LunarWeb employs three URLs (containing IP addresses instead of domains) for different purposes. One URL is used for"
-        },
-        {
-          "v": "five supported formats",
-          "q": "format vary across five supported formats, with a hardcoded value determining which to use."
-        },
-        {
-          "v": "1.33 MB",
-          "q": "If output data exceeds 1.33 MB after"
-        },
-        {
-          "v": "512-byte state structure",
-          "q": "The backdoor maintains a 512-byte state structure, updated during execution and stored in a file."
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "Lunar toolset"
-    },
-    "hedges": [
-      "ESET attributes these compromises to Turla with medium confidence.",
-      "The report does not know exactly how initial access was gained in any of the compromises.",
-      "Possible spearphishing and abuse of Zabbix are suggested by recovered components, not confirmed.",
-      "The report believes a Hafnium-associated filename is either a coincidence or a false flag.",
-      "The 2020 start date is based on timestamps in the oldest samples and the versions of libraries used.",
-      "The report suggests multiple individuals were likely involved in developing and operating the tools."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T06:18:29Z",
-      "ok": false,
-      "note": "actors[2]: The text says Turla is 'Believed to be part of the Russian FSB'. The card's value 'Russian FSB' and its quote, which starts at 'part of the Russian F",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T06:18:29Z",
+        "ok": false,
+        "note": "actors[2]: The text says Turla is 'Believed to be part of the Russian FSB'. The card's value 'Russian FSB' and its quote, which starts at 'part of the Russian F",
+        "by": "auditor"
+      }
+    ]
   }
 }

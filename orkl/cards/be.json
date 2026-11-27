@@ -492,7 +492,7 @@
   },
   "beb5c799a0d2beadd930cf8b769d02a29e83a1a5": {
     "sha1": "beb5c799a0d2beadd930cf8b769d02a29e83a1a5",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T08:35:36Z",
     "model": "haiku",
@@ -575,11 +575,19 @@
       "According to PCrisk, Dacls is the name of a remote access Trojan (RAT)",
       "Research shows that this malware is tied to Lazarus Group",
       "There is no Yara-Signature yet."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T09:10:51Z",
+      "ok": false,
+      "note": "actors[0].by: The text opens this passage with 'According to PCrisk', and the 'Research shows... tied to Lazarus Group' sentence continues that PCrisk passage. ",
+      "by": "auditor"
+    }
   },
   "be5f16a4a1558170bdd5877bfc221097ec6d1fe6": {
     "sha1": "be5f16a4a1558170bdd5877bfc221097ec6d1fe6",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T08:40:42Z",
     "model": "haiku",
@@ -710,6 +718,14 @@
       "whether this is an error or accounted for in the way the string is parsed by the binary we have yet to determine",
       "Our analysis of this is ongoing",
       "As the known C2s were unresponsive by the time we conducted our analysis, we were unable to obtain a sample of the next stage of the malware"
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T09:10:51Z",
+      "ok": false,
+      "note": "summary: It says Stage 3 adds a LaunchAgent, VM checks and host profiling as if all Stage 3 binaries do. The text says the LaunchAgent persistence appears only ",
+      "by": "auditor"
+    }
   }
 }

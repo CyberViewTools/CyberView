@@ -92,7 +92,7 @@ test("auditState: pauses above 5% once 50 cards are audited, not before", () => 
   assert.equal(auditState(audited(100, 6), DEFAULTS).paused, true);
   assert.equal(auditState(audited(100, 5), DEFAULTS).paused, false);
   assert.equal(paused(audited(100, 6), DEFAULTS), true);
-  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50 });
+  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0 });   // the code defaults; config/pipeline.json sets the live values
 });
 test("auditState: counts only the most recent 500 audits", () => {
   const m = new Map();

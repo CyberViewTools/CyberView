@@ -14,7 +14,7 @@ import { loadCards } from "./library-read.mjs";
 import { BY, cleanStory, storyProblems } from "./lib/library-check.mjs";
 import { writerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot, withTimeout } from "./lib/oneshot.mjs";
-import { loadConfig, paused, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
+import { loadConfig, paused, rewriteMsOf, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
 import { actorIndex, actorSubjects, looseSubjects, basedOn } from "./lib/library-subjects.mjs";
 
 export const STORIES_DIR = join(DIR, "stories");
@@ -51,8 +51,11 @@ export function loadStories(dir = STORIES_DIR, bad = []) {
 
 /** Pure: the subjects to write now. Order: `order` (a key list) first, then those with most read cards, then key.
  *  only: true with a key list restricts the queue to that list (the desk always passes it). */
-export function writeQueue(subjects, stories, cards, { order = null, max = Infinity, only = false } = {}) {
+export function writeQueue(subjects, stories, cards, { order = null, max = Infinity, only = false, now = Date.now(), rewriteMs = 0 } = {}) {
   const allowed = only && Array.isArray(order) ? new Set(order) : null;
+  // the cool-down (library.rewrite_hours; owner, 2026-11-27): a story written within it is not rewritten only because more cards
+  // arrived. A card-wrong stale story, a first story and a retry under MAX_TRIES are never held back.
+  const recent = (x) => !!(rewriteMs > 0 && x && now - Date.parse(x.written_at) < rewriteMs);
   const todo = (subjects || []).filter((s) => {
     if (allowed && !allowed.has(s.key)) return false;
     const readN = (s.sha1s || []).filter((x) => { const c = cards.get(x); return c && c.status === "read" && c.withdrawn !== true; }).length;
@@ -63,7 +66,9 @@ export function writeQueue(subjects, stories, cards, { order = null, max = Infin
     if (f.live && f.live.status === "withdrawn" && f.live.based_on === b) return false;   // withdrawn by the owner: rewritten only when its cards change
     if (f.next && f.next.status === "parked" && f.next.based_on === b) return false;   // parked stays parked until its cards change
     if (f.next && f.next.status === "rejected" && (Number(f.next.tries) || 0) < MAX_TRIES) return true;
-    return (!f.live || f.live.based_on !== b) && (!f.next || f.next.based_on !== b);
+    const due = (!f.live || f.live.based_on !== b) && (!f.next || f.next.based_on !== b);
+    if (!due || (f.live && f.live.status === "stale" && f.live.stale_reason === "card-wrong")) return due;
+    return !(recent(f.next) || recent(f.live));
   });
   const rank = new Map((Array.isArray(order) ? order : []).map((k, i) => [k, i]));
   todo.sort((a, b) => (rank.has(a.key) ? rank.get(a.key) : 1e9) - (rank.has(b.key) ? rank.get(b.key) : 1e9)
@@ -119,7 +124,7 @@ export async function run({ max = 10, order = null, only = false, concurrency = 
   const badStories = [];
   const stories = loadStories(dir, badStories);
   tally.unreadable = badStories.sort();
-  const queue = writeQueue(subjects.filter((s) => !badStories.includes(s.key)), stories, all, { order, max, only });
+  const queue = writeQueue(subjects.filter((s) => !badStories.includes(s.key)), stories, all, { order, max, only, rewriteMs: rewriteMsOf(cfg) });
   const runId = randomBytes(4).toString("hex");
   let failed = 0;
   const one = async (s) => {
@@ -161,10 +166,10 @@ export async function run({ max = 10, order = null, only = false, concurrency = 
   return tally;
 }
 
-export function statusLine(subjects, stories, cards) {
+export function statusLine(subjects, stories, cards, cfg = loadConfig()) {
   const n = { published: 0, draft: 0, stale: 0, rejected: 0, parked: 0 };
   for (const f of stories.values()) { if (f.live && n[f.live.status] != null) n[f.live.status]++; if (f.next && !f.live) n[f.next.status]++; }
-  const queued = writeQueue(subjects, stories, cards, {}).length;
+  const queued = writeQueue(subjects, stories, cards, { rewriteMs: rewriteMsOf(cfg) }).length;
   return `subjects ${subjects.length}, stories ${stories.size}, live published ${n.published} stale ${n.stale}, first drafts ${n.draft} rejected ${n.rejected} parked ${n.parked}, queued ${queued}`;
 }
 

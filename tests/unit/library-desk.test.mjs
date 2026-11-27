@@ -217,7 +217,7 @@ test("runStages: nothing starts without the time for the role, and a stage with 
     audit: async () => { calls.push("audit"); return { ok: 1, stopped: "ORKL unreachable" }; }, write: async () => { calls.push("write"); return { drafted: 1, stopped: "" }; }, read: async () => { calls.push("read"); return { read: 1, stopped: "" }; } };
   const p = { read: 4, write: 4, review: 4, audit: 4, mode: "steady" };
   await runStages({ plan: { ...p, read: 2 }, orders: { read: [], write: [] }, deps, now: () => t, deadline: reserveMs("library-writer") - 1, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
-  assert.deepEqual(calls, ["read"], "only the reader (a shorter reserve) still fits");
+  assert.deepEqual(calls, [], "with the reader on Sonnet (owner, 2026-11-27) every role needs the same reserve, so nothing fits");
   calls.length = 0;
   const out = await runStages({ plan: p, orders: { read: [], write: [] }, deps, now: () => t, deadline: 1e9, chunk: { review: 2, audit: 2, write: 2, read: 2 }, log: () => {} });
   assert.deepEqual(calls, ["review", "audit", "write", "write", "read", "read"], "review made no progress; an unreachable ORKL ends only the audit stage");
@@ -245,8 +245,8 @@ test("runStages: every call gets a timeout of at most the role's own and the tim
   assert.equal(seen.length, 4);
   for (const [k, ms, left] of seen) { assert.ok(ms <= left - 20000, `${k}: ${ms} > ${left} - 20000`); assert.ok(ms <= 6 * 60000); assert.ok(ms > 0); }
   const late = []; let t2 = 0;
-  await runStages({ plan: { read: 1, write: 0, review: 0, audit: 0, mode: "steady" }, orders: { read: [] }, deps: { read: async (o) => { late.push(o.timeoutMs); return { read: 1 }; } }, now: () => t2, deadline: 100000 + 5, chunk: { read: 1 }, log: () => {} });
-  assert.deepEqual(late, [80005], "90 s are left: the reader may start, with 80 s");
+  await runStages({ plan: { read: 1, write: 0, review: 0, audit: 0, mode: "steady" }, orders: { read: [] }, deps: { read: async (o) => { late.push(o.timeoutMs); return { read: 1 }; } }, now: () => t2, deadline: 160000 + 5, chunk: { read: 1 }, log: () => {} });
+  assert.deepEqual(late, [140005], "160 s are left: the Sonnet reader (150 s reserve) may start, with 140 s");
 });
 test("runStages: a stage that throws does not stop the others", async () => {
   const calls = [];
@@ -254,8 +254,8 @@ test("runStages: a stage that throws does not stop the others", async () => {
   const out = await runStages({ plan: { read: 1, write: 1, review: 1, audit: 1, mode: "steady" }, orders: { read: [], write: [] }, deps: { ...deps, audit: async (o) => { calls.push("audit"); return deps.audit(o); } }, now: () => 0, deadline: 1e9, log: () => {} });
   assert.equal(out.review.error, "Error"); assert.deepEqual(calls, ["audit"]);
 });
-test("reserveMs: reader 90 s, the Sonnet roles 150 s, never more than the role's own timeout", () => {
-  assert.equal(reserveMs("library-reader"), 90000); assert.equal(reserveMs("library-writer"), 150000);
+test("reserveMs: 90 s for a Haiku reader, 150 s for every Sonnet role (the reader too), never more than the role's own timeout", () => {
+  assert.equal(reserveMs("library-reader"), 150000); assert.equal(reserveMs("library-writer"), 150000);
   assert.equal(reserveMs("library-auditor"), 150000); assert.equal(reserveMs("library-reviewer"), 150000);
 });
 
@@ -295,8 +295,8 @@ test("pipeline.json: the library block as the owner set it on 2026-11-26 (backfi
   assert.deepEqual(L.pilot, { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 });
   assert.deepEqual(L.wave, { read: 150, write: 16, review: 16, audit: 150 });
   assert.deepEqual(L.api, { enabled: true, monthly_usd_cap: 75 });
-  assert.equal(L.reread, 3); assert.equal(L.audit_pct, 100); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50);
-  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min", "api", "monthly_usd_cap", "concurrency", "run_minutes"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
+  assert.equal(L.reread, 3); assert.equal(L.audit_pct, 20); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50); assert.equal(L.rewrite_hours, 24);
+  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min", "api", "monthly_usd_cap", "concurrency", "run_minutes", "rewrite_hours"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
   assert.match(L._note, /owner/);
   const c = deskConfig(join(ROOT, "config", "pipeline.json"));
   assert.equal(c.backfill, true); assert.deepEqual(c.wave, L.wave); assert.deepEqual(c.pilot, DESK_DEFAULTS.pilot);
@@ -307,7 +307,7 @@ test("routines.json: library is an AI routine, switched on, with a heartbeat and
   assert.equal(r.name, "Library reports"); assert.equal(r.tier, "ai"); assert.equal(r.workflow, "claude-task");
   assert.equal(r.cron, "17,37,57 * * * *"); assert.equal(r.model, "claude-sonnet-5-5");
   assert.equal(r.status_key, "last_library_at"); assert.equal(r.max_age_hours, 6); assert.equal(r.active, true);
-  assert.match(r.does, /Haiku/); assert.match(r.does, /bills only the API key/); assert.match(r.does, /"active": false/);
+  assert.match(r.does, /Sonnet reads each report/); assert.match(r.does, /bills only the API key/); assert.match(r.does, /"active": false/);
   const orkl = rj("routines.json").routines.find((x) => x.key === "orkl");
   assert.match(orkl.does, /Library reports/);
 });
@@ -315,10 +315,10 @@ test("stages: the library heartbeat row", () => {
   const s = STAGES.find((x) => x.status === "last_library_at");
   assert.ok(s); assert.equal(s.routine, "library"); assert.equal(s.heal, "");
 });
-test("models.json: the four Library roles are frozen, on haiku, sonnet, sonnet, sonnet", () => {
+test("models.json: the four Library roles are frozen, all on sonnet (owner, 2026-11-27: the reader moved off Haiku)", () => {
   const m = rj("config/models.json");
   assert.deepEqual([...m.frozen].sort(), ["library-auditor", "library-reader", "library-reviewer", "library-writer"]);
-  assert.deepEqual(["library-reader", "library-writer", "library-reviewer", "library-auditor"].map((r) => m.roles[r].model), ["haiku", "sonnet", "sonnet", "sonnet"]);
+  assert.deepEqual(["library-reader", "library-writer", "library-reviewer", "library-auditor"].map((r) => m.roles[r].model), ["sonnet", "sonnet", "sonnet", "sonnet"]);
 });
 
 /* ---------- pipeline check ---------- */
@@ -377,6 +377,26 @@ test("deskState: with backfill off the writer's steady queue is the pilot, stori
   const withStory = deskState({ reports, actors: w.actors, cards, stories: new Map([["a-102", { live: { status: "published", based_on: "old" }, next: null }]]), pilot, cfg: CFG });
   assert.ok(withStory.orders.write.includes("a-102"), "a subject that already has a story is rewritten when stale");
   assert.equal(state.writeNew, orders.write.length);
+});
+test("deskState: a story written within library.rewrite_hours is not in the write queue or its count; past it, it is", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const now = Date.parse("2026-11-27T12:00:00Z"), file = (hAgo) => new Map([["a-102", { live: { status: "published", based_on: "old", written_at: new Date(now - hAgo * 3600000).toISOString() }, next: null }]]);
+  const held = deskState({ reports, actors: w.actors, cards, stories: file(2), pilot, cfg: { ...CFG, rewrite_hours: 24 }, now });
+  assert.ok(!held.orders.write.includes("a-102"), "written 2 hours ago: held back");
+  const due = deskState({ reports, actors: w.actors, cards, stories: file(30), pilot, cfg: { ...CFG, rewrite_hours: 24 }, now });
+  assert.ok(due.orders.write.includes("a-102"), "written 30 hours ago: rewritten");
+  assert.equal(due.state.writeNew - held.state.writeNew, 1, "the plan never counts a held-back story");
+});
+// owner, 2026-11-27: with backfill on, the plan counted the ~2,000 unwritten subjects but the writer's order (it writes only what is
+// in its order) held only stories that already existed, so the backlog was never written and the same stories were rewritten
+test("deskState: with backfill on the writer's order is the steady queue first, then every other subject waiting", () => {
+  const { w, pilot, reports, cards } = steadyWorld();
+  const off = deskState({ reports, actors: w.actors, cards, stories: new Map(), pilot, cfg: { ...CFG, backfill: false } });
+  assert.ok(!off.orders.write.includes("a-102"), "backfill off: a subject read during the pilot waits");
+  const on = deskState({ reports, actors: w.actors, cards, stories: new Map(), pilot, cfg: { ...CFG, backfill: true } });
+  assert.ok(on.orders.write.includes("a-102"), "backfill on: the backlog subject is in the order");
+  assert.deepEqual(on.orders.write.slice(0, off.orders.write.length), off.orders.write, "the steady queue comes first");
+  assert.equal(on.orders.write.length, on.state.writeNew + on.state.writeBacklog, "the order holds everything the plan counts");
 });
 test("deskState: the reader's steady queue is the new reports and the audit-failed re-reads only", () => {
   const { w, pilot, reports, cards } = steadyWorld();

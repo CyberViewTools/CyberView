@@ -1,4 +1,4 @@
-// The Library's reader desk: each ORKL report's text is fetched, Haiku turns it into a fact card (scripts/lib/library-prompts.mjs),
+// The Library's reader desk: each ORKL report's text is fetched, the reader (library-reader, Sonnet since 2026-11-27) turns it into a fact card (scripts/lib/library-prompts.mjs),
 // the card is checked against the text (scripts/lib/library-check.mjs) and ONLY the card is stored, in data/orkl/cards/<shard>.json
 // keyed by the report's sha1. The report text lives in one local variable inside readOne() and is never written, logged or returned
 // by run(). Run: node scripts/library-read.mjs run [--max N] --owner-override | status (the desk calls run() in-process; the CLI run refuses without the override)   (behind a proxy: NODE_USE_ENV_PROXY=1)

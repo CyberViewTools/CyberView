@@ -41,7 +41,7 @@ test("models.json: the four library roles exist with no tools; reviewer and audi
     assert.equal(MODELS.roles[r].max_turns, 1); assert.equal(MODELS.roles[r].tools, "none");
   }
   assert.deepEqual(MODELS.toolsets.none, []);
-  assert.equal(MODELS.roles["library-reader"].model, "haiku");
+  assert.equal(MODELS.roles["library-reader"].model, "sonnet");   // owner, 2026-11-27: Haiku got about half its cards wrong
   assert.equal(MODELS.min_tier["library-reviewer"], "sonnet"); assert.equal(MODELS.min_tier["library-auditor"], "sonnet");
 });
 test("writerPrompt: the no-cards sentence is cited to the catalogue, and such a story passes storyProblems", () => {
@@ -71,9 +71,9 @@ test("auditorPrompt: asks for the summary, hedges and who-attributes to be judge
   const p = auditorPrompt(CARD, "text");
   for (const s of ['"summary"', '"hedges[0]"', '"actors[0].by"']) assert.ok(p.includes(s), s);
 });
-test("config: every card is audited before it can be shown (audit_pct 100) and the note says what lowering it does", () => {
+test("config: a 20% sample of cards is audited (owner, 2026-11-27) and the note says unaudited cards show no summary", () => {
   const L = JSON.parse(readFileSync(new URL("../../config/pipeline.json", import.meta.url), "utf8")).library;
-  assert.equal(L.audit_pct, 100); assert.match(L._note, /unaudited cards then show no summary/);
+  assert.equal(L.audit_pct, 20); assert.match(L._note, /unaudited cards then show no summary/);
 });
 
 // cardProblems refuses a summary or fact value holding a link, a domain or an email address: the reader is told so

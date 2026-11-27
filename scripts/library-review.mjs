@@ -3,7 +3,7 @@
 //           fact cards and against freshly re-read original reports (the most-cited ones, DEFAULTS.reread of them). The report text
 //           exists only inside reviewOne(); it is never stored or logged. A verdict is only advice: settle() takes the reviewer's
 //           corrected story as text, carries every script-owned field from the draft and runs the same script checks as the writer.
-//   audit : Sonnet (library-auditor) re-checks a share of the Haiku reader's cards against the report text. A card found wrong (by the
+//   audit : Sonnet (library-auditor) re-checks a share of the reader's cards against the report text. A card found wrong (by the
 //           auditor or the reviewer) keeps `audit: { ok: false }`, goes back to `unread` to be read again, and every story that rests on
 //           it goes stale at once (a published story citing it is marked stale here, no model call; the writer's basedOn also changes). Only
 //           the AUDITOR's verdicts make the reader's error rate (a reviewer's flag re-queues the card but does not count); over the

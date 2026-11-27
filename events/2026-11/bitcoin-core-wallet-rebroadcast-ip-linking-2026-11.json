@@ -1,0 +1,61 @@
+{
+  "title": "Bitcoin Core wallet rebroadcast can reveal which node's IP address tracks a Bitcoin address, researcher reports",
+  "category": "vuln",
+  "date": "2026-11-25",
+  "org": "Bitcoin Core",
+  "sector": "finance",
+  "country": "",
+  "place": "",
+  "lat": null,
+  "lng": null,
+  "pin_type": "none",
+  "geo_basis": "open-source software issue, no place stated",
+  "severity": 2,
+  "status": "developing",
+  "source_tier": "established",
+  "summary": "Bitcoin Core contributor ismaelsadeeq posted research on 25 November showing that wallet rebroadcast of unconfirmed payments can link a Bitcoin address to the IP address of a node whose wallet tracks it. Cyber Security News says it does not allow theft of funds or key recovery. The post says a workaround is -walletbroadcast=0; a proposed change in PR #36482 is unreleased.",
+  "plain": "A researcher showed that Bitcoin Core's wallet re-announcing of unpaid transactions can let an observer tie a Bitcoin address to the IP address of a node that tracks it. It does not expose funds or keys, per Cyber Security News.",
+  "exec": "A Bitcoin Core wallet privacy leak could tie addresses to node IP addresses; the research post lists a workaround and an unreleased fix proposal.",
+  "action": "The researcher's post advises setting -walletbroadcast=0 and relaying your own transactions with sendrawtransaction; this also disables wallet-initiated relay generally.",
+  "actor": "",
+  "attack": [
+    "wallet rebroadcast information leak"
+  ],
+  "cves": [],
+  "products": [
+    "Bitcoin Core wallet"
+  ],
+  "tags": [],
+  "sources": [
+    {
+      "name": "Delving Bitcoin (research post by ismaelsadeeq)",
+      "url": "https://delvingbitcoin.org/t/exploiting-wallet-rebroadcast-to-link-addresses-to-node-ips-and-more",
+      "published": "2026-11-25",
+      "read_depth": "full"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/bitcoin-privacy-flaw/",
+      "published": "2026-11-27",
+      "read_depth": "full"
+    }
+  ],
+  "evidence": [],
+  "sectors": {
+    "values": [
+      "cross-sector"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "endpoint",
+    "basis": "inferred"
+  },
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-27T04:02:00Z",
+    "note": "The researcher's own post and Cyber Security News, which relays it; one original report. No Bitcoin Core release or advisory was read."
+  },
+  "first_seen": "2026-11-27T04:02:00Z",
+  "updated_at": "2026-11-27T04:02:00Z"
+}

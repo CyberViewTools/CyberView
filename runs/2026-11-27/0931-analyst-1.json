@@ -1,0 +1,33 @@
+{
+  "job": "analyst-1",
+  "started_at": "2026-11-27T09:31:50Z",
+  "finished_at": "2026-11-27T09:50:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "CVE-2026-33825 Microsoft Defender elevation of privilege exploited",
+    "MiniPlasma cldflt.sys Nightmare Eclipse CVE"
+  ],
+  "pages_read": [
+    {"url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-33825", "title": "NVD CVE-2026-33825", "used_in": "CVE-2026-33825"},
+    {"url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-33825", "title": "CISA KEV CVE-2026-33825", "used_in": "CVE-2026-33825"},
+    {"url": "https://www.huntress.com/blog/nightmare-eclipse-intrusion", "title": "Huntress: Nightmare-Eclipse intrusion", "used_in": "CVE-2026-33825"},
+    {"url": "https://www.gub.uy/centro-nacional-respuesta-incidentes-seguridad-informatica/comunicacion/noticias/vulnerabilidad-atencion-inmediata-microsoft-defender-antimalware-platform", "title": "CERTUY: Microsoft Defender Antimalware Platform", "used_in": "CVE-2026-33825"},
+    {"url": "https://www.bleepingcomputer.com/news/security/cisa-orders-feds-to-patch-microsoft-defender-flaw-exploited-in-zero-day-attacks/", "title": "BleepingComputer: CISA orders feds to patch Defender flaw", "used_in": "CVE-2026-33825"},
+    {"url": "https://scan.netsecurity.ne.jp/article/2026/11/25/56897.html", "title": "ScanNetSecurity Scan Tech Report CVE-2026-33825", "used_in": "CVE-2026-33825 (caveat only)"},
+    {"url": "https://securelist.com/mini-plasma-vulner/120099/", "title": "Securelist: MiniPlasma", "used_in": "CVE-2026-33825 (to check the ScanNetSecurity description)"},
+    {"url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Apr", "title": "MSRC April 2026 CVRF (first 100k characters, summary row only)", "used_in": "CVE-2026-33825 caveats"}
+  ],
+  "added": ["CVE-2026-33825"],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [
+    {"title": "MSRC advisory CVE-2026-33825 FAQ and fixed build not read", "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-33825", "note": "Page is script-rendered and the MSRC data service returned 429 twice. Confirm fixed platform version 4.18.26030.3011 (from CERTUY) and FAQ text, then add the vendor page as a source and consider raising confidence to high.", "priority": "medium"},
+    {"title": "ScanNetSecurity event may mis-describe CVE-2026-33825 as the MiniPlasma Cloud Files driver flaw", "url": "https://scan.netsecurity.ne.jp/article/2026/11/25/56897.html", "note": "Huntress, BleepingComputer and CERTUY tie CVE-2026-33825 to BlueHammer (Defender); Securelist and others tie MiniPlasma to CVE-2020-17103. The map event cve-2026-33825-defender-exploit-code-published-2026-11 may need a correction or note.", "priority": "high"}
+  ],
+  "failed_sites": [
+    "msrc.microsoft.com (script-rendered, no content)",
+    "api.msrc.microsoft.com sug v2.0 (HTTP 429, three tries)",
+    "securityweek.com (HTTP 403, not retried)"
+  ],
+  "notes": "One CVE analysed. Vendor advisory unread in full, so confidence set to medium and the government sources (CISA, CERTUY) are cited. No instructions found in page text. Python edits needed approval, so the fixes were made with the file editor instead."
+}

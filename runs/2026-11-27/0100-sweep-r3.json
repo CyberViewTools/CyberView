@@ -1,0 +1,87 @@
+{
+  "job": "researcher-3",
+  "started_at": "2026-11-27T01:00:00Z",
+  "finished_at": "2026-11-27T01:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://www.digitimes.com/news/a20261126PD211/taiwan-automation-cybersecurity-government.html",
+      "title": "DigiTimes Taiwan hackers (paywalled, headline only)",
+      "used_in": "none"
+    },
+    {
+      "url": "https://www.shinailbo.co.kr/news/articleView.html?idxno=5088534",
+      "title": "CJ Olive Young breach",
+      "used_in": "cj-olive-young-internal-system-breach-2026-11 (duplicate_of)"
+    },
+    {
+      "url": "https://www.dailysecu.com/news/articleView.html?idxno=209785",
+      "title": "Air Premia MetaM",
+      "used_in": "air-premia-callcenter-contractor-metam-breach-2026-11"
+    },
+    {
+      "url": "https://andina.pe/agencia/noticia-parlamento-andino-comision-futuros-actualizara-marco-normativo-ciberseguridad-1101595.aspx",
+      "title": "Parlamento Andino",
+      "used_in": "closed, not an event"
+    },
+    {
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-126984",
+      "title": "NVD CVE-2026-126984 (via API)",
+      "used_in": "closed, not an event"
+    },
+    {
+      "url": "https://www.twcert.org.tw/tw/cp-104-11426-ea310-1.html",
+      "title": "TWCERT fake short-drama apps",
+      "used_in": "twcert-fake-short-drama-apps-accessibility-2026-11"
+    }
+  ],
+  "added": [
+    "air-premia-callcenter-contractor-metam-breach-2026-11",
+    "twcert-fake-short-drama-apps-accessibility-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "CJ올리브영 breach",
+      "url": "https://www.shinailbo.co.kr/news/articleView.html?idxno=5088534",
+      "reason": "already on file as olive-young-internal-system-unauthorized-access-2026-11; my duplicate record cj-olive-young-internal-system-breach-2026-11 is marked duplicate_of (could not delete the file)"
+    },
+    {
+      "title": "Peru national cybersecurity strategy",
+      "url": "",
+      "reason": "already on file"
+    },
+    {
+      "title": "Parlamento Andino cybersecurity framework",
+      "url": "",
+      "reason": "plans only, nothing adopted"
+    },
+    {
+      "title": "CVE-2026-126984 pulp_python SSRF",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-126984",
+      "reason": "no exploitation, PoC or urgent notice; niche software"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "Cyfirma: nine hacker groups, 18 active campaigns against Taiwan",
+      "url": "https://www.digitimes.com/news/a20261126PD211/taiwan-automation-cybersecurity-government.html",
+      "note": "DigiTimes paywalled; find Cyfirma's own report",
+      "priority": "medium"
+    },
+    {
+      "title": "Ashab Al Yamin network",
+      "url": "https://threatcluster.io/cluster/iran-linked-ashab-al-yamin-network-recruits-and-attacks-jewi-ebd8a57e",
+      "note": "403; find original reporting",
+      "priority": "medium"
+    }
+  ],
+  "failed_sites": [
+    "threatcluster.io (403)",
+    "digitimes.com (paywall)"
+  ],
+  "notes": "build.mjs and some shell commands (rm, build) were not permitted/run; build not verified.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

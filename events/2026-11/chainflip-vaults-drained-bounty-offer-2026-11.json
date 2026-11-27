@@ -1,9 +1,9 @@
 {
   "title": "Chainflip says attacker took BTC, ETH and stablecoins from its vaults; offers 10% bounty",
   "date": "2026-11-21",
-  "date_note": "Chainflip's message says the funds were taken on 21 November 2026; the time of day is The Block's, as relayed by CryptoTicker.",
-  "occurred_at": "2026-11-21T07:10:00Z",
-  "time_basis": "approx",
+  "date_note": "Chainflip's message says the funds were taken on 21 November 2026; the Part 1 incident report timeline gives 06:41:01 UTC for the first theft (BTC) and 07:10:59 UTC for the Ethereum vault.",
+  "occurred_at": "2026-11-21T06:41:01Z",
+  "time_basis": "occurred",
   "category": "incident",
   "severity": 2,
   "status": "confirmed",
@@ -100,16 +100,16 @@
       "quote": "If both arrive by 18:38 UTC on 23 November 2026, we will treat this as a white hat recovery"
     },
     {
-      "url": "https://cryptoticker.io/en/chainflip-hack-12-million-vaults-drained-signing-key/",
-      "quote": "According to The Block, the attack began on November 21 at around 2:10 a.m. Eastern Time, or about 8:10 a.m. German time."
-    },
-    {
       "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-1",
       "quote": "10.48288011 BTC remaining in the vault, still accessible via the stolen key, was taken."
     },
     {
       "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-2",
       "quote": "exploited a use-after-free flaw in libzmq to run code inside validator processes"
+    },
+    {
+      "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-1",
+      "quote": "21 Nov 06:41:01 | 122.86137042 BTC is taken from the Bitcoin vault."
     }
   ],
   "source_tier": "primary",
@@ -133,16 +133,16 @@
     "url": "https://chainflip.io/return"
   },
   "first_seen": "2026-11-22T11:55:17Z",
-  "updated_at": "2026-11-27T22:00:10Z",
-  "qa_checked_at": "2026-11-25T13:40:45Z",
+  "updated_at": "2026-11-27T22:08:40Z",
+  "qa_checked_at": "2026-11-27T22:08:37Z",
   "review": {
     "state": "corrected",
-    "at": "2026-11-25T13:40:45Z",
+    "at": "2026-11-27T22:08:37Z",
     "first_at": "2026-11-25T13:40:45Z",
-    "note": "validation note was stale (said no post-mortem; incident report exists); bug to flaw per report. Amounts, bounty, deadline, 10.48288011 BTC, time quote checked.",
+    "note": "time: occurred_at was The Block's approx 07:10Z relayed by CryptoTicker; now Chainflip Part 1 timeline 06:41:01 UTC first theft, time_basis occurred, evidence swapped. Amounts, bounty, deadline, libzmq quote, paused status checked.",
     "flags": [],
     "categories": [
-      "validation"
+      "occurred_at"
     ]
   }
 }

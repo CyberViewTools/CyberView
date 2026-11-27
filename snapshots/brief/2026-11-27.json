@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-11-27T05:25:00Z",
+  "date": "2026-11-27",
+  "headline": "Drupal and CISA list exploited flaws; most federal fix dates are tomorrow, 28 November",
+  "plain_summary": "Drupal says a second flaw in its core software is being used in attacks, and CISA added ten exploited flaws to its catalogue, with most federal deadlines on 28 November. Confirmed: Swiss officials report their first attacks on critical infrastructure that used AI agents. Researchers say a hacker used an AI agent against Flemish municipalities, though Belgium's cybersecurity centre cannot confirm the figures. Anyone running Drupal, Mitel MiCollab, Xen Orchestra or Juniper Session Smart should act.",
+  "items": [
+    {
+      "title": "CISA adds ten exploited flaws to KEV: Mitel, Xen Orchestra, Juniper, Danfoss",
+      "why": "Eight of the ten have a federal due date of 28 November and two have 9 December.",
+      "action": "CISA's catalog entries say to apply vendor mitigations as BOD 26-04 requires, or stop using the product if none are available; Mitel advises its fixed MiCollab release and restricting external access to the conferencing component, per Infobae.",
+      "event_id": "cisa-kev-ten-additions-2026-11-25"
+    },
+    {
+      "title": "Drupal core flaw CVE-2026-136716 (SA-CORE-2026-019) exploited in the wild",
+      "why": "Drupal rates it highly critical, and sites that left the installer exposed after SA-CORE-2026-017 may already be compromised.",
+      "action": "Drupal advises updating to the fixed version for your release line and running update.php, securing the installer, and checking logs for unauthorized access, especially to the user 1 account.",
+      "event_id": "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11"
+    },
+    {
+      "title": "Q-Dir and DesktopOK installers on the official SoftwareOK site were tampered with",
+      "why": "The tampered files install a Python-based remote access trojan, and the cause is not yet identified.",
+      "action": "AhnLab advises checking SHA-256 hashes against the official page, reinstalling the latest version, and checking for suspicious Python environments, scheduled tasks and external traffic; reinstalling alone may not remove the RAT.",
+      "event_id": "softwareok-q-dir-desktopok-installers-tampered-2026-11"
+    },
+    {
+      "title": "PolinRider loader reported in at least 7,609 GitHub repos",
+      "why": "Apiiro estimates the spread, and the loader was force-pushed into open pull requests at three projects; the North Korea link is reported by The Hacker News, not confirmed here.",
+      "action": "StepSecurity advises reviewing October workflow logs and pull-request timelines, requiring approval for workflows from external contributors, keeping VS Code in Restricted Mode for unfamiliar projects, and rotating GitHub, npm, SSH and cloud credentials from a clean machine if the loader ran.",
+      "event_id": "polinrider-github-repositories-malware-2026-11"
+    },
+    {
+      "title": "Swiss cyber office reports first critical-infrastructure attacks using AI agents",
+      "why": "Five cases are confirmed, three affecting critical infrastructure and two of those successful; the source is unclear.",
+      "action": "Switzerland's Federal Office for Cybersecurity (Bacs) advises a clear reduction of internet-reachable systems, the fastest possible security updates, strict access restrictions and full multi-factor authentication.",
+      "event_id": "switzerland-bacs-ai-agent-attacks-critical-infrastructure-2026-11"
+    },
+    {
+      "title": "Researchers say DeepSeek-driven AI agent took data from Flemish municipalities",
+      "why": "Secutec and SOCRadar report about 1.2 million people affected across 82 municipalities, but the CCB says it cannot confirm the figures.",
+      "action": "Secutec and SOCRadar say multi-factor authentication and IP restrictions held off the attacks; SOCRadar published detection rules and indicators for IT teams to search their logs.",
+      "event_id": "babidighost-deepseek-flemish-municipalities-2026-11"
+    },
+    {
+      "title": "Binance says October 29 theft began with a fake job interview",
+      "why": "Binance says an engineer was given a coding assignment containing malware; the FBI attribution to TraderTraitor is reported by BleepingComputer.",
+      "action": "No action needed; for awareness.",
+      "event_id": "binance-co-ceos-describe-october-29-theft-2026-11"
+    }
+  ]
+}

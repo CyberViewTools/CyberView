@@ -1,56 +1,50 @@
 {
-  "generated_at": "2026-11-26T11:48:55Z",
-  "date": "2026-11-26",
-  "headline": "Drupal says a second core flaw is exploited; sites may already be compromised",
-  "plain_summary": "Drupal says a second flaw in its core software is being used in attacks, and sites that left the installer reachable after the first advisory may already be compromised. A VirtueMart flaw for Joomla is also reported as exploited. Belgian researchers say a hacker used an AI agent to take data on about 1.2 million residents, though the national cyber centre cannot confirm the figures. Site owners running Drupal, Joomla or Ivanti Connect Secure should update.",
+  "generated_at": "2026-11-27T05:25:00Z",
+  "date": "2026-11-27",
+  "headline": "Drupal and CISA list exploited flaws; most federal fix dates are tomorrow, 28 November",
+  "plain_summary": "Drupal says a second flaw in its core software is being used in attacks, and CISA added ten exploited flaws to its catalogue, with most federal deadlines on 28 November. Confirmed: Swiss officials report their first attacks on critical infrastructure that used AI agents. Researchers say a hacker used an AI agent against Flemish municipalities, though Belgium's cybersecurity centre cannot confirm the figures. Anyone running Drupal, Mitel MiCollab, Xen Orchestra or Juniper Session Smart should act.",
   "items": [
     {
-      "title": "Drupal core flaw CVE-2026-136716 exploited in the wild",
-      "why": "Drupal rates it highly critical and says sites exposed after the earlier SA-CORE-2026-017 may already be compromised.",
+      "title": "CISA adds ten exploited flaws to KEV: Mitel, Xen Orchestra, Juniper, Danfoss",
+      "why": "Eight of the ten have a federal due date of 28 November and two have 9 December.",
+      "action": "CISA's catalog entries say to apply vendor mitigations as BOD 26-04 requires, or stop using the product if none are available; Mitel advises its fixed MiCollab release and restricting external access to the conferencing component, per Infobae.",
+      "event_id": "cisa-kev-ten-additions-2026-11-25"
+    },
+    {
+      "title": "Drupal core flaw CVE-2026-136716 (SA-CORE-2026-019) exploited in the wild",
+      "why": "Drupal rates it highly critical, and sites that left the installer exposed after SA-CORE-2026-017 may already be compromised.",
       "action": "Drupal advises updating to the fixed version for your release line and running update.php, securing the installer, and checking logs for unauthorized access, especially to the user 1 account.",
       "event_id": "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11"
     },
     {
-      "title": "VirtueMart for Joomla: file inclusion flaw exploited",
-      "why": "The CVE record says the unauthenticated flaw in versions 4.0.0 through 4.8.7 has been exploited and could allow remote code execution.",
-      "action": "Update the VirtueMart extension to 4.8.8, the version the CVE record says fixes the flaw.",
-      "event_id": "virtuemart-joomla-lfi-cve-2026-133335"
+      "title": "Q-Dir and DesktopOK installers on the official SoftwareOK site were tampered with",
+      "why": "The tampered files install a Python-based remote access trojan, and the cause is not yet identified.",
+      "action": "AhnLab advises checking SHA-256 hashes against the official page, reinstalling the latest version, and checking for suspicious Python environments, scheduled tasks and external traffic; reinstalling alone may not remove the RAT.",
+      "event_id": "softwareok-q-dir-desktopok-installers-tampered-2026-11"
     },
     {
-      "title": "Ivanti Connect Secure CVE-2026-104935 under scanning",
-      "why": "F5 Labs recorded 46 exploitation attempts from 4 source IPs; the flaw has been in CISA KEV since October 13.",
-      "action": "F5 Labs advises to patch now and apply Ivanti's fixed versions; per Ivanti's advisory data the flaw is fixed in ICS 25.1.3.0.",
-      "event_id": "ivanti-connect-secure-cve-2026-104935-f5-scanning-2026-11"
+      "title": "PolinRider loader reported in at least 7,609 GitHub repos",
+      "why": "Apiiro estimates the spread, and the loader was force-pushed into open pull requests at three projects; the North Korea link is reported by The Hacker News, not confirmed here.",
+      "action": "StepSecurity advises reviewing October workflow logs and pull-request timelines, requiring approval for workflows from external contributors, keeping VS Code in Restricted Mode for unfamiliar projects, and rotating GitHub, npm, SSH and cloud credentials from a clean machine if the loader ran.",
+      "event_id": "polinrider-github-repositories-malware-2026-11"
     },
     {
-      "title": "Hacker reportedly used DeepSeek agent on Flemish municipalities",
-      "why": "Secutec and SOCRadar say data of about 1.2 million people in 82 municipalities was exposed; the CCB cannot confirm the figures and prosecutors are investigating.",
+      "title": "Swiss cyber office reports first critical-infrastructure attacks using AI agents",
+      "why": "Five cases are confirmed, three affecting critical infrastructure and two of those successful; the source is unclear.",
+      "action": "Switzerland's Federal Office for Cybersecurity (Bacs) advises a clear reduction of internet-reachable systems, the fastest possible security updates, strict access restrictions and full multi-factor authentication.",
+      "event_id": "switzerland-bacs-ai-agent-attacks-critical-infrastructure-2026-11"
+    },
+    {
+      "title": "Researchers say DeepSeek-driven AI agent took data from Flemish municipalities",
+      "why": "Secutec and SOCRadar report about 1.2 million people affected across 82 municipalities, but the CCB says it cannot confirm the figures.",
       "action": "Secutec and SOCRadar say multi-factor authentication and IP restrictions held off the attacks; SOCRadar published detection rules and indicators for IT teams to search their logs.",
       "event_id": "babidighost-deepseek-flemish-municipalities-2026-11"
     },
     {
-      "title": "Binance: October 29 theft began with a malicious coding test",
-      "why": "Binance executives say about $6.34 billion in assets were affected and an engineer was approached through a recruitment platform; the FBI is reported to attribute it to TraderTraitor.",
+      "title": "Binance says October 29 theft began with a fake job interview",
+      "why": "Binance says an engineer was given a coding assignment containing malware; the FBI attribution to TraderTraitor is reported by BleepingComputer.",
       "action": "No action needed; for awareness.",
       "event_id": "binance-co-ceos-describe-october-29-theft-2026-11"
-    },
-    {
-      "title": "Microsoft Office/Visio flaw CVE-2026-112732 patched",
-      "why": "GovCERT.HK says a fix exists for Office LTSC 2021 and 2024; neither source says it is exploited.",
-      "action": "GovCERT.HK advises affected users to apply the patches from Windows Update / Microsoft Update Catalog and follow the vendor's recommendations.",
-      "event_id": "govcert-hk-microsoft-office-rce-cve-2026-112732-2026-11"
-    },
-    {
-      "title": "Hong Kong City Ticketing system hacked, about 1.3 million users",
-      "why": "LCSD says names, phone numbers and emails may be involved; identity document details are not stored and card data is masked.",
-      "action": "No action needed; for awareness.",
-      "event_id": "hk-lcsd-city-ticketing-hacked-1-3m-users-2026-11"
-    },
-    {
-      "title": "South Korea briefs firms on amended network act",
-      "why": "Companies must designate a CISO as an executive, notify affected users of breaches, and can face fines for repeated breaches.",
-      "action": "No action needed; for awareness.",
-      "event_id": "korea-msit-ict-network-act-ciso-briefing-2026-11"
     }
   ]
 }

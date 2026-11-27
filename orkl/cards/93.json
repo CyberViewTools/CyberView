@@ -33,5 +33,122 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "930cc42115fcbd879cf67403b12c3a3e4e347abe": {
+    "sha1": "930cc42115fcbd879cf67403b12c3a3e4e347abe",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:23:36Z",
+    "model": "haiku",
+    "summary": "Researcher's archived 2022 analysis of a Korean-language HWP document lure, attributed by the author to North Korea-linked APT37 and to its ROKRAT operations. A malicious HWP OLE object runs a BAT script that launches PowerShell to load shellcode into memory through reflective DLL injection. The shellcode stager was offline, so the in-memory payload was not analysed. The attribution is the author's own judgement.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT37",
+          "q": "APT37, is a advance persistent threat group attributed to the North Korean government.",
+          "by": "the report itself"
+        },
+        {
+          "v": "North Korean government",
+          "q": "APT37, is a advance persistent threat group attributed to the North Korean government.",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Human rights NGO",
+          "q": "Victim: Human rights NGO"
+        },
+        {
+          "v": "government agencies",
+          "q": "attacks, including the targeting of non-profit groups, government agencies, defense contractors, media"
+        },
+        {
+          "v": "defense contractors",
+          "q": "attacks, including the targeting of non-profit groups, government agencies, defense contractors, media"
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "known for conducting espionage operations primarily targeting South Korea, Japan, and other"
+        },
+        {
+          "v": "Japan",
+          "q": "known for conducting espionage operations primarily targeting South Korea, Japan, and other"
+        },
+        {
+          "v": "North Korea",
+          "q": "APT37, is a advance persistent threat group attributed to the North Korean government."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-03-01",
+          "q": "Published: 2024-03-01 · Archived: 2026-04-06 00:32:00 UTC",
+          "what": "report first published"
+        },
+        {
+          "v": "2026-04-06",
+          "q": "Published: 2024-03-01 · Archived: 2026-04-06 00:32:00 UTC",
+          "what": "report archived"
+        },
+        {
+          "v": "2022",
+          "q": "This is a short report detailing a sample analysis from 2022.",
+          "what": "sample analysed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ROKRAT",
+          "q": "I have previously written about ROKRAT impacting Android devices here, however this campaign"
+        },
+        {
+          "v": "GOLDBACKDOOR",
+          "q": "GOLDBACKDOOR dropper malware."
+        },
+        {
+          "v": "PowerShell",
+          "q": "creates a PowerShell-based reflective DLL injection attack on the victims machine."
+        },
+        {
+          "v": "HWP",
+          "q": "Malicious HWP (Hangul Word Processor) Object Linking and Embedding"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Reflective DLL Injection",
+          "q": "Capability: Reflective DLL Injection, HWP Object Linking and Embedding, BAT Scripts"
+        },
+        {
+          "v": "BAT Scripts",
+          "q": "Capability: Reflective DLL Injection, HWP Object Linking and Embedding, BAT Scripts"
+        },
+        {
+          "v": "embedded OLE object",
+          "q": "The email contains a HWP Doc which has a embedded OLE object in the form of a BAT script."
+        },
+        {
+          "v": "loads malicious code directly into memory",
+          "q": "Since the operation loads malicious code directly into memory, there is very little interaction on disk which can"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ROKRAT"
+    },
+    "hedges": [
+      "The sample is from 2022; the author says it does not pertain to a known recent threat campaign, though the techniques covered may still apply.",
+      "The link to APT37 rests on the author's experience with the actor: 'this sample is related to APT37's ROKRAT operations'.",
+      "The exact relationship between the group and the North Korean state 'remains somewhat unclear'.",
+      "Coordination by the North Korean government is described as 'believed', not confirmed.",
+      "The shellcode stager was down when written up, so the in-memory payload was not analysed; the author assumes it would have resulted in ROKRAT."
+    ]
   }
 }

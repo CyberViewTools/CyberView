@@ -89,5 +89,155 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "a2f93627151b2f4861d95ccc169e793a69bf5114": {
+    "sha1": "a2f93627151b2f4861d95ccc169e793a69bf5114",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:24:29Z",
+    "model": "haiku",
+    "summary": "A Validin blog post (published 2025-01-16) on the North Korean-linked Lazarus APT and its Contagious Interview campaign. Lazarus uses ClickFix lures with fake recruiter contact and video interviews to get job seekers to run malicious code. The post shows how to pivot from known indicators to find related infrastructure, and stresses that pivot results need verification and may include false positives.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus APT",
+          "q": "Lazarus APT, a North Korean group, is using the ClickFix social engineering technique to trick job seekers into",
+          "by": "the report (Validin blog)"
+        },
+        {
+          "v": "Bluenoroff",
+          "q": "The Lazarus Group is a North Korean umbrella of multiple threat actor groups (i.e. Bluenoroff, Andariel,",
+          "by": "the report (Validin blog)"
+        },
+        {
+          "v": "Andariel",
+          "q": "The Lazarus Group is a North Korean umbrella of multiple threat actor groups (i.e. Bluenoroff, Andariel,",
+          "by": "the report (Validin blog)"
+        },
+        {
+          "v": "Reconnaissance General Bureau",
+          "q": "Reconnaissance General Bureau. They support the North Korean government through a combination of espionage,",
+          "by": "the report (Validin blog)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "Their financially motivated attacks usually target financial institutions,"
+        },
+        {
+          "v": "cryptocurrency firms",
+          "q": "cryptocurrency firms, gambling platforms, and FinTech companies. Stolen funds from the APT’s operations are"
+        },
+        {
+          "v": "gambling platforms",
+          "q": "cryptocurrency firms, gambling platforms, and FinTech companies. Stolen funds from the APT’s operations are"
+        },
+        {
+          "v": "FinTech companies",
+          "q": "cryptocurrency firms, gambling platforms, and FinTech companies. Stolen funds from the APT’s operations are"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "Lazarus APT, a North Korean group,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 28, 2024",
+          "q": "On December 28, 2024, a tweet by researcher @tayvano_ alerted the infosec community to a campaign using a",
+          "what": "An alert on a ClickFix campaign attributed to Lazarus APT was posted."
+        },
+        {
+          "v": "2022",
+          "q": "2022 as described by PAN Unit 42, and it is about North Korean actors contacting software developers through",
+          "what": "The Contagious Interview campaign started as early as December 2022, as described by PAN Unit 42."
+        },
+        {
+          "v": "2009",
+          "q": "Lazarus has been active since at least 2009 and is associated with the North Korean government’s",
+          "what": "Lazarus has been active since at least this year."
+        },
+        {
+          "v": "mid-December 2024",
+          "q": "malicious domains generated activity beginning no later than mid-December 2024.",
+          "what": "Malicious domains in the hunt showed activity no later than mid-December 2024."
+        },
+        {
+          "v": "2025-01-16",
+          "q": "Published: 2025-01-16 · Archived: 2026-04-06 01:13:50 UTC",
+          "what": "The Validin blog post was published."
+        }
+      ],
+      "tools": [
+        {
+          "v": "BeaverTail",
+          "q": "download and install backdoor malware (BeaverTail,"
+        },
+        {
+          "v": "InvisibleFerret",
+          "q": "InvisibleFerret, CivetQ, etc)."
+        },
+        {
+          "v": "CivetQ",
+          "q": "InvisibleFerret, CivetQ, etc)."
+        },
+        {
+          "v": "Lumma",
+          "q": "ultimately abused first by Lumma"
+        },
+        {
+          "v": "PowerShell",
+          "q": "ClickFix style “verification steps” to execute PowerShell."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "ClickFix social engineering",
+          "q": "Lazarus APT uses ClickFix social engineering to trick job seekers into executing"
+        },
+        {
+          "v": "fake video job interviews",
+          "q": "copying and pasting malicious code onto their devices during fake video job interviews"
+        },
+        {
+          "v": "fake recruiter",
+          "q": "comes from a fake recruiter representing well-known companies, such as Kraken, MEXC, Gemini, and Meta,"
+        },
+        {
+          "v": "backdoor malware",
+          "q": "download and install backdoor malware (BeaverTail,"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "136",
+          "q": "that share this exact host-meta header (136 total). This great pivot was"
+        },
+        {
+          "v": "40 days",
+          "q": "Also, we refine the loopback to search only 40 days back since we know the campaign started in December 2024,"
+        },
+        {
+          "v": "AS 54290",
+          "q": "As we can see, this IP belongs to AS 54290 Hostwinds."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Contagious Interview"
+    },
+    "hedges": [
+      "The campaign was attributed to Lazarus APT due to similarities with Contagious Interview and domain registration patterns.",
+      "The report says Lazarus APT appears to have updated its social engineering tactics by incorporating ClickFix.",
+      "Those are potentially related indicators and further verification is needed to be considered an Indicator of Compromise.",
+      "Some pivots may contain false positives, including legitimate Willo domains that must be filtered out.",
+      "Additional autonomous systems may provide insights into Lazarus hosting preferences, or possibly different threat actor clusters."
+    ]
   }
 }

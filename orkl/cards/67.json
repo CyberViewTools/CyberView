@@ -243,5 +243,156 @@
       "note": "summary: It says the intrusion used PsExec. In the visible text, PsExec appears only as one lateral-movement channel in the ransomware's built-in --spread capab",
       "by": "auditor"
     }
+  },
+  "678ad058b3b1d73fd5e594432cb93c111a03ff26": {
+    "sha1": "678ad058b3b1d73fd5e594432cb93c111a03ff26",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:24:29Z",
+    "model": "haiku",
+    "summary": "Harfanglab analyses PackXOR, a private packer that Sentinel Labs linked to the AvNeutralizer anti-EDR tool, which it associates with the FIN7 cluster. The report says PackXOR also wraps XMRig cryptominers and R77 rootkit payloads, which it judges unrelated to FIN7. It describes the packer's layered XOR, LZNT1 compression and string encryption, provides an unpacker, and suggests ransomware operators use the packer.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "individuals they link with high confidence to the “FIN7” cluster",
+          "by": "Sentinel Labs (as cited in the report)"
+        },
+        {
+          "v": "ransomware operators",
+          "q": "it appears PackXOR is used by different ransomware operators",
+          "by": "the report (Harfanglab), citing Sentinel Labs and its own research"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-09-04",
+          "q": "Published: 2024-09-04 · Archived: 2026-04-06 01:10:31 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "early July 2024",
+          "q": "In early July 2024, the Sentinel Labs researchers released an extensive article1",
+          "what": "Sentinel Labs released an article on FIN7 reboot tooling"
+        },
+        {
+          "v": "2022",
+          "q": "AvNeutralizer has been sold since 2022 on “underground” forums such as",
+          "what": "AvNeutralizer reported as sold on underground forums"
+        },
+        {
+          "v": "April 2023",
+          "q": "can be delivered to targets as a packed or unprotected payload since April 2023",
+          "what": "AvNeutralizer reported as delivered as a packed or unprotected payload"
+        },
+        {
+          "v": "2024-08-05",
+          "q": "date = \"2024-08-05\"",
+          "what": "Date of the PackXOR detection rule"
+        },
+        {
+          "v": "2021",
+          "q": "which is very similar to a data exfiltration tool that was documented in an article from ReversingLab in 2021",
+          "what": "A similar data exfiltration tool was documented"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AvNeutralizer",
+          "q": "AvNeutralizer (also called “AuKill”) relies"
+        },
+        {
+          "v": "PackXOR",
+          "q": "we offer a thorough analysis of the associated private packer that we named “PackXOR”"
+        },
+        {
+          "v": "XMRig",
+          "q": "the “XMRig”2 cryptominer"
+        },
+        {
+          "v": "R77 rootkit",
+          "q": "XMRig + the “R77 rootkit”3"
+        },
+        {
+          "v": "SilentCryptoMiner",
+          "q": "additionally obfuscated with the open-source “SilentCryptoMiner”4"
+        },
+        {
+          "v": "Hidden Malware Builder",
+          "q": "(Hidden Malware Builder8)."
+        },
+        {
+          "v": "data exfiltration tool",
+          "q": "which is very similar to a data exfiltration tool that was documented in an article from ReversingLab in 2021"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Run-Time Dynamic Linking",
+          "q": "The packed binary leverages “Run-Time Dynamic Linking” 5 for some specific Windows API functions"
+        },
+        {
+          "v": "encrypted",
+          "q": "are “encrypted” strings in the"
+        },
+        {
+          "v": "vulnerable drivers",
+          "q": "relies on vulnerable drivers to terminate EDR related processes from the kernel"
+        },
+        {
+          "v": "XOR",
+          "q": "The XOR key is different for almost every string"
+        },
+        {
+          "v": "LZNT1",
+          "q": "A first XOR iteration (with XOR key 1) on LZNT1 compressed data"
+        },
+        {
+          "v": "concealing payloads",
+          "q": "concealing payloads and delaying their detection"
+        },
+        {
+          "v": "obfuscation",
+          "q": "we discovered a second and sometimes third layer of obfuscation"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "4",
+          "q": "we could identify 4 different additional payloads (other than AvNeutralizer)"
+        },
+        {
+          "v": "Three",
+          "q": "Three of the identified samples drop the XMRig2 cryptominer"
+        },
+        {
+          "v": "40 bytes",
+          "q": "A 40 bytes header that contains:"
+        },
+        {
+          "v": "62958",
+          "q": "Size of compressed data (in bytes): 62958"
+        },
+        {
+          "v": "80896",
+          "q": "Size of uncompressed data (in bytes): 80896"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "PackXOR"
+    },
+    "hedges": [
+      "Sentinel Labs links AvNeutralizer sellers to the FIN7 cluster with high confidence, as the report cites it.",
+      "PackXOR developers might indeed be connected to the FIN7 cluster, but the packer appears to be used for activities that are not related to FIN7.",
+      "The report believes with medium to high confidence that four additional payloads were packed with PackXOR.",
+      "The report says it appears PackXOR is used by different ransomware operators.",
+      "The report says it believes the hypothesis that PackXOR was used only to test detection is not consistent with the use of an extra obfuscator."
+    ]
   }
 }

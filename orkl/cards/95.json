@@ -25,5 +25,101 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "95a9b62c3535d9bcf354344a050f2df6c1f5644a": {
+    "sha1": "95a9b62c3535d9bcf354344a050f2df6c1f5644a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:28:30Z",
+    "model": "haiku",
+    "summary": "AhnLab's ASEC reports that a backdoor previously spread in CHM files is now distributed as malicious LNK shortcut files. The LNKs are disguised as Excel documents, uploaded alongside malware in ZIP and RAR archives on a regular website. When run, the LNK starts PowerShell, sets persistence through a registry Run key, and uses mshta to fetch scripts. The malware polls a server for commands and can collect system, clipboard and file information. The title attributes the activity to RedEyes (ScarCruft). The report says the attacker appears to keep modifying the script code. Published 2023-08-31.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "RedEyes (ScarCruft)",
+          "q": "Distribution of Backdoor via Malicious LNK: RedEyes (ScarCruft) - ASEC",
+          "by": "the report (AhnLab ASEC)"
+        },
+        {
+          "v": "APT37",
+          "q": "RedEyes Group Wiretapping Individuals (APT37)",
+          "by": "the report (citing a prior AhnLab post)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Korean public organization (impersonated)",
+          "q": "‘Status Survey Table.xlsx’ appears as a normal Excel document and impersonates a Korean public organization in"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-08-31",
+          "q": "Published: 2023-08-31 · Archived: 2026-04-05 19:57:14 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2023-08-31 · Archived: 2026-04-05 19:57:14 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "mshta",
+          "q": "executes additional scripts located at a specific URL through the mshta process."
+        },
+        {
+          "v": "PowerShell",
+          "q": "through PowerShell commands."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Malicious LNK file delivered in archive",
+          "q": "The threat actor has been distributing the confirmed LNK file on a regular website by uploading it alongside"
+        },
+        {
+          "v": "Document lure impersonating public organisation",
+          "q": "‘Status Survey Table.xlsx’ appears as a normal Excel document and impersonates a Korean public organization in"
+        },
+        {
+          "v": "Registry Run key persistence",
+          "q": "Registry path: HKCU\\ Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce"
+        },
+        {
+          "v": "Script execution via mshta",
+          "q": "executes additional scripts located at a specific URL through the mshta process."
+        },
+        {
+          "v": "Base64-obfuscated PowerShell",
+          "q": "a PowerShell command obfuscated in Base64 as shown below."
+        },
+        {
+          "v": "Polling a server for commands",
+          "q": "It then receives commands from the threat actor’s server to carry out additional malicious behaviors."
+        },
+        {
+          "v": "Host and clipboard information collection",
+          "q": "clipboard Collects clipboard content"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "10 MB",
+          "q": "a significant number of them have a file size exceeding 10 MB."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Malicious LNK distribution by RedEyes (ScarCruft)"
+    },
+    "hedges": [
+      "Report suspects the attacker keeps modifying the script code, so other malicious activities may also be performed."
+    ]
   }
 }

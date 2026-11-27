@@ -4,22 +4,28 @@
     "key": "a-49a6d7da-ac22-435f-b030-74be46900568",
     "kind": "actor",
     "name": "GOLD LOCUST",
-    "headline": "GOLD LOCUST: a long-tracked group known as FIN7 and Carbanak, with loaders and ransomware ties",
-    "in_short": "Secureworks tracks GOLD LOCUST and lists FIN7 and Carbanak among its aliases. Researchers describe its malware loaders and tie it to ransomware-linked intrusions. Several of these links are assessments, not settled fact.",
+    "headline": "GOLD LOCUST (FIN7, Carbanak): phishing loaders, the Carbanak backdoor and links to ransomware crews",
+    "in_short": "GOLD LOCUST is tracked by Secureworks and also known as FIN7 and Carbanak. Vendors tie it to phishing-led JSSLoader attacks and the Carbanak backdoor. Some reports link its tools or affiliates to ransomware intrusions.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as GOLD LOCUST. Its catalogue record lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon.",
+            "t": "The catalogue record, sourced to Secureworks, names the actor GOLD LOCUST.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The same record lists Carbanak as a tool linked to the group.",
+            "t": "The same record lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon, and names Carbanak as its tool.",
             "cites": [
               "catalogue"
+            ]
+          },
+          {
+            "t": "Morphisec Labs says it has tracked FIN7 (Carbanak Group) activity for several years.",
+            "cites": [
+              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
             ]
           }
         ]
@@ -28,34 +34,33 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Malwarebytes Threat Intelligence attributes a late-June malspam campaign to FIN7, a name the catalogue lists as an alias. The emails dropped a loader called JSSLoader.",
+            "t": "Morphisec describes a JSSLoader attack chain it says it intercepted in a customer network in December 2020. It began with a phishing lure and ran VBScript stages in memory.",
             "cites": [
-              "34d1144c2183487f403172e7b3c629fdeeb9688a",
-              "catalogue"
+              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
             ]
           },
           {
-            "t": "Malwarebytes describes JSSLoader as a rewrite with expanded capabilities, including data exfiltration. It also dropped a secondary payload written in .NET.",
+            "t": "In that chain, a scheduled task with a timeout delay ran a module, which Morphisec says was meant to get past attack chain monitoring. A Takeout script then loaded Carbanak reflectively.",
+            "cites": [
+              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
+            ]
+          },
+          {
+            "t": "Malwarebytes attributes a late-June malspam campaign to FIN7. In a post dated August 15, 2022, it says the campaign dropped JSSLoader and a secondary .NET payload.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "The same report notes an earlier component of FIN7 that others had described. It was delivered in the XLL file format.",
+            "t": "Malwarebytes describes this JSSLoader as a rewrite with expanded capabilities, including data exfiltration.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "SentinelLABS published a report on 3 November 2022 about Black Basta ransomware attacks. It says the custom EDR evasion tools used in them are tied to FIN7. The title describes a link, not a flat identity.",
+            "t": "A report on APT28 notes that FIN7 was among several actors that used the DDE document technique, citing DNSMessenger as an example.",
             "cites": [
-              "88f5a8bd8832f5d326afca713c918e1c856afd18"
-            ]
-          },
-          {
-            "t": "Rapid7 cites GData, which attributes a Python RAT it calls Anubis to FIN7.",
-            "cites": [
-              "276eef8e2d22f6e225440f49dfeb3de246f91df1"
+              "77b6d637bf703fc59d42da667715f8ae0653cece"
             ]
           }
         ]
@@ -64,19 +69,25 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In a 2020 ransomware overview, IBM Security X-Force reports investigating a Carbanak backdoor associated with a Sodinokibi ransomware attack.",
+            "t": "IBM Security X-Force reported investigating a Carbanak backdoor associated with a Sodinokibi ransomware attack. Its own text rests the Carbanak link on similarity to tools of the ITG14 group.",
             "cites": [
               "98db93df2c38d13d27ed23f978a9f60980941381"
             ]
           },
           {
-            "t": "IBM assesses that a group it calls ITG14 is at least one affiliate group that contracts with Sodinokibi providers. The report says the Carbanak link rests on similarity to ITG14 tools.",
+            "t": "A SentinelLABS report published on November 3, 2022 covers Black Basta ransomware attacks. Its title says the custom EDR evasion tools are \"tied to\" FIN7. Only the title page and contents were available, so the detail is thin.",
             "cites": [
-              "98db93df2c38d13d27ed23f978a9f60980941381"
+              "88f5a8bd8832f5d326afca713c918e1c856afd18"
             ]
           },
           {
-            "t": "Rapid7 assesses that the developers of a Java malware family are likely initial access brokers. It says they potentially provided access for Black Basta and/or FIN7 affiliates.",
+            "t": "Rapid7, in a report published on June 10, 2025, assesses that the developers of a Java malware family are likely initial access brokers. It says they potentially provided access for Black Basta and/or FIN7 affiliates.",
+            "cites": [
+              "276eef8e2d22f6e225440f49dfeb3de246f91df1"
+            ]
+          },
+          {
+            "t": "Rapid7 also notes that GData attributes a related python RAT to FIN7, and that GData calls it Anubis. Rapid7 says that name is likely based on the source code.",
             "cites": [
               "276eef8e2d22f6e225440f49dfeb3de246f91df1"
             ]
@@ -87,22 +98,22 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected loaders and unfamiliar remote-access sessions as signs of possible hands-on intrusion, and investigate them quickly.",
+            "t": "Treat unexpected invoice emails with care. Monitor script activity and scheduled tasks on endpoints, since the reported chains rely on both.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "b8ddb235f6bd3be80da7c790b163391fd4cc7e5d",
+    "based_on": "7186c9470ca96e6d1bcd21e78955fefcd49aded9",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T02:07:40Z",
+    "written_at": "2026-11-27T03:18:51Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked",
       "missing-section"
     ],
-    "written_run": "2025d0b1"
+    "written_run": "be09c809"
   }
 }

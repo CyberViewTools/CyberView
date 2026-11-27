@@ -122,5 +122,154 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb": {
+    "sha1": "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:26:14Z",
+    "model": "haiku",
+    "summary": "Sygnia, a vendor blog from 2024, describes how ransomware attacks against VMware ESXi and vCenter virtualisation environments typically unfold: initial access, privilege escalation, access validation, deployment on hosts, backup compromise, data theft for double extortion, and encryption. It names ransomware groups and tools, including LockBit, BlackCat and Akira, that it says often use this attack vector. It then gives defender guidance on monitoring, backups, authentication, hardening and network restrictions.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "LockBit",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "HelloKitty",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "BlackMatter",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "RedAlert (N13V)",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "Scattered Spider",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "Akira",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "Cactus",
+          "q": "and groups such as LockBit, HelloKitty, BlackMatter, RedAlert (N13V), Scattered Spider, Akira, Cactus,",
+          "by": "Sygnia"
+        },
+        {
+          "v": "BlackCat",
+          "q": "BlackCat and Cheerscrypt.",
+          "by": "Sygnia"
+        },
+        {
+          "v": "Cheerscrypt",
+          "q": "BlackCat and Cheerscrypt.",
+          "by": "Sygnia"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-05-15",
+          "q": "Published: 2024-05-15 · Archived: 2026-04-06 00:51:19 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-06",
+          "q": "Published: 2024-05-15 · Archived: 2026-04-06 00:51:19 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "vSphere Installation Bundles (VIBs)",
+          "q": "using custom-made vSphere Installation Bundles (VIBs)"
+        },
+        {
+          "v": "SCCM",
+          "q": "deployment mechanisms (such as SCCM or Active Directory)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "conducting phishing attacks",
+          "q": "conducting phishing attacks, downloading malicious files"
+        },
+        {
+          "v": "altering domain group memberships",
+          "q": "such as altering domain group memberships for domain-connected VMware"
+        },
+        {
+          "v": "brute-force",
+          "q": "employing brute-force"
+        },
+        {
+          "v": "RDP hijacking",
+          "q": "executing RDP hijacking attempts that target IT personnel"
+        },
+        {
+          "v": "enable SSH on all ESXi servers",
+          "q": "attackers use vCenter to enable SSH on all ESXi servers"
+        },
+        {
+          "v": "reset server passwords",
+          "q": "might also reset server passwords"
+        },
+        {
+          "v": "encrypting or deleting backup storage",
+          "q": "By encrypting or deleting backup storage"
+        },
+        {
+          "v": "double extortion",
+          "q": "enact a double extortion scheme"
+        },
+        {
+          "v": "shut down all virtual machines",
+          "q": "threat actors shut down all virtual machines and initiate"
+        },
+        {
+          "v": "encrypt or delete logs",
+          "q": "threat actors deliberately encrypt or delete logs to conceal their activities"
+        },
+        {
+          "v": "password reuse",
+          "q": "password reuse has been exploited by adversaries"
+        },
+        {
+          "v": "ESXi profiles",
+          "q": "using ESXi profiles to perform privilege escalation"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "6.7",
+          "q": "designed specifically to inhibit ransomware attacks on VMware (versions 6.7"
+        },
+        {
+          "v": "4728, 4732, 4756",
+          "q": "Event ID for a user being added to an AD group: 4728, 4732, 4756."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Sygnia says the attack vector is 'often' leveraged by the listed ransomware tools and groups.",
+      "Sygnia's analysis 'indicates' that attacks on virtualisation environments 'typically' follow a similar pattern.",
+      "The report says threat actors 'might' try to seize control of backup systems and 'might' also reset server passwords."
+    ]
   }
 }

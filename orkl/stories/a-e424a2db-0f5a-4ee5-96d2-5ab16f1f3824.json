@@ -51,45 +51,47 @@
     "key": "a-e424a2db-0f5a-4ee5-96d2-5ab16f1f3824",
     "kind": "actor",
     "name": "GOLD HARVEST",
-    "headline": "GOLD HARVEST (Scattered Spider): help-desk tricks and data extortion",
-    "in_short": "GOLD HARVEST is Secureworks' name for the actor also called Scattered Spider. Vendors describe a financially motivated group that phones help desks, steals logins and extorts victims, with blurry ties to allied groups.",
+    "headline": "GOLD HARVEST (Scattered Spider): a social-engineering crew that goes after help desks",
+    "in_short": "GOLD HARVEST, better known as Scattered Spider, is a financially motivated group. Vendors say it tricks help desks and staff to get in, then steals data or deploys ransomware. Some links to other groups are only partly confirmed.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as GOLD HARVEST. The same activity is also known as Octo Tempest, Roasted 0ktapus, Scatter Swine, Scattered Spider and UNC3944.",
+            "t": "Secureworks tracks this actor as GOLD HARVEST. The catalogue lists aliases including Octo Tempest, Roasted 0ktapus, Scatter Swine, Scattered Spider and UNC3944.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "CrowdStrike describes Scattered Spider as a prolific eCrime adversary. It says the group has carried out financially motivated activity since early 2022.",
+            "t": "CrowdStrike describes SCATTERED SPIDER as a prolific eCrime adversary that has run financially motivated activity since early 2022.",
             "cites": [
               "610338df14f4cebede6d1bb7ae7c1333ab864e87"
             ]
           },
           {
-            "t": "CrowdStrike also lists Storm-0875 and LUCR-3 among the group's aliases.",
+            "t": "Check Point Research, drawing on public intelligence, describes a group active since at least 2022. It says the members are mostly young people aged 19 to 22 from the US and UK.",
             "cites": [
-              "610338df14f4cebede6d1bb7ae7c1333ab864e87"
+              "a894be235a0f82062b5215e6a4aa1f04d8a5ab89"
             ]
           },
           {
-            "t": "Trustwave SpiderLabs says the Scattered LAPSUS$ Hunters brand borrows the names of Scattered Spider, ShinyHunters and LAPSUS$. It reads the brand as a situational alliance, not a formal merger.",
+            "t": "ReliaQuest calls it a financially motivated gang associated with the hacking collective known as The Com.",
+            "cites": [
+              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
+            ]
+          },
+          {
+            "t": "In August 2025 a Telegram brand called Scattered LAPSUS$ Hunters appeared. Trustwave SpiderLabs reads it as a situational alliance, not a formal merger. It infers from writing patterns that fewer than five people run the core.",
             "cites": [
               "6ea59b62458520febeb62152f791c51227c19eb5"
             ]
           },
           {
-            "t": "EclecticIQ analysts assess that ShinyHunters is very likely relying on members of Scattered Spider and The Com for voice phishing. The same report notes there is no direct relationship between ShinyHunters and Scattered Spider.",
+            "t": "EclecticIQ says there is no direct relationship between ShinyHunters and Scattered Spider. Its analysts also assess that ShinyHunters very likely relies on Scattered Spider and The Com members for voice phishing.",
             "cites": [
               "8ae6452064e6535526083d08be54c419543266c8"
             ]
-          },
-          {
-            "t": "Resecurity says the overlaps between these groups suggest operational coordination but do not prove it.",
-            "cites": []
           }
         ]
       },
@@ -97,14 +99,28 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "CrowdStrike says early campaigns reportedly targeted customer relationship management and business-process outsourcing firms. It adds telecommunications and technology companies to the list.",
+            "t": "CrowdStrike says the group's early campaigns reportedly hit customer relationship management and business-process outsourcing firms, plus telecommunications and technology companies.",
             "cites": [
               "610338df14f4cebede6d1bb7ae7c1333ab864e87"
             ]
           },
           {
-            "t": "Resecurity says the allied groups have jointly targeted financial services, technology, retail and airline organizations.",
-            "cites": []
+            "t": "ReliaQuest says 70% of the group's targets are in technology, finance and retail trade. Its figures come from a domain dataset and its own alerts.",
+            "cites": [
+              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
+            ]
+          },
+          {
+            "t": "Check Point says the group is widening its scope to aviation alongside enterprises. It cites media reports and advisories that link the group to airline attacks, including a July 2025 Qantas breach.",
+            "cites": [
+              "a894be235a0f82062b5215e6a4aa1f04d8a5ab89"
+            ]
+          },
+          {
+            "t": "Google's John Hultquist, quoted by BleepingComputer, said the group has recently been breaching US insurers. An Aflac spokesperson could not name the group behind its breach, but the report says it shows all the signs of Scattered Spider.",
+            "cites": [
+              "6431c1c21d4cce6686b3b44d057f31b66e817aba"
+            ]
           }
         ]
       },
@@ -118,29 +134,40 @@
             ]
           },
           {
-            "t": "Resecurity says both LAPSUS$ and Scattered Spider are known for help desk impersonation and credential theft.",
-            "cites": []
+            "t": "ReliaQuest says the group relies mainly on phishing, voice phishing and help-desk impersonation. It uses the Evilginx phishing framework to bypass MFA.",
+            "cites": [
+              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
+            ]
           },
           {
-            "t": "A report on the wider collective lists SIM swapping, MFA fatigue and session cookie theft as ways to get past multifactor login.",
-            "cites": []
+            "t": "BleepingComputer's report on the Aflac breach lists phishing, SIM swapping and MFA bombing among the group's tactics.",
+            "cites": [
+              "6431c1c21d4cce6686b3b44d057f31b66e817aba"
+            ]
           },
           {
-            "t": "Picus Labs says Scattered Spider used RustScan to probe ESXi appliances for open ports.",
+            "t": "Picus Labs says the group has been seen deploying commercial remote monitoring and management products. The catalogue lists AnyDesk, ConnectWise Control and Logmein among its tools.",
+            "cites": [
+              "a90dd5fe9bc1d7b3990d2d5a888acdca60ca1d3d",
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Google tracked a voice-phishing cluster, UNC6040, that tricked staff into linking a modified Salesforce data tool. Google ties its Okta phishing pages to Scattered Spider or The Com tactics.",
+            "cites": [
+              "ceb6daf589923566e4096f2c089c89605ceaf8eb"
+            ]
+          },
+          {
+            "t": "Picus Labs describes an August 2025 Telegram post that sought insiders with Okta, Microsoft SSO or Citrix access.",
             "cites": [
               "a90dd5fe9bc1d7b3990d2d5a888acdca60ca1d3d"
             ]
           },
           {
-            "t": "The catalogue record lists the remote access tools AnyDesk, ConnectWise Control and LogMeIn.",
+            "t": "ReliaQuest says the group has formed alliances with ransomware operators ALPHV, RansomHub and DragonForce, and increasingly targets managed service providers and IT contractors.",
             "cites": [
-              "catalogue"
-            ]
-          },
-          {
-            "t": "Rapid7 investigated an April 2026 intrusion that began with a Microsoft Teams message from a fake IT Support account. It says this mirrors tradecraft seen in Octo Tempest-style campaigns, and does not call it a confirmed link.",
-            "cites": [
-              "08f94fedfd18aae263a8c97b5e95f0228ca6f439"
+              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
             ]
           }
         ]
@@ -149,28 +176,28 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "One report says ALPHV/BlackCat ransomware crippled MGM and Caesars in 2023 after a simple phone call. It says Scattered Spider acted as an affiliate.",
-            "cites": []
-          },
-          {
-            "t": "Push says Scattered Spider made headlines again in April 2025 with attacks on UK retailers Marks & Spencer and Co-op.",
+            "t": "BleepingComputer's report says that in September 2023 the group breached MGM Resorts by impersonating an employee. It then encrypted over 100 VMware ESXi hypervisors with BlackCat ransomware.",
             "cites": [
-              "6a7fbb5bbccc65506bd2aa9751f68b1ad1dc8f0a"
+              "6431c1c21d4cce6686b3b44d057f31b66e817aba"
             ]
           },
           {
-            "t": "Resecurity attributes ransomware attacks on WestJet, Hawaiian Airlines and Qantas in mid-2025 to Scattered Spider.",
-            "cites": []
-          },
-          {
-            "t": "Intrinsec cites a CISA advisory of 29 July 2025 on Scattered Spider. It says the advisory names the Vidar infostealer among tools the group used.",
+            "t": "ReliaQuest says a wave of attacks hit UK retailers in May 2025, including Marks & Spencer, Co-op and Harrods. It says nothing definitive has tied those incidents to Scattered Spider.",
             "cites": [
-              "98a9ea3be1e31e4c5f1d00345d5f4a1467a5bec1"
+              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
             ]
           },
           {
-            "t": "Resecurity does not believe the alliance's announced end to operations is sincere. It expects the groups to regroup under other names.",
-            "cites": []
+            "t": "Resecurity cites Scattered Spider ransomware attacks on WestJet, Hawaiian Airlines and Qantas in mid-2025. It does not believe the combined group's announced retirement is sincere.",
+            "cites": [
+              "7adcfbd2c034d8e53fb98beebd1eae28d22984ac"
+            ]
+          },
+          {
+            "t": "Rapid7 investigated an April 2026 intrusion that began with a Microsoft Teams message from a fake IT Support account. Rapid7 says the approach mirrors Octo Tempest-style tradecraft but does not confirm a link.",
+            "cites": [
+              "08f94fedfd18aae263a8c97b5e95f0228ca6f439"
+            ]
           }
         ]
       },
@@ -178,26 +205,25 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Help desks should confirm a caller's identity through a separate, trusted channel before resetting passwords or multifactor settings.",
+            "t": "Help desks should confirm a caller's identity through a second, trusted channel before resetting MFA or passwords.",
             "cites": []
           },
           {
-            "t": "Staff should treat unexpected chat or phone requests from \"IT support\" with suspicion.",
+            "t": "Staff should be trained to treat unexpected IT-support calls and chat messages with suspicion, including requests to install remote access tools.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "79ab4acf7289969554d377570e65e2060f14b4a3",
+    "based_on": "b61851d5717ba32dd7617a3b7ff35fa7bcab3b8f",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T02:07:53Z",
+    "written_at": "2026-11-27T03:19:15Z",
     "writer_model": "sonnet",
     "reasons": [
-      "uncited",
       "unbacked"
     ],
-    "written_run": "2025d0b1"
+    "written_run": "be09c809"
   }
 }

@@ -397,5 +397,69 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "3770824fad66a3c0254661f0e17ca27b301dafdb": {
+    "sha1": "3770824fad66a3c0254661f0e17ca27b301dafdb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:29:32Z",
+    "model": "haiku",
+    "summary": "Malware analysis of Redosdru, primarily a downloader that the report says is commonly associated with APT27/Iron Tiger and was reported by Microsoft as early as 2009. The author reverses the string decryption used to recover the C2 URL, which appears to fetch a malicious DLL. Published June 2024.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT27/Iron Tiger",
+          "q": "Redosdru is malware primarily functioning as a downloader, commonly associated with APT27/Iron Tiger.",
+          "by": "the report (author Andrew Petrus)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-06-17",
+          "q": "Published: 2024-06-17",
+          "what": "Blog post analysing Redosdru string decryption was published"
+        },
+        {
+          "v": "July 2009",
+          "q": "Reported by Microsoft as early as July 2009",
+          "what": "Redosdru was reported by Microsoft"
+        }
+      ],
+      "tools": [
+        {
+          "v": "IDA",
+          "q": "After loading the binary into IDA, I came across an intriguing string in Main that was passed to another function."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "downloader",
+          "q": "Redosdru is malware primarily functioning as a downloader, commonly associated with APT27/Iron Tiger."
+        },
+        {
+          "v": "decryption process of the C2 URL",
+          "q": "I wanted to share the decryption process of the C2 URL, which I found quite interesting."
+        },
+        {
+          "v": "dynamic analysis",
+          "q": "Hash, dynamic analysis, and samples"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Redosdru"
+    },
+    "hedges": [
+      "The report says Redosdru is commonly associated with APT27/Iron Tiger.",
+      "The author says: I couldn't find much information about it.",
+      "The decrypted C2 URL appears to download a malicious DLL file.",
+      "Low amount of submissions on Malware Bazaar considering age."
+    ]
   }
 }

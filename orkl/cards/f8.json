@@ -217,5 +217,180 @@
       "note": "summary: It drops the hedge on how the access happened: the text says they 'somehow hacked one of our hosters, maybe even he himself helped them', not a plain i",
       "by": "auditor"
     }
+  },
+  "f8b56cdf8ac2641660351f4a0c587ecaa361564c": {
+    "sha1": "f8b56cdf8ac2641660351f4a0c587ecaa361564c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:24:32Z",
+    "model": "haiku",
+    "summary": "SentinelOne research on two ransomware-as-a-service brands, HellCat and Morpheus. Their payloads are almost identical, and the report believes one affiliate uploaded samples for both in late December 2024. The ransom notes follow the same template as those of Underground Team, but the report finds insufficient evidence of a shared codebase or partnership between the groups and suggests a shared builder may be in use. The payloads encrypt files with Windows cryptographic APIs, skip certain file extensions and a Windows system folder, and leave file extensions unchanged. Morpheus targets…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "HellCat",
+          "q": "HellCat Ransomware emerged in mid-2024.",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "Morpheus",
+          "q": "Morpheus functions as a semi-private RaaS, and its public branding efforts are far less",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "Underground Team",
+          "q": "Underground Team emerged as a RaaS operation in early to mid 2023.",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "IntelBroker",
+          "q": "These personas, including Rey, Pryx, Grep and IntelBroker, have been affiliated with the breaches of numerous high-value targets.",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "Rey",
+          "q": "These personas, including Rey, Pryx, Grep and IntelBroker, have been affiliated with the breaches of numerous high-value targets.",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "Pryx",
+          "q": "These personas, including Rey, Pryx, Grep and IntelBroker, have been affiliated with the breaches of numerous high-value targets.",
+          "by": "the report (SentinelOne)"
+        },
+        {
+          "v": "Grep",
+          "q": "These personas, including Rey, Pryx, Grep and IntelBroker, have been affiliated with the breaches of numerous high-value targets.",
+          "by": "the report (SentinelOne)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "pharmaceutical",
+          "q": "At the time of writing, Morpheus has listed two victims in the pharmaceutical and manufacturing industries."
+        },
+        {
+          "v": "manufacturing",
+          "q": "At the time of writing, Morpheus has listed two victims in the pharmaceutical and manufacturing industries."
+        },
+        {
+          "v": "government entities",
+          "q": "By their own admissions, HellCat operators are focused on high-value “big game” targets and government entities."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Italian",
+          "q": "The affiliate discussed below currently targets Italian organizations with a focus on virtual ESXi environments."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-01-23",
+          "q": "Published: 2025-01-23 · Archived: 2026-04-06 00:39:12 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "mid-2024",
+          "q": "HellCat Ransomware emerged in mid-2024.",
+          "what": "HellCat ransomware emerged"
+        },
+        {
+          "v": "December 2024",
+          "q": "Morpheus RaaS launched a data leaks site (DLS) in December 2024",
+          "what": "Morpheus launched a data leaks site"
+        },
+        {
+          "v": "early to mid 2023",
+          "q": "Underground Team emerged as a RaaS operation in early to mid 2023.",
+          "what": "Underground Team emerged as a RaaS operation"
+        },
+        {
+          "v": "December 22",
+          "q": "two similar ransomware payloads uploaded to VirusTotal on December 22 and December 30.",
+          "what": "Similar payload uploaded to VirusTotal"
+        },
+        {
+          "v": "December 31, 2024",
+          "q": "A further file named er.bat was uploaded to VirusTotal with the same submitter ID on December 31, 2024 and",
+          "what": "Batch file uploaded to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Windows Cryptographic API",
+          "q": "The Morpheus and HellCat samples use the Windows Cryptographic API for key generation and file encryption."
+        },
+        {
+          "v": "er.bat",
+          "q": "A further file named er.bat was uploaded to VirusTotal with the same submitter ID on December 31, 2024 and"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "encryption via Windows Cryptographic API",
+          "q": "The Morpheus and HellCat samples use the Windows Cryptographic API for key generation and file encryption."
+        },
+        {
+          "v": "excludes certain file extensions from encryption",
+          "q": "Both the HellCat and Morpheus samples are built with a hard-coded list of extensions to exclude from the"
+        },
+        {
+          "v": "skips the Windows System32 folder during encryption",
+          "q": "Additionally, the ransomware excludes the \\Windows\\System32 folder from encryption."
+        },
+        {
+          "v": "leaves file extensions unchanged after encryption",
+          "q": "they do not alter the extension of targeted and encrypted files."
+        },
+        {
+          "v": "ransom note written to disk as a text file",
+          "q": "For both Morpheus and HellCat, the ransom note is written to disk as _README_.txt ."
+        },
+        {
+          "v": "encrypts files on all available volumes",
+          "q": "Once all available files, on all available volumes, have been processed"
+        },
+        {
+          "v": "batch script launches the ransomware",
+          "q": "er.bat launches Morpheus ransomware"
+        },
+        {
+          "v": "no persistence or other system changes",
+          "q": "There are no further system modifications made beyond the file encryption and ransom note drop"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "32BTC",
+          "q": "Ransom demands from Morpheus affiliates are known to reach as high as 32BTC (~$3 million USD as of this"
+        },
+        {
+          "v": "~$3 million USD",
+          "q": "Ransom demands from Morpheus affiliates are known to reach as high as 32BTC (~$3 million USD as of this"
+        },
+        {
+          "v": "two victims",
+          "q": "At the time of writing, Morpheus has listed two victims in the pharmaceutical and manufacturing industries."
+        },
+        {
+          "v": "~18KB",
+          "q": "Both samples are ~18KB in size."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "HellCat and Morpheus ransomware"
+    },
+    "hedges": [
+      "we believe it is likely that the samples were uploaded by the same affiliate dabbling in both Morpheus and HellCat campaigns.",
+      "Presently, there is not sufficient evidence to support any sort of shared codebase or 'partnering' between Underground Team, HellCat and Morpheus.",
+      "assuming any deeper connection would be speculation at this time.",
+      "While it is not possible to assess the full extent of interaction between the owners and operators of these ransomware services",
+      "it appears that a shared codebase or possibly a shared builder application is being leveraged by affiliates tied to both groups.",
+      "While it is completely possible that there are affiliates that are tied to Underground Team and Hellcat/Morpheus"
+    ]
   }
 }

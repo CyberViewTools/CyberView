@@ -56,5 +56,113 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "a7a66566cdd12df0b483f89b2d64103dffa4791e": {
+    "sha1": "a7a66566cdd12df0b483f89b2d64103dffa4791e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:28:32Z",
+    "model": "haiku",
+    "summary": "Zscaler ThreatLabz describes APT37 activity that starts with Windows shortcut or help-file lures. The lures deliver a PowerShell backdoor called Chinotto, the Rust backdoor Rustonotto, and the FadeStealer data-theft tool, which is injected into a legitimate process. FadeStealer collects files, keystrokes, screenshots and audio into password-protected RAR archives and sends them to C2 servers, often compromised web servers. The report was published 2025-09-08.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT37",
+          "q": "In one campaign, APT37 utilizes a Windows shortcut file.",
+          "by": "Zscaler ThreatLabz (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-09-08",
+          "q": "Published: 2025-09-08",
+          "what": "Report published"
+        },
+        {
+          "v": "June 11, 2025",
+          "q": "which was last modified on June 11, 2025.",
+          "what": "Decoy document last modified"
+        },
+        {
+          "v": "2025-04-01",
+          "q": "The compiled Python module, created on 2025-04-01 05:42:03",
+          "what": "Compiled Python module created"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Chinotto",
+          "q": "followed by Chinotto dropping FadeStealer through a sophisticated infection"
+        },
+        {
+          "v": "Rustonotto",
+          "q": "The dropped payload is Rustonotto, which is a Rust-compiled binary"
+        },
+        {
+          "v": "FadeStealer",
+          "q": "The decrypted malware is FadeStealer, the same data-theft tool previously documented by AhnLab."
+        },
+        {
+          "v": "RAR.exe",
+          "q": "employs a custom RAR.exe tool extracted from its"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Windows shortcut file lure",
+          "q": "In one campaign, APT37 utilizes a Windows shortcut file."
+        },
+        {
+          "v": "Windows help file (CHM) delivery",
+          "q": "the threat actor used a Windows help file (CHM) to deliver malware"
+        },
+        {
+          "v": "Registry Run key persistence",
+          "q": "under the Run key to trigger the download and execution of an HTML Application (HTA) file"
+        },
+        {
+          "v": "Process Doppelgänging injection",
+          "q": "the Python script employs the Process Doppelgänging technique to inject"
+        },
+        {
+          "v": "HTTP-based command and control",
+          "q": "Makes HTTP requests to the C2 server to fetch commands."
+        },
+        {
+          "v": "Password-protected archive exfiltration",
+          "q": "compresses them into password-protected RAR archives"
+        },
+        {
+          "v": "Keylogging, screenshots and audio capture",
+          "q": "capture keystrokes, screenshots, audio recordings, and file content from connected devices."
+        },
+        {
+          "v": "Compromised web servers used as C2",
+          "q": "The threat actor leveraged vulnerable web servers to act as C2 servers for managing malware operations."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "6,032,787 bytes",
+          "q": "size (6,032,787 bytes) to ensure the correct file is processed."
+        },
+        {
+          "v": "5 seconds",
+          "q": "Every 5 seconds, Chinotto checks the threat actor’s C2"
+        },
+        {
+          "v": "10 seconds",
+          "q": "identifies archived RAR files every 10 seconds,"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "suggesting the use of a technique for stealthily injecting and executing arbitrary code within a legitimate Windows process."
+    ]
   }
 }

@@ -4,45 +4,22 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390: a China-linked group known by many names, tied to HyperBro and other tools",
-    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda and APT27. The cards on file are thin. One report names the group among users of Scanbox; another lists HyperBro samples.",
+    "headline": "Threat Group-3390: a long-tracked China-nexus group with a well-known toolkit",
+    "in_short": "Threat Group-3390 goes by many names, including APT27, Emissary Panda and Iron Tiger. Public reports list a deep toolkit, and Google's threat team describes the group as PRC-nexus.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "MITRE tracks the group as Threat Group-3390.",
+            "t": "MITRE tracks this actor as Threat Group-3390. It is also known as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Its aliases include Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
+            "t": "Google Threat Intelligence Group describes APT27 as a PRC-nexus threat actor.",
             "cites": [
-              "catalogue"
-            ]
-          }
-        ]
-      },
-      {
-        "h": "targets",
-        "sentences": [
-          {
-            "t": "Recorded Future's Insikt Group lists LuckyMouse (TG-3390, Emissary Panda, Bronze Union) among actors that have historically used the Scanbox framework.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
-            ]
-          },
-          {
-            "t": "The same report says Scanbox has been used before against persecuted minority groups, such as the Uighurs.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
-            ]
-          },
-          {
-            "t": "The report ties the March 2019 Scanbox campaigns to other targets, a Pakistani government passport tracking page and a spoofed Central Tibetan Administration site. It does not name this group as behind them.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
             ]
           }
         ]
@@ -51,21 +28,34 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "MITRE's record lists many tools for the group. They include PlugX, HyperBro, China Chopper, Cobalt Strike, Mimikatz, gh0st RAT, SysUpdate and RCSession.",
+            "t": "The catalogue lists many remote access tools for this group, including PlugX, HyperBro, gh0st RAT, ZxShell, RCSession, SysUpdate and Clambling.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Scanbox is a reconnaissance framework written in JavaScript and PHP. It can log keystrokes.",
+            "t": "It also lists the web shells China Chopper and ASPXSpy, and the frameworks Cobalt Strike and Impacket.",
             "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "catalogue"
             ]
           },
           {
-            "t": "Insikt Group says attackers using Scanbox likely aim to profile visitors' devices so they can carry out follow-on intrusions.",
+            "t": "For stealing credentials, the catalogue names Mimikatz, gsecdump, pwdump and Windows Credential Editor.",
             "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "catalogue"
+            ]
+          },
+          {
+            "t": "The catalogue also lists built-in Windows tools such as Systeminfo, Tasklist, netstat, ipconfig and certutil, along with the scanner NBTscan.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Recorded Future's Insikt Group lists LuckyMouse, a name for this group, among the actors that have used Scanbox in the past. Scanbox is a reconnaissance framework written in JavaScript and PHP that can log keystrokes.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9",
+              "catalogue"
             ]
           }
         ]
@@ -74,21 +64,22 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "A threat report titled 'Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users' is mostly a list of indicators of compromise.",
+            "t": "A threat report titled \"Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users\" lists indicators for the campaign. They include HyperBro samples for Windows and Rshell samples for Linux and Mac OS.",
+            "cites": [
+              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d",
+              "catalogue"
+            ]
+          },
+          {
+            "t": "The page is mostly a list of indicators. It gives no account of who was targeted or when.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
           },
           {
-            "t": "It lists file hashes for HyperBro samples on Windows and Rshell samples on Linux and Mac OS.",
+            "t": "Google Threat Intelligence Group says it saw APT27 activity in which the actor used Gemini. It also says an APT27 fleet management application is likely to support an ORB network.",
             "cites": [
-              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
-            ]
-          },
-          {
-            "t": "The page gives no account of who was targeted, where, or when the activity took place.",
-            "cites": [
-              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
+              "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
             ]
           }
         ]
@@ -97,21 +88,23 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Defenders who want more detail should look for fuller reporting, since the material here is limited.",
+            "t": "Treat tool names and indicator lists as a starting point for detection. They do not show the full scope of an intrusion.",
             "cites": []
           }
         ]
       }
     ],
-    "status": "parked",
-    "based_on": "cb104a34efe60ca1c540c57712c6dc5915d010fa",
-    "tries": 2,
+    "status": "rejected",
+    "based_on": "dd0511effccfb3d01646a5bd732d91af77ff2df3",
+    "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T02:08:02Z",
+    "written_at": "2026-11-27T03:19:34Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked"
+      "bare-attribution",
+      "unbacked",
+      "missing-section"
     ],
-    "written_run": "69323dc1"
+    "written_run": "bca654d4"
   }
 }

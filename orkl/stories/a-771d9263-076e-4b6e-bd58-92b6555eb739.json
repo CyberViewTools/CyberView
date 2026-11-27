@@ -51,41 +51,46 @@
     "key": "a-771d9263-076e-4b6e-bd58-92b6555eb739",
     "kind": "actor",
     "name": "NICKEL HYATT",
-    "headline": "NICKEL HYATT (Andariel): a North Korea-linked group known for ransomware and financial theft",
-    "in_short": "NICKEL HYATT, also tracked as Andariel and APT45, is a North Korea-nexus actor. CrowdStrike assesses it is likely tied to a state intelligence bureau. Reports note custom ransomware used for financial theft.",
+    "headline": "NICKEL HYATT (Andariel): a North Korea-linked actor tied to defense-sector intrusions and ransomware",
+    "in_short": "Secureworks calls it NICKEL HYATT. Others say Andariel or APT45. CrowdStrike assesses a North Korean intelligence link. South Korean police and AhnLab describe stolen accounts, hidden backdoor accounts and ransomware use.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "NICKEL HYATT is the Secureworks name for a threat actor that is also tracked as APT45, Andariel, Dark Seoul, Jumpy Pisces, Onyx Sleet, Silent Chollima, Stonefly and UN614.",
+            "t": "NICKEL HYATT is the Secureworks name for an actor that other vendors track as APT45, Andariel, Onyx Sleet, Jumpy Pisces, Silent Chollima and Stonefly, among other names.",
             "cites": [
-              "catalogue"
+              "catalogue",
+              "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
           },
           {
-            "t": "CrowdStrike tracks it as SILENT CHOLLIMA and describes it as a North Korea-nexus adversary active since at least 2007.",
+            "t": "CrowdStrike describes SILENT CHOLLIMA as a North Korea-nexus adversary that has been active since at least 2007.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
           },
           {
-            "t": "CrowdStrike assesses it is likely affiliated with Lab 110 within Bureau 3 of North Korea's General Reconnaissance Information Bureau (GRIB). The vendor states this as likely, not confirmed.",
+            "t": "CrowdStrike assesses the actor is likely affiliated with Lab 110 within Bureau 3 of North Korea's General Reconnaissance Information Bureau. It states this as likely, not confirmed.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
           },
           {
-            "t": "CrowdStrike lists its objectives as financial gain, intellectual property theft, intelligence gathering and destruction.",
+            "t": "CrowdStrike lists the actor's objectives as financial gain, intellectual property theft, intelligence gathering and destruction.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
           {
-            "t": "Kudelski Security and Sekoia note that affiliation of these clusters to the 3rd or 5th Bureau is debated among threat intelligence analysts. They also say aliases proliferate and vendors divide clusters differently.",
+            "t": "South Korea's National Police Agency warned that North Korean groups, including Andariel, breached South Korean defense companies and their subcontractors to steal defense technology data.",
             "cites": [
-              "24bb6d01f2508e4001990348616aff2cadc34cd1",
-              "4f376aac307589092604cf6c83559804e17cb771"
+              "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           }
         ]
@@ -94,37 +99,63 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Kudelski Security and Sekoia say Andariel is unusual because it used custom ransomware, Maui and H0lyGh0st, for financial theft.",
+            "t": "According to the National Police Agency, Andariel stole account details from an employee of a maintenance company. In October 2022 it used that account to install malware on the servers of defense subcontractors.",
             "cites": [
-              "24bb6d01f2508e4001990348616aff2cadc34cd1",
-              "4f376aac307589092604cf6c83559804e17cb771"
+              "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           },
           {
-            "t": "The catalogue lists these tools for the group: ActiveX 0-day, DTrack, HazyLoad, HotCriossant, Rifle, UnitBot and Valefor.",
+            "t": "AhnLab ASEC reports that Andariel used a malicious file to carry out RID Hijacking. This technique changes an account's identifier in the Windows account database so a hidden or low-privilege account is treated as an administrator.",
+            "cites": [
+              "37d087169d2bd363bc461552f900cf1b1f854864"
+            ]
+          },
+          {
+            "t": "AhnLab says the steps included gaining SYSTEM privileges with tools such as PsExec and JuicyPotato, creating a hidden account and changing its identifier. It says the account cannot be completely hidden.",
+            "cites": [
+              "37d087169d2bd363bc461552f900cf1b1f854864"
+            ]
+          },
+          {
+            "t": "AhnLab says this behavior can be read as an effort to keep the account's exposure low and to maintain persistence. It also cites an earlier KISA report that Andariel uses RID Hijacking when creating a backdoor account.",
+            "cites": [
+              "37d087169d2bd363bc461552f900cf1b1f854864"
+            ]
+          },
+          {
+            "t": "Sekoia and Kudelski Security note that Andariel is unusual among North Korea-linked clusters because it used custom ransomware, Maui and H0lyGh0st, for financial theft.",
+            "cites": [
+              "4f376aac307589092604cf6c83559804e17cb771",
+              "24bb6d01f2508e4001990348616aff2cadc34cd1"
+            ]
+          },
+          {
+            "t": "The catalogue record lists these tools for the actor: ActiveX 0-day, DTrack, HazyLoad, HotCriossant, Rifle, UnitBot and Valefor.",
             "cites": [
               "catalogue"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
           {
-            "t": "A public code repository describes a PHP server emulator as a tool for SHATTEREDGLASS ransomware attributed to Andariel. The page holds no threat analysis.",
-            "cites": [
-              "d4ce223008301f9d38aed51494c1d8787f9edbd5"
-            ]
+            "t": "Defenders at defense firms and their suppliers can keep work and personal passwords separate, review vendor and maintenance accounts closely, and check for hidden or unexpected administrator accounts.",
+            "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "52e95b02dfa48852d52558fff2257af4c0892599",
+    "based_on": "d86ed3a0eb53328f9b3bf6e8e39aa22f413d73ad",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T02:08:02Z",
+    "written_at": "2026-11-27T03:19:36Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked",
-      "missing-section"
+      "unbacked"
     ],
-    "written_run": "69323dc1"
+    "written_run": "bca654d4"
   }
 }

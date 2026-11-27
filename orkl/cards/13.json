@@ -1,26 +1,264 @@
 {
   "137263d75e06ee43d7fd29d45813ea6e87dafa9c": {
     "sha1": "137263d75e06ee43d7fd29d45813ea6e87dafa9c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:16:43Z",
+    "read_at": "2026-11-27T03:21:59Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Medium blog post by an individual author, published 2025-08-18, analysing Qilin ransomware (also called Agenda), a ransomware-as-a-service operation active since July 2022. Covers its affiliate model, attack techniques including double extortion and VMware ESXi targeting, exploited CVEs, notable victims from 2023 to 2025, a Microsoft-reported North Korean link (Moonstone Sleet), and forecasts.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Qilin",
+          "q": "Qilin ransomware, also known as Agenda, has emerged as one of the most significant and evolving cyber threats",
+          "by": "the report"
+        },
+        {
+          "v": "Russian-speaking cybercriminals",
+          "q": "the group is linked to Russian-speaking cybercriminals, often recruiting affiliates on Russian-language forums",
+          "by": "the report"
+        },
+        {
+          "v": "Moonstone Sleet",
+          "q": "Moonstone Sleet is now using Qilin ransomware in some of their attacks.",
+          "by": "Microsoft"
+        },
+        {
+          "v": "BianLian",
+          "q": "CVE-2024–27198: A vulnerability in JetBrains software leveraged by BianLian for data extortion",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "It has particularly focused on healthcare and education sectors, but also impacts manufacturing"
+        },
+        {
+          "v": "education",
+          "q": "It has particularly focused on healthcare and education sectors, but also impacts manufacturing"
+        },
+        {
+          "v": "manufacturing",
+          "q": "but also impacts manufacturing, legal & professional services, financial services, government"
+        },
+        {
+          "v": "government",
+          "q": "but also impacts manufacturing, legal & professional services, financial services, government"
+        },
+        {
+          "v": "Critical infrastructure",
+          "q": "Critical infrastructure entities are considered lucrative due to the high cost of downtime."
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "including the United States (the most targeted country), United Kingdom,"
+        },
+        {
+          "v": "United Kingdom",
+          "q": "including the United States (the most targeted country), United Kingdom,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 2022",
+          "q": "July 2022: First sighted as “Agenda” with code written in Go (Golang).",
+          "what": "Qilin first sighted under the name Agenda"
+        },
+        {
+          "v": "Late 2023",
+          "q": "Late 2023: Gained popularity through targeted attacks on VMware ESXi infrastructure.",
+          "what": "Qilin gained popularity through attacks on VMware ESXi infrastructure"
+        },
+        {
+          "v": "November 2023",
+          "q": "Yanfeng Automotive Interiors (November 2023): Qilin claimed responsibility for an attack on one of the",
+          "what": "Qilin claimed an attack on Yanfeng Automotive Interiors"
+        },
+        {
+          "v": "February 2024",
+          "q": "Lee Enterprises (February 2024): Targeted a major U.S. publishing network, disrupting services and",
+          "what": "Attack on Lee Enterprises, a U.S. publishing network"
+        },
+        {
+          "v": "June 2024",
+          "q": "Synnovis Attack (June 2024): A high-profile attack on a UK-based pathology services provider",
+          "what": "Synnovis attack on a UK pathology services provider"
+        },
+        {
+          "v": "October 2024",
+          "q": "Qilin.B Variant: Documented in October 2024, this new variant boasts enhanced encryption capabilities",
+          "what": "Qilin.B variant documented"
+        },
+        {
+          "v": "March 2025",
+          "q": "In March 2025, Microsoft revealed that North Korean hacker group",
+          "what": "Microsoft revealed North Korean group Moonstone Sleet was using Qilin ransomware"
+        },
+        {
+          "v": "April 2025",
+          "q": "City of Abilene, Texas (April 2025): Encrypted systems and exfiltrated 477 GB of data, disrupting bus",
+          "what": "Attack on City of Abilene, Texas"
+        },
+        {
+          "v": "April 2025",
+          "q": "A DDoS attack capability was introduced in April 2025 to increase pressure on victims.",
+          "what": "DDoS attack capability introduced for affiliates"
+        },
+        {
+          "v": "July 2025",
+          "q": "U.S. Financial Advisory Firm (July 2025): Exfiltrated approximately 340 GB of sensitive data.",
+          "what": "Exfiltration from a U.S. financial advisory firm"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mimikatz",
+          "q": "Qilin seeks to elevate privileges to SYSTEM-level access, often through an embedded Mimikatz module"
+        },
+        {
+          "v": "PsExec",
+          "q": "It embeds Sysinternals PsExec (version 2.43) to establish connections and move to other domain computers."
+        },
+        {
+          "v": "Chrome Stealer",
+          "q": "Expanded capabilities to include Chrome Stealer functionality and robust encryption/evasion"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing",
+          "q": "Phishing and Spear-Phishing: The most common method, involving malicious attachments or links in"
+        },
+        {
+          "v": "exploitation of exposed applications",
+          "q": "Exploitation of Exposed Applications and Interfaces: This includes Citrix, Remote Desktop Protocol"
+        },
+        {
+          "v": "compromised credentials",
+          "q": "Compromised Credentials: Gaining initial access through leaked or purchased valid credentials."
+        },
+        {
+          "v": "worm-like propagation",
+          "q": "Qilin exhibits worm-like propagation capabilities across local networks when the -"
+        },
+        {
+          "v": "log deletion",
+          "q": "Log Deletion: System logs (including Windows PowerShell and System logs) are systematically deleted to"
+        },
+        {
+          "v": "security tool disabling",
+          "q": "Security Tool Disabling: It attempts to disable security services like antivirus and intrusion detection"
+        },
+        {
+          "v": "backup corruption",
+          "q": "Backup Corruption/Deletion: It corrupts backups by deleting Volume Shadow Copies (VSS), disabling"
+        },
+        {
+          "v": "double extortion",
+          "q": "Qilin is known for its double extortion tactics, encrypting files and exfiltrating victim data"
+        },
+        {
+          "v": "boot systems into Safe Mode",
+          "q": "It can also boot systems into Safe Mode to bypass security tools."
+        },
+        {
+          "v": "credential harvesting",
+          "q": "By August 2024, Qilin was observed to be changing tactics to include credential harvesting (specifically Chrome browser credentials)"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-27532",
+          "q": "CVE-2023–27532: A critical vulnerability in Veeam Backup & Replication software."
+        },
+        {
+          "v": "CVE-2024-21762",
+          "q": "CVE-2024–21762, patched in February 2025, remains a major concern with tens of thousands of exposed systems."
+        },
+        {
+          "v": "CVE-2024-55591",
+          "q": "CVE-2024–55591: Critical vulnerabilities in Fortinet’s FortiGate and FortiProxy devices, enabling authentication bypass"
+        },
+        {
+          "v": "CVE-2025-29824",
+          "q": "CVE-2025–29824: An unpatched Windows CLFS vulnerability exploited by Play ransomware, which is"
+        },
+        {
+          "v": "CVE-2024-27198",
+          "q": "CVE-2024–27198: A vulnerability in JetBrains software leveraged by BianLian for data extortion"
+        },
+        {
+          "v": "CVE-2024-50623",
+          "q": "Cleo file transfer (CVE-2024–50623), which are increasingly attractive targets."
+        }
+      ],
+      "figures": [
+        {
+          "v": "over 310 victims",
+          "q": "Early 2025: Attacks intensified, with over 310 victims claimed by March 2025."
+        },
+        {
+          "v": "81 victims",
+          "q": "In June 2025, Qilin emerged as a significant threat, leading with 81 victims."
+        },
+        {
+          "v": "17%",
+          "q": "accounting for 17% of total victims in July 2025 with 73 reported incidents."
+        },
+        {
+          "v": "$25,000 to several million",
+          "q": "Ransom demands typically range from $25,000 to several million, depending on the size of the victim."
+        },
+        {
+          "v": "$50 million",
+          "q": "Qilin demanded $50 million and later leaked approximately 400GB of purported Synnovis"
+        },
+        {
+          "v": "over $50 million",
+          "q": "In 2024 alone, Qilin amassed over $50 million in ransom payments."
+        },
+        {
+          "v": "80% to 85%",
+          "q": "Affiliates typically receive between 80% to 85% of ransom payments."
+        },
+        {
+          "v": "25 countries",
+          "q": "Victims have been identified across 25 countries, including the United States (the most targeted country)"
+        },
+        {
+          "v": "350 GB",
+          "q": "exfiltrating sensitive personal and corporate data (350 GB, 120,000 documents) impacting nearly 40,000"
+        },
+        {
+          "v": "477 GB",
+          "q": "Encrypted systems and exfiltrated 477 GB of data, disrupting bus services and other operations for roughly a month."
+        },
+        {
+          "v": "over 400,000 files",
+          "q": "Cobb County, GA (2025): Attacked by Qilin, with over 400,000 files threatened for leak."
+        },
+        {
+          "v": "approximately 340 GB",
+          "q": "U.S. Financial Advisory Firm (July 2025): Exfiltrated approximately 340 GB of sensitive data."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Qilin ransomware"
+    },
+    "hedges": [
+      "Qilin's recent spike in activity may be attributed to an influx of affiliates from rival groups that have faced disruptions.",
+      "Group-IB observed doubled leak-site disclosures, which the report says suggests migration from RansomHub.",
+      "CVE-2025-29824 is exploited by Play ransomware and is 'not directly attributed to Qilin' per the report.",
+      "CVE-2024-27198 is leveraged by BianLian and is 'not directly Qilin' per the report.",
+      "The report says evidence 'also shows' use of VMware vCenter for self-distribution.",
+      "Outlook section is forward-looking; statements such as 'may increasingly leverage AI' are predictions, not observed facts."
+    ]
   },
   "13e8ba8ed046fc9091257f931cd358c7e0b5623c": {
     "sha1": "13e8ba8ed046fc9091257f931cd358c7e0b5623c",

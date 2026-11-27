@@ -45,28 +45,28 @@
     "key": "a-5a0483f5-09b3-4673-bb5a-56d41eaf91ed",
     "kind": "actor",
     "name": "MageCart",
-    "headline": "MageCart: a card-skimming group that cast a wide net over online shops",
-    "in_short": "A July 2019 WIRED article describes Magecart as a hacker group that steals credit card numbers from ecommerce sites. WIRED says it hit 17,000 domains in a few months.",
+    "headline": "MageCart: card skimmers that hit online shops and abused cloud hosting",
+    "in_short": "MageCart is a name for groups that steal payment card numbers from online shops. Reports describe injected skimmer code, fake payment forms and abuse of cloud services such as Heroku.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "MageCart is listed in the catalogue record under the name MageCart, with no aliases and no tools recorded.",
-            "cites": [
-              "catalogue"
-            ]
-          },
-          {
-            "t": "WIRED describes Magecart as a group of hackers that steals credit card numbers.",
+            "t": "MageCart is the name given to a group of hackers that steals credit card numbers, often by skimming card data from ecommerce sites.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "According to WIRED, Magecart has been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
+            "t": "WIRED says Magecart has been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+            ]
+          },
+          {
+            "t": "Malwarebytes describes the crooked part of the Magecart cabal, which suggests the name covers more than one party.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           }
         ]
@@ -75,9 +75,15 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "WIRED says Magecart hackers are casting the widest possible net to find vulnerable ecommerce sites.",
+            "t": "According to WIRED, Magecart hackers cast the widest possible net to find vulnerable ecommerce sites.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+            ]
+          },
+          {
+            "t": "Malwarebytes reports that the compromised sites were online shopping sites, where the skimmer code was injected.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           }
         ]
@@ -86,15 +92,39 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "The group's method is card skimming, as WIRED's headline puts it. Its stated goal is stealing credit card numbers.",
+            "t": "The singular goal, WIRED says, is stealing credit card numbers.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "WIRED reports that the group has hit 17,000 domains in the past few months alone, and puts this down to poor security hygiene.",
+            "t": "Malwarebytes says a compromised shop gets a single line of code that loads a remote piece of JavaScript.",
             "cites": [
-              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+            ]
+          },
+          {
+            "t": "A rogue iframe then overlays the normal payment form to harvest the victim's card data, according to Malwarebytes.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+            ]
+          },
+          {
+            "t": "The stolen data is sent back in encoded form, Malwarebytes reports.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+            ]
+          },
+          {
+            "t": "Malwarebytes says the actors registered free Heroku accounts to host their skimmer infrastructure. Heroku is a cloud platform owned by Salesforce.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+            ]
+          },
+          {
+            "t": "Malwarebytes also documented earlier skimmers served from GitHub and injected into Amazon S3 buckets, and says it will likely keep seeing skimmers abuse more cloud services.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           }
         ]
@@ -103,38 +133,35 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "The WIRED article was published on 11 July 2019. It names British Airways and Ticketmaster among past hacks.",
+            "t": "In a WIRED article published on 2019-07-11, the reporter says the group hit 17,000 domains in a few months, which it put down to poor security hygiene.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "The author warns that the method could lead to even bigger problems. This is a forward-looking warning, not a confirmed outcome.",
+            "t": "WIRED warns that the method could lead to even bigger problems. That is a forward-looking warning, not a confirmed outcome.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
-          }
-        ]
-      },
-      {
-        "h": "takeaway",
-        "sentences": [
+          },
           {
-            "t": "Online shops should keep their sites patched and well secured, since the group is reported to look for vulnerable ones.",
-            "cites": []
+            "t": "Malwarebytes published its report on Heroku-hosted skimmers on 2019-12-03 and says the abusive instances were reported to Heroku and taken down.",
+            "cites": [
+              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+            ]
           }
         ]
       }
     ],
-    "status": "parked",
-    "based_on": "0b437d5d4a9ea0e2fb2d004de2e92adf26771645",
-    "tries": 2,
+    "status": "rejected",
+    "based_on": "8254b48d3ebb07ab9778749c806eb03c54b68dac",
+    "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T02:08:17Z",
+    "written_at": "2026-11-27T03:19:59Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "a2f35bb6"
+    "written_run": "1170c390"
   }
 }

@@ -167,5 +167,147 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "b0265691d1be7cebe55f42db672f6840486cb924": {
+    "sha1": "b0265691d1be7cebe55f42db672f6840486cb924",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:23:55Z",
+    "model": "haiku",
+    "summary": "This page is an index of Virus Bulletin 2023 conference talk titles and workshops. The titles cover many malware and threat-actor topics, but the page itself is a programme listing with no analysis, so no facts are recorded.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "b0cdf57ffe0f8d7999e42901c8cb1610d98c2c3a": {
+    "sha1": "b0cdf57ffe0f8d7999e42901c8cb1610d98c2c3a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:28:27Z",
+    "model": "haiku",
+    "summary": "Malpedia entry (by Fraunhofer FKIE) for TwoFace, a two-stage ASP.NET webshell written in C#. A loader hides an encrypted payload that supports program execution, file download and deletion, and timestamp manipulation. The page credits Palo Alto Networks Unit 42 with the technical description, lists five associated actors, and gives a reference timeline from 2017 to 2022.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT27",
+          "q": "Actor(s): APT27, APT34, OilRig, Turla, UNC215",
+          "by": "Malpedia page (by Fraunhofer FKIE)"
+        },
+        {
+          "v": "APT34",
+          "q": "Actor(s): APT27, APT34, OilRig, Turla, UNC215",
+          "by": "Malpedia page (by Fraunhofer FKIE)"
+        },
+        {
+          "v": "OilRig",
+          "q": "Actor(s): APT27, APT34, OilRig, Turla, UNC215",
+          "by": "Malpedia page (by Fraunhofer FKIE)"
+        },
+        {
+          "v": "Turla",
+          "q": "Actor(s): APT27, APT34, OilRig, Turla, UNC215",
+          "by": "Malpedia page (by Fraunhofer FKIE)"
+        },
+        {
+          "v": "UNC215",
+          "q": "Actor(s): APT27, APT34, OilRig, Turla, UNC215",
+          "by": "Malpedia page (by Fraunhofer FKIE)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-07-31",
+          "q": "2017-07-31 ⋅ Palo Alto Networks Unit 42 ⋅ Bryan Lee, Robert Falcone",
+          "what": "Unit 42 published a report on the TwoFace webshell as a persistent access point for lateral movement"
+        },
+        {
+          "v": "2017-12-11",
+          "q": "2017-12-11 ⋅ Palo Alto Networks Unit 42 ⋅ Robert Falcone",
+          "what": "Unit 42 published a report on OilRig testing the TwoFace webshell"
+        },
+        {
+          "v": "2019-07-08",
+          "q": "2019-07-08 ⋅ SANS ⋅ Josh M. Bryant, Robert Falcone",
+          "what": "SANS published a talk on hunting webshells and tracking TwoFace"
+        },
+        {
+          "v": "2020-06-18",
+          "q": "2020-06-18 ⋅ Australian Cyber Security Centre ⋅ Australian Cyber Security Centre (ACSC)",
+          "what": "ACSC published Advisory 2020-008 on copy-paste compromises affecting Australian networks, a reference listing TwoFace"
+        },
+        {
+          "v": "2021-12-14",
+          "q": "2021-12-14 ⋅ Recorded Future ⋅ Insikt Group®",
+          "what": "Recorded Future published full-spectrum detections for five popular web shells, including TwoFace"
+        },
+        {
+          "v": "2022-07-18",
+          "q": "2022-07-18 ⋅ Palo Alto Networks Unit 42 ⋅",
+          "what": "Unit 42 reference listed on the TwoFace page (titled Evasive Serpens)"
+        }
+      ],
+      "tools": [
+        {
+          "v": "TwoFace",
+          "q": "According to Unit42, TwoFace is a two-staged (loader+payload) webshell, written in C# and meant to run on"
+        },
+        {
+          "v": "Minion",
+          "q": "aka: Minion, HighShell, HyperShell, SEASHARPEE"
+        },
+        {
+          "v": "HighShell",
+          "q": "aka: Minion, HighShell, HyperShell, SEASHARPEE"
+        },
+        {
+          "v": "HyperShell",
+          "q": "aka: Minion, HighShell, HyperShell, SEASHARPEE"
+        },
+        {
+          "v": "SEASHARPEE",
+          "q": "aka: Minion, HighShell, HyperShell, SEASHARPEE"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "two-staged webshell with a loader and encrypted embedded payload",
+          "q": "According to Unit42, TwoFace is a two-staged (loader+payload) webshell, written in C# and meant to run on"
+        },
+        {
+          "v": "obfuscated variable names and encrypted embedded payload",
+          "q": "The code in the loader webshell includes obfuscated variable names and the embedded payload is encoded and encrypted."
+        },
+        {
+          "v": "legitimate-looking content shown to visitors who open the shell in a browser",
+          "q": "The author of the initial loader webshell included legitimate and expected content that"
+        },
+        {
+          "v": "program execution, file download and deletion, MAC timestamp manipulation",
+          "q": "execution of programs, up-, download and deletion of files and capability to manipulate MAC timestamps"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "TwoFace"
+    },
+    "hedges": [
+      "The loader's decoy content is described as likely to remain undetected."
+    ]
   }
 }

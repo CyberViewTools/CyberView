@@ -83,7 +83,7 @@
   },
   "f9015ec340e025c16963e9b7cef4cbc3f4101ca7": {
     "sha1": "f9015ec340e025c16963e9b7cef4cbc3f4101ca7",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T03:10:47Z",
     "model": "haiku",
@@ -331,6 +331,205 @@
         "note": "summary: It says intrusions in Vietnam, Malaysia, Hong Kong and Honduras. The text reports active intrusions only in Vietnam, Malaysia and Hong Kong. Honduras i",
         "by": "auditor"
       }
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T03:18:31Z",
+      "ok": false,
+      "note": "actors[3].by: The text says only that an open directory 'was linked to APT27 (Emissary Panda)', in the passive voice. It does not say who made that link, so cre",
+      "by": "auditor"
+    }
+  },
+  "f947718c75929c5f5807f0f778453ca1453464c6": {
+    "sha1": "f947718c75929c5f5807f0f778453ca1453464c6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:31:10Z",
+    "model": "haiku",
+    "summary": "SentinelLABS reports an intrusion into NPO Mashinostroyeniya, a sanctioned Russian missile engineering organisation, flagged internally in May 2022. It links a Windows backdoor, OpenCarrot, to the Lazarus Group, and a compromised Linux email server to ScarCruft. The authors attribute the intrusion to threat actors independently associated with North Korea with a high level of confidence, but say they cannot determine how the two actors relate. Command infrastructure was hosted on VPS providers and active from November 2021 until it was paused after discovery.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "ScarCruft",
+          "q": "Our analysis attributes the email server compromise to the ScarCruft threat actor.",
+          "by": "SentinelLABS (the report)"
+        },
+        {
+          "v": "Lazarus Group",
+          "q": "We also identify the separate use of a Lazarus Group backdoor for compromise of their internal network.",
+          "by": "SentinelLABS (the report)"
+        },
+        {
+          "v": "Lazarus group",
+          "q": "previously identified by IBM XForce as part of Lazarus group activities",
+          "by": "IBM XForce (cited by the report)"
+        },
+        {
+          "v": "BlueNoroff",
+          "q": "Similarities in server configuration history can also link to lower-confidence BlueNoroff relationships.",
+          "by": "SentinelLABS (the report)"
+        },
+        {
+          "v": "APT37",
+          "q": "The group is also referred to as Inky Squid, APT37, or Group123",
+          "by": "SentinelLABS (the report)"
+        },
+        {
+          "v": "threat actors independently associated with North Korea",
+          "q": "we attribute this intrusion to threat actors independently associated with North Korea",
+          "by": "SentinelLABS (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Russian defense industrial base",
+          "q": "an intrusion into the Russian defense industrial base, specifically a missile"
+        },
+        {
+          "v": "missiles and military spacecraft",
+          "q": "a leading Russian manufacturer of missiles and military spacecraft"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "roughly a week prior to Russia vetoing a U.N. resolution to impose new sanctions on North Korea"
+        },
+        {
+          "v": "North Korea",
+          "q": "we attribute this intrusion to threat actors independently associated with North Korea"
+        },
+        {
+          "v": "Australia",
+          "q": "served via CrownCloud (Australia) and OhzCloud (Spain) VPS hosting providers"
+        },
+        {
+          "v": "Spain",
+          "q": "served via CrownCloud (Australia) and OhzCloud (Spain) VPS hosting providers"
+        },
+        {
+          "v": "South Korea",
+          "q": "Daily NK, a prominent South Korean online news outlet that provides independent reporting on North Korea"
+        }
+      ],
+      "dates": [
+        {
+          "v": "mid-May 2022",
+          "q": "In mid-May 2022, roughly a week prior to Russia vetoing a U.N. resolution to impose new sanctions on North Korea",
+          "what": "Victim organisation internally flagged the intrusion"
+        },
+        {
+          "v": "2023-08-07",
+          "q": "Published: 2023-08-07 · Archived: 2026-04-05 22:35:06 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "Dec. 01, 2021",
+          "q": "The file has a compilation timestamp of Wednesday, Dec. 01, 2021.",
+          "what": "Compilation timestamp of the OpenCarrot sample, which the report judges likely authentic"
+        },
+        {
+          "v": "November 2021",
+          "q": "became active in November 2021, and was immediately paused",
+          "what": "Command infrastructure cluster became active"
+        },
+        {
+          "v": "January and May 2022",
+          "q": "was used between January and May 2022 by the DPRK",
+          "what": "A command IP address was used by a DPRK-linked actor"
+        }
+      ],
+      "tools": [
+        {
+          "v": "OpenCarrot",
+          "q": "a version of the OpenCarrot Windows OS backdoor"
+        },
+        {
+          "v": "RokRAT",
+          "q": "using the RokRAT backdoor"
+        },
+        {
+          "v": "Oreans Code Virtualizer",
+          "q": "associated with the Oreans Code Virtualizer code protection platform"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "code virtualization for obfuscation",
+          "q": "indicating the use of code virtualization for obfuscation"
+        },
+        {
+          "v": "execute as a Windows service",
+          "q": "the malware is intended to execute as a Windows service"
+        },
+        {
+          "v": "encryption-protected C2 information",
+          "q": "The configuration data contains encryption-protected C2 information."
+        },
+        {
+          "v": "lesser-known standard Windows file extension",
+          "q": "mimicking a lesser-known standard Windows file extension"
+        },
+        {
+          "v": "enumeration, scanning and ICMP-pinging hosts",
+          "q": "Reconnaissance: File and process attribute enumeration, scanning and ICMP-pinging hosts in IP ranges for"
+        },
+        {
+          "v": "DLL injection",
+          "q": "Process termination, DLL injection, and file deletion, renaming, and timestomping."
+        },
+        {
+          "v": "timestomping",
+          "q": "Process termination, DLL injection, and file deletion, renaming, and timestomping."
+        },
+        {
+          "v": "named pipes",
+          "q": "local processes through named pipes and incoming connections to a TCP port on which"
+        },
+        {
+          "v": "incoming connections to a TCP port",
+          "q": "local processes through named pipes and incoming connections to a TCP port on which"
+        },
+        {
+          "v": "insertion of new drives",
+          "q": "monitors in 15 second intervals for the insertion of new drives, such as USBs"
+        },
+        {
+          "v": "proxying C2 communication through the internal network hosts",
+          "q": "supports proxying C2 communication through the internal network hosts"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 25 backdoor commands",
+          "q": "implements over 25 backdoor commands with a wide range of functionality"
+        },
+        {
+          "v": "15 seconds",
+          "q": "If the malware is instructed to sleep for 15 seconds or more"
+        },
+        {
+          "v": "15 second intervals",
+          "q": "monitors in 15 second intervals for the insertion of new drives, such as USBs"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "NPO Mashinostroyeniya intrusion"
+    },
+    "hedges": [
+      "The authors cannot determine the nature of the relationship between the two threat actors.",
+      "The initial access method and the implant on the email server could not be confirmed at discovery.",
+      "The compilation timestamp could have been manipulated, but is judged likely authentic.",
+      "Domain-name similarity alone is superficial and not strong enough for direct clustering.",
+      "Shared infrastructure with an unrelated group is assessed as reused low-cost VPS hosting, not related activity.",
+      "The ScarCruft and BlueNoroff links rest on shared infrastructure and tooling; the BlueNoroff link is lower-confidence.",
+      "Shared resources, or several independent actors tasked to the same target, are acknowledged as possibilities, not confirmed.",
+      "The leaked email collection is suggested to be accidental, so its origin is unclear."
     ]
   }
 }

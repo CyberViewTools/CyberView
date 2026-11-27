@@ -52,5 +52,294 @@
         "by": "auditor"
       }
     ]
+  },
+  "caea65bb7f902811d98ae257c767274fee58b95a": {
+    "sha1": "caea65bb7f902811d98ae257c767274fee58b95a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:26:16Z",
+    "model": "haiku",
+    "summary": "Kaspersky GReAT report, published 2017-02-08, on fileless attacks against enterprise networks, found during incident response at a bank. Attackers ran Metasploit Meterpreter in memory, used Windows SC and NETSH to install a service and set up tunnelling, and used Mimikatz to collect administrator passwords. Kaspersky found more than 100 enterprise networks infected with malicious PowerShell scripts in the registry, but could not confirm they shared one attacker. The report says attribution is almost impossible and names Carbanak and GCMAN only as the closest groups with similar techniques.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "This closest groups with the same TTPs are GCMAN and Carbanak.",
+          "by": "the report (Kaspersky GReAT)"
+        },
+        {
+          "v": "GCMAN",
+          "q": "This closest groups with the same TTPs are GCMAN and Carbanak.",
+          "by": "the report (Kaspersky GReAT)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banking industry",
+          "q": "Techniques like those described in this report are becoming more common, especially against relevant targets in the banking industry."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-02-08",
+          "q": "Published: 2017-02-08",
+          "what": "report published"
+        },
+        {
+          "v": "2 to 6 April, 2017",
+          "q": "Security Analyst Summit, to be held on St. Maarten from 2 to 6 April, 2017.",
+          "what": "further details of these attacks planned for presentation at the Security Analyst Summit"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Metasploit",
+          "q": "We know that the Metasploit framework was used to generate scripts like the following one:"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "after detecting Meterpreter code inside the"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Meterpreter and Mimikatz. These tools were used to collect passwords of system administrators and for the"
+        },
+        {
+          "v": "Duqu2",
+          "q": "A good example of the implementation of such techniques is Duqu2."
+        },
+        {
+          "v": "PLINK",
+          "q": "Cybercriminals (like Carbanak or GCMAN) may use PLINK for that."
+        },
+        {
+          "v": "SDELETE",
+          "q": "attackers are using anti-forensic techniques (or simply SDELETE)"
+        },
+        {
+          "v": "SC",
+          "q": "tunnelling were implemented by attackers using Windows standard utilities like “SC” and “NETSH“."
+        },
+        {
+          "v": "NETSH",
+          "q": "tunnelling were implemented by attackers using Windows standard utilities like “SC” and “NETSH“."
+        },
+        {
+          "v": "PowerShell",
+          "q": "discovering the use of PowerShell scripts within the Windows registry."
+        },
+        {
+          "v": "MEM:Trojan.Win32.Cometer",
+          "q": "are MEM:Trojan.Win32.Cometer and MEM:Trojan.Win32.Metasploit."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "memory-based malware",
+          "q": "and memory-based malware to hide their activity during data acquisition."
+        },
+        {
+          "v": "anti-forensic techniques",
+          "q": "attackers are using anti-forensic techniques (or simply SDELETE)"
+        },
+        {
+          "v": "network tunnelling",
+          "q": "Another important part of an attack are the tunnels that are going to be installed in the network by attackers."
+        },
+        {
+          "v": "malicious Windows service installation",
+          "q": "the attackers used the SC utility to install a malicious service (that will"
+        },
+        {
+          "v": "use of service account credentials",
+          "q": "attackers used credentials from Service accounts with administrative privileges (for example backup,"
+        },
+        {
+          "v": "fileless PowerShell attack",
+          "q": "discovering the use of PowerShell scripts within the Windows registry."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "more than 100 enterprise networks",
+          "q": "Using the Kaspersky Security Network we found more than 100 enterprise networks infected with malicious"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The report says it cannot confirm that all the infected networks were infected by the same attacker.",
+      "The report says attribution is almost impossible given common tools and unknown domains, and names GCMAN and Carbanak only as closest groups with the same TTPs.",
+      "The report says cybercriminals like Carbanak or GCMAN may use PLINK for tunnels.",
+      "The IP addresses given come from one incident case; the report says another attacker may use other IPs."
+    ]
+  },
+  "cab1d334efc14a7e9238a6349486de0763d4e0ab": {
+    "sha1": "cab1d334efc14a7e9238a6349486de0763d4e0ab",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:31:00Z",
+    "model": "haiku",
+    "summary": "AhnLab ASEC reports that the Andariel group, which may cooperate with or be a subsidiary of Lazarus, targets South Korean organisations. It assumes Andariel is exploiting the Apache ActiveMQ flaw CVE-2023-46604 to install NukeSped and TigerRat backdoors, but has no direct logs confirming this. Related ActiveMQ attacks included HelloKitty ransomware, CobaltStrike and Meterpreter stager installs. The report advises patching and asset management.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Andariel",
+          "q": "The Andariel threat group usually targets South Korean companies and institutions, and the group is known to be",
+          "by": "AhnLab ASEC"
+        },
+        {
+          "v": "Lazarus",
+          "q": "either in a cooperative relationship of the Lazarus threat group, or a subsidiary group of Lazarus.",
+          "by": "AhnLab ASEC"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "Along with the Kimsuky and Lazarus groups, the Andariel group is one of the threat groups that actively target",
+          "by": "AhnLab ASEC"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "national defense",
+          "q": "their main targets include national defense, political"
+        },
+        {
+          "v": "shipbuilding",
+          "q": "organizations, shipbuilding, energy, and telecommunications."
+        },
+        {
+          "v": "energy",
+          "q": "organizations, shipbuilding, energy, and telecommunications."
+        },
+        {
+          "v": "telecommunications",
+          "q": "organizations, shipbuilding, energy, and telecommunications."
+        },
+        {
+          "v": "universities",
+          "q": "include universities, logistics, and ICT companies."
+        },
+        {
+          "v": "logistics",
+          "q": "include universities, logistics, and ICT companies."
+        },
+        {
+          "v": "ICT companies",
+          "q": "include universities, logistics, and ICT companies."
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "against South Korea were first identified in 2008"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2008",
+          "q": "against South Korea were first identified in 2008",
+          "what": "first attacks by the group against South Korea identified"
+        },
+        {
+          "v": "2023-11-16",
+          "q": "Published: 2023-11-16",
+          "what": "AhnLab ASEC report published"
+        },
+        {
+          "v": "late October",
+          "q": "it was confirmed that there were various attack logs from late October when",
+          "what": "various attack logs seen on an ActiveMQ server after the CVE information was released"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NukeSped",
+          "q": "NukeSped is a backdoor that can control the infected system through commands received from the C&C server."
+        },
+        {
+          "v": "TigerRat",
+          "q": "While the malware files were not collected, TigerRat was installed under the names"
+        },
+        {
+          "v": "HelloKitty ransomware",
+          "q": "One major example is the case of HelloKitty ransomware attacks covered by Rapid7."
+        },
+        {
+          "v": "CobaltStrike",
+          "q": "CobaltStrike and Metasploit Meterpreter’s Stager installation logs were also"
+        },
+        {
+          "v": "Metasploit Meterpreter",
+          "q": "CobaltStrike and Metasploit Meterpreter’s Stager installation logs were also"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote code execution",
+          "q": "CVE-2023-46604 is a remote code execution vulnerability in Apache ActiveMQ, an open-source messaging and"
+        },
+        {
+          "v": "spear phishing",
+          "q": "The Andariel threat group has been employing spear phishing, watering hole, and supply chain attacks from the"
+        },
+        {
+          "v": "watering hole",
+          "q": "The Andariel threat group has been employing spear phishing, watering hole, and supply chain attacks from the"
+        },
+        {
+          "v": "supply chain attacks",
+          "q": "The Andariel threat group has been employing spear phishing, watering hole, and supply chain attacks from the"
+        },
+        {
+          "v": "Log4Shell vulnerability",
+          "q": "Recently, cases have been identified where the group exploits a Log4Shell vulnerability [3], target poorly"
+        },
+        {
+          "v": "MS-SQL servers",
+          "q": "managed MS-SQL servers, or abuse legitimate software."
+        },
+        {
+          "v": "abuse legitimate software",
+          "q": "managed MS-SQL servers, or abuse legitimate software."
+        },
+        {
+          "v": "malicious Java class file",
+          "q": "The threat actor used the following malicious Java class file during the vulnerability attack process."
+        },
+        {
+          "v": "auto-deletion",
+          "q": "When a connection to the C&C server is not established properly, auto-deletion is executed by using a batch file,"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-46604",
+          "q": "CVE-2023-46604 is a remote code execution vulnerability in Apache ActiveMQ, an open-source messaging and"
+        }
+      ],
+      "figures": [
+        {
+          "v": "three commands",
+          "q": "The NukeSped version used in the recent attacks only support three commands"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Andariel exploitation of Apache ActiveMQ (CVE-2023-46604)"
+    },
+    "hedges": [
+      "There are no direct logs as of now; the report assumes Andariel is exploiting the ActiveMQ remote code execution flaw.",
+      "No direct logs show NukeSped was installed through CVE-2023-46604; the link is a possibility inferred from circumstances.",
+      "The Lazarus relationship is given as either cooperative or subsidiary; the report does not choose between them.",
+      "TigerRat malware files were not collected; its installation is based on logs and the report's inference.",
+      "The Huntress report is cited, but the report says no specific malware is named in it.",
+      "Some cited sources are available only in Korean."
+    ]
   }
 }

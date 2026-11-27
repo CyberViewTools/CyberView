@@ -189,5 +189,156 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "6bc8f6928136857afc21813e6ed5c27427f3d106": {
+    "sha1": "6bc8f6928136857afc21813e6ed5c27427f3d106",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:28:36Z",
+    "model": "haiku",
+    "summary": "Genians Security Center describes Operation ToyBox Story, a March 2025 spear phishing campaign attributed to the APT37 group, linked to North Korea, targeting activists focused on North Korea. Lures impersonated a South Korean national security think tank event, and malicious LNK files in ZIP archives delivered the RoKRAT malware. RoKRAT used cloud services including Dropbox, pCloud and Yandex as command-and-control. The report links some accounts to Russian Yandex services, hedges some findings, and says the investigation is ongoing.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT37",
+          "q": "In March 2025, the APT37 threat actor launched a spear phishing campaign targeting several activists focused",
+          "by": "Genians Security Center (GSC), the report's author"
+        },
+        {
+          "v": "APT37",
+          "q": "'APT37' is widely known as a state-sponsored hacking group linked to North Korea.",
+          "by": "the report (Genians Security Center)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "activists",
+          "q": "launched a spear phishing campaign targeting several activists focused"
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "Analysis of APT37 Attack Case Disguised as a Think Tank for National Security Strategy in South Korea (Operation. ToyBox"
+        },
+        {
+          "v": "North Korea",
+          "q": "'APT37' is widely known as a state-sponsored hacking group linked to North Korea."
+        },
+        {
+          "v": "Russia",
+          "q": "both tokens are linked to Russian Yandex accounts."
+        }
+      ],
+      "dates": [
+        {
+          "v": "March 8, 2025",
+          "q": "The first observed spear phishing attack occurred on March 8, 2025.",
+          "what": "first observed spear phishing attack (Case A)"
+        },
+        {
+          "v": "March 11, 2025",
+          "q": "The second spear phishing case, which occurred on March 11, 2025, involved a fake invitation to a national",
+          "what": "second spear phishing case, a fake national security conference invitation (Case B)"
+        },
+        {
+          "v": "November 6, 2024",
+          "q": "a previous report published on November 6, 2024, titled “Cyber Reconnaissance Activities",
+          "what": "earlier Genians report disclosing five Gmail accounts used by the threat actor"
+        },
+        {
+          "v": "2025-05-12",
+          "q": "Published: 2025-05-12 · Archived: 2026-04-05 22:56:13 UTC",
+          "what": "report published by Genians"
+        }
+      ],
+      "tools": [
+        {
+          "v": "RoKRAT",
+          "q": "For reference, both LNK files deliver the same final payload, RoKRAT."
+        },
+        {
+          "v": "Dropbox",
+          "q": "APT37 used Dropbox as a C2 server, following earlier use of pCloud and Yandex"
+        },
+        {
+          "v": "pCloud",
+          "q": "APT37 used Dropbox as a C2 server, following earlier use of pCloud and Yandex"
+        },
+        {
+          "v": "Yandex",
+          "q": "APT37 used Dropbox as a C2 server, following earlier use of pCloud and Yandex"
+        },
+        {
+          "v": "NordVPN",
+          "q": "The actor also utilizes services like NordVPN and AstrillVPN to obfuscate their network origin."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing",
+          "q": "launched a spear phishing campaign targeting several activists focused"
+        },
+        {
+          "v": "malicious LNK shortcut delivery",
+          "q": "Delivered malicious LNK files via the Dropbox cloud platform"
+        },
+        {
+          "v": "fileless malware execution",
+          "q": "APT37 appears to employ the RoKRAT module in fileless attacks"
+        },
+        {
+          "v": "Living off Trusted Sites",
+          "q": "“Living off Trusted Sites (LoTS).”"
+        },
+        {
+          "v": "watering hole",
+          "q": "Watering Hole"
+        },
+        {
+          "v": "zero-day exploitation",
+          "q": "The group has also been involved in various zero-day attacks"
+        },
+        {
+          "v": "file extension disguise to evade detection",
+          "q": "To evade detection, the file disguises the “.bat” extension by breaking it into separate characters"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-41128",
+          "q": "vulnerabilities such as CVE-2022-41128."
+        }
+      ],
+      "figures": [
+        {
+          "v": "2 access tokens",
+          "q": "C2 communication is conducted via Dropbox authentication. 2 access tokens"
+        },
+        {
+          "v": "3 cloud-based API services",
+          "q": "The RoKRAT family typically uses 3 cloud-based API services and tokens."
+        },
+        {
+          "v": "3 hidden files",
+          "q": "In addition, 3 hidden files are created in the %Temp% directory, and a BAT (batch) file is executed."
+        },
+        {
+          "v": "five Gmail accounts",
+          "q": "disclosed five Gmail accounts used by the threat actor."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Operation ToyBox Story"
+    },
+    "hedges": [
+      "The report says APT37 'appears to' employ the RoKRAT module in fileless attacks.",
+      "Unclear whether LinkedIn profile matches are coincidences, identity theft or impersonation; the investigation is ongoing.",
+      "Static analysis mappings may differ from runtime behavior, as the report notes discrepancies may exist.",
+      "APT37 is described as 'widely known' as a state-sponsored group linked to North Korea, per the report's own description."
+    ]
   }
 }

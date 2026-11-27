@@ -1,0 +1,128 @@
+{
+  "2847d66d5679ee28e006b3eb2a330eebdd20bdcb": {
+    "sha1": "2847d66d5679ee28e006b3eb2a330eebdd20bdcb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T03:29:56Z",
+    "model": "haiku",
+    "summary": "Mandiant and Google Threat Intelligence Group report zero-day exploitation of CVE-2026-22769 (CVSSv3.1 10.0) in Dell RecoverPoint for Virtual Machines by UNC6201, a suspected PRC-nexus cluster, since at least mid-2024. The actor used hard-coded default Tomcat Manager credentials to deploy a SLAYSTYLE web shell, then backdoors SLAYSTYLE, BRICKSTORM and GRIMBOLT, with persistence through a boot-time script. The report also describes VMware pivoting using Ghost NICs and iptables-based Single Packet Authorization. Initial access was not confirmed. Dell has released remediations.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC6201",
+          "q": "UNC6201, a suspected PRC-nexus threat cluster,",
+          "by": "Mandiant and Google Threat Intelligence Group (GTIG), in this report"
+        },
+        {
+          "v": "UNC5221",
+          "q": "There are notable overlaps between UNC6201 and UNC5221, which has been",
+          "by": "Mandiant and Google Threat Intelligence Group (GTIG), in this report"
+        },
+        {
+          "v": "Silk Typhoon",
+          "q": "used synonymously with the actor publicly reported as Silk Typhoon, although GTIG does not currently consider",
+          "by": "Mandiant and Google Threat Intelligence Group (GTIG), in this report"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "PRC",
+          "q": "UNC6201, a suspected PRC-nexus threat cluster,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "mid-2024",
+          "q": "has exploited this flaw since at least mid-2024 to move laterally, maintain persistent access, and deploy malware",
+          "what": "Earliest identified exploitation of CVE-2026-22769"
+        },
+        {
+          "v": "September 2025",
+          "q": "Mandiant identified a campaign featuring the replacement of older BRICKSTORM binaries with GRIMBOLT in September 2025.",
+          "what": "BRICKSTORM binaries replaced with GRIMBOLT"
+        },
+        {
+          "v": "2026-02-17",
+          "q": "Published: 2026-02-17 · Archived: 2026-04-05 14:25:42 UTC",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SLAYSTYLE",
+          "q": "including SLAYSTYLE, BRICKSTORM, and a novel backdoor tracked as GRIMBOLT"
+        },
+        {
+          "v": "BRICKSTORM",
+          "q": "including SLAYSTYLE, BRICKSTORM, and a novel backdoor tracked as GRIMBOLT"
+        },
+        {
+          "v": "GRIMBOLT",
+          "q": "a novel backdoor tracked as GRIMBOLT"
+        },
+        {
+          "v": "Apache Tomcat Manager",
+          "q": "These requests were directed to the installed Apache Tomcat Manager, used to deploy"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hard-coded default credentials",
+          "q": "we identified a set of hard-coded default credentials for the"
+        },
+        {
+          "v": "web shell",
+          "q": "containing a SLAYSTYLE web shell."
+        },
+        {
+          "v": "Ghost NICs",
+          "q": "including the creation of \"Ghost NICs\" for stealthy network pivoting"
+        },
+        {
+          "v": "iptables for Single Packet Authorization",
+          "q": "the use of iptables for Single Packet Authorization (SPA)."
+        },
+        {
+          "v": "move laterally",
+          "q": "to move laterally, maintain persistent access, and deploy malware"
+        },
+        {
+          "v": "persistent access",
+          "q": "to move laterally, maintain persistent access, and deploy malware"
+        },
+        {
+          "v": "target edge appliances",
+          "q": "is known to target edge appliances (such as VPN"
+        },
+        {
+          "v": "complicates static analysis",
+          "q": "and complicates static analysis by"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2026-22769",
+          "q": "tracked as CVE-2026-22769, with a CVSSv3.1 score of"
+        }
+      ],
+      "figures": [
+        {
+          "v": "10.0",
+          "q": "with a CVSSv3.1 score of 10.0"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2026-22769"
+    },
+    "hedges": [
+      "The initial access vector for these incidents was not confirmed",
+      "UNC6201 is described as a suspected PRC-nexus threat cluster",
+      "GTIG does not currently consider the two clusters UNC6201 and UNC5221 to be the same",
+      "It's unclear if the threat actor's replacement of BRICKSTORM with GRIMBOLT was part of a pre-planned life cycle iteration or a reaction to incident response efforts"
+    ]
+  }
+}

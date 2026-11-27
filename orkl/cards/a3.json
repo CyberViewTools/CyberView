@@ -95,11 +95,11 @@
   },
   "a32666781a0f2225f289f72a0537cc3b6a031ad9": {
     "sha1": "a32666781a0f2225f289f72a0537cc3b6a031ad9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:27:04Z",
+    "read_at": "2026-11-27T05:09:08Z",
     "model": "haiku",
-    "summary": "Elastic Security Labs introduces the REF5961 intrusion set, which targets governments in Southern and Southeastern Asia, including the foreign affairs ministry of an ASEAN member. It discloses three new malware families (EAGERBEE, RUDEBIRD, DOWNTOWN) and links them to the REF2924 intrusion set and to a campaign against Mongolian government-themed lures. Elastic assesses the operators as state-sponsored and China-nexus. Links to LuckyMouse and TA428 are described as alignments or attributions made by others, with hedged confidence.",
+    "summary": "Elastic Security Labs describes REF5961, a state-aligned intrusion set targeting government bodies in Southern and Southeastern Asia, including a foreign affairs ministry of an ASEAN member and Mongolian government-related infrastructure. The report discloses three malware families (EAGERBEE, RUDEBIRD, DOWNTOWN) and a BLOODALCHEMY backdoor added in an October 2023 update. It links the activity to the REF2924 intrusion set and to a China-nexus actor, stating varying degrees of confidence. Shared C2 hosting, code overlap and co-residence support the associations, and several attributions are…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
@@ -110,32 +110,27 @@
         },
         {
           "v": "REF2924",
-          "q": "Elastic Security Labs describes the operators of the REF2924 and REF5961 intrusion sets as state-sponsored and",
+          "q": "Elastic Security Labs describes the operators of the REF2924 and REF5961 intrusion sets as state-sponsored",
           "by": "Elastic Security Labs"
         },
         {
           "v": "China-nexus actor",
-          "q": "makes us confident this is a China-nexus actor.",
+          "q": "makes us confident this is a China-nexus actor",
           "by": "Elastic Security Labs"
         },
         {
           "v": "LuckyMouse (APT27, EmissaryPanda)",
-          "q": "research attributed to a Chinese-speaking threat actor referred to as LuckyMouse (APT27, EmissaryPanda).",
-          "by": "Elastic Security Labs (citing earlier research)"
+          "q": "previous research attributed to a Chinese-speaking threat actor referred to as LuckyMouse (APT27, EmissaryPanda)",
+          "by": "Elastic Security Labs (citing prior third-party research)"
         },
         {
           "v": "TA428 (Colourful Panda, BRONZE DUDLEY)",
-          "q": "SManager/PhantomNet has been attributed to TA428 (Colourful Panda, BRONZE DUDLEY), a threat actor likely",
-          "by": "Elastic Security Labs (citing earlier attribution)"
+          "q": "SManager/PhantomNet has been attributed to TA428 (Colourful Panda, BRONZE DUDLEY)",
+          "by": "Elastic Security Labs (citing prior public reporting)"
         },
         {
           "v": "nationally sponsored Chinese threat actor",
-          "q": "we are attributing DOWNTOWN with a moderate degree of confidence to a nationally sponsored Chinese threat actor.",
-          "by": "Elastic Security Labs"
-        },
-        {
-          "v": "same tasking authority, or organizational umbrella",
-          "q": "the malware and campaign operators are from the same tasking authority, or organizational umbrella.",
+          "q": "we are attributing DOWNTOWN with a moderate degree of confidence to a nationally sponsored Chinese threat actor",
           "by": "Elastic Security Labs"
         }
       ],
@@ -145,58 +140,45 @@
           "q": "targeting governments and multinational government"
         },
         {
-          "v": "government diplomatic agency",
-          "q": "a government diplomatic agency would make it an ideal candidate"
-        },
-        {
-          "v": "Foreign Affairs Ministry",
-          "q": "The victim is the Foreign Affairs Ministry of a member of the Association of"
-        },
-        {
-          "v": "non-governmental organizations (NGOs)",
-          "q": "the Mongolian government or non-governmental organizations (NGOs) may have been targeted"
+          "v": "foreign affairs ministry",
+          "q": "The victim is the Foreign Affairs Ministry of a member of the Association of Southeast Asian Nations"
         }
       ],
       "countries": [
         {
           "v": "Mongolia",
-          "q": "a targeted campaign focused on Mongolia."
+          "q": "a targeted campaign focused on Mongolia"
         },
         {
           "v": "China",
-          "q": "makes us confident this is a China-nexus actor."
+          "q": "makes us confident this is a China-nexus actor"
         }
       ],
       "dates": [
         {
           "v": "2023-10-04",
-          "q": "Published: 2023-10-04 · Archived: 2026-04-05 17:24:42 UTC",
-          "what": "Elastic Security Labs publishes the REF5961 research"
+          "q": "Published: 2023-10-04",
+          "what": "report published"
         },
         {
           "v": "October 11, 2023",
-          "q": "Updated October 11, 2023 to include links to the BLOODALCHEMY backdoor.",
-          "what": "Report updated to add material on the BLOODALCHEMY backdoor"
-        },
-        {
-          "v": "September 2022",
-          "q": "September 2022.",
-          "what": "Mongolian lure archive likely created, based on scan date and filename"
-        },
-        {
-          "v": "December 14, 2020",
-          "q": "were registered on December 14, 2020.",
-          "what": "Subdomain and TLS certificate registered for C2-linked infrastructure"
-        },
-        {
-          "v": "December 13, 2020",
-          "q": "was registered on December 13, 2020.",
-          "what": "Self-signed TLS certificate registered, linked to C2 infrastructure"
+          "q": "Updated October 11, 2023 to include links to the BLOODALCHEMY backdoor",
+          "what": "update adding links to the BLOODALCHEMY backdoor"
         },
         {
           "v": "September 22, 2023",
           "q": "enabled on September 22, 2023 at 07:31 and then disabled on September 24, 2023",
-          "what": "C2 service enablement window observed (defense evasion by toggling availability)"
+          "what": "C2 service enabled on one host, later disabled"
+        },
+        {
+          "v": "December 13, 2020",
+          "q": "The 10-year TLS certificate was registered on December 13, 2020.",
+          "what": "self-signed TLS certificate registered"
+        },
+        {
+          "v": "December 14, 2020",
+          "q": "the TLS certificate were registered on December 14, 2020",
+          "what": "subdomain and TLS certificate registered for one C2 address"
         }
       ],
       "tools": [
@@ -206,96 +188,132 @@
         },
         {
           "v": "RUDEBIRD",
-          "q": "malware family as RUDEBIRD."
+          "q": "We refer to this malware family as RUDEBIRD."
         },
         {
           "v": "DOWNTOWN",
-          "q": "In the REF2924 environment, we observed a modular implant we call DOWNTOWN."
+          "q": "we observed a modular implant we call DOWNTOWN"
         },
         {
           "v": "BLOODALCHEMY",
-          "q": "includes a new x86-based backdoor called BLOODALCHEMY, and it is covered in depth here."
-        },
-        {
-          "v": "SHADOWPAD",
-          "q": "the deployment of SHADOWPAD and COBALTSTRIKE."
-        },
-        {
-          "v": "COBALTSTRIKE",
-          "q": "the deployment of SHADOWPAD and COBALTSTRIKE."
-        },
-        {
-          "v": "SIESTAGRAPH",
-          "q": "This environment has already seen the emergence of the REF2924 intrusion set (SIESTAGRAPH, NAPLISTENER,"
+          "q": "Part of this intrusion set includes a new x86-based backdoor called BLOODALCHEMY"
         },
         {
           "v": "PsExec",
-          "q": "It is unclear if PsExec was brought to the environment by the threat actor"
+          "q": "RUDEBIRD used PsExec"
+        },
+        {
+          "v": "SHADOWPAD",
+          "q": "as well as the deployment of SHADOWPAD and COBALTSTRIKE"
+        },
+        {
+          "v": "COBALTSTRIKE",
+          "q": "as well as the deployment of SHADOWPAD and COBALTSTRIKE"
+        },
+        {
+          "v": "SIESTAGRAPH",
+          "q": "the REF2924 intrusion set (SIESTAGRAPH, NAPLISTENER"
+        },
+        {
+          "v": "NAPLISTENER",
+          "q": "the REF2924 intrusion set (SIESTAGRAPH, NAPLISTENER"
+        },
+        {
+          "v": "DataExtractor1",
+          "q": "a utility they call DataExtractor1"
         }
       ],
       "techniques": [
         {
-          "v": "process injection",
-          "q": "Shortly after being executed, Elastic Defend registered a process injection"
-        },
-        {
-          "v": "anti-analysis technique",
-          "q": "Dynamic import tables are used as an anti-analysis technique by malware authors to impair static analysis of"
-        },
-        {
-          "v": "sideload a malicious DLL",
-          "q": "they leveraged a signed Kaspersky application in order to sideload a malicious DLL."
-        },
-        {
-          "v": "Registry Run Key",
-          "q": "Persistence is configured using a Registry Run Key."
+          "v": "dynamic import resolution",
+          "q": "EAGERBEE dynamically constructs its Import Address Table"
         },
         {
           "v": "API hashing",
-          "q": "RUDEBIRD uses a straightforward API hashing algorithm"
+          "q": "RUDEBIRD uses a straightforward API hashing algorithm with multiplication"
         },
         {
-          "v": "unpatched Exchange vulnerability",
-          "q": "This is consistent with the exploitation of an unpatched Exchange vulnerability, and prior research supports that hypothesis."
+          "v": "HTTP proxy detection",
+          "q": "The malware has the capability to detect the presence of an HTTP proxy configuration on the host machine"
         },
         {
-          "v": "collected from the machine and uploaded",
-          "q": "sensitive data and files were collected from the machine and uploaded to a hard-coded Mongolian government"
+          "v": "DLL sideloading via signed application",
+          "q": "they leveraged a signed Kaspersky application in order to sideload a malicious DLL"
+        },
+        {
+          "v": "registry run key persistence",
+          "q": "Persistence is configured using a Registry Run Key."
+        },
+        {
+          "v": "process injection",
+          "q": "Elastic Defend registered a process injection alert"
         },
         {
           "v": "move laterally",
-          "q": "and then move laterally from victim"
+          "q": "then move laterally from victim"
+        },
+        {
+          "v": "exploitation of an unpatched Exchange vulnerability",
+          "q": "consistent with the exploitation of an unpatched Exchange vulnerability"
+        },
+        {
+          "v": "self-signed TLS certificate for C2 encryption",
+          "q": "This self-signed TLS certificate was likely used to encrypt C2 traffic"
+        },
+        {
+          "v": "C2 availability toggling to hinder analysis",
+          "q": "This is a tactic to hinder the analysis of the C2 infrastructure by limiting its availability"
+        },
+        {
+          "v": "collection and upload of files to a government server",
+          "q": "sensitive data and files were collected from the machine and uploaded to a hard-coded Mongolian government"
+        },
+        {
+          "v": "file collection across drives",
+          "q": "Sensitive file collection on different drives"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "three new malware families",
-          "q": "Elastic Security Labs is disclosing three new malware families:"
+          "q": "Elastic Security Labs is disclosing three new malware families"
+        },
+        {
+          "v": "two (previously unnamed) EAGERBEE samples",
+          "q": "an additional two (previously unnamed) EAGERBEE samples involved in"
+        },
+        {
+          "v": "two IP addresses",
+          "q": "We observed two IP addresses in the configuration in our sample"
+        },
+        {
+          "v": "10-year TLS certificate",
+          "q": "The 10-year TLS certificate was registered on December 13, 2020"
         }
       ]
     },
     "subject": {
       "type": "campaign",
-      "name": "REF5961 intrusion set"
+      "name": "REF5961"
     },
     "hedges": [
-      "Elastic says it is confident the operators are China-nexus, based on overlaps in execution flows, tooling, infrastructure and victimology.",
-      "The state-sponsored, espionage-motivated description of the REF2924 and REF5961 operators is Elastic's own assessment.",
-      "The LuckyMouse link rests on string formatting and behaviour that only aligns with earlier research.",
-      "SManager/PhantomNet has been attributed to TA428 by earlier reporting; the report only links DOWNTOWN to it with a moderate degree of confidence.",
-      "DOWNTOWN is attributed to a nationally sponsored Chinese threat actor with a moderate degree of confidence; the report has little visibility into its overall impact.",
-      "The report has a high degree of confidence that the malware and campaign operators share a tasking authority or organizational umbrella.",
-      "The report says the Mongolian government or NGOs may have been targeted by REF2924, and that it is not clear how the infrastructure was compromised or how far it was used.",
-      "The report cannot confirm that the self-signed TLS certificate was used for EAGERBEE or RUDEBIRD, although TLS to an IP address is a configuration option."
+      "China-nexus attribution rests on correlated execution flows, tooling, infrastructure and victimology plus third-party reports; the report calls it confidence, not certainty.",
+      "DOWNTOWN is attributed with a moderate degree of confidence to a nationally sponsored Chinese threat actor.",
+      "The report cannot confirm that the self-signed certificate infrastructure was used for EAGERBEE or RUDEBIRD.",
+      "It is unclear whether PsExec was brought in by the threat actor or was already present in the environment.",
+      "It is not clear how the Mongolian infrastructure was compromised or the extent to which it has been used.",
+      "The report speculates that multiple players in the REF2924 organization may have been active in the environment.",
+      "Same tasking authority is stated with a high degree of confidence, based on shared hosting and service-availability coordination.",
+      "The report did not find network or communication functionality, or any domain or IP tied to the DOWNTOWN sample."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:49:01Z",
-      "ok": false,
-      "note": "hedges[3]: The text says SManager/PhantomNet has been attributed to TA428. It gives the moderate-confidence attribution for DOWNTOWN to 'a nationally sponsored ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:49:01Z",
+        "ok": false,
+        "note": "hedges[3]: The text says SManager/PhantomNet has been attributed to TA428. It gives the moderate-confidence attribution for DOWNTOWN to 'a nationally sponsored ",
+        "by": "auditor"
+      }
+    ]
   }
 }

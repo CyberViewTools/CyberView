@@ -74,97 +74,85 @@
   },
   "11bb697ec74ff8bedc5d4284110aef0a6169afd8": {
     "sha1": "11bb697ec74ff8bedc5d4284110aef0a6169afd8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:30:38Z",
+    "read_at": "2026-11-27T05:11:02Z",
     "model": "haiku",
-    "summary": "The GReAT team reports the EastWind campaign: from late July 2024 it targeted dozens of computers at Russian government organizations and IT companies, using phishing emails with malicious shortcut attachments. The attacks delivered GrewApacha, a RAT the report links to APT31, and an updated CloudSorcerer backdoor that uses Dropbox and social network profiles to find its command servers. A new implant, PlugY, shares code with the DRBControl backdoor, which the report says several companies link to APT27. The report says the campaign shows traces of two Chinese-speaking groups.",
+    "summary": "The GReAT team reports the EastWind campaign, first detected in late July 2024. Phishing emails with malicious shortcut attachments reached dozens of computers at Russian government organizations and IT companies. The malware used Dropbox for commands and loaded further tools: a GrewApacha RAT that the report links to APT31, an updated CloudSorcerer backdoor, and a new PlugY implant that the report says shares code with DRBControl, which several companies link to APT27.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "APT31",
-          "q": "tools used by the APT31 group and an updated CloudSorcerer backdoor",
-          "by": "the report (GReAT)"
+          "q": "The malware downloaded by the attackers from Dropbox has been used by APT31 since at least 2021.",
+          "by": "GReAT (report author)"
         },
         {
           "v": "APT27",
-          "q": "Later, Security Joes and Profero linked it to the APT27 group.",
-          "by": "Security Joes and Profero, as cited by the report"
+          "q": "Thus, the code previously observed in attacks by APT27 was likely used in developing the implant.",
+          "by": "GReAT (report author)"
         }
       ],
       "sectors": [
         {
-          "v": "government organizations",
-          "q": "government organizations and IT companies."
-        },
-        {
-          "v": "IT companies",
+          "v": "government organizations and IT companies",
           "q": "government organizations and IT companies."
         }
       ],
       "countries": [
         {
           "v": "Russia",
-          "q": "organizations in Russia"
-        },
-        {
-          "v": "US",
-          "q": "an attack on a US organization that involved use of the"
+          "q": "EastWind campaign: new CloudSorcerer attacks on government organizations in Russia"
         }
       ],
       "dates": [
         {
+          "v": "2024-08-14",
+          "q": "Published: 2024-08-14 · Archived: 2026-04-05 19:48:18 UTC",
+          "what": "Report published by GReAT"
+        },
+        {
           "v": "late July 2024",
-          "q": "In late July 2024, we detected a series of ongoing targeted cyberattacks",
-          "what": "Ongoing attacks on dozens of computers were detected"
+          "q": "In late July 2024, we detected a series of ongoing targeted cyberattacks on dozens of computers at Russian",
+          "what": "GReAT detected the campaign's attacks"
         },
         {
           "v": "2021",
-          "q": "has been used by APT31 since at least 2021.",
-          "what": "GrewApacha RAT in use by APT31 since at least this year"
+          "q": "The malware downloaded by the attackers from Dropbox has been used by APT31 since at least 2021.",
+          "what": "APT31 has used this Dropbox-downloaded malware since at least this date"
         },
         {
           "v": "early July 2024",
-          "q": "described by us in early July 2024",
-          "what": "CloudSorcerer backdoor first described by the report's authors"
+          "q": "publicly described this backdoor in early July 2024, the attackers modified it",
+          "what": "GReAT first publicly described the CloudSorcerer backdoor; the attackers then modified it"
+        },
+        {
+          "v": "July 2024",
+          "q": "CloudSorcerer backdoor, reported by Proofpoint in July 2024:",
+          "what": "Proofpoint reported a similar attack on a US organization using CloudSorcerer"
         },
         {
           "v": "2020",
           "q": "This backdoor was described in 2020 by Trend",
-          "what": "DRBControl backdoor first described"
-        },
-        {
-          "v": "July 2024",
-          "q": "reported by Proofpoint in July 2024",
-          "what": "Proofpoint reported a similar CloudSorcerer attack on a US organization"
-        },
-        {
-          "v": "2024-08-14",
-          "q": "Published: 2024-08-14 · Archived: 2026-04-05 19:48:18 UTC",
-          "what": "Report published"
+          "what": "DRBControl (Clambling) backdoor first described"
         }
       ],
       "tools": [
-        {
-          "v": "Dropbox",
-          "q": "Dropbox cloud service."
-        },
-        {
-          "v": "CloudSorcerer",
-          "q": "tools used by the APT31 group and an updated CloudSorcerer backdoor"
-        },
         {
           "v": "GrewApacha",
           "q": "GrewApacha: a RAT used by APT31 since 2021"
         },
         {
+          "v": "CloudSorcerer",
+          "q": "in particular tools used by the APT31 group and an updated CloudSorcerer backdoor."
+        },
+        {
           "v": "PlugY",
-          "q": "PlugY: an implant that overlaps with APT27 tools"
+          "q": "we dubbed PlugY. It is loaded via the CloudSorcerer backdoor, and its command set is quite extensive."
         },
         {
           "v": "DRBControl",
-          "q": "DRBControl (aka Clambling) backdoor was used to develop it."
+          "q": "the DRBControl backdoor (aka Clambling), which several companies attribute to the APT27 group."
         },
         {
           "v": "GetKey.exe",
@@ -172,33 +160,41 @@
         },
         {
           "v": "VMProtect",
-          "q": "GetKey.exe that is packed with the VMProtect obfuscator."
+          "q": "This library is a backdoor packed using the VMProtect tool."
+        },
+        {
+          "v": "VERSION.dll",
+          "q": "VERSION.dll – a backdoor that uses Dropbox"
         },
         {
           "v": "PlugX",
-          "q": "The backdoor also has similarities to PlugX."
+          "q": "the PlugX backdoor, which is popular among Chinese-speaking groups."
         }
       ],
       "techniques": [
         {
-          "v": "phishing emails",
-          "q": "The threat actors infected devices using phishing emails with"
+          "v": "spear phishing",
+          "q": "the attackers used spear phishing to gain an initial foothold into the organizations."
+        },
+        {
+          "v": "malicious shortcut attachments",
+          "q": "malicious shortcut attachments. These shortcuts were used to deliver malware that received commands via the"
         },
         {
           "v": "DLL sideloading",
           "q": "The attackers use classic DLL sideloading to load the malicious library VERSION.dll into the desktop.exe"
         },
         {
-          "v": "task scheduler",
-          "q": "Afterwards, they used the task scheduler to configure the renamed dbgsrv.exe"
+          "v": "task scheduler persistence",
+          "q": "they used the task scheduler to configure the renamed dbgsrv.exe"
         },
         {
-          "v": "profile bio on GitHub",
-          "q": "retrieve a webpage with a profile bio on GitHub."
+          "v": "popular network services as C2 servers",
+          "q": "used popular network services (GitHub, Dropbox, Quora, LiveJournal and Yandex.Disk) as C2 servers."
         },
         {
-          "v": "logging keystrokes",
-          "q": "to logging keystrokes and monitoring the screen or the"
+          "v": "profile pages as initial C2",
+          "q": "uses profile pages on the Russian-language social network LiveJournal and the Q&A site Quora as the initial C2"
         }
       ],
       "cves": [],
@@ -208,24 +204,20 @@
           "q": "targeted cyberattacks on dozens of computers at Russian"
         },
         {
+          "v": "two C2 servers",
+          "q": "the new version now uses two C2 servers instead of one."
+        },
+        {
           "v": "five",
           "q": "The backdoor supports a total of five"
         },
         {
           "v": "three",
-          "q": "It supports three different protocols for communicating with C2"
-        },
-        {
-          "v": "two",
-          "q": "the new version now uses two C2 servers instead of one."
+          "q": "It supports three different protocols for communicating with C2, and what’s more, its code resembles that of"
         },
         {
           "v": "9.82 MB",
           "q": "File size 9.82 MB"
-        },
-        {
-          "v": "5 MB",
-          "q": "(> 5 MB) located in the directory"
         }
       ]
     },
@@ -234,18 +226,18 @@
       "name": "EastWind"
     },
     "hedges": [
-      "The report says analysis of the PlugY implant is still ongoing.",
-      "The report says it can conclude 'with a high degree of confidence' that DRBControl code was used to develop PlugY.",
-      "The report says APT27 code was 'likely used' in developing the implant.",
-      "The report notes that several companies attribute the DRBControl backdoor to APT27."
+      "Analysis of the PlugY implant is still ongoing; the report says it can conclude with a high degree of confidence that DRBControl code was used to develop it.",
+      "The report says the code previously observed in APT27 attacks was likely used in developing the implant.",
+      "Several companies attribute the DRBControl backdoor to APT27; the report also says Security Joes and Profero linked it to APT27.",
+      "The set of three files resembles the sideloading triad typical of PlugX attacks, but the report says the malware inside is a GrewApacha RAT of APT31."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:48:21Z",
-      "ok": false,
-      "note": "summary: It says the campaign targeted computers 'from late July 2024', but the report only says the attacks were detected in late July 2024 and were ongoing. I",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:48:21Z",
+        "ok": false,
+        "note": "summary: It says the campaign targeted computers 'from late July 2024', but the report only says the attacks were detected in late July 2024 and were ongoing. I",
+        "by": "auditor"
+      }
+    ]
   }
 }

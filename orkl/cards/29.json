@@ -228,48 +228,39 @@
   },
   "29b89bf0badf1497f496ad30ad9c25d67b5f650a": {
     "sha1": "29b89bf0badf1497f496ad30ad9c25d67b5f650a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:29:57Z",
+    "read_at": "2026-11-27T05:11:11Z",
     "model": "haiku",
-    "summary": "EclecticIQ describes a cyber espionage campaign against the semiconductor industry in Taiwan, Hong Kong and Singapore. It uses a HyperBro loader variant with a TSMC-themed PDF decoy, Cobalt Strike beacons, a malware downloader hosted on a compromised Cobra DocGuard server, and a Go backdoor named ChargeWeapon. EclecticIQ assesses with high confidence that a PRC-backed nation-state actor operates these tools, and notes overlaps with APT27 and RedHotel reporting.",
+    "summary": "EclecticIQ describes a campaign targeting the semiconductor industry in Taiwan, Hong Kong and Singapore, using a HyperBro loader variant that side-loads a Cobalt Strike beacon through a signed CyberArk binary. A malware downloader fetches second-stage files from a compromised Cobra DocGuard server, and a Go backdoor named ChargeWeapon is also described. EclecticIQ assesses with high confidence that a PRC-backed nation-state actor is very likely behind the activity, citing overlaps with reporting on APT27, Carderbee and RedHotel.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
+          "v": "PRC backed nation state threat actor",
+          "q": "are very likely operated and developed by a PRC backed nation state threat actor, due to victimology,",
+          "by": "EclecticIQ"
+        },
+        {
           "v": "APT27",
-          "q": "It has been used by APT27 (aka Budworm, LuckyMouse) threat actor to enable the group to gain full control over targeted",
+          "q": "used by APT27 (aka Budworm, LuckyMouse) threat actor to enable the group to gain full control over targeted",
           "by": "Symantec"
         },
         {
           "v": "Carderbee",
-          "q": "It is attributed by Symantec to APT group Carderbee.",
+          "q": "It is attributed by Symantec to APT group Carderbee. [10]",
           "by": "Symantec"
         },
         {
           "v": "RedHotel",
           "q": "In August 2023, Recorded Future reported about a Chinese state-sponsored group dubbed RedHotel [8].",
           "by": "Recorded Future"
-        },
-        {
-          "v": "PRC backed nation state threat actor",
-          "q": "very likely operated and developed by a PRC backed nation state threat actor, due to victimology,",
-          "by": "EclecticIQ"
-        },
-        {
-          "v": "APT27",
-          "q": "Due to this pattern, ESET believes that the September 2022 breach was also the work of APT27.",
-          "by": "ESET"
         }
       ],
       "sectors": [
         {
           "v": "semiconductor industry",
           "q": "likely to target the semiconductor industry in Mandarin/Chinese"
-        },
-        {
-          "v": "gambling",
-          "q": "ESET reported that in September 2022, a malicious update to the Cobra DocGuard software compromised a Hong Kong-based gambling company."
         }
       ],
       "countries": [
@@ -287,83 +278,79 @@
         },
         {
           "v": "People's Republic of China",
-          "q": "overlap with previously reported activities attributed to People's Republic of China (PRC) backed cyber espionage"
+          "q": "This provides further evidence for attribution to People's Republic of China (PRC) backed nation-state APT"
         }
       ],
       "dates": [
         {
           "v": "August 21, 2023",
           "q": "The backdoor was very likely uploaded by the same threat actor on August 21, 2023 [2].",
-          "what": "ChargeWeapon backdoor uploaded to the compromised Cobra DocGuard web server"
+          "what": "Go backdoor (ChargeWeapon) uploaded to the compromised Cobra DocGuard web server"
+        },
+        {
+          "v": "September 2022",
+          "q": "ESET reported that in September 2022, a malicious update to the Cobra DocGuard software compromised a Hong",
+          "what": "Malicious update to Cobra DocGuard software compromised a Hong Kong gambling company"
+        },
+        {
+          "v": "October 2022",
+          "q": "In October 2022, a report from Symantec stated that “Budworm has used the endpoint privilege management software",
+          "what": "Symantec reported Budworm side-loading with a CyberArk binary"
+        },
+        {
+          "v": "2018",
+          "q": "According to researchers from Symantec, HyperBro is a malware strain seen in cyberattacks since 2018. It has been",
+          "what": "HyperBro first seen in cyberattacks"
+        },
+        {
+          "v": "September 2021",
+          "q": "The same company was targeted in September 2021 using a similar method by",
+          "what": "Same Hong Kong company targeted using a similar method"
         },
         {
           "v": "August 2023",
           "q": "In August 2023, Recorded Future reported about a Chinese state-sponsored group dubbed RedHotel [8].",
           "what": "Recorded Future reported on the RedHotel group"
-        },
-        {
-          "v": "October 2022",
-          "q": "In October 2022, a report from Symantec stated that",
-          "what": "Symantec reported Budworm side-loading via CyberArk Viewfinity"
-        },
-        {
-          "v": "September 2022",
-          "q": "ESET reported that in September 2022, a malicious update to the Cobra DocGuard software compromised a Hong Kong-based gambling company.",
-          "what": "Malicious update to Cobra DocGuard software compromised a Hong Kong gambling company"
-        },
-        {
-          "v": "September 2021",
-          "q": "The same company was targeted in September 2021 using a similar method by",
-          "what": "Same Hong Kong company targeted using a similar method, attributed by ESET to APT27"
-        },
-        {
-          "v": "2018",
-          "q": "HyperBro is a malware strain seen in cyberattacks since 2018.",
-          "what": "HyperBro first seen in cyberattacks, according to Symantec researchers"
         }
       ],
       "tools": [
         {
-          "v": "HyperBro",
-          "q": "EclecticIQ analysts identified a cyber espionage campaign where threat actors used a variant of HyperBro loader with a"
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is a commercial adversary simulation software that is marketed to Red Teams but is also stolen and actively used by a"
         },
         {
-          "v": "Cobalt Strike",
-          "q": "Analysts identified that the shellcode used the same Cobalt Strike C2 server associated"
+          "v": "HyperBro",
+          "q": "According to researchers from Symantec, HyperBro is a malware strain seen in cyberattacks since 2018. It has been"
         },
         {
           "v": "ChargeWeapon",
           "q": "ChargeWeapon is designed to get remote access and send device and network information from an infected host to an"
         },
         {
-          "v": "garble",
-          "q": "ChargeWeapon uses the open-source obfuscation tool called \"garble\" to perform anti malware evasion [7]."
-        },
-        {
           "v": "Cobra DocGuard",
           "q": "Cobra DocGuard is a software developed by a Chinese company called EsafeNet and used"
         },
         {
+          "v": "garble",
+          "q": "ChargeWeapon uses the open-source obfuscation tool called \"garble\" to perform anti malware evasion [7]."
+        },
+        {
           "v": "vfhost.exe",
-          "q": "legitimated and digitally signed binary from CyberArk’s vfhost.exe."
+          "q": "by leveraging a legitimated and digitally signed binary from CyberArk’s vfhost.exe. Cobalt"
         },
         {
           "v": "mcods.exe",
-          "q": "by using a signed McAfee binary, mcods.exe, to run"
+          "q": "The malware downloader employs a DLL Side-Loading technique by using a signed McAfee binary, mcods.exe, to run"
         }
       ],
       "techniques": [
         {
-          "v": "DLL Side-Loading",
-          "q": "The malware downloader employs a DLL Side-Loading technique by using a signed McAfee binary, mcods.exe, to run"
+          "v": "DLL side-loading",
+          "q": "DLL side-loading attacks use the DLL search order mechanism in Windows to plant and invoke a legitimate"
         },
         {
-          "v": "Malleable C2 profile",
-          "q": "A Malleable C2 profile specifies how the beacon will transform and store data in a"
-        },
-        {
-          "v": "TSMC-themed PDF",
-          "q": "The threat actor used a TSMC-themed PDF as a decoy, displayed after the execution of the HyperBro loader."
+          "v": "Malleable C2",
+          "q": "Analysis showed that the threat actor used a Malleable command and control (Malleable C2) profile to"
         },
         {
           "v": "BitsTransfer module in PowerShell",
@@ -374,7 +361,7 @@
           "q": "Transmitted data is sent in JSON format and obfuscated by base64 encoding."
         },
         {
-          "v": "Windows Management Instrumentation",
+          "v": "Windows Management Instrumentation (WMI) execution",
           "q": "Windows Management Instrumentation (WMI) execution."
         },
         {
@@ -382,19 +369,31 @@
           "q": "This information is very likely collected by threat actor to perform initial reconnaissance against infected hosts and"
         },
         {
-          "v": "malicious update",
-          "q": "ESET reported that in September 2022, a malicious update to the Cobra DocGuard software compromised a Hong Kong-based gambling company."
+          "v": "Exploit Public-Facing Application",
+          "q": "Exploit Public-Facing Application - T1190"
+        },
+        {
+          "v": "Obfuscated Files or Information",
+          "q": "Obfuscated Files or Information - T1027"
+        },
+        {
+          "v": "Ingress Tool Transfer",
+          "q": "Ingress Tool Transfer - T1105"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "four anti malware solutions",
-          "q": "At the time of this report, only four anti malware solutions have detected this malware variant in Virus Total."
+          "q": "only four anti malware solutions have detected this malware variant in Virus Total."
         },
         {
           "v": "13 days",
-          "q": "uploaded to Virus Total in August 2023, within 13 days of each other [5] [6]."
+          "q": "were uploaded to Virus Total in August 2023, within 13 days of each other [5] [6]."
+        },
+        {
+          "v": "16-byte",
+          "q": "downloader using 16-byte length XOR key."
         }
       ]
     },
@@ -403,22 +402,22 @@
       "name": "Chinese State-Sponsored Cyber Espionage Activity Targeting Semiconductor Industry in East Asia"
     },
     "hedges": [
-      "Report says the campaign is likely to target the semiconductor industry in Mandarin/Chinese speaking East Asian regions.",
-      "Analysts assess with high confidence that the loader, downloader and backdoor are very likely operated by a PRC backed actor; attribution rests on victimology, infrastructure, malware code and…",
-      "Report says the malware downloader was likely used by the same actor, and the downloader server was very likely compromised.",
-      "Report says the Mandarin lure possibly indicates an intention to target non-mainland Chinese speakers.",
-      "Report says it has not observed further overlap with APT27 beyond DLL side-loading via vfhost.exe.",
-      "ESET believes the September 2022 breach was also the work of APT27; the report relays this as ESET's belief.",
-      "Report says the ChargeWeapon file path string was assessed with high confidence to have been written during compilation.",
-      "Report says the Cobra DocGuard overlap with Symantec and ESET reporting provides further evidence for PRC-backed attribution."
+      "Analysts assess with high confidence that the malware downloader was likely used by the same threat actor, based on the shared C2 server and Malleable C2 profile.",
+      "The analysed HyperBro loader, downloader and Go backdoor are said to be very likely operated and developed by a PRC-backed nation-state actor; attribution rests on victimology, infrastructure, code…",
+      "The Cobra DocGuard web server is described as very likely compromised.",
+      "The Mandarin-language lure possibly indicates an intention to target non-mainland Chinese speakers.",
+      "ESET believes the September 2022 breach was also the work of APT27, based on a pattern of similar activity.",
+      "EclecticIQ has not observed any further overlap with APT27 beyond DLL side-loading via vfhost.exe.",
+      "ChargeWeapon information is very likely collected to perform initial reconnaissance and identify high-value targets.",
+      "The campaign is described as likely targeting the semiconductor industry."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:48:30Z",
-      "ok": false,
-      "note": "summary: Hedges are dropped. The report says the campaign is 'likely to target' the semiconductor industry, but the summary states it flatly. The Cobra DocGuard",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:48:30Z",
+        "ok": false,
+        "note": "summary: Hedges are dropped. The report says the campaign is 'likely to target' the semiconductor industry, but the summary states it flatly. The Cobra DocGuard",
+        "by": "auditor"
+      }
+    ]
   }
 }

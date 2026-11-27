@@ -234,43 +234,33 @@
   },
   "537e7c37a9c2a7d53f2c9f4406d80841debfd489": {
     "sha1": "537e7c37a9c2a7d53f2c9f4406d80841debfd489",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:26:35Z",
+    "read_at": "2026-11-27T05:10:49Z",
     "model": "haiku",
-    "summary": "A Kaspersky GReAT crimeware excerpt on LockBit Green, a LockBit ransomware variant detected from February that borrows code from the defunct Conti gang; the report's attribution engine finds about 25% Conti code. It also describes LockBit samples built for several platforms, which the authors judge to be in testing, and a SwitchSymb phishing kit used in a phishing and business email compromise campaign against German-speaking companies in the DACH region, active since at least Q3 2022.",
+    "summary": "Kaspersky's GReAT team describes LockBit Green, a LockBit ransomware variant first detected in February that reuses code from the defunct Conti gang, and LockBit samples built for many platforms found in a ZIP file. The report also covers the SwitchSymb phishing kit, used in phishing and business email compromise campaigns against German-speaking companies in the DACH region, with a BEC case active since at least Q3 2022.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "LockBit",
           "q": "LockBit is one of the most prolific ransomware groups currently active, targeting businesses all over the world.",
-          "by": "Kaspersky GReAT (the report itself)"
+          "by": "GReAT (Kaspersky report authors)"
         },
         {
           "v": "Conti",
-          "q": "the now-defunct Conti gang.",
-          "by": "Kaspersky GReAT (the report itself)"
-        },
-        {
-          "v": "BlackMatter",
-          "q": "Over time, they have adopted code from other ransomware gangs, such as BlackMatter and DarkSide, making it",
-          "by": "Kaspersky GReAT (the report itself)"
-        },
-        {
-          "v": "DarkSide",
-          "q": "Over time, they have adopted code from other ransomware gangs, such as BlackMatter and DarkSide, making it",
-          "by": "Kaspersky GReAT (the report itself)"
+          "q": "which borrows code from the now-defunct Conti gang",
+          "by": "GReAT (Kaspersky report authors), using the Kaspersky Threat Attribution Engine"
         }
       ],
       "sectors": [
         {
           "v": "businesses",
-          "q": "LockBit is one of the most prolific ransomware groups currently active, targeting businesses all over the world."
+          "q": "targeting businesses all over the world"
         },
         {
-          "v": "business users",
-          "q": "At the end of this past January, we observed a spike in phishing email from a campaign targeting business users,"
+          "v": "German-speaking companies",
+          "q": "The attackers target German-speaking companies in the DACH region."
         }
       ],
       "countries": [
@@ -282,74 +272,74 @@
       "dates": [
         {
           "v": "2023-06-22",
-          "q": "Published: 2023-06-22 · Archived: 2026-04-05 12:40:00 UTC",
-          "what": "Publication of the report"
+          "q": "Published: 2023-06-22",
+          "what": "report published"
         },
         {
           "v": "Q3 2022",
-          "q": "Recently we stumbled upon a Business Email Compromise (BEC) case, active since at least Q3 2022. The",
-          "what": "BEC case active since at least this time"
+          "q": "active since at least Q3 2022",
+          "what": "BEC case first observed as active, since at least this time"
         },
         {
-          "v": "end of this past January",
-          "q": "At the end of this past January, we observed a spike in phishing email from a campaign targeting business users,",
-          "what": "Spike in phishing email from a campaign targeting business users"
+          "v": "January",
+          "q": "At the end of this past January, we observed a spike in phishing email",
+          "what": "spike in phishing email from a business-targeting campaign observed"
         },
         {
           "v": "February",
-          "q": "Starting in this past February, we have detected a new variant, named “LockBit Green”, which borrows code from",
+          "q": "Starting in this past February, we have detected a new variant",
           "what": "LockBit Green variant first detected"
         }
       ],
       "tools": [
         {
-          "v": "LockBit Green",
-          "q": "we have detected a new variant, named “LockBit Green”"
+          "v": "SwitchSymb phishing kit",
+          "q": "the SwitchSymb phishing kit is one example."
         },
         {
-          "v": "SwitchSymb phishing kit",
-          "q": "of which the SwitchSymb phishing kit"
+          "v": "LockBit Green",
+          "q": "named “LockBit Green”, which borrows code from the now-defunct Conti gang"
         },
         {
           "v": "Kaspersky Threat Attribution Engine (KTAE)",
-          "q": "According to the Kaspersky Threat Attribution Engine (KTAE), LockBit incorporates"
+          "q": "According to the Kaspersky Threat Attribution Engine (KTAE), LockBit incorporates 25% of Conti code."
         }
       ],
       "techniques": [
         {
-          "v": "domain name that is similar",
-          "q": "domain name that is similar to that used by the attacked organization"
+          "v": "Business Email Compromise",
+          "q": "Business Email Compromise (BEC) case, active since at least Q3 2022."
         },
         {
-          "v": "Reply-to field contains a different email address",
-          "q": "the Reply-to field contains a different email address from the From field."
+          "v": "phishing",
+          "q": "ordinary phishing campaigns are relatively simple"
         },
         {
-          "v": "serve multiple campaigns at a time",
-          "q": "The phishing kit was designed to serve multiple campaigns at a time while running one instance on the web"
+          "v": "Reply-to field mismatch",
+          "q": "the Reply-to field contains a different email address from the From field"
         },
         {
-          "v": "encryption scheme from Conti",
-          "q": "adopted the encryption scheme from Conti."
+          "v": "encryption scheme",
+          "q": "LockBit adopted the encryption scheme from Conti"
         },
         {
-          "v": "encrypt only part of the files",
-          "q": "Functionality to encrypt only part of the files"
+          "v": "command line options",
+          "q": "In terms of command line options, the group added those from Conti"
         },
         {
-          "v": "Binary diffing",
-          "q": "Binary diffing across the two families"
+          "v": "multiple architectures",
+          "q": "contained LockBit samples for multiple architectures, such as Apple M1"
+        },
+        {
+          "v": "automation",
+          "q": "This creates opportunities for automation"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "25%",
-          "q": "25% of Conti code."
-        },
-        {
-          "v": "three private reports",
-          "q": "For this post, we selected three private reports,"
+          "q": "LockBit incorporates 25% of Conti code."
         }
       ]
     },
@@ -358,19 +348,19 @@
       "name": "LockBit Green"
     },
     "hedges": [
-      "Further analysis of the samples led us to believe that LockBit were in the process of testing their ransomware on various architectures, instead of deploying it in the wild.",
-      "Our findings suggest that LockBit will target more platforms in the wild in the (near) future.",
-      "For reasons unknown, the Reply-to field contains a different email address from the From field.",
-      "We could not think of a good reason for doing so, but nevertheless, LockBit did it."
+      "The report says the reason the Reply-to field differs from the From field is unknown.",
+      "The authors could not think of a good reason why LockBit adopted the Conti ransom note.",
+      "The authors believe LockBit was testing its ransomware on various architectures rather than deploying it in the wild.",
+      "The authors' findings suggest LockBit will target more platforms in the wild in the near future."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:48:38Z",
-      "ok": false,
-      "note": "summary: The summary merges two separate items. In the text, the BEC case (DACH, German-speaking companies, active since at least Q3 2022) is one thing. SwitchS",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:48:38Z",
+        "ok": false,
+        "note": "summary: The summary merges two separate items. In the text, the BEC case (DACH, German-speaking companies, active since at least Q3 2022) is one thing. SwitchS",
+        "by": "auditor"
+      }
+    ]
   },
   "53315e70da729b3b9a1a63327b57e27ad402bebb": {
     "sha1": "53315e70da729b3b9a1a63327b57e27ad402bebb",
@@ -571,51 +561,47 @@
   },
   "53626c1051da5e12ff8b7cade2ef7872314c17b2": {
     "sha1": "53626c1051da5e12ff8b7cade2ef7872314c17b2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:32:25Z",
+    "read_at": "2026-11-27T05:11:30Z",
     "model": "haiku",
-    "summary": "Sucuri blog post (Dec 2023) on the ATMZOW Magecart skimmer, which abuses Google Tag Manager containers to inject card-skimming scripts into Magento sites. It reports 327 affected sites, 40 newly registered lookalike analytics domains registered via Hostinger in November 2023, base64 and multi-layer obfuscation, two domains picked at random per visit, and CloudFlare-hidden infrastructure. After Google removed a container, the operators created new containers and reinfected sites. Group IB linked the skimmer to a 2015 Guruincsite infection.",
+    "summary": "Sucuri describes the ATMZOW credit card skimmer, which is planted through Google Tag Manager containers and has been tied to Magento sites since 2015. In late 2023 the actors used a newer container with heavy obfuscation and 40 newly registered domains, many hidden behind a firewall. Google removed one container, and the actors created new containers and reinfected sites. The report advises treating unexpected scripts as signs of compromise.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "ATMZOW",
-          "q": "40 New Domains of Magecart Veteran ATMZOW Found in Google Tag Manager",
-          "by": "Sucuri (the report itself)"
+          "q": "track the evolution of the ATMZOW skimmer linked to widespread Magento website infections since 2015",
+          "by": "Sucuri (report author)"
         }
       ],
       "sectors": [
         {
           "v": "ecommerce",
-          "q": "take a look at some recent Google Tag Manager containers used in ecommerce malware"
-        },
-        {
-          "v": "Magento website",
-          "q": "track the evolution of the ATMZOW skimmer linked to widespread Magento website infections since 2015"
+          "q": "recent Google Tag Manager containers used in ecommerce malware"
         }
       ],
       "countries": [],
       "dates": [
         {
           "v": "2023-12-07",
-          "q": "Published: 2023-12-07 · Archived: 2026-04-05 23:18:37 UTC",
-          "what": "Report published"
+          "q": "Published: 2023-12-07",
+          "what": "Sucuri published the report"
         },
         {
           "v": "2015",
-          "q": "Group IB has linked this skimmer to the 2015 Guruincsite infection",
-          "what": "Guruincsite infection that affected Magento sites"
+          "q": "Group IB has linked this skimmer to the 2015 Guruincsite infection that affected thousands of Magento sites",
+          "what": "Guruincsite infection affecting thousands of Magento sites, linked to the skimmer"
         },
         {
           "v": "July 11, 2023",
           "q": "originally created on July 11, 2023",
-          "what": "Malicious script source created"
+          "what": "a malicious look-alike analytics domain was created"
         },
         {
           "v": "November 8, 10 and 12 of 2023",
-          "q": "registered via Hostinger in three batches on November 8, 10 and 12 of 2023",
-          "what": "Lookalike domains registered in three batches"
+          "q": "All of these domains were registered via Hostinger in three batches on November 8, 10 and 12 of 2023",
+          "what": "40 new domains were registered in three batches"
         }
       ],
       "tools": [
@@ -624,45 +610,37 @@
           "q": "Hackers like Google Tag Manager: millions of sites use it"
         },
         {
-          "v": "CloudFlare",
-          "q": "hid these domains behind a CloudFlare firewall"
+          "v": "SiteCheck",
+          "q": "our SiteCheck remote website scanner has detected known malicious GTM containers on 327 sites"
         }
       ],
       "techniques": [
-        {
-          "v": "credit card skimmers",
-          "q": "We regularly find credit card skimmers planted inside Google Tag Manager scripts"
-        },
-        {
-          "v": "obfuscation",
-          "q": "the obfuscation used in this recently discovered GTM-TVKQ79ZS container"
-        },
         {
           "v": "base64 encoding",
           "q": "They used base64 encoding to hide the domain name and page URL attackers"
         },
         {
+          "v": "complex multi-layer",
+          "q": "deploying complex multi-layer (and rather unconventional)"
+        },
+        {
+          "v": "domains hidden behind a firewall",
+          "q": "the use of a long list of malicious domains hidden behind a firewall"
+        },
+        {
           "v": "randomly selects two",
           "q": "the malicious code randomly selects two of those"
-        },
-        {
-          "v": "firewall",
-          "q": "hid these domains behind a CloudFlare firewall"
-        },
-        {
-          "v": "new containers",
-          "q": "the bad actors created new containers GTM-NTV2JTB4 and GTM-MX7L8F2M"
-        },
-        {
-          "v": "three English words",
-          "q": "attackers used a combination of three English words with the following patterns"
         }
       ],
       "cves": [],
       "figures": [
         {
+          "v": "millions of sites",
+          "q": "Hackers like Google Tag Manager: millions of sites use it"
+        },
+        {
           "v": "327 sites",
-          "q": "detected known malicious GTM containers on 327 sites"
+          "q": "has detected known malicious GTM containers on 327 sites with the most"
         },
         {
           "v": "178 times",
@@ -670,19 +648,7 @@
         },
         {
           "v": "40 newly registered domains",
-          "q": "reveals a list of 40 newly registered domains"
-        },
-        {
-          "v": "11 months",
-          "q": "In the past 11 months of 2023"
-        },
-        {
-          "v": "8 years",
-          "q": "Now, 8 years later, the hacker group that uses this style of obfuscation is still active"
-        },
-        {
-          "v": "thousands of Magento sites",
-          "q": "that affected thousands of Magento sites in the very beginning of"
+          "q": "reveals a list of 40 newly registered domains used to"
         }
       ]
     },
@@ -691,18 +657,17 @@
       "name": "ATMZOW skimmer"
     },
     "hedges": [
-      "The naming patterns are likely used to blend more organically into the digital ecosystem, according to the report.",
-      "The report's analysis indicates the ATMZOW skimmer continues to specifically target Magento sites.",
-      "Resolution details for the domains are given only as at the time of writing.",
-      "The link between the skimmer and the 2015 Guruincsite infection is Group IB's attribution, as reported by Sucuri."
+      "These naming patterns are likely used to blend more organically into the digital ecosystem while art-related keywords make them look even more benign",
+      "Group IB has linked this skimmer to the 2015 Guruincsite infection that affected thousands of Magento sites",
+      "The ATMZOW level is pretty difficult to deobfuscate, as the decoder depends on the exact length of the script"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:48:38Z",
-      "ok": false,
-      "note": "summary: Two claims go beyond the text. (1) The text says domains are saved in local storage, so the same pair is reused on later loads in the same browser; 'tw",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:48:38Z",
+        "ok": false,
+        "note": "summary: Two claims go beyond the text. (1) The text says domains are saved in local storage, so the same pair is reused on later loads in the same browser; 'tw",
+        "by": "auditor"
+      }
+    ]
   }
 }

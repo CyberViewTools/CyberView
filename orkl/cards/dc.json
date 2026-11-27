@@ -123,18 +123,18 @@
   },
   "dc2c89b00c82c6d21a1a745693b916b4a2a7c8ef": {
     "sha1": "dc2c89b00c82c6d21a1a745693b916b4a2a7c8ef",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:22:18Z",
+    "read_at": "2026-11-27T05:08:50Z",
     "model": "haiku",
-    "summary": "BleepingComputer reports that Universal Health Services (UHS) hospitals and facilities in the US lost computer and phone systems in September 2020, with employee accounts pointing to Ryuk ransomware. The report says the attack likely began with phishing and Emotet and TrickBot infections. UHS confirmed an IT security issue and said no patient or employee data appears to have been compromised. Four deaths were reported but not independently corroborated.",
+    "summary": "A news report says Universal Health Services (UHS), a healthcare provider with facilities in the US and UK, shut down systems across its US hospitals in a suspected ransomware attack in late September 2020. Employees reported files renamed with a .ryk extension and a ransom note resembling Ryuk's. The report says the attack likely began with phishing, and that Emotet and TrickBot had been detected affecting UHS earlier in 2020. UHS confirmed an IT security incident and said no patient or employee data appeared to have been accessed. Four deaths were reported but not independently corroborated.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "Ryuk actors",
           "q": "Once the Ryuk actors manually get access to the network they start with reconnaissance and, after gaining admin credentials,",
-          "by": "the report itself (BleepingComputer)"
+          "by": "the report"
         }
       ],
       "sectors": [
@@ -157,22 +157,22 @@
         {
           "v": "2020-09-28",
           "q": "Published: 2020-09-28 · Archived: 2026-04-05 17:54:36 UTC",
-          "what": "article published"
+          "what": "Report published"
         },
         {
           "v": "early Sunday morning",
-          "q": "at healthcare facilities around the US after a cyber-attack that hit its network during early Sunday morning.",
-          "what": "attack hit UHS network and systems were taken offline"
+          "q": "after a cyber-attack that hit its network during early Sunday morning.",
+          "what": "UHS network hit by cyber-attack"
+        },
+        {
+          "v": "2020",
+          "q": "Inc. throughout 2020, and more recently, in September 2020.",
+          "what": "Emotet and TrickBot detected affecting UHS"
         },
         {
           "v": "September 28",
           "q": "Update September 28, 12:23 EDT: UHS confirmed that it was the victim of a security incident and says that no patient or",
-          "what": "UHS confirmed it was the victim of a security incident"
-        },
-        {
-          "v": "September 29",
-          "q": "Update September 29, 18:45 EDT: Added information about Emsisoft decryptors.",
-          "what": "update added information about recovery decryptors"
+          "what": "UHS confirmed a security incident"
         }
       ],
       "tools": [
@@ -182,7 +182,7 @@
         },
         {
           "v": "Emotet",
-          "q": "According to Kremez, their Andariel intelligence platform detected both the Emotet and TrickBot Trojans affecting UHS"
+          "q": "The Emotet trojan is spread via phishing emails containing malicious attachments that install the malware on a victim's"
         },
         {
           "v": "TrickBot",
@@ -200,31 +200,27 @@
       "techniques": [
         {
           "v": "phishing",
-          "q": "The Emotet trojan is spread via phishing emails containing malicious attachments that install the malware on a victim's"
-        },
-        {
-          "v": "launching the attack overnight to avoid detection",
-          "q": "ransomware attack, starting with its launch during the night to avoid detection before encrypting as many systems as"
-        },
-        {
-          "v": "disabling antivirus programs",
-          "q": "When the attack happened multiple antivirus programs were disabled by the attack and hard drives just lit up with activity,"
+          "q": "started via a phishing attack."
         },
         {
           "v": "reconnaissance",
           "q": "Once the Ryuk actors manually get access to the network they start with reconnaissance and, after gaining admin credentials,"
         },
         {
-          "v": "deploying ransomware across network devices",
+          "v": "encrypting as many systems",
+          "q": "before encrypting as many systems as"
+        },
+        {
+          "v": "shut down of all systems",
+          "q": "the immediate shut down of all systems after it was discovered to prevent more devices getting locked."
+        },
+        {
+          "v": "deploy ransomware payloads",
           "q": "they deploy ransomware payloads on network devices using PSExec or PowerShell Empire."
         },
         {
-          "v": "renaming files with the .ryk extension",
-          "q": "An employee told BleepingComputer that, during the cyberattack, files were being renamed to include the .ryk extension."
-        },
-        {
-          "v": "shutting down systems to contain spread",
-          "q": "Employees were also told to shut down all systems to block the attackers' from reaching all devices on the network."
+          "v": "renamed to include the .ryk extension",
+          "q": "files were being renamed to include the .ryk extension."
         }
       ],
       "cves": [],
@@ -238,11 +234,11 @@
           "q": "UHS operates over 400 healthcare facilities in the US and the UK, has more than 90,000 employees and provides"
         },
         {
-          "v": "3.5 million patients each year",
-          "q": "services to approximately 3.5 million patients each year."
+          "v": "approximately 3.5 million patients each year",
+          "q": "healthcare services to approximately 3.5 million patients each year."
         },
         {
-          "v": "$11.4 billion in 2019",
+          "v": "$11.4 billion",
           "q": "The Fortune 500 corporation had annual revenues of $11.4 billion in 2019 and it is 330th on Forbes' ranking of US largest"
         },
         {
@@ -253,21 +249,21 @@
     },
     "subject": {
       "type": "incident",
-      "name": "UHS ransomware attack"
+      "name": "UHS hospitals Ryuk ransomware attack"
     },
     "hedges": [
-      "While UHS has made no official statement regarding the attack, reports coming from employees show all the signs of a ransomware attack",
-      "the attack on UHS' system likely started via a phishing attack",
-      "BleepingComputer has not been able to independently corroborate if the deaths were related to the attack.",
-      "No patient or employee data appears to have been accessed, copied or otherwise compromised."
+      "UHS made no official statement about the attack at first; the report relies on employee reports showing signs of ransomware.",
+      "The attack on UHS' system likely started via a phishing attack, based on information shared by Advanced Intel's Vitali Kremez.",
+      "The outlet has not been able to independently corroborate whether the four deaths were related to the attack.",
+      "UHS said no patient or employee data appears to have been accessed, copied or otherwise compromised."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:49:10Z",
-      "ok": false,
-      "note": "actors[0]: The quote is a generic description of how Ryuk operators work, not a statement about the UHS attack. The text ties Ryuk to UHS through employee repor",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:49:10Z",
+        "ok": false,
+        "note": "actors[0]: The quote is a generic description of how Ryuk operators work, not a statement about the UHS attack. The text ties Ryuk to UHS through employee repor",
+        "by": "auditor"
+      }
+    ]
   }
 }

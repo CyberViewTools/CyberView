@@ -174,11 +174,11 @@
   },
   "0ce1eae63e681b49a35d3d50bcf5b34100b0272f": {
     "sha1": "0ce1eae63e681b49a35d3d50bcf5b34100b0272f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:29:50Z",
+    "read_at": "2026-11-27T05:11:06Z",
     "model": "haiku",
-    "summary": "Microsoft Threat Intelligence reports that North Korean actors Diamond Sleet and Onyx Sleet have exploited the TeamCity remote-code execution flaw CVE-2023-42793 since early October 2023. Diamond Sleet uses the ForestTiger backdoor and DLL search-order hijacking loaders (RollSling, FeedLoad) and dumps credentials. Onyx Sleet creates a privileged account, runs system discovery and deploys the HazyLoad proxy tool. Microsoft assesses the actors may be opportunistically compromising vulnerable servers. JetBrains has released an update and a mitigation.",
+    "summary": "Microsoft Threat Intelligence reports that two North Korean nation-state actors, Diamond Sleet and Onyx Sleet, have exploited the JetBrains TeamCity remote-code execution flaw CVE-2023-42793 since early October 2023. Diamond Sleet deployed ForestTiger and DLL search-order hijacking payloads, and Onyx Sleet created a new user account and deployed the HazyLoad proxy tool. Both actors dumped credentials from LSASS memory. Microsoft assesses the actors may be opportunistically compromising vulnerable servers. JetBrains has released an update and a mitigation.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
@@ -210,31 +210,31 @@
       "countries": [
         {
           "v": "North Korea",
-          "q": "Since early October 2023, Microsoft has observed two North Korean nation-state threat actors"
+          "q": "Onyx Sleet (PLUTONIUM) is a North Korean nation-state threat actor that primarily targets defense and IT"
         },
         {
           "v": "South Korea",
-          "q": "services organizations in South Korea, the United States, and India."
+          "q": "services organizations in South Korea, the United States, and India. Onyx Sleet employs a robust set of tools that"
         },
         {
           "v": "United States",
-          "q": "services organizations in South Korea, the United States, and India."
+          "q": "services organizations in South Korea, the United States, and India. Onyx Sleet employs a robust set of tools that"
         },
         {
           "v": "India",
-          "q": "services organizations in South Korea, the United States, and India."
+          "q": "services organizations in South Korea, the United States, and India. Onyx Sleet employs a robust set of tools that"
         }
       ],
       "dates": [
         {
           "v": "2023-10-18",
-          "q": "Published: 2023-10-18 · Archived: 2026-04-02 10:42:45 UTC",
-          "what": "Microsoft blog post on the TeamCity exploitation published"
+          "q": "Published: 2023-10-18",
+          "what": "Microsoft blog post published"
         },
         {
-          "v": "October 2023",
+          "v": "early October 2023",
           "q": "Since early October 2023, Microsoft has observed two North Korean nation-state threat actors",
-          "what": "Start of observed exploitation of CVE-2023-42793 by the two actors"
+          "what": "Exploitation of CVE-2023-42793 first observed"
         },
         {
           "v": "January 2021",
@@ -244,11 +244,11 @@
         {
           "v": "September 2022",
           "q": "weaponizing of open-source software in September 2022. In August 2023, Diamond Sleet conducted a software",
-          "what": "Diamond Sleet weaponized open-source software"
+          "what": "Microsoft reported Diamond Sleet weaponizing open-source software"
         },
         {
           "v": "August 2023",
-          "q": "In August 2023, Diamond Sleet conducted a software",
+          "q": "weaponizing of open-source software in September 2022. In August 2023, Diamond Sleet conducted a software",
           "what": "Diamond Sleet software supply chain compromise of a German software provider"
         }
       ],
@@ -268,10 +268,6 @@
         {
           "v": "HazyLoad",
           "q": "Microsoft Defender Antivirus detects this proxy tool as HazyLoad."
-        },
-        {
-          "v": "PowerShell",
-          "q": "Following the successful compromise of TeamCity servers, Diamond Sleet utilizes PowerShell to download two"
         }
       ],
       "techniques": [
@@ -280,24 +276,32 @@
           "q": "exploiting CVE-2023-42793, a remote-code execution vulnerability affecting multiple versions"
         },
         {
-          "v": "supply chain compromise",
-          "q": "supply chain compromise of a German software provider."
+          "v": "supply chain attacks",
+          "q": "supply chain attacks by infiltrating build environments. Given this, Microsoft assesses that this activity poses a"
+        },
+        {
+          "v": "PowerShell",
+          "q": "Diamond Sleet leverages PowerShell on compromised servers to download a malicious DLL from attacker"
         },
         {
           "v": "DLL search-order",
           "q": "Diamond Sleet attack path 2: Deploying payloads for use in DLL search-order"
         },
         {
-          "v": "dump credentials via the LSASS",
-          "q": "Microsoft also observed Diamond Sleet leveraging the ForestTiger backdoor to dump credentials via the LSASS"
-        },
-        {
           "v": "scheduled task",
           "q": "Microsoft observed Forest64.exe then creating a scheduled task named Windows TeamCity Settings User Interface"
         },
         {
+          "v": "Dumping credentials via the LSASS memory",
+          "q": "Dumping credentials via the LSASS memory"
+        },
+        {
           "v": "new user account",
           "q": "Following successful exploitation using the TeamCity exploit, Onyx Sleet creates a new user account on"
+        },
+        {
+          "v": "system discovery",
+          "q": "The threat actor also runs several system discovery commands on compromised systems, including:"
         },
         {
           "v": "remote desktop",
@@ -308,7 +312,7 @@
           "q": "Stopping the TeamCity service, likely in an attempt to prevent access by other threat actors"
         },
         {
-          "v": "retrieve credentials",
+          "v": "retrieve credentials and other data stored by browsers",
           "q": "Deploying tools to retrieve credentials and other data stored by browsers"
         }
       ],
@@ -330,19 +334,19 @@
       "name": "CVE-2023-42793"
     },
     "hedges": [
-      "Microsoft assesses the threat actors may be opportunistically compromising vulnerable servers.",
-      "The listed alerts can be triggered by unrelated threat activity.",
-      "The indicators of compromise are not exhaustive for this observed activity.",
-      "The krtbgt account is likely intended to impersonate the legitimate Windows KRBTGT account.",
-      "Stopping the TeamCity service is likely an attempt to prevent access by other threat actors."
+      "Microsoft assesses the threat actors may be opportunistically compromising vulnerable servers, based on the profile of the victim organizations.",
+      "Microsoft says the account name krtbgt is likely meant to impersonate the Windows KRBTGT account.",
+      "Microsoft says stopping the TeamCity service is likely meant to prevent access by other threat actors.",
+      "Microsoft says Defender for Endpoint alerts listed can be triggered by unrelated threat activity.",
+      "Microsoft says the indicators of compromise are not exhaustive for the observed activity."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T04:48:21Z",
-      "ok": false,
-      "note": "dates[3]: The text says Microsoft reported on the weaponizing of open-source software in September 2022. September 2022 is when Microsoft reported it, not neces",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T04:48:21Z",
+        "ok": false,
+        "note": "dates[3]: The text says Microsoft reported on the weaponizing of open-source software in September 2022. September 2022 is when Microsoft reported it, not neces",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,0 +1,110 @@
+{
+  "job": "sweep-r4",
+  "started_at": "2026-11-27T07:58:00Z",
+  "finished_at": "2026-11-27T08:10:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "ロリポップ 不正アクセス 516,564件",
+    "Metzgerei Kanton Bern Cyberangriff Kühlanlage SRF",
+    "GMOペパボ ロリポップ 不審なデータダウンロード"
+  ],
+  "pages_read": [
+    {
+      "url": "https://rocket-boys.co.jp/security-measures-lab/gmo_pepabo_lolipop_data_breach_516564_202611/",
+      "title": "GMO Pepabo Lolipop breach",
+      "used_in": "gmo-pepabo-lolipop-customer-data-breach-2026-11"
+    },
+    {
+      "url": "https://www.watson.ch/wirtschaft/digital/710558028-berner-metzgerei-oeffnet-nach-cyberangriff-wieder-bedrohung-haelt-an",
+      "title": "Berner Metzgerei",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://www.bluewin.ch/en/digital/now-in-switzerland-too-cyberattack-on-a-swiss-butcher-shop-li.3662996",
+      "title": "bluewin butcher",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://latele.ch/articles/congelateurs-d-une-boucherie-bernoise-victime-d-une-cyberattaque",
+      "title": "La Télé butcher",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://vulnerability.circl.lu/vuln/cve-2026-19443",
+      "title": "CVE-2026-19443",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://www.vulncheck.com/advisories/llama-cpp-b7118-before-b12604-integer-underflow-in-grammar-parser-parse-sequence",
+      "title": "llama.cpp advisory",
+      "used_in": "skipped"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137062",
+      "title": "BookStack CVE",
+      "used_in": "skipped"
+    }
+  ],
+  "added": [
+    "gmo-pepabo-lolipop-customer-data-breach-2026-11"
+  ],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "Köniz butcher Lüthi's cooling attack",
+      "url": "https://www.watson.ch/wirtschaft/digital/710558028-berner-metzgerei-oeffnet-nach-cyberangriff-wieder-bedrohung-haelt-an",
+      "reason": "older than map window (announced 5 Nov; watson 27 Nov only reports reopening on 18 Nov)"
+    },
+    {
+      "title": "CVE-2026-137536 ToolJet",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-137536",
+      "reason": "no exploitation or urgent notice read; NVD page would not load content"
+    },
+    {
+      "title": "CVE-2026-19443 CRI-O",
+      "url": "https://vulnerability.circl.lu/vuln/cve-2026-19443",
+      "reason": "Red Hat Moderate, feature off by default"
+    },
+    {
+      "title": "Nmap 7.992 CVEs",
+      "url": "",
+      "reason": "DoS loops, no exploitation; not opened"
+    },
+    {
+      "title": "CVE-2026-137057 llama.cpp",
+      "url": "https://www.vulncheck.com/advisories/llama-cpp-b7118-before-b12604-integer-underflow-in-grammar-parser-parse-sequence",
+      "reason": "DoS; PoC only seen on Sploitus aggregator"
+    },
+    {
+      "title": "CVE-2026-137062 BookStack",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137062",
+      "reason": "medium, no exploitation"
+    },
+    {
+      "title": "DB-GPT VulDB entries",
+      "url": "https://vuldb.com/vuln/444640",
+      "reason": "no vendor advisory or exploitation read; not opened"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "GMO Pepabo own notice",
+      "url": "",
+      "note": "Find GMO Pepabo's own Q&A to upgrade to primary/corroborated",
+      "priority": "medium"
+    },
+    {
+      "title": "llama.cpp CVE-2026-137057 public PoC",
+      "url": "https://sploitus.com/exploit?id=64CC7C05-E1D3-5B96-82F6-5E6287BB78F5",
+      "note": "Sploitus lists a Python PoC; original repo not read",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "dev.to ToolJet article (404)",
+    "nvd.nist.gov (no content)"
+  ],
+  "notes": "Swiss butcher story is the same wave as the Belgian/UK refrigeration events already on file but the attack itself predates the window.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

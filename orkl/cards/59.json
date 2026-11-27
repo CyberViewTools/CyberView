@@ -99,159 +99,188 @@
   },
   "59b4660c9819d21d97621fadcac9e93be556164c": {
     "sha1": "59b4660c9819d21d97621fadcac9e93be556164c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T06:55:49Z",
+    "read_at": "2026-11-27T07:21:02Z",
     "model": "haiku",
-    "summary": "Google Threat Intelligence Group and Mandiant report BRICKSTORM, a backdoor written in Go and used in intrusions into US organisations. They attribute the activity to UNC5221 and related suspected China-nexus clusters, which target legal services, SaaS providers, outsourcers and technology firms. The backdoors sit on network appliances and VMware vCenter/ESXi hosts that lack EDR, with SOCKS proxying and cloning of domain controllers. Average dwell time was 393 days. Mail is read through Microsoft 365 enterprise applications. The report offers an asset inventory, hunt steps and hardening…",
+    "summary": "Google Threat Intelligence Group and Mandiant report BRICKSTORM, a Go-based backdoor used in an espionage campaign against US legal, SaaS, BPO and technology organisations since March 2025. The activity is attributed to UNC5221 and closely related, suspected China-nexus clusters. The actor deploys the backdoor on network appliances that lack endpoint detection, targets VMware vCenter, clones sensitive virtual machines, and reads mailboxes through Microsoft Entra ID enterprise applications. Average dwell time was 393 days. The report gives hunting guidance and YARA rules.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "UNC5221",
-          "q": "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters that employ",
-          "by": "Google Threat Intelligence Group (GTIG), in this report"
+          "q": "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters",
+          "by": "Mandiant, Google Threat Intelligence Group (GTIG)"
         },
         {
           "v": "Silk Typhoon",
-          "q": "While UNC5221 has been used synonymously with the actor publicly reported as Silk Typhoon, GTIG does not",
-          "by": "Google Threat Intelligence Group (GTIG), in this report"
+          "q": "While UNC5221 has been used synonymously with the actor publicly reported as Silk Typhoon",
+          "by": "Google Threat Intelligence Group (GTIG)"
         }
       ],
       "sectors": [
         {
           "v": "legal services",
-          "q": "has responded to intrusions across a range of industry verticals, most notably legal services, Software as a Service"
+          "q": "most notably legal services, Software as a Service"
         },
         {
-          "v": "SaaS providers",
-          "q": "GTIG assesses with high confidence that the objective of BRICKSTORM targeting SaaS providers"
+          "v": "Software as a Service",
+          "q": "legal services, Software as a Service"
         },
         {
           "v": "Business Process Outsourcers (BPOs)",
-          "q": "providers, Business Process Outsourcers (BPOs), and Technology. The value of these targets extends"
+          "q": "Business Process Outsourcers (BPOs), and Technology"
         },
         {
-          "v": "technology companies",
-          "q": "The targeting of technology companies presents an"
+          "v": "Technology",
+          "q": "Business Process Outsourcers (BPOs), and Technology"
         }
       ],
       "countries": [
         {
           "v": "United States",
-          "q": "maintain persistent access to victim organizations in the United States."
+          "q": "maintain persistent access to victim organizations in the United States"
         },
         {
           "v": "China",
-          "q": "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters that employ"
+          "q": "suspected China-nexus threat clusters"
         }
       ],
       "dates": [
         {
           "v": "2025-09-24",
-          "q": "Published: 2025-09-24 · Archived: 2026-04-05 17:16:46 UTC",
-          "what": "Report published by Google Threat Intelligence Group and Mandiant"
+          "q": "Published: 2025-09-24",
+          "what": "Report published by Mandiant and Google Threat Intelligence Group"
         },
         {
           "v": "March 2025",
-          "q": "Since March 2025, Mandiant Consulting",
-          "what": "Mandiant began responding to intrusions linked to this activity"
+          "q": "Since March 2025, Mandiant Consulting has responded to intrusions",
+          "what": "Mandiant began responding to BRICKSTORM intrusions across several industry verticals"
         },
         {
           "v": "April 2025",
           "q": "As noted in our previous blog post from April 2025, Mandiant",
-          "what": "Earlier Mandiant post describing anti-forensics post-exploitation scripts"
+          "what": "Earlier Mandiant post described post-exploitation scripts with anti-forensics functions"
+        },
+        {
+          "v": "01:00 and 10:00 UTC",
+          "q": "primarily operated between the hours of 01:00 and 10:00 UTC",
+          "what": "Hours in which the actor mainly operated in VMware vCenter cloning activity"
         }
       ],
       "tools": [
         {
           "v": "BRICKSTORM",
-          "q": "The primary backdoor used by this actor is BRICKSTORM, as previously discussed by Mandiant and others."
+          "q": "is tracking BRICKSTORM malware activity"
         },
         {
           "v": "BRICKSTEAL",
-          "q": "The malicious filter, tracked by Mandiant as BRICKSTEAL, runs on HTTP requests to the vCenter web login"
+          "q": "filter, tracked by Mandiant as BRICKSTEAL, runs on HTTP requests"
         },
         {
           "v": "SLAYSTYLE",
-          "q": "The threat actor has also created a web shell tracked by Mandiant as SLAYSTYLE on vCenter servers."
+          "q": "The threat actor has also created a web shell tracked by Mandiant as SLAYSTYLE"
         },
         {
           "v": "BEEFLUSH",
-          "q": "SLAYSTYLE, tracked by MITRE as BEEFLUSH, is a JavaServer Pages (JSP) web shell that functions as a"
+          "q": "SLAYSTYLE, tracked by MITRE as BEEFLUSH, is a JavaServer"
         },
         {
           "v": "Garble",
           "q": "some samples are obfuscated using Garble and"
         },
         {
-          "v": "secret stealer",
-          "q": "consistent with the execution of a tool, such as secret stealer, to automatically extract and decrypt all credentials"
+          "v": "Delinea (formerly Thycotic) Secret Server",
+          "q": "system running Delinea (formerly Thycotic) Secret Server"
+        },
+        {
+          "v": "VMware vCenter",
+          "q": "VMware vCenter is an attractive target for threat actors"
+        },
+        {
+          "v": "Microsoft Entra ID",
+          "q": "made use of Microsoft Entra ID Enterprise Applications with"
         },
         {
           "v": "Cloudflare Workers",
-          "q": "Mandiant has identified samples using Cloudflare Workers and Heroku applications for C2, as well as"
+          "q": "identified samples using Cloudflare Workers and Heroku applications for C2"
         },
         {
           "v": "NordVPN",
-          "q": "Mandiant has found evidence of the threat actor using PIA, NordVPN, Surfshark, VPN Unlimited, and"
+          "q": "Mandiant has found evidence of the threat actor using PIA, NordVPN, Surfshark, VPN Unlimited, and PrivadoVPN"
         }
       ],
       "techniques": [
         {
-          "v": "exploitation of zero-day vulnerabilities targeting network appliances",
-          "q": "including the exploitation of zero-day vulnerabilities targeting network appliances."
+          "v": "zero-day vulnerabilities",
+          "q": "the exploitation of zero-day vulnerabilities targeting network appliances"
         },
         {
           "v": "backdoors on appliances",
-          "q": "backdoors on appliances that do not support traditional endpoint detection and response (EDR) tools. The actor"
-        },
-        {
-          "v": "SOCKS proxy",
-          "q": "they used the SOCKS proxy feature of"
-        },
-        {
-          "v": "clone Windows Server VMs",
-          "q": "the threat actor used their access to vCenter to clone Windows Server VMs for key systems such as Domain"
+          "q": "deploying backdoors on appliances that do not support traditional endpoint detection"
         },
         {
           "v": "legitimate credentials",
-          "q": "legitimate credentials to connect to the appliance, often with SSH."
+          "q": "the actor used legitimate credentials to connect to the appliance, often with SSH"
         },
         {
-          "v": "bulk email access",
-          "q": "Mandiant has observed this actor use common techniques to conduct bulk email access and exfiltration from"
+          "v": "valid credentials",
+          "q": "moved laterally to a vCenter server in the environment using valid credentials"
         },
         {
-          "v": "created a new local account",
-          "q": "Mandiant identified evidence the threat actor created a new local account to install BRICKSTORM and then"
+          "v": "malicious Java Servlet filter",
+          "q": "installed a malicious Java Servlet filter for the Apache Tomcat server"
         },
         {
-          "v": "enable the SSH service",
-          "q": "either the ESXi web-based UI or the vCenter Appliance Management Interface (VAMI) to enable the SSH service"
+          "v": "clone Windows Server VMs",
+          "q": "used their access to vCenter to clone Windows Server VMs"
         },
         {
-          "v": "“delay” timer",
-          "q": "a “delay” timer built-in that waited for a hard-coded date months in the future before beginning to beacon to the"
+          "v": "startup scripts",
+          "q": "modify legitimate startup scripts to launch BRICKSTORM"
         },
         {
-          "v": "compromised small office/home office",
-          "q": "a purpose-built obfuscation network built from compromised small office/home office"
+          "v": "web shell",
+          "q": "The threat actor has also created a web shell tracked by Mandiant as SLAYSTYLE"
+        },
+        {
+          "v": "Enterprise Applications",
+          "q": "made use of Microsoft Entra ID Enterprise Applications with"
+        },
+        {
+          "v": "SOCKS proxy",
+          "q": "they used the SOCKS proxy feature of BRICKSTORM to tunnel their workstation"
+        },
+        {
+          "v": "commercial VPN and proxy",
+          "q": "has used multiple commercial VPN and proxy"
+        },
+        {
+          "v": "compromised small office/home office routers",
+          "q": "a purpose-built obfuscation network built from compromised small office/home office routers"
+        },
+        {
+          "v": "DNS over HTTP",
+          "q": "BRICKSTORM can use DNS over HTTP (DoH)"
+        },
+        {
+          "v": "anti-forensics",
+          "q": "post-exploitation scripts that have included a wide range of anti-forensics functions"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "393 days",
-          "q": "environments for 393 days, on average. Mandiant strongly encourages organizations to reevaluate their threat"
+          "q": "environments for 393 days, on average"
         },
         {
-          "v": "at least two",
-          "q": "In at least two cases, the threat actor used their access to vCenter to clone Windows Server VMs"
+          "v": "two or more",
+          "q": "with two or more compromised appliances serving as backups"
         },
         {
-          "v": "01:00 and 10:00 UTC",
-          "q": "primarily operated between the hours of 01:00 and 10:00 UTC. Investigators should search vCenter"
+          "v": "at least two cases",
+          "q": "In at least two cases, the threat actor used their access to vCenter"
         }
       ]
     },
@@ -260,22 +289,21 @@
       "name": "BRICKSTORM"
     },
     "hedges": [
+      "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters.",
       "GTIG does not currently consider UNC5221 and Silk Typhoon to be the same cluster.",
-      "UNC5221 is attributed as part of suspected China-nexus threat clusters, not a confirmed single actor.",
-      "Mandiant could not find definitive evidence of vulnerability exploitation in the other edge appliance cases.",
-      "The initial intrusion vector could often not be determined because the artifacts had aged out of log retention.",
-      "Credentials used for lateral movement were likely captured by the malware running on the network appliances.",
-      "Mandiant has not observed a Windows variant of BRICKSTORM in any investigation.",
-      "Mandiant has no knowledge of how the routers in the obfuscation network are being compromised.",
-      "GTIG assesses with high confidence that the objective of targeting SaaS providers is access to downstream customer environments or their data."
+      "Mandiant could not find definitive evidence of vulnerability exploitation for several edge appliances early in the lifecycle.",
+      "Mandiant has no knowledge of how the obfuscation network's small office and home routers are being compromised.",
+      "GTIG assesses with high confidence that the objective of BRICKSTORM targeting SaaS providers is to gain access to downstream customer environments.",
+      "The objectives behind recent BRICKSTORM intrusions likely range from geopolitical espionage and IP theft to enabling exploit development.",
+      "Stolen credentials were likely captured by the malware running on the network appliances."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T07:09:03Z",
-      "ok": false,
-      "note": "hedges[1]: The text says only that the clusters are 'closely related, suspected China-nexus'. It never says UNC5221 is 'not a confirmed single actor', so that c",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T07:09:03Z",
+        "ok": false,
+        "note": "hedges[1]: The text says only that the clusters are 'closely related, suspected China-nexus'. It never says UNC5221 is 'not a confirmed single actor', so that c",
+        "by": "auditor"
+      }
+    ]
   }
 }

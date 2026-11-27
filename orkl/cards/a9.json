@@ -277,134 +277,31 @@
     "sha1": "a90ac4e3c02a1ea796f99068f59350546a1537eb",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T06:54:30Z",
+    "read_at": "2026-11-27T07:20:33Z",
     "model": "haiku",
-    "summary": "A report on a Magecart-style campaign that the report says ran for over 24 months across 100+ domains. Attackers hijacked e-commerce checkout pages and mimicked payment flows, notably Redsys in Spain, sending card data over WebSocket. The report says 17 WooCommerce sites were infected between February 2024 and April 2025. Victims are reported in at least 12 countries, concentrated in Spain, France and the United States, and banks bear the main impact. The same payload was also used to push an Android app. No threat actor is named.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
-      "sectors": [
-        {
-          "v": "retail e-commerce",
-          "q": "From an industry perspective, mostly retail e-commerce companies were targeted, although in some cases, non-"
-        },
-        {
-          "v": "banks",
-          "q": "the primary pressure here falls on banks, as cardholders faced financial exposure and their trust in"
-        }
-      ],
-      "countries": [
-        {
-          "v": "Spain",
-          "q": "Mimicry of RedSys, a payment system used in Spain, lies in the foundation of the attacks."
-        },
-        {
-          "v": "France",
-          "q": "of such incidents in Spain, France, and United States."
-        },
-        {
-          "v": "United States",
-          "q": "of such incidents in Spain, France, and United States."
-        },
-        {
-          "v": "United Kingdom",
-          "q": "countries, including the United Kingdom and Denmark."
-        },
-        {
-          "v": "Denmark",
-          "q": "countries, including the United Kingdom and Denmark."
-        }
-      ],
-      "dates": [
-        {
-          "v": "February 2024",
-          "q": "A total of 17 WooCommerce websites were infected between February 2024 and April 2025 and are likely",
-          "what": "start of the window in which 17 WooCommerce websites were infected"
-        },
-        {
-          "v": "April 2025",
-          "q": "A total of 17 WooCommerce websites were infected between February 2024 and April 2025 and are likely",
-          "what": "end of the window in which 17 WooCommerce websites were infected"
-        }
-      ],
-      "tools": [
-        {
-          "v": "loader",
-          "q": "The injected JavaScript contains only a minor loader that connects to external infrastructure, receives"
-        },
-        {
-          "v": "Android APK",
-          "q": "Additional Vector: Distribution of Android APK via the Same Inject"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "multi-step checkout hijacking",
-          "q": "threat actors applied multi-step checkout hijacking,"
-        },
-        {
-          "v": "payment page mimicry",
-          "q": "Payment page mimicry, including infrastructure-level impersonation of legitimate providers (notably"
-        },
-        {
-          "v": "WebSocket-based exfiltration of card data",
-          "q": "payment page mimicry, and WebSocket-based exfiltration of card data."
-        },
-        {
-          "v": "dynamically delivered payloads",
-          "q": "Multi-stage, dynamically delivered payloads allow attackers to adapt quickly and evade disruption."
-        },
-        {
-          "v": "fallback mechanism",
-          "q": "The loader uses the fallback mechanism: it iterates through backup"
-        },
-        {
-          "v": "anti-tampering",
-          "q": "Anti-tampering: code integrity is verified via function serialization,"
-        },
-        {
-          "v": "payment step substitution",
-          "q": "Payment step substitution"
-        }
-      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "100+",
-          "q": "A large-scale magecart operation remained active for over 24 months, leveraging an infrastructure of 100+"
-        },
-        {
-          "v": "over 24 months",
-          "q": "A large-scale magecart operation remained active for over 24 months, leveraging an infrastructure of 100+"
-        },
-        {
-          "v": "17 WooCommerce websites",
-          "q": "A total of 17 WooCommerce websites were infected between February 2024 and April 2025 and are likely"
-        },
-        {
-          "v": "at least 12",
-          "q": "Among the victims are organizations from at least 12"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "Global Magecart Campaign"
-    },
-    "hedges": [
-      "Some cases are confirmed directly via telemetry and network traffic, while others are identified via infrastructural correlation.",
-      "The 17 WooCommerce websites are described as likely linked to this campaign.",
-      "Case 2 is described as possibly due to redirection to a legitimate external payment flow.",
-      "The report says different front-end disguises do not necessarily indicate different campaigns.",
-      "The report says the registration of disguised infrastructure complicates attribution."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T07:09:10Z",
-      "ok": false,
-      "note": "summary: States that 17 WooCommerce sites were infected between February 2024 and April 2025 without the report's hedge. The text says they are only 'likely lin",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T07:09:10Z",
+        "ok": false,
+        "note": "summary: States that 17 WooCommerce sites were infected between February 2024 and April 2025 without the report's hedge. The text says they are only 'likely lin",
+        "by": "auditor"
+      }
+    ]
   }
 }

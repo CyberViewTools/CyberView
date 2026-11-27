@@ -40,7 +40,7 @@ test("libraryApiConfig and the shipped config: $75 a month, switched on", () => 
   assert.equal(libraryApiConfig({ api: { monthly_usd_cap: 0 } }).monthly_usd_cap, 0);
   const lib = JSON.parse(readFileSync(new URL("../../config/pipeline.json", import.meta.url), "utf8")).library;
   const nov = Date.parse("2026-11-27T22:00:00Z"), dec = Date.parse("2026-12-01T00:00:00Z");
-  assert.deepEqual(libraryApiConfig(lib, nov), { enabled: true, monthly_usd_cap: 88 }, "owner, 2026-11-27: $15 more for November (88 leaves room for calls in flight)");
+  assert.deepEqual(libraryApiConfig(lib, nov), { enabled: true, monthly_usd_cap: 0 }, "parked for the rest of November (2026-11-27) until the reader and the pause gate are fixed");
   assert.deepEqual(libraryApiConfig(lib, dec), { enabled: true, monthly_usd_cap: 75 }, "December is back on the monthly $75");
   assert.equal(lib.backfill, true);
 });

@@ -95,11 +95,11 @@
   },
   "da594d7b428d58b16edbf9012f948daed3c24cb8": {
     "sha1": "da594d7b428d58b16edbf9012f948daed3c24cb8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:03:05Z",
+    "read_at": "2026-11-27T11:36:07Z",
     "model": "haiku",
-    "summary": "CrowdStrike Intelligence report on CARBON SPIDER (also called FIN7). In 2020 the group moved from point-of-sale malware campaigns to broad ransomware operations, first using REvil ransomware, then its own Darkside ransomware. In November 2020 it launched a Darkside ransomware-as-a-service affiliate program. The report covers phishing delivery of Domenus, Harpy and JSS Loader tooling, Cobalt Strike use, credential harvesting and lateral movement tools, and data exfiltration before encryption. It is part one of a two-part series.",
+    "summary": "CrowdStrike Intelligence describes CARBON SPIDER, also called FIN7 and active since 2013, moving in 2020 from point-of-sale data theft to broad ransomware operations. It reports the group used REvil and its own Darkside ransomware, and launched a Darkside affiliate program in November 2020. Several links to REvil and Darkside are moderate-confidence assessments. This is part one of a two-part series; part two covers the aftermath of the Colonial Pipeline attack.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
@@ -111,51 +111,55 @@
         {
           "v": "FIN7",
           "q": "CARBON SPIDER, commonly referred to as FIN7 and active since 2013, is one of the oldest",
-          "by": "CrowdStrike Intelligence"
+          "by": "CrowdStrike Intelligence (the report)"
         },
         {
           "v": "PINCHY SPIDER",
-          "q": "operations using PINCHY SPIDER’s REvil ransomware.",
-          "by": "CrowdStrike Intelligence"
-        },
-        {
-          "v": "CARBON SPIDER",
-          "q": "CrowdStrike Intelligence assesses with moderate confidence that CARBON SPIDER was responsible for certain REvil campaigns,",
-          "by": "CrowdStrike Intelligence"
+          "q": "game hunting (BGH) operations using PINCHY SPIDER’s REvil ransomware.",
+          "by": "CrowdStrike Intelligence (the report)"
         },
         {
           "v": "INDRIK SPIDER",
           "q": "banking trojans (e.g., INDRIK SPIDER) or POS compromises (e.g., GRACEFUL SPIDER)",
-          "by": "the report itself"
+          "by": "CrowdStrike Intelligence (the report)"
         },
         {
           "v": "GRACEFUL SPIDER",
           "q": "banking trojans (e.g., INDRIK SPIDER) or POS compromises (e.g., GRACEFUL SPIDER)",
-          "by": "the report itself"
+          "by": "CrowdStrike Intelligence (the report)"
         }
       ],
       "sectors": [
         {
           "v": "hospitality",
-          "q": "primarily in the hospitality sector."
+          "q": "low-volume campaigns targeting company POS devices, primarily in the hospitality sector."
+        },
+        {
+          "v": "all sectors",
+          "q": "infect very many victims across all sectors."
         }
       ],
-      "countries": [],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "the U.S.-based delivery company UPS (Figures 1 and 2)."
+        }
+      ],
       "dates": [
         {
           "v": "2013",
           "q": "CARBON SPIDER, commonly referred to as FIN7 and active since 2013, is one of the oldest",
-          "what": "group active since 2013"
+          "what": "Group described as active since 2013"
         },
         {
           "v": "April 2020",
           "q": "In April 2020, CARBON SPIDER abruptly shifted from narrow campaigns focused entirely on",
-          "what": "shifted from narrow POS campaigns to broad operations across all sectors"
+          "what": "Shift from narrow campaigns to broad, indiscriminate operations"
         },
         {
           "v": "April 14",
           "q": "The first of these occurred on April 14,",
-          "what": "likely compromised a legitimate email distribution service for a broad spam campaign"
+          "what": "Broad spam campaign likely run via a compromised legitimate email distribution service"
         },
         {
           "v": "April 28, 2020",
@@ -165,58 +169,71 @@
         {
           "v": "July 1, 2020",
           "q": "On July 1, 2020, CARBON SPIDER sent a phishing email with the subject “Notification:",
-          "what": "phishing email impersonating a UPS delivery notification"
-        },
-        {
-          "v": "August 2020",
-          "q": "CARBON SPIDER deepened their commitment to BGH in August 2020 by using their own",
-          "what": "began using its own Darkside ransomware"
+          "what": "Phishing email impersonating a UPS notification"
         },
         {
           "v": "Aug. 9, 2020",
           "q": "On Aug. 9, 2020, CARBON SPIDER attempted to run the Darkside ransomware with the",
-          "what": "attempted to run Darkside ransomware under a filename that may masquerade as a Windows executable"
+          "what": "Attempt to run Darkside ransomware"
+        },
+        {
+          "v": "August 2020",
+          "q": "CARBON SPIDER deepened their commitment to BGH in August 2020 by using their own",
+          "what": "Began using its own Darkside ransomware"
         },
         {
           "v": "November 2020",
           "q": "In November 2020, the adversary took another step into the world of",
-          "what": "established a ransomware-as-a-service affiliate program for Darkside"
+          "what": "Established a ransomware-as-a-service affiliate program for Darkside"
         },
         {
           "v": "Nov. 10, 2020",
           "q": "On Nov. 10, 2020, CARBON SPIDER announced the establishment of the Darkside RaaS",
-          "what": "announced the Darkside RaaS affiliate program on Russian-language forums"
+          "what": "Announced the Darkside affiliate program on Russian-language forums"
+        },
+        {
+          "v": "Nov. 11, 2020",
+          "q": "On Nov. 11, 2020, CARBON SPIDER added a new message to their DLS concerning the new affiliate program.",
+          "what": "Added a message about the affiliate program to the leak site"
         },
         {
           "v": "Oct. 10, 2020",
           "q": "The Oct. 10, 2020 press release indicating Darkside is operated by a single group",
-          "what": "press release indicating Darkside is operated by a single group"
+          "what": "Press release stating Darkside is operated by a single group"
         }
       ],
       "tools": [
         {
-          "v": "REvil",
-          "q": "operations using PINCHY SPIDER’s REvil ransomware."
+          "v": "Darkside",
+          "q": "ransomware, Darkside."
         },
         {
-          "v": "Darkside",
-          "q": "On Aug. 9, 2020, CARBON SPIDER attempted to run the Darkside ransomware with the"
+          "v": "REvil",
+          "q": "game hunting (BGH) operations using PINCHY SPIDER’s REvil ransomware."
         },
         {
           "v": "Sekur (Carbanak) RAT",
-          "q": "including the Sekur (Carbanak) RAT, VB"
+          "q": "These campaigns featured a variety of malware, including the Sekur (Carbanak) RAT, VB"
         },
         {
           "v": "Harpy",
-          "q": "using phishing attachments and links to deliver Harpy, Leo VBS, JSS Loader, Domenus VBS and"
+          "q": "Flash, Bateleur and Harpy (GRIFFON). Using POS malware, including PILLOWMINT, the"
         },
         {
-          "v": "Leo VBS",
-          "q": "using phishing attachments and links to deliver Harpy, Leo VBS, JSS Loader, Domenus VBS and"
+          "v": "Bateleur",
+          "q": "Flash, Bateleur and Harpy (GRIFFON). Using POS malware, including PILLOWMINT, the"
+        },
+        {
+          "v": "PILLOWMINT",
+          "q": "Using POS malware, including PILLOWMINT, the"
         },
         {
           "v": "JSS Loader",
-          "q": "using phishing attachments and links to deliver Harpy, Leo VBS, JSS Loader, Domenus VBS and"
+          "q": "JSS Loader, which has both .NET and C++"
+        },
+        {
+          "v": "Leo VBS",
+          "q": "The Leo VBS performs an HTTP GET request to"
         },
         {
           "v": "Domenus VBS",
@@ -224,7 +241,7 @@
         },
         {
           "v": "KillACK",
-          "q": "CARBON SPIDER also used the KillACK PS backdoor, executing the"
+          "q": "KillACK sends host information to a C2"
         },
         {
           "v": "Cobalt Strike",
@@ -232,11 +249,11 @@
         },
         {
           "v": "Plink",
-          "q": "Plink tunneling tool in many of these campaigns."
+          "q": "framework and Plink tunneling tool in many of these campaigns."
         },
         {
           "v": "ADFind",
-          "q": "profiled the Active Directory environment using the utility ADFind."
+          "q": "Sekur stager and profiled the Active Directory environment using the utility ADFind."
         },
         {
           "v": "CrackMapExec",
@@ -255,54 +272,66 @@
           "q": "CrackMapExec, Kerberoasting, Mimikatz, PowerSploit and SessionGopher."
         },
         {
+          "v": "MEGASync",
+          "q": "For exfiltration, CARBON SPIDER primarily leveraged the MEGASync client"
+        },
+        {
           "v": "GoToAssist",
           "q": "Occasionally, CARBON SPIDER has deployed the legitimate GoToAssist or TightVNC tools to provide"
         },
         {
           "v": "TightVNC",
           "q": "Occasionally, CARBON SPIDER has deployed the legitimate GoToAssist or TightVNC tools to provide"
-        },
-        {
-          "v": "MEGASync",
-          "q": "CARBON SPIDER primarily leveraged the MEGASync client"
-        },
-        {
-          "v": "PILLOWMINT",
-          "q": "Using POS malware, including PILLOWMINT, the"
         }
       ],
       "techniques": [
         {
-          "v": "phishing",
-          "q": "using phishing attachments and links to deliver Harpy, Leo VBS, JSS Loader, Domenus VBS and"
+          "v": "phishing attachments and links",
+          "q": "phishing attachments and links to deliver Harpy, Leo VBS, JSS Loader, Domenus VBS and"
         },
         {
           "v": "spear-phishing",
           "q": "that used a spear-phishing email containing a Google Docs link."
         },
         {
+          "v": "compromised SharePoint services",
+          "q": "compromised WordPress installations, compromised SharePoint services,"
+        },
+        {
+          "v": "legitimate email distribution service",
+          "q": "2020, when the adversary likely compromised a legitimate email distribution service to"
+        },
+        {
+          "v": "impersonate a UPS notification",
+          "q": "The message body attempts to impersonate a UPS notification, but contains several grammar errors and non-idiomatic"
+        },
+        {
+          "v": "harvest valid administrative credentials",
+          "q": "access, the adversary consistently seeks to harvest valid administrative credentials to enable"
+        },
+        {
           "v": "Kerberoasting",
           "q": "CrackMapExec, Kerberoasting, Mimikatz, PowerSploit and SessionGopher."
         },
         {
-          "v": "moves laterally",
-          "q": "Using valid credentials, CARBON SPIDER moves laterally through victim environments"
+          "v": "RDP",
+          "q": "using RDP and occasionally SSH."
+        },
+        {
+          "v": "hypervisor jackpotting",
+          "q": "frequently conducted hypervisor jackpotting by encrypting ESXi servers using a version of"
+        },
+        {
+          "v": "exfiltrated data for publication on a dedicated leak site",
+          "q": "exfiltrated data for publication on a dedicated leak site (DLS)"
         },
         {
           "v": "masquerade",
           "q": "This filename may reflect an attempt to masquerade as the legitimate"
         },
         {
-          "v": "hypervisor jackpotting",
-          "q": "CARBON SPIDER frequently conducted hypervisor jackpotting by encrypting ESXi servers using a version of"
-        },
-        {
-          "v": "exfiltrated",
-          "q": "but also exfiltrated data for publication on a dedicated leak site (DLS)"
-        },
-        {
-          "v": "ransomware-as-a-service",
-          "q": "by establishing a ransomware-as-a-service (RaaS) affiliate program for Darkside,"
+          "v": "encrypted victim",
+          "q": "Similar to many other ransomware operators, CARBON SPIDER not only encrypted victim"
         }
       ],
       "cves": [
@@ -313,6 +342,10 @@
       ],
       "figures": [
         {
+          "v": "2015 and 2020",
+          "q": "Between 2015 and 2020, the adversary conducted"
+        },
+        {
           "v": "thousands of recipients",
           "q": "broad spam campaign targeting thousands of recipients across numerous"
         },
@@ -322,21 +355,27 @@
         }
       ]
     },
-    "subject": null,
+    "subject": {
+      "type": "campaign",
+      "name": "CARBON SPIDER"
+    },
     "hedges": [
-      "CrowdStrike Intelligence assesses with moderate confidence that CARBON SPIDER was responsible for certain REvil campaigns",
-      "CrowdStrike Intelligence assesses that Darkside ransomware campaigns prior to this announcement were likely conducted by CARBON SPIDER",
-      "This assessment carries moderate confidence, based on multiple separate Darkside incidents, low overall volume of Darkside campaigns, and related announcements",
-      "The report notes that a moderate-confidence judgment carries an increased probability of being incorrect until more information is available",
-      "A filename attempt may reflect an attempt to masquerade as a legitimate Windows executable"
+      "CrowdStrike Intelligence assesses with moderate confidence that CARBON SPIDER was responsible for certain REvil campaigns, likely stemming from JSS Loader or Domenus VBS/JS infections.",
+      "CrowdStrike Intelligence assesses that Darkside ransomware campaigns prior to this announcement were likely conducted by CARBON SPIDER.",
+      "This assessment carries moderate confidence, based on multiple separate Darkside incidents, low overall volume of Darkside campaigns, and the announcements described.",
+      "CrowdStrike Intelligence continued to observe some Darkside campaigns almost certainly conducted by CARBON SPIDER, in addition to campaigns operated by affiliates.",
+      "The adversary likely compromised a legitimate email distribution service to conduct a broad spam campaign.",
+      "The adversary likely exploited the ZeroLogon vulnerability (CVE-2020-1472) against a domain controller.",
+      "This filename may reflect an attempt to masquerade as the legitimate Windows executable with the same name.",
+      "The ZIP file was hosted on a likely compromised SharePoint account."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T11:24:33Z",
-      "ok": false,
-      "note": "summary: Two problems. (1) \"data exfiltration before encryption\": the text says CARBON SPIDER encrypted files with Darkside \"but also exfiltrated data\" and give",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T11:24:33Z",
+        "ok": false,
+        "note": "summary: Two problems. (1) \"data exfiltration before encryption\": the text says CARBON SPIDER encrypted files with Darkside \"but also exfiltrated data\" and give",
+        "by": "auditor"
+      }
+    ]
   }
 }

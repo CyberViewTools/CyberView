@@ -305,34 +305,46 @@
   },
   "e2b54bb7ea7cc5df374fc2d205488fd4391af8c3": {
     "sha1": "e2b54bb7ea7cc5df374fc2d205488fd4391af8c3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:03:48Z",
+    "read_at": "2026-11-27T11:35:34Z",
     "model": "haiku",
-    "summary": "News report on MoneyTaker, a cybercriminal group believed to be operating from Russian-speaking territories. Group-IB, a Russian security firm, first described it and named it after one of its hacking utilities. Group-IB says the group began in 2016 and hit at least 20 banks and financial companies, mainly targeting inter-bank money transfer and card processing systems. Reported tools include the MoneyTaker framework, ScanPOS, Citadel and Kronos. Group-IB could not find the initial infection vector.",
+    "summary": "Group-IB reported MoneyTaker, a criminal group believed to operate from Russian-speaking territories. It hit at least 20 banks and financial companies, mainly in the US, plus targets in the UK and Russia. Its first target was a Florida bank in May 2016. It attacked inter-banking transfer and card processing systems, stole internal documentation, and used tools including the MoneyTaker framework, ScanPOS, Citadel and Kronos. Group-IB could not find the initial infection vector. The data was passed to Europol and Interpol.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "MoneyTaker",
           "q": "Researchers named this new group MoneyTaker, based on the name attackers gave to one",
-          "by": "Group-IB, as reported by BleepingComputer"
+          "by": "Group-IB"
         }
       ],
       "sectors": [
         {
-          "v": "banks",
-          "q": "The attacks that hit banks have focused on infiltrating inter-banking money transfer and"
+          "v": "banks and financial companies",
+          "q": "hit at least 20 banks and financial companies and stolen millions of US dollars in the process."
         },
         {
           "v": "financial sector",
-          "q": "advanced criminal organizations that have hit the financial sector in the past, like the"
+          "q": "that have hit the financial sector in the past, like the"
+        },
+        {
+          "v": "ATM networks",
+          "q": "processing systems, from ATM networks, and even installed POS (Point-of-Sale) trojans"
+        },
+        {
+          "v": "law firm",
+          "q": "Russian banks, and one Russian law firm."
+        },
+        {
+          "v": "Latin America banks",
+          "q": "Now, experts believe Latin America banks and banks utilizing the SWIFT system are in"
         }
       ],
       "countries": [
         {
           "v": "Russian-speaking territories",
-          "q": "A cyber-criminal group believed to be operating out of Russian-speaking territories has hit"
+          "q": "believed to be operating out of Russian-speaking territories has hit"
         },
         {
           "v": "US",
@@ -341,6 +353,10 @@
         {
           "v": "UK",
           "q": "Since then, the group has hit 14 US banks, a US services provider, a UK company, 3"
+        },
+        {
+          "v": "Russian",
+          "q": "Russian banks, and one Russian law firm."
         }
       ],
       "dates": [
@@ -352,29 +368,34 @@
         {
           "v": "May 2016",
           "q": "first target —a Florida bank— in May 2016.",
-          "what": "First target, a Florida bank, was hit"
+          "what": "First target hit, a Florida bank"
+        },
+        {
+          "v": "December 12, 2017",
+          "q": "December 12, 2017",
+          "what": "Article published; Group-IB report made public the day before"
         }
       ],
       "tools": [
         {
           "v": "MoneyTaker malware framework",
-          "q": "According to Group-IB, the group used the MoneyTaker malware framework to hijack inter-"
+          "q": "used the MoneyTaker malware framework to hijack inter-"
         },
         {
           "v": "ScanPOS",
-          "q": "banking and card processing operations, the ScanPOS malware for POS systems, custom"
+          "q": "the ScanPOS malware for POS systems, custom"
+        },
+        {
+          "v": "screenshoting and keylogging tools",
+          "q": "custom screenshoting and keylogging tools and the Citadel"
         },
         {
           "v": "Citadel",
-          "q": "screenshoting and keylogging tools and the Citadel and Kronos banking trojans to move"
+          "q": "the Citadel and Kronos banking trojans to move"
         },
         {
           "v": "Kronos",
-          "q": "screenshoting and keylogging tools and the Citadel and Kronos banking trojans to move"
-        },
-        {
-          "v": "FedLink",
-          "q": "files on OceanSystems’ FedLink, a card processing system widely"
+          "q": "the Citadel and Kronos banking trojans to move"
         }
       ],
       "techniques": [
@@ -383,47 +404,55 @@
           "q": "Attackers used fileless malware, legitimate apps"
         },
         {
-          "v": "legitimate apps",
-          "q": "Attackers used fileless malware, legitimate apps"
+          "v": "use of common and legitimate apps",
+          "q": "Attackers used common and legitimate apps to carry out malicious operations"
         },
         {
-          "v": "spread laterally",
+          "v": "lateral spread inside networks",
           "q": "Attackers infiltrated one computer, then spread laterally, gathering any files and credentials"
         },
         {
-          "v": "stealing documentation files",
+          "v": "spoofed SSL certificates used to sign malware",
+          "q": "used SSL certificates generated in the name of big brands to"
+        },
+        {
+          "v": "overdraft technique with money mules for cashing out",
+          "q": "employed the overdraft technique for cashing stolen funds with the help of money mules."
+        },
+        {
+          "v": "removing entry points",
+          "q": "the hackers also took the time to delete their entry points"
+        },
+        {
+          "v": "command-and-control infrastructure that delivers malware only to targeted banks",
+          "q": "used a unique command-and-control server"
+        },
+        {
+          "v": "POS trojan installation",
+          "q": "processing systems, from ATM networks, and even installed POS (Point-of-Sale) trojans"
+        },
+        {
+          "v": "stealing internal documentation",
           "q": "Attackers studied bank networks by stealing documentation files"
-        },
-        {
-          "v": "SSL certificates in the name of big brands",
-          "q": "In addition, MoneyTaker also used SSL certificates generated in the name of big brands to"
-        },
-        {
-          "v": "overdraft technique",
-          "q": "overdraft technique for cashing stolen funds with the help of money mules."
-        },
-        {
-          "v": "deleted entry points",
-          "q": "Further, the hackers also took the time to delete their entry points, as Group-IB was not able"
-        },
-        {
-          "v": "command-and-control server infrastructure",
-          "q": "to find the initial infection vector, and used a unique command-and-control server"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "at least 20 banks and financial companies",
-          "q": "at least 20 banks and financial companies and stolen millions of US dollars in the process."
+          "v": "at least 20",
+          "q": "hit at least 20 banks and financial companies and stolen millions of US dollars in the process."
         },
         {
           "v": "millions of US dollars",
-          "q": "at least 20 banks and financial companies and stolen millions of US dollars in the process."
+          "q": "hit at least 20 banks and financial companies and stolen millions of US dollars in the process."
         },
         {
           "v": "14 US banks",
           "q": "Since then, the group has hit 14 US banks, a US services provider, a UK company, 3"
+        },
+        {
+          "v": "one Russian law firm",
+          "q": "Russian banks, and one Russian law firm."
         }
       ]
     },
@@ -432,20 +461,21 @@
       "name": "MoneyTaker"
     },
     "hedges": [
+      "Group-IB believes this is a new group, different from other advanced criminal organizations that have hit the financial sector.",
       "The group is believed to be operating out of Russian-speaking territories.",
-      "Group-IB believes this is a new group, different from other advanced criminal organizations.",
-      "Experts believe Latin America banks and SWIFT-using banks are in MoneyTaker's crosshairs.",
+      "Group-IB said the hackers' activity was very hard to investigate.",
       "Group-IB was not able to find the initial infection vector.",
-      "Evidence collected by Group-IB suggests the attackers searched for and stole documentation to prepare future attacks.",
-      "Group-IB suspects this will not be the last time we hear about MoneyTaker's operations."
+      "Evidence collected by Group-IB suggests attackers intentionally searched and stole internal documentation files.",
+      "Experts believe Latin America banks and banks using the SWIFT system are in MoneyTaker's crosshairs.",
+      "Group-IB investigators suspect this will not be the last time we hear about MoneyTaker's operations."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T11:24:41Z",
-      "ok": false,
-      "note": "facts.tools[4]: FedLink is OceanSystems' card processing system, which the attackers stole files about. The text does not describe it as a tool used by the grou",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T11:24:41Z",
+        "ok": false,
+        "note": "facts.tools[4]: FedLink is OceanSystems' card processing system, which the attackers stole files about. The text does not describe it as a tool used by the grou",
+        "by": "auditor"
+      }
+    ]
   }
 }

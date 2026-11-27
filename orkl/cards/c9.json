@@ -210,43 +210,38 @@
   },
   "c945838562918fd400a627b708e888d0b4c838d8": {
     "sha1": "c945838562918fd400a627b708e888d0b4c838d8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:04:12Z",
+    "read_at": "2026-11-27T11:36:11Z",
     "model": "haiku",
-    "summary": "CrowdStrike reports that two eCrime actors, SPRITE SPIDER (Defray777 ransomware) and CARBON SPIDER (Darkside ransomware), began deploying Linux versions of their ransomware in the second half of 2020, designed to encrypt VMware ESXi servers. The report calls this 'Hypervisor Jackpotting'. Both actors typically gain access with valid credentials to vCenter, then enable SSH for persistent access. The report expects more adversaries to target virtualization infrastructure in the medium term.",
+    "summary": "CrowdStrike's February 2021 report (part 1 of two) describes SPRITE SPIDER and CARBON SPIDER, which from the second half of 2020 deployed Linux versions of Defray777 and Darkside ransomware against VMware ESXi hosts. The report calls this Hypervisor Jackpotting: encrypting a few hosts multiplies the affected virtual machines and pressures victims to pay. Access came through valid vCenter credentials. The report suggests that if these attacks keep succeeding, more adversaries are likely to target virtualization infrastructure.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "SPRITE SPIDER",
           "q": "SPRITE SPIDER is an eCrime actor that conducts low-volume BGH ransomware campaigns",
-          "by": "CrowdStrike"
+          "by": "CrowdStrike (the report)"
         },
         {
           "v": "CARBON SPIDER",
-          "q": "CARBON SPIDER has used a variety of backdoors and RATs to enable persistent access.",
-          "by": "CrowdStrike"
+          "q": "Since 2016, CARBON SPIDER has traditionally targeted companies operating POS devices,",
+          "by": "CrowdStrike (the report)"
         },
         {
           "v": "PINCHY SPIDER",
-          "q": "with PINCHY SPIDER, the REvil vendor.",
-          "by": "CrowdStrike"
-        },
-        {
-          "v": "LUNAR SPIDER",
-          "q": "using LUNAR SPIDER’s BokBot trojan.",
-          "by": "CrowdStrike"
+          "q": "from ransomware-as-a-service (RaaS) vendor PINCHY SPIDER.",
+          "by": "CrowdStrike (the report)"
         }
       ],
       "sectors": [
         {
-          "v": "all sectors",
-          "q": "remained the primary eCrime threat to organizations across all sectors in 2020."
+          "v": "companies operating POS devices",
+          "q": "Since 2016, CARBON SPIDER has traditionally targeted companies operating POS devices,"
         },
         {
-          "v": "companies operating POS devices",
-          "q": "CARBON SPIDER has traditionally targeted companies operating POS devices,"
+          "v": "almost all sectors",
+          "q": "operations attempting to infect large numbers of victims across almost all sectors."
         }
       ],
       "countries": [],
@@ -254,61 +249,56 @@
         {
           "v": "February 26, 2021",
           "q": "Eric Loui - Sergei Frankoff February 26, 2021",
-          "what": "Report published"
+          "what": "Report published as part 1 of a two-part blog series."
         },
         {
-          "v": "second half of 2020",
-          "q": "However, in the second half of 2020, SPRITE SPIDER and CARBON SPIDER",
-          "what": "Began deploying Linux ransomware variants designed to affect ESXi"
-        },
-        {
-          "v": "Since 2016",
+          "v": "2016",
           "q": "Since 2016, CARBON SPIDER has traditionally targeted companies operating POS devices,",
-          "what": "CARBON SPIDER traditionally targeted companies operating POS devices"
+          "what": "CARBON SPIDER began traditionally targeting companies operating POS devices."
         },
         {
           "v": "April 2020",
           "q": "In April 2020, the adversary abruptly shifted its operational model away from narrow",
-          "what": "CARBON SPIDER shifted to broad, opportunistic campaigns across almost all sectors"
+          "what": "CARBON SPIDER shifted to broad operations aimed at delivering REvil ransomware."
         },
         {
           "v": "July 2020",
           "q": "In July 2020, SPRITE SPIDER began using a Linux version of its Defray777 ransomware.",
-          "what": "SPRITE SPIDER began using a Linux version of Defray777"
+          "what": "SPRITE SPIDER began using a Linux version of Defray777."
         },
         {
           "v": "August 2020",
           "q": "In August 2020, the adversary began deploying Darkside, likely in",
-          "what": "CARBON SPIDER began deploying Darkside"
+          "what": "CARBON SPIDER began deploying its own Darkside ransomware."
         },
         {
           "v": "August 2020",
           "q": "In August 2020, CARBON SPIDER also began using a Linux variant of Darkside configured",
-          "what": "CARBON SPIDER began using a Linux variant of Darkside configured for ESXi hosts"
+          "what": "CARBON SPIDER began using a Linux variant of Darkside configured to affect ESXi hosts."
         },
         {
           "v": "November 2020",
           "q": "In November 2020, SPRITE SPIDER launched",
-          "what": "SPRITE SPIDER launched a dedicated leak site"
+          "what": "SPRITE SPIDER launched a dedicated leak site."
         },
         {
           "v": "November 2020",
           "q": "In November 2020, the adversary took another step into the world of BGH by establishing a",
-          "what": "CARBON SPIDER established a RaaS affiliate program for Darkside"
+          "what": "CARBON SPIDER set up a RaaS affiliate program for Darkside."
         }
       ],
       "tools": [
         {
           "v": "Defray777",
-          "q": "Defray777 ransomware (aka Defray, Defray 2018, Target777, RansomX, RansomEXX), and"
+          "q": "In July 2020, SPRITE SPIDER began using a Linux version of its Defray777 ransomware."
         },
         {
           "v": "Darkside",
-          "q": "and that was responsible for introducing the Darkside ransomware."
+          "q": "In August 2020, the adversary began deploying Darkside, likely in"
         },
         {
           "v": "REvil",
-          "q": "to deliver the REvil ransomware, which CARBON SPIDER obtained"
+          "q": "The goal of these campaigns was to deliver the REvil ransomware, which CARBON SPIDER obtained"
         },
         {
           "v": "Vatet",
@@ -316,23 +306,11 @@
         },
         {
           "v": "PyXie",
-          "q": "loader and the PyXie remote access tool (RAT)."
+          "q": "SPRITE SPIDER uses both PyXie and Cobalt Strike to move laterally within a"
         },
         {
           "v": "Cobalt Strike",
           "q": "SPRITE SPIDER uses both PyXie and Cobalt Strike to move laterally within a"
-        },
-        {
-          "v": "Mimikatz",
-          "q": "Mimikatz to steal credentials from host memory."
-        },
-        {
-          "v": "LaZagne",
-          "q": "LaZagne module to recover vCenter credentials stored in web browsers, and also runs"
-        },
-        {
-          "v": "BokBot",
-          "q": "using LUNAR SPIDER’s BokBot trojan."
         },
         {
           "v": "Sekur",
@@ -340,72 +318,84 @@
         },
         {
           "v": "Harpy",
-          "q": "the Harpy (aka Griffon) backdoor, which has been used"
+          "q": "which has been used since 2016, and the Harpy (aka Griffon) backdoor, which has been used"
         },
         {
           "v": "PowerSploit",
-          "q": "open-source post-exploitation tools like PowerSploit."
+          "q": "movement, as well as open-source post-exploitation tools like PowerSploit."
+        },
+        {
+          "v": "LaZagne",
+          "q": "SPRITE SPIDER uses PyXie’s LaZagne module to recover vCenter credentials stored in web browsers, and also runs"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Mimikatz to steal credentials from host memory."
         },
         {
           "v": "Plink",
-          "q": "has also logged in over SSH using the Plink utility"
+          "q": "legitimate credentials, but has also logged in over SSH using the Plink utility"
+        },
+        {
+          "v": "VMware Tools",
+          "q": "CARBON SPIDER has used built-in VMware Tools scripts to shut down guest"
+        },
+        {
+          "v": "VMware Fault Domain Manager (FDM)",
+          "q": "VMware Fault Domain Manager (FDM) using a bash script named"
         }
       ],
       "techniques": [
-        {
-          "v": "exploiting vulnerable Citrix Application Delivery Controllers",
-          "q": "by exploiting vulnerable Citrix Application Delivery Controllers, as well as by using LUNAR"
-        },
         {
           "v": "valid credentials",
           "q": "valid credentials. The adversary has typically accessed these systems via the vCenter web"
         },
         {
-          "v": "credentials stored in web browsers",
-          "q": "LaZagne module to recover vCenter credentials stored in web browsers, and also runs"
+          "v": "recover vCenter credentials",
+          "q": "SPRITE SPIDER uses PyXie’s LaZagne module to recover vCenter credentials stored in web browsers, and also runs"
+        },
+        {
+          "v": "exploiting vulnerable Citrix Application Delivery Controllers",
+          "q": "by exploiting vulnerable Citrix Application Delivery Controllers, as well as by using LUNAR"
         },
         {
           "v": "compromise domain controllers",
-          "q": "Like other BGH actors, SPRITE SPIDER first attempts to compromise domain controllers"
+          "q": "Like other BGH actors, SPRITE SPIDER first attempts to compromise domain controllers (DCs)."
         },
         {
-          "v": "Leaking stolen data",
-          "q": "Leaking stolen data in an effort to pressure victims into paying is part of a broader trend"
-        },
-        {
-          "v": "terminates running VMs",
-          "q": "Before executing Defray777, SPRITE SPIDER terminates running VMs in order to allow the"
-        },
-        {
-          "v": "built-in VMware Tools scripts",
-          "q": "CARBON SPIDER has used built-in VMware Tools scripts to shut down guest"
+          "v": "stages payloads",
+          "q": "To avoid detection, SPRITE SPIDER often stages payloads on"
         },
         {
           "v": "in-memory-only deployments",
-          "q": "uses in-memory-only deployments of its later-"
+          "q": "victim network and uses in-memory-only deployments of its later-"
         },
         {
-          "v": "masquerade as a legitimate tool",
-          "q": "using a filename attempting to masquerade as a legitimate tool"
+          "v": "phishing",
+          "q": "with initial access being gained using low-volume phishing campaigns against this sector."
         },
         {
-          "v": "enables SSH to permit persistent access",
-          "q": "SPIDER enables SSH to permit persistent access to ESXi devices. In some cases, the"
+          "v": "leaking stolen data",
+          "q": "Leaking stolen data in an effort to pressure victims into paying is part of a broader trend"
         },
         {
-          "v": "dedicated leak site",
-          "q": "a dedicated leak site (DLS) on a Tor hidden service domain"
+          "v": "terminating running VMs",
+          "q": "Before executing Defray777, SPRITE SPIDER terminates running VMs in order to allow the"
         },
         {
-          "v": "RaaS affiliate program",
-          "q": "RaaS affiliate program for Darkside, allowing other actors to use the ransomware while"
+          "v": "enables SSH",
+          "q": "After authenticating to vCenter, SPRITE SPIDER enables SSH to permit persistent access to ESXi devices."
+        },
+        {
+          "v": "shut down guest",
+          "q": "CARBON SPIDER has used built-in VMware Tools scripts to shut down guest"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "50MB",
-          "q": "the encryption size was set to 50MB, which is"
+          "q": "In samples recovered by CrowdStrike Intelligence, the encryption size was set to 50MB, which is"
         },
         {
           "v": "4096-bit RSA",
@@ -415,21 +405,21 @@
     },
     "subject": null,
     "hedges": [
-      "It is likely CARBON SPIDER pivoted to BGH in response to the COVID-19 pandemic.",
       "This likely reflects the overwhelming dominance of the Windows operating system in businesses and large organizations.",
-      "SPRITE SPIDER was relatively late to adopt the data-leak tactic, possibly due to a desire to avoid attention.",
-      "CARBON SPIDER likely began deploying Darkside to avoid sharing profits from BGH campaigns with PINCHY SPIDER.",
-      "It is likely that more adversaries will begin to target virtualization infrastructure in the medium term.",
-      "SPRITE SPIDER may delete the Defray777 binary after execution and may also uninstall VMware Fault Domain Manager.",
-      "The SHA256 hashes given are examples of the Linux variants only."
+      "It is likely CARBON SPIDER pivoted to BGH in response to the COVID-19 pandemic, which dramatically reduced in-person retail sales and hospitality business.",
+      "Compared to other BGH actors, SPRITE SPIDER was relatively late to adopt this tactic, possibly due to a desire to avoid attention.",
+      "In August 2020, the adversary began deploying Darkside, likely in order to avoid sharing profits from BGH campaigns with PINCHY SPIDER, the REvil vendor.",
+      "SPRITE SPIDER and CARBON SPIDER likely intend to impose greater harm on victims than could be achieved by their respective Windows ransomware families alone.",
+      "If these ransomware attacks on ESXi servers continue to be successful, it is likely that more adversaries will begin to target virtualization infrastructure in the medium term.",
+      "SPRITE SPIDER may delete the Defray777 binary after execution."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T11:24:33Z",
-      "ok": false,
-      "note": "summary: It says both actors 'enable SSH for persistent access' after gaining vCenter access. The text says only SPRITE SPIDER enables SSH. For CARBON SPIDER it",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T11:24:33Z",
+        "ok": false,
+        "note": "summary: It says both actors 'enable SSH for persistent access' after gaining vCenter access. The text says only SPRITE SPIDER enables SSH. For CARBON SPIDER it",
+        "by": "auditor"
+      }
+    ]
   }
 }

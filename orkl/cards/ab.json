@@ -24,23 +24,28 @@
   },
   "ab329ec81cc6bbc20a38b69ae91c1327a390ecd5": {
     "sha1": "ab329ec81cc6bbc20a38b69ae91c1327a390ecd5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:08:45Z",
+    "read_at": "2026-11-27T11:37:23Z",
     "model": "haiku",
-    "summary": "Group-IB's September 2018 report on Silence, a Russian-speaking criminal group it calls a new threat to banks. Phishing emails carried exploit documents, CHM and LNK lures. The group used a modular Silence Trojan, ProxyBot backconnect tools, and Atmosphere malware to empty ATMs. Reported thefts ran from July 2016 to April 2018, including over $100,000, over $550,000 and about $150,000. Main targets are in Russia, Ukraine, Belarus, Azerbaijan, Poland and Kazakhstan.",
+    "summary": "Group-IB's September 2018 report on Silence, a Russian-speaking criminal group that targets banks, mainly in Russia, Ukraine, Belarus, Azerbaijan, Poland and Kazakhstan. Silence used phishing emails with exploits, CHM and LNK files, its own Silence trojan and modular framework, the Atmosphere ATM malware, the Farse credential tool, and RAdmin and winexe for lateral movement. Reported thefts include over $100,000 from ATMs (October 2017), over $550,000 via a partner bank's ATMs (2018) and about $150,000 (April 2018). The group waits about three months between incidents. An exploit is linked…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Silence",
-          "q": "Silence members constantly analyze the experience of other criminal groups. They",
-          "by": "Group-IB (the report's authors)"
+          "q": "The new threat actor group was eventually named Silence.",
+          "by": "Group-IB (report)"
         },
         {
           "v": "APT28",
-          "q": "identifying that APT28 software tools were used by another group to steal money.",
-          "by": "Group-IB (the report's authors)"
+          "q": "The exploit is believed to be owned by the state-sponsored hacker group APT28.",
+          "by": "Group-IB (report)"
+        },
+        {
+          "v": "Russian speakers",
+          "q": "the members of Silence are Russian speakers",
+          "by": "Group-IB (report)"
         }
       ],
       "sectors": [
@@ -50,7 +55,7 @@
         },
         {
           "v": "financial sector",
-          "q": "focus efforts on targeted attacks on the financial sector such as"
+          "q": "targeted attacks on the financial sector such as"
         }
       ],
       "countries": [
@@ -77,6 +82,10 @@
         {
           "v": "Kazakhstan",
           "q": "Their main targets are located in Russia, Ukraine, Belarus, Azerbaijan, Poland, and Kazakhstan."
+        },
+        {
+          "v": "Netherlands",
+          "q": "The servers rented by the attackers to conduct phishing attacks are located in Russia and the Netherlands."
         }
       ],
       "dates": [
@@ -88,80 +97,119 @@
         {
           "v": "August 2016",
           "q": "August 2016 — Another attempt to attack the same bank.",
-          "what": "Second attack on the same bank; attacker spied on operator and was stopped"
+          "what": "Second attack on the same bank; the attacker was stopped with outside incident response help"
+        },
+        {
+          "v": "13.06.2016",
+          "q": "On 13.06.2016, the hackers used an administrator account and domain controller",
+          "what": "Attackers installed the winexesvc service on a domain controller during the AWS CBR intrusion"
         },
         {
           "v": "October 2017",
           "q": "October 2017 — The first successful theft by the group that we know about.",
-          "what": "First successful theft, via ATMs; over $100,000 stolen in one night"
+          "what": "First known successful theft: ATMs emptied of over $100,000 in one night"
+        },
+        {
+          "v": "August 18, 2017",
+          "q": "For example, on August 18, 2017, the Central Bank of Ukraine notified",
+          "what": "Central Bank of Ukraine warned financial institutions of an upcoming ransomware attack"
+        },
+        {
+          "v": "10.08.2017",
+          "q": "On 10.08.2017, the bank employee received an email to their corporate mailbox",
+          "what": "Phishing email with a Word attachment reached a bank employee; the Silence loader was launched"
+        },
+        {
+          "v": "11.08.2017",
+          "q": "On 11.08.2017, this workstation was used to scan a local network using Nmap.",
+          "what": "Local network scanned with Nmap from a compromised workstation"
+        },
+        {
+          "v": "October 13, 2017",
+          "q": "On October 13, 2017, the attackers used names of several Russian banks to send phishing emails.",
+          "what": "Phishing emails used the names of several Russian banks"
+        },
+        {
+          "v": "08.10.2017",
+          "q": "According to Radmin Server 3 logs, on 08.10.2017, one of the ATMs was remotely",
+          "what": "An ATM was accessed remotely and dispenser software was installed"
         },
         {
           "v": "February 2018",
           "q": "February 2018 — Successful attack using card processing.",
-          "what": "Successful card processing attack; cash taken from ATMs of a bank's counterpart"
+          "what": "Successful card processing attack; funds taken through a partner bank's ATMs"
         },
         {
           "v": "April 2018",
           "q": "April 2018 — In two months, the group returned to their proven method and",
-          "what": "Returned to ATM cash-out; about $150,000 siphoned in one night"
+          "what": "Funds withdrawn again through ATMs, about $150,000 in one night"
+        },
+        {
+          "v": "May 2018",
+          "q": "whose infrastructure was banned by Interpol in May 2018.",
+          "what": "MaxiDed hosting infrastructure, which Silence had rented servers from, was banned by Interpol"
         }
       ],
       "tools": [
         {
           "v": "Silence",
-          "q": "Silence, a framework which the group is named after;"
+          "q": "Silence is a framework for attacks on infrastructure."
         },
         {
           "v": "Atmosphere",
-          "q": "To control the ATM dispenser, Silence uses a unique software called Atmosphere."
+          "q": "Atmosphere pack, a unique set for attacking ATMs;"
         },
         {
           "v": "Farse",
-          "q": "Farse is a utility for getting passwords from an infected computer."
+          "q": "Farse, a utility for getting passwords from the infected computer;"
         },
         {
           "v": "Cleaner",
-          "q": "Cleaner is a tool for deleting logs of the remote connection."
+          "q": "Cleaner, a tool for deleting logs of the remote connection."
+        },
+        {
+          "v": "Smoke bot",
+          "q": "Smoke bot is a bot for conducting the first phase of infection."
         },
         {
           "v": "Kikothac",
-          "q": "The software is classified as Backdoor.Kikothac."
-        },
-        {
-          "v": "Smoke Bot",
-          "q": "Smoke Bot was put up for sale on underground forums in 2011."
-        },
-        {
-          "v": "Silence.Downloader",
-          "q": "The VB script, in turn, downloads the Silence.Downloader backdoor, saves it in"
-        },
-        {
-          "v": "ProxyBot",
-          "q": "In the beginning of 2018, we discovered the new version of the ProxyBot"
-        },
-        {
-          "v": "Meterpreter",
-          "q": "After it is established on the system, the Silence Trojan installs Meterpreter stager."
-        },
-        {
-          "v": "RAdmin",
-          "q": "RAdmin. It is software used by many administrators in banks to remotely control"
-        },
-        {
-          "v": "Mimikatz",
-          "q": "This file is a modified version of the well-known utility Mimikatz that extracts"
+          "q": "a third-party patched backdoor Kikothac without access to its source code."
         },
         {
           "v": "Perl IRC DDoS",
           "q": "Modified Perl IRC DDoS is a bot based on the Undernet DDoS bot for"
         },
         {
-          "v": "Nmap",
-          "q": "Hackers used NMAP to scan the corporate network."
+          "v": "Silence.Downloader",
+          "q": "Silence.Downloader loader;"
+        },
+        {
+          "v": "Silence.ProxyBot",
+          "q": "Silence.ProxyBot proxy."
+        },
+        {
+          "v": "Silence.SurveillanceModule",
+          "q": "Silence.SurveillanceModule, a module for spying on users;"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "the Silence Trojan installs Meterpreter stager."
+        },
+        {
+          "v": "RAdmin",
+          "q": "RAdmin. It is software used by many administrators in banks to remotely control"
         },
         {
           "v": "winexe",
-          "q": "uses winexe, which is a Linux utility for remote control of Windows-based"
+          "q": "the group uses winexe, which is a Linux utility for remote control of Windows-based"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Farse is just an add-on for Mimikatz, which, when launched, extracts"
+        },
+        {
+          "v": "NMAP",
+          "q": "Hackers used NMAP to scan the corporate network."
         }
       ],
       "techniques": [
@@ -170,46 +218,62 @@
           "q": "The infection vector used by Silence is typical: phishing emails with attachments"
         },
         {
-          "v": "decoy Microsoft Office Word documents",
-          "q": "The emails contained decoy Microsoft Office Word documents weaponized with"
+          "v": "decoy Word documents",
+          "q": "decoy Microsoft Office Word documents weaponized with"
         },
         {
           "v": "CHM file",
-          "q": "Later, there was a campaign with the CHM file. This is a file extension for compiling"
+          "q": "Later, there was a campaign with the CHM file."
         },
         {
-          "v": "LPE exploits",
-          "q": "To get the computer administrator privileges, LPE exploits are required."
+          "v": ".LNK shortcut",
+          "q": "The attachment contained an archive with a .LNK shortcut, generated in such way"
         },
         {
-          "v": "Thread Hijack",
-          "q": "the standard technique Thread Hijack"
+          "v": "byte patching",
+          "q": "we discovered the modification of the exploit at the level of assembler instructions or so-called byte patching"
         },
         {
-          "v": "proxy with backconnect",
-          "q": "Thus, any computer becomes a proxy with backconnect and intermediate node for"
+          "v": "winexe",
+          "q": "the group uses winexe, which is a Linux utility for remote control of Windows-based"
         },
         {
-          "v": "delete RAdmin logs",
-          "q": "To delete RAdmin logs, the group used self-developed software called Cleaner,"
+          "v": "Metasploit",
+          "q": "The group also uses all LPE exploits provided by the Metasploit framework."
         },
         {
-          "v": "jackpotting",
-          "q": "Atmosphere is a set of software for ‘jackpotting’ ATMs."
+          "v": "backconnect",
+          "q": "which allows proxying traffic with backconnect."
+        },
+        {
+          "v": "attacking ATMs",
+          "q": "Atmosphere pack, a unique set for attacking ATMs;"
+        },
+        {
+          "v": "card processing",
+          "q": "In 2018, hackers attacked via card processing."
+        },
+        {
+          "v": "Perl IRC bot",
+          "q": "DDoS attacks using the Perl IRC bot and public IRC chats to control Trojans."
+        },
+        {
+          "v": "supply-chain attacks",
+          "q": "but also supply-chain attacks."
         }
       ],
       "cves": [
         {
           "v": "CVE-2017-0199",
-          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities"
+          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities."
         },
         {
           "v": "CVE-2017-11882",
-          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities"
+          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities."
         },
         {
           "v": "CVE-2018-0802",
-          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities"
+          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities."
         },
         {
           "v": "CVE-2017-0262",
@@ -217,29 +281,25 @@
         },
         {
           "v": "CVE-2018-8174",
-          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities"
+          "q": "exploits for the CVE-2017-0199, CVE-2017-11882+CVE-2018-0802, CVE-2017-0262, and CVE-2018-8174 vulnerabilities."
         },
         {
           "v": "CVE-2017-0263",
-          "q": "exploited two Microsoft Word vulnerabilities, CVE-2017-0262 and CVE-2017-0263."
+          "q": "CVE-2017-0263 vulnerability"
         },
         {
           "v": "CVE-2008-4250",
-          "q": "The attackers found Windows-based nodes which were vulnerable to CVE-2008-4250."
-        },
-        {
-          "v": "CVE-2017-0143",
-          "q": "It was confirmed that they used standalone LPE exploits: CVE-2008-4250, CVE-2017-0143, and CVE-2017-0263."
+          "q": "vulnerable to CVE-2008-4250."
         }
       ],
       "figures": [
         {
           "v": "over $100,000",
-          "q": "stole over $100,000 in just one night."
+          "q": "This time, Silence attacked ATMs and stole over $100,000 in just one night."
         },
         {
           "v": "over $550,000",
-          "q": "They picked up over $550,000 via ATMs of the bank’s counterpart."
+          "q": "They successfully withdrew over $550,000 in one weekend through the ATMs of the bank’s partner."
         },
         {
           "v": "about $150,000",
@@ -250,12 +310,20 @@
           "q": "In less than a year, the amount of funds stolen by Silence has increased five times."
         },
         {
+          "v": "about three months",
+          "q": "wait for about three months between incidents"
+        },
+        {
           "v": "more than 25",
-          "q": "However, some phishing emails were sent to bank employees in more than 25"
+          "q": "phishing emails were sent to bank employees in more than 25"
         },
         {
           "v": "about 11 samples",
-          "q": "about 11 samples of Atmosphere software, compiled at different times with slight changes."
+          "q": "discovered about 11 samples of Atmosphere software, compiled at"
+        },
+        {
+          "v": "up to 10 types",
+          "q": "In total, we detected up to 10 types of programs with"
         }
       ]
     },
@@ -264,20 +332,20 @@
       "name": "Silence"
     },
     "hedges": [
-      "The report says the listed Silence components were discovered by its authors and there could be more.",
-      "The report says it presumably compromised an account using Mimikatz or a variant, though no signs of that operation were seen.",
-      "The report believes a central bank warning was the result of a phishing campaign by Silence.",
-      "The report says the APT28 exploit is believed to be owned by APT28 and its use by Silence is a belief, not a proven fact.",
-      "Group-IB experts believe the July 2016 failure was a machine error during payment processing, not a deliberate act.",
-      "The report says the full course of events could not be restored because the bank's IT team deleted most of the attacker's traces."
+      "We believe that the message was the result of a phishing campaign by Silence against the banks in Ukraine, Kazakhstan, and Russia.",
+      "The exploit is believed to be owned by the state-sponsored hacker group APT28.",
+      "Presumably, the account was compromised using Mimikatz program or its variant, although there were no signs of its operation.",
+      "Group-IB experts believe that the attackers experienced a machine error during processing of a payment batch in AWS CBR.",
+      "The bank's IT team deleted most of the attacker's traces, so Group-IB did not recover the full course of events.",
+      "The Silence components listed are those Group-IB discovered; there could be more."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T11:24:22Z",
-      "ok": false,
-      "note": "summary: It says thefts ran from July 2016 to April 2018. The July 2016 event was a failed attempt; the first successful theft the report knows of is October 20",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T11:24:22Z",
+        "ok": false,
+        "note": "summary: It says thefts ran from July 2016 to April 2018. The July 2016 event was a failed attempt; the first successful theft the report knows of is October 20",
+        "by": "auditor"
+      }
+    ]
   }
 }

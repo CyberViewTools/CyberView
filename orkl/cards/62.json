@@ -70,26 +70,209 @@
   },
   "62c2ad292705cf6714a93f82625fed4a5fa340f5": {
     "sha1": "62c2ad292705cf6714a93f82625fed4a5fa340f5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:26:29Z",
+    "read_at": "2026-11-27T11:34:55Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Mandiant (FireEye) analysis of the CARBANAK data-stealing backdoor, drawing on 220 samples. It describes the backdoor's monitoring threads, its 34 commands, its configuration file, and its two C2 protocols (pseudo-HTTP and a custom binary protocol) and how the binary protocol changed over time. The report attributes the activity to the FIN7 threat group and to a possibly loosely connected 'Carbanak Group'. It says FIN7 targeted U.S. restaurant and hospitality firms, and that the wider campaigns hit banks and financial institutions in the U.S., Middle East, Asia and Eastern Europe. It also…",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "In all Mandiant investigations to date where the CARBANAK backdoor has been discovered, the activity has been attributed to the FIN7 threat group.",
+          "by": "the report, citing Mandiant investigations"
+        },
+        {
+          "v": "Carbanak Group",
+          "q": "a corresponding “Carbanak Group”, who appears to be behind the malicious activity",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "restaurant and hospitality",
+          "q": "FIN7 has been extremely active against the U.S. restaurant and hospitality industries since mid-2015."
+        },
+        {
+          "v": "financial institutions",
+          "q": "especially directed at financial institutions across the globe, as well as the restaurant and hospitality sectors within the U.S."
+        },
+        {
+          "v": "banks",
+          "q": "Proofpoint initially reported on a widespread campaign targeting banks and financial organizations throughout the U.S. and Middle East in early 2016."
+        },
+        {
+          "v": "point-of-sale systems",
+          "q": "targeted Eastern European banks, U.S. and European point-of-sale systems and other entities"
+        }
+      ],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "FIN7 has been extremely active against the U.S. restaurant and hospitality industries since mid-2015."
+        },
+        {
+          "v": "Ukraine",
+          "q": "This activity was further linked to the 2014 exploitation of ATMs in Ukraine."
+        },
+        {
+          "v": "Eastern Europe",
+          "q": "targeting Russian and Eastern European banks using DRIFTPIN as the malicious payload"
+        },
+        {
+          "v": "Southeast Asia",
+          "q": "as well as in Southeast Asia and Southwest Asia being targeted by the same attackers."
+        },
+        {
+          "v": "Middle East",
+          "q": "targeting banks and financial organizations throughout the U.S. and Middle East in early 2016."
+        }
+      ],
+      "dates": [
+        {
+          "v": "Jun 12, 2017",
+          "q": "Jun 12, 2017",
+          "what": "Date the report was published"
+        },
+        {
+          "v": "December 2014",
+          "q": "In December 2014, Group-IB and Fox-IT released a report about an organized criminal group using malware called \"Anunak\"",
+          "what": "Group-IB and Fox-IT released a report on the group using the Anunak malware"
+        },
+        {
+          "v": "February 2015",
+          "q": "Kaspersky released a similar report about the same group under the name \"Carbanak\" in February 2015.",
+          "what": "Kaspersky released a report naming the group Carbanak"
+        },
+        {
+          "v": "2014",
+          "q": "This activity was further linked to the 2014 exploitation of ATMs in Ukraine.",
+          "what": "Exploitation of ATMs in Ukraine linked to earlier CARBANAK activity"
+        },
+        {
+          "v": "May 20, 2014",
+          "q": "on May 20, 2014, two builds were compiled approximately four hours apart",
+          "what": "Two builds compiled about four hours apart"
+        },
+        {
+          "v": "late 2015",
+          "q": "in late 2015, ESET reported on CARBANAK associated attacks",
+          "what": "ESET reported a spear phishing campaign against Russian and Eastern European banks using DRIFTPIN"
+        },
+        {
+          "v": "mid-2015",
+          "q": "FIN7 has been extremely active against the U.S. restaurant and hospitality industries since mid-2015.",
+          "what": "FIN7 activity against U.S. restaurant and hospitality firms began"
+        },
+        {
+          "v": "early 2016",
+          "q": "Proofpoint initially reported on a widespread campaign targeting banks and financial organizations throughout the U.S. and Middle East in early 2016.",
+          "what": "Proofpoint reported a widespread campaign targeting banks and financial organizations"
+        },
+        {
+          "v": "first half of 2016",
+          "q": "We have seen it deployed in initial spear phishing by FIN7 in the first half of 2016.",
+          "what": "DRIFTPIN deployed in initial spear phishing by FIN7"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CARBANAK",
+          "q": "CARBANAK is a full-featured backdoor with data-stealing capabilities and a plugin architecture."
+        },
+        {
+          "v": "DRIFTPIN",
+          "q": "DRIFTPIN (aka Spy.Agent.ORM, and Toshliph) has been previously associated with"
+        },
+        {
+          "v": "LAZIOK",
+          "q": "the infrastructure utilized in this campaign overlapped with LAZIOK, NETWIRE and other"
+        },
+        {
+          "v": "NETWIRE",
+          "q": "the infrastructure utilized in this campaign overlapped with LAZIOK, NETWIRE and other"
+        },
+        {
+          "v": "Power Admin PAExec",
+          "q": "the use of Power Admin PAExec for lateral movement."
+        },
+        {
+          "v": "Ammyy Admin",
+          "q": "Ammyy Admin tool"
+        },
+        {
+          "v": "Anunak",
+          "q": "the malware authors refer to the backdoor as Anunak."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "key logging",
+          "q": "Some of its capabilities include key logging, desktop video capture, VNC, HTTP form grabbing"
+        },
+        {
+          "v": "TCP tunneling",
+          "q": "TCP tunneling, HTTP proxy, OS destruction, POS and Outlook data theft and reverse shell."
+        },
+        {
+          "v": "spear phishing",
+          "q": "We have seen it deployed in initial spear phishing by FIN7 in the first half of 2016."
+        },
+        {
+          "v": "string encryption",
+          "q": "Most of CARBANAK’s strings are encrypted in order to make analysis more difficult."
+        },
+        {
+          "v": "code signing with purchased certificates",
+          "q": "FIN7 has consistently utilized legally purchased code signing certificates to sign their CARBANAK payloads."
+        },
+        {
+          "v": "lateral movement",
+          "q": "the use of Power Admin PAExec for lateral movement."
+        },
+        {
+          "v": "exploit kit",
+          "q": "deployed via the RIG exploit kit placed on two compromised Ukrainian banks’ websites."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "220 samples",
+          "q": "We have rounded up 220 samples of the CARBANAK backdoor"
+        },
+        {
+          "v": "57",
+          "q": "we have found 57 unique compile times in our sample set"
+        },
+        {
+          "v": "34",
+          "q": "this data-stealing backdoor supports 34"
+        },
+        {
+          "v": "four hours",
+          "q": "two builds were compiled approximately four hours apart"
+        },
+        {
+          "v": "150 bytes",
+          "q": "If a message is larger than 150 bytes, it is compressed with an unidentified algorithm."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "CARBANAK"
+    },
+    "hedges": [
+      "This may not be entirely accurate because our visibility is not complete",
+      "It is unclear how interconnected these campaigns are",
+      "The Carbanak Group appears to be behind the malicious activity associated with this backdoor",
+      "These changes were likely introduced to render existing network signatures ineffective",
+      "This may suggest multiple groups of operators compiling their own builds of this data-stealing backdoor",
+      "we believe that at least some of the operators of CARBANAK either have access to the source code directly",
+      "denote the likely existence of a build tool"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T10:57:22Z",

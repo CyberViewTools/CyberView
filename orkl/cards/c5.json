@@ -28,23 +28,18 @@
   },
   "c5d51aa7c50818c5981fb74368a3a8e63e18cf15": {
     "sha1": "c5d51aa7c50818c5981fb74368a3a8e63e18cf15",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:00:03Z",
+    "read_at": "2026-11-27T11:34:42Z",
     "model": "haiku",
-    "summary": "Forcepoint Security Labs reports that a trojanized RTF document tied to the Carbanak financially motivated criminal group ran VBScript malware that used Google Apps Script, Google Sheets and Google Forms for command-and-control, creating a unique spreadsheet per victim. The report says the Google channel was likely to succeed because such services are rarely blocked. It also mentions a Carbanak campaign called Digital Plagiarist that used weaponized office documents on mirrored hosts. Indicators list Cobalt Strike and Meterpreter DNS beacons.",
-    "kind": "malware-analysis",
+    "summary": "Forcepoint Security Labs reports that the Carbanak financially motivated criminal group used a trojanized RTF document with encoded VBScript. A new ggldr module uses Google Apps Script, Google Sheets and Google Forms for command-and-control, creating a unique spreadsheet per victim. Forcepoint says it notified Google and that its TRITON ACE customers are protected.",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Carbanak",
           "q": "Carbanak (also known as Anunak) are a group of financially motivated criminals first exposed in 2015.",
-          "by": "Forcepoint Security Labs (report author)"
-        },
-        {
-          "v": "Anunak",
-          "q": "Carbanak (also known as Anunak) are a group of financially motivated criminals first exposed in 2015.",
-          "by": "Forcepoint Security Labs (report author)"
+          "by": "Forcepoint Security Labs (the report's own attribution)"
         }
       ],
       "sectors": [
@@ -56,32 +51,24 @@
       "countries": [],
       "dates": [
         {
-          "v": "2015",
-          "q": "a group of financially motivated criminals first exposed in 2015",
-          "what": "Carbanak group first exposed"
-        },
-        {
           "v": "January 17, 2017",
           "q": "January 17, 2017",
-          "what": "Forcepoint X-Labs report published"
+          "what": "Report published"
+        },
+        {
+          "v": "2015",
+          "q": "Carbanak (also known as Anunak) are a group of financially motivated criminals first exposed in 2015.",
+          "what": "Group first exposed"
         }
       ],
       "tools": [
         {
+          "v": "ggldr",
+          "q": "however we also found the addition of a new \"ggldr\" script module."
+        },
+        {
           "v": "Google Apps Script",
           "q": "The \"ggldr\" script will send and receive commands to and from Google Apps Script, Google Sheets, and"
-        },
-        {
-          "v": "Google Sheets",
-          "q": "The \"ggldr\" script will send and receive commands to and from Google Apps Script, Google Sheets, and"
-        },
-        {
-          "v": "Google Forms",
-          "q": "The \"entry\" value is also a unique ID which is sent with each subsequent Google Forms C&C request."
-        },
-        {
-          "v": "VBScript",
-          "q": "The document contains an encoded Visual Basic Script (VBScript) typical of previous"
         },
         {
           "v": "Cobalt Strike",
@@ -94,36 +81,45 @@
       ],
       "techniques": [
         {
-          "v": "Abusing Google for C&C communication",
-          "q": "Abusing Google for C&C communication"
-        },
-        {
           "v": "weaponized office documents",
-          "q": "the group used weaponized office documents"
+          "q": "where the group used weaponized office documents"
         },
         {
-          "v": "double-clicking",
-          "q": "lured into double-clicking on the embedded OLE object which is disguised as an image:"
+          "v": "encoded Visual Basic Script",
+          "q": "The document contains an encoded Visual Basic Script (VBScript) typical of previous"
+        },
+        {
+          "v": "Google services",
+          "q": "Recent samples of the malware have now included the ability to use Google services for"
+        },
+        {
+          "v": "unique Google Sheets spreadsheet",
+          "q": "For each infected user a unique Google Sheets spreadsheet is dynamically created"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two requests",
+          "q": "The malware will then send two requests"
+        }
+      ]
     },
     "subject": {
       "type": "malware",
       "name": "Carbanak"
     },
     "hedges": [
-      "It is unlikely that these hosted Google services are blocked by default in an organization, so it is more likely that the attacker will establish a C&C channel successfully.",
-      "Using Google as an independent C&C channel is likely to be more successful than using newly created domains or domains with no reputation."
+      "Report judges that Google services are unlikely to be blocked by default, so the attacker more likely establishes a C&C channel successfully.",
+      "Report judges Google as a C&C channel likely more successful than newly created or low-reputation domains."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T11:24:22Z",
-      "ok": false,
-      "note": "summary: The report says it is 'unlikely that these hosted Google services are blocked by default in an organization'. The summary turns this into 'such service",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T11:24:22Z",
+        "ok": false,
+        "note": "summary: The report says it is 'unlikely that these hosted Google services are blocked by default in an organization'. The summary turns this into 'such service",
+        "by": "auditor"
+      }
+    ]
   }
 }

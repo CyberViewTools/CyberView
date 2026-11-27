@@ -1,26 +1,86 @@
 {
   "be200799a3bcb1b8e94f4cf1d8bea50bbeea41e8": {
     "sha1": "be200799a3bcb1b8e94f4cf1d8bea50bbeea41e8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:10:29Z",
+    "read_at": "2026-11-27T00:33:10Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Cofense Intelligence report, published 2018-06-28, on the Zeus Panda banking trojan, which it says targets Italian users. Infected browsers receive injected scripts when victims log into online bank accounts. The malware shows distraction screens, drains funds and hides the transactions. It also reaches accounts protected by two-factor authentication, including corporate accounts. The report says Zeus Panda rarely targets banks outside Italy.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Zeus Panda operators",
+          "q": "Zeus Panda operators possibly assume higher value account holders will be",
+          "by": "the report (Cofense Intelligence)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "online banking",
+          "q": "certain online banking websites"
+        },
+        {
+          "v": "corporate banking",
+          "q": "the corporate banking site"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Italy",
+          "q": "Zeus Panda itself may rarely target banks outside of Italy"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2018-06-28",
+          "q": "Published: 2018-06-28",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Zeus Panda",
+          "q": "Zeus Panda is the advanced banking trojan"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "webinjects",
+          "q": "“webinjects” (which are scripts injected into the website)"
+        },
+        {
+          "v": "distraction",
+          "q": "Figure 9: PIN number reset prompt used as a distraction"
+        },
+        {
+          "v": "transaction removal",
+          "q": "Figure 8: Webinject code used for transaction removal to hide from the user"
+        },
+        {
+          "v": "real-time attack",
+          "q": "to access accounts with 2FA in a real-time attack"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "17",
+          "q": "17 different verification questions"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "code",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Zeus Panda"
+    },
+    "hedges": [
+      "almost certainly due to the additional security of the one-time access provided by 2FA, which prevents the threat actors from gaining future access",
+      "Cofense Intelligence assesses that these accounts are likely seen as belonging to higher-value private or corporate targets",
+      "Zeus Panda operators possibly assume higher value account holders will be less suspicious of additional verification questions",
+      "Zeus Panda itself may rarely target banks outside of Italy, but if the source code were to be made available",
+      "It may behoove the threat actors not to immediately drain those accounts in order to avoid increased exposure"
+    ],
     "audit_history": [
       {
         "at": "2026-11-26T23:49:37Z",
@@ -34,7 +94,7 @@
     "sha1": "bedba2cd318fa02d8225fdc38d4845db82756759",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T00:11:20Z",
+    "read_at": "2026-11-27T00:32:57Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -51,7 +111,7 @@
     "subject": null,
     "hedges": [],
     "reason": "code",
-    "tries": 1,
+    "tries": 2,
     "audit_history": [
       {
         "at": "2026-11-26T23:49:37Z",

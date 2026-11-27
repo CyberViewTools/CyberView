@@ -1,26 +1,108 @@
 {
   "ee83e8e1e26af1b5a99f8971514442501806fc70": {
     "sha1": "ee83e8e1e26af1b5a99f8971514442501806fc70",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:10:29Z",
+    "read_at": "2026-11-27T00:33:07Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "F-Secure's report on the Havex RAT. Three industrial software vendor sites in Germany, Switzerland and Belgium were compromised and their installers trojanized. Victims were mostly in Europe, including industrial, educational and construction organisations, and one in California. The report says the operators conduct industrial espionage, gathering details of ICS/SCADA hardware on infected networks, and that no control payloads had been seen so far.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
+      "actors": [
+        {
+          "v": "the attackers behind Havex",
+          "q": "The attackers behind Havex are conducting industrial espionage using a clever method.",
+          "by": "F-Secure (the report's authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "industrial applications",
+          "q": "all three companies are involved in development of applications and appliances for use in industrial applications."
+        },
+        {
+          "v": "educational institutions",
+          "q": "two are major educational institutions in France that are known for technology-related research"
+        },
+        {
+          "v": "construction",
+          "q": "one is a Russian construction company that appears to specialize in structural engineering."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Germany",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "Switzerland",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "Belgium",
+          "q": "These organizations are based in Germany, Switzerland and Belgium."
+        },
+        {
+          "v": "France",
+          "q": "two are major educational institutions in France that are known for technology-related research"
+        },
+        {
+          "v": "Russia",
+          "q": "one is a Russian construction company that appears to specialize in structural engineering."
+        },
+        {
+          "v": "California",
+          "q": "at the time of writing at least one company in California was also observed sending data to the C&C servers."
+        }
+      ],
       "dates": [],
-      "tools": [],
-      "techniques": [],
+      "tools": [
+        {
+          "v": "Havex RAT",
+          "q": "The software installers available on the sites were trojanized to include the Havex RAT."
+        },
+        {
+          "v": "Backdoor:W32/Havex.A",
+          "q": "F-Secure detects this threat as Backdoor:W32/Havex.A."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "watering-hole attack",
+          "q": "could be considered a form of \"watering-hole attack\", as the attackers"
+        },
+        {
+          "v": "trojanized software installers",
+          "q": "Trojanized installers planted on compromised vendor sites"
+        },
+        {
+          "v": "compromised servers as command-and-control",
+          "q": "The method of using compromised servers as C&C's is typical for this group."
+        },
+        {
+          "v": "ICS/SCADA sniffing",
+          "q": "Our analysis of Havex sample codes also uncovered its \"ICS/SCADA sniffing\" behavior."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three software vendor sites",
+          "q": "Our research uncovered three software vendor sites that were compromised in this manner."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Havex"
+    },
+    "hedges": [
+      "We suspect more similar cases exist but have not been identified yet.",
+      "It appears the attackers abuse vulnerabilities in the software used to run the websites to break in and replace legitimate software installers.",
+      "It appears that this component is used as a tool for intelligence gathering.",
+      "So far, we have not seen any payloads that attempt to control the connected hardware.",
+      "The construction company appears to specialize in structural engineering, according to the report."
+    ],
     "audit_history": [
       {
         "at": "2026-11-26T23:50:10Z",

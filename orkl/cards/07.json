@@ -377,101 +377,162 @@
   },
   "07d6c89b969ac75280bcaa8779fb8ae0132b4923": {
     "sha1": "07d6c89b969ac75280bcaa8779fb8ae0132b4923",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:22:37Z",
+    "read_at": "2026-11-27T12:50:14Z",
     "model": "haiku",
-    "summary": "Aqua Security's 2020 threat alert says TeamTNT returned after Docker Hub removed its images and deleted an account, using new accounts and container images. Targets include exposed Redis servers and misconfigured Docker API ports. Payloads named in the report include cryptominers, Tsunami and Rekobee malware, backdoors, a post-exploitation tool, and a Linux password-finding tool based on CVE-2018-20781. Storage buckets and a hacked website are said to serve as command-and-control infrastructure, though the report hedges on some of this. It recommends having Docker Hub close adversary…",
+    "summary": "Aqua Security reports that TeamTNT returned after Docker Hub removed its images and account, using a new Docker Hub account and new images. The images were used to find and attack vulnerable Redis servers and to deliver cryptominers, backdoors, a Rekoobe-named malware and a password-harvesting tool. The report describes S3 buckets and the IPlogger service as C2 infrastructure, with some uncertainty about ownership. It also notes a MimiPenguin 2.0 password dumper based on CVE-2018-20781, and that TeamTNT steals AWS credentials and targets Weave Scope deployments.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "TeamTNT",
-          "q": "A quick analysis revealed that this account and images are strongly affiliated to TeamTNT.",
-          "by": "Aqua Security (the report)"
+          "q": "TeamTNT grabbed headlines after launching several novel attacks against cloud native",
+          "by": "Aqua Security (report author and Aqua DTA analysis)"
         }
       ],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "cloud native",
+          "q": "launching several novel attacks against cloud native"
+        }
+      ],
       "countries": [],
       "dates": [
         {
-          "v": "May 10, 2019",
-          "q": "The account ‘kirito666’ was created on May 10, 2019.",
-          "what": "Docker Hub account kirito666 was created"
+          "v": "2020-09-30",
+          "q": "Published: 2020-09-30",
+          "what": "Report published by Aqua Security"
         },
         {
-          "v": "2020-09-30",
-          "q": "Published: 2020-09-30 · Archived: 2026-04-06 01:23:44 UTC",
-          "what": "Report published"
+          "v": "May 10, 2019",
+          "q": "was created on May 10, 2019.",
+          "what": "Docker Hub account kirito666 was created"
         },
         {
           "v": "July 11th, 2020",
           "q": "Since July 11th, 2020, 42 malicious images were uploaded to this website.",
-          "what": "Malicious images began being uploaded to the website"
+          "what": "Malicious images began to be uploaded to the website"
         }
       ],
       "tools": [
         {
           "v": "Tsunami malware",
-          "q": "Tsunami malware, Rekobee Malware, Cryptominers, backdoors, Trojans"
+          "q": "payloads regularly applied by TeamTNT: Tsunami malware, Rekobee Malware"
         },
         {
-          "v": "Rekobee Malware",
-          "q": "Tsunami malware, Rekobee Malware, Cryptominers, backdoors, Trojans"
+          "v": "Rekoobe malware",
+          "q": "tshd from iplogger (Rekoobe malware,"
         },
         {
-          "v": "xmrig",
-          "q": "Cloning the xmrig git repo"
-        },
-        {
-          "v": "Kinsing",
-          "q": "Cleaning Cryptocurrency (MoneroOcean) and Malware (such as Kinsing)."
+          "v": "tshd",
+          "q": "download the malicious binaries bioset, tshd, and kube"
         },
         {
           "v": "bioset",
-          "q": "Compiling bioset, if it isn’t present in a specific path."
+          "q": "download the malicious binaries bioset, tshd, and kube"
         },
         {
-          "v": "MimiPenguin 2.0",
-          "q": "contain MimiPenguin 2.0 tool which is set to find the login"
+          "v": "kube",
+          "q": "kube (Classified by VirusTotal as Tsunami Malware,"
         },
         {
-          "v": "Shodan API",
-          "q": "it runs Shodan API,"
+          "v": "xmrig",
+          "q": "Downloading xmrig from an S3 bucket (Cryptominer,"
         },
         {
           "v": "docker-update",
           "q": "docker-update (Classified by VirusTotal as a cryptominer,"
         },
         {
-          "v": "tshd",
-          "q": "tshd (Classified by VirusTotal as a backdoor,"
+          "v": "Kinsing",
+          "q": "Malware (such as Kinsing)."
+        },
+        {
+          "v": "MimiPenguin 2.0",
+          "q": "contain MimiPenguin 2.0 tool which is set to find the login"
+        },
+        {
+          "v": "hackredis",
+          "q": "GitHub project hackredis, which is designed to attack Redis by"
+        },
+        {
+          "v": "redisMassExploit",
+          "q": "GitHub project (redisMassExploit) and is designed to connect to the Redis hosts"
+        },
+        {
+          "v": "Shodan API",
+          "q": "When executed, it runs Shodan API,"
+        },
+        {
+          "v": "IPlogger",
+          "q": "the web service IPlogger as their C2 servers"
+        },
+        {
+          "v": "Weave Scope",
+          "q": "target Weave Scope deployments."
+        },
+        {
+          "v": "Docker Hub",
+          "q": "Last week we detected a Docker Hub account hosting malicious container images."
+        },
+        {
+          "v": "S3 buckets",
+          "q": "targeting vulnerable Redis servers using S3 buckets"
         }
       ],
       "techniques": [
         {
+          "v": "two-stage attack",
+          "q": "was designed to launch a two-stage attack."
+        },
+        {
           "v": "misconfigured Docker API port",
-          "q": "running the container image on a host with the misconfigured Docker API port"
+          "q": "a host with the misconfigured Docker API port."
         },
         {
-          "v": "targeting vulnerable Redis servers",
-          "q": "TeamTNT is now targeting vulnerable Redis servers using S3 buckets"
-        },
-        {
-          "v": "Crypto-mining",
-          "q": "Crypto-mining and DDoS worm designed to steal AWS credentials"
+          "v": "establishing SSH connection as root",
+          "q": "establishing SSH connection as root with the targeted host."
         },
         {
           "v": "find Linux user passwords in memory",
           "q": "then trying to find Linux user passwords in memory."
         },
         {
-          "v": "network pivoting",
-          "q": "designed for network pivoting from a compromised Unix box"
+          "v": "cleartext credentials in memory",
+          "q": "It searches for cleartext credentials in memory"
+        },
+        {
+          "v": "network pivoting from a compromised Unix box",
+          "q": "designed for network pivoting from a compromised Unix box."
+        },
+        {
+          "v": "Disabling TenCent Cloud security",
+          "q": "Disabling TenCent Cloud security and Aliyun (Alibaba Cloud) security components."
+        },
+        {
+          "v": "Cleaning Cryptocurrency",
+          "q": "Cleaning Cryptocurrency (MoneroOcean) and Malware (such as Kinsing)."
+        },
+        {
+          "v": "Crypto-mining",
+          "q": "built a Crypto-mining and DDoS worm"
+        },
+        {
+          "v": "steal AWS credentials",
+          "q": "designed to steal AWS credentials and target Weave"
         },
         {
           "v": "Denial of Service attack",
-          "q": "functions designed to launch a Denial of Service attack"
+          "q": "launch a Denial of Service attack, such as SynFlood"
+        },
+        {
+          "v": "fail-safe mechanism",
+          "q": "uses them as a fail-safe mechanism"
+        },
+        {
+          "v": "searching for vulnerable Redis hosts",
+          "q": "searching for vulnerable Redis hosts and decompressing"
         }
       ],
       "cves": [
@@ -491,23 +552,20 @@
         }
       ]
     },
-    "subject": {
-      "type": "campaign",
-      "name": "TeamTNT"
-    },
+    "subject": null,
     "hedges": [
-      "The report says it is unclear whether the S3 bucket is owned by TeamTNT or whether the AWS account was hacked and used as a C2 server.",
-      "The report speculates that the hacked website serves as a C2 server.",
-      "The report says it appears the website belongs to a German company that was hacked by TeamTNT.",
-      "The report says it appears TeamTNT is trying to execute a version of the attack against vulnerable Redis ports."
+      "It is unclear whether this S3 bucket is owned by TeamTNT or the AWS account is hacked and exploited to serve as a C2 server.",
+      "we speculate that this website serves as a C2 server",
+      "It appears that this website belongs to a German company and was hacked by TeamTNT.",
+      "It appears that TeamTNT is trying to execute their version of attack against vulnerable Redis ports"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:16Z",
-      "ok": false,
-      "note": "summary: The summary says the report recommends having Docker Hub close adversary accounts. The report only says its findings must not discourage Docker Hub fro",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:16Z",
+        "ok": false,
+        "note": "summary: The summary says the report recommends having Docker Hub close adversary accounts. The report only says its findings must not discourage Docker Hub fro",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -55,18 +55,18 @@
   },
   "7cb22a620b8d7f6bb40d570c5b7e4188e316a682": {
     "sha1": "7cb22a620b8d7f6bb40d570c5b7e4188e316a682",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:23:43Z",
+    "read_at": "2026-11-27T12:50:10Z",
     "model": "haiku",
-    "summary": "Juniper Threat Labs reports on the resurgence of the DreamBus bot, a modular Linux malware. Attackers exploit the RocketMQ remote code execution flaw CVE-2023-33246, disclosed in May 2023, for initial access. The bot runs downloaded bash scripts, installs an XMRig Monero miner, persists through a user timer and cron, and spreads via IT automation tools and SSH host lists. Attacks began in early June 2023 with non-destructive reconnaissance using interactsh. The report notes zero antivirus detections for the samples at the time of analysis.",
+    "summary": "Juniper Threat Labs reports on the DreamBus botnet, a modular Linux bot last seen in 2021 that resurfaced in June 2023 by exploiting the RocketMQ remote code execution flaw CVE-2023-33246. Attackers ran a bash downloader that fetched payloads over Tor and from an IP address, then installed a packed DreamBus module that deletes itself after running. The bot persists through systemd timers and cron, spreads via IT automation tools and SSH host lists, and beacons to a Tor command server. Its main goal is installing a Monero miner. Juniper recommends timely patching.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
-          "v": "DreamBus malicious threat actors",
-          "q": "As DreamBus malicious threat actors resurface, their primary objective remains the installation of a Monero",
-          "by": "Juniper Threat Labs (the report)"
+          "v": "threat actors",
+          "q": "Juniper Threat Labs has detected multiple attacks where threat actors took advantage of the vulnerability to",
+          "by": "Juniper Threat Labs"
         }
       ],
       "sectors": [],
@@ -75,101 +75,88 @@
         {
           "v": "2023-08-28",
           "q": "Published: 2023-08-28 · Archived: 2026-04-06 00:39:42 UTC",
-          "what": "Report published"
+          "what": "Juniper Threat Labs blog post published"
         },
         {
           "v": "May 2023",
           "q": "In May 2023, a vulnerability affecting RocketMQ servers (CVE-2023-33246), which allows remote code",
-          "what": "CVE-2023-33246 publicly disclosed"
+          "what": "RocketMQ remote code execution vulnerability publicly disclosed"
+        },
+        {
+          "v": "June 19th",
+          "q": "Starting on June 19th, we detected a series of attacks that involved downloading and executing a malicious bash",
+          "what": "attacks downloading and running a malicious bash script observed"
         },
         {
           "v": "2021",
           "q": "install the malicious DreamBus bot, a malware strain last seen in 2021.",
           "what": "DreamBus malware last seen"
-        },
-        {
-          "v": "early June",
-          "q": "In early June, as shown above in Fig. 1, we began seeing attacks targeting this RocketMQ vulnerability.",
-          "what": "Attacks targeting the RocketMQ vulnerability began"
-        },
-        {
-          "v": "June 19th",
-          "q": "Starting on June 19th, we detected a series of attacks that involved downloading and executing a malicious bash",
-          "what": "Attacks downloading and executing the reketed bash script detected"
         }
       ],
       "tools": [
-        {
-          "v": "DreamBus bot",
-          "q": "install the malicious DreamBus bot, a malware strain last seen in 2021."
-        },
-        {
-          "v": "reketed",
-          "q": "Upon successful exploitation, the payload will execute the bash script named ‘reketed’"
-        },
         {
           "v": "interactsh",
           "q": "employed an open-source reconnaissance tool called ‘interactsh’ to assess server vulnerabilities."
         },
         {
-          "v": "XMRig",
-          "q": "retrieved an open-source Monero cryptocurrency miner program called XMRig"
+          "v": "DreamBus",
+          "q": "install the malicious DreamBus bot, a malware strain last seen in 2021."
         },
         {
-          "v": "ansible",
+          "v": "reketed",
+          "q": "Upon successful exploitation, the payload will execute the bash script named ‘reketed’ (hash:"
+        },
+        {
+          "v": "XMRig",
+          "q": "retrieved an open-source Monero cryptocurrency miner program called XMRig."
+        },
+        {
+          "v": "UPX",
+          "q": "packed with UPX, but with modified headers and footers that make unpacking more challenging."
+        },
+        {
+          "v": "ansible, knife, salt and pssh",
           "q": "IT automation tools like ansible, knife, salt and pssh (parallel ssh)."
         }
       ],
       "techniques": [
         {
           "v": "exploiting vulnerabilities",
-          "q": "exploiting vulnerabilities, particularly recent ones that result in remote code execution like the RocketMQ"
+          "q": "Their preferred means of initial access revolves around exploiting vulnerabilities, particularly recent ones"
         },
         {
-          "v": "TOR proxy service",
-          "q": "made use of the TOR onion router web traffic service via a TOR proxy service called"
+          "v": "Tor proxy download of payloads",
+          "q": "the threat actors made use of the TOR onion router web traffic service via a TOR proxy service called,"
         },
         {
-          "v": "reconnaissance",
-          "q": "employed an open-source reconnaissance tool called ‘interactsh’ to assess server vulnerabilities."
+          "v": "obfuscation with randomized names",
+          "q": "exhibits some obfuscation techniques, with randomized names assigned to"
         },
         {
-          "v": "obfuscation",
-          "q": "the reketed bash script exhibits some obfuscation techniques, with randomized names assigned to"
+          "v": "UPX packing with modified headers",
+          "q": "packed with UPX, but with modified headers and footers that make unpacking more challenging."
         },
         {
-          "v": "packed with UPX",
-          "q": "The DreamBus main module is an ELF Linux binary that has been packed with UPX, but with modified headers"
+          "v": "multiple persistence mechanisms",
+          "q": "To ensure persistent presence, the malware employs multiple mechanisms."
         },
         {
-          "v": "deletes it",
+          "v": "lateral spread via IT automation tools and SSH",
+          "q": "the DreamBus bot malware spread laterally."
+        },
+        {
+          "v": "self-deletion of binary after execution",
           "q": "and subsequently deletes it,"
         },
         {
-          "v": "timer service",
-          "q": "Then, a “timer service” is implemented"
-        },
-        {
-          "v": "cron job",
-          "q": "Furthermore, a cron job (refer to Fig. 15"
-        },
-        {
-          "v": "IT automation tools",
-          "q": "IT automation tools like ansible, knife, salt and pssh (parallel ssh)."
-        },
-        {
-          "v": "bash_history",
-          "q": "extracts hosts from the user’s bash_history, /etc/hosts file and ssh known_hosts file,"
-        },
-        {
-          "v": "spread via exploits",
-          "q": "We believe this module will scan a set of external and internal IP ranges and spread via exploits as seen in previous DreamBus variants"
+          "v": "Monero cryptocurrency miner",
+          "q": "their primary objective remains the installation of a Monero cryptocurrency miner."
         }
       ],
       "cves": [
         {
           "v": "CVE-2023-33246",
-          "q": "In May 2023, a vulnerability affecting RocketMQ servers (CVE-2023-33246), which allows remote code"
+          "q": "a vulnerability affecting RocketMQ servers (CVE-2023-33246), which allows remote code"
         }
       ],
       "figures": [
@@ -182,7 +169,7 @@
           "q": "it is worth noting that the attacks targeted at least seven other ports."
         },
         {
-          "v": "zero (0)",
+          "v": "zero (0) anti-malware vendors",
           "q": "VT shows zero (0) anti-malware vendors detected malicious"
         },
         {
@@ -196,17 +183,17 @@
       "name": "DreamBus"
     },
     "hedges": [
-      "The report says the /scan module could not be verified because the request returned nothing at the time of analysis.",
-      "The report believes the /scan module will scan IP ranges and spread via exploits, based on previous DreamBus variants.",
-      "Zero VirusTotal detections were recorded only at the time of the analysis."
+      "The report says the /scan module could not be verified because the request returned nothing at the time of analysis; it believes the module scans IP ranges and spreads via exploits.",
+      "At the time of analysis, the reketed script and the DreamBus main module showed no detections in VirusTotal.",
+      "The report's own analysis of the Monero miner and persistence is based on the samples it examined at the time of writing."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:50Z",
-      "ok": false,
-      "note": "techniques[10]: The report only says 'We believe this module will scan ... and spread via exploits as seen in previous DreamBus variants', about the unverified ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:50Z",
+        "ok": false,
+        "note": "techniques[10]: The report only says 'We believe this module will scan ... and spread via exploits as seen in previous DreamBus variants', about the unverified ",
+        "by": "auditor"
+      }
+    ]
   }
 }

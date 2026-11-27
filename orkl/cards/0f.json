@@ -431,11 +431,11 @@
   },
   "0fd73fb19634637c9d66265f9b891826d8fffbea": {
     "sha1": "0fd73fb19634637c9d66265f9b891826d8fffbea",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:22:28Z",
+    "read_at": "2026-11-27T12:49:59Z",
     "model": "haiku",
-    "summary": "A 2019 security research write-up by Objective-See describes the author's search for dylib hijacking flaws in macOS apps and how it led to local privilege escalation to root. Writes to root-owned App Store app folders could be redirected during installation. The author used a benign-looking App Store app, Crontab Creator, as a proof of concept for root access through a cron job. Apple treated the installer issue as an enhancement, did not assign a CVE, and fixed it in Mojave 10.14.5. The author says a bypass of that fix followed.",
+    "summary": "Objective-See blog writeup dated July 2, 2019, describing macOS local privilege escalation research. It covers dylib hijacking in third-party apps, and App Store installer weaknesses that let a researcher write files into root-owned app folders via symlinks. A benign 'Crontab Creator' app was used to place a root cron file, and a second LaunchDaemons variant is described. The report says Apple fixed the installer path in Mojave (October 2018 fix, then a 10.14.5 fix), without assigning a CVE. The author says the story continues with a bypass of Apple's fix.",
     "kind": "vulnerability",
     "facts": {
       "actors": [],
@@ -445,34 +445,35 @@
         {
           "v": "July 2, 2019",
           "q": "July 2, 2019",
-          "what": "Date of the write-up"
+          "what": "Blog writeup published"
         },
         {
           "v": "2018 October",
-          "q": "This was in 2018 October",
-          "what": "Apple fixed the Mojave exploit path"
+          "q": "This was in 2018 October, my POC didn’t work",
+          "what": "Apple fixed the App Store install exploit path in Mojave"
+        },
+        {
+          "v": "Mojave 10.14.5",
+          "q": "Finally this came with Mojave 10.14.5",
+          "what": "Apple's fix for the installer redirection issue arrived"
         }
       ],
       "tools": [
         {
           "v": "Dylib Hijack Scanner",
-          "q": "Patrick’s “Dylib Hijack Scanner” (DHS) tool"
+          "q": "“Dylib Hijack Scanner” (DHS) tool"
         },
         {
           "v": "Monitor.app",
-          "q": "This is a procmon like app created by FireEye, it can be downloaded from here: Monitor.app It’s quite good!"
+          "q": "FireEye - Monitor.app"
         },
         {
-          "v": "fs_usage",
-          "q": "Built-in fs_usage utility"
-        },
-        {
-          "v": "ProcInfo library",
+          "v": "ProcInfo",
           "q": "Objective-See’s ProcInfo library & ProcInfoExample"
         },
         {
           "v": "Crontab Creator",
-          "q": "is called “Crontab Creator”, which is actually very useful for creating crontab files"
+          "q": "is called “Crontab Creator”, which is actually very useful for creating crontab files."
         },
         {
           "v": "StartUp",
@@ -482,37 +483,37 @@
       "techniques": [
         {
           "v": "dylib hijacking",
-          "q": "trying to find dylib hijacking vulnerability in a specific application"
+          "q": "If you are not familiar with dylib hijacking on macOS:"
         },
         {
-          "v": "privilege escalation",
-          "q": "Ideas for using this for privilege escalation"
+          "v": "weak loading of dylibs",
+          "q": "Weak Loading of dylibs:"
         },
         {
-          "v": "symlink",
-          "q": "Even if we create a hardlink instead of symlink, that will be overwritten like in the 1st case."
-        },
-        {
-          "v": "Bypassing root folder permissions",
+          "v": "bypassing root folder permissions",
           "q": "Bypassing root folder permissions in App Store installed apps"
         },
         {
-          "v": "Dropping AppStore files",
-          "q": "Taking it further - Dropping AppStore files anywhere"
+          "v": "symlink",
+          "q": "but I thought that the symlink issue is solved"
         },
         {
-          "v": "Redistributing paid apps",
-          "q": "Redistributing paid apps"
+          "v": "library validation",
+          "q": "double check if the App is compiled with the library-validation option"
         },
         {
-          "v": "bypass Gatekeeper",
-          "q": "you will need a method to bypass Gatekeeper"
+          "v": "cron job",
+          "q": "Find a file in the AppStore that has a cron job line inside"
+        },
+        {
+          "v": "Infecting installers",
+          "q": "Infecting installers without breaking the Application’s signature"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "99$",
+          "v": "99$/ annum",
           "q": "It’s 99$/ annum."
         },
         {
@@ -520,25 +521,26 @@
           "q": "I had to wait ~24 hours for it being reviewed"
         },
         {
-          "v": "10.14.5",
-          "q": "Finally this came with Mojave 10.14.5"
+          "v": "9 others",
+          "q": "along with 9 others"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The author declines to name the specific application where the dylib hijack was first found.",
-      "The author says they are not even sure the 2019 fix directly addresses their proof of concept, or whether it was a coincidence.",
-      "The author says other folders may also be affected but that they did not explore other options.",
-      "The author says they bypassed Apple's fix and that an update will follow once the issue is fixed."
+      "Apple never admitted this as a security bug, they never assigned a CVE, they considered it as an enhancement.",
+      "The bypass will only work if the application was installed already at least once.",
+      "Potentially many other folders are also affected, but I didn’t explore other options.",
+      "I’m not even sure that this is a direct fix for my POC or some other coincidence.",
+      "The author says the story goes on with a bypass of Apple’s fix, with an update to follow; no details are given."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:16Z",
-      "ok": false,
-      "note": "summary: The write-up is attributed to Objective-See, but the text only gives the blog URL. The author is a guest (csaby) who refers to Objective-See's ProcInfo",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:16Z",
+        "ok": false,
+        "note": "summary: The write-up is attributed to Objective-See, but the text only gives the blog URL. The author is a guest (csaby) who refers to Objective-See's ProcInfo",
+        "by": "auditor"
+      }
+    ]
   }
 }

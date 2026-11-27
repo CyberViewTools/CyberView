@@ -1,49 +1,44 @@
 {
   "3a8b95623bfbca0404372fe5d4a9fa89dbfa3aa8": {
     "sha1": "3a8b95623bfbca0404372fe5d4a9fa89dbfa3aa8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:17:42Z",
+    "read_at": "2026-11-27T12:50:59Z",
     "model": "haiku",
-    "summary": "Dark Matter LLC's 2018 conference talk on WINDSHIFT APT, a long-term, non-attributable cyber-espionage actor that targets specific individuals and government. It describes multi-phase operations: fake social media personas, benign-email reconnaissance, one-day credential harvesting and occasional malware delivery. It covers macOS tools WINDTAIL.A/B/C and WINDTAPE, and the Windows dropper WINDDROP (2017-2018). Attribution links reused Appin Security tools (Operation Hangover, 2012) and overlaps with BAHAMUT APT, Fancy Bear and SOFACY. The report itself hedges these links.",
+    "summary": "Dark Matter (report by Taha K.) describes WINDSHIFT APT, a long-term, non-attributable cyber-espionage actor that targets specific individuals and government bodies, mainly in the Middle East. Its methods include fake personas, credential-harvesting phishing and macOS and Windows backdoors (WINDTAIL, WINDTAPE, WINDDROP). The report says it reuses tools linked to Appin Security and shows overlaps with BAHAMUT, Fancy Bear and SOFACY infrastructure. The India link is presented as an overlap, not a confirmed attribution.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "WINDSHIFT APT",
-          "q": "Fact 3: WINDSHIFT APT are currently targeting government using Appin Security tools.",
-          "by": "Dark Matter LLC (report author)"
+          "q": "IN THE TRAILS OF WINDSHIFT APT",
+          "by": "the report itself (Dark Matter)"
         },
         {
           "v": "BAHAMUT APT",
           "q": "Infrastructure used: BAHAMUT APT, Fancy Bear",
-          "by": "Dark Matter LLC (report author)"
+          "by": "the report itself (Dark Matter)"
         },
         {
           "v": "Fancy Bear",
           "q": "Infrastructure used: BAHAMUT APT, Fancy Bear",
-          "by": "Dark Matter LLC (report author)"
+          "by": "the report itself (Dark Matter)"
         },
         {
           "v": "SOFACY",
           "q": "Malware coding practices similarities: SOFACY",
-          "by": "Dark Matter LLC (report author)"
+          "by": "the report itself (Dark Matter)"
         },
         {
           "v": "Operation Hangover",
-          "q": "Operation Hangover / Appin Security",
-          "by": "Dark Matter LLC (report author)"
-        },
-        {
-          "v": "Dark Hotel",
-          "q": "Bodis LLC is known to be linked to Dark Hotel and to many others:",
-          "by": "Dark Matter LLC (report author)"
+          "q": "An APT hacked into Operation Hangover and got access to",
+          "by": "the report itself (Dark Matter)"
         }
       ],
       "sectors": [
         {
           "v": "government",
-          "q": "Fact 3: WINDSHIFT APT are currently targeting government using Appin Security tools."
+          "q": "WINDSHIFT APT are currently targeting government using Appin Security tools"
         }
       ],
       "countries": [
@@ -52,55 +47,50 @@
           "q": "Etisalat (main ISP in UAE)"
         },
         {
-          "v": "India",
-          "q": "Attribution to India (we will talk about this later on, in the Attribution part)"
+          "v": "Netherlands",
+          "q": "Komplex OSX communicated with C2 hosted via AltusHost B.V a Netherlands service provider"
         },
         {
-          "v": "Netherlands",
-          "q": "Komplex OSX communicated with C2 hosted via AltusHost B.V a Netherlands service provider."
+          "v": "India",
+          "q": "Also AltusHost B.V had 46 IP’s related to Operation Hangover: Attribution to India"
         }
       ],
       "dates": [
         {
+          "v": "2017",
+          "q": "Suddenly variants of malware appeared in 2017 all signed with developer id’s",
+          "what": "Malware variants appeared, signed with developer IDs"
+        },
+        {
+          "v": "2012",
+          "q": "Since not activity was recorded between 2012 and 2017",
+          "what": "No recorded activity of the reused Appin-linked tools between 2012 and 2017"
+        },
+        {
           "v": "January 2017",
           "q": "First apparition in January 2017",
-          "what": "WINDTAIL.A first observed"
+          "what": "WINDTAIL.A first seen"
         },
         {
           "v": "January 2018",
           "q": "WINDTAIL.B, first apparition in January 2018",
-          "what": "WINDTAIL.B first observed"
+          "what": "WINDTAIL.B first seen"
         },
         {
           "v": "January 2018",
           "q": "WINDTAPE, first apparition in January 2018",
-          "what": "WINDTAPE first observed"
+          "what": "WINDTAPE first seen"
         },
         {
           "v": "May 2018",
           "q": "WINDDROP, a Windows dropper, first appeared in May 2018",
-          "what": "WINDDROP first observed"
-        },
-        {
-          "v": "2012",
-          "q": "Rewrite ? of “Hack Back” aka “KitM OSX” , 2012 surveillance malware.",
-          "what": "Hack Back / KitM OSX surveillance malware, reused by WINDTAIL.A, linked to Operation Hangover"
-        },
-        {
-          "v": "2017",
-          "q": "2 attempts in 2017, very specific individuals.",
-          "what": "Two direct malware attempts against specific individuals"
-        },
-        {
-          "v": "2018",
-          "q": "3 attempts in 2018, again very specific individuals.",
-          "what": "Three direct malware attempts against specific individuals"
+          "what": "WINDDROP first seen"
         }
       ],
       "tools": [
         {
           "v": "WINDTAIL.A",
-          "q": "WINDTAIL.A : Signed macOS backdoor exfiltrating files having the"
+          "q": "WINDTAIL.A : Signed macOS backdoor exfiltrating files having the following extensions"
         },
         {
           "v": "WINDTAIL.B",
@@ -120,44 +110,40 @@
         },
         {
           "v": "KitM OSX",
-          "q": "Rewrite ? of “Hack Back” aka “KitM OSX” , 2012 surveillance malware."
-        },
-        {
-          "v": "KSReachability",
-          "q": "using KSReachability framework to determine if the infected hosts is connected"
+          "q": "Rewrite ? of “Hack Back” aka “KitM OSX” , 2012 surveillance malware"
         }
       ],
       "techniques": [
         {
-          "v": "fake personas",
-          "q": "Via maintained fake personas on different social platforms:"
-        },
-        {
-          "v": "Long term monitoring of targets",
-          "q": "Long term monitoring of targets via benign emails:"
-        },
-        {
           "v": "Spear phishing",
           "q": "Versatile, sophisticated and unpredictable Spear phishing attacks"
+        },
+        {
+          "v": "fake personas",
+          "q": "Via maintained fake personas on different social platforms:"
         },
         {
           "v": "Credential harvesting",
           "q": "Phase 3: Credential harvesting, duration 1 day"
         },
         {
-          "v": "Domain typo squatting",
+          "v": "password reset",
+          "q": "Sending emails mimicking legit password recovery or password reset of following providers"
+        },
+        {
+          "v": "typo squatting",
           "q": "Domain typo squatting"
         },
         {
           "v": "free SSL certificates",
-          "q": "Credential harvesting landing pages are using HTTPS : free SSL certificates"
+          "q": "Credential harvesting landing pages are using HTTPS : free SSL certificates with let’s encrypt"
         },
         {
           "v": "drive by download",
-          "q": "having link to a drive by download delivering malware"
+          "q": "link to a drive by download delivering malware"
         },
         {
-          "v": "Re-use command and control infrastructure",
+          "v": "command and control infrastructure",
           "q": "Re-use command and control infrastructure from other groups"
         },
         {
@@ -165,16 +151,8 @@
           "q": "Lateral movement: how WINDTAIL.A infect any MacOS via network shares"
         },
         {
-          "v": "Persists via LoginItems",
-          "q": "Persists via LoginItems"
-        },
-        {
           "v": "Stack strings",
-          "q": "Stack strings are encrypted, tools like FLOSS wont be able decode them:"
-        },
-        {
-          "v": "1-click Malware infection",
-          "q": "1-click Malware infection and persistence"
+          "q": "Stack strings are encrypted, tools like FLOSS wont be able decode them"
         }
       ],
       "cves": [],
@@ -184,8 +162,12 @@
           "q": "Phase 1: RECON – phase 1 duration 1-2 years"
         },
         {
-          "v": "1 day",
-          "q": "Phase 3: Credential harvesting, duration 1 day"
+          "v": "2 attempts in 2017",
+          "q": "2 attempts in 2017, very specific individuals."
+        },
+        {
+          "v": "3 attempts in 2018",
+          "q": "3 attempts in 2018, again very specific individuals."
         },
         {
           "v": "1 or twice per year",
@@ -193,15 +175,7 @@
         },
         {
           "v": "46",
-          "q": "AltusHost B.V had 46 IP’s related to Operation Hangover"
-        },
-        {
-          "v": "660 functions",
-          "q": "OilRig modified Mimikatz have only 660 functions in total"
-        },
-        {
-          "v": "5 seconds",
-          "q": "Repeat every 5 seconds"
+          "q": "Also AltusHost B.V had 46 IP’s related to Operation Hangover: Attribution to India"
         }
       ]
     },
@@ -210,20 +184,20 @@
       "name": "WINDSHIFT APT"
     },
     "hedges": [
-      "Report says the Appin Security link is 'highly likely', with alternatives: tools stolen by a rogue employee or sold to a third party.",
-      "Overlaps with BAHAMUT APT, Fancy Bear and SOFACY are described as overlaps, not a confirmed attribution.",
-      "Attribution to India is deferred by the report: 'we will talk about this later on, in the Attribution part'.",
-      "Report notes no activity was recorded for the Appin-linked tools between 2012 and 2017.",
-      "The report describes its tool set as 'still under on-going development'.",
-      "WINDDROP's second-stage backdoor: 'No details about this second stage backdoor found yet', and the file was removed from the server."
+      "Appin Security was highly likely either targeted by an advanced APT group, or its tools were stolen or sold to a third party.",
+      "WINDDROP's second-stage backdoor is unidentified; no details were found and the file was removed from the server.",
+      "WINDDROP is described as a downloader of an unconfirmed unknown malware.",
+      "Overlaps with BAHAMUT, SOFACY, Fancy Bear and others are described as overlaps, not confirmed attribution.",
+      "The India attribution is said to be discussed later; persona and registrar links are described as 'linked to'.",
+      "The tool-set is described as still under on-going development."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:39Z",
-      "ok": false,
-      "note": "figures[4]: The 660 functions describe OilRig's modified Mimikatz, a different actor used as an example in Part I. They are not a WINDSHIFT figure, so the card ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:39Z",
+        "ok": false,
+        "note": "figures[4]: The 660 functions describe OilRig's modified Mimikatz, a different actor used as an example in Part I. They are not a WINDSHIFT figure, so the card ",
+        "by": "auditor"
+      }
+    ]
   }
 }

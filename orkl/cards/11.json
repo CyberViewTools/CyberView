@@ -558,131 +558,167 @@
   },
   "1137d574278dedd79c844634a5d5239640fa5f40": {
     "sha1": "1137d574278dedd79c844634a5d5239640fa5f40",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:17:33Z",
+    "read_at": "2026-11-27T12:51:03Z",
     "model": "haiku",
-    "summary": "Virus Bulletin 2020 talk by Paul Jung of Excellium on an incident responded to in December 2019 at a Belgian healthcare organisation. The ransom operation was described as allegedly run by TA505. Attackers used phishing with macro-enabled Word documents, a GET2 dropper, the SDBbot backdoor, TinyMet, smbexec and credential dumping to reach domain admin rights. The responders contained the intrusion 21 days after the breach.",
-    "kind": "incident",
+    "summary": "Paul Jung of Excellium's CERT-XLM team (Virus Bulletin 2020) describes a December 2019 incident at a Belgian healthcare actor. The ransom operation was allegedly run by TA505. Attackers sent phishing emails leading to a macro-enabled Word document, deployed the GET2 dropper and the SDBbot backdoor, then used TinyMet, smbexec and credential dumping to take over a domain controller and plant SDBbot on more than 50 hosts. The responders contained the intrusion 21 days after the breach. The report also maps SDBbot command servers, finding 11 running servers in June 2020.",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "TA505",
-          "q": "ransom operation run allegedly by the APT group TA505",
-          "by": "the report itself (author Paul Jung, CERT-XLM)"
+          "q": "run allegedly by the APT group TA505",
+          "by": "the report (CERT-XLM, Paul Jung)"
         }
       ],
       "sectors": [
         {
           "v": "healthcare",
-          "q": "responded to an incident affecting a Belgian actor in the healthcare sector"
+          "q": "affecting a Belgian actor in the healthcare sector"
         }
       ],
       "countries": [
         {
-          "v": "Belgian",
-          "q": "responded to an incident affecting a Belgian actor in the healthcare sector"
-        },
-        {
-          "v": "Russian",
-          "q": "The emails were sent to individuals’ mailboxes by using a Russian university MTA"
-        },
-        {
           "v": "Ukraine",
-          "q": "the geolocation seems to be in Ukraine but the owner of the AS is in the"
+          "q": "the geolocation seems to be in Ukraine but the owner of the AS is in the Seychelles"
+        },
+        {
+          "v": "Seychelles",
+          "q": "the geolocation seems to be in Ukraine but the owner of the AS is in the Seychelles"
         }
       ],
       "dates": [
         {
           "v": "December 2019",
-          "q": "In December 2019 our team CERT-XLM responded to an incident affecting a Belgian actor",
-          "what": "CERT-XLM responded to an incident affecting a Belgian healthcare actor, a ransom operation"
+          "q": "In December 2019 our team CERT-XLM responded to an incident affecting a Belgian actor in the healthcare sector.",
+          "what": "CERT-XLM responded to a healthcare-sector incident"
         },
         {
           "v": "November 2019",
           "q": "for example Rouen Hospital in November 2019 and Maastricht University in December 2019",
-          "what": "Ransom victim cited as an example of the group's activity"
+          "what": "Rouen Hospital cited as an example of the group's ransoming"
         },
         {
-          "v": "mid October 2019",
-          "q": "already extensively analysed by Proofpoint in mid October 2019",
-          "what": "GET2 dropper analysed by Proofpoint"
+          "v": "October 2019",
+          "q": "which was already extensively analysed by Proofpoint in mid October 2019",
+          "what": "Proofpoint analysed the GET2 dropper"
+        },
+        {
+          "v": "October 2019",
+          "q": "This malware was analysed in depth by Proofpoint in October 2019.",
+          "what": "Proofpoint analysed SDBbot"
+        },
+        {
+          "v": "2017",
+          "q": "discovered by FireEye in 2017 called application shimming",
+          "what": "FireEye discovered the FIN7 application shimming persistence method"
+        },
+        {
+          "v": "16 October 2019",
+          "q": "resolved to 185.33.86.40 (AS202015) from 16 October 2019 to 29 October",
+          "what": "A domain linked to SDBbot command servers resolved to a new address"
+        },
+        {
+          "v": "June 2020",
+          "q": "11 running SDBbot servers, 10 of them still active in June 2020",
+          "what": "10 of the 11 SDBbot command servers found were still active"
         },
         {
           "v": "June 2020",
           "q": "in June 2020, Telekom announced the discovery of SDBbot samples using TLS",
-          "what": "Telekom reported SDBbot samples using TLS and certificate pinning"
+          "what": "Telekom announced SDBbot samples using TLS and certificate pinning"
         }
       ],
       "tools": [
         {
-          "v": "SDBbot",
-          "q": "the attackers installed a backdoor commonly named SDBbot"
-        },
-        {
           "v": "TinyMet",
-          "q": "a repacked version of TinyMet, which is an open source small meterpreter stager hosted on GitHub"
-        },
-        {
-          "v": "GET2",
-          "q": "This DLL is a dropper known as GET2, which was already extensively analysed by Proofpoint"
+          "q": "a repacked version of TinyMet"
         },
         {
           "v": "smbexec",
           "q": "the attackers then used smbexec to execute commands on remote Windows systems"
         },
         {
-          "v": "Metasploit",
-          "q": "launched Metasploit as TCP listen meterpreter in order to plant SDBbot backdoors"
-        },
-        {
           "v": "procdump",
-          "q": "dumped the lsass process using procdump tools from sysinternals"
+          "q": "using procdump tools from sysinternals"
         },
         {
           "v": "pwdump",
-          "q": "and finally using the pwdump tool"
+          "q": "finally using the pwdump tool"
+        },
+        {
+          "v": "meterpreter",
+          "q": "an open source small meterpreter stager"
+        },
+        {
+          "v": "Metasploit",
+          "q": "launched Metasploit as TCP listen meterpreter"
+        },
+        {
+          "v": "GET2",
+          "q": "This DLL is a dropper known as GET2"
+        },
+        {
+          "v": "SDBbot",
+          "q": "the attackers installed a backdoor commonly named SDBbot"
+        },
+        {
+          "v": "reg.exe",
+          "q": "They used reg.exe to extract the SAM database"
         }
       ],
       "techniques": [
         {
-          "v": "phishing",
-          "q": "Our customer was hit by two separate waves of phishing emails."
+          "v": "phishing emails",
+          "q": "Our customer was hit by two separate waves of phishing emails"
         },
         {
           "v": "macro-enabled Word document",
           "q": "redirect the victims toward a macro-enabled Word document"
         },
         {
-          "v": "application shimming",
-          "q": "called application shimming (Att&ck T1138)"
+          "v": "MS17-07",
+          "q": "One hour later, they used MS17-07"
         },
         {
-          "v": "start-up key",
-          "q": "The persistence is set with a simple start-up key using rundll32"
+          "v": "extract the domain credentials",
+          "q": "To extract the domain credentials, the assailants used multiple solutions"
+        },
+        {
+          "v": "simple start-up key",
+          "q": "The persistence is set with a simple start-up key using rundll32 to launch the payload"
+        },
+        {
+          "v": "application shimming",
+          "q": "persistence is achieved by using the same mechanism as FIN7, discovered by FireEye in 2017 called application shimming"
         },
         {
           "v": "stored in the registry",
           "q": "The binary including the CC configuration is stored in the registry along with a little randomly named DLL"
         },
         {
-          "v": "MS17-07",
-          "q": "they used MS17-07 directly against one domain controller to gain AD domain admin rights"
+          "v": "mostly fileless",
+          "q": "The malware, when deployed with simple user privileges, is mostly fileless."
         },
         {
-          "v": "domain credentials",
-          "q": "To extract the domain credentials, the assailants used multiple solutions."
+          "v": "not encrypted with SSL",
+          "q": "is not encrypted with SSL, making the beaconing easy to spot."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "more than 100 destination mailboxes",
-          "q": "Both waves were large, each with more than 100 destination mailboxes."
+          "v": "two separate waves",
+          "q": "Our customer was hit by two separate waves of phishing emails"
         },
         {
-          "v": "Four hours",
-          "q": "Four hours after the implant was installed, the attackers connected back to the target."
+          "v": "more than 100 destination mailboxes",
+          "q": "each with more than 100 destination mailboxes"
+        },
+        {
+          "v": "more than 50 servers and workstations",
+          "q": "plant SDBbot backdoors in more than 50 servers and workstations"
         },
         {
           "v": "21 days",
@@ -690,23 +726,19 @@
         },
         {
           "v": "124 distinct labels",
-          "q": "All the IOCs collected and attributed to this group gave us 124 distinct labels, resolving to only 1,900 hosts"
+          "q": "gave us 124 distinct labels, resolving to only 1,900 hosts covering 397"
         },
         {
           "v": "1,900 hosts",
-          "q": "All the IOCs collected and attributed to this group gave us 124 distinct labels, resolving to only 1,900 hosts"
+          "q": "resolving to only 1,900 hosts covering 397"
+        },
+        {
+          "v": "397 AS ranges",
+          "q": "covering 397 AS ranges"
         },
         {
           "v": "11 running SDBbot servers",
-          "q": "By using this method, we discovered 11 running SDBbot servers, 10 of them still active in June 2020."
-        },
-        {
-          "v": "more than 50 servers and workstations",
-          "q": "to plant SDBbot backdoors in more than 50 servers and workstations."
-        },
-        {
-          "v": "Ubuntu 18.04",
-          "q": "mostly Ubuntu 18.04, but also Debian 10 and a few Ubuntu 16.4."
+          "q": "11 running SDBbot servers, 10 of them still active in June 2020"
         }
       ]
     },
@@ -715,20 +747,21 @@
       "name": "SDBbot"
     },
     "hedges": [
-      "The ransom operation was run allegedly by TA505, according to the report.",
-      "We do not know if the credential-dumping approach is a standard procedure for the group or if they just ran into issues.",
-      "The geolocation of the command server seems to be in Ukraine, but the owner of the network block is in Seychelles.",
-      "Domains allegedly belonging to TA505 are listed, and the group probably has been using the same techniques for months.",
-      "The report leaves attribution to readers: For fun, we will now allow readers to make their own attribution conclusions.",
-      "The purpose of the transient file profile3.7.exe remains unknown."
+      "The report says the ransom operation was run allegedly by TA505.",
+      "The report says it is not known whether the credential-extraction methods are standard for the group or were due to problems.",
+      "The purpose of the file profile3.7.exe remains unknown to the authors.",
+      "The report says the server geolocation seems to be in Ukraine, while the AS owner is in the Seychelles.",
+      "The report says the group probably has been using the same techniques for months.",
+      "Domains are listed as allegedly belonging to TA505.",
+      "The authors leave attribution conclusions to readers."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:16Z",
-      "ok": false,
-      "note": "summary: It lists credential dumping among the means used to reach domain admin rights. The text says domain admin was gained with MS17-07 against a domain cont",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:16Z",
+        "ok": false,
+        "note": "summary: It lists credential dumping among the means used to reach domain admin rights. The text says domain admin was gained with MS17-07 against a domain cont",
+        "by": "auditor"
+      }
+    ]
   }
 }

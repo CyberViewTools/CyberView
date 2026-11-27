@@ -444,31 +444,37 @@
   },
   "4bcaa0ea749e55f9e9d29669df670aa5c4f7e569": {
     "sha1": "4bcaa0ea749e55f9e9d29669df670aa5c4f7e569",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:22:31Z",
+    "read_at": "2026-11-27T12:50:08Z",
     "model": "haiku",
-    "summary": "An archived Unix-era article on placing backdoors and trojan horses in Unix systems. It reviews historical trojan cases (Crackerjack, SATAN, quota, ircII, TCP Wrappers, Linux Slackware), outlines backdoor techniques at a general level, and presents file integrity checking with Tripwire as the detection approach. It names no actors, CVEs or dated incidents with attribution.",
+    "summary": "A guide signed airwalk on placing backdoors and trojan horses in Unix systems and detecting them. It recalls historical cases such as Crackerjack, SATAN, quota, ircII and a Slackware account backdoor, describes common backdoor and trojan techniques in general terms, and presents Tripwire as an integrity-checking defence. It is instructional rather than a report on a specific campaign.",
     "kind": "overview",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "daemon9",
+          "q": "this technique was introduced by daemon9 and is quite effective.",
+          "by": "the report"
+        }
+      ],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "1992",
           "q": "Tripwire, created by Eugene Spafford and Gene Kim at Purdue University in 1992, is an",
-          "what": "Tripwire integrity checking tool created at Purdue University"
+          "what": "Tripwire integrity checking tool created"
         },
         {
           "v": "1994",
-          "q": "the ircII trojan case: back in 1994, ircII (Internet Relay Chat client) version 2.2.9 also had a trojan horse.",
-          "what": "ircII version 2.2.9 reported to have a trojan horse"
+          "q": "back in 1994, ircII (Internet Relay Chat client) version 2.2.9 also had a trojan horse.",
+          "what": "ircII version 2.2.9 found to contain a trojan horse"
         },
         {
           "v": "1996",
-          "q": "the quota trojan case: in 1996 a trojanized version of quota (a Unix tool for checking disk qoutas for users) was",
-          "what": "trojanized quota tool distributed on the Internet"
+          "q": "in 1996 a trojanized version of quota (a Unix tool for checking disk qoutas for users) was distributed on the Internet.",
+          "what": "trojanized version of the quota tool distributed on the Internet"
         }
       ],
       "tools": [
@@ -478,19 +484,31 @@
         },
         {
           "v": "SATAN",
-          "q": "the SATAN case: an early version of SATAN (1.0) had malicious code in one of the binaries shipped in the"
+          "q": "an early version of SATAN (1.0) had malicious code in one of the binaries shipped in the package -- fping."
+        },
+        {
+          "v": "fping",
+          "q": "had malicious code in one of the binaries shipped in the package -- fping."
         },
         {
           "v": "quota",
-          "q": "the quota trojan case: in 1996 a trojanized version of quota (a Unix tool for checking disk qoutas for users) was"
+          "q": "in 1996 a trojanized version of quota (a Unix tool for checking disk qoutas for users) was distributed on the Internet."
+        },
+        {
+          "v": "ircII",
+          "q": "back in 1994, ircII (Internet Relay Chat client) version 2.2.9 also had a trojan horse."
         },
         {
           "v": "TCP Wrappers",
-          "q": "the TCP Wrappers case: there was a trojan version of a popular Unix tool TCP Wrappers on the Internet."
+          "q": "there was a trojan version of a popular Unix tool TCP Wrappers on the Internet."
         },
         {
-          "v": "Linux Slackware",
-          "q": "in Linux Slackware releases 3.2 and earlier, there was a package called"
+          "v": "Slackware",
+          "q": "the infamous Slackware backdoor: in Linux Slackware releases 3.2 and earlier, there was a package called"
+        },
+        {
+          "v": "wu-ftpd",
+          "q": "for example the wu-ftpd trojan horse"
         },
         {
           "v": "Tripwire",
@@ -498,11 +516,7 @@
         },
         {
           "v": "Slipwire",
-          "q": "Slipwire, coded in Perl."
-        },
-        {
-          "v": "ATP",
-          "q": "other, similar programs are ATP (the Anti-Tampering Program), Hobgoblin (by Farmer"
+          "q": "such an example is Slipwire, coded in Perl."
         }
       ],
       "techniques": [
@@ -512,15 +526,23 @@
         },
         {
           "v": "SUID shell backdoor",
-          "q": "* the SUID shell backdoor: i recommend the use of this technique only if you have constant non-root access to the"
+          "q": "the SUID shell backdoor: i recommend the use of this technique only if you have constant non-root access to the"
         },
         {
           "v": "/etc/passwd backdoor",
-          "q": "* the /etc/passwd backdoor: this involves adding a user to the /etc/passwd file with root ID (0) and without a"
+          "q": "the /etc/passwd backdoor: this involves adding a user to the /etc/passwd file with root ID (0) and without a"
         },
         {
           "v": "inet daemon/services backdoor",
-          "q": "* the inet daemon/services backdoor: this is another widely used backdoor technique. basically, there are two"
+          "q": "the inet daemon/services backdoor: this is another widely used backdoor technique."
+        },
+        {
+          "v": "telnet daemon backdoor",
+          "q": "telnet daemon backdoor (a modified version of the in.telnetd file, which allows access to hackers if"
+        },
+        {
+          "v": "library backdoors",
+          "q": "library backdoors (backdoors placed in library"
         },
         {
           "v": "cronjob backdoors",
@@ -528,11 +550,19 @@
         },
         {
           "v": "su trojan",
-          "q": "* the su trojan: this type of trojan horse is used a lot for getting the root's password."
+          "q": "the su trojan: this type of trojan horse is used a lot for getting the root's password."
         },
         {
           "v": "telnet trojan",
-          "q": "* the telnet trojan: this is used if you want to get more hosts and their passwords. since most Unix users use their"
+          "q": "the telnet trojan: this is used if you want to get more hosts and their passwords."
+        },
+        {
+          "v": "using existing programs for trojan horses",
+          "q": "using existing programs for trojan horses: this is a very common method."
+        },
+        {
+          "v": "nasty trojan horses",
+          "q": "nasty trojan horses: some people like to use trojan horses to further demolish the system."
         },
         {
           "v": "integrity checking",
@@ -542,34 +572,42 @@
       "cves": [],
       "figures": [
         {
-          "v": "over 250,000 files on five computers",
-          "q": "the authors tested over 250,000 files on five computers for duplicate signatures. while the 16-bit CRC"
+          "v": "250,000 files",
+          "q": "the authors tested over 250,000 files on five computers for duplicate signatures."
         },
         {
           "v": "approximately 25,000 collisions",
           "q": "while the 16-bit CRC produced approximately 25,000 collisions, 128-bit MD4, MD5 and Snefru produced none"
         },
         {
-          "v": "37024",
-          "q": "Total files scanned: 37024"
+          "v": "three users",
+          "q": "this file would install three users ('satan','gonzo' and 'snake') without passwords. this gave free"
+        },
+        {
+          "v": "3.2 and earlier",
+          "q": "the infamous Slackware backdoor: in Linux Slackware releases 3.2 and earlier, there was a package called"
+        },
+        {
+          "v": "2.2.9",
+          "q": "back in 1994, ircII (Internet Relay Chat client) version 2.2.9 also had a trojan horse."
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The article says backdoors cannot be generalised, since they do many different things.",
-      "The article says a perfect system cannot exist, though detection programs exist and are helpful.",
-      "The article describes its basic detection scripts as quite primitive and not very reliable.",
-      "The article says backdoors and trojans are not always detected, and only a small amount of them are found.",
-      "The article says its telnet trojan only guesses the host system, so it is not good against smart users."
+      "The report says its list of historical cases is not complete: these aren't all examples of backdoors and trojan horses on Unix systems.",
+      "The report says backdoors cannot be generalized and that the best technique depends on the system being targeted.",
+      "The report says its simple detection scripts are quite primitive and not so reliable, and that a perfect system cannot exist.",
+      "The report says the telnet trojan only guesses the host's system type, so it is not good against smart users.",
+      "The report says the SUID shell check is not a full-proof technique and that protection against backdoors is weak."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:33:39Z",
-      "ok": false,
-      "note": "summary: The closing sentence, \"It names no actors, CVEs or dated incidents with attribution,\" does not match the text. The text names Eugene Spafford and Gene ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:33:39Z",
+        "ok": false,
+        "note": "summary: The closing sentence, \"It names no actors, CVEs or dated incidents with attribution,\" does not match the text. The text names Eugene Spafford and Gene ",
+        "by": "auditor"
+      }
+    ]
   }
 }

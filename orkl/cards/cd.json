@@ -153,33 +153,119 @@
   },
   "cd0870230ac81b8b2a406413dee1c528b164b07d": {
     "sha1": "cd0870230ac81b8b2a406413dee1c528b164b07d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:23:11Z",
+    "read_at": "2026-11-27T12:49:50Z",
     "model": "haiku",
-    "summary": "GitHub project page for TripleCross, a Linux eBPF rootkit that its author describes as a demonstration of the offensive capabilities of eBPF, created for a bachelor's thesis. The page is project documentation for a tool and does not report observed threat activity, so no facts are recorded.",
-    "kind": "not-a-threat-report",
+    "summary": "Archived GitHub README for TripleCross, a Linux eBPF rootkit project built for a bachelor's thesis at UC3M. It describes a backdoor with C2, library injection via GOT hijacking, execution hijacking, a local privilege escalation module, persistence through cron and sudoers files, and file hiding. The project is presented as educational and names no real victims or threat actors.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 14:21:08 UTC",
+          "what": "Repository archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "TripleCross",
+          "q": "TripleCross is a Linux eBPF rootkit that demonstrates the offensive capabilities of the eBPF technology."
+        },
+        {
+          "v": "libbpf",
+          "q": "Contains the libbpf library integrated with the rootkit"
+        },
+        {
+          "v": "netcat",
+          "q": "Receiving a reverse shell from the attacker machine can be done with netcat:"
+        },
+        {
+          "v": "RawTCP_Lib",
+          "q": "The raw sockets library RawTCP_Lib used for rootkit transmissions is of my authorship and has its own repository."
+        },
+        {
+          "v": "deployer.sh",
+          "q": "Executing deployer.sh will install the rootkit and create the persistence files."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "eBPF rootkit",
+          "q": "TripleCross is a Linux eBPF rootkit that demonstrates the offensive capabilities of the eBPF technology."
+        },
+        {
+          "v": "library injection",
+          "q": "1. A library injection module to execute malicious code by writing at a process' virtual memory."
+        },
+        {
+          "v": "GOT hijacking",
+          "q": "Library injection via GOT hijacking technique"
+        },
+        {
+          "v": "execution hijacking",
+          "q": "2. An execution hijacking module that modifies data passed to the kernel to execute malicious programs."
+        },
+        {
+          "v": "local privilege escalation",
+          "q": "3. A local privilege escalation module that allows for running malicious programs with root privileges."
+        },
+        {
+          "v": "backdoor with C2",
+          "q": "4. A backdoor with C2 capabilities that can monitor the network and execute commands sent from a remote rootkit"
+        },
+        {
+          "v": "encrypted pseudo-shell",
+          "q": "An encrypted pseudo-shell can be requested by the rootkit client at any time, consisting of a TLS connection between the"
+        },
+        {
+          "v": "phantom shell",
+          "q": "A phantom shell uses a combination of XDP and TC programs to overcome eBPF limitations at the network, specifically"
+        },
+        {
+          "v": "multi-packet trigger",
+          "q": "Multi-packet trigger"
+        },
+        {
+          "v": "ELF hardening",
+          "q": "TripleCross is prepared to bypass common ELF hardening techniques, including:"
+        },
+        {
+          "v": "persistence module",
+          "q": "6. A persistence module that ensures the rootkit remains installed maintaining full privileges even after a reboot event."
+        },
+        {
+          "v": "stealth module",
+          "q": "7. A stealth module that hides rootkit-related files and directories from the user."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "5.11.0",
+          "q": "VERSION Ubuntu 21.04 5.11.0 10.3.0 12.0.0 2.33"
+        }
+      ]
     },
-    "subject": null,
+    "subject": {
+      "type": "malware",
+      "name": "TripleCross"
+    },
     "hedges": [
-      "The page states the software is purely for educational and academic purposes and that the authors are not responsible for any damage or mishaps that may occur during its use."
+      "Stated as purely for educational and academic purposes; the authors disclaim responsibility for any damage from use.",
+      "Software provided 'as is'; the report warns that misuse may result in criminal charges.",
+      "Recommends Ubuntu 21.04 as the tested environment and notes that other systems may run into problems."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:34:09Z",
-      "ok": false,
-      "note": "hedges[0]: The text says the rootkit is purely for educational and academic purposes and the authors are not responsible for damage. The card's wording matches ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:34:09Z",
+        "ok": false,
+        "note": "hedges[0]: The text says the rootkit is purely for educational and academic purposes and the authors are not responsible for damage. The card's wording matches ",
+        "by": "auditor"
+      }
+    ]
   }
 }

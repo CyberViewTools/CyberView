@@ -275,5 +275,250 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "8f02e50e937228476c2898f3f02dd74fd6a43340": {
+    "sha1": "8f02e50e937228476c2898f3f02dd74fd6a43340",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:46:40Z",
+    "model": "haiku",
+    "summary": "Annual roundup by Patrick Wardle (Objective-See) of new macOS malware first seen in 2022, with analysis and sample downloads. It covers about a dozen families, including SysJoker, DazzleSpy, CoinMiner, CloudMensis, rShell and Insekt, plus adware and older threats in an appendix. Several spread by typosquatting or supply-chain compromise, others via trojanized disk images or browser exploits, and infection vectors are unknown for several. Findings are credited to vendor researchers including TrendMicro, ESET, Intezer, Talos, SentinelOne, Volexity, Sonatype and ReversingLabs.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Earth Berberoka",
+          "q": "a new APT group they dubbed “Earth Berberoka”",
+          "by": "TrendMicro"
+        },
+        {
+          "v": "Lazarus",
+          "q": "The NukeSped malware is associated with the Lazarus APT group (North Korea), and",
+          "by": "the report"
+        },
+        {
+          "v": "Storm Cloud",
+          "q": "GIMMICK is used in targeted attacks by Storm Cloud, a Chinese espionage threat",
+          "by": "Volexity"
+        },
+        {
+          "v": "Iron Tiger",
+          "q": "used by Iron Tiger (also known as Emissary Panda, APT27, Bronze Union, and Luckymouse)",
+          "by": "TrendMicro"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "educational institution",
+          "q": "a leading educational institution. After further investigation, we found that SysJoker"
+        },
+        {
+          "v": "Gambling Websites",
+          "q": "Earth Berberoka Targets Gambling Websites With Old and New"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Hong Kong",
+          "q": "[A] Hong Kong pro-democracy radio station website [was] compromised to serve a"
+        },
+        {
+          "v": "Singapore",
+          "q": "description was uploaded to VirusTotal from Singapore"
+        },
+        {
+          "v": "Brazil",
+          "q": "was uploaded to VirusTotal from Brazil"
+        },
+        {
+          "v": "North Korea",
+          "q": "The NukeSped malware is associated with the Lazarus APT group (North Korea), and"
+        }
+      ],
+      "dates": [
+        {
+          "v": "January 11, 2022",
+          "q": "Avigayil Mechtinger (@AbbyMCH) January 11, 2022",
+          "what": "Intezer researcher post about the SysJoker backdoor research."
+        },
+        {
+          "v": "January 1, 2023",
+          "q": "by: Patrick Wardle / January 1, 2023",
+          "what": "Blog post covering new Mac malware of 2022 published."
+        },
+        {
+          "v": "May 17th",
+          "q": "On May 17th, a mysterious 'pymafka' package appeared on the PyPI registry.",
+          "what": "Malicious pymafka package appeared on the PyPI registry."
+        },
+        {
+          "v": "July 19, 2022",
+          "q": "ESET (@ESET) July 19, 2022",
+          "what": "ESET public post about the CloudMensis spyware."
+        },
+        {
+          "v": "October 13, 2022",
+          "q": "Cisco Talos Intelligence Group (@TalosSecurity) October 13, 2022",
+          "what": "Talos post announcing the Alchimist framework and Insekt trojan."
+        },
+        {
+          "v": "November 19, 2022",
+          "q": "Trend Micro Research (@TrendMicroRSRCH) November 19, 2022",
+          "what": "TrendMicro post about KeySteal, a trojanized copy of ResignTool."
+        },
+        {
+          "v": "December 22, 2022",
+          "q": "ReversingLabs (@ReversingLabs) December 22, 2022",
+          "what": "ReversingLabs post about a malicious PyPI package posing as a SentinelOne SDK."
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is a pen-testing software tool typically used by red teams and ethical"
+        },
+        {
+          "v": "Sliver",
+          "q": "noted that this persistent binary, softwareupdated is a Sliver"
+        },
+        {
+          "v": "XMRig",
+          "q": "“modified [open-source] XMRig command-line [miner] app”"
+        },
+        {
+          "v": "ResignTool",
+          "q": "a copy of the open-source ResignTool was packaged up with keychain-stealing malware"
+        },
+        {
+          "v": "BlockBlock",
+          "q": "If one has BlockBlock installed, it will detects the malware attempting to persist"
+        },
+        {
+          "v": "Poseidon",
+          "q": "According to its Github repository, Poseidon is,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "supply-chain attack",
+          "q": "Delivered via a supply-chain attack, this backdoor affords basic, albeit sufficient capabilities"
+        },
+        {
+          "v": "typosquatting",
+          "q": "Spread though “typosquatting” of a popular Rust Crate"
+        },
+        {
+          "v": "Watering hole",
+          "q": "Watering hole deploys new macOS malware, DazzleSpy, in Asia"
+        },
+        {
+          "v": "browser exploit",
+          "q": "CloudMensis was likely deployed via a browser exploit"
+        },
+        {
+          "v": "launch agent",
+          "q": "SysJoker persists as a launch agent (com.apple.update.plist)."
+        },
+        {
+          "v": "launch daemon",
+          "q": "CloudMensis is installed as a launch daemon."
+        },
+        {
+          "v": "password prompt",
+          "q": "Invoking the AuthorizationExecuteWithPrivileges API will result in a password prompt,"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "The dropper contains an exploit for a privilege escalation vulnerability (CVE-2021-4034)"
+        },
+        {
+          "v": "escape the Safari sandbox",
+          "q": "to escape the Safari sandbox and gain root."
+        },
+        {
+          "v": "fileless technique",
+          "q": "it uses a 'fileless' technique to execute a further payload in-memory"
+        },
+        {
+          "v": "Trojanized Disk Images",
+          "q": "Infection Vector: Trojanized Disk Images(?)"
+        },
+        {
+          "v": "Malicious Ads",
+          "q": "Infection Vector: Malicious Ads / Fake Update Prompt"
+        },
+        {
+          "v": "port scan",
+          "q": "For another example, let’s task the malware to perform a port scan:"
+        },
+        {
+          "v": "keychain stealer",
+          "q": "KeySteal, as its name implies is a simple keychain stealer, embedded in a trojanized copy of"
+        },
+        {
+          "v": "crypto currency miner",
+          "q": "CoinMiner is a surreptitious crypto currency miner, leveraging various open-source"
+        },
+        {
+          "v": "exfiltrate",
+          "q": "The sole goal of SentinelSneak is to steal (exfiltrate) sensitive developer-related files off an"
+        },
+        {
+          "v": "public cloud hosting services",
+          "q": "It is a feature-rich, multi-platform malware family that uses public cloud hosting services (such as Google Drive) for"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-30869",
+          "q": "exploit a privilege escalation vulnerability (CVE-2021-30869) to escape the Safari sandbox and gain root."
+        },
+        {
+          "v": "CVE-2021-4034",
+          "q": "The dropper contains an exploit for a privilege escalation vulnerability (CVE-2021-4034) in polkit's pkexec utility."
+        },
+        {
+          "v": "CVE-2019-8526",
+          "q": "The ability to dump the keychain (on systems vulnerable to CVE-2019-8526)."
+        }
+      ],
+      "figures": [
+        {
+          "v": "40%",
+          "q": "except for Apple who saw a 40% increase!"
+        },
+        {
+          "v": "7th year",
+          "q": "For the 7th year in a row"
+        },
+        {
+          "v": "4 million",
+          "q": "has been downloaded over 4 million"
+        },
+        {
+          "v": "almost 40",
+          "q": "CloudMensis exposes almost 40"
+        },
+        {
+          "v": "10.15.2",
+          "q": "attempting to exploit users running macOS 10.15.2 or newer."
+        },
+        {
+          "v": "11.6",
+          "q": "running macOS 11.6 (Big Sur)"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Intezer did not disclose how the macOS variant of SysJoker spreads or infects Mac systems; a possible vector is an infected npm package.",
+      "At this time however, it is unknown how Gimmick initially infects macOS systems.",
+      "Exactly how such disk images make to their intended targets or victims remains unclear.",
+      "it was not (yet) seen in the wild, and as such, we don’t currently know its infection vector.",
+      "We still do not know how victims are initially compromised by this threat.",
+      "CloudMensis was likely deployed via a browser exploit.",
+      "We think it was part of #Lazarus campaign for Mac.",
+      "It does not appear that SentinelSneak persists."
+    ]
   }
 }

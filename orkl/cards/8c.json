@@ -1,0 +1,184 @@
+{
+  "8c266b9ba995444a9ed5a801dbd1f0b71cc8021c": {
+    "sha1": "8c266b9ba995444a9ed5a801dbd1f0b71cc8021c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:47:42Z",
+    "model": "haiku",
+    "summary": "CrowdStrike reports a significant rise in eCrime actors using ransomware against VMware ESXi hypervisors since its February 2021 post on hypervisor jackpotting. It describes ESXi-targeting campaigns by several SPIDER-named actors, using tools including Babuk Locker, DeathKitty, Pysa, REvix and Ragnar Locker, with tradecraft such as SSH access and terminating VMs before encryption. It recommends avoiding direct host access, restricting vCenter exposure, backing up datastores daily, and not shutting down hosts during encryption.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "CARBON SPIDER",
+          "q": "CrowdStrike noted that two big game hunting (BGH) adversaries, CARBON SPIDER",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "SPRITE SPIDER",
+          "q": "and SPRITE SPIDER, were observed utilizing this technique with their respective",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "PINCHY SPIDER",
+          "q": "Since then, CrowdStrike has observed a significant uptrend in hypervisor jackpotting by other adversaries, including PINCHY SPIDER",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "VIKING SPIDER",
+          "q": "Since June 2021, VIKING SPIDER has deployed Ragnar Locker",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "FERAL SPIDER",
+          "q": "Since March 2021, FERAL SPIDER, the developers and operators of DeathKitty (aka",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "CYBORG SPIDER",
+          "q": "Since May 2021, CYBORG SPIDER, the developers and operators of Pysa ransomware,",
+          "by": "CrowdStrike"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 30, 2021",
+          "q": "Michael Dawson August 30, 2021",
+          "what": "CrowdStrike published the report"
+        },
+        {
+          "v": "February 2021",
+          "q": "In February 2021, CrowdStrike blogged about Hypervisor Jackpotting, a technique that",
+          "what": "CrowdStrike blogged about hypervisor jackpotting"
+        },
+        {
+          "v": "March 2021",
+          "q": "In March 2021, operators of Babuk Locker ransomware offered access",
+          "what": "Babuk Locker operators offered access to an ESXi variant"
+        },
+        {
+          "v": "May 2021",
+          "q": "In May 2021, CrowdStrike Services observed a",
+          "what": "CrowdStrike Services observed a victim targeted with the Babuk Locker ESXi variant"
+        },
+        {
+          "v": "March 2021",
+          "q": "Since March 2021, FERAL SPIDER, the developers and operators of DeathKitty (aka",
+          "what": "DeathKitty added functionality to terminate and encrypt VMs on ESXi"
+        },
+        {
+          "v": "May 2021",
+          "q": "Since May 2021, CYBORG SPIDER, the developers and operators of Pysa ransomware,",
+          "what": "CYBORG SPIDER began targeting ESXi servers for encryption with Pysa"
+        },
+        {
+          "v": "June 2021",
+          "q": "Since June 2021, PINCHY SPIDER has distributed a Linux ransomware variant named",
+          "what": "PINCHY SPIDER began distributing the REvix Linux ransomware for ESXi"
+        },
+        {
+          "v": "July 2021",
+          "q": "In July 2021, PINCHY SPIDER began distributing REvix v1.2a, which added execution of VM",
+          "what": "PINCHY SPIDER began distributing REvix v1.2a"
+        },
+        {
+          "v": "mid-July 2021",
+          "q": "In mid-July 2021, PINCHY SPIDER",
+          "what": "PINCHY SPIDER's dedicated leak site infrastructure went offline"
+        },
+        {
+          "v": "June 2021",
+          "q": "Since June 2021, VIKING SPIDER has deployed Ragnar Locker",
+          "what": "VIKING SPIDER began deploying Ragnar Locker to ESXi systems"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Babuk Locker",
+          "q": "In March 2021, operators of Babuk Locker ransomware offered access"
+        },
+        {
+          "v": "DeathKitty",
+          "q": "Since March 2021, FERAL SPIDER, the developers and operators of DeathKitty (aka"
+        },
+        {
+          "v": "Pysa",
+          "q": "Since May 2021, CYBORG SPIDER, the developers and operators of Pysa ransomware,"
+        },
+        {
+          "v": "REvix",
+          "q": "In July 2021, PINCHY SPIDER began distributing REvix v1.2a, which added execution of VM"
+        },
+        {
+          "v": "Ragnar Locker",
+          "q": "Since June 2021, VIKING SPIDER has deployed Ragnar Locker"
+        },
+        {
+          "v": "Darkside",
+          "q": "ransomware variants, Darkside and Defray777. Since then, CrowdStrike has observed a"
+        },
+        {
+          "v": "Defray777",
+          "q": "ransomware variants, Darkside and Defray777. Since then, CrowdStrike has observed a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hypervisor jackpotting: ransomware targeting ESXi hypervisors to widen impact",
+          "q": "In February 2021, CrowdStrike blogged about Hypervisor Jackpotting, a technique that"
+        },
+        {
+          "v": "gaining interactive access, such as over SSH",
+          "q": "such as gaining interactive access"
+        },
+        {
+          "v": "terminating running VMs before encryption",
+          "q": "listing and terminating running VM processes prior to encryption, and"
+        },
+        {
+          "v": "encrypting VM datastore disk volumes and snapshots",
+          "q": "to encrypt disk volumes and snapshots."
+        },
+        {
+          "v": "lateral movement to ESXi hosts over HTTPS using the native root account",
+          "q": "SPIDER operators move laterally to the hypervisors via HTTPS using the native ESXi root"
+        },
+        {
+          "v": "terminating and encrypting running virtual machines on ESXi",
+          "q": "terminate and encrypt virtual machines running"
+        },
+        {
+          "v": "initial access to vCenter via valid accounts or RCE exploitation",
+          "q": "CrowdStrike has observed adversaries gaining initial access to vCenter using valid accounts or"
+        },
+        {
+          "v": "shutting down VMs releases file locks, enabling encryption",
+          "q": "shutting down or rebooting VMs"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-21985",
+          "q": "exploiting remote code execution (RCE) vulnerabilities (e.g., CVE-2021-21985)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "two",
+          "q": "two big game hunting (BGH) adversaries"
+        },
+        {
+          "v": "five recommendations",
+          "q": "top five recommendations that organizations should"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Pysa script filenames are noted as highly likely to correspond with Python v2.7 or v3.x.",
+      "The report says PINCHY SPIDER's dedicated leak site went offline in mid-July 2021, leaving in question the future of those operations."
+    ]
+  }
+}

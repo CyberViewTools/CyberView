@@ -501,5 +501,277 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "4c0ae63a64e187dcceec69bb1a103c5677abaa79": {
+    "sha1": "4c0ae63a64e187dcceec69bb1a103c5677abaa79",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:43:04Z",
+    "model": "haiku",
+    "summary": "BleepingComputer reports that LockBit ransomware encryptors for macOS and other CPU types, including an Apple Silicon (M1) build, were found on VirusTotal. Researchers say the samples look like in-development test builds not ready for live attacks, and the macOS encryptor crashes on launch due to a buffer overflow bug. LockBit's public representative said the Mac encryptor is actively being developed. Researcher Florian Roth found an Apple M1 encryptor uploaded in December 2022.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "LockBit",
+          "q": "The LockBit ransomware gang has created encryptors targeting Macs for the first time",
+          "by": "BleepingComputer"
+        },
+        {
+          "v": "LockBitSupp",
+          "q": "the public-facing representative of LockBit, known as LockBitSupp, said that the Mac encryptor is \"actively being developed.\"",
+          "by": "BleepingComputer (LockBit representative's statement to BleepingComputer)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "consumers and small businesses",
+          "q": "some LockBit affiliates target consumers and small businesses, where an encryptor like this could be more useful."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-04-16",
+          "q": "Published: 2023-04-16 · Archived: 2026-04-05 15:32:41 UTC",
+          "what": "The report was published"
+        },
+        {
+          "v": "December 2022",
+          "q": "December 2022, indicating that these samples have been floating around for some time.",
+          "what": "An Apple M1 LockBit encryptor was uploaded to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "locker_Apple_M1_64",
+          "q": "These encryptors also include one named 'locker_Apple_M1_64' [VirusTotal] that targets the newer Macs running on Apple"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "compiled for macOS",
+          "q": "the macOS encryptor is based on the Linux version and compiled for macOS with some basic configuration settings."
+        },
+        {
+          "v": "excluded from encryption",
+          "q": "the encryptor contains a list of sixty-five file extensions and filenames that will be excluded from encryption"
+        },
+        {
+          "v": "buffer overflow bug",
+          "q": "it crashes due to a buffer overflow bug in its code."
+        },
+        {
+          "v": "bypass TCC, get notarized",
+          "q": "figure out how to bypass TCC, get notarized"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "sixty-five",
+          "q": "the encryptor contains a list of sixty-five file extensions and filenames that will be excluded from encryption"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LockBit ransomware"
+    },
+    "hedges": [
+      "The report says LockBit is likely becoming the first major ransomware operation to ever specifically target macOS.",
+      "BleepingComputer says the strings were likely haphazardly thrown together in a test, indicating likely test builds.",
+      "The good news is that these encryptors are likely not ready for deployment in actual attacks against macOS devices.",
+      "The report says it is not clear how useful a macOS encryptor would be in the enterprise.",
+      "LockBit has a history of toying with security researchers and the media; if the claim is true, more production-quality versions will likely follow."
+    ]
+  },
+  "4c92ec27cabd70f496bfc1ea21b7b85dd24ba9bc": {
+    "sha1": "4c92ec27cabd70f496bfc1ea21b7b85dd24ba9bc",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:45:01Z",
+    "model": "haiku",
+    "summary": "Insikt Group (Recorded Future) reports new infrastructure linked to GrayAlpha, a threat actor that overlaps with the financially motivated group FIN7. The report describes two custom PowerShell loaders, PowerNet and MaskBat, which lead to NetSupport RAT infections, and three infection vectors: fake browser update pages, fake 7-Zip download sites, and the TAG-124 traffic distribution system. At the time of writing only the fake 7-Zip pages appeared active, with domains as recent as April 2025. The report links an individual to the 7-Zip pages and gives defender advice on application…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "GrayAlpha",
+          "q": "Insikt Group identified new infrastructure associated with GrayAlpha, a threat actor that overlaps with the",
+          "by": "Insikt Group, in the report"
+        },
+        {
+          "v": "FIN7",
+          "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically sophisticated",
+          "by": "Insikt Group, in the report"
+        },
+        {
+          "v": "Dmytro Fedorov",
+          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
+          "by": "US Department of Justice, as cited in the report"
+        },
+        {
+          "v": "Fedir Hladyr",
+          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
+          "by": "US Department of Justice, as cited in the report"
+        },
+        {
+          "v": "Andrii Kolpakov",
+          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
+          "by": "US Department of Justice, as cited in the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "retail",
+          "q": "particularly within the retail, hospitality, and financial sectors."
+        },
+        {
+          "v": "hospitality",
+          "q": "particularly within the retail, hospitality, and financial sectors."
+        },
+        {
+          "v": "financial",
+          "q": "particularly within the retail, hospitality, and financial sectors."
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "businesses across 47 US states and multiple countries."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2013",
+          "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically sophisticated",
+          "what": "FIN7 active since at least this year"
+        },
+        {
+          "v": "2018",
+          "q": "In 2018, the US Department of Justice (US DOJ) unsealed indictments against three high-ranking FIN7 members",
+          "what": "US DOJ unsealed indictments against FIN7 members"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, FIN7 expanded its operations to include the deployment of ransomware through affiliations with RaaS",
+          "what": "FIN7 expanded into ransomware deployment via RaaS affiliations"
+        },
+        {
+          "v": "April 2024",
+          "q": "Since at least April 2024, GrayAlpha has been observed leveraging fake browser update websites as part of its",
+          "what": "GrayAlpha observed using fake browser update websites"
+        },
+        {
+          "v": "September 2024",
+          "q": "the most recently observed domain began resolving in September 2024.",
+          "what": "Most recent fake browser update domain began resolving"
+        },
+        {
+          "v": "April 2025",
+          "q": "with newly registered domains appearing as recently as April 2025.",
+          "what": "Newly registered domains appeared in the fake 7-Zip pages"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PowerNet",
+          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
+        },
+        {
+          "v": "NetSupport RAT",
+          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
+        },
+        {
+          "v": "MaskBat",
+          "q": "Insikt Group identified another custom loader, referred to as MaskBat, that has similarities to FakeBat"
+        },
+        {
+          "v": "TAG-124",
+          "q": "Notably, the use of TAG-124 had not been publicly documented prior to this report."
+        },
+        {
+          "v": "Carbanak",
+          "q": "including variants of Carbanak,"
+        },
+        {
+          "v": "POWERTRASH",
+          "q": "POWERTRASH — a uniquely obfuscated, PowerShell-based, in-memory loader adapted from the PowerSploit framework"
+        },
+        {
+          "v": "AuKill",
+          "q": "FIN7 also developed AuKill (also known as"
+        },
+        {
+          "v": "Anubis backdoor",
+          "q": "deploying the Python-based Anubis backdoor, which provides full system control via in-"
+        },
+        {
+          "v": "DiceLoader",
+          "q": "used to deploy payloads such as DiceLoader and cracked Core Impact"
+        },
+        {
+          "v": "REvil",
+          "q": "groups such as REvil and Maze, while also managing its own RaaS programs, including the now-retired Darkside"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spearphishing emails",
+          "q": "gains initial access through spearphishing emails containing malicious attachments or links hosted on"
+        },
+        {
+          "v": "callback phishing",
+          "q": "often combined with callback phishing to increase credibility."
+        },
+        {
+          "v": "fake browser update websites",
+          "q": "observed leveraging fake browser update websites as part of its"
+        },
+        {
+          "v": "malicious 7-Zip download pages",
+          "q": "Infection Vector 2: Malicious 7-Zip download pages"
+        },
+        {
+          "v": "fake software updates",
+          "q": "Infection Vector 1: Fake software updates impersonating legitimate products such as Concur"
+        },
+        {
+          "v": "malvertising",
+          "q": "MSIX application packages, delivered via fake update sites and malvertising."
+        },
+        {
+          "v": "EDR evasion",
+          "q": "AvNeutralizer), a custom EDR evasion utility designed to disable endpoint security solutions, which was later"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three distinct infection vectors",
+          "q": "Over the past year, Insikt Group has identified three distinct infection vectors associated with GrayAlpha,"
+        },
+        {
+          "v": "47 US states",
+          "q": "businesses across 47 US states and multiple countries."
+        },
+        {
+          "v": "thousands of point-of-sale systems",
+          "q": "to compromise thousands of point-of-sale systems and exfiltrate over 15"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "GrayAlpha"
+    },
+    "hedges": [
+      "Additional IP addresses are described as believed to be tied to GrayAlpha.",
+      "Active domain resolution does not necessarily indicate ongoing use by threat actors.",
+      "Only the fake 7-Zip download pages appear to remain active at the time of writing.",
+      "The individual identified through the 7-Zip pages may be involved in the GrayAlpha operation.",
+      "GrayAlpha is said to overlap with FIN7, sharing infrastructure, tooling and tradecraft; the report does not say they are the same group."
+    ]
   }
 }

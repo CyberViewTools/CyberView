@@ -283,5 +283,175 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fc16fa5d5bbca92275d1e8e490574ba7cfd5f807": {
+    "sha1": "fc16fa5d5bbca92275d1e8e490574ba7cfd5f807",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:44:18Z",
+    "model": "haiku",
+    "summary": "Google Security Operations blog post by Mandiant on the NUMOZYLOD PowerShell malware family. It is delivered in trojanized MSIX installers through malvertising, with activity seen since mid-2023. Mandiant attributes its distribution to UNC4536, a malware-as-a-service operator. The post describes two variants that delivered CARBANAK and LUMMASTEALER, the execution path, host reconnaissance and persistence. It also gives hunting queries and detection rules for the platform.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC4536",
+          "q": "Mandiant tracks this PowerShell script as NUMOZYLOD and attributes its distribution to UNC4536, a threat",
+          "by": "Mandiant (as stated in this blog post)"
+        },
+        {
+          "v": "eugenfest",
+          "q": "a threat actor operating under the moniker \"eugenfest.\"",
+          "by": "Mandiant (as stated in this blog post)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "mid-2023",
+          "q": "Since mid-2023, Mandiant Managed Defense has responded to a surge in malware infections originating from",
+          "what": "Mandiant Managed Defense began responding to a surge in malware infections from malvertising campaigns"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, Managed Defense observed a campaign utilizing UNC4536's distribution network to spread the",
+          "what": "Campaign spreading CARBANAK through SEO poisoning observed"
+        },
+        {
+          "v": "2024-08-13",
+          "q": "Published: 2024-08-13",
+          "what": "Blog post published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NUMOZYLOD",
+          "q": "Mandiant tracks this PowerShell script as NUMOZYLOD and attributes its distribution to UNC4536, a threat"
+        },
+        {
+          "v": "FakeBat",
+          "q": "Also known as: FakeBat, EugenLoader, PaykLoader"
+        },
+        {
+          "v": "EugenLoader",
+          "q": "Also known as: FakeBat, EugenLoader, PaykLoader"
+        },
+        {
+          "v": "PaykLoader",
+          "q": "Also known as: FakeBat, EugenLoader, PaykLoader"
+        },
+        {
+          "v": "ICEDID",
+          "q": "distributing malware such as ICEDID, REDLINESTEALER, CARBANAK, LUMMASTEALER, or"
+        },
+        {
+          "v": "REDLINESTEALER",
+          "q": "distributing malware such as ICEDID, REDLINESTEALER, CARBANAK, LUMMASTEALER, or"
+        },
+        {
+          "v": "CARBANAK",
+          "q": "distributing malware such as ICEDID, REDLINESTEALER, CARBANAK, LUMMASTEALER, or"
+        },
+        {
+          "v": "LUMMASTEALER",
+          "q": "distributing malware such as ICEDID, REDLINESTEALER, CARBANAK, LUMMASTEALER, or"
+        },
+        {
+          "v": "MSIX",
+          "q": "threat actors are exploiting MSIX to covertly bundle and distribute malware alongside legitimate software."
+        },
+        {
+          "v": "Package Support Framework",
+          "q": "A key feature of MSIX is its ability to execute scripts with the help of the Package Support Framework (PSF)."
+        },
+        {
+          "v": "Advanced Installer",
+          "q": "Trojanized MSIX are often found to be built with Advanced Installer as indicated under the build"
+        },
+        {
+          "v": "gpg.exe",
+          "q": "files within the VFS folder (such as gpg.exe and iconv.dll) were written to"
+        },
+        {
+          "v": "iconv.dll",
+          "q": "files within the VFS folder (such as gpg.exe and iconv.dll) were written to"
+        },
+        {
+          "v": "AMSI",
+          "q": "Disabling AMSI allows the malware to run undetected by security software."
+        },
+        {
+          "v": "PowerShell",
+          "q": "which executes a PowerShell script to download a"
+        },
+        {
+          "v": "WMI",
+          "q": "Run WMI to gather host information including a list of installed antivirus software on the system."
+        },
+        {
+          "v": "4Sync",
+          "q": "Download the secondary malicious payload encrypted with GPG from 4Sync, a file-sharing and storage"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malvertising",
+          "q": "UNC4536's modus operandi involves leveraging malvertising to distribute trojanized MSIX installers disguised as"
+        },
+        {
+          "v": "SEO poisoning",
+          "q": "This campaign exploited SEO poisoning tactics, directing unsuspecting victims to a"
+        },
+        {
+          "v": "DLL Search Order",
+          "q": "download and execute the CARBANAK malware via DLL Search Order"
+        },
+        {
+          "v": "obfuscation",
+          "q": "Multiple layers of obfuscation to hinder analysis and evade detection"
+        },
+        {
+          "v": "StartUp folder",
+          "q": "In some variants, NUMOZYLOD creates a shortcut(.lnk) in the StartUp folder as its persistence."
+        },
+        {
+          "v": "encrypted with GPG",
+          "q": "Download the secondary malicious payload encrypted with GPG from 4Sync, a file-sharing and storage"
+        },
+        {
+          "v": "Disabling AMSI",
+          "q": "Disabling AMSI allows the malware to run undetected by security software."
+        },
+        {
+          "v": "T1105",
+          "q": "These events map to MITRE ATT&CK® Technique T1105 - Ingress"
+        },
+        {
+          "v": "User Execution: Malicious File",
+          "q": "Such events map to MITRE ATT&CK® Technique T1204.002 - User Execution: Malicious File."
+        },
+        {
+          "v": "Command and Scripting Interpreter: PowerShell",
+          "q": "mapped to MITRE ATT&CK® Technique T1059.001 - Command and Scripting Interpreter: PowerShell."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "4104",
+          "q": "Using the Windows Event Viewer, a user can filter for eventID 4104 and"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NUMOZYLOD"
+    },
+    "hedges": [
+      "Several behaviours are described only for some variants, such as the StartUp shortcut and the host IP gathering.",
+      "Files in the VFS folder may be intended for a later stage of a multi-stage malware attack.",
+      "Later stages of compromise are checked only if attackers progress to that point."
+    ]
   }
 }

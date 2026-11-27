@@ -172,5 +172,93 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "71e6e667e19aa1e3fa3806e352442b214a4b67cc": {
+    "sha1": "71e6e667e19aa1e3fa3806e352442b214a4b67cc",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:36:25Z",
+    "model": "haiku",
+    "summary": "Blog entry describing SepSys, a ransomware whose activity is dated to the second half of February 2020. It encrypts user files with AES, appends the .sepsys extension and demands a $100 Bitcoin payment to a recipient named Silicon Venom, with README.html as the ransom note. The entry says it spreads through insecure RDP configurations, email spam, malicious attachments and fake updates, and that it uses Windows PowerShell. Prevalence is described as low. Antivirus vendors use varied detection names. The family lineage lists Silvertor (July 2020) and RedRoman (November 2020).",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Silicon Venom",
+          "q": "To regain access to your files, please make a $100 donation to Silicon Venom",
+          "by": "the report"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "second half of February 2020",
+          "q": "Активность этого крипто-вымогателя пришлась на вторую половину февраля 2020 г.",
+          "what": "Activity of the ransomware fell in the second half of February 2020"
+        },
+        {
+          "v": "25 April 2020",
+          "q": "Обновление от 25 апреля 2020:",
+          "what": "Update block recorded the .sepsys extension and the SMBGhoster_1.2.exe masquerade"
+        },
+        {
+          "v": "July 2020",
+          "q": "Silvertor Ransomware - июль 2020",
+          "what": "Silvertor follow-on family listed in the family history"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SepSys ransomware",
+          "q": "SepSys Ransomware - февраль 2020"
+        },
+        {
+          "v": "Windows PowerShell",
+          "q": "Использует Windows PowerShell для атаки."
+        },
+        {
+          "v": "SMBGhoster_1.2.exe",
+          "q": "Выдает себя за SMBGhoster_1.2.exe"
+        },
+        {
+          "v": "README.html",
+          "q": "Записка с требованием выкупа называется: README.html"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "RDP",
+          "q": "Может распространяться путём взлома через незащищенную конфигурацию RDP"
+        },
+        {
+          "v": "email",
+          "q": "с помощью email-спама"
+        },
+        {
+          "v": "AES",
+          "q": "Этот крипто-вымогатель шифрует данные пользователей с помощью AES"
+        },
+        {
+          "v": "PowerShell",
+          "q": "Использует Windows PowerShell для атаки."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$100",
+          "q": "To regain access to your files, please make a $100 donation to Silicon Venom"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SepSys ransomware"
+    },
+    "hedges": [
+      "Prevalence is described as low.",
+      "Later update variants may differ from the original version of the ransomware."
+    ]
   }
 }

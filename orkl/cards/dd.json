@@ -163,5 +163,151 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "dd292ad0fef27eff1a38732bf4629f566c3534f7": {
+    "sha1": "dd292ad0fef27eff1a38732bf4629f566c3534f7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:47:34Z",
+    "model": "haiku",
+    "summary": "ESET published research on 21 previously undocumented Linux malware families that backdoor OpenSSH, dated 5 December 2018. Most families include a credential-stealing feature and a backdoor mode. The report highlights Kessel, Kamino, Chandrila and Bonadan. Kamino was first used by a DarkLeech-linked crimeware campaign and later appeared in attacks on Russian banks by a group ESET cites as Carbanak. Samples were found using YARA rules derived from an earlier Windigo detection script, plus a custom honeypot.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "it is the same backdoor that was used on attacks against Russian banks by a group called Carbanak years later, as described by Group-IB.",
+          "by": "Group-IB, as cited in the ESET report"
+        },
+        {
+          "v": "Windigo",
+          "q": "In that white paper, we described in detail Windigo’s multiple malware components and how they work together.",
+          "by": "ESET"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "used on attacks against Russian banks by a group called Carbanak"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russian",
+          "q": "attacks against Russian banks by a group called Carbanak"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 5, 2018",
+          "q": "December 5, 2018",
+          "what": "ESET published the research on the OpenSSH backdoor families"
+        },
+        {
+          "v": "2013",
+          "q": "as documented by ESET researchers in 2013.",
+          "what": "ESET documented the DarkLeech-linked crimeware campaign that first used Kamino"
+        },
+        {
+          "v": "August 2018",
+          "q": "It is also quite new: the C&C server domain was registered in August 2018.",
+          "what": "The C&C server of Kessel was registered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ebury",
+          "q": "At its core was Ebury, an OpenSSH backdoor and credential stealer that was installed on tens of thousands"
+        },
+        {
+          "v": "DarkLeech",
+          "q": "It was first used by a crimeware campaign known to leverage the DarkLeech malware to"
+        },
+        {
+          "v": "Kessel",
+          "q": "One of these is Kessel."
+        },
+        {
+          "v": "Kamino",
+          "q": "Another such example is Kamino."
+        },
+        {
+          "v": "Chandrila",
+          "q": "Detailed analyses of Chandrila (passing data in passwords) and Bonadan (cryptocurrency mining features) are also provided in the white paper."
+        },
+        {
+          "v": "Bonadan",
+          "q": "Detailed analyses of Chandrila (passing data in passwords) and Bonadan (cryptocurrency mining features) are also provided in the white paper."
+        },
+        {
+          "v": "Linux/SSHDoor",
+          "q": "ESET products detect the analyzed OpenSSH backdoors as Linux/SSHDoor variants."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "backdooring OpenSSH server and client",
+          "q": "is to backdoor the OpenSSH server and client already installed."
+        },
+        {
+          "v": "credential stealing",
+          "q": "18 out of the 21 families feature a credential-stealing feature, making it possible to"
+        },
+        {
+          "v": "backdoor mode",
+          "q": "17 out of the 21 families feature a backdoor mode, allowing the attacker a stealthy"
+        },
+        {
+          "v": "HTTP, raw TCP and DNS",
+          "q": "It implements HTTP, raw TCP and DNS."
+        },
+        {
+          "v": "brute force",
+          "q": "brute force or exploitation of a vulnerable service exposed by the server."
+        },
+        {
+          "v": "cryptocurrency mining",
+          "q": "Detailed analyses of Chandrila (passing data in passwords) and Bonadan (cryptocurrency mining features) are also provided in the white paper."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "21 malware families",
+          "q": "analysis of 21 malware families to improve the prevention, detection and remediation of"
+        },
+        {
+          "v": "more than 40 signatures",
+          "q": "contains more than 40 signatures for different backdoors."
+        },
+        {
+          "v": "tens of thousands",
+          "q": "installed on tens of thousands of compromised Linux servers worldwide"
+        },
+        {
+          "v": "a few hundred",
+          "q": "obtained a few hundred trojanized OpenSSH binaries"
+        },
+        {
+          "v": "18 out of the 21 families",
+          "q": "18 out of the 21 families feature a credential-stealing feature, making it possible to"
+        },
+        {
+          "v": "17 out of the 21 families",
+          "q": "17 out of the 21 families feature a backdoor mode, allowing the attacker a stealthy"
+        },
+        {
+          "v": "more than three years",
+          "q": "We collected new samples for more than three years and,"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Because the samples were taken out of context, the original infection vectors are hard to identify.",
+      "Whether the Kamino uses are by the same group, or the code was sold to several crime groups, is not settled.",
+      "Evaluating how complex a family is could be subjective.",
+      "Brute force or exploitation of an exposed service are possible vectors that might be used in future attacks."
+    ]
   }
 }

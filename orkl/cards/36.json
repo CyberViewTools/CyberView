@@ -1,0 +1,370 @@
+{
+  "360394f33e3e2f99029aa4cd8fae22bad3ef8ae2": {
+    "sha1": "360394f33e3e2f99029aa4cd8fae22bad3ef8ae2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:34:13Z",
+    "model": "haiku",
+    "summary": "An Eclectic Light article, published 2020-11-16, sets out a first draft of how macOS 10.15 and 11.0 check executable code before loading and running it. It covers code signing on Intel and Apple Silicon Macs, a local security database of code hashes, hash lookups sent to Apple, and online developer certificate revocation checks. The author says Apple has stated its privacy position and plans to add an opt-out. The article names no specific malware family, campaign, vulnerability or incident.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Apple",
+          "q": "Apple appears to have changed this system over a year ago",
+          "by": "the report itself (author's reading)"
+        },
+        {
+          "v": "state security services",
+          "q": "where state security services may be monitoring them",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-11-16",
+          "q": "Published: 2020-11-16 · Archived: 2026-04-05 17:48:08 UTC",
+          "what": "article published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 17:48:08 UTC",
+          "what": "page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XProtect",
+          "q": "checks in XProtect to see if it is known malware and should be blocked"
+        },
+        {
+          "v": "Gatekeeper",
+          "q": "‘Gatekeeper’ database. However, that was only updated periodically"
+        },
+        {
+          "v": "codesign",
+          "q": "codesign , and used only on specific apps"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hash lookup in local security database",
+          "q": "this is looked up in the local security database, which establishes"
+        },
+        {
+          "v": "OCSP",
+          "q": "macOS sends an OCSP"
+        },
+        {
+          "v": "certificate revocation checks",
+          "q": "certificate revocation checks will change in the next year to feature:"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "5 minutes",
+          "q": "results were cached for a period of 5 minutes"
+        },
+        {
+          "v": "12 hours",
+          "q": "this appears to have been extended to 12 hours now"
+        },
+        {
+          "v": "a couple of weeks",
+          "q": "for a couple of weeks after they were known to have been compromised"
+        },
+        {
+          "v": "macOS 10.15 and 11.0",
+          "q": "in macOS 10.15 and 11.0"
+        },
+        {
+          "v": "macOS 10.14",
+          "q": "Before macOS 10.14, this appears to have been handled locally"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "This is my first draft, so please bear with my errors and help me correct them to build a more accurate picture.",
+      "This has been thought to relate to notarization, but I don't think has anything to do with that.",
+      "At the least, Apple collects hashes as they're encountered, and appears to look them up in a database of known malware.",
+      "Apple appears to have changed this system over a year ago.",
+      "This appears to have been extended to 12 hours now.",
+      "For a very few Mac users, such as journalists who work in hostile environments, the OCSP exchange and transmission of new hashes could conceivably be used against them.",
+      "Apple's statement that the new opt-out preference presumably means both hash lookup and certificate revocation checks is the author's inference."
+    ]
+  },
+  "36306e003905c18244827376abe525ad46e1a655": {
+    "sha1": "36306e003905c18244827376abe525ad46e1a655",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:36:54Z",
+    "model": "haiku",
+    "summary": "Microsoft threat analysts linked the financially motivated group FIN7, also tracked as Sangria Tempest, to an April 2023 campaign deploying Clop ransomware. The attacks used the POWERTRASH dropper and the Lizar tool, with OpenSSH and Impacket for lateral movement. Microsoft also linked FIN7 to PaperCut printing server attacks using Clop, Bl00dy and LockBit, and tied FIN11 (Lace Tempest) to FIN7 tooling. The article recounts FIN7's history since 2013, including attacks on banks and point-of-sale terminals, USB lures, and prison sentences for several members in 2021 and 2022.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "Financially motivated cybercriminal group Sangria Tempest (ELBRUS, FIN7) has come out of a long period of inactivity,",
+          "by": "Microsoft"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "Financially motivated cybercriminal group Sangria Tempest (ELBRUS, FIN7) has come out of a long period of inactivity,",
+          "by": "Microsoft"
+        },
+        {
+          "v": "ELBRUS",
+          "q": "Financially motivated cybercriminal group Sangria Tempest (ELBRUS, FIN7) has come out of a long period of inactivity,",
+          "by": "Microsoft"
+        },
+        {
+          "v": "FIN11",
+          "q": "Microsoft saw the FIN11 financial crime group it tracks as Lace Tempest was seen employing new tooling, including the",
+          "by": "Microsoft"
+        },
+        {
+          "v": "Lace Tempest",
+          "q": "Microsoft saw the FIN11 financial crime group it tracks as Lace Tempest was seen employing new tooling, including the",
+          "by": "Microsoft"
+        },
+        {
+          "v": "Denys Iarmak",
+          "q": "In April 2022, FIN7 \"pen tester\" Denys Iarmak was sentenced to 5 years in prison for network breaches and credit card theft",
+          "by": "the report"
+        },
+        {
+          "v": "Andrii Kolpakov",
+          "q": "Iarmak was the third FIN7 member sentenced in the U.S. after Andrii Kolpakov (another \"pen tester\") was sent to prison for",
+          "by": "the report"
+        },
+        {
+          "v": "Fedir Hladyr",
+          "q": "seven years in June 2021, and Fedir Hladyr (a high-level manager) received a ten years sentence in April 2021.",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "mainly targeting banks and the point-of-sale (PoS) terminals of companies from various industry sectors (predominantly"
+        },
+        {
+          "v": "restaurants, gambling, and hospitality",
+          "q": "(predominantly restaurants, gambling, and hospitality) in Europe and the United States."
+        },
+        {
+          "v": "defense industry",
+          "q": "The FBI has warned U.S. companies of USB drive-by attacks coordinated by FIN7, targeting the U.S. defense industry with"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Europe",
+          "q": "(predominantly restaurants, gambling, and hospitality) in Europe and the United States."
+        },
+        {
+          "v": "United States",
+          "q": "(predominantly restaurants, gambling, and hospitality) in Europe and the United States."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2013",
+          "q": "Since it started operating a decade ago, in 2013, the FIN7 financially-motivated hacking group has been linked to attacks",
+          "what": "FIN7 began operating"
+        },
+        {
+          "v": "April 2023",
+          "q": "The group was observed deploying the Clop ransomware in opportunistic attacks in April 2023, its first ransomware",
+          "what": "Clop ransomware deployed in opportunistic attacks"
+        },
+        {
+          "v": "late 2021",
+          "q": "campaign since late 2021.",
+          "what": "Previous FIN7 ransomware campaign before April 2023"
+        },
+        {
+          "v": "April 2022",
+          "q": "In April 2022, FIN7 \"pen tester\" Denys Iarmak was sentenced to 5 years in prison for network breaches and credit card theft",
+          "what": "Denys Iarmak sentenced to 5 years in prison"
+        },
+        {
+          "v": "June 2021",
+          "q": "seven years in June 2021, and Fedir Hladyr (a high-level manager) received a ten years sentence in April 2021.",
+          "what": "Andrii Kolpakov sent to prison for seven years"
+        },
+        {
+          "v": "April 2021",
+          "q": "seven years in June 2021, and Fedir Hladyr (a high-level manager) received a ten years sentence in April 2021.",
+          "what": "Fedir Hladyr received a ten years sentence"
+        },
+        {
+          "v": "2023-05-19",
+          "q": "Published: 2023-05-19 · Archived: 2026-04-05 21:13:34 UTC",
+          "what": "Article published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "POWERTRASH",
+          "q": "In these recent attacks, FIN7 attackers utilized the PowerShell-based POWERTRASH in-memory malware dropper to"
+        },
+        {
+          "v": "Lizar",
+          "q": "deploy the Lizar post-exploitation tool on compromised devices."
+        },
+        {
+          "v": "Clop ransomware",
+          "q": "The group was observed deploying the Clop ransomware in opportunistic attacks in April 2023, its first ransomware"
+        },
+        {
+          "v": "OpenSSH",
+          "q": "using OpenSSH and Impacket. This legitimate Python toolkit can also be used for remote service execution and relay"
+        },
+        {
+          "v": "Impacket",
+          "q": "using OpenSSH and Impacket. This legitimate Python toolkit can also be used for remote service execution and relay"
+        },
+        {
+          "v": "inv.ps1",
+          "q": "inv.ps1 PowerShell script the company connected to FIN7."
+        },
+        {
+          "v": "Bl00dy",
+          "q": "targeting PaperCut printing servers with Clop, Bl00dy, and LockBit ransomware."
+        },
+        {
+          "v": "LockBit",
+          "q": "targeting PaperCut printing servers with Clop, Bl00dy, and LockBit ransomware."
+        },
+        {
+          "v": "REvil",
+          "q": "The group has been previously linked to REvil and Maze ransomware before their involvement in the now-defunct"
+        },
+        {
+          "v": "Maze",
+          "q": "The group has been previously linked to REvil and Maze ransomware before their involvement in the now-defunct"
+        },
+        {
+          "v": "BlackMatter",
+          "q": "BlackMatter and DarkSide ransomware-as-a-service (Raas) operations."
+        },
+        {
+          "v": "DarkSide",
+          "q": "BlackMatter and DarkSide ransomware-as-a-service (Raas) operations."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "USB drive-by attacks",
+          "q": "The FBI has warned U.S. companies of USB drive-by attacks coordinated by FIN7, targeting the U.S. defense industry with"
+        },
+        {
+          "v": "impersonated Best Buy",
+          "q": "FIN7 operators have also impersonated Best Buy in similar attacks with malicious flash drives via USPS to hotels,"
+        },
+        {
+          "v": "teddy bears",
+          "q": "packages that also bundled teddy bears to trick the targets into lowering their guard."
+        },
+        {
+          "v": "in-memory malware dropper",
+          "q": "In these recent attacks, FIN7 attackers utilized the PowerShell-based POWERTRASH in-memory malware dropper to"
+        },
+        {
+          "v": "post-exploitation",
+          "q": "deploy the Lizar post-exploitation tool on compromised devices."
+        },
+        {
+          "v": "move laterally",
+          "q": "and move laterally to deploy Clop ransomware"
+        },
+        {
+          "v": "opportunistic attacks",
+          "q": "The group was observed deploying the Clop ransomware in opportunistic attacks in April 2023, its first ransomware"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "5 years",
+          "q": "In April 2022, FIN7 \"pen tester\" Denys Iarmak was sentenced to 5 years in prison for network breaches and credit card theft"
+        },
+        {
+          "v": "seven years",
+          "q": "seven years in June 2021, and Fedir Hladyr (a high-level manager) received a ten years sentence in April 2021."
+        },
+        {
+          "v": "ten years",
+          "q": "seven years in June 2021, and Fedir Hladyr (a high-level manager) received a ten years sentence in April 2021."
+        },
+        {
+          "v": "third",
+          "q": "Iarmak was the third FIN7 member sentenced in the U.S."
+        },
+        {
+          "v": "a decade",
+          "q": "Since it started operating a decade ago, in 2013, the FIN7 financially-motivated hacking group has been linked to attacks"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7 Clop ransomware attacks"
+    },
+    "hedges": [
+      "The report says it is likely that FIN7 and FIN11 operators have recently started teaming up or sharing their tools in attacks.",
+      "The PaperCut link comes from a private Microsoft threat analytics report seen by the publication, not from a public source.",
+      "The link between FIN7 and the REvil and Maze ransomware is attributed to Microsoft in the report."
+    ]
+  },
+  "3647d0b1f55f78d0fd793ebc76728e2aecddd9f0": {
+    "sha1": "3647d0b1f55f78d0fd793ebc76728e2aecddd9f0",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:44:25Z",
+    "model": "haiku",
+    "summary": "The page is titled as a report on PolinRider, described as a DPRK threat actor implanting malware in hundreds of GitHub repositories. The body contains no analysis. It is a long numbered list of repository names, owners and project descriptions, with no malware behaviour, attribution, activity dates or indicators stated. It is classified as not a threat report because it is an index.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "369d4b59aee01db1efb5fac2614e92fa63616064": {
+    "sha1": "369d4b59aee01db1efb5fac2614e92fa63616064",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T08:47:37Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1
+  }
+}

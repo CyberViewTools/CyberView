@@ -87,5 +87,124 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "23159a7b614699b40e0cf08cd7ee7a00d67d54b6": {
+    "sha1": "23159a7b614699b40e0cf08cd7ee7a00d67d54b6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:42:31Z",
+    "model": "haiku",
+    "summary": "VMware Threat Research analysis of Defray777, a Linux command-line ransomware that encrypts files using hardcoded keys and appears to be an evolution of RansomEXX. The report says the attacks target virtualized hosts on VMware ESXi servers. Associated kill-chain tools include PyXie RAT, Cobalt Strike, LaZagne and Mimikatz. The report was published 2021-03-11.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT3",
+          "q": "applications. Threat groups that are known to use this application include APT3, APT33 and Inception.",
+          "by": "VMware Threat Research (report)"
+        },
+        {
+          "v": "APT33",
+          "q": "applications. Threat groups that are known to use this application include APT3, APT33 and Inception.",
+          "by": "VMware Threat Research (report)"
+        },
+        {
+          "v": "Inception",
+          "q": "applications. Threat groups that are known to use this application include APT3, APT33 and Inception.",
+          "by": "VMware Threat Research (report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-03-11",
+          "q": "Published: 2021-03-11 · Archived: 2026-04-05 20:40:09 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "second half of 2020",
+          "q": "In the second half of 2020 these variants of ransomware, including Defray777, have been witnessed",
+          "what": "Variants including Defray777 witnessed targeting both Windows and Linux systems"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PyXie RAT",
+          "q": "PyXie RAT is an important component used by attackers to provide RAT functionalities after successfully breaching the"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is a tool that supports Red Teams in attack simulation exercises, providing a number of techniques that allow a"
+        },
+        {
+          "v": "LaZagne",
+          "q": "LaZagne is an open-source tool that retrieves passwords stored on a system whether it is Windows, Linux, or macOS. This"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Mimikatz is considered a versatile tool that gathers credentials data from Windows systems. Mimikatz requires a higher"
+        },
+        {
+          "v": "SharpHound",
+          "q": "commands to execute SharpHound (SMB scanning) and advanced info stealing capabilities that include keylogging and"
+        },
+        {
+          "v": "Vatet loader",
+          "q": "The Vatet loader is publicly documented as used on Windows hosts to execute a Cobalt Strike Beacon payload, which, in"
+        },
+        {
+          "v": "RansomEXX",
+          "q": "they appeared to be variants of the RansomEXX"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hardcoded encryption keys",
+          "q": "methods of enumerating folders and files on a system and then encrypting them using hardcoded encryption keys. This"
+        },
+        {
+          "v": "credential gathering from Windows systems",
+          "q": "Mimikatz is considered a versatile tool that gathers credentials data from Windows systems. Mimikatz requires a higher"
+        },
+        {
+          "v": "Kerberos ticket extraction",
+          "q": "Extracting Kerberos tickets. Using a Kerberos module, Mimikatz can access the Kerberos API, enabling a number of"
+        },
+        {
+          "v": "keylogging",
+          "q": "commands to execute SharpHound (SMB scanning) and advanced info stealing capabilities that include keylogging and"
+        },
+        {
+          "v": "harvesting local credentials",
+          "q": "harvest local credentials from browsers and other applications. This RAT also enables further reconnaissance by providing"
+        },
+        {
+          "v": "Volume Shadow Copy deletion",
+          "q": "the attempted deletion of Volume Shadow Copies (internal Windows data backups) as well as foreseeable file enumeration"
+        },
+        {
+          "v": "in-memory loading",
+          "q": "turn, loads the Defray777 in memory and executes it without leaving any artifacts on the filesystem."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three",
+          "q": "We also analyzed the similarities among the three Linux samples of Defray777 currently available on VirusTotal."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Defray777"
+    },
+    "hedges": [
+      "Defray777 is said to appear to be variants of RansomEXX, based on ransom notes and file extensions; its code analysis suggests an evolution of that family.",
+      "PyXie is reportedly executed by custom-compiled Python interpreters.",
+      "The report says varied ransom note wording is a method to confuse analysis efforts that try to identify the family by its notes.",
+      "Threat groups named as users of LaZagne are described as known to use it, per the report."
+    ]
   }
 }

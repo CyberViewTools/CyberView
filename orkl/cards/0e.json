@@ -44,5 +44,74 @@
     "hedges": [],
     "reason": "value-not-in-quote, quote-not-in-text",
     "tries": 2
+  },
+  "0e4caecb0c32c66e4af751b48bfe683e951501d6": {
+    "sha1": "0e4caecb0c32c66e4af751b48bfe683e951501d6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:43:47Z",
+    "model": "haiku",
+    "summary": "Malpedia profile of BlackCat, also called ALPHV or Noberus: a Rust ransomware family sold as ransomware-as-a-service. It runs on Windows, Linux (Debian, Ubuntu, ReadyNAS, Synology) and VMware ESXi. It can encrypt files with AES or ChaCha20, delete volume shadow copies, stop processes, services and ESXi virtual machines, and spread using PsExec. The page says it has been seen in attacks since November 18, 2021. Listed actors are Alpha Spider, RansomHub and Vanilla Tempest. Most of the page is a reference list of vendor and government reports.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Alpha Spider",
+          "q": "Actor(s): Alpha Spider, RansomHub, Vanilla Tempest",
+          "by": "the report itself (Malpedia, Fraunhofer FKIE)"
+        },
+        {
+          "v": "RansomHub",
+          "q": "Actor(s): Alpha Spider, RansomHub, Vanilla Tempest",
+          "by": "the report itself (Malpedia, Fraunhofer FKIE)"
+        },
+        {
+          "v": "Vanilla Tempest",
+          "q": "Actor(s): Alpha Spider, RansomHub, Vanilla Tempest",
+          "by": "the report itself (Malpedia, Fraunhofer FKIE)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 18, 2021",
+          "q": "ALPHV has been observed being deployed in ransomware attacks since November 18, 2021.",
+          "what": "ALPHV first observed being deployed in ransomware attacks"
+        },
+        {
+          "v": "2025-12-30",
+          "q": "2025-12-30 ⋅ US Department of Justice ⋅",
+          "what": "US Department of Justice reference: two Americans pleaded guilty to targeting US victims using ALPHV BlackCat ransomware"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PsExec",
+          "q": "ALPHV can self-propagate by using PsExec to remote execute itself on other hosts on the local network."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "file encryption with AES or ChaCha20",
+          "q": "ALPHV can be configured to encrypt files using either the AES or ChaCha20 algorithms."
+        },
+        {
+          "v": "deleting volume shadow copies",
+          "q": "ALPHV can delete volume shadow copies, stop processes and services, and stop virtual machines on ESXi servers."
+        },
+        {
+          "v": "self-propagation over the local network",
+          "q": "ALPHV can self-propagate by using PsExec to remote execute itself on other hosts on the local network."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "BlackCat (ALPHV)"
+    },
+    "hedges": []
   }
 }

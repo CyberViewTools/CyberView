@@ -162,5 +162,151 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "7d2c6d368515836e0ae599d39a56b937836c3c9d": {
+    "sha1": "7d2c6d368515836e0ae599d39a56b937836c3c9d",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T08:42:18Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
+  },
+  "7dd057ab41b4f45ffa29e29508f2e9fe438236cb": {
+    "sha1": "7dd057ab41b4f45ffa29e29508f2e9fe438236cb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:43:24Z",
+    "model": "haiku",
+    "summary": "Blog post by Tonmoy Jitu, published 2025-03-20, on reverse engineering an undetected macOS sample of AMOS Stealer. The author used LLDB and Binary Ninja to bypass an anti-VM check and extract the AppleScript payload. The report describes browser, cryptocurrency wallet, Telegram and file theft, a hidden Terminal window, and uploading a ZIP archive to a hardcoded command-and-control server. It includes IOC hashes and a YARA rule.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-03-20",
+          "q": "Published: 2025-03-20",
+          "what": "Blog post published"
+        },
+        {
+          "v": "March 11, 2025",
+          "q": "This malware remained undetected on March 11, 2025",
+          "what": "Sample remained undetected; no security vendors flagged it"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 14:06:58 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AppleScript",
+          "q": "It leverages AppleScript to perform a variety of malicious tasks"
+        },
+        {
+          "v": "LLDB",
+          "q": "The binary was loaded into LLDB"
+        },
+        {
+          "v": "Binary Ninja",
+          "q": "Binary Ninja was used to analyze the binary’s structure"
+        },
+        {
+          "v": "Detect It Easy",
+          "q": "Detect It Easy (DIE)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "anti-VM techniques",
+          "q": "AMOS Stealer often employs anti-VM techniques to evade analysis in sandboxed environments"
+        },
+        {
+          "v": "Gatekeeper",
+          "q": "Gatekeeper , the security mechanism that enforces code signing"
+        },
+        {
+          "v": "obfuscated strings",
+          "q": "With static analysis revealing obfuscated strings, dynamic analysis"
+        },
+        {
+          "v": "Hides its execution",
+          "q": "Hides its execution by setting the Terminal window to invisible."
+        },
+        {
+          "v": "deceptive dialog",
+          "q": "using a deceptive dialog disguised as a legitimate"
+        },
+        {
+          "v": "Chromium-based browsers",
+          "q": "Targets Chromium-based browsers (e.g., Google Chrome, Brave, Edge, Vivaldi, Opera) and"
+        },
+        {
+          "v": "Electrum",
+          "q": "Steals data from desktop wallets like Electrum by copying wallet files from"
+        },
+        {
+          "v": "Telegram",
+          "q": "Telegram: Grabs Telegram Desktop data, including session files from the tdata folder."
+        },
+        {
+          "v": "File Grabber",
+          "q": "File Grabber: Collects files with specific extensions"
+        },
+        {
+          "v": "Archives stolen data",
+          "q": "Archives stolen data into a ZIP file"
+        },
+        {
+          "v": "hardcoded C2",
+          "q": "uploads it to a hardcoded C2 (command-and-control)"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "0/61",
+          "q": "with a community score of 0/61."
+        },
+        {
+          "v": "196 file hashes",
+          "q": "Additional IOCs (196 file hashes) can be found related to AMOS Stealer"
+        },
+        {
+          "v": "30MB",
+          "q": "with a size limit of 30MB total."
+        },
+        {
+          "v": "6000 bytes",
+          "q": "only after determining the payload exceeded 6000 bytes,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "AMOS Stealer"
+    },
+    "hedges": [
+      "The strings, including the osascript payload, are likely encrypted or encoded to evade static analysis.",
+      "The cleanup step is described as likely to hide the malware's activity.",
+      "The report says AMOS Stealer often employs anti-VM techniques."
+    ]
   }
 }

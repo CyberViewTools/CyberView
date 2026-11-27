@@ -157,5 +157,225 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "764d71dadafd4fce8eaa4ce62e9a901b33bbcef8": {
+    "sha1": "764d71dadafd4fce8eaa4ce62e9a901b33bbcef8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:45:20Z",
+    "model": "haiku",
+    "summary": "Recorded Future's Insikt Group reports on GrayAlpha, a threat actor cluster overlapping with the financially motivated group FIN7. Three infection vectors are described: fake browser update pages, fake 7-Zip download pages, and the TAG-124 traffic distribution system. Custom PowerShell loaders PowerNet and MaskBat deliver NetSupport RAT. At the time of writing only the fake 7-Zip pages were still active. Most infrastructure sits with bulletproof hosting providers. The report says the relationship between GrayAlpha and TAG-124 is unknown.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "GrayAlpha",
+          "q": "GrayAlpha is a threat actor cluster that overlaps with the financially motivated cybercriminal group",
+          "by": "Recorded Future Insikt Group"
+        },
+        {
+          "v": "FIN7",
+          "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically",
+          "by": "Recorded Future Insikt Group"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "In November 2023, Microsoft reported that Sangria Tempest, which overlaps with GrayAlpha and FIN7, had used",
+          "by": "Microsoft, as cited by Insikt Group"
+        },
+        {
+          "v": "TAG-124",
+          "q": "leverages infrastructure from other threat actors, notably TAG-124.",
+          "by": "Recorded Future Insikt Group"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "retail, hospitality, and financial",
+          "q": "particularly within the retail, hospitality, and financial sectors."
+        },
+        {
+          "v": "multiple industries",
+          "q": "likelihood of organizations across multiple industries being targeted."
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "operations against businesses across 47 US states and multiple countries."
+        },
+        {
+          "v": "UK",
+          "q": "The company is registered in the UK through “First Formations”"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 13, 2025",
+          "q": "June 13, 2025",
+          "what": "Report published"
+        },
+        {
+          "v": "April 2025",
+          "q": "with newly registered domains appearing as recently as April 2025.",
+          "what": "Most recent registrations seen for the fake 7-Zip domains"
+        },
+        {
+          "v": "April 2024",
+          "q": "Since at least April 2024, GrayAlpha has also been observed deploying fake 7-Zip download pages",
+          "what": "Fake 7-Zip pages first observed"
+        },
+        {
+          "v": "August 2024",
+          "q": "Since at least August 2024, Insikt Group has identified cases where NetSupport RAT samples",
+          "what": "NetSupport RAT delivered via TAG-124 infrastructure observed"
+        },
+        {
+          "v": "November 2023",
+          "q": "In November 2023, Microsoft reported that Sangria Tempest, which overlaps with GrayAlpha and FIN7, had used",
+          "what": "Microsoft reported EugenLoader delivery of Carbanak and GraceWire"
+        },
+        {
+          "v": "September 2023",
+          "q": "during a brief period at the end of September 2023, Insikt Group identified over 212",
+          "what": "FIN7 infected systems communicating with a Carbanak C2 server"
+        },
+        {
+          "v": "2018",
+          "q": "In 2018, the US Department of Justice (US DOJ) unsealed indictments against three high-ranking FIN7",
+          "what": "US DOJ unsealed indictments against FIN7 members"
+        },
+        {
+          "v": "2013",
+          "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically",
+          "what": "FIN7 active since at least this year"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NetSupport RAT",
+          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
+        },
+        {
+          "v": "PowerNet",
+          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
+        },
+        {
+          "v": "MaskBat",
+          "q": "Insikt Group identified another custom loader, referred to as MaskBat, which has similarities to FakeBat but is"
+        },
+        {
+          "v": "FakeBat",
+          "q": "Insikt Group identified another custom loader, referred to as MaskBat, which has similarities to FakeBat but is"
+        },
+        {
+          "v": "EugenLoader",
+          "q": "GrayAlpha has traditionally relied on tools like EugenLoader (also known as FakeBat or PaykLoader) and"
+        },
+        {
+          "v": "POWERTRASH",
+          "q": "POWERTRASH — a uniquely obfuscated, PowerShell-based, in-memory loader adapted from"
+        },
+        {
+          "v": "Carbanak",
+          "q": "FIN7’s early operations leveraged its then-proprietary Carbanak backdoor as the primary command-and-control"
+        },
+        {
+          "v": "AuKill",
+          "q": "FIN7 also developed AuKill (also known as AvNeutralizer), a custom EDR evasion utility designed to disable endpoint"
+        },
+        {
+          "v": "Anubis",
+          "q": "observed deploying the Python-based Anubis backdoor, which provides full system control via"
+        },
+        {
+          "v": "DiceLoader",
+          "q": "malware families such as POWERTRASH and DiceLoader, both of which are directly associated with"
+        },
+        {
+          "v": "GraceWire",
+          "q": "which then enabled the deployment of the GraceWire malware implant."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fake browser updates",
+          "q": "Insikt Group identified three GrayAlpha infection vectors: fake browser updates, fake 7-Zip sites,"
+        },
+        {
+          "v": "fake 7-Zip download pages",
+          "q": "Since at least April 2024, GrayAlpha has also been observed deploying fake 7-Zip download pages"
+        },
+        {
+          "v": "compromised WordPress websites",
+          "q": "TAG-124 leverages an extensive network of compromised WordPress websites, which in turn employ either fake"
+        },
+        {
+          "v": "ClickFix technique",
+          "q": "or the ClickFix technique to deliver payloads"
+        },
+        {
+          "v": "spearphishing emails",
+          "q": "The group typically gains initial access through spearphishing emails containing malicious attachments or links"
+        },
+        {
+          "v": "malvertising",
+          "q": "It is primarily distributed through malvertising and drive-by download campaigns."
+        },
+        {
+          "v": "MSIX packages",
+          "q": "The PowerNet loader is a PowerShell-based loader delivered via MSIX packages, resembling the"
+        },
+        {
+          "v": "sandbox evasion",
+          "q": "it terminates execution — likely as a sandbox evasion technique (see"
+        },
+        {
+          "v": "EDR evasion",
+          "q": "FIN7 also developed AuKill (also known as AvNeutralizer), a custom EDR evasion utility designed to disable endpoint"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "47 US states",
+          "q": "operations against businesses across 47 US states and multiple countries."
+        },
+        {
+          "v": "15 million payment card records",
+          "q": "to compromise thousands of point-of-sale systems and exfiltrate over 15 million payment card records."
+        },
+        {
+          "v": "over 212",
+          "q": "during a brief period at the end of September 2023, Insikt Group identified over 212"
+        },
+        {
+          "v": "nearly 75%",
+          "q": "Insikt Group determined that nearly 75% of all NetSupport RAT samples associated with MSIX packages"
+        },
+        {
+          "v": "eleven distinct certificate serials",
+          "q": "In total, Insikt Group identified eleven distinct certificate serials."
+        },
+        {
+          "v": "six IP prefixes",
+          "q": "H2NEXUS currently announces just six IP prefixes."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "GrayAlpha"
+    },
+    "hedges": [
+      "additional IP addresses believed to be tied to GrayAlpha",
+      "Insikt Group identified an individual who may be involved in the GrayAlpha operation.",
+      "the exact relationship between GrayAlpha and TAG-124 is unknown at the time of writing.",
+      "It remains unclear whether this version was developed by the original FakeBat authors or by GrayAlpha itself.",
+      "though Insikt Group is unable to independently verify this claim.",
+      "It remains unclear whether this disclosure was deliberate or an operational oversight by the threat actor.",
+      "likely as a sandbox evasion technique",
+      "Insikt Group assesses that this 7-Zip–themed campaign remains active"
+    ]
   }
 }

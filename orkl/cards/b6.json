@@ -174,5 +174,175 @@
         "by": "auditor"
       }
     ]
+  },
+  "b61e4c6ba0bf6f9658599075cdee2c82a340f909": {
+    "sha1": "b61e4c6ba0bf6f9658599075cdee2c82a340f909",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:34:43Z",
+    "model": "haiku",
+    "summary": "Ransom-ISAC, working with Bridewell, analyses the command-and-control infrastructure behind a September 2025 cryptocurrency and data theft intrusion that targeted developers through a weaponised private GitHub repository. Servers are clustered by fingerprints such as the EmbedIO web server, a shared RDP certificate name and hosting networks. The report links some indicators to a May 2025 NPM supply-chain campaign described by Aikido. It assesses with low to medium confidence that two cooperating actors were involved, possibly a DPRK-linked group and Russia-facing pre-attack infrastructure,…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "DPRK",
+          "q": "a potentially attributed DPRK campaign where novel tradecraft",
+          "by": "Ransom-ISAC (its own assessment, described as potentially attributed)"
+        },
+        {
+          "v": "Russian APT",
+          "q": "they are leaning towards a Russian APT behind the operations which is also one of our stronger",
+          "by": "Aikido, as reported by Ransom-ISAC"
+        },
+        {
+          "v": "Famous Chollima",
+          "q": "with North Korea (Famous Chollima). Vast majority of ASNs linked to the IP addresses mentioned in the article are on",
+          "by": "Ransom-ISAC, citing historic reporting"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cryptocurrency",
+          "q": "to investigate a cryptocurrency and data theft"
+        },
+        {
+          "v": "developers",
+          "q": "especially considering the targets are developers."
+        }
+      ],
+      "countries": [
+        {
+          "v": "United Kingdom",
+          "q": "Source Location: United Kingdom"
+        },
+        {
+          "v": "Russia",
+          "q": "Location: Russia, hosted on ASN 31213, PJSC Megafon"
+        },
+        {
+          "v": "North Korea",
+          "q": "with North Korea (Famous Chollima)."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-11-13",
+          "q": "Published: 2025-11-13 · Archived: 2026-04-05 17:33:44 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "September 2025",
+          "q": "In September 2025, Ransom-ISAC was brought in by Crystal Intelligence to investigate a cryptocurrency and data theft",
+          "what": "Ransom-ISAC engaged to investigate the intrusion"
+        },
+        {
+          "v": "6th August 2025",
+          "q": "First C2 Configuration Seen: 6th August 2025",
+          "what": "first C2 configuration seen on one C2 IP address"
+        },
+        {
+          "v": "15th October 2025",
+          "q": "quite recent (from 15th October 2025 onwards). This observation is further validated when cross-",
+          "what": "C2 IP addresses shifted to a new hosting network"
+        }
+      ],
+      "tools": [
+        {
+          "v": "EmbedIO",
+          "q": "EmbedIO is a lightweight open-source web server by Unosquare which is available for users to download from the GitHub."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Majority of the sightings were for Cobalt Strike C2 framework spanning across different Cobalt Strike Watermarks."
+        },
+        {
+          "v": "Orlan:DCAP",
+          "q": "deploying legitimate Orlan:DCAP licences on compromised victim networks to automate the identification of high-value"
+        },
+        {
+          "v": "SocketIO",
+          "q": "_V-Selected C2: SocketIO"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing",
+          "q": "What initially appeared to be a standard phishing campaign"
+        },
+        {
+          "v": "private weaponised GitHub repository",
+          "q": "via a private weaponised GitHub repository."
+        },
+        {
+          "v": "Cross-Chain TxDataHiding",
+          "q": "such as Cross-Chain TxDataHiding techniques combined with the subsequent creation of a takedown-proof Command and"
+        },
+        {
+          "v": "OPSEC 302 Redirection",
+          "q": "Alternate HTTP Status Code: OPSEC 302 Redirection"
+        },
+        {
+          "v": "data exfiltration",
+          "q": "large-scale data exfiltration operations."
+        },
+        {
+          "v": "RDP remote access",
+          "q": "Russian Remote Access: Evidence of RDP activity originating from Russian servers"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "84",
+          "q": "A total of 84 unique sightings of malware and known threat groups were identified using this ASN over the last three years."
+        },
+        {
+          "v": "4",
+          "q": "Analysis from parts 1 and 2 identified 4 unique C2 IP addresses discovered either, directly through tracing the complex"
+        },
+        {
+          "v": "11",
+          "q": "Fingerprint 1 results in 11 unique IP addresses (inclusive of the 4 identified previously)."
+        },
+        {
+          "v": "300",
+          "q": "currently, at the time of writing this, there are only 300 servers deployed in the wild with"
+        },
+        {
+          "v": "50,000",
+          "q": "At the time of writing this, 50,000 servers globally are configured"
+        },
+        {
+          "v": "1500",
+          "q": "Currently, there are over 1500 servers with this RDP TLS certificate"
+        },
+        {
+          "v": "17",
+          "q": "Historically, there are only 17 IP"
+        },
+        {
+          "v": "18",
+          "q": "The newly formed Cluster-4 provides total of 18 IP addresses which were reduced down to 8 unique IP addresses by"
+        },
+        {
+          "v": "22 domains",
+          "q": "(except the dropper C2 which had 22 domains)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Cross-Chain TxDataHiding Crypto Heist"
+    },
+    "hedges": [
+      "Attribution to a DPRK campaign is described as potential; the report says there is not enough evidence to name a known specific threat group.",
+      "Assessed with low to medium confidence that two distinct threat actors worked together, actively or passively.",
+      "Pre-attack infrastructure being facilitated in Russia is assessed with low confidence.",
+      "Aikido did not attribute its campaign to known threat groups; the overlap with the observed intrusion is assessed with moderate to high confidence.",
+      "Link between Orlan DCAP login pages and DPRK operators is a plausible hypothesis with moderate-to-high confidence; the tool's role is not known.",
+      "Russian APT lean is Aikido's view and is described as one of the stronger hypotheses; the report's own hypothesis is about pre-attack infrastructure.",
+      "First-seen dates are estimates because internet scanner intervals created blind spots."
+    ]
   }
 }

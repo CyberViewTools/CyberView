@@ -546,5 +546,165 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "7a172d59bbe3772b484bcd91ae821b371233f4ae": {
+    "sha1": "7a172d59bbe3772b484bcd91ae821b371233f4ae",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:34:23Z",
+    "model": "haiku",
+    "summary": "Microsoft Threat Intelligence describes Storm-0324, a financially motivated actor that distributes malware by email and exploit kits and, from July 2023, by Microsoft Teams phishing. It hands off access to compromised networks to other threat actors, mainly Sangria Tempest, which often leads to ransomware. Since 2019 it has mainly distributed JSSLoader. The report names tools including JSSLoader, Gozi, Trickbot, IcedID and TeamsPhisher, and recommends phishing-resistant authentication, Teams hardening and ransomware-limiting controls.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Storm-0324",
+          "q": "The threat actor that Microsoft tracks as Storm-0324 is a financially motivated group",
+          "by": "Microsoft Threat Intelligence (the report)"
+        },
+        {
+          "v": "DEV-0324",
+          "q": "Storm-0324 (DEV-0324), which overlaps with threat groups",
+          "by": "Microsoft Threat Intelligence (the report)"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "facilitates access for the ransomware-as-a-service (RaaS) actor Sangria Tempest",
+          "by": "Microsoft Threat Intelligence (the report)"
+        },
+        {
+          "v": "TA543",
+          "q": "which overlaps with threat groups tracked by other researchers as TA543 and Sagrid",
+          "by": "Microsoft Threat Intelligence (the report; overlap stated with hedge)"
+        },
+        {
+          "v": "Sagrid",
+          "q": "which overlaps with threat groups tracked by other researchers as TA543 and Sagrid",
+          "by": "Microsoft Threat Intelligence (the report; overlap stated with hedge)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2016",
+          "q": "Storm-0324 has distributed a range of first-stage payloads since at least 2016",
+          "what": "Storm-0324 distributing first-stage payloads since at least this year"
+        },
+        {
+          "v": "2019",
+          "q": "Since as early as 2019, Storm-0324 has handed off access to the cybercrime group Sangria Tempest",
+          "what": "Storm-0324 began handing off access to Sangria Tempest after delivering its JSSLoader payload"
+        },
+        {
+          "v": "2019",
+          "q": "Since 2019, however, Storm-0324 has primarily distributed JSSLoader",
+          "what": "Storm-0324 primarily distributing JSSLoader and handing off access to a ransomware actor"
+        },
+        {
+          "v": "2023-09-12",
+          "q": "Published: 2023-09-12",
+          "what": "Microsoft Security Blog report published"
+        },
+        {
+          "v": "July 2023",
+          "q": "In July 2023, Storm-0324 began using phishing lures sent over Teams",
+          "what": "Storm-0324 began using Teams phishing lures"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSSLoader",
+          "q": "The actor is known to distribute the JSSLoader malware"
+        },
+        {
+          "v": "TeamsPhisher",
+          "q": "most likely relies on a publicly available tool called TeamsPhisher"
+        },
+        {
+          "v": "Gozi",
+          "q": "Gozi version 3, an infostealer"
+        },
+        {
+          "v": "Nymaim",
+          "q": "Nymaim, a first-stage downloader and locker"
+        },
+        {
+          "v": "Trickbot",
+          "q": "Trickbot, a modular malware platform"
+        },
+        {
+          "v": "Gootkit",
+          "q": "Gootkit, a banking trojan"
+        },
+        {
+          "v": "Dridex",
+          "q": "Dridex, a banking trojan"
+        },
+        {
+          "v": "Sage ransomware",
+          "q": "Sage ransomware"
+        },
+        {
+          "v": "GandCrab ransomware",
+          "q": "GandCrab ransomware"
+        },
+        {
+          "v": "IcedID",
+          "q": "IcedID, a modular information-stealing malware"
+        },
+        {
+          "v": "BlackTDS",
+          "q": "BlackTDS and Keitaro, which provide identification"
+        },
+        {
+          "v": "Keitaro",
+          "q": "BlackTDS and Keitaro, which provide identification"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing emails with invoice or payment lures",
+          "q": "delivery chain begins with phishing emails referencing invoices or payments"
+        },
+        {
+          "v": "exploit kit and email delivery of malware",
+          "q": "has used exploit kit and email-based vectors to deliver malware payloads"
+        },
+        {
+          "v": "traffic filtering to evade security sandboxes",
+          "q": "filtering capability allows attackers to evade detection by certain IP ranges"
+        },
+        {
+          "v": "password-protected lure documents",
+          "q": "Storm-0324 uses protected documents for additional social engineering"
+        },
+        {
+          "v": "Teams chat phishing lures",
+          "q": "phishing lures sent over Teams with malicious links leading to a malicious"
+        },
+        {
+          "v": "handoff of network access to other threat actors",
+          "q": "hand off access to compromised networks to other threat"
+        },
+        {
+          "v": "ZIP archive with embedded JavaScript",
+          "q": "The ZIP archive contains a file with embedded JavaScript code"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-21715",
+          "q": "exploiting the CVE-2023-21715 local security feature bypass vulnerability"
+        }
+      ],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The report says Storm-0324 most likely relies on a publicly available tool called TeamsPhisher for its Teams phishing.",
+      "The report says Storm-0324 overlaps with threat groups that other researchers track as TA543 and Sagrid.",
+      "The report says protected-document lures are used in some cases and may make the lure seem more believable."
+    ]
   }
 }

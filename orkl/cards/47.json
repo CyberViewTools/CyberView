@@ -1,0 +1,162 @@
+{
+  "4738575ced46c35d87c56b79fc130afada0b2222": {
+    "sha1": "4738575ced46c35d87c56b79fc130afada0b2222",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:46:08Z",
+    "model": "haiku",
+    "summary": "IBM Security X-Force describes Minodo, a backdoor loaded by the Dave Loader crypter since late February 2023. X-Force assesses its developers were linked to ITG14 (FIN7), and that former Trickbot/Conti (ITG23) members use it to deliver the Project Nemesis infostealer or Cobalt Strike. The report notes code overlap with the Lizar malware family. Attribution is hedged as assessment or likelihood.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "ITG14",
+          "q": "was created by developers associated with the cybercriminal group that X-Force tracks as ITG14, also",
+          "by": "IBM Security X-Force"
+        },
+        {
+          "v": "FIN7",
+          "q": "known as FIN7. Former members of the Trickbot/Conti syndicate which X-Force tracks as ITG23 have been",
+          "by": "IBM Security X-Force"
+        },
+        {
+          "v": "ITG23",
+          "q": "Former members of ITG23 (aka the Trickbot/Conti syndicate) are likely behind recent campaigns using the",
+          "by": "IBM Security X-Force"
+        },
+        {
+          "v": "Royal",
+          "q": "X-Force observed Dave-loaded Cobalt Strike samples using this watermark in suspected Royal",
+          "by": "IBM Security X-Force"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "late February 2023",
+          "q": "using Minodo since at least late February 2023 to deliver either the Project Nemesis information stealer or",
+          "what": "Former Trickbot/Conti members began using Minodo"
+        },
+        {
+          "v": "December 2021",
+          "q": "The Project Nemesis infostealer has been active in the wild since December 2021, when it was offered for",
+          "what": "Project Nemesis first offered for sale on dark web forums"
+        },
+        {
+          "v": "28 February 2023",
+          "q": "a reported compile date of 28 February 2023. This sample",
+          "what": "Reported compile date of the analysed Dave Loader sample"
+        },
+        {
+          "v": "October 2022",
+          "q": "Minodo has been active in the wild since at least October 2022, which notably is when Lizar observations",
+          "what": "Minodo first active in the wild, at least from this date"
+        },
+        {
+          "v": "March 2020",
+          "q": "Lizar was reportedly first used in March 2020, when it was",
+          "what": "Lizar first reportedly used, under the name Tirion"
+        },
+        {
+          "v": "December 2022",
+          "q": "We identified Minodo Backdoor samples from December 2022, which used a different loader that",
+          "what": "Minodo samples observed using NewWorldOrder Loader"
+        },
+        {
+          "v": "fall 2022",
+          "q": "attacks in fall 2022.",
+          "what": "Dave-loaded Cobalt Strike samples seen in suspected Royal attacks"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Minodo",
+          "q": "IBM Security X-Force recently discovered a new malware family we have called “Minodo,” which we assess"
+        },
+        {
+          "v": "Dave Loader",
+          "q": "Dave Loader has also been used this year to load IcedID and Emotet, both of which serve as initial"
+        },
+        {
+          "v": "Emotet",
+          "q": "Dave Loader has also been used this year to load IcedID and Emotet, both of which serve as initial"
+        },
+        {
+          "v": "Lizar",
+          "q": "Minodo’s code shows overlap with the Lizar (aka Tirion, Diceloader) malware family, leading us to"
+        },
+        {
+          "v": "Project Nemesis",
+          "q": "One of Minodo’s final payloads is the Project Nemesis infostealer. Project Nemesis was first advertised"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "more capable backdoors such as Cobalt Strike."
+        },
+        {
+          "v": "Carbanak Backdoor",
+          "q": "used to load the Carbanak Backdoor. Carbanak has been used by ITG14 since late"
+        },
+        {
+          "v": "NewWorldOrder Loader",
+          "q": "we have dubbed NewWorldOrder Loader."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "domain-join check before connecting to C2",
+          "q": "checks whether the host system is connected to a domain."
+        },
+        {
+          "v": "AES-encrypted communication with C2",
+          "q": "encrypts using AES-256-CBC and the generated, shared key"
+        },
+        {
+          "v": "browser and wallet credential theft",
+          "q": "Steals stored credentials, cookies, credit cards, bookmarks, autofill data,"
+        },
+        {
+          "v": "loading DLL payloads from memory",
+          "q": "allows for DLL payloads to load themselves directly from memory into a host process."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$ 1300",
+          "q": "Will be sold in one hand. Price $ 1300 (bargaining is appropriate)"
+        },
+        {
+          "v": "206546002",
+          "q": "“206546002,” which X-Force and other security researchers"
+        },
+        {
+          "v": "two",
+          "q": "the decrypted config contains two pipe-delimited IP addresses"
+        },
+        {
+          "v": "16-byte key",
+          "q": "The config is decrypted using XOR and a 16-byte key which is stored immediately before the"
+        },
+        {
+          "v": "32-byte key",
+          "q": "The malware generates a random 32-byte key, which it encrypts using the RSA key. It then attempts to"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Minodo"
+    },
+    "hedges": [
+      "The report says it was republished with the family renamed from Domino to Minodo to avoid confusion with the HCL Domino brand, and that the malware is unrelated to HCL.",
+      "X-Force assesses the Minodo malware was created by developers associated with ITG14, and suspects it was created by current or former ITG14 developers.",
+      "Former ITG23 members are likely behind recent Dave Loader campaigns and probably collaborated with current or former ITG14 developers.",
+      "The report says C2 address overlap with ITG14 infrastructure is insufficient for attribution but is consistent with other evidence.",
+      "Attribution of the Dave-loaded Cobalt Strike samples to Royal is described as suspected.",
+      "X-Force assesses that infostealers may often be deployed during lower priority infections.",
+      "X-Force assesses that ITG14 members responsible for developing Minodo probably had a relationship with Project Nemesis."
+    ]
+  }
+}

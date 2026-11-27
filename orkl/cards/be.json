@@ -489,5 +489,227 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "beb5c799a0d2beadd930cf8b769d02a29e83a1a5": {
+    "sha1": "beb5c799a0d2beadd930cf8b769d02a29e83a1a5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:35:36Z",
+    "model": "haiku",
+    "summary": "Malpedia-style entry from Fraunhofer FKIE on Dacls, also called MATA. The page describes Dacls as a remote access Trojan, based on PCrisk, that targets Linux and Windows. It says research ties the malware to Lazarus Group. The reference list runs from 2019 to 2023 and covers MATA framework activity, a TFlower ransomware deployment, and attacks on industrial companies in Eastern Europe. The page notes that no Yara signature exists yet.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus Group",
+          "q": "Research shows that this malware is tied to Lazarus Group (a group of cyber criminals) and targets Linux and the",
+          "by": "the report itself"
+        },
+        {
+          "v": "Lazarus Group",
+          "q": "Actor(s): Lazarus Group",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "industrial companies",
+          "q": "Updated MATA attacks industrial companies in Eastern Europe"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-12-17",
+          "q": "2019-12-17 ⋅ ⋅ Netlab ⋅ GenShen Ye, Jinye",
+          "what": "Netlab reference: Lazarus Group uses Dacls RAT to attack Linux platform"
+        },
+        {
+          "v": "2020-07-22",
+          "q": "2020-07-22 ⋅ Kaspersky Labs ⋅ GReAT",
+          "what": "Kaspersky reference: MATA multi-platform targeted malware framework"
+        },
+        {
+          "v": "2021-03-03",
+          "q": "2021-03-03 ⋅ SYGNIA ⋅ Amitai Ben Shushan, Amnon Kushnir",
+          "what": "SYGNIA reference: Lazarus Group’s MATA framework used to deploy TFlower ransomware"
+        },
+        {
+          "v": "2023-10-18",
+          "q": "2023-10-18 ⋅ Kaspersky Labs ⋅",
+          "what": "Kaspersky reference: updated MATA attacks on industrial companies in Eastern Europe"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dacls",
+          "q": "Dacls (Malware Family)"
+        },
+        {
+          "v": "MATA",
+          "q": "MATA: Multi-platform targeted malware framework"
+        },
+        {
+          "v": "TFlower ransomware",
+          "q": "Lazarus Group’s MATA Framework Leveraged to Deploy TFlower Ransomware"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Active C2 Discovery Using Protocol Emulation",
+          "q": "Threat Analysis: Active C2 Discovery Using Protocol Emulation Part4 (Dacls, aka MATA)"
+        },
+        {
+          "v": "information theft",
+          "q": "Typically, cyber criminals use RATs to steal sensitive, confidential information,"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Dacls"
+    },
+    "hedges": [
+      "According to PCrisk, Dacls is the name of a remote access Trojan (RAT)",
+      "Research shows that this malware is tied to Lazarus Group",
+      "There is no Yara-Signature yet."
+    ]
+  },
+  "be5f16a4a1558170bdd5877bfc221097ec6d1fe6": {
+    "sha1": "be5f16a4a1558170bdd5877bfc221097ec6d1fe6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:40:42Z",
+    "model": "haiku",
+    "summary": "SentinelOne blog post (published 2023-07-05) on RustBucket, a macOS malware campaign it says is linked to the DPRK-linked BlueNoroff group, which JAMF and other researchers had earlier attributed. The chain has three stages: an AppleScript applet disguised as a PDF viewer drops Objective-C or Swift stage-2 payloads, which fetch Rust stage-3 binaries. Stage 3 adds a LaunchAgent for persistence, virtual-machine checks and host profiling. The report stresses anti-analysis features. Its C2 servers were unresponsive, so the next stage was not obtained. The report notes possible multiple…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "BlueNoroff",
+          "q": "attributed with strong confidence to the BlueNoroff APT",
+          "by": "JAMF researchers, as cited in the report"
+        },
+        {
+          "v": "BlueNoroff",
+          "q": "attributed to DPRK’s BlueNoroff APT",
+          "by": "previous researchers, as cited in the report"
+        },
+        {
+          "v": "Lazarus",
+          "q": "generally assumed to be a subsidiary of the wider DPRK cyber attack group known as Lazarus",
+          "by": "the report, citing a general assumption"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "DPRK",
+          "q": "How DPRK’s macOS RustBucket Seeks to Evade Analysis and Detection"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-07-05",
+          "q": "Published: 2023-07-05 · Archived: 2026-04-05 21:23:31 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2023-07-05 · Archived: 2026-04-05 21:23:31 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AppleScript",
+          "q": "An Applet is simply a compiled AppleScript that is saved in a"
+        },
+        {
+          "v": "Rust",
+          "q": "compiled from Rust source code"
+        },
+        {
+          "v": "Swift",
+          "q": "some written in Swift, some in Objective-C"
+        },
+        {
+          "v": "Objective-C",
+          "q": "some written in Swift, some in Objective-C"
+        },
+        {
+          "v": "LaunchAgent",
+          "q": "This takes the form of a hardcoded LaunchAgent, which is written to disk at"
+        },
+        {
+          "v": "sysinfo crate",
+          "q": "makes less use of the sysinfo crate found in both"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering",
+          "q": "employs social engineering tactics"
+        },
+        {
+          "v": "disguised applet as a fake PDF viewer",
+          "q": "masquerades as a PDF Viewer app"
+        },
+        {
+          "v": "hidden file staging",
+          "q": "it writes the second stage as a hidden file to"
+        },
+        {
+          "v": "XOR-obfuscated payload",
+          "q": "provide an XOR’d key to decode the obfuscated C2"
+        },
+        {
+          "v": "virtual machine check",
+          "q": "checking for execution in a virtual machine"
+        },
+        {
+          "v": "launch agent persistence",
+          "q": "This takes the form of a hardcoded LaunchAgent, which is written to disk at"
+        },
+        {
+          "v": "anti-analysis and anti-evasion measures",
+          "q": "anti-evasion and anti-analysis measures"
+        },
+        {
+          "v": "complex Rust binaries",
+          "q": "The choice of Rust and the complexity of the Stage 3 binaries"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "11.84MB",
+          "q": "weighing in at 11.84MB versus 8.12MB for variant B"
+        },
+        {
+          "v": "160Kb and 210Kb",
+          "q": "vary between 160Kb and 210Kb"
+        },
+        {
+          "v": "501 basic blocks",
+          "q": "contains 501 basic blocks"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RustBucket"
+    },
+    "hedges": [
+      "attributed with strong confidence to the BlueNoroff APT",
+      "generally assumed to be a subsidiary of the wider DPRK cyber attack group known as Lazarus",
+      "Code varies widely among samples, possibly suggesting different developers",
+      "the case variance may be no more than a product of different developers with different standards of rigor",
+      "whether this is an error or accounted for in the way the string is parsed by the binary we have yet to determine",
+      "Our analysis of this is ongoing",
+      "As the known C2s were unresponsive by the time we conducted our analysis, we were unable to obtain a sample of the next stage of the malware"
+    ]
   }
 }

@@ -428,5 +428,77 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "881012ca3fd522f51e6cb92b15f40807b4072573": {
+    "sha1": "881012ca3fd522f51e6cb92b15f40807b4072573",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:45:47Z",
+    "model": "haiku",
+    "summary": "Objective-See's Patrick Wardle analyses UpdateAgent, the second-stage macOS payload of the 3CX supply chain attack. The report says the attack was attributed to Lazarus Group. UpdateAgent is an ad hoc signed x86_64 binary that forks, self-deletes, reads a 3CX configuration file and a victim identifier, and attempts to send them to an attacker server. That server was offline, so the server response could not be observed. The report gives file indicators and DNS and network detection approaches.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus Group",
+          "q": "attributed to the North Koreans, aka Lazarus Group",
+          "by": "Patrick Wardle, Objective-See blog (report author), citing an earlier post"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 1, 2023",
+          "q": "by: Patrick Wardle / April 1, 2023",
+          "what": "Blog post published"
+        },
+        {
+          "v": "March 31, 2023",
+          "q": "Patrick Wardle (@patrickwardle) March 31, 2023",
+          "what": "Initial analysis of UpdateAgent tweeted"
+        }
+      ],
+      "tools": [
+        {
+          "v": "libffmpeg.dylib",
+          "q": "(libffmpeg.dylib) was to download and execute a 2nd-stage payload named UpdateAgent."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Forks itself",
+          "q": "Forks itself via fork"
+        },
+        {
+          "v": "Self-deletes",
+          "q": "Self-deletes via ulink"
+        },
+        {
+          "v": "anti-analysis",
+          "q": "the malware contain some basic anti-analysis logic"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "v2.4.3",
+          "q": "Make sure you are running the latest version of LuLu (v2.4.3) that improved the handling of"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "UpdateAgent"
+    },
+    "hedges": [
+      "The report says the attribution to Lazarus Group comes from an earlier post in the series, not from its own analysis.",
+      "The author says the purpose of UpdateAgent may simply be to report information about victims, which he presents as a possibility.",
+      "The author says the configuration file appears to be a legitimate 3CX file.",
+      "The author says the victim identifier file likely uniquely identifies the victim.",
+      "The author says that, because the server was offline, the response handling appears to do nothing, which is based on static reading only.",
+      "The author says a later-swapped UpdateAgent could perhaps become a persistent, fully featured implant.",
+      "The author notes the self-deleted binary might be gone, so file indicators may not be found."
+    ]
   }
 }

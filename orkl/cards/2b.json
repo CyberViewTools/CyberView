@@ -1,0 +1,293 @@
+{
+  "2b047cba8ddfac68189a1eb1f52886a630c80ead": {
+    "sha1": "2b047cba8ddfac68189a1eb1f52886a630c80ead",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:38:28Z",
+    "model": "haiku",
+    "summary": "Team Cymru's April 2025 post, written with Silent Push and hosting provider Stark Industries Solutions, describes FIN7, a financially motivated group active for over a decade. Silent Push identified about 4,000 domains attributed to FIN7 or to actors mimicking its TTPs, many hosted on Stark-assigned IPs. Two upstream clusters, one from Post Ltd (Russia) and one from SmartApe (Estonia), were linked to the hosts through SSH and HTTPS connections. The reported hosts were suspended. The post is a snapshot and does not claim to list all FIN7 infrastructure.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "FIN7 is a financially motivated threat group that has been active for more than a decade, targeting a wide variety",
+          "by": "Team Cymru (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "a broadband provider operating in the Northern Caucasus region in Southern Russia."
+        },
+        {
+          "v": "Estonia",
+          "q": "SmartApe, a cloud hosting provider operating from Estonia."
+        },
+        {
+          "v": "US",
+          "q": "the majority of the IPs (74%) were assigned to Cloudflare, US, indicating the"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-04-08",
+          "q": "Published: 2025-04-08 · Archived: 2026-04-05 16:03:41 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2025-04-08 · Archived: 2026-04-05 16:03:41 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [],
+      "techniques": [
+        {
+          "v": "SSH",
+          "q": "This activity is therefore indicative of potential management activity of the Stark-assigned hosts, initiated via SSH from user(s) of the Post Ltd IPs."
+        },
+        {
+          "v": "spoofed website",
+          "q": "in many cases may be some form of spoofed website"
+        },
+        {
+          "v": "obscured behind Cloudflare",
+          "q": "indicating the “true” hosting IPs were likely obscured behind Cloudflare services."
+        },
+        {
+          "v": "resellers",
+          "q": "likely procured by the threat actors from one of Stark’s resellers."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "4,000",
+          "q": "Recent research by Silent Push has identified upwards of 4,000 domains that they believe are attributable to either"
+        },
+        {
+          "v": "70",
+          "q": "Silent Push provided 70 indicators (67 domains and 3 IP addresses) of FIN7-related"
+        },
+        {
+          "v": "116",
+          "q": "Passive DNS data for the domains showed them resolving to 116 distinct IPs in the 30 days prior to the"
+        },
+        {
+          "v": "74%",
+          "q": "the majority of the IPs (74%) were assigned to Cloudflare, US, indicating the"
+        },
+        {
+          "v": "nine",
+          "q": "we extracted nine Stark-assigned IPs as follows:"
+        },
+        {
+          "v": "25",
+          "q": "Identification of 25 Stark-assigned IP addresses used to host domains associated with FIN7 activities."
+        },
+        {
+          "v": "four",
+          "q": "The first cluster involved four IP addresses assigned to Post Ltd, a broadband provider operating in the Northern"
+        },
+        {
+          "v": "15",
+          "q": "Over the past 30 days, we observed these IP addresses communicating with at least 15 Stark-assigned hosts, which"
+        },
+        {
+          "v": "16",
+          "q": "Over the past 30 days, we observed these IP addresses communicating with at least 16 Stark-assigned hosts, which"
+        },
+        {
+          "v": "six",
+          "q": "a further six hosts, which we assess to be connected to the same activity"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The initial feedback from Stark indicated that the hosts were likely procured by the threat actors from one of Stark's resellers.",
+      "This activity is therefore indicative of potential management activity of the Stark-assigned hosts.",
+      "It is possible that the SmartApe cluster is tied to threat researcher activities, or used for testing purposes.",
+      "Some domains may be attributable to other threat actors mimicking the group's established TTPs.",
+      "The post is a snapshot in time and does not exhaustively identify FIN7 infrastructure.",
+      "Links to FIN7 are described as potential, likely, or assessed rather than confirmed."
+    ]
+  },
+  "2b92911dc1cad928ecfc8a42d00850cf737d8722": {
+    "sha1": "2b92911dc1cad928ecfc8a42d00850cf737d8722",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:41:32Z",
+    "model": "haiku",
+    "summary": "Rewterz threat alert (published 2023-12-30) reports that Microsoft again disabled the ms-appinstaller protocol handler after threat actors abused it for initial access. Signed malicious MSIX app packages, spread through Microsoft Teams or malvertising, were used by at least four financially motivated groups since November 2023 to deliver tools such as BATLOADER, FakeBat, and DarkGate, feeding ransomware operations. Named groups include Storm-0569, Storm-1113, Storm-1674, and Sangria Tempest (aka FIN7 and Carbon Spider). A separate October 2023 campaign used fake MSIX packages to deliver…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Storm-0569",
+          "q": "Storm-0569 is an initial access broker that distributes BATLOADER using search engine optimization",
+          "by": "the report itself"
+        },
+        {
+          "v": "Storm-1113",
+          "q": "Storm-1113 is an initial access broker that uses fake MSIX installers pretending to be Zoom to spread",
+          "by": "the report itself"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "Sangria Tempest (aka FIN7 and Carbon Spider) uses",
+          "by": "the report itself"
+        },
+        {
+          "v": "FIN7",
+          "q": "Sangria Tempest (aka FIN7 and Carbon Spider) uses",
+          "by": "the report itself"
+        },
+        {
+          "v": "Carbon Spider",
+          "q": "Sangria Tempest (aka FIN7 and Carbon Spider) uses",
+          "by": "the report itself"
+        },
+        {
+          "v": "Storm-1674",
+          "q": "Storm-1674 is an initial access broker that uses Teams messages to send fake landing pages that look like",
+          "by": "the report itself"
+        },
+        {
+          "v": "Storm-0506",
+          "q": "malware to inject the Cobalt Strike payload and transfers access to Storm-0506 for the deployment of the Black Basta ransomware.",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-12-30",
+          "q": "Published: 2023-12-30 · Archived: 2026-04-05 18:17:54 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "November 2023",
+          "q": "detected leveraging the App Installer service since November 2023 and using it for initial access for further",
+          "what": "Financially motivated groups began leveraging App Installer for initial access"
+        },
+        {
+          "v": "October 2023",
+          "q": "In October 2023, another campaign was discovered in which fake MSIX Windows app package files for Microsoft",
+          "what": "Campaign with fake MSIX packages discovered"
+        },
+        {
+          "v": "February 2022",
+          "q": "as in February 2022, the company did it to prevent attackers from leveraging it to spread Emotet,",
+          "what": "Microsoft previously disabled the ms-appinstaller protocol handler"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BATLOADER",
+          "q": "Storm-0569 is an initial access broker that distributes BATLOADER using search engine optimization"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "malware to inject the Cobalt Strike payload and transfers access to Storm-0506 for the deployment of the Black Basta ransomware."
+        },
+        {
+          "v": "Black Basta",
+          "q": "malware to inject the Cobalt Strike payload and transfers access to Storm-0506 for the deployment of the Black Basta ransomware."
+        },
+        {
+          "v": "EugenLoader",
+          "q": "Sangria Tempest (aka FIN7 and Carbon Spider) uses Storm-1113’s EugenLoader to distribute Carbanak"
+        },
+        {
+          "v": "FakeBat",
+          "q": "EugenLoader (aka FakeBat), acting as a conduit for several remote access trojans and stealer malware."
+        },
+        {
+          "v": "Carbanak",
+          "q": "Sangria Tempest (aka FIN7 and Carbon Spider) uses Storm-1113’s EugenLoader to distribute Carbanak"
+        },
+        {
+          "v": "Gracewire",
+          "q": "which delivers an implant named Gracewire. The group also relied on Google ads as a lure so victims"
+        },
+        {
+          "v": "POWERTRASH",
+          "q": "downloaded malicious MSIX application packages from rogue landing pages to inject POWERTRASH"
+        },
+        {
+          "v": "NetSupport RAT",
+          "q": "which is used to load Gracewire and NetSupport RAT."
+        },
+        {
+          "v": "TeamsPhisher",
+          "q": "Microsoft OneDrive and SharePoint by using the TeamsPhisher tool. It urges the users to open PDF files"
+        },
+        {
+          "v": "DarkGate",
+          "q": "DarkGate or SectopRAT payloads."
+        },
+        {
+          "v": "SectopRAT",
+          "q": "DarkGate or SectopRAT payloads."
+        },
+        {
+          "v": "GHOSTPULSE",
+          "q": "GHOSTPULSE. This is not the first time Microsoft has disabled the MSIX ms-appinstaller protocol handler in"
+        },
+        {
+          "v": "Emotet",
+          "q": "as in February 2022, the company did it to prevent attackers from leveraging it to spread Emotet,"
+        },
+        {
+          "v": "Bazaloader",
+          "q": "Bazaloader, and TrickBot."
+        },
+        {
+          "v": "TrickBot",
+          "q": "Bazaloader, and TrickBot."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "ms-appinstaller protocol handler",
+          "q": "malware kit that uses the ms-appinstaller protocol handler and MSIX file format."
+        },
+        {
+          "v": "signed malicious MSIX packages via Teams",
+          "q": "The attacks utilize signed malicious MSIX application packages spread through Microsoft Teams or"
+        },
+        {
+          "v": "malvertising",
+          "q": "malvertising of legitimate popular software on Google Search."
+        },
+        {
+          "v": "SEO poisoning",
+          "q": "(SEO) poisoning with websites that spoof Zoom, TeamViewer, Tableau, and AnyDesk."
+        },
+        {
+          "v": "Teams messages with fake landing pages",
+          "q": "Storm-1674 is an initial access broker that uses Teams messages to send fake landing pages that look like"
+        },
+        {
+          "v": "Security bypass",
+          "q": "Security Bypass"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four",
+          "q": "At least four financially motivated threat groups have been"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "At least four financially motivated threat groups have been detected, so four is a minimum count."
+    ]
+  }
+}

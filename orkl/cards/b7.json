@@ -127,5 +127,128 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "b77405f967ae674b0b4dd32f2766624ab67a21e3": {
+    "sha1": "b77405f967ae674b0b4dd32f2766624ab67a21e3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:42:25Z",
+    "model": "haiku",
+    "summary": "eSentire's Threat Response Unit describes the XRed backdoor, a malicious program disguised as the Synaptics Pointing Device Driver and delivered through a trojanized Windows InstantView.exe that comes with some USB docks. It persists through a Registry Run Key, logs keystrokes, accepts remote commands, spreads through USB autorun files, and injects malicious macros into Excel macro-enabled files. The report says the backdoor has existed since at least 2019 and assesses with high confidence that its developer is a native Turkish speaker. eSentire's endpoint tool prevented its execution and…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "native Turkish speaker",
+          "q": "We assess with high confidence that the developer of the backdoor is a native Turkish speaker",
+          "by": "eSentire Threat Response Unit (TRU)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019",
+          "q": "The backdoor, known as “XRed,” has been in existence since at least 2019.",
+          "what": "Backdoor known to have existed since at least this year"
+        },
+        {
+          "v": "2020",
+          "q": "we found a Twitter post from 2020 by The DFIR Report",
+          "what": "Twitter post by The DFIR Report mentioning the backdoor"
+        },
+        {
+          "v": "early February",
+          "q": "In early February, the eSentire Threat Response Unit (TRU) identified a malicious backdoor disguised as",
+          "what": "eSentire TRU identified the malicious backdoor disguised as Synaptics.exe"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XRed",
+          "q": "The backdoor, known as “XRed,” has been in existence since at least 2019."
+        },
+        {
+          "v": "Windows InstantView.exe",
+          "q": "originated from a file named \"Windows InstantView.exe\""
+        },
+        {
+          "v": "Synaptics.exe",
+          "q": "Let’s look at Synaptics.exe binary, which is the XRed backdoor."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "trojanized software",
+          "q": "its delivery using trojanized software, and notable persistence and propagation capabilities"
+        },
+        {
+          "v": "launches it as a decoy",
+          "q": "and launches it as a decoy (Figures 6-7)."
+        },
+        {
+          "v": "Registry Run Key",
+          "q": "The persistence is achieved via the Registry Run Key"
+        },
+        {
+          "v": "keylogging",
+          "q": "Additionally, the backdoor features keylogging functionality through keyboard hooking"
+        },
+        {
+          "v": "remote commands",
+          "q": "The following remote commands can be executed from attacker’s server (Figure 15):"
+        },
+        {
+          "v": "worm-like USB propagation",
+          "q": "The XRed backdoor also possesses worm-like USB propagation capabilities."
+        },
+        {
+          "v": "AutoRun feature",
+          "q": "This behavior leverages the AutoRun feature that was more prominently used in older versions of Windows"
+        },
+        {
+          "v": "injects the malicious VBA code",
+          "q": "injects the malicious VBA code into them."
+        },
+        {
+          "v": "disables security warnings for VBA macros",
+          "q": "The malicious VBA script disables security warnings for VBA macros via the registry"
+        },
+        {
+          "v": "transmits this data to the attacker using SMTP",
+          "q": "transmits this data to the attacker using SMTP to email addresses shown in Figure 12"
+        },
+        {
+          "v": "social engineering tactics",
+          "q": "showcases the use of social engineering tactics by attackers"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "106",
+          "q": "The resource “EXEVSNX” contains the version of the payload, which is 106 (Figure 11)."
+        },
+        {
+          "v": "54efba3a1e800e0a0cccddc7950476c646935d28",
+          "q": "Synaptics.exe (MD5: 54efba3a1e800e0a0cccddc7950476c646935d28), which was detected and quarantined by"
+        },
+        {
+          "v": "8fe9734738d9851113a7ac5f8f484d29",
+          "q": "a malicious sample named “Windows InstantView.exe” (MD5: 8fe9734738d9851113a7ac5f8f484d29)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "XRed backdoor"
+    },
+    "hedges": [
+      "The malicious binary could not be retrieved from the host system; similar samples were found on VirusTotal instead.",
+      "The URLs used to fetch additional payloads are currently down.",
+      "At the time of writing, all URLs the macro uses to download the backdoor are offline.",
+      "The developer attribution is an assessment made with high confidence, not a confirmed identity.",
+      "A 2020 Twitter post attributed the backdoor to njRAT; the report checked this further and does not state a confirmed result."
+    ]
   }
 }

@@ -48,5 +48,129 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "b5475b123d3e2147e54c417e7cbc08c1fb70a5e4": {
+    "sha1": "b5475b123d3e2147e54c417e7cbc08c1fb70a5e4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:35:47Z",
+    "model": "haiku",
+    "summary": "Morphisec Labs describes a 2019 variant of the ShellTea (PunchBuggy) backdoor, linked with high probability to the FIN8 group. The fileless malware hit a hotel-entertainment customer, believed reached by phishing, and was blocked before POS malware could be downloaded. It persists via the registry, injects into explorer.exe, checks for analysis environments, and uses HTTPS C2 plus reflectively loaded PowerShell. Indicators overlap with FIN7.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN8",
+          "q": "This is the first cyberattack observed during 2019 that can be attributed to FIN8 with high probability, although",
+          "by": "Morphisec (the report's publisher)"
+        },
+        {
+          "v": "FIN6",
+          "q": "we’ve seen multiple attacks by FIN6, FIN7, and others.",
+          "by": "Morphisec (the report's publisher)"
+        },
+        {
+          "v": "FIN7",
+          "q": "we’ve seen multiple attacks by FIN6, FIN7, and others.",
+          "by": "Morphisec (the report's publisher)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "hospitality",
+          "q": "The hospitality industry, and particularly their POS networks, continues to be one of the industries most targeted"
+        },
+        {
+          "v": "hotel-entertainment industry",
+          "q": "a customer in the hotel-entertainment industry."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "March to May 2019",
+          "q": "During the period of March to May 2019, Morphisec Labs observed a new, highly sophisticated variant of the",
+          "what": "ShellTea variant observed attempting to infiltrate machines at a hotel-entertainment customer"
+        },
+        {
+          "v": "2017",
+          "q": "The last documented version of ShellTea was in 2017, in a POS malware attack.",
+          "what": "Last documented ShellTea version, used in a POS malware attack"
+        },
+        {
+          "v": "2019",
+          "q": "This is the first cyberattack observed during 2019 that can be attributed to FIN8 with high probability, although",
+          "what": "First cyberattack observed in 2019 attributed to FIN8 with high probability"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ShellTea",
+          "q": "The last documented version of ShellTea was in 2017, in a POS malware attack."
+        },
+        {
+          "v": "PunchBuggy",
+          "q": "ShellTea / PunchBuggy backdoor malware that attempted to infiltrate a number of machines within the network of"
+        },
+        {
+          "v": "ReflectivePicker",
+          "q": "As mentioned previously, the PowerShell is executed using reflectively loaded ReflectivePicker from the Empire"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fileless malware",
+          "q": "It is believed that the fileless malware was deployed as a result of"
+        },
+        {
+          "v": "phishing",
+          "q": "several phishing attempts."
+        },
+        {
+          "v": "persists through registry",
+          "q": "Following successful infiltration, the malware persists through registry:"
+        },
+        {
+          "v": "virtual environment checks",
+          "q": "ShellTea utilizes a number of techniques to identify if it is running within a virtual environment or is being"
+        },
+        {
+          "v": "Inject into Explorer",
+          "q": "Inject into Explorer"
+        },
+        {
+          "v": "functions are hashed",
+          "q": "To operate and evade standard analysis tools, most of the functions are hashed."
+        },
+        {
+          "v": "monitoring processes",
+          "q": "Looking for monitoring processes"
+        },
+        {
+          "v": "HTTPS",
+          "q": "The ShellTea backdoor communicates on top of HTTPS and supports a number of commands based on what is"
+        },
+        {
+          "v": "proxy aware",
+          "q": "ShellTea is proxy aware malware – if direct communication fails it will try to execute the proxy aware API."
+        },
+        {
+          "v": "collects all possible information",
+          "q": "The PowerShell script collects all possible information on the user and the network, including snapshots,"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ShellTea"
+    },
+    "hedges": [
+      "It is believed that the fileless malware was deployed as a result of several phishing attempts.",
+      "The report assumes the attack was also an attempted POS attack, since the targeted industry is hospitality.",
+      "FIN8 attribution is made with high probability, not certainty.",
+      "Some indicators, including URLs and infrastructure, overlap with known FIN7 attacks; this is presented as overlap, not attribution."
+    ]
   }
 }

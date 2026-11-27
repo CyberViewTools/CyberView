@@ -336,5 +336,176 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "94cf359a01b554eb46edd83952e99930d114046c": {
+    "sha1": "94cf359a01b554eb46edd83952e99930d114046c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:33:38Z",
+    "model": "haiku",
+    "summary": "A FireEye threat research blog from June 2017 says targeted attackers increasingly use command-line evasion and obfuscation to get past application whitelisting and signature-based detection. It describes FIN8 (environment variables, WMI and StdIn tricks, linked to PUNCHTRACK activity), APT19 and APT32 (regsvr32 bypass with obfuscated arguments), and FIN7 (obfuscated JavaScript and cmd.exe commands hidden in LNK files in phishing documents). It urges defenders to layer detection methods rather than rely on one.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN8",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via",
+          "by": "FireEye (this report)"
+        },
+        {
+          "v": "APT19",
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms.",
+          "by": "FireEye (this report)"
+        },
+        {
+          "v": "APT32",
+          "q": "The cyber espionage group APT32 heavily obfuscates their backdoors and scripts",
+          "by": "FireEye (this report)"
+        },
+        {
+          "v": "FIN7",
+          "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in",
+          "by": "FireEye (this report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "restaurant, hospitality, and financial services",
+          "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in"
+        },
+        {
+          "v": "law firms",
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017-06-30",
+          "q": "Published: 2017-06-30 · Archived: 2026-04-05 14:48:57 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "early 2017",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via",
+          "what": "FIN8 began using environment-variable command hiding"
+        },
+        {
+          "v": "February 2017",
+          "q": "In the February 2017",
+          "what": "FIN8 phishing document containing a macro"
+        },
+        {
+          "v": "April 2017",
+          "q": "APT32 implement additional command argument obfuscation in April 2017.",
+          "what": "APT32 added command argument obfuscation"
+        },
+        {
+          "v": "April 2017",
+          "q": "To ensure their arsenal did not grow stale, in April 2017 FIN7 shifted to using wscript.exe to run JavaScript",
+          "what": "FIN7 shifted to wscript.exe running JavaScript payloads"
+        },
+        {
+          "v": "2017",
+          "q": "Throughout 2017 we have observed a marked increase in the use of command line evasion and obfuscation by a",
+          "what": "Report observed rising command-line evasion through 2017"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PowerShell",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
+        },
+        {
+          "v": "PUNCHTRACK",
+          "q": "launch their PUNCHTRACK POS-scraping malware, and the 2017 activity is an implementation of these evasion"
+        },
+        {
+          "v": "wscript.exe",
+          "q": "To ensure their arsenal did not grow stale, in April 2017 FIN7 shifted to using wscript.exe to run JavaScript"
+        },
+        {
+          "v": "regsvr32.exe",
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms."
+        },
+        {
+          "v": "cmd.exe",
+          "q": "they used a little-known character replacement functionality supported by cmd.exe."
+        },
+        {
+          "v": "WMI",
+          "q": "FIN8 crafted this macro to use WMI to"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "environment variables",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
+        },
+        {
+          "v": "application whitelisting bypass",
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms."
+        },
+        {
+          "v": "parent-child process",
+          "q": "To evade many detections based on parent-child process relationships"
+        },
+        {
+          "v": "WMI",
+          "q": "FIN8 crafted this macro to use WMI to"
+        },
+        {
+          "v": "command line evasion and obfuscation",
+          "q": "Throughout 2017 we have observed a marked increase in the use of command line evasion and obfuscation by a"
+        },
+        {
+          "v": "LNK files",
+          "q": "These methods rely on FIN7’s preferred method of hiding shortcut files (LNK files) in their"
+        },
+        {
+          "v": "character replacement",
+          "q": "they used a little-known character replacement functionality supported by cmd.exe."
+        },
+        {
+          "v": "StdIn",
+          "q": "StdIn (standard input) to evade detection based on process command line arguments."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "0 antivirus engines",
+          "q": "technique were detected by 0 antivirus engines."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The 0-engine detection figure applies only 'at the time of this blog'.",
+      "Says these techniques 'often' bypass static and dynamic analysis methods, a general rather than absolute claim."
+    ]
+  },
+  "9461daa2fdf5bd49d6b684ea0ce4ffb4a7a32774": {
+    "sha1": "9461daa2fdf5bd49d6b684ea0ce4ffb4a7a32774",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T08:44:41Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1
   }
 }

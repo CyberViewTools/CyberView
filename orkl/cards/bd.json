@@ -1,0 +1,161 @@
+{
+  "bd304e1edd18b18a7d280ee093ef02f8e5706aca": {
+    "sha1": "bd304e1edd18b18a7d280ee093ef02f8e5706aca",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:33:40Z",
+    "model": "haiku",
+    "summary": "Cisco Talos report (published 31 October 2023) on Arid Viper, an espionage-motivated group believed to be based in Gaza. Since April 2022 it has run an Android spyware campaign targeting Arabic-speaking users with malicious app updates. The malware 'Skipped_Messenger' uses Firebase as a C2 channel and shares a Firebase project with the Skipped dating app. The report also maps a wider network of dating apps tied to Skipped GmbH and related companies in Germany, Singapore and Dubai.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Arid Viper",
+          "q": "Although Arid Viper is believed to be based out of Gaza, Cisco Talos has no evidence indicating or refuting that",
+          "by": "Cisco Talos"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Gaza",
+          "q": "Although Arid Viper is believed to be based out of Gaza, Cisco Talos has no evidence indicating or refuting that"
+        },
+        {
+          "v": "Germany",
+          "q": "The publisher of Skipped, a company called “Skipped GmbH,” was registered and is headquartered in Germany, and"
+        },
+        {
+          "v": "Singapore",
+          "q": "appears to be linked to a multitude of seemingly non-malicious dating applications published by companies in Singapore and Dubai."
+        }
+      ],
+      "dates": [
+        {
+          "v": "April 2022",
+          "q": "Since April 2022, Cisco Talos has been tracking a malicious campaign operated by the espionage-motivated Arid",
+          "what": "Talos began tracking the campaign"
+        },
+        {
+          "v": "October 31, 2023",
+          "q": "Tuesday, October 31, 2023 07:00",
+          "what": "Report published"
+        },
+        {
+          "v": "August 9, 2021",
+          "q": "for the database was first seen on August 9, 2021, while Arid Viper’s malware started using this infrastructure beginning",
+          "what": "Skipped Firebase database URL first seen"
+        },
+        {
+          "v": "November 11, 2022",
+          "q": "on November 11, 2022. Given the malware used Skipped’s Firebase project almost a year after the infrastructure was set",
+          "what": "Malware began using the Skipped Firebase infrastructure"
+        },
+        {
+          "v": "January 2022",
+          "q": "at least one of these companies, NYUTAINMENT PTE. LTD, was issued Cease and Desist orders in January 2022 by the",
+          "what": "Cease and desist orders issued to NYUTAINMENT PTE. LTD by the Berlin Regional Court"
+        },
+        {
+          "v": "March 17, 2022",
+          "q": "The account was created on March 17, 2022 and has",
+          "what": "YouTube account hosting a lure video was created"
+        },
+        {
+          "v": "2021",
+          "q": "Arid Viper has been using native code libraries since at least 2021 with the intent of obfuscating C2 hostnames.",
+          "what": "Arid Viper began using native code libraries"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Skipped_Messenger",
+          "q": "The name of Arid Viper’s mobile malware, “Skipped_Messenger,” appears to be a reference to Skipped, which is listed"
+        },
+        {
+          "v": "Firebase",
+          "q": "The Firebase platform primarily serves as a C2 channel to issue commands"
+        },
+        {
+          "v": "ALFA TEaM Shell",
+          "q": "the attackers by using webshells such as “ALFA TEaM Shell”."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "masquerades as application updates",
+          "q": "through mobile malware that masquerades as application updates."
+        },
+        {
+          "v": "tutorial video",
+          "q": "The attackers typically send targets a link to a tutorial video for the application, which is posted on a media-"
+        },
+        {
+          "v": "honey trap",
+          "q": "is in line with the “honey trap” tactics used by Arid"
+        },
+        {
+          "v": "disabling system or security notifications",
+          "q": "Once deployed, the malware attempts to hide itself on a victim machine by disabling system or security notifications from"
+        },
+        {
+          "v": "record telephone calls",
+          "q": "The implant has the ability to record telephone calls made on the compromised device."
+        },
+        {
+          "v": "exfiltrate credentials",
+          "q": "It can also exfiltrate credentials collected from Facebook and relay them to the C2 server:"
+        },
+        {
+          "v": "native code",
+          "q": "The malware uses native code to hide some of its"
+        },
+        {
+          "v": "C2 channel",
+          "q": "The Firebase platform primarily serves as a C2 channel to issue commands"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "50K downloads",
+          "q": "“SKIPPED - Chat, Match & Dating” : 50K downloads on Google Play."
+        },
+        {
+          "v": "10K downloads",
+          "q": "“Joostly - Dating App! Singles,” : 10K downloads on Google Play."
+        },
+        {
+          "v": "approximately 50 views",
+          "q": "had approximately 50 views at the time of writing."
+        },
+        {
+          "v": "one video",
+          "q": "has uploaded only one video, suggesting Arid Viper may use such accounts to host a limited number of videos at a time."
+        },
+        {
+          "v": "30 days",
+          "q": "is only available for 30 days. After this duration, the database is locked and needs to be specifically re-"
+        },
+        {
+          "v": "at least three",
+          "q": "at least three different yet related companies in Germany"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Arid Viper Android spyware campaign"
+    },
+    "hedges": [
+      "Talos has no evidence indicating or refuting that the campaign is related to the Israel-Hamas war.",
+      "Arid Viper is only believed to be based out of Gaza.",
+      "The overlaps suggest the operators are either linked to Skipped's developer or gained illicit access to the shared project's database.",
+      "Talos considered, but assessed as unlikely, that Skipped's Firebase databases were in public test mode and abused by Arid Viper.",
+      "It is currently unclear whether there is a direct relationship between Skipped GmbH and the other developers of the dating apps.",
+      "The dating app ecosystem cannot be explicitly categorized as a scam operation.",
+      "Talos assesses that Arid Viper operators may seek to leverage the additional dating apps and names in future campaigns.",
+      "It is unclear why the four vendors require a different obfuscation procedure for their security package names."
+    ]
+  }
+}

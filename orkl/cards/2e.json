@@ -438,5 +438,159 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "2ea47ee3caf45c7eea548e479295854aa201d78b": {
+    "sha1": "2ea47ee3caf45c7eea548e479295854aa201d78b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:40:59Z",
+    "model": "haiku",
+    "summary": "Encyclopedia article on booting: how a computer starts and loads its operating system, covering early hardware loaders, ROM and firmware, boot loaders, boot security and boot loops. It is not a threat report. It describes no threat actor, campaign, malware or vulnerability. The 2024 CrowdStrike update incident appears only as an example of a boot loop, not as a threat.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "2e11ec83965d1af3d750cf20ddc8f8c3337220b1": {
+    "sha1": "2e11ec83965d1af3d750cf20ddc8f8c3337220b1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T08:47:38Z",
+    "model": "haiku",
+    "summary": "GReAT at Kaspersky describes Silence, a Trojan found in a targeted campaign against financial institutions, mostly Russian banks, with infections also found in Malaysia and Armenia. The attackers sent spear-phishing emails, often from addresses of employees of already infected banks, with a malicious help-file attachment. The payload is a set of Windows service modules that record victim screens, give console backconnect access, and can install further tools. The report says the attacks were still ongoing and that the group uses legitimate administration tools such as Winexesvc to avoid…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Silence",
+          "q": "The cybercriminals using Silence send spear-phishing emails as initial infection vectors,",
+          "by": "GReAT (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "In September 2017, we discovered a new targeted attack on financial institutions."
+        },
+        {
+          "v": "banks",
+          "q": "Victims are mostly Russian banks but we also found infected organizations in Malaysia and Armenia."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "Victims are mostly Russian banks but we also found infected organizations in Malaysia and Armenia."
+        },
+        {
+          "v": "Malaysia",
+          "q": "Victims are mostly Russian banks but we also found infected organizations in Malaysia and Armenia."
+        },
+        {
+          "v": "Armenia",
+          "q": "Victims are mostly Russian banks but we also found infected organizations in Malaysia and Armenia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 2017",
+          "q": "In September 2017, we discovered a new targeted attack on financial institutions.",
+          "what": "Discovery of a new targeted attack on financial institutions"
+        },
+        {
+          "v": "Thu Oct 12 02:53:12 2017",
+          "q": "Thu Oct 12 02:53:12 2017",
+          "what": "Compilation timestamp listed for the dropper sample"
+        },
+        {
+          "v": "Tue Jul 19 15:35:17 2016",
+          "q": "Tue Jul 19 15:35:17 2016",
+          "what": "Compilation timestamp listed for the monitoring module sample"
+        },
+        {
+          "v": "Thu Jun 08 03:28:44 2017",
+          "q": "Thu Jun 08 03:28:44 2017",
+          "what": "Compilation timestamp listed for the C&C communication module sample"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Winexesvc",
+          "q": "Also, on some infected computers we found a tool called the Winexesvc tool."
+        },
+        {
+          "v": "psexec",
+          "q": "This tool basically provides the same functionality as the well-known “psexec” tool."
+        },
+        {
+          "v": "winexe",
+          "q": "When the Linux binary “winexe” is run against a Windows server,"
+        },
+        {
+          "v": "Compiled HTML Help",
+          "q": "The attachment we detected in this new wave is a “Microsoft Compiled HTML Help” file."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing email with malicious attachment",
+          "q": "The infection vector is a spear-phishing email with a malicious attachment."
+        },
+        {
+          "v": "phishing sent from addresses of employees of compromised banks",
+          "q": "often using the addresses of employees of an already infected financial institution"
+        },
+        {
+          "v": "abusing CHM help files to run payloads automatically on opening",
+          "q": "Attackers began exploiting CHM files to automatically run malicious payloads once the file is accessed."
+        },
+        {
+          "v": "recording bank employees' screens to learn daily operations",
+          "q": "making video recordings of the day to day activity on bank employees’ PCs"
+        },
+        {
+          "v": "payload modules registered as Windows services",
+          "q": "All the payload modules we were able to identify are registered as Windows services."
+        },
+        {
+          "v": "taking repeated screenshots to form a pseudo-video stream",
+          "q": "it takes multiple screenshots of the victim´s active screen"
+        },
+        {
+          "v": "remote backconnect console access to the victim machine",
+          "q": "provide backconnect access to the victim machine using console command execution"
+        },
+        {
+          "v": "dropper that downloads and runs payloads from the command server",
+          "q": "send the ID of the infected machine and download and execute malicious payloads."
+        },
+        {
+          "v": "use of legitimate administration tools in post-exploitation",
+          "q": "The group uses legitimate administration tools to fly under the radar in their post-exploitation"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Silence"
+    },
+    "hedges": [
+      "The Trojan is apparently being used in multiple international locations.",
+      "The report says the activity suggests the group is expanding, which is an inference rather than a confirmed finding.",
+      "Spear-phishing with .chm attachments seems effective, at least among financial organizations.",
+      "The report says legitimate admin tools make detection and attribution more complicated.",
+      "Full IOCs and YARA rules are only available with a private report subscription."
+    ]
   }
 }

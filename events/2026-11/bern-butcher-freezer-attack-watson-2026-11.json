@@ -3,7 +3,7 @@
   "cves": [],
   "products": [],
   "first_seen": "2026-11-27T08:02:16Z",
-  "updated_at": "2026-11-27T08:02:16Z",
+  "updated_at": "2026-11-27T08:12:00Z",
   "checked_at": "2026-11-27T08:02:16Z",
   "category": "incident",
   "time_basis": "published",
@@ -25,15 +25,51 @@
   "plain": "Watson reports a butcher in canton Bern was hit over the internet and its freezer heated to 50 to 70 degrees. The shop checked its systems and has reopened.",
   "exec": "Watson reports the first publicly known attack of this kind in Switzerland, hitting a food business's cooling system.",
   "action": "No action needed; for awareness.",
-  "attack": ["intrusion", "ot-ics"],
-  "tags": ["critical-infrastructure", "ot-ics"],
+  "attack": [
+    "intrusion",
+    "ot-ics"
+  ],
+  "tags": [
+    "ot-ics"
+  ],
   "sources": [
-    {"name": "Watson Switzerland", "url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an", "published": "2026-11-27", "read_depth": "full"}
+    {
+      "name": "Watson Switzerland",
+      "url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an",
+      "published": "2026-11-27",
+      "read_depth": "full"
+    }
   ],
   "evidence": [
-    {"url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an", "quote": "stieg die Temperatur im Tiefkühler auf 50 bis 70 Grad"}
+    {
+      "url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an",
+      "quote": "stieg die Temperatur im Tiefkühler auf 50 bis 70 Grad"
+    }
   ],
-  "validation": {"state": "single_source", "checked_at": "2026-11-27T08:02:16Z", "note": "Only Watson read; no statement from the butcher or Swiss authorities read."},
-  "sectors": {"values": ["food-agriculture"], "basis": "stated"},
-  "surface": {"value": "ot-ics", "basis": "inferred"}
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-27T08:02:16Z",
+    "note": "Only Watson read; no statement from the butcher or Swiss authorities read."
+  },
+  "sectors": {
+    "values": [
+      "food-agriculture"
+    ],
+    "basis": "stated"
+  },
+  "surface": {
+    "value": "ot-ics",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-27T08:11:45Z",
+    "first_at": "2026-11-27T08:11:45Z",
+    "note": "tag: removed critical-infrastructure (not supported by source); temperature quote, reopening, Volg/Coop checked against Watson",
+    "flags": [],
+    "categories": [
+      "tags"
+    ]
+  },
+  "qa_checked_at": "2026-11-27T08:11:45Z"
 }

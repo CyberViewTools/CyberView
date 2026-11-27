@@ -1,13 +1,15 @@
 {
   "actor": "",
   "cves": [],
-  "products": ["TONARIWA"],
+  "products": [
+    "TONARIWA"
+  ],
   "first_seen": "2026-11-27T08:02:16Z",
-  "updated_at": "2026-11-27T08:02:16Z",
+  "updated_at": "2026-11-27T08:11:03Z",
   "checked_at": "2026-11-27T08:02:16Z",
   "category": "incident",
   "time_basis": "published",
-  "title": "Persol Career says 61万6,329件 doda records leaked after unauthorized access to contractor's TONARIWA",
+  "title": "Persol Career says 616,329 records of doda customers leaked after unauthorized access to contractor's TONARIWA",
   "date": "2026-11-26",
   "date_note": "26 November is the day of Persol Career's second report, per Cybersecurity.com (Japan); Dentsu Digital's own notice dated 12 November gave the first disclosure.",
   "org": "Persol Career (doda)",
@@ -20,21 +22,67 @@
   "geo_basis": "Japan, as the companies are Japanese; no city stated in the pages read",
   "severity": 2,
   "status": "confirmed",
-  "source_tier": "primary",
-  "summary": "Cybersecurity.com (Japan) reports that Persol Career's second report on 26 November confirmed the leak of 61万6,329件 (616,329) records connected to doda's LINE account, after unauthorized access to the TONARIWA platform run by contractor Dentsu Digital. The article lists name, birth date, gender, phone number, employer and employment status. Dentsu Digital's notice of 12 November says logs showed data taken from TONARIWA.",
-  "plain": "Persol Career says 61万6,329件 (616,329) doda records leaked via its contractor Dentsu Digital's TONARIWA platform. Names, birth dates and phone numbers are among the data, the article says.",
-  "exec": "Persol Career says 61万6,329件 (616,329) records leaked at a contractor; the article says it found no unauthorized access to its own systems.",
+  "source_tier": "established",
+  "summary": "Cybersecurity.com (Japan) reports that Persol Career's second report on 26 November confirmed the leak of 616,329 records connected to doda's LINE account, after unauthorized access to the TONARIWA platform run by contractor Dentsu Digital. The article lists name, birth date, gender, phone number, employer and employment status. Dentsu Digital's notice of 12 November reports unauthorized access to TONARIWA.",
+  "plain": "Persol Career says 616,329 doda records leaked via its contractor Dentsu Digital's TONARIWA platform. Names, birth dates and phone numbers are among the data, the article says.",
+  "exec": "Persol Career says 616,329 records leaked at a contractor; the article says Persol's first report found no unauthorized access to its own systems.",
   "action": "As Persol Career says, affected customers will be contacted individually by email; the LINE official account is suspended, so contact advisers by phone or email.",
-  "attack": ["intrusion", "supply-chain"],
-  "tags": ["data-breach", "third-party"],
+  "attack": [
+    "intrusion",
+    "supply-chain"
+  ],
+  "tags": [
+    "data-breach",
+    "third-party"
+  ],
   "sources": [
-    {"name": "Dentsu Digital (notice, second report)", "url": "https://www.dentsudigital.co.jp/news/updates/services/2026-1112-001112", "published": "2026-11-12", "read_depth": "full"},
-    {"name": "Cybersecurity.com (Japan)", "url": "https://cybersecurity-jp.com/news/119098", "published": "2026-11-27", "read_depth": "full"}
+    {
+      "name": "Dentsu Digital (notice, second report)",
+      "url": "https://www.dentsudigital.co.jp/news/updates/services/2026-1112-001112",
+      "published": "2026-11-12",
+      "read_depth": "full"
+    },
+    {
+      "name": "Cybersecurity.com (Japan)",
+      "url": "https://cybersecurity-jp.com/news/119098",
+      "published": "2026-11-27",
+      "read_depth": "full"
+    }
   ],
   "evidence": [
-    {"url": "https://cybersecurity-jp.com/news/119098", "quote": "件数は61万6,329件となった"}
+    {
+      "url": "https://cybersecurity-jp.com/news/119098",
+      "quote": "件数は61万6,329件となった"
+    }
   ],
-  "validation": {"state": "primary", "checked_at": "2026-11-27T08:02:16Z", "note": "Dentsu Digital's own notice (12 November) states the unauthorized access to TONARIWA and data-taking logs; the 616,329 figure and Persol's second report come from Cybersecurity.com (Japan) only. Persol Career's own page returned 403."},
-  "sectors": {"values": ["professional-services", "individuals"], "basis": "inferred"},
-  "surface": {"value": "supply-chain", "basis": "stated"}
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-27T08:02:16Z",
+    "note": "Dentsu Digital's notice (12 November) reports unauthorized access to TONARIWA but does not mention Persol Career or doda; the 616,329 figure and Persol's second report come from Cybersecurity.com (Japan) only. Persol Career's own page returned 403."
+  },
+  "sectors": {
+    "values": [
+      "professional-services",
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-27T08:12:09Z",
+    "first_at": "2026-11-27T08:12:09Z",
+    "note": "figure format 616,329 records; validation single_source; removed unsupported data-taking-logs claim; exec attributes statement to first report",
+    "flags": [],
+    "categories": [
+      "unsourced",
+      "figure",
+      "validation",
+      "attribution"
+    ]
+  },
+  "qa_checked_at": "2026-11-27T08:12:09Z"
 }

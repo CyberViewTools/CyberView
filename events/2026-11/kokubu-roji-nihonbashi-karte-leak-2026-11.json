@@ -1,7 +1,9 @@
 {
   "actor": "",
   "cves": [],
-  "products": ["PLAID KARTE"],
+  "products": [
+    "PLAID KARTE"
+  ],
   "first_seen": "2026-11-27T08:02:16Z",
   "updated_at": "2026-11-27T08:02:16Z",
   "checked_at": "2026-11-27T08:02:16Z",
@@ -25,17 +27,64 @@
   "plain": "Kokubu Group says names and email addresses, and for some customers phone numbers, of its ROJI online store may have leaked from vendor Plaid's KARTE. Payment data and passwords are not included, it says.",
   "exec": "Kokubu says 8,590 records may have leaked (a possible, not confirmed, count); it reports no secondary harm as of 26 November.",
   "action": "Kokubu advises not answering calls from unknown numbers, not replying to suspicious emails, and not opening links or attachments in them.",
-  "attack": ["intrusion", "supply-chain"],
-  "tags": ["data-breach", "third-party", "supply-chain"],
+  "attack": [
+    "intrusion",
+    "supply-chain"
+  ],
+  "tags": [
+    "data-breach",
+    "third-party",
+    "supply-chain"
+  ],
   "sources": [
-    {"name": "Kokubu Group (notice)", "url": "https://www.kokubu.co.jp/news/2026/detail/1126170000.html", "published": "2026-11-26", "read_depth": "full"},
-    {"name": "Cybersecurity.com (Japan)", "url": "https://cybersecurity-jp.com/news/119101", "published": "2026-11-27", "read_depth": "full"}
+    {
+      "name": "Kokubu Group (notice)",
+      "url": "https://www.kokubu.co.jp/news/2026/detail/1126170000.html",
+      "published": "2026-11-26",
+      "read_depth": "full"
+    },
+    {
+      "name": "Cybersecurity.com (Japan)",
+      "url": "https://cybersecurity-jp.com/news/119101",
+      "published": "2026-11-27",
+      "read_depth": "full"
+    }
   ],
   "evidence": [
-    {"url": "https://cybersecurity-jp.com/news/119101", "quote": "なお、8,590件は漏えいが確定した件数ではなく、漏えいの可能性がある件数である。"}
+    {
+      "url": "https://cybersecurity-jp.com/news/119101",
+      "quote": "なお、8,590件は漏えいが確定した件数ではなく、漏えいの可能性がある件数である。"
+    }
   ],
-  "validation": {"state": "primary", "checked_at": "2026-11-27T08:02:16Z", "note": "Kokubu Group's own notice read; Cybersecurity.com (Japan) relays the same announcement."},
-  "sectors": {"values": ["food-agriculture", "commercial-facilities"], "basis": "inferred"},
-  "surface": {"value": "supply-chain", "basis": "stated"},
-  "links": [{"to": "plaid-karte-unauthorized-access-2026-11", "rel": "customer of breached supplier PLAID", "url": "https://www.kokubu.co.jp/news/2026/detail/1126170000.html"}]
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-27T08:02:16Z",
+    "note": "Kokubu Group's own notice read; Cybersecurity.com (Japan) relays the same announcement."
+  },
+  "sectors": {
+    "values": [
+      "food-agriculture",
+      "commercial-facilities"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "links": [
+    {
+      "to": "plaid-karte-unauthorized-access-2026-11",
+      "rel": "customer of breached supplier PLAID",
+      "url": "https://www.kokubu.co.jp/news/2026/detail/1126170000.html"
+    }
+  ],
+  "review": {
+    "state": "passed",
+    "at": "2026-11-27T08:11:45Z",
+    "first_at": "2026-11-27T08:11:45Z",
+    "note": "title, date, 8,590 figure and quote, data types, advice, status checked against Kokubu notice and Cybersecurity.com",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-27T08:11:45Z"
 }

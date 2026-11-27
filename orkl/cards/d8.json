@@ -550,7 +550,7 @@
   },
   "d889f8ed2f6a73de74d4c8ec846a60281b64c951": {
     "sha1": "d889f8ed2f6a73de74d4c8ec846a60281b64c951",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T14:07:54Z",
     "model": "haiku",
@@ -709,7 +709,15 @@
         "note": "summary: The text says the groups \"hold and have made payments totaling around 1,200 Monero\". The summary says only \"hold about 1,200 Monero\". It also states th",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T14:19:27Z",
+      "ok": false,
+      "note": "summary: The text says Rocke's destructive ransomware-like malware was 'diversifying their payloads as a potential response to declining cryptocurrency value'. ",
+      "by": "auditor"
+    }
   },
   "d8c342f73b2603fedc4913e6a2378a846331fa96": {
     "sha1": "d8c342f73b2603fedc4913e6a2378a846331fa96",
@@ -740,26 +748,137 @@
   },
   "d8141e5ae73b0856feae51f1c3dd07a979f15ad0": {
     "sha1": "d8141e5ae73b0856feae51f1c3dd07a979f15ad0",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:11:49Z",
+    "read_at": "2026-11-27T14:20:11Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "FortiGuard Labs (Fortinet) report on RapperBot, an IoT malware family tracked since June 2022. It reuses Mirai source code but brute-forces SSH servers rather than Telnet. Later samples added persistence through SSH keys and a hidden root account, and the bot has a minimal set of DoS attacks. Over 3,500 scanner IPs were observed, half from the US, Taiwan and South Korea. The report says the primary motivation is still unclear.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "This provides threat actors with continued access to infected devices via SSH even after the device is rebooted",
+          "by": "FortiGuard Labs (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Any organization",
+          "q": "Impacted Users: Any organization"
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        },
+        {
+          "v": "Taiwan",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        },
+        {
+          "v": "South Korea",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 2022",
+          "q": "In June 2022, FortiGuard Labs encountered IoT malware samples with SSH-related strings",
+          "what": "Researchers first encountered samples with SSH-related strings"
+        },
+        {
+          "v": "August 3, 2022",
+          "q": "August 3, 2022",
+          "what": "Date of the report"
+        },
+        {
+          "v": "late June",
+          "q": "In late June, however, FortiGuard Labs found some samples that attempted to self-propagate",
+          "what": "Samples found attempting self-propagation"
+        },
+        {
+          "v": "mid-July",
+          "q": "Since mid-July, RapperBot has switched from self-propagation to maintaining remote access",
+          "what": "Switch from self-propagation to keeping remote access"
+        },
+        {
+          "v": "November 2021",
+          "q": "pivoting on these bot IDs allowed us to find older samples from November 2021",
+          "what": "Older samples found by pivoting on bot IDs"
+        },
+        {
+          "v": "mid-June 2022",
+          "q": "Figure 4: Scanner IP Count from mid-June 2022 to late July 2022",
+          "what": "Start of the period in which scanner IPs were counted"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mirai",
+          "q": "RapperBot heavily reuses parts of the Mirai source code"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute force",
+          "q": "attempts to brute force SSH servers configured to accept password authentication"
+        },
+        {
+          "v": "persistence",
+          "q": "its developers have started adding code to maintain persistence"
+        },
+        {
+          "v": "DoS attacks",
+          "q": "RapperBot does support a very minimal set of DoS attacks, including plain UDP and TCP STOMP flood attacks"
+        },
+        {
+          "v": "self-propagation",
+          "q": "Since mid-July, RapperBot has switched from self-propagation to maintaining remote access"
+        },
+        {
+          "v": "root user",
+          "q": "In the latest RapperBot samples, the malware also started adding the root user"
+        },
+        {
+          "v": "obfuscation",
+          "q": "subsequent samples added extra obfuscation to the strings by building them on the stack"
+        },
+        {
+          "v": "C2",
+          "q": "RapperBot communicates with its C2 server via TCP requests at separate ports"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "3,500 unique IPs",
+          "q": "Over 3,500 unique IPs have been observed in the past 1.5 months"
+        },
+        {
+          "v": "half of the observed IPs",
+          "q": "IPs from the US, Taiwan, and South Korea comprised half of the observed IPs"
+        },
+        {
+          "v": "Critical",
+          "q": "Severity Level: Critical"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "RapperBot"
+    },
+    "hedges": [
+      "The report says the primary motivation is still a bit of a mystery.",
+      "The report suggests DDoS capability may have been kept to look like a typical DDoS botnet, but this is a question it raises, not a finding.",
+      "The report suspects the threat actors run a separate loader system that connects to victims and downloads the bot client.",
+      "The report says the reason self-propagation was removed from samples is unknown.",
+      "The report says it can only speculate why the threat actors are amassing compromised SSH servers.",
+      "The report says the campaign may still be a work in progress.",
+      "Dotted lines in the report's execution figure mark actions assessed as possible but not observed in the wild."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T13:49:29Z",

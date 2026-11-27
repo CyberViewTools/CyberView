@@ -595,26 +595,322 @@
   },
   "b31bac9f3cd7bdeb0e4b79edacae72ca02ee357b": {
     "sha1": "b31bac9f3cd7bdeb0e4b79edacae72ca02ee357b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:08:32Z",
+    "read_at": "2026-11-27T14:20:57Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Mandiant case studies on post-exploitation of Ivanti Connect Secure VPN flaws CVE-2023-46805, CVE-2024-21887 and CVE-2024-21893. Describes suspected China-nexus clusters UNC5221, UNC5266, UNC5291 (possibly Volt Typhoon), UNC5330 and UNC5337, plus the SPAWN backdoor family, ROOTROT web shell, BRICKSTORM vCenter backdoor, TERRIBLETEA, PHANTOMNET and SLIVER. Lateral movement reached vCenter and Active Directory. A patch was available as of April 3, 2024.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "UNC5221",
+          "q": "UNC5221 is a suspected China-nexus actor that Mandiant is tracking as the only group exploiting CVE-2023-",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC5266",
+          "q": "Mandiant created UNC5266 to track post-disclosure exploitation leading to deployment of Bishop Fox's SLIVER",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC5291",
+          "q": "UNC5291 is a cluster of targeted probing activity that we assess with moderate confidence is associated with",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC5330",
+          "q": "UNC5330 is a suspected China-nexus espionage actor. UNC5330 has been observed chaining CVE-2024-21893",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC5337",
+          "q": "UNC5337 is a suspected China-nexus espionage actor that compromised Ivanti Connect Secure VPN appliances",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC5325",
+          "q": "The activity detailed in this blog, as well as the recently published Cutting Edge, Part 3 highlighting UNC5325",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC3569",
+          "q": "UNC5266 overlaps in part with UNC3569, a China-nexus espionage actor that has been observed exploiting",
+          "by": "Mandiant"
+        },
+        {
+          "v": "UNC3236",
+          "q": "UNC3236, also known publicly as Volt Typhoon.",
+          "by": "Mandiant"
+        },
+        {
+          "v": "Volt Typhoon",
+          "q": "confidence to be Volt Typhoon, targeting U.S. energy and defense sectors.",
+          "by": "Mandiant"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "energy",
+          "q": "confidence to be Volt Typhoon, targeting U.S. energy and defense sectors."
+        },
+        {
+          "v": "defense",
+          "q": "confidence to be Volt Typhoon, targeting U.S. energy and defense sectors."
+        },
+        {
+          "v": "academic",
+          "q": "Probing has been observed against the academic, energy, defense, and health sectors, which aligns"
+        },
+        {
+          "v": "health",
+          "q": "Probing has been observed against the academic, energy, defense, and health sectors, which aligns"
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "Security Agency (CISA) released an advisory warning that Volt Typhoon was targeting critical infrastructure and"
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "UNC5221 is a suspected China-nexus actor that Mandiant is tracking as the only group exploiting CVE-2023-"
+        },
+        {
+          "v": "Rwanda",
+          "q": "was downloaded by UNC5266 from what Mandiant believes to be a compromised web server located in Rwanda."
+        },
+        {
+          "v": "U.S.",
+          "q": "confidence to be Volt Typhoon, targeting U.S. energy and defense sectors."
+        }
+      ],
+      "dates": [
+        {
+          "v": "Jan. 10, 2024",
+          "q": "Since the initial disclosure of CVE-2023-46805 and CVE-2024-21887 on Jan. 10, 2024, Mandiant has conducted",
+          "what": "Public disclosure of CVE-2023-46805 and CVE-2024-21887"
+        },
+        {
+          "v": "April 3, 2024",
+          "q": "As of April 3, 2024, a patch is readily available for every supported version of Ivanti Connect Secure affected by",
+          "what": "Patch available for every supported affected version"
+        },
+        {
+          "v": "early Dec. 2023",
+          "q": "46805 and CVE-2024-21887 during the pre-disclosure time frame since early Dec. 2023. As stated in our previous",
+          "what": "UNC5221 exploitation began before public disclosure"
+        },
+        {
+          "v": "Dec. 6, 2021",
+          "q": "Mandiant observed UNC5330 operating a server since Dec. 6, 2021, which the group used as a GOST proxy to",
+          "what": "UNC5330 server observed operating since this date"
+        },
+        {
+          "v": "Feb. 3, 2024",
+          "q": "server on Feb. 3, 2024, from a compromised Ivanti Connect Secure device. Given the SSH key reuse in",
+          "what": "UNC5330 attempted to download Fast Reverse Proxy from a compromised appliance"
+        },
+        {
+          "v": "Feb. 2024",
+          "q": "and CVE-2024-21887 to compromise Ivanti Connect Secure VPN appliances as early as Feb. 2024.",
+          "what": "UNC5330 chained CVEs to compromise appliances"
+        },
+        {
+          "v": "February 2024",
+          "q": "In February 2024, Mandiant identified a cluster of activity tracked as UNC5291, which we assess with medium",
+          "what": "UNC5291 cluster identified"
+        },
+        {
+          "v": "December 2023",
+          "q": "Activity for this cluster started in December 2023 focusing on",
+          "what": "UNC5291 activity began"
+        },
+        {
+          "v": "Feb. 2024",
+          "q": "In Feb. 2024, the Cybersecurity and Infrastructure",
+          "what": "CISA released an advisory on Volt Typhoon targeting critical infrastructure"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SPAWNANT",
+          "q": "SPAWNANT is an installer that leverages a coreboot installer function to establish persistence for the"
+        },
+        {
+          "v": "SPAWNMOLE",
+          "q": "SPAWNSNAIL passive backdoor, SPAWNMOLE tunneler, SPAWNANT installer,"
+        },
+        {
+          "v": "SPAWNSNAIL",
+          "q": "SPAWNSNAIL passive backdoor, SPAWNMOLE tunneler, SPAWNANT installer,"
+        },
+        {
+          "v": "SPAWNSLOTH",
+          "q": "SPAWNSLOTH is a log tampering utility injected into the"
+        },
+        {
+          "v": "ROOTROT",
+          "q": "new web shell we are tracking as ROOTROT."
+        },
+        {
+          "v": "BRICKSTORM",
+          "q": "BRICKSTORM is a Go backdoor targeting VMware vCenter servers."
+        },
+        {
+          "v": "TERRIBLETEA",
+          "q": "TERRIBLETEA is a Go backdoor that communicates over HTTP using XXTEA for encrypted communications."
+        },
+        {
+          "v": "PHANTOMNET",
+          "q": "PHANTOMNET is a modular backdoor that communicates using a custom communication protocol over TCP."
+        },
+        {
+          "v": "TONERJAM",
+          "q": "TONERJAM is a launcher that decrypts and executes a shellcode payload, in this case PHANTOMNET, stored as"
+        },
+        {
+          "v": "SLIVER",
+          "q": "Mandiant created UNC5266 to track post-disclosure exploitation leading to deployment of Bishop Fox's SLIVER"
+        },
+        {
+          "v": "WARPWIRE",
+          "q": "Additionally, UNC5266 leveraged a WARPWIRE variant previously reported in Cutting Edge, Part 2."
+        },
+        {
+          "v": "CrackMapExec",
+          "q": "of open-source tooling, such as SLIVER and CrackMapExec."
+        },
+        {
+          "v": "Fast Reverse Proxy (FRP)",
+          "q": "UNC5330 also attempted to download Fast Reverse Proxy (FRP) from this"
+        },
+        {
+          "v": "GOST proxy",
+          "q": "Mandiant observed UNC5330 operating a server since Dec. 6, 2021, which the group used as a GOST proxy to"
+        },
+        {
+          "v": "external integrity checker tool",
+          "q": "Ivanti released a new enhanced external integrity checker tool"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "authentication bypass",
+          "q": "UNC5337 is suspected to exploit CVE-2023-46805 (authentication bypass) and CVE-2024-"
+        },
+        {
+          "v": "command injection",
+          "q": "21887 (command injection) for infecting Ivanti Connect Secure appliances. UNC5337 leveraged multiple custom"
+        },
+        {
+          "v": "zero-day exploitation",
+          "q": "Attempts, details zero-day exploitation of CVE-2024-21893 and CVE-2024-21887 by a suspected China-nexus"
+        },
+        {
+          "v": "moved laterally",
+          "q": "Mandiant identified that UNC5221 first moved laterally using the vCenter web console, then later using SSH."
+        },
+        {
+          "v": "Windows Management Instrumentation (WMI)",
+          "q": "UNC5330 has employed Windows Management Instrumentation (WMI) to perform reconnaissance, move laterally, manipulate"
+        },
+        {
+          "v": "Windows Certificate Template Abuse",
+          "q": "Windows Certificate Template Abuse"
+        },
+        {
+          "v": "DCSync",
+          "q": "performed DCSync attacks to obtain additional domain credentials for enabling lateral"
+        },
+        {
+          "v": "scheduled tasks",
+          "q": "creating and executing scheduled tasks that were subsequently removed."
+        },
+        {
+          "v": "web shell",
+          "q": "new web shell we are tracking as ROOTROT."
+        },
+        {
+          "v": "masquerade",
+          "q": "Notably, BRICKSTORM appears to masquerade as a"
+        },
+        {
+          "v": "log tampering",
+          "q": "SPAWNSLOTH is a log tampering utility injected into the"
+        },
+        {
+          "v": "Keystroke logging",
+          "q": "Keystroke logging"
+        },
+        {
+          "v": "SOCKS5 proxy",
+          "q": "SOCKS5 proxy"
+        },
+        {
+          "v": "Port scanning",
+          "q": "Port scanning"
+        },
+        {
+          "v": "WebSockets",
+          "q": "BRICKSTORM communicates over WebSockets to a hard-coded"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-46805",
+          "q": "Since the initial disclosure of CVE-2023-46805 and CVE-2024-21887 on Jan. 10, 2024, Mandiant has conducted"
+        },
+        {
+          "v": "CVE-2024-21887",
+          "q": "Since the initial disclosure of CVE-2023-46805 and CVE-2024-21887 on Jan. 10, 2024, Mandiant has conducted"
+        },
+        {
+          "v": "CVE-2024-21893",
+          "q": "UNC5330 is a suspected China-nexus espionage actor. UNC5330 has been observed chaining CVE-2024-21893"
+        },
+        {
+          "v": "CVE-2020-8218",
+          "q": "2019-11539 and CVE-2020-8218."
+        }
+      ],
+      "figures": [
+        {
+          "v": "eight distinct clusters",
+          "q": "observed eight distinct clusters involved in the exploitation of one or more of these Ivanti CVEs. Of these, we are"
+        },
+        {
+          "v": "five China-nexus clusters",
+          "q": "highlighting five China-nexus clusters that have conducted intrusions."
+        },
+        {
+          "v": "four",
+          "q": "appliance compromised by UNC5221, Mandiant discovered four"
+        },
+        {
+          "v": "seven minutes",
+          "q": "the intervening seven minutes."
+        },
+        {
+          "v": "port 8300",
+          "q": "exposing a limited SSH server on localhost port 8300."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "Ivanti Connect Secure VPN exploitation"
+    },
+    "hedges": [
+      "Mandiant suspects with medium confidence that UNC5337 is UNC5221.",
+      "UNC5291 is assessed with moderate confidence to be associated with UNC3236, also known publicly as Volt Typhoon.",
+      "Mandiant has not directly observed Volt Typhoon successfully compromise Ivanti Connect Secure.",
+      "Mandiant suspects with moderate confidence that UNC5266 overlaps in part with UNC3569.",
+      "Mandiant assesses with moderate confidence UNC5330 has been operating through this server since at least 2021.",
+      "The WARPWIRE download server in Rwanda is what Mandiant believes to be a compromised web server.",
+      "UNC5266 likely uploaded TERRIBLETEA to the file-sharing site in the intervening seven minutes.",
+      "Mandiant did not identify evidence of UNC5221 successfully running or using the created virtual machine."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T13:49:10Z",

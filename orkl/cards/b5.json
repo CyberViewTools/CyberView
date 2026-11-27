@@ -181,26 +181,145 @@
   },
   "b58144152c477b7d3de87a8d5ace97094dc41ce7": {
     "sha1": "b58144152c477b7d3de87a8d5ace97094dc41ce7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:09:43Z",
+    "read_at": "2026-11-27T14:20:14Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Varonis reports that ransomware hit VMware ESXi servers in early 2023, likely after scanning for hosts exposed to OpenSLP flaws CVE-2020-3992 and CVE-2021-21974. The Nevada ransomware-as-a-service group is widely thought responsible. Its Rust encryptor stops virtual machines, partly encrypts large VM files, and replaces ESXi ransom notes. Data theft is unconfirmed. The report advises patching ESXi 7.x and earlier, restricting port 427, and keeping offline backups.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Nevada",
+          "q": "Nevada is widely thought to be associated with the attacks against vulnerable VMware ESXi servers; specifically,",
+          "by": "Varonis (the report)"
+        },
+        {
+          "v": "Cheerscrypt",
+          "q": "similar to that used by Cheerscrypt ransomware, a threat that also targeted VMware ESXi servers and that was",
+          "by": "Varonis (the report)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "2023-02-07",
+          "q": "Published: 2023-02-07",
+          "what": "Report published on VMware ESXi ransomware attacks"
+        },
+        {
+          "v": "late 2022",
+          "q": "since late 2022, appears to be responsible for many of these recent attacks",
+          "what": "Nevada group believed active since"
+        },
+        {
+          "v": "early- to mid-2022",
+          "q": "many similarities with Cheerscrypt, a ransomware threat that targeted ESXi in early- to mid-2022.",
+          "what": "Cheerscrypt targeted ESXi"
+        },
+        {
+          "v": "second quarter of 2022",
+          "q": "first observed in the second quarter of 2022.",
+          "what": "Cheerscrypt ransomware first observed"
+        },
+        {
+          "v": "October 2022",
+          "q": "given that the end of general support for these installations was October 2022.",
+          "what": "End of general support for ESXi 6.5 and 6.7"
+        }
+      ],
+      "tools": [
+        {
+          "v": "encrypt",
+          "q": "a Linux executable encryption tool (encrypt) and an"
+        },
+        {
+          "v": "esxcli",
+          "q": "esxcli, to identify each virtual machine's configuration file."
+        },
+        {
+          "v": "Rust",
+          "q": "written in Rust that has support for Linux, Windows, and VMware ESXi hosts, the latter of which is the subject of"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "double-extortion",
+          "q": "double-extortion tactic in their attacks and shared some stolen data on their Tor-based leak site."
+        },
+        {
+          "v": "scanning activity",
+          "q": "suspected of conducting widespread scanning activity to identify VMware ESXi hosts that are"
+        },
+        {
+          "v": "OpenSLP",
+          "q": "The following VMware ESXi vulnerabilities (related to the OpenSLP implementation) have been exploited in"
+        },
+        {
+          "v": "terminated all virtual machines",
+          "q": "Having forcefully terminated all virtual machines, ensuring that targeted files are not locked open, the shell script"
+        },
+        {
+          "v": "configuration files",
+          "q": "Within each of these configuration files, the virtual disk (.vmdk) and virtual swap (.vswp) filenames will have the"
+        },
+        {
+          "v": "ransom note",
+          "q": "Additionally, to ensure the ransom note is displayed to any administrator logging onto the compromised ESXi host"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2020-3992",
+          "q": "CVE-2020-3992 and CVE-2021-21974 that, when exploited, can allow remote code execution."
+        },
+        {
+          "v": "CVE-2021-21974",
+          "q": "CVE-2020-3992 and CVE-2021-21974 that, when exploited, can allow remote code execution."
+        }
+      ],
+      "figures": [
+        {
+          "v": "9.8",
+          "q": "Assigned a CVSS v3 score of 9.8, this vulnerability is considered critical and affects VMware ESXi versions 6.5,"
+        },
+        {
+          "v": "8.8",
+          "q": "While not as severe as CVE-2020-3992, this vulnerability was assigned a CVSS v3 score of 8.8 and is therefore"
+        },
+        {
+          "v": "128MB",
+          "q": "than 128MB being encrypted in their entirety and those larger than 128MB being encrypted in “steps.”"
+        },
+        {
+          "v": "3 days",
+          "q": "Contact us within 3 days, otherwise we will expose some data and raise the price"
+        },
+        {
+          "v": "15%",
+          "q": "15%, depending on the affiliate’s status, from any victim making a ransom payment."
+        },
+        {
+          "v": "port 427",
+          "q": "Consideration should be given to either disabling, or restricting access to, port 427, especially from untrusted"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Nevada ransomware"
+    },
+    "hedges": [
+      "likely following scanning activity to identify hosts with Open Service",
+      "While this ransom note suggests that data has been stolen, this has yet to be confirmed",
+      "there is no apparent file transfer code within the observed samples",
+      "Nevada is widely thought to be associated with the attacks against vulnerable VMware ESXi servers",
+      "Widely attributed to the Nevada ransomware group",
+      "Though this may just be an instance of ransom note plagiarism",
+      "Conversely, there is no specific evidence at this time that demonstrates Nevada has carried out data exfiltration, although the possibility remains.",
+      "these IP addresses have been associated with vulnerability-scanning in the past and may therefore be long-term nefarious hosts used by multiple threat actors"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T13:49:20Z",

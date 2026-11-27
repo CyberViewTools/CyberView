@@ -770,26 +770,124 @@
   },
   "2e330f9e2f40c3c82b7a190fe66bbd9feaec173a": {
     "sha1": "2e330f9e2f40c3c82b7a190fe66bbd9feaec173a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:11:39Z",
+    "read_at": "2026-11-27T14:20:02Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Intezer researchers describe SysJoker, a multi-platform backdoor for Windows, Linux and macOS, first found in December 2021 during an attack on a Linux web server at an educational institution. The malware masquerades as a system update, gets its command server address from a text file on Google Drive, and can run executables and commands sent to it. The report assesses the attacker as an advanced actor targeting specific victims, likely aiming at espionage and lateral movement.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "advanced threat actor",
+          "q": "There are indications that SysJoker attack is performed by an advanced threat actor:",
+          "by": "the report (Intezer researchers)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "educational institution",
+          "q": "SysJoker was first discovered during an active attack on a Linux-based web server of a leading educational institution."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "December 2021",
+          "q": "In December 2021, we discovered a new multi-platform backdoor that targets Windows, Mac, and Linux.",
+          "what": "SysJoker was discovered as a new multi-platform backdoor"
+        },
+        {
+          "v": "second half of 2021",
+          "q": "we estimate that the SysJoker attack was initiated during the second half of 2021.",
+          "what": "estimated start of the SysJoker attack"
+        },
+        {
+          "v": "January 11, 2022",
+          "q": "January 11, 2022",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SysJoker",
+          "q": "We named this backdoor SysJoker."
+        },
+        {
+          "v": "PowerShell",
+          "q": "All of these actions are executed via PowerShell commands."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "masquerades as a system update",
+          "q": "SysJoker masquerades as a system update and generates its C2 by decoding a string retrieved"
+        },
+        {
+          "v": "Living off the Land",
+          "q": "gather information about the machine using Living off the Land (LOtL) commands"
+        },
+        {
+          "v": "registry run key",
+          "q": "SysJoker will create persistence by adding an entry to the registry run key"
+        },
+        {
+          "v": "hardcoded XOR key",
+          "q": "SysJoker holds within the binary a hardcoded XOR key which is used for decoding and encoding"
+        },
+        {
+          "v": "Google Drive",
+          "q": "SysJoker first decodes a hardcoded Google Drive"
+        },
+        {
+          "v": "infected npm package",
+          "q": "A possible attack vector for this malware is via an infected npm package."
+        },
+        {
+          "v": "cron job",
+          "q": "Creates the cron job:"
+        },
+        {
+          "v": "LaunchAgent",
+          "q": "Creates persistence via LaunchAgent under the path"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "at least 4 different domains",
+          "q": "The attacker registered at least 4 different domains and wrote from scratch the malware for"
+        },
+        {
+          "v": "three different operating systems",
+          "q": "wrote from scratch the malware for three different operating systems."
+        },
+        {
+          "v": "90 to 120 seconds",
+          "q": "it sleeps for a random duration between 90 to 120 seconds."
+        },
+        {
+          "v": "6 detections",
+          "q": "has only 6 detections at the time of this writing."
+        },
+        {
+          "v": "three times",
+          "q": "During our analysis the C2 changed three times, indicating"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "SysJoker"
+    },
+    "hedges": [
+      "We estimate that the SysJoker attack was initiated during the second half of 2021, based on C2 domain registration and samples found in VirusTotal.",
+      "We assess that SysJoker is after specific targets, based on victimology and the malware's behavior.",
+      "A possible attack vector for this malware is via an infected npm package.",
+      "There are indications that the SysJoker attack is performed by an advanced threat actor.",
+      "Based on the malware's capabilities the report assesses the goal as espionage with lateral movement, which might also lead to ransomware.",
+      "Self-deletion is only assumed from the instruction names; remove_reg and exit are not implemented in the current version."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T13:48:24Z",

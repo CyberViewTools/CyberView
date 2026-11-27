@@ -1,62 +1,45 @@
 {
-  "job": "researcher",
-  "started_at": "2026-11-27T12:00:54Z",
-  "finished_at": "2026-11-27T12:08:00Z",
+  "job": "sweep-r4",
   "model": "claude-sonnet-5-5",
   "searches": [
-    "개인정보위 개인정보 유출 신고 1019건 1~10월 비상 점검"
+    "Mitel OpenScape 4000 security advisory CVE-2026-137724"
   ],
   "pages_read": [
     {
-      "url": "https://www.begeek.fr/gta-6-une-fausse-version-pc-cache-un-dangereux-malware-443360",
-      "title": "GTA 6 fake PC version",
-      "used_in": "closed, already on file"
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0013",
+      "title": "MISA-2026-0013",
+      "used_in": "ec14b021 (not added, advisory dated 2026-11-18)"
     },
     {
-      "url": "https://www.epochtimes.jp/2026/11/396836.html",
-      "title": "Taiwan 2.58M attacks",
-      "used_in": "closed, already on file"
-    },
-    {
-      "url": "https://www.itdaily.kr/news/articleView.html?idxno=243292",
-      "title": "PIPC 1019 reports",
-      "used_in": "korea-pipc-1019-breach-reports-jan-oct-2026-11"
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-127118/",
+      "title": "CERT Polska CVE-2026-127118",
+      "used_in": "9472fc8a (closed)"
     }
   ],
-  "added": [
-    "korea-pipc-1019-breach-reports-jan-oct-2026-11"
-  ],
+  "added": [],
   "updated": [],
   "skipped": [
     {
-      "title": "Han Dong-hoon leak stories (aececb96, 0554d1c4)",
-      "url": "",
-      "reason": "not a cyber event; political/prosecution file leak, pages not opened"
+      "title": "Mitel OpenScape 4000 CVEs",
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0013",
+      "reason": "older than map window; advisory 2026-11-18, no exploitation stated"
     },
     {
-      "title": "SC clears woman of cyberlibel",
-      "url": "https://newsinfo.inquirer.net/2348133/sc-clears-woman-of-cyberlibel-over-quezon-mayors-extortion-attempt",
-      "reason": "court ruling on libel, not a cyber event; page not opened"
-    },
-    {
-      "title": "SAP, Japan outreach team, Taiwan, GTA",
+      "title": "SMSEagle/RCDevs, pdf-reader-mcp, django-allauth, MONEO, OPA, Flowintel, Typebot, Signet Pacific",
       "url": "",
-      "reason": "already on file"
+      "reason": "no exploitation or urgent notice, or minor leak-site claim; database rows only"
     }
   ],
   "open_leads": [
     {
-      "title": "PIPC 1019 reports: find PIPC's own release for second source",
-      "url": "https://www.itdaily.kr/news/articleView.html?idxno=243292",
-      "note": "single source, no second publisher found",
+      "title": "Mitel MISA-2026-0013 CVEs now published (CVE-2026-137721/3/4)",
+      "url": "https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0013",
+      "note": "critical CVSS 10 unauthenticated; no exploitation stated; could be added if CVE publication date counts for the window",
       "priority": "low"
     }
   ],
-  "failed_sites": [
-    "br.de (fetch blocked)",
-    "mainichi.jp (fetch blocked)"
-  ],
-  "notes": "Build not run separately by me beyond validate; see below.",
+  "failed_sites": [],
+  "notes": "Conservative: database-only CVE leads not written.",
   "worker_role": "researcher-deep",
   "worker_model": "sonnet"
 }

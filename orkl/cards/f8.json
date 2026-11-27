@@ -120,25 +120,26 @@
   },
   "f8b6627efa17af121b92c7fd50736432a2ffb68d": {
     "sha1": "f8b6627efa17af121b92c7fd50736432a2ffb68d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:17:59Z",
+    "read_at": "2026-11-27T02:49:26Z",
     "model": "haiku",
-    "summary": "A breach-news site reproduces a post attributed to the ransomware group AlphV after a law enforcement takedown of its leak site. The post says the group removed most affiliate rules, now allows attacks on hospitals and critical infrastructure, raised the affiliate share to 90%, and says more than 3,000 companies will never receive their keys. It says it has moved to a newer site, will leak data without prior contact, and threatens victims' families. An editor's note asks readers to read 'advertisers' as 'affiliates'.",
+    "summary": "A repost of a statement attributed to the AlphV ransomware group, made after law enforcement action against its leak site (the report cites a DOJ press release and warrant application). AlphV says an intrusion via one of its hosting providers exposed decryption keys for about 400 companies, and it announces removing its rules against targeting hospitals and nuclear power plants, raising the affiliate rate to 90%, and harsher treatment of victims. These are AlphV's own claims, reproduced by the outlet and not independently confirmed in the text.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "AlphV",
-          "q": "AlphV reacts to law enforcement action by allowing affiliates to",
-          "by": "the report, reproducing AlphV's own post"
+          "q": "AlphV posted this:",
+          "by": "AlphV's own post, reproduced by the outlet"
+        },
+        {
+          "v": "affiliate",
+          "q": "One affiliate is already lashing out at the government by leaking a victim now",
+          "by": "AlphV's own post, reproduced by the outlet"
         }
       ],
       "sectors": [
-        {
-          "v": "critical infrastructure",
-          "q": "attack hospitals, critical infrastructure"
-        },
         {
           "v": "hospitals",
           "q": "you can now block hospitals, nuclear power plants, anything and anywhere."
@@ -153,7 +154,7 @@
         {
           "v": "2023-12-20",
           "q": "Published: 2023-12-20 · Archived: 2026-04-09 02:20:07 UTC",
-          "what": "Article published; the DOJ press release and warrant application were unsealed that day"
+          "what": "Report published"
         },
         {
           "v": "2026-04-09",
@@ -161,42 +162,25 @@
           "what": "Page archived"
         }
       ],
-      "tools": [
-        {
-          "v": "leak site",
-          "q": "takedown notice on their original leak site"
-        }
-      ],
+      "tools": [],
       "techniques": [
         {
+          "v": "access via a hoster",
+          "q": "our hosters, maybe even he himself helped them."
+        },
+        {
           "v": "leak your data",
-          "q": "or else we will leak your data and harass the family of your executive teams and employees"
-        },
-        {
-          "v": "harass the family",
-          "q": "or else we will leak your data and harass the family of your executive teams and employees"
-        },
-        {
-          "v": "removed prior to a leak",
-          "q": "Patient data will no longer be removed prior to a leak"
-        },
-        {
-          "v": "migrated to a newer site",
-          "q": "they had already migrated to a newer site after the initial disruption."
-        },
-        {
-          "v": "private affiliate program",
-          "q": "VIP advertisers receive their private affiliate program, which we raise only for them, on a separate DC,"
+          "q": "or else we will leak your data and harass the family of your executive teams"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "400 companies",
-          "q": "it’s about 400 companies"
+          "v": "about 400 companies",
+          "q": "it’s about 400 companies, but"
         },
         {
-          "v": "3,000 companies",
+          "v": "more than 3,000 companies",
           "q": "now more than 3,000 companies will never receive their keys because of them."
         },
         {
@@ -214,15 +198,16 @@
       "name": "AlphV"
     },
     "hedges": [
-      "Editor's note in the reproduced text: mentally replace 'advertisers' with 'affiliates' in the post above."
+      "AlphV's account of how the access happened is its own and speculative: 'maybe even he himself helped them'.",
+      "The text is AlphV's own post, reproduced by the outlet; its claims are not independently confirmed in the report."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:53Z",
-      "ok": false,
-      "note": "summary: Misattributes and overstates. The move to a newer site is the editor's statement, not part of AlphV's post. The no-prior-contact leak threat and the th",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:53Z",
+        "ok": false,
+        "note": "summary: Misattributes and overstates. The move to a newer site is the editor's statement, not part of AlphV's post. The no-prior-contact leak threat and the th",
+        "by": "auditor"
+      }
+    ]
   }
 }

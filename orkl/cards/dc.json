@@ -24,93 +24,67 @@
   },
   "dcb1fb8a500b2bc4515e729a3696cd477b6e0c8d": {
     "sha1": "dcb1fb8a500b2bc4515e729a3696cd477b6e0c8d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:17:19Z",
+    "read_at": "2026-11-27T02:49:30Z",
     "model": "haiku",
-    "summary": "A breach-news article (published 2023-09-15) reproduces a statement from the ALPHV ransomware group about its attack on MGM Resorts. The group claims it kept Okta super-administrator and Azure Global Administrator access, launched ransomware against more than 100 ESXi hypervisors on September 11, and posted a data download link. The article says the group has not answered its request for clarification, so claims about LinkedIn social engineering remain unconfirmed and possibly refuted. Rumours about teenagers from the US and UK were called unproven. The group says it cannot say whether…",
+    "summary": "This article reports on AlphV's own statement about its ransomware attack on MGM Resorts International in September 2023. AlphV says it kept administrator access to MGM's identity and cloud systems, launched ransomware against more than 100 ESXi hypervisors on September 11, and still had access to some infrastructure. It denies claiming the attack before it did, and says news outlets wrongly reported that it had. The article notes that a LinkedIn social-engineering claim was never confirmed. All of AlphV's claims are its own and unverified.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "AlphV",
           "q": "AlphV has posted a statement about their attack on MGM Resorts.",
-          "by": "the report, quoting the group's own statement"
+          "by": "AlphV, in its own statement relayed by the article"
         }
       ],
       "sectors": [
         {
-          "v": "resorts",
-          "q": "You believe that this company is concerned for your privacy and well-being while visiting one of their resorts?"
+          "v": "casinos",
+          "q": "Other lodging options, including casinos, are undoubtedly open and happy to assist you."
         }
       ],
       "countries": [],
       "dates": [
         {
-          "v": "2023-09-15",
-          "q": "Published: 2023-09-15 · Archived: 2026-04-09 02:18:25 UTC",
-          "what": "article published"
+          "v": "September 11th",
+          "q": "their environment on September 11th after trying to get in touch but failing.",
+          "what": "ransomware launched against more than 100 ESXi hypervisors (per AlphV)"
         },
         {
           "v": "9/14/2023",
           "q": "9/14/2023, 7:46:49 PM",
-          "what": "group statement posted"
-        },
-        {
-          "v": "September 11",
-          "q": "their environment on September 11th after trying to get in touch but failing.",
-          "what": "ransomware launched on ESXi hypervisors, per the group"
-        },
-        {
-          "v": "September 12",
-          "q": "no one from AlphV ever contacted vx-underground and talked about LinkedIn or social engineering on September 12?",
-          "what": "alleged contact with the group, unconfirmed"
-        },
-        {
-          "v": "September 13",
-          "q": "We posted a link to download any and all exfiltrated materials up until September 12th, on September 13th in the",
-          "what": "group posted a data download link, per the group"
+          "what": "AlphV posted its statement on the MGM attack"
         },
         {
           "v": "September 15, 2023",
           "q": "As of September 15, 2023, we have not spoken with any journalists, news organizations, Twitter/X users, or",
-          "what": "group says it had no contact with the press as of this date"
+          "what": "AlphV said it had not spoken with journalists or news organisations"
+        },
+        {
+          "v": "2023-09-15",
+          "q": "Published: 2023-09-15 · Archived: 2026-04-09 02:18:25 UTC",
+          "what": "article published"
         }
       ],
       "tools": [
         {
-          "v": "Okta",
-          "q": "shut down each and every one of their Okta Sync servers after learning that we"
-        },
-        {
-          "v": "Azure",
-          "q": "Azure tenant. They made an attempt to evict us after discovering that we had access to their Okta environment,"
-        },
-        {
-          "v": "ESXi",
+          "v": "ransomware",
           "q": "we successfully launched ransomware attacks against more than 100 ESXi hypervisors in"
         }
       ],
       "techniques": [
         {
-          "v": "password sniffing",
+          "v": "sniffing passwords",
           "q": "lurking on their Okta Agent servers sniffing passwords of people whose passwords couldn’t be cracked"
         },
         {
-          "v": "credential hash dumping",
-          "q": "from their domain controller hash dumps."
-        },
-        {
-          "v": "ransomware",
+          "v": "ransomware attacks",
           "q": "we successfully launched ransomware attacks against more than 100 ESXi hypervisors in"
         },
         {
-          "v": "social engineering",
-          "q": "talked about LinkedIn or social engineering on September 12?"
-        },
-        {
-          "v": "exfiltrated materials",
-          "q": "download any and all exfiltrated materials up until September 12th"
+          "v": "super administrator privileges",
+          "q": "we continued having super administrator privileges to their Okta, along with Global Administrator privileges to their"
         }
       ],
       "cves": [],
@@ -118,18 +92,6 @@
         {
           "v": "more than 100",
           "q": "we successfully launched ransomware attacks against more than 100 ESXi hypervisors in"
-        },
-        {
-          "v": "33 MILLION dollars",
-          "q": "12 months, while 7 insiders have sold shares for a combined 33 MILLION dollars."
-        },
-        {
-          "v": "five years",
-          "q": "really regret that it has taken them five years to"
-        },
-        {
-          "v": "Two passwords",
-          "q": "Two passwords belonging to senior executives were combined to create the password."
         }
       ]
     },
@@ -138,19 +100,19 @@
       "name": "MGM Resorts International attack"
     },
     "hedges": [
-      "The statement is the group's own account; the article says the group has not responded to its request for clarification.",
-      "Reports of social engineering using LinkedIn remain unconfirmed and possibly refuted.",
-      "The rumors about teenagers from the US and UK breaking into this organization are still just that—rumors.",
-      "We are unable to reveal if PII information has been exfiltrated at this time.",
-      "The group says the TTPs attributed to it are known to the public and relatively easy for anyone to imitate."
+      "AlphV has not yet responded to the site's request for clarification, so reports of social engineering using LinkedIn remain unconfirmed and possibly refuted.",
+      "The article notes there was no confirmation at the time for a claim that LinkedIn and social engineering were used in the attack.",
+      "AlphV says it is unable to reveal whether PII has been exfiltrated at this time.",
+      "AlphV calls rumours that teenagers from the US and UK broke into the organisation unproven rumours.",
+      "The statement is AlphV's own account, relayed in the article; the article does not independently verify its claims."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:43Z",
-      "ok": false,
-      "note": "techniques[3]: The quote is a rhetorical question about whether anyone discussed LinkedIn or social engineering. The article says these claims are unconfirmed a",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:43Z",
+        "ok": false,
+        "note": "techniques[3]: The quote is a rhetorical question about whether anyone discussed LinkedIn or social engineering. The article says these claims are unconfirmed a",
+        "by": "auditor"
+      }
+    ]
   }
 }

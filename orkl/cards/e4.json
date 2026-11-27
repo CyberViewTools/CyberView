@@ -24,58 +24,58 @@
   },
   "e491dfa958fb8ebf437a1ce367e98d624a9371a7": {
     "sha1": "e491dfa958fb8ebf437a1ce367e98d624a9371a7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:17:00Z",
+    "read_at": "2026-11-27T02:49:14Z",
     "model": "haiku",
-    "summary": "A DataBreaches news report from November 2023 says the AlphV group listed MeridianLink, a loan origination software provider for financial institutions, on its leak site after an attack on November 7. AlphV says it exfiltrated files without encrypting them and filed an SEC complaint alleging MeridianLink missed the four-business-day disclosure deadline. MeridianLink says it identified a cybersecurity incident on November 10, contained it, found no evidence of unauthorized access to production platforms, and its investigation is ongoing.",
+    "summary": "DataBreaches reports that the AlphV group added MeridianLink, a provider of a loan origination system and digital lending platform for financial institutions, to its leak site. According to AlphV, the November 7 attack involved data exfiltration but no encryption. AlphV also filed a complaint with the SEC alleging MeridianLink failed to file a disclosure under Item 1.05 of Form 8-K within four business days. MeridianLink said it identified a cybersecurity incident on Nov 10, contained it, and found no evidence of unauthorized access to production platforms. Its investigation is ongoing. The…",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "AlphV",
-          "q": "Earlier today, AlphV added MeridianLink to their leak site.",
-          "by": "the report, citing AlphV's own leak-site posting and statements"
+          "q": "AlphV files an SEC complaint against MeridianLink for not",
+          "by": "DataBreaches (the report)"
         }
       ],
       "sectors": [
         {
           "v": "financial institutions",
-          "q": "digital lending platform for financial institutions"
+          "q": "digital lending platform for financial institutions."
         }
       ],
       "countries": [],
       "dates": [
         {
           "v": "2023-11-15",
-          "q": "Published: 2023-11-15 · Archived: 2026-04-09 02:10:55 UTC",
-          "what": "article published"
+          "q": "Published: 2023-11-15",
+          "what": "Report published"
         },
         {
           "v": "November 7",
           "q": "The attack was last Tuesday, November 7.",
-          "what": "attack on MeridianLink"
+          "what": "Attack on MeridianLink, per the report"
         },
         {
-          "v": "November 10",
-          "q": "MeridianLink recently identified a cybersecurity incident that took place on Nov 10.",
-          "what": "cybersecurity incident identified by MeridianLink"
+          "v": "Nov 10",
+          "q": "recently identified a cybersecurity incident that took place on Nov 10.",
+          "what": "Incident date given by MeridianLink"
         },
         {
           "v": "December 15",
-          "q": "reporting rule doesn't go into effect until December 15.",
-          "what": "date the report believes the new SEC reporting rule takes effect"
+          "q": "doesn’t go into effect until December 15.",
+          "what": "Date the report believes the new SEC reporting rule takes effect (not a legal view)"
         }
       ],
       "tools": [],
       "techniques": [
         {
           "v": "data exfiltration without encryption",
-          "q": "According to AlphV, they did not encrypt any files, but did exfiltrate files."
+          "q": "they did not encrypt any files, but did exfiltrate"
         },
         {
-          "v": "extortion leak site listing",
-          "q": "Earlier today, AlphV added MeridianLink to their leak site."
+          "v": "publishing victim on a leak site",
+          "q": "AlphV added MeridianLink to their leak site."
         }
       ],
       "cves": [],
@@ -88,22 +88,21 @@
     },
     "subject": {
       "type": "incident",
-      "name": "MeridianLink cybersecurity incident (AlphV)"
+      "name": "MeridianLink breach"
     },
     "hedges": [
-      "The account of the attack is according to AlphV, the threat actor.",
-      "DataBreaches learned some additional details from someone involved in the attack.",
-      "AlphV has seemingly reported its victim to the SEC.",
-      "We are not lawyers, but we believe that new SEC reporting rule doesn't go into effect until December 15.",
-      "MeridianLink says its investigation is ongoing and it has no further details to offer currently."
+      "Several claims are attributed to AlphV ('According to AlphV') and are relayed by the report, not independently verified.",
+      "AlphV's listing was temporarily removed to be updated, per the report.",
+      "MeridianLink's statement says its investigation is ongoing and it has no further details to offer.",
+      "The report says 'We are not lawyers' and that it believes the SEC reporting rule does not take effect until December 15; it asks for legal authority to correct this."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:43Z",
-      "ok": false,
-      "note": "summary: The report says AlphV has 'seemingly reported' MeridianLink to the SEC, but the summary states the filing flatly and drops that hedge. It also gives th",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:43Z",
+        "ok": false,
+        "note": "summary: The report says AlphV has 'seemingly reported' MeridianLink to the SEC, but the summary states the filing flatly and drops that hedge. It also gives th",
+        "by": "auditor"
+      }
+    ]
   }
 }

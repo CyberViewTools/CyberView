@@ -597,106 +597,101 @@
   },
   "d01e8492eb25e3a9dfa0218367a708d2d3230c93": {
     "sha1": "d01e8492eb25e3a9dfa0218367a708d2d3230c93",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:19:14Z",
+    "read_at": "2026-11-27T02:51:06Z",
     "model": "haiku",
-    "summary": "Sygnia incident-response case study of a 2023 client intrusion attributed to BlackCat (ALPHV) or one of its affiliates. Initial access came through a compromised third-party vendor. The attacker spent weeks moving laterally with Cobalt Strike and proxy tools, exfiltrated data with Rclone to cloud storage, and extorted the victim by email. Encryption was prevented when the client blocked internet access. A CVE id is mentioned in the text but is split across a line break, so it is not recorded.",
+    "summary": "Sygnia incident response case study of a 2023 financial extortion attack on a client, attributed to the BlackCat (ALPHV) ransomware group or one of its affiliates. Initial access came through a compromised third-party vendor. The attacker spent weeks moving laterally with Cobalt Strike and tunnelling tools, exfiltrated data with Rclone to cloud storage, and sent extortion emails. The client blocked internet access, which stopped encryption. Stolen files were later published on the group's leak site.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "BlackCat (ALPHV)",
-          "q": "executed by the BlackCat (ALPHV) ransomware group or one of its affiliates",
-          "by": "Sygnia"
-        },
-        {
-          "v": "Conti",
-          "q": "among them the Conti and LockBit ransomware groups",
-          "by": "Sygnia, citing threat intelligence analysis"
-        },
-        {
-          "v": "LockBit",
-          "q": "among them the Conti and LockBit ransomware groups",
-          "by": "Sygnia, citing threat intelligence analysis"
-        },
-        {
-          "v": "LockBit",
-          "q": "previously utilized by LockBit ransomware affiliates",
-          "by": "Sygnia, citing threat intelligence research"
+          "q": "a financial extortion attack executed by the BlackCat (ALPHV) ransomware",
+          "by": "Sygnia (report author)"
         }
       ],
       "sectors": [
         {
-          "v": "multi-sector",
-          "q": "targeting high-profile multi-sector and worldwide organizations"
+          "v": "multi-sector and worldwide organizations",
+          "q": "targeting high-profile multi-sector and worldwide organizations."
         }
       ],
       "countries": [
         {
           "v": "Russia",
-          "q": "communicating with a C2 server located in Russia"
+          "q": "The ‘tomcat.exe’ file was observed communicating with a C2 server located in Russia"
         },
         {
           "v": "US",
-          "q": "a US-based cloud storage platform"
+          "q": "from the victim’s network to ‘wasabi’, a US-based cloud storage platform."
         }
       ],
       "dates": [
         {
-          "v": "2024-03-05",
-          "q": "Published: 2024-03-05",
-          "what": "Sygnia blog post published"
+          "v": "2023",
+          "q": "In 2023, Sygnia’s IR team was engaged by a client to investigate suspicious activities in the client’s network.",
+          "what": "Sygnia's incident response team was engaged by a client"
         },
         {
           "v": "November 2021",
-          "q": "The BlackCat ransomware group surfaced in November 2021, and has since become",
-          "what": "BlackCat ransomware group first surfaced"
+          "q": "The BlackCat ransomware group surfaced in November 2021",
+          "what": "BlackCat ransomware group surfaced"
         },
         {
-          "v": "2023",
-          "q": "In 2023, Sygnia’s IR team was engaged by a client",
-          "what": "Sygnia engaged by a client to investigate suspicious activity"
+          "v": "days 1 – 5",
+          "q": "Phase 1: Initial Access and Foothold (days 1 – 5).",
+          "what": "Initial access and foothold phase"
+        },
+        {
+          "v": "days 6-20",
+          "q": "Phase 2: Lateral Movement (days 6-20).",
+          "what": "Lateral movement phase"
         },
         {
           "v": "days 27-30",
-          "q": "Data Exfiltration and Additional Lateral Movement (days 27-30)",
-          "what": "data exfiltration and additional lateral movement phase"
+          "q": "Phase 3: Data Exfiltration and Additional Lateral Movement (days 27-30).",
+          "what": "Data exfiltration phase"
         },
         {
           "v": "days 30-45",
-          "q": "Extortion Attempts (days 30-45)",
-          "what": "extortion phase"
+          "q": "Phase 4: Extortion Attempts (days 30-45).",
+          "what": "Extortion attempts phase"
+        },
+        {
+          "v": "2024-03-05",
+          "q": "Published: 2024-03-05",
+          "what": "Sygnia blog post published"
         }
       ],
       "tools": [
         {
           "v": "Cobalt Strike",
-          "q": "Several Cobalt Strike framework capabilities were utilized by the threat actor throughout the course"
+          "q": "Several Cobalt Strike framework capabilities were utilized"
         },
         {
           "v": "Rclone",
-          "q": "Rclone, an open-source tool used for syncing files and folders to and from cloud storage providers"
+          "q": "Using the ‘Rclone’ tool, the threat"
         },
         {
-          "v": "SoftPerfect Network Scanner",
-          "q": "The file was identified as a version of the SoftPerfect Network Scanner"
+          "v": "SoftPerfect",
+          "q": "The threat actor leveraged the SoftPerfect tool to perform several manual reconnaissance activities"
         },
         {
           "v": "Stowaway",
-          "q": "Stowaway is an open-source tool used for creation of a chained proxy connection between a series"
-        },
-        {
-          "v": "AccountRestore",
-          "q": "a renamed version of ‘AccountRestore’"
-        },
-        {
-          "v": "ADRecon",
-          "q": "‘ADRecon’, an open-source PowerShell tool"
+          "q": "Several executions of the Stowaway proxy tool were observed in the network under different names"
         },
         {
           "v": "Process Hacker",
           "q": "deploying ‘Process Hacker’ – a free tool used for resources monitoring"
+        },
+        {
+          "v": "AccountRestore",
+          "q": "Snippet from a sandbox execution of BG00Q.exe, which shows that it is a renamed version of AccountRestore"
+        },
+        {
+          "v": "ADRecon",
+          "q": "The file was identified as ‘ADRecon’, an open-source PowerShell tool specifically designed to gather"
         },
         {
           "v": "defoff.bat",
@@ -705,67 +700,63 @@
       ],
       "techniques": [
         {
-          "v": "leveraging access from third parties",
-          "q": "employed a method that has become almost standard: leveraging access from third parties"
-        },
-        {
-          "v": "move laterally",
-          "q": "Cobalt Strike platform, to move laterally between the victim’s on-premises domains and Azure environment through"
-        },
-        {
-          "v": "brute-force",
-          "q": "A brute-force attack was initiated from a compromised server on the vendor’s network."
-        },
-        {
           "v": "Kerberoasting",
-          "q": "a Kerberoasting attack in order to retrieve password hashes from the Active Directory"
-        },
-        {
-          "v": "process injection",
-          "q": "process injection for the purposes of execution and evasion"
+          "q": "a Kerberoasting attack in order to retrieve password hashes from the Active Directory."
         },
         {
           "v": "password-dumping tool",
           "q": "using a password-dumping tool"
         },
         {
-          "v": "disable security monitoring tools",
-          "q": "Several attempts to disable security monitoring tools by remotely creating a service"
+          "v": "RDP tunnelling",
+          "q": "including RDP tunnelling for lateral movement"
         },
         {
-          "v": "mask the malware as benign activity",
-          "q": "attempting to mask the malware as benign activity"
+          "v": "third-party vendor",
+          "q": "network of a third-party vendor, utilizing a local terminal server in the client’s network"
         },
         {
-          "v": "Data Exfiltration",
-          "q": "Data Exfiltration and Additional Lateral Movement (days 27-30)"
+          "v": "email messages threatening to",
+          "q": "the threat actor flooded the victim with email messages threatening to"
         },
         {
-          "v": "email messages",
-          "q": "flooded the victim with email messages threatening to publish sensitive information"
+          "v": "disables different Windows Defender components",
+          "q": "this script disables different Windows Defender components"
+        },
+        {
+          "v": "chained proxy",
+          "q": "Stowaway is an open-source tool used for creation of a chained proxy connection"
+        },
+        {
+          "v": "deleting the tools after execution",
+          "q": "Snippet based on MDE logs, showing the threat actor deleting the tools after execution"
+        },
+        {
+          "v": "Ransomware-as-a-Service",
+          "q": "BlackCat employs a Ransomware-as-a-Service business model"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "terabytes",
-          "q": "claimed that terabytes of data had been exfiltrated from their network"
+          "v": "four",
+          "q": "The attack consisted of four main phases:"
         },
         {
-          "v": "two hosts",
-          "q": "exfiltration attempts from two hosts were successful"
+          "v": "two different environments",
+          "q": "the attacker compromised two different environments"
         },
         {
-          "v": "three accounts",
-          "q": "Three successful network logons to one of these servers were executed from a host named ‘DESKTOP-PSGDD89’ using three accounts"
+          "v": "Three successful network logons",
+          "q": "Three successful network logons to one of these servers"
         },
         {
           "v": "dozens of employees",
           "q": "emails to dozens of employees of the victim company"
         },
         {
-          "v": "weeks",
-          "q": "the attacker spent weeks in the network"
+          "v": "terabytes of data",
+          "q": "claimed that terabytes of data had been exfiltrated from their network."
         }
       ]
     },
@@ -774,29 +765,31 @@
       "name": "The Anatomy of a BlackCat (ALPHV) Attack"
     },
     "hedges": [
-      "Attribution is to BlackCat (ALPHV) or one of its affiliates, not to a single confirmed actor.",
-      "The report says the Russian C2 server appears to be a compromised MikroTik router.",
-      "The report says one service executable seems to attempt to disable EDR agents.",
-      "The deleted PowerShell script was presumably removed by the threat actor, inferred from the logs.",
-      "Threat intelligence analysis indicated the hostnames are known to be used by various threat actors, not confirmed as used by these groups.",
-      "Some renamed executables carry a copyright that looks legitimate, because the Apache Tomcat project shares the name."
+      "The threat actor was unable to fully execute the attack or clear its evidence trail, so the investigation's findings are limited by that.",
+      "Attribution is to the BlackCat (ALPHV) ransomware group or one of its affiliates, not to a single confirmed actor.",
+      "Threat intelligence indicated some hosts are known to be used frequently by various threat actors, including Conti and LockBit.",
+      "The Russian C2 server appears to be a compromised MikroTik router.",
+      "The attacker presumably deleted a PowerShell script; its content was recovered from logs.",
+      "A renamed executable's copyright looks legitimate because the Apache Foundation also publishes Apache Tomcat.",
+      "The claim of terabytes stolen comes from the threat actor, and the report notes attackers often overestimate the value of stolen information.",
+      "One executable seems to attempt to disable EDR agents."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:32Z",
-      "ok": false,
-      "note": "hedges[4]: The text says the hostnames are known to be used frequently by various threat actors, among them Conti and LockBit. The card's added 'not confirmed a",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:32Z",
+        "ok": false,
+        "note": "hedges[4]: The text says the hostnames are known to be used frequently by various threat actors, among them Conti and LockBit. The card's added 'not confirmed a",
+        "by": "auditor"
+      }
+    ]
   },
   "d024ba07693e90631f56e0ccf049775a082516ca": {
     "sha1": "d024ba07693e90631f56e0ccf049775a082516ca",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:20:23Z",
+    "read_at": "2026-11-27T02:51:20Z",
     "model": "haiku",
-    "summary": "An educational blog tutorial on a Windows persistence technique: hijacking a default file association so a chosen program runs when a text file is opened. The report says the technique is used by the SILENTTRINITY framework and the Kimsuky cyber espionage group. It also says malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors. The walkthrough and demo are not reproduced here.",
+    "summary": "Educational blog post explaining a Windows persistence technique: hijacking the default file association for .txt files so a chosen program runs when the file is opened. The report says the SILENTTRINITY framework and the Kimsuky espionage group use this technique, and that a 2019 campaign against Croatian government agencies was run by unidentified cyber actors. The post is dated 2022-08-26 and says it is for educational purposes only.",
     "kind": "overview",
     "facts": {
       "actors": [
@@ -804,25 +797,35 @@
           "v": "Kimsuky",
           "q": "This persistence trick is used by SILENTTRINITY framework and Kimsuky cyber espionage group.",
           "by": "the report itself"
+        },
+        {
+          "v": "unidentified cyber actors",
+          "q": "malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors.",
+          "by": "the report itself"
         }
       ],
       "sectors": [
         {
           "v": "government agencies",
-          "q": "This malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors."
+          "q": "malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors."
         }
       ],
-      "countries": [],
+      "countries": [
+        {
+          "v": "Croatia",
+          "q": "malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors."
+        }
+      ],
       "dates": [
         {
           "v": "2022-08-26",
           "q": "Published: 2022-08-26 · Archived: 2026-04-06 01:29:22 UTC",
-          "what": "Article published"
+          "what": "article published"
         },
         {
           "v": "2019",
-          "q": "This malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors.",
-          "what": "Campaign against Croatian government agencies"
+          "q": "malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors.",
+          "what": "campaign against Croatian government agencies"
         }
       ],
       "tools": [
@@ -833,12 +836,12 @@
       ],
       "techniques": [
         {
-          "v": "default file association hijacking",
-          "q": "It is possible to hijacking a default file association to execute a malicious program."
-        },
-        {
           "v": "Change Default File Association",
           "q": "MITRE ATT&CK: Change Default File Association"
+        },
+        {
+          "v": "hijacking a default file association",
+          "q": "It is possible to hijacking a default file association to execute a malicious program."
         }
       ],
       "cves": [],
@@ -846,17 +849,17 @@
     },
     "subject": null,
     "hedges": [
-      "This is a practical case for educational purposes only.",
-      "The report attributes the 2019 campaign only to unidentified cyber actors."
+      "The report says the 2019 campaign was carried out by unidentified cyber actors.",
+      "This is a practical case for educational purposes only."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:43Z",
-      "ok": false,
-      "note": "summary: Says the 2019 campaign malware was used 'against Croatian government agencies' as a claim about this technique, and states 'The report says the techniq",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:43Z",
+        "ok": false,
+        "note": "summary: Says the 2019 campaign malware was used 'against Croatian government agencies' as a claim about this technique, and states 'The report says the techniq",
+        "by": "auditor"
+      }
+    ]
   },
   "d0d666177b14b04a9202863e5b062a0e5936b161": {
     "sha1": "d0d666177b14b04a9202863e5b062a0e5936b161",

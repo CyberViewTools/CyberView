@@ -85,280 +85,31 @@
     "sha1": "f9015ec340e025c16963e9b7cef4cbc3f4101ca7",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T02:10:40Z",
+    "read_at": "2026-11-27T02:48:14Z",
     "model": "haiku",
-    "summary": "Group-IB report on JadeProx, a China-nexus cluster found through an exposed operator server in mid-April 2026. It describes the TriBack Loader (four variants, DLL sideloading) delivering AdaptixC2 and Beagle, phishing portals impersonating a Venezuelan municipal tax system and Claude-themed software, and intrusions in Vietnam, Malaysia, Hong Kong and Honduras. Attribution is to the China-nexus ecosystem without a single group, and several links to other groups are described as overlaps or consistent with.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "JadeProx",
-          "q": "We track this cluster as JadeProx with TTPs overlapping with multiple China-nexus groups.",
-          "by": "Group-IB"
-        },
-        {
-          "v": "China-nexus",
-          "q": "Attribution sits firmly in the China-nexus ecosystem as TTP overlaps with multiple such groups",
-          "by": "Group-IB"
-        },
-        {
-          "v": "Tropic Trooper",
-          "q": "Recently, Tropic Trooper weaponized AdaptixC2 with a customer beacon listener.",
-          "by": "Group-IB"
-        },
-        {
-          "v": "Mustang Panda",
-          "q": "which is seen to be used by Mustang Panda a lot.",
-          "by": "Group-IB"
-        },
-        {
-          "v": "APT27",
-          "q": "An open directory with similar Chinese-origin toolset was linked to APT27 (Emissary Panda),",
-          "by": "Group-IB"
-        },
-        {
-          "v": "Earth Lusca",
-          "q": "is consistent with Earth Lusca and UAT-5918 operations among others targeting government and education sectors across Asia.",
-          "by": "Group-IB"
-        },
-        {
-          "v": "UAT-5918",
-          "q": "is consistent with Earth Lusca and UAT-5918 operations among others targeting government and education sectors across Asia.",
-          "by": "Group-IB"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "education",
-          "q": "Hong Kong education sector campaign via Nuclei"
-        },
-        {
-          "v": "government",
-          "q": "Execution of Neo-reGeorg against a Malaysian government department."
-        },
-        {
-          "v": "public hospital",
-          "q": "simultaneous intrusions against a Vietnamese public hospital’s medical"
-        }
-      ],
-      "countries": [
-        {
-          "v": "Vietnam",
-          "q": "revealed simultaneous active intrusions in Vietnam, Malaysia, and Hong"
-        },
-        {
-          "v": "Malaysia",
-          "q": "revealed simultaneous active intrusions in Vietnam, Malaysia, and Hong"
-        },
-        {
-          "v": "Hong Kong",
-          "q": "Hong Kong education sector campaign via Nuclei"
-        },
-        {
-          "v": "Honduras",
-          "q": "Honduras was targeted through a lure impersonating a major local beverage company"
-        },
-        {
-          "v": "Venezuela",
-          "q": "A live credential harvesting portal impersonating Venezuela’s municipal tax management system"
-        }
-      ],
-      "dates": [
-        {
-          "v": "2026-07-23",
-          "q": "Published: 2026-07-23 · Archived: 2026-07-25 02:01:06 UTC",
-          "what": "Report published"
-        },
-        {
-          "v": "mid-April 2026",
-          "q": "In mid-April 2026, an exposed directory on an operator-owned Alibaba Cloud server gave us a complete view into an active",
-          "what": "Exposed operator server directory found"
-        },
-        {
-          "v": "2026-01-18",
-          "q": "2026-01-18 10:14:11 UTC avk.dll",
-          "what": "Earliest artifact (avk.dll) timestamp"
-        },
-        {
-          "v": "2026-03-13",
-          "q": "Recent whois records indicate the C2 was created on 2026-03-13 during the same time when the malware was created.",
-          "what": "C2 domain created"
-        },
-        {
-          "v": "2026-03-25",
-          "q": "was uploaded from Honduras on 2026-03-25 containing the following files nested inside the folder",
-          "what": "Honduras archive uploaded"
-        },
-        {
-          "v": "2026-04-04",
-          "q": "with a 2026-04-04 modification date, it contains an additional bash script in its infection chain.",
-          "what": "Claude-Pro relay archive modification date"
-        }
-      ],
-      "tools": [
-        {
-          "v": "iox",
-          "q": "iox Port-forwarding/proxy tunneling tool used to relay traffic through compromised hosts"
-        },
-        {
-          "v": "suo5",
-          "q": "suo5 SOCKS5-over-HTTP tunnel tool, used to pivot through web shells planted on victim servers"
-        },
-        {
-          "v": "Neo-reGeorg",
-          "q": "Neo-reGeorg HTTP-based tunnel/proxy tool for maintaining access through web shells"
-        },
-        {
-          "v": "nuclei",
-          "q": "nuclei Vulnerability scanner, used offensively to find exploitable CVEs at scale"
-        },
-        {
-          "v": "fscan",
-          "q": "fscan Network scanner for internal network reconnaissance"
-        },
-        {
-          "v": "AdaptixC2",
-          "q": "AdaptixC2 Post-exploitation and adversarial emulation framework for pentesting"
-        },
-        {
-          "v": "TriBack Loader",
-          "q": "At the centre of all these campaigns is a loader Group-IB tracks as TriBack Loader, triggered via DLL sideloading"
-        },
-        {
-          "v": "Beagle",
-          "q": "while a third variant delivers Beagle, a backdoor documented recently with the domains being registered under"
-        },
-        {
-          "v": "XMRig",
-          "q": "The operator’s infrastructure hosts both offensive and proxy tools, along with XMRig and socks5 server proxy"
-        },
-        {
-          "v": "NPS",
-          "q": "A garbled version of NPS, another Chinese-origin intranet penetration proxy server"
-        },
-        {
-          "v": "fuckaliyun.sh",
-          "q": "6. fuckaliyun.sh"
-        },
-        {
-          "v": "socks5 server proxy",
-          "q": "The operator’s infrastructure hosts both offensive and proxy tools, along with XMRig and socks5 server proxy"
-        },
-        {
-          "v": "ChromElevator",
-          "q": "Figure 12. Failure to fetch ChromElevator."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "DLL sideloading",
-          "q": "At the centre of all these campaigns is a loader Group-IB tracks as TriBack Loader, triggered via DLL sideloading"
-        },
-        {
-          "v": "Win32 callback APIs",
-          "q": "decrypts and executes shellcode payloads using Win32 callback APIs to avoid detection"
-        },
-        {
-          "v": "LNK spearphishing",
-          "q": "LNK spearphishing with ZIP + PDF decoy"
-        },
-        {
-          "v": "Exploit Public-Facing Application",
-          "q": "T1190 Exploit Public-Facing Application"
-        },
-        {
-          "v": "startup directory for persistence",
-          "q": "drops all the payloads into the startup directory for persistence."
-        },
-        {
-          "v": "Self-deletion",
-          "q": "Self-deletion via batch relay"
-        },
-        {
-          "v": "two-stages",
-          "q": "the routine has two-stages: byte reversal and rolling XOR with offset."
-        },
-        {
-          "v": "reflective loader",
-          "q": "reveals this to be a reflective loader of the PE file."
-        },
-        {
-          "v": "credential harvesting",
-          "q": "A live credential harvesting portal impersonating Venezuela’s municipal tax management system"
-        },
-        {
-          "v": "sandbox evasion",
-          "q": "uses InitOnceExecuteOnce API which is a known sandbox evasion technique."
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2018-11511",
-          "q": "CVE-2018-11511 – SQL injection in the tree list in the photo gallery application in ASUSTOR ADM"
-        },
-        {
-          "v": "CVE-2021-24139",
-          "q": "CVE-2021-24139 – SQL injection in the Photo Gallery (10Web Photo Gallery) WordPress plugin"
-        },
-        {
-          "v": "CVE-2021-31755",
-          "q": "CVE-2021-31755 – A stack buffer overflow vulnerability on Tenda AC11 devices"
-        },
-        {
-          "v": "CVE-2021-32305",
-          "q": "CVE-2021-32305 – WebSVN arbitrary command execution"
-        }
-      ],
-      "figures": [
-        {
-          "v": "14,653 URLs",
-          "q": "Observed HK education sector list contains 14,653 URLs under targets.txt file."
-        },
-        {
-          "v": "117 different service ports",
-          "q": "sub-domains and 117 different service ports including RDP, SSH, FTP, MySQL beyond standard"
-        },
-        {
-          "v": "13 unique vulnerabilities",
-          "q": "The output.txt file points to 13 unique vulnerabilities present on these education domains."
-        },
-        {
-          "v": "four loader variants",
-          "q": "The same builder produced four loader variants across two months"
-        },
-        {
-          "v": "~57,000 HNL",
-          "q": "~57,000 HNL, which looks like a payment notice from July 2025."
-        },
-        {
-          "v": "CVSS 9.8",
-          "q": "CVE-2021-31755 – A stack buffer overflow vulnerability on Tenda AC11 devices – [CVSS 9.8]."
-        },
-        {
-          "v": "4 different infection chains",
-          "q": "A custom shellcode loader that has been observed in 4 different infection chains"
-        }
-      ]
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "JadeProx"
-    },
-    "hedges": [
-      "No single group accounts for the full picture; the cluster is tracked as JadeProx to avoid misattribution.",
-      "Tooling is routinely shared across China-nexus groups, so the same tools do not mean the same operator.",
-      "Links to other groups are described as overlaps or consistent with, not as confirmed attribution.",
-      "The link to Tropic Trooper is inferred from a GitHub analytics cookie in a beacon configuration.",
-      "Upload regions do not necessarily indicate a targeted country.",
-      "The APT27 link is stated only as the open directory toolset having been linked to that group."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:53Z",
-      "ok": false,
-      "note": "summary: It says intrusions in Vietnam, Malaysia, Hong Kong and Honduras. The text reports active intrusions only in Vietnam, Malaysia and Hong Kong. Honduras i",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:53Z",
+        "ok": false,
+        "note": "summary: It says intrusions in Vietnam, Malaysia, Hong Kong and Honduras. The text reports active intrusions only in Vietnam, Malaysia and Hong Kong. Honduras i",
+        "by": "auditor"
+      }
+    ]
   }
 }

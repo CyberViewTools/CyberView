@@ -394,18 +394,18 @@
   },
   "2197d3ecec9e3525ad99312896a387996084be83": {
     "sha1": "2197d3ecec9e3525ad99312896a387996084be83",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:19:39Z",
+    "read_at": "2026-11-27T02:50:24Z",
     "model": "haiku",
-    "summary": "Qualys Research Team describes three techniques for hiding and deleting Windows scheduled tasks by manipulating the Index registry value. It builds on Microsoft's report that Hafnium concealed a task by deleting the SD value. Lab tests on Windows 10 and Windows 2016 machines are described, and the report recommends monitoring changes to the Index and SD values.",
+    "summary": "Qualys Research Team blog (published 2022-06-21) on ways attackers hide and delete Windows scheduled tasks. It describes three techniques that manipulate registry Index and SD values, and cites Microsoft's account of the Chinese state-sponsored group Hafnium hiding a task by deleting the SD value. Lab tests on Windows 10 and Windows 2016 Server reproduced the behaviour. The report recommends monitoring changes to Index and SD values.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "Hafnium",
-          "q": "the Chinese state-sponsored group Hafnium concealed scheduled tasks by deleting the Security Descriptor",
-          "by": "Microsoft (as cited in the Qualys report)"
+          "q": "the Chinese state-sponsored group Hafnium concealed scheduled tasks",
+          "by": "Microsoft, as cited by Qualys"
         }
       ],
       "sectors": [],
@@ -414,74 +414,69 @@
         {
           "v": "2022-06-21",
           "q": "Published: 2022-06-21 · Archived: 2026-04-06 02:09:43 UTC",
-          "what": "report published by Qualys"
+          "what": "Blog post published"
         },
         {
           "v": "2026-04-06",
-          "q": "Archived: 2026-04-06 02:09:43 UTC",
-          "what": "page archived"
+          "q": "Published: 2022-06-21 · Archived: 2026-04-06 02:09:43 UTC",
+          "what": "Page archived"
         }
       ],
       "tools": [
         {
-          "v": "Task Scheduler",
-          "q": "all scheduled tasks disappear from the Task Scheduler app"
-        },
-        {
-          "v": "Windows Registry",
-          "q": "within the Windows Registry path"
-        },
-        {
-          "v": "Windows Security event log",
-          "q": "updating (4702) in the Windows Security event log"
+          "v": "Python script",
+          "q": "The Qualys Research Team wrote a Python script and ran it across different Windows machines to confirm this"
         }
       ],
       "techniques": [
         {
           "v": "hide and delete scheduled tasks",
-          "q": "three new techniques to hide and delete scheduled tasks"
-        },
-        {
-          "v": "modifying or deleting the Index value",
-          "q": "modifying or deleting the Index value within the Tree subkey also hides scheduled tasks"
+          "q": "In this blog, we describe three new techniques to hide and delete scheduled tasks in a Microsoft"
         },
         {
           "v": "token theft",
-          "q": "acquired SYSTEM privileges (via token theft)"
+          "q": "the threat actor acquired SYSTEM privileges (via token theft) and deleted the SD value within the Tree subkey"
         },
         {
-          "v": "deleted the SD value",
-          "q": "deleted the SD value within the Tree subkey"
+          "v": "Hide all scheduled tasks",
+          "q": "Hide all scheduled tasks from the Task Scheduler app"
+        },
+        {
+          "v": "Delete a scheduled task",
+          "q": "Delete a scheduled task by first setting its Index value to 0x0"
+        },
+        {
+          "v": "establish persistence",
+          "q": "Scheduling tasks is one of the most popular attack techniques used by threat actors to establish persistence on a"
         }
       ],
       "cves": [],
       "figures": [
         {
+          "v": "three new techniques",
+          "q": "In this blog, we describe three new techniques to hide and delete scheduled tasks in a Microsoft"
+        },
+        {
           "v": "five boxes",
-          "q": "reproduce this issue on every Windows 10 machine that we experimented with, which was across a total of five boxes"
+          "q": "which was across a total of five boxes"
         },
         {
-          "v": "10.0.19043",
-          "q": "Windows 10 Pro (v10.0.19043)"
-        },
-        {
-          "v": "4698",
-          "q": "creation (4698), deletion (4699) and updating (4702)"
+          "v": "4699",
+          "q": "event id 4699: scheduled task deletion"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "Our investigation did not find any online documentation describing the purpose of the Index value associated with the scheduled task.",
-      "there seems to be only three possible values for Index: 0x1, 0x2, or 0x3"
+      "The report says only three Index values seem possible, and its authors found no online documentation describing the purpose of the Index value."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:34Z",
-      "ok": false,
-      "note": "summary: Says lab tests on 'Windows 10 and Windows 2016 machines'; the text also names Windows 10 Enterprise, but the bigger issue is that it says the report re",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:34Z",
+        "ok": false,
+        "note": "summary: Says lab tests on 'Windows 10 and Windows 2016 machines'; the text also names Windows 10 Enterprise, but the bigger issue is that it says the report re",
+        "by": "auditor"
+      }
+    ]
   }
 }

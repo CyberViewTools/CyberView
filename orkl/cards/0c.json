@@ -1,24 +1,24 @@
 {
   "0c1e924baae3ecbc5fa96e88a1afd0d7d55e8b97": {
     "sha1": "0c1e924baae3ecbc5fa96e88a1afd0d7d55e8b97",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:16:00Z",
+    "read_at": "2026-11-27T02:48:50Z",
     "model": "haiku",
-    "summary": "Analysis of eight malicious container images in a Docker Hub account linked to the TeamTNT group. Two were used in attacks in the wild. The images carried crypto-mining tools, Mirai and Tsunami malware, a Docker escape binary and a bind shell. Later images added defense evasion, lateral movement and hidden command-and-control. The report says the campaign is still active and targets cloud native environments, especially misconfigured Docker API ports, and recommends dynamic analysis before deployment.",
+    "summary": "Aqua Team Nautilus analysed eight malicious container images in the Docker Hub account hildeteamtnt, which the report says TeamTNT used. The images carried cryptominers, Tsunami and Mirai, backdoors and Docker escape tools, and at least two were used in attacks. The report calls it a still-active campaign against cloud native environments and misconfigured Docker API ports, and says the newer images use more defence evasion. Published 2020-08-25.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "TeamTNT",
-          "q": "a group called TeamTNT",
-          "by": "the report (Team Nautilus)"
+          "q": "which was used by TeamTNT",
+          "by": "the report itself (Aqua Team Nautilus)"
         }
       ],
       "sectors": [
         {
           "v": "cloud native environments",
-          "q": "an active campaign targeting cloud native environments in general"
+          "q": "targeting cloud native environments in general"
         }
       ],
       "countries": [],
@@ -26,12 +26,12 @@
         {
           "v": "2020-08-25",
           "q": "Published: 2020-08-25",
-          "what": "report published"
+          "what": "Report published"
         },
         {
           "v": "March 28, 2020",
-          "q": "was uploaded on March 28, 2020",
-          "what": "first xmrigminer tool uploaded to the account"
+          "q": "the first tool ‘xmrigminer’ was uploaded on March 28, 2020",
+          "what": "First xmrigminer image uploaded to the account"
         }
       ],
       "tools": [
@@ -44,8 +44,16 @@
           "q": "malware executables (Tsunami and Mirai)"
         },
         {
+          "v": "xmrigminer",
+          "q": "the first tool ‘xmrigminer’ was uploaded on March 28, 2020"
+        },
+        {
           "v": "docker-escape",
-          "q": "contain a binary named docker-escape"
+          "q": "contain a binary named docker-escape."
+        },
+        {
+          "v": "avscan",
+          "q": "The second image ‘avscan’ is a more sophisticated version"
         },
         {
           "v": "xmrig",
@@ -53,45 +61,49 @@
         },
         {
           "v": "Bioset",
-          "q": "This leads us to conclude that the Bioset is serving as a bind shell"
-        },
-        {
-          "v": "AVscan",
-          "q": "execute two malicious binaries SystemHealt and AVscan"
+          "q": "the Bioset is serving as a bind shell"
         }
       ],
       "techniques": [
         {
-          "v": "resource hijacking",
-          "q": "launch a simple resource hijacking attack (Cryptominer)"
+          "v": "resource hijacking (cryptomining)",
+          "q": "launch a simple resource hijacking attack (Cryptominer)."
         },
         {
           "v": "Docker escape",
-          "q": "it then attempts Docker escape techniques."
+          "q": "backdoors, Docker escape tools, and Potentially Unwanted"
         },
         {
-          "v": "defense evasion",
-          "q": "They added defense evasion techniques and attempted to conceal"
+          "v": "host takeover",
+          "q": "The adversaries used a known technique aimed at taking over the host"
         },
         {
-          "v": "lateral movement",
-          "q": "designed to conduct lateral movement in the network by"
+          "v": "defence evasion",
+          "q": "They added defense evasion techniques"
         },
         {
-          "v": "bind shell",
-          "q": "This leads us to conclude that the Bioset is serving as a bind shell"
+          "v": "persistence",
+          "q": "gain persistence over time."
         },
         {
           "v": "web services and TOR servers",
-          "q": "Leveraging web services and TOR servers to increase the persistence"
+          "q": "Leveraging web services and TOR servers to increase the persistence of their C2 infrastructure."
+        },
+        {
+          "v": "disabling security tools",
+          "q": "Disabling security tools and network security tools."
+        },
+        {
+          "v": "base64",
+          "q": "Encoding many snippets with base64 (the same snippet may be encoded multiple times)."
+        },
+        {
+          "v": "deleting command history",
+          "q": "Deleting command history."
         },
         {
           "v": "misconfigured Docker API ports",
-          "q": "targeting cloud native environments in general and misconfigured Docker API ports in"
-        },
-        {
-          "v": "base64 encoding",
-          "q": "Encoding many snippets with base64"
+          "q": "is still an active campaign targeting cloud native environments in general and misconfigured Docker API ports in"
         }
       ],
       "cves": [],
@@ -102,11 +114,15 @@
         },
         {
           "v": "at least two",
-          "q": "with at least two of these images being used to perform attacks in the wild"
+          "q": "malicious container images, with at least two of these images being used to perform attacks in the wild."
         },
         {
           "v": "four months",
           "q": "Over four months, TeamTNT uploaded various images"
+        },
+        {
+          "v": "cb782b40757d1aba7a3ab7db57b50847",
+          "q": "SystemHealt – cb782b40757d1aba7a3ab7db57b50847 (MD5)"
         }
       ]
     },
@@ -116,15 +132,15 @@
     },
     "hedges": [
       "We believe changes in these newer images somewhat reflect the learning curve (developing capabilities) of TeamTNT.",
-      "This leads us to conclude that the Bioset is serving as a bind shell that probably allows the attacker to connect to the host"
+      "This leads us to conclude that the Bioset is serving as a bind shell that probably allows the attacker to connect to the host after he deployed the container."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:26Z",
-      "ok": false,
-      "note": "summary: It says \"Two were used in attacks in the wild\", but the text says \"at least two\" of the images were used. Dropping \"at least\" removes a hedge and makes",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:26Z",
+        "ok": false,
+        "note": "summary: It says \"Two were used in attacks in the wild\", but the text says \"at least two\" of the images were used. Dropping \"at least\" removes a hedge and makes",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,24 +1,24 @@
 {
   "f59aee00a916248d7022042ff6cb62b68e94dd29": {
     "sha1": "f59aee00a916248d7022042ff6cb62b68e94dd29",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:17:00Z",
+    "read_at": "2026-11-27T02:49:30Z",
     "model": "haiku",
-    "summary": "Article on AlphV (aka BlackCat) publicly claiming an attack on Tipalti, an accounts-payable software firm, before contacting the victim or extorting it. AlphV says it has been present in Tipalti systems since September 2023 and has exfiltrated over 265GB of data. It plans to pressure Tipalti and clients including Roblox and Twitch. No proof was posted. Tipalti said it has not detected any data loss or breach of its systems.",
-    "kind": "actor-campaign",
+    "summary": "A DataBreaches report, published 2023-12-03, on an extortion claim by the AlphV (aka BlackCat) group against Tipalti, a financial technology firm providing accounts payable and payments software. AlphV said it had exfiltrated over 265GB of data since September 2023, claimed an insider was involved, and planned to extort Tipalti, Roblox and Twitch. It posted no proof of its claims. Tipalti said it was investigating the allegation and had not detected any data loss or breach. The report stresses that AlphV's claims are unconfirmed.",
+    "kind": "incident",
     "facts": {
       "actors": [
         {
-          "v": "AlphV",
+          "v": "AlphV (aka BlackCat)",
           "q": "So AlphV (aka BlackCat) is trying something different again, it seems.",
-          "by": "the report itself"
+          "by": "DataBreaches (report author), relaying AlphV's own leak-site listing"
         }
       ],
       "sectors": [
         {
           "v": "financial technology",
-          "q": "Tipalti is an accounting software financial technology business"
+          "q": "Tipalti is an accounting software financial technology business that provides accounts"
         }
       ],
       "countries": [],
@@ -26,23 +26,23 @@
         {
           "v": "2023-12-03",
           "q": "Published: 2023-12-03 · Archived: 2026-04-09 02:08:08 UTC",
-          "what": "Date the article was published"
+          "what": "Report published"
         },
         {
           "v": "September 8th 2023",
-          "q": "We have remained present, undetected, in multiple Tipali systems since September 8th 2023. Over",
-          "what": "AlphV says it has been present in Tipalti systems since this date"
+          "q": "We have remained present, undetected, in multiple Tipali systems since September 8th 2023.",
+          "what": "AlphV claims it was present in Tipalti systems from this date"
         }
       ],
       "tools": [],
       "techniques": [
         {
-          "v": "extortion",
-          "q": "policy does not cover extortion"
+          "v": "exfiltration",
+          "q": "We remain committed to this exfiltration operation, so we plan to reach out to both"
         },
         {
-          "v": "exfiltration",
-          "q": "We remain committed to this exfiltration operation"
+          "v": "extortion",
+          "q": "the victim’s cyberinsurance policy does not cover extortion, and their research into the victim (Tipalti)"
         },
         {
           "v": "insider",
@@ -53,25 +53,26 @@
       "figures": [
         {
           "v": "265GB+",
-          "q": "Over 265GB+ of confidential business data belonging to the company"
+          "q": "265GB+ of confidential business data belonging to the company, as well as its employees and clients"
         }
       ]
     },
     "subject": {
-      "type": "campaign",
-      "name": "AlphV claim against Tipalti"
+      "type": "incident",
+      "name": "AlphV extortion claim against Tipalti"
     },
     "hedges": [
-      "DataBreaches reminds readers that AlphV's claims are unconfirmed.",
-      "it may just be a false claim made to make the firm doubt themselves and their own internal resources."
+      "DataBreaches reminds readers that AlphV’s claims are unconfirmed.",
+      "Whether the insider claim is true is not likely to be found out quickly; it may be a false claim made to make the firm doubt its own resources.",
+      "Tipalti said it was investigating the allegation and had not detected any data loss or breach of its systems; this statement came via an Israeli news source."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:53Z",
-      "ok": false,
-      "note": "summary: Calls Twitch a Tipalti client. The text names only Roblox as a client of the victim and says AlphV will extort 'those firms and Twitch', so Twitch is n",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:53Z",
+        "ok": false,
+        "note": "summary: Calls Twitch a Tipalti client. The text names only Roblox as a client of the victim and says AlphV will extort 'those firms and Twitch', so Twitch is n",
+        "by": "auditor"
+      }
+    ]
   }
 }

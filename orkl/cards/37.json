@@ -293,23 +293,23 @@
   },
   "37d087169d2bd363bc461552f900cf1b1f854864": {
     "sha1": "37d087169d2bd363bc461552f900cf1b1f854864",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:21:41Z",
+    "read_at": "2026-11-27T02:51:38Z",
     "model": "haiku",
-    "summary": "AhnLab's ASEC reports that the Andariel attack group used a malicious file to perform RID Hijacking during breaches. The technique changes a low-privilege account's RID to match an administrator's, so the account is treated as having admin rights. The attackers needed SYSTEM privileges, used PsExec and JuicyPotato to get them, and created a hidden account. The report also names a tool called CreateHiddenAccount and says the technique was cited earlier in a KISA publication.",
+    "summary": "AhnLab ASEC reports that the Andariel attack group used a malicious file to carry out RID Hijacking during breach incidents. RID Hijacking changes an account's Relative Identifier in the SAM registry so that a lower-privilege or hidden account is treated as administrator. The report walks through the stages: SYSTEM privilege escalation using PsExec and JuicyPotato, creating a hidden account, and changing its RID. It describes two malicious files, one custom-built and one based on the open-source CreateHiddenAccount tool, and steps taken to conceal the account. It also cites an earlier KISA…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Andariel",
-          "q": "AhnLab SEcurity intelligence Center (ASEC) has identified the Andariel attack group using a malicious file to",
-          "by": "AhnLab SEcurity intelligence Center (ASEC)"
+          "q": "has identified the Andariel attack group using a malicious file to",
+          "by": "AhnLab ASEC"
         },
         {
           "v": "Andariel",
           "q": "it was mentioned that the Andariel threat group uses the RID Hijacking technique when creating a backdoor account",
-          "by": "Korea Internet & Security Agency (KISA), as cited in the report"
+          "by": "KISA, as cited by AhnLab ASEC"
         }
       ],
       "sectors": [],
@@ -337,11 +337,11 @@
         },
         {
           "v": "CreateHiddenAccount",
-          "q": "The open-source tool CreateHiddenAccount can perform all of its functions even with administrator privileges."
+          "q": "tool CreateHiddenAccount can perform all of its functions even with administrator privileges. Analyzing the"
         },
         {
           "v": "regini",
-          "q": "Analyzing the operation process of this tool revealed that it uses the Windows default program, regini, to grant permissions."
+          "q": "regini is a CLI tool provided by Microsoft that can edit the Windows registry through a text file."
         }
       ],
       "techniques": [
@@ -355,29 +355,41 @@
         },
         {
           "v": "hidden account",
-          "q": "In addition to creating a hidden account with a ‘$’ in the account name, the malicious file used by the Andariel"
+          "q": "name during account creation, the account is created with a hidden attribute."
         },
         {
-          "v": "persistence",
-          "q": "the threat actor’s behavior can be interpreted as intending to minimize account exposure and maintain persistence."
+          "v": "RID change",
+          "q": "Threat actors change the value at this offset to the RID of the hijacking target."
+        },
+        {
+          "v": "SAM database manipulation",
+          "q": "RID Hijacking is typically performed by manipulating the Security Account Manager (SAM) database."
+        },
+        {
+          "v": "Modify SAM Registry Access Permission",
+          "q": "3.1 Modify SAM Registry Access Permission"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "b500a8ffd4907a1dfda985683f1de1df",
+          "q": "b500a8ffd4907a1dfda985683f1de1df"
+        }
+      ]
     },
     "subject": null,
     "hedges": [
-      "KISA's publication is cited as mentioning that the Andariel group uses RID Hijacking when creating a backdoor account.",
-      "The threat actor's behavior can be interpreted as intending to minimize account exposure and maintain persistence.",
-      "The account created with this method cannot be completely hidden."
+      "The report says the account created using the above method cannot be completely hidden.",
+      "The report says the actor's behavior can be interpreted as intending to minimize account exposure and maintain persistence."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:34Z",
-      "ok": false,
-      "note": "summary: It says the attackers used PsExec and JuicyPotato to get SYSTEM privileges. The text only says threat actors use tools 'such as' these in general. In t",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:34Z",
+        "ok": false,
+        "note": "summary: It says the attackers used PsExec and JuicyPotato to get SYSTEM privileges. The text only says threat actors use tools 'such as' these in general. In t",
+        "by": "auditor"
+      }
+    ]
   }
 }

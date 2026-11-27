@@ -362,91 +362,99 @@
   },
   "84479097058c0c9942a1c58a7e814ca2090bdb67": {
     "sha1": "84479097058c0c9942a1c58a7e814ca2090bdb67",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:16:15Z",
+    "read_at": "2026-11-27T02:49:54Z",
     "model": "haiku",
-    "summary": "Avast Threat Labs reports that the Lazarus Group exploited a zero-day (CVE-2024-21338) in the Windows AppLocker driver appid.sys to gain kernel read/write access, then ran an updated FudModule rootkit. The rootkit uses nine techniques, four of them new, and targets security software including Microsoft Defender, CrowdStrike Falcon and HitmanPro. Microsoft patched the flaw in its February Patch Tuesday update. The rootkit is data-only and the report says it remains under active development. A new RAT attributed to Lazarus is to be covered in a planned follow-up.",
+    "summary": "Avast Threat Labs analysis of an updated FudModule rootkit attributed to the Lazarus Group. Lazarus used a zero-day in the appid.sys AppLocker driver (CVE-2024-21338, patched in the February Patch Tuesday update) to gain kernel read/write access. The rootkit adds techniques that remove kernel callbacks and minifilters, disable ETW, and suspend processes of Microsoft Defender, CrowdStrike Falcon and HitmanPro. A new RAT attributed to Lazarus is also reported.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Lazarus Group",
-          "q": "The exploitation activity was orchestrated by the notorious Lazarus Group",
-          "by": "Avast Threat Labs"
+          "q": "The exploitation activity was orchestrated by the notorious Lazarus Group, with the end goal of",
+          "by": "Avast Threat Labs (report author)"
+        },
+        {
+          "v": "Candiru",
+          "q": "consider the spyware vendor Candiru, which we caught exploiting a zero-day vulnerability in hw.sys",
+          "by": "Avast Threat Labs (report author)"
         }
       ],
       "sectors": [],
       "countries": [
         {
           "v": "North Korea",
-          "q": "Note that even North Korea’s “own” antivirus was called SiliVaccine"
+          "q": "even North Korea’s “own” antivirus was called SiliVaccine"
         }
       ],
       "dates": [
         {
           "v": "August 2023",
           "q": "We developed a custom PoC (Proof of Concept) exploit and submitted it in August 2023 as part of a vulnerability",
-          "what": "Avast submitted a proof-of-concept exploit for the flaw to Microsoft"
+          "what": "Avast submitted a proof-of-concept exploit to Microsoft in a vulnerability report"
         },
         {
-          "v": "February Patch Tuesday",
-          "q": "leading to an advisory for CVE-2024-21338 in the February Patch Tuesday update.",
-          "what": "Microsoft addressed CVE-2024-21338 in its patch update"
+          "v": "February Patch Tuesday update",
+          "q": "leading to an advisory for CVE-2024-21338 in the February Patch Tuesday update",
+          "what": "Microsoft fixed CVE-2024-21338 in this update"
         },
         {
           "v": "September 2022",
           "q": "both publishing detailed analyses in September 2022",
-          "what": "AhnLab and ESET published analyses of earlier FudModule variants"
-        },
-        {
-          "v": "Black Hat Asia 2024",
-          "q": "scheduled for release along with our Black Hat Asia 2024 briefing",
-          "what": "Planned release of a follow-up post on the RAT and infection vector"
+          "what": "AhnLab and ESET published detailed analyses of earlier FudModule variants"
         }
       ],
       "tools": [
         {
           "v": "FudModule rootkit",
-          "q": "data-only FudModule rootkit, a previous version of which was analyzed by ESET and AhnLab."
+          "q": "the FudModule rootkit employs direct kernel object manipulation (DKOM) techniques to disrupt various kernel security mechanisms"
+        },
+        {
+          "v": "appid.sys",
+          "q": "in the appid.sys AppLocker driver"
         },
         {
           "v": "RAT (Remote Access Trojan)",
-          "q": "resulting in the discovery of a new RAT (Remote Access Trojan) attributed to Lazarus."
+          "q": "resulting in the discovery of a new RAT (Remote Access Trojan) attributed to Lazarus"
         }
       ],
       "techniques": [
         {
           "v": "BYOVD (Bring Your Own Vulnerable Driver)",
-          "q": "in a technique called BYOVD (Bring Your Own Vulnerable Driver)."
+          "q": "in a technique called BYOVD (Bring Your Own Vulnerable Driver)"
         },
         {
-          "v": "exploiting the zero-day vulnerability",
-          "q": "Another significant step up is exploiting the zero-day vulnerability, where Lazarus previously utilized"
+          "v": "zero-day",
+          "q": "In more sophisticated scenarios, an attacker would use BYOVD to exploit a zero-day vulnerability within a signed"
+        },
+        {
+          "v": "data-only attacks",
+          "q": "forcing most to resort to data-only attacks (where they achieve"
         },
         {
           "v": "direct kernel object manipulation",
-          "q": "perform direct kernel object manipulation in an updated version of their"
+          "q": "the FudModule rootkit employs direct kernel object manipulation (DKOM) techniques to disrupt various kernel security mechanisms"
+        },
+        {
+          "v": "registry callbacks",
+          "q": "FudModule’s goal here is to remove existing registry callbacks and thus disrupt security solutions"
+        },
+        {
+          "v": "minifilters",
+          "q": "FudModule is trying to get rid of all the monitoring and antivirus minifilters while leaving the rest untouched"
+        },
+        {
+          "v": "image verification callbacks",
+          "q": "Image verification callbacks are yet another callback mechanism disrupted by FudModule."
+        },
+        {
+          "v": "ETW",
+          "q": "FudModule tampers with ETW internals in an attempt to intercept suspicious events and thus evade detection."
         },
         {
           "v": "handle table entry manipulation",
-          "q": "FudModule attempts to suspend them using a new handle table entry manipulation technique."
-        },
-        {
-          "v": "disables file system minifilters",
-          "q": "the current version of FudModule disables file system minifilters in a brand-new data-only attack."
-        },
-        {
-          "v": "tampers with ETW internals",
-          "q": "FudModule tampers with ETW internals in an attempt to"
-        },
-        {
-          "v": "remove existing registry callbacks",
-          "q": "FudModule’s goal here is to remove existing registry callbacks and thus disrupt security solutions that rely on this mechanism."
-        },
-        {
-          "v": "interfere with the installed callout routines",
-          "q": "FudModule is trying to interfere with the installed callout routines in an attempt to disrupt the security they provide."
+          "q": "FudModule attempts to suspend them using a new handle table entry manipulation technique"
         }
       ],
       "cves": [
@@ -457,20 +465,20 @@
       ],
       "figures": [
         {
-          "v": "nine",
-          "q": "our discovery concerns a sample featuring nine"
+          "v": "four new",
+          "q": "with four new – and three updated – rootkit"
         },
         {
-          "v": "seven rootkit techniques",
-          "q": "also featuring seven rootkit techniques but exploiting a"
+          "v": "34 unique vulnerabilities",
+          "q": "uncover 34 unique vulnerabilities across more than 200 signed drivers"
         },
         {
           "v": "95 GUIDs",
           "q": "It contains a hardcoded list of 95 GUIDs, each representing an"
         },
         {
-          "v": "34 unique vulnerabilities across more than 200 signed drivers",
-          "q": "used bulk static analysis to uncover 34 unique vulnerabilities across more than 200 signed drivers."
+          "v": "seven",
+          "q": "incorporated seven data-only rootkit techniques"
         }
       ]
     },
@@ -479,21 +487,22 @@
       "name": "FudModule"
     },
     "hedges": [
-      "The report says it can only speculate on Lazarus's motivation for choosing the zero-day approach over BYOVD, and believes stealth was the primary motive.",
-      "The report says the actual impact of one rootkit technique remains unclear because it did not reverse engineer a competitor's product.",
-      "The report says the vulnerability may only barely meet Microsoft's security servicing criteria.",
-      "The report says the dropped status file is presumably inspected through hands-on keyboard activity via a RAT command.",
-      "The report says the most likely explanation for the image verification technique is that the actors are preparing to load a malicious driver later.",
-      "The report says the Korean origin of the debug strings is only a supposed origin, based on language analysis.",
-      "The report says the RAT technical details and initial infection vector are to be published in a follow-up post."
+      "The report says it can only speculate on Lazarus motivation for going beyond BYOVD, and believes stealth was the primary motive.",
+      "The report says the RAT and initial infection vector will be covered in a follow-up post.",
+      "The report deliberately omits some key exploit details to avoid making exploitation widely accessible.",
+      "The report says some rootkit bugs are withheld and may be shared later if they are fixed.",
+      "The report says the rootkit is only loosely integrated into the wider Lazarus malware ecosystem, based on its own belief.",
+      "The report says the most likely explanation for one technique is that the actors are preparing to load a malicious driver later.",
+      "The report says the vulnerability may only barely meet Microsoft security servicing criteria.",
+      "The report says the CVE is more precisely local service-to-kernel, but it mainly calls it admin-to-kernel because of how it was used in the wild."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:53Z",
-      "ok": false,
-      "note": "summary: It says the report states the rootkit 'remains under active development', but the text hedges this: 'it seems that FudModule remains under active devel",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:53Z",
+        "ok": false,
+        "note": "summary: It says the report states the rootkit 'remains under active development', but the text hedges this: 'it seems that FudModule remains under active devel",
+        "by": "auditor"
+      }
+    ]
   }
 }

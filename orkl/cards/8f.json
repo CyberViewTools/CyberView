@@ -185,11 +185,11 @@
   },
   "8fb41a6db4044de0619582b12dbb6bb3627e50db": {
     "sha1": "8fb41a6db4044de0619582b12dbb6bb3627e50db",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:23:47Z",
+    "read_at": "2026-11-27T02:47:21Z",
     "model": "haiku",
-    "summary": "A 2021 Medium blog post by Michael Koczwara analyses a PowerShell payload identified as Cobalt Strike, which the author spotted via a tweet. The post says a Base64 block is XOR-encoded and that it can be decrypted with CyberChef after extracting the encoded payload from the PowerShell script. The report names no threat actor, sector, country, CVE or victim.",
+    "summary": "A short single-author write-up analysing a PowerShell payload associated with Cobalt Strike. The author notes a loop that XOR-decodes a Base64 block, extracts the encoded payload, and decrypts it with CyberChef. The article names no threat actor, sector, country or CVE, and gives no figures beyond the publication date.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -199,7 +199,7 @@
         {
           "v": "2021-09-06",
           "q": "Published: 2021-09-06 · Archived: 2026-11-25 02:08:33 UTC",
-          "what": "Blog post published"
+          "what": "Article published"
         }
       ],
       "tools": [
@@ -214,7 +214,7 @@
       ],
       "techniques": [
         {
-          "v": "XOR encoding of a Base64 block",
+          "v": "XOR-encoded Base64 payload in PowerShell",
           "q": "Base64 block is encrypted with XOR"
         }
       ],
@@ -226,20 +226,18 @@
       "name": "Cobalt Strike"
     },
     "hedges": [],
-    "audit": {
-      "at": "2026-11-27T02:30:00Z",
-      "ok": false,
-      "note": "The summary says the block can be decrypted with CyberChef 'after extracting' the payload; the text gives no such order. The date fact (2021-09-06) also ignores",
-      "by": "reviewer"
-    },
-    "reason": "audit-wrong",
-    "tries": 0,
     "audit_history": [
       {
         "at": "2026-11-26T23:49:20Z",
         "ok": true,
         "note": "",
         "by": "auditor"
+      },
+      {
+        "at": "2026-11-27T02:30:00Z",
+        "ok": false,
+        "note": "The summary says the block can be decrypted with CyberChef 'after extracting' the payload; the text gives no such order. The date fact (2021-09-06) also ignores",
+        "by": "reviewer"
       }
     ]
   },

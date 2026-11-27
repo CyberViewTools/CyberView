@@ -1,85 +1,92 @@
 {
   "c4f1da693af6b0106ffedb87215e9996f229b02b": {
     "sha1": "c4f1da693af6b0106ffedb87215e9996f229b02b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:09:14Z",
+    "read_at": "2026-11-27T02:47:53Z",
     "model": "haiku",
-    "summary": "CrowdStrike blog on USB removable-media risk. It describes MUSTANG PANDA's USBFect worm campaigns (2023 to 2025, covering the Philippines, Taiwan and North America), late 2025 USB campaigns that dropped CoinMiner, and a 2025 US defense insider case involving more than 3,600 files. It closes by promoting CrowdStrike Falcon Data Protection and Device Control.",
+    "summary": "CrowdStrike blog on removable-media risk, covering data theft by insiders and malicious devices entering endpoints. Its main case study is MUSTANG PANDA's USBFect USB worm campaigns (2023 to 2025), which used loaders to deliver LingerRAT, spread from the Philippines to Taiwan, and were later seen affecting organisations in North America. It also cites late 2025 USB-delivered CoinMiner campaigns and a 2025 case in which a U.S. defense engineer admitted moving over 3,600 files to personal storage. The text promotes CrowdStrike Falcon Data Protection and Falcon Device Control.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "MUSTANG PANDA",
-          "q": "CrowdStrike Intelligence exposed a series of evolving USB-borne campaigns conducted by China-nexus adversary MUSTANG PANDA.",
-          "by": "CrowdStrike Intelligence"
+          "q": "by China-nexus adversary MUSTANG PANDA.",
+          "by": "CrowdStrike Intelligence (the report's vendor)"
         }
       ],
       "sectors": [
         {
-          "v": "technology",
+          "v": "defense",
           "q": "Recent cases across technology and defense show"
         },
         {
-          "v": "defense",
+          "v": "technology",
           "q": "Recent cases across technology and defense show"
         }
       ],
       "countries": [
         {
           "v": "Philippines",
-          "q": "impacted entities in the Philippines, while the December 2024 campaign broadened targeting to Taiwan and"
+          "q": "impacted entities in the Philippines, while the December 2024 campaign"
         },
         {
           "v": "Taiwan",
-          "q": "impacted entities in the Philippines, while the December 2024 campaign broadened targeting to Taiwan and"
-        },
-        {
-          "v": "North America",
-          "q": "observed USBFect affecting organizations in North America, confirming it remains active in real-world intrusions"
+          "q": "the December 2024 campaign broadened targeting to Taiwan and"
         },
         {
           "v": "U.S.",
           "q": "while employed at a U.S. defense contractor."
-        },
-        {
-          "v": "China",
-          "q": "CrowdStrike Intelligence exposed a series of evolving USB-borne campaigns conducted by China-nexus adversary MUSTANG PANDA."
         }
       ],
       "dates": [
         {
-          "v": "2023",
-          "q": "Across three campaigns — two in 2023 and a more sophisticated wave in late 2024 — MUSTANG PANDA",
-          "what": "Two USBFect campaigns in 2023"
+          "v": "2023 and 2025",
+          "q": "Between 2023 and 2025, CrowdStrike Intelligence exposed a series of evolving USB-borne campaigns",
+          "what": "CrowdStrike Intelligence exposed a series of USB-borne MUSTANG PANDA campaigns (USBFect)"
         },
         {
           "v": "late 2024",
-          "q": "Across three campaigns — two in 2023 and a more sophisticated wave in late 2024 — MUSTANG PANDA",
-          "what": "More sophisticated USBFect wave"
+          "q": "Across three campaigns — two in 2023 and a more sophisticated wave in late 2024",
+          "what": "A more sophisticated USBFect campaign wave"
         },
         {
           "v": "December 2024",
-          "q": "impacted entities in the Philippines, while the December 2024 campaign broadened targeting to Taiwan and",
+          "q": "the December 2024 campaign broadened targeting to Taiwan and",
           "what": "Campaign broadened targeting to Taiwan and replaced Claimloader with ColorDrama"
         },
         {
           "v": "2025",
-          "q": "Between 2023 and 2025, CrowdStrike Intelligence exposed a series of evolving USB-borne campaigns",
-          "what": "Period covered by CrowdStrike's reporting on the USB-borne campaigns"
-        },
-        {
-          "v": "2025",
-          "q": "2025 campaigns where infected USB drives automatically executed hidden files and dropped CoinMiner malware",
-          "what": "Late 2025 campaigns in which infected USB drives dropped CoinMiner malware"
-        },
-        {
-          "v": "2025",
           "q": "In a high-profile case reported in 2025, a Silicon Valley-area defense engineer admitted to",
-          "what": "Defense engineer case in which over 3,600 files were moved to personal storage"
+          "what": "Insider admitted transferring defense-related files to personal storage devices"
+        },
+        {
+          "v": "2025",
+          "q": "2025 campaigns where infected USB drives",
+          "what": "Late 2025 campaigns used infected USB drives to drop CoinMiner malware"
         }
       ],
       "tools": [
+        {
+          "v": "USBFect",
+          "q": "At the center of these operations was USBFect, a custom USB worm"
+        },
+        {
+          "v": "Claimloader",
+          "q": "Claimloader or ColorDrama to execute LingerRAT"
+        },
+        {
+          "v": "ColorDrama",
+          "q": "replaced Claimloader with ColorDrama, signaling"
+        },
+        {
+          "v": "LingerRAT",
+          "q": "Claimloader or ColorDrama to execute LingerRAT"
+        },
+        {
+          "v": "CoinMiner",
+          "q": "dropped CoinMiner malware as soon as they were connected"
+        },
         {
           "v": "Hworm",
           "q": "These attacks deployed additional tools such as Hworm, Brute Ratel"
@@ -91,63 +98,39 @@
         {
           "v": "AsyncRAT",
           "q": "components, and AsyncRAT to establish persistence and remote control"
-        },
-        {
-          "v": "CoinMiner",
-          "q": "2025 campaigns where infected USB drives automatically executed hidden files and dropped CoinMiner malware"
-        },
-        {
-          "v": "USBFect",
-          "q": "At the center of these operations was USBFect, a custom USB worm engineered to silently propagate across removable drives"
-        },
-        {
-          "v": "Claimloader",
-          "q": "launch adversary payloads including either Claimloader or ColorDrama to execute LingerRAT shellcode."
-        },
-        {
-          "v": "ColorDrama",
-          "q": "launch adversary payloads including either Claimloader or ColorDrama to execute LingerRAT shellcode."
-        },
-        {
-          "v": "LingerRAT",
-          "q": "launch adversary payloads including either Claimloader or ColorDrama to execute LingerRAT shellcode."
         }
       ],
       "techniques": [
         {
-          "v": "social engineering",
-          "q": "USBFect relies heavily on social engineering: It"
+          "v": "USB worm self-propagation",
+          "q": "a custom USB worm engineered to silently propagate across removable drives"
         },
         {
-          "v": "persistence via registry manipulation",
+          "v": "social engineering lures",
+          "q": "USBFect relies heavily on social engineering"
+        },
+        {
+          "v": "registry-based persistence",
           "q": "establishes persistence via registry manipulation"
         },
         {
-          "v": "self-propagation to newly connected USB drives",
-          "q": "automatically spreads to any newly connected USB drive"
-        },
-        {
-          "v": "automatic execution of hidden files from removable media",
-          "q": "infected USB drives automatically executed hidden files"
-        },
-        {
-          "v": "offline data movement to evade network controls",
-          "q": "move data offline, evade network-based controls, and bypass digital defenses"
+          "v": "encrypted archives for data exfiltration",
+          "q": "Attackers often package data into encrypted files before moving it to"
         },
         {
           "v": "copying data to personal storage devices",
-          "q": "transferring more than 3,600 proprietary files related to missile detection and advanced sensor technologies to"
+          "q": "continuing to rely on USB drives and personal storage devices to steal sensitive data"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "three campaigns",
-          "q": "Across three campaigns — two in 2023 and a more sophisticated wave in late 2024 — MUSTANG PANDA"
+          "v": "3,600",
+          "q": "admitted to transferring more than 3,600 proprietary files"
         },
         {
-          "v": "more than 3,600 proprietary files",
-          "q": "transferring more than 3,600 proprietary files related to missile detection and advanced sensor technologies to"
+          "v": "three",
+          "q": "Across three campaigns — two in 2023 and a more sophisticated wave in late 2024"
         }
       ]
     },
@@ -156,17 +139,18 @@
       "name": "USBFect"
     },
     "hedges": [
-      "The late 2025 USB campaigns and the 2025 defense insider case are cited to third-party reporting in the footnotes, not to CrowdStrike's own observation.",
-      "CrowdStrike says its own intelligence and Falcon teams observed 2025 North American USBFect activity; footnote 3 cites internal threat intelligence.",
-      "The report describes MUSTANG PANDA as a 'China-nexus' adversary rather than naming a state."
+      "Employees or attackers may try to evade controls by renaming files, changing formats, or copying and pasting content.",
+      "The early MUSTANG PANDA operations primarily impacted entities in the Philippines.",
+      "The late 2025 CoinMiner campaign claim is sourced to third-party reporting cited by footnote.",
+      "The 2025 North America observation is sourced to CrowdStrike internal threat intelligence."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:22Z",
-      "ok": false,
-      "note": "countries[4]: The quote only says 'China-nexus adversary'. The text does not name China as a state, and the card's own hedges[2] says so. Listing China as a cou",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:22Z",
+        "ok": false,
+        "note": "countries[4]: The quote only says 'China-nexus adversary'. The text does not name China as a state, and the card's own hedges[2] says so. Listing China as a cou",
+        "by": "auditor"
+      }
+    ]
   }
 }

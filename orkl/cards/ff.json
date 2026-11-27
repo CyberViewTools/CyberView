@@ -129,67 +129,72 @@
   },
   "ffaaf49f0ead72966c28858a9674927f78fe951a": {
     "sha1": "ffaaf49f0ead72966c28858a9674927f78fe951a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:13:09Z",
+    "read_at": "2026-11-27T02:48:45Z",
     "model": "haiku",
-    "summary": "S2W's TALON team analysed DocSwap, an Android malware sample found on VirusTotal in January 2025 that poses as a document-viewing authentication app. It logs keystrokes through accessibility services, takes commands from a command-and-control server (57 identified), and steals data including audio, video and messages. The report suspects a North Korean-backed group, possibly Kimsuky, which S2W tracks as puNK-004. Both attributions are hedged as suspected or possible.",
+    "summary": "S2W's TALON team analysed DocSwap, a mobile app sample found on VirusTotal in January 2025 that is disguised as a document-viewing authentication app. It logs keystrokes through accessibility services, receives commands from a C2 server and performs information theft. S2W suspects a North Korea-linked actor, tracked as puNK-004 and possibly connected to Kimsuky, and suspects that South Korean mobile users are targeted.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "North Korean-backed APT group",
-          "q": "which is suspected to be linked to a North Korean-backed APT group.",
-          "by": "S2W (the report)"
+          "q": "which is suspected to be linked to a North Korean-backed APT group",
+          "by": "S2W Threat Research and Intelligence Center TALON (report author)"
         },
         {
-          "v": "Kimsuky",
-          "q": "indicating a possible connection to the Kimsuky group.",
-          "by": "S2W (the report)"
+          "v": "Kimsuky group",
+          "q": "possible connection to the Kimsuky group",
+          "by": "S2W Threat Research and Intelligence Center TALON (report author)"
         },
         {
           "v": "puNK-004",
           "q": "the threat actors using the DocSwap malware have been designated as puNK-004",
-          "by": "S2W (the report)"
+          "by": "S2W Threat Research and Intelligence Center TALON (report author)"
         }
       ],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "mobile device users",
+          "q": "suspected to target mobile device users in South Korea"
+        }
+      ],
       "countries": [
         {
           "v": "South Korea",
-          "q": "suspected to target mobile device users in South Korea."
+          "q": "suspected to target mobile device users in South Korea"
         },
         {
           "v": "North Korea",
-          "q": "Among them, attack groups linked to North Korea are tracked under the name puNK and the threat actors"
+          "q": "attack groups linked to North Korea are tracked under the name puNK"
         }
       ],
       "dates": [
         {
-          "v": "2025-01-21",
-          "q": "On January 21, 2025, a malicious app named “문서열람 인증 앱” was identified through VirusTotal and",
-          "what": "malicious app identified on VirusTotal"
+          "v": "January 21, 2025",
+          "q": "On January 21, 2025, S2W Threat Research and Intelligence Center Talon hunted and",
+          "what": "malware sample found on VirusTotal and analysed by S2W"
         },
         {
-          "v": "2024-12-13",
+          "v": "December 13, 2024",
           "q": "The malicious app was first signed on December 13, 2024.",
           "what": "malicious app first signed"
         },
         {
-          "v": "2025-02-21",
-          "q": "On February 21, 2025, when accessing the app’s C2 address, a phishing page masquerading as CoinSwap",
-          "what": "C2 address showed a phishing page impersonating CoinSwap"
+          "v": "February 21, 2025",
+          "q": "On February 21, 2025, when accessing the app's C2 address, a phishing page masquerading as CoinSwap was",
+          "what": "phishing page impersonating CoinSwap observed at the C2 address"
         },
         {
-          "v": "2025-02-27",
-          "q": "However, on February 27, 2025, it was noticed that the Naver favicon and the string “Million OK !!!!”",
-          "what": "C2 address showed a Naver favicon and the string Million OK"
+          "v": "February 27, 2025",
+          "q": "on February 27, 2025, it was noticed that the Naver favicon and the string",
+          "what": "Naver favicon and a special string observed at the C2 address"
         }
       ],
       "tools": [
         {
           "v": "DocSwap",
-          "q": "leading to its designation as DocSwap."
+          "q": "leading to its designation as DocSwap"
         },
         {
           "v": "LoadedApkPlugin",
@@ -198,36 +203,52 @@
       ],
       "techniques": [
         {
-          "v": "keylogging via accessibility services",
-          "q": "such as keylogging through accessibility services, file transfers via socket communication, camera"
+          "v": "Boot or Logon Initialization Scripts",
+          "q": "(T1398) Boot or Logon Initialization Scripts"
         },
         {
-          "v": "masquerading as a document-viewing authentication app",
-          "q": "masquerading as a Document-viewing authentication app."
-        },
-        {
-          "v": "persistence across phone reboot",
-          "q": "ensures that the malware runs even after a phone reboot by triggering the"
-        },
-        {
-          "v": "Foreground persistence",
+          "v": "Foreground Persistence",
           "q": "(T1541) Foreground Persistence"
         },
         {
-          "v": "Audio capture",
+          "v": "Match Legitimate Name or Location",
+          "q": "(T1655.001) Match Legitimate Name or Location"
+        },
+        {
+          "v": "Obfuscated Files or Information",
+          "q": "(T1406) Obfuscated Files or Information"
+        },
+        {
+          "v": "keylogging through accessibility services",
+          "q": "The malicious app performs keylogging through accessibility services."
+        },
+        {
+          "v": "Audio Capture",
           "q": "(T1429) Audio Capture"
         },
         {
-          "v": "Video capture",
+          "v": "Video Capture",
           "q": "(T1512) Video Capture"
         },
         {
-          "v": "SMS message collection",
+          "v": "SMS messages",
           "q": "(T1636.004) SMS Messages"
         },
         {
-          "v": "Keylogging",
-          "q": "(T1417.001) Keylogging"
+          "v": "Archive Collected Data",
+          "q": "(T1532) Archive Collected Data"
+        },
+        {
+          "v": "Exfiltration Over C2 Channel",
+          "q": "(T1646) Exfiltration Over C2 Channel"
+        },
+        {
+          "v": "phishing impersonating CoinSwap",
+          "q": "A phishing page impersonating CoinSwap was found at the C2 Infrastructure"
+        },
+        {
+          "v": "disguised as a document-viewing authentication app",
+          "q": "masquerading as a Document-viewing authentication app"
         }
       ],
       "cves": [],
@@ -243,18 +264,19 @@
       "name": "DocSwap"
     },
     "hedges": [
-      "which is suspected to be linked to a North Korean-backed APT group.",
-      "suspected to target mobile device users in South Korea.",
-      "indicating a possible connection to the Kimsuky group.",
-      "Kimsuky link rests on a similar trait previously seen in phishing servers targeting Naver accounts of the Kimsuky group."
+      "suspected to be linked to a North Korean-backed APT group",
+      "indicating a possible connection to the Kimsuky group",
+      "suspected to target mobile device users in South Korea",
+      "Based on the malicious app's name and the presence of Korean-language strings, it is suspected to target mobile device users in South Korea.",
+      "Given that a similar characteristic was previously observed in phishing servers targeting Naver accounts of the Kimsuky group."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:59Z",
-      "ok": false,
-      "note": "summary: It says Kimsuky is 'which S2W tracks as puNK-004'. The text only says the DocSwap threat actors are designated puNK-004, and that the Naver favicon and",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:59Z",
+        "ok": false,
+        "note": "summary: It says Kimsuky is 'which S2W tracks as puNK-004'. The text only says the DocSwap threat actors are designated puNK-004, and that the Naver favicon and",
+        "by": "auditor"
+      }
+    ]
   }
 }

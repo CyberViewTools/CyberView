@@ -195,17 +195,17 @@
   },
   "8b7379363ff30208137df63589f03fe755886953": {
     "sha1": "8b7379363ff30208137df63589f03fe755886953",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:13:25Z",
+    "read_at": "2026-11-27T02:48:16Z",
     "model": "haiku",
-    "summary": "Interpres Security report on abuse of the macOS TCC (Transparency, Consent and Control) database to bypass privacy controls. It covers DPRK-linked Lazarus Group activity and APT37's CloudMensis, plus Callisto, Bundlore, BlueBlood, JokerSpy and XCSSET samples found through VirusTotal hunting. It also covers historical CVEs (CVE-2020-9934, CVE-2020-27937, CVE-2020-9771), social engineering, and defender recommendations.",
+    "summary": "Interpres Security research post on abuse of the macOS TCC privacy database (TCC.db): historical bypasses, staging and social-engineering tactics, and VirusTotal hunts. It links DPRK-attributed Lazarus Group and APT37 (CloudMensis) activity to macOS, and covers Callisto, Bundlore, BlueBlood, JokerSpy and XCSSET. It ends with blue-team recommendations: patching, SIP, restricting Terminal Full Disk Access, MDM controls. The hunt results are the author's and may not reflect in-the-wild activity.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "Lazarus Group",
-          "q": "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009",
+          "q": "The Lazarus Group is believed to operate out of North Korea",
           "by": "the report itself"
         },
         {
@@ -217,17 +217,25 @@
       "sectors": [
         {
           "v": "cryptocurrency",
-          "q": "they were heavily observed targeting cryptocurrency companies"
+          "q": "In 2023, they were heavily observed targeting cryptocurrency companies"
         },
         {
-          "v": "cryptocurrency",
+          "v": "cryptocurrency exchange",
           "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+        },
+        {
+          "v": "security research",
+          "q": "having targeted security researchers in 2021 and engineers via social engineering methods using LinkedIn and email"
+        },
+        {
+          "v": "software developers and engineers",
+          "q": "targeting unsuspecting developers and engineering roles with the promise"
         }
       ],
       "countries": [
         {
           "v": "North Korea",
-          "q": "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009"
+          "q": "The Lazarus Group is believed to operate out of North Korea"
         },
         {
           "v": "Japan",
@@ -241,13 +249,28 @@
           "what": "Apple patched the CVE-2020-9934 TCC bypass"
         },
         {
+          "v": "2009",
+          "q": "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009",
+          "what": "Lazarus Group active since"
+        },
+        {
+          "v": "2015",
+          "q": "Bundlore is a notorious macOS adware that has also been around since 2015 and gained notoriety in 2019.",
+          "what": "Bundlore adware around since"
+        },
+        {
+          "v": "2019",
+          "q": "Bundlore is a notorious macOS adware that has also been around since 2015 and gained notoriety in 2019.",
+          "what": "Bundlore gained notoriety"
+        },
+        {
           "v": "2020",
-          "q": "With Operation Dream Job dating back to at least 2020",
+          "q": "With Operation Dream Job dating back to at least 2020, the Lazarus Group pretended to be cryptocurrency companies",
           "what": "Operation Dream Job dating back to at least this year"
         },
         {
           "v": "2021",
-          "q": "having targeted security researchers in 2021",
+          "q": "having targeted security researchers in 2021 and engineers via social engineering methods using LinkedIn and email",
           "what": "Lazarus Group targeted security researchers"
         },
         {
@@ -263,19 +286,19 @@
         },
         {
           "v": "Callisto",
-          "q": "Results: 4 hits attributed to Callisto, a different macOS backdoor that some sources state serves as"
+          "q": "Results: 4 hits attributed to Callisto, a different macOS backdoor"
         },
         {
           "v": "Bundlore",
-          "q": "Bundlore is a notorious macOS adware that has also been around since 2015"
+          "q": "Bundlore is a notorious macOS adware"
         },
         {
           "v": "BlueBlood",
-          "q": "I am assuming the BlueBlood keylogger samples I have corresponds to the BlueBlood keylogger that has been"
+          "q": "the BlueBlood keylogger that has been around for years"
         },
         {
           "v": "JokerSpy",
-          "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+          "q": "JokerSpy is a malware leveraging SwiftBelt"
         },
         {
           "v": "SwiftBelt",
@@ -283,53 +306,105 @@
         },
         {
           "v": "XCSSET",
-          "q": "Digging into how this campaign operates, the developers of XCSSET used three zero-days to bypass"
+          "q": "I came across XCSSET, another malware sample absent from my VT hunt"
+        },
+        {
+          "v": "Operation Dream Job",
+          "q": "With Operation Dream Job dating back to at least 2020"
+        },
+        {
+          "v": "csrutil",
+          "q": "CloudMensis consistently leverages csrutil to query the status of SIP protection"
+        },
+        {
+          "v": "sqlite3",
+          "q": "If an app could write to TCC.db using sqlite3 INSERT commands"
+        },
+        {
+          "v": "tccd",
+          "q": "Tccd is the dedicated for TCC; it exists for each logged-in user and system."
+        },
+        {
+          "v": "tccutil",
+          "q": "As a last (nuclear) option, you can reset TCC settings with tccutil"
+        },
+        {
+          "v": "Finder",
+          "q": "Finder, unbeknownst to the user, has access to FDA by default"
+        },
+        {
+          "v": "Directory Utility",
+          "q": "by modifying the NFSHomeDirectory entry under the Directory Utility app"
+        },
+        {
+          "v": "mdfind",
+          "q": "Using mdfind, it checks if the appIDs of those apps are present."
+        },
+        {
+          "v": "cp",
+          "q": "leveraging the binaries xcc and cp"
         },
         {
           "v": "VirusTotal",
-          "q": "I realized VirusTotal was not using the quotes to denote a literal"
+          "q": "Threat Hunting in VirusTotal"
         }
       ],
       "techniques": [
         {
-          "v": "write to TCC.db",
-          "q": "could directly write to TCC.db to give themselves permissions"
+          "v": "direct writes to the TCC database to grant permissions",
+          "q": "In earlier implementations, a malicious actor could directly write to TCC.db to give themselves permissions"
+        },
+        {
+          "v": "granting Full Disk Access",
+          "q": "If you are an admin, and you can grant yourself FDA,"
+        },
+        {
+          "v": "redirecting the user TCC database via a directory setting",
+          "q": "by modifying the NFSHomeDirectory entry under the Directory Utility app"
+        },
+        {
+          "v": "mounting local snapshots to read files",
+          "q": "Because TCC privacy is not enforced on mounted local snapshots"
+        },
+        {
+          "v": "using TCC-protected areas as staging directories",
+          "q": "malware authors could use these TCC protected areas as"
+        },
+        {
+          "v": "staging in directories TCC does not protect",
+          "q": "$HOME/.ssh, $HOME/.aws, and /tmp, just to name a few."
         },
         {
           "v": "social engineering",
           "q": "Finally, social engineering also works!"
         },
         {
-          "v": "override Gatekeeper",
+          "v": "guiding users to override Gatekeeper",
           "q": "directing users on how to override Gatekeeper step-by-step"
         },
         {
-          "v": "screen capture",
-          "q": "allowing them to take screen captures"
+          "v": "masquerading",
+          "q": "I noted the heavy use of masquerading and TCC.db related activity."
         },
         {
-          "v": "logs keyboard events",
-          "q": "and logs keyboard events"
+          "v": "privacy setting enumeration",
+          "q": "Adversaries performed TCC.db privacy setting enumeration and discovery by using SELECT statements in"
         },
         {
-          "v": "inject its own malicious app into the bundle",
-          "q": "it will inject its own malicious app into the bundle of"
+          "v": "keyboard event logging",
+          "q": "gains access to the screen, scans removable storage for documents of interest, and logs keyboard events"
         },
         {
-          "v": "creates a new TCC database",
-          "q": "It creates a new TCC database and replaces the existing legitimate TCC"
+          "v": "screen capture by hijacking other apps' entitlements",
+          "q": "allowing them to take screen captures by hijacking the entitlements of other apps on the system"
         },
         {
-          "v": "mount local apfs snapshots",
-          "q": "anyone can mount local apfs snapshots if using"
+          "v": "injecting into other apps' bundles",
+          "q": "it will inject its own malicious app into the bundle of any of those apps"
         },
         {
-          "v": "TCC.db privacy setting enumeration",
-          "q": "Adversaries performed TCC.db privacy setting enumeration and discovery"
-        },
-        {
-          "v": "masquerade as an Apple sanctioned appID",
-          "q": "named in this fashion likely to masquerade as an Apple sanctioned appID for the accessibility list"
+          "v": "interactive commands decoupled from malware",
+          "q": "VirusTotal will only show malware strings and commands, whereas adversaries can and will run"
         }
       ],
       "cves": [
@@ -339,7 +414,7 @@
         },
         {
           "v": "CVE-2020-27937",
-          "q": "Similarly, in CVE-2020-27937, an actor can gain control of TCC by modifying the NFSHomeDirectory"
+          "q": "Similarly, in CVE-2020-27937, an actor can gain control of TCC by modifying the NFSHomeDirectory entry"
         },
         {
           "v": "CVE-2020-9771",
@@ -352,28 +427,20 @@
           "q": "1% a year over the past 14 years (from 3% to 16.5%)"
         },
         {
-          "v": "33%",
-          "q": "macOS is gaining traction at 33%"
+          "v": "87,000",
+          "q": "out of over 87,000 developer responses, we see that macOS is gaining traction at 33%"
         },
         {
-          "v": "87,000",
-          "q": "out of over 87,000 developer responses"
+          "v": "33%",
+          "q": "out of over 87,000 developer responses, we see that macOS is gaining traction at 33%"
         },
         {
           "v": "186",
           "q": "Results: 186 hits!"
         },
         {
-          "v": "9",
-          "q": "Results: 9 hits, all of which were popping up as"
-        },
-        {
           "v": "37",
-          "q": "Results: 37 hits!"
-        },
-        {
-          "v": "41",
-          "q": "Results: 41 hits, less than half were confirmed malware"
+          "q": "Results: 37 hits! Less than half were confirmed malware"
         },
         {
           "v": "35",
@@ -382,26 +449,47 @@
         {
           "v": "8",
           "q": "Rummaging through the results, 8 hits tied back to CloudMensis."
+        },
+        {
+          "v": "9",
+          "q": "Pouring into the 9 samples I found on VT"
+        },
+        {
+          "v": "11",
+          "q": "Results: 11 hits, 10 of which were confirmed malware samples"
+        },
+        {
+          "v": "41",
+          "q": "Results: 41 hits, less than half were confirmed malware."
+        },
+        {
+          "v": "3",
+          "q": "3 hits: (at the time of discovery)"
+        },
+        {
+          "v": "three",
+          "q": "the developers of XCSSET used three zero-days to bypass"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "I am by no means a VirusTotal query pro, and your mileage may vary depending on your subscription, date of query, etc.",
-      "just because we did not see hits in VT does not mean these techniques are not happening in the wild.",
-      "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009",
-      "Lazarus Group appears to be attempting to dump the access table from the TCC.db",
-      "some sources state serves as the forerunner of the Proton family of malware",
-      "Either the target hosts were known to be running macOS Catalina 10.5.6 or earlier, or the malware contained legacy code that the developers forgot to remove.",
-      "It is unclear if this is a viable or high-fidelity query currently."
+      "The author is not a VirusTotal query expert; results depend on subscription type, query date and search syntax.",
+      "Absence of VirusTotal hits does not mean these techniques are not happening in the wild.",
+      "Lazarus Group is said to be believed to operate from North Korea, and Lazarus appears to be dumping the TCC access table.",
+      "Either the target hosts were known to run macOS Catalina 10.5.6 or earlier, or the malware held legacy code the developers forgot to remove.",
+      "CloudMensis seems to be mitigated on up-to-date MacBooks with SIP enabled.",
+      "Some sources state Callisto is the forerunner of the Proton malware family.",
+      "It is unclear whether the APFS-mount detection query is viable or high-fidelity.",
+      "Malware authors may decouple TCC commands from their files, possibly as a means of file-based detection evasion."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:03Z",
-      "ok": false,
-      "note": "summary: It says Callisto, Bundlore, BlueBlood, JokerSpy and XCSSET were 'samples found through VirusTotal hunting'. The text says JokerSpy and XCSSET did NOT s",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:03Z",
+        "ok": false,
+        "note": "summary: It says Callisto, Bundlore, BlueBlood, JokerSpy and XCSSET were 'samples found through VirusTotal hunting'. The text says JokerSpy and XCSSET did NOT s",
+        "by": "auditor"
+      }
+    ]
   }
 }

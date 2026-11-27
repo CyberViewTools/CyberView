@@ -51,11 +51,11 @@
   },
   "3f3aed9ad668eda74e5140d895f2b5d6b5d11271": {
     "sha1": "3f3aed9ad668eda74e5140d895f2b5d6b5d11271",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:15:39Z",
+    "read_at": "2026-11-27T02:48:23Z",
     "model": "haiku",
-    "summary": "A malware-development tutorial by a blogger (cocomelonc) showing a simple Windows keylogger proof-of-concept written in C, which records keystrokes to a local text file. It is an educational how-to article about a programming technique, not a report on threat activity by any actor, campaign or incident. It mentions several named groups and malware families only in passing.",
+    "summary": "A tutorial blog post, not a threat report. It walks through a simple proof-of-concept Windows keylogger written in C, which logs keystrokes to a local text file, and says it is for educational purposes. It mentions other malware and groups only in passing, with no analysis of them, and it is not an intelligence report on any actor, campaign or incident.",
     "kind": "not-a-threat-report",
     "facts": {
       "actors": [],
@@ -71,97 +71,44 @@
     "hedges": [
       "This is a practical case for educational purposes only."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:34Z",
-      "ok": false,
-      "note": "summary: The text mentions the named groups and malware (APT37, Sandworm, MyDoom, ROKRAT, NOKKI) as having employed this trick, not merely in passing. The summa",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:34Z",
+        "ok": false,
+        "note": "summary: The text mentions the named groups and malware (APT37, Sandworm, MyDoom, ROKRAT, NOKKI) as having employed this trick, not merely in passing. The summa",
+        "by": "auditor"
+      }
+    ]
   },
   "3f780cfb0f5b50f46b0ab544610e6279810af77c": {
     "sha1": "3f780cfb0f5b50f46b0ab544610e6279810af77c",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T02:15:56Z",
+    "read_at": "2026-11-27T02:48:37Z",
     "model": "haiku",
-    "summary": "Intego's blog describes HZ RAT, a macOS remote access Trojan first observed in 2022 targeting Windows PCs and now on Macs. It gives attackers full remote control and is described as mainly used for data collection: installed app lists, WeChat and DingTalk user data, and username-site pairs from Google Password Manager. One known installer is a trojanised OpenVPN Connect. How victims get the installers is not known. The post lists antivirus detection names and C2 IP addresses, most apparently in China; these are not recorded here.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "China",
-          "q": "be located in China:"
-        }
-      ],
-      "dates": [
-        {
-          "v": "2024-09-05",
-          "q": "Published: 2024-09-05 · Archived: 2026-04-10 03:02:09 UTC",
-          "what": "Intego blog post on HZ RAT published"
-        },
-        {
-          "v": "2022",
-          "q": "The earliest known version of this RAT was observed in 2022 targeting Windows PCs",
-          "what": "Earliest known version of the RAT observed, targeting Windows PCs"
-        },
-        {
-          "v": "2024",
-          "q": "(a very common malware distribution tactic in 2024)",
-          "what": "Malicious search ads described as a very common malware distribution tactic"
-        }
-      ],
-      "tools": [
-        {
-          "v": "HZ RAT",
-          "q": "HZ RAT is a remote access Trojan (RAT)—a tool that gives an attacker full remote administration privileges."
-        },
-        {
-          "v": "OpenVPN Connect",
-          "q": "a maliciously modified version of OpenVPN Connect, a common VPN app."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "remote access trojan with full remote control",
-          "q": "HZ RAT is a remote access Trojan (RAT)—a tool that gives an attacker full remote administration privileges."
-        },
-        {
-          "v": "harvesting app list and WeChat/DingTalk user data",
-          "q": "collects user information from WeChat and DingTalk (Mac apps commonly used in"
-        },
-        {
-          "v": "collecting Google Password Manager username-site pairs",
-          "q": "It also gathers the username and site combinations from Google Password Manager."
-        },
-        {
-          "v": "trojanised OpenVPN Connect installer",
-          "q": "a maliciously modified version of OpenVPN Connect, a common VPN app."
-        }
-      ],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
       "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "HZ RAT"
-    },
-    "hedges": [
-      "It isn't yet known how victims may have encountered HZ RAT installers in the first place.",
-      "Distribution through malicious Google ads or watering-hole style attacks is described only as possible.",
-      "Most of the C2 IP addresses appear to be located in China.",
-      "The report notes the trojanised OpenVPN Connect is one known installer, not necessarily the only one."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:34Z",
-      "ok": false,
-      "note": "summary: It says HZ RAT is 'described as mainly used for data collection'. The text is hedged: 'Data collection appears to be one of the main purposes of HZ RAT",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:34Z",
+        "ok": false,
+        "note": "summary: It says HZ RAT is 'described as mainly used for data collection'. The text is hedged: 'Data collection appears to be one of the main purposes of HZ RAT",
+        "by": "auditor"
+      }
+    ]
   }
 }

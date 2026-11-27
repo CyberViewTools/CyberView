@@ -1,37 +1,47 @@
 {
   "8776907f05d885e069149847589b31708c5fc1f5": {
     "sha1": "8776907f05d885e069149847589b31708c5fc1f5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:19:48Z",
+    "read_at": "2026-11-27T02:50:39Z",
     "model": "haiku",
-    "summary": "A Malpedia family page for HelloKitty, a ransomware family that the page says first surfaced at the end of 2020 and was primarily targeting Windows systems. Its name comes from a mutex called HelloKitty Mutex, and different versions use the .crypted or .kitty file extensions. Newer samples use a Golang packer so the final ransomware code is loaded only in memory. The page says this is most likely to evade security detection. The rest of the page is a dated list of reports from 2020 to 2022 by vendors and agencies, including an FBI report that names FiveHands. The page gives no sectors,…",
-    "kind": "malware-analysis",
+    "summary": "Malpedia family page for HelloKitty, a ransomware family that mainly targets Windows and, according to Unit42, first surfaced at the end of 2020. Samples evolve quickly, and newer ones use a Golang packer. The page lists third-party reports from 2020 to 2023, including a 2021 FBI report on Hello Kitty/FiveHands tactics, a 2021 warning that the group added DDoS to its extortion, and a 2021 tweet about the group targeting CD PROJEKT RED.",
+    "kind": "overview",
     "facts": {
       "actors": [
         {
-          "v": "UNC2447",
-          "q": "UNC2447 SOMBRAT and FIVEHANDS Ransomware: A Sophisticated Financial Threat",
-          "by": "FireEye (2021-04-29 listing)"
+          "v": "HelloKitty ransomware group",
+          "q": "Tweet on CD PROJEKT RED targeted by HelloKitty ransomware group",
+          "by": "Fabian Wosar (tweet cited in the report)"
         }
       ],
       "sectors": [],
       "countries": [],
       "dates": [
         {
-          "v": "end of 2020",
+          "v": "2020",
           "q": "HelloKitty is a ransomware family that first surfaced at the end of 2020",
-          "what": "HelloKitty first surfaced, per the page's Unit42 statement"
+          "what": "HelloKitty first surfaced (per Unit42)"
         },
         {
           "v": "2020-11-13",
           "q": "2020-11-13 ⋅ ID Ransomware ⋅ Andrew Ivanov",
-          "what": "ID Ransomware entry on HelloKitty Ransomware"
+          "what": "Entry on HelloKitty Ransomware listed by ID Ransomware"
         },
         {
           "v": "2021-02-09",
           "q": "2021-02-09 ⋅ Twitter (@fwosar) ⋅ Fabian Wosar",
-          "what": "Post on CD PROJEKT RED being targeted by the HelloKitty ransomware group"
+          "what": "Tweet reports CD PROJEKT RED targeted by HelloKitty ransomware group"
+        },
+        {
+          "v": "2021-02-10",
+          "q": "2021-02-10 ⋅ Cado Security ⋅ Christopher Doman",
+          "what": "Cado Security analysis of HelloKitty ransomware attacks"
+        },
+        {
+          "v": "2021-06-28",
+          "q": "2021-06-28 ⋅ CrowdStrike ⋅ Alexandru Ghita",
+          "what": "CrowdStrike entry on a new ransomware variant using a Golang packer"
         },
         {
           "v": "2021-07-17",
@@ -39,14 +49,14 @@
           "what": "Report that HelloKitty ransomware is targeting vulnerable SonicWall devices"
         },
         {
-          "v": "2021-08-24",
-          "q": "2021-08-24 ⋅ Palo Alto Networks Unit 42 ⋅ Doel Santos, Ruchna Nigam",
-          "what": "Unit 42 entry in Ransomware Groups to Watch: Emerging Threats"
-        },
-        {
           "v": "2021-10-28",
           "q": "2021-10-28 ⋅ FBI ⋅ FBI",
-          "what": "FBI report CU-000154-MW on tactics, techniques and indicators for Hello Kitty/FiveHands ransomware"
+          "what": "FBI report on tactics and indicators associated with Hello Kitty/FiveHands ransomware"
+        },
+        {
+          "v": "2021-11-02",
+          "q": "2021-11-02 ⋅ SpearTip ⋅ Chris Swagler",
+          "what": "Warning that HelloKitty ransomware added DDoS to its extortion arsenal"
         }
       ],
       "tools": [
@@ -61,37 +71,42 @@
       ],
       "techniques": [
         {
-          "v": "Mutex",
-          "q": "The malware family got its name due to its use of a Mutex with the same name:"
-        },
-        {
           "v": "Golang packer",
-          "q": "Some newer samples make use of a Golang packer that ensures the final ransomware code is only loaded in memory"
+          "q": "Some newer samples make use of a Golang packer"
         },
         {
-          "v": "DDoS",
+          "v": "targeting vulnerable SonicWall devices",
+          "q": "HelloKitty ransomware is targeting vulnerable SonicWall devices"
+        },
+        {
+          "v": "DDoS added to extortion",
           "q": "FBI Warning: HelloKitty Ransomware Add DDoS to Extortion Arsenal"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "CU-000154-MW",
+          "q": "CU-000154-MW: Tactics, Techniques, and Indicators of Compromise Associated with Hello Kitty/FiveHands"
+        }
+      ]
     },
     "subject": {
       "type": "malware",
       "name": "HelloKitty"
     },
     "hedges": [
-      "The page says the ransomware samples seem to evolve quickly and frequently, with different versions using different file extensions.",
-      "The page says the Golang packer is most likely used to evade detection by security solutions.",
-      "The first-surfaced date and description are attributed to Unit42 in the page's own text."
+      "The ransomware samples seem to evolve quickly and frequently, with different versions making use of different file extensions.",
+      "Golang packer use is described as most likely to evade detection by security solutions.",
+      "The page is a listing of references; each date and attribution is as stated by the cited source."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:30:53Z",
-      "ok": false,
-      "note": "summary: Says the dated list runs from 2020 to 2022, but the page also lists 2023 entries (e.g. 2023-12-13, 2023-02-14, 2023-01-04). It also drops the hedge \"So",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:30:53Z",
+        "ok": false,
+        "note": "summary: Says the dated list runs from 2020 to 2022, but the page also lists 2023 entries (e.g. 2023-12-13, 2023-02-14, 2023-01-04). It also drops the hedge \"So",
+        "by": "auditor"
+      }
+    ]
   }
 }

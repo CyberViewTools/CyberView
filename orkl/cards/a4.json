@@ -296,38 +296,29 @@
   },
   "a4f74c55f5359b7588ac88acc87d71e0c9f81b42": {
     "sha1": "a4f74c55f5359b7588ac88acc87d71e0c9f81b42",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:15:26Z",
+    "read_at": "2026-11-27T02:48:58Z",
     "model": "haiku",
-    "summary": "DataBreaches reports that the ALPHV (BlackCat) ransomware group emailed Bangladesh Krishi Bank in June 2023, claiming it stole over 170Gb of data after 12 days inside the network and encrypted its servers. The group demanded a fee and threatened to publish the data, and the bank did not respond to it. Bank officials gave conflicting public statements in local media, and the group later called a news article about the incident inaccurate. The report says it could not confirm the breach details.",
+    "summary": "Report on a June 2023 ransomware attack on Bangladesh Krishi Bank, attributed to the AlphV (BlackCat) group. The attackers claim 12 days inside the network, over 170Gb of data taken, encrypted servers, and a demand to negotiate under threat of publication. They emailed the bank on June 23 and July 6 and set a 72-hour deadline from July 8. Bank officials told local media there was no hacking, or that the servers were only down. The report contrasts these statements with the attackers' claims and says the bank had not replied to its questions.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
-          "v": "ALPHV Ransomware Team",
-          "q": "This is ALPHV Ransomware Team.",
-          "by": "the report itself, quoting the attackers' own email"
-        },
-        {
           "v": "AlphV",
-          "q": "An AlphV spokesperson confirmed to DataBreaches that BKB hadn’t contacted AlphV at all",
-          "by": "the report itself, citing an AlphV spokesperson"
+          "q": "An AlphV spokesperson confirmed to DataBreaches that BKB hadn’t contacted AlphV at all since their first June",
+          "by": "the report, citing an AlphV spokesperson"
         },
         {
           "v": "BlackCat",
           "q": "BlackCat to Bangladeshi news outlets",
-          "by": "the report itself (article title)"
+          "by": "the report itself"
         }
       ],
       "sectors": [
         {
-          "v": "bank",
-          "q": "The [Managing Director] of the bank gave this information"
-        },
-        {
-          "v": "financial",
-          "q": "financial data (accounts, statements, payments, taxes, etc)"
+          "v": "Bank",
+          "q": "Bangladesh Krishi Bank (BKB)"
         }
       ],
       "countries": [
@@ -339,53 +330,62 @@
       "dates": [
         {
           "v": "June 21th 2023",
-          "q": "network on June 21th 2023.",
-          "what": "Breach at the bank network, according to the attackers' email"
+          "q": "“Bangladesh Krishi Bank” network on June 21th 2023.",
+          "what": "Attacker claims breach of the bank's network"
         },
         {
           "v": "June 23",
-          "q": "On June 23, using the greeting that Hive ransomware always used in emailing victims",
-          "what": "First extortion email sent to the bank"
+          "q": "On June 23, using the greeting that Hive ransomware always used in emailing victims, AlphV wrote to the",
+          "what": "AlphV first emailed the bank"
         },
         {
           "v": "June 25",
-          "q": "The [Managing Director] of the bank gave this information to the media on Sunday (June 25) night.",
-          "what": "Bank managing director told media that hackers had taken control of servers"
+          "q": "gave this information to the media on Sunday (June 25) night.",
+          "what": "Bank managing director gave media statements about the servers"
+        },
+        {
+          "v": "June 26",
+          "q": "25 news story reported that the Bangladesh Agricultural Bank was in the hands of hackers. And on June 26,",
+          "what": "News story reported the server was recovered after 72 hours"
         },
         {
           "v": "July 6",
-          "q": "On July 6, they wrote to BKB again",
-          "what": "Second email sent to the bank, with bank executives copied"
+          "q": "On July 6, they wrote to BKB again, with a large distribution list of executives at BKB included.",
+          "what": "Second email to the bank, copying its executives"
         },
         {
           "v": "July 8th 2023",
           "q": "within 72 hours starting July 8th 2023.",
-          "what": "Start of the attackers' 72-hour deadline for bank top management"
+          "what": "Start of the attackers' 72-hour deadline for bank contact"
         },
         {
-          "v": "2023-07-07",
-          "q": "Published: 2023-07-07 · Archived: 2026-04-11 02:21:07 UTC",
-          "what": "Publication date of the article"
+          "v": "6/19/2023",
+          "q": "sql backups dated 6/19/2023",
+          "what": "Date of SQL backups the attackers say they took"
         }
       ],
       "tools": [
         {
-          "v": "backdoor",
+          "v": "backdoor tools",
           "q": "We have placed a strong backdoor tools within Krishi Bank’s network,"
         }
       ],
       "techniques": [
         {
-          "v": "infiltrated your network",
-          "q": "We have infiltrated your network and stayed there for"
-        },
-        {
           "v": "encrypted all servers and data",
           "q": "Also we have encrypted all servers and data"
         },
         {
+          "v": "infiltrated your network and stayed there",
+          "q": "We have infiltrated your network and stayed there for"
+        },
+        {
           "v": "publish your data",
           "q": "we will be forced to publish your data for"
+        },
+        {
+          "v": "negotiation",
+          "q": "Our organisation is kindly offering you to start negotiation with us."
         }
       ],
       "cves": [],
@@ -404,26 +404,26 @@
         },
         {
           "v": "7 days",
-          "q": "should withdraw their money within 7 days"
+          "q": "the Bangladesh Krishi Bank should withdraw their money within 7 days"
         }
       ]
     },
     "subject": {
       "type": "incident",
-      "name": "Bangladesh Krishi Bank breach"
+      "name": "Bangladesh Krishi Bank ransomware incident"
     },
     "hedges": [
-      "The breach details are the attackers' own claims as quoted in the report; the bank had not replied to the report's questions.",
-      "The report quotes a news story saying it could not be confirmed whether any information was leaked or not.",
-      "The report says the attackers claim and have shown proof of claims, and that the bank's public statements appear inaccurate."
+      "The report says it could not be confirmed whether any information was leaked or not.",
+      "The report found no notice on the bank's website or press release, and no reply from the bank had been received.",
+      "The report says the bank may have been given inaccurate information, and presents the attackers' figures and claims as claims."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:03Z",
-      "ok": false,
-      "note": "summary: The claim 'The report says it could not confirm the breach details' is not in the text. The 'could not be confirmed' line is from a quoted local news s",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:03Z",
+        "ok": false,
+        "note": "summary: The claim 'The report says it could not confirm the breach details' is not in the text. The 'could not be confirmed' line is from a quoted local news s",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -28,30 +28,30 @@
   },
   "e82d84cd510e127ea76cb153a175d44ad12d761f": {
     "sha1": "e82d84cd510e127ea76cb153a175d44ad12d761f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:12:34Z",
+    "read_at": "2026-11-27T02:47:47Z",
     "model": "haiku",
-    "summary": "Report by Doron Karmi on the Konni malware family, a remote administration tool seen since early 2014 and potentially linked to North Korean group APT37. It describes three Konni campaigns in 2019, from January to late September, that used macro-armed Word lures, living-off-the-land tools such as certutil, a UAC bypass, and a free FTP service for command and data exfiltration. Named victims include political organizations in South Korea and Russia, plus others in Asia and the Middle East. The author notes overlap with the Syscon backdoor but cannot confirm it is the same actor.",
+    "summary": "Doron Karmi's write-up of three Konni malware campaigns observed in 2019 (January to late September). Macro-armed lure Word documents run certutil to fetch later stages, which bypass UAC, persist through the COMSysApp service, and exfiltrate data over a free FTP service. Konni is potentially linked to APT37, a North Korean espionage group. A possible overlap with the Syscon backdoor was noted but not confirmed.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "APT37",
-          "q": "potentially linked to APT37, a North-Korean cyber espionage group active since 2012",
-          "by": "the report (author Doron Karmi)"
+          "q": "potentially linked to APT37, a North-Korean cyber espionage group active since 2012.",
+          "by": "Doron Karmi, the report's author"
         }
       ],
       "sectors": [
         {
           "v": "political organizations",
-          "q": "The latest activities leveraging the Konni malware family potentially target political organizations and politically"
+          "q": "potentially target political organizations and politically"
         }
       ],
       "countries": [
         {
-          "v": "South-Korean",
-          "q": "are South-Korean political organizations, as well as Japan, Vietnam, Russia, Nepal, China, India, Romania,"
+          "v": "South-Korea",
+          "q": "motivated victims in Russia and South-Korea."
         },
         {
           "v": "Japan",
@@ -63,7 +63,7 @@
         },
         {
           "v": "Russia",
-          "q": "motivated victims in Russia and South-Korea. During my research, I observed 3 distinct campaigns throughout"
+          "q": "are South-Korean political organizations, as well as Japan, Vietnam, Russia, Nepal, China, India, Romania,"
         },
         {
           "v": "Nepal",
@@ -88,39 +88,49 @@
       ],
       "dates": [
         {
-          "v": "2014",
-          "q": "Konni is a remote administration tool, observed in the wild since early 2014.",
-          "what": "Konni first observed in the wild"
-        },
-        {
           "v": "2012",
-          "q": "potentially linked to APT37, a North-Korean cyber espionage group active since 2012",
+          "q": "cyber espionage group active since 2012.",
           "what": "APT37 described as active since this year"
         },
         {
-          "v": "mid-July 2019",
-          "q": "In mid-July 2019 I encountered with an emerging campaign delivering the Konni malware.",
-          "what": "author first encountered an emerging Konni campaign"
-        },
-        {
-          "v": "August",
-          "q": "Unlike the previously observed campaign, the August campaign potentially targeting Russian language speakers",
-          "what": "a Konni campaign targeting Russian-language speakers"
-        },
-        {
-          "v": "January to late September",
-          "q": "2019: starting from January to late September.",
-          "what": "the three 2019 Konni campaigns were observed"
+          "v": "2014",
+          "q": "observed in the wild since early 2014.",
+          "what": "Konni first observed in the wild"
         },
         {
           "v": "March 2017",
-          "q": "that was leaked back in March 2017 to WikiLeaks as part of “Vault 7”",
+          "q": "that was leaked back in March 2017 to",
           "what": "UAC bypass technique leaked to WikiLeaks as part of Vault 7"
         },
         {
           "v": "October 2017",
           "q": "for other Konni and Syscon variants, staring from October 2017.",
-          "what": "free FTP services used as C2 for earlier Konni and Syscon variants"
+          "what": "earlier similar campaigns using free FTP services for C2 began"
+        },
+        {
+          "v": "January to late September 2019",
+          "q": "2019: starting from January to late September.",
+          "what": "the three Konni campaigns observed during 2019"
+        },
+        {
+          "v": "January 2019",
+          "q": "2 similar samples observed on January 2019,",
+          "what": "two similar samples observed"
+        },
+        {
+          "v": "mid-July 2019",
+          "q": "In mid-July 2019 I encountered with an emerging campaign delivering the Konni malware.",
+          "what": "researcher encountered an emerging Konni campaign"
+        },
+        {
+          "v": "September 2019",
+          "q": "and another one on September 2019.",
+          "what": "another Konni outburst observed"
+        },
+        {
+          "v": "2020-01-08",
+          "q": "Published: 2020-01-08 · Archived: 2026-04-29 07:00:53 UTC",
+          "what": "report published"
         }
       ],
       "tools": [
@@ -129,275 +139,136 @@
           "q": "Konni is a remote administration tool, observed in the wild since early 2014."
         },
         {
+          "v": "Syscon backdoor",
+          "q": "used by the Syscon backdoor [1] using a service called COMSysApp"
+        },
+        {
           "v": "certutil.exe",
-          "q": "use of certutil.exe to download additional files and decode their content to sc.exe and reg.exe for persistence."
+          "q": "use of certutil.exe to download additional files"
         },
         {
           "v": "sc.exe",
-          "q": "use of certutil.exe to download additional files and decode their content to sc.exe and reg.exe for persistence."
+          "q": "decode their content to sc.exe and reg.exe for persistence."
         },
         {
           "v": "reg.exe",
-          "q": "use of certutil.exe to download additional files and decode their content to sc.exe and reg.exe for persistence."
+          "q": "decode their content to sc.exe and reg.exe for persistence."
         },
         {
-          "v": "Syscon",
-          "q": "Syscon backdoor [1] using a service called COMSysApp to load the payload as a service DLL as a mean to"
-        },
-        {
-          "v": "COMSysApp",
-          "q": "Syscon backdoor [1] using a service called COMSysApp to load the payload as a service DLL as a mean to"
-        },
-        {
-          "v": "wusa.exe",
-          "q": "Installer, wusa.exe. This process runs as a high-integrity process by default, since its set to auto-elevate within its"
+          "v": "net.exe",
+          "q": "the threat actor uses net.exe."
         },
         {
           "v": "rundll32.exe",
-          "q": "Otherwise, mshlpweb.dll is executed using rundll32.exe."
+          "q": "is executed using rundll32.exe."
         },
         {
-          "v": "mshlpweb.dll",
-          "q": "mshlpweb.dll — acts as loader; responsible to elevate privileges."
+          "v": "wusa.exe",
+          "q": "Installer, wusa.exe."
         },
         {
-          "v": "mshlpsrvc.dll",
-          "q": "mshlpsrvc.dll — final payload; responsible for data exfiltration."
+          "v": "UPX packer",
+          "q": "packed with UPX packer."
         },
         {
-          "v": "UPX",
-          "q": "Both dropped DLL files are unsigned and packed with UPX packer."
+          "v": "COMSysApp",
+          "q": "using a service called COMSysApp"
         }
       ],
       "techniques": [
         {
           "v": "living-off-the-land binaries",
-          "q": "Konni Infection chain consists of multiple stages and utilizes living-off-the-land binaries in its operation from the"
+          "q": "utilizes living-off-the-land binaries in its operation"
         },
         {
-          "v": "macro-armed Microsoft Word document",
-          "q": "leveraged a malicious macro-armed Microsoft Word document titled:"
+          "v": "macro-armed lure documents",
+          "q": "the macro-armed lure documents used to deliver"
         },
         {
-          "v": "token impersonation",
-          "q": "mshlpweb.dll is a loader that uses a known token impersonation technique to elevate permissions and execute"
+          "v": "token impersonation UAC bypass",
+          "q": "uses a known token impersonation technique to elevate permissions"
         },
         {
-          "v": "Cavalry",
-          "q": "full fileless UAC bypass named “Cavalry” that was leaked back in March 2017 to"
+          "v": "fileless UAC bypass named Cavalry",
+          "q": "a full fileless UAC bypass named “Cavalry”"
         },
         {
-          "v": "Bypass User Account Control",
-          "q": "T1088-Bypass User Account Control"
+          "v": "service DLL persistence",
+          "q": "The malicious DLL is added as a service DLL of COMSysApp."
         },
         {
-          "v": "custom base64 key",
-          "q": "Konni malware family use a custom base64 key to encode the content of several files in the exfiltration phase."
+          "v": "custom base64 encoding",
+          "q": "Konni malware family use a custom base64 key to encode the content"
         },
         {
-          "v": "free FTP service",
-          "q": "These campaigns leverage similar C2 infrastructure for the delivery and a specific free FTP service used for"
-        },
-        {
-          "v": "Imphash",
-          "q": "Imphash (for “import hash”) is a unique hash value assign to PE files based on the import table of the file."
+          "v": "free FTP service for exfiltration",
+          "q": "a specific free FTP service used for exfiltration"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "3 distinct campaigns",
-          "q": "During my research, I observed 3 distinct campaigns throughout"
+          "q": "I observed 3 distinct campaigns throughout"
         },
         {
           "v": "3 additional outbursts",
-          "q": "I have observed 3 additional outbursts on 2019: 2 similar samples observed on January 2019,"
+          "q": "I have observed 3 additional outbursts on 2019:"
         },
         {
-          "v": "949",
-          "q": "we see that the internal codepage of the lure document is 949 — ANSI/OEM"
+          "v": "3 hidden text boxes",
+          "q": "The document contains 3 hidden text boxes."
         }
       ]
     },
     "subject": {
-      "type": "malware",
-      "name": "Konni"
+      "type": "campaign",
+      "name": "Konni 2019 Campaign"
     },
     "hedges": [
-      "The Konni malware family is potentially linked to APT37.",
-      "At this time we can’t say with full certainty that the same threat actor is behind both operations.",
-      "We were unable to find additional operations related to the Konni malware family that might reveal further capabilities.",
-      "The latest activities potentially target political organizations and politically motivated victims in Russia and South-Korea.",
-      "the file content appears to be the FTP credentials for the FTP service that acts as the command & control server"
+      "Konni is described as potentially linked to APT37.",
+      "The lure documents potentially target political organizations and politically motivated victims.",
+      "At this time we can't say with full certainty that the same threat actor is behind both Konni and Syscon operations.",
+      "We were unable to find additional operations related to the Konni malware family that might reveal further capabilities."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:43Z",
-      "ok": false,
-      "note": "summary: Presents 'named victims' (South Korea, Russia, Asia, Middle East) as Konni victims stated as fact. The text says the Asian and Middle Eastern countries",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:43Z",
+        "ok": false,
+        "note": "summary: Presents 'named victims' (South Korea, Russia, Asia, Middle East) as Konni victims stated as fact. The text says the Asian and Middle Eastern countries",
+        "by": "auditor"
+      }
+    ]
   },
   "e8bbcab2a44fbc4e9f63eab01e0c27ea3ed8215c": {
     "sha1": "e8bbcab2a44fbc4e9f63eab01e0c27ea3ed8215c",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T02:17:27Z",
+    "read_at": "2026-11-27T02:49:49Z",
     "model": "haiku",
-    "summary": "Positive Technologies review of tools used by the (Ex)Cobalt group in 2024-2025 attacks on Linux systems. Centres on PUMAKIT, a kernel-module rootkit with a userland backdoor that hides files, processes and connections, injects an attacker SSH key into authorized_keys in memory, and captures credentials. Also covers the Octopus Rust toolkit, which carries privilege-escalation exploits and implants, and the related Facefish, Kitsune and Megatsune tools, grouped as the PUMA family.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "(Ex)Cobalt",
-          "q": "Наиболее интересным инструментом группировки (Ex)Cobalt, обнаруженным в ходе расследований, является руткит",
-          "by": "Positive Technologies (the report itself)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2025-12-02",
-          "q": "Published: 2025-12-02 · Archived: 2026-04-10 02:37:45 UTC",
-          "what": "Report published"
-        },
-        {
-          "v": "February 2021",
-          "q": "Февраль 2021 г.",
-          "what": "Facefish first detected"
-        },
-        {
-          "v": "February 2022",
-          "q": "Февраль 2022 г.",
-          "what": "Kitsune first detected"
-        },
-        {
-          "v": "March 2024",
-          "q": "Март 2024 г.",
-          "what": "PUMAKIT first detected (per comparison table)"
-        }
-      ],
-      "tools": [
-        {
-          "v": "PUMAKIT",
-          "q": "Рисунок 8. Диаграмма взаимодействия компонентов PUMAKIT"
-        },
-        {
-          "v": "Facefish",
-          "q": "Помимо руткита PUMAKIT, группировка (Ex)Cobalt регулярно использует и другой инструмент — Facefish,"
-        },
-        {
-          "v": "Kitsune",
-          "q": "ранее злоумышленники использовали еще один руткит — Kitsune,"
-        },
-        {
-          "v": "Octopus",
-          "q": "2.5. Octopus и его щупальца"
-        },
-        {
-          "v": "mycelium",
-          "q": "Бэкдор mycelium. Инструмент для удаленного управления зараженной системой."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Kernel Modules",
-          "q": "T1547.006 Execution: Kernel Modules"
-        },
-        {
-          "v": "Dynamic Linker Hijacking",
-          "q": "Dynamic Linker Hijacking"
-        },
-        {
-          "v": "Account Manipulation: SSH",
-          "q": "Account Manipulation: SSH"
-        },
-        {
-          "v": "Rootkit",
-          "q": "T1014 Rootkit"
-        },
-        {
-          "v": "Hidden Files",
-          "q": "Hide Artifacts: Hidden Files"
-        },
-        {
-          "v": "Modify System Firewall",
-          "q": "Modify System Firewall"
-        },
-        {
-          "v": "Input Capture: Credential",
-          "q": "Input Capture: Credential"
-        },
-        {
-          "v": "Compromise Host Software",
-          "q": "Compromise Host Software"
-        },
-        {
-          "v": "Exploitation for Privilege",
-          "q": "Exploitation for Privilege"
-        },
-        {
-          "v": "Exfiltration Over C2",
-          "q": "Exfiltration Over C2"
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2021-4034",
-          "q": "pwnkit — запуск эксплойта CVE-2021-4034;"
-        },
-        {
-          "v": "CVE-2021-3156",
-          "q": "Реализация CVE-2021-3156 (уязвимость heap overflow в утилите sudo),"
-        },
-        {
-          "v": "CVE-2022-2588",
-          "q": "Реализация CVE-2022-2588 (уязвимость double free в функции route4_change),"
-        },
-        {
-          "v": "CVE-2023-4911",
-          "q": "Реализация CVE-2023-4911 (уязвимость buffer overflow в ld.so), переписанная"
-        }
-      ],
-      "figures": [
-        {
-          "v": "20",
-          "q": "размер которого отличался от размера легитимного файла более чем в 20 раз."
-        },
-        {
-          "v": "100",
-          "q": "Цикл ограничен 100"
-        },
-        {
-          "v": "32",
-          "q": "до 32 записей об управляющих серверах"
-        },
-        {
-          "v": "2.6.27",
-          "q": "не ниже 2.6.27"
-        }
-      ]
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "PUMA"
-    },
-    "hedges": [
-      "The link between PUMAKIT and (Ex)Cobalt rests on a certificate the authors saw in an earlier investigation; they state this as their own association.",
-      "The authors suppose the debug mode is used by attackers when the standard dropper run fails to install the module.",
-      "The authors believe Facefish was not developed by the group but was bought on the black market or obtained from a leak.",
-      "The authors say there are all grounds to assume Kitsune was built on the source code of the Azazel rootkit.",
-      "The authors assume the rootkit's main purpose is persistence and interception of SSH authentication credentials."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T02:31:53Z",
-      "ok": false,
-      "note": "summary: The summary says Facefish, Kitsune and Megatsune are grouped as the PUMA family. In the text, 'эти три инструмента' joins Kitsune, Megatsune and PUMAKI",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T02:31:53Z",
+        "ok": false,
+        "note": "summary: The summary says Facefish, Kitsune and Megatsune are grouped as the PUMA family. In the text, 'эти три инструмента' joins Kitsune, Megatsune and PUMAKI",
+        "by": "auditor"
+      }
+    ]
   }
 }

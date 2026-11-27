@@ -359,5 +359,133 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "84479097058c0c9942a1c58a7e814ca2090bdb67": {
+    "sha1": "84479097058c0c9942a1c58a7e814ca2090bdb67",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:16:15Z",
+    "model": "haiku",
+    "summary": "Avast Threat Labs reports that the Lazarus Group exploited a zero-day (CVE-2024-21338) in the Windows AppLocker driver appid.sys to gain kernel read/write access, then ran an updated FudModule rootkit. The rootkit uses nine techniques, four of them new, and targets security software including Microsoft Defender, CrowdStrike Falcon and HitmanPro. Microsoft patched the flaw in its February Patch Tuesday update. The rootkit is data-only and the report says it remains under active development. A new RAT attributed to Lazarus is to be covered in a planned follow-up.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus Group",
+          "q": "The exploitation activity was orchestrated by the notorious Lazarus Group",
+          "by": "Avast Threat Labs"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "Note that even North Korea’s “own” antivirus was called SiliVaccine"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2023",
+          "q": "We developed a custom PoC (Proof of Concept) exploit and submitted it in August 2023 as part of a vulnerability",
+          "what": "Avast submitted a proof-of-concept exploit for the flaw to Microsoft"
+        },
+        {
+          "v": "February Patch Tuesday",
+          "q": "leading to an advisory for CVE-2024-21338 in the February Patch Tuesday update.",
+          "what": "Microsoft addressed CVE-2024-21338 in its patch update"
+        },
+        {
+          "v": "September 2022",
+          "q": "both publishing detailed analyses in September 2022",
+          "what": "AhnLab and ESET published analyses of earlier FudModule variants"
+        },
+        {
+          "v": "Black Hat Asia 2024",
+          "q": "scheduled for release along with our Black Hat Asia 2024 briefing",
+          "what": "Planned release of a follow-up post on the RAT and infection vector"
+        }
+      ],
+      "tools": [
+        {
+          "v": "FudModule rootkit",
+          "q": "data-only FudModule rootkit, a previous version of which was analyzed by ESET and AhnLab."
+        },
+        {
+          "v": "RAT (Remote Access Trojan)",
+          "q": "resulting in the discovery of a new RAT (Remote Access Trojan) attributed to Lazarus."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "BYOVD (Bring Your Own Vulnerable Driver)",
+          "q": "in a technique called BYOVD (Bring Your Own Vulnerable Driver)."
+        },
+        {
+          "v": "exploiting the zero-day vulnerability",
+          "q": "Another significant step up is exploiting the zero-day vulnerability, where Lazarus previously utilized"
+        },
+        {
+          "v": "direct kernel object manipulation",
+          "q": "perform direct kernel object manipulation in an updated version of their"
+        },
+        {
+          "v": "handle table entry manipulation",
+          "q": "FudModule attempts to suspend them using a new handle table entry manipulation technique."
+        },
+        {
+          "v": "disables file system minifilters",
+          "q": "the current version of FudModule disables file system minifilters in a brand-new data-only attack."
+        },
+        {
+          "v": "tampers with ETW internals",
+          "q": "FudModule tampers with ETW internals in an attempt to"
+        },
+        {
+          "v": "remove existing registry callbacks",
+          "q": "FudModule’s goal here is to remove existing registry callbacks and thus disrupt security solutions that rely on this mechanism."
+        },
+        {
+          "v": "interfere with the installed callout routines",
+          "q": "FudModule is trying to interfere with the installed callout routines in an attempt to disrupt the security they provide."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2024-21338",
+          "q": "Microsoft addressed this vulnerability as CVE-2024-21338 in the"
+        }
+      ],
+      "figures": [
+        {
+          "v": "nine",
+          "q": "our discovery concerns a sample featuring nine"
+        },
+        {
+          "v": "seven rootkit techniques",
+          "q": "also featuring seven rootkit techniques but exploiting a"
+        },
+        {
+          "v": "95 GUIDs",
+          "q": "It contains a hardcoded list of 95 GUIDs, each representing an"
+        },
+        {
+          "v": "34 unique vulnerabilities across more than 200 signed drivers",
+          "q": "used bulk static analysis to uncover 34 unique vulnerabilities across more than 200 signed drivers."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "FudModule"
+    },
+    "hedges": [
+      "The report says it can only speculate on Lazarus's motivation for choosing the zero-day approach over BYOVD, and believes stealth was the primary motive.",
+      "The report says the actual impact of one rootkit technique remains unclear because it did not reverse engineer a competitor's product.",
+      "The report says the vulnerability may only barely meet Microsoft's security servicing criteria.",
+      "The report says the dropped status file is presumably inspected through hands-on keyboard activity via a RAT command.",
+      "The report says the most likely explanation for the image verification technique is that the actors are preparing to load a malicious driver later.",
+      "The report says the Korean origin of the debug strings is only a supposed origin, based on language analysis.",
+      "The report says the RAT technical details and initial infection vector are to be published in a follow-up post."
+    ]
   }
 }

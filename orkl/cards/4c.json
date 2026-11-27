@@ -231,25 +231,291 @@
   },
   "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f": {
     "sha1": "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:52:19Z",
+    "read_at": "2026-11-27T02:09:26Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Sysdig's Threat Research Team describes JADEPUFFER as what it assesses is the first documented case of agentic ransomware: an extortion operation driven end-to-end by a large language model. The operator got in through an unauthenticated code-execution flaw in the Langflow AI framework (CVE-2025-3248), harvested credentials, and moved to a production database server. There it used a 2021 Nacos auth-bypass and a default signing key, encrypted 1,342 Nacos configuration items, and dropped databases. The report reads the self-narrated payloads and fast failure correction as evidence of…",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "JADEPUFFER",
+          "q": "This operator, which we have dubbed JADEPUFFER, gained initial access to an internet-facing Langflow",
+          "by": "Sysdig Threat Research Team"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "2026-07-01",
+          "q": "Published: 2026-07-01 · Archived: 2026-10-06 02:00:36 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "19:35:18",
+          "q": "19:35:18 Login succeeds.",
+          "what": "Login to the backdoor administrator account succeeds"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Langflow",
+          "q": "gained initial access to an internet-facing Langflow"
+        },
+        {
+          "v": "MinIO",
+          "q": "using MinIO's default credentials"
+        },
+        {
+          "v": "Nacos",
+          "q": "Captured payloads show the LLM attacking the Nacos service through"
+        },
+        {
+          "v": "MySQL",
+          "q": "The JADEPUFFER payloads the Sysdig TRT captured show the agent connecting to this server's exposed MySQL"
+        },
+        {
+          "v": "crontab",
+          "q": "It installed a crontab entry on the Langflow server beaconing to attacker infrastructure every 30 minutes:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "missing-authentication flaw",
+          "q": "is a missing-authentication flaw in its code validation endpoint that allows an unauthenticated attacker"
+        },
+        {
+          "v": "credential harvesting",
+          "q": "Reconnaissance and credential harvesting:"
+        },
+        {
+          "v": "internal lateral discovery",
+          "q": "Internal lateral discovery: It scanned the internal address space"
+        },
+        {
+          "v": "default credentials",
+          "q": "using MinIO's default credentials"
+        },
+        {
+          "v": "persistence",
+          "q": "Persistence on the Langflow host: It installed a"
+        },
+        {
+          "v": "forging a valid JWT",
+          "q": "forging a valid JWT using Nacos's well-known default signing key"
+        },
+        {
+          "v": "backdoor administrator account",
+          "q": "injecting a backdoor administrator directly into the Nacos backing database"
+        },
+        {
+          "v": "container-escape survey",
+          "q": "Artifacts also show a methodical container-escape survey via"
+        },
+        {
+          "v": "encryption of configuration data",
+          "q": "encrypting all 1,342 Nacos service configuration items"
+        },
+        {
+          "v": "mass destruction",
+          "q": "3. Mass destruction: Captured payloads show the LLM escalating from row-level deletion to dropping entire"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2025-3248",
+          "q": "instance through CVE-2025-3248 and ran an adaptive and fully automated campaign"
+        },
+        {
+          "v": "CVE-2021-29441",
+          "q": "That includes exploiting the auth-bypass family (CVE-2021-29441), forging a"
+        }
+      ],
+      "figures": [
+        {
+          "v": "31 seconds",
+          "q": "In one sequence, it went from a failed login to a working fix in 31 seconds."
+        },
+        {
+          "v": "1,342",
+          "q": "encrypting all 1,342 Nacos service configuration items"
+        },
+        {
+          "v": "600+",
+          "q": "Together with the breadth and coherence of 600+ distinct, purposeful payloads executed in a compressed window,"
+        },
+        {
+          "v": "737 confirmed transactions",
+          "q": "live wallet: 737 confirmed transactions,"
+        },
+        {
+          "v": "~46 BTC",
+          "q": "~46 BTC received over its history"
+        },
+        {
+          "v": "eight minutes",
+          "q": "including multiple rounds of probes spanning approximately eight minutes"
+        },
+        {
+          "v": "15 lines",
+          "q": "That payload is 15 lines of"
+        },
+        {
+          "v": "every 30 minutes",
+          "q": "beaconing to attacker infrastructure every 30 minutes:"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "JADEPUFFER"
+    },
+    "hedges": [
+      "Sysdig says it assesses this to be the first documented case of agentic ransomware.",
+      "Sysdig did not observe the root database credentials being harvested from the victim; their origin is unknown.",
+      "The ransom note claims AES-256, but the encryption function may default to a weaker algorithm, so the claim may overstate it.",
+      "The AES key was printed once and never stored or sent, so the configurations cannot be recovered even with payment.",
+      "The exfiltration claim is the agent's own assertion in its code comments and was not independently verified.",
+      "The Bitcoin address is a documentation example and also a live wallet; the report cannot tell whether the agent hallucinated it or an operator configured it.",
+      "The LLM-driven assessment rests on the report's own evidence, and Sysdig has no visibility into the operator's system prompt or agent configuration."
+    ]
+  },
+  "4cc0024b221effc8ae71cd54f6391a929ecbacf1": {
+    "sha1": "4cc0024b221effc8ae71cd54f6391a929ecbacf1",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:18:44Z",
+    "model": "haiku",
+    "summary": "BleepingComputer reports that a cyberattack on UnitedHealth subsidiary Optum disrupted the Change Healthcare payment platform. Unnamed sources linked it to the BlackCat (ALPHV) ransomware gang, which had not claimed it at publication; the article could not confirm this. UnitedHealth's SEC filing described suspected nation-state hackers. Sources also named an exploited ScreenConnect flaw, CVE-2024-1709. The article gives background on BlackCat's activity and the FBI's disruption of its leak sites.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "BlackCat (ALPHV)",
+          "q": "the attack was linked to the BlackCat (ALPHV)",
+          "by": "unnamed sources familiar with the investigation, as reported by BleepingComputer"
+        },
+        {
+          "v": "nation-state threat actor",
+          "q": "UnitedHealth Group's SEC filing states that a nation-state threat actor is behind the attack",
+          "by": "UnitedHealth Group, in an SEC 8-K filing"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "health insurance",
+          "q": "United Health Group (UHG) is a health insurance company with a presence across all 50 U.S. states"
+        },
+        {
+          "v": "healthcare industry",
+          "q": "Zoom calls with partners in the healthcare industry"
+        }
+      ],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "The U.S. State Department is offering rewards of up to $10 million"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-02-27",
+          "q": "Published: 2024-02-27 · Archived: 2026-04-06 03:10:58 UTC",
+          "what": "article published"
+        },
+        {
+          "v": "November 2021",
+          "q": "BlackCat surfaced in November 2021 as a suspected rebrand of the DarkSide and BlackMatter ransomware operations.",
+          "what": "BlackCat surfaced as a suspected rebrand of DarkSide and BlackMatter"
+        },
+        {
+          "v": "December",
+          "q": "The gang's operations were disrupted in December",
+          "what": "FBI temporarily took down BlackCat's Tor negotiation and leak sites"
+        },
+        {
+          "v": "September 2023",
+          "q": "until September 2023.",
+          "what": "end of the period covered by the FBI's ransom payment estimate"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ScreenConnect",
+          "q": "one of the indicators of compromise is a critical ScreenConnect auth"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "deploy ransomware",
+          "q": "actively exploited in attacks to deploy ransomware on unpatched servers"
+        },
+        {
+          "v": "extort a ransom",
+          "q": "they may still be in the process of trying to extort a ransom"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2024-1709",
+          "q": "bypass flaw (CVE-2024-1709) actively exploited in attacks to deploy ransomware on unpatched servers."
+        }
+      ],
+      "figures": [
+        {
+          "v": "$300 million",
+          "q": "It also estimates that BlackCat has raked in at least $300 million in ransom payments from more than 1,000 victims"
+        },
+        {
+          "v": "more than 1,000 victims",
+          "q": "It also estimates that BlackCat has raked in at least $300 million in ransom payments from more than 1,000 victims"
+        },
+        {
+          "v": "over 60 breaches",
+          "q": "The FBI linked BlackCat to over 60 breaches during its first four months of activity between November 2021 and March"
+        },
+        {
+          "v": "$10 million",
+          "q": "The U.S. State Department is offering rewards of up to $10 million"
+        },
+        {
+          "v": "$5 million",
+          "q": "and $5 million for information on individuals linked to BlackCat ransomware attacks"
+        },
+        {
+          "v": "more than 90%",
+          "q": "We estimate more than 90% of the nation’s 70,000+ pharmacies have modified electronic claim processing"
+        },
+        {
+          "v": "65 million",
+          "q": "Both Optum Rx and UnitedHealthcare are seeing minimal reports, including less than 100 out of more than 65 million"
+        },
+        {
+          "v": "$324.2 billion",
+          "q": "is the world's largest healthcare company by revenue ($324.2 billion in 2022)"
+        },
+        {
+          "v": "440,000",
+          "q": "UHG employs 440,000 people worldwide"
+        },
+        {
+          "v": "1.6 million",
+          "q": "more than 1.6 million physicians and care professionals"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "Change Healthcare cyberattack"
+    },
+    "hedges": [
+      "BleepingComputer has not been able to independently confirm the sources' claims.",
+      "At the time of this publication, BlackCat had yet to claim the attack on Change Healthcare.",
+      "UnitedHealth Group VP Tyler Mason did not confirm whether BlackCat was responsible for the attack.",
+      "BlackCat has not been publicly linked to any foreign government agencies.",
+      "The link to BlackCat comes from unnamed sources familiar with the investigation, reported by BleepingComputer; the SEC filing describes suspected 'nation-state' hackers."
+    ]
   }
 }

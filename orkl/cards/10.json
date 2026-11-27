@@ -55,32 +55,169 @@
   },
   "10efc9456f6091cedccf1852f2514a3f7392fb8d": {
     "sha1": "10efc9456f6091cedccf1852f2514a3f7392fb8d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:50:58Z",
+    "read_at": "2026-11-27T02:08:57Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Intel 471 describes The Gentlemen, a data extortion and ransomware group active since August 2025 that it says has claimed hundreds of victims. The report says the group typically gets in through compromised credentials or exposed VPN and firewall services, maps the network, disables security tools using a vulnerable signed driver, shuts down backup services, exfiltrates data, and deploys ransomware through the NETLOGON share. It also presents a behavioural hunt for accounts added to privileged Windows groups, run in Splunk.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "The Gentlemen",
+          "q": "Since emerging in August 2025, The Gentlemen ransomware gang have have claimed hundreds of victims,",
+          "by": "Intel 471 (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "manufacturing",
+          "q": "Targeted industries include manufacturing, insurance, construction and consumer services, but the group has also"
+        },
+        {
+          "v": "insurance",
+          "q": "Targeted industries include manufacturing, insurance, construction and consumer services, but the group has also"
+        },
+        {
+          "v": "construction",
+          "q": "Targeted industries include manufacturing, insurance, construction and consumer services, but the group has also"
+        },
+        {
+          "v": "consumer services",
+          "q": "Targeted industries include manufacturing, insurance, construction and consumer services, but the group has also"
+        },
+        {
+          "v": "healthcare",
+          "q": "the group has also gone after critical services such as healthcare networks and hospitals and is regularly among"
+        },
+        {
+          "v": "financial services",
+          "q": "regularly among the top ransomware threats to the financial services sector."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Thailand",
+          "q": "The Gentlemen data extortion group has focussed heavily on the Asia-Pacific region, particularly Thailand and"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-07-14",
+          "q": "Published: 2026-07-14 · Archived: 2026-10-14 02:01:37 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-10-14",
+          "q": "Published: 2026-07-14 · Archived: 2026-10-14 02:01:37 UTC",
+          "what": "Report archived copy captured"
+        },
+        {
+          "v": "August 2025",
+          "q": "Since emerging in August 2025, The Gentlemen ransomware gang have have claimed hundreds of victims,",
+          "what": "Group emerged"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Advanced IP Scanner",
+          "q": "using a commodity tool, Advanced IP Scanner, to identify additional machines and locate administrative accounts."
+        },
+        {
+          "v": "PowerRun.exe",
+          "q": "To move from a standard foothold to elevated privileges, they run a legitimate system utility called PowerRun.exe."
+        },
+        {
+          "v": "AV Killer",
+          "q": "move to disable security tooling with its so-called “AV Killer”"
+        },
+        {
+          "v": "ThrottleBlood.sys",
+          "q": "They load a legitimate, signed Windows driver named ThrottleBlood.sys."
+        },
+        {
+          "v": "All.exe",
+          "q": "The attackers then pair the driver with a separate tool called All.exe"
+        },
+        {
+          "v": "Veeam",
+          "q": "They systematically shut down backup and database services, including Veeam, SAP, Oracle and MySQL."
+        },
+        {
+          "v": "WinSCP",
+          "q": "using WinSCP over encrypted channels, and they maintain remote access to compromised systems using"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "AnyDesk, the same remote monitoring and management tool we covered in our threat hunting case study on"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "initial access through compromised credentials",
+          "q": "The Gentlemen typically gain initial access through compromised credentials or internet-exposed services,"
+        },
+        {
+          "v": "disable security tooling",
+          "q": "move to disable security tooling with its so-called “AV Killer”"
+        },
+        {
+          "v": "vulnerable signed driver to end security processes",
+          "q": "pair the driver with a separate tool called All.exe"
+        },
+        {
+          "v": "shut down backup and database services",
+          "q": "They systematically shut down backup and database services, including Veeam, SAP, Oracle and MySQL."
+        },
+        {
+          "v": "data staging and exfiltration",
+          "q": "they stage and exfiltrate data"
+        },
+        {
+          "v": "distribute ransomware via NETLOGON share",
+          "q": "abuse the native NETLOGON share to distribute the"
+        },
+        {
+          "v": "Lateral Tool Transfer (T1570)",
+          "q": "an application of Lateral Tool Transfer (T1570)."
+        },
+        {
+          "v": "Account Manipulation (T1098)",
+          "q": "an example of Account Manipulation (T1098)."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "hundreds of victims",
+          "q": "Since emerging in August 2025, The Gentlemen ransomware gang have have claimed hundreds of victims,"
+        },
+        {
+          "v": "over 600 organizations",
+          "q": "It has publicly claimed to have breached over 600 organizations in at least 80 countries."
+        },
+        {
+          "v": "at least 80 countries",
+          "q": "It has publicly claimed to have breached over 600 organizations in at least 80 countries."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "The Gentlemen"
+    },
+    "hedges": [
+      "The 600+ organizations figure is what the group publicly claimed, per the report.",
+      "Some hunt results will be legitimate IT administration rather than attacker activity, per the report.",
+      "Static indicators may change: any affiliate using similar tooling could rename files or swap drivers, per the report.",
+      "Recent reported activity indicates the operators increased focus on weakening defensive tooling, per the report."
+    ]
   },
   "109b3ffe7f72186b7baae8d54f16c843ff40a964": {
     "sha1": "109b3ffe7f72186b7baae8d54f16c843ff40a964",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T00:57:12Z",
+    "read_at": "2026-11-27T02:10:22Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -97,7 +234,7 @@
     "subject": null,
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1
+    "tries": 2
   },
   "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b": {
     "sha1": "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b",

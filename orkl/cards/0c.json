@@ -1,0 +1,122 @@
+{
+  "0c1e924baae3ecbc5fa96e88a1afd0d7d55e8b97": {
+    "sha1": "0c1e924baae3ecbc5fa96e88a1afd0d7d55e8b97",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:16:00Z",
+    "model": "haiku",
+    "summary": "Analysis of eight malicious container images in a Docker Hub account linked to the TeamTNT group. Two were used in attacks in the wild. The images carried crypto-mining tools, Mirai and Tsunami malware, a Docker escape binary and a bind shell. Later images added defense evasion, lateral movement and hidden command-and-control. The report says the campaign is still active and targets cloud native environments, especially misconfigured Docker API ports, and recommends dynamic analysis before deployment.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "a group called TeamTNT",
+          "by": "the report (Team Nautilus)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud native environments",
+          "q": "an active campaign targeting cloud native environments in general"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-08-25",
+          "q": "Published: 2020-08-25",
+          "what": "report published"
+        },
+        {
+          "v": "March 28, 2020",
+          "q": "was uploaded on March 28, 2020",
+          "what": "first xmrigminer tool uploaded to the account"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Tsunami",
+          "q": "malware executables (Tsunami and Mirai)"
+        },
+        {
+          "v": "Mirai",
+          "q": "malware executables (Tsunami and Mirai)"
+        },
+        {
+          "v": "docker-escape",
+          "q": "contain a binary named docker-escape"
+        },
+        {
+          "v": "xmrig",
+          "q": "Downloading xmrig from a remote source."
+        },
+        {
+          "v": "Bioset",
+          "q": "This leads us to conclude that the Bioset is serving as a bind shell"
+        },
+        {
+          "v": "AVscan",
+          "q": "execute two malicious binaries SystemHealt and AVscan"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "resource hijacking",
+          "q": "launch a simple resource hijacking attack (Cryptominer)"
+        },
+        {
+          "v": "Docker escape",
+          "q": "it then attempts Docker escape techniques."
+        },
+        {
+          "v": "defense evasion",
+          "q": "They added defense evasion techniques and attempted to conceal"
+        },
+        {
+          "v": "lateral movement",
+          "q": "designed to conduct lateral movement in the network by"
+        },
+        {
+          "v": "bind shell",
+          "q": "This leads us to conclude that the Bioset is serving as a bind shell"
+        },
+        {
+          "v": "web services and TOR servers",
+          "q": "Leveraging web services and TOR servers to increase the persistence"
+        },
+        {
+          "v": "misconfigured Docker API ports",
+          "q": "targeting cloud native environments in general and misconfigured Docker API ports in"
+        },
+        {
+          "v": "base64 encoding",
+          "q": "Encoding many snippets with base64"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "eight",
+          "q": "uncovered a total of eight"
+        },
+        {
+          "v": "at least two",
+          "q": "with at least two of these images being used to perform attacks in the wild"
+        },
+        {
+          "v": "four months",
+          "q": "Over four months, TeamTNT uploaded various images"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "TeamTNT"
+    },
+    "hedges": [
+      "We believe changes in these newer images somewhat reflect the learning curve (developing capabilities) of TeamTNT.",
+      "This leads us to conclude that the Bioset is serving as a bind shell that probably allows the attacker to connect to the host"
+    ]
+  }
+}

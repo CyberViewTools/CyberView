@@ -1,0 +1,85 @@
+{
+  "5c4ff737523066bf4f97e1a19613189aa290a25b": {
+    "sha1": "5c4ff737523066bf4f97e1a19613189aa290a25b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:19:29Z",
+    "model": "haiku",
+    "summary": "Malwarebytes reports Magecart-linked credit card skimmers hosted on Heroku, a container-based platform-as-a-service owned by Salesforce. The skimmers are injected into compromised shopping sites, overlay a fake payment iframe, and send stolen card data back in encoded form. The report says the abusive instances were reported to Heroku and taken down.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Magecart",
+          "q": "The crooked part of the Magecart cabal were registering free accounts with Heroku to host",
+          "by": "Malwarebytes"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "shopping sites (e-commerce merchants)",
+          "q": "Compromised shopping sites are injected with a single line of code that loads the remote piece of JavaScript."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-12-03",
+          "q": "Published: 2019-12-03 · Archived: 2026-04-06 01:50:46 UTC",
+          "what": "Malwarebytes blog post on Heroku-hosted web skimmers published"
+        },
+        {
+          "v": "April 2019",
+          "q": "in April 2019 we documented a web skimmer served on code repository GitHub.",
+          "what": "Malwarebytes documented a web skimmer served on GitHub"
+        },
+        {
+          "v": "June",
+          "q": "Later on in June,",
+          "what": "Malwarebytes observed a campaign injecting skimming code into Amazon S3 buckets"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Heroku",
+          "q": "This time, we take a look at a rash of skimmers found on Heroku, a container-based, cloud PaaS owned by"
+        },
+        {
+          "v": "Amazon S3",
+          "q": "we observed a vast campaign where skimming code was injected into Amazon S3 buckets."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hosting skimmer infrastructure on a cloud platform",
+          "q": "Threat actors are leveraging the service not only to host their skimmer infrastructure"
+        },
+        {
+          "v": "injecting a skimmer into compromised shopping sites",
+          "q": "Compromised shopping sites are injected with a single line of code that loads the remote piece of JavaScript."
+        },
+        {
+          "v": "overlaying a rogue iframe on the payment form",
+          "q": "A rogue iframe that will overlay the standard payment form meant to harvest the victim’s credit card data."
+        },
+        {
+          "v": "encoded exfiltration of stolen card data",
+          "q": "The exfiltration mechanism for the stolen data that is sent back in encoded format."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three components",
+          "q": "Their web skimming app consists of three components:"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The report says the threat actors 'may have forgotten to use obfuscation' in one case.",
+      "The report says it will 'likely continue to observe web skimmers abusing more cloud services'.",
+      "The report says the error message victims see 'may be because the form needs to be repopulated properly'."
+    ]
+  }
+}

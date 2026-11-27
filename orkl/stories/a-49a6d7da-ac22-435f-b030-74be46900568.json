@@ -4,26 +4,20 @@
     "key": "a-49a6d7da-ac22-435f-b030-74be46900568",
     "kind": "actor",
     "name": "GOLD LOCUST",
-    "headline": "GOLD LOCUST: the Carbanak and FIN7 name cluster, seen in malspam and a ransomware case",
-    "in_short": "Secureworks tracks GOLD LOCUST under several names, including FIN7 and Carbanak. Malwarebytes attributes a malspam campaign that dropped JSSLoader to FIN7. IBM X-Force links a Carbanak backdoor to a ransomware case.",
+    "headline": "GOLD LOCUST: a long-tracked group known as FIN7 and Carbanak, with loaders and ransomware ties",
+    "in_short": "Secureworks tracks GOLD LOCUST and lists FIN7 and Carbanak among its aliases. Researchers describe its malware loaders and tie it to ransomware-linked intrusions. Several of these links are assessments, not settled fact.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as GOLD LOCUST.",
+            "t": "Secureworks tracks this actor as GOLD LOCUST. Its catalogue record lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The catalogue lists these aliases: Anunak, Carbanak, Carbon Spider, FIN7 and Silicon.",
-            "cites": [
-              "catalogue"
-            ]
-          },
-          {
-            "t": "Carbanak is the one tool named in the catalogue record.",
+            "t": "The same record lists Carbanak as a tool linked to the group.",
             "cites": [
               "catalogue"
             ]
@@ -34,27 +28,34 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Malwarebytes Threat Intelligence attributes a late-June malspam campaign to FIN7.",
+            "t": "Malwarebytes Threat Intelligence attributes a late-June malspam campaign to FIN7, a name the catalogue lists as an alias. The emails dropped a loader called JSSLoader.",
+            "cites": [
+              "34d1144c2183487f403172e7b3c629fdeeb9688a",
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Malwarebytes describes JSSLoader as a rewrite with expanded capabilities, including data exfiltration. It also dropped a secondary payload written in .NET.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "Malwarebytes says the campaign dropped JSSLoader, a rewrite of the loader with expanded capabilities, including data exfiltration.",
+            "t": "The same report notes an earlier component of FIN7 that others had described. It was delivered in the XLL file format.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "It also dropped a secondary payload written in .NET.",
+            "t": "SentinelLABS published a report on 3 November 2022 about Black Basta ransomware attacks. It says the custom EDR evasion tools used in them are tied to FIN7. The title describes a link, not a flat identity.",
             "cites": [
-              "34d1144c2183487f403172e7b3c629fdeeb9688a"
+              "88f5a8bd8832f5d326afca713c918e1c856afd18"
             ]
           },
           {
-            "t": "Malwarebytes notes an earlier component used by this group, delivered in XLL format, which others had already described.",
+            "t": "Rapid7 cites GData, which attributes a Python RAT it calls Anubis to FIN7.",
             "cites": [
-              "34d1144c2183487f403172e7b3c629fdeeb9688a"
+              "276eef8e2d22f6e225440f49dfeb3de246f91df1"
             ]
           }
         ]
@@ -63,27 +64,21 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "Malwarebytes published its account of the late-June campaign on August 15, 2022.",
-            "cites": [
-              "34d1144c2183487f403172e7b3c629fdeeb9688a"
-            ]
-          },
-          {
-            "t": "IBM Security X-Force investigated a Carbanak backdoor that was associated with a Sodinokibi ransomware attack.",
+            "t": "In a 2020 ransomware overview, IBM Security X-Force reports investigating a Carbanak backdoor associated with a Sodinokibi ransomware attack.",
             "cites": [
               "98db93df2c38d13d27ed23f978a9f60980941381"
             ]
           },
           {
-            "t": "IBM X-Force concludes that ITG14 is at least one affiliate group that contracts with Sodinokibi ransomware-as-a-service providers.",
+            "t": "IBM assesses that a group it calls ITG14 is at least one affiliate group that contracts with Sodinokibi providers. The report says the Carbanak link rests on similarity to ITG14 tools.",
             "cites": [
               "98db93df2c38d13d27ed23f978a9f60980941381"
             ]
           },
           {
-            "t": "The report's Carbanak link rests on the similarity of the backdoor to ITG14's tools.",
+            "t": "Rapid7 assesses that the developers of a Java malware family are likely initial access brokers. It says they potentially provided access for Black Basta and/or FIN7 affiliates.",
             "cites": [
-              "98db93df2c38d13d27ed23f978a9f60980941381"
+              "276eef8e2d22f6e225440f49dfeb3de246f91df1"
             ]
           }
         ]
@@ -92,21 +87,22 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected email attachments with caution, and keep an eye on how remote access to your network is secured.",
+            "t": "Treat unexpected loaders and unfamiliar remote-access sessions as signs of possible hands-on intrusion, and investigate them quickly.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "184b560ee1f8506d5be6c998a13dafc79c2e889f",
+    "based_on": "b8ddb235f6bd3be80da7c790b163391fd4cc7e5d",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T00:46:06Z",
+    "written_at": "2026-11-27T02:07:40Z",
     "writer_model": "sonnet",
     "reasons": [
+      "unbacked",
       "missing-section"
     ],
-    "written_run": "e0e6841f"
+    "written_run": "2025d0b1"
   }
 }

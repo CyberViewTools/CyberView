@@ -151,5 +151,219 @@
       "note": "summary: The text says the family modifies encrypted files using specific patterns and lists the extension added, but the summary says 'to mark them as encrypte",
       "by": "auditor"
     }
+  },
+  "37114c033cf4dc4e27f0631d4af9be712dbea44b": {
+    "sha1": "37114c033cf4dc4e27f0631d4af9be712dbea44b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:13:32Z",
+    "model": "haiku",
+    "summary": "ENKI WhiteHat analyses new Android APK variants of the DOCSWAP malware strain. The apps are distributed through phishing, QR codes and fake delivery and security-app lures, and each embeds an encrypted APK that runs a RAT with keylogging, infostealer and remote-command features. ENKI attributes the activity to DPRK-nexus Kimsuky, citing shared infrastructure, a known phishing string and Korean-language comments. The report could not confirm the initial access vector and assesses smishing or email delivery. It also describes Naver and Kakao phishing proxy sites.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "We identified multiple indicators that attribute the activity to Kimsuky, including shared C&C infrastructure and",
+          "by": "ENKI WhiteHat (report authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "DPRK",
+          "q": "Additionally, the Korean comments and error messages found on the distribution sites indicate the connection to DPRK-nexus threat actor."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-12-16",
+          "q": "Published: 2025-12-16 · Archived: 2026-04-29 02:12:13 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "September 2025",
+          "q": "In September 2025, the ENKI WhiteHat Threat Research Team detected a malicious mobile application distributed via",
+          "what": "ENKI detected a malicious app distributed via phishing"
+        },
+        {
+          "v": "May 20, 2025",
+          "q": "creating a malicious RAT service. The APK signature's validity period begins on May 20, 2025, and we assess that the threat",
+          "what": "signature validity period begins for SecDelivery.apk"
+        },
+        {
+          "v": "Tue Apr 22 15:57:54 KST 2025",
+          "q": "| Certificate Validity Period | Tue Apr 22 15:57:54 KST 2025",
+          "what": "signature validity period begins for the embedded APK"
+        },
+        {
+          "v": "Thu Aug 14 00:38:45 KST 2025",
+          "q": "| Certificate Validity Period | Thu Aug 14 00:38:45 KST 2025",
+          "what": "signature validity period begins for the auction and VPN samples"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DOCSWAP",
+          "q": "the latest iteration of \"DOCSWAP,\" a malware strain originally named by S2W in"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "smishing or phishing emails",
+          "q": "we assess with high confidence that the threat actor employed smishing or phishing emails for initial access"
+        },
+        {
+          "v": "QR codes",
+          "q": "The threat actor leveraged QR codes and notification pop-ups to lure victims into installing and executing"
+        },
+        {
+          "v": "masquerading as delivery service apps",
+          "q": "Among the four malicious applications discovered during the investigation, two masqueraded as delivery service apps."
+        },
+        {
+          "v": "native decryption function",
+          "q": "The threat actor added a new native decryption function and diversified the decoy behavior."
+        },
+        {
+          "v": "keylogging logic via the Accessibility Service",
+          "q": "Additionally, the application executes keylogging logic via the Accessibility Service."
+        },
+        {
+          "v": "operate persistently",
+          "q": "SplashActivity registers the MainService contained within the decrypted ”security.dat”, allowing it to operate persistently."
+        },
+        {
+          "v": "infostealer and RAT",
+          "q": "MainService connects to the C&C server to function as an infostealer and RAT."
+        },
+        {
+          "v": "masquerades as an OTP authentication screen",
+          "q": "This activity masquerades as an OTP authentication screen and verifies the user's identity using a delivery number."
+        },
+        {
+          "v": "repackaged a legitimate app",
+          "q": "This indicates that the threat actor injected malicious functionality into the legitimate APK and repackaged it for use in the attack."
+        },
+        {
+          "v": "Naver phishing",
+          "q": "Similar to the Naver phishing setup, these sites load content via a proxy."
+        },
+        {
+          "v": "password interception",
+          "q": "we identified an exfiltration routine that intercepts the password input"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "57 commands",
+          "q": "The RAT supports a total of 57 commands;"
+        },
+        {
+          "v": "four malicious applications",
+          "q": "Among the four malicious applications discovered during the investigation, two masqueraded as delivery service apps."
+        },
+        {
+          "v": "three additional malicious applications",
+          "q": "Leveraging APK metadata and infrastructure overlaps, we identified three additional malicious applications and seven C&C"
+        },
+        {
+          "v": "seven C&C",
+          "q": "Leveraging APK metadata and infrastructure overlaps, we identified three additional malicious applications and seven C&C"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "DOCSWAP"
+    },
+    "hedges": [
+      "The report says it could not confirm the initial delivery vector and only assesses that malicious links were sent by SMS or email.",
+      "Smishing or phishing is said to be assessed with high confidence in one section, while the conclusion says the vector was not confirmed.",
+      "The Kimsuky attribution is described as strong evidence from shared infrastructure, a known phishing string and Korean comments, not as a definitive confirmation.",
+      "Several infrastructure and timing claims are hedged with words such as likely, appears and assess rather than stated as fact."
+    ]
+  },
+  "37d087169d2bd363bc461552f900cf1b1f854864": {
+    "sha1": "37d087169d2bd363bc461552f900cf1b1f854864",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:21:41Z",
+    "model": "haiku",
+    "summary": "AhnLab's ASEC reports that the Andariel attack group used a malicious file to perform RID Hijacking during breaches. The technique changes a low-privilege account's RID to match an administrator's, so the account is treated as having admin rights. The attackers needed SYSTEM privileges, used PsExec and JuicyPotato to get them, and created a hidden account. The report also names a tool called CreateHiddenAccount and says the technique was cited earlier in a KISA publication.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Andariel",
+          "q": "AhnLab SEcurity intelligence Center (ASEC) has identified the Andariel attack group using a malicious file to",
+          "by": "AhnLab SEcurity intelligence Center (ASEC)"
+        },
+        {
+          "v": "Andariel",
+          "q": "it was mentioned that the Andariel threat group uses the RID Hijacking technique when creating a backdoor account",
+          "by": "Korea Internet & Security Agency (KISA), as cited in the report"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-01-22",
+          "q": "Published: 2025-01-22 · Archived: 2026-04-06 01:32:01 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-06",
+          "q": "Published: 2025-01-22 · Archived: 2026-04-06 01:32:01 UTC",
+          "what": "Report page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PsExec",
+          "q": "Threat actors use privilege escalation tools such as PsExec and JuicyPotato to obtain SYSTEM privileges on the"
+        },
+        {
+          "v": "JuicyPotato",
+          "q": "Threat actors use privilege escalation tools such as PsExec and JuicyPotato to obtain SYSTEM privileges on the"
+        },
+        {
+          "v": "CreateHiddenAccount",
+          "q": "The open-source tool CreateHiddenAccount can perform all of its functions even with administrator privileges."
+        },
+        {
+          "v": "regini",
+          "q": "Analyzing the operation process of this tool revealed that it uses the Windows default program, regini, to grant permissions."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "RID Hijacking",
+          "q": "RID Hijacking is an attack technique that involves modifying the Relative Identifier (RID) value of an account"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "Threat actors use privilege escalation tools such as PsExec and JuicyPotato to obtain SYSTEM privileges on the"
+        },
+        {
+          "v": "hidden account",
+          "q": "In addition to creating a hidden account with a ‘$’ in the account name, the malicious file used by the Andariel"
+        },
+        {
+          "v": "persistence",
+          "q": "the threat actor’s behavior can be interpreted as intending to minimize account exposure and maintain persistence."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "KISA's publication is cited as mentioning that the Andariel group uses RID Hijacking when creating a backdoor account.",
+      "The threat actor's behavior can be interpreted as intending to minimize account exposure and maintain persistence.",
+      "The account created with this method cannot be completely hidden."
+    ]
   }
 }

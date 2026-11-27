@@ -67,5 +67,243 @@
       "note": "summary: Says the decryptor page is 'for GlobeImposter ransomware' and 'Decryption needs a matching pair of an encrypted file and its unencrypted original' — fi",
       "by": "auditor"
     }
+  },
+  "298101821b6b52ac6c12254de806b87efa15f260": {
+    "sha1": "298101821b6b52ac6c12254de806b87efa15f260",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:21:17Z",
+    "model": "haiku",
+    "summary": "CSHARP-STREAMER is a modular .NET remote access trojan analysed by HiSolutions. The report says its casework saw the Metaencryptor ransomware group using it, and that RAT usage rose sharply in Q3 2023. Other public reports tie it to REvil and ALPHV deployments. The report suggests it may be sold as a service to ransomware groups, and it provides detection rules and identifying strings. Most attribution in the report is hedged.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "REvil",
+          "q": "Fortgale attributes the usage to REvil",
+          "by": "Fortgale"
+        },
+        {
+          "v": "GoldSouthfield",
+          "q": "As mentioned by Fortgale the RAT has also been used in 2021 by REvil/GoldSouthfield and by an unknown",
+          "by": "Fortgale"
+        },
+        {
+          "v": "Metaencryptor",
+          "q": "ransomware Metaencryptor using CSHARP-STREAMER.",
+          "by": "HiSolutions (the report)"
+        },
+        {
+          "v": "ALPHV",
+          "q": "The DFIR-Report identified the RAT during an deployment of ALPHV-Ransomware.",
+          "by": "The DFIR-Report"
+        },
+        {
+          "v": "LostTrust",
+          "q": "LostTrusts trove of 53 victims in August.",
+          "by": "HiSolutions (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "IT service providers",
+          "q": "Metaencryptor shows a special interest in IT service providers."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-06-25",
+          "q": "Published: 2024-06-25 · Archived: 2026-04-06 01:38:47 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2023-12-18",
+          "q": "date = \"2023-12-18\"",
+          "what": "Detection rule dated"
+        },
+        {
+          "v": "Q3 2023",
+          "q": "The usage of the RAT has massively increased in Q3 2023.",
+          "what": "RAT usage sharply increased"
+        },
+        {
+          "v": "August 2023",
+          "q": "The observed uptick of the RATs usage in August 2023 also marks the beginning of Metaencryptor‘s",
+          "what": "Uptick in RAT usage observed; Metaencryptor began publishing victims"
+        },
+        {
+          "v": "2021",
+          "q": "As mentioned by Fortgale the RAT has also been used in 2021 by REvil/GoldSouthfield and by an unknown",
+          "what": "RAT used by REvil/GoldSouthfield"
+        },
+        {
+          "v": "Summer 2022",
+          "q": "by an unknown Threat-Actor in Summer 2022 accordingly to Arista",
+          "what": "RAT used by an unknown threat actor"
+        },
+        {
+          "v": "2020",
+          "q": "first in the wild samples of the malware surfaced in the second half of 2020.",
+          "what": "First in-the-wild samples surfaced"
+        },
+        {
+          "v": "2019",
+          "q": "earlier samples from 2019 contain a PDB-",
+          "what": "Earlier samples with PDB path"
+        },
+        {
+          "v": "2022",
+          "q": "While we couldn't identify samples from the year 2022, we are confident that CSHARP-STREAMER was also in active use during this timeperiod.",
+          "what": "No 2022 samples identified; malware believed in use"
+        },
+        {
+          "v": "early 2023",
+          "q": "with the occurence of new C2-Infrastructure in early 2023.",
+          "what": "New C2 infrastructure appeared"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CSHARP-STREAMER",
+          "q": "The malware known as CSHARP-STREAMER is a Remote Access Trojan (RAT) developed in .NET."
+        },
+        {
+          "v": "Metaencryptor",
+          "q": "ransomware Metaencryptor using CSHARP-STREAMER."
+        },
+        {
+          "v": "ALPHV-Ransomware",
+          "q": "The DFIR-Report identified the RAT during an deployment of ALPHV-Ransomware."
+        },
+        {
+          "v": "Powershell loader",
+          "q": "HiSolutions identified a Powershell loader responsible for loading, decrypting, and executing the RAT."
+        },
+        {
+          "v": "PSExec",
+          "q": "The TA uses „ PSExec “[2] to execute commands"
+        },
+        {
+          "v": "PowerView",
+          "q": "The TA uses „PowerView“[4] from the"
+        },
+        {
+          "v": "Browser History",
+          "q": "The TA uses NirSoft’s „Browser History"
+        },
+        {
+          "v": "MegaUpload client",
+          "q": "came with a MegaUpload client and with ICMP for C2-Communication"
+        },
+        {
+          "v": "netsh.exe",
+          "q": "The creation of firewall-rules by netsh.exe"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "patches the in-memory amsi.dll",
+          "q": "The malware patches the in-memory amsi.dll"
+        },
+        {
+          "v": "TCP relay",
+          "q": "We can confirm the usage of the RAT’s TCP relay functionality."
+        },
+        {
+          "v": "keylogging",
+          "q": "The malware offers keylogging functionality"
+        },
+        {
+          "v": "capture screenshots",
+          "q": "The malware can capture screenshots."
+        },
+        {
+          "v": "token impersonation",
+          "q": "The malware supports token impersonation."
+        },
+        {
+          "v": "LDAP",
+          "q": "The malware queries LDAP to discover"
+        },
+        {
+          "v": "port-scanning",
+          "q": "The malware implements port-scanning-"
+        },
+        {
+          "v": "bruteforcing credentials",
+          "q": "supports bruteforcing credentials for smb-access."
+        },
+        {
+          "v": "ICMP",
+          "q": "came with a MegaUpload client and with ICMP for C2-Communication"
+        },
+        {
+          "v": "data exfiltration via https",
+          "q": "The malware allows data exfiltration via https."
+        },
+        {
+          "v": "execute Code from URLs",
+          "q": "The malware allows to execute Code from URLs,"
+        },
+        {
+          "v": "Kerberoasting",
+          "q": "Tickets (Kerberoasting) converts them for later usage via a Powershell-"
+        },
+        {
+          "v": "KeePass",
+          "q": "searches actively for KeePass-Configuration-"
+        },
+        {
+          "v": "encrypts virtual machines",
+          "q": "The TA encrypts virtual machines on the"
+        },
+        {
+          "v": "checks the host environment",
+          "q": "The TA checks the host environment via the bios"
+        },
+        {
+          "v": "creation of firewall-rules",
+          "q": "The creation of firewall-rules by netsh.exe"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "53 victims",
+          "q": "LostTrusts trove of 53 victims in August."
+        },
+        {
+          "v": "12 in August, 1 in September, 2 in November, 1 in December",
+          "q": "(12 in August, 1 in September, 2 in November, 1 in December)"
+        },
+        {
+          "v": "at least three",
+          "q": "in at least three (Mega, Mega + ICMP, Basic) different configurations"
+        },
+        {
+          "v": "two main different configurations",
+          "q": "there are two main different configurations of CSHARP-STREAMER used in"
+        },
+        {
+          "v": "1.0.0.0",
+          "q": "are declared as Version 1.0.0.0, actual samples"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CSHARP-STREAMER"
+    },
+    "hedges": [
+      "The report assumes Metaencryptor has a special interest in IT service providers, based on its own visibility.",
+      "The report could not rule out that the malware is a malware-as-a-service product or that its modularity is meant to evade analysis.",
+      "The report says the reasoning behind the modular design is unclear.",
+      "The report is not confident that the Arista-described attack and its own case share one threat actor.",
+      "The report says the switch in TTPs suggests an initial access broker gave Metaencryptor access; this is an inference.",
+      "The report expects the malware is provided as a service to ransomware groups.",
+      "The report says the early samples are probably early development versions of the malware.",
+      "The report could not identify 2022 samples but is confident the malware was in use in that period."
+    ]
   }
 }

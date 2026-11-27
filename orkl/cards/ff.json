@@ -126,5 +126,127 @@
       "note": "hedges[2]: The text only says the 8/7/2014 date 'would seem like a valid and logical date' given the timeline. It does not say the date is unconfirmed, so 'not ",
       "by": "auditor"
     }
+  },
+  "ffaaf49f0ead72966c28858a9674927f78fe951a": {
+    "sha1": "ffaaf49f0ead72966c28858a9674927f78fe951a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:13:09Z",
+    "model": "haiku",
+    "summary": "S2W's TALON team analysed DocSwap, an Android malware sample found on VirusTotal in January 2025 that poses as a document-viewing authentication app. It logs keystrokes through accessibility services, takes commands from a command-and-control server (57 identified), and steals data including audio, video and messages. The report suspects a North Korean-backed group, possibly Kimsuky, which S2W tracks as puNK-004. Both attributions are hedged as suspected or possible.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "North Korean-backed APT group",
+          "q": "which is suspected to be linked to a North Korean-backed APT group.",
+          "by": "S2W (the report)"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "indicating a possible connection to the Kimsuky group.",
+          "by": "S2W (the report)"
+        },
+        {
+          "v": "puNK-004",
+          "q": "the threat actors using the DocSwap malware have been designated as puNK-004",
+          "by": "S2W (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "suspected to target mobile device users in South Korea."
+        },
+        {
+          "v": "North Korea",
+          "q": "Among them, attack groups linked to North Korea are tracked under the name puNK and the threat actors"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-01-21",
+          "q": "On January 21, 2025, a malicious app named “문서열람 인증 앱” was identified through VirusTotal and",
+          "what": "malicious app identified on VirusTotal"
+        },
+        {
+          "v": "2024-12-13",
+          "q": "The malicious app was first signed on December 13, 2024.",
+          "what": "malicious app first signed"
+        },
+        {
+          "v": "2025-02-21",
+          "q": "On February 21, 2025, when accessing the app’s C2 address, a phishing page masquerading as CoinSwap",
+          "what": "C2 address showed a phishing page impersonating CoinSwap"
+        },
+        {
+          "v": "2025-02-27",
+          "q": "However, on February 27, 2025, it was noticed that the Naver favicon and the string “Million OK !!!!”",
+          "what": "C2 address showed a Naver favicon and the string Million OK"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DocSwap",
+          "q": "leading to its designation as DocSwap."
+        },
+        {
+          "v": "LoadedApkPlugin",
+          "q": "the LoadedApkPlugin open-source project was utilized, with modifications"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "keylogging via accessibility services",
+          "q": "such as keylogging through accessibility services, file transfers via socket communication, camera"
+        },
+        {
+          "v": "masquerading as a document-viewing authentication app",
+          "q": "masquerading as a Document-viewing authentication app."
+        },
+        {
+          "v": "persistence across phone reboot",
+          "q": "ensures that the malware runs even after a phone reboot by triggering the"
+        },
+        {
+          "v": "Foreground persistence",
+          "q": "(T1541) Foreground Persistence"
+        },
+        {
+          "v": "Audio capture",
+          "q": "(T1429) Audio Capture"
+        },
+        {
+          "v": "Video capture",
+          "q": "(T1512) Video Capture"
+        },
+        {
+          "v": "SMS message collection",
+          "q": "(T1636.004) SMS Messages"
+        },
+        {
+          "v": "Keylogging",
+          "q": "(T1417.001) Keylogging"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "57",
+          "q": "a total of 57"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "DocSwap"
+    },
+    "hedges": [
+      "which is suspected to be linked to a North Korean-backed APT group.",
+      "suspected to target mobile device users in South Korea.",
+      "indicating a possible connection to the Kimsuky group.",
+      "Kimsuky link rests on a similar trait previously seen in phishing servers targeting Naver accounts of the Kimsuky group."
+    ]
   }
 }

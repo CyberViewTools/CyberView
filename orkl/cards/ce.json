@@ -52,5 +52,104 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "ceb6daf589923566e4096f2c089c89605ceaf8eb": {
+    "sha1": "ceb6daf589923566e4096f2c089c89605ceaf8eb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:18:49Z",
+    "model": "haiku",
+    "summary": "Google's Threat Intelligence Group tracks UNC6040, a financially motivated cluster that uses voice phishing to get employees to connect a modified Salesforce Data Loader to their Salesforce environment. After access it exfiltrates Salesforce data and moves laterally into platforms such as Okta, Workplace and Microsoft 365. Extortion can follow months later, with the actor claiming ShinyHunters affiliation. Google recommends restricting API-enabled permissions, limiting app installation authorization and blocking commercial VPNs. Salesforce says the attacks are social engineering, not a…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC6040",
+          "q": "which tracks the threat cluster as 'UNC6040,'",
+          "by": "Google Threat Intelligence Group (GTIG), as reported by BleepingComputer"
+        },
+        {
+          "v": "ShinyHunters",
+          "q": "Google has observed hackers claiming to be the ShinyHunters extortion group conducting social engineering attacks against",
+          "by": "Google GTIG, reporting claims made by the actors"
+        },
+        {
+          "v": "Scattered Spider",
+          "q": "Scattered Spider tactics.",
+          "by": "Google GTIG"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-06-04",
+          "q": "Published: 2025-06-04",
+          "what": "BleepingComputer article published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Salesforce Data Loader",
+          "q": "UNC6040 also used modified versions of the Salesforce Data Loader appropriately named to fit the social engineering"
+        },
+        {
+          "v": "My Ticket Portal",
+          "q": "renaming it to \"My Ticket Portal\" and tricking victims into installing the app on their systems during"
+        },
+        {
+          "v": "Mullvad VPN",
+          "q": "GTIG reports the threat actors use Mullvad VPN IPs when exfiltrating the Salesforce data to obfuscate the activity."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "voice phishing",
+          "q": "UNC6040 is a financially motivated threat cluster that accesses victim networks by voice phishing social engineering,"
+        },
+        {
+          "v": "impersonating IT support personnel",
+          "q": "The attackers impersonate IT support personnel, requesting the target employee to accept a connection to Salesforce Data"
+        },
+        {
+          "v": "connection code",
+          "q": "\"connection code,\" thereby linking the actor-controlled Data Loader to the victim's environment."
+        },
+        {
+          "v": "phishing pages impersonating Okta",
+          "q": "Google says that attacks used phishing pages impersonating Okta, linking them to threat actors associated with the \"The"
+        },
+        {
+          "v": "immediately exfiltrating data from the victim's Salesforce",
+          "q": "Upon obtaining access, UNC6040 has been observed immediately exfiltrating data from the victim's Salesforce"
+        },
+        {
+          "v": "moving laterally through the victim's network",
+          "q": "UNC6040 was observed moving laterally through the victim's network, accessing and"
+        },
+        {
+          "v": "extortion several months after the initial UNC6040 intrusion",
+          "q": "In some instances, extortion activities haven't been observed until several months after the initial UNC6040 intrusion"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "62 million students",
+          "q": "the PowerSchool data breach that impacted 62 million students."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "UNC6040"
+    },
+    "hedges": [
+      "Google says the ShinyHunters claim is likely a method to increase pressure on victims.",
+      "Google says the delayed extortion could suggest UNC6040 has partnered with a second actor that monetizes access.",
+      "Google describes the Okta phishing link as threat actors associated with 'The Com' or Scattered Spider tactics.",
+      "In some cases the exfiltration was stopped prematurely by protection systems that revoked access.",
+      "Salesforce says accounts are not breached through a vulnerability but via social engineering, and there is no indication of a vulnerability in its services."
+    ]
   }
 }

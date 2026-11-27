@@ -122,5 +122,123 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "9f050b8452d7b63e4d794f66cc4f6c525c51b3a3": {
+    "sha1": "9f050b8452d7b63e4d794f66cc4f6c525c51b3a3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:21:47Z",
+    "model": "haiku",
+    "summary": "BleepingComputer's December 2021 report on the ALPHV BlackCat ransomware-as-a-service operation. The Rust-written ransomware is configurable, offers several encryption modes, can spread across a network using domain credentials and PSExec, and terminates backup and database processes. Affiliates earn revenue shares of 80 to 90 percent. Victims in the USA, Australia and India were reported, with ransom demands of $400,000 to $3 million. Extortion includes data theft and DDoS threats. The report says BlackCat is likely to fill the gap left by BlackMatter and REvil.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "ALPHV BlackCat operators",
+          "q": "Like all ransomware-as-a-service (RaaS) operations, the ALPHV BlackCat operators recruit affiliates to perform corporate",
+          "by": "BleepingComputer report"
+        },
+        {
+          "v": "Evil Corp",
+          "q": "CNA reportedly paid a $40 million ransom to the Russian hacking group Evil Corp.",
+          "by": "BleepingComputer report"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "USA",
+          "q": "including the USA, Australia, and India."
+        },
+        {
+          "v": "Australia",
+          "q": "including the USA, Australia, and India."
+        },
+        {
+          "v": "India",
+          "q": "including the USA, Australia, and India."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2021-12-09",
+          "q": "Published: 2021-12-09 · Archived: 2026-04-06 02:08:45 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "November 21st",
+          "q": "the new operation was on November 21st.",
+          "what": "First ID Ransomware submission for the new operation"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PSExec",
+          "q": "The executable will then extract PSExec to the %Temp% folder and use it to copy the"
+        },
+        {
+          "v": "Rust",
+          "q": "The ransomware executable is written in Rust, which is not typical for malware developers but is slowly increasing in"
+        },
+        {
+          "v": "Windows Restart Manager API",
+          "q": "ALPHV BlackCat also uses the Windows Restart Manager API to close processes or shut down Windows services keeping a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "triple-extortion",
+          "q": "Like other newer ransomware gangs, ALPHV uses a triple-extortion tactic where they steal data before encrypting devices"
+        },
+        {
+          "v": "DDoS",
+          "q": "As an additional extortion method, the threat actors threaten to DDoS victims until they pay a ransom."
+        },
+        {
+          "v": "domain credentials",
+          "q": "ALPHV BlackCat can also be configured with domain credentials that can be used to spread the ransomware and encrypt"
+        },
+        {
+          "v": "terminate processes and Windows services",
+          "q": "In the sample tested by BleepingComputer, the ransomware will terminate processes and Windows services that could"
+        },
+        {
+          "v": "AES",
+          "q": "In auto mode, the software detects the presence of AES hardware support (exists in all modern processors) and uses it."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four different encryption modes",
+          "q": "According to the threat actor, the ransomware can be configured to use four different encryption modes, as described in their"
+        },
+        {
+          "v": "80%",
+          "q": "payments up to $1.5 million, the affiliate earns 80%, 85% for up to $3 million, and 90% of payments over $3 million."
+        },
+        {
+          "v": "$40 million",
+          "q": "CNA reportedly paid a $40 million ransom to the Russian hacking group Evil Corp."
+        },
+        {
+          "v": "$400,000 to $3 million",
+          "q": "Ransom demands range between $400,000 to $3 million payable in Bitcoin or Monero. However, if victims pay in bitcoin"
+        },
+        {
+          "v": "15%",
+          "q": "there is an additional 15% fee added to the ransom."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ALPHV BlackCat"
+    },
+    "hedges": [
+      "The report says the threat actors allegedly tested the ransomware on the listed operating systems.",
+      "The report says CNA reportedly paid a $40 million ransom to Evil Corp.",
+      "The report states it is very likely that ALPHV BlackCat will fill the void left by BlackMatter and REvil."
+    ]
   }
 }

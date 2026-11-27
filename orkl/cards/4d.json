@@ -1,0 +1,125 @@
+{
+  "4d612928d40b956cf990c917aca29944d7abb949": {
+    "sha1": "4d612928d40b956cf990c917aca29944d7abb949",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:15:22Z",
+    "model": "haiku",
+    "summary": "AhnLab's ATCP report describes the Kimsuky group distributing the PebbleDash backdoor, which CISA earlier linked to Lazarus, mainly through spear-phishing with LNK shortcut files disguised as documents. The chain uses PowerShell, a Dropbox and TCP socket command channel, a UAC bypass tool, and a patched termsrv.dll to bypass RDP authentication. AsyncRAT and a ForceCopy data-exfiltration utility are also described. The report covers activity from March 2025, lists MD5 hashes and IP indicators, and gives response steps for users.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "the Kimsuky threat group is known to use an open-source RDP",
+          "by": "the report (ATCP, AhnLab)"
+        },
+        {
+          "v": "Lazarus",
+          "q": "as a backdoor malware of Lazarus (Hidden Corba) in 2020.",
+          "by": "CISA, as cited by the report"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "March 2025",
+          "q": "Distribution of PebbleDash Malware in March 2025",
+          "what": "period covered by the report"
+        },
+        {
+          "v": "2025-04-21",
+          "q": "Published: 2025-04-21",
+          "what": "report published"
+        },
+        {
+          "v": "2020",
+          "q": "as a backdoor malware of Lazarus (Hidden Corba) in 2020.",
+          "what": "CISA identified PebbleDash as a Lazarus backdoor"
+        },
+        {
+          "v": "2021",
+          "q": "Since 2021, the PebbleDash malware has been continuously used by the Kimsuky group.",
+          "what": "PebbleDash has been used by the Kimsuky group since then"
+        },
+        {
+          "v": "2024",
+          "q": "multiple privilege escalation tools in 2024, but one particular type is more prevalent than the others.",
+          "what": "Kimsuky was still using multiple privilege escalation tools"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PebbleDash",
+          "q": "PebbleDash is a backdoor malware that was previously identified by the Cybersecurity and Infrastructure Security"
+        },
+        {
+          "v": "AsyncRAT",
+          "q": "and AsyncRAT to control the infected PC."
+        },
+        {
+          "v": "UACMe",
+          "q": "The Kimsuky group has been using various privilege escalation tools, mainly UACMe."
+        },
+        {
+          "v": "RDP Wrapper",
+          "q": "the group has moved away from their previous method of using the open-source RDP Wrapper."
+        },
+        {
+          "v": "ForceCopy utility",
+          "q": "UAC bypass malware for privilege escalation, and ForceCopy utility for data"
+        },
+        {
+          "v": "advconf2.dll",
+          "q": "the threat actors directly created advconf2.dll using PowerShell, as shown in the image below."
+        },
+        {
+          "v": "termsrv.dll",
+          "q": "The following have been identified: termsrv.dll patched for RDP"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "specific individuals with spear-phishing attacks to gain initial access."
+        },
+        {
+          "v": "LNK malicious shortcut files disguised as normal documents",
+          "q": "The Kimsuky group distributes LNK malicious shortcut files disguised as normal documents by attaching a"
+        },
+        {
+          "v": "double extension",
+          "q": "double extension to emails."
+        },
+        {
+          "v": "task scheduler for system persistence",
+          "q": "executes PowerShell to perform tasks such as registering a task scheduler for system persistence, registering"
+        },
+        {
+          "v": "Dropbox and TCP socket C&C communication",
+          "q": "Through communication with a Dropbox and TCP socket-based C&C server, the group installs multiple malware"
+        },
+        {
+          "v": "UAC bypass for privilege escalation",
+          "q": "UAC bypass malware for privilege escalation, and ForceCopy utility for data"
+        },
+        {
+          "v": "patching system DLL termsrv.dll to disable RDP authentication",
+          "q": "they have begun directly modifying the system DLL (termsrv.dll) to disable RDP authentication."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "PebbleDash"
+    },
+    "hedges": [
+      "The report covers the latest distribution process; execution methods differ between past and current versions of PebbleDash.",
+      "The report says PebbleDash was once known as Lazarus malware, but that recent distribution is by the Kimsuky group.",
+      "Additional IOCs are only available by subscribing to AhnLab TIP."
+    ]
+  }
+}

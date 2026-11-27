@@ -594,5 +594,322 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "d01e8492eb25e3a9dfa0218367a708d2d3230c93": {
+    "sha1": "d01e8492eb25e3a9dfa0218367a708d2d3230c93",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:19:14Z",
+    "model": "haiku",
+    "summary": "Sygnia incident-response case study of a 2023 client intrusion attributed to BlackCat (ALPHV) or one of its affiliates. Initial access came through a compromised third-party vendor. The attacker spent weeks moving laterally with Cobalt Strike and proxy tools, exfiltrated data with Rclone to cloud storage, and extorted the victim by email. Encryption was prevented when the client blocked internet access. A CVE id is mentioned in the text but is split across a line break, so it is not recorded.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "BlackCat (ALPHV)",
+          "q": "executed by the BlackCat (ALPHV) ransomware group or one of its affiliates",
+          "by": "Sygnia"
+        },
+        {
+          "v": "Conti",
+          "q": "among them the Conti and LockBit ransomware groups",
+          "by": "Sygnia, citing threat intelligence analysis"
+        },
+        {
+          "v": "LockBit",
+          "q": "among them the Conti and LockBit ransomware groups",
+          "by": "Sygnia, citing threat intelligence analysis"
+        },
+        {
+          "v": "LockBit",
+          "q": "previously utilized by LockBit ransomware affiliates",
+          "by": "Sygnia, citing threat intelligence research"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "multi-sector",
+          "q": "targeting high-profile multi-sector and worldwide organizations"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "communicating with a C2 server located in Russia"
+        },
+        {
+          "v": "US",
+          "q": "a US-based cloud storage platform"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-03-05",
+          "q": "Published: 2024-03-05",
+          "what": "Sygnia blog post published"
+        },
+        {
+          "v": "November 2021",
+          "q": "The BlackCat ransomware group surfaced in November 2021, and has since become",
+          "what": "BlackCat ransomware group first surfaced"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, Sygnia’s IR team was engaged by a client",
+          "what": "Sygnia engaged by a client to investigate suspicious activity"
+        },
+        {
+          "v": "days 27-30",
+          "q": "Data Exfiltration and Additional Lateral Movement (days 27-30)",
+          "what": "data exfiltration and additional lateral movement phase"
+        },
+        {
+          "v": "days 30-45",
+          "q": "Extortion Attempts (days 30-45)",
+          "what": "extortion phase"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "Several Cobalt Strike framework capabilities were utilized by the threat actor throughout the course"
+        },
+        {
+          "v": "Rclone",
+          "q": "Rclone, an open-source tool used for syncing files and folders to and from cloud storage providers"
+        },
+        {
+          "v": "SoftPerfect Network Scanner",
+          "q": "The file was identified as a version of the SoftPerfect Network Scanner"
+        },
+        {
+          "v": "Stowaway",
+          "q": "Stowaway is an open-source tool used for creation of a chained proxy connection between a series"
+        },
+        {
+          "v": "AccountRestore",
+          "q": "a renamed version of ‘AccountRestore’"
+        },
+        {
+          "v": "ADRecon",
+          "q": "‘ADRecon’, an open-source PowerShell tool"
+        },
+        {
+          "v": "Process Hacker",
+          "q": "deploying ‘Process Hacker’ – a free tool used for resources monitoring"
+        },
+        {
+          "v": "defoff.bat",
+          "q": "Execution of a ‘defoff.bat’ batch script"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "leveraging access from third parties",
+          "q": "employed a method that has become almost standard: leveraging access from third parties"
+        },
+        {
+          "v": "move laterally",
+          "q": "Cobalt Strike platform, to move laterally between the victim’s on-premises domains and Azure environment through"
+        },
+        {
+          "v": "brute-force",
+          "q": "A brute-force attack was initiated from a compromised server on the vendor’s network."
+        },
+        {
+          "v": "Kerberoasting",
+          "q": "a Kerberoasting attack in order to retrieve password hashes from the Active Directory"
+        },
+        {
+          "v": "process injection",
+          "q": "process injection for the purposes of execution and evasion"
+        },
+        {
+          "v": "password-dumping tool",
+          "q": "using a password-dumping tool"
+        },
+        {
+          "v": "disable security monitoring tools",
+          "q": "Several attempts to disable security monitoring tools by remotely creating a service"
+        },
+        {
+          "v": "mask the malware as benign activity",
+          "q": "attempting to mask the malware as benign activity"
+        },
+        {
+          "v": "Data Exfiltration",
+          "q": "Data Exfiltration and Additional Lateral Movement (days 27-30)"
+        },
+        {
+          "v": "email messages",
+          "q": "flooded the victim with email messages threatening to publish sensitive information"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "terabytes",
+          "q": "claimed that terabytes of data had been exfiltrated from their network"
+        },
+        {
+          "v": "two hosts",
+          "q": "exfiltration attempts from two hosts were successful"
+        },
+        {
+          "v": "three accounts",
+          "q": "Three successful network logons to one of these servers were executed from a host named ‘DESKTOP-PSGDD89’ using three accounts"
+        },
+        {
+          "v": "dozens of employees",
+          "q": "emails to dozens of employees of the victim company"
+        },
+        {
+          "v": "weeks",
+          "q": "the attacker spent weeks in the network"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "The Anatomy of a BlackCat (ALPHV) Attack"
+    },
+    "hedges": [
+      "Attribution is to BlackCat (ALPHV) or one of its affiliates, not to a single confirmed actor.",
+      "The report says the Russian C2 server appears to be a compromised MikroTik router.",
+      "The report says one service executable seems to attempt to disable EDR agents.",
+      "The deleted PowerShell script was presumably removed by the threat actor, inferred from the logs.",
+      "Threat intelligence analysis indicated the hostnames are known to be used by various threat actors, not confirmed as used by these groups.",
+      "Some renamed executables carry a copyright that looks legitimate, because the Apache Tomcat project shares the name."
+    ]
+  },
+  "d024ba07693e90631f56e0ccf049775a082516ca": {
+    "sha1": "d024ba07693e90631f56e0ccf049775a082516ca",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:20:23Z",
+    "model": "haiku",
+    "summary": "An educational blog tutorial on a Windows persistence technique: hijacking a default file association so a chosen program runs when a text file is opened. The report says the technique is used by the SILENTTRINITY framework and the Kimsuky cyber espionage group. It also says malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors. The walkthrough and demo are not reproduced here.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "This persistence trick is used by SILENTTRINITY framework and Kimsuky cyber espionage group.",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government agencies",
+          "q": "This malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-08-26",
+          "q": "Published: 2022-08-26 · Archived: 2026-04-06 01:29:22 UTC",
+          "what": "Article published"
+        },
+        {
+          "v": "2019",
+          "q": "This malware was used in a 2019 campaign against Croatian government agencies by unidentified cyber actors.",
+          "what": "Campaign against Croatian government agencies"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SILENTTRINITY",
+          "q": "This persistence trick is used by SILENTTRINITY framework and Kimsuky cyber espionage group."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "default file association hijacking",
+          "q": "It is possible to hijacking a default file association to execute a malicious program."
+        },
+        {
+          "v": "Change Default File Association",
+          "q": "MITRE ATT&CK: Change Default File Association"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "This is a practical case for educational purposes only.",
+      "The report attributes the 2019 campaign only to unidentified cyber actors."
+    ]
+  },
+  "d0d666177b14b04a9202863e5b062a0e5936b161": {
+    "sha1": "d0d666177b14b04a9202863e5b062a0e5936b161",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:21:43Z",
+    "model": "haiku",
+    "summary": "AhnLab's ASEC analysis team reports signs of AppleSeed malware being spread to maintenance contractors of a military unit, in July 2022. The report says AppleSeed is a backdoor mainly used by the Kimsuky group. Lures were disguised purchase-order and approval documents, plus an Excel file named after an expected installation schedule. The Excel file was password-protected and used a macro that shows the body after the user enables content. The macro uses mshta to fetch and run a further script, which installs AppleSeed. Once running, AppleSeed takes commands from a C2 server. AhnLab V3…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "AppleSeed 악성코드는 Kimsuky 조직에서 주로 사용되는 백도어성 악성코드로",
+          "by": "AhnLab ASEC analysis team (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Military unit maintenance contractors",
+          "q": "특정 군부대 유지보수 업체 대상으로 AppleSeed 유포"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-07-21",
+          "q": "Published: 2022-07-21",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AppleSeed",
+          "q": "AppleSeed 악성코드는 Kimsuky 조직에서 주로 사용되는 백도어성 악성코드로"
+        },
+        {
+          "v": "mshta",
+          "q": "mshta를 이용하여 특정 C2에서 추가 스크립트를 다운로드 받아 실행한다"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Document lures disguised as purchase orders and approval forms",
+          "q": "발주서, 품의서를 위장하여 AppleSeed 악성코드를 유포하는 정황을 포착하였"
+        },
+        {
+          "v": "Password-protected Excel attachment",
+          "q": "최초 엑셀 문서 형태(XLS)로 유포가 이루어졌으며, 백신을 우회하기 위해서인지 엑셀 파일은 암호로 보호"
+        },
+        {
+          "v": "Macro lure prompting the user to enable content",
+          "q": "콘텐츠 사용 버튼을 클릭하면 매크로에 의하여 [그림 3]으로 본문이 바뀌게 된다."
+        },
+        {
+          "v": "Commands received from a C2 server after execution",
+          "q": "AppleSeed가 실행되면 지속적으로 C2 서버로부터 명령을 받은 후"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "AppleSeed"
+    },
+    "hedges": [
+      "The report describes the distribution as signs (정황) it observed ('포착'), not as a confirmed finding.",
+      "The report says the password on the Excel file was perhaps meant to get past antivirus ('백신을 우회하기 위해서인지')."
+    ]
   }
 }

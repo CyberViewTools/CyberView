@@ -192,5 +192,208 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "8b7379363ff30208137df63589f03fe755886953": {
+    "sha1": "8b7379363ff30208137df63589f03fe755886953",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:13:25Z",
+    "model": "haiku",
+    "summary": "Interpres Security report on abuse of the macOS TCC (Transparency, Consent and Control) database to bypass privacy controls. It covers DPRK-linked Lazarus Group activity and APT37's CloudMensis, plus Callisto, Bundlore, BlueBlood, JokerSpy and XCSSET samples found through VirusTotal hunting. It also covers historical CVEs (CVE-2020-9934, CVE-2020-27937, CVE-2020-9771), social engineering, and defender recommendations.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus Group",
+          "q": "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009",
+          "by": "the report itself"
+        },
+        {
+          "v": "APT37",
+          "q": "CloudMensis is a macOS malware attributed to North Korean adversary APT37",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cryptocurrency",
+          "q": "they were heavily observed targeting cryptocurrency companies"
+        },
+        {
+          "v": "cryptocurrency",
+          "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009"
+        },
+        {
+          "v": "Japan",
+          "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+        }
+      ],
+      "dates": [
+        {
+          "v": "Jul 15, 2020",
+          "q": "Apple thankfully patched this Jul 15, 2020, in Security-Update 2020-004.",
+          "what": "Apple patched the CVE-2020-9934 TCC bypass"
+        },
+        {
+          "v": "2020",
+          "q": "With Operation Dream Job dating back to at least 2020",
+          "what": "Operation Dream Job dating back to at least this year"
+        },
+        {
+          "v": "2021",
+          "q": "having targeted security researchers in 2021",
+          "what": "Lazarus Group targeted security researchers"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, they were heavily observed targeting cryptocurrency companies",
+          "what": "Lazarus Group heavily observed targeting cryptocurrency companies"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CloudMensis",
+          "q": "CloudMensis is a macOS malware attributed to North Korean adversary APT37"
+        },
+        {
+          "v": "Callisto",
+          "q": "Results: 4 hits attributed to Callisto, a different macOS backdoor that some sources state serves as"
+        },
+        {
+          "v": "Bundlore",
+          "q": "Bundlore is a notorious macOS adware that has also been around since 2015"
+        },
+        {
+          "v": "BlueBlood",
+          "q": "I am assuming the BlueBlood keylogger samples I have corresponds to the BlueBlood keylogger that has been"
+        },
+        {
+          "v": "JokerSpy",
+          "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+        },
+        {
+          "v": "SwiftBelt",
+          "q": "JokerSpy is a malware leveraging SwiftBelt that targeted a cryptocurrency exchange in Japan"
+        },
+        {
+          "v": "XCSSET",
+          "q": "Digging into how this campaign operates, the developers of XCSSET used three zero-days to bypass"
+        },
+        {
+          "v": "VirusTotal",
+          "q": "I realized VirusTotal was not using the quotes to denote a literal"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "write to TCC.db",
+          "q": "could directly write to TCC.db to give themselves permissions"
+        },
+        {
+          "v": "social engineering",
+          "q": "Finally, social engineering also works!"
+        },
+        {
+          "v": "override Gatekeeper",
+          "q": "directing users on how to override Gatekeeper step-by-step"
+        },
+        {
+          "v": "screen capture",
+          "q": "allowing them to take screen captures"
+        },
+        {
+          "v": "logs keyboard events",
+          "q": "and logs keyboard events"
+        },
+        {
+          "v": "inject its own malicious app into the bundle",
+          "q": "it will inject its own malicious app into the bundle of"
+        },
+        {
+          "v": "creates a new TCC database",
+          "q": "It creates a new TCC database and replaces the existing legitimate TCC"
+        },
+        {
+          "v": "mount local apfs snapshots",
+          "q": "anyone can mount local apfs snapshots if using"
+        },
+        {
+          "v": "TCC.db privacy setting enumeration",
+          "q": "Adversaries performed TCC.db privacy setting enumeration and discovery"
+        },
+        {
+          "v": "masquerade as an Apple sanctioned appID",
+          "q": "named in this fashion likely to masquerade as an Apple sanctioned appID for the accessibility list"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2020-9934",
+          "q": "Performing screen capture requires bypassing TCC restrictions via exploiting CVE-2020-9934."
+        },
+        {
+          "v": "CVE-2020-27937",
+          "q": "Similarly, in CVE-2020-27937, an actor can gain control of TCC by modifying the NFSHomeDirectory"
+        },
+        {
+          "v": "CVE-2020-9771",
+          "q": "In CVE-2020-9771 a disk can be mounted and read by non-admin users."
+        }
+      ],
+      "figures": [
+        {
+          "v": "16.5%",
+          "q": "1% a year over the past 14 years (from 3% to 16.5%)"
+        },
+        {
+          "v": "33%",
+          "q": "macOS is gaining traction at 33%"
+        },
+        {
+          "v": "87,000",
+          "q": "out of over 87,000 developer responses"
+        },
+        {
+          "v": "186",
+          "q": "Results: 186 hits!"
+        },
+        {
+          "v": "9",
+          "q": "Results: 9 hits, all of which were popping up as"
+        },
+        {
+          "v": "37",
+          "q": "Results: 37 hits!"
+        },
+        {
+          "v": "41",
+          "q": "Results: 41 hits, less than half were confirmed malware"
+        },
+        {
+          "v": "35",
+          "q": "Results: 35 hits total."
+        },
+        {
+          "v": "8",
+          "q": "Rummaging through the results, 8 hits tied back to CloudMensis."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "I am by no means a VirusTotal query pro, and your mileage may vary depending on your subscription, date of query, etc.",
+      "just because we did not see hits in VT does not mean these techniques are not happening in the wild.",
+      "The Lazarus Group is believed to operate out of North Korea, and has been active since 2009",
+      "Lazarus Group appears to be attempting to dump the access table from the TCC.db",
+      "some sources state serves as the forerunner of the Proton family of malware",
+      "Either the target hosts were known to be running macOS Catalina 10.5.6 or earlier, or the malware contained legacy code that the developers forgot to remove.",
+      "It is unclear if this is a viable or high-fidelity query currently."
+    ]
   }
 }

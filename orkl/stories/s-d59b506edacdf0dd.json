@@ -1,0 +1,119 @@
+{
+  "live": null,
+  "next": {
+    "key": "s-d59b506edacdf0dd",
+    "kind": "subject",
+    "name": "SmokeLoader",
+    "headline": "SmokeLoader: a loader first revealed in 2011, now seen hiding in concatenated ZIP files",
+    "in_short": "SmokeLoader is a loader that can act as a keylogger, stealer, botnet or backdoor. Perception Point links a 2024 phishing attack using a concatenated ZIP disguised as a shipping document to it.",
+    "sections": [
+      {
+        "h": "who",
+        "sentences": [
+          {
+            "t": "SmokeLoader is a malware family of the loader type, and one source says it was first revealed in 2011.",
+            "cites": [
+              "1088dcecf624a75713158f8d6d72c2847baf58ab"
+            ]
+          },
+          {
+            "t": "The same source says it is a family that keeps evolving and aims to work as a keylogger, information stealer, botnet or backdoor.",
+            "cites": [
+              "1088dcecf624a75713158f8d6d72c2847baf58ab"
+            ]
+          },
+          {
+            "t": "The cards name no specific group behind it. Perception Point refers only to unnamed threat actors who distributed the malware in a recent attack.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "methods",
+        "sentences": [
+          {
+            "t": "SmokeLoader is spread through emails and drive-by downloads, according to one technical analysis.",
+            "cites": [
+              "1088dcecf624a75713158f8d6d72c2847baf58ab"
+            ]
+          },
+          {
+            "t": "The same analysis says it was the first to use PROPagate injection, a way of running code inside a different application from the one that is running.",
+            "cites": [
+              "1088dcecf624a75713158f8d6d72c2847baf58ab"
+            ]
+          },
+          {
+            "t": "Perception Point describes a phishing email sent under the guise of a shipping company. The attackers changed the file name and extension so the attachment looked like a RAR archive.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          },
+          {
+            "t": "The file was a concatenated ZIP. Perception Point says opening it in 7zip shows only a benign-looking PDF, while WinRAR reads the second central directory and shows the second archive.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          },
+          {
+            "t": "The hidden item was an AutoIt-based executable. The report says Windows File Explorer struggles with concatenated ZIPs and may fail to open the file at all.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          },
+          {
+            "t": "Perception Point says 7zip may show a warning about extra data after the archive end, but that it is easily overlooked. It also says 7zip's developers consider the behaviour intentional.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "operations",
+        "sentences": [
+          {
+            "t": "In a blog post dated 2024-11-07, Perception Point linked the attack path it analysed to SmokeLoader.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          },
+          {
+            "t": "The report describes the executable as a variant of a trojan family. It says the eventual payload could include banking trojans or ransomware.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          },
+          {
+            "t": "The tests used 7zip 22.01, WinRAR 7.01 and Windows 23H2. The report says the techniques apply to the latest versions of these tools as of its date.",
+            "cites": [
+              "53df10cc3e045218c62e0bceb2d1c6f309487ed4"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
+          {
+            "t": "Treat unexpected shipping documents with caution, even when the file looks like a plain archive or PDF.",
+            "cites": []
+          },
+          {
+            "t": "Do not rely on a single archive tool to show what a file contains.",
+            "cites": []
+          }
+        ]
+      }
+    ],
+    "status": "draft",
+    "based_on": "aab369e7ed1caa1a97032a4b3d07e8243d9deacf",
+    "tries": 0,
+    "by": "CyberView AI (a Claude model)",
+    "written_at": "2026-11-27T02:08:21Z",
+    "writer_model": "sonnet",
+    "written_run": "a2f35bb6"
+  }
+}

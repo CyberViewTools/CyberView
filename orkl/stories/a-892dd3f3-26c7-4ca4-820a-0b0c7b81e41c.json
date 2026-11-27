@@ -51,28 +51,58 @@
     "key": "a-892dd3f3-26c7-4ca4-820a-0b0c7b81e41c",
     "kind": "actor",
     "name": "NICKEL KIMBALL",
-    "headline": "NICKEL KIMBALL (Kimsuky): a North Korea-linked spying group seen in phishing and malware campaigns",
-    "in_short": "NICKEL KIMBALL, widely known as Kimsuky, is tracked under many names. Analysts tie it to North Korea. Recent reports describe spearphishing of South Korean policy staff, with some attribution caveats.",
+    "headline": "NICKEL KIMBALL (Kimsuky): a North Korea-linked espionage group with many names, phishing lures and layered malware",
+    "in_short": "NICKEL KIMBALL, widely tracked as Kimsuky, is assessed by several vendors to be North Korea-linked. Reports describe spearphishing of South Korean targets, multi-stage scripts and cloud-based data theft.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as NICKEL KIMBALL. Other names in the catalogue include Kimsuky, THALLIUM, APT43, Emerald Sleet and Velvet Chollima.",
+            "t": "Secureworks tracks this actor as NICKEL KIMBALL. The catalogue lists many other names, including Kimsuky, APT43, Velvet Chollima, Black Banshee, Emerald Sleet, THALLIUM and TA427.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The catalogue lists tools tied to the actor, among them BabyShark, ReconShark, KONNI and KimJongRAT.",
+            "t": "Tools the catalogue links to the actor include BabyShark, ReconShark, KONNI, KimJongRAT, FastFire, FastSpy and FireViewer.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The ESRC report on a 2022 malicious document describes the actor behind it as North Korea-linked and names Thallium, also known as Kimsuky.",
+            "t": "Breakglass Intelligence attributes a command server it analysed to Kimsuky (APT43, Velvet Chollima, Black Banshee) and calls it a DPRK actor, with high confidence.",
             "cites": [
-              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "Genians Security Center assesses with moderate confidence that a 2026 campaign was the work of Kimsuky, which it calls a North Korea-linked group. It says no single decisive piece of evidence was found and that imitation by a third party cannot be ruled out.",
+            "cites": [
+              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
+            ]
+          },
+          {
+            "t": "Sekoia and Kudelski Security note that some DPRK experts regard Kimsuky as a mega-cluster with several branches, such as TA406 and TA408. They also say vendors divide and name clusters differently.",
+            "cites": [
+              "24bb6d01f2508e4001990348616aff2cadc34cd1"
+            ]
+          },
+          {
+            "t": "The same report identifies cyberespionage as the primary objective of the threat clusters it describes, a group that includes Kimsuky.",
+            "cites": [
+              "24bb6d01f2508e4001990348616aff2cadc34cd1"
+            ]
+          },
+          {
+            "t": "Attribution is not always clean. Some research firms detected malware in an Iranian-linked campaign as Kimsuky or Lazarus, while ClearSky attributed it to a subgroup of Charming Kitten.",
+            "cites": [
+              "5f483228d8e542273e3fe8a35b02aa8a0713825b"
+            ]
+          },
+          {
+            "t": "Lookout found that a North Korea-linked Android spyware campaign, which it attributed to APT37 with medium confidence, also had ties to infrastructure used by APT43. Lookout notes that North Korean groups share infrastructure, targeting and techniques, which makes attribution harder.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
             ]
           }
         ]
@@ -81,9 +111,21 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "In a campaign running from June to October 2026, South Korean policy and security professionals were approached through reply-based spearphishing, according to Genians Security Center.",
+            "t": "Genians describes a 2026 campaign that approached South Korean policy and security professionals.",
             "cites": [
               "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
+            ]
+          },
+          {
+            "t": "Breakglass Intelligence reports phishing lures aimed at South Korean users of Naver, including tax-themed lures.",
+            "cites": [
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "In 2022, ESRC analysed a malicious Word file disguised as a customer-center guide from Klip, a digital asset wallet service. ESRC linked it to Thallium, also known as Kimsuky.",
+            "cites": [
+              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
             ]
           }
         ]
@@ -92,27 +134,45 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "In the Genians case, the attacker posed as a senior aide in a National Assembly member's office. The lure was a shortcut file disguised as an HWP document inside an archive.",
+            "t": "Genians describes reply-based spearphishing in which the sender posed as an aide to a National Assembly member. The victim got an archive holding a shortcut file disguised as a document.",
             "cites": [
               "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           },
           {
-            "t": "Persistence came from a scheduled task. The second-stage loader ran in memory without being written to disk.",
+            "t": "In that campaign, later stages ran in memory, set up persistence with a scheduled task and used built-in Windows tools. A public note service served as an extra control channel, and the operator swapped its contents to change tools.",
             "cites": [
               "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           },
           {
-            "t": "The operator used a public note service as an extra command channel and swapped its contents to change tools. Stolen data went to Dropbox, MEGA Cloud and free web hosting at different times.",
+            "t": "Genians reports that stolen data went to cloud services such as Dropbox, MEGA and free web hosting. The tools it saw included XenoRAT variants and a Node.js-based remote access tool it named NodeLinkRAT.",
             "cites": [
               "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           },
           {
-            "t": "The 2022 ESRC sample was a Word document with macros. It asked users to click Enable Content, dropped an XML file that then ran, and tried to reach a command server.",
+            "t": "Breakglass Intelligence describes a three-stage chain that starts from a compiled help file disguised as API documentation. The stages do reconnaissance and persistence, bridge to PowerShell, then run a keylogger with clipboard monitoring and timed exfiltration.",
+            "cites": [
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "The same report maps about 79 domains across five IP addresses, using Korean and US hosting providers and free dynamic DNS services.",
+            "cites": [
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "The 2022 ESRC analysis found a macro-laden document that asked users to enable content. The macro dropped an XML file that ran and tried to reach a command server, which could not be reached at the time.",
             "cites": [
               "fdf53fac0af9cced76179fb1b9df0ce009952e36"
+            ]
+          },
+          {
+            "t": "Google Threat Intelligence Group reported that it detected APT43 actors using multiple public AI tools. It says the purpose of that access is not clear.",
+            "cites": [
+              "5a9ce647a34b32dddf096dd7f17697b44a5f5b0b"
             ]
           }
         ]
@@ -121,33 +181,21 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "Genians assesses with moderate confidence that the 2026 campaign, which used a Node.js tool it named NodeLinkRAT and XenoRAT variants, is the work of the North Korea-linked group Kimsuky.",
+            "t": "Genians dates the 2026 campaign's activity from June to October 2026. It places the spearphishing of a seminar attendee between September 12 and 18, 2026.",
             "cites": [
               "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           },
           {
-            "t": "Genians says no single decisive piece of evidence was found. It cannot fully rule out a third party copying the same techniques.",
+            "t": "Breakglass Intelligence says a researcher submitted the help file to MalwareBazaar in April 2026. The report was published on 2026-04-11.",
             "cites": [
-              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
             ]
           },
           {
-            "t": "In February 2022, ESRC analysed a Word file disguised as a customer-center guide from the Klip digital wallet service. The report links it to the Smoke Screen campaign. The command server could not be reached, so analysis stopped there.",
-            "cites": [
-              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
-            ]
-          },
-          {
-            "t": "Lookout attributes the KoSpy Android spyware to APT37 with medium confidence. It says the campaign also has ties to infrastructure used by APT43, another North Korean group, and notes that North Korean groups share infrastructure and techniques.",
+            "t": "Lookout's KoSpy Android spyware, disguised as utility apps, had samples from March 2022 to March 2024. Lookout says the apps were removed from Google Play.",
             "cites": [
               "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
-            ]
-          },
-          {
-            "t": "ClearSky attributes an Iranian \"Dream Job\" campaign to a subgroup of Charming Kitten. It notes that some other research companies link the malware files to the North Korean Kimsuky/Lazarus group.",
-            "cites": [
-              "5f483228d8e542273e3fe8a35b02aa8a0713825b"
             ]
           }
         ]
@@ -156,25 +204,25 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected replies from a supposed official with care, even inside an existing email thread.",
+            "t": "Be wary of unexpected replies and attachments, even from a sender who seems to hold an official role. Shortcut files and help files inside archives deserve extra suspicion.",
             "cites": []
           },
           {
-            "t": "Do not open archives, shortcut files or documents that ask you to enable macros without checking with the sender through another channel.",
+            "t": "Watch for odd traffic to cloud storage and note-sharing services, and treat attribution to one named group as provisional.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "cdbc0e49742242f9f4d2a5088d96bcdd0764625d",
+    "based_on": "5ad6be427ab09e710c3cb762175aa8e4062a5c21",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T00:46:12Z",
+    "written_at": "2026-11-27T02:07:47Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "e0e6841f"
+    "written_run": "2025d0b1"
   }
 }

@@ -145,25 +145,137 @@
   },
   "cfa1b91e1d42cd6d86d703f1f4ccf1e27b00340d": {
     "sha1": "cfa1b91e1d42cd6d86d703f1f4ccf1e27b00340d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T01:00:00Z",
+    "read_at": "2026-11-27T02:12:20Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Group-IB's DFIR team describes a campaign against CentOS VPS cloud hosts, which it attributes to the TeamTNT threat actor with moderate confidence. Reported steps include SSH brute force initial access, disabling security controls and rival miners, a cron-based payload job, the Diamorphine Linux rootkit, file locking, a root backdoor account, and erasure of logs and command history. The report says TeamTNT was active from 2019, vanished in 2022, and is seen again in 2023 and 2024 campaigns.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "We are talking about the infamous threat actor, TeamTNT.",
+          "by": "Group-IB DFIR team (report author)"
+        },
+        {
+          "v": "TeamTNT",
+          "q": "identified various traces of matching tactics, techniques, and procedures (TTPs) used by TeamTNT in campaigns perpetrated in 2023",
+          "by": "Group-IB DFIR team (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "VPS cloud infrastructure",
+          "q": "TeamTNT’s ongoing campaigns target VPS cloud infrastructures on CentOS, beginning with SSH brute"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Germany",
+          "q": "Germany. The only connection to the mappers is their shared name; aside from that, there is no relation between"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2019",
+          "q": "we have to look back to 2019, when a new threat actor initiated a covert, long-term",
+          "what": "A new threat actor began a covert, long-term campaign against public Redis, Kubernetes and Docker instances."
+        },
+        {
+          "v": "2022",
+          "q": "But in 2022, the adversary abruptly vanished, abandoning their social media profiles and websites.",
+          "what": "The adversary abruptly vanished, abandoning its social media profiles and websites."
+        },
+        {
+          "v": "2023",
+          "q": "identified various traces of matching tactics, techniques, and procedures (TTPs) used by TeamTNT in campaigns perpetrated in 2023",
+          "what": "Traces of matching TeamTNT tactics were identified in campaigns perpetrated."
+        },
+        {
+          "v": "2024",
+          "q": "and campaigns still ongoing in 2024, which we will elaborate in this blog.",
+          "what": "Campaigns attributed to TeamTNT were still ongoing."
+        },
+        {
+          "v": "2018-05-15",
+          "q": "The crontab file is timestamped 2018-05-15, likely as a time-stomping attempt to deceive security analysts who",
+          "what": "The crontab file carries a 2018-05-15 timestamp, likely a time-stomping attempt."
+        }
+      ],
+      "tools": [
+        {
+          "v": "Diamorphine rootkit",
+          "q": "The script installs the Diamorphine rootkit for stealth and root privileges, and uses custom tools to"
+        },
+        {
+          "v": "tntrecht",
+          "q": "These lines also contain a custom tool developed by the threat actor named “tntrecht”, which is loaded into"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute force attack",
+          "q": "The investigation revealed that the initial access was accomplished via a Secure Shell (SSH) brute force attack on"
+        },
+        {
+          "v": "Disabling the firewall",
+          "q": "Disabling the firewall (iptables and UFW)"
+        },
+        {
+          "v": "kills cryptocurrency mining processes",
+          "q": "It kills cryptocurrency mining processes, removes Docker containers, and updates DNS settings to"
+        },
+        {
+          "v": "adds the IP addresses of Google DNS servers",
+          "q": "It then changes the attributes of /etc/resolv.conf and adds the IP addresses of Google DNS servers."
+        },
+        {
+          "v": "loadable kernel module (LKM) rootkit",
+          "q": "Diamorphine is a loadable kernel module (LKM) rootkit for Linux kernels, which has recently been observed in"
+        },
+        {
+          "v": "cron job",
+          "q": "To ensure payload persistence, the script adds a cron job that downloads a copy of the patload every 30 minutes"
+        },
+        {
+          "v": "time-stomping",
+          "q": "The crontab file is timestamped 2018-05-15, likely as a time-stomping attempt to deceive security analysts who"
+        },
+        {
+          "v": "lock and unlock various file attributes",
+          "q": "the script executes the command chattr to lock and unlock various file attributes, in particular write"
+        },
+        {
+          "v": "backdoor user with root access",
+          "q": "creating a backdoor user with root access, and"
+        },
+        {
+          "v": "Authentication via public key",
+          "q": "Authentication via public key"
+        },
+        {
+          "v": "erasing command history",
+          "q": "erasing command history to hide its activities."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "moderate confidence",
+          "q": "attribute this attack to them with moderate confidence."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Diamorphine"
+    },
+    "hedges": [
+      "The report says it cannot definitively confirm that TeamTNT is behind this attack.",
+      "Attribution of this attack to TeamTNT is made with moderate confidence.",
+      "The report says TeamTNT likely originated in Germany.",
+      "The report says the 2018-05-15 crontab timestamp is likely a time-stomping attempt to deceive analysts."
+    ]
   }
 }

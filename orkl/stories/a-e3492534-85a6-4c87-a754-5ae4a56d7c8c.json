@@ -4,20 +4,43 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390: a China-linked group known by many names, with tools and a Mimi chat app report",
-    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda and APT27. Cards tie it to a Mimi chat app compromise and to past use of Scanbox, though attribution there is low-confidence.",
+    "headline": "Threat Group-3390: a China-linked group known by many names, tied to HyperBro and other tools",
+    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda and APT27. The cards on file are thin. One report names the group among users of Scanbox; another lists HyperBro samples.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Threat Group-3390 is also known as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
+            "t": "MITRE tracks the group as Threat Group-3390.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Recorded Future's Insikt Group lists LuckyMouse (TG-3390, Emissary Panda, Bronze Union) among actors that have used the Scanbox framework in the past.",
+            "t": "Its aliases include Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
+            "cites": [
+              "catalogue"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "Recorded Future's Insikt Group lists LuckyMouse (TG-3390, Emissary Panda, Bronze Union) among actors that have historically used the Scanbox framework.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+            ]
+          },
+          {
+            "t": "The same report says Scanbox has been used before against persecuted minority groups, such as the Uighurs.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+            ]
+          },
+          {
+            "t": "The report ties the March 2019 Scanbox campaigns to other targets, a Pakistani government passport tracking page and a spoofed Central Tibetan Administration site. It does not name this group as behind them.",
             "cites": [
               "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
@@ -28,21 +51,21 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "The catalogue lists many tools for the group, including PlugX, Cobalt Strike, Mimikatz, Impacket, China Chopper, HyperBro, gh0st RAT, ZxShell, SysUpdate and RCSession.",
+            "t": "MITRE's record lists many tools for the group. They include PlugX, HyperBro, China Chopper, Cobalt Strike, Mimikatz, gh0st RAT, SysUpdate and RCSession.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Scanbox is a reconnaissance framework that lets attackers track website visitors. Insikt Group says it has features for keylogging and for delivering additional malware.",
+            "t": "Scanbox is a reconnaissance framework written in JavaScript and PHP. It can log keystrokes.",
             "cites": [
               "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
           },
           {
-            "t": "The report on the Iron Tiger compromise of the chat application Mimi lists HyperBro samples for Windows and Rshell samples for Linux and Mac OS.",
+            "t": "Insikt Group says attackers using Scanbox likely aim to profile visitors' devices so they can carry out follow-on intrusions.",
             "cites": [
-              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
           }
         ]
@@ -51,37 +74,44 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "A threat report is titled 'Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users'. It is mostly a list of indicators, such as file hashes and command-and-control addresses.",
+            "t": "A threat report titled 'Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users' is mostly a list of indicators of compromise.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
           },
           {
-            "t": "In March 2019, Insikt Group found two Scanbox campaigns. One was a compromised Pakistani government passport tracking page. The other was a spoofed Central Tibetan Administration website.",
+            "t": "It lists file hashes for HyperBro samples on Windows and Rshell samples on Linux and Mac OS.",
             "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
           },
           {
-            "t": "Insikt Group says the attackers likely meant to profile visitors' devices for follow-on intrusions. It assesses with low confidence that Chinese state-sponsored actors were behind them. The cards do not tie these two campaigns to TG-3390 itself.",
+            "t": "The page gives no account of who was targeted, where, or when the activity took place.",
             "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
+          {
+            "t": "Defenders who want more detail should look for fuller reporting, since the material here is limited.",
+            "cites": []
           }
         ]
       }
     ],
-    "status": "rejected",
+    "status": "parked",
     "based_on": "cb104a34efe60ca1c540c57712c6dc5915d010fa",
-    "tries": 1,
+    "tries": 2,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T00:46:20Z",
+    "written_at": "2026-11-27T02:08:02Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked",
-      "bare-attribution",
-      "missing-section"
+      "unbacked"
     ],
-    "written_run": "b1d08f51"
+    "written_run": "69323dc1"
   }
 }

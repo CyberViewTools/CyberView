@@ -170,5 +170,195 @@
       "note": "summary: The summary states that TREKX is a 'custom backdoor' and that NCCGroup reported it in March 2019 as Chafer activity. The text hedges both claims: it sa",
       "by": "auditor"
     }
+  },
+  "40b21146d8883a66532a724f0e847cb1cc39e3d5": {
+    "sha1": "40b21146d8883a66532a724f0e847cb1cc39e3d5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:20:04Z",
+    "model": "haiku",
+    "summary": "NTT Security Japan's SOC describes Operation RestyLink, an APT campaign targeting Japanese companies, first observed in mid-April 2022. The report thinks it may have started in March 2022, with a related attack possibly around October 2021. Delivery used spear phishing, ZIP and LNK files, decoy PDFs, Word startup-folder persistence and DLL sideloading, with Cobalt Strike and possibly Covenant. The report names DarkHotel as the strongest suspect among four candidate APT groups but says there is no convincing evidence to confirm attribution.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "DarkHotel",
+          "q": "Based on the similarities of these characteristics, we suspect that DarkHotel is related to the",
+          "by": "NTT Security Japan report"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "Kimsuky is an APT group said to attribute to North Korea [7]",
+          "by": "NTT Security Japan report (citing Mandiant)"
+        },
+        {
+          "v": "APT29",
+          "q": "APT29 is an APT group said to attribute to Russia [11]",
+          "by": "NTT Security Japan report (citing MITRE ATT&CK)"
+        },
+        {
+          "v": "TA416",
+          "q": "TA416 is an APT group said to attribute to China [16]",
+          "by": "NTT Security Japan report (citing Proofpoint)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Japanese companies",
+          "q": "Our SOC observed APT campaign targeting Japanese companies starting from mid of April 2022."
+        },
+        {
+          "v": "media companies",
+          "q": "They are continuously attacking Japanese media companies or think tanks."
+        },
+        {
+          "v": "think tanks",
+          "q": "They are continuously attacking Japanese media companies or think tanks."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Japan",
+          "q": "It was apparent that Japan was not attacked just by"
+        },
+        {
+          "v": "South Korea",
+          "q": "DarkHotel is an APT group said to attribute to South Korea [1]"
+        },
+        {
+          "v": "North Korea",
+          "q": "Kimsuky is an APT group said to attribute to North Korea [7]"
+        },
+        {
+          "v": "Russia",
+          "q": "APT29 is an APT group said to attribute to Russia [11]"
+        },
+        {
+          "v": "China",
+          "q": "TA416 is an APT group said to attribute to China [16]"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2022-05-13",
+          "q": "Published: 2022-05-13 · Archived: 2026-04-06 02:58:45 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "mid of April 2022",
+          "q": "Our SOC observed APT campaign targeting Japanese companies starting from mid of April 2022.",
+          "what": "SOC first observed the campaign"
+        },
+        {
+          "v": "March 2022",
+          "q": "this campaign had already started in March 2022 and related attack might have performed around October 2021.",
+          "what": "campaign may have started (report's estimate)"
+        },
+        {
+          "v": "October 2021",
+          "q": "this campaign had already started in March 2022 and related attack might have performed around October 2021.",
+          "what": "related attack may have been performed (report's estimate)"
+        },
+        {
+          "v": "late April 2022",
+          "q": "In late April 2022, we confirmed that we could download an ISO file",
+          "what": "ISO file with sideloaded DLL and Cobalt Strike stager downloaded"
+        },
+        {
+          "v": "early April 2022",
+          "q": "In early April 2022, we observed outbound access to the infrastructure (IP address) used in discussing campaign.",
+          "what": "outbound access to campaign infrastructure observed; cause unknown"
+        },
+        {
+          "v": "March 2022",
+          "q": "to VirusTotal by March 2022 from Japan.",
+          "what": "similar LNK sample posted to VirusTotal"
+        },
+        {
+          "v": "January 2022",
+          "q": "found a sample that had same characteristics was posted to VirusTotal from Japan in January 2022.",
+          "what": "similar sample posted to VirusTotal"
+        },
+        {
+          "v": "November 2021",
+          "q": "registered in November 2021 was related to the Cobalt Strike activity observed in",
+          "what": "related domain registered"
+        },
+        {
+          "v": "late October 2021",
+          "q": "might have performed in late October 2021.",
+          "what": "similar-infrastructure attacks possibly performed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "The DLL file downloaded Cobalt Strike Stager from the"
+        },
+        {
+          "v": "Covenant",
+          "q": "we found the trace of Covenant,"
+        },
+        {
+          "v": "ScriptRunner.exe",
+          "q": "but it used ScriptRunner.exe to execute the following"
+        },
+        {
+          "v": "Golang downloader",
+          "q": "The DLL file was an UPX packed Golang downloader."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing",
+          "q": "Once a user accessed the URL in spear phishing email"
+        },
+        {
+          "v": "LNK file",
+          "q": "As soon as executing the LNK file included in the ZIP file"
+        },
+        {
+          "v": "embedded macro",
+          "q": "Whenever the user opens a Word file, the DOT file placed in Startup folder is loaded and embedded macro is"
+        },
+        {
+          "v": "sideloaded",
+          "q": "The DLL file is to be sideloaded and executed when the EXE file is executed."
+        },
+        {
+          "v": "decoy PDF",
+          "q": "There were two decoy PDF file, both of which were about relation between Japan and South Korea."
+        },
+        {
+          "v": "geological information",
+          "q": "campaign might have been limited based on geological information"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four APT groups",
+          "q": "we would like to name four APT groups that we think are related to this campaign."
+        },
+        {
+          "v": "two decoy PDF file",
+          "q": "There were two decoy PDF file, both of which were about relation between Japan and South Korea."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Operation RestyLink"
+    },
+    "hedges": [
+      "The report thinks the campaign had already started in March 2022 and a related attack might have been performed around October 2021.",
+      "The authors could not download the first DOT file or the second file fetched by the macro during their research.",
+      "The early April 2022 access is described as unknown in detail; the authors only suspect it was part of the campaign.",
+      "The authors say it is highly probable that the March 2022 LNK file was part of the campaign.",
+      "The attacker might have used Covenant in addition to Cobalt Strike.",
+      "The report says the candidate APT groups are limited, but there is no clear evidence which one is behind the campaign.",
+      "DarkHotel is called the strongest suspect, but the report says there is no convincing evidence and the assumption could change.",
+      "The files used in the late October 2021 attack could not be obtained; that activity is only described as possibly performed."
+    ]
   }
 }

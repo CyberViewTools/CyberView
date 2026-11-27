@@ -230,5 +230,244 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "21255dabf13b81070819344ae2b82e9d6ebe0573": {
+    "sha1": "21255dabf13b81070819344ae2b82e9d6ebe0573",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:16:17Z",
+    "model": "haiku",
+    "summary": "Elastic Security Labs describes REF6138, a Linux intrusion campaign that began in March 2024 with exploitation of an Apache2 web server. The actor deployed KAIJI and RUDEDEVIL malware, used GSOCKET for persistence, and ran XMRIG cryptomining with a Telegram bot. The report also describes a gambling-API script it calls likely used for testing, and notes possible money laundering through compromised hosts.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "REF6138",
+          "q": "REF6138 through MITRE ATT&CK",
+          "by": "Elastic Security Labs"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "March 2024",
+          "q": "The attackers initiated the compromise in March 2024 by exploiting an Apache2 web server.",
+          "what": "Initial compromise of a server via an Apache2 web server"
+        },
+        {
+          "v": "2024-09-27",
+          "q": "Published: 2024-09-27",
+          "what": "Report published"
+        },
+        {
+          "v": "September 10th",
+          "q": "uploaded September 10th, was already downloaded 3,100 times",
+          "what": "A download.sh file was uploaded on the file server"
+        },
+        {
+          "v": "2022",
+          "q": "samples identified by Black Lotus Labs in 2022",
+          "what": "Earlier KAIJI samples were identified by Black Lotus Labs"
+        }
+      ],
+      "tools": [
+        {
+          "v": "KAIJI",
+          "q": "KAIJI, known for its DDoS capabilities"
+        },
+        {
+          "v": "RUDEDEVIL",
+          "q": "has been identified as the RUDEDEVIL"
+        },
+        {
+          "v": "XMRIG",
+          "q": "The second value reveals options that will be passed to XMRIG."
+        },
+        {
+          "v": "GSOCKET",
+          "q": "downloaded and installed GSOCKET, a network utility"
+        },
+        {
+          "v": "Ligolo-ng",
+          "q": "the open source Ligolo-ng tool"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploiting an Apache2 web server",
+          "q": "by exploiting an Apache2 web server"
+        },
+        {
+          "v": "cron jobs",
+          "q": "and cron jobs for scheduled task execution"
+        },
+        {
+          "v": "timestomped",
+          "q": "will be timestomped to attempt to erase any trace"
+        },
+        {
+          "v": "disguised as kernel processes",
+          "q": "C2 channels disguised as kernel processes"
+        },
+        {
+          "v": "bind mount",
+          "q": "KAIJI employed the bind mount technique"
+        },
+        {
+          "v": "XOR-based encoding",
+          "q": "it utilizes XOR-based encoding"
+        },
+        {
+          "v": "PKEXEC exploitation",
+          "q": "Privilege Escalation via PKEXEC Exploitation"
+        },
+        {
+          "v": "telegram bots for communication",
+          "q": "telegram bots for communication"
+        },
+        {
+          "v": "kill any potential mining",
+          "q": "to kill any potential mining"
+        },
+        {
+          "v": "downloaded and executed malware",
+          "q": "the attacker downloaded and executed malware"
+        },
+        {
+          "v": "Bitcoin/XMR mining",
+          "q": "a potential Bitcoin/XMR mining scheme"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-4034",
+          "q": "CVE-2021-4034 , also known as pwnkit"
+        }
+      ],
+      "figures": [
+        {
+          "v": "3,100",
+          "q": "uploaded September 10th, was already downloaded 3,100 times"
+        },
+        {
+          "v": "15 active workers",
+          "q": "there are 15 active workers mining Bitcoin"
+        },
+        {
+          "v": "more than 15 times",
+          "q": "attempted to alter, upload and execute these binaries more than 15 times"
+        },
+        {
+          "v": "three-week period",
+          "q": "After a three-week period of quiet"
+        },
+        {
+          "v": "600 seconds",
+          "q": "enters an extended sleep for 600 seconds"
+        },
+        {
+          "v": "30-second delay",
+          "q": "the function enforces a 30-second delay"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "REF6138"
+    },
+    "hedges": [
+      "suggesting the attackers might be conducting money laundering activities using compromised hosts",
+      "Although GSOCKET is not inherently malicious, its features can be leveraged for suspicious purposes.",
+      "this script is likely being used for testing purposes, as it interacts with the demo version of the gambling app",
+      "due to repeated segfaults, it is unlikely that they succeeded in running this custom malware",
+      "we have reason to believe this tool was used during this intrusion",
+      "We did not manage to obtain this payload.",
+      "The contents of this payload remain unknown."
+    ]
+  },
+  "2197d3ecec9e3525ad99312896a387996084be83": {
+    "sha1": "2197d3ecec9e3525ad99312896a387996084be83",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:19:39Z",
+    "model": "haiku",
+    "summary": "Qualys Research Team describes three techniques for hiding and deleting Windows scheduled tasks by manipulating the Index registry value. It builds on Microsoft's report that Hafnium concealed a task by deleting the SD value. Lab tests on Windows 10 and Windows 2016 machines are described, and the report recommends monitoring changes to the Index and SD values.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Hafnium",
+          "q": "the Chinese state-sponsored group Hafnium concealed scheduled tasks by deleting the Security Descriptor",
+          "by": "Microsoft (as cited in the Qualys report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-06-21",
+          "q": "Published: 2022-06-21 · Archived: 2026-04-06 02:09:43 UTC",
+          "what": "report published by Qualys"
+        },
+        {
+          "v": "2026-04-06",
+          "q": "Archived: 2026-04-06 02:09:43 UTC",
+          "what": "page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Task Scheduler",
+          "q": "all scheduled tasks disappear from the Task Scheduler app"
+        },
+        {
+          "v": "Windows Registry",
+          "q": "within the Windows Registry path"
+        },
+        {
+          "v": "Windows Security event log",
+          "q": "updating (4702) in the Windows Security event log"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "hide and delete scheduled tasks",
+          "q": "three new techniques to hide and delete scheduled tasks"
+        },
+        {
+          "v": "modifying or deleting the Index value",
+          "q": "modifying or deleting the Index value within the Tree subkey also hides scheduled tasks"
+        },
+        {
+          "v": "token theft",
+          "q": "acquired SYSTEM privileges (via token theft)"
+        },
+        {
+          "v": "deleted the SD value",
+          "q": "deleted the SD value within the Tree subkey"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "five boxes",
+          "q": "reproduce this issue on every Windows 10 machine that we experimented with, which was across a total of five boxes"
+        },
+        {
+          "v": "10.0.19043",
+          "q": "Windows 10 Pro (v10.0.19043)"
+        },
+        {
+          "v": "4698",
+          "q": "creation (4698), deletion (4699) and updating (4702)"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Our investigation did not find any online documentation describing the purpose of the Index value associated with the scheduled task.",
+      "there seems to be only three possible values for Index: 0x1, 0x2, or 0x3"
+    ]
   }
 }

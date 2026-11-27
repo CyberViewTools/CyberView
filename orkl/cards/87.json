@@ -1,0 +1,89 @@
+{
+  "8776907f05d885e069149847589b31708c5fc1f5": {
+    "sha1": "8776907f05d885e069149847589b31708c5fc1f5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T02:19:48Z",
+    "model": "haiku",
+    "summary": "A Malpedia family page for HelloKitty, a ransomware family that the page says first surfaced at the end of 2020 and was primarily targeting Windows systems. Its name comes from a mutex called HelloKitty Mutex, and different versions use the .crypted or .kitty file extensions. Newer samples use a Golang packer so the final ransomware code is loaded only in memory. The page says this is most likely to evade security detection. The rest of the page is a dated list of reports from 2020 to 2022 by vendors and agencies, including an FBI report that names FiveHands. The page gives no sectors,…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC2447",
+          "q": "UNC2447 SOMBRAT and FIVEHANDS Ransomware: A Sophisticated Financial Threat",
+          "by": "FireEye (2021-04-29 listing)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "end of 2020",
+          "q": "HelloKitty is a ransomware family that first surfaced at the end of 2020",
+          "what": "HelloKitty first surfaced, per the page's Unit42 statement"
+        },
+        {
+          "v": "2020-11-13",
+          "q": "2020-11-13 ⋅ ID Ransomware ⋅ Andrew Ivanov",
+          "what": "ID Ransomware entry on HelloKitty Ransomware"
+        },
+        {
+          "v": "2021-02-09",
+          "q": "2021-02-09 ⋅ Twitter (@fwosar) ⋅ Fabian Wosar",
+          "what": "Post on CD PROJEKT RED being targeted by the HelloKitty ransomware group"
+        },
+        {
+          "v": "2021-07-17",
+          "q": "2021-07-17 ⋅ Bleeping Computer ⋅ Sergiu Gatlan",
+          "what": "Report that HelloKitty ransomware is targeting vulnerable SonicWall devices"
+        },
+        {
+          "v": "2021-08-24",
+          "q": "2021-08-24 ⋅ Palo Alto Networks Unit 42 ⋅ Doel Santos, Ruchna Nigam",
+          "what": "Unit 42 entry in Ransomware Groups to Watch: Emerging Threats"
+        },
+        {
+          "v": "2021-10-28",
+          "q": "2021-10-28 ⋅ FBI ⋅ FBI",
+          "what": "FBI report CU-000154-MW on tactics, techniques and indicators for Hello Kitty/FiveHands ransomware"
+        }
+      ],
+      "tools": [
+        {
+          "v": "FiveHands",
+          "q": "CU-000154-MW: Tactics, Techniques, and Indicators of Compromise Associated with Hello Kitty/FiveHands"
+        },
+        {
+          "v": "Hello Kitty Packer",
+          "q": "Static unpacker and decoder for Hello Kitty Packer"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Mutex",
+          "q": "The malware family got its name due to its use of a Mutex with the same name:"
+        },
+        {
+          "v": "Golang packer",
+          "q": "Some newer samples make use of a Golang packer that ensures the final ransomware code is only loaded in memory"
+        },
+        {
+          "v": "DDoS",
+          "q": "FBI Warning: HelloKitty Ransomware Add DDoS to Extortion Arsenal"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "HelloKitty"
+    },
+    "hedges": [
+      "The page says the ransomware samples seem to evolve quickly and frequently, with different versions using different file extensions.",
+      "The page says the Golang packer is most likely used to evade detection by security solutions.",
+      "The first-surfaced date and description are attributed to Unit42 in the page's own text."
+    ]
+  }
+}

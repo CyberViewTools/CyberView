@@ -119,25 +119,159 @@
   },
   "e012644ba7c04c8fc85518ff6ffb20e4bef11b93": {
     "sha1": "e012644ba7c04c8fc85518ff6ffb20e4bef11b93",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:24:03Z",
+    "read_at": "2026-11-27T13:08:39Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Sekoia's threat intelligence team investigated the Quad7 (7777) botnet, which uses compromised, mostly TP-Link routers to relay password spraying against Microsoft 365 accounts. They monitored one router and recovered malware from a victim router in France: a Socks5 proxy and a bind shell named xlogin. The report links the activity to likely business email compromise by cybercriminals rather than an APT, but leaves attribution, the exploited vulnerabilities and the geographic distribution unresolved.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Quad7 botnet operators",
+          "q": "To our understanding, the Quad7 botnet operators leverage compromised TP-Link routers to relay",
+          "by": "Sekoia TDR (the report authors)"
+        },
+        {
+          "v": "cybercriminals",
+          "q": "Therefore, the threat actor behind the Quad7 botnet does not appear to be an APT but more likely cybercriminals",
+          "by": "Sekoia TDR (the report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "local authorities",
+          "q": "Several industry verticals, including local authorities, have been targeted in recent days without any discernible"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Bulgaria",
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the"
+        },
+        {
+          "v": "Russia",
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the"
+        },
+        {
+          "v": "US",
+          "q": "US, and Ukraine, as shown below."
+        },
+        {
+          "v": "Ukraine",
+          "q": "US, and Ukraine, as shown below."
+        },
+        {
+          "v": "France",
+          "q": "router compromised by the Quad7 botnet in France."
+        }
+      ],
+      "dates": [
+        {
+          "v": "October 19, 2023",
+          "q": "On October 19, 2023, independent researchers Gi7w0rm and Dunstable Toblerone published a blog post about a",
+          "what": "Independent researchers published a blog post about the botnet"
+        },
+        {
+          "v": "2024-07-23",
+          "q": "Published: 2024-07-23",
+          "what": "The Sekoia report was published"
+        },
+        {
+          "v": "2022",
+          "q": "the Quad7 operators persist in maintaining the infrastructure established in 2022",
+          "what": "The botnet infrastructure was established"
+        }
+      ],
+      "tools": [
+        {
+          "v": "xlogin",
+          "q": "to a simple authenticated shell named xlogin"
+        },
+        {
+          "v": "Socks5 proxy",
+          "q": "Additionally, there was a Socks5 proxy"
+        },
+        {
+          "v": "BusyBox",
+          "q": "a Telnet binary coming from BusyBox"
+        },
+        {
+          "v": "microsocks",
+          "q": "Detects the microsocks project developed by rofl0r"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "password spraying",
+          "q": "leverage compromised TP-Link routers to relay password spraying attacks against Microsoft 365 accounts"
+        },
+        {
+          "v": "bind shell",
+          "q": "related to the xlogin bind shell and who was interacting with it"
+        },
+        {
+          "v": "command injection",
+          "q": "and a command injection."
+        },
+        {
+          "v": "authentication bypass",
+          "q": "that the attackers had an authentication bypass leading to an RCE or an unauthenticated RCE"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "0.11%",
+          "q": "we have detected these attacks on 0.11% of our monitored Microsoft 365 accounts"
+        },
+        {
+          "v": "16,000",
+          "q": "involved dropping from 16,000 in August 2022, to ~7,000 in July 2024."
+        },
+        {
+          "v": "~7,000",
+          "q": "involved dropping from 16,000 in August 2022, to ~7,000 in July 2024."
+        },
+        {
+          "v": "912 connections",
+          "q": "912 connections were made using the socks"
+        },
+        {
+          "v": "27%",
+          "q": "27% of organisations (Entra ID tenants) were targeted over the"
+        },
+        {
+          "v": "98%",
+          "q": "over 98% of the authentication attempts identified by this heuristic can be conclusively"
+        },
+        {
+          "v": "one week",
+          "q": "we collected one week’s data"
+        },
+        {
+          "v": "40 hours",
+          "q": "The rate of attempts per account is on average about one every 40 hours"
+        },
+        {
+          "v": "11MB",
+          "q": "our small network capture (11MB) obtained from connections"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "Quad7 botnet"
+    },
+    "hedges": [
+      "To our understanding, the Quad7 botnet operators leverage compromised TP-Link routers to relay password spraying attacks",
+      "we cannot be completely certain that the compromised assets were all TP-Link routers",
+      "we link the Quad7 botnet activity to possible long term business email compromise (BEC) cybercriminal activity rather than an APT threat actor",
+      "we believe this botnet is primarily used to conduct simple password spraying attacks, rather than traditional brute force attacks",
+      "we were unable to identify any evidence pointing to a known threat actor",
+      "we are almost certain that the attackers had an authentication bypass leading to an RCE or an unauthenticated RCE",
+      "This is a very weak link as GobRAT and the other implants dropped by the same threat actor are modular and way more sophisticated",
+      "It is important to remember that our investigation was limited to one router and one week of monitoring"
+    ]
   }
 }

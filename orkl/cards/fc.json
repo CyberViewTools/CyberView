@@ -636,5 +636,208 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fc74c428b0bccae718df1f0f92eb7e2c9105b5d3": {
+    "sha1": "fc74c428b0bccae718df1f0f92eb7e2c9105b5d3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:12:00Z",
+    "model": "haiku",
+    "summary": "Aqua Nautilus analysis of perfctl, a stealthy Linux malware that runs a Monero cryptominer and proxy-jacking software. The report says it exploits a RocketMQ flaw (CVE-2023-33246) for initial access and tries CVE-2021-4034 (Polkit) to escalate privileges. It uses rootkits, TOR communication and misleading file names to hide and persist. The report recorded several dozen attacks, speculates the campaign began about a year before its analysis, and believes millions of servers were targeted. Download-server and IOC hosts are omitted from this summary.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actor",
+          "q": "During one of our sandbox tests, the threat actor utilized one of the malware’s backdoors to access the honeypot",
+          "by": "Aqua Nautilus (the report)"
+        },
+        {
+          "v": "malware authors",
+          "q": "the malware authors crafted a name that appears legitimate.",
+          "by": "Aqua Nautilus (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Germany",
+          "q": "Iterating over this download server, we see a compromised site on a server in Germany."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-10-03",
+          "q": "Published: 2024-10-03 · Archived: 2026-04-05 19:07:04 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2024-10-03 · Archived: 2026-04-05 19:07:04 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "httpd",
+          "q": "Figure 3: httpd is copying itself from memory"
+        },
+        {
+          "v": "wizlmsh",
+          "q": "Figure 4: wizlmsh main function"
+        },
+        {
+          "v": "libgcwrap.so",
+          "q": "Appendix 4: The main rootkit (libgcwrap.so)"
+        },
+        {
+          "v": "XMRIG",
+          "q": "In all cases we observed a monero cryptominer (XMRIG)"
+        },
+        {
+          "v": "bitping daemon",
+          "q": "In addition, we can observe the usage of the bitping daemon usage, which provide similar bandwidth payment"
+        },
+        {
+          "v": "ldd",
+          "q": "Appendix 5: User Land Rootkits ‘top’, ‘ldd’, ‘crontab’ and ‘lsof’"
+        },
+        {
+          "v": "top",
+          "q": "Appendix 5: User Land Rootkits ‘top’, ‘ldd’, ‘crontab’ and ‘lsof’"
+        },
+        {
+          "v": "lsof",
+          "q": "Appendix 5: User Land Rootkits ‘top’, ‘ldd’, ‘crontab’ and ‘lsof’"
+        },
+        {
+          "v": "crontab",
+          "q": "Appendix 5: User Land Rootkits ‘top’, ‘ldd’, ‘crontab’ and ‘lsof’"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "rootkits",
+          "q": "It utilizes rootkits to hide its presence."
+        },
+        {
+          "v": "process masquerading",
+          "q": "This technique is called “process masquerading” or “process replacement”"
+        },
+        {
+          "v": "TOR",
+          "q": "It utilizes Unix socket for internal communication and TOR for external communication."
+        },
+        {
+          "v": "Unix socket",
+          "q": "It utilizes Unix socket for internal communication and TOR for external communication."
+        },
+        {
+          "v": "hooking",
+          "q": "It does various interesting manipulations, including hooking to Libpam symbols."
+        },
+        {
+          "v": "proxy-jacking",
+          "q": "and in some cases, we also detected the execution of proxy-jacking software."
+        },
+        {
+          "v": "cryptominer",
+          "q": "In all the attacks observed, the malware was used to run a cryptominer, and in some cases"
+        },
+        {
+          "v": "packed, stripped, and encrypted",
+          "q": "All the binaries are packed, stripped, and encrypted, indicating significant efforts to bypass defense mechanisms"
+        },
+        {
+          "v": "terminating any competing malware",
+          "q": "and terminating any competing malware to maintain control over the infected system."
+        },
+        {
+          "v": "deletes its binary",
+          "q": "After execution, it deletes its binary and continues to run quietly in the background as a service."
+        },
+        {
+          "v": "persistence",
+          "q": "in regard to persistence as the malware author creates a lot of locations"
+        },
+        {
+          "v": "directory traversal",
+          "q": "We identified a very long list of almost 20K directory traversal fuzzing list, seeking for mistakenly exposed"
+        },
+        {
+          "v": "misconfigurations",
+          "q": "actively sought more than 20,000 types of misconfigurations in order to target and exploit Linux servers."
+        },
+        {
+          "v": "escalate privileges",
+          "q": "It attempts to exploit the Polkit vulnerability (CVE-2021-4034) to escalate privileges."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-4034",
+          "q": "It attempts to exploit the Polkit vulnerability (CVE-2021-4034) to escalate privileges."
+        },
+        {
+          "v": "CVE-2023-33246",
+          "q": "The initial access was gained via this vulnerability (CVE-2023-33246), led to download and execution of the shell"
+        }
+      ],
+      "figures": [
+        {
+          "v": "3-4 years",
+          "q": "over the past 3-4 years, has"
+        },
+        {
+          "v": "20,000",
+          "q": "actively sought more than 20,000 types of misconfigurations in order to target and exploit Linux servers."
+        },
+        {
+          "v": "millions",
+          "q": "we strongly believe the attackers targeted millions worldwide with a potential number of victims of thousands"
+        },
+        {
+          "v": "thousands",
+          "q": "we strongly believe the attackers targeted millions worldwide with a potential number of victims of thousands"
+        },
+        {
+          "v": "several dozen",
+          "q": "We recorded several dozen attacks of perfctl."
+        },
+        {
+          "v": "3 download servers",
+          "q": "We saw 3 download servers involved in these attacks"
+        },
+        {
+          "v": "~9mb",
+          "q": "But if you use the correct user agent it will drop the malware (size of ~9mb)."
+        },
+        {
+          "v": "465",
+          "q": "There were 465 incidents, we can now go over all the files that were dropped"
+        },
+        {
+          "v": "22K",
+          "q": "During this incident there were above 22K audit events, thus we will need to search for specific events"
+        },
+        {
+          "v": "almost 20K",
+          "q": "We identified a very long list of almost 20K directory traversal fuzzing list, seeking for mistakenly exposed"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "perfctl"
+    },
+    "hedges": [
+      "The report speculates the campaign with this malware started about a year before its analysis.",
+      "The authors strongly believe millions of servers were targeted, with a potential number of victims in the thousands.",
+      "Two of the download servers seem linked to previously hacked servers; the third could be owned by the threat actor.",
+      "The authors' explanation for the chosen file names is their own hypothesis.",
+      "The authors assume the hidden object in the modified utilities is the cryptominer.",
+      "The authors say one environment check is probably there to evade sandbox execution.",
+      "Two dropped files were not analysed in this research."
+    ]
   }
 }

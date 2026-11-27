@@ -44,5 +44,135 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "2d1005b7047f695671ffeeed7d33b5921a707265": {
+    "sha1": "2d1005b7047f695671ffeeed7d33b5921a707265",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:15Z",
+    "model": "haiku",
+    "summary": "Black Lotus Labs at Lumen describes KadNap, a malware that mainly targets Asus routers and enrols them in a proxy botnet. It uses a custom Kademlia DHT peer-to-peer network to hide its command servers. Monitored since August 2025, the botnet averaged about 14,000 victims a day, with 60% in the United States. Bots are sold through the Doppelganger proxy service, which the report says appears to be a rebrand of the defunct Faceless service. Lumen blocked the control infrastructure and plans to share indicators of compromise.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Doppelganger",
+          "q": "bots are then marketed by a proxy service called “Doppelganger,” which is specifically tailored for criminal activity",
+          "by": "Black Lotus Labs (Lumen)"
+        },
+        {
+          "v": "Faceless",
+          "q": "linked to the now defunct Faceless proxy service, which previously used TheMoon malware.",
+          "by": "Black Lotus Labs (Lumen), agreeing with Spur"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "more than 60% of KadNap’s victims are based in the United States."
+        },
+        {
+          "v": "Taiwan",
+          "q": "The victims are distributed across several countries, with 60% located in the United States and 5% each in Taiwan, Hong Kong and Russia."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "The victims are distributed across several countries, with 60% located in the United States and 5% each in Taiwan, Hong Kong and Russia."
+        },
+        {
+          "v": "Russia",
+          "q": "The victims are distributed across several countries, with 60% located in the United States and 5% each in Taiwan, Hong Kong and Russia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2025",
+          "q": "Since August 2025, we have been monitoring the growth of this network, which is now above 14,000 infected devices.",
+          "what": "Black Lotus Labs began monitoring the botnet"
+        },
+        {
+          "v": "early August of 2025",
+          "q": "In early August of 2025, our algorithm detected over 10,000 Asus devices that were all communicating with a",
+          "what": "Lumen's algorithm detected over 10,000 Asus devices communicating with a set of servers"
+        },
+        {
+          "v": "Mar 10, 2026",
+          "q": "Published on Mar 10, 2026 | 16 minute read",
+          "what": "The report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "KadNap",
+          "q": "The Black Lotus Labs team at Lumen has discovered a sophisticated new malware named “KadNap.”"
+        },
+        {
+          "v": "TheMoon",
+          "q": "which was powered by victims of TheMoon malware."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Kademlia Distributed Hash Table (DHT) protocol",
+          "q": "KadNap employs a custom version of the Kademlia Distributed Hash Table (DHT) protocol, which is used to"
+        },
+        {
+          "v": "cron job",
+          "q": "The file sets up a cron job to pull the malicious shell script"
+        },
+        {
+          "v": "proxies malicious traffic",
+          "q": "conscripting them into a botnet that proxies malicious traffic."
+        },
+        {
+          "v": "password spraying",
+          "q": "Protect cloud assets from communicating with bots that attempt to perform password spraying attacks and"
+        },
+        {
+          "v": "brute-force attacks",
+          "q": "a range of malicious purposes, including brute-force attacks and highly targeted exploitation campaigns."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "14,000 infected devices",
+          "q": "Since August 2025, we have been monitoring the growth of this network, which is now above 14,000 infected devices."
+        },
+        {
+          "v": "10,000 Asus devices",
+          "q": "In early August of 2025, our algorithm detected over 10,000 Asus devices that were all communicating with a"
+        },
+        {
+          "v": "60%",
+          "q": "more than 60% of KadNap’s victims are based in the United States."
+        },
+        {
+          "v": "5%",
+          "q": "The victims are distributed across several countries, with 60% located in the United States and 5% each in Taiwan, Hong Kong and Russia."
+        },
+        {
+          "v": "14,000 distinct victims",
+          "q": "as it had grown to maintain a daily average of 14,000 distinct victims, while using three to four active C2s on average."
+        },
+        {
+          "v": "three to four active C2s",
+          "q": "as it had grown to maintain a daily average of 14,000 distinct victims, while using three to four active C2s on average."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "KadNap"
+    },
+    "hedges": [
+      "The report says Doppelganger 'appears to be a rebrand' of the Faceless service.",
+      "Black Lotus Labs 'confidently agrees with Spur that this is likely a new botnet' linked to Faceless.",
+      "Naming the ELF file 'kad' was 'likely in relation to' hiding the C2 server's IP address.",
+      "The report says KadNap's purpose 'was unclear when first discovered'.",
+      "The report says the information 'may require additional research and substantiation by the end user'.",
+      "The report says it is provided 'as is' without any warranty, for informational purposes only."
+    ]
   }
 }

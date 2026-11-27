@@ -726,7 +726,7 @@
     "sha1": "5976aa6169eb23716b628f71a824e05c7c1d126b",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T12:51:00Z",
+    "read_at": "2026-11-27T13:05:29Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -742,8 +742,8 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "reason": "quote-not-in-text",
+    "tries": 2,
     "audit_history": [
       {
         "at": "2026-11-27T12:33:39Z",
@@ -751,6 +751,305 @@
         "note": "summary: Says attacks were \"mostly\" on manufacturing (36%) and utilities (10%). Those figures total 46%, which is not a majority. The text says only that manufa",
         "by": "auditor"
       }
+    ]
+  },
+  "5990239edd77c73c031624b123c3bce1c9ac918c": {
+    "sha1": "5990239edd77c73c031624b123c3bce1c9ac918c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:10:34Z",
+    "model": "haiku",
+    "summary": "Aqua Nautilus researchers describe a renewed TeamTNT botnet campaign against cloud and container services, including exposed Docker APIs, JupyterLab, Redis, Kubernetes, Weave Scope and Hadoop. Infected hosts scan the internet in coordinated ranges and report to a command server. Over seven days the researchers observed 196 infected hosts. The report says the campaign appears focused on infecting systems and testing the botnet rather than on cryptomining for profit. Attribution to TeamTNT rests on similarities with earlier campaigns.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "The botnet run by TeamTNT has set its sights on Docker and Kubernetes environments, Redis servers, Postgres",
+          "by": "Aqua Nautilus research team (report author)"
+        },
+        {
+          "v": "TeamTNT",
+          "q": "The infrastructure in question shares significant similarities with previous campaigns attributed to TeamTNT,",
+          "by": "Aqua Nautilus research team (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud service providers",
+          "q": "In the runtime phase, TeamTNT targets cloud native environments and cloud service providers."
+        },
+        {
+          "v": "Software Development Life Cycle",
+          "q": "targeting a wide array of services and applications within the Software Development Life Cycle (SDLC)."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-07-13",
+          "q": "Published: 2023-07-13 · Archived: 2026-04-05 16:59:20 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2019",
+          "q": "shifting from solely targeting containers (as seen in 2019) to becoming a threat actor that targets cloud native",
+          "what": "Earlier focus on containers noted"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Tsunami",
+          "q": "Tsunami is a type of malware, specifically a botnet, that primarily targets Linux systems."
+        },
+        {
+          "v": "Masscan",
+          "q": "Using Masscan, a tool renowned for its high-speed scanning capabilities, we estimate that a /8 CIDR range can be"
+        },
+        {
+          "v": "Pacu",
+          "q": "TeamTNT is running in pacu.sh, a pip install command to install Pacu"
+        },
+        {
+          "v": "Weave Scope",
+          "q": "Hadoop clusters, Tomcat and Nginx servers, Weave Scope, SSH, and Jupyter applications."
+        },
+        {
+          "v": "Gsocket",
+          "q": "The second one was by using Gsocket, as seen in the execution command in figure 12 below, TeamTNT is using"
+        },
+        {
+          "v": "Ngrok",
+          "q": "The fourth backdoor is by utilizing a socket connected over HTTP service with Ngrok product."
+        },
+        {
+          "v": "Tmate",
+          "q": "Tmate is legitimate software serves as a terminal"
+        },
+        {
+          "v": "prochider",
+          "q": "TeamTNT is using prochider rootkit to hide cryptomining execution."
+        },
+        {
+          "v": "xmrig",
+          "q": "xmrig binary 4dc1884527550dc27bd5dfc54b9ae433 Cryptominer"
+        },
+        {
+          "v": "peirates.sh",
+          "q": "peirates.sh 519f86ac6c71c736fdadbb7ff37b6c2d A k8s pen test tool"
+        },
+        {
+          "v": "zgrab",
+          "q": "zgrab binary 26c8f6597826fbdebb5df4cd8cd34663 Scanning tool"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Command and Control",
+          "q": "A key feature of Tsunami is its ability to connect to a Command and Control (C2) server using the Internet Relay"
+        },
+        {
+          "v": "misconfigured Docker API",
+          "q": "TeamTNT is looking for misconfigured Docker API that allows access and code"
+        },
+        {
+          "v": "scans the entirety of the internet",
+          "q": "Based on our research, we have discerned that this botnet perpetually scans the entirety of the internet."
+        },
+        {
+          "v": "privileged",
+          "q": "As depicted in figure 16 above, TeamTNT is running the container as a privileged one, and mounting the host"
+        },
+        {
+          "v": "creating a new account",
+          "q": "The first one was by creating a new account by modifying"
+        },
+        {
+          "v": "removing the execution of runc",
+          "q": "removing the execution of runc when the"
+        },
+        {
+          "v": "hiding its processes and files",
+          "q": "Tsunami includes features to maintain its presence on the infected system, such as hiding its processes and files to"
+        },
+        {
+          "v": "scanning for credentials",
+          "q": "TeamTNT is scanning for credentials across multiple cloud environments, including AWS, Azure, and GCP."
+        },
+        {
+          "v": "collecting cluster secrets",
+          "q": "From k8s clusters, TeamTNT is collecting cluster secrets with the function illustrated in figure 21 below:"
+        },
+        {
+          "v": "worm script",
+          "q": "Each target in this campaign is infected with malware and runs a worm script that operates in three stages:"
+        },
+        {
+          "v": "public registry",
+          "q": "TeamTNT is recognized for utilizing Docker Hub’s public registry to distribute their malware."
+        },
+        {
+          "v": "deploying cryptominers",
+          "q": "rather than deploying cryptominers for profit."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "196 unique infected hosts",
+          "q": "Over a span of 7 days, we observed 196 unique infected hosts."
+        },
+        {
+          "v": "440 scans",
+          "q": "Over a two-week period, we recorded 440 scans, suggesting that each IP address worldwide is scanned approximately 1.3 times per hour."
+        },
+        {
+          "v": "~1.3 new victims every hour",
+          "q": "This equates to ~1.3 new victims every hour."
+        },
+        {
+          "v": "minimum of two new victims emerging every hour",
+          "q": "is fairly rapid, with a minimum of two new victims emerging every hour."
+        },
+        {
+          "v": "six times per minute",
+          "q": "In our experiment, we observed that each number (1-255) in the first octet is selected six times per minute."
+        },
+        {
+          "v": "approximately 17 million IP addresses",
+          "q": "encompasses approximately 17 million IP addresses."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "TeamTNT Reemerged with New Aggressive Cloud Campaign"
+    },
+    "hedges": [
+      "Linking malicious activity to one entity from outside is hard because a single server is often shared by several customers.",
+      "The trend in activity strongly suggests TeamTNT is still building, refining and preparing its campaign.",
+      "The researchers are not sure about the Redis attack vector and only have indications from an IRC channel.",
+      "The researchers are still investigating Hadoop attacks and are not sure how TeamTNT exploits that vector.",
+      "Scanning-rate figures are the researchers' estimates, and they describe their observed rate as more moderate than some estimates.",
+      "Attribution rests on similarities in coding style, infrastructure, targeting and tools with previous TeamTNT campaigns."
+    ]
+  },
+  "590d6486d3f9bf48e1005ce46f8ae6433bf7bc49": {
+    "sha1": "590d6486d3f9bf48e1005ce46f8ae6433bf7bc49",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:11:41Z",
+    "model": "haiku",
+    "summary": "Malware analysis of Auto-color, a Linux backdoor seen in cyberattacks against government organizations and universities in North America and Asia, first observed November to December 2024. It disguises itself with benign names and persists by preloading a shared library that hides it from system tools. It decrypts an embedded configuration to reach a command server over TCP and accepts commands for file operations, a reverse shell, proxy use and self-destruction. Published 2025-03-28 by Mohamed Ezzat.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "government organizations",
+          "q": "Auto-color is a Linux backdoor that has been seen in cyberattacks targeting government organizations and"
+        },
+        {
+          "v": "universities",
+          "q": "universities in North America and Asia. It was first observed between November and December 2024 and is"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November and December 2024",
+          "q": "It was first observed between November and December 2024 and is",
+          "what": "Auto-color was first observed"
+        },
+        {
+          "v": "2025-03-28",
+          "q": "Published: 2025-03-28 · Archived: 2026-04-05 22:58:47 UTC",
+          "what": "The report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Auto-color",
+          "q": "Auto-color is a Linux backdoor that has been seen in cyberattacks targeting government organizations and"
+        },
+        {
+          "v": "libcext.so.2",
+          "q": "It also drops a malicious shared library named libcext.so.2 into the system’s library path."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "encrypted strings",
+          "q": "Auto-Color encrypts its strings to prevent easy extraction of its functionality."
+        },
+        {
+          "v": "dynamically resolves APIs at runtime",
+          "q": "dynamically resolves APIs at runtime, loading libc and retrieving function addresses with dlsym."
+        },
+        {
+          "v": "hides itself with a benign name",
+          "q": "It hides itself with a benign name merged with system files and operates as a background process without user interaction."
+        },
+        {
+          "v": "root privileges",
+          "q": "If executed with root privileges, more advanced tactics are used."
+        },
+        {
+          "v": "hooks libc functions",
+          "q": "Dropping a shared library that hooks libc functions to hide"
+        },
+        {
+          "v": "encrypted configuration",
+          "q": "Auto-Color’s data section contains an embedded custom encrypted configuration, including information"
+        },
+        {
+          "v": "random value handshake",
+          "q": "validates the exchange via a random value handshake."
+        },
+        {
+          "v": "reverse shell",
+          "q": "Auto-color creates a reverse shell, allowing a remote server to interact directly with the victim host."
+        },
+        {
+          "v": "configuring the device as a proxy",
+          "q": "configuring the device as a proxy, and self-destructing to erase all traces of its presence."
+        },
+        {
+          "v": "self-destructing",
+          "q": "configuring the device as a proxy, and self-destructing to erase all traces of its presence."
+        },
+        {
+          "v": "file-based locking",
+          "q": "Auto-color ensures that only one instance runs by using a file-based locking mechanism."
+        },
+        {
+          "v": "daemonizes itself",
+          "q": "Auto-color then daemonizes itself, following a famous technique to run in the background without a controlling"
+        },
+        {
+          "v": "preloaded shared library",
+          "q": "it ensures its library is loaded even before legitimate system libraries."
+        },
+        {
+          "v": "hooks to manipulate system calls",
+          "q": "Auto-color’s malicious library employs various hooks to manipulate system calls, ensuring that"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "15 security vendors",
+          "q": "On the writing date, only 15 security vendors flagged it as malicious."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Auto-color"
+    },
+    "hedges": [
+      "The report says Auto-color seems to require explicit execution by the victim.",
+      "On the writing date, only 15 security vendors flagged the sample as malicious."
     ]
   }
 }

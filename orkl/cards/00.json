@@ -21,5 +21,109 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "00dcdb65370a0b56b2e7890e259ec8fb303d6924": {
+    "sha1": "00dcdb65370a0b56b2e7890e259ec8fb303d6924",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:12Z",
+    "model": "haiku",
+    "summary": "Trend Micro report on exposed Redis servers, which lack authentication by default, being abused for remote code execution. Attackers write cron tasks through the config command or push malicious replication modules. Captured malware, including the Kinsing downloader and a multiplatform shell-based worm, installs XMRig cryptocurrency miners and spreads to other vulnerable Redis instances using weak-password guessing. The report also lists indicators of compromise and detection rules.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "attackers",
+          "q": "We’ve observed attackers using these scenarios in a honeypot",
+          "by": "Trend Micro (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-04-21",
+          "q": "Published: 2020-04-21 · Archived: 2026-04-05 13:12:51 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "October 2018",
+          "q": "Redis 5.0, which was released in October 2018",
+          "what": "Redis 5.0 released"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Kinsing",
+          "q": "downloads a version of the Kinsing malware"
+        },
+        {
+          "v": "XMRig",
+          "q": "downloads and executes the XMRig Monero"
+        },
+        {
+          "v": "masscan",
+          "q": "Download and install masscan"
+        },
+        {
+          "v": "pnscan",
+          "q": "Scan port 6379 with pnscan"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "abusing the config command",
+          "q": "Scenario 1: Abusing the config command"
+        },
+        {
+          "v": "abusing the slaveof feature",
+          "q": "Scenario 2: Abusing the slaveof feature"
+        },
+        {
+          "v": "remote code execution",
+          "q": "Exposed Redis Instances Abused for Remote Code Execution"
+        },
+        {
+          "v": "brute-force password guessing",
+          "q": "resistant to brute-force attacks"
+        },
+        {
+          "v": "wormlike self-spreading",
+          "q": "“wormlike” spreading capability"
+        },
+        {
+          "v": "cryptocurrency mining",
+          "q": "Cryptocurrency Mining"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "8,000",
+          "q": "more than 8,000 unsecured Redis"
+        },
+        {
+          "v": "over 200 commands",
+          "q": "over 200 commands"
+        },
+        {
+          "v": "22,000",
+          "q": "22,000 IP address subsets"
+        },
+        {
+          "v": "55 kB",
+          "q": "The replica received about 55 kB"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "this may not be the be-all and end-all of the possible abuse surrounding exposed Redis instances",
+      "an action that may have been inspired by this repository",
+      "As of the publication of this article, there are no transactions associated with the hard-coded Ethereum address."
+    ]
   }
 }

@@ -262,5 +262,223 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "d4c3fb7ebf839c2694a88d5afaa44da3caf3552b": {
+    "sha1": "d4c3fb7ebf839c2694a88d5afaa44da3caf3552b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:12:24Z",
+    "model": "haiku",
+    "summary": "Joint advisory from ASD's ACSC, CISA, NSA, FBI and other partner agencies on APT40, a PRC state-sponsored group the authoring agencies assess conducts operations for the Ministry of State Security. It presents two anonymized case studies of 2022 intrusions into organisations, involving public-facing application exploitation, web shells, compromised credentials, Kerberoasting, lateral movement and credential capture from a remote access appliance. It lists CVEs (Log4J, Atlassian Confluence, Microsoft Exchange) the group exploits quickly after disclosure, notes its use of compromised SOHO…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT40",
+          "q": "APT40 has repeatedly targeted Australian networks as well as government and private sector networks in the",
+          "by": "the authoring agencies"
+        },
+        {
+          "v": "PRC Ministry of State Security (MSS)",
+          "q": "The authoring agencies assess that this group conduct malicious cyber operations for the PRC Ministry of State Security (MSS).",
+          "by": "the authoring agencies"
+        },
+        {
+          "v": "Hainan State Security Department",
+          "q": "receiving tasking from the PRC MSS, Hainan State Security Department.",
+          "by": "earlier reporting cited in the advisory"
+        },
+        {
+          "v": "Kryptonite Panda",
+          "q": "40 (also known as Kryptonite Panda, GINGHAM TYPHOON, Leviathan and Bronze Mohawk in industry",
+          "by": "industry reporting, as cited in the advisory"
+        },
+        {
+          "v": "GINGHAM TYPHOON",
+          "q": "40 (also known as Kryptonite Panda, GINGHAM TYPHOON, Leviathan and Bronze Mohawk in industry",
+          "by": "industry reporting, as cited in the advisory"
+        },
+        {
+          "v": "Leviathan",
+          "q": "40 (also known as Kryptonite Panda, GINGHAM TYPHOON, Leviathan and Bronze Mohawk in industry",
+          "by": "industry reporting, as cited in the advisory"
+        },
+        {
+          "v": "Bronze Mohawk",
+          "q": "40 (also known as Kryptonite Panda, GINGHAM TYPHOON, Leviathan and Bronze Mohawk in industry",
+          "by": "industry reporting, as cited in the advisory"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "APT40 has repeatedly targeted Australian networks as well as government and private sector networks in the"
+        },
+        {
+          "v": "private sector",
+          "q": "APT40 has repeatedly targeted Australian networks as well as government and private sector networks in the"
+        }
+      ],
+      "countries": [
+        {
+          "v": "People’s Republic of China",
+          "q": "outlines a People’s Republic of China (PRC) state-sponsored cyber group and their current threat to Australian networks."
+        },
+        {
+          "v": "Australia",
+          "q": "APT40 has repeatedly targeted Australian networks as well as government and private sector networks in the"
+        },
+        {
+          "v": "United States",
+          "q": "Australia and the United States, and the techniques highlighted below are regularly used by other PRC state-"
+        },
+        {
+          "v": "Haikou, Hainan Province, PRC",
+          "q": "This group has previously been reported as being based in Haikou, Hainan Province, PRC and"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-07-08",
+          "q": "Published: 2024-07-08 · Archived: 2026-04-05 19:07:13 UTC",
+          "what": "advisory published"
+        },
+        {
+          "v": "July and September 2022",
+          "q": "organization’s network between July and September 2022.",
+          "what": "first case study: compromise of an organisation's network investigated"
+        },
+        {
+          "v": "mid-August 2022",
+          "q": "In mid-August 2022, the ASD’s ACSC notified the organization that a confirmed malicious IP believed to be",
+          "what": "organisation notified of a malicious IP that had interacted with its network"
+        },
+        {
+          "v": "April 2022",
+          "q": "organization’s network in April 2022.",
+          "what": "second case study: compromise of an organisation's network"
+        },
+        {
+          "v": "May 2022",
+          "q": "In May 2022, ASD’s ACSC notified an organization of suspected malicious activity impacting the organization’s",
+          "what": "organisation notified of suspected malicious activity since April 2022"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Secure Socket Funnelling",
+          "q": "The actors deploy the open-source tool Secure Socket Funnelling, which was used to connect out to the"
+        },
+        {
+          "v": "nmap",
+          "q": "There is evidence that network scanning utility nmap was executed on the compromised appliance to scan other"
+        },
+        {
+          "v": "tcpdump",
+          "q": "There is evidence that the utility tcpdump was executed on the compromised appliance, which may have been"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "web shells",
+          "q": "APT40 regularly uses web shells"
+        },
+        {
+          "v": "exploiting public-facing infrastructure",
+          "q": "This group appears to prefer exploiting vulnerable, public-facing infrastructure over techniques that require user"
+        },
+        {
+          "v": "Kerberoasting",
+          "q": "The actor carried out a Kerberoasting attack in order to obtain valid"
+        },
+        {
+          "v": "lateral movement",
+          "q": "actors moved laterally through the network"
+        },
+        {
+          "v": "credential capture from a web portal",
+          "q": "Evidence on the compromised appliance showed that the actor had captured several hundred username-"
+        },
+        {
+          "v": "multi-factor authentication token interception",
+          "q": "The actor also captured the value of MFA tokens"
+        },
+        {
+          "v": "session token capture from HTTP traffic",
+          "q": "The actor is believed to have captured JWTs by capturing HTTP traffic on the compromised appliance."
+        },
+        {
+          "v": "network service discovery",
+          "q": "There is evidence that network scanning utility nmap was executed on the compromised appliance to scan other"
+        },
+        {
+          "v": "host enumeration",
+          "q": "Host enumeration, which enables an actor to build their own map of the network"
+        },
+        {
+          "v": "use of compromised SOHO devices as infrastructure",
+          "q": "using compromised devices, including small-office/home-office (SOHO)"
+        },
+        {
+          "v": "data exfiltration by mounting file shares",
+          "q": "exfiltrate data by mounting file shares"
+        },
+        {
+          "v": "use of compromised credentials",
+          "q": "Compromised credentials"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "Threat actors from the group are assessed to have attained escalated privileges on the appliance."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-44228",
+          "q": "APT40 rapidly exploits newly public vulnerabilities in widely used software such as Log4J (CVE-2021-44228),"
+        },
+        {
+          "v": "CVE-2021-31207",
+          "q": "Atlassian Confluence (CVE-2021-31207, CVE-2021-26084) and Microsoft Exchange (CVE-2021-31207, CVE-"
+        },
+        {
+          "v": "CVE-2021-26084",
+          "q": "Atlassian Confluence (CVE-2021-31207, CVE-2021-26084) and Microsoft Exchange (CVE-2021-31207, CVE-"
+        },
+        {
+          "v": "CVE-2021-34473",
+          "q": "2021-34523, CVE-2021-34473). ASD’s ACSC and the authoring agencies expect the group to continue using"
+        }
+      ],
+      "figures": [
+        {
+          "v": "two",
+          "q": "ASD’s ACSC are sharing two anonymized investigative reports to provide awareness of how the actors employ"
+        },
+        {
+          "v": "several hundred",
+          "q": "a malicious actor had exfiltrated several hundred unique username and password pairs on the compromised appliance"
+        },
+        {
+          "v": "three",
+          "q": "three load-balanced hosts where the earliest evidence of compromise was detected."
+        },
+        {
+          "v": "within hours or days",
+          "q": "POCs for new high-profile vulnerabilities within hours or days of public release."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The exact method of exploitation is unknown for one investigated intrusion.",
+      "This group appears to prefer exploiting public-facing infrastructure over techniques that require user interaction.",
+      "Some artefacts were not available due to the configuration of logging or network design.",
+      "The ASD’s ACSC could not determine the full extent of the activity due to lack of logging availability.",
+      "The compromised device probably belonged to a small business or home user.",
+      "The ASD’s ACSC assesses that the actor may have collected artefacts to hijack a remote login session.",
+      "The activity and techniques overlap with the groups tracked as APT40; this is an overlap, not a stated identity match.",
+      "This group has previously been reported as being based in Haikou, Hainan Province; the advisory cites earlier reporting for this."
+    ]
   }
 }

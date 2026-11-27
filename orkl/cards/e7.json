@@ -405,25 +405,121 @@
   },
   "e78fa5bff9c6831544f19992cc3f1c632b7e5866": {
     "sha1": "e78fa5bff9c6831544f19992cc3f1c632b7e5866",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:20:41Z",
+    "read_at": "2026-11-27T13:08:21Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Sysdig's Threat Research Team describes proxyjacking, an attack in which an attacker exploited Log4j (CVE-2021-44228) in an unpatched Apache Solr container, installed a proxyware agent, and sold the victim's IP addresses to proxyware services for profit. The report covers profit estimates, cloud billing costs, container images on DockerHub used to spread proxyware, and advice on billing alerts and detection rules.",
+    "kind": "incident",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "cloud service provider",
+          "q": "In the case of services running on a cloud service provider (CSP), these financial costs could be metered."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "2023-04-04",
+          "q": "Published: 2023-04-04 · Archived: 2026-04-06 01:54:41 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2022",
+          "q": "As pointed out in our 2022 Threat Report, DockerHub is also",
+          "what": "Earlier Sysdig threat report noted attackers using DockerHub"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Apache Solr",
+          "q": "an unpatched Apache Solr service"
+        },
+        {
+          "v": "IPRoyal Pawns application",
+          "q": "the command-line interface version of the IPRoyal Pawns application from GitHub"
+        },
+        {
+          "v": "Peer2Profit",
+          "q": "Peer2Profit does not have the same restrictions"
+        },
+        {
+          "v": "Honeygain",
+          "q": "These services, such as IPRoyal, Honeygain, Peer2Profit, and others, pay for each IP address you"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploitation of a Log4j vulnerability",
+          "q": "The attacker obtained initial access via exploitation of a Log4j vulnerability"
+        },
+        {
+          "v": "crontab",
+          "q": "the attacker used crontab to schedule the download and execution command of the script previously"
+        },
+        {
+          "v": "covering their tracks",
+          "q": "After covering their tracks, the attacker performed persistent actions inside the compromised pod."
+        },
+        {
+          "v": "sell bandwidth",
+          "q": "they can sell bandwidth on your behalf"
+        },
+        {
+          "v": "proxyware services inside container",
+          "q": "One of the threats we saw in our proxyjacking research was the use of proxyware services inside container"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-44228",
+          "q": "Initial access (CVE-2021-44228) and execution"
+        }
+      ],
+      "figures": [
+        {
+          "v": "$10 per month",
+          "q": "make as much as $10 per month for each compromised device"
+        },
+        {
+          "v": "$9.60 per month",
+          "q": "24 hours of activity for one IP address will net $9.60 per month"
+        },
+        {
+          "v": "$220,000 in profit per month",
+          "q": "could theoretically provide more than $220,000 in profit per month"
+        },
+        {
+          "v": "23,000",
+          "q": "according to Censys, more than 23,000 of those are reachable from"
+        },
+        {
+          "v": "$1,000 per month",
+          "q": "a modest compromise of 100 IPs will net a passive income of nearly $1,000 per month"
+        },
+        {
+          "v": "10 minutes",
+          "q": "the command was executed every 10 minutes"
+        },
+        {
+          "v": "1 GB",
+          "q": "1 GB of network traffic spread out over a month is tens"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "Proxyjacking"
+    },
+    "hedges": [
+      "The report says proxyware is a legitimate, nonmalicious application; the malicious use is the attacker's.",
+      "Profit figures are presented as estimates; the $220,000 monthly figure is described as theoretical.",
+      "The report assumes IPRoyal's ethics claim implies vetting, but says it found the claim hard to believe.",
+      "The report believes the Pawns app uses an IP classification service, but says this could be benevolent.",
+      "The report says the list of proxyware services used for proxyjacking is small right now.",
+      "The report says proxyjacking may not directly cause data destruction or IP theft, though these could be indirect results."
+    ]
   }
 }

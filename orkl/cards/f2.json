@@ -213,5 +213,128 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "f260bc5667c5378141a6ba8199d930d6224b9d31": {
+    "sha1": "f260bc5667c5378141a6ba8199d930d6224b9d31",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:10:27Z",
+    "model": "haiku",
+    "summary": "Synacktiv CSIRT analysis of LinkPro, a Golang Linux rootkit found in an AWS EKS environment. Initial access came via an exposed, vulnerable Jenkins server. Two eBPF modules hide the backdoor and activate it on a magic packet. Passive (reverse) and active (forward) modes are described. The infection chain used a malicious container image with a host mount, a vGet downloader loading vShell in memory, and a dropper using DNS tunneling. No formal threat actor attribution was made; objectives appear financial.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC5174",
+          "q": "vShell is an already documented backdoor9, notably used by UNC517410",
+          "by": "the report itself, citing prior documentation of vShell"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2025-10-13",
+          "q": "date = \"2025-10-13\"",
+          "what": "date in the metadata of the LinkPro YARA rules"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 17:24:53 UTC",
+          "what": "date the report page was archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "vShell",
+          "q": "vShell is an already documented backdoor9"
+        },
+        {
+          "v": "vGet",
+          "q": "The Synacktiv CSIRT names this downloader vGet"
+        },
+        {
+          "v": "vnt8",
+          "q": "An open-source program called vnt8 that acts as a VPN server"
+        },
+        {
+          "v": "LinkPro",
+          "q": "The Synacktiv CSIRT names it LinkPro in reference to the symbol defining its main module"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "magic packet",
+          "q": "activated upon receipt of a \"magic packet\"."
+        },
+        {
+          "v": "Dynamic Linker Hijacking",
+          "q": "Threat Linux Dynamic Linker Hijacking"
+        },
+        {
+          "v": "Timestomping",
+          "q": "Timestomping the modification and access dates of"
+        },
+        {
+          "v": "systemd unit file",
+          "q": "Adding a systemd unit file in"
+        },
+        {
+          "v": "escape the container's context",
+          "q": "to escape the container's context"
+        },
+        {
+          "v": "retrieving credentials",
+          "q": "retrieving credentials (authentication tokens, API keys, certificates...)"
+        },
+        {
+          "v": "DNS tunneling",
+          "q": "communicating via DNS tunneling"
+        },
+        {
+          "v": "hide its processes",
+          "q": "takes advantage of their capabilities to hide its processes"
+        },
+        {
+          "v": "lateral movement",
+          "q": "ability to serve as a pivot point for lateral movement."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "8710464 bytes",
+          "q": "File size 8710464 bytes"
+        },
+        {
+          "v": "10 PIDs",
+          "q": "(which can contain up to 10 PIDs)"
+        },
+        {
+          "v": "one-hour window",
+          "q": "the operator has a one-hour window"
+        },
+        {
+          "v": "four ELF modules",
+          "q": "LinkPro embeds four ELF modules"
+        },
+        {
+          "v": "1MB",
+          "q": "The target file is split into 1MB chunks."
+        },
+        {
+          "v": "Five communication protocols",
+          "q": "Five communication protocols are possible for the"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LinkPro"
+    },
+    "hedges": [
+      "No formal attribution to a threat actor could be established, but the objectives of the attack appear to be financial.",
+      "It is therefore possible that there is a link between vGet and vShell, and that vGet was specifically developed to execute vShell directly in memory."
+    ]
   }
 }

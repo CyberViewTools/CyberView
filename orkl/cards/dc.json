@@ -652,5 +652,151 @@
       "note": "tools[5]: mimikatz appears only in the report's hypothesis about what organized groups usually do after moving laterally. The text never says RTM uses it.; tech",
       "by": "auditor"
     }
+  },
+  "dc8437a657e65d8081977059d898382b32859b96": {
+    "sha1": "dc8437a657e65d8081977059d898382b32859b96",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:17:31Z",
+    "model": "haiku",
+    "summary": "Elastic Security Labs primer by Ruben Groenewoud, published 2024-08-21, in a Linux detection engineering series. It explains Linux persistence mechanisms, including cron, at, systemd services and timers, shell profiles, XDG autostart, SUID/SGID, sudoers, local accounts, SSH keys and bind/reverse shells. It shows how to set them up with the PANIX tool, then how to detect them with SIEM and endpoint rules and hunt for them with ES|QL and OSQuery. It is educational and names no specific threat actor or incident.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-08-21",
+          "q": "Published: 2024-08-21",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 22:24:14 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PANIX",
+          "q": "PANIX, a Linux persistence tool developed by Ruben"
+        },
+        {
+          "v": "OSQuery",
+          "q": "OSQuery is an open-source, cross-"
+        },
+        {
+          "v": "ES|QL",
+          "q": "ES|QL provides a powerful way to filter, transform, and analyze data stored in"
+        },
+        {
+          "v": "Cron",
+          "q": "Cron is a utility for scheduling recurring tasks to run at specific times or intervals."
+        },
+        {
+          "v": "At",
+          "q": "At is a utility for scheduling one-time tasks to run at a specified time in the future on Linux systems."
+        },
+        {
+          "v": "Systemd",
+          "q": "Systemd is a system and service manager for Linux, widely adopted as a replacement for the traditional SysVinit"
+        },
+        {
+          "v": "netcat",
+          "q": "Here is an example of a bind shell using the traditional version of netcat:"
+        },
+        {
+          "v": "DISGOMOJI",
+          "q": "Volexity recently published research on DISGOMOJI malware, which was found to establish persistence by"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "scheduled task/job",
+          "q": "T1053 - scheduled task/job"
+        },
+        {
+          "v": "cron job",
+          "q": "The scheduled task is called a cron job and can be executed with both user and root permissions"
+        },
+        {
+          "v": "systemd services",
+          "q": "This section will discuss T1453 for systemd services and generators, and T1053 for systemd timers."
+        },
+        {
+          "v": "systemd timers",
+          "q": "This section will discuss T1453 for systemd services and generators, and T1053 for systemd timers."
+        },
+        {
+          "v": "Unix shell configuration modification",
+          "q": "T1546.004 - event triggered execution: Unix shell configuration modification"
+        },
+        {
+          "v": "XDG autostart entries",
+          "q": "T1547.013 - boot or logon autostart execution: XDG autostart entries"
+        },
+        {
+          "v": "setuid and setgid",
+          "q": "T1548.001 - abuse elevation control mechanism: setuid and setgid"
+        },
+        {
+          "v": "sudoers file modification",
+          "q": "Persistence through T1548.003 - sudoers file modification"
+        },
+        {
+          "v": "local account",
+          "q": "T1136.001 - create account: local account"
+        },
+        {
+          "v": "backdoor user creation",
+          "q": "T1136.001 - create account: backdoor user creation"
+        },
+        {
+          "v": "user added to privileged group",
+          "q": "T1098 - account manipulation: user added to privileged group"
+        },
+        {
+          "v": "SSH modification",
+          "q": "Persistence through T1098.004 - SSH modification"
+        },
+        {
+          "v": "bind shells",
+          "q": "T1059.004 - command and scripting interpreter: bind shells"
+        },
+        {
+          "v": "reverse shells",
+          "q": "T1059.004 - command and scripting interpreter: reverse shells"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 1,000 prebuilt rules",
+          "q": "Elastic SIEM includes over 1,000 prebuilt rules and more than 200 specifically dedicated to Linux."
+        },
+        {
+          "v": "more than 200",
+          "q": "Elastic SIEM includes over 1,000 prebuilt rules and more than 200 specifically dedicated to Linux."
+        },
+        {
+          "v": "76 hits",
+          "q": "This query returns 76 hits that could be investigated."
+        },
+        {
+          "v": "37 results",
+          "q": "In this case, the query returns 37 results, most of which are true positives"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Every network is unique; therefore, a false positive in one environment may not be a false positive for every environment.",
+      "Detecting bind shells through behavioral rules is inherently challenging because their behavior is typically benign and indistinguishable from legitimate processes.",
+      "Although writing solid behavioral detection rules that do not provide false positives on a regular basis is near impossible, hunting for them is not.",
+      "MITRE does not have a specific bind/reverse-shell technique, and probably classifies bind shells as the execution technique.",
+      "Less commonly leveraged by malware due to their non-default installation and limited versatility compared to cron and other mechanisms.",
+      "SUID and SGID binaries are common on Linux and are available on the system by default. Generally, these cannot be exploited."
+    ]
   }
 }

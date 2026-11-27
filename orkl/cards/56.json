@@ -579,5 +579,168 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5680c21a347bfdc57a46d79a2acb6749a0c88f0c": {
+    "sha1": "5680c21a347bfdc57a46d79a2acb6749a0c88f0c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:16:43Z",
+    "model": "haiku",
+    "summary": "Uptycs Threat Research reports a cryptomining campaign by the 8220 Gang, a Chinese-based group, from May 2023 to February 2024 against cloud infrastructure on Linux and Windows. The group scans for vulnerable applications and exploits flaws including CVE-2021-44228 and CVE-2022-26134. Windows infections use PowerShell, DLL sideloading and a UAC bypass. The Linux variant is a shell-script downloader that spreads over SSH and drops miners and the Tsunami IRCBot.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "8220 Gang",
+          "q": "The 8220 Gang, a notorious Chinese-based threat actor group, has once again surfaced in the spotlight with a renewed",
+          "by": "Uptycs Threat Research (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud infrastructure",
+          "q": "in cyber threats facing cloud infrastructure today."
+        },
+        {
+          "v": "cloud environments",
+          "q": "underscoring a persistent threat to cloud environments worldwide."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Chinese",
+          "q": "a notorious Chinese-based threat actor group"
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 2023",
+          "q": "This latest campaign, unfolding from May 2023 through February 2024, showcases the",
+          "what": "start of the campaign period described in the report"
+        },
+        {
+          "v": "February 2024",
+          "q": "This latest campaign, unfolding from May 2023 through February 2024, showcases the",
+          "what": "end of the campaign period described in the report"
+        },
+        {
+          "v": "2024-02-22",
+          "q": "Published: 2024-02-22 · Archived: 2026-04-05 12:37:06 UTC",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "masscan",
+          "q": "still employing tools such as masscan and spirit for reconnaissance, just"
+        },
+        {
+          "v": "spirit",
+          "q": "used by the spirit tool which is Golang UPX binary"
+        },
+        {
+          "v": "Tsunami IRCBot",
+          "q": "The main purpose of this shell script is to download payloads which includes “Tsunami IRCBot” and “Coinminer”."
+        },
+        {
+          "v": "Coinminer",
+          "q": "The main purpose of this shell script is to download payloads which includes “Tsunami IRCBot” and “Coinminer”."
+        },
+        {
+          "v": "sysrv",
+          "q": "Other known cryptocurrency miners such as network0, kthreaddi, sysrv etc are killed."
+        },
+        {
+          "v": "AddInProcess.exe",
+          "q": "The above payload is loaded inside AddInProcess.exe via Process injection"
+        },
+        {
+          "v": "Windows PowerShell",
+          "q": "the utilization of Windows PowerShell for fileless execution is noted"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fileless execution",
+          "q": "the utilization of Windows PowerShell for fileless execution is noted"
+        },
+        {
+          "v": "DLL sideloading",
+          "q": "of distinctive techniques, including DLL sideloading, User Account Control (UAC) bypass, and the modification of AMSIscanBuffer and ETWEventWrite."
+        },
+        {
+          "v": "User Account Control (UAC) bypass",
+          "q": "of distinctive techniques, including DLL sideloading, User Account Control (UAC) bypass, and the modification of AMSIscanBuffer and ETWEventWrite."
+        },
+        {
+          "v": "Windows Defender exclusions",
+          "q": "Windows Defender Exclusions are added via following command"
+        },
+        {
+          "v": "disabling security enforcement",
+          "q": "This includes disabling security enforcement, modifying firewall rules,"
+        },
+        {
+          "v": "removing cloud security services",
+          "q": "and removing cloud security services,"
+        },
+        {
+          "v": "disable SELinux enforcement",
+          "q": "is used to temporarily disable SELinux enforcement on a system."
+        },
+        {
+          "v": "cron jobs",
+          "q": "Deployed multiple cron jobs across various directories, each tasked with fetching the primary payload from the"
+        },
+        {
+          "v": "brute force attacks",
+          "q": "It launches brute force attacks"
+        },
+        {
+          "v": "SSH connections",
+          "q": "It also automates SSH connections to various hosts using multiple keys and users"
+        },
+        {
+          "v": "Process injection",
+          "q": "The above payload is loaded inside AddInProcess.exe via Process injection"
+        },
+        {
+          "v": "internet scans",
+          "q": "conducts internet scans to identify susceptible applications"
+        },
+        {
+          "v": "base64 encoding",
+          "q": "The utilization of base64 encoding for both Python code and a shell script in the download process serves as a strategy"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-26134",
+          "q": "2021-44228 and CVE-2022-26134, underscoring a persistent threat to cloud environments worldwide."
+        }
+      ],
+      "figures": [
+        {
+          "v": "around 6000",
+          "q": "having around 6000"
+        },
+        {
+          "v": "85%",
+          "q": "addinprocess.exe runs with high CPU usage > 85%"
+        },
+        {
+          "v": "5-6 months",
+          "q": "over the last 5-6 months campaigns"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "8220 Gang cryptomining campaign"
+    },
+    "hedges": [
+      "The report says it looks like the actor used an open-source project for some tools, presented as an inference rather than a confirmed fact.",
+      "The reasons given for patching AMSI and ETW functions are framed as typical associations and possibilities ('may', 'potential'), not confirmed intent."
+    ]
   }
 }

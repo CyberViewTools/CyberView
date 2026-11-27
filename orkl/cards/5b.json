@@ -730,5 +730,113 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5b29f671666c9e98a0fb600a486b2ae9dfaf9188": {
+    "sha1": "5b29f671666c9e98a0fb600a486b2ae9dfaf9188",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:10:24Z",
+    "model": "haiku",
+    "summary": "Elastic Security Labs analysis, published 2024-12-12, of PUMAKIT, a multi-stage Linux malware. A dropper disguised as a cron binary runs memory-resident executables, one of which loads PUMA, an LKM kernel rootkit. A shared-object userland rootkit called Kitsune is embedded in the kernel module. The rootkit hooks 18 syscalls with ftrace to hide files, directories and itself, escalates privileges through a special hook, and communicates with C2 servers. Elastic provides detection queries and a YARA signature. The report names no threat actor or country.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-12-12",
+          "q": "Published: 2024-12-12 · Archived: 2026-04-05 14:09:58 UTC",
+          "what": "Elastic Security Labs published the report"
+        },
+        {
+          "v": "September 4, 2024",
+          "q": "The binary was first uploaded on September 4, 2024, with 0 detections, raising suspicions about its potential",
+          "what": "The suspect cron binary was first uploaded to VirusTotal"
+        },
+        {
+          "v": "February 2020",
+          "q": "In February 2020, kernel developers debated the unexporting of",
+          "what": "Kernel developers debated unexporting a kernel symbol lookup function"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PUMAKIT",
+          "q": "PUMAKIT is a sophisticated piece of malware, initially uncovered during routine threat hunting on VirusTotal and"
+        },
+        {
+          "v": "PUMA",
+          "q": "PUMAKIT, named after its embedded LKM rootkit module (named \"PUMA\" by the malware authors) and Kitsune,"
+        },
+        {
+          "v": "Kitsune",
+          "q": "This suggests that the SO is referred to as Kitsune by the developers."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "privilege escalation",
+          "q": "Key functionalities of the kernel module include privilege escalation, hiding files and directories, concealing itself"
+        },
+        {
+          "v": "hiding files and directories",
+          "q": "Key functionalities of the kernel module include privilege escalation, hiding files and directories, concealing itself"
+        },
+        {
+          "v": "anti-debugging",
+          "q": "Critical Functionalities: Includes privilege escalation, C2 communication, anti-debugging, and system"
+        },
+        {
+          "v": "C2 communication",
+          "q": "Critical Functionalities: Includes privilege escalation, C2 communication, anti-debugging, and system"
+        },
+        {
+          "v": "ftrace",
+          "q": "(ftrace) to hook 18 different syscalls and several kernel functions, enabling it to manipulate core system behaviors."
+        },
+        {
+          "v": "fileless execution",
+          "q": "This is a hallmark of fileless execution."
+        },
+        {
+          "v": "executed from memory",
+          "q": "executed from memory, not from a file on disk, making detection and forensic analysis more difficult."
+        },
+        {
+          "v": "fraudulent use of the GPL license",
+          "q": "This fraudulent use of the GPL license ensures the rootkit can call"
+        },
+        {
+          "v": "Multi-Stage Architecture",
+          "q": "Multi-Stage Architecture: The malware combines a dropper, two memory-resident executables, an LKM"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "18 different syscalls",
+          "q": "(ftrace) to hook 18 different syscalls and several kernel functions, enabling it to manipulate core system behaviors."
+        },
+        {
+          "v": "0 detections",
+          "q": "The binary was first uploaded on September 4, 2024, with 0 detections, raising suspicions about its potential"
+        },
+        {
+          "v": "5.7",
+          "q": "Unlike modern rootkits targeting kernel versions 5.7 and above, the"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "PUMAKIT"
+    },
+    "hedges": [
+      "The report says the dropper is possibly masquerading as a legitimate process, such as cron.",
+      "The report says Kitsune may be responsible for certain behaviors observed in the rootkit.",
+      "The report says several other behavioral rules may also trigger, depending on the execution chain.",
+      "The report infers the rootkit is designed for older kernels because it does not use kprobes."
+    ]
   }
 }

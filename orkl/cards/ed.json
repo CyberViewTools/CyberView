@@ -188,5 +188,206 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "ede7a171d8d96e4bf02144ef76697cfd941da6e3": {
+    "sha1": "ede7a171d8d96e4bf02144ef76697cfd941da6e3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:18:19Z",
+    "model": "haiku",
+    "summary": "CrowdStrike describes ransomware operations by ALPHA SPIDER affiliates of the Alphv ransomware-as-a-service, drawn from several incident response engagements. Initial access used an Ivanti appliance flaw (CVE-2021-44529) and a PwnKit root escalation. Later steps included network scanning, Veeam credential theft attempts, hiding a reverse SSH tool in an NTFS alternate data stream, and editing the hosts file to bypass DNS filtering and MFA. Data was exfiltrated with Rclone, FileZilla and MEGA.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "ALPHA SPIDER",
+          "q": "ALPHA SPIDER is the adversary behind the development and operation of the Alphv ransomware as a",
+          "by": "the report (CrowdStrike Services blog)"
+        },
+        {
+          "v": "ALPHA SPIDER affiliates",
+          "q": "attributed to ALPHA SPIDER affiliates by CrowdStrike Counter Adversary Operations.",
+          "by": "CrowdStrike Counter Adversary Operations"
+        },
+        {
+          "v": "Threat Actor 1",
+          "q": "Threat Actor 1 leveraged an exploit for the vulnerability identified as CVE-2021-44529",
+          "by": "the report (CrowdStrike Services blog)"
+        },
+        {
+          "v": "Threat Actor 2",
+          "q": "Threat Actor 2 modified the",
+          "by": "the report (CrowdStrike Services blog)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "December 2, 2021",
+          "q": "A patch was made available for CVE-2021-44529 before the exploit happened on December 2, 2021",
+          "what": "Exploit of CVE-2021-44529 against the Ivanti CSA server happened after a patch was available"
+        },
+        {
+          "v": "December 2021",
+          "q": "Alphv ransomware-as-a-service, which first emerged in December 2021",
+          "what": "Alphv ransomware-as-a-service first emerged"
+        },
+        {
+          "v": "2018",
+          "q": "This offensive security technique has been documented since at least 2018",
+          "what": "The fail-open technique for Duo Windows logon was documented"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Nmap",
+          "q": "Threat Actor 1 downloaded Nmap, the infamous network"
+        },
+        {
+          "v": "mitm6",
+          "q": "Threat Actor 1 attempted to use mitm6 5 and responder ,6 two offensive security network"
+        },
+        {
+          "v": "responder",
+          "q": "Threat Actor 1 attempted to use mitm6 5 and responder ,6 two offensive security network"
+        },
+        {
+          "v": "masscan",
+          "q": "1 also installed masscan on the compromised CSA server to perform additional network reconnaissance"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Affiliates have used Linux variants of Cobalt Strike and SystemBC"
+        },
+        {
+          "v": "SystemBC",
+          "q": "Affiliates have used Linux variants of Cobalt Strike and SystemBC"
+        },
+        {
+          "v": "KoloVeeam",
+          "q": "KoloVeeam is a simple tool that extracts and decrypts user credentials stored in the VeeamBackup database."
+        },
+        {
+          "v": "Veeam-Get-Creds.ps1",
+          "q": "Veeam Credential Recovery12 PowerShell script ( Veeam-Get-Creds.ps1 ) to"
+        },
+        {
+          "v": "reverse-ssh",
+          "q": "At this point, Threat Actor 1 installed a reverse-ssh executable to connect back to their server"
+        },
+        {
+          "v": "Rclone",
+          "q": "attempted many times to use Rclone15 to exfiltrate data"
+        },
+        {
+          "v": "FileZilla",
+          "q": "Threat Actor 1 then downloaded FileZilla from the legitimate website"
+        },
+        {
+          "v": "MEGA",
+          "q": "downloaded the MEGA17 client software to exfiltrate data to a MEGA cloud account"
+        },
+        {
+          "v": "Alphv ransomware",
+          "q": "Alphv ransomware-as-a-service, which first emerged in December 2021"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "NTFS Alternate Data Streams",
+          "q": "techniques such as the usage of NTFS Alternate Data Streams for"
+        },
+        {
+          "v": "exploitation of multiple vulnerabilities",
+          "q": "exploitation of multiple vulnerabilities associated with a GNU/Linux-based"
+        },
+        {
+          "v": "tampering with network configuration files",
+          "q": "bypassing DNS-based filtering and multifactor authentication (MFA) by tampering with network configuration files"
+        },
+        {
+          "v": "network discovery",
+          "q": "performed extensive network discovery activities."
+        },
+        {
+          "v": "extract and decrypt stored credentials",
+          "q": "extract and decrypt stored credentials."
+        },
+        {
+          "v": "malicious service",
+          "q": "created a malicious service to ensure persistence for their"
+        },
+        {
+          "v": "Cron daemon",
+          "q": "executed by the local Cron daemon to achieve persistence on the compromised"
+        },
+        {
+          "v": "root privileges",
+          "q": "to temporarily obtain root privileges and add a new UID 0"
+        },
+        {
+          "v": "masquerade",
+          "q": "tried to masquerade the Rclone executable under different system and legitimate"
+        },
+        {
+          "v": "exfiltrate data",
+          "q": "persistently attempted to exfiltrate data using three different"
+        },
+        {
+          "v": "rebuilds itself every hour",
+          "q": "rebuilds itself every hour to evade antivirus tooling"
+        },
+        {
+          "v": "malware-less attacks",
+          "q": "malware-less attacks by leveraging dual-purpose administration tools and legitimate user accounts"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-44529",
+          "q": "Threat Actor 1 leveraged an exploit for the vulnerability identified as CVE-2021-44529"
+        },
+        {
+          "v": "CVE-2021-21972",
+          "q": "CVE-2021-21972 is a remote code execution vulnerability in a vCenter Server plugin"
+        }
+      ],
+      "figures": [
+        {
+          "v": "two software vulnerabilities",
+          "q": "the adversary used a combination of two software vulnerabilities to gain an initial foothold within the"
+        },
+        {
+          "v": "two years",
+          "q": "Over the last two years, CrowdStrike Services has run several incident response"
+        },
+        {
+          "v": "two separate incidents",
+          "q": "In two separate incidents, ALPHA SPIDER affiliates"
+        },
+        {
+          "v": "two IR engagements",
+          "q": "In two IR engagements, Threat Actor 1 deployed a"
+        },
+        {
+          "v": "three",
+          "q": "persistently attempted to exfiltrate data using three different"
+        },
+        {
+          "v": "every hour",
+          "q": "rebuilds itself every hour to evade antivirus tooling"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Alphv ransomware"
+    },
+    "hedges": [
+      "The report says it 'does appear' that ALPHA SPIDER affiliates had no specific operational security measures in place to avoid being detected.",
+      "The report uses 'may' for possibilities: a threat actor may exploit CVE-2021-21972, and threat actors may export logs for various reasons.",
+      "The report says Veeam user credentials are a target that ransomware-oriented actors often go after, and describes this as a general pattern."
+    ]
   }
 }

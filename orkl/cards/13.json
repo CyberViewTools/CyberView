@@ -441,25 +441,381 @@
   },
   "135a6f7d72166abc72a0fc691651c47eb0ed1b5e": {
     "sha1": "135a6f7d72166abc72a0fc691651c47eb0ed1b5e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T12:19:47Z",
+    "read_at": "2026-11-27T13:07:03Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CERT-FR report (17/07/2020) on the Dridex banking trojan. Dridex appeared in June 2014 as a fifth variant of Bugat with GameOverZeuS features. It runs on a peer-to-peer botnet and is operated under an affiliate model. The report traces its developers to Evil Corp, which grew out of the Business Club and the ZeuS family. It describes distribution through phishing, Emotet, FakeUpdates and exploit kits, and links Dridex to the BitPaymer and DoppelPaymer ransomware. Many links between groups are hedged as uncertain.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Evil Corp",
+          "q": "the Business Club, henceforth known as Evil Corporation (alias EvilCorp, Indrik Spider), headed up by Yakubets",
+          "by": "the report itself, citing a joint US DoJ and UK NCA indictment"
+        },
+        {
+          "v": "TA505",
+          "q": "According to Proofpoint [37], the cybercriminal group TA505 began using Dridex in July 2014",
+          "by": "Proofpoint, as cited in the report"
+        },
+        {
+          "v": "TA544",
+          "q": "TA544 (alias Narwhal Spider) is a cybercriminal service provider believed to make the botnet Cutwail available for hire",
+          "by": "the report itself"
+        },
+        {
+          "v": "M. Bogachev",
+          "q": "In 2005-2006 or thereabouts, M. Bogachev (alias Slavik, lucky12345) created the trojan ZeuS",
+          "by": "the report itself"
+        },
+        {
+          "v": "M. Yakubets",
+          "q": "allegedly led by M. Yakubets (alias Aqua)",
+          "by": "the report itself, citing court documents"
+        },
+        {
+          "v": "A. Ghinkul",
+          "q": "A. Ghinkul (alias Smilex) [10], a Moldovan national, was arrested in August 2015 in Cyprus",
+          "by": "the report itself"
+        },
+        {
+          "v": "Doppel Spider",
+          "q": "Evil Corp is thought to have split into two groups: Indrik Spider and Doppel Spider20",
+          "by": "the report itself; aliases established by CrowdStrike"
+        },
+        {
+          "v": "Indrik Spider",
+          "q": "Evil Corp is thought to have split into two groups: Indrik Spider and Doppel Spider20",
+          "by": "the report itself; alias established by CrowdStrike"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "the primary target of botnet ID 120 was banks"
+        },
+        {
+          "v": "industrial espionage",
+          "q": "Dridex’ interest for sectors other than banking, not least industrial espionage"
+        }
+      ],
+      "countries": [
+        {
+          "v": "UK",
+          "q": "the main countries to be targeted by Dridex were the UK, Italy and France"
+        },
+        {
+          "v": "Italy",
+          "q": "the main countries to be targeted by Dridex were the UK, Italy and France"
+        },
+        {
+          "v": "France",
+          "q": "the main countries to be targeted by Dridex were the UK, Italy and France"
+        },
+        {
+          "v": "United States",
+          "q": "The United States was the next most common target [11]"
+        },
+        {
+          "v": "Cyprus",
+          "q": "A. Ghinkul (alias Smilex) [10], a Moldovan national, was arrested in August 2015 in Cyprus"
+        },
+        {
+          "v": "Australia",
+          "q": "220 (targeting the UK, France and Australia)"
+        },
+        {
+          "v": "Germany",
+          "q": "223 (targeting Germany and Austria)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 2014",
+          "q": "Surfacing in June 2014, Dridex is the fifth variant of the banking trojan Bugat",
+          "what": "Dridex first surfaced"
+        },
+        {
+          "v": "July 2014",
+          "q": "According to Proofpoint [37], the cybercriminal group TA505 began using Dridex in July 2014",
+          "what": "TA505 began using Dridex"
+        },
+        {
+          "v": "November 2014",
+          "q": "In November 2014, Dridex embraced not only digital signature theft but also the P2P protocol",
+          "what": "Dridex added digital signature theft and the P2P protocol"
+        },
+        {
+          "v": "February 2017",
+          "q": "Dridex is the first known malware to have implemented, in February 2017, a new code injection technique",
+          "what": "Dridex implemented the AtomBombing code injection technique"
+        },
+        {
+          "v": "April 2019",
+          "q": "In April 2019, Evil Corp is thought to have split into two groups",
+          "what": "Evil Corp reportedly split into two groups"
+        },
+        {
+          "v": "5 December 2019",
+          "q": "In a joint indictment dated 5 December 2019, the US Department of Justice and Britain’s National Crime Agency",
+          "what": "Joint indictment identified nine members of Evil Corp"
+        },
+        {
+          "v": "August 2015",
+          "q": "A. Ghinkul (alias Smilex) [10], a Moldovan national, was arrested in August 2015 in Cyprus",
+          "what": "Ghinkul arrested in Cyprus after botnet control points were sinkholed"
+        },
+        {
+          "v": "May 2014",
+          "q": "In May 2014, the FBI-led Operation Tovar",
+          "what": "Operation Tovar took down GoZ and Cryptolocker infrastructure"
+        },
+        {
+          "v": "2015-2016",
+          "q": "Dridex’ maximum infection rate is considered to have been reached over the 2015-2016 period",
+          "what": "Dridex maximum infection rate reached"
+        },
+        {
+          "v": "2019",
+          "q": "In 2019, it appears that Evil Corp is now using Dridex no longer to commit bank fraud but to conduct recce operations",
+          "what": "Evil Corp reportedly used Dridex for reconnaissance rather than bank fraud"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dridex",
+          "q": "Surfacing in June 2014, Dridex is the fifth variant of the banking trojan Bugat"
+        },
+        {
+          "v": "Bugat",
+          "q": "Surfacing in June 2014, Dridex is the fifth variant of the banking trojan Bugat"
+        },
+        {
+          "v": "ZeuS",
+          "q": "In 2005-2006 or thereabouts, M. Bogachev (alias Slavik, lucky12345) created the trojan ZeuS"
+        },
+        {
+          "v": "JabberZeuS",
+          "q": "would be renamed JabberZeuS (see Appendix 6.2)"
+        },
+        {
+          "v": "GameOverZeuS",
+          "q": "was soon after renamed GameOverZeuS (GoZ)"
+        },
+        {
+          "v": "Pony",
+          "q": "Pony: based on the Pony malware7, this can steal access codes;"
+        },
+        {
+          "v": "Cutwail",
+          "q": "In 2019, the botnet Cutwail was distributing Dridex ID 1044 via phishing campaigns"
+        },
+        {
+          "v": "CraP2P",
+          "q": "Active from 2012 to 2020, CraP2P is a botnet specialising in the distribution of phishing campaigns and malware"
+        },
+        {
+          "v": "Andromeda",
+          "q": "Before it was taken down in 2017, the botnet Andromeda (alias Gamarue) was tasked with distributing Dridex"
+        },
+        {
+          "v": "Emotet",
+          "q": "Emotet has even been known to distribute Bitpaymer, the ransomware exclusively used by Evil Corp."
+        },
+        {
+          "v": "Gozi ISFB",
+          "q": "the operators of Emotet, Gozi ISFB (alias Ursnif)23 and Dridex likely share the same PE24 loader"
+        },
+        {
+          "v": "FakeUpdates",
+          "q": "the malware FakeUpdates distributed Dridex in October 2019"
+        },
+        {
+          "v": "Spelevo",
+          "q": "In June 2019, the exploit kit Spelevo32 delivered Dridex"
+        },
+        {
+          "v": "Fallout",
+          "q": "concomitantly with the exploit kit Fallout [15]"
+        },
+        {
+          "v": "Chthonic",
+          "q": "These campaigns deliver, in turn, Dridex v4 botnets, ID 199 or 501, AZORult, Chthonic30 and NetSupport RAT31"
+        },
+        {
+          "v": "NetSupport RAT",
+          "q": "These campaigns deliver, in turn, Dridex v4 botnets, ID 199 or 501, AZORult, Chthonic30 and NetSupport RAT31"
+        },
+        {
+          "v": "Carbanak",
+          "q": "as well as Carbanak19 [26]"
+        },
+        {
+          "v": "Hermès",
+          "q": "since the latter propagated the ransomware Hermès 22 [15]"
+        },
+        {
+          "v": "Cryptolocker",
+          "q": "In 2012, the botnet GoZ also distributed the ransomeware Cryptolocker."
+        },
+        {
+          "v": "Dyre",
+          "q": "Two weeks after GOZ was taken down, the banking trojan Dyre also allegedly appeared"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "web injection",
+          "q": "Harvesting information and tampering with content on websites (web injection), via interaction with the"
+        },
+        {
+          "v": "keylogger",
+          "q": "A keylogger, which provides the threat actors with context about the victim"
+        },
+        {
+          "v": "AtomBombing",
+          "q": "DLL order hijacking, process hollowing, PE injection, thread execution hijacking and AtomBombing."
+        },
+        {
+          "v": "phishing campaigns",
+          "q": "Over the 2015-2016 period, CraP2P was behind phishing campaigns particularly delivering Dridex botnets"
+        },
+        {
+          "v": "Watering hole",
+          "q": "Watering hole attacks, or phishing emails pointing to a malicious URL"
+        },
+        {
+          "v": "exploit kit",
+          "q": "In June 2019, the exploit kit Spelevo32 delivered Dridex"
+        },
+        {
+          "v": "Peer-to-Peer",
+          "q": "Dridex employs various Peer-to-Peer (P2P) botnets9.10 composed of workstations it compromises"
+        },
+        {
+          "v": "erases the master boot record",
+          "q": "it erases the master boot record (MBR) from the hard drive in a bid to sabotage the infected workstation"
+        },
+        {
+          "v": "affiliate model",
+          "q": "While some banking trojans are sold alone and deployed by the customer, Dridex operates according to an affiliate model."
+        },
+        {
+          "v": "malware-as-a-service",
+          "q": "ZeuS was hired out as malware-as-a-service to other cybercriminal groups"
+        },
+        {
+          "v": "Sinkholing",
+          "q": "Sinkholing involves redirecting data flow from zombie machines to a server outside the control"
+        },
+        {
+          "v": "DDoS attacks",
+          "q": "in a bid to launch DDoS attacks on banks’ websites"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-0199",
+          "q": "addition of the vulnerability 0-day MS Word (CVE-2017-0199)8"
+        }
+      ],
+      "figures": [
+        {
+          "v": "1,804 bots",
+          "q": "In 2015, the main countries to be targeted by Dridex were the UK, Italy and France, which had 1,804 bots."
+        },
+        {
+          "v": "around 24 servers",
+          "q": "It comprises around 24 servers [10]"
+        },
+        {
+          "v": "around 15 servers",
+          "q": "comprise around 15 servers [10]"
+        },
+        {
+          "v": "several hundred",
+          "q": "of which there are believed to be several hundred"
+        },
+        {
+          "v": "USD 100,000",
+          "q": "e.g. for USD 100,000 in the case of one British mule"
+        },
+        {
+          "v": "USD 50,000 per week",
+          "q": "along with USD 50,000 per week to the group"
+        },
+        {
+          "v": "100,000 bots",
+          "q": "Which apparently contained 100,000 bots in May 2015 [10]."
+        },
+        {
+          "v": "9,650 bots",
+          "q": "Which apparently contained 9,650 bots in April 2015 [14, 9]."
+        },
+        {
+          "v": "nearly USD 100m",
+          "q": "after reaping nearly USD 100m worth of profits during his five years in operation"
+        },
+        {
+          "v": "some 1 million bots",
+          "q": "At the time, this included some 1 million bots, and was responsible for fraudulent transactions totalling tens of millions of dollars"
+        },
+        {
+          "v": "447 variants",
+          "q": "To date, 447 variants of Zeus, associated with 27 families, have been identified"
+        },
+        {
+          "v": "27 families",
+          "q": "To date, 447 variants of Zeus, associated with 27 families, have been identified"
+        },
+        {
+          "v": "nine members",
+          "q": "identified nine members of the group Evil Corp"
+        },
+        {
+          "v": "14 Dridex distributors",
+          "q": "pick him out from among 14 Dridex distributors"
+        },
+        {
+          "v": "27 botnets",
+          "q": "This structure had 27 botnets, whose C2 backends were each controlled by a different person or group"
+        },
+        {
+          "v": "some fifty individuals",
+          "q": "The new group formed around JabberZeuS includes some fifty individuals"
+        },
+        {
+          "v": "nine million",
+          "q": "the number of bots making it up has risen to nine million"
+        },
+        {
+          "v": "around USD 70m",
+          "q": "siphoned around USD 70m off them"
+        },
+        {
+          "v": "USD 3,000 or 4,000",
+          "q": "for USD 3,000 or 4,000 [20], not including modules"
+        },
+        {
+          "v": "153 messages",
+          "q": "DridexBOT posted 153 messages, frequently aimed at demonstrating"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Dridex"
+    },
+    "hedges": [
+      "Without further evidence, it is only possible to confirm a close relationship between the groups linked to CraP2P.",
+      "Some sources say Evil Corp operates the CraP2P botnet, others say TA505; the report does not settle which.",
+      "It is not easy to tell whether TA544 is an affiliate of Dridex or only a distributor.",
+      "Dridex is manifestly operated (perhaps even developed) by at least one member of the Business Club, per the report.",
+      "Evil Corp is thought to have split in April 2019; the report says Doppel Spider may be a sub-group of Evil Corp.",
+      "The report says Bitpaymer development by Evil Corp is suggested by code similarities and shared prior compromise, not proven.",
+      "Dridex's maximum infection rate is considered to have been reached over 2015-2016.",
+      "Names in the report come from open sources and judicial documents that the report references."
+    ]
   }
 }

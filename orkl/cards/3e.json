@@ -215,5 +215,135 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "3e977e4c58244ba5a0a3eb2e221be8138fd7fb3e": {
+    "sha1": "3e977e4c58244ba5a0a3eb2e221be8138fd7fb3e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:24Z",
+    "model": "haiku",
+    "summary": "Volexity reports zero-day exploitation of an unauthenticated remote code execution flaw in Palo Alto Networks GlobalProtect firewalls, CVE-2024-3400 (CVSS 10.0). It tracks the activity as UTA0218. Exploitation was seen from March 26, 2024, and compromises were identified on April 10 and 11, 2024. The actor used a Python backdoor named UPSTYLE, reverse shells and the GOST tunnelling tool, exported firewall configuration, and moved laterally to steal Active Directory and browser credential data. Volexity assesses the actor is highly likely state-backed. A vendor fix was expected April 14, 2024.",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [
+        {
+          "v": "UTA0218",
+          "q": "Volexity tracks activity described in this blog post under the moniker UTA0218.",
+          "by": "Volexity"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "March 26, 2024",
+          "q": "The earliest evidence of attempted exploitation observed by Volexity thus far is on March 26, 2024 when",
+          "what": "earliest attempted exploitation observed"
+        },
+        {
+          "v": "April 10, 2024",
+          "q": "On April 10, 2024, Volexity identified zero-day exploitation of a vulnerability found within the GlobalProtect",
+          "what": "zero-day exploitation first identified at a customer"
+        },
+        {
+          "v": "April 11, 2024",
+          "q": "The following day, April 11, 2024, Volexity observed",
+          "what": "identical exploitation seen at another customer"
+        },
+        {
+          "v": "April 14, 2024",
+          "q": "expected April 14, 2024.",
+          "what": "expected date of the vendor fix"
+        },
+        {
+          "v": "2024-04-12",
+          "q": "Published: 2024-04-12 · Archived: 2026-04-05 14:18:27 UTC",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "UPSTYLE",
+          "q": "Volexity calls UPSTYLE, on the firewall."
+        },
+        {
+          "v": "GOST",
+          "q": "download reverse proxy tooling such as GOST (GO Simple Tunnel)."
+        },
+        {
+          "v": "reverse-sshx64",
+          "q": "Name(s) reverse-sshx64"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "unauthenticated remote code execution",
+          "q": "The issue is an unauthenticated remote code execution vulnerability with a CVSS base score of"
+        },
+        {
+          "v": "cron job",
+          "q": "The initial persistence mechanism setup by UTA0218 involved configuring a cron job that would use"
+        },
+        {
+          "v": "SMB and WinRM",
+          "q": "firewall device was used by the attacker to pivot into the internal network via SMB and WinRM."
+        },
+        {
+          "v": "NTDS.DIT",
+          "q": "directory credentials by obtaining the NTDS.DIT file."
+        },
+        {
+          "v": "saved cookies and login data",
+          "q": "saved cookies and login data, along with the users’ DPAPI keys."
+        },
+        {
+          "v": "exfiltrate configuration data",
+          "q": "download tools, exfiltrate configuration data, and move laterally within the network."
+        },
+        {
+          "v": "reverse shell",
+          "q": "create a reverse shell, and download further tools onto the device."
+        },
+        {
+          "v": "compromised AWS bucket",
+          "q": "compromised AWS bucket and various Virtual Private Servers (VPS) providers to store malicious files."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2024-3400",
+          "q": "CVE-2024-3400. The issue is an unauthenticated remote code execution vulnerability with a CVSS base score of"
+        }
+      ],
+      "figures": [
+        {
+          "v": "10.0",
+          "q": "CVSS base score of 10.0."
+        },
+        {
+          "v": "Six",
+          "q": "Six different versions of the"
+        },
+        {
+          "v": "Fifteen seconds",
+          "q": "Fifteen seconds after execution, the original version of"
+        },
+        {
+          "v": "60 seconds",
+          "q": "executes it via bash every 60 seconds."
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2024-3400"
+    },
+    "hedges": [
+      "It is likely the firewall device exploitation, followed by hands-on-keyboard activity, was limited and targeted.",
+      "Volexity is not currently able to provide an estimate as to the scale of exploitation taking place.",
+      "At the time of writing, Volexity was unable to link the activity to other threat activity.",
+      "Volexity assesses that it is highly likely UTA0218 is a state-backed threat actor based on the resources required to develop and exploit a vulnerability of this nature.",
+      "Volexity assesses that it is likely a spike in exploitation will be observed over the next few days by UTA0218 and potentially other threat actors."
+    ]
   }
 }

@@ -440,6 +440,207 @@
         "note": "summary: The claim 'Targets named are mainly banks and financial institutions' is too strong. The text says FIN7 attacks 'various companies' for financial data ",
         "by": "auditor"
       }
+    ],
+    "audit": {
+      "at": "2026-11-27T13:03:26Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
+  },
+  "3022e37224e3fa2abe43f2cadd50fc8b64422d27": {
+    "sha1": "3022e37224e3fa2abe43f2cadd50fc8b64422d27",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T13:12:00Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1
+  },
+  "3053d8fc62fda388518356d4e8f1be78ee7fcc58": {
+    "sha1": "3053d8fc62fda388518356d4e8f1be78ee7fcc58",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:14:11Z",
+    "model": "haiku",
+    "summary": "Sysdig's Threat Research Team blog on the 8220 Gang, a cryptojacking group that scans for and exploits misconfigured or vulnerable public-facing hosts. It covers three attacks observed from November 2022 to January 2023, two of them against Oracle Weblogic. The report describes the group's use of modified XMRig (PwnRig), masscan, cron and init.d persistence, rotating C2 IP addresses, and tools borrowed from TeamTNT and Rocke Group. It ends with indicators of compromise.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "8220 Gang",
+          "q": "8220 Gang has been dubbed as a group of low-level script kiddies with an equally disappointing name based on",
+          "by": "the report (Sysdig Threat Research Team)"
+        },
+        {
+          "v": "TeamTNT",
+          "q": "Cloud security practitioners might remember that the threat actor known as TeamTNT also emerged",
+          "by": "the report"
+        },
+        {
+          "v": "Rocke Group",
+          "q": "reported as having borrowed TeamTNT and Rocke Group scripts and miners, and WatchDog domain naming",
+          "by": "the report, citing earlier reporting"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-02-14",
+          "q": "Published: 2023-02-14",
+          "what": "Blog published"
+        },
+        {
+          "v": "December 2018",
+          "q": "Cisco Talos first reported on 8220 Gang in December 2018, with a timeline and description of the group's initial",
+          "what": "Cisco Talos first reported on the group"
+        },
+        {
+          "v": "mid-2021",
+          "q": "In mid-2021, Lacework identified 8220 Gang's XMRig",
+          "what": "Lacework identified the PwnRig variant"
+        },
+        {
+          "v": "July and October 2022",
+          "q": "SentinelOne reported on 8220 Gang in July and October 2022, expanding their botnet and",
+          "what": "SentinelOne reported on the group's campaigns"
+        },
+        {
+          "v": "November 2022 and January 2023",
+          "q": "Our most recently observed 8220 Gang attacks between November 2022 and January 2023 have many similarities",
+          "what": "Most recent attacks observed by Sysdig"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "The group also still deploys the PwnRig fork of XMRig and uses cron to schedule"
+        },
+        {
+          "v": "PwnRig",
+          "q": "variant called PwnRig, in addition to a modified Tsunami-based IRC botnets and new loader script."
+        },
+        {
+          "v": "Tsunami-based IRC botnets",
+          "q": "variant called PwnRig, in addition to a modified Tsunami-based IRC botnets and new loader script."
+        },
+        {
+          "v": "masscan",
+          "q": "scan the internet for vulnerable applications, using masscan and spirit for discovery efforts. Unsurprisingly, two of"
+        },
+        {
+          "v": "spirit",
+          "q": "scan the internet for vulnerable applications, using masscan and spirit for discovery efforts. Unsurprisingly, two of"
+        },
+        {
+          "v": "lwp-download",
+          "q": "One example is the addition of lwp-download as a backup"
+        },
+        {
+          "v": "wget",
+          "q": "download tool to wget and cron."
+        },
+        {
+          "v": "PureCrypter",
+          "q": "New TTPs in these reports included the use of the PureCrypter Malware-as-a-Service"
+        },
+        {
+          "v": "Discord",
+          "q": "using Discord to"
+        },
+        {
+          "v": "oanacroner",
+          "q": "8220 Gang also used the oanacroner script for the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cryptojacking",
+          "q": "namely, that the end-goal is cryptojacking."
+        },
+        {
+          "v": "exploiting misconfigured and vulnerable public-facing hosts",
+          "q": "In these campaigns, the group continued to exploit misconfigured and vulnerable"
+        },
+        {
+          "v": "scanning the internet for vulnerable applications",
+          "q": "scan the internet for vulnerable applications, using masscan and spirit for discovery efforts. Unsurprisingly, two of"
+        },
+        {
+          "v": "cron scheduled persistence",
+          "q": "The group also still deploys the PwnRig fork of XMRig and uses cron to schedule"
+        },
+        {
+          "v": "init.d service persistence",
+          "q": "Another is the creation of init.d services for persistence."
+        },
+        {
+          "v": "defense evasion tactics",
+          "q": "The group also added more defense evasion tactics, including the use"
+        },
+        {
+          "v": "searching for private keys or passwords",
+          "q": "Search private keys or passwords"
+        },
+        {
+          "v": "clearing logs",
+          "q": "Clear log activities"
+        },
+        {
+          "v": "rotating C2 IP addresses",
+          "q": "since upgraded to consistently changing their C2 IP addresses."
+        },
+        {
+          "v": "obfuscating the configuration file and mining pool",
+          "q": "8220 Gang's changes to XMRig in creating PwnRig obfuscate the configuration file"
+        },
+        {
+          "v": "base64-encoded script execution",
+          "q": "Base64-encoded python script execution"
+        },
+        {
+          "v": "using Discord to stash malware",
+          "q": "using Discord to"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three captures",
+          "q": "our three captures were against exploitable Oracle Weblogic applications."
+        },
+        {
+          "v": "two",
+          "q": "Unsurprisingly, two of"
+        },
+        {
+          "v": "three",
+          "q": "triggered during the three 8220 Gang"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "8220 Gang"
+    },
+    "hedges": [
+      "The report says the group borrows tools either because they are easier to steal or to obfuscate attribution, and that Occam's Razor dictates the former.",
+      "The report says that from all signs and measures the group can still be described as script kiddies, though that label may become a misnomer someday soon."
     ]
   }
 }

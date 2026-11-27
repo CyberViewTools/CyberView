@@ -276,5 +276,98 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "b9920be1ae93cbe482c9fafc95c96479f3881f05": {
+    "sha1": "b9920be1ae93cbe482c9fafc95c96479f3881f05",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:17:27Z",
+    "model": "haiku",
+    "summary": "Aqua Nautilus describes PG_MEM, a PostgreSQL malware that brute forces weak database credentials, creates a superuser backdoor, downloads payloads and deploys XMRIG cryptominers. It removes cron jobs and rival malware, deletes traces, and maps the activity to MITRE ATT&CK. The report notes more than 800,000 internet-exposed Postgres databases, found using Shodan.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actor",
+          "q": "First, the threat actor creates a new user role with login capability and high privileges.",
+          "by": "Aqua Nautilus (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-08-19",
+          "q": "Published: 2024-08-19",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PG_MEM",
+          "q": "Aqua Nautilus researchers have uncovered PG_MEM, a new PostgreSQL malware, that brute forces its way into"
+        },
+        {
+          "v": "PG_Core",
+          "q": "Figure 5: Delivery of PG_Core malware"
+        },
+        {
+          "v": "XMRIG",
+          "q": "This file is an XMRIG"
+        },
+        {
+          "v": "Shodan",
+          "q": "Shodan, the search engine for Internet-connected devices, was utilized to identify exposed PostgreSQL databases."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit Public-Facing Application",
+          "q": "T1190 – Exploit Public-Facing Application: The attacker exploits a vulnerability in the Postgres database"
+        },
+        {
+          "v": "Command and Scripting Interpreter: Unix Shell",
+          "q": "T1059.004 – Command and Scripting Interpreter: Unix Shell: The attacker executes SQL commands that"
+        },
+        {
+          "v": "Create Account: Local Account",
+          "q": "T1136.001 – Create Account: Local Account: The attacker creates a new user role with login capabilities"
+        },
+        {
+          "v": "Brute Force: Password Guessing",
+          "q": "T1110.002 – Brute Force: Password Guessing: The attacker uses brute force to guess the user and password"
+        },
+        {
+          "v": "Indicator Removal on Host: File Deletion",
+          "q": "T1070.004 – Indicator Removal on Host: File Deletion: The attacker deletes files and logs related to their"
+        },
+        {
+          "v": "Resource Hijacking",
+          "q": "T1496 – Resource Hijacking: The primary impact is the deployment of cryptominers"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "800,000",
+          "q": "we uncovered more than 800,000 internet"
+        },
+        {
+          "v": "3 files",
+          "q": "There are 3 files dropped to disk on the following path"
+        },
+        {
+          "v": "two files",
+          "q": "In total, there are two files downloaded"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "PG_MEM"
+    },
+    "hedges": [
+      "where h probably stands for hash and p stands for assigned worker."
+    ]
   }
 }

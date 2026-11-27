@@ -757,5 +757,118 @@
       "note": "sectors[1]: The text gives telecommunications companies as the usual targets of the LuckyMouse group ('targets mainly governments, telecommunications companies,",
       "by": "auditor"
     }
+  },
+  "ac09612e4de92769cf7f0b0bbeb25cfb5f612668": {
+    "sha1": "ac09612e4de92769cf7f0b0bbeb25cfb5f612668",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:32Z",
+    "model": "haiku",
+    "summary": "This is a user guide chapter for the CodeBuilder development environment. It covers its UNIX-style file systems (a native fast file system and a UNIX layer on Macintosh HFS), file names, permissions, time stamps, links, and root directory layout. It is product documentation, not a threat report, so no threat facts are recorded.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
+  },
+  "ac5e1ae9222a705f18b7ba216fa2fad095e0a9e6": {
+    "sha1": "ac5e1ae9222a705f18b7ba216fa2fad095e0a9e6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:17:17Z",
+    "model": "haiku",
+    "summary": "Elastic Security Labs article (published 2024-08-30) on Linux persistence mechanisms, the third part of a detection engineering series. It covers init systems (System V, Upstart), rc.local, message of the day, udev, package managers (APT, YUM, DNF), Git hooks and pager, process capabilities and system binary hijacking. For each it explains how the technique works, how to test it with the PANIX tool, and how to detect and hunt for it. The article is educational and aimed at defenders.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-08-30",
+          "q": "Published: 2024-08-30 · Archived: 2026-04-05 13:08:57 UTC",
+          "what": "Article published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2024-08-30 · Archived: 2026-04-05 13:08:57 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PANIX",
+          "q": "PANIX is a Linux persistence tool that simplifies and customizes persistence"
+        },
+        {
+          "v": "sedexp",
+          "q": "Researchers from AON recently discovered a malware called \"sedexp\" that achieves persistence using Udev rules"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "boot or logon initialization scripts",
+          "q": "T1037 - boot or logon initialization scripts: Init"
+        },
+        {
+          "v": "System V init",
+          "q": "T1037 - boot or logon initialization scripts: System V init"
+        },
+        {
+          "v": "Upstart",
+          "q": "T1037 - boot or logon initialization scripts: Upstart"
+        },
+        {
+          "v": "run control (RC) scripts",
+          "q": "T1037.004 - boot or logon initialization scripts: run control (RC) scripts"
+        },
+        {
+          "v": "Message of the Day (MOTD)",
+          "q": "T1037 - boot or logon initialization scripts: Message of the Day (MOTD)"
+        },
+        {
+          "v": "event triggered execution",
+          "q": "T1546 - event triggered execution: udev"
+        },
+        {
+          "v": "installer packages",
+          "q": "T1546.016 - event triggered execution: installer packages"
+        },
+        {
+          "v": "Git hooks",
+          "q": "T1546 - event triggered execution: Git hooks"
+        },
+        {
+          "v": "git pager",
+          "q": "T1546 - event triggered execution: git pager"
+        },
+        {
+          "v": "process capabilities",
+          "q": "T1548 - abuse elevation control mechanism: process capabilities"
+        },
+        {
+          "v": "hijacking system binaries",
+          "q": "T1554 - compromise host software binary: hijacking system binaries"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "MITRE has no specific categories for System V or Upstart; the report says these are generally part of T1037.",
+      "MITRE has no technique dedicated to process capabilities; the report says the most logical technique to add it to would be T1548.",
+      "MITRE has no technique for the udev-based cron and systemd mechanisms; the most logical technique would be T1546.",
+      "For system binary hijacking, MITRE has no direct reference; the report says it probably fits T1554 best.",
+      "Timing limits detection: some events may be missed before they are ingested, so the report recommends threat hunting alongside detections."
+    ]
   }
 }

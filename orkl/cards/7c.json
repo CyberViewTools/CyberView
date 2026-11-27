@@ -55,7 +55,7 @@
   },
   "7cb22a620b8d7f6bb40d570c5b7e4188e316a682": {
     "sha1": "7cb22a620b8d7f6bb40d570c5b7e4188e316a682",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T12:50:10Z",
     "model": "haiku",
@@ -194,6 +194,14 @@
         "note": "techniques[10]: The report only says 'We believe this module will scan ... and spread via exploits as seen in previous DreamBus variants', about the unverified ",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T13:03:36Z",
+      "ok": false,
+      "note": "summary: It says the DreamBus module deletes itself after running. The text says the 'reketed' bash script executes the ELF binary and then deletes it, so the s",
+      "by": "auditor"
+    }
   }
 }

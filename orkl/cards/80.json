@@ -469,5 +469,158 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "80569e9e576d14e178fd506d9c6efa8c65d0e72e": {
+    "sha1": "80569e9e576d14e178fd506d9c6efa8c65d0e72e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:24Z",
+    "model": "haiku",
+    "summary": "Picus Security overview of MITRE ATT&CK T1082, System Information Discovery. It describes adversaries using built-in OS commands on Windows, macOS and Linux, and cloud provider APIs (AWS, Azure, GCP), to collect host and network details. It cites reported examples from 2024 involving Interlock ransomware, UAT-5647's SingleCamper implant, Moonstone Sleet, Cuckoo malware and a Rust-based macOS backdoor. It notes the technique ranks seventh in the Red Report 2025. Several examples are illustrative or hypothetical.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "UAT-5647",
+          "q": "SingleCamper is a key implant used by the UAT-5647 threat group",
+          "by": "the report (citing Cisco Talos)"
+        },
+        {
+          "v": "Moonstone Sleet",
+          "q": "in one case reported by Microsoft in May 2024, Moonstone Sleet has been observed distributing malware",
+          "by": "the report (citing Microsoft)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-06-09",
+          "q": "Published: 2022-06-09",
+          "what": "article published"
+        },
+        {
+          "v": "2025",
+          "q": "In the Red Report 2025, this technique ranks seventh among the top ten most prevalent adversarial tactics",
+          "what": "Red Report 2025 ranks this technique seventh among the top ten tactics"
+        },
+        {
+          "v": "November 2024",
+          "q": "in November 2024, it was reported that the Interlock ransomware attack leveraged a Remote Access Tool",
+          "what": "Interlock ransomware reported to use systeminfo through a remote access tool"
+        },
+        {
+          "v": "October 2024",
+          "q": "In another example highlighted in October 2024, SingleCamper is a key implant used by the UAT-5647 threat group",
+          "what": "SingleCamper implant highlighted"
+        },
+        {
+          "v": "May 2024",
+          "q": "in one case reported by Microsoft in May 2024, Moonstone Sleet has been observed distributing malware",
+          "what": "Microsoft reported Moonstone Sleet distributing malware"
+        },
+        {
+          "v": "May 2024",
+          "q": "the Cuckoo malware, reported in May 2024, employs the system_profiler command",
+          "what": "Cuckoo malware reported using system_profiler on macOS"
+        },
+        {
+          "v": "February 2024",
+          "q": "the Rust-based macOS backdoor analyzed in February 2024 executes",
+          "what": "Rust-based macOS backdoor analysed"
+        },
+        {
+          "v": "December 2024",
+          "q": "in December 2024, an analysis of Linux malware revealed",
+          "what": "analysis of Linux malware showed use of built-in Linux functions for system information"
+        }
+      ],
+      "tools": [
+        {
+          "v": "systeminfo",
+          "q": "On Windows, tools like Systeminfo provide comprehensive information about the OS and hardware."
+        },
+        {
+          "v": "system_profiler",
+          "q": "The system_profiler is a command-line utility on macOS"
+        },
+        {
+          "v": "systemsetup",
+          "q": "The systemsetup command-line utility in macOS is designed for configuring system settings"
+        },
+        {
+          "v": "networksetup",
+          "q": "The networksetup tool in macOS can be used by adversaries for reconnaissance purposes."
+        },
+        {
+          "v": "uname",
+          "q": "On Linux, commands like uname, sysinfo and lsb_release are commonly employed to identify the OS and version."
+        },
+        {
+          "v": "sysinfo",
+          "q": "On Linux, commands like uname, sysinfo and lsb_release are commonly employed to identify the OS and version."
+        },
+        {
+          "v": "lsb_release",
+          "q": "On Linux, commands like uname, sysinfo and lsb_release are commonly employed to identify the OS and version."
+        },
+        {
+          "v": "Interlock ransomware",
+          "q": "in November 2024, it was reported that the Interlock ransomware attack leveraged a Remote Access Tool"
+        },
+        {
+          "v": "SingleCamper",
+          "q": "SingleCamper is a key implant used by the UAT-5647 threat group"
+        },
+        {
+          "v": "ShadyHammock",
+          "q": "It is loaded by ShadyHammock after being read and decoded from the Windows registry."
+        },
+        {
+          "v": "TrojanDropper:Win64/YouieLoad",
+          "q": "distributing malware, such as the TrojanDropper:Win64/YouieLoad*"
+        },
+        {
+          "v": "Cuckoo",
+          "q": "the Cuckoo malware, reported in May 2024, employs the system_profiler command"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "System Information Discovery",
+          "q": "System Information Discovery involves collecting details about compromised systems or networks"
+        },
+        {
+          "v": "living-off-the-land binaries",
+          "q": "frequent use of living-off-the-land binaries (LOLBins) and native tools"
+        },
+        {
+          "v": "built-in OS commands",
+          "q": "As stressed earlier, adversaries often use built-in OS commands to gather system details during reconnaissance."
+        },
+        {
+          "v": "API Calls for Information in Cloud and Virtual Environments",
+          "q": "API Calls for Information in Cloud and Virtual Environments: In cloud or virtualized environments, adversaries may"
+        },
+        {
+          "v": "Living off the Land",
+          "q": "a tactic known as \"Living off the Land.\""
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "seventh",
+          "q": "In the Red Report 2025, this technique ranks seventh among the top ten most prevalent adversarial tactics"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The report says its OS tool list is 'some, but not all' of the native tools commonly used in malware campaigns.",
+      "The report labels its crontab example a hypothetical scenario and says it would theoretically schedule a script.",
+      "Attacker-behaviour statements are often hedged with 'may', 'potentially' or 'can'.",
+      "The malware examples are drawn from external sources cited in the report's reference list."
+    ]
   }
 }

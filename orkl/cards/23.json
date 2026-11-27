@@ -470,5 +470,120 @@
       "note": "summary: The text says the dropper was signed by a valid Certificate Authority, with a certificate issued by MANGO ENTERPRISE LIMITED. It does not call the cert",
       "by": "auditor"
     }
+  },
+  "238a0dc2d7c417664d146b73a4ade9718a20edbe": {
+    "sha1": "238a0dc2d7c417664d146b73a4ade9718a20edbe",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:28Z",
+    "model": "haiku",
+    "summary": "Red Canary blog post on hunting for the Rocke actor (also called Iron) in Linux environments. Rocke is associated with cryptocurrency mining payloads and the Xbash malware family, and its campaigns were examined by Talos Group and Unit 42 in 2018 and 2019. The post describes techniques from a recent campaign (public-facing app exploitation, Pastebin-hosted scripts, removal of competing miners, cron persistence, process hiding, timestomping, SSH lateral movement) and suggests endpoint detections, several rated medium confidence.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "we’ll cover a threat actor named Rocke (also known as Iron)",
+          "by": "the report itself (Red Canary)"
+        },
+        {
+          "v": "Iron",
+          "q": "threat actor named Rocke (also known as Iron)",
+          "by": "the report itself (Red Canary)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 2018",
+          "q": "the adversary’s activity dates back at least as far as April 2018",
+          "what": "Rocke activity is known to date back at least to this month"
+        },
+        {
+          "v": "August 2018",
+          "q": "notably those examined by Talos Group and Unit 42 in August 2018 and January",
+          "what": "Talos Group examined recent Rocke campaigns"
+        },
+        {
+          "v": "2019",
+          "q": "2019 respectively, the adversary has combined its cryptocurrency mining payloads with a script to establish",
+          "what": "Unit 42 examined a recent Rocke campaign (January 2019)"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Xbash",
+          "q": "Rocke has primarily been associated with cryptocurrency mining payloads and the Xbash malware family."
+        },
+        {
+          "v": "cron",
+          "q": "Rocke uses cron jobs to persist on victim systems."
+        },
+        {
+          "v": "libprocesshider",
+          "q": "modified version of the libprocesshider project compiled as a shared object, the Linux equivalent of a Windows"
+        },
+        {
+          "v": "Pastebin",
+          "q": "The downloaded payloads are hosted using Pastebin, a popular"
+        },
+        {
+          "v": "SSH",
+          "q": "Rocke looks for the presence of SSH public key configuration and a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Remote Code Execution in Public-Facing Apps",
+          "q": "Remote Code Execution in Public-Facing Apps (T1190)"
+        },
+        {
+          "v": "Downloading and Deobfuscating Code",
+          "q": "Downloading and Deobfuscating Code (T1140)"
+        },
+        {
+          "v": "Stopping Competing Miners",
+          "q": "Stopping Competing Miners"
+        },
+        {
+          "v": "Discovering Competing Miners Using Network Connections",
+          "q": "Discovering Competing Miners Using Network Connections (T1049)"
+        },
+        {
+          "v": "Miner Payload Execution and Masquerading",
+          "q": "Miner Payload Execution and Masquerading (T1036)"
+        },
+        {
+          "v": "Persisting with Cron Jobs",
+          "q": "Persisting with Cron Jobs (T1168)"
+        },
+        {
+          "v": "Hiding Processes with Process Injection",
+          "q": "Hiding Processes with Process Injection (T1055)"
+        },
+        {
+          "v": "Changing Timestamps",
+          "q": "Changing Timestamps (T1099)"
+        },
+        {
+          "v": "Lateral Movement with SSH",
+          "q": "Lateral Movement with SSH (T1021)"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Rocke cryptocurrency mining campaign"
+    },
+    "hedges": [
+      "The report says Rocke is thought to exploit the listed public-facing services, so near-real-time detection of that exploitation is difficult.",
+      "The report says the Unit 42 and Talos Group research indicates Rocke exploited remote code execution vulnerabilities; the post relies on that published research.",
+      "Some listed commands are common to Linux cryptocurrency miner payloads in general and are not exclusive to Rocke.",
+      "The report notes the cron editing method is also used by other adversaries.",
+      "Several detections are labelled medium confidence and are described as needing tuning; the timestamp detection is described as fragile."
+    ]
   }
 }

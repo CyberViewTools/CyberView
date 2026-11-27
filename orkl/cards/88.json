@@ -542,5 +542,217 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "8831939056d868d10d86da0d8dd9b37ee7518052": {
+    "sha1": "8831939056d868d10d86da0d8dd9b37ee7518052",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:10:39Z",
+    "model": "haiku",
+    "summary": "Google Threat Intelligence Group reports several threat actors exploiting CVE-2025-55182 (React2Shell), an unauthenticated remote code execution flaw in React Server Components disclosed on Dec. 3, 2025. Activity includes China-nexus clusters deploying MINOCAT, SNOWLIGHT, HISONIC, COMPOOD and ANGRYREBEL.LINUX, plus financially motivated XMRig cryptomining. Iran-nexus exploitation is also noted. Vulnerable packages are React Server Components 19.0 to 19.2.0 used by React and Next.js. The report recommends patching and deploying a WAF rule as a temporary mitigation.",
+    "kind": "vulnerability",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC6600",
+          "q": "GTIG observed China-nexus espionage cluster UNC6600 exploiting the vulnerability to deliver the MINOCAT",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "UNC6586",
+          "q": "In separate incidents, suspected China-nexus threat actor UNC6586 exploited the vulnerability to execute a",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "UNC6588",
+          "q": "GTIG also observed multiple incidents in which threat actor UNC6588 exploited CVE-2025-55182, then ran a script",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "UNC6603",
+          "q": "Another China-nexus actor, UNC6603, deployed an updated version of the HISONIC backdoor.",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "UNC6595",
+          "q": "Finally, we also observed a China-nexus actor, UNC6595, exploiting the vulnerability to deploy",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        },
+        {
+          "v": "Earth Lamia",
+          "q": "GTIG tracks Earth Lamia as UNC5454.",
+          "by": "Amazon Web Services (AWS) reporting, as cited by GTIG"
+        },
+        {
+          "v": "Jackpot Panda",
+          "q": "Lamia and Jackpot Panda are also exploiting this vulnerability.",
+          "by": "Amazon Web Services (AWS) reporting, as cited by GTIG"
+        },
+        {
+          "v": "Iran-nexus actors",
+          "q": "motivated activity, but we have additionally observed Iran-nexus actors exploiting CVE-2025-55182.",
+          "by": "Google Threat Intelligence Group (GTIG)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud infrastructure",
+          "q": "Telemetry indicates this actor is targeting cloud infrastructure, specifically AWS and Alibaba Cloud instances, within"
+        },
+        {
+          "v": "Virtual Private Servers (VPS)",
+          "q": "infrastructure hosted on international Virtual Private Servers (VPS)."
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "As of Dec. 12, GTIG has identified multiple China-nexus threat clusters utilizing CVE-2025-55182 to compromise"
+        },
+        {
+          "v": "Iran",
+          "q": "motivated activity, but we have additionally observed Iran-nexus actors exploiting CVE-2025-55182."
+        },
+        {
+          "v": "Taiwan",
+          "q": "uploaded to VirusTotal from Taiwan, Vietnam, and China."
+        },
+        {
+          "v": "Vietnam",
+          "q": "uploaded to VirusTotal from Taiwan, Vietnam, and China."
+        }
+      ],
+      "dates": [
+        {
+          "v": "Dec. 3, 2025",
+          "q": "On Dec. 3, 2025, a critical unauthenticated remote code execution (RCE) vulnerability in React Server Components,",
+          "what": "CVE-2025-55182 was publicly disclosed"
+        },
+        {
+          "v": "Dec. 5",
+          "q": "GTIG observed multiple incidents, starting on Dec. 5, in which threat actors exploited CVE-2025-",
+          "what": "Financially motivated exploitation incidents were first observed"
+        },
+        {
+          "v": "2025-12-12",
+          "q": "Published: 2025-12-12",
+          "what": "The Google Threat Intelligence Group report was published"
+        },
+        {
+          "v": "2022",
+          "q": "In 2022, GTIG observed",
+          "what": "COMPOOD was observed in incidents involving a suspected China-nexus espionage actor"
+        }
+      ],
+      "tools": [
+        {
+          "v": "MINOCAT",
+          "q": "GTIG has identified distinct campaigns leveraging this vulnerability to deploy a MINOCAT tunneler, SNOWLIGHT"
+        },
+        {
+          "v": "SNOWLIGHT",
+          "q": "GTIG has identified distinct campaigns leveraging this vulnerability to deploy a MINOCAT tunneler, SNOWLIGHT"
+        },
+        {
+          "v": "VSHELL",
+          "q": "is a component of VSHELL, a publicly available multi-platform backdoor written in Go, which has been used by"
+        },
+        {
+          "v": "HISONIC",
+          "q": "Another China-nexus actor, UNC6603, deployed an updated version of the HISONIC backdoor."
+        },
+        {
+          "v": "COMPOOD",
+          "q": "COMPOOD has historically been linked to suspected China-nexus espionage activity."
+        },
+        {
+          "v": "ANGRYREBEL.LINUX",
+          "q": "ANGRYREBEL.LINUX. The threat actor uses an installation script (b.sh) that attempts to evade detection by"
+        },
+        {
+          "v": "XMRig",
+          "q": "55182 and deployed XMRig for illicit cryptocurrency mining. In one observed chain, the actor downloaded a shell"
+        },
+        {
+          "v": "Fast Reverse Proxy (FRP) client",
+          "q": "an embedded, open-source Fast Reverse Proxy (FRP) client that handles the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "unauthenticated remote code execution",
+          "q": "On Dec. 3, 2025, a critical unauthenticated remote code execution (RCE) vulnerability in React Server Components,"
+        },
+        {
+          "v": "cryptomining",
+          "q": "55182 and deployed XMRig for illicit cryptocurrency mining. In one observed chain, the actor downloaded a shell"
+        },
+        {
+          "v": "persistence via cron job, systemd service and shell configuration",
+          "q": "creating a new cron job and a systemd service and by inserting malicious commands into the current user's shell"
+        },
+        {
+          "v": "timestomping",
+          "q": "The actor also employs timestomping to alter file timestamps and executes anti-forensics"
+        },
+        {
+          "v": "anti-forensics",
+          "q": "The actor also employs timestomping to alter file timestamps and executes anti-forensics"
+        },
+        {
+          "v": "use of legitimate cloud services to retrieve encrypted configuration",
+          "q": "based implant that utilizes legitimate cloud services, such as Cloudflare Pages and GitLab, to retrieve its encrypted"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2025-55182",
+          "q": "tracked as CVE-2025-55182 (aka \"React2Shell\"), was publicly disclosed."
+        },
+        {
+          "v": "CVE-2025-55183",
+          "q": "2. To prevent the information disclosure impacts due to CVE-2025-55183, patch vulnerable React Server"
+        },
+        {
+          "v": "CVE-2025-55184",
+          "q": "3. To prevent DoS impacts due to CVE-2025-55184 and CVE-2025-67779, patch vulnerable React"
+        },
+        {
+          "v": "CVE-2025-67779",
+          "q": "3. To prevent DoS impacts due to CVE-2025-55184 and CVE-2025-67779, patch vulnerable React"
+        },
+        {
+          "v": "CVE-2025-66478",
+          "q": "Additionally, there was a separate CVE issued for Next.js (CVE-2025-66478); however, this CVE has since been"
+        }
+      ],
+      "figures": [
+        {
+          "v": "10.0",
+          "q": "10.0 and a CVSS v4 score of 9.3."
+        },
+        {
+          "v": "9.3",
+          "q": "10.0 and a CVSS v4 score of 9.3."
+        },
+        {
+          "v": "19.0, 19.1.0, 19.1.1, and 19.2.0",
+          "q": "The specific RSC packages that are vulnerable to CVE-2025-55182 are versions 19.0, 19.1.0, 19.1.1, and 19.2.0 of:"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2025-55182 (React2Shell)"
+    },
+    "hedges": [
+      "Many exploits circulated after disclosure were non-functional or fake; the report advises validating all exploit code before trusting it.",
+      "Some China-nexus activity is described as suspected, such as UNC6586 and the historical link of COMPOOD to espionage.",
+      "No public indicators are available to assess a group relationship for Jackpot Panda.",
+      "The motivations of UNC6588 are currently unknown, and no significant follow-on activity was observed.",
+      "Some observed activity overlaps with activity previously reported by Huntress.",
+      "Exploitation by Earth Lamia and Jackpot Panda is reported through Amazon Web Services reporting, as cited by the report.",
+      "The report focuses on China-nexus activity; Iran-nexus exploitation is only noted briefly."
+    ]
   }
 }

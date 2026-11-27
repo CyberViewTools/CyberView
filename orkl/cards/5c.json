@@ -387,5 +387,199 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5c0d380e5e3e71df8f155eb60d8d0ea3a54f1ea5": {
+    "sha1": "5c0d380e5e3e71df8f155eb60d8d0ea3a54f1ea5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:11:39Z",
+    "model": "haiku",
+    "summary": "Analysis of NoaBot, a Mirai-based Linux botnet whose sample targets MIPS 32-bit and spreads via SSH rather than Telnet. Sandbox results (ELFEN) show cron persistence, credential brute-forcing indicators, looking for secrets such as bash history, SSH private keys and passwd, process name masquerading, scanning of SSH ports, and contact with a C2 that is now unavailable. Akamai detected the campaign in early 2023. The report names no threat actor.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "early 2023",
+          "q": "campaign in early 2023.",
+          "what": "Akamai detected the NoaBot campaign"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ELFEN",
+          "q": "I built the ELFEN sandbox to analyze Linux malware"
+        },
+        {
+          "v": "Yara",
+          "q": "ELFEN also applies Yara rules on them."
+        },
+        {
+          "v": "uClibc",
+          "q": "The sample is compiled with uClibc, and more specifically, with a version between"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cron job persistence",
+          "q": "The sample establishes persistence through a cron job that runs the sample every time the system reboots."
+        },
+        {
+          "v": "credential brute-forcing",
+          "q": "Some in-memory strings in the analysis hint at credentials brute-forcing"
+        },
+        {
+          "v": "secret file harvesting",
+          "q": "The sample looks for a variety of secret information such as bash history, SSH private keys and user accounts"
+        },
+        {
+          "v": "process name masquerading",
+          "q": "The sample changes its process name to masquerade as a benign process."
+        },
+        {
+          "v": "SSH spreader",
+          "q": "the spreader is based in SSH and not Telnet."
+        },
+        {
+          "v": "C2 contact",
+          "q": "The sample reaches out to its C2,"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 4000 IPv4 addresses",
+          "q": "for over 4000 IPv4 addresses."
+        },
+        {
+          "v": "MIPS 32-bit, little-endian",
+          "q": "targeted towards the MIPS 32-bit, little-endian architecture."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NoaBot"
+    },
+    "hedges": [
+      "Author's hypothesis: the sample may be trying to capture the server's SSH identification string, perhaps to check for a known exploit.",
+      "The sample does not seem to read or write the secret files it looks for; the author asks whether this is a gap in tracing.",
+      "An analyst can likely assume the secret information is leveraged in some manner.",
+      "Benign executables also access /etc/passwd, so context matters when judging that access."
+    ]
+  },
+  "5c4d48bb3ac8d6ea7a48ba25605f217d506ffab4": {
+    "sha1": "5c4d48bb3ac8d6ea7a48ba25605f217d506ffab4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:16:13Z",
+    "model": "haiku",
+    "summary": "Blog post by Spencer Gietzen of Rhino Security Labs listing Google Cloud Platform IAM permissions that enable privilege escalation, with how each can be abused and proof-of-concept scripts. Presents the methods as configuration weaknesses rather than infrastructure vulnerabilities. Part 1 of a two-part series, covering Deployment Manager, IAM service account methods, Cloud Functions, Compute Engine, Cloud Run and Cloud Scheduler.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-05-05",
+          "q": "Published: 2020-05-05 · Archived: 2026-04-05 16:30:53 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2020-05-05 · Archived: 2026-04-05 16:30:53 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "gcloud CLI",
+          "q": "To fetch an access token for a gcloud CLI-Authenticated user, you can run the following command:"
+        },
+        {
+          "v": "Deployment Manager",
+          "q": "Deployment Manager allows you to specify resources to create and configure in your projects in YAML or Jinja"
+        },
+        {
+          "v": "Cloud Scheduler",
+          "q": "Cloud Scheduler allows you to set up cron jobs targeting arbitrary HTTP endpoints. If that endpoint is a"
+        },
+        {
+          "v": "Cloud Run",
+          "q": "Similar to the cloudfunctions.functions.create method, this method creates a new Cloud Run Service that, when"
+        },
+        {
+          "v": "Cloud Function",
+          "q": "For this method, we will be creating a new Cloud Function with an associated Service Account that we want to"
+        },
+        {
+          "v": "Compute Engine",
+          "q": "when starting a new Compute Engine instance"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "deploymentmanager.deployments.create",
+          "q": "deploymentmanager.deployments.create"
+        },
+        {
+          "v": "iam.roles.update",
+          "q": "iam.roles.update"
+        },
+        {
+          "v": "iam.serviceAccounts.getAccessToken",
+          "q": "iam.serviceAccounts.getAccessToken"
+        },
+        {
+          "v": "iam.serviceAccounts.implicitDelegation",
+          "q": "iam.serviceAccounts.implicitDelegation"
+        },
+        {
+          "v": "iam.serviceAccounts.actAs",
+          "q": "iam.serviceAccounts.actAs"
+        },
+        {
+          "v": "cloudfunctions.functions.create",
+          "q": "cloudfunctions.functions.create"
+        },
+        {
+          "v": "compute.instances.create",
+          "q": "compute.instances.create"
+        },
+        {
+          "v": "run.services.create",
+          "q": "run.services.create"
+        },
+        {
+          "v": "cloudscheduler.jobs.create",
+          "q": "cloudscheduler.jobs.create"
+        },
+        {
+          "v": "Server Side Request Forgery",
+          "q": "In a real attack, this access token may come from Server Side Request Forgery, from someone’s local file system,"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "Editor role",
+          "q": "Service Account, which, by default, is granted the Editor role on"
+        },
+        {
+          "v": "two part blog series",
+          "q": "This week will be a two part blog series, each one outlining different types of privilege escalation in GCP."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Note that none of these privilege escalation methods are vulnerabilities in the GCP infrastructure, but rather weaknesses in the configuration of a GCP environment.",
+      "This list of privilege escalation methods is not a definitive list, because there are likely more methods out there (such as in GKE, which wasn't touched on in this post).",
+      "A similar method may be possible with Cloud Tasks, but we were not able to do it in our testing.",
+      "This was reported to the Google Bug Bounty program, but we were told it is working as intended and that it is a feature of the service."
+    ]
   }
 }

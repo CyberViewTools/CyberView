@@ -287,5 +287,201 @@
         "by": "auditor"
       }
     ]
+  },
+  "adc6c259bb0270e22e83f63cea05797cf0b5a8cc": {
+    "sha1": "adc6c259bb0270e22e83f63cea05797cf0b5a8cc",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:27Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1
+  },
+  "ad6740045c5dc9af006d2517ce6f8b17bda5a79d": {
+    "sha1": "ad6740045c5dc9af006d2517ce6f8b17bda5a79d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:16:41Z",
+    "model": "haiku",
+    "summary": "ESET describes two Linux backdoors. It attributes WolfsBane to the Gelsemium APT group with high confidence, and FireWood to Gelsemium with low confidence, as a possible tool shared by China-aligned groups. Samples came from archives uploaded to VirusTotal from Taiwan, the Philippines and Singapore, probably from an incident response on a compromised server. The archives also held web shells, a trojanized SSH client and a privilege escalation helper. ESET concludes with medium confidence that initial access was an unknown web application vulnerability.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Gelsemium",
+          "q": "attribute with high confidence to the Gelsemium advanced persistent threat (APT) group.",
+          "by": "ESET"
+        },
+        {
+          "v": "Gelsemium",
+          "q": "we attribute FireWood to Gelsemium with low confidence",
+          "by": "ESET"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Taiwan",
+          "q": "In 2023, we found these samples in archives uploaded to VirusTotal from Taiwan, the Philippines, and Singapore,"
+        },
+        {
+          "v": "Philippines",
+          "q": "In 2023, we found these samples in archives uploaded to VirusTotal from Taiwan, the Philippines, and Singapore,"
+        },
+        {
+          "v": "Singapore",
+          "q": "In 2023, we found these samples in archives uploaded to VirusTotal from Taiwan, the Philippines, and Singapore,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2014",
+          "q": "This China-aligned threat actor has a known history dating back to 2014",
+          "what": "Start of Gelsemium's known history"
+        },
+        {
+          "v": "2005",
+          "q": "We have traced it back to 2005 and observed it evolving into more sophisticated versions.",
+          "what": "Project Wood backdoor traced back to this year"
+        },
+        {
+          "v": "2019",
+          "q": "the value of pluginkey found in the configuration is the same as in all Windows Gelsevirine samples from 2019.",
+          "what": "Windows Gelsevirine samples from this year share a configuration value with WolfsBane"
+        },
+        {
+          "v": "2023",
+          "q": "In 2023, we found these samples in archives uploaded to VirusTotal from Taiwan, the Philippines, and Singapore,",
+          "what": "ESET found the samples in archives uploaded to VirusTotal"
+        },
+        {
+          "v": "March 6th, 2023",
+          "q": "The first archive was uploaded to VirusTotal on March 6th, 2023, from Taiwan.",
+          "what": "First archive uploaded to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "WolfsBane",
+          "q": "identified multiple samples of Linux backdoor, which we have named WolfsBane, that we"
+        },
+        {
+          "v": "FireWood",
+          "q": "The second backdoor, which we named FireWood, is connected to a backdoor tracked by ESET researchers"
+        },
+        {
+          "v": "Gelsevirine",
+          "q": "The first backdoor, WolfsBane, is a Linux version of Gelsevirine, a Windows backdoor used by"
+        },
+        {
+          "v": "Gelsemine",
+          "q": "Its dropper is the equivalent of the Gelsemine dropper, and features a hider based on an open-"
+        },
+        {
+          "v": "Project Wood",
+          "q": "The Windows version of the Project Wood backdoor was previously used by the Gelsemium group in Operation TooHash."
+        },
+        {
+          "v": "WolfsBane Hider rootkit",
+          "q": "The WolfsBane Hider rootkit hooks many basic standard C library functions such as open, stat, readdir, and"
+        },
+        {
+          "v": "BEURK",
+          "q": "WolfsBane backdoor uses a modified open-source BEURK userland rootkit to hide its activities."
+        },
+        {
+          "v": "SSH password stealer",
+          "q": "The SSH password stealer is an SSH client based on the open-source OpenSSH software, modified to collect"
+        },
+        {
+          "v": "privilege escalation tool",
+          "q": "The privilege escalation tool is a small binary, named ccc, that just escalates user privileges by setting UID and"
+        },
+        {
+          "v": "AntSword",
+          "q": "The login.jsp is a modified AntSword JSP webshell that executes Java bytecode from attackers."
+        },
+        {
+          "v": "icesword",
+          "q": "The yy1.jsp webshell, which we identified as icesword JSP, is sourced from internet forums, primarily those in"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistence",
+          "q": "The dropper then establishes persistence based on the system’s configuration and execution context:"
+        },
+        {
+          "v": "userland rootkit",
+          "q": "WolfsBane backdoor uses a modified open-source BEURK userland rootkit to hide its activities."
+        },
+        {
+          "v": "kernel driver module working as a rootkit",
+          "q": "The analyzed code suggests that the file usbdev.ko is a kernel driver module working as a rootkit to hide processes."
+        },
+        {
+          "v": "webshell",
+          "q": "The login.jsp is a modified AntSword JSP webshell that executes Java bytecode from attackers."
+        },
+        {
+          "v": "renames its process",
+          "q": "FireWood renames its process based on the value in the configuration."
+        },
+        {
+          "v": "TCP",
+          "q": "FireWood communicates with its C&C server via TCP, as specified in its configuration."
+        },
+        {
+          "v": "unknown web application vulnerability",
+          "q": "we conclude with medium confidence that the attackers exploited an unknown web application vulnerability to gain server access."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "two backdoors",
+          "q": "The most notable samples we found in archives uploaded to VirusTotal are two backdoors resembling known"
+        },
+        {
+          "v": "two additional tools",
+          "q": "We discovered two additional tools in the archives, which could be related to Gelsemium activity: the SSH"
+        },
+        {
+          "v": "fourth day",
+          "q": "Connection day (backdoor connects every fourth day of the month)."
+        },
+        {
+          "v": "version 15",
+          "q": "This table was built using version 15 of the MITRE ATT&CK framework."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "WolfsBane"
+    },
+    "hedges": [
+      "WolfsBane is attributed to Gelsemium with high confidence.",
+      "FireWood is attributed to Gelsemium with low confidence; it could be a tool shared by multiple China-aligned APT groups.",
+      "FireWood's presence in the analysed archives might be coincidental.",
+      "The report lacks concrete evidence of the initial access vector; the unknown web application vulnerability is a medium-confidence conclusion.",
+      "The target was probably an Apache Tomcat webserver, based on the archive folder structure.",
+      "The archives probably originate from an incident response on a compromised server.",
+      "Gelsemium most likely acquires VPS from commercial providers."
+    ]
   }
 }

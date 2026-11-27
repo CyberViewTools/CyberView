@@ -375,5 +375,67 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "bd874e6a1da1738d659cfb4bc99e09022d295293": {
+    "sha1": "bd874e6a1da1738d659cfb4bc99e09022d295293",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:16:12Z",
+    "model": "haiku",
+    "summary": "Blog post by Pepe Berba, part 5 of a Linux persistence series, on systemd generators as a boot-time persistence location. It explains the generator directories, walks through a lab example that uses a generator to start a service and overwrite monitoring services, and suggests detection by watching generator directories with auditd, Sysmon, Auditbeat and osquery. The post says the technique has no dedicated sub-technique in MITRE ATT&CK.",
+    "kind": "overview",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-02-07",
+          "q": "Published: 2022-02-07 · Archived: 2026-04-05 16:50:03 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2022-02-07 · Archived: 2026-04-05 16:50:03 UTC",
+          "what": "Blog post archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "auditd",
+          "q": "using open-source solutions such as auditd, sysmon and auditbeats."
+        },
+        {
+          "v": "sysmon",
+          "q": "using open-source solutions such as auditd, sysmon and auditbeats."
+        },
+        {
+          "v": "auditbeat",
+          "q": "using open-source solutions such as auditd, sysmon and auditbeats."
+        },
+        {
+          "v": "osquery",
+          "q": "12.3.4 osquery"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Boot or Logon Initialization Scripts: systemd-generators",
+          "q": "Boot or Logon Initialization Scripts: systemd-generators"
+        },
+        {
+          "v": "Creating a malicious generator",
+          "q": "12.2 Creating a malicious generator"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "The author is not sure why the target filename has a + at the start.",
+      "The author says they don't know why the symlink-related behaviour happens.",
+      "The author says there is no dedicated sub-technique for this technique in MITRE ATT&CK."
+    ]
   }
 }

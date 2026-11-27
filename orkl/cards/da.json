@@ -383,5 +383,119 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "daebaf0e378fc11ad510c22584e45580cf068611": {
+    "sha1": "daebaf0e378fc11ad510c22584e45580cf068611",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:13:14Z",
+    "model": "haiku",
+    "summary": "Kaspersky GERT describes NKAbuse, a Go-written multiplatform implant. It targets mainly Linux desktops and can also infect MIPS and ARM IoT devices. It combines DDoS flooding with RAT backdoor features and uses the NKN peer-to-peer blockchain network to communicate with its bot master. Initial access was reportedly via an old Apache Struts2 flaw (CVE-2017-5638) against a financial company. Persistence is via cron jobs. The report describes victims in Colombia, Mexico and Vietnam, and says the malware has no self-propagation. Kaspersky products detect it as a Linux backdoor.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "financial",
+          "q": "targeting a financial company."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Colombia",
+          "q": "Our telemetry data shows that there are victims in Colombia, Mexico, and Vietnam."
+        },
+        {
+          "v": "Mexico",
+          "q": "Our telemetry data shows that there are victims in Colombia, Mexico, and Vietnam."
+        },
+        {
+          "v": "Vietnam",
+          "q": "Our telemetry data shows that there are victims in Colombia, Mexico, and Vietnam."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-12-14",
+          "q": "Published: 2023-12-14 · Archived: 2026-04-05 22:36:22 UTC",
+          "what": "Kaspersky published the report"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NKAbuse",
+          "q": "we uncovered a novel multiplatform threat named “NKAbuse”"
+        },
+        {
+          "v": "NKN",
+          "q": "The malware utilizes NKN technology for data exchange between peers"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploited an old vulnerability",
+          "q": "Evidence collected and analyzed by GERT suggests that this attack exploited an old vulnerability related to"
+        },
+        {
+          "v": "uploading an implant",
+          "q": "NKAbuse infiltrates systems by uploading an implant to the victim host."
+        },
+        {
+          "v": "cron jobs",
+          "q": "NKAbuse makes use of cron jobs to survive reboots."
+        },
+        {
+          "v": "Distributed Denial of Service (DDoS) attacks",
+          "q": "NKAbuse contains a large arsenal of Distributed Denial of Service (DDoS) attacks."
+        },
+        {
+          "v": "screenshots",
+          "q": "Another feature of this malware is the ability to make screenshots of the infected machine."
+        },
+        {
+          "v": "run system commands",
+          "q": "Another common feature that makes this implant a full-fledged backdoor is the ability to run system commands."
+        },
+        {
+          "v": "generate binaries compatible with various architectures",
+          "q": "Written in Go, it is flexible enough to generate binaries compatible with various architectures."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-5638",
+          "q": "related to Struts2 (CVE-2017-5638 – Apache Struts2)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "180,000 official nodes",
+          "q": "The NKN network currently has more than 180,000 official nodes."
+        },
+        {
+          "v": "42",
+          "q": "The handler contains 42 or so cases, each performing different actions"
+        },
+        {
+          "v": "eight architectures",
+          "q": "There are eight architectures hosted on that server and supported by the malware:"
+        },
+        {
+          "v": "11e2d7a8d678cd72e6e5286ccfb4c833",
+          "q": "MD5: 11e2d7a8d678cd72e6e5286ccfb4c833"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NKAbuse"
+    },
+    "hedges": [
+      "Our analysis suggests that the primary target of NKAbuse is Linux desktops.",
+      "Evidence collected and analyzed by GERT suggests that this attack exploited an old vulnerability related to Struts2.",
+      "This particular implant appears to have been meticulously crafted for integration into a botnet.",
+      "It can adapt to functioning as a backdoor, and its blockchain use seemingly leaves the botnet devoid of an identifiable central controller.",
+      "This analysis will focus on the amd64 (x86-64) version."
+    ]
   }
 }

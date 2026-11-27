@@ -403,5 +403,122 @@
       "note": "summary: Three claims go beyond the text. (1) 'attributes to Fraunhofer FKIE' misreads the 'By Fraunhofer FKIE' byline: FKIE is the page's publisher, and the pa",
       "by": "auditor"
     }
+  },
+  "407423e2af3d2bd6c14f2b254f19759f23e8edaa": {
+    "sha1": "407423e2af3d2bd6c14f2b254f19759f23e8edaa",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T13:11:43Z",
+    "model": "haiku",
+    "summary": "Zscaler ThreatLabz describes APT36 using Linux desktop entry files as an attack vector, documented in three samples with no VirusTotal detections at the time. Activity ran from May to August 2023 and included a credential phishing site targeting Indian government staff, zip archives with decoy PDFs, and file padding to evade scanning. The Linux payloads were identified as Mythic Poseidon binaries. The report calls the attack vector new and low-volume, and says one payload appeared to be in development.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT36",
+          "q": "we were able to retrieve the payloads and conclude the threat attribution to APT36.",
+          "by": "Zscaler ThreatLabz (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "a credential phishing website used to target Indian government employees was also found"
+        },
+        {
+          "v": "Ministry of Defence",
+          "q": "The PDF appears to be a document from the Indian Ministry of Defence describing the visit of nine members of a"
+        }
+      ],
+      "countries": [
+        {
+          "v": "India",
+          "q": "National Informatics Center (NIC), India Phishing Attack - May 2023"
+        },
+        {
+          "v": "Saudi Arabia",
+          "q": "describing the visit of nine members of a delegation from Saudi Arabia, where they discussed issues"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-09-12",
+          "q": "Published: 2023-09-12",
+          "what": "The ThreatLabz blog post was published."
+        },
+        {
+          "v": "May 2023",
+          "q": "We first observed an occurrence in May 2023 when a credential phishing website",
+          "what": "A credential phishing website targeting Indian government employees was first observed."
+        },
+        {
+          "v": "June 2023",
+          "q": "Beginning in June 2023, we detected APT36 establishing their operational infrastructure",
+          "what": "APT36 was detected establishing its operational infrastructure."
+        },
+        {
+          "v": "Aug 29, 2023",
+          "q": "noticed that on Aug 29, 2023, a new domain called",
+          "what": "A new domain was registered and used to distribute a new Linux desktop entry file."
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mythic Poseidon",
+          "q": "A quick technical analysis determined these Linux payloads as Mythic Poseidon binaries."
+        },
+        {
+          "v": "LibreOffice",
+          "q": "Uses LibreOffice to open and display the decoy PDF file."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malicious Linux desktop entry files as an attack vector",
+          "q": "The utilization of Linux desktop entry files by APT36 as an attack vector has never been documented before."
+        },
+        {
+          "v": "decoy document icon to disguise the malicious file",
+          "q": "Figure 7: The icon of the desktop configuration file is set to PDF to make it more convincing."
+        },
+        {
+          "v": "padding file size to bypass security scanning",
+          "q": "We believe this was an attempt by the threat actor to bypass security"
+        },
+        {
+          "v": "credential phishing website",
+          "q": "a credential phishing website used to target Indian government employees was also found"
+        },
+        {
+          "v": "zip archive distribution",
+          "q": "which the threat actor distributed enclosed in zip archives."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three samples",
+          "q": "So far, our research team has discovered three samples - all of which have 0 detection on VirusTotal."
+        },
+        {
+          "v": "1 MB",
+          "q": "A size larger than 1 MB for a Linux desktop entry file is rare."
+        },
+        {
+          "v": "nine",
+          "q": "describing the visit of nine members of a delegation from Saudi Arabia, where they discussed issues"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Inflated File Attack"
+    },
+    "hedges": [
+      "The attack vector is fairly new and appears to be utilized in very low-volume attacks.",
+      "Since it did not contain a fully functional C2 mechanism at the time of analysis, we believe it was still in a development phase",
+      "We believe this was an attempt by the threat actor to bypass security scanning solutions.",
+      "The PDF appears to be a document from the Indian Ministry of Defence describing the visit of nine members of a delegation"
+    ]
   }
 }

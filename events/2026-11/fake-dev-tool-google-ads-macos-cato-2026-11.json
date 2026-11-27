@@ -1,10 +1,10 @@
 {
   "title": "Cato Networks: Google ads for fake Codex, Claude Code and Homebrew installers target macOS developers",
   "category": "incident",
-  "date": "2026-11-23",
-  "date_note": "The page gives only its publication day; it says Cato disclosed the campaign earlier.",
+  "date": "2026-11-19",
+  "date_note": "Securityonline (published 23 November) says Cato published its research on 19 November; Cato page itself not read.",
   "first_seen": "2026-11-24T09:13:10Z",
-  "updated_at": "2026-11-27T12:41:33Z",
+  "updated_at": "2026-11-27T12:54:15Z",
   "status": "developing",
   "severity": 2,
   "org": "Cato Networks",
@@ -27,7 +27,7 @@
   "lng": -98.6,
   "pin_type": "country",
   "geo_basis": "No victim location is stated; country-level placeholder",
-  "summary": "Securityonline reports that Cato Networks researchers found sponsored Google Search ads for Codex, Claude Code and Homebrew installers leading to fake pages that tell macOS users to run Terminal commands. Moonlock says the campaign delivers the AMOS and MacSync stealers and that one ad came from a US healthcare company's Google Ads account, which Cato believes was likely hijacked. Cato said its findings do not show Homebrew itself was compromised.",
+  "summary": "Securityonline reports that Cato Networks researchers found sponsored Google Search ads for Codex, Claude Code and Homebrew installers leading to fake pages that tell macOS users to run Terminal commands. Moonlock says the campaign delivers the AMOS and MacSync stealers and that one ad came from a US healthcare company's Google Ads account, which Moonlock describes as likely hijacked, an inference. Cato said its findings do not show Homebrew itself was compromised.",
   "plain": "Researchers at Cato Networks say fake ads for developer tools lead Mac users to pages that ask them to paste a Terminal command, which installs malware. Homebrew itself was not shown to be compromised.",
   "exec": "Developers who search for AI coding or package tools on Google could be sent to fake install pages, according to Cato Networks.",
   "action": "Cato Networks advises (as summarised by Securityonline) to avoid sponsored results when downloading developer tools, bookmark official project sites and inspect any pasted Terminal command before running it.",
@@ -60,11 +60,18 @@
     "basis": "inferred"
   },
   "review": {
-    "state": "passed",
-    "at": "2026-11-24T10:13:14Z",
+    "state": "corrected",
+    "at": "2026-11-27T12:54:24Z",
     "first_at": "2026-11-24T10:13:14Z",
-    "note": "Compared title, date_note, Homebrew statement, AMOS link, no victim count, advice against the securityonline page",
-    "flags": []
+    "note": "date: was article publication day 23 Nov, now 19 Nov when Cato published per Securityonline; hijack wording attributed to Moonlock as inference",
+    "flags": [
+      "long-summary"
+    ],
+    "categories": [
+      "unsourced",
+      "date",
+      "attribution"
+    ]
   },
-  "qa_checked_at": "2026-11-24T10:13:14Z"
+  "qa_checked_at": "2026-11-27T12:54:24Z"
 }

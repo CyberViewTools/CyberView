@@ -51,34 +51,40 @@
     "key": "a-771d9263-076e-4b6e-bd58-92b6555eb739",
     "kind": "actor",
     "name": "NICKEL HYATT",
-    "headline": "NICKEL HYATT (Andariel): a North Korea-linked group hitting South Korean defense and industry",
-    "in_short": "NICKEL HYATT, also called Andariel or APT45, is tracked by several firms as a North Korea-linked actor. Reports describe attacks on South Korean defense, construction and tech firms, plus ransomware used for money.",
+    "headline": "NICKEL HYATT (Andariel): a North Korea-linked group that mostly targets South Korean industry",
+    "in_short": "NICKEL HYATT, better known as Andariel or APT45, is tied by several vendors and governments to North Korea. Reports describe attacks on South Korean defense and industrial firms, using stolen accounts, software flaws and tainted updates.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "NICKEL HYATT is the Secureworks name. The catalogue also lists the aliases APT45, Andariel, Silent Chollima, Onyx Sleet, Stonefly, Jumpy Pisces, Dark Seoul and UN614.",
+            "t": "The catalogue lists these aliases for NICKEL HYATT: APT45, Andariel, Dark Seoul, Jumpy Pisces, Onyx Sleet, RIFLE Campaign, Silent Chollima, Stonefly and UN614.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "CrowdStrike tracks SILENT CHOLLIMA as a North Korea-nexus adversary active since at least 2007. CrowdStrike assesses it is likely affiliated with Lab 110 within Bureau 3 of the General Reconnaissance Information Bureau.",
+            "t": "CrowdStrike tracks SILENT CHOLLIMA as a DPRK-nexus adversary active since at least 2007. CrowdStrike assesses it is likely affiliated with Lab 110 within Bureau 3 of North Korea's General Reconnaissance Information Bureau.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
           },
           {
-            "t": "AhnLab's ASEC says Andariel is either in a cooperative relationship with the Lazarus group or is a subsidiary of it. The report does not say which.",
+            "t": "The US Treasury's OFAC calls Andariel the second Lazarus Group sub-group it designated. OFAC says it is a controlled entity of the Government of North Korea through the Reconnaissance General Bureau. It says security firms first noticed Andariel around 2015.",
+            "cites": [
+              "1f797c4832edd2005abaa9076ccc40d3f16bccde"
+            ]
+          },
+          {
+            "t": "AhnLab's ASEC says Andariel is affiliated with Lazarus or one of its subsidiaries. In another report ASEC says it may be in a cooperative relationship with Lazarus or be a subsidiary, and does not choose between the two.",
             "cites": [
               "cab1d334efc14a7e9238a6349486de0763d4e0ab"
             ]
           },
           {
-            "t": "In September 2019, the US Treasury sanctioned three North Korean hacking groups: Lazarus, Andariel and Bluenoroff. Treasury said the aim was to stop stolen funds flowing back to the country's weapons programmes.",
+            "t": "South Korea's National Cyber Security Center names Andariel as APT45, alongside Kimsuky as APT43, in its account of 2024 supply chain attacks.",
             "cites": [
-              "80579210268b61ff389629fd202a0b1ca0b79eb7"
+              "1b4ceca6cc6589f8c2b4b1afd0d7e6b5d0b21aed"
             ]
           }
         ]
@@ -87,23 +93,23 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "ASEC says Andariel usually targets South Korean companies and institutions. Main targets include national defense, political organisations, shipbuilding, energy and telecommunications. Universities, logistics and ICT firms are also hit.",
+            "t": "According to AhnLab's ASEC, Andariel usually targets South Korean companies and institutions. Main targets include national defense, political organizations, shipbuilding, energy and telecommunications. Universities, logistics and ICT companies are also named.",
             "cites": [
               "cab1d334efc14a7e9238a6349486de0763d4e0ab"
             ]
           },
           {
-            "t": "South Korea's National Police Agency said Andariel stole account details from an employee of a maintenance company. It then used the account to install malware on the servers of defense subcontractors.",
+            "t": "South Korea's National Police Agency warned that Lazarus, Andariel and Kimsuky breached South Korean defense companies and their subcontractors to steal defense technology data.",
             "cites": []
           },
           {
-            "t": "South Korea's National Cyber Security Center said Andariel hit construction and machinery firms in 2024. The advisory believes the aim was to steal trade secrets.",
+            "t": "South Korea's National Cyber Security Center says Andariel pushed fake VPN updates that installed the DoraRAT remote access trojan at construction and machinery firms. The advisory believes the aim is to steal trade secrets.",
             "cites": [
               "1b4ceca6cc6589f8c2b4b1afd0d7e6b5d0b21aed"
             ]
           },
           {
-            "t": "The US Treasury says Andariel targets South Korea's government and infrastructure to collect information and create disorder. Treasury attributes its intelligence-gathering activity to industry and press reporting.",
+            "t": "The Treasury release says Andariel targets South Korea's government and infrastructure to collect information and to create disorder. It attributes the intelligence-gathering claim to industry and press reporting.",
             "cites": [
               "1f797c4832edd2005abaa9076ccc40d3f16bccde"
             ]
@@ -114,19 +120,35 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "ASEC says the group has used spear phishing, watering-hole and supply chain attacks. It has also exploited the Log4Shell flaw, targeted poorly managed MS-SQL servers and abused legitimate software.",
+            "t": "ASEC says Andariel has used spear phishing, watering hole and supply chain attacks. It also reports cases of Log4Shell exploitation, attacks on poorly managed MS-SQL servers and abuse of legitimate software.",
             "cites": [
               "cab1d334efc14a7e9238a6349486de0763d4e0ab"
             ]
           },
           {
-            "t": "ASEC reported that Andariel used a malicious file for RID Hijacking. The technique changes an account's identifier so a hidden, low-privilege account is treated as an administrator. ASEC says such an account cannot be completely hidden.",
+            "t": "In 2023 attacks, ASEC reports Andariel abused the Innorix Agent file transfer tool. ASEC saw many signs of spear phishing but did not confirm it. The malware included Go-based backdoors such as Goat RAT and DurianBeacon, plus AndarLoader.",
+            "cites": []
+          },
+          {
+            "t": "ASEC reports Andariel used a malicious file for RID Hijacking. The technique changes an account's identifier so a hidden, low-privilege account is treated as an administrator. ASEC reads this as an effort to limit exposure and keep persistence.",
             "cites": [
               "37d087169d2bd363bc461552f900cf1b1f854864"
             ]
           },
           {
-            "t": "Kudelski Security and Sekoia note that Andariel is unusual among North Korea-linked clusters. It used custom ransomware, Maui and H0lyGh0st, for financial theft.",
+            "t": "Microsoft says Onyx Sleet exploited the TeamCity flaw CVE-2023-42793 from early October 2023. After exploitation it created a new user account and deployed the HazyLoad proxy tool. Microsoft assesses the actors may be compromising vulnerable servers opportunistically.",
+            "cites": [
+              "0ce1eae63e681b49a35d3d50bcf5b34100b0272f"
+            ]
+          },
+          {
+            "t": "The catalogue lists these tools for NICKEL HYATT: ActiveX 0-day, DTrack, HazyLoad, HotCriossant, Rifle, UnitBot and Valefor.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Sekoia and Kudelski Security note that Andariel is unusual because it used custom ransomware, Maui and H0lyGh0st, for financial theft.",
             "cites": [
               "4f376aac307589092604cf6c83559804e17cb771",
               "24bb6d01f2508e4001990348616aff2cadc34cd1"
@@ -138,29 +160,26 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "Since early October 2023, Microsoft has seen Onyx Sleet exploit a TeamCity server flaw, CVE-2023-42793. Onyx Sleet created a new user account and deployed the HazyLoad proxy tool. Microsoft assesses the actor may be compromising vulnerable servers opportunistically.",
-            "cites": [
-              "0ce1eae63e681b49a35d3d50bcf5b34100b0272f"
-            ]
-          },
-          {
-            "t": "ASEC analysed Andariel attacks from the first half of 2023. They abused the Innorix Agent file-transfer tool and used Go-based backdoors such as Goat RAT and DurianBeacon. ASEC says the initial distribution route was not confirmed.",
+            "t": "In April 2024, South Korea's police warned that North Korean groups had breached defense firms, some undetected since late 2022. They attributed one case to Andariel, which they say used a stolen account from a maintenance company employee to install malware on subcontractor servers in October 2022.",
             "cites": []
           },
           {
-            "t": "In November 2023, ASEC assumed Andariel was exploiting the Apache ActiveMQ flaw CVE-2023-46604 to install NukeSped and TigerRat backdoors. It said it had no direct logs confirming this.",
+            "t": "ASEC assumes Andariel is exploiting the Apache ActiveMQ flaw CVE-2023-46604 to install NukeSped and TigerRat backdoors. It has no direct logs confirming this.",
             "cites": [
               "cab1d334efc14a7e9238a6349486de0763d4e0ab"
             ]
           },
           {
-            "t": "In April 2024, South Korea's police agency warned that Lazarus, Andariel and Kimsuky had breached defense companies and subcontractors. It said some firms had been compromised since late 2022 without knowing it.",
-            "cites": []
-          },
-          {
-            "t": "South Korea's National Cyber Security Center said Andariel abused a flaw in a domestic VPN's update process in April 2024. It used the flaw to push fake updates that installed the DoraRAT remote access trojan.",
+            "t": "In April 2024, South Korea's National Cyber Security Center says, Andariel exploited a flaw in a VPN's update process to push fake updates that installed DoraRAT.",
             "cites": [
               "1b4ceca6cc6589f8c2b4b1afd0d7e6b5d0b21aed"
+            ]
+          },
+          {
+            "t": "In September 2019, the US Treasury sanctioned three North Korean hacking groups: Lazarus, Andariel and Bluenoroff.",
+            "cites": [
+              "80579210268b61ff389629fd202a0b1ca0b79eb7",
+              "d830b326d3b7fcf805e9519ebdd9d959f98d62d6"
             ]
           }
         ]
@@ -169,22 +188,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Patch internet-facing servers quickly, keep a clear inventory of software and accounts, and keep work and personal passwords separate.",
+            "t": "Patch internet-facing servers and VPN software promptly, and check that update channels are trusted.",
+            "cites": []
+          },
+          {
+            "t": "Use different passwords for personal and work accounts, and watch for stolen accounts at vendors and maintenance firms.",
             "cites": []
           }
         ]
       }
     ],
-    "status": "rejected",
+    "status": "parked",
     "based_on": "6d835be70b9c60172eca15e8bdfb8e3625e8977c",
-    "tries": 1,
+    "tries": 2,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T06:53:57Z",
+    "written_at": "2026-11-27T07:10:32Z",
     "writer_model": "sonnet",
     "reasons": [
-      "uncited",
-      "unbacked"
+      "unbacked",
+      "uncited"
     ],
-    "written_run": "ef1701ee"
+    "written_run": "da835468"
   }
 }

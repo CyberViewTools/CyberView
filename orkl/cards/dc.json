@@ -403,5 +403,240 @@
       "note": "figures[0]: The text says 'fewer than 60 Kaseya customers'. The value '60 Kaseya customers' drops 'fewer than' and so states an exact count, which is stronger t",
       "by": "auditor"
     }
+  },
+  "dc03a067735360acad3b1053e3fb9302e6609192": {
+    "sha1": "dc03a067735360acad3b1053e3fb9302e6609192",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:56:38Z",
+    "model": "haiku",
+    "summary": "A white paper by Matthieu Faou and Jean-Ian Boutin (February 2017) on the RTM banking Trojan, a Delphi-written malware first seen in late 2015. It targets accounting staff and remote banking systems, mainly in Russia and neighbouring countries. It spreads through drive-by downloads and spam, fingerprints banking software, logs keystrokes, takes screenshots of banking pages, and can deploy VNC and 1C export-file modules. Its C&C addresses moved to a Namecoin-based naming system. The report says RTM is a different group from Buhtrap, though the two use similar methods.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "RTM",
+          "q": "We call this new group RTM [1];",
+          "by": "the report itself"
+        },
+        {
+          "v": "Buhtrap",
+          "q": "Some of the groups that best exemplify these trends are Buhtrap, Cobalt",
+          "by": "the report itself"
+        },
+        {
+          "v": "Cobalt",
+          "q": "Some of the groups that best exemplify these trends are Buhtrap, Cobalt",
+          "by": "the report itself"
+        },
+        {
+          "v": "Corkow",
+          "q": "Other groups, such as Buhtrap, Corkow and Carbanak, were already known to target",
+          "by": "the report itself"
+        },
+        {
+          "v": "Carbanak",
+          "q": "Other groups, such as Buhtrap, Corkow and Carbanak, were already known to target",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "businesses",
+          "q": "That this group is mostly targeting businesses is apparent from the processes"
+        },
+        {
+          "v": "accounting departments",
+          "q": "they are going after accounting departments in Russian firms."
+        },
+        {
+          "v": "financial institutions",
+          "q": "to target and successfully steal money from financial institutions"
+        },
+        {
+          "v": "remote banking system",
+          "q": "A typical target for banking Trojans is the remote banking system"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "we see this threat actor focusing mostly on Russia and neighboring countries"
+        }
+      ],
+      "dates": [
+        {
+          "v": "late 2015",
+          "q": "dates back to late 2015.",
+          "what": "first trace of the tool in telemetry data"
+        },
+        {
+          "v": "October 2015 to April 2016",
+          "q": "from October 2015 to April 2016, used traditional domain names",
+          "what": "older samples used traditional domain names and an RSS feed for C&C"
+        },
+        {
+          "v": "April 2016",
+          "q": "Starting in April 2016, we observed in our telemetry",
+          "what": "move toward a newer kind of C&C address observed"
+        },
+        {
+          "v": "March 13th, 2016",
+          "q": "was registered on March 13th, 2016.",
+          "what": "first RTM C&C address of the newer kind was registered"
+        },
+        {
+          "v": "September 2016",
+          "q": "In September 2016, we saw an RTM sample being distributed by a Buhtrap downloader.",
+          "what": "RTM sample seen distributed by a Buhtrap downloader"
+        },
+        {
+          "v": "late 2016",
+          "q": "1c_to_kl.txt export files in late 2016.",
+          "what": "FinCERT warned victims about criminals targeting these export files"
+        },
+        {
+          "v": "November 2016",
+          "q": "(November 2016) of the feed contains the following C&C addresses",
+          "what": "contents of the C&C feed at this date"
+        },
+        {
+          "v": "December 5th, 2016",
+          "q": "0.00185 USD (as of December 5th, 2016).",
+          "what": "date of the registration cost quoted"
+        },
+        {
+          "v": "2014-2015",
+          "q": "attacked by the Buhtrap group in 2014-2015.",
+          "what": "Buhtrap group attacked these same kinds of targets"
+        },
+        {
+          "v": "February 2017",
+          "q": "February 2017",
+          "what": "date of the white paper"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VNC module",
+          "q": "This VNC module has both a 32 and 64-bits variants"
+        },
+        {
+          "v": "1c_2_kl",
+          "q": "a new module: 1c_2_kl.dll. This module was pushed as a plugin"
+        },
+        {
+          "v": "mimikatz",
+          "q": "recovering account passwords through tools such as mimikatz"
+        },
+        {
+          "v": "browser data exfiltration module",
+          "q": "the browser data exfiltration module"
+        },
+        {
+          "v": "Sundown exploit kit",
+          "q": "Sundown exploit kits or spam runs"
+        },
+        {
+          "v": "RIG",
+          "q": "such as the RIG [4]"
+        },
+        {
+          "v": "Buhtrap downloader",
+          "q": "distributed by a Buhtrap downloader"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "drive-by downloads",
+          "q": "mostly revolving around drive-by downloads"
+        },
+        {
+          "v": "spam",
+          "q": "mostly revolving around drive-by downloads and spam."
+        },
+        {
+          "v": "keylogging",
+          "q": "including smart card reading, keylogging and real-time monitoring"
+        },
+        {
+          "v": "screenshots",
+          "q": "it will take six consecutive screenshots"
+        },
+        {
+          "v": "smart card readers",
+          "q": "The RTM malware has the ability to monitor smart card readers"
+        },
+        {
+          "v": "fake error messages",
+          "q": "This malware can try to elevate its privileges by showing fake error messages"
+        },
+        {
+          "v": "Windows Task Scheduler",
+          "q": "It will also try to add a task in the Windows Task Scheduler."
+        },
+        {
+          "v": "RC4",
+          "q": "the RC4 algorithm is regularly used by malware authors"
+        },
+        {
+          "v": "Namecoin",
+          "q": "relies on the Namecoin cryptocurrency, a fork of the well-known Bitcoin"
+        },
+        {
+          "v": "erase the MBR",
+          "q": "it will try to erase the MBR"
+        },
+        {
+          "v": "Windows store",
+          "q": "The malware can also add certificates to the Windows store"
+        },
+        {
+          "v": "Host file management",
+          "q": "4.8.5. Host file management"
+        },
+        {
+          "v": "Backconnect TCP tunnel",
+          "q": "The malware authors also implemented a Backconnect TCP tunnel."
+        },
+        {
+          "v": "find a file",
+          "q": "to find a file on the file system and to upload it to the server"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "0.01NC",
+          "q": "pay 0.01NC which corresponds to 0.00185 USD"
+        },
+        {
+          "v": "0.00185 USD",
+          "q": "0.00185 USD (as of December 5th, 2016)."
+        },
+        {
+          "v": "more than 25",
+          "q": "We found more than 25 different RC4 keys used for string encryption"
+        },
+        {
+          "v": "six consecutive screenshots",
+          "q": "it will take six consecutive screenshots"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RTM"
+    },
+    "hedges": [
+      "The report says it is not sure what the botnet-prefix value is for; it may record a version of the malware.",
+      "The report hypothesizes that criminals will use the VNC module to connect remotely and look around the computer.",
+      "The report believes the groups behind RTM and Buhtrap are not the same, though they use similar methods.",
+      "The report says the 1c_2_kl module is probably still in development, based on debug messages it contains.",
+      "The report says the company names used on the signing certificates are only 'allegedly' those names.",
+      "The report says the modified RC4 may have been changed possibly to slow down analysis by security researchers.",
+      "The report has not seen the backconnect function used, but says it may be used to control infected machines.",
+      "The report believes the targets are accounting departments in Russian firms, based on decoy documents and targeted software."
+    ]
   }
 }

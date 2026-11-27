@@ -119,5 +119,153 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "9abf08d5f161141853b1ecf23b0b35d6839adb64": {
+    "sha1": "9abf08d5f161141853b1ecf23b0b35d6839adb64",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:01:04Z",
+    "model": "haiku",
+    "summary": "Morphisec profile of the FIN7 JSSLoader, a minimized .NET remote access trojan mostly used by FIN7 (Carbanak Group). It covers JSSLoader versions from October 2019 to December 2020 and phishing lures that deliver VBScript or WSF first stages, which fetch JSSLoader and run it via a scheduled task. Listed capabilities include anti-debugging, data collection, persistence, auto-update and remote commands, one of which runs a Takeout PowerShell script that loads Carbanak. The report notes resemblance to QBOT and possible Egregor links.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7 (Carbanak Group)",
+          "q": "Morphisec Labs has been tracking FIN7 (Carbanak Group) activity for the past several years.",
+          "by": "Morphisec (report author)"
+        },
+        {
+          "v": "FIN7",
+          "q": "JSSLoader is a highly maintained minimized .NET RAT backdoor, mostly used by the FIN7 group.",
+          "by": "Morphisec (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "October 10, 2019",
+          "q": "Creation date: October 10, 2019:",
+          "what": "earliest JSSLoader version in the appendix, created"
+        },
+        {
+          "v": "December 23, 2019",
+          "q": "Creation date: December 23, 2019:",
+          "what": "JSSLoader version created; anti-debug timing check added"
+        },
+        {
+          "v": "April 13, 2020",
+          "q": "Creation date: April 13, 2020:",
+          "what": "JSSLoader version created; exfiltrated data switched to JSON; two remote commands added"
+        },
+        {
+          "v": "July 15, 2020",
+          "q": "Creation date: July 15, 2020:",
+          "what": "JSSLoader version created; remote command names changed from TASK to CMD"
+        },
+        {
+          "v": "October 7, 2020",
+          "q": "Creation date: October 7, 2020:",
+          "what": "JSSLoader version created; Cmd_VBS remote command added"
+        },
+        {
+          "v": "December 1, 2020",
+          "q": "Creation date: December 1, 2020:",
+          "what": "JSSLoader version created; Cmd_RunDll remote command added"
+        },
+        {
+          "v": "2020-12-08",
+          "q": "Creation date: 2020-12-08:",
+          "what": "JSSLoader version created; Cmd_Info remote command added"
+        },
+        {
+          "v": "late October 2020",
+          "q": "From late October 2020, the adversaries moved to a WSF (Windows Script File) as the first stage script.",
+          "what": "adversaries moved from VBScript to WSF as the first stage script"
+        },
+        {
+          "v": "December 2020",
+          "q": "This report presents an attack chain that was intercepted and prevented within a customer’s network in December 2020",
+          "what": "attack chain intercepted and prevented within a customer network"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSSLoader",
+          "q": "JSSLoader is a highly maintained minimized .NET RAT backdoor, mostly used by the FIN7 group."
+        },
+        {
+          "v": "Carbanak",
+          "q": "The second layer PowerShell reflectively maps a Carbanak to memory."
+        },
+        {
+          "v": "Takeout",
+          "q": "the RAT typically executes a Takeout which is responsible for the reflective loading"
+        },
+        {
+          "v": "Qbot",
+          "q": "such as Qbot; the traffic is then redirected through"
+        },
+        {
+          "v": "BlackTDS",
+          "q": "BlackTDS traffic distribution system"
+        },
+        {
+          "v": "Egregor",
+          "q": "have a strong resemblance to the ongoing QBOT campaign that may lead to an Egregor compromise."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing",
+          "q": "Below is an example of a typical phishing campaign"
+        },
+        {
+          "v": "scheduled task",
+          "q": "executes the module through a scheduled task with a newly introduced timeout delay"
+        },
+        {
+          "v": "anti-debugging",
+          "q": "Minimalistic anti-debugging using timing checks"
+        },
+        {
+          "v": "startup directory",
+          "q": "It creates a shortcut shell LNK via com IShellLink in the startup directory that points to the executable."
+        },
+        {
+          "v": "auto-update",
+          "q": "Cmd_UPDATE – auto-update capability"
+        },
+        {
+          "v": "uninstall",
+          "q": "Cmd_UNINST – Uninstalls the RAT from the infected machine"
+        },
+        {
+          "v": "reflective loading",
+          "q": "the RAT typically executes a Takeout which is responsible for the reflective loading"
+        },
+        {
+          "v": "in memory",
+          "q": "This VBScript downloads and executes the next stage’s VBScript in memory."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "third round",
+          "q": "Their advanced techniques and tactics were even emulated in the third round of the MITRE"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "JSSLoader"
+    },
+    "hedges": [
+      "the early versions of the VB scripts have a strong resemblance to the ongoing QBOT campaign that may lead to an Egregor compromise",
+      "a typical phishing campaign that may lead to a FIN7 JSSLoader compromise",
+      "the newer VBScripts ... executes the next stage JSSloader through a scheduled task, possibly to avoid sequential monitoring of the attack chain"
+    ]
   }
 }

@@ -436,5 +436,111 @@
       "note": "summary: States as a flat finding that 'RustBucket SwiftLoader droppers now deliver KandyKorn RAT payloads'. The report only says its analysis 'suggests' DPRK a",
       "by": "auditor"
     }
+  },
+  "2a04fb97ff89595bc49dd71a7246402e3b355cc6": {
+    "sha1": "2a04fb97ff89595bc49dd71a7246402e3b355cc6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:55:31Z",
+    "model": "haiku",
+    "summary": "Yoroi Z-LAB reports on ATMitch, an ATM malware sample spotted in early April and possibly active since 2017. A loader injects a DLL into the Wincor Nixdorf fwmain32.exe process using thread hijacking. The DLL uses the XFS banking interface to read commands from a file and dispense cash. The report says it is manually installed on ATMs after a network intrusion, possibly used by the Carbanak or GCMAN groups, and may be the tip of a larger attack.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "potentially even by the Carbanak or the GCMAN group",
+          "by": "the report itself (Yoroi Z-LAB)"
+        },
+        {
+          "v": "GCMAN group",
+          "q": "potentially even by the Carbanak or the GCMAN group",
+          "by": "the report itself (Yoroi Z-LAB)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Banking",
+          "q": "targeting the Banking sector"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April",
+          "q": "In the first days of April, our threat monitoring operations spotted a new interesting malware sample",
+          "what": "Sample spotted by Yoroi threat monitoring (year not stated in the text)"
+        },
+        {
+          "v": "2017",
+          "q": "possibly active in the wild since 2017",
+          "what": "Sample possibly active in the wild since this year, per the report's hedged wording"
+        },
+        {
+          "v": "8th Oct 2017",
+          "q": "the sample has been compiled on 8th Oct 2017, months later than",
+          "what": "Static data indicates the sample was compiled; the report notes possible tampering"
+        },
+        {
+          "v": "May 7, 2019",
+          "q": "ZLAB-YOROI May 7, 2019",
+          "what": "Blog post published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ATMitch",
+          "q": "a particular malware tool dubbed ATMitch has"
+        },
+        {
+          "v": "tester.exe",
+          "q": "The executable sample is a PE32 x86 file named “tester.exe”."
+        },
+        {
+          "v": "fwmain32.exe",
+          "q": "It looks for a really particular one: “fwmain32.exe”."
+        },
+        {
+          "v": "msxfs.dll",
+          "q": "The injected DLL has a very characteristic dependency: it requires the “msxfs.dll”."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Thread Hijacking",
+          "q": "target process using the “SetThreadContext” injection technique (Thread Hijacking)."
+        },
+        {
+          "v": "reads commands from a file",
+          "q": "The malware is quite simple: it reads commands from a file included"
+        },
+        {
+          "v": "Remote Desktop",
+          "q": "The usage of Remote Desktop to directly connect to the target machine is also supported by the"
+        },
+        {
+          "v": "manually install it within segregated hosts",
+          "q": "Who manually install it within segregated hosts and write commands directly into the target machine"
+        },
+        {
+          "v": "deletes the initial file",
+          "q": "The attacker deletes the initial file in order to remove tracks;"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ATMitch"
+    },
+    "hedges": [
+      "The sample is possibly active in the wild since 2017; initial triage suggests it may be part of an advanced attacker arsenal.",
+      "The sample is possibly related to the same APT group Kaspersky Lab tracked two years ago.",
+      "This element is not enough to date the sample with 100% accuracy due to possible tampering.",
+      "Potentially even used by the Carbanak or the GCMAN group.",
+      "Probably the last steps of an attack flow involving ATMitch are the following.",
+      "So, the eventual presence of this malware could be the tip of the iceberg of a more complex and articulated attack."
+    ]
   }
 }

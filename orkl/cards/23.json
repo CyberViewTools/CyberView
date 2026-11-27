@@ -342,5 +342,120 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "23e4d67dd76553f78f40f1a30aef6bd88ca7200e": {
+    "sha1": "23e4d67dd76553f78f40f1a30aef6bd88ca7200e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:57:45Z",
+    "model": "haiku",
+    "summary": "FireEye Mandiant report on FIN7 describing two new tools. BOOSTWRITE is an in-memory dropper that decrypts and loads payloads, including CARBANAK and RDFSNIFFER. RDFSNIFFER hooks Win32 API functions to tamper with NCR Aloha Command Center client sessions. A signed BOOSTWRITE sample, signed with a certificate from MANGO ENTERPRISE LIMITED, showed a 0/68 detection ratio on VirusTotal. The report presents these as FIN7 evasion and evolution.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "The first of FIN7's new tools is BOOSTWRITE",
+          "by": "FireEye Mandiant (the report's authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "payment card",
+          "q": "administration toolset designed to manage and troubleshoot systems within payment card"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2019-05-20",
+          "q": "2019-05-20 09:50:55",
+          "what": "PE compilation time of the signed BOOSTWRITE sample"
+        },
+        {
+          "v": "2019-05-22",
+          "q": "2019-05-22 00:00 UTC",
+          "what": "start of the validity window of the signing certificate"
+        },
+        {
+          "v": "2020-05-21",
+          "q": "2020-05-21 23:59 UTC",
+          "what": "end of the validity window of the signing certificate"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BOOSTWRITE",
+          "q": "BOOSTWRITE is a loader crafted to be launched via abuse of the DLL search order of"
+        },
+        {
+          "v": "RDFSNIFFER",
+          "q": "RDFSNIFFER, a payload of BOOSTWRITE, appears to have been developed to tamper with"
+        },
+        {
+          "v": "CARBANAK",
+          "q": "payloads: CARBANAK and RDFSNIFFER."
+        },
+        {
+          "v": "BABYMETAL",
+          "q": "CARBANAK and BABYMETAL, the introduction of new tools and techniques provides further"
+        },
+        {
+          "v": "NCR Aloha Command Center",
+          "q": "NCR Aloha Command Center is a remote"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL search order",
+          "q": "BOOSTWRITE is a loader crafted to be launched via abuse of the DLL search order of"
+        },
+        {
+          "v": "ChaCha stream cipher",
+          "q": "BOOSTWRITE encodes its payloads using a ChaCha stream cipher with a"
+        },
+        {
+          "v": "in-memory-only dropper",
+          "q": "The first of FIN7's new tools is BOOSTWRITE – an in-memory-only dropper that decrypts"
+        },
+        {
+          "v": "signed by a valid CA",
+          "q": "BOOSTWRITE variants were observed signed by a valid CA"
+        },
+        {
+          "v": "hooks several Win32 API functions",
+          "q": "RDFSNIFFER hooks several Win32 API functions intended to enable it to tamper with"
+        },
+        {
+          "v": "loads into the same process",
+          "q": "RDFSNIFFER loads into the same process as the legitimate RDFClient by"
+        },
+        {
+          "v": "upload, download, execute",
+          "q": "This backdoor allows an attacker to upload, download, execute and/or"
+        },
+        {
+          "v": "change the user's last input time",
+          "q": "Used to change the user's last input time (to avoid timed lock outs)"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "0/68",
+          "q": "the signed BOOSTWRITE sample had a 0/68 detection ratio when it was"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "BOOSTWRITE"
+    },
+    "hedges": [
+      "Report says RDFSNIFFER appears to have been developed to tamper with the NCR Aloha Command Center client.",
+      "Report says the operators may be actively altering BOOSTWRITE to avoid traditional detection.",
+      "Report says VirusTotal detection performance often isn't a comprehensive representation of full security stacks.",
+      "Report says that barring law enforcement action it expects at least a portion of the FIN7 actors to keep conducting campaigns."
+    ]
   }
 }

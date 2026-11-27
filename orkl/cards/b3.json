@@ -359,5 +359,232 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "b31245aa28777ce928ce0325c7a77db3a42edc1a": {
+    "sha1": "b31245aa28777ce928ce0325c7a77db3a42edc1a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T12:01:26Z",
+    "model": "haiku",
+    "summary": "NCC Group research (published June 23, 2020) on WastedLocker, a ransomware locker first seen in use in May 2020 and attributed by the report to the Evil Corp group. The report covers Evil Corp's history with Dridex, BitPaymer and Ryuk; distribution through the SocGholish fake update framework, which delivers a custom CobaltStrike loader; privilege escalation via a UAC bypass; per-file AES encryption with RSA-wrapped keys; and anti-analysis and endpoint-evasion behaviour. Several attributions and observations are explicitly hedged by the authors.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Evil Corp",
+          "q": "We have tracked the activities of the Evil Corp group for many years",
+          "by": "NCC Group (report authors)"
+        },
+        {
+          "v": "FIN7",
+          "q": "the Anunak group (also known as FIN7 and Carbanak)",
+          "by": "NCC Group (report)"
+        },
+        {
+          "v": "TA505",
+          "q": "the group publicly referred to as TA505",
+          "by": "NCC Group (report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "USA",
+          "q": "in North America (mainly USA)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 23, 2020",
+          "q": "June 23, 2020",
+          "what": "Report published"
+        },
+        {
+          "v": "May 2020",
+          "q": "The new WastedLocker ransomware appeared in May 2020",
+          "what": "WastedLocker first appeared"
+        },
+        {
+          "v": "July 2014",
+          "q": "Evil Corp has been operating the Dridex malware since July 2014",
+          "what": "Evil Corp began operating Dridex"
+        },
+        {
+          "v": "2017",
+          "q": "towards the end of 2017 Evil Corp became smaller",
+          "what": "Evil Corp shifted to targeted BitPaymer ransomware campaigns"
+        },
+        {
+          "v": "2018",
+          "q": "During 2018, Evil Corp had a short lived partnership with TheTrick group",
+          "what": "Short-lived partnership with TheTrick group, leasing out BitPaymer access"
+        },
+        {
+          "v": "2019",
+          "q": "In 2019 a fork of BitPaymer usually referred to as DoppelPaymer appeared",
+          "what": "DoppelPaymer fork of BitPaymer appeared"
+        },
+        {
+          "v": "December 2019",
+          "q": "the financial sanctions against Evil Corp in December 2019",
+          "what": "Financial sanctions against Evil Corp"
+        },
+        {
+          "v": "January 2020",
+          "q": "since January 2020 activity has resumed as usual",
+          "what": "Evil Corp activity resumed"
+        },
+        {
+          "v": "March 2020",
+          "q": "from around the middle of March 2020, we failed to observe much",
+          "what": "Little observed BitPaymer deployment activity from Evil Corp"
+        }
+      ],
+      "tools": [
+        {
+          "v": "WastedLocker",
+          "q": "WastedLocker is a new ransomware locker we’ve detected being used since May 2020."
+        },
+        {
+          "v": "Dridex",
+          "q": "Evil Corp has been operating the Dridex malware since July 2014"
+        },
+        {
+          "v": "BitPaymer",
+          "q": "targeted ransomware campaigns by deploying BitPaymer."
+        },
+        {
+          "v": "DoppelPaymer",
+          "q": "In 2019 a fork of BitPaymer usually referred to as DoppelPaymer appeared"
+        },
+        {
+          "v": "Ryuk",
+          "q": "BitPaymer for a while, prior to their use of Ryuk."
+        },
+        {
+          "v": "Gozi ISFB 2",
+          "q": "use of a variant of Gozi we refer to as Gozi ISFB 2 variant."
+        },
+        {
+          "v": "CobaltStrike",
+          "q": "CobaltStrike loader has been observed, possibly intended as a replacement for the Empire"
+        },
+        {
+          "v": "Empire PowerShell framework",
+          "q": "is no longer using the Empire PowerShell framework"
+        },
+        {
+          "v": "SocGholish",
+          "q": "the distribution via the SocGholish fake update framework."
+        },
+        {
+          "v": "CryptOne",
+          "q": "referred to as CryptOne by Fox-IT"
+        },
+        {
+          "v": "Netwalker",
+          "q": "such as: Netwalker, Gozi ISFB v3, ZLoader and Smokeloader."
+        },
+        {
+          "v": "ZLoader",
+          "q": "such as: Netwalker, Gozi ISFB v3, ZLoader and Smokeloader."
+        },
+        {
+          "v": "Smokeloader",
+          "q": "such as: Netwalker, Gozi ISFB v3, ZLoader and Smokeloader."
+        },
+        {
+          "v": "Donut",
+          "q": "are part of the ‘Donut’ project [3]."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "UAC bypass",
+          "q": "uses a well-documented UAC bypass method [1] [2]."
+        },
+        {
+          "v": "Anti-analysis checks in the crypter",
+          "q": "thus it is used as an anti-analysis technique."
+        },
+        {
+          "v": "Shadow copy deletion",
+          "q": "i. Delete shadow copies"
+        },
+        {
+          "v": "Disabling or disrupting backups",
+          "q": "should be able to disable or disrupt backup applications and related infrastructure"
+        },
+        {
+          "v": "Endpoint protection bypass via abused trial license request",
+          "q": "abused a victim’s email so they could pose as a legitimate potential client"
+        },
+        {
+          "v": "Per-file AES encryption",
+          "q": "encrypted using the AES algorithm with a newly generated AES key"
+        },
+        {
+          "v": "Junk code to raise entropy and hide code",
+          "q": "contains junk code to increase entropy of the sample"
+        },
+        {
+          "v": "CobaltStrike payloads embedded in PowerShell scripts",
+          "q": "embedded inside two types of PowerShell scripts."
+        },
+        {
+          "v": "Targeting of file servers and cloud environments",
+          "q": "Typically, they hit file servers, database services, virtual machines and cloud environments."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "6 months",
+          "q": "compromised a target over 6 months after their initial failure to obtain privileged access."
+        },
+        {
+          "v": "10 bytes",
+          "q": "Files with a size less than 10 bytes"
+        },
+        {
+          "v": "4096 bits",
+          "q": "key (4096 bits). The RSA encrypted output"
+        },
+        {
+          "v": "256-bit",
+          "q": "newly generated AES key and IV (256-bit in"
+        },
+        {
+          "v": "2 crypter variants",
+          "q": "We have found 2 crypter variants with some code differences"
+        },
+        {
+          "v": "botnet 501",
+          "q": "replacement for Dridex botnet 501 as one of the"
+        },
+        {
+          "v": "5 digit numbers",
+          "q": "usually 5 digit numbers"
+        },
+        {
+          "v": "CobaltStrike v4.0 (Dec 5, 2019)",
+          "q": "Version: CobaltStrike v4.0 (Dec 5, 2019)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "WastedLocker"
+    },
+    "hedges": [
+      "We believe those changes were ultimately caused by the unsealing of indictments against two named individuals and the financial sanctions against Evil Corp in December 2019.",
+      "The report asserts certain Evil Corp points with high confidence, based on the authors' in-depth tracking of the group.",
+      "Business associations in cybercrime groups are fluid, so threat intelligence reporting on group composition can be misleading.",
+      "It is possible that the post-indictment inactivity was primarily a strategic move to suggest Evil Corp was still active.",
+      "It is thought that the Gozi ISFB 2 variant is intended as a replacement for Dridex botnet 501 as a persistent component.",
+      "It is assumed that the CrowdStrike-related loader logic is an attempt to bypass CrowdStrike's endpoint solution, although it is still unclear if this is the case.",
+      "It is believed that the SecTool checker tool is used during ransomware deployment, but the authors have no specific evidence that Evil Corp used it.",
+      "Other distribution methods appear to still be in use, but the authors have not been able to independently verify this at the time of writing."
+    ]
   }
 }

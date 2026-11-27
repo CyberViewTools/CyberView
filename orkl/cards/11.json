@@ -454,7 +454,7 @@
   },
   "115eca945977d9d9d80821777d878d70fdf9556a": {
     "sha1": "115eca945977d9d9d80821777d878d70fdf9556a",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T11:36:46Z",
     "model": "haiku",
@@ -546,6 +546,14 @@
         "note": "summary: Says the actor ran the Demux loader, but the text says Falcon blocked the download of the Demux stager script. The actor's later attempt to echo the De",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T11:48:48Z",
+      "ok": false,
+      "note": "summary: It says the actor used SQL injection to run 'a download of the Demux loader'. The text says Falcon blocked that download, and the actor's later attempt",
+      "by": "auditor"
+    }
   }
 }

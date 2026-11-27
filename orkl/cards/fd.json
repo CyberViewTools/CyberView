@@ -489,5 +489,218 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "fd935612ea036144030f0ca7fce0810b09c6eec4": {
+    "sha1": "fd935612ea036144030f0ca7fce0810b09c6eec4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:58:12Z",
+    "model": "haiku",
+    "summary": "Cybereason's report on Operation Cobalt Kitty, an advanced persistent threat that targeted a global corporation. It describes spear-phishing, Cobalt Strike Beacon payloads, the Denis and Goopy backdoors (using DNS tunneling and DLL hijacking), an Outlook macro used as a command channel, and credential dumping. More than 35 machines were compromised. The report links the activity to the OceanLotus Group but frames this as a suspicion based on behavioural fingerprints.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "OceanLotus Group",
+          "q": "suspect the involvement of the OceanLotus Group",
+          "by": "Cybereason (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government agencies",
+          "q": "government agencies, media, business sector, and more"
+        },
+        {
+          "v": "media",
+          "q": "government agencies, media, business sector, and more"
+        },
+        {
+          "v": "business sector",
+          "q": "government agencies, media, business sector, and more"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Vietnam",
+          "q": "Analysis of those samples clearly indicates the involvement of the threat actor in Asia and Vietnam in particular"
+        },
+        {
+          "v": "Philippines",
+          "q": "the group was observed attacking a wide spectrum of targets in other Asian countries (Philippines and Vietnam)"
+        },
+        {
+          "v": "China",
+          "q": "such as Vietnam, China, and the Philippines"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2012",
+          "q": "date back to 2012, attacking Chinese entities",
+          "what": "earliest reports of OceanLotus activity in Asia"
+        },
+        {
+          "v": "December 2016",
+          "q": "Cybereason spotted the main backdoor in in December 2016",
+          "what": "Cybereason first spotted the main Denis backdoor"
+        },
+        {
+          "v": "August 2016",
+          "q": "back in August 2016",
+          "what": "possible earlier in-the-wild use of the Denis backdoor (hedged in the report)"
+        },
+        {
+          "v": "March 2017",
+          "q": "which published their analysis of it in March 2017",
+          "what": "Kaspersky published its analysis of the Denis backdoor"
+        },
+        {
+          "v": "April 1, 2017",
+          "q": "this vulnerability was reported to Microsoft on April 1, 2017",
+          "what": "phantom DLL hijacking flaw reported to Microsoft under responsible disclosure"
+        },
+        {
+          "v": "April 2, 2017",
+          "q": "this vulnerability was reported to Google on April 2, 2017",
+          "what": "Google Update DLL hijacking flaw reported to Google under responsible disclosure"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is a well-known, commercial offensive security framework"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "The attackers mainly used Mimikatz"
+        },
+        {
+          "v": "Denis Backdoor",
+          "q": "Variant of Denis Backdoor using DNS Tunneling"
+        },
+        {
+          "v": "Goopy",
+          "q": "From features perspective, Goopy shows great similarities to the Denis backdoor."
+        },
+        {
+          "v": "Outlook Backdoor Macro",
+          "q": "Outlook Backdoor Macro as C2 channel"
+        },
+        {
+          "v": "PowerSploit",
+          "q": "Vulnerability Scanning using PowerSploit"
+        },
+        {
+          "v": "Invoke-obfuscation",
+          "q": "Invoke-obfuscation (PowerShell Obfuscator)"
+        },
+        {
+          "v": "PSUnlock",
+          "q": "PowerShell bypass tool (PSUnlock)"
+        },
+        {
+          "v": "NetCat",
+          "q": "Custom NetCat"
+        },
+        {
+          "v": "GetPassword_x64",
+          "q": "GetPassword_x64 is a known, publicly available password dumping tool by the K8Team."
+        },
+        {
+          "v": "HookPasswordChange",
+          "q": "a known publicly available tool called “HookPasswordChange”"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "specifically spear-phishing attacks against carefully selected, high-profile targets in the company"
+        },
+        {
+          "v": "DLL hijacking",
+          "q": "The attackers exploited a DLL hijacking vulnerability in a legitimate Google Update binary"
+        },
+        {
+          "v": "DLL side loading",
+          "q": "The attackers used DLL side loading, a well-known technique for evading detection"
+        },
+        {
+          "v": "DNS Tunneling",
+          "q": "The backdoor uses DNS Tunneling as the main C2 channel"
+        },
+        {
+          "v": "fileless operation",
+          "q": "The motivation for fileless operation is clear"
+        },
+        {
+          "v": "Windows Registry Autorun",
+          "q": "The attackers used the Windows Registry Autorun to execute VBScript"
+        },
+        {
+          "v": "scheduled tasks",
+          "q": "The attackers used scheduled tasks to ensure the malicious payloads ran"
+        },
+        {
+          "v": "pass-the-hash",
+          "q": "using common lateral movement techniques including pass-the-hash and pass-the-ticket"
+        },
+        {
+          "v": "port scanning",
+          "q": "the attackers launched port scanning against common ports"
+        },
+        {
+          "v": "Windows Management Instrumentation",
+          "q": "abuses Windows Management Instrumentation (WMI)"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "more than 35 machines",
+          "q": "The attackers compromised more than 35 machines, including the Active Directory server"
+        },
+        {
+          "v": "over 80 payloads",
+          "q": "Cybereason recovered over 80 payloads that were used during the four stages of the attack"
+        },
+        {
+          "v": "at least 14",
+          "q": "The attackers used at least 14 different versions of Mimikatz"
+        },
+        {
+          "v": "Four variants",
+          "q": "Four variants of the main backdoor were found in the environment"
+        },
+        {
+          "v": "30MB to 55MB",
+          "q": "Unusually large files (30MB to 55MB)"
+        },
+        {
+          "v": "between 48 hours and four weeks",
+          "q": "that lasted between 48 hours and four weeks"
+        },
+        {
+          "v": "three DLL-hijacking vulnerabilities",
+          "q": "The attackers exploited three DLL-hijacking vulnerabilities in legitimate applications from trusted vendors"
+        },
+        {
+          "v": "at least four",
+          "q": "The attackers used at least four different kinds of credential dumping tools"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Operation Cobalt Kitty"
+    },
+    "hedges": [
+      "Cybereason cannot fully determine whether SOUNDBITE and Denis are the same backdoor, even though the likelihood seems rather high.",
+      "The report says the threat actor left enough behavioral fingerprints to suspect the involvement of the OceanLotus Group.",
+      "The report says the August 2016 in-the-wild use of the backdoor is quite possible, not confirmed.",
+      "OceanLotus is said to use tools with similar capabilities, but no public documentation shows whether the tools are the same.",
+      "The report says working-hours observations can suggest time zone proximity and an institutionalized threat actor, possibly nation-state.",
+      "The report says the Outlook backdoor can be considered one of the signature tools of OceanLotus."
+    ]
   }
 }

@@ -961,25 +961,123 @@
   },
   "ee48407bd11f46dcc700d8d43e1eedfd49e8ef3d": {
     "sha1": "ee48407bd11f46dcc700d8d43e1eedfd49e8ef3d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:10:44Z",
+    "read_at": "2026-11-27T11:53:13Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Proofpoint describes a targeted spearphishing campaign in 2017 that used a fake Game of Thrones spoiler lure in a Word document. The document held an embedded shortcut object that ran PowerShell and installed the diskless 9002 RAT. Proofpoint says a link to the Deputy Dog (APT17) actor is possible, based on shared identifiers and similarities, but it has no definitive evidence. Related activity is traced back to April 2014. Proofpoint systems blocked this attack.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Deputy Dog",
+          "q": "attack was carried out by a Chinese state-sponsored actor known as Deputy Dog.",
+          "by": "Proofpoint"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "Chinese",
+          "q": "attack was carried out by a Chinese state-sponsored actor known as Deputy Dog."
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 10",
+          "q": "On August 10 Proofpoint detected malicious email messages",
+          "what": "Proofpoint detected malicious spearphishing emails with the Game of Thrones lure"
+        },
+        {
+          "v": "July 6, 2017",
+          "q": "uploaded to a malicious file scanning service on July 6, 2017.",
+          "what": "A ZIP file containing the same LNK used in the Game of Thrones attack was uploaded to a file scanning service"
+        },
+        {
+          "v": "July 1, 2017",
+          "q": "The modified timestamp for the files contained in the ZIP file is July 1, 2017.",
+          "what": "Modified timestamp of files in the ZIP package"
+        },
+        {
+          "v": "April 2014",
+          "q": "occurring at least as far back as April 2014.",
+          "what": "Earliest similar activity observed, in archives sharing a similar LNK downloader"
+        }
+      ],
+      "tools": [
+        {
+          "v": "9002",
+          "q": "installation of the diskless “9002” RAT."
+        },
+        {
+          "v": "Invoke-Shellcode",
+          "q": "a modified Invoke-Shellcode [5] PowerShell script to download two files"
+        },
+        {
+          "v": "PhotoShow.jar",
+          "q": "contained a Java payload named PhotoShow.jar that ultimately executes"
+        },
+        {
+          "v": "wabmig.exe",
+          "q": "injected into a legitimate Windows Mail binary wabmig.exe."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spearphishing",
+          "q": "Proofpoint recently observed a targeted email campaign attempting a spearphishing attack"
+        },
+        {
+          "v": "embedded .LNK",
+          "q": "is an embedded .LNK (an OLE packager shell object)"
+        },
+        {
+          "v": "diskless",
+          "q": "installation of the diskless “9002” RAT."
+        },
+        {
+          "v": "code injection",
+          "q": "Instead of using code injection however, a packed executable (PE) is embedded"
+        },
+        {
+          "v": "persistence",
+          "q": "The persistence .LNK is stored in the Startup directory as UpdateCheck.lnk"
+        },
+        {
+          "v": "XOR",
+          "q": "The encoding algorithm used in this version is an iteration of the “4-byte XOR version of 9002”"
+        },
+        {
+          "v": "base64",
+          "q": "custom algorithm followed by base64-encoding"
+        },
+        {
+          "v": "fake SSL",
+          "q": "This variant of 9002 is capable of communicating over both HTTP and what appears to be fake SSL."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "four copies",
+          "q": "contains four copies of the same LNK"
+        },
+        {
+          "v": "five",
+          "q": "All five of the archives contained a similar stock picture of a party"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text, code",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "9002 RAT"
+    },
+    "hedges": [
+      "Proofpoint says it is possible the attack was carried out by a Chinese state-sponsored actor known as Deputy Dog.",
+      "Proofpoint has no definitive evidence linking the activity to Deputy Dog; it says there are enough similarities to support a possible connection.",
+      "The 2014 and 2017 campaigns are said to possibly be run by the same actor, based on shared identifiers.",
+      "The report says the matching Volume Serial Number makes it more likely the files were created on one device or with one builder, but notes such values can be faked.",
+      "The hardcoded date value likely represents May 17, 2015, but the report is not aware whether that date has any significance."
+    ]
   }
 }

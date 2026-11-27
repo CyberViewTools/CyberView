@@ -276,5 +276,218 @@
         "by": "auditor"
       }
     ]
+  },
+  "35f1522128ae21490cc812f5929b961fe0cbdf5c": {
+    "sha1": "35f1522128ae21490cc812f5929b961fe0cbdf5c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:57:58Z",
+    "model": "haiku",
+    "summary": "Trustwave reports a new Carbanak/Anunak methodology against hospitality and restaurant clients. Social engineering by phone delivers a malicious Word document, which drops a VBScript loader that sets persistence, beacons every 5 minutes and downloads reconnaissance tools. A second-stage backdoor scrapes point-of-sale memory for card data, can target iFOBS banking software and exfiltrates data over HTTP POST. An upgraded malware version appeared two weeks later.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "Carbanak is a prolific crime group, well known for stealing over one billion dollars from banks in 2015",
+          "by": "Trustwave (the report)"
+        },
+        {
+          "v": "Anunak",
+          "q": "The Anunak crime group is generally believed to be synonymous with Carbanak.",
+          "by": "Trustwave (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "hospitality",
+          "q": "focused on the hospitality industry"
+        },
+        {
+          "v": "restaurant",
+          "q": "one restaurant chain for investigations by an unknown attacker"
+        },
+        {
+          "v": "banking",
+          "q": "This is a very popular banking platform in Russia and Eastern Europe"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "banking platform in Russia and Eastern Europe"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2015",
+          "q": "stealing over one billion dollars from banks in 2015",
+          "what": "Carbanak stole over one billion dollars from banks, a loss estimate attributed to Kaspersky"
+        },
+        {
+          "v": "2016-03-01",
+          "q": "Compile Date: 2016-03-01 08:50:54",
+          "what": "Compile date of the bf.exe second-stage sample"
+        },
+        {
+          "v": "2016-11-08",
+          "q": "Date: Tue, 08 Nov 2016 20:12:05 GMT",
+          "what": "Date header in a sample response from the beaconing traffic"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Nmap",
+          "q": "Downloaded tools have included Nmap, FreeRDP, NCat, NPing, and others."
+        },
+        {
+          "v": "FreeRDP",
+          "q": "Downloaded tools have included Nmap, FreeRDP, NCat, NPing, and others."
+        },
+        {
+          "v": "Mimikatz",
+          "q": "utilizes the open source project called Mimikatz"
+        },
+        {
+          "v": "VNC",
+          "q": "install completely different remote desktop programs, such as VNC or AMMYY"
+        },
+        {
+          "v": "AMMYY",
+          "q": "install completely different remote desktop programs, such as VNC or AMMYY"
+        },
+        {
+          "v": "ifobs module",
+          "q": "reused code from the Carperp ifobs module to target a banking application called iFOBS"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering",
+          "q": "The attacks began via social engineering."
+        },
+        {
+          "v": "malicious Word Document",
+          "q": "The email attachment was a malicious Word Document that"
+        },
+        {
+          "v": "persistence mechanism",
+          "q": "Adds persistence mechanism to the CURRENT_USER registry hive"
+        },
+        {
+          "v": "scheduled task",
+          "q": "A scheduled task is created named SysChecks which calls the vbs"
+        },
+        {
+          "v": "registers itself as a service",
+          "q": "it registers itself as a service with the following details"
+        },
+        {
+          "v": "injects its malicious code into this running process",
+          "q": "injects its malicious code into this running process"
+        },
+        {
+          "v": "Anti-reversing",
+          "q": "Anti-reversing"
+        },
+        {
+          "v": "API Hashing",
+          "q": "An API Hashing technique is also utilized by the malware"
+        },
+        {
+          "v": "escalate the privilege",
+          "q": "to escalate the privilege of the malware process."
+        },
+        {
+          "v": "data beaconing",
+          "q": "We have seen slightly different data beaconing methodologies over the different attacks"
+        },
+        {
+          "v": "encrypted tunnel",
+          "q": "It communicates via an encrypted tunnel on port 443 with the following IP addresses:"
+        },
+        {
+          "v": "HTTP POST messages",
+          "q": "All exfiltrated information is encrypted with base64+RC2 and sent via HTTP POST messages."
+        },
+        {
+          "v": "scraping memory",
+          "q": "designed to target credit card data by scraping memory on Point-of-Sale systems"
+        },
+        {
+          "v": "steal clear text local passwords",
+          "q": "steal clear text local passwords from Lsass"
+        },
+        {
+          "v": "Outlook PST files",
+          "q": "scrounging the victim's Outlook PST files for contact's email addresses"
+        },
+        {
+          "v": "move laterally",
+          "q": "move laterally into the card holder data environment"
+        },
+        {
+          "v": "reconnaissance",
+          "q": "Attacker conducts reconnaissance to scan network"
+        },
+        {
+          "v": "enables the Remote Desktop",
+          "q": "The malware enables the Remote Desktop by starting the Termservice service"
+        },
+        {
+          "v": "keylogger",
+          "q": "This malware may steal credit card data, as well as screen captures, keylogger information"
+        },
+        {
+          "v": "spear-phishing",
+          "q": "possibly to be used for further spear-phishing attacks"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2013-3660",
+          "q": "identified as CVE-2013-3660 to escalate the privilege of the malware process."
+        }
+      ],
+      "figures": [
+        {
+          "v": "over one billion dollars",
+          "q": "stealing over one billion dollars from banks in 2015"
+        },
+        {
+          "v": "over one million",
+          "q": "that put over one million Point of"
+        },
+        {
+          "v": "two separate hospitality clients",
+          "q": "In the last month Trustwave was engaged by two separate hospitality clients"
+        },
+        {
+          "v": "two weeks",
+          "q": "Version two arrived only two weeks after we began investigating this new campaign."
+        },
+        {
+          "v": "300 seconds",
+          "q": "occur almost exactly every 300 seconds (5 minutes)."
+        },
+        {
+          "v": "port 443",
+          "q": "It communicates via an encrypted tunnel on port 443 with the following IP addresses:"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Carbanak / Anunak"
+    },
+    "hedges": [
+      "The attacks 'appear to be' a new Carbanak gang methodology, and the investigations are still underway.",
+      "The Anunak crime group is generally believed to be synonymous with Carbanak.",
+      "The one billion dollar loss figure is a Kaspersky estimate, as marked in the report.",
+      "Some antivirus firms incorrectly identify the second-stage file as ransomware, according to the report.",
+      "The malware may report to the listed command and control servers, depending on the version used.",
+      "The service name is random and may vary on different systems.",
+      "Most antivirus engines did not detect the malware at the time of investigation, per the report."
+    ]
   }
 }

@@ -24,26 +24,205 @@
   },
   "7faa8655733ce23d861df818f1ab5fd073d0b1f1": {
     "sha1": "7faa8655733ce23d861df818f1ab5fd073d0b1f1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:54:37Z",
+    "read_at": "2026-11-27T06:54:42Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ASEC (AhnLab) report on BlueShell, an open-source backdoor written in Go that runs on Windows, Linux and Mac. The report describes its use in attacks on Korean companies and Thai broadcasting companies, with Windows and customised Linux variants. It links BlueShell to the China-based Dalbit group but says BlueShell's use by that group was not confirmed. Tools reported alongside include FRP, Frpc, fscan, Impacket and Venom. Attacks are inferred to date from at least September 2022.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Dalbit",
+          "q": "The Dalbit group is a threat group based in China.",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "the Kimsuky threat group developed a downloader that installs Meterpreter",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "RedEyes (APT37)",
+          "q": "the RedEyes (APT37) threat group developed a backdoor by abusing the Ably service",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "Andariel",
+          "q": "the Andariel threat group developed a variety of malware including 1th Troy reverse shell, Black RAT, Goat",
+          "by": "ASEC (AhnLab), the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "broadcasting companies",
+          "q": "not only Korean but Thai broadcasting companies were also targeted."
+        },
+        {
+          "v": "Korean companies",
+          "q": "those that targeted Windows systems of Korean companies"
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "The Dalbit group is a threat group based in China."
+        },
+        {
+          "v": "Korea",
+          "q": "the BlueShells used in attack cases in both Korea and Thailand were built in the Go language"
+        },
+        {
+          "v": "Thailand",
+          "q": "As they were uploaded to VirusTotal from Korea and Thailand, it seems that"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-09-04",
+          "q": "Published: 2023-09-04 · Archived: 2026-04-05 18:45:17 UTC",
+          "what": "ASEC published the report"
+        },
+        {
+          "v": "September 2022",
+          "q": "it can be inferred that attacks would have been ongoing from at least September 2022.",
+          "what": "attacks inferred to have been ongoing since at least this month"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BlueShell",
+          "q": "BlueShell is a backdoor developed in Go."
+        },
+        {
+          "v": "SparkRAT",
+          "q": "SparkRAT included in a Korean VPN installer [1]"
+        },
+        {
+          "v": "Sliver C2",
+          "q": "Sliver C2 used in the attack campaign exploiting the vulnerability in Sunlogin"
+        },
+        {
+          "v": "CobaltStrike",
+          "q": "publicly available tools such as CobaltStrike, Metasploit,"
+        },
+        {
+          "v": "Metasploit",
+          "q": "publicly available tools such as CobaltStrike, Metasploit,"
+        },
+        {
+          "v": "Ladaon",
+          "q": "tools such as CobaltStrike, Metasploit, Ladaon, and BlueShell."
+        },
+        {
+          "v": "Lsass dump tool",
+          "q": "the threat actor used the Lsass dump tool to steal account credentials"
+        },
+        {
+          "v": "fscan",
+          "q": "used the fscan tool to scan the internal network"
+        },
+        {
+          "v": "Impacket",
+          "q": "lateral movement using the Impacket tool."
+        },
+        {
+          "v": "Frpc",
+          "q": "the Frpc tool, its configuration file, and another proxy tool"
+        },
+        {
+          "v": "Fast Reverse Proxy (FRP)",
+          "q": "uses Fast Reverse Proxy (FRP) as the proxy tool."
+        },
+        {
+          "v": "Venom",
+          "q": "another proxy tool by the name of Venom [7]"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote command execution",
+          "q": "include remote command execution, file download/upload, and Socks5 proxy."
+        },
+        {
+          "v": "TLS encryption",
+          "q": "It supports TLS encryption in"
+        },
+        {
+          "v": "bypasses network detection",
+          "q": "communications with the C2 server and bypasses network detection."
+        },
+        {
+          "v": "dropper",
+          "q": "The threat actor first created a dropper and used this to install BlueShell."
+        },
+        {
+          "v": "changes the name of the running process",
+          "q": "changes the name of the running process into"
+        },
+        {
+          "v": "deletes itself",
+          "q": "it deletes itself, so BlueShell only runs in the memory area."
+        },
+        {
+          "v": "environment variable",
+          "q": "a certain environment variable is read and decrypted to obtain said data."
+        },
+        {
+          "v": "WebLogic",
+          "q": "usually exploits the WebLogic or file upload vulnerability"
+        },
+        {
+          "v": "web shells",
+          "q": "to upload web shells."
+        },
+        {
+          "v": "steal account credentials",
+          "q": "the Lsass dump tool to steal account credentials"
+        },
+        {
+          "v": "scan the internal network",
+          "q": "used the fscan tool to scan the internal network"
+        },
+        {
+          "v": "lateral movement",
+          "q": "lateral movement using the Impacket tool."
+        },
+        {
+          "v": "open-source tools",
+          "q": "The Dalbit group is known for using open-source tools in most stages of their attack"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three",
+          "q": "BlueShell has three configuration data: the IP address of the C2 server"
+        },
+        {
+          "v": "Two versions",
+          "q": "Two versions of BlueShell were identified in the attack process"
+        },
+        {
+          "v": "1.18.4",
+          "q": "built in the Go language environment version 1.18.4"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "BlueShell"
+    },
+    "hedges": [
+      "It has not been confirmed whether the threat actor used BlueShell in the actual attack.",
+      "The collected files were probably included in the collection of attack tools used by the threat actor.",
+      "Due to a lack of relevant information, the initial attack vector and whether the actor is the Dalbit group could not be ascertained.",
+      "The report says the BlueShell creator may be a Chinese speaker, based on a Chinese-language ReadMe.",
+      "Timeline of attacks from at least September 2022 is an inference from build and upload data.",
+      "It is difficult to pinpoint the attack targets using only the host name of the infected system.",
+      "The Thai activity is described as possibly an APT attack against targets in Thailand.",
+      "Upload locations suggest the two areas were targets, and the report says it seems so."
+    ]
   },
   "7f08574c8197d23e7bce2ed27b5098105fcb3e23": {
     "sha1": "7f08574c8197d23e7bce2ed27b5098105fcb3e23",

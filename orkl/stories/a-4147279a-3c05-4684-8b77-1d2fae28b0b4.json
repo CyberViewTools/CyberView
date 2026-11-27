@@ -51,38 +51,33 @@
     "key": "a-4147279a-3c05-4684-8b77-1d2fae28b0b4",
     "kind": "actor",
     "name": "NICKEL FOXCROFT",
-    "headline": "NICKEL FOXCROFT (APT37, ScarCruft): a long-running espionage group focused on Korea",
-    "in_short": "Vendors describe NICKEL FOXCROFT, better known as APT37 or ScarCruft, as a North Korea-linked espionage group active since 2012. It mostly targets South Korea and uses phishing, shortcut files and cloud-based control.",
+    "headline": "NICKEL FOXCROFT (APT37): a long-running espionage group focused on Korea, per vendors",
+    "in_short": "NICKEL FOXCROFT, also tracked as APT37 and ScarCruft, is described by several vendors as a North Korean espionage group. It mainly targets South Korea, using shortcut-file lures, cloud-based control channels and Android spyware.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "The catalogue lists NICKEL FOXCROFT under many other names, including APT37, ScarCruft, Reaper, InkySquid, Group 123 and RICOCHET CHOLLIMA.",
+            "t": "Secureworks tracks this group as NICKEL FOXCROFT. Other names include APT37, ScarCruft, Reaper, Group 123, InkySquid, Moldy Pisces and RICOCHET CHOLLIMA.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "ESET says ScarCruft, also known as APT37 or Reaper, has operated since at least 2012 and is suspected to be a North Korean espionage group.",
-            "cites": [
-              "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
-            ]
-          },
-          {
-            "t": "CrowdStrike calls its RICOCHET CHOLLIMA profile a DPRK-nexus targeted intrusion adversary involved in espionage since at least 2016.",
+            "t": "CrowdStrike describes RICOCHET CHOLLIMA as a North Korea (DPRK)-nexus targeted intrusion adversary. It says the actor has run espionage operations since at least 2016.",
             "cites": [
               "d05f74add08e022ef631c1d55dac87636f641e08"
             ]
           },
           {
-            "t": "Lookout attributes the KoSpy Android spyware to APT37 with medium confidence. It notes that North Korean groups share infrastructure, targeting and techniques, which makes attribution harder.",
+            "t": "Lookout describes ScarCruft as a North Korean state-sponsored cyber espionage group active since 2012. ESET calls it a suspected North Korean espionage group operating since at least 2012.",
             "cites": [
-              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33",
+              "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
             ]
           },
           {
-            "t": "Genians notes that some researchers class KONNI, Kimsuky and APT37 as one group. Genians says they overlap in targets and infrastructure. The MSMT report, as cited by Genians, assesses Kimsuky and KONNI as distinct groups.",
+            "t": "The line between this group and the Konni and Kimsuky clusters is disputed. Genians says some researchers class KONNI, Kimsuky and APT37 as one group, while the MSMT report as cited by Genians assesses Kimsuky and KONNI as distinct.",
             "cites": [
               "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
             ]
@@ -93,33 +88,33 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "CrowdStrike says its observed operations have almost exclusively targeted the Republic of Korea. It assesses they focus on government officials, NGOs, academics and journalists.",
+            "t": "CrowdStrike says observed operations have almost exclusively targeted South Korea. It assesses the focus to be government officials, NGOs, academics and journalists.",
             "cites": [
               "d05f74add08e022ef631c1d55dac87636f641e08"
             ]
           },
           {
-            "t": "AhnLab's ASEC says the group targets individuals such as human rights activists, reporters and North Korean defectors.",
+            "t": "AhnLab's ASEC says the group targets individuals such as human rights activists, reporters and North Korean defectors. It says the aim appears to be data theft.",
             "cites": [
               "5c7412f41750686d04fcdc582d97efff5b043a5b"
             ]
           },
           {
-            "t": "360 Advanced Threat Research Institute says a 2024 campaign hit government personnel and corporations in South Korea and Asia, with strategic industries such as aerospace, chemicals and healthcare also named.",
+            "t": "Genians reported a March 2025 spear phishing campaign against activists focused on North Korea. The lures imitated a South Korean national security think tank.",
             "cites": [
-              "28ca30af74645877c18b6ca1c60a9c8873987815"
+              "6bc8f6928136857afc21813e6ed5c27427f3d106"
             ]
           },
           {
-            "t": "ESET reports a supply-chain attack on a video game platform aimed at the Yanbian region of China. It infers that the main targets are ethnic Koreans there, most likely refugees or defectors.",
+            "t": "ESET reported a game-platform compromise aimed at the Yanbian region of China. It infers the main targets are ethnic Koreans there, most likely refugees or defectors.",
             "cites": [
               "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
             ]
           },
           {
-            "t": "Genians reports a March 2025 spear phishing campaign against activists focused on North Korea, with lures posing as a South Korean national security think tank.",
+            "t": "360 Advanced Threat Research Institute says a RokRat campaign targeted government personnel and corporations in South Korea and Asia.",
             "cites": [
-              "6bc8f6928136857afc21813e6ed5c27427f3d106"
+              "28ca30af74645877c18b6ca1c60a9c8873987815"
             ]
           }
         ]
@@ -128,38 +123,27 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Phishing emails with ZIP files hiding malicious shortcut (LNK) files are a common start. They launch a chain of scripts that loads the RokRat remote access tool in memory.",
+            "t": "Zscaler says the group has used Windows shortcut (LNK) files as an entry point for years. 360 and ASEC describe phishing lures where an LNK file starts PowerShell and loads the RokRat backdoor in memory.",
             "cites": [
-              "809d2511cc72fc1d1433cc2fa5d9736013637b33",
-              "28ca30af74645877c18b6ca1c60a9c8873987815"
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3",
+              "28ca30af74645877c18b6ca1c60a9c8873987815",
+              "490d99f79acb8bd63784f656f911669351d34833"
             ]
           },
           {
-            "t": "RokRat uses legitimate cloud services such as pCloud, Yandex and Dropbox for command and control. It captures screenshots and can collect files.",
+            "t": "One analysis says RokRat uses pCloud, Yandex and Dropbox as command-and-control channels. It can run commands, collect files and capture screenshots.",
             "cites": [
               "809d2511cc72fc1d1433cc2fa5d9736013637b33"
             ]
           },
           {
-            "t": "AhnLab's ASEC describes a Hangul document exploiting the old flaw CVE-2017-8291. It hid a payload in a JPEG image and installed a backdoor called M2RAT, which logs keystrokes and takes screenshots.",
+            "t": "ASEC reported an attack on an old Hangul word processor flaw, CVE-2017-8291. The payload was hidden in a JPEG image and installed a backdoor named M2RAT, which logs keystrokes and takes screenshots.",
             "cites": [
               "5c7412f41750686d04fcdc582d97efff5b043a5b"
             ]
           },
           {
-            "t": "Zscaler says one campaign, Ruby Jumper, spreads through removable media to reach air-gapped networks. Zscaler also says this was, to its knowledge, the first time APT37 abused Zoho WorkDrive.",
-            "cites": [
-              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
-            ]
-          },
-          {
-            "t": "Zscaler also describes chains that start from a shortcut or a Windows help file. They drop the Rustonotto and Chinotto backdoors and then FadeStealer, which collects files, keystrokes, screenshots and audio.",
-            "cites": [
-              "a7a66566cdd12df0b483f89b2d64103dffa4791e"
-            ]
-          },
-          {
-            "t": "Lookout describes KoSpy, Android spyware disguised as utility apps and spread through Google Play and Firebase Firestore.",
+            "t": "Lookout attributes the KoSpy Android spyware to ScarCruft (APT37) with medium confidence. It notes that North Korean groups share infrastructure and techniques, which makes attribution harder. The apps posed as utility tools.",
             "cites": [
               "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
             ]
@@ -170,33 +154,27 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "S2W judged from analysis of techniques that a December 2020 watering-hole attack, which delivered a ROKRAT variant, related to ScarCruft. This is a judgement, not a confirmed attribution.",
+            "t": "Zscaler described a campaign called Ruby Jumper, published in February 2026. It spreads through removable media to reach air-gapped networks and uses Zoho WorkDrive for command and control. Zscaler says that, to its knowledge, this is the first time APT37 has abused Zoho WorkDrive.",
             "cites": [
-              "86e496f986f55f6c0b0191ce30111a6769ca7696"
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
             ]
           },
           {
-            "t": "AhnLab's ASEC saw the M2RAT phishing attacks begin in January 2023.",
-            "cites": [
-              "5c7412f41750686d04fcdc582d97efff5b043a5b"
-            ]
-          },
-          {
-            "t": "ESET says the game platform attack was probably ongoing since late 2024. It says an Android version of the BirdCall backdoor was delivered through trojanized games.",
+            "t": "ESET says ScarCruft trojanized Windows and Android parts of a video game platform and delivered the BirdCall backdoor. It says the attack was probably under way since late 2024.",
             "cites": [
               "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
             ]
           },
           {
-            "t": "Genians says the first observed Operation ToyBox Story spear phishing attack was on March 8, 2025. It delivered the RoKRAT malware.",
+            "t": "Genians named the March 2025 spear phishing campaign Operation ToyBox Story. Malicious LNK files in ZIP archives delivered RoKRAT, and Genians says its investigation is ongoing.",
             "cites": [
               "6bc8f6928136857afc21813e6ed5c27427f3d106"
             ]
           },
           {
-            "t": "Zscaler published its Ruby Jumper report on 2026-02-26.",
+            "t": "Zscaler ThreatLabz, in a report published in September 2025, described APT37 infection chains using a shortcut or help-file lure. They dropped the Rustonotto and Chinotto backdoors, followed by the FadeStealer data-theft tool.",
             "cites": [
-              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+              "a7a66566cdd12df0b483f89b2d64103dffa4791e"
             ]
           }
         ]
@@ -205,25 +183,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected shortcut files inside archives, and unsolicited documents sent to activists, journalists and researchers, as suspect.",
+            "t": "Treat unexpected shortcut files inside ZIP attachments with suspicion, even when the lure looks relevant to your work.",
             "cites": []
           },
           {
-            "t": "Monitor for scripting activity and for unusual traffic to cloud storage services from endpoints.",
+            "t": "Control removable media on sensitive networks, and monitor for PowerShell activity and unusual use of cloud storage services.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "5c8963e6d869815e5baf3b9c712e0b488f6d5c3e",
+    "based_on": "0bddb29e4120cafeca3c1ba86c57ee830943f7a8",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T05:49:37Z",
+    "written_at": "2026-11-27T06:53:07Z",
     "writer_model": "sonnet",
     "reasons": [
+      "bare-attribution",
       "unbacked"
     ],
-    "written_run": "80dcb815"
+    "written_run": "69346d53"
   }
 }

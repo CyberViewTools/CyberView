@@ -236,25 +236,194 @@
   },
   "f0487f5496a4edf0b00f792aab65d938674ca196": {
     "sha1": "f0487f5496a4edf0b00f792aab65d938674ca196",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T05:56:09Z",
+    "read_at": "2026-11-27T06:54:40Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Unit 42 (Palo Alto Networks) describes activity cluster CL-STA-0046, which attacked a Southeast Asian government over more than six months in 2022-2023. Unit 42 attributes the cluster to the Gelsemium APT group with moderate confidence, citing the rare backdoors OwlProxy and SessionManager. Other tools seen include web shells, Cobalt Strike, EarthWorm and SpoolFool. Telsy and the Thai CERT link Gelsemium to China; Unit 42 cannot confirm that.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Gelsemium",
+          "q": "we attribute CL-STA-0046 to the Gelsemium APT group, with a moderate level of confidence.",
+          "by": "Unit 42 (Palo Alto Networks)"
+        },
+        {
+          "v": "APT 27",
+          "q": "For example, Kaspersky reported that APT 27 used EarthWorm in a campaign targeting Asian government entities.",
+          "by": "Kaspersky (as cited by Unit 42)"
+        },
+        {
+          "v": "Iron Taurus",
+          "q": "was reportedly used by Iron Taurus (aka APT 27) for operation Iron Tiger in 2015 (according to Trend Micro).",
+          "by": "Trend Micro (as cited by Unit 42)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "It is recognized for its tendency to target a diverse range of entities, including governments, universities, electronics"
+        },
+        {
+          "v": "government sector",
+          "q": "CL-STA-0046 is one of three clusters that we observed targeting the government sector in a country in Southeast Asia."
+        },
+        {
+          "v": "military",
+          "q": "Attackers specifically used it in government, nongovernment, military and industrial organizations."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Southeast Asia",
+          "q": "A cluster of threat actor activity that Unit 42 observed attacking a Southeast Asian government target could"
+        },
+        {
+          "v": "Laos",
+          "q": "was previously used to target several entities in Laos."
+        },
+        {
+          "v": "Taiwan",
+          "q": "OwlProxy is an HTTP proxy with backdoor functionality that was first discovered in April 2020 in an attack targeting the Taiwanese government."
+        },
+        {
+          "v": "China",
+          "q": "the security firm Telsy and the Thai CERT consider this group to be operating from China."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-09-22",
+          "q": "Published: 2023-09-22 · Archived: 2026-04-05 16:58:45 UTC",
+          "what": "Unit 42 report published"
+        },
+        {
+          "v": "2022-2023",
+          "q": "This unique cluster had activity spanning over six months between 2022-2023.",
+          "what": "CL-STA-0046 activity observed"
+        },
+        {
+          "v": "2014",
+          "q": "the Gelsemium APT group has been operational since at least 2014.",
+          "what": "Gelsemium operational since at least this year, per ESET research"
+        },
+        {
+          "v": "April 2020",
+          "q": "OwlProxy is an HTTP proxy with backdoor functionality that was first discovered in April 2020 in an attack targeting the Taiwanese government.",
+          "what": "OwlProxy first discovered in attack on Taiwanese government"
+        },
+        {
+          "v": "2015",
+          "q": "was reportedly used by Iron Taurus (aka APT 27) for operation Iron Tiger in 2015 (according to Trend Micro).",
+          "what": "Iron Tiger operation (web shell reportedly used)"
+        },
+        {
+          "v": "June 2022",
+          "q": "According to a Kaspersky blog published in June 2022",
+          "what": "Kaspersky blog on SessionManager published"
+        },
+        {
+          "v": "March 2021",
+          "q": "the Gelsemium APT group used SessionManager in compromises dating back to at least March 2021.",
+          "what": "SessionManager compromises dating back to at least this date"
+        }
+      ],
+      "tools": [
+        {
+          "v": "OwlProxy",
+          "q": "In addition to an array of web shells, the main backdoors used by the threat actor were OwlProxy and"
+        },
+        {
+          "v": "SessionManager",
+          "q": "SessionManager is a unique custom backdoor that allows its operators to run commands, as well as uploading files"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "The attackers attempted to execute Artifactd.exe, as shown in Figure 2 above, which is a Cobalt Strike beacon"
+        },
+        {
+          "v": "SpoolFool",
+          "q": "published on GitHub called SpoolFool, as shown in Figure 2 above."
+        },
+        {
+          "v": "EarthWorm",
+          "q": "EarthWorm is a publicly available SOCKS tunneler that, although initially created for research purposes, gained"
+        },
+        {
+          "v": "Potato Suite",
+          "q": "they used the Potato Suite (JuicyPotato – j.exe, BadPotato and SweetPotato – ev.exe) to try to perform privilege escalation."
+        },
+        {
+          "v": "demo.exe",
+          "q": "The attackers used a “shell-like” tool named demo.exe to run additional commands"
+        },
+        {
+          "v": "netscan",
+          "q": "Later, they used netscan and nbtscan to gather further information about the victim."
+        },
+        {
+          "v": "nbtscan",
+          "q": "Later, they used netscan and nbtscan to gather further information about the victim."
+        },
+        {
+          "v": "AspxSpy web shell",
+          "q": "One of the AspxSpy web shells that we saw the threat actor behind CL-STA-0046 use was reportedly used by Iron"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "web shells",
+          "q": "The threat actor behind CL-STA-0046 gained access to the environment after installing several web shells on a"
+        },
+        {
+          "v": "moved laterally via SMB",
+          "q": "They moved laterally via SMB and downloaded additional tools."
+        },
+        {
+          "v": "gather further information",
+          "q": "Later, they used netscan and nbtscan to gather further information about the victim."
+        },
+        {
+          "v": "privilege escalation",
+          "q": "the attackers also used another local privilege escalation"
+        },
+        {
+          "v": "SOCKS tunneler",
+          "q": "EarthWorm is a publicly available SOCKS tunneler that, although initially created for research purposes, gained"
+        },
+        {
+          "v": "proxy",
+          "q": "This threat also allows attackers to use the web server as a proxy to communicate with additional systems on the network."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-21999",
+          "q": "This tool exploits CVE-2022-21999 (Windows Print Spooler Elevation of Privilege Vulnerability)."
+        }
+      ],
+      "figures": [
+        {
+          "v": "six months",
+          "q": "This unique cluster had activity spanning over six months between 2022-2023."
+        },
+        {
+          "v": "three clusters",
+          "q": "CL-STA-0046 is one of three clusters that we observed targeting the government sector in a country in Southeast Asia."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "CL-STA-0046"
+    },
+    "hedges": [
+      "Attribution of CL-STA-0046 to the Gelsemium APT group is made with a moderate level of confidence.",
+      "At the time of writing this report, Unit 42 cannot confirm these attribution claims about Gelsemium operating from China.",
+      "The AspxSpy web shell is publicly available, could be used by any threat actor, and was therefore not included in the attribution.",
+      "Unit 42 assesses that EarthWorm was delivered as a replacement after the attackers failed to run OwlProxy.",
+      "The observations could provide a view into a threat group about which only a handful of public reports have been published."
+    ]
   }
 }

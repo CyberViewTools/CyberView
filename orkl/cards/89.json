@@ -375,25 +375,327 @@
   },
   "89dc96ea163d64499eef809f5a13a6fb906ea27b": {
     "sha1": "89dc96ea163d64499eef809f5a13a6fb906ea27b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T06:02:22Z",
+    "read_at": "2026-11-27T06:57:46Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ANSSI reports a September 2024 campaign that exploited zero-day flaws in Ivanti Cloud Service Appliance devices to reach French governmental, telecoms, media, finance and transport entities. ANSSI names the intrusion set Houken, suspects it is run by the same threat actor as UNC5174, and says it is likely an access broker. Tooling mixed open-source tools, PHP webshells and a rootkit.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Houken",
+          "q": "The Agency named this intrusion set “Houken”.",
+          "by": "ANSSI"
+        },
+        {
+          "v": "UNC5174",
+          "q": "UNC5174, an intrusion set described in open-source publications",
+          "by": "ANSSI"
+        },
+        {
+          "v": "MSS",
+          "q": "potential access broker for the MSS (Ministry of State Security of the People’s Republic of China)",
+          "by": "Google Threat Intelligence Group (GTIG), as cited by ANSSI"
+        },
+        {
+          "v": "uteus",
+          "q": "“uteus”, formerly active on cybercrime forums.",
+          "by": "GTIG, as cited by ANSSI"
+        },
+        {
+          "v": "Dawn Calvary",
+          "q": "the pro-China hacktivist group Dawn Calvary",
+          "by": "GTIG, as cited by ANSSI"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "governmental",
+          "q": "French organizations from governmental, telecommunications, media, finance, and transport sectors were impacted."
+        },
+        {
+          "v": "telecommunications",
+          "q": "French organizations from governmental, telecommunications, media, finance, and transport sectors were impacted."
+        },
+        {
+          "v": "media",
+          "q": "French organizations from governmental, telecommunications, media, finance, and transport sectors were impacted."
+        },
+        {
+          "v": "finance",
+          "q": "French organizations from governmental, telecommunications, media, finance, and transport sectors were impacted."
+        },
+        {
+          "v": "transport",
+          "q": "French organizations from governmental, telecommunications, media, finance, and transport sectors were impacted."
+        },
+        {
+          "v": "defense",
+          "q": "entity of the French defense sector"
+        },
+        {
+          "v": "education",
+          "q": "with a specific focus on governmental and education sectors"
+        },
+        {
+          "v": "NGOs",
+          "q": "Non-Governmental Organizations (NGOs), inside and outside China"
+        }
+      ],
+      "countries": [
+        {
+          "v": "France",
+          "q": "2.2 Incidents in France"
+        },
+        {
+          "v": "China",
+          "q": "Entities located near China especially in southeast Asia"
+        },
+        {
+          "v": "Thailand",
+          "q": "southeast Asia (e.g., Thailand, Vietnam, Indone-"
+        },
+        {
+          "v": "Vietnam",
+          "q": "southeast Asia (e.g., Thailand, Vietnam, Indone-"
+        },
+        {
+          "v": "Hong Kong",
+          "q": "inside and outside China, including Hong Kong"
+        },
+        {
+          "v": "United States",
+          "q": "UNC5174 has been used to target Southeast Asia, Europe and the United States of Amer-"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 2024",
+          "q": "In September 2024, ANSSI observed an attack campaign seeking initial access",
+          "what": "ANSSI observed the campaign exploiting Ivanti CSA zero-days"
+        },
+        {
+          "v": "2023",
+          "q": "Since 2023, Houken is likely used by an access broker to gain a foothold on targeted systems",
+          "what": "Houken believed in use as an access broker since 2023"
+        },
+        {
+          "v": "November 2023",
+          "q": "While initially documented for targeting F5 BIG-IP devices in November 2023, UNC5174",
+          "what": "UNC5174 first documented targeting F5 BIG-IP devices"
+        },
+        {
+          "v": "September 14, 2024",
+          "q": "one NordVPN IP address was observed in two incidents handled by ANSSI on September 14, 2024.",
+          "what": "ANSSI handled two incidents where one NordVPN IP address was seen"
+        },
+        {
+          "v": "November 2024",
+          "q": "at the end of November 2024 by ANSSI.",
+          "what": "Most recent activity in the campaign observed by ANSSI"
+        },
+        {
+          "v": "March 2025",
+          "q": "In March 2025, ANSSI’s investigations on Houken attack infrastructure revealed the compro-",
+          "what": "ANSSI found a foreign ministry email appliance compromised and emails exfiltrated"
+        },
+        {
+          "v": "May 2025",
+          "q": "In April and May 2025 respectively, the SYSDIG security team and ECLECTICIQ detailed two",
+          "what": "Sysdig and EclecticIQ published reports on two campaigns they linked to UNC5174"
+        },
+        {
+          "v": "July 1, 2025",
+          "q": "Date: July 1, 2025",
+          "what": "Report version 1.0 published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Neo-reGeorg",
+          "q": "webshells related to the open-source tool Neo-reGeorg5 or generated via the Behinder"
+        },
+        {
+          "v": "Behinder",
+          "q": "generated via the Behinder (“Ice Scorpion”)6 webshell framework"
+        },
+        {
+          "v": "GOREVERSE",
+          "q": "GOREVERSE is the name given by Google Threat Intelligence Group to a reverse shell backdoor written in"
+        },
+        {
+          "v": "suo5",
+          "q": "corresponds to the HTTP proxy tunnel tool called suo5 [10]."
+        },
+        {
+          "v": "VShell",
+          "q": "through the use of the in-memory backdoor VShell"
+        },
+        {
+          "v": "fscan",
+          "q": "GOREVERSE, VShell, fscan or ffuff."
+        },
+        {
+          "v": "ffuff",
+          "q": "GOREVERSE, VShell, fscan or ffuff."
+        },
+        {
+          "v": "SNOWLIGHT",
+          "q": "dropped by a downloader named SNOWLIGHT by GTIG [8]."
+        },
+        {
+          "v": "sysinitd",
+          "q": "composed of a kernel module (sysinitd.ko) and a user-space executable file (sysinitd)"
+        },
+        {
+          "v": "rootkit",
+          "q": "a previously unobserved rootkit on an internet-facing Ivanti CSA appliance."
+        },
+        {
+          "v": "Netcat",
+          "q": "In order to create basic reverse shells, some dedicated servers were contacted through Netcat"
+        },
+        {
+          "v": "Interactsh",
+          "q": "Interactsh11."
+        },
+        {
+          "v": "ChinaChopper",
+          "q": "operators to deploy the ChinaChopper webshell"
+        },
+        {
+          "v": "PHP webshells",
+          "q": "Several PHP webshells were created by exploiting vulnerabilities on the compromised Ivanti"
+        },
+        {
+          "v": "Monero",
+          "q": "the installation of a Monero (XMR) cryptocurrency was observed."
+        },
+        {
+          "v": "NordVPN",
+          "q": "Commercial VPN services, such as NordVPN or ExpressVPN, were also"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "zero-days",
+          "q": "These vulnerabilities were exploited as zero-days, before the publication of the Ivanti security advisory"
+        },
+        {
+          "v": "self-patching",
+          "q": "the threat actor was observed self-patching"
+        },
+        {
+          "v": "PHP webshells",
+          "q": "deploying or creating PHP webshells;"
+        },
+        {
+          "v": "appended PHP code",
+          "q": "intrusion set operators appended PHP code to legitimate resources in order to add"
+        },
+        {
+          "v": "moved laterally",
+          "q": "the attacker performed reconnaissance activities and moved laterally."
+        },
+        {
+          "v": "Obtaining credentials",
+          "q": "Obtaining credentials through the execution of a base64 encoded Python script1."
+        },
+        {
+          "v": "reverse shells",
+          "q": "In order to create basic reverse shells, some dedicated servers were contacted through Netcat"
+        },
+        {
+          "v": "anonymisation services",
+          "q": "popular and publicly accessible anonymisation services;"
+        },
+        {
+          "v": "Commercial VPN services",
+          "q": "Commercial VPN services, such as NordVPN or ExpressVPN, were also"
+        },
+        {
+          "v": "hijacking inbound TCP traffic",
+          "q": "By hijacking inbound TCP traffic over all ports, and invoking shells,"
+        },
+        {
+          "v": "SSH",
+          "q": "The attacker also tried to connect to VPS using SSH."
+        },
+        {
+          "v": "data exfiltration",
+          "q": "ANSSI also observed one case of data exfiltration"
+        },
+        {
+          "v": "cryptominers",
+          "q": "cryptominers, indicating straight-forward profit-driven objectives."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2024-8190",
+          "q": "Security Advisory Ivanti Cloud Service Appliance (CSA) (CVE-2024-8190)."
+        },
+        {
+          "v": "CVE-2024-8963",
+          "q": "8190, CVE-2024-8963, and CVE-2024-9380 vulnerabilities to remotely execute arbitrary code"
+        },
+        {
+          "v": "CVE-2024-9380",
+          "q": "8190, CVE-2024-8963, and CVE-2024-9380 vulnerabilities to remotely execute arbitrary code"
+        },
+        {
+          "v": "CVE-2021-26855",
+          "q": "chain (linked to the vulnerability CVE-2021-26855) [11]."
+        },
+        {
+          "v": "CVE-2023-46747",
+          "q": "nerability CVE-2023-46747), a local account named Root6 was created by the threat actor."
+        },
+        {
+          "v": "CVE-2024-1709",
+          "q": "as ConnectWise ScreenConnect (CVE-2024-1709) and PaloAlto (CVE-2024-3400) [13]."
+        },
+        {
+          "v": "CVE-2024-3400",
+          "q": "as ConnectWise ScreenConnect (CVE-2024-1709) and PaloAlto (CVE-2024-3400) [13]."
+        }
+      ],
+      "figures": [
+        {
+          "v": "three cases",
+          "q": "In three cases, the compromise of Ivanti CSA devices was followed by lateral movements toward"
+        },
+        {
+          "v": "one case",
+          "q": "ANSSI also observed one case of data exfiltration as well as an interest in the deployment of"
+        },
+        {
+          "v": "two victims",
+          "q": "to have used the same NordVPN session to compromise two victims:"
+        },
+        {
+          "v": "ExpressVPN 6",
+          "q": "ExpressVPN 6"
+        },
+        {
+          "v": "UTC+8",
+          "q": "Attacker’s operational activities time zone was UTC+8, which aligns with China Standard Time (CST)."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "September 2024 Ivanti CSA vulnerabilities exploitation campaign"
+    },
+    "hedges": [
+      "ANSSI suspects Houken is operated by the same threat actor as the intrusion set previously described by MANDIANT as UNC5174.",
+      "Since 2023, Houken is likely used by an access broker to gain a foothold on targeted systems.",
+      "Houken is an intrusion set plausibly operated by an initial access broker.",
+      "While rare, the use of the OutlookEN.aspx filename is not evidence enough to link Houken to the Hafnium intrusion set.",
+      "Such behaviour could not be confirmed, as ANSSI did not observe any latter intrusion set activity following Houken's initial access.",
+      "ANSSI can not confirm the links between the attack campaigns described and the Houken or UNC5174 intrusion sets, as SNOWLIGHT might not be exclusive to UNC5174.",
+      "According to GTIG, UNC5174 operators may be linked to a threat actor persona named uteus, which may have been part of Dawn Calvary."
+    ]
   }
 }

@@ -285,25 +285,179 @@
   },
   "7eccc47c8707a8c9363d0829a1a64d0b9d9e5d2a": {
     "sha1": "7eccc47c8707a8c9363d0829a1a64d0b9d9e5d2a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T06:00:47Z",
+    "read_at": "2026-11-27T06:56:05Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Fraunhofer FKIE reference entry for the REvil (Sodinokibi) ransomware family. It lists hashes and version-by-version changes from REvil Beta to v1.07, including privilege escalation via CVE-2018-8453, shadow copy deletion, network drive encryption and persistence added in v1.05. It also indexes many third-party reports from 2019 to 2024, including the 2021 Kaseya supply-chain attack.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Yevgeniy Polyanin",
+          "q": "Indictment of Yevgeniy Polyanin, one off the REvil affliates",
+          "by": "Department of Justice"
+        },
+        {
+          "v": "Yaroslav Vasinskyi",
+          "q": "Indictment of Yaroslav Vasinskyi (REvil affiliate)",
+          "by": "Department of Justice"
+        },
+        {
+          "v": "PINCHY SPIDER",
+          "q": "The Evolution of PINCHY SPIDER from GandCrab to REvil",
+          "by": "CrowdStrike"
+        },
+        {
+          "v": "GOLD SOUTHFIELD",
+          "q": "Threat Profile: GOLD SOUTHFIELD",
+          "by": "Secureworks"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Education",
+          "q": "Sodinokibi / REvil Ransomware attacks against the Education Sector"
+        },
+        {
+          "v": "Healthcare",
+          "q": "To Attack or Not to Attack: Targeting the Healthcare Sector in the Underground Ecosystem"
+        },
+        {
+          "v": "Critical infrastructure",
+          "q": "Critical Infrastructure Ransomware Attacks"
+        },
+        {
+          "v": "MSPs",
+          "q": "Kaseya supply chain attack targeting MSPs to deliver REvil ransomware"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "Storm in \"Safe Haven\": Takeaways from Russian Authorities Takedown of REvil"
+        },
+        {
+          "v": "Ukraine",
+          "q": "Ukrainian Arrested and Charged with Ransomware Attack on Kaseya"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2020-01-06",
+          "q": "REvil 2020-01-06 ⋅ Bleeping Computer ⋅ Ionut Ilascu",
+          "what": "Sodinokibi ransomware hits Travelex and demands $3 million"
+        },
+        {
+          "v": "2020-06-01",
+          "q": "REvil 2020-06-01 ⋅ Arete ⋅ Arete Incident Response",
+          "what": "Sodinokibi / REvil ransomware attacks against the Education Sector"
+        },
+        {
+          "v": "2021-06-02",
+          "q": "REvil 2021-06-02 ⋅ Bleeping Computer ⋅ Lawrence Abrams",
+          "what": "FBI reports REvil cybergang behind the JBS ransomware attack"
+        },
+        {
+          "v": "2021-07-02",
+          "q": "REvil 2021-07-02 ⋅ Bleeping Computer ⋅ Lawrence Abrams",
+          "what": "REvil ransomware hits 1,000+ companies in an MSP supply-chain attack"
+        },
+        {
+          "v": "2021-10-22",
+          "q": "REvil REvil 2021-10-22 ⋅ Reuters ⋅ Christopher Bing, Joseph Menn",
+          "what": "Governments push ransomware gang REvil offline"
+        },
+        {
+          "v": "2021-11-08",
+          "q": "REvil REvil 2021-11-08 ⋅ Department of Justice ⋅ Department of Justice",
+          "what": "Justice Department indictment of Yevgeniy Polyanin, a REvil affiliate"
+        },
+        {
+          "v": "2022-04-20",
+          "q": "REvil 2022-04-20 ⋅ Bleeping Computer ⋅ Ionut Ilascu",
+          "what": "REvil's Tor sites come alive to redirect to a new ransomware operation"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PowerShell",
+          "q": "Leverages PowerShell and WMI to delete shadow copies if the victim's operating system is newer than"
+        },
+        {
+          "v": "WMI",
+          "q": "Leverages WMI to continuously monitor for and kill newly launched processes whose names are listed in the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Privilege escalation",
+          "q": "Privilege escalation via CVE-2018-8453 (64-bit only)"
+        },
+        {
+          "v": "Deletes shadow copies",
+          "q": "Deletes shadow copies and disables recovery"
+        },
+        {
+          "v": "Implements target whitelisting",
+          "q": "Implements target whitelisting"
+        },
+        {
+          "v": "persistence functionality",
+          "q": "Implements persistence functionality via registry Run key."
+        },
+        {
+          "v": "Encodes stored strings",
+          "q": "Encodes stored strings used for URI building within the binary and decodes them in memory right before use"
+        },
+        {
+          "v": "Double Extortion",
+          "q": "Ransomware Double Extortion and Beyond: REvil, Clop, and Conti"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-8453",
+          "q": "Privilege escalation via CVE-2018-8453 (64-bit only)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "$100 million",
+          "q": "REvil ransomware gang claims over $100 million profit in a year"
+        },
+        {
+          "v": "1,000+",
+          "q": "REvil ransomware hits 1,000+ companies in MSP supply-chain attack"
+        },
+        {
+          "v": "$2.5 million",
+          "q": "MTR in Real Time: Hand-to-hand combat with REvil ransomware chasing a $2.5 million pay day"
+        },
+        {
+          "v": "$3 Million",
+          "q": "Sodinokibi Ransomware Hits Travelex, Demands $3 Million"
+        },
+        {
+          "v": "$14 Million",
+          "q": "Electric Company Ransomware Attack Calls for $14 Million in Ransom"
+        },
+        {
+          "v": "$2.3 million",
+          "q": "Travelex paid hackers $2.3 million worth of Bitcoin after ransomware attack"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "REvil"
+    },
+    "hedges": [
+      "It does not appear that this value is referenced after it is created and stored in memory. There is no evidence that a lock file is dropped to disk.",
+      "This breaks persistence however as the target executable specified in the Run key will no longer exist once this is done.",
+      "Updated string decoding function to break existing yara rules. Likely the result of the blog posted by us.",
+      "(URI path building is not implemented.)",
+      "Partially implements a background image setting to display a basic \"Image text\" message"
+    ]
   }
 }

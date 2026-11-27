@@ -99,25 +99,175 @@
   },
   "59b4660c9819d21d97621fadcac9e93be556164c": {
     "sha1": "59b4660c9819d21d97621fadcac9e93be556164c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T06:00:54Z",
+    "read_at": "2026-11-27T06:55:49Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Google Threat Intelligence Group and Mandiant report BRICKSTORM, a backdoor written in Go and used in intrusions into US organisations. They attribute the activity to UNC5221 and related suspected China-nexus clusters, which target legal services, SaaS providers, outsourcers and technology firms. The backdoors sit on network appliances and VMware vCenter/ESXi hosts that lack EDR, with SOCKS proxying and cloning of domain controllers. Average dwell time was 393 days. Mail is read through Microsoft 365 enterprise applications. The report offers an asset inventory, hunt steps and hardening…",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "UNC5221",
+          "q": "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters that employ",
+          "by": "Google Threat Intelligence Group (GTIG), in this report"
+        },
+        {
+          "v": "Silk Typhoon",
+          "q": "While UNC5221 has been used synonymously with the actor publicly reported as Silk Typhoon, GTIG does not",
+          "by": "Google Threat Intelligence Group (GTIG), in this report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "legal services",
+          "q": "has responded to intrusions across a range of industry verticals, most notably legal services, Software as a Service"
+        },
+        {
+          "v": "SaaS providers",
+          "q": "GTIG assesses with high confidence that the objective of BRICKSTORM targeting SaaS providers"
+        },
+        {
+          "v": "Business Process Outsourcers (BPOs)",
+          "q": "providers, Business Process Outsourcers (BPOs), and Technology. The value of these targets extends"
+        },
+        {
+          "v": "technology companies",
+          "q": "The targeting of technology companies presents an"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "maintain persistent access to victim organizations in the United States."
+        },
+        {
+          "v": "China",
+          "q": "We attribute this activity to UNC5221 and closely related, suspected China-nexus threat clusters that employ"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-09-24",
+          "q": "Published: 2025-09-24 · Archived: 2026-04-05 17:16:46 UTC",
+          "what": "Report published by Google Threat Intelligence Group and Mandiant"
+        },
+        {
+          "v": "March 2025",
+          "q": "Since March 2025, Mandiant Consulting",
+          "what": "Mandiant began responding to intrusions linked to this activity"
+        },
+        {
+          "v": "April 2025",
+          "q": "As noted in our previous blog post from April 2025, Mandiant",
+          "what": "Earlier Mandiant post describing anti-forensics post-exploitation scripts"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BRICKSTORM",
+          "q": "The primary backdoor used by this actor is BRICKSTORM, as previously discussed by Mandiant and others."
+        },
+        {
+          "v": "BRICKSTEAL",
+          "q": "The malicious filter, tracked by Mandiant as BRICKSTEAL, runs on HTTP requests to the vCenter web login"
+        },
+        {
+          "v": "SLAYSTYLE",
+          "q": "The threat actor has also created a web shell tracked by Mandiant as SLAYSTYLE on vCenter servers."
+        },
+        {
+          "v": "BEEFLUSH",
+          "q": "SLAYSTYLE, tracked by MITRE as BEEFLUSH, is a JavaServer Pages (JSP) web shell that functions as a"
+        },
+        {
+          "v": "Garble",
+          "q": "some samples are obfuscated using Garble and"
+        },
+        {
+          "v": "secret stealer",
+          "q": "consistent with the execution of a tool, such as secret stealer, to automatically extract and decrypt all credentials"
+        },
+        {
+          "v": "Cloudflare Workers",
+          "q": "Mandiant has identified samples using Cloudflare Workers and Heroku applications for C2, as well as"
+        },
+        {
+          "v": "NordVPN",
+          "q": "Mandiant has found evidence of the threat actor using PIA, NordVPN, Surfshark, VPN Unlimited, and"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploitation of zero-day vulnerabilities targeting network appliances",
+          "q": "including the exploitation of zero-day vulnerabilities targeting network appliances."
+        },
+        {
+          "v": "backdoors on appliances",
+          "q": "backdoors on appliances that do not support traditional endpoint detection and response (EDR) tools. The actor"
+        },
+        {
+          "v": "SOCKS proxy",
+          "q": "they used the SOCKS proxy feature of"
+        },
+        {
+          "v": "clone Windows Server VMs",
+          "q": "the threat actor used their access to vCenter to clone Windows Server VMs for key systems such as Domain"
+        },
+        {
+          "v": "legitimate credentials",
+          "q": "legitimate credentials to connect to the appliance, often with SSH."
+        },
+        {
+          "v": "bulk email access",
+          "q": "Mandiant has observed this actor use common techniques to conduct bulk email access and exfiltration from"
+        },
+        {
+          "v": "created a new local account",
+          "q": "Mandiant identified evidence the threat actor created a new local account to install BRICKSTORM and then"
+        },
+        {
+          "v": "enable the SSH service",
+          "q": "either the ESXi web-based UI or the vCenter Appliance Management Interface (VAMI) to enable the SSH service"
+        },
+        {
+          "v": "“delay” timer",
+          "q": "a “delay” timer built-in that waited for a hard-coded date months in the future before beginning to beacon to the"
+        },
+        {
+          "v": "compromised small office/home office",
+          "q": "a purpose-built obfuscation network built from compromised small office/home office"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "393 days",
+          "q": "environments for 393 days, on average. Mandiant strongly encourages organizations to reevaluate their threat"
+        },
+        {
+          "v": "at least two",
+          "q": "In at least two cases, the threat actor used their access to vCenter to clone Windows Server VMs"
+        },
+        {
+          "v": "01:00 and 10:00 UTC",
+          "q": "primarily operated between the hours of 01:00 and 10:00 UTC. Investigators should search vCenter"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "BRICKSTORM"
+    },
+    "hedges": [
+      "GTIG does not currently consider UNC5221 and Silk Typhoon to be the same cluster.",
+      "UNC5221 is attributed as part of suspected China-nexus threat clusters, not a confirmed single actor.",
+      "Mandiant could not find definitive evidence of vulnerability exploitation in the other edge appliance cases.",
+      "The initial intrusion vector could often not be determined because the artifacts had aged out of log retention.",
+      "Credentials used for lateral movement were likely captured by the malware running on the network appliances.",
+      "Mandiant has not observed a Windows variant of BRICKSTORM in any investigation.",
+      "Mandiant has no knowledge of how the routers in the obfuscation network are being compromised.",
+      "GTIG assesses with high confidence that the objective of targeting SaaS providers is access to downstream customer environments or their data."
+    ]
   }
 }

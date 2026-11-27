@@ -210,7 +210,7 @@
   },
   "bb38ec9e943645f3568e94c0b66ec04218dd65f2": {
     "sha1": "bb38ec9e943645f3568e94c0b66ec04218dd65f2",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T06:45:12Z",
     "model": "haiku",
@@ -383,6 +383,14 @@
         "note": "actors[2]: The text says Turla is 'Believed to be part of the Russian FSB'. The card's value 'Russian FSB' and its quote, which starts at 'part of the Russian F",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T06:52:35Z",
+      "ok": false,
+      "note": "techniques[6]: The quote ('LunarWeb and LunarMail are AES-256 encrypted') comes from the MITRE table row about files encrypted on disk, not C&C traffic. The rep",
+      "by": "auditor"
+    }
   }
 }

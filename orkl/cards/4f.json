@@ -580,7 +580,7 @@
   },
   "4fd6a10ea2117edfa1d0389313d78af2712c8dc6": {
     "sha1": "4fd6a10ea2117edfa1d0389313d78af2712c8dc6",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T14:42:22Z",
     "model": "haiku",
@@ -731,6 +731,14 @@
       "The 26 servers are described as likely compromised at some point.",
       "The report says the accepted commands for the malware are unclear.",
       "The report says the SSH keys are likely unique to the botnet's infrastructure."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T15:13:34Z",
+      "ok": false,
+      "note": "summary: It says the bash loader adds cron persistence. The text says the sysrv binary (the second-stage Golang ELF) adds the cron entry, not the ldr.sh loader.",
+      "by": "auditor"
+    }
   }
 }

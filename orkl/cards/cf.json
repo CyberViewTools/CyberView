@@ -390,7 +390,7 @@
   },
   "cfd45384f984c7dc7316e7c683888e81a31eb1dd": {
     "sha1": "cfd45384f984c7dc7316e7c683888e81a31eb1dd",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T14:46:50Z",
     "model": "haiku",
@@ -547,6 +547,14 @@
       "In the case that the malware runs in Tencent Cloud or Alibaba Cloud, it will use the exact code of the previous malware to uninstall monitoring agents to avoid detection.",
       "By observing it, we can conclude that two of the malware’s targets are Alibaba Cloud and Tencent Cloud.",
       "We can assume that the growing trend of sophisticated attacks on the cloud will continue."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T15:14:11Z",
+      "ok": false,
+      "note": "summary: It says the malware removes cloud monitoring agents without the text's condition. The text says it uninstalls them only when it runs in Tencent Cloud o",
+      "by": "auditor"
+    }
   }
 }

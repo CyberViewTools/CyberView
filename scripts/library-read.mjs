@@ -16,7 +16,7 @@ import { prepText, fetchText, TEXT_MIN } from "./lib/orkl-text.mjs";
 import { cleanCard, cardProblems } from "./lib/library-check.mjs";
 import { readerPrompt } from "./lib/library-prompts.mjs";
 import { oneShot, withTimeout } from "./lib/oneshot.mjs";
-import { loadConfig, paused, auditFailed, PAUSE_NOTICE, PAUSE_MESSAGE } from "./lib/library-audit.mjs";
+import { loadConfig, paused, auditFailed, PAUSE_NOTICE } from "./lib/library-audit.mjs";
 
 export const CARDS_DIR = join(DIR, "cards");
 export const READ_STATE_FILE = join(DIR, "read-state.json");   // per-record failure counts: { failures: { sha1: { n, last_at, parked_until? } } }

@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
-import { join, extname } from "node:path";
+import { join } from "node:path";
 import { ROOT, listEventFiles } from "./lib/store.mjs";
 import { pathToFileURL } from "node:url";
 import { railProblems } from "./lib/scanner-rail-check.mjs";

@@ -34,7 +34,7 @@
 // ..._WITHOUT_ELECTRICITY), counted per run in last_run.grid_rows, but they are not filed: see config/gdelt.json grid_note.
 import { createHash } from "node:crypto";
 import { inflateRawSync, crc32 } from "node:zlib";
-import { existsSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
+import { readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";

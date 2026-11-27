@@ -16,7 +16,7 @@
 // msrc.microsoft.com/csaf (Crawl-delay 30: the CVRF API carries the same data), and vendors whose advisories are only in a
 // script-built page or behind a sign-in (Juniper, Citrix, SonicWall, VMware by Broadcom, F5, Atlassian, Check Point, Zyxel,
 // Progress); the ICS vendors are scripts/ics.mjs.
-import { mkdirSync, readdirSync, readFileSync, appendFileSync, existsSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, appendFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";

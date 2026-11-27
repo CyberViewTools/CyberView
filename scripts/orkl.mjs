@@ -31,7 +31,7 @@ import { existsSync, readdirSync, mkdirSync, rmSync, writeFileSync, renameSync }
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";
-import { get, FetchError } from "./lib/net.mjs";
+import { get } from "./lib/net.mjs";
 import { actorSubjects, looseSubjects, actorIndex } from "./lib/library-subjects.mjs";
 
 export const API = "https://orkl.eu/api/v1";
